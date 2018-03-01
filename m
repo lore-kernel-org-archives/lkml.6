@@ -1,176 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033704AbeCARsq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:48:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1033539AbeCARsm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:48:42 -0500
-Date: Thu, 1 Mar 2018 09:49:06 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
- rcu-fence
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180301015531.olvuu5g35eta5xhr@tardis>
- <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
+        id S1033745AbeCARtt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033501AbeCARtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:49:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7F020856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 1 Mar 2018 11:49:41 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 03/10] PCI/P2PDMA: Add PCI p2pmem dma mappings to
+ adjust the bus offset
+Message-ID: <20180301174941.GG13722@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-4-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030117-0056-0000-0000-00000426BEAB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008609; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00996886; UDB=6.00506843; IPR=6.00776205;
- MB=3.00019803; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-01 17:48:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030117-0057-0000-0000-00000868BFA3
-Message-Id: <20180301174906.GC3777@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010220
+In-Reply-To: <20180228234006.21093-4-logang@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 10:49:05AM -0500, Alan Stern wrote:
-> On Thu, 1 Mar 2018, Boqun Feng wrote:
+On Wed, Feb 28, 2018 at 04:39:59PM -0700, Logan Gunthorpe wrote:
+> The DMA address used when mapping PCI P2P memory must be the PCI bus
+> address. Thus, introduce pci_p2pmem_[un]map_sg() to map the correct
+> addresses when using P2P memory.
 > 
-> > > +let rec rcu-fence = gp |
-> > > +	(gp ; rcu-link ; rscs) |
-> > > +	(rscs ; rcu-link ; gp) |
-> > > +	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
-> > > +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
-> > > +	(rcu-fence ; rcu-link ; rcu-fence)
-> > > +
-> > > +(* rb orders instructions just as pb does *)
-> > > +let rb = prop ; rcu-fence ; hb* ; pb*
-> > >  
-> > >  irreflexive rb as rcu
-> > 
-> > I wonder whether we can simplify things as:
-> > 
-> > 	let rec rcu-fence =
-> > 	    (gp; rcu-link; rscs) |
-> > 	    (rscs; rcu-link; gp) |
-> > 	    (gp; rcu-link; rcu-fence; rcu-link; rscs) |
-> > 	    (rscs; rcu-link; rcu-fence; rcu-link; gp)
-> > 	
-> > 	(* gp and rcu-fence; rcu-link; rcu-fence removed *)
-> > 	
-> > 	let rb = prop; rcu-fence; hb*; pb*
-> > 
-> > 	acycle rb as rcu
-> > 
-> > In this way, "rcu-fence" is defined as "any sequence containing as many
-> > grace periods as RCU read-side critical sections (joined by rcu-link)."
-> > Note that "rcu-link" contains "gp", so we don't miss the case where
-> > there are more grace periods. And since we use "acycle" now, so we don't
-> > need "rcu-fence; rcu-link; rcu-fence" to build "rcu-fence" recursively.
+> For this, we assume that an SGL passed to these functions contain all
+> p2p memory or no p2p memory.
 > 
-> Would this definition of rcu-fence work for a sequence such as (leaving
-> out the intermediate rcu-link parts):
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/pci/p2pdma.c       | 51 ++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/memremap.h   |  1 +
+>  include/linux/pci-p2pdma.h | 13 ++++++++++++
+>  3 files changed, 65 insertions(+)
 > 
-> 	gp gp gp rscs rscs gp rscs rscs
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index a57df78f6a32..4e1c81f64b29 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -188,6 +188,8 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  	pgmap->res.flags = pci_resource_flags(pdev, bar);
+>  	pgmap->ref = &pdev->p2pdma->devmap_ref;
+>  	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
+> +	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
+> +		pci_resource_start(pdev, bar);
+>  
+>  	addr = devm_memremap_pages(&pdev->dev, pgmap);
+>  	if (IS_ERR(addr))
+> @@ -616,3 +618,52 @@ void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+>  	pdev->p2pdma->published = publish;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
+> +
+> +/*
+> + * pci_p2pdma_map_sg - map a PCI peer-to-peer sg for DMA
+> + * @dev:        device doing the DMA request
+> + * @sg:		scatter list to map
+> + * @nents:	elements in the scatterlist
+> + * @dir:        DMA direction
+
+Can you fix these so the descriptions all have a single space after
+the "@dev:", which seems to be the existing convention in this file?
+The indentation looks pretty random now.
+
+> + *
+> + * Returns the number of SG entries mapped
+> + */
+> +int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		      enum dma_data_direction dir)
+
+Same question as before about why the mixture of "pci_*" interfaces
+that take "struct device *" parameters.
+
+> +{
+> +	struct dev_pagemap *pgmap;
+> +	struct scatterlist *s;
+> +	phys_addr_t paddr;
+> +	int i;
+> +
+> +	/*
+> +	 * p2pdma mappings are not compatible with devices that use
+> +	 * dma_virt_ops.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_DMA_VIRT_OPS) && dev->dma_ops == &dma_virt_ops)
+> +		return 0;
+> +
+> +	for_each_sg(sg, s, nents, i) {
+> +		pgmap = sg_page(s)->pgmap;
+> +		paddr = sg_phys(s);
+> +
+> +		s->dma_address = paddr - pgmap->pci_p2pdma_bus_offset;
+> +		sg_dma_len(s) = s->length;
+> +	}
+> +
+> +	return nents;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
+> +
+> +/**
+> + * pci_p2pdma_unmap_sg - unmap a PCI peer-to-peer sg for DMA
+> + * @dev:        device doing the DMA request
+> + * @sg:		scatter list to map
+> + * @nents:	elements in the scatterlist
+> + * @dir:        DMA direction
+
+Same whitespace comment as above.
+
+> + */
+> +void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +			 enum dma_data_direction dir)
+> +{
+> +}
+> +EXPORT_SYMBOL_GPL(pci_p2pdma_unmap_sg);
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index 9e907c338a44..1660f64ce96f 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -125,6 +125,7 @@ struct dev_pagemap {
+>  	struct device *dev;
+>  	void *data;
+>  	enum memory_type type;
+> +	u64 pci_p2pdma_bus_offset;
+>  };
+>  
+>  #ifdef CONFIG_ZONE_DEVICE
+> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+> index c0dde3d3aac4..126eca697ab3 100644
+> --- a/include/linux/pci-p2pdma.h
+> +++ b/include/linux/pci-p2pdma.h
+> @@ -36,6 +36,10 @@ int pci_p2pmem_alloc_sgl(struct pci_dev *pdev, struct scatterlist **sgl,
+>  void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl,
+>  		unsigned int nents);
+>  void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
+> +int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		      enum dma_data_direction dir);
+> +void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +			 enum dma_data_direction dir);
+>  #else /* CONFIG_PCI_P2PDMA */
+>  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
+>  		size_t size, u64 offset)
+> @@ -83,5 +87,14 @@ static inline void pci_p2pmem_free_sgl(struct pci_dev *pdev,
+>  static inline void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+>  {
+>  }
+> +static inline int pci_p2pdma_map_sg(struct device *dev,
+> +	struct scatterlist *sg, int nents, enum dma_data_direction dir)
+> +{
+> +	return 0;
+> +}
+> +static inline void pci_p2pdma_unmap_sg(struct device *dev,
+> +	struct scatterlist *sg, int nents, enum dma_data_direction dir)
+> +{
+> +}
+>  #endif /* CONFIG_PCI_P2PDMA */
+>  #endif /* _LINUX_PCI_P2P_H */
+> -- 
+> 2.11.0
 > 
-> ?  I don't think it would.  Yes, if you had a cycle of that form then 
-> your "rcu" axiom would detect it, but at some point we might want to 
-> use rcu-fence for some other purpose, one that doesn't involve cycles.
-
-Let's see, that would map to this:
-
-auto/RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
-
-And no, there is no such automatically generated litmus test.  Let's
-try reversing the "gp" and "rscs", which should have the same effect
-courtesy of symmetry:
-
-auto/RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
-
-And that one doesn't exist, either.  So much for random test generation!  :-/
-
-Clearly time to add them.  And here is what herd has to say about them:
-
-l$ sh scripts/checklitmus.sh /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
-Herd options: -conf linux-kernel.cfg
-Observation /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R Sometimes 1 255
- ^^^ Unexpected non-Never verification
- 0inputs+32outputs (0major+2605minor)pagefaults 0swaps
-$ sh scripts/checklitmus.sh /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
-Herd options: -conf linux-kernel.cfg
-Observation /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G Sometimes 1 255
- ^^^ Unexpected non-Never verification
- 0inputs+32outputs (0major+2620minor)pagefaults 0swaps
-
-In other words, they are in fact misclassified as "Sometimes" when they
-should be "Never".  I have my diffs below in case I misapplied Boqun's
-change.
-
-With Alan's original formulation, these two litmus tests are correctly
-handled:
-
-$ sh scripts/checklitmus.sh /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
-Herd options: -conf linux-kernel.cfg
-Observation /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R Never 0 255
-1.61user 0.00system 0:01.63elapsed 98%CPU (0avgtext+0avgdata 9572maxresident)k
-$ sh scripts/checklitmus.sh /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
-Herd options: -conf linux-kernel.cfg
-Observation /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G Never 0 255
-1.84user 0.01system 0:01.92elapsed 96%CPU (0avgtext+0avgdata 10112maxresident)k
-
-> > I prefer this because we already treat "gp" as "strong-fence", which
-> > already is a "rcu-link".
-> 
-> That's a good point; it had not occurred to me.
-
-And if I remove the "gp" but leave the last line, it does properly
-classify the two new litmus tests.
-
-							Thanx, Paul
-
-> >  Also, recurisively extending rcu-fence with
-> > itself is exactly calculating the transitive closure, which we can avoid
-> > by using a "acycle" rule. Besides, it looks more consistent with hb and
-> > pb.
-> 
-> That _had_ occurred to me.  But I couldn't see any way to do it while 
-> still defining rcu-fence correctly.
-
-------------------------------------------------------------------------
-
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index 1e5c4653dd12..75d3c225146c 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -106,12 +106,11 @@ let rcu-link = hb* ; pb* ; prop
-  * Any sequence containing at least as many grace periods as RCU read-side
-  * critical sections (joined by rcu-link) acts as a generalized strong fence.
-  *)
--let rec rcu-fence = gp |
-+let rec rcu-fence =
- 	(gp ; rcu-link ; rscs) |
- 	(rscs ; rcu-link ; gp) |
- 	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
--	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
--	(rcu-fence ; rcu-link ; rcu-fence)
-+	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp)
- 
- (* rb orders instructions just as pb does *)
- let rb = prop ; rcu-fence ; hb* ; pb*
