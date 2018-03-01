@@ -1,110 +1,117 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3607228-1519929776-2-1660357887473667309
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3347819-1519921447-2-4680377315775077467
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519929776; b=nTl0Qk/WY2BAgi8w2fLgQicGPSj07oCflVY8/tt1RUwEMZe
-    ZpZxLehJa9zh0xlCa0SonCcka8ckhAmInPbfJfr3IVJ4cvEuwsIl8wsUL3HlR5so
-    LNO1tM0wGI6y7EKH7m28JW7izDz4X6bSJyRd8aa9nhwW/08k6pdFwkfRxej8TMyq
-    W8Lm0SENzxtiwcdYZgQ1pbIsQXbpZzKVgXUW9RVSXj/fg2QQHX0ti9QOyRS9p3yz
-    EPQdvqsdQFhGySNtLVTxEXemd677TYBQmNh4oVgpcabzq4XkIZ11LfBavNq1Er6k
-    jUIYZUcDRga+JwmZHSugzrflkDjOriDizJ8B+OQ==
+    t=1519921446; b=rrERzoZ8ampIzsziEhsw2W2fpkbaLEeDMBvQa1+oSUQvogu
+    7p+KEX1Nk/NCwQqYP4SHYyStlLwsNuSms6FdXXxr8/kyFuIUVBlYhuVDRWn22y91
+    bV6oTxtkux4rz7nidvNbsOp1IZhos8pTANSZox3Jx1/o6c4huk3TXpS17Cz2c9N6
+    9AI/RBZn7cfMK5mVxUxRY0zNzMo+Nz2M9gPWfTEpwQX1sRGoeIShJQVdsSRi8K7p
+    aM4yDdE5D0r5EIgJ5UbTQzMHP2KJvKbf3BYGWVaWelYaoS2wNhjSRNVS+BN0vQhW
+    x8aaDuXeG/oWpKMHq5jI0csh1+mvjfkZ4POs8Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519929776; bh=A7/iB/FiCZv1Gk6zS3OljudbPV
-    IzRlkYcYwyjcH7VDM=; b=XuuUn1oBgxWizpnz5+a14CIh1IZyLks0zU1mwdl3Et
-    oqO9Ay0HcUhI0fwr/frZcYvN/r1h1hL/g2GWifakIhCRh7r2jEamsv9RUKaMl2qJ
-    ocSozWxRehHkQ2DY0SPpzCbNcJbwel8roQxoTS1aTLiLc+nNDykfXL06RM1+2Llk
-    p06hLU+CynPFQ/1umoFC2GuPBIXavDcyHMKSs22wi77xirIgBRVum1Ss9J1Arxdb
-    g6nRS1aUhuCnesYQfUC7Lz7H/cExrwbzSnbcnmh/vtYRRLg5Vx0R4SoAjsFxEF/A
-    hEXUpNQD0MyiMkbkfhwrmO8lvoVsQEStGZqcattBAP+w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519921446; bh=5
+    nUz04gDCgBTxt77518tJ8bQt32mCvc94/m61A4N/KY=; b=HDWqVxkgNGgyR2RfP
+    foiX/3zbk7XhWbcUVzdohAb4Yt3MNplEQoSFYqfzOVKgD2zSKXy03vlpZK7NKtxq
+    b2hkNERu05x1S+ymKC/wxxMlAP7SyyG9lPDEo1tJQ3UTq4Nh5xp9oRja7kcsOkH1
+    9d07BJyYukNlpJwjXV9ZTZuhxt4rcQYFlLFL/AMXSdf0BbYBudHEjmlBD9Fp54cP
+    x6WHB0A9BOfV6BvOP4KCnQPjP0IcX0dMxzj2UI7Ua9FwYjRWgahApk6gOD49MAgK
+    IcPm0OAK0bQ5q1MwisCnbewkw8/WhB5ZCa1boIqncOWGeLfZ/KtGLSHq07180ZGY
+    BLylw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034010AbeCASmy (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 13:42:54 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37634 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033831AbeCASmy (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:42:54 -0500
-Date: Thu, 1 Mar 2018 19:42:52 +0100
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Thu, 1 Mar 2018 17:24:00 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, adurbin@chromium.org,
-        briannorris@chromium.org, Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] earlycon: Allow specifying a uartclk in options
-Message-ID: <20180301184252.GA29304@kroah.com>
-References: <20180301182028.237856-1-djkurtz@chromium.org>
- <57fb4f35-fd75-b2cc-75f7-8157ab1081d5@infradead.org>
+To: umesh.freelance@gmail.com
+Subject: Re: [PATCH] drivers:staging: Fix alignment warnings reported by tool
+Message-ID: <20180301162400.GA28738@kroah.com>
+References: <1519494760-14097-1-git-send-email-umesh.freelance@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57fb4f35-fd75-b2cc-75f7-8157ab1081d5@infradead.org>
+In-Reply-To: <1519494760-14097-1-git-send-email-umesh.freelance@gmail.com>
 User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 01, 2018 at 10:30:45AM -0800, Randy Dunlap wrote:
-> On 03/01/2018 10:20 AM, Daniel Kurtz wrote:
-> > Currently when an earlycon is registered, the uartclk is assumed to be
-> > BASE_BAUD * 16 = 1843200.  If a baud rate is specified in the earlycon
-> > options, then 8250_early's init_port will program the UART clock divider
-> > registers based on this assumed uartclk.
-> > 
-> > However, not all uarts have a UART clock of 1843200.  For example, the
-> > 8250_dw uart in AMD's CZ/ST uses a fixed 48 MHz clock (as specified in
-> > cz_uart_desc in acpi_apd.c).  Thus, specifying a baud when using earlycon
-> > on such a device will result in incorrect divider values and a wrong UART
-> > clock.
-> > 
-> > Fix this by extending the earlycon options parameter to allow specification
-> > of a uartclk, like so:
-> > 
-> >  earlycon=uart,mmio32,0xfedc6000,115200,48000000
-> > 
-> > If none is specified, fall-back to prior behavior - 1843200.
-> > 
-> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+On Sat, Feb 24, 2018 at 11:22:40PM +0530, umesh.freelance@gmail.com wrote:
+> From: Umesh3034 <umesh.freelance@gmail.com>
 > 
-> Hi,
+> Fix alignment warnings reported by checkpatch.pl
 > 
-> Hopefully there will also be an update to one of
-> Documentation/admin-guide/kernel-parameters.txt or
-> Documentation/admin-guide/serial-console.rst.
+> Signed-off-by: Umesh3034 <umesh.freelance@gmail.com>
 
-Well, considering I'm not taking this patch unless it comes with such an
-update, I'm hoping as well :)
+Hi,
 
-greg k-h
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You did not use your real name.  Signed-off-by: and From: has to have
+  a real name associated with it.  Use whatever you sign legal documents
+  with, no anonymous patches are allowed.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
