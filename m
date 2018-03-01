@@ -1,186 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030626AbeCAN0l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:26:41 -0500
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:34187 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030379AbeCAN0j (ORCPT
+        id S1030679AbeCAN1E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:27:04 -0500
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:47033 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030379AbeCAN1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:26:39 -0500
-X-IronPort-AV: E=Sophos;i="5.47,408,1515456000";
-   d="scan'208";a="333894535"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2] pci: Store more data about VFs into the SRIOV struct
-Date: Thu,  1 Mar 2018 14:26:04 +0100
-Message-Id: <1519910764-12789-1-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        Thu, 1 Mar 2018 08:27:02 -0500
+Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 217.238.5.165
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        Scott Bauer <scott.bauer@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][RESEND] block: sed-opal: fix response string extraction
+Date: Thu,  1 Mar 2018 14:26:37 +0100
+Message-Id: <20180301132637.1230-1-jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-... to avoid reading them from the config space of all the PCI VFs. This is
-specially a useful optimization when bringing up thousands of VFs.
+Tokens are prefixed by a variable length of bytes. If a bytestring is
+not stored in an tiny or short atom, we have to skip more than one byte
+in order to have the actual bytes not prefixed by the bytes describing
+the actual length of the string.
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
-v1 -> v2:
-* Rebase on latest + remove dependency on a non-upstream patch.
+ block/sed-opal.c | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
- drivers/pci/iov.c   | 16 ++++++++++++++++
- drivers/pci/pci.h   |  5 +++++
- drivers/pci/probe.c | 42 ++++++++++++++++++++++++++++++++----------
- 3 files changed, 53 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 677924a..e1d2e3f 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -114,6 +114,19 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
- 	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
- }
- 
-+static void pci_read_vf_config_common(struct pci_bus *bus, struct pci_dev *dev)
-+{
-+	int devfn = pci_iov_virtfn_devfn(dev, 0);
-+
-+	pci_bus_read_config_dword(bus, devfn, PCI_CLASS_REVISION,
-+				  &dev->sriov->class);
-+	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_ID,
-+				 &dev->sriov->subsystem_device);
-+	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_VENDOR_ID,
-+				 &dev->sriov->subsystem_vendor);
-+	pci_bus_read_config_byte(bus, devfn, PCI_HEADER_TYPE, &dev->sriov->hdr_type);
-+}
-+
- int pci_iov_add_virtfn(struct pci_dev *dev, int id)
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index 525506bed399..33052d0111de 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -876,6 +876,9 @@ static int response_parse(const u8 *buf, size_t length,
+ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 				  const char **store)
  {
- 	int i;
-@@ -133,6 +146,9 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 	if (!virtfn)
- 		goto failed0;
- 
-+	if (id == 0)
-+		pci_read_vf_config_common(bus, dev);
++	u8 skip;
++	const struct opal_resp_tok *token;
 +
- 	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
- 	virtfn->vendor = dev->vendor;
- 	virtfn->device = iov->vf_device;
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index fcd8191..346daa5 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -271,6 +271,11 @@ struct pci_sriov {
- 	u16		driver_max_VFs;	/* Max num VFs driver supports */
- 	struct pci_dev	*dev;		/* Lowest numbered PF */
- 	struct pci_dev	*self;		/* This PF */
-+	u8 hdr_type;		/* VF header type */
-+	u32 class;		/* VF device */
-+	u16 device;		/* VF device */
-+	u16 subsystem_vendor;	/* VF subsystem vendor */
-+	u16 subsystem_device;	/* VF subsystem device */
- 	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
- 	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
- };
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef53774..aeaa10a 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -180,6 +180,7 @@ static inline unsigned long decode_bar(struct pci_dev *dev, u32 bar)
- int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
- 		    struct resource *res, unsigned int pos)
- {
-+	int bar = res - dev->resource;
- 	u32 l = 0, sz = 0, mask;
- 	u64 l64, sz64, mask64;
- 	u16 orig_cmd;
-@@ -199,9 +200,13 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
- 	res->name = pci_name(dev);
- 
- 	pci_read_config_dword(dev, pos, &l);
--	pci_write_config_dword(dev, pos, l | mask);
--	pci_read_config_dword(dev, pos, &sz);
--	pci_write_config_dword(dev, pos, l);
-+	if (dev->is_virtfn) {
-+		sz = dev->physfn->sriov->barsz[bar] & 0xffffffff;
-+	} else {
-+		pci_write_config_dword(dev, pos, l | mask);
-+		pci_read_config_dword(dev, pos, &sz);
-+		pci_write_config_dword(dev, pos, l);
-+	}
- 
- 	/*
- 	 * All bits set in sz means the device isn't working properly.
-@@ -241,9 +246,14 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
- 
- 	if (res->flags & IORESOURCE_MEM_64) {
- 		pci_read_config_dword(dev, pos + 4, &l);
--		pci_write_config_dword(dev, pos + 4, ~0);
--		pci_read_config_dword(dev, pos + 4, &sz);
--		pci_write_config_dword(dev, pos + 4, l);
-+
-+		if (dev->is_virtfn) {
-+			sz = (dev->physfn->sriov->barsz[bar] >> 32) & 0xffffffff;
-+		} else {
-+			pci_write_config_dword(dev, pos + 4, ~0);
-+			pci_read_config_dword(dev, pos + 4, &sz);
-+			pci_write_config_dword(dev, pos + 4, l);
-+		}
- 
- 		l64 |= ((u64)l << 32);
- 		sz64 |= ((u64)sz << 32);
-@@ -332,6 +342,8 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
- 	for (pos = 0; pos < howmany; pos++) {
- 		struct resource *res = &dev->resource[pos];
- 		reg = PCI_BASE_ADDRESS_0 + (pos << 2);
-+		if (dev->is_virtfn && dev->physfn->sriov->barsz[pos] == 0)
-+			continue;
- 		pos += __pci_read_base(dev, pci_bar_unknown, res, reg);
+ 	*store = NULL;
+ 	if (!resp) {
+ 		pr_debug("Response is NULL\n");
+@@ -888,13 +891,30 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
+ 		return 0;
  	}
  
-@@ -1454,7 +1466,9 @@ int pci_setup_device(struct pci_dev *dev)
- 	struct pci_bus_region region;
- 	struct resource *res;
+-	if (resp->toks[n].type != OPAL_DTA_TOKENID_BYTESTRING) {
++	token = &resp->toks[n];
++	if (token->type != OPAL_DTA_TOKENID_BYTESTRING) {
+ 		pr_debug("Token is not a byte string!\n");
+ 		return 0;
+ 	}
  
--	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
-+	if (dev->is_virtfn)
-+		hdr_type = dev->physfn->sriov->hdr_type;
-+	else if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
- 		return -EIO;
+-	*store = resp->toks[n].pos + 1;
+-	return resp->toks[n].len - 1;
++	switch (token->width) {
++	case OPAL_WIDTH_TINY:
++	case OPAL_WIDTH_SHORT:
++		skip = 1;
++		break;
++	case OPAL_WIDTH_MEDIUM:
++		skip = 2;
++		break;
++	case OPAL_WIDTH_LONG:
++		skip = 4;
++		break;
++	default:
++		pr_debug("Token has invalid width!\n");
++		return 0;
++	}
++
++	*store = token->pos + skip;
++	return token->len - skip;
+ }
  
- 	dev->sysdata = dev->bus->sysdata;
-@@ -1477,7 +1491,10 @@ int pci_setup_device(struct pci_dev *dev)
- 		     dev->bus->number, PCI_SLOT(dev->devfn),
- 		     PCI_FUNC(dev->devfn));
- 
--	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-+	if (dev->is_virtfn)
-+		class = dev->physfn->sriov->class;
-+	else
-+		pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
- 	dev->revision = class & 0xff;
- 	dev->class = class >> 8;		    /* upper 3 bytes */
- 
-@@ -1517,8 +1534,13 @@ int pci_setup_device(struct pci_dev *dev)
- 			goto bad;
- 		pci_read_irq(dev);
- 		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-+		if (dev->is_virtfn) {
-+			dev->subsystem_vendor = dev->physfn->sriov->subsystem_vendor;
-+			dev->subsystem_device = dev->physfn->sriov->subsystem_device;
-+		} else {
-+			pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
-+			pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-+		}
- 
- 		/*
- 		 * Do the ugly legacy mode stuff here rather than broken chip
+ static u64 response_get_u64(const struct parsed_resp *resp, int n)
 -- 
-2.7.4
+2.13.6
