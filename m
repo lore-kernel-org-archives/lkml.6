@@ -1,65 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965385AbeCAAiJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 19:38:09 -0500
-Received: from smtp.h3c.com ([60.191.123.56]:10079 "EHLO h3cmg01-ex.h3c.com"
+        id S965359AbeCAAph (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 19:45:37 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5686 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965280AbeCAAiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 19:38:08 -0500
-From: Changwei Ge <ge.changwei@h3c.com>
-To: Larry Chen <lchen@suse.com>,
-        "mfasheh@versity.com" <mfasheh@versity.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: Re: [Ocfs2-devel] [PATCH] Correct a comment error
-Thread-Topic: [Ocfs2-devel] [PATCH] Correct a comment error
-Thread-Index: AQHTsH2KCDugZkjy6km/xN7cimww6Q==
-Date: Thu, 1 Mar 2018 00:36:53 +0000
-Message-ID: <63ADC13FD55D6546B7DECE290D39E373F292A95A@H3CMLB12-EX.srv.huawei-3com.com>
-References: <20180228101720.20725-1-lchen@suse.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.136.231]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S965328AbeCAApf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 19:45:35 -0500
+Subject: Re: [PATCH] checkpatch: avoid error report caused by syzbot
+To: Joe Perches <joe@perches.com>, <apw@canonical.com>,
+        <akpm@linux-foundation.org>
+References: <1519809018-1736-1-git-send-email-xieyisheng1@huawei.com>
+ <1519835851.30349.7.camel@perches.com>
+CC: <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <4b58143b-2dc4-0d7c-e450-8e07cadb11c6@huawei.com>
+Date: Thu, 1 Mar 2018 08:44:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
+In-Reply-To: <1519835851.30349.7.camel@perches.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Larry,
+Hi Joe,
 
-On 2018/2/28 18:18, Larry Chen wrote:
-> The function ocfs2_double_lock tries to lock the inode with lower
-> blockid first, not lockid.
-
-As ocfs2's lock name includes block number, so I think the comment you want to 
-rework is all right.
-So nack.
-
-Thanks,
-Changwei
-
+On 2018/3/1 0:37, Joe Perches wrote:
+> On Wed, 2018-02-28 at 17:10 +0800, Yisheng Xie wrote:
+>> syzbot request to add his reported-by when fix the bug find by syzbot.
+>> However, it will trigger a error when use checkpatch:
+>>
+>>   ERROR: Unrecognized email address: 'syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com'
+>>
+>> For it include '+' in email and make regular expression works abnomal. Fix
+>> it by adding check for syzbot.
+>>
+>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 > 
-> Signed-off-by: Larry Chen <lchen@suse.com>
-> ---
->   fs/ocfs2/namei.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Nack.
 > 
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index c801eddc4bf3..30d454de35a8 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -1133,7 +1133,7 @@ static int ocfs2_double_lock(struct ocfs2_super *osb,
->   	if (*bh2)
->   		*bh2 = NULL;
->   
-> -	/* we always want to lock the one with the lower lockid first.
-> +	/* we always want to lock the one with the lower blockid first.
->   	 * and if they are nested, we lock ancestor first */
->   	if (oi1->ip_blkno != oi2->ip_blkno) {
->   		inode1_is_ancestor = ocfs2_check_if_ancestor(osb, oi2->ip_blkno,
+> There's a proper patch already in -next
+> 
+
+Thanks for the information.
+
+Thanks
+Yisheng
+
+> commit 14e45b3ecdb03211ab32656cd84e66fd6a28343e
+> Author: Joe Perches <joe@perches.com>
+> Date:   Thu Feb 22 09:59:45 2018 +1100
+> 
+>     checkpatch: improve parse_email signature checking
+>     
+>     Bare email addresses with non alphanumeric characters require escape
+>     quoting before being substituted in the parse_email routine.
+>     
+>     e.g. Reported-by: syzbot+bbd8e9a06452cc48059b@syzkaller.appspotmail.com
+>     
+>     Do so.
+>     
+>     Link: http://lkml.kernel.org/r/1518631805.3678.12.camel@perches.com
+> 
+> 
+> .
 > 
