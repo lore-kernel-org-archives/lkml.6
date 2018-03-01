@@ -1,106 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162721AbeCAWzw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 17:55:52 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45136 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162589AbeCAWzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:55:51 -0500
-Date: Thu, 1 Mar 2018 14:55:49 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: <linux-mm@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>, Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [RFC] mm: indirectly reclaimable memory and dcache
-Message-Id: <20180301145549.8ff621a708ccd8fb59d924f7@linux-foundation.org>
-In-Reply-To: <20180301221713.25969-1-guro@fb.com>
-References: <20180301221713.25969-1-guro@fb.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1162796AbeCAW4z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:56:55 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:39342 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162589AbeCAW4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 17:56:53 -0500
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+ <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+ <20180301224540.GL19007@ziepe.ca>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <cd55324c-f5bb-6bfb-a7b3-e128c797ca6b@deltatee.com>
+Date: Thu, 1 Mar 2018 15:56:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180301224540.GL19007@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, jgg@ziepe.ca
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 22:17:13 +0000 Roman Gushchin <guro@fb.com> wrote:
 
-> I was reported about suspicious growth of unreclaimable slabs
-> on some machines. I've found that it happens on machines
-> with low memory pressure, and these unreclaimable slabs
-> are external names attached to dentries.
-> 
-> External names are allocated using generic kmalloc() function,
-> so they are accounted as unreclaimable. But they are held
-> by dentries, which are reclaimable, and they will be reclaimed
-> under the memory pressure.
-> 
-> In particular, this breaks MemAvailable calculation, as it
-> doesn't take unreclaimable slabs into account.
-> This leads to a silly situation, when a machine is almost idle,
-> has no memory pressure and therefore has a big dentry cache.
-> And the resulting MemAvailable is too low to start a new workload.
-> 
-> To resolve this issue, a new mm counter is introduced:
-> NR_INDIRECTLY_RECLAIMABLE_BYTES .
-> Since it's not possible to count such objects on per-page basis,
-> let's make the unit obvious (by analogy to NR_KERNEL_STACK_KB).
-> 
-> The counter is increased in dentry allocation path, if an external
-> name structure is allocated; and it's decreased in dentry freeing
-> path. I believe, that it's not the only case in the kernel, when
-> we do have such indirectly reclaimable memory, so I expect more
-> use cases to be added.
-> 
-> This counter is used to adjust MemAvailable calculations:
-> indirectly reclaimable memory is considered as available.
-> 
-> To reproduce the problem I've used the following Python script:
->   import os
-> 
->   for iter in range (0, 10000000):
->       try:
->           name = ("/some_long_name_%d" % iter) + "_" * 220
->           os.stat(name)
->       except Exception:
->           pass
-> 
-> Without this patch:
->   $ cat /proc/meminfo | grep MemAvailable
->   MemAvailable:    7811688 kB
->   $ python indirect.py
->   $ cat /proc/meminfo | grep MemAvailable
->   MemAvailable:    2753052 kB
-> 
-> With the patch:
->   $ cat /proc/meminfo | grep MemAvailable
->   MemAvailable:    7809516 kB
->   $ python indirect.py
->   $ cat /proc/meminfo | grep MemAvailable
->   MemAvailable:    7749144 kB
-> 
-> Also, this patch adds a corresponding entry to /proc/vmstat:
-> 
->   $ cat /proc/vmstat | grep indirect
->   nr_indirectly_reclaimable 5117499104
-> 
->   $ echo 2 > /proc/sys/vm/drop_caches
-> 
->   $ cat /proc/vmstat | grep indirect
->   nr_indirectly_reclaimable 7104
 
-hm, I guess so...
+On 01/03/18 03:45 PM, Jason Gunthorpe wrote:
+> I can appreciate you might have some special use case for that, but it
+> absolutely should require special configuration and not just magically
+> happen.
 
-I wonder if it should be more general, as there are probably other
-potential users of NR_INDIRECTLY_RECLAIMABLE_BYTES.  And they might be
-using alloc_pages() or even vmalloc()?  Whereas
-NR_INDIRECTLY_RECLAIMABLE_BYTES is pretty closely tied to kmalloc, at
-least in the code comments.
+Well if driver doesn't want someone doing p2p transfers with the memory 
+it shouldn't publish it to be used for exactly that purpose.
 
-If we're really OK with the "only for kmalloc" concept then why create
-NR_INDIRECTLY_RECLAIMABLE_BYTES at all?  Could we just use
-NR_SLAB_RECLAIMABLE to account the external names?  After all, kmalloc
-is slab.
+> You bring up IB adaptor memory - if we put that into the allocator
+> then what is to stop the NMVe driver just using it instead of the CMB
+> buffer? That would be totally wrong in almost all cases.
+
+If you mean for SQEs in the NVMe driver, look at the code, it 
+specifically allocates it from it's own device. If you mean the 
+nvmet-rdma then it's using that memory exactly as it was meant to. 
+Again, if the IB driver doesn't want someone to use that memory for P2P 
+transfers it shouldn't publish it as such.
+
+> Seems like a very subtle and hard to debug performance trap to leave
+> for the users, and pretty much the only reason to use P2P is
+> performance... So why have such a dangerous interface?
+
+It's not at all dangerous, the code specifically only uses P2P memory 
+that's local enough. And the majority of the code is there to make sure 
+it will all work in all cases.
+
+Honestly, though, I'd love to go back to the case where the user selects 
+which p2pmem device to use, but that was very unpopular last year. It 
+would simplify a bunch of things though.
+
+Also, no, the reason to use P2P is not performance. Only if you have 
+very specific hardware can you get a performance bump and it isn't all 
+that significant. The reason to use P2P is so you can design performant 
+systems with small CPUs, less or slower DRAM, and low lane counts to the 
+CPU, etc.
+
+Logan
