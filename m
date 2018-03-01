@@ -1,92 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033708AbeCARvv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:51:51 -0500
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35092 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033559AbeCARvt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:51:49 -0500
-X-Google-Smtp-Source: AG47ELtpxoyHcYH3Hw6Qz/XC/KpuhLts15lHsNkfdEgFT9z6aqiCnV6MfaEiMjk26BQ1RmHIqAparg4DH/DP9/aTgEU=
-MIME-Version: 1.0
-In-Reply-To: <1519917874.15908.41.camel@amazon.de>
-References: <1519235241-6500-1-git-send-email-karahmed@amazon.de> <1519917874.15908.41.camel@amazon.de>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 1 Mar 2018 09:51:47 -0800
-Message-ID: <CALMp9eQmA920LgDQjZ4+X8zLFoKMMpntZj0Kx_3i1OW=LcRDWg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] KVM/X86: Handle guest memory that does not have a
- struct page
-To: "Raslan, KarimAllah" <karahmed@amazon.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1033646AbeCARz2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:55:28 -0500
+Received: from mga17.intel.com ([192.55.52.151]:56439 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033576AbeCARz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:55:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
+   d="scan'208";a="179148958"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Fix: Use u64 for limit_period
+Date: Thu,  1 Mar 2018 12:54:54 -0500
+Message-Id: <1519926894-3520-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No complaints here!
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On Thu, Mar 1, 2018 at 7:24 AM, Raslan, KarimAllah <karahmed@amazon.de> wrote:
-> Jim/Paolo/Radim,
->
-> Any complains about the current API? (introduced in 4/10)
->
-> I have more patches on top and I would like to ensure that this is
-> agreed upon at least before sending more revisions/patches.
->
-> Also 1, 2, and 3 should be a bit straight forward and does not use
-> this API.
->
-> Thanks.
->
-> On Wed, 2018-02-21 at 18:47 +0100, KarimAllah Ahmed wrote:
->> For the most part, KVM can handle guest memory that does not have a struct
->> page (i.e. not directly managed by the kernel). However, There are a few places
->> in the code, specially in the nested code, that does not support that.
->>
->> Patch 1, 2, and 3 avoid the mapping and unmapping all together and just
->> directly use kvm_guest_read and kvm_guest_write.
->>
->> Patch 4 introduces a new guest mapping interface that encapsulate all the
->> bioler plate code that is needed to map and unmap guest memory. It also
->> supports guest memory without "struct page".
->>
->> Patch 5, 6, 7, 8, 9, and 10 switch most of the offending code in VMX and hyperv
->> to use the new guest mapping API.
->>
->> This patch series is the first set of fixes. Handling SVM and APIC-access page
->> will be handled in a different patch series.
->>
->> KarimAllah Ahmed (10):
->>   X86/nVMX: handle_vmon: Read 4 bytes from guest memory instead of
->>     map->read->unmap sequence
->>   X86/nVMX: handle_vmptrld: Copy the VMCS12 directly from guest memory
->>     instead of map->copy->unmap sequence.
->>   X86/nVMX: Update the PML table without mapping and unmapping the page
->>   KVM: Introduce a new guest mapping API
->>   KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
->>   KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
->>   KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt
->>     descriptor table
->>   KVM/X86: Use kvm_vcpu_map in emulator_cmpxchg_emulated
->>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_clear_sint_msg_pending
->>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_deliver_msg
->>
->>  arch/x86/kvm/hyperv.c    |  28 ++++-----
->>  arch/x86/kvm/vmx.c       | 144 +++++++++++++++--------------------------------
->>  arch/x86/kvm/x86.c       |  13 ++---
->>  include/linux/kvm_host.h |  15 +++++
->>  virt/kvm/kvm_main.c      |  50 ++++++++++++++++
->>  5 files changed, 129 insertions(+), 121 deletions(-)
->>
-> Amazon Development Center Germany GmbH
-> Berlin - Dresden - Aachen
-> main office: Krausenstr. 38, 10117 Berlin
-> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-> Ust-ID: DE289237879
-> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+The large fixed period could be truncated on Broadwell.
+For example, perf record -e cycles -c 10000000000.
+The fixed period is 0x2540BE400. But the period which finally applied is
+0x540BE400.
+
+Because the limit_period is unsigned, which is 32bit. The higher 32bit
+of the period will be truncated.
+
+The issue is introduced since 'commit 294fe0f52a44 ("perf/x86/intel: Add
+INST_RETIRED.ALL workarounds")
+
+Although the 'left' is s64, the value of 'left' must be positive when
+calling limit_period.
+bdw_limit_period() only modify the lowest 6 bits. It doesn't touch the
+higher 32bit.
+So it's safe to use u64 to replace the unsigned.
+
+Fixes: 294fe0f52a44 ("perf/x86/intel: Add INST_RETIRED.ALL workarounds")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c | 2 +-
+ arch/x86/events/perf_event.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 916b6e6..8e722e4 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3222,7 +3222,7 @@ glp_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
+  * Therefore the effective (average) period matches the requested period,
+  * despite coarser hardware granularity.
+  */
+-static unsigned bdw_limit_period(struct perf_event *event, unsigned left)
++static u64 bdw_limit_period(struct perf_event *event, u64 left)
+ {
+ 	if ((event->hw.config & INTEL_ARCH_EVENT_MASK) ==
+ 			X86_CONFIG(.event=0xc0, .umask=0x01)) {
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index b5352f1..810013d 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -561,7 +561,7 @@ struct x86_pmu {
+ 	struct x86_pmu_quirk *quirks;
+ 	int		perfctr_second_write;
+ 	bool		late_ack;
+-	unsigned	(*limit_period)(struct perf_event *event, unsigned l);
++	u64		(*limit_period)(struct perf_event *event, u64 l);
+ 
+ 	/*
+ 	 * sysfs attrs
+-- 
+2.4.11
