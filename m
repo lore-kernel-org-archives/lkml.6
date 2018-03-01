@@ -1,77 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032045AbeCAPZa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:25:30 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41016 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031977AbeCAPZ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:25:26 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: kishon@ti.com, heiko@sntech.de
-Cc: groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
-        vicencb@gmail.com, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/6] phy: rockchip-typec: fall back to working in host-mode if extcon is missing.
-Date: Thu,  1 Mar 2018 16:25:10 +0100
-Message-Id: <20180301152515.20940-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180301152515.20940-1-enric.balletbo@collabora.com>
-References: <20180301152515.20940-1-enric.balletbo@collabora.com>
+        id S1032131AbeCAP0f (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:26:35 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:48578 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032010AbeCAP03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 10:26:29 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: dri-devel@lists.freedesktop.org
+Cc: Thierry Escande <thierry.escande@collabora.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>, linux-rockchip@lists.infradead.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/rockchip: analogix_dp: reorder psr_unregister call in unbind
+Date: Thu, 01 Mar 2018 16:25:58 +0100
+Message-ID: <76025075.yWNtk1v57f@phil>
+In-Reply-To: <20180110162348.22765-4-thierry.escande@collabora.com>
+References: <20180110162348.22765-1-thierry.escande@collabora.com> <20180110162348.22765-4-thierry.escande@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now the rockchip type-c phy does fail probing when no extcon is
-detected. Some boards get the cable-state via the extcon interface and
-have this supported, other boards seem to use the fusb302 chip or
-another but the driver currently does not seem to utilize the extcon
-interface to report the cable-state. And, other, just connect the type-c
-to a standard USB-A port so use no controller at all. A missing extcon
-shouldn't fail to probe, instead, should just fall back to working in
-host-mode if it cannot get the extcon.
+In bind the psr handler gets registered first before the core
+analogix_dp_bind() gets called. So it should be the other way
+around in unbind, first unbind the analogix_dp and then
+unregister the psr.
 
-Fixes: c301b327aea898af ("arm64: dts: rockchip: add usb3-phy otg-port support for rk3399")
-Reported-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Changes in v2:
-- [1/6] Keep the error handling of extcon (Heiko Stubner)
-
- drivers/phy/rockchip/phy-rockchip-typec.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
-index 7492c8978217..e260067d2c98 100644
---- a/drivers/phy/rockchip/phy-rockchip-typec.c
-+++ b/drivers/phy/rockchip/phy-rockchip-typec.c
-@@ -782,6 +782,9 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
- 	u8 mode;
- 	int ret;
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 37250ab63bd7..eb88c52336a7 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -370,8 +377,8 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
+ {
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
  
-+	if (!edev)
-+		return MODE_DFP_USB;
-+
- 	ufp = extcon_get_state(edev, EXTCON_USB);
- 	dp = extcon_get_state(edev, EXTCON_DISP_DP);
+-	rockchip_drm_psr_unregister(&dp->encoder);
+ 	analogix_dp_unbind(dp->adp);
++	rockchip_drm_psr_unregister(&dp->encoder);
+ 	dp->encoder.funcs->destroy(&dp->encoder);
+ }
  
-@@ -1115,9 +1118,13 @@ static int rockchip_typec_phy_probe(struct platform_device *pdev)
- 
- 	tcphy->extcon = extcon_get_edev_by_phandle(dev, 0);
- 	if (IS_ERR(tcphy->extcon)) {
--		if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
--			dev_err(dev, "Invalid or missing extcon\n");
--		return PTR_ERR(tcphy->extcon);
-+		if (PTR_ERR(tcphy->extcon) == -ENODEV) {
-+			tcphy->extcon = NULL;
-+		} else {
-+			if (PTR_ERR(tcphy->extcon) != -EPROBE_DEFER)
-+				dev_err(dev, "Invalid or missing extcon\n");
-+			return PTR_ERR(tcphy->extcon);
-+		}
- 	}
- 
- 	pm_runtime_enable(dev);
 -- 
-2.16.1
+2.15.1
