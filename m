@@ -1,77 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162054AbeCAV1R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:27:17 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:38740 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161871AbeCAV1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:27:10 -0500
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Stephen Bates <sbates@raithlin.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-5-logang@deltatee.com>
- <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
- <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
- <20180301142155.5966c4c0@w520.home>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8202ea69-f0ed-db10-a0d3-9fd470c1c441@deltatee.com>
-Date: Thu, 1 Mar 2018 14:26:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1162007AbeCAV24 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:28:56 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55536 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161792AbeCAV2y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:28:54 -0500
+Date: Thu, 1 Mar 2018 21:28:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 10/25] ASoC: qcom: q6asm: Add support to memory map
+ and unmap
+Message-ID: <20180301212844.GU12864@sirena.org.uk>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-11-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180301142155.5966c4c0@w520.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, sbates@raithlin.com, alex.williamson@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="niUlcCfh/sMBwTxc"
+Content-Disposition: inline
+In-Reply-To: <20180213165837.1620-11-srinivas.kandagatla@linaro.org>
+X-Cookie: Real Users hate Real Programmers.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--niUlcCfh/sMBwTxc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 01/03/18 02:21 PM, Alex Williamson wrote:
-> This is still a pretty terrible solution though, your kernel provider
-> needs to decide whether they favor device assignment or p2p, because we
-> can't do both, unless there's a patch I haven't seen yet that allows
-> boot time rather than compile time configuration.  There are absolutely
-> supported device assignment cases of switches proving isolation between
-> devices allowing the downstream EPs to be used independently.  I think
-> this is a non-starter for distribution support without boot time or
-> dynamic configuration.  I could imagine dynamic configuration through
-> sysfs that might trigger a soft remove and rescan of the affected
-> devices in order to rebuild the IOMMU group.  The hard part might be
-> determining which points to allow that to guarantee correctness.  For
-> instance, upstream switch ports don't actually support ACS, but they'd
-> otherwise be an obvious concentration point to trigger a
-> reconfiguration.  Thanks,
+On Tue, Feb 13, 2018 at 04:58:22PM +0000, srinivas.kandagatla@linaro.org wrote:
 
-At this point, I don't expect this to be enabled in any distribution. 
-The use case is for custom hardware intended to do P2P which means they 
-can have a custom kernel with P2P enabled. The default for 
-CONFIG_PCI_P2P is 'no' and I expect it to stay that way for a long time.
+> +	num_regions = is_contiguous ? 1 : periods;
+> +	buf_sz = is_contiguous ? (period_sz * periods) : period_sz;
 
-Another boot option which has to be set for this to work isn't something 
-we'd like to see.
+Please write normal if statements, it's much easier to read.
 
-Logan
+> +	buf_sz = PAGE_ALIGN(buf_sz);
+
+I don't understand what this is doing, buf_sz is a length not an address
+so why are we attempting to align it?
+
+--niUlcCfh/sMBwTxc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYcIwACgkQJNaLcl1U
+h9BM0wf7BJhu/GsY5odkp6NACTy4X6ZG7hEyKG7kzoSlcdOkp2LTimDfQXjM6WUi
+T/uWJuO2pUeR5tXp3nVZbjeyeeEjhBbNyBtxcBZFHtkh0mUyKoYxSsYJxanLcXDg
+Pdgl1BWCXrNQIhyhleHidL8McBKUmz08ecsuO0aPRn52dRM0ZwIqNPcVzwpW2/t9
+8YsDK6uH1wtM2G9cI6dIJCW5aKoAs7SU+jd+HiPm4PWP6df76nucNKesoFnB9qvd
+4fpOubTMrCqn/f7JazBLlLT+6l1BJToHbxEBNIm9Xg7edElwxhPGUILOF5CbAgKa
+RfpEpX/inf0urcCjJsgdF4AUYfHVQg==
+=xWCm
+-----END PGP SIGNATURE-----
+
+--niUlcCfh/sMBwTxc--
