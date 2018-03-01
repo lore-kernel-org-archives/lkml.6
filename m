@@ -1,344 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967633AbeCALDc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:03:32 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:42381 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967213AbeCALCz (ORCPT
+        id S967690AbeCALDs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:03:48 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41862 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967563AbeCALD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:02:55 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180301110253epoutp041b9f033a138fa06810c0d055526a0183~XxvlWgFW00274402744epoutp04H
-X-AuditID: b6c32a46-3c1ff70000001029-fb-5a97dddc6012
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, linux-ide@vger.kernel.org,
-        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ata: add Amiga Gayle PATA controller driver
-Date: Thu, 01 Mar 2018 12:02:49 +0100
-Message-id: <6699002.vrpdlHjtgs@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsWy7bCmhe6du9OjDM7vlrB4dmsvk8Xs98oW
-        x3Y8YrK4vGsOm8XyJ2uZLf7/PsdqMbd1OrvFr+VHGR04PHbOusvusWlVJ5vHocMdjB4nW7+x
-        eCzfaeJx8Nw5Ro/Pm+QC2KO4bFJSczLLUov07RK4Mhacns5e0OFY0d9xlrmBcY9pFyMnh4SA
-        icSM019Zuxi5OIQEdjBKXFhwiBHC+c4o8fPgJVaYqqc3tkNV7WaUmLh4HTOE85VR4uu1U2BV
-        bAJWEhPbVzGC2CICshJXpj0EG8UsMJtJ4tGNlewgCWEBe4kH6xYygdgsAqoSs0+fBrN5BTQl
-        NvXtBmsWFfCS2LKvHSouKPFj8j0WEJtZQF5i3/6prBC2jsTZY+vAFkgI7GCTuN9wG2gBB5Dj
-        InH5sw7E2cISr45vYYewpSWerdoIVd/MKPFtxx5miMQERok964UgbGuJw8cvQi3gk+g4/Bdq
-        Jq9ER5sQhOkhMeNnEUS1o8S1bTvBzhQSiJW4OHUC6wRGmVlIrp6F5OpZSK5ewMi8ilEstaA4
-        Nz212KjASK84Mbe4NC9dLzk/dxMjOE1oue1gXHLO5xCjAAejEg+vw/5pUUKsiWXFlbmHGCU4
-        mJVEeE9vBwrxpiRWVqUW5ccXleakFh9ilOZgURLnbQ1wiRISSE8sSc1OTS1ILYLJMnFwSjUw
-        rj+wZgLPsnhll0daJcyPZadHFs4+n8G9ruVrdqHVEkuVeUnzGlTsj+7M+3FpWp7BkW3KV7iW
-        5r8WPf0yfHehUcZ6ngylid431M25iiYn5K7eezRqZfoZBY5L2hsef404dbLjXYPGEuEZhTtf
-        2iSqJ0cf+im64JzlH7XI3ZOVt1x/vyk7f8pmXiWW4oxEQy3mouJEAAgux98PAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jAd07d6dHGZy8wmLx7NZeJovZ75Ut
-        ju14xGRxedccNovlT9YyW/z/fY7VYm7rdHaLX8uPMjpweOycdZfdY9OqTjaPQ4c7GD1Otn5j
-        8Vi+08Tj4LlzjB6fN8kFsEdx2aSk5mSWpRbp2yVwZSw4PZ29oMOxor/jLHMD4x7TLkZODgkB
-        E4mnN7azdjFycQgJ7GSUeNgwC8r5yihxYtJjdpAqNgEriYntqxhBbBEBWYkr0x4yghQxC8xl
-        klj+/ygzSEJYwF7iwbqFTCA2i4CqxOzTp8FsXgFNiU19u8GaRQW8JLbsa4eKC0r8mHyPBcRm
-        FpCX2Ld/KiuErSWxfudxpgmMvLOQlM1CUjYLSdkCRuZVjJKpBcW56bnFRgVGeanlesWJucWl
-        eel6yfm5mxiBIbztsFb/DsbHS+IPMQpwMCrx8DrsnxYlxJpYVlyZe4hRgoNZSYT39HagEG9K
-        YmVValF+fFFpTmrxIUZpDhYlcV7+/GORQgLpiSWp2ampBalFMFkmDk6pBsYdS/l3bRJo8tY6
-        KL5pps+E+XOLz4fdmXHp3VynSRxJ00XZpTy49FY9Lllxq/uuVpEDs/zBBSuUs0UvpfNc0pj2
-        vmmnQ6Sr7fNXfy0m7pp8qjH6/ZyIRy9Tdxv9ex/I933LGnuel1NS6i9c+i7hsN91w8Y9+a3z
-        X3tczlR1sTnc7HPHq1KunFFKiaU4I9FQi7moOBEArYmQ/V0CAAA=
-X-CMS-MailID: 20180301110252epcas2p3ea455cfb08b2f7edb4af6fbc95addc88
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180301110252epcas2p3ea455cfb08b2f7edb4af6fbc95addc88
-X-RootMTR: 20180301110252epcas2p3ea455cfb08b2f7edb4af6fbc95addc88
-References: <CGME20180301110252epcas2p3ea455cfb08b2f7edb4af6fbc95addc88@epcas2p3.samsung.com>
+        Thu, 1 Mar 2018 06:03:26 -0500
+X-Google-Smtp-Source: AG47ELtyKbyv3FslAZbvfwPZlQkeg621Pe8gBC4orLSB31xtrrT7xKHOANWpSSrF9X58RVL7JUPc3A==
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+Date: Thu, 1 Mar 2018 13:03:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180228234006.21093-11-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Amiga Gayle PATA controller driver. It enables libata support
-for the on-board IDE interfaces on some Amiga models (A600, A1200,
-A4000 and A4000T) and also for IDE interfaces on the Zorro expansion
-bus (M-Tech E-Matrix 530 expansion card).
 
-Thanks to John Paul Adrian Glaubitz and Michael Schmitz for help
-with testing the driver.
+> We create a configfs attribute in each nvme-fabrics target port to
+> enable p2p memory use. When enabled, the port will only then use the
+> p2p memory if a p2p memory device can be found which is behind the
+> same switch as the RDMA port and all the block devices in use. If
+> the user enabled it an no devices are found, then the system will
+> silently fall back on using regular memory.
+> 
+> If appropriate, that port will allocate memory for the RDMA buffers
+> for queues from the p2pmem device falling back to system memory should
+> anything fail.
 
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2:
-- clarify license version (it should be GPL 2.0)
-- use SPDX header
+Nice.
 
- drivers/ata/Kconfig      |   12 ++
- drivers/ata/Makefile     |    1 
- drivers/ata/pata_gayle.c |  222 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 235 insertions(+)
+> Ideally, we'd want to use an NVME CMB buffer as p2p memory. This would
+> save an extra PCI transfer as the NVME card could just take the data
+> out of it's own memory. However, at this time, cards with CMB buffers
+> don't seem to be available.
 
-Index: b/drivers/ata/Kconfig
-===================================================================
---- a/drivers/ata/Kconfig	2018-03-01 11:48:06.941525737 +0100
-+++ b/drivers/ata/Kconfig	2018-03-01 11:48:06.921525736 +0100
-@@ -963,6 +963,18 @@ config PATA_FALCON
- 
- 	  If unsure, say N.
- 
-+config PATA_GAYLE
-+	tristate "Amiga Gayle PATA support"
-+	depends on M68K && AMIGA
-+	help
-+	  This option enables support for the on-board IDE
-+	  interfaces on some Amiga models (A600, A1200,
-+	  A4000 and A4000T) and also for IDE interfaces on
-+	  the Zorro expansion bus (M-Tech E-Matrix 530
-+	  expansion card).
-+
-+	  If unsure, say N.
-+
- config PATA_ISAPNP
- 	tristate "ISA Plug and Play PATA support"
- 	depends on ISAPNP
-Index: b/drivers/ata/Makefile
-===================================================================
---- a/drivers/ata/Makefile	2018-03-01 11:48:06.941525737 +0100
-+++ b/drivers/ata/Makefile	2018-03-01 11:48:06.937525737 +0100
-@@ -98,6 +98,7 @@ obj-$(CONFIG_PATA_WINBOND)	+= pata_sl82c
- # SFF PIO only
- obj-$(CONFIG_PATA_CMD640_PCI)	+= pata_cmd640.o
- obj-$(CONFIG_PATA_FALCON)	+= pata_falcon.o
-+obj-$(CONFIG_PATA_GAYLE)	+= pata_gayle.o
- obj-$(CONFIG_PATA_ISAPNP)	+= pata_isapnp.o
- obj-$(CONFIG_PATA_IXP4XX_CF)	+= pata_ixp4xx_cf.o
- obj-$(CONFIG_PATA_MPIIX)	+= pata_mpiix.o
-Index: b/drivers/ata/pata_gayle.c
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ b/drivers/ata/pata_gayle.c	2018-03-01 11:57:12.673539480 +0100
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Amiga Gayle PATA controller driver
-+ *
-+ * Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Based on gayle.c:
-+ *
-+ *     Created 12 Jul 1997 by Geert Uytterhoeven
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/blkdev.h>
-+#include <linux/delay.h>
-+#include <scsi/scsi_host.h>
-+#include <scsi/scsi_cmnd.h>
-+#include <linux/ata.h>
-+#include <linux/libata.h>
-+#include <linux/mm.h>
-+#include <linux/interrupt.h>
-+#include <linux/zorro.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/setup.h>
-+#include <asm/amigahw.h>
-+#include <asm/amigaints.h>
-+#include <asm/amigayle.h>
-+#include <asm/ide.h>
-+
-+#define DRV_NAME "pata_gayle"
-+#define DRV_VERSION "0.1.0"
-+
-+#define GAYLE_CONTROL	0x101a
-+
-+static struct scsi_host_template pata_gayle_sht = {
-+	ATA_PIO_SHT(DRV_NAME),
-+};
-+
-+/* FIXME: is this needed? */
-+static unsigned int pata_gayle_data_xfer(struct ata_queued_cmd *qc,
-+					 unsigned char *buf,
-+					 unsigned int buflen, int rw)
-+{
-+	struct ata_device *dev = qc->dev;
-+	struct ata_port *ap = dev->link->ap;
-+	void __iomem *data_addr = ap->ioaddr.data_addr;
-+	unsigned int words = buflen >> 1;
-+
-+	/* Transfer multiple of 2 bytes */
-+	if (rw == READ)
-+		raw_insw((u16 *)data_addr, (u16 *)buf, words);
-+	else
-+		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
-+
-+	/* Transfer trailing byte, if any. */
-+	if (unlikely(buflen & 0x01)) {
-+		unsigned char pad[2] = { };
-+
-+		/* Point buf to the tail of buffer */
-+		buf += buflen - 1;
-+
-+		if (rw == READ) {
-+			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
-+			*buf = pad[0];
-+		} else {
-+			pad[0] = *buf;
-+			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
-+		}
-+		words++;
-+	}
-+
-+	return words << 1;
-+}
-+
-+/*
-+ * Provide our own set_mode() as we don't want to change anything that has
-+ * already been configured..
-+ */
-+static int pata_gayle_set_mode(struct ata_link *link,
-+			       struct ata_device **unused)
-+{
-+	struct ata_device *dev;
-+
-+	ata_for_each_dev(dev, link, ENABLED) {
-+		/* We don't really care */
-+		dev->pio_mode = dev->xfer_mode = XFER_PIO_0;
-+		dev->xfer_shift = ATA_SHIFT_PIO;
-+		dev->flags |= ATA_DFLAG_PIO;
-+		ata_dev_info(dev, "configured for PIO\n");
-+	}
-+	return 0;
-+}
-+
-+static bool pata_gayle_irq_check(struct ata_port *ap)
-+{
-+	u8 ch;
-+
-+	ch = z_readb((unsigned long)ap->private_data);
-+	if (!(ch & GAYLE_IRQ_IDE))
-+		return false;
-+	return true;
-+}
-+
-+static void pata_gayle_irq_clear(struct ata_port *ap)
-+{
-+	(void)z_readb((unsigned long)ap->ioaddr.status_addr);
-+	z_writeb(0x7c, (unsigned long)ap->private_data);
-+}
-+
-+static struct ata_port_operations pata_gayle_a1200_ops = {
-+	.inherits	= &ata_sff_port_ops,
-+	.sff_data_xfer	= pata_gayle_data_xfer,
-+	.sff_irq_check	= pata_gayle_irq_check,
-+	.sff_irq_clear	= pata_gayle_irq_clear,
-+	.cable_detect	= ata_cable_unknown,
-+	.set_mode	= pata_gayle_set_mode,
-+};
-+
-+static struct ata_port_operations pata_gayle_a4000_ops = {
-+	.inherits	= &ata_sff_port_ops,
-+	.sff_data_xfer	= pata_gayle_data_xfer,
-+	.cable_detect	= ata_cable_unknown,
-+	.set_mode	= pata_gayle_set_mode,
-+};
-+
-+static int __init pata_gayle_init_one(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct gayle_ide_platform_data *pdata;
-+	struct ata_host *host;
-+	struct ata_port *ap;
-+	void __iomem *base;
-+	int ret;
-+
-+	pdata = dev_get_platdata(&pdev->dev);
-+
-+	pr_info(DRV_NAME ": Amiga Gayle IDE controller (A%u style)\n",
-+		pdata->explicit_ack ? 1200 : 4000);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENODEV;
-+
-+	if (!devm_request_mem_region(&pdev->dev, res->start,
-+				     resource_size(res), DRV_NAME)) {
-+		pr_err(DRV_NAME ": resources busy\n");
-+		return -EBUSY;
-+	}
-+
-+	/* allocate host */
-+	host = ata_host_alloc(&pdev->dev, 1);
-+	if (!host)
-+		return -ENOMEM;
-+
-+	ap = host->ports[0];
-+
-+	if (pdata->explicit_ack)
-+		ap->ops = &pata_gayle_a1200_ops;
-+	else
-+		ap->ops = &pata_gayle_a4000_ops;
-+
-+	ap->pio_mask = ATA_PIO4;
-+	ap->flags |= ATA_FLAG_SLAVE_POSS | ATA_FLAG_NO_IORDY;
-+
-+	base = ZTWO_VADDR(pdata->base);
-+	ap->ioaddr.data_addr		= base;
-+	ap->ioaddr.error_addr		= base + 2 + 1 * 4;
-+	ap->ioaddr.feature_addr		= base + 2 + 1 * 4;
-+	ap->ioaddr.nsect_addr		= base + 2 + 2 * 4;
-+	ap->ioaddr.lbal_addr		= base + 2 + 3 * 4;
-+	ap->ioaddr.lbam_addr		= base + 2 + 4 * 4;
-+	ap->ioaddr.lbah_addr		= base + 2 + 5 * 4;
-+	ap->ioaddr.device_addr		= base + 2 + 6 * 4;
-+	ap->ioaddr.status_addr		= base + 2 + 7 * 4;
-+	ap->ioaddr.command_addr		= base + 2 + 7 * 4;
-+
-+	ap->ioaddr.altstatus_addr	= base + GAYLE_CONTROL;
-+	ap->ioaddr.ctl_addr		= base + GAYLE_CONTROL;
-+
-+	ap->private_data = (void *)ZTWO_VADDR(pdata->irqport);
-+
-+	ata_port_desc(ap, "cmd 0x%lx ctl 0x%lx", (unsigned long)base,
-+		      (unsigned long)base + GAYLE_CONTROL);
-+
-+	/* activate */
-+	ret = ata_host_activate(host, IRQ_AMIGA_PORTS, ata_sff_interrupt,
-+				IRQF_SHARED, &pata_gayle_sht);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, host);
-+
-+	return 0;
-+}
-+
-+static int __exit pata_gayle_remove_one(struct platform_device *pdev)
-+{
-+	struct ata_host *host = platform_get_drvdata(pdev);
-+
-+	ata_host_detach(host);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver pata_gayle_driver = {
-+	.remove = __exit_p(pata_gayle_remove_one),
-+	.driver   = {
-+		.name	= "amiga-gayle-ide",
-+	},
-+};
-+
-+module_platform_driver_probe(pata_gayle_driver, pata_gayle_init_one);
-+
-+MODULE_AUTHOR("Bartlomiej Zolnierkiewicz");
-+MODULE_DESCRIPTION("low-level driver for Amiga Gayle PATA");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:amiga-gayle-ide");
-+MODULE_VERSION(DRV_VERSION);
+Can you describe what would be the plan to have it when these devices
+do come along? I'd say that p2p_dev needs to become a nvmet_ns reference
+and not from nvmet_ctrl. Then, when cmb capable devices come along, the
+ns can prefer to use its own cmb instead of locating a p2p_dev device?
+
+> +static int nvmet_p2pdma_add_client(struct nvmet_ctrl *ctrl,
+> +				   struct nvmet_ns *ns)
+> +{
+> +	int ret;
+> +
+> +	if (!blk_queue_pci_p2pdma(ns->bdev->bd_queue)) {
+> +		pr_err("peer-to-peer DMA is not supported by %s\n",
+> +		       ns->device_path);
+> +		return -EINVAL;
+
+I'd say that just skip it instead of failing it, in theory one can
+connect nvme devices via p2p mem and expose other devices in the
+same subsystem. The message would be pr_debug to reduce chattiness.
+
+> +	}
+> +
+> +	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
+> +	if (ret)
+> +		pr_err("failed to add peer-to-peer DMA client %s: %d\n",
+> +		       ns->device_path, ret);
+> +
+> +	return ret;
+> +}
+> +
+>   int nvmet_ns_enable(struct nvmet_ns *ns)
+>   {
+>   	struct nvmet_subsys *subsys = ns->subsys;
+> @@ -299,6 +319,14 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+>   	if (ret)
+>   		goto out_blkdev_put;
+>   
+> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+> +		if (ctrl->p2p_dev) {
+> +			ret = nvmet_p2pdma_add_client(ctrl, ns);
+> +			if (ret)
+> +				goto out_remove_clients;
+
+Is this really a fatal failure given that we fall-back to main
+memory? Why not continue with main memory (and warn at best)?
+
+> +/*
+> + * If allow_p2pmem is set, we will try to use P2P memory for the SGL lists for
+> + * Ι/O commands. This requires the PCI p2p device to be compatible with the
+> + * backing device for every namespace on this controller.
+> + */
+> +static void nvmet_setup_p2pmem(struct nvmet_ctrl *ctrl, struct nvmet_req *req)
+> +{
+> +	struct nvmet_ns *ns;
+> +	int ret;
+> +
+> +	if (!req->port->allow_p2pmem || !req->p2p_client)
+> +		return;
+> +
+> +	mutex_lock(&ctrl->subsys->lock);
+> +
+> +	ret = pci_p2pdma_add_client(&ctrl->p2p_clients, req->p2p_client);
+> +	if (ret) {
+> +		pr_err("failed adding peer-to-peer DMA client %s: %d\n",
+> +		       dev_name(req->p2p_client), ret);
+> +		goto free_devices;
+> +	}
+> +
+> +	list_for_each_entry_rcu(ns, &ctrl->subsys->namespaces, dev_link) {
+> +		ret = nvmet_p2pdma_add_client(ctrl, ns);
+> +		if (ret)
+> +			goto free_devices;
+> +	}
+> +
+> +	ctrl->p2p_dev = pci_p2pmem_find(&ctrl->p2p_clients);
+
+This is the first p2p_dev found right? What happens if I have more than
+a single p2p device? In theory I'd have more p2p memory I can use. Have
+you considered making pci_p2pmem_find return the least used suitable
+device?
+
+> +	if (!ctrl->p2p_dev) {
+> +		pr_info("no supported peer-to-peer memory devices found\n");
+> +		goto free_devices;
+> +	}
+> +	mutex_unlock(&ctrl->subsys->lock);
+> +
+> +	pr_info("using peer-to-peer memory on %s\n", pci_name(ctrl->p2p_dev));
+> +	return;
+> +
+> +free_devices:
+> +	pci_p2pdma_client_list_free(&ctrl->p2p_clients);
+> +	mutex_unlock(&ctrl->subsys->lock);
+> +}
+> +
+> +static void nvmet_release_p2pmem(struct nvmet_ctrl *ctrl)
+> +{
+> +	if (!ctrl->p2p_dev)
+> +		return;
+> +
+> +	mutex_lock(&ctrl->subsys->lock);
+> +
+> +	pci_p2pdma_client_list_free(&ctrl->p2p_clients);
+> +	pci_dev_put(ctrl->p2p_dev);
+> +	ctrl->p2p_dev = NULL;
+> +
+> +	mutex_unlock(&ctrl->subsys->lock);
+> +}
+> +
+>   u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
+>   		struct nvmet_req *req, u32 kato, struct nvmet_ctrl **ctrlp)
+>   {
+> @@ -800,6 +890,7 @@ u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
+>   
+>   	INIT_WORK(&ctrl->async_event_work, nvmet_async_event_work);
+>   	INIT_LIST_HEAD(&ctrl->async_events);
+> +	INIT_LIST_HEAD(&ctrl->p2p_clients);
+>   
+>   	memcpy(ctrl->subsysnqn, subsysnqn, NVMF_NQN_SIZE);
+>   	memcpy(ctrl->hostnqn, hostnqn, NVMF_NQN_SIZE);
+> @@ -855,6 +946,7 @@ u16 nvmet_alloc_ctrl(const char *subsysnqn, const char *hostnqn,
+>   		ctrl->kato = DIV_ROUND_UP(kato, 1000);
+>   	}
+>   	nvmet_start_keep_alive_timer(ctrl);
+> +	nvmet_setup_p2pmem(ctrl, req);
+>   
+>   	mutex_lock(&subsys->lock);
+>   	list_add_tail(&ctrl->subsys_entry, &subsys->ctrls);
+> @@ -891,6 +983,7 @@ static void nvmet_ctrl_free(struct kref *ref)
+>   	flush_work(&ctrl->async_event_work);
+>   	cancel_work_sync(&ctrl->fatal_err_work);
+>   
+> +	nvmet_release_p2pmem(ctrl);
+>   	ida_simple_remove(&cntlid_ida, ctrl->cntlid);
+>   
+>   	kfree(ctrl->sqs);
+> diff --git a/drivers/nvme/target/io-cmd.c b/drivers/nvme/target/io-cmd.c
+> index 28bbdff4a88b..a213f8fc3bf3 100644
+> --- a/drivers/nvme/target/io-cmd.c
+> +++ b/drivers/nvme/target/io-cmd.c
+> @@ -56,6 +56,9 @@ static void nvmet_execute_rw(struct nvmet_req *req)
+>   		op = REQ_OP_READ;
+>   	}
+>   
+> +	if (is_pci_p2pdma_page(sg_page(req->sg)))
+> +		op_flags |= REQ_PCI_P2PDMA;
+> +
+>   	sector = le64_to_cpu(req->cmd->rw.slba);
+>   	sector <<= (req->ns->blksize_shift - 9);
+>   
+> diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+> index 417f6c0331cc..85a170914588 100644
+> --- a/drivers/nvme/target/nvmet.h
+> +++ b/drivers/nvme/target/nvmet.h
+> @@ -64,6 +64,11 @@ static inline struct nvmet_ns *to_nvmet_ns(struct config_item *item)
+>   	return container_of(to_config_group(item), struct nvmet_ns, group);
+>   }
+>   
+> +static inline struct device *nvmet_ns_dev(struct nvmet_ns *ns)
+> +{
+> +	return disk_to_dev(ns->bdev->bd_disk);
+> +}
+> +
+>   struct nvmet_cq {
+>   	u16			qid;
+>   	u16			size;
+> @@ -98,6 +103,7 @@ struct nvmet_port {
+>   	struct list_head		referrals;
+>   	void				*priv;
+>   	bool				enabled;
+> +	bool				allow_p2pmem;
+>   };
+>   
+>   static inline struct nvmet_port *to_nvmet_port(struct config_item *item)
+> @@ -131,6 +137,8 @@ struct nvmet_ctrl {
+>   	struct work_struct	fatal_err_work;
+>   
+>   	struct nvmet_fabrics_ops *ops;
+> +	struct pci_dev		*p2p_dev;
+> +	struct list_head	p2p_clients;
+>   
+>   	char			subsysnqn[NVMF_NQN_FIELD_LEN];
+>   	char			hostnqn[NVMF_NQN_FIELD_LEN];
+> @@ -232,6 +240,8 @@ struct nvmet_req {
+>   
+>   	void (*execute)(struct nvmet_req *req);
+>   	struct nvmet_fabrics_ops *ops;
+> +
+> +	struct device *p2p_client;
+>   };
+>   
+>   static inline void nvmet_set_status(struct nvmet_req *req, u16 status)
+> diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+> index 020354e11351..7a1f09995ed5 100644
+> --- a/drivers/nvme/target/rdma.c
+> +++ b/drivers/nvme/target/rdma.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/string.h>
+>   #include <linux/wait.h>
+>   #include <linux/inet.h>
+> +#include <linux/pci-p2pdma.h>
+>   #include <asm/unaligned.h>
+>   
+>   #include <rdma/ib_verbs.h>
+> @@ -68,6 +69,7 @@ struct nvmet_rdma_rsp {
+>   	u8			n_rdma;
+>   	u32			flags;
+>   	u32			invalidate_rkey;
+> +	struct pci_dev		*p2p_dev;
+
+Given that p2p_client is in nvmet_req, I think it make sense
+that the p2p_dev itself would also live there. In theory, nothing
+is preventing FC from using it as well.
