@@ -1,97 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967547AbeCAKuk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:50:40 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34071 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965992AbeCAKuh (ORCPT
+        id S1030202AbeCAKwZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:52:25 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:29002 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966899AbeCAKwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:50:37 -0500
-X-Google-Smtp-Source: AG47ELui5QtxnOThDs+5l1XQiXVGwm9AmhupIri/S+aMc68t0PE2uueogF7Q6WVoUTesElsOvm1dAlOzktOVmfUReWk=
-MIME-Version: 1.0
-In-Reply-To: <62ac821e-290a-6b7c-ef6e-9c5e4c49de36@infradead.org>
-References: <62ac821e-290a-6b7c-ef6e-9c5e4c49de36@infradead.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 12:50:36 +0200
-Message-ID: <CAHp75Vdh-KonisDC7MeTLHnZKqZo+kURS9og22GvJdp0SCJR2g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] auxdisplay: fix broken menu
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Mar 2018 05:52:20 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180301105218epoutp01e3c97a2cdace99e7730a35d37222d9df~XxmVmq4J81306213062epoutp01P
+X-AuditID: b6c32a38-ac3ff70000001054-57-5a97db61d5af
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Tejun Heo <tj@kernel.org>, Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, linux-ide@vger.kernel.org,
+        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: add Amiga Gayle PATA controller driver
+Date: Thu, 01 Mar 2018 11:52:14 +0100
+Message-id: <2435240.vCYXG2Zeag@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <4c590675-71dc-d7f1-b40f-3b0ee124082a@physik.fu-berlin.de>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsWy7bCmvm7i7elRBsePC1o8u7WXyWL2e2WL
+        YzseMVlc3jWHzWL5k7XMFnNbp7Nb/Fp+lNGB3WPnrLvsHptWdbJ5HDrcwehxsvUbi8fBc+cY
+        PT5vkgtgi+KySUnNySxLLdK3S+DKWHpwNnNBN2vFvNenWRsYfzF3MXJwSAiYSHRf4Oli5OQQ
+        EtjBKHHlT0wXIxeQ/Z1R4n3TdBaQBEjNkvM/mCASuxklZn46xwrhfGWUeHL5O1gVm4CVxMT2
+        VYwgtoiAjcS/j7/ZQGxmgXOMEu1bFUBsYQEHiZmbG9hBbBYBVYnrP4+C1fMKaEqsPPUEzBYV
+        8JLYsq+dCeQ6TgF3icnT4iFKBCV+TL7HAjFSXmLf/qmsELaOxNlj6xhB7pEQOMImMf/WB2aI
+        q10kDq59zgZhC0u8Or6FHeJjaYlLR20h6psZJb7t2ANVP4FRYs96IQjbWuLw8YtQC/gk3n3t
+        YYXo5ZXoaBOCMD0knj0Uh6h2lFjSfZ4ZEiTXGSX+zT3FPoFRdhaSs2chOXsWkrMXMDKvYhRL
+        LSjOTU8tNiww0StOzC0uzUvXS87P3cQIThNaFjsY95zzOcQowMGoxMPrsH9alBBrYllxZe4h
+        RgkOZiUR3tPbgUK8KYmVValF+fFFpTmpxYcYpTlYlMR5AwJcooQE0hNLUrNTUwtSi2CyTByc
+        Ug2MObmyy6aHLGk/uXXn6VnJAQtCzMO2XpDv7Vpi0erQbt2668zKpcsMuLcqO9r6WM/T26/K
+        9D59vujqVnOhjx8NhHgkvn2ynZL+cOYf9Wl5j72MfSalZyhNZp6VEaTbuDVGaHuh2Y+vmzmC
+        dYXmzV3tLpx1clHb1C2LFjlrvH5pURi6PKlyefVKJZbijERDLeai4kQAOlSvBQ8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsVy+t9jAd2E29OjDFbvsrB4dmsvk8Xs98oW
+        x3Y8YrK4vGsOm8XyJ2uZLea2Tme3+LX8KKMDu8fOWXfZPTat6mTzOHS4g9HjZOs3Fo+D584x
+        enzeJBfAFsVlk5Kak1mWWqRvl8CVsfTgbOaCbtaKea9PszYw/mLuYuTkkBAwkVhy/gcTiC0k
+        sJNR4ugS/S5GLiD7K6PExYenwBJsAlYSE9tXMYLYIgI2Ev8+/mYDsZkFzjFK7FpmBmILCzhI
+        zNzcwA5iswioSlz/eRSsnldAU2LlqSdgtqiAl8SWfe1AMzk4OAXcJSZPi4fYdZNRYuYhiF5e
+        AUGJH5PvsUDMl5fYt38qK4StJbF+53GmCYz8s5CUzUJSNgtJ2QJG5lWMkqkFxbnpucVGBYZ5
+        qeV6xYm5xaV56XrJ+bmbGIHBve2wVt8OxvtL4g8xCnAwKvHwOuyfFiXEmlhWXJl7iFGCg1lJ
+        hPf0dqAQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNITS1KzU1MLUotgskwcnFINjOZO
+        YQ1nQmtMFzssj7iVG3x4zQb3TQq/5n5SvqWmsID1GJst68ajbUWLTC8e27H2fcBGm1YJi5gb
+        H0KuTj/L+evirSn9bXxv3yQfripz0DAOnL7o45bNfFf/pE9exPf555z5XvJLYm+lx/8z6dCS
+        8QrZMPfkT5M3X/gTZt4xWfxYu8yfUdLAUE2JpTgj0VCLuag4EQD1zto7agIAAA==
+X-CMS-MailID: 20180301105216epcas1p4b08417478030bcb0fb17566cf59c2bca
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180212134949epcas2p37f0bdae15608340bc21dbb2358db8df3
+X-RootMTR: 20180212134949epcas2p37f0bdae15608340bc21dbb2358db8df3
+References: <CGME20180212134949epcas2p37f0bdae15608340bc21dbb2358db8df3@epcas2p3.samsung.com>
+        <19df19ad-47e8-1f17-6b7f-39365cd0d4df@physik.fu-berlin.de>
+        <4c590675-71dc-d7f1-b40f-3b0ee124082a@physik.fu-berlin.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 4:33 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Having the CHARLCD Kconfig symbol between "menuconfig AUXDISPLAY"
-> and "if AUXDISPLAY" breaks the AUXDISPLAY submenus, so move the
-> CHARLCD Kconfig symbol near the end of the file so that the menu
-> display is continuous.
->
-> Also include ARM_CHARLCD inside of the if AUXDISPLAY/endif block.
-> Geert says that it should be there.
->
-> Fixes: 39f8ea46724e ("auxdisplay: charlcd: Extract character LCD core from misc/panel")
->
-> Cc: stable@vger.kernel.org # v4.12
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Thursday, March 01, 2018 10:55:48 AM John Paul Adrian Glaubitz wrote:
+> Hello!
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Hi,
 
-> Cc: Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
->  drivers/auxdisplay/Kconfig |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> --- linux-next-20180228.orig/drivers/auxdisplay/Kconfig
-> +++ linux-next-20180228/drivers/auxdisplay/Kconfig
-> @@ -14,9 +14,6 @@ menuconfig AUXDISPLAY
->
->           If you say N, all options in this submenu will be skipped and disabled.
->
-> -config CHARLCD
-> -       tristate "Character LCD core support" if COMPILE_TEST
-> -
->  if AUXDISPLAY
->
->  config HD44780
-> @@ -157,8 +154,6 @@ config HT16K33
->           Say yes here to add support for Holtek HT16K33, RAM mapping 16*8
->           LED controller driver with keyscan.
->
-> -endif # AUXDISPLAY
-> -
->  config ARM_CHARLCD
->         bool "ARM Ltd. Character LCD Driver"
->         depends on PLAT_VERSATILE
-> @@ -169,6 +164,8 @@ config ARM_CHARLCD
->           line and the Linux version on the second line, but that's
->           still useful.
->
-> +endif # AUXDISPLAY
-> +
->  config PANEL
->         tristate "Parallel port LCD/Keypad Panel support"
->         depends on PARPORT
-> @@ -448,3 +445,6 @@ config PANEL_BOOT_MESSAGE
->           printf()-formatted message is valid with newline and escape codes.
->
->  endif # PANEL
-> +
-> +config CHARLCD
-> +       tristate "Character LCD core support" if COMPILE_TEST
->
->
+> On 02/18/2018 05:18 PM, John Paul Adrian Glaubitz wrote:
+> > Is there any progress on this? Is it just the SDPX headers now that
+> > are missing?
+> 
+> Would it be okay if re-send the patch with the SPDX headers added?
+> 
+> Or can we get the patch merged, then I'll send a patch to add the
+> SPDX headers?
 
+I'll post updated version later today, sorry for the delay (I've been
+busy with other things and the patch is not v4.16 material anyway).
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
