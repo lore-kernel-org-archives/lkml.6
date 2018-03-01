@@ -1,269 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162106AbeCAVcS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:32:18 -0500
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:40396 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161792AbeCAVcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:32:12 -0500
-X-IronPort-AV: E=Sophos;i="5.47,409,1515456000";
-   d="scan'208";a="668874718"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "helgaas@kernel.org" <helgaas@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        id S1162124AbeCAVc3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:32:29 -0500
+Received: from mail-eopbgr670126.outbound.protection.outlook.com ([40.107.67.126]:13543
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161792AbeCAVcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:32:24 -0500
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Bjorn Helgaas <helgaas@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Subject: Re: [PATCH v2] pci: Store more data about VFs into the SRIOV struct
-Thread-Topic: [PATCH v2] pci: Store more data about VFs into the SRIOV struct
-Thread-Index: AQHTsWDs7fDQMe1Am0i79I3K4P45AaO7xcKAgAAg9QA=
-Date: Thu, 1 Mar 2018 21:32:02 +0000
-Message-ID: <1519939922.15908.51.camel@amazon.de>
-References: <1519910764-12789-1-git-send-email-karahmed@amazon.de>
-         <20180301193405.GL13722@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180301193405.GL13722@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-US
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Topic: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Index: AQHTsO2G6rmrD21g1EKzg35eF0OenKO7rTOA//+Y6gCAAJ6tgP//jY+A
+Date: Thu, 1 Mar 2018 21:32:20 +0000
+Message-ID: <EE1B4EB7-D3C0-4916-81CE-E647222D03E4@raithlin.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-5-logang@deltatee.com>
+ <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+ <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+ <20180301142155.5966c4c0@w520.home>
+In-Reply-To: <20180301142155.5966c4c0@w520.home>
+Accept-Language: en-CA, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.111]
+user-agent: Microsoft-MacOutlook/10.a.0.180210
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.224.121]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB0989;6:7v8aVKK4Cx91RhqbJf4Xcc+2T6gq2UytnZeDBlLHh4y7rxbnrk/T+tv/yauq9fI5deSciVE5xpq5AkmAoia5RbkOw4JMaMXIARYQrAf07HUu2wf2b1lwuTYlsb6AGdpr/gdTI2ySxacpkMbW1joAm9V351SoyeC+Rewhk8zHVtefamXVStlqeDLfq/C2bwcSYj+rzq3x2Z2V1sdc0sq/I3HJKZoVSC/5Ewb8l+nQe+5gTOnNVRN7KvVXTv9627WvstgCS7tzJMZ5FETErKG99SuV8Z3JsI1o2waeQbSVjYMypLxz8ZDb+QdXaG6Gbuq/BVmkSihMLZLInW3mzqzTQ7CQd4TCMUm+sKh+Qa4eqcg0QmGfKC3WVyG2O1U/izvJ;5:pqcy2/Zs9OY3spNfMAjQyJ4YE2PD9CXlVLRpDH+z1eWIaiQGEGaq7rrbjpTuWVLKAEYIZKPUbUNXebcn/X+RSspvn2vGcMyFBSz2a2F3Hbl2GN0S1Swae0l14YRtMDxJMP8pDmilN2sCZ3NMNLptO/NPyus7KIiJO4NradzreKg=;24:Y+TVG7p0WvOAhl5jYDGLUuZRWhh8tt6bDVoZXhnVJ6m5bwdJoj/ctxKpBVKGeyRM5K+L4KlBwEkaNdG5ueiaRjw1smGXVfNDcneI4ur2CnU=;7:cc9dTgDgzfWaYjbOUXOp82BJkTaYjAKw8sfSIplr97lmU3HwNIQgyfR6Nk6N3SJKvjOZlFF9q9SHRwAq7COCf4h7VSYC22VjivAyMiZNjQtGiqe0yRtEOjAKoapdSouGWL+UHMAPKQQJPPZUZE5rWxsg/Ag24sOt/R6jQWbE9CN8Dc+mzw6bAJTFZcf3LLx3rioy9q8VPHySYIpmyoSrsVmzru8AlWPZSewIsHnRx0MiBB0tggIACpP195Qs+Sw/
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: cdeed6be-1cf7-43c8-a0c3-08d57fbbea3f
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:YTXPR0101MB0989;
+x-ms-traffictypediagnostic: YTXPR0101MB0989:
+x-microsoft-antispam-prvs: <YTXPR0101MB0989C894EAEF8B45A3829563AAC60@YTXPR0101MB0989.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501231)(52105095)(93006095)(93001095)(10201501046)(6041288)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB0989;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB0989;
+x-forefront-prvs: 05986C03E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39830400003)(396003)(39380400002)(346002)(376002)(189003)(199004)(4326008)(3280700002)(2906002)(97736004)(6116002)(5250100002)(106356001)(93886005)(6916009)(2900100001)(229853002)(83716003)(66066001)(6512007)(53936002)(2950100002)(82746002)(86362001)(81156014)(6246003)(6436002)(8936002)(8676002)(6486002)(81166006)(68736007)(305945005)(7416002)(102836004)(7736002)(316002)(33656002)(5660300001)(3660700001)(36756003)(105586002)(76176011)(14454004)(54906003)(3846002)(478600001)(186003)(26005)(6506007)(99286004)(58126008)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB0989;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: iiUoH3haK7dkaP/WlJvTdMOGCt4otagI6hAu3XSxbLzYI52iC4l/E6ZIldGftPsUHpPdQ/gzrA5KR+1qx0aUZ1NIiMRnpZ/zUfT2+Y46lCikjaD967veoUm3RYdkOBggsRDwh/orrx6eg51Yns41djEE2+teqkWgP8jQmtb26/A=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <BCDC074A24B22549A359EF8B8CA76815@amazon.com>
+Content-ID: <6EA528C75EDB254F991BBE0327689534@CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdeed6be-1cf7-43c8-a0c3-08d57fbbea3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2018 21:32:20.7818
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB0989
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21LWMMP024854
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21LWbtM024943
 
-On Thu, 2018-03-01 at 13:34 -0600, Bjorn Helgaas wrote:
-> s|pci: Store|PCI/IOV: Store|
-> 
-> (run "git log --oneline drivers/pci/probe.c" to see why)
-> 
-> On Thu, Mar 01, 2018 at 02:26:04PM +0100, KarimAllah Ahmed wrote:
-> > 
-> > ... to avoid reading them from the config space of all the PCI VFs. This is
-> > specially a useful optimization when bringing up thousands of VFs.
-> 
-> Please make the changelog complete in itself, so it doesn't have to be
-> read in conjunction with the subject.  It's OK if you have to repeat
-> the subject in the changelog.
+> your kernel provider needs to decide whether they favor device assignment or p2p
 
-ack.
+Thanks Alex! The hardware requirements for P2P (switch, high performance EPs) are such that we really only expect CONFIG_P2P_DMA to be enabled in specific instances and in those instances the users have made a decision to favor P2P over IOMMU isolation. Or they have setup their PCIe topology in a way that gives them IOMMU isolation where they want it and P2P where they want it.
 
-> 
-> > 
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: linux-pci@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> > ---
-> > v1 -> v2:
-> > * Rebase on latest + remove dependency on a non-upstream patch.
-> > 
-> >  drivers/pci/iov.c   | 16 ++++++++++++++++
-> >  drivers/pci/pci.h   |  5 +++++
-> >  drivers/pci/probe.c | 42 ++++++++++++++++++++++++++++++++----------
-> >  3 files changed, 53 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> > index 677924a..e1d2e3f 100644
-> > --- a/drivers/pci/iov.c
-> > +++ b/drivers/pci/iov.c
-> > @@ -114,6 +114,19 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
-> >  	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
-> >  }
-> >  
-> > +static void pci_read_vf_config_common(struct pci_bus *bus, struct pci_dev *dev)
-> > +{
-> > +	int devfn = pci_iov_virtfn_devfn(dev, 0);
-> > +
-> > +	pci_bus_read_config_dword(bus, devfn, PCI_CLASS_REVISION,
-> > +				  &dev->sriov->class);
-> > +	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_ID,
-> > +				 &dev->sriov->subsystem_device);
-> > +	pci_bus_read_config_word(bus, devfn, PCI_SUBSYSTEM_VENDOR_ID,
-> > +				 &dev->sriov->subsystem_vendor);
-> > +	pci_bus_read_config_byte(bus, devfn, PCI_HEADER_TYPE, &dev->sriov->hdr_type);
-> 
-> Can't you do this a little later, e.g., after pci_iov_add_virtfn()
-> calls pci_setup_device(), and then use the standard
-> pci_read_config_*() interfaces instead of the special
-> pci_bus_read_config*() ones?
-
-ack.
-
-I moved it after "pci_iov_virtfn_devfn".
-
-> 
-> > 
-> > +}
-> > +
-> >  int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-> >  {
-> >  	int i;
-> > @@ -133,6 +146,9 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-> >  	if (!virtfn)
-> >  		goto failed0;
-> >  
-> > +	if (id == 0)
-> > +		pci_read_vf_config_common(bus, dev);
-> > +
-> >  	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
-> >  	virtfn->vendor = dev->vendor;
-> >  	virtfn->device = iov->vf_device;
-> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > index fcd8191..346daa5 100644
-> > --- a/drivers/pci/pci.h
-> > +++ b/drivers/pci/pci.h
-> > @@ -271,6 +271,11 @@ struct pci_sriov {
-> >  	u16		driver_max_VFs;	/* Max num VFs driver supports */
-> >  	struct pci_dev	*dev;		/* Lowest numbered PF */
-> >  	struct pci_dev	*self;		/* This PF */
-> > +	u8 hdr_type;		/* VF header type */
-> > +	u32 class;		/* VF device */
-> > +	u16 device;		/* VF device */
-> > +	u16 subsystem_vendor;	/* VF subsystem vendor */
-> > +	u16 subsystem_device;	/* VF subsystem device */
-> 
-> Please make the whitespace here match the existing code, i.e.,
-> line up the structure element names and comments.
-
-ack!
-
-> 
-> > 
-> >  	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
-> >  	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
-> >  };
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > index ef53774..aeaa10a 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -180,6 +180,7 @@ static inline unsigned long decode_bar(struct pci_dev *dev, u32 bar)
-> >  int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
-> >  		    struct resource *res, unsigned int pos)
-> >  {
-> > +	int bar = res - dev->resource;
-> >  	u32 l = 0, sz = 0, mask;
-> >  	u64 l64, sz64, mask64;
-> >  	u16 orig_cmd;
-> > @@ -199,9 +200,13 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
-> >  	res->name = pci_name(dev);
-> >  
-> >  	pci_read_config_dword(dev, pos, &l);
-> > -	pci_write_config_dword(dev, pos, l | mask);
-> > -	pci_read_config_dword(dev, pos, &sz);
-> > -	pci_write_config_dword(dev, pos, l);
-> > +	if (dev->is_virtfn) {
-> > +		sz = dev->physfn->sriov->barsz[bar] & 0xffffffff;
-> > +	} else {
-> > +		pci_write_config_dword(dev, pos, l | mask);
-> > +		pci_read_config_dword(dev, pos, &sz);
-> > +		pci_write_config_dword(dev, pos, l);
-> > +	}
-> 
-> This part is not like the others, i.e., the others are caching info
-> from VF 0 in newly-added elements of struct pci_sriov.  This also uses
-> information from struct pci_sriov, but it's qualitatively different,
-> so it should be in a separate patch.
-
-ack. Moved to a seperate patch.
-
-> 
-> > 
-> >  	/*
-> >  	 * All bits set in sz means the device isn't working properly.
-> > @@ -241,9 +246,14 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
-> >  
-> >  	if (res->flags & IORESOURCE_MEM_64) {
-> >  		pci_read_config_dword(dev, pos + 4, &l);
-> > -		pci_write_config_dword(dev, pos + 4, ~0);
-> > -		pci_read_config_dword(dev, pos + 4, &sz);
-> > -		pci_write_config_dword(dev, pos + 4, l);
-> > +
-> > +		if (dev->is_virtfn) {
-> > +			sz = (dev->physfn->sriov->barsz[bar] >> 32) & 0xffffffff;
-> > +		} else {
-> > +			pci_write_config_dword(dev, pos + 4, ~0);
-> > +			pci_read_config_dword(dev, pos + 4, &sz);
-> > +			pci_write_config_dword(dev, pos + 4, l);
-> > +		}
-> >  
-> >  		l64 |= ((u64)l << 32);
-> >  		sz64 |= ((u64)sz << 32);
-> > @@ -332,6 +342,8 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
-> >  	for (pos = 0; pos < howmany; pos++) {
-> >  		struct resource *res = &dev->resource[pos];
-> >  		reg = PCI_BASE_ADDRESS_0 + (pos << 2);
-> > +		if (dev->is_virtfn && dev->physfn->sriov->barsz[pos] == 0)
-> > +			continue;
-> >  		pos += __pci_read_base(dev, pci_bar_unknown, res, reg);
-> >  	}
-> >  
-> > @@ -1454,7 +1466,9 @@ int pci_setup_device(struct pci_dev *dev)
-> >  	struct pci_bus_region region;
-> >  	struct resource *res;
-> >  
-> > -	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
-> > +	if (dev->is_virtfn)
-> > +		hdr_type = dev->physfn->sriov->hdr_type;
-> > +	else if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
-> >  		return -EIO;
-> >  
-> >  	dev->sysdata = dev->bus->sysdata;
-> > @@ -1477,7 +1491,10 @@ int pci_setup_device(struct pci_dev *dev)
-> >  		     dev->bus->number, PCI_SLOT(dev->devfn),
-> >  		     PCI_FUNC(dev->devfn));
-> >  
-> > -	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-> > +	if (dev->is_virtfn)
-> > +		class = dev->physfn->sriov->class;
-> > +	else
-> > +		pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-> >  	dev->revision = class & 0xff;
-> >  	dev->class = class >> 8;		    /* upper 3 bytes */
-> >  
-> > @@ -1517,8 +1534,13 @@ int pci_setup_device(struct pci_dev *dev)
-> >  			goto bad;
-> >  		pci_read_irq(dev);
-> >  		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
-> > -		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
-> > -		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-> > +		if (dev->is_virtfn) {
-> > +			dev->subsystem_vendor = dev->physfn->sriov->subsystem_vendor;
-> > +			dev->subsystem_device = dev->physfn->sriov->subsystem_device;
-> 
-> PCIe r4.0, sec 9.3.4.1.13 requires that Subsystem Vendor ID be the
-> same for the PF and all VFs, but sec 9.3.4.1.14 says the PF and VF may
-> have different Subsystem IDs.  I know you're caching the Subsystem ID
-> from VF 0, not the PF, but I don't see anything that requires all the
-> VFs to have the same Subsystem ID.
-> 
-> I think the same is technically true for the Revision ID.  It might be
-> reasonable to assume all the VFs have the same values, but maybe worth
-> a comment.
-
-I added a comment about that for the 3 fields.
-
-> 
-> > 
-> > +		} else {
-> > +			pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
-> > +			pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-> > +		}
-> >  
-> >  		/*
-> >  		 * Do the ugly legacy mode stuff here rather than broken chip
-> > -- 
-> > 2.7.4
-> > 
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Stephen
+ 
