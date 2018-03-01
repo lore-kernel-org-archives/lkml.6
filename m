@@ -1,16 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162290AbeCAVho (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:37:44 -0500
-Received: from mail-eopbgr670106.outbound.protection.outlook.com ([40.107.67.106]:13629
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1162063AbeCAVhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:37:02 -0500
-From: "Stephen  Bates" <sbates@raithlin.com>
+        id S1162295AbeCAViD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:38:03 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:38888 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161622AbeCAVh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:37:59 -0500
 To: Jerome Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-CC: Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Stephen Bates <sbates@raithlin.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
@@ -22,64 +21,45 @@ CC: Benjamin Herrenschmidt <benh@au1.ibm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-Thread-Topic: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
- Memory
-Thread-Index: AQHTsO2GEDgA2h38ikWGpBGerXYMdKO6wDyAgAAAX4CAAO0JAIAAKJ+AgAAHPICAAAIhAIAAAgEA//+SBoA=
-Date: Thu, 1 Mar 2018 21:37:00 +0000
-Message-ID: <EA9224B2-3B12-4F31-9602-DEAF9869A242@raithlin.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
- <1519936195.4592.18.camel@au1.ibm.com> <20180301205548.GA6742@redhat.com>
- <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
- <20180301211036.GB6742@redhat.com>
-In-Reply-To: <20180301211036.GB6742@redhat.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.a.0.180210
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.224.121]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1968;7:+J6bCT3U93BZdIXne+joUdvzWcN9ItMtWlSBtT41Tr0UohGy4PrflTuB9RytGDham5FdGeurwVqZ4ffd3rtqZdR+ATZzV7F45JQizLYLi+9Ebnr17G5imI77kLI9l16JLGWdFcybDylndNYFZm2PoWxdvKfEKPpxP6XHDBCF9enhiC3hShU9MoO/fttV5KvMu0fiC1Rx77qxwUd4Fpb3cAqtZ+wOCvKt3MlZ5qW3cRDspPnMLhXUqlfihYY0/Jt7
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: 691d0294-f40f-4ae1-d29c-08d57fbc90e1
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:YTXPR0101MB1968;
-x-ms-traffictypediagnostic: YTXPR0101MB1968:
-x-microsoft-antispam-prvs: <YTXPR0101MB1968564F292F2CE3E0C30A82AAC60@YTXPR0101MB1968.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501231)(52105095)(93006095)(93001095)(10201501046)(6041288)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB1968;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1968;
-x-forefront-prvs: 05986C03E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39830400003)(346002)(376002)(396003)(199004)(189003)(25786009)(6116002)(76176011)(3846002)(4326008)(99286004)(26005)(6506007)(14454004)(186003)(2906002)(83716003)(66066001)(229853002)(478600001)(8936002)(305945005)(7736002)(93886005)(110136005)(316002)(58126008)(54906003)(33656002)(7416002)(8676002)(81166006)(81156014)(5660300001)(3280700002)(97736004)(105586002)(6512007)(53936002)(6486002)(6436002)(106356001)(5250100002)(2950100002)(86362001)(82746002)(6246003)(68736007)(102836004)(2900100001)(36756003)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1968;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: vEFh54r4JerWq8IoCm7URUhIH9k/QPv5kBn9b6bAJCBAMZmwZPDZwQLEpMmdU2j2voJg/oPLQ17mczJNP3OvMO2Rs+9rizfxteDS62uVQ8Nh0rAvIHsMYakCLl65Su1zyDBkVtTtqpax4jbgrqX7BEvhXTTfTr9vtcm9VgNP5lQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <39F1AEAE53F44B4493149DAB944FFFF2@CANPRD01.PROD.OUTLOOK.COM>
+ <20180228234006.21093-5-logang@deltatee.com>
+ <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+ <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+ <20180301142155.5966c4c0@w520.home>
+ <EE1B4EB7-D3C0-4916-81CE-E647222D03E4@raithlin.com>
+ <20180301213533.GE6742@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <0f33b4ec-6d1c-779a-c2cd-82d6ceb4991b@deltatee.com>
+Date: Thu, 1 Mar 2018 14:37:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 691d0294-f40f-4ae1-d29c-08d57fbc90e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2018 21:37:00.2997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1968
+In-Reply-To: <20180301213533.GE6742@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, alex.williamson@redhat.com, sbates@raithlin.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21LblrQ026975
 
-> The intention of HMM is to be useful for all device memory that wish
-> to have struct page for various reasons.
 
-Hi Jermone and thanks for your input! Understood. We have looked at HMM in the past and long term I definitely would like to consider how we can add P2P functionality to HMM for both DEVICE_PRIVATE and DEVICE_PUBLIC so we can pass addressable and non-addressable blocks of data between devices. However that is well beyond the intentions of this series ;-).
 
-Stephen
-    
+On 01/03/18 02:35 PM, Jerome Glisse wrote:
+> Note that they are usecase for P2P where IOMMU isolation matter and
+> the traffic through root complex isn't see as an issue. 
+
+Well, we can worry about that once we have a solution to the problem of 
+knowing whether a root complex supports P2P at all. I'm not sure how 
+people are going to solve that one.
+
+For the time being, this work is for cards behind a switch only.
+
+Logan
