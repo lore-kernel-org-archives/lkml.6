@@ -1,91 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967202AbeCAJpa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:45:30 -0500
-Received: from foss.arm.com ([217.140.101.70]:34342 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967187AbeCAJp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:45:27 -0500
-Subject: Re: Clang build of arm64 kernel fails
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, ard.biesheuvel@linaro.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <CAAeHK+wRcZ1o53CEpeOQ-J5AayVAd8nm-ASj8HsTy1vOzHQAqQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d601e0ca-dd91-3dd4-c610-dd2ae49aa1b6@arm.com>
-Date: Thu, 1 Mar 2018 09:45:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967255AbeCAJrB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:47:01 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57363 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S967018AbeCAJpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:45:14 -0500
+From: <patrice.chotard@st.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <alexandre.torgue@st.com>,
+        <lee.jones@linaro.org>
+CC: <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>
+Subject: [PATCH 5/6] dt-bindings: mfd: Add STM32F7 SDMMC2 rcc entry
+Date: Thu, 1 Mar 2018 10:43:40 +0100
+Message-ID: <1519897421-23803-6-git-send-email-patrice.chotard@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
+References: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+wRcZ1o53CEpeOQ-J5AayVAd8nm-ASj8HsTy1vOzHQAqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
+From: Patrice Chotard <patrice.chotard@st.com>
 
-On 28/02/18 19:32, Andrey Konovalov wrote:
-> Hi Marc!
-> 
-> I've tried to pull in new upstream commits and the kernel build
-> started failing for me with the following errors (see below).
-> 
-> It seems that the reason is your commit "arm64: Add
-> ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support". It seems that Clang
-> doesn't like 32 bits registers being used in 64 bits build.
+STM32F769 SoC provides 2 SDMMC instances, add missing
+RCC SDMMC2 entry for it.
 
-I'd say this is really a bug in Clang. Architecturally, the register in 
-AArch64 state is still named "r0"; "x0"/"w0" are assembler operands 
-which additionally encode the size of the corresponding *access* to r0.
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ include/dt-bindings/mfd/stm32f7-rcc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I note that GCC's documentation on register variables[1] does just say 
-"the name of the register", which implies this code is not incorrect. 
-Given that Clang already likes to infer the operand size from the 
-argument type in actual inline asms, it seems funny that its register 
-allocator should care in this non-instruction context.
-
-> Would you mind sending a fix?
-
-That said, I guess it's a bug we might have to work around anyway. Oh well.
-
-Robin.
-
-[1] 
-https://gcc.gnu.org/onlinedocs/gcc/Global-Register-Variables.html#Global-Register-Variables
-
-> 
-> Thanks!
-> 
-> arch/arm64/kernel/cpu_errata.c:156:2: error: unknown register name 'r0' in asm
->          arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
->          ^
-> ./include/linux/arm-smccc.h:276:32: note: expanded from macro
-> 'arm_smccc_1_1_smc'
-> #define arm_smccc_1_1_smc(...)  __arm_smccc_1_1(SMCCC_SMC_INST, __VA_ARGS__)
->                                  ^
-> ./include/linux/arm-smccc.h:255:3: note: expanded from macro '__arm_smccc_1_1'
->                  __declare_args(__count_args(__VA_ARGS__), __VA_ARGS__); \
->                  ^
-> ./include/linux/arm-smccc.h:240:37: note: expanded from macro '__declare_args'
-> #define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
->                                      ^
-> ./include/linux/arm-smccc.h:239:37: note: expanded from macro '___declare_args'
-> #define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
->                                      ^
-> <scratch space>:136:1: note: expanded from here
-> __declare_arg_0
-> ^
-> ./include/linux/arm-smccc.h:197:32: note: expanded from macro '__declare_arg_0'
->          register u32           r0 asm("r0") = a0;
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+diff --git a/include/dt-bindings/mfd/stm32f7-rcc.h b/include/dt-bindings/mfd/stm32f7-rcc.h
+index 8b7b7197ffd7..a90f3613c584 100644
+--- a/include/dt-bindings/mfd/stm32f7-rcc.h
++++ b/include/dt-bindings/mfd/stm32f7-rcc.h
+@@ -91,6 +91,7 @@
+ #define STM32F7_RCC_APB2_TIM8		1
+ #define STM32F7_RCC_APB2_USART1		4
+ #define STM32F7_RCC_APB2_USART6		5
++#define STM32F7_RCC_APB2_SDMMC2		7
+ #define STM32F7_RCC_APB2_ADC1		8
+ #define STM32F7_RCC_APB2_ADC2		9
+ #define STM32F7_RCC_APB2_ADC3		10
+-- 
+1.9.1
