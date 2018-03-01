@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935749AbeCAHsa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 02:48:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60469 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934908AbeCAHs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:48:27 -0500
-Date: Thu, 1 Mar 2018 08:48:15 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com
-Subject: Re: [PATCH v1 3/4] ASoC: codecs: pcm179x: Add reset gpio
-Message-ID: <20180301084815.75b5aaaf@dell-desktop.home>
-In-Reply-To: <20180227230200.67d8ae45@windsurf.lan>
-References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
-        <20180227212433.2189-4-mylene.josserand@bootlin.com>
-        <20180227230200.67d8ae45@windsurf.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S935758AbeCAHuW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 02:50:22 -0500
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:40405 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934908AbeCAHuV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 02:50:21 -0500
+X-Google-Smtp-Source: AG47ELvm9xR0l2pWTf4R2SLI2YyurR0RVPo532vvF3WFry7/0QrrT581/GRbD8JBaPfzi4GodXB2GA==
+Date: Thu, 1 Mar 2018 08:50:17 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v4 1/4] HID: add driver for Valve Steam Controller
+Message-ID: <20180301075017.GB8901@gmail.com>
+References: <20180228184322.29636-1-rodrigorivascosta@gmail.com>
+ <20180228184322.29636-2-rodrigorivascosta@gmail.com>
+ <CAHp75VfPK=yAx9TLEX-W0SrK8xXQzrP4wAuFWS3zEjHGoPJRsw@mail.gmail.com>
+ <20180228224926.GA7009@casa>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228224926.GA7009@casa>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Rodrigo,
 
-On Tue, 27 Feb 2018 23:02:00 +0100
-Thomas Petazzoni <thomas.petazzoni@bootlin.com> wrote:
-
-> Hello,
-> 
-> On Tue, 27 Feb 2018 22:24:32 +0100, Mylène Josserand wrote:
-> > Add a reset gpio to be able to reset this line at startup.
+On Wed, Feb 28, 2018 at 11:49:26PM +0100, Rodrigo Rivas Costa wrote:
+> On Wed, Feb 28, 2018 at 09:21:15PM +0200, Andy Shevchenko wrote:
+> > On Wed, Feb 28, 2018 at 8:43 PM, Rodrigo Rivas Costa
+> > <rodrigorivascosta@gmail.com> wrote:
+> > > There are two ways to connect the Steam Controller: directly to the USB
+> > > or with the USB wireless adapter.  Both methods are similar, but the
+> > > wireless adapter can connect up to 4 devices at the same time.
+> > >
+> > > The wired device will appear as 3 interfaces: a virtual mouse, a virtual
+> > > keyboard and a custom HID device.
+> > >
+> > > The wireless device will appear as 5 interfaces: a virtual keyboard and
+> > > 4 custom HID devices, that will remain silent until a device is actually
+> > > connected.
+> > >
+> > > The custom HID device has a report descriptor with all vendor specific
+> > > usages, so the hid-generic is not very useful. In a PC/SteamBox Valve
+> > > Steam Client provices a software translation by using direct USB access
+> > > and a creates a uinput virtual gamepad.
+> > >
+> > > This driver was reverse engineered to provide direct kernel support in
+> > > case you cannot, or do not want to, use Valve Steam Client. It disables
+> > > the virtual keyboard and mouse, as they are not so useful when you have
+> > > a working gamepad.
 > > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>  
+> > 
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > Not the same.
 > 
-> This needs an updated of the DT binding, since it's adding support for
-> a new reset-gpios property.
+> Hmmm... I copied from usb-skeleton.c, IIRC...
+> I'll change to GPL-2.0+, that would be correct, I think.
 
-True, I will add it in my new series.
+Yep, the usb-skeleton.c is wrong.
+I have prepared a patch, just not submitted it yet..
 
-> 
-> Thanks!
-> 
-> Thomas
+GPL-2.0+ is "GPLv2 or later" if that is what you want.
 
-Thanks,
-
-Mylène
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Best regards
+Marcus Folkesson
