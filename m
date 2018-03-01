@@ -1,668 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031780AbeCAPJX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:09:23 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55090 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031707AbeCAPJJ (ORCPT
+        id S1031695AbeCAPL5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:11:57 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46537 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031631AbeCAPL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:09:09 -0500
-X-Google-Smtp-Source: AG47ELsSbsbpiULpcu8i66kh7ZD9xpu3dskRA2oZhv9Ea198SVkQgeuFmJPFLV7J+6Y3xQgY9VNFIQ==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: refactor init/exit sequences
-Date: Thu,  1 Mar 2018 16:08:56 +0100
-Message-Id: <1519916936-30079-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519916936-30079-1-git-send-email-javier@cnexlabs.com>
-References: <1519916936-30079-1-git-send-email-javier@cnexlabs.com>
+        Thu, 1 Mar 2018 10:11:56 -0500
+X-Google-Smtp-Source: AG47ELsDAVcVmo4/dyl9atNS/WAj03Lczo5IFcshL3lMDiAg0a2ktejzD3vfW2zqYrL/pG7u5/ho+A==
+Date: Thu, 1 Mar 2018 16:11:41 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Daniel Lustig <dlustig@nvidia.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
+ spin_unlock()
+Message-ID: <20180301151141.GA6430@andrea>
+References: <1519301990-11766-1-git-send-email-parri.andrea@gmail.com>
+ <20180222134004.GN25181@hirez.programming.kicks-ass.net>
+ <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+ <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net>
+ <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor init and exit sequences to eliminate dependencies among init
-modules and improve readability.
+Hi Daniel,
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-init.c | 412 +++++++++++++++++++++----------------------
- 1 file changed, 206 insertions(+), 206 deletions(-)
+On Thu, Feb 22, 2018 at 11:47:57AM -0800, Daniel Lustig wrote:
+> On 2/22/2018 10:27 AM, Peter Zijlstra wrote:
+> > On Thu, Feb 22, 2018 at 10:13:17AM -0800, Paul E. McKenney wrote:
+> >> So we have something that is not all that rare in the Linux kernel
+> >> community, namely two conflicting more-or-less concurrent changes.
+> >> This clearly needs to be resolved, either by us not strengthening the
+> >> Linux-kernel memory model in the way we were planning to or by you
+> >> strengthening RISC-V to be no weaker than PowerPC for these sorts of
+> >> externally viewed release-acquire situations.
+> >>
+> >> Other thoughts?
+> > 
+> > Like said in the other email, I would _much_ prefer to not go weaker
+> > than PPC, I find that PPC is already painfully weak at times.
+> 
+> Sure, and RISC-V could make this work too by using RCsc instructions
+> and/or by using lightweight fences instead.  It just wasn't clear at
+> first whether smp_load_acquire() and smp_store_release() were RCpc,
+> RCsc, or something else, and hence whether RISC-V would actually need
+> to use something stronger than pure RCpc there.  Likewise for
+> spin_unlock()/spin_lock() and everywhere else this comes up.
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 25fc70ca07f7..785020e95a73 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -103,7 +103,40 @@ static void pblk_l2p_free(struct pblk *pblk)
- 	vfree(pblk->trans_map);
- }
- 
--static int pblk_l2p_init(struct pblk *pblk)
-+static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
-+{
-+	struct pblk_line *line = NULL;
-+
-+	if (factory_init) {
-+		pblk_setup_uuid(pblk);
-+	} else {
-+		line = pblk_recov_l2p(pblk);
-+		if (IS_ERR(line)) {
-+			pr_err("pblk: could not recover l2p table\n");
-+			return -EFAULT;
-+		}
-+	}
-+
-+#ifdef CONFIG_NVM_DEBUG
-+	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
-+#endif
-+
-+	/* Free full lines directly as GC has not been started yet */
-+	pblk_gc_free_full_lines(pblk);
-+
-+	if (!line) {
-+		/* Configure next line for user data */
-+		line = pblk_line_get_first_data(pblk);
-+		if (!line) {
-+			pr_err("pblk: line list corrupted\n");
-+			return -EFAULT;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
- {
- 	sector_t i;
- 	struct ppa_addr ppa;
-@@ -119,7 +152,7 @@ static int pblk_l2p_init(struct pblk *pblk)
- 	for (i = 0; i < pblk->rl.nr_secs; i++)
- 		pblk_trans_map_set(pblk, i, ppa);
- 
--	return 0;
-+	return pblk_l2p_recover(pblk, factory_init);
- }
- 
- static void pblk_rwb_free(struct pblk *pblk)
-@@ -159,7 +192,13 @@ static int pblk_set_ppaf(struct pblk *pblk)
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
- 	struct nvm_addr_format ppaf = geo->ppaf;
--	int power_len;
-+	int mod, power_len;
-+
-+	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
-+	if (mod) {
-+		pr_err("pblk: bad configuration of sectors/pages\n");
-+		return -EINVAL;
-+	}
- 
- 	/* Re-calculate channel and lun format to adapt to configuration */
- 	power_len = get_count_order(geo->nr_chnls);
-@@ -252,12 +291,39 @@ static int pblk_core_init(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-+	int max_write_ppas;
-+
-+	atomic64_set(&pblk->user_wa, 0);
-+	atomic64_set(&pblk->pad_wa, 0);
-+	atomic64_set(&pblk->gc_wa, 0);
-+	pblk->user_rst_wa = 0;
-+	pblk->pad_rst_wa = 0;
-+	pblk->gc_rst_wa = 0;
-+
-+	atomic64_set(&pblk->nr_flush, 0);
-+	pblk->nr_flush_rst = 0;
- 
- 	pblk->pgs_in_buffer = NVM_MEM_PAGE_WRITE * geo->sec_per_pg *
- 						geo->nr_planes * geo->all_luns;
- 
-+	pblk->min_write_pgs = geo->sec_per_pl * (geo->sec_size / PAGE_SIZE);
-+	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
-+	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
-+	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
-+
-+	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
-+		pr_err("pblk: vector list too big(%u > %u)\n",
-+				pblk->max_write_pgs, PBLK_MAX_REQ_ADDRS);
-+		return -EINVAL;
-+	}
-+
-+	pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) * sizeof(atomic64_t),
-+								 GFP_KERNEL);
-+	if (!pblk->pad_dist)
-+		return -ENOMEM;
-+
- 	if (pblk_init_global_caches(pblk))
--		return -ENOMEM;
-+		goto fail_free_pad_dist;
- 
- 	/* Internal bios can be at most the sectors signaled by the device. */
- 	pblk->page_bio_pool = mempool_create_page_pool(NVM_MAX_VLBA, 0);
-@@ -307,10 +373,8 @@ static int pblk_core_init(struct pblk *pblk)
- 	if (pblk_set_ppaf(pblk))
- 		goto free_r_end_wq;
- 
--	if (pblk_rwb_init(pblk))
--		goto free_r_end_wq;
--
- 	INIT_LIST_HEAD(&pblk->compl_list);
-+
- 	return 0;
- 
- free_r_end_wq:
-@@ -333,6 +397,8 @@ static int pblk_core_init(struct pblk *pblk)
- 	mempool_destroy(pblk->page_bio_pool);
- free_global_caches:
- 	pblk_free_global_caches(pblk);
-+fail_free_pad_dist:
-+	kfree(pblk->pad_dist);
- 	return -ENOMEM;
- }
- 
-@@ -354,14 +420,8 @@ static void pblk_core_free(struct pblk *pblk)
- 	mempool_destroy(pblk->e_rq_pool);
- 	mempool_destroy(pblk->w_rq_pool);
- 
--	pblk_rwb_free(pblk);
--
- 	pblk_free_global_caches(pblk);
--}
--
--static void pblk_luns_free(struct pblk *pblk)
--{
--	kfree(pblk->luns);
-+	kfree(pblk->pad_dist);
- }
- 
- static void pblk_line_mg_free(struct pblk *pblk)
-@@ -378,8 +438,6 @@ static void pblk_line_mg_free(struct pblk *pblk)
- 		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
- 		kfree(l_mg->eline_meta[i]);
- 	}
--
--	kfree(pblk->lines);
- }
- 
- static void pblk_line_meta_free(struct pblk_line *line)
-@@ -402,6 +460,11 @@ static void pblk_lines_free(struct pblk *pblk)
- 		pblk_line_meta_free(line);
- 	}
- 	spin_unlock(&l_mg->free_lock);
-+
-+	pblk_line_mg_free(pblk);
-+
-+	kfree(pblk->luns);
-+	kfree(pblk->lines);
- }
- 
- static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
-@@ -476,7 +539,7 @@ static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
- 	return bb_cnt;
- }
- 
--static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
-+static int pblk_luns_init(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
-@@ -501,7 +564,7 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
- 		int lunid = lun_raw + ch * geo->nr_luns;
- 
- 		rlun = &pblk->luns[i];
--		rlun->bppa = luns[lunid];
-+		rlun->bppa = dev->luns[lunid];
- 
- 		sema_init(&rlun->wr_sem, 1);
- 	}
-@@ -509,38 +572,6 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
- 	return 0;
- }
- 
--static int pblk_lines_configure(struct pblk *pblk, int flags)
--{
--	struct pblk_line *line = NULL;
--	int ret = 0;
--
--	if (!(flags & NVM_TARGET_FACTORY)) {
--		line = pblk_recov_l2p(pblk);
--		if (IS_ERR(line)) {
--			pr_err("pblk: could not recover l2p table\n");
--			ret = -EFAULT;
--		}
--	}
--
--#ifdef CONFIG_NVM_DEBUG
--	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
--#endif
--
--	/* Free full lines directly as GC has not been started yet */
--	pblk_gc_free_full_lines(pblk);
--
--	if (!line) {
--		/* Configure next line for user data */
--		line = pblk_line_get_first_data(pblk);
--		if (!line) {
--			pr_err("pblk: line list corrupted\n");
--			ret = -EFAULT;
--		}
--	}
--
--	return ret;
--}
--
- /* See comment over struct line_emeta definition */
- static unsigned int calc_emeta_len(struct pblk *pblk)
- {
-@@ -606,11 +637,70 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
- 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
- }
- 
--static int pblk_lines_alloc_metadata(struct pblk *pblk)
-+static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
-+				void *chunk_log, long *nr_bad_blks)
- {
-+	struct pblk_line_meta *lm = &pblk->lm;
-+
-+	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
-+	if (!line->blk_bitmap)
-+		return -ENOMEM;
-+
-+	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
-+	if (!line->erase_bitmap) {
-+		kfree(line->blk_bitmap);
-+		return -ENOMEM;
-+	}
-+
-+	*nr_bad_blks = pblk_bb_line(pblk, line, chunk_log, lm->blk_per_line);
-+
-+	return 0;
-+}
-+
-+static int pblk_line_mg_init(struct pblk *pblk)
-+{
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct pblk_line_meta *lm = &pblk->lm;
--	int i;
-+	int i, bb_distance;
-+
-+	l_mg->nr_lines = geo->nr_chks;
-+	l_mg->log_line = l_mg->data_line = NULL;
-+	l_mg->l_seq_nr = l_mg->d_seq_nr = 0;
-+	l_mg->nr_free_lines = 0;
-+	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
-+
-+	INIT_LIST_HEAD(&l_mg->free_list);
-+	INIT_LIST_HEAD(&l_mg->corrupt_list);
-+	INIT_LIST_HEAD(&l_mg->bad_list);
-+	INIT_LIST_HEAD(&l_mg->gc_full_list);
-+	INIT_LIST_HEAD(&l_mg->gc_high_list);
-+	INIT_LIST_HEAD(&l_mg->gc_mid_list);
-+	INIT_LIST_HEAD(&l_mg->gc_low_list);
-+	INIT_LIST_HEAD(&l_mg->gc_empty_list);
-+
-+	INIT_LIST_HEAD(&l_mg->emeta_list);
-+
-+	l_mg->gc_lists[0] = &l_mg->gc_high_list;
-+	l_mg->gc_lists[1] = &l_mg->gc_mid_list;
-+	l_mg->gc_lists[2] = &l_mg->gc_low_list;
-+
-+	spin_lock_init(&l_mg->free_lock);
-+	spin_lock_init(&l_mg->close_lock);
-+	spin_lock_init(&l_mg->gc_lock);
-+
-+	l_mg->vsc_list = kcalloc(l_mg->nr_lines, sizeof(__le32), GFP_KERNEL);
-+	if (!l_mg->vsc_list)
-+		goto fail;
-+
-+	l_mg->bb_template = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!l_mg->bb_template)
-+		goto fail_free_vsc_list;
-+
-+	l_mg->bb_aux = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!l_mg->bb_aux)
-+		goto fail_free_bb_template;
- 
- 	/* smeta is always small enough to fit on a kmalloc memory allocation,
- 	 * emeta depends on the number of LUNs allocated to the pblk instance
-@@ -656,13 +746,13 @@ static int pblk_lines_alloc_metadata(struct pblk *pblk)
- 		}
- 	}
- 
--	l_mg->vsc_list = kcalloc(l_mg->nr_lines, sizeof(__le32), GFP_KERNEL);
--	if (!l_mg->vsc_list)
--		goto fail_free_emeta;
--
- 	for (i = 0; i < l_mg->nr_lines; i++)
- 		l_mg->vsc_list[i] = cpu_to_le32(EMPTY_ENTRY);
- 
-+	bb_distance = (geo->all_luns) * geo->ws_opt;
-+	for (i = 0; i < lm->sec_per_line; i += bb_distance)
-+		bitmap_set(l_mg->bb_template, i, geo->ws_opt);
-+
- 	return 0;
- 
- fail_free_emeta:
-@@ -673,69 +763,25 @@ static int pblk_lines_alloc_metadata(struct pblk *pblk)
- 			kfree(l_mg->eline_meta[i]->buf);
- 		kfree(l_mg->eline_meta[i]);
- 	}
--
- fail_free_smeta:
- 	for (i = 0; i < PBLK_DATA_LINES; i++)
- 		kfree(l_mg->sline_meta[i]);
--
-+	kfree(l_mg->bb_aux);
-+fail_free_bb_template:
-+	kfree(l_mg->bb_template);
-+fail_free_vsc_list:
-+	kfree(l_mg->vsc_list);
-+fail:
- 	return -ENOMEM;
- }
- 
--static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
--				void *chunk_log, long *nr_bad_blks)
--{
--	struct pblk_line_meta *lm = &pblk->lm;
--
--	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
--	if (!line->blk_bitmap)
--		return -ENOMEM;
--
--	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
--	if (!line->erase_bitmap) {
--		kfree(line->blk_bitmap);
--		return -ENOMEM;
--	}
--
--	*nr_bad_blks = pblk_bb_line(pblk, line, chunk_log, lm->blk_per_line);
--
--	return 0;
--}
--
--static int pblk_lines_init(struct pblk *pblk)
-+static int pblk_line_meta_init(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct pblk_line_meta *lm = &pblk->lm;
--	struct pblk_line *line;
--	void *chunk_log;
- 	unsigned int smeta_len, emeta_len;
--	long nr_bad_blks = 0, nr_free_blks = 0;
--	int bb_distance, max_write_ppas, mod;
--	int i, ret;
--
--	pblk->min_write_pgs = geo->sec_per_pl * (geo->sec_size / PAGE_SIZE);
--	max_write_ppas = pblk->min_write_pgs * geo->all_luns;
--	pblk->max_write_pgs = min_t(int, max_write_ppas, NVM_MAX_VLBA);
--	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
--
--	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
--		pr_err("pblk: vector list too big(%u > %u)\n",
--				pblk->max_write_pgs, PBLK_MAX_REQ_ADDRS);
--		return -EINVAL;
--	}
--
--	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
--	if (mod) {
--		pr_err("pblk: bad configuration of sectors/pages\n");
--		return -EINVAL;
--	}
--
--	l_mg->nr_lines = geo->nr_chks;
--	l_mg->log_line = l_mg->data_line = NULL;
--	l_mg->l_seq_nr = l_mg->d_seq_nr = 0;
--	l_mg->nr_free_lines = 0;
--	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
-+	int i;
- 
- 	lm->sec_per_line = geo->sec_per_chk * geo->all_luns;
- 	lm->blk_per_line = geo->all_luns;
-@@ -787,58 +833,43 @@ static int pblk_lines_init(struct pblk *pblk)
- 		return -EINVAL;
- 	}
- 
--	ret = pblk_lines_alloc_metadata(pblk);
-+	return 0;
-+}
-+
-+static int pblk_lines_init(struct pblk *pblk)
-+{
-+	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	struct pblk_line *line;
-+	void *chunk_log;
-+	long nr_bad_blks = 0, nr_free_blks = 0;
-+	int i, ret;
-+
-+	ret = pblk_line_meta_init(pblk);
-+	if (ret)
-+		return ret;
-+
-+	ret = pblk_line_mg_init(pblk);
- 	if (ret)
- 		return ret;
- 
--	l_mg->bb_template = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
--	if (!l_mg->bb_template) {
--		ret = -ENOMEM;
-+	ret = pblk_luns_init(pblk);
-+	if (ret)
- 		goto fail_free_meta;
--	}
--
--	l_mg->bb_aux = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
--	if (!l_mg->bb_aux) {
--		ret = -ENOMEM;
--		goto fail_free_bb_template;
--	}
--
--	bb_distance = (geo->all_luns) * geo->sec_per_pl;
--	for (i = 0; i < lm->sec_per_line; i += bb_distance)
--		bitmap_set(l_mg->bb_template, i, geo->sec_per_pl);
--
--	INIT_LIST_HEAD(&l_mg->free_list);
--	INIT_LIST_HEAD(&l_mg->corrupt_list);
--	INIT_LIST_HEAD(&l_mg->bad_list);
--	INIT_LIST_HEAD(&l_mg->gc_full_list);
--	INIT_LIST_HEAD(&l_mg->gc_high_list);
--	INIT_LIST_HEAD(&l_mg->gc_mid_list);
--	INIT_LIST_HEAD(&l_mg->gc_low_list);
--	INIT_LIST_HEAD(&l_mg->gc_empty_list);
--
--	INIT_LIST_HEAD(&l_mg->emeta_list);
--
--	l_mg->gc_lists[0] = &l_mg->gc_high_list;
--	l_mg->gc_lists[1] = &l_mg->gc_mid_list;
--	l_mg->gc_lists[2] = &l_mg->gc_low_list;
--
--	spin_lock_init(&l_mg->free_lock);
--	spin_lock_init(&l_mg->close_lock);
--	spin_lock_init(&l_mg->gc_lock);
--
--	pblk->lines = kcalloc(l_mg->nr_lines, sizeof(struct pblk_line),
--								GFP_KERNEL);
--	if (!pblk->lines) {
--		ret = -ENOMEM;
--		goto fail_free_bb_aux;
--	}
- 
- 	chunk_log = pblk_bb_get_log(pblk);
- 	if (IS_ERR(chunk_log)) {
- 		pr_err("pblk: could not get bad block log (%lu)\n",
- 							PTR_ERR(chunk_log));
- 		ret = PTR_ERR(chunk_log);
--		goto fail_free_lines;
-+		goto fail_free_luns;
-+	}
-+
-+	pblk->lines = kcalloc(l_mg->nr_lines, sizeof(struct pblk_line),
-+								GFP_KERNEL);
-+	if (!pblk->lines) {
-+		ret = -ENOMEM;
-+		goto fail_free_chunk_log;
- 	}
- 
- 	for (i = 0; i < l_mg->nr_lines; i++) {
-@@ -856,7 +887,7 @@ static int pblk_lines_init(struct pblk *pblk)
- 
- 		ret = pblk_setup_line_meta(pblk, line, chunk_log, &nr_bad_blks);
- 		if (ret)
--			goto fail_free_chunk_log;
-+			goto fail_free_lines;
- 
- 		chk_in_line = lm->blk_per_line - nr_bad_blks;
- 		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
-@@ -878,16 +909,14 @@ static int pblk_lines_init(struct pblk *pblk)
- 	kfree(chunk_log);
- 	return 0;
- 
--fail_free_chunk_log:
--	kfree(chunk_log);
-+fail_free_lines:
- 	while (--i >= 0)
- 		pblk_line_meta_free(&pblk->lines[i]);
--fail_free_lines:
- 	kfree(pblk->lines);
--fail_free_bb_aux:
--	kfree(l_mg->bb_aux);
--fail_free_bb_template:
--	kfree(l_mg->bb_template);
-+fail_free_chunk_log:
-+	kfree(chunk_log);
-+fail_free_luns:
-+	kfree(pblk->luns);
- fail_free_meta:
- 	pblk_line_mg_free(pblk);
- 
-@@ -930,12 +959,10 @@ static void pblk_writer_stop(struct pblk *pblk)
- 
- static void pblk_free(struct pblk *pblk)
- {
--	pblk_luns_free(pblk);
- 	pblk_lines_free(pblk);
--	kfree(pblk->pad_dist);
--	pblk_line_mg_free(pblk);
--	pblk_core_free(pblk);
- 	pblk_l2p_free(pblk);
-+	pblk_rwb_free(pblk);
-+	pblk_core_free(pblk);
- 
- 	kfree(pblk);
- }
-@@ -1003,16 +1030,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	if (flags & NVM_TARGET_FACTORY)
- 		pblk_setup_uuid(pblk);
- 
--	atomic64_set(&pblk->user_wa, 0);
--	atomic64_set(&pblk->pad_wa, 0);
--	atomic64_set(&pblk->gc_wa, 0);
--	pblk->user_rst_wa = 0;
--	pblk->pad_rst_wa = 0;
--	pblk->gc_rst_wa = 0;
--
--	atomic64_set(&pblk->nr_flush, 0);
--	pblk->nr_flush_rst = 0;
--
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_set(&pblk->inflight_writes, 0);
- 	atomic_long_set(&pblk->padded_writes, 0);
-@@ -1036,48 +1053,35 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	atomic_long_set(&pblk->write_failed, 0);
- 	atomic_long_set(&pblk->erase_failed, 0);
- 
--	ret = pblk_luns_init(pblk, dev->luns);
--	if (ret) {
--		pr_err("pblk: could not initialize luns\n");
--		goto fail;
--	}
--
--	ret = pblk_lines_init(pblk);
--	if (ret) {
--		pr_err("pblk: could not initialize lines\n");
--		goto fail_free_luns;
--	}
--
--	pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) * sizeof(atomic64_t),
--				 GFP_KERNEL);
--	if (!pblk->pad_dist) {
--		ret = -ENOMEM;
--		goto fail_free_line_meta;
--	}
--
- 	ret = pblk_core_init(pblk);
- 	if (ret) {
- 		pr_err("pblk: could not initialize core\n");
--		goto fail_free_pad_dist;
-+		goto fail;
- 	}
- 
--	ret = pblk_l2p_init(pblk);
-+	ret = pblk_lines_init(pblk);
- 	if (ret) {
--		pr_err("pblk: could not initialize maps\n");
-+		pr_err("pblk: could not initialize lines\n");
- 		goto fail_free_core;
- 	}
- 
--	ret = pblk_lines_configure(pblk, flags);
-+	ret = pblk_rwb_init(pblk);
- 	if (ret) {
--		pr_err("pblk: could not configure lines\n");
--		goto fail_free_l2p;
-+		pr_err("pblk: could not initialize write buffer\n");
-+		goto fail_free_lines;
-+	}
-+
-+	ret = pblk_l2p_init(pblk, flags & NVM_TARGET_FACTORY);
-+	if (ret) {
-+		pr_err("pblk: could not initialize maps\n");
-+		goto fail_free_rwb;
- 	}
- 
- 	ret = pblk_writer_init(pblk);
- 	if (ret) {
- 		if (ret != -EINTR)
- 			pr_err("pblk: could not initialize write thread\n");
--		goto fail_free_lines;
-+		goto fail_free_l2p;
- 	}
- 
- 	ret = pblk_gc_init(pblk);
-@@ -1112,18 +1116,14 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 
- fail_stop_writer:
- 	pblk_writer_stop(pblk);
--fail_free_lines:
--	pblk_lines_free(pblk);
- fail_free_l2p:
- 	pblk_l2p_free(pblk);
-+fail_free_rwb:
-+	pblk_rwb_free(pblk);
-+fail_free_lines:
-+	pblk_lines_free(pblk);
- fail_free_core:
- 	pblk_core_free(pblk);
--fail_free_pad_dist:
--	kfree(pblk->pad_dist);
--fail_free_line_meta:
--	pblk_line_mg_free(pblk);
--fail_free_luns:
--	pblk_luns_free(pblk);
- fail:
- 	kfree(pblk);
- 	return ERR_PTR(ret);
--- 
-2.7.4
+while digging into riscv's locks and atomics to fix the issues discussed
+earlier in this thread, I became aware of another issue:
+
+Considering here the CMPXCHG primitives, for example, I noticed that the
+implementation currently provides the four variants
+
+	ATOMIC_OPS(        , .aqrl)
+	ATOMIC_OPS(_acquire,   .aq)
+	ATOMIC_OPS(_release,   .rl)
+	ATOMIC_OPS(_relaxed,      )
+
+(corresponding, resp., to
+
+	atomic_cmpxchg()
+	atomic_cmpxchg_acquire()
+	atomic_cmpxchg_release()
+	atomic_cmpxchg_relaxed()  )
+
+so that the first variant above ends up doing
+
+	0:	lr.w.aqrl  %0, %addr
+		bne        %0, %old, 1f
+		sc.w.aqrl  %1, %new, %addr
+		bnez       %1, 0b
+        1:                   
+
+>From Sect. 2.3.5. ("Acquire/Release Ordering") of the Spec.,
+
+ "AMOs with both .aq and .rl set are fully-ordered operations.  Treating
+  the load part and the store part as independent RCsc operations is not
+  in and of itself sufficient to enforce full fencing behavior, but this
+  subtle weak behavior is counterintuitive and not much of an advantage
+  architecturally, especially with lr and sc also available [...]."
+
+I understand that
+
+        { x = y = u = v = 0 }
+
+	P0()
+
+	WRITE_ONCE(x, 1);		("relaxed" store, sw)
+	atomic_cmpxchg(&u, 0, 1);
+	r0 = READ_ONCE(y);		("relaxed" load, lw)
+
+	P1()
+
+	WRITE_ONCE(y, 1);
+	atomic_cmpxchg(&v, 0, 1);
+	r1 = READ_ONCE(x);
+
+could result in (u = v = 1 and r0 = r1 = 0) at the end; can you confirm?
+
+Thanks,
+  Andrea
