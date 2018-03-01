@@ -1,84 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031137AbeCAOFE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:05:04 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:57046 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030876AbeCAOFC (ORCPT
+        id S1031156AbeCAOFN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:05:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47154 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1031049AbeCAOFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:05:02 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w21E4o0h022827
-X-Nifty-SrcIP: [209.85.213.48]
-X-Google-Smtp-Source: AG47ELt5v5tgCRRr/od/s1IjmJtn7qi4+r6lVvQuTPQFchusfyBA+j/EpeKurlh2b3BZsmB/f1bZTQiF+aW1NvwOfxY=
+        Thu, 1 Mar 2018 09:05:10 -0500
+Date: Thu, 1 Mar 2018 15:04:20 +0100
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] s390: Use _refcount for pgtables
+In-Reply-To: <20180301125310.jx6c5dypk5axrmum@node.shutemov.name>
+References: <20180228223157.9281-1-willy@infradead.org>
+        <20180228223157.9281-2-willy@infradead.org>
+        <20180301125310.jx6c5dypk5axrmum@node.shutemov.name>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
-References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-3-robh@kernel.org>
- <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
- <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com> <CAL_JsqJKc=-qyeiQuPy_fnEQ0xUV0Cem=5nwjKn-KQrqH_X-ow@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 23:04:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASCbTg1qSzyBQJ7LXGf1ZPOKZvWrOMXLWA+vc=sDjgHpA@mail.gmail.com>
-Message-ID: <CAK7LNASCbTg1qSzyBQJ7LXGf1ZPOKZvWrOMXLWA+vc=sDjgHpA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] kbuild: add dtc as dependency on .dtb files
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030114-0020-0000-0000-000003FD5C30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030114-0021-0000-0000-000042918A85
+Message-Id: <20180301150420.19a14fd3@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010177
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 22:28 GMT+09:00 Rob Herring <robh@kernel.org>:
-> On Wed, Feb 28, 2018 at 11:45 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-03-01 13:33 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->>> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
->>>> If dtc is rebuilt, we should rebuild .dtb files with the new dtc.
->>>>
->>>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> Signed-off-by: Rob Herring <robh@kernel.org>
->>>
->>>
->>> Hmm, I am not 100% sure about this.
->>>
->>> Is there a case where resulted DTBs
->>> depend on DTC version?
->>>
->>>
->>> If I understand correctly,
->>> DTS and DTB are 1:1
->>> Unlike CC, there is no room for optimization.
->>
->>
->> Maybe I was wrong.
->>
->> Is there room for optimization
->> in 'DT strings' section?
->
-> Not sure.
->
->> I guess it is optimized enough to avoid string duplication,
->> but there could be different results
->> without changing the specification.
->
-> What I care about is rebuilding so new warnings get emitted especially
-> when developing those checks. Right now I have to manually delete the
-> dtb files each time.
->
+On Thu, 1 Mar 2018 15:53:10 +0300
+"Kirill A. Shutemov" <kirill@shutemov.name> wrote:
 
-Fair enough.
-Probably, it is better to make sure all DTB are compiled
-by the latest DTC.
-
-Please go ahead.
-Seemed already queued up  :-)
-
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
+> On Wed, Feb 28, 2018 at 02:31:54PM -0800, Matthew Wilcox wrote:
+> > From: Matthew Wilcox <mawilcox@microsoft.com>
+> > 
+> > s390 borrows the storage used for _mapcount in struct page in order to
+> > account whether the bottom or top half is being used for 2kB page
+> > tables.  I want to use that for something else, so use the top byte of
+> > _refcount instead of the bottom byte of _mapcount.  _refcount may
+> > temporarily be incremented by other CPUs that see a stale pointer to
+> > this page in the page cache, but each CPU can only increment it by one,
+> > and there are no systems with 2^24 CPUs today, so they will not change
+> > the upper byte of _refcount.  We do have to be a little careful not to
+> > lose any of their writes (as they will subsequently decrement the
+> > counter).  
+> 
+> Hm. I'm more worried about false-negative put_page_testzero().
+> Are you sure it won't lead to leaks. I cannot say from the code changes.
+> 
+> And for page-table pages should have planty space in other fields.
+> IIRC page->mapping is unused there.
+ 
+2^^24 put_page_testzero calls for page table pages? I don't think so.
 
 -- 
-Best Regards
-Masahiro Yamada
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
