@@ -1,129 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752526AbeCABVW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 20:21:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46590 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751472AbeCABVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 20:21:20 -0500
-Date: Wed, 28 Feb 2018 17:21:44 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 06/10] trace: Eliminate
- cond_resched_rcu_qs() in favor of cond_resched()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20171201192122.GA19301@linux.vnet.ibm.com>
- <1512156104-20104-6-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180224151240.0d63a059@vmware.local.home>
- <20180225174927.GC2855@linux.vnet.ibm.com>
- <20180225181730.GA3963@linux.vnet.ibm.com>
- <20180225183944.GA8840@linux.vnet.ibm.com>
- <20180226212920.43e25d6e@vmware.local.home>
- <20180227153646.GD3777@linux.vnet.ibm.com>
- <20180228181252.55e0590c@vmware.local.home>
+        id S935651AbeCABYm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 20:24:42 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932143AbeCABYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 20:24:41 -0500
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2 1/2] mkfs.f2fs: support hot file extension
+Date: Thu, 1 Mar 2018 09:24:09 +0800
+Message-ID: <20180301012409.93726-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228181252.55e0590c@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030101-0056-0000-0000-000004264A74
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008605; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00996557; UDB=6.00506646; IPR=6.00775880;
- MB=3.00019786; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-01 01:21:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030101-0057-0000-0000-000008684AC7
-Message-Id: <20180301012144.GX3777@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-02-28_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010016
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 06:12:52PM -0500, Steven Rostedt wrote:
-> On Tue, 27 Feb 2018 07:36:46 -0800
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> 
-> > > > --- a/include/linux/sched.h
-> > > > +++ b/include/linux/sched.h
-> > > > @@ -1589,6 +1589,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
-> > > >   */
-> > > >  #ifndef CONFIG_PREEMPT
-> > > >  extern int _cond_resched(void);
-> > > > +#elif defined(CONFIG_TASKS_RCU)
-> > > > +static inline int _cond_resched(void)
-> > > > +{
-> > > > +	rcu_note_voluntary_context_switch(current);
-> > > > +	return 0;
-> > > > +}
-> > > >  #else
-> > > >  static inline int _cond_resched(void) { return 0; }
-> > > >  #endif  
-> > > 
-> > > 
-> > > This does work, but so does the below, without causing cond_resched()
-> > > from being something other than a nop of CONFIG_PREEMPT.  
-> > 
-> > True, but based on the cond_resched_rcu_qs() experience, I bet that
-> > trace_benchmark.c won't be the only place needing help.
-> 
-> Perhaps, still think this is a special case. That said, perhaps
-> cond_resched isn't done in critical locations as it's a place that is
-> explicitly stating that it's OK to schedule.
+This patch adds new option '-E' to accept user configured hot file
+extension, in order to let kernel module handle hot/cold file's datas
+separately better.
 
-Building on your second sentence, when you are running a non-production
-stress test, adding an extra function call and conditional branch to
-cond_resched() should not be a problem.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: fix to add missing f2fs_super_block layout modification.
+ include/f2fs_fs.h       |  5 +--
+ mkfs/f2fs_format.c      | 83 +++++++++++++++++++++++++++++++++----------------
+ mkfs/f2fs_format_main.c | 16 +++++++---
+ 3 files changed, 70 insertions(+), 34 deletions(-)
 
-So how about the (still untested) patch below?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit e9a6ea9fc2542459f9a63cf2b3a0264d09fbc266
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Sun Feb 25 10:40:44 2018 -0800
-
-    EXP sched: Make non-production PREEMPT cond_resched() help Tasks RCU
-    
-    In CONFIG_PREEMPT=y kernels, cond_resched() is a complete no-op, and
-    thus cannot help advance Tasks-RCU grace periods.  However, such grace
-    periods are only an issue in non-production benchmarking runs of the
-    Linux kernel.  This commit therefore makes cond_resched() invoke
-    rcu_note_voluntary_context_switch() for kernels implementing Tasks RCU
-    even in CONFIG_PREEMPT=y kernels.
-    
-    Reported-by: Steven Rostedt <rostedt@goodmis.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b161ef8a902e..970dadefb86f 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1589,6 +1589,12 @@ static inline int test_tsk_need_resched(struct task_struct *tsk)
-  */
- #ifndef CONFIG_PREEMPT
- extern int _cond_resched(void);
-+#elif defined(CONFIG_TRACEPOINT_BENCHMARK)
-+static inline int _cond_resched(void)
-+{
-+	rcu_note_voluntary_context_switch(current);
-+	return 0;
-+}
- #else
- static inline int _cond_resched(void) { return 0; }
- #endif
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index ca4522d54de2..be0a2da8f950 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -347,7 +347,7 @@ struct f2fs_configuration {
+ 	int32_t dump_fd;
+ 	struct device_info devices[MAX_DEVICES];
+ 	int ndevs;
+-	char *extension_list;
++	char *extension_list[2];
+ 	const char *rootdev_name;
+ 	int dbg_lv;
+ 	int show_dentry;
+@@ -614,7 +614,8 @@ struct f2fs_super_block {
+ 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+-	__u8 reserved[315];		/* valid reserved region */
++	__u8 hot_ext_count;		/* # of hot file extension */
++	__u8 reserved[314];		/* valid reserved region */
+ } __attribute__((packed));
+ 
+ /*
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c9492f6bc986..3e20b8fc7bd1 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
+ 	NULL
+ };
+ 
++const char *hot_ext_lists[] = {
++	NULL
++};
++
++const char **default_ext_list[] = {
++	media_ext_lists,
++	hot_ext_lists
++};
++
+ static bool is_extension_exist(const char *name)
+ {
+ 	int i;
+@@ -83,44 +92,64 @@ static bool is_extension_exist(const char *name)
+ 
+ static void cure_extension_list(void)
+ {
+-	const char **extlist = media_ext_lists;
+-	char *ext_str = c.extension_list;
++	const char **extlist;
++	char *ext_str;
+ 	char *ue;
+ 	int name_len;
+-	int i = 0;
++	int i, pos = 0;
+ 
+ 	set_sb(extension_count, 0);
+ 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
+ 
+-	while (*extlist) {
+-		name_len = strlen(*extlist);
+-		memcpy(sb->extension_list[i++], *extlist, name_len);
+-		extlist++;
+-	}
+-	set_sb(extension_count, i);
+-
+-	if (!ext_str)
+-		return;
++	for (i = 0; i < 2; i++) {
++		ext_str = c.extension_list[i];
++		extlist = default_ext_list[i];
+ 
+-	/* add user ext list */
+-	ue = strtok(ext_str, ", ");
+-	while (ue != NULL) {
+-		name_len = strlen(ue);
+-		if (name_len >= 8) {
+-			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
+-			goto next;
++		while (*extlist) {
++			printf("default: i:%u, extlist:%s\n", i, *extlist);
++			name_len = strlen(*extlist);
++			memcpy(sb->extension_list[pos++], *extlist, name_len);
++			extlist++;
+ 		}
+-		if (!is_extension_exist(ue))
+-			memcpy(sb->extension_list[i++], ue, name_len);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);;
++		if (i == 1)
++			printf("1hot count:%d\n", sb->hot_ext_count);
++		else
++			printf("1cold count:%d\n", get_sb(extension_count));
++		if (!ext_str)
++			continue;
++
++		/* add user ext list */
++		ue = strtok(ext_str, ", ");
++		while (ue != NULL) {
++			printf("private: i:%u, extlist:%s\n", i, ue);
++			name_len = strlen(ue);
++			if (name_len >= 8) {
++				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
++				goto next;
++			}
++			if (!is_extension_exist(ue))
++				memcpy(sb->extension_list[pos++], ue, name_len);
+ next:
+-		ue = strtok(NULL, ", ");
+-		if (i >= F2FS_MAX_EXTENSION)
+-			break;
+-	}
++			ue = strtok(NULL, ", ");
++			if (pos >= F2FS_MAX_EXTENSION)
++				break;
++		}
+ 
+-	set_sb(extension_count, i);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);
++		if (i == 1)
++			printf("2hot count:%d\n", sb->hot_ext_count);
++		else
++			printf("2cold count:%d\n", get_sb(extension_count));
+ 
+-	free(c.extension_list);
++		free(c.extension_list[i]);
++	}
+ }
+ 
+ static void verify_cur_segs(void)
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 120eeba91007..4a52a24cd297 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -44,7 +44,8 @@ static void mkfs_usage()
+ 	MSG(0, "  -a heap-based allocation [default:0]\n");
+ 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+-	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
+ 	MSG(0, "  -f force overwrite the exist filesystem\n");
+ 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
+ 	MSG(0, "  -l label\n");
+@@ -69,8 +70,10 @@ static void f2fs_show_info()
+ 		MSG(0, "Info: Disable heap-based policy\n");
+ 
+ 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
+-	if (c.extension_list)
+-		MSG(0, "Info: Add new extension list\n");
++	if (c.extension_list[0])
++		MSG(0, "Info: Add new cold file extension list\n");
++	if (c.extension_list[1])
++		MSG(0, "Info: Add new hot file extension list\n");
+ 
+ 	if (c.vol_label)
+ 		MSG(0, "Info: Label = %s\n", c.vol_label);
+@@ -103,7 +106,7 @@ static void parse_feature(const char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
++	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -131,7 +134,10 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			c.dbg_lv = atoi(optarg);
+ 			break;
+ 		case 'e':
+-			c.extension_list = strdup(optarg);
++			c.extension_list[0] = strdup(optarg);
++			break;
++		case 'E':
++			c.extension_list[1] = strdup(optarg);
+ 			break;
+ 		case 'i':
+ 			c.large_nat_bitmap = 1;
+-- 
+2.15.0.55.gc2ece9dc4de6
