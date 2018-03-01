@@ -1,67 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966972AbeCAJcW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:32:22 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966675AbeCAJcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:32:19 -0500
-Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
- <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
- <47808b6f-9e6d-1f17-c26b-3e03d1f1e2ca@linux.vnet.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <dcb6e922-6349-9932-c9be-ff8581ba0259@redhat.com>
-Date: Thu, 1 Mar 2018 10:32:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S966983AbeCAJdn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:33:43 -0500
+Received: from ozlabs.org ([103.22.144.67]:58899 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966675AbeCAJdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:33:41 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/21] powerpc: Remove warning on array size when empty
+In-Reply-To: <CA+7wUsxsZrjHY8=TSUiMEgGMm72XyQRW47b7oqNjFGeFKLMd+w@mail.gmail.com>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-2-malat@debian.org> <87woyw8pxe.fsf@concordia.ellerman.id.au> <CA+7wUsxsZrjHY8=TSUiMEgGMm72XyQRW47b7oqNjFGeFKLMd+w@mail.gmail.com>
+Date: Thu, 01 Mar 2018 20:33:38 +1100
+Message-ID: <87a7vs87il.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <47808b6f-9e6d-1f17-c26b-3e03d1f1e2ca@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mathieu Malaterre <malat@debian.org> writes:
 
->>> +EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
->>> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
->>> index 1b5621f..3142541 100644
->>> --- a/arch/s390/kvm/kvm-s390.h
->>> +++ b/arch/s390/kvm/kvm-s390.h
->>> @@ -18,6 +18,7 @@
->>>   #include <asm/facility.h>
->>>   #include <asm/processor.h>
->>>   #include <asm/sclp.h>
->>> +#include <asm/ap.h>
->>>   
->>>   /* Transactional Memory Execution related macros */
->>>   #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
->>>
->> What about VSIE?
-> That is a good question. I'm beginning to think introducing AP on second 
-> level guests
-> ought to be postponed for now. I'm going to look into this further.
+> On Thu, Mar 1, 2018 at 3:55 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> Mathieu Malaterre <malat@debian.org> writes:
 >>
+>>> When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
+>>> array feature_properties is defined as an empty array, which in turn
+>>> triggers the following warning (treated as error on W=1):
+>>>
+>>>   CC      arch/powerpc/kernel/prom.o
+>>> arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
+>>> arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
+>>>   for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+>>>                 ^
+>>> cc1: all warnings being treated as errors
+>>
+>> Ugh, that's annoying.
+>>
+>> This seems to work?
+>>
+>> diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+>> index 4dffef947b8a..5215119e249c 100644
+>> --- a/arch/powerpc/kernel/prom.c
+>> +++ b/arch/powerpc/kernel/prom.c
+>> @@ -291,11 +291,11 @@ static inline void identical_pvr_fixup(unsigned long node)
+>>
+>>  static void __init check_cpu_feature_properties(unsigned long node)
+>>  {
+>> -       unsigned long i;
+>>         struct feature_property *fp = feature_properties;
+>>         const __be32 *prop;
+>> +       int i;
+>>
+>> -       for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+>> +       for (i = 0; i < (int)ARRAY_SIZE(feature_properties); ++i, ++fp) {
+>>                 prop = of_get_flat_dt_prop(node, fp->name, NULL);
+>>                 if (prop && be32_to_cpup(prop) >= fp->min_value) {
+>>                         cur_cpu_spec->cpu_features |= fp->cpu_feature;
+>>
+>
+> Indeed that looks like the less invasive solution, I'll re-submit.
 
-Once you provide AP support to the guest, vSIE also has to be in place.
+Thanks.
 
-But don't worry about vSIE, I think I know what we have to do.
+> Should I resubmit the entire patch series (21 indep patches) or
+> re-submit only the 3 patches that were discussed (as part of a
+> different series) ?
 
--- 
+Just resubmit the ones that need changes. You can either send them as a
+new series of 3, or post each as a reply to the original patch with v2
+in the subject.
 
-Thanks,
-
-David / dhildenb
+cheers
