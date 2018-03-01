@@ -1,147 +1,108 @@
-Return-Path: <maran.wilson@oracle.com>
-X-Google-Smtp-Source: AG47ELuWZYkBWyS2C3sxsV9jenJNOy/9bGrvAaGupGbgLnzWJXrrbE6JwSdypkFrh8oIXTvHhkE1
-ARC-Seal: i=1; a=rsa-sha256; t=1521573583; cv=none;
+Return-Path: <boris.ostrovsky@oracle.com>
+X-Google-Smtp-Source: AG47ELvZkayJKntsoYrOB9ySDwXIuvPK57nH8WuvXjmTLx0Hy48Ny5CUzV1V773p5t16EBTcf24j
+ARC-Seal: i=1; a=rsa-sha256; t=1519920284; cv=none;
         d=google.com; s=arc-20160816;
-        b=cGRGPD6qqK8EpZkhJSHoZgYPgKoNEbITysEzg313Te4iMP1luvMWyq19bO3nGJfG9Z
-         fwfQYqFFWuc1I9Ow/3xcLwXceKcf1YnxNA7DxRMZJrJmjZmghBC8aEgm//KQXXM+5gki
-         5Q0MZfyErR/iaE6cYpJGfC4dAOepy800GilZptVRxj0nPK9l8n1IJfRMuL+OlS2CShfP
-         /6fqc7rXItNRoisEmKW+0FPbM9diaWQZmvwzjQ57mF6WQeVP0sLr+U6ykBsxJFLumqF+
-         WbuE3Pt8VWViMyCdhDGceuxJSRNKNJ8Ho9oWwREtNlP4DNWtGJ1lBJFhVcVTUD2rvU3X
-         Z+tg==
+        b=zfgSPoEoBnSjKrpyaChkKsPBRB4ZAnYOwQpbJED/kZvSDmK0dAE28AMsvUqswSRcjK
+         PPEAA4HvrOG3otUo7hc/eTziKlC0cjbz570jUD2rHcqpd6vdUlod3spq8HQ98RO5txZl
+         Z9Tn04YLDNE/BreJGlc00rMlpGi51gp1kCeLZSNjk7JKPE5IL/D/xcPKphvajPk0CGiJ
+         YixKansrsVCWbgGZAv3L+uHwDN7GmYref/B6gHdVaQZC8jj7RHxTIuCagj4xs+06rGgF
+         kkBWEcC8mBtjG3Nk18v8IzcUPL09IP24vvZFyvdaV65ZbIUFzmfkV9mSQ0SWee0dQ3Eo
+         +3HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :dkim-signature:arc-authentication-results;
-        bh=h1giV71u09hqPVuHgYXA6LO+pZSIAQQuYSal9cT9DNM=;
-        b=WiPOqk9OyQXa1T+FPMSLcB6V6LVuWfLcUr9KCBY3QtEuLCEk6+qDuvvU7w57D295CX
-         qheTldCiI4vcovzafGcRjhhBMa+P+xgJsb5/pgi0xxKTZyQnGuKeXOYgig9liPayeLyY
-         7nTmmDVJ9A87jO1AhXIZPTva63RQ3MN9R+qSLhm9pqHfp2qEU/H4YOQ2gUNmhoCWGKPR
-         gPaLnqLncCco+8cqWuArokn92VPbnsH4tSecbHRO+jozDDP0XVPhipb11ApNnwQ8BA9O
-         sqYHzR9ML60u3grGTlSpg7Y5eJw/NEOp3OsGwYBwx+TFGWi4o0IdfR9m5kuAYnlImAIC
-         AMLA==
+        bh=JNB4nXngZDIovGn/Utr8fGSpQOuO6ht3KZdsxVhOzz0=;
+        b=Wk6NP0om6Tkjuk418jVLj0Mbs4Q+NkZy+cezhc6fsfKP8pCb8g0NGw23l88DW26kpx
+         VrEgo6u/9rv8rIVrBuAnQ7Jptg4Q7YwG5vE04TvrcHdXmr2XyMWCFFaP/7rAYiKBqX1x
+         W5orBdk5IjaOWi6q+9TRkz3CVjx3iuqC52k+bdRMeyCkM6HGAQptDkvJ4+KgSE27fogy
+         VRwPHMElSmDq8lyW+7olpbr6ai9Cw/Nq9g0jsEmMaDKIbZF8m8lhQ3GdGziKUZKqVmcZ
+         c7848PFRKFlyIbC1wdmOw8Oe7Vqnq4Vg7yLXnH5ThH18pm1OmuXZxDO6Cd3hsOlJcf5u
+         1p1A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CFoPQU9I;
-       spf=pass (google.com: domain of maran.wilson@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=maran.wilson@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=E0IzK1uG;
+       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=CFoPQU9I;
-       spf=pass (google.com: domain of maran.wilson@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=maran.wilson@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=E0IzK1uG;
+       spf=pass (google.com: domain of boris.ostrovsky@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=boris.ostrovsky@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        boris.ostrovsky@oracle.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, mchehab@kernel.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org, roger.pau@citrix.com,
-        rkrcmar@redhat.com, maran.wilson@oracle.com
-Subject: [PATCH v5 2/7] xen/pvh: Move PVH entry code out of Xen specific tree
-Date: Tue, 20 Mar 2018 12:18:54 -0700
-Message-Id: <1521573534-17382-1-git-send-email-maran.wilson@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
-References: <1521573369-17216-1-git-send-email-maran.wilson@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+Subject: Re: [RFC PATCH v4 4/7] xen/pvh: Move Xen specific PVH VM
+ initialization out of common code
+To: Maran Wilson <maran.wilson@oracle.com>, pbonzini@redhat.com,
+        jgross@suse.com, roger.pau@citrix.com, andrew.cooper3@citrix.com,
+        hch@infradead.org, JBeulich@suse.com, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, rkrcmar@redhat.com,
+        jpoimboe@redhat.com, bp@suse.de, kirill.shutemov@linux.intel.com,
+        thomas.lendacky@amd.com, luto@kernel.org, dave.hansen@linux.intel.com,
+        davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org
+References: <1519842483-8887-1-git-send-email-maran.wilson@oracle.com>
+ <1519842483-8887-5-git-send-email-maran.wilson@oracle.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <d9b1e5ef-af73-d2cb-0f3d-f41cdc8f35cd@oracle.com>
+Date: Thu, 1 Mar 2018 11:05:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519842483-8887-5-git-send-email-maran.wilson@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+ engine=8.0.1-1711220000 definitions=main-1803010200
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595485541993170929?=
-X-GMAIL-MSGID: =?utf-8?q?1595485541993170929?=
+X-GMAIL-THRID: =?utf-8?q?1593670492940069413?=
+X-GMAIL-MSGID: =?utf-8?q?1593751931904735007?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Once hypervisors other than Xen start using the PVH entry point for
-starting VMs, we would like the option of being able to compile PVH entry
-capable kernels without enabling CONFIG_XEN and all the code that comes
-along with that. To allow that, we are moving the PVH code out of Xen and
-into files sitting at a higher level in the tree.
+On 02/28/2018 01:28 PM, Maran Wilson wrote:
+> We need to refactor PVH entry code so that support for other hypervisors
+> like Qemu/KVM can be added more easily.
+>
+> This patch moves the small block of code used for initializing Xen PVH
+> virtual machines into the Xen specific file. This initialization is not
+> going to be needed for Qemu/KVM guests. Moving it out of the common file
+> is going to allow us to compile kernels in the future without CONFIG_XEN
+> that are still capable of being booted as a Qemu/KVM guest via the PVH
+> entry point.
+>
+> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+> ---
+>  arch/x86/pvh.c               | 28 ++++++++++++++++++++--------
+>  arch/x86/xen/enlighten_pvh.c | 18 +++++++++++++++++-
+>  2 files changed, 37 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/pvh.c b/arch/x86/pvh.c
+> index b56cb5e7d6ac..2d7a7f4958cb 100644
+> --- a/arch/x86/pvh.c
+> +++ b/arch/x86/pvh.c
+> @@ -72,26 +72,38 @@ static void __init init_pvh_bootparams(void)
+>  	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
+>  }
+>  
+> +/*
+> + * If we are trying to boot a Xen PVH guest, it is expected that the kernel
+> + * will have been configured to provide the required override for this routine.
+> + */
+> +void __init __weak xen_pvh_init(void)
+> +{
+> +	xen_raw_printk("Error: Missing xen PVH initialization\n");
 
-This patch is not introducing any code or functional changes, just moving
-files from one location to another.
+I think this should be printk (or, more precisely, this should not be
+xen_raw_printk()): we are here because we are *not* a Xen guest and so
+Xen-specific printk will not work. (and the same is true for the next
+patch where weak mem_map_via_hcall() is added).
 
-Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
- MAINTAINERS                                                | 1 +
- arch/x86/Kbuild                                            | 2 ++
- arch/x86/platform/pvh/Makefile                             | 5 +++++
- arch/x86/{xen/enlighten_pvh.c => platform/pvh/enlighten.c} | 0
- arch/x86/{xen/xen-pvh.S => platform/pvh/head.S}            | 0
- arch/x86/xen/Makefile                                      | 3 ---
- 6 files changed, 8 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/platform/pvh/Makefile
- rename arch/x86/{xen/enlighten_pvh.c => platform/pvh/enlighten.c} (100%)
- rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
+-boris
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93a12af4f180..58a836f39ad4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15210,6 +15210,7 @@ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git
- S:	Supported
- F:	arch/x86/xen/
-+F:	arch/x86/platform/pvh/
- F:	drivers/*/xen-*front.c
- F:	drivers/xen/
- F:	arch/x86/include/asm/xen/
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index 0038a2d10a7a..2089e4414300 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -7,6 +7,8 @@ obj-$(CONFIG_KVM) += kvm/
- # Xen paravirtualization support
- obj-$(CONFIG_XEN) += xen/
- 
-+obj-$(CONFIG_XEN_PVH) += platform/pvh/
-+
- # Hyper-V paravirtualization support
- obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
- 
-diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
-new file mode 100644
-index 000000000000..9fd25efcd2a3
---- /dev/null
-+++ b/arch/x86/platform/pvh/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+OBJECT_FILES_NON_STANDARD_head.o := y
-+
-+obj-$(CONFIG_XEN_PVH) += enlighten.o
-+obj-$(CONFIG_XEN_PVH) += head.o
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/platform/pvh/enlighten.c
-similarity index 100%
-rename from arch/x86/xen/enlighten_pvh.c
-rename to arch/x86/platform/pvh/enlighten.c
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/platform/pvh/head.S
-similarity index 100%
-rename from arch/x86/xen/xen-pvh.S
-rename to arch/x86/platform/pvh/head.S
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index d83cb5478f54..f1b850607212 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- OBJECT_FILES_NON_STANDARD_xen-asm_$(BITS).o := y
--OBJECT_FILES_NON_STANDARD_xen-pvh.o := y
- 
- ifdef CONFIG_FUNCTION_TRACER
- # Do not profile debug and lowlevel utilities
-@@ -21,7 +20,6 @@ obj-y		:= enlighten.o multicalls.o mmu.o irq.o \
- obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o mmu_hvm.o suspend_hvm.o
- obj-$(CONFIG_XEN_PV)			+= setup.o apic.o pmu.o suspend_pv.o \
- 						p2m.o enlighten_pv.o mmu_pv.o
--obj-$(CONFIG_XEN_PVH)			+= enlighten_pvh.o
- 
- obj-$(CONFIG_EVENT_TRACING) += trace.o
- 
-@@ -33,4 +31,3 @@ obj-$(CONFIG_XEN_DEBUG_FS)	+= debugfs.o
- obj-$(CONFIG_XEN_DOM0)		+= vga.o
- obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
- obj-$(CONFIG_XEN_EFI)		+= efi.o
--obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
--- 
-2.16.1
+
+> +	BUG();
+> +}
+>
