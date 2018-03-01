@@ -1,38 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967774AbeCALYo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:24:44 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34020 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S967673AbeCALYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:24:42 -0500
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <26787.1519902415@warthog.procyon.org.uk>
-References: <26787.1519902415@warthog.procyon.org.uk>
-To: sfr@canb.auug.org.au
-Cc: dhowells@redhat.com, jmorris@namei.org, ard.biesheuvel@linaro.org,
-        jforbes@redhat.com, mjg59@google.com,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mtk.manpages@gmail.com
-Subject: Re: linux-next: UEFI Secure boot lockdown patchset
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7295.1519903479.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date: Thu, 01 Mar 2018 11:24:39 +0000
-Message-ID: <7296.1519903479@warthog.procyon.org.uk>
+        id S1030260AbeCALcl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:32:41 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36718 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967708AbeCALci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 06:32:38 -0500
+X-Google-Smtp-Source: AG47ELtt+FXJmnCf37OTGf5upyPV0FpdSnmA8tsvHPlo7n0gXdj7V45yaE0SdMR0IbXLtNJe9DTYrg==
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH v3] net: iucv: Free memory obtained by kzalloc
+Date: Thu,  1 Mar 2018 17:01:57 +0530
+Message-Id: <1519903917-11575-1-git-send-email-arvind.yadav.cs@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I forgot to include the branch URL:
+Free memory by calling put_device(), if afiucv_iucv_init is not
+successful.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=efi-lock-down
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+---
+changes in v2:
+             Calling put_device() before kfree().
+changes in v3:
+             No need to call kfree(). So removed kfree().
 
-Thanks for spotting that, Ard!
+ net/iucv/af_iucv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-David
+diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+index 1e8cc7b..9e2643a 100644
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
+ 	af_iucv_dev->driver = &af_iucv_driver;
+ 	err = device_register(af_iucv_dev);
+ 	if (err)
+-		goto out_driver;
++		goto out_iucv_dev;
+ 	return 0;
+ 
++out_iucv_dev:
++	put_device(af_iucv_dev);
+ out_driver:
+ 	driver_unregister(&af_iucv_driver);
+ out_iucv:
+-- 
+1.9.1
