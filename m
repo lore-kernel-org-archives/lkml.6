@@ -1,55 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033110AbeCAQja (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:39:30 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35226 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032988AbeCAQj2 (ORCPT
+        id S1033144AbeCAQjh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:39:37 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51523 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033113AbeCAQjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:39:28 -0500
-X-Google-Smtp-Source: AG47ELv5SuHdhZoeMBF4tM4a1yHv132290FTzJeb3rj7CG9WtkYxp4RNcFQV+OmzeTigAvdiwAUxZQ==
+        Thu, 1 Mar 2018 11:39:31 -0500
+X-Google-Smtp-Source: AG47ELuBP8gOtraCCc/N32EfmS8bFx+uWMfx/aMl4p67BKNkZR2nPIK0RjguCh7PBdfgz4cEYboolw==
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To: wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         jassisinghbrar@gmail.com, andy.shevchenko@gmail.com,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v4 0/2] add support for Socionext SynQuacer I2C controller
-Date: Thu,  1 Mar 2018 16:38:13 +0000
-Message-Id: <20180301163815.30595-1-ard.biesheuvel@linaro.org>
+Subject: [PATCH v4 1/2] dt-bindings: i2c: add binding for Socionext SynQuacer I2C
+Date: Thu,  1 Mar 2018 16:38:14 +0000
+Message-Id: <20180301163815.30595-2-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180301163815.30595-1-ard.biesheuvel@linaro.org>
+References: <20180301163815.30595-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
-SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
+Add a binding for the I2C controller that can be found in the Socionext
+SynQuacer SoC.
 
-v4:
-- clarify binding that only a single interrupt specifier is expected (#1)
-- check return value of clk_prepare_enable() on probe path (#2)
-- add Andy's R-b to patch #2
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ Documentation/devicetree/bindings/i2c/i2c-synquacer.txt | 29 ++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-v3:
-- incorporate more of Andy's review comments (#2), especially regarding the
-  bus speed and clock source handling for ACPI
-- patch #1 unchanged.
-
-v2:
-- incorporate Andy's review comments (#2)
-- patch #1 unchanged.
-
-Ard Biesheuvel (2):
-  dt-bindings: i2c: add binding for Socionext SynQuacer I2C
-  i2c: add support for Socionext SynQuacer I2C controller
-
- Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
- drivers/i2c/busses/Kconfig                              |  10 +
- drivers/i2c/busses/Makefile                             |   1 +
- drivers/i2c/busses/i2c-synquacer.c                      | 792 ++++++++++++++++++++
- 4 files changed, 832 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
- create mode 100644 drivers/i2c/busses/i2c-synquacer.c
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
+new file mode 100644
+index 000000000000..72f4a2f0fedc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
+@@ -0,0 +1,29 @@
++Socionext SynQuacer I2C
++
++Required properties:
++- compatible      : Must be "socionext,synquacer-i2c"
++- reg             : Offset and length of the register set for the device
++- interrupts      : A single interrupt specifier
++- #address-cells  : Must be <1>;
++- #size-cells     : Must be <0>;
++- clock-names     : Must contain "pclk".
++- clocks          : Must contain an entry for each name in clock-names.
++                    (See the common clock bindings.)
++
++Optional properties:
++- clock-frequency : Desired I2C bus clock frequency in Hz. As only Normal and
++                    Fast modes are supported, possible values are 100000 and
++                    400000.
++
++Example :
++
++    i2c@51210000 {
++        compatible = "socionext,synquacer-i2c";
++        reg = <0x51210000 0x1000>;
++        interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        clock-names = "pclk";
++        clocks = <&clk_i2c>;
++        clock-frequency = <400000>;
++    };
 -- 
 2.11.0
