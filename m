@@ -1,74 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031751AbeCAPHT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:07:19 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40224 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1031350AbeCAPHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:07:18 -0500
-Date: Thu, 1 Mar 2018 16:07:14 +0100
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.vnet.ibm.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] vfio-ccw: fence off transport mode
-Message-ID: <20180301160714.22c8113d.cohuck@redhat.com>
-In-Reply-To: <95c1554e-ada3-f6db-62aa-f04e42a0ae09@linux.vnet.ibm.com>
-References: <20180222153959.31272-1-cohuck@redhat.com>
-        <20180222153959.31272-2-cohuck@redhat.com>
-        <95c1554e-ada3-f6db-62aa-f04e42a0ae09@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1031767AbeCAPJL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:09:11 -0500
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:50411 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031666AbeCAPJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 10:09:07 -0500
+X-Google-Smtp-Source: AG47ELtvUDtH5OxlDcBqmHuRp2/IoZJJAlib6JxDS89GCGpu4sC+roGJAxBtBgYHr2IDqKWbIEDEVw==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: refactor init/exit sequences
+Date: Thu,  1 Mar 2018 16:08:55 +0100
+Message-Id: <1519916936-30079-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 15:51:05 +0100
-Halil Pasic <pasic@linux.vnet.ibm.com> wrote:
+The init/exit sequences have grown in a very bad way. Refactor them to
+eliminate dependencies across initialization modules.
 
-> On 02/22/2018 04:39 PM, Cornelia Huck wrote:
-> > vfio-ccw only supports command mode for channel programs, not transport
-> > mode. User space is supposed to already take care of that and pass us
-> > command-mode ORBs only, but better make sure and return an error to
-> > the caller instead of trying to process tcws as ccws.
-> > 
-> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>  
-> 
-> Acked-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+One of these dependencies caused a bad double free when introducing a
+preparation patch for 2.0 bad block identification. This was reported by
+Dan Carpenter and 0-DAY.
 
-Thanks!
+Matias,
 
-> 
-> > ---
-> >  drivers/s390/cio/vfio_ccw_fsm.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
-> > index c30420c517b1..ff6963ad6e39 100644
-> > --- a/drivers/s390/cio/vfio_ccw_fsm.c
-> > +++ b/drivers/s390/cio/vfio_ccw_fsm.c
-> > @@ -124,6 +124,11 @@ static void fsm_io_request(struct vfio_ccw_private *private,
-> >  	if (scsw->cmd.fctl & SCSW_FCTL_START_FUNC) {
-> >  		orb = (union orb *)io_region->orb_area;
-> > 
-> > +		/* Don't try to build a cp if transport mode is specified. */
-> > +		if (orb->tm.b) {
-> > +			io_region->ret_code = -EOPNOTSUPP;  
-> 
-> I guess now we communicate this as appropriately as possible.
+Since you have not send the PR to Jens, please squash this patch with:
+    lightnvm: pblk: refactor bad block identification
 
-Yes. We certainly only want to return an error to user space; it is
-their responsibility to correctly reflect that to the guest (and even
-more their responsibility to not present us with a transport orb in the
-first place...)
+You will notice that I had queued this patch on the 2.0 series. I did
+the rebase now, which is probably what I should have done from the
+beginning. Since I'll be sending a V5 for it, this should not be a
+problem.
 
-> 
-> > +			goto err_out;
-> > +		}
-> >  		io_region->ret_code = cp_init(&private->cp, mdev_dev(mdev),
-> >  					      orb);
-> >  		if (io_region->ret_code)
-> >   
-> 
+Thanks,
+Javier
+
+Javier González (1):
+  lightnvm: pblk: refactor init/exit sequences
+
+ drivers/lightnvm/pblk-init.c | 412 +++++++++++++++++++++----------------------
+ 1 file changed, 206 insertions(+), 206 deletions(-)
+
+-- 
+2.7.4
