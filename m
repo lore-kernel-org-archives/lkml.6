@@ -1,112 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030953AbeCANos (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:44:48 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36902 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030760AbeCANop (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:44:45 -0500
-X-Google-Smtp-Source: AG47ELtn2eznVSQt+epE0R1thqi1/p63ETEjzmRY2eG0fLq2HCiu4t7FeD+9M7JtaaBqOjPhBErfXg==
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
- <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
- <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
- <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
- <028b0ba5-33b9-d12e-77ba-aebbfa91a5fb@gmail.com>
-Message-ID: <0aa21b3e-0ace-33d5-31ec-ecd7bb36b1d0@gmail.com>
-Date: Thu, 1 Mar 2018 16:44:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1030979AbeCANpP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:45:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59538 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030801AbeCANpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 08:45:14 -0500
+Date: Thu, 1 Mar 2018 14:45:12 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 1/3] mm/free_pcppages_bulk: update pcp->count inside
+Message-ID: <20180301134512.GI15057@dhcp22.suse.cz>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-2-aaron.lu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <028b0ba5-33b9-d12e-77ba-aebbfa91a5fb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301062845.26038-2-aaron.lu@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.03.2018 16:19, Dmitry Osipenko wrote:
-> On 01.03.2018 10:41, Peter De Schrijver wrote:
->> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
->>> On 28.02.2018 17:14, Peter De Schrijver wrote:
->>>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
->>>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
->>>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->>>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>>>>>>> which
->>>>>>>>>> leaves it at some default rate of 500 kHz:
->>>>>>>>>>
->>>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>>>>>>> pll_u
->>>>>>>>>>        pll_u                  3        3        0      500000      
->>>>>>>>>>     0
->>>>>>>>>>
->>>>>>>>>> Of course this won't quite work leading to the following messages:
->>>>>>>>>>
->>>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>>>>>>> tegra-
->>>>>>>>>> ehci
->>>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>>>>>>> tegra-
->>>>>>>>>> ehci
->>>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>>>>>>> tegra-
->>>>>>>>>> ehci
->>>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>>>>>>> tegra-
->>>>>>>>>> ehci
->>>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>>>>>>
->>>>>>>>>> Fix this by actually allowing the rate also being set from within
->>>>>>>>>> the Linux kernel.
->>>>>>
->>>>>> I think the best solution to this problem would be to make pll_u a fixed
->>>>>> clock and enable it and program the rate if it's not enabled at boot.
->>>>>
->>>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
->>>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
->>>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
->>>>> there.
->>>>>
->>>>
->>>> AFAIK we only use one rate ever?
->>>
->>> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
->>> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
->>>
->>
->> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
->> it a fixed clock and handle the init at kernel boot depending on what the
->> bootloader has done.
+On Thu 01-03-18 14:28:43, Aaron Lu wrote:
+> Matthew Wilcox found that all callers of free_pcppages_bulk() currently
+> update pcp->count immediately after so it's natural to do it inside
+> free_pcppages_bulk().
 > 
-> We can, I just don't think you can demand from Mark to do it. This patch is fine
-> on its own, everything else could be done later.
-I meant Marcel.
+> No functionality or performance change is expected from this patch.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+
+Makes a lot of sense to me.
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/page_alloc.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cb416723538f..faa33eac1635 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1148,6 +1148,7 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+>  			page = list_last_entry(list, struct page, lru);
+>  			/* must delete as __free_one_page list manipulates */
+>  			list_del(&page->lru);
+> +			pcp->count--;
+>  
+>  			mt = get_pcppage_migratetype(page);
+>  			/* MIGRATE_ISOLATE page should not go to pcplists */
+> @@ -2416,10 +2417,8 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+>  	local_irq_save(flags);
+>  	batch = READ_ONCE(pcp->batch);
+>  	to_drain = min(pcp->count, batch);
+> -	if (to_drain > 0) {
+> +	if (to_drain > 0)
+>  		free_pcppages_bulk(zone, to_drain, pcp);
+> -		pcp->count -= to_drain;
+> -	}
+>  	local_irq_restore(flags);
+>  }
+>  #endif
+> @@ -2441,10 +2440,8 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+>  	pset = per_cpu_ptr(zone->pageset, cpu);
+>  
+>  	pcp = &pset->pcp;
+> -	if (pcp->count) {
+> +	if (pcp->count)
+>  		free_pcppages_bulk(zone, pcp->count, pcp);
+> -		pcp->count = 0;
+> -	}
+>  	local_irq_restore(flags);
+>  }
+>  
+> @@ -2668,7 +2665,6 @@ static void free_unref_page_commit(struct page *page, unsigned long pfn)
+>  	if (pcp->count >= pcp->high) {
+>  		unsigned long batch = READ_ONCE(pcp->batch);
+>  		free_pcppages_bulk(zone, batch, pcp);
+> -		pcp->count -= batch;
+>  	}
+>  }
+>  
+> -- 
+> 2.14.3
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
