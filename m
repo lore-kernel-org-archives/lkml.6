@@ -1,86 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162824AbeCAXAR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:00:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52280 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1162747AbeCAXAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:00:14 -0500
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
- Memory
-From: Benjamin Herrenschmidt <benh@au1.ibm.com>
-Reply-To: benh@au1.ibm.com
-To: Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-Date: Fri, 02 Mar 2018 10:00:04 +1100
-In-Reply-To: <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
+        id S1162844AbeCAXAi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:00:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162828AbeCAXAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:00:36 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39832177C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 1 Mar 2018 17:00:32 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 01/10] PCI/P2PDMA: Support peer to peer memory
+Message-ID: <20180301230032.GA74737@bhelgaas-glaptop.roam.corp.google.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
-         <1519876489.4592.3.camel@kernel.crashing.org>
-         <1519876569.4592.4.camel@au1.ibm.com>
-         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
-         <1519936477.4592.23.camel@au1.ibm.com>
-         <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
-         <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
-         <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030123-0040-0000-0000-00000419A6F2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030123-0041-0000-0000-0000261CAC79
-Message-Id: <1519945204.4592.45.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010279
+ <20180228234006.21093-2-logang@deltatee.com>
+ <20180301173752.GE13722@bhelgaas-glaptop.roam.corp.google.com>
+ <b81503c2-9f07-b5f6-df06-64d1fdc53386@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b81503c2-9f07-b5f6-df06-64d1fdc53386@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 14:57 -0700, Logan Gunthorpe wrote:
+On Thu, Mar 01, 2018 at 11:55:51AM -0700, Logan Gunthorpe wrote:
+> Hi Bjorn,
 > 
-> On 01/03/18 02:45 PM, Logan Gunthorpe wrote:
-> > It handles it fine for many situations. But when you try to map 
-> > something that is at the end of the physical address space then the 
-> > spares-vmemmap needs virtual address space that's the size of the 
-> > physical address space divided by PAGE_SIZE which may be a little bit 
-> > too large...
+> Thanks for the review. I'll correct all the nits for the next version.
 > 
-> Though, considering this more, maybe this shouldn't be a problem...
+> On 01/03/18 10:37 AM, Bjorn Helgaas wrote:
+> > On Wed, Feb 28, 2018 at 04:39:57PM -0700, Logan Gunthorpe wrote:
+> > > Some PCI devices may have memory mapped in a BAR space that's
+> > > intended for use in Peer-to-Peer transactions. In order to enable
+> > > such transactions the memory must be registered with ZONE_DEVICE pages
+> > > so it can be used by DMA interfaces in existing drivers.
 > 
-> Lets say you have 56bits of address space.
+> > Is there anything about this memory that makes it specifically
+> > intended for peer-to-peer transactions?  I assume the device can't
+> > really tell whether a transaction is from a CPU or a peer.
+> 
+> No there's nothing special about the memory and it can still be accessed by
+> the CPU. This is just the intended purpose. You could use this PCI memory as
+> regular DMA buffers or regular memory but I'm not sure why you would. It
+> would probably be pretty bad performance-wise.
+> 
+> 
+> > BTW, maybe there could be some kind of guide for device driver writers
+> > in Documentation/PCI/?
+> Makes sense we can look at writing something for the next iteration.
+> 
+> > I think it would be clearer and sufficient to simply say that we have
+> > no way to know whether peer-to-peer routing between PCIe Root Ports is
+> > supported (PCIe r4.0, sec 1.3.1).
+> 
+> Fair enough.
+> 
+> > The fact that you use the PCIe term "switch" suggests that a PCIe
+> > Switch is required, but isn't it sufficient for the peers to be below
+> > the same "PCI bridge", which would include PCIe Root Ports, PCIe
+> > Switch Downstream Ports, and conventional PCI bridges?
+> > The comments at get_upstream_bridge_port() suggest that this isn't
+> > enough, and the peers actually do have to be below the same PCIe
+> > Switch, but I don't know why.
+> 
+> I do mean Switch as we do need to keep the traffic off the root complex.
+> Seeing, as stated above, we don't know if it actually support it. (While we
+> can be certain any PCI switch does). So we specifically want to exclude PCIe
+> Root ports and I'm not sure about the support of PCI bridges but I can't
+> imagine anyone wanting to do P2P around them so I'd rather be safe than
+> sorry and exclude them.
 
-We use only 52 in practice but yes.
+I don't think this is correct.  A Root Port defines a hierarchy domain
+(I'm looking at PCIe r4.0, sec 1.3.1).  The capability to route
+peer-to-peer transactions *between* hierarchy domains is optional.  I
+think this means a Root Complex is not required to route transactions
+from one Root Port to another Root Port.
 
->  That's 64PB. If you use need 
-> a sparse vmemmap for the entire space it will take 16TB which leaves you 
-> with 63.98PB of address space left. (Similar calculations for other 
-> numbers of address bits.)
+This doesn't say anything about routing between two different devices
+below a Root Port.  Those would be in the same hierarchy domain and
+should follow the conventional PCI routing rules.  Of course, since a
+Root Port has one link that leads to one device, they would probably
+be different functions of a single multi-function device, so I don't
+know how practical it would be to test this.
 
-We only have 52 bits of virtual space for the kernel with the radix
-MMU.
-
-> So I'm not sure what the problem with this is.
+> > This whole thing is confusing to me.  Why do you want to reject peers
+> > directly connected to the same root port?  Why do you require the same
+> > Switch Upstream Port?  You don't exclude conventional PCI, but it
+> > looks like you would require peers to share *two* upstream PCI-to-PCI
+> > bridges?  I would think a single shared upstream bridge (conventional,
+> > PCIe Switch Downstream Port, or PCIe Root Port) would be sufficient?
 > 
-> We still have to ensure all the arches map the memory with the right 
-> cache bits but that should be relatively easy to solve.
+> Hmm, yes, this may just be laziness on my part. Finding the shared upstream
+> bridge is a bit more tricky than just showing that they are on the same
+> switch. So as coded, a fabric of switches with peers on different legs of
+> the fabric are not supported. But yes, maybe they just need to be two
+> devices with a single shared upstream bridge that is not the root port.
+> Again, we need to reject the root port because we can't know if the root
+> complex can support P2P traffic.
+
+This sounds like the same issue as above, so we just need to resolve
+that.
+
+> > Since "pci_p2pdma_add_client()" includes "pci_" in its name, it seems
+> > sort of weird that callers supply a non-PCI device and then we look up
+> > a PCI device here.  I assume you have some reason for this; if you
+> > added a writeup in Documentation/PCI, that would be a good place to
+> > elaborate on that, maybe with a one-line clue here.
 > 
-> Logan
+> Well yes, but this is much more convenient for callers which don't need to
+> care if the device they are attempting to add (which in the NVMe target
+> case, could be a random block device) is a pci device or not. Especially
+> seeing find_parent_pci_dev() is non-trivial.
+
+OK.  I accept that it might be convenient, but I still think it leads
+to a weird API.  Maybe that's OK; I don't know enough about the
+scenario in the caller to do anything more than say "hmm, strange".
+
+> > > +void *pci_alloc_p2pmem(struct pci_dev *pdev, size_t size)
+> > > +{
+> > > +	void *ret;
+> > > +
+> > > +	if (unlikely(!pdev->p2pdma))
+> > 
+> > Is this a hot path?  I'm not sure it's worth cluttering
+> > non-performance paths with likely/unlikely.
+> 
+> I'd say it can be pretty hot given that we need to allocate and free buffers
+> at multiple GB/s for the NVMe target case. I don't exactly have benchmarks
+> or anything to show this though...
+
+OK, I'll take your word for that.  I'm fine with this as long as it is
+performance-sensitive.
+
+Bjorn
