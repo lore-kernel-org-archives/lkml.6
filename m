@@ -1,112 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935696AbeCABzF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 20:55:05 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5688 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932134AbeCABzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 20:55:04 -0500
-Subject: Re: [PATCH] irqchip/gic-v3-its: handle rd_idx wrapping in
- its_wait_for_range_completion()
-To: Marc Zyngier <marc.zyngier@arm.com>
-References: <1518320521-12536-1-git-send-email-yangyingliang@huawei.com>
- <866073z7pr.wl-marc.zyngier@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From: Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5A975D2F.1010302@huawei.com>
-Date: Thu, 1 Mar 2018 09:53:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S935710AbeCAB6E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 20:58:04 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:43610 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932134AbeCAB6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 20:58:02 -0500
+Subject: Re: [PATCH V2] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>
+References: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1519840355.2777.8.camel@wdc.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <624cedc6-9658-7b76-9c63-61c30fdfe6be@oracle.com>
+Date: Thu, 1 Mar 2018 09:57:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <866073z7pr.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <1519840355.2777.8.camel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8818 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803010024
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Bart
 
+Thanks for your precious time to review this and kindly detailed response.
 
-On 2018/2/12 2:45, Marc Zyngier wrote:
-Hi, Marc
+On 03/01/2018 01:52 AM, Bart Van Assche wrote:
+> On Wed, 2018-02-28 at 16:55 +0800, Jianchao Wang wrote:
+>> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+>> index a86df9c..6fa7b0c 100644
+>> --- a/drivers/scsi/scsi_lib.c
+>> +++ b/drivers/scsi/scsi_lib.c
+>> @@ -191,7 +191,8 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+>>  	 */
+>>  	cmd->result = 0;
+>>  	if (q->mq_ops) {
+>> -		scsi_mq_requeue_cmd(cmd);
+>> +		blk_mq_requeue_request(cmd->request, true);
+>> +		put_device(&device->sdev_gendev);
+>>  		return;
+>>  	}
+>>  	spin_lock_irqsave(q->queue_lock, flags);
+> 
+> Anyone who sees the put_device() call that follows the blk_mq_requeue_request()
+> call will wonder why that call occurs there. So I think we need a comment above
+> that call that explains where the matching get_device() call is.
 
-Sorry for replying so late.
-> On Sun, 11 Feb 2018 03:42:01 +0000,
-> Yang Yingliang wrote:
->
-> Hi Yang,
->
->> In direct case, rd_idx will wrap if other cpus post commands
->> that make rd_idx increase. When rd_idx wrapped, the driver prints
->> timeout messages but in fact the command is finished. To handle
->> this case by adding last_rd_id to check rd_idx whether wrapped.
->>
->> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> Please always Cc LKML on irqchip related patches.
->
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c | 84 ++++++++++++++++++++++------------------
->>   1 file changed, 46 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index 06f025f..d7176d1 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -713,7 +713,8 @@ static void its_flush_cmd(struct its_node *its, struct its_cmd_block *cmd)
->>   
->>   static int its_wait_for_range_completion(struct its_node *its,
->>   					 struct its_cmd_block *from,
->> -					 struct its_cmd_block *to)
->> +					 struct its_cmd_block *to,
->> +					 u64 last_rd_idx)
->>   {
->>   	u64 rd_idx, from_idx, to_idx;
->>   	u32 count = 1000000;	/* 1s! */
->> @@ -724,9 +725,14 @@ static int its_wait_for_range_completion(struct its_node *its,
->>   	while (1) {
->>   		rd_idx = readl_relaxed(its->base + GITS_CREADR);
->>   
->> -		/* Direct case */
->> -		if (from_idx < to_idx && rd_idx >= to_idx)
->> -			break;
->> +
->> +		/*
->> +		 * Direct case. In this case, rd_idx may wrapped,
->> +		 * because other cpus may post commands that make
->> +		 * rd_idx increase.
->> +		 */
->> +		if (from_idx < to_idx && (rd_idx >= to_idx || rd_idx < last_rd_idx))
->> +				break;
->>   
->>   		/* Wrapped case */
->>   		if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
->> @@ -746,40 +752,42 @@ static int its_wait_for_range_completion(struct its_node *its,
-> [...]
->
->> +	last_rd_idx = readl_relaxed(its->base + GITS_CREADR);			\
-> What is this last_rd_idx exactly? It is just some random sampling of
-> the read pointer after we've posted our commands. It can still be in
-> any position. And if the reader as wrapped because other CPUs are
-> feeding more commands to the queue, it could just as well overtake
-> last_rd_idx, making your new condition just as false. Yes, this is
-> unlikely, but still.
->
-> If you're going to harden the command queue wrapping, I'd suggest you
-> implement a generation mechanism so that we can easily work out if
-> we've seen the queue wrapping or not. THis would lift any kind of
-> ambiguity once and for all.
-I get a lot of timeout messages, when I am doing set affinity stress 
-testing which
-will post many its commands. I will try another way to handle the 
-wrapped case.
+Yes, I will add this.
 
-Regards,
-Yang
->
-> Thanks,
->
-> 	M.
->
+> For the legacy code path, there is a get_device() call in scsi_prep_fn() but no
+> put_device() call in scsi_unprep_fn() - the matching put_device() calls occur in
+> scsi_end_request() and after blk_requeue_request().
+> 
+> For scsi-mq however there is a get_device() call in scsi_mq_get_budget() and a
+> put_device() call in scsi_mq_put_budget(). So why do we need the put_device()
+> calls after blk_mq_requeue_request() and in the mq path for scsi_end_request()?
+> 
+
+>From the source code, we know the scsi_mq_get_budget will be invoked every time when we issue a request.
+But scsi_mq_put_budget is just in the fail path.
+
+scsi_queue_rq // if any error
+  -> scsi_mq_put_budget
+
+blk_mq_dispatch_rq_list // if no driver tags
+  -> blk_mq_put_dispatch_budget
+    -> scsi_mq_put_budget
+blk_mq_do_dispatch_sched/blk_mq_do_dispatch_ctx // if no requests
+  -> blk_mq_put_dispatch_budget
+    -> scsi_mq_put_budget
+
+So we have to add put_device after  blk_mq_requeue_request() and in scsi_end_request() to match the
+scsi_mq_get_budget.
+
+Thanks
+Jianchao
