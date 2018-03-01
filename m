@@ -1,85 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967907AbeCAMAB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:00:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49722 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967818AbeCAMAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:00:00 -0500
-Date: Thu, 1 Mar 2018 12:59:53 +0100
-From: Borislav Petkov <bp@suse.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 0/8] Decode IA32/X64 CPER
-Message-ID: <20180301115953.GA5040@pd.tnic>
-References: <20180226193904.20532-1-Yazen.Ghannam@amd.com>
- <20180228084321.GA2969@pd.tnic>
- <DM5PR12MB1916B6CA08F0D423B3635EDDF8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
- <20180228163539.GC2969@pd.tnic>
- <DM5PR12MB19169CD3BC3BAE3230C1DCA3F8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM5PR12MB19169CD3BC3BAE3230C1DCA3F8C70@DM5PR12MB1916.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S967911AbeCAMB3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 07:01:29 -0500
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:40621 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S967863AbeCAMB2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 07:01:28 -0500
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:69:355:379:541:800:960:968:973:988:989:1260:1345:1437:1534:1542:1711:1730:1747:1777:1792:2393:2559:2562:2743:3138:3139:3140:3141:3142:3354:3867:3868:4250:4321:5007:6261:10004:10848:11026:11473:11658:11914:12438:12555:12679:12895:12986:13095:13138:13231:14181:14394:14721:21080:21433:21451:21524:21627:30012:30054:30080,0,RBL:46.188.150.148:@perches.com:.lbl8.mailshell.net-62.8.110.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: scent75_63c14d4df6435
+X-Filterd-Recvd-Size: 3243
+From: Joe Perches <joe@perches.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: tw9910: Miscellaneous neatening
+Date: Thu,  1 Mar 2018 04:01:22 -0800
+Message-Id: <45c4aeef9d2f00b95ba762ad80b4afc2fc60e846.1519905664.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 08:58:15PM +0000, Ghannam, Yazen wrote:
-> 1) We keep this set mostly as-is. This would be our fallback if we don't have
-> anything better.
+Yet more whitespace and style neatening
 
-Yes, sounds good. We try to decode it as MCE and if we cannot, we dump
-the raw CPER record.
+o Add blank lines before returns
+o Reverse a logic test and return early on error
+o Move formats to same line as dev_<level> calls
+o Remove an unnecessary period from a logging message
 
-> 2) I add the MCA decoding to this set. I was thinking to do this in a separate
-> set but maybe it's better to do it all together.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/media/i2c/tw9910.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-I'm fine if you do it separately, as long as you do it so that we have
-user-friendly decoding in the end.
-
-> Number 2 would mean we do a quick check on the CPER to see if it contains
-> MCA info. There's no spec-defined way to do this, but we can make a good
-> guess by seeing if we have an "MSR register" context and that context has
-> an "MSR address" that is an MCA register.
-
-Yap.
-
-> If we think we have MCA info, then we pull as much out of the CPER as we
-> can and put it in a struct mce which we then pass to the notifier chain.
-> 
-> If we don't think we have MCA info, then we fallback to number 1.
-
-Ack.
-
-> At the moment, it seems we'll be using x86 CPER to represent MCA errors
-> in BERT since there's no other option in BERT. So I think having number 2
-> would catch most, if not all, errors reported with x86 CPER.
-
-Yeah, if you think about it, CPER is a clumsy and totally useless
-indirection layer between MCA and the OS. And if the error is of
-different type (AER, PCI, whatever), then it wraps around it too with
-some dumb table. And that doesn't bring anything - just the need for
-more support added to the OS and tools around it. Basically what you're
-doing now.
-
-I don't mind the aspect of firmware seeing the errors first and even
-attempting to fix them as the firmware knows the platform intimately but
-doing everything in firmware just because some misguided souls think
-this gives added value but in reality ends up becoming a worse problem,
-is simply the wrong wrong thing to do.
-
-Thx.
-
+diff --git a/drivers/media/i2c/tw9910.c b/drivers/media/i2c/tw9910.c
+index ab32cd81ebd0..cc648deb8123 100644
+--- a/drivers/media/i2c/tw9910.c
++++ b/drivers/media/i2c/tw9910.c
+@@ -752,6 +752,7 @@ static int tw9910_get_selection(struct v4l2_subdev *sd,
+ 		sel->r.width	= 768;
+ 		sel->r.height	= 576;
+ 	}
++
+ 	return 0;
+ }
+ 
+@@ -799,11 +800,13 @@ static int tw9910_s_fmt(struct v4l2_subdev *sd,
+ 	mf->colorspace = V4L2_COLORSPACE_SMPTE170M;
+ 
+ 	ret = tw9910_set_frame(sd, &width, &height);
+-	if (!ret) {
+-		mf->width	= width;
+-		mf->height	= height;
+-	}
+-	return ret;
++	if (ret)
++		return ret;
++
++	mf->width	= width;
++	mf->height	= height;
++
++	return 0;
+ }
+ 
+ static int tw9910_set_fmt(struct v4l2_subdev *sd,
+@@ -821,7 +824,7 @@ static int tw9910_set_fmt(struct v4l2_subdev *sd,
+ 	if (mf->field == V4L2_FIELD_ANY) {
+ 		mf->field = V4L2_FIELD_INTERLACED_BT;
+ 	} else if (mf->field != V4L2_FIELD_INTERLACED_BT) {
+-		dev_err(&client->dev, "Field type %d invalid.\n", mf->field);
++		dev_err(&client->dev, "Field type %d invalid\n", mf->field);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -840,7 +843,9 @@ static int tw9910_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
+ 		return tw9910_s_fmt(sd, mf);
++
+ 	cfg->try_fmt = *mf;
++
+ 	return 0;
+ }
+ 
+@@ -871,21 +876,21 @@ static int tw9910_video_probe(struct i2c_client *client)
+ 	id = GET_ID(id);
+ 
+ 	if (id != 0x0b || priv->revision > 0x01) {
+-		dev_err(&client->dev,
+-			"Product ID error %x:%x\n",
++		dev_err(&client->dev, "Product ID error %x:%x\n",
+ 			id, priv->revision);
+ 		ret = -ENODEV;
+ 		goto done;
+ 	}
+ 
+-	dev_info(&client->dev,
+-		 "tw9910 Product ID %0x:%0x\n", id, priv->revision);
++	dev_info(&client->dev, "tw9910 Product ID %0x:%0x\n",
++		 id, priv->revision);
+ 
+ 	priv->norm = V4L2_STD_NTSC;
+ 	priv->scale = &tw9910_ntsc_scales[0];
+ 
+ done:
+ 	tw9910_s_power(&priv->subdev, 0);
++
+ 	return ret;
+ }
+ 
+@@ -905,12 +910,14 @@ static int tw9910_enum_mbus_code(struct v4l2_subdev *sd,
+ 		return -EINVAL;
+ 
+ 	code->code = MEDIA_BUS_FMT_UYVY8_2X8;
++
+ 	return 0;
+ }
+ 
+ static int tw9910_g_tvnorms(struct v4l2_subdev *sd, v4l2_std_id *norm)
+ {
+ 	*norm = V4L2_STD_NTSC | V4L2_STD_PAL;
++
+ 	return 0;
+ }
+ 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+2.15.0
