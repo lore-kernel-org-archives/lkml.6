@@ -1,107 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163295AbeCAXmo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:42:44 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:16444 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163088AbeCAXmm (ORCPT
+        id S1163483AbeCAXoT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:44:19 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39786 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163258AbeCAXoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:42:42 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180301234240epoutp01b6df302e84115f198fedea49128e8775~X8G_DL5R_0864308643epoutp01Z
-X-AuditID: b6c32a48-9c5ff70000000ff0-27-5a988ff0f39a
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A988FF0.3080302@samsung.com>
-Date: Fri, 02 Mar 2018 08:42:40 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        acourbot@chromium.org, kernel@collabora.com
-Subject: Re: [PATCH] arm64: defconfig: Enable typec-phy and
- extcon-usbc-cros-ec for rk3399
-In-reply-to: <20180228140251.22232-1-enric.balletbo@collabora.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNKsWRmVeSWpSXmKPExsWy7bCmme6H/hlRBl8mqVi0HXnDaPF+WQ+j
-        xZrbhxgtNp/rYbXY9Pgaq8XlXXPYLF5+PMHiwO6xZt4aRo/ZDRdZPHbcXcLosXlJvcfnTXIB
-        rFGpNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAVygp
-        lCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJWiDQ2N9AwNzPWMjIz0TIxjrYxMgUoSUjOOvrvD
-        WrCEs2LHirOMDYyv2bsYOTkkBEwkLny+yNrFyMUhJLCDUaLn11IWCOc7o8T07XtYYarO7HjP
-        CJHYzShx8F4LWDuvgKDEj8n3gDo4OJgF5CWOXMoGCTMLaEps3b2eHaL+HqNE79nFUPVaEjeP
-        HAMbyiKgKnFq4T1GEJsNKL7/xQ02EJtfQFHi6o/HYHFRgQiJnfO/gQ0SEehklNjwo4cJYkOp
-        xP8DT8AahAViJPq7HrCDHMEp4CTxbgIHxNFn2CROboJ6wEVi4eYFTBC2sMSr41ug3peWeLZq
-        I9hjEgLtjBLte+cxQzhTGCXOXb8H1WEs8WxhF9RiPomOw3/BlkkI8Ep0tAlBlHhIXPz8lw3C
-        dpT4vWQZG8T3Uxklrj9YwDaBUW4WUoDNQgTYLKQAW8DIvIpRLLWgODc9tdiowESvODG3uDQv
-        XS85P3cTIzjhaXnsYDxwzucQowAHoxIPrwDPjCgh1sSy4srcQ4wSHMxKIrynt0+LEuJNSays
-        Si3Kjy8qzUktPsRoCgzvicxSosn5wGScVxJvaGJpYGJmZmRuZgFMYeK8bQEuUUIC6Yklqdmp
-        qQWpRTB9TBycUg2M+5zKg+7YKGopTm4+EOC2UOtra6+lbOeBqNSCuSXrH3idXltgd+X/3j6u
-        TgGWX2F3euYt1PvGEKlQEfhWW26vnaEzq9KnTWUPZvoXeAR7/Qg75ydwYUlXnUz6JjHOEhXJ
-        aM7b71a8qZy2N/1B3qGla/g3bq6UFPn3pIE5IIS9MS/r0dL/9TZKLMUZiYZazEXFiQBaEMvR
-        jgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsVy+t9jAd0P/TOiDCZNELFoO/KG0eL9sh5G
-        izW3DzFabD7Xw2qx6fE1VovLu+awWbz8eILFgd1jzbw1jB6zGy6yeOy4u4TRY/OSeo/Pm+QC
-        WKO4bFJSczLLUov07RK4Mo6+u8NasISzYseKs4wNjK/Zuxg5OSQETCTO7HjP2MXIxSEksJNR
-        YsXXbWwgCV4BQYkfk++xdDFycDALyEscuZQNEmYWUJeYNG8RM0T9A0aJreeuQ9VrSdw8cowV
-        xGYRUJU4tfAeI4jNBhTf/+IGWA2/gKLE1R+PGUFmigpESHSfqASZIyLQySgx494HNogFpRJt
-        s1vBjhMWiJE4duU11HHTGSU2Hd8NdhCngJPEuwkcExgFZiE5dRbCqbOQnLqAkXkVo2RqQXFu
-        em6xUYFRXmq5XnFibnFpXrpecn7uJkZgoG87rNW/g/HxkvhDjAIcjEo8vDs4Z0QJsSaWFVfm
-        HmKU4GBWEuE9vX1alBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe/vxjkUIC6YklqdmpqQWpRTBZ
-        Jg5OqQbG/bO6TKbsUEx/H7Fs3YS6iqqvB/nUz1pPu+tmKi0hqFxvM0PFvHtW9xpexgMB9R80
-        W/bIP1n8au1s4X1rH2z/LXj+wNIfnxme3EmPmXNh4h6PB6bJv19XOZ4JimZ9a1Gwo8TsWOB3
-        oT2rDOdesFM94cVnExTGIPPDSPO+7baD91s2v9sTrb1xvRJLcUaioRZzUXEiAJCnkRdwAgAA
-X-CMS-MailID: 20180301234240epcas2p4ee9c3b9a428311e50747e09d165841d6
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180228140304epcas3p377c02db2d4f9f5d2549f433e08b51ea4
-X-RootMTR: 20180228140304epcas3p377c02db2d4f9f5d2549f433e08b51ea4
-References: <CGME20180228140304epcas3p377c02db2d4f9f5d2549f433e08b51ea4@epcas3p3.samsung.com>
-        <20180228140251.22232-1-enric.balletbo@collabora.com>
+        Thu, 1 Mar 2018 18:44:16 -0500
+X-Google-Smtp-Source: AG47ELvMKfl/JHTR3lyRhfHmXM+hMtyNQrV3TZzqZpaf3I2kLug4KLHBJ5m7rayR4q0PavjlbXBk5w==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <FCCCD016-8402-42E5-B92F-79287D67B27C@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_9B87DCCE-81B6-4AB2-A810-550E560575CD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC 1/5] seq_file: introduce seq_open_data helper
+Date: Thu, 1 Mar 2018 16:44:10 -0700
+In-Reply-To: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 02월 28일 23:02, Enric Balletbo i Serra wrote:
-> Enables typec phyter and extcon driver for cable detection that is used by
-> USB 3.0 controller for Rockchip rk3399 SoCs.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+--Apple-Mail=_9B87DCCE-81B6-4AB2-A810-550E560575CD
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Mar 1, 2018, at 4:37 PM, Rasmus Villemoes <linux@rasmusvillemoes.dk> =
+wrote:
+>=20
+> There are quite a few callers of seq_open that could be simplified by
+> setting the ->private member via the seq_open call instead of fetching
+> file->private_data afterwards.
+>=20
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > ---
->  arch/arm64/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 78b47bc7dc54..d4c25aa55785 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -544,6 +544,7 @@ CONFIG_ARCH_TEGRA_132_SOC=y
->  CONFIG_ARCH_TEGRA_210_SOC=y
->  CONFIG_ARCH_TEGRA_186_SOC=y
->  CONFIG_EXTCON_USB_GPIO=y
-> +CONFIG_EXTCON_USBC_CROS_EC=y
->  CONFIG_IIO=y
->  CONFIG_EXYNOS_ADC=y
->  CONFIG_ROCKCHIP_SARADC=m
-> @@ -564,6 +565,7 @@ CONFIG_PHY_MVEBU_CP110_COMPHY=y
->  CONFIG_PHY_ROCKCHIP_INNO_USB2=y
->  CONFIG_PHY_ROCKCHIP_EMMC=y
->  CONFIG_PHY_ROCKCHIP_PCIE=m
-> +CONFIG_PHY_ROCKCHIP_TYPEC=y
->  CONFIG_PHY_XGENE=y
->  CONFIG_PHY_TEGRA_XUSB=y
->  CONFIG_QCOM_L2_PMU=y
-> 
+> I've just included a few examples of possible users of this helper,
+> there are many more similar cases. As a bonus, the first two fix
+> potential NULL derefs (if one believes that seq_open can actually
+> fail).
+>=20
+> seq_open_private would have been a better name, but that one is
+> already taken...
+>=20
+> Documentation/filesystems/seq_file.txt | 9 +++++----
+> fs/seq_file.c                          | 9 ++++++++-
+> include/linux/seq_file.h               | 1 +
+> 3 files changed, 14 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/filesystems/seq_file.txt =
+b/Documentation/filesystems/seq_file.txt
+> index 9de4303201e1..68571b8275d8 100644
+> --- a/Documentation/filesystems/seq_file.txt
+> +++ b/Documentation/filesystems/seq_file.txt
+> @@ -234,10 +234,11 @@ Here, the call to seq_open() takes the =
+seq_operations structure we created
+> before, and gets set up to iterate through the virtual file.
+>=20
+> On a successful open, seq_open() stores the struct seq_file pointer in
+> -file->private_data. If you have an application where the same =
+iterator can
+> -be used for more than one file, you can store an arbitrary pointer in =
+the
+> -private field of the seq_file structure; that value can then be =
+retrieved
+> -by the iterator functions.
+> +file->private_data. If you have an application where the same =
+iterator
+> +can be used for more than one file, you can store an arbitrary =
+pointer
+> +in the private field of the seq_file structure; that value can then =
+be
+> +retrieved by the iterator functions. Using the wrapper =
+seq_open_data()
+> +allows you to set the initial value for that field.
+>=20
+> There is also a wrapper function to seq_open() called =
+seq_open_private(). It
+> kmallocs a zero filled block of memory and stores a pointer to it in =
+the
+> diff --git a/fs/seq_file.c b/fs/seq_file.c
+> index eea09f6d8830..f2145cb6e23d 100644
+> --- a/fs/seq_file.c
+> +++ b/fs/seq_file.c
+> @@ -45,7 +45,7 @@ static void *seq_buf_alloc(unsigned long size)
+>  *	Note: seq_open() will allocate a struct seq_file and store its
+>  *	pointer in @file->private_data. This pointer should not be =
+modified.
+>  */
+> -int seq_open(struct file *file, const struct seq_operations *op)
+> +int seq_open_data(struct file *file, const struct seq_operations *op, =
+void *data)
+> {
+> 	struct seq_file *p;
+>=20
+> @@ -59,6 +59,7 @@ int seq_open(struct file *file, const struct =
+seq_operations *op)
+>=20
+> 	mutex_init(&p->lock);
+> 	p->op =3D op;
+> +	p->private =3D data;
+>=20
+> 	// No refcounting: the lifetime of 'p' is constrained
+> 	// to the lifetime of the file.
+> @@ -85,6 +86,12 @@ int seq_open(struct file *file, const struct =
+seq_operations *op)
+> }
+> EXPORT_SYMBOL(seq_open);
+>=20
+> +int seq_open(struct file *file, const struct seq_operations *op)
+> +{
+> +	return seq_open_data(file, op, NULL);
+> +}
+> +EXPORT_SYMBOL(seq_open_data);
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+This is a bit confusing.  You export "seq_open" after seq_open_data(),
+and export "seq_open_data" here after seq_open().  Not strictly a bug,
+but could become one in the future.
+
+Cheers, Andreas
+
+> +
+> static int traverse(struct seq_file *m, loff_t offset)
+> {
+> 	loff_t pos =3D 0, index;
+> diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+> index ab437dd2e3b9..f5ff376fa62b 100644
+> --- a/include/linux/seq_file.h
+> +++ b/include/linux/seq_file.h
+> @@ -107,6 +107,7 @@ void seq_pad(struct seq_file *m, char c);
+>=20
+> char *mangle_path(char *s, const char *p, const char *esc);
+> int seq_open(struct file *, const struct seq_operations *);
+> +int seq_open_data(struct file *, const struct seq_operations *, void =
+*);
+> ssize_t seq_read(struct file *, char __user *, size_t, loff_t *);
+> loff_t seq_lseek(struct file *, loff_t, int);
+> int seq_release(struct inode *, struct file *);
+> --
+> 2.15.1
+>=20
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+
+
+
+--Apple-Mail=_9B87DCCE-81B6-4AB2-A810-550E560575CD
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlqYkEsACgkQcqXauRfM
+H+AzdQ//S1/2JezuOJUxxbNc11QjDvMOoBPM7D11h6Ht5dT0+Tw0dFBFBcG+gqGl
+28MxwK+4sUU3A00/LgUxopfeoKw6+ve4NZFZYh0kwZoEXMoCxkB2tECNRYMrkiDR
+TDY70i4VZ5Bch1xd31FB3bZb+ukkls1R0Z/6WjfUhG8D/5yPBA9PQS0+jHo+tHHX
+y4aJS9eCwKPRHtP5LpCkuaEKZFxL48RWFghHcqhfd8fXRuFD9Q6/mPhLkH3/fX4y
+IsbUFW2ozrN94/3OWM+1+4r8eC1mpe+DqRkqg/4G0CX6agfpmpkUh++8QGP6fufV
+RG5pAaMwEpqXsFygvwvWFJEkeLp1BFybgmGKe3gN9A7arlyhxhW8J+8FbPBpduq4
+T/Okk/qcJhSMVV/at9sybRKMvZ40IX0E5jRwmPG/AQl1Bsj/yyOTmJCTHAowIydx
+VkYxTsmSPjnVm2LPELBCEPUqT5jDgpFDBzr148l6ks6Q1Vxiw0MJZL+zruRtOfcC
+wHa05O5AZjwRXpk8LBWE48x2qroLjM5Oruqkjg53DX7LgHUxRwhY4li7gGnfxmTf
+gZl526gU0fx6xPsiV6F6sLazf91BmmUi0x12n4nJMjESLMJP4OrRkhgNtiM1uK/m
+cp/UMSnVXC0ks7HiE8CP08WcFoho6LoazlgEXHawk4Y/+fRwWy8=
+=E59S
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_9B87DCCE-81B6-4AB2-A810-550E560575CD--
