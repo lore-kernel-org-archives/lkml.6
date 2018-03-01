@@ -1,86 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967305AbeCAKcE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:32:04 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46870 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935832AbeCAKb7 (ORCPT
+        id S966956AbeCAKcB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:32:01 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33817 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935717AbeCAKb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:31:59 -0500
-X-Google-Smtp-Source: AG47ELsOzk2u2eph1IPk69zNefJHL+wEGGJ0lgjZkCFO3JYtjVJQDo6aBmt0pcV0MppAr/1evhop2k4HCpIMHjkgBSI=
+        Thu, 1 Mar 2018 05:31:58 -0500
+X-Google-Smtp-Source: AG47ELsA7VXWUB3BqAwRVSyMeXN6aq/YMQuYwkR8i6JK6ZzNTvP2E6G5GR84RJMY6GoWiNQ6WTOVxg==
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <90b658d9-da8a-af36-ad8f-a72ef0c6e3c1@grimberg.me>
+Date: Thu, 1 Mar 2018 12:31:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <8527c92b2e2920b8cd9096ddcbbb6d0f4004eb69.1519882849.git.jan.kiszka@siemens.com>
-References: <cover.1519882849.git.jan.kiszka@siemens.com> <8527c92b2e2920b8cd9096ddcbbb6d0f4004eb69.1519882849.git.jan.kiszka@siemens.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 12:31:58 +0200
-Message-ID: <CAHp75VeaE_fm53Ga+zMNsvC2Ew6E5D0hbruV5jDwPeGvZk8v2g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] x86: Consolidate PCI_MMCONFIG configs
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180228234006.21093-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 7:40 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> Since e279b6c1d329 ("x86: start unification of arch/x86/Kconfig.*"), we
-> have two PCI_MMCONFIG entries, one from the original i386 and another
-> from x86_64. This consolidates both entries into a single one.
->
-> The logic for x86_32, where this option was not under user control,
-> remains identical. On x86_64, PCI_MMCONFIG becomes additionally
-> configurable for SFI systems even if ACPI was disabled. This just
-> simplifies the logic without restricting the configurability in any way.
->
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Hi Everyone,
 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  arch/x86/Kconfig | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index eb7f43f23521..aef9d67ac186 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2641,8 +2641,9 @@ config PCI_DIRECT
->         depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
->
->  config PCI_MMCONFIG
-> -       def_bool y
-> -       depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
-> +       bool "Support mmconfig PCI config space access" if X86_64
-> +       default y
-> +       depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY || PCI_GOMMCONFIG))
->
->  config PCI_OLPC
->         def_bool y
-> @@ -2657,10 +2658,6 @@ config PCI_DOMAINS
->         def_bool y
->         depends on PCI
->
-> -config PCI_MMCONFIG
-> -       bool "Support mmconfig PCI config space access"
-> -       depends on X86_64 && PCI && ACPI
-> -
->  config PCI_CNB20LE_QUIRK
->         bool "Read CNB20LE Host Bridge Windows" if EXPERT
->         depends on PCI
-> --
-> 2.13.6
->
+Hi Logan,
 
+> Here's v2 of our series to introduce P2P based copy offload to NVMe
+> fabrics. This version has been rebased onto v4.16-rc3 which already
+> includes Christoph's devpagemap work the previous version was based
+> off as well as a couple of the cleanup patches that were in v1.
+> 
+> Additionally, we've made the following changes based on feedback:
+> 
+> * Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
+>    as a bunch of cleanup and spelling fixes he pointed out in the last
+>    series.
+> 
+> * To address Alex's ACS concerns, we change to a simpler method of
+>    just disabling ACS behind switches for any kernel that has
+>    CONFIG_PCI_P2PDMA.
+> 
+> * We also reject using devices that employ 'dma_virt_ops' which should
+>    fairly simply handle Jason's concerns that this work might break with
+>    the HFI, QIB and rxe drivers that use the virtual ops to implement
+>    their own special DMA operations.
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+That's good, but what would happen for these devices? simply fail the
+mapping causing the ulp to fail its rdma operation? I would think
+that we need a capability flag for devices that support it.
