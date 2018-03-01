@@ -1,90 +1,269 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-373521-1521123402-5-7896728514030341061
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521123402; b=NlopFq5JFUmO8vjeRn4DXiqSmHV3f4fNUrly7WfHR6C3lw/
-    JV0cgHHfgwtDBXJnlmFoBFCzi55g0gNiZ9xK0gDBB4Np8MyIsCzJ52pp9y8OSYuh
-    CNDOf1nadYvjOlGuYu2yc+r17bEpghMry838m1CMUDu+WK3QCfIuoHrCyGDa6Rn3
-    mM0yxt0NQtQ8w+W7Iom6+mTqGcgsjW01pBIkg9rNU+ZaZrqhrAyqZ3MXMbOTO0IT
-    k/GBsLMa40RtHGq0clO75GLdQUS47LsPwbCDQEQ0kn+W0wL7m/odTxgsDwCvWPRv
-    cnT4WiCy3E9fHPL+2FJNm2ifZPI6sS4hMXqUz8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521123402; bh=kisFl6oLe+QHkC6d+v1L/6/4Tk
-    zexHZOiNdjvB4xpdo=; b=bRR+yHtxWSFGL93cOZ9GtLxUhNlcbXeB++ER89Tv0M
-    LAm9oB1o46PW02zlOFOBpe637tuXzsc5FSfTrpYpIWxtEyuw6ambqP9uoS4RnHtO
-    BBG3kvlBB+Qv+6070fpG9VxmtKpvAth8Cl+Ubjb+o0hQNt7EuRJzGGIYjGn+FiDI
-    WJcD/gIxSNkYDoH6mdcopSRtTEavtAEfXALq2k3tNqJfdcGYGIxDg1P3ALrhUZFf
-    O566InZ4nstILnWmFq+PGIu5IQPaQhJkbuRQyh7w9Agk9hZlG1xVjRGTQVKHnNnG
-    8CZMJY1BYZL8C0cLFKaZTOWjunitGI4LpttXtZIo8ilA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=8bytes.org header.i=@8bytes.org header.b=H3L6RjKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=8bytes.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=8bytes.org header.i=@8bytes.org header.b=H3L6RjKH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=8bytes.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751651AbeCOOQj (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 15 Mar 2018 10:16:39 -0400
-Received: from 8bytes.org ([81.169.241.247]:42814 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751535AbeCOOQi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 15 Mar 2018 10:16:38 -0400
-Date: Thu, 15 Mar 2018 15:16:36 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        "# v4 . 4+" <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix a potential memory leak
-Message-ID: <20180315141636.cel3dqr4pzxfgtb3@8bytes.org>
-References: <1519450947-9760-1-git-send-email-baolu.lu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519450947-9760-1-git-send-email-baolu.lu@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <idgar@virtualoco.com>
+X-Google-Smtp-Source: AG47ELsx3ccLzruYxu6fLhoqR+vIPFOLFSwKgpa7t5J01sNPdMB3eqqjZo8APNBhLWtogKaWkG1M
+ARC-Seal: i=1; a=rsa-sha256; t=1519914157; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rUAEgUhJx9CiilXtqbotknIHNbc69rcgCwlZc7WWQmwHkdqFTFloES6SzUvNYRI2Cy
+         rmB9mgG8EO02iBxsGfITfy9Nn2wJ1aliN6LChhWllKXYLaDmjdAltYd73SJ2LG+oQKfh
+         m2o8laQGXnIl/6214S1jtt5jFSd54UUHA6Se+xTb1cYCrRLl86q8EPWA+tgZGo9ONcIj
+         Ds5BtUNUgzZsb9X8BsJ1ND2E8y33G5W70T3rIt4KTspXxIzBympLlFNp9vP/vs4Hjnsn
+         SWTuLuDek+PtdtWUJIRxlN92OcbOXeYoB/bKtozVw9AjM9WP49jUVE4YNVOVNOCUo7Ey
+         L0BQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=k/HOeSC97e7TAVoeRcqMlAAZhoMC090TKeuK3laTsWo=;
+        b=iwxDUSYNx6kkXnf5qEL0g3po0EUF1jzmdnctSo+fSDRuilDa3hoYr/6N/fxyDSwEDk
+         SLg9uLTm2TDUSKDv7Wuwy53DpJOBrOhn95iqQSAhaNv83Qilen3+uIEAe4yYZbuXPOk3
+         DU7pDZ1KD3wkmMZn7RNjQlnIBSMUCbUYaGzcaVdULup+YmxsSLyo51IBaZGuhODFSk3b
+         7BT1764d0rPnrVQ8ljrG1tJa0QpKX7dDhRhtj3fgKoTQeR/kryj+Tz2bKBvlgHgt4BtR
+         h6xxT1zuv0EOskVnRLqhmmskhb9Dam6fXZfUh7KY2898q3pRrWdeftyk6Ka0eHFs4ddq
+         1Z+g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=GEHkzIBJ;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@virtualoco.com header.s=it header.b=GEHkzIBJ;
+       spf=pass (google.com: domain of idgar@virtualoco.com designates 135.84.80.217 as permitted sender) smtp.mailfrom=idgar@virtualoco.com
+From: Or Idgar <idgar@virtualoco.com>
+To: linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: oidgar@redhat.com,
+	idgar@virtualoco.com,
+	ghammer@redhat.com,
+	Or Idgar <oridgar@gmail.com>
+Subject: [PATCH v5] drivers/misc: vm_gen_counter: initial driver implementation
+Date: Thu,  1 Mar 2018 16:22:15 +0200
+Message-Id: <20180301142215.11812-1-idgar@virtualoco.com>
+X-Mailer: git-send-email 2.14.3
+X-ZohoMailClient: External
+X-ZohoMail: Z_638866495 SPT_1 Z_638866494 SPT_1 SLF_D
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593745507285614890?=
+X-GMAIL-MSGID: =?utf-8?q?1593745507285614890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Feb 24, 2018 at 01:42:27PM +0800, Lu Baolu wrote:
-> A memory block was allocated in intel_svm_bind_mm() but never freed
-> in a failure path. This patch fixes this by free it to avoid memory
-> leakage.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: <stable@vger.kernel.org> # v4.4+
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+From: Or Idgar <oridgar@gmail.com>
 
-Applied, thanks.
+This patch is a driver which expose the Virtual Machine Generation ID
+via sysfs. The ID is a UUID value used to differentiate between virtual
+machines.
+
+The VM-Generation ID is a feature defined by Microsoft (paper:
+http://go.microsoft.com/fwlink/?LinkId=260709) and supported by multiple
+hypervisor vendors.
+
+Signed-off-by: Or Idgar <oridgar@gmail.com>
+---
+
+Changes in v5:
+- added to VMGENID module dependency on ACPI module.
+
+ Documentation/ABI/testing/sysfs-hypervisor |  13 +++
+ drivers/misc/Kconfig                       |   7 ++
+ drivers/misc/Makefile                      |   1 +
+ drivers/misc/vmgenid.c                     | 142 +++++++++++++++++++++++++++++
+ 4 files changed, 163 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-hypervisor
+ create mode 100644 drivers/misc/vmgenid.c
+
+diff --git a/Documentation/ABI/testing/sysfs-hypervisor b/Documentation/ABI/testing/sysfs-hypervisor
+new file mode 100644
+index 000000000000..2f9a7b8eab70
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-hypervisor
+@@ -0,0 +1,13 @@
++What:		/sys/hypervisor/vm_gen_counter
++Date:		February 2018
++Contact:	Or Idgar <idgar@virtualoco.com>
++		Gal Hammer <ghammer@redhat.com>
++Description:	Expose the virtual machine generation ID. The directory
++		contains two files: "generation_id" and "raw". Both files
++		represent the same information.
++
++		"generation_id" file is a UUID string
++		representation.
++
++		"raw" file is a 128-bit integer
++		representation (binary).
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 03605f8fc0dc..a39feff6a867 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -500,6 +500,13 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
+ 
++config VMGENID
++	depends on ACPI
++	tristate "Virtual Machine Generation ID driver"
++	help
++	  This is a Virtual Machine Generation ID driver which provides
++	  a virtual machine unique identifier.
++
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index c3c8624f4d95..067aa666bb6a 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_VMGENID)		+= vmgenid.o
+ 
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
+ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
+diff --git a/drivers/misc/vmgenid.c b/drivers/misc/vmgenid.c
+new file mode 100644
+index 000000000000..6c8d8fe75335
+--- /dev/null
++++ b/drivers/misc/vmgenid.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Virtual Machine Generation ID driver
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All rights reserved.
++ *	Authors:
++ *	  Or Idgar <oridgar@gmail.com>
++ *	  Gal Hammer <ghammer@redhat.com>
++ *
++ */
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/kobject.h>
++#include <linux/acpi.h>
++#include <linux/uuid.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Or Idgar <oridgar@gmail.com>");
++MODULE_AUTHOR("Gal Hammer <ghammer@redhat.com>");
++MODULE_DESCRIPTION("Virtual Machine Generation ID");
++MODULE_VERSION("0.1");
++
++ACPI_MODULE_NAME("vmgenid");
++
++static u64 phys_addr;
++
++static ssize_t generation_id_show(struct device *_d,
++			      struct device_attribute *attr, char *buf)
++{
++	void __iomem *uuid_map;
++	uuid_t uuid;
++	ssize_t result;
++
++	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
++	if (!uuid_map)
++		return -EFAULT;
++
++	memcpy_fromio(&uuid, uuid_map, sizeof(uuid_t));
++	result = sprintf(buf, "%pUl\n", &uuid);
++	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
++	return result;
++}
++static DEVICE_ATTR_RO(generation_id);
++
++static ssize_t raw_show(struct device *_d,
++			struct device_attribute *attr,
++			      char *buf)
++{
++	void __iomem *uuid_map;
++
++	uuid_map = acpi_os_map_iomem(phys_addr, sizeof(uuid_t));
++	if (!uuid_map)
++		return -EFAULT;
++	memcpy_fromio(buf, uuid_map, sizeof(uuid_t));
++	acpi_os_unmap_iomem(uuid_map, sizeof(uuid_t));
++	return sizeof(uuid_t);
++}
++static DEVICE_ATTR_RO(raw);
++
++static struct attribute *vmgenid_attrs[] = {
++	&dev_attr_generation_id.attr,
++	&dev_attr_raw.attr,
++	NULL,
++};
++static const struct attribute_group vmgenid_group = {
++	.name = "vm_gen_counter",
++	.attrs = vmgenid_attrs,
++};
++
++static int get_vmgenid(acpi_handle handle)
++{
++	int i;
++	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
++	acpi_status status;
++	union acpi_object *pss;
++	union acpi_object *element;
++
++	status = acpi_evaluate_object(handle, "ADDR", NULL, &buffer);
++	if (ACPI_FAILURE(status)) {
++		ACPI_EXCEPTION((AE_INFO, status, "Evaluating _ADDR"));
++		return -ENODEV;
++	}
++	pss = buffer.pointer;
++	if (!pss || pss->type != ACPI_TYPE_PACKAGE || pss->package.count != 2)
++		return -EFAULT;
++
++	phys_addr = 0;
++	for (i = 0; i < pss->package.count; i++) {
++		element = &(pss->package.elements[i]);
++		if (element->type != ACPI_TYPE_INTEGER)
++			return -EFAULT;
++		phys_addr |= element->integer.value << i*32;
++	}
++	return 0;
++}
++
++static int acpi_vmgenid_add(struct acpi_device *device)
++{
++	int retval;
++
++	if (!device)
++		return -EINVAL;
++	retval = get_vmgenid(device->handle);
++	if (retval < 0)
++		return retval;
++	return sysfs_create_group(hypervisor_kobj, &vmgenid_group);
++}
++
++static int acpi_vmgenid_remove(struct acpi_device *device)
++{
++	sysfs_remove_group(hypervisor_kobj, &vmgenid_group);
++	return 0;
++}
++
++static const struct acpi_device_id vmgenid_ids[] = {
++	{"QEMUVGID", 0},
++	{"", 0},
++};
++
++static struct acpi_driver acpi_vmgenid_driver = {
++	.name = "vm_gen_counter",
++	.ids = vmgenid_ids,
++	.owner = THIS_MODULE,
++	.ops = {
++		.add = acpi_vmgenid_add,
++		.remove = acpi_vmgenid_remove,
++	}
++};
++
++static int __init vmgenid_init(void)
++{
++	return acpi_bus_register_driver(&acpi_vmgenid_driver);
++}
++
++static void __exit vmgenid_exit(void)
++{
++	acpi_bus_unregister_driver(&acpi_vmgenid_driver);
++}
++
++module_init(vmgenid_init);
++module_exit(vmgenid_exit);
+-- 
+2.14.3
