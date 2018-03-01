@@ -1,74 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162594AbeCAWWe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 17:22:34 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51212 "EHLO mx1.redhat.com"
+        id S1162571AbeCAWYC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:24:02 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:55233 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1162548AbeCAWWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:22:32 -0500
-Subject: Re: [PATCH v3 4/6] sysctl: Warn when a clamped sysctl parameter is
- set out of range
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1519926220-7453-1-git-send-email-longman@redhat.com>
- <1519926220-7453-5-git-send-email-longman@redhat.com>
- <20180301133807.f5beb1bf1d1391f23e95ce63@linux-foundation.org>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <478592ec-3550-0e81-6242-41190bea6521@redhat.com>
-Date: Thu, 1 Mar 2018 17:22:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1162460AbeCAWYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 17:24:01 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: kuninori.morimoto.gx@renesas.com
+Cc: broonie@kernel.org, maxime.ripard@free-electrons.com, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [BUG] Kernel crash on Allwinner H3 due to sound core changes
+Date: Thu, 01 Mar 2018 23:23:57 +0100
+Message-ID: <63331816.68OamKINx1@jernej-laptop>
+In-Reply-To: <2424862.oPtAVTfrB9@jernej-laptop>
+References: <2424862.oPtAVTfrB9@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20180301133807.f5beb1bf1d1391f23e95ce63@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2018 04:38 PM, Andrew Morton wrote:
-> On Thu,  1 Mar 2018 12:43:38 -0500 Waiman Long <longman@redhat.com> wrote:
->
->> Even with clamped sysctl parameters, it is still not that straight
->> forward to figure out the exact range of those parameters. One may
->> try to write extreme parameter values to see if they get clamped.
->> To make it easier, a warning with the expected range will now be
->> printed in the kernel ring buffer when a clamped sysctl parameter
->> receives an out of range value.
->>
->> ...
->>
->> +		if (clamped && param->name &&
->> +		   !(*param->flags & CTL_FLAGS_OOR_WARNED)) {
->> +			proc_ctl_warn(d, param->name,
->> +				param->min ? *param->min : -INT_MAX,
->> +				param->max ? *param->max :  INT_MAX, val);
->> +			*param->flags |= CTL_FLAGS_OOR_WARNED;
->> +		}
-> The handling of ctl_table.flags looks racy on SMP or preemptible. 
-> That's not at all a serious problem in this usage, but such handling of
-> ctl_table.flags may be a problem in the future.  Which means that if
-> some future user of this field *is* sensitive to races then people are
-> going to have to come back to this code and add the needed locking.
->
-> So we should at least think about what that locking is to be, and
-> document it in some fashion.  Do we already hold an appropriate lock at
-> this time?  If so, what is it?
->
-> If some such future user of ctl_table.flags has to add a new lock to
-> the ctl_table for this purpose then we just eliminated your use-16-bit
-> space saving trick and we may as well use a ulong and operate on it
-> with bitops.
+Hi Kuninori,
 
-We don't actually need locking if it is only the flags that we are
-worrying about. Doing some kind of atomic bit setting should be enough.
-I should probably add some comment to elaborate a bit more on this.
-Thanks for reminding me about this forward looking concern.
+I'm responding to my own mail, since I didn't received yours for some reason 
+but I still saw your response in mailing list archive.
 
-Cheers,
-Longman
+Dne sreda, 28. februar 2018 ob 22:02:09 CET je Jernej Škrabec napisal(a):
+> Hi all,
+> 
+> with todays linux-next (next-20180228), kernel on Allwinner H3 SoC crashes
+> with dmesg like that: https://pastebin.com/raw/0D5JeaJ8
+> 
+> I bisected the kernel and first offending commit is:
+> be7ee5f32a9a ("ASoC: soc-generic-dmaengine-pcm: replace platform to
+> component")
+> 
+> I know that crash message is completely unrelated to sound subsystem, but it
+> turns out that if I disable CONFIG_SND_SUN4I_CODEC kernel works ok, but
+> this way I lose analog audio output.
+> 
+> Any suggestions what can be the issue?
+
+I did a bit of research and I can tell you that different kernel options (some 
+drivers added or removed) change how or where kernel crashes. That would 
+suggest some kind of memory corruption.
+
+I removed parts of the code from the sun4i codec driver and interestingly it 
+doesn't crash if I remove following lines:
+
+ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
+if (ret) {
+	dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
+	goto err_assert_reset;
+}
+
+Is it possible that NULL pointer causes troubles somewhere down the line?
+
+I tested this on linux-next, next-20180228 tag.
+
+Best regards,
+Jernej
