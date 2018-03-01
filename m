@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966956AbeCAKcB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:32:01 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33817 "EHLO
+        id S967388AbeCAKcy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:32:54 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33924 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935717AbeCAKb6 (ORCPT
+        with ESMTP id S966058AbeCAKcu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:31:58 -0500
-X-Google-Smtp-Source: AG47ELsA7VXWUB3BqAwRVSyMeXN6aq/YMQuYwkR8i6JK6ZzNTvP2E6G5GR84RJMY6GoWiNQ6WTOVxg==
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+        Thu, 1 Mar 2018 05:32:50 -0500
+X-Google-Smtp-Source: AG47ELvOeZbD0qDQMwCNTUXnYdRtrRWoogq0KEuCGuMRDx25FQ4Ih5cLgj3dq/lfID0UvVEGGYWVKg==
+Subject: Re: [PATCH v2 06/10] IB/core: Add optional PCI P2P flag to
+ rdma_rw_ctx_[init|destroy]()
 To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
@@ -22,13 +23,14 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-7-logang@deltatee.com>
 From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <90b658d9-da8a-af36-ad8f-a72ef0c6e3c1@grimberg.me>
-Date: Thu, 1 Mar 2018 12:31:53 +0200
+Message-ID: <72e90cc2-c05a-3ed8-42c7-e4d7a0d535d8@grimberg.me>
+Date: Thu, 1 Mar 2018 12:32:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228234006.21093-1-logang@deltatee.com>
+In-Reply-To: <20180228234006.21093-7-logang@deltatee.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -37,30 +39,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> Hi Everyone,
 
-Hi Logan,
+On 03/01/2018 01:40 AM, Logan Gunthorpe wrote:
+> In order to use PCI P2P memory pci_p2pmem_[un]map_sg() functions must be
+> called to map the correct DMA address. To do this, we add a flags
+> variable and the RDMA_RW_CTX_FLAG_PCI_P2P flag. When the flag is
+> specified use the appropriate map function.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>   drivers/infiniband/core/rw.c            | 21 +++++++++++++++++----
+>   drivers/infiniband/ulp/isert/ib_isert.c |  5 +++--
+>   drivers/infiniband/ulp/srpt/ib_srpt.c   |  7 ++++---
+>   drivers/nvme/target/rdma.c              |  6 +++---
+>   include/rdma/rw.h                       |  7 +++++--
+>   net/sunrpc/xprtrdma/svc_rdma_rw.c       |  6 +++---
+>   6 files changed, 35 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
+> index c8963e91f92a..775a9f8b15a6 100644
+> --- a/drivers/infiniband/core/rw.c
+> +++ b/drivers/infiniband/core/rw.c
+> @@ -12,6 +12,7 @@
+>    */
+>   #include <linux/moduleparam.h>
+>   #include <linux/slab.h>
+> +#include <linux/pci-p2pdma.h>
+>   #include <rdma/mr_pool.h>
+>   #include <rdma/rw.h>
+>   
+> @@ -269,18 +270,24 @@ static int rdma_rw_init_single_wr(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
+>    * @remote_addr:remote address to read/write (relative to @rkey)
+>    * @rkey:	remote key to operate on
+>    * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
+> + * @flags:      any of the RDMA_RW_CTX_FLAG_* flags
+>    *
+>    * Returns the number of WQEs that will be needed on the workqueue if
+>    * successful, or a negative error code.
+>    */
+>   int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
+>   		struct scatterlist *sg, u32 sg_cnt, u32 sg_offset,
+> -		u64 remote_addr, u32 rkey, enum dma_data_direction dir)
+> +		u64 remote_addr, u32 rkey, enum dma_data_direction dir,
+> +		unsigned int flags)
+>   {
+>   	struct ib_device *dev = qp->pd->device;
+>   	int ret;
+>   
+> -	ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+> +	if (flags & RDMA_RW_CTX_FLAG_PCI_P2PDMA)
+> +		ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
+> +	else
+> +		ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+> +
 
-> Here's v2 of our series to introduce P2P based copy offload to NVMe
-> fabrics. This version has been rebased onto v4.16-rc3 which already
-> includes Christoph's devpagemap work the previous version was based
-> off as well as a couple of the cleanup patches that were in v1.
-> 
-> Additionally, we've made the following changes based on feedback:
-> 
-> * Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
->    as a bunch of cleanup and spelling fixes he pointed out in the last
->    series.
-> 
-> * To address Alex's ACS concerns, we change to a simpler method of
->    just disabling ACS behind switches for any kernel that has
->    CONFIG_PCI_P2PDMA.
-> 
-> * We also reject using devices that employ 'dma_virt_ops' which should
->    fairly simply handle Jason's concerns that this work might break with
->    the HFI, QIB and rxe drivers that use the virtual ops to implement
->    their own special DMA operations.
-
-That's good, but what would happen for these devices? simply fail the
-mapping causing the ulp to fail its rdma operation? I would think
-that we need a capability flag for devices that support it.
+Why not use is_pci_p2pdma_page(sg) instead of a flag? It would be so
+much cleaner...
