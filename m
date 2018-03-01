@@ -1,64 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965122AbeCAIZc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:25:32 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:56203 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935781AbeCAIZa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:25:30 -0500
-X-Google-Smtp-Source: AG47ELvu5590a5YsHDO6hdtJ0Cp+g3bsfbAmbKkXzUNi3j+YNAn/N1BMGcnpsbX6X9EpHWesaFDPZJtaS93W0qp/YAU=
+        id S965389AbeCAI0v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:26:51 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52834 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964841AbeCAI0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 03:26:50 -0500
+Date: Thu, 1 Mar 2018 09:26:48 +0100
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH 0/9] drm/xen-front: Add support for Xen PV display
+ frontend
+Message-ID: <20180301082648.frnslqyhffj2bkwl@sirius.home.kraxel.org>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <4c7e6f65-1787-3815-22b5-f9495e388c06@gmail.com>
+ <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 09:25:28 +0100
-Message-ID: <CACRpkdZpVtTVuPYMhRPP1WpyraHsXoRQX9yv5yv8hmOQWJ69vw@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v4.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e265c53-db9a-0946-6b1c-b946bcbb4100@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+  Hi,
 
-two smallish pin control fixes: one actual code fix for the Meson and
-a MAINTAINERS update.
+> 1. Possible security issues - VirtIO devices are PCI bus masters, thus
+> allowing real device (running, for example, in untrusted driver domain)
+> to get control over guest's memory by writing to its memory
+>
+> 2. VirtIO currently uses GFNs written into the shared ring, without Xen
+> grants support. This will require generic grant-mapping/sharing layer
+> to be added to VirtIO.
+> 
+> 3. VirtIO requires QEMU PCI emulation for setting up a device. Xen PV
+> (and PVH) domains don't use QEMU for platform emulation in order to
+> reduce attack surface.  (PVH is in the process of gaining PCI config
+> space emulation though, but it is optional, not a requirement)
 
-Please pull it in!
+Well, that is wrong.  virtio doesn't require pci.  There are other
+transports (mmio, ccw), and it should be possible to create a xen
+specific transport which uses grant tables properly.  Seems there even
+was an attempt to implement that in 2011, see 
+https://wiki.xenproject.org/wiki/Virtio_On_Xen
 
-Yours,
-Linus Walleij
+> 4. Most of the PV drivers a guest uses at the moment are Xen PV drivers,
+> e.g. net,
+> block, console, so only virtio-gpu will require QEMU to run.
 
+You are not forced to use qemu, you can certainly create an alternative
+host side implementation (and still use on the existing virtio guest
+drivers).
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+Whenever writing a xenbus implementation for both guest and host or
+writing a virtio implementation for the host only is better -- dunno.
+The virtio path obviously needs some infrastructure work for virtio
+support in Xen, which may pay off long term.  Your call.
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.16-2
-
-for you to fetch changes up to 78de41a368af26e54ba53e63629fd7f166f17cef:
-
-  MAINTAINERS: add Freescale pin controllers (2018-02-21 11:09:23 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for v4.16:
-
-- Fix a pin group on the Meson.
-- Assign maintainers for Freescale/NXP pin controllers.
-
-----------------------------------------------------------------
-Stefan Agner (1):
-      MAINTAINERS: add Freescale pin controllers
-
-Yixun Lan (1):
-      pinctrl: meson-axg: adjust uart_ao_b pin group naming
-
- MAINTAINERS                               | 11 +++++++++++
- drivers/pinctrl/meson/pinctrl-meson-axg.c |  4 ++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
+cheers,
+  Gerd
