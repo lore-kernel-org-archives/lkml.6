@@ -1,127 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161882AbeCAVH4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:07:56 -0500
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50018 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161805AbeCAVHz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:07:55 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: frowand.list@gmail.com
-Cc: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com
-Subject: Re: [PATCH v4 0/4] of: change overlay apply input data from unflattened
-Date: Thu, 01 Mar 2018 23:08:44 +0200
-Message-ID: <1686635.IHDeayOHqm@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1519927256-4868-1-git-send-email-frowand.list@gmail.com>
-References: <1519927256-4868-1-git-send-email-frowand.list@gmail.com>
+        id S1161874AbeCAVKo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:10:44 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161764AbeCAVKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:10:42 -0500
+Date: Thu, 1 Mar 2018 16:10:36 -0500
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20180301211036.GB6742@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
+ <1519936195.4592.18.camel@au1.ibm.com>
+ <20180301205548.GA6742@redhat.com>
+ <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Frank,
+On Thu, Mar 01, 2018 at 02:03:26PM -0700, Logan Gunthorpe wrote:
+> 
+> 
+> On 01/03/18 01:55 PM, Jerome Glisse wrote:
+> > Well this again a new user of struct page for device memory just for
+> > one usecase. I wanted HMM to be more versatile so that it could be use
+> > for this kind of thing too. I guess the message didn't go through. I
+> > will take some cycles tomorrow to look into this patchset to ascertain
+> > how struct page is use in this context.
+> 
+> We looked at it but didn't see how any of it was applicable to our needs.
+> 
 
-Thank you for the patches.
+It seems people miss-understand HMM :( you do not have to use all of
+its features. If all you care about is having struct page then just
+use that for instance in your case only use those following 3 functions:
 
-For the whole series,
+hmm_devmem_add() or hmm_devmem_add_resource() and hmm_devmem_remove()
+for cleanup.
 
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+You can set the fault callback to an empty stub that always do return
+VM_SIGBUS or a patch to allow NULL callback inside HMM.
 
-On Thursday, 1 March 2018 20:00:52 EET frowand.list@gmail.com wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> Move duplicating and unflattening of an overlay flattened devicetree
-> (FDT) into the overlay application code.  To accomplish this,
-> of_overlay_apply() is replaced by of_overlay_fdt_apply().
-> 
-> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
-> code, which is thus responsible for freeing the duplicate FDT.  The
-> caller of of_overlay_fdt_apply() remains responsible for freeing the
-> original FDT.
-> 
-> The unflattened devicetree now belongs to devicetree code, which is
-> thus responsible for freeing the unflattened devicetree.
-> 
-> These ownership changes prevent early freeing of the duplicated FDT
-> or the unflattened devicetree, which could result in use after free
-> errors.
-> 
-> These changes led to migrating some unittest overlay data into
-> their own devicetree source files, and then converting most of
-> them to use sugar syntax instead of hand coding fragments.
-> 
-> Changes from v3:
->   - patch 1/4: OF_OVERLAY: add select OF_FLATTREE
-> 
-> Changes from v2:
->   - improve error messages in patch 4/4, as suggested by Geert
-> 
-> Changes from v1:
->   - rebase on v4.16-rc1
->   - update documentation
->   - split out error message to a separate patch
-> 
-> 
-> Frank Rowand (4):
->   of: change overlay apply input data from unflattened to FDT
->   of: Documentation: of_overlay_apply() replaced by
->     of_overlay_fdt_apply()
->   of: convert unittest overlay devicetree source to sugar syntax
->   of: improve reporting invalid overlay target path
-> 
->  Documentation/devicetree/overlay-notes.txt       |   4 +-
->  drivers/of/Kconfig                               |   1 +
->  drivers/of/of_private.h                          |   1 +
->  drivers/of/overlay.c                             | 129 ++++++++--
->  drivers/of/resolver.c                            |   6 -
->  drivers/of/unittest-data/Makefile                |  28 ++-
->  drivers/of/unittest-data/overlay.dts             | 101 ++++----
->  drivers/of/unittest-data/overlay_0.dts           |  14 ++
->  drivers/of/unittest-data/overlay_1.dts           |  14 ++
->  drivers/of/unittest-data/overlay_10.dts          |  27 +++
->  drivers/of/unittest-data/overlay_11.dts          |  28 +++
->  drivers/of/unittest-data/overlay_12.dts          |  14 ++
->  drivers/of/unittest-data/overlay_13.dts          |  14 ++
->  drivers/of/unittest-data/overlay_15.dts          |  30 +++
->  drivers/of/unittest-data/overlay_2.dts           |   9 +
->  drivers/of/unittest-data/overlay_3.dts           |   9 +
->  drivers/of/unittest-data/overlay_4.dts           |  18 ++
->  drivers/of/unittest-data/overlay_5.dts           |   9 +
->  drivers/of/unittest-data/overlay_6.dts           |  10 +
->  drivers/of/unittest-data/overlay_7.dts           |  10 +
->  drivers/of/unittest-data/overlay_8.dts           |  10 +
->  drivers/of/unittest-data/overlay_9.dts           |  10 +
->  drivers/of/unittest-data/overlay_bad_phandle.dts |  23 +-
->  drivers/of/unittest-data/overlay_bad_symbol.dts  |  25 +-
->  drivers/of/unittest-data/tests-overlay.dtsi      | 217 +----------------
->  drivers/of/unittest.c                            | 294 ++++++++++----------
->  include/linux/of.h                               |   7 -
->  27 files changed, 575 insertions(+), 487 deletions(-)
->  create mode 100644 drivers/of/unittest-data/overlay_0.dts
->  create mode 100644 drivers/of/unittest-data/overlay_1.dts
->  create mode 100644 drivers/of/unittest-data/overlay_10.dts
->  create mode 100644 drivers/of/unittest-data/overlay_11.dts
->  create mode 100644 drivers/of/unittest-data/overlay_12.dts
->  create mode 100644 drivers/of/unittest-data/overlay_13.dts
->  create mode 100644 drivers/of/unittest-data/overlay_15.dts
->  create mode 100644 drivers/of/unittest-data/overlay_2.dts
->  create mode 100644 drivers/of/unittest-data/overlay_3.dts
->  create mode 100644 drivers/of/unittest-data/overlay_4.dts
->  create mode 100644 drivers/of/unittest-data/overlay_5.dts
->  create mode 100644 drivers/of/unittest-data/overlay_6.dts
->  create mode 100644 drivers/of/unittest-data/overlay_7.dts
->  create mode 100644 drivers/of/unittest-data/overlay_8.dts
->  create mode 100644 drivers/of/unittest-data/overlay_9.dts
+You don't have to use the free callback if you don't care and if there
+is something that doesn't quite match what you want HMM can always be
+ajusted to address this.
 
+The intention of HMM is to be useful for all device memory that wish
+to have struct page for various reasons.
 
--- 
-Regards,
-
-Laurent Pinchart
+Cheers,
+Jérôme
