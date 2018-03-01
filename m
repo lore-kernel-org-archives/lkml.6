@@ -1,96 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966997AbeCAJbU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:31:20 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:55304 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966780AbeCAJbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:31:16 -0500
-X-Google-Smtp-Source: AG47ELv7jfSWs8t94HnFerVO5ppe14JOYT//BXyGLFg6qpwfJZmNnEJsG47+kZHf701sf59hbJdtww==
-Date: Thu, 1 Mar 2018 10:31:11 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        william.grant@canonical.com, terraluna977@gmail.com
-Cc: linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/pti] x86/cpu_entry_area: Sync cpu_entry_area to
- initial_page_table
-Message-ID: <20180301093111.kyskbidqe5fqvogs@gmail.com>
-References: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
- <tip-945fd17ab6bab8a4d05da6c3170519fbcfe62ddb@git.kernel.org>
+        id S966972AbeCAJcW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:32:22 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966675AbeCAJcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:32:19 -0500
+Subject: Re: [PATCH v2 08/15] KVM: s390: interface to enable AP execution mode
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <a3df4d1b-05a2-38de-b4bb-76bfd3e23818@redhat.com>
+ <47808b6f-9e6d-1f17-c26b-3e03d1f1e2ca@linux.vnet.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <dcb6e922-6349-9932-c9be-ff8581ba0259@redhat.com>
+Date: Thu, 1 Mar 2018 10:32:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tip-945fd17ab6bab8a4d05da6c3170519fbcfe62ddb@git.kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <47808b6f-9e6d-1f17-c26b-3e03d1f1e2ca@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Just a few small speling nits:
+>>> +EXPORT_SYMBOL(kvm_ap_enable_ie_mode);
+>>> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+>>> index 1b5621f..3142541 100644
+>>> --- a/arch/s390/kvm/kvm-s390.h
+>>> +++ b/arch/s390/kvm/kvm-s390.h
+>>> @@ -18,6 +18,7 @@
+>>>   #include <asm/facility.h>
+>>>   #include <asm/processor.h>
+>>>   #include <asm/sclp.h>
+>>> +#include <asm/ap.h>
+>>>   
+>>>   /* Transactional Memory Execution related macros */
+>>>   #define IS_TE_ENABLED(vcpu)	((vcpu->arch.sie_block->ecb & ECB_TE))
+>>>
+>> What about VSIE?
+> That is a good question. I'm beginning to think introducing AP on second 
+> level guests
+> ought to be postponed for now. I'm going to look into this further.
+>>
 
-* tip-bot for Thomas Gleixner <tipbot@zytor.com> wrote:
+Once you provide AP support to the guest, vSIE also has to be in place.
 
-> Commit-ID:  945fd17ab6bab8a4d05da6c3170519fbcfe62ddb
-> Gitweb:     https://git.kernel.org/tip/945fd17ab6bab8a4d05da6c3170519fbcfe62ddb
-> Author:     Thomas Gleixner <tglx@linutronix.de>
-> AuthorDate: Wed, 28 Feb 2018 21:14:26 +0100
-> Committer:  Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Thu, 1 Mar 2018 09:48:27 +0100
-> 
-> x86/cpu_entry_area: Sync cpu_entry_area to initial_page_table
-> 
-> The separation of the cpu_entry_area from the fixmap missed the fact that
-> on 32bit non-PAE kernels the cpu_entry_area mapping might not be covered in
-> initial_page_table by the previous synchronizations.
-> 
-> This results in suspend/resume failures because 32bit utilizes initial page
-> table for resume. The absence of the cpu_entry_area mapping results in a
-> triple fault, aka. insta reboot.
-> 
-> With PAE enabled this works by chance because the PGD entry which covers
-> the fixmap and other parts incindentally provides the cpu_entry_area
-> mapping as well.
+But don't worry about vSIE, I think I know what we have to do.
 
-s/incindentally/incidentally
-
-s/32bit/32-bit
-
-s/utilizes initial page table
- /utilizes the initial page table
-
-> Synchronize the initial page table after setting up the cpu entry
-> area. Instead of adding yet another copy of the same code, move it to a
-> function and invoke it from the various places.
-
-s/cpu/CPU
-
-> It needs to be investigated if the existing calls in setup_arch() and
-> setup_per_cpu_areas() can be replaced by the later invocation from
-> setup_cpu_entry_areas(), but that's beyond the scope of this fix.
-
-> +	/*
-> +	 * This is the last essential update to swapper_pgdir which needs
-> +	 * to be synchronized to initial_page_table on 32bit.
-> +	 */
-> +	sync_initial_page_table();
-
-
-s/swapper_pgdir
- /swapper_pg_dir
-
-s/on 32bit/on 32-bit kernels
-
-> +	/*
-> +	 * sync back low identity map too.  It is used for example
-> +	 * in the 32-bit EFI stub.
-> +	 */
-
-s/sync/Sync
-
-Very nice fix!
+-- 
 
 Thanks,
 
-	Ingo
+David / dhildenb
