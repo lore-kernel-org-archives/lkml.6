@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161760AbeCAUvN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:51:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43928 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161698AbeCAUu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:50:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDDA21782
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 2/4] crypto: omap-sham - Fix misleading indentation
-Date: Thu,  1 Mar 2018 21:50:11 +0100
-Message-Id: <1519937413-24468-2-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519937413-24468-1-git-send-email-krzk@kernel.org>
-References: <1519937413-24468-1-git-send-email-krzk@kernel.org>
+        id S1161726AbeCAUx0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:53:26 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38478 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161674AbeCAUxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 15:53:23 -0500
+X-Google-Smtp-Source: AG47ELvvCTCdIRRfYnukG5Jm5ldQ42NFbtuocNGkdBJenKJ2Hf18afBSxrFYAY17PuM2Q104z7g9ew==
+Date: Thu, 1 Mar 2018 13:53:15 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20180301205315.GJ19007@ziepe.ca>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519936477.4592.23.camel@au1.ibm.com>
+ <1519936815.4592.25.camel@au1.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519936815.4592.25.camel@au1.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8043bb1ae03c ("crypto: omap-sham - convert driver logic to use
-sgs for data xmit") removed the if() clause leaving the statement as is.
-The intention was in that case to finish the request always so the goto
-instruction seems sensible.
+On Fri, Mar 02, 2018 at 07:40:15AM +1100, Benjamin Herrenschmidt wrote:
+> Also we need to be able to hard block MEMREMAP_WB mappings of non-RAM
+> on ppc64 (maybe via an arch hook as it might depend on the processor
+> family). Server powerpc cannot do cachable accesses on IO memory
+> (unless it's special OpenCAPI or nVlink, but not on PCIe).
 
-Remove the indentation to fix Smatch warning:
-    drivers/crypto/omap-sham.c:1761 omap_sham_done_task() warn: inconsistent indenting
+I think you are right on this - even on x86 we must not create
+cachable mappings of PCI BARs - there is no way that works the way
+anyone would expect.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/crypto/omap-sham.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think this series doesn't have a problem here only because it never
+touches the BAR pages with the CPU.
 
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 7650b1b449bb..6cb6ab6f52c0 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1758,7 +1758,7 @@ static void omap_sham_done_task(unsigned long data)
- 		if (test_and_clear_bit(FLAGS_OUTPUT_READY, &dd->flags)) {
- 			/* hash or semi-hash ready */
- 			clear_bit(FLAGS_DMA_READY, &dd->flags);
--				goto finish;
-+			goto finish;
- 		}
- 	}
- 
--- 
-2.7.4
+BAR memory should be mapped into the CPU as WC at best on all arches..
+
+Jason
