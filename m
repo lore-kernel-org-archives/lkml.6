@@ -1,107 +1,263 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELv9a7eeXLJDoml2R0DGYgaALJaXvISTuCrxP2rrBeehVHJFAQdYwSauiyr0kj7yeQZ3EgVa
-ARC-Seal: i=1; a=rsa-sha256; t=1519881580; cv=none;
-        d=google.com; s=arc-20160816;
-        b=vBim9uU2tRybNIkZfrMsEKJq0UJThWhQHlcq3sHEX8hYuiOG0gCAVHSYohQfAPDMqP
-         e+n9lPhsHfmbhK8AmblSMjhjYomE5ZDlMHOwFNZ86RUsnNQDfwDDTxgph7T6Y//YgNXZ
-         T4zPs8yBs+DaButwN9ZWPKaYKNUHhMXXvmhRfQ8p3W6gymnaL/Ai/XBWTwGmnpAhBvsy
-         1WHNqm8J0aph033spyU8Ikc4/GY/yT+sLwlBp0IdRVAvUdA6dRsOCCl9x+64Wf5U34RV
-         sVFO+o2M/43RdpAAPmi9PwI/5jYvaCs1jG9L8MVlYAVxlHPAscCNEp/rnNDOaPCQnAZc
-         O2LA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=jPCi4u/ucGx5Jr0VCzrqVl6hEfg1NwHFtSqQ0NMnI2M=;
-        b=cSe3IQIISmU+i48ulFrfEwrlKdunD12J7tqPoMS7uk1fwNaWRAMBymIeaiQdmIsPha
-         encvrwf7M+byq6L1ur5Abeau3OCThcfdPleDnLqVP2ijj/9A9o50CuG4xVLov7QRujg9
-         u/pFKCZj/wKatRaJv/1g0h0lz2Eby1mvNvXHP2MM37EScOylxsLq/8FaXaXtgY5raftd
-         Qh7KJqnj4bS9Wvy/ZdkTNg80YifJwjiFQWdthP0Pv1C8Uuhyqc01Ltsp1AOPWpXdHFB4
-         xHyi32H1qPn6UU+RnOPUDseul4oXLlDGnfksyntQANr4cDbX5g6emQx7V4Evd6d5gxfP
-         ughw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	wsa@the-dreams.de
-Cc: driverdev-devel@linuxdriverproject.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 2/5] staging: ks7010: Replace SSID_MAX_SIZE with IEEE80211_MAX_SSID_LEN.
-Date: Wed, 28 Feb 2018 21:19:08 -0800
-Message-Id: <20180301051911.1314-2-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180301051911.1314-1-quytelda@tamalin.org>
-References: <20180301051911.1314-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:9V+4iqSPP68LoRK+vBILjwKT7xGIHtYlsmFdvufvgN8uADLDlYd
- 3eJydhBdhH34mHfjNApajXInIwEcTfGt88Byq8fRROtPE90pJVl0kVzKdCxnBZuYw8mBlHz
- iCe295juNPXmW2fFHmhNPyv3aJ5e5490IiU4X9LHurcXVzdFVy2jrp5WfLC9YYFtHZ3Ly4Q
- 4lc6A96sw0jjYWlgKzBvw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9VzqNW8JUpo=:OM7ua3VER264UqV64vFMqB
- gZLj7cMxPmKqPytrzGSy/91Deeq3aqU5CJslN1wTrb6MW4x4CJVoVFcmEyXztfT9NHdF2N2xh
- 3VklVdj7i891Ve2AvLD8lRE550LtRZQOChIp1E7BDEpALAuTROkCinuqNJ3Is3XzjdS7Fr2/L
- Nv0fzrwnfbZoAOb3U57rzJnnw+PX5/ZMb06DXUUvGvClRxk7W0HRcxcK8wJaomUqpptv6legz
- Z7H9JnfINIJWKceUNbOXTUJAex7jKYcBFmxPdp/DQ0s2JVt6nt6hcCqW4B5STv8tt3unxMsWZ
- 3GajbueAkrP2wr1HOJt5T9yHIshHlW2l0UU5gUXvUnzWo6k02Lv0DcT633UsEW0o/Fp2phxSh
- QvMkNqa/QWZCCmw/M0t5CPQ6R3w1K9QydTgaTGx9Cv4kI8Efv3ZWlijctqnbCe+FznXhoQH8N
- yO3Cz0C7CiPL23/0+PnUz+VZjDpj6oTzAgSe4NGBPryIds8VyYJxkvELi3ieZjoXZG2TZEO6s
- y0RnMv4+q9XCDJEayQkLLEbR6cQtjZnCrfH11cqjeASMMs/Q7W35v3t+Vy3UxrlM0X6YzZJZ9
- 9e4QYKMvsHwROlSTax0BiLDWgsGYXin4TsZioI0DZo7OAB8UKc9td6dFShN3rpbN0wU8wq2QI
- 74LHL63ot4sDHA6nDrzLblHbjhQUIt+2b+FxSwysIU9SFf7s2rNRjh8fd89GQBirB0BVtBBqv
- tbJaCffwHta/ax0KzwIFbbjGZtsALeu0zca5kg==
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1971162-1519881517-4-1816429442705754296
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: cc='ISO-8859-15', plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519881516; b=hLPdlJiRQLDyOEwzKK4re6ghT5FCUOgIcoPy4fmZrTLzeYL
+    XGyPi7aL9TtJFDhp3tAKejGYkt8fiTsTeixB/bQ+mwb6We0NSVbwhfT/DpTUrwWc
+    U5KId3gh12pIOvW+OJrdWfUOK4+Fv3iCr3cWiFDQO8MnhDcO9WPZHs9QCX7KkH7E
+    DANuHYIX0vq2m32qnUeWNY3C2mg2W43ELnMLOM6Y38DZWB8cx5dDmeq1Maf/AP3Z
+    Y0Ny81P8qkijHmBXCueU54GD2tFsx9WSKQwsT9AFz1bCrUmd6bLCxccvPi+RnaBk
+    4MkGaaB24lxM1S7nQrEMewI2RMjYzFt132rATWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519881516; bh=j
+    SLuOs1yIV5xQKzJQuspK19mITzHsIpp/r8hntEIpOE=; b=szF9bUkecQf1yQT/X
+    Ifu1NU3W30HhXXVbw+aNYhXnMd7I6ibDAjQ0dm/sZu5j6skPOldPPnj565SVxi53
+    BLedV4Bl2sbk6K5bMkW/bFi3qFGKx+GLZknEVX+rln2l5cCpWPe7poqW4183p3OD
+    PynO3P3PamEGFv+6bYqefeb87f+vXZvcq5WuMa4lqyyq96pEYUrmi9h08zO/IvM/
+    YdPw0Leh4O88a+alxczAAjUpmMbcwEOLgVhhVMVANq1juAHH+IDU2Ae5HXM6r2/B
+    dKT28lRmT4Hlh4ZBjvFdulFqsIvBki1fhF+M198O+5sig+1dau5PZtYHNA0uQ0U0
+    kNYNw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=OsuW9qQT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=nH2mmTPB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=OsuW9qQT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=nH2mmTPB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 33E2B60117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org;
+ spf=none smtp.mailfrom=lmark@codeaurora.org
+Date: Wed, 28 Feb 2018 21:18:27 -0800 (PST)
+From: Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To: Laura Abbott <labbott@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>
+Subject: [RFC] android: ion: How to properly clean caches for uncached
+ allocations
+Message-ID: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com>
+User-Agent: Alpine 2.02 (DEB 1266 2009-07-14)
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
+ linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ =?ISO-8859-15?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
+ Martijn Coenen <maco@android.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593711348040953526?=
-X-GMAIL-MSGID: =?utf-8?q?1593711348040953526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SSID_MAX_SIZE is a constant defined locally in ks_hostif.h, but it should
-be replaced with IEEE80211_MAX_SSID_LEN from the kernel's 802.11 header,
-of which it is just a copy.
+The issue:
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-Reviewed-by: Tobin C. Harding <me@tobin.cc>
+Currently in ION if you allocate uncached memory it is possible that there
+are still dirty lines in the cache.  And often these dirty lines in the
+cache are the zeros which were meant to clear out any sensitive kernel
+data.
+
+What this means is that if you allocate uncached memory from ION, and then
+subsequently write to that buffer (using the uncached mapping you are
+provided by ION) then the data you have written could be corrupted at some
+point in the future if a dirty line is evicted from the cache.
+
+Also this means there is a potential security issue.  If an un-privileged
+userspace user allocated uncached memory (for example from the system heap)
+and then if they were to read from that buffer (through the un-cached
+mapping they are provided by ION), and if some of the zeros which were
+written to that memory are still in the cache then this un-privileged
+userspace user could read potentially sensitive kernel data.
+
+
+An unacceptable fix:
+
+I have included some sample code which should resolve this issue for the
+system heap and the cma heap on some architectures, however this code
+would not be acceptable for upstreaming since it uses hacks to clean
+the cache.
+Similar changes would need to be made to carveout heap and chunk heap.
+
+I would appreciate some feedback on the proper way for ION to clean the
+caches for memory it has allocated that is intended for uncached access.
+
+I realize that it may be tempting, as a solution to this problem, to
+simply strip uncached support from ION. I hope that we can try to find a
+solution which preserves uncached memory support as ION uncached memory
+is often used (though perhaps not in upstreamed code) in cases such as
+multimedia use cases where there is no CPU access required, in secure
+heap allocations, and in some cases where there is minimal CPU access
+and therefore uncached memory performs better.
+
+Signed-off-by: Liam Mark <lmark@codeaurora.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 4 ++--
- drivers/staging/ks7010/ks_hostif.h | 3 +--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/staging/android/ion/ion.c             | 16 ++++++++++++++++
+ drivers/staging/android/ion/ion.h             |  5 ++++-
+ drivers/staging/android/ion/ion_cma_heap.c    |  3 +++
+ drivers/staging/android/ion/ion_page_pool.c   |  8 ++++++--
+ drivers/staging/android/ion/ion_system_heap.c |  7 ++++++-
+ 5 files changed, 35 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 67cf32433023..59f7c4e422d3 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -253,12 +253,12 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
- 	while (bsize > offset) {
- 		switch (*bp) { /* Information Element ID */
- 		case WLAN_EID_SSID:
--			if (*(bp + 1) <= SSID_MAX_SIZE) {
-+			if (*(bp + 1) <= IEEE80211_MAX_SSID_LEN) {
- 				ap->ssid.size = *(bp + 1);
- 			} else {
- 				DPRINTK(1, "size over :: ssid size=%d\n",
- 					*(bp + 1));
--				ap->ssid.size = SSID_MAX_SIZE;
-+				ap->ssid.size = IEEE80211_MAX_SSID_LEN;
- 			}
- 			memcpy(ap->ssid.body, bp + 2, ap->ssid.size);
- 			break;
-diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index 9ac317e4b507..b46aa94c0d48 100644
---- a/drivers/staging/ks7010/ks_hostif.h
-+++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -225,10 +225,9 @@ struct hostif_start_confirm_t {
- 	__le16 result_code;
- } __packed;
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 57e0d8035b2e..10e967b0a0f4 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -38,6 +38,22 @@ bool ion_buffer_cached(struct ion_buffer *buffer)
+ 	return !!(buffer->flags & ION_FLAG_CACHED);
+ }
  
--#define SSID_MAX_SIZE 32
- struct ssid_t {
- 	u8 size;
--	u8 body[SSID_MAX_SIZE];
-+	u8 body[IEEE80211_MAX_SSID_LEN];
- 	u8 ssid_pad;
- } __packed;
++void ion_pages_sync_for_device(struct page *page, size_t size,
++			       enum dma_data_direction dir)
++{
++	struct scatterlist sg;
++	struct device dev = {0};
++
++	/* hack, use dummy device */
++	arch_setup_dma_ops(&dev, 0, 0, NULL, false);
++
++	sg_init_table(&sg, 1);
++	sg_set_page(&sg, page, size, 0);
++	/* hack, use phys address for dma address */
++	sg_dma_address(&sg) = page_to_phys(page);
++	dma_sync_sg_for_device(&dev, &sg, 1, dir);
++}
++
+ /* this function should only be called while dev->lock is held */
+ static void ion_buffer_add(struct ion_device *dev,
+ 			   struct ion_buffer *buffer)
+diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
+index a238f23c9116..227b9928d185 100644
+--- a/drivers/staging/android/ion/ion.h
++++ b/drivers/staging/android/ion/ion.h
+@@ -192,6 +192,9 @@ struct ion_heap {
+  */
+ bool ion_buffer_cached(struct ion_buffer *buffer);
  
++void ion_pages_sync_for_device(struct page *page, size_t size,
++			       enum dma_data_direction dir);
++
+ /**
+  * ion_buffer_fault_user_mappings - fault in user mappings of this buffer
+  * @buffer:		buffer
+@@ -333,7 +336,7 @@ struct ion_page_pool {
+ struct ion_page_pool *ion_page_pool_create(gfp_t gfp_mask, unsigned int order,
+ 					   bool cached);
+ void ion_page_pool_destroy(struct ion_page_pool *pool);
+-struct page *ion_page_pool_alloc(struct ion_page_pool *pool);
++struct page *ion_page_pool_alloc(struct ion_page_pool *pool, bool *from_pool);
+ void ion_page_pool_free(struct ion_page_pool *pool, struct page *page);
+ 
+ /** ion_page_pool_shrink - shrinks the size of the memory cached in the pool
+diff --git a/drivers/staging/android/ion/ion_cma_heap.c b/drivers/staging/android/ion/ion_cma_heap.c
+index 49718c96bf9e..82e80621d114 100644
+--- a/drivers/staging/android/ion/ion_cma_heap.c
++++ b/drivers/staging/android/ion/ion_cma_heap.c
+@@ -59,6 +59,9 @@ static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
+ 		memset(page_address(pages), 0, size);
+ 	}
+ 
++	if (!ion_buffer_cached(buffer))
++		ion_pages_sync_for_device(pages, size, DMA_BIDIRECTIONAL);
++
+ 	table = kmalloc(sizeof(*table), GFP_KERNEL);
+ 	if (!table)
+ 		goto err;
+diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
+index b3017f12835f..169a321778ed 100644
+--- a/drivers/staging/android/ion/ion_page_pool.c
++++ b/drivers/staging/android/ion/ion_page_pool.c
+@@ -63,7 +63,7 @@ static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
+ 	return page;
+ }
+ 
+-struct page *ion_page_pool_alloc(struct ion_page_pool *pool)
++struct page *ion_page_pool_alloc(struct ion_page_pool *pool, bool *from_pool)
+ {
+ 	struct page *page = NULL;
+ 
+@@ -76,8 +76,12 @@ struct page *ion_page_pool_alloc(struct ion_page_pool *pool)
+ 		page = ion_page_pool_remove(pool, false);
+ 	mutex_unlock(&pool->mutex);
+ 
+-	if (!page)
++	if (!page) {
+ 		page = ion_page_pool_alloc_pages(pool);
++		*from_pool = false;
++	} else {
++		*from_pool = true;
++	}
+ 
+ 	return page;
+ }
+diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
+index bc19cdd30637..3bb4604e032b 100644
+--- a/drivers/staging/android/ion/ion_system_heap.c
++++ b/drivers/staging/android/ion/ion_system_heap.c
+@@ -57,13 +57,18 @@ static struct page *alloc_buffer_page(struct ion_system_heap *heap,
+ 	bool cached = ion_buffer_cached(buffer);
+ 	struct ion_page_pool *pool;
+ 	struct page *page;
++	bool from_pool;
+ 
+ 	if (!cached)
+ 		pool = heap->uncached_pools[order_to_index(order)];
+ 	else
+ 		pool = heap->cached_pools[order_to_index(order)];
+ 
+-	page = ion_page_pool_alloc(pool);
++	page = ion_page_pool_alloc(pool, &from_pool);
++
++	if (!from_pool && !ion_buffer_cached(buffer))
++		ion_pages_sync_for_device(page, PAGE_SIZE << order,
++					  DMA_BIDIRECTIONAL);
+ 
+ 	return page;
+ }
 -- 
-2.16.2
+1.8.5.2
+
+
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
