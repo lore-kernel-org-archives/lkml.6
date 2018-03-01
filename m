@@ -1,76 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965815AbeCAEC3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 23:02:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965752AbeCAEC2 (ORCPT
+        id S965856AbeCAEKo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 23:10:44 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36272 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965779AbeCAEKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 23:02:28 -0500
-Subject: Re: linux-next: build warnings after merge of the block tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
-References: <20180301112624.652612c7@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date: Thu, 1 Mar 2018 09:32:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Wed, 28 Feb 2018 23:10:43 -0500
+X-Google-Smtp-Source: AG47ELtrQImvj39m/IPpIZAEQdpfHczElw6F6j6yJTQkVahMjFBZVi+p0L3g/fZvotHU6sNd7HlB8g==
+Subject: Re: [PATCH v2] hwmon: g762: handle cleanup with devm_add_action
+To: Peng Hao <peng.hao2@zte.com.cn>, jdelvare@suse.com
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519902202-80883-1-git-send-email-peng.hao2@zte.com.cn>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b4523e12-2abc-1cac-d190-120c04840469@roeck-us.net>
+Date: Wed, 28 Feb 2018 20:10:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180301112624.652612c7@canb.auug.org.au>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1519902202-80883-1-git-send-email-peng.hao2@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030104-0016-0000-0000-0000052B4138
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030104-0017-0000-0000-0000286843A6
-Message-Id: <1f3b4275-b346-d768-681e-b180ec351140@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010050
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2018 05:56 AM, Stephen Rothwell wrote:
-> Hi Jens,
+On 03/01/2018 03:03 AM, Peng Hao wrote:
+> Simplify code and use devm_add_action() to handle cleanup.
 > 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) produced these warning:
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>   drivers/hwmon/g762.c | 43 +++++++++++++++++--------------------------
+>   1 file changed, 17 insertions(+), 26 deletions(-)
 > 
-> In file included from drivers/misc/cardreader/rts5209.c:24:0:
-> include/linux/rtsx_pci.h:40:0: warning: "SG_END" redefined
->  #define   SG_END   0x02
->  
-> In file included from include/linux/dmapool.h:14:0,
->                  from include/linux/pci.h:1311,
->                  from include/linux/rtsx_pci.h:26,
->                  from drivers/misc/cardreader/rts5209.c:24:
-> include/linux/scatterlist.h:69:0: note: this is the location of the previous definition
->  #define SG_END  0x02UL
->  
-> In file included from drivers/staging/rts5208/rtsx.h:180:0,
->                  from drivers/staging/rts5208/rtsx.c:28:
-> drivers/staging/rts5208/rtsx_chip.h:343:0: warning: "SG_END" redefined
->  #define SG_END   0x02
->  
-> In file included from include/linux/blkdev.h:28:0,
->                  from drivers/staging/rts5208/rtsx.c:23:
-> include/linux/scatterlist.h:69:0: note: this is the location of the previous definition
->  #define SG_END  0x02UL
->  
-> 
-> and many more the same.
-> 
-> Introduced by commit
-> 
->   723fbf563a6a ("lib/scatterlist: Add SG_CHAIN and SG_END macros for LSB encodings")
+> diff --git a/drivers/hwmon/g762.c b/drivers/hwmon/g762.c
+> index 6d1208b..49046b4 100644
+> --- a/drivers/hwmon/g762.c
+> +++ b/drivers/hwmon/g762.c
+> @@ -128,7 +128,6 @@ enum g762_regs {
+>   			 G762_REG_FAN_CMD2_GEAR_MODE_1)) >> 2))
+>   
+>   struct g762_data {
+> -	struct device *hwmon_dev;
+>   	struct i2c_client *client;
+>   	struct clk *clk;
+>   
+> @@ -174,6 +173,9 @@ struct g762_data {
+>   		      */
+>   };
+>   
+> +static void g762_remove(void *data);
+> +
+> +
+Double empty line, and the need for a forward declaration usually means
+that something is less than perfect.
 
-IIRC this was already detected and hence sent a new version changing
-this to SG_LAST.
+>   /*
+>    * Convert count value from fan controller register (FAN_SET_CNT) into fan
+>    * speed RPM value. Note that the datasheet documents a basic formula;
+> @@ -626,6 +628,7 @@ static int g762_of_clock_enable(struct i2c_client *client)
+>   	data = i2c_get_clientdata(client);
+>   	data->clk = clk;
+>   
+> +	devm_add_action(&client->dev, g762_remove, data);
+>   	return 0;
+>   
+>    clk_unprep:
+> @@ -1051,9 +1054,17 @@ static inline int g762_fan_init(struct device *dev)
+>   					 data->fan_cmd1);
+>   }
+>   
+> +static void g762_remove(void *data)
+> +{
+> +	struct g762_data *g762 = data;
+> +
+> +	g762_of_clock_disable(g762->client);
 
-https://patchwork.kernel.org/patch/10227897/
+Why did you not just change the parameter of g762_of_clock_disable to
+void *data and call
+	devm_add_action(&client->dev, g762_of_clock_disable, data);
+above ?
+
+> +}
+> +
+>   static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   {
+>   	struct device *dev = &client->dev;
+> +	struct device *hwmon_dev;
+>   	struct g762_data *data;
+>   	int ret;
+>   
+> @@ -1080,35 +1091,16 @@ static int g762_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>   		return ret;
+>   	ret = g762_of_prop_import(client);
+>   	if (ret)
+> -		goto clock_dis;
+> +		return ret;
+>   	/* ... or platform_data */
+>   	ret = g762_pdata_prop_import(client);
+>   	if (ret)
+> -		goto clock_dis;
+> +		return ret;
+>   
+> -	data->hwmon_dev = hwmon_device_register_with_groups(dev, client->name,
+> +	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+>   							    data, g762_groups);
+> -	if (IS_ERR(data->hwmon_dev)) {
+> -		ret = PTR_ERR(data->hwmon_dev);
+> -		goto clock_dis;
+> -	}
+> -
+> -	return 0;
+> -
+> - clock_dis:
+> -	g762_of_clock_disable(client);
+> -
+> -	return ret;
+> -}
+> -
+> -static int g762_remove(struct i2c_client *client)
+> -{
+> -	struct g762_data *data = i2c_get_clientdata(client);
+> -
+> -	hwmon_device_unregister(data->hwmon_dev);
+> -	g762_of_clock_disable(client);
+> -
+> -	return 0;
+> +
+empty line is unnecessary.
+
+> +	return PTR_ERR_OR_ZERO(hwmon_dev);
+>   }
+>   
+>   static struct i2c_driver g762_driver = {
+> @@ -1117,7 +1109,6 @@ static int g762_remove(struct i2c_client *client)
+>   		.of_match_table = of_match_ptr(g762_dt_match),
+>   	},
+>   	.probe	  = g762_probe,
+> -	.remove	  = g762_remove,
+>   	.id_table = g762_id,
+>   };
+>   
+> 
