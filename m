@@ -1,77 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162281AbeCAVhS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:37:18 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37208 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162175AbeCAVhE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:37:04 -0500
-X-Google-Smtp-Source: AG47ELv7RypfS3i+Ru3d7g6rhUbxjLVND8CAwy6lpipAVW0BUERxo1jUv6fVu+8XgvndpzoLQamxohWZ1CZmMRDNYmY=
-MIME-Version: 1.0
-In-Reply-To: <1519936477.4592.23.camel@au1.ibm.com>
-References: <20180228234006.21093-1-logang@deltatee.com> <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com> <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
- <1519936477.4592.23.camel@au1.ibm.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 1 Mar 2018 13:37:03 -0800
-Message-ID: <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-To: benh@au1.ibm.com
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        id S1162290AbeCAVho (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:37:44 -0500
+Received: from mail-eopbgr670106.outbound.protection.outlook.com ([40.107.67.106]:13629
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1162063AbeCAVhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:37:02 -0500
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Jerome Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+CC: Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Oliver OHalloran <oliveroh@au1.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Thread-Topic: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+Thread-Index: AQHTsO2GEDgA2h38ikWGpBGerXYMdKO6wDyAgAAAX4CAAO0JAIAAKJ+AgAAHPICAAAIhAIAAAgEA//+SBoA=
+Date: Thu, 1 Mar 2018 21:37:00 +0000
+Message-ID: <EA9224B2-3B12-4F31-9602-DEAF9869A242@raithlin.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
+ <1519936195.4592.18.camel@au1.ibm.com> <20180301205548.GA6742@redhat.com>
+ <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
+ <20180301211036.GB6742@redhat.com>
+In-Reply-To: <20180301211036.GB6742@redhat.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.a.0.180210
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.224.121]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1968;7:+J6bCT3U93BZdIXne+joUdvzWcN9ItMtWlSBtT41Tr0UohGy4PrflTuB9RytGDham5FdGeurwVqZ4ffd3rtqZdR+ATZzV7F45JQizLYLi+9Ebnr17G5imI77kLI9l16JLGWdFcybDylndNYFZm2PoWxdvKfEKPpxP6XHDBCF9enhiC3hShU9MoO/fttV5KvMu0fiC1Rx77qxwUd4Fpb3cAqtZ+wOCvKt3MlZ5qW3cRDspPnMLhXUqlfihYY0/Jt7
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 691d0294-f40f-4ae1-d29c-08d57fbc90e1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:YTXPR0101MB1968;
+x-ms-traffictypediagnostic: YTXPR0101MB1968:
+x-microsoft-antispam-prvs: <YTXPR0101MB1968564F292F2CE3E0C30A82AAC60@YTXPR0101MB1968.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501231)(52105095)(93006095)(93001095)(10201501046)(6041288)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB1968;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1968;
+x-forefront-prvs: 05986C03E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39830400003)(346002)(376002)(396003)(199004)(189003)(25786009)(6116002)(76176011)(3846002)(4326008)(99286004)(26005)(6506007)(14454004)(186003)(2906002)(83716003)(66066001)(229853002)(478600001)(8936002)(305945005)(7736002)(93886005)(110136005)(316002)(58126008)(54906003)(33656002)(7416002)(8676002)(81166006)(81156014)(5660300001)(3280700002)(97736004)(105586002)(6512007)(53936002)(6486002)(6436002)(106356001)(5250100002)(2950100002)(86362001)(82746002)(6246003)(68736007)(102836004)(2900100001)(36756003)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1968;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: vEFh54r4JerWq8IoCm7URUhIH9k/QPv5kBn9b6bAJCBAMZmwZPDZwQLEpMmdU2j2voJg/oPLQ17mczJNP3OvMO2Rs+9rizfxteDS62uVQ8Nh0rAvIHsMYakCLl65Su1zyDBkVtTtqpax4jbgrqX7BEvhXTTfTr9vtcm9VgNP5lQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <39F1AEAE53F44B4493149DAB944FFFF2@CANPRD01.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 691d0294-f40f-4ae1-d29c-08d57fbc90e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2018 21:37:00.2997
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1968
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21LblrQ026975
 
-On Thu, Mar 1, 2018 at 12:34 PM, Benjamin Herrenschmidt
-<benh@au1.ibm.com> wrote:
-> On Thu, 2018-03-01 at 11:21 -0800, Dan Williams wrote:
->> On Wed, Feb 28, 2018 at 7:56 PM, Benjamin Herrenschmidt
->> <benh@au1.ibm.com> wrote:
->> > On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
->> > > On Wed, 2018-02-28 at 16:39 -0700, Logan Gunthorpe wrote:
->> > > > Hi Everyone,
->> > >
->> > >
->> > > So Oliver (CC) was having issues getting any of that to work for us.
->> > >
->> > > The problem is that acccording to him (I didn't double check the latest
->> > > patches) you effectively hotplug the PCIe memory into the system when
->> > > creating struct pages.
->> > >
->> > > This cannot possibly work for us. First we cannot map PCIe memory as
->> > > cachable. (Note that doing so is a bad idea if you are behind a PLX
->> > > switch anyway since you'd ahve to manage cache coherency in SW).
->> >
->> > Note: I think the above means it won't work behind a switch on x86
->> > either, will it ?
->>
->> The devm_memremap_pages() infrastructure allows placing the memmap in
->> "System-RAM" even if the hotplugged range is in PCI space. So, even if
->> it is an issue on some configurations, it's just a simple adjustment
->> to where the memmap is placed.
->
-> But what happens with that PCI memory ? Is it effectively turned into
-> nromal memory (ie, usable for normal allocations, potentially used to
-> populate user pages etc...) or is it kept aside ?
->
-> Also on ppc64, the physical addresses of PCIe make it so far appart
-> that there's no way we can map them into the linear mapping at the
-> normal offset of PAGE_OFFSET + (pfn << PAGE_SHIFT), so things like
-> page_address or virt_to_page cannot work as-is on PCIe addresses.
+> The intention of HMM is to be useful for all device memory that wish
+> to have struct page for various reasons.
 
-Ah ok, I'd need to look at the details. I had been assuming that
-sparse-vmemmap could handle such a situation, but that could indeed be
-a broken assumption.
+Hi Jermone and thanks for your input! Understood. We have looked at HMM in the past and long term I definitely would like to consider how we can add P2P functionality to HMM for both DEVICE_PRIVATE and DEVICE_PUBLIC so we can pass addressable and non-addressable blocks of data between devices. However that is well beyond the intentions of this series ;-).
+
+Stephen
+    
