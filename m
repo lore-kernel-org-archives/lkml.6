@@ -1,88 +1,139 @@
-Return-Path: <shuahkh@osg.samsung.com>
-X-Google-Smtp-Source: AG47ELv4l9fUmet5txDIhCvw1gXn3g5RISa9ctfIOLzgI0YER0JyWRDiA7N9amMxpkEDZplF+C4f
-ARC-Seal: i=1; a=rsa-sha256; t=1519915296; cv=none;
-        d=google.com; s=arc-20160816;
-        b=EGsFigvaLZSEeYfqL/FnhpTckiUT41U6ZtRHbjuM52b6ktQQgxuq/Z/PayoYXMjns9
-         JC4v1FzqcQ20WIIcq526tMIqHYhb3t3urkRmedB6VpwN8DwdjuzuxMRD5Hi1KnMabyeQ
-         9S9/rmpm3LGXFO6XACxt9zesHmKahBJGLaRgR3nQXO0FeFj+QcLjA/H2+Aeun1gul2CF
-         WUyxA6eMkb9544nM+wuv6kCwET+rva0zbA38l3D7pxsblkBgynH5Wn4VqTNOWB/tVchB
-         i5dcaMrXMMRyYPNfbOigxVD5UtG5DoE41vo5L9T4oHRN4c5Twq/h/0Zq/p0ec/58oZz8
-         fhOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=VzbCRf3CeWapGreyNCO/NXaS6gdYtRUjqEfBXELN/OM=;
-        b=yrfew6gRsybareRSpHhFAxGVULsrVzC7vcgYk+lqBcY/gXUdSZyyUo8AW8pBV686iT
-         GkUDLNto9rG3o/Ifv403f5HOKhHwhZIdUpIa75RlffanRjac5cC/ToA/UMnlA1/rdXMl
-         k3ENC4J43l6L3puhEuLv2Iy2T7Dq2mnVpUjCweatklhBY0/cRX/TkZHgiaOnaizcpf7D
-         7zdjfq7teTQxdL65Zw7bJk/TpJQZHWm0VggAlh0m7uCYDBZYCixtHjLsOWUL4PE1ERuT
-         vfGNvB9xq0snu5WgDUXFR/jGmcGfZqsAb7q02OhsK0ZCCkhhf6CzKsAn4ypX/pPcrE5i
-         ZyfA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Subject: Re: [PATCH] selftests: memory-hotplug: silence test command echo
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Shuah Khan <shuah@kernel.org>, lyang0 <lei.yang@windriver.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- linux-kernel@vger.kernel.org, Dan Rue <dan.rue@linaro.org>,
- Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180213214407.21717-1-shuahkh@osg.samsung.com>
- <CA+G9fYsE0w00aeE3jxJU3Q01Yz_C95zn+kguMHqg6M9PRmhemg@mail.gmail.com>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <7475d5ca-3fc6-260b-a1d3-60a3e1263769@osg.samsung.com>
-Date: Thu, 1 Mar 2018 07:41:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3102895-1519914329-2-1231522670664908465
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: from='UTF-8', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519914329; b=rwV/CS3DnzVs1dgI5t1jPclGqYD4qvk+E74bAbNo00VVri1
+    b2qZDAt+u1Tqn+o8DzMAQSC2wUI9Fjv2otr8McA0gZ2pQjxzSZ639tlbnX/es1xw
+    CeFaT8NxnUna2hhCutoxIwkTeEvm1EzYSBdr7tDG8apHGesGoPkzKw+FGuc7DsX1
+    KjYlFTeApm5eqPPNSeW+PY87OyvzXcOI9S/RINQA8/1BJvvKIdWr4f4b2AIvjVj2
+    de9Gk5vS29Kt03iH9CTdm8KzRCZQnFOORY7FRTPxXo+ZiQzbqnTK6hSQocC6dNY8
+    KC5vcwmnIAJbaSDGJqyuS5oTQQ0+r3YCh2aY4TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1519914329; bh=dgoZl/Dz769uuvVsD2p2/y19Rn
+    lwsoxVkRanCkxfOIg=; b=Ik3Z7rU9bcL8Ctjs3dct2tTuD90mmLpH9N/ff05hsr
+    SFc0BRsA84IKIQr/ug1QpJ3nlv9v5X1Nl/buFUx0lKMB1FXqN2bs63TChn+pLMmE
+    iGddBVEC9V9BB6chXmamuXd5BdxPWlrZliJNx06ntFHjkGfT9xJQVrWnf6BBSw2V
+    NvtkE//6ct+i+muEIMfSkX8u0DWtoUNNhkP6MuTua1FjOMv2BJ4opvb0ol6Jo4Ka
+    +Xos+o69vjyJxTyG4GdZADWaVZ1cSD1EnGE4BddL4YO9y29OHBUTDiA4q1LlBJ52
+    XkV/ptxjkd7hhwqgXeVx+iLJP3D/HciusT8OYKScH+9Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1031469AbeCAOZJ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 09:25:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1031397AbeCAOZJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:25:09 -0500
+From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>, stable@vger.kernel.org
+Subject: [PATCH] KVM: x86: fix vcpu initialization with userspace lapic
+Date: Thu,  1 Mar 2018 15:24:25 +0100
+Message-Id: <20180301142425.18550-1-rkrcmar@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+G9fYsE0w00aeE3jxJU3Q01Yz_C95zn+kguMHqg6M9PRmhemg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592323763418926951?=
-X-GMAIL-MSGID: =?utf-8?q?1593746701515667522?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/01/2018 02:11 AM, Naresh Kamboju wrote:
-> On 14 February 2018 at 03:14, Shuah Khan <shuahkh@osg.samsung.com> wrote:
->> Silence the following command being printed while running test.
->>
->> ./mem-on-off-test.sh -r 2 && echo "selftests: memory-hotplug [PASS]" ||
->> echo "selftests: memory-hotplug [FAIL]"
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>  tools/testing/selftests/memory-hotplug/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/memory-hotplug/Makefile b/tools/testing/selftests/memory-hotplug/Makefile
->> index 86636d207adf..183b46883875 100644
->> --- a/tools/testing/selftests/memory-hotplug/Makefile
->> +++ b/tools/testing/selftests/memory-hotplug/Makefile
->> @@ -4,7 +4,7 @@ all:
->>  include ../lib.mk
->>
->>  TEST_PROGS := mem-on-off-test.sh
->> -override RUN_TESTS := ./mem-on-off-test.sh -r 2 && echo "selftests: memory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
->> +override RUN_TESTS := @./mem-on-off-test.sh -r 2 && echo "selftests: memory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
->>  override EMIT_TESTS := echo "$(RUN_TESTS)"
->>
->>  run_full_test:
-> 
-> The test execution broken due to this patch ?
+Moving the code around broke this rare configuration.
+Use this opportunity to finally call lapic reset from vcpu reset.
 
-Thanks for reporting this. I will look at this. The change probably
-broke the EMIT_TESTS case.
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 0b2e9904c159 ("KVM: x86: move LAPIC initialization after VMCS creation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+---
+ arch/x86/kvm/lapic.c | 10 ++++------
+ arch/x86/kvm/x86.c   |  3 ++-
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index cc5fe7a50dde..391dda8d43b7 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2002,14 +2002,13 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
+ 
+ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
+ {
+-	struct kvm_lapic *apic;
++	struct kvm_lapic *apic = vcpu->arch.apic;
+ 	int i;
+ 
+-	apic_debug("%s\n", __func__);
++	if (!apic)
++		return;
+ 
+-	ASSERT(vcpu);
+-	apic = vcpu->arch.apic;
+-	ASSERT(apic != NULL);
++	apic_debug("%s\n", __func__);
+ 
+ 	/* Stop the timer in case it's a reset to an active apic */
+ 	hrtimer_cancel(&apic->lapic_timer.timer);
+@@ -2568,7 +2567,6 @@ void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+ 
+ 	pe = xchg(&apic->pending_events, 0);
+ 	if (test_bit(KVM_APIC_INIT, &pe)) {
+-		kvm_lapic_reset(vcpu, true);
+ 		kvm_vcpu_reset(vcpu, true);
+ 		if (kvm_vcpu_is_bsp(apic->vcpu))
+ 			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1a3ed81031f1..3f96b51d0495 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8123,7 +8123,6 @@ int kvm_arch_vcpu_setup(struct kvm_vcpu *vcpu)
+ 	kvm_vcpu_mtrr_init(vcpu);
+ 	vcpu_load(vcpu);
+ 	kvm_vcpu_reset(vcpu, false);
+-	kvm_lapic_reset(vcpu, false);
+ 	kvm_mmu_setup(vcpu);
+ 	vcpu_put(vcpu);
+ 	return 0;
+@@ -8166,6 +8165,8 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+ 
+ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ {
++	kvm_lapic_reset(vcpu, init_event);
++
+ 	vcpu->arch.hflags = 0;
+ 
+ 	vcpu->arch.smi_pending = 0;
+-- 
+2.15.1
