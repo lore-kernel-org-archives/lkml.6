@@ -1,116 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032998AbeCAQfx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:35:53 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:37979 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032742AbeCAQfv (ORCPT
+        id S1032951AbeCAQiJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:38:09 -0500
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:40610 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031589AbeCAQiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:35:51 -0500
-X-Google-Smtp-Source: AG47ELvPK98PjDxYgLVB/QsVyyPKpKgcF8Cro6z85nHfW+ForoG4q3/9hWUT3ym5AqHQoc79xua98zlA7sMxHQ+15tw=
+        Thu, 1 Mar 2018 11:38:07 -0500
+X-Google-Smtp-Source: AG47ELuY+4CdM7Lrn7G5MwRg6usmX6DGVYX68BW0+TyOZXo3u84P0d7k6fBaJfVVikZkr0On92+gyrs+5vm+7ZneTCs=
 MIME-Version: 1.0
-In-Reply-To: <20180301151359.GC13722@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1519882849.git.jan.kiszka@siemens.com> <8527c92b2e2920b8cd9096ddcbbb6d0f4004eb69.1519882849.git.jan.kiszka@siemens.com>
- <20180301151359.GC13722@bhelgaas-glaptop.roam.corp.google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 18:35:50 +0200
-Message-ID: <CAHp75VcmGCAARtuL5xBNWRN7SLcoh_Gxfkf1shgktTKTDjHn9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] x86: Consolidate PCI_MMCONFIG configs
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
+In-Reply-To: <CAKv+Gu8HN-t2om8sCfjxCWbsgSir54fZw222dsed0Xwqph2aNg@mail.gmail.com>
+References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian> <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
+ <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz> <20180301013722.GA6763@tigerII.localdomain>
+ <CACT4Y+ZuCq+yN3YwusmHuv1CN86CfEYEhaJGoaD7xLG9irgyYw@mail.gmail.com>
+ <201803011906.JCI39072.NGYSNtPVOJMNt@I-love.SAKURA.ne.jp> <CACT4Y+ZkbkjJw=diHQbqHOBdbcs9zDUS0ggqwrLU02U_tEP73g@mail.gmail.com>
+ <CAKv+Gu8HN-t2om8sCfjxCWbsgSir54fZw222dsed0Xwqph2aNg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 1 Mar 2018 08:38:04 -0800
+X-Google-Sender-Auth: 7_v5Y_8Rgri0aZQu4hGTjCSywJQ
+Message-ID: <CAGXu5j+mcfo4aB3PM1We6O62bFBJcMFX-9obJE4jFU1Dp=gNwg@mail.gmail.com>
+Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <from-linux-mm@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, kernel test robot <shun.hao@intel.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 5:13 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Thu, Mar 01, 2018 at 06:40:47AM +0100, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
+On Thu, Mar 1, 2018 at 6:14 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 1 March 2018 at 14:09, Dmitry Vyukov <dvyukov@google.com> wrote:
+> ..
+>> +Ard, Kees
 >>
->> Since e279b6c1d329 ("x86: start unification of arch/x86/Kconfig.*"), we
->> have two PCI_MMCONFIG entries, one from the original i386 and another
->> from x86_64. This consolidates both entries into a single one.
+>> This is a problem with GCC_PLUGIN_STRUCTLEAK_BYREF_ALL. It inserts an
+>> initializing write for __u used in READ_ONCE outside of live scope of
+>> the variable.
+>> Below "movb   $0x1,0x0(%r13)" and "movb   $0xf8,0x0(%r13)" denote live
+>> scope of the variable __u (the 0xf8 that appears in the KASAN report).
+>> But the initializing store at ffffffff811a5f84 (and the corresponding
+>> KASAN check) are outside of that scope, which causes the KASAN report.
 >>
->> The logic for x86_32, where this option was not under user control,
->> remains identical. On x86_64, PCI_MMCONFIG becomes additionally
->> configurable for SFI systems even if ACPI was disabled. This just
->> simplifies the logic without restricting the configurability in any way.
+>>
+>> ffffffff811a5f61: 49 8d 9f 40 ff ff ff lea    -0xc0(%r15),%rbx
+>> ffffffff811a5f68: 4d 8d 67 80          lea    -0x80(%r15),%r12
+>> kernel/printk/printk.c:1600
+>> waiter = READ_ONCE(console_waiter);
+>> ffffffff811a5f79: 49 89 dd              mov    %rbx,%r13
+>> ffffffff811a5f7c: e8 d3 4e 21 00        callq  ffffffff813bae54 <__asan_store1>
+>> ffffffff811a5f81: 4c 89 e7              mov    %r12,%rdi
+>> ffffffff811a5f84: 41 c6 87 40 ff ff ff movb   $0x0,-0xc0(%r15)
+>> ffffffff811a5f8b: 00
+>> ffffffff811a5f8c: 49 c1 ed 03          shr    $0x3,%r13
+>> ffffffff811a5f90: e8 bf 4e 21 00        callq  ffffffff813bae54 <__asan_store1>
+>> kernel/printk/printk.c:1599
+>> raw_spin_lock(&console_owner_lock);
+>> ffffffff811a5f95: 48 c7 c7 e0 90 b5 82 mov    $0xffffffff82b590e0,%rdi
+>> ffffffff811a5f9c: 41 c6 47 80 00        movb   $0x0,-0x80(%r15)
+>> ffffffff811a5fa1: e8 92 a9 e7 00        callq  ffffffff82020938 <_raw_spin_lock>
+>> kernel/printk/printk.c:1600
+>> waiter = READ_ONCE(console_waiter);
+>> ffffffff811a5fa6: 4c 03 ad e8 fe ff ff add    -0x118(%rbp),%r13
+>> __read_once_size():
+>> ./include/linux/compiler.h:178
+>> })
+>>
+>> static __always_inline
+>> void __read_once_size(const volatile void *p, void *res, int size)
+>> {
+>> __READ_ONCE_SIZE;
+>> ffffffff811a5fad: 44 8a 35 2c 7b e6 02 mov    0x2e67b2c(%rip),%r14b
+>>     # ffffffff8400dae0 <console_waiter>
+>> ffffffff811a5fb4: 48 89 df              mov    %rbx,%rdi
+>> console_lock_spinning_disable_and_check():
+>> kernel/printk/printk.c:1600
+>> ffffffff811a5fb7: 41 c6 45 00 01        movb   $0x1,0x0(%r13)
+>> __read_once_size():
+>> ./include/linux/compiler.h:178
+>> ffffffff811a5fbc: e8 93 4e 21 00        callq  ffffffff813bae54 <__asan_store1>
+>> console_lock_spinning_disable_and_check():
+>> kernel/printk/printk.c:1600
+>> ffffffff811a5fc1: 48 89 df              mov    %rbx,%rdi
+>> __read_once_size():
+>> ./include/linux/compiler.h:178
+>> ffffffff811a5fc4: 45 88 b7 40 ff ff ff mov    %r14b,-0xc0(%r15)
+>> console_lock_spinning_disable_and_check():
+>> kernel/printk/printk.c:1600
+>> ffffffff811a5fcb: e8 3d 4e 21 00        callq  ffffffff813bae0d <__asan_load1>
+>> ffffffff811a5fd0: 45 8a b7 40 ff ff ff mov    -0xc0(%r15),%r14b
+>> kernel/printk/printk.c:1602
+>> raw_spin_unlock(&console_owner_lock);
+>> ffffffff811a5fd7: 48 c7 c7 e0 90 b5 82 mov    $0xffffffff82b590e0,%rdi
+>> ffffffff811a5fde: 41 c6 45 00 f8        movb   $0xf8,0x0(%r13)
+>> kernel/printk/printk.c:1601
+>> console_owner = NULL;
+>> ffffffff811a5fe3: 48 c7 05 32 7b e6 02 movq   $0x0,0x2e67b32(%rip)
+>>    # ffffffff8400db20 <console_owner>
+>> ffffffff811a5fea: 00 00 00 00
+>> kernel/printk/printk.c:1602
+>> raw_spin_unlock(&console_owner_lock);
+>> ffffffff811a5fee: e8 d1 ab e7 00        callq  ffffffff82020bc4
+>> <_raw_spin_unlock>
+>>
+>>
+>>
+>> We either need to fix GCC_PLUGIN_STRUCTLEAK_BYREF_ALL (and probably
+>> GCC_PLUGIN_STRUCTLEAK) to insert initialization at proper places or
+>> run before KASAN instrumentation (though, since the initializing
+>> stores are instrumented, it already runs partially before KASAN), or
+>> declare GCC_PLUGIN_STRUCTLEAK incompatible with KASAN (it's not the
+>> first time we debug this).
 >
-> Thanks for mentioning this difference.  It's probably trivial, but if
-> you have any other reason to respin this series, I would split this
-> into two patches:
+> I am pretty sure that this is a fundamental issue with the plugin, and
+> not specific to BYREF_ALL. BYREF_ALL just increases the number of
+> occurrences, making it easier to hit this issue.
 >
->   - allow PCI_MMCONFIG on x86_64 with SFI
->   - consolidate PCI_MMCONFIG with no logical change at all
->
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->
-> But either way,
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->
+> I'd be fine with making the plugin mutually exclusive with KASAN.
 
-If you going to respin I would suggest one more trivia
+I'm fine making it mutally exclusive: it forces KASAN to run without
+the protections the plugin provides, so really, that's better to test
+(i.e. the plugin could cover up bugs that KASAN might otherwise find).
 
-Split long depends on to two lines, like
--      depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY ||
-PCI_GOOLPC || PCI_GOMMCONFIG))
-+      depends on PCI
-+      depends on X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC
-|| PCI_GOMMCONFIG)
-
-...
-
-      depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY ||
-PCI_GOMMCONFIG))
-+     depends on PCI && (ACPI || SFI)
-+     depends on X86_64 || (PCI_GOANY || PCI_GOMMCONFIG)
-
-(perhaps in a separate change)
-
->> ---
->>  arch/x86/Kconfig | 9 +++------
->>  1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index eb7f43f23521..aef9d67ac186 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -2641,8 +2641,9 @@ config PCI_DIRECT
->>       depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
->>
->>  config PCI_MMCONFIG
->> -     def_bool y
->> -     depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
->> +     bool "Support mmconfig PCI config space access" if X86_64
->> +     default y
->> +     depends on PCI && (ACPI || SFI) && (X86_64 || (PCI_GOANY || PCI_GOMMCONFIG))
->>
->>  config PCI_OLPC
->>       def_bool y
->> @@ -2657,10 +2658,6 @@ config PCI_DOMAINS
->>       def_bool y
->>       depends on PCI
->>
->> -config PCI_MMCONFIG
->> -     bool "Support mmconfig PCI config space access"
->> -     depends on X86_64 && PCI && ACPI
->> -
->>  config PCI_CNB20LE_QUIRK
->>       bool "Read CNB20LE Host Bridge Windows" if EXPERT
->>       depends on PCI
->> --
->> 2.13.6
->>
-
-
+-Kees
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Kees Cook
+Pixel Security
