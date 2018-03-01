@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909023-2-5764941526950946147
+X-Cyrus-Session-Id: sloti22d1t05-2898263-1519908996-2-5197031397231210649
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909023; b=I0py24UvAsdRMqcI9jVbfOoH7zzkDBJe7vwcQ+fYhYB7avE
-    Epc0N2vVps9PHQWI2yDyhoq5tMf1GhMXvGE5QSYGHSkMkUhKvch3ZdL2K5aEJ7pq
-    s4Y4HRXNsgDlynPtGaO9zHoVBGA1l6H9EfPy8fKbjk+QYT+4OaQmcBdqctdAl3O7
-    K+tCagFP3gZXNm3DW277HAoZEg3UkVrkoI4K5MPvancPKNE12c+aKTl6kUCbPHp8
-    GdKv+Z53R5vjP4Vlf8Ax0teKIa3QPo6e14GRu8Ka8DAEREDd4YvaNBv5wc70baZi
-    mBxsLirr6mUjwsAhpmy6BEJAGtLbv51HYIKfP5Q==
+    t=1519908995; b=mpCWhA/vBwV2XpE5V5Dz8oyLb7mn23yBJDqXCuQEemRW7cG
+    2WN+oRRZ5mb5bWyF5iGNeAVuKrx+oi0A8D/JxRC1N+AcaV+J6kb9tnVKplvWhnJg
+    91D4df3khX72AQub0gqgbeoWgo/EYDObqpVB77cSZZIqYj3X0XWwJ135Mg8dGPhb
+    0b3WkhcXBsqSL426l9cNATeTOhlrW22oUOGnDNT34ig3o8/0Li9JdIXmw8Pq6u1o
+    4EmewpvrMhnVwJYGzBFCD9YFWkCnJzUhaGh08XnaPUuhAuC5CLly5OAUsyfiDtQS
+    zzlz9T2395+6s58PNZxRUfP3CVKsTnyIHMVkV+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909023;
-    bh=5TmZ3GA7LvmXHit8kAa24HeUaVa3IsIu64SOGOdKiTk=; b=k48YFPf7uJX3
-    AhDREcnirR9MHTRx78V7v9QUsoCcXbADNmoXWnm7rIBCAdtSLsdvYh/qrneRH4v/
-    /5mnrl5hfN/wLP05NoR4yikAyJrevPyo+vsP9ZkIYqkHVIbvNL3kxZKHvqXFO76Y
-    QoiLkcV+h8A3azBTriSM1XrB5PjaK30KxXARML54VcjDVUOv0TVUuj30AJVMa92S
-    O5Y0/pES6Tp5K70gGlQLPehSH479oaIENY2ScXOhCnZnq8BT2izVwdTwyxIz3O1l
-    AwX8Jdms+mZzMA4A+zJWZ5oHPPgon1LHUQJqHYQuJxZhDqxevAjfZ1W+AvdUNmRS
-    JVZ6pMcPYw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=T2+3o9bm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519908995;
+    bh=Z+S2Ix53iGrX6+QKSywvcFw930P0kQ8cnUrXTnqGG/Q=; b=ax7hreDyjhXn
+    wiQgudlB3748ranoCsQ7snRM0Bg+9SpusvLyNBreyQlFKgL8pkA5kUJ3L5cjineo
+    5mA8dLFdj/9vdDk+7yRBxpmxLSKQVocZU84B64nXN48jxUifXfs7NAt9ZOuiCruM
+    m7K0Vc+FFbiPl+ll7Bw0M6c5xtic6EE4yjbDnxlU+YNib0WCap8ShHuTJdkxxMvR
+    FAXaUmKkNiuBpkhCC9PJQD3GsXoLtP1k3fRXEmqt35baJ11k2q5C7U7dIQfz1Qx3
+    ujQu8OdX2mZEXhlVy4BURGLAKjGKZfIlPi0+W0Z5NDt8zk9ceVqOZoJwIXO1a6uy
+    uUVstBwL6g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ShK26/14 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AQXMWh3L;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qdOP7bZ0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=T2+3o9bm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ShK26/14 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AQXMWh3L;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qdOP7bZ0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030588AbeCAM4n (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 07:56:43 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46423 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030577AbeCAM4j (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:56:39 -0500
-X-Google-Smtp-Source: AG47ELshHXS8LSmIqn1xR93SccwtESrHmZDe9YqcSf26CiTlYcecd6YWVY2MrPydeENFTQhhokLDdg==
+        id S1030648AbeCAMzv (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:55:51 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34226 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030629AbeCAMzt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:55:49 -0500
+X-Google-Smtp-Source: AG47ELvtOJoxtae7VP52TxhHT2W0qDhxbZOyqW6tymQbQigwp50gvvZUG/syybv/FCab9JN0LxIYyQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,10 +63,13 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Dave Martin <Dave.Martin@arm.com>, Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 11/45] arm64: syscallno is secretly an int, make it official
-Date: Thu,  1 Mar 2018 20:53:48 +0800
-Message-Id: <1519908862-11425-12-git-send-email-alex.shi@linaro.org>
+Cc: Yury Norov <ynorov@caviumnetworks.com>,
+        Laura Abbott <labbott@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 05/45] arm64: move TASK_* definitions to <asm/processor.h>
+Date: Thu,  1 Mar 2018 20:53:42 +0800
+Message-Id: <1519908862-11425-6-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -76,247 +79,126 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Yury Norov <ynorov@caviumnetworks.com>
 
-commit 35d0e6fb4d upstream.
+commit eef94a3d09aab upstream.
 
-The upper 32 bits of the syscallno field in thread_struct are
-handled inconsistently, being sometimes zero extended and sometimes
-sign-extended.  In fact, only the lower 32 bits seem to have any
-real significance for the behaviour of the code: it's been OK to
-handle the upper bits inconsistently because they don't matter.
+ILP32 series [1] introduces the dependency on <asm/is_compat.h> for
+TASK_SIZE macro. Which in turn requires <asm/thread_info.h>, and
+<asm/thread_info.h> include <asm/memory.h>, giving a circular dependency,
+because TASK_SIZE is currently located in <asm/memory.h>.
 
-Currently, the only place I can find where those bits are
-significant is in calling trace_sys_enter(), which may be
-unintentional: for example, if a compat tracer attempts to cancel a
-syscall by passing -1 to (COMPAT_)PTRACE_SET_SYSCALL at the
-syscall-enter-stop, it will be traced as syscall 4294967295
-rather than -1 as might be expected (and as occurs for a native
-tracer doing the same thing).  Elsewhere, reads of syscallno cast
-it to an int or truncate it.
+In other architectures, TASK_SIZE is defined in <asm/processor.h>, and
+moving TASK_SIZE there fixes the problem.
 
-There's also a conspicuous amount of code and casting to bodge
-around the fact that although semantically an int, syscallno is
-stored as a u64.
+Discussion: https://patchwork.kernel.org/patch/9929107/
 
-Let's not pretend any more.
+[1] https://github.com/norov/linux/tree/ilp32-next
 
-In order to preserve the stp x instruction that stores the syscall
-number in entry.S, this patch special-cases the layout of struct
-pt_regs for big endian so that the newly 32-bit syscallno field
-maps onto the low bits of the stored value.  This is not beautiful,
-but benchmarking of the getpid syscall on Juno suggests indicates a
-minor slowdown if the stp is split into an stp x and stp w.
-
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Laura Abbott <labbott@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/include/asm/processor.h |  2 +-
- arch/arm64/include/asm/ptrace.h    |  9 ++++++++-
- arch/arm64/kernel/entry.S          | 34 +++++++++++++++++-----------------
- arch/arm64/kernel/ptrace.c         |  2 +-
- arch/arm64/kernel/signal.c         |  6 +++---
- arch/arm64/kernel/signal32.c       |  2 +-
- arch/arm64/kernel/traps.c          |  2 +-
- 7 files changed, 32 insertions(+), 25 deletions(-)
+ arch/arm64/include/asm/memory.h    | 15 ---------------
+ arch/arm64/include/asm/processor.h | 21 +++++++++++++++++++++
+ arch/arm64/kernel/entry.S          |  2 +-
+ 3 files changed, 22 insertions(+), 16 deletions(-)
 
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 53211a0..269b979 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -60,8 +60,6 @@
+  * KIMAGE_VADDR - the virtual address of the start of the kernel image
+  * VA_BITS - the maximum number of bits for virtual addresses.
+  * VA_START - the first kernel virtual address.
+- * TASK_SIZE - the maximum size of a user space task.
+- * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
+  */
+ #define VA_BITS			(CONFIG_ARM64_VA_BITS)
+ #define VA_START		(UL(0xffffffffffffffff) << VA_BITS)
+@@ -74,19 +72,6 @@
+ #define PCI_IO_END		(VMEMMAP_START - SZ_2M)
+ #define PCI_IO_START		(PCI_IO_END - PCI_IO_SIZE)
+ #define FIXADDR_TOP		(PCI_IO_START - SZ_2M)
+-#define TASK_SIZE_64		(UL(1) << VA_BITS)
+-
+-#ifdef CONFIG_COMPAT
+-#define TASK_SIZE_32		UL(0x100000000)
+-#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
+-				TASK_SIZE_32 : TASK_SIZE_64)
+-#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
+-				TASK_SIZE_32 : TASK_SIZE_64)
+-#else
+-#define TASK_SIZE		TASK_SIZE_64
+-#endif /* CONFIG_COMPAT */
+-
+-#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
+ 
+ #define KERNEL_START      _text
+ #define KERNEL_END        _end
 diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 5917147..f5cdda6 100644
+index 60e3482..4258f4d 100644
 --- a/arch/arm64/include/asm/processor.h
 +++ b/arch/arm64/include/asm/processor.h
-@@ -130,7 +130,7 @@ struct thread_struct {
- static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
- {
- 	memset(regs, 0, sizeof(*regs));
--	regs->syscallno = ~0UL;
-+	regs->syscallno = ~0;
- 	regs->pc = pc;
- }
+@@ -19,6 +19,10 @@
+ #ifndef __ASM_PROCESSOR_H
+ #define __ASM_PROCESSOR_H
  
-diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-index ada08b5..7721d7a 100644
---- a/arch/arm64/include/asm/ptrace.h
-+++ b/arch/arm64/include/asm/ptrace.h
-@@ -116,7 +116,14 @@ struct pt_regs {
- 		};
- 	};
- 	u64 orig_x0;
--	u64 syscallno;
-+#ifdef __AARCH64EB__
-+	u32 unused2;
-+	s32 syscallno;
-+#else
-+	s32 syscallno;
-+	u32 unused2;
-+#endif
++#define TASK_SIZE_64		(UL(1) << VA_BITS)
 +
- 	u64 orig_addr_limit;
- 	u64 unused;	// maintain 16 byte alignment
- };
++#ifndef __ASSEMBLY__
++
+ /*
+  * Default implementation of macro that returns current
+  * instruction pointer ("program counter").
+@@ -37,6 +41,22 @@
+ #include <asm/ptrace.h>
+ #include <asm/types.h>
+ 
++/*
++ * TASK_SIZE - the maximum size of a user space task.
++ * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area.
++ */
++#ifdef CONFIG_COMPAT
++#define TASK_SIZE_32		UL(0x100000000)
++#define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
++				TASK_SIZE_32 : TASK_SIZE_64)
++#define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
++				TASK_SIZE_32 : TASK_SIZE_64)
++#else
++#define TASK_SIZE		TASK_SIZE_64
++#endif /* CONFIG_COMPAT */
++
++#define TASK_UNMAPPED_BASE	(PAGE_ALIGN(TASK_SIZE / 4))
++
+ #define STACK_TOP_MAX		TASK_SIZE_64
+ #ifdef CONFIG_COMPAT
+ #define AARCH32_VECTORS_BASE	0xffff0000
+@@ -192,4 +212,5 @@ int cpu_enable_pan(void *__unused);
+ int cpu_enable_uao(void *__unused);
+ int cpu_enable_cache_maint_trap(void *__unused);
+ 
++#endif /* __ASSEMBLY__ */
+ #endif /* __ASM_PROCESSOR_H */
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 6915697..48c41ff 100644
+index b4c7db4..478f0fe 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -116,8 +116,8 @@
- 	 * Set syscallno to -1 by default (overridden later if real syscall).
- 	 */
- 	.if	\el == 0
--	mvn	x21, xzr
--	str	x21, [sp, #S_SYSCALLNO]
-+	mvn	w21, wzr
-+	str	w21, [sp, #S_SYSCALLNO]
- 	.endif
- 
- 	/*
-@@ -232,8 +232,9 @@ alternative_else_nop_endif
-  *
-  * x7 is reserved for the system call number in 32-bit mode.
-  */
--sc_nr	.req	x25		// number of system calls
--scno	.req	x26		// syscall number
-+wsc_nr	.req	w25		// number of system calls
-+wscno	.req	w26		// syscall number
-+xscno	.req	x26		// syscall number (zero-extended)
- stbl	.req	x27		// syscall table pointer
- tsk	.req	x28		// current thread_info
- 
-@@ -519,8 +520,8 @@ el0_svc_compat:
- 	 * AArch32 syscall handling
- 	 */
- 	adrp	stbl, compat_sys_call_table	// load compat syscall table pointer
--	uxtw	scno, w7			// syscall number in w7 (r7)
--	mov     sc_nr, #__NR_compat_syscalls
-+	mov	wscno, w7			// syscall number in w7 (r7)
-+	mov     wsc_nr, #__NR_compat_syscalls
- 	b	el0_svc_naked
- 
- 	.align	6
-@@ -741,19 +742,19 @@ ENDPROC(ret_from_fork)
- 	.align	6
- el0_svc:
- 	adrp	stbl, sys_call_table		// load syscall table pointer
--	uxtw	scno, w8			// syscall number in w8
--	mov	sc_nr, #__NR_syscalls
-+	mov	wscno, w8			// syscall number in w8
-+	mov	wsc_nr, #__NR_syscalls
- el0_svc_naked:					// compat entry point
--	stp	x0, scno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
-+	stp	x0, xscno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
- 	enable_dbg_and_irq
- 	ct_user_exit 1
- 
- 	ldr	x16, [tsk, #TI_FLAGS]		// check for syscall hooks
- 	tst	x16, #_TIF_SYSCALL_WORK
- 	b.ne	__sys_trace
--	cmp     scno, sc_nr                     // check upper syscall limit
-+	cmp     wscno, wsc_nr			// check upper syscall limit
- 	b.hs	ni_sys
--	ldr	x16, [stbl, scno, lsl #3]	// address in the syscall table
-+	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
- 	blr	x16				// call sys_* routine
- 	b	ret_fast_syscall
- ni_sys:
-@@ -767,24 +768,23 @@ ENDPROC(el0_svc)
- 	 * switches, and waiting for our parent to respond.
- 	 */
- __sys_trace:
--	mov	w0, #-1				// set default errno for
--	cmp     scno, x0			// user-issued syscall(-1)
-+	cmp     wscno, #-1			// user-issued syscall(-1)?
- 	b.ne	1f
--	mov	x0, #-ENOSYS
-+	mov	x0, #-ENOSYS			// set default errno if so
- 	str	x0, [sp, #S_X0]
- 1:	mov	x0, sp
- 	bl	syscall_trace_enter
- 	cmp	w0, #-1				// skip the syscall?
- 	b.eq	__sys_trace_return_skipped
--	uxtw	scno, w0			// syscall number (possibly new)
-+	mov	wscno, w0			// syscall number (possibly new)
- 	mov	x1, sp				// pointer to regs
--	cmp	scno, sc_nr			// check upper syscall limit
-+	cmp	wscno, wsc_nr			// check upper syscall limit
- 	b.hs	__ni_sys_trace
- 	ldp	x0, x1, [sp]			// restore the syscall args
- 	ldp	x2, x3, [sp, #S_X2]
- 	ldp	x4, x5, [sp, #S_X4]
- 	ldp	x6, x7, [sp, #S_X6]
--	ldr	x16, [stbl, scno, lsl #3]	// address in the syscall table
-+	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
- 	blr	x16				// call sys_* routine
- 
- __sys_trace_return:
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 8eedeef..193c621 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -1346,7 +1346,7 @@ static void tracehook_report_syscall(struct pt_regs *regs,
- 	if (dir == PTRACE_SYSCALL_EXIT)
- 		tracehook_report_syscall_exit(regs, 0);
- 	else if (tracehook_report_syscall_entry(regs))
--		regs->syscallno = ~0UL;
-+		regs->syscallno = ~0;
- 
- 	regs->regs[regno] = saved_reg;
- }
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 404dd67..fd7eba8 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -113,7 +113,7 @@ static int restore_sigframe(struct pt_regs *regs,
- 	/*
- 	 * Avoid sys_rt_sigreturn() restarting.
- 	 */
--	regs->syscallno = ~0UL;
-+	regs->syscallno = ~0;
- 
- 	err |= !valid_user_regs(&regs->user_regs, current);
- 
-@@ -332,7 +332,7 @@ static void do_signal(struct pt_regs *regs)
- {
- 	unsigned long continue_addr = 0, restart_addr = 0;
- 	int retval = 0;
--	int syscall = (int)regs->syscallno;
-+	int syscall = regs->syscallno;
- 	struct ksignal ksig;
- 
- 	/*
-@@ -346,7 +346,7 @@ static void do_signal(struct pt_regs *regs)
- 		/*
- 		 * Avoid additional syscall restarting via ret_to_user.
- 		 */
--		regs->syscallno = ~0UL;
-+		regs->syscallno = ~0;
- 
- 		/*
- 		 * Prepare for system call restart. We do this here so that a
-diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
-index b7063de..1effea2 100644
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -354,7 +354,7 @@ static int compat_restore_sigframe(struct pt_regs *regs,
- 	/*
- 	 * Avoid compat_sys_sigreturn() restarting.
- 	 */
--	regs->syscallno = ~0UL;
-+	regs->syscallno = ~0;
- 
- 	err |= !valid_user_regs(&regs->user_regs, current);
- 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index c743d1f..59f80b0 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -541,7 +541,7 @@ asmlinkage long do_ni_syscall(struct pt_regs *regs)
- 
- 	if (show_unhandled_signals_ratelimited()) {
- 		pr_info("%s[%d]: syscall %d\n", current->comm,
--			task_pid_nr(current), (int)regs->syscallno);
-+			task_pid_nr(current), regs->syscallno);
- 		dump_instr("", regs);
- 		if (user_mode(regs))
- 			__show_regs(regs);
+@@ -28,7 +28,7 @@
+ #include <asm/errno.h>
+ #include <asm/esr.h>
+ #include <asm/irq.h>
+-#include <asm/memory.h>
++#include <asm/processor.h>
+ #include <asm/thread_info.h>
+ #include <asm/asm-uaccess.h>
+ #include <asm/unistd.h>
 -- 
 2.7.4
