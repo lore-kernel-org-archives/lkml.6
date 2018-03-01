@@ -1,59 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032811AbeCAQJY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:09:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36724 "EHLO mail.kernel.org"
+        id S1032719AbeCAQMg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:12:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:41294 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031777AbeCAQJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:09:23 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34C321771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Thu, 1 Mar 2018 17:09:20 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
-        morten.rasmussen@foss.arm.com, brendan.jackman@arm.com,
-        dietmar.eggemann@arm.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH v3 3/3] sched: update blocked load when newly idle
-Message-ID: <20180301160918.GC29639@lerouge>
-References: <1518422874-13216-1-git-send-email-vincent.guittot@linaro.org>
- <1518422874-13216-4-git-send-email-vincent.guittot@linaro.org>
- <20180212120411.GT25201@hirez.programming.kicks-ass.net>
- <20180212143444.GA12378@linaro.org>
- <20180212153805.GW25201@hirez.programming.kicks-ass.net>
+        id S1031777AbeCAQMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 11:12:34 -0500
+Subject: Re: [PATCH v3 0/3] renesas: irqchip: Use wakeup_path i.s.o. explicit
+ clock handling
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <70c3eaa7-f103-33b0-26a0-c0c1b1b9608a@arm.com>
+Date: Thu, 1 Mar 2018 16:12:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180212153805.GW25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 04:38:05PM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 12, 2018 at 03:34:44PM +0100, Vincent Guittot wrote:
-> > > Aside from the above being an unreadable mess, I dislike that it breaks
-> > > the various isolation crud, we should not touch CPUs outside of our
-> > > domain.
-> > >
-> > > 
-> > > Maybe something like the below? (unfinished)
-> > >
-> > 
-> > good catch. I completely miss the isolation stuff.
-> > But isn't already the case when kicking ilb ? I mean that an idle CPU touches
-> > all idle CPUs and some can be outside its domain during ilb.
+On 12/02/18 13:55, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> > Shouldn't we test housekeeping_cpu(cpu, HK_FLAG_SCHED) instead if we want to
-> > make sure that an isolated/full nohz CPU will not be used for updating blocked
-> > load of CPUs outside its domain ?
+> If an interrupt controller in a Renesas ARM SoC is part of a Clock
+> Domain, and it is part of the wakeup path, it must be kept active during
+> system suspend.
 > 
-> I _thought_ we had some 'housekeeping' crud in the ilb selection logic,
-> but now I can't find it. Frederic?
+> Currently this is handled in all interrupt controller drivers by
+> explicitly increasing the use count of the module clock when the device
+> is part of the wakeup path.  However, this explicit clock handling is
+> merely a workaround for a failure to properly communicate wakeup
+> information to the device core.
+> 
+> Hence this series fixes the affected drivers by setting the devices'
+> power.wakeup_path fields instead, to indicate they are part of the
+> wakeup path.  Depending on the PM Domain's active_wakeup configuration,
+> the genpd core code will keep the device enabled (and the clock running)
+> during system suspend when needed.
+> 
+> Target trees:
+>   - Patches 1 and 2 are meant for the irqchip tree,
+Patches queued for 4.17.
 
-I think you're referring to nohz_balance_idle(). The call is still there but HK_FLAG_SCHED
-is unused for now. I initially turned it on by default on nohz_full but some people
-complained. I don't recall why exactly. Anyway I'm waiting for a suitable interface
-to use it.
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
