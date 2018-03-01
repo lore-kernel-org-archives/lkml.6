@@ -1,133 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967239AbeCAJvg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:51:36 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34791 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967069AbeCAJvd (ORCPT
+        id S967249AbeCAJxI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:53:08 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:56453 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967059AbeCAJxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:51:33 -0500
-Subject: Re: [PATCH 1/6] ARM: dts: stm32: Add sdio pins definition for stm32f7
-To: <patrice.chotard@st.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <lee.jones@linaro.org>
-CC: <mcoquelin.stm32@gmail.com>
-References: <1519897421-23803-1-git-send-email-patrice.chotard@st.com>
- <1519897421-23803-2-git-send-email-patrice.chotard@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <1e73394f-2410-1d2a-a450-d3f1c88d1ca2@st.com>
-Date: Thu, 1 Mar 2018 10:51:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 1 Mar 2018 04:53:05 -0500
+Date: Thu, 1 Mar 2018 10:53:00 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] R-Car M3-N: Enable EtherAVB device node
+Message-ID: <20180301095300.egvxwzpiuhwabwzg@verge.net.au>
+References: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <1519897421-23803-2-git-send-email-patrice.chotard@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519726974-23160-1-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrice
-
-On 03/01/2018 10:43 AM, patrice.chotard@st.com wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
+On Tue, Feb 27, 2018 at 11:22:44AM +0100, Jacopo Mondi wrote:
+> Hi Simon, Geert,
+>    in this second iteration I have dropped iommu dependencies for EtherAVB
+> and have changed "phy-mode" for all mainlines Gen-3 boards, this time including
+> ULCB, Draak, Eagle and V3MSK.
 > 
-> Add sdio pins definition for the 2 sdio instances embeds in stm32f746.
+> The series add phy-mode as a board property to the following board files:
+> - salvator-common.dtsi
+> - ulcb.dtsi
+> - r8a77995-draak.dts
+> - r8a77970-eagle.dts
+> - r8a77970-v3msk.dts
 > 
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> ---
->   arch/arm/boot/dts/stm32f7-pinctrl.dtsi | 62 ++++++++++++++++++++++++++++++++++
->   1 file changed, 62 insertions(+)
+> And reset the EtherAVB phy-mode to "rgmii" in the following SoC DTSI:
+> - r8a7795.dtsi
+> - r8a7796.dtsi
+> - r8a77995.dtsi
+> - r8a77970.dtsi
 > 
-> diff --git a/arch/arm/boot/dts/stm32f7-pinctrl.dtsi b/arch/arm/boot/dts/stm32f7-pinctrl.dtsi
-> index f518de184e52..fb40f0835dd4 100644
-> --- a/arch/arm/boot/dts/stm32f7-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/stm32f7-pinctrl.dtsi
-> @@ -222,6 +222,68 @@
->   					slew-rate = <2>;
->   				};
->   			};
-> +
-> +			sdio_pins: sdio_pins@0 {
-> +				pins {
-> +					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1 D0 */
-> +						 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1 D1 */
-> +						 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1 D2 */
-> +						 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1 D3 */
-> +						 <STM32_PINMUX('C', 12, AF12)>, /* SDMMC1 CLK */
-> +						 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1 CMD */
-> +					drive-push-pull;
-> +					slew-rate = <2>;
-> +				};
-> +			};
+> And finally, I added EtherAVB device node for M3-N on top.
 
-if you have 2 pins groups, please use '_a' for the first one. You could 
-have something like:
-
-sdio_pins_a
-sdio_od_pins_a
-
-and
-
-sdio_pins_b
-sdio_od_pins_b
-
-> +			sdio_pins_od: sdio_pins_od@0 {
-> +				pins1 {
-> +					pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1 D0 */
-> +						 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1 D1 */
-> +						 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1 D2 */
-> +						 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1 D3 */
-> +						 <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1 CLK */
-> +					drive-push-pull;
-> +					slew-rate = <2>;
-> +				};
-> +
-> +				pins2 {
-> +					pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1 CMD */
-> +					drive-open-drain;
-> +					slew-rate = <2>;
-> +				};
-> +			};
-> +
-> +			sdio_pins_b: sdio_pins_b@0 {
-> +				pins {
-> +					pinmux = <STM32_PINMUX('G', 9, AF11)>, /* SDMMC2 D0 */
-> +						 <STM32_PINMUX('G', 10, AF11)>, /* SDMMC2 D1 */
-> +						 <STM32_PINMUX('B', 3, AF10)>, /* SDMMC2 D2 */
-> +						 <STM32_PINMUX('B', 4, AF10)>, /* SDMMC2 D3 */
-> +						 <STM32_PINMUX('D', 6, AF11)>, /* SDMMC2 CLK */
-> +						 <STM32_PINMUX('D', 7, AF11)>; /* SDMMC2 CMD */
-> +					drive-push-pull;
-> +					slew-rate = <2>;
-> +				};
-> +			};
-> +
-> +			sdio_pins_od_b: sdio_pins_od_b@0 {
-> +				pins1 {
-> +					pinmux = <STM32_PINMUX('G', 9, AF11)>, /* SDMMC2 D0 */
-> +						 <STM32_PINMUX('G', 10, AF11)>, /* SDMMC2 D1 */
-> +						 <STM32_PINMUX('B', 3, AF10)>, /* SDMMC2 D2 */
-> +						 <STM32_PINMUX('B', 4, AF10)>, /* SDMMC2 D3 */
-> +						 <STM32_PINMUX('D', 6, AF11)>; /* SDMMC2 CLK */
-> +					drive-push-pull;
-> +					slew-rate = <2>;
-> +				};
-> +
-> +				pins2 {
-> +					pinmux = <STM32_PINMUX('D', 7, AF11)>; /* SDMMC2 CMD */
-> +					drive-open-drain;
-> +					slew-rate = <2>;
-> +				};
-> +			};
->   		};
->   	};
->   };
-> 
+Thanks for the test report, applied.
