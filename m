@@ -1,153 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033526AbeCARkb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:40:31 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:36770 "EHLO ale.deltatee.com"
+        id S1033441AbeCARm4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:42:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:42580 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033270AbeCARk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:40:28 -0500
-To: Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
-Date: Thu, 1 Mar 2018 10:40:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1033261AbeCARmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:42:55 -0500
+Date: Thu, 1 Mar 2018 17:42:42 +0000
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
+Message-ID: <20180301174231.GA26235@e110439-lin>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180222170153.673-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is missing the below #ifdef guards, adding here has a note for
+the next resping on list.
 
+On 22-Feb 17:01, Patrick Bellasi wrote:
 
-On 01/03/18 04:03 AM, Sagi Grimberg wrote:
-> Can you describe what would be the plan to have it when these devices
-> do come along? I'd say that p2p_dev needs to become a nvmet_ns reference
-> and not from nvmet_ctrl. Then, when cmb capable devices come along, the
-> ns can prefer to use its own cmb instead of locating a p2p_dev device?
+[...]
 
-The patchset already supports CMB drives. That's essentially what patch 
-7 is for. We change the nvme-pci driver to use the p2pmem code to 
-register and manage the CMB memory. After that, it is simply available 
-to the nvmet code. We have already been using this with a couple 
-prototype CMB drives.
-
->> +static int nvmet_p2pdma_add_client(struct nvmet_ctrl *ctrl,
->> +                   struct nvmet_ns *ns)
->> +{
->> +    int ret;
->> +
->> +    if (!blk_queue_pci_p2pdma(ns->bdev->bd_queue)) {
->> +        pr_err("peer-to-peer DMA is not supported by %s\n",
->> +               ns->device_path);
->> +        return -EINVAL;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e1febd252a84..c8526687f107 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5205,6 +5205,23 @@ static inline void hrtick_update(struct rq *rq)
+>  }
+>  #endif
 > 
-> I'd say that just skip it instead of failing it, in theory one can
-> connect nvme devices via p2p mem and expose other devices in the
-> same subsystem. The message would be pr_debug to reduce chattiness.
 
-No, it's actually a bit more complicated than you make it. There's a 
-couple cases:
+#ifdef CONFIG_SMP
 
-1) The user adds a namespace but there hasn't been a connection and no 
-p2pmem has been selected. In this case the add_client function is never 
-called and the user can add whatever namespace they like.
+> +static inline unsigned long task_util(struct task_struct *p);
+> +static inline unsigned long _task_util_est(struct task_struct *p);
+> +
+> +static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
+> +				    struct task_struct *p)
+> +{
+> +	unsigned int enqueued;
+> +
+> +	if (!sched_feat(UTIL_EST))
+> +		return;
+> +
+> +	/* Update root cfs_rq's estimated utilization */
+> +	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+> +	enqueued += _task_util_est(p);
+> +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
+> +}
+> +
 
-2) When the first connect happens, nvmet_setup_p2pmem() will call 
-add_client() for each namespace and rdma device. If any of them fail 
-then it does not use a P2P device and falls back, as you'd like, to 
-regular memory.
+#else
+static inline void util_est_enqueue(struct cfs_rq *cfs_rq
+                                    struct task_struct *p)
+{
+}
+#endif /* CONFIG_SMP */
 
-3) When the user adds a namespace after a port is in use and a 
-compatible P2P device has been found. In this case, if the user tries to 
-add a namespace that is not compatible with the P2P device in use then 
-it fails adding the new namespace. The only alternative here is to tear 
-everything down, ensure there are no P2P enabled buffers open and start 
-using regular memory again... That is very difficult.
-
-I also disagree that these messages should be pr_debug. If a user is 
-trying to use P2P memory and they enable it but the system doesn't 
-choose to use their memory they must know why that is so they can make 
-the necessary adjustments. If the system doesn't at least print a dmesg 
-they are in the dark.
-
->> +    }
->> +
->> +    ret = pci_p2pdma_add_client(&ctrl->p2p_clients, nvmet_ns_dev(ns));
->> +    if (ret)
->> +        pr_err("failed to add peer-to-peer DMA client %s: %d\n",
->> +               ns->device_path, ret);
->> +
->> +    return ret;
->> +}
->> +
->>   int nvmet_ns_enable(struct nvmet_ns *ns)
->>   {
->>       struct nvmet_subsys *subsys = ns->subsys;
->> @@ -299,6 +319,14 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
->>       if (ret)
->>           goto out_blkdev_put;
->> +    list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
->> +        if (ctrl->p2p_dev) {
->> +            ret = nvmet_p2pdma_add_client(ctrl, ns);
->> +            if (ret)
->> +                goto out_remove_clients;
+>  /*
+>   * The enqueue_task method is called before nr_running is
+>   * increased. Here we update the fair scheduling stats and
+> @@ -5257,9 +5274,86 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  	if (!se)
+>  		add_nr_running(rq, 1);
 > 
-> Is this really a fatal failure given that we fall-back to main
-> memory? Why not continue with main memory (and warn at best)?
-
-See above. It's fatal because we are already using p2p memory and we 
-can't easily tear that all down when a user adds a new namespace.
-
->> +    ctrl->p2p_dev = pci_p2pmem_find(&ctrl->p2p_clients);
+> +	util_est_enqueue(&rq->cfs, p);
+>  	hrtick_update(rq);
+>  }
 > 
-> This is the first p2p_dev found right? What happens if I have more than
-> a single p2p device? In theory I'd have more p2p memory I can use. Have
-> you considered making pci_p2pmem_find return the least used suitable
-> device?
+> +/*
+> + * Check if a (signed) value is within a specified (unsigned) margin,
+> + * based on the observation that:
+> + *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
+> + *
+> + * NOTE: this only works when value + maring < INT_MAX.
+> + */
+> +static inline bool within_margin(int value, int margin)
+> +{
+> +	return ((unsigned int)(value + margin - 1) < (2 * margin - 1));
+> +}
+> +
+> +static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
+> +				    struct task_struct *p,
+> +				    bool task_sleep)
+> +{
 
-Yes, it currently returns the first found. I imagine a bunch of 
-improvements could be made to it in future work. However, I'd probably 
-start with finding the nearest p2p device and then falling back to the 
-least used if that's necessary. At this time though it's not clear how 
-complicated these systems will get and what's actually needed here.
+#ifdef CONFIG_SMP
 
->> @@ -68,6 +69,7 @@ struct nvmet_rdma_rsp {
->>       u8            n_rdma;
->>       u32            flags;
->>       u32            invalidate_rkey;
->> +    struct pci_dev        *p2p_dev;
+> +	long last_ewma_diff;
+> +	struct util_est ue;
+> +
+> +	if (!sched_feat(UTIL_EST))
+> +		return;
+> +
+> +	/*
+> +	 * Update root cfs_rq's estimated utilization
+> +	 *
+> +	 * If *p is the last task then the root cfs_rq's estimated utilization
+> +	 * of a CPU is 0 by definition.
+> +	 */
+> +	ue.enqueued = 0;
+> +	if (cfs_rq->nr_running) {
+> +		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+> +		ue.enqueued -= min_t(unsigned int, ue.enqueued,
+> +				     _task_util_est(p));
+> +	}
+> +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
+> +
+> +	/*
+> +	 * Skip update of task's estimated utilization when the task has not
+> +	 * yet completed an activation, e.g. being migrated.
+> +	 */
+> +	if (!task_sleep)
+> +		return;
+> +
+> +	/*
+> +	 * Skip update of task's estimated utilization when its EWMA is
+> +	 * already ~1% close to its last activation value.
+> +	 */
+> +	ue = READ_ONCE(p->se.avg.util_est);
+> +	ue.enqueued = task_util(p);
+> +	last_ewma_diff = ue.enqueued - ue.ewma;
+> +	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
+> +		return;
+> +
+> +	/*
+> +	 * Update Task's estimated utilization
+> +	 *
+> +	 * When *p completes an activation we can consolidate another sample
+> +	 * of the task size. This is done by storing the current PELT value
+> +	 * as ue.enqueued and by using this value to update the Exponential
+> +	 * Weighted Moving Average (EWMA):
+> +	 *
+> +	 *  ewma(t) = w *  task_util(p) + (1-w) * ewma(t-1)
+> +	 *          = w *  task_util(p) +         ewma(t-1)  - w * ewma(t-1)
+> +	 *          = w * (task_util(p) -         ewma(t-1)) +     ewma(t-1)
+> +	 *          = w * (      last_ewma_diff            ) +     ewma(t-1)
+> +	 *          = w * (last_ewma_diff  +  ewma(t-1) / w)
+> +	 *
+> +	 * Where 'w' is the weight of new samples, which is configured to be
+> +	 * 0.25, thus making w=1/4 ( >>= UTIL_EST_WEIGHT_SHIFT)
+> +	 */
+> +	ue.ewma <<= UTIL_EST_WEIGHT_SHIFT;
+> +	ue.ewma  += last_ewma_diff;
+> +	ue.ewma >>= UTIL_EST_WEIGHT_SHIFT;
+> +	WRITE_ONCE(p->se.avg.util_est, ue);
+
+#endif /* CONFIG_SMP */
+
+> +}
+> +
+>  static void set_next_buddy(struct sched_entity *se);
 > 
-> Given that p2p_client is in nvmet_req, I think it make sense
-> that the p2p_dev itself would also live there. In theory, nothing
-> is preventing FC from using it as well.
+>  /*
+> @@ -5316,6 +5410,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  	if (!se)
+>  		sub_nr_running(rq, 1);
+> 
+> +	util_est_dequeue(&rq->cfs, p, task_sleep);
+>  	hrtick_update(rq);
+>  }
+> 
 
-Fair point. I can look at moving it in v3.
+-- 
+#include <best/regards.h>
 
-Thanks,
-
-Logan
+Patrick Bellasi
