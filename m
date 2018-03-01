@@ -1,75 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965597AbeCACut (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:50:49 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5689 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965520AbeCACur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:50:47 -0500
-Subject: Re: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180228140120.8758-1-chao@kernel.org>
- <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <7b8a2429-974d-e6d0-f5cc-9bd12a09ebf9@huawei.com>
-Date: Thu, 1 Mar 2018 10:54:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S965549AbeCACwi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:52:38 -0500
+Received: from mga06.intel.com ([134.134.136.31]:19345 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965522AbeCACwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:52:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
+   d="scan'208";a="21932195"
+Message-ID: <1519872317.58658.186.camel@intel.com>
+Subject: [PATCH v2 0/3] x86: devicetree: re-enable x86-specific
+ implementation
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Date: Wed, 28 Feb 2018 18:45:17 -0800
+Organization: Intel Corporation
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+Fixing x86-specific DT implementation in the kernel allows reusing most of
+firmware code for SoC that have ARM core replaced with x86, e.g. SC9853i.
 
-On 2018/3/1 10:45, Jaegeuk Kim wrote:
-> On 02/28, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> If we fail in ->remount_fs, it needs to restore old whint_mode as other
->> mount options.
->>
->> Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
-> 
-> Hi Chao,
-> 
-> It was not merged, so please allow me to integrate this into the original
-> patch.
+Changes since first version:
 
-No problem, please go ahead. ;)
+ * Splitting a single patch into three parts
 
-Thanks,
+Ivan Gorinov (3):
+  x86: devicetree: call early_init_dt_verify()
+  x86: devicetree: enable multiprocessing in DT
+  x86: devicetree: fix device IRQ settings in DT
 
-> 
-> Thanks,
-> 
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 89abe4087e66..8a93f78efca2 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>  		sbi->s_qf_names[i] = s_qf_names[i];
->>  	}
->>  #endif
->> +	sbi->whint_mode = old_whint_mode;
->>  	sbi->mount_opt = org_mount_opt;
->>  	sbi->active_logs = active_logs;
->>  	sb->s_flags = old_sb_flags;
->> -- 
->> 2.14.1.145.gb3622a4ee
-> 
-> .
-> 
+ arch/x86/kernel/devicetree.c | 40 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
