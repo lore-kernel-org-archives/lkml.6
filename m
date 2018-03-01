@@ -1,141 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965447AbeCABh3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 20:37:29 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39189 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932134AbeCABh0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 20:37:26 -0500
-X-Google-Smtp-Source: AG47ELt64PIVZ4qrE7x1Ytf/CXNDQqVq4ILame1hYKJx3j6wCdsAGMWbN7kviY72GI5fv+723Ro7XA==
-Date: Thu, 1 Mar 2018 10:37:22 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: kernel test robot <shun.hao@intel.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [lkp-robot] [printk]  c162d5b433: BUG:KASAN:use-after-scope_in_c
-Message-ID: <20180301013722.GA6763@tigerII.localdomain>
-References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian>
- <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
- <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz>
+        id S935699AbeCABni (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 20:43:38 -0500
+Received: from ozlabs.org ([103.22.144.67]:45531 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932134AbeCABnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 20:43:37 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: npiggin@gmail.com, Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: Re: [PATCH] cpuidle/powernv : Restore different PSSCR for idle and hotplug
+In-Reply-To: <87vaekmk6n.fsf@linux.vnet.ibm.com>
+References: <1519053500-31860-1-git-send-email-akshay.adiga@linux.vnet.ibm.com> <87vaekmk6n.fsf@linux.vnet.ibm.com>
+Date: Thu, 01 Mar 2018 12:43:34 +1100
+Message-ID: <87zi3s8ta1.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Stewart Smith <stewart@linux.vnet.ibm.com> writes:
 
-Cc-ing Dmitry Vyukov and kasan-dev on this.
+> Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> writes:
+>> commit 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
+>> states via stop API.") uses stop-api provided by the firmware to restore
+>> PSSCR. PSSCR restore is required for handling special wakeup. When special
+>> wakeup is completed, the core enters stop state based on restored PSSCR.
+>>
+>> Currently PSSCR is restored to deepest available stop state, causing
+>> a idle cpu to enter deeper stop state on a special wakeup, which causes
+>> the cpu to hang on wakeup.
+>>
+>> A "sensors" command which reads temperature (through DTS sensors) on idle
+>> cpu can trigger special wakeup.
+>>
+>> Failed Scenario :
+>> Request restore of PSSCR with RL = 11
+>> cpu enters idle state (stop5)
+>>   user triggers "sensors" command
+>>    Assert special wakeup on cpu
+>>      Restores PSSCR with RL = 11  <---- Done by firmware
+>>       Read DTS sensor
+>>    Deassert special wakeup
+>>   cpu enters idle state (stop11) <-- Instead of stop5
+>>
+>> Cpu hang is caused because cpu ended up in a deeper state than it requested
+>>
+>> This patch fixes instability caused by special wakeup when stop11 is
+>> enabled. Requests restore of PSSCR to deepest stop state used by cpuidle.
+>> Only when offlining cpu, request restore of PSSCR to deepest stop state.
+>> On onlining cpu, request restore of PSSCR to deepest stop state used by
+>> cpuidle.
+>>
+>> Fixes : 1e1601b38e6e ("powerpc/powernv/idle: Restore SPRs for deep idle
+>> states via stop API.")
+>
+> This should CC stable ?
+>
+> We'll need this to enable stop11 in firmware and not break things, right?
 
-On (02/28/18 16:59), Petr Mladek wrote:
-[..]
-> > > 
-> > > [    0.003333] BUG: KASAN: use-after-scope in console_unlock+0x185/0x960
-> > > [    0.003333] BUG: KASAN: use-after-scope in console_unlock+0x185/0x960
-> > 
-> > Is there any change to get disassembly of console_unlock() from the
-> > problematic build?
-> > 
-> > I have troubles to reproduce this myself. Also I was not able to find any
-> > bug just by looking into the code yet. The disassembly might help
-> > a lot here.
-> > 
-> > 
-> > Interesting symptoms (for myself and other debuggers):
-> > 
-> > The lines are duplicated. Therefore it happened when real
-> > console was registered and before the early console was unregistered.
-> > See also the full dmesg for these actions. The related printk messages
-> > are right after the KASAN report.
-> > 
-> > I wonder if it is unsafe to pass the console_lock via
-> > console_trylock_spinnning() from console_unlock() called
-> > in register_console(). I do not see any problem but I might
-> > be blind.
+But is Cc'ing this to stable even sufficient to enable stop11?
 
-I'm not sure it we actually have concurrent printks at that state yet,
-might be too early for any printk offloading. The backtrace still
-makes no sense to me at all, tho. We had this report twice, probably,
-already (even before the offloading patchset, if I'm not mistaken).
+If firmware starts enabling stop11 then every existing kernel will be
+broken, so eg. bisecting anything prior to now will be impossible.
 
-https://marc.info/?l=linux-kernel&m=151200883525299
-
-[..]
-> I feel lost a bit.
-
-Yeah... can't understand what's going on there.
-
-The last time kasan didn't like this part
-
-[    0.003333]  ? console_unlock+0x605/0xcc0:
-                              atomic_read at arch/x86/include/asm/atomic.h:27
-                               (inlined by) static_key_count at include/linux/jump_label.h:191
-                               (inlined by) static_key_false at include/linux/jump_label.h:201
-                               (inlined by) trace_console_rcuidle at include/trace/events/printk.h:10
-                               (inlined by) call_console_drivers at kernel/printk/printk.c:1556
-                               (inlined by) console_unlock at kernel/printk/printk.c:2233
-
-complaining that there was a write of size 4... at atomic_read().
-
-Now it's reporting that the write of size 1 was out of scope.
-
-> I am really curious what code is proceed on the line
-> console_unlock+0x185/0x960.
-
-Agreed.
-
-On my system 0x185/0x960 is somewhere around
-
-
-     191e:       89 d7                   mov    %edx,%edi
-     1920:       e8 06 e7 ff ff          callq  2b <log_next>
-     1925:       48 89 2d 00 00 00 00    mov    %rbp,0x0(%rip)        # 192c <console_unlock+0x17f>
-     192c:       89 05 00 00 00 00       mov    %eax,0x0(%rip)        # 1932 <console_unlock+0x185>
->>   1932:       eb a9                   jmp    18dd <console_unlock+0x130>
-     1934:       8b 35 00 00 00 00       mov    0x0(%rip),%esi        # 193a <console_unlock+0x18d>
-     193a:       b9 00 04 00 00          mov    $0x400,%ecx
-     193f:       4c 89 ef                mov    %r13,%rdi
-     1942:       31 ed                   xor    %ebp,%ebp
-
-
-That jmp 18dd after log_next() is a `goto skip' in
-suppress_message_printing() branch
-
-skip:
-                if (console_seq == log_next_seq)
-                        break;
-
-                msg = log_from_idx(console_idx);
-                if (suppress_message_printing(msg->level)) {
-                        /*
-                         * Skip record we have buffered and already printed
-                         * directly to the console when we received it, and
-                         * record that has level above the console loglevel.
-                         */
-                        console_idx = log_next(console_idx);
-                        console_seq++;
->>                      goto skip;
-                }
-
-
-As far as I can tell.
-
-	-ss
+cheers
