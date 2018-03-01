@@ -1,55 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966077AbeCAFfP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:35:15 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:46051 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965994AbeCAFfK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:35:10 -0500
-Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in
- /proc/partitions
-To: Alex Lemberg <Alex.Lemberg@wdc.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
- <14AC9066-4BA9-478D-9F67-2A29D69E6011@wdc.com>
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <7e4ff9cf-f2f3-68b0-c903-fc6f2fc0c7c7@mentor.com>
-Date: Thu, 1 Mar 2018 11:04:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <14AC9066-4BA9-478D-9F67-2A29D69E6011@wdc.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+        id S966127AbeCAFlP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:41:15 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:47579 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966068AbeCAFlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 00:41:10 -0500
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Benedikt Spranger <b.spranger@linutronix.de>
+Subject: [PATCH v3 2/6] PCI: Scan all functions when running over Jailhouse
+Date: Thu,  1 Mar 2018 06:40:45 +0100
+Message-Id: <2b4c650d27e59c81903fa4c2526bf18a2cf2d243.1519882849.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
+References: <cover.1519882849.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
+References: <cover.1519882849.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
+Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
+have a function 0.  Therefore, Linux scans for devices at function 0
+(devfn 0/8/16/...) and only scans for other functions if function 0
+has its Multi-Function Device bit set or ARI or SR-IOV indicate
+there are more functions.
 
-On Tuesday 27 February 2018 08:28 PM, Alex Lemberg wrote:
-> Hi Andrew,
->
-> While RPMB partition requires special IOCTL, the boot partition is only requires "switch partition", which is not unusual operation in eMMC.
-> Why to prevent users access boot partition?
->
-> Thanks,
-> Alex 
+The Jailhouse hypervisor may pass individual functions of a
+multi-function device to a guest without passing function 0, which
+means a Linux guest won't find them.
 
-The main intention of the patch was to not have RPMB device in /proc/partitions. Boot partitions are also unlikely to have any partitioning, so it made sense to treat them the same way as RPMB and not list in /proc/partitions.
-Now I see that RPMB is converted to a character device and this change may not be required for RPMB.
+Change Linux PCI probing so it scans all function numbers when
+running as a guest over Jailhouse.
 
-Correct me if I am wrong. Also any comments are welcome.
+This is technically prohibited by the spec, so it is possible that
+PCI devices without the Multi-Function Device bit set may have
+unexpected behavior in response to this probe.
 
-Thanks,
-Harish Jenny K N
+Derived from original patch by Benedikt Spranger.
+
+CC: Benedikt Spranger <b.spranger@linutronix.de>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ arch/x86/pci/legacy.c |  4 +++-
+ drivers/pci/probe.c   | 22 +++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+index 1cb01abcb1be..dfbe6ac38830 100644
+--- a/arch/x86/pci/legacy.c
++++ b/arch/x86/pci/legacy.c
+@@ -4,6 +4,7 @@
+ #include <linux/init.h>
+ #include <linux/export.h>
+ #include <linux/pci.h>
++#include <asm/jailhouse_para.h>
+ #include <asm/pci_x86.h>
+ 
+ /*
+@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
+ 
+ void pcibios_scan_specific_bus(int busn)
+ {
++	int stride = jailhouse_paravirt() ? 1 : 8;
+ 	int devfn;
+ 	u32 l;
+ 
+ 	if (pci_find_bus(0, busn))
+ 		return;
+ 
+-	for (devfn = 0; devfn < 256; devfn += 8) {
++	for (devfn = 0; devfn < 256; devfn += stride) {
+ 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
+ 		    l != 0x0000 && l != 0xffff) {
+ 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ef5377438a1e..da22d6d216f8 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -16,6 +16,7 @@
+ #include <linux/pci-aspm.h>
+ #include <linux/aer.h>
+ #include <linux/acpi.h>
++#include <linux/hypervisor.h>
+ #include <linux/irqdomain.h>
+ #include <linux/pm_runtime.h>
+ #include "pci.h"
+@@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
+ {
+ 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
+ 	unsigned int start = bus->busn_res.start;
+-	unsigned int devfn, cmax, max = start;
++	unsigned int devfn, fn, cmax, max = start;
+ 	struct pci_dev *dev;
++	int nr_devs;
+ 
+ 	dev_dbg(&bus->dev, "scanning bus\n");
+ 
+ 	/* Go find them, Rover! */
+-	for (devfn = 0; devfn < 0x100; devfn += 8)
+-		pci_scan_slot(bus, devfn);
++	for (devfn = 0; devfn < 0x100; devfn += 8) {
++		nr_devs = pci_scan_slot(bus, devfn);
++
++		/*
++		 * The Jailhouse hypervisor may pass individual functions of a
++		 * multi-function device to a guest without passing function 0.
++		 * Look for them as well.
++		 */
++		if (jailhouse_paravirt() && nr_devs == 0) {
++			for (fn = 1; fn < 8; fn++) {
++				dev = pci_scan_single_device(bus, devfn + fn);
++				if (dev)
++					dev->multifunction = 1;
++			}
++		}
++	}
+ 
+ 	/* Reserve buses for SR-IOV capability */
+ 	used_buses = pci_iov_bus_range(bus);
+-- 
+2.13.6
