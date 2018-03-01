@@ -1,14 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967718AbeCALHs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:07:48 -0500
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38510 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966703AbeCALHp (ORCPT
+        id S967741AbeCALIc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:08:32 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37147 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966703AbeCALI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:07:45 -0500
-X-Google-Smtp-Source: AG47ELuwDWYKkuCggvlj6dVZYCEh10s/F2sImOqljxg4nVLIWCLIW+YUHrDgvJ314lid4QfLWus4Nw==
-Subject: Re: [PATCH v2 08/10] nvme-pci: Add support for P2P memory in requests
+        Thu, 1 Mar 2018 06:08:28 -0500
+X-Google-Smtp-Source: AG47ELvtfQki6ufuytwzLsvbw+bwWx7FhvRwGgPo671OAZisVhGtEpHjJBncmYs8YJjQgpDbYkXAdA==
+Subject: Re: [PATCH v2 05/10] block: Introduce PCI P2P flags for request and
+ request queue
 To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
@@ -22,14 +23,14 @@ Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-9-logang@deltatee.com>
+ <20180228234006.21093-6-logang@deltatee.com>
 From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <c6639530-48ba-4655-c772-7d88a030e37e@grimberg.me>
-Date: Thu, 1 Mar 2018 13:07:41 +0200
+Message-ID: <2882003d-7689-7825-7651-e68ffadb9d41@grimberg.me>
+Date: Thu, 1 Mar 2018 13:08:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228234006.21093-9-logang@deltatee.com>
+In-Reply-To: <20180228234006.21093-6-logang@deltatee.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -37,18 +38,6 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> For P2P requests we must use the pci_p2pmem_[un]map_sg() functions
-> instead of the dma_map_sg functions.
-> 
-> With that, we can then indicate PCI_P2P support in the request queue.
-> For this, we create an NVME_F_PCI_P2P flag which tells the core to
-> set QUEUE_FLAG_PCI_P2P in the request queue.
-
-This looks fine to me,
+Looks fine,
 
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-
-Any plans adding the capability to nvme-rdma? Should be
-straight-forward... In theory, the use-case would be rdma backend
-fabric behind. Shouldn't be hard to test either...
