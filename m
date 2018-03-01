@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966447AbeCAHR7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 02:17:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34990 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966384AbeCAHR5 (ORCPT
+        id S966481AbeCAHWu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 02:22:50 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35102 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966417AbeCAHWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:17:57 -0500
-Date: Thu, 1 Mar 2018 08:17:50 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Split page_type out from mapcount
-In-Reply-To: <20180228223157.9281-1-willy@infradead.org>
-References: <20180228223157.9281-1-willy@infradead.org>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030107-0012-0000-0000-000005B74FD3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030107-0013-0000-0000-000019335278
-Message-Id: <20180301081750.42b135c3@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010094
+        Thu, 1 Mar 2018 02:22:48 -0500
+X-Google-Smtp-Source: AG47ELsE0iRMSrCcPYfD3HYp6Q9JtjfalZfd4O/0NbWOVCJpWYU/2kaVjXwYw2OpS/rI5xz8lDFIyA==
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jianguo Sun <sunjianguo1@huawei.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v3 0/2] Add HiSilicon INNO USB2 PHY driver support
+Date: Thu,  1 Mar 2018 15:22:18 +0800
+Message-Id: <1519888940-23235-1-git-send-email-shawn.guo@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018 14:31:53 -0800
-Matthew Wilcox <willy@infradead.org> wrote:
+It adds device tree bindings and driver support for HiSilicon INNO USB2
+PHY device, which can be found on HiSilicon STB SoC Hi3798cv200.
 
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> I want to use the _mapcount field to record what a page is in use as.
-> This can help with debugging and we can also expose that information to
-> userspace through /proc/kpageflags to help diagnose memory usage (not
-> included as part of this patch set).
-> 
-> First, we need s390 to stop using _mapcount for its own purposes;
-> Martin, I hope you have time to look at this patch.  I must confess I
-> don't quite understand what the different bits are used for in the upper
-> nybble of the _mapcount, but I tried to replicate what you were doing
-> faithfully.
+Changes for v3:
+ - Make combphy device be child of peripheral controller and use 'reg'
+   property for mapping combphy configuration register.
 
-Yeah, that is a nasty bit of code. On s390 we have 2K page tables (pte)
-but 4K pages. If we use full pages for the pte tables we waste 2K of
-memory for each of the tables. So we allocate 4K and split it into two
-2K pieces. Now we have to keep track of the pieces to be able to free
-them again.
+Changes for v2:
+ - Move DT bindings into a separate patch.
+ - Rename hisi_inno_phy_start() to hisi_inno_phy_init() for aligning
+   name with .init hook.
 
-I try to give your patch a spin today. It should be stand-alone, no ?
+Pengcheng Li (2):
+  dt-bindings: add bindings doc for HiSilicon INNO USB2 PHY
+  phy: add inno-usb2-phy driver for hi3798cv200 SoC
+
+ .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt |  52 +++++
+ drivers/phy/hisilicon/Kconfig                      |  10 +
+ drivers/phy/hisilicon/Makefile                     |   1 +
+ drivers/phy/hisilicon/phy-hisi-inno-usb2.c         | 218 +++++++++++++++++++++
+ 4 files changed, 281 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+ create mode 100644 drivers/phy/hisilicon/phy-hisi-inno-usb2.c
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+1.9.1
