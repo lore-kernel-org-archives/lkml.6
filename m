@@ -1,54 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967559AbeCAKex (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:34:53 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42726 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966824AbeCAKew (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:34:52 -0500
-X-Google-Smtp-Source: AG47ELupOMfjiRSv1zQhKuZCszNhvblWDUO5Zh/5WTl/TlNz0LGolGR4CjZ6NTnLYGlIGMhvMhVt+g==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2] ARM: davinci: fix the GPIO lookup for omapl138-hawk
-Date: Thu,  1 Mar 2018 11:34:48 +0100
-Message-Id: <20180301103448.27233-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
+        id S967488AbeCAKfl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:35:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966437AbeCAKfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:35:39 -0500
+Date: Thu, 1 Mar 2018 11:35:31 +0100
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com, brouer@redhat.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+Message-ID: <20180301113531.7b25e2df@redhat.com>
+In-Reply-To: <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+        <20180301101038.4253424d@redhat.com>
+        <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Thu, 1 Mar 2018 17:23:37 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-The GPIO chip is called davinci_gpio.0 in legacy mode. Fix it, so that
-mmc can correctly lookup the wp and cp gpios.
+> On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:
+> > On Thu,  1 Mar 2018 11:19:03 +0800
+> > Jason Wang <jasowang@redhat.com> wrote:
+> >  
+> >> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
+> >> was removed since commit 7324f5399b06 ("virtio_net: disable
+> >> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
+> >>
+> >> - not enough tailroom was reserved which breaks cpumap  
+>
+> > To address this at a more fundamental level, I would suggest that we/you
+> > instead extend XDP to know it's buffers "frame" size/end.  (The
+> > assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
+> > ixgbe+virtio_net broke that assumption).
+> >
+> > It should actually be fairly easy to implement:
+> >   * Simply extend xdp_buff with a "data_hard_end" pointer.  
+> 
+> Right, and then cpumap can warn and drop packets with insufficient 
+> tailroom.
+>
+> But it should be a patch on top of this I think.
 
-Fixes: c69f43fb4f26 ("ARM: davinci: hawk: use gpio descriptor for mmc pins")
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
-v1 -> v2:
-- added the Fixes: tag
+Hmmm, not really.  If we/you instead fix the issue of XDP doesn't know
+the end/size of the frame, then we don't need this mixed XDP
+generic/native code path mixing.
 
- arch/arm/mach-davinci/board-omapl138-hawk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+You could re-enable native redirect, and push the responsibility to
+cpumap for detecting this too-small frame "missing tailroom" (and avoid
+crashing...). (If we really want to support this, cpumap could fallback
+to dev_alloc_skb, and handle it gracefully).
 
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index a3e78074be70..62eb7d668890 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -127,8 +127,8 @@ static struct gpiod_lookup_table mmc_gpios_table = {
- 	.dev_id = "da830-mmc.0",
- 	.table = {
- 		/* CD: gpio3_12: gpio60: chip 1 contains gpio range 32-63*/
--		GPIO_LOOKUP("davinci_gpio.1", 28, "cd", GPIO_ACTIVE_LOW),
--		GPIO_LOOKUP("davinci_gpio.1", 29, "wp", GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP("davinci_gpio.0", 28, "cd", GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP("davinci_gpio.0", 29, "wp", GPIO_ACTIVE_LOW),
- 	},
- };
- 
 -- 
-2.16.1
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
