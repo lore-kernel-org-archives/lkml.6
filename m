@@ -1,167 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935822AbeCAIKs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:10:48 -0500
-Received: from mfo1502.tsb.2iij.net ([210.149.48.177]:49443 "EHLO
-        mfo.tsb.2iij.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935665AbeCAIKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:10:46 -0500
-X-MXL-Hash: 5a97adef6c6eeabf-896cc1fc677fc540e7be86384f95641c419295ab
-Content-Transfer-Encoding: 7bit
-From: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
-To: jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
-Subject: [RFC v2 0/2] WhiteEgret LSM module
-Date: Thu,  1 Mar 2018 16:37:42 +0900
-Message-Id: <20180301073742.2501-1-masanobu2.koike@toshiba.co.jp>
-X-Mailer: git-send-email 2.14.1
-X-MAIL-FROM: <masanobu2.koike@toshiba.co.jp>
-X-SOURCE-IP: [172.27.153.190]
-X-Spam: exempt
+        id S935816AbeCAINv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:13:51 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60747 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935665AbeCAINt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 03:13:49 -0500
+Date: Thu, 1 Mar 2018 09:13:47 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        alexandre.belloni@bootlin.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v1 3/4] ASoC: codecs: pcm179x: Add reset gpio
+Message-ID: <20180301091347.6575e621@dell-desktop.home>
+In-Reply-To: <CAOMZO5C+Ub2R6srR+2jv2pY8zwjwkPSecpO1gbXvmXMTTnhU8Q@mail.gmail.com>
+References: <20180227212433.2189-1-mylene.josserand@bootlin.com>
+        <20180227212433.2189-4-mylene.josserand@bootlin.com>
+        <CAOMZO5C+Ub2R6srR+2jv2pY8zwjwkPSecpO1gbXvmXMTTnhU8Q@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WhiteEgret is an LSM to simply provide a whitelisting-type
-execution control.
+Hello Fabio,
 
-An execution-whitelist, simply called whitelist, is a list
-of executable components (e.g., applications, libraries)
-that are approved to run on a host. The whitelist is used
-to decide whether executable components are permitted to
-execute or not. This mechanism can stop an execution of
-unknown software, so it helps stop the execution of
-malicious code and other unauthorized software.
+Thank you for the review!
 
-It is important to maintain a whitelist properly according to
-the execution environments. Managing whitelists for information
-systems is a difficult task because their environments are
-changed frequently. On the other hand, for such devices that
-continue to do the same tasks for a certain period of time,
-we can use the same whitelist for the period once the whitelist
-is established. Thus the whitelisting-type execution control
-works best in such execution environments. Examples of the above
-execution environments include control devices in industrial
-control systems.
+On Tue, 27 Feb 2018 19:30:11 -0300
+Fabio Estevam <festevam@gmail.com> wrote:
 
-Although the number of changing whitelists is not so large,
-it is necessary to change them according to a system life cycle
-or each phase of system operations. There is a requirement to
-change whitelists with the system operations continued because
-they often cannot easily be stopped. For example, such cases
-include temporarily allowing maintenance programs for maintenance
-or troubleshooting purposes while running the systems.
+> On Tue, Feb 27, 2018 at 6:24 PM, Mylène Josserand
+> <mylene.josserand@bootlin.com> wrote:
+> 
+> > +       pcm179x->reset = of_get_named_gpio(np, "reset-gpios", 0);
+> > +       if (gpio_is_valid(pcm179x->reset)) {
+> > +               ret = devm_gpio_request_one(dev, pcm179x->reset,
+> > +                                           GPIOF_OUT_INIT_LOW,
+> > +                                           "pcm179x reset");
+> > +               if (ret) {
+> > +                       dev_err(dev,
+> > +                               "Failed to request GPIO %d as reset pin, error %d\n",
+> > +                               pcm179x->reset, ret);
+> > +                       return ret;
+> > +               }
+> > +
+> > +               gpio_set_value(pcm179x->reset, 1);  
+> 
+> It would be better to use the gpiod API, which takes the GPIO polarity
+> into account.
+> 
+> There may be systems that have an inverter connected to this pin, and
+> this can be changed in dts via GPIO_ACTIVE_HIGH.
 
-WhiteEgret is aiming at satisfying the above requirement.
-WhiteEgret adopts a model that a whitelist is managed in user space.
-Namely, WhiteEgret assumes that a privileged user manages a whitelist
-in user space. This makes it possible to change the whitelist while
-running the systems. 
+Oh, true, I should have used gpiod. Thanks for pointing me out.
 
-Mechanism of WhiteEgret
+> 
+> Also, as the reset pin can be connected to an I2C expander, for
+> example, so it is safer to use the cansleep variant:
+> 
+> gpiod_set_value_cansleep(pcm179x->reset, 0);
 
-WhiteEgret requires a user application called WhiteEgret User
-Application (WEUA, for short). WhiteEgret utilizes the
-bprm_check_security hook and the mmap_file hook.
-WhiteEgret asks WEUA whether an executable component hooked
-by the above hooks is permitted to execute or not.
-If the response from the WEUA is "permit", then WhiteEgret
-continues to process the executable component. If the response
-is "not permit", then WhiteEgret returns an error and blocks
-the execution of the executable component.
-The bprm_check_security hook is triggered by execve system
-call, so execution by almost all executable components are
-hooked by the hook. However, because shared objects do not
-invoke execve system call, WhiteEgret utilizes the mmap_file
-hook to hook the memory mapping by a shared object.
-Thus WhiteEgret ignores the mmap_file hook caused by
-non-executable and by executable which calls execve system call.
+Sure, I will update it.
 
-To ask the permission to a WEUA, WhiteEgret sends the
-absolute path, the inode number and the device number of the
-executable component to the WEUA.
-Then the WEUA is expected to work as follows.
-The WEUA sees if the tuple of the absolute path and/or the inode
-number and/or the device number is contained in the whitelist.
-If it exists, the WEUA compares a hash value of the executable
-component indicated by the absolute path (and/or the inode number
-and/or device number) with that in the whitelist to see whether
-the executable component is changed or not after the whitelist is
-made. The WEUA returns "permit" if both tests are passed,
-otherwise returns "not permit".
+Thanks,
 
-To use WhiteEgret
-
-Users have to prepare a whitelist and a WEUA to use WhiteEgret.
-A sample WEUA is involved in samples/whiteegret/.
-
-To enable WhiteEgret, you are required to build the kernel using
-normal procedures with CONFIG_SECURITY_WHITEEGRET=y and
-CONFIG_DEFAULT_SECURITY_WHITEEGRET=y (or pass
-"security=whiteegret" on kernel's command line).
-
-Assumptions and ToDos
-
-At this stage, WhiteEgret assumes the following.
-Relaxing these assumptions are future works.
-- Root is not compromised. And using a whitelist and a WEUA
-requires root privilege.
-- WEUA is reliable.
-- It is allowed for scripting languages, e.g., Perl or Python,
-to read arbitrary scripts and to execute them. 
-
-
-Changes in v2:
-- Change communication method between kernel space and user space
-from netlink to device driver, and device driver utilizes not LKM
-but securityfs.
-- Add inode number and device number to information of executable
-component sent from kernel space to user space.
-- Fix bugs regarding to locks during kernel space and user space
-communication.
-- Change return value from -EPERM to -EACCES when the execution of
-an executable component is denied.
-
-
-Masanobu Koike (2):
-  WhiteEgret: Add WhiteEgret core functions.
-  WhiteEgret: Add an example of user application.
-
- samples/Kconfig                    |   6 +
- samples/Makefile                   |   2 +-
- samples/whiteegret/Makefile        |  14 ++
- samples/whiteegret/checkwl.c       |  57 ++++++++
- samples/whiteegret/checkwl.h       |  26 ++++
- samples/whiteegret/main.c          |  86 ++++++++++++
- security/Kconfig                   |   6 +
- security/Makefile                  |   2 +
- security/whiteegret/Kconfig        |  11 ++
- security/whiteegret/Makefile       |   2 +
- security/whiteegret/init.c         |  75 ++++++++++
- security/whiteegret/main.c         | 251 +++++++++++++++++++++++++++++++++
- security/whiteegret/request.c      | 151 ++++++++++++++++++++
- security/whiteegret/request.h      |  52 +++++++
- security/whiteegret/we.h           |  66 +++++++++
- security/whiteegret/we_fs.c        | 280 +++++++++++++++++++++++++++++++++++++
- security/whiteegret/we_fs.h        |  23 +++
- security/whiteegret/we_fs_common.h |  36 +++++
- 18 files changed, 1145 insertions(+), 1 deletion(-)
- create mode 100644 samples/whiteegret/Makefile
- create mode 100644 samples/whiteegret/checkwl.c
- create mode 100644 samples/whiteegret/checkwl.h
- create mode 100644 samples/whiteegret/main.c
- create mode 100644 security/whiteegret/Kconfig
- create mode 100644 security/whiteegret/Makefile
- create mode 100644 security/whiteegret/init.c
- create mode 100644 security/whiteegret/main.c
- create mode 100644 security/whiteegret/request.c
- create mode 100644 security/whiteegret/request.h
- create mode 100644 security/whiteegret/we.h
- create mode 100644 security/whiteegret/we_fs.c
- create mode 100644 security/whiteegret/we_fs.h
- create mode 100644 security/whiteegret/we_fs_common.h
+Mylène
 
 -- 
-2.14.1
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
