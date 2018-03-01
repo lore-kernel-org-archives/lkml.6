@@ -1,95 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163190AbeCAXbG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 18:31:06 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:52472 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163012AbeCAX33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 18:29:29 -0500
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <1c8ae855bc1474da6e37f1726545f5811610f5f9.1519813462.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1519813462.git.fthain@telegraphics.com.au>
-References: <cover.1519813462.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH net 3/4] net/mac89x0: Fix and modernize log messages
-Date: Thu,  1 Mar 2018 18:29:28 -0500 (EST)
+        id S1163477AbeCAXex (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 18:34:53 -0500
+Received: from mga09.intel.com ([134.134.136.24]:61783 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163178AbeCAXev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 18:34:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="34829814"
+From: Tony Luck <tony.luck@intel.com>
+To: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Subject: [PATCH] x86/mce: Save microcode revision in machine check records
+Date: Thu,  1 Mar 2018 15:34:49 -0800
+Message-Id: <20180301233449.24311-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix log message fragments that no longer produce the desired output
-since the behaviour of printk() was changed.
-Add missing printk severity levels.
-Drop deprecated "out of memory" message as per checkpatch advice.
+Updating microcode used to be relatively rare. Now that it has become
+more common we should save the microcode version in a machine check
+record to make sure that those people looking at the error have this
+important information bundled with the rest of the logged information.
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- drivers/net/ethernet/cirrus/mac89x0.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ arch/x86/include/uapi/asm/mce.h  | 1 +
+ arch/x86/kernel/cpu/mcheck/mce.c | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/cirrus/mac89x0.c b/drivers/net/ethernet/cirrus/mac89x0.c
-index 911139abbe20..9a266496a538 100644
---- a/drivers/net/ethernet/cirrus/mac89x0.c
-+++ b/drivers/net/ethernet/cirrus/mac89x0.c
-@@ -56,6 +56,8 @@
-   local_irq_{dis,en}able()
- */
+diff --git a/arch/x86/include/uapi/asm/mce.h b/arch/x86/include/uapi/asm/mce.h
+index 91723461dc1f..435db58a7bad 100644
+--- a/arch/x86/include/uapi/asm/mce.h
++++ b/arch/x86/include/uapi/asm/mce.h
+@@ -30,6 +30,7 @@ struct mce {
+ 	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
+ 	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
+ 	__u64 ppin;	/* Protected Processor Inventory Number */
++	__u32 microcode;/* Microcode revision */
+ };
  
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 8ff94d1e2dce..b9403c446e05 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -118,6 +118,8 @@ BLOCKING_NOTIFIER_HEAD(x86_mce_decoder_chain);
+ /* Do initial initialization of a struct mce */
+ void mce_setup(struct mce *m)
+ {
++	struct cpuinfo_x86 *c;
 +
- static const char version[] =
- "cs89x0.c:v1.02 11/26/96 Russell Nelson <nelson@crynwr.com>\n";
+ 	memset(m, 0, sizeof(struct mce));
+ 	m->cpu = m->extcpu = smp_processor_id();
+ 	/* We hope get_seconds stays lockless */
+@@ -130,6 +132,9 @@ void mce_setup(struct mce *m)
  
-@@ -245,16 +247,14 @@ static int mac89x0_device_probe(struct platform_device *pdev)
- 	if (net_debug && version_printed++ == 0)
- 		printk(version);
+ 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
+ 		rdmsrl(MSR_PPIN, m->ppin);
++
++	c = &cpu_data(m->cpu);
++	m->microcode = c->microcode;
+ }
  
--	printk(KERN_INFO "%s: cs89%c0%s rev %c found at %#8lx",
--	       dev->name,
--	       lp->chip_type==CS8900?'0':'2',
--	       lp->chip_type==CS8920M?"M":"",
--	       lp->chip_revision,
--	       dev->base_addr);
-+	pr_info("cs89%c0%s rev %c found at %#8lx\n",
-+		lp->chip_type == CS8900 ? '0' : '2',
-+		lp->chip_type == CS8920M ? "M" : "",
-+		lp->chip_revision, dev->base_addr);
- 
- 	/* Try to read the MAC address */
- 	if ((readreg(dev, PP_SelfST) & (EEPROM_PRESENT | EEPROM_OK)) == 0) {
--		printk("\nmac89x0: No EEPROM, giving up now.\n");
-+		pr_info("No EEPROM, giving up now.\n");
- 		goto out1;
-         } else {
-                 for (i = 0; i < ETH_ALEN; i += 2) {
-@@ -269,7 +269,7 @@ static int mac89x0_device_probe(struct platform_device *pdev)
- 
- 	/* print the IRQ and ethernet address. */
- 
--	printk(" IRQ %d ADDR %pM\n", dev->irq, dev->dev_addr);
-+	pr_info("MAC %pM, IRQ %d\n", dev->dev_addr, dev->irq);
- 
- 	dev->netdev_ops		= &mac89x0_netdev_ops;
- 
-@@ -472,7 +472,6 @@ net_rx(struct net_device *dev)
- 	/* Malloc up new buffer. */
- 	skb = alloc_skb(length, GFP_ATOMIC);
- 	if (skb == NULL) {
--		printk("%s: Memory squeeze, dropping packet.\n", dev->name);
- 		dev->stats.rx_dropped++;
- 		return;
- 	}
-@@ -560,7 +559,7 @@ static int set_mac_address(struct net_device *dev, void *addr)
- 		return -EADDRNOTAVAIL;
- 
- 	memcpy(dev->dev_addr, saddr->sa_data, ETH_ALEN);
--	printk("%s: Setting MAC address to %pM\n", dev->name, dev->dev_addr);
-+	netdev_info(dev, "Setting MAC address to %pM\n", dev->dev_addr);
- 
- 	/* set the Ethernet address */
- 	for (i=0; i < ETH_ALEN/2; i++)
+ DEFINE_PER_CPU(struct mce, injectm);
 -- 
-2.16.1
+2.14.1
