@@ -1,68 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031850AbeCAPWe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:22:34 -0500
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:37567 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031659AbeCAPWd (ORCPT
+        id S1031921AbeCAPXk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:23:40 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:42741 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031893AbeCAPXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:22:33 -0500
-X-Google-Smtp-Source: AG47ELs9mztyLnGNSJgnPXQpn3N3+vW9Gc9voxiCevD0TtC0W/bii5U2vo125iJXZ+7OHWdir1vvGQ==
-Date: Thu, 1 Mar 2018 05:22:28 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] sound/pci/ice1712: replace strcpy() with strlcpy()
-Message-ID: <20180301152228.4hup3qvizqef3hax@gmail.com>
-References: <20180301114535.bf3ibzcpvohyjweu@gmail.com>
- <CAHp75Vf6kfPE_sRPj_mLMvLQfn9Fe9B_MeXqnGAHGAdzR7HX+Q@mail.gmail.com>
- <20180301141707.cp5dc6zbh6bur4xw@gmail.com>
- <s5hk1uvj0b7.wl-tiwai@suse.de>
+        Thu, 1 Mar 2018 10:23:35 -0500
+X-Google-Smtp-Source: AG47ELvsz8fi5X22+5mq9d4/NVjSGevKXq4dh/No29GRnAs2XvBnbKYXZ0PnMQuJjgKVeM9qkgRww0cUu6xmF45ogRE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="avggzieuidntpp7i"
-Content-Disposition: inline
-In-Reply-To: <s5hk1uvj0b7.wl-tiwai@suse.de>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
+References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
+ <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com>
+ <20180228051525.a2vouqs6djnd2cnf@huvuddator> <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
+ <20180301111801.gdhoam4kqrbqnasv@huvuddator> <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Thu, 1 Mar 2018 16:23:33 +0100
+Message-ID: <CAFkk2KS=Z2qHgh5X_W9uTPPG1qHop_m7ZoHYQy5Ss9PpBTJd6Q@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: remove redundant streamline_config.pl prerequisite
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 1, 2018 at 3:39 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-03-01 20:18 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>> The local{yes,mod}config targets currently have streamline_config.pl as
+>> a prerequisite. This is redundant, because streamline_config.pl is a
+>> checked-in file with no prerequisites.
+>>
+>> Remove the prerequisite and reference streamline_config.pl directly in
+>> the recipe of the rule instead.
+>>
+>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+>> ---
+>>  scripts/kconfig/Makefile | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+>> index 1f74336d4e23..58be52cb464d 100644
+>
+>
+> Thanks! Almost good.
+>
+> Just small nits.
+>
+>
+>> --- a/scripts/kconfig/Makefile
+>> +++ b/scripts/kconfig/Makefile
+>> @@ -77,9 +77,9 @@ silentoldconfig: $(obj)/conf
+>>             touch   include/generated/autoksyms.h
+>>         $< $(silent) --$@ $(Kconfig)
+>>
+>> -localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
+>> +localyesconfig localmodconfig: $(obj)/conf
+>>         $(Q)mkdir -p include/config include/generated
+>> -       $(Q)perl $< --$@ $(srctree) $(Kconfig) > .tmp.config
+>> +       $(Q)perl $(obj)/streamline_config.pl --$@ $(srctree) $(Kconfig) > .tmp.config
+>
+>
+>
+> '$(src)/streamline_config.pl' is better than '$(obj)/streamline_config.pl'
+> since it is a checked-in file.
+>
+> '$(src)' and '$(obj)' are always the same.
+> (https://github.com/torvalds/linux/blob/master/scripts/Makefile.build#L6)
+>
+>
+> So, there is no effective difference.
+> It is just a coding convention to use $(obj)/ for generated files,
+> and $(src)/ for source files.
+>
+> The original code already used $(obj)/, so this is not your fault
+> but I want to fix it while we are here.
+>
+>
+>
+> One more nit.
+>
+> $(obj)/conf $(silent) --silentoldconfig $(Kconfig);
+>
+> can be
+>
+> $< $(silent) --silentoldconfig $(Kconfig);
+>
+>
+> I guess you did not touch this line to avoid
+> conflict with my patch.
 
---avggzieuidntpp7i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yep, plus I wanted to keep the patch focused.
 
-On Thu, Mar 01, 2018 at 04:13:48PM +0100, Takashi Iwai wrote:
-> Thanks, applied now.
+>
+>
+>
+> If you agree those two, shall I fix it up
+> when I apply it?
 
-Cheers
+That's fine by me. I'll assume less sanity from the existing code from
+now on. :)
 
---=20
-Joey Pabalinas
+>
+>
+>
+>
+>
+>>         $(Q)if [ -f .config ]; then                                     \
+>>                         cmp -s .tmp.config .config ||                   \
+>>                         (mv -f .config .config.old.1;                   \
+>> --
+>> 2.14.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
---avggzieuidntpp7i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlqYGrQACgkQruvLfWhy
-VBlzSQ//SFpqmTRHoUHlGB4RtwASD0xcLA7rUqSQ64R14XLABXM0AnQjpbr8YMmM
-yqiVQYkJSLxGSSvB8mWpy+A2Qlm8Ubh0mBNrOxOOUACVtQclmR20Nk1Oy5Sc8wYP
-rnxUd1eOPFfThoXshQGp06QUy3UbLL9Z0fZQ+ZTP3Qwi0JwfPV92deOr88PVMWmA
-F6TpZYi11hmHDo3QcXETm/gvl1nFHCVB5BD10q1P1BvnVSeBS5proug1fzqRYckS
-mCSJqDi+8L/dRPMeJqZpIOFipWf8ArVeihBRleaHY8LcHUODQun41FEKJB/zKRVX
-32IloNkeu+26Ok2n4z4xi8Hmn6MlQraiZA6myZzkTadXaopbqoKDPisrh0/+csgF
-8xgQYx5nXkOr0c8Fw0y/1QnIoxwT/BnDkkCURDzm4cjIaWA8PxdjuPqvrp1/D1Rm
-cgjqcWKSoP0TUMglWmm2m6W1dI0M3XiDuZ4AxVmFpUrE5+ECNqinIA5wJHMbq6o1
-Tv5S/ViGp6dA6tiLD28ghuZLOF6goRcPh5Widn75+EYumSFG6xMeuNqHDwp1fF7x
-L5DubSRpkRFtJtsOfa2R0DBy+ERNzSKKdMO0Sd4x4U+Foec/9AdaVM73cM4k+9X3
-QBI2AafBvySSaafkGAupVzWqXK3015PZPwLU+OzqHgOqC+kFTdc=
-=hXto
------END PGP SIGNATURE-----
-
---avggzieuidntpp7i--
+Thanks,
+Ulf
