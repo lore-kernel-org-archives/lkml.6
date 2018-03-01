@@ -1,197 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033825AbeCASDC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:03:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033661AbeCASC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:02:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7457214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 1 Mar 2018 12:02:57 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-5-logang@deltatee.com>
+        id S1033833AbeCASED (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:04:03 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34658 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033627AbeCASEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:04:00 -0500
+X-Google-Smtp-Source: AG47ELvIJ6dp4jo3nfAO7redijnz+QR2efPpBhYzK1mxAdLVw2FPu6tjyF4lf+V4BJuyEtlBk7ibJQ==
+From: Paul Moore <paul@paul-moore.com>
+To: Richard Haines <richard_c_haines@btinternet.com>
+CC: <netdev@vger.kernel.org>, <selinux@tycho.nsa.gov>,
+        <linux-kernel@vger.kernel.org>, <anders.roxell@linaro.org>
+Date: Thu, 01 Mar 2018 13:03:51 -0500
+Message-ID: <161e2bc0f58.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <1519914989.3063.1.camel@btinternet.com>
+References: <20180301083316.GA6779@localhost.localdomain>
+ <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
+ <1519914989.3063.1.camel@btinternet.com>
+User-Agent: AquaMail/1.13.2-730 (build: 101300200)
+Subject: Re: Regression found when running LTP connect01 on next-20180301
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228234006.21093-5-logang@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w21I4CZk031560
 
-On Wed, Feb 28, 2018 at 04:40:00PM -0700, Logan Gunthorpe wrote:
-> For peer-to-peer transactions to work the downstream ports in each
-> switch must not have the ACS flags set. At this time there is no way
-> to dynamically change the flags and update the corresponding IOMMU
-> groups so this is done at enumeration time before the the groups are
-> assigned.
+On March 1, 2018 9:36:37 AM Richard Haines <richard_c_haines@btinternet.com> wrote:
+> On Thu, 2018-03-01 at 08:42 -0500, Paul Moore wrote:
+>> On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@linaro.o
+>> rg> wrote:
+>> > Hi,
+>> > 
+>> > I was running LTP's testcase connect01 [1] and found a regression
+>> > in linux-next
+>> > (next-20180301).  Bisect gave me this patch as the problematic
+>> > patch (sha
+>> > d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
+>> > 
+>> > Output from the test(LTP release 20180118):
+>> > $ cd /opt/ltp/
+>> > $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
+>> > $ ./runltp -pq -f connect-syscall
+>> > "
+>> > Running tests.......
+>> > connect01    1  TPASS  :  bad file descriptor successful
+>> > connect01    2  TPASS  :  invalid socket buffer successful
+>> > connect01    3  TPASS  :  invalid salen successful
+>> > connect01    4  TPASS  :  invalid socket successful
+>> > connect01    5  TPASS  :  already connected successful
+>> > connect01    6  TPASS  :  connection refused successful
+>> > connect01    7  TFAIL  :  connect01.c:146: invalid address family ;
+>> > returned -1 (expected -1), errno 22 (expected 97)
+>> > INFO: ltp-pan reported some tests FAIL
+>> > LTP Version: 20180118
+>> > "
+>> > 
+>> > The output from the test expected 97 and we received 22, can you
+>> > please
+>> > elaborate on what have been changed?
+>> > 
+>> > Cheers,
+>> > Anders
+>> > [1] https://github.com/linux-test-project/ltp/blob/20180118/testcas
+>> > es/kernel/syscalls/connect/connect01.c#L146
+>> 
+>> Hi Anders,
+>> 
+>> Thanks for the report.  Out of curiosity, we're you running the full
+>> LTP test suite and this was the only failure, or did you just run the
+>> connect01 test?  Either answer is fine, I'm just trying to understand
+>> the scope of the regression.
+>> 
+>> Richard, are you able to look into this?  If not, let me know and
+>> I'll
+>> dig a bit deeper (I'll likely take a quick look today, but if the
+>> failure is subtle it might require some digging).
+>
+> I'll have a look today.
 
-s/the the/the/
+One more thing I forgot to mention earlier, if there is a patch to fix this, could you please base it on top of the existing SELinux/SCTP patches that have already been merged, and not respin an earlier patch?
 
-> This effectively means that if CONFIG_PCI_P2PDMA is selected then
-> all devices behind any switch will be in the same IOMMU group.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
->  drivers/pci/Kconfig        |  4 ++++
->  drivers/pci/p2pdma.c       | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  drivers/pci/pci.c          |  4 ++++
->  include/linux/pci-p2pdma.h |  5 +++++
->  4 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 840831418cbd..a430672f0ad4 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -138,6 +138,10 @@ config PCI_P2PDMA
->  	  it's hard to tell which support it with good performance, so
->  	  at this time you will need a PCIe switch.
->  
-> +	  Enabling this option will also disable ACS on all ports behind
-> +	  any PCIe switch. This effictively puts all devices behind any
-> +	  switch into the same IOMMU group.
+Thank you.
 
-s/effictively/effectively/
-
-Does this really mean "all devices behind the same Root Port"?
-
-What does this mean in terms of device security?  I assume it means,
-at least, that individual devices can't be assigned to separate VMs.
-
-I don't mind admitting that this patch makes me pretty nervous, and I
-don't have a clear idea of what the implications of this are, or how
-to communicate those to end users.  "The same IOMMU group" is a pretty
-abstract idea.
-
->  	  If unsure, say N.
->  
->  config PCI_LABEL
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 4e1c81f64b29..61af07acd21a 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -255,6 +255,50 @@ static struct pci_dev *get_upstream_bridge_port(struct pci_dev *pdev)
->  	return up2;
->  }
->  
-> +/*
-> + * pci_p2pdma_disable_acs - disable ACS flags for ports in PCI
-> + *	bridges/switches
-> + * @pdev: device to disable ACS flags for
-> + *
-> + * The ACS flags for P2P Request Redirect and P2P Completion Redirect need
-> + * to be disabled on any downstream port in any switch in order for
-> + * the TLPs to not be forwarded up to the RC which is not what we want
-> + * for P2P.
-> + *
-> + * This function is called when the devices are first enumerated and
-> + * will result in all devices behind any switch to be in the same IOMMU
-> + * group. At this time there is no way to "hotplug" IOMMU groups so we rely
-> + * on this largish hammer. If you need the devices to be in separate groups
-> + * don't enable CONFIG_PCI_P2PDMA.
-> + *
-> + * Returns 1 if the ACS bits for this device were cleared, otherwise 0.
-> + */
-> +int pci_p2pdma_disable_acs(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *up;
-> +	int pos;
-> +	u16 ctrl;
-> +
-> +	up = get_upstream_bridge_port(pdev);
-> +	if (!up)
-> +		return 0;
-> +	pci_dev_put(up);
-> +
-> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ACS);
-> +	if (!pos)
-> +		return 0;
-> +
-> +	dev_info(&pdev->dev, "disabling ACS flags for peer-to-peer DMA\n");
-> +
-> +	pci_read_config_word(pdev, pos + PCI_ACS_CTRL, &ctrl);
-> +
-> +	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR);
-> +
-> +	pci_write_config_word(pdev, pos + PCI_ACS_CTRL, ctrl);
-> +
-> +	return 1;
-> +}
-> +
->  static bool __upstream_bridges_match(struct pci_dev *upstream,
->  				     struct pci_dev *client)
->  {
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index f6a4dd10d9b0..95ad3cf288c8 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/of_pci.h>
->  #include <linux/pci.h>
-> +#include <linux/pci-p2pdma.h>
->  #include <linux/pm.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
-> @@ -2826,6 +2827,9 @@ static void pci_std_enable_acs(struct pci_dev *dev)
->   */
->  void pci_enable_acs(struct pci_dev *dev)
->  {
-> +	if (pci_p2pdma_disable_acs(dev))
-> +		return;
-
-This doesn't read naturally to me.  I do see that when
-CONFIG_PCI_P2PDMA is not set, pci_p2pdma_disable_acs() does nothing
-and returns 0, so we'll go ahead and try to enable ACS as before.
-
-But I think it would be clearer to have an #ifdef CONFIG_PCI_P2PDMA
-right here so it's more obvious that we only disable ACS when it's
-selected.
-
->  	if (!pci_acs_enable)
->  		return;
->  
-> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-> index 126eca697ab3..f537f521f60c 100644
-> --- a/include/linux/pci-p2pdma.h
-> +++ b/include/linux/pci-p2pdma.h
-> @@ -22,6 +22,7 @@ struct block_device;
->  struct scatterlist;
->  
->  #ifdef CONFIG_PCI_P2PDMA
-> +int pci_p2pdma_disable_acs(struct pci_dev *pdev);
->  int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
->  		u64 offset);
->  int pci_p2pdma_add_client(struct list_head *head, struct device *dev);
-> @@ -41,6 +42,10 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
->  void pci_p2pdma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
->  			 enum dma_data_direction dir);
->  #else /* CONFIG_PCI_P2PDMA */
-> +static inline int pci_p2pdma_disable_acs(struct pci_dev *pdev)
-> +{
-> +	return 0;
-> +}
->  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
->  		size_t size, u64 offset)
->  {
-> -- 
-> 2.11.0
-> 
+--
+paul moore
+www.paul-moore.com
