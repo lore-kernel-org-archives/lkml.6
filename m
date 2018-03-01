@@ -1,222 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935651AbeCABYm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 20:24:42 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5687 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932143AbeCABYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 20:24:41 -0500
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 1/2] mkfs.f2fs: support hot file extension
-Date: Thu, 1 Mar 2018 09:24:09 +0800
-Message-ID: <20180301012409.93726-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S935647AbeCABbU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 20:31:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34282 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932134AbeCABbT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 20:31:19 -0500
+Date: Wed, 28 Feb 2018 17:31:15 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Split page_type out from mapcount
+Message-ID: <20180301013115.GA2946@bombadil.infradead.org>
+References: <20180228223157.9281-1-willy@infradead.org>
+ <06c145aa-db40-df72-b626-da9d45f9111d@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06c145aa-db40-df72-b626-da9d45f9111d@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds new option '-E' to accept user configured hot file
-extension, in order to let kernel module handle hot/cold file's datas
-separately better.
+On Wed, Feb 28, 2018 at 03:22:49PM -0800, Randy Dunlap wrote:
+> On 02/28/2018 02:31 PM, Matthew Wilcox wrote:
+> > From: Matthew Wilcox <mawilcox@microsoft.com>
+> > 
+> > I want to use the _mapcount field to record what a page is in use as.
+> > This can help with debugging and we can also expose that information to
+> > userspace through /proc/kpageflags to help diagnose memory usage (not
+> > included as part of this patch set).
+> 
+> Hey,
+> 
+> Will there be updates to tools/vm/ also, or are these a different set of
+> (many) flags?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2: fix to add missing f2fs_super_block layout modification.
- include/f2fs_fs.h       |  5 +--
- mkfs/f2fs_format.c      | 83 +++++++++++++++++++++++++++++++++----------------
- mkfs/f2fs_format_main.c | 16 +++++++---
- 3 files changed, 70 insertions(+), 34 deletions(-)
-
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index ca4522d54de2..be0a2da8f950 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -347,7 +347,7 @@ struct f2fs_configuration {
- 	int32_t dump_fd;
- 	struct device_info devices[MAX_DEVICES];
- 	int ndevs;
--	char *extension_list;
-+	char *extension_list[2];
- 	const char *rootdev_name;
- 	int dbg_lv;
- 	int show_dentry;
-@@ -614,7 +614,8 @@ struct f2fs_super_block {
- 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
- 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
- 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
--	__u8 reserved[315];		/* valid reserved region */
-+	__u8 hot_ext_count;		/* # of hot file extension */
-+	__u8 reserved[314];		/* valid reserved region */
- } __attribute__((packed));
- 
- /*
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index c9492f6bc986..3e20b8fc7bd1 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
- 	NULL
- };
- 
-+const char *hot_ext_lists[] = {
-+	NULL
-+};
-+
-+const char **default_ext_list[] = {
-+	media_ext_lists,
-+	hot_ext_lists
-+};
-+
- static bool is_extension_exist(const char *name)
- {
- 	int i;
-@@ -83,44 +92,64 @@ static bool is_extension_exist(const char *name)
- 
- static void cure_extension_list(void)
- {
--	const char **extlist = media_ext_lists;
--	char *ext_str = c.extension_list;
-+	const char **extlist;
-+	char *ext_str;
- 	char *ue;
- 	int name_len;
--	int i = 0;
-+	int i, pos = 0;
- 
- 	set_sb(extension_count, 0);
- 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
- 
--	while (*extlist) {
--		name_len = strlen(*extlist);
--		memcpy(sb->extension_list[i++], *extlist, name_len);
--		extlist++;
--	}
--	set_sb(extension_count, i);
--
--	if (!ext_str)
--		return;
-+	for (i = 0; i < 2; i++) {
-+		ext_str = c.extension_list[i];
-+		extlist = default_ext_list[i];
- 
--	/* add user ext list */
--	ue = strtok(ext_str, ", ");
--	while (ue != NULL) {
--		name_len = strlen(ue);
--		if (name_len >= 8) {
--			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
--			goto next;
-+		while (*extlist) {
-+			printf("default: i:%u, extlist:%s\n", i, *extlist);
-+			name_len = strlen(*extlist);
-+			memcpy(sb->extension_list[pos++], *extlist, name_len);
-+			extlist++;
- 		}
--		if (!is_extension_exist(ue))
--			memcpy(sb->extension_list[i++], ue, name_len);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);;
-+		if (i == 1)
-+			printf("1hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("1cold count:%d\n", get_sb(extension_count));
-+		if (!ext_str)
-+			continue;
-+
-+		/* add user ext list */
-+		ue = strtok(ext_str, ", ");
-+		while (ue != NULL) {
-+			printf("private: i:%u, extlist:%s\n", i, ue);
-+			name_len = strlen(ue);
-+			if (name_len >= 8) {
-+				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
-+				goto next;
-+			}
-+			if (!is_extension_exist(ue))
-+				memcpy(sb->extension_list[pos++], ue, name_len);
- next:
--		ue = strtok(NULL, ", ");
--		if (i >= F2FS_MAX_EXTENSION)
--			break;
--	}
-+			ue = strtok(NULL, ", ");
-+			if (pos >= F2FS_MAX_EXTENSION)
-+				break;
-+		}
- 
--	set_sb(extension_count, i);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);
-+		if (i == 1)
-+			printf("2hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("2cold count:%d\n", get_sb(extension_count));
- 
--	free(c.extension_list);
-+		free(c.extension_list[i]);
-+	}
- }
- 
- static void verify_cur_segs(void)
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 120eeba91007..4a52a24cd297 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -44,7 +44,8 @@ static void mkfs_usage()
- 	MSG(0, "  -a heap-based allocation [default:0]\n");
- 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
--	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
- 	MSG(0, "  -f force overwrite the exist filesystem\n");
- 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
- 	MSG(0, "  -l label\n");
-@@ -69,8 +70,10 @@ static void f2fs_show_info()
- 		MSG(0, "Info: Disable heap-based policy\n");
- 
- 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
--	if (c.extension_list)
--		MSG(0, "Info: Add new extension list\n");
-+	if (c.extension_list[0])
-+		MSG(0, "Info: Add new cold file extension list\n");
-+	if (c.extension_list[1])
-+		MSG(0, "Info: Add new hot file extension list\n");
- 
- 	if (c.vol_label)
- 		MSG(0, "Info: Label = %s\n", c.vol_label);
-@@ -103,7 +106,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
-+	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -131,7 +134,10 @@ static void f2fs_parse_options(int argc, char *argv[])
- 			c.dbg_lv = atoi(optarg);
- 			break;
- 		case 'e':
--			c.extension_list = strdup(optarg);
-+			c.extension_list[0] = strdup(optarg);
-+			break;
-+		case 'E':
-+			c.extension_list[1] = strdup(optarg);
- 			break;
- 		case 'i':
- 			c.large_nat_bitmap = 1;
--- 
-2.15.0.55.gc2ece9dc4de6
+Those KPF flags are the ones I was talking about.  I haven't looked into
+what it takes to assign those flags yet.
