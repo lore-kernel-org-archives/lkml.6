@@ -1,86 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030356AbeCAMQz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:16:55 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50896 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030253AbeCAMQy (ORCPT
+        id S1030378AbeCAMTD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 07:19:03 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39077 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030328AbeCAMTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:16:54 -0500
-Date: Thu, 1 Mar 2018 13:16:47 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-cc: Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Andy Tang <andy.tang@nxp.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
+        Thu, 1 Mar 2018 07:19:01 -0500
+X-Google-Smtp-Source: AG47ELs3TFGOHiy6H9NG7MQktevWAiY+OwMG14JJ3Nhl0Uv2GCOGIGdH6nelHNwQnVmbqtJI3jsE5w==
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] irqchip: add support for Layerscape external
- interrupt lines
-In-Reply-To: <20180223210901.23480-2-rasmus.villemoes@prevas.dk>
-Message-ID: <alpine.DEB.2.21.1803011308440.1396@nanos.tec.linutronix.de>
-References: <20180125150230.7234-1-rasmus.villemoes@prevas.dk> <20180223210901.23480-1-rasmus.villemoes@prevas.dk> <20180223210901.23480-2-rasmus.villemoes@prevas.dk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Cc: Dmitry Shmidt <dimitrysh@google.com>
+Subject: [PATCH RESEND] arm64: dts: hi6220: enable watchdog
+Date: Thu,  1 Mar 2018 20:18:47 +0800
+Message-Id: <1519906727-11135-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Feb 2018, Rasmus Villemoes wrote:
-> +#include <linux/irq.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/of.h>
+From: Dmitry Shmidt <dimitrysh@google.com>
 
-of.h is already included from of_irq.h and of_address.h
+This patch is to add watchdog binding for Hi6220 on Hikey board.
 
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> +static int
-> +ls_extirq_set_type(struct irq_data *data, unsigned int type)
-> +{
-> +	irq_hw_number_t hwirq = data->hwirq;
-> +	struct extirq_chip_data *chip_data = data->chip_data;
-> +	u32 value, mask;
+Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+---
+ arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Please order local variables in reverse fir tree fashion whenever
-possible. That's way simpler to read:
-
-	struct extirq_chip_data *chip_data = data->chip_data;
-	irq_hw_number_t hwirq = data->hwirq;
-	u32 value, mask;
-
-> +
-> +	if (chip_data->bit_reverse)
-> +		mask = 1U << (31 - hwirq);
-> +	else
-> +		mask = 1U << hwirq;
-> +
-> +	switch (type) {
-> +	case IRQ_TYPE_LEVEL_LOW:
-> +		type = IRQ_TYPE_LEVEL_HIGH;
-> +		value = mask;
-> +		break;
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		type = IRQ_TYPE_EDGE_RISING;
-> +		value = mask;
-> +		break;
-> +	case IRQ_TYPE_LEVEL_HIGH:
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		value = 0;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	regmap_update_bits(chip_data->syscon, chip_data->intpcr, mask, value);
-> +
-> +	data = data->parent_data;
-> +	return data->chip->irq_set_type(data, type);
-
-  	irq_chip_set_type_parent() 
-
-Thanks,
-
-	tglx
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+index 6a180d1..e9d5bb6 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
+@@ -817,6 +817,14 @@
+ 			pinctrl-1 = <&sdio_pmx_idle &sdio_clk_cfg_idle &sdio_cfg_idle>;
+ 		};
+ 
++		watchdog0: watchdog@f8005000 {
++			compatible = "arm,sp805-wdt", "arm,primecell";
++			reg = <0x0 0xf8005000 0x0 0x1000>;
++			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ao_ctrl HI6220_WDT0_PCLK>;
++			clock-names = "apb_pclk";
++		};
++
+ 		tsensor: tsensor@0,f7030700 {
+ 			compatible = "hisilicon,tsensor";
+ 			reg = <0x0 0xf7030700 0x0 0x1000>;
+-- 
+2.7.4
