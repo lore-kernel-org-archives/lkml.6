@@ -1,84 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034040AbeCASlo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:41:44 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52181 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033831AbeCASlm (ORCPT
+        id S1034082AbeCASnE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:43:04 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34873 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034065AbeCASm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:41:42 -0500
-Date: Thu, 1 Mar 2018 19:41:35 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        John Stultz <john.stultz@linaro.org>, Petr Mladek <pmladek@suse.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-In-Reply-To: <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1803011936200.1391@nanos.tec.linutronix.de>
-References: <20180301163331.987775783@linutronix.de> <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Mar 2018 13:42:57 -0500
+X-Google-Smtp-Source: AG47ELv2Spzl/AoN4Ptvtyt/O4UQu1tfHeybkoCdYXasiprhfsVPE81wylCDXHzd1uik0oJvo37ccQ==
+Date: Thu, 1 Mar 2018 11:42:49 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Sagi Grimberg <sagi@grimberg.me>
+Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+Message-ID: <20180301184249.GI19007@ziepe.ca>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018, Linus Torvalds wrote:
-> On Thu, Mar 1, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+On Thu, Mar 01, 2018 at 08:35:55PM +0200, Sagi Grimberg wrote:
+> 
+> >On 01/03/18 04:03 AM, Sagi Grimberg wrote:
+> >>Can you describe what would be the plan to have it when these devices
+> >>do come along? I'd say that p2p_dev needs to become a nvmet_ns reference
+> >>and not from nvmet_ctrl. Then, when cmb capable devices come along, the
+> >>ns can prefer to use its own cmb instead of locating a p2p_dev device?
 > >
-> > This really needs lot of testing, documentation updates and more input from
-> > userspace folks to make a final decision.
+> >The patchset already supports CMB drives. That's essentially what patch 7
+> >is for. We change the nvme-pci driver to use the p2pmem code to register
+> >and manage the CMB memory. After that, it is simply available to the nvmet
+> >code. We have already been using this with a couple prototype CMB drives.
 > 
-> Honestly, I don't think we'd get the testing this kind of change needs
-> except by just trying it.
+> The comment was to your statement:
+> "Ideally, we'd want to use an NVME CMB buffer as p2p memory. This would
+> save an extra PCI transfer as the NVME card could just take the data
+> out of it's own memory. However, at this time, cards with CMB buffers
+> don't seem to be available."
 > 
-> I'm willing to merge this in the 4.17 merge window, with the
-> understanding that if people end up reporting issues, we may just have
-> to revert it all, and chalk it up to a learning experience - and add
-> the appropriate commentary in the kernel code about exactly what it
-> was that depended on that MONO/BOOT difference.
-
-Fair enough. So we maybe just merge the first two patches and merge the
-cleanups and consolidation patches when we feel good enough.
-
-I surely can queue the whole lot in next, but from PTI the experience I
-know how good the test coverage is. 4.14.stable would be the ideal testing
-ground. /me runs fast and hides
-
-> One non-technical thing I would ask: use some other word than
-> "conflate". Maybe just "combine". Or better yet, "unify".
+> Maybe its a left-over which confused me...
 > 
-> "Conflate" technically and historically means the same thing as
-> combine, but has very much gathered a side meaning of "confuse".
-> 
-> So yes, "conflate" is indeed about mixing or combining, but it's
-> typically used in the sense of a *bad* combination or mixing. So
-> "trying to conflate two issues" means "trying to mix two issues that
-> are not the same into one".
-> 
-> So "unify" and "conflate" mean both the same thing and almost exactly
-> the opposite at the same time.
-> 
-> And yes, you will find dictionaries (and linguists) that hold purely
-> to the old meaning. As always, there are fogeys that can't get over
-> the fact that meanings meander and change.
+> Anyways, my question still holds. If I rack several of these
+> nvme drives, ideally we would use _their_ cmbs for I/O that is
+> directed to these namespaces. This is why I was suggesting that
+> p2p_dev should live in nvmet_ns and not in nvmet_ctrl as a single
+> p2p_dev used by all namespaces.
 
-I'm old enough to have learned that conflate means unify or combine, but
-I'm still not old enough to be stubborn about it :)
+I agree, I don't think this series should target anything other than
+using p2p memory located in one of the devices expected to participate
+in the p2p trasnaction for a first pass..
 
-Thanks,
+locality is super important for p2p, so I don't think things should
+start out in a way that makes specifying the desired locality hard.
 
-	tglx
+This is also why I don't entirely understand why this series has a
+generic allocator for p2p mem, it makes little sense to me.
+
+Why wouldn't the nmve driver just claim the entire CMB of its local
+device for its own use? Why involve p2p core code in this?
+
+Jason
