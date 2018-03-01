@@ -1,90 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033853AbeCASQw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:16:52 -0500
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:44879 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033321AbeCASQv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:16:51 -0500
-X-Google-Smtp-Source: AG47ELu9+7Hzr7J3IjfDHD7u72pTvaGEh+hlQ7WMKWD2Ph9AQfLGKRgLnQlQilXEJ1epC/L6bnOJVA==
-Message-ID: <1519928208.11375.3.camel@gmail.com>
-Subject: Re: Use higher-order pages in vmalloc
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Michal Hocko <mhocko@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Date: Thu, 01 Mar 2018 10:16:48 -0800
-In-Reply-To: <20180223121300.GU30681@dhcp22.suse.cz>
-References: <151670492223.658225.4605377710524021456.stgit@buzz>
-         <151670493255.658225.2881484505285363395.stgit@buzz>
-         <20180221154214.GA4167@bombadil.infradead.org>
-         <fff58819-d39d-3a8a-f314-690bcb2f95d7@intel.com>
-         <20180221170129.GB27687@bombadil.infradead.org>
-         <20180222065943.GA30681@dhcp22.suse.cz>
-         <20180222122254.GA22703@bombadil.infradead.org>
-         <20180222133643.GJ30681@dhcp22.suse.cz>
-         <CALCETrU2c=SzWJCwuqqFuBVkC=nN27_ce4GxweCQXEwPAqnz7A@mail.gmail.com>
-         <20180223121300.GU30681@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1033869AbeCASRm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:17:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43124 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033321AbeCASRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:17:40 -0500
+Date: Thu, 1 Mar 2018 18:18:00 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Vignesh R <vigneshr@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
+Message-ID: <20180301181800.GA4728@red-moon>
+References: <20180209120415.17590-1-vigneshr@ti.com>
+ <20180209120415.17590-3-vigneshr@ti.com>
+ <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
+ <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
+ <c3efe768-8934-16cc-142b-bc46b88fe399@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c3efe768-8934-16cc-142b-bc46b88fe399@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-23 at 13:13 +0100, Michal Hocko wrote:
-> On Thu 22-02-18 19:01:35, Andy Lutomirski wrote:
-> > On Thu, Feb 22, 2018 at 1:36 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > On Thu 22-02-18 04:22:54, Matthew Wilcox wrote:
-> > > > On Thu, Feb 22, 2018 at 07:59:43AM +0100, Michal Hocko wrote:
-> > > > > On Wed 21-02-18 09:01:29, Matthew Wilcox wrote:
-> > > > > > Right.  It helps with fragmentation if we can keep higher-order
-> > > > > > allocations together.
-> > > > > 
-> > > > > Hmm, wouldn't it help if we made vmalloc pages migrateable instead? That
-> > > > > would help the compaction and get us to a lower fragmentation longterm
-> > > > > without playing tricks in the allocation path.
-> > > > 
-> > > > I was wondering about that possibility.  If we want to migrate a page
-> > > > then we have to shoot down the PTE across all CPUs, copy the data to the
-> > > > new page, and insert the new PTE.  Copying 4kB doesn't take long; if you
-> > > > have 12GB/s (current example on Wikipedia: dual-channel memory and one
-> > > > DDR2-800 module per channel gives a theoretical bandwidth of 12.8GB/s)
-> > > > then we should be able to copy a page in 666ns).  So there's no problem
-> > > > holding a spinlock for it.
-> > > > 
-> > > > But we can't handle a fault in vmalloc space today.  It's handled in
-> > > > arch-specific code, see vmalloc_fault() in arch/x86/mm/fault.c
-> > > > If we're going to do this, it'll have to be something arches opt into
-> > > > because I'm not taking on the job of fixing every architecture!
-> > > 
-> > > yes.
+On Thu, Mar 01, 2018 at 09:01:53PM +0530, Vignesh R wrote:
+> Hi Lorenzo,
+> 
+> On 15-Feb-18 9:59 AM, Vignesh R wrote:
+> > Hi,
 > > 
-> > On x86, if you shoot down the PTE for the current stack, you're dead.
-> > vmalloc_fault() might not even be called.  Instead we hit
-> > do_double_fault(), and the manual warns extremely strongly against
-> > trying to recover, and, in this case, I agree with the SDM.  If you
-> > actually want this to work, there needs to be a special IPI broadcast
-> > to the task in question (with appropriate synchronization) that calls
-> > magic arch code that does the switcheroo.
+> > On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
+> >> On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
+> >>> We need to ensure that there are no pending MSI IRQ vector set (i.e
+> >>> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
+> >>> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
+> >>> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
+> >>> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
+> >>> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
+> >>>
+> >>> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
+> >>> 8260 used to throw following error and stall during ping/iperf3 tests.
+> >>>
+> >>> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+> >>>
+> >>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> >>> ---
+> >>>   drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
+> >>>   1 file changed, 18 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+> >>> index ed8558d638e5..3420cbf7b60a 100644
+> >>> --- a/drivers/pci/dwc/pci-dra7xx.c
+> >>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+> >>> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+> >>>         struct dra7xx_pcie *dra7xx = arg;
+> >>>         struct dw_pcie *pci = dra7xx->pci;
+> >>>         struct pcie_port *pp = &pci->pp;
+> >>> +     int count = 0;
+> >>>         unsigned long reg;
+> >>>         u32 virq, bit;
+> >>>   
+> >>>         reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
+> >>> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+> >>>   
+> >>>         switch (reg) {
+> >>>         case MSI:
+> >>> -             dw_handle_msi_irq(pp);
+> >>> +             /*
+> >>> +              * Need to make sure no MSI IRQs are pending before
+> >>> +              * exiting handler, else the wrapper will not catch new
+> >>> +              * IRQs. So loop around till dw_handle_msi_irq() returns
+> >>> +              * IRQ_NONE
+> >>> +              */
+> >>> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
+> >>> +                     count++;
+> >>> +
+> >>> +             if (count == 1000) {
+> >>> +                     dev_err(pci->dev, "too much work in msi irq\n");
+> >>> +                     dra7xx_pcie_writel(dra7xx,
+> >>> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
+> >>> +                                        reg);
+> >>> +                     return IRQ_HANDLED;
+> >>
+> >> I am not merging any code patching this IRQ handling routine anymore
+> >> unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
+> >> works (and how it is related to DW registers) and why this specific host
+> >> controller needs handling that is not required by any other host
+> >> controller relying on dw_handle_msi_irq().
+> > 
+> > Unlike other DW PCIe controllers, TI implementation has a wrapper on top
+> > of DW core. This wrapper latches the DW core level MSI and legacy
+> > interrupts and then propagates it to GIC.
+> > PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
+> > wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
+> > level. They are mapped on the MSI interrupt line of PCIe controller,
+> > using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
+> > 
+> > So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
+> > at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
+> > then call dw_handle_msi_irq() to handle individual MSI vectors.
+> > Driver has to make sure there are no pending vectors in DW core MSI
+> > status register before exiting handler. Otherwise next MSI IRQ will not
+> > be latched by the wrapper.
+> > 
+> > 
 > 
-> Why cannot we use the pte swap entry trick also for vmalloc migration.
-> I haven't explored this path at all, to be honest.
+> Did above explanation clarify CONF_IRQSTATUS_MSI register usage and the
+> need for IRQ handler? Are you okay with this fix?
+
+Hi Vignesh,
+
+I will get back to it shortly, thanks for your patience.
+
+Lorenzo
+
+> Regards
+> Vignesh
 > 
-> > Didn't someone (Christoph?) have a patch to teach the page allocator
-> > to give high-order allocations if available and otherwise fall back to
-> > low order?
-> 
-> Do you mean kvmalloc?
-
-
-I sent something last year but had not finished the patch series :/
-
-https://marc.info/?l=linux-kernel&m=148233423610544&w=2
+> >>
+> >> I suspect there is a code design flaw with the way this host handles
+> >> IRQs and we are going to find it and fix it the way it should, not with
+> >> any plaster like this patch.
+> >>
+> > 
+> > I agree there has been some churn wrt this wrapper level IRQ handler.
+> > But, that was because hardware documentation/TRM did not match
+> > actual behavior and so it took some time to understand how the
+> > hardware is working. I have extensively tested this series on multiple
+> > problematic PCIe USB cards and PCIe WiFi cards over week long stress
+> > tests. And also had some agreement with internal hardware designers.
+> > Hardware documentations will also be updated.
+> > 
+> > 
+> >> Lorenzo
+> >>
+> >>> +             }
+> >>>                 break;
+> >>>         case INTA:
+> >>>         case INTB:
+> >>> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+> >>>                 break;
+> >>>         }
+> >>>   
+> >>> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+> >>> -
+> >>>         return IRQ_HANDLED;
+> >>>   }
+> >>>   
+> >>> -- 
+> >>> 2.16.1
+> >>>
+> > 
