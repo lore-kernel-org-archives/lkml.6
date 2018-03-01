@@ -1,50 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031821AbeCAPPY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:15:24 -0500
-Received: from mga06.intel.com ([134.134.136.31]:19026 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031631AbeCAPPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:15:23 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
-   d="scan'208";a="179107974"
-Date: Thu, 1 Mar 2018 08:15:44 -0700
-From: Keith Busch <keith.busch@intel.com>
-To: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
-        axboe@fb.com, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Subject: Re: [PATCH V2] nvme-pci: assign separate irq vectors for adminq and
- ioq0
-Message-ID: <20180301151544.GA17676@localhost.localdomain>
-References: <1519832921-13915-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180228164726.GB16536@lst.de>
- <ddfc2ab4-1a51-c488-25e8-bc434edf8aba@grimberg.me>
- <66e4ad3e-4019-13ec-94c0-e168cc1d95b4@oracle.com>
+        id S1031776AbeCAPTj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:19:39 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36762 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031631AbeCAPTi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 10:19:38 -0500
+X-Google-Smtp-Source: AG47ELuOimeDcS6XnpJh/7xwI/P/RjEMAktd50VQUBHYG24Ei+swguVgGvq1SmB8eSUuRb4jwx6xeg==
+Date: Fri, 2 Mar 2018 00:19:34 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, kernel test robot <shun.hao@intel.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+Message-ID: <20180301151934.GA507@tigerII.localdomain>
+References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian>
+ <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
+ <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz>
+ <20180301013722.GA6763@tigerII.localdomain>
+ <CACT4Y+ZUDu588gwgCbqru5D1RD5C+s3+E5ydhP7h9RoCjwQWJw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <66e4ad3e-4019-13ec-94c0-e168cc1d95b4@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CACT4Y+ZUDu588gwgCbqru5D1RD5C+s3+E5ydhP7h9RoCjwQWJw@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 06:05:53PM +0800, jianchao.wang wrote:
-> When the adminq is free, ioq0 irq completion path has to invoke nvme_irq twice, one for itself,
-> one for adminq completion irq action.
+On (03/01/18 09:51), Dmitry Vyukov wrote:
+> > https://marc.info/?l=linux-kernel&m=151200883525299
+> >
+> > [..]
+> >> I feel lost a bit.
+> >
+> > Yeah... can't understand what's going on there.
+> >
+> > The last time kasan didn't like this part
+> >
+> > [    0.003333]  ? console_unlock+0x605/0xcc0:
+> >                               atomic_read at arch/x86/include/asm/atomic.h:27
+> >                                (inlined by) static_key_count at include/linux/jump_label.h:191
+> >                                (inlined by) static_key_false at include/linux/jump_label.h:201
+> >                                (inlined by) trace_console_rcuidle at include/trace/events/printk.h:10
+> >                                (inlined by) call_console_drivers at kernel/printk/printk.c:1556
+> >                                (inlined by) console_unlock at kernel/printk/printk.c:2233
+> >
+> > complaining that there was a write of size 4... at atomic_read().
+> 
+> Hi Sergey,
+> 
+> Where is that report?
+> I doubt that KASAN has instrumented a read as a write (at least there
+> are no such known cases), so perhaps it's pointing to some other
+> memory access.
 
-Let's be a little more careful on the terminology when referring to spec
-defined features: there is no such thing as "ioq0". The IO queues start
-at 1. The admin queue is the '0' index queue.
+Hello Dmitry,
 
-> We are trying to save every cpu cycle across the nvme host path, why we waste nvme_irq cycles here.
-> If we have enough vectors, we could allocate another irq vector for adminq to avoid this.
+I believe it's this one
 
-Please understand the _overwhelming_ majority of time spent for IRQ
-handling is the context switches. There's a reason you're not able to
-measure a perf difference between IOQ1 and IOQ2: the number of CPU cycles
-to chain a second action is negligible.
+https://marc.info/?l=linux-kernel&m=151200883525299
+
+
+	-ss
