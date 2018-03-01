@@ -1,82 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034082AbeCASnE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:43:04 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34873 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034065AbeCASm5 (ORCPT
+        id S1034095AbeCASn0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:43:26 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42302 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034013AbeCASnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:42:57 -0500
-X-Google-Smtp-Source: AG47ELv2Spzl/AoN4Ptvtyt/O4UQu1tfHeybkoCdYXasiprhfsVPE81wylCDXHzd1uik0oJvo37ccQ==
-Date: Thu, 1 Mar 2018 11:42:49 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-Message-ID: <20180301184249.GI19007@ziepe.ca>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
- <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
- <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+        Thu, 1 Mar 2018 13:43:22 -0500
+X-Google-Smtp-Source: AG47ELtZPWwWSVnYS+e83G6QFEfrMnvTnGiV+uz8RYREobAMRDzB2THQ7VzQpjjIYUmdmRv6GiUSzw==
+Subject: Re: [PATCH V2] lightnvm: pblk: remove unused variable
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1519833444-28160-1-git-send-email-javier@cnexlabs.com>
+ <2cf2565b-0a2c-ecba-ea55-9a63591d8f93@lightnvm.io>
+ <D5C55585-6CB6-4F47-9AD0-6CE961BA1392@lightnvm.io>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <84044d5d-10d4-7b2f-7f58-4af1fbe71cac@lightnvm.io>
+Date: Thu, 1 Mar 2018 19:43:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <D5C55585-6CB6-4F47-9AD0-6CE961BA1392@lightnvm.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 08:35:55PM +0200, Sagi Grimberg wrote:
+On 03/01/2018 11:24 AM, Javier González wrote:
 > 
-> >On 01/03/18 04:03 AM, Sagi Grimberg wrote:
-> >>Can you describe what would be the plan to have it when these devices
-> >>do come along? I'd say that p2p_dev needs to become a nvmet_ns reference
-> >>and not from nvmet_ctrl. Then, when cmb capable devices come along, the
-> >>ns can prefer to use its own cmb instead of locating a p2p_dev device?
-> >
-> >The patchset already supports CMB drives. That's essentially what patch 7
-> >is for. We change the nvme-pci driver to use the p2pmem code to register
-> >and manage the CMB memory. After that, it is simply available to the nvmet
-> >code. We have already been using this with a couple prototype CMB drives.
 > 
-> The comment was to your statement:
-> "Ideally, we'd want to use an NVME CMB buffer as p2p memory. This would
-> save an extra PCI transfer as the NVME card could just take the data
-> out of it's own memory. However, at this time, cards with CMB buffers
-> don't seem to be available."
+>> On 1 Mar 2018, at 11.07, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 02/28/2018 04:57 PM, Javier González wrote:
+>>> # Changes since V1:
+>>>   - Rebase on top of latest 2.0 changes
+>>> Javier González (1):
+>>>    lightnvm: pblk: remove unused variable
+>>>   drivers/lightnvm/pblk-core.c | 3 ---
+>>>   1 file changed, 3 deletions(-)
+>>
+>> Okay if I merge this with Hans' patch? It has not gone upstream yet.
 > 
-> Maybe its a left-over which confused me...
+> Of course!
 > 
-> Anyways, my question still holds. If I rack several of these
-> nvme drives, ideally we would use _their_ cmbs for I/O that is
-> directed to these namespaces. This is why I was suggesting that
-> p2p_dev should live in nvmet_ns and not in nvmet_ctrl as a single
-> p2p_dev used by all namespaces.
 
-I agree, I don't think this series should target anything other than
-using p2p memory located in one of the devices expected to participate
-in the p2p trasnaction for a first pass..
-
-locality is super important for p2p, so I don't think things should
-start out in a way that makes specifying the desired locality hard.
-
-This is also why I don't entirely understand why this series has a
-generic allocator for p2p mem, it makes little sense to me.
-
-Why wouldn't the nmve driver just claim the entire CMB of its local
-device for its own use? Why involve p2p core code in this?
-
-Jason
+Thanks. Applied.
