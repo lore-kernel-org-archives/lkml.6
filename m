@@ -1,37 +1,37 @@
 Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AG47ELteYMawxxIg4ucyILnKSe/yUpHpVfbxLYSMQHcp+hzt1aaGY0LuHSL2yqgaSXVv2vbeN5mJ
-ARC-Seal: i=1; a=rsa-sha256; t=1520531228; cv=none;
+X-Google-Smtp-Source: AG47ELtnR2UXJx1KkwtcUm+uXoDV2OVVQ7nKCTKOAHccJ7GeZTWppRaFxM0rzsDNfZWNbLkjE84G
+ARC-Seal: i=1; a=rsa-sha256; t=1519919269; cv=none;
         d=google.com; s=arc-20160816;
-        b=MwNufjHKVmKJVysCZli5ExJ5fGTwPphRMyynXAVrYq0wNbq4JRq8KemmhvQUxwywY3
-         TGp8afxePu13047fRZlmC6aZDskGSVukNqzI4rOJZOHCJkezXsKTr99SUSMqRGnPDALj
-         FZs0MUa/QXYm5I0M80LKg5Nya2um5FTY4eMLGQMUf36mPXutKvBAbFbNBpd4iE+JcDkT
-         /F6qxRyWp39l8FNHW0/058l0LxnNJ2MtGyuvtXVbb+u0DAmvHTCgKl8ZR6j1tF8RBsXm
-         YiCOVnmAD7ySI3TNpXAkwBcKAntguq8J3akakvGTZuXfIQmD3/JabeVXpGsZDEI493H1
-         Sxbg==
+        b=V8tdZ/4Vb6rJBBM5hUeZIkUwno5gBFQzNUx3Fy9geB3c7w2AycsPiClX9NEaZv5DbY
+         cAZMpwo0XaIvhyo1qcWAqiGfyJ0dXFSU7H0jqa6jTKsgizOnUpHdQVziBbv0vWrLv2RG
+         4mZuk4UZXbtriak0Lhjo89YSM0X3Bs+dSQRvvksQohf7f6SWGAvohAhawvvhgzRWCtCp
+         ckSn6vxRvikhGWFfcq/+r1kDZpT0Wp+j1tXwWfJIiuzX3SsBDhvDpk3NhrhdkFJ3kcgX
+         SzRBm6xlhD59deuiucspgFiCEHMLqygsMOacCLGWF8vK4nHCyG9gdqqjTrDs40dWplJu
+         fRXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
          :date:content-transfer-encoding:mime-version:dkim-signature
          :dkim-signature:arc-authentication-results;
-        bh=IViC49lVmbf7kE0gedat0efxfX1jmAaJz/Igsr5j5Hk=;
-        b=Z0Ijc8NL1dk9KD/Oza9E8V8EDWKS5VcCPpBYkyTA4KceXkNwSC4UCrqBEKFw9q6q2S
-         rWuhCd7BIgXoN78/RxnGxRnqOztmClOa7IVWNB0Z0v/mXF27bODwdecNxOHJmSCT4KAj
-         vguwZRoLJFZpCRz6cRHroqT0hMPYxhZy1QH0oNf14r1Er1N9jehpMbH2UGNZNzcQmgzJ
-         xnMC9XGwtAnhfOQQQD7Iyq24hZpBNQ4pVeWd+xuZBsKs42I/H0XripSwBs4kBMfuFY71
-         aGL7f7OMqJmZ+C6iFIc4r/q14B4k/lfjXzs/zb4IIoJugNFVDJrj+tJHQnBDxWQTewVD
-         GGsw==
+        bh=tXCaxfnu769KYVb9sAJfEhWTkUpYBPK0xn45galsqT8=;
+        b=aSBiAluluPabNd5IAAAtE1ZG0P1RScJkHXh3UHvkrZwxeBRscXXB0bVD+016u5F6tB
+         Dmqn/wq4Jo8gkJlqJHHHWynB7PEknJSLcvx6nOulNghQgdWu6LnmGEVevUUYYQs5NZWe
+         iHRur5HQSSbu9JzTefowJ3kcDTd1BImFdhftb2+6X8TGGKgMw+v99ufaFEgx6Ij5JQRM
+         NHMKXVtzGtaLb4Faf3RU5fjgvm4Z7uHHdy92Tm3zPGwnx5L9xiACXkFyG/RebW4XvGEL
+         O3Zds1V3tUs4jX0Y+HVaUuhAqzQ9/0gBSY7BrCCZubRSHOfd3gZEY6gXxAqC+gMIXnV1
+         pw0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=iVf9ANn/;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YHI/rlPM;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=OW8QNYaf;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=JZE3cjhL;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=iVf9ANn/;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YHI/rlPM;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=OW8QNYaf;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=JZE3cjhL;
        spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Thu, 08 Mar 2018 23:17:06 +0530
+Date: Thu, 01 Mar 2018 21:17:47 +0530
 From: poza@codeaurora.org
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
@@ -45,11 +45,11 @@ Subject: Re: [PATCH] PCI/DPC: Fix INT legacy interrupt in dpc_irq
 In-Reply-To: <20180301153802.GD13722@bhelgaas-glaptop.roam.corp.google.com>
 References: <1517415535-21850-1-git-send-email-poza@codeaurora.org>
  <20180301153802.GD13722@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <fad06db9b09369af322b491ceddaedc3@codeaurora.org>
+Message-ID: <d759fe9efb8e5ece4097375e97772565@codeaurora.org>
 User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591125527357545721?=
-X-GMAIL-MSGID: =?utf-8?q?1594392554099030305?=
+X-GMAIL-MSGID: =?utf-8?q?1593750867601395648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -84,6 +84,12 @@ On 2018-03-01 21:08, Bjorn Helgaas wrote:
 > Please rebase to my "master" branch (v4.16-rc1).  There was some minor
 > change that made this not apply cleanly.
 > 
+
+sure will do these changes and re-post the same.
+
+Regards,
+Oza.
+
 >> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 >> 
 >> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
@@ -115,10 +121,3 @@ On 2018-03-01 21:08, Bjorn Helgaas wrote:
 >> a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
 >> Linux Foundation Collaborative Project.
 >> 
-
-Hi Bjorn,
-
-Can I make this path on top of DPC/AER patch series ?
-
-Regards,
-Oza.
