@@ -1,101 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161621AbeCAUdH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:33:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49368 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1161584AbeCAUdC (ORCPT
+        id S1161638AbeCAUe3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:34:29 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48750 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161578AbeCAUe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:33:02 -0500
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
- Memory
-From: Benjamin Herrenschmidt <benh@au1.ibm.com>
-Reply-To: benh@au1.ibm.com
-To: Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
+        Thu, 1 Mar 2018 15:34:26 -0500
+Date: Thu, 1 Mar 2018 20:34:13 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Date: Fri, 02 Mar 2018 07:32:48 +1100
-In-Reply-To: <B4151146-0490-40D4-BB0A-4FC9DE5841A4@raithlin.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
-         <1519876489.4592.3.camel@kernel.crashing.org>
-         <1519876569.4592.4.camel@au1.ibm.com>
-         <B4151146-0490-40D4-BB0A-4FC9DE5841A4@raithlin.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030120-0040-0000-0000-000004399C6A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030120-0041-0000-0000-000020DCA254
-Message-Id: <1519936368.4592.21.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010251
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
+Message-ID: <20180301203413.GN12864@sirena.org.uk>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-2-srinivas.kandagatla@linaro.org>
+ <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
+ <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
+ <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
+ <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
+ <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
+ <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3rMDlCEgcaHQQFB+"
+Content-Disposition: inline
+In-Reply-To: <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
+X-Cookie: Real Users hate Real Programmers.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 18:09 +0000, Stephen  Bates wrote:
-> > > So Oliver (CC) was having issues getting any of that to work for us.
-> > > 
-> > > The problem is that acccording to him (I didn't double check the latest
-> > > patches) you effectively hotplug the PCIe memory into the system when
-> > > creating struct pages.
-> > > 
-> > > This cannot possibly work for us. First we cannot map PCIe memory as
-> > > cachable. (Note that doing so is a bad idea if you are behind a PLX
-> > > switch anyway since you'd ahve to manage cache coherency in SW).
-> > 
-> >   
-> >   Note: I think the above means it won't work behind a switch on x86
-> >   either, will it ?
-> 
->  
-> Ben 
-> 
-> We have done extensive testing of this series and its predecessors
-> using PCIe switches from both Broadcom (PLX) and Microsemi. We have
-> also done testing on x86_64, ARM64 and ppc64el based ARCH with
-> varying degrees of success. The series as it currently stands only
-> works on x86_64 but modified (hacky) versions have been made to work
-> on ARM64. The x86_64 testing has been done on a range of (Intel)
-> CPUs, servers, PCI EPs (including RDMA NICs from at least three
-> vendors, NVMe SSDs from at least four vendors and P2P devices from
-> four vendors) and PCI switches.
-> 
-> I do find it slightly offensive that you would question the series
-> even working. I hope you are not suggesting we would submit this
-> framework multiple times without having done testing on it....
 
-No need to get personal on that. I did specify that this was based on
-some incomplete understanding of what's going on with that new hack
-used to create struct pages.
+--3rMDlCEgcaHQQFB+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As it is, it cannot work on ppc64 however, in part because according to
-Oliver, we end up mapping things cachable, and in part, because of the
-address range issues.
+On Thu, Feb 22, 2018 at 10:03:42AM +0000, Srinivas Kandagatla wrote:
+> On 22/02/18 00:14, Rob Herring wrote:
 
-The latter issue might be fundamental to the approach and unfixable
-unless we have ways to use hooks for virt_to_page/page_address on these
-things.
+> > Am I saying a single DT node for this? Yes, perhaps.
+> Yes, I will give that a go.
+>=20
+> So we will endup having something like this in DT for one frontend and
+> backend dailink:
 
-Ben.
+Let's not start encoding DPCM into DT, DPCM is very much an
+implemntation detail of the current stack which we're gradually pushing
+towards replacing with something better.  What we want to be doing is
+just treating components inside the SoC the same as components in a
+CODEC, the routing within a SoC being the same as in a CODEC and
+similarly for externally connected devices.
+
+> 		fe@1 {
+>                 	is-fe;
+>                         link-name =3D "MultiMedia1";
+
+In particular having the concept of "front end" in the DT is *very*
+implementation specific.  We should just be describing the connections
+that exist in the system.
+
+--3rMDlCEgcaHQQFB+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYY8QACgkQJNaLcl1U
+h9A2AQf/afU7I+Vlh5qhOLI+4+E9POiqDGkF2eC13xgr1bKvvC1JNlQFVnEpm4QM
+xonSvnwf2rv7WLTSP6lClTLAjvXdW4qQ5KvfR6U78HxabliiJyK2aiBVjolPWjse
+qvqHHciRTdA3LZmpmGE/rdo3lNAEkiCIHJups7g8spE9Dto6EaMS4Dp05q8OumgD
+1DRyte5vIF9m0geqjgexGeTbADs2SwQvdBDdl1PH2Wap/lan8ricHEBVwJlz94LF
+A2suvzqCPUUpCdd3vf2CaTo50oQf3Zb4mPD0iKXmpIrx2NFnB6DpqvQsH5EMFkD/
+lbxRSeYYJNNSXVbCJYd64Uqez55P3A==
+=9CV7
+-----END PGP SIGNATURE-----
+
+--3rMDlCEgcaHQQFB+--
