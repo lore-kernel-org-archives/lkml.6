@@ -1,126 +1,152 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3628988-1520960651-2-3408671246406174681
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520960650; b=q+Nz51tjrMYZKXcKi3BDJUEV5gy4rJdJQYJSn7XKlCUnvAd
-    zBgsTOyUt7Nf3lZn3cQqgF/xs8Mg62+DyXb43Ug9/5izVfvHJKCyaQQNjFUlMiDX
-    Wgl8LEwCpPMuoMwYTjA+g1ADAw7kHnU34gz3NeLm46sHuCLXoE4V8p1IAgKZFK40
-    ehNGV6G8eI8QKpTa2s8kl4QQFdpCQ3GQPgQRRzomrLlu/AV8htWOigFDeePOa3RV
-    Bg7XQzIdpdi6ItDjf+qqgQYQaTP0g+aYg/knctfCJANsI8KbawfBSlaUZvkYRpxT
-    FQUbuXQx4mwVNNK2rLFqoB70mEZ/BA2fzIy7cqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1520960650;
-    bh=jDQIR12hhTdGYeJe1og7QQ4rDMbB+zxrKgBKaRyT3PY=; b=MC+0q6b0oKA8
-    wbU+Y5sjB9c3FmxeQ7lxyN+WCeGE9oVKEt9do7yOnZgwsjItbJ56HQHQqUUxQnmU
-    Eo9zrHYgf65n+u0mfouWfdSu+/ZkdC9C7u5kG9Tf5fjTUNJU1mvBpFRWiURDCH0l
-    gwXIOw/V4glF6mTkSKSCFMiu0AEsA57SvIYvfh42gMZJqb2L6bZb7R1r48wO4Maf
-    40M1Bn+ua4+ZCjKSJdH2CahxhPFpJSIgY8LlyqqIu1D+Dl5tX0QFsXJtNMD4YVV+
-    IO033RjURryfDqmmUT2dJWVY6NYNW5oPeu0BSAI4t94OgksZCMHhAZMPipFNFl+E
-    xA6P1VT4TQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933082AbeCMRDz (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 13:03:55 -0400
-Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:38416 "EHLO
-        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932303AbeCMRDx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 13 Mar 2018 13:03:53 -0400
-From: Toshi Kani <toshi.kani@hpe.com>
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-Cc: bp@alien8.de, luto@kernel.org, gratian.crisan@ni.com,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Toshi Kani <toshi.kani@hpe.com>, stable@vger.kernel.org
-Subject: [PATCH 1/2] x86/mm: fix vmalloc_fault to use pXd_large
-Date: Tue, 13 Mar 2018 11:03:46 -0600
-Message-Id: <20180313170347.3829-2-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180313170347.3829-1-toshi.kani@hpe.com>
-References: <20180313170347.3829-1-toshi.kani@hpe.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519898270; cv=none;
+        d=google.com; s=arc-20160816;
+        b=B/B1q03DVQyFSB+F5iTTX2uD/82OWta+/7ryczfbR4MfZT93mXRFUlbT2hMjdyfo2n
+         d2O9nW7tYyz/ZYXU+y3dgGKycb5BtCTf18MDrdPnfV+b2VSicTfM3fDwlg4NFL5ja/gj
+         12E+3vGDOCUiou2wLZ2PG0nzY4n3crkdZPZOgP/whQqbhJylqIva1ungkaWGzWCtcTEI
+         lQHjINCkDPrT5twV1W4aFF/MMBbDD7+eJm/zsUx46wr5Teim+cIgjzb7LGi+/5Mdpg8A
+         rm6mxZweweCmBD++GP9yXbfGw38l6VsOkFfEwHRzJz/aHdiaU69PuvEnmFxGEzimao1q
+         h9iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=zLnjBcFRZZde/xT4A5GUPWo7VmLHENlTmBUX52lnNKI=;
+        b=Cvh1vNzGlvXspnN4mDC3+MCXO1hGPc+A1hCMl3Jise1UkUjZ443OOOaWfG/mYxkufx
+         V7PGSxKgS0WxsxmTCXrJyfSIQYtDNKYrWpBF17648b0vHKBHBOK4T/rNA6ZzkUNfx5XC
+         wGTY1gOBmBRD9JmOszeCUShqIO8GhTrseCtwXP4Rd1XxuV4JJhhCCc6Zrp3ZfAzqiCsz
+         n6y/r3V0e9a9VhQ4no8Ga7M3ZXJUOSEtxL7PT3mUGlfq4ZQbH2gjBLKXeCKwTI+966aY
+         r1lb3aa7TC4pg5ti2IAFDc/DZ9TTsaCMXZN7MQDQapVoMP8ump/kDNa89w8vnV3MacsW
+         +mqA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dt5l1fY1;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dt5l1fY1;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELuyW4r/ILG65CzHiCIs1PuUDByHU17gJ4+IuxvFnV8w5NMrKptEc4w87P8D0zoN+YzMNHqihXifhgPMdYcB2a4=
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CANiq72=jgAzCDoU2Vkq0zVKNCDvwhPT7Eqpy5Af6W3=XacQnRA@mail.gmail.com>
+References: <20180217191035.gol4woxsgzpo4bfq@gmail.com> <alpine.DEB.2.10.1802181519400.205822@chino.kir.corp.google.com>
+ <CANiq72=jgAzCDoU2Vkq0zVKNCDvwhPT7Eqpy5Af6W3=XacQnRA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 1 Mar 2018 10:57:49 +0100
+X-Google-Sender-Auth: 2tvNMmOClD8FrgcGmXAcA1BKzcY
+Message-ID: <CAK8P3a1d-DnF58zZqxMYE3DrtZO9Bs3a2o-cuvTupnJeTeG2ww@mail.gmail.com>
+Subject: Re: [PATCH] Support the nonstring variable attribute (gcc >= 8)
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@kernel.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>, Greg KH <gregkh@linuxfoundation.org>,
+	"Lendacky, Thomas" <thomas.lendacky@amd.com>, Will Deacon <will.deacon@arm.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
+	Xiongfeng Wang <wangxiongfeng2@huawei.com>, Martin Sebor <msebor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592676488865934389?=
+X-GMAIL-MSGID: =?utf-8?q?1593728849370145487?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Gratian Crisan reported that vmalloc_fault() crashes when
-CONFIG_HUGETLBFS is not set since the function inadvertently
-uses pXn_huge(), which always return 0 in this case.  ioremap()
-does not depend on CONFIG_HUGETLBFS.
+On Mon, Feb 19, 2018 at 1:01 AM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> On Mon, Feb 19, 2018 at 12:20 AM, David Rientjes <rientjes@google.com> wrote:
+>> On Sat, 17 Feb 2018, Miguel Ojeda wrote:
+>>
+>>> From the GCC manual:
+>>>
+>>> The nonstring variable attribute specifies that an object or member
+>>> declaration with type array of char or pointer to char is intended to
+>>> store character arrays that do not necessarily contain a terminating NUL
+>>> character. This is useful in detecting uses of such arrays or pointers
+>>> with functions that expect NUL-terminated strings, and to avoid warnings
+>>> when such an array or pointer is used as an argument to a bounded string
+>>> manipulation function such as strncpy.
+>>>
+>>>   https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
+>>>
+>>> Some reports are already coming to the LKML regarding these
+>>> warnings. When they are false positives, we can use __nonstring to let
+>>> gcc know a NUL character is not required; like in this case:
+>>>
+>>>   https://lkml.org/lkml/2018/1/16/135
+>>>
+>>> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>>> Cc: Will Deacon <will.deacon@arm.com>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: David Rientjes <rientjes@google.com>
+>>
+>> I would have expected to have seen __nonstring used somewhere as part of
+>> this patch.
+>
+> Do you mean to expand the commit message with an actual code example
+> instead of the links to the docs and the discussion about the report?
+> Otherwise, if you mean in the actual commit, I think in that case it
+> should be a patch series, not a single commit.
+>
+> In any case, the key point here is to agree on the short-term policy:
+> i.e. whether we want to disable the upcoming warning or try to take
+> advantage of it (which not *necessarily* implies using __nonstring,
+> there are other workarounds; though where applicable, __nonstring is
+> probably the right thing to use).
 
-Fix vmalloc_fault() to call pXd_large() instead.
+What David was asking for is to have a couple of users of the
+__nonstring attribute in places for which it is the right solution.
 
-fixes: f4eafd8bcd52 ("x86/mm: Fix vmalloc_fault() to handle large pages properly")
-Reported-by: Gratian Crisan <gratian.crisan@ni.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Gratian Crisan <gratian.crisan@ni.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/mm/fault.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I would suggest making it a patch series, with patch 1/x introducing
+the attribute (i.e. your patch), and followed by additional patches
+that add the attribute to individual header files or drivers for which
+it is the right solution.
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index c88573d90f3e..25a30b5d6582 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -330,7 +330,7 @@ static noinline int vmalloc_fault(unsigned long address)
- 	if (!pmd_k)
- 		return -1;
- 
--	if (pmd_huge(*pmd_k))
-+	if (pmd_large(*pmd_k))
- 		return 0;
- 
- 	pte_k = pte_offset_kernel(pmd_k, address);
-@@ -475,7 +475,7 @@ static noinline int vmalloc_fault(unsigned long address)
- 	if (pud_none(*pud) || pud_pfn(*pud) != pud_pfn(*pud_ref))
- 		BUG();
- 
--	if (pud_huge(*pud))
-+	if (pud_large(*pud))
- 		return 0;
- 
- 	pmd = pmd_offset(pud, address);
-@@ -486,7 +486,7 @@ static noinline int vmalloc_fault(unsigned long address)
- 	if (pmd_none(*pmd) || pmd_pfn(*pmd) != pmd_pfn(*pmd_ref))
- 		BUG();
- 
--	if (pmd_huge(*pmd))
-+	if (pmd_large(*pmd))
- 		return 0;
- 
- 	pte_ref = pte_offset_kernel(pmd_ref, address);
+When I looked at the warning, I found that we have around 120 file
+for which we warn. The majority of them are actually questionable
+uses of strncpy() that probably should have been strscpy(), but
+most of those do not actually cause undefined behavior.
+
+A smaller number like the example from ext4 are nonstrings
+(i.e. character arrays without nul-termination) that would benefit
+from the nonstring attribute. About half of those are actually
+arrays of u8/__u8/uint8_t/__uint8_t for which the currently
+implemented nonstring attribute is invalid, and it seems odd
+to convert those to 'char', e.g.
+
+struct ext4_super_block {
+        __le32  s_first_error_time;     /* first time an error happened */
+        __le32  s_first_error_ino;      /* inode involved in first error */
+        __le64  s_first_error_block;    /* block involved of first error */
+-       __u8    s_first_error_func[32]; /* function where the error happened */
++       char    s_first_error_func[32] __nonstring;     /* function
+where the error happened */
+        __le32  s_first_error_line;     /* line number where error happened */
+        __le32  s_last_error_time;      /* most recent time of an error */
+        __le32  s_last_error_ino;       /* inode involved in last error */
+        __le32  s_last_error_line;      /* line number where error happened */
+        __le64  s_last_error_block;     /* block involved of last error */
+-       __u8    s_last_error_func[32];  /* function where the error happened */
++       char    s_last_error_func[32] __nonstring;      /* function
+where the error happened */
+
+doesn't feel right. Maybe we can extend gcc to also accept
+the attribute on arrays of other 8-bit types.
+
+> [By the way, CC'ing Xiongfeng, Willy and Arnd, since they were
+> involved in the example report; sorry guys!].
+
+Martin Sebor also asked me about this, he's the one that worked on
+the gcc code that introduced the warning. Sorry for not replying earlier.
+
+For a complete list of affected files, see https://pastebin.com/eWFQf58i
+this is what I come up with by doing randconfig builds, but I have not
+tried to submit additional patches here, since I'm sure that a lot of
+those are wrong -- they need a much closer inspection to decide which
+ones are actual bugs vs harmless warnings, and which ones should
+use strscpy()/strlcpy() vs a nonstring annotation or a rewrite of that
+function.
+
+       Arnd
