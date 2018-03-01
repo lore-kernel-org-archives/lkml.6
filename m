@@ -1,90 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033833AbeCASED (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:04:03 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:34658 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033627AbeCASEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:04:00 -0500
-X-Google-Smtp-Source: AG47ELvIJ6dp4jo3nfAO7redijnz+QR2efPpBhYzK1mxAdLVw2FPu6tjyF4lf+V4BJuyEtlBk7ibJQ==
-From: Paul Moore <paul@paul-moore.com>
-To: Richard Haines <richard_c_haines@btinternet.com>
-CC: <netdev@vger.kernel.org>, <selinux@tycho.nsa.gov>,
-        <linux-kernel@vger.kernel.org>, <anders.roxell@linaro.org>
-Date: Thu, 01 Mar 2018 13:03:51 -0500
-Message-ID: <161e2bc0f58.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <1519914989.3063.1.camel@btinternet.com>
-References: <20180301083316.GA6779@localhost.localdomain>
- <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
- <1519914989.3063.1.camel@btinternet.com>
-User-Agent: AquaMail/1.13.2-730 (build: 101300200)
-Subject: Re: Regression found when running LTP connect01 on next-20180301
+        id S1033779AbeCASEz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:04:55 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:36960 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1033627AbeCASEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:04:53 -0500
+To: benh@au1.ibm.com, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
+Date: Thu, 1 Mar 2018 11:04:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1519876569.4592.4.camel@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, benh@au1.ibm.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w21I4CZk031560
 
-On March 1, 2018 9:36:37 AM Richard Haines <richard_c_haines@btinternet.com> wrote:
-> On Thu, 2018-03-01 at 08:42 -0500, Paul Moore wrote:
->> On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@linaro.o
->> rg> wrote:
->> > Hi,
->> > 
->> > I was running LTP's testcase connect01 [1] and found a regression
->> > in linux-next
->> > (next-20180301).  Bisect gave me this patch as the problematic
->> > patch (sha
->> > d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
->> > 
->> > Output from the test(LTP release 20180118):
->> > $ cd /opt/ltp/
->> > $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
->> > $ ./runltp -pq -f connect-syscall
->> > "
->> > Running tests.......
->> > connect01    1  TPASS  :  bad file descriptor successful
->> > connect01    2  TPASS  :  invalid socket buffer successful
->> > connect01    3  TPASS  :  invalid salen successful
->> > connect01    4  TPASS  :  invalid socket successful
->> > connect01    5  TPASS  :  already connected successful
->> > connect01    6  TPASS  :  connection refused successful
->> > connect01    7  TFAIL  :  connect01.c:146: invalid address family ;
->> > returned -1 (expected -1), errno 22 (expected 97)
->> > INFO: ltp-pan reported some tests FAIL
->> > LTP Version: 20180118
->> > "
->> > 
->> > The output from the test expected 97 and we received 22, can you
->> > please
->> > elaborate on what have been changed?
->> > 
->> > Cheers,
->> > Anders
->> > [1] https://github.com/linux-test-project/ltp/blob/20180118/testcas
->> > es/kernel/syscalls/connect/connect01.c#L146
->> 
->> Hi Anders,
->> 
->> Thanks for the report.  Out of curiosity, we're you running the full
->> LTP test suite and this was the only failure, or did you just run the
->> connect01 test?  Either answer is fine, I'm just trying to understand
->> the scope of the regression.
->> 
->> Richard, are you able to look into this?  If not, let me know and
->> I'll
->> dig a bit deeper (I'll likely take a quick look today, but if the
->> failure is subtle it might require some digging).
->
-> I'll have a look today.
 
-One more thing I forgot to mention earlier, if there is a patch to fix this, could you please base it on top of the existing SELinux/SCTP patches that have already been merged, and not respin an earlier patch?
 
-Thank you.
+On 28/02/18 08:56 PM, Benjamin Herrenschmidt wrote:
+> On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
+>> The problem is that acccording to him (I didn't double check the latest
+>> patches) you effectively hotplug the PCIe memory into the system when
+>> creating struct pages.
+>>
+>> This cannot possibly work for us. First we cannot map PCIe memory as
+>> cachable. (Note that doing so is a bad idea if you are behind a PLX
+>> switch anyway since you'd ahve to manage cache coherency in SW).
+> 
+> Note: I think the above means it won't work behind a switch on x86
+> either, will it ?
 
---
-paul moore
-www.paul-moore.com
+This works perfectly fine on x86 behind a switch and we've tested it on 
+multiple machines. We've never had an issue of running out of virtual 
+space despite our PCI bars typically being located with an offset of 
+56TB or more. The arch code on x86 also somehow figures out not to map 
+the memory as cachable so that's not an issue (though, at this point, 
+the CPU never accesses the memory so even if it were, it wouldn't affect 
+anything).
+
+We also had this working on ARM64 a while back but it required some out 
+of tree ZONE_DEVICE patches and some truly horrid hacks to it's arch 
+code to ioremap the memory into the page map.
+
+You didn't mention what architecture you were trying this on.
+
+It may make sense at this point to make this feature dependent on x86 
+until more work is done to make it properly portable. Something like 
+arch functions that allow adding IO memory pages to with a specific 
+cache setting. Though, if an arch has such restrictive limits on the map 
+size it would probably need to address that too somehow.
+
+Thanks,
+
+Logan
