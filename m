@@ -1,41 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966987AbeCAJ3H (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:29:07 -0500
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:53029 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966861AbeCAJ3D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:29:03 -0500
-X-Google-Smtp-Source: AG47ELt/IrdqOgA6bV8X3L5+25QCF8HQYt9U9fOrIwz1xtS1PGVwnX9rZBhAQA6KTrtxJAtz6k57Qw==
-Subject: Re: [PATCH V2] nvme-pci: assign separate irq vectors for adminq and
- ioq0
-To: Christoph Hellwig <hch@lst.de>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: keith.busch@intel.com, axboe@fb.com, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1519832921-13915-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180228164726.GB16536@lst.de>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <ddfc2ab4-1a51-c488-25e8-bc434edf8aba@grimberg.me>
-Date: Thu, 1 Mar 2018 11:28:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S966993AbeCAJ3s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:29:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34765 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966781AbeCAJ3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:29:46 -0500
+Date: Thu, 1 Mar 2018 10:29:33 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: add support for the Allwinner H6
+ CCU
+Message-ID: <20180301092933.eqibjnepoj3ecvo6@flea>
+References: <20180223123555.64009-6-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20180228164726.GB16536@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s63sgyrl3h62372d"
+Content-Disposition: inline
+In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> Note that we originally allocates irqs this way, and Keith changed
-> it a while ago for good reasons.  So I'd really like to see good
-> reasons for moving away from this, and some heuristics to figure
-> out which way to use.  E.g. if the device supports more irqs than
-> I/O queues your scheme might always be fine.
+--s63sgyrl3h62372d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I still don't understand what this buys us in practice. Seems redundant
-to allocate another vector without any (even marginal) difference.
+On Fri, Feb 23, 2018 at 08:35:53PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has a CCU which has been largely rearranged.
+>=20
+> Add support for it in the sunxi-ng CCU framework.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--s63sgyrl3h62372d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXx/wACgkQ0rTAlCFN
+r3QliQ//fe49xJfjzFjOrXyAoTIVrDoHzFPPRbLwC1kMiDypGE/WGyU/ofTX8u3o
+1EjXj2TQorYDHwl/+8QGHOnfnDWg5gUmJOeVCvdS8fhcjReTC8Ofrwnti3SHERjK
+K5YjBYIxByAvZOfAc6ohAKVP2RxuOR1owAEYRIi0/7SvRwH+4LRmCTB9PGiJsqSn
+lenCiR6ZYcP1Ny08VVi620EiLV9aNY8pQBRh1oL/EFudT4Gg3it3L7DIWgYs2on7
+Dpt+UdPxH+ZCpqnlYUGzL/Thw/Kd9F32ZpqWDywzu88g/HPcAXwoTYtYWpOpE3Cu
+mUyf7aSxJ+wkZRcmTlJtbMp94fSDS2ZtZQqF7E1i2YqGtmxrS7pdSQDEcKE6YqKz
+ITZSveu9SmIFkd1NEfpRDDw/ouuzS+IjcR0Unn6TQ9o7knLTMK8nJDDk7dsLpb95
+oRgLBBMwYsalT0XC0m0PtKvqaALRGWEaV6ncOilNKZvgZLb2Wd5o8yQnqLXw7LpP
+BEaI017FQa96DDCXooLP4l1FKsD/s38PvqFQrUGD/OynBvcnehV2tLMHJ0ABvXVT
++aO0poJG6+H4xk4J/m427F9OVTIUcqQJAU8NqPQ/YVp1j0UiLC+aycWXrS1ztBVS
+1nrR3rqp1un4XBs0cbUQBPAuTHSQf7Xr4HVexA47zklbEGwGrss=
+=t6pH
+-----END PGP SIGNATURE-----
+
+--s63sgyrl3h62372d--
