@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909446-2-413385393986561300
+X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909429-2-15944702391680808475
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909446; b=U+c2WPfWl/vZD1lxk7l5mqVD+f+L+ZNhExmgEXXN3LOmFKK
-    JGaLe07NBDXAwIhZknCjZsTjFRhIvfhql0KvBlTeixxXCoiW3Zye3jlxQX2oEYX8
-    bWinVEVdCCmN2p8I8r89J5LKLRA6Qv6M1Vxv29d04QPpNutpueZ4cc2+hPsN0csE
-    Fwg4B048yM8v1iu3cWr6fRHz11k6cyjWbJWIP5SUgp5vgGBnWpAUl/LwfYmHTzWn
-    hJp4IcfUckmqUHTEuVkdRHq2tTaoRUQsccCAojkAqDrt/zu5U2TV+xVGjS0iyC1v
-    /kKhBvACNEHKcDd0/+zLCHIkqUv3vPdfRIgBkvg==
+    t=1519909428; b=cDZBNz2WRkbpimf7V0UY0pElEzMEWheNa3EZLF7dYwKpCZl
+    QlTZ5/6a92LA7ixxD8Jcsah11FszS9JOmTWKPc+EASp3v+DTvIx9F/aAwMZE689a
+    KNsWhVNRIEaOkOn5FgRrJOKDTN+pcLICIiZ6B3ULa16ewJwO6ARcRp1jbI9Yo73w
+    eeDD8iIio9k22s+Jwyn+L9aVHTyFOc+++qb1OGWMppYl7Gj431dkZatlEPWkMtDO
+    kRsLCQwGAR9n59+Rrh4SroBUFkD5wjedcOYCWII846WACv4aiuz+OW9wTwl3YfuL
+    C7vTBjNnJ6Pqj3pYz9F+qEkaB4L1VjCscFqXLFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909446;
-    bh=LVyW4e3/ZiswQxGmhghNNTu5Pe0KH7+4scjkon+J7js=; b=RpJ9JUHb5+wK
-    LZr/jtEpNMNwA3Le/iwjbejrmzlaZ/Zc6I4FLwEuHjd2HzkOYTEHrpv3iMNDnMhF
-    KsVKrC1V4plGYXgZltCGPaiKSf4vLQ2tk63pj+Rf7f7Ht5yr94EfWNI7m9/Qsafj
-    LbSnGpwaVhh7gS1evUu8xqZJuIiEdCcl68Mym2J2lJSFLUwKgZS0QDBpkNTa2AZW
-    H39jOFBVRxgv5NXF28N4BYb+mpNasmG9c9vdDipL0AH1MUHUSqtzUAxS5051mx93
-    Ob44gxJaN7uHxvQvRRIfb+gYX0L6QvGGyR5yH89JS2whL3o+ItkxJyQGfw+AyYRw
-    hBDC8MkniA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=TSi4qw+P x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519909428;
+    bh=J+5mFS5YG0Z6B4feNaUOGsgL/hJiqYMdZY2VyVL7BU0=; b=A+XMGkMS3MFo
+    ZKfzsRm8Vdj8+wfIRYbJT+rZ+0FQ5nfIGOYi2yvf3xuxIKCkR9+L6TMslFHT5I+P
+    Wl3dfSpNkUmlPl65CaN9NC82bk1bXxHbb94hU7XqqoPusuFy/9SYKvz3JpVb2KX5
+    84A0DUrm3mrfupALgXetu+wMJ1E7mBg1x7X7PjNorpZQxr5yPoHA0h4OMwdFgSVS
+    jEa0gePSDbgMG0h3kTWYlYfrXrMw2VrP6UeH9/OTVH9z4i/HCjz2V6wHmFkdDOKa
+    YUoP4Ko9u4pJDtoayIt2wAlxb5uOoIprgxmbhj51dZlb7WKmXHtEkQDrqS1tCsYk
+    5wD/UvAZVw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=cNliJQE+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AxUsv2h5;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TvDORTKO;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=TSi4qw+P x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=cNliJQE+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AxUsv2h5;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TvDORTKO;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030578AbeCAM71 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 07:59:27 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43169 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030701AbeCAM7W (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:59:22 -0500
-X-Google-Smtp-Source: AG47ELtFaRIVwQSMw5iqCTc3Xh5dh53cFI3tKoB7sVhnLaa0Ty91NO/1KZOM6qDXY5kBPyZwQgUZPg==
+        id S1030783AbeCANAA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 08:00:00 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:37032 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031054AbeCAM75 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:59:57 -0500
+X-Google-Smtp-Source: AG47ELvKp4Clz97eme3mdjWQnxvda2WgRLRApIFE4uP/5+Rx5eBiail9K7eRDPa2cBNTS+RNp1oT7A==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 29/45] arm64: Implement branch predictor hardening for affected Cortex-A CPUs
-Date: Thu,  1 Mar 2018 20:54:06 +0800
-Message-Id: <1519908862-11425-30-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 34/45] arm/arm64: KVM: Implement PSCI 1.0 support
+Date: Thu,  1 Mar 2018 20:54:11 +0800
+Message-Id: <1519908862-11425-35-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -76,131 +76,113 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Will Deacon <will.deacon@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit aa6acde65e03 upstream.
+commit 58e0b2239a4d upstream.
 
-Cortex-A57, A72, A73 and A75 are susceptible to branch predictor aliasing
-and can theoretically be attacked by malicious code.
+PSCI 1.0 can be trivially implemented by providing the FEATURES
+call on top of PSCI 0.2 and returning 1.0 as the PSCI version.
 
-This patch implements a PSCI-based mitigation for these CPUs when available.
-The call into firmware will invalidate the branch predictor state, preventing
-any malicious entries from affecting other victim contexts.
+We happily ignore everything else, as they are either optional or
+are clarifications that do not require any additional change.
 
-Co-developed-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+PSCI 1.0 is now the default until we decide to add a userspace
+selection API.
+
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/kernel/bpi.S        | 24 ++++++++++++++++++++++++
- arch/arm64/kernel/cpu_errata.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
+ arch/arm/kvm/psci.c    | 45 ++++++++++++++++++++++++++++++++++++++++++++-
+ include/kvm/arm_psci.h |  3 +++
+ 2 files changed, 47 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
-index 06a931e..dec95bd 100644
---- a/arch/arm64/kernel/bpi.S
-+++ b/arch/arm64/kernel/bpi.S
-@@ -53,3 +53,27 @@ ENTRY(__bp_harden_hyp_vecs_start)
- 	vectors __kvm_hyp_vector
- 	.endr
- ENTRY(__bp_harden_hyp_vecs_end)
-+ENTRY(__psci_hyp_bp_inval_start)
-+	sub	sp, sp, #(8 * 18)
-+	stp	x16, x17, [sp, #(16 * 0)]
-+	stp	x14, x15, [sp, #(16 * 1)]
-+	stp	x12, x13, [sp, #(16 * 2)]
-+	stp	x10, x11, [sp, #(16 * 3)]
-+	stp	x8, x9, [sp, #(16 * 4)]
-+	stp	x6, x7, [sp, #(16 * 5)]
-+	stp	x4, x5, [sp, #(16 * 6)]
-+	stp	x2, x3, [sp, #(16 * 7)]
-+	stp	x0, x1, [sp, #(16 * 8)]
-+	mov	x0, #0x84000000
-+	smc	#0
-+	ldp	x16, x17, [sp, #(16 * 0)]
-+	ldp	x14, x15, [sp, #(16 * 1)]
-+	ldp	x12, x13, [sp, #(16 * 2)]
-+	ldp	x10, x11, [sp, #(16 * 3)]
-+	ldp	x8, x9, [sp, #(16 * 4)]
-+	ldp	x6, x7, [sp, #(16 * 5)]
-+	ldp	x4, x5, [sp, #(16 * 6)]
-+	ldp	x2, x3, [sp, #(16 * 7)]
-+	ldp	x0, x1, [sp, #(16 * 8)]
-+	add	sp, sp, #(8 * 18)
-+ENTRY(__psci_hyp_bp_inval_end)
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 0e07893..f8810bf 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -53,6 +53,8 @@ static int cpu_enable_trap_ctr_access(void *__unused)
- DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
- 
- #ifdef CONFIG_KVM
-+extern char __psci_hyp_bp_inval_start[], __psci_hyp_bp_inval_end[];
-+
- static void __copy_hyp_vect_bpi(int slot, const char *hyp_vecs_start,
- 				const char *hyp_vecs_end)
+diff --git a/arch/arm/kvm/psci.c b/arch/arm/kvm/psci.c
+index bc334d6..097632c 100644
+--- a/arch/arm/kvm/psci.c
++++ b/arch/arm/kvm/psci.c
+@@ -233,7 +233,7 @@ static void kvm_psci_system_reset(struct kvm_vcpu *vcpu)
+ int kvm_psci_version(struct kvm_vcpu *vcpu)
  {
-@@ -94,6 +96,9 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 	spin_unlock(&bp_lock);
- }
- #else
-+#define __psci_hyp_bp_inval_start	NULL
-+#define __psci_hyp_bp_inval_end		NULL
-+
- static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 				      const char *hyp_vecs_start,
- 				      const char *hyp_vecs_end)
-@@ -118,6 +123,21 @@ static void  install_bp_hardening_cb(const struct arm64_cpu_capabilities *entry,
+ 	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
+-		return KVM_ARM_PSCI_0_2;
++		return KVM_ARM_PSCI_LATEST;
  
- 	__install_bp_hardening_cb(fn, hyp_vecs_start, hyp_vecs_end);
+ 	return KVM_ARM_PSCI_0_1;
  }
-+
-+#include <linux/psci.h>
-+
-+static int enable_psci_bp_hardening(void *data)
+@@ -312,6 +312,47 @@ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ 	return ret;
+ }
+ 
++static int kvm_psci_1_0_call(struct kvm_vcpu *vcpu)
 +{
-+	const struct arm64_cpu_capabilities *entry = data;
++	u32 psci_fn = smccc_get_function(vcpu);
++	u32 feature;
++	unsigned long val;
++	int ret = 1;
 +
-+	if (psci_ops.get_version)
-+		install_bp_hardening_cb(entry,
-+				       (bp_hardening_cb_t)psci_ops.get_version,
-+				       __psci_hyp_bp_inval_start,
-+				       __psci_hyp_bp_inval_end);
++	switch(psci_fn) {
++	case PSCI_0_2_FN_PSCI_VERSION:
++		val = KVM_ARM_PSCI_1_0;
++		break;
++	case PSCI_1_0_FN_PSCI_FEATURES:
++		feature = smccc_get_arg1(vcpu);
++		switch(feature) {
++		case PSCI_0_2_FN_PSCI_VERSION:
++		case PSCI_0_2_FN_CPU_SUSPEND:
++		case PSCI_0_2_FN64_CPU_SUSPEND:
++		case PSCI_0_2_FN_CPU_OFF:
++		case PSCI_0_2_FN_CPU_ON:
++		case PSCI_0_2_FN64_CPU_ON:
++		case PSCI_0_2_FN_AFFINITY_INFO:
++		case PSCI_0_2_FN64_AFFINITY_INFO:
++		case PSCI_0_2_FN_MIGRATE_INFO_TYPE:
++		case PSCI_0_2_FN_SYSTEM_OFF:
++		case PSCI_0_2_FN_SYSTEM_RESET:
++		case PSCI_1_0_FN_PSCI_FEATURES:
++			val = 0;
++			break;
++		default:
++			val = PSCI_RET_NOT_SUPPORTED;
++			break;
++		}
++		break;
++	default:
++		return kvm_psci_0_2_call(vcpu);
++	}
 +
-+	return 0;
++	smccc_set_retval(vcpu, val, 0, 0, 0);
++	return ret;
 +}
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
++
+ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+@@ -354,6 +395,8 @@ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
+ int kvm_psci_call(struct kvm_vcpu *vcpu)
+ {
+ 	switch (kvm_psci_version(vcpu)) {
++	case KVM_ARM_PSCI_1_0:
++		return kvm_psci_1_0_call(vcpu);
+ 	case KVM_ARM_PSCI_0_2:
+ 		return kvm_psci_0_2_call(vcpu);
+ 	case KVM_ARM_PSCI_0_1:
+diff --git a/include/kvm/arm_psci.h b/include/kvm/arm_psci.h
+index 5659343..3236043 100644
+--- a/include/kvm/arm_psci.h
++++ b/include/kvm/arm_psci.h
+@@ -22,6 +22,9 @@
  
- #define MIDR_RANGE(model, min, max) \
-@@ -211,6 +231,28 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 		.def_scope = SCOPE_LOCAL_CPU,
- 		.enable = cpu_enable_trap_ctr_access,
- 	},
-+#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
-+		.enable = enable_psci_bp_hardening,
-+	},
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
-+		.enable = enable_psci_bp_hardening,
-+	},
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
-+		.enable = enable_psci_bp_hardening,
-+	},
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
-+		.enable = enable_psci_bp_hardening,
-+	},
-+#endif
- 	{
- 	}
- };
+ #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
+ #define KVM_ARM_PSCI_0_2	PSCI_VERSION(0, 2)
++#define KVM_ARM_PSCI_1_0	PSCI_VERSION(1, 0)
++
++#define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
+ 
+ int kvm_psci_version(struct kvm_vcpu *vcpu);
+ int kvm_psci_call(struct kvm_vcpu *vcpu);
 -- 
 2.7.4
