@@ -1,215 +1,210 @@
-Return-Path: <andreas.dilger@intel.com>
-X-Google-Smtp-Source: AG47ELsrgGoXYCN4Sp/Ug/ySdEh7F1cA3rmAWjcUtwHwlU9iH1nUwufVbfw/hGVM7hp29QyTFcdy
-ARC-Seal: i=1; a=rsa-sha256; t=1520537019; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AG47ELswMo+BaXeq1hULdE/vhYsy5yC7KDiZ4e3uaiOXxXfAnUznx7xapr2Bu4vEllLLJJrJgqNw
+ARC-Seal: i=1; a=rsa-sha256; t=1519947198; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZWXioLZAUsNsfQxDQtJOp0nyd1eVRu1pt54Dvx1kQqYcpkhinvMgHg74vsMlps4jO1
-         cx4b1ra9OC0AV7fn9FM2clzEbbFjVsmXN/zrv+m6kU2fCABdedudl4Vlt5kd/4V5MUFq
-         6akPDIVOd88KrITEIgeg6UuKo3KHrKe720Wz8/rEvDDGoLZ1XZNp0fgjB0vfR6eG3jQY
-         ZLiKsdoFX4v2xOMhaeUnmNnJDojYgOJ10/xPtvvxj1diXbCZJv+2tB9JKZc11hkX5lZ0
-         9vUcZg/6np0bZ4gEzRTi2tmt+8iRZRJ7028p5fsXQ3DZ36l1bWsB0jq1a/YiiXfQFzgr
-         oWAw==
+        b=HXTgrBara4FamtwbYnSfxt0iLItHovyUkS1811oskOm6uUzjSImxT9eQA0JIuG3RFI
+         tqGlWY0DuWXu0d6K+jCVxsVCnPm1zpUGpwUlntKkxYxZqoKPWA93gTJGDfcXxJC0+g29
+         JTfADavui8CUu8N/FqJkfLpmm4Uz449DHkl1YEoMYhCrDdA/rRW1kIubc9MpwAhdGcyw
+         35SHfUcKh3FmoQERCcM6BC3VNnSnAe3Di4PtUmWYX3j+fW7hqS4GnQykG4Xd+g3pFk5+
+         b0wgYbKotqkHiuO2aQXt0o9ljSbxwZOu+8vX2Tq0+RfVxHk/s9uJqlUIUKMMWlQjfHCX
+         BQfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=ElZUL1EXq8vqgwd4MSDQSbi9ka52qJ3C2JI4pgZKtaA=;
-        b=QhScUfg6+0xw4kboMS8pitsLXQUQh58H3YTQ1QY3yCAL9bClt82pjwABg+sB9IUni2
-         v/HPIJbFoCAQS5PVndxh82wrUlzAHZ2FvcivS796VTB5o3yLlolN6a7H/TvJ6QaHEJei
-         EUkm3mruds76lLR1a3FcSp5JVn78SBdTp2XujrEfBBzFX9Y4gYR1JwyXZHkysrKoxUzS
-         SOlP2pRi2v7xY8D6Sgo+0KvYT1zpwVI1/c3mVk0fVO85X/phxbOv801akvkAGNOwh+K0
-         4m/1LkjWKHSbBPQbuE8DRVlzP8hRbQF8kgAwqFTIJjTCa6Q4FPGVIW51oJQtgizkAdZ0
-         7CeA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=zVMrCPUaw+4TpOskXCG5u6aEOTiLVmHQFWeXuPU0He4=;
+        b=morHzi8ZWcKy+oe6ocIvgGhlDOJXf9t8Z5o1mKaxMJn2vrontBA0bcXmPYIiMZAG3U
+         lKuwtQ7uezHIXahzDSRJujTIAqpvvEUZWcfJZDoEjpu/NCOTECsIoaf6WuGbIdQb4eQh
+         RCUMnwB0Ml6MMSZDr/IqDqYtKY9noXkt+dsT64Lnc06/7xK3n9X/maNhjYZx+1VQh+z3
+         vkifk20cAyibHOgYGbhoWGx52E+eFYkJeinxD1Lmw7+LXWmALLdH8NeS8ZIWB5/Gr1mI
+         s/6trQgjND918MvPfdwNWIgZZK7sKQfho9fyP8lGkqnG21hf/YDI01E0VBCTKiPoivQ+
+         mR0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,442,1515484800";
-   d="scan'208";a="23622598"
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-To: NeilBrown <neilb@suse.com>
-CC: "Drokin, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List
-	<lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 10/17] staging: lustre: ptlrpc: use delayed_work in
- sec_gc
-Thread-Topic: [PATCH 10/17] staging: lustre: ptlrpc: use delayed_work in
- sec_gc
-Thread-Index: AQHTsbWzxLXqmzk1sE2umINNS54o4KPHSImA
-Date: Thu, 8 Mar 2018 19:23:20 +0000
-Message-ID: <D6D3EC01-6338-4285-A4FE-9F9C54EC1586@intel.com>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Fri, 02 Mar 2018 10:31:25 +1100
+Subject: [PATCH 09/17] staging: lustre: ldlm: use delayed_work for
+ pools_recalc
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <151994708534.7628.3824921218925924808.stgit@noble>
+In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
 References: <151994679573.7628.1024109499321778846.stgit@noble>
- <151994708538.7628.11965951418635189732.stgit@noble>
-In-Reply-To: <151994708538.7628.11965951418635189732.stgit@noble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.37.249]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3D7D963FEBC7FF4BAE2B88465E0C7FC3@intel.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593780160747933116?=
-X-GMAIL-MSGID: =?utf-8?q?1594398626055304175?=
+X-GMAIL-THRID: =?utf-8?q?1593780153084905668?=
+X-GMAIL-MSGID: =?utf-8?q?1593780153084905668?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
->=20
-> The garbage collection for security contexts currently
-> has a dedicated kthread which wakes up every 30 minutes
-> to discard old garbage.
->=20
-> Replace this with a simple delayed_work item on the
-> system work queue.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.com>
+ldlm currenty has a kthread which wakes up every so often
+and calls ldlm_pools_recalc().
+The thread is started and stopped, but no other external interactions
+happen.
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+This can trivially be replaced by a delayed_work if we have
+ldlm_pools_recalc() reschedule the work rather than just report
+when to do that.
 
-> ---
-> drivers/staging/lustre/lustre/ptlrpc/sec_gc.c |   90 ++++++++------------=
------
-> 1 file changed, 28 insertions(+), 62 deletions(-)
->=20
-> diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c b/drivers/stag=
-ing/lustre/lustre/ptlrpc/sec_gc.c
-> index 48f1a72afd77..2c8bad7b7877 100644
-> --- a/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c
-> +++ b/drivers/staging/lustre/lustre/ptlrpc/sec_gc.c
-> @@ -55,7 +55,6 @@ static spinlock_t sec_gc_list_lock;
-> static LIST_HEAD(sec_gc_ctx_list);
-> static spinlock_t sec_gc_ctx_list_lock;
->=20
-> -static struct ptlrpc_thread sec_gc_thread;
-> static atomic_t sec_gc_wait_del =3D ATOMIC_INIT(0);
->=20
-> void sptlrpc_gc_add_sec(struct ptlrpc_sec *sec)
-> @@ -139,86 +138,53 @@ static void sec_do_gc(struct ptlrpc_sec *sec)
-> 	sec->ps_gc_next =3D ktime_get_real_seconds() + sec->ps_gc_interval;
-> }
->=20
-> -static int sec_gc_main(void *arg)
-> -{
-> -	struct ptlrpc_thread *thread =3D arg;
-> -
-> -	unshare_fs_struct();
-> +static void sec_gc_main(struct work_struct *ws);
-> +static DECLARE_DELAYED_WORK(sec_gc_work, sec_gc_main);
->=20
-> -	/* Record that the thread is running */
-> -	thread_set_flags(thread, SVC_RUNNING);
-> -	wake_up(&thread->t_ctl_waitq);
-> -
-> -	while (1) {
-> -		struct ptlrpc_sec *sec;
-> +static void sec_gc_main(struct work_struct *ws)
-> +{
-> +	struct ptlrpc_sec *sec;
->=20
-> -		sec_process_ctx_list();
-> +	sec_process_ctx_list();
-> again:
-> -		/* go through sec list do gc.
-> -		 * FIXME here we iterate through the whole list each time which
-> -		 * is not optimal. we perhaps want to use balanced binary tree
-> -		 * to trace each sec as order of expiry time.
-> -		 * another issue here is we wakeup as fixed interval instead of
-> -		 * according to each sec's expiry time
-> +	/* go through sec list do gc.
-> +	 * FIXME here we iterate through the whole list each time which
-> +	 * is not optimal. we perhaps want to use balanced binary tree
-> +	 * to trace each sec as order of expiry time.
-> +	 * another issue here is we wakeup as fixed interval instead of
-> +	 * according to each sec's expiry time
-> +	 */
-> +	mutex_lock(&sec_gc_mutex);
-> +	list_for_each_entry(sec, &sec_gc_list, ps_gc_list) {
-> +		/* if someone is waiting to be deleted, let it
-> +		 * proceed as soon as possible.
-> 		 */
-> -		mutex_lock(&sec_gc_mutex);
-> -		list_for_each_entry(sec, &sec_gc_list, ps_gc_list) {
-> -			/* if someone is waiting to be deleted, let it
-> -			 * proceed as soon as possible.
-> -			 */
-> -			if (atomic_read(&sec_gc_wait_del)) {
-> -				CDEBUG(D_SEC, "deletion pending, start over\n");
-> -				mutex_unlock(&sec_gc_mutex);
-> -				goto again;
-> -			}
-> -
-> -			sec_do_gc(sec);
-> +		if (atomic_read(&sec_gc_wait_del)) {
-> +			CDEBUG(D_SEC, "deletion pending, start over\n");
-> +			mutex_unlock(&sec_gc_mutex);
-> +			goto again;
-> 		}
-> -		mutex_unlock(&sec_gc_mutex);
-> -
-> -		/* check ctx list again before sleep */
-> -		sec_process_ctx_list();
-> -		wait_event_idle_timeout(thread->t_ctl_waitq,
-> -					thread_is_stopping(thread),
-> -					SEC_GC_INTERVAL * HZ);
->=20
-> -		if (thread_test_and_clear_flags(thread, SVC_STOPPING))
-> -			break;
-> +		sec_do_gc(sec);
-> 	}
-> +	mutex_unlock(&sec_gc_mutex);
->=20
-> -	thread_set_flags(thread, SVC_STOPPED);
-> -	wake_up(&thread->t_ctl_waitq);
-> -	return 0;
-> +	/* check ctx list again before sleep */
-> +	sec_process_ctx_list();
-> +	schedule_delayed_work(&sec_gc_work, SEC_GC_INTERVAL * HZ);
-> }
->=20
-> int sptlrpc_gc_init(void)
-> {
-> -	struct task_struct *task;
-> -
-> 	mutex_init(&sec_gc_mutex);
-> 	spin_lock_init(&sec_gc_list_lock);
-> 	spin_lock_init(&sec_gc_ctx_list_lock);
->=20
-> -	/* initialize thread control */
-> -	memset(&sec_gc_thread, 0, sizeof(sec_gc_thread));
-> -	init_waitqueue_head(&sec_gc_thread.t_ctl_waitq);
-> -
-> -	task =3D kthread_run(sec_gc_main, &sec_gc_thread, "sptlrpc_gc");
-> -	if (IS_ERR(task)) {
-> -		CERROR("can't start gc thread: %ld\n", PTR_ERR(task));
-> -		return PTR_ERR(task);
-> -	}
-> -
-> -	wait_event_idle(sec_gc_thread.t_ctl_waitq,
-> -			thread_is_running(&sec_gc_thread));
-> +	schedule_delayed_work(&sec_gc_work, 0);
-> 	return 0;
-> }
->=20
-> void sptlrpc_gc_fini(void)
-> {
-> -	thread_set_flags(&sec_gc_thread, SVC_STOPPING);
-> -	wake_up(&sec_gc_thread.t_ctl_waitq);
-> -
-> -	wait_event_idle(sec_gc_thread.t_ctl_waitq,
-> -			thread_is_stopped(&sec_gc_thread));
-> +	cancel_delayed_work_sync(&sec_gc_work);
-> }
->=20
->=20
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ drivers/staging/lustre/lustre/ldlm/ldlm_pool.c |   99 +++---------------------
+ 1 file changed, 11 insertions(+), 88 deletions(-)
 
-Cheers, Andreas
---
-Andreas Dilger
-Lustre Principal Architect
-Intel Corporation
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+index a0e486b57e08..53b8f33e54b5 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+@@ -784,9 +784,6 @@ static int ldlm_pool_granted(struct ldlm_pool *pl)
+ 	return atomic_read(&pl->pl_granted);
+ }
+ 
+-static struct ptlrpc_thread *ldlm_pools_thread;
+-static struct completion ldlm_pools_comp;
+-
+ /*
+  * count locks from all namespaces (if possible). Returns number of
+  * cached locks.
+@@ -899,8 +896,12 @@ static unsigned long ldlm_pools_cli_scan(struct shrinker *s,
+ 			       sc->gfp_mask);
+ }
+ 
+-static int ldlm_pools_recalc(enum ldlm_side client)
++static void ldlm_pools_recalc(struct work_struct *ws);
++static DECLARE_DELAYED_WORK(ldlm_recalc_pools, ldlm_pools_recalc);
++
++static void ldlm_pools_recalc(struct work_struct *ws)
+ {
++	enum ldlm_side client = LDLM_NAMESPACE_CLIENT;
+ 	struct ldlm_namespace *ns;
+ 	struct ldlm_namespace *ns_old = NULL;
+ 	/* seconds of sleep if no active namespaces */
+@@ -982,92 +983,19 @@ static int ldlm_pools_recalc(enum ldlm_side client)
+ 	/* Wake up the blocking threads from time to time. */
+ 	ldlm_bl_thread_wakeup();
+ 
+-	return time;
+-}
+-
+-static int ldlm_pools_thread_main(void *arg)
+-{
+-	struct ptlrpc_thread *thread = (struct ptlrpc_thread *)arg;
+-	int c_time;
+-
+-	thread_set_flags(thread, SVC_RUNNING);
+-	wake_up(&thread->t_ctl_waitq);
+-
+-	CDEBUG(D_DLMTRACE, "%s: pool thread starting, process %d\n",
+-	       "ldlm_poold", current_pid());
+-
+-	while (1) {
+-		/*
+-		 * Recal all pools on this tick.
+-		 */
+-		c_time = ldlm_pools_recalc(LDLM_NAMESPACE_CLIENT);
+-
+-		/*
+-		 * Wait until the next check time, or until we're
+-		 * stopped.
+-		 */
+-		wait_event_idle_timeout(thread->t_ctl_waitq,
+-					thread_is_stopping(thread) ||
+-					thread_is_event(thread),
+-					c_time * HZ);
+-
+-		if (thread_test_and_clear_flags(thread, SVC_STOPPING))
+-			break;
+-		thread_test_and_clear_flags(thread, SVC_EVENT);
+-	}
+-
+-	thread_set_flags(thread, SVC_STOPPED);
+-	wake_up(&thread->t_ctl_waitq);
+-
+-	CDEBUG(D_DLMTRACE, "%s: pool thread exiting, process %d\n",
+-	       "ldlm_poold", current_pid());
+-
+-	complete_and_exit(&ldlm_pools_comp, 0);
++	schedule_delayed_work(&ldlm_recalc_pools, time * HZ);
+ }
+ 
+ static int ldlm_pools_thread_start(void)
+ {
+-	struct task_struct *task;
+-
+-	if (ldlm_pools_thread)
+-		return -EALREADY;
+-
+-	ldlm_pools_thread = kzalloc(sizeof(*ldlm_pools_thread), GFP_NOFS);
+-	if (!ldlm_pools_thread)
+-		return -ENOMEM;
+-
+-	init_completion(&ldlm_pools_comp);
+-	init_waitqueue_head(&ldlm_pools_thread->t_ctl_waitq);
++	schedule_delayed_work(&ldlm_recalc_pools, 0);
+ 
+-	task = kthread_run(ldlm_pools_thread_main, ldlm_pools_thread,
+-			   "ldlm_poold");
+-	if (IS_ERR(task)) {
+-		CERROR("Can't start pool thread, error %ld\n", PTR_ERR(task));
+-		kfree(ldlm_pools_thread);
+-		ldlm_pools_thread = NULL;
+-		return PTR_ERR(task);
+-	}
+-	wait_event_idle(ldlm_pools_thread->t_ctl_waitq,
+-			thread_is_running(ldlm_pools_thread));
+ 	return 0;
+ }
+ 
+ static void ldlm_pools_thread_stop(void)
+ {
+-	if (!ldlm_pools_thread)
+-		return;
+-
+-	thread_set_flags(ldlm_pools_thread, SVC_STOPPING);
+-	wake_up(&ldlm_pools_thread->t_ctl_waitq);
+-
+-	/*
+-	 * Make sure that pools thread is finished before freeing @thread.
+-	 * This fixes possible race and oops due to accessing freed memory
+-	 * in pools thread.
+-	 */
+-	wait_for_completion(&ldlm_pools_comp);
+-	kfree(ldlm_pools_thread);
+-	ldlm_pools_thread = NULL;
++	cancel_delayed_work_sync(&ldlm_recalc_pools);
+ }
+ 
+ static struct shrinker ldlm_pools_cli_shrinker = {
+@@ -1081,20 +1009,15 @@ int ldlm_pools_init(void)
+ 	int rc;
+ 
+ 	rc = ldlm_pools_thread_start();
+-	if (rc)
+-		return rc;
+-
+-	rc = register_shrinker(&ldlm_pools_cli_shrinker);
+-	if (rc)
+-		ldlm_pools_thread_stop();
++	if (!rc)
++		rc = register_shrinker(&ldlm_pools_cli_shrinker);
+ 
+ 	return rc;
+ }
+ 
+ void ldlm_pools_fini(void)
+ {
+-	if (ldlm_pools_thread)
+-		unregister_shrinker(&ldlm_pools_cli_shrinker);
++	unregister_shrinker(&ldlm_pools_cli_shrinker);
+ 
+ 	ldlm_pools_thread_stop();
+ }
