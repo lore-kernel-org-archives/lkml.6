@@ -1,119 +1,112 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2070142-1519889045-2-14246471535280599123
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3944332-1519938937-2-13108926380470232202
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519889045; b=ONOkpYuwwfHmE6eLZL7zy+2iQw97QzfzWCXyDt7WHZShbb8
-    8w7i8wzgPBTT8R2MGVwW97Jx803LzVH4fJHKXbfyQOdm+ViQA7rixYxuKd/NKreE
-    jJloRJ7X0t3ED+bvICl4vdsZa1TN7ZN4o/QpJSQb1CSshITOvI3QmTP/TU1bihxv
-    ok9Nm3NX31EQ1RHevM1rG7TZxAvjk0o+3aGj9su4hXAled8EhL8QWMtt8PgtS0/k
-    4O5cMOCuXlEXoSi3XPuYizJJbbOHHbCgUlzMBGCQ1ppvjm9R9N+uC41qaf+Vviun
-    pMsKPCDQ8hGr2R34bbj42ZBqws4/LF37xgnjraQ==
+    t=1519938936; b=LtmfoUfBO6KaH7gB33sWywUPXS1yfIBR/BvJDPcCFi/Sjli
+    ROTP8blAZPfZpLeBXqgx6oHAX/21Y7A/dTUBFybYIyiH46+CsMOtDe/vwa5Qy7CX
+    yOuvoWODp7Q7JV/FNLiVcx/dTD1JIxELR+pWOCKZJfWg/SXwqdBZSScYeB2xYX41
+    n1NsNDJla/LDfzmkVEg1zUcxrEhkmjU+PjLUL5GdEEE8pehD3z3DN6ErRW6ie5FI
+    snb/BIJ1+1/w3RIL6k+Pw/XVoG6UZ9sC9A7zfJjuquv9j3WAj1xguviraLkHme8Y
+    qZ+YgXlLWXOVycAzSCVHxMaHk72kR7GQxYIpOhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519889045; bh=PACJLTHAbyQGGndZUbC0yfWUp6
-    xV8RT0knWidGfUsAU=; b=JLtRaZ2nC0/9RnmF84MQcsK53aLvFGz+6Xd3d3k99z
-    fdHloAM9RvkihOoiPtEe2nL7/f4YJnUtacdLbhIWsDunPd6gEO1mzQDVf/lC+sxf
-    YH1AmkjUnqb01Fv1Lxblq1o9x/I8C0k8KDJRPXucJr0kbBpzN/IavBRQZPX0KrlT
-    rBY1rhmz0sr2Se+UlBXIzTVTO1pFKp036L/MhVnhHVhhS9H5ZYoHuQg/CoIrpc5/
-    hdIwqQBpBk+zDfcMABQB+gjQ+bzB4t5ft22sjmD5V8liELhxejB1m4je9m7aYRfz
-    PfRw9dmMaKyPFvuerhCn7WUhrVY2NCpcuZlgirPcqjUw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519938936; bh=1ZB+4bFKY9gKWl521JP0MI7J84
+    G+7INlpTyO/d0wgzc=; b=HNEchOQgB+6+cNfe6bFXgq82nIfdh0jEMtC4DEdgAz
+    ifh7/0dgiLzhbjgLUQTYyIFMxAhkVIBe4Wfi14rOGuFzjCmXZq70hKHpwbAGOe5o
+    F/F8ji7dnBdzKbYUTYeAnmgiOg3r3iBPlE1hhXPE9Rb3WVZMpxZQoM9jZFi6JyiO
+    zT9TlWo8m0riBGDsdCLqzMyRo0c9RFATH4DCm3lUThftaQTKS20qDUeoMij2PqoF
+    Fd3VLMeZmNzI94kSsIBtKwGDCdVzX8duHkzGiWkhKi2bsVGrv+S/aQmCMisii6P7
+    /9uZRMzyknLeuP5zSpKoT/lqg4jXsn+O65fyLNsf7qtQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=NCxLdhBW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=NCxLdhBW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966460AbeCAHXt (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 02:23:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:32993 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966417AbeCAHXs (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Thu, 1 Mar 2018 02:23:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
-   d="scan'208";a="34584819"
-Date: Thu, 1 Mar 2018 09:23:43 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v5 08/12] xhci: Add Intel extended cap / otg phy mux
- handling
-Message-ID: <20180301072343.GB5335@kuha.fi.intel.com>
-References: <20180228150749.26831-1-hdegoede@redhat.com>
- <20180228150749.26831-9-hdegoede@redhat.com>
- <20180228151552.GA5335@kuha.fi.intel.com>
- <070f5ccd-dfeb-1e47-681a-8e116472ef9f@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <070f5ccd-dfeb-1e47-681a-8e116472ef9f@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S1034158AbeCAVPd (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 16:15:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49156 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1034165AbeCAVPb (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 1 Mar 2018 16:15:31 -0500
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        linux-api@vger.kernel.org
+Subject: [PATCH v4 0/4] Record additional page allocation reasons
+Date: Thu,  1 Mar 2018 13:15:19 -0800
+Message-Id: <20180301211523.21104-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 04:42:32PM +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 28-02-18 16:15, Heikki Krogerus wrote:
-> > On Wed, Feb 28, 2018 at 04:07:45PM +0100, Hans de Goede wrote:
-> > > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> > > index 96099a245c69..5917e3095e2a 100644
-> > > --- a/drivers/usb/host/xhci.h
-> > > +++ b/drivers/usb/host/xhci.h
-> > > @@ -1825,6 +1825,7 @@ struct xhci_hcd {
-> > >   /* Reserved. It was XHCI_U2_DISABLE_WAKE */
-> > >   #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
-> > >   #define XHCI_HW_LPM_DISABLE	(1 << 29)
-> > > +#define XHCI_INTEL_USB_ROLE_SW	(1 << 30)
-> > 
-> > Did you rebased these on tope of the latest usb-next?
-> 
-> No I did not expect that to be necessary, but I see now that it is.
-> I've just done a rebase locally, any other remarks before I send
-> out a v6?
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Nothing from me.
+Rework how the _map_count field in struct page is used to record why
+the page was allocated.  We now have about twenty bits available, and
+I've taken two of them to mark pages allocated for page tables and
+through vmalloc.  They are reported by the page-types tool as g and
+V respectively.
 
+Changes since v3:
+ - Ack from Martin on s390 changes
+ - Fix up some comments
+ - Removed check for PageType from fs/proc/page.c; page_mapped() handles
+   this just fine.
+ - Added KPF_VMALLOC and KPF_PGTABLE (hence cc'ing linux-api)
+ - Set KPF_VMALLOC and KPF_PGTABLE in fs/proc/page.c
+ - Interpret KPF_VMALLOC and KPF_PGTABLE in tools/vm/page-flags.c
+ - Set PageTable on tile's extra pages
 
-Thanks,
+Matthew Wilcox (4):
+  s390: Use _refcount for pgtables
+  mm: Split page_type out from _map_count
+  mm: Mark pages allocated through vmalloc
+  mm: Mark pages in use for page tables
+
+ arch/s390/mm/pgalloc.c                 | 21 +++++++------
+ arch/tile/mm/pgtable.c                 |  3 ++
+ fs/proc/page.c                         |  4 +++
+ include/linux/mm.h                     |  2 ++
+ include/linux/mm_types.h               | 13 +++++---
+ include/linux/page-flags.h             | 57 ++++++++++++++++++++++------------
+ include/uapi/linux/kernel-page-flags.h |  3 +-
+ kernel/crash_core.c                    |  1 +
+ mm/page_alloc.c                        | 13 +++-----
+ mm/vmalloc.c                           |  2 ++
+ scripts/tags.sh                        |  6 ++--
+ tools/vm/page-types.c                  |  2 ++
+ 12 files changed, 82 insertions(+), 45 deletions(-)
 
 -- 
-heikki
+2.16.1
+
