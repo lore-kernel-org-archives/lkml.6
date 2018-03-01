@@ -1,79 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030904AbeCANk2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:40:28 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37604 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030701AbeCANk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:40:27 -0500
-Date: Thu, 1 Mar 2018 15:40:26 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, john.fastabend@gmail.com,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
- mergeable buffer
-Message-ID: <20180301153900-mutt-send-email-mst@kernel.org>
-References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
- <20180301101038.4253424d@redhat.com>
- <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
- <20180301113531.7b25e2df@redhat.com>
+        id S1030832AbeCANmM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:42:12 -0500
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:35491 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030694AbeCANmK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 08:42:10 -0500
+X-Google-Smtp-Source: AG47ELuG6JHK6B69n5EnxFmok85XDt3gfeoVyFxJ79pqSrwKZJiAmfrS3/trAMSs8YRbCaZoGohMZ+1BjMPJ8KHFsD8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180301113531.7b25e2df@redhat.com>
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180301083316.GA6779@localhost.localdomain>
+References: <20180301083316.GA6779@localhost.localdomain>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 1 Mar 2018 08:42:08 -0500
+Message-ID: <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
+Subject: Re: Regression found when running LTP connect01 on next-20180301
+To: Anders Roxell <anders.roxell@linaro.org>,
+        richard_c_haines@btinternet.com
+Cc: netdev@vger.kernel.org, selinux@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 11:35:31AM +0100, Jesper Dangaard Brouer wrote:
-> On Thu, 1 Mar 2018 17:23:37 +0800
-> Jason Wang <jasowang@redhat.com> wrote:
-> 
-> > On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:
-> > > On Thu,  1 Mar 2018 11:19:03 +0800
-> > > Jason Wang <jasowang@redhat.com> wrote:
-> > >  
-> > >> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
-> > >> was removed since commit 7324f5399b06 ("virtio_net: disable
-> > >> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
-> > >>
-> > >> - not enough tailroom was reserved which breaks cpumap  
-> >
-> > > To address this at a more fundamental level, I would suggest that we/you
-> > > instead extend XDP to know it's buffers "frame" size/end.  (The
-> > > assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
-> > > ixgbe+virtio_net broke that assumption).
-> > >
-> > > It should actually be fairly easy to implement:
-> > >   * Simply extend xdp_buff with a "data_hard_end" pointer.  
-> > 
-> > Right, and then cpumap can warn and drop packets with insufficient 
-> > tailroom.
-> >
-> > But it should be a patch on top of this I think.
-> 
-> Hmmm, not really.  If we/you instead fix the issue of XDP doesn't know
-> the end/size of the frame, then we don't need this mixed XDP
-> generic/native code path mixing.
-> 
-> You could re-enable native redirect, and push the responsibility to
-> cpumap for detecting this too-small frame "missing tailroom" (and avoid
-> crashing...). (If we really want to support this, cpumap could fallback
-> to dev_alloc_skb, and handle it gracefully).
+On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@linaro.org> wrote:
+> Hi,
+>
+> I was running LTP's testcase connect01 [1] and found a regression in linux-next
+> (next-20180301).  Bisect gave me this patch as the problematic patch (sha
+> d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
+>
+> Output from the test(LTP release 20180118):
+> $ cd /opt/ltp/
+> $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
+> $ ./runltp -pq -f connect-syscall
+> "
+> Running tests.......
+> connect01    1  TPASS  :  bad file descriptor successful
+> connect01    2  TPASS  :  invalid socket buffer successful
+> connect01    3  TPASS  :  invalid salen successful
+> connect01    4  TPASS  :  invalid socket successful
+> connect01    5  TPASS  :  already connected successful
+> connect01    6  TPASS  :  connection refused successful
+> connect01    7  TFAIL  :  connect01.c:146: invalid address family ; returned -1 (expected -1), errno 22 (expected 97)
+> INFO: ltp-pan reported some tests FAIL
+> LTP Version: 20180118
+> "
+>
+> The output from the test expected 97 and we received 22, can you please
+> elaborate on what have been changed?
+>
+> Cheers,
+> Anders
+> [1] https://github.com/linux-test-project/ltp/blob/20180118/testcases/kernel/syscalls/connect/connect01.c#L146
 
-Yea, we probably should.
+Hi Anders,
 
-However it's not nice that redirect is now gone in net.
-IMHO a smaller version of patch 1/2 (without using generic code)
-should go into net. tailroom tracking and fallback to dev_alloc_skb
-can go into net-next.
+Thanks for the report.  Out of curiosity, we're you running the full
+LTP test suite and this was the only failure, or did you just run the
+connect01 test?  Either answer is fine, I'm just trying to understand
+the scope of the regression.
 
-> -- 
-> Best regards,
->   Jesper Dangaard Brouer
->   MSc.CS, Principal Kernel Engineer at Red Hat
->   LinkedIn: http://www.linkedin.com/in/brouer
+Richard, are you able to look into this?  If not, let me know and I'll
+dig a bit deeper (I'll likely take a quick look today, but if the
+failure is subtle it might require some digging).
+
+-- 
+paul moore
+www.paul-moore.com
