@@ -1,69 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162432AbeCAV52 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:57:28 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39006 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162136AbeCAV50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:57:26 -0500
-From: Logan Gunthorpe <logang@deltatee.com>
-To: Dan Williams <dan.j.williams@intel.com>, benh@au1.ibm.com
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
- <1519936477.4592.23.camel@au1.ibm.com>
- <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
- <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
-Message-ID: <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
-Date: Thu, 1 Mar 2018 14:57:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1162409AbeCAV6q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:58:46 -0500
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:38624 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162159AbeCAV6n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:58:43 -0500
+X-Google-Smtp-Source: AG47ELt95wfjLf4spLZ0jGfMuMseQp/bnE54woJFBr5sHkNb103ggu6UqU92ywDAchaBCM7SbGZh5Q==
+Date: Thu, 1 Mar 2018 13:58:39 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, linux-ide@vger.kernel.org,
+        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pata_falcon: clarify license version and use SPDX header
+Message-ID: <20180301215839.GC2421174@devbig577.frc2.facebook.com>
+References: <CGME20180301111338epcas1p3986304526e78000c4f7b00f7154fc92a@epcas1p3.samsung.com>
+ <2054548.du6VOAbhqL@amdc3058>
 MIME-Version: 1.0
-In-Reply-To: <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, alex.williamson@redhat.com, oliveroh@au1.ibm.com, keith.busch@intel.com, axboe@kernel.dk, benh@au1.ibm.com, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2054548.du6VOAbhqL@amdc3058>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 01, 2018 at 12:13:35PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> - clarify license version (it should be GPL 2.0)
+> - use SPDX header
+> 
+> Cc: Michael Schmitz <schmitzmic@gmail.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+Applied to libata/for-4.17.
 
-On 01/03/18 02:45 PM, Logan Gunthorpe wrote:
-> It handles it fine for many situations. But when you try to map 
-> something that is at the end of the physical address space then the 
-> spares-vmemmap needs virtual address space that's the size of the 
-> physical address space divided by PAGE_SIZE which may be a little bit 
-> too large...
+Thanks.
 
-Though, considering this more, maybe this shouldn't be a problem...
-
-Lets say you have 56bits of address space. That's 64PB. If you use need 
-a sparse vmemmap for the entire space it will take 16TB which leaves you 
-with 63.98PB of address space left. (Similar calculations for other 
-numbers of address bits.)
-
-So I'm not sure what the problem with this is.
-
-We still have to ensure all the arches map the memory with the right 
-cache bits but that should be relatively easy to solve.
-
-Logan
+-- 
+tejun
