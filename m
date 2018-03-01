@@ -1,91 +1,85 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELt86Px+WDMZ6B4dGnXBmr9410GRUVN9uwUJrwdiagZF17f60O1gdtPTtSF7HZ955WxVcmTM
-ARC-Seal: i=1; a=rsa-sha256; t=1519963053; cv=none;
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519889723; cv=none;
         d=google.com; s=arc-20160816;
-        b=RDviZ0qjYQ5L1RhwL6i0Z/Ab3Ex6Zh5HUNagZxZrH68J1+93CzQhYRz+R8hatSUzqp
-         ufO83E6WEXya7e7kz/gtoIWvqJSRCrCSUYtnzIaV5Yh6LilaJueYdP6bzHmV4p3yBAyb
-         XkHPh4QiRoF7uZtIDzzAFvWy2+tXW/+rrBZZnFJqBul+DRrIEp0//CbbxoFWTzpWrMrL
-         TwdBrqXPlw7OUWg9zwoC6wISrYxEBBJ/M0oH2oaeCgtN97IoLdR682zv8IHn7hQtoS8W
-         JKXEkOzcimbQMzKkZbWow+8x2HLFb7u82puMuDZCx3ZSGszSlgTy/4IvKSvSvsE02072
-         K6HA==
+        b=JcEQwQ7DNvFbPX8YNa4MRbsHBpXS7f/OtymgfiFDKRf9aMUAnEmbQnKis6MXdCVOWX
+         dnAiJrRyu/zrL4txI5i12xUNRhAOg5Dc0VgcIK76qbzwv71VvwEpahASubG6nqjhjxDe
+         jHmsp2aeLYWcv0jbLKmNxnQ7orXJsFXrpzoR3xqFfFpOA//bKta4MedoJPWKlU1ud1a6
+         4rzBeOr2Ccgd6Ay1v+MsrVwFeEtoqq4zxKmIcYozq6Guh4+wUKfIAsEf0BTKTcdJE2Br
+         TEfkWAJiQRf2yho79D671X9RFZyLGuDUst0VfPv/NvJY8bKDuHKd/VYvFLd43bCtgD9P
+         o81g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:references:subject:cc:to
-         :mime-version:user-agent:from:date:message-id
-         :arc-authentication-results;
-        bh=ev7OUfgNxv8c38vIcFpaFwOa/tnQfWDhJHCmr5fd8io=;
-        b=ZwPjYCNeAQdVlKeWXy3YLREgHxiM1XPkZ12sDX53Hrq3AJXBPvcQdcyGucbH7KNlmc
-         z9zDwo558KI9SrjTqTWsqeIOj0nSeUkCh1Zln07HkMpB1A/vdeixgzVj7oMyxoRhGSAV
-         +KypbvHQnvLjmqb9m7WkanO33q3P2OXEdbt2XutCvQgjZRNTghgmJ3hlUaRbM67BIOsd
-         eRpL3be/ihCDrC1yo3+FkOHQGu2moG13puRkAUOgKuf+odg0FOo/Z9Fams31tljr+0aM
-         zJg7i6lHVwY6n+eMzGlzIUch0/folI+Cuuy+kwYDOc1J+nFHtjb/OTDAu8TkMdUiA9WM
-         QA0A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Z6UpImDyA4g/B8MjeHRc5jNnU3PylRTyjo6Xd2J+cFs=;
+        b=KubXsUdgd1TL2d4dvdZ/nLvBrIZcTrgw1feEDf6teszwErsdKCvEcHjXf4PaF2L5+z
+         b2fsXtG1v37y0WENfguCzRoIAnFyE5ryoi9WLyEqrbcLonlVtWYgBJBwcZmH4yD0OaBW
+         gomDLRoll68SyWaxvXJZ8AP4tQ7vKibxUfiTdHFPp/VYXO3D9HyqhjBM/a3fU4acKBMd
+         5/O/qXapX1ycFssAQJ/TmiRnc0gFjD/XM0+W9Zpn8tosTFebVfucoNCBIhm/d5ceZ8cM
+         QoH1ZgWf5uUP8WsXkF1luS9mdjnNP2gq/wimXI4KN6+HjN3mZbQQw4DTehExxjmKXgmK
+         ajCw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.19 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=GXcj6ZzY;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.19 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: briannorris@chromium.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <bbe2218598ee7854f0d48c7698441d3c>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A98CBA1.6090801@rock-chips.com>
-Date: Fri, 02 Mar 2018 11:57:21 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+       dkim=pass header.i=@linaro.org header.s=google header.b=GXcj6ZzY;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELsnL6qq6I7Ui3UX6pcdSLCtBNlCC1v2sujPulk5xX1hIQvXOArQPbpuCOWy4Ufjms20Z6a3JSCQOd1nAoV5Fk0=
 MIME-Version: 1.0
-To: Brian Norris <briannorris@chromium.org>
-CC: linux-kernel@vger.kernel.org, briannorris@google.com,
- dtor@google.com, dianders@google.com,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- Thomas Gleixner <tglx@linutronix.de>, Joseph Lo <josephl@nvidia.com>,
- stephen lu <lumotuwe@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- linux-input@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: Re: [PATCH v2 1/3] Input: gpio-keys - add support for wakeup event
- action
-References: <20180210110907.5504-1-jeffy.chen@rock-chips.com> <20180210110907.5504-2-jeffy.chen@rock-chips.com> <20180212221309.GA66974@ban.mtv.corp.google.com> <5A8FE726.6080903@rock-chips.com> <20180302023229.GA164361@rodete-desktop-imager.corp.google.com>
-In-Reply-To: <20180302023229.GA164361@rodete-desktop-imager.corp.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK8P3a1v2GanneaFKpXWjWLt1YzibJ9Bh7vUcd_SH-4jGN_1+A@mail.gmail.com>
+References: <826093167e8fb24723f474b0272f3dcab1b6a97e.1519821626.git.baolin.wang@linaro.org>
+ <CAK8P3a1v2GanneaFKpXWjWLt1YzibJ9Bh7vUcd_SH-4jGN_1+A@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 1 Mar 2018 15:35:23 +0800
+Message-ID: <CAMz4kuLNbsZjDPW19V96yL3DzY-bJsjRR=o+w0x4PGyxZFZ0dg@mail.gmail.com>
+Subject: Re: [PATCH v3] Input: gpio_keys: Add level trigger support for GPIO keys
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, gregkh <gregkh@linuxfoundation.org>,
+	stephen lu <lumotuwe@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	Joseph Lo <josephl@nvidia.com>, Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592012049405115473?=
-X-GMAIL-MSGID: =?utf-8?q?1593796778615685697?=
+X-GMAIL-THRID: =?utf-8?q?1593648786277200792?=
+X-GMAIL-MSGID: =?utf-8?q?1593719887527613011?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Brain,
-
-Thanks for your reply.
-
-On 03/02/2018 10:32 AM, Brian Norris wrote:
->>> > >What about the 'else' case? Shouldn't we try to handle that?
->> >i think the else case is for irq key, which would generate down and up
->> >events in one irq, so it would use the same trigger type for all these 3
->> >cases.
-> Not necessarily. It uses whatever trigger was provided in
-> platform/DT/etc. data. You could retrieve that with
-> irq_get_trigger_type() and try to interpret that. Or you could just
-> outlaw using that combination (e.g., in the binding documentation).
-i think for the IRQ button case the assert/deassert/any are using the 
-same irq trigger type, so it should be ok to leave the wakeup trigger 
-type to be 0(not reconfigure the trigger type)...
-
-i've made a v3 to add a comment about that, but forgot to send it :(
-
+On 28 February 2018 at 22:44, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Feb 28, 2018 at 1:44 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> On some platforms (such as Spreadtrum platform), the GPIO keys can only
+>> be triggered by level type. So this patch introduces one property to
+>> indicate if the GPIO trigger type is level trigger or edge trigger.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>> Changes since v2:
+>>  - Use 'interrupt' property to indicate the irq type.
+>>
+>> Changes since v1:
+>>  - Diable the GPIO irq until reversing the GPIO level type.
 >
-> Brian
+> I've looked at your patch in more detail now, and given it a bit more thought.
 >
+> I wonder if you could move that logic into your gpiochip/irqchip driver instead.
+> It seems that what you do in the gpio-keys driver is to emulate edge triggered
+> behavior on a level triggered irqchip.
+>
+> If you put the same logic into the gpio driver, you could simply make it
+> pretend to support an edge trigger on both edges and call into the interrupt
+> handler whenever the state changes.
+>
+
+That is really a good suggestion, which can avoid duplicate level
+reverse logic in different drivers. So this patch can be simplified
+just adding one trigger_type to indicate the interrupt type (not
+always edge trigger). Thanks for your suggestion.
+
+-- 
+Baolin.wang
+Best Regards
