@@ -1,176 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965634AbeCACx5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:53:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
+        id S965578AbeCAC4D convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:56:03 -0500
+Received: from ozlabs.org ([103.22.144.67]:39741 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965488AbeCACx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:53:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09852177C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Wed, 28 Feb 2018 18:53:55 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 1/5 v2] f2fs: add mount option for segment
- allocation policy
-Message-ID: <20180301025355.GD18665@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180226174731.26679-1-jaegeuk@kernel.org>
- <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
- <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
+        id S965488AbeCAC4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:56:02 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Mathieu Malaterre <malat@debian.org>
+Subject: Re: [PATCH 01/21] powerpc: Remove warning on array size when empty
+In-Reply-To: <20180225172236.29650-2-malat@debian.org>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-2-malat@debian.org>
+Date: Thu, 01 Mar 2018 13:55:57 +1100
+Message-ID: <87woyw8pxe.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/28, Chao Yu wrote:
-> On 2018/2/28 13:09, Jaegeuk Kim wrote:
-> > Change log from v1:
-> >  - add doc :)
-> > 
-> > This patch adds an mount option, "alloc_mode=%s" having two options, "default"
-> > and "reuse".
-> > 
-> > In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
-> > all the time to reassign segments. It'd be useful for small-sized eMMC parts.
-> 
-> We have to restore old alloc_mode if we encounter any failure in ->remount, right?
+Mathieu Malaterre <malat@debian.org> writes:
 
-Yup, done.
+> When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
+> array feature_properties is defined as an empty array, which in turn
+> triggers the following warning (treated as error on W=1):
+>
+>   CC      arch/powerpc/kernel/prom.o
+> arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
+> arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
+>   for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+>                 ^
+> cc1: all warnings being treated as errors
 
-> 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  Documentation/filesystems/f2fs.txt |  2 ++
-> >  fs/f2fs/f2fs.h                     |  8 ++++++++
-> >  fs/f2fs/segment.c                  |  5 +++++
-> >  fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
-> >  4 files changed, 39 insertions(+)
-> > 
-> > diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> > index 0caf7da0a532..0409c47584ea 100644
-> > --- a/Documentation/filesystems/f2fs.txt
-> > +++ b/Documentation/filesystems/f2fs.txt
-> > @@ -180,6 +180,8 @@ whint_mode=%s          Control which write hints are passed down to block
-> >                         down hints. In "user-based" mode, f2fs tries to pass
-> >                         down hints given by users. And in "fs-based" mode, f2fs
-> >                         passes down hints with its policy.
-> > +alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
-> > +                       and "default".
-> >  
-> >  ================================================================================
-> >  DEBUGFS ENTRIES
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index f68ece08b5a2..d1bfdf691afc 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1043,6 +1043,11 @@ enum {
-> >  	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
-> >  };
-> >  
-> > +enum {
-> > +	ALLOC_MODE_DEFAULT,	/* stay default */
-> > +	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
-> > +};
-> > +
-> >  struct f2fs_sb_info {
-> >  	struct super_block *sb;			/* pointer to VFS super block */
-> >  	struct proc_dir_entry *s_proc;		/* proc entry */
-> > @@ -1229,6 +1234,9 @@ struct f2fs_sb_info {
-> >  #endif
-> >  	/* For which write hints are passed down to block layer */
-> >  	int whint_mode;
-> > +
-> > +	/* segment allocation policy */
-> > +	int alloc_mode;
-> >  };
-> >  
-> >  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 0646d5de8cd0..5e5e2936a26a 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -2170,6 +2170,11 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
-> >  
-> >  	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
-> >  		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
-> > +
-> > +	/* find segments from 0 to reuse freed segments */
-> > +	if (sbi->alloc_mode == ALLOC_MODE_REUSE)
-> > +		return 0;
-> > +
-> >  	return CURSEG_I(sbi, type)->segno;
-> >  }
-> >  
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 2d832866720c..1345ef167140 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -130,6 +130,7 @@ enum {
-> >  	Opt_jqfmt_vfsv0,
-> >  	Opt_jqfmt_vfsv1,
-> >  	Opt_whint,
-> > +	Opt_alloc,
-> >  	Opt_err,
-> >  };
-> >  
-> > @@ -184,6 +185,7 @@ static match_table_t f2fs_tokens = {
-> >  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
-> >  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
-> >  	{Opt_whint, "whint_mode=%s"},
-> > +	{Opt_alloc, "alloc_mode=%s"},
-> >  	{Opt_err, NULL},
-> >  };
-> >  
-> > @@ -700,6 +702,23 @@ static int parse_options(struct super_block *sb, char *options)
-> >  			}
-> >  			kfree(name);
-> >  			break;
-> > +		case Opt_alloc:
-> > +			name = match_strdup(&args[0]);
-> > +			if (!name)
-> > +				return -ENOMEM;
-> > +
-> > +			if (strlen(name) == 7 &&
-> > +					!strncmp(name, "default", 7)) {
-> > +				sbi->alloc_mode = ALLOC_MODE_DEFAULT;
-> > +			} else if (strlen(name) == 5 &&
-> > +					!strncmp(name, "reuse", 5)) {
-> > +				sbi->alloc_mode = ALLOC_MODE_REUSE;
-> > +			} else {
-> > +				kfree(name);
-> > +				return -EINVAL;
-> > +			}
-> > +			kfree(name);
-> > +			break;
-> >  		default:
-> >  			f2fs_msg(sb, KERN_ERR,
-> >  				"Unrecognized mount option \"%s\" or missing value",
-> > @@ -1264,6 +1283,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
-> >  	else if (sbi->whint_mode == WHINT_MODE_FS)
-> >  		seq_printf(seq, ",whint_mode=%s", "fs-based");
-> >  
-> > +	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
-> > +		seq_printf(seq, ",alloc_mode=%s", "default");
-> > +	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
-> > +		seq_printf(seq, ",alloc_mode=%s", "reuse");
-> >  	return 0;
-> >  }
-> >  
-> > @@ -1273,6 +1296,7 @@ static void default_options(struct f2fs_sb_info *sbi)
-> >  	sbi->active_logs = NR_CURSEG_TYPE;
-> >  	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
-> >  	sbi->whint_mode = WHINT_MODE_OFF;
-> > +	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
-> >  
-> >  	set_opt(sbi, BG_GC);
-> >  	set_opt(sbi, INLINE_XATTR);
-> > 
+Ugh, that's annoying.
+
+This seems to work?
+
+diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+index 4dffef947b8a..5215119e249c 100644
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@ -291,11 +291,11 @@ static inline void identical_pvr_fixup(unsigned long node)
+ 
+ static void __init check_cpu_feature_properties(unsigned long node)
+ {
+-	unsigned long i;
+ 	struct feature_property *fp = feature_properties;
+ 	const __be32 *prop;
++	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
++	for (i = 0; i < (int)ARRAY_SIZE(feature_properties); ++i, ++fp) {
+ 		prop = of_get_flat_dt_prop(node, fp->name, NULL);
+ 		if (prop && be32_to_cpup(prop) >= fp->min_value) {
+ 			cur_cpu_spec->cpu_features |= fp->cpu_feature;
+
+
+cheers
