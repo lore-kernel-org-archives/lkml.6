@@ -1,135 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966178AbeCAKTk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:19:40 -0500
-Received: from regular1.263xmail.com ([211.150.99.130]:59340 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935863AbeCAKTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:19:34 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <704096b41d650732328ce11cae468727>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v6 03/14] iommu/rockchip: Request irqs in rk_iommu_probe()
-Date: Thu,  1 Mar 2018 18:18:26 +0800
-Message-Id: <20180301101837.27969-4-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
-References: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
+        id S966513AbeCAK2o (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:28:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38114 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935764AbeCAK2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:28:40 -0500
+Date: Thu, 1 Mar 2018 11:28:36 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Samuel Holland <samuel@sholland.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 0/3] Allwinner sunxi message box support
+Message-ID: <20180301102836.odxjy4lak2spujii@flea>
+References: <20180228022714.30068-1-samuel@sholland.org>
+ <20180228082459.o3juhfiml3logxwl@flea>
+ <398d54c4-8bfc-c459-f7d4-fba4665d1250@sholland.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q2dip6buehh4gsh7"
+Content-Disposition: inline
+In-Reply-To: <398d54c4-8bfc-c459-f7d4-fba4665d1250@sholland.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move request_irq to the end of rk_iommu_probe().
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+--q2dip6buehh4gsh7
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-Loop platform_get_irq() as Robin suggested.
+Hi,
 
-Changes in v2: None
+On Wed, Feb 28, 2018 at 11:18:50AM -0600, Samuel Holland wrote:
+> On 02/28/18 02:24, Maxime Ripard wrote:
+> > On Tue, Feb 27, 2018 at 08:27:11PM -0600, Samuel Holland wrote:
+> >> This series adds support for the "hardware message box" in recent
+> >> Allwinner sunxi SoCs, used for communication with the ARISC management
+> >> processor (the platform's equivalent of the ARM SCP). The end goal is =
+to
+> >> use the arm_scpi driver as a client, communicating with firmware runni=
+ng
+> >> on the ARISC CPU.
+> >>
+> >> This driver has been tested with the base arm_scpi driver (which sends
+> >> the SCPI_CMD_SCPI_CAPABILITIES command at probe time) and an in-progre=
+ss
+> >> firmware application running on the ARISC CPU. Because no firmware for
+> >> the other end of the mailbox is complete at the moment, I have not
+> >> included changes to the SoC device trees.
+> >=20
+> > This is not directly related to this series, but what is your end goal
+> > with regard to SCPI? What features do you expect to have there?
+>=20
+> Current plans are to support in SCPI:
+> - SMP bringup and CPU hotplug (via PSCI in ATF)
+> - System reset and poweroff (via PSCI in ATF)
+> - System standby and suspend (via PSCI in ATF)
+> - DVFS for ARM CPUs
+> - Clock control for clocks in R_PRCM (e.g. R_CIR_RX)
+> - Thermal sensor reading
+>=20
+> Other planned features of the firmware:
+> - System wakeup from poweroff (via GPIO or interrupt to firmware)
+> - System power/suspend LED control (connected to GPIO or PMIC GPIO)
+> - Polling of thermal sensor in firmware for thermal throttling
 
- drivers/iommu/rockchip-iommu.c | 38 +++++++++-----------------------------
- 1 file changed, 9 insertions(+), 29 deletions(-)
+Nice.
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index c2ef3cbd4401..b743d82e6fe1 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -90,8 +90,6 @@ struct rk_iommu {
- 	struct device *dev;
- 	void __iomem **bases;
- 	int num_mmu;
--	int *irq;
--	int num_irq;
- 	bool reset_disabled;
- 	struct iommu_device iommu;
- 	struct list_head node; /* entry in rk_iommu_domain.iommus */
-@@ -830,13 +828,6 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 
- 	iommu->domain = domain;
- 
--	for (i = 0; i < iommu->num_irq; i++) {
--		ret = devm_request_irq(iommu->dev, iommu->irq[i], rk_iommu_irq,
--				       IRQF_SHARED, dev_name(dev), iommu);
--		if (ret)
--			return ret;
--	}
--
- 	for (i = 0; i < iommu->num_mmu; i++) {
- 		rk_iommu_write(iommu->bases[i], RK_MMU_DTE_ADDR,
- 			       rk_domain->dt_dma);
-@@ -885,9 +876,6 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
- 	}
- 	rk_iommu_disable_stall(iommu);
- 
--	for (i = 0; i < iommu->num_irq; i++)
--		devm_free_irq(iommu->dev, iommu->irq[i], iommu);
--
- 	iommu->domain = NULL;
- 
- 	dev_dbg(dev, "Detached from iommu domain\n");
-@@ -1138,7 +1126,7 @@ static int rk_iommu_probe(struct platform_device *pdev)
- 	struct rk_iommu *iommu;
- 	struct resource *res;
- 	int num_res = pdev->num_resources;
--	int err, i;
-+	int err, i, irq;
- 
- 	iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
- 	if (!iommu)
-@@ -1165,23 +1153,15 @@ static int rk_iommu_probe(struct platform_device *pdev)
- 	if (iommu->num_mmu == 0)
- 		return PTR_ERR(iommu->bases[0]);
- 
--	iommu->num_irq = platform_irq_count(pdev);
--	if (iommu->num_irq < 0)
--		return iommu->num_irq;
--	if (iommu->num_irq == 0)
--		return -ENXIO;
-+	i = 0;
-+	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO) {
-+		if (irq < 0)
-+			return irq;
- 
--	iommu->irq = devm_kcalloc(dev, iommu->num_irq, sizeof(*iommu->irq),
--				  GFP_KERNEL);
--	if (!iommu->irq)
--		return -ENOMEM;
--
--	for (i = 0; i < iommu->num_irq; i++) {
--		iommu->irq[i] = platform_get_irq(pdev, i);
--		if (iommu->irq[i] < 0) {
--			dev_err(dev, "Failed to get IRQ, %d\n", iommu->irq[i]);
--			return -ENXIO;
--		}
-+		err = devm_request_irq(iommu->dev, irq, rk_iommu_irq,
-+				       IRQF_SHARED, dev_name(dev), iommu);
-+		if (err)
-+			return err;
- 	}
- 
- 	iommu->reset_disabled = device_property_read_bool(dev,
--- 
-2.11.0
+> > I'm asking because last time we discussed this, SCPI wasn't able to abs=
+tract
+> > all the features the PMIC provides, and thus Linux needed to still be a=
+ble to
+> > access it.
+>=20
+> This should only be an issue for devices with AXP PMICs.
+
+So this should only be an issue for most devices out there :)
+
+> Other devices with GPIO or simple I=B2C regulator control, such as H3
+> and H5 boards, can have all necessary features described with
+> standard SCPI commands. SCPI provides for 127 vendor-defined
+> "extended" commands, which could be used to build a full AXP PMIC
+> driver, or simply provide commands to read/write PMIC registers.
+
+So I'm not sure whether it was your plan, but the last plan that was
+discussed was that the whole RSB bus would be put outside of Linux
+control, hence why I was asking.
+
+And in this case the RSB bus is used to access the PMIC, but also its
+secondary devices such as the audio codec on the AC100/AC200, so we
+really need to have access to the RSB bus in Linux. If you can
+implement that through custom SCPI commands, that works for me though.
+
+Another thing that I'm not quire sure about is how would interrupts be
+reported throuh that mecanism? We want to use the PMIC as an interrupt
+controller for things like VBUS detection, GPIOs or the Jack detect in
+the codec. Is that doable?
+
+> For the moment I'm not concerned with battery powered devices. So
+> right now the relevant boards either a) don't have a PMIC, or b) can
+> have everything but DVFS voltage hard-coded in the firmware.
+
+I wasn't asking you to implement everything from the start, just that
+you consider the rest in your design.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--q2dip6buehh4gsh7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqX1dMACgkQ0rTAlCFN
+r3QhAQ/9EnasFCsnPOlSBd8Lq9/+KLWQE3QSm4Xtzz4p1ZPF/e0Ph62kHmd86J62
+smdkdbOfONuxRbIWw8qUFeQ5+HKRxUJDs58XnVK8pT9ylZBHhfphUPDe/QpzAJRf
+1mdvceU1d01e6Ea/b4/QzMkt9QzasFMkqd1ZfUT6WE7DZp3pRy2UHGoOX00uG5Kf
+1GaaJsLLfeMo8Qr/pealxr2PkoS+NPhpA+N0zOJFEsKkz/bblQaMYUEFgU0Q6VFh
+H1z7qZnRKHzAMvkRUthNSJ3UISI1gKoRWo3SX9p2XtdKOzYxhqqYTUodRgcww10+
+oJvnfeoD5hG+Hc5UhPIcIYuZAZMbdMYo9wNkQFtS+KpBGUEWU4wFG7Uql5lqv6kq
+SBFhrt92IAF3vUVo7+RX9ZKKOv6JSJJXjiJVngijX7lwcmMNTeUW2NWoc7ZOUyOc
+o2ImMrgyNIR1I7Z6Flj81EqVtorW1/WlthBftbob79rajPiMudyCAVriJQngoYYT
+Dfe33ns25F1KqWhJ+oJZyCi/Yclji6P6CIY4JuAa1InG4iBsNiKRXRkkY+xOEh0U
+6Z00IkiNOs4s+VFD1+VhBIguNsaqN4ulbmIuucyFuf3LZznf/gwdTW5h6oHAZ4dD
+Aed6lDU99COANPbbJPoJFZeHXFaKwePruoNQtJ65yht4lUXtN6Y=
+=4jx+
+-----END PGP SIGNATURE-----
+
+--q2dip6buehh4gsh7--
