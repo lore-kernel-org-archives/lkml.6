@@ -1,72 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935723AbeCACFh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:05:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932134AbeCACFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:05:36 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C102B21771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
-Date: Wed, 28 Feb 2018 18:05:34 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To: jgross@suse.com, boris.ostrovsky@oracle.com
-cc: sstabellini@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pvcalls-front: 64-bit align flags
-Message-ID: <alpine.DEB.2.10.1802281803430.4239@sstabellini-ThinkPad-X260>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        id S935729AbeCACIO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:08:14 -0500
+Received: from exmail.andestech.com ([59.124.169.137]:65513 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932134AbeCACIN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:08:13 -0500
+Date: Thu, 1 Mar 2018 10:05:08 +0800
+From: Alan Kao <alankao@andestech.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+CC: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        "sw-dev@groups.riscv.org" <sw-dev@groups.riscv.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?="
+        <greentime@andestech.com>,
+        "Zong Zong-Xian =?utf-8?B?TGko5p2O5a6X5oayKQ==?="
+        <zong@andestech.com>
+Subject: Re: ftrace: Proposal for an Alternative RecordMcount framework
+Message-ID: <20180301020507.GA24550@andestech.com>
+References: <20180227100425.GB20904@andestech.com>
+ <20180227161252.25162d81@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180227161252.25162d81@vmware.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w2125Nao048859
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are using test_and_* operations on the status and flag fields of
-struct sock_mapping. However, these functions require the operand to be
-64-bit aligned on arm64. Currently, only status is 64-bit aligned.
+On Wed, Feb 28, 2018 at 05:12:52AM +0800, Steven Rostedt wrote:
+> On Tue, 27 Feb 2018 18:04:26 +0800
+> Alan Kao <alankao@andestech.com> wrote:
+>  
+> > 1. During the final linking stages, do "objdump vmlinux.o | grep ..." [2]
+> 
+> Note, doing it at that stage takes the longest time. It makes small
+> changes much longer to compile. That said...
+>
 
-Make status and flags explicitly 64-bit aligned.
+What if we can have some option to *disable* all the recordmcount.pl lauches
+after every .o?  There will be only an oneshot grep for a near-complete
+vmlinux binary.
 
-Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
+> > 2. Form the output as an ELF objecj
+> > 3. Link the object to __mcount_loc_start symbol
+> > 4. Done
+> > 
+> > With the similar reason as the patch [3], we should mark _mcount to be
+> > a weak symbol to prevent it from being relaxed later.
+> > 
+> > We would like to know your opinion and comments on this.
+> > Thanks!
+> 
+> What about just having your arch use recordmcount.c instead? It doesn't
+> do any grepping. It is an elf reader and modifier and modifies the .o
+> file directly.
 
----
-Changes in v2:
-- use __attribute__((aligned(8)))
-- add comments
+Thanks for the hint.  But after a quick scan, it seems that recordmcount.c
+processes .o files in a per-file basis, which means that we will still
+suffer from the linker relaxation problem.
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index ca5b773..582929e 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -73,20 +73,25 @@ struct sock_mapping {
- 			wait_queue_head_t inflight_conn_req;
- 		} active;
- 		struct {
--		/* Socket status */
-+		/*
-+		 * Socket status, needs to be 64-bit aligned due to the
-+		 * test_and_* functions which have this requirement on arm64.
-+		 */
- #define PVCALLS_STATUS_UNINITALIZED  0
- #define PVCALLS_STATUS_BIND          1
- #define PVCALLS_STATUS_LISTEN        2
--			uint8_t status;
-+			uint8_t status __attribute__((aligned(8)));
- 		/*
- 		 * Internal state-machine flags.
- 		 * Only one accept operation can be inflight for a socket.
- 		 * Only one poll operation can be inflight for a given socket.
-+		 * flags needs to be 64-bit aligned due to the test_and_*
-+		 * functions which have this requirement on arm64.
- 		 */
- #define PVCALLS_FLAG_ACCEPT_INFLIGHT 0
- #define PVCALLS_FLAG_POLL_INFLIGHT   1
- #define PVCALLS_FLAG_POLL_RET        2
--			uint8_t flags;
-+			uint8_t flags __attribute__((aligned(8)));
- 			uint32_t inflight_req_id;
- 			struct sock_mapping *accept_map;
- 			wait_queue_head_t inflight_accept_req;
+> 
+> Note, I will be rewriting that code in the near future too, to
+> consolidate it with objtool.
+> 
+> -- Steve
+
+Please allow me to state the problem more clearly here.  I hope this helps.
+
+1. locations of mcount are recorded in a per-file basis.
+2. to optimize the binary, the linker turns on some aggressive
+   options, including relaxation.
+3. the optimizations changes the original offset.
+4. already recorded mcount call-sites no longer point to their
+   real positions.
+5. still a linked vmlinux is made.
+6. dynamic ftrace breaks the real logic in the kernel space,
+   panics happen.
+
+Thanks,
+Alan
