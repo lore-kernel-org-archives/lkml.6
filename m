@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162315AbeCAVuE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:50:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162201AbeCAVt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:49:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5888B20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1162337AbeCAVu3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:50:29 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:41417 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162159AbeCAVuZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:50:25 -0500
+X-Google-Smtp-Source: AG47ELtp4Ur/WAX6nPswPV1yHG9zkjDvLPKKkzW8zfKBJkJf6IiE+FJsDFUix3Gf0oKJt9FC3NG7pA==
+Date: Thu, 1 Mar 2018 15:50:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, horms@verge.net.au, magnus.damm@gmail.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/19] dt-bindings: dmaengine: rcar-dmac: document
+ R8A77965 support
+Message-ID: <20180301215023.ojsnkavkrxnkcxli@rob-hp-laptop>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Linus Walleij <linus.walleij@linaro.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CACRpkda2_nt24pweyQTtB_9gypDJTK1NHRm1LjsinEaK-G8F_Q@mail.gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Timur Tabi <timur@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180126011400.2191-1-sboyd@codeaurora.org>
- <20180126011400.2191-3-sboyd@codeaurora.org>
- <CACRpkda2_nt24pweyQTtB_9gypDJTK1NHRm1LjsinEaK-G8F_Q@mail.gmail.com>
-Message-ID: <151994099669.240031.102662015980326125@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 2/3] gpiolib-of: Support 'reserved-gpio-ranges' property
-Date: Thu, 01 Mar 2018 13:49:56 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Linus Walleij (2018-02-07 05:34:19)
-> Hi Stephen,
+On Tue, Feb 20, 2018 at 04:12:12PM +0100, Jacopo Mondi wrote:
+> Add documentation for r8a77965 compatible string to rcar-dmac device
+> tree bindings documentation.
 > 
-> nice work!
-> 
-> On Fri, Jan 26, 2018 at 2:13 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> 
-> > For now, we plumb this into the gpiochip irq APIs so that
-> > GPIO/pinctrl drivers can use the gpiochip_irqchip_irq_valid() to
-> > test validity of GPIOs.
-> 
-> But is that the right thing to do, given that we just took the
-> trouble to define a DT binding that is explicitly about
-> any GPIO, not just IRQ capable ones?
-> 
-> I am worries that the *irq* infix etc on these functions
-> will be a bit confusing.
-> 
-> Is it a lot of work to make it just generic and maybe bake it
-> into the gpio_chip so as to refuse already in
-> gpiod_request_commit() in gpiolib already?
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-I don't think that it will be too much work to tweak the code to treat
-these as gpios instead of irq lines. It may end up duplicating a bit of code
-that the irq line stuff is already doing, but I'll take a stab at it and
-see how bad it comes out.
+Reviewed-by: Rob Herring <robh@kernel.org>
