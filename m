@@ -1,68 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965621AbeCADHZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 22:07:25 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38991 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965564AbeCADHX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 22:07:23 -0500
-X-Google-Smtp-Source: AG47ELvXGO/4/VwqUv8HGsc4chtPDs49ZgioHeeALhLpPnyPZFCFd8apTW/QkOyUdqYN/7SVY/LE5Q==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
-        Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 11/12] PM / AVS: SmartReflex: Prepare to use device tree based probing
-Organization: BayLibre
-References: <20180223210100.86732-1-tony@atomide.com>
-        <20180223210100.86732-12-tony@atomide.com>
-Date: Wed, 28 Feb 2018 19:07:19 -0800
-In-Reply-To: <20180223210100.86732-12-tony@atomide.com> (Tony Lindgren's
-        message of "Fri, 23 Feb 2018 13:00:59 -0800")
-Message-ID: <7hr2p41ok8.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S965640AbeCADJF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 22:09:05 -0500
+Received: from mga03.intel.com ([134.134.136.65]:4096 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965563AbeCADJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 22:09:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
+   d="scan'208";a="178946879"
+From: Andi Kleen <andi@firstfloor.org>
+To: richard@nod.at
+Cc: linux-kernel@vger.kernel.org,
+        user-mode-linux-devel@lists.sourceforge.net,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] uml: Fix build with recent glibc
+Date: Wed, 28 Feb 2018 19:08:44 -0800
+Message-Id: <20180301030844.23448-1-andi@firstfloor.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony Lindgren <tony@atomide.com> writes:
+From: Andi Kleen <ak@linux.intel.com>
 
-> We are currently probing smartreflex with omap_device while we are
-> already probing smartreflex related interconnect target module with
-> ti-sysc driver and dts data.
->
-> Before we can flip things on for ti-sysc, we need to prepare the
-> smartreflex driver a bit:
->
-> 1. The smartreflex clock is really for the whole interconnect target
->    module. So it may be configured at the parent device level with
->    ti-sysc
->
-> 2. With ti-sysc, we have the child device manage interconnect target
->    module directly if pm_runtime_irq_safe() is set and there is only
->    one child. In that case nobody else is going to call pm_runtime_get
->    and put, so we need to add these calls to idle smartreflex properly
->    after probe if not fully configured
->
-> 3. With ti-sysc, the parent driver may rebind. So we want to use
->    platform_driver_register() and don't want probe to be __init
->
-> Note that this patch depends on the related changes to ti-sysc driver
-> and omap_device probing to prevent both ti-sysc and omap_device to
-> try to probe smartreflex.
->
-> Cc: linux-pm@vger.kernel.org
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+Newer glibc did some include namespace "cleanups" and removed
+struct ucontext and friends. This already broke a lot of software,
+and UML seems to be the latest victim.
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Use the typedefs which are still available. They also work on
+older glibcs.
 
-I don't have anything else queued for this driver, so feel free to take
-it along with the rest of the series.
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ arch/um/os-Linux/signal.c | 2 +-
+ arch/x86/um/stub_segv.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Kevin
+diff --git a/arch/um/os-Linux/signal.c b/arch/um/os-Linux/signal.c
+index a86d7cc2c2d8..a5c0c909c48b 100644
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -159,7 +159,7 @@ static void (*handlers[_NSIG])(int sig, struct siginfo *si, mcontext_t *mc) = {
+ 
+ static void hard_handler(int sig, siginfo_t *si, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 	mcontext_t *mc = &uc->uc_mcontext;
+ 	unsigned long pending = 1UL << sig;
+ 
+diff --git a/arch/x86/um/stub_segv.c b/arch/x86/um/stub_segv.c
+index 1518d2805ae8..fd6825537b97 100644
+--- a/arch/x86/um/stub_segv.c
++++ b/arch/x86/um/stub_segv.c
+@@ -10,7 +10,7 @@
+ void __attribute__ ((__section__ (".__syscall_stub")))
+ stub_segv_handler(int sig, siginfo_t *info, void *p)
+ {
+-	struct ucontext *uc = p;
++	ucontext_t *uc = p;
+ 
+ 	GET_FAULTINFO_FROM_MC(*((struct faultinfo *) STUB_DATA),
+ 			      &uc->uc_mcontext);
+-- 
+2.14.3
