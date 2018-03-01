@@ -1,150 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161742AbeCAUyi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:54:38 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:59083 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1161577AbeCAUyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:54:36 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EyAADoZ5hah2Oa6EReGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYQmgQAoCo1tjXiCAoEWhyGNC4IVCoUwAoJeITQYAQIBAQEBAQE?=
- =?us-ascii?q?CAQIQAQEBCgsJCCgugjgigkoBAQEEOj8MBAIBCBEEAQEBHgkHISUJCAIEDgUIh?=
- =?us-ascii?q?HsDFa0VhywNgTCCK4UmgieDPYMtgmqCFwEBJYVmBIgXB4cRinkwCYljg12DMY5?=
- =?us-ascii?q?/ijSHH4EuHoILcIMSgjEQDBaBZXeKN4EigRcBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EyAADoZ5hah2Oa6EReGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
- =?us-ascii?q?mgQAoCo1tjXiCAoEWhyGNC4IVCoUwAoJeITQYAQIBAQEBAQECAQIQAQEBCgsJC?=
- =?us-ascii?q?CgugjgigkoBAQEEOj8MBAIBCBEEAQEBHgkHISUJCAIEDgUIhHsDFa0VhywNgTC?=
- =?us-ascii?q?CK4UmgieDPYMtgmqCFwEBJYVmBIgXB4cRinkwCYljg12DMY5/ijSHH4EuHoILc?=
- =?us-ascii?q?IMSgjEQDBaBZXeKN4EigRcBAQE?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.187
-X-IronPort-AV: E=Sophos;i="5.47,409,1515477600";
-   d="scan'208";a="1058519919"
-X-DLP: DLP_GlobalPCIDSS
-To: <dvhart@infradead.org>
-CC: <andy.shevchenko@gmail.com>, <pali.rohar@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-Thread-Topic: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-Thread-Index: AQHTsYWRlsja2+R4vkC/toflQeQBp6O72v5g
-Date: Thu, 1 Mar 2018 20:54:31 +0000
-Message-ID: <44477ede216542d89090494590ad7a2c@ausx13mpc124.AMER.DELL.COM>
-References: <1519755784-2155-1-git-send-email-mario.limonciello@dell.com>
- <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
- <20180301174845.GA25613@fury>
-In-Reply-To: <20180301174845.GA25613@fury>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
+        id S1161786AbeCAUz5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 15:55:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48290 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161577AbeCAUzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 15:55:55 -0500
+Date: Thu, 1 Mar 2018 15:55:49 -0500
+From: Jerome Glisse <jglisse@redhat.com>
+To: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20180301205548.GA6742@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
+ <1519936195.4592.18.camel@au1.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519936195.4592.18.camel@au1.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w21KshYU010918
 
-> -----Original Message-----
-> From: Darren Hart [mailto:dvhart@infradead.org]
-> Sent: Thursday, March 1, 2018 11:49 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>; pali.rohar@gmail.com;
-> LKML <linux-kernel@vger.kernel.org>; platform-driver-x86@vger.kernel.org
-> Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
-> modules together
+On Fri, Mar 02, 2018 at 07:29:55AM +1100, Benjamin Herrenschmidt wrote:
+> On Thu, 2018-03-01 at 11:04 -0700, Logan Gunthorpe wrote:
+> > 
+> > On 28/02/18 08:56 PM, Benjamin Herrenschmidt wrote:
+> > > On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
+> > > > The problem is that acccording to him (I didn't double check the latest
+> > > > patches) you effectively hotplug the PCIe memory into the system when
+> > > > creating struct pages.
+> > > > 
+> > > > This cannot possibly work for us. First we cannot map PCIe memory as
+> > > > cachable. (Note that doing so is a bad idea if you are behind a PLX
+> > > > switch anyway since you'd ahve to manage cache coherency in SW).
+> > > 
+> > > Note: I think the above means it won't work behind a switch on x86
+> > > either, will it ?
+> > 
+> > This works perfectly fine on x86 behind a switch and we've tested it on 
+> > multiple machines. We've never had an issue of running out of virtual 
+> > space despite our PCI bars typically being located with an offset of 
+> > 56TB or more. The arch code on x86 also somehow figures out not to map 
+> > the memory as cachable so that's not an issue (though, at this point, 
+> > the CPU never accesses the memory so even if it were, it wouldn't affect 
+> > anything).
 > 
-> On Tue, Feb 27, 2018 at 12:23:04PM -0600, Mario Limonciello wrote:
-> > Some race conditions were raised due to dell-smbios and its backends
-> > not being ready by the time that a consumer would call one of the
-> > exported methods.
-> >
-> > To avoid this problem, guarantee that all initialization has been
-> > done by linking them all together and running init for them all.
-> >
-> > As part of this change the Kconfig needs to be adjusted so that
-> > CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
-> > rather than modules.
-> >
-> > CONFIG_DELL_SMBIOS is a visually selectable option again and both
-> > CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
-> >
-> > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> > ---
-> > Changes from v2:
-> >  * Move rest of #ifdef out of source files
-> >  * Only compile units as necessary
-> >
-> >  drivers/platform/x86/Kconfig            | 11 ++++++++---
-> >  drivers/platform/x86/Makefile           |  4 ++--
-> >  drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
-> >  drivers/platform/x86/dell-smbios-smm.c  | 18 ++++--------------
-> >  drivers/platform/x86/dell-smbios-wmi.c  | 14 ++++----------
-> >  drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
-> >  6 files changed, 64 insertions(+), 31 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> > index 9a8f964..0c0897e 100644
-> > --- a/drivers/platform/x86/Kconfig
-> > +++ b/drivers/platform/x86/Kconfig
-> > @@ -106,10 +106,15 @@ config ASUS_LAPTOP
-> >  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
-> >
-> >  config DELL_SMBIOS
-> > -	tristate
-> > +	tristate "Dell SMBIOS driver"
-> > +	---help---
-> > +	This provides support for the Dell SMBIOS calling interface.
-> > +	If you have a Dell computer you should enable this option.
-> > +
-> > +	Be sure to select at least one backend for it to work properly.
+> Oliver can you look into this ? You sais the memory was effectively
+> hotplug'ed into the system when creating the struct pages. That would
+> mean to me that it's a) mapped (which for us is cachable, maybe x86 has
+> tricks to avoid that) and b) potentially used to populate userspace
+> pages (that will definitely be cachable). Unless there's something in
+> there you didn't see that prevents it.
 > 
-> In order to make the default sane, I would suggest making the above a menu
-> (default n), nesting the two options below, and making WMI a default=y. This
-> satisfies Linus' requirement by defaulting everything to n, but enables a sane
-> default IFF the DELL_SMBIOS menu is enabled.
+> > We also had this working on ARM64 a while back but it required some out 
+> > of tree ZONE_DEVICE patches and some truly horrid hacks to it's arch 
+> > code to ioremap the memory into the page map.
+> > 
+> > You didn't mention what architecture you were trying this on.
 > 
-> Alternatively, all of the above can be put under the "Dell Extras" menu I
-> proposed, and DELL_SMBIOS can default to m and DELL_SMBIOS_WMI can default
-> to y.
+> ppc64.
+> 
+> > It may make sense at this point to make this feature dependent on x86 
+> > until more work is done to make it properly portable. Something like 
+> > arch functions that allow adding IO memory pages to with a specific 
+> > cache setting. Though, if an arch has such restrictive limits on the map 
+> > size it would probably need to address that too somehow.
+> 
+> Not fan of that approach.
+> 
+> So there are two issues to consider here:
+> 
+>  - Our MMIO space is very far away from memory (high bits set in the
+> address) which causes problem with things like vmmemmap, page_address,
+> virt_to_page etc... Do you have similar issues on arm64 ?
 
-I'm on board with moving everything to a Dell extras menu.  There are so many
-drivers now, it really seems like the best way to make sure that people get them.
+HMM private (HMM public is different) works around that by looking for
+"hole" in address space and using those for hotplug (ie page_to_pfn()
+!= physical pfn of the memory). This is ok for HMM because the memory
+is never map by the CPU and we can find the physical pfn with a little
+bit of math (page_to_pfn() - page->pgmap->res->start + page->pgmap->dev->
+physical_base_address).
 
-You'll have to actively go out of your way to turn off one of the sub-drivers then
-to get into the situation that was described.
-
-Since you did the original patch for dell extras nested in a mail would you mind 
-sending that as a follow up second patch on top of my patch?
-
-I think it's probably too much to do it all in this same patch itself.
-Alternatively I can re-send my series with it before my 3/3, up to you.
+To avoid anything going bad i actually do not populate the kernel linear
+mapping for the range hence definitly no CPU access at all through those
+struct page. CPU can still access PCIE bar through usual mmio map.
 
 > 
-> >
-> > +	/* register backends */
-> > +	wmi = init_dell_smbios_wmi();
-> > +	if (wmi)
-> > +		pr_debug("Failed to initialize WMI backend: %d\n", wmi);
-> > +	smm = init_dell_smbios_smm();
-> > +	if (smm)
-> > +		pr_debug("Failed to initialize SMM backend: %d\n", smm);
-> > +	if (wmi && smm) {
-> > +		pr_err("No SMBIOS backends available (wmi: %d, smm: %d)\n",
-> > +			wmi, smm);
-> > +		goto fail_sysfs;
-> > +	}
-> > +
+>  - We need to ensure that the mechanism (which I'm not familiar with)
+> that you use to create the struct page's for the device don't end up
+> turning those device pages into normal "general use" pages for the
+> system. Oliver thinks it does, you say it doesn't, ... 
 > 
-> I like the approach of building a library instead of a bunch of separate
-> modules.
-> 
-> --
-> Darren Hart
-> VMware Open Source Technology Center
+> Jerome (Glisse), what's your take on this ? Smells like something that
+> could be covered by HMM...
+
+Well this again a new user of struct page for device memory just for
+one usecase. I wanted HMM to be more versatile so that it could be use
+for this kind of thing too. I guess the message didn't go through. I
+will take some cycles tomorrow to look into this patchset to ascertain
+how struct page is use in this context.
+
+Note that i also want peer to peer for HMM users but with ACS and using
+IOMMU ie having to populate IOMMU page table of one device to point to
+bar of another device. I need to test on how many platform this work,
+hardware engineer are unable/unwilling to commit on wether this work or
+not.
+
+
+> Logan, the only reason you need struct page's to begin with is for the
+> DMA API right ? Or am I missing something here ?
+
+If it is only needed for that this sounds like a waste of memory for
+struct page. Thought i understand this allow new API to match previous
+one.
+
+Cheers,
+Jérôme
