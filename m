@@ -1,131 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966527AbeCAIle (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:41:34 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53046 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964939AbeCAIld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:41:33 -0500
-Date: Thu, 1 Mar 2018 09:41:29 +0100
-From: Jesper Dangaard Brouer <brouer@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        john.fastabend@gmail.com, brouer@redhat.com
-Subject: Re: [PATCH net-next 1/2] virtio-net: re enable XDP_REDIRECT for
- mergeable buffer
-Message-ID: <20180301094129.29fb6ce6@redhat.com>
-In-Reply-To: <1519874345-10235-2-git-send-email-jasowang@redhat.com>
-References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
-        <1519874345-10235-2-git-send-email-jasowang@redhat.com>
+        id S966462AbeCAIoD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:44:03 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:42116 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965502AbeCAIoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 03:44:02 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs, wifi reset)
+Date: Thu, 01 Mar 2018 09:43:55 +0100
+Message-ID: <3831527.HjPPvuL6zK@diego>
+In-Reply-To: <20180227204711.29357-1-dianders@chromium.org>
+References: <20180227204711.29357-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Thu,  1 Mar 2018 11:19:04 +0800 Jason Wang <jasowang@redhat.com> wrote:
-
-> XDP_REDIRECT support for mergeable buffer was removed since commit
-> 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in receive_mergeable()
-> case"). This is because we don't reserve enough tailroom for struct
-> skb_shared_info which breaks XDP assumption. Other complaints are, the
-> complex linearize logic and EWMA estimation may increase the
-> possibility of linearizing.
-
-This patch also have the intermixing issues, I mentioned for patch 2/2.
-
-On Thu, 1 Mar 2018 09:02:06 +0100
-Jesper Dangaard Brouer <brouer@redhat.com> wrote:
-
-> 1. XDP generic is not feature complete, e.g. cpumap will drop these
->    packets. It might not be possible to implement some features, think
->    of (AF_XDP) zero-copy.
+Am Dienstag, 27. Februar 2018, 21:47:11 CET schrieb Douglas Anderson:
+> Back in the early days when gru devices were still under development
+> we found an issue where the WiFi reset line needed to be configured as
+> early as possible during the boot process to avoid the WiFi module
+> being in a bad state.
 > 
-> 2. This can easily cause out-of-order packets.
+> We found that the way to get the kernel to do this in the earliest
+> possible place was to configure this line in the pinctrl hogs, so
+> that's what we did.  For some history here you can see
+> <http://crosreview.com/368770>.  After the time that change landed in
+> the kernel, we landed a firmware change to configure this line even
+> earlier.  See <http://crosreview.com/399919>.  However, even after the
+> firmware change landed we kept the kernel change to deal with the fact
+> that some people working on devices might take a little while to
+> update their firmware.
 > 
-> 3. It makes it harder to troubleshoot, when diagnosing issues
->    around #1, we have a hard time determining what path an XDP packet
->    took (the xdp tracepoints doesn't know).
-
-
-It is slightly better, as it is consistent in calling XDP-generic in
-the XDP_REDIRECT action, which an action under heavy development, here
-we want the freedom to develop in different code tempi.  And some
-features might never be available in XDP-generic. Thus, when a feature
-is missing/broken it will be consistent for the user.
-
-The remaining question is how will a user know that XDP "mode" she is
-using?  The user clearly loaded an XDP-native program, and expect the
-associated performance, but XDP_REDIRECT will be using the slow
-XDP-generic code path...
-
-
-
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/net/virtio_net.c | 107 +++++++++++++++++++++++++++++------------------
->  1 file changed, 67 insertions(+), 40 deletions(-)
+> At this there are definitely zero devices out in the wild that have
+> firmware without the fix in it.  Specifically looking in the firmware
+> branch several critically important fixes for memory stability landed
+> after the patch in coreboot and I know we didn't ship without those.
+> Thus, by now, everyone should have the new firmware and it's safe to
+> not have the kernel set this up in a pinctrl hog.
 > 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 9bb9e56..81190ba 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-[...]
-> @@ -689,31 +709,30 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
->  	struct bpf_prog *xdp_prog;
->  	unsigned int truesize;
->  	unsigned int headroom = mergeable_ctx_to_headroom(ctx);
-> -	bool sent;
-> +	bool sent, skb_xdp = false;
-> +	int err;
->  
->  	head_skb = NULL;
->  
->  	rcu_read_lock();
->  	xdp_prog = rcu_dereference(rq->xdp_prog);
->  	if (xdp_prog) {
-> -		struct page *xdp_page;
->  		struct xdp_buff xdp;
->  		void *data;
->  		u32 act;
->  
-> -		/* This happens when rx buffer size is underestimated */
-> +		/* This happens when rx buffer size is underestimated
-> +		 * or headroom is not enough because of the buffer
-> +		 * was refilled before XDP is set. In both cases,
-> +		 * for simplicity, we will offload them to generic
-> +		 * XDP routine. This should only happen for the first
-> +		 * several packets, so we don't care much about its
-> +		 * performance.
-> +		 */
->  		if (unlikely(num_buf > 1 ||
->  			     headroom < virtnet_get_headroom(vi))) {
+> Historically, even though it wasn't needed to have this in a pinctrl
+> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
+> default hog at bootup and then would never touch things again.  That
+> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
+> during suspend/resume").  After that commit then we'll re-apply the
+> default hog at resume time and that can screw up the reset state of
+> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
+> then the whole system can go haywire.  That's what was happening.
+> Specifically you'd resume a rk3399-gru-* device and it would mostly
+> resume, then would crash with some crazy weird crash.
+> 
+> One could say, perhaps, that the recent pinctrl change was at fault
+> (and should be fixed) since it changed behavior.  ...but that's not
+> really true.  The device tree for rk3399-gru is really to blame.
+> Specifically since the pinctrl is defined in the hog and not in the
+> "wlan-pd-n" node then the actual user of this pin doesn't have a
+> pinctrl entry for it.  That's bad.
+> 
+> Let's fix our problems by just moving the control of
+> "wlan_module_reset_l pinctrl" out of the hog and put them in the
+> proper place.
+> 
+> NOTE: in theory, I think it should actually be possible to have a pin
+> controlled _both_ by the hog and by an actual device.  Once the device
+> claims the pin I think the hog is supposed to let go.  I'm not 100%
+> sure that this works and in any case this solution would be more
+> complex than is necessary.
+> 
+> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
+> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
+> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during suspend/resume")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-I think you also need to check the tailroom here? (AFAIK this is hidden
-in the len_to_ctx as the "truesize").
-
-> -			/* linearize data for XDP */
-> -			xdp_page = xdp_linearize_page(rq, &num_buf,
-> -						      page, offset,
-> -						      VIRTIO_XDP_HEADROOM,
-> -						      &len);
-> -			if (!xdp_page)
-> -				goto err_xdp;
-> -			offset = VIRTIO_XDP_HEADROOM;
-> -		} else {
-> -			xdp_page = page;
-> +			skb_xdp = true;
-> +			goto skb_xdp;
->  		}
->  
->  		/* Transient failure which in theory could occur if
+applied as fix for 4.16 with the 2 Tested-tags
 
 
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Thanks
+Heiko
