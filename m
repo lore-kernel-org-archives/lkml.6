@@ -1,74 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966993AbeCAJ3s (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:29:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34765 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966781AbeCAJ3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:29:46 -0500
-Date: Thu, 1 Mar 2018 10:29:33 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Message-ID: <20180301092933.eqibjnepoj3ecvo6@flea>
-References: <20180223123555.64009-6-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s63sgyrl3h62372d"
-Content-Disposition: inline
-In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
-User-Agent: NeoMutt/20180223
+        id S966910AbeCAJan (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:30:43 -0500
+Received: from s3.sipsolutions.net ([144.76.63.242]:53282 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966650AbeCAJal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:30:41 -0500
+Message-ID: <1519896638.2292.7.camel@sipsolutions.net>
+Subject: Re: KASAN: use-after-free Read in mac80211_hwsim_del_radio
+From: Johannes Berg <johannes@sipsolutions.net>
+To: syzbot <syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com>,
+        kvalo@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Benjamin Beichler <benjamin.beichler@uni-rostock.de>
+Date: Thu, 01 Mar 2018 10:30:38 +0100
+In-Reply-To: <001a113ecf342db684056655e097@google.com> (sfid-20180301_094507_144777_9C69AA6F)
+References: <001a113ecf342db684056655e097@google.com>
+         (sfid-20180301_094507_144777_9C69AA6F)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---s63sgyrl3h62372d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> syzbot hit the following crash on upstream commit
+> f3afe530d644488a074291da04a69a296ab63046 (Tue Feb 27 22:02:39 2018 +0000)
+> Merge branch 'fixes-v4.16-rc4' of  
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security
+> 
+> So far this crash happened 4 times on upstream.
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output is attached.
 
-On Fri, Feb 23, 2018 at 08:35:53PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has a CCU which has been largely rearranged.
->=20
-> Add support for it in the sunxi-ng CCU framework.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Rob Herring <robh@kernel.org>
+That's ... a pretty complex scenario.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Looks like we have a race between destroying a network namespace, which
+moves everything back into the init_ns and may have to rename objects
+asynchronously (cleanup_net), with destroying the radio in hwsim that's
+also asynchronous (destroy_radio).
 
-Thanks!
-Maxime
+Benjamin, would you be able to take a look at this? I'm preparing for a
+trip and will leave Saturday for a week so I don't think I'll be able
+to really dig into this before mid-March.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---s63sgyrl3h62372d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXx/wACgkQ0rTAlCFN
-r3QliQ//fe49xJfjzFjOrXyAoTIVrDoHzFPPRbLwC1kMiDypGE/WGyU/ofTX8u3o
-1EjXj2TQorYDHwl/+8QGHOnfnDWg5gUmJOeVCvdS8fhcjReTC8Ofrwnti3SHERjK
-K5YjBYIxByAvZOfAc6ohAKVP2RxuOR1owAEYRIi0/7SvRwH+4LRmCTB9PGiJsqSn
-lenCiR6ZYcP1Ny08VVi620EiLV9aNY8pQBRh1oL/EFudT4Gg3it3L7DIWgYs2on7
-Dpt+UdPxH+ZCpqnlYUGzL/Thw/Kd9F32ZpqWDywzu88g/HPcAXwoTYtYWpOpE3Cu
-mUyf7aSxJ+wkZRcmTlJtbMp94fSDS2ZtZQqF7E1i2YqGtmxrS7pdSQDEcKE6YqKz
-ITZSveu9SmIFkd1NEfpRDDw/ouuzS+IjcR0Unn6TQ9o7knLTMK8nJDDk7dsLpb95
-oRgLBBMwYsalT0XC0m0PtKvqaALRGWEaV6ncOilNKZvgZLb2Wd5o8yQnqLXw7LpP
-BEaI017FQa96DDCXooLP4l1FKsD/s38PvqFQrUGD/OynBvcnehV2tLMHJ0ABvXVT
-+aO0poJG6+H4xk4J/m427F9OVTIUcqQJAU8NqPQ/YVp1j0UiLC+aycWXrS1ztBVS
-1nrR3rqp1un4XBs0cbUQBPAuTHSQf7Xr4HVexA47zklbEGwGrss=
-=t6pH
------END PGP SIGNATURE-----
-
---s63sgyrl3h62372d--
+johannes
