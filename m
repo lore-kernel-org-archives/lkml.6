@@ -1,83 +1,62 @@
-Return-Path: <arvind.yadav.cs@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519903523; cv=none;
+Return-Path: <amelie.delaunay@st.com>
+X-Google-Smtp-Source: AG47ELvHCsw75J0NP/h77y6K0u/G09KuZJK5+iizFocS4QGUdSM1GWYgWB9CAF1m9NKdjkywdGYa
+ARC-Seal: i=1; a=rsa-sha256; t=1519898749; cv=none;
         d=google.com; s=arc-20160816;
-        b=dHM9dOlZU4uZDkw1xdP7KXaTFGbWL8TkrP/6Mkd/2IOCR9yhZS8czo4QV5bm9Nltl/
-         kQzGj+Kie3NPJ1l4zK5CwR1m3QNgJAqCUkepcvauoTqxsM+V7e8vL+6UA/U+s4V4mA8Y
-         zk8kZJyEmfsEqpwbIHBSfsQNDBHWHmPLMa0709SVqQGVDWj9m+i9E2JurqEx1NZ1vUa0
-         818F/DEvtcP+GquBt+k/pG0Cg5Jbhfa8PFfuVNTMauWUwDqCRgB08Vbve7+69gSNGjxM
-         F5Dq9PXhmmyHN6oYl20rmSljozZSx4A0X2HymGGgKzrvMbIkTmsTYbwHAwQNiWUVuP9X
-         shKw==
+        b=Z27wDQX1n6jFBXBAuwjJQLFNVK8up4BtSCSf8QyE5+BBXtEWjq1ZxyToXnLwb0qtv5
+         HVjQeSbu7en2fvtgsg5YTaeWjYcL17mZn0D45IbHoR4skeXIF+dBUSlpuDteg5WMlnXE
+         RB2oIeiFFC58OXmMxzr/77nTQ8vZ6z2JsU1mqLWZe2IMsxCDXKrPMO7wjluTEoVTbcgW
+         m27f8ag9ydf2UKsQFa10s1M/HThDK9xja0PZ7BWejgaymZkttV9KSDiCXTvn6orq7nKL
+         bWhlWGVJUMRJKKP+IzCLDOqoNBbdTrRYrY0pxODAbidSbVfBy1e6AM30j6lhreAFqGbF
+         Vpuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:dkim-signature
+        h=mime-version:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Qco3pFI9HjiB49zW8U7IqZ/HbhvTHud8Swz2RFUYYmw=;
-        b=C3RSdlfn5150Hx9VDC9lRbQJu50iNWhYHd8U0c7qQZVMo5T17E0Zw9e+b4MO8jBZl/
-         aFgAefXdWDhEaYPmZZmJoNhfePZWk4sAoSAkCk9zBzOq1O6tTGI04iix4jjWKbsmQzRk
-         ub1ms7S7czZqOesysJ5NLl4TmwpbTMLQZYBJYyllnCasMgBtKcpsCUIjuEFTIUQgjISq
-         y57j+MCVpobJmq63oW95dmYgWnlMSUr8nFmukUWIWpyjcn1Ji1VeXshgwd2493jvkFMv
-         id0/KtrNeFRYl6CO3k/vwEs+lTdsn4AdC4bluCiv5uadruQdHr3p7nevWVY39wSmTrzK
-         pYsA==
+        bh=iIX/jMQjxCNeUXNjm/s44xQVGL0ibhFwaOsMtCOqupI=;
+        b=pRKNcEU7l+vFSDMBSerkZAM2EuKAPJTJSb62vcxSPbjnecYdHRdqNTmcoj2JyOICC+
+         pcRW2p94Ntdhs6hAQKOuPXe5Yz84aVVlqP1QzCEQQWOHyGWmNiAlAxsYBZ9UJDKFnAV8
+         V2jj4PmAfAIkBxk+AfLhfKuRo7DOgyQE1nOSzYrqyWDBRK2lczGGUy1fw6Cm8P4nBx+g
+         1zytYKmdgBDoSuE1yrvLU6zLXlowsWo2WGNi0fWn1bIq0d4QZpUvuCstYhh4CLe9sVGS
+         hgvsDlXT000rW718yX1b0O1XnxfgQv5rkoitHli5giZDppd18kgrS1z3WfHpXpzQV6C5
+         Xldg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CcKSpMCk;
-       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CcKSpMCk;
-       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuRJZ++m8cDLJGvzL77ILFaiTy1fmhs2H+g+Op9dFjFlRXrAdxijB+sCsFCYbsbcfYKaU9L/Q==
-Subject: Re: [PATCH] driver core: Free memory obtained by kzalloc
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <55b8ad8c5e7ad38403c34a5d30d49f8aaba37156.1519883835.git.arvind.yadav.cs@gmail.com>
- <CAHp75VeiUccZp7fLeRv9d2qt61Ha=CPEo2rwKypY42WGO4Aejw@mail.gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Message-ID: <4f693209-db25-2dfb-1018-3dcbe806104f@gmail.com>
-Date: Thu, 1 Mar 2018 16:54:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+       spf=pass (google.com: domain of amelie.delaunay@st.com designates 91.207.212.93 as permitted sender) smtp.mailfrom=amelie.delaunay@st.com
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: John Youn <johnyoun@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH RESEND 0/2] Fix STM32F7 DWC2 OTG HS binding
+Date: Thu, 1 Mar 2018 11:05:33 +0100
+Message-ID: <1519898735-10319-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeiUccZp7fLeRv9d2qt61Ha=CPEo2rwKypY42WGO4Aejw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
+ signatures=0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593713894002392634?=
-X-GMAIL-MSGID: =?utf-8?q?1593734356430364993?=
+X-GMAIL-THRID: =?utf-8?q?1593729351308575201?=
+X-GMAIL-MSGID: =?utf-8?q?1593729351308575201?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Andy,
+This patchset fixes STM32F7 DWC2 OTG HS binding. It actually
+re-applies the v2 former patches adding STM32F7 DWC2 OTG HS support.
+Bindings reviewed by Rob Herring.
 
-sorry for noise.
+Amelie Delaunay (2):
+  dt-bindings: usb: fix the STM32F7 DWC2 OTG HS core binding
+  usb: dwc2: fix STM32F7 USB OTG HS compatible
 
-On Thursday 01 March 2018 04:24 PM, Andy Shevchenko wrote:
-> On Thu, Mar 1, 2018 at 7:59 AM, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
->> Here kfree() is taking NULL. So moving 'dev = NULL' after kfree().
-> Ouch! Does system_root_device_release() code ring a bell? How did you test this?
-Yes, This is fine. put_device() will decrement a ref count.
-So No need to call kfree() after put_device().
->
-> When you start eventually looking to the code?
->
-> NAK.
->
->> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
->> index ef61833..ccb64a0 100644
->> --- a/drivers/base/bus.c
->> +++ b/drivers/base/bus.c
->> @@ -1170,9 +1170,9 @@ static int subsys_register(struct bus_type *subsys,
->>
->>   err_dev_reg:
->>          put_device(dev);
->> -       dev = NULL;
->>   err_name:
->>          kfree(dev);
->> +       dev = NULL;
->>   err_dev:
->>          bus_unregister(subsys);
->>          return err;
-Thanks for your review.
->
->
+ Documentation/devicetree/bindings/usb/dwc2.txt | 2 +-
+ drivers/usb/dwc2/params.c                      | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
