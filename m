@@ -1,183 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161082AbeCAS4S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 13:56:18 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:37388 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1034046AbeCAS4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 13:56:15 -0500
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-2-logang@deltatee.com>
- <20180301173752.GE13722@bhelgaas-glaptop.roam.corp.google.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b81503c2-9f07-b5f6-df06-64d1fdc53386@deltatee.com>
-Date: Thu, 1 Mar 2018 11:55:51 -0700
+        id S1161097AbeCAS5x (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 13:57:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1034092AbeCAS5u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 13:57:50 -0500
+Subject: Re: [PATCH 2/3] tpm: reduce poll sleep time between send() and recv()
+ in tpm_transmit()
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+ <20180228191828.20056-2-nayna@linux.vnet.ibm.com>
+ <20180301092222.GC29420@linux.intel.com>
+From: Nayna Jain <nayna@linux.vnet.ibm.com>
+Date: Fri, 2 Mar 2018 00:26:35 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180301173752.GE13722@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180301092222.GC29420@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 01/10] PCI/P2PDMA: Support peer to peer memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-TM-AS-GCONF: 00
+x-cbid: 18030118-0056-0000-0000-00000426C582
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008609; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00996910; UDB=6.00506857; IPR=6.00776227;
+ MB=3.00019805; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-01 18:57:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030118-0057-0000-0000-00000868C68A
+Message-Id: <6ef601be-5627-6746-bd4a-4f391aba8b04@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010233
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-Thanks for the review. I'll correct all the nits for the next version.
-
-On 01/03/18 10:37 AM, Bjorn Helgaas wrote:
-> On Wed, Feb 28, 2018 at 04:39:57PM -0700, Logan Gunthorpe wrote:
->> Some PCI devices may have memory mapped in a BAR space that's
->> intended for use in Peer-to-Peer transactions. In order to enable
->> such transactions the memory must be registered with ZONE_DEVICE pages
->> so it can be used by DMA interfaces in existing drivers.
-
-> Is there anything about this memory that makes it specifically
-> intended for peer-to-peer transactions?  I assume the device can't
-> really tell whether a transaction is from a CPU or a peer.
-
-No there's nothing special about the memory and it can still be accessed 
-by the CPU. This is just the intended purpose. You could use this PCI 
-memory as regular DMA buffers or regular memory but I'm not sure why you 
-would. It would probably be pretty bad performance-wise.
 
 
-> BTW, maybe there could be some kind of guide for device driver writers
-> in Documentation/PCI/?
-Makes sense we can look at writing something for the next iteration.
+On 03/01/2018 02:52 PM, Jarkko Sakkinen wrote:
+> On Wed, Feb 28, 2018 at 02:18:27PM -0500, Nayna Jain wrote:
+>> In tpm_transmit, after send(), the code checks for status in a loop
+> Maybe cutting hairs now but please just use the actual function name
+> instead of send(). Just makes the commit log more useful asset.
+Sure, will do.
+>
+>> -		tpm_msleep(TPM_TIMEOUT);
+>> +		tpm_msleep(TPM_TIMEOUT_POLL);
+> What about just calling schedule()?
+I'm not sure what you mean by "schedule()".  Are you suggesting instead 
+of using usleep_range(),  using something with an even finer grain 
+construct?
 
-> I think it would be clearer and sufficient to simply say that we have
-> no way to know whether peer-to-peer routing between PCIe Root Ports is
-> supported (PCIe r4.0, sec 1.3.1).
+Thanks & Regards,
+      - Nayna
 
-Fair enough.
-
-> The fact that you use the PCIe term "switch" suggests that a PCIe
-> Switch is required, but isn't it sufficient for the peers to be below
-> the same "PCI bridge", which would include PCIe Root Ports, PCIe
-> Switch Downstream Ports, and conventional PCI bridges?
-> The comments at get_upstream_bridge_port() suggest that this isn't
-> enough, and the peers actually do have to be below the same PCIe
-> Switch, but I don't know why.
-
-I do mean Switch as we do need to keep the traffic off the root complex. 
-Seeing, as stated above, we don't know if it actually support it. (While 
-we can be certain any PCI switch does). So we specifically want to 
-exclude PCIe Root ports and I'm not sure about the support of PCI 
-bridges but I can't imagine anyone wanting to do P2P around them so I'd 
-rather be safe than sorry and exclude them.
-
-
->> +	addr = devm_memremap_pages(&pdev->dev, pgmap);
->> +	if (IS_ERR(addr))
-> 
-> Free pgmap here?  And in the other error case below?  Or maybe this
-> happens via the devm_* magic?  If so, when would that actually happen?
-> Would pgmap be effectively leaked until the pdev is destroyed?
-
-Yes, it happens via the devm magic as that's the way the 
-devm_memremap_pages() interface was designed. If I remember correctly, 
-in my testing, it would be de-allocated when the driver gets unbound.
-
->> +		return PTR_ERR(addr);
->> +
->> +	error = gen_pool_add_virt(pdev->p2pdma->pool, (uintptr_t)addr,
->> +			pci_bus_address(pdev, bar) + offset,
->> +			resource_size(&pgmap->res), dev_to_node(&pdev->dev));
->> +	if (error)
->> +		return error;
->> +
->> +	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_percpu_kill,
->> +					  &pdev->p2pdma->devmap_ref);
->> +	if (error)
->> +		return error;
->> +
->> +	dev_info(&pdev->dev, "added peer-to-peer DMA memory %pR\n",
->> +		 &pgmap->res);
-> 
-> s/dev_info/pci_info/ (also similar usages below, except for the one or
-> two cases where you don't have a pci_dev).
-
-Oh, nice, I didn't notice that was added.
-
-> This whole thing is confusing to me.  Why do you want to reject peers
-> directly connected to the same root port?  Why do you require the same
-> Switch Upstream Port?  You don't exclude conventional PCI, but it
-> looks like you would require peers to share *two* upstream PCI-to-PCI
-> bridges?  I would think a single shared upstream bridge (conventional,
-> PCIe Switch Downstream Port, or PCIe Root Port) would be sufficient?
-
-Hmm, yes, this may just be laziness on my part. Finding the shared 
-upstream bridge is a bit more tricky than just showing that they are on 
-the same switch. So as coded, a fabric of switches with peers on 
-different legs of the fabric are not supported. But yes, maybe they just 
-need to be two devices with a single shared upstream bridge that is not 
-the root port. Again, we need to reject the root port because we can't 
-know if the root complex can support P2P traffic.
-
-> Since "pci_p2pdma_add_client()" includes "pci_" in its name, it seems
-> sort of weird that callers supply a non-PCI device and then we look up
-> a PCI device here.  I assume you have some reason for this; if you
-> added a writeup in Documentation/PCI, that would be a good place to
-> elaborate on that, maybe with a one-line clue here.
-
-Well yes, but this is much more convenient for callers which don't need 
-to care if the device they are attempting to add (which in the NVMe 
-target case, could be a random block device) is a pci device or not. 
-Especially seeing find_parent_pci_dev() is non-trivial.
-
->> +void *pci_alloc_p2pmem(struct pci_dev *pdev, size_t size)
->> +{
->> +	void *ret;
->> +
->> +	if (unlikely(!pdev->p2pdma))
-> 
-> Is this a hot path?  I'm not sure it's worth cluttering
-> non-performance paths with likely/unlikely.
-
-I'd say it can be pretty hot given that we need to allocate and free 
-buffers at multiple GB/s for the NVMe target case. I don't exactly have 
-benchmarks or anything to show this though...
-
->> +		return NULL;
->> +
->> +	if (unlikely(!percpu_ref_tryget_live(&pdev->p2pdma->devmap_ref)))
->> +		return NULL;
->> +
->> +	ret = (void *)(uintptr_t)gen_pool_alloc(pdev->p2pdma->pool, size);
-> 
-> Why the double cast?  Wouldn't "(void *)" be sufficient?
-
-Oh, hmm, I can't remember now. I suspect I added it to fix a kbuild test 
-robot error. I'll check and see if it can be removed.
-
-
-> In v4.6-rc1, gen_pool_free() takes "unsigned long addr".  I know this
-> is based on -rc3; is this something that changed between -rc1 and
-> -rc3?
-
-Yes, I think it's taken an unsigned long for a while now. Per the above, 
-I can't remember exactly why I casted it this way and I'll take a look 
-again.
-
-Logan
+>
+> /Jarkko
+>
