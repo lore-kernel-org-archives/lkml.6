@@ -1,49 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033384AbeCARQb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:16:31 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34465 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033102AbeCARPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:15:48 -0500
-X-Google-Smtp-Source: AG47ELv7/G7elxbvcPK9dnPeZzENfX3ePvsUksABuFYx65lQx/fq1XgMMicjfqbKvj2FJyQWVdOm2g==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nick Terrell <terrelln@fb.com>, Chris Mason <clm@fb.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org
-Cc: Kostya Serebryany <kcc@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 0/2] kasan: a couple of test fixes
-Date: Thu,  1 Mar 2018 18:15:41 +0100
-Message-Id: <cover.1519924383.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+        id S1033410AbeCARQz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:16:55 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:36610 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032942AbeCARQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:16:52 -0500
+To: Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-7-logang@deltatee.com>
+ <72e90cc2-c05a-3ed8-42c7-e4d7a0d535d8@grimberg.me>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <3527faf1-3f3a-88d0-caa8-d94d75437d73@deltatee.com>
+Date: Thu, 1 Mar 2018 10:16:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <72e90cc2-c05a-3ed8-42c7-e4d7a0d535d8@grimberg.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 06/10] IB/core: Add optional PCI P2P flag to
+ rdma_rw_ctx_[init|destroy]()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first one fixes the invalid-free test crashing the kernel, and the
-second one fixes the memset tests working incorrectly due to compiler
-optimizations.
+Hey Sagi,
 
-Andrey Konovalov (2):
-  kasan: fix invalid-free test crashing the kernel
-  kasan: disallow compiler to optimize away memset in tests
+Thanks for the review!
 
- lib/Makefile     | 1 +
- lib/test_kasan.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
 
--- 
-2.16.2.395.g2e18187dfd-goog
+On 01/03/18 03:32 AM, Sagi Grimberg wrote:
+>>   int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 
+>> port_num,
+>>           struct scatterlist *sg, u32 sg_cnt, u32 sg_offset,
+>> -        u64 remote_addr, u32 rkey, enum dma_data_direction dir)
+>> +        u64 remote_addr, u32 rkey, enum dma_data_direction dir,
+>> +        unsigned int flags)
+>>   {
+>>       struct ib_device *dev = qp->pd->device;
+>>       int ret;
+>> -    ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+>> +    if (flags & RDMA_RW_CTX_FLAG_PCI_P2PDMA)
+>> +        ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
+>> +    else
+>> +        ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
+>> +
+> 
+> Why not use is_pci_p2pdma_page(sg) instead of a flag? It would be so
+> much cleaner...
+
+Yes, that sounds like a good idea. We can make that change for v3.
+
+Logan
