@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909311-2-4021064936198798736
+X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909208-2-8902287369113528895
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909310; b=Dvf9lJHc9qxet+bM/lFBtMxwdLVg3gBojRn70gE536+UwpV
-    D29ODPGBSat/8duAgwmI6LLIwjBH5XCc/Dr3H7KbyI32nLzIR6OX+YLaR2hMmDfG
-    x5ueFVAs9L1cGBVXSU1rrBu6+IieJOmBDvKdk2VziL9JTrDMvULvDzi4R8/l7gTU
-    SdWQV6wc6dAdcACFcf0P549dKBn6x3TCGkYLaDXksblhE0JO6OS1YNfhLHqRYPR7
-    JCxfLmUHe9TmeexCTs0EUj30eTKqgOji6QNQBCoyeukX9Oz82J/08HHbPE9XU6DU
-    1aMaAejiLzeCa4vpCZtvW/fEIa5RvK1AQYC2qjQ==
+    t=1519909207; b=mOUTeDETOUF3uxjiJ5ITNFzA6xPnkacLNSIuhfxC4MFxPrL
+    kb4HmhyCVm9F5IkBh3DNRCmDxUh0A0e4eG2cHXKW1inWzHXiV7c+3K+J0DO4SHY+
+    vr0phYQwOSztHr82ITu55tKmSwuY3AMfhGEvrtoRAUtv33caaHzqEzL0eDLBcGJz
+    WM1ahfWnRiBbB+YaLMPGyj4gfHiAEcIOTuM21oGcz6VpiQvuim55ucJzWy7dh8H6
+    ighTX73OqSnntiLUTENm2H40f61UwPJUssCJ3yq58SBxeIyZqIztdP0x22Z1ztwJ
+    tU993h0H3EivinuyjnQvDZpNNyRBsgr06qfLp+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909310;
-    bh=3nJ4z4z9UJLDq0U9q5iOSITdh7PqyHF254/P1MMmfts=; b=gOqEOA30JEf6
-    szm7NM7tqJ3cePMGJQfoHMKv5NmcLWBN05K/HX2DSy/3zWLpRuHbUsC3Vb0pvNf5
-    cj/6vNUxLlLRY20IZcqKm5VEudyHshDSCG2mafEVH4UH6/1Zkno0LbepVW9xrGlS
-    ST/X5aZqydyqhEpTXnlyI1UR6GggaAzf/r+ggoL61vQz5fx3N07veQ9PjkRn4sfj
-    uzaNz/f60uME+lUmuJsdr/cKNC5VeKTpS1/7vH9pPStnl4Rw9wlrcHi7xOlMIyIy
-    jc+8gqrElqcPANMS6A+tOLWUVJ/ciSjiHI+6soHcmuXrMkmDTcjex2MUEWOhUQPh
-    MehhaKVKkQ==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519909207;
+    bh=zjBJQZwCtp0hGrc4gv51u2xDzBZtNutKZ6u7sQOebOs=; b=w7d2qVODUkxw
+    Bg87CL/VM6RJ2h8pHI6P0QxVk9dEBh9U2H6FpXIJUaSoGkJEvs+ekRnjTWHqIS7I
+    yTspcg80jB0iPqQNdMT6idclcaOtM9CGpsnKj2n7QHmHE7BIXobVhdh8/ZoYvVT/
+    oEAI2S+N0oLREsXe9M36skE9+97L1B//pRGX87NcZ5X6++MFodeq+Iy7O3GKvSuv
+    71dr6ZuIPgn29GseEOlqmUirzz7OA6c4ntk2veqozLXQ5FfaGFPV2mgenvG+L62x
+    tpxyk/VOHmprW3sFwHIuMe5N62Uy+L5tRUDKRny59eyXT3q76AzNC8+diuwb944T
+    cLG6yJtGEg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Wg1LOuBR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=W122qInO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=XPnkpHWO;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdXQjrOq;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Wg1LOuBR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=W122qInO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=XPnkpHWO;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdXQjrOq;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030954AbeCANBP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 08:01:15 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39677 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030736AbeCANBN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 08:01:13 -0500
-X-Google-Smtp-Source: AG47ELteRlcoq2nHWCbsLDfNIWZ6fQvI59GiQAtGm3qahkKl5lc7gZG1GS91+JpaePx71mTfOgEFsQ==
+        id S1030919AbeCAM7z (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:59:55 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:32806 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030914AbeCAM7u (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:59:50 -0500
+X-Google-Smtp-Source: AG47ELuQBr+GTLMgXYzS3KxepkIju7CfTyeQxoJAISMICoR1Xe+uWIBD/LJx0VR9yrcl7m+prdM8Dw==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 44/45] arm64: Add ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support
-Date: Thu,  1 Mar 2018 20:54:21 +0800
-Message-Id: <1519908862-11425-45-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 33/45] arm/arm64: KVM: Add smccc accessors to PSCI code
+Date: Thu,  1 Mar 2018 20:54:10 +0800
+Message-Id: <1519908862-11425-34-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -78,162 +78,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit b092201e0020 upstream.
+commit 84684fecd7ea upstream.
 
-Add the detection and runtime code for ARM_SMCCC_ARCH_WORKAROUND_1.
-It is lovely. Really.
+Instead of open coding the accesses to the various registers,
+let's add explicit SMCCC accessors.
 
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/kernel/bpi.S        | 20 ++++++++++++
- arch/arm64/kernel/cpu_errata.c | 72 ++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 89 insertions(+), 3 deletions(-)
+ arch/arm/kvm/psci.c | 52 ++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 42 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
-index dec95bd..c72f261 100644
---- a/arch/arm64/kernel/bpi.S
-+++ b/arch/arm64/kernel/bpi.S
-@@ -17,6 +17,7 @@
-  */
+diff --git a/arch/arm/kvm/psci.c b/arch/arm/kvm/psci.c
+index 4adfa28..bc334d6 100644
+--- a/arch/arm/kvm/psci.c
++++ b/arch/arm/kvm/psci.c
+@@ -33,6 +33,38 @@
  
- #include <linux/linkage.h>
-+#include <linux/arm-smccc.h>
+ #define AFFINITY_MASK(level)	~((0x1UL << ((level) * MPIDR_LEVEL_BITS)) - 1)
  
- .macro ventry target
- 	.rept 31
-@@ -77,3 +78,22 @@ ENTRY(__psci_hyp_bp_inval_start)
- 	ldp	x0, x1, [sp, #(16 * 8)]
- 	add	sp, sp, #(8 * 18)
- ENTRY(__psci_hyp_bp_inval_end)
-+
-+.macro smccc_workaround_1 inst
-+	sub	sp, sp, #(8 * 4)
-+	stp	x2, x3, [sp, #(8 * 0)]
-+	stp	x0, x1, [sp, #(8 * 2)]
-+	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_1
-+	\inst	#0
-+	ldp	x2, x3, [sp, #(8 * 0)]
-+	ldp	x0, x1, [sp, #(8 * 2)]
-+	add	sp, sp, #(8 * 4)
-+.endm
-+
-+ENTRY(__smccc_workaround_1_smc_start)
-+	smccc_workaround_1	smc
-+ENTRY(__smccc_workaround_1_smc_end)
-+
-+ENTRY(__smccc_workaround_1_hvc_start)
-+	smccc_workaround_1	hvc
-+ENTRY(__smccc_workaround_1_hvc_end)
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index f8810bf..9632319 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -54,6 +54,10 @@ DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
- 
- #ifdef CONFIG_KVM
- extern char __psci_hyp_bp_inval_start[], __psci_hyp_bp_inval_end[];
-+extern char __smccc_workaround_1_smc_start[];
-+extern char __smccc_workaround_1_smc_end[];
-+extern char __smccc_workaround_1_hvc_start[];
-+extern char __smccc_workaround_1_hvc_end[];
- 
- static void __copy_hyp_vect_bpi(int slot, const char *hyp_vecs_start,
- 				const char *hyp_vecs_end)
-@@ -96,8 +100,12 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 	spin_unlock(&bp_lock);
- }
- #else
--#define __psci_hyp_bp_inval_start	NULL
--#define __psci_hyp_bp_inval_end		NULL
-+#define __psci_hyp_bp_inval_start		NULL
-+#define __psci_hyp_bp_inval_end			NULL
-+#define __smccc_workaround_1_smc_start		NULL
-+#define __smccc_workaround_1_smc_end		NULL
-+#define __smccc_workaround_1_hvc_start		NULL
-+#define __smccc_workaround_1_hvc_end		NULL
- 
- static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 				      const char *hyp_vecs_start,
-@@ -124,17 +132,75 @@ static void  install_bp_hardening_cb(const struct arm64_cpu_capabilities *entry,
- 	__install_bp_hardening_cb(fn, hyp_vecs_start, hyp_vecs_end);
- }
- 
-+#include <uapi/linux/psci.h>
-+#include <linux/arm-smccc.h>
- #include <linux/psci.h>
- 
-+static void call_smc_arch_workaround_1(void)
++static u32 smccc_get_function(struct kvm_vcpu *vcpu)
 +{
-+	arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
++	return vcpu_get_reg(vcpu, 0);
 +}
 +
-+static void call_hvc_arch_workaround_1(void)
++static unsigned long smccc_get_arg1(struct kvm_vcpu *vcpu)
 +{
-+	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
++	return vcpu_get_reg(vcpu, 1);
 +}
 +
-+static bool check_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
++static unsigned long smccc_get_arg2(struct kvm_vcpu *vcpu)
 +{
-+	bp_hardening_cb_t cb;
-+	void *smccc_start, *smccc_end;
-+	struct arm_smccc_res res;
-+
-+	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
-+		return false;
-+
-+	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
-+		return false;
-+
-+	switch (psci_ops.conduit) {
-+	case PSCI_CONDUIT_HVC:
-+		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
-+		if (res.a0)
-+			return false;
-+		cb = call_hvc_arch_workaround_1;
-+		smccc_start = __smccc_workaround_1_hvc_start;
-+		smccc_end = __smccc_workaround_1_hvc_end;
-+		break;
-+
-+	case PSCI_CONDUIT_SMC:
-+		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
-+		if (res.a0)
-+			return false;
-+		cb = call_smc_arch_workaround_1;
-+		smccc_start = __smccc_workaround_1_smc_start;
-+		smccc_end = __smccc_workaround_1_smc_end;
-+		break;
-+
-+	default:
-+		return false;
-+	}
-+
-+	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
-+
-+	return true;
++	return vcpu_get_reg(vcpu, 2);
 +}
 +
- static int enable_psci_bp_hardening(void *data)
++static unsigned long smccc_get_arg3(struct kvm_vcpu *vcpu)
++{
++	return vcpu_get_reg(vcpu, 3);
++}
++
++static void smccc_set_retval(struct kvm_vcpu *vcpu,
++			     unsigned long a0,
++			     unsigned long a1,
++			     unsigned long a2,
++			     unsigned long a3)
++{
++	vcpu_set_reg(vcpu, 0, a0);
++	vcpu_set_reg(vcpu, 1, a1);
++	vcpu_set_reg(vcpu, 2, a2);
++	vcpu_set_reg(vcpu, 3, a3);
++}
++
+ static unsigned long psci_affinity_mask(unsigned long affinity_level)
  {
- 	const struct arm64_cpu_capabilities *entry = data;
+ 	if (affinity_level <= 3)
+@@ -75,7 +107,7 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
+ 	unsigned long context_id;
+ 	phys_addr_t target_pc;
  
--	if (psci_ops.get_version)
-+	if (psci_ops.get_version) {
-+		if (check_smccc_arch_workaround_1(entry))
-+			return 0;
-+
- 		install_bp_hardening_cb(entry,
- 				       (bp_hardening_cb_t)psci_ops.get_version,
- 				       __psci_hyp_bp_inval_start,
- 				       __psci_hyp_bp_inval_end);
-+	}
+-	cpu_id = vcpu_get_reg(source_vcpu, 1) & MPIDR_HWID_BITMASK;
++	cpu_id = smccc_get_arg1(source_vcpu) & MPIDR_HWID_BITMASK;
+ 	if (vcpu_mode_is_32bit(source_vcpu))
+ 		cpu_id &= ~((u32) 0);
  
- 	return 0;
+@@ -94,8 +126,8 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
+ 			return PSCI_RET_INVALID_PARAMS;
+ 	}
+ 
+-	target_pc = vcpu_get_reg(source_vcpu, 2);
+-	context_id = vcpu_get_reg(source_vcpu, 3);
++	target_pc = smccc_get_arg2(source_vcpu);
++	context_id = smccc_get_arg3(source_vcpu);
+ 
+ 	kvm_reset_vcpu(vcpu);
+ 
+@@ -114,7 +146,7 @@ static unsigned long kvm_psci_vcpu_on(struct kvm_vcpu *source_vcpu)
+ 	 * NOTE: We always update r0 (or x0) because for PSCI v0.1
+ 	 * the general puspose registers are undefined upon CPU_ON.
+ 	 */
+-	vcpu_set_reg(vcpu, 0, context_id);
++	smccc_set_retval(vcpu, context_id, 0, 0, 0);
+ 	vcpu->arch.power_off = false;
+ 	smp_mb();		/* Make sure the above is visible */
+ 
+@@ -134,8 +166,8 @@ static unsigned long kvm_psci_vcpu_affinity_info(struct kvm_vcpu *vcpu)
+ 	struct kvm *kvm = vcpu->kvm;
+ 	struct kvm_vcpu *tmp;
+ 
+-	target_affinity = vcpu_get_reg(vcpu, 1);
+-	lowest_affinity_level = vcpu_get_reg(vcpu, 2);
++	target_affinity = smccc_get_arg1(vcpu);
++	lowest_affinity_level = smccc_get_arg2(vcpu);
+ 
+ 	/* Determine target affinity mask */
+ 	target_affinity_mask = psci_affinity_mask(lowest_affinity_level);
+@@ -209,7 +241,7 @@ int kvm_psci_version(struct kvm_vcpu *vcpu)
+ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+-	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
++	u32 psci_fn = smccc_get_function(vcpu);
+ 	unsigned long val;
+ 	int ret = 1;
+ 
+@@ -276,14 +308,14 @@ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ 		break;
+ 	}
+ 
+-	vcpu_set_reg(vcpu, 0, val);
++	smccc_set_retval(vcpu, val, 0, 0, 0);
+ 	return ret;
  }
+ 
+ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+-	unsigned long psci_fn = vcpu_get_reg(vcpu, 0) & ~((u32) 0);
++	u32 psci_fn = smccc_get_function(vcpu);
+ 	unsigned long val;
+ 
+ 	switch (psci_fn) {
+@@ -301,7 +333,7 @@ static int kvm_psci_0_1_call(struct kvm_vcpu *vcpu)
+ 		break;
+ 	}
+ 
+-	vcpu_set_reg(vcpu, 0, val);
++	smccc_set_retval(vcpu, val, 0, 0, 0);
+ 	return 1;
+ }
+ 
 -- 
 2.7.4
