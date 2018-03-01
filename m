@@ -1,185 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033441AbeCARm4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:42:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:42580 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033261AbeCARmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:42:55 -0500
-Date: Thu, 1 Mar 2018 17:42:42 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
-Message-ID: <20180301174231.GA26235@e110439-lin>
-References: <20180222170153.673-1-patrick.bellasi@arm.com>
- <20180222170153.673-2-patrick.bellasi@arm.com>
+        id S1033506AbeCARnv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:43:51 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:24226 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033270AbeCARnt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:43:49 -0500
+X-IronPort-AV: E=Sophos;i="5.47,408,1515427200";
+   d="scan'208";a="73249097"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>
+Subject: Re: [PATCH V2] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+Thread-Topic: [PATCH V2] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+Thread-Index: AQHTsHHVjOEcXDmyrUm+gBCv0tqSDKO6GPCAgACHmACAAQhFgA==
+Date: Thu, 1 Mar 2018 17:43:46 +0000
+Message-ID: <1519926225.2675.6.camel@wdc.com>
+References: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
+         <1519840355.2777.8.camel@wdc.com>
+         <624cedc6-9658-7b76-9c63-61c30fdfe6be@oracle.com>
+In-Reply-To: <624cedc6-9658-7b76-9c63-61c30fdfe6be@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.172]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR0401MB1536;7:3LC3C5bq1vjp7E99T72lLNqw9SwsdGkbRFuUVvW3i1cNEbhQI7ib7TF/RyqJzYikBde8VUVLhSGGHTLHaJM1AHKc42Rr1D1Tq4RljrB4exS6EPYlrcvJdrZZhpcoGU/jE1LXBehH8+KYMEA5tsvKbI9ZOHYmz2h0aWzKyPy6235kO0QF4Tgs5ncb2XLHilhkn+Q1CRWyxIQmXILFBDPq1CU1fT6GdG3RUpax7pJoLM6LTVARU4tbyo8ohPojDtcm;20:FXRKKEu4gGs6OCkZ7lBcQzYKOydzvqnSrsV+Aod5uQQ6Ovq7uRZ7nyVZbefdKhfjsqtJZbUqNXPvDPAV/BVUFovuPiXVorqXAr37VVZGPng0HzB7SD76Y6xDqgCeDQCkOl4Jsn8nODX7C57Duxa2mYrm5bHQhs4ACDzEH45JcNE=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4ee0a3a1-13cd-4048-9d1a-08d57f9bfc2b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:CY1PR0401MB1536;
+x-ms-traffictypediagnostic: CY1PR0401MB1536:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <CY1PR0401MB1536730E7B99762E3587579E98C60@CY1PR0401MB1536.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231220)(944501224)(93006095)(93001095)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:CY1PR0401MB1536;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0401MB1536;
+x-forefront-prvs: 05986C03E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(346002)(396003)(366004)(57704003)(189003)(199004)(377424004)(52314003)(2950100002)(2201001)(5660300001)(86362001)(575784001)(97736004)(103116003)(4326008)(14454004)(110136005)(54906003)(7736002)(305945005)(106356001)(105586002)(6512007)(316002)(99286004)(3660700001)(3280700002)(6436002)(66066001)(6486002)(6246003)(3846002)(81166006)(81156014)(2906002)(76176011)(68736007)(2900100001)(478600001)(2501003)(8936002)(77096007)(186003)(26005)(8676002)(53546011)(6506007)(59450400001)(229853002)(36756003)(6116002)(102836004)(25786009)(72206003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR0401MB1536;H:CY1PR0401MB1536.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: wRiEfv0yYliO6I3xIilY8XB3rIi2tJ6IxUGHrX+KalaWU+wFYZVh2xNfrZPhJVYhuvjr3tawz/CVt6kneluEfbbDjVUME+y561bp/Owhl3N9P1R9/Bd1xYmSJqbpd6iKGcGuQruDXxNRE3VWX4GqoKsxXazG5xYYS1lxlgmOvdE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F357BBC82A598C48B98BC46D935190DE@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180222170153.673-2-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ee0a3a1-13cd-4048-9d1a-08d57f9bfc2b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2018 17:43:46.9387
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0401MB1536
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w21Hi0hl022126
 
-This is missing the below #ifdef guards, adding here has a note for
-the next resping on list.
-
-On 22-Feb 17:01, Patrick Bellasi wrote:
-
-[...]
-
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e1febd252a84..c8526687f107 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5205,6 +5205,23 @@ static inline void hrtick_update(struct rq *rq)
->  }
->  #endif
+On Thu, 2018-03-01 at 09:57 +0800, jianchao.wang wrote:
+> On 03/01/2018 01:52 AM, Bart Van Assche wrote:
+> > On Wed, 2018-02-28 at 16:55 +0800, Jianchao Wang wrote:
+> > > diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> > > index a86df9c..6fa7b0c 100644
+> > > --- a/drivers/scsi/scsi_lib.c
+> > > +++ b/drivers/scsi/scsi_lib.c
+> > > @@ -191,7 +191,8 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+> > >  	 */
+> > >  	cmd->result = 0;
+> > >  	if (q->mq_ops) {
+> > > -		scsi_mq_requeue_cmd(cmd);
+> > > +		blk_mq_requeue_request(cmd->request, true);
+> > > +		put_device(&device->sdev_gendev);
+> > >  		return;
+> > >  	}
+> > >  	spin_lock_irqsave(q->queue_lock, flags);
+> > 
+> > Anyone who sees the put_device() call that follows the blk_mq_requeue_request()
+> > call will wonder why that call occurs there. So I think we need a comment above
+> > that call that explains where the matching get_device() call is.
 > 
-
-#ifdef CONFIG_SMP
-
-> +static inline unsigned long task_util(struct task_struct *p);
-> +static inline unsigned long _task_util_est(struct task_struct *p);
-> +
-> +static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-> +				    struct task_struct *p)
-> +{
-> +	unsigned int enqueued;
-> +
-> +	if (!sched_feat(UTIL_EST))
-> +		return;
-> +
-> +	/* Update root cfs_rq's estimated utilization */
-> +	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> +	enqueued += _task_util_est(p);
-> +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
-> +}
-> +
-
-#else
-static inline void util_est_enqueue(struct cfs_rq *cfs_rq
-                                    struct task_struct *p)
-{
-}
-#endif /* CONFIG_SMP */
-
->  /*
->   * The enqueue_task method is called before nr_running is
->   * increased. Here we update the fair scheduling stats and
-> @@ -5257,9 +5274,86 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  	if (!se)
->  		add_nr_running(rq, 1);
+> Yes, I will add this.
 > 
-> +	util_est_enqueue(&rq->cfs, p);
->  	hrtick_update(rq);
->  }
+> > For the legacy code path, there is a get_device() call in scsi_prep_fn() but no
+> > put_device() call in scsi_unprep_fn() - the matching put_device() calls occur in
+> > scsi_end_request() and after blk_requeue_request().
+> > 
+> > For scsi-mq however there is a get_device() call in scsi_mq_get_budget() and a
+> > put_device() call in scsi_mq_put_budget(). So why do we need the put_device()
+> > calls after blk_mq_requeue_request() and in the mq path for scsi_end_request()?
+> > 
 > 
-> +/*
-> + * Check if a (signed) value is within a specified (unsigned) margin,
-> + * based on the observation that:
-> + *     abs(x) < y := (unsigned)(x + y - 1) < (2 * y - 1)
-> + *
-> + * NOTE: this only works when value + maring < INT_MAX.
-> + */
-> +static inline bool within_margin(int value, int margin)
-> +{
-> +	return ((unsigned int)(value + margin - 1) < (2 * margin - 1));
-> +}
-> +
-> +static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
-> +				    struct task_struct *p,
-> +				    bool task_sleep)
-> +{
-
-#ifdef CONFIG_SMP
-
-> +	long last_ewma_diff;
-> +	struct util_est ue;
-> +
-> +	if (!sched_feat(UTIL_EST))
-> +		return;
-> +
-> +	/*
-> +	 * Update root cfs_rq's estimated utilization
-> +	 *
-> +	 * If *p is the last task then the root cfs_rq's estimated utilization
-> +	 * of a CPU is 0 by definition.
-> +	 */
-> +	ue.enqueued = 0;
-> +	if (cfs_rq->nr_running) {
-> +		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> +		ue.enqueued -= min_t(unsigned int, ue.enqueued,
-> +				     _task_util_est(p));
-> +	}
-> +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
-> +
-> +	/*
-> +	 * Skip update of task's estimated utilization when the task has not
-> +	 * yet completed an activation, e.g. being migrated.
-> +	 */
-> +	if (!task_sleep)
-> +		return;
-> +
-> +	/*
-> +	 * Skip update of task's estimated utilization when its EWMA is
-> +	 * already ~1% close to its last activation value.
-> +	 */
-> +	ue = READ_ONCE(p->se.avg.util_est);
-> +	ue.enqueued = task_util(p);
-> +	last_ewma_diff = ue.enqueued - ue.ewma;
-> +	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
-> +		return;
-> +
-> +	/*
-> +	 * Update Task's estimated utilization
-> +	 *
-> +	 * When *p completes an activation we can consolidate another sample
-> +	 * of the task size. This is done by storing the current PELT value
-> +	 * as ue.enqueued and by using this value to update the Exponential
-> +	 * Weighted Moving Average (EWMA):
-> +	 *
-> +	 *  ewma(t) = w *  task_util(p) + (1-w) * ewma(t-1)
-> +	 *          = w *  task_util(p) +         ewma(t-1)  - w * ewma(t-1)
-> +	 *          = w * (task_util(p) -         ewma(t-1)) +     ewma(t-1)
-> +	 *          = w * (      last_ewma_diff            ) +     ewma(t-1)
-> +	 *          = w * (last_ewma_diff  +  ewma(t-1) / w)
-> +	 *
-> +	 * Where 'w' is the weight of new samples, which is configured to be
-> +	 * 0.25, thus making w=1/4 ( >>= UTIL_EST_WEIGHT_SHIFT)
-> +	 */
-> +	ue.ewma <<= UTIL_EST_WEIGHT_SHIFT;
-> +	ue.ewma  += last_ewma_diff;
-> +	ue.ewma >>= UTIL_EST_WEIGHT_SHIFT;
-> +	WRITE_ONCE(p->se.avg.util_est, ue);
-
-#endif /* CONFIG_SMP */
-
-> +}
-> +
->  static void set_next_buddy(struct sched_entity *se);
+> From the source code, we know the scsi_mq_get_budget will be invoked every time
+> when we issue a request. But scsi_mq_put_budget is just in the fail path.
 > 
->  /*
-> @@ -5316,6 +5410,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  	if (!se)
->  		sub_nr_running(rq, 1);
+> scsi_queue_rq // if any error
+>   -> scsi_mq_put_budget
 > 
-> +	util_est_dequeue(&rq->cfs, p, task_sleep);
->  	hrtick_update(rq);
->  }
+> blk_mq_dispatch_rq_list // if no driver tags
+>   -> blk_mq_put_dispatch_budget
+>     -> scsi_mq_put_budget
+> blk_mq_do_dispatch_sched/blk_mq_do_dispatch_ctx // if no requests
+>   -> blk_mq_put_dispatch_budget
+>     -> scsi_mq_put_budget
 > 
+> So we have to add put_device after blk_mq_requeue_request() and in
+> scsi_end_request() to match the scsi_mq_get_budget.
 
--- 
-#include <best/regards.h>
+Hello Jianchao,
 
-Patrick Bellasi
+Yes, the block layer core guarantees that scsi_mq_get_budget() will be called
+before scsi_queue_rq(). I think the full picture is as follows:
+* Before scsi_queue_rq() calls .queuecommand(), get_device() is called for the
+  SCSI device and the device, target and host busy counters are incremented.
+* If the SCSI core decides to requeue a command, scsi_queue_insert() causes
+  __scsi_queue_insert() to call scsi_device_unbusy(). That last function
+  decreases the device, target and host busy counters but not put_device(sdev).
+  Hence the need for a separate put_device() call after requeuing.
+
+It's unfortunate that the SCSI core became so asymmetric. Anyway, since I am
+now convinced that this patch is correct, feel free to add:
+
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
