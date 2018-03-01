@@ -1,101 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030508AbeCAMtb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:49:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37490 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030347AbeCAMta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:49:30 -0500
-Date: Thu, 1 Mar 2018 12:49:26 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] Detect early free of a live mm
-Message-ID: <20180301124925.k6q2fxvrphu7m7m6@lakrids.cambridge.arm.com>
-References: <20180228121458.2230-1-mark.rutland@arm.com>
- <20180228121809.ztpcjb3256tj6tct@lakrids.cambridge.arm.com>
- <20180301093522.GC15057@dhcp22.suse.cz>
- <20180301112237.pjn5rmvkkpxcntl7@lakrids.cambridge.arm.com>
- <20180301124024.GE15057@dhcp22.suse.cz>
+        id S1030525AbeCAMuj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 07:50:39 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1030347AbeCAMug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 07:50:36 -0500
+Date: Thu, 1 Mar 2018 13:50:31 +0100
+From: Cornelia Huck <cohuck@redhat.com>
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: jwi@linux.vnet.ibm.com, ubraun@linux.vnet.ibm.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v3] net: iucv: Free memory obtained by kzalloc
+Message-ID: <20180301135031.149076bf.cohuck@redhat.com>
+In-Reply-To: <1519903917-11575-1-git-send-email-arvind.yadav.cs@gmail.com>
+References: <1519903917-11575-1-git-send-email-arvind.yadav.cs@gmail.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301124024.GE15057@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 01:40:24PM +0100, Michal Hocko wrote:
-> On Thu 01-03-18 11:22:37, Mark Rutland wrote:
-> > On Thu, Mar 01, 2018 at 10:35:22AM +0100, Michal Hocko wrote:
-> > > On Wed 28-02-18 12:18:10, Mark Rutland wrote:
-> > > > Ugh, I messed up Peter's email when sending this out. please
-> > > > s/infraded/infradead/ if replying to the first mail.
-> > > > 
-> > > > Sorry about that.
-> > > > 
-> > > > Mark.
-> > > > 
-> > > > On Wed, Feb 28, 2018 at 12:14:58PM +0000, Mark Rutland wrote:
-> > > > > KASAN splats indicate that in some cases we free a live mm, then
-> > > > > continue to access it, with potentially disastrous results. This is
-> > > > > likely due to a mismatched mmdrop() somewhere in the kernel, but so far
-> > > > > the culprit remains elusive.
-> > > > > 
-> > > > > Let's have __mmdrop() verify that the mm isn't live for the current
-> > > > > task, similar to the existing check for init_mm. This way, we can catch
-> > > > > this class of issue earlier, and without requiring KASAN.
-> > > 
-> > > Wouldn't it be better to check the mm_users count instead?
-> > > {VM_}BUG_ON(atomic_read(&mm->mm_users));
-> > 
-> > Perhaps, but that won't catch a mismatched mmput(), which could
-> > decrement mm_users (and mm_count) to zero early, before current->mm is
-> > cleared in exit_mm().
+On Thu,  1 Mar 2018 17:01:57 +0530
+Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+
+> Free memory by calling put_device(), if afiucv_iucv_init is not
+> successful.
 > 
-> true
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+> changes in v2:
+>              Calling put_device() before kfree().
+> changes in v3:
+>              No need to call kfree(). So removed kfree().
 > 
-> > Locally, I'm testing with:
-> > 
-> >   BUG_ON(mm == current->mm);
-> >   BUG_ON(mm == current->active_mm);
-> >   BUG_ON(refcount_read(&mm->mm_users) != 0);
-> >   BUG_ON(refcount_read(&mm->mm_count) != 0);
-> > 
-> > ... so as to also catch an early free from another thread.
+>  net/iucv/af_iucv.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> I would be careful about active_mm. At least {un}use_mm does some tricks
-> with it.
+> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+> index 1e8cc7b..9e2643a 100644
+> --- a/net/iucv/af_iucv.c
+> +++ b/net/iucv/af_iucv.c
+> @@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
+>  	af_iucv_dev->driver = &af_iucv_driver;
+>  	err = device_register(af_iucv_dev);
+>  	if (err)
+> -		goto out_driver;
+> +		goto out_iucv_dev;
+>  	return 0;
+>  
+> +out_iucv_dev:
+> +	put_device(af_iucv_dev);
+>  out_driver:
+>  	driver_unregister(&af_iucv_driver);
+>  out_iucv:
 
-If that can leave mm == current->active_mm during __mmdrop(), I think
-that would be a bug in its own right, since that would leave
-current->active_mm pointing at a freed mm.
-
-AFAICT, use_mm() does the usual mm_count balancing when flipping
-active_mm (i.e. we mmgrab() the new mm, make it active_mm, then mmdrop()
-the old active_mm), so even if the mmdrop() ends up freeing the old
-active_mm, that shouldn't trigger the BUG_ON(mm == current->active_mm).
-
-In unuse_mm() we don't poke active_mm at all, and leave that to the
-usual context_switch() + finish_task_switch() grab/drop.
-
-> > > Relying on current->mm resetting works currently but this is quite a
-> > > subtle dependency.
-> > 
-> > Do you mean because it only catches an early free in a thread using that
-> > mm, or is there another subtlety you had in mind?
-> 
-> No, I was more thinking about future changes when we stop clearing
-> tsk->mm at exit. This is rather unlikely to be honest because that
-> requires more changes.
-
-Ok.
-
-Thanks,
-Mark.
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
