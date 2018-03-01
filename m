@@ -1,128 +1,84 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2240270-1520399852-2-4148780510323997513
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES dasven, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520399851; b=MZQNOiVQSEhX9zNxwRHrvEQnJukh3k7gqz4L6sB30pe3s/n
-    Udo8zaIq9YxjYVgProMKjXeKZ6lqX0JmGl2WMhr/5Gd1kUglraXkMM0YXyFVaUqN
-    2a8cPxuYz2XhOKciec8iGepQspxo8oAS3/BOE5Zj8N7MKBHHU0aqTNGawywL3WSr
-    geyZ/HxKF9QLk5g18ZBmaYh/7BXnsRD5g5qI4ddMEQuTpxewfvX4Z5E/06/QlD6E
-    4VNIgXBTnQGMEshGngQd9Jt5lYIWKxQ2p2ua1hjHicvaJclaxATCF742Xn6a6JGK
-    X+uILZtUZ3DOMrJuX/jI3gq2HjKnNo0HE1Qw+JQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:date:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520399851; bh=z
-    8vuEYMcNhAGhM5KmnhUj36fQihxqvvfekoFnB6STmc=; b=X7RE//TH4qaQIkkwF
-    6jS7+PUubJeQHX0xZGQsOKscR4m2UBXe2VAAHBpK6NJzIm7SltxjKkkGQJQ106WL
-    xx4QPPbwwqqpyYmOUOCoOZLtmhSLeycwa6vixMV4AhQisUvXX5fruOOAQbdf98zN
-    tZhlr6EyLSriVtQRDH1gydPbLqCQSLL1K8Txn+KZOshrA2Vywzcm2jh6fem9Bbfk
-    /0kFRBhofRaJIr234kdruvuKpB6STBSBjOQu1vpPF5cEbPQAfOOX+Qz+l8fNw2/I
-    TKans6gZ9yYN22ZTRDuyqzVq47B3jEryfhzgiqPLtaRkUpOnFP3148AchxRYcfQf
-    Z6oQA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=rVnFAu49 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-85 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MhDiIi2y;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=rVnFAu49 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-85 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MhDiIi2y;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELs3SHEBcITzWXzntgwwOnFuy72+lChGWUpqXhN8jhzAA5m6ik7dgeZNJn5Lpun+WvOKHVO3FA==
-From: "<Hariprasath Elango>" <hariprasath.elango@gmail.com>
-X-Google-Original-From: "<Hariprasath Elango>" <hariprasath.elango>
-Date: Wed, 7 Mar 2018 10:47:10 +0530
-To: hariprasath.elango@gmail.com
-Subject: Re: [PATCH] staging: iio: adc: Remove reduntant __func__ from debug
- print
-Message-ID: <20180307051710.GA13147@hariprasath>
-References: <20180307051005.13038-1-hariprasath.elango@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180307051005.13038-1-hariprasath.elango@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de,
- Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
- Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AG47ELs05K269kKqfWlsZUKkNWnTHxjh4zZqg/TyPlM5uzVbGdqTQWior15Sre249ExRiTD7yWLN
+ARC-Seal: i=1; a=rsa-sha256; t=1519935572; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UXSSmswbI+1wvR1D1YgYQ1hmbUU/lijdwb0s+TgBx1a5dkwYmmanf83i1WPJXM1O8V
+         yWZ4kl9HIdwiKV65M12hiU3hSnhAvOrGwY8Z1v7E9JbuKdDuwMA0FuBN50VlWb+tftNU
+         0fKXW2WqUdDca4to0+nUwczyfUn2Jw2u20Rs3LEfD8hWMpJF2a6V059Ixyrn3tW6YSvw
+         mHXTa0kGykXsz9XiWBacgkucGJioaBPuRniNvm3WC9Di3LiZypVIptF4TbvJo/B2pTkF
+         QVau7mNZn3tLNIQU85NzIgGGdCO3bBc4BOrsfesqDSIUAXhVtJvBX4sjz5AjyJQdKm7d
+         7VKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=b4JI1WABLRIJ7ZgSaqjPOlsI+qm645GJFQHSA2D9F3U=;
+        b=ecv9FbAiMeKnjmz12OgYePLBfCddbg9DunYvPCM/hMvH9B7na1+UQtA3fPQCIaWBHZ
+         DqG3Ixxz9mWjB3q9+Y0qBpzHmlWKRcG/j/2fstG8/Lz7g5W6QUqf7S5iUWJjb/AktqSh
+         5HaVvwPUBlSQZYm63aMpJwOpJfsPO9vz2rvC+Tuv3fd0xtYd/aZPxpls8ju1LSJaVjZG
+         o2rYYCpJheB3AEuD980ce2bvs6RDi5ERceMbDEHZMRmgsfnshS7wDhuDZ6c39ZpyudZ/
+         jd5KFxXmLf+SCA3z0kV7b5uOvId1UvlOhikkPU5U+ZlrNKth5MuoLw8Ryq1DcWYqAZGp
+         oVsA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1161496AbeCAUTc (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 1 Mar 2018 15:19:32 -0500
+Received: from osg.samsung.com ([64.30.133.232]:57047 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161487AbeCAUTb (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 1 Mar 2018 15:19:31 -0500
+From: Shuah Khan <shuahkh@osg.samsung.com>
+To: shuah@kernel.org, dvhart@infradead.org, tbird20d@gmail.com
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH v2] selftests: futex Makefile add top level TAP header echo to RUN_TESTS
+Date: Thu,  1 Mar 2018 13:19:07 -0700
+Message-Id: <20180301201907.17573-1-shuahkh@osg.samsung.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593767962911316222?=
+X-GMAIL-MSGID: =?utf-8?q?1593767962911316222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 07, 2018 at 10:40:05AM +0530, hariprasath.elango@gmail.com wrote:
-> From: HariPrasath Elango <hariprasath.elango@gmail.com>
-> 
-> dev_dbg includes the function name & line number by default when dynamic
-> debugging is enabled. Hence__func__ is reduntant here and removed.
-> 
-> Signed-off-by: HariPrasath Elango <hariprasath.elango@gmail.com>
-> ---
->  drivers/staging/iio/meter/ade7758_trigger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/iio/meter/ade7758_trigger.c b/drivers/staging/iio/meter/ade7758_trigger.c
-> index 1f0d1a0..da489ae 100644
-> --- a/drivers/staging/iio/meter/ade7758_trigger.c
-> +++ b/drivers/staging/iio/meter/ade7758_trigger.c
-> @@ -34,7 +34,7 @@ static int ade7758_data_rdy_trigger_set_state(struct iio_trigger *trig,
->  {
->  	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
->  
-> -	dev_dbg(&indio_dev->dev, "%s (%d)\n", __func__, state);
-> +	dev_dbg(&indio_dev->dev, "(%d)\n", state);
->  	return ade7758_set_irq(&indio_dev->dev, state);
->  }
->  
-> -- 
-> 2.10.0.GIT
-> 
+Add top level TAP header echo, testname and separator line to make
+the output consistent with the common run_tests target.
 
-Please ignore this patch as the subject line is wrong. It should be
-'meter' and not 'adc.
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+This change prevents nested TAP13 headers output from individual tests.
+Nested TAP13 headers could cause problems for some parsers.
+
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+---
+Changes since v1:
+- Add export KSFT_TAP_LEVEL to fix nested TAP header problem
+  for "make -C" usecase
+- Update commit log with details on nested TAP headers.
+
+ tools/testing/selftests/futex/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selftests/futex/Makefile
+index cea4adcd42b8..3006febb59fe 100644
+--- a/tools/testing/selftests/futex/Makefile
++++ b/tools/testing/selftests/futex/Makefile
+@@ -18,6 +18,10 @@ all:
+ 	done
+ 
+ override define RUN_TESTS
++	@export KSFT_TAP_LEVEL=`echo 1`;
++	@echo "TAP version 13";
++	@echo "selftests: futex";
++	@echo "========================================";
+ 	@cd $(OUTPUT); ./run.sh
+ endef
+ 
+-- 
+2.14.1
+
