@@ -1,147 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966628AbeCAIvq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:51:46 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:39054 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965940AbeCAIvo (ORCPT
+        id S966639AbeCAIwE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:52:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42787 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965940AbeCAIwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:51:44 -0500
-X-Google-Smtp-Source: AG47ELuBk8vGg8rGtnoY88n1rCQWwlZba9H00SyxvcJiM5yrj5zTSe1vKPmpVrW82yofOjuc1Nisoy6sOX/ClwUJnwc=
+        Thu, 1 Mar 2018 03:52:00 -0500
+Date: Thu, 1 Mar 2018 00:51:47 -0800
+From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-945fd17ab6bab8a4d05da6c3170519fbcfe62ddb@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        william.grant@canonical.com, linux-kernel@vger.kernel.org,
+        terraluna977@gmail.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        william.grant@canonical.com, terraluna977@gmail.com, mingo@kernel.org
+In-Reply-To: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/cpu_entry_area: Sync cpu_entry_area to
+ initial_page_table
+Git-Commit-ID: 945fd17ab6bab8a4d05da6c3170519fbcfe62ddb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180301013722.GA6763@tigerII.localdomain>
-References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian> <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
- <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz> <20180301013722.GA6763@tigerII.localdomain>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 1 Mar 2018 09:51:22 +0100
-Message-ID: <CACT4Y+ZUDu588gwgCbqru5D1RD5C+s3+E5ydhP7h9RoCjwQWJw@mail.gmail.com>
-Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>, kernel test robot <shun.hao@intel.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 2:37 AM, Sergey Senozhatsky
-<sergey.senozhatsky@gmail.com> wrote:
-> Hello,
->
-> Cc-ing Dmitry Vyukov and kasan-dev on this.
->
-> On (02/28/18 16:59), Petr Mladek wrote:
-> [..]
->> > >
->> > > [    0.003333] BUG: KASAN: use-after-scope in console_unlock+0x185/0x960
->> > > [    0.003333] BUG: KASAN: use-after-scope in console_unlock+0x185/0x960
->> >
->> > Is there any change to get disassembly of console_unlock() from the
->> > problematic build?
->> >
->> > I have troubles to reproduce this myself. Also I was not able to find any
->> > bug just by looking into the code yet. The disassembly might help
->> > a lot here.
->> >
->> >
->> > Interesting symptoms (for myself and other debuggers):
->> >
->> > The lines are duplicated. Therefore it happened when real
->> > console was registered and before the early console was unregistered.
->> > See also the full dmesg for these actions. The related printk messages
->> > are right after the KASAN report.
->> >
->> > I wonder if it is unsafe to pass the console_lock via
->> > console_trylock_spinnning() from console_unlock() called
->> > in register_console(). I do not see any problem but I might
->> > be blind.
->
-> I'm not sure it we actually have concurrent printks at that state yet,
-> might be too early for any printk offloading. The backtrace still
-> makes no sense to me at all, tho. We had this report twice, probably,
-> already (even before the offloading patchset, if I'm not mistaken).
->
-> https://marc.info/?l=linux-kernel&m=151200883525299
->
-> [..]
->> I feel lost a bit.
->
-> Yeah... can't understand what's going on there.
->
-> The last time kasan didn't like this part
->
-> [    0.003333]  ? console_unlock+0x605/0xcc0:
->                               atomic_read at arch/x86/include/asm/atomic.h:27
->                                (inlined by) static_key_count at include/linux/jump_label.h:191
->                                (inlined by) static_key_false at include/linux/jump_label.h:201
->                                (inlined by) trace_console_rcuidle at include/trace/events/printk.h:10
->                                (inlined by) call_console_drivers at kernel/printk/printk.c:1556
->                                (inlined by) console_unlock at kernel/printk/printk.c:2233
->
-> complaining that there was a write of size 4... at atomic_read().
+Commit-ID:  945fd17ab6bab8a4d05da6c3170519fbcfe62ddb
+Gitweb:     https://git.kernel.org/tip/945fd17ab6bab8a4d05da6c3170519fbcfe62ddb
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 28 Feb 2018 21:14:26 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Mar 2018 09:48:27 +0100
 
-Hi Sergey,
+x86/cpu_entry_area: Sync cpu_entry_area to initial_page_table
 
-Where is that report?
-I doubt that KASAN has instrumented a read as a write (at least there
-are no such known cases), so perhaps it's pointing to some other
-memory access.
+The separation of the cpu_entry_area from the fixmap missed the fact that
+on 32bit non-PAE kernels the cpu_entry_area mapping might not be covered in
+initial_page_table by the previous synchronizations.
 
+This results in suspend/resume failures because 32bit utilizes initial page
+table for resume. The absence of the cpu_entry_area mapping results in a
+triple fault, aka. insta reboot.
 
-> Now it's reporting that the write of size 1 was out of scope.
->
->> I am really curious what code is proceed on the line
->> console_unlock+0x185/0x960.
->
-> Agreed.
->
-> On my system 0x185/0x960 is somewhere around
->
->
->      191e:       89 d7                   mov    %edx,%edi
->      1920:       e8 06 e7 ff ff          callq  2b <log_next>
->      1925:       48 89 2d 00 00 00 00    mov    %rbp,0x0(%rip)        # 192c <console_unlock+0x17f>
->      192c:       89 05 00 00 00 00       mov    %eax,0x0(%rip)        # 1932 <console_unlock+0x185>
->>>   1932:       eb a9                   jmp    18dd <console_unlock+0x130>
->      1934:       8b 35 00 00 00 00       mov    0x0(%rip),%esi        # 193a <console_unlock+0x18d>
->      193a:       b9 00 04 00 00          mov    $0x400,%ecx
->      193f:       4c 89 ef                mov    %r13,%rdi
->      1942:       31 ed                   xor    %ebp,%ebp
+With PAE enabled this works by chance because the PGD entry which covers
+the fixmap and other parts incindentally provides the cpu_entry_area
+mapping as well.
 
-For a KASAN report IP must point to one of __asan_[report_]load/store function.
+Synchronize the initial page table after setting up the cpu entry
+area. Instead of adding yet another copy of the same code, move it to a
+function and invoke it from the various places.
 
-> That jmp 18dd after log_next() is a `goto skip' in
-> suppress_message_printing() branch
->
-> skip:
->                 if (console_seq == log_next_seq)
->                         break;
->
->                 msg = log_from_idx(console_idx);
->                 if (suppress_message_printing(msg->level)) {
->                         /*
->                          * Skip record we have buffered and already printed
->                          * directly to the console when we received it, and
->                          * record that has level above the console loglevel.
->                          */
->                         console_idx = log_next(console_idx);
->                         console_seq++;
->>>                      goto skip;
->                 }
->
->
-> As far as I can tell.
->
->         -ss
+It needs to be investigated if the existing calls in setup_arch() and
+setup_per_cpu_areas() can be replaced by the later invocation from
+setup_cpu_entry_areas(), but that's beyond the scope of this fix.
+
+Fixes: 92a0f81d8957 ("x86/cpu_entry_area: Move it out of the fixmap")
+Reported-by: Woody Suwalski <terraluna977@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Woody Suwalski <terraluna977@gmail.com>
+Cc: William Grant <william.grant@canonical.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1802282137290.1392@nanos.tec.linutronix.de
+
+---
+ arch/x86/include/asm/pgtable_32.h |  1 +
+ arch/x86/include/asm/pgtable_64.h |  1 +
+ arch/x86/kernel/setup.c           | 17 +++++------------
+ arch/x86/kernel/setup_percpu.c    | 17 ++++-------------
+ arch/x86/mm/cpu_entry_area.c      |  6 ++++++
+ arch/x86/mm/init_32.c             | 15 +++++++++++++++
+ 6 files changed, 32 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
+index e55466760ff8..b3ec519e3982 100644
+--- a/arch/x86/include/asm/pgtable_32.h
++++ b/arch/x86/include/asm/pgtable_32.h
+@@ -32,6 +32,7 @@ extern pmd_t initial_pg_pmd[];
+ static inline void pgtable_cache_init(void) { }
+ static inline void check_pgt_cache(void) { }
+ void paging_init(void);
++void sync_initial_page_table(void);
+ 
+ /*
+  * Define this if things work differently on an i386 and an i486:
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 81462e9a34f6..1149d2112b2e 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -28,6 +28,7 @@ extern pgd_t init_top_pgt[];
+ #define swapper_pg_dir init_top_pgt
+ 
+ extern void paging_init(void);
++static inline void sync_initial_page_table(void) { }
+ 
+ #define pte_ERROR(e)					\
+ 	pr_err("%s:%d: bad pte %p(%016lx)\n",		\
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 1ae67e982af7..4c616be28506 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1204,20 +1204,13 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	kasan_init();
+ 
+-#ifdef CONFIG_X86_32
+-	/* sync back kernel address range */
+-	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			KERNEL_PGD_PTRS);
+-
+ 	/*
+-	 * sync back low identity map too.  It is used for example
+-	 * in the 32-bit EFI stub.
++	 * Sync back kernel address range.
++	 *
++	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
++	 * this call?
+ 	 */
+-	clone_pgd_range(initial_page_table,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
+-#endif
++	sync_initial_page_table();
+ 
+ 	tboot_probe();
+ 
+diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
+index 497aa766fab3..ea554f812ee1 100644
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -287,24 +287,15 @@ void __init setup_per_cpu_areas(void)
+ 	/* Setup cpu initialized, callin, callout masks */
+ 	setup_cpu_local_masks();
+ 
+-#ifdef CONFIG_X86_32
+ 	/*
+ 	 * Sync back kernel address range again.  We already did this in
+ 	 * setup_arch(), but percpu data also needs to be available in
+ 	 * the smpboot asm.  We can't reliably pick up percpu mappings
+ 	 * using vmalloc_fault(), because exception dispatch needs
+ 	 * percpu data.
++	 *
++	 * FIXME: Can the later sync in setup_cpu_entry_areas() replace
++	 * this call?
+ 	 */
+-	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			KERNEL_PGD_PTRS);
+-
+-	/*
+-	 * sync back low identity map too.  It is used for example
+-	 * in the 32-bit EFI stub.
+-	 */
+-	clone_pgd_range(initial_page_table,
+-			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
+-			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
+-#endif
++	sync_initial_page_table();
+ }
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index b9283cc27622..476d810639a8 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -163,4 +163,10 @@ void __init setup_cpu_entry_areas(void)
+ 
+ 	for_each_possible_cpu(cpu)
+ 		setup_cpu_entry_area(cpu);
++
++	/*
++	 * This is the last essential update to swapper_pgdir which needs
++	 * to be synchronized to initial_page_table on 32bit.
++	 */
++	sync_initial_page_table();
+ }
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 79cb066f40c0..396e1f0151ac 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -453,6 +453,21 @@ static inline void permanent_kmaps_init(pgd_t *pgd_base)
+ }
+ #endif /* CONFIG_HIGHMEM */
+ 
++void __init sync_initial_page_table(void)
++{
++	clone_pgd_range(initial_page_table + KERNEL_PGD_BOUNDARY,
++			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
++			KERNEL_PGD_PTRS);
++
++	/*
++	 * sync back low identity map too.  It is used for example
++	 * in the 32-bit EFI stub.
++	 */
++	clone_pgd_range(initial_page_table,
++			swapper_pg_dir     + KERNEL_PGD_BOUNDARY,
++			min(KERNEL_PGD_PTRS, KERNEL_PGD_BOUNDARY));
++}
++
+ void __init native_pagetable_init(void)
+ {
+ 	unsigned long pfn, va;
