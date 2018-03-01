@@ -1,87 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935729AbeCACIO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 21:08:14 -0500
-Received: from exmail.andestech.com ([59.124.169.137]:65513 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932134AbeCACIN (ORCPT
+        id S935732AbeCACOq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:14:46 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:57314 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935682AbeCACOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 21:08:13 -0500
-Date: Thu, 1 Mar 2018 10:05:08 +0800
-From: Alan Kao <alankao@andestech.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        "sw-dev@groups.riscv.org" <sw-dev@groups.riscv.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?="
-        <greentime@andestech.com>,
-        "Zong Zong-Xian =?utf-8?B?TGko5p2O5a6X5oayKQ==?="
-        <zong@andestech.com>
-Subject: Re: ftrace: Proposal for an Alternative RecordMcount framework
-Message-ID: <20180301020507.GA24550@andestech.com>
-References: <20180227100425.GB20904@andestech.com>
- <20180227161252.25162d81@vmware.local.home>
+        Wed, 28 Feb 2018 21:14:45 -0500
+Subject: Re: [PATCH v2] pvcalls-front: 64-bit align flags
+To: Stefano Stabellini <sstabellini@kernel.org>, jgross@suse.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.10.1802281803430.4239@sstabellini-ThinkPad-X260>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <f7c47593-8f1d-3607-a50f-9659e65e4319@oracle.com>
+Date: Wed, 28 Feb 2018 21:14:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180227161252.25162d81@vmware.local.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w2125Nao048859
+In-Reply-To: <alpine.DEB.2.10.1802281803430.4239@sstabellini-ThinkPad-X260>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8818 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=697
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803010027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 05:12:52AM +0800, Steven Rostedt wrote:
-> On Tue, 27 Feb 2018 18:04:26 +0800
-> Alan Kao <alankao@andestech.com> wrote:
->  
-> > 1. During the final linking stages, do "objdump vmlinux.o | grep ..." [2]
+
+
+On 02/28/2018 09:05 PM, Stefano Stabellini wrote:
+> We are using test_and_* operations on the status and flag fields of
+> struct sock_mapping. However, these functions require the operand to be
+> 64-bit aligned on arm64. Currently, only status is 64-bit aligned.
 > 
-> Note, doing it at that stage takes the longest time. It makes small
-> changes much longer to compile. That said...
->
-
-What if we can have some option to *disable* all the recordmcount.pl lauches
-after every .o?  There will be only an oneshot grep for a near-complete
-vmlinux binary.
-
-> > 2. Form the output as an ELF objecj
-> > 3. Link the object to __mcount_loc_start symbol
-> > 4. Done
-> > 
-> > With the similar reason as the patch [3], we should mark _mcount to be
-> > a weak symbol to prevent it from being relaxed later.
-> > 
-> > We would like to know your opinion and comments on this.
-> > Thanks!
+> Make status and flags explicitly 64-bit aligned.
 > 
-> What about just having your arch use recordmcount.c instead? It doesn't
-> do any grepping. It is an elf reader and modifier and modifies the .o
-> file directly.
+> Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
 
-Thanks for the hint.  But after a quick scan, it seems that recordmcount.c
-processes .o files in a per-file basis, which means that we will still
-suffer from the linker relaxation problem.
 
-> 
-> Note, I will be rewriting that code in the near future too, to
-> consolidate it with objtool.
-> 
-> -- Steve
-
-Please allow me to state the problem more clearly here.  I hope this helps.
-
-1. locations of mcount are recorded in a per-file basis.
-2. to optimize the binary, the linker turns on some aggressive
-   options, including relaxation.
-3. the optimizations changes the original offset.
-4. already recorded mcount call-sites no longer point to their
-   real positions.
-5. still a linked vmlinux is made.
-6. dynamic ftrace breaks the real logic in the kernel space,
-   panics happen.
-
-Thanks,
-Alan
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
