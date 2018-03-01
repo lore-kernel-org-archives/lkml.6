@@ -1,54 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967805AbeCALgg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:36:36 -0500
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:42693 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967540AbeCALgb (ORCPT
+        id S967810AbeCALiL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:38:11 -0500
+Received: from regular1.263xmail.com ([211.150.99.137]:56270 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967540AbeCALiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:36:31 -0500
-X-Google-Smtp-Source: AG47ELu2UHLCDNPIBgYP3qJRTOS0xFLd3MmmSj6tt98MP5P+to0YZqLx3w7vOX0/a6SAgVFoN7TSYp6sKls9hKgbfbU=
-MIME-Version: 1.0
-In-Reply-To: <20180228193142-mutt-send-email-mst@kernel.org>
-References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
- <20180228150615.17317-7-marcandre.lureau@redhat.com> <20180228193142-mutt-send-email-mst@kernel.org>
-From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
-Date: Thu, 1 Mar 2018 12:36:29 +0100
-Message-ID: <CAMxuvaxAuB3mtq7--KA+cCrGZ-kJj9+9yrdiToYo9EoH-=AYHw@mail.gmail.com>
-Subject: Re: [PATCH v16 06/11] fw_cfg: handle fw_cfg_read_blob() error
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Baoquan He <bhe@redhat.com>,
-        Sergio Lopez Pascual <slp@redhat.com>,
-        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Mar 2018 06:38:10 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <83643f4c4a3656a525d0cd1bf430e161>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] mfd: syscon: Set name of regmap_config
+Date: Thu,  1 Mar 2018 19:37:59 +0800
+Message-Id: <20180301113759.9029-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+We are now allowing to register debugfs for syscon regmap, and not
+having a valid name will end up using "dummy" to create debugfs dir.
 
-On Wed, Feb 28, 2018 at 6:32 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> @@ -557,7 +566,10 @@ static int fw_cfg_sysfs_probe(struct platform_device *pdev)
->>               goto err_probe;
->>
->>       /* get revision number, add matching top-level attribute */
->> -     fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
->> +     err = fw_cfg_read_blob(FW_CFG_ID, &rev, 0, sizeof(rev));
->> +     if (err < 0)
->> +             goto err_probe;
->> +
->>       fw_cfg_rev = le32_to_cpu(rev);
->>       err = sysfs_create_file(fw_cfg_top_ko, &fw_cfg_rev_attr.attr);
->>       if (err)
->
-> So on this one, maybe we should just drop this attribute.
-> Does anyone use it?
-> Removing it will speed up boot slightly.
+Fixes: 9b947a13e7f6 ("regmap: use debugfs even when no device")
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-We can't skip reading FW_CFG_ID (rev) as we need it to check DMA
-support. I don't mind if we remove the sysfs entry, but I doubt it
-makes a difference in boot time.
+ drivers/mfd/syscon.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->> --
->> 2.16.1.73.g5832b7e9f2
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index 7eaa40bc703f..250d22f40c84 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -109,6 +109,7 @@ static struct syscon *of_syscon_register(struct device_node *np)
+ 	syscon_config.reg_stride = reg_io_width;
+ 	syscon_config.val_bits = reg_io_width * 8;
+ 	syscon_config.max_register = resource_size(&res) - reg_io_width;
++	syscon_config.name = of_node_full_name(np);
+ 
+ 	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+ 	if (IS_ERR(regmap)) {
+-- 
+2.11.0
