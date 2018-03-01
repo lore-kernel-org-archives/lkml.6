@@ -1,80 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966741AbeCAKUZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:20:25 -0500
-Received: from regular1.263xmail.com ([211.150.99.131]:57004 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935484AbeCAKUS (ORCPT
+        id S967235AbeCAKYS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:24:18 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:58538 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966014AbeCAKYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:20:18 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <ac0d455af4a40b56d2677e8cc4213c60>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org, iommu@lists.linux-foundation.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH v6 09/14] dt-bindings: iommu/rockchip: Add clock property
-Date: Thu,  1 Mar 2018 18:18:32 +0800
-Message-Id: <20180301101837.27969-10-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
-References: <20180301101837.27969-1-jeffy.chen@rock-chips.com>
+        Thu, 1 Mar 2018 05:24:14 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w21AO3J9019311
+X-Nifty-SrcIP: [209.85.217.169]
+X-Google-Smtp-Source: AG47ELumyNgf9yMfkMKk7xRw8NBNX8Mqe4OlMI3BGEyfItTeGtkUc1n3in6nBm6ZUo7cy5xxVZIdLN072OOjREJRIKA=
+MIME-Version: 1.0
+In-Reply-To: <20180301100640.7hi4lbx6a4gzhw2k@ltop.local>
+References: <20180227194828.GA29918@bombadil.infradead.org>
+ <5a85a7cf-c59c-f338-2087-c9de799adbe8@infradead.org> <CA+55aFxNksRJEwsYFGY3_Zy+wqvQVu3h4Bq3Go3KZpbxE8F6fQ@mail.gmail.com>
+ <20180227223611.vglxasfco524cdy7@ltop.local> <CAK7LNASjV8jH+BMd0_4v9GeXiizyY9+hAQiBs+sZnz4S3eGB5Q@mail.gmail.com>
+ <20180301100640.7hi4lbx6a4gzhw2k@ltop.local>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 1 Mar 2018 19:23:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYevi5UvTPqL9+00D5bthPwu_dPwaCz6M8DghjTy9=mg@mail.gmail.com>
+Message-ID: <CAK7LNASYevi5UvTPqL9+00D5bthPwu_dPwaCz6M8DghjTy9=mg@mail.gmail.com>
+Subject: Re: [PATCH] sparse doesn't support indirect_branch attribute
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock property, since we are going to control clocks in rockchip
-iommu driver.
+2018-03-01 19:06 GMT+09:00 Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
+> On Wed, Feb 28, 2018 at 10:30:58AM +0900, Masahiro Yamada wrote:
+>> 2018-02-28 7:36 GMT+09:00 Luc Van Oostenryck <luc.vanoostenryck@gmail.com>:
+>> >
+>> > To compensate this, I sent a patch  to use '-Wno-unknown-attribute' for kernel
+>> > builds. Masahiro Yamada has already taken it to the linux-kbuild tree.
+>> > I'm not sure if it's planned for the next -rc or for 4.17, though.
+>>
+>> I am planning to send it in the next MW (i.e. v4.17-rc1)
+>>
+>> If you want me to send this earlier as fixes PR,
+>> please let me know.
+>>
+>
+> Hi,
+>
+> Thanks for having taken this patch promptly.
+> Given that the warnings is issued more than 148000 and thus tend
+> to drown the other, more useful, warnings in the noise, I think
+> it would be a good thing to have this patch already in 4.16.
+> I should have put this clearly in the patch description.
+>
+> Best regards,
+> -- Luc Van Oostenryck
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+OK.  I will send a PR for v4.16-rc4 this weekend.
 
- Documentation/devicetree/bindings/iommu/rockchip,iommu.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iommu/rockchip,iommu.txt b/Documentation/devicetree/bindings/iommu/rockchip,iommu.txt
-index 2098f7732264..6ecefea1c6f9 100644
---- a/Documentation/devicetree/bindings/iommu/rockchip,iommu.txt
-+++ b/Documentation/devicetree/bindings/iommu/rockchip,iommu.txt
-@@ -14,6 +14,11 @@ Required properties:
-                     "single-master" device, and needs no additional information
-                     to associate with its master device.  See:
-                     Documentation/devicetree/bindings/iommu/iommu.txt
-+- clocks          : A list of clocks required for the IOMMU to be accessible by
-+                    the host CPU.
-+- clock-names     : Should contain the following:
-+	"iface" - Main peripheral bus clock (PCLK/HCL) (required)
-+	"aclk"  - AXI bus clock (required)
- 
- Optional properties:
- - rockchip,disable-mmu-reset : Don't use the mmu reset operation.
-@@ -27,5 +32,7 @@ Example:
- 		reg = <0xff940300 0x100>;
- 		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "vopl_mmu";
-+		clocks = <&cru ACLK_VOP1>, <&cru HCLK_VOP1>;
-+		clock-names = "aclk", "iface";
- 		#iommu-cells = <0>;
- 	};
+
+
+
 -- 
-2.11.0
+Best Regards
+Masahiro Yamada
