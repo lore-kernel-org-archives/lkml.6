@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELv4zM5dto0hIsqluSU9fz3+5NNsDv0JT5y+H2uhaHI36S83apCe3EMhv4UI0+cjhrn63wvL
-ARC-Seal: i=1; a=rsa-sha256; t=1519881585; cv=none;
+X-Google-Smtp-Source: AG47ELv9a7eeXLJDoml2R0DGYgaALJaXvISTuCrxP2rrBeehVHJFAQdYwSauiyr0kj7yeQZ3EgVa
+ARC-Seal: i=1; a=rsa-sha256; t=1519881580; cv=none;
         d=google.com; s=arc-20160816;
-        b=z/I7WcFcf3JgAvrdHaeH1LF0pCLihzfkAw+j4/M+RvvbM70/ZLTYC89ZoOd1tzEE2T
-         0aAU6pqqDddOqRW7CUvEIAaPQeujRqSpinOupmTpT/uapVMmi7z0GzCfGOfGwqM78YPL
-         k5/lfX80pywMGcdDK6nbeLdXqjm9B97Fi4e9xn524a4NK7WYWHQd5qw754+RCuFtfRNS
-         QTBm/pFkyvlS//L4COUXk3CTUrYMQfd+1u8+wfhpkjixvFsjVX4ONQPSblaDPCgBBSui
-         wmc6KAEaYoFzi+NX+I3NFP/GxTs5tdZ85YS5kdnEfL5o9fyT+rDyMgascOWuBRNRho87
-         5PLg==
+        b=vBim9uU2tRybNIkZfrMsEKJq0UJThWhQHlcq3sHEX8hYuiOG0gCAVHSYohQfAPDMqP
+         e+n9lPhsHfmbhK8AmblSMjhjYomE5ZDlMHOwFNZ86RUsnNQDfwDDTxgph7T6Y//YgNXZ
+         T4zPs8yBs+DaButwN9ZWPKaYKNUHhMXXvmhRfQ8p3W6gymnaL/Ai/XBWTwGmnpAhBvsy
+         1WHNqm8J0aph033spyU8Ikc4/GY/yT+sLwlBp0IdRVAvUdA6dRsOCCl9x+64Wf5U34RV
+         sVFO+o2M/43RdpAAPmi9PwI/5jYvaCs1jG9L8MVlYAVxlHPAscCNEp/rnNDOaPCQnAZc
+         O2LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=1GtaAxVs7MgHRKdoHcFvWR4m94yCeISZpPKMutqHSm4=;
-        b=Isz+Bko7tkg1oEJ5N63R12Lqqwqe3uf8NGeJ5Ue2NbCdsvaPTWK31uP1iqlFPmkWLR
-         E+yku2c5vMX9BGeS3wEL4FxwGwumbWorFvyZzQzNY2PdkF37TaOhhlO1l9wJYgS6ZrGG
-         sS69ehFQGbPayB35p7xsJLn0tfub/wLpmtl2/TX8axGcKeyN3qYGlho7AXU1hDajutOi
-         Hv+NaqTGS5iJKqis8vxAkhUAIFRx8qAcKBbOWEcHwH9bWprUv5pMsiHKLk0pJ0lY2UCZ
-         b5jcImzUj65w2/SHl06c5UXI8qQgxOcOYaD3gXW6eQY2wUi9FVU3gD/A4GsSc1JaAzFS
-         Kb2Q==
+        bh=jPCi4u/ucGx5Jr0VCzrqVl6hEfg1NwHFtSqQ0NMnI2M=;
+        b=cSe3IQIISmU+i48ulFrfEwrlKdunD12J7tqPoMS7uk1fwNaWRAMBymIeaiQdmIsPha
+         encvrwf7M+byq6L1ur5Abeau3OCThcfdPleDnLqVP2ijj/9A9o50CuG4xVLov7QRujg9
+         u/pFKCZj/wKatRaJv/1g0h0lz2Eby1mvNvXHP2MM37EScOylxsLq/8FaXaXtgY5raftd
+         Qh7KJqnj4bS9Wvy/ZdkTNg80YifJwjiFQWdthP0Pv1C8Uuhyqc01Ltsp1AOPWpXdHFB4
+         xHyi32H1qPn6UU+RnOPUDseul4oXLlDGnfksyntQANr4cDbX5g6emQx7V4Evd6d5gxfP
+         ughw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,212 +29,79 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 3/5] staging: ks7010: Factor out repeated code into function 'ks_wlan_cap()'.
-Date: Wed, 28 Feb 2018 21:19:09 -0800
-Message-Id: <20180301051911.1314-3-quytelda@tamalin.org>
+Subject: [PATCH 2/5] staging: ks7010: Replace SSID_MAX_SIZE with IEEE80211_MAX_SSID_LEN.
+Date: Wed, 28 Feb 2018 21:19:08 -0800
+Message-Id: <20180301051911.1314-2-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180301051911.1314-1-quytelda@tamalin.org>
 References: <20180301051911.1314-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:S6CuRABQLxT4vwE5mMRywGFLAt/kQIzOgNcXDnPnur55iDZ9kTg
- DMuy11e2QFt6ZmSIImaXatR430+7d81E4TD5ygm5pc/hWkfSwV8YzjZqDJREiEKCNl2Qk0H
- E+c1BjJd8y6tX8Qxq9CNisKFR7N3ESeeGHiDaQ/DCvD+VJTwnaOElCyN2CFVqkx3ngzvBPs
- WVfY0zJ820jUyE7F0KyUQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5hEme2/MIhc=:Arj6LKuOvcIEdcXU7M+lXV
- HVo1cdf/tfODYxpo0osXRWcNvxfBk8dTu7DzFvvc0sAan2wRhmtFAnRLQ2IMp8a08gNBsCGr8
- WTtQgfirEauB/dJFEyynRX7oqsCF2iVwPNI4ZGK7ATqHyKyicV4GPY4IjLq3Um8AiH4YUQUh4
- hBsQoJk/Z+IwFtgTDtTlNgML9stjmP9q6fFrbu+raGlwLBVrMqv5lt3aUzA/BEnTkzK90I07Q
- MBafmPEd0iREaZP7KvmwORqm241SNoa0A2EJA6EC8Nmz04/7VT/JdASPqxqiVZO1wKsYwn/lK
- tph+kwIaSt1r9OfmeJPCMQTwJBx1oeN3JJMoqp16gTcukPuz3Mo75Hr1JuDn+zTvgxI20DpHI
- +EkMI3w2tRBWLR2H9g6lmm8KouSXQNp/zycq1ZnE9w0HI16wsMTMoZZJoQzBsA67oPi3hoRhu
- y1khQru4BUX4GYmAxHigi20ZB1wGd1/gW7SgbFBLa7ex1yrz4A7fDyPRM4+jpgxNkZsmtrb20
- tJNenbELcPw9gh16qNp/6mUk1Y2teB7ONy68VUAPeI33uocQiw4gyquLC+w/DH+HMYEJ+v8B4
- VnWsDM3Rfejx6285/89UTbqMFaM042depNf2JOf27hgEx/SUx6QNv4TRqmyf2vLmob8L7Lblb
- +dbKpsdHwE4bonJV4xq2t35DjA5dWhS8aoxjYpfZ6THAwWlVLe/quqd6dKGzyF62yfqcSLTSD
- BwEOMRPuq21lfk95QMiQ6j0Mc8DbwFaaP4vqRQ==
+X-Provags-ID: V03:K0:9V+4iqSPP68LoRK+vBILjwKT7xGIHtYlsmFdvufvgN8uADLDlYd
+ 3eJydhBdhH34mHfjNApajXInIwEcTfGt88Byq8fRROtPE90pJVl0kVzKdCxnBZuYw8mBlHz
+ iCe295juNPXmW2fFHmhNPyv3aJ5e5490IiU4X9LHurcXVzdFVy2jrp5WfLC9YYFtHZ3Ly4Q
+ 4lc6A96sw0jjYWlgKzBvw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9VzqNW8JUpo=:OM7ua3VER264UqV64vFMqB
+ gZLj7cMxPmKqPytrzGSy/91Deeq3aqU5CJslN1wTrb6MW4x4CJVoVFcmEyXztfT9NHdF2N2xh
+ 3VklVdj7i891Ve2AvLD8lRE550LtRZQOChIp1E7BDEpALAuTROkCinuqNJ3Is3XzjdS7Fr2/L
+ Nv0fzrwnfbZoAOb3U57rzJnnw+PX5/ZMb06DXUUvGvClRxk7W0HRcxcK8wJaomUqpptv6legz
+ Z7H9JnfINIJWKceUNbOXTUJAex7jKYcBFmxPdp/DQ0s2JVt6nt6hcCqW4B5STv8tt3unxMsWZ
+ 3GajbueAkrP2wr1HOJt5T9yHIshHlW2l0UU5gUXvUnzWo6k02Lv0DcT633UsEW0o/Fp2phxSh
+ QvMkNqa/QWZCCmw/M0t5CPQ6R3w1K9QydTgaTGx9Cv4kI8Efv3ZWlijctqnbCe+FznXhoQH8N
+ yO3Cz0C7CiPL23/0+PnUz+VZjDpj6oTzAgSe4NGBPryIds8VyYJxkvELi3ieZjoXZG2TZEO6s
+ y0RnMv4+q9XCDJEayQkLLEbR6cQtjZnCrfH11cqjeASMMs/Q7W35v3t+Vy3UxrlM0X6YzZJZ9
+ 9e4QYKMvsHwROlSTax0BiLDWgsGYXin4TsZioI0DZo7OAB8UKc9td6dFShN3rpbN0wU8wq2QI
+ 74LHL63ot4sDHA6nDrzLblHbjhQUIt+2b+FxSwysIU9SFf7s2rNRjh8fd89GQBirB0BVtBBqv
+ tbJaCffwHta/ax0KzwIFbbjGZtsALeu0zca5kg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593711353553441871?=
-X-GMAIL-MSGID: =?utf-8?q?1593711353553441871?=
+X-GMAIL-THRID: =?utf-8?q?1593711348040953526?=
+X-GMAIL-MSGID: =?utf-8?q?1593711348040953526?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The code that generates a WLAN capability mask is repeated in five
-functions.  This change refactors that code into a new function, which is
-called now in each of those functions.
+SSID_MAX_SIZE is a constant defined locally in ks_hostif.h, but it should
+be replaced with IEEE80211_MAX_SSID_LEN from the kernel's 802.11 header,
+of which it is just a copy.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 Reviewed-by: Tobin C. Harding <me@tobin.cc>
 ---
- drivers/staging/ks7010/ks_hostif.c | 88 ++++++++++----------------------------
- 1 file changed, 23 insertions(+), 65 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c | 4 ++--
+ drivers/staging/ks7010/ks_hostif.h | 3 +--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 59f7c4e422d3..4d11627a3d72 100644
+index 67cf32433023..59f7c4e422d3 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1381,11 +1381,28 @@ void hostif_start_request(struct ks_wlan_private *priv, unsigned char mode)
- 	priv->scan_ind_count = 0;
- }
+@@ -253,12 +253,12 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
+ 	while (bsize > offset) {
+ 		switch (*bp) { /* Information Element ID */
+ 		case WLAN_EID_SSID:
+-			if (*(bp + 1) <= SSID_MAX_SIZE) {
++			if (*(bp + 1) <= IEEE80211_MAX_SSID_LEN) {
+ 				ap->ssid.size = *(bp + 1);
+ 			} else {
+ 				DPRINTK(1, "size over :: ssid size=%d\n",
+ 					*(bp + 1));
+-				ap->ssid.size = SSID_MAX_SIZE;
++				ap->ssid.size = IEEE80211_MAX_SSID_LEN;
+ 			}
+ 			memcpy(ap->ssid.body, bp + 2, ap->ssid.size);
+ 			break;
+diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
+index 9ac317e4b507..b46aa94c0d48 100644
+--- a/drivers/staging/ks7010/ks_hostif.h
++++ b/drivers/staging/ks7010/ks_hostif.h
+@@ -225,10 +225,9 @@ struct hostif_start_confirm_t {
+ 	__le16 result_code;
+ } __packed;
  
-+static __le16 ks_wlan_cap(struct ks_wlan_private *priv)
-+{
-+	u16 capability = 0x0000;
-+
-+	if (priv->reg.preamble == SHORT_PREAMBLE) {
-+		capability |= BSS_CAP_SHORT_PREAMBLE;
-+	}
-+
-+	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
-+
-+	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
-+		capability |= BSS_CAP_SHORT_SLOT_TIME;
-+		capability &= ~(BSS_CAP_DSSS_OFDM);
-+	}
-+
-+	return cpu_to_le16((uint16_t)capability);
-+}
-+
- static
- void hostif_ps_adhoc_set_request(struct ks_wlan_private *priv)
- {
- 	struct hostif_ps_adhoc_set_request_t *pp;
--	u16 capability;
+-#define SSID_MAX_SIZE 32
+ struct ssid_t {
+ 	u8 size;
+-	u8 body[SSID_MAX_SIZE];
++	u8 body[IEEE80211_MAX_SSID_LEN];
+ 	u8 ssid_pad;
+ } __packed;
  
- 	DPRINTK(3, "\n");
- 
-@@ -1398,21 +1415,10 @@ void hostif_ps_adhoc_set_request(struct ks_wlan_private *priv)
- 	pp->scan_type = cpu_to_le16((uint16_t)(priv->reg.scan_type));
- 	pp->channel = cpu_to_le16((uint16_t)(priv->reg.channel));
- 	pp->rate_set.size = priv->reg.rate_set.size;
-+	pp->capability = ks_wlan_cap(priv);
- 	memcpy(&pp->rate_set.body[0], &priv->reg.rate_set.body[0],
- 	       priv->reg.rate_set.size);
- 
--	capability = 0x0000;
--	if (priv->reg.preamble == SHORT_PREAMBLE) {
--		/* short preamble */
--		capability |= BSS_CAP_SHORT_PREAMBLE;
--	}
--	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
--	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
--		capability |= BSS_CAP_SHORT_SLOT_TIME;	/* ShortSlotTime support */
--		capability &= ~(BSS_CAP_DSSS_OFDM);	/* DSSS OFDM */
--	}
--	pp->capability = cpu_to_le16((uint16_t)capability);
--
- 	/* send to device request */
- 	ps_confirm_wait_inc(priv);
- 	ks_wlan_hw_tx(priv, pp, hif_align_size(sizeof(*pp)), NULL, NULL);
-@@ -1422,7 +1428,6 @@ static
- void hostif_infrastructure_set_request(struct ks_wlan_private *priv)
- {
- 	struct hostif_infrastructure_set_request_t *pp;
--	u16 capability;
- 
- 	DPRINTK(3, "ssid.size=%d\n", priv->reg.ssid.size);
- 
-@@ -1439,18 +1444,7 @@ void hostif_infrastructure_set_request(struct ks_wlan_private *priv)
- 	       priv->reg.rate_set.size);
- 	pp->ssid.size = priv->reg.ssid.size;
- 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
--
--	capability = 0x0000;
--	if (priv->reg.preamble == SHORT_PREAMBLE) {
--		/* short preamble */
--		capability |= BSS_CAP_SHORT_PREAMBLE;
--	}
--	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
--	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
--		capability |= BSS_CAP_SHORT_SLOT_TIME;	/* ShortSlotTime support */
--		capability &= ~(BSS_CAP_DSSS_OFDM);	/* DSSS OFDM not support */
--	}
--	pp->capability = cpu_to_le16((uint16_t)capability);
-+	pp->capability = ks_wlan_cap(priv);
- 	pp->beacon_lost_count =
- 	    cpu_to_le16((uint16_t)(priv->reg.beacon_lost_count));
- 	pp->auth_type = cpu_to_le16((uint16_t)(priv->reg.authenticate_type));
-@@ -1483,7 +1477,6 @@ void hostif_infrastructure_set_request(struct ks_wlan_private *priv)
- static void hostif_infrastructure_set2_request(struct ks_wlan_private *priv)
- {
- 	struct hostif_infrastructure_set2_request_t *pp;
--	u16 capability;
- 
- 	DPRINTK(2, "ssid.size=%d\n", priv->reg.ssid.size);
- 
-@@ -1500,18 +1493,7 @@ static void hostif_infrastructure_set2_request(struct ks_wlan_private *priv)
- 	       priv->reg.rate_set.size);
- 	pp->ssid.size = priv->reg.ssid.size;
- 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
--
--	capability = 0x0000;
--	if (priv->reg.preamble == SHORT_PREAMBLE) {
--		/* short preamble */
--		capability |= BSS_CAP_SHORT_PREAMBLE;
--	}
--	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
--	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
--		capability |= BSS_CAP_SHORT_SLOT_TIME;	/* ShortSlotTime support */
--		capability &= ~(BSS_CAP_DSSS_OFDM);	/* DSSS OFDM not support */
--	}
--	pp->capability = cpu_to_le16((uint16_t)capability);
-+	pp->capability = ks_wlan_cap(priv);
- 	pp->beacon_lost_count =
- 	    cpu_to_le16((uint16_t)(priv->reg.beacon_lost_count));
- 	pp->auth_type = cpu_to_le16((uint16_t)(priv->reg.authenticate_type));
-@@ -1547,7 +1529,6 @@ static
- void hostif_adhoc_set_request(struct ks_wlan_private *priv)
- {
- 	struct hostif_adhoc_set_request_t *pp;
--	u16 capability;
- 
- 	DPRINTK(3, "\n");
- 
-@@ -1564,18 +1545,7 @@ void hostif_adhoc_set_request(struct ks_wlan_private *priv)
- 	       priv->reg.rate_set.size);
- 	pp->ssid.size = priv->reg.ssid.size;
- 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
--
--	capability = 0x0000;
--	if (priv->reg.preamble == SHORT_PREAMBLE) {
--		/* short preamble */
--		capability |= BSS_CAP_SHORT_PREAMBLE;
--	}
--	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
--	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
--		capability |= BSS_CAP_SHORT_SLOT_TIME;	/* ShortSlotTime support */
--		capability &= ~(BSS_CAP_DSSS_OFDM);	/* DSSS OFDM not support */
--	}
--	pp->capability = cpu_to_le16((uint16_t)capability);
-+	pp->capability = ks_wlan_cap(priv);
- 
- 	/* send to device request */
- 	ps_confirm_wait_inc(priv);
-@@ -1586,7 +1556,6 @@ static
- void hostif_adhoc_set2_request(struct ks_wlan_private *priv)
- {
- 	struct hostif_adhoc_set2_request_t *pp;
--	u16 capability;
- 
- 	DPRINTK(3, "\n");
- 
-@@ -1602,18 +1571,7 @@ void hostif_adhoc_set2_request(struct ks_wlan_private *priv)
- 	       priv->reg.rate_set.size);
- 	pp->ssid.size = priv->reg.ssid.size;
- 	memcpy(&pp->ssid.body[0], &priv->reg.ssid.body[0], priv->reg.ssid.size);
--
--	capability = 0x0000;
--	if (priv->reg.preamble == SHORT_PREAMBLE) {
--		/* short preamble */
--		capability |= BSS_CAP_SHORT_PREAMBLE;
--	}
--	capability &= ~(BSS_CAP_PBCC);	/* pbcc not support */
--	if (priv->reg.phy_type != D_11B_ONLY_MODE) {
--		capability |= BSS_CAP_SHORT_SLOT_TIME;	/* ShortSlotTime support */
--		capability &= ~(BSS_CAP_DSSS_OFDM);	/* DSSS OFDM not support */
--	}
--	pp->capability = cpu_to_le16((uint16_t)capability);
-+	pp->capability = ks_wlan_cap(priv);
- 
- 	pp->channel_list.body[0] = priv->reg.channel;
- 	pp->channel_list.size = 1;
 -- 
 2.16.2
