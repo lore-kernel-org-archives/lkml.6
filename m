@@ -1,41 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162424AbeCAVz3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:55:29 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:35710 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162136AbeCAVz1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:55:27 -0500
-X-Google-Smtp-Source: AG47ELsIQtYFQhrgdjPpQ9KfV0uuQLvasxGGSOpZYZL4T7G4zSCrYGKTxm6YxjQLZZUXO7JyReowtw==
-Date: Thu, 1 Mar 2018 15:55:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/15] dt-bindings: arm: tegra: Document #reset-cells
- property of the Tegra20 MC
-Message-ID: <20180301215525.tufu6qeikvfueauu@rob-hp-laptop>
-References: <cover.1519141896.git.digetx@gmail.com>
- <c16e37ca23b7a3c53d121ba85889bb6f35576557.1519141896.git.digetx@gmail.com>
+        id S1162432AbeCAV52 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:57:28 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:39006 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162136AbeCAV50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:57:26 -0500
+From: Logan Gunthorpe <logang@deltatee.com>
+To: Dan Williams <dan.j.williams@intel.com>, benh@au1.ibm.com
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519936477.4592.23.camel@au1.ibm.com>
+ <CAPcyv4goHsYytq60ehJUori8Xq+Z0p8dV-8_oRALj244H4YtwQ@mail.gmail.com>
+ <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
+Message-ID: <43ba615f-a6e1-9444-65e1-494169cb415d@deltatee.com>
+Date: Thu, 1 Mar 2018 14:57:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c16e37ca23b7a3c53d121ba85889bb6f35576557.1519141896.git.digetx@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <2079ba48-5ae5-5b44-cce1-8175712dd395@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, alex.williamson@redhat.com, oliveroh@au1.ibm.com, keith.busch@intel.com, axboe@kernel.dk, benh@au1.ibm.com, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 20, 2018 at 07:25:16PM +0300, Dmitry Osipenko wrote:
-> Memory Controller has a memory client "hot reset" functionality, which
-> resets the DMA interface of a memory client, so MC is a reset controller.
-> Documentation the new property.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../devicetree/bindings/arm/tegra/nvidia,tegra20-mc.txt      | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 01/03/18 02:45 PM, Logan Gunthorpe wrote:
+> It handles it fine for many situations. But when you try to map 
+> something that is at the end of the physical address space then the 
+> spares-vmemmap needs virtual address space that's the size of the 
+> physical address space divided by PAGE_SIZE which may be a little bit 
+> too large...
+
+Though, considering this more, maybe this shouldn't be a problem...
+
+Lets say you have 56bits of address space. That's 64PB. If you use need 
+a sparse vmemmap for the entire space it will take 16TB which leaves you 
+with 63.98PB of address space left. (Similar calculations for other 
+numbers of address bits.)
+
+So I'm not sure what the problem with this is.
+
+We still have to ensure all the arches map the memory with the right 
+cache bits but that should be relatively easy to solve.
+
+Logan
