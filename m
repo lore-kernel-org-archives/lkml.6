@@ -1,92 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935710AbeCAB6E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 20:58:04 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:43610 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932134AbeCAB6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 20:58:02 -0500
-Subject: Re: [PATCH V2] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-References: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
- <1519840355.2777.8.camel@wdc.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <624cedc6-9658-7b76-9c63-61c30fdfe6be@oracle.com>
-Date: Thu, 1 Mar 2018 09:57:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935723AbeCACFh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 21:05:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932134AbeCACFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Feb 2018 21:05:36 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C102B21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sstabellini@kernel.org
+Date: Wed, 28 Feb 2018 18:05:34 -0800 (PST)
+From: Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To: jgross@suse.com, boris.ostrovsky@oracle.com
+cc: sstabellini@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] pvcalls-front: 64-bit align flags
+Message-ID: <alpine.DEB.2.10.1802281803430.4239@sstabellini-ThinkPad-X260>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <1519840355.2777.8.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8818 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803010024
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
+We are using test_and_* operations on the status and flag fields of
+struct sock_mapping. However, these functions require the operand to be
+64-bit aligned on arm64. Currently, only status is 64-bit aligned.
 
-Thanks for your precious time to review this and kindly detailed response.
+Make status and flags explicitly 64-bit aligned.
 
-On 03/01/2018 01:52 AM, Bart Van Assche wrote:
-> On Wed, 2018-02-28 at 16:55 +0800, Jianchao Wang wrote:
->> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
->> index a86df9c..6fa7b0c 100644
->> --- a/drivers/scsi/scsi_lib.c
->> +++ b/drivers/scsi/scsi_lib.c
->> @@ -191,7 +191,8 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
->>  	 */
->>  	cmd->result = 0;
->>  	if (q->mq_ops) {
->> -		scsi_mq_requeue_cmd(cmd);
->> +		blk_mq_requeue_request(cmd->request, true);
->> +		put_device(&device->sdev_gendev);
->>  		return;
->>  	}
->>  	spin_lock_irqsave(q->queue_lock, flags);
-> 
-> Anyone who sees the put_device() call that follows the blk_mq_requeue_request()
-> call will wonder why that call occurs there. So I think we need a comment above
-> that call that explains where the matching get_device() call is.
+Signed-off-by: Stefano Stabellini <stefano@aporeto.com>
 
-Yes, I will add this.
+---
+Changes in v2:
+- use __attribute__((aligned(8)))
+- add comments
 
-> For the legacy code path, there is a get_device() call in scsi_prep_fn() but no
-> put_device() call in scsi_unprep_fn() - the matching put_device() calls occur in
-> scsi_end_request() and after blk_requeue_request().
-> 
-> For scsi-mq however there is a get_device() call in scsi_mq_get_budget() and a
-> put_device() call in scsi_mq_put_budget(). So why do we need the put_device()
-> calls after blk_mq_requeue_request() and in the mq path for scsi_end_request()?
-> 
-
->From the source code, we know the scsi_mq_get_budget will be invoked every time when we issue a request.
-But scsi_mq_put_budget is just in the fail path.
-
-scsi_queue_rq // if any error
-  -> scsi_mq_put_budget
-
-blk_mq_dispatch_rq_list // if no driver tags
-  -> blk_mq_put_dispatch_budget
-    -> scsi_mq_put_budget
-blk_mq_do_dispatch_sched/blk_mq_do_dispatch_ctx // if no requests
-  -> blk_mq_put_dispatch_budget
-    -> scsi_mq_put_budget
-
-So we have to add put_device after  blk_mq_requeue_request() and in scsi_end_request() to match the
-scsi_mq_get_budget.
-
-Thanks
-Jianchao
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index ca5b773..582929e 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -73,20 +73,25 @@ struct sock_mapping {
+ 			wait_queue_head_t inflight_conn_req;
+ 		} active;
+ 		struct {
+-		/* Socket status */
++		/*
++		 * Socket status, needs to be 64-bit aligned due to the
++		 * test_and_* functions which have this requirement on arm64.
++		 */
+ #define PVCALLS_STATUS_UNINITALIZED  0
+ #define PVCALLS_STATUS_BIND          1
+ #define PVCALLS_STATUS_LISTEN        2
+-			uint8_t status;
++			uint8_t status __attribute__((aligned(8)));
+ 		/*
+ 		 * Internal state-machine flags.
+ 		 * Only one accept operation can be inflight for a socket.
+ 		 * Only one poll operation can be inflight for a given socket.
++		 * flags needs to be 64-bit aligned due to the test_and_*
++		 * functions which have this requirement on arm64.
+ 		 */
+ #define PVCALLS_FLAG_ACCEPT_INFLIGHT 0
+ #define PVCALLS_FLAG_POLL_INFLIGHT   1
+ #define PVCALLS_FLAG_POLL_RET        2
+-			uint8_t flags;
++			uint8_t flags __attribute__((aligned(8)));
+ 			uint32_t inflight_req_id;
+ 			struct sock_mapping *accept_map;
+ 			wait_queue_head_t inflight_accept_req;
