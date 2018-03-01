@@ -1,73 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966115AbeCAFqu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:46:50 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:23261 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966068AbeCAFqt (ORCPT
+        id S966149AbeCAFs3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:48:29 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33434 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966102AbeCAFs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:46:49 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w215kU8u008027
-X-Nifty-SrcIP: [209.85.213.50]
-X-Google-Smtp-Source: AG47ELuHaRf5wf6lLie1KRDoiLY4yNRtxZIVL4TigHeEpo/EqNAzVko7+xgyk2zPXYTcZvot0Rkd8kkoaK9vi3EMTbk=
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
-References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-3-robh@kernel.org>
- <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 14:45:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
-Message-ID: <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] kbuild: add dtc as dependency on .dtb files
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Gibson <david@gibson.dropbear.id.au>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 1 Mar 2018 00:48:26 -0500
+X-Google-Smtp-Source: AG47ELu3ftvRKHRU4dNUDb3u6qbNo1vWFHRyy6fGMoWgrvlKu8Tejhp3x2PvngbSTZrtoYLfU9d+tg==
+From: Derek Basehore <dbasehore@chromium.org>
+To: linux-kernel@vger.kernel.org
+Cc: Soby.Mathew@arm.com, sudeep.holla@arm.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        rafael.j.wysocki@intel.com, tglx@linutronix.de,
+        briannorris@chromium.org, marc.zyngier@arm.com,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH v7 0/3] GICv3 Save and Restore
+Date: Wed, 28 Feb 2018 21:48:17 -0800
+Message-Id: <20180301054820.42847-1-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 13:33 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
->> If dtc is rebuilt, we should rebuild .dtb files with the new dtc.
->>
->> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->
->
-> Hmm, I am not 100% sure about this.
->
-> Is there a case where resulted DTBs
-> depend on DTC version?
->
->
-> If I understand correctly,
-> DTS and DTB are 1:1
-> Unlike CC, there is no room for optimization.
+A lot of changes in v2. The distributor and redistributor saving and
+restoring is left to the PSCI/firmware implementation after
+discussions with ARM. This reduces the line changes by a lot and
+removes now unneeded patches.
 
+Patches are verified on an RK3399 platform with pending patches in the
+ARM-Trusted-Firmware project.
 
-Maybe I was wrong.
+Just a couple minor changes in v3 to formatting.
 
-Is there room for optimization
-in 'DT strings' section?
+Fixed a false ITS wedged detection due to the cmd_write and creadr
+offsets not matching up on reset in v4. Also minor formatting changes.
 
-I guess it is optimized enough to avoid string duplication,
-but there could be different results
-without changing the specification.
+Got rid of additional device tree property with detecting if there are
+collections stored in the ITS in v5. Made other minor changes.
 
+v6: Fixed reinitialized collections to only happen when the collection
+is stored in the ITS. Changed error handling to avoid undefined
+behavior of the ITS.
 
+v7: Fixed pr_errs to print out the physical rather than virtual base
+address of the ITS and the error code. Updated the documentation.
 
+Derek Basehore (3):
+  irqchip/gic-v3-its: add ability to save/restore ITS state
+  DT/arm,gic-v3-its: add reset-on-suspend property
+  irqchip/gic-v3-its: add ability to resend MAPC on resume
 
-
-> Some possibilities could be:
->      - specification is updated.
->     ( /dts-v1/ in DTS should be updated if so)
->   - buggy DTC version generates broken DTBs.
->
->
-
+ .../interrupt-controller/arm,gic-v3.txt       |   5 +
+ drivers/irqchip/irq-gic-v3-its.c              | 193 ++++++++++++++----
+ include/linux/irqchip/arm-gic-v3.h            |   1 +
+ 3 files changed, 161 insertions(+), 38 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.16.2.395.g2e18187dfd-goog
