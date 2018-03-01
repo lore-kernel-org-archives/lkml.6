@@ -1,80 +1,114 @@
-Return-Path: <kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsKfow6VLUQBOJWeIePjXlsky1k9jEjilQne1GVweW4iAD8wAvocc7ZVg5QuUjNFo2DUbUD
-ARC-Seal: i=1; a=rsa-sha256; t=1519941855; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Lh2P8L05lGxHZQL6kYinE3+vx/CJFOgbDEzzWAWVMcLdJX64XBWB/1J2SGJEwmUrKw
-         9RWxb681oLXYE9+SqBNJX1HtYigQ6kqHw4Kpca3ZjAZGMzSvnspZrgENDqRxjDFBgdkA
-         JZBMk8iZtgLARgQZtMQ8yzfUOmVvjcrtdoRzRK5ra5RefIZANCgnZyqsO9Rsx/k1o3zv
-         JsdXU1z0yeR62OSZbYSU4HXkCPs0os9/OI+a3v3SFYrAM9hjozNyPl01RsD4YnXa8IYZ
-         5JC9gdE6t3sYaUtyPDL+xH0WEC7SNyl7Fotay2No2Hcv6In9N8fk32u4qVPRIMyPvBjk
-         Yc0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=aE88WhNEM1RWMwmNE0en7qQyFse/3m+degho9/T+LUw=;
-        b=hrS1FfwRYoeeMLdDDPpR3J49PRxlK1jlRHYpsO/jbMx/RAxEECo56sE54JnSMoVGGv
-         +5c+4+Ws1URiEEEXqoFcCZKEhT8ye26KCO2X2Bs9ymF84WM2ulrztOO73d74zVSAPrig
-         XRGjKG6TIaovN+Wtpx8mCr4ZsqW2Nt7JZt7d7o4z6OtDJJovxQLA7TjvpCUh+P8WwUJ8
-         oJyeHhBlcclwOzgovjWiGo6xrGk/t5PEvF+FajMFFoPkeK2TQrRHS+ccv5vHX0xwCNh/
-         weonkKLHWUoNFXQcVNM08CUKhM0OL1hdHKb2P94yHHhoFZn9FZx0TShhTpTGGzj/N/1G
-         iCqw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=QeMXr02w;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BcyA3y93;
-       spf=pass (google.com: domain of kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm2 header.b=QeMXr02w;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=BcyA3y93;
-       spf=pass (google.com: domain of kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12064-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-ME-Sender: <xms:vXiYWskLjba6RXI9z9Vu5qYvM4GhGsScAH2ECBVzYAHkmMn65y5QtQ>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Kernel Hardening <kernel-hardening@lists.openwall.com>
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	Tycho Andersen <tycho@tycho.ws>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] leaking_addresses: explicitly name variable used in regex
-Date: Fri,  2 Mar 2018 09:03:19 +1100
-Message-Id: <1519941800-27710-2-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1519941800-27710-1-git-send-email-me@tobin.cc>
-References: <1519941800-27710-1-git-send-email-me@tobin.cc>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4026909-1519943620-2-2125385799852108442
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519943619; b=IRvp24qgRfE9e+OqaebX+jbD0R85TNUx3ZrO9XUac2sPqOR
+    P1ZCPyAbsfGmsB4qLEQBuIy6hYjKbXsvnC5V8Yagz0cVtfRVSjEoBWFKyyFj6zbz
+    i844q2o/lsr7tQ96Aec3eiCZS2PeYiSw53F2q54ZUegUAjBQhD+26MeJw/R89qni
+    FL8vsaAL+AVlP+S43D+oJT1SKbKHK82860BxVl58ylT+1Lm0LGVDuupTrnuLVuUE
+    nzNxkYr6P3R+zuF38tdjrCPpn9TcOx3lZUkX9s+1keqlbrtMNzcL+z0fFG05Uj+h
+    LteCUwCEtDhyUvtMjOOc4zqJpsnsqaKZVvEP9AA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1519943619; bh=GLhc/oZAnnCpqBALhtxstmDsurm+YJJ6jucyT0
+    GWAD8=; b=NVHf1dwjqcMW82hU0CvEU+8agIEnLkKruOjD4r7u7OMabDMS2IMohR
+    ifEEjVaMEaEMNySnrbkWCqexMJAdOy7evDDoLUmS4sMJmp5vXw4xvftIuqHZN+jp
+    p1YK/5cB3qMYmQ8iZM7zQEU1p0lRPJztJ9U9x28texBAhDq04Wx2Rne/Lwkart7B
+    l9+9h7wZdpDAL5C2DGjf1Pqo3i/RNWqg+X8FXuz9F2XJnSpeZcLF0OHuySgWpzk3
+    xnk9MjtazqpQ1A36G7B6pPFXS8AnZrIyJJJYEVoAuhUkhCNp/ZOfx5rAZz22b16F
+    x2dMqWOEO/4ZfY/K6Hwfs5Q4oiX1czHQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Y/3/bE7G x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uRjEATVc;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Y/3/bE7G x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uRjEATVc;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1162641AbeCAWdH (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 17:33:07 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51260 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161204AbeCAWdD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 17:33:03 -0500
+X-Google-Smtp-Source: AG47ELtiI+ooAPmOFembg9+D1Nu/OFAM+QmMHm/FJ3Zm8ckBzxnYayRTc4LmuVc4rIjC6LuiZuSYGDUg7/OMvJWQhpQ=
+MIME-Version: 1.0
+In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
+References: <20180220181751.20826-1-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Mar 2018 23:33:01 +0100
+Message-ID: <CACRpkdbAhPdpRTx0P3yvazGgRvtUMmJ-qese1LFoCqNSPuR+sw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593774551367950492?=
-X-GMAIL-MSGID: =?utf-8?q?1593774551367950492?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently sub routine may_leak_address() is checking regex against Perl
-special variable $_ which is _fortunately_ being set correctly in a loop
-before this sub routine is called.  We already have declared a variable
-to hold this value '$line' we should use it.
+On Tue, Feb 20, 2018 at 7:17 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Use $line in regex match instead of implicit $_
+> Driver uses alias from Device Tree as an index of pin controller data
+> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
+> outside of this data array leading to out-of-bounds access.
+>
+> Depending on binary and memory layout, this could be handled properly
+> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
+> available") or could lead to exceptions.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Issue is present since first version of this driver so this should be
+> backported as far as possible.
+>
+> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
+> ARM64 and any other chips are highly appreciated.
+>
+> Linus,
+> I can take it through samsung/pinctrl tree and later send you again as
+> pull request... or you can apply it directly as I do not have any other
+> pinctrl patches queued so far.
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- scripts/leaking_addresses.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied for fixes with all the tags.
 
-diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-index d5d31f3df97e..65a65aa64d26 100755
---- a/scripts/leaking_addresses.pl
-+++ b/scripts/leaking_addresses.pl
-@@ -363,7 +363,7 @@ sub may_leak_address
- 	}
- 
- 	$address_re = get_address_re();
--	while (/($address_re)/g) {
-+	while ($line =~ /($address_re)/g) {
- 		if (!is_false_positive($1)) {
- 			return 1;
- 		}
--- 
-2.7.4
+Yours,
+Linus Walleij
