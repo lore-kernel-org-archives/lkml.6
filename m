@@ -1,194 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033494AbeCARaE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:30:04 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37547 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033466AbeCAR3z (ORCPT
+        id S1033423AbeCARgl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:36:41 -0500
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:56170 "EHLO
+        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1032900AbeCARgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:29:55 -0500
-X-Google-Smtp-Source: AG47ELswjYKmPzm/O76Rmk9aGPHjlH8kSESy7TsIUZwPhnI2GgQvmsPxkcAXWNaHl/Z6V/pkpPsoAw==
-Date: Thu, 1 Mar 2018 22:59:44 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com
-Subject: Re: [PATCH v3 04/10] pinctrl: actions: Add Actions S900 pinctrl
- driver
-Message-ID: <20180301172943.cuypepvflte2cynr@linaro.org>
-References: <20180228181432.26847-1-manivannan.sadhasivam@linaro.org>
- <20180228181432.26847-5-manivannan.sadhasivam@linaro.org>
- <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VchzV9SZb4g0fVP9aoKb7actsehXm8c4wsvVGASgkOc+w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Thu, 1 Mar 2018 12:36:39 -0500
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Brian Starkey <brian.starkey@arm.com>
+Cc: Mali DP Maintainers <malidp@foss.arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        DRI devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
+Subject: [PATCH] drm/mali-dp: Fix malidp_atomic_commit_hw_done() for event sending.
+Date: Thu,  1 Mar 2018 17:36:33 +0000
+Message-Id: <20180301173633.9506-1-Liviu.Dudau@arm.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+Mali DP hardware has a 'go' bit (config_valid) for making the new scene
+parameters active at the next page flip. The problem with the current
+code is that the driver first sets this bit and then proceeds to wait
+for confirmation from the hardware that the configuration has been
+updated before arming the vblank event. As config_valid is actually
+asserted by the hardware after the vblank event, during the prefetch
+phase, when we get to arming the vblank event we are going to send it
+at the next vblank, in effect halving the vblank rate from the userspace
+perspective.
 
-On Wed, Feb 28, 2018 at 08:36:53PM +0200, Andy Shevchenko wrote:
-> On Wed, Feb 28, 2018 at 8:14 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Add pinctrl driver for Actions Semi S900 SoC. The driver supports
-> > pinctrl, pinmux and pinconf functionalities through a range of registers
-> > common to both gpio driver and pinctrl driver.
-> >
-> > Pinmux functionality is available only for the pin groups while the
-> > pinconf functionality is available for both pin groups and individual
-> > pins.
-> 
-> > +static int owl_set_mux(struct pinctrl_dev *pctrldev,
-> > +                               unsigned int function,
-> > +                               unsigned int group)
-> > +{
-> 
-> > +       mfpval = readl(pctrl->base + g->mfpctl_reg);
-> > +       mfpval &= ~mask;
-> > +       mfpval |= val;
-> > +       writel(mfpval, pctrl->base + g->mfpctl_reg);
-> 
-> This is called owl_update_bits().
->
+Fix it by sending the userspace event from the IRQ handler, when we
+handle the config_valid interrupt, which syncs with the time when the
+hardware is active with the new parameters.
 
-Okay. Will add a helper.
+Reported-by: Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/gpu/drm/arm/malidp_drv.c | 27 ++++++++++++---------------
+ drivers/gpu/drm/arm/malidp_drv.h |  1 +
+ drivers/gpu/drm/arm/malidp_hw.c  | 12 +++++++++---
+ 3 files changed, 22 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index d88a3b9d59cc..7be5d48eefd0 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -185,27 +185,26 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
  
-> > +static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
-> > +                               unsigned int pin,
-> > +                               unsigned long *configs,
-> > +                               unsigned int num_configs)
-> > +{
-> 
-> > +       int ret = 0;
-> 
-> Redundant assignment?
->
-
-Ack.
+ static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
+ {
+-	struct drm_pending_vblank_event *event;
+ 	struct drm_device *drm = state->dev;
+ 	struct malidp_drm *malidp = drm->dev_private;
  
-> > +               mask = (1 << width) - 1;
-> > +               mask = mask << bit;
-> > +               tmp = readl(pctrl->base + reg);
-> > +               tmp &= ~mask;
-> > +               tmp |= arg << bit;
-> > +               writel(tmp, pctrl->base + reg);
-> 
-> This is called owl_update_bits().
->
-
-Ack.
-
-> > +}
-> 
-> > +static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
-> > +                               unsigned int param,
-> > +                               u32 *arg)
-> > +{
-> 
-> > +       case PIN_CONFIG_SLEW_RATE:
-> > +               if (*arg)
-> > +                       *arg = 1;
-> > +               else
-> > +                       *arg = 0;
-> 
-> Doesn't slew rate allow a non-binary value?
->
-
-As stated in the binding doc, valid values for the slew rate parameter are:
-
-0 - Slow
-1 - Fast
++	malidp->event = malidp->crtc.state->event;
++	malidp->crtc.state->event = NULL;
++
++	/*
++	 * if we have an event to deliver to userspace, make sure
++	 * the vblank is enabled as we are sending it from the IRQ
++	 * handler.
++	 */
++	if (malidp->event)
++		drm_crtc_vblank_get(&malidp->crtc);
++
+ 	if (malidp->crtc.enabled) {
+ 		/* only set config_valid if the CRTC is enabled */
+-		if (malidp_set_and_wait_config_valid(drm))
++		if (malidp_set_and_wait_config_valid(drm) < 0)
+ 			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
+ 	}
  
-> > +       return 0;
-> > +}
-> > +
-> > +static int owl_group_config_get(struct pinctrl_dev *pctrldev,
-> > +                               unsigned int group,
-> > +                               unsigned long *config)
-> > +{
-> > +       int ret = 0;
-> 
-> Redundant assignment.
-> 
-
-Ack.
-
-> > +}
-> 
-> > +static int owl_group_config_set(struct pinctrl_dev *pctrldev,
-> > +                               unsigned int group,
-> > +                               unsigned long *configs,
-> > +                               unsigned int num_configs)
-> > +{
-> > +       int ret = 0;
-> 
-> Redundant assignment, see below.
->
-
-Ack. Will return 0 directly.
+-	event = malidp->crtc.state->event;
+-	if (event) {
+-		malidp->crtc.state->event = NULL;
+-
+-		spin_lock_irq(&drm->event_lock);
+-		if (drm_crtc_vblank_get(&malidp->crtc) == 0)
+-			drm_crtc_arm_vblank_event(&malidp->crtc, event);
+-		else
+-			drm_crtc_send_vblank_event(&malidp->crtc, event);
+-		spin_unlock_irq(&drm->event_lock);
+-	}
+ 	drm_atomic_helper_commit_hw_done(state);
+ }
  
-> > +               mask = (1 << width) - 1;
-> > +               mask = mask << bit;
-> > +               tmp = readl(pctrl->base + reg);
-> > +               tmp &= ~mask;
-> > +               tmp |= arg << bit;
-> > +               writel(tmp, pctrl->base + reg);
-> 
-> This is called owl_update_bits().
->
-
-Ack.
+@@ -232,8 +231,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
  
-> > +       return ret;
-> 
-> return 0; ?
-> 
-
-Okay.
-
-> > +}
-> 
-> > +int owl_pinctrl_probe(struct platform_device *pdev,
-> > +                               struct owl_pinctrl_soc_data *soc_data)
-> > +{
-> 
-> > +       clk_prepare_enable(pctrl->clk);
-> 
-> This can fail.
->
-
-Okay. Will add a check.
+ 	malidp_atomic_commit_hw_done(state);
  
-> > +}
-> 
-> > +static const struct of_device_id s900_pinctrl_of_match[] = {
-> > +       { .compatible = "actions,s900-pinctrl", },
-> 
-> > +       { },
-> 
-> No comma needed.
->
-
-Okay.
-
-Thanks for the review.
-
-Regards,
-Mani
+-	drm_atomic_helper_wait_for_vblanks(drm, state);
+-
+ 	pm_runtime_put(drm->dev);
  
-> > +};
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+ 	drm_atomic_helper_cleanup_planes(drm, state);
+diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
+index e0d12c9fc6b8..c2375bb49619 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.h
++++ b/drivers/gpu/drm/arm/malidp_drv.h
+@@ -22,6 +22,7 @@ struct malidp_drm {
+ 	struct malidp_hw_device *dev;
+ 	struct drm_crtc crtc;
+ 	wait_queue_head_t wq;
++	struct drm_pending_vblank_event *event;
+ 	atomic_t config_valid;
+ 	u32 core_id;
+ };
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index 2bfb542135ac..8abd335ec313 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -782,9 +782,15 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
+ 	/* first handle the config valid IRQ */
+ 	dc_status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
+ 	if (dc_status & hw->map.dc_irq_map.vsync_irq) {
+-		/* we have a page flip event */
+-		atomic_set(&malidp->config_valid, 1);
+ 		malidp_hw_clear_irq(hwdev, MALIDP_DC_BLOCK, dc_status);
++		/* do we have a page flip event? */
++		if (malidp->event != NULL) {
++			spin_lock(&drm->event_lock);
++			drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
++			malidp->event = NULL;
++			spin_unlock(&drm->event_lock);
++		}
++		atomic_set(&malidp->config_valid, 1);
+ 		ret = IRQ_WAKE_THREAD;
+ 	}
+ 
+@@ -794,7 +800,7 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
+ 
+ 	mask = malidp_hw_read(hwdev, MALIDP_REG_MASKIRQ);
+ 	status &= mask;
+-	if (status & de->vsync_irq)
++	if ((status & de->vsync_irq) && malidp->crtc.enabled)
+ 		drm_crtc_handle_vblank(&malidp->crtc);
+ 
+ 	malidp_hw_clear_irq(hwdev, MALIDP_DE_BLOCK, status);
+-- 
+2.16.2
