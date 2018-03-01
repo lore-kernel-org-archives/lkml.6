@@ -1,81 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162790AbeCAWsI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 17:48:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53510 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162589AbeCAWsG (ORCPT
+        id S1162721AbeCAWzw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:55:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45136 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162589AbeCAWzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:48:06 -0500
-Date: Thu, 1 Mar 2018 14:48:00 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Vratislav Bendel <vbendel@redhat.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        linux-kernel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
-Message-ID: <20180301224800.GI12763@magnolia>
-References: <20180228154951.31714-1-vbendel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180228154951.31714-1-vbendel@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803010276
+        Thu, 1 Mar 2018 17:55:51 -0500
+Date: Thu, 1 Mar 2018 14:55:49 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: <linux-mm@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-team@fb.com>, Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [RFC] mm: indirectly reclaimable memory and dcache
+Message-Id: <20180301145549.8ff621a708ccd8fb59d924f7@linux-foundation.org>
+In-Reply-To: <20180301221713.25969-1-guro@fb.com>
+References: <20180301221713.25969-1-guro@fb.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 04:49:51PM +0100, Vratislav Bendel wrote:
-> The function xfs_buftarg_isolate() used by xfs buffer schrinkers 
-> to determine whether a buffer should be isolated and disposed 
-> from LRU list, has inverted logic.
-> 
-> Excerpt from xfs_buftarg_isolate():
->         /*
->          * Decrement the b_lru_ref count unless the value is already
->          * zero. If the value is already zero, we need to reclaim the
->          * buffer, otherwise it gets another trip through the LRU.
->          */
->         if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
->                 spin_unlock(&bp->b_lock);
->                 return LRU_ROTATE;
->         }
-> 
-> However, as per documentation, atomic_add_unless() returns _zero_
-> if the atomic value was originally equal to the specified *unsless* value.
-> 
-> Ultimately causing a xfs_buffer with ->b_lru_ref == 0, to take another 
-> trip around LRU, while isolating buffers with non-zero b_lru_ref.
-> 
-> Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
-> CC: Brian Foster <bfoster@redhat.com>
+On Thu, 1 Mar 2018 22:17:13 +0000 Roman Gushchin <guro@fb.com> wrote:
 
-Looks ok, will test...
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> ---
->  fs/xfs/xfs_buf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I was reported about suspicious growth of unreclaimable slabs
+> on some machines. I've found that it happens on machines
+> with low memory pressure, and these unreclaimable slabs
+> are external names attached to dentries.
 > 
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index d1da2ee9e6db..ac669a10c62f 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -1708,7 +1708,7 @@ xfs_buftarg_isolate(
->  	 * zero. If the value is already zero, we need to reclaim the
->  	 * buffer, otherwise it gets another trip through the LRU.
->  	 */
-> -	if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-> +	if (atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
->  		spin_unlock(&bp->b_lock);
->  		return LRU_ROTATE;
->  	}
-> -- 
-> 2.14.3
+> External names are allocated using generic kmalloc() function,
+> so they are accounted as unreclaimable. But they are held
+> by dentries, which are reclaimable, and they will be reclaimed
+> under the memory pressure.
 > 
+> In particular, this breaks MemAvailable calculation, as it
+> doesn't take unreclaimable slabs into account.
+> This leads to a silly situation, when a machine is almost idle,
+> has no memory pressure and therefore has a big dentry cache.
+> And the resulting MemAvailable is too low to start a new workload.
+> 
+> To resolve this issue, a new mm counter is introduced:
+> NR_INDIRECTLY_RECLAIMABLE_BYTES .
+> Since it's not possible to count such objects on per-page basis,
+> let's make the unit obvious (by analogy to NR_KERNEL_STACK_KB).
+> 
+> The counter is increased in dentry allocation path, if an external
+> name structure is allocated; and it's decreased in dentry freeing
+> path. I believe, that it's not the only case in the kernel, when
+> we do have such indirectly reclaimable memory, so I expect more
+> use cases to be added.
+> 
+> This counter is used to adjust MemAvailable calculations:
+> indirectly reclaimable memory is considered as available.
+> 
+> To reproduce the problem I've used the following Python script:
+>   import os
+> 
+>   for iter in range (0, 10000000):
+>       try:
+>           name = ("/some_long_name_%d" % iter) + "_" * 220
+>           os.stat(name)
+>       except Exception:
+>           pass
+> 
+> Without this patch:
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7811688 kB
+>   $ python indirect.py
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    2753052 kB
+> 
+> With the patch:
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7809516 kB
+>   $ python indirect.py
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7749144 kB
+> 
+> Also, this patch adds a corresponding entry to /proc/vmstat:
+> 
+>   $ cat /proc/vmstat | grep indirect
+>   nr_indirectly_reclaimable 5117499104
+> 
+>   $ echo 2 > /proc/sys/vm/drop_caches
+> 
+>   $ cat /proc/vmstat | grep indirect
+>   nr_indirectly_reclaimable 7104
+
+hm, I guess so...
+
+I wonder if it should be more general, as there are probably other
+potential users of NR_INDIRECTLY_RECLAIMABLE_BYTES.  And they might be
+using alloc_pages() or even vmalloc()?  Whereas
+NR_INDIRECTLY_RECLAIMABLE_BYTES is pretty closely tied to kmalloc, at
+least in the code comments.
+
+If we're really OK with the "only for kmalloc" concept then why create
+NR_INDIRECTLY_RECLAIMABLE_BYTES at all?  Could we just use
+NR_SLAB_RECLAIMABLE to account the external names?  After all, kmalloc
+is slab.
