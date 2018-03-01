@@ -1,99 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967496AbeCAKdT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:33:19 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38278 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966395AbeCAKdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S967456AbeCAKdN (ORCPT <rfc822;w@1wt.eu>);
         Thu, 1 Mar 2018 05:33:13 -0500
-Date: Thu, 1 Mar 2018 11:32:59 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Samuel Holland <samuel@sholland.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 3/3] mailbox: sunxi-msgbox: Add a new mailbox driver
-Message-ID: <20180301103259.nomjbwkw4xbvhbfv@flea>
-References: <20180228022714.30068-1-samuel@sholland.org>
- <20180228022714.30068-4-samuel@sholland.org>
- <20180228083214.h4oi2kmjjqmoyfhn@flea>
- <fdf86770-6f45-3b3c-50ea-7a8363894639@sholland.org>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40843 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966117AbeCAKdJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:33:09 -0500
+X-Google-Smtp-Source: AG47ELvPtvPz0DEH6sQsduWYBCKQuLStF4lVv4w452JAJEHB7ty1MXyg6uZo0ei1WKZjGVB9amm4Sg==
+Subject: Re: [PATCH 02/15] lightnvm: add controller capabilities to 2.0
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
+ <1519832975-25432-3-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e435dd71-a83d-1888-0e1b-cd1b62181e4c@lightnvm.io>
+Date: Thu, 1 Mar 2018 11:33:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zp7kdmrnxtjungey"
-Content-Disposition: inline
-In-Reply-To: <fdf86770-6f45-3b3c-50ea-7a8363894639@sholland.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1519832975-25432-3-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/28/2018 04:49 PM, Javier González wrote:
+> Assign missing mccap value on 2.0 path
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/nvme/host/lightnvm.c | 4 +++-
+>   include/linux/lightnvm.h     | 8 +++++---
+>   2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index e276ace28c64..5b2024ebac76 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -318,7 +318,7 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+>   	geo->ws_opt = sec_per_pg;
+>   	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values */
+>   
+> -	geo->mccap = le32_to_cpu(src->mccap);
+> +	geo->cap = le32_to_cpu(src->mccap);
+>   
+>   	geo->trdt = le32_to_cpu(src->trdt);
+>   	geo->trdm = le32_to_cpu(src->trdm);
+> @@ -396,6 +396,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+>   	geo->ws_opt = le32_to_cpu(id->ws_opt);
+>   	geo->mw_cunits = le32_to_cpu(id->mw_cunits);
+>   
+> +	geo->cap = le32_to_cpu(id->mccap);
+> +
+>   	geo->trdt = le32_to_cpu(id->trdt);
+>   	geo->trdm = le32_to_cpu(id->trdm);
+>   	geo->tprt = le32_to_cpu(id->twrt);
+> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+> index 16255fcd5250..b9f0d2070de9 100644
+> --- a/include/linux/lightnvm.h
+> +++ b/include/linux/lightnvm.h
+> @@ -288,8 +288,10 @@ struct nvm_geo {
+>   	u32	ws_opt;		/* optimal write size */
+>   	u32	mw_cunits;	/* distance required for successful read */
+>   
+> -	/* device capabilities */
+> -	u32	mccap;
+> +	/* device capabilities. Note that this represents capabilities in 1.2
+> +	 * and media and controller capabilities in 2.0
+> +	 */
+> +	u32	cap;
 
---zp7kdmrnxtjungey
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here is a list of capabilities:
 
-On Wed, Feb 28, 2018 at 11:19:11AM -0600, Samuel Holland wrote:
-> Hi,
->=20
-> On 02/28/18 02:32, Maxime Ripard wrote:
-> > On Tue, Feb 27, 2018 at 08:27:14PM -0600, Samuel Holland wrote:
-> >> +	/*
-> >> +	 * The failure path should not disable the clock or assert the reset,
-> >> +	 * because the PSCI implementation in firmware relies on this device
-> >> +	 * being functional. Claiming the clock in this driver is required to
-> >> +	 * prevent Linux from turning it off.
-> >> +	 */
-> >> +	ret =3D clk_prepare_enable(clk);
-> >> +	if (ret) {
-> >> +		dev_err(dev, "Failed to enable bus clock: %d\n", ret);
-> >> +		return ret;
-> >> +	}
-> >=20
-> > You don't need it to be always on though. You only need it to be
-> > enabled when you access the registers (on both sides I guess?). So you
-> > could very well enable the clock in your registers accessors in Linux,
-> > and do the same in the ARISC firmware. That should work.
->=20
-> It does need to always be on because the *PSCI* implementation (ATF) also=
- uses
-> SCPI concurrently with Linux (on a separate channel). Turning off the clo=
-ck
-> anywhere in Linux could turn it off in the middle of a PSCI SCPI call on a
-> different CPU, causing ATF to hang in EL3 (which would be very bad).
+1.2
+Bad block mgmt
+Hybrid command support
 
-Then the above code doesn't fix anything. You should mark the clock
-critical, otherwise that clock will be turned off if the driver is
-compiled as a module and not loaded (or loaded later), or if the
-driver is not even compiled in.
+2.0
 
-Maxime
+Vector copy
+Double reset
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The way I was thinking it would be implemented is to split the upper cap 
+bits to 2.0, and let the lower bits be reserved for 1.2.
 
---zp7kdmrnxtjungey
-Content-Type: application/pgp-signature; name="signature.asc"
+Such that one would define the following:
 
------BEGIN PGP SIGNATURE-----
+enum {
+	NVM_CAP_BBM 	1 << 0;
+	NVM_CAP_HCS 	1 << 1;
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqX1toACgkQ0rTAlCFN
-r3QrCQ//W43iHw2yA04qQwRg+S9XCDti0+SutM54YaVxFsebKuS3lL46Cn7DZdXt
-EMC+p3pDfMBpKhDDyVYDiGKVFvU1U9ho0J14esSNmos2o9t7hGByjQ54dgQMH3B3
-D1K42KdbTvu7JxWmGl2k+6eLt1QIKovaB4GS2pc0IL++bZInOuOkoa1m/M2s1li3
-EvdYSB1oNhuriqD+kZq4COp11iGuv4MDGtLmaIiltSXqmgb6OqGw+wNExR23kHUk
-porzRqvAXODE7K/rw104xl4ykMp9f4h+eY0NLNHe2uR8inDPEpTGGNYhxKOjQFr6
-XI/8gyhamQSlnaC32rlu7k07EQEm7sdMHmMyJ4awU+schNskN1b46nHMD3Uti2oM
-OEpVFLn9ExFmPiTx4fVUkx8QFCCgc3xkLrFHUJuR0ikRbdciuN+fa1lF67COXoRa
-AyWbBnH2SnjFu1xKurGU77ZVAA2slQdwggJp86+aYxoXGVhNoE14MgfECtUSMJ3F
-TeaurYiXi876b0dYxnDoFNaY1TUE6L5rkD5QG4CDhl8s7v362Ae0/tEEDs0QSl3X
-a5f1K3t24Repvcfh6mPzkGVtjOZ/JP4QFPlprVOU9nQ6yUY7ofl1AsXiWnyrWVED
-rZtsmGqQdLdlgNMKK2fOsaA5jsDtoirvS/+1tJZi+mVrVA4rfZU=
-=eBab
------END PGP SIGNATURE-----
+	NVM_CAP_VCPY 	1 << 16;
+	NVM_CAP_DRST	1 << 17;
+};
 
---zp7kdmrnxtjungey--
+That way, the assignment from 2.0 can easily be done with cap = 
+le32_to_cpu(id->mccap) << 16;
+
+and targets and other don't need to understand the difference between 
+1.2 and 2.0 format.
+>   
+>   	/* device timings */
+>   	u32	trdt;		/* Avg. Tread (ns) */
+> @@ -304,7 +306,7 @@ struct nvm_geo {
+>   
+>   	/* 1.2 compatibility */
+>   	u8	vmnt;
+> -	u32	cap;
+> +	u32	mccap;
+>   	u32	dom;
+>   
+>   	u8	mtype;
+> 
