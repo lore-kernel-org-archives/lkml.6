@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909644-2-11701983831820591997
+X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909635-5-7959769409441574029
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909643; b=vsosRgfuUXB65rsV61GvX5WHTlZ3lQqtXaldYVc4tkidFRy
-    OInbf4K6HhD2YY7RnT7pe/UG5sFa3uBHdFOMqpvo0vWTyzQm4334T4w4SlY4/Yh0
-    iUZPjJ5u8FUhMi4Ya6NsvlfxyQwAJdjbIdv/guYi66r11FoyY4ymddym+q1T5t+N
-    twmhVjw62JAo8QuQgkAXvooXpqCO7ocK8aRm44KUKSTd/3sgn7m6Mr/Aii4IvU/c
-    x8W+o94Ix8Z13mzwPHlT7XfwXXT2pgrK4XPf9xTFqB/B+JXsJJKw3gT8QXzenTTi
-    of1k+ezrZ7+3DgxTg84x72s9un1DhGCAMyUGncw==
+    t=1519909635; b=lk+/6II6Fy4bcBgONcaavCPeY3AJc5HpU+jE2bVvM/n1oNE
+    7fRoNP+M5qwj6+v7Asjz8hvRoToXUfp82irigu6OXMQnPjaav7CoFqPWlzAij3WB
+    yV9QjAy2iFgy2p5klSBF2JOhud3pbCley65D1OxQIVoQXboq2IqOCodrf4renFb2
+    ohD6M5e9ED9SZqx/EjXdEORLV9ALfQV4AQ/kHaqa3reINkdDc94NfGia9entGRi+
+    l9vUtnlzxTMiF4jN1E2CQLr7VC6zH/uzDatOd6T5Qxn1p+rR6kWbpbmowiOVIR+q
+    qFSaQbqlItWOebh9MxSb7zrf/TC0/VwJkPhOT7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909643;
-    bh=i4j5LLlcJTrNi6a03osuM7FMBFfhyS0MAdksfWz86sU=; b=kIfAXkZOkW/L
-    Kg0IwzUlmi2GilzA/BPP8EU4auzckzbesUH7lRiBoV+Ls1Ybwe7KtkKLzgAV8pD2
-    cs37Juy4DWQUrLZr9ep56a91Yt4kOtnPaV+w0T7xUKY3mgz6xIDv1LpdkWY+4K3B
-    2B0aAbyvxaadbDbjAo0FHG6/98lkmn0yd5zsDcQQfPSUAzk4T2Y6uaCemQfQS0UL
-    T6MuV7vcWQ2IdYgVyGt42Vj9O45R6yPji6vrLy0RFVUqePqNon/hxN+yWGFNpz8U
-    cOTmOvtBvt8wyjkhBkL/ZXMEkxYaAm3vpuqR+S7blQUUtgkSFsPvmttnXaa+aoY7
-    NKD6DZiq6g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=R0saQ4fw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519909635;
+    bh=B06UrOpFOhDhk8CXgd0QbaeXaNIGUHvFPN317fRlFQ4=; b=XxrFJTrCkr89
+    tRD3Ya3Yy8Ij6w9Sgif5YsPEc6YduiqaNcN0ejJuMdq2GWpVNODFUKFZ66uHbF7l
+    hbylxCW2FcscsyPfIZUqFmYK8wvwTn25Mv5fqzWhyOSxtnPuFdkkTQQfKhvUVzIy
+    WwCwJtiNjzwvM7FYvHIoVpvU3vvBJMsRFY3KLpmjOYimxn74FulbPIiTceBQ9LDD
+    EAAqjmbvumY5ohNqgnOeIfOhoxr9/gZ0SleGCrcPHBp2UgEnrv2jAW+8amNqzVlI
+    cvUsaGONyxP+2TVak8rNe7Jqwcg5mGxEBLwNrrdOTl7KdnYd7lFnRLjlVgcKUt1o
+    HnhA23/Vjg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=D/+FhXt5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=n5ZwZFSf;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=j264OKcz;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=R0saQ4fw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=D/+FhXt5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=n5ZwZFSf;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=j264OKcz;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030591AbeCAM4e (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 07:56:34 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46405 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030589AbeCAM4c (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:56:32 -0500
-X-Google-Smtp-Source: AG47ELsvVB0DSQF2OwnASvNYr6xc0pimqOciuNc9K+uEPMwaAu/w78ro4ekF5MjwucxAoQDv+70C4A==
+        id S1030791AbeCAM5J (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:57:09 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41327 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030789AbeCAM5C (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:57:02 -0500
+X-Google-Smtp-Source: AG47ELsj8/N9BmPe04eqb9FPvC24xYKDpVP8wgcHlRMGFnwC+82inZWq/GwfEgDId/anSFRAIo99yA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -63,10 +63,10 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc: Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH 10/45] arm64: Use pointer masking to limit uaccess speculation
-Date: Thu,  1 Mar 2018 20:53:47 +0800
-Message-Id: <1519908862-11425-11-git-send-email-alex.shi@linaro.org>
+Cc: Alex Shi <alex.shi@linaro.org>
+Subject: [PATCH 14/45] arm64: uaccess: Don't bother eliding access_ok checks in __{get, put}_user
+Date: Thu,  1 Mar 2018 20:53:51 +0800
+Message-Id: <1519908862-11425-15-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -76,82 +76,124 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 4d8efc2d5ee4 upstream.
+commit 84624087dd7e upstream.
 
-Similarly to x86, mitigate speculation past an access_ok() check by
-masking the pointer against the address limit before use.
+access_ok isn't an expensive operation once the addr_limit for the current
+thread has been loaded into the cache. Given that the initial access_ok
+check preceding a sequence of __{get,put}_user operations will take
+the brunt of the miss, we can make the __* variants identical to the
+full-fat versions, which brings with it the benefits of address masking.
 
-Even if we don't expect speculative writes per se, it is plausible that
-a CPU may still speculate at least as far as fetching a cache line for
-writing, hence we also harden put_user() and clear_user() for peace of
-mind.
+The likely cost in these sequences will be from toggling PAN/UAO, which
+we can address later by implementing the *_unsafe versions.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/include/asm/uaccess.h | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/uaccess.h | 54 ++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 7b1eb49..3531fec 100644
+index 00025c5..ffa4e39 100644
 --- a/arch/arm64/include/asm/uaccess.h
 +++ b/arch/arm64/include/asm/uaccess.h
-@@ -170,6 +170,26 @@ static inline void uaccess_enable_not_uao(void)
- }
+@@ -248,30 +248,35 @@ do {									\
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+ } while (0)
  
- /*
-+ * Sanitise a uaccess pointer such that it becomes NULL if above the
-+ * current addr_limit.
-+ */
-+#define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
-+static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
-+{
-+	void __user *safe_ptr;
-+
-+	asm volatile(
-+	"	bics	xzr, %1, %2\n"
-+	"	csel	%0, %1, xzr, eq\n"
-+	: "=&r" (safe_ptr)
-+	: "r" (ptr), "r" (current_thread_info()->addr_limit)
-+	: "cc");
-+
-+	csdb();
-+	return safe_ptr;
-+}
-+
-+/*
-  * The "__xxx" versions of the user access functions do not verify the address
-  * space - it must have been done previously with a separate "access_ok()"
-  * call.
-@@ -241,7 +261,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_READ, __p, sizeof(*__p)) ?			\
--		__get_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __get_user((x), __p) :	\
- 		((x) = 0, -EFAULT);					\
+-#define __get_user(x, ptr)						\
++#define __get_user_check(x, ptr, err)					\
+ ({									\
+-	int __gu_err = 0;						\
+-	__get_user_err((x), (ptr), __gu_err);				\
+-	__gu_err;							\
++	__typeof__(*(ptr)) __user *__p = (ptr);				\
++	might_fault();							\
++	if (access_ok(VERIFY_READ, __p, sizeof(*__p))) {		\
++		__p = uaccess_mask_ptr(__p);				\
++		__get_user_err((x), __p, (err));			\
++	} else {							\
++		(x) = 0; (err) = -EFAULT;				\
++	}								\
  })
  
-@@ -307,7 +327,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_WRITE, __p, sizeof(*__p)) ?			\
--		__put_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __put_user((x), __p) :	\
- 		-EFAULT;						\
+ #define __get_user_error(x, ptr, err)					\
+ ({									\
+-	__get_user_err((x), (ptr), (err));				\
++	__get_user_check((x), (ptr), (err));				\
+ 	(void)0;							\
  })
  
-@@ -368,7 +388,7 @@ static inline unsigned long __must_check copy_in_user(void __user *to, const voi
- static inline unsigned long __must_check clear_user(void __user *to, unsigned long n)
- {
- 	if (access_ok(VERIFY_WRITE, to, n))
--		n = __clear_user(to, n);
-+		n = __clear_user(__uaccess_mask_ptr(to), n);
- 	return n;
- }
+ #define __get_user_unaligned __get_user
  
+-#define get_user(x, ptr)						\
++#define __get_user(x, ptr)						\
+ ({									\
+-	__typeof__(*(ptr)) __user *__p = (ptr);				\
+-	might_fault();							\
+-	access_ok(VERIFY_READ, __p, sizeof(*__p)) ?			\
+-		__p = uaccess_mask_ptr(__p), __get_user((x), __p) :	\
+-		((x) = 0, -EFAULT);					\
++	int __gu_err = 0;						\
++	__get_user_check((x), (ptr), __gu_err);				\
++	__gu_err;							\
+ })
+ 
++#define get_user	__get_user
++
+ #define __put_user_asm(instr, alt_instr, reg, x, addr, err, feature)	\
+ 	asm volatile(							\
+ 	"1:"ALTERNATIVE(instr "     " reg "1, [%2]\n",			\
+@@ -314,30 +319,35 @@ do {									\
+ 	uaccess_disable_not_uao();					\
+ } while (0)
+ 
+-#define __put_user(x, ptr)						\
++#define __put_user_check(x, ptr, err)					\
+ ({									\
+-	int __pu_err = 0;						\
+-	__put_user_err((x), (ptr), __pu_err);				\
+-	__pu_err;							\
++	__typeof__(*(ptr)) __user *__p = (ptr);				\
++	might_fault();							\
++	if (access_ok(VERIFY_WRITE, __p, sizeof(*__p))) {		\
++		__p = uaccess_mask_ptr(__p);				\
++		__put_user_err((x), __p, (err));			\
++	} else	{							\
++		(err) = -EFAULT;					\
++	}								\
+ })
+ 
+ #define __put_user_error(x, ptr, err)					\
+ ({									\
+-	__put_user_err((x), (ptr), (err));				\
++	__put_user_check((x), (ptr), (err));				\
+ 	(void)0;							\
+ })
+ 
+ #define __put_user_unaligned __put_user
+ 
+-#define put_user(x, ptr)						\
++#define __put_user(x, ptr)						\
+ ({									\
+-	__typeof__(*(ptr)) __user *__p = (ptr);				\
+-	might_fault();							\
+-	access_ok(VERIFY_WRITE, __p, sizeof(*__p)) ?			\
+-		__p = uaccess_mask_ptr(__p), __put_user((x), __p) :	\
+-		-EFAULT;						\
++	int __pu_err = 0;						\
++	__put_user_check((x), (ptr), __pu_err);				\
++	__pu_err;							\
+ })
+ 
++#define put_user	__put_user
++
+ extern unsigned long __must_check __arch_copy_from_user(void *to, const void __user *from, unsigned long n);
+ extern unsigned long __must_check __arch_copy_to_user(void __user *to, const void *from, unsigned long n);
+ extern unsigned long __must_check __copy_in_user(void __user *to, const void __user *from, unsigned long n);
 -- 
 2.7.4
