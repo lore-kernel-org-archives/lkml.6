@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033228AbeCAQwG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:52:06 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:51703 "EHLO
+        id S1033184AbeCAQwE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:52:04 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:51702 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033004AbeCAQwC (ORCPT
+        with ESMTP id S1032990AbeCAQwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Mar 2018 11:52:02 -0500
-Message-Id: <20180301165150.410218515@linutronix.de>
+Message-Id: <20180301165149.965235774@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Thu, 01 Mar 2018 17:33:37 +0100
+Date: Thu, 01 Mar 2018 17:33:32 +0100
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -23,126 +23,171 @@ Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
         Kevin Easton <kevin@guarana.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [RFC/RFT patch 6/7] hrtimer: Conflate clock MONOTONIC and BOOTTIME
+Subject: [RFC/RFT patch 1/7] timekeeping: Provide CLOCK_MONOTONIC_ACTIVE
 References: <20180301163331.987775783@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Disposition: inline;
- filename=hrtimer--Conflate-clock-MONOTONIC-and-BOOTTIME.patch
+ filename=timekeeping--Provide-CLOCK_MONOTONIC_ACTIVE.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that clock MONOTONIC and BOOTTIME are indentical remove all the special
-casing. The user space visible interfaces still support both clocks.
+The planned change to unify the behaviour of clock MONOTONIC and clock
+BOOTTIME vs. suspend removes the ability to retrieve the active
+nonsuspended time of a system.
+
+Provide CLOCK_MONOTONIC_ACTIVE which return the active non suspended time
+of the system via clock_gettime(). This is the behaviour of CLOCK_MONOTONIC
+bevor the BOOTTIME/MONOTONIC unification.
+
+It also allows applications to detect programmatically that clock MONOTONIC
+and clock BOOTTIME are identical.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/hrtimer.h   |    2 --
- kernel/time/hrtimer.c     |   16 ++--------------
- kernel/time/timekeeping.c |    4 +---
- kernel/time/timekeeping.h |    1 -
- 4 files changed, 3 insertions(+), 20 deletions(-)
+ include/linux/timekeeper_internal.h |    2 ++
+ include/linux/timekeeping.h         |    1 +
+ include/uapi/linux/time.h           |    1 +
+ kernel/time/posix-stubs.c           |    2 ++
+ kernel/time/posix-timers.c          |   13 +++++++++++++
+ kernel/time/timekeeping.c           |   36 ++++++++++++++++++++++++++++++++++++
+ 6 files changed, 55 insertions(+)
 
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -161,11 +161,9 @@ struct hrtimer_clock_base {
- enum  hrtimer_base_type {
- 	HRTIMER_BASE_MONOTONIC,
- 	HRTIMER_BASE_REALTIME,
--	HRTIMER_BASE_BOOTTIME,
- 	HRTIMER_BASE_TAI,
- 	HRTIMER_BASE_MONOTONIC_SOFT,
- 	HRTIMER_BASE_REALTIME_SOFT,
--	HRTIMER_BASE_BOOTTIME_SOFT,
- 	HRTIMER_BASE_TAI_SOFT,
- 	HRTIMER_MAX_CLOCK_BASES,
- };
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -91,11 +91,6 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base,
- 			.get_time = &ktime_get_real,
- 		},
- 		{
--			.index = HRTIMER_BASE_BOOTTIME,
--			.clockid = CLOCK_BOOTTIME,
--			.get_time = &ktime_get_boottime,
--		},
--		{
- 			.index = HRTIMER_BASE_TAI,
- 			.clockid = CLOCK_TAI,
- 			.get_time = &ktime_get_clocktai,
-@@ -111,11 +106,6 @@ DEFINE_PER_CPU(struct hrtimer_cpu_base,
- 			.get_time = &ktime_get_real,
- 		},
- 		{
--			.index = HRTIMER_BASE_BOOTTIME_SOFT,
--			.clockid = CLOCK_BOOTTIME,
--			.get_time = &ktime_get_boottime,
--		},
--		{
- 			.index = HRTIMER_BASE_TAI_SOFT,
- 			.clockid = CLOCK_TAI,
- 			.get_time = &ktime_get_clocktai,
-@@ -129,7 +119,7 @@ static const int hrtimer_clock_to_base_t
+--- a/include/linux/timekeeper_internal.h
++++ b/include/linux/timekeeper_internal.h
+@@ -52,6 +52,7 @@ struct tk_read_base {
+  * @offs_real:		Offset clock monotonic -> clock realtime
+  * @offs_boot:		Offset clock monotonic -> clock boottime
+  * @offs_tai:		Offset clock monotonic -> clock tai
++ * @time_suspended:	Accumulated suspend time
+  * @tai_offset:		The current UTC to TAI offset in seconds
+  * @clock_was_set_seq:	The sequence number of clock was set events
+  * @cs_was_changed_seq:	The sequence number of clocksource change events
+@@ -94,6 +95,7 @@ struct timekeeper {
+ 	ktime_t			offs_real;
+ 	ktime_t			offs_boot;
+ 	ktime_t			offs_tai;
++	ktime_t			time_suspended;
+ 	s32			tai_offset;
+ 	unsigned int		clock_was_set_seq;
+ 	u8			cs_was_changed_seq;
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -32,6 +32,7 @@ extern void getrawmonotonic64(struct tim
+ extern void ktime_get_ts64(struct timespec64 *ts);
+ extern time64_t ktime_get_seconds(void);
+ extern time64_t ktime_get_real_seconds(void);
++extern void ktime_get_active_ts64(struct timespec64 *ts);
  
- 	[CLOCK_REALTIME]	= HRTIMER_BASE_REALTIME,
- 	[CLOCK_MONOTONIC]	= HRTIMER_BASE_MONOTONIC,
--	[CLOCK_BOOTTIME]	= HRTIMER_BASE_BOOTTIME,
-+	[CLOCK_BOOTTIME]	= HRTIMER_BASE_MONOTONIC,
- 	[CLOCK_TAI]		= HRTIMER_BASE_TAI,
- };
+ extern int __getnstimeofday64(struct timespec64 *tv);
+ extern void getnstimeofday64(struct timespec64 *tv);
+--- a/include/uapi/linux/time.h
++++ b/include/uapi/linux/time.h
+@@ -61,6 +61,7 @@ struct itimerval {
+  */
+ #define CLOCK_SGI_CYCLE			10
+ #define CLOCK_TAI			11
++#define CLOCK_MONOTONIC_ACTIVE		12
  
-@@ -565,14 +555,12 @@ static ktime_t
- static inline ktime_t hrtimer_update_base(struct hrtimer_cpu_base *base)
+ #define MAX_CLOCKS			16
+ #define CLOCKS_MASK			(CLOCK_REALTIME | CLOCK_MONOTONIC)
+--- a/kernel/time/posix-stubs.c
++++ b/kernel/time/posix-stubs.c
+@@ -73,6 +73,8 @@ int do_clock_gettime(clockid_t which_clo
+ 	case CLOCK_BOOTTIME:
+ 		get_monotonic_boottime64(tp);
+ 		break;
++	case CLOCK_MONOTONIC_ACTIVE:
++		ktime_get_active_ts64(tp);
+ 	default:
+ 		return -EINVAL;
+ 	}
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -263,6 +263,13 @@ static int posix_get_tai(clockid_t which
+ 	return 0;
+ }
+ 
++static int posix_get_monotonic_active(clockid_t which_clock,
++				      struct timespec64 *tp)
++{
++	ktime_get_active_ts64(tp);
++	return 0;
++}
++
+ static int posix_get_hrtimer_res(clockid_t which_clock, struct timespec64 *tp)
  {
- 	ktime_t *offs_real = &base->clock_base[HRTIMER_BASE_REALTIME].offset;
--	ktime_t *offs_boot = &base->clock_base[HRTIMER_BASE_BOOTTIME].offset;
- 	ktime_t *offs_tai = &base->clock_base[HRTIMER_BASE_TAI].offset;
+ 	tp->tv_sec = 0;
+@@ -1330,6 +1337,11 @@ static const struct k_clock clock_bootti
+ 	.timer_arm		= common_hrtimer_arm,
+ };
  
- 	ktime_t now = ktime_get_update_offsets_now(&base->clock_was_set_seq,
--					    offs_real, offs_boot, offs_tai);
-+						   offs_real, offs_tai);
++static const struct k_clock clock_monotonic_active = {
++	.clock_getres		= posix_get_hrtimer_res,
++	.clock_get		= posix_get_monotonic_active,
++};
++
+ static const struct k_clock * const posix_clocks[] = {
+ 	[CLOCK_REALTIME]		= &clock_realtime,
+ 	[CLOCK_MONOTONIC]		= &clock_monotonic,
+@@ -1342,6 +1354,7 @@ static const struct k_clock * const posi
+ 	[CLOCK_REALTIME_ALARM]		= &alarm_clock,
+ 	[CLOCK_BOOTTIME_ALARM]		= &alarm_clock,
+ 	[CLOCK_TAI]			= &clock_tai,
++	[CLOCK_MONOTONIC_ACTIVE]	= &clock_monotonic_active,
+ };
  
- 	base->clock_base[HRTIMER_BASE_REALTIME_SOFT].offset = *offs_real;
--	base->clock_base[HRTIMER_BASE_BOOTTIME_SOFT].offset = *offs_boot;
- 	base->clock_base[HRTIMER_BASE_TAI_SOFT].offset = *offs_tai;
- 
- 	return now;
+ static const struct k_clock *clockid_to_kclock(const clockid_t id)
 --- a/kernel/time/timekeeping.c
 +++ b/kernel/time/timekeeping.c
-@@ -2242,7 +2242,6 @@ void do_timer(unsigned long ticks)
-  * ktime_get_update_offsets_now - hrtimer helper
-  * @cwsseq:	pointer to check and store the clock was set sequence number
-  * @offs_real:	pointer to storage for monotonic -> realtime offset
-- * @offs_boot:	pointer to storage for monotonic -> boottime offset
-  * @offs_tai:	pointer to storage for monotonic -> clock tai offset
-  *
-  * Returns current monotonic time and updates the offsets if the
-@@ -2252,7 +2251,7 @@ void do_timer(unsigned long ticks)
-  * Called from hrtimer_interrupt() or retrigger_next_event()
-  */
- ktime_t ktime_get_update_offsets_now(unsigned int *cwsseq, ktime_t *offs_real,
--				     ktime_t *offs_boot, ktime_t *offs_tai)
-+				     ktime_t *offs_tai)
+@@ -139,6 +139,9 @@ static void tk_set_wall_to_mono(struct t
+ static inline void tk_update_sleep_time(struct timekeeper *tk, ktime_t delta)
  {
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 	unsigned int seq;
-@@ -2269,7 +2268,6 @@ ktime_t ktime_get_update_offsets_now(uns
- 		if (*cwsseq != tk->clock_was_set_seq) {
- 			*cwsseq = tk->clock_was_set_seq;
- 			*offs_real = tk->offs_real;
--			*offs_boot = tk->offs_boot;
- 			*offs_tai = tk->offs_tai;
- 		}
+ 	tk->offs_boot = ktime_add(tk->offs_boot, delta);
++
++	/* Accumulate time spent in suspend */
++	tk->time_suspended += delta;
+ }
  
---- a/kernel/time/timekeeping.h
-+++ b/kernel/time/timekeeping.h
-@@ -6,7 +6,6 @@
-  */
- extern ktime_t ktime_get_update_offsets_now(unsigned int *cwsseq,
- 					    ktime_t *offs_real,
--					    ktime_t *offs_boot,
- 					    ktime_t *offs_tai);
+ /*
+@@ -886,6 +889,39 @@ void ktime_get_ts64(struct timespec64 *t
+ EXPORT_SYMBOL_GPL(ktime_get_ts64);
  
- extern int timekeeping_valid_for_hres(void);
+ /**
++ * ktime_get_active_ts64 - Get the active nonsuspended monotonic clock
++ * @ts:		pointer to timespec variable
++ *
++ * The function calculates the monotonic clock from the realtime clock and
++ * the wall_to_monotonic offset, subtracts the accumulated suspend time and
++ * stores the result in normalized timespec64 format in the variable
++ * pointed to by @ts.
++ */
++void ktime_get_active_ts64(struct timespec64 *ts)
++{
++	struct timekeeper *tk = &tk_core.timekeeper;
++	struct timespec64 tomono, tsusp;
++	u64 nsec, nssusp;
++	unsigned int seq;
++
++	WARN_ON(timekeeping_suspended);
++
++	do {
++		seq = read_seqcount_begin(&tk_core.seq);
++		ts->tv_sec = tk->xtime_sec;
++		nsec = timekeeping_get_ns(&tk->tkr_mono);
++		tomono = tk->wall_to_monotonic;
++		nssusp = tk->time_suspended;
++	} while (read_seqcount_retry(&tk_core.seq, seq));
++
++	ts->tv_sec += tomono.tv_sec;
++	ts->tv_nsec = 0;
++	timespec64_add_ns(ts, nsec + tomono.tv_nsec);
++	tsusp = ns_to_timespec64(nssusp);
++	*ts = timespec64_sub(*ts, tsusp);
++}
++
++/**
+  * ktime_get_seconds - Get the seconds portion of CLOCK_MONOTONIC
+  *
+  * Returns the seconds portion of CLOCK_MONOTONIC with a single non
