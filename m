@@ -1,141 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031656AbeCAOvg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:51:36 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:30692 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031642AbeCAOve (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:51:34 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w21EpBne010651
-X-Nifty-SrcIP: [209.85.213.47]
-X-Google-Smtp-Source: AG47ELsQv1ZuP+3XjfRjlr6988tQuJu1ErxrRhhVDmbun8ZvwU1GZJiTMlySAG9on4fAS6rhvI51MP0WdMD2bAZGmNE=
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQRc_WCw1kSQs3YDjtX=eRKQXtkixifR3hdz1kz2Gt1+A@mail.gmail.com>
-References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
- <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com>
- <20180228051525.a2vouqs6djnd2cnf@huvuddator> <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
- <20180301111801.gdhoam4kqrbqnasv@huvuddator> <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
- <CAK7LNAQRc_WCw1kSQs3YDjtX=eRKQXtkixifR3hdz1kz2Gt1+A@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 23:50:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATKrkkRCZofZi7cLyG2gjetsUsZ=Fh-CkJ2vT1LgNzjxQ@mail.gmail.com>
-Message-ID: <CAK7LNATKrkkRCZofZi7cLyG2gjetsUsZ=Fh-CkJ2vT1LgNzjxQ@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: remove redundant streamline_config.pl prerequisite
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1031606AbeCAO40 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:56:26 -0500
+Received: from mga03.intel.com ([134.134.136.65]:32125 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031346AbeCAO4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:56:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
+   d="scan'208";a="21323901"
+Message-ID: <1519916180.10722.317.camel@linux.intel.com>
+Subject: Re: [PATCH v2 8/9] lib/vsprintf: Remove useless NULL checks
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Date: Thu, 01 Mar 2018 16:56:20 +0200
+In-Reply-To: <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+         <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+         <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+         <1519752950.10722.231.camel@linux.intel.com>
+         <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 23:44 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> 2018-03-01 23:39 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> 2018-03-01 20:18 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->>> The local{yes,mod}config targets currently have streamline_config.pl as
->>> a prerequisite. This is redundant, because streamline_config.pl is a
->>> checked-in file with no prerequisites.
->>>
->>> Remove the prerequisite and reference streamline_config.pl directly in
->>> the recipe of the rule instead.
->>>
->>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
->>> ---
->>>  scripts/kconfig/Makefile | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
->>> index 1f74336d4e23..58be52cb464d 100644
->>
->>
->> Thanks! Almost good.
->>
->> Just small nits.
->>
->>
->>> --- a/scripts/kconfig/Makefile
->>> +++ b/scripts/kconfig/Makefile
->>> @@ -77,9 +77,9 @@ silentoldconfig: $(obj)/conf
->>>             touch   include/generated/autoksyms.h
->>>         $< $(silent) --$@ $(Kconfig)
->>>
->>> -localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
->>> +localyesconfig localmodconfig: $(obj)/conf
->>>         $(Q)mkdir -p include/config include/generated
->>> -       $(Q)perl $< --$@ $(srctree) $(Kconfig) > .tmp.config
->>> +       $(Q)perl $(obj)/streamline_config.pl --$@ $(srctree) $(Kconfig) > .tmp.config
->>
->>
->>
->> '$(src)/streamline_config.pl' is better than '$(obj)/streamline_config.pl'
->> since it is a checked-in file.
->>
->> '$(src)' and '$(obj)' are always the same.
->> (https://github.com/torvalds/linux/blob/master/scripts/Makefile.build#L6)
->>
->>
->> So, there is no effective difference.
->> It is just a coding convention to use $(obj)/ for generated files,
->> and $(src)/ for source files.
->>
->> The original code already used $(obj)/, so this is not your fault
->> but I want to fix it while we are here.
->
->
-> No.
->
-> This is not a matter of taste,
-> but a bug that must be fixed.
->
->
-> This patch breaks out-of-tree build.
->
-> If O=... is given, it is error.
->
->
-> $ make O=foo  localyesconfig
-> make[1]: Leaving directory '/home/masahiro/workspace/linux-yamada/foo'
-> masahiro@grover:~/workspace/linux-yamada$ make O=foo  localyesconfig
-> make[1]: Entering directory '/home/masahiro/workspace/linux-yamada/foo'
->   GEN     ./Makefile
-> Can't open perl script "scripts/kconfig/streamline_config.pl": No such
-> file or directory
-> ../scripts/kconfig/Makefile:46: recipe for target 'localyesconfig' failed
-> make[2]: *** [localyesconfig] Error 2
-> /home/masahiro/workspace/linux-yamada/Makefile:521: recipe for target
-> 'localyesconfig' failed
-> make[1]: *** [localyesconfig] Error 2
-> make[1]: Leaving directory '/home/masahiro/workspace/linux-yamada/foo'
-> Makefile:146: recipe for target 'sub-make' failed
-> make: *** [sub-make] Error 2
->
->
->
-> The right fix is $(srctree)/$(src)/streamline_config.pl
->
->
++Cc: Pantelis, author of %pOF extension
+(I leave a lot of the message from Petr to give you a bit of context)
 
+On Wed, 2018-02-28 at 11:04 +0100, Petr Mladek wrote:
+> On Tue 2018-02-27 19:35:50, Andy Shevchenko wrote:
+> > On Tue, 2018-02-27 at 16:50 +0100, Petr Mladek wrote:
+> > > On Fri 2018-02-16 23:07:10, Andy Shevchenko wrote:
+> > > > The pointer can't be NULL since it's first what has been done in
+> > > > the
+> > > > pointer().
+> > > > 
+> > > > Remove useless checks.
+> > > > 
+> > > > Note we leave check for !CONFIG_HAVE_CLK to make compiler
+> > > > to optimize code away when possible.
+ 
+> > > > -	if (ZERO_OR_NULL_PTR(addr))
+> > > 
+> > > This macro matches also values <= 16.
+> > 
+> > Yes, I know.
+> > 
+> > This had been discussed with Rasmus and we agreed that printing a
+> > result
+> > of kmalloc(0) is rather weird.
+> 
+> I see
+> https://lkml.kernel.org/r/1500546142.29303.133.camel@linux.intel.com
+> There you suggested to move this check into pointer(). But I do not
+> see any agreement on this.
 
+> > > >  	switch (fmt[1]) {
+> > > > @@ -1580,9 +1572,6 @@ char *device_node_string(char *buf, char
+> > > > *end,
+> > > > struct device_node *dn,
+> > > >  	if (!IS_ENABLED(CONFIG_OF))
+> > > >  		return string(buf, end, "(!OF)", spec);
+> > > >  
+> > > > -	if ((unsigned long)dn < PAGE_SIZE)
+> > > > -		return string(buf, end, "(null)", spec);
+> > > 
+> > > In this case, "null" was printed for ptr < PAGE_SIZE. The same
+> > > check
+> > > is also in string() function.
+> > 
+> > Do we have a uses cases when invalid (non-NULL) pointer is supplied
+> > to
+> > print function?
+> > 
+> > Those call sites have to be fixed.
 
+Pantelis, is this check necessary? What are the use cases of node
+pointer being < PAGE_SIZE?
 
-For somebody wondering why the current code works
-for out-of-tree building.
+And main question, can it be just (re-)moved to simple NULL check?
 
+See below the originate of the PAGE_SIZE check what Petr found.
 
-Kbuild sets VPATH
-(https://github.com/torvalds/linux/blob/master/Makefile#L208)
-
-
-So, Make searches for pre-requisites in both objtree and srctree
-when building out-of-tree.
-
-VPATH does not work for recipe lines.
-So, we need to specify the exact path to streamline_config.pl
-
-
+> I am not aware of any. But this patch will make fixing such locations
+> more complicated. The kernel would crash and might not show any
+> message.
+> Is this really what we want?
+> 
+> Note that it will most likely crash in vprintk_emit() on the line
+> 
+>    text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
+> 
+> It will be with logbug_lock() taken. The nested printk() messages
+> will be stored in per-CPU buffer thanks to printk_safe code.
+> They might eventually be printed by printk_safe_flush_on_panic()
+> but it is not guaranteed.
+> 
+> 
+> > > Note that it is not only about the printed value. The pointer is
+> > > later
+> > > derefecend. We will start crashing on dn > 0 && dn < PAGE_SIZE.
+> > 
+> > Yes.
+> > So, fix the call sites!
+> 
+> It would be easier if printk() was able to show the message
+> when hitting this place.
+> 
+> I did some archaeology. The first check for PAGE_SIZE was added
+> by the pre-git commit:
+> 
+> commit 8bcb3ba1dec5749a7f1eed570cb69a20c2e4bd41
+> Author: Andrew Morton <akpm@osdl.org>
+> Date:   Tue Oct 21 18:22:28 2003 -0700
+> 
+>     [PATCH] make printk more robust with "null" pointers
+>     
+>     Expand printk's traditional handling of null pointers so that
+> anything in the
+>     first page is considered a null pointer.
+>     
+>     This gives us better behaviour when someone (acpi..) accidentally
+> prints a
+>     string which is embedded in a struct, the pointer to which is
+> null.
+> 
+> 
+> IMHO, it would make sense to hanve this check also pointers that are
+> being deferred.
+> 
+> 
+> > > To be honest, I do not feel experienced enough to decide
+> > > about the preferred behavior. On one hand, it is bad when
+> > > printk() would crash the kernel. On the other hand, hiding wide
+> > > range of values under "(null)" string might confuse people.
+> > > Would it make sense to survive and write different strings for
+> > > difference intervals? For example?
+> > > 
+> > >     "(null)"     for ptr == 0
+> > >     "(null-16)"  for ptr > 0 && ptr <= 16
+> > >     "(null-pg)"  for prt > 16 && ptr <= PAGE_SIZE
+> > > 
+> > > In each case, this patch changes the behavior and it should
+> > > be documented in the commit message.
+> > 
+> > Personally I strongly disagree with blowing code up in such places
+> > for
+> > little or none benefit.
+> 
+> I do not have strong opinion here. I could imagine that this might
+> save a day to some people. But I have never encountered such a bug
+> myself.
+> 
+> To make it clear. Your clean up work makes sense. I just want to point
+> out that this patch is not as innocent as the commit message suggest.
+> Also I think that it goes in the wrong direction regarding the
+> ability to show useful information in a buggy situation.
 
 -- 
-Best Regards
-Masahiro Yamada
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
