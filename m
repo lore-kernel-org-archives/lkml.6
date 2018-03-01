@@ -1,308 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935803AbeCAIBH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:01:07 -0500
-Received: from mfo1500.tsb.2iij.net ([210.149.48.175]:53333 "EHLO
-        mfo.tsb.2iij.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934962AbeCAIBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:01:03 -0500
-X-MXL-Hash: 5a97ae1f27e4400a-4f9d8bcedf12bc050529ab28ceda8fd7fec5d5d0
+        id S935812AbeCAICM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:02:12 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52034 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934962AbeCAICK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 03:02:10 -0500
+Date: Thu, 1 Mar 2018 09:02:06 +0100
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH net-next 2/2] virtio-net: simplify XDP handling in small
+ buffer
+Message-ID: <20180301090206.04e13a71@redhat.com>
+In-Reply-To: <1519874345-10235-3-git-send-email-jasowang@redhat.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+        <1519874345-10235-3-git-send-email-jasowang@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-From: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
-To: jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
-Subject: [RFC v2 2/2] WhiteEgret: Add an example of user application.
-Date: Thu,  1 Mar 2018 16:38:56 +0900
-Message-Id: <20180301073856.2601-1-masanobu2.koike@toshiba.co.jp>
-X-Mailer: git-send-email 2.14.1
-X-MAIL-FROM: <masanobu2.koike@toshiba.co.jp>
-X-SOURCE-IP: [172.27.153.190]
-X-Spam: exempt
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A user application is required to use WhiteEgret.
-This RFC provides a sample user application program.
 
-Usage
-  sample-we-user <exe>
+On Thu,  1 Mar 2018 11:19:05 +0800 Jason Wang <jasowang@redhat.com> wrote:
 
-This sample user application always returns "not permit"
-for the executable specified by the argument <exe>,
-otherwise always returns "permit". Set the absolute path
-of an executable to be blocked for <exe>.
+> We used to do data copy through xdp_linearize_page() for the buffer
+> without sufficient headroom, it brings extra complexity without
+> helping for the performance. So this patch remove it and switch to use
+> generic XDP routine to handle this case.
 
-Example
-  sample-we-user /bin/df
+I don't like where this is going.  I don't like intermixing the native
+XDP and generic XDP in this way, for several reasons:
 
-Then every executions of /bin/df are blocked.
-The other commands can be issued normally.
+1. XDP generic is not feature complete, e.g. cpumap will drop these
+   packets. It might not be possible to implement some features, think
+   of (AF_XDP) zero-copy.
 
-How to build
-To build this sample user application, set option
-CONFIG_SAMPLE_WHITEEGRET=y.
+2. This can easily cause out-of-order packets.
 
-Remark
-This sample user application does not use a whitelist.
-It simply returns "not permit" only when WhiteEgret sends
-the absolute path of argv[1] to the application.
-The reason why this sample user application adopts
-blacklist-like approach is to avoid a host to become
-uncontrollable. Namely, if this sample provides a sample
-whitelist and it misses indispensable executable components
-for a host, the host cannot run or stop normally.
-Because indispensable executable components depend on
-each environment, we decide not to provide a whitelisting-type
-sample user application.
+3. It makes it harder to troubleshoot, when diagnosing issues
+   around #1, we have a hard time determining what path an XDP packet
+   took (the xdp tracepoints doesn't know).
 
-Signed-off-by: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
----
- samples/Kconfig              |  6 ++++
- samples/Makefile             |  2 +-
- samples/whiteegret/Makefile  | 14 ++++++++
- samples/whiteegret/checkwl.c | 57 +++++++++++++++++++++++++++++
- samples/whiteegret/checkwl.h | 26 ++++++++++++++
- samples/whiteegret/main.c    | 86 ++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 190 insertions(+), 1 deletion(-)
- create mode 100644 samples/whiteegret/Makefile
- create mode 100644 samples/whiteegret/checkwl.c
- create mode 100644 samples/whiteegret/checkwl.h
- create mode 100644 samples/whiteegret/main.c
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c332a3b9de05..be6b03a70f23 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -117,4 +117,10 @@ config SAMPLE_STATX
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
- 
-+config SAMPLE_WHITEEGRET
-+	bool "Build WhiteEgret sample user application"
-+	depends on SECURITY_WHITEEGRET
-+	help
-+	  Build sample userspace application for WhiteEgret LSM module.
-+
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index db54e766ddb1..00bcba542e46 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
--			   vfio-mdev/ statx/
-+			   vfio-mdev/ statx/ whiteegret/
-diff --git a/samples/whiteegret/Makefile b/samples/whiteegret/Makefile
-new file mode 100644
-index 000000000000..77a01643c45d
---- /dev/null
-+++ b/samples/whiteegret/Makefile
-@@ -0,0 +1,14 @@
-+# kbuild trick to avoid linker error. Can be omitted if a module is built.
-+obj- := dummy.o
-+
-+# List of programs to build
-+hostprogs-$(CONFIG_SAMPLE_WHITEEGRET) := sample-we-user
-+
-+sample-we-user-objs := main.o checkwl.o
-+
-+HOSTCFLAGS += -Wall
-+HOSTCFLAGS += -I/usr/local/include
-+HOSTCFLAGS += -I$(srctree)/security/whiteegret
-+
-+# Tell kbuild to always build the programs
-+always := $(hostprogs-y)
-diff --git a/samples/whiteegret/checkwl.c b/samples/whiteegret/checkwl.c
-new file mode 100644
-index 000000000000..f19eb1054208
---- /dev/null
-+++ b/samples/whiteegret/checkwl.c
-@@ -0,0 +1,57 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <errno.h>
-+#include <string.h>
-+#include "checkwl.h"
-+
-+/*
-+ * The function check_whitelist() returns -EACCES
-+ * only when path to be examined equals to @a not_permit_exe.
-+ */
-+char not_permit_exe[NOTPERMITEXENAMELENGTH];
-+
-+/**
-+ * check_whitelist - Examine whether the executable input to this function
-+ *                   is included in whitelist or not.
-+ *
-+ * @result: Result of the examination.
-+ *            0       if the executble is included in whitelist
-+ *            -EACCES otherwise ("not included")
-+ *
-+ * Returns 0 for success, -1 otherwise.
-+ */
-+int check_whitelist(int *result, struct we_req_user *user)
-+{
-+	char *path;
-+
-+	if (result == NULL)
-+		return -1;
-+
-+	*result = 0;
-+
-+	if (user == NULL)
-+		return -1;
-+
-+	path = user->path;
-+
-+	/*
-+	 * Referring a whitelist is expected at this location.
-+	 * However, this sample uses not whitelist but blacklist
-+	 * because of avoiding a host to become uncontrollable.
-+	 * (not_permit_exe is a blacklist containing only one item.)
-+	 */
-+	if (strncmp(not_permit_exe, path, NOTPERMITEXENAMELENGTH) == 0)
-+		*result = -EACCES;
-+
-+	return 0;
-+}
-diff --git a/samples/whiteegret/checkwl.h b/samples/whiteegret/checkwl.h
-new file mode 100644
-index 000000000000..732959bbcf16
---- /dev/null
-+++ b/samples/whiteegret/checkwl.h
-@@ -0,0 +1,26 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#ifndef _CHECKWL_H
-+#define _CHECKWL_H
-+
-+#include <sys/types.h>
-+#include "we_fs_common.h"
-+
-+/* byte length of absolute path of file not to permit execution */
-+#define NOTPERMITEXENAMELENGTH 1024
-+
-+extern char not_permit_exe[NOTPERMITEXENAMELENGTH];
-+
-+int check_whitelist(int *result, struct we_req_user *user);
-+
-+#endif
-diff --git a/samples/whiteegret/main.c b/samples/whiteegret/main.c
-new file mode 100644
-index 000000000000..949d188885de
---- /dev/null
-+++ b/samples/whiteegret/main.c
-@@ -0,0 +1,86 @@
-+/*
-+ * WhiteEgret Linux Security Module
-+ *
-+ * Sample program of user's whitelisting application
-+ *
-+ * Copyright (C) 2017-2018 Toshiba Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation, version 2.
-+ */
-+
-+#include <stdio.h>
-+#include <string.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <unistd.h>
-+#include <sys/epoll.h>
-+#include <sys/socket.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include "checkwl.h"
-+
-+#include <stdlib.h>
-+#include "we_fs_common.h"
-+
-+#define MAXWAITFROMKER 10
-+
-+static void sigint_catch(int sig)
-+{
-+}
-+
-+static void print_usage(void)
-+{
-+	fprintf(stderr, "Usage: sample-we-user [file_name]\n");
-+	fprintf(stderr, "file_name: absolute path of executable");
-+	fprintf(stderr, "not to permit execution.\n");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd;
-+	struct we_req_user *user;
-+	struct we_ack ack;
-+	char buf[1024];
-+	int ret;
-+
-+	if (argc < 2) {
-+		print_usage();
-+		return -1;
-+	}
-+
-+	snprintf(not_permit_exe, NOTPERMITEXENAMELENGTH, "%s", argv[1]);
-+
-+	signal(SIGINT, sigint_catch);
-+
-+	if (daemon(0, 0) < 0) {
-+		perror("daemon");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	fd = open(WE_DEV_PATH, O_RDWR, 0);
-+	if (fd < 0) {
-+		perror(WE_DEV_PATH);
-+		exit(EXIT_FAILURE);
-+	}
-+	user = (struct we_req_user *)((void *)buf);
-+
-+	while (1) {
-+		ret = read(fd, (char *)user, 1024);
-+		if (ret < 0) {
-+			perror("read");
-+			continue;
-+		}
-+
-+		ack.pid = user->pid;
-+		check_whitelist(&ack.permit, user);
-+
-+		ret = write(fd, (char *)&ack, sizeof(ack));
-+	}
-+
-+	close(fd);
-+
-+	return 0;
-+}
+[...]
+> @@ -590,25 +526,14 @@ static struct sk_buff *receive_small(struct net_device *dev,
+>  		if (unlikely(hdr->hdr.gso_type))
+>  			goto err_xdp;
+>  
+> +		/* This happnes when headroom is not enough because
+> +		 * the buffer was refilled before XDP is set. This
+> +		 * only happen for several packets, for simplicity,
+> +		 * offload them to generic XDP routine.
+
+In my practical tests, I also saw that sometime my ping packets were
+traveling this code-path, even after a long time when XDP were attached.
+
+This worries me a bit, for troubleshooting purposes... as this can give
+a strange user experience given point #1.
+
+
+> +		 */
+>  		if (unlikely(xdp_headroom < virtnet_get_headroom(vi))) {
+> -			int offset = buf - page_address(page) + header_offset;
+> -			unsigned int tlen = len + vi->hdr_len;
+> -			u16 num_buf = 1;
+
+
 -- 
-2.14.1
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
