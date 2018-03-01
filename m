@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162131AbeCAVfG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:35:06 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:33083 "EHLO mail.siol.net"
+        id S1162147AbeCAVfJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:35:09 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:33137 "EHLO mail.siol.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1161792AbeCAVfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:35:02 -0500
+        id S1162122AbeCAVfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:35:07 -0500
 From: Jernej Skrabec <jernej.skrabec@siol.net>
 To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
@@ -14,9 +14,9 @@ Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 03/16] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-Date: Thu,  1 Mar 2018 22:34:29 +0100
-Message-Id: <20180301213442.16677-4-jernej.skrabec@siol.net>
+Subject: [PATCH v3 05/16] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
+Date: Thu,  1 Mar 2018 22:34:31 +0100
+Message-Id: <20180301213442.16677-6-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
 References: <20180301213442.16677-1-jernej.skrabec@siol.net>
@@ -24,45 +24,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some units have to be able to set it's own clock precisely to work
-correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
-
-Add this flag to DE, TCON and HDMI clocks.
+Add missing compatibles for H3 HDMI pipeline. These compatibles can also
+be used with H5 SoC.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index b9f39078c0b2..77ed0b0ba681 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b995bfee734a..8bdef4920edc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -102,6 +102,7 @@ DWC HDMI PHY
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-hdmi-phy
++    * allwinner,sun8i-h3-hdmi-phy
+   - reg: base address and size of memory-mapped region
+   - clocks: phandles to the clocks feeding the HDMI PHY
+     * bus: the HDMI PHY interface clock
+@@ -110,6 +111,9 @@ Required properties:
+   - resets: phandle to the reset controller driving the PHY
+   - reset-names: must be "phy"
  
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
++H3 HDMI PHY requires additional clock:
++  - pll-0: parent of phy clock
++
+ TV Encoder
+ ----------
  
- static const char * const tcon_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
+@@ -275,6 +279,7 @@ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
++    * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -305,6 +310,7 @@ Required properties:
+     * allwinner,sun7i-a20-display-engine
+     * allwinner,sun8i-a33-display-engine
+     * allwinner,sun8i-a83t-display-engine
++    * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
  
- static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
-@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
+   - allwinner,pipelines: list of phandle to the display engine
 -- 
 2.16.2
