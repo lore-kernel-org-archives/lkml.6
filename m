@@ -1,69 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161197AbeCATKb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 14:10:31 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:37524 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161124AbeCATKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:10:25 -0500
-To: Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
- <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
- <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <7163af93-2f37-a8b6-986a-3cb2e62bee29@deltatee.com>
-Date: Thu, 1 Mar 2018 12:10:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1161209AbeCATKz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 14:10:55 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52219 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161124AbeCATKw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 14:10:52 -0500
+Date: Thu, 1 Mar 2018 20:10:49 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Stultz <john.stultz@linaro.org>, Petr Mladek <pmladek@suse.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kevin Easton <kevin@guarana.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
+ BOOTTIME
+In-Reply-To: <alpine.DEB.2.21.1803011936200.1391@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1803012009550.1391@nanos.tec.linutronix.de>
+References: <20180301163331.987775783@linutronix.de> <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com> <alpine.DEB.2.21.1803011936200.1391@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> Wouldn't it all be simpler if the p2p_dev resolution would be private
-> to the namespace?
+On Thu, 1 Mar 2018, Thomas Gleixner wrote:
+> On Thu, 1 Mar 2018, Linus Torvalds wrote:
+> > On Thu, Mar 1, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > >
+> > > This really needs lot of testing, documentation updates and more input from
+> > > userspace folks to make a final decision.
+> > 
+> > Honestly, I don't think we'd get the testing this kind of change needs
+> > except by just trying it.
+> > 
+> > I'm willing to merge this in the 4.17 merge window, with the
+> > understanding that if people end up reporting issues, we may just have
+> > to revert it all, and chalk it up to a learning experience - and add
+> > the appropriate commentary in the kernel code about exactly what it
+> > was that depended on that MONO/BOOT difference.
 > 
-> So is adding some all the namespaces in a subsystem must comply to
-> using p2p? Seems a little bit harsh if its not absolutely needed. Would
-> be nice to export a subsystems between two ports (on two HCAs, across
-> NUMA nodes) where the home node (primary path) would use p2p and
-> failover would use host memory...
+> Fair enough. So we maybe just merge the first two patches and merge the
+> cleanups and consolidation patches when we feel good enough.
 > 
-> Can you help me understand why this is absolutely not feasible?
+> I surely can queue the whole lot in next, but from PTI the experience I
+> know how good the test coverage is. 4.14.stable would be the ideal testing
+> ground. /me runs fast and hides
 
-Yes, it would simplify things. However, as best as I can tell, when we 
-allocate memory we don't know what namespace it will be used for. If 
-there is a way, I could probably rework it so there's a P2P device per 
-namespace.
-
-Can you show me how we'd know the namespace to use in 
-nvmet_rdma_map_sgl_keyed()?
+That said, at least the people who are asking for that should provide
+testing results _before_ this gets applied or merged upstream.
 
 Thanks,
 
-Logan
+	tglx
