@@ -1,75 +1,308 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935789AbeCAIA0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 03:00:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60360 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934962AbeCAIAY (ORCPT
+        id S935803AbeCAIBH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 03:01:07 -0500
+Received: from mfo1500.tsb.2iij.net ([210.149.48.175]:53333 "EHLO
+        mfo.tsb.2iij.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934962AbeCAIBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 03:00:24 -0500
-Date: Thu, 1 Mar 2018 09:00:16 +0100
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Split page_type out from mapcount
-In-Reply-To: <20180301081750.42b135c3@mschwideX1>
-References: <20180228223157.9281-1-willy@infradead.org>
-        <20180301081750.42b135c3@mschwideX1>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 1 Mar 2018 03:01:03 -0500
+X-MXL-Hash: 5a97ae1f27e4400a-4f9d8bcedf12bc050529ab28ceda8fd7fec5d5d0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030108-0020-0000-0000-000003FD34F5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030108-0021-0000-0000-0000429161C3
-Message-Id: <20180301090016.01a54a5f@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010105
+From: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
+To: jmorris@namei.org, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
+Subject: [RFC v2 2/2] WhiteEgret: Add an example of user application.
+Date: Thu,  1 Mar 2018 16:38:56 +0900
+Message-Id: <20180301073856.2601-1-masanobu2.koike@toshiba.co.jp>
+X-Mailer: git-send-email 2.14.1
+X-MAIL-FROM: <masanobu2.koike@toshiba.co.jp>
+X-SOURCE-IP: [172.27.153.190]
+X-Spam: exempt
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 08:17:50 +0100
-Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
+A user application is required to use WhiteEgret.
+This RFC provides a sample user application program.
 
-> On Wed, 28 Feb 2018 14:31:53 -0800
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > 
-> > I want to use the _mapcount field to record what a page is in use as.
-> > This can help with debugging and we can also expose that information to
-> > userspace through /proc/kpageflags to help diagnose memory usage (not
-> > included as part of this patch set).
-> > 
-> > First, we need s390 to stop using _mapcount for its own purposes;
-> > Martin, I hope you have time to look at this patch.  I must confess I
-> > don't quite understand what the different bits are used for in the upper
-> > nybble of the _mapcount, but I tried to replicate what you were doing
-> > faithfully.  
-> 
-> Yeah, that is a nasty bit of code. On s390 we have 2K page tables (pte)
-> but 4K pages. If we use full pages for the pte tables we waste 2K of
-> memory for each of the tables. So we allocate 4K and split it into two
-> 2K pieces. Now we have to keep track of the pieces to be able to free
-> them again.
-> 
-> I try to give your patch a spin today. It should be stand-alone, no ?
+Usage
+  sample-we-user <exe>
 
-Ok, that seems to work just fine. System boots and survived some stress
-without loosing memory. 
+This sample user application always returns "not permit"
+for the executable specified by the argument <exe>,
+otherwise always returns "permit". Set the absolute path
+of an executable to be blocked for <exe>.
 
-Acked-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Example
+  sample-we-user /bin/df
 
+Then every executions of /bin/df are blocked.
+The other commands can be issued normally.
+
+How to build
+To build this sample user application, set option
+CONFIG_SAMPLE_WHITEEGRET=y.
+
+Remark
+This sample user application does not use a whitelist.
+It simply returns "not permit" only when WhiteEgret sends
+the absolute path of argv[1] to the application.
+The reason why this sample user application adopts
+blacklist-like approach is to avoid a host to become
+uncontrollable. Namely, if this sample provides a sample
+whitelist and it misses indispensable executable components
+for a host, the host cannot run or stop normally.
+Because indispensable executable components depend on
+each environment, we decide not to provide a whitelisting-type
+sample user application.
+
+Signed-off-by: Masanobu Koike <masanobu2.koike@toshiba.co.jp>
+---
+ samples/Kconfig              |  6 ++++
+ samples/Makefile             |  2 +-
+ samples/whiteegret/Makefile  | 14 ++++++++
+ samples/whiteegret/checkwl.c | 57 +++++++++++++++++++++++++++++
+ samples/whiteegret/checkwl.h | 26 ++++++++++++++
+ samples/whiteegret/main.c    | 86 ++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 190 insertions(+), 1 deletion(-)
+ create mode 100644 samples/whiteegret/Makefile
+ create mode 100644 samples/whiteegret/checkwl.c
+ create mode 100644 samples/whiteegret/checkwl.h
+ create mode 100644 samples/whiteegret/main.c
+
+diff --git a/samples/Kconfig b/samples/Kconfig
+index c332a3b9de05..be6b03a70f23 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -117,4 +117,10 @@ config SAMPLE_STATX
+ 	help
+ 	  Build example userspace program to use the new extended-stat syscall.
+ 
++config SAMPLE_WHITEEGRET
++	bool "Build WhiteEgret sample user application"
++	depends on SECURITY_WHITEEGRET
++	help
++	  Build sample userspace application for WhiteEgret LSM module.
++
+ endif # SAMPLES
+diff --git a/samples/Makefile b/samples/Makefile
+index db54e766ddb1..00bcba542e46 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
+ 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
+-			   vfio-mdev/ statx/
++			   vfio-mdev/ statx/ whiteegret/
+diff --git a/samples/whiteegret/Makefile b/samples/whiteegret/Makefile
+new file mode 100644
+index 000000000000..77a01643c45d
+--- /dev/null
++++ b/samples/whiteegret/Makefile
+@@ -0,0 +1,14 @@
++# kbuild trick to avoid linker error. Can be omitted if a module is built.
++obj- := dummy.o
++
++# List of programs to build
++hostprogs-$(CONFIG_SAMPLE_WHITEEGRET) := sample-we-user
++
++sample-we-user-objs := main.o checkwl.o
++
++HOSTCFLAGS += -Wall
++HOSTCFLAGS += -I/usr/local/include
++HOSTCFLAGS += -I$(srctree)/security/whiteegret
++
++# Tell kbuild to always build the programs
++always := $(hostprogs-y)
+diff --git a/samples/whiteegret/checkwl.c b/samples/whiteegret/checkwl.c
+new file mode 100644
+index 000000000000..f19eb1054208
+--- /dev/null
++++ b/samples/whiteegret/checkwl.c
+@@ -0,0 +1,57 @@
++/*
++ * WhiteEgret Linux Security Module
++ *
++ * Sample program of user's whitelisting application
++ *
++ * Copyright (C) 2017-2018 Toshiba Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation, version 2.
++ */
++
++#include <errno.h>
++#include <string.h>
++#include "checkwl.h"
++
++/*
++ * The function check_whitelist() returns -EACCES
++ * only when path to be examined equals to @a not_permit_exe.
++ */
++char not_permit_exe[NOTPERMITEXENAMELENGTH];
++
++/**
++ * check_whitelist - Examine whether the executable input to this function
++ *                   is included in whitelist or not.
++ *
++ * @result: Result of the examination.
++ *            0       if the executble is included in whitelist
++ *            -EACCES otherwise ("not included")
++ *
++ * Returns 0 for success, -1 otherwise.
++ */
++int check_whitelist(int *result, struct we_req_user *user)
++{
++	char *path;
++
++	if (result == NULL)
++		return -1;
++
++	*result = 0;
++
++	if (user == NULL)
++		return -1;
++
++	path = user->path;
++
++	/*
++	 * Referring a whitelist is expected at this location.
++	 * However, this sample uses not whitelist but blacklist
++	 * because of avoiding a host to become uncontrollable.
++	 * (not_permit_exe is a blacklist containing only one item.)
++	 */
++	if (strncmp(not_permit_exe, path, NOTPERMITEXENAMELENGTH) == 0)
++		*result = -EACCES;
++
++	return 0;
++}
+diff --git a/samples/whiteegret/checkwl.h b/samples/whiteegret/checkwl.h
+new file mode 100644
+index 000000000000..732959bbcf16
+--- /dev/null
++++ b/samples/whiteegret/checkwl.h
+@@ -0,0 +1,26 @@
++/*
++ * WhiteEgret Linux Security Module
++ *
++ * Sample program of user's whitelisting application
++ *
++ * Copyright (C) 2017-2018 Toshiba Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation, version 2.
++ */
++
++#ifndef _CHECKWL_H
++#define _CHECKWL_H
++
++#include <sys/types.h>
++#include "we_fs_common.h"
++
++/* byte length of absolute path of file not to permit execution */
++#define NOTPERMITEXENAMELENGTH 1024
++
++extern char not_permit_exe[NOTPERMITEXENAMELENGTH];
++
++int check_whitelist(int *result, struct we_req_user *user);
++
++#endif
+diff --git a/samples/whiteegret/main.c b/samples/whiteegret/main.c
+new file mode 100644
+index 000000000000..949d188885de
+--- /dev/null
++++ b/samples/whiteegret/main.c
+@@ -0,0 +1,86 @@
++/*
++ * WhiteEgret Linux Security Module
++ *
++ * Sample program of user's whitelisting application
++ *
++ * Copyright (C) 2017-2018 Toshiba Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation, version 2.
++ */
++
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <signal.h>
++#include <unistd.h>
++#include <sys/epoll.h>
++#include <sys/socket.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include "checkwl.h"
++
++#include <stdlib.h>
++#include "we_fs_common.h"
++
++#define MAXWAITFROMKER 10
++
++static void sigint_catch(int sig)
++{
++}
++
++static void print_usage(void)
++{
++	fprintf(stderr, "Usage: sample-we-user [file_name]\n");
++	fprintf(stderr, "file_name: absolute path of executable");
++	fprintf(stderr, "not to permit execution.\n");
++}
++
++int main(int argc, char *argv[])
++{
++	int fd;
++	struct we_req_user *user;
++	struct we_ack ack;
++	char buf[1024];
++	int ret;
++
++	if (argc < 2) {
++		print_usage();
++		return -1;
++	}
++
++	snprintf(not_permit_exe, NOTPERMITEXENAMELENGTH, "%s", argv[1]);
++
++	signal(SIGINT, sigint_catch);
++
++	if (daemon(0, 0) < 0) {
++		perror("daemon");
++		exit(EXIT_FAILURE);
++	}
++
++	fd = open(WE_DEV_PATH, O_RDWR, 0);
++	if (fd < 0) {
++		perror(WE_DEV_PATH);
++		exit(EXIT_FAILURE);
++	}
++	user = (struct we_req_user *)((void *)buf);
++
++	while (1) {
++		ret = read(fd, (char *)user, 1024);
++		if (ret < 0) {
++			perror("read");
++			continue;
++		}
++
++		ack.pid = user->pid;
++		check_whitelist(&ack.permit, user);
++
++		ret = write(fd, (char *)&ack, sizeof(ack));
++	}
++
++	close(fd);
++
++	return 0;
++}
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+2.14.1
