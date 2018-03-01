@@ -1,57 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161851AbeCAVDh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:03:37 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:38460 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161818AbeCAVDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:03:35 -0500
-To: Jerome Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        id S1161879AbeCAVDq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:03:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34314 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1161818AbeCAVDn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:03:43 -0500
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+From: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Reply-To: benh@au1.ibm.com
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
         Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
         Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
         Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Oliver OHalloran <oliveroh@au1.ibm.com>
+Date: Fri, 02 Mar 2018 08:03:30 +1100
+In-Reply-To: <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
- <1519936195.4592.18.camel@au1.ibm.com> <20180301205548.GA6742@redhat.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
-Date: Thu, 1 Mar 2018 14:03:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180301205548.GA6742@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+         <1519876489.4592.3.camel@kernel.crashing.org>
+         <1519876569.4592.4.camel@au1.ibm.com>
+         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, benh@au1.ibm.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-TM-AS-GCONF: 00
+x-cbid: 18030121-0012-0000-0000-000005B79F78
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030121-0013-0000-0000-00001933A5BA
+Message-Id: <1519938210.4592.30.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010257
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-03-01 at 11:21 -0800, Dan Williams wrote:
+> 
+> 
+> The devm_memremap_pages() infrastructure allows placing the memmap in
+> "System-RAM" even if the hotplugged range is in PCI space. So, even if
+> it is an issue on some configurations, it's just a simple adjustment
+> to where the memmap is placed.
 
+Actually can you explain a bit more here ?
 
-On 01/03/18 01:55 PM, Jerome Glisse wrote:
-> Well this again a new user of struct page for device memory just for
-> one usecase. I wanted HMM to be more versatile so that it could be use
-> for this kind of thing too. I guess the message didn't go through. I
-> will take some cycles tomorrow to look into this patchset to ascertain
-> how struct page is use in this context.
+devm_memremap_pages() doesn't take any specific argument about what to
+do with the memory.
 
-We looked at it but didn't see how any of it was applicable to our needs.
+It does create the vmemmap sections etc... but does so by calling
+arch_add_memory(). So __add_memory() isn't called, which means the
+pages aren't added to the linear mapping. Then you manually add them to
+ZONE_DEVICE.
 
-Logan
+Am I correct ?
+
+In that case, they indeed can't be used as normal memory pages, which
+is good, and if they are indeed not in the linear mapping, then there
+is no caching issues.
+
+However, what happens if anything calls page_address() on them ? Some
+DMA ops do that for example, or some devices might ...
+
+This is all quite convoluted with no documentation I can find that
+explains the various expectations.
+
+So the question is are those pages landing in the linear mapping, and
+if yes, by what code path ?
+
+The next question is if we ever want that to work on ppc64, we need a
+way to make this fit in our linear mapping and map it non-cachable,
+which will require some wrangling on how we handle that mapping.
+
+Cheers,
+Ben.
