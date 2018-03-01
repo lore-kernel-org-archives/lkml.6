@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030679AbeCAN1E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 08:27:04 -0500
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:47033 "EHLO
-        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1030379AbeCAN1C (ORCPT
+        id S1030716AbeCAN1O (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:27:14 -0500
+Received: from mx-rz-1.rrze.uni-erlangen.de ([131.188.11.20]:48251 "EHLO
+        mx-rz-1.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030379AbeCAN1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 08:27:02 -0500
-Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        Thu, 1 Mar 2018 08:27:10 -0500
+Authentication-Results: mx-rz-1.rrze.uni-erlangen.de; dkim=none
         reason="no signature"; dkim-adsp=none (unprotected policy);
         dkim-atps=neutral
 X-RRZE-Flag: Not-Spam
@@ -18,71 +18,33 @@ To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][RESEND] block: sed-opal: fix response string extraction
-Date: Thu,  1 Mar 2018 14:26:37 +0100
-Message-Id: <20180301132637.1230-1-jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH][RESEND] block: sed-opal: fix u64 short atom length
+Date: Thu,  1 Mar 2018 14:27:00 +0100
+Message-Id: <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
 X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tokens are prefixed by a variable length of bytes. If a bytestring is
-not stored in an tiny or short atom, we have to skip more than one byte
-in order to have the actual bytes not prefixed by the bytes describing
-the actual length of the string.
+The length must be given as bytes and not as 4 bit tuples.
 
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 ---
- block/sed-opal.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ block/sed-opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 525506bed399..33052d0111de 100644
+index 36842bfa572e..d5f565e1557a 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -876,6 +876,9 @@ static int response_parse(const u8 *buf, size_t length,
- static size_t response_get_string(const struct parsed_resp *resp, int n,
- 				  const char **store)
- {
-+	u8 skip;
-+	const struct opal_resp_tok *token;
-+
- 	*store = NULL;
- 	if (!resp) {
- 		pr_debug("Response is NULL\n");
-@@ -888,13 +891,30 @@ static size_t response_get_string(const struct parsed_resp *resp, int n,
- 		return 0;
+@@ -562,7 +562,7 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
  	}
  
--	if (resp->toks[n].type != OPAL_DTA_TOKENID_BYTESTRING) {
-+	token = &resp->toks[n];
-+	if (token->type != OPAL_DTA_TOKENID_BYTESTRING) {
- 		pr_debug("Token is not a byte string!\n");
- 		return 0;
- 	}
+ 	msb = fls(number);
+-	len = DIV_ROUND_UP(msb, 4);
++	len = DIV_ROUND_UP(msb, 8);
  
--	*store = resp->toks[n].pos + 1;
--	return resp->toks[n].len - 1;
-+	switch (token->width) {
-+	case OPAL_WIDTH_TINY:
-+	case OPAL_WIDTH_SHORT:
-+		skip = 1;
-+		break;
-+	case OPAL_WIDTH_MEDIUM:
-+		skip = 2;
-+		break;
-+	case OPAL_WIDTH_LONG:
-+		skip = 4;
-+		break;
-+	default:
-+		pr_debug("Token has invalid width!\n");
-+		return 0;
-+	}
-+
-+	*store = token->pos + skip;
-+	return token->len - skip;
- }
- 
- static u64 response_get_u64(const struct parsed_resp *resp, int n)
+ 	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
+ 		pr_debug("Error adding u64: end of buffer.\n");
 -- 
 2.13.6
