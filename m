@@ -1,74 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033213AbeCAQsX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:48:23 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36264 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033032AbeCAQsW (ORCPT
+        id S1033275AbeCAQwJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:52:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:51707 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1033036AbeCAQwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:48:22 -0500
-Date: Thu, 1 Mar 2018 16:48:19 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] ASoC: Intel: bytcr_rt5640: Drop unwanted
- ignore_suspend settings
-Message-ID: <20180301164819.GD12864@sirena.org.uk>
-References: <20180218220146.22485-1-hdegoede@redhat.com>
- <20180218220146.22485-9-hdegoede@redhat.com>
- <20180301162215.GC12864@sirena.org.uk>
- <55819630-6198-6227-63ef-69311b21b255@redhat.com>
+        Thu, 1 Mar 2018 11:52:03 -0500
+Message-Id: <20180301165150.315745557@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Thu, 01 Mar 2018 17:33:36 +0100
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Stultz <john.stultz@linaro.org>, Petr Mladek <pmladek@suse.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kevin Easton <kevin@guarana.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [RFC/RFT patch 5/7] posix-timers: Conflate clock MONOTONIC and
+ BOOTTIME
+References: <20180301163331.987775783@linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
-Content-Disposition: inline
-In-Reply-To: <55819630-6198-6227-63ef-69311b21b255@redhat.com>
-X-Cookie: Real Users hate Real Programmers.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline;
+ filename=posix-timers--Conflate-clock-MONOTONIC-and-BOOTTIME.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now that clock MONOTONIC and BOOTTIME are indentical remove all the special
+casing. The user space visible interfaces still support both clocks.
 
---at6+YcpfzWZg/htY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/time/posix-timers.c |   23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
 
-On Thu, Mar 01, 2018 at 05:26:06PM +0100, Hans de Goede wrote:
-> On 01-03-18 17:22, Mark Brown wrote:
-> > On Sun, Feb 18, 2018 at 11:01:45PM +0100, Hans de Goede wrote:
-
-> > > The ignore_suspend settings were added in an attempt to try and fix
-> > > suspend / resume issues. But they never fully fixed these and now we've
-> > > a proper fix, so lets remove these.
-
-> > Do these systems not have the ability to continue to play audio through
-> > suspend using the DSP?  That's the sort of thing that ignore_suspend is
-> > normally used for.
-
-> In theory yes, in practice if we keep ignore_suspend set then we get
-> audio for a couple of more seconds after suspend until the buffers
-> are empty, as we have no code keeping them filled, which is not really
-> useful, since we don't support this in a meaningful way it is better
-> to just do a normal full suspend.
-
-That sounds like what's missing is hookup of whatever the DSP uses to
-wake the system when it's getting to the bottom of the buffer?  That's
-the normal way this stuff is implemented anyway.
-
---at6+YcpfzWZg/htY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYLtIACgkQJNaLcl1U
-h9AvKAf/Vp7NbceL0r2EDqDRNBAlE3p5oLid62O48Anoxfnb3tUeCIcoFa7Ukv6E
-lxekUJnwDODB9iW5nPfjztzqZMZ5sRrMt5IBDWRPJoHC/fkXIAKziIyusKY3Mi/I
-Hl4Hb6213mTBKweBx/JCLlf/JOe1q12fLSOQMnQRcCNnNEer/QzRjw6ZWi1SXYJv
-c5xJOKdH/O8nDk/A1QexeTDJeNaUe53zAKXXE7i797Mf3CNPSzIzHCqrx71ydNI4
-41hiaBM7LH/zdmM+lU8dG1oqFQBWfJ2uV/r6451SIzmb2P5R7BujrJq/dXlArb6s
-Ds/34OFYhU90+/ozg2X4mWUQuzau1A==
-=RC+5
------END PGP SIGNATURE-----
-
---at6+YcpfzWZg/htY--
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -251,12 +251,6 @@ static int posix_get_coarse_res(const cl
+ 	return 0;
+ }
+ 
+-static int posix_get_boottime(const clockid_t which_clock, struct timespec64 *tp)
+-{
+-	get_monotonic_boottime64(tp);
+-	return 0;
+-}
+-
+ static int posix_get_tai(clockid_t which_clock, struct timespec64 *tp)
+ {
+ 	timekeeping_clocktai64(tp);
+@@ -1322,21 +1316,6 @@ static const struct k_clock clock_tai =
+ 	.timer_arm		= common_hrtimer_arm,
+ };
+ 
+-static const struct k_clock clock_boottime = {
+-	.clock_getres		= posix_get_hrtimer_res,
+-	.clock_get		= posix_get_boottime,
+-	.nsleep			= common_nsleep,
+-	.timer_create		= common_timer_create,
+-	.timer_set		= common_timer_set,
+-	.timer_get		= common_timer_get,
+-	.timer_del		= common_timer_del,
+-	.timer_rearm		= common_hrtimer_rearm,
+-	.timer_forward		= common_hrtimer_forward,
+-	.timer_remaining	= common_hrtimer_remaining,
+-	.timer_try_to_cancel	= common_hrtimer_try_to_cancel,
+-	.timer_arm		= common_hrtimer_arm,
+-};
+-
+ static const struct k_clock clock_monotonic_active = {
+ 	.clock_getres		= posix_get_hrtimer_res,
+ 	.clock_get		= posix_get_monotonic_active,
+@@ -1350,7 +1329,7 @@ static const struct k_clock * const posi
+ 	[CLOCK_MONOTONIC_RAW]		= &clock_monotonic_raw,
+ 	[CLOCK_REALTIME_COARSE]		= &clock_realtime_coarse,
+ 	[CLOCK_MONOTONIC_COARSE]	= &clock_monotonic_coarse,
+-	[CLOCK_BOOTTIME]		= &clock_boottime,
++	[CLOCK_BOOTTIME]		= &clock_monotonic,
+ 	[CLOCK_REALTIME_ALARM]		= &alarm_clock,
+ 	[CLOCK_BOOTTIME_ALARM]		= &alarm_clock,
+ 	[CLOCK_TAI]			= &clock_tai,
