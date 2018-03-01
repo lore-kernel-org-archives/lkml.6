@@ -1,105 +1,123 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2391582-1519890244-2-7655460156975085358
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519890243; b=Kh1LZBZR46RmC2IR+5JNtWcdXFKKjh6zYU2ES82h3ENpzIu
-    Ot4jXQks18CaDMjz2aWs0e3ZH/Uv6YzZv1HtrnRFVSR4hXRi/qMgigH8yvyGJj8H
-    4XyZxN1FJxjgIOFDxHHOdiefaBfqI4o/xg9S13xxCVkzlD3YWRgwunAjUWyfZNtn
-    ULQE/gFl93isbKy+25Gz7vkzRBdssc03d4gPg/jA8LW4yOtlUVHYmGsH7kPi2sCI
-    4ghhYl4ryTU64+2rtogaea3/Xfw8WvOyrj5Dl7OvQjhU/JYiTUf8lZTIF1iPdYGC
-    sLBVXRHLk1ink6aaoqQtSLSbt4+KDHBJHlwko5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=arctest; t=1519890243; bh=ReoEY
-    fDZVBK/P+VerHj1jMkyp1EAbSDNLr6iwEJHsvU=; b=subW7dxv89qKdX2rczdrU
-    R11/8QPpedMvrTn30XdS2bIY9NtBTkw0AMFosfvCMIpmV8cMXopuLBWdu6IMB75K
-    fBpN6riS7q2G38j7QtbcKkzayyjphLfJLZDq5a7Qrt7kJ32COOh0llnbdsjmumUv
-    wFCz8gHetww1w7aS1x1M+yS/VzHG2GRa4eDGPIG8kTS9hycqtbDX+FOzH3pQf4pf
-    i/YMHR6i04DxSi4jQkyM8ifTvkZxqcyeBkZ6XTaoY3O5K3G1ryjxocjKFke488pL
-    /mbSxw5cKtKivmBmWu2ld1JTI4nIOKo6KLToOzlyuZPTPyH9t7Wnn6Qf66mDVHvS
-    w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=holtmann.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=holtmann.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=holtmann.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=holtmann.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935505AbeCAHoC (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 02:44:02 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:46717 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935139AbeCAHoB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 02:44:01 -0500
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] Bluetooth: btusb: Add Dell OptiPlex 3060 to
- btusb_needs_reset_resume_table
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180301054252.16007-1-kai.heng.feng@canonical.com>
-Date: Thu, 1 Mar 2018 08:43:59 +0100
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <80186954-EDE1-4DBA-8ED6-055BC53FD1C5@holtmann.org>
-References: <20180301054252.16007-1-kai.heng.feng@canonical.com>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-X-Mailer: Apple Mail (2.3445.5.20)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519890076; cv=none;
+        d=google.com; s=arc-20160816;
+        b=abD+lintrX48jii0ei4h/VbN89zkeW+ua15Z0eWo7jwiNRGLQOI0IVn7SRqAV5CC/s
+         7we8H9Wi9MHNtHo/Co4Rurpph+HPvgfEH3fxTPFOBucQ9VbcAyvqVc8Fk/2z8h1KgTDo
+         6Nb/QuQpWfeVE6U6IhG4Lf8+7Bbezz1T7aHgv6Ly2tTz3eBcrn0puJyV7w0Wc0Zay3wC
+         7tAT+hOplAeeJPZne7+qylQ4PWDdgO0AXRTVbavxQRm9EtHbavlg/hyOelRp4P3xXaKj
+         amzJ40Ad1xkJoyN2HhIx3Vc6URKPFAcDGGoy5Vw5Tcu1QS0rnP6twcgiAN0wtbw5Xv+o
+         H/Xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=rR+yhOTfmfndku+4+ZVkjfUdjmECR4VJcmO9ozhINfk=;
+        b=MzsvYAc7uBQL0JW06icG0zEFOOtYINKRtjxj7cYAKsv3TAyOt5THyRGOYUm20IrDU8
+         XIQ0mXzkciwglbbvRwenzMfbq+SReKsd9pqLSKW2mzvFW7aziO2bLMy9rL8Muenk538P
+         HN6Uwpvg1zUWDPkalOPyy5iLQj+8CX1ZM8E5NvYsHMknE433KHSYl+ZwirjpRoUiUViP
+         9XbK+iW6zgVbRFT4dzLBlISFJoMcIaAK5cdLqLVKExCyPjrFJZ1exGkbXcDIY4NUZpfG
+         rxSaHDxj+VRiqTqaT8D8OB1A/97YnWjTSMw9aPJcCQm0DUuuRMmc7uNidTycbaIHGgp/
+         owng==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=JLu9igWK;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=JLu9igWK;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELuW3LmwxXZRwT2i4IE7QIvNJAoeejjtXn5BwDXqG0o8Cz/ylB2iJ1qOkZX5a9uWDVM4hiOYTt8VjMoqCBemb5g=
+MIME-Version: 1.0
+In-Reply-To: <CACRpkdad4ZYa27Xd73QAsxvhJmBZnFRhDk-10yiitKYSrvxzWQ@mail.gmail.com>
+References: <7fc26df245d56fd2014532b56e67630e76e2c513.1518316248.git.baolin.wang@linaro.org>
+ <20180219181159.tzbhhvbvpc236qma@rob-hp-laptop> <CAMz4kuL-VZ8XY5-ZLWfXLVXWb4zmxD-aaLQ-ka9M8V83y1B7Ag@mail.gmail.com>
+ <CAMz4ku+0uzSDiM3AOnDcnVDqAjoV47nVAK+yQAw2CzgO6Yw-Bg@mail.gmail.com> <CACRpkdad4ZYa27Xd73QAsxvhJmBZnFRhDk-10yiitKYSrvxzWQ@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 1 Mar 2018 15:41:15 +0800
+Message-ID: <CAMz4ku+g38dn2n+_VC96uXOjaxpb+zrWPXnN-rcPucZQpwDi5g@mail.gmail.com>
+Subject: Re: [PATCH v2] Input: gpio_keys: Add level trigger support for GPIO keys
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Greg KH <gregkh@linuxfoundation.org>,
+	stephen lu <lumotuwe@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	Joseph Lo <josephl@nvidia.com>, Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Linux Input <linux-input@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1591902511604872416?=
+X-GMAIL-MSGID: =?utf-8?q?1593720256874762309?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Kai-Heng,
+On 28 February 2018 at 20:53, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Feb 26, 2018 at 7:24 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> On 21 February 2018 at 19:35, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>> On 20 February 2018 at 02:11, Rob Herring <robh@kernel.org> wrote:
+>
+>>>>> diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+>>>>> index a949404..e3104bd 100644
+>>>>> --- a/Documentation/devicetree/bindings/input/gpio-keys.txt
+>>>>> +++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+>>>>> @@ -29,6 +29,8 @@ Optional subnode-properties:
+>>>>>       - linux,can-disable: Boolean, indicates that button is connected
+>>>>>         to dedicated (not shared) interrupt which can be disabled to
+>>>>>         suppress events from the button.
+>>>>> +     - gpio-key,level-trigger: Boolean, indicates that button's interrupt
+>>>>> +       type is level trigger. Otherwise it is edge trigger as default.
+>>>>
+>>>> No. Just use 'interrupts' instead of 'gpios' and specify the trigger
+>>>> type. Or put both if you need to read the state.
+>>>
+>>> Okay, so something as below to get the level type from the
+>>> 'interrupts' property.
+>>> if (fwnode_property_read_u32(child, "interrupts", &button->level_type))
+>>>         button->level_type = IRQ_TYPE_NONE;
+>>
+>> After more thinking, if we use 'interrupts' to indicate the irq type
+>> for this case, we cannot specify the irq number due to the irq number
+>> should be get by gpiod_to_irq(). So the device nodes look weird, since
+>> we should define the index of the interrupt controller instead of the
+>> irq type if the #interrupt_cells is set to 1 according to the
+>> interrupt controller documentation. What do you think about this?
+>
+> I think what you're ultimately seeing is a bad fit between this
+> GPIO/irq-controller and the Linux gpio keys driver, it doesn't
+> have very much to do with the device tree bindings.
+>
+> What I think is appropriate is to try to create a new input driver
+> in Linux that just takes an interrupt, not a GPIO, and let the
+> GPIO chip only act as an irqchip for this.
+>
+> This avoid the complicated step of converting a GPIO to an
+> interrupt in order to use it, when all you really want to
+> do is use an interrupt, you don't really care about the
+> GPIO here, correct?
 
-> The issue can be reproduced before commit fd865802c66b ("Bluetooth:
-> btusb: fix QCA Rome suspend/resume") gets introduced, so the reset
-> resume quirk is still needed for this system.
-> 
-> T:  Bus=01 Lev=01 Prnt=01 Port=13 Cnt=01 Dev#=  4 Spd=12  MxCh= 0
-> D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=0cf3 ProdID=e007 Rev=00.01
-> C:  #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-> I:  If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> I:  If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Brian Norris <briannorris@chromium.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> drivers/bluetooth/btusb.c | 7 +++++++
-> 1 file changed, 7 insertions(+)
+Sometimes we should set the GPIO debounce, and read GPIO value to
+report the event, so I think we can not remove GPIO.
 
-patch has been applied to bluetooth-stable tree.
+>
+> So we would create
+> drivers/input/keyboard/interrupt_keys.c
+> however I suspect a bunch of code would need to be shared
+> with gpio_keys.c so maybe it is necessary to break out the
+> parts of gpio_keys.c into its own helper file.
+>
+> Or maybe even have the
+> pure interrupt handling as part of gpio_keys.c, i.e. if the
+> driver can't find any associated GPIO, it goes on to
+> check if there is an interrupt assigned to the device node
+> and use that directly instead.
+>
+> Either way, Dmitry must be involved.
+>
+> Yours,
+> Linus Walleij
 
-Regards
 
-Marcel
+
+-- 
+Baolin.wang
+Best Regards
