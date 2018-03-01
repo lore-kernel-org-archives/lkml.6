@@ -1,109 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162489AbeCAWFr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 17:05:47 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:33477 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162420AbeCAWFq (ORCPT
+        id S1162478AbeCAWHG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 17:07:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1161413AbeCAWHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 17:05:46 -0500
-X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [GIT PULL] ARC fixes for 4.16-rc4
-Message-ID: <d363d22e-d465-c1de-a665-103543f21cf0@synopsys.com>
-Date: Thu, 1 Mar 2018 14:05:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        Thu, 1 Mar 2018 17:07:03 -0500
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+From: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Reply-To: benh@au1.ibm.com
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Date: Fri, 02 Mar 2018 09:06:52 +1100
+In-Reply-To: <20180301205315.GJ19007@ziepe.ca>
+References: <20180228234006.21093-1-logang@deltatee.com>
+         <1519876489.4592.3.camel@kernel.crashing.org>
+         <1519876569.4592.4.camel@au1.ibm.com>
+         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+         <1519936477.4592.23.camel@au1.ibm.com>
+         <1519936815.4592.25.camel@au1.ibm.com> <20180301205315.GJ19007@ziepe.ca>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.84]
+X-TM-AS-GCONF: 00
+x-cbid: 18030122-0016-0000-0000-0000052BA54A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030122-0017-0000-0000-00002868ABB7
+Message-Id: <1519942012.4592.31.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010270
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, 2018-03-01 at 13:53 -0700, Jason Gunthorpe wrote:
+> On Fri, Mar 02, 2018 at 07:40:15AM +1100, Benjamin Herrenschmidt wrote:
+> > Also we need to be able to hard block MEMREMAP_WB mappings of non-RAM
+> > on ppc64 (maybe via an arch hook as it might depend on the processor
+> > family). Server powerpc cannot do cachable accesses on IO memory
+> > (unless it's special OpenCAPI or nVlink, but not on PCIe).
+> 
+> I think you are right on this - even on x86 we must not create
+> cachable mappings of PCI BARs - there is no way that works the way
+> anyone would expect.
+> 
+> I think this series doesn't have a problem here only because it never
+> touches the BAR pages with the CPU.
+> 
+> BAR memory should be mapped into the CPU as WC at best on all arches..
 
-Please pull ARC fixes for 4.16-rc4.
+Could be that x86 has the smarts to do the right thing, still trying to
+untangle the code :-)
 
-Thx,
--Vineet
-
-------------------->
-The following changes since commit b2cd1df66037e7c4697c7e40496bf7e4a5e16a2d:
-
-   Linux 4.15-rc7 (2018-01-07 14:22:41 -0800)
-
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-4.15-rc4
-
-for you to fetch changes up to a29a25275452c97fe35815f1eb9564f2a07a1965:
-
-   ARC: setup cpu possible mask according to possible-cpus dts property 
-(2018-02-28 10:45:32 -0800)
-
-----------------------------------------------------------------
-ARC fixes for 4.16-rc4
-
-  - MCIP aka ARconnect fixes for SMP builds [Euginey]
-
-  - Preventive fix for SLC (L2 cache) flushing [Euginey]
-
-  - Kconfig default fix [Ulf Magnusson]
-
-  - trailing semicolon fixes [Luis de Bethencourt]
-
-  - other assorted minor fixes
-
-----------------------------------------------------------------
-Alexey Brodkin (2):
-       ARCv2: Don't pretend we may set L-bit in STATUS32 with kflag instruction
-       ARC: Enable fatal signals on boot for dev platforms
-
-Bartosz Golaszewski (1):
-       arc: dts: use 'atmel' as manufacturer for at24 in axs10x_mb
-
-Eugeniy Paltsev (4):
-       ARCv2: cache: fix slc_entire_op: flush only instead of flush-n-inv
-       ARC: mcip: halt GFRC counter when ARC cores halt
-       ARC: mcip: update MCIP debug mask when the new cpu came online
-       ARC: setup cpu possible mask according to possible-cpus dts property
-
-Luis de Bethencourt (2):
-       ARC: dw2 unwind: Fix trailing semicolon
-       ARC: boot log: Fix trailing semicolon
-
-Ulf Magnusson (1):
-       ARC: Fix malformed ARC_EMUL_UNALIGNED default
-
-Vineet Gupta (1):
-       ARCv2: boot log: fix HS48 release number
-
-  arch/arc/Kconfig                      |  1 -
-  arch/arc/boot/dts/axs101.dts          |  2 +-
-  arch/arc/boot/dts/axs10x_mb.dtsi      |  4 +-
-  arch/arc/boot/dts/haps_hs_idu.dts     |  2 +-
-  arch/arc/boot/dts/nsim_700.dts        |  2 +-
-  arch/arc/boot/dts/nsim_hs.dts         |  2 +-
-  arch/arc/boot/dts/nsim_hs_idu.dts     |  2 +-
-  arch/arc/boot/dts/nsimosci.dts        |  2 +-
-  arch/arc/boot/dts/nsimosci_hs.dts     |  2 +-
-  arch/arc/boot/dts/nsimosci_hs_idu.dts |  2 +-
-  arch/arc/include/asm/entry-arcv2.h    |  2 +-
-  arch/arc/kernel/mcip.c                | 74 ++++++++++++++++++++++++++++++++---
-  arch/arc/kernel/setup.c               |  4 +-
-  arch/arc/kernel/smp.c                 | 50 ++++++++++++++++++-----
-  arch/arc/kernel/unwind.c              |  2 +-
-  arch/arc/mm/cache.c                   |  5 ++-
-  include/soc/arc/mcip.h                |  5 +++
-  17 files changed, 132 insertions(+), 31 deletions(-)
+Cheers,
+Ben.
