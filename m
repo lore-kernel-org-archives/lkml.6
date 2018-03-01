@@ -1,57 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032843AbeCAQGw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 11:06:52 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34695 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031777AbeCAQGt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 11:06:49 -0500
-X-Google-Smtp-Source: AG47ELsHNRcN2NgjpyyBe4cFntlQxDCJNLe0ZnP0M92zqMEqctNhrFtUCeb+oAef69EGQIYud+kKXCEZZDzMEsNPs2k=
-MIME-Version: 1.0
-In-Reply-To: <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be> <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 17:06:47 +0100
-Message-ID: <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        id S1032845AbeCAQHU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 11:07:20 -0500
+Received: from imap.thunk.org ([74.207.234.97]:42430 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031777AbeCAQHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 11:07:16 -0500
+Date: Thu, 1 Mar 2018 11:07:05 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jose R R <jose.r.r@metztli.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Dong Aisheng <dongas86@gmail.com>,
+        Das Asutosh <asutoshd@codeaurora.org>,
+        Zhangfei Gao <zhangfei.gao@gmail.com>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-ext4@vger.kernel.org
+Subject: Re: EXT4 Oops (Re: [PATCH V15 06/22] mmc: block: Add blk-mq support)
+Message-ID: <20180301160705.GB2490@thunk.org>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Jose R R <jose.r.r@metztli.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Dong Aisheng <dongas86@gmail.com>,
+        Das Asutosh <asutoshd@codeaurora.org>,
+        Zhangfei Gao <zhangfei.gao@gmail.com>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-ext4@vger.kernel.org
+References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
+ <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
+ <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
+ <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
+ <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
+ <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
+ <8876217f-ede6-fc81-2e05-b4fc976b3235@intel.com>
+ <6a1267b0-6242-fc9f-60ed-02bf34677b62@intel.com>
+ <CAM12Q5TBGwtcMk1pgN70DeqsP7TWtdC4WXhx8jUJe0VekXZJBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM12Q5TBGwtcMk1pgN70DeqsP7TWtdC4WXhx8jUJe0VekXZJBQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Mar 01, 2018 at 01:15:24AM -0800, Jose R R wrote:
+> Probably it is not wise to place all your eggs (data) in one basket
+> (ext4) and diversify to viable alternatives which won't be affected by
+> UNIX 2038 year date problem, likewise?
+> < https://metztli.it/blog/index.php/amatl8/reiser-nahui/reiser4-filesystem-and-the-unix
+> >
 
-> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
-> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
-> block's module clock (if exists) is manually kept running during system
-> suspend, to make sure the device stays active.
->
-> However, this explicit clock handling is merely a workaround for a
-> failure to properly communicate wakeup information to the device core.
->
-> Instead, set the device's power.wakeup_path field, to indicate this
-> device is part of the wakeup path.  Depending on the PM Domain's
-> active_wakeup configuration, the genpd core code will keep the device
-> enabled (and the clock running) during system suspend when needed.
-> This allows for the removal of all explicit clock handling code from the
-> driver.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
+All of the modern file systems (btrfs, ext4, f2fs, xfs, etc.) are fine
+with respect to the 2038 problem.
 
-Patch applied for v4.16 fixes.
-
-Yours,
-Linus Walleij
+     	   	 				- Ted
