@@ -1,246 +1,453 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161832AbeCAU74 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 15:59:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34944 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161722AbeCAU7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 15:59:50 -0500
-Date: Thu, 1 Mar 2018 20:59:40 +0000
-From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-Subject: Re: [PATCH v3 05/25] ASoC: qcom: qdsp6: Add support to Q6AFE
-Message-ID: <20180301205940.GR12864@sirena.org.uk>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-6-srinivas.kandagatla@linaro.org>
+        id S1161814AbeCAVCf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:02:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161771AbeCAVCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:02:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5AA2179F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AG47ELvO5O0hr46NTc/BSJBLDgwuQzOHmp6woC0iRvSdXmD0X1LkdqG3UMZOCmVUUDcTew3N9cPVXbTSNxBN+6n7q/s=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XAEV7zm15O60d1Zf"
-Content-Disposition: inline
-In-Reply-To: <20180213165837.1620-6-srinivas.kandagatla@linaro.org>
-X-Cookie: Real Users hate Real Programmers.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1519927256-4868-2-git-send-email-frowand.list@gmail.com>
+References: <1519927256-4868-1-git-send-email-frowand.list@gmail.com> <1519927256-4868-2-git-send-email-frowand.list@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 1 Mar 2018 15:02:11 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL9r8d4wZ0qrsE2fbK4siVWwuyq_9x4RcFJta_7RRhUyg@mail.gmail.com>
+Message-ID: <CAL_JsqL9r8d4wZ0qrsE2fbK4siVWwuyq_9x4RcFJta_7RRhUyg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] of: change overlay apply input data from
+ unflattened to FDT
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---XAEV7zm15O60d1Zf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 13, 2018 at 04:58:17PM +0000, srinivas.kandagatla@linaro.org wr=
-ote:
-
-> +// SPDX-License-Identifier: GPL-2.0
-> +#ifndef __DT_BINDINGS_Q6_AFE_H__
-> +#define __DT_BINDINGS_Q6_AFE_H__
+On Thu, Mar 1, 2018 at 12:00 PM,  <frowand.list@gmail.com> wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Move duplicating and unflattening of an overlay flattened devicetree
+> (FDT) into the overlay application code.  To accomplish this,
+> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>
+> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+> code, which is thus responsible for freeing the duplicate FDT.  The
+> caller of of_overlay_fdt_apply() remains responsible for freeing the
+> original FDT.
+>
+> The unflattened devicetree now belongs to devicetree code, which is
+> thus responsible for freeing the unflattened devicetree.
+>
+> These ownership changes prevent early freeing of the duplicated FDT
+> or the unflattened devicetree, which could result in use after free
+> errors.
+>
+> of_overlay_fdt_apply() is a private function for the anticipated
+> overlay loader.
+>
+> Update unittest.c to use of_overlay_fdt_apply() instead of
+> of_overlay_apply().
+>
+> Move overlay fragments from artificial locations in
+> drivers/of/unittest-data/tests-overlay.dtsi into one devicetree
+> source file per overlay.  This led to changes in
+> drivers/of/unitest-data/Makefile and drivers/of/unitest.c.
+>
+>   - Add overlay directives to the overlay devicetree source files so
+>     that dtc will compile them as true overlays into one FDT data
+>     chunk per overlay.
+>
+>   - Set CFLAGS for drivers/of/unittest-data/testcases.dts so that
+>     symbols will be generated for overlay resolution of overlays
+>     that are no longer artificially contained in testcases.dts
+>
+>   - Unflatten and apply each unittest overlay FDT using
+>     of_overlay_fdt_apply().
+>
+>   - Enable the of_resolve_phandles() check for whether the unflattened
+>     overlay is detached.  This check was previously disabled because the
+>     overlays from tests-overlay.dtsi were not unflattened into detached
+>     trees.
+>
+>   - Other changes to unittest.c infrastructure to manage multiple test
+>     FDTs built into the kernel image (access by name instead of
+>     arbitrary number).
+>
+>   - of_unittest_overlay_high_level(): previously unused code to add
+>     properties from the overlay_base devicetree to the live tree
+>     was triggered by the restructuring of tests-overlay.dtsi and thus
+>     testcases.dts.  This exposed two bugs: (1) the need to dup a
+>     property before adding it, and (2) property 'name' is
+>     auto-generated in the unflatten code and thus will be a duplicate
+>     in the __symbols__ node - do not treat this duplicate as an error.
+>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+>
+> There are checkpatch warnings.  I have reviewed them and feel they
+> can be ignored.  They are "line over 80 characters" for either
+> pre-existing long lines, or lines in devicetree source files.
+>
+> Changes from v3:
+>   - OF_OVERLAY: add select OF_FLATTREE
+>
+> Changes from v1:
+>   - rebase on v4.16-rc1
+>
+>  drivers/of/Kconfig                          |   1 +
+>  drivers/of/of_private.h                     |   1 +
+>  drivers/of/overlay.c                        | 107 +++++++++-
+>  drivers/of/resolver.c                       |   6 -
+>  drivers/of/unittest-data/Makefile           |  28 ++-
+>  drivers/of/unittest-data/overlay_0.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_1.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_10.dts     |  34 ++++
+>  drivers/of/unittest-data/overlay_11.dts     |  34 ++++
+>  drivers/of/unittest-data/overlay_12.dts     |  14 ++
+>  drivers/of/unittest-data/overlay_13.dts     |  14 ++
+>  drivers/of/unittest-data/overlay_15.dts     |  35 ++++
+>  drivers/of/unittest-data/overlay_2.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_3.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_4.dts      |  23 +++
+>  drivers/of/unittest-data/overlay_5.dts      |  14 ++
+>  drivers/of/unittest-data/overlay_6.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_7.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_8.dts      |  15 ++
+>  drivers/of/unittest-data/overlay_9.dts      |  15 ++
+>  drivers/of/unittest-data/tests-overlay.dtsi | 213 --------------------
+>  drivers/of/unittest.c                       | 294 ++++++++++++++--------------
+>  include/linux/of.h                          |   7 -
+>  23 files changed, 552 insertions(+), 389 deletions(-)
+>  create mode 100644 drivers/of/unittest-data/overlay_0.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_1.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_10.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_11.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_12.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_13.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_15.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_2.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_3.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_4.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_5.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_6.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_7.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_8.dts
+>  create mode 100644 drivers/of/unittest-data/overlay_9.dts
+>
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index 783e0870bd22..ad3fcad4d75b 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -92,6 +92,7 @@ config OF_RESOLVE
+>  config OF_OVERLAY
+>         bool "Device Tree overlays"
+>         select OF_DYNAMIC
+> +       select OF_FLATTREE
+>         select OF_RESOLVE
+>         help
+>           Overlays are a method to dynamically modify part of the kernel's
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 0c609e7d0334..6e39dce3a979 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -77,6 +77,7 @@ static inline void __of_detach_node_sysfs(struct device_node *np) {}
+>  #endif
+>
+>  #if defined(CONFIG_OF_OVERLAY)
+> +int of_overlay_fdt_apply(void *overlay_fdt, int *ovcs_id);
+>  void of_overlay_mutex_lock(void);
+>  void of_overlay_mutex_unlock(void);
+>  #else
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 3397d7642958..5f6c5569e97d 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -12,10 +12,12 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/string.h>
+>  #include <linux/ctype.h>
+>  #include <linux/errno.h>
+>  #include <linux/slab.h>
+> +#include <linux/libfdt.h>
+>  #include <linux/err.h>
+>  #include <linux/idr.h>
+>
+> @@ -33,7 +35,9 @@ struct fragment {
+>
+>  /**
+>   * struct overlay_changeset
+> + * @id:                        changeset identifier
+>   * @ovcs_list:         list on which we are located
+> + * @fdt:               FDT that was unflattened to create @overlay_tree
+>   * @overlay_tree:      expanded device tree that contains the fragment nodes
+>   * @count:             count of fragment structures
+>   * @fragments:         fragment nodes in the overlay expanded device tree
+> @@ -43,6 +47,7 @@ struct fragment {
+>  struct overlay_changeset {
+>         int id;
+>         struct list_head ovcs_list;
+> +       const void *fdt;
+>         struct device_node *overlay_tree;
+>         int count;
+>         struct fragment *fragments;
+> @@ -503,7 +508,8 @@ static struct device_node *find_target_node(struct device_node *info_node)
+>
+>  /**
+>   * init_overlay_changeset() - initialize overlay changeset from overlay tree
+> - * @ovcs       Overlay changeset to build
+> + * @ovcs:      Overlay changeset to build
+> + * @fdt:       the FDT that was unflattened to create @tree
+>   * @tree:      Contains all the overlay fragments and overlay fixup nodes
+>   *
+>   * Initialize @ovcs.  Populate @ovcs->fragments with node information from
+> @@ -514,7 +520,7 @@ static struct device_node *find_target_node(struct device_node *info_node)
+>   * detected in @tree, or -ENOSPC if idr_alloc() error.
+>   */
+>  static int init_overlay_changeset(struct overlay_changeset *ovcs,
+> -               struct device_node *tree)
+> +               const void *fdt, struct device_node *tree)
+>  {
+>         struct device_node *node, *overlay_node;
+>         struct fragment *fragment;
+> @@ -535,6 +541,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+>                 pr_debug("%s() tree is not root\n", __func__);
+>
+>         ovcs->overlay_tree = tree;
+> +       ovcs->fdt = fdt;
+>
+>         INIT_LIST_HEAD(&ovcs->ovcs_list);
+>
+> @@ -606,6 +613,7 @@ static int init_overlay_changeset(struct overlay_changeset *ovcs,
+>         }
+>
+>         if (!cnt) {
+> +               pr_err("no fragments or symbols in overlay\n");
+>                 ret = -EINVAL;
+>                 goto err_free_fragments;
+>         }
+> @@ -642,11 +650,24 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
+>         }
+>         kfree(ovcs->fragments);
+>
+> +       /*
+> +        * TODO
+> +        *
+> +        * would like to: kfree(ovcs->overlay_tree);
+> +        * but can not since drivers may have pointers into this data
+> +        *
+> +        * would like to: kfree(ovcs->fdt);
+> +        * but can not since drivers may have pointers into this data
+> +        */
 > +
-> +/* Audio Front End (AFE) Ports */
-> +#define AFE_PORT_HDMI_RX	8
-> +
-> +#endif /* __DT_BINDINGS_Q6_AFE_H__ */
-
-Please use a C++ comment here as well for consistency, it looks more
-intentional.
-
-> +config SND_SOC_QDSP6_AFE
-> +	tristate
-> +	default n
-> +
-
-n is the default anyway, no need to specify it (I know some uses already
-slipped through here but it'd be better to fix those).
-
-> index 000000000000..0a5af06bb50e
-> --- /dev/null
-> +++ b/sound/soc/qcom/qdsp6/q6afe.c
-> @@ -0,0 +1,520 @@
-> +// SPDX-License-Identifier: GPL-2.0
+>         kfree(ovcs);
+>  }
+>
+> -/**
 > +/*
-> + * Copyright (c) 2011-2017, The Linux Foundation
-> + * Copyright (c) 2018, Linaro Limited
-> + */
-
-Same here with the comment, just make the whole comment a C++ comment
-rather than having one comment using both styles.  Similar things apply
-elsewhere.
-
-> +/* Port map of index vs real hw port ids */
-> +static struct afe_port_map port_maps[AFE_PORT_MAX] =3D {
-> +	[AFE_PORT_HDMI_RX] =3D { AFE_PORT_ID_MULTICHAN_HDMI_RX,
-> +				AFE_PORT_HDMI_RX, 1, 1},
-> +};
-
-Is this not device specific in any way?  It looks likely to be.
-
-> +static struct q6afe_port *afe_find_port(struct q6afe *afe, int token)
-> +{
-> +	struct q6afe_port *p =3D NULL;
-> +
-> +	spin_lock(&afe->port_list_lock);
-> +	list_for_each_entry(p, &afe->port_list, node)
-> +		if (p->token =3D=3D token)
-> +			break;
-> +
-> +	spin_unlock(&afe->port_list_lock);
-
-Why do we need to lock the port list, what are we protecting it against?
-We don't write here which suggests either there's some kind of race
-condition in this lookup or the lock is not doing anything.
-
-> +static int afe_callback(struct apr_device *adev,
-> +			struct apr_client_message *data)
-> +{
-> +	struct q6afe *afe =3D dev_get_drvdata(&adev->dev);
-> +	struct aprv2_ibasic_rsp_result_t *res;
-> +	struct q6afe_port *port;
-> +
-> +	if (!data->payload_size)
-> +		return 0;
-> +
-> +	res =3D data->payload;
-> +	if (data->opcode =3D=3D APR_BASIC_RSP_RESULT) {
-> +		if (res->status) {
-
-Shouldn't we use a switch statement here in case we want to handle
-something else?
-
-> +		switch (res->opcode) {
-> +		case AFE_PORT_CMD_SET_PARAM_V2:
-> +		case AFE_PORT_CMD_DEVICE_STOP:
-> +		case AFE_PORT_CMD_DEVICE_START:
-> +			afe->state =3D AFE_CMD_RESP_AVAIL;
-> +			port =3D afe_find_port(afe, data->token);
-> +			if (port)
-> +				wake_up(&port->wait);
-
-No locking here?  It seems a bit odd that the AFE global state is being
-set to say there's a response available but we wake a specific port.
-
-> +	ret =3D apr_send_pkt(afe->apr, data);
-> +	if (ret < 0) {
-> +		dev_err(afe->dev, "packet not transmitted\n");
-> +		ret =3D -EINVAL;
-> +		goto err;
-
-Why squash the error code here?  We don't even print it.
-
-> +	}
-> +
-> +	ret =3D wait_event_timeout(*wait, (afe->state =3D=3D AFE_CMD_RESP_AVAIL=
-),
-> +				 msecs_to_jiffies(TIMEOUT_MS));
-> +	if (!ret) {
-> +		ret =3D -ETIMEDOUT;
-> +	} else if (afe->status > 0) {
-> +		dev_err(afe->dev, "DSP returned error[%s]\n",
-> +		       q6dsp_strerror(afe->status));
-> +		ret =3D q6dsp_errno(afe->status);
-
-If we time out here and the DSP delivers a response later it looks like
-we'll get data corruption - the DSP will happily deliver the response
-into shared state.
-
-> +static int afe_port_start(struct q6afe_port *port,
-> +			  union afe_port_config *afe_config)
-> +{
-> +	struct afe_audioif_config_command config =3D {0,};
-> +	struct q6afe *afe =3D port->afe;
-> +	int port_id =3D port->id;
-> +	int ret, param_id =3D port->cfg_type;
-> +
-> +	config.port =3D *afe_config;
-> +
-> +	ret  =3D q6afe_port_set_param_v2(port, &config, param_id,
-> +				       sizeof(*afe_config));
-> +	if (ret) {
-> +		dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
-> +			port_id, ret);
-> +		return ret;
-> +	}
-> +	return afe_send_cmd_port_start(port);
-
-Why not just inline this function here?  It appears to have only this
-user.
-
-> +	int index =3D 0;
-
-We set index to 0...
-> +
-> +	port_id =3D port->id;
-> +	index =3D port->token;
-
-=2E..the unconditionally overwrite it?
-
-> +/**
-> + * q6afe_port_start() - Start a afe port
+> + * internal documentation
 > + *
-> + * @port: Instance of port to start
-> + *
-> + * Return: Will be an negative on packet size on success.
-> + */
-> +int q6afe_port_start(struct q6afe_port *port)
+>   * of_overlay_apply() - Create and apply an overlay changeset
+> + * @fdt:       the FDT that was unflattened to create @tree
+>   * @tree:      Expanded overlay device tree
+>   * @ovcs_id:   Pointer to overlay changeset id
+>   *
+> @@ -685,21 +706,29 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
+>   * id is returned to *ovcs_id.
+>   */
+>
+> -int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+> +static int of_overlay_apply(const void *fdt, struct device_node *tree,
+> +               int *ovcs_id)
+>  {
+>         struct overlay_changeset *ovcs;
+>         int ret = 0, ret_revert, ret_tmp;
+>
+> -       *ovcs_id = 0;
+> +       /*
+> +        * As of this point, fdt and tree belong to the overlay changeset.
+> +        * overlay changeset code is responsible for freeing them.
+> +        */
+>
+>         if (devicetree_corrupt()) {
+>                 pr_err("devicetree state suspect, refuse to apply overlay\n");
+> +               kfree(fdt);
+> +               kfree(tree);
+>                 ret = -EBUSY;
+>                 goto out;
+>         }
+>
+>         ovcs = kzalloc(sizeof(*ovcs), GFP_KERNEL);
+>         if (!ovcs) {
+> +               kfree(fdt);
+
+You free the fdt up here, but ...
+
+> +               kfree(tree);
+>                 ret = -ENOMEM;
+>                 goto out;
+>         }
+> @@ -709,12 +738,17 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+>
+>         ret = of_resolve_phandles(tree);
+>         if (ret)
+> -               goto err_free_overlay_changeset;
+> +               goto err_free_tree;
+>
+> -       ret = init_overlay_changeset(ovcs, tree);
+> +       ret = init_overlay_changeset(ovcs, fdt, tree);
+>         if (ret)
+> -               goto err_free_overlay_changeset;
+> +               goto err_free_tree;
+>
+> +       /*
+> +        * after overlay_notify(), ovcs->overlay_tree related pointers may have
+> +        * leaked to drivers, so can not kfree() tree, aka ovcs->overlay_tree;
+> +        * and can not free fdt, aka ovcs->fdt
+> +        */
+>         ret = overlay_notify(ovcs, OF_OVERLAY_PRE_APPLY);
+>         if (ret) {
+>                 pr_err("overlay changeset pre-apply notify error %d\n", ret);
+> @@ -754,6 +788,9 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+>
+>         goto out_unlock;
+>
+> +err_free_tree:
+> +       kfree(tree);
+> +
+
+...not down here?
+
+Seems like of_overlay_fdt_apply should do the freeing as that is what
+does the allocation of the fdt.
+
+>  err_free_overlay_changeset:
+>         free_overlay_changeset(ovcs);
+>
+> @@ -766,7 +803,59 @@ int of_overlay_apply(struct device_node *tree, int *ovcs_id)
+>
+>         return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(of_overlay_apply);
+> +
+> +int of_overlay_fdt_apply(void *overlay_fdt, int *ovcs_id)
 > +{
-> +	return afe_port_start(port, &port->port_cfg);
+> +       const void *new_fdt;
+> +       int ret;
+> +       u32 size;
+> +       struct device_node *overlay_root;
+> +
+> +       *ovcs_id = 0;
+> +       ret = 0;
+> +
+> +       if (fdt_check_header(overlay_fdt)) {
+> +               pr_err("Invalid overlay_fdt header\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       size = fdt_totalsize(overlay_fdt);
+> +
+> +       /*
+> +        * Must create permanent copy of FDT because of_fdt_unflatten_tree()
+> +        * will create pointers to the passed in FDT in the unflattened tree.
+> +        */
+> +       new_fdt = kmemdup(overlay_fdt, size, GFP_KERNEL);
+> +       if (!new_fdt)
+> +               return -ENOMEM;
+> +
+> +       of_fdt_unflatten_tree(new_fdt, NULL, &overlay_root);
+> +       if (!overlay_root) {
+> +               pr_err("unable to unflatten overlay_fdt\n");
+> +               ret = -EINVAL;
+> +               goto out_free_new_fdt;
+> +       }
+> +
+> +       ret = of_overlay_apply(new_fdt, overlay_root, ovcs_id);
+> +       if (ret < 0) {
+> +               /*
+> +                * new_fdt and overlay_root now belong to the overlay
+> +                * changeset.
+> +                * overlay changeset code is responsible for freeing them.
+> +                */
+> +               goto out;
+> +       }
+> +
+> +       return 0;
+> +
+> +
+> +out_free_new_fdt:
+> +       kfree(new_fdt);
+> +
+> +out:
+> +       return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(q6afe_port_start);
+> +EXPORT_SYMBOL_GPL(of_overlay_fdt_apply);
 
-This is the third level of wrapper for the port start command in this
-file.  Do we *really* need all these wrappers?
+[...]
 
-> +struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
-> +{
-
-> +	port =3D devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
-> +	if (!port)
-> +		return ERR_PTR(-ENOMEM);
-
-The _port_get_ function is allocating data but...
-
-> +/**
-> + * q6afe_port_put() - Release port reference
-> + *
-> + * @port: Instance of port to put
-> + */
-> +void q6afe_port_put(struct q6afe_port *port)
-> +{
-> +	struct q6afe *afe =3D port->afe;
+> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> index 7a9abaae874d..2d706039ac96 100644
+> --- a/drivers/of/unittest.c
+> +++ b/drivers/of/unittest.c
+> @@ -45,6 +45,8 @@
+>         failed; \
+>  })
+>
+> +static int __init overlay_data_apply(const char *overlay_name, int *overlay_id);
 > +
-> +	spin_lock(&afe->port_list_lock);
-> +	list_del(&port->node);
-> +	spin_unlock(&afe->port_list_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(q6afe_port_put);
+>  static void __init of_unittest_find_node_by_name(void)
+>  {
+>         struct device_node *np;
+> @@ -997,8 +999,7 @@ static int __init unittest_data_add(void)
+>         }
+>
+>         /*
+> -        * This lock normally encloses of_overlay_apply() as well as
+> -        * of_resolve_phandles().
+> +        * This lock normally encloses of_resolve_phandles()
 
-=2E..the _port_put() function isn't freeing it.  That seems leaky.  I'm
-also a bit worried about this being a spinlock that we're using for
-allocation, and not even spin_lock_irqsave().  Presumably this is
-protecting against interrupts otherwise we'd not need a spinlock but
-for that to work we'd need the _irqsave()? =20
+I thought this lock was going to be internal when we did this change.
 
---XAEV7zm15O60d1Zf
-Content-Type: application/pgp-signature; name="signature.asc"
+>          */
+>         of_overlay_mutex_lock();
+>
+> @@ -1191,12 +1192,12 @@ static int of_unittest_device_exists(int unittest_nr, enum overlay_type ovtype)
+>         return 0;
+>  }
+>
+> -static const char *overlay_path(int nr)
+> +static const char *overlay_name_from_nr(int nr)
+>  {
+>         static char buf[256];
+>
+>         snprintf(buf, sizeof(buf) - 1,
+> -               "/testcase-data/overlay%d", nr);
+> +               "overlay_%d", nr);
+>         buf[sizeof(buf) - 1] = '\0';
+>
+>         return buf;
+> @@ -1263,25 +1264,19 @@ static void of_unittest_destroy_tracked_overlays(void)
+>         } while (defers > 0);
+>  }
+>
+> -static int of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
+> +static int __init of_unittest_apply_overlay(int overlay_nr, int unittest_nr,
+>                 int *overlay_id)
 
------BEGIN PGP SIGNATURE-----
+Why __init? Really, we want to move towards building the unittests as
+a module and we don't want __init for that. Though maybe __init is a
+nop for modules, I don't remember offhand.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYabsACgkQJNaLcl1U
-h9B9qQf/WATKLGQAmk8TiQplsSUEPDHMqf6jgYzWoXgWRnT06NKKpBZnO9l2rmmz
-SsznY8MTqmf42p5w8l602GHRTB1KFc6Qj7sko3A2Bu7KbtQINdWiAtBbk0X6UGyF
-LBdgKSW4DM2xttG1FxvmqfBLGBLK0XUUCpjIn0+Z1ZAcAqWC3BmdoYMiy5tHYb13
-FIFNTA4ZWI06MMJXG2Xh1utLPJqfAnFhCpLXRyxWXRTyOiXmeeqm/h4n3IrcWXBe
-uFAOM34+0UQQ4370eBUWrtU/hQcpx6tqxaKSxIBFZK8VFMm8LXAF9Mi6kaJsjC5n
-4lroING3TpBGjikBw5/mjaBvxlq++w==
-=DqGK
------END PGP SIGNATURE-----
+In any case, seems like a separate change.
 
---XAEV7zm15O60d1Zf--
+Rob
