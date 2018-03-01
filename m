@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3702529-1519933787-2-16716587523428617526
+X-Cyrus-Session-Id: sloti22d1t05-3702529-1519933768-2-2528431221030478435
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -14,23 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519933786; b=N6LOVWRNVu3VLnPpq/DXrj0BS1CFRrzpZHgcuhOredx/E9w
-    fDAw6qGLBdc6seNwTvP5/maSAfa6H/pWxLAXUYJircegbjIbItB+yD8O9nguGFXD
-    wMMm+Ler7PMBv4FaRzAIU8mJNlGXKNY9uZQN6wLyAAx/5MH2ll/B4E0b9kOTngHM
-    ChJ05kby/0sX6TeUvnq9SL+S+GbFX4GI+oBGZLd7pX7NnZExJeUHgieA8IMUHF1M
-    4sTE7wPuGowVsvnUjXf0FnUdcopOzJUti1eU3oQkHmkMV5yTEjcLyJQIk12JhWhe
-    V0v/dDXgRxP7cr3j4a/lGWwbOMDEf7/0U44Ku5w==
+    t=1519933767; b=AAOXLB0MKwz70uS8BGJYNq1ziui4KLytyULx63aGLCkDiuw
+    Zv8dpaSFKGSAYaf1aSW6Cl4V90nvM3DR9xczHlQzGY6GO9OxRCdHJIqQeqhJHVm/
+    zmPj/a6X7rAmOOFOqeuC/qehxQydNlc7sJDxWVaj799lIoGyCn2Hdqf51WAA2lpY
+    JB+CM/glREq7eKzwK7GQlEqgkDqHB9dXDaDCWdurSxsAcnshnLYBu4YJD+xHqgXB
+    9er9MDZ2dYpnSGL9jr9Zu/Bf6MpBiWvjZcwdbhdsEY0lqq48Rh0HM4yxU8bG0QIR
+    C2+4n6nBKZI7XSlDCSBx+ngZxOztH1efrgHWEZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1519933786; bh=+xvR4+zNDYkbElos6/OGAsAVX425qNFIt/w
-    xvUSWmyk=; b=GXDa65zsp6O99Fxgljas+wtgFKn85efGP7VldVf5JXzNb11AROa
-    INRCgZPQFsgEamYDh8DGq4fPOZ2uO4U4j63Mnduubr3pHWircJycGO8cefMtRYz1
-    tyiGYGq+AeYvnlK239RZDIEdrS7k2gVYGdjfMRzL3n0Nj7E4xpsIayYhAzoyFx7w
-    Ny56pSNwPDx/yl/rFGQG8UUWJa6bpws6rrVlM/keYg/uPiBNlcY8gVS9raQ/A8zP
-    z7gBkgSkWISdPDqT0y7a20vtc3J4ywZOzMXFhYqzC/yLJhUhvahIvbMJgY7sEPUY
-    VB6mR+ziI09Tq5WjWzowWrUQjMkCr+eogow==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    s=arctest; t=1519933767; bh=nZg/0ysmCSabbuimeREQRb8c+0Q4Wg6tcEG
+    jO1/Lq7E=; b=rtYSI8zmowGtbQTWkmE3KhrDDg4NsnJTrykiykjfEfWxpvIpzEq
+    udTClQtZOrHjvtAOmTFwdHVOFBMjqLXZLExIPQvjQ2kXYxk8tKOtm7vjoPPifAjY
+    VdFezuQt/tzpc46LwF1ZpIW1D3QJ0uwx2jyC3GZsQtMKAbUKDnk7UkIuo4dh835K
+    aeuIwYB/yPePRE7CaVI2M4B5dsYM1abIEOLrryejpg1s0aNao4irKNqpQsru3T0D
+    jLK5KNGys4z++LjtAmB3B/Og5BWM400fWww9sz94c3/u4WO49TFmiW3u1Iuz78Q2
+    9to8cv5/xpdV1QUyirhAszt+u+A1RNEV3vA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -48,12 +48,12 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033719AbeCATq6 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 14:46:58 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43684 "EHLO mx1.redhat.com"
+        id S1033647AbeCATrB (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 14:47:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42468 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1033276AbeCATqz (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 1 Mar 2018 14:46:55 -0500
+        id S1034175AbeCATq7 (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Thu, 1 Mar 2018 14:46:59 -0500
 From: Richard Guy Briggs <rgb@redhat.com>
 To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc: mszeredi@redhat.com, luto@kernel.org, jlayton@redhat.com,
         simo@redhat.com, trondmy@primarydata.com, eparis@parisplace.org,
         serge@hallyn.com, ebiederm@xmission.com, madzcar@gmail.com,
         Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH V1 06/12] audit: add support for non-syscall auxiliary records
-Date: Thu,  1 Mar 2018 14:41:09 -0500
-Message-Id: <e26d089d495f2ffd1d4e1f3de7730aa209340a59.1519930146.git.rgb@redhat.com>
+Subject: [RFC PATCH V1 07/12] audit: add container aux record to watch/tree/mark
+Date: Thu,  1 Mar 2018 14:41:10 -0500
+Message-Id: <6c071b3e4fbe848ccd692c7dc27c9f75589852c0.1519930146.git.rgb@redhat.com>
 In-Reply-To: <cover.1519930146.git.rgb@redhat.com>
 References: <cover.1519930146.git.rgb@redhat.com>
 In-Reply-To: <cover.1519930146.git.rgb@redhat.com>
@@ -78,78 +78,110 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Standalone audit records have the timestamp and serial number generated
-on the fly and as such are unique, making them standalone.  This is a
-prototype of a method to generate a local audit context that will be
-used only for a standalone record and its auxiliary record.  The context
-is discarded immediately after the local associated records are
-produced.
+Add container ID information to mark, watch and tree rule standalone
+records.
 
 Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- include/linux/audit.h |  8 ++++++++
- kernel/auditsc.c      | 20 +++++++++++++++++++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
+ kernel/audit_fsnotify.c |  5 ++++-
+ kernel/audit_tree.c     |  5 ++++-
+ kernel/audit_watch.c    | 33 +++++++++++++++++++--------------
+ 3 files changed, 27 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index ed16bb6..c0b83cb 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -227,7 +227,9 @@ static inline int audit_log_container_info(struct audit_context *context,
- /* These are defined in auditsc.c */
- 				/* Public API */
- extern int  audit_alloc(struct task_struct *task);
-+extern struct audit_context *audit_alloc_local(void);
- extern void __audit_free(struct task_struct *task);
-+extern void audit_free_context(struct audit_context *context);
- extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
- 				  unsigned long a2, unsigned long a3);
- extern void __audit_syscall_exit(int ret_success, long ret_value);
-@@ -472,6 +474,12 @@ static inline int audit_alloc(struct task_struct *task)
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index 52f368b..18c110d 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -124,10 +124,11 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
  {
- 	return 0;
- }
-+static inline struct audit_context *audit_alloc_local(void)
-+{
-+	return NULL;
-+}
-+static inline void audit_free_context(struct audit_context *context)
-+{ }
- static inline void audit_free(struct task_struct *task)
- { }
- static inline void audit_syscall_entry(int major, unsigned long a0,
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 0e41884..0cbd762 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -959,8 +959,26 @@ int audit_alloc(struct task_struct *tsk)
- 	return 0;
+ 	struct audit_buffer *ab;
+ 	struct audit_krule *rule = audit_mark->rule;
++	struct audit_context *context = audit_alloc_local();
+ 
+ 	if (!audit_enabled)
+ 		return;
+-	ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(context, GFP_NOFS, AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return;
+ 	audit_log_format(ab, "auid=%u ses=%u op=%s",
+@@ -138,6 +139,8 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
+ 	audit_log_key(ab, rule->filterkey);
+ 	audit_log_format(ab, " list=%d res=1", rule->listnr);
+ 	audit_log_end(ab);
++	audit_log_container_info(context, "config", audit_get_containerid(current));
++	audit_free_context(context);
  }
  
--static inline void audit_free_context(struct audit_context *context)
-+struct audit_context *audit_alloc_local(void)
+ void audit_remove_mark(struct audit_fsnotify_mark *audit_mark)
+diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
+index fd35312..2ad85d4 100644
+--- a/kernel/audit_tree.c
++++ b/kernel/audit_tree.c
+@@ -496,8 +496,9 @@ static int tag_chunk(struct inode *inode, struct audit_tree *tree)
+ static void audit_tree_log_remove_rule(struct audit_krule *rule)
  {
-+	struct audit_context *context;
+ 	struct audit_buffer *ab;
++	struct audit_context *context = audit_alloc_local();
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
++	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+ 	if (unlikely(!ab))
+ 		return;
+ 	audit_log_format(ab, "op=remove_rule");
+@@ -506,6 +507,8 @@ static void audit_tree_log_remove_rule(struct audit_krule *rule)
+ 	audit_log_key(ab, rule->filterkey);
+ 	audit_log_format(ab, " list=%d res=1", rule->listnr);
+ 	audit_log_end(ab);
++	audit_log_container_info(context, "config", audit_get_containerid(current));
++	audit_free_context(context);
+ }
+ 
+ static void kill_rules(struct audit_tree *tree)
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 9eb8b35..60d75a2 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -238,20 +238,25 @@ static struct audit_watch *audit_dupe_watch(struct audit_watch *old)
+ 
+ static void audit_watch_log_rule_change(struct audit_krule *r, struct audit_watch *w, char *op)
+ {
+-	if (audit_enabled) {
+-		struct audit_buffer *ab;
+-		ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
+-		if (unlikely(!ab))
+-			return;
+-		audit_log_format(ab, "auid=%u ses=%u op=%s",
+-				 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-				 audit_get_sessionid(current), op);
+-		audit_log_format(ab, " path=");
+-		audit_log_untrustedstring(ab, w->path);
+-		audit_log_key(ab, r->filterkey);
+-		audit_log_format(ab, " list=%d res=1", r->listnr);
+-		audit_log_end(ab);
+-	}
++	struct audit_buffer *ab;
++	struct audit_context *context = audit_alloc_local();
 +
-+	if (likely(!audit_ever_enabled))
-+		return NULL; /* Return if not auditing. */
-+
-+	context = audit_alloc_context(AUDIT_RECORD_CONTEXT);
-+	if (!context)
-+		return NULL;
-+	context->serial = audit_serial();
-+	context->ctime = current_kernel_time64();
-+	context->in_syscall = 1;
-+	return context;
-+}
-+
-+inline void audit_free_context(struct audit_context *context)
-+{
-+	if (!context)
++	if (!audit_enabled)
 +		return;
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
- 	free_tree_refs(context);
++
++	ab = audit_log_start(context, GFP_NOFS, AUDIT_CONFIG_CHANGE);
++	if (unlikely(!ab))
++		return;
++	audit_log_format(ab, "auid=%u ses=%u op=%s",
++			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
++			 audit_get_sessionid(current), op);
++	audit_log_format(ab, " path=");
++	audit_log_untrustedstring(ab, w->path);
++	audit_log_key(ab, r->filterkey);
++	audit_log_format(ab, " list=%d res=1", r->listnr);
++	audit_log_end(ab);
++	audit_log_container_info(context, "config", audit_get_containerid(current));
++	audit_free_context(context);
+ }
+ 
+ /* Update inode info in audit rules based on filesystem event. */
 -- 
 1.8.3.1
 
