@@ -1,92 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161879AbeCAVDq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:03:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34314 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1161818AbeCAVDn (ORCPT
+        id S1161891AbeCAVEl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:04:41 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43030 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161796AbeCAVEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:03:43 -0500
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
- Memory
-From: Benjamin Herrenschmidt <benh@au1.ibm.com>
-Reply-To: benh@au1.ibm.com
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Date: Fri, 02 Mar 2018 08:03:30 +1100
-In-Reply-To: <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
-         <1519876489.4592.3.camel@kernel.crashing.org>
-         <1519876569.4592.4.camel@au1.ibm.com>
-         <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030121-0012-0000-0000-000005B79F78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030121-0013-0000-0000-00001933A5BA
-Message-Id: <1519938210.4592.30.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803010257
+        Thu, 1 Mar 2018 16:04:39 -0500
+Date: Thu, 1 Mar 2018 21:04:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 03/25] ASoC: qcom: qdsp6: Add common qdsp6 helper
+ functions
+Message-ID: <20180301210428.GS12864@sirena.org.uk>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-4-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/U0GMd1Pus0mbMSS"
+Content-Disposition: inline
+In-Reply-To: <20180213165837.1620-4-srinivas.kandagatla@linaro.org>
+X-Cookie: Real Users hate Real Programmers.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 11:21 -0800, Dan Williams wrote:
-> 
-> 
-> The devm_memremap_pages() infrastructure allows placing the memmap in
-> "System-RAM" even if the hotplugged range is in PCI space. So, even if
-> it is an issue on some configurations, it's just a simple adjustment
-> to where the memmap is placed.
 
-Actually can you explain a bit more here ?
+--/U0GMd1Pus0mbMSS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-devm_memremap_pages() doesn't take any specific argument about what to
-do with the memory.
+On Tue, Feb 13, 2018 at 04:58:15PM +0000, srinivas.kandagatla@linaro.org wrote:
 
-It does create the vmemmap sections etc... but does so by calling
-arch_add_memory(). So __add_memory() isn't called, which means the
-pages aren't added to the linear mapping. Then you manually add them to
-ZONE_DEVICE.
+> +config SND_SOC_QDSP6_COMMON
+> +	tristate
+> +	default n
+> +
 
-Am I correct ?
+Ah, the other default n that had snuck in was actually in an earlier
+patch in the series!  I'm fairly sure this has come up with earlier
+drivers you've submitted...
 
-In that case, they indeed can't be used as normal memory pages, which
-is good, and if they are indeed not in the linear mapping, then there
-is no caching issues.
+> +int q6dsp_map_channels(u8 ch_map[PCM_FORMAT_MAX_NUM_CHANNEL], int ch)
+> +{
+> +	memset(ch_map, 0, PCM_FORMAT_MAX_NUM_CHANNEL);
+> +
+> +	switch (ch) {
+> +	case 1:
+> +			ch_map[0] = PCM_CHANNEL_FC;
+> +		break;
+> +	case 2:
+> +			ch_map[0] = PCM_CHANNEL_FL;
+> +			ch_map[1] = PCM_CHANNEL_FR;
+> +		break;
 
-However, what happens if anything calls page_address() on them ? Some
-DMA ops do that for example, or some devices might ...
+That's some really funky indentation there...
 
-This is all quite convoluted with no documentation I can find that
-explains the various expectations.
+> +static inline int q6dsp_errno(u32 error)
+> +{
+> +	int ret = -EINVAL;
+> +
+> +	if (error <= ARRAY_SIZE(q6dsp_err_codes))
+> +		ret = q6dsp_err_codes[error].lnx_err_code;
+> +
+> +	return ret;
+> +}
 
-So the question is are those pages landing in the linear mapping, and
-if yes, by what code path ?
+Is the error handling such a hot path that we need to make the lookup
+functions (and the data table with the lookups) static inlines in a
+header or could we just move the functions and the data into a C file?
+Especially given the string lookups for the errors (which are really
+nice to have) it seems wasteful.
 
-The next question is if we ever want that to work on ppc64, we need a
-way to make this fit in our linear mapping and map it non-cachable,
-which will require some wrangling on how we handle that mapping.
+--/U0GMd1Pus0mbMSS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Ben.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYatsACgkQJNaLcl1U
+h9BlTQf9GxyaM1vTkhv2OQa2s4bd3M3jGz+u9SFXCfM90dcKPeEDbXWDaBKWXDBp
+VmUXFJwdYWrj3IYA5woFFLEitl3qam5OOfnOIWCHNmcA+sNM0JSCxiWVzmC9WUrK
+Lqpn9Ggy41EDKePr5b6Fz5Me2rpyq6ijANzRtQcsHo2CaAXjj3vmdrRccO5QD0aH
+0A1nZFC6xGwRRKC3MTHlOcH+1oAGw23VkRydKJLUxCCx5d5BlRWj7/bw0FPtK/3z
+TV/h38Zf1xDntDxJRAYPkBGSgvlILe+0qyCIHC5dHPfILceOFjXXXHsU7am8SKju
+KlyMhmcoyBGHOzYFHNx9ev5yoojkOA==
+=k4hS
+-----END PGP SIGNATURE-----
+
+--/U0GMd1Pus0mbMSS--
