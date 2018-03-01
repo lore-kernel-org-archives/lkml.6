@@ -1,100 +1,110 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvjnk4Ba66geGWfnUEiiNZDiQ304ZD5yCe1ow8D66kYwXuQEyrBcHtSLCpbbk9/xSK5CqnG
-ARC-Seal: i=1; a=rsa-sha256; t=1520451580; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AG47ELvS4wlbGMcYmlTXtiu76Mf4UlUe21ER7Hkf0r8w9D5BLznJmHBOZXPo+tbCLWW+nZ3FFY++
+ARC-Seal: i=1; a=rsa-sha256; t=1519918684; cv=none;
         d=google.com; s=arc-20160816;
-        b=LW3TT7zF/1ikIioRk54oLVd3Qx8cnsozcnJvo8MUCOPuHEg1aHmq8QH7JTgk9JYTeR
-         5BdOlx607AdpRS0BQReOTabp98LgCuwlze/UVy19q4zkJo8O2c8WNwSHBE9PXGmmfl/d
-         NVhMIvIch6yXBxvsn/xLXdaWJxSJyMCs8vdP92Fn9bjXhxJdMWEMc90lNPZJveh3l9VM
-         qe7UeN7FQA+DfMcG5amSWMeEsRWfiN7JyGASY/Rp200NqSEhl76BA9XqUvZAbZj+i4Vn
-         le4BEnQdX2fBROEmVYbBnpGU077JQ7cD3LwnJ0XR6K2gJZwhAryCh08EjvWKO+IClSvs
-         5/Jw==
+        b=Fk/3879FKQUz/T7+sVcEsRGFzKplC1IJADvJJa8lYycbBmVD65FWc45ktoFaHj1nN8
+         gUZWEGZzuJhpExURXwd5lH8wCWVe75pWMrcTYdM5AWMZ2UclKoFIqr4oX6VrHEO6UEC1
+         VBfMcdwqzHT5hKHss6lktmocYWKBA9elYn4d51Sl43o5JTC1XQqcEhOGGEInvtpgdNfP
+         Fdam7f4GmBfBDs+Rgrku+YQg3oGghIYp8sj0gSI4f5Rz0ADI+1V1dkPwTtS2z84Xr/DO
+         PngmkM4MVaVVfltJvsrguQKB0zfTYdVOxJoA5/joJXFBjT6h9tQdQr3o6G4MeF2xuIBu
+         SH0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=e7CqiNFKFYnuagURskU9IhD9/O52u1qm3L7F/ycYD5A=;
-        b=bMF4rv3HdlvrFkZIVEHjL70gTTUK3HOOxeHOJq6ZvNuqitovW9m1VNly/nzjSUYg9I
-         JkjECZhKXzjHY+7ZeL/H5jQqoafLNZQJeyyeCsmxG4xaOMwdx3NwPSvba21rheJcgavH
-         3BwjdvW7qOFiTO79EWQNZ+h6KIIC9H2r2Vd+o8Oune8dagNZyamhyDDNDWLAnzIbavA8
-         BRTTm6jO4UGW2gdO3tn6+gCtf90AoihR+5KVL65MHZbCn4d0rKCJx2w8a3mjSaQQHU4u
-         rmCMdOV1CE6SFbtDBwnYSm0E/9vndLt0v2p48Od0n5gHERibqZu2MJXL/EbySVwWUkC1
-         5yCw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=yTSlMspq68DzprtlG2JJ+djWoyt+05wYTK6NCT3eu58=;
+        b=pDGl1WdPdpTjHdcNvJq6sMZi2qoQBojO6GZ7fnVunFNHG6zTMkap3IkUgTHKxofrSo
+         vEsSIsIJVsnFcZF8n+JjW2AvCg3xE4acRJBRc1nq6bpvGaoCFpQsX1h4Eb/I5dd8Hofn
+         7WMmy/dz8/yntq8/3qi3lpE91JzP+P4tO5OEK4JB0B/TJwJ6S1d/e2wF8CkardyMAZ2+
+         UuVFn+M9kCwydlt5mPpPnPE1V2XHotWyCDiKk24uvswBOa8BxLTJTDOsBsWaGFmO/iSg
+         Ur7utMxk5+cccesgauzbF0eIPJY92K7+A8aYhiJjiuFY3t0nlTqdQ5dXBBjx/PQVHHok
+         Z8eQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Joe Perches <joe@perches.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Roberts, William C" <william.c.roberts@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Laight <David.Laight@ACULAB.COM>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Adam Borowski <kilobyte@angband.pl>,
-	Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.15 001/122] vsprintf: avoid misleading "(null)" for %px
-Date: Wed,  7 Mar 2018 11:36:53 -0800
-Message-Id: <20180307191729.373118279@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
-References: <20180307191729.190879024@linuxfoundation.org>
-User-Agent: quilt/0.65
+       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FB920685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 1 Mar 2018 09:38:02 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH] PCI/DPC: Fix INT legacy interrupt in dpc_irq
+Message-ID: <20180301153802.GD13722@bhelgaas-glaptop.roam.corp.google.com>
+References: <1517415535-21850-1-git-send-email-poza@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1517415535-21850-1-git-send-email-poza@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309036618641205?=
-X-GMAIL-MSGID: =?utf-8?q?1594309036618641205?=
+X-GMAIL-THRID: =?utf-8?q?1591125527357545721?=
+X-GMAIL-MSGID: =?utf-8?q?1593750254557354281?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+Hi Oza,
 
-------------------
+On Wed, Jan 31, 2018 at 09:48:55PM +0530, Oza Pawandeep wrote:
+> Current dpc driver acknowledge the interrupt in deferred work, which works
+> okay since LPI are edge triggered.
+> But when RP does not have MSI support, port service driver falls back to
+> legacy GIC SPI interrupts, and with current code we do not acknowledge the
+> interrupt and we get dpc interrupt storm.
+> This patch acknowledges the interrupt in interrupt handler.
 
-From: Adam Borowski <kilobyte@angband.pl>
+Would you mind rephrasing this changelog in generic PCIe terms?  E.g.,
+"LPI" and "GIC SPI" are meaningless to me (I assume they're
+arm64-specific things), but I don't think it's any arm64-specific
+thing that motivates this change.  IIUC, the issue should occur any
+time we're not using MSI, so we should be able to describe it in
+purely PCIe terms.
 
-commit 3a129cc2151425e5aeb69aeb25fbc994ec738137 upstream.
+s/dpc/DPC/ in text.
 
-Like %pK already does, print "00000000" instead.
+It looks like this changelog is intended to be multiple paragraphs; if
+so, please leave a blank line between them.  It's a little awkward to
+infer "this is a new paragraph" from the fact that "the previous line
+didn't look full" :)
 
-This confused people -- the convention is that "(null)" means you tried to
-dereference a null pointer as opposed to printing the address.
+Please rebase to my "master" branch (v4.16-rc1).  There was some minor
+change that made this not apply cleanly.
 
-Link: http://lkml.kernel.org/r/20180204174521.21383-1-kilobyte@angband.pl
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Roberts, William C" <william.c.roberts@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- lib/vsprintf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf
- {
- 	const int default_width = 2 * sizeof(void *);
- 
--	if (!ptr && *fmt != 'K') {
-+	if (!ptr && *fmt != 'K' && *fmt != 'x') {
- 		/*
- 		 * Print (null) with the same width as a pointer so it makes
- 		 * tabular output look nice.
+> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+> 
+> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
+> index 2d976a6..570b561 100644
+> --- a/drivers/pci/pcie/pcie-dpc.c
+> +++ b/drivers/pci/pcie/pcie-dpc.c
+> @@ -134,7 +134,7 @@ static void interrupt_event_handler(struct work_struct *work)
+>  	}
+>  
+>  	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
+> -		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
+> +			      PCI_EXP_DPC_STATUS_TRIGGER);
+>  }
+>  
+>  static void dpc_rp_pio_print_tlp_header(struct device *dev,
+> @@ -277,6 +277,8 @@ static irqreturn_t dpc_irq(int irq, void *context)
+>  
+>  		schedule_work(&dpc->work);
+>  	}
+> +	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_STATUS,
+> +			      PCI_EXP_DPC_STATUS_INTERRUPT);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -- 
+> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.,
+> a Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
