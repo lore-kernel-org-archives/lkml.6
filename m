@@ -1,132 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966831AbeCAJU6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:20:58 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:55193 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966724AbeCAJUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:20:55 -0500
-Date: Thu, 1 Mar 2018 11:20:50 +0200
-From: Baruch Siach <baruch@tkos.co.il>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gpio: raspberrypi-ext: fix firmware dependency
-Message-ID: <20180301092050.4yzfjmhvpwmhwzdn@tarshish>
-References: <20180228134822.2194009-1-arnd@arndb.de>
- <20180228214725.ewu3zt3l2xyxtxb2@tarshish>
- <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
+        id S966779AbeCAJWc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:22:32 -0500
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:42639 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966650AbeCAJW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:22:27 -0500
+X-Google-Smtp-Source: AG47ELuKJIpFllquBwM1eNLmD/x/TQ4XSGBMFSo9jLxrRkWirDQPe1OX1IoqyTmXGOTlEgrfzLo7uA==
+Date: Thu, 1 Mar 2018 19:22:15 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Christophe LEROY <christophe.leroy@c-s.fr>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC REBASED 5/5] powerpc/mm/slice: use the dynamic high slice
+ size to limit bitmap operations
+Message-ID: <20180301192215.0872484d@roar.ozlabs.ibm.com>
+In-Reply-To: <4e3c5281-427b-abe8-9c80-f2c1a0247e28@c-s.fr>
+References: <02a62db83282b5ef3e0e8281fdc46fa91beffc86.1518382747.git.christophe.leroy@c-s.fr>
+        <5badd882663833576c10b8aafe235fe1e443f119.1518382747.git.christophe.leroy@c-s.fr>
+        <87bmga7qng.fsf@linux.vnet.ibm.com>
+        <20180227191125.659d5cbe@roar.ozlabs.ibm.com>
+        <878tbe7ggs.fsf@linux.vnet.ibm.com>
+        <20180228165331.6e09959d@roar.ozlabs.ibm.com>
+        <4e3c5281-427b-abe8-9c80-f2c1a0247e28@c-s.fr>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0nQmCk-qZEuEU2p6w6NNztLnk9UkejsVW=V5bvxXG3rQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Thu, 1 Mar 2018 08:09:55 +0100
+Christophe LEROY <christophe.leroy@c-s.fr> wrote:
 
-On Wed, Feb 28, 2018 at 11:08:54PM +0100, Arnd Bergmann wrote:
-> On Wed, Feb 28, 2018 at 10:47 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> > Thanks for the fix.
-> >
-> > On Wed, Feb 28, 2018 at 02:48:08PM +0100, Arnd Bergmann wrote:
-> >> When the firmware driver is a loadable module, the gpio driver cannot be
-> >> built-in:
+> Le 28/02/2018 à 07:53, Nicholas Piggin a écrit :
+> > On Tue, 27 Feb 2018 18:11:07 +0530
+> > "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
+> >   
+> >> Nicholas Piggin <npiggin@gmail.com> writes:
+> >>  
+> >>> On Tue, 27 Feb 2018 14:31:07 +0530
+> >>> "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com> wrote:
+> >>>     
+> >>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> >>>>      
+> >>>>> The number of high slices a process might use now depends on its
+> >>>>> address space size, and what allocation address it has requested.
+> >>>>>
+> >>>>> This patch uses that limit throughout call chains where possible,
+> >>>>> rather than use the fixed SLICE_NUM_HIGH for bitmap operations.
+> >>>>> This saves some cost for processes that don't use very large address
+> >>>>> spaces.  
+> >>>>
+> >>>> I haven't really looked at the final code. One of the issue we had was
+> >>>> with the below scenario.
+> >>>>
+> >>>> mmap(addr, len) where addr < 128TB and addr+len > 128TB  We want to make
+> >>>> sure we build the mask such that we don't find the addr available.  
+> >>>
+> >>> We should run it through the mmap regression tests. I *think* we moved
+> >>> all of that logic from the slice code to get_ummapped_area before going
+> >>> in to slices. I may have missed something though, it would be good to
+> >>> have more eyes on it.
+> >>>     
 > >>
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_set':
-> >> gpio-raspberrypi-exp.c:(.text+0xb4): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get':
-> >> gpio-raspberrypi-exp.c:(.text+0x1ec): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_direction':
-> >> gpio-raspberrypi-exp.c:(.text+0x360): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_get_polarity':
-> >> gpio-raspberrypi-exp.c:(.text+0x4d4): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_out':
-> >> gpio-raspberrypi-exp.c:(.text+0x670): undefined reference to `rpi_firmware_property'
-> >> drivers/gpio/gpio-raspberrypi-exp.o:gpio-raspberrypi-exp.c:(.text+0x7fc): more undefined references to `rpi_firmware_property' follow
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_dir_in':
-> >> drivers/gpio/gpio-raspberrypi-exp.o: In function `rpi_exp_gpio_probe':
-> >> gpio-raspberrypi-exp.c:(.text+0x93c): undefined reference to `rpi_firmware_get'
+> >> mmap(-1,...) failed with the test. Something like below fix it
 > >>
-> >> We already have a Kconfig dependency for it, but when compile-testing, it
-> >> is disregarded.
+> >> @@ -756,7 +770,7 @@ void slice_set_user_psize(struct mm_struct *mm, unsigned int psize)
+> >>          mm->context.low_slices_psize = lpsizes;
+> >>   
+> >>          hpsizes = mm->context.high_slices_psize;
+> >> -       high_slices = GET_HIGH_SLICE_INDEX(mm->context.slb_addr_limit);
+> >> +       high_slices = SLICE_NUM_HIGH;
+> >>          for (i = 0; i < high_slices; i++) {
+> >>                  mask_index = i & 0x1;
+> >>                  index = i >> 1;
 > >>
-> >> This changes the dependency so that compile-testing is only done when the
-> >> firmware driver is completely disabled.
-> >
-> > What about the CONFIG_ARCH_BCM2835=y case? The combination of
-> > CONFIG_GPIO_RASPBERRYPI_EXP=y and CONFIG_RASPBERRYPI_FIRMWARE=m is still
-> > valid. Wouldn't that break the build?
-> >
-> > Isn't there a way in Kconfig to force CONFIG_GPIO_RASPBERRYPI_EXP=m when
-> > CONFIG_RASPBERRYPI_FIRMWARE=m?
+> >> I guess for everything in the mm_context_t, we should compute it till
+> >> SLICE_NUM_HIGH. The reason for failure was, even though we recompute the
+> >> slice mask cached in mm_context on slb_addr_limit, it was still derived
+> >> from the high_slices_psizes which was computed with lower value.  
+> > 
+> > Okay thanks for catching that Aneesh. I guess that's a slow path so it
+> > should be okay. Christophe if you're taking care of the series can you
+> > fold it in? Otherwise I'll do that after yours gets merged.
+> >   
 > 
-> The problem I ran into only happens with CONFIG_ARCH_BCM2835=y to
-> start with. My fix handles that case correctly, it forces
-> CONFIG_GPIO_RASPBERRYPI_EXP to be either 'n' or 'm'
-> when CONFIG_RASPBERRYPI_FIRMWARE=m.
+> I'm not really taking care of your serie, just took it once to see how 
+> it fits on the 8xx.
+> I prefer if you can handle them. If you need my help for any test on 
+> PPC32 don't hesitate to ask.
 
-Thanks for the explanation.
+No problem I can do that. Thanks for rebasing them.
 
-> > What about 'depends on m || RASPBERRYPI_FIRMWARE=y'?
-> 
-> That would be (slightly) wrong, it would force CONFIG_GPIO_RASPBERRYPI_EXP
-> to be 'm' even if RASPBERRYPI_FIRMWARE=n.
-> 
-> > Grepping around I also found this:
-> >
-> > drivers/power/supply/Kconfig:   depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
-> 
-> That is what I did here as well, except the !RASPBERRYPI_FIRMWARE
-> only applies for COMPILE_TEST.
-> 
-> > And this:
-> >
-> > drivers/infiniband/Kconfig:     depends on m || IPV6 != m
-> 
-> This is a less common way to express it. The idiomatic
-> Kconfig expression here would be 'depends on IPV6 || !IPV6'.
-
-I find this way much easier to understand. Without the comment I would never 
-have guessed what 'USB_GADGET || !USB_GADGET' actually means. And indeed no 
-comment is needed in the infiniband case.
-
-> >> Fixes: a98d90e7d588 ("gpio: raspberrypi-exp: Driver for RPi3 GPIO expander via mailbox service")
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> ---
-> >>  drivers/gpio/Kconfig | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> >> index 2ecd2adbaec6..52a8b0a6f4e1 100644
-> >> --- a/drivers/gpio/Kconfig
-> >> +++ b/drivers/gpio/Kconfig
-> >> @@ -126,7 +126,7 @@ config GPIO_RASPBERRYPI_EXP
-> >>       tristate "Raspberry Pi 3 GPIO Expander"
-> >>       default RASPBERRYPI_FIRMWARE
-> >>       depends on OF_GPIO
-> >> -     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || COMPILE_TEST
-> >> +     depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-> >
-> > This is really non-obvious. An inline comment here might help, IMO.
-> 
-> How about
-> 
->        # RASPBERRYPI_FIRMWARE is only available for ARCH_BCM2835, but we want to
->        # allow compile-testing when it is disabled
-> 
-> ?
-
-The module vs built-in aspect is missing. That is the non-obvious part.
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+Thanks,
+Nick
