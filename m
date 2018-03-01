@@ -1,55 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966191AbeCAFmm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:42:42 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:47578 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966069AbeCAFlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 00:41:10 -0500
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: x86@kernel.org,
+        id S966115AbeCAFqu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:46:50 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:23261 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966068AbeCAFqt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 00:46:49 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w215kU8u008027
+X-Nifty-SrcIP: [209.85.213.50]
+X-Google-Smtp-Source: AG47ELuHaRf5wf6lLie1KRDoiLY4yNRtxZIVL4TigHeEpo/EqNAzVko7+xgyk2zPXYTcZvot0Rkd8kkoaK9vi3EMTbk=
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
+References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-3-robh@kernel.org>
+ <CAK7LNAQSJ1uzgmta76rJwDpi08SB5gwcRPxu_TPw0u0XzgGaJA@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 1 Mar 2018 14:45:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
+Message-ID: <CAK7LNAT+_0t4PQxW911a0xL-f54WHGbF8t3rEq2Pfngr3J7BOQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] kbuild: add dtc as dependency on .dtb files
+To: Rob Herring <robh@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 6/6] MAINTAINERS: Add entry for Jailhouse
-Date: Thu,  1 Mar 2018 06:40:49 +0100
-Message-Id: <35c7685c09f406c8497c60408dd861ab1dcc3941.1519882849.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
-References: <cover.1519882849.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
-References: <cover.1519882849.git.jan.kiszka@siemens.com>
+        David Gibson <david@gibson.dropbear.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+2018-03-01 13:33 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
+>> If dtc is rebuilt, we should rebuild .dtb files with the new dtc.
+>>
+>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Signed-off-by: Rob Herring <robh@kernel.org>
+>
+>
+> Hmm, I am not 100% sure about this.
+>
+> Is there a case where resulted DTBs
+> depend on DTC version?
+>
+>
+> If I understand correctly,
+> DTS and DTB are 1:1
+> Unlike CC, there is no room for optimization.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93a12af4f180..4b889f282c77 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7521,6 +7521,13 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
- S:	Maintained
- F:	drivers/media/dvb-frontends/ix2505v*
- 
-+JAILHOUSE HYPERVISOR INTERFACE
-+M:	Jan Kiszka <jan.kiszka@siemens.com>
-+L:	jailhouse-dev@googlegroups.com
-+S:	Maintained
-+F:	arch/x86/kernel/jailhouse.c
-+F:	arch/x86/include/asm/jailhouse_para.h
-+
- JC42.4 TEMPERATURE SENSOR DRIVER
- M:	Guenter Roeck <linux@roeck-us.net>
- L:	linux-hwmon@vger.kernel.org
+Maybe I was wrong.
+
+Is there room for optimization
+in 'DT strings' section?
+
+I guess it is optimized enough to avoid string duplication,
+but there could be different results
+without changing the specification.
+
+
+
+
+
+> Some possibilities could be:
+>      - specification is updated.
+>     ( /dts-v1/ in DTS should be updated if so)
+>   - buggy DTC version generates broken DTBs.
+>
+>
+
+
 -- 
-2.13.6
+Best Regards
+Masahiro Yamada
