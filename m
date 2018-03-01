@@ -1,76 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031094AbeCAOCh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 09:02:37 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:61102 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030948AbeCAOCf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 09:02:35 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w21E2JfG007162
-X-Nifty-SrcIP: [209.85.217.169]
-X-Google-Smtp-Source: AG47ELusDm8u3lj71cavUhuR/ag/4Afvb9RrAFrDPkTdzpQuEIm8/fII7LuUDxrH7sIA3ob8RJ2l9ka03rbuQNdjvCk=
+        id S1031124AbeCAOCt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 09:02:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:38914 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030922AbeCAOCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 09:02:48 -0500
+Date: Thu, 1 Mar 2018 14:02:43 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: robh+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        robin.murphy@arm.com, arnd@arndb.de, loic.pallardy@st.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v2 0/2] STM32 Extended TrustZone Protection driver
+Message-ID: <20180301140243.3uamdvdcvmsxv6im@lakrids.cambridge.arm.com>
+References: <20180301135806.19982-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+tDtR-fmqwQy3bGQecB=5ieL4jVrHct8L-mo23btvYTA@mail.gmail.com>
-References: <20180228233249.26281-1-robh@kernel.org> <20180228233249.26281-2-robh@kernel.org>
- <CAK7LNAQLq5MVhT5nZO_MTya7YhHee17UhJ7jnq51oeiJVL26QA@mail.gmail.com>
- <CAK7LNAQAZQAcTCL__RZoWTH-ROg3ZfPh1aEafcw6TS5vxAwNrA@mail.gmail.com> <CAL_Jsq+tDtR-fmqwQy3bGQecB=5ieL4jVrHct8L-mo23btvYTA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 23:01:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASjzLW-ssqhDw93eA7O_7ZgUw1sxRBZwK4VERL2B9eC0A@mail.gmail.com>
-Message-ID: <CAK7LNASjzLW-ssqhDw93eA7O_7ZgUw1sxRBZwK4VERL2B9eC0A@mail.gmail.com>
-Subject: Re: [PATCH 1/6] kbuild: remove remaining use of undefined YACC_PREFIX
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301135806.19982-1-benjamin.gaignard@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 22:39 GMT+09:00 Rob Herring <robh@kernel.org>:
-> On Thu, Mar 1, 2018 at 5:35 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Hi Rob,
->>
->> 2018-03-01 13:20 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->>> 2018-03-01 8:32 GMT+09:00 Rob Herring <robh@kernel.org>:
->>>> Commit eea199b445f6 ("kbuild: remove unnecessary LEX_PREFIX and
->>>> YACC_PREFIX") removed YACC_PREFIX definition, but left one use of it. There
->>>> was not any build error since there is no user of "cmd_bison_h" currently.
->>>> Remove the last remaining occurrence of YACC_PREFIX.
->>>>
->>>> Fixes: eea199b445f6 ("kbuild: remove unnecessary LEX_PREFIX and YACC_PREFIX")
->>>> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> Signed-off-by: Rob Herring <robh@kernel.org>
->>>
->>> You can replace CC with my
->>>
->>> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->>
->> I got a reason to send a fixes pull request this week.
->>
->> If you do not mind, may I include this one in
->> my Kbuild fixes pull request?
->
-> Yes, please do.
->
->>
->> I do not see dependency between 1/6 and the rest of the series.
->
-> Only that dtc won't build without it. :)
->
+On Thu, Mar 01, 2018 at 02:58:04PM +0100, Benjamin Gaignard wrote:
+> On early boot stages STM32MP1 platform is able to dedicate some hardware blocks
+> to a secure OS running in TrustZone.
+> We need to avoid using those hardware blocks on non-secure context (i.e. kernel)
+> because read/write accesses could generate illegale access exceptions.
+> 
+> Extended TrustZone Protection driver make sure that device is disabled if
+> non-secure world can't acces to it.
+> 
+> version 2:
+> - do not use notifier anymore
+> - change status property value in device-tree if needed
+> - use a list of phandle instead of hard coded array
 
-Sorry, I missed that.
-You are right.
+As mentioned on v1, I don't think this should be done in Linux at all.
 
-I see this series is already queued up in your tree.
-So, just keep it in your tree.
+If you wish to handle this dynamically, please fixup the DT *before*
+entering Linux.
 
-Thanks!
+If you want a sane default in the dts file, put status = "disabled" on
+all nodes which the secure world might take ownership of.
 
+Thanks,
+Mark.
 
--- 
-Best Regards
-Masahiro Yamada
+> NOTE: Those patches should be applied only on
+> git://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
+> until this patch: https://lkml.org/lkml/2018/2/26/386
+> find it way to mainline because KBuild will complain about them.
+> 
+> Benjamin Gaignard (2):
+>   dt-bindings: stm32: Add bindings for Extended TrustZone Protection
+>   ARM: mach-stm32: Add Extended TrustZone Protection driver
+> 
+>  .../bindings/arm/stm32/st,stm32mp1-etzpc.txt       |  25 +++++
+>  arch/arm/mach-stm32/Kconfig                        |   7 ++
+>  arch/arm/mach-stm32/Makefile                       |   1 +
+>  arch/arm/mach-stm32/stm32-etzpc.c                  | 116 +++++++++++++++++++++
+>  4 files changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/stm32/st,stm32mp1-etzpc.txt
+>  create mode 100644 arch/arm/mach-stm32/stm32-etzpc.c
+> 
+> -- 
+> 2.15.0
+> 
