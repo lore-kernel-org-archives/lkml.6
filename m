@@ -1,111 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967390AbeCAKI7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:08:59 -0500
-Received: from regular1.263xmail.com ([211.150.99.132]:34889 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967191AbeCAKIw (ORCPT
+        id S967465AbeCAKNN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:13:13 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:43743 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967232AbeCAKNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:08:52 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <b5f5deca37d51bf4f81f88d39afcd488>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 01/14] iommu/rockchip: Prohibit unbind and remove
-Date: Thu,  1 Mar 2018 18:08:11 +0800
-Message-Id: <20180301100824.14887-2-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180301100824.14887-1-jeffy.chen@rock-chips.com>
-References: <20180301100824.14887-1-jeffy.chen@rock-chips.com>
+        Thu, 1 Mar 2018 05:13:10 -0500
+X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
+   d="scan'208";a="15454771"
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+To: Thomas Hebb <tommyhebb@gmail.com>
+CC: "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ath10k: search all IEs for variant before falling back
+Thread-Topic: [PATCH] ath10k: search all IEs for variant before falling back
+Thread-Index: AQHTsUXj6VXRigGCREuv4ev5MVXW+g==
+Date: Thu, 1 Mar 2018 10:13:05 +0000
+Message-ID: <87tvu0p0i7.fsf@kamboji.qca.qualcomm.com>
+References: <d121031bd5eacf212f7ddf49c0440218714f1ae6.1519231419.git.tommyhebb@gmail.com>
+        <87y3jcp0kz.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87y3jcp0kz.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
+        of "Thu, 01 Mar 2018 12:11:24 +0200")
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.251.52.12]
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w21ADJ3J005254
 
-Removal of IOMMUs cannot be done reliably.
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-This is similar to exynos iommu driver.
+> Thomas Hebb <tommyhebb@gmail.com> writes:
+>
+>> commit f2593cb1b291 ("ath10k: Search SMBIOS for OEM board file
+>> extension") added a feature to ath10k that allows Board Data File
+>> (BDF) conflicts between multiple devices that use the same device IDs
+>> but have different calibration requirements to be resolved by allowing
+>> a "variant" string to be stored in SMBIOS [and later device tree, added
+>> by commit d06f26c5c8a4 ("ath10k: search DT for qcom,ath10k-calibration-
+>> variant")] that gets appended to the ID stored in board-2.bin.
+>>
+>> This original patch had a regression, however. Namely that devices with
+>> a variant present in SMBIOS that didn't need custom BDFs could no longer
+>> find the default BDF, which has no variant appended. The patch was
+>> reverted and re-applied with a fix for this issue in commit 1657b8f84ed9
+>> ("search SMBIOS for OEM board file extension").
+>>
+>> But the fix to fall back to a default BDF introduced another issue: the
+>> driver currently parses IEs in board-2.bin one by one, and for each one
+>> it first checks to see if it matches the ID with the variant appended.
+>> If it doesn't, it checks to see if it matches the "fallback" ID with no
+>> variant. If a matching BDF is found at any point during this search, the
+>> search is terminated and that BDF is used. The issue is that it's very
+>> possible (and is currently the case for board-2.bin files present in the
+>> ath10k-firmware repository) for the default BDF to occur in an earlier
+>> IE than the variant-specific BDF. In this case, the current code will
+>> happily choose the default BDF even though a better-matching BDF is
+>> present later in the file.
+>>
+>> This patch fixes the issue by first searching the entire file for the ID
+>> with variant, and searching for the fallback ID only if that search
+>> fails. It also includes some code cleanup in the area, as
+>> ath10k_core_fetch_board_data_api_n() no longer does its own string
+>> mangling to remove the variant from an ID, instead leaving that job to a
+>> new flag passed to ath10k_core_create_board_name().
+>>
+>> I've tested this patch on a QCA4019 and verified that the driver behaves
+>> correctly for 1) both fallback and variant BDFs present, 2) only fallback
+>> BDF present, and 3) no matching BDFs present.
+>>
+>> Fixes: 1657b8f84ed9 ("ath10k: search SMBIOS for OEM board file extension")
+>> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+>
+> BTW, you forgot to CC linux-wireless so I don't see this in patchwork.
+>
+> https://wireless.wiki.kernel.org/en/users/drivers/ath10k/submittingpatches
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
----
+Oh, and I haven't had a chance to review this yet but I'll try to do
+that soon.
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4:
-Rewrite commit message.
-
-Changes in v3:
-Also remove remove() and module_exit() as Tomasz suggested.
-
-Changes in v2: None
-
- drivers/iommu/rockchip-iommu.c | 21 +--------------------
- 1 file changed, 1 insertion(+), 20 deletions(-)
-
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index 9d991c2d8767..16cd8780c289 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -1197,18 +1197,6 @@ static int rk_iommu_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static int rk_iommu_remove(struct platform_device *pdev)
--{
--	struct rk_iommu *iommu = platform_get_drvdata(pdev);
--
--	if (iommu) {
--		iommu_device_sysfs_remove(&iommu->iommu);
--		iommu_device_unregister(&iommu->iommu);
--	}
--
--	return 0;
--}
--
- static const struct of_device_id rk_iommu_dt_ids[] = {
- 	{ .compatible = "rockchip,iommu" },
- 	{ /* sentinel */ }
-@@ -1217,10 +1205,10 @@ MODULE_DEVICE_TABLE(of, rk_iommu_dt_ids);
- 
- static struct platform_driver rk_iommu_driver = {
- 	.probe = rk_iommu_probe,
--	.remove = rk_iommu_remove,
- 	.driver = {
- 		   .name = "rk_iommu",
- 		   .of_match_table = rk_iommu_dt_ids,
-+		   .suppress_bind_attrs = true,
- 	},
- };
- 
-@@ -1248,14 +1236,7 @@ static int __init rk_iommu_init(void)
- 		platform_driver_unregister(&rk_iommu_domain_driver);
- 	return ret;
- }
--static void __exit rk_iommu_exit(void)
--{
--	platform_driver_unregister(&rk_iommu_driver);
--	platform_driver_unregister(&rk_iommu_domain_driver);
--}
--
- subsys_initcall(rk_iommu_init);
--module_exit(rk_iommu_exit);
- 
- MODULE_DESCRIPTION("IOMMU API for Rockchip");
- MODULE_AUTHOR("Simon Xue <xxm@rock-chips.com> and Daniel Kurtz <djkurtz@chromium.org>");
 -- 
-2.11.0
+Kalle Valo
