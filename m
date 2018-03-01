@@ -1,131 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967318AbeCAJ6X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 04:58:23 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37681 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S967144AbeCAJ6S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:58:18 -0500
-Subject: Re: [PATCH V2 0/5] mmc: add stm32 sdmmc controller
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-References: <1519832844-28068-1-git-send-email-ludovic.Barre@st.com>
- <CAPDyKFpfPAaLRZLqpyi6RwC1-=7Ao=u+OmEfHaYBABzd_-BKAw@mail.gmail.com>
-From: Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <8f328063-610f-a2e8-5f29-d3f0019384f2@st.com>
-Date: Thu, 1 Mar 2018 10:57:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S967330AbeCAJ6u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 04:58:50 -0500
+Received: from mga18.intel.com ([134.134.136.126]:56222 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967141AbeCAJ6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:58:47 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,407,1515484800";
+   d="scan'208";a="22027074"
+Date: Thu, 1 Mar 2018 11:58:40 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Nayna Jain <nayna@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peterhuewe@gmx.de, tpmdd@selhorst.net, jgunthorpe@obsidianresearch.com,
+        patrickc@us.ibm.com
+Subject: Re: [RFC PATCH 3/3] tpm: tpm_msleep() with finer granularity
+ improves performance
+Message-ID: <20180301095840.GD29420@linux.intel.com>
+References: <20180228191828.20056-1-nayna@linux.vnet.ibm.com>
+ <20180228191828.20056-3-nayna@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpfPAaLRZLqpyi6RwC1-=7Ao=u+OmEfHaYBABzd_-BKAw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228191828.20056-3-nayna@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf
+On Wed, Feb 28, 2018 at 02:18:28PM -0500, Nayna Jain wrote:
+> When 'commit 9f3fc7bcddcb ("tpm: replace msleep() with  usleep_range()
+> in TPM 1.2/2.0 generic drivers")' was upstreamed, it replaced the
 
-On 03/01/2018 10:06 AM, Ulf Hansson wrote:
-> Hi Ludovic,
+"was upstreamed" is redundant information. If you speak about commit ID,
+it is expected to be in the mainline. Why there is "'" before the word
+'commit'?
+
+Just write
+
+  In commit 9f3fc7bcddcb ("tpm: replace msleep() with  usleep_range()
+  in TPM 1.2/2.0 generic drivers")' msleep() was replaced with
+  usleep_range().
+
+> msleep() calls with usleep_range(), but did not change the
+> granularity of the calls. They're still defined in terms of msec.
+> Test results show that refining the granularity further improves
+> the performance. We're posting this patch as an RFC to show that there
+> needs to be another function which allows finer granularity.
 > 
-> On 28 February 2018 at 16:47, Ludovic Barre <ludovic.Barre@st.com> wrote:
->> From: Ludovic Barre <ludovic.barre@st.com>
->>
->> This patch serie adds support of stm32 SDMMC controller.
->> stm32h7 is the first SoC to use stm32 SDMMC controller
->> (previous SoC had pl180 controller).
+> After this change, performance on a TPM 1.2 with an 8 byte
+> burstcount for 1000 extends improved from ~10.7sec to ~6.9sec.
+
+Environment where this result was achieved would be mandatory.
+
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> ---
+>  drivers/char/tpm/tpm.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> I am a not convinced this isn't a new improved variant of the pl180.
-> According to register layout and the code you submitted in patch2,
-> there are great similarities to pl180 and the mmci driver.
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 7e797377e1eb..8cad6bfc5f46 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -522,8 +522,7 @@ int tpm_pm_resume(struct device *dev);
+>  
+>  static inline void tpm_msleep(unsigned int delay_msec)
+>  {
+> -	usleep_range((delay_msec * 1000) - TPM_TIMEOUT_RANGE_US,
+> -		     delay_msec * 1000);
+> +	usleep_range((delay_msec * 1000) / 10, (delay_msec * 1000) / 2);
 
-In fact, ST designers which created stm32-sdmmc hardware block from 
-scratch are the same which have done the modifications on pl180 variant 
-(stm32 legacy f4, f7).
-So some registers or bits name seem identical (or strongly inspirited) 
-but the engine and features are different.
+Shouldn't the max be 'delay_msec * 1000'? Where do these numbers
+come from?
 
-You could find the datasheet of STM32H7x3 on:
-http://www.st.com/content/ccc/resource/technical/document/reference_manual/group0/c9/a3/76/fa/55/46/45/fa/DM00314099/files/DM00314099.pdf/jcr:content/translations/en.DM00314099.pdf
-
-Chapters: 55 Secure digital input/output MultiMediaCard interface
-(SDMMC)
-
-This hardware block has own roadmap and some features are already in the 
-pipe for next SoC.
-
-For code design: like I also worked on pl180 in the past :-)
-my code is inspirited of this driver.
-
-BR
-Ludo
-
-> 
-> In other words, it more sounds like an improved variant of pl180,
-> hence I am thinking that you should try to extend the mmci driver
-> instead. Could you please have a look at that, unless you can specify
-> more exactly why that isn't suitable?
-> 
->>
->> The SDMMC features include the following:
->> -Full compliance with MultiMediaCard System Specification Version 4.51.
->>   Card support for three different databus modes:
->>   1-bit (default), 4-bit and 8-bit.
->> -Full compliance with SD memory card specifications version 4.1.
->>   SDR104 speed limited to maximum allowed I/O speed, SPI mode and
->>   UHS-II mode not supported.
->> -Full compliance with SDIO card specification version 4.0.
->>
->> change V2:
->> -dt-bindings: properties name
->> st,dir-output-high; st,neg-edge; st,use-ckin
->> -dt-bindings: node example s/sdmmc@/mmc@/g
->> -removes return of enable/disable_imask functions
->> -adds dev_warn if clk divisor is too short.
->> -replaces overprotection of n_elem by fail of dma_map_sg
->> -removes shortcut host->base
->> -Use device_property_present
->>
->> Ludovic Barre (5):
->>    dt-bindings: mmc: document the stm32 sdmmc bindings
->>    mmc: add stm32 sdmmc controller driver
->>    ARM: dts: stm32: add sdmmc support for stm32h743
->>    ARM: dts: stm32: add sdmmc1 support for stm32h743i-eval
->>    ARM: configs: stm32: add mmc and ext2/3/4 support
->>
->>   .../devicetree/bindings/mmc/st,stm32-sdmmc.txt     |  35 +
->>   arch/arm/boot/dts/stm32h743-pinctrl.dtsi           |  26 +
->>   arch/arm/boot/dts/stm32h743.dtsi                   |  26 +
->>   arch/arm/boot/dts/stm32h743i-eval.dts              |  11 +
->>   arch/arm/configs/stm32_defconfig                   |   4 +-
->>   drivers/mmc/host/Kconfig                           |   8 +
->>   drivers/mmc/host/Makefile                          |   1 +
->>   drivers/mmc/host/stm32-sdmmc.c                     | 708 +++++++++++++++++++++
->>   drivers/mmc/host/stm32-sdmmc.h                     | 220 +++++++
->>   9 files changed, 1038 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/devicetree/bindings/mmc/st,stm32-sdmmc.txt
->>   create mode 100644 drivers/mmc/host/stm32-sdmmc.c
->>   create mode 100644 drivers/mmc/host/stm32-sdmmc.h
->>
->> --
->> 2.7.4
->>
-> 
-> Kind regards
-> Uffe
-> 
+/Jarkko
