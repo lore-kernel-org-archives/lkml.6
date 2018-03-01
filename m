@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966112AbeCAFlN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 00:41:13 -0500
-Received: from david.siemens.de ([192.35.17.14]:59741 "EHLO david.siemens.de"
+        id S966095AbeCAFlM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 00:41:12 -0500
+Received: from david.siemens.de ([192.35.17.14]:59740 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966063AbeCAFlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S966050AbeCAFlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Mar 2018 00:41:10 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -13,10 +13,11 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 3/6] x86/jailhouse: Enable PCI mmconfig access in inmates
-Date: Thu,  1 Mar 2018 06:40:46 +0100
-Message-Id: <188edc11aa5fa11d4915097831a2a4a153f6ed83.1519882849.git.jan.kiszka@siemens.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v3 1/6] jailhouse: Provide detection for non-x86 systems
+Date: Thu,  1 Mar 2018 06:40:44 +0100
+Message-Id: <558f5cbae432ae029e2d8ee9b0ef44d837318625.1519882849.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1519882849.git.jan.kiszka@siemens.com>
 References: <cover.1519882849.git.jan.kiszka@siemens.com>
@@ -26,65 +27,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Otavio Pontes <otavio.pontes@intel.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Use the PCI mmconfig base address exported by jailhouse in boot
-parameters in order to access the memory mapped PCI configuration space.
+Implement jailhouse_paravirt() via device tree probing on architectures
+!= x86. Will be used by the PCI core.
 
-Signed-off-by: Otavio Pontes <otavio.pontes@intel.com>
-[Jan: rebased, fixed !CONFIG_PCI_MMCONFIG]
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- arch/x86/include/asm/pci_x86.h | 2 ++
- arch/x86/kernel/jailhouse.c    | 7 +++++++
- arch/x86/pci/mmconfig-shared.c | 4 ++--
- 3 files changed, 11 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+ arch/x86/include/asm/jailhouse_para.h           |  2 +-
+ include/linux/hypervisor.h                      | 17 +++++++++++++++--
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
 
-diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-index eb66fa9cd0fc..959d618dbb17 100644
---- a/arch/x86/include/asm/pci_x86.h
-+++ b/arch/x86/include/asm/pci_x86.h
-@@ -151,6 +151,8 @@ extern int pci_mmconfig_insert(struct device *dev, u16 seg, u8 start, u8 end,
- 			       phys_addr_t addr);
- extern int pci_mmconfig_delete(u16 seg, u8 start, u8 end);
- extern struct pci_mmcfg_region *pci_mmconfig_lookup(int segment, int bus);
-+extern struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
-+							int end, u64 addr);
- 
- extern struct list_head pci_mmcfg_list;
- 
-diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
-index b68fd895235a..7fe2a73da0b3 100644
---- a/arch/x86/kernel/jailhouse.c
-+++ b/arch/x86/kernel/jailhouse.c
-@@ -124,6 +124,13 @@ static int __init jailhouse_pci_arch_init(void)
- 	if (pcibios_last_bus < 0)
- 		pcibios_last_bus = 0xff;
- 
-+#ifdef CONFIG_PCI_MMCONFIG
-+	if (setup_data.pci_mmconfig_base) {
-+		pci_mmconfig_add(0, 0, 0xff, setup_data.pci_mmconfig_base);
-+		pci_mmcfg_arch_init();
-+	}
-+#endif
+diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
+new file mode 100644
+index 000000000000..2901c25ff340
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jailhouse.txt
+@@ -0,0 +1,8 @@
++Jailhouse non-root cell device tree bindings
++--------------------------------------------
 +
- 	return 0;
- }
++When running in a non-root Jailhouse cell (partition), the device tree of this
++platform shall have a top-level "hypervisor" node with the following
++properties:
++
++- compatible = "jailhouse,cell"
+diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
+index 875b54376689..b885a961a150 100644
+--- a/arch/x86/include/asm/jailhouse_para.h
++++ b/arch/x86/include/asm/jailhouse_para.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL2.0 */
  
-diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
-index 96684d0adcf9..0e590272366b 100644
---- a/arch/x86/pci/mmconfig-shared.c
-+++ b/arch/x86/pci/mmconfig-shared.c
-@@ -94,8 +94,8 @@ static struct pci_mmcfg_region *pci_mmconfig_alloc(int segment, int start,
- 	return new;
- }
+ /*
+- * Jailhouse paravirt_ops implementation
++ * Jailhouse paravirt detection
+  *
+  * Copyright (c) Siemens AG, 2015-2017
+  *
+diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
+index b19563f9a8eb..fc08b433c856 100644
+--- a/include/linux/hypervisor.h
++++ b/include/linux/hypervisor.h
+@@ -8,15 +8,28 @@
+  */
  
--static struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
--							int end, u64 addr)
-+struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
-+						 int end, u64 addr)
+ #ifdef CONFIG_X86
++
++#include <asm/jailhouse_para.h>
+ #include <asm/x86_init.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
  {
- 	struct pci_mmcfg_region *new;
+ 	x86_platform.hyper.pin_vcpu(cpu);
+ }
+-#else
++
++#else /* !CONFIG_X86 */
++
++#include <linux/of.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ }
+-#endif
++
++static inline bool jailhouse_paravirt(void)
++{
++	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
++}
++
++#endif /* !CONFIG_X86 */
  
+ #endif /* __LINUX_HYPEVISOR_H */
 -- 
 2.13.6
