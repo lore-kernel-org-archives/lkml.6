@@ -1,538 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030806AbeCAM5K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 07:57:10 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41827 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030545AbeCAM5C (ORCPT
+        id S1030752AbeCANIf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 08:08:35 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:51511 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030597AbeCANId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:57:02 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180301125700euoutp012b89a3dc4178db4be8e729ceec0796b6~XzTNxR9n11457314573euoutp01K
-X-AuditID: cbfec7f4-713ff700000043e4-a6-5a97f89a5804
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"; format="flowed"
-Subject: Re: [PATCH v3 00/43] DRM Rockchip rk3399 (Kevin)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: Thierry Escande <thierry.escande@collabora.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandy Huang <hjc@rock-chips.com>, Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, Tomasz Figa <tfiga@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Cc: Zain Wang <wzz@rock-chips.com>, Lin Huang <hl@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Yakir Yang <ykk@rock-chips.com>,
-        =?UTF-8?Q?=c3=98rjan_Eide?= <orjan.eide@arm.com>,
-        Mark Yao <mark.yao@rock-chips.com>, Haixia Shi <hshi@chromium.org>,
-        "'Linux Samsung SOC'" <linux-samsung-soc@vger.kernel.org>
-Message-id: <a741f2a4-0633-e2f0-97e9-ced1257691c2@samsung.com>
-Date: Thu, 01 Mar 2018 13:56:56 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-In-reply-to: <91b1714e-fe63-9b06-7f90-2fc85f4ed5e7@samsung.com>
-Content-transfer-encoding: 8bit
-Content-language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzH931+3dNx9rjQZ2nJmVHzO7MvWhiz5x9m84/dzHm4R7V+0F3J
-        j9GNStKFjrIjC6212xG6urSVfs2trHKXChWFySJWkXCOHk+s/17fz4/3+/P57MuS6jE6kI1J
-        SBINCUKchlFSFY++ty21judrV/SkrcMv7rTS2NzaROBTmUM0bimuY/DTr58ZbO+uR7gg9wQe
-        v9tM4jOO1wTOfXWBwu1V1xg80vebxFfaaghceamWwDVlDRTuvduC8Gi6j8HnOzwM/l51ncIZ
-        XXNwq8mi2Dibt1+3I/6qyU3x7Tlmgq/sLUL8A2uvgneO9dH8q3Mugi8rSuV/WR9SfI7DhvjR
-        +8E7pmmVEXoxLuawaFgeuVcZ7RzzkId6StGRvPxG2oSa81AW8mOBWw0ZmR0KidVcCQKPd24W
-        Uk7wKIInjbf/F2UPpU0wO5EoRvAyVgqruJkwbnlJSUxy6+CdL52WdQYQ3CheKLE/txbePHr/
-        N85wKyFrKIuR9Gdxl0kw38ogpQfJlZBQfbOQkFUjoaavgJGY4hZCb7nUzbKzud3wwbtVCvtx
-        GyDH61HIxvOg7unA5BABcDr9OSVpAtepgDNNg5MLbAHT+3JGZn8YdDkUMgdBu+UcJXMq5Hxr
-        JOTmbATVaZcJObEeGlxuWnaYAbkV+aQ0EHAqyMxQyyU8WJrvTXptgtbhQVq+oomAss5+6gIK
-        tk65mHXKxaxTlrBOWaIQUTYUICYb46NE46oEMWWZUYg3JidELdt/MP4+mviNj32uL5Woyruv
-        HnEs0kxXPTufr1XTwmHj0fh6BCypmaV67MzTqlV64egx0XBQZ0iOE431aC5LaQJUexaf1Kq5
-        KCFJjBXFQ6LhX5Zg/QJNyJ5o2WO71dC5gSrybUZJA58WZ+tta/QFXU7e6uiJEo68Lp0fpEtP
-        DQn9ckkX1K3VRWTbHYV07tnwziXdQ2vC3AdKhe0/+st2bd3pS3QlpZSE1C5/+9PW7x5e0fRs
-        gT14G+kRnCP08SvuGe4fulhz6SKlOTEkNFzvvfhx57SREA1ljBZWhpEGo/AH9xGFaYkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xa7qzfkyPMnj6nMPi1rpzrBa9504y
-        WTR1vGW1OLvsIJvFla/v2SzW3D7EaDF3Uq3Fjw2nmC3atzxisph0fwKLxeVdc9gsPj34z2wx
-        4/w+JosdUw4wWezbfJjF4u6Gs4wWn1v/sVn0X73EZvFz1zwWi7brYhbnGiazO4h6rJm3htFj
-        dsNFFo/Lfb1MHjvuLmH02DnrLrvH9m8PWD3udx9n8ti8pN7j76z9LB59W1YxenzeJBfAHcVl
-        k5Kak1mWWqRvl8CVsf3bJeaCO+sZK6ZNP8LawHhqGmMXIyeHhICJRM/bFiCbi0NIYAmjxJNN
-        k1lAErwCghI/Jt8Ds5kFzCS+vDzMCmILCTxnlOicrg9iCwtYSjw+9gIsziZgKNH1tosNZJCI
-        wHRmiWVzP4E5zAKrmCWef+hlgVjRxCSxfetFqBV2EvsezGUDsVkEVCXuboUYJSoQIzH140Yw
-        m1PAXqLvzyV2iDPkJQ5eeQ51krhEc+tNlgmMArOQXDsLybWzkLTMQtKygJFlFaNIamlxbnpu
-        sZFecWJucWleul5yfu4mRmAcbzv2c8sOxq53wYcYBTgYlXh4HfZPixJiTSwrrsw9xCjBwawk
-        wnt6O1CINyWxsiq1KD++qDQntfgQozQHi5I473mDyighgfTEktTs1NSC1CKYLBMHp1QDo6n2
-        x+4bZ04IL6qLd7Xa9uWvyM3ywOOtSdl5u7nulTp2i69aoF3sE+kQujY/XLj6tKR1edx5kUcH
-        bpfOSy5md89bVM3Qdk50558bGXeZ1h3/F5jxVuX2pgWOiq8dz5yYoXa8dsPxD7vsO24++DVx
-        u/SZL5udOVX6O+zD3B7LWmxqsm30c+AJVmIpzkg01GIuKk4EAISkQBLfAgAA
-X-CMS-MailID: 20180301125658eucas1p134d693ebbd6d03dfb7a857d64545f72d
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180131083447epcas3p3633663f2f88e637ffe54ab8307ce5d14
-X-RootMTR: 20180131083447epcas3p3633663f2f88e637ffe54ab8307ce5d14
-References: <CGME20180131083447epcas3p3633663f2f88e637ffe54ab8307ce5d14@epcas3p3.samsung.com>
-        <20180130202913.28724-1-thierry.escande@collabora.com>
-        <a2331b65-2a3c-e8f4-6db2-31d53d1bddd6@samsung.com>
-        <91b1714e-fe63-9b06-7f90-2fc85f4ed5e7@samsung.com>
+        Thu, 1 Mar 2018 08:08:33 -0500
+From: Arnd Bergmann <arnd@arndb.de>
+To: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Hannes Reinecke <hare@suse.de>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: mpt3sas: clarify mmio pointer types
+Date: Thu,  1 Mar 2018 14:07:07 +0100
+Message-Id: <20180301130729.3278022-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:mNHd5emfBLJOXH5+47hbotn6VjR4/xUTyZcaDgrT3BWUSRxlUmr
+ hyzfs8Cwc/gTONlUjbwLDoW1MRFPZvRkeSElh6sfzu2y10sHJeS4V2uDuhnUFnV3b2lxkAJ
+ aIq9gFLA9l3826tabwBOFakeV75ujy25RSPlKhxBNgqifLTpo/pYgIi+qaYnzzW1O13Os6/
+ N0SJuROOLNlb0XCqc12lg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Kyf9wzeXr1Q=:QAWvVL4fdOXUDbS34GVCFY
+ l4D1rUeaJY7Xx+iPA+nLDMYKgw5dZUzRW5iaAaP29ZA2a92KtDk9Fq7AM+93KjS0agDK2Zkw5
+ 1qOIuhnHMCgNOdMjFUFhBSSq0IvDOihdqOFmmIUxfri+vMnTI8RbW369FP9MPZ9YKzvjlS7Qj
+ yWObk7WI/f8XxAgWfBsjHQxpEDcIDXftGPf3lFwXc0uv5LuAE6Z82qDHTXSzNl3ZXzTqhx90B
+ ZPBiTaWinmGrw9IKwMaAdUzlfKZUpdf6JOywYbdrS8bryoWjo0heUEnE2Bl+qw1N10uP4JyFs
+ VFUSTBMKLfXdUbGrvO2qwF7YU6A6Ex+7mnExpzxOJFKNBsRaMVYBqKz6r96PDott67+E1msiw
+ I/JXaM25IrPp/SwZtdAHPNgY4ip3Zbj1fsR8pKZ2kbeYru7+rcBMUrKTI1b5Bfn+AYYQ7dVHz
+ Feq8pdlv2ZrudRQ6YnHYOiFQ+lAZVSH8Qt7JvKfhhKfD4yIrmrJLlQFnGQFh4BSQVAJN6rkbU
+ PVmq/kV+3Lm6sibBeKKQ87PdlVaeh5mQIVHtFzln/kaSFRpaXUvC3xqVCegDA047/M9SEIHNU
+ P2qJ0tDahWYk1b4f2ytmiT1QXPlpggy4cvUrA14nrfkxpTDVPrDpjgvRhUvXuIyNWVQPg6tVa
+ suBd1Ds/5wTUtpI+4fmfPPWK856leGdO4KTnY8cCTX9BUcU1kxzuRvbhHwnU2IvWW6+CfNUlt
+ zgw8EG7b5in3UeNNLS5PSbOyBkgEOUXi2l+Tvg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All once again,
+The newly added code mixes up phys_addr_t/resource_size_t with dma_addr_t
+and void pointers, as seen from these compiler warning:
 
-On 2018-03-01 12:06, Marek Szyprowski wrote:
->
-> On 2018-03-01 09:50, Marek Szyprowski wrote:
->>
->> On 2018-01-30 21:28, Thierry Escande wrote:
->>> This patchset includes cleanups, improvements, and bug fixes for
->>> Rockchip DRM driver and PSR support.
->>>
->>> this patchset depends and needs to be applied on top of Rockchip rk3399
->>> eDP support [1].
->>>
->>> [1] https://lkml.org/lkml/2018/1/10/682
->>
->> I've applied this patchset on vanilla v4.16-rc1 and check how it 
->> works on
->> Exynos5250-based Chromeboo Snow and Exynos5420-based Chromebook2 
->> Peach-Pit
->> boards. Sadly it breaks exynos_dp drm driver.
->>
->> Here is the log:
->>
->> [    3.540955] [drm] Exynos DRM: using 14400000.fimd device for DMA 
->> mapping operations
->> [    3.548810] exynos-drm exynos-drm: bound 14400000.fimd (ops 
->> fimd_component_ops)
->> [    3.555350] exynos-drm exynos-drm: bound 14450000.mixer (ops 
->> mixer_component_ops)
->> [    3.564622] Unable to handle kernel NULL pointer dereference at 
->> virtual address 000007d8
->> [    3.571465] pgd = 28ffa2e4
->> [    3.573977] [000007d8] *pgd=00000000
->> [    3.577543] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
->> [    3.582817] Modules linked in:
->> [    3.585846] CPU: 6 PID: 69 Comm: kworker/6:1 Not tainted 
->> 4.16.0-rc1-00062-ge25751974ba8 #3622
->> [    3.594369] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [    3.600437] Workqueue: events deferred_probe_work_func
->> [    3.605547] PC is at analogix_dp_resume+0x8/0xc0
->> [    3.610144] LR is at pm_generic_runtime_resume+0x2c/0x38
->> [    3.615434] pc : [<c0531b98>]    lr : [<c0543fec>] psr: a0000113
->> [    3.621684] sp : ee13fbd8  ip : 0000001a  fp : 00000001
->> [    3.626885] r10: ee0eb080  r9 : c0552bd8  r8 : c0fb1d98
->> [    3.632090] r7 : eebb1010  r6 : eeae9808  r5 : 00000000  r4 : 
->> d4850415
->> [    3.638602] r3 : ee0ed010  r2 : b2d05e00  r1 : 00000000  r0 : 
->> 00000000
->> [    3.645109] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM 
->> Segment none
->> [    3.652224] Control: 10c5387d  Table: 2000406a  DAC: 00000051
->> [    3.657944] Process kworker/6:1 (pid: 69, stack limit = 0x913205b4)
->> [    3.664192] Stack: (0xee13fbd8 to 0xee140000)
->> [    3.668523] fbc0: d4850415 00000000
->> [    3.676698] fbe0: eeae9808 c0543fec c0543fc0 c054ffb4 00000000 
->> c0552d24 00000001 ee10b400
->> [    3.684852] fc00: c09d1500 eebb1010 eebb10b8 eebad810 00000000 
->> 00000004 c0552bd8 00000000
->> [    3.693007] fc20: c016f5c4 c0547798 00000000 eebb1010 c0f05900 
->> eebad810 c0552bd8 00000004
->> [    3.701163] fc40: 00000000 00000000 c016f5c4 c0547898 00000000 
->> eebb1010 c0f05900 c0546ff4
->> [    3.709315] fc60: 60000113 c05475dc 00000001 eebb1010 00000000 
->> c1711b78 eebb10b8 eebb1010
->> [    3.717470] fc80: 00000004 eebb10b8 60000113 eebb1010 00000000 
->> c1711b78 c0f75ce0 c05475ec
->> [    3.725624] fca0: 00000000 ecc59458 ecc5948c c0f75d4c 00000001 
->> c053b95c ecc59458 00000001
->> [    3.733779] fcc0: 00000001 ecc59458 ecc59458 c0f75d4c c0f08448 
->> c053ad08 ecc59458 ecc59460
->> [    3.741934] fce0: 00000000 c05390d0 ecc595a4 c1711c3c c0c7310c 
->> ecc61000 000001ff d186fc33
->> [    3.750088] fd00: ecc59458 ecc59398 c1715440 ecc59458 ecc61000 
->> 000001ff 00000001 c0fb1738
->> [    3.758242] fd20: 00000000 c06764c4 c0fb1738 c0678130 ecc59010 
->> eebb1010 00000000 ecc61000
->> [    3.766397] fd40: 000001ff c05321c8 00000003 c0c70b70 ecc59010 
->> eebb1010 ee0ed010 eebb1010
->> [    3.774551] fd60: 00000000 00000000 ecc50b7c c0528e90 00000000 
->> c053fa60 ed99b080 00000002
->> [    3.782706] fd80: 00000028 ee0ec340 ecc61000 c0535bc4 00000000 
->> 00000000 ffffffff 00000000
->> [    3.790860] fda0: c0f62f80 ee0eb280 ecc61000 c0f63c80 ee031410 
->> eebb0c10 c0fb1738 c0522ee8
->> [    3.799015] fdc0: c0522d8c ee0e82c0 00000050 00000004 ed99b050 
->> ed99b080 c0f6375c c0536378
->> [    3.807169] fde0: 00000001 c0f63710 c0522b70 ee0ec340 ee0ec340 
->> ed99b080 00000000 c0f63754
->> [    3.815324] fe00: ee0ec340 c1711bc0 c0f6333c 00000000 00000007 
->> c05364fc ecc50b7c eebb1000
->> [    3.823479] fe20: ee0ed010 eebb1010 c0f6333c c0528fe4 ee13fe3c 
->> 00000000 00000000 ecc50b7c
->> [    3.831633] fe40: 00000000 eebb1010 fffffdfb c053debc c053de6c 
->> eebb1010 c1711bbc 00000000
->> [    3.839787] fe60: c0fb19f0 c053bd18 00000001 c053e4d4 c0f6333c 
->> 00000000 ee13feb0 c053c054
->> [    3.847942] fe80: 00000001 c0f63bb4 c0fb19f0 c0fc50a0 c1711bbc 
->> c0539e4c ee8a3ad4 ed996a54
->> [    3.856096] fea0: eebb1010 eebb1044 c0f63c80 c053b970 eebb1010 
->> 00000001 00000001 ee0d4100
->> [    3.864251] fec0: eebb1010 c0f63c80 c0f63b68 c053ad08 ee0d4100 
->> eefa50c0 eebb1010 c053b258
->> [    3.872405] fee0: c053b21c ee0d4100 eefa50c0 ee13ff28 eefa8300 
->> c0f63bd8 00000000 c0fa8ae5
->> [    3.880560] ff00: c0f0846c c014352c 00000001 00000000 c014347c 
->> 60000193 c09cb114 eefa50c0
->> [    3.888714] ff20: c0143c38 00000000 c0f63bd8 c110ef34 00000000 
->> c0c71fdc c0f05900 ee0d4100
->> [    3.896869] ff40: eefa50c0 eefa50f4 c0143bfc c0fa9a27 00000008 
->> ee0d4118 c0f05900 c0143b84
->> [    3.905024] ff60: c09d14d4 eeae7280 ee0d5000 eeae7280 ee0d5000 
->> 00000000 eeae72b8 ee0d4100
->> [    3.913178] ff80: ee9b5eb0 c0143b50 00000000 c014a30c ee0d5000 
->> c014a1e4 00000000 00000000
->> [    3.921332] ffa0: 00000000 00000000 00000000 c01010b4 00000000 
->> 00000000 00000000 00000000
->> [    3.929486] ffc0: 00000000 00000000 00000000 00000000 00000000 
->> 00000000 00000000 00000000
->> [    3.937641] ffe0: 00000000 00000000 00000000 00000000 00000013 
->> 00000000 00000000 00000000
->> [    3.945800] [<c0531b98>] (analogix_dp_resume) from [<c0543fec>] 
->> (pm_generic_runtime_resume+0x2c/0x38)
->> [    3.955001] [<c0543fec>] (pm_generic_runtime_resume) from 
->> [<c054ffb4>] (__genpd_runtime_resume+0x2c/0x8c)
->> [    3.964543] [<c054ffb4>] (__genpd_runtime_resume) from 
->> [<c0552d24>] (genpd_runtime_resume+0x14c/0x258)
->> [    3.973824] [<c0552d24>] (genpd_runtime_resume) from [<c0547798>] 
->> (__rpm_callback+0x134/0x214)
->> [    3.982409] [<c0547798>] (__rpm_callback) from [<c0547898>] 
->> (rpm_callback+0x20/0x80)
->> [    3.990126] [<c0547898>] (rpm_callback) from [<c0546ff4>] 
->> (rpm_resume+0x3a0/0x734)
->> [    3.997672] [<c0546ff4>] (rpm_resume) from [<c05475ec>] 
->> (__pm_runtime_resume+0x64/0x9c)
->> [    4.005654] [<c05475ec>] (__pm_runtime_resume) from [<c053b95c>] 
->> (__device_attach+0x8c/0x134)
->> [    4.014157] [<c053b95c>] (__device_attach) from [<c053ad08>] 
->> (bus_probe_device+0x88/0x90)
->> [    4.022314] [<c053ad08>] (bus_probe_device) from [<c05390d0>] 
->> (device_add+0x3a8/0x580)
->> [    4.030209] [<c05390d0>] (device_add) from [<c06764c4>] 
->> (i2c_register_adapter+0xd4/0x3ec)
->> [    4.038360] [<c06764c4>] (i2c_register_adapter) from [<c05321c8>] 
->> (analogix_dp_bind+0x2a0/0x410)
->> [    4.047128] [<c05321c8>] (analogix_dp_bind) from [<c0528e90>] 
->> (exynos_dp_bind+0x9c/0x12c)
->> [    4.055277] [<c0528e90>] (exynos_dp_bind) from [<c0535bc4>] 
->> (component_bind_all+0xfc/0x258)
->> [    4.063605] [<c0535bc4>] (component_bind_all) from [<c0522ee8>] 
->> (exynos_drm_bind+0x15c/0x28c)
->> [    4.072107] [<c0522ee8>] (exynos_drm_bind) from [<c0536378>] 
->> (try_to_bring_up_master+0x1b8/0x29c)
->> [    4.080957] [<c0536378>] (try_to_bring_up_master) from 
->> [<c05364fc>] (component_add+0xa0/0x170)
->> [    4.089545] [<c05364fc>] (component_add) from [<c0528fe4>] 
->> (exynos_dp_probe+0x64/0xb8)
->> [    4.097437] [<c0528fe4>] (exynos_dp_probe) from [<c053debc>] 
->> (platform_drv_probe+0x50/0xb0)
->> [    4.105766] [<c053debc>] (platform_drv_probe) from [<c053bd18>] 
->> (driver_probe_device+0x2b8/0x4a0)
->> [    4.114615] [<c053bd18>] (driver_probe_device) from [<c0539e4c>] 
->> (bus_for_each_drv+0x44/0x8c)
->> [    4.123115] [<c0539e4c>] (bus_for_each_drv) from [<c053b970>] 
->> (__device_attach+0xa0/0x134)
->> [    4.131355] [<c053b970>] (__device_attach) from [<c053ad08>] 
->> (bus_probe_device+0x88/0x90)
->> [    4.139509] [<c053ad08>] (bus_probe_device) from [<c053b258>] 
->> (deferred_probe_work_func+0x3c/0x168)
->> [    4.148536] [<c053b258>] (deferred_probe_work_func) from 
->> [<c014352c>] (process_one_work+0x1d0/0x7bc)
->> [    4.157644] [<c014352c>] (process_one_work) from [<c0143b84>] 
->> (worker_thread+0x34/0x4dc)
->> [    4.165710] [<c0143b84>] (worker_thread) from [<c014a30c>] 
->> (kthread+0x128/0x164)
->> [    4.173080] [<c014a30c>] (kthread) from [<c01010b4>] 
->> (ret_from_fork+0x14/0x20)
->> [    4.180274] Exception stack(0xee13ffb0 to 0xee13fff8)
->> [    4.185295] ffa0: 00000000 00000000 00000000 00000000
->> [    4.193466] ffc0: 00000000 00000000 00000000 00000000 00000000 
->> 00000000 00000000 00000000
->> [    4.201620] ffe0: 00000000 00000000 00000000 00000000 00000013 
->> 00000000
->> [    4.208207] Code: e2800e37 eafee601 e92d4070 e1a05000 (e59067d8)
->> [    4.214370] ---[ end trace bf6046013df7cab2 ]---
->>
->> This oops happens, because analogix_dp_bind() calls 
->> drm_dp_aux_register()
->> which registers i2c adapter. I2C core tries to runtime get i2c host
->> device during registration. This ends in analogix_dp_resume(), but dp
->> context is NULL there. dp context is set in exynos_dp_bind() after
->> executing analogix_dp_bind().
->>
->> A quick workaround of this issue is to postpone enabling runtime PM
->> on analogix device:
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
->> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 8217c106c72b..db5a6b82815d 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1621,8 +1621,6 @@ analogix_dp_bind(struct device *dev, struct 
->> drm_device *drm_dev,
->>                 return ERR_PTR(-ENODEV);
->>         }
->>
->> -       pm_runtime_enable(dev);
->> -
->>         ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
->>                                         analogix_dp_hardirq,
->>                                         analogix_dp_irq_thread,
->> @@ -1642,7 +1640,9 @@ analogix_dp_bind(struct device *dev, struct 
->> drm_device *drm_dev,
->>
->>         ret = drm_dp_aux_register(&dp->aux);
->>         if (ret)
->> -               goto err_disable_pm_runtime;
->> +               return ERR_PTR(ret);
->> +
->> +       pm_runtime_enable(dev);
->>
->>         ret = analogix_dp_create_bridge(drm_dev, dp);
->>         if (ret) {
->>
->> With such patch Exynos based boards boot, but there is significant delay
->> related to i2c/aux channel timeout:
->>
->> [    3.510610] [drm] Exynos DRM: using 14400000.fimd device for DMA 
->> mapping operations
->> [    3.517733] exynos-drm exynos-drm: bound 14400000.fimd (ops 
->> fimd_component_ops)
->> [    3.524483] exynos-drm exynos-drm: bound 14450000.mixer (ops 
->> mixer_component_ops)
->> [    3.533743] exynos-drm exynos-drm: bound 145b0000.dp-controller 
->> (ops exynos_dp_ops)
->> [    3.540074] exynos-drm exynos-drm: bound 14530000.hdmi (ops 
->> hdmi_component_ops)
->> [    3.547262] [drm] Supports vblank timestamp caching Rev 2 
->> (21.10.2013).
->> [    3.553899] [drm] No driver support for vblank timestamp query.
->> [    3.580467] exynos-dp 145b0000.dp-controller: AUX CH cmd reply 
->> timeout!
->> [    4.085814] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    4.590904] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    5.095930] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    5.601022] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    6.106031] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    6.611095] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    7.116112] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    7.621150] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    8.126191] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    8.638389] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    9.138537] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    9.638613] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   10.138698] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   10.638784] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   11.138939] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   11.639025] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   12.139186] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   12.639281] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   13.139368] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   13.216585] exynos-dp 145b0000.dp-controller: Link Training Clock 
->> Recovery success
->> [   13.218846] exynos-dp 145b0000.dp-controller: Link Training success!
->> [   13.333502] Console: switching to colour frame buffer device 170x48
->> [   13.446186] exynos-drm exynos-drm: fb0:  frame buffer device
->> [   13.456751] [drm] Initialized exynos 1.0.0 20110530 for exynos-drm 
->> on minor 0
->>
->> I've added some debugs and they reveal that AUX CH timeouts happen 
->> until DP
->> PHY is powered on:
->>
->> [    3.511022] [drm] Exynos DRM: using 14400000.fimd device for DMA 
->> mapping operations
->> [    3.518137] exynos-drm exynos-drm: bound 14400000.fimd (ops 
->> fimd_component_ops)
->> [    3.524900] exynos-drm exynos-drm: bound 14450000.mixer (ops 
->> mixer_component_ops)
->> [    3.533944] exynos-drm exynos-drm: bound 145b0000.dp-controller 
->> (ops exynos_dp_ops)
->> [    3.540231] exynos-drm exynos-drm: bound 14530000.hdmi (ops 
->> hdmi_component_ops)
->> [    3.547447] [drm] Supports vblank timestamp caching Rev 2 
->> (21.10.2013).
->> [    3.554077] [drm] No driver support for vblank timestamp query.
->> [    3.580511] exynos-dp 145b0000.dp-controller: AUX CH cmd reply 
->> timeout!
->> [    4.085882] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    4.590979] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    5.095986] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    5.601057] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    6.106110] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    6.611168] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    7.116212] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    7.621290] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    8.126331] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    8.638578] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    9.138715] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [    9.638872] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   10.138963] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   10.639057] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   11.139208] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   11.639374] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   12.139451] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   12.639553] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   13.139636] exynos-dp 145b0000.dp-controller: AUX CH enable timeout!
->> [   13.211826] analogix_dp_set_bridge line 1270 phy_power_on
->> [   13.216999] exynos-dp 145b0000.dp-controller: Link Training Clock 
->> Recovery success
->> [   13.219235] exynos-dp 145b0000.dp-controller: Link Training success!
->> [   13.333802] Console: switching to colour frame buffer device 170x48
->> [   13.453198] exynos-drm exynos-drm: fb0:  frame buffer device
->> [   13.462463] [drm] Initialized exynos 1.0.0 20110530 for exynos-drm 
->> on minor 0
->>
->> It looks that handling of DDC i2c over DP AUX chanel (get_modes 
->> callback) is
->> not synchronized with enabling bridge in analogix_dp_set_bridge().
->>
->> I'm surprised that you didn't observe similar issues on rk3399.
->>
->
-> I've investigated this issue further and it turned out that the 
-> DDC/I2C AUX
-> channel timeout issue is related to the fact, that exynos_dp driver 
-> creates
-> additional connector for the display pipeline on Exynos5420 Chromebook2
-> Peach-PIT.
->
-> One connector is created by analogix_dp core, the second (the one 
-> which is
-> in fact operational) is created by parade_ps eDP/LVDS bridge. The DDC/I2C
-> AUX channel timeouts happens when DRM core tries to get mode from the
-> connector object created by analogix_dp core.
->
-> This patch fixes this issue:
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
-> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index db5a6b82815d..46b704adb2ae 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1195,27 +1195,30 @@ static int analogix_dp_bridge_attach(struct 
-> drm_bridge *bridge)
->  {
->      struct analogix_dp_device *dp = bridge->driver_private;
->      struct drm_encoder *encoder = dp->encoder;
-> -    struct drm_connector *connector = &dp->connector;
-> -    int ret;
-> +    struct drm_connector *connector = NULL;
-> +    int ret = 0;
->
->      if (!bridge->encoder) {
->          DRM_ERROR("Parent encoder object not found");
->          return -ENODEV;
->      }
->
-> -    connector->polled = DRM_CONNECTOR_POLL_HPD;
-> +    if (!dp->plat_data->skip_connector) {
-> +        connector = &dp->connector;
-> +        connector->polled = DRM_CONNECTOR_POLL_HPD;
->
-> -    ret = drm_connector_init(dp->drm_dev, connector,
-> -                 &analogix_dp_connector_funcs,
-> -                 DRM_MODE_CONNECTOR_eDP);
-> -    if (ret) {
-> -        DRM_ERROR("Failed to initialize connector with drm\n");
-> -        return ret;
-> -    }
-> +        ret = drm_connector_init(dp->drm_dev, connector,
-> +                     &analogix_dp_connector_funcs,
-> +                     DRM_MODE_CONNECTOR_eDP);
-> +        if (ret) {
-> +            DRM_ERROR("Failed to initialize connector with drm\n");
-> +            return ret;
-> +        }
->
-> -    drm_connector_helper_add(connector,
-> -                 &analogix_dp_connector_helper_funcs);
-> -    drm_mode_connector_attach_encoder(connector, encoder);
-> +        drm_connector_helper_add(connector,
-> +                     &analogix_dp_connector_helper_funcs);
-> +        drm_mode_connector_attach_encoder(connector, encoder);
-> +    }
->
->      /*
->       * NOTE: the connector registration is implemented in analogix
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c 
-> b/drivers/gpu/drm/exynos/exynos_dp.c
-> index b316249a3f89..86330f396784 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-> @@ -244,6 +244,7 @@ static int exynos_dp_probe(struct platform_device 
-> *pdev)
->
->      /* The remote port can be either a panel or a bridge */
->      dp->plat_data.panel = panel;
-> +    dp->plat_data.skip_connector = !!bridge;
->      dp->ptn_bridge = bridge;
->
->  out:
-> diff --git a/include/drm/bridge/analogix_dp.h 
-> b/include/drm/bridge/analogix_dp.h
-> index b384f7e8d14a..475b706b49de 100644
-> --- a/include/drm/bridge/analogix_dp.h
-> +++ b/include/drm/bridge/analogix_dp.h
-> @@ -31,6 +31,7 @@ struct analogix_dp_plat_data {
->      struct drm_panel *panel;
->      struct drm_encoder *encoder;
->      struct drm_connector *connector;
-> +    bool skip_connector;
->
->      int (*power_on_start)(struct analogix_dp_plat_data *);
->      int (*power_on_end)(struct analogix_dp_plat_data *);
-> --
->
-> I'm still not convinced that the get_modes callback implementation and 
-> real
-> DDC/I2C AUX transfers are correctly handled in ExynosDP case, but I 
-> don't have
-> access to the hardware which would use them. Both Chromebook2 
-> Peach-PIT and
-> Chromebook Snow have additional bridge between analogix_dp and the panel.
->
-> Frankly speaking, this issue reveals that the whole bridge-to-bridge,
-> connector, panel pipeline handling in the DRM drivers is a 
-> over-complicated
-> (over-engineered?) and there is a mess in the drivers.
+drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_base_get_chain_phys':
+drivers/scsi/mpt3sas/mpt3sas_base.c:235:21: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+  base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
+                     ^
+drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_clone_sg_entries':
+drivers/scsi/mpt3sas/mpt3sas_base.c:427:20: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+    sgel->Address = (dma_addr_t)dst_addr_phys;
+                    ^
+drivers/scsi/mpt3sas/mpt3sas_base.c:438:7: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+       (dma_addr_t)buff_ptr_phys;
+       ^
+drivers/scsi/mpt3sas/mpt3sas_base.c:444:10: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+          (dma_addr_t)buff_ptr_phys;
 
-There is one more issue even after above patch - disabling display pipeline
-causes system hang. I've spent some more time debugging it and found 
-that the
-power off sequence in analogix_dp_bridge_disable() is incorrect. In case of
-exynos_dp, external PHY also powers analogix_dp block, so any register 
-access
-after phy_power_off() is forbidden. The following patch fixes this issue:
+Both dma_addr_t and phys_addr_t may be wider than a pointer, so we must
+avoid the conversion to pointer types. This also helps readability.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
-b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index ad8737384ab0..32c42d33c25e 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1349,8 +1349,8 @@ static void analogix_dp_bridge_disable(struct 
-drm_bridge *bridge)
-      if (dp->plat_data->power_off)
-          dp->plat_data->power_off(dp->plat_data);
+A second problem is treating MMIO addresses from a 'struct resource'
+as addresses that can be used for DMA on that device. In almost all
+cases, those are the same, but on some of the more obscure architectures,
+PCI memory address 0 is mapped into the CPU address space at a nonzero
+offset. I don't have a good fix for that, so I'm adding a comment here,
+plus a WARN_ON() that triggers whenever the phys_addr_t number is
+outside of the low 32-bit address space and causes a straight overflow
+when assigned to the 32-bit sgel->Address.
 
--    phy_power_off(dp->phy);
-      analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
-+    phy_power_off(dp->phy);
+Fixes: 182ac784b41f ("scsi: mpt3sas: Introduce Base function for cloning.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 42 ++++++++++++++++++++-----------------
+ drivers/scsi/mpt3sas/mpt3sas_base.h |  2 +-
+ 2 files changed, 24 insertions(+), 20 deletions(-)
 
-      clk_disable_unprepare(dp->clock);
-
-
-With the above patch it looks that exynos_dp is now fully operational again.
-
-Best regards
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 9f2434e59b40..61f93a134956 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -225,14 +225,14 @@ _base_get_chain(struct MPT3SAS_ADAPTER *ioc, u16 smid,
+  *
+  * @Return - Physical chain address.
+  */
+-static inline void *
++static inline phys_addr_t
+ _base_get_chain_phys(struct MPT3SAS_ADAPTER *ioc, u16 smid,
+ 		u8 sge_chain_count)
+ {
+-	void *base_chain_phys, *chain_phys;
++	phys_addr_t base_chain_phys, chain_phys;
+ 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
+ 
+-	base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
++	base_chain_phys  = ioc->chip_phys + MPI_FRAME_START_OFFSET +
+ 		(cmd_credit * ioc->request_sz) +
+ 		REPLY_FREE_POOL_SIZE;
+ 	chain_phys = base_chain_phys + (smid * ioc->facts.MaxChainDepth *
+@@ -272,11 +272,11 @@ _base_get_buffer_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)
+  *
+  * @Returns - Pointer to buffer location in BAR0.
+  */
+-static void *
++static phys_addr_t
+ _base_get_buffer_phys_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)
+ {
+ 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
+-	void *chain_end_phys = _base_get_chain_phys(ioc,
++	phys_addr_t chain_end_phys = _base_get_chain_phys(ioc,
+ 			cmd_credit + 1,
+ 			ioc->facts.MaxChainDepth);
+ 	return chain_end_phys + (smid * 64 * 1024);
+@@ -330,11 +330,12 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 	bool is_write = 0;
+ 	u16 i = 0;
+ 	void __iomem *buffer_iomem;
+-	void  *buffer_iomem_phys;
++	phys_addr_t buffer_iomem_phys;
+ 	void __iomem *buff_ptr;
+-	void *buff_ptr_phys;
++	phys_addr_t buff_ptr_phys;
+ 	void __iomem *dst_chain_addr[MCPU_MAX_CHAINS_PER_IO];
+-	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO], *dst_addr_phys;
++	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO];
++	phys_addr_t dst_addr_phys;
+ 	MPI2RequestHeader_t *request_hdr;
+ 	struct scsi_cmnd *scmd;
+ 	struct scatterlist *sg_scmd = NULL;
+@@ -391,6 +392,7 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 
+ 	buff_ptr = buffer_iomem;
+ 	buff_ptr_phys = buffer_iomem_phys;
++	WARN_ON(buff_ptr_phys > U32_MAX);
+ 
+ 	if (sgel->FlagsLength &
+ 			(MPI2_SGE_FLAGS_HOST_TO_IOC << MPI2_SGE_FLAGS_SHIFT))
+@@ -421,10 +423,10 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 					smid, sge_chain_count);
+ 			src_chain_addr[sge_chain_count] =
+ 						(void *) sgel_next;
+-			dst_addr_phys =
+-				_base_get_chain_phys(ioc,
++			dst_addr_phys = _base_get_chain_phys(ioc,
+ 						smid, sge_chain_count);
+-			sgel->Address = (dma_addr_t)dst_addr_phys;
++			WARN_ON(dst_addr_phys > U32_MAX);
++			sgel->Address = (u32)dst_addr_phys;
+ 			sgel = sgel_next;
+ 			sge_chain_count++;
+ 			break;
+@@ -434,14 +436,16 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 					_base_clone_to_sys_mem(buff_ptr,
+ 					    sg_virt(sg_scmd),
+ 					    (sgel->FlagsLength & 0x00ffffff));
+-					sgel->Address =
+-						(dma_addr_t)buff_ptr_phys;
++					/*
++					 * FIXME: this relies on a a zero
++					 * PCI mem_offset.
++					 */
++					sgel->Address = (u32)buff_ptr_phys;
+ 				} else {
+ 					_base_clone_to_sys_mem(buff_ptr,
+ 					    ioc->config_vaddr,
+ 					    (sgel->FlagsLength & 0x00ffffff));
+-					sgel->Address =
+-					    (dma_addr_t)buff_ptr_phys;
++					sgel->Address = (u32)buff_ptr_phys;
+ 				}
+ 			}
+ 			buff_ptr += (sgel->FlagsLength & 0x00ffffff);
+@@ -2941,7 +2945,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
+ 	u32 pio_sz;
+ 	int i, r = 0;
+ 	u64 pio_chip = 0;
+-	u64 chip_phys = 0;
++	phys_addr_t chip_phys = 0;
+ 	struct adapter_reply_queue *reply_q;
+ 
+ 	dinitprintk(ioc, pr_info(MPT3SAS_FMT "%s\n",
+@@ -2989,7 +2993,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
+ 			if (memap_sz)
+ 				continue;
+ 			ioc->chip_phys = pci_resource_start(pdev, i);
+-			chip_phys = (u64)ioc->chip_phys;
++			chip_phys = ioc->chip_phys;
+ 			memap_sz = pci_resource_len(pdev, i);
+ 			ioc->chip = ioremap(ioc->chip_phys, memap_sz);
+ 		}
+@@ -3064,8 +3068,8 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
+ 		    "IO-APIC enabled"),
+ 		    pci_irq_vector(ioc->pdev, reply_q->msix_index));
+ 
+-	pr_info(MPT3SAS_FMT "iomem(0x%016llx), mapped(0x%p), size(%d)\n",
+-	    ioc->name, (unsigned long long)chip_phys, ioc->chip, memap_sz);
++	pr_info(MPT3SAS_FMT "iomem(%pap), mapped(0x%p), size(%d)\n",
++	    ioc->name, &chip_phys, ioc->chip, memap_sz);
+ 	pr_info(MPT3SAS_FMT "ioport(0x%016llx), size(%d)\n",
+ 	    ioc->name, (unsigned long long)pio_chip, pio_sz);
+ 
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index df8233c1e1c1..ae36d8fb2f2b 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -1103,7 +1103,7 @@ struct MPT3SAS_ADAPTER {
+ 	char		tmp_string[MPT_STRING_LENGTH];
+ 	struct pci_dev	*pdev;
+ 	Mpi2SystemInterfaceRegs_t __iomem *chip;
+-	resource_size_t	chip_phys;
++	phys_addr_t	chip_phys;
+ 	int		logging_level;
+ 	int		fwfault_debug;
+ 	u8		ir_firmware;
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.9.0
