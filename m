@@ -1,77 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161959AbeCAVWC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:22:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:24677 "EHLO mx1.redhat.com"
+        id S1162011AbeCAVXP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:23:15 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:38684 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1161475AbeCAVV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:21:59 -0500
-Date: Thu, 1 Mar 2018 14:21:55 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Stephen  Bates" <sbates@raithlin.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        id S1161923AbeCAVXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:23:10 -0500
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: benh@au1.ibm.com, Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all
- devices behind switches
-Message-ID: <20180301142155.5966c4c0@w520.home>
-In-Reply-To: <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
 References: <20180228234006.21093-1-logang@deltatee.com>
-        <20180228234006.21093-5-logang@deltatee.com>
-        <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
-        <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <CAPcyv4h7mcFphv3j_vW-CGxXa2pjQgLqpBOLzHuTzAFzygai-Q@mail.gmail.com>
+ <1519938210.4592.30.camel@au1.ibm.com>
+ <1de70207-40ce-29f0-6093-337112852475@deltatee.com>
+ <20180301211817.GC6742@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <25034ee7-de03-ed77-78e0-2333f46897cc@deltatee.com>
+Date: Thu, 1 Mar 2018 14:22:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180301211817.GC6742@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: oliveroh@au1.ibm.com, alex.williamson@redhat.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, dan.j.williams@intel.com, benh@au1.ibm.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 18:54:01 +0000
-"Stephen  Bates" <sbates@raithlin.com> wrote:
 
-> Thanks for the detailed review Bjorn!
-> 
-> >>  
-> >> +	  Enabling this option will also disable ACS on all ports behind
-> >> +	  any PCIe switch. This effictively puts all devices behind any
-> >> +	  switch into the same IOMMU group.  
-> 
-> >
-> >  Does this really mean "all devices behind the same Root Port"?  
-> 
-> Not necessarily. You might have a cascade of switches (i.e switches below a switch) to achieve a very large fan-out (in an NVMe SSD array for example) and we will only disable ACS on the ports below the relevant switch.
-> 
-> > What does this mean in terms of device security?  I assume it means,
-> > at least, that individual devices can't be assigned to separate VMs.  
-> 
-> This was discussed during v1 [1]. Disabling ACS on all downstream ports of the switch means that all the EPs below it have to part of the same IOMMU grouping. However it was also agreed that as long as the ACS disable occurred at boot time (which is does in v2) then the virtualization layer will be aware of it and will perform the IOMMU group formation correctly.
 
-This is still a pretty terrible solution though, your kernel provider
-needs to decide whether they favor device assignment or p2p, because we
-can't do both, unless there's a patch I haven't seen yet that allows
-boot time rather than compile time configuration.  There are absolutely
-supported device assignment cases of switches proving isolation between
-devices allowing the downstream EPs to be used independently.  I think
-this is a non-starter for distribution support without boot time or
-dynamic configuration.  I could imagine dynamic configuration through
-sysfs that might trigger a soft remove and rescan of the affected
-devices in order to rebuild the IOMMU group.  The hard part might be
-determining which points to allow that to guarantee correctness.  For
-instance, upstream switch ports don't actually support ACS, but they'd
-otherwise be an obvious concentration point to trigger a
-reconfiguration.  Thanks,
+On 01/03/18 02:18 PM, Jerome Glisse wrote:
+> This is pretty easy to do with HMM:
+> 
+> unsigned long hmm_page_to_phys_pfn(struct page *page)
+This is not useful unless you want to go through all the kernel paths we 
+are using and replace page_to_phys() and friends with something else 
+that calls an HMM function when appropriate...
 
-Alex
+The problem isn't getting the physical address from a page, it's that we 
+are passing these pages through various kernel interfaces which expect 
+pages that work in the usual manner. (Look at the code: we quite simply 
+provide a way to get the PCI bus address from a page when necessary).
+
+Logan
