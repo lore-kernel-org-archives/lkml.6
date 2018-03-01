@@ -1,153 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966944AbeCAK2y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:28:54 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35206 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966528AbeCAK2r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:28:47 -0500
-X-Google-Smtp-Source: AG47ELtoSJYUvPnxbPbhVVEMwQOQz8BHl4liI50mPGSR1ZGIlOGD1X4ZhzuO0LFo5YqHB0BsjcvQVT6CaqhKBAuAwMQ=
+        id S967196AbeCAK3E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:29:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40607 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966146AbeCAK3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 05:29:01 -0500
+Date: Thu, 1 Mar 2018 11:28:59 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] livepatch: Correctly handle atomic replace for
+ not yet loaded modules
+Message-ID: <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
+References: <20180221132914.4809-1-pmladek@suse.com>
+ <20180221132914.4809-8-pmladek@suse.com>
+ <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <2b4c650d27e59c81903fa4c2526bf18a2cf2d243.1519882849.git.jan.kiszka@siemens.com>
-References: <cover.1519882849.git.jan.kiszka@siemens.com> <2b4c650d27e59c81903fa4c2526bf18a2cf2d243.1519882849.git.jan.kiszka@siemens.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 1 Mar 2018 12:28:45 +0200
-Message-ID: <CAHp75VcKqgmVV7-sj9kfzcAyO-sTCt54vpPx3RL3TMcRp5i=EA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] PCI: Scan all functions when running over Jailhouse
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Benedikt Spranger <b.spranger@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 7:40 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
-> have a function 0.  Therefore, Linux scans for devices at function 0
-> (devfn 0/8/16/...) and only scans for other functions if function 0
-> has its Multi-Function Device bit set or ARI or SR-IOV indicate
-> there are more functions.
->
-> The Jailhouse hypervisor may pass individual functions of a
-> multi-function device to a guest without passing function 0, which
-> means a Linux guest won't find them.
->
-> Change Linux PCI probing so it scans all function numbers when
-> running as a guest over Jailhouse.
->
-> This is technically prohibited by the spec, so it is possible that
-> PCI devices without the Multi-Function Device bit set may have
-> unexpected behavior in response to this probe.
->
-> Derived from original patch by Benedikt Spranger.
->
+On Thu 2018-02-22 22:00:28, Miroslav Benes wrote:
+> On Wed, 21 Feb 2018, Petr Mladek wrote:
+> > This patch allows the late initialization.
+> > 
+> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> > index ad508a86b2f9..da1438d47d83 100644
+> > --- a/kernel/livepatch/core.c
+> > +++ b/kernel/livepatch/core.c
+> > @@ -984,7 +988,12 @@ static void klp_free_patch(struct klp_patch *patch)
+> >  
+> >  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+> >  {
+> > -	if (!func->old_name || !func->new_func)
+> > +	if (!func->old_name)
+> > +		return -EINVAL;
+> > +
+> > +	/* NOPs do not know the address until the patched module is loaded. */
+> > +	if (!func->new_func &&
+> > +	    (!klp_is_func_type(func, KLP_FUNC_NOP) || klp_is_object_loaded(obj)))
+> >  		return -EINVAL;
+> 
+> If we changed the order of klp_init_func() and klp_init_object_loaded() 
+> calls in klp_init_object(), the hunk would not be needed. Is that correct? 
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-One nit below.
-
-> CC: Benedikt Spranger <b.spranger@linutronix.de>
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  arch/x86/pci/legacy.c |  4 +++-
->  drivers/pci/probe.c   | 22 +++++++++++++++++++---
->  2 files changed, 22 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-> index 1cb01abcb1be..dfbe6ac38830 100644
-> --- a/arch/x86/pci/legacy.c
-> +++ b/arch/x86/pci/legacy.c
-> @@ -4,6 +4,7 @@
->  #include <linux/init.h>
->  #include <linux/export.h>
->  #include <linux/pci.h>
-> +#include <asm/jailhouse_para.h>
->  #include <asm/pci_x86.h>
->
->  /*
-> @@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
->
->  void pcibios_scan_specific_bus(int busn)
->  {
-> +       int stride = jailhouse_paravirt() ? 1 : 8;
->         int devfn;
->         u32 l;
->
->         if (pci_find_bus(0, busn))
->                 return;
->
-> -       for (devfn = 0; devfn < 256; devfn += 8) {
-> +       for (devfn = 0; devfn < 256; devfn += stride) {
->                 if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
->                     l != 0x0000 && l != 0xffff) {
->                         DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ef5377438a1e..da22d6d216f8 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -16,6 +16,7 @@
->  #include <linux/pci-aspm.h>
->  #include <linux/aer.h>
->  #include <linux/acpi.h>
-> +#include <linux/hypervisor.h>
->  #include <linux/irqdomain.h>
->  #include <linux/pm_runtime.h>
->  #include "pci.h"
-> @@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
->  {
->         unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
->         unsigned int start = bus->busn_res.start;
-> -       unsigned int devfn, cmax, max = start;
-> +       unsigned int devfn, fn, cmax, max = start;
->         struct pci_dev *dev;
-> +       int nr_devs;
->
->         dev_dbg(&bus->dev, "scanning bus\n");
->
->         /* Go find them, Rover! */
-> -       for (devfn = 0; devfn < 0x100; devfn += 8)
-> -               pci_scan_slot(bus, devfn);
-
-> +       for (devfn = 0; devfn < 0x100; devfn += 8) {
-
-Since you touch this line perhaps make sense to unify with above, i.e.
-0x100 -> 256 ?
-
-> +               nr_devs = pci_scan_slot(bus, devfn);
-> +
-> +               /*
-> +                * The Jailhouse hypervisor may pass individual functions of a
-> +                * multi-function device to a guest without passing function 0.
-> +                * Look for them as well.
-> +                */
-> +               if (jailhouse_paravirt() && nr_devs == 0) {
-> +                       for (fn = 1; fn < 8; fn++) {
-> +                               dev = pci_scan_single_device(bus, devfn + fn);
-> +                               if (dev)
-> +                                       dev->multifunction = 1;
-> +                       }
-> +               }
-> +       }
->
->         /* Reserve buses for SR-IOV capability */
->         used_buses = pci_iov_bus_range(bus);
-> --
-> 2.13.6
->
+Not really. klp_init_object_loaded() would set func->new_func only
+when the object was loaded. But we want to proceed here and create
+the kobject for NOPs even when it was not loaded.
 
 
+> >  	INIT_LIST_HEAD(&func->stack_node);
+> > @@ -1039,6 +1048,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+> >  			return -ENOENT;
+> >  		}
+> >  
+> > +		if (klp_is_func_type(func, KLP_FUNC_NOP))
+> > +			func->new_func = (void *)func->old_addr;
+> 
+> Is there a reason why you left the same assignment in 
+> klp_alloc_func_nop()? This one is enough, no?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Good point! I am going to replace the obsolete assignment
+with a comment in v8.
+
+Best Regards,
+Petr
