@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909515-5-380585072406398813
+X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909515-2-16772082436134778479
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909514; b=uyT+9TPa8Ny1Ys1YSe+esdu0MRmfscw4O9OUm+1sbuKgAi4
-    vowON77gXi3cVPBzaX3JiPz4o/0ofgXvBi2GL8+Dztzq7n+fga4xlTo7UGmXRZFO
-    gJtWE2vSqhJXz8oI6phKOebsPhQnJrcev8bPgZugErPd1tXzTHss+uOfD7KJYpHc
-    om1zHew/QbJtQCk4u4pPml4UuLun6eaAWYHcqiTNk7WoiiO/1QmQNuUqVirTqAGM
-    XUFmI8LrzAaSxqrb9v15CZg3jqdol5WSjD5E1kcqV9Kc4h0OL5oxo0UswV+TcsPx
-    UHbSvNvIRs9ZWwGP+au8L5XDswuo8minCwFv04g==
+    t=1519909514; b=GljWASWIbAgHAHPcnXYO812+begmu5T1bajmqjDMMLjRiHa
+    hJIHTyDmHPgAQcP3TYwygApQ3BGcARdFIzz50zZyyBHQYaA0mHw974j1ovZpvvAp
+    MK81vtvKTDNCicyMqktwMPczWEr+JrTUHK1ZqHB7lFPFs4gHRktnxq1q2RlPuCJA
+    44fJwxLhC9ZMzC8pRhVCA4xGmTLZ0MRufNMhynZRnPK4UKiKtQBUhXEbsgnkcp/y
+    cwV2VbESiOdBtTAOClvrFX8fS9DdM4JTV1xLSzdPs4Y83uKZbqPoEGYpowF4RuYk
+    vCLUdkqHZpZSOf6emwgqSo2mrDrV/Lm7rutl31w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:sender:list-id; s=arctest; t=1519909514;
-    bh=NZ2qtdpybzZDjgWGLMAPxPIrjxBvuuwvSlz1/mXg4z0=; b=sU6hbjbSpUGx
-    Si3HxkqhnZw5ejnoWMKz1CrfmFqKySATa6EF8gFwW5ThD5el2wD1mYTtIRu4Gyy0
-    P3VKNAUDtzPl/YZZvS70QiadBkuTlDQym6Dc5+wZv+SS7Iw3SYi1A9D5uORWg0QQ
-    M5RpldtCWSW5PmmATPt1W1ZLFjauv9Up9eEQspU33Hfx597oiCLybiggvwXBEhEm
-    Hhp0q0y4Ske90eIUUlBkEHriuwyi/C9Ecqhy7LyIHLmfBekqKwQpi8sboLtYPPfX
-    +hiIiwmJYZlgZbtJWq5GJ7/H+Z66WGNgWHC3ndSV4UdLuQE753fYBCYSnfff9MiK
-    XzLfAP0crg==
+    bh=LTZ3hl6u/7+oQ/R6V0y/q5Po/IW9w8cPYog3KcYjLHo=; b=RZhc5NJ8VWTO
+    2LjbsRHLHx08gDKiNReBp5Y2H+ynUwhg4qlynKh/CtDQl+zrSt0dAzox73bvY+2F
+    IZRPffUkOlFNimTyDorny+WrUTfiW0iE3mtLn2NRyv7hweowDEClfSrqJ+AfJTuP
+    M8WE/gRngiroyTH2T4iurDF9fYlQUi3/eec8G3hJ5MbHwaCsIfrDvtmU2EuG+BsS
+    H7XEahOm3fX8hd3W6X/A/sfVk8xOokUNO9+4BlKkyIpxVKf62ayhFisQkzTyyJZV
+    vLU4ROb4GfFxmPlzK9yfHt3rFQDLl0av68ZEc/4ctszntfheHo0vxOtCqMMhTIX2
+    pqQPTFM/GA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=HRBfzix6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=MiD+Ntqk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g9ZMxkfu;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TqKeaX1N;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=HRBfzix6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=MiD+Ntqk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g9ZMxkfu;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TqKeaX1N;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030656AbeCANE3 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 08:04:29 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:47083 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030752AbeCAM6x (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:58:53 -0500
-X-Google-Smtp-Source: AG47ELtrUVevA+U8jJo2/4wlgSw/treYCtTMy+wJ12JcqE4tDPXxow8MyP5Baq7jfd16SplCjfrN9g==
+        id S1030738AbeCAM6n (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:58:43 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46276 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030931AbeCAM6k (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:58:40 -0500
+X-Google-Smtp-Source: AG47ELt46iXMOLh27ilcWuBn4Hz8EKEbeNMkSNp3hbbmc/9IG+3IkAzK818wUKx1G+LpaDNkPF35XA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 25/45] arm64: KVM: Use per-CPU vector when BP hardening is enabled
-Date: Thu,  1 Mar 2018 20:54:02 +0800
-Message-Id: <1519908862-11425-26-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 23/45] arm64: Add skeleton to harden the branch predictor against aliasing attacks
+Date: Thu,  1 Mar 2018 20:54:00 +0800
+Message-Id: <1519908862-11425-24-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -76,129 +76,389 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 6840bdd73d07 upstream
+commit 0f15adbb2861 upstream.
 
-Now that we have per-CPU vectors, let's plug then in the KVM/arm64 code.
+Aliasing attacks against CPU branch predictors can allow an attacker to
+redirect speculative control flow on some CPUs and potentially divulge
+information from one context to another.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+This patch adds initial skeleton code behind a new Kconfig option to
+enable implementation-specific mitigations against these attacks for
+CPUs that are affected.
+
+Co-developed-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm/include/asm/kvm_mmu.h   | 10 ++++++++++
- arch/arm/kvm/arm.c               |  8 +++++++-
- arch/arm64/include/asm/kvm_mmu.h | 38 ++++++++++++++++++++++++++++++++++++++
- arch/arm64/kvm/hyp/switch.c      |  2 +-
- 4 files changed, 56 insertions(+), 2 deletions(-)
+ arch/arm64/Kconfig               | 17 +++++++++
+ arch/arm64/include/asm/cpucaps.h |  3 +-
+ arch/arm64/include/asm/mmu.h     | 38 +++++++++++++++++++++
+ arch/arm64/include/asm/sysreg.h  |  1 +
+ arch/arm64/kernel/Makefile       |  4 +++
+ arch/arm64/kernel/bpi.S          | 55 +++++++++++++++++++++++++++++
+ arch/arm64/kernel/cpu_errata.c   | 74 ++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/cpufeature.c   |  1 +
+ arch/arm64/kernel/entry.S        |  8 +++--
+ arch/arm64/mm/context.c          |  2 ++
+ arch/arm64/mm/fault.c            | 17 +++++++++
+ include/linux/mm_types.h         |  1 +
+ 12 files changed, 217 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/kernel/bpi.S
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index a58bbaa..d10e362 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -223,6 +223,16 @@ static inline unsigned int kvm_get_vmid_bits(void)
- 	return 8;
- }
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 7769c2e..0c4be63 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -733,6 +733,23 @@ config FORCE_MAX_ZONEORDER
+ 	  However for 4K, we choose a higher default value, 11 as opposed to 10, giving us
+ 	  4M allocations matching the default size used by generic code.
  
-+static inline void *kvm_get_hyp_vector(void)
++config HARDEN_BRANCH_PREDICTOR
++	bool "Harden the branch predictor against aliasing attacks" if EXPERT
++	default y
++	help
++	  Speculation attacks against some high-performance processors rely on
++	  being able to manipulate the branch predictor for a victim context by
++	  executing aliasing branches in the attacker context.  Such attacks
++	  can be partially mitigated against by clearing internal branch
++	  predictor state and limiting the prediction logic in some situations.
++
++	  This config option will take CPU-specific actions to harden the
++	  branch predictor against aliasing attacks and may rely on specific
++	  instruction sequences or control bits being set by the system
++	  firmware.
++
++	  If unsure, say Y.
++
+ menuconfig ARMV8_DEPRECATED
+ 	bool "Emulate deprecated/obsolete ARMv8 instructions"
+ 	depends on COMPAT
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index 87b4465..f8b7799 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -34,7 +34,8 @@
+ #define ARM64_HAS_32BIT_EL0			13
+ #define ARM64_HYP_OFFSET_LOW			14
+ #define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
++#define ARM64_HARDEN_BRANCH_PREDICTOR		16
+ 
+-#define ARM64_NCAPS				16
++#define ARM64_NCAPS				17
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index b075140..203974c 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -28,6 +28,44 @@ typedef struct {
+  */
+ #define ASID(mm)	((mm)->context.id.counter & 0xffff)
+ 
++
++typedef void (*bp_hardening_cb_t)(void);
++
++struct bp_hardening_data {
++	int			hyp_vectors_slot;
++	bp_hardening_cb_t	fn;
++};
++
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++extern char __bp_harden_hyp_vecs_start[], __bp_harden_hyp_vecs_end[];
++
++DECLARE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
++
++static inline struct bp_hardening_data *arm64_get_bp_hardening_data(void)
 +{
-+	return kvm_ksym_ref(__kvm_hyp_vector);
++	return this_cpu_ptr(&bp_hardening_data);
 +}
 +
-+static inline int kvm_map_vectors(void)
++static inline void arm64_apply_bp_hardening(void)
 +{
-+	return 0;
++	struct bp_hardening_data *d;
++
++	if (!cpus_have_cap(ARM64_HARDEN_BRANCH_PREDICTOR))
++		return;
++
++	d = arm64_get_bp_hardening_data();
++	if (d->fn)
++		d->fn();
++}
++#else
++static inline struct bp_hardening_data *arm64_get_bp_hardening_data(void)
++{
++	return NULL;
 +}
 +
- #endif	/* !__ASSEMBLY__ */
- 
- #endif /* __ARM_KVM_MMU_H__ */
-diff --git a/arch/arm/kvm/arm.c b/arch/arm/kvm/arm.c
-index c38bfbe..4e4ae07 100644
---- a/arch/arm/kvm/arm.c
-+++ b/arch/arm/kvm/arm.c
-@@ -1088,7 +1088,7 @@ static void cpu_init_hyp_mode(void *dummy)
- 	pgd_ptr = kvm_mmu_get_httbr();
- 	stack_page = __this_cpu_read(kvm_arm_hyp_stack_page);
- 	hyp_stack_ptr = stack_page + PAGE_SIZE;
--	vector_ptr = (unsigned long)kvm_ksym_ref(__kvm_hyp_vector);
-+	vector_ptr = (unsigned long)kvm_get_hyp_vector();
- 
- 	__cpu_init_hyp_mode(pgd_ptr, hyp_stack_ptr, vector_ptr);
- 	__cpu_init_stage2();
-@@ -1345,6 +1345,12 @@ static int init_hyp_mode(void)
- 		goto out_err;
- 	}
- 
-+	err = kvm_map_vectors();
-+	if (err) {
-+		kvm_err("Cannot map vectors\n");
-+		goto out_err;
-+	}
++static inline void arm64_apply_bp_hardening(void)	{ }
++#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
 +
- 	/*
- 	 * Map the Hyp stack pages
- 	 */
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 6d22017..80bf337 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -313,5 +313,43 @@ static inline unsigned int kvm_get_vmid_bits(void)
- 	return (cpuid_feature_extract_unsigned_field(reg, ID_AA64MMFR1_VMIDBITS_SHIFT) == 2) ? 16 : 8;
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+ extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 7393cc7..e91710f 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -117,6 +117,7 @@
+ #define ID_AA64ISAR0_AES_SHIFT		4
+ 
+ /* id_aa64pfr0 */
++#define ID_AA64PFR0_CSV2_SHIFT		56
+ #define ID_AA64PFR0_GIC_SHIFT		24
+ #define ID_AA64PFR0_ASIMD_SHIFT		20
+ #define ID_AA64PFR0_FP_SHIFT		16
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 7d66bba..74b8fd8 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -51,6 +51,10 @@ arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
+ arm64-obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o	\
+ 					   cpu-reset.o
+ 
++ifeq ($(CONFIG_KVM),y)
++arm64-obj-$(CONFIG_HARDEN_BRANCH_PREDICTOR)	+= bpi.o
++endif
++
+ obj-y					+= $(arm64-obj-y) vdso/ probes/
+ obj-m					+= $(arm64-obj-m)
+ head-y					:= head.o
+diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
+new file mode 100644
+index 0000000..06a931e
+--- /dev/null
++++ b/arch/arm64/kernel/bpi.S
+@@ -0,0 +1,55 @@
++/*
++ * Contains CPU specific branch predictor invalidation sequences
++ *
++ * Copyright (C) 2018 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/linkage.h>
++
++.macro ventry target
++	.rept 31
++	nop
++	.endr
++	b	\target
++.endm
++
++.macro vectors target
++	ventry \target + 0x000
++	ventry \target + 0x080
++	ventry \target + 0x100
++	ventry \target + 0x180
++
++	ventry \target + 0x200
++	ventry \target + 0x280
++	ventry \target + 0x300
++	ventry \target + 0x380
++
++	ventry \target + 0x400
++	ventry \target + 0x480
++	ventry \target + 0x500
++	ventry \target + 0x580
++
++	ventry \target + 0x600
++	ventry \target + 0x680
++	ventry \target + 0x700
++	ventry \target + 0x780
++.endm
++
++	.align	11
++ENTRY(__bp_harden_hyp_vecs_start)
++	.rept 4
++	vectors __kvm_hyp_vector
++	.endr
++ENTRY(__bp_harden_hyp_vecs_end)
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 8de43799..0e07893 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -46,6 +46,80 @@ static int cpu_enable_trap_ctr_access(void *__unused)
+ 	return 0;
  }
  
 +#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+#include <asm/mmu.h>
++#include <asm/mmu_context.h>
++#include <asm/cacheflush.h>
 +
-+static inline void *kvm_get_hyp_vector(void)
++DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
++
++#ifdef CONFIG_KVM
++static void __copy_hyp_vect_bpi(int slot, const char *hyp_vecs_start,
++				const char *hyp_vecs_end)
 +{
-+	struct bp_hardening_data *data = arm64_get_bp_hardening_data();
-+	void *vect = kvm_ksym_ref(__kvm_hyp_vector);
++	void *dst = lm_alias(__bp_harden_hyp_vecs_start + slot * SZ_2K);
++	int i;
 +
-+	if (data->fn) {
-+		vect = __bp_harden_hyp_vecs_start +
-+		       data->hyp_vectors_slot * SZ_2K;
++	for (i = 0; i < SZ_2K; i += 0x80)
++		memcpy(dst + i, hyp_vecs_start, hyp_vecs_end - hyp_vecs_start);
 +
-+		if (!cpus_have_cap(ARM64_HAS_VIRT_HOST_EXTN))
-+			vect = lm_alias(vect);
++	flush_icache_range((uintptr_t)dst, (uintptr_t)dst + SZ_2K);
++}
++
++static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
++				      const char *hyp_vecs_start,
++				      const char *hyp_vecs_end)
++{
++	static int last_slot = -1;
++	static DEFINE_SPINLOCK(bp_lock);
++	int cpu, slot = -1;
++
++	spin_lock(&bp_lock);
++	for_each_possible_cpu(cpu) {
++		if (per_cpu(bp_hardening_data.fn, cpu) == fn) {
++			slot = per_cpu(bp_hardening_data.hyp_vectors_slot, cpu);
++			break;
++		}
 +	}
 +
-+	return vect;
-+}
++	if (slot == -1) {
++		last_slot++;
++		BUG_ON(((__bp_harden_hyp_vecs_end - __bp_harden_hyp_vecs_start)
++			/ SZ_2K) <= last_slot);
++		slot = last_slot;
++		__copy_hyp_vect_bpi(slot, hyp_vecs_start, hyp_vecs_end);
++	}
 +
-+static inline int kvm_map_vectors(void)
-+{
-+	return create_hyp_mappings(kvm_ksym_ref(__bp_harden_hyp_vecs_start),
-+				   kvm_ksym_ref(__bp_harden_hyp_vecs_end),
-+				   PAGE_HYP_EXEC);
++	__this_cpu_write(bp_hardening_data.hyp_vectors_slot, slot);
++	__this_cpu_write(bp_hardening_data.fn, fn);
++	spin_unlock(&bp_lock);
 +}
-+
 +#else
-+static inline void *kvm_get_hyp_vector(void)
++static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
++				      const char *hyp_vecs_start,
++				      const char *hyp_vecs_end)
 +{
-+	return kvm_ksym_ref(__kvm_hyp_vector);
++	__this_cpu_write(bp_hardening_data.fn, fn);
 +}
++#endif	/* CONFIG_KVM */
 +
-+static inline int kvm_map_vectors(void)
++static void  install_bp_hardening_cb(const struct arm64_cpu_capabilities *entry,
++				     bp_hardening_cb_t fn,
++				     const char *hyp_vecs_start,
++				     const char *hyp_vecs_end)
 +{
-+	return 0;
++	u64 pfr0;
++
++	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
++		return;
++
++	pfr0 = read_cpuid(ID_AA64PFR0_EL1);
++	if (cpuid_feature_extract_unsigned_field(pfr0, ID_AA64PFR0_CSV2_SHIFT))
++		return;
++
++	__install_bp_hardening_cb(fn, hyp_vecs_start, hyp_vecs_end);
 +}
++#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
++
+ #define MIDR_RANGE(model, min, max) \
+ 	.def_scope = SCOPE_LOCAL_CPU, \
+ 	.matches = is_affected_midr_range, \
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 5c41ef6..6e7fda3 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -98,6 +98,7 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_EXACT, ID_AA64PFR0_GIC_SHIFT, 4, 0),
+ 	S_ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
+ 	S_ARM64_FTR_BITS(FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
++	ARM64_FTR_BITS(FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
+ 	/* Linux doesn't care about the EL3 */
+ 	ARM64_FTR_BITS(FTR_NONSTRICT, FTR_EXACT, ID_AA64PFR0_EL3_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_STRICT, FTR_EXACT, ID_AA64PFR0_EL2_SHIFT, 4, 0),
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 0a27e12..bdb0139 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -549,13 +549,15 @@ el0_ia:
+ 	 * Instruction abort handling
+ 	 */
+ 	mrs	x26, far_el1
+-	// enable interrupts before calling the main handler
+-	enable_dbg_and_irq
++	msr	daifclr, #(8 | 4 | 1)
++#ifdef CONFIG_TRACE_IRQFLAGS
++	bl	trace_hardirqs_off
 +#endif
+ 	ct_user_exit
+ 	mov	x0, x26
+ 	mov	x1, x25
+ 	mov	x2, sp
+-	bl	do_mem_abort
++	bl	do_el0_ia_bp_hardening
+ 	b	ret_to_user
+ el0_fpsimd_acc:
+ 	/*
+diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
+index 32eeabe91..afc9266 100644
+--- a/arch/arm64/mm/context.c
++++ b/arch/arm64/mm/context.c
+@@ -231,6 +231,8 @@ asmlinkage void post_ttbr_update_workaround(void)
+ 			"ic iallu; dsb nsh; isb",
+ 			ARM64_WORKAROUND_CAVIUM_27456,
+ 			CONFIG_CAVIUM_ERRATUM_27456));
 +
- #endif /* __ASSEMBLY__ */
- #endif /* __ARM64_KVM_MMU_H__ */
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 0c848c1..cf6d962 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -50,7 +50,7 @@ static void __hyp_text __activate_traps_vhe(void)
- 	val &= ~CPACR_EL1_FPEN;
- 	write_sysreg(val, cpacr_el1);
- 
--	write_sysreg(__kvm_hyp_vector, vbar_el1);
-+	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
++	arm64_apply_bp_hardening();
  }
  
- static void __hyp_text __activate_traps_nvhe(void)
+ static int asids_init(void)
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 4df70c9..c95b194 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -590,6 +590,23 @@ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+ 	arm64_notify_die("", regs, &info, esr);
+ }
+ 
++asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
++						   unsigned int esr,
++						   struct pt_regs *regs)
++{
++	/*
++	 * We've taken an instruction abort from userspace and not yet
++	 * re-enabled IRQs. If the address is a kernel address, apply
++	 * BP hardening prior to enabling IRQs and pre-emption.
++	 */
++	if (addr > TASK_SIZE)
++		arm64_apply_bp_hardening();
++
++	local_irq_enable();
++	do_mem_abort(addr, esr, regs);
++}
++
++
+ /*
+  * Handle stack alignment exceptions.
+  */
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index e8471c2..15a82f3 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -13,6 +13,7 @@
+ #include <linux/uprobes.h>
+ #include <linux/page-flags-layout.h>
+ #include <linux/workqueue.h>
++#include <linux/percpu.h>
+ #include <asm/page.h>
+ #include <asm/mmu.h>
+ 
 -- 
 2.7.4
