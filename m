@@ -1,151 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033735AbeCARtU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:49:20 -0500
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:59740 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1033501AbeCARtS (ORCPT
+        id S1033704AbeCARsq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:48:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1033539AbeCARsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:49:18 -0500
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Brian Starkey <brian.starkey@arm.com>
-Cc: Mali DP Maintainers <malidp@foss.arm.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        DRI devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v2] drm/mali-dp: Fix malidp_atomic_commit_hw_done() for event sending.
-Date: Thu,  1 Mar 2018 17:49:13 +0000
-Message-Id: <20180301174913.10875-1-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180301173633.9506-1-Liviu.Dudau@arm.com>
-References: <20180301173633.9506-1-Liviu.Dudau@arm.com>
+        Thu, 1 Mar 2018 12:48:42 -0500
+Date: Thu, 1 Mar 2018 09:49:06 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
+ rcu-fence
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180301015531.olvuu5g35eta5xhr@tardis>
+ <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18030117-0056-0000-0000-00000426BEAB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008609; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00996886; UDB=6.00506843; IPR=6.00776205;
+ MB=3.00019803; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-01 17:48:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030117-0057-0000-0000-00000868BFA3
+Message-Id: <20180301174906.GC3777@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mali DP hardware has a 'go' bit (config_valid) for making the new scene
-parameters active at the next page flip. The problem with the current
-code is that the driver first sets this bit and then proceeds to wait
-for confirmation from the hardware that the configuration has been
-updated before arming the vblank event. As config_valid is actually
-asserted by the hardware after the vblank event, during the prefetch
-phase, when we get to arming the vblank event we are going to send it
-at the next vblank, in effect halving the vblank rate from the userspace
-perspective.
+On Thu, Mar 01, 2018 at 10:49:05AM -0500, Alan Stern wrote:
+> On Thu, 1 Mar 2018, Boqun Feng wrote:
+> 
+> > > +let rec rcu-fence = gp |
+> > > +	(gp ; rcu-link ; rscs) |
+> > > +	(rscs ; rcu-link ; gp) |
+> > > +	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
+> > > +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
+> > > +	(rcu-fence ; rcu-link ; rcu-fence)
+> > > +
+> > > +(* rb orders instructions just as pb does *)
+> > > +let rb = prop ; rcu-fence ; hb* ; pb*
+> > >  
+> > >  irreflexive rb as rcu
+> > 
+> > I wonder whether we can simplify things as:
+> > 
+> > 	let rec rcu-fence =
+> > 	    (gp; rcu-link; rscs) |
+> > 	    (rscs; rcu-link; gp) |
+> > 	    (gp; rcu-link; rcu-fence; rcu-link; rscs) |
+> > 	    (rscs; rcu-link; rcu-fence; rcu-link; gp)
+> > 	
+> > 	(* gp and rcu-fence; rcu-link; rcu-fence removed *)
+> > 	
+> > 	let rb = prop; rcu-fence; hb*; pb*
+> > 
+> > 	acycle rb as rcu
+> > 
+> > In this way, "rcu-fence" is defined as "any sequence containing as many
+> > grace periods as RCU read-side critical sections (joined by rcu-link)."
+> > Note that "rcu-link" contains "gp", so we don't miss the case where
+> > there are more grace periods. And since we use "acycle" now, so we don't
+> > need "rcu-fence; rcu-link; rcu-fence" to build "rcu-fence" recursively.
+> 
+> Would this definition of rcu-fence work for a sequence such as (leaving
+> out the intermediate rcu-link parts):
+> 
+> 	gp gp gp rscs rscs gp rscs rscs
+> 
+> ?  I don't think it would.  Yes, if you had a cycle of that form then 
+> your "rcu" axiom would detect it, but at some point we might want to 
+> use rcu-fence for some other purpose, one that doesn't involve cycles.
 
-Fix it by sending the userspace event from the IRQ handler, when we
-handle the config_valid interrupt, which syncs with the time when the
-hardware is active with the new parameters.
+Let's see, that would map to this:
 
-v2: Brian reminded me that interrupts won't fire when CRTC is off,
-so we need to do the sending ourselves.
+auto/RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
 
-Cc: Brian Starkey <brian.starkey@arm.com>
-Reported-by: Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/arm/malidp_drv.c | 30 ++++++++++++++++--------------
- drivers/gpu/drm/arm/malidp_drv.h |  1 +
- drivers/gpu/drm/arm/malidp_hw.c  | 12 +++++++++---
- 3 files changed, 26 insertions(+), 17 deletions(-)
+And no, there is no such automatically generated litmus test.  Let's
+try reversing the "gp" and "rscs", which should have the same effect
+courtesy of symmetry:
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index d88a3b9d59cc..a12bef526f92 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -185,25 +185,29 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
+auto/RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
+
+And that one doesn't exist, either.  So much for random test generation!  :-/
+
+Clearly time to add them.  And here is what herd has to say about them:
+
+l$ sh scripts/checklitmus.sh /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
+Herd options: -conf linux-kernel.cfg
+Observation /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R Sometimes 1 255
+ ^^^ Unexpected non-Never verification
+ 0inputs+32outputs (0major+2605minor)pagefaults 0swaps
+$ sh scripts/checklitmus.sh /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
+Herd options: -conf linux-kernel.cfg
+Observation /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G Sometimes 1 255
+ ^^^ Unexpected non-Never verification
+ 0inputs+32outputs (0major+2620minor)pagefaults 0swaps
+
+In other words, they are in fact misclassified as "Sometimes" when they
+should be "Never".  I have my diffs below in case I misapplied Boqun's
+change.
+
+With Alan's original formulation, these two litmus tests are correctly
+handled:
+
+$ sh scripts/checklitmus.sh /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R.litmus
+Herd options: -conf linux-kernel.cfg
+Observation /tmp/auto/C-RW-G+RW-G+RW-G+RW-R+RW-R+RW-G+RW-R+RW-R Never 0 255
+1.61user 0.00system 0:01.63elapsed 98%CPU (0avgtext+0avgdata 9572maxresident)k
+$ sh scripts/checklitmus.sh /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G.litmus
+Herd options: -conf linux-kernel.cfg
+Observation /tmp/auto/C-RW-R+RW-R+RW-R+RW-G+RW-G+RW-R+RW-G+RW-G Never 0 255
+1.84user 0.01system 0:01.92elapsed 96%CPU (0avgtext+0avgdata 10112maxresident)k
+
+> > I prefer this because we already treat "gp" as "strong-fence", which
+> > already is a "rcu-link".
+> 
+> That's a good point; it had not occurred to me.
+
+And if I remove the "gp" but leave the last line, it does properly
+classify the two new litmus tests.
+
+							Thanx, Paul
+
+> >  Also, recurisively extending rcu-fence with
+> > itself is exactly calculating the transitive closure, which we can avoid
+> > by using a "acycle" rule. Besides, it looks more consistent with hb and
+> > pb.
+> 
+> That _had_ occurred to me.  But I couldn't see any way to do it while 
+> still defining rcu-fence correctly.
+
+------------------------------------------------------------------------
+
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 1e5c4653dd12..75d3c225146c 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -106,12 +106,11 @@ let rcu-link = hb* ; pb* ; prop
+  * Any sequence containing at least as many grace periods as RCU read-side
+  * critical sections (joined by rcu-link) acts as a generalized strong fence.
+  *)
+-let rec rcu-fence = gp |
++let rec rcu-fence =
+ 	(gp ; rcu-link ; rscs) |
+ 	(rscs ; rcu-link ; gp) |
+ 	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
+-	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
+-	(rcu-fence ; rcu-link ; rcu-fence)
++	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp)
  
- static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
- {
--	struct drm_pending_vblank_event *event;
- 	struct drm_device *drm = state->dev;
- 	struct malidp_drm *malidp = drm->dev_private;
- 
-+	malidp->event = malidp->crtc.state->event;
-+	malidp->crtc.state->event = NULL;
-+
- 	if (malidp->crtc.enabled) {
-+		/*
-+		 * if we have an event to deliver to userspace, make sure
-+		 * the vblank is enabled as we are sending it from the IRQ
-+		 * handler.
-+		 */
-+		if (malidp->event)
-+			drm_crtc_vblank_get(&malidp->crtc);
-+
- 		/* only set config_valid if the CRTC is enabled */
--		if (malidp_set_and_wait_config_valid(drm))
-+		if (malidp_set_and_wait_config_valid(drm) < 0)
- 			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
--	}
--
--	event = malidp->crtc.state->event;
--	if (event) {
--		malidp->crtc.state->event = NULL;
--
-+	} else if (malidp->event) {
-+		/* CRTC disabled means vblank IRQ is disabled, send event directly */
- 		spin_lock_irq(&drm->event_lock);
--		if (drm_crtc_vblank_get(&malidp->crtc) == 0)
--			drm_crtc_arm_vblank_event(&malidp->crtc, event);
--		else
--			drm_crtc_send_vblank_event(&malidp->crtc, event);
-+		drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
-+		malidp->event = NULL;
- 		spin_unlock_irq(&drm->event_lock);
- 	}
- 	drm_atomic_helper_commit_hw_done(state);
-@@ -232,8 +236,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- 
- 	malidp_atomic_commit_hw_done(state);
- 
--	drm_atomic_helper_wait_for_vblanks(drm, state);
--
- 	pm_runtime_put(drm->dev);
- 
- 	drm_atomic_helper_cleanup_planes(drm, state);
-diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
-index e0d12c9fc6b8..c2375bb49619 100644
---- a/drivers/gpu/drm/arm/malidp_drv.h
-+++ b/drivers/gpu/drm/arm/malidp_drv.h
-@@ -22,6 +22,7 @@ struct malidp_drm {
- 	struct malidp_hw_device *dev;
- 	struct drm_crtc crtc;
- 	wait_queue_head_t wq;
-+	struct drm_pending_vblank_event *event;
- 	atomic_t config_valid;
- 	u32 core_id;
- };
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 2bfb542135ac..8abd335ec313 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -782,9 +782,15 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
- 	/* first handle the config valid IRQ */
- 	dc_status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
- 	if (dc_status & hw->map.dc_irq_map.vsync_irq) {
--		/* we have a page flip event */
--		atomic_set(&malidp->config_valid, 1);
- 		malidp_hw_clear_irq(hwdev, MALIDP_DC_BLOCK, dc_status);
-+		/* do we have a page flip event? */
-+		if (malidp->event != NULL) {
-+			spin_lock(&drm->event_lock);
-+			drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
-+			malidp->event = NULL;
-+			spin_unlock(&drm->event_lock);
-+		}
-+		atomic_set(&malidp->config_valid, 1);
- 		ret = IRQ_WAKE_THREAD;
- 	}
- 
-@@ -794,7 +800,7 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
- 
- 	mask = malidp_hw_read(hwdev, MALIDP_REG_MASKIRQ);
- 	status &= mask;
--	if (status & de->vsync_irq)
-+	if ((status & de->vsync_irq) && malidp->crtc.enabled)
- 		drm_crtc_handle_vblank(&malidp->crtc);
- 
- 	malidp_hw_clear_irq(hwdev, MALIDP_DE_BLOCK, status);
--- 
-2.16.2
+ (* rb orders instructions just as pb does *)
+ let rb = prop ; rcu-fence ; hb* ; pb*
