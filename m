@@ -1,182 +1,151 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-517306-1519965782-2-17031830393645436828
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519965781; b=d24Qbvd6HJuBHb55iyj0tWh0EP2F8UFEWNTFi4gw0fTsHO/
-    E8GGebu06vpabgui8rAhlcjonKBhSZAw8EKhhTYUUYJcPntppBgAwyM5A2GKNPu5
-    MntGm2prfQP9diJam24aUxzWKepaPDG0NrZPYsILrfaH6qDSXFFJBU33+EYAa26D
-    oeUVGIdQuvk8JFmrNKor3qCaQlUEqcMzi9+E9rCl0w8QWGt7PBgKra3SGhpSrkTh
-    5MQzFlS5aG66Jnb4NhsvBU4KeGe7Ph2NXcSIKG5ULhGl8q0WwK3H3jj16/Fe6wQO
-    +CWqZZe+3VuMoJruLlcZ34xwe6IdiJlV60bTHQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1519965781; bh=HQivaLxPpxita7Kh4Aew5K9DBC3Gkrw+N9FlaKYKq2Q=; b=l
-    MHU1eRl4eN+Pmt/7egWBlTDP3NzEypqVxrknjnQOQO+1V3/m8AMq6ky5NNH6qNn2
-    QINhDiqE8n9aY/2G4wVJJMfM4GTyfw0uZs/Gm6XkWQjHsEUK7biii7J6sOgvllWz
-    CF9cAdgubeevFYxcqa+2onoBFinBFaV0E29FOBXc+VuLj3m8W/DV7qOtyquZCbJk
-    LXg11uPugr9zprC2wnzIb5QQWyJX1050eLEvOQOdZ720rUKdGx/koni7x8la0MdX
-    Px44+la1N/8XZz9XD1XwUYg3c74IU4cj7MUpjIHCidcBBCdZWTvCyVuSXs55KmcR
-    x8dkgFTiHpigVk1fNHB2w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Th4BAnn5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Uu1c1re3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Th4BAnn5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Uu1c1re3;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422797AbeCBEnA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 23:43:00 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36753 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422796AbeCBEm6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 23:42:58 -0500
-X-Google-Smtp-Source: AG47ELslUQOYFFExWmZYJCZyc1cdW9eLfgDUKpM9M5Uph8q/MSJEWZBqo2EFIOPhpwDzz7Ler+4qOw==
-Subject: Re: [PATCH v5 2/9] watchdog/hpwdt: Remove legacy NMI sourcing.
-To: Jerry.Hoemann@hpe.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com,
-        Ingo Molnar <mingo@kernel.org>, marcus.folkesson@gmail.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        stable <stable@vger.kernel.org>
-References: <20180226032227.14615-1-jerry.hoemann@hpe.com>
- <20180226032227.14615-3-jerry.hoemann@hpe.com>
- <CAK8P3a1A5d52g-3Wgs1xP3P=dT6K0RVjmamfqAi9vE5TT=mo3g@mail.gmail.com>
- <03b13d44-9ce3-ead8-020d-4b1b8114079d@roeck-us.net>
- <20180227010250.GC8244@anatevka.americas.hpqcorp.net>
- <8766f2ee-428a-d72f-b0c3-e5fe68fd0a33@roeck-us.net>
- <20180228194558.GB28906@anatevka.americas.hpqcorp.net>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <f61a92c4-f923-77d7-22a8-11481baca79b@roeck-us.net>
-Date: Thu, 1 Mar 2018 20:42:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1519894646; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=Tj2q7687rViVKfzGMhxGdNxlO1MaJHN2MTngZcBT2n4YW01kLGZQOHAWLycoWk6og/
+         HtBmVDNb2tv399xizUIfBaosSVpRs/vkG9iI3sIwDZGV9spL2NJX9lygFZt2k5JeqxN7
+         0J/VLPXn3eGaVzdCeqaiVLbXWXVsGETCPVy/Ia0Ssh5OgVs6f352v2/+2XVmh+cqzl2N
+         jTUGGqcHRo5TN/3+B56YrPookHyLHiusnAo0A27HnOeNrzdVopDkp8D6cUBahDOe1G60
+         kkPJ6+674JFzoO3rrwAXsO5NQAbtFZEPpbgY045Pc/7alqvd0ifleYVSpfr8pxdycg7C
+         bYLg==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results:arc-message-signature
+         :arc-authentication-results;
+        bh=63AYGJLHdrgjTO8rCQVjw3zqjDAq0mi785LNk7sbhtE=;
+        b=d7vgFdWfDNdsckKcQTiic2zkXJcpYvJk5CIWulHESO+xUFcn+Y0UfnZomAHNW/k5vx
+         hcPJ7+ImbpZOzdPEJp86KLqomEz2zAz0b8VJ3zhO4ZkL/o26Br4enL91Pv4IyMvBUsF0
+         52IdfrMB17AJln9Al8+tcTPE0PZUu8yUayQZRY02f87+EOFbF9WapqMKb5Akp7S0zjoV
+         MG5ph9z++Bz5vEWvFpEQfEBBnc+iSdzXF14g9EadE92tL+nSxn91bfv9Q1US9Sh/pk7g
+         RCwp6d1xx27JRvvVQA4Pbtdd73NQlHv1fzj5VdBfe4IZt/nnvwpj5NlSZ+rHN3Abdfko
+         0LNQ==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=R7dgBGTF;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QYXHMOqn;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbc4o7jfqxqfrb5ma37kakgqez4yzqmy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=R7dgBGTF;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QYXHMOqn;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbc4o7jfqxqfrb5ma37kakgqez4yzqmy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBC4O7JFQXQFRB5MA37KAKGQEZ4YZQMY@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1519894646; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=NLJPBT5yVqUQga+XEETns4fJUVgHvZML1o8WGQFAXHG5Y61LRfCi0j4ueSek9ZK4/K
+         px4VUIHks0MMa6wf0fmp0fyasEu/15EJKmLG6FwpXKS6L2yRTaClBAPI0jCmQatk8FVm
+         dSOgEQeYQeyvjwAhKyFf8ACBM0rgFPOa7RY59KaCua7+2UrXuFPHouGv+/Enf7rqt2GU
+         tm2a5ETrV+mht9pn7Z9XcPDbFyczhfLCOYVO8o7AFSSv2zn5xx0b4nBj5M+xUkjNACgs
+         hZppnj569b2faymEhO2tRhnZum9XeXtFl6oqdX2din2djFPkfz+cPJKvFH0nCr0E9dAA
+         fY3w==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=63AYGJLHdrgjTO8rCQVjw3zqjDAq0mi785LNk7sbhtE=;
+        b=lQJvzfw0su1bDeMRfxkzW55OesO1ViHTi9XnMOp+6bDnS+2c5WHFs+cpbGhL0IQ3ZV
+         y5zdgkeIdxP1A2zicxx53VY2VCM7dWDxU4Pf75un3VAy9JLp50/04oi/F9CIQun50xN8
+         ixPX30erahuWvnDlXDSxNOktKHFYusw0bqtjLAkZnDuj1UOB7lhdEmyLSRD0hbLJtHV0
+         1oTPTlB3Zd7ClZuk3RelxQhWqFDPr12OVRti+EOUkgMhMhDfDMdKbTIMLoJwZfcjsd1p
+         lGk4cLOZmeBoaoYo2fI8w0BWFtNIzKXzpLalREDIrS60XtA2RAYkhFLURGKx2AclSSd5
+         4VjQ==
+ARC-Authentication-Results: i=2; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;
+       spf=pass (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as permitted sender) smtp.mailfrom=dafna3@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Sender: outreachy-kernel@googlegroups.com
+X-Google-Smtp-Source: AG47ELva7ttP/lus+VGAm2f6vwpCZd6T/CN4y8JYX2JiPr7QrhDKXw7h/7RV1GaveMtRO0z+5tQ3HA==
+X-BeenThere: outreachy-kernel@googlegroups.com
+ARC-Seal: i=1; a=rsa-sha256; t=1519894645; cv=none;
+        d=google.com; s=arc-20160816;
+        b=BGUVNYNfD/v0T10DipKAArVwt5JlJsT+VQyeAabSGlnWthW5esmGeTR83OuxT8Nkn7
+         nRjiJSrNfSPCmrmsWg2H1zkBGSDzwluvpRghg3zqsPqqhRnskGhbdnslS+EFArRZdzfL
+         qbh/wTItnkME7Vno6TvvZ5rR5M/9XFKyPu6BLz+kuzDcP3Q8MuIbbAAOkU0wiRhp1bpN
+         Xz2OLfCc46kr5quMXJSB2i6nH07cVZOa/cfxfUrEqy4q76ODYQPa1ZLeypPSYzSRhAK9
+         ldtpSmXS6ovaI2FygRnW/Yw+RyUI5F7ccVwaK1wZVlujaWw3TQtZ+h2aMvCL3HN22gHB
+         Ky9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=SD+fg8HBJsn6GE9PdO4Qs0QUv/WL5Hd4jfnxAOv3AWE=;
+        b=cPLGMSRxPe8A6Bb6j5fBX6Z1DwOjRItv/BcKx6FHX1+635gW+7cv+Y9LVARH5bzcLl
+         4ZbE4mlot1lnqfOktC7tQLolE6EhjgKPFDkstA4Zaskxq/yFX36HrGZq8uRqhR4WhGdR
+         c8umLmCHODEcm8KoxyW/IQYiMfv/rRFOm1oePH04ljEGuY1LHGRQpv4+G5/O+0WJgL7h
+         rNEtySnY2afOdjWj/OQC55UEJ5Mvttmq45tV+tZ/tj4S4duHQ7NTc1kSNfUCuhAyZ6YN
+         3YsHVe8OUVJYvUZBi5LDRLI0+sp1vsrv77iauwItsq40W/VxIejNr/2GF2lWsOe/YAd2
+         7+hA==
+ARC-Authentication-Results: i=1; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;
+       spf=pass (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as permitted sender) smtp.mailfrom=dafna3@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Thu, 1 Mar 2018 10:57:21 +0200
+From: Dafna Hirschfeld <dafna3@gmail.com>
+To: Julia.Lawall@lip6.fr, Gilles.Muller@lip6.fr, nicolas.palix@imag.fr,
+	michal.lkml@markovi.net, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: outreachy-kernel@googlegroups.com
+Subject: [Outreachy kernel] [PATCH] Coccinelle: memdup: Fix typo in warning messages
+Message-ID: <20180301085717.GA4508@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228194558.GB28906@anatevka.americas.hpqcorp.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Original-Sender: dafna3@gmail.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@gmail.com header.s=20161025 header.b=QB4Y9cJU;       spf=pass
+ (google.com: domain of dafna3@gmail.com designates 2a00:1450:400c:c09::22c as
+ permitted sender) smtp.mailfrom=dafna3@gmail.com;       dmarc=pass (p=NONE
+ sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
+X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
+X-Google-Group-Id: 672804067692
+List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
+List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
+List-Archive: <https://groups.google.com/group/outreachy-kernel
+List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
+ <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593725048662035735?=
+X-GMAIL-MSGID: =?utf-8?q?1593725048662035735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 02/28/2018 11:45 AM, Jerry Hoemann wrote:
-> On Mon, Feb 26, 2018 at 05:29:55PM -0800, Guenter Roeck wrote:
->> On 02/26/2018 05:02 PM, Jerry Hoemann wrote:
->>> On Mon, Feb 26, 2018 at 06:32:30AM -0800, Guenter Roeck wrote:
->>>> On 02/26/2018 06:11 AM, Arnd Bergmann wrote:
->>>>> On Mon, Feb 26, 2018 at 4:22 AM, Jerry Hoemann <jerry.hoemann@hpe.com> wrote:
->>>>>> Gen8 and prior Proliant systems supported the "CRU" interface
->>>>>> to firmware.  This interfaces allows linux to "call back" into firmware
->>>>>> to source the cause of an NMI.  This feature isn't fully utilized
->>>>>> as the actual source of the NMI isn't printed, the driver only
->>>>>> indicates that the source couldn't be determined when the call
->>>>>> fails.
->>>>>>
->>>>>> With the advent of Gen9, iCRU replaces the CRU. The call back
->>>>>> feature is no longer available in firmware.  To be compatible and
->>>>>> not attempt to call back into firmware on system not supporting CRU,
->>>>>> the SMBIOS table is consulted to determine if it is safe to
->>>>>> make the call back or not.
->>>>>>
->>>>>> This results in about half of the driver code being devoted
->>>>>> to either making CRU calls or determing if it is safe to make
->>>>>> CRU calls.  As noted, the driver isn't really using the results of
->>>>>> the CRU calls.
->>>>>>
->>>>>> Furthermore, as a consequence of the Spectre security issue, the
->>>>>> BIOS/EFI calls are being wrapped into Spectre-disabling section.
->>>>>> Removing the call back in hpwdt_pretimeout assists in this effort.
->>>>>>
->>>>>> As the CRU sourcing of the NMI isn't required for handling the
->>>>>> NMI and there are security concerns with making the call back, remove
->>>>>> the legacy (pre Gen9) NMI sourcing and the DMI code to determine if
->>>>>> the system had the CRU interface.
->>>>>>
->>>>>> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
->>>>>
->>>>> This avoids a warning in mainline kernels, so that's great:
->>>>>
->>>>> drivers/watchdog/hpwdt.o: warning: objtool: .text+0x24: indirect call
->>>>> found in RETPOLINE build
->>>>>
->>>>> I wonder what we do about stable kernels. Are both this patch and the patch
->>>>> that added the objtool warning message candidates for backports to
->>>>> stable kernels?
->>>>>
->>>>
->>>> Makes sense to me, but it is really a bit more than a bug fix, so I'll
->>>> leave it up to Jerry/HPE to make the call in respect to hpwdt.
->>>>
->>>
->>> Generally speaking, HPE customers who run linux do so through a distro
->>> vendor and pick up patches from them.  But I'm sure there are some
->>> customers who do things differently.
->>>
->>> The distro vendor's have their own repos and we'll work with them
->>> to back port patches to their code base.  So, I typically don't do a lot
->>> of kernel.org stable branch work.
->>>
->>> Looks like objtool has been enhanced to find Spectre vulnerable code.
->>> Are the other kernel patches related to Spectre being back ported
->>> to stable release lines?  If yes, it probably make sense to do
->>> the hpwdt change as well.
->>>
->>
->> Spectre has been backported to v4.4 and later. I don't know about earlier kernels.
->>
->>> Is just the patch removing the firmware call back wanted/needed? Or the
->>> whole driver rewrite?  (The older baseline don't have all the watchdog
->>> features that the patch set uses.)
->>>
->>
->> We would only want to backport this patch. The rest is really out of scope.
->>
->>> Which stable baseline(s) would need to be patched?  Priority?
->>>
->>> Who does it?  (i.e. do you want me to submit patches to the stable baseline?)
->>>
->> We would tag the patch for stable (and submit it into v4.16-rc). Greg would
->> take care of the rest unless there are conflicts, in which case we get a note
->> telling us that a backport is needed.
->>
-> 
-> Guenter,
-> 
-> Are you waiting for anything more from me on this patch, or are we
-> good for now until the back ports to v.15 etc.,?
-> 
+Replace 'kmemdep' with 'kmemdup' in warning messages.
 
-We are good. I'll need to ask Wim to send a pull request to Linus.
+Signed-off-by: Dafna Hirschfeld <dafna3@gmail.com>
+Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+---
+ scripts/coccinelle/api/memdup.cocci | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Guenter
+diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api/memdup.cocci
+index 1249b72..8fd6437 100644
+--- a/scripts/coccinelle/api/memdup.cocci
++++ b/scripts/coccinelle/api/memdup.cocci
+@@ -56,10 +56,10 @@ statement S;
+ p << r.p;
+ @@
+ 
+-coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdep")
++coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdup")
+ 
+ @script:python depends on report@
+ p << r.p;
+ @@
+ 
+-coccilib.report.print_report(p[0], "WARNING opportunity for kmemdep")
++coccilib.report.print_report(p[0], "WARNING opportunity for kmemdup")
+-- 
+2.7.4
+
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180301085717.GA4508%40gmail.com.
+For more options, visit https://groups.google.com/d/optout.
