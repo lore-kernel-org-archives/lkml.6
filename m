@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909331-2-6957185382908301674
+X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909323-2-583688679516492483
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909330; b=B8qiMVh6H4WPhWH5rkMuD2XwkMGMuCn2//q37SY5DgJxmxo
-    p+QQXyYxRxPZCblvAbd3/QMTq2nl7D/RBnxnuyyuy/F7s0P1A+0Wv1r2OJRaV5Qr
-    adNAVAYfw/LV3OGnxDMyjpDxwbTGgYw8WHDF1myXQng81XOoBT0ctkZoZa/UwCiu
-    5S7XM7VbpqoYvxtJKwO/i/Iwk0P7p64q3AKmz7JyukH3NKxI005hobbyK7mWqIUL
-    ahXt08of9s3/I5PSn+Rh9cmKkHedUcOEHhs9ersf5ALpEkO3P1uho8Ev3cgFaVcU
-    NrrAPjnnOUilO06O/GGg/TT0P+6+lr/zzj67vcQ==
+    t=1519909322; b=IoMuVWOxypooYJgqoM9PmsmNdItPqbXvLlA8dGVpVkhh0+m
+    TeZctKiw7S1qo9lvr7tWe2zLKuH896jv6uN/o1sRsgC24+nNjn2EDnL9GrTiHBg8
+    ypU7F5IfyTZcYrejrf4jmNpNIHsoVbbuIO+/0Z2+OKV1/2o6aBrdzz7fksi4IAB1
+    CNNhloa+p6cRHt/tNV8E61qGDKVcx+FgXVpJ1oWEe1Tw8TDY8eoliZYNoD4kSBUi
+    wnndb2NDnJkip7+VldcnXKjMjWMsH+bgs0keZsV/48KzreVHtNv1glbkcfQAF3Q7
+    Nj3SO4GK4GgZGv5YmL9SJTi4uRNX+9/HM3xnrqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519909330;
-    bh=HEY4UErd4E33sLr2mfE4fjyOkfyGVz0DVWFLdDXHqoI=; b=az7FXQaKpx5i
-    YFRb2pn6e5TEDttNX+grGDuL4+YJZCUgup18N55XBgUjpm1fRCctbcAezDf2s9Gw
-    itY3xXScKK94o5cp1+GmiFWGDc5e5F/t31Ma8dLlnBSGblLD0NcD02KqDn1eF5YC
-    DYUZV+M7/DKYX0kXmniNUEZcbbHzztTIceK3xJGPZDw/Ca/m1tKjHNHA+rtXF4QQ
-    B34lh+c/3YbCssrbBKQc3LOd7VHjs79d8lo1BruXtJMyfwgqgjX30lQOtFKSOUWy
-    sMAV9x9dFLHHGL9VJJY5mV1YZGGUQlU1XXl1XbKVfXMREq1y36rKjtQ6LV0kda32
-    Cfpmdw1PwQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OsId/04A x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1519909322;
+    bh=xjpJ8k7CKNbvTvoCWi2+8tjs1SrG8L5eeUCBFmDTG3o=; b=eJsywULthrMj
+    tBYIHqaQpzRp+owLbZGbRSbz9xIkBcSCBVCCBu2qRu8M5b7mp0BvbExVUglNf21S
+    1f0ThLnA/mFdxrSlIz6pbURDe0tjNnPaSJJpEjGLBD/5e+6ajn9tXPUcAG5yhMMq
+    vv5vle0/IvYqdupXn7CDbminJhI/uygmE0Rc1auLWdB71jaxCOdPvpM14TmlB0hR
+    d3uSD37lRiQszkRdn2rXkep+VesteMyW9w9oSa2svJilFQC+R2txDHsFSqH63ynD
+    foKgxSlhdp2avHrr5BeR+bnO8/65OR1DIpm2PxEdMfNHajsVeuKboOXrOaeJHsCF
+    51zBFyFT+w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ULhcJObd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YuJJeTxQ;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OAvZvRpc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=OsId/04A x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=ULhcJObd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YuJJeTxQ;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OAvZvRpc;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030539AbeCANCG (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 08:02:06 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40265 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030739AbeCANAu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 08:00:50 -0500
-X-Google-Smtp-Source: AG47ELvQqnGqop2TBN8hv8AWjq4YbCsz4i+AuqmSvTMEN2TFxuw7Q/KfIRkMsDsPnJ55jXJhZeLDFg==
+        id S1030850AbeCANBA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 08:01:00 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43078 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030312AbeCANA6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 08:00:58 -0500
+X-Google-Smtp-Source: AG47ELtk5UIblqE4EjZZZmblxyUl0egcP/ETuZdAP2NsG4qBYpoepQrn4DXTcsQu6PMQDGoCf3OtFA==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 41/45] firmware/psci: Expose SMCCC version through psci_ops
-Date: Thu,  1 Mar 2018 20:54:18 +0800
-Message-Id: <1519908862-11425-42-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 42/45] arm/arm64: smccc: Make function identifiers an unsigned quantity
+Date: Thu,  1 Mar 2018 20:54:19 +0800
+Message-Id: <1519908862-11425-43-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -78,13 +78,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit e78eef554a91 upstream.
+commit ded4c39e93f3 upstream.
 
-Since PSCI 1.0 allows the SMCCC version to be (indirectly) probed,
-let's do that at boot time, and expose the version of the calling
-convention as part of the psci_ops structure.
+Function identifiers are a 32bit, unsigned quantity. But we never
+tell so to the compiler, resulting in the following:
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+ 4ac:   b26187e0        mov     x0, #0xffffffff80000001
+
+We thus rely on the firmware narrowing it for us, which is not
+always a reasonable expectation.
+
+Cc: stable@vger.kernel.org
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
@@ -92,85 +98,31 @@ Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- drivers/firmware/psci.c | 27 +++++++++++++++++++++++++++
- include/linux/psci.h    |  6 ++++++
- 2 files changed, 33 insertions(+)
+ include/linux/arm-smccc.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index a49196a..79a48c3 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -61,6 +61,7 @@ bool psci_tos_resident_on(int cpu)
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index e1ef944..dd44d84 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -14,14 +14,16 @@
+ #ifndef __LINUX_ARM_SMCCC_H
+ #define __LINUX_ARM_SMCCC_H
  
- struct psci_operations psci_ops = {
- 	.conduit = PSCI_CONDUIT_NONE,
-+	.smccc_version = SMCCC_VERSION_1_0,
- };
++#include <uapi/linux/const.h>
++
+ /*
+  * This file provides common defines for ARM SMC Calling Convention as
+  * specified in
+  * http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
+  */
  
- typedef unsigned long (psci_fn)(unsigned long, unsigned long,
-@@ -511,6 +512,31 @@ static void __init psci_init_migrate(void)
- 	pr_info("Trusted OS resident on physical CPU 0x%lx\n", cpuid);
- }
+-#define ARM_SMCCC_STD_CALL		0
+-#define ARM_SMCCC_FAST_CALL		1
++#define ARM_SMCCC_STD_CALL	        _AC(0,U)
++#define ARM_SMCCC_FAST_CALL	        _AC(1,U)
+ #define ARM_SMCCC_TYPE_SHIFT		31
  
-+static void __init psci_init_smccc(void)
-+{
-+	u32 ver = ARM_SMCCC_VERSION_1_0;
-+	int feature;
-+
-+	feature = psci_features(ARM_SMCCC_VERSION_FUNC_ID);
-+
-+	if (feature != PSCI_RET_NOT_SUPPORTED) {
-+		u32 ret;
-+		ret = invoke_psci_fn(ARM_SMCCC_VERSION_FUNC_ID, 0, 0, 0);
-+		if (ret == ARM_SMCCC_VERSION_1_1) {
-+			psci_ops.smccc_version = SMCCC_VERSION_1_1;
-+			ver = ret;
-+		}
-+	}
-+
-+	/*
-+	 * Conveniently, the SMCCC and PSCI versions are encoded the
-+	 * same way. No, this isn't accidental.
-+	 */
-+	pr_info("SMC Calling Convention v%d.%d\n",
-+		PSCI_VERSION_MAJOR(ver), PSCI_VERSION_MINOR(ver));
-+
-+}
-+
- static void __init psci_0_2_set_functions(void)
- {
- 	pr_info("Using standard PSCI v0.2 function IDs\n");
-@@ -559,6 +585,7 @@ static int __init psci_probe(void)
- 	psci_init_migrate();
- 
- 	if (PSCI_VERSION_MAJOR(ver) >= 1) {
-+		psci_init_smccc();
- 		psci_init_cpu_suspend();
- 		psci_init_system_suspend();
- 	}
-diff --git a/include/linux/psci.h b/include/linux/psci.h
-index 66ff547..347077c 100644
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -31,6 +31,11 @@ enum psci_conduit {
- 	PSCI_CONDUIT_HVC,
- };
- 
-+enum smccc_version {
-+	SMCCC_VERSION_1_0,
-+	SMCCC_VERSION_1_1,
-+};
-+
- struct psci_operations {
- 	u32 (*get_version)(void);
- 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
-@@ -41,6 +46,7 @@ struct psci_operations {
- 			unsigned long lowest_affinity_level);
- 	int (*migrate_info_type)(void);
- 	enum psci_conduit conduit;
-+	enum smccc_version smccc_version;
- };
- 
- extern struct psci_operations psci_ops;
+ #define ARM_SMCCC_SMC_32		0
 -- 
 2.7.4
