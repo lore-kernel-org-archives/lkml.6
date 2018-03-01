@@ -1,180 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030212AbeCALWX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:22:23 -0500
-Received: from mail-it0-f47.google.com ([209.85.214.47]:55915 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967726AbeCALWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:22:16 -0500
-X-Google-Smtp-Source: AG47ELvA/4sQkx4uwbQ9daCI0Q4NZ7ZOtuoV8Tw05yjN8OWfXJ3+ebCDu3gN2j9MKxyUYVbI8A3Y/m1PcjWYmDEMvFs=
+        id S1030235AbeCALWr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:22:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:36406 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030215AbeCALWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 06:22:45 -0500
+Date: Thu, 1 Mar 2018 11:22:37 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] Detect early free of a live mm
+Message-ID: <20180301112237.pjn5rmvkkpxcntl7@lakrids.cambridge.arm.com>
+References: <20180228121458.2230-1-mark.rutland@arm.com>
+ <20180228121809.ztpcjb3256tj6tct@lakrids.cambridge.arm.com>
+ <20180301093522.GC15057@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWg1y3Ragb9nYY12whZhUn8w0a4aOOR31LSNXa37NbfXg@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
- <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
- <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
- <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
- <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
- <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
- <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com>
- <5A977638.8010506@rock-chips.com> <CAMuHMdU9PFAXwo+1Z7Baw1fanst9yFKZ3ohoSTiQiMKTaYMVVw@mail.gmail.com>
- <CAPDyKFq_hwao0hZCYmO-VrsW3vDJJboa1RG-TMLRQRgbt+YhpQ@mail.gmail.com> <CAMuHMdWg1y3Ragb9nYY12whZhUn8w0a4aOOR31LSNXa37NbfXg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 1 Mar 2018 12:22:14 +0100
-Message-ID: <CAPDyKFrN0t6Jr-gAuU4_OHEvYap2fRiaUbZC5E7sAGAQOUQjjw@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301093522.GC15057@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 March 2018 at 11:37, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> On Thu, Mar 1, 2018 at 11:18 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 1 March 2018 at 09:33, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->>> On Thu, Mar 1, 2018 at 4:40 AM, JeffyChen <jeffy.chen@rock-chips.com> wrote:
->>>> 3/ make sure PM clk always be controlled(otherwise it might be unexpected
->>>> disabled by other clocks under the same clk parent?):
->>>>  a) make sure Runtime PM is always enabled. and as discussed, we can select
->>>> PM in ARCH_ROCKCHIP
->>
->> I am fine enabling PM for ARCH_ROCKCHIP, if needed.
->>
->> However, what I don't agree with in general, is to make a generic
->> driver to rely on having CONFIG_PM to be set to be functional. That's
->> to me, bad practice.
->>
->> I understand, this approach exists in drivers today. I assume it
->> works, because those drivers are being used on SoCs which always has
->> CONFIG_PM set.
->
-> I agree. This is mostly useful for drivers that are used on multiple SoCs,
-> where the driver doesn't care about the clock (doesn't care about its
-> properties), and where the clock is optional (i.e. either tied to an
-> always-running bus clock, or to a controllable module clock, depending on SoC).
-> The latter needs CONFIG_PM=y, but that's a platform property, controlled
-> by selecting support for that specific SoC.
->
->>> On Renesas SoCs, we only add the device's module clock with pm_clk_add().
->>> Drivers that don't care about properties of the module clock just call
->>> pm_runtime_*(). That way the same driver works on different SoCs using
->>> the same device, with and without power and/or clock domains.
->>
->> I understand your point and I accept your view.
->>
->> However, I think this is more a mindset of which way one want
->> implement things. This has been discussed several times in the mailing
->> list as well.
->>
->> Surely we can cope with SoC specific constraints in drivers as well,
->> we already do that.
->>
->> In principle I think this boils done to comparing a centralized
->> method, where the PM domain deals with clocks vs a decentralized
->> method, where the driver deals with clocks. Both works, both have
->> positive and negative consequences.
->
-> Is the clock (are the clocks) used purely for power management of the device,
-> or does it/do they serve another (independent) purpose?
+On Thu, Mar 01, 2018 at 10:35:22AM +0100, Michal Hocko wrote:
+> On Wed 28-02-18 12:18:10, Mark Rutland wrote:
+> > Ugh, I messed up Peter's email when sending this out. please
+> > s/infraded/infradead/ if replying to the first mail.
+> > 
+> > Sorry about that.
+> > 
+> > Mark.
+> > 
+> > On Wed, Feb 28, 2018 at 12:14:58PM +0000, Mark Rutland wrote:
+> > > KASAN splats indicate that in some cases we free a live mm, then
+> > > continue to access it, with potentially disastrous results. This is
+> > > likely due to a mismatched mmdrop() somewhere in the kernel, but so far
+> > > the culprit remains elusive.
+> > > 
+> > > Let's have __mmdrop() verify that the mm isn't live for the current
+> > > task, similar to the existing check for init_mm. This way, we can catch
+> > > this class of issue earlier, and without requiring KASAN.
+> 
+> Wouldn't it be better to check the mm_users count instead?
+> {VM_}BUG_ON(atomic_read(&mm->mm_users));
 
-Well, I am not talking about one specific case.
+Perhaps, but that won't catch a mismatched mmput(), which could
+decrement mm_users (and mm_count) to zero early, before current->mm is
+cleared in exit_mm().
 
-I guess what you are saying is that, devices may need different kind
-of clocks. Some can be power managed, some can't. That seems
-reasonable.
+Locally, I'm testing with:
 
-In either way, the driver should be able to cope with both kinds of
-clocks. Right!?
+  BUG_ON(mm == current->mm);
+  BUG_ON(mm == current->active_mm);
+  BUG_ON(refcount_read(&mm->mm_users) != 0);
+  BUG_ON(refcount_read(&mm->mm_count) != 0);
 
->
-> Note that unlike clocks, power areas cannot be controlled explicitly by the
-> driver. That always has to be done through the Runtime PM API.
+... so as to also catch an early free from another thread.
 
-Yes, agree!
+> Relying on current->mm resetting works currently but this is quite a
+> subtle dependency.
 
-At least until/if we get multiple power areas (PM domain) support for
-devices. Then this may change. However, that's a different story. :-)
+Do you mean because it only catches an early free in a thread using that
+mm, or is there another subtlety you had in mind?
 
->
->> In my experience for ARM SoCs, I have found that centralized method
->> doesn't work well, when one need flexibility. For example, if there
->> are strict constraints on the order of how to put device's PM
->> resources (clocks, pinctrl, etc) in low power states. For example, to
->> avoid clock glitches.
->
-> With multiple clocks used by a device, there's sometimes also a lack of
-> understanding of the real clock hierarchy. If these multiple clocks need
-> to be enabled/disabled in a specific order, perhaps they are not
-> independent, and modelling the hierarchy correctly, and describing in DT
-> the device as being connected to the leaf clock may solve the ordering issue.
-
-Nope, this scenario I had in mind isn't about the clock hierarchy.
-Instead this is about other resources that the driver deals with
-during runtime PM. Pinctrl, regulators, device internals registers,
-etc.
-
-I have stumbled of cases, where the order dealing with these
-resources, simply need to be strict, thus it is better managed from
-the driver's runtime PM callbacks.
-
-What I am saying is that, if you have these kind of constraints, then
-having clocks being managed at the PM domain level via PM clk and
-other resources in the driver, simply isn't a good mix.
-
->
->> Another problem with the PM clk is, more exactly with
->> pm_clk_suspend|resume(), that those invokes only clk_enable|disable().
->> pm_clk_suspend|resume() can't call clk_prepare|unprepare(), because we
->> don't know if we running in atomic context when those are executed.
->> Potentially this means leaving the clocks ungated - all the time.
->>
->> I have though about how to fix the above, several times, but I always
->> ends up with thinking that's it more easy, to let the driver deal with
->> the clocks, as then the problem goes away.
->
-> There's a similar issue with powering on/off power areas.
-
-I don't follow. Can you elaborate?
-
-> How do device start/stop differ from power domain on/off?
-
-I guess what you refer to is that, genpd's ->start|stop() callbacks
-may be assigned to pm_clk_suspend|resume(), and those may be called
-from genps's runtime PM callbacks and genpd's system sleep callbacks.
-
-Yes, both cases suffers from the same problem as I describe above.
-Clocks may stay ungated - all the time.
-
->
->>> Drivers that care about properties of the module clock (mainly frequency)
->>> can still use the clk_*() API for that. Other (optional) clocks must be
->>> handled by the device driver itself.
->>
->> A comment on that;
->>
->> Before we the PM clk was introduced, we didn't have the clk_bulk_*()
->> interface. To me, using clk_bulk_*() in drivers could help to simplify
->> the code in regards to manage clocks (including SoC specific clocks)
->> during runtime PM.
->>
->> Perhaps this could be an option to using PM clk, as it provides both
->> flexibility and could manage SoC specific clocks.
->
-> See my comment about multiple clocks above...
->
-
-Kind regards
-Uffe
+Thanks,
+Mark.
