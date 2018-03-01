@@ -1,146 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967331AbeCAKhF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 05:37:05 -0500
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:47045 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965992AbeCAKhC (ORCPT
+        id S967077AbeCAKk2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 05:40:28 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38613 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966437AbeCAKkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 05:37:02 -0500
-X-Google-Smtp-Source: AG47ELuJerH6BdB8Bk9+Acs9cxwXK+i0Hi4mqxVhsNbo5Zgxn62UK3kW8nVpPqEphyCgKAf3ASFSzYPDCg/DVU6eQUI=
+        Thu, 1 Mar 2018 05:40:24 -0500
+X-Google-Smtp-Source: AG47ELtdFx6/Psp0/bzEg874ZV5R59OP8YPejzkFyrfCPt/Wkv8eeH+p4LzlyhFfgfm8/qexWJWVCw==
+Subject: Re: [PATCH 09/15] lightnvm: implement get log report chunk helpers
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <jg@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
+ <1519832975-25432-10-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <4c82d581-d8bf-25fb-26ea-48b26e6de899@lightnvm.io>
+Date: Thu, 1 Mar 2018 11:40:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFq_hwao0hZCYmO-VrsW3vDJJboa1RG-TMLRQRgbt+YhpQ@mail.gmail.com>
-References: <20180228111113.13639-1-jeffy.chen@rock-chips.com>
- <CAMuHMdWLL9CxmxSLsqs1QX0dDHVhp4NrW4Me2EZaZE_bJ330bA@mail.gmail.com>
- <CAAFQd5CLXUwH6jTq9ZOpbYt9-Xx-+Kgj-Nk+KujS=Y=qLByc9Q@mail.gmail.com>
- <CAMuHMdWdVdregCRh17Jfa92csBruZvLzAK+M8uajif0BSJTcaw@mail.gmail.com>
- <CAAFQd5CpA_M821cMDtiEiWxw_rL--hQy6T6imz_c+fSi3gH9zw@mail.gmail.com>
- <CAMuHMdVVDiuv7bpdC0X95Xy9dSK_TfjW5RvSekVym9Q02798Fg@mail.gmail.com>
- <CAAFQd5C0GZ9C-pAqAdpuyxaF2xthLPY62a921nmABTbbmYtBmQ@mail.gmail.com>
- <5A977638.8010506@rock-chips.com> <CAMuHMdU9PFAXwo+1Z7Baw1fanst9yFKZ3ohoSTiQiMKTaYMVVw@mail.gmail.com>
- <CAPDyKFq_hwao0hZCYmO-VrsW3vDJJboa1RG-TMLRQRgbt+YhpQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Mar 2018 11:37:00 +0100
-X-Google-Sender-Auth: C7aLrygR7iDLOO-OTtexzXke_kE
-Message-ID: <CAMuHMdWg1y3Ragb9nYY12whZhUn8w0a4aOOR31LSNXa37NbfXg@mail.gmail.com>
-Subject: Re: [PATCH] soc: rockchip: power-domain: remove PM clocks
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519832975-25432-10-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+On 02/28/2018 04:49 PM, Javier González wrote:
+> The 2.0 spec provides a report chunk log page that can be retrieved
+> using the stangard nvme get log page. This replaces the dedicated
+> get/put bad block table in 1.2.
+> 
+> This patch implements the helper functions to allow targets retrieve the
+> chunk metadata using get log page. It makes nvme_get_log_ext available
+> outside of nvme core so that we can use it form lightnvm.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/core.c      | 11 +++++++
+>   drivers/nvme/host/core.c     |  6 ++--
+>   drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/nvme/host/nvme.h     |  3 ++
+>   include/linux/lightnvm.h     | 24 ++++++++++++++
+>   5 files changed, 115 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+> index ed33e0b11788..4141871f460d 100644
+> --- a/drivers/lightnvm/core.c
+> +++ b/drivers/lightnvm/core.c
+> @@ -712,6 +712,17 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
+>   	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
+>   }
+>   
+> +int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
+> +		struct ppa_addr ppa, int nchks)
+> +{
+> +	struct nvm_dev *dev = tgt_dev->parent;
+> +
+> +	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
+> +
+> +	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
+> +						(sector_t)ppa.ppa, nchks);
+> +}
+> +EXPORT_SYMBOL(nvm_get_chunk_meta);
+>   
+>   int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
+>   		       int nr_ppas, int type)
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 2e9e9f973a75..af642ce6ba69 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -2127,9 +2127,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+>   	return ret;
+>   }
+>   
+> -static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> -			    u8 log_page, void *log,
+> -			    size_t size, size_t offset)
+> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> +		     u8 log_page, void *log,
+> +		     size_t size, size_t offset)
+>   {
+>   	struct nvme_command c = { };
+>   	unsigned long dwlen = size / 4 - 1;
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index f7135659f918..a1796241040f 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+>   	nvme_nvm_admin_set_bb_tbl	= 0xf1,
+>   };
+>   
+> +enum nvme_nvm_log_page {
+> +	NVME_NVM_LOG_REPORT_CHUNK	= 0xca,
+> +};
+> +
+>   struct nvme_nvm_ph_rw {
+>   	__u8			opcode;
+>   	__u8			flags;
+> @@ -236,6 +240,16 @@ struct nvme_nvm_id20 {
+>   	__u8			vs[1024];
+>   };
+>   
+> +struct nvme_nvm_chk_meta {
+> +	__u8	state;
+> +	__u8	type;
+> +	__u8	wi;
+> +	__u8	rsvd[5];
+> +	__le64	slba;
+> +	__le64	cnlb;
+> +	__le64	wp;
+> +};
+> +
+>   /*
+>    * Check we didn't inadvertently grow the command struct
+>    */
+> @@ -252,6 +266,9 @@ static inline void _nvme_nvm_check_size(void)
+>   	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
+>   	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
+>   	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
+> +	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) != 32);
+> +	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=
+> +						sizeof(struct nvm_chk_meta));
+>   }
+>   
+>   static void nvme_nvm_set_addr_12(struct nvm_addr_format_12 *dst,
+> @@ -555,6 +572,61 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
+>   	return ret;
+>   }
+>   
+> +/*
+> + * Expect the lba in device format
+> + */
+> +static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+> +				 struct nvm_chk_meta *meta,
+> +				 sector_t slba, int nchks)
+> +{
+> +	struct nvm_geo *geo = &ndev->geo;
+> +	struct nvme_ns *ns = ndev->q->queuedata;
+> +	struct nvme_ctrl *ctrl = ns->ctrl;
+> +	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
+> +	struct ppa_addr ppa;
+> +	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+> +	size_t log_pos, offset, len;
+> +	int ret, i;
+> +
+> +	/* Normalize lba address space to obtain log offset */
+> +	ppa.ppa = slba;
+> +	ppa = dev_to_generic_addr(ndev, ppa);
+> +
+> +	log_pos = ppa.m.chk;
+> +	log_pos += ppa.m.pu * geo->num_chk;
+> +	log_pos += ppa.m.grp * geo->num_lun * geo->num_chk;
 
-On Thu, Mar 1, 2018 at 11:18 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 1 March 2018 at 09:33, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Thu, Mar 1, 2018 at 4:40 AM, JeffyChen <jeffy.chen@rock-chips.com> wrote:
->>> 3/ make sure PM clk always be controlled(otherwise it might be unexpected
->>> disabled by other clocks under the same clk parent?):
->>>  a) make sure Runtime PM is always enabled. and as discussed, we can select
->>> PM in ARCH_ROCKCHIP
->
-> I am fine enabling PM for ARCH_ROCKCHIP, if needed.
->
-> However, what I don't agree with in general, is to make a generic
-> driver to rely on having CONFIG_PM to be set to be functional. That's
-> to me, bad practice.
->
-> I understand, this approach exists in drivers today. I assume it
-> works, because those drivers are being used on SoCs which always has
-> CONFIG_PM set.
-
-I agree. This is mostly useful for drivers that are used on multiple SoCs,
-where the driver doesn't care about the clock (doesn't care about its
-properties), and where the clock is optional (i.e. either tied to an
-always-running bus clock, or to a controllable module clock, depending on SoC).
-The latter needs CONFIG_PM=y, but that's a platform property, controlled
-by selecting support for that specific SoC.
-
->> On Renesas SoCs, we only add the device's module clock with pm_clk_add().
->> Drivers that don't care about properties of the module clock just call
->> pm_runtime_*(). That way the same driver works on different SoCs using
->> the same device, with and without power and/or clock domains.
->
-> I understand your point and I accept your view.
->
-> However, I think this is more a mindset of which way one want
-> implement things. This has been discussed several times in the mailing
-> list as well.
->
-> Surely we can cope with SoC specific constraints in drivers as well,
-> we already do that.
->
-> In principle I think this boils done to comparing a centralized
-> method, where the PM domain deals with clocks vs a decentralized
-> method, where the driver deals with clocks. Both works, both have
-> positive and negative consequences.
-
-Is the clock (are the clocks) used purely for power management of the device,
-or does it/do they serve another (independent) purpose?
-
-Note that unlike clocks, power areas cannot be controlled explicitly by the
-driver. That always has to be done through the Runtime PM API.
-
-> In my experience for ARM SoCs, I have found that centralized method
-> doesn't work well, when one need flexibility. For example, if there
-> are strict constraints on the order of how to put device's PM
-> resources (clocks, pinctrl, etc) in low power states. For example, to
-> avoid clock glitches.
-
-With multiple clocks used by a device, there's sometimes also a lack of
-understanding of the real clock hierarchy. If these multiple clocks need
-to be enabled/disabled in a specific order, perhaps they are not
-independent, and modelling the hierarchy correctly, and describing in DT
-the device as being connected to the leaf clock may solve the ordering issue.
-
-> Another problem with the PM clk is, more exactly with
-> pm_clk_suspend|resume(), that those invokes only clk_enable|disable().
-> pm_clk_suspend|resume() can't call clk_prepare|unprepare(), because we
-> don't know if we running in atomic context when those are executed.
-> Potentially this means leaving the clocks ungated - all the time.
->
-> I have though about how to fix the above, several times, but I always
-> ends up with thinking that's it more easy, to let the driver deal with
-> the clocks, as then the problem goes away.
-
-There's a similar issue with powering on/off power areas.
-How do device start/stop differ from power domain on/off?
-
->> Drivers that care about properties of the module clock (mainly frequency)
->> can still use the clk_*() API for that. Other (optional) clocks must be
->> handled by the device driver itself.
->
-> A comment on that;
->
-> Before we the PM clk was introduced, we didn't have the clk_bulk_*()
-> interface. To me, using clk_bulk_*() in drivers could help to simplify
-> the code in regards to manage clocks (including SoC specific clocks)
-> during runtime PM.
->
-> Perhaps this could be an option to using PM clk, as it provides both
-> flexibility and could manage SoC specific clocks.
-
-See my comment about multiple clocks above...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Why is this done?
