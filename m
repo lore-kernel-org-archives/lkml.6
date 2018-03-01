@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967762AbeCALSP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 06:18:15 -0500
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39350 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967618AbeCALSM (ORCPT
+        id S967770AbeCALWQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 06:22:16 -0500
+Received: from regular1.263xmail.com ([211.150.99.135]:50632 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967592AbeCALWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 06:18:12 -0500
-X-Google-Smtp-Source: AG47ELuiPEjMe9+KTtjjhB5Zhvwc52R45pXFVj+4561FFVKteLs6/domlvCRaCutcAkpAB9bf4wawQ==
-Date: Thu, 1 Mar 2018 12:18:01 +0100
-From: Ulf Magnusson <ulfalizer@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] kconfig: remove redundant streamline_config.pl prerequisite
-Message-ID: <20180301111801.gdhoam4kqrbqnasv@huvuddator>
-References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
- <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com>
- <20180228051525.a2vouqs6djnd2cnf@huvuddator>
- <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Thu, 1 Mar 2018 06:22:14 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <095a3f675d7f5f1cab6893b881def490>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: robin.murphy@arm.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH] iommu/omap: Increase group ref in .device_group()
+Date: Thu,  1 Mar 2018 19:22:08 +0800
+Message-Id: <20180301112208.25284-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The local{yes,mod}config targets currently have streamline_config.pl as
-a prerequisite. This is redundant, because streamline_config.pl is a
-checked-in file with no prerequisites.
+Increase group refcounting in omap_iommu_device_group().
 
-Remove the prerequisite and reference streamline_config.pl directly in
-the recipe of the rule instead.
-
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- scripts/kconfig/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index 1f74336d4e23..58be52cb464d 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -77,9 +77,9 @@ silentoldconfig: $(obj)/conf
- 	    touch   include/generated/autoksyms.h
- 	$< $(silent) --$@ $(Kconfig)
+ drivers/iommu/omap-iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+index e135ab830ebf..c33b7b104e72 100644
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1536,7 +1536,7 @@ static struct iommu_group *omap_iommu_device_group(struct device *dev)
+ 	struct iommu_group *group = ERR_PTR(-EINVAL);
  
--localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
-+localyesconfig localmodconfig: $(obj)/conf
- 	$(Q)mkdir -p include/config include/generated
--	$(Q)perl $< --$@ $(srctree) $(Kconfig) > .tmp.config
-+	$(Q)perl $(obj)/streamline_config.pl --$@ $(srctree) $(Kconfig) > .tmp.config
- 	$(Q)if [ -f .config ]; then 					\
- 			cmp -s .tmp.config .config ||			\
- 			(mv -f .config .config.old.1;			\
+ 	if (arch_data->iommu_dev)
+-		group = arch_data->iommu_dev->group;
++		group = iommu_group_ref_get(arch_data->iommu_dev->group);
+ 
+ 	return group;
+ }
 -- 
-2.14.1
+2.11.0
