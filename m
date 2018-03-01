@@ -1,72 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033410AbeCARQz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 12:16:55 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:36610 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032942AbeCARQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 12:16:52 -0500
-To: Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-7-logang@deltatee.com>
- <72e90cc2-c05a-3ed8-42c7-e4d7a0d535d8@grimberg.me>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3527faf1-3f3a-88d0-caa8-d94d75437d73@deltatee.com>
-Date: Thu, 1 Mar 2018 10:16:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1033369AbeCARRt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 12:17:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57404 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032942AbeCARRr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 12:17:47 -0500
+Date: Thu, 1 Mar 2018 17:17:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] ASoC: Intel: bytcr_rt5640: Drop unwanted
+ ignore_suspend settings
+Message-ID: <20180301171744.GE12864@sirena.org.uk>
+References: <20180218220146.22485-1-hdegoede@redhat.com>
+ <20180218220146.22485-9-hdegoede@redhat.com>
+ <20180301162215.GC12864@sirena.org.uk>
+ <55819630-6198-6227-63ef-69311b21b255@redhat.com>
+ <20180301164819.GD12864@sirena.org.uk>
+ <2aa03d98-7f61-0699-98d6-ac3ca3497c41@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <72e90cc2-c05a-3ed8-42c7-e4d7a0d535d8@grimberg.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 06/10] IB/core: Add optional PCI P2P flag to
- rdma_rw_ctx_[init|destroy]()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+Content-Disposition: inline
+In-Reply-To: <2aa03d98-7f61-0699-98d6-ac3ca3497c41@redhat.com>
+X-Cookie: Real Users hate Real Programmers.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Sagi,
 
-Thanks for the review!
+--pY3vCvL1qV+PayAL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Mar 01, 2018 at 05:58:35PM +0100, Hans de Goede wrote:
+> On 01-03-18 17:48, Mark Brown wrote:
 
-On 01/03/18 03:32 AM, Sagi Grimberg wrote:
->>   int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 
->> port_num,
->>           struct scatterlist *sg, u32 sg_cnt, u32 sg_offset,
->> -        u64 remote_addr, u32 rkey, enum dma_data_direction dir)
->> +        u64 remote_addr, u32 rkey, enum dma_data_direction dir,
->> +        unsigned int flags)
->>   {
->>       struct ib_device *dev = qp->pd->device;
->>       int ret;
->> -    ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
->> +    if (flags & RDMA_RW_CTX_FLAG_PCI_P2PDMA)
->> +        ret = pci_p2pdma_map_sg(dev->dma_device, sg, sg_cnt, dir);
->> +    else
->> +        ret = ib_dma_map_sg(dev, sg, sg_cnt, dir);
->> +
-> 
-> Why not use is_pci_p2pdma_page(sg) instead of a flag? It would be so
-> much cleaner...
+> > That sounds like what's missing is hookup of whatever the DSP uses to
+> > wake the system when it's getting to the bottom of the buffer?  That's
+> > the normal way this stuff is implemented anyway.
 
-Yes, that sounds like a good idea. We can make that change for v3.
+> I'm afraid there is a lot more missing, at least from a standard Linux
+> distro pov, just waking up is not enough, we need to also wakeup
+> userspace to get the mp3-player (or whatever) to refill the buffer,
+> but preferably without waking up the GPU, turning on the screen, etc.
 
-Logan
+> AFAIK support for this is currently completely missing, standard Linux
+> userspace currently treats suspend-2-idle as a a full suspend and any
+> wakeup as a full wakeup.
+
+Sure, but do such userspaces exist - ChromeOS or something for example?
+
+> So AFAICT currently the ignore-suspend flag is currently not useful
+> and as the commit message mentions IIRC there were added to fix some
+> issues with suspend/resume in the past.
+
+Is it possible the issue was playback during suspend?
+
+--pY3vCvL1qV+PayAL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqYNbcACgkQJNaLcl1U
+h9DTygf/S3RtA9cznPWvGyDZqPW9Kh59QKnr01zWpfDaviHiRXqkJvuYxwUCcUJC
+XV1dKSaC07XrEaCsb/zfRiMguUZPqknskx434j0JnwwRkOzbVVD7zoAVEq5U6Ayt
+kzINfuwTO7O2eCmllR8SGE7qrHRfHx1QOQ/LsiRU0OfzoNcSAvnx/5q3setwniNi
+ZeEVXT6nokHpyl5jQ2jdQ3iyNdp4NcaPfi7Fks+AO9YFxI+E+kniqwnViZrgNzI5
+YO/3PXcHVCJS+GZ/f3O+UssI4DA1Df2WLeooB65eLMX9q5uvzABRuiJAQTvD+8RE
+jZYPqqsPG8S0OHGzUHg9pCFFE2aPtQ==
+=j7E9
+-----END PGP SIGNATURE-----
+
+--pY3vCvL1qV+PayAL--
