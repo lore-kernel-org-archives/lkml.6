@@ -1,115 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965798AbeCADsP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Feb 2018 22:48:15 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:34227 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S965674AbeCADsN (ORCPT
+        id S965837AbeCAD4Z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Feb 2018 22:56:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965823AbeCAD4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Feb 2018 22:48:13 -0500
-X-UUID: 81c265c3520b45b49a5f84a667465b38-20180301
-Message-ID: <1519876072.23198.17.camel@mhfsdcap03>
-Subject: Re: [PATCH v2 4/4] pintcrl: support bias-disable of generic and
- special pins simultaneously
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-To: Sean Wang <sean.wang@mediatek.com>
-CC: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <biao.huang@mediatek.com>, <erin.lo@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <hongzhou.yang@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-Date: Thu, 1 Mar 2018 11:47:52 +0800
-In-Reply-To: <1519804157.23198.9.camel@mhfsdcap03>
-References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1519634042-12063-5-git-send-email-zhiyong.tao@mediatek.com>
-         <1519803217.8089.31.camel@mtkswgap22> <1519804157.23198.9.camel@mhfsdcap03>
+        Wed, 28 Feb 2018 22:56:21 -0500
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+From: Benjamin Herrenschmidt <benh@au1.ibm.com>
+Reply-To: benh@au1.ibm.com
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Date: Thu, 01 Mar 2018 14:56:09 +1100
+In-Reply-To: <1519876489.4592.3.camel@kernel.crashing.org>
+References: <20180228234006.21093-1-logang@deltatee.com>
+         <1519876489.4592.3.camel@kernel.crashing.org>
+Organization: IBM Australia
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+X-TM-AS-GCONF: 00
+x-cbid: 18030103-0012-0000-0000-000005B74001
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030103-0013-0000-0000-00001933421C
+Message-Id: <1519876569.4592.4.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803010048
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-02-28 at 15:49 +0800, Zhiyong Tao wrote:
-> On Wed, 2018-02-28 at 15:33 +0800, Sean Wang wrote:
-> > On Mon, 2018-02-26 at 16:34 +0800, Zhiyong Tao wrote:
-> > > For generic pins, parameter "arg" is 0 or 1.
-> > > For special pins, bias-disable is set by R0R1,
-> > > so we need transmited "00" to set bias-disable
-> > > When we set "bias-disable" as high-z property,
-> > > the parameter should be "MTK_PUPD_SET_R1R0_00".
-> > > 
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > ---
-> > >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 13 +++++++++++--
-> > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > index 3cf384f..e88ba04 100644
-> > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > @@ -301,8 +301,17 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
-> > >  	 * resistor bit, so we need this special handle.
-> > >  	 */
-> > >  	if (pctl->devdata->spec_pull_set) {
-> > > -		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > > -			pin, pctl->devdata->port_align, isup, arg);
-> > > +		if (enable) {
-> > > +			ret = pctl->devdata->spec_pull_set(
-> > > +				mtk_get_regmap(pctl, pin), pin,
-> > > +				pctl->devdata->port_align, isup,
-> > > +				arg);
-> > > +		} else {
-> > > +			ret = pctl->devdata->spec_pull_set(
-> > > +				mtk_get_regmap(pctl, pin), pin,
-> > > +				pctl->devdata->port_align, isup,
-> > > +				MTK_PUPD_SET_R1R0_00);
-> > > +		}
-> > 
-> > 
-> > it looks like you can use as following snippet with reusing original
-> > logic and less effort on maintaining these common code (?)
-> ==> Thanks for your suggestion very much. It seems better.
-> I will change it in v3.
-
-==>
- Hi sean,
-
-we try it in our site. we can't change like this.
-Because we will check "arg" after setting "arg = MTK_PUPD_SET_R1R0_00;".
-following snippet which check "arg" value is o or 1. If it not, which
-will print error. so we can't change like this.
-/* For generic pull config, default arg value should be 0 or 1. */
-if (arg != 0 && arg != 1) {
-	dev_err(pctl->dev, "invalid pull-up argument %d on pin %d .\n", arg,
-pin);
-	return -EINVAL;
-}
-
-Thanks.
-> > 
-> > 
-> > if (pctl->devdata->spec_pull_set) {
-> > 	+ if (!enable)
-> > 	+ 	arg = MTK_PUPD_SET_R1R0_00;
-> > 
-> > 	ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > 		pin, pctl->devdata->port_align, isup, arg);
-> > 
-> > 
-> > Also, it's better to add more comments to such kind of special path for
-> > allowing future SoCs to follow and extend more easily.
+On Thu, 2018-03-01 at 14:54 +1100, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-02-28 at 16:39 -0700, Logan Gunthorpe wrote:
+> > Hi Everyone,
 > 
-> ==> Thanks for your suggestion very much. I will add more comments here.
-> > 
-> > >  		if (!ret)
-> > >  			return 0;
-> > >  	}
-> > 
-> > 
 > 
+> So Oliver (CC) was having issues getting any of that to work for us.
+> 
+> The problem is that acccording to him (I didn't double check the latest
+> patches) you effectively hotplug the PCIe memory into the system when
+> creating struct pages.
+> 
+> This cannot possibly work for us. First we cannot map PCIe memory as
+> cachable. (Note that doing so is a bad idea if you are behind a PLX
+> switch anyway since you'd ahve to manage cache coherency in SW).
+
+Note: I think the above means it won't work behind a switch on x86
+either, will it ?
+
+> Then our MMIO space is so far away from our memory space that there is
+> not enough vmemmap virtual space to be able to do that.
+> 
+> So this can only work accross achitectures by using something like HMM
+> to create special device struct page's.
+> 
+> Ben.
+> 
+> 
+> > Here's v2 of our series to introduce P2P based copy offload to NVMe
+> > fabrics. This version has been rebased onto v4.16-rc3 which already
+> > includes Christoph's devpagemap work the previous version was based
+> > off as well as a couple of the cleanup patches that were in v1.
+> > 
+> > Additionally, we've made the following changes based on feedback:
+> > 
+> > * Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
+> >   as a bunch of cleanup and spelling fixes he pointed out in the last
+> >   series.
+> > 
+> > * To address Alex's ACS concerns, we change to a simpler method of
+> >   just disabling ACS behind switches for any kernel that has
+> >   CONFIG_PCI_P2PDMA.
+> > 
+> > * We also reject using devices that employ 'dma_virt_ops' which should
+> >   fairly simply handle Jason's concerns that this work might break with
+> >   the HFI, QIB and rxe drivers that use the virtual ops to implement
+> >   their own special DMA operations.
+> > 
+> > Thanks,
+> > 
+> > Logan
+> > 
+> > --
+> > 
+> > This is a continuation of our work to enable using Peer-to-Peer PCI
+> > memory in NVMe fabrics targets. Many thanks go to Christoph Hellwig who
+> > provided valuable feedback to get these patches to where they are today.
+> > 
+> > The concept here is to use memory that's exposed on a PCI BAR as
+> > data buffers in the NVME target code such that data can be transferred
+> > from an RDMA NIC to the special memory and then directly to an NVMe
+> > device avoiding system memory entirely. The upside of this is better
+> > QoS for applications running on the CPU utilizing memory and lower
+> > PCI bandwidth required to the CPU (such that systems could be designed
+> > with fewer lanes connected to the CPU). However, presently, the
+> > trade-off is currently a reduction in overall throughput. (Largely due
+> > to hardware issues that would certainly improve in the future).
+> > 
+> > Due to these trade-offs we've designed the system to only enable using
+> > the PCI memory in cases where the NIC, NVMe devices and memory are all
+> > behind the same PCI switch. This will mean many setups that could likely
+> > work well will not be supported so that we can be more confident it
+> > will work and not place any responsibility on the user to understand
+> > their topology. (We chose to go this route based on feedback we
+> > received at the last LSF). Future work may enable these transfers behind
+> > a fabric of PCI switches or perhaps using a white list of known good
+> > root complexes.
+> > 
+> > In order to enable this functionality, we introduce a few new PCI
+> > functions such that a driver can register P2P memory with the system.
+> > Struct pages are created for this memory using devm_memremap_pages()
+> > and the PCI bus offset is stored in the corresponding pagemap structure.
+> > 
+> > Another set of functions allow a client driver to create a list of
+> > client devices that will be used in a given P2P transactions and then
+> > use that list to find any P2P memory that is supported by all the
+> > client devices. This list is then also used to selectively disable the
+> > ACS bits for the downstream ports behind these devices.
+> > 
+> > In the block layer, we also introduce a P2P request flag to indicate a
+> > given request targets P2P memory as well as a flag for a request queue
+> > to indicate a given queue supports targeting P2P memory. P2P requests
+> > will only be accepted by queues that support it. Also, P2P requests
+> > are marked to not be merged seeing a non-homogenous request would
+> > complicate the DMA mapping requirements.
+> > 
+> > In the PCI NVMe driver, we modify the existing CMB support to utilize
+> > the new PCI P2P memory infrastructure and also add support for P2P
+> > memory in its request queue. When a P2P request is received it uses the
+> > pci_p2pmem_map_sg() function which applies the necessary transformation
+> > to get the corrent pci_bus_addr_t for the DMA transactions.
+> > 
+> > In the RDMA core, we also adjust rdma_rw_ctx_init() and
+> > rdma_rw_ctx_destroy() to take a flags argument which indicates whether
+> > to use the PCI P2P mapping functions or not.
+> > 
+> > Finally, in the NVMe fabrics target port we introduce a new
+> > configuration boolean: 'allow_p2pmem'. When set, the port will attempt
+> > to find P2P memory supported by the RDMA NIC and all namespaces. If
+> > supported memory is found, it will be used in all IO transfers. And if
+> > a port is using P2P memory, adding new namespaces that are not supported
+> > by that memory will fail.
+> > 
+> > Logan Gunthorpe (10):
+> >   PCI/P2PDMA: Support peer to peer memory
+> >   PCI/P2PDMA: Add sysfs group to display p2pmem stats
+> >   PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
+> >   PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
+> >   block: Introduce PCI P2P flags for request and request queue
+> >   IB/core: Add optional PCI P2P flag to rdma_rw_ctx_[init|destroy]()
+> >   nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+> >   nvme-pci: Add support for P2P memory in requests
+> >   nvme-pci: Add a quirk for a pseudo CMB
+> >   nvmet: Optionally use PCI P2P memory
+> > 
+> >  Documentation/ABI/testing/sysfs-bus-pci |  25 ++
+> >  block/blk-core.c                        |   3 +
+> >  drivers/infiniband/core/rw.c            |  21 +-
+> >  drivers/infiniband/ulp/isert/ib_isert.c |   5 +-
+> >  drivers/infiniband/ulp/srpt/ib_srpt.c   |   7 +-
+> >  drivers/nvme/host/core.c                |   4 +
+> >  drivers/nvme/host/nvme.h                |   8 +
+> >  drivers/nvme/host/pci.c                 | 118 ++++--
+> >  drivers/nvme/target/configfs.c          |  29 ++
+> >  drivers/nvme/target/core.c              |  95 ++++-
+> >  drivers/nvme/target/io-cmd.c            |   3 +
+> >  drivers/nvme/target/nvmet.h             |  10 +
+> >  drivers/nvme/target/rdma.c              |  43 +-
+> >  drivers/pci/Kconfig                     |  20 +
+> >  drivers/pci/Makefile                    |   1 +
+> >  drivers/pci/p2pdma.c                    | 713 ++++++++++++++++++++++++++++++++
+> >  drivers/pci/pci.c                       |   4 +
+> >  include/linux/blk_types.h               |  18 +-
+> >  include/linux/blkdev.h                  |   3 +
+> >  include/linux/memremap.h                |  19 +
+> >  include/linux/pci-p2pdma.h              | 105 +++++
+> >  include/linux/pci.h                     |   4 +
+> >  include/rdma/rw.h                       |   7 +-
+> >  net/sunrpc/xprtrdma/svc_rdma_rw.c       |   6 +-
+> >  24 files changed, 1204 insertions(+), 67 deletions(-)
+> >  create mode 100644 drivers/pci/p2pdma.c
+> >  create mode 100644 include/linux/pci-p2pdma.h
+> > 
+> > --
+> > 2.11.0
