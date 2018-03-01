@@ -1,150 +1,188 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-628284-1522190003-2-14727644668691670928
+X-Cyrus-Session-Id: sloti22d1t05-2399589-1519892361-2-16446829837725930439
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES enroca, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522190002; b=iTgh2vN2oM/L040oaoHVZrvqP3gUrA/ZkdDGXns4LptewnR
-    VifbFwoLRdV/GqPm4Rco6nOZOJgDWEWA+LYw0TAWWLQqyEFqt3a6ajD+/TDXRjsT
-    2MW3eHbqjlHuP6qodhGwQFJA58I21VcXNrr2jnGAbkImT9eaa9LPnLHM0JsBKDdZ
-    MW2m06MjGazf66h1Fbj4GNyryVTKu+RWS1rx66ge+d3aqOnmMj++P/aZxI2KEpLZ
-    tboHiAI5BfvVWVtPbNqH3X6qh1fGX/OHpn2JH3iNLzPNfVd+rLQj1Pw+y6mPVAbQ
-    WYdxNvmxQ8Ub6JAYX8wv/N3ZBPwS/4EzdsZ9niA==
+    t=1519892360; b=rjMMeNv0gdRo2eWWnwwkUbHZmHZTETmCZDg6qjZ4HPrANSL
+    2ATdHE2t8R1jPBj8IyE6vCP+u7Xhp9oYyLj93ySbOjX1qO+8NV0pfo/mDe1wzLeF
+    t2j76TzfWZIbbpRREtYbscIqaqd+YBqzXWCfxXtkxJFk131L9zBR4+Ob7ZKG0TX2
+    msf6Yn+MtGRupexzKGOkvBqsCqWkJBvz4acd3lE6UkBgqg169xpTAbChI0vlOajR
+    084dLD4cMK7UO/1zhd+uL+jUM7mcjCqfhTYyFJCcGIhbtvck7sDW4vO+h/egdWsP
+    atKoMl8ECsWe7bm26zIOjgQiRwh4pBrTOAURpvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1522190002; bh=IUO05CDcUVfzZvVPsSCNgBLsGe
-    Z5b7xwa12RE9dnno8=; b=PiJwD0GzIRwri8zG52HyN2qNl23I+G4vMLVpOR0y9K
-    eMQSrRYRr5qTZ51gKngsf5XtTdwKr9SjMlMP7kDqXlHpxU7fxT5rNYs3GzVVb13s
-    VF5dFJOVz4pAMm9MCEZ86/UjOo7/I0TE5ixYjD0BQSd8duaSA8vU0jr+uhfyZX53
-    JY1rKeJDqSiRIEAKOWIk1oV6Jk4tAkpjgYqUm/2+4Px6ogzLUhrwqL31GI7IZsNi
-    Kn6+NyUbtbNuUnEWErmB1B/4E22R1ZAakMOVwD/JSaTtJ+AJ/Ld5S7cJiTPapwF4
-    NDWy1PI0MzENY6FOh0wAy8ibL4kx4Lsc70sJM3QTDVEQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ay3AYhj9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1519892360; bh=6pr8cugSgQs5x2COwdHgAc3mRiHyhkZQf6tpZuVOzdM=; b=A
+    AmCmPPxp+t0ZGk5arYJlZRNYMhag4nzaam17ZrZbE0XcqplzmnyYKk8UJuWca2ov
+    9hKV6+97aBwuUv/mkD92pJgsMdxFWobaHrBXo5LngFGwwUP6+gQpHBaiebVvRqrn
+    /sWNNewel9rRC1/UQEAQqwhSPvsIPdQ+Hfb3rsM4le4eoOs3p0QiJzKSUsnOvJrn
+    p48oFYeH//IFeNA9B3RAn7TeWRfCMVKwhGG8oQvuIelEcqqHyv3cJpMKNoKvoNrz
+    iD3SD0jlMnmr/sqIA6IUUql9MHMqe0Uwi73ryHydp9DVBfbEPs14btwVnH/VN/vo
+    tlExtkGGyG7AJyogLHIzA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JLNnGlta;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ay3AYhj9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JLNnGlta;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDV3aMRm3vJpM5EFYvSr7MUjRvQ/ECmk8yUTUASOtuExbAICNl9p0/qX1kYtCJQu2FdbNeeeZN1lX9d44PL2EylsUlv1CRwGhr6lsntT6RRit0X84lRP
-    OZ1zFXmTfC12IQryEZK4lNsrwIlYsMO+54TR9dfW/wR7QpoGDj3pKlApok3Mu/zerFT+KzZZ0rclLuo9Km32uC/3yazJnAw+BrzMDuzRNfMz16U96wfRmo1g
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=I5jJpb0z_YgA:10
-    a=xqWC_Br6kY4A:10 a=v2DPQv5-lfwA:10 a=mpaa-ttXAAAA:8 a=JfrnYn6hAAAA:8
-    a=VwQbUJbxAAAA:8 a=K5FuqnCOEb49mLD4sfUA:9 a=AELozh5JGdfiRjgV:21
-    a=wBAtAoaiaq0SkGrT:21 a=CjuIK1q_8ugA:10 a=fHSMZwuQgDQA:10
-    a=MDZPUUTaiW4ZE0QFHiEA:9 a=ONNS8QRKHyMA:10 a=6heAxKwa5pAsJatQ0mat:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeC0WdT (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 18:33:19 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37350 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752414AbeC0WdS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 18:33:18 -0400
-X-Google-Smtp-Source: AIpwx48rk/53DLADz1UAbEqVmh0NapnswMxh+EpMWqriXc2RnT3Dzvse+3s+k8FczKOMV2u4yUr52A==
-Date: Wed, 28 Mar 2018 00:33:15 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: sean.wang@mediatek.com
-Cc: matthias.bgg@gmail.com, linux-pwm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v1] pwm: mediatek: improve precision in rate calculation
-Message-ID: <20180327223314.GH28163@mithrandir>
-References: <72b74a30ced1c7e7549dcbb56d6123fc27fac405.1519980119.git.sean.wang@mediatek.com>
+        id S935203AbeCAITT (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 03:19:19 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9264 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934985AbeCAITS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 03:19:18 -0500
+X-UUID: dcb8cd33af694742aed8176349e80ae9-20180301
+From: <sean.wang@mediatek.com>
+To: <thierry.reding@gmail.com>, <matthias.bgg@gmail.com>
+CC: <linux-pwm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+        <stable@vger.kernel.org>, Zhi Mao <zhi.mao@mediatek.com>,
+        John Crispin <john@phrozen.org>
+Subject: [PATCH v3] pwm: mediatek: fix up PWM4 and PWM5 malfunction on MT7623
+Date: Thu, 1 Mar 2018 16:19:12 +0800
+Message-ID: <051f401bcca48ece188023ccf10b2cedc7a25a64.1519891948.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRdC2OsRnuV8iIl8"
-Content-Disposition: inline
-In-Reply-To: <72b74a30ced1c7e7549dcbb56d6123fc27fac405.1519980119.git.sean.wang@mediatek.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK: N
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Sean Wang <sean.wang@mediatek.com>
 
---jRdC2OsRnuV8iIl8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since the offset for both registers, PWMDWIDTH and PWMTHRES, used to
+control PWM4 or PWM5 are distinct from the other PWMs, whose wrong
+programming on PWM hardware causes waveform cannot be output as expected.
+Thus, the patch adds the extra condition for fixing up the weird case to
+let PWM4 or PWM5 able to work on MT7623.
 
-On Fri, Mar 02, 2018 at 04:49:14PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
->=20
-> Add a way that turning resolution from in nanosecond into in picosecond
-> to improve noticeably almost 4.5% precision.
->=20
-> It's necessary to hold the new resolution with type u64 and thus related
-> operations on u64 are applied instead in those rate calculations.
->=20
-> And the patch has a dependency on [1].
->=20
-> [1] http://lists.infradead.org/pipermail/linux-mediatek/2018-March/012225=
-=2Ehtml
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: caf065f8fd58 ("pwm: Add MediaTek PWM support")
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/pwm/pwm-mediatek.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
+v1 -> v2: use pwm45_fixup naming instead of pwm45_quirk
+v2 -> v3: add more tags for Reviewed-by, Fixes, and Cc stable
 
-Applied, thanks.
+Cc: stable@vger.kernel.org
+Fixes: caf065f8fd58 ("pwm: Add MediaTek PWM support")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Zhi Mao <zhi.mao@mediatek.com>
+Cc: John Crispin <john@phrozen.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/pwm/pwm-mediatek.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-Thierry
-
---jRdC2OsRnuV8iIl8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6xqoACgkQ3SOs138+
-s6GCRRAArW5dSAE+wDWE+7hBfS66wYIK87ZXIPUO69YVGLG5H1GaJ/OGo1JepDJU
-ibVXdNZiAcJLiBWBYVuL/8YycVFUCMXZTj5IWaooczKWOj+p2vNIPorzYAkMPgZ8
-qLtJxi5fEGO5DqQlAGKBPMhlIIgG/PB1WPxNiaVzngJD81ioAY1H8gTC5+Yxwigp
-67wIBtxSHML3lqzpUHBitaIFNHmDQWng3eP8LU5rUqGYYsS3bq08JUQw3uA6/U50
-utBcXrzgPQdREhs2j6hyJMDPrdID9DZtcsfm4Z9VIN7cfBtqlNqA9bcrTKHIq6OF
-QO8BzGonimfsZk4JqBeVDdCnR3j442SYlrF4Iccat+fqHxGrNKtE8bvaPZqxCQeG
-uy3hx14uKOjUkR8vYbC0Oov+cN0WtSkI1VtUxwei/LBDwPWjznLl6W7Nv+NW41k+
-funPi3FjiEWC/54dQd0+0iIQZSB+spb06WTKeN3PzO7Qa0Sit3ybJthCSbLKXK+/
-A5JCNMlVKRelW0EFQ6eoZyUVeHKWyBGt827ZEDEfPjon5OYbe30zd/1E8owtjSje
-nSSJMmLSdinM2npCCmIlCMpYTVZ1tbL2VJ9ZdO7AuVDDHkRiR/3kq1VkphKrwqxi
-e4tzFc29xff40FkvhQkU5px1TsRYwv4bQbVTwuAWLH3uy+1k8qY=
-=Bg+w
------END PGP SIGNATURE-----
-
---jRdC2OsRnuV8iIl8--
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index f5d97e0..796baea 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -29,7 +29,9 @@
+ #define PWMGDUR			0x0c
+ #define PWMWAVENUM		0x28
+ #define PWMDWIDTH		0x2c
++#define PWM45DWIDTH_FIXUP	0x30
+ #define PWMTHRES		0x30
++#define PWM45THRES_FIXUP	0x34
+ 
+ #define PWM_CLK_DIV_MAX		7
+ 
+@@ -54,6 +56,7 @@ static const char * const mtk_pwm_clk_name[MTK_CLK_MAX] = {
+ 
+ struct mtk_pwm_platform_data {
+ 	unsigned int num_pwms;
++	bool pwm45_fixup;
+ };
+ 
+ /**
+@@ -66,6 +69,7 @@ struct mtk_pwm_chip {
+ 	struct pwm_chip chip;
+ 	void __iomem *regs;
+ 	struct clk *clks[MTK_CLK_MAX];
++	const struct mtk_pwm_platform_data *soc;
+ };
+ 
+ static const unsigned int mtk_pwm_reg_offset[] = {
+@@ -131,7 +135,8 @@ static int mtk_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ {
+ 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+ 	struct clk *clk = pc->clks[MTK_CLK_PWM1 + pwm->hwpwm];
+-	u32 resolution, clkdiv = 0;
++	u32 resolution, clkdiv = 0, reg_width = PWMDWIDTH,
++	    reg_thres = PWMTHRES;
+ 	int ret;
+ 
+ 	ret = mtk_pwm_clk_enable(chip, pwm);
+@@ -151,9 +156,18 @@ static int mtk_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		return -EINVAL;
+ 	}
+ 
++	if (pc->soc->pwm45_fixup && pwm->hwpwm > 2) {
++		/*
++		 * PWM[4,5] has distinct offset for PWMDWIDTH and PWMTHRES
++		 * from the other PWMs on MT7623.
++		 */
++		reg_width = PWM45DWIDTH_FIXUP;
++		reg_thres = PWM45THRES_FIXUP;
++	}
++
+ 	mtk_pwm_writel(pc, pwm->hwpwm, PWMCON, BIT(15) | clkdiv);
+-	mtk_pwm_writel(pc, pwm->hwpwm, PWMDWIDTH, period_ns / resolution);
+-	mtk_pwm_writel(pc, pwm->hwpwm, PWMTHRES, duty_ns / resolution);
++	mtk_pwm_writel(pc, pwm->hwpwm, reg_width, period_ns / resolution);
++	mtk_pwm_writel(pc, pwm->hwpwm, reg_thres, duty_ns / resolution);
+ 
+ 	mtk_pwm_clk_disable(chip, pwm);
+ 
+@@ -211,6 +225,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+ 	data = of_device_get_match_data(&pdev->dev);
+ 	if (data == NULL)
+ 		return -EINVAL;
++	pc->soc = data;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pc->regs = devm_ioremap_resource(&pdev->dev, res);
+@@ -251,14 +266,17 @@ static int mtk_pwm_remove(struct platform_device *pdev)
+ 
+ static const struct mtk_pwm_platform_data mt2712_pwm_data = {
+ 	.num_pwms = 8,
++	.pwm45_fixup = false,
+ };
+ 
+ static const struct mtk_pwm_platform_data mt7622_pwm_data = {
+ 	.num_pwms = 6,
++	.pwm45_fixup = false,
+ };
+ 
+ static const struct mtk_pwm_platform_data mt7623_pwm_data = {
+ 	.num_pwms = 5,
++	.pwm45_fixup = true,
+ };
+ 
+ static const struct of_device_id mtk_pwm_of_match[] = {
+-- 
+2.7.4
