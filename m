@@ -1,114 +1,179 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4026909-1519943620-2-2125385799852108442
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519943619; b=IRvp24qgRfE9e+OqaebX+jbD0R85TNUx3ZrO9XUac2sPqOR
-    P1ZCPyAbsfGmsB4qLEQBuIy6hYjKbXsvnC5V8Yagz0cVtfRVSjEoBWFKyyFj6zbz
-    i844q2o/lsr7tQ96Aec3eiCZS2PeYiSw53F2q54ZUegUAjBQhD+26MeJw/R89qni
-    FL8vsaAL+AVlP+S43D+oJT1SKbKHK82860BxVl58ylT+1Lm0LGVDuupTrnuLVuUE
-    nzNxkYr6P3R+zuF38tdjrCPpn9TcOx3lZUkX9s+1keqlbrtMNzcL+z0fFG05Uj+h
-    LteCUwCEtDhyUvtMjOOc4zqJpsnsqaKZVvEP9AA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1519943619; bh=GLhc/oZAnnCpqBALhtxstmDsurm+YJJ6jucyT0
-    GWAD8=; b=NVHf1dwjqcMW82hU0CvEU+8agIEnLkKruOjD4r7u7OMabDMS2IMohR
-    ifEEjVaMEaEMNySnrbkWCqexMJAdOy7evDDoLUmS4sMJmp5vXw4xvftIuqHZN+jp
-    p1YK/5cB3qMYmQ8iZM7zQEU1p0lRPJztJ9U9x28texBAhDq04Wx2Rne/Lwkart7B
-    l9+9h7wZdpDAL5C2DGjf1Pqo3i/RNWqg+X8FXuz9F2XJnSpeZcLF0OHuySgWpzk3
-    xnk9MjtazqpQ1A36G7B6pPFXS8AnZrIyJJJYEVoAuhUkhCNp/ZOfx5rAZz22b16F
-    x2dMqWOEO/4ZfY/K6Hwfs5Q4oiX1czHQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Y/3/bE7G x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uRjEATVc;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Y/3/bE7G x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uRjEATVc;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162641AbeCAWdH (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 17:33:07 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51260 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161204AbeCAWdD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 17:33:03 -0500
-X-Google-Smtp-Source: AG47ELtiI+ooAPmOFembg9+D1Nu/OFAM+QmMHm/FJ3Zm8ckBzxnYayRTc4LmuVc4rIjC6LuiZuSYGDUg7/OMvJWQhpQ=
-MIME-Version: 1.0
-In-Reply-To: <20180220181751.20826-1-krzk@kernel.org>
-References: <20180220181751.20826-1-krzk@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 23:33:01 +0100
-Message-ID: <CACRpkdbAhPdpRTx0P3yvazGgRvtUMmJ-qese1LFoCqNSPuR+sw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Validate alias coming from DT
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <merlijn@wizzup.org>
+X-Google-Smtp-Source: AG47ELv+yhKeJGWvT5xBZ5+F/FEAgvap2SaNtLuHplbshtl8YlWuRGC/Tz/o4p8eVpmQz7M75te/
+ARC-Seal: i=1; a=rsa-sha256; t=1519943575; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hQ5fgemvSe6cd0StpTZq8812sUdO36ZGAP6I8V/NQiYjPkRyWNaVGbjAFsO+jw+i9a
+         BOd4gozfFLH2AZ564LPOylLtfbmiS9hQjylpumATLncezV3NR30+UTyoJIuAEbwetC1/
+         +9E2kz7PDam63/lfQ0UBeXB/aCdhy4n5MGWUcIpKHFhf45vHz91ZOnjepUa9vPu4oOZn
+         YnM+1382FSgWXqL9Us2Bv7per5SoN6QqoFsN2xRzf1RgIS0UY47mEVB9mIcDTcQyyVCo
+         /8ZfAUxYJW+Czv/1tnXPeYfiEiICoprHdXRyZhwcKcjHDVHpg32ZmL0ftinrSy7APM3D
+         LNTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=bCJiacTRdjzrA3SaEdV9ojiTEicKkO7Q2sdHR8/6R9U=;
+        b=LJFL5yVfnEeP0or9QdwVAhmhEXMVDab1dzzUThayRjOcKL/mg7yEGLaD+uhhvSnsas
+         3O8sLieTuRbyUd0Vq7NIetT2mXQvZJBxBKqB5MmPieWxrnybp/9FHLlfJQw9TFh2M3ug
+         RIwOsf4Im9vp1E7t36YhrSb2rZe57qlD4X0T8JPiQaoEFzkNtmp8I84Zi9jvtv1oPF1Z
+         WJjtCrL03i8rgc2brf8O1K/MuA04O7KnSW04Ngb8qBqPdeAj7QDlje71ukTECZu/YTye
+         N8M2JIRV8XKhrnOYTvcq3xetxd/akR213afTYZJj3bYIQ1gCF6vzIF6/M07t4pHzA4mo
+         KLZg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 188.165.243.101 is neither permitted nor denied by best guess record for domain of merlijn@wizzup.org) smtp.mailfrom=merlijn@wizzup.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 188.165.243.101 is neither permitted nor denied by best guess record for domain of merlijn@wizzup.org) smtp.mailfrom=merlijn@wizzup.org
+From: Merlijn Wajer <merlijn@wizzup.org>
+To: 
+Cc: merlijn@wizzup.org,
+	ivo.g.dimitrov.75@gmail.com,
+	"Andrew F. Davis" <afd@ti.com>,
+	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Breck <kernel@networkimprov.net>,
+	Matt Ranostay <matt.ranostay@konsulko.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] power: supply: bq27xxx: Call power_supply_changed on status change
+Date: Thu,  1 Mar 2018 23:32:03 +0100
+Message-Id: <20180301223218.17422-1-merlijn@wizzup.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593776354858171040?=
+X-GMAIL-MSGID: =?utf-8?q?1593776354858171040?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Feb 20, 2018 at 7:17 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+It seems that bq27xxx_battery_update does not call power_supply_changed when the
+charging status changes, and instead only when the capacity changes.
 
-> Driver uses alias from Device Tree as an index of pin controller data
-> array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
-> outside of this data array leading to out-of-bounds access.
->
-> Depending on binary and memory layout, this could be handled properly
-> (showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
-> available") or could lead to exceptions.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Issue is present since first version of this driver so this should be
-> backported as far as possible.
->
-> Tested on Odroid HC1 (Exynos5422). Tests on S3C24xx, S3C64xx, Exynos
-> ARM64 and any other chips are highly appreciated.
->
-> Linus,
-> I can take it through samsung/pinctrl tree and later send you again as
-> pull request... or you can apply it directly as I do not have any other
-> pinctrl patches queued so far.
+This can cause considerable delays in reporting charging status changes to
+userspace. This patch turns the battery status reading function into one that
+returns the value directly (as other *_read functions), adds the status to the
+cache, uses the cache when reporting the values and finally will trigger
+power_supply_changed when the charging status changes.
 
-Patch applied for fixes with all the tags.
+Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
+---
+ drivers/power/supply/bq27xxx_battery.c | 59 +++++++++++++++++-----------------
+ include/linux/power/bq27xxx_battery.h  |  1 +
+ 2 files changed, 30 insertions(+), 30 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index 0a203672744c..218d153fb431 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -1527,6 +1527,31 @@ static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
+ 	return POWER_SUPPLY_HEALTH_GOOD;
+ }
+ 
++static int bq27xxx_battery_read_status(struct bq27xxx_device_info *di)
++{
++	int status;
++
++	if (di->opts & BQ27XXX_O_ZERO) {
++		if (di->cache.flags & BQ27000_FLAG_FC)
++			status = POWER_SUPPLY_STATUS_FULL;
++		else if (di->cache.flags & BQ27000_FLAG_CHGS)
++			status = POWER_SUPPLY_STATUS_CHARGING;
++		else if (power_supply_am_i_supplied(di->bat) > 0)
++			status = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		else
++			status = POWER_SUPPLY_STATUS_DISCHARGING;
++	} else {
++		if (di->cache.flags & BQ27XXX_FLAG_FC)
++			status = POWER_SUPPLY_STATUS_FULL;
++		else if (di->cache.flags & BQ27XXX_FLAG_DSC)
++			status = POWER_SUPPLY_STATUS_DISCHARGING;
++		else
++			status = POWER_SUPPLY_STATUS_CHARGING;
++	}
++
++	return status;
++}
++
+ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ {
+ 	struct bq27xxx_reg_cache cache = {0, };
+@@ -1547,6 +1572,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			cache.time_to_full = -ENODATA;
+ 			cache.charge_full = -ENODATA;
+ 			cache.health = -ENODATA;
++			cache.status = bq27xxx_battery_read_status(di);
+ 		} else {
+ 			if (di->regs[BQ27XXX_REG_TTE] != INVALID_REG_ADDR)
+ 				cache.time_to_empty = bq27xxx_battery_read_time(di, BQ27XXX_REG_TTE);
+@@ -1559,6 +1585,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			if (di->regs[BQ27XXX_REG_AE] != INVALID_REG_ADDR)
+ 				cache.energy = bq27xxx_battery_read_energy(di);
+ 			cache.health = bq27xxx_battery_read_health(di);
++			cache.status = bq27xxx_battery_read_status(di);
+ 		}
+ 		if (di->regs[BQ27XXX_REG_CYCT] != INVALID_REG_ADDR)
+ 			cache.cycle_count = bq27xxx_battery_read_cyct(di);
+@@ -1570,7 +1597,7 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			di->charge_design_full = bq27xxx_battery_read_dcap(di);
+ 	}
+ 
+-	if (di->cache.capacity != cache.capacity)
++	if ((di->cache.capacity != cache.capacity) || (di->cache.status != cache.status))
+ 		power_supply_changed(di->bat);
+ 
+ 	if (memcmp(&di->cache, &cache, sizeof(cache)) != 0)
+@@ -1625,34 +1652,6 @@ static int bq27xxx_battery_current(struct bq27xxx_device_info *di,
+ 	return 0;
+ }
+ 
+-static int bq27xxx_battery_status(struct bq27xxx_device_info *di,
+-				  union power_supply_propval *val)
+-{
+-	int status;
+-
+-	if (di->opts & BQ27XXX_O_ZERO) {
+-		if (di->cache.flags & BQ27000_FLAG_FC)
+-			status = POWER_SUPPLY_STATUS_FULL;
+-		else if (di->cache.flags & BQ27000_FLAG_CHGS)
+-			status = POWER_SUPPLY_STATUS_CHARGING;
+-		else if (power_supply_am_i_supplied(di->bat) > 0)
+-			status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+-		else
+-			status = POWER_SUPPLY_STATUS_DISCHARGING;
+-	} else {
+-		if (di->cache.flags & BQ27XXX_FLAG_FC)
+-			status = POWER_SUPPLY_STATUS_FULL;
+-		else if (di->cache.flags & BQ27XXX_FLAG_DSC)
+-			status = POWER_SUPPLY_STATUS_DISCHARGING;
+-		else
+-			status = POWER_SUPPLY_STATUS_CHARGING;
+-	}
+-
+-	val->intval = status;
+-
+-	return 0;
+-}
+-
+ static int bq27xxx_battery_capacity_level(struct bq27xxx_device_info *di,
+ 					  union power_supply_propval *val)
+ {
+@@ -1733,7 +1732,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_STATUS:
+-		ret = bq27xxx_battery_status(di, val);
++		ret = bq27xxx_simple_value(di->cache.status, val);
+ 		break;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+ 		ret = bq27xxx_battery_voltage(di, val);
+diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
+index e6187f524f2c..4f27656045fd 100644
+--- a/include/linux/power/bq27xxx_battery.h
++++ b/include/linux/power/bq27xxx_battery.h
+@@ -49,6 +49,7 @@ struct bq27xxx_reg_cache {
+ 	int flags;
+ 	int power_avg;
+ 	int health;
++	int status;
+ };
+ 
+ struct bq27xxx_device_info {
+-- 
+2.16.2
