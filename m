@@ -1,159 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032326AbeCAPcY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 10:32:24 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:12539 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032293AbeCAPcJ (ORCPT
+        id S1032428AbeCAPep (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 10:34:45 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8015 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1032299AbeCAPcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 10:32:09 -0500
-Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
-From: Vignesh R <vigneshr@ti.com>
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        KISHON VIJAY ABRAHAM <kishon@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180209120415.17590-1-vigneshr@ti.com>
- <20180209120415.17590-3-vigneshr@ti.com>
- <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
- <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
-Message-ID: <c3efe768-8934-16cc-142b-bc46b88fe399@ti.com>
-Date: Thu, 1 Mar 2018 21:01:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 1 Mar 2018 10:32:20 -0500
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v2 0/2] Introduce STM32 USB PHY Controller driver
+Date: Thu, 1 Mar 2018 16:30:43 +0100
+Message-ID: <1519918245-17333-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-01_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+This patchset adds support for STMicroelectronics STM32 USB PHY Controller
+(USBPHYC) which is embedded in STM32MP1 SoC.
+The STM32 USBPHYC block contains a dual port High Speed UTMI+ PHY and a UTMI
+switch that selects either USB OTG controller or USB Host controller for the
+second PHY port.
 
-On 15-Feb-18 9:59 AM, Vignesh R wrote:
-> Hi,
-> 
-> On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
->> On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
->>> We need to ensure that there are no pending MSI IRQ vector set (i.e
->>> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
->>> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
->>> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
->>> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
->>> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
->>>
->>> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
->>> 8260 used to throw following error and stall during ping/iperf3 tests.
->>>
->>> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
->>>
->>> Signed-off-by: Vignesh R <vigneshr@ti.com>
->>> ---
->>>   drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
->>>   1 file changed, 18 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
->>> index ed8558d638e5..3420cbf7b60a 100644
->>> --- a/drivers/pci/dwc/pci-dra7xx.c
->>> +++ b/drivers/pci/dwc/pci-dra7xx.c
->>> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->>>         struct dra7xx_pcie *dra7xx = arg;
->>>         struct dw_pcie *pci = dra7xx->pci;
->>>         struct pcie_port *pp = &pci->pp;
->>> +     int count = 0;
->>>         unsigned long reg;
->>>         u32 virq, bit;
->>>   
->>>         reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
->>> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
->>>   
->>>         switch (reg) {
->>>         case MSI:
->>> -             dw_handle_msi_irq(pp);
->>> +             /*
->>> +              * Need to make sure no MSI IRQs are pending before
->>> +              * exiting handler, else the wrapper will not catch new
->>> +              * IRQs. So loop around till dw_handle_msi_irq() returns
->>> +              * IRQ_NONE
->>> +              */
->>> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
->>> +                     count++;
->>> +
->>> +             if (count == 1000) {
->>> +                     dev_err(pci->dev, "too much work in msi irq\n");
->>> +                     dra7xx_pcie_writel(dra7xx,
->>> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
->>> +                                        reg);
->>> +                     return IRQ_HANDLED;
->>
->> I am not merging any code patching this IRQ handling routine anymore
->> unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
->> works (and how it is related to DW registers) and why this specific host
->> controller needs handling that is not required by any other host
->> controller relying on dw_handle_msi_irq().
-> 
-> Unlike other DW PCIe controllers, TI implementation has a wrapper on top
-> of DW core. This wrapper latches the DW core level MSI and legacy
-> interrupts and then propagates it to GIC.
-> PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
-> wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
-> level. They are mapped on the MSI interrupt line of PCIe controller,
-> using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
-> 
-> So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
-> at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
-> then call dw_handle_msi_irq() to handle individual MSI vectors.
-> Driver has to make sure there are no pending vectors in DW core MSI
-> status register before exiting handler. Otherwise next MSI IRQ will not
-> be latched by the wrapper.
-> 
-> 
+---
+Changes in v2:
+* Update diagram to better describe the context.
+* Change boolean dt propery st,port2-switch-to-host into u32 st,utmi-switch.
+* Silent phy creation failure in case of -EPROBE_DEFER.
 
-Did above explanation clarify CONF_IRQSTATUS_MSI register usage and the
-need for IRQ handler? Are you okay with this fix?
 
-Regards
-Vignesh
+Amelie Delaunay (2):
+  dt-bindings: phy: add support for STM32 USB PHY Controller (USBPHYC)
+  phy: stm32: add support for STM32 USB PHY Controller (USBPHYC)
 
->>
->> I suspect there is a code design flaw with the way this host handles
->> IRQs and we are going to find it and fix it the way it should, not with
->> any plaster like this patch.
->>
-> 
-> I agree there has been some churn wrt this wrapper level IRQ handler.
-> But, that was because hardware documentation/TRM did not match
-> actual behavior and so it took some time to understand how the
-> hardware is working. I have extensively tested this series on multiple
-> problematic PCIe USB cards and PCIe WiFi cards over week long stress
-> tests. And also had some agreement with internal hardware designers.
-> Hardware documentations will also be updated.
-> 
-> 
->> Lorenzo
->>
->>> +             }
->>>                 break;
->>>         case INTA:
->>>         case INTB:
->>> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
->>>                 break;
->>>         }
->>>   
->>> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
->>> -
->>>         return IRQ_HANDLED;
->>>   }
->>>   
->>> -- 
->>> 2.16.1
->>>
-> 
+ .../devicetree/bindings/phy/phy-stm32-usbphyc.txt  |  46 +++
+ drivers/phy/st/Kconfig                             |  14 +
+ drivers/phy/st/Makefile                            |   1 +
+ drivers/phy/st/phy-stm32-usbphyc.c                 | 382 +++++++++++++++++++++
+ 4 files changed, 443 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
+ create mode 100644 drivers/phy/st/phy-stm32-usbphyc.c
+
+-- 
+2.7.4
