@@ -1,110 +1,89 @@
-Return-Path: <andreas.dilger@intel.com>
-X-Google-Smtp-Source: AG47ELsF8Vh0g43x+v1/Ov7g7Df0/HjnihH8hS5609xxlSJL+xCYBXh7wVnA4GG3ETCLSy3azMkO
-ARC-Seal: i=1; a=rsa-sha256; t=1520457887; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AG47ELvTfodts0GZbe+hgbYGsi9rDG4gLvbo/TAg395cmt8U27tQQrj8ov3+A3rZjzSQopYPAIS7
+ARC-Seal: i=1; a=rsa-sha256; t=1519947162; cv=none;
         d=google.com; s=arc-20160816;
-        b=cG40KUexSNviNXrG44wKwI00GTb033uVBAXN+nFUPX8Uyj8r9f7KfON0r4Nbo9UgcI
-         yeimmPmDLpFb9SUcteq0buppVm9K5F80G+tPwR70F/tvfuB8tSZNQ7C6N1mr45qstthm
-         20lZH6knJg4CA0bUQbQ1NdPtuznIz0cNxQxldgy19yED4QmckXRAH4EPFAMQsvCtSnAI
-         03m0orM4Zw6VVebmS6FCLLNAjJEubbDbQFuQlJa70tC3pCLI8/EhysaZf4Y9zCtRqbU5
-         vqSH3Ei0d/9VDbzio7v8H5CSVadz5uwMCpwkUOvOkrR9rWOlMX8mlTGKkEKQtmNbzDBz
-         EKhA==
+        b=TSa7/vpRANj4PCw5vX+14zGRf0g8ltoRD1Ed4pIevGVxAVcZnHO2Vg08cVB6pnil9l
+         Maxj594dyDGHJQEN0GA/XjT0Pw39g1V3x3eiyYfBEh02sxpMjRH1TlTLQDtY1P9g9e69
+         STfRvPtDjybf/yPqHE6cvkcGfE8acx6jH4c3mx4ZGR3LOkZGm5VYBlWMPBsyaSLlCllM
+         KA3USU9GcMhCpl7zf1BUV28xQSJg+S7MtQrdsJUzE9lTbzhsLsDr5mE9OO8Q/QP2Ks2S
+         zxil7bCYTkwB2xCUGnokXWZLVHzdRwjl5bKVeueJYAdBD0bVyBZsgQ7zejFSUrxgndhi
+         EEvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=hYV7p6EAH/XrsPhdkRfk5aynOfJZHpPI6rkUzz+h+tY=;
-        b=k0Bb0ylp088/0y9pG53LhBGxxBTM+lqroNhkBxxHVnmypqHqotBDWAAmvOKPOxAoUX
-         d5V8DFHI9mc8ZvgS8JWRHvFVvfNNl342pa9sFy3xLY5sO0tHmMBMHsI5Xhv9WLu9Shep
-         nrLyOQEZ4cFhcLW49irIiAVjstakPKOJcmxKxZGdiG52ZkqD8kuqU6gamRcpyE/Vk9fv
-         y3efeVUmH2lnGPTgUGLHPYtFNNgo1QceX/eQ0lysIOsHIn2EMLy0xu4Y6WBIRVti5ScQ
-         FbtxfPTPEaNXijN/fajqPpVqRjWDVAJ7frHAf/EIYDJvMY84TlfxDtu6TgVhD6mpjW43
-         XWhA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=jHOSYWaeNyqXdGPinYF2SUJ3PQ3PezIxJ9oxpwU2sOQ=;
+        b=JmBvooae68XgzBjT7KBX+4Mysy6J0r++p9oJOA9R57hGQfD9YrSHWSTJSp7JbuYJY/
+         ZqNj4/BvC1dbcLD9v+zBArfaWtm6RVqy/lRB5c4I6FW8iXzUcXgXRytRIIumbuoT3s39
+         XAFAwMw+FsfnkDYrE7t73hn3UyQV1J0rYpMcWq065z8dXxOQsP+zYBzFmyJxngO2J4EX
+         BeDORgfYW+e/eL1xgTOjtfzp4dRAe+146eo2fpQ1UzKbTB1ug21rVeBIqKmTkfsLZipF
+         0AcM4JZhvhqRAAADzqvm2G9F1WURW42hKZopqOncvlpyScUjxag/VMDCr7bW0VDWH/9p
+         GpMg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of andreas.dilger@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
-   d="scan'208";a="22836604"
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-To: NeilBrown <neilb@suse.com>
-CC: "Drokin, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List
-	<lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 05/17] staging: lustre: lnet: keep ln_nportals consistent
-Thread-Topic: [PATCH 05/17] staging: lustre: lnet: keep ln_nportals
- consistent
-Thread-Index: AQHTsbWhUnueJw3apEa+L8kuiQjaj6PF2BwA
-Date: Wed, 7 Mar 2018 21:24:45 +0000
-Message-ID: <7BA17B93-50EA-41F3-890D-69EA4FE468F5@intel.com>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Fri, 02 Mar 2018 10:31:25 +1100
+Subject: [PATCH 04/17] staging: lustre: obdclass: don't require lct_owner to
+ be non-NULL.
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <151994708517.7628.10169180583984336095.stgit@noble>
+In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
 References: <151994679573.7628.1024109499321778846.stgit@noble>
- <151994708521.7628.13905456558048566520.stgit@noble>
-In-Reply-To: <151994708521.7628.13905456558048566520.stgit@noble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.6.233]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BC162B80A0B48340BFB55EF0C596C3B0@intel.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593780122780902634?=
-X-GMAIL-MSGID: =?utf-8?q?1594315649775430527?=
+X-GMAIL-THRID: =?utf-8?q?1593780115063763673?=
+X-GMAIL-MSGID: =?utf-8?q?1593780115063763673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
->=20
-> ln_nportals should be zero when no portals have
-> been allocated.  This ensures that memory allocation failure
-> is handled correctly elsewhere.
->=20
-> Signed-off-by: NeilBrown <neilb@suse.com>
+Some places in lu_object.c allow lct_owner to be NULL, implying
+that the code is built in to the kernel (not a module), but
+two places don't.  This prevents us from building lustre into
+the kernel.
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+So remove the requirement and always allow lct_owner to be NULL.
 
-> ---
-> drivers/staging/lustre/lnet/lnet/lib-ptl.c |    5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/staging/lustre/lnet/lnet/lib-ptl.c b/drivers/staging=
-/lustre/lnet/lnet/lib-ptl.c
-> index 471f2f6c86f4..fc47379c5938 100644
-> --- a/drivers/staging/lustre/lnet/lnet/lib-ptl.c
-> +++ b/drivers/staging/lustre/lnet/lnet/lib-ptl.c
-> @@ -841,6 +841,7 @@ lnet_portals_destroy(void)
->=20
-> 	cfs_array_free(the_lnet.ln_portals);
-> 	the_lnet.ln_portals =3D NULL;
-> +	the_lnet.ln_nportals =3D 0;
-> }
->=20
-> int
-> @@ -851,12 +852,12 @@ lnet_portals_create(void)
->=20
-> 	size =3D offsetof(struct lnet_portal, ptl_mt_maps[LNET_CPT_NUMBER]);
->=20
-> -	the_lnet.ln_nportals =3D MAX_PORTALS;
-> -	the_lnet.ln_portals =3D cfs_array_alloc(the_lnet.ln_nportals, size);
-> +	the_lnet.ln_portals =3D cfs_array_alloc(MAX_PORTALS, size);
-> 	if (!the_lnet.ln_portals) {
-> 		CERROR("Failed to allocate portals table\n");
-> 		return -ENOMEM;
-> 	}
-> +	the_lnet.ln_nportals =3D MAX_PORTALS;
->=20
-> 	for (i =3D 0; i < the_lnet.ln_nportals; i++) {
-> 		if (lnet_ptl_setup(the_lnet.ln_portals[i], i)) {
->=20
->=20
+This requires removing an "assert" that the module count is positive,
+but this is redundant as module_put() already does the necessary test.
 
-Cheers, Andreas
---
-Andreas Dilger
-Lustre Principal Architect
-Intel Corporation
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index cca688175d2d..880800e78c52 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -1380,12 +1380,8 @@ static void key_fini(struct lu_context *ctx, int index)
+ 		lu_ref_del(&key->lct_reference, "ctx", ctx);
+ 		atomic_dec(&key->lct_used);
+ 
+-		if ((ctx->lc_tags & LCT_NOREF) == 0) {
+-#ifdef CONFIG_MODULE_UNLOAD
+-			LINVRNT(module_refcount(key->lct_owner) > 0);
+-#endif
++		if ((ctx->lc_tags & LCT_NOREF) == 0)
+ 			module_put(key->lct_owner);
+-		}
+ 		ctx->lc_value[index] = NULL;
+ 	}
+ }
+@@ -1619,7 +1615,6 @@ static int keys_fill(struct lu_context *ctx)
+ 			LINVRNT(key->lct_init);
+ 			LINVRNT(key->lct_index == i);
+ 
+-			LASSERT(key->lct_owner);
+ 			if (!(ctx->lc_tags & LCT_NOREF) &&
+ 			    !try_module_get(key->lct_owner)) {
+ 				/* module is unloading, skip this key */
