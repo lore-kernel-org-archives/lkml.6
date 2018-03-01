@@ -1,66 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1161943AbeCAVT6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:19:58 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42053 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161475AbeCAVT4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:19:56 -0500
-X-Google-Smtp-Source: AG47ELv+bzGql4T5InDHamVzaVMDvgLAa5AH8m6oehvlEVITu2O+StHAZKUXT24CwTJqUagBmtmsiA==
-Date: Thu, 1 Mar 2018 15:19:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 3/7] pinctrl: sunxi: add support for the Allwinner H6
- main pin controller
-Message-ID: <20180301211950.ust7g4jnlncrvwxp@rob-hp-laptop>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-4-icenowy@aosc.io>
+        id S1161959AbeCAVWC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:22:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:24677 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161475AbeCAVV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:21:59 -0500
+Date: Thu, 1 Mar 2018 14:21:55 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: "Stephen  Bates" <sbates@raithlin.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all
+ devices behind switches
+Message-ID: <20180301142155.5966c4c0@w520.home>
+In-Reply-To: <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+        <20180228234006.21093-5-logang@deltatee.com>
+        <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+        <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223122552.58049-4-icenowy@aosc.io>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 08:25:48PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has two pin controllers, one main controller
-> (called CPUX-PORT in user manual) and one controller in CPUs power
-> domain (called CPUS-PORT in user manual).
-> 
-> This commit introduces support for the main pin controller on H6.
-> 
-> The pin bank A and B are not wired out and hidden from the SoC's
-> documents, however it's shown that the "ATE" (an AC200 chip
-> co-packaged with the H6 die) is connected to the main SoC die via these
-> pin banks. The information about these banks is just copied from the BSP
-> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
-> format. The GPIO functions are dropped, as they're impossible to use --
-> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - SPDX license identifier fix.
-> - Dropped most GPIO functionality at PA/PB.
-> 
-> Changes in v2:
-> - Dropped without_bus_gate description.
-> - Switched to SPDX license identifier.
-> 
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+On Thu, 1 Mar 2018 18:54:01 +0000
+"Stephen  Bates" <sbates@raithlin.com> wrote:
 
-Please add acks when posting new versions.
+> Thanks for the detailed review Bjorn!
+> 
+> >>  
+> >> +	  Enabling this option will also disable ACS on all ports behind
+> >> +	  any PCIe switch. This effictively puts all devices behind any
+> >> +	  switch into the same IOMMU group.  
+> 
+> >
+> >  Does this really mean "all devices behind the same Root Port"?  
+> 
+> Not necessarily. You might have a cascade of switches (i.e switches below a switch) to achieve a very large fan-out (in an NVMe SSD array for example) and we will only disable ACS on the ports below the relevant switch.
+> 
+> > What does this mean in terms of device security?  I assume it means,
+> > at least, that individual devices can't be assigned to separate VMs.  
+> 
+> This was discussed during v1 [1]. Disabling ACS on all downstream ports of the switch means that all the EPs below it have to part of the same IOMMU grouping. However it was also agreed that as long as the ACS disable occurred at boot time (which is does in v2) then the virtualization layer will be aware of it and will perform the IOMMU group formation correctly.
 
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          | 614 +++++++++++++++++++++
->  4 files changed, 620 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+This is still a pretty terrible solution though, your kernel provider
+needs to decide whether they favor device assignment or p2p, because we
+can't do both, unless there's a patch I haven't seen yet that allows
+boot time rather than compile time configuration.  There are absolutely
+supported device assignment cases of switches proving isolation between
+devices allowing the downstream EPs to be used independently.  I think
+this is a non-starter for distribution support without boot time or
+dynamic configuration.  I could imagine dynamic configuration through
+sysfs that might trigger a soft remove and rescan of the affected
+devices in order to rebuild the IOMMU group.  The hard part might be
+determining which points to allow that to guarantee correctness.  For
+instance, upstream switch ports don't actually support ACS, but they'd
+otherwise be an obvious concentration point to trigger a
+reconfiguration.  Thanks,
+
+Alex
