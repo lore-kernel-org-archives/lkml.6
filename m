@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2898263-1519909475-2-15972227733070343223
+X-Cyrus-Session-Id: sloti22d1t05-2899084-1519909475-2-8026011412050063983
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,49 +13,49 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519909474; b=CXZG4DoMBCk0Y5AAhFmqbs3Ib0g6UtH60E08jDbzlFRb4GN
-    4Ror88cDkX/Le3gMIyDjAiVS8DS+i03NoBJuKyOYI14uStkGe4hLn479iyb7F5wz
-    MCW8O38uB8720B4OrgojcjW64Yfbv+cOEcnXNLSaDhFOgeu++19VHYdtQgtsfNj9
-    5kl8bjkWvtfoMtuElSWsXDfKcCTVQl9Qpvc0dhSaGRcmlnCmB9AboTtnGOmIUoYx
-    RVhETbqavFaR5XXywKZtqnOGzpN6d7mMYJZ82sapP7waLRJd987PZazJijzclaZD
-    8fC7swhrIW6kdeBkDFRweLTsUn5yLgS/KHJvBlQ==
+    t=1519909474; b=TJKYJ+ZGwBOgGCAWLe/BKScdh87CXyVb9wgybTzcVc7oNe9
+    Bz/iWgWs9/xQGUZ7yix09JSgqSAVSB71H3KL0TBvmGx2SXUOyrJATjqO459e5/N3
+    0cPm+mFSiiV13ME3F/N3xPJ5Fub4im6Lq59ZCavyIPZwv/49XR46hqXRWoOdMNH7
+    eLajmZTgfSVmDXFvh+lIDBouYACXQOrhce7GyefcLWg43bpQobWA5Upoe1asGBDC
+    sDpKEpNJnBT9w6T06U8bj2TbWYcM27qXE+IBFe5gStyH7xegU3Mm3DH/Z5787EhT
+    QZstmkyhBTkGyJGzUWveRmnMZHfZYbJRC7Z//LA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:sender:list-id; s=arctest; t=1519909474;
-    bh=YTi+3EgVxwTxApY3ucUH/g1LD9enZczbL8ouc6EbVOA=; b=eOrR0GzraOzT
-    GMYrvaaa+yUeX52aVlipfa9PoxgBm90H3THl1cWMJty4tMw+uSgpXwShwfcsG7nm
-    1iw0xEP7GLRbbsDKmO4dOdPhPjXay0OItgDY9cNGRitZx0XK6d0iPlbVY8QuBkWP
-    rPGy9GOtCx1umaRYlcXrj00GD8eubz74+BRoEXIJPhQ+oSxFdgFKYcQ/3JJqmJTB
-    9gb0qkLv+dN24Qo+jUJP4ESR7w5WBWjUHfltR2yudKoehxd0sZZpE2zFV5YV42Gk
-    F90zrAWMMEXX4YAdfxNQ5QxFT3WReMXX3sbeAb1EAO3PjK3/cHNpXZHNgetp4KdJ
-    a6ynk+JeDQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=YOD8Yuf8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    bh=o9wt4qxRgviZ/SM2aAeUByaDVo70FE/AaFiMiokIiaM=; b=Pl7qBNTtBBUT
+    VPVCNdm8OeP0DfSdpfEK7k7tjTmKieunT8FgOl8T1DCO9DY8Aaf8YpIfxz76UZJn
+    DjB++c4m9Hx36bhiB1XzyyBC9i6zjA2d9NqiPjJJkvi477ISs3/Ti+R9J3hnHHLM
+    AZuhMQ5Utw9yTK8fjUgB8IJJFmu81VinOAzomJ8sgd8eGVQ4ZRCJ5x7o+o57eigB
+    9Wm6jEwoBNb6fCogY6nefVA1YZ+QSmfzaR9u8vqCrYryGkQMvkkJCgxAWoxddvPx
+    0YQTHeQOOryxdcvaXSXF/26q4PHiPstui2kUNn8b3Vt+X/xAk1Gclbt5IE3GRIvS
+    IfymJkz2jQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=g3bSVM/I x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F/TEE48j;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NbcHd8uj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=YOD8Yuf8 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=g3bSVM/I x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F/TEE48j;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NbcHd8uj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030654AbeCANEa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 08:04:30 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40061 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030930AbeCAM6r (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:58:47 -0500
-X-Google-Smtp-Source: AG47ELsgvdv889GZkRoNxZhwuaugUaeNlR/+ZYs+1tsQN/dRTsgOlj11aoYXW33+9LPDHxvvvjgbgw==
+        id S1030780AbeCAM7K (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 07:59:10 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35599 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030781AbeCAM7H (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 07:59:07 -0500
+X-Google-Smtp-Source: AG47ELtD9SfX5B/ebbCGDbEQMCO76Tb5+BucethGiDDu5z38caUlitVDXoQqjxHR4ioGmmn3vAaCbQ==
 From: Alex Shi <alex.shi@linaro.org>
 To: Marc Zyngier <marc.zyngier@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -64,9 +64,9 @@ To: Marc Zyngier <marc.zyngier@arm.com>,
         stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc: Alex Shi <alex.shi@linaro.org>
-Subject: [PATCH 24/45] arm64: Move BP hardening to check_and_switch_context
-Date: Thu,  1 Mar 2018 20:54:01 +0800
-Message-Id: <1519908862-11425-25-git-send-email-alex.shi@linaro.org>
+Subject: [PATCH 27/45] arm64: entry: Apply BP hardening for suspicious interrupts from EL0
+Date: Thu,  1 Mar 2018 20:54:04 +0800
+Message-Id: <1519908862-11425-28-git-send-email-alex.shi@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
@@ -76,52 +76,59 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit a8e4c0a919ae upstream.
+commit 30d88c0e3ace upstream.
 
-We call arm64_apply_bp_hardening() from post_ttbr_update_workaround,
-which has the unexpected consequence of being triggered on every
-exception return to userspace when ARM64_SW_TTBR0_PAN is selected,
-even if no context switch actually occured.
+It is possible to take an IRQ from EL0 following a branch to a kernel
+address in such a way that the IRQ is prioritised over the instruction
+abort. Whilst an attacker would need to get the stars to align here,
+it might be sufficient with enough calibration so perform BP hardening
+in the rare case that we see a kernel address in the ELR when handling
+an IRQ from EL0.
 
-This is a bit suboptimal, and it would be more logical to only
-invalidate the branch predictor when we actually switch to
-a different mm.
-
-In order to solve this, move the call to arm64_apply_bp_hardening()
-into check_and_switch_context(), where we're guaranteed to pick
-a different mm context.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Reported-by: Dan Hettena <dhettena@nvidia.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Alex Shi <alex.shi@linaro.org>
 ---
- arch/arm64/mm/context.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/kernel/entry.S | 5 +++++
+ arch/arm64/mm/fault.c     | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
-index afc9266..36416e4 100644
---- a/arch/arm64/mm/context.c
-+++ b/arch/arm64/mm/context.c
-@@ -221,6 +221,7 @@ void check_and_switch_context(struct mm_struct *mm, unsigned int cpu)
- 	raw_spin_unlock_irqrestore(&cpu_asid_lock, flags);
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index d50c2fe..e26a114 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -646,6 +646,11 @@ el0_irq_naked:
+ #endif
  
- switch_mm_fastpath:
+ 	ct_user_exit
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++	tbz	x22, #55, 1f
++	bl	do_el0_irq_bp_hardening
++1:
++#endif
+ 	irq_handler
+ 
+ #ifdef CONFIG_TRACE_IRQFLAGS
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 6120a14..ad49ae8 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -590,6 +590,12 @@ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+ 	arm64_notify_die("", regs, &info, esr);
+ }
+ 
++asmlinkage void __exception do_el0_irq_bp_hardening(void)
++{
++	/* PC has already been checked in entry.S */
 +	arm64_apply_bp_hardening();
- 	cpu_switch_mm(mm->pgd, mm);
- }
- 
-@@ -231,8 +232,6 @@ asmlinkage void post_ttbr_update_workaround(void)
- 			"ic iallu; dsb nsh; isb",
- 			ARM64_WORKAROUND_CAVIUM_27456,
- 			CONFIG_CAVIUM_ERRATUM_27456));
--
--	arm64_apply_bp_hardening();
- }
- 
- static int asids_init(void)
++}
++
+ asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
+ 						   unsigned int esr,
+ 						   struct pt_regs *regs)
 -- 
 2.7.4
