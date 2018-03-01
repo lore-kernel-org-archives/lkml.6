@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162053AbeCAV0Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:26:24 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39455 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161816AbeCAV0W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:26:22 -0500
-X-Google-Smtp-Source: AG47ELuQ1Sv8imFBT2PNAmPrGeiM9r8WvoYzPMoGQ/OTKc/3iN4Iq90V60xYSpEz/10Mfq4J4QEd1Q==
-Date: Thu, 1 Mar 2018 15:26:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, briannorris@google.com, dtor@google.com,
-        dianders@google.com, devicetree@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 2/3] Input: gpio-keys - allow setting wakeup event
- action in DT
-Message-ID: <20180301212620.bfrz6qjqsg4xkdaa@rob-hp-laptop>
-References: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
- <20180210110907.5504-3-jeffy.chen@rock-chips.com>
+        id S1162054AbeCAV1R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:27:17 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:38740 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1161871AbeCAV1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:27:10 -0500
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Stephen Bates <sbates@raithlin.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-5-logang@deltatee.com>
+ <20180301180257.GH13722@bhelgaas-glaptop.roam.corp.google.com>
+ <0D05579B-789C-4A19-B3A2-C1A630BE31C0@raithlin.com>
+ <20180301142155.5966c4c0@w520.home>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <8202ea69-f0ed-db10-a0d3-9fd470c1c441@deltatee.com>
+Date: Thu, 1 Mar 2018 14:26:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180210110907.5504-3-jeffy.chen@rock-chips.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180301142155.5966c4c0@w520.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, sbates@raithlin.com, alex.williamson@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 04/10] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 10, 2018 at 07:09:06PM +0800, Jeffy Chen wrote:
-> Allow specifying event actions to trigger wakeup when using the
-> gpio-keys input device as a wakeup source.
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> ---
-> 
-> Changes in v2:
-> Specify wakeup event action instead of irq trigger type as Brian
-> suggested.
-> 
->  Documentation/devicetree/bindings/input/gpio-keys.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On 01/03/18 02:21 PM, Alex Williamson wrote:
+> This is still a pretty terrible solution though, your kernel provider
+> needs to decide whether they favor device assignment or p2p, because we
+> can't do both, unless there's a patch I haven't seen yet that allows
+> boot time rather than compile time configuration.  There are absolutely
+> supported device assignment cases of switches proving isolation between
+> devices allowing the downstream EPs to be used independently.  I think
+> this is a non-starter for distribution support without boot time or
+> dynamic configuration.  I could imagine dynamic configuration through
+> sysfs that might trigger a soft remove and rescan of the affected
+> devices in order to rebuild the IOMMU group.  The hard part might be
+> determining which points to allow that to guarantee correctness.  For
+> instance, upstream switch ports don't actually support ACS, but they'd
+> otherwise be an obvious concentration point to trigger a
+> reconfiguration.  Thanks,
+
+At this point, I don't expect this to be enabled in any distribution. 
+The use case is for custom hardware intended to do P2P which means they 
+can have a custom kernel with P2P enabled. The default for 
+CONFIG_PCI_P2P is 'no' and I expect it to stay that way for a long time.
+
+Another boot option which has to be set for this to work isn't something 
+we'd like to see.
+
+Logan
