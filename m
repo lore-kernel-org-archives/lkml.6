@@ -1,251 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1162234AbeCAViv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 16:38:51 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:33171 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1161792AbeCAVfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 16:35:20 -0500
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc: jernej.skrabec@siol.net, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 10/16] drm/sun4i: Add support for variants to DW HDMI PHY
-Date: Thu,  1 Mar 2018 22:34:36 +0100
-Message-Id: <20180301213442.16677-11-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+        id S1162310AbeCAVjD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 16:39:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55078 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161622AbeCAVjB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 16:39:01 -0500
+Date: Thu, 1 Mar 2018 13:38:57 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Mario.Limonciello@dell.com
+Cc: andy.shevchenko@gmail.com, pali.rohar@gmail.com,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+Message-ID: <20180301213857.GC25613@fury>
+References: <1519755784-2155-1-git-send-email-mario.limonciello@dell.com>
+ <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
+ <20180301174845.GA25613@fury>
+ <44477ede216542d89090494590ad7a2c@ausx13mpc124.AMER.DELL.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44477ede216542d89090494590ad7a2c@ausx13mpc124.AMER.DELL.COM>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are multiple variants of DW HDMI PHYs in Allwinner SoCs. While
-some things like clock and reset setup are the same, PHY configuration
-differs a lot.
+On Thu, Mar 01, 2018 at 08:54:31PM +0000, Mario.Limonciello@dell.com wrote:
+> > -----Original Message-----
+> > From: Darren Hart [mailto:dvhart@infradead.org]
+> > Sent: Thursday, March 1, 2018 11:49 AM
+> > To: Limonciello, Mario <Mario_Limonciello@Dell.com>
+> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>; pali.rohar@gmail.com;
+> > LKML <linux-kernel@vger.kernel.org>; platform-driver-x86@vger.kernel.org
+> > Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+> > modules together
+> > 
+> > On Tue, Feb 27, 2018 at 12:23:04PM -0600, Mario Limonciello wrote:
+> > > Some race conditions were raised due to dell-smbios and its backends
+> > > not being ready by the time that a consumer would call one of the
+> > > exported methods.
+> > >
+> > > To avoid this problem, guarantee that all initialization has been
+> > > done by linking them all together and running init for them all.
+> > >
+> > > As part of this change the Kconfig needs to be adjusted so that
+> > > CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+> > > rather than modules.
+> > >
+> > > CONFIG_DELL_SMBIOS is a visually selectable option again and both
+> > > CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
+> > >
+> > > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+> > > ---
+> > > Changes from v2:
+> > >  * Move rest of #ifdef out of source files
+> > >  * Only compile units as necessary
+> > >
+> > >  drivers/platform/x86/Kconfig            | 11 ++++++++---
+> > >  drivers/platform/x86/Makefile           |  4 ++--
+> > >  drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
+> > >  drivers/platform/x86/dell-smbios-smm.c  | 18 ++++--------------
+> > >  drivers/platform/x86/dell-smbios-wmi.c  | 14 ++++----------
+> > >  drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
+> > >  6 files changed, 64 insertions(+), 31 deletions(-)
+> > >
+> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> > > index 9a8f964..0c0897e 100644
+> > > --- a/drivers/platform/x86/Kconfig
+> > > +++ b/drivers/platform/x86/Kconfig
+> > > @@ -106,10 +106,15 @@ config ASUS_LAPTOP
+> > >  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+> > >
+> > >  config DELL_SMBIOS
+> > > -	tristate
+> > > +	tristate "Dell SMBIOS driver"
+> > > +	---help---
+> > > +	This provides support for the Dell SMBIOS calling interface.
+> > > +	If you have a Dell computer you should enable this option.
+> > > +
+> > > +	Be sure to select at least one backend for it to work properly.
+> > 
+> > In order to make the default sane, I would suggest making the above a menu
+> > (default n), nesting the two options below, and making WMI a default=y. This
+> > satisfies Linus' requirement by defaulting everything to n, but enables a sane
+> > default IFF the DELL_SMBIOS menu is enabled.
+> > 
+> > Alternatively, all of the above can be put under the "Dell Extras" menu I
+> > proposed, and DELL_SMBIOS can default to m and DELL_SMBIOS_WMI can default
+> > to y.
+> 
+> I'm on board with moving everything to a Dell extras menu.  There are so many
+> drivers now, it really seems like the best way to make sure that people get them.
+> 
+> You'll have to actively go out of your way to turn off one of the sub-drivers then
+> to get into the situation that was described.
+> 
+> Since you did the original patch for dell extras nested in a mail would you mind 
+> sending that as a follow up second patch on top of my patch?
+> 
+> I think it's probably too much to do it all in this same patch itself.
 
-Split out code which is PHY specific to separate functions and create
-a structure which holds pointers to those functions.
+Yup, easier for me to wrangle that all on my end. I'll look at your 3 again with
+that in mind and let you know if I think any changes are needed, or just update
+mine to apply on top.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 20 ++++++--
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 89 +++++++++++++++++++++++-----------
- 2 files changed, 76 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index d8d0684fc8aa..1e9eb6072615 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -12,11 +12,23 @@
- #include <linux/regmap.h>
- #include <linux/reset.h>
- 
-+struct sun8i_hdmi_phy;
-+
-+struct sun8i_hdmi_phy_variant {
-+	void (*phy_init)(struct sun8i_hdmi_phy *phy);
-+	void (*phy_disable)(struct dw_hdmi *hdmi,
-+			    struct sun8i_hdmi_phy *phy);
-+	int  (*phy_config)(struct dw_hdmi *hdmi,
-+			   struct sun8i_hdmi_phy *phy,
-+			   unsigned int clk_rate);
-+};
-+
- struct sun8i_hdmi_phy {
--	struct clk		*clk_bus;
--	struct clk		*clk_mod;
--	struct regmap		*regs;
--	struct reset_control	*rst_phy;
-+	struct clk			*clk_bus;
-+	struct clk			*clk_mod;
-+	struct regmap			*regs;
-+	struct reset_control		*rst_phy;
-+	struct sun8i_hdmi_phy_variant	*variant;
- };
- 
- struct sun8i_dw_hdmi {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 9d2f11ca3538..17aada64bafd 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -30,21 +30,10 @@
-  */
- #define I2C_ADDR	0x69
- 
--static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
--				 struct drm_display_mode *mode)
-+static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
-+				      struct sun8i_hdmi_phy *phy,
-+				      unsigned int clk_rate)
- {
--	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
--	u32 val = 0;
--
--	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
--		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC;
--
--	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
--		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC;
--
--	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
--			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
--
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
-@@ -64,21 +53,21 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	 * release any documentation, explanation of this values can
- 	 * be found in i.MX 6Dual/6Quad Reference Manual.
- 	 */
--	if (mode->crtc_clock <= 27000) {
-+	if (clk_rate <= 27000000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x01e0, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x08da, 0x10);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0318, 0x0e);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
--	} else if (mode->crtc_clock <= 74250) {
-+	} else if (clk_rate <= 74250000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0540, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0005, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x02b5, 0x0e);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
--	} else if (mode->crtc_clock <= 148500) {
-+	} else if (clk_rate <= 148500000) {
- 		dw_hdmi_phy_i2c_write(hdmi, 0x04a0, 0x06);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x000a, 0x15);
- 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
-@@ -103,10 +92,27 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	return 0;
- };
- 
--static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
-+				 struct drm_display_mode *mode)
- {
- 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
-+	u32 val = 0;
-+
-+	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC;
- 
-+	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC;
-+
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
-+			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
-+
-+	return phy->variant->phy_config(hdmi, phy, mode->crtc_clock * 1000);
-+};
-+
-+static void sun8i_hdmi_phy_disable_a83t(struct dw_hdmi *hdmi,
-+					struct sun8i_hdmi_phy *phy)
-+{
- 	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
- 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
- 
-@@ -114,6 +120,13 @@ static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN, 0);
- }
- 
-+static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
-+{
-+	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
-+
-+	phy->variant->phy_disable(hdmi, phy);
-+}
-+
- static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
- 	.init = &sun8i_hdmi_phy_config,
- 	.disable = &sun8i_hdmi_phy_disable,
-@@ -122,16 +135,8 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
- 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
- };
- 
--void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
-+static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
- {
--	/* enable read access to HDMI controller */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
--		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
--
--	/* unscramble register offsets */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
--		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
--
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
-@@ -145,6 +150,19 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- 			   SUN8I_HDMI_PHY_DBG_CTRL_ADDR(I2C_ADDR));
- }
- 
-+void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
-+{
-+	/* enable read access to HDMI controller */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
-+		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
-+
-+	/* unscramble register offsets */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
-+		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-+
-+	phy->variant->phy_init(phy);
-+}
-+
- const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
- {
- 	return &sun8i_hdmi_phy_ops;
-@@ -158,20 +176,31 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 	.name		= "phy"
- };
- 
-+static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
-+	.phy_init = &sun8i_hdmi_phy_init_a83t,
-+	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
-+	.phy_config = &sun8i_hdmi_phy_config_a83t,
-+};
-+
- static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
--	{ .compatible = "allwinner,sun8i-a83t-hdmi-phy" },
-+	{
-+		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
-+		.data = &sun8i_a83t_hdmi_phy,
-+	},
- 	{ /* sentinel */ }
- };
- 
- int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- {
-+	const struct of_device_id *match;
- 	struct device *dev = hdmi->dev;
- 	struct sun8i_hdmi_phy *phy;
- 	struct resource res;
- 	void __iomem *regs;
- 	int ret;
- 
--	if (!of_match_node(sun8i_hdmi_phy_of_table, node)) {
-+	match = of_match_node(sun8i_hdmi_phy_of_table, node);
-+	if (!match) {
- 		dev_err(dev, "Incompatible HDMI PHY\n");
- 		return -EINVAL;
- 	}
-@@ -180,6 +209,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	if (!phy)
- 		return -ENOMEM;
- 
-+	phy->variant = (struct sun8i_hdmi_phy_variant *)match->data;
-+
- 	ret = of_address_to_resource(node, 0, &res);
- 	if (ret) {
- 		dev_err(dev, "phy: Couldn't get our resources\n");
 -- 
-2.16.2
+Darren Hart
+VMware Open Source Technology Center
