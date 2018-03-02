@@ -1,67 +1,161 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELsG9q8oOv0o1sRxm4SNjqfAzme6acrCNjQulqAbdIZFBFrplpZFAbCloM532vgSTYFRdtBS
-ARC-Seal: i=1; a=rsa-sha256; t=1519998123; cv=none;
+Return-Path: <opensource.ganesh@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519966872; cv=none;
         d=google.com; s=arc-20160816;
-        b=uQ642pLWjVASVdiqOvWyZY2dTlqYy9GA601SAUDuILwcv5jrhPT+KFBixYzU0/9Hbd
-         za4AW0fIfsgyV0Pp3k9BwK8zB+XLmhYrsQLb1OOT7jlr6T7Y20h70uX6OaeBAPCIpW1L
-         wNPFFm/JPnm2Yni4QmIaGX3z2DmbB38O79qDeL3f7UrgA4Btu1fUxowQwoy1AjqYxP+o
-         Zj9qm8/5L5E7ZS0ycWBPFjNdB6fOjTv4pNOdNAMf98tP3IEPEK6VM374WUUilZr4Dkpk
-         LBZH8idj0WcBVTfNakDOUUyjAPtPA2SLhrkM75Y4lpd+9lZeDpo9pw0ZICM16zEGtl9M
-         jyOg==
+        b=zQh+OiyGMcHnFdnupx3JsWTIbvpYZT6Hxdwe1pRGYGbpJNSbLENyxHwU4LS0jhORvH
+         RBIsoHu73ntmBjyi/0murn5vWgenN0ZqnqFjcBveG1MqKM1l67plcKIeFMZwi9KJN923
+         BgaS+TNqYyQQDyPqvrVMA1p/3pkH+GRz86H4AfrWOw597Et5D4CmVw7Kc53A52tqkKoQ
+         V5xqDK2vQXXomlui/wjSiUufcxxjy+TXKigNygOwxASWedNW1CZRhMXvmcZXVgKWIWLG
+         B+OfNKFSHoeHNRmvbRnAXtlD07Sv+41wsMvj4WI7j53T4M5E9LkP6zj8KceNM17eEYEn
+         9dXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=fl/mH639Cx4q2vA3irCeip7xqUAbuUvamEi7vjjfhFE=;
-        b=wRZHwbwbKlqNQDgOzadtlhxpcwcDQhTjpwo1LRQlIjEQzfE9uOzhKLfkJC4zGcaGev
-         ocYIn+ikJkAuFvtbiGdLsgU7e+vTalFxCviq+z5f/rWpRgI2z2vEcfLFMt2a0bU3YqQL
-         VPUMR9K5Dr9dv7YpzckXRz3WAfwMfcfkJZnpEhavc6rliigjSD2iEs9skdzIK1rKvonz
-         oG0M+MFqkFfCV7SpomBlZgX7HGjvjP3073Wx9aGwT7ovVnOljbM7mhG0ow0rkuBKOo3Y
-         le8IjUBQcjnhk4lL08Y858o9MTbl89vJg6ku1GdbXSbws3c2esEhVV2TgTt4mWFkRG4Z
-         C5kw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=cWyjGul+LC3Nx4Bg+vZmY3IZvVwez3KsRrrXRSiydzY=;
+        b=QGq1+k7p1ouhWq7L0TvUot98i4SBKCuVIvz2xBKNHfh5aHkYe9KjBg5Naj7C7kl5Oc
+         lssu1eiEFenMNekDOe1KKVx5PDMgYSyTFLborJzbf6nL9ZMmwRNFrRMl6y06lru45XG2
+         34b1IGaTVDYFPIc4kROSWiYmSZtnIW5TL1kKUbptMTWbUDRkAeO1LK9f9RM1L4/YxOr6
+         Kq5i3pmEKjGr0m+0BKGU/Y35pxbVJ+4OUyNKb9T5bh3OM4jq5JrFiF+6sUah3iGhpquW
+         XZ954WY+fQ3b+pGv75eOTAk9RgN8JzomewygYuWS+rx3+Hu7dW8u+hvr20iNJgKgJ7g4
+         erRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=iJM/Grla;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bhbwFHRV;
+       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=iJM/Grla;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-MIME-Version: 1.0
-In-Reply-To: <20180302130541.GO15057@dhcp22.suse.cz>
-References: <20180228030308.1116-1-pasha.tatashin@oracle.com> <20180302130541.GO15057@dhcp22.suse.cz>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Fri, 2 Mar 2018 08:42:01 -0500
-X-Gmail-Original-Message-ID: <CAOAebxvs0Nh6AkyPJS7e-B-cfeRqUZsQ23AOecOzH8YbneDOOg@mail.gmail.com>
-Message-ID: <CAOAebxvs0Nh6AkyPJS7e-B-cfeRqUZsQ23AOecOzH8YbneDOOg@mail.gmail.com>
-Subject: Re: [v5 0/6] optimize memory hotplug
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Steve Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Bharata B Rao <bharata@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, dan.j.williams@intel.com,
-        kirill.shutemov@linux.intel.com, bhe@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=449
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020162
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bhbwFHRV;
+       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELsc/DZW5RQiMsRC0/JWdnwkCFCncROKVyuHRFTdHC8Kx7+Zzs+r1eBuMAXwIW8uGcJjPXofTA==
+From: Ganesh Mahendran <opensource.ganesh@gmail.com>
+To: rjw@rjwysocki.net,
+	pavel@ucw.cz,
+	len.brown@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ganesh Mahendran <opensource.ganesh@gmail.com>
+Subject: [PATCH] PM / wakeup: use seq_open() to show wakeup stats
+Date: Fri,  2 Mar 2018 13:01:00 +0800
+Message-Id: <1519966860-32519-1-git-send-email-opensource.ganesh@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593612185598129869?=
-X-GMAIL-MSGID: =?utf-8?q?1593833551936654347?=
+X-GMAIL-THRID: =?utf-8?q?1593800783059204124?=
+X-GMAIL-MSGID: =?utf-8?q?1593800783059204124?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Michal,
+single_open() interface requires that the whole output must
+fit into a single buffer. This will lead to timeout when
+system memory is not in a good situation.
 
-Thank you for letting me know, its OK, the patches are in mm-tree, so
-they are getting tested, and there is no rush.
+This patch use seq_open() to show wakeup stats. This method
+need only one page, so timeout will not be observed.
 
-Pavel
+Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
+---
+ drivers/base/power/wakeup.c | 71 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 56 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index ea01621..c64609a 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -1029,32 +1029,73 @@ static int print_wakeup_source_stats(struct seq_file *m,
+ 	return 0;
+ }
+ 
++static void *wakeup_sources_stats_seq_start(struct seq_file *m,
++					loff_t *pos)
++{
++	struct wakeup_source *ws;
++	loff_t n = *pos;
++
++	if (n == 0) {
++		seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
++			"expire_count\tactive_since\ttotal_time\tmax_time\t"
++			"last_change\tprevent_suspend_time\n");
++	}
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
++		if (n-- > 0)
++			continue;
++		goto out;
++	}
++	ws = NULL;
++out:
++	return ws;
++}
++
++static void *wakeup_sources_stats_seq_next(struct seq_file *m,
++					void *v, loff_t *pos)
++{
++	struct wakeup_source *ws = v;
++	struct wakeup_source *next_ws = NULL;
++
++	++(*pos);
++
++	list_for_each_entry_continue_rcu(ws, &wakeup_sources, entry) {
++		next_ws = ws;
++		break;
++	}
++
++	return next_ws;
++}
++
++static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
++{
++	rcu_read_unlock();
++}
++
+ /**
+  * wakeup_sources_stats_show - Print wakeup sources statistics information.
+  * @m: seq_file to print the statistics into.
+  */
+-static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
++static int wakeup_sources_stats_seq_show(struct seq_file *m, void *v)
+ {
+-	struct wakeup_source *ws;
+-	int srcuidx;
++	struct wakeup_source *ws = v;
+ 
+-	seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+-		"expire_count\tactive_since\ttotal_time\tmax_time\t"
+-		"last_change\tprevent_suspend_time\n");
+-
+-	srcuidx = srcu_read_lock(&wakeup_srcu);
+-	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
+-		print_wakeup_source_stats(m, ws);
+-	srcu_read_unlock(&wakeup_srcu, srcuidx);
+-
+-	print_wakeup_source_stats(m, &deleted_ws);
++	print_wakeup_source_stats(m, ws);
+ 
+ 	return 0;
+ }
+ 
++static const struct seq_operations wakeup_sources_stats_seq_ops = {
++	.start = wakeup_sources_stats_seq_start,
++	.next  = wakeup_sources_stats_seq_next,
++	.stop  = wakeup_sources_stats_seq_stop,
++	.show  = wakeup_sources_stats_seq_show,
++};
++
+ static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, wakeup_sources_stats_show, NULL);
++	return seq_open(file, &wakeup_sources_stats_seq_ops);
+ }
+ 
+ static const struct file_operations wakeup_sources_stats_fops = {
+@@ -1062,7 +1103,7 @@ static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+ 	.open = wakeup_sources_stats_open,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
+-	.release = single_release,
++	.release = seq_release,
+ };
+ 
+ static int __init wakeup_sources_debugfs_init(void)
+-- 
+1.9.1
