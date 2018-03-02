@@ -1,192 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeCBTdp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:33:45 -0500
-Received: from magic.merlins.org ([209.81.13.136]:33851 "EHLO
-        mail1.merlins.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbeCBTdc (ORCPT
+        id S1165200AbeCBTUC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:20:02 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56608 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165178AbeCBTT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:33:32 -0500
-Date: Fri, 2 Mar 2018 11:33:27 -0800
-From: Marc MERLIN <marc@merlins.org>
-To: tony.luck@intel.com, Matthew Garrett <mjg59@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, vstavrinov@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
-Subject: Re: Deleting pstore data causes immediate hang of 4.15.5 on Lenovo P70 with upgraded bios
-Message-ID: <20180302193327.GA14014@merlins.org>
-References: <20180302062239.GA17688@merlins.org> <20180302191739.GA5613@merlins.org>
+        Fri, 2 Mar 2018 14:19:58 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E18AD60117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5A99A3DC.9020400@codeaurora.org>
+Date: Fri, 02 Mar 2018 11:19:56 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302191739.GA5613@merlins.org>
-X-Sysadmin: BOFH
-X-URL: http://marc.merlins.org/
-User-Agent: Mutt/1.5.13 (2006-08-11)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: marc@merlins.org
+To: Mark Rutland <mark.rutland@arm.com>
+CC: robh@kernel.org, mathieu.poirier@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>, peterz@infradead.org,
+        sudeep.holla@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        jonathan.cameron@huawei.com, frowand.list@gmail.com,
+        leo.yan@linaro.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+References: <20180102112533.13640-1-suzuki.poulose@arm.com> <20180102112533.13640-9-suzuki.poulose@arm.com> <5A90B77E.8040105@codeaurora.org> <20180225143653.peb4quk3ha5h3t5x@salmiak> <5A972A7D.9020301@codeaurora.org> <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com> <5A986425.9080007@codeaurora.org> <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
+In-Reply-To: <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sigh, and now I was just able to do this:
-saruman:/sys/fs/pstore# \rm *
-saruman:/sys/fs/pstore# l
-total 0
-drwxr-x---  2 root root 0 Mar  2 11:28 ./
-drwxr-xr-x 10 root root 0 Mar  2 10:20 ../
+On 03/02/2018 02:42 AM, Mark Rutland wrote:
+> On Thu, Mar 01, 2018 at 12:35:49PM -0800, Saravana Kannan wrote:
+>> On 03/01/2018 03:49 AM, Mark Rutland wrote:
+>>> On Wed, Feb 28, 2018 at 02:17:33PM -0800, Saravana Kannan wrote:
+>>>> On 02/25/2018 06:36 AM, Mark Rutland wrote:
+>>>>> On Fri, Feb 23, 2018 at 04:53:18PM -0800, Saravana Kannan wrote:
+>>>>>> On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
+>>>>>>> +static void dsu_pmu_event_update(struct perf_event *event)
+>>>>>>> +{
+>>>>>>> +	struct hw_perf_event *hwc = &event->hw;
+>>>>>>> +	u64 delta, prev_count, new_count;
+>>>>>>> +
+>>>>>>> +	do {
+>>>>>>> +		/* We may also be called from the irq handler */
+>>>>>>> +		prev_count = local64_read(&hwc->prev_count);
+>>>>>>> +		new_count = dsu_pmu_read_counter(event);
+>>>>>>> +	} while (local64_cmpxchg(&hwc->prev_count, prev_count, new_count) !=
+>>>>>>> +			prev_count);
+>>>>>>> +	delta = (new_count - prev_count) & DSU_PMU_COUNTER_MASK(hwc->idx);
+>>>>>>> +	local64_add(delta, &event->count);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void dsu_pmu_read(struct perf_event *event)
+>>>>>>> +{
+>>>>>>> +	dsu_pmu_event_update(event);
+>>>>>>> +}
+>>>>>
+>>>>>> I sent out a patch that'll allow PMUs to set an event flag to avoid
+>>>>>> unnecessary smp calls when the event can be read from any CPU. You could
+>>>>>> just always set that if you can't have multiple DSU's running the kernel (I
+>>>>>> don't know if the current ARM designs support having multiple DSUs in a
+>>>>>> SoC/system) or set it if associated_cpus == cpu_present_mask.
+>>>>>
+>>>>> As-is, that won't be safe, given the read function calls the event_update()
+>>>>> function, which has side-effects on hwc->prec_count and event->count. Those
+>>>>> need to be serialized somehow.
+>>>>
+>>>> You have to grab the dsu_pmu->pmu_lock spin lock anyway because the system
+>>>> registers are shared across all CPUs.
+>>>
+>>> I believe that lock is currently superfluous, because the perf core
+>>> ensures operations are cpu-affine, and have interrupts disabled in most
+>>> cases (thanks to the context lock).
+>>
+>> I don't think it's superfluous. You have a common "event counter" selection
+>> register and a common "event counter value" register. You can two CPUs
+>> racing to read two unrelated event counters and end up causing one of them
+>> to read a bogus value from the wrong event counter.
+>
+> It's important to note that the DSU PMU's event_init() ensures events
+> are affine to a single CPU, and the perf core code serializes operations
+> on those events via the context lock.
 
-Ok, so forget linux, I think it's just a stupid EFI bios.
+Ah, I see that now. Thanks!
 
-If I were to venture a guess:
-1) I went in setup, reset to default, that deleted my efibootmgr entries
-2) some EFI space got freed as a result
-3) truncating pstore files worked, because of #1 or not
-4) now that the storage fronted by pstore, wasn't full anymore, deleting
-files just worked.
-5) I had to recreate my efibootmgr entries, and now that there is space,
-that worked fine.
+> Therefore, two CPUs *won't* try to access the registers simultaneously.
 
-I'm going to guess that the EFI bios needs some space to delete files and
-without any, it just hangs.
+Right, and this driver seems to be going through a lot of work to make 
+sure all events are read in one CPU.
 
-Oh well, sorry for the noise, and if maybe someone hits this problem in the
-future, they'll be able to find this post with the solution.
+Do you even have an upstream target where there are multiple DSU's in a 
+system? If not, we can simplify a ton of this code (no hotplug 
+notifiers, no migrating PMUs, no SMP calls, etc) by just adding a 
+spinlock and letting any CPU read these DSU counters.
 
-On Fri, Mar 02, 2018 at 11:17:39AM -0800, Marc MERLIN wrote:
-> [+linux-efi and fixed Matthew's Email]
-> 
-> As an update, I got my NVME drive to boot once at least, it seem that I need
-> to wait about 2mn for the bios to do whatever, hang, recover and then
-> finally continue booting.
-> If I take over and force a boot on the M2 Sata drive instead, then it boots
-> near instantly.
-> 
-> After 2H on the phone with lenovo an finally getting someone with a clue,
-> apparently removing the CMOS battery may clear that pstore storage and help
-> with my issue.
-> Obviously it will also kill my efiboomgr entries and all my settings,
-> although I could recover from that if needed.
-> Before I go through all that trouble though, it'd be great to figure out why 
-> linux is causing hangs when deleting pstore data, and if it's only a bios
-> bug we can do nothing about, or maybe an issue on the linux side.
-> 
-> Is there any other way to delete from /sys/fs/pstore/ besides rm which
-> causes an instant hang?
-> Well, how about that, truncating the files seems to work, and now efibootmgr 
-> is able to make a new entry with the space I just freed.
-> pstore is still full of files, but they're not 0 sized, so I'm likely only
-> wasting the space for the filenames now.
-> 
-> Now, I probably have to also find what is writing to pstore and
-> kill that job given that deleting from pstore seems not possible on my
-> machine, and filling it up causes the bios to get upset.
-> 
-> Marc
-> 
-> On Thu, Mar 01, 2018 at 10:22:39PM -0800, Marc MERLIN wrote:
-> > Howdy,
-> > 
-> > I have a thinkpad P70 which started to fail resuming from S3 sleep after any
-> > kernel past 4.12 (sometimes it would work, sometimes the HD led would come
-> > on when trying to resume, but nothing else).
-> > After much debugging trying to figure what was causing it and coming short,
-> > I decided to upgrade the very old firmware/bios on that laptop, since it likely
-> > had many bugs.
-> > 
-> > The firmware update from a boot CD was weird, long, and worrisome. It looks
-> > like after 1h or so (very long procedure), I got the latest firmware now,
-> > but it won't boot my NVME M2 drive anymore, it shows in the boot menu, but
-> > just hangs if I use it to boot.
-> > However, I can get it to boot my M2 SATA drive. The nvme drive shows up fine
-> > and works once linux has booted.
-> > 
-> > So, I figured I'd try a new bootmgr entry
-> > saruman:~# efibootmgr -v -c -d /dev/nvme0n1 -p 1 -L "GrubNVME" -l '\EFI\debian\grubx64.efi'
-> > Could not prepare Boot variable: No space left on device <<<
-> > 
-> > Ok, this brought me to
-> > https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=845023
-> > and
-> > https://mjg59.dreamwidth.org/23554.html
-> > 
-> > Sure enough,
-> > saruman:~# df /sys/fs/pstore/
-> > Filesystem     1K-blocks  Used Available Use% Mounted on
-> > pstore                 0     0         0    - /sys/fs/pstore
-> > it's full of files, and I'm assuming the variable storage is full of crap
-> > (see below)
-> > 
-> > The problem is trying to delete any file in there causes an immediate hange of the kernel.
-> > 
-> > Any idea how to get around this problem?  I realize it may be the bios
-> > that's crashing/hanging and not linux.
-> > At least filling up the space did not brick my machine like Matthew pointing out
-> > some firwmare crashes when it's full ( https://mjg59.dreamwidth.org/23554.html )
-> > 
-> > Is there any way to clear all this space, maybe from inside the bios by
-> > resetting everything to default, or some other way?
-> > 
-> > saruman:~# l /sys/fs/pstore/ | wc -l
-> > 151
-> > saruman:~# l /sys/fs/pstore/ | head
-> > total 0
-> > drwxr-x---  2 root root    0 Mar  1 22:00 ./
-> > drwxr-xr-x 10 root root    0 Mar  1 22:02 ../
-> > -r--r--r--  1 root root  983 Feb 16  2016 dmesg-efi-145565830401001
-> > -r--r--r--  1 root root 1744 Feb 16  2016 dmesg-efi-145565830401002
-> > -r--r--r--  1 root root  952 Feb 16  2016 dmesg-efi-145565830402001
-> > -r--r--r--  1 root root 1636 Feb 16  2016 dmesg-efi-145565830402002
-> > -r--r--r--  1 root root 1014 Feb 16  2016 dmesg-efi-145565830403001
-> > -r--r--r--  1 root root 1781 Feb 16  2016 dmesg-efi-145565830403002
-> > -r--r--r--  1 root root  351 Feb 16  2016 dmesg-efi-145565830404001
-> > saruman:~# cat /sys/fs/pstore/dmesg-efi-145565830401001
-> > Oops#1 Part1
-> > <4>[ 4508.389437]  [<ffffffff81183ea3>] do_execveat_common.isra.26+0x450/0x5fd
-> > <4>[ 4508.389495]  [<ffffffff81184073>] do_execve+0x23/0x25
-> > <4>[ 4508.389541]  [<ffffffff81184298>] SyS_execve+0x2a/0x2e
-> > <4>[ 4508.389582]  [<ffffffff816e1955>] stub_execve+0x5/0x5
-> > <4>[ 4508.389624]  [<ffffffff816e16b6>] ? entry_SYSCALL_64_fastpath+0x16/0x75
-> > <4>[ 4508.389682] Code: 45 31 e4 48 8b 47 78 4c 8b 30 48 8d 58 f0 48 8d 47 78 48 89 45 d0 49 83 ee 10 48 8d 43 10 48 39 45 d0 74 6f 4c 8b 6b 08 4c 89 e7 <49> 8b 75 00 e8 3a f0 ff ff 49 8d 75 40 48 89 df 49 89 c4 e8 6b
-> > <1>[ 4508.390025] RIP  [<ffffffff8114edf1>] unlink_anon_vmas+0x41/0x13e
-> > <4>[ 4508.390086]  RSP <ffff88070c137c20>
-> > <4>[ 4508.390119] CR2: 00000000000000fb
-> > <7>[ 4508.390339] pci_bus 0000:3b: busn_res: [bus 3b] is released
-> > <7>[ 4508.390468] pci_bus 0000:3c: busn_res: [bus 3c-6f] is released
-> > <7>[ 4508.390605] pci_bus 0000:06: busn_res: [bus 06-6f] is released
-> > <4>[ 4508.470221] ---[ end trace e21f39de184e5ef4 ]---
-> > 
-> > Yeah, there is another issue that I have something that kept writing here until 
-> > it filled up, and nothing that ever emptied it. I guess my old bios didn't care and the new 
-> > one is having issues with this.
-> > If I'm unlucky, this may even have caused the firmware upgrade to fail partially?
-> > 
-> > Handle 0x000E, DMI type 0, 24 bytes
-> > BIOS Information
-> >         Vendor: LENOVO
-> >         Version: N1DET95W (2.21 )
-> >         Release Date: 12/13/2017
-> >         Runtime Size: 128 kB
-> >         ROM Size: 16384 kB
-> >         BIOS Revision: 2.21
-> >         Firmware Revision: 1.17
-> > 
-> > Thanks,
-> > Marc
-> > -- 
-> > "A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-> > Microsoft is to operating systems ....
-> >                                       .... what McDonalds is to gourmet cooking
-> > Home page: http://marc.merlins.org/
-> 
-> -- 
-> "A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-> Microsoft is to operating systems ....
->                                       .... what McDonalds is to gourmet cooking
-> Home page: http://marc.merlins.org/  
-> 
+If you need to support a system with multiple DSUs, I think it's still 
+useful to add CPU mask for events and letting the perf framework read 
+events on any of those CPUs.
+
+> If events could be active on multiple CPUs simultaneously, I agree that
+> the lock would be necessary. However, there would also be other problems
+> to deal with in that case.
+>
+> If we want to allow pmu::read() from arbitrary CPUs the DSU is affine
+> to, I agree we'd need the lock to serialize accesses to the registers
+> and data structures.
+
+Agreed.
+
+So, depending on how many DSUs you want to support in the mainline 
+kernel, we can simplify it a ton. And if not, we can still try to remove 
+the need for smp calls so that we don't cause power impact when trying 
+to profile while measuring power.
+
+Thanks,
+Saravana
 
 -- 
-"A mouse is a device used to point at the xterm you want to type in" - A.S.R.
-Microsoft is to operating systems ....
-                                      .... what McDonalds is to gourmet cooking
-Home page: http://marc.merlins.org/  
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
