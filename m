@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELscyP4+r5UL+bJbuD3OcUfJja5brcqoUWDiUL8pE4eUT7DmTI4Taxco+tKsoQOIGjgFRqfR
-ARC-Seal: i=1; a=rsa-sha256; t=1519981415; cv=none;
+X-Google-Smtp-Source: AG47ELthdLR/12Z0QQXZ1qjogP2Kp3OSu5pP1X31ZQw/IBYNZ/GJuALjg7wgqxJKhJ+4LQ52S7op
+ARC-Seal: i=1; a=rsa-sha256; t=1519981412; cv=none;
         d=google.com; s=arc-20160816;
-        b=M7GS28yO3WolW2kHLfksDRYyGi+7tdbkvpKdVAAFOPEfAvrcqzkWxGgtbGVFfs9lz/
-         4kQ4YzCFZWzW1ezLMPJ2VHF1mHQw4umZLn7apKxqDPVN6T1mByYt+R/svxDEfrNTGTuj
-         x2wK1S4uy7MBnc9jadA9Smr1ew9NaF6fHUhx6xQu0hpWvkiS6z70GRpKO1fPIOddX1B7
-         r0MyXLRx8myT6DFXqx3ZbYI0inPKtrPeGWoK1xHaY5Y0SmooL/HYK/UQ/Je8pb4BukVH
-         NJlQVDQVpxqthg63YTZz3PwKXHbOf5ZtpMd2J8qh/K0ok755fPVWt4B9hHIRdiI5o7oV
-         wDHw==
+        b=mcimmJLGxx0OgLvg8aVanZFjwS7Yq+a6nVfeIuGaNbX+MulfoLxnGgTrlG8iWCV0Ec
+         T31Vbajx/5f/e5wePfGF+aa+GwO8kC8N//S5mfwCzS4MNaV8yIYCTWQ/Yf4GEwSbrUFz
+         RedHcVePPMg8F/QjC0O7+mAHQqbQ0+RNKFy6AsBTtpjQ7vHuab0US6y9FvA9tSSnk2Sa
+         0XVGOII0PdMfIqgaoh5C+BRH6UTghu29YmD9cBkCm710/BVPoldIqbdxA0zi1xPTiC4W
+         H4Z1+o5jUN+f2uG7vTGpPX6C6jLuPTMAYsnU1+/dlMxIMabbSXEdc82/TheXkFHnxDDr
+         5oSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NpP8TKgwfxW0RWXl8yO7JOO2NJ2UesUxZdc+40Eyfa0=;
-        b=nwdZLnNW1xsfKa8vDC22iZ8ewQXSt+4owqtb0xzQc68dcVi0SriTWVrZ0BZobTvlcI
-         jjC3gYjfPSGUHYbnRZHBVqSDV1f71BPzBbLrk44SMTX5UIulBSxgqlFHrNrnqrY+zkZD
-         fQvdmRJ8pLVF0dzI2dqbpbsmIQXQNadlUsg5W9IYeKFcIPVzpYHWsU1FY9jQeEp5YtkR
-         S75OUoctxu232VoEzZRxHvHkILzSKSqa+UCkHz0pX3RhKy/lgkynsEPDEjetApj751BS
-         ZS7frAPQDEzJlvLbSOz9fW/84DSnxJ9klFmvPE4WcZv0ImMU+T0BkyjUrDRdjLQFbiY4
-         Q90g==
+        bh=AJOKhx7qv8tkxQrlfwtlQLlTM/xDiYXkPE/uOdHqRpw=;
+        b=BFOJG6rEnvsflOO0hf8KjFQpBlTyFMYt0gmVBIVW93LNKCjQyr1BFoV/QVmSwu65GN
+         c+4RjKvT1g4YztIv9WY/7MPiL/rJFijAkbk6r8umwVovC4GWjk+ROJjRTAYpeZD360dT
+         REbA3WN3ciAL0wQkmjwdUMflf1w0r6OpCy1T5bCHKvq3bLsCZy4Dzl0vk3NUrdv2+Q1U
+         4kpfNdaDhEuRR46QHWHFGvwfmn7wcL07YKB2/18juAJak8+/AwKurx6A1+PX2efqJxvj
+         nUzuClo65CCMQIbFOCqXC0RJrNbeVJxtErMo9eW/h8XM82W/9m+IwYOOr9KEOPQb29mm
+         tnEw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hao Chen <flank3rsky@gmail.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Netanel Belgazal <netanel@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 084/115] nl80211: Check for the required netlink attribute presence
-Date: Fri,  2 Mar 2018 09:51:27 +0100
-Message-Id: <20180302084507.249319749@linuxfoundation.org>
+Subject: [PATCH 4.14 083/115] net: ena: unmask MSI-X only after device initialization is completed
+Date: Fri,  2 Mar 2018 09:51:26 +0100
+Message-Id: <20180302084507.208102278@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815690872102850?=
-X-GMAIL-MSGID: =?utf-8?q?1593816032136085974?=
+X-GMAIL-THRID: =?utf-8?q?1593816028931880647?=
+X-GMAIL-MSGID: =?utf-8?q?1593816028931880647?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hao Chen <flank3rsky@gmail.com>
+From: Netanel Belgazal <netanel@amazon.com>
 
 
-[ Upstream commit 3ea15452ee85754f70f3b9fa1f23165ef2e77ba7 ]
+[ Upstream commit 7853b49ce8e0ef6364d24512b287463841d71bd3 ]
 
-nl80211_nan_add_func() does not check if the required attribute
-NL80211_NAN_FUNC_FOLLOW_UP_DEST is present when processing
-NL80211_CMD_ADD_NAN_FUNCTION request. This request can be issued
-by users with CAP_NET_ADMIN privilege and may result in NULL dereference
-and a system crash. Add a check for the required attribute presence.
+Under certain conditions MSI-X interrupt might arrive right after it
+was unmasked in ena_up(). There is a chance it would be processed by
+the driver before device ENA_FLAG_DEV_UP flag is set. In such a case
+the interrupt is ignored.
+ENA device operates in auto-masked mode, therefore ignoring
+interrupt leaves it masked for good.
+Moving unmask of interrupt to be the last step in ena_up().
 
-Signed-off-by: Hao Chen <flank3rsky@gmail.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/wireless/nl80211.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -11301,7 +11301,8 @@ static int nl80211_nan_add_func(struct s
- 		break;
- 	case NL80211_NAN_FUNC_FOLLOW_UP:
- 		if (!tb[NL80211_NAN_FUNC_FOLLOW_UP_ID] ||
--		    !tb[NL80211_NAN_FUNC_FOLLOW_UP_REQ_ID]) {
-+		    !tb[NL80211_NAN_FUNC_FOLLOW_UP_REQ_ID] ||
-+		    !tb[NL80211_NAN_FUNC_FOLLOW_UP_DEST]) {
- 			err = -EINVAL;
- 			goto out;
- 		}
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -1565,7 +1565,7 @@ static int ena_rss_configure(struct ena_
+ 
+ static int ena_up_complete(struct ena_adapter *adapter)
+ {
+-	int rc, i;
++	int rc;
+ 
+ 	rc = ena_rss_configure(adapter);
+ 	if (rc)
+@@ -1584,17 +1584,6 @@ static int ena_up_complete(struct ena_ad
+ 
+ 	ena_napi_enable_all(adapter);
+ 
+-	/* Enable completion queues interrupt */
+-	for (i = 0; i < adapter->num_queues; i++)
+-		ena_unmask_interrupt(&adapter->tx_ring[i],
+-				     &adapter->rx_ring[i]);
+-
+-	/* schedule napi in case we had pending packets
+-	 * from the last time we disable napi
+-	 */
+-	for (i = 0; i < adapter->num_queues; i++)
+-		napi_schedule(&adapter->ena_napi[i].napi);
+-
+ 	return 0;
+ }
+ 
+@@ -1731,7 +1720,7 @@ create_err:
+ 
+ static int ena_up(struct ena_adapter *adapter)
+ {
+-	int rc;
++	int rc, i;
+ 
+ 	netdev_dbg(adapter->netdev, "%s\n", __func__);
+ 
+@@ -1774,6 +1763,17 @@ static int ena_up(struct ena_adapter *ad
+ 
+ 	set_bit(ENA_FLAG_DEV_UP, &adapter->flags);
+ 
++	/* Enable completion queues interrupt */
++	for (i = 0; i < adapter->num_queues; i++)
++		ena_unmask_interrupt(&adapter->tx_ring[i],
++				     &adapter->rx_ring[i]);
++
++	/* schedule napi in case we had pending packets
++	 * from the last time we disable napi
++	 */
++	for (i = 0; i < adapter->num_queues; i++)
++		napi_schedule(&adapter->ena_napi[i].napi);
++
+ 	return rc;
+ 
+ err_up:
