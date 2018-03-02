@@ -1,75 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936183AbeCBHiQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 02:38:16 -0500
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35637 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935717AbeCBHiN (ORCPT
+        id S936197AbeCBHkD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 02:40:03 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:57456 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935717AbeCBHkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 02:38:13 -0500
-X-Google-Smtp-Source: AG47ELsUrBi9KKrV7WG/MlWjVHjQh/BY2xUkO0Au54NmRQIxeW/OiWqsH2wX6NEFWLGfJKX7bz87WA==
-Date: Fri, 2 Mar 2018 15:37:43 +0800
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jianguo Sun <sunjianguo1@huawei.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pengcheng Li <lpc.li@hisilicon.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: add bindings doc for HiSilicon INNO
- USB2 PHY
-Message-ID: <20180302073740.GC28619@dragon>
-References: <1519888940-23235-1-git-send-email-shawn.guo@linaro.org>
- <1519888940-23235-2-git-send-email-shawn.guo@linaro.org>
- <c1f60df2-20d1-53ac-6cf7-9c81baea789c@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1f60df2-20d1-53ac-6cf7-9c81baea789c@ti.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Fri, 2 Mar 2018 02:40:02 -0500
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+From: Byungchul Park <byungchul.park@lge.com>
+To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: [PATCH] rcu: Remove deprecated RCU debugfs tracing code
+Date: Fri,  2 Mar 2018 16:39:12 +0900
+Message-Id: <1519976352-25400-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+Commit ae91aa0adb14(rcu: Remove debugfs tracing) removed the RCU debugfs
+tracing code, and left deprecated code.
 
-On Fri, Mar 02, 2018 at 11:55:57AM +0530, Kishon Vijay Abraham I wrote:
-> On Thursday 01 March 2018 12:52 PM, Shawn Guo wrote:
-> > From: Pengcheng Li <lpc.li@hisilicon.com>
-> > 
-> > It adds device tree bindings document for HiSilicon INNO USB2 PHY.
-> > 
-> > Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
-> > Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > ---
-> >  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 52 ++++++++++++++++++++++
-> >  1 file changed, 52 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> > new file mode 100644
-> > index 000000000000..b563cf54ca7b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> > @@ -0,0 +1,52 @@
-> > +HiSilicon INNO USB2 PHY
-> > +
-> > +Required properties:
-> > +- compatible: Should be one of the following strings:
-> > +	"hisilicon,inno-usb2-phy",
-> > +	"hisilicon,hi3798cv200-usb2-phy".
-> > +- reg: Should be the address space for PHY configuration register in peripheral
-> > +  controller, e.g. PERI_USB0 for USB 2.0 PHY01 on Hi3798cv200 SoC.
-> > +- #phy-cells: Should be 1. The specifier is the index of the PHY port to
-> > +  reference.
-> 
-> This can be '0' if the consumers directly use phandle to the subnodes.
+Because exp_workdone{0,1,2,3} won't be used anymore since the commit,
+it's better to remove code to do with those variables. Remove it.
 
-Yes, I understand that for most of PHY devices #phy-cells is just 0, and
-consumers simply use the phandle without any cell number.  But for this
-inno-usb2-phy, every single device contains two PHY ports, and each port
-can be connected to different USB controller.  That said, for each
-inno-usb2-phy device, we need to create two phy devices and register
-them to PHY core system.  And the phy-cell number is used by consumers
-to specify the PHY port id.
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+---
+ kernel/rcu/tree.h     |  4 ----
+ kernel/rcu/tree_exp.h | 13 +++++--------
+ 2 files changed, 5 insertions(+), 12 deletions(-)
 
-Shawn
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 9dd0ea7..cfeb351 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -234,10 +234,6 @@ struct rcu_data {
+ #ifdef CONFIG_RCU_FAST_NO_HZ
+ 	struct rcu_head oom_head;
+ #endif /* #ifdef CONFIG_RCU_FAST_NO_HZ */
+-	atomic_long_t exp_workdone0;	/* # done by workqueue. */
+-	atomic_long_t exp_workdone1;	/* # done by others #1. */
+-	atomic_long_t exp_workdone2;	/* # done by others #2. */
+-	atomic_long_t exp_workdone3;	/* # done by others #3. */
+ 	int exp_dynticks_snap;		/* Double-check need for IPI. */
+ 
+ 	/* 6) Callback offloading. */
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 73e1d3d..f8e4571 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -248,14 +248,12 @@ static void rcu_report_exp_rdp(struct rcu_state *rsp, struct rcu_data *rdp,
+ }
+ 
+ /* Common code for synchronize_{rcu,sched}_expedited() work-done checking. */
+-static bool sync_exp_work_done(struct rcu_state *rsp, atomic_long_t *stat,
+-			       unsigned long s)
++static bool sync_exp_work_done(struct rcu_state *rsp, unsigned long s)
+ {
+ 	if (rcu_exp_gp_seq_done(rsp, s)) {
+ 		trace_rcu_exp_grace_period(rsp->name, s, TPS("done"));
+ 		/* Ensure test happens before caller kfree(). */
+ 		smp_mb__before_atomic(); /* ^^^ */
+-		atomic_long_inc(stat);
+ 		return true;
+ 	}
+ 	return false;
+@@ -289,7 +287,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
+ 	 * promoting locality and is not strictly needed for correctness.
+ 	 */
+ 	for (; rnp != NULL; rnp = rnp->parent) {
+-		if (sync_exp_work_done(rsp, &rdp->exp_workdone1, s))
++		if (sync_exp_work_done(rsp, s))
+ 			return true;
+ 
+ 		/* Work not done, either wait here or go up. */
+@@ -302,8 +300,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
+ 						  rnp->grplo, rnp->grphi,
+ 						  TPS("wait"));
+ 			wait_event(rnp->exp_wq[rcu_seq_ctr(s) & 0x3],
+-				   sync_exp_work_done(rsp,
+-						      &rdp->exp_workdone2, s));
++				   sync_exp_work_done(rsp, s));
+ 			return true;
+ 		}
+ 		rnp->exp_seq_rq = s; /* Followers can wait on us. */
+@@ -313,7 +310,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
+ 	}
+ 	mutex_lock(&rsp->exp_mutex);
+ fastpath:
+-	if (sync_exp_work_done(rsp, &rdp->exp_workdone3, s)) {
++	if (sync_exp_work_done(rsp, s)) {
+ 		mutex_unlock(&rsp->exp_mutex);
+ 		return true;
+ 	}
+@@ -661,7 +658,7 @@ static void _synchronize_rcu_expedited(struct rcu_state *rsp,
+ 	rdp = per_cpu_ptr(rsp->rda, raw_smp_processor_id());
+ 	rnp = rcu_get_root(rsp);
+ 	wait_event(rnp->exp_wq[rcu_seq_ctr(s) & 0x3],
+-		   sync_exp_work_done(rsp, &rdp->exp_workdone0, s));
++		   sync_exp_work_done(rsp, s));
+ 	smp_mb(); /* Workqueue actions happen before return. */
+ 
+ 	/* Let the next expedited grace period start. */
+-- 
+1.9.1
