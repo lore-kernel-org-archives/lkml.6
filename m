@@ -1,130 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935073AbeCBQOG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:14:06 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933522AbeCBQN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:13:58 -0500
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH] perf record: Fix crash in pipe mode
-Date: Fri,  2 Mar 2018 17:13:54 +0100
-Message-Id: <20180302161354.30192-1-jolsa@kernel.org>
+        id S936345AbeCBQOt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:14:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:57476 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932319AbeCBQOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:14:47 -0500
+Subject: Re: [PATCH 2/3] rpmsg: core: make rpmsg bus DMA capable
+To: srinivas.kandagatla@linaro.org, will.deacon@arm.com,
+        bjorn.andersson@linaro.org
+Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
+ <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <07503032-b08b-10ea-9d34-ddf85c682a9d@arm.com>
+Date: Fri, 2 Mar 2018 16:14:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we can crash perf record when running in pipe mode, like:
+On 02/03/18 14:55, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Many of the rpmsg clients like audio drivers need to allocate
+> dma memory. Make this bus DMA capable so that the child devices
+> can use dma apis.
 
-  $ perf record ls | perf report
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  perf: Segmentation fault
-  Error:
-  The - file has no samples!
+AFAICS after 15 minutes in the docs and code, the rpmsg "bus" is a 
+virtual one based around shared-memory mailbox communication, so I don't 
+really see how DMA exists in that context - I think maybe that 
+abstraction needs looking at.
 
-The callstack of the crash is:
+However, from grepping through the DTs it seems at first glance like the 
+non-trivial things under the "qcom,smd" bus mostly map to actual 
+platform devices via the "qcom,smd-edge" property - if those platform 
+devices are the physical DMA masters, they should be the ones used for 
+DMA API operations.
 
-    0x0000000000515242 in perf_event__synthesize_event_update_name
-  3513            ev = event_update_event__new(len + 1, PERF_EVENT_UPDATE__NAME, evsel->id[0]);
-  (gdb) bt
-  #0  0x0000000000515242 in perf_event__synthesize_event_update_name
-  #1  0x00000000005158a4 in perf_event__synthesize_extra_attr
-  #2  0x0000000000443347 in record__synthesize
-  #3  0x00000000004438e3 in __cmd_record
-  #4  0x000000000044514e in cmd_record
-  #5  0x00000000004cbc95 in run_builtin
-  #6  0x00000000004cbf02 in handle_internal_command
-  #7  0x00000000004cc054 in run_argv
-  #8  0x00000000004cc422 in main
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   drivers/rpmsg/rpmsg_core.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index e84c71f8d6ab..540a3f3567b8 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -472,6 +472,7 @@ struct bus_type rpmsg_bus = {
+>   	.uevent		= rpmsg_uevent,
+>   	.probe		= rpmsg_dev_probe,
+>   	.remove		= rpmsg_dev_remove,
+> +	.force_dma	= true,
 
-The reason of the crash is that the evsel does not have ids array
-allocated and the pipe's synthesize code tries to access it.
+Regardless of the above, would you really need to use this brute force 
+hack instead of just fixing the DTs? I'm struggling to find which 
+drivers might currently be relying on this :/
 
-We don't force evsel ids allocation when we have single event,
-because it's not needed. However we need it when we are in pipe
-mode even for single event as a key for evsel update event.
+Robin.
 
-Fixing this by forcing evsel ids allocation event for single
-event, when we are in pipe mode.
-
-Link: http://lkml.kernel.org/n/tip-xbh5ca1azdcdqyep653vba7w@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-record.c | 9 +++++++++
- tools/perf/perf.h           | 1 +
- tools/perf/util/record.c    | 8 ++++++--
- 3 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index a60f398cbc24..eeef1143bae3 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -881,6 +881,15 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		}
- 	}
- 
-+	/*
-+	 * If we have just single event and are sending data
-+	 * through pipe, we need to force the ids allocation,
-+	 * because we synthesize event name through the pipe
-+	 * and need the id for that.
-+	 */
-+	if (data->is_pipe && rec->evlist->nr_entries == 1)
-+		rec->opts.sample_id = true;
-+
- 	if (record__open(rec) != 0) {
- 		err = -1;
- 		goto out_child;
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 007e0dfd5ce3..8fec1abd0f1f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -62,6 +62,7 @@ struct record_opts {
- 	bool	     overwrite;
- 	bool	     ignore_missing_thread;
- 	bool	     strict_freq;
-+	bool	     sample_id;
- 	unsigned int freq;
- 	unsigned int mmap_pages;
- 	unsigned int auxtrace_mmap_pages;
-diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
-index 3878c503f464..867f5937ebb7 100644
---- a/tools/perf/util/record.c
-+++ b/tools/perf/util/record.c
-@@ -138,6 +138,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 	struct perf_evsel *evsel;
- 	bool use_sample_identifier = false;
- 	bool use_comm_exec;
-+	bool sample_id = opts->sample_id;
- 
- 	/*
- 	 * Set the evsel leader links before we configure attributes,
-@@ -164,8 +165,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 		 * match the id.
- 		 */
- 		use_sample_identifier = perf_can_sample_identifier();
--		evlist__for_each_entry(evlist, evsel)
--			perf_evsel__set_sample_id(evsel, use_sample_identifier);
-+		sample_id = true;
- 	} else if (evlist->nr_entries > 1) {
- 		struct perf_evsel *first = perf_evlist__first(evlist);
- 
-@@ -175,6 +175,10 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 			use_sample_identifier = perf_can_sample_identifier();
- 			break;
- 		}
-+		sample_id = true;
-+	}
-+
-+	if (sample_id) {
- 		evlist__for_each_entry(evlist, evsel)
- 			perf_evsel__set_sample_id(evsel, use_sample_identifier);
- 	}
--- 
-2.13.6
+>   };
+>   EXPORT_SYMBOL(rpmsg_bus);
+>   
+> 
