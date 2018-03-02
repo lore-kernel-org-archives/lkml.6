@@ -1,61 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034385AbeCBQjG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:39:06 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:54544 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034309AbeCBQjD (ORCPT
+        id S1034400AbeCBQjf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:39:35 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40010 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932704AbeCBQjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:39:03 -0500
-Date: Fri, 2 Mar 2018 17:39:01 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Haris Okanovic <haris.okanovic@ni.com>
-Cc: linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, julia.cartwright@ni.com, gratian.crisan@ni.com,
-        anna-maria@linutronix.de
-Subject: Re: [PATCH v3 2/2] timers: Don't search for expired timers while
- TIMER_SOFTIRQ is scheduled
-Message-ID: <20180302163900.ldnkhgsvqxlki4ju@linutronix.de>
-References: <alpine.DEB.2.20.1707182206110.2425@nanos>
- <20170803210657.19179-1-haris.okanovic@ni.com>
- <20170803210657.19179-2-haris.okanovic@ni.com>
- <28f05e39-6bc6-99c5-e1bc-91be3e79ea78@ni.com>
- <13c06708-f7ad-4f46-1c0b-f12d1ca16beb@ni.com>
- <20180301164755.pipco45y5nlvmdsy@linutronix.de>
- <7079102c-f53b-e8ab-c54d-1c40ff21d921@ni.com>
- <20180302145232.anp4hz25uwqygopa@linutronix.de>
- <98f4236e-9863-2af7-1170-51cd118f65bd@ni.com>
+        Fri, 2 Mar 2018 11:39:32 -0500
+X-Google-Smtp-Source: AG47ELv2xZCB2sdfmxdChPdnth1Kq7D1+sj30GtzY77E1C1OlHn8+Bgi1rPGlOTGs+VGIUT/es/gRA==
+Subject: Re: EXT4 Oops (Re: [PATCH V15 06/22] mmc: block: Add blk-mq support)
+To: Andreas Dilger <adilger@dilger.ca>, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Alex Lemberg <alex.lemberg@sandisk.com>,
+        Mateusz Nowak <mateusz.nowak@intel.com>,
+        Yuliy Izrailov <Yuliy.Izrailov@sandisk.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Dong Aisheng <dongas86@gmail.com>,
+        Das Asutosh <asutoshd@codeaurora.org>,
+        Zhangfei Gao <zhangfei.gao@gmail.com>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Harjani Ritesh <riteshh@codeaurora.org>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Christoph Hellwig <hch@lst.de>, Thierry Reding <treding@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>
+References: <1511962879-24262-1-git-send-email-adrian.hunter@intel.com>
+ <1511962879-24262-7-git-send-email-adrian.hunter@intel.com>
+ <bc65b542-9703-aa04-f1c7-b10584e44391@gmail.com>
+ <829308a3-3bf6-c173-65fa-e2a0f45f7f61@intel.com>
+ <68886f99-97f5-897a-f754-6f414741bd5a@gmail.com>
+ <22580b82-0257-b156-9f0c-79afa34067e5@gmail.com>
+ <8876217f-ede6-fc81-2e05-b4fc976b3235@intel.com>
+ <6a1267b0-6242-fc9f-60ed-02bf34677b62@intel.com>
+ <20180301160418.GA2490@thunk.org>
+ <AF3403B9-9791-4A77-A6FB-3281B8EA7A31@dilger.ca>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <24166154-8b08-bab6-ac8e-618eeba30674@gmail.com>
+Date: Fri, 2 Mar 2018 19:39:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <AF3403B9-9791-4A77-A6FB-3281B8EA7A31@dilger.ca>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <98f4236e-9863-2af7-1170-51cd118f65bd@ni.com>
-User-Agent: NeoMutt/20171215
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-02 10:29:56 [-0600], Haris Okanovic wrote:
-> > Could please point me to the code/patches or something?
+On 01.03.2018 23:20, Andreas Dilger wrote:
 > 
-> I rebase onto v4.14.20-rt17, running some sanity test before reposting to ml
-> (cyclictest & Anna's timertest). Will post V4 sometime today (US Central
-> Time) if everything goes well.
+> On Mar 1, 2018, at 9:04 AM, Theodore Ts'o <tytso@mit.edu> wrote:
+>> This doesn't seem to make sense; the PC is where we are currently
+>> executing, and LR is the "Link Register" where the flow of control
+>> will be returning after the current function returns, right?  Well,
+>> dx_probe should *not* be returning to __wait_on_bit().  So this just
+>> seems.... weird.
+>>
+>> Ignoring the LR register, this stack trace looks sane...  I can't see
+>> which pointer could be NULL and getting dereferenced, though.  How
+>> easily can you reproduce the problem?  Can you either (a) translate
+>> the PC into a line number, or better yet, if you can reproduce, add a
+>> series of BUG_ON's so we can see what's going on?
+
+Ted, thank you for the suggestion. I don't have a bug-reproducer, it happens
+only under some IO load and quite randomly. I've applied the BUG_ON()'s, but it
+may take some time to catch the bug again.
+
+>> +	BUG_ON(frame);
 > 
-> Are you also asking for a 4.9 version? I'm fine leaving it out of 4.9.
+> I think you mean:
+> 	BUG_ON(frame == NULL);
+> or
+> 	BUG_ON(!frame);
+> 
+> 
+>> 	memset(frame_in, 0, EXT4_HTREE_LEVEL * sizeof(frame_in[0]));
+>> 	frame->bh = ext4_read_dirblock(dir, 0, INDEX);
+>> 	if (IS_ERR(frame->bh))
+>> 		return (struct dx_frame *) frame->bh;
+>>
+>> +	BUG_ON(frame->bh);
+>> +	BUG_ON(frame->bh->b_data);
+> 
+> Same here.
+> 
+> 	BUG_ON(frame->bh == NULL);
+> 	BUG_ON(frame->bh->b_data == NULL);
+> 
+> This is why I don't like implicit "is NULL" or "is non-zero" usage.  Lustre
+> used to require "== NULL" or "!= NULL" to avoid bugs like this, but had to
+> abandon that because of upstream code style.
 
-Hmmm. Maybe this is a form of miscommunication here :)
-So my understanding is that you complain/ask why there is an older
-version of the patch still in v4.9-RT:
+Well spotted, thanks Andreas.
 
-|It was added back into 4.9 at some point after v4.9.30-rt20. I see an older
-|version in v4.9.68-rt60, for example, hence my original email. It was dropped
-|sometime thereafter, presumably because it no longer cleanly applies. I don't
-|see it in v4.14.20-rt17, for example.
-
-So I ask where you see the old version of your patch in v4.9-RT. Yes it
-was added, then removed and it never appeared back in. However, I don't
-see anymore in v4.9.68-rt60.
-
-> -- Haris
-
-Sebastian
+>> 	root = (struct dx_root *) frame->bh->b_data;
+>> 	if (root->info.hash_version != DX_HASH_TEA &&
+>> 	    root->info.hash_version != DX_HASH_HALF_MD4 &&
+>> 	    root->info.hash_version != DX_HASH_LEGACY) {
+>>
+>> These are "could never" happen scenarios from looking at the code, but
+>> that will help explain what is going on.
+>>
+>> If this is reliably only happening with mq, the only way I could see
+>> that if is something is returning an error when it previously wasn't.
+>> This isn't a problem we're seeing with any of our testing, though.
