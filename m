@@ -1,125 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163775AbeCBAK7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 19:10:59 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41010 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163655AbeCBAJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 19:09:14 -0500
-X-Google-Smtp-Source: AG47ELtqhBTsrSVAOD1+/Aftd+gJLZksnerIZw78XLhopXs9OkV4E13IbSoSesYjGO/PiF73JJ2LYw==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Russell King <rmk@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org (open list), moritz.fischer@ettus.com
-Subject: [PATCH net-next v3 2/5] net: phy: Export gen10g_* functions
-Date: Thu,  1 Mar 2018 16:08:56 -0800
-Message-Id: <20180302000859.17309-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180302000859.17309-1-f.fainelli@gmail.com>
-References: <20180302000859.17309-1-f.fainelli@gmail.com>
+        id S1163318AbeCBAQJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 19:16:09 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:40116 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163226AbeCBAQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 19:16:07 -0500
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-3-logang@deltatee.com>
+ <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
+Date: Thu, 1 Mar 2018 17:15:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem
+ stats
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to remove a fair amount of duplication in the different 10G PHY
-drivers, export all gen10g_* functions to be able to make use of those.
-While we are at it, rename gen10g_soft_reset() to gen10g_no_soft_reset()
-to illustrate what it does.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/phy/phy-c45.c | 20 +++++++++++++-------
- include/linux/phy.h       |  8 ++++++++
- 2 files changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
-index a4576859afae..0017eddc24db 100644
---- a/drivers/net/phy/phy-c45.c
-+++ b/drivers/net/phy/phy-c45.c
-@@ -268,12 +268,13 @@ EXPORT_SYMBOL_GPL(genphy_c45_read_mdix);
- 
- /* The gen10g_* functions are the old Clause 45 stub */
- 
--static int gen10g_config_aneg(struct phy_device *phydev)
-+int gen10g_config_aneg(struct phy_device *phydev)
- {
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_config_aneg);
- 
--static int gen10g_read_status(struct phy_device *phydev)
-+int gen10g_read_status(struct phy_device *phydev)
- {
- 	u32 mmd_mask = phydev->c45_ids.devices_in_package;
- 	int ret;
-@@ -291,14 +292,16 @@ static int gen10g_read_status(struct phy_device *phydev)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_read_status);
- 
--static int gen10g_soft_reset(struct phy_device *phydev)
-+int gen10g_no_soft_reset(struct phy_device *phydev)
- {
- 	/* Do nothing for now */
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_no_soft_reset);
- 
--static int gen10g_config_init(struct phy_device *phydev)
-+int gen10g_config_init(struct phy_device *phydev)
- {
- 	/* Temporarily just say we support everything */
- 	phydev->supported = SUPPORTED_10000baseT_Full;
-@@ -306,22 +309,25 @@ static int gen10g_config_init(struct phy_device *phydev)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_config_init);
- 
--static int gen10g_suspend(struct phy_device *phydev)
-+int gen10g_suspend(struct phy_device *phydev)
- {
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_suspend);
- 
--static int gen10g_resume(struct phy_device *phydev)
-+int gen10g_resume(struct phy_device *phydev)
- {
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(gen10g_resume);
- 
- struct phy_driver genphy_10g_driver = {
- 	.phy_id         = 0xffffffff,
- 	.phy_id_mask    = 0xffffffff,
- 	.name           = "Generic 10G PHY",
--	.soft_reset	= gen10g_soft_reset,
-+	.soft_reset	= gen10g_no_soft_reset,
- 	.config_init    = gen10g_config_init,
- 	.features       = 0,
- 	.config_aneg    = gen10g_config_aneg,
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 5a0c3e53e7c2..6e38c699b753 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -994,6 +994,14 @@ int genphy_c45_pma_setup_forced(struct phy_device *phydev);
- int genphy_c45_an_disable_aneg(struct phy_device *phydev);
- int genphy_c45_read_mdix(struct phy_device *phydev);
- 
-+/* The gen10g_* functions are the old Clause 45 stub */
-+int gen10g_config_aneg(struct phy_device *phydev);
-+int gen10g_read_status(struct phy_device *phydev);
-+int gen10g_no_soft_reset(struct phy_device *phydev);
-+int gen10g_config_init(struct phy_device *phydev);
-+int gen10g_suspend(struct phy_device *phydev);
-+int gen10g_resume(struct phy_device *phydev);
-+
- static inline int phy_read_status(struct phy_device *phydev)
- {
- 	if (!phydev->drv)
--- 
-2.14.1
+On 01/03/18 10:44 AM, Bjorn Helgaas wrote:
+> I think these two statements are out of order, since the attributes
+> dereference pdev->p2pdma.  And it looks like you set "error"
+> unnecessarily, since you return immediately looking at it.
+
+Per the previous series, sysfs_create_group is must_check for some 
+reason. I had a printk there but you didn't think it was necessary. So 
+assigning it to error is the only way to squash the warning.
+
+Logan
