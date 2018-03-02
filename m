@@ -1,196 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427193AbeCBLYP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:24:15 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37896 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165055AbeCBIvb (ORCPT
+        id S1427241AbeCBLZq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:25:46 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3442 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1427120AbeCBLZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 03:51:31 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180302085129euoutp025128361346449f43015f683e61abb6b9~YDmJJv_1Y0222702227euoutp02W
-X-AuditID: cbfec7f5-f95739c0000028a9-49-5a991090a726
-From: Maciej Purski <m.purski@samsung.com>
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v5 3/5] regulator: core: Resolve coupled regulators
-Date: Fri, 02 Mar 2018 09:42:47 +0100
-Message-id: <1519980169-8491-4-git-send-email-m.purski@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-reply-to: <1519980169-8491-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsWy7djP87oTBGZGGRw4IGGxccZ6VoupD5+w
-        Wcw/co7V4uyyg2wW3650MFlc3jWHzWLBy1ssFmuP3GW3WHr9IpNF694j7A5cHmvmrWH0mN1w
-        kcVj56y77B6bVnWyefRtWcXo8XmTXABbFJdNSmpOZllqkb5dAlfGlj+TWQuaFSqub/NtYOyR
-        6mLk5JAQMJG4tK6JpYuRi0NIYAWjxJH+VmYI5zOjxIfjX1lgqn7O+8QIkVjGKLG09TQrhPOf
-        UWLN4f9AGQ4ONgEtiTXt8SANIgI2Em9vHABrYBY4ziRxfepGJpCEsICzxLV5s1hBbBYBVYmL
-        14+wgdi8QPFVi3uYIbbJSdw81wlmcwq4SPx8sIoNZJCEwBI2id19txghilwkFr86AmULS7w6
-        voUdwpaR6Ow4yARhV0tc/LqLDcKukWi8vQGqxlri86QtYAuYBfgkJm2bzgzygIQAr0RHmxBE
-        iYfE/M//ocY4Sizp+Qb1/XRGict72tgmMEotYGRYxSieWlqcm55abJyXWq5XnJhbXJqXrpec
-        n7uJERi/p/8d/7qDcd+fpEOMAhyMSjy8OzlnRAmxJpYVV+YeYpTgYFYS4W35ABTiTUmsrEot
-        yo8vKs1JLT7EKM3BoiTOG6dRFyUkkJ5YkpqdmlqQWgSTZeLglGpglFlqfPy69Vn+Q14pVq+e
-        SBw9pT3x+Bo5c7Wm37//6z65wXMsW/AT85KKDVaMs/ckl3ceOSt+NnVzvPPvN0Yr5ISlLhil
-        ZejbNWkys10qEb7zoZFj2fWd6rPq1q5y2Xxq9vMZqWFrDwbas7Lmvgl5cmu9bXPtFf6DjJb9
-        fJFiJscNblraXzHcqsRSnJFoqMVcVJwIAA6NpPvbAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJLMWRmVeSWpSXmKPExsVy+t/xy7r9AjOjDJoW61tsnLGe1WLqwyds
-        FvOPnGO1OLvsIJvFtysdTBaXd81hs1jw8haLxdojd9ktll6/yGTRuvcIuwOXx5p5axg9Zjdc
-        ZPHYOesuu8emVZ1sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx5c9k1oJmhYrr23wbGHuk
-        uhg5OSQETCR+zvvE2MXIxSEksIRRYsXzp+wgCSGBRiaJ53Pzuxg5ONgEtCTWtMeDhEUEbCTe
-        3jgAVs8scJJJ4s/FdYwgCWEBZ4lr82axgtgsAqoSF68fYQOxeYHiqxb3MEMsk5O4ea4TzOYU
-        cJH4+WAVG8QuZ4nGo+vYJzDyLGBkWMUoklpanJueW2yoV5yYW1yal66XnJ+7iREYYNuO/dy8
-        g/HSxuBDjAIcjEo8vAc+zogSYk0sK67MPcQowcGsJMLb8gEoxJuSWFmVWpQfX1Sak1p8iFGa
-        g0VJnPe8QWWUkEB6YklqdmpqQWoRTJaJg1OqgdF1y0MXO/ferUfFTxluy35eYLl+4z9pB0ez
-        hAducVPUkk5HzYk93h7S8tb2nvRMl5WPDqrYXXnR9t7n+YPX0Q3v9L57n1Diq9H2vy9wzsVH
-        /O4SVfGd/q6zz2xrENY5F/4vIo3no9qWNRu+/RO/9URNapX63P6qyQ1uj09d+J5dv6PIzdvq
-        Y4QSS3FGoqEWc1FxIgBMqVHYLAIAAA==
-X-CMS-MailID: 20180302085127eucas1p19293e26a9abe8f7df6936912e6999b3f
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180302085127eucas1p19293e26a9abe8f7df6936912e6999b3f
-X-RootMTR: 20180302085127eucas1p19293e26a9abe8f7df6936912e6999b3f
-References: <1519980169-8491-1-git-send-email-m.purski@samsung.com>
-        <CGME20180302085127eucas1p19293e26a9abe8f7df6936912e6999b3f@eucas1p1.samsung.com>
+        Fri, 2 Mar 2018 06:25:40 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 02 Mar 2018 03:25:39 -0800
+Date: Fri, 2 Mar 2018 13:25:34 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Dmitry Osipenko <digetx@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Message-ID: <20180302112534.GI6190@tbergstrom-lnx.Nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+ <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+ <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+ <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.21.24.170]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Odroid XU3/4 and other Exynos5422 based boards there is a case, that
-different devices on the board are supplied by different regulators
-with non-fixed voltages. If one of these devices temporarily requires
-higher voltage, there might occur a situation that the spread between
-two devices' voltages is so high, that there is a risk of changing
-'high' and 'low' states on the interconnection between devices powered
-by those regulators.
+On Fri, Mar 02, 2018 at 09:02:07AM +0000, Jon Hunter wrote:
+> 
+> On 01/03/18 07:41, Peter De Schrijver wrote:
+> > On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
+> >> On 28.02.2018 17:14, Peter De Schrijver wrote:
+> >>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+> >>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+> >>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+> >>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> >>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+> >>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+> >>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+> >>>>>>>>> which
+> >>>>>>>>> leaves it at some default rate of 500 kHz:
+> >>>>>>>>>
+> >>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+> >>>>>>>>> pll_u
+> >>>>>>>>>        pll_u                  3        3        0      500000      
+> >>>>>>>>>     0
+> >>>>>>>>>
+> >>>>>>>>> Of course this won't quite work leading to the following messages:
+> >>>>>>>>>
+> >>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+> >>>>>>>>> tegra-
+> >>>>>>>>> ehci
+> >>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> >>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> >>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+> >>>>>>>>> tegra-
+> >>>>>>>>> ehci
+> >>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> >>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> >>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+> >>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+> >>>>>>>>> tegra-
+> >>>>>>>>> ehci
+> >>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> >>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+> >>>>>>>>> tegra-
+> >>>>>>>>> ehci
+> >>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> >>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+> >>>>>>>>>
+> >>>>>>>>> Fix this by actually allowing the rate also being set from within
+> >>>>>>>>> the Linux kernel.
+> >>>>>
+> >>>>> I think the best solution to this problem would be to make pll_u a fixed
+> >>>>> clock and enable it and program the rate if it's not enabled at boot.
+> >>>>
+> >>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+> >>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+> >>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+> >>>> there.
+> >>>>
+> >>>
+> >>> AFAIK we only use one rate ever?
+> >>
+> >> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+> >> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
+> >>
+> > 
+> > Indeed. And given that it's hw controlled anyway, I don't see why we can't make
+> > it a fixed clock and handle the init at kernel boot depending on what the
+> > bootloader has done.
+> 
+> Peter, are you suggesting we implement the equivalent to
+> tegra210_init_pllu()? This does look a bit more involved that what this
+> change is doing. Is there a simple way to do what you are suggesting?
+> 
 
-Fill coupling descriptor with data obtained from DTS using previously
-defined of_functions. Fail to register a regulator, if some data
-inconsistency occurs. If some coupled regulators are not yet registered,
-don't fail to register, but try to resolve them in late init call.
+Basically yes.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- drivers/regulator/core.c | 92 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 5494189..f8adfe4 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4067,6 +4067,88 @@ static int regulator_register_resolve_supply(struct device *dev, void *data)
- 	return 0;
- }
- 
-+static int regulator_fill_coupling_array(struct regulator_dev *rdev)
-+{
-+	struct coupling_desc *c_desc = &rdev->coupling_desc;
-+	int n_coupled = c_desc->n_coupled;
-+	struct regulator_dev *c_rdev;
-+	int i;
-+
-+	for (i = 1; i < n_coupled; i++) {
-+		/* already resolved */
-+		if (c_desc->coupled_rdevs[i])
-+			continue;
-+
-+		c_rdev = of_parse_coupled_regulator(rdev, i - 1);
-+
-+		if (c_rdev) {
-+			c_desc->coupled_rdevs[i] = c_rdev;
-+			c_desc->n_resolved++;
-+		}
-+	}
-+
-+	if (rdev->coupling_desc.n_resolved < n_coupled)
-+		return -1;
-+	else
-+		return 0;
-+}
-+
-+static int regulator_register_fill_coupling_array(struct device *dev,
-+						  void *data)
-+{
-+	struct regulator_dev *rdev = dev_to_rdev(dev);
-+
-+	if (regulator_fill_coupling_array(rdev))
-+		rdev_dbg(rdev, "unable to resolve coupling\n");
-+
-+	return 0;
-+}
-+
-+static int regulator_resolve_coupling(struct regulator_dev *rdev)
-+{
-+	int n_phandles = of_get_n_coupled(rdev);
-+
-+	if (n_phandles + 1 > MAX_COUPLED) {
-+		rdev_err(rdev, "too many regulators coupled\n");
-+		return -EPERM;
-+	}
-+
-+	/*
-+	 * Every regulator should always have coupling descriptor filled with
-+	 * at least pointer to itself.
-+	 */
-+	rdev->coupling_desc.coupled_rdevs[0] = rdev;
-+	rdev->coupling_desc.n_coupled = n_phandles + 1;
-+	rdev->coupling_desc.n_resolved++;
-+
-+	/* regulator isn't coupled */
-+	if (n_phandles == 0)
-+		return 0;
-+
-+	/* regulator, which can't change its voltage, can't be coupled */
-+	if (!regulator_ops_is_valid(rdev, REGULATOR_CHANGE_VOLTAGE)) {
-+		rdev_err(rdev, "voltage operation not allowed\n");
-+		return -EPERM;
-+	}
-+
-+	if (rdev->constraints->max_spread <= 0) {
-+		rdev_err(rdev, "wrong max_spread value\n");
-+		return -EPERM;
-+	}
-+
-+	if (!of_check_coupling_data(rdev))
-+		return -EPERM;
-+
-+	/*
-+	 * After everything has been checked, try to fill rdevs array
-+	 * with pointers to regulators parsed from device tree. If some
-+	 * regulators are not registered yet, retry in late init call
-+	 */
-+	regulator_fill_coupling_array(rdev);
-+
-+	return 0;
-+}
-+
- /**
-  * regulator_register - register regulator
-  * @regulator_desc: regulator to register
-@@ -4200,6 +4282,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	if (ret < 0)
- 		goto wash;
- 
-+	mutex_lock(&regulator_list_mutex);
-+	ret = regulator_resolve_coupling(rdev);
-+	mutex_unlock(&regulator_list_mutex);
-+
-+	if (ret != 0)
-+		goto wash;
-+
- 	/* add consumers devices */
- 	if (init_data) {
- 		mutex_lock(&regulator_list_mutex);
-@@ -4693,6 +4782,9 @@ static int __init regulator_init_complete(void)
- 	class_for_each_device(&regulator_class, NULL, NULL,
- 			      regulator_late_cleanup);
- 
-+	class_for_each_device(&regulator_class, NULL, NULL,
-+			      regulator_register_fill_coupling_array);
-+
- 	return 0;
- }
- late_initcall_sync(regulator_init_complete);
--- 
-2.7.4
+Peter.
