@@ -1,58 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428791AbeCBOwi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 09:52:38 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:54312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1428753AbeCBOwg (ORCPT
+        id S1428795AbeCBOwp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 09:52:45 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39737 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1428753AbeCBOwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:52:36 -0500
-Date: Fri, 2 Mar 2018 15:52:33 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Haris Okanovic <haris.okanovic@ni.com>
-Cc: linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, julia.cartwright@ni.com, gratian.crisan@ni.com,
-        anna-maria@linutronix.de
-Subject: Re: [PATCH v3 2/2] timers: Don't search for expired timers while
- TIMER_SOFTIRQ is scheduled
-Message-ID: <20180302145232.anp4hz25uwqygopa@linutronix.de>
-References: <alpine.DEB.2.20.1707182206110.2425@nanos>
- <20170803210657.19179-1-haris.okanovic@ni.com>
- <20170803210657.19179-2-haris.okanovic@ni.com>
- <28f05e39-6bc6-99c5-e1bc-91be3e79ea78@ni.com>
- <13c06708-f7ad-4f46-1c0b-f12d1ca16beb@ni.com>
- <20180301164755.pipco45y5nlvmdsy@linutronix.de>
- <7079102c-f53b-e8ab-c54d-1c40ff21d921@ni.com>
+        Fri, 2 Mar 2018 09:52:41 -0500
+X-Google-Smtp-Source: AG47ELvaDii4Bk2L0tpv+MEdEbAjQC2h/lkEy0W39jxuYjuAmOOZtf9zBhWdoDozj/WYMHD8qRfRQA==
+Subject: Re: [PATCH v4 3/4] dt-bindings: display: amlogic: DT fix
+ s/resets-names/reset-names/
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>, Chanho Min <chanho.min@lge.com>
+Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <1519998993-14398-1-git-send-email-geert+renesas@glider.be>
+ <1519998993-14398-4-git-send-email-geert+renesas@glider.be>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <d2be8243-caf1-32e3-bda2-b454a2cc147c@baylibre.com>
+Date: Fri, 2 Mar 2018 15:52:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1519998993-14398-4-git-send-email-geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7079102c-f53b-e8ab-c54d-1c40ff21d921@ni.com>
-User-Agent: NeoMutt/20171215
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-01 12:37:49 [-0600], Haris Okanovic wrote:
-> It was added back into 4.9 at some point after v4.9.30-rt20. I see an older
-> version in v4.9.68-rt60, for example, hence my original email. It was
-> dropped sometime thereafter, presumably because it no longer cleanly
-> applies. I don't see it in v4.14.20-rt17, for example.
-
-It was removed in v4.9.34-rt24 via 95d4a348841d ("Revert "timers: Don't
-wake ktimersoftd on every tick""). I don't see any leftovers or an older
-version.
-Looking at the queue I see two patches from you and that is:
- timers: Don't wake ktimersoftd on every tick
- tpm_tis: fix stall after iowrite*()s
-
-and the former is reverted. This was v4.9.84-rt62 that I've been looking
-at. Could please point me to the code/patches or something?
-
-> > Is there a newer patch pending on your side?
+On 02/03/2018 14:56, Geert Uytterhoeven wrote:
+> Fixes: 8cceda5349377e30 ("dt-bindings: Add bindings for the Amlogic Meson dw-hdmi extension")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> v4:
+>   - Add Acked-by,
 > 
-> Not yet. The latest version on patchwork is OK, just needs to be rebased
-> post-4.9. I'll post a new version when I get a chance to build and retest
-> it.
-okay.
+> v3:
+>   - New.
+> ---
+>  Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt
+> index bf4a18047309a5f8..d8f6268849f43621 100644
+> --- a/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt
+> +++ b/Documentation/devicetree/bindings/display/amlogic,meson-dw-hdmi.txt
+> @@ -43,7 +43,7 @@ Required properties:
+>    and the Amlogic Meson venci clocks as described in
+>    Documentation/devicetree/bindings/clock/clock-bindings.txt,
+>    the clocks are soc specific, the clock-names should be "iahb", "isfr", "venci"
+> -- resets, resets-names: must have the phandles to the HDMI apb, glue and phy
+> +- resets, reset-names: must have the phandles to the HDMI apb, glue and phy
+>    resets as described in :
+>    Documentation/devicetree/bindings/reset/reset.txt,
+>    the reset-names should be "hdmitx_apb", "hdmitx", "hdmitx_phy"
+> 
 
-Sebastian
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
