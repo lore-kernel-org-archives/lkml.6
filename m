@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1148518-1519981289-2-17453012012726001746
+X-Cyrus-Session-Id: sloti22d1t05-1164852-1519981288-2-11035737995101214743
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519981288; b=j+O719AdLqETBQUHDnS8wBbOH63QpZuyxKpaXIuVcILjf5X
-    0CVWP5EIl4f3i5QC9lv6Ccb1N2oU7OzkpJC/kSmiDWG+kNSuSW7ji0ZhFBIqaXEI
-    uWSMj74Bm9CrlbHLvSxEq91hA2+VjpXtegnsnvgaEknEyJCgOQNNVK61cb6ABjwe
-    su8Rw0IiQLdYYzTz+Q+oICiXIVq2DTfOlyfITtHsCwbjUCLMxlkITSf5PCumw9Sr
-    8g8dujRS1WUGbcJhrMXjlRrMUoUFWVrAHT0aB+1cQn4hKRFFfehZnef4VozkE7TC
-    smONrSijcQyDnUTfalZ29sSY61Cl7y6F/bfmQvw==
+    t=1519981287; b=ePFE/VXVLFuuJp5qfqu+qyN1p2lq1NZwrydA/59KwZILliQ
+    EjgM28E+VXkEn+0LU+CF9KtPtDKuKadYXa8gxhttjxAocZRK+kXBUTWT1v1d63gS
+    U3llSjHSs6Wd+neBLFeQXWuGeOc7/l4D/rOzML0uzxuuQ8SKbZh6Lc6n9I2dyUhB
+    zyqzkXSLgoieROQV5QDdgDMYKW0USSC4Z54NXXFQ6e9YpJvsF7GmFQGOZMGnv8YU
+    JXg5CSmRNrF1PppWbnbgWAYM+l2kn1FVmOt1r4EFAIE4T0pAV2mi5nMrqKOA/Kfy
+    eBVT7aBPhNjVXz/3M2HFAuG40085jN6Nq+Se5wA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519981288; bh=PwrZbkmF9rQ2BtEIlHDsU0reGi
-    wbnigOCIhNrhiPiQ8=; b=MivloYMYN+MPm3OE9QwvT/V1W/7bE9icaqRUTe56sb
-    dhvCGf4cWo+HlvAJSbu54W0kzwfZuFKJCX62TH03MWMUiZAiIk/9cXpCXlD3+ME/
-    7KZVL42nljsBzIkMGWJEEyFcbN53luZbDOL0RkfqEDMPHG6U8TgaapD2zMVe0tMZ
-    iMo8ajGTDNEgXlVg7LbDaA4pHkblC+Fmjv+GutDBBLJe34YLarqthyS64YmBQnlo
-    6YIqv3b7FllgkO3Cyja4NpnZOfRrnoD+rF3YZfB6ReFD5gVaBrTKgXhgDEmRULuJ
-    QnwCaSmiIuj9FpKhlStZwZKExA22ck6wf2D9KqV6SwFg==
+    :list-id; s=arctest; t=1519981287; bh=dmQOjoZ4RgPU2kllr/midYV1bz
+    V1NUzZhlKncWu/ciM=; b=PIzW8vKlvPKbta0M6OkDcYPqKe8jGiKryHJsXtJrv7
+    Ifc98fww86fzIFmv8Mb9RRr/ENxQ+2tiTQYoA3rdelwkonDdbDqZIOkQyyhdzV3T
+    iOE+5NhP9nric/qsXRi0x2P2cmWg4VolPjqp0PIOTSFkk0B4LN1JbV+kheMn4bFD
+    NSpa9zDZ6Yha1QC7oOipSb/6vSL+sPg6nCoeSDLn8RGvKyONinKda/K2k4/MGRiI
+    sjsaLwUbieBZ/CfYhxvpI7qvv7gEqjz2eEMjU8CqEC4I1/ImzULk+iFQzl+QcHoD
+    ii/yjjnqBcKbe7kzB/ZcMR+jedgVeMy32uzg3KnOvlzA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,24 +47,23 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424337AbeCBJBY (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 04:01:24 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53852 "EHLO
+        id S1424706AbeCBJBT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 04:01:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53798 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424716AbeCBJBW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:22 -0500
+        with ESMTP id S1424337AbeCBJBQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:16 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.co.uk>,
-        Ben Widawsky <ben@bwidawsk.net>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
+        stable@vger.kernel.org, Cathy Avery <cavery@redhat.com>,
+        Long Li <longli@microsoft.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 046/115] i915: Reject CCS modifiers for pipe C on Geminilake
-Date: Fri,  2 Mar 2018 09:50:49 +0100
-Message-Id: <20180302084505.740582206@linuxfoundation.org>
+Subject: [PATCH 4.14 044/115] scsi: storvsc: Fix scsi_cmd error assignments in storvsc_handle_error
+Date: Fri,  2 Mar 2018 09:50:47 +0100
+Message-Id: <20180302084505.661623169@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -82,44 +81,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+From: Cathy Avery <cavery@redhat.com>
 
 
-[ Upstream commit 8bc0d7ac934b6f2d0dc8f38a3104d281c9db1e98 ]
+[ Upstream commit d1b8b2391c24751e44f618fcf86fb55d9a9247fd ]
 
-Current code advertises (on the modifiers blob property) support for CCS
-modifier for pipe C on GLK, only to reject it later when validating the
-request before the atomic commit.
+When an I/O is returned with an srb_status of SRB_STATUS_INVALID_LUN
+which has zero good_bytes it must be assigned an error. Otherwise the
+I/O will be continuously requeued and will cause a deadlock in the case
+where disks are being hot added and removed. sd_probe_async will wait
+forever for its I/O to complete while holding scsi_sd_probe_domain.
 
-This fixes the tests igt@kms_ccs@pipe-c-*, which should skip on GLK for
-pipe C (see bug 104096).
+Also returning the default error of DID_TARGET_FAILURE causes multipath
+to not retry the I/O resulting in applications receiving I/O errors
+before a failover can occur.
 
-A relevant discussion is archived at:
-
-https://lists.freedesktop.org/archives/intel-gfx/2017-December/150646.html
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104096
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-Cc: Ben Widawsky <ben@bwidawsk.net>
-Reviewed-by: Ben Widawsky <ben@bwidawsk.net>
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20171220002410.5604-1-krisman@collabora.co.uk
-(cherry picked from commit f0cbd8bd877f3d8c5b80a6b1add9ca9010d7f9d8)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Signed-off-by: Long Li <longli@microsoft.com>
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/i915/intel_display.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/storvsc_drv.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -13240,7 +13240,7 @@ intel_primary_plane_create(struct drm_i9
- 	primary->frontbuffer_bit = INTEL_FRONTBUFFER_PRIMARY(pipe);
- 	primary->check_plane = intel_check_primary_plane;
- 
--	if (INTEL_GEN(dev_priv) >= 10 || IS_GEMINILAKE(dev_priv)) {
-+	if (INTEL_GEN(dev_priv) >= 10) {
- 		intel_primary_formats = skl_primary_formats;
- 		num_formats = ARRAY_SIZE(skl_primary_formats);
- 		modifiers = skl_format_modifiers_ccs;
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -952,10 +952,11 @@ static void storvsc_handle_error(struct
+ 		case TEST_UNIT_READY:
+ 			break;
+ 		default:
+-			set_host_byte(scmnd, DID_TARGET_FAILURE);
++			set_host_byte(scmnd, DID_ERROR);
+ 		}
+ 		break;
+ 	case SRB_STATUS_INVALID_LUN:
++		set_host_byte(scmnd, DID_NO_CONNECT);
+ 		do_work = true;
+ 		process_err_fn = storvsc_remove_lun;
+ 		break;
