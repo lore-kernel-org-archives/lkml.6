@@ -1,22 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163677AbeCBAgQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 19:36:16 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39550 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163343AbeCBAgN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 19:36:13 -0500
-X-Google-Smtp-Source: AG47ELvZUWCpZSguPuIyrZdyNLFEgCBMIpbs51txNGrr7vQtMYouYvFbioRRq+eg1fMVt7nk7m9x16VJ/w9g3XasN6o=
-MIME-Version: 1.0
-In-Reply-To: <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
-References: <20180228234006.21093-1-logang@deltatee.com> <20180228234006.21093-3-logang@deltatee.com>
- <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com> <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 1 Mar 2018 16:36:12 -0800
-Message-ID: <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem stats
-To: Logan Gunthorpe <logang@deltatee.com>
+        id S1163817AbeCBAiL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 19:38:11 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:40390 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1162941AbeCBAiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 19:38:09 -0500
+To: Dan Williams <dan.j.williams@intel.com>
 Cc: Bjorn Helgaas <helgaas@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
@@ -29,27 +19,57 @@ Cc: Bjorn Helgaas <helgaas@kernel.org>,
         =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-3-logang@deltatee.com>
+ <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com>
+ <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
+ <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c97fb967-966d-4a8e-91ab-e3f216ebdd97@deltatee.com>
+Date: Thu, 1 Mar 2018 17:37:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, dan.j.williams@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem
+ stats
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 4:15 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->
->
-> On 01/03/18 10:44 AM, Bjorn Helgaas wrote:
->>
->> I think these two statements are out of order, since the attributes
->> dereference pdev->p2pdma.  And it looks like you set "error"
->> unnecessarily, since you return immediately looking at it.
->
->
-> Per the previous series, sysfs_create_group is must_check for some reason. I
-> had a printk there but you didn't think it was necessary. So assigning it to
-> error is the only way to squash the warning.
 
-Why not fail the setup if the sysfs_create_group() fails? Sure, it may
-not be strictly required for userspace to have access to these
-attributes, but it seems hostile that userspace can't make assumptions
-about the presence of the "p2pmem" directory relative to the
-capability being setup.
+
+On 01/03/18 05:36 PM, Dan Williams wrote:
+> On Thu, Mar 1, 2018 at 4:15 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+>>
+>>
+>> On 01/03/18 10:44 AM, Bjorn Helgaas wrote:
+>>>
+>>> I think these two statements are out of order, since the attributes
+>>> dereference pdev->p2pdma.  And it looks like you set "error"
+>>> unnecessarily, since you return immediately looking at it.
+>>
+>>
+>> Per the previous series, sysfs_create_group is must_check for some reason. I
+>> had a printk there but you didn't think it was necessary. So assigning it to
+>> error is the only way to squash the warning.
+> 
+> Why not fail the setup if the sysfs_create_group() fails? Sure, it may
+> not be strictly required for userspace to have access to these
+> attributes, but it seems hostile that userspace can't make assumptions
+> about the presence of the "p2pmem" directory relative to the
+> capability being setup.
+
+Works for me. I'll do that.
+
+Thanks,
+
+Logan
