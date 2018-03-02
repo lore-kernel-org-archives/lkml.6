@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtVGzwT6MiaB+mEA+/2Gs06Nwfr7Pe4Wncd13kRRY5Saw5PKS5nQkDJjtIqaQszZGK292Lc
-ARC-Seal: i=1; a=rsa-sha256; t=1519981020; cv=none;
+X-Google-Smtp-Source: AG47ELvp4xozqaBNxiurktRkwypSkuCkQPMEht9fXzJrnS4ea5DGRRTdPS0GfOYEC4AhaW9xM+4q
+ARC-Seal: i=1; a=rsa-sha256; t=1519981017; cv=none;
         d=google.com; s=arc-20160816;
-        b=EBu2dg/8zEMClwu/azPGFNDmBDUbdal5UZmoSfS/j1TgeiMHrYJ0rJfWgQXRd4/rvp
-         orOhCGXlsu3E6wRtfxlOnXn5h+VxnTzDFvGykcPxEB52LlzmV3RkC94SFDhWXyTeLSaR
-         F2s88WRqcE++d7i2ZW1acdEnXZoh0+fDZzm5EQsMG987AOU7DXdmcF5zih4LNnC9o8ot
-         +dXH2qFnpV6hYfoh7MP+q+rpqAZkMGQ485NTzqlasIT5+m8ZgYu7qS9TYHThx4K7N2+9
-         BtBbndTpi1YQuNaDJ7jD9/gNKsg11l092hzeMIUd4M08DTo+I66EHNijmRENaK3XpWQx
-         9uTg==
+        b=ePzIx6Cz9SoGHnFJzNHgL+8fnza1r3N1AH/5PN+4Cm2VxXbxjH3wjlpvieSarmIlM/
+         MosHeXJV6rvNGpTbFj8G/LXXpH1GnmtJlyKBefvf9mWJv3lRhDkRYnUYEKGqfgU/zeDQ
+         fHINgnwlB1ys23AyBDKQu+Uzt1ms+LBIjTfHQKcb1SLxPwp2sj7ZT+bIMnQ39sCafDWo
+         NOTCHmVtwbghG7A1xAV8cMm1WGUfNp/fhSEJq15cwU3ZjFb9EzIoBW9Hy2TTttEd7QgI
+         PJoMGFxOJLreazIKS4P55eePzinUFHASGoZdBEM0InmiC1pRO4G1LsshYeB7Ldbc5KN0
+         7guA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Bhvb0OYB0moPUXaYSduaHKfWNeeoxVOtuzQPeeaCRT0=;
-        b=JINAbxqZDwUIjnxzjdmtaAcGVNGgQMOyd7wgdqD+dKN9mG9PdouBu4bEEsSdB2cTf3
-         2SMdzsh8I9kPtF1lCk9oxlcm4tCdwClyBpRM1SD+Z0xin+r+sA68Z6vyXt+xFLf6F1Xc
-         DONPYMubuOQrcM/A9YuvFtHhmfX/VwLfYSiqzdPblSLNxj8KeF2PuaZeKsSwazzZmMeY
-         n8rqW07l9gA1CK6EcOK2fYVbJ8BPhjcII3wdkC2kdygDi7/Nj5sh61mboaqxE9UWbKwf
-         Ypk8mbYVzqV8va9XT9Leb6kj+nZe/Nl02X5r3Am6UAn42LtFDD/my6OVgIIhHB9h8p5D
-         UNvg==
+        bh=Wouvfonk+yPtO3c9HiOWQx0hTaa4hY5nc6IY1UrEuUo=;
+        b=JuEoWP5rV2//MnW04uqOOCnXN7UDXzfFrafvJqXyNEjKGgzqULYW8VvP/SODu4tVmE
+         D77rc7I9tCVpQVj7ZGbqaxk+BROHow7JvBz9X9shOAWiciIwf6SwoGIY8+nUuYrpI0HP
+         ERWs1SpTW6nNTtN3+8Zq67IFtA/Q/FVU41pGThvfaHMLqBBDl3gTlhKNdQV8lRWT38hE
+         nZv7FF3JriWoVJnYG7lXYv+Xfr+N7PKR5/izum63MjsZ/J1Tt38UswNj+33ns3Ew4Odw
+         Y85f6yzSTht58ufD+SlqtUjMsqY7EJYvwLuiuRvvhhUJMFjEKw3E8UnpqJRHB8ROsWwm
+         jbJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Siva Reddy Kallam <siva.kallam@broadcom.com>,
-	Michael Chan <michael.chan@broadcom.com>,
+	Ying Xue <ying.xue@windriver.com>,
+	Jon Maloy <jon.maloy@ericsson.com>,
+	Tommi Rantala <tommi.t.rantala@nokia.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 27/56] tg3: Add workaround to restrict 5762 MRRS to 2048
-Date: Fri,  2 Mar 2018 09:51:13 +0100
-Message-Id: <20180302084450.957168665@linuxfoundation.org>
+Subject: [PATCH 4.9 26/56] tipc: fix tipc_mon_delete() oops in tipc_enable_bearer() error path
+Date: Fri,  2 Mar 2018 09:51:12 +0100
+Message-Id: <20180302084450.907609168@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815433008003046?=
-X-GMAIL-MSGID: =?utf-8?q?1593815619128842560?=
+X-GMAIL-THRID: =?utf-8?q?1593815615517653649?=
+X-GMAIL-MSGID: =?utf-8?q?1593815615517653649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +52,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Siva Reddy Kallam <siva.kallam@broadcom.com>
+From: Tommi Rantala <tommi.t.rantala@nokia.com>
 
 
-[ Upstream commit 4419bb1cedcda0272e1dc410345c5a1d1da0e367 ]
+[ Upstream commit 642a8439ddd8423b92f2e71960afe21ee1f66bb6 ]
 
-One of AMD based server with 5762 hangs with jumbo frame traffic.
-This AMD platform has southbridge limitation which is restricting MRRS
-to 4000. As a work around, driver to restricts the MRRS to 2048 for
-this particular 5762 NX1 card.
+Calling tipc_mon_delete() before the monitor has been created will oops.
+This can happen in tipc_enable_bearer() error path if tipc_disc_create()
+fails.
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+[   48.589074] BUG: unable to handle kernel paging request at 0000000000001008
+[   48.590266] IP: tipc_mon_delete+0xea/0x270 [tipc]
+[   48.591223] PGD 1e60c5067 P4D 1e60c5067 PUD 1eb0cf067 PMD 0
+[   48.592230] Oops: 0000 [#1] SMP KASAN
+[   48.595610] CPU: 5 PID: 1199 Comm: tipc Tainted: G    B            4.15.0-rc4-pc64-dirty #5
+[   48.597176] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
+[   48.598489] RIP: 0010:tipc_mon_delete+0xea/0x270 [tipc]
+[   48.599347] RSP: 0018:ffff8801d827f668 EFLAGS: 00010282
+[   48.600705] RAX: ffff8801ee813f00 RBX: 0000000000000204 RCX: 0000000000000000
+[   48.602183] RDX: 1ffffffff1de6a75 RSI: 0000000000000297 RDI: 0000000000000297
+[   48.604373] RBP: 0000000000000000 R08: 0000000000000000 R09: fffffbfff1dd1533
+[   48.605607] R10: ffffffff8eafbb05 R11: fffffbfff1dd1534 R12: 0000000000000050
+[   48.607082] R13: dead000000000200 R14: ffffffff8e73f310 R15: 0000000000001020
+[   48.608228] FS:  00007fc686484800(0000) GS:ffff8801f5540000(0000) knlGS:0000000000000000
+[   48.610189] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   48.611459] CR2: 0000000000001008 CR3: 00000001dda70002 CR4: 00000000003606e0
+[   48.612759] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   48.613831] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   48.615038] Call Trace:
+[   48.615635]  tipc_enable_bearer+0x415/0x5e0 [tipc]
+[   48.620623]  tipc_nl_bearer_enable+0x1ab/0x200 [tipc]
+[   48.625118]  genl_family_rcv_msg+0x36b/0x570
+[   48.631233]  genl_rcv_msg+0x5a/0xa0
+[   48.631867]  netlink_rcv_skb+0x1cc/0x220
+[   48.636373]  genl_rcv+0x24/0x40
+[   48.637306]  netlink_unicast+0x29c/0x350
+[   48.639664]  netlink_sendmsg+0x439/0x590
+[   48.642014]  SYSC_sendto+0x199/0x250
+[   48.649912]  do_syscall_64+0xfd/0x2c0
+[   48.650651]  entry_SYSCALL64_slow_path+0x25/0x25
+[   48.651843] RIP: 0033:0x7fc6859848e3
+[   48.652539] RSP: 002b:00007ffd25dff938 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+[   48.654003] RAX: ffffffffffffffda RBX: 00007ffd25dff990 RCX: 00007fc6859848e3
+[   48.655303] RDX: 0000000000000054 RSI: 00007ffd25dff990 RDI: 0000000000000003
+[   48.656512] RBP: 00007ffd25dff980 R08: 00007fc685c35fc0 R09: 000000000000000c
+[   48.657697] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000d13010
+[   48.658840] R13: 00007ffd25e009c0 R14: 0000000000000000 R15: 0000000000000000
+[   48.662972] RIP: tipc_mon_delete+0xea/0x270 [tipc] RSP: ffff8801d827f668
+[   48.664073] CR2: 0000000000001008
+[   48.664576] ---[ end trace e811818d54d5ce88 ]---
+
+Acked-by: Ying Xue <ying.xue@windriver.com>
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |   10 ++++++++++
- drivers/net/ethernet/broadcom/tg3.h |    4 ++++
- 2 files changed, 14 insertions(+)
+ net/tipc/monitor.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -10049,6 +10049,16 @@ static int tg3_reset_hw(struct tg3 *tp,
+--- a/net/tipc/monitor.c
++++ b/net/tipc/monitor.c
+@@ -633,9 +633,13 @@ void tipc_mon_delete(struct net *net, in
+ {
+ 	struct tipc_net *tn = tipc_net(net);
+ 	struct tipc_monitor *mon = tipc_monitor(net, bearer_id);
+-	struct tipc_peer *self = get_self(net, bearer_id);
++	struct tipc_peer *self;
+ 	struct tipc_peer *peer, *tmp;
  
- 	tw32(GRC_MODE, tp->grc_mode | val);
- 
-+	/* On one of the AMD platform, MRRS is restricted to 4000 because of
-+	 * south bridge limitation. As a workaround, Driver is setting MRRS
-+	 * to 2048 instead of default 4096.
-+	 */
-+	if (tp->pdev->subsystem_vendor == PCI_VENDOR_ID_DELL &&
-+	    tp->pdev->subsystem_device == TG3PCI_SUBDEVICE_ID_DELL_5762) {
-+		val = tr32(TG3PCI_DEV_STATUS_CTRL) & ~MAX_READ_REQ_MASK;
-+		tw32(TG3PCI_DEV_STATUS_CTRL, val | MAX_READ_REQ_SIZE_2048);
-+	}
++	if (!mon)
++		return;
 +
- 	/* Setup the timer prescalar register.  Clock is always 66Mhz. */
- 	val = tr32(GRC_MISC_CFG);
- 	val &= ~0xff;
---- a/drivers/net/ethernet/broadcom/tg3.h
-+++ b/drivers/net/ethernet/broadcom/tg3.h
-@@ -95,6 +95,7 @@
- #define TG3PCI_SUBDEVICE_ID_DELL_JAGUAR		0x0106
- #define TG3PCI_SUBDEVICE_ID_DELL_MERLOT		0x0109
- #define TG3PCI_SUBDEVICE_ID_DELL_SLIM_MERLOT	0x010a
-+#define TG3PCI_SUBDEVICE_ID_DELL_5762		0x07f0
- #define TG3PCI_SUBVENDOR_ID_COMPAQ		PCI_VENDOR_ID_COMPAQ
- #define TG3PCI_SUBDEVICE_ID_COMPAQ_BANSHEE	0x007c
- #define TG3PCI_SUBDEVICE_ID_COMPAQ_BANSHEE_2	0x009a
-@@ -280,6 +281,9 @@
- #define TG3PCI_STD_RING_PROD_IDX	0x00000098 /* 64-bit */
- #define TG3PCI_RCV_RET_RING_CON_IDX	0x000000a0 /* 64-bit */
- /* 0xa8 --> 0xb8 unused */
-+#define TG3PCI_DEV_STATUS_CTRL		0x000000b4
-+#define  MAX_READ_REQ_SIZE_2048		 0x00004000
-+#define  MAX_READ_REQ_MASK		 0x00007000
- #define TG3PCI_DUAL_MAC_CTRL		0x000000b8
- #define  DUAL_MAC_CTRL_CH_MASK		 0x00000003
- #define  DUAL_MAC_CTRL_ID		 0x00000004
++	self = get_self(net, bearer_id);
+ 	write_lock_bh(&mon->lock);
+ 	tn->monitors[bearer_id] = NULL;
+ 	list_for_each_entry_safe(peer, tmp, &self->list, list) {
