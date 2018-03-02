@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1415877-1519989843-2-15876338897912309274
+X-Cyrus-Session-Id: sloti22d1t05-1414047-1519989836-2-9870943339317357311
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519989842; b=v+OSMlftW566HRVd8XIA7f6mHYew8Pox9GnYeDz6Oo9Kv5c
-    HjiterwLns/erda4DlXKdH8oFkvyJ0YPX6YBtUx5rrpFCPAisUYV5wLAlBB5XOB1
-    Y74AXeOzRlFo5mLLTUaLj2m0lEDvqRj9n7EAqoSMnqq7I7DZWFWKj8mF4u5K0tKV
-    j4CEs2Upi2qEEZc6bE5oRKD9IiXtP0Hjm/rp/s8iGIM9w1Ewk0pC6krgHNxsTfFw
-    44c90nvzaWpKzHMubsd8vq9Pn/gPZNApVO5lJMmXoiRlcLIwzqR+OYNWT7qYNKqN
-    3YE6IxwArYjVUZRVqTd9xyWWktQTpUl8KFMez5w==
+    t=1519989835; b=VoHS3DEr63goh0T2qqfjybA6Ef7BeHzMuAmixjgG7e/jZ2Y
+    tY/RVJqs+AyB1AM4B/37pSu2acrEw5iMpRvMlMl5C3f06EiQpCjOb6Z4IrcQbRgX
+    2/fH/F3TtRbAVle8D2l/N49IXZnBF9XjShzy/CVS4ADW4RQ459C19cKrZ2Cc0k2x
+    BI0msf4MZeuRBy5zZczGurueEXNN9phskGr8EFOtnAmO+TX8kB0nb4paLFIaxGtF
+    qvL0R+jEcofbr33PQtukxVmUwdSVf5ROgAlkAq9mOxY1m9+yqIwTAKY0Tll9D2PU
+    VQxgaH9EH3V3FKTAaZTKvSKdNr493EvFr7lxVmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519989842; bh=sbknFkH0x3FkdvE817pLm0OeF2
-    5fufRiABvUb/oTcfk=; b=JmlN3iZ/DCiaxMH74lJSeBnHxSdxqrb/0J8IRi3BWB
-    ZdWJ8iseC7WzKpvNY0f/AJZ4UGQMdkc0Y0roLDdVByaFZWv20gwfI4DJGsnc2NCQ
-    qB4O0ZmaUcIm9+ARFCRxcdHwjpbtfAuQOR/Tvm9oHP9WhaXleFqkWfH9h1AT+PnZ
-    MOiAwx+mbYmC0226WfJ8OyJffDOv+QkOGeRuoXNtLNJ0eCXOT+7jbyiKwR/GkAIM
-    +vk4sebvlO0W4r4U0gAzCd83UvijuUBnBA1Udf4BJB2+ocunT4lHhMnKJDqKDE4H
-    DQpDlafwkpuhtkUIA5BdphCfGC8mZhtamykHzsdYt4sA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519989835; bh=i3uN3nb0VcHpoqMzlbBy0RAlK2
+    SQhEzonQ6X4HKBa9U=; b=v0l8V+Hz529kBIcekLF50FAgQEX/z9mIljIeRORtKa
+    HpYRLkENs13l8lJn3VfRzh0pQzLYIC27Dz9Dr1/Px6ADN1YdxoyxyFt3Gqp+SK5Z
+    sYSPdPzSxS2PQ4aGCPzB/jM3JYZ9Ccq0cmbLRvSt1tEQOld8vl4M91fr5V/wxIeV
+    so2q+wk7g7ZWvPkISx/NxcI7mCsnqjKDXEBNFosIn04PRpm/rLR2jU48Id7qx6P0
+    nC2z2+BZb+KxulsVtJjJ3nDtCsHec5/9fJlR6fH3U2Yz3rfhI4AY+Ez8YyLx5rCL
+    OceYI5yCfx6jlQmimIHbqh4V1L/lVYPWCGuCExTrwqtg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,27 +47,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422790AbeCBIvd (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 03:51:33 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48998 "EHLO
+        id S1423166AbeCBLXc (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 06:23:32 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165056AbeCBIvb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:51:31 -0500
+        with ESMTP id S1423161AbeCBIve (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:51:34 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Tluka <jtluka@redhat.com>,
-        Jakub Sitnicki <jkbs@redhat.com>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        stable@vger.kernel.org,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Benedict Wong <benedictwong@google.com>
-Subject: [PATCH 3.18 01/24] ipv6: Skip XFRM lookup if dst_entry in socket cache is valid
-Date: Fri,  2 Mar 2018 09:50:58 +0100
-Message-Id: <20180302084239.248232037@linuxfoundation.org>
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 10/24] tg3: Enable PHY reset in MTU change path for 5720
+Date: Fri,  2 Mar 2018 09:51:07 +0100
+Message-Id: <20180302084239.669158320@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084239.157503766@linuxfoundation.org>
 References: <20180302084239.157503766@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -80,102 +81,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jakub Sitnicki <jkbs@redhat.com>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
 
-commit 00bc0ef5880dc7b82f9c320dead4afaad48e47be upstream.
 
-At present we perform an xfrm_lookup() for each UDPv6 message we
-send. The lookup involves querying the flow cache (flow_cache_lookup)
-and, in case of a cache miss, creating an XFRM bundle.
+[ Upstream commit e60ee41aaf898584205a6af5c996860d0fe6a836 ]
 
-If we miss the flow cache, we can end up creating a new bundle and
-deriving the path MTU (xfrm_init_pmtu) from on an already transformed
-dst_entry, which we pass from the socket cache (sk->sk_dst_cache) down
-to xfrm_lookup(). This can happen only if we're caching the dst_entry
-in the socket, that is when we're using a connected UDP socket.
+A customer noticed RX path hang when MTU is changed on the fly while
+running heavy traffic with NCSI enabled for 5717 and 5719. Since 5720
+belongs to same ASIC family, we observed same issue and same fix
+could solve this problem for 5720.
 
-To put it another way, the path MTU shrinks each time we miss the flow
-cache, which later on leads to incorrectly fragmented payload. It can
-be observed with ESPv6 in transport mode:
-
-  1) Set up a transformation and lower the MTU to trigger fragmentation
-    # ip xfrm policy add dir out src ::1 dst ::1 \
-      tmpl src ::1 dst ::1 proto esp spi 1
-    # ip xfrm state add src ::1 dst ::1 \
-      proto esp spi 1 enc 'aes' 0x0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b
-    # ip link set dev lo mtu 1500
-
-  2) Monitor the packet flow and set up an UDP sink
-    # tcpdump -ni lo -ttt &
-    # socat udp6-listen:12345,fork /dev/null &
-
-  3) Send a datagram that needs fragmentation with a connected socket
-    # perl -e 'print "@" x 1470 | socat - udp6:[::1]:12345
-    2016/06/07 18:52:52 socat[724] E read(3, 0x555bb3d5ba00, 8192): Protocol error
-    00:00:00.000000 IP6 ::1 > ::1: frag (0|1448) ESP(spi=0x00000001,seq=0x2), length 1448
-    00:00:00.000014 IP6 ::1 > ::1: frag (1448|32)
-    00:00:00.000050 IP6 ::1 > ::1: ESP(spi=0x00000001,seq=0x3), length 1272
-    (^ ICMPv6 Parameter Problem)
-    00:00:00.000022 IP6 ::1 > ::1: ESP(spi=0x00000001,seq=0x5), length 136
-
-  4) Compare it to a non-connected socket
-    # perl -e 'print "@" x 1500' | socat - udp6-sendto:[::1]:12345
-    00:00:40.535488 IP6 ::1 > ::1: frag (0|1448) ESP(spi=0x00000001,seq=0x6), length 1448
-    00:00:00.000010 IP6 ::1 > ::1: frag (1448|64)
-
-What happens in step (3) is:
-
-  1) when connecting the socket in __ip6_datagram_connect(), we
-     perform an XFRM lookup, miss the flow cache, create an XFRM
-     bundle, and cache the destination,
-
-  2) afterwards, when sending the datagram, we perform an XFRM lookup,
-     again, miss the flow cache (due to mismatch of flowi6_iif and
-     flowi6_oif, which is an issue of its own), and recreate an XFRM
-     bundle based on the cached (and already transformed) destination.
-
-To prevent the recreation of an XFRM bundle, avoid an XFRM lookup
-altogether whenever we already have a destination entry cached in the
-socket. This prevents the path MTU shrinkage and brings us on par with
-UDPv4.
-
-The fix also benefits connected PINGv6 sockets, another user of
-ip6_sk_dst_lookup_flow(), who also suffer messages being transformed
-twice.
-
-Joint work with Hannes Frederic Sowa.
-
-Reported-by: Jan Tluka <jtluka@redhat.com>
-Signed-off-by: Jakub Sitnicki <jkbs@redhat.com>
-Acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Benedict Wong <benedictwong@google.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/ipv6/ip6_output.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/broadcom/tg3.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1038,17 +1038,12 @@ struct dst_entry *ip6_sk_dst_lookup_flow
- 					 const struct in6_addr *final_dst)
- {
- 	struct dst_entry *dst = sk_dst_check(sk, inet6_sk(sk)->dst_cookie);
--	int err;
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -14214,7 +14214,8 @@ static int tg3_change_mtu(struct net_dev
+ 	 */
+ 	if (tg3_asic_rev(tp) == ASIC_REV_57766 ||
+ 	    tg3_asic_rev(tp) == ASIC_REV_5717 ||
+-	    tg3_asic_rev(tp) == ASIC_REV_5719)
++	    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++	    tg3_asic_rev(tp) == ASIC_REV_5720)
+ 		reset_phy = true;
  
- 	dst = ip6_sk_dst_check(sk, dst, fl6);
-+	if (!dst)
-+		dst = ip6_dst_lookup_flow(sk, fl6, final_dst);
- 
--	err = ip6_dst_lookup_tail(sk, &dst, fl6);
--	if (err)
--		return ERR_PTR(err);
--	if (final_dst)
--		fl6->daddr = *final_dst;
--
--	return xfrm_lookup_route(sock_net(sk), dst, flowi6_to_flowi(fl6), sk, 0);
-+	return dst;
- }
- EXPORT_SYMBOL_GPL(ip6_sk_dst_lookup_flow);
- 
+ 	err = tg3_restart_hw(tp, reset_phy);
