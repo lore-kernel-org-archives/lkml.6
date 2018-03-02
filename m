@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvHfdeKqLi/xkQeSepDs/PDg1pcBGwfUmc+qmUbSQ19fhq94mXfHeuxC8LZ87Xj+TN3kfyV
-ARC-Seal: i=1; a=rsa-sha256; t=1519980899; cv=none;
+X-Google-Smtp-Source: AG47ELuE9Ddi3l82uQ8SQD+v+UHNrdM51I6i3wLzhfzjCQBDDJufa0cc9iHE+Y8iQVg8whavugIk
+ARC-Seal: i=1; a=rsa-sha256; t=1519980893; cv=none;
         d=google.com; s=arc-20160816;
-        b=d3GLP7CBAt3Jhuaq90PVDi3HBE3Q+4HtMyZ3QUxxy7VItN5+bWcdjOjK9iAwTJcGjj
-         x2MXAUQO35iKOFPN4eBgJ1Efa2hRr3rJFJdJoqyTmCZ6EuKwpRzZMk2JUt9ue0XKRVay
-         T2PT0AMZxqPXRCkGUL6O/B0CQDOWEgppKW90a/3A6gtAGnaJD/xz2kRrcibyQ+oErA4N
-         UPubn0bArLgZuWx75OQtT4gDhirLmIo0C2E0h0E+XsPUB/x6aUtNIN+3bR4TqduVrVKK
-         59WfLWzL6yteAPPbFNpFAh85fw/dZQPi0iKEfufy2KCEO1coL9VqzVghbyGJUT9wOpUE
-         LCQA==
+        b=o7CnYthozJjFVZjOVf98TR+mAyZiT5WphEp0O3hllJ2zZgI4X9AXmilFreMKjasj8s
+         EmzABDF/Fefpr8qUn82k0MMyCzsFIx0YFYSoOlGk4jhlBIIZkyghyj2zLQE8VwGTI3ok
+         MtD9xKXjXttebw5BJ5RqIkINM/wAhDabFTM+1Bf0ndZQGk5kKeqIrKwY+WS0iIcPn4Gj
+         M/2dUw/d5WqgWO9fy1gQBlQmFsvVrSOZAsPpxLOHoE/Rsgyz8IuNKeiogAmgbcRJwb7S
+         kukcs+FNSerRwiBH568tmHT/+fiXSoVDg2Ca2dKwBkTPz+2S5AqmfWo7Icbw5gF1qS51
+         UPzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lfsrjHS/Gc4eJxThhMkmH9SrVTT6/eQtnxJ85UkdCOw=;
-        b=UV4LcSnnLZfaliHkBpv5ASjbdxZlcO0PeThooqkw9w2pmLuZNBhxHF90X8s2jwNYmm
-         I4+PsetnmISHch/nYhJMSTKBuwXlhdSoTqTCD8jRPa2SEBR3bXXEC+Itm+VYgFG9iaJo
-         RDZ+0uBIrQdSiKXXDDjemssR3pYl6ONSYdYX3bZ20c6US97uvYPBjytEnJUUSvCdBtZ2
-         ghqNo7yKiDbADk33FmzJ+UONNpN5GUrC7U6QZKX0VEeX2pcpq+Qi5JF+57tuI4v9gtUG
-         +lp63N3/BHaxc9GOSAsTiO1ZVOawmkW6rLM9MP2fmo04hvRXr6oEfDBHMEJsXiEtc2f1
-         4jZg==
+        bh=RodYCVExXASpgTAmtPKxok6FuY7Y5A/Z3sSpX2Xnnyw=;
+        b=Ta5LF6LvgYkEq3aDfEcUtadfuJ0BnoPcDOK/IJMzEVy4Rkmxx5WPkiK9J+QCV3xMO2
+         1Ip8WhncZ9E25DUZmZTF2O4eM/PNGTeI23wKX+3tcKk6rdstA8gZHv5mEamnWWiTVHK6
+         u9UFRihzX3hrVwq7H7GYmn03y7wnbb8W+zZiVAz31Yj+xQCwtqUn0ov5R//41PzgVnLU
+         mwT87izp3+MRfBxwYTxNVqjHPkP/YU/Ld8LW6lcbE5fDweBE23Czh+0XpyYNaxE4IZO1
+         ZC41+z+DlDcSDkh+LjgEs4Zk5PH1hEzW5mSns3f7PPefMZHI0f424qHCkekzRz9FRf3X
+         CZ3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Luu An Phu <phu.luuan@nxp.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Xiongwei Song <sxwjean@gmail.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 25/34] can: flex_can: Correct the checking for frame length in flexcan_start_xmit()
-Date: Fri,  2 Mar 2018 09:51:21 +0100
-Message-Id: <20180302084437.652137759@linuxfoundation.org>
+Subject: [PATCH 4.4 23/34] drm/ttm: check the return value of kzalloc
+Date: Fri,  2 Mar 2018 09:51:19 +0100
+Message-Id: <20180302084437.535534570@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815491970045896?=
-X-GMAIL-MSGID: =?utf-8?q?1593815491970045896?=
+X-GMAIL-THRID: =?utf-8?q?1593815303183169989?=
+X-GMAIL-MSGID: =?utf-8?q?1593815485522915694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luu An Phu <phu.luuan@nxp.com>
+From: Xiongwei Song <sxwjean@gmail.com>
 
 
-[ Upstream commit 13454c14550065fcc1705d6bd4ee6d40e057099f ]
+[ Upstream commit 19d859a7205bc59ffc38303eb25ae394f61d21dc ]
 
-The flexcan_start_xmit() function compares the frame length with data
-register length to write frame content into data[0] and data[1]
-register. Data register length is 4 bytes and frame maximum length is 8
-bytes.
+In the function ttm_page_alloc_init, kzalloc call is made for variable
+_manager, we need to check its return value, it may return NULL.
 
-Fix the check that compares frame length with 3. Because the register
-length is 4.
-
-Signed-off-by: Luu An Phu <phu.luuan@nxp.com>
-Reviewed-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Xiongwei Song <sxwjean@gmail.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/flexcan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_page_alloc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -493,7 +493,7 @@ static int flexcan_start_xmit(struct sk_
- 		data = be32_to_cpup((__be32 *)&cf->data[0]);
- 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[0]);
- 	}
--	if (cf->can_dlc > 3) {
-+	if (cf->can_dlc > 4) {
- 		data = be32_to_cpup((__be32 *)&cf->data[4]);
- 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[1]);
- 	}
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
+@@ -818,6 +818,8 @@ int ttm_page_alloc_init(struct ttm_mem_g
+ 	pr_info("Initializing pool allocator\n");
+ 
+ 	_manager = kzalloc(sizeof(*_manager), GFP_KERNEL);
++	if (!_manager)
++		return -ENOMEM;
+ 
+ 	ttm_page_pool_init_locked(&_manager->wc_pool, GFP_HIGHUSER, "wc");
+ 
