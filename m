@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtL3413kznZ4SrOfm7tIi5smYN7lUPrX+szqpSOSRynyVrN7svuC+81Anmt96MGJMYaBL8w
-ARC-Seal: i=1; a=rsa-sha256; t=1519981128; cv=none;
+X-Google-Smtp-Source: AG47ELsuZjHQLgV090MdNRoH3vNQKb4olaH63m3fQottr3VUn1dX44dfdFD9sClmEG+0V4iiZRlI
+ARC-Seal: i=1; a=rsa-sha256; t=1519981125; cv=none;
         d=google.com; s=arc-20160816;
-        b=VzMfhJhXZxf6FnXxras792QTye+yKJqYbb47iskb92KFTvO23IYhPBDb4z2OHzbYBE
-         kisQwecQYOm/6KV0CEFj41N22Qi5mp1iAdQI/bLnEa+6oHglmqOz3OBs3IAqtflIAQjs
-         BDveeo+oyCL4JfNVQXFvKCWMY0sYZ7Tp3R7MXlSf3j8jhpkL7dl+wfEQyEfxz1APbFg+
-         E4L4bmco59JR75Ui7E4JTuDwIXEmiF7oK5I0qiIlD3sNoBvveWQvjC/PYsy7agU2tZGM
-         r54g/0w4aErbXFvKbqVjZL/WsC/do+MN0ulBi62lDUrkbqJ9RUfGxmllMJ4aPF+VRJ+R
-         1ihQ==
+        b=FL14EtwlVWQKPaqIS6WaeA1gh5xRQzZCanrbGOgvOdL4hPYAL1IHzG+vKbohfrcVtW
+         VBdJ2YFct2el9V6A4cPwZ916mTPKIP9YdMcmUUcA2XmYWR7D0wNV2/+exOjtDd7YAMla
+         wU87jENsvCMtxDai7UrjrX0fh/1QxIoMLpiSaEmyxQX6jgBDvYsCXhSNobecCeN0eRy3
+         C8Ly7teu4S/UKDz7f30LwGCvf759h00zYU/vkZun/ZQgHaGSk2pH4E/Z1+gR0oRdHH/S
+         osxIJsDmqrU/zAScI6yW2SCQouFDKnULha9Z1i9UAY5XrkJownc+9cj5ZJ0a1YIjN6Sy
+         VJ8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OTfTeBV0E1kd+u7PxArE9GDi1mLSnPIX0WXl8XTtdfg=;
-        b=RSqu4so9FkDxDTg9COd10C6KE8LTzduD7zc5ssF6rqOpEK8ESH+ZwUTRDxRo68NuTB
-         JG+Q78X3fWLIRZZJ7aha9UnK6yNIO3BHMbzCuyohDXraf9ZYSowtSD4C8jiHC3H3qhgh
-         ql4lgXkla8cbBcX+BCqr7T1A6/yQ6Gqr5RhHvr2dm7FPwBGZo4Ku6AYgHdUR6tijUHsO
-         VmODBCwpEPq6ctXBvbwh/rvYIJiQvXkALxS8uC8lTqBpbXh9UI6QfxwgJaMguIjJoZRS
-         7S7sEgggLUT910pyBnoGtHAF678cnC6zyCaUFCMpLWjG95MLvjPDuar+Xod2e5j9qnsD
-         uyzQ==
+        bh=0WLnDu0L0GK0EIIijYWPLlrluJ1rXIyTZvHk+JUCRUw=;
+        b=Ffg6hSqcvCuDqsS3ep9MsZjfILhQXSELQwRX037cTAJD3Txm3EaIztzw08ba8WSLap
+         rHEsTUUMBNDehI/kY4HrpDQ06s1unumh0tsW9phrPKz7ZVU+dwWt4jPhv/bDXqq9NYQl
+         auip5gUci+FXLXc6XAc3AoC9NsZEBIRVm3jH2KYQiLvb472DlT1kTOZSkrnT8q1w9d+k
+         VWHsAwdCcIT0IBdqivVuHQT8Snsrk225BkwAU/j68QIfgkYWe47EoDNRfvZW5Nw/5tkx
+         XpiAkzkNX6V5JFn2ztu6FIbH5NX34f4g5FFXHfc93/TxxVCmExq48SDPmjZkzWzxBA2b
+         dg5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 50/56] SolutionEngine771x: fix Ether platform data
-Date: Fri,  2 Mar 2018 09:51:36 +0100
-Message-Id: <20180302084452.068140598@linuxfoundation.org>
+Subject: [PATCH 4.9 49/56] mdio-sun4i: Fix a memory leak
+Date: Fri,  2 Mar 2018 09:51:35 +0100
+Message-Id: <20180302084452.027864759@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815317239776648?=
-X-GMAIL-MSGID: =?utf-8?q?1593815730953227363?=
+X-GMAIL-THRID: =?utf-8?q?1593815310363107750?=
+X-GMAIL-MSGID: =?utf-8?q?1593815727877192916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,63 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 195e2addbce09e5afbc766efc1e6567c9ce840d3 ]
+[ Upstream commit 56c0290202ab94a2f2780c449395d4ae8495fab4 ]
 
-The 'sh_eth' driver's probe() method would fail  on the SolutionEngine7710
-board and crash on SolutionEngine7712 board  as the platform code is
-hopelessly behind the driver's platform data --  it passes the PHY address
-instead of 'struct sh_eth_plat_data *'; pass the latter to the driver in
-order to fix the bug...
+If the probing of the regulator is deferred, the memory allocated by
+'mdiobus_alloc_size()' will be leaking.
+It should be freed before the next call to 'sun4i_mdio_probe()' which will
+reallocate it.
 
-Fixes: 71557a37adb5 ("[netdrvr] sh_eth: Add SH7619 support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sh/boards/mach-se/770x/setup.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/phy/mdio-sun4i.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/sh/boards/mach-se/770x/setup.c
-+++ b/arch/sh/boards/mach-se/770x/setup.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/sh_eth.h>
- #include <mach-se/mach/se.h>
- #include <mach-se/mach/mrshpc.h>
- #include <asm/machvec.h>
-@@ -114,6 +115,11 @@ static struct platform_device heartbeat_
- #if defined(CONFIG_CPU_SUBTYPE_SH7710) ||\
- 	defined(CONFIG_CPU_SUBTYPE_SH7712)
- /* SH771X Ethernet driver */
-+static struct sh_eth_plat_data sh_eth_plat = {
-+	.phy = PHY_ID,
-+	.phy_interface = PHY_INTERFACE_MODE_MII,
-+};
-+
- static struct resource sh_eth0_resources[] = {
- 	[0] = {
- 		.start = SH_ETH0_BASE,
-@@ -131,7 +137,7 @@ static struct platform_device sh_eth0_de
- 	.name = "sh771x-ether",
- 	.id = 0,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth0_resources),
- 	.resource = sh_eth0_resources,
-@@ -154,7 +160,7 @@ static struct platform_device sh_eth1_de
- 	.name = "sh771x-ether",
- 	.id = 1,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth1_resources),
- 	.resource = sh_eth1_resources,
+--- a/drivers/net/phy/mdio-sun4i.c
++++ b/drivers/net/phy/mdio-sun4i.c
+@@ -118,8 +118,10 @@ static int sun4i_mdio_probe(struct platf
+ 
+ 	data->regulator = devm_regulator_get(&pdev->dev, "phy");
+ 	if (IS_ERR(data->regulator)) {
+-		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(data->regulator) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_out_free_mdiobus;
++		}
+ 
+ 		dev_info(&pdev->dev, "no regulator found\n");
+ 		data->regulator = NULL;
