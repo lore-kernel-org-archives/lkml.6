@@ -1,69 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1164852-1519981288-2-11035737995101214743
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519981287; b=ePFE/VXVLFuuJp5qfqu+qyN1p2lq1NZwrydA/59KwZILliQ
-    EjgM28E+VXkEn+0LU+CF9KtPtDKuKadYXa8gxhttjxAocZRK+kXBUTWT1v1d63gS
-    U3llSjHSs6Wd+neBLFeQXWuGeOc7/l4D/rOzML0uzxuuQ8SKbZh6Lc6n9I2dyUhB
-    zyqzkXSLgoieROQV5QDdgDMYKW0USSC4Z54NXXFQ6e9YpJvsF7GmFQGOZMGnv8YU
-    JXg5CSmRNrF1PppWbnbgWAYM+l2kn1FVmOt1r4EFAIE4T0pAV2mi5nMrqKOA/Kfy
-    eBVT7aBPhNjVXz/3M2HFAuG40085jN6Nq+Se5wA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519981287; bh=dmQOjoZ4RgPU2kllr/midYV1bz
-    V1NUzZhlKncWu/ciM=; b=PIzW8vKlvPKbta0M6OkDcYPqKe8jGiKryHJsXtJrv7
-    Ifc98fww86fzIFmv8Mb9RRr/ENxQ+2tiTQYoA3rdelwkonDdbDqZIOkQyyhdzV3T
-    iOE+5NhP9nric/qsXRi0x2P2cmWg4VolPjqp0PIOTSFkk0B4LN1JbV+kheMn4bFD
-    NSpa9zDZ6Yha1QC7oOipSb/6vSL+sPg6nCoeSDLn8RGvKyONinKda/K2k4/MGRiI
-    sjsaLwUbieBZ/CfYhxvpI7qvv7gEqjz2eEMjU8CqEC4I1/ImzULk+iFQzl+QcHoD
-    ii/yjjnqBcKbe7kzB/ZcMR+jedgVeMy32uzg3KnOvlzA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424706AbeCBJBT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 04:01:19 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53798 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424337AbeCBJBQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:16 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuydvZMMFjNqfiCLhDERhnOgXlWzOOSWYR6hixMvSk1WVqDk2Nl8wn1unUUmmILZK18itr+
+ARC-Seal: i=1; a=rsa-sha256; t=1519981286; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oNdrc/2I7mdm7tsD3OZ70qepjV03/FzRuDB8YvdVYQ0bt5TXE8jV+mjIJOw0lZhBEO
+         RxaDgExjEp8TI7Xlb+FjNsYBCWdkYRFTtix6YVKo4G6nIfyZpUgXZUsp3qD21SWFILzj
+         AchUmA0d2tNNwbrmao5A+R84pt98ZY1rHg5Gr7fmfWQmxz9UlVkhsoJrYNZn660Hw+wO
+         z/K3OKFoKesSQD5VrI5XSc9amJszkharJhnVUM1l38uLlwlFM+/ygN15cxqh34O9aU1v
+         qyMPkbpyw6gJ0UnP05NBZrS6VnFYcmpD4FU5jIU4e5gwL38N7eq8TrP7G9dn+HwdwDEQ
+         LVFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=8jDSFGu57EC/cH3MMWgihtdKh6YOmrrdRdPMf+r4P5I=;
+        b=xqeYS+K91oyBhhcRUXVgp99tFLsdhYNdFHp5OY81CORfDJzahNHSgzQ7lSjlm3Fzjt
+         E/lMa+GkLs8scIaEFbSdvxOZMSx2A2XUEZB2OVxM18Ns9vou8mYyzevGo8FsWpX9evTn
+         /RCBwRYYu0uFu9jPqe11Mhe2ARquTIQkSXzRGZTvd74uerFm5J9sAH+0e5P60n2/BwtX
+         YKgqYNxHKE/FogiCulCEYpgYasUSW2uPUbU9ecJQWYS1eNUhJFrpnAImjiuur2LpOjsB
+         +zT7arbOvc1WLUZ8LliFJDY9hEqyBwghVEbyWksIHbcB+m7HET9TnUlb7mPwXddigt8V
+         4pkw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cathy Avery <cavery@redhat.com>,
-        Long Li <longli@microsoft.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 044/115] scsi: storvsc: Fix scsi_cmd error assignments in storvsc_handle_error
-Date: Fri,  2 Mar 2018 09:50:47 +0100
-Message-Id: <20180302084505.661623169@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Adit Ranadive <aditr@vmware.com>,
+	Aditya Sarwade <asarwade@vmware.com>,
+	Jorgen Hansen <jhansen@vmware.com>,
+	Bryan Tan <bryantan@vmware.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 047/115] RDMA/vmw_pvrdma: Call ib_umem_release on destroy QP path
+Date: Fri,  2 Mar 2018 09:50:50 +0100
+Message-Id: <20180302084505.785880970@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -71,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815897550624784?=
+X-GMAIL-MSGID: =?utf-8?q?1593815897550624784?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,43 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cathy Avery <cavery@redhat.com>
+From: Bryan Tan <bryantan@vmware.com>
 
 
-[ Upstream commit d1b8b2391c24751e44f618fcf86fb55d9a9247fd ]
+[ Upstream commit 17748056ce123ee37fb7382bc698fc721e3c4a09 ]
 
-When an I/O is returned with an srb_status of SRB_STATUS_INVALID_LUN
-which has zero good_bytes it must be assigned an error. Otherwise the
-I/O will be continuously requeued and will cause a deadlock in the case
-where disks are being hot added and removed. sd_probe_async will wait
-forever for its I/O to complete while holding scsi_sd_probe_domain.
+The QP cleanup did not previously call ib_umem_release,
+resulting in a user-triggerable kernel resource leak.
 
-Also returning the default error of DID_TARGET_FAILURE causes multipath
-to not retry the I/O resulting in applications receiving I/O errors
-before a failover can occur.
-
-Signed-off-by: Cathy Avery <cavery@redhat.com>
-Signed-off-by: Long Li <longli@microsoft.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
+Reviewed-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Aditya Sarwade <asarwade@vmware.com>
+Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: Bryan Tan <bryantan@vmware.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/storvsc_drv.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -952,10 +952,11 @@ static void storvsc_handle_error(struct
- 		case TEST_UNIT_READY:
- 			break;
- 		default:
--			set_host_byte(scmnd, DID_TARGET_FAILURE);
-+			set_host_byte(scmnd, DID_ERROR);
- 		}
- 		break;
- 	case SRB_STATUS_INVALID_LUN:
-+		set_host_byte(scmnd, DID_NO_CONNECT);
- 		do_work = true;
- 		process_err_fn = storvsc_remove_lun;
- 		break;
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
+@@ -406,6 +406,13 @@ static void pvrdma_free_qp(struct pvrdma
+ 	atomic_dec(&qp->refcnt);
+ 	wait_event(qp->wait, !atomic_read(&qp->refcnt));
+ 
++	if (!qp->is_kernel) {
++		if (qp->rumem)
++			ib_umem_release(qp->rumem);
++		if (qp->sumem)
++			ib_umem_release(qp->sumem);
++	}
++
+ 	pvrdma_page_dir_cleanup(dev, &qp->pdir);
+ 
+ 	kfree(qp);
