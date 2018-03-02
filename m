@@ -1,73 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936345AbeCBQOt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:14:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:57476 "EHLO foss.arm.com"
+        id S936386AbeCBQRZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:17:25 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37704 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932319AbeCBQOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:14:47 -0500
-Subject: Re: [PATCH 2/3] rpmsg: core: make rpmsg bus DMA capable
-To: srinivas.kandagatla@linaro.org, will.deacon@arm.com,
-        bjorn.andersson@linaro.org
-Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
- <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <07503032-b08b-10ea-9d34-ddf85c682a9d@arm.com>
-Date: Fri, 2 Mar 2018 16:14:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935554AbeCBQRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:17:16 -0500
+Date: Fri, 2 Mar 2018 17:17:13 +0100
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: davem@davemloft.net, Stefan Chulski <stefanc@marvell.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
+Message-ID: <20180302171713.54beaad0@windsurf.lan>
+In-Reply-To: <20180302154044.25204-6-antoine.tenart@bootlin.com>
+References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
+        <20180302154044.25204-6-antoine.tenart@bootlin.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/18 14:55, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> Many of the rpmsg clients like audio drivers need to allocate
-> dma memory. Make this bus DMA capable so that the child devices
-> can use dma apis.
+Hello,
 
-AFAICS after 15 minutes in the docs and code, the rpmsg "bus" is a 
-virtual one based around shared-memory mailbox communication, so I don't 
-really see how DMA exists in that context - I think maybe that 
-abstraction needs looking at.
+On Fri,  2 Mar 2018 16:40:44 +0100, Antoine Tenart wrote:
 
-However, from grepping through the DTs it seems at first glance like the 
-non-trivial things under the "qcom,smd" bus mostly map to actual 
-platform devices via the "qcom,smd-edge" property - if those platform 
-devices are the physical DMA masters, they should be the ones used for 
-DMA API operations.
+>  /* Attach long pool to rxq */
+> @@ -4551,7 +4559,7 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, int pkt_size)
+>  	struct mvpp2_bm_pool *new_pool = &port->priv->bm_pools[pool];
+>  	int num;
+>  
+> -	if (pool < MVPP2_BM_SHORT || pool > MVPP2_BM_LONG) {
+> +	if (pool < MVPP2_BM_SHORT || pool > MVPP2_BM_JUMBO) {
 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   drivers/rpmsg/rpmsg_core.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index e84c71f8d6ab..540a3f3567b8 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -472,6 +472,7 @@ struct bus_type rpmsg_bus = {
->   	.uevent		= rpmsg_uevent,
->   	.probe		= rpmsg_dev_probe,
->   	.remove		= rpmsg_dev_remove,
-> +	.force_dma	= true,
+pool could be an unsigned, which would avoid the need for
+MVPP2_BM_SHORT.
 
-Regardless of the above, would you really need to use this brute force 
-hack instead of just fixing the DTs? I'm struggling to find which 
-drivers might currently be relying on this :/
+And for the upper limit, you have a convenient MVPP2_BM_POOLS_NUM in
+your mvpp2_bm_pool_log_num enum, so why not use if ?
 
-Robin.
 
->   };
->   EXPORT_SYMBOL(rpmsg_bus);
->   
-> 
+
+>  		netdev_err(port->dev, "Invalid pool %d\n", pool);
+>  		return NULL;
+>  	}
+> @@ -4596,11 +4604,24 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, int pkt_size)
+>  static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+>  {
+>  	int rxq;
+> +	enum mvpp2_bm_pool_log_num long_log_pool, short_log_pool;
+> +
+> +	/* If port pkt_size is higher than 1518B:
+> +	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Short pool
+
+The comment is wrong. In this case, the HW short pool is the SW long
+pool.
+
+> +	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
+> +	 */
+> +	if (port->pkt_size > MVPP2_BM_LONG_PKT_SIZE) {
+> +		long_log_pool = MVPP2_BM_JUMBO;
+> +		short_log_pool = MVPP2_BM_LONG;
+
+See here.
+
+> +	} else {
+> +		long_log_pool = MVPP2_BM_LONG;
+> +		short_log_pool = MVPP2_BM_SHORT;
+> +	}
+
+
+> +	/* If port MTU is higher than 1518B:
+> +	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Short pool
+
+And the comment is wrong here as well :)
+
+> +	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
+> +	 */
+> +	if (pkt_size > MVPP2_BM_LONG_PKT_SIZE)
+> +		new_long_pool = MVPP2_BM_JUMBO;
+> +	else
+> +		new_long_pool = MVPP2_BM_LONG;
+> +
+> +	if (new_long_pool != port->pool_long->id) {
+> +		/* Remove port from old short & long pool */
+> +		port->pool_long = mvpp2_bm_pool_use(port, port->pool_long->id,
+> +						    port->pool_long->pkt_size);
+> +		port->pool_long->port_map &= ~(1 << port->id);
+
+BIT(port->id) ?
+
+> +		port->pool_long = NULL;
+> +
+> +		port->pool_short = mvpp2_bm_pool_use(port, port->pool_short->id,
+> +						     port->pool_short->pkt_size);
+> +		port->pool_short->port_map &= ~(1 << port->id);
+
+Ditto.
+
+> +	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
+
+Again, all over the place we hardcode the fact that Jumbo frames can
+only be used on port 0. I know port 0 is the only one that can do 10G,
+but are there possibly some use cases where you may want Jumbo frame on
+another port ?
+
+This all really feels very hardcoded to me.
+
+> +		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+> +		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+> +	}
+> +
+>  	dev->vlan_features |= features;
+>  	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
+>  
+> -	/* MTU range: 68 - 9676 */
+> +	/* MTU range: 68 - 9704 */
+>  	dev->min_mtu = ETH_MIN_MTU;
+> -	/* 9676 == 9700 - 20 and rounding to 8 */
+> -	dev->max_mtu = 9676;
+
+How come we already had a max_mtu of 9676 without Jumbo frame support ?
+
+> +	/* 9704 == 9728 - 20 and rounding to 8 */
+> +	dev->max_mtu = MVPP2_BM_JUMBO_PKT_SIZE;
+
+Is this correct for all ports ? Shouldn't the maximum MTU be different
+between port 0 (that supports Jumbo frames) and the other ports ?
+
+Thanks!
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
