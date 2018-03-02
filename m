@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELusC3egS+WlCRucWnTHtHhB7ULP1nc6fHhB90CKqXlysk1HkEOcVRC+RS/UoISY5w1Wy40f
-ARC-Seal: i=1; a=rsa-sha256; t=1519981252; cv=none;
+X-Google-Smtp-Source: AG47ELtp1nTZ/DeiL4yTrc8JP6aPgPdGJtD4wY8YnHzKHMlXs/Fv5E+i31EBKnbw2pj1tFkPafF0
+ARC-Seal: i=1; a=rsa-sha256; t=1519981249; cv=none;
         d=google.com; s=arc-20160816;
-        b=l8VQzGsLsxtd6U0TA3Kyh5tplFKtt/nMZ9Vx82fXOZYe2WDVLmCUIhvGeXJPqpqeNs
-         /iYGTlJxMutxfr9QNCgKAm630VHtTVd1HcqHx7+JllkoMJvPIIKsq8f6PzPKA5dIvLCp
-         V5cmg/w99yj99qdAfQsOUhyzR92VeequeZQ/1e/veIaZwrVnSLHaKYZSDud3JCEBXnEk
-         VvTn+XH6Xz1qA2YVN04cGMcj+9JezmlY00VU11EX46rZmVL6LIFDPFud4B5pmQRTrIuk
-         MXkCalJy8uATl6Do4cWzEuJ7j2/OxRCYnd9oS92hMss2TYtRgAaCWXnDuer18wuw42Qi
-         n2dA==
+        b=d+SqTqf41rm+fcPVan3JusVU9I0UNRTHjZJxwP0kkuYg9Xsfs7GH1WgABZ6hX8ratI
+         Rs85sqHgajOw6m39TF3PfCtRHiwZYa879N1umL6wBiDSxFmGMOlh0PunWWFTJLePU2at
+         g9iwGYA91Bp6t7C3u9B1NN5HJeefPHmEKXPmWYXjHthDR2J3N4mFeZcz0EDLTersBqZK
+         k6A3GqJtxOpni3ZzBkD3yHzG6xWzA/cqjMtGiTPe7h3k0Kq2g5025zRfhc9ytjsnoRbj
+         wTHc9n2juaX/WglHobx2VG5lNJpTFyaYQpxS2dz3S8onn1AotiL7p/ZpI8METQmpnBIw
+         undw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nD/KEdhXMosT0FiQhS6qNUIYRDnQiKCMmMgA29tFBZo=;
-        b=qEeHi5T4InLy0jPXmi3INLCpqm2iBukqz7RplHYelnrORrdd5Dcu0Neo1jcs7x3/6V
-         1jHmX4pIOTqvfZsU9pGOueyUI49lwuLxMRNv9K9ptGh9AY7gjFrLON5oQmEG8zBNT2Lw
-         GrBIHGwXD+9+w6nLg52zGrhizexqDi5ckj0d/x2VZ2KKwiV3J+zgBHoRzebrzNcs0Txd
-         cFbjk14o08Fp6JNo7rAPWOZga1P9VPLcNB93di+vJzLjNbw3UFnXpz3YxCY0DawvmSVa
-         piLA1NWlFcaBCQNPpX4rPjMKxmAYmctaFFT3WiFu0D79Mf2xPfH10J0F9kmW6IZNkCdp
-         5RTA==
+        bh=0PWlPRvCzDbSnOExTbBR6l8DFsfjNG4XxxPQxgUwDQ4=;
+        b=ZixQqVfpBntaE5zsB5mxmMSgR8Odpyr/k8z1/bmmX4Cb/SkPtG157EgPLr7J5FfsH9
+         PVSFtqE9DXR9rduz2N5mu+Q86sARI//P5hOmcS3XlzRaGxtBAhhfhStwl4IOBaZN31Fw
+         H+sR0NVb+aa7SvC8A+fvxkuc3gyQShBbh61iWOfPz9cNa3Fdf0pu/o45HLbQXIX+Ze/s
+         BtzgKKNRBUwH/bYa9gNPgJCqGxTKHWn4V9TmC86s9nHxilC1Ktorskaq4Neh26Y5vIZ+
+         O919BhyE0F7Bw3SmuSZ6L23hujB+qs5BENmsXSahbcdC+qV8wpX7MqdT+ES6D/c4hwQ/
+         FWIA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Fredrik Hallenberg <megahallon@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 037/115] net: stmmac: Fix bad RX timestamp extraction
-Date: Fri,  2 Mar 2018 09:50:40 +0100
-Message-Id: <20180302084505.374403503@linuxfoundation.org>
+Subject: [PATCH 4.14 036/115] net: stmmac: Fix TX timestamp calculation
+Date: Fri,  2 Mar 2018 09:50:39 +0100
+Message-Id: <20180302084505.334349934@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815861960936258?=
-X-GMAIL-MSGID: =?utf-8?q?1593815861960936258?=
+X-GMAIL-THRID: =?utf-8?q?1593815599183712138?=
+X-GMAIL-MSGID: =?utf-8?q?1593815858280306070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,88 +53,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Fredrik Hallenberg <megahallon@gmail.com>
 
 
-[ Upstream commit a1762456993893795030d911106a7650481db0ef ]
+[ Upstream commit 200922c93f008e03ddc804c6dacdf26ca1ba86d7 ]
 
-As noted in dwmac4_wrback_get_rx_timestamp_status the timestamp is found
-in the context descriptor following the current descriptor. However the
-current code looks for the context descriptor in the current
-descriptor, which will always fail.
+When using GMAC4 the value written in PTP_SSIR should be shifted however
+the shifted value is also used in subsequent calculations which results
+in a bad timestamp value.
 
 Signed-off-by: Fredrik Hallenberg <megahallon@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h       |    2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c |    5 +++--
- drivers/net/ethernet/stmicro/stmmac/enh_desc.c     |    3 ++-
- drivers/net/ethernet/stmicro/stmmac/norm_desc.c    |    2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |    2 +-
- 5 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -409,7 +409,7 @@ struct stmmac_desc_ops {
- 	/* get timestamp value */
- 	 u64(*get_timestamp) (void *desc, u32 ats);
- 	/* get rx timestamp status */
--	int (*get_rx_timestamp_status) (void *desc, u32 ats);
-+	int (*get_rx_timestamp_status)(void *desc, void *next_desc, u32 ats);
- 	/* Display ring */
- 	void (*display_ring)(void *head, unsigned int size, bool rx);
- 	/* set MSS via context descriptor */
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
-@@ -258,7 +258,8 @@ static int dwmac4_rx_check_timestamp(voi
- 	return ret;
- }
- 
--static int dwmac4_wrback_get_rx_timestamp_status(void *desc, u32 ats)
-+static int dwmac4_wrback_get_rx_timestamp_status(void *desc, void *next_desc,
-+						 u32 ats)
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c
+@@ -34,6 +34,7 @@ static u32 stmmac_config_sub_second_incr
  {
- 	struct dma_desc *p = (struct dma_desc *)desc;
- 	int ret = -EINVAL;
-@@ -270,7 +271,7 @@ static int dwmac4_wrback_get_rx_timestam
+ 	u32 value = readl(ioaddr + PTP_TCR);
+ 	unsigned long data;
++	u32 reg_value;
  
- 			/* Check if timestamp is OK from context descriptor */
- 			do {
--				ret = dwmac4_rx_check_timestamp(desc);
-+				ret = dwmac4_rx_check_timestamp(next_desc);
- 				if (ret < 0)
- 					goto exit;
- 				i++;
---- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-@@ -400,7 +400,8 @@ static u64 enh_desc_get_timestamp(void *
- 	return ns;
+ 	/* For GMAC3.x, 4.x versions, convert the ptp_clock to nano second
+ 	 *	formula = (1/ptp_clock) * 1000000000
+@@ -50,10 +51,11 @@ static u32 stmmac_config_sub_second_incr
+ 
+ 	data &= PTP_SSIR_SSINC_MASK;
+ 
++	reg_value = data;
+ 	if (gmac4)
+-		data = data << GMAC4_PTP_SSIR_SSINC_SHIFT;
++		reg_value <<= GMAC4_PTP_SSIR_SSINC_SHIFT;
+ 
+-	writel(data, ioaddr + PTP_SSIR);
++	writel(reg_value, ioaddr + PTP_SSIR);
+ 
+ 	return data;
  }
- 
--static int enh_desc_get_rx_timestamp_status(void *desc, u32 ats)
-+static int enh_desc_get_rx_timestamp_status(void *desc, void *next_desc,
-+					    u32 ats)
- {
- 	if (ats) {
- 		struct dma_extended_desc *p = (struct dma_extended_desc *)desc;
---- a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
-@@ -265,7 +265,7 @@ static u64 ndesc_get_timestamp(void *des
- 	return ns;
- }
- 
--static int ndesc_get_rx_timestamp_status(void *desc, u32 ats)
-+static int ndesc_get_rx_timestamp_status(void *desc, void *next_desc, u32 ats)
- {
- 	struct dma_desc *p = (struct dma_desc *)desc;
- 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -489,7 +489,7 @@ static void stmmac_get_rx_hwtstamp(struc
- 		desc = np;
- 
- 	/* Check if timestamp is available */
--	if (priv->hw->desc->get_rx_timestamp_status(desc, priv->adv_ts)) {
-+	if (priv->hw->desc->get_rx_timestamp_status(p, np, priv->adv_ts)) {
- 		ns = priv->hw->desc->get_timestamp(desc, priv->adv_ts);
- 		netdev_dbg(priv->dev, "get valid RX hw timestamp %llu\n", ns);
- 		shhwtstamp = skb_hwtstamps(skb);
