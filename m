@@ -1,146 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425997AbeCBJwG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:52:06 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:51175 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1424708AbeCBJva (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:51:30 -0500
-X-UUID: 914360f5fe16491a84a004b762a6cd43-20180302
-Message-ID: <1519984283.8089.182.camel@mtkswgap22>
-Subject: Re: [PATCH v5 2/3] dmaengine: mediatek: Add MediaTek High-Speed DMA
- controller for MT7622 and MT7623 SoC
-From: Sean Wang <sean.wang@mediatek.com>
-To: Vinod Koul <vinod.koul@intel.com>
-CC: <dan.j.williams@intel.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <dmaengine@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 2 Mar 2018 17:51:23 +0800
-In-Reply-To: <20180302081706.GL15443@localhost>
-References: <cover.1518857746.git.sean.wang@mediatek.com>
-         <de4177cb2269c99f8d7c5738ac8a64f512122dfd.1518857747.git.sean.wang@mediatek.com>
-         <20180301082329.GD15443@localhost> <1519900021.8089.136.camel@mtkswgap22>
-         <20180301125649.GH15443@localhost> <1519973271.8089.166.camel@mtkswgap22>
-         <20180302081706.GL15443@localhost>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1426005AbeCBJwv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:52:51 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51815 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424798AbeCBJwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:52:41 -0500
+Date: Fri, 2 Mar 2018 10:52:04 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 08/10] drm/panel: Add Huarui LHR050H41 panel driver
+Message-ID: <20180302095204.jskwptipqa6x42gn@flea.lan>
+References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
+ <33efcb267bc513bb19551f1ffdcf578ebfb90369.1519204731.git-series.maxime.ripard@bootlin.com>
+ <CAGb2v66c-KntNqkb0=qyP2JCafUOcPuh1o_VqeGencMXEuEfMA@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ds3enghugvzc5jav"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v66c-KntNqkb0=qyP2JCafUOcPuh1o_VqeGencMXEuEfMA@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 13:47 +0530, Vinod Koul wrote:
-> On Fri, Mar 02, 2018 at 02:47:51PM +0800, Sean Wang wrote:
-> > Hi, Vinod
-> > 
-> > On Thu, 2018-03-01 at 18:26 +0530, Vinod Koul wrote:
-> > > On Thu, Mar 01, 2018 at 06:27:01PM +0800, Sean Wang wrote:
-> > > > On Thu, 2018-03-01 at 13:53 +0530, Vinod Koul wrote:
-> > > > > On Sun, Feb 18, 2018 at 03:08:30AM +0800, sean.wang@mediatek.com wrote:
-> > > > > 
-> > > > > > @@ -0,0 +1,1054 @@
-> > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > // Copyright ...
-> > > > > 
-> > > > > The copyright line needs to follow SPDX tag line
-> > > > > 
-> > > > 
-> > > > okay, I will make it reorder and be something like that
-> > > > 
-> > > > // SPDX-License-Identifier: GPL-2.0
-> > > > /*
-> > > >  * Copyright (c) 2017-2018 MediaTek Inc.
-> > > >  * Author: Sean Wang <sean.wang@mediatek.com>
-> > > >  *
-> > > >  * Driver for MediaTek High-Speed DMA Controller
-> > > >  *
-> > > >  */
-> > > 
-> > > It needs to be:
-> > > 
-> > > // SPDX-License-Identifier: GPL-2.0
-> > > // Copyright (c) 2017-2018 MediaTek Inc.
-> > > 
-> > > /*
-> > >  * whatever else you want
-> > >  */
-> > > 
-> > > The first two lines are in C99 style comment and need to have SPDX tag and
-> > > Copyright info
-> > 
-> > Sure, I can do it using C99 style comments at the first two lines.
-> > 
-> > In addition, I'm really curious where we can find a reference to the
-> > rule and if it 's a strict rule for all the drivers.
-> > 
-> > Because I'm considering whether I should turn other driver into using
-> > the same rule.
-> 
-> Yes that seems to be the rule now https://lkml.org/lkml/2017/11/2/715
-> 
 
-Where could I find the rule for the copyright line needed to follow SPDX
-tag line ?
+--ds3enghugvzc5jav
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-currently, I still seen tons of drivers putting its copyright inside 
-/* ... 
- * 
- */
+Hi,
 
-> > > > > > +#define MTK_HSDMA_USEC_POLL		20
-> > > > > > +#define MTK_HSDMA_TIMEOUT_POLL		200000
-> > > > > > +#define MTK_HSDMA_DMA_BUSWIDTHS		BIT(DMA_SLAVE_BUSWIDTH_UNDEFINED)
-> > > > > 
-> > > > > Undefined buswidth??
-> > > 
-> > > ??
-> > 
-> > Sorry for I didn't answer the question in the short time.
-> > 
-> > After spending some time on a confirmation with design, it is
-> > DMA_SLAVE_BUSWIDTH_4_BYTES and not be configurable. 
-> 
-> Then it should be DMA_SLAVE_BUSWIDTH_4_BYTES and not
-> DMA_SLAVE_BUSWIDTH_UNDEFINED...
-> 
+On Wed, Feb 21, 2018 at 11:36:10PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Feb 21, 2018 at 5:20 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > From: Maxime Ripard <maxime.ripard@free-electrons.com>
+> >
+> > The LHR050H41 panel is the panel shipped with the BananaPi M2-Magic. Ad=
+d a
+> > driver for it.
+>=20
+> So I distinctly remember questioning the vendor name the first time.
+> I would just use Bananapi as the vendor name instead.
 
-understood, I will do it.
+Ack.
 
-> > > > > shouldn't we check if next is in range, we can crash if we get bad value
-> > > > > from hardware..
-> > > > 
-> > > > okay, there are checks for next with ddone bit check and null check in
-> > > > the corresponding descriptor as the following.
-> > > 
-> > > what if you get bad next value
-> > > 
-> > 
-> > next is not hardware value. it's maintained by software which is always
-> > between 0 to MTK_DMA_SIZE - 1, and definitely doesn't get a bad value.
-> > 
-> > > > 
-> > > > > > +		rxd = &pc->ring.rxd[next];
-> > > 
-> > > resulting in bad ref here
-> > 
-> > rxd is also definitely a good ref
-> 
-> not if next is out of range, say you read -1 or 200000?
-> 
+> > +config DRM_PANEL_HUARUI_LHR050H41
+> > +       tristate "Huarui LHR050H41 panel"
+> > +       depends on OF
+> > +       depends on DRM_MIPI_DSI
+> > +       depends on BACKLIGHT_CLASS_DEVICE
+> > +       help
+> > +         Say Y if you want to enable support for the Huarui Lighting
+> > +         LHR05041 DSI panel. The panel has a 1280x720 resolution.
+> > +
+>=20
+> And it seems this panel is driven by an ILI9881C from Ilitek. So
+> maybe you could make the panel driver more like the IL9322, as in
+> having common code for the driver IC, then a data structure tied
+> to actual panel compatible strings to handle any quirks.
+>=20
+> The datasheet can be found simply by googling the part ID, or here:
+>=20
+>    http://en.startek-lcd.com/res/starteklcden/pdres/201706/20170617115241=
+070.pdf
+>=20
+> This should help with the init command sequence.
+>=20
+> I also found this:
+>=20
+> http://www.ampdisplay.com/documents/pdf/AM-7201280ETZQW-00H.pdf
+>=20
+> which might or might not be the same panel.
+>=20
+> Now the IL9332 driver simply uses the device model (Dlink DIR-685)
+> as part of the compatible string.
 
-next must be in range because next is calculated by
-MTK_HSDMA_NEXT_DESP_IDX macro which is just a modulo operation
-with MTK_DMA_SIZE.
+I guess we can create an ili9881c driver then, with the lhr050h41
+compatible. I'm not sure there's much more we can do at this point,
+since in order to know the set of quirks to associate to each
+compatible, we'd need to have a second panel.
 
-Currently, MTK_DMA_SIZE is equal to 64 and thus next must be 0 to 63 and
-wraparound.
+Thanks!
+Maxime
 
-As to MTK_HSDMA_NEXT_DESP_IDX , it is defined as the following
-#define MTK_HSDMA_NEXT_DESP_IDX(x, y)   (((x) + 1) & ((y) - 1))
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ds3enghugvzc5jav
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqZHsMACgkQ0rTAlCFN
+r3SH3Q/5AfVYCIONgIeWRUHZrG68dT8xGO2WVYGk/XjlE7ftsdrI5moyJAKb1oYv
+5aAbavptdLw8S+/+M9mu8ell/uFAguvY4OkHrvwvkKf8Rzzlir6UQEDEMMIdHy1a
+fMoFuu2f/lvLw8tFvTJeF/AAVrcFVaxY23rv1L+vw0FyKuACiKkemEQDrGHoYFJu
+TSZfYcbEwcyMSIH0wZrw2cIf+Gpm4k4ccKf7BVFquD4+de+ORLHr3tCfLtPI57Cj
+D2VTBwPJ05HFAH28yVEoFXjw2UChPC48cIyoTIVgfLfJhY3gi+pCct1kHtoxhlZt
+W+dW1vRpA1ItYI6XsJLYTx9WZRnXrJHLgXzrajZ5wSZB9Us2LVyBjgqzW7cK8MhS
+tBRBzDRsTuN4qi9vroP9XAalji2SbIRkWl1FmwOnTdklGK7F38jjvsRAcC4OPoFf
+k805LOORVL98YSdnxD9rC7EUL7BArqG7eHBKPc0PZI9b+b4kWVVsQ562R+uffPW0
+Dpo4hLchKB83Y2TwIvdkVkkDC88bKPXCEB3xuqDXRJ3TCzhRICaMYMXAcUwDnY/k
+XPa9vkdWlctF4BdEvuTMzAM9bFmL0kNkEJYo5a6Pr968IT5DmvE7ymxE935WmDV3
+pLwtH2etAhOGddbaov4cfEsHbf9RQQrxQ0quBJGBWWQ3JLQru5w=
+=WxHl
+-----END PGP SIGNATURE-----
+
+--ds3enghugvzc5jav--
