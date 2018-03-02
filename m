@@ -1,175 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163907AbeCBGr7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 01:47:59 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28971 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S935863AbeCBGr5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 01:47:57 -0500
-X-UUID: ba102993478f40ecb36aad222d88a6f3-20180302
-Message-ID: <1519973271.8089.166.camel@mtkswgap22>
-Subject: Re: [PATCH v5 2/3] dmaengine: mediatek: Add MediaTek High-Speed DMA
- controller for MT7622 and MT7623 SoC
-From: Sean Wang <sean.wang@mediatek.com>
-To: Vinod Koul <vinod.koul@intel.com>
-CC: <dan.j.williams@intel.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <dmaengine@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 2 Mar 2018 14:47:51 +0800
-In-Reply-To: <20180301125649.GH15443@localhost>
-References: <cover.1518857746.git.sean.wang@mediatek.com>
-         <de4177cb2269c99f8d7c5738ac8a64f512122dfd.1518857747.git.sean.wang@mediatek.com>
-         <20180301082329.GD15443@localhost> <1519900021.8089.136.camel@mtkswgap22>
-         <20180301125649.GH15443@localhost>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S936086AbeCBGyZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 01:54:25 -0500
+Received: from mga14.intel.com ([192.55.52.115]:2929 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935863AbeCBGyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 01:54:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
+   d="scan'208";a="204937672"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        Ilya Lesokhin <ilyal@mellanox.com>, Don Dutile <ddutile@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Subject: RE: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+Thread-Topic: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lg
+Date: Fri, 2 Mar 2018 06:54:17 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
+References: <20180227190520.3273.79728.stgit@localhost.localdomain>
+        <20180227144015.228d4f5c@w520.home>
+        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
+        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
+        <20180228155949.00fde8ae@w520.home>
+        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
+ <20180301132224.1ca06949@w520.home>
+In-Reply-To: <20180301132224.1ca06949@w520.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGQyNzRhYWItZjZiNy00NDcwLWI0NDQtYjllYTUzOTYwNmVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlNVeUxrMXIrRWg4ejZlVUZ3eHUyU283bFwvbjRGNnJ0eWJKK0xiVkVHWjk4PSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Vinod
-
-On Thu, 2018-03-01 at 18:26 +0530, Vinod Koul wrote:
-> On Thu, Mar 01, 2018 at 06:27:01PM +0800, Sean Wang wrote:
-> > On Thu, 2018-03-01 at 13:53 +0530, Vinod Koul wrote:
-> > > On Sun, Feb 18, 2018 at 03:08:30AM +0800, sean.wang@mediatek.com wrote:
-> > > 
-> > > > @@ -0,0 +1,1054 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > // Copyright ...
-> > > 
-> > > The copyright line needs to follow SPDX tag line
-> > > 
-> > 
-> > okay, I will make it reorder and be something like that
-> > 
-> > // SPDX-License-Identifier: GPL-2.0
-> > /*
-> >  * Copyright (c) 2017-2018 MediaTek Inc.
-> >  * Author: Sean Wang <sean.wang@mediatek.com>
-> >  *
-> >  * Driver for MediaTek High-Speed DMA Controller
-> >  *
-> >  */
+> From: Alex Williamson
+> Sent: Friday, March 2, 2018 4:22 AM
+> >
+> > I am pretty sure that you are describing is true of some, but not for
+> > all. I think the Amazon solutions and the virtio solution are doing
+> > hard partitioning of the part. I will leave it to those guys to speak
+> > for themselves since I don't know anything about the hardware design
+> > of those parts.
 > 
-> It needs to be:
+> I think we'd need device specific knowledge and enablement to be able
+> to take advantage of any hardware partitioning, otherwise we need to
+> assume the pf is privileged, as implemented in other sriov devices.
 > 
-> // SPDX-License-Identifier: GPL-2.0
-> // Copyright (c) 2017-2018 MediaTek Inc.
-> 
-> /*
->  * whatever else you want
->  */
-> 
-> The first two lines are in C99 style comment and need to have SPDX tag and
-> Copyright info
-
-Sure, I can do it using C99 style comments at the first two lines.
-
-In addition, I'm really curious where we can find a reference to the
-rule and if it 's a strict rule for all the drivers.
-
-Because I'm considering whether I should turn other driver into using
-the same rule.
-
-> > the point is I learned from other subsystem makes the driver name be
-> > same with the module name with KBUILD_MODNAME.
-> > 
-> > If you really don't like it, I can just change it into 
-> > 
-> > #define MTK_DMA_DEV "mtk-hsdma"
-> 
-> It is used only once, why not use KBUILD_MODNAME directly?
+> I'm also trying to imagine whether there's a solution via the new
+> vfio/mdev interface, where the mdev vendor driver would bind to the pf
+> and effectively present itself as the mdev device.  The vendor driver
+> could provide sriov capabilities and bear the burden of ensuring that
+> the pf is used cooperatively.  The only existing mdev vendor drivers are
+> vGPUs and rely on on-device DMA translation and isolation, such as
+> through GTTs, but there have been some thoughts on providing IOMMU
+> based
+> isolation of mdev/sriov mixed devices (assuming DMA is even required
+> for userspace management of the pf in this use case).  [Cc Kirti]
+> Thanks,
 > 
 
-Yup, it can use KBUILD_MODNAME directly.
+Hope not distracting this thread, but above sounds like an interesting
+idea. Actually we ever brainstormed similar thought for another 
+potential usage - supporting VF live migration. We are already working
+on an generic extension to allow state save/restore of mdev instance.
+If vendor driver could further wrap pf as a mdev instance, it could 
+leverage the same framework for a clean state migration on VF. based
+on mmap callback the vendor driver can easily switch back-and-forth
+between pass through and trap/emulation of the VF resources. Of
+course doing so alone doesn't address all the demands of VF live
+migration (e.g. dirty page tracking still requires other techniques), 
+but it does pave a way toward a general framework to support VF
+live migration.
 
-> > 
-> > > > +
-> > > > +#define MTK_HSDMA_USEC_POLL		20
-> > > > +#define MTK_HSDMA_TIMEOUT_POLL		200000
-> > > > +#define MTK_HSDMA_DMA_BUSWIDTHS		BIT(DMA_SLAVE_BUSWIDTH_UNDEFINED)
-> > > 
-> > > Undefined buswidth??
-> 
-> ??
+If above is feasible, finally we could use one mdev framework to
+manage both mdev and pf/vf assignment, while providing added
+values which are difficult to achieve today. :-)
 
-Sorry for I didn't answer the question in the short time.
-
-After spending some time on a confirmation with design, it is
-DMA_SLAVE_BUSWIDTH_4_BYTES and not be configurable. 
-
-> 
-> > > > +/**
-> > > > + * struct mtk_hsdma_pdesc - This is the struct holding info describing physical
-> > > > + *			    descriptor (PD) and its placement must be kept at
-> > > > + *			    4-bytes alignment in little endian order.
-> > > > + * @desc[1-4]:		    The control pad used to indicate hardware how to
-> > > 
-> > > pls align to 80char or lesser
-> > > 
-> > 
-> > weird, it seems the line is already with 80 char and pass the
-> > checkpatch.pl. or do I misunderstand something ?
-> 
-> Okay please check. With text it helps to wrap before that
-> 
-
-After check again, these lines are all already aligned to 80 chars
-
-> > > > +	/*
-> > > > +	 * Updating into hardware the pointer of TX ring lets HSDMA to take
-> > > > +	 * action for those pending PDs.
-> > > > +	 */
-> > > > +	mtk_dma_write(hsdma, MTK_HSDMA_TX_CPU, ring->cur_tptr);
-> > > > +
-> > > > +	spin_unlock_irqrestore(&hsdma->lock, flags);
-> > > > +
-> > > > +	return !hvd->len ? 0 : -ENOSPC;
-> > > 
-> > > you already wrote and started txn, so why this?
-> > > 
-> > 
-> > it's possible just partial virtual descriptor fits into hardware and
-> > then return -ENOSPC. And it will start it to complete the remaining part
-> > as soon as possible when some rooms is being freed.
-> 
-> Either ways you have issued the descriptor, so you succeed right?
-> 
-
-I think I should get your points.
-
-I guessed what you meant is that it should be returning 0 instead of
--ENOSPC for all successful descriptor issuing either in part or in full
-
-I will refine this flow based on the thought.
-
-> > > shouldn't we check if next is in range, we can crash if we get bad value
-> > > from hardware..
-> > 
-> > okay, there are checks for next with ddone bit check and null check in
-> > the corresponding descriptor as the following.
-> 
-> what if you get bad next value
-> 
-
-next is not hardware value. it's maintained by software which is always
-between 0 to MTK_DMA_SIZE - 1, and definitely doesn't get a bad value.
-
-> > 
-> > > > +		rxd = &pc->ring.rxd[next];
-> 
-> resulting in bad ref here
-
-rxd is also definitely a good ref
-
-
-> 
+Thanks
+Kevin
