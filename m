@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsuZjHQLgV090MdNRoH3vNQKb4olaH63m3fQottr3VUn1dX44dfdFD9sClmEG+0V4iiZRlI
-ARC-Seal: i=1; a=rsa-sha256; t=1519981125; cv=none;
+X-Google-Smtp-Source: AG47ELspaNojiIZHhTW09pNu2rqlfA1//rzkYf9npZYUZTqUxu/zK553d5gOeE6xp2radgMReymg
+ARC-Seal: i=1; a=rsa-sha256; t=1519981121; cv=none;
         d=google.com; s=arc-20160816;
-        b=FL14EtwlVWQKPaqIS6WaeA1gh5xRQzZCanrbGOgvOdL4hPYAL1IHzG+vKbohfrcVtW
-         VBdJ2YFct2el9V6A4cPwZ916mTPKIP9YdMcmUUcA2XmYWR7D0wNV2/+exOjtDd7YAMla
-         wU87jENsvCMtxDai7UrjrX0fh/1QxIoMLpiSaEmyxQX6jgBDvYsCXhSNobecCeN0eRy3
-         C8Ly7teu4S/UKDz7f30LwGCvf759h00zYU/vkZun/ZQgHaGSk2pH4E/Z1+gR0oRdHH/S
-         osxIJsDmqrU/zAScI6yW2SCQouFDKnULha9Z1i9UAY5XrkJownc+9cj5ZJ0a1YIjN6Sy
-         VJ8w==
+        b=wa71C7lCVAzLYE40gaFeFLFMzXzJMEkp5kbv21gAQ6/h/pYR7w3A3dlnBS0Y/erPHc
+         qrQasjMHlgIMrO3i4PHh5A4oTtLQ2aTZck137qESLLYWxoXLDJlSYdfKmMxJg3/pK2t7
+         AkFDWppIrzVSbkhgkak6CSxgZ4xGaxoEFzaLsRM71Auoah997pKgglMnxCUAu/CRHkWj
+         mXj4BJkcwjClIuKreL0QElphqXFA3ydohR9+ZY5k7DV5np8TzzSDZQKD9iLkJ5onZTHQ
+         hCE6HUv5209Pcm+K8CoGs2jglc1bVIOdSp7sVJJJJctBB72I3HbuZKhHIHwG3LwOm0CQ
+         5SVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0WLnDu0L0GK0EIIijYWPLlrluJ1rXIyTZvHk+JUCRUw=;
-        b=Ffg6hSqcvCuDqsS3ep9MsZjfILhQXSELQwRX037cTAJD3Txm3EaIztzw08ba8WSLap
-         rHEsTUUMBNDehI/kY4HrpDQ06s1unumh0tsW9phrPKz7ZVU+dwWt4jPhv/bDXqq9NYQl
-         auip5gUci+FXLXc6XAc3AoC9NsZEBIRVm3jH2KYQiLvb472DlT1kTOZSkrnT8q1w9d+k
-         VWHsAwdCcIT0IBdqivVuHQT8Snsrk225BkwAU/j68QIfgkYWe47EoDNRfvZW5Nw/5tkx
-         XpiAkzkNX6V5JFn2ztu6FIbH5NX34f4g5FFXHfc93/TxxVCmExq48SDPmjZkzWzxBA2b
-         dg5w==
+        bh=7S1ujfkJpyNTvTFyYcYX66/rpzMQmbzIMjzifGS6B8Y=;
+        b=Mkw+rLLF2GjAxvWV/yJj6KLdN1GO/ikusIE5vOrICw1HB0dvo8cveh+TQHMG0s5qSq
+         X58SG/evOT8TD9APrvmeu2AeMVPKLtUwmiHCCG6T74RYfzioj8btaQoodw2smUU1nP+p
+         EWAugDzlMRCmeSMK8WwvI+zIKq+VN9lLGSIedPtJKCDyaDolnO/3qFbDy10LKX748nKU
+         yaMExMhAD0V9KVc+nU7q82a8fmzcW9WaDQb090XD4TPiHX8hG0oQ4ga5QSECgqesAeHC
+         jPwt1YjI8+7FUMtYKOlHME84/CAqRphv4z/a6cwr3dQKiMRr8oeKK3cK7z5bBw9UH9i9
+         hzlA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
+	Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 49/56] mdio-sun4i: Fix a memory leak
-Date: Fri,  2 Mar 2018 09:51:35 +0100
-Message-Id: <20180302084452.027864759@linuxfoundation.org>
+Subject: [PATCH 4.9 10/56] ARM: 8731/1: Fix csum_partial_copy_from_user() stack mismatch
+Date: Fri,  2 Mar 2018 09:50:56 +0100
+Message-Id: <20180302084450.150750423@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815310363107750?=
-X-GMAIL-MSGID: =?utf-8?q?1593815727877192916?=
+X-GMAIL-THRID: =?utf-8?q?1593815515532586116?=
+X-GMAIL-MSGID: =?utf-8?q?1593815724658561459?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
 
 
-[ Upstream commit 56c0290202ab94a2f2780c449395d4ae8495fab4 ]
+[ Upstream commit 36b0cb84ee858f02c256d26f0cb4229c78e3399e ]
 
-If the probing of the regulator is deferred, the memory allocated by
-'mdiobus_alloc_size()' will be leaking.
-It should be freed before the next call to 'sun4i_mdio_probe()' which will
-reallocate it.
+An additional 'ip' will be pushed to the stack, for restoring the
+DACR later, if CONFIG_CPU_SW_DOMAIN_PAN defined.
 
-Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, the fixup still get the err_ptr by add #8*4 to sp, which
+results in the fact that the code area pointed by the LR will be
+overwritten, or the kernel will crash if CONFIG_DEBUG_RODATA is enabled.
+
+This patch fixes the stack mismatch.
+
+Fixes: a5e090acbf54 ("ARM: software-based priviledged-no-access support")
+Signed-off-by: Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-sun4i.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/lib/csumpartialcopyuser.S |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/phy/mdio-sun4i.c
-+++ b/drivers/net/phy/mdio-sun4i.c
-@@ -118,8 +118,10 @@ static int sun4i_mdio_probe(struct platf
- 
- 	data->regulator = devm_regulator_get(&pdev->dev, "phy");
- 	if (IS_ERR(data->regulator)) {
--		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(data->regulator) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto err_out_free_mdiobus;
-+		}
- 
- 		dev_info(&pdev->dev, "no regulator found\n");
- 		data->regulator = NULL;
+--- a/arch/arm/lib/csumpartialcopyuser.S
++++ b/arch/arm/lib/csumpartialcopyuser.S
+@@ -85,7 +85,11 @@
+ 		.pushsection .text.fixup,"ax"
+ 		.align	4
+ 9001:		mov	r4, #-EFAULT
++#ifdef CONFIG_CPU_SW_DOMAIN_PAN
++		ldr	r5, [sp, #9*4]		@ *err_ptr
++#else
+ 		ldr	r5, [sp, #8*4]		@ *err_ptr
++#endif
+ 		str	r4, [r5]
+ 		ldmia	sp, {r1, r2}		@ retrieve dst, len
+ 		add	r2, r2, r1
