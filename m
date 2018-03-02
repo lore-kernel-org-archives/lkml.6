@@ -1,109 +1,111 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1330670-1519988601-2-9100884379744126992
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1625397-1519996609-2-1287239571029834832
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519988600; b=dqUAAfKhfyhNTP3Mpm6IB0xRtb1YQuAzYHHICMvGo9wntux
-    2Wtjse0DObxnF65iKcUJoFtZ2i0875gTzk1D2LiDxRZ/B5CApUAIp2eUfNb6uXSU
-    VtbqbLIWCtgpwP/pZ0CA+K+TtpHd7F0DUSSG42S/T8SFDYtEk+ygUwpUxfAHaEK8
-    axqLT+jIqTQjIbT88E9MYIWUvqTE0wBzL3eop6qnPrluBeX+JCDyd3NKYud4DYaZ
-    JKFz37xcaEwI857t+e4W9eDVAzYlTeHhfontUCaopjunF00uIF9CYiPEVrKnsBNW
-    smpR97U5RJdyLYHkvm5PxxVosCq78zV9zu5Sk8A==
+    t=1519996609; b=luACne8MpCNl/sUlUTTIhcyj6aNMy8wGDnIL9ZJ3edBi7y4
+    xXHnpvbiAQAyVC8BlfTnysbXbP13Q8pJTa6oqIhvt+32MhTm9dmyIUqc0w6Yclww
+    sH6dNOA9yEp6gVky3PojbwHFUUh+f1HoOngOUaKpV1ForZWgXwfOuoQPnFed/PxB
+    CjB5yweBln7lLaY+mWnHRYVTQ36tZjGZWa1IGu8DuC1qa/aazpeLf6VfBG5BQEf8
+    EKogL4d5WJk4lReM4RvD/cysF42DP4RbzTRPjjhhPqP6vheewpAc25PmyA1CyvEp
+    wQQUz5KhNplKGm6z32GAfRVCZyOrMtDlGV+r+ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519988600; bh=AdrNPALNIXN8qakYmv4wms/o71
-    wS3DdZPMkCVvy0SH0=; b=k3e9GkXhxMP6u1La6NbsgV3/MCt2c5JsMS15gvJXm4
-    xQ7DtcnVS5ISTjdG/IuP2NOtGXKZ8KaWuvkLyLitMRr+LErCyONw2U28jZtobcFn
-    mZpl7iohTE7rpV6jk0SpLE5gjYpk5SVsbMdPI/Wqt3fkuyil0o6ttnNp56n48/BP
-    npOM2hgwEO7jSo5H04Vszz+dlZQNIpRTXcaaeL2h0RgJn5NJkDYRFQoW9hquLeP+
-    YIQJBA6afjT8e2EMSQpK02laDjDiwS0OuuvOvpRCFGkPOkRD30ed8FsVIKlHmlz3
-    bhRY6NQbf0fbzwjL28JJC9KnKdGngqs9Ec8YmGm7LACQ==
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519996609; bh=y
+    wCcE71cyv9kw6zCnfVPAZeWe1UsvrhEqazpmkvRuBk=; b=XlQpE8aSqte0jtHeM
+    wi3eU8Tazx4qowIlpgbN/fJ4964r2BXz6h196quaseJ7AYpbbu2VEkVYolFT1SOF
+    qX3BGFxrNAv4nkXnrDGq2DPXwWnvVH5AMctIJruHHa1pQZniHsCBIputPT7DSZmS
+    BwedA0e8eoT9u9+GU3dx9Xb5c0wL0mUCjpsogPzu7RUYbbFyOTvXVWtv2TwEKzQw
+    r60UcwJu06m60dw7jao7NGjQXCIH64hX1TRRcuqLU+S10QkuL1JG1sONeiIzGeDM
+    Ns7K6M9CzTp3cQ3VxMFE9LXFgPWG+WQhpXKDiDKHzQrN7A5fWLNa90Fu5UwNbVsj
+    hctng==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=VWk7n9Py x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=X9g/qfLE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TGVNXpO4;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=VWk7n9Py x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=X9g/qfLE x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426826AbeCBLCy (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 06:02:54 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:46138 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423716AbeCBLCs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 06:02:48 -0500
-Date: Fri, 2 Mar 2018 14:02:12 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
-Message-ID: <20180302110212.7wfk6hn4tf5l7ax4@mwanda>
-References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
- <20180302102926.fuqmfyaxiujjwill@ninjato>
- <20180302110002.wmkvktobi7ssmin5@mwanda>
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TGVNXpO4;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELt+EXiQWCAQb1HnkCTDgqhFPeqsHCGJ0iShf5ixzsW4EtGCwgQ15mOP7E0nOcbjEl5MXjNMgA==
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
+To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+ linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, daniel.baluta@gmail.com
+Subject: [PATCH 0/6] adis16209 driver cleanup
+Date: Fri,  2 Mar 2018 18:46:29 +0530
+Message-Id: <cover.1519995673.git.shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302110002.wmkvktobi7ssmin5@mwanda>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=840
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020129
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 02, 2018 at 02:00:03PM +0300, Dan Carpenter wrote:
-> On Fri, Mar 02, 2018 at 11:29:26AM +0100, Wolfram Sang wrote:
-> > On Thu, Mar 01, 2018 at 09:34:44PM +0100, Krzysztof Kozlowski wrote:
-> > > Interrupt number 0 (returned by platform_get_irq()) might be a valid IRQ
-> > > so do not treat it as an error.  If interrupt 0 was configured, the driver
-> > > would exit the probe early, before finishing initialization, but with
-> > > 0-exit status.
-> > > 
-> > > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: e0d1ec97853f ("i2c-s3c2410: Change IRQ to be plain integer.")
-> > 
-> > Please configure git to use 14 digits here.
-> 
-> Wait, when did we decide that 12 wasn't enough?
-> 
-> I just did a `git log | grep Fixes | tee baz | head -n 200` and only on
-> my git tree tehre were only 2 which used exactly 14 digits.  The
-> standard is 12.
+This patchset has been introduced for the cleanup of
+adis16209 driver.
+This patchset cleans up miscellaneous code fragments
+and improves the code readability.
 
-Wow...  I clearly did not read that email before sending it...  :(
+Shreeya Patel (6):
+  Staging: iio: adis16209: Arrange headers in alphabetical order
+  Staging: iio: adis16209: Change the definition name
+  Staging: iio: adis16209: Add _REG postfix for registers
+  Staging: iio: adis16209: Remove unnecessary comments and group the
+    definitions
+  Staging: iio: adis16209: Add some informatic comments
+  Staging: iio: adis16209: Use sign_extend32 and adjust a switch
+    statement
 
-regards,
-dan carpenter
+ drivers/staging/iio/accel/adis16209.c | 245 +++++++++++++---------------------
+ 1 file changed, 94 insertions(+), 151 deletions(-)
+
+-- 
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
