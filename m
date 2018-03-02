@@ -1,113 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932298AbeCBWKC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:10:02 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60966 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932197AbeCBWKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:10:00 -0500
-Date: Fri, 2 Mar 2018 17:09:51 -0500
-From: Jerome Glisse <jglisse@redhat.com>
-To: Stephen Bates <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oliver OHalloran <oliveroh@au1.ibm.com>
-Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
-Message-ID: <20180302220950.GA6148@redhat.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <1519876489.4592.3.camel@kernel.crashing.org>
- <1519876569.4592.4.camel@au1.ibm.com>
- <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
- <1519936195.4592.18.camel@au1.ibm.com>
- <20180301205548.GA6742@redhat.com>
- <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
- <20180301211036.GB6742@redhat.com>
- <8D3B5C26-39E0-478D-B51F-A22B3F36C4D7@raithlin.com>
+        id S932466AbeCBWMl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:12:41 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39165 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbeCBWMj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:12:39 -0500
+X-Google-Smtp-Source: AG47ELtAjRVR0lutjNFhsVZsPjeVd88Mj6tavGybEzFiAQi/HoWyAq3OwYrMIrUXpVSa5SjkoXpMrw==
+Date: Fri, 2 Mar 2018 16:12:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tali Perry <tali.perry1@gmail.com>
+Cc: brendanhiggins@google.com, mark.rutland@arm.com, linux@armlinux.org.uk,
+        avifishman70@gmail.com, tmaimon77@gmail.com, raltherr@google.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v10 2/3] NPCM750: add clock tree doc and binding
+Message-ID: <20180302221236.qsxooi5l53wx6lby@rob-hp-laptop>
+References: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
+ <1519553539-15899-3-git-send-email-tali.perry1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8D3B5C26-39E0-478D-B51F-A22B3F36C4D7@raithlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1519553539-15899-3-git-send-email-tali.perry1@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 09:38:43PM +0000, Stephen  Bates wrote:
-> > It seems people miss-understand HMM :( 
+On Sun, Feb 25, 2018 at 12:12:18PM +0200, Tali Perry wrote:
 > 
-> Hi Jerome
+Need a commit msg.
+
+The subject should be "dt-bindings: clock: ..."
+
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 > 
-> Your unhappy face emoticon made me sad so I went off to (re)read up
-> on HMM. Along the way I came up with a couple of things.
+> ---
+>  .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
+>  include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
+>  2 files changed, 144 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+>  create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
 > 
-> While hmm.txt is really nice to read it makes no mention of
-> DEVICE_PRIVATE and DEVICE_PUBLIC. It also gives no indication when
-> one might choose to use one over the other. Would it be possible to
-> update hmm.txt to include some discussion on this? I understand
-> that DEVICE_PUBLIC creates a mapping in the kernel's linear address
-> space for the device memory and DEVICE_PRIVATE does not. However,
-> like I said, I am not sure when you would use either one and the
-> pros and cons of doing so. I actually ended up finding some useful
-> information in memremap.h but I don't think it is fair to expect
-> people to dig *that* deep to find this information ;-).
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+> new file mode 100644
+> index 000000000000..dd17b86bd577
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+> @@ -0,0 +1,100 @@
+> +* Nuvoton NPCM7XX Clock Controller
+> +
+> +Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+> +generates and supplies clocks to all modules within the BMC.
+> +
+> +External clocks:
+> +
+> +There are six fixed clocks that are generated outside the BMC. All clocks are of
+> +a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
+> +clk_sysbypck are inputs to the clock controller.
+> +clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
+> +network. They are set on the device tree, but not used by the clock module. The
+> +network devices use them directly.
+> +Example can be found below.
+> +
+> +All available clocks are defined as preprocessor macros in:
+> +dt-bindings/clock/nuvoton,npcm7xx-clock.h
+> +and can be reused as DT sources.
+> +
+> +Required Properties of clock controller:
+> +
+> +	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
+> +		  Poleg BMC NPCM750
+> +
+> +	- reg: physical base address of the clock controller and length of
+> +		memory mapped region.
+> +
+> +	- #clock-cells: should be 1.
+> +
+> +Example: Clock controller node:
+> +
+> +	clk: clock-controller@f0801000 {
+> +		compatible = "nuvoton,npcm750-clk";
+> +		#clock-cells = <1>;
+> +		reg = <0xf0801000 0x1000>;
+> +		clock-names = "refclk", "sysbypck", "mcbypck";
+> +		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
+> +	};
+> +
+> +Example: Required external clocks for network:
+> +
+> +	/* external reference clock */
+> +	clk_refclk: clk-refclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <25000000>;
+> +		clock-output-names = "refclk";
+> +	};
+> +
+> +	/* external reference clock for cpu. float in normal operation */
+> +	clk_sysbypck: clk-sysbypck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <800000000>;
+> +		clock-output-names = "sysbypck";
+> +	};
+> +
+> +	/* external reference clock for MC. float in normal operation */
+> +	clk_mcbypck: clk-mcbypck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <800000000>;
+> +		clock-output-names = "mcbypck";
+> +	};
+> +
+> +	 /* external clock signal rg1refck, supplied by the phy */
+> +	clk_rg1refck: clk-rg1refck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <125000000>;
+> +		clock-output-names = "clk_rg1refck";
+> +	};
+> +
+> +	 /* external clock signal rg2refck, supplied by the phy */
+> +	clk_rg2refck: clk-rg2refck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <125000000>;
+> +		clock-output-names = "clk_rg2refck";
+> +	};
+> +
+> +	clk_xin: clk-xin {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <50000000>;
+> +		clock-output-names = "clk_xin";
+> +	};
+> +
+> +
+> +Example: GMAC controller node that consumes two clocks: a generated clk by the
+> +clock controller and a fixed clock from DT (clk_rg1refck).
+> +
+> +	ethernet0: eth@f0802000 {
 
-Yes i need to document that some more in hmm.txt, PRIVATE is for device
-that have memory that do not fit regular memory expectation ie cachable
-so PCIe device memory fit under that category. So if all you need is
-struct page for such memory then this is a perfect fit. On top of that
-you can use more HMM feature, like using this memory transparently
-inside a process address space.
+ethernet@...
 
-PUBLIC is for memory that belong to a device but still can be access by
-CPU in cache coherent way (CAPI, CCIX, ...). Again if you have such
-memory and just want struct page you can use that and again if you want
-to use that inside a process address space HMM provide more helpers to
-do so.
-
-
-> A quick grep shows no drivers using the HMM API in the upstream code
-> today. Is this correct? Are there any examples of out of tree drivers
-> that use HMM you can point me too? As a driver developer what
-> resources exist to help me write a HMM aware driver?
-
-I am about to send RFC for nouveau, i am still working out some bugs.
-I was hoping to be done today but i am still fighting with the hardware.
-They are other drivers being work on with HMM. I do not know exactly
-when they will be made public (i expect in coming months).
-
-How you use HMM is under the control of the device driver, as well as
-how you expose it to userspace. They use it how they want to use it.
-There is no pattern or requirement imposed by HMM. All driver being work
-on so far are GPU like hardware, ie big chunk of on board memory
-(several giga-bytes) and they want to use that memory inside process
-address space in a transparent fashion to the program and CPU.
-
-Each have their own API expose to userspace and while they are a lot of
-similarity among them, lot of details of userspace API is hardware
-specific. In GPU world most of the driver are in userspace, application
-do target high level API such as OpenGL, Vulkan, OpenCL or CUDA. Those
-API then have a hardware specific userspace driver that talks to hardware
-specific IOCTL. So this is not like network or block device.
-
-
-> The (very nice) hmm.txt document is not references in the MAINTAINERS
-> file? You might want to fix that when you have a moment.
-
-I have couple small fixes/typo patches that i need to cleanup and send
-i will fix the MAINTAINERS as part of those.
-
-Cheers,
-Jérôme
+> +		compatible = "snps,dwmac";
+> +		reg = <0xf0802000 0x2000>;
+> +		interrupts = <0 14 4>;
+> +		interrupt-names = "macirq";
+> +		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
+> +		clock-names = "stmmaceth", "clk_gmac";
+> +	};
+> diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+> new file mode 100644
+> index 000000000000..f21522605b94
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Nuvoton NPCM7xx Clock Generator binding
+> + * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
+> + *
+> + * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
+> + *
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
+> +#define __DT_BINDINGS_CLOCK_NPCM7XX_H
+> +
+> +
+> +#define NPCM7XX_CLK_CPU 0
+> +#define NPCM7XX_CLK_GFX_PIXEL 1
+> +#define NPCM7XX_CLK_MC 2
+> +#define NPCM7XX_CLK_ADC 3
+> +#define NPCM7XX_CLK_AHB 4
+> +#define NPCM7XX_CLK_TIMER 5
+> +#define NPCM7XX_CLK_UART 6
+> +#define NPCM7XX_CLK_MMC  7
+> +#define NPCM7XX_CLK_SPI3 8
+> +#define NPCM7XX_CLK_PCI  9
+> +#define NPCM7XX_CLK_AXI 10
+> +#define NPCM7XX_CLK_APB4 11
+> +#define NPCM7XX_CLK_APB3 12
+> +#define NPCM7XX_CLK_APB2 13
+> +#define NPCM7XX_CLK_APB1 14
+> +#define NPCM7XX_CLK_APB5 15
+> +#define NPCM7XX_CLK_CLKOUT 16
+> +#define NPCM7XX_CLK_GFX  17
+> +#define NPCM7XX_CLK_SU   18
+> +#define NPCM7XX_CLK_SU48 19
+> +#define NPCM7XX_CLK_SDHC 20
+> +#define NPCM7XX_CLK_SPI0 21
+> +#define NPCM7XX_CLK_SPIX 22
+> +
+> +#define NPCM7XX_CLK_REFCLK 23
+> +#define NPCM7XX_CLK_SYSBYPCK 24
+> +#define NPCM7XX_CLK_MCBYPCK 25
+> +
+> +#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
+> +
+> +#endif
+> -- 
+> 2.14.1
+> 
