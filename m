@@ -1,80 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1033294AbeCBHI4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 02:08:56 -0500
-Received: from mga17.intel.com ([192.55.52.151]:64469 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932927AbeCBHIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 02:08:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
-   d="scan'208";a="21341848"
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>
-Subject: RE: [PATCH 0/3] vfio/pci: ioeventfd support
-Thread-Topic: [PATCH 0/3] vfio/pci: ioeventfd support
-Thread-Index: AQHTsNDlMLSEP3bOBEe6xhmmuixhi6O8hlzg
-Date: Fri, 2 Mar 2018 07:08:51 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19102545C@SHSMSX101.ccr.corp.intel.com>
-References: <20180228195504.25283.45666.stgit@gimli.home>
-In-Reply-To: <20180228195504.25283.45666.stgit@gimli.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzJlNjE0ZDItZjQ5ZS00YTMzLThmZjQtZjUwMmU4YTAwMjg4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlNYQXE3SWtDUHhwdlFLaVkyVTJNdVIySW9zeG16dWhqdHRiUHpFWlVtUFk9In0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
+        id S1164586AbeCBHJL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 02:09:11 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:35976 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932927AbeCBHJI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 02:09:08 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w2278sA6014642
+X-Nifty-SrcIP: [209.85.217.171]
+X-Google-Smtp-Source: AG47ELv9wPPCqmSelc7KY2kmWFBG4WZLX8LDWVgZURu9tP65WY99faGDFIUhKCILQsdfIsHwpiwHFAKwEyT7g6k3psc=
 MIME-Version: 1.0
+In-Reply-To: <1519965121-12017-12-git-send-email-yamada.masahiro@socionext.com>
+References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com> <1519965121-12017-12-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 2 Mar 2018 16:08:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASShS-umtrDwhc7vg1mc-u01cO4qSsAxX1rxBQ_pjVZ3g@mail.gmail.com>
+Message-ID: <CAK7LNASShS-umtrDwhc7vg1mc-u01cO4qSsAxX1rxBQ_pjVZ3g@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] kconfig: unittest: test if recursive inclusion
+ is detected
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w22795m3016399
 
-> From: Alex Williamson
-> Sent: Thursday, March 1, 2018 4:15 AM
-> 
-> A vfio ioeventfd will perform the pre-specified device write on
-> triggering of an eventfd.  When coupled with KVM ioeventfds, this
-> feature allows a VM to trap a device page for virtualization, while
-> also registering targeted ioeventfds to maintain performance of high
-> frequency register writes within the trapped range.  Much like the
-> existing interrupt eventfd/irqfd coupling, such writes can be handled
-> entirely in the host kernel.
-> 
-> The new VFIO device ioctl may be supported by any vfio bus driver,
-> including mdev drivers, but the implementation here only enables
-> vfio-pci.  This is intended as an acceleration path, bus drivers
-> may choose which regions to support and userspace should always
-> intend to fall back to non-accelerated handling when unavailable.
-> 
+2018-03-02 13:32 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> If recursive inclusion is detected, it should fail with error messages.
+> Test this.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>
+> Changes in v2:
+>   - coding style clean-up based on PEP8, PEP257
+>
+>  scripts/kconfig/tests/err_recursive_inc/Kconfig         |  1 +
+>  scripts/kconfig/tests/err_recursive_inc/Kconfig.inc     |  1 +
+>  scripts/kconfig/tests/err_recursive_inc/__init__.py     | 10 ++++++++++
+>  scripts/kconfig/tests/err_recursive_inc/expected_stderr |  4 ++++
+>  4 files changed, 16 insertions(+)
+>  create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig
+>  create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
+>  create mode 100644 scripts/kconfig/tests/err_recursive_inc/__init__.py
+>  create mode 100644 scripts/kconfig/tests/err_recursive_inc/expected_stderr
+>
+> diff --git a/scripts/kconfig/tests/err_recursive_inc/Kconfig b/scripts/kconfig/tests/err_recursive_inc/Kconfig
+> new file mode 100644
+> index 0000000..3ce7a3f
+> --- /dev/null
+> +++ b/scripts/kconfig/tests/err_recursive_inc/Kconfig
+> @@ -0,0 +1 @@
+> +source "Kconfig.inc"
+> diff --git a/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc b/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
+> new file mode 100644
+> index 0000000..1fab1c1
+> --- /dev/null
+> +++ b/scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
+> @@ -0,0 +1 @@
+> +source "Kconfig"
+> diff --git a/scripts/kconfig/tests/err_recursive_inc/__init__.py b/scripts/kconfig/tests/err_recursive_inc/__init__.py
+> new file mode 100644
+> index 0000000..0e4c839
+> --- /dev/null
+> +++ b/scripts/kconfig/tests/err_recursive_inc/__init__.py
+> @@ -0,0 +1,10 @@
+> +"""
+> +Detect recursive inclusion error.
+> +
+> +If recursive inclusion is detected, it should fail with error messages.
+> +"""
+> +
+> +
+> +def test(conf):
+> +    assert conf.oldaskconfig() != 0
+> +    assert conf.stderr_contains('expected_stderr')
+> diff --git a/scripts/kconfig/tests/err_recursive_inc/expected_stderr b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
+> new file mode 100644
+> index 0000000..b256c91
+> --- /dev/null
+> +++ b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
+> @@ -0,0 +1,4 @@
+> +Kconfig:1: recursive inclusion detected. Inclusion path:
+> +  current file : 'Kconfig'
+> +  included from: 'Kconfig.inc:1'
+> +  included from: 'Kconfig:3'
 
-it's a nice feature! A curious question. Is it possible for mdev driver
-to directly create ioeventfd on specified offset? Currently ioeventfd
-requires quirks in Qemu, which must know the device detail to
-create ioeventfd and then connect vfio and kvm together. However
-mdev instance is more software defined thus I'm not sure whether 
-asking Qemu to catch up quirk with underlying software logic could
-be overwhelmed. Also in case of vendor driver emulating mdev
-with same DID/VID as a real device, it might be difficult for Qemu
-to figure out whether a vfio device is a real one or mdev one to
-apply a mdev specific quirk. On the other hand, since vendor
-driver knows all the logic constructing mdev, it would be more
-convenient allowing vendor driver to directly create/destroy
-ioeventfd on its demand?
 
-Thanks
-Kevin
+Currently, the line number is wrong.
+
+The following patch should be applied first
+https://patchwork.kernel.org/patch/10253541/
+
+
+Then, expected data should be changed
+
+  included from: 'Kconfig:3'
+
+->
+
+  included from: 'Kconfig:1'
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
