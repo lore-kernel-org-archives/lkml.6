@@ -1,92 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427890AbeCBMxS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:53:18 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52141 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423162AbeCBMxP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:53:15 -0500
-X-Google-Smtp-Source: AG47ELuZ60rY4Gp1FMhooKRJWTj+gSlPdv4zGSP27vTaAEDjzlEd+TbBVH05hZIqhTROnfmDRlUXw0Ej+NBFKv0LipI=
+        id S1427902AbeCBMyD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:54:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49847 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423162AbeCBMyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:54:01 -0500
+Date: Fri, 2 Mar 2018 13:53:59 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Subject: [PATCH] vsprintf: Make "null" pointer dereference more robust
+Message-ID: <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+ <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+ <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+ <1519752950.10722.231.camel@linux.intel.com>
+ <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+ <1519814544.10722.266.camel@linux.intel.com>
+ <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 13:53:14 +0100
-Message-ID: <CACRpkdYuxoZaF9xyoA9tsyBuXOkrcdZVGWYfcyEMe0psk6UydQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in /proc/partitions
-To: Harish Jenny K N <harish_kandiga@mentor.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 12:33 PM, Harish Jenny K N
-<harish_kandiga@mentor.com> wrote:
+%p has many modifiers where the pointer is dereferenced. An invalid
+pointer might cause kernel to crash silently.
 
-> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
->
-> Since RPMB area is accessible via special ioctl only and boot areas
-> are unlikely to contain any partitions, exclude them all from listing
-> in /proc/partitions. This will hide them from various user-level
-> software (e.g. fdisk), thus avoiding unnecessary access attempts.
->
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+Note that printk() formats the string under logbuf_lock. Any recursive
+printks are redirected to the printk_safe implementation and the messages
+are stored into per-CPU buffers. These buffers might be eventually flushed
+in printk_safe_flush_on_panic() but it is not guaranteed.
 
-Makes sense to me, at least it makes the problem smaller not bigger.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+In general, we should do our best to get useful message from printk().
+All pointers to the first memory page must be invalid. Let's prevent
+the dereference and print "(null)" in this case. This is already done
+in many other situations, including "%s" format handling and many
+page fault handlers.
 
-> The main intention of the patch was to not have RPMB device in /proc/partitions.
-> Boot partitions are also unlikely to have any partitioning, so it made sense to
-> treat them the same way as RPMB and not list in /proc/partitions.
-> Now I see that RPMB is converted to a character device and this change
-> may not be required for RPMB.
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ lib/vsprintf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It certainly does not hurt, even if this code path is not called
-for the RPMB partition anymore (luckily).
-
-On a general note, I do not feel the work with boot partitions or
-the general purpose partitions is finished.
-
-In a lecture I pointed out that:
-
-dd if=/dev/sda of=sda.img
-
-Gives an image of the whole device, and you can restore the
-device by doing the inverse of that command.
-
-For MMC devices,
-
-dd if=/dev/mmcblk0 of=mmcblk0.img
-
-does NOT have the same nice property. Instead, since the
-special partitions are their own devices and not part of the main
-device, they have to be backed up separately.
-
-IMO this breaks the user contract of how a device vs a partition
-works.
-
-What we need to do is make the "special partitions" part of the
-main block device and stop spawning these special block
-devices for each boot partions or general partitions. In addition,
-each of these boot partitions or general partitions will get their
-own block queue and state container which is not cheap in
-runtime memory footprint terms.
-
-So what I want to do (unless someone beats me to it) it to come
-up with some way making boot and general partitions part
-of the main block device. Possibly the core kernel partitioning
-code needs to be augmented. The tentative idea is to just
-put the sectors representing these partitions after the main
-block device and access them from there, with an offset.
-
-That job isn't entirely trivial though.
-
-Yours,
-Linus Walleij
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index d7a708f82559..5c2d1f44218a 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ {
+ 	const int default_width = 2 * sizeof(void *);
+ 
+-	if (!ptr && *fmt != 'K' && *fmt != 'x') {
++	if ((unsigned long)ptr < PAGE_SIZE && *fmt != 'K' && *fmt != 'x') {
+ 		/*
+ 		 * Print (null) with the same width as a pointer so it makes
+ 		 * tabular output look nice.
+-- 
+2.13.6
