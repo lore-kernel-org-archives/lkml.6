@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsk0mAU2c4Qrpg/XUQv3HFIREHPf0biepsDm4i83U2H+PNqbQYfLDXjXa2jw4m7y9AyXixd
-ARC-Seal: i=1; a=rsa-sha256; t=1519981432; cv=none;
+X-Google-Smtp-Source: AG47ELu2bNDaEaqqqDKYe2vOk9O/Avll+8lZoibaHsEzPHQhL5ywcWAV/hAE4Op5FY/ljzNitfzV
+ARC-Seal: i=1; a=rsa-sha256; t=1519981429; cv=none;
         d=google.com; s=arc-20160816;
-        b=s1NPpW6OKgwVPqDl3BDtL/FlJsvXHNwMrGrwgOZ9ncYGt2NT8d2WTjqZxxRJjPdEnT
-         GClHZvWZ0rYcurW7Snb9P9fGOmZ5sRm+uI6cx8AyoVT7+deH30NXEw5iI2PK/waZs+YD
-         ckvY5wagwgHS/pP0aEvKKy2rWT2yObtWejdry9lSVp+bUY537WCA7/XOA1wgyTgLM/kJ
-         05wlCqa3E3ZPKvZG/DDbIgUPihsqJKG2EX6WBSCA9fCrO/RmlgAUh7lpMsmMQN+Y1HKo
-         Jz5T5W79Om7GQ1yFs6hnQ6aGUv+BM5WJTDT1qBCGTSj58IfOarBjfGvJMFDpkZzPa/UJ
-         4iLQ==
+        b=YoNasI8GRRNgrwhOMi4ZX6GY8jsVyAayBFaGax6/MVP3rybQgiCAQ9W8pPisGpO+tG
+         ldYx2cFS+Ad7jeEe8SvFn7vAVNjRWOgk8QKUExU2BQL61kJ9dsKxQOvg1XAajjVGeo3Q
+         NxNelijohx62DgsLDAETniHnmwEaBctWHjAlrTPH7/bBj1HkeQV0UQiKTu3rL2v9Cvua
+         qVtCWNjUnyJCXqYiQu/t+YBklXzZrQraHOQs+y9JvggpKvMou//o93A3AxBEFbLc74i9
+         +h0CbCw3JnJvHbtJdr468xJTqKliXzd42SdAMvm5DLAsnUBQaAsC0LI1IzQk73pTbeGp
+         AHhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jzqIwF1ZA9jOKQzAd5PnzC2nxDsm0mOqiWgUtprat0s=;
-        b=GXURfMRQlsk5/PrimvVBGywlERvWA5xzqajtmoXJm+qHY7CArr/j7+K7evxHCcD3nz
-         bq8iGDuoUNLHAMKSnMAyuet74VNNf/G91f0dTs0ZtFj8SsnX8WQoCtXT71xGiqfB0N25
-         frbLfelbSIVWSSbiDSgzBcl9WQTYX+Kf7CnqhIund/ohNp5XLnShBycG+HzhSBE2iNFS
-         9DAfJBiS8g8cybXgf0alCLcN1WnWP+CLbDJ25os6JNSDkezz9ip+czrX5x3LFE1739Wj
-         FrRszKCEPzGTN0i/FrKkt94iqjySjULPMMbINeRZWeLZdmt3rNfnr/3/R/lQ9aeyECKU
-         jVXw==
+        bh=jx6saKj/rbw3ApDfU3KR3+ycJFL46SO/hF8HaeTwi0o=;
+        b=xhZpjMwY+efNLC60L/SfslkO4LLcUy+SduJK0t3DC0hvVb3I5NcUW2PbdcuhFTrl8S
+         Ff9qR58ZEr2h6tt/SBTMYk5HFcUSYMIHUR9VnfdriHqzWE/eMFHC21qPDt3KRPkocE35
+         8qhlSPhhYS8pdix+W3Ycj3RIa3doStQaco7Dps3n5IOAX5NWIbNfskLxeWDg1IjeDydi
+         EEzEoVNAx7SMrkZPccBWDtAoarJK/tIN3m/LyV7CFZBnNO7UBUpJKdsvVsDUMQ6O4iVZ
+         SEGv/WR012JmlmuKVgKhE3NtxXKcko+Ta3Ma+nTjsAIsWMsdX5Lld8KhnBM5AIIluWBN
+         yHLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -25,10 +25,16 @@ Authentication-Results: mx.google.com;
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 4.14 062/115] led: core: Fix brightness setting when setting delay_off=0
-Date: Fri,  2 Mar 2018 09:51:05 +0100
-Message-Id: <20180302084506.388001450@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Wen Xiong <wenxiong@us.ibm.com>,
+	"chenxiang (M)" <chenxiang66@hisilicon.com>,
+	Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 088/115] block: drain queue before waiting for q_usage_counter becoming zero
+Date: Fri,  2 Mar 2018 09:51:31 +0100
+Message-Id: <20180302084507.412212701@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -38,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815285215753423?=
-X-GMAIL-MSGID: =?utf-8?q?1593816051434190819?=
+X-GMAIL-THRID: =?utf-8?q?1593816047688069259?=
+X-GMAIL-MSGID: =?utf-8?q?1593816047688069259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -47,30 +53,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthieu CASTET <matthieu.castet@parrot.com>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
+[ Upstream commit 454be724f6f99cc7e7bbf15067128be9868186c6 ]
 
-With the current code, the following sequence won't work :
-echo timer > trigger
+Now we track legacy requests with .q_usage_counter in commit 055f6e18e08f
+("block: Make q_usage_counter also track legacy requests"), but that
+commit never runs and drains legacy queue before waiting for this counter
+becoming zero, then IO hang is caused in the test of pulling disk during IO.
 
-echo 0 >  delay_off
-* at this point we call
-** led_delay_off_store
-** led_blink_set
+This patch fixes the issue by draining requests before waiting for
+q_usage_counter becoming zero, both Mauricio and chenxiang reported this
+issue, and observed that it can be fixed by this patch.
+
+Link: https://marc.info/?l=linux-block&m=151192424731797&w=2
+Fixes: 055f6e18e08f("block: Make q_usage_counter also track legacy requests")
+Cc: Wen Xiong <wenxiong@us.ibm.com>
+Tested-by: "chenxiang (M)" <chenxiang66@hisilicon.com>
+Tested-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/leds/led-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-core.c |    9 +++++++--
+ block/blk-mq.c   |    2 ++
+ block/blk.h      |    2 ++
+ 3 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -187,7 +187,7 @@ void led_blink_set(struct led_classdev *
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
- {
--	del_timer_sync(&led_cdev->blink_timer);
-+	led_stop_software_blink(led_cdev);
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -531,6 +531,13 @@ static void __blk_drain_queue(struct req
+ 	}
+ }
  
- 	clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
- 	clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
++void blk_drain_queue(struct request_queue *q)
++{
++	spin_lock_irq(q->queue_lock);
++	__blk_drain_queue(q, true);
++	spin_unlock_irq(q->queue_lock);
++}
++
+ /**
+  * blk_queue_bypass_start - enter queue bypass mode
+  * @q: queue of interest
+@@ -655,8 +662,6 @@ void blk_cleanup_queue(struct request_qu
+ 	 */
+ 	blk_freeze_queue(q);
+ 	spin_lock_irq(lock);
+-	if (!q->mq_ops)
+-		__blk_drain_queue(q, true);
+ 	queue_flag_set(QUEUE_FLAG_DEAD, q);
+ 	spin_unlock_irq(lock);
+ 
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -159,6 +159,8 @@ void blk_freeze_queue(struct request_que
+ 	 * exported to drivers as the only user for unfreeze is blk_mq.
+ 	 */
+ 	blk_freeze_queue_start(q);
++	if (!q->mq_ops)
++		blk_drain_queue(q);
+ 	blk_mq_freeze_queue_wait(q);
+ }
+ 
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -362,4 +362,6 @@ static inline void blk_queue_bounce(stru
+ }
+ #endif /* CONFIG_BOUNCE */
+ 
++extern void blk_drain_queue(struct request_queue *q);
++
+ #endif /* BLK_INTERNAL_H */
