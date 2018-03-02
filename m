@@ -1,114 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeCBTtB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:49:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750924AbeCBTs7 (ORCPT
+        id S932238AbeCBTtv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:49:51 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50992 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752744AbeCBTtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:48:59 -0500
-Subject: Re: [PATCH v2 13/15] KVM: s390: Configure the guest's CRYCB
-To: David Hildenbrand <david@redhat.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com
-References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1519741693-17440-14-git-send-email-akrowiak@linux.vnet.ibm.com>
- <99b24fc7-3df9-6620-d1df-917214fbdda2@redhat.com>
- <fdb264da-dd74-f380-78dc-7abc61f1484b@linux.vnet.ibm.com>
- <081eab40-0bbd-5842-76bc-2974f4544529@redhat.com>
- <4763e223-1c78-c9a3-42bc-2d3569a716ff@linux.vnet.ibm.com>
- <56f576ba-4eee-696e-45aa-f4db1e96bd57@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Fri, 2 Mar 2018 14:48:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 2 Mar 2018 14:49:49 -0500
+X-Google-Smtp-Source: AG47ELvpDuRxoM25LiFSFb+OrS/Q5PXCTIJmTXu2FkO+6hF040R+XeKeX/2LUwbnRrv8c6MbmqNtbg==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/21] powerpc: Remove warning on array size when empty
+Date: Fri,  2 Mar 2018 20:49:18 +0100
+Message-Id: <20180302194918.4358-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180225172236.29650-2-malat@debian.org>
+References: <20180225172236.29650-2-malat@debian.org>
 MIME-Version: 1.0
-In-Reply-To: <56f576ba-4eee-696e-45aa-f4db1e96bd57@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18030219-0040-0000-0000-000004012448
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008610; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00997407; UDB=6.00507153; IPR=6.00776725;
- MB=3.00019824; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-02 19:48:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030219-0041-0000-0000-0000080225AE
-Message-Id: <6e5e25e3-271e-bc19-cc82-75b62ca407f9@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803020232
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 05:08 AM, David Hildenbrand wrote:
-> On 01.03.2018 21:42, Tony Krowiak wrote:
->> On 03/01/2018 04:37 AM, David Hildenbrand wrote:
->>> On 28.02.2018 21:45, Tony Krowiak wrote:
->>>> On 02/28/2018 04:49 AM, David Hildenbrand wrote:
->>>>>> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
->>>>>> +{
->>>>>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->>>>>> +	unsigned long events;
->>>>>> +	int ret;
->>>>>> +
->>>>>> +	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
->>>>>> +	events = VFIO_GROUP_NOTIFY_SET_KVM;
->>>>>> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->>>>>> +				     &events, &matrix_mdev->group_notifier);
->>>>>> +
->>>>>> +	ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
->>>>>> +				      matrix_mdev->matrix);
->>>>>> +	if (ret)
->>>>>> +		return ret;
->>>>>> +
->>>>>> +	ret = kvm_ap_enable_ie_mode(matrix_mdev->kvm);
->>>>> Can't this happen while the guest is already running? Or what hinders us
->>>>> from doing that?
->>>> I'm not sure exactly what you're asking here. Are you asking if the
->>>> vfio_ap_mdev_open()
->>>> function can be called multiple times while the guest is running? AFAIK
->>>> this will be
->>>> called only once when the mediated device's file descriptor is opened.
->>>> This happens in
->>>> QEMU when the -device vfio-ap device is realized.
->>> Okay, but from a pure interface point of view, this could happen any
->>> time, even while the guest is already running. Patching in the SCB of a
->>> running VCPU is evil.
->> How can this happen while the guest is running? QEMU opens the fd when the
->> device is realized and AFAIK vfio mdev will not allow any other process to
->> open it until the guest is terminated. What am I missing?
-> It can't happen right now (the way QEMU uses it), but the kernel
-> interface allows it, no?
->
-> Anyhow, as discussed this should be handled directly while creating a
-> VCPU. Then also CPU hotplug is properly covered.
-Here is what I think we should do:
+When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
+array feature_properties is defined as an empty array, which in turn
+triggers the following warning (treated as error on W=1):
 
-* Set ECA.28 in the VCPU setup function based on whether the CPU model 
-feature
-   has been turned on by user space as you suggest.
+  CC      arch/powerpc/kernel/prom.o
+arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
+arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
+  for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
+                ^
+cc1: all warnings being treated as errors
 
-* Replace the kvm_ap_enable_ie_mode() call in the open() above with a 
-query of
-   the CPU model feature and return an error if it is not turned on.
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/kernel/prom.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Does this sound reasonable?
-
-Would it be more appropriate in this case to rename the feature to
-KVM_S390_VM_CPU_FEAT_APIE?
->
->
+diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+index 4dffef947b8a..330c65f04820 100644
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@ -291,11 +291,11 @@ static inline void identical_pvr_fixup(unsigned long node)
+ 
+ static void __init check_cpu_feature_properties(unsigned long node)
+ {
+-	unsigned long i;
++	int i;
+ 	struct feature_property *fp = feature_properties;
+ 	const __be32 *prop;
+ 
+-	for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
++	for (i = 0; i < (int)ARRAY_SIZE(feature_properties); ++i, ++fp) {
+ 		prop = of_get_flat_dt_prop(node, fp->name, NULL);
+ 		if (prop && be32_to_cpup(prop) >= fp->min_value) {
+ 			cur_cpu_spec->cpu_features |= fp->cpu_feature;
+-- 
+2.11.0
