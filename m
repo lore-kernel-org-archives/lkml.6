@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1330670-1519989356-2-5559311126063045592
+X-Cyrus-Session-Id: sloti22d1t05-1330799-1519989335-2-6046506848647105249
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519989355; b=ne8AL6iU/u/748iKWWp8LlmJAoPuqwHxNL94I4U3Ln14Pk6
-    raYUa36M7yO6mjZ8ylEFCVvs6/SNYPVMBZJX9kkk9E2aJ05Qa/9yriNI01/gO9mC
-    vEcj1mmHuHQKY+0kBDPTwa/S5HlyCTLVtUCzF6W1uNjdRP+bJCwTxuhdoRGXgreW
-    np5VglGo/bX0H0sOLJ87yv8GVz0F27Gi00ztzGE0qqXJG0XcRL3+DIsZT3fU/gK3
-    YkwwhqKjVfIzIfPTi58Bwmc/1wdKlzfXqlEUbuIdG+sdsqx6x9E6UCM6X4o2Z0RT
-    oUJQ4TI+3fRJVhIBN8BI/DQxvT5le+KX78Re8zg==
+    t=1519989334; b=d4Ymbdz7bb6gWScoTB5q8J2ScnGJz+1POieWB0P+CuHESBG
+    a5dMGc0EXSaR/X+T/Rqtrc15AYUiy+T8FWXca6jAJNoHHYXbNBSLpb1PtQl5oNlT
+    WY6Wytk80V/VedF7P47y6b18tTrklJGSRT0d6zHSY81aldR2rC+Gy+tm1PUYjpj7
+    cLdNSaPk4CR4jV+/Fa5UzGUJybMWRukcHebQ6xPoIbd0bM7/AipXWX1QhtGqRLYb
+    8Mz/gGUnFr6NJAENW2MrrRCOQYvfJzvDIXCH9/n1ppca0TbhLEArsZeJW/L5lFKL
+    Km0S1gB5TXYzEycQ3VddZLIpHN+KWXe0va65xcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519989355; bh=5rm078RSRaKz+5AAH1iubSLQT3
-    BITlZFbe4N7QTyHLs=; b=QI6GofQeoNarpBLiwYddnATWXugYCL0c6SDCAaszYO
-    qIsj62lZjZ3bu45QsNsBkxkDUDGY1HlBJPy1MjIdoTDQm1D8/rBEJFlfQsmXF5xX
-    DLZMHYgGyPc1P+GKxKfkPh+3jAaydLGZDTMHe8dalEkvNDJlrJc0JOevykvBa4e4
-    7xSnc5N4TE0O34QaAKKsfcsryBznGO+OukVczN9IKnoYPEHr/9RQzNAThGzmHPlE
-    +NSbH4m2Y7weuWh28q97q8SmkF35F0M9x3PYL8ra5lKXtjcnwr7U1B5vA9MDl0Op
-    uW1JwPdH+nuS/TOCBpRia5FFyzzfQGANiO73cHGDUb9w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519989334; bh=OeBgKUn2/JT6ZSB5N0LTv7FhZ1
+    y89VcwiuL1hGmb0iw=; b=w9RcdH56zzRrth387jO0aXra8KN9EKNdC+rDsZVGXL
+    DdwGy+0WtUCUpmN2zGkSTKwBDW+BSEsiABlT2GErT45PEJcO5u+MwoxQRdoiiqOc
+    FPsxCz7Rt3hWhUSb6Z56korCaQA9UXZXKXhjri2nG5hrk6uOHF9yo2cfjvKPqdYY
+    xDcfXnL70eyepuDE1eHlGDjFk06S4fCzfEdIyIHydl/pWFND9fdQiuwVmmYAVpuK
+    v1X1ulwU95W6i/3g8jsfXX6Ha8qWAivbQB6tVdICvVlSelPVRHB/g3MJSqz+JgR3
+    XrgQWxq6sGPHal0NtdpcuEUgywPTsIdWUynzpwpeuiNw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,20 +47,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423382AbeCBIxv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 03:53:51 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50214 "EHLO
+        id S1423403AbeCBIx5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 03:53:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423321AbeCBIxt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:53:49 -0500
+        with ESMTP id S1423387AbeCBIxx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:53:53 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Radu Pirea <radu.pirea@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 05/24] sget(): handle failures of register_shrinker()
-Date: Fri,  2 Mar 2018 09:51:02 +0100
-Message-Id: <20180302084239.446610429@linuxfoundation.org>
+Subject: [PATCH 3.18 06/24] spi: atmel: fixed spin_lock usage inside atmel_spi_remove
+Date: Fri,  2 Mar 2018 09:51:03 +0100
+Message-Id: <20180302084239.490259197@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084239.157503766@linuxfoundation.org>
 References: <20180302084239.157503766@linuxfoundation.org>
@@ -78,30 +80,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Radu Pirea <radu.pirea@microchip.com>
 
 
-[ Upstream commit 9ee332d99e4d5a97548943b81c54668450ce641b ]
+[ Upstream commit 66e900a3d225575c8b48b59ae1fe74bb6e5a65cc ]
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+The only part of atmel_spi_remove which needs to be atomic is hardware
+reset.
+
+atmel_spi_stop_dma calls dma_terminate_all and this needs interrupts
+enabled.
+atmel_spi_release_dma calls dma_release_channel and dma_release_channel
+locks a mutex inside of spin_lock.
+
+So the call of these functions can't be inside a spin_lock.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/super.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/spi/spi-atmel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -476,7 +476,11 @@ retry:
- 	hlist_add_head(&s->s_instances, &type->fs_supers);
- 	spin_unlock(&sb_lock);
- 	get_filesystem(type);
--	register_shrinker(&s->s_shrink);
-+	err = register_shrinker(&s->s_shrink);
-+	if (err) {
-+		deactivate_locked_super(s);
-+		s = ERR_PTR(err);
-+	}
- 	return s;
- }
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -1416,12 +1416,12 @@ static int atmel_spi_remove(struct platf
+ 	struct atmel_spi	*as = spi_master_get_devdata(master);
  
+ 	/* reset the hardware and block queue progress */
+-	spin_lock_irq(&as->lock);
+ 	if (as->use_dma) {
+ 		atmel_spi_stop_dma(as);
+ 		atmel_spi_release_dma(as);
+ 	}
+ 
++	spin_lock_irq(&as->lock);
+ 	spi_writel(as, CR, SPI_BIT(SWRST));
+ 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
+ 	spi_readl(as, SR);
