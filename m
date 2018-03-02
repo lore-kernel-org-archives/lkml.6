@@ -1,124 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422815AbeCBEuB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:50:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33728 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1164978AbeCBEtx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 23:49:53 -0500
-Date: Thu, 1 Mar 2018 20:50:15 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
- rcu-fence
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180301015531.olvuu5g35eta5xhr@tardis>
- <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
- <20180301174906.GC3777@linux.vnet.ibm.com>
- <20180301183758.GA31761@linux.vnet.ibm.com>
- <20180302043141.fgmjyysrws55pi7q@tardis>
+        id S1165010AbeCBEwl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:52:41 -0500
+Received: from ozlabs.org ([103.22.144.67]:39617 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164429AbeCBEwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 23:52:39 -0500
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 2 Mar 2018 15:52:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the net-next tree
+Message-ID: <20180302155215.7653987d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302043141.fgmjyysrws55pi7q@tardis>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030204-0044-0000-0000-000003ED013B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008609; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00997107; UDB=6.00506974; IPR=6.00776425;
- MB=3.00019811; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-02 04:49:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030204-0045-0000-0000-0000081D0280
-Message-Id: <20180302045015.GO3777@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803020054
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/o_XjIvKMJhbRFFIt+hmhf_R"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 12:31:41PM +0800, Boqun Feng wrote:
-> On Thu, Mar 01, 2018 at 10:37:58AM -0800, Paul E. McKenney wrote:
-> > On Thu, Mar 01, 2018 at 09:49:06AM -0800, Paul E. McKenney wrote:
+--Sig_/o_XjIvKMJhbRFFIt+hmhf_R
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[ . . . ]
+Hi all,
 
-> > And as Andrea pointed out off-list, I did indeed mess up Boqun's change.
-> > I forgot to change the "irreflexive" into "acyclic".  Applying that change
-> > makes everything work.
-> > 
-> > Please accept my apologies for my confusion!
-> > 
-> 
-> np, also I should have provided a proper patch for your testing.
-> 
-> For this Alan's patch, feel free to add:
-> 
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Commits
 
-Alan's last submission was still RFC, so I have not yet queued it.
-So this ball is still in Alan's court.
+  568477045f80 (" phy: marvell10g: Utilize gen10g_no_soft_reset()")
+  0adfdb667ab5 (" phy: cortina: Utilize generic functions")
+  aebc78a40b88 (" phy: teranetics: Utilize generic functions")
+  e8a714e086e4 (" phy: Export gen10g_* functions")
+  6ed33d3a06e6 (" phy: aquantia: Utilize genphy_c45_aneg_done()")
 
-							Thanx, Paul
+are missing a Signed-off-by from their committer.
 
-> Regards,
-> Boqun
-> 
-> > 							Thanx, Paul
-> > 
-> > > > > I prefer this because we already treat "gp" as "strong-fence", which
-> > > > > already is a "rcu-link".
-> > > > 
-> > > > That's a good point; it had not occurred to me.
-> > > 
-> > > And if I remove the "gp" but leave the last line, it does properly
-> > > classify the two new litmus tests.
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > > >  Also, recurisively extending rcu-fence with
-> > > > > itself is exactly calculating the transitive closure, which we can avoid
-> > > > > by using a "acycle" rule. Besides, it looks more consistent with hb and
-> > > > > pb.
-> > > > 
-> > > > That _had_ occurred to me.  But I couldn't see any way to do it while 
-> > > > still defining rcu-fence correctly.
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> > > index 1e5c4653dd12..75d3c225146c 100644
-> > > --- a/tools/memory-model/linux-kernel.cat
-> > > +++ b/tools/memory-model/linux-kernel.cat
-> > > @@ -106,12 +106,11 @@ let rcu-link = hb* ; pb* ; prop
-> > >   * Any sequence containing at least as many grace periods as RCU read-side
-> > >   * critical sections (joined by rcu-link) acts as a generalized strong fence.
-> > >   *)
-> > > -let rec rcu-fence = gp |
-> > > +let rec rcu-fence =
-> > >  	(gp ; rcu-link ; rscs) |
-> > >  	(rscs ; rcu-link ; gp) |
-> > >  	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
-> > > -	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
-> > > -	(rcu-fence ; rcu-link ; rcu-fence)
-> > > +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp)
-> > >  
-> > >  (* rb orders instructions just as pb does *)
-> > >  let rb = prop ; rcu-fence ; hb* ; pb*
-> > 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/o_XjIvKMJhbRFFIt+hmhf_R
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqY2H8ACgkQAVBC80lX
+0GxCAQf/StJ7Z4Hq6ZrMaHRrjcJtn7A+UJrIaRUtjt2SabZgKrCkQrw5sfMAsH1d
+ezb2ZMoewHmJnOkbmwd314HKOzslRQ6QNS4krX8rC8xVbTl1Dw3KIaHOaBaCzqQ1
+zrSF85CmTDV7auRWuy9+VU8bp59iVD6AagS/L6loKeqXFonakwJ9k+slnP5Hifmj
+ixTaTuoao3duXvJSP9ciWhaIwkRGM8NDTE8pyJtEajQCo246kRz+rWXuLoyNWBbT
+nfMRfmNlaIl/PVmTi/aL1h/bpGzsyba+jC6YNUVb3gtfpDCFjLrNVqU7oSVlcupc
+VxlqtAGDa38oksStGtwV8kR3ECgUgQ==
+=IdR8
+-----END PGP SIGNATURE-----
+
+--Sig_/o_XjIvKMJhbRFFIt+hmhf_R--
