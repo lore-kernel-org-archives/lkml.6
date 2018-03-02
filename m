@@ -1,87 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425918AbeCBJh5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:37:57 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36684 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1424995AbeCBJhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:37:05 -0500
-Subject: Re: [PATCH 1/8] dt-bindings: scsi: hisi_sas: add an property of
- signal attenuation
-To: Rob Herring <robh@kernel.org>
-References: <1519067611-206638-1-git-send-email-john.garry@huawei.com>
- <1519067611-206638-2-git-send-email-john.garry@huawei.com>
- <20180301214010.ptcaoah756z5xias@rob-hp-laptop>
-CC: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <mark.rutland@arm.com>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <584282a9-225c-0000-06bd-c07c0ae55007@huawei.com>
-Date: Fri, 2 Mar 2018 09:36:37 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1425849AbeCBJhg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:37:36 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35912 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1424982AbeCBJg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:36:26 -0500
+Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
+ userspace
+To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
+ <20180226221300.GK22024@char.us.oracle.com> <20180301213205.GB29001@flask>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <ccead1df-ba70-f365-c816-7892834a290c@redhat.com>
+Date: Fri, 2 Mar 2018 10:36:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180301214010.ptcaoah756z5xias@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180301213205.GB29001@flask>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/03/2018 21:40, Rob Herring wrote:
-> On Tue, Feb 20, 2018 at 03:13:24AM +0800, John Garry wrote:
->> From: Xiaofei Tan <tanxiaofei@huawei.com>
+On 01/03/2018 22:39, Radim Krčmář wrote:
+> [Resent after removing g@char.us.oracle.com.]
+> 
+> 2018-02-26 17:13-0500, Konrad Rzeszutek Wilk:
+>> On Sat, Feb 24, 2018 at 01:52:26AM +0100, Paolo Bonzini wrote:
+>>> Use the new MSR feature framework to expose the ARCH_CAPABILITIES MSR to
+>>> userspace.  This way, userspace can access the capabilities even if it
+>>> does not have the permissions to read MSRs.
 >>
->> For some new boards with hip07 chipset we are required to
->> set PHY config registers differently. The hw property which
->> determines how to set these registers is in the PHY signal
->> attenuation readings.
+>> ... That is good but could you expand a bit of why it would want this?
 >>
->> This patch add an devicetree property, signal-attenuation, which
->> is used to describe the signal attenuation of an board.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
->> Signed-off-by: John Garry <john.garry@huawei.com>
->> ---
->>  Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
->> index df3bef7..bd32ecd 100644
->> --- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
->> +++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
->> @@ -53,6 +53,13 @@ Main node required properties:
->>  Optional main node properties:
->>   - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
->>  			    "am-max-transmissions" limitation.
->> + - signal-attenuation : array of 3 32-bit values, containing de-emphasis,
->
-> Needs a vendor prefix.
+>> I am 99% sure it is due to the lovely spectre_v2 mitigation but
+>> could you include that in the commit message so that in say a year
+>> folks would know what this is?
+> 
+> Userspace can currently get the MSR by creating a VCPU and reading its
+> MSR_IA32_ARCH_CAPABILITIES, because it is set from the hardware MSR.
+> 
+> I thought that "permissions to read MSRs" talked about hardware MSRs, so
+> the purpose of this patch would be a better interface, but I don't see
+> how if we keep the auto-setting on VCPU creation.
 
-Fine, I can add it. It's going to be "hisilicon-signal-attenuation" or 
-similar.
+Yeah, it's mostly about a better interface and being able to do checks
+before creating the VCPU.  The commit message was written before I
+noticed the auto-setting on VCPU creation, and I failed to update it.
 
 Thanks,
-John
 
->
->> +		preshoot, and boost attenuation readings for the board. They
->> +		are used to describe the signal attenuation of the board. These
->> +		values' range is 7600 to 12400, and used to represent -24dB to
->> +		24dB.
->> +		The formula is "y = (x-10000)/10000". For example, 10478
->> +		means 4.78dB.
->>
->>  Example:
->>  	sas0: sas@c1000000 {
->> --
->> 1.9.1
->>
->
-> .
->
+Paolo
+
+> Is this aimed towards userspaces that want nothing else from KVM than
+> the MSR value?
+> 
+> Thanks.
+> 
