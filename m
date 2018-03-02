@@ -1,92 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428582AbeCBORo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 09:17:44 -0500
-Received: from mga12.intel.com ([192.55.52.136]:49737 "EHLO mga12.intel.com"
+        id S1425388AbeCBOVd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 09:21:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57583 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1428567AbeCBORi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:17:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,412,1515484800";
-   d="scan'208";a="22338715"
-Message-ID: <1520000254.10722.389.camel@linux.intel.com>
-Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>
-Date: Fri, 02 Mar 2018 16:17:34 +0200
-In-Reply-To: <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
-         <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
-         <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
-         <1519752950.10722.231.camel@linux.intel.com>
-         <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
-         <1519814544.10722.266.camel@linux.intel.com>
-         <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
-         <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1425309AbeCBOVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 09:21:32 -0500
+Subject: Re: [Xen-devel] [PATCH] xen: use hvc console for dom0
+To: Julien Grall <julien.grall@arm.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc: nd@arm.com, Andrii Anisov <andrii_anisov@epam.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, jbeulich@suse.com
+References: <20180226110822.13787-1-jgross@suse.com>
+ <0d8bdda5-faef-41da-344a-644b5c3d6006@epam.com>
+ <58e94cc9-9b09-d6b7-3122-fb4c83e97926@suse.com>
+ <b57092b4-e740-e1f8-3885-a817bb7d4e70@arm.com>
+ <alpine.DEB.2.10.1802271159070.4239@sstabellini-ThinkPad-X260>
+ <19afb9f9-a845-e627-8f78-d1fdb349c6bd@arm.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <73110605-e3b9-92d2-cc78-56ff8d13b9ea@suse.com>
+Date: Fri, 2 Mar 2018 15:21:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <19afb9f9-a845-e627-8f78-d1fdb349c6bd@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 13:53 +0100, Petr Mladek wrote:
-> %p has many modifiers where the pointer is dereferenced. An invalid
-> pointer might cause kernel to crash silently.
+On 27/02/18 21:09, Julien Grall wrote:
+> Hi,
 > 
-> Note that printk() formats the string under logbuf_lock. Any recursive
-> printks are redirected to the printk_safe implementation and the
-> messages
-> are stored into per-CPU buffers. These buffers might be eventually
-> flushed
-> in printk_safe_flush_on_panic() but it is not guaranteed.
+> On 27/02/2018 20:03, Stefano Stabellini wrote:
+>> On Tue, 27 Feb 2018, Julien Grall wrote:
+>>> Hi,
+>>>
+>>> On 26/02/18 12:32, Juergen Gross wrote:
+>>>> On 26/02/18 13:06, Andrii Anisov wrote:
+>>>>> Hello Juergen,
+>>>>>
+>>>>>
+>>>>> On 26.02.18 13:08, Juergen Gross wrote:
+>>>>>> Today the hvc console is added as a preferred console for pv domUs
+>>>>>> only. As this requires a boot parameter for getting dom0 messages per
+>>>>>> default add it for dom0, too.
+>>>>>>
+>>>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>>>>> ---
+>>>>>>     arch/x86/xen/enlighten_pv.c | 4 +++-
+>>>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/x86/xen/enlighten_pv.c
+>>>>>> b/arch/x86/xen/enlighten_pv.c
+>>>>> Is this something x86 specific? Could it be a generic approach?
+>>>>
+>>>> In case ARM wants something similar I guess the test for
+>>>> xen_initial_domain() should be dropped in xen_early_init().
+>>> I am pretty sure we discussed to remove !xen_initial_domain() for Arm
+>>> in the
+>>> past. But I don't remember why the patch was not sent to remove it.
+>>>
+>>> Anyway, I guess this should be fine to have hvc as a preferred
+>>> console for the
+>>> initial domain as well.
+>>
+>> Usually, Dom0 has access to several physical UARTs and/or VGA, making
+>> this patch less obviously desirable. I think that for Dom0 the best
+>> behavior would be to add "hvc0" as first console rather than last
+>> console, so that if the user specified something else, this call won't
+>> interfere with it.
 > 
-> In general, we should do our best to get useful message from printk().
-> All pointers to the first memory page must be invalid. Let's prevent
-> the dereference and print "(null)" in this case. This is already done
-> in many other situations, including "%s" format handling and many
-> page fault handlers.
-> 
+> Well, that's exactly the goal of add_preferred_console. It will use hvc0
+> unless specified otherwise by the user on the command line.
+
+I suggest someone who can test it should post a patch for ARM.
 
 
-With such explanation it makes at least clear for the reader why it's
-done.
-
-Thanks!
-
-Would you be okay if I take this one as a first in my series and
-resubmit the series based on it?
-
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  lib/vsprintf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index d7a708f82559..5c2d1f44218a 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char
-> *end, void *ptr,
->  {
->  	const int default_width = 2 * sizeof(void *);
->  
-> -	if (!ptr && *fmt != 'K' && *fmt != 'x') {
-> +	if ((unsigned long)ptr < PAGE_SIZE && *fmt != 'K' && *fmt !=
-> 'x') {
->  		/*
->  		 * Print (null) with the same width as a pointer so
-> it makes
->  		 * tabular output look nice.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Juergen
