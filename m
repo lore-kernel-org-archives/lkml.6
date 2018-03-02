@@ -1,37 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv7LL/CFNLSHatWQo16SvBOkU3+GqL5irNBXMzcy2m56fIOx1RlIvaFBFYGQCShi1XD0rPk
-ARC-Seal: i=1; a=rsa-sha256; t=1519981513; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JiswkrpyFDBhIpsGOy8BtBxD/ErFgAuGTv/t14e9BvH1e96nmh7xCSyuyVBqhCoXdx
-         r0cYxrY9NsKrZ5VsNEEjqisH6+29ecRsWZ3xIVueff94lVAQQVnWsxKQ6CQCMWXa4d3X
-         cU7UwsaJsLcCRVqGZ4AZTXowWIdriEekwPBJBdiN4vViyfoDVmz3EhZy+PPnLKU+nx8U
-         umHUQcFHUC8AUxsI/Z80fs9qKqYIzO1Kfq/7FJCuV7nL3v/5XU92uj5CRzEqsyb9isQi
-         FcVI63m+vzpQiCeb0A/8ITr0KD3JWs+2Ay/f4YwNLKj5XYigk1xPXDzfurc9uwoLKvKE
-         WOIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Dt2d5iJFzlCS2h2ARnyYOoN5nszagPDShyvI0yEJnOw=;
-        b=R6f+2RQAda5TFtxscrN/sHqIAQbe0xSRHsUv6CZbWetxUnGfoJXmHYpB/ZWNH/mvnm
-         lDviohBMNyMEN9ywyiSw4tpof+kHH6I2yNmY+TtVAlk5jVUnl28d6iPKjPcTroagcYWF
-         N/k7R24hOG13NDYhMYSskxuna/nrk4tFsKAE3+lNzWgck97o5nx7O+3yjLSiecINHoj7
-         VY7xLio3cHCAyPrfDwDcp8MwiFWi1HgCii6JYHOz8J9HyPVBj0W8x3xT7kR5QLDLu0BO
-         6xV10Pmye9ktn25bZ2k8QKYL/r1oOQsclZwJQaE3+mD4l1+h6qlYQVamH7id+Wf3Ac72
-         jCGw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519981511-2-12979479835729903418
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519981510; b=kIIXPBnGrkjIkyeecb/Lln4sv4WTn5rHGuaOpZ4WEZBEsHQ
+    +squi/6dl1fy41HAnfN7tKQMaV//lCy+Oo4klvmqk4U8htBHN+KpFoSZRqmP1CQT
+    bgk2GIHPrgdZb8xJQYXbxS5/HqztvZTeZdaMJUcJD+sPssnaJVAgjQHRk5WEyasd
+    IJwZNliJnW/BmZWctjBYaeIkz8ym4Jj+OASA003JcPVA3aIuUR/Slq86qNphh++D
+    zAkAFRdL3sZrC8NOn51XxBaElKZIflJiJdegtm2wL5F2ZVjwygnOLnbzzja6RcAY
+    fCEt0lKE48ekwoveP6BAxCJVJv3PrPDs3z/YkpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519981510; bh=CNOkjZZUFDgfXDTVy6o1msf1Aj
+    agpn/hNpjQ8KYj74M=; b=eYfuly6Hxm73zklcFZuW4QCJ9QGH8ez+5JRjjRKUUH
+    Vf0TowxrOjhiR5zgYPCA8A05lZ26q7m4/Ikr3grWzL4qa0ebgLRHbcLycKJlfTYJ
+    +Nf91M0kJLQN8cqHVj3GQaYRbwwU4FzYhXUpJWrWa3ftJVzZMMMqkRAr/T1etHWR
+    q5uJ9AjbJHo0PJJ2mIBVLAbzW5+BzdgDAud0j7byDxMs0wANteoL4K/2cw5Mj7q+
+    kz1nyXi3hUSw5ZkQ0rRkdregURXu6SaeBWawzuPkXnDGE8NmgJCf4GK1N0ofutP1
+    D+u16SP7OiYMJPaGmgmj7oSE40m2EA3kt1iZHgaAlOBg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1425111AbeCBJEW (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 04:04:22 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55778 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425107AbeCBJEU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:04:20 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jiri Pirko <jiri@mellanox.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [PATCH 4.14 115/115] net: sched: fix use-after-free in tcf_block_put_ext
-Date: Fri,  2 Mar 2018 09:51:58 +0100
-Message-Id: <20180302084508.490842564@linuxfoundation.org>
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Nitzan Carmi <nitzanc@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 063/115] IB/mlx5: Fix mlx5_ib_alloc_mr error flow
+Date: Fri,  2 Mar 2018 09:51:06 +0100
+Message-Id: <20180302084506.427431038@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -39,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816135243715312?=
-X-GMAIL-MSGID: =?utf-8?q?1593816135243715312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +81,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Pirko <jiri@mellanox.com>
+From: Nitzan Carmi <nitzanc@mellanox.com>
 
-commit df45bf84e4f5a48f23d4b1a07d21d566e8b587b2 upstream.
 
-Since the block is freed with last chain being put, once we reach the
-end of iteration of list_for_each_entry_safe, the block may be
-already freed. I'm hitting this only by creating and deleting clsact:
+[ Upstream commit 45e6ae7ef21b907dacb18da62d5787d74a31d860 ]
 
-[  202.171952] ==================================================================
-[  202.180182] BUG: KASAN: use-after-free in tcf_block_put_ext+0x240/0x390
-[  202.187590] Read of size 8 at addr ffff880225539a80 by task tc/796
-[  202.194508]
-[  202.196185] CPU: 0 PID: 796 Comm: tc Not tainted 4.15.0-rc2jiri+ #5
-[  202.203200] Hardware name: Mellanox Technologies Ltd. "MSN2100-CB2F"/"SA001017", BIOS 5.6.5 06/07/2016
-[  202.213613] Call Trace:
-[  202.216369]  dump_stack+0xda/0x169
-[  202.220192]  ? dma_virt_map_sg+0x147/0x147
-[  202.224790]  ? show_regs_print_info+0x54/0x54
-[  202.229691]  ? tcf_chain_destroy+0x1dc/0x250
-[  202.234494]  print_address_description+0x83/0x3d0
-[  202.239781]  ? tcf_block_put_ext+0x240/0x390
-[  202.244575]  kasan_report+0x1ba/0x460
-[  202.248707]  ? tcf_block_put_ext+0x240/0x390
-[  202.253518]  tcf_block_put_ext+0x240/0x390
-[  202.258117]  ? tcf_chain_flush+0x290/0x290
-[  202.262708]  ? qdisc_hash_del+0x82/0x1a0
-[  202.267111]  ? qdisc_hash_add+0x50/0x50
-[  202.271411]  ? __lock_is_held+0x5f/0x1a0
-[  202.275843]  clsact_destroy+0x3d/0x80 [sch_ingress]
-[  202.281323]  qdisc_destroy+0xcb/0x240
-[  202.285445]  qdisc_graft+0x216/0x7b0
-[  202.289497]  tc_get_qdisc+0x260/0x560
+ibmr.device is being set only after ib_alloc_mr() is
+(successfully) complete. Therefore, in case mlx5_core_create_mkey()
+return with error, the error flow calls mlx5_free_priv_descs()
+which uses ibmr.device (which doesn't exist yet), causing
+a NULL dereference oops.
 
-Fix this by holding the block also by chain 0 and put chain 0
-explicitly, out of the list_for_each_entry_safe loop at the very
-end of tcf_block_put_ext.
+To fix this, the IB device should be set in the mr struct earlier
+stage (e.g. prior to calling mlx5_core_create_mkey()).
 
-Fixes: efbf78973978 ("net_sched: get rid of rcu_barrier() in tcf_block_put_ext()")
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 8a187ee52b04 ("IB/mlx5: Support the new memory registration API")
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Nitzan Carmi <nitzanc@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- net/sched/cls_api.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -290,21 +290,22 @@ void tcf_block_put(struct tcf_block *blo
- 	if (!block)
- 		return;
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1637,6 +1637,7 @@ struct ib_mr *mlx5_ib_alloc_mr(struct ib
+ 	MLX5_SET(mkc, mkc, access_mode, mr->access_mode);
+ 	MLX5_SET(mkc, mkc, umr_en, 1);
  
--	/* Hold a refcnt for all chains, except 0, so that they don't disappear
-+	/* Hold a refcnt for all chains, so that they don't disappear
- 	 * while we are iterating.
- 	 */
- 	list_for_each_entry(chain, &block->chain_list, list)
--		if (chain->index)
--			tcf_chain_hold(chain);
-+		tcf_chain_hold(chain);
- 
- 	list_for_each_entry(chain, &block->chain_list, list)
- 		tcf_chain_flush(chain);
- 
--	/* At this point, all the chains should have refcnt >= 1. Block will be
--	 * freed after all chains are gone.
--	 */
-+	/* At this point, all the chains should have refcnt >= 1. */
- 	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
- 		tcf_chain_put(chain);
-+
-+	/* Finally, put chain 0 and allow block to be freed. */
-+	chain = list_first_entry(&block->chain_list, struct tcf_chain, list);
-+	tcf_chain_put(chain);
- }
- EXPORT_SYMBOL(tcf_block_put);
- 
++	mr->ibmr.device = pd->device;
+ 	err = mlx5_core_create_mkey(dev->mdev, &mr->mmkey, in, inlen);
+ 	if (err)
+ 		goto err_destroy_psv;
