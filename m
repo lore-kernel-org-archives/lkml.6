@@ -1,238 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426236AbeCBKOh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:14:37 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34119 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424378AbeCBKOG (ORCPT
+        id S1426287AbeCBKPK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:15:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46658 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1426160AbeCBKLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:14:06 -0500
-X-Google-Smtp-Source: AG47ELua2ZQ+tGjm9P5NxgVGJ5lJ71XqnU4z3qasMbflRj4e++7sqknnooDatAOCwrqNr+iAxfOzqsDWkmKrZ3r+6c4=
-MIME-Version: 1.0
-In-Reply-To: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
-References: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 11:14:05 +0100
-Message-ID: <CACRpkdZc0ataQGWQ-81v1+_wCRpv=VVk195rafJcEQUFM5xfOg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: bc2835: Add brcm,level property
-To: Matheus Castello <matheus@castello.eng.br>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 2 Mar 2018 05:11:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 268AA6074C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        rjw@rjwysocki.net, robin.murphy@arm.com, will.deacon@arm.com,
+        robdclark@gmail.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: tfiga@chromium.org, jcrouse@codeaurora.org, sboyd@codeaurora.org,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        vivek.gautam@codeaurora.org
+Subject: [PATCH v8 2/5] iommu/arm-smmu: Add pm_runtime/sleep ops
+Date: Fri,  2 Mar 2018 15:40:47 +0530
+Message-Id: <20180302101050.6191-3-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+In-Reply-To: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matheus,
+From: Sricharan R <sricharan@codeaurora.org>
 
-sorry for top-posting, but new DT properties have to be ACKed
-by the device tree maintainers, so quoting it all.
+The smmu needs to be functional only when the respective
+master's using it are active. The device_link feature
+helps to track such functional dependencies, so that the
+iommu gets powered when the master device enables itself
+using pm_runtime. So by adapting the smmu driver for
+runtime pm, above said dependency can be addressed.
 
-I understand why you use the legacy bcm-specific bindings for this,
-but in theory nothing really stops you from just using
-"output-high" and "output-low" from the generic properties,
-even if you are not using the generic code to handle them but
-instead parse them just like in this driver.
+This patch adds the pm runtime/sleep callbacks to the
+driver and also the functions to parse the smmu clocks
+from DT and enable them in resume/suspend.
 
-The only reason I could think of not to use them would be consistency,
-like it would look not so elegant.
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Archit Taneja <architt@codeaurora.org>
+[vivek: Clock rework to request bulk of clocks]
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 58 insertions(+), 2 deletions(-)
 
-But if we look at the pin control bindings from a birds eye view
-the big problem with consistency is the proliferation of custom
-vendor bindings like this.
-
-So there is a bit of conflict of interest here.
-
-Yours,
-Linus Walleij
-
-
-On Thu, Feb 22, 2018 at 6:44 PM, Matheus Castello
-<matheus@castello.eng.br> wrote:
-> Property to set initial value of pin output buffer.
->
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> ---
->  .../bindings/pinctrl/brcm,bcm2835-gpio.txt         |  5 +-
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c              | 90 +++++++++++++++++-----
->  2 files changed, 75 insertions(+), 20 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-> index 2569866..6834f1d 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
-> @@ -54,8 +54,11 @@ Optional subnode-properties:
->    0: none
->    1: down
->    2: up
-> +- brcm,level: Integer, representing the value of output buffer to apply to the pin(s):
-> +  0: low
-> +  1: high
->
-> -Each of brcm,function and brcm,pull may contain either a single value which
-> +Each of brcm,function, brcm,pull and brcm,level may contain either a single value which
->  will be applied to all pins in brcm,pins, or 1 value for each entry in
->  brcm,pins.
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index 785c366..0ace548 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -73,6 +73,8 @@
->  enum bcm2835_pinconf_param {
->         /* argument: bcm2835_pinconf_pull */
->         BCM2835_PINCONF_PARAM_PULL,
-> +       /* argument: bcm2835_pinconf_level */
-> +       BCM2835_PINCONF_PARAM_LEVEL,
->  };
->
->  #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
-> @@ -725,16 +727,42 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
->         return 0;
->  }
->
-> +static int bcm2835_pctl_dt_node_to_map_level(struct bcm2835_pinctrl *pc,
-> +               struct device_node *np, u32 pin, u32 level,
-> +               struct pinctrl_map **maps)
-> +{
-> +       struct pinctrl_map *map = *maps;
-> +       unsigned long *configs;
-> +
-> +       if (level > 2) {
-> +               dev_err(pc->dev, "%pOF: invalid brcm,level %d\n", np, level);
-> +               return -EINVAL;
-> +       }
-> +
-> +       configs = kzalloc(sizeof(*configs), GFP_KERNEL);
-> +       if (!configs)
-> +               return -ENOMEM;
-> +       configs[0] = BCM2835_PINCONF_PACK(BCM2835_PINCONF_PARAM_LEVEL, level);
-> +
-> +       map->type = PIN_MAP_TYPE_CONFIGS_PIN;
-> +       map->data.configs.group_or_pin = bcm2835_gpio_pins[pin].name;
-> +       map->data.configs.configs = configs;
-> +       map->data.configs.num_configs = 1;
-> +       (*maps)++;
-> +
-> +       return 0;
-> +}
-> +
->  static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->                 struct device_node *np,
->                 struct pinctrl_map **map, unsigned *num_maps)
->  {
->         struct bcm2835_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
-> -       struct property *pins, *funcs, *pulls;
-> -       int num_pins, num_funcs, num_pulls, maps_per_pin;
-> +       struct property *pins, *funcs, *pulls, *levels;
-> +       int num_pins, num_funcs, num_pulls, num_levels, maps_per_pin;
->         struct pinctrl_map *maps, *cur_map;
->         int i, err;
-> -       u32 pin, func, pull;
-> +       u32 pin, func, pull, level;
->
->         pins = of_find_property(np, "brcm,pins", NULL);
->         if (!pins) {
-> @@ -744,6 +772,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->
->         funcs = of_find_property(np, "brcm,function", NULL);
->         pulls = of_find_property(np, "brcm,pull", NULL);
-> +       levels = of_find_property(np, "brcm,level", NULL);
->
->         if (!funcs && !pulls) {
->                 dev_err(pc->dev,
-> @@ -755,6 +784,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->         num_pins = pins->length / 4;
->         num_funcs = funcs ? (funcs->length / 4) : 0;
->         num_pulls = pulls ? (pulls->length / 4) : 0;
-> +       num_levels = levels ? (levels->length / 4) : 0;
->
->         if (num_funcs > 1 && num_funcs != num_pins) {
->                 dev_err(pc->dev,
-> @@ -770,11 +800,20 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->                 return -EINVAL;
->         }
->
-> +       if (num_levels > 1 && num_levels != num_pins) {
-> +               dev_err(pc->dev,
-> +                       "%pOF: brcm,level must have 1 or %d entries\n",
-> +                       np, num_pins);
-> +               return -EINVAL;
-> +       }
-> +
->         maps_per_pin = 0;
->         if (num_funcs)
->                 maps_per_pin++;
->         if (num_pulls)
->                 maps_per_pin++;
-> +       if (num_levels)
-> +               maps_per_pin++;
->         cur_map = maps = kzalloc(num_pins * maps_per_pin * sizeof(*maps),
->                                 GFP_KERNEL);
->         if (!maps)
-> @@ -811,6 +850,17 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->                         if (err)
->                                 goto out;
->                 }
-> +               if (num_levels) {
-> +                       err = of_property_read_u32_index(np, "brcm,level",
-> +                                       (num_levels > 1) ? i : 0, &level);
-> +                       if (err)
-> +                               goto out;
-> +
-> +                       err = bcm2835_pctl_dt_node_to_map_level(pc, np, pin,
-> +                                                       level, &cur_map);
-> +                       if (err)
-> +                               goto out;
-> +               }
->         }
->
->         *map = maps;
-> @@ -931,23 +981,25 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
->                 param = BCM2835_PINCONF_UNPACK_PARAM(configs[i]);
->                 arg = BCM2835_PINCONF_UNPACK_ARG(configs[i]);
->
-> -               if (param != BCM2835_PINCONF_PARAM_PULL)
-> +               if (param == BCM2835_PINCONF_PARAM_PULL) {
-> +                       off = GPIO_REG_OFFSET(pin);
-> +                       bit = GPIO_REG_SHIFT(pin);
-> +
-> +                       bcm2835_gpio_wr(pc, GPPUD, arg & 3);
-> +                       /*
-> +                       * Docs say to wait 150 cycles, but not of what. We assume a
-> +                       * 1 MHz clock here, which is pretty slow...
-> +                       */
-> +                       udelay(150);
-> +                       bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
-> +                       udelay(150);
-> +                       bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
-> +               } else if (param == BCM2835_PINCONF_PARAM_LEVEL) {
-> +                       /* write in register */
-> +                       bcm2835_gpio_set_bit(pc, arg ? GPSET0 : GPCLR0, pin);
-> +               } else {
->                         return -EINVAL;
-> -
-> -               off = GPIO_REG_OFFSET(pin);
-> -               bit = GPIO_REG_SHIFT(pin);
-> -
-> -               bcm2835_gpio_wr(pc, GPPUD, arg & 3);
-> -               /*
-> -                * BCM2835 datasheet say to wait 150 cycles, but not of what.
-> -                * But the VideoCore firmware delay for this operation
-> -                * based nearly on the same amount of VPU cycles and this clock
-> -                * runs at 250 MHz.
-> -                */
-> -               udelay(1);
-> -               bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
-> -               udelay(1);
-> -               bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
-> +               }
->         } /* for each config */
->
->         return 0;
-> --
-> 2.7.4
->
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index ffc152c36002..c8b16f53f597 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -48,6 +48,7 @@
+ #include <linux/of_iommu.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -205,6 +206,8 @@ struct arm_smmu_device {
+ 	u32				num_global_irqs;
+ 	u32				num_context_irqs;
+ 	unsigned int			*irqs;
++	struct clk_bulk_data		*clks;
++	int				num_clks;
+ 
+ 	u32				cavium_id_base; /* Specific to Cavium */
+ 
+@@ -1902,10 +1905,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
+ struct arm_smmu_match_data {
+ 	enum arm_smmu_arch_version version;
+ 	enum arm_smmu_implementation model;
++	const char * const *clks;
++	int num_clks;
+ };
+ 
+ #define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
+-static struct arm_smmu_match_data name = { .version = ver, .model = imp }
++static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
+ 
+ ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+@@ -1924,6 +1929,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ 
++static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
++				   const char * const *clks)
++{
++	int i;
++
++	if (smmu->num_clks < 1)
++		return;
++
++	smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
++				  sizeof(*smmu->clks), GFP_KERNEL);
++	if (!smmu->clks)
++		return;
++
++	for (i = 0; i < smmu->num_clks; i++)
++		smmu->clks[i].id = clks[i];
++}
++
+ #ifdef CONFIG_ACPI
+ static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
+ {
+@@ -2006,6 +2028,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+ 	data = of_device_get_match_data(dev);
+ 	smmu->version = data->version;
+ 	smmu->model = data->model;
++	smmu->num_clks = data->num_clks;
++
++	arm_smmu_fill_clk_data(smmu, data->clks);
+ 
+ 	parse_driver_options(smmu);
+ 
+@@ -2104,6 +2129,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		smmu->irqs[i] = irq;
+ 	}
+ 
++	err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
++	if (err)
++		return err;
++
++	err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
++	if (err)
++		return err;
++
+ 	err = arm_smmu_device_cfg_probe(smmu);
+ 	if (err)
+ 		return err;
+@@ -2186,6 +2219,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
+ 
+ 	/* Turn the thing off */
+ 	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
++
++	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
++
+ 	return 0;
+ }
+ 
+@@ -2202,7 +2238,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
++static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
++{
++	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
++
++	return clk_bulk_enable(smmu->num_clks, smmu->clks);
++}
++
++static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
++{
++	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
++
++	clk_bulk_disable(smmu->num_clks, smmu->clks);
++
++	return 0;
++}
++
++static const struct dev_pm_ops arm_smmu_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
++	SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
++			   arm_smmu_runtime_resume, NULL)
++};
+ 
+ static struct platform_driver arm_smmu_driver = {
+ 	.driver	= {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
