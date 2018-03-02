@@ -1,66 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946588AbeCBRYJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:24:09 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60614 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1945952AbeCBRYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:24:06 -0500
-Date: Fri, 2 Mar 2018 09:24:01 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Masanari Iida <standby24x7@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] xfs: Change URL for the project in xfs.txt
-Message-ID: <20180302172401.GT19312@magnolia>
-References: <20180302133013.9744-1-standby24x7@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302133013.9744-1-standby24x7@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020205
+        id S1427339AbeCBRZW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:25:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53573 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424699AbeCBRZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:25:21 -0500
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com
+Subject: [GIT PULL] xen: fixes for v4.16-rc4
+Date: Fri,  2 Mar 2018 18:25:18 +0100
+Message-Id: <20180302172518.16501-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 10:30:13PM +0900, Masanari Iida wrote:
-> The oss.sgi.com doesn't exist any more.
-> Change it to current project URL, https://xfs.wiki.kernel.org/
-> 
-> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-> ---
->  Documentation/filesystems/xfs.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
-> index 3b9b5c149f32..4d9ff0a7f8e1 100644
-> --- a/Documentation/filesystems/xfs.txt
-> +++ b/Documentation/filesystems/xfs.txt
-> @@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
->  Btrees (directories, extents, free space) to aid both performance
->  and scalability.
->  
-> -Refer to the documentation at http://oss.sgi.com/projects/xfs/
-> +Refer to the documentation at https://xfs.wiki.kernel.org/
->  for further details.  This implementation is on-disk compatible
->  with the IRIX version of XFS.
+Linus,
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Please git pull the following tag:
 
---D
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.16a-rc4-tag
 
->  
-> -- 
-> 2.16.2.345.g7e31236f652a
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+xen: fixes for v4.16-rc4
+
+It contains 5 minor fixes for Xen-specific drivers.
+
+
+Thanks.
+
+Juergen
+
+ arch/x86/xen/enlighten_pv.c      |  6 ++++--
+ drivers/net/xen-netfront.c       |  7 ++++++-
+ drivers/xen/events/events_base.c |  4 ++--
+ drivers/xen/pvcalls-back.c       |  2 +-
+ drivers/xen/pvcalls-front.c      | 11 ++++++++---
+ 5 files changed, 21 insertions(+), 9 deletions(-)
+
+Colin Ian King (1):
+      xen/pvcalls: fix null pointer dereference on map->sock
+
+Jason Andryuk (1):
+      xen-netfront: Fix hang on device removal
+
+Juergen Gross (2):
+      x86/xen: add tty0 and hvc0 as preferred consoles for dom0
+
+Roger Pau Monne (1):
+      xen/pirq: fix error path cleanup when binding MSIs
+
+Stefano Stabellini (1):
+      pvcalls-front: 64-bit align flags
