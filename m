@@ -1,74 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425650AbeCBJWp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:22:45 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36899 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425128AbeCBJVv (ORCPT
+        id S1425606AbeCBJYW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:24:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48932 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424768AbeCBJYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:21:51 -0500
-X-Google-Smtp-Source: AG47ELudPKIIolaIj0lS8GhNFHqeoZSOSIgtriOEvVp+Z4JIYD1eqWROGL5fl+D1fenQ2HUiaZY2cA==
-Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: net: Add bindings for National
- Instruments XGE netdev
-To: Moritz Fischer <mdf@kernel.org>, linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net
-References: <20180301191547.2816-1-mdf@kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d776cc09-5374-d92c-0e95-62ca4afd30ad@cogentembedded.com>
-Date: Fri, 2 Mar 2018 12:21:49 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180301191547.2816-1-mdf@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 2 Mar 2018 04:24:05 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6BAF604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From: sibis <sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, jassisinghbrar@gmail.com,
+        p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 0/6] Add support for remoteproc modem-pil on SDM845 SoCs  
+Date: Fri,  2 Mar 2018 14:53:33 +0530
+Message-Id: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/1/2018 10:15 PM, Moritz Fischer wrote:
+This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
+SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
+to provide for mss reset line. The third patch adds the APCS offset for
+SDM845. The last couple of patches add the resets sequence for Q6 on
+SDM845 and adds helper functions for arbitrary reset assert/deassert
+sequences.
 
-> This adds bindings for the NI XGE 1G/10G network device.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> ---
-> 
-> Changes from v3:
-> - Added Rob's Reviewed-by
-> 
-> Changes from v2:
-> - Addressed Rob's comments w.r.t to IRQ names and typo
-> 
-> Changes from v1:
-> - Corrected from nixge -> nixge.txt
-> ---
->   Documentation/devicetree/bindings/net/nixge.txt | 32 +++++++++++++++++++++++++
->   1 file changed, 32 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/net/nixge.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/net/nixge.txt b/Documentation/devicetree/bindings/net/nixge.txt
-> new file mode 100644
-> index 000000000000..e55af7f0881a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/nixge.txt
-> @@ -0,0 +1,32 @@
-> +* NI XGE Ethernet controller
-> +
-> +Required properties:
-> +- compatible: Should be "ni,xge-enet-2.00"
-> +- reg: Address and length of the register set for the device
-> +- interrupts: Should contain tx and rx interrupt
+sibis (6):
+  reset: qcom: AOSS (Always on subsystem) reset controller
+  dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
+  mailbox: Add support for Qualcomm SDM845 SoCs
+  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+  remoteproc: qcom: Add support for mss remoteproc on SDM845
+  remoteproc: qcom: Reorder active clks enable and reset
 
-     Maybe rx and tx, looking below:
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   3 +-
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   5 +-
+ .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 149 +++++++++++++++++--
+ drivers/reset/Kconfig                              |  10 ++
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
+ include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
+ 9 files changed, 386 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+ create mode 100644 drivers/reset/reset-qcom-aoss.c
+ create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
 
-> +- interrupt-names: Should be "rx" and "tx"
-> +- phy-mode: See ethernet.txt file in the same directory.
-> +- phy-handle: See ethernet.txt file in the same directory.
-> +- nvmem-cells: Phandle of nvmem cell containing the MAC address
-> +- nvmem-cell-names: Should be "address"
-[...]
-
-MBR, Sergei
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
