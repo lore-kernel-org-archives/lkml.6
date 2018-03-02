@@ -1,116 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946233AbeCBRzG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:55:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51612 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1946022AbeCBRzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:55:04 -0500
-Date: Fri, 2 Mar 2018 17:54:51 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-Subject: Re: [PATCH v3 05/25] ASoC: qcom: qdsp6: Add support to Q6AFE
-Message-ID: <20180302175451.GB3482@sirena.org.uk>
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-6-srinivas.kandagatla@linaro.org>
- <20180301205940.GR12864@sirena.org.uk>
- <66d37327-b8ea-0da5-3e05-435cec5d84ab@linaro.org>
+        id S1946965AbeCBR5T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:57:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56635 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1946955AbeCBR5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:57:14 -0500
+Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
+ holding lock
+To: Michal Hocko <mhocko@kernel.org>, Aaron Lu <aaron.lu@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-4-aaron.lu@intel.com>
+ <20180301140044.GK15057@dhcp22.suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
+Date: Fri, 2 Mar 2018 18:55:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
-Content-Disposition: inline
-In-Reply-To: <66d37327-b8ea-0da5-3e05-435cec5d84ab@linaro.org>
-X-Cookie: Limited delivery area.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180301140044.GK15057@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/01/2018 03:00 PM, Michal Hocko wrote:
+> On Thu 01-03-18 14:28:45, Aaron Lu wrote:
+>> When a page is freed back to the global pool, its buddy will be checked
+>> to see if it's possible to do a merge. This requires accessing buddy's
+>> page structure and that access could take a long time if it's cache cold.
+>>
+>> This patch adds a prefetch to the to-be-freed page's buddy outside of
+>> zone->lock in hope of accessing buddy's page structure later under
+>> zone->lock will be faster. Since we *always* do buddy merging and check
+>> an order-0 page's buddy to try to merge it when it goes into the main
+>> allocator, the cacheline will always come in, i.e. the prefetched data
+>> will never be unused.
+>>
+>> In the meantime, there are two concerns:
+>> 1 the prefetch could potentially evict existing cachelines, especially
+>>   for L1D cache since it is not huge;
+>> 2 there is some additional instruction overhead, namely calculating
+>>   buddy pfn twice.
+>>
+>> For 1, it's hard to say, this microbenchmark though shows good result but
+>> the actual benefit of this patch will be workload/CPU dependant;
+>> For 2, since the calculation is a XOR on two local variables, it's expected
+>> in many cases that cycles spent will be offset by reduced memory latency
+>> later. This is especially true for NUMA machines where multiple CPUs are
+>> contending on zone->lock and the most time consuming part under zone->lock
+>> is the wait of 'struct page' cacheline of the to-be-freed pages and their
+>> buddies.
+>>
+>> Test with will-it-scale/page_fault1 full load:
+>>
+>> kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
+>> v4.16-rc2+  9034215        7971818       13667135       15677465
+>> patch2/3    9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
+>> this patch 10338868 +8.4%  8544477 +2.8% 14839808 +5.5% 17155464 +2.9%
+>> Note: this patch's performance improvement percent is against patch2/3.
+> 
+> I am really surprised that this has such a big impact.
 
---4bRzO86E/ozDv8r1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It's even stranger to me. Struct page is 64 bytes these days, exactly a
+a cache line. Unless that changed, Intel CPUs prefetched a "buddy" cache
+line (that forms an aligned 128 bytes block with the one we touch).
+Which is exactly a order-0 buddy struct page! Maybe that implicit
+prefetching stopped at L2 and explicit goes all the way to L1, can't
+remember. Would that make such a difference? It would be nice to do some
+perf tests with cache counters to see what is really going on...
 
-On Fri, Mar 02, 2018 at 01:13:17PM +0000, Srinivas Kandagatla wrote:
-> On 01/03/18 20:59, Mark Brown wrote:
-> > On Tue, Feb 13, 2018 at 04:58:17PM +0000, srinivas.kandagatla@linaro.org wrote:
+Vlastimil
 
-> > > +static struct afe_port_map port_maps[AFE_PORT_MAX] = {
-> > > +	[AFE_PORT_HDMI_RX] = { AFE_PORT_ID_MULTICHAN_HDMI_RX,
-> > > +				AFE_PORT_HDMI_RX, 1, 1},
-> > > +};
-
-> > Is this not device specific in any way?  It looks likely to be.
-
-> It is specific to Audio firmware build.
-> AFAIK, DSP port IDs are consistent across a given range of AVS firmware
-> builds. So far I have seen them not change in any of the B family SoCs.
-> However on older A family SOCs these are very different numbers. Which is
-> where ADSP version info would help select correct map.
-
-Can we have some documentation of this in the code please?
-
-> > > +static struct q6afe_port *afe_find_port(struct q6afe *afe, int token)
-> > > +{
-> > > +	struct q6afe_port *p = NULL;
-> > > +
-> > > +	spin_lock(&afe->port_list_lock);
-> > > +	list_for_each_entry(p, &afe->port_list, node)
-> > > +		if (p->token == token)
-> > > +			break;
-> > > +
-> > > +	spin_unlock(&afe->port_list_lock);
-
-> > Why do we need to lock the port list, what are we protecting it against?
-
-> This is just to protect the list from anyone deleting this.
-
-> Its very rare but the use case could be somelike the adsp is up and we are
-> in the middle of finding a port and then adsp went down or crashed we would
-> delete an entry in the list.
-
-If that's what we're protecting against then this also needs to do
-something to ensure that the port we looked up doesn't get deallocated
-before or while we look at it.
-
-> > > +int q6afe_port_start(struct q6afe_port *port)
-> > > +{
-> > > +	return afe_port_start(port, &port->port_cfg);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(q6afe_port_start);
-
-> > This is the third level of wrapper for the port start command in this
-> > file.  Do we *really* need all these wrappers?
-
-> Intention here is that we have plans to support different version of ADSP,
-> on A family this command is different, so having this wrapper would help
-> tackle this use-case.
-
-Why not just take out the level of wrapper for now then add it in when
-there's actually an abstraction in there?  The code might end up looking
-different anyway.
-
---4bRzO86E/ozDv8r1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqZj+oACgkQJNaLcl1U
-h9BglQf/Yr/VUWgW/Yt5oZyuay/zHxMAuWyObW6ZelbFKsU/PSD/bYjyUuLOABst
-B30f7OSttx/uCFmHUC8i0AOvOCyfjXW0oJxCIesxsAQxDnJzM+fBldKJMbDfAajT
-uT/z2EbENWf/ZjyydM20gJZ9lVGNBQU5Ck7MwOidmCftgBUcIaQGWzLc6JCfBZV6
-Qb9PrKF/XroZbVthZ7H0JLmFR94v5CjFzyvgwfol37tP75eu+t4xXBVET8ac+4Ea
-yVe2ZsuDof5y0agHQczSZkXbQCA5LOkoE5QgPL9xNRuFBwF6gHIoHAUVXHaEV5S7
-HAmRwKobzqt6l1vtSZk5AU+oxH+ftA==
-=Ioiu
------END PGP SIGNATURE-----
-
---4bRzO86E/ozDv8r1--
+> Is this a win on
+> other architectures as well?
+>  
+>> [changelog stole from Dave Hansen and Mel Gorman's comments]
+>> https://lkml.org/lkml/2018/1/24/551
+> 
+> Please use http://lkml.kernel.org/r/<msg-id> for references because
+> lkml.org is quite unstable. It would be
+> http://lkml.kernel.org/r/148a42d8-8306-2f2f-7f7c-86bc118f8ccd@intel.com
+> here.
+> 
