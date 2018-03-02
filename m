@@ -1,97 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425591AbeCBJUP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:20:15 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:28747 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425539AbeCBJTz (ORCPT
+        id S1425599AbeCBJUX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:20:23 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59382 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424831AbeCBJUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:19:55 -0500
-X-IronPort-AV: E=Sophos;i="5.47,411,1515481200";
-   d="scan'208";a="9313871"
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-        <airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-        <jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-        <rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
-        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180228194429.GD22932@mithrandir>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <0c3fc3ba-8640-0b2c-a9ec-ab848227c92d@microchip.com>
-Date: Fri, 2 Mar 2018 11:19:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 2 Mar 2018 04:20:01 -0500
+Date: Fri, 2 Mar 2018 10:20:00 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, Jose.Abreu@synopsys.com,
+        Niklas Cassel <niklass@axis.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] net: stmmac: use correct barrier between
+ coherent memory and MMIO
+Message-ID: <20180302091959.GC15948@amd>
+References: <20180226214709.4359-1-niklas.cassel@axis.com>
+ <20180226214709.4359-3-niklas.cassel@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <20180228194429.GD22932@mithrandir>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
+Content-Disposition: inline
+In-Reply-To: <20180226214709.4359-3-niklas.cassel@axis.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 28.02.2018 21:44, Thierry Reding wrote:
-> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->> were adapted to this change.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->> ---
->>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>  drivers/bus/ts-nbus.c                |  2 +-
->>  drivers/clk/clk-pwm.c                |  3 ++-
->>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>  drivers/hwmon/pwm-fan.c              |  2 +-
->>  drivers/input/misc/max77693-haptic.c |  2 +-
->>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>  drivers/leds/leds-pwm.c              |  5 ++++-
->>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>  include/linux/pwm.h                  |  6 ++++--
->>  16 files changed, 70 insertions(+), 21 deletions(-)
-> 
-> I don't think it makes sense to leak mode support into the legacy API.
-> The pwm_config() function is considered legacy
-I missed this aspect.
+Hi!
 
- and should eventually go
-> away. As such it doesn't make sense to integrate a new feature such as
-> PWM modes into it. 
-Agree.
+Thanks for doing the detective work!
 
-All users of pwm_config() assume normal mode, and
-> that's what pwm_config() should provide.
-Agree.
+> This barrier cannot be a simple dma_wmb(), since a dma_wmb() is only
+> used to guarantee the ordering, with respect to other writes,
+> to cache coherent DMA memory.
 
-> 
-> Anyone that needs something other than normal mode should use the new
-> atomic PWM API.
-Agree.
+Could you explain this a bit more (and perhaps in code comment)?
 
-> 
-> Thierry
-> 
+Ensuring other writes are done before writing the "GO!" bit should be
+enough, no?
+
+(If it is not, do we need heavier barriers in other places, too?)
+
+Best regards,
+							Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqZFz8ACgkQMOfwapXb+vL1fgCgqThlDwvpcOZuyqi6Hp1deKW8
+KWkAoLaqDLOJdCTDch6GEjgJwCEQMEgN
+=YSd2
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
