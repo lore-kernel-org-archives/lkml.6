@@ -1,144 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932858AbeCBWrI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:47:08 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:48195 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932482AbeCBWrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:47:06 -0500
-X-UUID: 2b02e25cd0fb42d4b0e603b1d9e6d4fa-20180303
-Message-ID: <1520030818.8089.190.camel@mtkswgap22>
-Subject: Re: [PATCH v1 13/19] arm: dts: mt7623: move node mt6323 leds to
- mt6323.dtsi
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Lee Jones" <lee.jones@linaro.org>
-Date: Sat, 3 Mar 2018 06:46:58 +0800
-In-Reply-To: <20180302154050.lfxojro4woucl6lh@rob-hp-laptop>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
-         <e8a515a1aeaf06a7162b8b0e390bee615b323303.1519378872.git.sean.wang@mediatek.com>
-         <20180302154050.lfxojro4woucl6lh@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S933286AbeCBWsu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:48:50 -0500
+Received: from mga06.intel.com ([134.134.136.31]:13329 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932936AbeCBWsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:48:47 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
+   d="scan'208";a="22160551"
+Date: Sat, 3 Mar 2018 06:48:09 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Matt Porter <mporter@konsulko.com>
+Cc: kbuild-all@01.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: add tda7419 audio processor driver
+Message-ID: <201803030612.VHNIieNt%fengguang.wu@intel.com>
+References: <20180227225128.17815-3-mporter@konsulko.com>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180227225128.17815-3-mporter@konsulko.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 09:40 -0600, Rob Herring wrote:
-> On Fri, Feb 23, 2018 at 06:16:33PM +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > Since those LEDs are parts of PMIC MT6323, it is reasonable to merge
-> > those LEDs node definition back into mt6323.dtsi. This way can improve
-> > the reusability of those nodes among different boards with the same PMIC.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > ---
-> >  arch/arm/boot/dts/mt6323.dtsi                 | 26 ++++++++++++++++++++++++-
-> >  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 28 ---------------------------
-> >  2 files changed, 25 insertions(+), 29 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/mt6323.dtsi b/arch/arm/boot/dts/mt6323.dtsi
-> > index 7c783d6..44c5642 100644
-> > --- a/arch/arm/boot/dts/mt6323.dtsi
-> > +++ b/arch/arm/boot/dts/mt6323.dtsi
-> > @@ -1,5 +1,5 @@
-> >  /*
-> > - * Copyright (c) 2017 MediaTek Inc.
-> > + * Copyright (c) 2017-2018 MediaTek Inc.
-> >   * Author: John Crispin <john@phrozen.org>
-> >   *	   Sean Wang <sean.wang@mediatek.com>
-> >   * This program is free software; you can redistribute it and/or modify
-> > @@ -237,5 +237,29 @@
-> >  				regulator-enable-ramp-delay = <216>;
-> >  			};
-> >  		};
-> > +
-> > +		leds {
-> > +			compatible = "mediatek,mt6323-led";
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			led@0 {
-> > +				reg = <0>;
-> > +				label = "mt6323:isink:green";
-> 
-> Changing the label potentially breaks userspace. And the fact that it is 
-> a green LED is very much board specific. So I think the old location was 
-> correct. You could put the parent node here and leave these child nodes 
-> in the board specific dts file.
-> 
+Hi Matt,
 
-yes, I really made a mistake on breaking userspace with a label change.
+I love your patch! Perhaps something to improve:
 
-I will keep the parent node here and then leave these child nodes into
-board specific dts files. thanks for your idea!
+[auto build test WARNING on asoc/for-next]
+[also build test WARNING on v4.16-rc3 next-20180302]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> 
-> > +				default-state = "off";
-> > +			};
-> > +
-> > +			led@1 {
-> > +				reg = <1>;
-> > +				label = "mt6323:isink:red";
-> > +				default-state = "off";
-> > +			};
-> > +
-> > +			led@2 {
-> > +				reg = <2>;
-> > +				label = "mt6323:isink:blue";
-> > +				default-state = "off";
-> > +			};
-> > +		};
-> >  	};
-> >  };
-> > diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > index 75e61c4..767b225 100644
-> > --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > @@ -483,34 +483,6 @@
-> >  	status = "okay";
-> >  };
-> >  
-> > -&pwrap {
-> > -	mt6323 {
-> > -		mt6323led: led {
-> > -			compatible = "mediatek,mt6323-led";
-> > -			#address-cells = <1>;
-> > -			#size-cells = <0>;
-> > -
-> > -			led@0 {
-> > -				reg = <0>;
-> > -				label = "bpi-r2:isink:green";
-> > -				default-state = "off";
-> > -			};
-> > -
-> > -			led@1 {
-> > -				reg = <1>;
-> > -				label = "bpi-r2:isink:red";
-> > -				default-state = "off";
-> > -			};
-> > -
-> > -			led@2 {
-> > -				reg = <2>;
-> > -				label = "bpi-r2:isink:blue";
-> > -				default-state = "off";
-> > -			};
-> > -		};
-> > -	};
-> > -};
-> > -
-> >  &spi0 {
-> >  	pinctrl-names = "default";
-> >  	pinctrl-0 = <&spi0_pins_a>;
-> > -- 
-> > 2.7.4
-> > 
+url:    https://github.com/0day-ci/linux/commits/Matt-Porter/TDA7419-audio-processor-driver/20180303-042824
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> sound/soc/codecs/tda7419.c:151:9-10: WARNING: return of 0/1 in function 'tda7419_vol_is_stereo' with return type bool
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
