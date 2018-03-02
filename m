@@ -1,112 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936114AbeCBGzx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 01:55:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:26005 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935863AbeCBGzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 01:55:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
-   d="scan'208";a="31848745"
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: "'Alex Williamson'" <alex.williamson@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        Ilya Lesokhin <ilyal@mellanox.com>, Don Dutile <ddutile@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Subject: RE: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Thread-Topic: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lggAAHpJA=
-Date: Fri, 2 Mar 2018 06:55:44 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910253DC@SHSMSX101.ccr.corp.intel.com>
-References: <20180227190520.3273.79728.stgit@localhost.localdomain>
-        <20180227144015.228d4f5c@w520.home>
-        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
-        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
-        <20180228155949.00fde8ae@w520.home>
-        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
- <20180301132224.1ca06949@w520.home>
- <AADFC41AFE54684AB9EE6CBC0274A5D1910253BF@SHSMSX101.ccr.corp.intel.com>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1910253BF@SHSMSX101.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZGQyNzRhYWItZjZiNy00NDcwLWI0NDQtYjllYTUzOTYwNmVmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlNVeUxrMXIrRWg4ejZlVUZ3eHUyU283bFwvbjRGNnJ0eWJKK0xiVkVHWjk4PSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S936083AbeCBG5b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 01:57:31 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:53229 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935863AbeCBG53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 01:57:29 -0500
+X-Google-Smtp-Source: AG47ELtJLZttUzM0kmZn01SGXBiPC79npHN2wnELQ5nL2hTVyNNxdU+hpjP8v8LXjeU6HmqW0Q4Gxm4EIv6W4xd2+W8=
 MIME-Version: 1.0
+From: Maxim Uvarov <muvarov@gmail.com>
+Date: Fri, 2 Mar 2018 09:57:27 +0300
+Message-ID: <CAJGZr0KKRv3GbdkpFerAzNMazQ5YWnT9P==gy0BqY4ZCpKCwgg@mail.gmail.com>
+Subject: fsl,ifc + MT29F64G08CBAAAWP
+To: kernel list <linux-kernel@vger.kernel.org>
+Cc: boris.brezillon@free-electrons.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w226vbkP012569
 
-> From: Tian, Kevin
-> Sent: Friday, March 2, 2018 2:54 PM
-> 
-> > From: Alex Williamson
-> > Sent: Friday, March 2, 2018 4:22 AM
-> > >
-> > > I am pretty sure that you are describing is true of some, but not for
-> > > all. I think the Amazon solutions and the virtio solution are doing
-> > > hard partitioning of the part. I will leave it to those guys to speak
-> > > for themselves since I don't know anything about the hardware design
-> > > of those parts.
-> >
-> > I think we'd need device specific knowledge and enablement to be able
-> > to take advantage of any hardware partitioning, otherwise we need to
-> > assume the pf is privileged, as implemented in other sriov devices.
-> >
-> > I'm also trying to imagine whether there's a solution via the new
-> > vfio/mdev interface, where the mdev vendor driver would bind to the pf
-> > and effectively present itself as the mdev device.  The vendor driver
-> > could provide sriov capabilities and bear the burden of ensuring that
-> > the pf is used cooperatively.  The only existing mdev vendor drivers are
-> > vGPUs and rely on on-device DMA translation and isolation, such as
-> > through GTTs, but there have been some thoughts on providing IOMMU
-> > based
-> > isolation of mdev/sriov mixed devices (assuming DMA is even required
-> > for userspace management of the pf in this use case).  [Cc Kirti]
-> > Thanks,
-> >
-> 
-> Hope not distracting this thread, but above sounds like an interesting
-> idea. Actually we ever brainstormed similar thought for another
-> potential usage - supporting VF live migration. We are already working
-> on an generic extension to allow state save/restore of mdev instance.
-> If vendor driver could further wrap pf as a mdev instance, it could
+Hello,
 
-I meant "wrap vf as a mdev instance" here.
+I'm trying to make work NAND MT29F64G08CBAAAWP with fsl IFC driver.
+And that seems trickly or I'm missing some fundamental thing.
 
-> leverage the same framework for a clean state migration on VF. based
-> on mmap callback the vendor driver can easily switch back-and-forth
-> between pass through and trap/emulation of the VF resources. Of
-> course doing so alone doesn't address all the demands of VF live
-> migration (e.g. dirty page tracking still requires other techniques),
-> but it does pave a way toward a general framework to support VF
-> live migration.
-> 
-> If above is feasible, finally we could use one mdev framework to
-> manage both mdev and pf/vf assignment, while providing added
-> values which are difficult to achieve today. :-)
-> 
-> Thanks
-> Kevin
+>From MT29F64G08CBAAAWP  it's said:
+
+Organization Page
+– Page size x8: 8640 bytes (8192 + 448 bytes)
+– Block size: 256 pages (2048K + 112K bytes)
+– Plane size: 2 planes x 2048 blocks per plane
+– Device size: 64Gb: 4096 blocks; 128Gb: 8192 blocks; 256Gb: 16,384
+blocks; 512Gb: 32,786 blocks
+- Minimum required ECC 24-bit ECC per 1080 bytes of data (BCH algo for ECC)
+
+And it looks like drivers/mtd/nand/fsl_ifc_nand.c works well only with
+512K blocks.
+
+So the question is - should I set up IFC driver absolutely the same as
+NAND chip spec says? Or it can work
+with smaller blocks?
+
+fsl_ifc_chip_init() csor = 0x9518c300 csor_ext 0x100000
+fsl_ifc_chip_init() csor pgs = 0x180000
+fsl_ifc_chip_init() CSOR_NAND_ECC_DEC_EN 1, CSOR_NAND_ECC_ENC_EN 1
+fsl_ifc_chip_init() csor CSOR_NAND_ECC_MODE 268435456
+fsl_ifc_chip_init() NAND_BUSWIDTH_16 0
+nand: device found, Manufacturer ID: 0x2c, Chip ID: 0x88
+nand: Micron MT29F64G08CBAAAWP
+nand: 8192 MiB, MLC, erase size: 2048 KiB, page size: 8192, OOB size: 448
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->numchips = 1
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->chipsize = 8589934592
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->pagemask =    fffff
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->chip_delay = 200
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->badblockpos = 0
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->chip_shift = 33
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->page_shift = 13
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->phys_erase_shift = 21
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->ecc.mode = 2
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->ecc.steps = 0
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->ecc.bytes = 16
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: nand->ecc.total = 0
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->ooblayout = (ptrval)
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->flags = 00000000
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->size = 8589934592
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->erasesize = 2097152
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->writesize = 8192
+fsl,ifc-nand 60000000.nand: fsl_ifc_chip_init_tail: mtd->oobsize = 448
+nand: WARNING: 60000000.flash: the ECC used on your system is too weak
+compared to the one required by the NAND chip
+1 ofpart partitions found on MTD device 60000000.flash
+Creating 1 MTD partitions on "60000000.flash":
+0x000000000000-0x000040000000 : "rootfs"
+
+Issue is that on mtd_test I get I/O errors. The same as ubu_attach.
+ubi_format looks like pass first cycle but can not place bad blocks.
+Should this NAND chip work with IFC or there is some limitation?
+
+-- 
+Best regards,
+Maxim Uvarov
