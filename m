@@ -1,199 +1,181 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELthjWMmEzIHMJDWTwGf0MKjrwCmvSFqPzXJrhXho2xtrbmBKU22xPuofrOCDxWRyu52G8w4
-ARC-Seal: i=1; a=rsa-sha256; t=1520033219; cv=none;
-        d=google.com; s=arc-20160816;
-        b=N11IwMH/jVHjT8W0MVcEMkmhSSNBTSvpfHhoKla5y2/Ch+CzJjfbRz2u8qNHisF/dt
-         PdNk/Q8hCWTSYJACvl4PQ+Q9wXJc+3EHe5a4qTrYsbzWsiZ/K6OI5bw4EWIqHrr2M6wT
-         yyt/rpPSoOLE7jH86ohkKErxe3sJVxrl/6YndyJRLjsfXo5oi0GR/+W8s52RvrLLr+IL
-         O5WU1FEY4DCeMDYlHhAJRkA1htNP6i6/zuFPL0YaJGamyvYTnZxwVB+XZR7VBjuNfJF9
-         xyQ0z3xwRvBOZfJvgDxh7adZMVLqF8qCFcHzcrQLLiEWu1MEZp+pakKYOz39svQdDUDR
-         oPQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:dkim-signature
-         :arc-authentication-results;
-        bh=eXszRTfAGQ0C4FHK59cbB0Coe8jQqeM+i+aNqjr/hUM=;
-        b=Oz5UlSiuhaYQ8HIt4NQU3UWO1g1IFgDvuWofjM0Uo9dd8Q8dZNh2NiTQXn3TKi8lZu
-         9ZSnEDR4tuMA+KnseZ60wDhIK8J8ov8CTTbnf+Qb2Zu+f49MlV/0YmPkWldIBXz75+dF
-         wsXQDafHvpiY0dFEsxdqsPjCKu9fMaRZ4gQntODDT7D4k7kmcgi8ztuViB9CePOGQ+MM
-         kzk0dWm37re3RqCFTnsMHXWRofHXUAuznTFc+Q38S3YX61ZJHIhj4n7YWFiRsi+VogkT
-         9peR9GVPkM/pyk/YQl1pMJ6bUfMM/vCT6838+h7PT+5LEviOZOAVz213XVc5P3pDFzrg
-         WUtA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@oracle.com header.s=corp-2017-10-26 header.b=pLJjfhaQ;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@oracle.com header.s=corp-2017-10-26 header.b=pLJjfhaQ;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2738277-1520030535-2-13970161603561939625
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='ru',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520030534; b=onx6ulT1Q6pxSHzkqq9+LiQAWz38gH+Eh55KixgelnSlpQL
+    TIbvSNyjZ6x60b0qsXvr1gFykMtrndishydreoAQvgdnWrskhXqSa2V7rNmRzfPk
+    NPCOvvUche+r0qk6eu9525QLGfkNHKConNKKigM1EAo8jLE7B7OOAIuWo/AeHFCI
+    J0DU88J4Pg0AjjcVARwAGL75inaIZ0JWvI6X3ld9NQYrXyL8Ve1h1Rq0gpi3qQgJ
+    RlYC1WY/EwBXGhDsurmy8C5aFn2CUsOUNJTmtDfxcM2ghC0CyPm0B1oDevBXi3za
+    crU69IC1mBHZzP2O1COpjfmKfh7V8XOPz1sIjwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520030534; bh=aWFbuVSq6FQFjFgBVpeGDMRc3B
+    odEpNpJCvs2gpmLo8=; b=slxYt2TXy6427WFxvigNfLNty+GtNiDIaQ5hZJ5VXJ
+    mir3aOrdrFACToGvWWFvaxw5gfti8GdPsMkLHC99DprpFn6iQwBmkscj5j5UOBpQ
+    JNsmwlDh4F5PzXb/jV+JqJJXOi+sd7jPCH4S0skR/Ha8Vjpi7pCANoHoRoOSPtZy
+    JAXwLzkdNNNBBFl76AOungzMf2PFU5tlI9ENPXkcv5/aJvrRIJJ2Mw1PY0LykpsX
+    MBthRd4wuvTrXcBPeEdfn6ymMnAvwtl9twCs6CunxQ4Q5EzDNeXbHciIhAt70fPW
+    Jtt7gByYZna3yi88b45IvQ4etFH62AjHpVjmJ8oJm3gA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ispras.ru;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ispras.ru header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ispras.ru;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ispras.ru header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934485AbeCBX05 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 2 Mar 2018 18:26:57 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34136 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934230AbeCBX05 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:26:57 -0500
-Subject: Re: [PATCH] selftests/vm/run_vmtests: adjust hugetlb size accroding
- to nr_cpus
-To: Li Zhijian <zhijianx.li@intel.com>, shuah@kernel.org,
-        akpm@linux-foundation.org, sj38.park@gmail.com,
-        pombredanne@nexb.com, aneesh.kumar@linux.vnet.ibm.com,
-        linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, lizhijian@cn.fujitsu.com
-References: <20180302024356.83359-1-zhijianx.li@intel.com>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <27de0b4e-d75b-a71d-c45c-1d84bc7e6e9e@oracle.com>
-Date: Fri, 2 Mar 2018 15:26:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180302024356.83359-1-zhijianx.li@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020271
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+        id S932188AbeCBWmN (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 17:42:13 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:55404 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932121AbeCBWmM (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:42:12 -0500
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] serial: mxs-auart: disable clks of Alphascale ASM9260
+Date: Sat,  3 Mar 2018 01:42:01 +0300
+Message-Id: <1520030521-19049-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593792153540765223?=
-X-GMAIL-MSGID: =?utf-8?q?1593870352809260025?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/01/2018 06:43 PM, Li Zhijian wrote:
-> this patch is to fix running userfaultfd_hugetlb failed on the host which has
-> more than 64 cpus
-> ---------------------------
-> running userfaultfd_hugetlb
-> ---------------------------
-> invalid MiB
-> Usage: <MiB> <bounces>
-> [FAIL]
-> 
-> From userfaultfd.c we can know, hugetlb_size need to meet hugetlb_size >= nr_cpus * hugepage_size
-> hugepage_size is often 2M, so when host cpus > 64, it requires more than 128M.
-> 
-> Signed-off-by: Li Zhijian <zhijianx.li@intel.com>
+In case of Alphascale ASM9260 probe() enables s->clk and s->clk_ahb
+via mxs_get_clks(), but there is no disable of the clocks.
+The patch adds it to error paths and to mxs_auart_remove().
 
-Thanks for fixing this.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-> ---
->  tools/testing/selftests/vm/run_vmtests | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-> index d2561895a021a..c440fb972afe9 100755
-> --- a/tools/testing/selftests/vm/run_vmtests
-> +++ b/tools/testing/selftests/vm/run_vmtests
-> @@ -2,8 +2,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  #please run as root
->  
-> -#we need 256M, below is the size in kB
-> -needmem=262144
->  mnt=./huge
->  exitcode=0
->  
-> @@ -17,6 +15,13 @@ while read name size unit; do
->  	fi
->  done < /proc/meminfo
->  
-> +nr_cpus=$(nproc)
-> +pgsize_MB=$((pgsize/1024))
-> +# rule: nr_cpus * pgsize_MB <= hugetlb_size(round to 128M for testing)
-> +hugetlb_size=$((((nr_cpus*pgsize_MB+127)/128)*128))
-> +# needmem depends on the nr_cpus, below is the size in kB
-> +needmem=$((hugetlb_size*2*1024))
-> +
->  #set proper nr_hugepages
->  if [ -n "$freepgs" ] && [ -n "$pgsize" ]; then
->  	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
-> @@ -107,8 +112,8 @@ fi
->  echo "---------------------------"
->  echo "running userfaultfd_hugetlb"
->  echo "---------------------------"
-> -# 256MB total huge pages == 128MB src and 128MB dst
-> -./userfaultfd hugetlb 128 32 $mnt/ufd_test_file
-> +# 256MB total huge pages == 128MB src and 128MB dst when nr_cpus <= 64
-> +./userfaultfd hugetlb $hugetlb_size 32 $mnt/ufd_test_file
->  if [ $? -ne 0 ]; then
->  	echo "[FAIL]"
->  	exitcode=1
-
-The above changes are functionally OK.  But, I think something like the
-following may be easier to read/understand.  Feel free to use as much or
-little as you would like.
--- 
-Mike Kravetz
-
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 254da0d753fb ("serial: mxs-auart: add Alphascale ASM9260 support")
 ---
- tools/testing/selftests/vm/run_vmtests | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/tty/serial/mxs-auart.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index d2561895a021..40671f6739a9 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -2,25 +2,33 @@
- # SPDX-License-Identifier: GPL-2.0
- #please run as root
+diff --git a/drivers/tty/serial/mxs-auart.c b/drivers/tty/serial/mxs-auart.c
+index 079dc47aa142..531c374a5e3e 100644
+--- a/drivers/tty/serial/mxs-auart.c
++++ b/drivers/tty/serial/mxs-auart.c
+@@ -1674,8 +1674,10 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 		return ret;
  
--#we need 256M, below is the size in kB
--needmem=262144
- mnt=./huge
- exitcode=0
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r)
+-		return -ENXIO;
++	if (!r) {
++		ret = -ENXIO;
++		goto out_disable_clks;
++	}
  
--#get pagesize and freepages from /proc/meminfo
-+#get huge pagesize and freepages from /proc/meminfo
- while read name size unit; do
- 	if [ "$name" = "HugePages_Free:" ]; then
- 		freepgs=$size
- 	fi
- 	if [ "$name" = "Hugepagesize:" ]; then
--		pgsize=$size
-+		hpgsize_KB=$size
- 	fi
- done < /proc/meminfo
+ 	s->port.mapbase = r->start;
+ 	s->port.membase = ioremap(r->start, resource_size(r));
+@@ -1690,21 +1692,23 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 	s->mctrl_prev = 0;
  
-+# Simple hugetlbfs tests have a hardcoded minimum requirement of
-+# huge pages totaling 256MB (262144KB) in size.  The userfaultfd
-+# hugetlb test requires a minimum of 2 * nr_cpus huge pages.  Take
-+# both of these requirements into account and attempt to increase
-+* number of huge pages available.
-+nr_cpus=$(nproc)
-+hpgsize_MB=$((hpgsize_KB / 1024))
-+half_ufd_size_MB=$((((nr_cpus * hpgsize_MB + 127) / 128) * 128))
-+needmem_KB=$((half_ufd_size_MB * 2 * 1024))
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
++	if (irq < 0) {
++		ret = irq;
++		goto out_disable_clks;
++	}
+ 
+ 	s->port.irq = irq;
+ 	ret = devm_request_irq(&pdev->dev, irq, mxs_auart_irq_handle, 0,
+ 			       dev_name(&pdev->dev), s);
+ 	if (ret)
+-		return ret;
++		goto out_disable_clks;
+ 
+ 	platform_set_drvdata(pdev, s);
+ 
+ 	ret = mxs_auart_init_gpios(s, &pdev->dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize GPIOs.\n");
+-		return ret;
++		goto out_disable_clks;
+ 	}
+ 
+ 	/*
+@@ -1712,7 +1716,7 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = mxs_auart_request_gpio_irq(s);
+ 	if (ret)
+-		return ret;
++		goto out_disable_clks;
+ 
+ 	auart_port[s->port.line] = s;
+ 
+@@ -1720,7 +1724,7 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 
+ 	ret = uart_add_one_port(&auart_driver, &s->port);
+ 	if (ret)
+-		goto out_disable_clks_free_qpio_irq;
++		goto out_free_qpio_irq;
+ 
+ 	/* ASM9260 don't have version reg */
+ 	if (is_asm9260_auart(s)) {
+@@ -1734,13 +1738,15 @@ static int mxs_auart_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-out_disable_clks_free_qpio_irq:
+-	if (s->clk)
+-		clk_disable_unprepare(s->clk_ahb);
+-	if (s->clk_ahb)
+-		clk_disable_unprepare(s->clk_ahb);
++out_free_qpio_irq:
+ 	mxs_auart_free_gpio_irq(s);
+ 	auart_port[pdev->id] = NULL;
 +
- #set proper nr_hugepages
--if [ -n "$freepgs" ] && [ -n "$pgsize" ]; then
-+if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
- 	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
--	needpgs=`expr $needmem / $pgsize`
-+	needpgs=$((needmem_KB / hpgsize_KB))
- 	tries=2
- 	while [ $tries -gt 0 ] && [ $freepgs -lt $needpgs ]; do
- 		lackpgs=$(( $needpgs - $freepgs ))
-@@ -107,8 +115,9 @@ fi
- echo "---------------------------"
- echo "running userfaultfd_hugetlb"
- echo "---------------------------"
--# 256MB total huge pages == 128MB src and 128MB dst
--./userfaultfd hugetlb 128 32 $mnt/ufd_test_file
-+# Test requires source and destination huge pages.  Size of source
-+# (half_ufd_size_MB) is passed as argument to test.
-+./userfaultfd hugetlb $half_ufd_size_MB 32 $mnt/ufd_test_file
- if [ $? -ne 0 ]; then
- 	echo "[FAIL]"
- 	exitcode=1
++out_disable_clks:
++	if (is_asm9260_auart(s)) {
++		clk_disable_unprepare(s->clk);
++		clk_disable_unprepare(s->clk_ahb);
++	}
+ 	return ret;
+ }
+ 
+@@ -1751,6 +1757,10 @@ static int mxs_auart_remove(struct platform_device *pdev)
+ 	uart_remove_one_port(&auart_driver, &s->port);
+ 	auart_port[pdev->id] = NULL;
+ 	mxs_auart_free_gpio_irq(s);
++	if (is_asm9260_auart(s)) {
++		clk_disable_unprepare(s->clk);
++		clk_disable_unprepare(s->clk_ahb);
++	}
+ 
+ 	return 0;
+ }
 -- 
-2.13.6
+2.7.4
 
