@@ -1,133 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427305AbeCBMHt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:07:49 -0500
-Received: from mail-it0-f42.google.com ([209.85.214.42]:37461 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423004AbeCBMHo (ORCPT
+        id S1427320AbeCBMJK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:09:10 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45990 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423004AbeCBMJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:07:44 -0500
-X-Google-Smtp-Source: AG47ELuzSEsxjtBobKmQ+qxjXye8/QXsh9bBiqwiO2fTSeAoqMBsV3LB7qS3AsXg8qqQSivmoRRKTG/ylNc/9g+RXww=
+        Fri, 2 Mar 2018 07:09:07 -0500
+Subject: Re: [PATCH v8 4/8] drm/rockchip: dw-mipi-dsi: Fix error handling path
+To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        dri-devel@lists.freedesktop.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>, linux-rockchip@lists.infradead.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
+References: <20180110162348.22765-1-thierry.escande@collabora.com>
+ <20180110162348.22765-5-thierry.escande@collabora.com>
+ <13219770.NOTAg9tncx@diego>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <68537204-0c41-5210-935a-0a7743ea847c@collabora.com>
+Date: Fri, 2 Mar 2018 13:09:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180302103127.GA2081@amd>
-References: <20180224214617.GA22619@amd> <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
- <20180226131318.GA14045@amd> <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
- <20180226231336.GA18565@amd> <CACRpkdarR_7HqGMPwfa8YpG9wnFs5mJrNwuctycn=MrdwaRxyw@mail.gmail.com>
- <20180302091025.GC30267@amd> <CACRpkda=deFSmk2iyrtde3Z-aj6rW9_jNfE3Ep4X=ejprGxRUw@mail.gmail.com>
- <20180302103127.GA2081@amd>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 13:07:43 +0100
-Message-ID: <CACRpkda-VLsMVqYx3Y6+3JtLJERhmeJZF5g4Gd9ecvgR1Nnr0A@mail.gmail.com>
-Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Daniel Baluta <daniel.baluta@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Ivajlo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Martijn Braam <martijn@brixit.nl>,
-        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?B?TWlja3Vsw6HFoSBRd2VydHo=?= <abcloriens@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        clayton@craftyguy.net, Linux-OMAP <linux-omap@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Patrik Bachan <patrikbachan@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <13219770.NOTAg9tncx@diego>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 11:31 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Fri 2018-03-02 10:33:24, Linus Walleij wrote:
->> On Fri, Mar 2, 2018 at 10:10 AM, Pavel Machek <pavel@ucw.cz> wrote:
->> > Linux-Regression-ID: lr#4b650f
->> >
->> > On Tue 2018-02-27 09:43:32, Linus Walleij wrote:
->> >> On Tue, Feb 27, 2018 at 12:13 AM, Pavel Machek <pavel@ucw.cz> wrote:
->> >>
->> >> > I did git bisect, and the winner seems to be:
->> >> >
->> >> > pavel@duo:/data/l/linux-n900$ git bisect bad
->> >> > c85823390215e52d68d3826df92a447ed31e5c80 is the first bad commit
->> >> > commit c85823390215e52d68d3826df92a447ed31e5c80
->> >> > Author: Linus Walleij <linus.walleij@linaro.org>
->> >> > Date:   Wed Dec 27 16:37:44 2017 +0100
->> >> >
->> >> >     gpio: of: Support SPI nonstandard GPIO properties
->> >>
->> >> I have fixes queued for this, tried to send a pull request yesterday
->> >> but it turns out the fixes need fixing... OK I'm onto it anyways.
->> >
->> > Do you have any updates? Is there way to fix dts so that this does not
->> > trigger on N900?
->> >
->> > If this is taking longer to fix, should c85823390215 be reverted in
->> > the meantime? It does not seem particulary important/urgent...
+Hi Heiko,
+
+On 01/03/18 16:50, Heiko Stübner wrote:
+> Hi Jeffy, Thierry, Enric,
+> 
+> Am Mittwoch, 10. Januar 2018, 17:23:44 CET schrieb Thierry Escande:
+>> From: Jeffy Chen <jeffy.chen@rock-chips.com>
 >>
->> No patience between the v4.16 release candidates eh ;)
+>> Add missing pm_runtime_disable() in bind()'s error handling path.
 >>
->> commit 6662ae6af82df10259a70c7569b4c12ea7f3ba93
->> ("gpiolib: Keep returning EPROBE_DEFER when we should")
+>> Also cleanup encoder & connector in unbind().
+> 
+> Can you please split all these surprise "Also" sections into separate
+> patches?
+> 
+
+I'll take a look.
+
+> It looks like this is true for all following patch to some degree and
+> the inno-hdmi patch even has a unbind reordering-change without
+> mentioning it in the commit message.
+> 
+
+Actually, I think this patch is not correct against current mainline, see below.
+
+> 
+> Thanks
+> Heiko
+> 
+>> Fixes: 80a9a059d4e4 ("drm/rockchip/dsi: add dw-mipi power domain support")
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+>> ---
+>>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 21 +++++++++++++--------
+>>  1 file changed, 13 insertions(+), 8 deletions(-)
 >>
->> and
+>> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+>> b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c index b1fe0639227e..78e6b7919bf7
+>> 100644
+>> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+>> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+>> @@ -1282,7 +1282,7 @@ static int dw_mipi_dsi_bind(struct device *dev, struct
+>> device *master, ret = dw_mipi_dsi_register(drm, dsi);
+>>  	if (ret) {
+>>  		DRM_DEV_ERROR(dev, "Failed to register mipi_dsi: %d\n", ret);
+>> -		goto err_pllref;
+>> +		goto err_disable_pllref;
+>>  	}
 >>
->> commit ce27fb2c56db6ccfe8099343bb4afdab15e77e7b
->> ("gpio: Handle deferred probing in of_find_gpio() properly")
+>>  	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
+>> @@ -1290,24 +1290,25 @@ static int dw_mipi_dsi_bind(struct device *dev,
+>> struct device *master, ret = mipi_dsi_host_register(&dsi->dsi_host);
+>>  	if (ret) {
+>>  		DRM_DEV_ERROR(dev, "Failed to register MIPI host: %d\n", ret);
+>> -		goto err_cleanup;
+>> +		goto err_disable_pm_runtime;
+>>  	}
 >>
->> that are both in Torvalds' tree since yesterday should be fixing
->> this, I think? Did you try just using the upstream HEAD?
->
-> After I spent hours bisecting, I was kind of assuming you'd cc me on
-> merge request or something like that... so that I could test it before
-> going mainline.
+>>  	if (!dsi->panel) {
+>>  		ret = -EPROBE_DEFER;
+>> -		goto err_mipi_dsi_host;
+>> +		goto err_unreg_mipi_dsi_host;
+>>  	}
+>>
+>>  	dev_set_drvdata(dev, dsi);
+>>  	pm_runtime_enable(dev);
+>>  	return 0;
+>>
+>> -err_mipi_dsi_host:
+>> +err_unreg_mipi_dsi_host:
+>>  	mipi_dsi_host_unregister(&dsi->dsi_host);
+>> -err_cleanup:
+>> -	drm_encoder_cleanup(&dsi->encoder);
+>> -	drm_connector_cleanup(&dsi->connector);
+>> -err_pllref:
+>> +err_disable_pm_runtime:
+>> +	pm_runtime_disable(dev);
 
-Sorry, I'm not very good with planning and coordination. I just
-try my best to keep this working.
+I think that this is not required, 'pm_runtime_enable' is called just before the
+'return 0' (see above). Commit 517f56839f58 'drm/rockchip: dw-mipi-dsi: fix
+possible un-balanced runtime PM enable' moved the call to that place. So, now
+the call to pm_runtime_disable is not needed.
 
-I guess ideally we should use Bugzilla to track regressions
-like this, but it also comes with a bit of overhead so I don't
-know if it helps more than trying to keep things in the head.
+>> +	dsi->connector.funcs->destroy(&dsi->connector);
+>> +	dsi->encoder.funcs->destroy(&dsi->encoder);
 
-> Which of those should fix it?
+Here, there is a reordering and also a function replacement. The reorder makes
+sense to me, first cleanup the connector and then the encoder, but I'm not sure
+about the function change and if is needed, anyway, in the case is needed,
+shouldn't be
 
-The first one I guess, the second is mostly about supporting
--EPROBE_DEFER for different use cases.
++	drm_connector_cleanup(&dsi->connector);
++	drm_encoder_cleanup(&dsi->encoder);
 
-> I tested today's mainline, and... sound fails, different way:
->
-> pavel@n900:~$ cat /proc/asound/cards
->  0 [RX51           ]: RX-51 - RX-51
->                        RX-51
-> pavel@n900:~$ cd g/tui/ofone/
-> pavel@n900:~/g/tui/ofone$ cd
-> pavel@n900:~$ festival --tts
->                        ahoj
->                        ^D
->                        uname -a
->
-> (Festival is hung).
+instead?
 
-Sorry but I need some background here, I have no idea what
-festival is, other than it seems to be some kind of userspace
-test program?
+>> +err_disable_pllref:
+>>  	clk_disable_unprepare(dsi->pllref_clk);
+>>  	return ret;
+>>  }
+>> @@ -1319,6 +1320,10 @@ static void dw_mipi_dsi_unbind(struct device *dev,
+>> struct device *master,
+>>
+>>  	mipi_dsi_host_unregister(&dsi->dsi_host);
+>>  	pm_runtime_disable(dev);
+>> +
+>> +	dsi->connector.funcs->destroy(&dsi->connector);
+>> +	dsi->encoder.funcs->destroy(&dsi->encoder);
+>> +
 
->> Ok, so this code looks pretty crazy to me: I tried removing the
->> "of_find_spi_gpio" part, and audio started working.
->
-> Hmm. Looks like audio is working w/o any changes, too. Not sure why
-> festival hung on me before.
+Same here.
 
-Does it mean that mainline is working find for you or
-do we need to look deeper into the problem in the OF
-lookup?
+>>  	clk_disable_unprepare(dsi->pllref_clk);
+>>  }
+> 
+> 
 
-Yours,
-Linus Walleij
+Best regards,
+  Enric
