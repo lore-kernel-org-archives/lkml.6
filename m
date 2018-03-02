@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164759AbeCBDwR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 22:52:17 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34257 "EHLO
+        id S1164796AbeCBDwh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 22:52:37 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44884 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164743AbeCBDwI (ORCPT
+        with ESMTP id S1164778AbeCBDwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 22:52:08 -0500
-X-Google-Smtp-Source: AG47ELt6LpQprIeatqzWaEMdIBplTsuML/HbFRsywFkoYM0tQHS6fBMrPEB0uOfRQyDV/Lm5nrm5LA==
+        Thu, 1 Mar 2018 22:52:31 -0500
+X-Google-Smtp-Source: AG47ELsQ34tgDeOTCec7MpJgq7iRNiYsFiOLFhck4Ad5xRu6mDKhmVM+i+MRm0Pxl4ZlSull1o5CQw==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,99 +17,38 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
         bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 06/10] arm64: dts: actions: Add S900 gpio nodes
-Date: Fri,  2 Mar 2018 09:20:41 +0530
-Message-Id: <20180302035045.14660-7-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 09/10] MAINTAINERS: Add reviewer for ACTIONS platforms
+Date: Fri,  2 Mar 2018 09:20:44 +0530
+Message-Id: <20180302035045.14660-10-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
 References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio nodes for Actions Semi S900 SoC.
+Since I'll be working on improving support for ACTIONS platforms, adding
+myself as the reviewer.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts |  6 +++
- arch/arm64/boot/dts/actions/s900.dtsi             | 48 +++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index ff043c961d75..60ddaf98401b 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -14,6 +14,12 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9a7f76eadae9..640dabc4c311 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1117,6 +1117,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
  
- 	aliases {
- 		serial5 = &uart5;
-+		gpio0 = &gpioa;
-+		gpio1 = &gpiob;
-+		gpio2 = &gpioc;
-+		gpio3 = &gpiod;
-+		gpio4 = &gpioe;
-+		gpio5 = &gpiof;
- 	};
- 
- 	chosen {
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 0156483f0f4d..9c7843045850 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -180,6 +180,54 @@
- 			clocks = <&cmu CLK_GPIO>;
- 		};
- 
-+		gpioa: gpioa@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 0 32>;
-+		};
-+
-+		gpiob: gpiob@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 32 32>;
-+		};
-+
-+		gpioc: gpioc@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 64 12>;
-+		};
-+
-+		gpiod: gpiod@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 76 30>;
-+		};
-+
-+		gpioe: gpioe@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 106 32>;
-+		};
-+
-+		gpiof: gpiof@e01b0000 {
-+			compatible = "actions,s900-gpio";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pinctrl 0 138 8>;
-+		};
-+
- 		timer: timer@e0228000 {
- 			compatible = "actions,s900-timer";
- 			reg = <0x0 0xe0228000 0x0 0x8000>;
+ ARM/ACTIONS SEMI ARCHITECTURE
+ M:	Andreas Färber <afaerber@suse.de>
++R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ N:	owl
 -- 
 2.14.1
