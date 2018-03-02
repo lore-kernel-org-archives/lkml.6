@@ -1,49 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946631AbeCBOEv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 09:04:51 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:51050 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425223AbeCBOEu (ORCPT
+        id S1946646AbeCBOH6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 09:07:58 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33066 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425080AbeCBOH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:04:50 -0500
+        Fri, 2 Mar 2018 09:07:56 -0500
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Dinh Nguyen <dinguyen@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: socfpga: PM: Drop useless check for PM_SUSPEND_STANDBY
-Date: Fri,  2 Mar 2018 15:04:47 +0100
-Message-Id: <1519999487-15474-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2] checkpatch: Update section keywords
+Date: Fri,  2 Mar 2018 15:07:52 +0100
+Message-Id: <1519999672-15828-1-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As SoCFPGA uses the standard suspend_valid_only_mem() for its
-platform_suspend_ops.valid() callback, its platform_suspend_ops.enter()
-callback will never be called with state equal to PM_SUSPEND_STANDBY.
+As of commit bd721ea73e1f9655 ("treewide: replace obsolete _refok by
+__ref"), __init_refok no longer exists, so it can be removed.
+While at it, add the modern variants that were still missing.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Acked-by: Joe Perches <joe@perches.com>
 ---
 v2:
-  - Add Acked-by.
+  - Add Acked-by,
+  - Improve one-line summary.
 ---
- arch/arm/mach-socfpga/pm.c | 1 -
- 1 file changed, 1 deletion(-)
+ scripts/checkpatch.pl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-socfpga/pm.c b/arch/arm/mach-socfpga/pm.c
-index c378ab0c24317ccf..d4866788702cb87a 100644
---- a/arch/arm/mach-socfpga/pm.c
-+++ b/arch/arm/mach-socfpga/pm.c
-@@ -116,7 +116,6 @@ static int socfpga_pm_suspend(unsigned long arg)
- static int socfpga_pm_enter(suspend_state_t state)
- {
- 	switch (state) {
--	case PM_SUSPEND_STANDBY:
- 	case PM_SUSPEND_MEM:
- 		outer_disable();
- 		cpu_suspend(0, socfpga_pm_suspend);
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 3d4040322ae19f66..e8f8a65d31c73903 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -344,9 +344,10 @@ our $Sparse	= qr{
+ 			__force|
+ 			__iomem|
+ 			__must_check|
+-			__init_refok|
+ 			__kprobes|
+ 			__ref|
++			__refconst|
++			__refdata|
+ 			__rcu|
+ 			__private
+ 		}x;
 -- 
 2.7.4
