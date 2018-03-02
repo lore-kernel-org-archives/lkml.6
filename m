@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsQs5sNKUKIYF4mKSxxeSPJ/b1W912cxiCo1fBGzwTcQ6lX3Nb9GY2HtxwlOxzaQreu+hAn
-ARC-Seal: i=1; a=rsa-sha256; t=1519981445; cv=none;
+X-Google-Smtp-Source: AG47ELuy+yIX8XZGgSRESPIDQQ3u2+igciaIMQTbql1rr/CWRLbaXwCVZ/EvwaiWqa2NYMl3uzoN
+ARC-Seal: i=1; a=rsa-sha256; t=1519981442; cv=none;
         d=google.com; s=arc-20160816;
-        b=bsXIbs/8ygn+zNeNmhOCgnErQsIIFpKv0JhN7Q13K6YFlYTKl/wmhyG1Wfr+dJkj92
-         fy6p+0S6nK+2m4o9G6kYVXKjtQZwoS83c9dwOQm6nCxEdQyqBjOWAjezgg+Y+nF8zBxJ
-         j/YmAOhW+ZLumU8HWD7ELrHJChQeq1O9+/5fnbdNKlLHW9cZjyJYZh1MQEVghYg4FoHi
-         jnU4BGnfGoWZlLYlelBKLxACmg5gLsrKJdy5TvPCIWaGq4yCjb3FB2iH6ZK+yFPepzbg
-         vrxdiZkfaekRSn4YEImUR/+WCVs/nk2lIHWR8yF9AawfaTcAY2gSiWorMq27OSgjkM3e
-         h4nA==
+        b=aXB0U7QA8R2Lr7g/TuNreNLS+y75WP/7DjCeP2LhXmN0yqYXncRatyEdGQ5lIrtc/d
+         5QaS7Jky0bPavm5xocH6cC0NIKGoaV7r1zsK9Ai26uD6T5j4uqF/7U+6NlK9M2RS+QqU
+         Kpkcp2hJEMOtRHaDtDhuW4qzJgXmFPC2txyuNQMVdW6h/019I9pNPRwSpRo2DST1kbIE
+         MwkmNn66jqCwsJaYH7ncEMgltMH8kYJQ2LBBy457VDa/Q2Akwah/XTI+SV1nVwf5II99
+         33+3i4/KdEnCf65MopqaMLT997WjyB9KlaiuonsayRKfrve9igCi9TWy5dVTBWBBpa2G
+         +puw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BA92QFEUHs9EBA6tSlcH2gIgAJduhG6cCAyiUwfv2+0=;
-        b=goh7sitBuT0fQsl4ejvnC3znFljDo4FVzh4/wH0Dt0Yx9pV6TaXaUHRnt328HbMDaw
-         3OK4DGnXkC2K4AM65e/NaTp5VsMaX9heyl6SCkvuCmgnI5Un7ict9EW1QNq82IwRvYMj
-         eAq8I/xW7diNhnjZmoTY2mZxej4+pSCuZgW480yB1rzIZTUSJbtD7Lk4XYJh1OfX1kAV
-         A2nm7jxEpl8lYtfSZOMw1RhW79uj+aUC6EzproiXGBLmoghkrj1Fs2dybxKrzfiD2Mg8
-         8+evfjUC33v+YN6f0krOMTDBuRu+ORjE/GHs21tOR0cwfdLhgxy/buVOjhvvkosD/dAy
-         Y26g==
+        bh=dHsPxu5UztxB85QZH8MK9NJ6jNoeR3rIfh/9f/opN1Q=;
+        b=anY6y9/+FK+Cd90x23vduC9E3IFPzZT4IsNDE07ZFgeTSt74Yx6Mg3roZVUSB4bwK+
+         5m6u+Q2XswrQdI+lBj4sIJDCSi6A2G0MtWx4hC7WvQlEs2zIJSJ7iJVdtjhYDIcqhsfz
+         zhZnA2Y0flUCKUl5U045W8xDpHBNOKW53VTExz0twNfaDnKxa5URZXvmO9QCLlLV6Z2Y
+         ETJYLcBOjxAeVtSWueUHxb8ObkZSBrNXh5zM4Kfm9qHuU3isa4NMxDMsK2LIYsAMcz5c
+         9gSSFt3q847gdh+9nuKg0KUyrzeVDpBins90dc27HSLzt5uKSlWTr/luboq62ZM3lDSG
+         GTxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Min Deng <mdeng@redhat.com>,
-	Daniel Henrique Barboza <danielhb@linux.vnet.ibm.com>,
-	Jose Ricardo Ziviani <joserz@linux.vnet.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	David Gibson <david@gibson.dropbear.id.au>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 092/115] powerpc/pseries: Make RAS IRQ explicitly dependent on DLPAR WQ
-Date: Fri,  2 Mar 2018 09:51:35 +0100
-Message-Id: <20180302084507.575230806@linuxfoundation.org>
+Subject: [PATCH 4.14 091/115] leds: core: Fix regression caused by commit 2b83ff96f51d
+Date: Fri,  2 Mar 2018 09:51:34 +0100
+Message-Id: <20180302084507.532380207@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816064137372436?=
-X-GMAIL-MSGID: =?utf-8?q?1593816064137372436?=
+X-GMAIL-THRID: =?utf-8?q?1593816060624964724?=
+X-GMAIL-MSGID: =?utf-8?q?1593816060624964724?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,106 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
 
-[ Upstream commit e2d5915293ffdff977ddcfc12b817b08c53ffa7a ]
+[ Upstream commit 7b6af2c53192f1766892ef40c8f48a413509ed72 ]
 
-The hotplug code uses its own workqueue to handle IRQ requests
-(pseries_hp_wq), however that workqueue is initialized after
-init_ras_IRQ(). That can lead to a kernel panic if any hotplug
-interrupts fire after init_ras_IRQ() but before pseries_hp_wq is
-initialised. eg:
+Commit 2b83ff96f51d ("led: core: Fix brightness setting when setting delay_off=0")
+replaced del_timer_sync(&led_cdev->blink_timer) with led_stop_software_blink()
+in led_blink_set(), which additionally clears LED_BLINK_SW flag as well as
+zeroes blink_delay_on and blink_delay_off properties of the struct led_classdev.
 
-  UDP-Lite hash table entries: 2048 (order: 0, 65536 bytes)
-  NET: Registered protocol family 1
-  Unpacking initramfs...
-  (qemu) object_add memory-backend-ram,id=mem1,size=10G
-  (qemu) device_add pc-dimm,id=dimm1,memdev=mem1
-  Unable to handle kernel paging request for data at address 0xf94d03007c421378
-  Faulting instruction address: 0xc00000000012d744
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  LE SMP NR_CPUS=2048 NUMA pSeries
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2-ziviani+ #26
-  task:         (ptrval) task.stack:         (ptrval)
-  NIP:  c00000000012d744 LR: c00000000012d744 CTR: 0000000000000000
-  REGS:         (ptrval) TRAP: 0380   Not tainted  (4.15.0-rc2-ziviani+)
-  MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 28088042  XER: 20040000
-  CFAR: c00000000012d3c4 SOFTE: 0
-  ...
-  NIP [c00000000012d744] __queue_work+0xd4/0x5c0
-  LR [c00000000012d744] __queue_work+0xd4/0x5c0
-  Call Trace:
-  [c0000000fffefb90] [c00000000012d744] __queue_work+0xd4/0x5c0 (unreliable)
-  [c0000000fffefc70] [c00000000012dce4] queue_work_on+0xb4/0xf0
+Cleansing of the latter ones wasn't required to fix the original issue but
+wasn't considered harmful. It nonetheless turned out to be so in case when
+pointer to one or both props is passed to led_blink_set() like in the
+ledtrig-timer.c. In such cases zeroes are passed later in delay_on and/or
+delay_off arguments to led_blink_setup(), which results either in stopping
+the software blinking or setting blinking frequency always to 1Hz.
 
-This commit makes the RAS IRQ registration explicitly dependent on the
-creation of the pseries_hp_wq.
+Avoid using led_stop_software_blink() and add a single call required
+to clear LED_BLINK_SW flag, which was the only needed modification to
+fix the original issue.
 
-Reported-by: Min Deng <mdeng@redhat.com>
-Reported-by: Daniel Henrique Barboza <danielhb@linux.vnet.ibm.com>
-Tested-by: Jose Ricardo Ziviani <joserz@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Fixes 2b83ff96f51d ("led: core: Fix brightness setting when setting delay_off=0")
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/dlpar.c   |   21 ++++++++++++++++++---
- arch/powerpc/platforms/pseries/pseries.h |    2 ++
- arch/powerpc/platforms/pseries/ras.c     |    3 ++-
- 3 files changed, 22 insertions(+), 4 deletions(-)
+ drivers/leds/led-core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -586,11 +586,26 @@ static ssize_t dlpar_show(struct class *
- 
- static CLASS_ATTR_RW(dlpar);
- 
--static int __init pseries_dlpar_init(void)
-+int __init dlpar_workqueue_init(void)
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -187,8 +187,9 @@ void led_blink_set(struct led_classdev *
+ 		   unsigned long *delay_on,
+ 		   unsigned long *delay_off)
  {
-+	if (pseries_hp_wq)
-+		return 0;
-+
- 	pseries_hp_wq = alloc_workqueue("pseries hotplug workqueue",
--					WQ_UNBOUND, 1);
-+			WQ_UNBOUND, 1);
-+
-+	return pseries_hp_wq ? 0 : -ENOMEM;
-+}
-+
-+static int __init dlpar_sysfs_init(void)
-+{
-+	int rc;
-+
-+	rc = dlpar_workqueue_init();
-+	if (rc)
-+		return rc;
-+
- 	return sysfs_create_file(kernel_kobj, &class_attr_dlpar.attr);
- }
--machine_device_initcall(pseries, pseries_dlpar_init);
-+machine_device_initcall(pseries, dlpar_sysfs_init);
+-	led_stop_software_blink(led_cdev);
++	del_timer_sync(&led_cdev->blink_timer);
  
---- a/arch/powerpc/platforms/pseries/pseries.h
-+++ b/arch/powerpc/platforms/pseries/pseries.h
-@@ -98,4 +98,6 @@ static inline unsigned long cmo_get_page
- 	return CMO_PageSize;
- }
++	clear_bit(LED_BLINK_SW, &led_cdev->work_flags);
+ 	clear_bit(LED_BLINK_ONESHOT, &led_cdev->work_flags);
+ 	clear_bit(LED_BLINK_ONESHOT_STOP, &led_cdev->work_flags);
  
-+int dlpar_workqueue_init(void);
-+
- #endif /* _PSERIES_PSERIES_H */
---- a/arch/powerpc/platforms/pseries/ras.c
-+++ b/arch/powerpc/platforms/pseries/ras.c
-@@ -69,7 +69,8 @@ static int __init init_ras_IRQ(void)
- 	/* Hotplug Events */
- 	np = of_find_node_by_path("/event-sources/hot-plug-events");
- 	if (np != NULL) {
--		request_event_sources_irqs(np, ras_hotplug_interrupt,
-+		if (dlpar_workqueue_init() == 0)
-+			request_event_sources_irqs(np, ras_hotplug_interrupt,
- 					   "RAS_HOTPLUG");
- 		of_node_put(np);
- 	}
