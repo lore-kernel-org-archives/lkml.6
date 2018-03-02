@@ -1,112 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936197AbeCBHkD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 02:40:03 -0500
-Received: from LGEAMRELO12.lge.com ([156.147.23.52]:57456 "EHLO
-        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935717AbeCBHkC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 02:40:02 -0500
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [PATCH] rcu: Remove deprecated RCU debugfs tracing code
-Date: Fri,  2 Mar 2018 16:39:12 +0900
-Message-Id: <1519976352-25400-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        id S1034246AbeCBHnQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 02:43:16 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:57258 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936128AbeCBHnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 02:43:15 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>, dianders@google.com,
+        groeck@chromium.org, briannorris@google.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] arm64: dts: rockchip: add usb3-phy otg-port support for rk3399.
+Date: Fri, 02 Mar 2018 08:43:08 +0100
+Message-ID: <1798650.vypR2cBVd9@phil>
+In-Reply-To: <9229851.uS1UDVWbBb@phil>
+References: <20171215110005.7564-1-enric.balletbo@collabora.com> <20171215110005.7564-3-enric.balletbo@collabora.com> <9229851.uS1UDVWbBb@phil>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit ae91aa0adb14(rcu: Remove debugfs tracing) removed the RCU debugfs
-tracing code, and left deprecated code.
+Am Samstag, 16. Dezember 2017, 18:06:50 CET schrieb Heiko Stuebner:
+> Am Freitag, 15. Dezember 2017, 12:00:03 CET schrieb Enric Balletbo i Serra:
+> > Add the usb3 phyter for the USB3.0 OTG controller.
+> > 
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> applied for 4.16
 
-Because exp_workdone{0,1,2,3} won't be used anymore since the commit,
-it's better to remove code to do with those variables. Remove it.
+and reverted again for the 4.16 cycle due to the regressions it causes on
+non-gru boards.
 
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- kernel/rcu/tree.h     |  4 ----
- kernel/rcu/tree_exp.h | 13 +++++--------
- 2 files changed, 5 insertions(+), 12 deletions(-)
+I've requeued it in my temporary 4.18 branch and will readd it once
+the typec-phy changeset gets merged.
 
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 9dd0ea7..cfeb351 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -234,10 +234,6 @@ struct rcu_data {
- #ifdef CONFIG_RCU_FAST_NO_HZ
- 	struct rcu_head oom_head;
- #endif /* #ifdef CONFIG_RCU_FAST_NO_HZ */
--	atomic_long_t exp_workdone0;	/* # done by workqueue. */
--	atomic_long_t exp_workdone1;	/* # done by others #1. */
--	atomic_long_t exp_workdone2;	/* # done by others #2. */
--	atomic_long_t exp_workdone3;	/* # done by others #3. */
- 	int exp_dynticks_snap;		/* Double-check need for IPI. */
- 
- 	/* 6) Callback offloading. */
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 73e1d3d..f8e4571 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -248,14 +248,12 @@ static void rcu_report_exp_rdp(struct rcu_state *rsp, struct rcu_data *rdp,
- }
- 
- /* Common code for synchronize_{rcu,sched}_expedited() work-done checking. */
--static bool sync_exp_work_done(struct rcu_state *rsp, atomic_long_t *stat,
--			       unsigned long s)
-+static bool sync_exp_work_done(struct rcu_state *rsp, unsigned long s)
- {
- 	if (rcu_exp_gp_seq_done(rsp, s)) {
- 		trace_rcu_exp_grace_period(rsp->name, s, TPS("done"));
- 		/* Ensure test happens before caller kfree(). */
- 		smp_mb__before_atomic(); /* ^^^ */
--		atomic_long_inc(stat);
- 		return true;
- 	}
- 	return false;
-@@ -289,7 +287,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
- 	 * promoting locality and is not strictly needed for correctness.
- 	 */
- 	for (; rnp != NULL; rnp = rnp->parent) {
--		if (sync_exp_work_done(rsp, &rdp->exp_workdone1, s))
-+		if (sync_exp_work_done(rsp, s))
- 			return true;
- 
- 		/* Work not done, either wait here or go up. */
-@@ -302,8 +300,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
- 						  rnp->grplo, rnp->grphi,
- 						  TPS("wait"));
- 			wait_event(rnp->exp_wq[rcu_seq_ctr(s) & 0x3],
--				   sync_exp_work_done(rsp,
--						      &rdp->exp_workdone2, s));
-+				   sync_exp_work_done(rsp, s));
- 			return true;
- 		}
- 		rnp->exp_seq_rq = s; /* Followers can wait on us. */
-@@ -313,7 +310,7 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
- 	}
- 	mutex_lock(&rsp->exp_mutex);
- fastpath:
--	if (sync_exp_work_done(rsp, &rdp->exp_workdone3, s)) {
-+	if (sync_exp_work_done(rsp, s)) {
- 		mutex_unlock(&rsp->exp_mutex);
- 		return true;
- 	}
-@@ -661,7 +658,7 @@ static void _synchronize_rcu_expedited(struct rcu_state *rsp,
- 	rdp = per_cpu_ptr(rsp->rda, raw_smp_processor_id());
- 	rnp = rcu_get_root(rsp);
- 	wait_event(rnp->exp_wq[rcu_seq_ctr(s) & 0x3],
--		   sync_exp_work_done(rsp, &rdp->exp_workdone0, s));
-+		   sync_exp_work_done(rsp, s));
- 	smp_mb(); /* Workqueue actions happen before return. */
- 
- 	/* Let the next expedited grace period start. */
--- 
-1.9.1
+
+Heiko
