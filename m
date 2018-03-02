@@ -1,127 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946510AbeCBRT0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:19:26 -0500
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:20239 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1945949AbeCBRTY (ORCPT
+        id S1946588AbeCBRYJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:24:09 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60614 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1945952AbeCBRYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:19:24 -0500
-Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-CC: Pavel Machek <pavel@ucw.cz>, Linus Walleij <linus.walleij@linaro.org>,
-        Martijn Braam <martijn@brixit.nl>,
-        Daniel Baluta <daniel.baluta@gmail.com>,
-        Ivajlo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        ext Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        =?UTF-8?B?TWlja3Vsw6HFoSBRd2VydHo=?= <abcloriens@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sebastian Reichel <sre@kernel.org>, <clayton@craftyguy.net>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Patrik Bachan <patrikbachan@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <serge@hallyn.com>
-References: <20180224214617.GA22619@amd>
- <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
- <20180226131318.GA14045@amd>
- <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
- <20180226231336.GA18565@amd>
- <CACRpkdarR_7HqGMPwfa8YpG9wnFs5mJrNwuctycn=MrdwaRxyw@mail.gmail.com>
- <20180302091025.GC30267@amd>
- <CACRpkda=deFSmk2iyrtde3Z-aj6rW9_jNfE3Ep4X=ejprGxRUw@mail.gmail.com>
- <20180302111040.GA6344@amd> <0f090cc7-2b72-a038-26ee-d43077cb9663@ti.com>
- <20180302170841.GP28231@n2100.armlinux.org.uk>
-From: "Andrew F. Davis" <afd@ti.com>
-Message-ID: <8cf3f026-4d65-71ac-60ed-3e9427139843@ti.com>
-Date: Fri, 2 Mar 2018 11:18:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 2 Mar 2018 12:24:06 -0500
+Date: Fri, 2 Mar 2018 09:24:01 -0800
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Masanari Iida <standby24x7@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] xfs: Change URL for the project in xfs.txt
+Message-ID: <20180302172401.GT19312@magnolia>
+References: <20180302133013.9744-1-standby24x7@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180302170841.GP28231@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302133013.9744-1-standby24x7@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803020205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 11:08 AM, Russell King - ARM Linux wrote:
-> On Fri, Mar 02, 2018 at 08:22:52AM -0600, Andrew F. Davis wrote:
->>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
->>> index 84e5a9d..f0fab26 100644
->>> --- a/drivers/gpio/gpiolib-of.c
->>> +++ b/drivers/gpio/gpiolib-of.c
->>> @@ -241,29 +241,17 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
->>>  
->>>  		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
->>>  						&of_flags);
->>> -		/*
->>> -		 * -EPROBE_DEFER in our case means that we found a
->>> -		 * valid GPIO property, but no controller has been
->>> -		 * registered so far.
->>> -		 *
->>> -		 * This means we don't need to look any further for
->>> -		 * alternate name conventions, and we should really
->>> -		 * preserve the return code for our user to be able to
->>> -		 * retry probing later.
->>> -		 */
->>> -		if (IS_ERR(desc) && PTR_ERR(desc) == -EPROBE_DEFER)
->>> -			return desc;
->>>  
->>> -		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
->>> +		if (!IS_ERR(desc) || PTR_ERR(desc) != -ENOENT)
->>
->>
->> I rather like the () so one doesn't always have to look up C operator
->> precedence to verify..
+On Fri, Mar 02, 2018 at 10:30:13PM +0900, Masanari Iida wrote:
+> The oss.sgi.com doesn't exist any more.
+> Change it to current project URL, https://xfs.wiki.kernel.org/
 > 
-> Too many make it impossible to see which close paren ties up with
-> which open paren.  I've spent way too long in the past reformatting
-> code, where people think that () are a good thing, to work out what
-> the comparison is actually doing before then rewriting the damn
-> thing with less () and in a much clearer way.  I'm now convinced
-> that unnecessary () are a very bad thing as they severely harm
-> readability as test complexity increases.
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> ---
+>  Documentation/filesystems/xfs.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
+> index 3b9b5c149f32..4d9ff0a7f8e1 100644
+> --- a/Documentation/filesystems/xfs.txt
+> +++ b/Documentation/filesystems/xfs.txt
+> @@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
+>  Btrees (directories, extents, free space) to aid both performance
+>  and scalability.
+>  
+> -Refer to the documentation at http://oss.sgi.com/projects/xfs/
+> +Refer to the documentation at https://xfs.wiki.kernel.org/
+>  for further details.  This implementation is on-disk compatible
+>  with the IRIX version of XFS.
 
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Fair enough, I personally prefer always having a new line per condition
-when doing chained conditionals:
+--D
 
-if (something &&
-    this == that &&
-    !not_this)
-
-
->>
->>
->>>  			break;
->>>  	}
->>>  
->>>  	/* Special handling for SPI GPIOs if used */
->>> -	if (IS_ERR(desc))
->>> +	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
+>  
+> -- 
+> 2.16.2.345.g7e31236f652a
 > 
-> These can be simplified to:
-> 
-> 	if (desc == ERR_PTR(-ENOENT))
-> 
-> since error pointers are unique - ERR_PTR(-ENOENT) is what was
-> returned as an error-pointer, and if IS_ERR(ERR_PTR(-ENOMENT)) etc
-> were false, we'd have big problems as it'd mean we couldn't detect
-> error pointers!
-> 
-> As an added bonus, they don't involve any operator precedence
-> questions either.
-> 
-
-Looks like your suggestion clears up this one anyway.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
