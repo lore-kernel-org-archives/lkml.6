@@ -1,92 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936657AbeCBQgN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:36:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60622 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936306AbeCBQgK (ORCPT
+        id S936676AbeCBQgU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:36:20 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60963 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936660AbeCBQgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:36:10 -0500
-Date: Fri, 2 Mar 2018 08:36:03 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Vratislav Bendel <vbendel@redhat.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        linux-kernel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
-Message-ID: <20180302163603.GQ19312@magnolia>
-References: <20180228154951.31714-1-vbendel@redhat.com>
- <20180301224800.GI12763@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301224800.GI12763@magnolia>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020194
+        Fri, 2 Mar 2018 11:36:16 -0500
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
+        sakari.ailus@iki.fi, mchehab@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] Renesas CEU: SH7724 ECOVEC + Aptina mt9t112
+Date: Fri,  2 Mar 2018 17:35:36 +0100
+Message-Id: <1520008541-3961-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 02:48:00PM -0800, Darrick J. Wong wrote:
-> On Wed, Feb 28, 2018 at 04:49:51PM +0100, Vratislav Bendel wrote:
-> > The function xfs_buftarg_isolate() used by xfs buffer schrinkers 
-> > to determine whether a buffer should be isolated and disposed 
-> > from LRU list, has inverted logic.
-> > 
-> > Excerpt from xfs_buftarg_isolate():
-> >         /*
-> >          * Decrement the b_lru_ref count unless the value is already
-> >          * zero. If the value is already zero, we need to reclaim the
-> >          * buffer, otherwise it gets another trip through the LRU.
-> >          */
-> >         if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-> >                 spin_unlock(&bp->b_lock);
-> >                 return LRU_ROTATE;
-> >         }
-> > 
-> > However, as per documentation, atomic_add_unless() returns _zero_
-> > if the atomic value was originally equal to the specified *unsless* value.
-> > 
-> > Ultimately causing a xfs_buffer with ->b_lru_ref == 0, to take another 
-> > trip around LRU, while isolating buffers with non-zero b_lru_ref.
-> > 
-> > Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
-> > CC: Brian Foster <bfoster@redhat.com>
-> 
-> Looks ok, will test...
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Hello,
+   now that CEU has been picked up for inclusion in v4.17, we can start moving
+users of old sh_mobile_ceu_camera driver to use the newly introduced one.
 
-This tests ok, but please address Brian and Luis' comments before I put
-this in the upstream tream.
+Migo-R has been first, now it's SH7724 ECOVEC board turn.
 
---D
+ECOVEC has a camera board with two MT9T112 image sensor and one TW9910 video
+decoder input. This series moves the mt9t112 driver away from soc_camera
+framework and remove dependencies on it in mach-ecovec board code.
 
-> --D
-> 
-> > ---
-> >  fs/xfs/xfs_buf.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > index d1da2ee9e6db..ac669a10c62f 100644
-> > --- a/fs/xfs/xfs_buf.c
-> > +++ b/fs/xfs/xfs_buf.c
-> > @@ -1708,7 +1708,7 @@ xfs_buftarg_isolate(
-> >  	 * zero. If the value is already zero, we need to reclaim the
-> >  	 * buffer, otherwise it gets another trip through the LRU.
-> >  	 */
-> > -	if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-> > +	if (atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
-> >  		spin_unlock(&bp->b_lock);
-> >  		return LRU_ROTATE;
-> >  	}
-> > -- 
-> > 2.14.3
-> > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+As per Migo-R, memory for CEU is reserved using memblocks APIs and declared
+as DMA-capable in board code, power up/down routines have been removed from
+board code, and GPIOs lookup table registered for sensor drivers.
+
+As in the previous series, still no code has been removed or changed in
+drivers/media/i2c/soc_camera/ until we do not remove all dependencies on it
+in all board files.
+
+Hans, since you asked me to add frame rate interval support for ov772x I expect
+to receive the same request for mt9t112. Unfortunately I do not have access to
+register level documentation, nor can perform any testing as I don't have the
+camera modules. For the same reason I cannot run any v4l2-compliance test on
+that driver, but just make sure the ECOVEC boots cleanly with the new board
+file. I'm in favour of moving the driver to staging if you think that's the case.
+
+Series based on media-tree master, and as per Migo-R I would ask SH arch/
+changes to go through media tree as SH maintainers are un-responsive.
+
+Thanks
+  j
+
+Jacopo Mondi (5):
+  media: i2c: Copy mt9t112 soc_camera sensor driver
+  media: i2c: mt9t112: Remove soc_camera dependencies
+  media: i2c: mt9t112: Fix code style issues
+  arch: sh: ecovec: Use new renesas-ceu camera driver
+  media: MAINTAINERS: Add entry for Aptina MT9T112
+
+ MAINTAINERS                            |    7 +
+ arch/sh/boards/mach-ecovec24/setup.c   |  338 +++++-----
+ arch/sh/kernel/cpu/sh4a/clock-sh7724.c |    4 +-
+ drivers/media/i2c/Kconfig              |   11 +
+ drivers/media/i2c/Makefile             |    1 +
+ drivers/media/i2c/mt9t112.c            | 1136 ++++++++++++++++++++++++++++++++
+ include/media/i2c/mt9t112.h            |   17 +-
+ 7 files changed, 1333 insertions(+), 181 deletions(-)
+ create mode 100644 drivers/media/i2c/mt9t112.c
+
+--
+2.7.4
