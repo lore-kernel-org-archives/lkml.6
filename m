@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuri1xS1TyBuu3JAxsEbZuSpDJtZzWRdCdupQI5mt57mhQrL945H+vVSP0/iLfYj+vVrdCV
-ARC-Seal: i=1; a=rsa-sha256; t=1519981409; cv=none;
+X-Google-Smtp-Source: AG47ELsr7LbZDmdmOnAU+bnjr47bAzgVCvZk9s8gQmxxFmAGmNG62oncBmM9XSnbSakIcHwzryap
+ARC-Seal: i=1; a=rsa-sha256; t=1519981405; cv=none;
         d=google.com; s=arc-20160816;
-        b=bFYCO5//JCpibANCVvW2JW21lJE1g/4mfcIyr0zmb5vITdReNfGr5mH+tE4E4rRLsw
-         NgdgocbKxx5HKNJN7FZg2UhI/N++Yzr7vvq9KY1gmHw8OgYDY1Mi3fdBPb4Zw24kKMBM
-         Aliow+CURyKme3JXJ53V7ITCjzyo/6SGZ0TdjoT3FTBFx13bEaLgrkPrJaLoB25/RvuI
-         vHyOd+obq/B9NIjtn+PheAGjW/32iSvYfMCamDoovuuKwW/KrasYPYwLGeM8umqJHH3c
-         fRor8dkq5z+taKSOxJsTGu+YCD9aMa2ViAFo+aDZPnyh3WDfPyoq6Z5r2NOAdzUo6mtt
-         UATA==
+        b=i9RAWCXdH/ep6VQnQz+H83Z1XrAzDS3UOMJkQAjLzV4pVXa9j2/2cU23oCPlOt0iya
+         l15PtSk6MOQsdds3Yob1ziEppRXcUmsO5HBgg6GNnTs254+pR85K2MCB22oUwBkS8MVp
+         Kyz8P+6LsV6mnYhDo+azgT5Ht7a8DSPAezWP6IOHE5qzG2jN1DtwAQ7i8e6KKlJaH3MM
+         ApiyVEvOG6VZLfaNd/ZJad/TUj2wy7wbDeoB+L3BBTeOhirzOr156xpQDw3YJg5laFjt
+         gu0vjFiGmydx6ADu55vqOsUnS1d65D70TU+57s0rb0NR/wGHb/DFuRfi0MOA7+Nq2tF6
+         PhPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YObUDLtSRX+JUgiDKKLdIz8++VA1wQBXnQCAyqDSE10=;
-        b=ow1UzYTfMDOeOc/pbSO/vPkrC/0iyltw0J9QYt8BO5evEVgQKkBDpJCnN/HdJl5Sjm
-         e53AhESOcb/JoELUBuBwCfurpS/dh5QL6ySZoUS6NzwnYRQIU3a/tVE1KtpD6JWZRE7I
-         UKui8nswUCtRaNtNzIZpql/iTmqyjaE8auFcfq8pXQHtN634/AgeAd6fwHdYL2wU3cRx
-         nfGvME6nnjSyWsjse+RqaTBmhXIxxj7Xb2XmLvPZAM0pwgEU5LIo2GNPPlC+z7eH1F8M
-         gwspDbEf6QHuWiClZ5wKgPTirl80AeXWoV3fzOiN3vWmKznZ83sO/xoW2zyyJlVNi+Tv
-         oqEQ==
+        bh=2M6IhFglmcr2XE/IJ+SMsP261dFg27ExtQszapIRURE=;
+        b=Xg/MsWoXy1MmWexehE8KZkPC0haKBA9bavhnwR50ZuiAXcZeqyoQXUWnt4NLw9W5jC
+         M9+m0Rvil0SGis0lx7vn89+rPcJRqyP12dQQNQxXr/6YfCN5HGVeFFVi5MSGKEt1ewCL
+         vTGwJn+8BPYls/R+1Au3Vr5no9o6NWEywYpHSDL9ui3HE3jg2Yf6YbwkgRUrOoEiGzad
+         ILHEMvNW09lu1t8i1Dl77hx/R99uLdFRlMZYMq3mAurZ3VUvO4czhAdRUZL0imqU7K0g
+         0p36TeMNWlu8H01gzDCEacoUsm4qPeQfbqxccMrhtwdxyitGRvv0/k0vzWOWHDQzXYPO
+         q/mQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jacob Keller <jacob.e.keller@intel.com>,
+	Alexander Duyck <alexander.h.duyck@intel.com>,
 	Andrew Bowers <andrewx.bowers@intel.com>,
 	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 082/115] i40e: dont remove netdev->dev_addr when syncing uc list
-Date: Fri,  2 Mar 2018 09:51:25 +0100
-Message-Id: <20180302084507.168261150@linuxfoundation.org>
+Subject: [PATCH 4.14 081/115] i40e/i40evf: Account for frags split over multiple descriptors in check linearize
+Date: Fri,  2 Mar 2018 09:51:24 +0100
+Message-Id: <20180302084507.127995055@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816026353255685?=
-X-GMAIL-MSGID: =?utf-8?q?1593816026353255685?=
+X-GMAIL-THRID: =?utf-8?q?1593815687679033951?=
+X-GMAIL-MSGID: =?utf-8?q?1593816022516889156?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,96 +51,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Alexander Duyck <alexander.h.duyck@intel.com>
 
 
-[ Upstream commit 458867b2ca0c987445c5d9adccd1642970e1ba07 ]
+[ Upstream commit 248de22e638f10bd5bfc7624a357f940f66ba137 ]
 
-In some circumstances, such as with bridging, it is possible that the
-stack will add a devices own MAC address to its unicast address list.
+The original code for __i40e_chk_linearize didn't take into account the
+fact that if a fragment is 16K in size or larger it has to be split over 2
+descriptors and the smaller of those 2 descriptors will be on the trailing
+edge of the transmit. As a result we can get into situations where we didn't
+catch requests that could result in a Tx hang.
 
-If, later, the stack deletes this address, then the i40e driver will
-receive a request to remove this address.
+This patch takes care of that by subtracting the length of all but the
+trailing edge of the stale fragment before we test for sum. By doing this
+we can guarantee that we have all cases covered, including the case of a
+fragment that spans multiple descriptors. We don't need to worry about
+checking the inner portions of this since 12K is the maximum aligned DMA
+size and that is larger than any MSS will ever be since the MTU limit for
+jumbos is something on the order of 9K.
 
-The driver stores its current MAC address as part of the MAC/VLAN hash
-array, since it is convenient and matches exactly how the hardware
-expects to be told which traffic to receive.
-
-This causes a problem, since for more devices, the MAC address is stored
-separately, and requests to delete a unicast address should not have the
-ability to remove the filter for the MAC address.
-
-Fix this by forcing a check on every address sync to ensure we do not
-remove the device address.
-
-There is a very narrow possibility of a race between .set_mac and
-.set_rx_mode, if we don't change netdev->dev_addr before updating our
-internal MAC list in .set_mac. This might be possible if .set_rx_mode is
-going to remove MAC "XYZ" from the list, at the same time as .set_mac
-changes our dev_addr to MAC "XYZ", we might possibly queue a delete,
-then an add in .set_mac, then queue a delete in .set_rx_mode's
-dev_uc_sync and then update netdev->dev_addr. We can avoid this by
-moving the copy into dev_addr prior to the changes to the MAC filter
-list.
-
-A similar race on the other side does not cause problems, as if we're
-changing our MAC form A to B, and we race with .set_rx_mode, it could
-queue a delete from A, we'd update our address, and allow the delete.
-This seems like a race, but in reality we're about to queue a delete of
-A anyways, so it would not cause any issues.
-
-A race in the initialization code is unlikely because the netdevice has
-not yet been fully initialized and the stack should not be adding or
-removing addresses yet.
-
-Note that we don't (yet) need similar code for the VF driver because it
-does not make use of __dev_uc_sync and __dev_mc_sync, but instead roles
-its own method for handling updates to the MAC/VLAN list, which already
-has code to protect against removal of the hardware address.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
 Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e_txrx.c   |   26 +++++++++++++++++++++++---
+ drivers/net/ethernet/intel/i40evf/i40e_txrx.c |   26 +++++++++++++++++++++++---
+ 2 files changed, 46 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -1553,11 +1553,18 @@ static int i40e_set_mac(struct net_devic
- 	else
- 		netdev_info(netdev, "set new mac address %pM\n", addr->sa_data);
- 
-+	/* Copy the address first, so that we avoid a possible race with
-+	 * .set_rx_mode(). If we copy after changing the address in the filter
-+	 * list, we might open ourselves to a narrow race window where
-+	 * .set_rx_mode could delete our dev_addr filter and prevent traffic
-+	 * from passing.
-+	 */
-+	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+--- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
+@@ -3048,10 +3048,30 @@ bool __i40e_chk_linearize(struct sk_buff
+ 	/* Walk through fragments adding latest fragment, testing it, and
+ 	 * then removing stale fragments from the sum.
+ 	 */
+-	stale = &skb_shinfo(skb)->frags[0];
+-	for (;;) {
++	for (stale = &skb_shinfo(skb)->frags[0];; stale++) {
++		int stale_size = skb_frag_size(stale);
 +
- 	spin_lock_bh(&vsi->mac_filter_hash_lock);
- 	i40e_del_mac_filter(vsi, netdev->dev_addr);
- 	i40e_add_mac_filter(vsi, addr->sa_data);
- 	spin_unlock_bh(&vsi->mac_filter_hash_lock);
--	ether_addr_copy(netdev->dev_addr, addr->sa_data);
- 	if (vsi->type == I40E_VSI_MAIN) {
- 		i40e_status ret;
+ 		sum += skb_frag_size(frag++);
  
-@@ -1739,6 +1746,14 @@ static int i40e_addr_unsync(struct net_d
- 	struct i40e_netdev_priv *np = netdev_priv(netdev);
- 	struct i40e_vsi *vsi = np->vsi;
- 
-+	/* Under some circumstances, we might receive a request to delete
-+	 * our own device address from our uc list. Because we store the
-+	 * device address in the VSI's MAC/VLAN filter list, we need to ignore
-+	 * such requests and not delete our device address from this list.
-+	 */
-+	if (ether_addr_equal(addr, netdev->dev_addr))
-+		return 0;
++		/* The stale fragment may present us with a smaller
++		 * descriptor than the actual fragment size. To account
++		 * for that we need to remove all the data on the front and
++		 * figure out what the remainder would be in the last
++		 * descriptor associated with the fragment.
++		 */
++		if (stale_size > I40E_MAX_DATA_PER_TXD) {
++			int align_pad = -(stale->page_offset) &
++					(I40E_MAX_READ_REQ_SIZE - 1);
 +
- 	i40e_del_mac_filter(vsi, addr);
++			sum -= align_pad;
++			stale_size -= align_pad;
++
++			do {
++				sum -= I40E_MAX_DATA_PER_TXD_ALIGNED;
++				stale_size -= I40E_MAX_DATA_PER_TXD_ALIGNED;
++			} while (stale_size > I40E_MAX_DATA_PER_TXD);
++		}
++
+ 		/* if sum is negative we failed to make sufficient progress */
+ 		if (sum < 0)
+ 			return true;
+@@ -3059,7 +3079,7 @@ bool __i40e_chk_linearize(struct sk_buff
+ 		if (!nr_frags--)
+ 			break;
  
- 	return 0;
+-		sum -= skb_frag_size(stale++);
++		sum -= stale_size;
+ 	}
+ 
+ 	return false;
+--- a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
++++ b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
+@@ -2014,10 +2014,30 @@ bool __i40evf_chk_linearize(struct sk_bu
+ 	/* Walk through fragments adding latest fragment, testing it, and
+ 	 * then removing stale fragments from the sum.
+ 	 */
+-	stale = &skb_shinfo(skb)->frags[0];
+-	for (;;) {
++	for (stale = &skb_shinfo(skb)->frags[0];; stale++) {
++		int stale_size = skb_frag_size(stale);
++
+ 		sum += skb_frag_size(frag++);
+ 
++		/* The stale fragment may present us with a smaller
++		 * descriptor than the actual fragment size. To account
++		 * for that we need to remove all the data on the front and
++		 * figure out what the remainder would be in the last
++		 * descriptor associated with the fragment.
++		 */
++		if (stale_size > I40E_MAX_DATA_PER_TXD) {
++			int align_pad = -(stale->page_offset) &
++					(I40E_MAX_READ_REQ_SIZE - 1);
++
++			sum -= align_pad;
++			stale_size -= align_pad;
++
++			do {
++				sum -= I40E_MAX_DATA_PER_TXD_ALIGNED;
++				stale_size -= I40E_MAX_DATA_PER_TXD_ALIGNED;
++			} while (stale_size > I40E_MAX_DATA_PER_TXD);
++		}
++
+ 		/* if sum is negative we failed to make sufficient progress */
+ 		if (sum < 0)
+ 			return true;
+@@ -2025,7 +2045,7 @@ bool __i40evf_chk_linearize(struct sk_bu
+ 		if (!nr_frags--)
+ 			break;
+ 
+-		sum -= skb_frag_size(stale++);
++		sum -= stale_size;
+ 	}
+ 
+ 	return false;
