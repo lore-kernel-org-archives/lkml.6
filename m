@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164670AbeCBDvd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 22:51:33 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46140 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164655AbeCBDv2 (ORCPT
+        id S1164430AbeCBDxl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 22:53:41 -0500
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45793 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164750AbeCBDwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 22:51:28 -0500
-X-Google-Smtp-Source: AG47ELs4Y/qJU98IYeo78YR6KQUfChQxkXI/d6gvIU+O958OfkWXDONBwX7wcfE3r71N3qWmpVHsaw==
+        Thu, 1 Mar 2018 22:52:15 -0500
+X-Google-Smtp-Source: AG47ELs1IWuqNy1s3w9P8zGfNjl8Ii2qiIqRcn21zMY9CyjHdY3UFWyrz74yF/OGeuuAHeM+PZ0aLA==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
 Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
@@ -17,9 +17,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
         bdong@ucrobotics.com, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 01/10] dt-bindings: pinctrl: Add bindings for Actions S900 SoC
-Date: Fri,  2 Mar 2018 09:20:36 +0530
-Message-Id: <20180302035045.14660-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 07/10] arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+Date: Fri,  2 Mar 2018 09:20:42 +0530
+Message-Id: <20180302035045.14660-8-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
 References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
@@ -27,198 +27,215 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pinctrl bindings for Actions Semi S900 SoC
+Add gpio line names to Actions Semi S900 based Bubblegum-96 board.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/pinctrl/actions,s900-pinctrl.txt      | 178 +++++++++++++++++++++
- 1 file changed, 178 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 195 ++++++++++++++++++++++
+ 1 file changed, 195 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-new file mode 100644
-index 000000000000..fb87c7d74f2e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
-@@ -0,0 +1,178 @@
-+Actions Semi S900 Pin Controller
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+index 60ddaf98401b..05ec8a7e924d 100644
+--- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+@@ -40,3 +40,198 @@
+ 	status = "okay";
+ 	clocks = <&cmu CLK_UART5>;
+ };
 +
-+This binding describes the pin controller found in the S900 SoC.
++/*
++ * GPIO name legend: proper name = the GPIO line is used as GPIO
++ *         NC = not connected (pin out but not routed from the chip to
++ *              anything the board)
++ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
++ *         LSEC = Low Speed External Connector
++ *         HSEC = High Speed External Connector
++ *
++ * Line names are taken from the schematic "Schematics Bubblegum96"
++ * version v1.0
++ *
++ * For the lines routed to the external connectors the
++ * lines are named after the 96Boards CE Specification 1.0,
++ * Appendix "Expansion Connector Signal Description".
++ *
++ * When the 96Boards naming of a line and the schematic name of
++ * the same line are in conflict, the 96Boards specification
++ * takes precedence, which means that the external UART on the
++ * LSEC is named UART0 while the schematic and SoC names this
++ * UART2. Only exception is the I2C lines for which the schematic
++ * naming has been preferred. This is only for the informational
++ * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
++ * are the only ones actually used for GPIO.
++ */
 +
-+Required Properties:
++&gpioa {
++	gpio-line-names =
++		"GPIO-A", /* GPIO_0, LSEC pin 23 */
++		"GPIO-B", /* GPIO_1, LSEC pin 24 */
++		"GPIO-C", /* GPIO_2, LSEC pin 25 */
++		"GPIO-D", /* GPIO_3, LSEC pin 26 */
++		"GPIO-E", /* GPIO_4, LSEC pin 27 */
++		"GPIO-F", /* GPIO_5, LSEC pin 28 */
++		"GPIO-G", /* GPIO_6, LSEC pin 29 */
++		"GPIO-H", /* GPIO_7, LSEC pin 30 */
++		"GPIO-I", /* GPIO_8, LSEC pin 31 */
++		"GPIO-J", /* GPIO_9, LSEC pin 32 */
++		"NC", /* GPIO_10 */
++		"NC", /* GPIO_11 */
++		"SIRQ2_1V8", /* GPIO_12 */
++		"PCM0_OUT", /* GPIO_13 */
++		"WIFI_LED", /* GPIO_14 */
++		"PCM0_SYNC", /* GPIO_15 */
++		"PCM0_CLK", /* GPIO_16 */
++		"PCM0_IN", /* GPIO_17 */
++		"BT_LED", /* GPIO_18 */
++		"LED0", /* GPIO_19 */
++		"LED1", /* GPIO_20 */
++		"JTAG_TCK", /* GPIO_21 */
++		"JTAG_TMS", /* GPIO_22 */
++		"JTAG_TDI", /* GPIO_23 */
++		"JTAG_TDO", /* GPIO_24 */
++		"[UART1_RxD]", /* GPIO_25, LSEC pin 13 */
++		"NC", /* GPIO_26 */
++		"[UART1_TxD]", /* GPIO_27, LSEC pin 11 */
++		"SD0_D0", /* GPIO_28 */
++		"SD0_D1", /* GPIO_29 */
++		"SD0_D2", /* GPIO_30 */
++		"SD0_D3"; /* GPIO_31 */
++};
 +
-+- compatible:   Should be "actions,s900-pinctrl"
-+- reg:          Should contain the register base address and size of
-+                the pin controller.
-+- clocks:       phandle of the clock feeding the pin controller
++&gpiob {
++	gpio-line-names =
++		"SD1_D0", /* GPIO_32 */
++		"SD1_D1", /* GPIO_33 */
++		"SD1_D2", /* GPIO_34 */
++		"SD1_D3", /* GPIO_35 */
++		"SD0_CMD", /* GPIO_36 */
++		"SD0_CLK", /* GPIO_37 */
++		"SD1_CMD", /* GPIO_38 */
++		"SD1_CLK", /* GPIO_39 */
++		"SPI0_SCLK", /* GPIO_40, LSEC pin 8 */
++		"SPI0_CS", /* GPIO_41, LSEC pin 12 */
++		"SPI0_DIN", /* GPIO_42, LSEC pin 10 */
++		"SPI0_DOUT", /* GPIO_43, LSEC pin 14 */
++		"I2C5_SDATA", /* GPIO_44, HSEC pin 36 */
++		"I2C5_SCLK", /* GPIO_45, HSEC pin 38 */
++		"UART0_RX", /* GPIO_46, LSEC pin 7 */
++		"UART0_TX", /* GPIO_47, LSEC pin 5 */
++		"UART0_RTSB", /* GPIO_48, LSEC pin 9 */
++		"UART0_CTSB", /* GPIO_49, LSEC pin 3 */
++		"I2C4_SCLK", /* GPIO_50, HSEC pin 32 */
++		"I2C4_SDATA", /* GPIO_51, HSEC pin 34 */
++		"I2C0_SCLK", /* GPIO_52 */
++		"I2C0_SDATA", /* GPIO_53 */
++		"I2C1_SCLK", /* GPIO_54, LSEC pin 15 */
++		"I2C1_SDATA", /* GPIO_55, LSEC pin 17 */
++		"I2C2_SCLK", /* GPIO_56, LSEC pin 19 */
++		"I2C2_SDATA", /* GPIO_57, LSEC pin 21 */
++		"CSI0_DN0", /* GPIO_58, HSEC pin 10 */
++		"CSI0_DP0", /* GPIO_59, HSEC pin 8 */
++		"CSI0_DN1", /* GPIO_60, HSEC pin 16 */
++		"CSI0_DP1", /* GPIO_61, HSEC pin 14 */
++		"CSI0_CN", /* GPIO_62, HSEC pin 4 */
++		"CSI0_CP"; /* GPIO_63, HSEC pin 2 */
++};
 +
-+Please refer to pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the meaning of the
-+phrase "pin configuration node".
++&gpioc {
++	gpio-line-names =
++		"CSI0_DN2", /* GPIO_64, HSEC pin 22 */
++		"CSI0_DP2", /* GPIO_65, HSEC pin 20 */
++		"CSI0_DN3", /* GPIO_66, HSEC pin 28 */
++		"CSI0_DP3", /* GPIO_67, HSEC pin 26 */
++		"[CLK0]", /* GPIO_68, HSEC pin 15 */
++		"CSI1_DN0", /* GPIO_69, HSEC pin 44 */
++		"CSI1_DP0", /* GPIO_70, HSEC pin 42 */
++		"CSI1_DN1", /* GPIO_71, HSEC pin 50 */
++		"CSI1_DP1", /* GPIO_72, HSEC pin 48 */
++		"CSI1_CN", /* GPIO_73, HSEC pin 56 */
++		"CSI1_CP", /* GPIO_74, HSEC pin 54 */
++		"[CLK1]"; /* GPIO_75, HSEC pin 17 */
++};
 +
-+The pin configuration nodes act as a container for an arbitrary number of
-+subnodes. Each of these subnodes represents some desired configuration for a
-+pin, a group, or a list of pins or groups. This configuration can include the
-+mux function to select on those group(s), and various pin configuration
-+parameters, such as pull-up, drive strength, etc.
++&gpiod {
++	gpio-line-names =
++		"[GPIOD0]", /* GPIO_76 */
++		"[GPIOD1]", /* GPIO_77 */
++		"BT_RST_N", /* GPIO_78 */
++		"EXT_DC_EN", /* GPIO_79 */
++		"[PCM_DI]", /* GPIO_80, LSEC pin 22 */
++		"[PCM_DO]", /* GPIO_81, LSEC pin 20 */
++		"[PCM_CLK]", /* GPIO_82, LSEC pin 18 */
++		"[PCM_FS]", /* GPIO_83, LSEC pin 16 */
++		"WAKE_BT", /* GPIO_84 */
++		"WL_REG_ON", /* GPIO_85 */
++		"NC", /* GPIO_86 */
++		"NC", /* GPIO_87 */
++		"NC", /* GPIO_88 */
++		"NC", /* GPIO_89 */
++		"NC", /* GPIO_90 */
++		"WIFI_WAKE", /* GPIO_91 */
++		"BT_WAKE", /* GPIO_92 */
++		"NC", /* GPIO_93 */
++		"OTG_EN2", /* GPIO_94 */
++		"OTG_EN", /* GPIO_95 */
++		"DSI_DP3", /* GPIO_96, HSEC pin 45 */
++		"DSI_DN3", /* GPIO_97, HSEC pin 47 */
++		"DSI_DP1", /* GPIO_98, HSEC pin 33 */
++		"DSI_DN1", /* GPIO_99, HSEC pin 35 */
++		"DSI_CP", /* GPIO_100, HSEC pin 21 */
++		"DSI_CN", /* GPIO_101, HSEC pin 23 */
++		"DSI_DP0", /* GPIO_102, HSEC pin 27 */
++		"DSI_DN0", /* GPIO_103, HSEC pin 29 */
++		"DSI_DP2", /* GPIO_104, HSEC pin 39 */
++		"DSI_DN2"; /* GPIO_105, HSEC pin 41 */
++};
 +
-+PIN CONFIGURATION NODES:
++&gpioe {
++	gpio-line-names =
++		"N0_D0", /* GPIO_106 */
++		"N0_D1", /* GPIO_107 */
++		"N0_D2", /* GPIO_108 */
++		"N0_D3", /* GPIO_109 */
++		"N0_D4", /* GPIO_110 */
++		"N0_D5", /* GPIO_111 */
++		"N0_D6", /* GPIO_112 */
++		"N0_D7", /* GPIO_113 */
++		"N0_DQS", /* GPIO_114 */
++		"N0_DQSN", /* GPIO_115 */
++		"NC", /* GPIO_116 */
++		"NC", /* GPIO_117 */
++		"NC", /* GPIO_118 */
++		"N0_CEB1", /* GPIO_119 */
++		"CARD_DT", /* GPIO_120 */
++		"N0_CEB3", /* GPIO_121 */
++		"SD_DAT0", /* GPIO_122, HSEC pin 1 */
++		"SD_DAT1", /* GPIO_123, HSEC pin 3 */
++		"SD_DAT2", /* GPIO_124, HSEC pin 5 */
++		"SD_DAT3", /* GPIO_125, HSEC pin 7 */
++		"NC", /* GPIO_126 */
++		"NC", /* GPIO_127 */
++		"[PWR_BTN_N]", /* GPIO_128, LSEC pin 4 */
++		"[RST_BTN_N]", /* GPIO_129, LSEC pin 6 */
++		"NC", /* GPIO_130 */
++		"SD_CMD", /* GPIO_131 */
++		"GPIO-L", /* GPIO_132, LSEC pin 34 */
++		"GPIO-K", /* GPIO_133, LSEC pin 33 */
++		"NC", /* GPIO_134 */
++		"SD_SCLK", /* GPIO_135 */
++		"NC", /* GPIO_136 */
++		"JTAG_TRST"; /* GPIO_137 */
++};
 +
-+The name of each subnode is not important; all subnodes should be enumerated
-+and processed purely based on their content.
-+
-+Each subnode only affects those parameters that are explicitly listed. In
-+other words, a subnode that lists a mux function but no pin configuration
-+parameters implies no information about any pin configuration parameters.
-+Similarly, a pin subnode that describes a pullup parameter implies no
-+information about e.g. the mux function.
-+
-+Pinmux functions are available only for the pin groups while pinconf
-+parameters are available for both pin groups and individual pins.
-+
-+The following generic properties as defined in pinctrl-bindings.txt are valid
-+to specify in a pin configuration subnode:
-+
-+Required Properties:
-+
-+- pins:           An array of strings, each string containing the name of a pin.
-+                  These pins are used for selecting the pull control and schmitt
-+                  trigger parameters. The following are the list of pins
-+                  available:
-+
-+                  eth_txd0, eth_txd1, eth_txen, eth_rxer, eth_crs_dv,
-+                  eth_rxd1, eth_rxd0, eth_ref_clk, eth_mdc, eth_mdio,
-+                  sirq0, sirq1, sirq2, i2s_d0, i2s_bclk0, i2s_lrclk0,
-+                  i2s_mclk0, i2s_d1, i2s_bclk1, i2s_lrclk1, i2s_mclk1,
-+                  pcm1_in, pcm1_clk, pcm1_sync, pcm1_out, eram_a5,
-+                  eram_a6, eram_a7, eram_a8, eram_a9, eram_a10, eram_a11,
-+                  lvds_oep, lvds_oen, lvds_odp, lvds_odn, lvds_ocp,
-+                  lvds_ocn, lvds_obp, lvds_obn, lvds_oap, lvds_oan,
-+                  lvds_eep, lvds_een, lvds_edp, lvds_edn, lvds_ecp,
-+                  lvds_ecn, lvds_ebp, lvds_ebn, lvds_eap, lvds_ean,
-+                  sd0_d0, sd0_d1, sd0_d2, sd0_d3, sd1_d0, sd1_d1,
-+                  sd1_d2, sd1_d3, sd0_cmd, sd0_clk, sd1_cmd, sd1_clk,
-+                  spi0_sclk, spi0_ss, spi0_miso, spi0_mosi, uart0_rx,
-+                  uart0_tx, uart2_rx, uart2_tx, uart2_rtsb, uart2_ctsb,
-+                  uart3_rx, uart3_tx, uart3_rtsb, uart3_ctsb, uart4_rx,
-+                  uart4_tx, i2c0_sclk, i2c0_sdata, i2c1_sclk, i2c1_sdata,
-+                  i2c2_sclk, i2c2_sdata, csi0_dn0, csi0_dp0, csi0_dn1,
-+                  csi0_dp1, csi0_cn, csi0_cp, csi0_dn2, csi0_dp2, csi0_dn3,
-+                  csi0_dp3, dsi_dp3, dsi_dn3, dsi_dp1, dsi_dn1, dsi_cp,
-+                  dsi_cn, dsi_dp0, dsi_dn0, dsi_dp2, dsi_dn2, sensor0_pclk,
-+                  csi1_dn0,csi1_dp0,csi1_dn1, csi1_dp1, csi1_cn, csi1_cp,
-+                  sensor0_ckout, nand0_d0, nand0_d1, nand0_d2, nand0_d3,
-+                  nand0_d4, nand0_d5, nand0_d6, nand0_d7, nand0_dqs,
-+                  nand0_dqsn, nand0_ale, nand0_cle, nand0_ceb0, nand0_ceb1,
-+                  nand0_ceb2, nand0_ceb3, nand1_d0, nand1_d1, nand1_d2,
-+                  nand1_d3, nand1_d4, nand1_d5, nand1_d6, nand1_d7, nand1_dqs,
-+                  nand1_dqsn, nand1_ale, nand1_cle, nand1_ceb0, nand1_ceb1,
-+                  nand1_ceb2, nand1_ceb3, sgpio0, sgpio1, sgpio2, sgpio3
-+
-+- groups:         An array of strings, each string containing the name of a pin
-+                  group. These pin groups are used for selecting the pinmux
-+                  functions.
-+
-+                  lvds_oxx_uart4_mfp, rmii_mdc_mfp, rmii_mdio_mfp, sirq0_mfp,
-+                  sirq1_mfp, rmii_txd0_mfp, rmii_txd1_mfp, rmii_txen_mfp,
-+                  rmii_rxer_mfp, rmii_crs_dv_mfp, rmii_rxd1_mfp, rmii_rxd0_mfp,
-+                  rmii_ref_clk_mfp, i2s_d0_mfp, i2s_d1_mfp, i2s_lr_m_clk0_mfp,
-+                  i2s_bclk0_mfp, i2s_bclk1_mclk1_mfp, pcm1_in_out_mfp,
-+                  pcm1_clk_mfp, pcm1_sync_mfp, eram_a5_mfp, eram_a6_mfp,
-+                  eram_a7_mfp, eram_a8_mfp, eram_a9_mfp, eram_a10_mfp,
-+                  eram_a11_mfp, lvds_oep_odn_mfp, lvds_ocp_obn_mfp,
-+                  lvds_oap_oan_mfp, lvds_e_mfp, spi0_sclk_mosi_mfp, spi0_ss_mfp,
-+                  spi0_miso_mfp, uart2_rtsb_mfp, uart2_ctsb_mfp, uart3_rtsb_mfp,
-+                  uart3_ctsb_mfp, sd0_d0_mfp, sd0_d1_mfp, sd0_d2_d3_mfp,
-+                  sd1_d0_d3_mfp, sd0_cmd_mfp, sd0_clk_mfp, sd1_cmd_clk_mfp,
-+                  uart0_rx_mfp, nand0_d0_ceb3_mfp, uart0_tx_mfp, i2c0_mfp,
-+                  csi0_cn_cp_mfp, csi0_dn0_dp3_mfp, csi1_dn0_cp_mfp,
-+                  dsi_dp3_dn1_mfp, dsi_cp_dn0_mfp, dsi_dp2_dn2_mfp,
-+                  nand1_d0_ceb1_mfp, nand1_ceb3_mfp, nand1_ceb0_mfp,
-+                  csi1_dn0_dp0_mfp, uart4_rx_tx_mfp
-+
-+
-+                  These pin groups are used for selecting the drive strength
-+                  parameters.
-+
-+                  sgpio3_drv, sgpio2_drv, sgpio1_drv, sgpio0_drv,
-+                  rmii_tx_d0_d1_drv, rmii_txen_rxer_drv, rmii_crs_dv_drv,
-+                  rmii_rx_d1_d0_drv, rmii_ref_clk_drv, rmii_mdc_mdio_drv,
-+                  sirq_0_1_drv, sirq2_drv, i2s_d0_d1_drv, i2s_lr_m_clk0_drv,
-+                  i2s_blk1_mclk1_drv, pcm1_in_out_drv, lvds_oap_oan_drv,
-+                  lvds_oep_odn_drv, lvds_ocp_obn_drv, lvds_e_drv, sd0_d3_d0_drv,
-+                  sd1_d3_d0_drv, sd0_sd1_cmd_clk_drv, spi0_sclk_mosi_drv,
-+                  spi0_ss_miso_drv, uart0_rx_tx_drv, uart4_rx_tx_drv, uart2_drv,
-+                  uart3_drv, i2c0_drv, i2c1_drv, i2c2_drv, sensor0_drv
-+
-+                  These pin groups are used for selecting the slew rate
-+                  parameters.
-+
-+                  sgpio3_sr, sgpio2_sr, sgpio1_sr, sgpio0_sr, rmii_tx_d0_d1_sr,
-+                  rmii_txen_rxer_sr, rmii_crs_dv_sr, rmii_rx_d1_d0_sr,
-+                  rmii_ref_clk_sr, rmii_mdc_mdio_sr, sirq_0_1_sr, sirq2_sr,
-+                  i2s_do_d1_sr, i2s_lr_m_clk0_sr, i2s_bclk0_mclk1_sr,
-+                  pcm1_in_out_sr, sd1_d3_d0_sr, sd0_sd1_clk_cmd_sr,
-+                  spi0_sclk_mosi_sr, spi0_ss_miso_sr, uart0_rx_tx_sr,
-+                  uart4_rx_tx_sr, uart2_sr, uart3_sr, i2c0_sr, i2c1_sr, i2c2_sr,
-+                  sensor0_sr
-+
-+- function:       An array of strings, each string containing the name of the
-+                  pinmux functions. These functions can only be selected by
-+                  the corresponding pin groups. The following are the list of
-+                  pinmux functions available:
-+
-+                  eram, eth_rmii, eth_smii, spi0, spi1, spi2, spi3, sens0,
-+                  uart0, uart1, uart2, uart3, uart4, uart5, uart6, i2s0, i2s1,
-+                  pcm0, pcm1, jtag, pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, sd0,
-+                  sd1, sd2, sd3, i2c0, i2c1, i2c2, i2c3, i2c4, i2c5, lvds,
-+                  usb30, usb20, gpu, mipi_csi0, mipi_csi1, mipi_dsi, nand0,
-+                  nand1, spdif, sirq0, sirq1, sirq2
-+
-+Optional Properties:
-+
-+- bias-bus-hold:  No arguments. The specified pins should retain the previous
-+                  state value.
-+- bias-high-impedance: No arguments. The specified pins should be configured
-+                  as high impedance.
-+- bias-pull-down: No arguments. The specified pins should be configured as
-+                  pull down.
-+- bias-pull-up:   No arguments. The specified pins should be configured as
-+                  pull up.
-+- input-schmitt-enable: No arguments: Enable schmitt trigger for the specified
-+                  pins
-+- input-schmitt-disable: No arguments: Disable schmitt trigger for the specified
-+                  pins
-+- slew-rate:      Integer. Sets slew rate for the specified pins.
-+                  Valid values are:
-+                  <0>  - Slow
-+                  <1>  - Fast
-+- drive-strength: Integer. Selects the drive strength for the specified
-+                  pins in mA.
-+                  Valid values are:
-+                  <2>
-+                  <4>
-+                  <8>
-+                  <12>
-+
-+Example:
-+
-+          pinctrl: pinctrl@e01b0000 {
-+                  compatible = "actions,s900-pinctrl";
-+                  reg = <0x0 0xe01b0000 0x0 0x1000>;
-+                  clocks = <&cmu CLK_GPIO>;
-+
-+                  uart2-default: uart2-default {
-+                          pinmux {
-+                                  groups = "lvds_oep_odn_mfp";
-+                                  function = "uart2";
-+                          };
-+                          pinconf {
-+                                  groups = "lvds_oep_odn_drv";
-+                                  drive-strength = <12>;
-+                          };
-+                  };
-+          };
++&gpiof {
++	gpio-line-names =
++		"I2C3_SCLK", /* GPIO_138 */
++		"LED2", /* GPIO_139 */
++		"LED3", /* GPIO_140 */
++		"I2C3_SDATA", /* GPIO_141 */
++		"UART3_RX", /* GPIO_142 */
++		"UART3_TX", /* GPIO_143 */
++		"UART3_RTSB", /* GPIO_144 */
++		"UART3_CTSB"; /* GPIO_145 */
++};
 -- 
 2.14.1
