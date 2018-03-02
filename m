@@ -1,73 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426501AbeCBKm0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:42:26 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:35885 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424102AbeCBKmL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:42:11 -0500
-X-Google-Smtp-Source: AG47ELvhb9KL3/F17FDbrM1iiJmaqmBhRyD4Rp612quRsQ5Mcj3OD4zCKmm0NegAA6/OgWgqGImv5Q==
-Date: Fri, 2 Mar 2018 11:42:07 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 5/5] PCI: tegra: use seq_open_data
-Message-ID: <20180302104207.GB27178@ulmo>
-References: <20180301233724.20440-1-linux@rasmusvillemoes.dk>
- <20180301233724.20440-5-linux@rasmusvillemoes.dk>
+        id S1426515AbeCBKmh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:42:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52882 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424102AbeCBKm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:42:28 -0500
+Date: Fri, 2 Mar 2018 10:42:23 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Saravana Kannan <skannan@codeaurora.org>
+Cc: robh@kernel.org, mathieu.poirier@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>, peterz@infradead.org,
+        jonathan.cameron@huawei.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        sudeep.holla@arm.com, frowand.list@gmail.com, leo.yan@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+Message-ID: <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
+References: <20180102112533.13640-1-suzuki.poulose@arm.com>
+ <20180102112533.13640-9-suzuki.poulose@arm.com>
+ <5A90B77E.8040105@codeaurora.org>
+ <20180225143653.peb4quk3ha5h3t5x@salmiak>
+ <5A972A7D.9020301@codeaurora.org>
+ <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
+ <5A986425.9080007@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180301233724.20440-5-linux@rasmusvillemoes.dk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <5A986425.9080007@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 01, 2018 at 12:35:49PM -0800, Saravana Kannan wrote:
+> On 03/01/2018 03:49 AM, Mark Rutland wrote:
+> > On Wed, Feb 28, 2018 at 02:17:33PM -0800, Saravana Kannan wrote:
+> > > On 02/25/2018 06:36 AM, Mark Rutland wrote:
+> > > > On Fri, Feb 23, 2018 at 04:53:18PM -0800, Saravana Kannan wrote:
+> > > > > On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
+> > > > > > +static void dsu_pmu_event_update(struct perf_event *event)
+> > > > > > +{
+> > > > > > +	struct hw_perf_event *hwc = &event->hw;
+> > > > > > +	u64 delta, prev_count, new_count;
+> > > > > > +
+> > > > > > +	do {
+> > > > > > +		/* We may also be called from the irq handler */
+> > > > > > +		prev_count = local64_read(&hwc->prev_count);
+> > > > > > +		new_count = dsu_pmu_read_counter(event);
+> > > > > > +	} while (local64_cmpxchg(&hwc->prev_count, prev_count, new_count) !=
+> > > > > > +			prev_count);
+> > > > > > +	delta = (new_count - prev_count) & DSU_PMU_COUNTER_MASK(hwc->idx);
+> > > > > > +	local64_add(delta, &event->count);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static void dsu_pmu_read(struct perf_event *event)
+> > > > > > +{
+> > > > > > +	dsu_pmu_event_update(event);
+> > > > > > +}
+> > > > 
+> > > > > I sent out a patch that'll allow PMUs to set an event flag to avoid
+> > > > > unnecessary smp calls when the event can be read from any CPU. You could
+> > > > > just always set that if you can't have multiple DSU's running the kernel (I
+> > > > > don't know if the current ARM designs support having multiple DSUs in a
+> > > > > SoC/system) or set it if associated_cpus == cpu_present_mask.
+> > > > 
+> > > > As-is, that won't be safe, given the read function calls the event_update()
+> > > > function, which has side-effects on hwc->prec_count and event->count. Those
+> > > > need to be serialized somehow.
+> > > 
+> > > You have to grab the dsu_pmu->pmu_lock spin lock anyway because the system
+> > > registers are shared across all CPUs.
+> > 
+> > I believe that lock is currently superfluous, because the perf core
+> > ensures operations are cpu-affine, and have interrupts disabled in most
+> > cases (thanks to the context lock).
+> 
+> I don't think it's superfluous. You have a common "event counter" selection
+> register and a common "event counter value" register. You can two CPUs
+> racing to read two unrelated event counters and end up causing one of them
+> to read a bogus value from the wrong event counter.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's important to note that the DSU PMU's event_init() ensures events
+are affine to a single CPU, and the perf core code serializes operations
+on those events via the context lock.
 
-On Fri, Mar 02, 2018 at 12:37:24AM +0100, Rasmus Villemoes wrote:
-> Simplify the code slightly by having seq_open_data do the ->private
-> assignment.
->=20
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->  drivers/pci/host/pci-tegra.c | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
+Therefore, two CPUs *won't* try to access the registers simultaneously.
 
-I had to go hunt for patch 1/5 to be able to tell if this is indeed
-equivalent. It is, so:
+If events could be active on multiple CPUs simultaneously, I agree that
+the lock would be necessary. However, there would also be other problems
+to deal with in that case.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+If we want to allow pmu::read() from arbitrary CPUs the DSU is affine
+to, I agree we'd need the lock to serialize accesses to the registers
+and data structures.
 
---CUfgB8w4ZwR/yMy5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqZKn8ACgkQ3SOs138+
-s6EmyRAAkzu5grx2iNvsqWgE/4+9sRZ97eRSEc4muVz5vPvuNNZ0aviU4rXZ9OCi
-1R73r8tc73U1LOTlHozRLIwvXiWMiv8vE9YzgUyoaj0Pllh44P0GK7PXiuPmktyo
-hUMpQwxEfQNtTR18svAFb0iKexFzLUhTndAvgRwmUb9stTkfEXX0HUMYb5vOD1t5
-NWbw8sO9lCUq++NUkiyKG9+mGK1M2YLAsGtbewYqqBqP0g68NPYBPHBaDzATZrvF
-z61G0Y0SzUg9F1oNmkDgUghDKlDzouhWxYBRVk37sCNg2CVkW+9+Exlcwi3lSNQI
-pDgykezDrCcC/sYJJ2wGQBiElrvtfGwJUJmI3eozKoDqvSI8o4r15EZozAuaAexL
-CBoJy9NfQBhqbFBl0HcteEqCLdqXmmA6sIleBbadQWjW+fvGsIyfyS4lGL2Cs8Sl
-qgkVe+iKhg4jRYFBTVKRbADdxxpBZ8hoty5I9ew+tcpWOWwOyjc1AZHM9n54J/IA
-Poj0tJmDgbfeC4J/AnSYpYXCm+P+2YxwprTzuOdIe2N8XMkiCj8jYKWOydWzZAEW
-eMHZ8vnyvmUWVgmHpo2KPo0nMGMc8KGqMAVOjbThUvh3ETvczyd+XhizMV/G9AvW
-W9/Ry5co8MP/2Eder/JT6ylcjwVcnVN3MtvMB8bjn2Xw3I2hHTE=
-=QeI3
------END PGP SIGNATURE-----
-
---CUfgB8w4ZwR/yMy5--
+Thanks,
+Mark.
