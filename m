@@ -1,129 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426276AbeCBOnD convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 09:43:03 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1848 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1426189AbeCBOnA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:43:00 -0500
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: add support for STM32 USB PHY
- Controller (USBPHYC)
-Thread-Topic: [PATCH v2 1/2] dt-bindings: phy: add support for STM32 USB PHY
- Controller (USBPHYC)
-Thread-Index: AQHTsXJHzOW8wFithkSMmKaB4gOhl6O8ZJCAgACRMAA=
-Date: Fri, 2 Mar 2018 14:42:36 +0000
-Message-ID: <6a11cbdc-a7db-31c5-740c-06857f051e38@st.com>
-References: <1519918245-17333-1-git-send-email-amelie.delaunay@st.com>
- <1519918245-17333-2-git-send-email-amelie.delaunay@st.com>
- <bac8ba1a-dd66-4df6-1976-c6144e35040c@ti.com>
-In-Reply-To: <bac8ba1a-dd66-4df6-1976-c6144e35040c@ti.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.47]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <84EA306B2A90664CBD82979F5E7B325A@st.com>
-Content-Transfer-Encoding: 8BIT
+        id S1426386AbeCBOnT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 09:43:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1426299AbeCBOnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 09:43:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B40206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Fri, 2 Mar 2018 11:43:12 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: changbin.du@intel.com
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180302144312.GC4086@kernel.org>
+References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/02/2018 07:02 AM, Kishon Vijay Abraham I wrote:
+Em Fri, Feb 23, 2018 at 07:40:40PM +0800, changbin.du@intel.com escreveu:
+> From: Changbin Du <changbin.du@intel.com>
 > 
-> 
-> On Thursday 01 March 2018 09:00 PM, Amelie Delaunay wrote:
->> This patch adds the device tree bindings description for STM32 USBPHYC
->> (USB PHY Controller).
->>
->> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->> ---
->>   .../devicetree/bindings/phy/phy-stm32-usbphyc.txt  | 46 ++++++++++++++++++++++
->>   1 file changed, 46 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt b/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
->> new file mode 100644
->> index 0000000..1ad3893
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/phy-stm32-usbphyc.txt
->> @@ -0,0 +1,46 @@
->> +STMicroelectronics STM32 USB HS PHY controller
->> +
->> +The STM32 USBPHYC block contains a dual port High Speed UTMI+ PHY and a UTMI
->> +switch. It controls PHY configuration and status, and the UTMI+ switch that
->> +selects either OTG or HOST controller for the second PHY port. It also sets
->> +PLL configuration.
->> +
->> +USBPHYC
->> +      |_ PLL
->> +      |
->> +      |_ PHY port#1 _________________ HOST controller
->> +      |                    _                 |
->> +      |                  / 1|________________|
->> +      |_ PHY port#2 ----|   |________________
->> +      |                  \_0|                |
->> +      |_ UTMI switch_______|          OTG controller
->> +
->> +
-> 
-> This should be modeled as a phy provider node with two separate sub-nodes for
-> each of the PHYs.
-> 
-> Thanks
-> Kishon
-> 
+> This is to show the real name of thread that created via fork-exec.
+> See below example for shortname *A0*.
 
-Thank you for pointing me to the right solution. I send a V3.
+Can you ellaborate a bit more and perhaps provide before and after
+outputs?
 
-Regards,
-Amelie
-
->> +Required properties:
->> +- compatible: must be "st,stm32mp1-usbphyc"
->> +- reg: address and length of the usb phy control register set
->> +- clocks: phandle + clock specifier for the PLL phy clock
->> +- phy-supply: from the generic phy bindings, phandle to the regulator
->> +  providing 3V3 power to the PHY, see phy-bindings.txt
->> +- vdda1v1-supply: phandle to the regulator providing 1V1 power to the PHY
->> +- vdda1v8-supply: phandle to the regulator providing 1V8 power to the PHY
->> +
->> +Optional properties:
->> +- assigned-clocks: phandle + clock specifier for the PLL phy clock
->> +- assigned-clock-parents: the PLL phy clock parent
->> +- resets: phandle + reset specifier
->> +- st,utmi-switch: should be <0> or <1>, to select USB controller for PHY
->> +  port#2. If not specified, 0 is the default selection.
->> +
->> +
->> +Example:
->> +		usbphyc: usb-phy@5a006000 {
->> +			compatible = "st,stm32mp1-usbphyc";
->> +			reg = <0x5a006000 0x1000>;
->> +			clocks = <&rcc_clk USBPHY_K>;
->> +			resets = <&rcc_rst USBPHY_R>;
->> +			st,utmi-switch = <1>;
->> +			phy-supply = <&vdd_usb>;
->> +			vdda1v1-supply = <&reg11>;
->> +			vdda1v8-supply = <&reg18>
->> +		};
->>
+- Arnaldo
+ 
+> $ sudo ./perf sched map
+>               *A0   80393.050639 secs A0 => perf:22368
+>           *.   A0   80393.050748 secs .  => swapper:0
+>            .  *.    80393.050887 secs
+>       *B0  .   .    80393.052735 secs B0 => rcu_sched:8
+>       *.   .   .    80393.052743 secs
+>        .  *C0  .    80393.056264 secs C0 => kworker/2:1H:287
+>        .  *A0  .    80393.056270 secs
+>        .  *D0  .    80393.056769 secs D0 => ksoftirqd/2:22
+>        .  *A0  .    80393.056804 secs A0 => pi:22368
+>        .  *.   .    80393.056854 secs
+>       *B0  .   .    80393.060727 secs
+>       ...
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> ---
+>  tools/perf/builtin-sched.c | 4 +++-
+>  tools/perf/util/thread.c   | 1 +
+>  tools/perf/util/thread.h   | 1 +
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 83283fe..53bb8df 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -1580,7 +1580,7 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
+>  
+>  	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
+>  	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
+> -	if (new_shortname || (verbose > 0 && sched_in->tid)) {
+> +	if (new_shortname || sched_in->comm_changed || (verbose > 0 && sched_in->tid)) {
+>  		const char *pid_color = color;
+>  
+>  		if (thread__has_color(sched_in))
+> @@ -1588,6 +1588,8 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
+>  
+>  		color_fprintf(stdout, pid_color, "%s => %s:%d",
+>  		       sched_in->shortname, thread__comm_str(sched_in), sched_in->tid);
+> +
+> +		sched_in->comm_changed = false;
+>  	}
+>  
+>  	if (sched->map.comp && new_cpu)
+> diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+> index 68b65b1..c660fe6 100644
+> --- a/tools/perf/util/thread.c
+> +++ b/tools/perf/util/thread.c
+> @@ -212,6 +212,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
+>  			unwind__flush_access(thread);
+>  	}
+>  
+> +	thread->comm_changed = true;
+>  	thread->comm_set = true;
+>  
+>  	return 0;
+> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+> index 40cfa36..b9a328b 100644
+> --- a/tools/perf/util/thread.h
+> +++ b/tools/perf/util/thread.h
+> @@ -27,6 +27,7 @@ struct thread {
+>  	int			cpu;
+>  	refcount_t		refcnt;
+>  	char			shortname[3];
+> +	bool			comm_changed;
+>  	bool			comm_set;
+>  	int			comm_len;
+>  	bool			dead; /* if set thread has exited */
+> -- 
+> 2.7.4
