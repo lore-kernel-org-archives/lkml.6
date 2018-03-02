@@ -1,114 +1,212 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2979411-1520043563-2-8133042926655713136
+X-Cyrus-Session-Id: sloti22d1t05-441027-1519963425-2-4449114833517442178
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520043563; b=w/HAvvimiKgJZTLTCpj0GLf9CA8jbSBveeHQnJbup2DBlM9
-    Pv45/VfxbT0TktbZjFlmML9FhhKep+ZuCoi8IxGAH4ItpCPEEp1ygENwJSY2lUsD
-    H/RhOuKS3DQ1uU9XUs8UN6wDD19jXw6h2rGYH3w1e9R4LSu8WzowwwiaY3s7UIP7
-    kZlXh1bdzMYV1747HMPYRn5Yp9LA0zIyzgXa+W/TX/C3wzx7iT5AQBM41PayTLQp
-    SJtFSj5nVwOHSMKO+c9MY1h29lmLjA4zv8mqEXWgBRQ1V1me0QZIdVYpm+3pDIkC
-    dmPt/MeZMFjzZWf7zXub7tnGV35M+w5VDXdOG9w==
+    t=1519963425; b=QVtw5Rhx2KfqGfe9kJY+FLqa/+/u1duk/fBDJNcBHYuXnfm
+    bPwMdRsLSoNmwlDj5b8NsCBD9dTK4D6GHIbm1HdphAhbTzc74Y5XzjbMFp2lEbDy
+    yB2x3zNVqmsEqKPMV84Rg0qbMetjUYpAujEbW5B8xpT/hg10VOo/jbZK8I9wtJBp
+    oXBvDYWdYpSF0iK5Y710kHcfg1ZZnMmRk3LGzmVO7Kj5zpMK/exfwTFq2v1NuAmH
+    mDKcOK6SRycxQbsEfRIiHJWxWgRGp6YnwXfCp0umuW7epGDQN/Ho2R6OWr+7NA88
+    vU9jCn7vooIfOnpaVb4x9GTSLdwu4r04H7IO7Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520043563; bh=qjpsXh8moTIrfIc1Nxa1kTTCCLW/kJC9SUxsEs
-    D+Lxs=; b=uVp39kEWcicqYeirGYFX0pwgtLjYBTlEvVxbmjFtvRYU+jXOTF1Hsw
-    msP49a2Is7OALB9NGg9bfzhZ5NQHRfyfoYlabg4Ypr379sKamoFUKcyM8WcXe4i/
-    S7u5dnsgGC+cFKDgQu+72nNJjSCUzpVNcknOcnnbjxNnvuUhTKFjqvGW4WujORg8
-    K9rJVDMo0vVOI9WxMMGqWV0aJZnDQ9ljhv9N1q2mOtoktsoLi9H/Fh5KAQBBP1Rx
-    PvqzxEne8BVg676GsbQQ2Ms46e6vviC7kyHMCamcLAoblaexFbYUmMyeA4PxdCQu
-    hp//nryPjOn7vlvzOK90D6MQmS56i1Jw==
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519963425; bh=RMdT8uFwVDxzR+dlyKngaErTFPWHbsX/n4zHefiW93s=; b=q
+    3/5d8009m6uGdfCMmYOSDDbJN/hut9inLKSPUwe8KBCROUYU99ONXPxfcFetUCGE
+    wWDcILEFy37akNBSL6r8HG1yLFon4QZXw74nglXyAkhqEY8Er8wykXtKPipmUZiJ
+    UaOcaoWdlwr2oX+b+wQCgpiO34A3au81z9yar88XUa42wPVqMl4Xz6ab0hxbE6+z
+    TYZ65V8xyZ5myYtNs6xKmApuNzaqm8uxH6hAD/YinSFPE0erS1sFnD5xJZqE3mPk
+    jRgca1Xw3tXGh1kJKd2IiB30+l9mTClDDPTiKispnZolhmPOXtzKY49yzEgXi3Xj
+    g9vUw2qoIBXRTcDmmELFg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b=vu2+Vq9n x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bfQzPlgf;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b=vu2+Vq9n x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bfQzPlgf;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935740AbeCCCTT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 21:19:19 -0500
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46551 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933609AbeCCCTR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 21:19:17 -0500
-X-Google-Smtp-Source: AG47ELv8zz4lHxTJ/JltNXKlHV7jcjK8FQe+hPwi3bXp6k/ufbaUIIM2xPay/IuJ6p+YtV2f0wXxOlBGTjkalUSuw0o=
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jM=N=wjnK4gWxHu0Fk9VXnfReLf6shW6mbzvf3sahjrQ@mail.gmail.com>
-References: <151996281307.28483.12343847096989509127.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180302221020.GA30722@lst.de> <CAPcyv4gKyvkHY_qQTYvd8wrLpaXXciJyWZY+9T7Q_Eg-Zuxpgw@mail.gmail.com>
- <20180302225734.GE31240@lst.de> <CAPcyv4jM=N=wjnK4gWxHu0Fk9VXnfReLf6shW6mbzvf3sahjrQ@mail.gmail.com>
+        id S1164861AbeCBEDb (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 23:03:31 -0500
+Received: from mga06.intel.com ([134.134.136.31]:54050 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164868AbeCBED3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 1 Mar 2018 23:03:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="30862327"
+Subject: [PATCH v5 09/12] mm,
+ dax: replace IS_DAX() with IS_DEVDAX() or IS_FSDAX()
 From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 2 Mar 2018 18:19:16 -0800
-Message-ID: <CAPcyv4iZ3QCR5qjvEdBEZ3PikEujJbWK62TiKoceEoG2N+dUzw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/12] vfio, dax: prevent long term filesystem-dax pins
- and other fixes
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Haozhong Zhang <haozhong.zhang@intel.com>,
-        Jane Chu <jane.chu@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Gerd Rausch <gerd.rausch@oracle.com>,
-        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
+To: linux-nvdimm@lists.01.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
         Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        linux-xfs@vger.kernel.org, hch@lst.de,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 01 Mar 2018 19:54:22 -0800
+Message-ID: <151996286235.28483.2635632878864807577.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <151996281307.28483.12343847096989509127.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <151996281307.28483.12343847096989509127.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 2, 2018 at 3:49 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Fri, Mar 2, 2018 at 2:57 PM, Christoph Hellwig <hch@lst.de> wrote:
->> On Fri, Mar 02, 2018 at 02:21:40PM -0800, Dan Williams wrote:
->>> They are indeed a hodge-podge. The problem is that the current
->>> IS_DAX() is broken. So I'd like to propose fixing IS_DAX() with
->>> IS_FSDAX() + IS_DEVDAX() for 4.16-rc4 and queue up these wider reworks
->>> you propose for the next merge window.
->>
->> The only thing broken about IS_DAX are the code elimination games
->> based on the CONFIG_* flags.  Remove those and just add proper stubs
->> for the dax routines and everything will be fine for now until we can
->> kill that inode flag.
->>
->> IS_FSDAX and IS_DEVDAX on the other hand are a giant mess that isn't
->> helping anyone.
->
-> Ok, I'll take another shot at something suitable for 4.16, but without
-> these new helpers...
+In preparation for fixing the broken definition of S_DAX in the
+CONFIG_FS_DAX=n + CONFIG_DEV_DAX=y case, convert all IS_DAX() usages to
+use explicit tests for the DEVDAX and FSDAX sub-cases of DAX
+functionality.
 
-I'll drop patches 2-11 for now, and just get the high priority fixes
-in for the next rc.
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: dee410792419 ("/dev/dax, core: file operations and dax-mmap")
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/fs.h |   16 +++++++---------
+ mm/fadvise.c       |    3 ++-
+ mm/filemap.c       |    4 ++--
+ mm/huge_memory.c   |    4 +++-
+ mm/madvise.c       |    3 ++-
+ 5 files changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bd0c46880572..33e859e7d100 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3208,21 +3208,19 @@ static inline bool io_is_direct(struct file *filp)
+ 
+ static inline bool vma_is_dax(struct vm_area_struct *vma)
+ {
+-	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
++	struct inode *inode;
++
++	if (!vma->vm_file)
++		return false;
++	inode = file_inode(vma->vm_file);
++	return IS_FSDAX(inode) || IS_DEVDAX(inode);
+ }
+ 
+ static inline bool vma_is_fsdax(struct vm_area_struct *vma)
+ {
+-	struct inode *inode;
+-
+ 	if (!vma->vm_file)
+ 		return false;
+-	if (!vma_is_dax(vma))
+-		return false;
+-	inode = file_inode(vma->vm_file);
+-	if (S_ISCHR(inode->i_mode))
+-		return false; /* device-dax */
+-	return true;
++	return IS_FSDAX(file_inode(vma->vm_file));
+ }
+ 
+ static inline int iocb_flags(struct file *file)
+diff --git a/mm/fadvise.c b/mm/fadvise.c
+index 767887f5f3bf..00d9317636a2 100644
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -55,7 +55,8 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, loff_t, offset, loff_t, len, int, advice)
+ 
+ 	bdi = inode_to_bdi(mapping->host);
+ 
+-	if (IS_DAX(inode) || (bdi == &noop_backing_dev_info)) {
++	if (IS_FSDAX(inode) || IS_DEVDAX(inode)
++			|| (bdi == &noop_backing_dev_info)) {
+ 		switch (advice) {
+ 		case POSIX_FADV_NORMAL:
+ 		case POSIX_FADV_RANDOM:
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 693f62212a59..4bc4e067ebf2 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2357,7 +2357,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		 * DAX files, so don't bother trying.
+ 		 */
+ 		if (retval < 0 || !count || iocb->ki_pos >= size ||
+-		    IS_DAX(inode))
++		    IS_FSDAX(inode))
+ 			goto out;
+ 	}
+ 
+@@ -3225,7 +3225,7 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		 * not succeed (even if it did, DAX does not handle dirty
+ 		 * page-cache pages correctly).
+ 		 */
+-		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
++		if (written < 0 || !iov_iter_count(from) || IS_FSDAX(inode))
+ 			goto out;
+ 
+ 		status = generic_perform_write(file, from, pos = iocb->ki_pos);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 87ab9b8f56b5..ed238936e29b 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -529,10 +529,12 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags)
+ {
+ 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
++	struct inode *inode;
+ 
+ 	if (addr)
+ 		goto out;
+-	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
++	inode = filp->f_mapping->host;
++	if (!IS_FSDAX(inode) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+ 		goto out;
+ 
+ 	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 4d3c922ea1a1..bdb83cf018b1 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -275,6 +275,7 @@ static long madvise_willneed(struct vm_area_struct *vma,
+ 			     unsigned long start, unsigned long end)
+ {
+ 	struct file *file = vma->vm_file;
++	struct inode *inode = file_inode(file);
+ 
+ 	*prev = vma;
+ #ifdef CONFIG_SWAP
+@@ -293,7 +294,7 @@ static long madvise_willneed(struct vm_area_struct *vma,
+ 		return -EBADF;
+ #endif
+ 
+-	if (IS_DAX(file_inode(file))) {
++	if (IS_FSDAX(inode) || IS_DEVDAX(inode)) {
+ 		/* no bad return value, but ignore advice */
+ 		return 0;
+ 	}
