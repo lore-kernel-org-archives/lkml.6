@@ -1,82 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935159AbeCBX6Z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:58:25 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:50208 "EHLO vps-vb.mhejs.net"
+        id S935193AbeCBX7Z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:59:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38572 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934915AbeCBX6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:58:24 -0500
-Subject: Re: [PATCH 2/3] crypto: ccp - return an actual key size from RSA
- max_size callback
-To: "Hook, Gary" <ghook@amd.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <51c265e4-6153-3e5e-316a-ebef059ac36a@maciej.szmigiero.name>
- <20180302164451.GJ21579@gondor.apana.org.au>
- <087e7b27-f839-8d4b-8da8-5d0fa2f8caf1@maciej.szmigiero.name>
- <bcf42353-4b07-a14a-e76f-6c520b7b0ba1@amd.com>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <7deb1115-b4b2-8fe3-885f-0162f2fe359f@maciej.szmigiero.name>
-Date: Sat, 3 Mar 2018 00:58:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933567AbeCBX7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 18:59:23 -0500
+Date: Fri, 2 Mar 2018 16:59:19 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: bhelgaas@google.com, alexander.h.duyck@intel.com,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, mheyne@amazon.de,
+        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
+        dwmw@amazon.co.uk
+Subject: Re: [PATCH 1/3] pci-iov: Add support for unmanaged SR-IOV
+Message-ID: <20180302165919.423cd45b@t450s.home>
+In-Reply-To: <20180302234412.3337.71321.stgit@localhost.localdomain>
+References: <20180302234218.3337.16486.stgit@localhost.localdomain>
+        <20180302234412.3337.71321.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <bcf42353-4b07-a14a-e76f-6c520b7b0ba1@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.03.2018 00:49, Hook, Gary wrote:
-> On 3/2/2018 5:15 PM, Maciej S. Szmigiero wrote:
->> On 02.03.2018 17:44, Herbert Xu wrote:
->>> On Sat, Feb 24, 2018 at 05:03:21PM +0100, Maciej S. Szmigiero wrote:
->>>> rsa-pkcs1pad uses a value returned from a RSA implementation max_size
->>>> callback as a size of an input buffer passed to the RSA implementation for
->>>> encrypt and sign operations.
->>>>
->>>> CCP RSA implementation uses a hardware input buffer which size depends only
->>>> on the current RSA key length, so it should return this key length in
->>>> the max_size callback, too.
->>>> This also matches what the kernel software RSA implementation does.
->>>>
->>>> Previously, the value returned from this callback was always the maximum
->>>> RSA key size the CCP hardware supports.
->>>> This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
->>>> for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
->>>> tried to copy this large input buffer into a RSA key length-sized hardware
->>>> input buffer.
->>>>
->>>> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->>>> Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
->>>> Cc: stable@vger.kernel.org
->>>
->>> Patch applied.  Thanks.
->>
->> Thanks.
->>
->> However, what about the first patch from this series?
->> Without it, while it no longer should cause a buffer overflow, in-kernel
->> X.509 certificate verification will still fail with CCP driver loaded
->> (since CCP RSA implementation has a higher priority than the software
->> RSA implementation).
->>
->> Maciej
->>
-> 
-> 
-> I commented on that one here:
-> https://marc.info/?l=linux-crypto-vger&m=151986452422791&w=2
-> 
-> Effectively a NACK. We are a reviewing a proposed patch right now.
+On Fri, 02 Mar 2018 15:44:25 -0800
+Alexander Duyck <alexander.duyck@gmail.com> wrote:
 
-Your earlier comment referred to the third patch from this series.
-My message above was about the first one.
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> 
+> This patch is meant to add some basic functionality to support for SR-IOV
+> on devices when the VFs are not managed by the kernel. The functions
+> provided here can be used by drivers such as vfio-pci and virtio to enable
+> SR-IOV on devices that are either managed by userspace, or by some sort of
+> firmware entity respectively.
+> 
+> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
+> value is used as the drivers_autoprobe setting of the VFs when they are
+> being managed by an external entity such as userspace or device firmware
+> instead of being managed by the kernel.
+> 
+> One side effect of this change is that the sriov_drivers_autoprobe and
+> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
+> disabled. Attempts to update them when SR-IOV is in use will only update
+> the local value and will not update sriov->autoprobe.
+> 
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-pci |   17 ++++++++++++++
+>  drivers/pci/iov.c                       |   37 +++++++++++++++++++++++++++++++
+>  drivers/pci/pci-driver.c                |    2 +-
+>  drivers/pci/pci-sysfs.c                 |   29 ++++++++++++++++++++++++
+>  drivers/pci/pci.h                       |    4 +++
+>  include/linux/pci.h                     |    1 +
+>  6 files changed, 88 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+> index 44d4b2be92fd..ff0b6c19cb1a 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-pci
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+> @@ -323,3 +323,20 @@ Description:
+>  
+>  		This is similar to /sys/bus/pci/drivers_autoprobe, but
+>  		affects only the VFs associated with a specific PF.
+> +
+> +What:		/sys/bus/pci/devices/.../sriov_unmanaged_autoprobe
+> +Date:		March 2018
+> +Contact:	Alexander Duyck <alexander.h.duyck@intel.com>
+> +Description:
+> +		This file is associated with the PF of a device that
+> +		supports SR-IOV.  It determines whether newly-enabled VFs
+> +		are immediately bound to a driver when the PF driver does
+> +		not manage the VFs itself.  It initially contains 0, which
+> +		means the kernel will not automatically bind VFs to a driver.
+> +		If an application writes 1 to the file before enabling VFs,
+> +		the kernel will bind VFs to a compatible driver immediately
+> +		after they are enabled.
+> +
+> +		This overrides /sys/bus/pci/devices/.../sriov_drivers_autoprobe
+> +		when a PF driver is not present to manage a device, or the PF
+> +		driver does not provide functionality to support SR-IOV.
 
-Maciej
+
+Given a pf, how does a user determine whether it is managed or unmanaged
+and therefore which autoprobe attributes are in effect?  Thanks,
+
+Alex
