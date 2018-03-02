@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428416AbeCBSEt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:04:49 -0500
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:40809 "EHLO
+        id S1426584AbeCBSGq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:06:46 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:37158 "EHLO
         mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426543AbeCBSEr (ORCPT
+        with ESMTP id S1423832AbeCBSGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:04:47 -0500
-X-Google-Smtp-Source: AG47ELvcgzvQMXZT1rLuM4kwiwLchj9sgVspL5vWXaqTCCHzsgM9ppAJbT4PNO7kOMwhzvKm42HkYg==
-Date: Fri, 2 Mar 2018 12:04:39 -0600
+        Fri, 2 Mar 2018 13:06:44 -0500
+X-Google-Smtp-Source: AG47ELt5WV2K8D4KTfuSDqsjjlmdGeKxFHaKuwpvSmq4exJ5eA9/FhLig5XX5Hq3Wk7YeaYcHPxlfg==
+Date: Fri, 2 Mar 2018 12:06:42 -0600
 From: Rob Herring <robh@kernel.org>
 To: Michal Simek <michal.simek@xilinx.com>
 Cc: devicetree@vger.kernel.org, monstr@monstr.eu,
@@ -19,7 +19,7 @@ Cc: devicetree@vger.kernel.org, monstr@monstr.eu,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v2 6/8] arm64: zynqmp: Add support for Xilinx zcu111-revA
-Message-ID: <20180302180439.bzl6zmnpkvaqnekb@rob-hp-laptop>
+Message-ID: <20180302180642.vctexdelz6z7h6cq@rob-hp-laptop>
 References: <cover.1519396753.git.michal.simek@xilinx.com>
  <db4b958c2280352939de0e7e55bc00d416b694e9.1519396753.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
@@ -106,8 +106,6 @@ On Fri, Feb 23, 2018 at 03:40:28PM +0100, Michal Simek wrote:
 > +		serial1 = &dcc;
 > +		usb0 = &usb0;
 
-Same comments on aliases.
-
-Otherwise,
+And here too.
 
 Reviewed-by: Rob Herring <robh@kernel.org>
