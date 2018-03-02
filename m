@@ -1,82 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935040AbeCBXp0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:45:26 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36027 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935015AbeCBXpX (ORCPT
+        id S935061AbeCBXqH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:46:07 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56362 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935015AbeCBXqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:45:23 -0500
-X-Google-Smtp-Source: AG47ELtwqyuPoV6fjKnu5ZGqd6jhbVM4wVLjhRxSVefG5Kl0nCMTcTG9vbD+8617M+mdn+ba3Nka+w==
-Subject: [PATCH 3/3] virtio_pci: Add support for unmanaged SR-IOV on
- virtio_pci devices
-From: Alexander Duyck <alexander.duyck@gmail.com>
-To: bhelgaas@google.com, alexander.h.duyck@intel.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, mheyne@amazon.de,
-        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
-        dwmw@amazon.co.uk
-Date: Fri, 02 Mar 2018 15:45:20 -0800
-Message-ID: <20180302234459.3337.5625.stgit@localhost.localdomain>
-In-Reply-To: <20180302234218.3337.16486.stgit@localhost.localdomain>
-References: <20180302234218.3337.16486.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Fri, 2 Mar 2018 18:46:06 -0500
+Date: Fri, 2 Mar 2018 15:46:04 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] checkpatch: warn for use of %px
+Message-Id: <20180302154604.c6c8cc14d06124f36de136d9@linux-foundation.org>
+In-Reply-To: <1519700648-23108-1-git-send-email-me@tobin.cc>
+References: <1519700648-23108-1-git-send-email-me@tobin.cc>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+On Tue, 27 Feb 2018 14:04:04 +1100 "Tobin C. Harding" <me@tobin.cc> wrote:
 
-Hardware-realized virtio_pci devices can implement SR-IOV, so this
-patch enables its use. The device in question is an upcoming Intel
-NIC that implements both a virtio_net PF and virtio_net VFs. These
-are hardware realizations of what has been up to now been a software
-interface.
+> Hi Andrew,
+> 
+> This is a resurrection of a patch set from last December.  There was
+> some confusion (on my behalf) as to how patches to checkpatch got into
+> the mainline.  Are you willing (and able) to take patches to
+> checkpatch.pl?
+> 
+> Patch 1 through 3 are cleanup/refactoring patches.
+> 
+> Patch 3 makes checkpatch emit a warning for usage of specifier %px.
+> 
+> You may remember that the initial idea for this was from yourself, v1
+> requested permission to use 'Suggested-by' tag.  I didn't get comment on
+> that so v2 removed the tag.  (I'm not totally across when one should add
+> the 'Suggested-by' tag.)
+> 
+> v3 was an Epic fail, not testing final patch series before submission.
+> 
+> Joe, I removed your 'Acked-by' tag because the patch you originally
+> acked is different after rebasing.  I kept the Co-Developed-by tag
+> because the code you wrote is still there I just had to massage it a bit
+> since the check for deprecated %p[Ff] has been added since we did v2.
 
-The device in question has the following 4-part PCI IDs:
+I prefer not to include tags which aren't listed in
+Documentation/process/submitting-patches.rst, but I now see that some
+bright spark added Co-Developed-by: to
+Documentation/process/5.Posting.rst, so the two files are a)
+duplicative and b) out of sync.
 
-PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
-VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
-
-The patch currently needs no check for device ID, because the callback
-will never be made for devices that do not assert the capability or
-when run on a platform incapable of SR-IOV.
-
-One reason for this patch is because the hardware requires the
-vendor ID of a VF to be the same as the vendor ID of the PF that
-created it. So it seemed logical to simply have a fully-functioning
-virtio_net PF create the VFs. This patch makes that possible.
-
-Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
----
- drivers/virtio/virtio_pci_common.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..ca1549393255 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	else
- 		virtio_pci_modern_remove(vp_dev);
- 
-+	pci_disable_sriov(pci_dev);
- 	pci_disable_device(pci_dev);
- 	put_device(dev);
- }
-@@ -596,6 +597,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+#ifdef CONFIG_PCI_IOV
-+	.sriov_configure = pci_sriov_configure_unmanaged,
-+#endif
- };
- 
- module_pci_driver(virtio_pci_driver);
+Co-Developed-by is a little more specific than signed-off-by, but not
+usefully so, I suggest...
