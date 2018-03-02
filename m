@@ -1,196 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164032AbeCBBts (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 20:49:48 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1163120AbeCBBtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:49:46 -0500
-Date: Fri, 2 Mar 2018 03:49:45 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>, David Miller <davem@davemloft.net>
-Subject: [RFC PATCH v3] ptr_ring: linked list fallback
-Message-ID: <1519955233-13070-1-git-send-email-mst@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+        id S1164077AbeCBBwv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 20:52:51 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36957 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163120AbeCBBwr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 20:52:47 -0500
+X-Google-Smtp-Source: AG47ELvkm5fWxx8B+BaNSq/rPyWz1Rf/cv771vvhrkBPm1K5cEtGGy86cpIsvk7KvEwvUJ/A07t/4g==
+From: frowand.list@gmail.com
+To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com
+Subject: [PATCH v5 0/4] of: change overlay apply input data from unflattened
+Date: Thu,  1 Mar 2018 17:51:56 -0800
+Message-Id: <1519955520-29975-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So pointer rings work fine, but they have a problem: make them too small
-and not enough entries fit.  Make them too large and you start flushing
-your cache and running out of memory.
+From: Frank Rowand <frank.rowand@sony.com>
 
-This is a new idea of mine: a ring backed by a linked list. Once you run
-out of ring entries, instead of a drop you fall back on a list with a
-common lock.
+Move duplicating and unflattening of an overlay flattened devicetree
+(FDT) into the overlay application code.  To accomplish this,
+of_overlay_apply() is replaced by of_overlay_fdt_apply().
 
-Should work well for the case where the ring is typically sized
-correctly, but will help address the fact that some user try to set e.g.
-tx queue length to 1000000.
+The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+code, which is thus responsible for freeing the duplicate FDT.  The
+caller of of_overlay_fdt_apply() remains responsible for freeing the
+original FDT.
 
-In other words, the idea is that if a user sets a really huge TX queue
-length, we allocate a ptr_ring which is smaller, and use the backup
-linked list when necessary to provide the requested TX queue length
-legitimately.
+The unflattened devicetree now belongs to devicetree code, which is
+thus responsible for freeing the unflattened devicetree.
 
-My hope this will move us closer to direction where e.g. fw codel can
-use ptr rings without locking at all.  The API is still very rough, and
-I really need to take a hard look at lock nesting.
+These ownership changes prevent early freeing of the duplicated FDT
+or the unflattened devicetree, which could result in use after free
+errors.
 
-As was pointed out, this approach only brings benefits if ring
-is rarely completely full. Whether that's common remains to be seen.
+These changes led to migrating some unittest overlay data into
+their own devicetree source files, and then converting most of
+them to use sugar syntax instead of hand coding fragments.
 
-Compiled only, sending for early feedback/flames.
+Changes from v4:
+  (all in patch 1/4)
+  - move of_overlay_fdt_apply() prototype from of_private.h to of.h
+  - of_overlay_apply(): add kfree(fdt) if resolve phandles or
+    initialize changeset fail
+  - of_overlay_fdt_apply(): add parameter size of overlay_fdt and use
+    it for some additional validation of the overlay fdt
+  - update unittest.c with additional parameter to of_overlay_fdt_apply()
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- include/linux/ptr_ring.h | 79 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 75 insertions(+), 4 deletions(-)
+Changes from v3:
+  - patch 1/4: OF_OVERLAY: add select OF_FLATTREE
 
-diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-index e633522..aadb751 100644
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -31,16 +31,25 @@
- #include <asm/errno.h>
- #endif
- 
-+/* entries must start with the following structure */
-+struct plist {
-+	struct plist *next;
-+	struct plist *last; /* only valid in the 1st entry */
-+};
-+
- struct ptr_ring {
- 	int producer ____cacheline_aligned_in_smp;
- 	spinlock_t producer_lock;
- 	int consumer_head ____cacheline_aligned_in_smp; /* next valid entry */
- 	int consumer_tail; /* next entry to invalidate */
-+	struct plist *consumer_list;
-+	int list_num;
- 	spinlock_t consumer_lock;
- 	/* Shared consumer/producer data */
- 	/* Read-only by both the producer and the consumer */
- 	int size ____cacheline_aligned_in_smp; /* max entries in queue */
- 	int batch; /* number of entries to consume in a batch */
-+	int list_size;
- 	void **queue;
- };
- 
-@@ -121,10 +130,42 @@ static inline int __ptr_ring_produce(struct ptr_ring *r, void *ptr)
- }
- 
- /*
-- * Note: resize (below) nests producer lock within consumer lock, so if you
-- * consume in interrupt or BH context, you must disable interrupts/BH when
-- * calling this.
-+ * Note: resize API with the _fallback should be used when calling this.
-  */
-+static inline int ptr_ring_produce_fallback(struct ptr_ring *r, void *ptr)
-+{
-+	int ret;
-+	unsigned long flags;
-+	struct plist *p = ptr;
-+
-+	p->next = NULL;
-+	p->last = p;
-+
-+	spin_lock_irqsave(&r->producer_lock, flags);
-+	ret = __ptr_ring_produce(r, ptr);
-+	if (ret && r->list_size) {
-+		spin_lock(&r->consumer_lock);
-+		ret = __ptr_ring_produce(r, ptr);
-+		if (ret && r->list_num < r->list_size) {
-+			int producer = r->producer ? r->producer - 1 :
-+				r->size - 1;
-+			struct plist *first = r->queue[producer];
-+
-+			BUG_ON(!first);
-+
-+			first->last->next = p;
-+			first->last = p;
-+
-+			r->list_num++;
-+		}
-+		spin_unlock(&r->consumer_lock);
-+	}
-+
-+	spin_unlock_irqrestore(&r->producer_lock, flags);
-+
-+	return ret;
-+}
-+
- static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
- {
- 	int ret;
-@@ -136,6 +177,7 @@ static inline int ptr_ring_produce(struct ptr_ring *r, void *ptr)
- 	return ret;
- }
- 
-+
- static inline int ptr_ring_produce_irq(struct ptr_ring *r, void *ptr)
- {
- 	int ret;
-@@ -372,6 +414,27 @@ static inline void *ptr_ring_consume_bh(struct ptr_ring *r)
- 	return ptr;
- }
- 
-+static inline void *ptr_ring_consume_fallback(struct ptr_ring *r)
-+{
-+	unsigned long flags;
-+	struct plist *ptr;
-+
-+	spin_lock_irqsave(&r->consumer_lock, flags);
-+	if (r->consumer_list) {
-+		ptr = r->consumer_list;
-+		r->consumer_list = ptr->next;
-+		r->list_num--;
-+	} else {
-+		ptr = __ptr_ring_consume(r);
-+		if (ptr) {
-+			r->consumer_list = ptr->next;
-+		}
-+	}
-+	spin_unlock_irqrestore(&r->consumer_lock, flags);
-+
-+	return ptr;
-+}
-+
- static inline int ptr_ring_consume_batched(struct ptr_ring *r,
- 					   void **array, int n)
- {
-@@ -487,7 +550,8 @@ static inline void __ptr_ring_set_size(struct ptr_ring *r, int size)
- 		r->batch = 1;
- }
- 
--static inline int ptr_ring_init(struct ptr_ring *r, int size, gfp_t gfp)
-+static inline int ptr_ring_init_fallback(struct ptr_ring *r, int size, gfp_t gfp,
-+					 int fallback_size)
- {
- 	r->queue = __ptr_ring_init_queue_alloc(size, gfp);
- 	if (!r->queue)
-@@ -497,10 +561,17 @@ static inline int ptr_ring_init(struct ptr_ring *r, int size, gfp_t gfp)
- 	r->producer = r->consumer_head = r->consumer_tail = 0;
- 	spin_lock_init(&r->producer_lock);
- 	spin_lock_init(&r->consumer_lock);
-+	r->list_size = fallback_size;
-+	r->consumer_list = NULL;
- 
- 	return 0;
- }
- 
-+static inline int ptr_ring_init(struct ptr_ring *r, int size, gfp_t gfp)
-+{
-+	return ptr_ring_init_fallback(r, size, gfp, 0);
-+}
-+
- /*
-  * Return entries into ring. Destroy entries that don't fit.
-  *
+Changes from v2:
+  - improve error messages in patch 4/4, as suggested by Geert
+
+Changes from v1:
+  - rebase on v4.16-rc1
+  - update documentation
+  - split out error message to a separate patch
+
+
+Frank Rowand (4):
+  of: change overlay apply input data from unflattened to FDT
+  of: Documentation: of_overlay_apply() replaced by
+    of_overlay_fdt_apply()
+  of: convert unittest overlay devicetree source to sugar syntax
+  of: improve reporting invalid overlay target path
+
+ Documentation/devicetree/overlay-notes.txt       |   4 +-
+ drivers/of/Kconfig                               |   1 +
+ drivers/of/overlay.c                             | 134 +++++++++--
+ drivers/of/resolver.c                            |   6 -
+ drivers/of/unittest-data/Makefile                |  28 ++-
+ drivers/of/unittest-data/overlay.dts             | 101 ++++----
+ drivers/of/unittest-data/overlay_0.dts           |  14 ++
+ drivers/of/unittest-data/overlay_1.dts           |  14 ++
+ drivers/of/unittest-data/overlay_10.dts          |  27 +++
+ drivers/of/unittest-data/overlay_11.dts          |  28 +++
+ drivers/of/unittest-data/overlay_12.dts          |  14 ++
+ drivers/of/unittest-data/overlay_13.dts          |  14 ++
+ drivers/of/unittest-data/overlay_15.dts          |  30 +++
+ drivers/of/unittest-data/overlay_2.dts           |   9 +
+ drivers/of/unittest-data/overlay_3.dts           |   9 +
+ drivers/of/unittest-data/overlay_4.dts           |  18 ++
+ drivers/of/unittest-data/overlay_5.dts           |   9 +
+ drivers/of/unittest-data/overlay_6.dts           |  10 +
+ drivers/of/unittest-data/overlay_7.dts           |  10 +
+ drivers/of/unittest-data/overlay_8.dts           |  10 +
+ drivers/of/unittest-data/overlay_9.dts           |  10 +
+ drivers/of/unittest-data/overlay_bad_phandle.dts |  23 +-
+ drivers/of/unittest-data/overlay_bad_symbol.dts  |  25 +-
+ drivers/of/unittest-data/tests-overlay.dtsi      | 217 +----------------
+ drivers/of/unittest.c                            | 294 +++++++++++------------
+ include/linux/of.h                               |   6 +-
+ 26 files changed, 582 insertions(+), 483 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_0.dts
+ create mode 100644 drivers/of/unittest-data/overlay_1.dts
+ create mode 100644 drivers/of/unittest-data/overlay_10.dts
+ create mode 100644 drivers/of/unittest-data/overlay_11.dts
+ create mode 100644 drivers/of/unittest-data/overlay_12.dts
+ create mode 100644 drivers/of/unittest-data/overlay_13.dts
+ create mode 100644 drivers/of/unittest-data/overlay_15.dts
+ create mode 100644 drivers/of/unittest-data/overlay_2.dts
+ create mode 100644 drivers/of/unittest-data/overlay_3.dts
+ create mode 100644 drivers/of/unittest-data/overlay_4.dts
+ create mode 100644 drivers/of/unittest-data/overlay_5.dts
+ create mode 100644 drivers/of/unittest-data/overlay_6.dts
+ create mode 100644 drivers/of/unittest-data/overlay_7.dts
+ create mode 100644 drivers/of/unittest-data/overlay_8.dts
+ create mode 100644 drivers/of/unittest-data/overlay_9.dts
+
 -- 
-MST
+Frank Rowand <frank.rowand@sony.com>
