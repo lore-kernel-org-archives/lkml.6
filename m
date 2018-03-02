@@ -1,37 +1,69 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuNnkz1SB1PLMHGkhmGH6TBEi1Zp2y3WvGt1U4iBalN8cIiFnIsX+aLA5hQSP6jmMoIj7v7
-ARC-Seal: i=1; a=rsa-sha256; t=1519981376; cv=none;
-        d=google.com; s=arc-20160816;
-        b=CVi7RvnqqWsCITUftvkuW8hOEIncGxMMbQD2U+2XYdJUFF1Xd/H9lPKGmNH+6RDNyt
-         um8pPwA0vKj4frrVuLPTOlFoOSW9KpYWxOZlhzIW18g866PXV3D1uJL98pp2gtNRGVC0
-         46FEDt3sW0vn4j5YUOGFtRbS7KU4letzIRM7sjRWtcrX1w87cDbq0kz2Wb4zQ3Ri8g2r
-         XGbB+IpUnXxpu9pEz9GL+zepGYcPYsIkhtUKmJFvS+VrD3pIlW3UsLQY1vRvTbT4hzo/
-         dE8O8TkFWMa2Dt0X6dcnandhbbB12POQrsPdeZmthVU3P6yb8kGSdj2QnodJmw4HENd4
-         CBZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6UIZN3MxFuL4/lmLrQHaFadRsW9Pia0zVeIvftviC20=;
-        b=dzkpQ3va+gdtyHhpHRfKghPKXDQ15aLSai3/qNuYcI1L6CsJbdVtW6AwvkjLC8v2yG
-         w0fISI0a/BoTqEQ/D8nmZYv6CvaZowOLnjfA/Ieu7wCEbeRRkEE/ifTnXNSBvKV+nRIu
-         psC4CGjuHF+H3iV5enoDMveEhEbSkkYexHNgSXv+9fD/k9TyctEs06LW0Zp49ICxRIE3
-         e8cjZvhY057tC8SvqvxyhqlN/xXyBL0cDy02VRKBMhhuysE7Pb3scC15/4CGsiBg3ikn
-         8Fewb5ahzIYJWfkf/jRSfzoGKEhr1FIDKy7M4L0MaSJwRdIkDvkl6wkNr30ZCt6fntiZ
-         /t+w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1148518-1519981376-2-16767179761280699383
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519981375; b=Ng9dMxu3dawfZ5y7eZy6Newwy3+eLPE3407JuTGkugOIG9a
+    DJQfL1GiKrCtD9DcgkrkPFs1db0gLNq503oTJ85D8CcQtopszIjUKiYnEv4JwRQa
+    29iDNGyp+YFuENpPBhp/6u6pdO97onfIewQfVQAuv/zoPuyLxDqJuU/y8BwtenZg
+    ALHtUUt5YIbB/wgXsZ6Sg6+6ApLQgv6czSFYcmLLy5Z9lodpJhm98XvLkZ5NJ/Sz
+    x91desd+fetjwhfhRHJfj92/a4yp2E8xhu515tuB0iqzo0giH8NtHLzfIr+axnk+
+    UNw2a9595pIdbR2JN0QAFWDJChn2vtdtCw8VuKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519981375; bh=iB252sggrBDI2ktsY8LmrsuHUJ
+    lAjyhqxKZGPA40mcg=; b=m/erPawsX3M3ZaLJymlZjjMyzIhdkQd4Pe34GeStzW
+    fMNjfxB7s0roK6FnlHlTEP5fO7pMb2EBs9MpXoxojWwXJCPtoN8zcAjSjapNXOJ7
+    cYioZ4KxroXA6H+t/kQSZKwFDGXA2C22+S8N4/Sa06HbtgBKLgvLALTDL3RRZPS1
+    fNFbMolxRZ62/wXL5PO9Y3s9Q6ZAuRNxee1V/0GYJAX5dlT/UhmPa+exB6tZEgw2
+    iFCYwRkbU62T0rp74sRBIRLwwU8JbN3pnn3WoRirJKVA8eqRsT6PcrvekA1Lqcse
+    E+hpiufRF3bS6TMEkOkNiCfoKeE2z2z21N7PvJJsbiPw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1424919AbeCBJCw (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 04:02:52 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54980 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424890AbeCBJCm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:02:42 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Aliaksei Karaliou <akaraliou.dev@gmail.com>,
-	"Darrick J. Wong" <darrick.wong@oracle.com>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 073/115] xfs: quota: check result of register_shrinker()
-Date: Fri,  2 Mar 2018 09:51:16 +0100
-Message-Id: <20180302084506.813770544@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Andrii Chepurnyi <andrii_chepurnyi@epam.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 069/115] Input: xen-kbdfront - do not advertise multi-touch pressure support
+Date: Fri,  2 Mar 2018 09:51:12 +0100
+Message-Id: <20180302084506.653886673@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -39,10 +71,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815297009213787?=
-X-GMAIL-MSGID: =?utf-8?q?1593815992250050648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,106 +81,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Aliaksei Karaliou <akaraliou.dev@gmail.com>
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
 
-[ Upstream commit 3a3882ff26fbdbaf5f7e13f6a0bccfbf7121041d ]
+[ Upstream commit 02a0d9216d4daf6a58d88642bd2da2c78c327552 ]
 
-xfs_qm_init_quotainfo() does not check result of register_shrinker()
-which was tagged as __must_check recently, reported by sparse.
+Some user-space applications expect multi-touch pressure
+on contact to be reported if it is advertised in device
+properties. Otherwise, such applications may treat reports
+not as actual touches, but hovering. Currently this is
+only advertised, but not reported.
+Fix this by not advertising that ABS_MT_PRESSURE is supported.
 
-Signed-off-by: Aliaksei Karaliou <akaraliou.dev@gmail.com>
-[darrick: move xfs_qm_destroy_quotainos nearer xfs_qm_init_quotainos]
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Signed-off-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+Patchwork-Id: 10140017
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_qm.c |   45 +++++++++++++++++++++++++++++----------------
- 1 file changed, 29 insertions(+), 16 deletions(-)
+ drivers/input/misc/xen-kbdfront.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/xfs/xfs_qm.c
-+++ b/fs/xfs/xfs_qm.c
-@@ -48,7 +48,7 @@
- STATIC int	xfs_qm_init_quotainos(xfs_mount_t *);
- STATIC int	xfs_qm_init_quotainfo(xfs_mount_t *);
+--- a/drivers/input/misc/xen-kbdfront.c
++++ b/drivers/input/misc/xen-kbdfront.c
+@@ -326,8 +326,6 @@ static int xenkbd_probe(struct xenbus_de
+ 				     0, width, 0, 0);
+ 		input_set_abs_params(mtouch, ABS_MT_POSITION_Y,
+ 				     0, height, 0, 0);
+-		input_set_abs_params(mtouch, ABS_MT_PRESSURE,
+-				     0, 255, 0, 0);
  
--
-+STATIC void	xfs_qm_destroy_quotainos(xfs_quotainfo_t *qi);
- STATIC void	xfs_qm_dqfree_one(struct xfs_dquot *dqp);
- /*
-  * We use the batch lookup interface to iterate over the dquots as it
-@@ -695,9 +695,17 @@ xfs_qm_init_quotainfo(
- 	qinf->qi_shrinker.scan_objects = xfs_qm_shrink_scan;
- 	qinf->qi_shrinker.seeks = DEFAULT_SEEKS;
- 	qinf->qi_shrinker.flags = SHRINKER_NUMA_AWARE;
--	register_shrinker(&qinf->qi_shrinker);
-+
-+	error = register_shrinker(&qinf->qi_shrinker);
-+	if (error)
-+		goto out_free_inos;
-+
- 	return 0;
- 
-+out_free_inos:
-+	mutex_destroy(&qinf->qi_quotaofflock);
-+	mutex_destroy(&qinf->qi_tree_lock);
-+	xfs_qm_destroy_quotainos(qinf);
- out_free_lru:
- 	list_lru_destroy(&qinf->qi_lru);
- out_free_qinf:
-@@ -706,7 +714,6 @@ out_free_qinf:
- 	return error;
- }
- 
--
- /*
-  * Gets called when unmounting a filesystem or when all quotas get
-  * turned off.
-@@ -723,19 +730,7 @@ xfs_qm_destroy_quotainfo(
- 
- 	unregister_shrinker(&qi->qi_shrinker);
- 	list_lru_destroy(&qi->qi_lru);
--
--	if (qi->qi_uquotaip) {
--		IRELE(qi->qi_uquotaip);
--		qi->qi_uquotaip = NULL; /* paranoia */
--	}
--	if (qi->qi_gquotaip) {
--		IRELE(qi->qi_gquotaip);
--		qi->qi_gquotaip = NULL;
--	}
--	if (qi->qi_pquotaip) {
--		IRELE(qi->qi_pquotaip);
--		qi->qi_pquotaip = NULL;
--	}
-+	xfs_qm_destroy_quotainos(qi);
- 	mutex_destroy(&qi->qi_tree_lock);
- 	mutex_destroy(&qi->qi_quotaofflock);
- 	kmem_free(qi);
-@@ -1601,6 +1596,24 @@ error_rele:
- }
- 
- STATIC void
-+xfs_qm_destroy_quotainos(
-+	xfs_quotainfo_t	*qi)
-+{
-+	if (qi->qi_uquotaip) {
-+		IRELE(qi->qi_uquotaip);
-+		qi->qi_uquotaip = NULL; /* paranoia */
-+	}
-+	if (qi->qi_gquotaip) {
-+		IRELE(qi->qi_gquotaip);
-+		qi->qi_gquotaip = NULL;
-+	}
-+	if (qi->qi_pquotaip) {
-+		IRELE(qi->qi_pquotaip);
-+		qi->qi_pquotaip = NULL;
-+	}
-+}
-+
-+STATIC void
- xfs_qm_dqfree_one(
- 	struct xfs_dquot	*dqp)
- {
+ 		ret = input_mt_init_slots(mtouch, num_cont, INPUT_MT_DIRECT);
+ 		if (ret) {
