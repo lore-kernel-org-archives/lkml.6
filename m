@@ -1,45 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946605AbeCBQA0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:00:26 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:42117 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423884AbeCBQAY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:00:24 -0500
-X-Google-Smtp-Source: AG47ELvqKtGkpjX5VaX4YjFKAO3rRBhgQ0AegiiLSFjpelCJLE4AFvef1PFnHJmNzXj9rSPMeRiQRw==
-Date: Fri, 2 Mar 2018 10:00:22 -0600
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: matthias.bgg@gmail.com, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/19] dt-bindings: arm: mediatek: add support for
- more mt7623 reference boards
-Message-ID: <20180302160022.ub6vinw6br3l2dyb@rob-hp-laptop>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
- <e77690ea7f7332e9e1ee64204a4e72c759c41aa9.1519378871.git.sean.wang@mediatek.com>
+        id S1946666AbeCBQBz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:01:55 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1946608AbeCBQBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:01:53 -0500
+Subject: Re: [PATCH] arm64: dts: hisi: add hns-dsaf cpld control for the hip07
+ SoC
+To: Huazhong Tan <tanhuazhong@huawei.com>
+References: <1516278697-244377-1-git-send-email-tanhuazhong@huawei.com>
+CC: <linuxarm@huawei.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5A997559.9060103@hisilicon.com>
+Date: Fri, 2 Mar 2018 16:01:29 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e77690ea7f7332e9e1ee64204a4e72c759c41aa9.1519378871.git.sean.wang@mediatek.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1516278697-244377-1-git-send-email-tanhuazhong@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.47]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 06:16:24PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Update binding document for more mt7623[A,N] reference boards being
-> supported.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.txt | 9 +++++++++
->  1 file changed, 9 insertions(+)
+Hi Huazhong,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 2018/1/18 12:31, Huazhong Tan wrote:
+> Add cpld-syscon node to support the cpld control for hns-dsaf
+> on the hip07 SoC.
+> 
+> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+> ---
+
+Applied into hisilicon dt tree.
+Thanks!
+
+BR,
+Wei
+
+>  arch/arm64/boot/dts/hisilicon/hip07.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hip07.dtsi b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> index 2c01a21..4bd6416 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hip07.dtsi
+> @@ -1127,6 +1127,12 @@
+>  			reg = <0x0 0xc0000000 0x0 0x10000>;
+>  		};
+>  
+> +		dsa_cpld: dsa_cpld@78000010 {
+> +			compatible = "syscon";
+> +			reg = <0x0 0x78000010 0x0 0x100>;
+> +			reg-io-width = <2>;
+> +		};
+> +
+>  		pcie_subctl: pcie_subctl@a0000000 {
+>  			compatible = "hisilicon,pcie-sas-subctrl", "syscon";
+>  			reg = <0x0 0xa0000000 0x0 0x10000>;
+> @@ -1258,6 +1264,7 @@
+>  			port@0 {
+>  				reg = <0>;
+>  				serdes-syscon = <&serdes_ctrl>;
+> +				cpld-syscon = <&dsa_cpld 0x0>;
+>  				port-rst-offset = <0>;
+>  				port-mode-offset = <0>;
+>  				mc-mac-mask = [ff f0 00 00 00 00];
+> @@ -1267,6 +1274,7 @@
+>  			port@1 {
+>  				reg = <1>;
+>  				serdes-syscon= <&serdes_ctrl>;
+> +				cpld-syscon = <&dsa_cpld 0x4>;
+>  				port-rst-offset = <1>;
+>  				port-mode-offset = <1>;
+>  				mc-mac-mask = [ff f0 00 00 00 00];
+> 
