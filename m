@@ -1,61 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933327AbeCBVDj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 16:03:39 -0500
-Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:39700 "EHLO
-        emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933204AbeCBVDi (ORCPT
+        id S933479AbeCBVF4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 16:05:56 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44669 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933412AbeCBVFs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 16:03:38 -0500
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: [PATCH] init/ramdisk: use pr_cont() at the end of ramdisk loading
-Date: Fri,  2 Mar 2018 22:55:52 +0200
-Message-Id: <20180302205552.16031-1-aaro.koskinen@iki.fi>
-X-Mailer: git-send-email 2.9.2
+        Fri, 2 Mar 2018 16:05:48 -0500
+X-Google-Smtp-Source: AG47ELtqTzYur/xOE0yBOrAFjiWmPb8xMtziwr3Gy/sKoGM2guZgpeg9RSJHRz35mhn8Lj9N6t+lIw==
+From: frowand.list@gmail.com
+To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, laurent.pinchart+renesas@ideasonboard.com
+Subject: [PATCH v6 2/4] of: Documentation: of_overlay_apply() replaced by of_overlay_fdt_apply()
+Date: Fri,  2 Mar 2018 13:04:58 -0800
+Message-Id: <1520024700-31315-3-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520024700-31315-1-git-send-email-frowand.list@gmail.com>
+References: <1520024700-31315-1-git-send-email-frowand.list@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use pr_cont() at the end of ramdisk loading. This will avoid the rotator
-and an extra newline appearing in the dmesg.
+From: Frank Rowand <frank.rowand@sony.com>
 
-Before:
-[    0.868650] RAMDISK: Loading 2436KiB [1 disk] into ram disk... |
-[    1.490464] done.
-
-After:
-[    0.868587] RAMDISK: Loading 2436KiB [1 disk] into ram disk... done.
-
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- init/do_mounts_rd.c | 4 ++--
+ Documentation/devicetree/overlay-notes.txt | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index 99e0b64..e3cba12 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -255,7 +255,7 @@ int __init rd_load_image(char *from)
- 		nblocks, ((nblocks-1)/devblocks)+1, nblocks>devblocks ? "s" : "");
- 	for (i = 0, disk = 1; i < nblocks; i++) {
- 		if (i && (i % devblocks == 0)) {
--			printk("done disk #%d.\n", disk++);
-+			pr_cont("done disk #%d.\n", disk++);
- 			rotate = 0;
- 			if (sys_close(in_fd)) {
- 				printk("Error closing the disk.\n");
-@@ -278,7 +278,7 @@ int __init rd_load_image(char *from)
- 		}
- #endif
- 	}
--	printk("done.\n");
-+	pr_cont("done.\n");
+diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
+index c4aa0adf13ec..5175a24d387e 100644
+--- a/Documentation/devicetree/overlay-notes.txt
++++ b/Documentation/devicetree/overlay-notes.txt
+@@ -87,8 +87,8 @@ Overlay in-kernel API
  
- successful_load:
- 	res = 1;
+ The API is quite easy to use.
+ 
+-1. Call of_overlay_apply() to create and apply an overlay changeset. The return
+-value is an error or a cookie identifying this overlay.
++1. Call of_overlay_fdt_apply() to create and apply an overlay changeset. The
++return value is an error or a cookie identifying this overlay.
+ 
+ 2. Call of_overlay_remove() to remove and cleanup the overlay changeset
+ previously created via the call to of_overlay_apply(). Removal of an overlay
 -- 
-2.9.2
+Frank Rowand <frank.rowand@sony.com>
