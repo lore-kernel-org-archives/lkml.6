@@ -1,84 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933473AbeCBWtP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:49:15 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52378 "EHLO mail.bootlin.com"
+        id S934096AbeCBXEC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:04:02 -0500
+Received: from anholt.net ([50.246.234.109]:56174 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933313AbeCBWtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:49:14 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v4 2/6] dt-bindings: mips: Add bindings for Microsemi SoCs
-Date: Fri,  2 Mar 2018 23:48:07 +0100
-Message-Id: <20180302224811.26840-3-alexandre.belloni@bootlin.com>
+        id S933117AbeCBXEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 18:04:00 -0500
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Stefan Schake <stschake@gmail.com>
+Subject: [PATCH] drm/vc4: Add some missing HVS register definitions.
+Date: Fri,  2 Mar 2018 15:03:58 -0800
+Message-Id: <20180302230358.25153-1-eric@anholt.net>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180302224811.26840-1-alexandre.belloni@bootlin.com>
-References: <20180302224811.26840-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microsemi SoCs. Currently only Ocelot is supported.
+At least the RGBA expand field we should have been setting, because we
+aren't expanding correctly for 565 -> 8888.  Other registers are ones
+that may be interesting for various projects that have been discussed.
 
-Reviewed-by: Rob Herring <robh+dt@kernel.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Cc: Stefan Schake <stschake@gmail.com>
 ---
- Documentation/devicetree/bindings/mips/mscc.txt | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/mscc.txt
+ drivers/gpu/drm/vc4/vc4_regs.h | 96 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mips/mscc.txt b/Documentation/devicetree/bindings/mips/mscc.txt
-new file mode 100644
-index 000000000000..f4514c274510
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/mscc.txt
-@@ -0,0 +1,44 @@
-+* Microsemi MIPS CPUs
+diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+index b9749cb24063..ce8bb7486456 100644
+--- a/drivers/gpu/drm/vc4/vc4_regs.h
++++ b/drivers/gpu/drm/vc4/vc4_regs.h
+@@ -330,6 +330,21 @@
+ #define SCALER_DISPCTRL0                        0x00000040
+ # define SCALER_DISPCTRLX_ENABLE		BIT(31)
+ # define SCALER_DISPCTRLX_RESET			BIT(30)
++/* Generates a single frame when VSTART is seen and stops at the last
++ * pixel read from the FIFO.
++ */
++# define SCALER_DISPCTRLX_ONESHOT		BIT(29)
++/* Processes a single context in the dlist and then task switch,
++ * instead of an entire line.
++ */
++# define SCALER_DISPCTRLX_ONECTX		BIT(28)
++/* Set to have DISPSLAVE return 2 16bpp pixels and no status data. */
++# define SCALER_DISPCTRLX_FIFO32		BIT(27)
++/* Turns on output to the DISPSLAVE register instead of the normal
++ * FIFO.
++ */
++# define SCALER_DISPCTRLX_FIFOREG		BIT(26)
 +
-+Boards with a SoC of the Microsemi MIPS family shall have the following
-+properties:
+ # define SCALER_DISPCTRLX_WIDTH_MASK		VC4_MASK(23, 12)
+ # define SCALER_DISPCTRLX_WIDTH_SHIFT		12
+ # define SCALER_DISPCTRLX_HEIGHT_MASK		VC4_MASK(11, 0)
+@@ -402,6 +417,68 @@
+  */
+ # define SCALER_GAMADDR_SRAMENB			BIT(30)
+ 
++#define SCALER_OLEDOFFS                         0x00000080
++/* Clamps R to [16,235] and G/B to [16,240]. */
++# define SCALER_OLEDOFFS_YUVCLAMP               BIT(31)
 +
-+Required properties:
-+- compatible: "mscc,ocelot"
-+- mips-hpt-frequency: CPU counter frequency.
++/* Chooses which display FIFO the matrix applies to. */
++# define SCALER_OLEDOFFS_DISPFIFO_MASK          VC4_MASK(25, 24)
++# define SCALER_OLEDOFFS_DISPFIFO_SHIFT         24
++# define SCALER_OLEDOFFS_DISPFIFO_DISABLED      0
++# define SCALER_OLEDOFFS_DISPFIFO_0             1
++# define SCALER_OLEDOFFS_DISPFIFO_1             2
++# define SCALER_OLEDOFFS_DISPFIFO_2             3
 +
++/* Offsets are 8-bit 2s-complement. */
++# define SCALER_OLEDOFFS_RED_MASK               VC4_MASK(23, 16)
++# define SCALER_OLEDOFFS_RED_SHIFT              16
++# define SCALER_OLEDOFFS_GREEN_MASK             VC4_MASK(15, 8)
++# define SCALER_OLEDOFFS_GREEN_SHIFT            8
++# define SCALER_OLEDOFFS_BLUE_MASK              VC4_MASK(7, 0)
++# define SCALER_OLEDOFFS_BLUE_SHIFT             0
 +
-+* Other peripherals:
++/* The coefficients are S0.9 fractions. */
++#define SCALER_OLEDCOEF0                        0x00000084
++# define SCALER_OLEDCOEF0_B_TO_R_MASK           VC4_MASK(29, 20)
++# define SCALER_OLEDCOEF0_B_TO_R_SHIFT          20
++# define SCALER_OLEDCOEF0_B_TO_G_MASK           VC4_MASK(19, 10)
++# define SCALER_OLEDCOEF0_B_TO_G_SHIFT          10
++# define SCALER_OLEDCOEF0_B_TO_B_MASK           VC4_MASK(9, 0)
++# define SCALER_OLEDCOEF0_B_TO_B_SHIFT          0
 +
-+o CPU chip regs:
++#define SCALER_OLEDCOEF1                        0x00000088
++# define SCALER_OLEDCOEF1_G_TO_R_MASK           VC4_MASK(29, 20)
++# define SCALER_OLEDCOEF1_G_TO_R_SHIFT          20
++# define SCALER_OLEDCOEF1_G_TO_G_MASK           VC4_MASK(19, 10)
++# define SCALER_OLEDCOEF1_G_TO_G_SHIFT          10
++# define SCALER_OLEDCOEF1_G_TO_B_MASK           VC4_MASK(9, 0)
++# define SCALER_OLEDCOEF1_G_TO_B_SHIFT          0
 +
-+The SoC has a few registers (DEVCPU_GCB:CHIP_REGS) handling miscellaneous
-+functionalities: chip ID, general purpose register for software use, reset
-+controller, hardware status and configuration, efuses.
++#define SCALER_OLEDCOEF2                        0x0000008c
++# define SCALER_OLEDCOEF2_R_TO_R_MASK           VC4_MASK(29, 20)
++# define SCALER_OLEDCOEF2_R_TO_R_SHIFT          20
++# define SCALER_OLEDCOEF2_R_TO_G_MASK           VC4_MASK(19, 10)
++# define SCALER_OLEDCOEF2_R_TO_G_SHIFT          10
++# define SCALER_OLEDCOEF2_R_TO_B_MASK           VC4_MASK(9, 0)
++# define SCALER_OLEDCOEF2_R_TO_B_SHIFT          0
 +
-+Required properties:
-+- compatible: Should be "mscc,ocelot-chip-regs", "simple-mfd", "syscon"
-+- reg : Should contain registers location and length
++/* Slave addresses for DMAing from HVS composition output to other
++ * devices.  The top bits are valid only in !FIFO32 mode.
++ */
++#define SCALER_DISPSLAVE0                       0x000000c0
++#define SCALER_DISPSLAVE1                       0x000000c9
++#define SCALER_DISPSLAVE2                       0x000000d0
++# define SCALER_DISPSLAVE_ISSUE_VSTART          BIT(31)
++# define SCALER_DISPSLAVE_ISSUE_HSTART          BIT(30)
++/* Set when the current line has been read and an HSTART is required. */
++# define SCALER_DISPSLAVE_EOL                   BIT(26)
++/* Set when the display FIFO is empty. */
++# define SCALER_DISPSLAVE_EMPTY                 BIT(25)
++/* Set when there is RGB data ready to read. */
++# define SCALER_DISPSLAVE_VALID                 BIT(24)
++# define SCALER_DISPSLAVE_RGB_MASK              VC4_MASK(23, 0)
++# define SCALER_DISPSLAVE_RGB_SHIFT             0
 +
-+Example:
-+	syscon@71070000 {
-+		compatible = "mscc,ocelot-chip-regs", "simple-mfd", "syscon";
-+		reg = <0x71070000 0x1c>;
-+	};
+ #define SCALER_GAMDATA                          0x000000e0
+ #define SCALER_DLIST_START                      0x00002000
+ #define SCALER_DLIST_SIZE                       0x00004000
+@@ -767,6 +844,10 @@ enum hvs_pixel_format {
+ 	HVS_PIXEL_FORMAT_YCBCR_YUV420_2PLANE = 9,
+ 	HVS_PIXEL_FORMAT_YCBCR_YUV422_3PLANE = 10,
+ 	HVS_PIXEL_FORMAT_YCBCR_YUV422_2PLANE = 11,
++	HVS_PIXEL_FORMAT_H264 = 12,
++	HVS_PIXEL_FORMAT_PALETTE = 13,
++	HVS_PIXEL_FORMAT_YUV444_RGB = 14,
++	HVS_PIXEL_FORMAT_AYUV444_RGB = 15,
+ };
+ 
+ /* Note: the LSB is the rightmost character shown.  Only valid for
+@@ -800,12 +881,27 @@ enum hvs_pixel_format {
+ #define SCALER_CTL0_TILING_128B			2
+ #define SCALER_CTL0_TILING_256B_OR_T		3
+ 
++#define SCALER_CTL0_ALPHA_MASK                  BIT(19)
+ #define SCALER_CTL0_HFLIP                       BIT(16)
+ #define SCALER_CTL0_VFLIP                       BIT(15)
+ 
++#define SCALER_CTL0_KEY_MODE_MASK		VC4_MASK(18, 17)
++#define SCALER_CTL0_KEY_MODE_SHIFT		17
++#define SCALER_CTL0_KEY_DISABLED		0
++#define SCALER_CTL0_KEY_LUMA_OR_COMMON_RGB	1
++#define SCALER_CTL0_KEY_MATCH			2 /* turn transparent */
++#define SCALER_CTL0_KEY_REPLACE			3 /* replace with value from key mask word 2 */
 +
+ #define SCALER_CTL0_ORDER_MASK			VC4_MASK(14, 13)
+ #define SCALER_CTL0_ORDER_SHIFT			13
+ 
++#define SCALER_CTL0_RGBA_EXPAND_MASK		VC4_MASK(12, 11)
++#define SCALER_CTL0_RGBA_EXPAND_SHIFT		11
++#define SCALER_CTL0_RGBA_EXPAND_ZERO		0
++#define SCALER_CTL0_RGBA_EXPAND_LSB		1
++#define SCALER_CTL0_RGBA_EXPAND_MSB		2
++#define SCALER_CTL0_RGBA_EXPAND_ROUND		3
 +
-+o CPU system control:
-+
-+The SoC has a few registers (ICPU_CFG:CPU_SYSTEM_CTRL) handling configuration of
-+the CPU: 8 general purpose registers, reset control, CPU en/disabling, CPU
-+endianness, CPU bus control, CPU status.
-+
-+Required properties:
-+- compatible: Should be "mscc,ocelot-cpu-syscon", "syscon"
-+- reg : Should contain registers location and length
-+
-+Example:
-+	syscon@70000000 {
-+		compatible = "mscc,ocelot-cpu-syscon", "syscon";
-+		reg = <0x70000000 0x2c>;
-+	};
+ #define SCALER_CTL0_SCL1_MASK			VC4_MASK(10, 8)
+ #define SCALER_CTL0_SCL1_SHIFT			8
+ 
 -- 
 2.16.2
