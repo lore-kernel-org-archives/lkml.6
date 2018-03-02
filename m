@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936219AbeCBLjF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:39:05 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936005AbeCBLis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:38:48 -0500
-Date: Fri, 2 Mar 2018 12:38:45 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
- comm changed
-Message-ID: <20180302113845.GC16348@krava>
-References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
- <20180302105254.234axj7b3nixakav@intel.com>
+        id S936233AbeCBLmV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:42:21 -0500
+Received: from mail.micronovasrl.com ([212.103.203.10]:48984 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934881AbeCBLmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 06:42:15 -0500
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 2/2] drm/sun4i: add lvds mode_valid function
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <1519840432-61489-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1519840432-61489-2-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180301095721.4iga7dcgg566j44m@flea>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <ebe7cfe5-e731-10cf-17cd-fe79bee0fdc4@micronovasrl.com>
+Date: Fri, 2 Mar 2018 12:42:14 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302105254.234axj7b3nixakav@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180301095721.4iga7dcgg566j44m@flea>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 06:52:54PM +0800, Du, Changbin wrote:
-> Hello, any comment?
+Hi,
 
-sry, overlooked this one
+Il 01/03/2018 10:57, Maxime Ripard ha scritto:
+> On Wed, Feb 28, 2018 at 06:53:52PM +0100, Giulio Benetti wrote:
+>>   static struct drm_connector_helper_funcs sun4i_lvds_con_helper_funcs = {
+>>   	.get_modes	= sun4i_lvds_get_modes,
+>> +	.mode_valid	= sun4i_lvds_mode_valid,
+>>   };
+> 
+> This should be on the encoder, not the connector.
 
-SNIP
+I've seen it is bound to connector in rgb and to encoder in hdmi.
+Is it correct rgb mode_valid under connector funcs?
+Otherwise I send a patch also for that one.
 
-> > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> > index 68b65b1..c660fe6 100644
-> > --- a/tools/perf/util/thread.c
-> > +++ b/tools/perf/util/thread.c
-> > @@ -212,6 +212,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
-> >  			unwind__flush_access(thread);
-> >  	}
-> >  
-> > +	thread->comm_changed = true;
-> >  	thread->comm_set = true;
-> >  
-> >  	return 0;
-> > diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> > index 40cfa36..b9a328b 100644
-> > --- a/tools/perf/util/thread.h
-> > +++ b/tools/perf/util/thread.h
-> > @@ -27,6 +27,7 @@ struct thread {
-> >  	int			cpu;
-> >  	refcount_t		refcnt;
-> >  	char			shortname[3];
-> > +	bool			comm_changed;
+> 
+> Maxime
+> 
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
 
-I don't like that it's in struct thread and set by generic function,
-and just one command (sched) checks/sets it back.. I'd rather see it
-in thread::priv area..  on the other hand it's simple enough and looks
-like generic solution would be more tricky
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+-- 
+Giulio Benetti
+CTO
 
-jirka
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
