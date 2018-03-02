@@ -1,53 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424021AbeCBP2j (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:28:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40727 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422665AbeCBP2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:28:37 -0500
-From: Takashi Iwai <tiwai@suse.de>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Jani Nikula <jani.nikula@intel.com>, Jiri Slaby <jslaby@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] Documentation/sphinx: Fix Directive import error
-Date: Fri,  2 Mar 2018 16:28:31 +0100
-Message-Id: <20180302152831.11510-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.2
+        id S1423471AbeCBPdD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:33:03 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:32790 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1423074AbeCBPc7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:32:59 -0500
+From: Philippe Cornu <philippe.cornu@st.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Andrzej Hajda <a.hajda@samsung.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH v2 0/2] drm/panel: Add support for Raydium RM68200 panel
+Date: Fri, 2 Mar 2018 16:32:20 +0100
+Message-ID: <20180302153222.4377-1-philippe.cornu@st.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.32]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sphinx.util.compat for Directive stuff was deprecated in the
-recent Sphinx version, and now we get a build error.
+The Raydium Semiconductor Corporation RM68200 is a 5.5" 720x1280
+TFT LCD panel connected using a MIPI-DSI video interface.
 
-Let's import from the new place, docutils.parsers.rst, while keeping
-the old sphinx.util.compat as fallback.
+Version 2:
+- Add Rob Herring Reviewed-by on dt-bindings.
+- Update Kconfig & driver thanks to Thierry Reding comments: no more
+  DRV_NAME, DRM_WARN_ONCE instead of DRV_NAME where applicable, use
+  backlight_enable/disable() & devm_of_find_backlight(), no extra
+  gpio reset to 0, no more msg if successful, use RM68200 instead of
+  rm68200 where necessary.
 
-Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
-v1->v2: Change the fallback order as Matthew suggested, the new one at first
+Version 1:
+- Initial commit
 
- Documentation/sphinx/kerneldoc.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Philippe Cornu (2):
+  dt-bindings/display/panel: Add support for Raydium rm68200 dsi panel
+  drm/panel: Add support for Raydium RM68200 panel driver
 
-diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-index 39aa9e8697cc..34396976eb0a 100644
---- a/Documentation/sphinx/kerneldoc.py
-+++ b/Documentation/sphinx/kerneldoc.py
-@@ -37,7 +37,10 @@ import glob
- from docutils import nodes, statemachine
- from docutils.statemachine import ViewList
- from docutils.parsers.rst import directives
--from sphinx.util.compat import Directive
-+try:
-+    from docutils.parsers.rst import directives, Directive
-+except ImportError:
-+    from sphinx.util.compat import Directive
- from sphinx.ext.autodoc import AutodocReporter
- 
- __version__  = '1.0'
+ .../bindings/display/panel/raydium,rm68200.txt     |  25 ++
+ drivers/gpu/drm/panel/Kconfig                      |   8 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c      | 437 +++++++++++++++++++++
+ 4 files changed, 471 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt
+ create mode 100755 drivers/gpu/drm/panel/panel-raydium-rm68200.c
+
 -- 
-2.16.2
+2.15.1
