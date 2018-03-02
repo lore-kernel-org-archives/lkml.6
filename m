@@ -1,121 +1,78 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2592411-1520410678-2-1251630873043922075
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='at',
-  MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520410677; b=Gqw/YlEOhQnF3hZPtEW7NIVwvPEzoC2ByRkIjb8YZVWB9hV
-    k/7/TuPe7hFDtcGVuZKGZJOS4CMLrzUVyIV4nsog4Faaevnmk5vZe0eo2wBtkyMY
-    VG0qCNELg3IKhxLfjul6n2d+yOBzPP+P4soPtQb1eno6IYEajGlKZ+1mxpgrRJpD
-    MgZ8voZO4x3LurkrpvV9HpiLh5nliTUHJXbdR+CnDd5RA8cxVOlbCHGEXxpHFrjk
-    Pr+X2rcnDiv21QK1dVlvYgAUUVrI7HltGYoJuO+WJJVLVlrjzQSAJywJqEEeG5dF
-    vi3R72IUSrV/u9KzT71JJtM5fopMSQZJWgYDFXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-transfer-encoding
-    :content-type:sender:list-id; s=arctest; t=1520410677; bh=S4jnM0
-    nI0aIp55BcNfQUEMimL5Bdq/sHO0ashOSDHsg=; b=oHNn00V91H/ri50HgMxKwx
-    dgCV4CXZjeMuD1g9cDSPvDXCsQIE2K7A2B4lAMXMbxwsHYuwqHDyqAwHiK+mYfqn
-    q6iZHM5qPZxbj1QeCQ4JUeMXSFVLTluyeOFueroG5ygR1w2Qdlli5w1vConNV/77
-    0Mg0Rw+RCeKz2CbU1G9y/hmwHBNUXdSXDww1HajznQqdk8KrcvuTWbYKxNqqQ7U9
-    PUxZ7ehjinSriyrUSPnRWYImcw9/IuZLEpuUs0jf2CbgCjRnkU9m379BgaQJyj2/
-    jKzLMLiOvMJ1TuQ1DApQDcQo+nUBL850dlgU/UoOW9sA7v+NlJBwtVZltL8635JQ
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=nod.at;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nod.at header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=nod.at;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nod.at header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751197AbeCGIRy convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Wed, 7 Mar 2018 03:17:54 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:35602 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751185AbeCGIRy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 03:17:54 -0500
-From: Richard Weinberger <richard@nod.at>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 03/34] mtd: nand: gpmi: Fix failure when a erased page has a bitflip at BBM
-Date: Wed, 07 Mar 2018 09:19:15 +0100
-Message-ID: <3306133.ouE1UNrexX@blindfold>
-In-Reply-To: <20180307091236.741b7fd2@bbrezillon>
-References: <20180302084435.842679610@linuxfoundation.org> <1520371350.23626.23.camel@codethink.co.uk> <20180307091236.741b7fd2@bbrezillon>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtRXApKXUp+6hp0QjI79Ulf6fSIapeJWiOKYoLHshYZrN9A+7sqWYAQE7/Ot5s1YIBe7FiG
+ARC-Seal: i=1; a=rsa-sha256; t=1519980925; cv=none;
+        d=google.com; s=arc-20160816;
+        b=bnI+w0A4qGJ6J1hxPjuoo+ISS5JYj4zElgMVzFgFqbXYm0QYYKwrpP1iZdeHOxUUy1
+         LVfJHftIzXcb0uT4YVLNl8qo7JSxTXXLNMF6VgSJo8D9eLZtflZ+AgnDNtMZAI58ffeI
+         CnEDJS0bbf5vkXOhcGhlAjXXnTIufSdjw34hi1BQbAmiblTdofGB3KsoNKySC4ly26nV
+         b7S6d/ywLLypmue1z9IfSnebRixDCtIsJuKQTie+Hspp6DMvef5HOKuSzKINwPHqA7RW
+         sXB9xtPX9o1AtSbdef29COAjOILzdswf6ty6DuvzuFbe7V+OUfYsm5yWZt3cK+hsB6j6
+         BOIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/KUj+8pFowdtcdRq/FYjjQYXyHJvvg/Vwh3bntlV0jM=;
+        b=SaFiCr72Xyj+eE2t/p9eQprSXSZSQ1kx4bWgeN4YDMA+nGYoweRlivy/zHV8GXxyMu
+         wEZ2s4bettRgd9c/fV+tWvVWS+6K7xIxc+v1jkgYQRPoZj9rGs6ENRAZPVaALPNvDTjn
+         A6U8b1UIPRdoQAEKOw6yHfRHiMfSEQh5Y3oWeAEmOs0yNRdD1o9VGCDrdLOMYL5RNCzW
+         qRXvNxUGzGmz8Szsv7cKb0rWqdriUj7GZHvPGFHmHuUeLsaxA+m0gyLXrQhsQt3hwpWZ
+         EndWwwTcR8a5bywnU0ueywzfdJf2WRu6a+Yg+6WDvo6CjMxZKhrt7xVryRqKaxYU8LPy
+         /HjQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 06/34] sget(): handle failures of register_shrinker()
+Date: Fri,  2 Mar 2018 09:51:02 +0100
+Message-Id: <20180302084436.414587775@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
+References: <20180302084435.842679610@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815419622660679?=
+X-GMAIL-MSGID: =?utf-8?q?1593815519344385763?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Boris,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Am Mittwoch, 7. März 2018, 09:12:36 CET schrieb Boris Brezillon:
-> On Tue, 06 Mar 2018 21:22:30 +0000
-> 
-> Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
-> > On Fri, 2018-03-02 at 09:50 +0100, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me
-> > > know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > > 
-> > > 
-> > > [ Upstream commit fdf2e821052958a114618a95ab18a300d0b080cb ]
-> > > 
-> > > When erased subpages are read then the BCH decoder returns STATUS_ERASED
-> > > if they are all empty, or STATUS_UNCORRECTABLE if there are bitflips.
-> > > When there are bitflips, we have to set these bits again to show the
-> > > upper layers a completely erased page. When a bitflip happens in the
-> > > exact byte where the bad block marker is, then this byte is swapped
-> > > with another byte in block_mark_swapping(). The correction code then
-> > > detects a bitflip in another subpage and no longer corrects the bitflip
-> > > where it really happens.
-> > 
-> > [...]
-> > 
-> > This seesm to be a bug fix for commit bd2e778c9ee3 "gpmi-nand: Handle
-> > ECC Errors in erased pages".  That's not in 4.4 so the bug fix is not
-> > needed, though it doesn't appear to do any harm.
-> 
-> I wonder why the fix was backported to stable releases in the first
-> place. AFAICS, there's no Cc-stable or Fixes tag in the original
-> commit. It's probably something in the backport-to-stable process I'm
-> not aware of.
+------------------
 
-It was auto selected by a stable script.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Thanks,
-//richard
+
+[ Upstream commit 9ee332d99e4d5a97548943b81c54668450ce641b ]
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/super.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -497,7 +497,11 @@ retry:
+ 	hlist_add_head(&s->s_instances, &type->fs_supers);
+ 	spin_unlock(&sb_lock);
+ 	get_filesystem(type);
+-	register_shrinker(&s->s_shrink);
++	err = register_shrinker(&s->s_shrink);
++	if (err) {
++		deactivate_locked_super(s);
++		s = ERR_PTR(err);
++	}
+ 	return s;
+ }
+ 
