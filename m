@@ -1,47 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425531AbeCBJTf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:19:35 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:53430 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425143AbeCBJS5 (ORCPT
+        id S1425591AbeCBJUP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:20:15 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:28747 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425539AbeCBJTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:18:57 -0500
-Date: Fri, 2 Mar 2018 10:18:46 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ivan Gorinov <ivan.gorinov@intel.com>
-cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v3 0/3] x86: devicetree: re-enable x86-specific
- implementation
-In-Reply-To: <20180301230445.GA48473@intel.com>
-Message-ID: <alpine.DEB.2.21.1803021011160.1803@nanos.tec.linutronix.de>
-References: <20180301230445.GA48473@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 2 Mar 2018 04:19:55 -0500
+X-IronPort-AV: E=Sophos;i="5.47,411,1515481200";
+   d="scan'208";a="9313871"
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
+        <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+        <joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+        <airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+        <jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+        <rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>,
+        <milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180228194429.GD22932@mithrandir>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <0c3fc3ba-8640-0b2c-a9ec-ab848227c92d@microchip.com>
+Date: Fri, 2 Mar 2018 11:19:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180228194429.GD22932@mithrandir>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018, Ivan Gorinov wrote:
 
-> Fixing x86-specific DT implementation in the kernel allows reusing most of
-> firmware code for SoC that have ARM core replaced with x86, e.g. SC9853i.
+
+On 28.02.2018 21:44, Thierry Reding wrote:
+> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>> were adapted to this change.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> ---
+>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>  drivers/bus/ts-nbus.c                |  2 +-
+>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>  include/linux/pwm.h                  |  6 ++++--
+>>  16 files changed, 70 insertions(+), 21 deletions(-)
 > 
-> Changes since v2:
+> I don't think it makes sense to leak mode support into the legacy API.
+> The pwm_config() function is considered legacy
+I missed this aspect.
+
+ and should eventually go
+> away. As such it doesn't make sense to integrate a new feature such as
+> PWM modes into it. 
+Agree.
+
+All users of pwm_config() assume normal mode, and
+> that's what pwm_config() should provide.
+Agree.
+
 > 
->  * WARN_ON_ONCE instead of WARN_ON to aviod multiple warnings
->    when APIC ID is missing in CPU device tree nodes
+> Anyone that needs something other than normal mode should use the new
+> atomic PWM API.
+Agree.
+
 > 
->  * Switched to Mutt because of white space issues:
->    "Preformatted" paragraph style does not work in Evolution 3.18.5.2
-
-The patches can be applied now, but still the series is not threaded. That
-means 1/3 - 3/3 lack a References: tag which contains the message-id of
-0/3. Please figure out how to do that, it's annoying if patch series cannot
-be collapsed.
-
-Thanks,
-
-	tglx
+> Thierry
+> 
