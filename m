@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELujdZiFcsbiWeaVKVimSy6Gi+7PNTwQKsA2jb+g1hlhFSMduiCOoFqz79TAA9czsoakh9S7
-ARC-Seal: i=1; a=rsa-sha256; t=1519981483; cv=none;
+X-Google-Smtp-Source: AG47ELtFQZnB+Zodspn/Mnncti+vRQXMQVIWtjePwF5UifBx8bYoi5uUD0ZsuK38MtrwIHK3b5wd
+ARC-Seal: i=1; a=rsa-sha256; t=1519981480; cv=none;
         d=google.com; s=arc-20160816;
-        b=pczT6yImpseKKkYcSB9h+NGLn7wOnyAFXrc5eGwCa2gEwfNI4e2LyVxUBTnlZ437Fl
-         EjBQf9wJsO4frrgCrnu1UsvvkNpa8+7/kxrUnpF+OU1j7/TmAETZ/yiuMYUO0OP8OyFr
-         zkkwNpbnyjzbcaDBuvuS6w3x87A+wmZlXIE2+GngBxtdfm79xfPNST56qCcKdVl/sax9
-         W9Kv0MtBFgNX0qsZOAmR7j9AXdRpXsmyBBeZXfRdB2tYf6/cBeqb2YSuyFN2FXiVquZb
-         XcviWfZX7RNhnGjC9+EoiTJsOQwG4SunvNLtk9H3mzaZKe+Rpjo0rEyQE18nVeYS6LKo
-         tnrw==
+        b=dWKgnjBDLq6REpa2h1v12F1sIhMZxi3CzW/g7iu9TixYYR09nM74peLfm1SAUy71oB
+         BayEmjzuUgGywwd2G5QL8ocDLVbKeuHfy8rQAkD/blufcaSoDuF1AqSrsNAhe98dPW9u
+         k+0+26WvmBqIZm8feLx7tJdRaeCARyJ0RdtRj6RomekaSPB2aSxKjtNhyNHxw3SRav68
+         pGC1Xleqtgc7PH27QhIninFVWq4Iv3YjtWu4dcRytTgzoVq6RoOeSJbbw0p6/Kw+kVkF
+         guGDJKrlbSafIquS0lp8UfMpEo4u50K5I4b0AlOel7Uguvtj4JqSePxClBRjPOa9egtu
+         m1yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wPrVZyNd3MhuryyUnDfJVue1X0RibhqgjCV9SFW5QNk=;
-        b=aiOpbFyLMCN2b+2Liotrol2Bvt70yEUMklxAcoxm2LA1tVSzT8PLBZ0hwc9peBNFeG
-         4WwSDgj69kxMAkt5fdKz779cqp2l/N2Qzq2KqjnZmnWgEkC6NrsQCrHuCwDRQrCik3xS
-         CkgmBO643MsCqHU++bOZXOUwRxCbNN1jVfTEmX+N8rZ2iytSUM+JHcHPCmnrTtXFb9ga
-         7Q74m2AuJjcvxrP2FneSIVm8ZvADNKezDvmJZpoxDGpNgFX9ECIFJWzkSiFamP1VxhOS
-         ga4uFH7STh00qpCNyt8fRDE81mdecdIrz/3zQMrwZ2pa9PD6b3ifL4+CIlfdTpVhIYbY
-         bGdw==
+        bh=rOkl0bLI1zR9kZn63QPXeK2YG4H+IbepE04KFMXk1GM=;
+        b=lEmlbqE69qQlqBmd7kvywWcos8LuzS2O0QXZ8gtxsYA6IN4OT8MPC9vDLQfKEgtJl5
+         o/qfx8x4cjRhmemlCLRFLhtEgVGA78EEfxh28evacxm92PyQp5Yh6Bqvht4BP/bRdRc0
+         OB/0+J0/jWYrzE7Q1/QUIpcRB2nADd8yJYM7j9WWATRML3Oq8aQ+k/GkWBq4qNc3kreY
+         ZkLlZMvKNzB4UmzgNRsGmQAZcvoj5i1lg5gV4bW0Gb6frZUXkB9vVzauLUpdIrelF7Gy
+         wbXYfwCtMPrnAVa2ptO4C4AW8G5kMzwWwntt5PbZ0+HppD7sHTN/kCmPjdizIO8t15An
+         nrJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Siva Reddy Kallam <siva.kallam@broadcom.com>,
+	Michael Chan <michael.chan@broadcom.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 098/115] mdio-sun4i: Fix a memory leak
-Date: Fri,  2 Mar 2018 09:51:41 +0100
-Message-Id: <20180302084507.808402845@linuxfoundation.org>
+Subject: [PATCH 4.14 059/115] tg3: Enable PHY reset in MTU change path for 5720
+Date: Fri,  2 Mar 2018 09:51:02 +0100
+Message-Id: <20180302084506.271255648@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815310363107750?=
-X-GMAIL-MSGID: =?utf-8?q?1593816104493138675?=
+X-GMAIL-THRID: =?utf-8?q?1593815277327871524?=
+X-GMAIL-MSGID: =?utf-8?q?1593816101164936264?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
 
 
-[ Upstream commit 56c0290202ab94a2f2780c449395d4ae8495fab4 ]
+[ Upstream commit e60ee41aaf898584205a6af5c996860d0fe6a836 ]
 
-If the probing of the regulator is deferred, the memory allocated by
-'mdiobus_alloc_size()' will be leaking.
-It should be freed before the next call to 'sun4i_mdio_probe()' which will
-reallocate it.
+A customer noticed RX path hang when MTU is changed on the fly while
+running heavy traffic with NCSI enabled for 5717 and 5719. Since 5720
+belongs to same ASIC family, we observed same issue and same fix
+could solve this problem for 5720.
 
-Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-sun4i.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/tg3.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/mdio-sun4i.c
-+++ b/drivers/net/phy/mdio-sun4i.c
-@@ -118,8 +118,10 @@ static int sun4i_mdio_probe(struct platf
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -14239,7 +14239,8 @@ static int tg3_change_mtu(struct net_dev
+ 	 */
+ 	if (tg3_asic_rev(tp) == ASIC_REV_57766 ||
+ 	    tg3_asic_rev(tp) == ASIC_REV_5717 ||
+-	    tg3_asic_rev(tp) == ASIC_REV_5719)
++	    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++	    tg3_asic_rev(tp) == ASIC_REV_5720)
+ 		reset_phy = true;
  
- 	data->regulator = devm_regulator_get(&pdev->dev, "phy");
- 	if (IS_ERR(data->regulator)) {
--		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(data->regulator) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto err_out_free_mdiobus;
-+		}
- 
- 		dev_info(&pdev->dev, "no regulator found\n");
- 		data->regulator = NULL;
+ 	err = tg3_restart_hw(tp, reset_phy);
