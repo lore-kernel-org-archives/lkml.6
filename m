@@ -1,78 +1,157 @@
-Return-Path: <herbert@gondor.apana.org.au>
-X-Google-Smtp-Source: AG47ELsLyLkA5JE9j237nCte2+7H9HHXH7JILVTyadSZlUydMG879xPmQKPxTRx1XjkkMUMdcjHF
-ARC-Seal: i=1; a=rsa-sha256; t=1520008447; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZkMNQ6vLInZS1kEPJPIjZT2XER/WTuefU9TlT2a7KV3f6vRQ63pGVpWSKL3tNj7/jT
-         9DnjM3SSFrnM6rakVDPnThYEpAYEdxIDhyPLUOsvDLBhse/oCMfKXgBDUxk+MIffKNne
-         c8Vu3+Rfv7NR+W6xEGU79K0wyxEA3uyji39xO7WoQbTfYOyI2fJoWD20O4DEjqnUGgLA
-         fALqAF9yJBtadyeKTejY20It0KGvdW75cknsor+f00zMHKqqlxISNTA+3G277ahKmHhY
-         j9HbL/BLSYASZHGIMxl9QS5lui0cCESkI7zB/GIWFrqTB5aNZzHwAgPBByvXVdGIlF6T
-         DaDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=d5hZWiSYMIMKxqJY1lmm54oQLg5joLmoVGy96l6zyRM=;
-        b=S1ikvmw0RF5s39167vnk0ywx41iMJyQpcusOGnDFKkTuCERmeNdb0ObQLfSxlUU1OM
-         bzAsUP3+7DbvI3cJd6wJ5YfB4nX5oyCDUMg/j43eviCd1bE/lO1VRg7qiMc7FioZ24BY
-         /6ldPjXSh/Z3AUWWDighMFPJiDX0jFH5hSc+E+82D3mSQ/zSkj3PSk+O5J2PWNu8Lqjd
-         zJ54z50xmQND9o7Gi1tVjZSgzp+zNkBdHpO5L1TJrJiH60+X19vJbi+q4Okkb9teXlKp
-         peeQkFngZi/LHshFOkGmYRwHQtiQXFslqcM+UJNqLc7RIRFxw3hA4OpGGP/mWDCkpHse
-         J8Qg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of herbert@gondor.apana.org.au designates 104.223.48.154 as permitted sender) smtp.mailfrom=herbert@gondor.apana.org.au
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of herbert@gondor.apana.org.au designates 104.223.48.154 as permitted sender) smtp.mailfrom=herbert@gondor.apana.org.au
-Date: Sat, 3 Mar 2018 00:33:50 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Lionel Debieve <lionel.debieve@st.com>
-Cc: Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Rob Herring <rob.herring@linaro.org>, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@st.com>,
-	Ludovic Barre <ludovic.barre@st.com>
-Subject: Re: [PATCH Resend 0/5] hwrng: stm32 - Improvement for stm32-rng
-Message-ID: <20180302163350.GA21579@gondor.apana.org.au>
-References: <20180215130312.23612-1-lionel.debieve@st.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1739853-1520000389-2-7210158651949961275
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520000388; b=GUuNwNKlb/OpOGaC+Jtbl1XT73DjegJHNrEBP6CgkotrWIl
+    EncliHGMODHnjXh5ju5t9yiEQZHB05xkq/Ns+zgg+TLfLhnm5xy7wGSNIwHqlWoB
+    GBJDuu6P2mMWMfOymb4+x+67Ascw92FvUS5NY/bzVpKlmYdnPpKO2EmyI4TyROOk
+    GyK5neDav++QOaVeqpbj81OHQT0ZCbkoU9ac2BtxTcXShsiX4LggCF0uF6ybW+JO
+    yVBZKtV+HO4DQ13jmieSLbcqSNP49w01lU+XmXRbs7VzeyZ2ccBhD07AsEYWtzYH
+    QtA3VYfGNsbm/oQAbpxNWQMFw+/Hx4DKF/q91Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520000388; bh=Yb86OE+vyVdicgyRvhSC7gtJOp+pZ6sfO1FPl8reLHQ=; b=j
+    Z0h5psKipb3/zb6IRkYgUjLtxiAUier7XUwevSkY5qwC7Re8ZU01y8mEqFkpX3tQ
+    a6zcD2HrLdU+KoYFjpgDzggbKYq09VGUCj2l1wbiF9apqsihNC15zllg0rjSZWs3
+    W6rWEOGxF2NZLqZ6NKf9D+A8IUfnobAYlups5IH1mbrXWZhCkRWTf8PBe+YyUCQs
+    UOjxtxOlZvr4T7Ph51Bx6aY6zuGu4btEaaQJh/UElcooiXTvaOxgv22eCg7HDUL8
+    RI4yRixjdxxq8LeNd4l8WVZaZReWV8M8tulo80Pj5MWLH85wj66l7iBVr6e3phV2
+    FoWtERPuTcEazsk1cz0gg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1428589AbeCBOTp (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 09:19:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57414 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1428567AbeCBOTo (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 2 Mar 2018 09:19:44 -0500
+Subject: Re: [PATCH 1/2] xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END
+ handling
+To: Simon Gaiser <simon@invisiblethingslab.com>,
+        xen-devel@lists.xenproject.org
+Cc: stable@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <20180207222236.7434-1-simon@invisiblethingslab.com>
+ <ea0630bd-5139-5f79-847c-f88f733b5053@suse.com>
+ <1fbf69f9-f835-897e-144f-8c6f8b94cd26@suse.com>
+ <1d10edc6-8ad6-bc58-432c-d1867f0ab57a@invisiblethingslab.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <2263ddf3-54f6-d81e-7674-d0ae0802aa65@suse.com>
+Date: Fri, 2 Mar 2018 15:19:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180215130312.23612-1-lionel.debieve@st.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1d10edc6-8ad6-bc58-432c-d1867f0ab57a@invisiblethingslab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592472174804694074?=
-X-GMAIL-MSGID: =?utf-8?q?1593844377445713720?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Feb 15, 2018 at 02:03:07PM +0100, Lionel Debieve wrote:
-> This set of patches add extended functionalities for stm32 rng
-> driver.
-> Patch #1 includes a reset during probe to avoid any error status
-> which can occur during bootup process and keep safe rng integrity.
+On 20/02/18 05:56, Simon Gaiser wrote:
+> Juergen Gross:
+>> On 07/02/18 23:22, Simon Gaiser wrote:
+>>> Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple
+>>> concurrent xenstore accesses") made a subtle change to the semantic of
+>>> xenbus_dev_request_and_reply() and xenbus_transaction_end().
+>>>
+>>> Before on an error response to XS_TRANSACTION_END
+>>> xenbus_dev_request_and_reply() would not decrement the active
+>>> transaction counter. But xenbus_transaction_end() has always counted the
+>>> transaction as finished regardless of the response.
+>>
+>> Which is correct now. Xenstore will free all transaction related
+>> data regardless of the response. A once failed transaction can't
+>> be repaired, it has to be repeated completely.
 > 
-> Patch #3 adds a new property to manage the clock error detection
-> feature which can be disabled on specific target.
-> 
-> Patch #5 rework the timeout calculation for read value that was
-> previously defined based on loop operation and is now based on
-> timer.
-> 
-> Lionel Debieve (5):
->   hwrng: stm32 - add reset during probe
->   dt-bindings: rng: add reset node for stm32
->   hwrng: stm32 - allow disable clock error detection
->   dt-bindings: rng: add clock detection error for stm32
->   hwrng: stm32 - rework read timeout calculation
-> 
->  .../devicetree/bindings/rng/st,stm32-rng.txt       |  4 ++
->  drivers/char/hw_random/stm32-rng.c                 | 44 ++++++++++++++--------
->  2 files changed, 32 insertions(+), 16 deletions(-)
+> So if xenstore frees the transaction why should we keep it in the list
+> with pending transaction in xenbus_dev_frontend? That's exactly what
+> this patch fixes by always removing it from the list, not only on a
+> successful response (See below for the EINVAL case).
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Aah, sorry, I seem to have misread my own coding. :-(
+
+Yes, you are right. Sorry for not seeing it before.
+
+> 
+> [...]
+>>> But xenbus_dev_frontend tries to end a transaction on closing of the
+>>> device if the XS_TRANSACTION_END failed before. Trying to close the
+>>> transaction twice corrupts the reference count. So fix this by also
+>>> considering a transaction closed if we have sent XS_TRANSACTION_END once
+>>> regardless of the return code.
+>>
+>> A transaction in the list of transactions should not considered to be
+>> finished. Either it is not on the list or it is still pending.
+> 
+> With "considering a transaction closed" I mean "take the code path which
+> removes the transaction from the list with pending transactions".
+> 
+> From the follow-up mail:
+>>>> The new behavior is that xenbus_dev_request_and_reply() and
+>>>> xenbus_transaction_end() will always count the transaction as finished
+>>>> regardless the response code (handled in xs_request_exit()).
+>>>
+>>> ENOENT should not decrement the transaction counter, while all
+>>> other responses to XS_TRANSACTION_END should still do so.
+>>
+>> Sorry, I stand corrected: the ENOENT case should never happen, as this
+>> case is tested in xenbus_write_transaction(). It doesn't hurt to test
+>> for ENOENT, though.
+>>
+>> What should be handled is EINVAL: this would happen if a user specified
+>> a string different from "T" and "F".
+> 
+> Ok, I will handle those cases in xs_request_exit(). Although I don't
+> like that this depends on the internals of xenstore (At least to me it's
+> not obvious why it should only return ENOENT or EINVAL in this case).
+> 
+> In the xenbus_write_transaction() case checking the string before
+> sending the transaction (like the transaction itself is verified) would
+> avoid this problem.
+
+Right. I'd prefer this solution.
+
+Remains the only problem you tried to tackle with your second patch: a
+kernel driver going crazy and ending transactions it never started (or
+ending them multiple times). The EINVAL case can't happen here, but
+ENOENT can. Either ENOENT has to be handled in xs_request_exit() or you
+need to keep track of the transactions like in the user interface and
+refuse ending an unknown transaction. Or you trust the kernel users.
+Trying to fix the usage counter seems to be the wrong approach IMO.
+
+
+Juergen
