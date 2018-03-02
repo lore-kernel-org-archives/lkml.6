@@ -1,65 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1945959AbeCBKSB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:18:01 -0500
-Received: from sauhun.de ([88.99.104.3]:53649 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1945930AbeCBKR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:17:56 -0500
-Date: Fri, 2 Mar 2018 11:17:54 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] i2c: piix4: Use request_muxed_region
-Message-ID: <20180302101754.npxrbagl74jvveza@ninjato>
-References: <1519678013-32749-1-git-send-email-linux@roeck-us.net>
- <1519678013-32749-2-git-send-email-linux@roeck-us.net>
+        id S1945970AbeCBKSq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:18:46 -0500
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:33840 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424221AbeCBKSN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:18:13 -0500
+X-Google-Smtp-Source: AG47ELtsMLtNZIKUp5H0/0XUnRo1BCB8wTqRHfGqSqaQF7ebuu1Nnfy0SpsDinVaFa/KgF55NqVAt/VOjcF8o5h8t4w=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2ahtyt3gc37mx6sh"
-Content-Disposition: inline
-In-Reply-To: <1519678013-32749-2-git-send-email-linux@roeck-us.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180302094140.ncypewkdg6g6rs2g@intel.com>
+References: <1519809638-24248-1-git-send-email-changbin.du@intel.com>
+ <CAJZ5v0jqG0pcqOuvAVoP7sNKoOe+3ByMk4X5AZASp84OPcrgPg@mail.gmail.com>
+ <20180301022719.xyfcu5tpmadjxbut@intel.com> <CAJZ5v0j8GsaK7kJ4hyvyQYOpa6QmoP2Pc69egg0hb=tb2EwpuA@mail.gmail.com>
+ <20180302094140.ncypewkdg6g6rs2g@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 Mar 2018 11:18:10 +0100
+X-Google-Sender-Auth: SGO8HWsoehkz7YZTOYfT0HXnnyI
+Message-ID: <CAJZ5v0jcTfjBsyR1NN-JjAN86xPm0rA0qr4mnOpJwiv6PSdy6Q@mail.gmail.com>
+Subject: Re: [PATCH v2] tracing/power: Polish the tracepoints cpu_idle and cpu_frequency
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 2, 2018 at 10:41 AM, Du, Changbin <changbin.du@intel.com> wrote:
+>> >> That rather isn't the case if negative values are ever passed to the
+>> >> tracepoint, right?
+>> >>
+>> > yes.
+>> >> Which seems to be the reason why you want to make this change, isn't it?
+>> >>
+>> > yes, to improve readability.
+>> >
+>> >> So maybe fix the code using the tracepoint(s) to avoid passing
+>> >> negative values to it(them)?
+>> > For cpu_idle event, [0, CPUIDLE_STATE_MAX) are used to index the idle state arrary,
+>> > so I think a appropriate value for PWR_EVENT_EXIT is -1 (defined in include/trace/events/power.h).
+>> > Or do you have a better idea? Thanks!
+>>
+>> Sorry, I'm not sure what you mean.
+>>
+>> I'm saying that the code using the CPU PM tracepoints is not expected
+>> to pass -1 as the CPU number to them.  IOW, neither -1 nor its UL
+>> representation should ever appear in the output of these tracepoints.
+>> If that happens, it is a problem with the code using the tracepoints
+>> which needs to be fixed.  Users should not see any of these values.
+>
+> This patch only changed 'state' field but cpuid. For cpu_idle event, 'state' is
+> singned value, but for cpu_frequency it is unsinged.
+> The cpuid is always unsinged value. So no one passes -1 as CPU number.
 
---2ahtyt3gc37mx6sh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You are right, 'state' not 'cpuid', sorry.
 
-On Mon, Feb 26, 2018 at 12:46:53PM -0800, Guenter Roeck wrote:
-> Accesses to SB800_PIIX4_SMB_IDX can occur from multiple drivers.
-> One example for another driver is the sp5100_tco driver.
->=20
-> Use request_muxed_region() to ensure synchronization.
->=20
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-
-Applied to for-next, thanks!
-
-
---2ahtyt3gc37mx6sh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqZJNIACgkQFA3kzBSg
-Kbb9XQ/+LlJzoGswBqBtRDTdormIAS+xaF4vhJb4UTt/S3zNLmx350Mg4NSdudSC
-3xz4Uhp49ofOTyr+QR0k/mqJ+4nQrMs+GlZg5OFAefZhijG4qPjkZnMYGqgTlCMo
-hpoil1+T/OR4d594S3x3LnliXhTrFFAgNU1uXTyw3dp+ZDpqYwnt3bTfgIm5tFCG
-qgS8gxGtACk3Y0pZUWGV9l1yJMiqIoGo5U0LfJ7A9f5IF679O0k+nokXTTxGuNiQ
-3wUVLKg8oF8DGo33DPVo1yUHwGVwgGpkbFIh0S/M4sO6NFuiaO99OarwUt05ZcHJ
-5v64vn2akcO7l+FRaD8xtGM4LwO9lxCl3SY+JhYdV49tI7K3U1/oIbA5TjzWvyZE
-lpZdG3FCbScMR5dT8WoqEmYfc309+tZfsEuERVlr2wE2d40RcouEc4O1t5Ai/c73
-aUY25TCimotssWbEngSqwH/fP7u/qFWD/msD6OK7p8Yq+VWhkcTMKBcpeLlpx+mw
-bOoKmDx7QNC2iqoZJSeTDKsNmdgLsMu8kAB+5At0K5z0937/IRKDHnYTGbq/gBpK
-w9W7ajjYPeLi+kF0iUXVZMHbT0UCgDLzFdkLD6yu+1XaCFf8G1eugW7IWdfxhpmX
-z4z8aembq/dVUc/iEeK+Dmsf5XC7lQQrveQOoSBjZ06r/SP94y0=
-=acS/
------END PGP SIGNATURE-----
-
---2ahtyt3gc37mx6sh--
+Negative 'state' should not be passed to these tracepoints too, though.
