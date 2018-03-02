@@ -1,51 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426699AbeCBSJt (ORCPT <rfc822;w@1wt.eu>);
+        id S1426747AbeCBSKC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:10:02 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36897 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423941AbeCBSJt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Mar 2018 13:09:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57488 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423570AbeCBSJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:09:48 -0500
-Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
- holding lock
-To: Dave Hansen <dave.hansen@intel.com>, Michal Hocko <mhocko@kernel.org>,
-        Aaron Lu <aaron.lu@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Kemi Wang <kemi.wang@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-4-aaron.lu@intel.com>
- <20180301140044.GK15057@dhcp22.suse.cz>
- <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
- <2433e857-fea7-9af4-d124-538ad17de454@intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <787e53b9-20d3-a2df-44fc-ea8c31a6ced3@suse.cz>
-Date: Fri, 2 Mar 2018 19:08:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+X-Google-Smtp-Source: AG47ELsEL4nREWfQ0vTJD6Xmbeadm8ooTBdA4kdvMXT4UVXS5frbWXNcAu7sgTBPWJDdJqHvwQ0aSEsv0VQBLWUDhMU=
 MIME-Version: 1.0
-In-Reply-To: <2433e857-fea7-9af4-d124-538ad17de454@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180302200241-mutt-send-email-mst@kernel.org>
+References: <20180228150615.17317-1-marcandre.lureau@redhat.com>
+ <20180228150615.17317-10-marcandre.lureau@redhat.com> <20180302023204.GA2818@dhcp-128-65.nay.redhat.com>
+ <20180302200241-mutt-send-email-mst@kernel.org>
+From: =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>
+Date: Fri, 2 Mar 2018 19:09:48 +0100
+Message-ID: <CAMxuvax-g_FUT+7g=+D6CC+XNKftgmeas9JR_bPAUDG9wuqUEA@mail.gmail.com>
+Subject: Re: [PATCH v16 09/11] crash: export paddr_vmcoreinfo_note()
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Baoquan He <bhe@redhat.com>,
+        Sergio Lopez Pascual <slp@redhat.com>,
+        "Somlo, Gabriel" <somlo@cmu.edu>, xiaolong.ye@intel.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Tony Luck <tony.luck@intel.com>, Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 07:00 PM, Dave Hansen wrote:
-> On 03/02/2018 09:55 AM, Vlastimil Babka wrote:
->> It's even stranger to me. Struct page is 64 bytes these days, exactly a
->> a cache line. Unless that changed, Intel CPUs prefetched a "buddy" cache
->> line (that forms an aligned 128 bytes block with the one we touch).
-> 
-> I believe that was a behavior that was specific to the Pentium 4
-> "Netburst" era.  I don't think the 128-byte line behavior exists on
-> modern Intel cpus.
+Hi
 
-I remember it on Core 2 something (Nehalem IIRC). And this page suggests
-up to Broadwell, and it can be disabled. And it's an L2 prefetcher indeed.
-https://software.intel.com/en-us/articles/disclosure-of-hw-prefetcher-control-on-some-intel-processors
+On Fri, Mar 2, 2018 at 7:03 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Fri, Mar 02, 2018 at 10:32:04AM +0800, Dave Young wrote:
+>> Hi
+>>
+>> On 02/28/18 at 04:06pm, Marc-André Lureau wrote:
+>> > The following patch is going to use the symbol from the fw_cfg module,
+>> > to call the function and write the note location details in the
+>> > vmcoreinfo entry, so qemu can produce dumps with the vmcoreinfo note.
+>> >
+>> > CC: Andrew Morton <akpm@linux-foundation.org>
+>> > CC: Baoquan He <bhe@redhat.com>
+>> > CC: Dave Young <dyoung@redhat.com>
+>> > CC: Dave Young <dyoung@redhat.com>
+>>
+>> Above duplicated a CC, btw, I remember both Baoquan and me acked it
+>> before, you can find the old email and carry the acked-by.
+>
+> I fixed it but all this is submitter's job really.
+
+Thanks, my bad, I missed it from v6.
+
+>
+>> > CC: Hari Bathini <hbathini@linux.vnet.ibm.com>
+>> > CC: Tony Luck <tony.luck@intel.com>
+>> > CC: Vivek Goyal <vgoyal@redhat.com>
+>> > Signed-off-by: Marc-André Lureau <marcandre.lureau@redhat.com>
+>> > Acked-by: Gabriel Somlo <somlo@cmu.edu>
+>> > ---
+>> >  kernel/crash_core.c | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> >
+>> > diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+>> > index 4f63597c824d..a93590cdd9e1 100644
+>> > --- a/kernel/crash_core.c
+>> > +++ b/kernel/crash_core.c
+>> > @@ -376,6 +376,7 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
+>> >  {
+>> >     return __pa(vmcoreinfo_note);
+>> >  }
+>> > +EXPORT_SYMBOL(paddr_vmcoreinfo_note);
+>> >
+>> >  static int __init crash_save_vmcoreinfo_init(void)
+>> >  {
+>> > --
+>> > 2.16.1.73.g5832b7e9f2
+>> >
+>>
+>> Thanks
+>> Dave
