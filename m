@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946303AbeCBKfL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:35:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35609 "EHLO mx2.suse.de"
+        id S1946329AbeCBKfj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:35:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35592 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1946096AbeCBK3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:29:48 -0500
+        id S1946095AbeCBK3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:29:45 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v9 3/9] livepatch: Initial support for dynamic structures
-Date: Fri,  2 Mar 2018 11:29:29 +0100
-Message-Id: <20180302102935.14564-4-pmladek@suse.com>
+Subject: [PATCH v9 1/9] livepatch: Use lists to manage patches, objects and functions
+Date: Fri,  2 Mar 2018 11:29:27 +0100
+Message-Id: <20180302102935.14564-2-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180302102935.14564-1-pmladek@suse.com>
 References: <20180302102935.14564-1-pmladek@suse.com>
@@ -26,344 +26,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jason Baron <jbaron@akamai.com>
 
-We are going to add a feature called atomic replace. It will allow to
-create a patch that would replace all already registered patches.
-For this, we will need to dynamically create funcs and objects
-for functions that are no longer patched.
+Currently klp_patch contains a pointer to a statically allocated array of
+struct klp_object and struct klp_objects contains a pointer to a statically
+allocated array of klp_func. In order to allow for the dynamic allocation
+of objects and functions, link klp_patch, klp_object, and klp_func together
+via linked lists. This allows us to more easily allocate new objects and
+functions, while having the iterator be a simple linked list walk.
 
-This patch adds basic framework to handle such dynamic structures.
+The static structures are added to the lists early. It allows to add
+the dynamically allocated objects before klp_init_object() and
+klp_init_func() calls. Therefore it reduces the further changes
+to the code.
 
-It adds enum klp_func_type that allows to distinguish the dynamically
-allocated funcs' structures. Note that objects' structures do not have
-a clear type. Namely the static objects' structures might list both static
-and dynamic funcs' structures.
+Also klp_init_*_list() functions are split because they will
+be used when adding the dynamically allocated structures.
 
-The function type is then used to limit klp_free() functions. We will
-want to free the dynamic structures separately when they are no longer
-needed. At the same time, we also want to make our life easier,
-and introduce _any_ type that will allow to process all existing
-structures in one go.
-
-We need to be careful here. First, objects' structures must be freed
-only when all listed funcs' structures are freed. Also we must avoid
-double free. Both problems are solved by removing the freed structures
-from the list.
-
-Also note that klp_free*() functions are called also in klp_init_patch()
-error path when only some kobjects have been initialized. The other
-dynamic structures must be freed immediately by calling the respective
-klp_free_*_dynamic() functions.
-
-Finally, the dynamic objects' structures are generic. The respective
-klp_allocate_object_dynamic() and klp_free_object_dynamic() can
-be implemented here. On the other hand, klp_free_func_dynamic()
-is empty. It must be updated when a particular dynamic
-klp_func_type is introduced.
+This patch does not change the existing behavior.
 
 Signed-off-by: Jason Baron <jbaron@akamai.com>
-[pmladek@suse.com: Converted into a generic API]
+[pmladek@suse.com: Initialize lists before init calls]
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Jessica Yu <jeyu@kernel.org>
 Cc: Jiri Kosina <jikos@kernel.org>
 Acked-by: Miroslav Benes <mbenes@suse.cz>
 ---
- include/linux/livepatch.h |  37 +++++++++++-
- kernel/livepatch/core.c   | 141 +++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 163 insertions(+), 15 deletions(-)
+ include/linux/livepatch.h | 19 +++++++++++++++++--
+ kernel/livepatch/core.c   | 27 +++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index e5db2ba7e2a5..7fb76e7d2693 100644
+index 4754f01c1abb..e5db2ba7e2a5 100644
 --- a/include/linux/livepatch.h
 +++ b/include/linux/livepatch.h
-@@ -35,12 +35,22 @@
- #define KLP_UNPATCHED	 0
- #define KLP_PATCHED	 1
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
+ #include <linux/completion.h>
++#include <linux/list.h>
  
-+/*
-+ * Function type is used to distinguish dynamically allocated structures
-+ * and limit some operations.
-+ */
-+enum klp_func_type {
-+	KLP_FUNC_ANY = -1,	/* Substitute any type */
-+	KLP_FUNC_STATIC = 0,    /* Original statically defined structure */
-+};
-+
- /**
-  * struct klp_func - function structure for live patching
-  * @old_name:	name of the function to be patched
-  * @new_func:	pointer to the patched function code
-  * @old_sympos: a hint indicating which symbol position the old function
-  *		can be found (optional)
-+ * @ftype:	distinguish static and dynamic structures
+ #if IS_ENABLED(CONFIG_LIVEPATCH)
+ 
+@@ -43,6 +44,7 @@
   * @old_addr:	the address of the function being patched
   * @kobj:	kobject for sysfs resources
   * @stack_node:	list node for klp_ops func_stack list
-@@ -79,6 +89,7 @@ struct klp_func {
- 	unsigned long old_sympos;
- 
- 	/* internal */
-+	enum klp_func_type ftype;
++ * @func_entry:	links struct klp_func to struct klp_object
+  * @old_size:	size of the old function
+  * @new_size:	size of the new function
+  * @patched:	the func has been added to the klp_ops list
+@@ -80,6 +82,7 @@ struct klp_func {
  	unsigned long old_addr;
  	struct kobject kobj;
  	struct list_head stack_node;
-@@ -164,17 +175,41 @@ struct klp_patch {
- #define klp_for_each_object_static(patch, obj) \
++	struct list_head func_entry;
+ 	unsigned long old_size, new_size;
+ 	bool patched;
+ 	bool transition;
+@@ -117,6 +120,8 @@ struct klp_callbacks {
+  * @kobj:	kobject for sysfs resources
+  * @mod:	kernel module associated with the patched object
+  *		(NULL for vmlinux)
++ * @func_list:	head of list for struct klp_func
++ * @obj_entry:	links struct klp_object to struct klp_patch
+  * @patched:	the object's funcs have been added to the klp_ops list
+  */
+ struct klp_object {
+@@ -127,6 +132,8 @@ struct klp_object {
+ 
+ 	/* internal */
+ 	struct kobject kobj;
++	struct list_head func_list;
++	struct list_head obj_entry;
+ 	struct module *mod;
+ 	bool patched;
+ };
+@@ -137,6 +144,7 @@ struct klp_object {
+  * @objs:	object entries for kernel objects to be patched
+  * @list:	list node for global list of registered patches
+  * @kobj:	kobject for sysfs resources
++ * @obj_list:	head of list for struct klp_object
+  * @enabled:	the patch is enabled (but operation may be incomplete)
+  * @finish:	for waiting till it is safe to remove the patch module
+  */
+@@ -148,18 +156,25 @@ struct klp_patch {
+ 	/* internal */
+ 	struct list_head list;
+ 	struct kobject kobj;
++	struct list_head obj_list;
+ 	bool enabled;
+ 	struct completion finish;
+ };
+ 
+-#define klp_for_each_object(patch, obj) \
++#define klp_for_each_object_static(patch, obj) \
  	for (obj = patch->objs; obj->funcs || obj->name; obj++)
  
-+#define klp_for_each_object_safe(patch, obj, tmp_obj)		\
-+	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, obj_entry)
+-#define klp_for_each_func(obj, func) \
++#define klp_for_each_object(patch, obj)	\
++	list_for_each_entry(obj, &patch->obj_list, obj_entry)
 +
- #define klp_for_each_object(patch, obj)	\
- 	list_for_each_entry(obj, &patch->obj_list, obj_entry)
- 
-+/* Support also dynamically allocated struct klp_object */
- #define klp_for_each_func_static(obj, func) \
++#define klp_for_each_func_static(obj, func) \
  	for (func = obj->funcs; \
--	     func->old_name || func->new_func || func->old_sympos; \
-+	     func && (func->old_name || func->new_func || func->old_sympos); \
+ 	     func->old_name || func->new_func || func->old_sympos; \
  	     func++)
  
-+#define klp_for_each_func_safe(obj, func, tmp_func)			\
-+	list_for_each_entry_safe(func, tmp_func, &obj->func_list, func_entry)
-+
- #define klp_for_each_func(obj, func)	\
- 	list_for_each_entry(func, &obj->func_list, func_entry)
- 
-+static inline bool klp_is_object_dynamic(struct klp_object *obj)
-+{
-+	return !obj->funcs;
-+}
-+
-+static inline bool klp_is_func_dynamic(struct klp_func *func)
-+{
-+	WARN_ON_ONCE(func->ftype == KLP_FUNC_ANY);
-+	return func->ftype != KLP_FUNC_STATIC;
-+}
-+
-+static inline bool klp_is_func_type(struct klp_func *func,
-+				    enum klp_func_type ftype)
-+{
-+	return ftype == KLP_FUNC_ANY || ftype == func->ftype;
-+}
++#define klp_for_each_func(obj, func)	\
++	list_for_each_entry(func, &obj->func_list, func_entry)
 +
  int klp_register_patch(struct klp_patch *);
  int klp_unregister_patch(struct klp_patch *);
  int klp_enable_patch(struct klp_patch *);
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 69bde95e76f8..a47c26147c17 100644
+index 3a4656fb7047..1d525f4a270a 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -124,6 +124,26 @@ static bool klp_initialized(void)
- 	return !!klp_root_kobj;
- }
+@@ -49,6 +49,32 @@ static LIST_HEAD(klp_patches);
  
-+static struct klp_object *klp_find_object(struct klp_patch *patch,
-+					  struct klp_object *old_obj)
+ static struct kobject *klp_root_kobj;
+ 
++static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
 +{
-+	struct klp_object *obj;
-+	bool mod = klp_is_module(old_obj);
-+
-+	klp_for_each_object(patch, obj) {
-+		if (mod) {
-+			if (klp_is_module(obj) &&
-+			    strcmp(old_obj->name, obj->name) == 0) {
-+				return obj;
-+			}
-+		} else if (!klp_is_module(obj)) {
-+			return obj;
-+		}
-+	}
-+
-+	return NULL;
++	list_add(&func->func_entry, &obj->func_list);
 +}
 +
- struct klp_find_arg {
- 	const char *objname;
- 	const char *name;
-@@ -621,6 +641,66 @@ static struct attribute *klp_patch_attrs[] = {
- 	NULL
- };
- 
-+/*
-+ * Dynamically allocated objects and functions.
-+ */
-+static void klp_free_func_dynamic(struct klp_func *func)
++static void klp_init_object_list(struct klp_patch *patch,
++				 struct klp_object *obj)
 +{
-+}
-+
-+static void klp_free_object_dynamic(struct klp_object *obj)
-+{
-+	kfree(obj->name);
-+	kfree(obj);
-+}
-+
-+static struct klp_object *klp_alloc_object_dynamic(const char *name)
-+{
-+	struct klp_object *obj;
-+
-+	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
-+	if (!obj)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (name) {
-+		obj->name = kstrdup(name, GFP_KERNEL);
-+		if (!obj->name) {
-+			kfree(obj);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+	}
-+
-+	return obj;
-+}
-+
-+static struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
-+						struct klp_object *old_obj)
-+{
-+	struct klp_object *obj;
-+
-+	obj = klp_find_object(patch, old_obj);
-+	if (obj)
-+		return obj;
-+
-+	obj = klp_alloc_object_dynamic(old_obj->name);
-+	if (IS_ERR(obj))
-+		return obj;
-+
-+	klp_init_object_list(patch, obj);
-+	return obj;
-+}
-+
-+/*
-+ * Patch release framework must support the following scenarios:
-+ *
-+ *   + Asynchonous release is used when kobjects are initialized.
-+ *
-+ *   + Direct release is used in error paths for structures that
-+ *     have not had kobj initialized yet.
-+ *
-+ *   + Allow to release dynamic structures of the given type when
-+ *     they are not longer needed.
-+ */
- static void klp_kobj_release_patch(struct kobject *kobj)
- {
- 	struct klp_patch *patch;
-@@ -637,6 +717,12 @@ static struct kobj_type klp_ktype_patch = {
- 
- static void klp_kobj_release_object(struct kobject *kobj)
- {
-+	struct klp_object *obj;
-+
-+	obj = container_of(kobj, struct klp_object, kobj);
-+
-+	if (klp_is_object_dynamic(obj))
-+		klp_free_object_dynamic(obj);
- }
- 
- static struct kobj_type klp_ktype_object = {
-@@ -646,6 +732,12 @@ static struct kobj_type klp_ktype_object = {
- 
- static void klp_kobj_release_func(struct kobject *kobj)
- {
 +	struct klp_func *func;
 +
-+	func = container_of(kobj, struct klp_func, kobj);
++	list_add(&obj->obj_entry, &patch->obj_list);
 +
-+	if (klp_is_func_dynamic(func))
-+		klp_free_func_dynamic(func);
- }
- 
- static struct kobj_type klp_ktype_func = {
-@@ -653,14 +745,26 @@ static struct kobj_type klp_ktype_func = {
- 	.sysfs_ops = &kobj_sysfs_ops,
- };
- 
--/* Free all funcs that have the kobject initialized. */
--static void klp_free_funcs(struct klp_object *obj)
-+/*
-+ * Free all funcs of the given ftype. Use the kobject when it has already
-+ * been initialized. Otherwise, do it directly.
-+ */
-+static void klp_free_funcs(struct klp_object *obj,
-+			   enum klp_func_type ftype)
++	INIT_LIST_HEAD(&obj->func_list);
++	klp_for_each_func_static(obj, func)
++		klp_init_func_list(obj, func);
++}
++
++static void klp_init_patch_list(struct klp_patch *patch)
++{
++	struct klp_object *obj;
++
++	INIT_LIST_HEAD(&patch->obj_list);
++	klp_for_each_object_static(patch, obj)
++		klp_init_object_list(patch, obj);
++}
++
+ static bool klp_is_module(struct klp_object *obj)
  {
--	struct klp_func *func;
-+	struct klp_func *func, *tmp_func;
-+
-+	klp_for_each_func_safe(obj, func, tmp_func) {
-+		if (!klp_is_func_type(func, ftype))
-+			continue;
-+
-+		/* Avoid double free and allow to detect empty objects. */
-+		list_del(&func->func_entry);
+ 	return obj->name;
+@@ -794,6 +820,7 @@ static int klp_init_patch(struct klp_patch *patch)
  
--	klp_for_each_func(obj, func) {
- 		if (func->kobj.state_initialized)
- 			kobject_put(&func->kobj);
-+		else if (klp_is_func_dynamic(func))
-+			klp_free_func_dynamic(func);
- 	}
- }
+ 	patch->enabled = false;
+ 	init_completion(&patch->finish);
++	klp_init_patch_list(patch);
  
-@@ -675,22 +779,34 @@ static void klp_free_object_loaded(struct klp_object *obj)
- 		func->old_addr = 0;
- }
- 
--/* Free all funcs and objects that have the kobject initialized. */
--static void klp_free_objects(struct klp_patch *patch)
-+/*
-+ * Free all linked funcs of the given ftype. Then free empty objects.
-+ * Use the kobject when it has already been initialized. Otherwise,
-+ * do it directly.
-+ */
-+static void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
- {
--	struct klp_object *obj;
-+	struct klp_object *obj, *tmp_obj;
- 
--	klp_for_each_object(patch, obj) {
--		klp_free_funcs(obj);
-+	klp_for_each_object_safe(patch, obj, tmp_obj) {
-+		klp_free_funcs(obj, ftype);
-+
-+		if (!list_empty(&obj->func_list))
-+			continue;
-+
-+		/* Avoid freeing the object twice. */
-+		list_del(&obj->obj_entry);
- 
- 		if (obj->kobj.state_initialized)
- 			kobject_put(&obj->kobj);
-+		else if (klp_is_object_dynamic(obj))
-+			klp_free_object_dynamic(obj);
- 	}
- }
- 
- static void klp_free_patch(struct klp_patch *patch)
- {
--	klp_free_objects(patch);
-+	klp_free_objects(patch, KLP_FUNC_ANY);
- 
- 	if (!list_empty(&patch->list))
- 		list_del(&patch->list);
-@@ -771,9 +887,6 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
- 	int ret;
- 	const char *name;
- 
--	if (!obj->funcs)
--		return -EINVAL;
--
- 	obj->patched = false;
- 	obj->mod = NULL;
- 
-@@ -834,7 +947,7 @@ static int klp_init_patch(struct klp_patch *patch)
- 	return 0;
- 
- free:
--	klp_free_objects(patch);
-+	klp_free_objects(patch, KLP_FUNC_ANY);
- 
- 	mutex_unlock(&klp_mutex);
- 
+ 	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
+ 				   klp_root_kobj, "%s", patch->mod->name);
 -- 
 2.13.6
