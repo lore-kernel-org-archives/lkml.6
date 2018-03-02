@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtMAhOZd9CC3wtHIaK7HfIYmXjaBRNDHfxA/YLB1PDPqpMX8Tq83kI7DuwTd9n8MozWJYgU
-ARC-Seal: i=1; a=rsa-sha256; t=1519981243; cv=none;
+X-Google-Smtp-Source: AG47ELtK3kXYdoWmjwnSX3JXciHgruQqChHAb3EjnBbUIfIaTrRy8geeSMIFWtIQs6xhUyW+x0V1
+ARC-Seal: i=1; a=rsa-sha256; t=1519981240; cv=none;
         d=google.com; s=arc-20160816;
-        b=XWZSIVNGOD17fER0Y3Hs4ADYgVEnPnpIrBGW9d49vi5oiJLBVwCbsERR/oDGkybMbD
-         br4Z9ARpo3zAHDFv2IUPAIl1ZwrN4roHc0CobMopJCljlJr4wAFujGGKOTH5x2+2XjsH
-         x4ZiprZjqCUILko74xcIiE6Ln/MIVym4bhVMS30JRBkSxlNSiBGkyUAFgZGRfXy8jmg6
-         7xLjp+I+d9r64pk17rPHJhL/eZaXaKWh2cTdUny4MBiED9hFsBTTSRz3ZZGjRAEQ5cFw
-         Ndr9XiiIgmeGEXwe4LZBoTCceO/Pv5tvlOkxWm6KdKcMqEKBtWVBNIE13VKhYWU2DKNu
-         xQ8g==
+        b=RdoL3cDheE/SC2ksXK8egY+weT1D31MiE8HqIYTOaHHTlpGtProBSo8zQDVJhQuXTa
+         SXtMimDtdFR1Un82DR3OVCdlneREqgsyfaU6Bo0ZX1l8bT6HIdwVxhVX7uSn0dodFXTn
+         zyiHCUXXImaMxwDVaV0encS0M5qJfCRjPVYVbitF/bIR1qVgrLagk8FrqsbFKBCVU/B+
+         Y3ygNZZkKymU48ATmitsgsRzvrv7J2MZOOjWjRa25CfuA6NCNL5ypNp9+/ozrDJoMpYh
+         Q6siIuhziBqLGFkaDI5q9GaoNe/9YC1ycvTEshE9UXWFMPP3uJXxSt5alBBCZinF1KVw
+         ECiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sAcnLdRzJjLTR66Sjwl30qdnb4FfATnwtpxB6KUp4eY=;
-        b=xKEVx5SAyocwOpNCM72fcEp8Z31PYriYCZivtDZ5KsKbUQxDKHEt6RcEfHOaH6ScT5
-         maDsNc66hSQXnHZwCMB7Rq9zlz58ZoeaRb3Ctd5n+qskXnfrdXwcwe1FWOHhsVPgWaH9
-         PmGFfFAOh7CqIsJ2d3/krc4wHz7+4KV2vrvVWRwEjt7d3aRacsG2mneLxBV4zAKVvdTe
-         lS9lgl579TIAW/amHVqgTXdLxgjK11XbdeSuKFd1mTmTqbtFE2ii3rVQR3IehHkzp4+I
-         5L7/pwXxtByYxI1Ohz9uA+G+Ni64LxX/QsJyV4x/DI9l15IPOSi7x1sVj6FPFF5AsXcJ
-         Ot5w==
+        bh=37NjCwM9eopXVLx0gTtgvO33Pd1jCT5IoxVAvatNS0I=;
+        b=Uu1TATJ0c5+asDoyvjNTSUlFwDfCgNNkJKkB0ik4BrUDQFyHd5CJvB/nFxLeH0GNl1
+         VD3COyIoCKPcGJ4lpez730E7zuh00zWGoBeEAHgWN4ZQ3uvRK9yUmLUn9EWWXCZI+/lc
+         /Ob7As/WAotVcrH8z9Id3AQxvRzPHyXTPX8j5tUo2xQBFU+UGeToAsGewNHKp3n5i7Yt
+         GHNwPWDr3o5WKaiqxmKLlDJ2KyaVgmQe5yx6169e7ld8al/h4Ad+ZtvxUaa9VCqoI15f
+         lKf31r3uIEqo3MOX7okpXvmKmXLlk17dFfntDNQUoft/VdqziP+LrDrpJbt3ZZzkoPdZ
+         3G/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Jianlin Shi <jishi@redhat.com>,
 	Xin Long <lucien.xin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 034/115] ip6_gre: remove the incorrect mtu limit for ipgre tap
-Date: Fri,  2 Mar 2018 09:50:37 +0100
-Message-Id: <20180302084505.256139802@linuxfoundation.org>
+Subject: [PATCH 4.14 033/115] ip_gre: remove the incorrect mtu limit for ipgre tap
+Date: Fri,  2 Mar 2018 09:50:36 +0100
+Message-Id: <20180302084505.214969401@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815852245420601?=
-X-GMAIL-MSGID: =?utf-8?q?1593815852245420601?=
+X-GMAIL-THRID: =?utf-8?q?1593815848700955353?=
+X-GMAIL-MSGID: =?utf-8?q?1593815848700955353?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,27 +54,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit 2c52129a7d74d017320804c6928de770815c5f4a ]
+[ Upstream commit cfddd4c33c254954927942599d299b3865743146 ]
 
-The same fix as the patch "ip_gre: remove the incorrect mtu limit for
-ipgre tap" is also needed for ip6_gre.
+ipgre tap driver calls ether_setup(), after commit 61e84623ace3
+("net: centralize net_device min/max MTU checking"), the range
+of mtu is [min_mtu, max_mtu], which is [68, 1500] by default.
+
+It causes the dev mtu of the ipgre tap device to not be greater
+than 1500, this limit value is not correct for ipgre tap device.
+
+Besides, it's .change_mtu already does the right check. So this
+patch is just to set max_mtu as 0, and leave the check to it's
+.change_mtu.
 
 Fixes: 61e84623ace3 ("net: centralize net_device min/max MTU checking")
+Reported-by: Jianlin Shi <jishi@redhat.com>
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |    1 +
+ net/ipv4/ip_gre.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -1335,6 +1335,7 @@ static void ip6gre_tap_setup(struct net_
- 
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1274,6 +1274,7 @@ static const struct net_device_ops erspa
+ static void ipgre_tap_setup(struct net_device *dev)
+ {
  	ether_setup(dev);
- 
 +	dev->max_mtu = 0;
- 	dev->netdev_ops = &ip6gre_tap_netdev_ops;
- 	dev->needs_free_netdev = true;
- 	dev->priv_destructor = ip6gre_dev_free;
+ 	dev->netdev_ops	= &gre_tap_netdev_ops;
+ 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
+ 	dev->priv_flags	|= IFF_LIVE_ADDR_CHANGE;
