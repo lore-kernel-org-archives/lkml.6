@@ -1,210 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165120AbeCBSZn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:25:43 -0500
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:45847 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1162994AbeCBSZk (ORCPT
+        id S1165152AbeCBS2i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:28:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51060 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1162994AbeCBS2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:25:40 -0500
-X-Google-Smtp-Source: AG47ELtjfp3jFsjS6idOuT+g3njqxGPvlSj0JB7loiSjUtNNcR6x2imF9yIwuh+MetQir9B/Hj8lH395IN6pi3OMYyc=
+        Fri, 2 Mar 2018 13:28:36 -0500
+Date: Fri, 2 Mar 2018 10:28:31 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Jonathan Corbet <corbet@lwn.net>,
+        Jiri Slaby <jslaby@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation/sphinx: Fix Directive import error
+Message-ID: <20180302182831.GF31400@bombadil.infradead.org>
+References: <20180302152831.11510-1-tiwai@suse.de>
+ <871sh2v53l.fsf@intel.com>
+ <20180302164254.GB31400@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1518415278-59062-3-git-send-email-vviswana@codeaurora.org>
-References: <1518415278-59062-1-git-send-email-vviswana@codeaurora.org> <1518415278-59062-3-git-send-email-vviswana@codeaurora.org>
-From: Doug Anderson <dianders@google.com>
-Date: Fri, 2 Mar 2018 10:25:38 -0800
-Message-ID: <CAD=FV=VXWbFDtDPboSpj=Pp3iCujN6RaE2dzXRpUEX-F-B_uZA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: support voltage pad switching
-To: Vijay Viswanath <vviswana@codeaurora.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com,
-        Krishna Konda <kkonda@codeaurora.org>, evgreen@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302164254.GB31400@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Mar 02, 2018 at 08:42:54AM -0800, Matthew Wilcox wrote:
+> On Fri, Mar 02, 2018 at 06:01:50PM +0200, Jani Nikula wrote:
+> > On Fri, 02 Mar 2018, Takashi Iwai <tiwai@suse.de> wrote:
+> > > The sphinx.util.compat for Directive stuff was deprecated in the
+> > > recent Sphinx version, and now we get a build error.
+> > >
+> > > Let's import from the new place, docutils.parsers.rst, while keeping
+> > > the old sphinx.util.compat as fallback.
+> > >
+> > > Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
+> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > ---
+> > > v1->v2: Change the fallback order as Matthew suggested, the new one at first
+> > 
+> > So this crossed my mind as well... and then I thought it'll probably
+> > succeed on older Sphinx, and the fallback is not needed. The question
+> > is, are these equal? Can we just import from docutils.parsers.rst?
+> 
+> I found a github page which implies that docutils.parsers.rst.Directive
+> was added 12 years ago (!) so we're probably safe to rely on it:
+> 
+> https://github.com/docutils-mirror/docutils/commit/9649abee47b4ce4db51be1d90fcb1fb500fa78b3
+> 
+> Again, I'm no pythonista, so I may have muddled this.
 
-On Sun, Feb 11, 2018 at 10:01 PM, Vijay Viswanath
-<vviswana@codeaurora.org> wrote:
-> From: Krishna Konda <kkonda@codeaurora.org>
->
-> The PADs for SD card are dual-voltage that support 3v/1.8v. Those PADs
-> have a control signal  (io_pad_pwr_switch/mode18 ) that indicates
-> whether the PAD works in 3v or 1.8v.
->
-> SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
-> based on actual voltage used for IO lines. So when power irq is
-> triggered for io high or io low, the driver should check the voltages
-> supported and set the pad accordingly.
->
-> Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
-> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-> ---
->  drivers/mmc/host/sdhci-msm.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 5c23e92..96c81df 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -78,6 +78,8 @@
->  #define CORE_HC_MCLK_SEL_DFLT  (2 << 8)
->  #define CORE_HC_MCLK_SEL_HS400 (3 << 8)
->  #define CORE_HC_MCLK_SEL_MASK  (3 << 8)
-> +#define CORE_IO_PAD_PWR_SWITCH_EN      (1 << 15)
-> +#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
->  #define CORE_HC_SELECT_IN_EN   BIT(18)
->  #define CORE_HC_SELECT_IN_HS400        (6 << 19)
->  #define CORE_HC_SELECT_IN_MASK (7 << 19)
-> @@ -1109,6 +1111,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->         u32 irq_status, irq_ack = 0;
->         int retry = 10;
->         int pwr_state = 0, io_level = 0;
-> +       u32 config = 0;
-
-Don't init things to 0 unless you're relying on it (you're not).
-Doing so tends to bypass compiler warnings about "use before init" and
-leads to uncaught bugs.
-
-
->         irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
-> @@ -1166,6 +1169,30 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->          */
->         writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
->
-> +       /* Ensure order between core_mem and hc_mem */
-> +       mb();
-
-I spent a bit of time brushing up on my memory barriers and (as far as
-I understand) I agree that in general mb() between accesses of
-core_mem and hc_mem is technically needed since, as you say, there are
-two separate io-mapped devices here and you're using relaxed
-accessors.
-
-Oh, but hold on.  In this particular case they're truly not needed,
-right?  The value stored in CORE_VENDOR_SPEC should be exactly the
-value you wrote last to it, right?  ...and you're just reading it
-back.  There should be no need for any sort of barrier here...
-...and, if you wanted to be _truly_ efficient (maybe you do since
-you're going through all this trouble of using readl_relaxed) you
-could just cache this value in "struct sdhci_msm_host" and you don't
-even have to read it back at all.
-
-
-> +       /*
-> +        * We should unset IO PAD PWR switch only if the register write can
-> +        * set IO lines high and the regulator also switches to 3 V.
-> +        * Else, we should keep the IO PAD PWR switch set.
-> +        * This is applicable to certain targets where eMMC vccq supply is only
-> +        * 1.8V. In such targets, even during REQ_IO_HIGH, the IO PAD PWR
-> +        * switch must be kept set to reflect actual regulator voltage. This
-> +        * way, during initialization of controllers with only 1.8V, we will
-> +        * set the IO PAD bit without waiting for a REQ_IO_LOW.
-> +        */
-> +       config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-> +
-> +       if ((io_level & REQ_IO_HIGH) && (msm_host->caps_0 & CORE_3_0V_SUPPORT))
-> +               config &= ~CORE_IO_PAD_PWR_SWITCH;
-> +       else if ((io_level & REQ_IO_LOW) ||
-> +                       (msm_host->caps_0 & CORE_1_8V_SUPPORT))
-> +               config |= CORE_IO_PAD_PWR_SWITCH;
-
-Part of me thinks that this would all be much cleaner using the same
-solution as "drivers/power/avs/rockchip-io-domain.c".  AKA: register
-to be notified about changes to vqmmc and set the bit whenever it
-flips.  ...but I won't insist on that.  I don't know a whole lot about
-the whole "REQ_IO_HIGH" bug I guess it's a sane place to do this...
-
-...but I will say that the fact that sometimes "config" isn't set to
-anything at all here confuses me (IOW if you don't hit either the "if"
-or "else if" then config is unchanged).  I think the comment block
-above tries to explain it, but I still don't really get it.  Maybe
-more examples?  If I was describing the current algorithm, I'd give
-these examples:
-
-* If vqmmc can only be 1.8V then at init time we'll have set
-PAD_PWR_SWITCH_EN and leave the PAD_PWR_SWITCH set to 3.3V, but then
-upon the first "REQ_IO_LOW" we'll transition down to 1.8V and stay
-there forever.
-
-* If vqmmc can only be 3.3V then at init time we'll have set
-PAD_PWR_SWITCH_EN and leave the PAD_PWR_SWITCH set to 3.3V always.
-
-* If vqmmc can be either 3.3V or 1.8V then at init time we'll have set
-PAD_PWR_SWITCH_EN and leave the PAD_PWR_SWITCH set to 3.3V, but then
-we'll honor REQ_IO_LOW / REQ_IO_HIGH.
-
-* If vqmmc has an unknown range (or ins't provided) then we'll behave
-like the 3.3V case (because earlier code initted PAD_PWR_SWITCH_EN to
-0 when it wrote CORE_VENDOR_SPEC_POR_VAL and then we never change it).
-
-
-> +
-> +       writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-> +       /* Ensure IO pad update before any further register read/writes */
-> +       mb();
-
-I agree that (to the best of my understanding) this mb() ought to be
-there, but maybe mention that the reason is that you have two separate
-IO ranges for registers and that's why you need it.
-
-Also: if you truly care about avoiding mb() calls (and since you're
-using _relaxed variants I assume you do), you should avoid writing the
-config and doing the "mb" if you didn't actually make a change.
-
-
-> +
->         if (pwr_state)
->                 msm_host->curr_pwr_state = pwr_state;
->         if (io_level)
-> @@ -1518,6 +1545,13 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->         }
->
->         /*
-> +        * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH bit can
-> +        * be used as required later on.
-> +        */
-> +       config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-> +       config |= CORE_IO_PAD_PWR_SWITCH_EN;
-> +       writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-
-If this is going to be unconditional (as you've written it) should
-this be combined with the statement earlier in the same function where
-we write "CORE_VENDOR_SPEC_POR_VAL" to this same register?
-
-Seems like you could write:
-
-#define CORE_VENDOR_SPEC_INIT_VAL (CORE_VENDOR_SPEC_POR_VAL | \
-                           CORE_IO_PAD_PWR_SWITCH_EN)
-
-...then just change the init line to use "CORE_VENDOR_SPEC_INIT_VAL"
-instead of "CORE_VENDOR_SPEC_POR_VAL".
-
----
-
-...but it seems like it might be even better just leave the "en" bit
-off for now and just turn it on when you actually need it.
-
-BTW: All I have is a very terse register spec in front of me, but do
-you happen to know why "HC_IO_PAD_PWR_SWITCH_EN" even exists at all?
-Is there some difference between "enabled but choose 3.3 V" and "not
-enabled?"  Also: do all versions of the controller supported by this
-driver support this bit?
-
-One last thing: on SDM845 one of the two SD controllers doesn't
-support 1.8V, though the register description still describes these
-bits.  Presumably for that controller it's better to just not set
-"enabled" at all?
-
-
-
-
--Doug
+I spent some time delving through the Sphinx codebase.  The compat
+version was added so you could use Directive with docutils 0.4 onwards.
+docutils 0.5 onwards has Directive.  So as long as we're comfortable
+mandating docutils from 2009, we're fine ;-)
