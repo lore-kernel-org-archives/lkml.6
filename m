@@ -1,56 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936573AbeCBQeH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:34:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38358 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936304AbeCBQeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:34:02 -0500
-Date: Fri, 2 Mar 2018 17:11:17 +0100
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, Yan Markman <ymarkman@marvell.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 3/5] net: mvpp2: use a data size of 10kB for Tx
- FIFO on port 0
-Message-ID: <20180302171117.2344a893@windsurf.lan>
-In-Reply-To: <20180302154044.25204-4-antoine.tenart@bootlin.com>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-4-antoine.tenart@bootlin.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S936624AbeCBQem (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:34:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52464 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936591AbeCBQeQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:34:16 -0500
+Date: Fri, 2 Mar 2018 08:34:12 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jani Nikula <jani.nikula@intel.com>,
+        Jiri Slaby <jslaby@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation/sphinx: Fix Directive import error
+Message-ID: <20180302163412.GA31400@bombadil.infradead.org>
+References: <20180302152831.11510-1-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302152831.11510-1-tiwai@suse.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Mar 02, 2018 at 04:28:31PM +0100, Takashi Iwai wrote:
+>  from docutils.parsers.rst import directives
+> -from sphinx.util.compat import Directive
+> +try:
+> +    from docutils.parsers.rst import directives, Directive
 
-On Fri,  2 Mar 2018 16:40:42 +0100, Antoine Tenart wrote:
+We also don't need 'directives' on this line as it was imported on the
+previous line.
 
-> -/* Initialize Tx FIFO's */
-> +/* Initialize Tx FIFO's
-> + * The CP110's total tx-fifo size is 19kB.
-> + * Use large-size 10kB for fast port but 3kB for others.
-> + */
+> +except ImportError:
+> +    from sphinx.util.compat import Directive
+>  from sphinx.ext.autodoc import AutodocReporter
+>  
+>  __version__  = '1.0'
 
-Is there a reason to hardcode 10KB for port 0, and 3KB for the other
-ports ? Would there be use cases where the user may want different
-configurations ?
+Here's what I tested on Debian:
 
-It's just that it feels very "hardcoded" to enforce specifically those
-numbers.
-
-Also, does it make sense to mention the CP110 here ? Is this 19 KB
-limitation a limit of the PPv2.2 IP, or of the CP110 ?
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
++++ b/Documentation/sphinx/kerneldoc.py
+@@ -37,7 +37,10 @@ import glob
+ from docutils import nodes, statemachine
+ from docutils.statemachine import ViewList
+ from docutils.parsers.rst import directives
+-from sphinx.util.compat import Directive
++try:
++    from docutils.parsers.rst import Directive
++except ImportError:
++    from sphinx.util.compat import Directive
+ from sphinx.ext.autodoc import AutodocReporter
+ 
+ __version__  = '1.0'
