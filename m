@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuR3M2wlHUQHYHzdzuNkkVm7bjCZnuZf7d2CDHV3cZRqsAHLhb2qLu0kIkLV4P0ChmO4Ibo
-ARC-Seal: i=1; a=rsa-sha256; t=1519980934; cv=none;
+X-Google-Smtp-Source: AG47ELtKOG/ZLWyi4j0sp5REr8iTG2jBxB3S+0ysDs7+/E9km9J/SBPIn77svAjqYLP8PkwfO/YY
+ARC-Seal: i=1; a=rsa-sha256; t=1519980929; cv=none;
         d=google.com; s=arc-20160816;
-        b=gNu6jyq/+v7kxnRRDYU2PCfkpOkHEcWr8Ya3PLx/3Nh5zqeKI35VXFoPo34P7Uq9Ci
-         i7R7aPXzv5HX7QNx9/2m+sCbwDVIJoEonP69wg648UA/JkrEqm1I/TO+HxA/SjByvbuu
-         D+KT8RcuOjZrH0/IPbaEGOzbmpb+Aaihv1eUuROcrJw8EgsRGNos0dJALN8ZmouF6e2n
-         AW+5A9IENO2rMJXG6k2E19aqqtmJ3RJOEyyixBRl+rBVwCbecbc7m2E1IYsS5ATl+US4
-         YyqGjg7L2I15M5mG5AundyR0Haai89FPGkUL17K+3ML3BMkw7Y4IUw79eScL0wHOeH4b
-         VbxQ==
+        b=iChThJr44uittd1stCZzM0M4xKDiR2xTt3Oq8BkjWU4cpxcstQd/BswP7qC5sQsq36
+         9Ytf3wnMTYKamACP/1RNtk2xytlGFslMwS5gw0dLX+pPokclNQu8/L5JDFLd0I+2cQvk
+         YatFjlH+Hqp4vcR3VcWng/yUKiWJ3z6BrsAJwt3VXmM6/0RJyFt2zij/Ow3BMlDCcdun
+         kmMK9YRkzgCPlYUg3+imJV/3gLPB69V+MK69FCsQInx+3MUwAWME0fpJP9IsdE/49O5P
+         twKE2Q85G21QeSjASldWtEe2A1JI+UM1kqUaO+B85rr9wJmmjZPzHH+gsII8O2f0it3i
+         3brA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mI45qsHPvekLbOcampYwefzmGtxV2kZwC0svZ3zB8UY=;
-        b=nB55frkIXa7IL1xpxBGv0uRu0BNSQ1bprsfhR2TURO667PiMi6hrDVlUCvjYChC6il
-         a57C/IBx8i9wEuEbLwWKlFYdTfpKCpdbLfwcTBF8xgaQDkqILYsZ5dYLFaGQc0xIuyfo
-         yDwkB74Li2Fvr7HP4ZuHtgrpZIU9xwXjL90/dXXQTAK8kD9H06/bCoD8+U4iAXfXVZzi
-         6/kf8XZpuQfoeqm3xFFqiPXMT7yaHmHBXUd2XfT15iVdCgZ+IuqJSKiCcQgrzMbAjVUF
-         tZTPUr12NqJycZekR9erhFDOkflUt30zvakwaWpP/3o0VNtteLc5UYaou67FrzLuC4Co
-         lOog==
+        bh=7eeqeqAO8C+SkQybWGVJx9TX3OeYb6EC0pp2IhKkM20=;
+        b=WFpwAGOPwYRM1kn1+o9mAizsdz1mBeujB6M2C32iud7XPqWo2weP2TGn9atfJNNCzk
+         B9KmsLgWPL9I3ZQU0rwADkxvI3htc6SbuT7De/fP4GdXcXT5tnjTroIo16JYUzeBD961
+         BRReXVXq/WrR1Qv/uLCuCqMPyLCz5NjENtippJIkGfIyYwds4Tz7TUdcmlF9QBRK7OHX
+         Wk37husTFK8ioJGjPV6o9+cgK7XvhMPCM8wQoY+q1ga6UIt0r6oNx2oBNrTr+y+wEBlT
+         cx14ldt/oJ3Ohr0XUNRhmwy3H9Iw37CH5s2Mpxxsc62lgi3Ja/CFCwRpXVTDYB6ZfxY9
+         P58A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Radu Pirea <radu.pirea@microchip.com>,
-	Mark Brown <broonie@kernel.org>,
+	Karol Herbst <kherbst@redhat.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 08/34] spi: atmel: fixed spin_lock usage inside atmel_spi_remove
-Date: Fri,  2 Mar 2018 09:51:04 +0100
-Message-Id: <20180302084436.531804809@linuxfoundation.org>
+Subject: [PATCH 4.4 07/34] drm/nouveau/pci: do a msi rearm on init
+Date: Fri,  2 Mar 2018 09:51:03 +0100
+Message-Id: <20180302084436.470546495@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815423105817995?=
-X-GMAIL-MSGID: =?utf-8?q?1593815528394945274?=
+X-GMAIL-THRID: =?utf-8?q?1593815522892231705?=
+X-GMAIL-MSGID: =?utf-8?q?1593815522892231705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Radu Pirea <radu.pirea@microchip.com>
+From: Karol Herbst <kherbst@redhat.com>
 
 
-[ Upstream commit 66e900a3d225575c8b48b59ae1fe74bb6e5a65cc ]
+[ Upstream commit a121027d2747168df0aac0c3da35509eea39f61c ]
 
-The only part of atmel_spi_remove which needs to be atomic is hardware
-reset.
-
-atmel_spi_stop_dma calls dma_terminate_all and this needs interrupts
+On my GP107 when I load nouveau after unloading it, for some reason the
+GPU stopped sending or the CPU stopped receiving interrupts if MSI was
 enabled.
-atmel_spi_release_dma calls dma_release_channel and dma_release_channel
-locks a mutex inside of spin_lock.
 
-So the call of these functions can't be inside a spin_lock.
+Doing a rearm once before getting any interrupts fixes this.
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Karol Herbst <kherbst@redhat.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-atmel.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1669,12 +1669,12 @@ static int atmel_spi_remove(struct platf
- 	pm_runtime_get_sync(&pdev->dev);
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c
+@@ -127,6 +127,13 @@ nvkm_pci_init(struct nvkm_subdev *subdev
+ 		return ret;
  
- 	/* reset the hardware and block queue progress */
--	spin_lock_irq(&as->lock);
- 	if (as->use_dma) {
- 		atmel_spi_stop_dma(as);
- 		atmel_spi_release_dma(as);
- 	}
+ 	pci->irq = pdev->irq;
++
++	/* Ensure MSI interrupts are armed, for the case where there are
++	 * already interrupts pending (for whatever reason) at load time.
++	 */
++	if (pci->msi)
++		pci->func->msi_rearm(pci);
++
+ 	return ret;
+ }
  
-+	spin_lock_irq(&as->lock);
- 	spi_writel(as, CR, SPI_BIT(SWRST));
- 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
- 	spi_readl(as, SR);
