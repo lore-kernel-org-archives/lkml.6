@@ -1,157 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946938AbeCBRwn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:52:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1946901AbeCBRwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:52:41 -0500
-Date: Fri, 2 Mar 2018 10:52:37 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk,
-        Don Dutile <ddutile@redhat.com>, Kirti Wankhede <kwankhede@nvidia.com>
-Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Message-ID: <20180302105237.286bbbd2@t450s.home>
-In-Reply-To: <CAKgT0UcBX5o3BFZGXpLQGWjNGnqgEPQv=g=yd_PXCv-9uFNadA@mail.gmail.com>
-References: <20180227190520.3273.79728.stgit@localhost.localdomain>
-        <20180227144015.228d4f5c@w520.home>
-        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
-        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
-        <20180228155949.00fde8ae@w520.home>
-        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
-        <20180301132224.1ca06949@w520.home>
-        <CAKgT0Ufo_wJPuRYBYK3j_jB_5rnhgdhO6ijEH4h=ypRztaveZA@mail.gmail.com>
-        <20180301165841.5f8c8edc@w520.home>
-        <CAKgT0UcBX5o3BFZGXpLQGWjNGnqgEPQv=g=yd_PXCv-9uFNadA@mail.gmail.com>
+        id S1946233AbeCBRzG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:55:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51612 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946022AbeCBRzE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:55:04 -0500
+Date: Fri, 2 Mar 2018 17:54:51 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v3 05/25] ASoC: qcom: qdsp6: Add support to Q6AFE
+Message-ID: <20180302175451.GB3482@sirena.org.uk>
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-6-srinivas.kandagatla@linaro.org>
+ <20180301205940.GR12864@sirena.org.uk>
+ <66d37327-b8ea-0da5-3e05-435cec5d84ab@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+Content-Disposition: inline
+In-Reply-To: <66d37327-b8ea-0da5-3e05-435cec5d84ab@linaro.org>
+X-Cookie: Limited delivery area.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Mar 2018 18:49:53 -0800
-Alexander Duyck <alexander.duyck@gmail.com> wrote:
 
-> On Thu, Mar 1, 2018 at 3:58 PM, Alex Williamson
-> <alex.williamson@redhat.com> wrote:
-> > On Thu, 1 Mar 2018 14:42:40 -0800
-> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> >  
-> >> On Thu, Mar 1, 2018 at 12:22 PM, Alex Williamson
-> >> <alex.williamson@redhat.com> wrote:  
-> >> > On Wed, 28 Feb 2018 16:36:38 -0800
-> >> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> >> >  
-> >> >> On Wed, Feb 28, 2018 at 2:59 PM, Alex Williamson
-> >> >> <alex.williamson@redhat.com> wrote:  
-> >> >> > On Wed, 28 Feb 2018 09:49:21 -0800
-> >> >> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> >> >> >  
-> >> >> >> On Tue, Feb 27, 2018 at 2:25 PM, Alexander Duyck
-> >> >> >> <alexander.duyck@gmail.com> wrote:    
-> >> >> >> So I was thinking about this some more. In the case of vfio-pci things
-> >> >> >> are a bit different since you are essentially taking a given device
-> >> >> >> and handing it to a VM or userspace and it doesn't guarantee a
-> >> >> >> communication between the two.  
-> >> >> >
-> >> >> > Doesn't guarantee communication or cooperation or even trust.  
-> >> >>
-> >> >> Right, but at the same time I consider this to be a shoot yourself in
-> >> >> the foot type scenario. If you are going to hand off your PF while VFs
-> >> >> are active then you are asking for whatever repercussions you end up
-> >> >> getting. I've added a warning and a TAINT_USER flag to my code at this
-> >> >> point if you load an active PF in vfio, and I have added a function
-> >> >> that locks the setting so it cannot be changed once we place a PF in
-> >> >> the control of vfio-pci.
-> >> >>
-> >> >> The way I see it there are two scenarios. One where the PF is just a
-> >> >> VF with an extra bit of SR-IOV configuration space floating off of it.
-> >> >> The other is where we want to have SR-IOV enabled and have some third
-> >> >> party managing the PF.  The first one doesn't really care about the
-> >> >> communication and would prefer that whatever owns the driver on the PF
-> >> >> just ignore the SR-IOV portion of the configuration space. The second
-> >> >> one actually cares and would want some sort of
-> >> >> communication/cooperation but for now I don't see that as being the
-> >> >> easiest thing to do so it might be best to just let it see a fixed
-> >> >> number of VFs it just has to work with that.  
-> >> >
-> >> > There's no such thing as a read-only sriov capability in the spec,
-> >> > which is a problem we ran into a while ago, vfio-pci exposes the
-> >> > capability, but protects it as read-only so the user cannot create
-> >> > devices on the host.  QEMU passed this through to the guest, but that
-> >> > failed as soon as OVMF started supporting sriov as it's unable to size
-> >> > the VF BAR resources.  Now QEMU drops the sriov capability from the
-> >> > guest capability chain.  So it's not clear how this fixed number of vfs
-> >> > plan works.  Are we inventing our own capability for this?  If the pf
-> >> > driver is just a userspace driver and not a VM, maybe what we do now is
-> >> > sufficient, otherwise there's no standard for exposing fixed vfs.  
-> >>
-> >> So one thought I had is what if we provide an ioctl command that
-> >> allows for setting the number of VFs through VFIO? Basically it
-> >> wouldn't be exposed through the sysfs, but would be totally controlled
-> >> by the userspace using the sriov_configure_unmanged call to
-> >> enable/disable the VFs and ultimately cleaning it up when the device
-> >> it is released. I would imagine all the Amazon guys were looking for
-> >> is something where they could just have some sort of command that
-> >> could reach through and manage their VF count from some daemon. If
-> >> they assigned the interface to a guest it would not be able to touch
-> >> the SR-IOV capability unless QEMU went and implemented it which likely
-> >> isn't happening anytime soon. It would provide the userspace guys a
-> >> way to allocate the VF resources, call this ioctl, and then start
-> >> managing VFs in the case of a userspace managed entity instead of it
-> >> just being a firmware or preallocated type SR-IOV configuration.  
-> >
-> > Wait a sec, we were considering that a user owned pf sourcing vfs would
-> > taint the host kernel and now we want to give the user the ability to
-> > enable those vfs and trigger that tainting?  I saw the route through
-> > sysfs to enable sriov on a user owned device as a feature because it
-> > would require an existing privilege path rather than creating one
-> > through vfio.  For example, an unprivileged QEMU could submit a
-> > request to a privileged entity to enable sriov through sysfs.  If we
-> > wanted to allow the user to enable sriov directly, the user would at
-> > least need to run with privileges like CAP_SYS_ADMIN.  
-> 
-> The issue in all this ends up being how to handle the synchronization
-> between userspace and the kernel. That was the only reason why I was
-> thinking of that.
-> 
-> An alternative thought I had was to look at just making it so that we
-> did a minimal vfio version of sriov_configure that only allowed
-> changing the number of VFs when the device was not already in use,
-> specifically if the vdev->refcnt was non-zero. So the usage in such a
-> case would be to bind the driver, set the number of VFs, and then
-> start the application. On driver unload we would then call
-> pci_disable_sriov and just clean everything up on the way out.
+--4bRzO86E/ozDv8r1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yep, aside from asking Amazon to submit a native host driver, this is
-the only option I'm seeing as well.  Of course vfio would need to taint
-the kernel since it's not doing anything to restrict the usage of those
-potentially compromised vfs, and then we need to think about how much
-code we're willing to introduce and maintain to enable unsupported use
-cases.
- 
-> > Side note: we could just enable emulation of the sriov capability
-> > through config space in vfio-pci if we wanted to allow that, rather
-> > than adding a new ioctl.  
-> 
-> That seems like a really messy way of doing things though since there
-> isn't really any way to report exceptions other than just refusing to
-> set the bit and for all we know that could be the result of a hardware
-> error.
+On Fri, Mar 02, 2018 at 01:13:17PM +0000, Srinivas Kandagatla wrote:
+> On 01/03/18 20:59, Mark Brown wrote:
+> > On Tue, Feb 13, 2018 at 04:58:17PM +0000, srinivas.kandagatla@linaro.org wrote:
 
-Re-reading a register doesn't seem so terrible.  Of course, unless we
-can solve the tainting problem, it doesn't matter.  Either an ioctl or
-emulation is more code than I'm willing to maintain for a taint-only
-interface.  Thanks,
+> > > +static struct afe_port_map port_maps[AFE_PORT_MAX] = {
+> > > +	[AFE_PORT_HDMI_RX] = { AFE_PORT_ID_MULTICHAN_HDMI_RX,
+> > > +				AFE_PORT_HDMI_RX, 1, 1},
+> > > +};
 
-Alex
+> > Is this not device specific in any way?  It looks likely to be.
+
+> It is specific to Audio firmware build.
+> AFAIK, DSP port IDs are consistent across a given range of AVS firmware
+> builds. So far I have seen them not change in any of the B family SoCs.
+> However on older A family SOCs these are very different numbers. Which is
+> where ADSP version info would help select correct map.
+
+Can we have some documentation of this in the code please?
+
+> > > +static struct q6afe_port *afe_find_port(struct q6afe *afe, int token)
+> > > +{
+> > > +	struct q6afe_port *p = NULL;
+> > > +
+> > > +	spin_lock(&afe->port_list_lock);
+> > > +	list_for_each_entry(p, &afe->port_list, node)
+> > > +		if (p->token == token)
+> > > +			break;
+> > > +
+> > > +	spin_unlock(&afe->port_list_lock);
+
+> > Why do we need to lock the port list, what are we protecting it against?
+
+> This is just to protect the list from anyone deleting this.
+
+> Its very rare but the use case could be somelike the adsp is up and we are
+> in the middle of finding a port and then adsp went down or crashed we would
+> delete an entry in the list.
+
+If that's what we're protecting against then this also needs to do
+something to ensure that the port we looked up doesn't get deallocated
+before or while we look at it.
+
+> > > +int q6afe_port_start(struct q6afe_port *port)
+> > > +{
+> > > +	return afe_port_start(port, &port->port_cfg);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(q6afe_port_start);
+
+> > This is the third level of wrapper for the port start command in this
+> > file.  Do we *really* need all these wrappers?
+
+> Intention here is that we have plans to support different version of ADSP,
+> on A family this command is different, so having this wrapper would help
+> tackle this use-case.
+
+Why not just take out the level of wrapper for now then add it in when
+there's actually an abstraction in there?  The code might end up looking
+different anyway.
+
+--4bRzO86E/ozDv8r1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqZj+oACgkQJNaLcl1U
+h9BglQf/Yr/VUWgW/Yt5oZyuay/zHxMAuWyObW6ZelbFKsU/PSD/bYjyUuLOABst
+B30f7OSttx/uCFmHUC8i0AOvOCyfjXW0oJxCIesxsAQxDnJzM+fBldKJMbDfAajT
+uT/z2EbENWf/ZjyydM20gJZ9lVGNBQU5Ck7MwOidmCftgBUcIaQGWzLc6JCfBZV6
+Qb9PrKF/XroZbVthZ7H0JLmFR94v5CjFzyvgwfol37tP75eu+t4xXBVET8ac+4Ea
+yVe2ZsuDof5y0agHQczSZkXbQCA5LOkoE5QgPL9xNRuFBwF6gHIoHAUVXHaEV5S7
+HAmRwKobzqt6l1vtSZk5AU+oxH+ftA==
+=Ioiu
+-----END PGP SIGNATURE-----
+
+--4bRzO86E/ozDv8r1--
