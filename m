@@ -1,125 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932794AbeCBWA4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:00:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932681AbeCBWAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:00:41 -0500
-Subject: Re: [PATCH v8 7/8] livepatch: Correctly handle atomic replace for not
- yet loaded modules
-To: Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>
-Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180221132914.4809-1-pmladek@suse.com>
- <20180221132914.4809-8-pmladek@suse.com>
- <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
- <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
-From: Joe Lawrence <joe.lawrence@redhat.com>
-Organization: Red Hat
-Message-ID: <7f920ec3-dfe0-6a4d-dd25-5d5c4fa75714@redhat.com>
-Date: Fri, 2 Mar 2018 17:00:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933291AbeCBWCa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:02:30 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:39297 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932815AbeCBWBA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:01:00 -0500
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date: Fri,  2 Mar 2018 15:59:19 -0600
+Message-Id: <20180302215919.27207-6-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <87r2p287i8.fsf_-_@xmission.com>
+References: <87r2p287i8.fsf_-_@xmission.com>
+X-XM-SPF: eid=1ersjZ-0000ts-NM;;;mid=<20180302215919.27207-6-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX196h5zsM4VeLBTVW4lH/rhDzbWOfpJ+gaY=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5010]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=165]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=165 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1219 ms - load_scoreonly_sql: 0.11 (0.0%),
+        signal_user_changed: 3.2 (0.3%), b_tie_ro: 2.1 (0.2%), parse: 0.78 (0.1%),
+        extract_message_metadata: 16 (1.3%), get_uri_detail_list: 1.74 (0.1%),
+        tests_pri_-1000: 7 (0.6%), tests_pri_-950: 1.02 (0.1%), tests_pri_-900: 0.81
+        (0.1%), tests_pri_-400: 20 (1.6%), check_bayes: 19 (1.5%), b_tokenize: 6
+        (0.5%), b_tok_get_all: 7 (0.5%), b_comp_prob: 1.75 (0.1%), b_tok_touch_all:
+        2.6 (0.2%), b_finish: 0.55 (0.0%), tests_pri_0: 1162 (95.3%),
+        check_dkim_signature: 0.48 (0.0%), check_dkim_adsp: 2.9 (0.2%),
+        tests_pri_500: 7 (0.5%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v8 6/6] fuse: Restrict allow_other to the superblock's namespace or a descendant
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2018 05:28 AM, Petr Mladek wrote:
-> On Thu 2018-02-22 22:00:28, Miroslav Benes wrote:
->> On Wed, 21 Feb 2018, Petr Mladek wrote:
->>> This patch allows the late initialization.
->>>
->>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
->>> index ad508a86b2f9..da1438d47d83 100644
->>> --- a/kernel/livepatch/core.c
->>> +++ b/kernel/livepatch/core.c
->>> @@ -984,7 +988,12 @@ static void klp_free_patch(struct klp_patch *patch)
->>>  
->>>  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
->>>  {
->>> -	if (!func->old_name || !func->new_func)
->>> +	if (!func->old_name)
->>> +		return -EINVAL;
->>> +
->>> +	/* NOPs do not know the address until the patched module is loaded. */
->>> +	if (!func->new_func &&
->>> +	    (!klp_is_func_type(func, KLP_FUNC_NOP) || klp_is_object_loaded(obj)))
->>>  		return -EINVAL;
->>
->> If we changed the order of klp_init_func() and klp_init_object_loaded() 
->> calls in klp_init_object(), the hunk would not be needed. Is that correct? 
-> 
-> Not really. klp_init_object_loaded() would set func->new_func only
-> when the object was loaded. But we want to proceed here and create
-> the kobject for NOPs even when it was not loaded.
-> 
-> 
->>>  	INIT_LIST_HEAD(&func->stack_node);
->>> @@ -1039,6 +1048,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
->>>  			return -ENOENT;
->>>  		}
->>>  
->>> +		if (klp_is_func_type(func, KLP_FUNC_NOP))
->>> +			func->new_func = (void *)func->old_addr;
->>
->> Is there a reason why you left the same assignment in 
->> klp_alloc_func_nop()? This one is enough, no?
-> 
-> Good point! I am going to replace the obsolete assignment
-> with a comment in v8.
+From: Seth Forshee <seth.forshee@canonical.com>
 
-Hi Petr, Miroslav,
+Unprivileged users are normally restricted from mounting with the
+allow_other option by system policy, but this could be bypassed
+for a mount done with user namespace root permissions. In such
+cases allow_other should not allow users outside the userns
+to access the mount as doing so would give the unprivileged user
+the ability to manipulate processes it would otherwise be unable
+to manipulate. Restrict allow_other to apply to users in the same
+userns used at mount or a descendant of that namespace. Also
+export current_in_userns() for use by fuse when built as a
+module.
 
-I don't think the assignment in klp_alloc_func_nop() was necessarily
-redundant.  It was removed in v9 and that breaks my atomic replace
-sample module when I try to load it.  (Perhaps the sample patch has
-issues, but here are my debug notes):
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ fs/fuse/dir.c           | 2 +-
+ kernel/user_namespace.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-To recap:
-
-  patch 1 - modifies cmdline_proc_show()
-  patch 2 - modifies only meminfo_proc_show()
-
-when I load patch 2 with .replace=1, klp_add_nops() is called and this
-adds a nop function to patch 2 so it reverts cmdline_proc_show():
-
-klp_init_patch()
-  if (patch->replace)
-    klp_add_nops()
-      list_for_each_entry(old_patch, &klp_patches, list) {
-        klp_for_each_object(old_patch, old_obj) {
-          klp_add_object_nops()
-            klp_add_func_nop()
-              klp_alloc_func_nop()
-
-the patch continues initialization and I hit the second -EINVAL
-condition on that nop function in klp_init_func():
-
-  klp_init_object
-    klp_init_func
-
-(from added debug):
-[   48.456980] livepatch: func->old_name=cmdline_proc_show
-[   48.457620] livepatch: func->new_func=          (null)
-[   48.458042] livepatch: klp_is_func_type(func, KLP_FUNC_NOP)=1
-[   48.458573] livepatch: klp_is_object_loaded(obj)=1
-
-If I restore the assignment of func->new_func to klp_alloc_func_nop()
-then the replacement patch properly loads.  (Reordering the code may
-have similar effect?)
-
-I think this problem is contained to only replacement patches that need
-the nop-revert feature... if the replacement patch provides a new
-function definition, then it shouldn't be affected.
-
-Man, we need a regression test suite for all these cases :)
-
--- Joe
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index c749a4bd4ea3..5461b63bb2a4 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1030,7 +1030,7 @@ int fuse_allow_current_process(struct fuse_conn *fc)
+ 	const struct cred *cred;
+ 
+ 	if (fc->allow_other)
+-		return 1;
++		return current_in_userns(fc->user_ns);
+ 
+ 	cred = current_cred();
+ 	if (uid_eq(cred->euid, fc->user_id) &&
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 246d4d4ce5c7..492c255e6c5a 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -1235,6 +1235,7 @@ bool current_in_userns(const struct user_namespace *target_ns)
+ {
+ 	return in_userns(target_ns, current_user_ns());
+ }
++EXPORT_SYMBOL(current_in_userns);
+ 
+ static inline struct user_namespace *to_user_ns(struct ns_common *ns)
+ {
+-- 
+2.14.1
