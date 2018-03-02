@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuxwL2dHak8Ikp07N1QhssYu//21uDfrqNoBxGJUkcpngYPMMOYhk25ohyi43EP+taNQiv6
-ARC-Seal: i=1; a=rsa-sha256; t=1519981086; cv=none;
+X-Google-Smtp-Source: AG47ELvNL0U7hNTs+9zjAVVDP646DDe+vej9vz8Zg7mxMOPk0RS511vInDFyi8cPMfPPE3GkOmPv
+ARC-Seal: i=1; a=rsa-sha256; t=1519981082; cv=none;
         d=google.com; s=arc-20160816;
-        b=axLQZ31MeCQIQDuHM16qkptHd4J2Wd/rvK0w07S/xgIY8gofG5wRRXJBR8UVp40CpD
-         g4PB3oI1bEHNGOrGlE5VwWIFBPmOdcyiX+3cdvY+yCH7q82eJJAPFLurXnI5FKsVVfM+
-         ub6ObfDuIfrs25ywEvke5RLIN6aGKqakiNWcYUN2hDvouFdf1do1o0yh8gZ+P+2Nwl04
-         AQbkhJf7E59IO5toEDkykDgdInHmyo1+KcmrP4dRMhvjywNNgAcYh+5KfppNXi3xJ4u2
-         Dd53OWgB6LhwT2xZEv+Nu7e97r98xB9e/x/TS38LrhDHQDDfq3NV5NiERkaA7N3N4va5
-         mOCQ==
+        b=LwYZIwxmdxr0wNqj11ktwTd8sO5Y2lUlbI9smFaldlXUfFExuxx187KgKPE2Js6NXN
+         E+AH0A/pJUj9WJHLjfT78AV0TfeYHQAhti1tiqmn6o3/MeBF396L/GsjlOrLgDxt6a/I
+         XHlZqJPAQb5OKNjIA25/tXzQLSwmORNcJh2Vg/CULun2Y+jK54RIdbklv4Sf4lhcHY+y
+         IQIvoYnw+vks2XAeGQzS75Dufq9ABh/016byPIZPEG5LOBIA+eLBnOdc1q0lgXtkByQL
+         nKmfyBULNCRhWyXx7kkrBzwSGAa14KTNvjSoYpem0EPxuX0ledBT+w5NarjNmte6Mzf3
+         LaJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=y85TsUaBXsPjPjkdZMJUS3aVis7X2GL5DEC4F6uMeeI=;
-        b=IV4KXB95P92ZUIYPhJiEFM3X9TLDxpseJOBBRvfFdnxA6oG46hMCFA0/ujjQaAB2Td
-         xW/cj24MoR+a70V4tEDDJaakrSFHM6E9ofD2huLT+fZNMZlTL0HRIjs33WdsPWTKqzD6
-         GPWZR4PuZY5+drITVUxWN4UYccGkoOgeoqSmfnOlDkUDxBdwv53w3oI/tWKvDfcw5yHv
-         Sphl/Q1GwDEjxPnboG6NtgyTUmrzAHpJfZ24FBIK1viu4RNefVihbUzzOPVY/Mwm8P+j
-         jSY27Gt2cvY5wj7LKx24FNWIsLwDFiiJ0FFrkPu5gxbHhkd4ni4EjwlcJ8zeMEqkaIMm
-         iKVg==
+        bh=A2tkZXu7j6rh9CjIehh3tzwr5H8MyW4bpTQatjA1xIU=;
+        b=GzOLDmdFMcacbru0KtkK3ZeN+Xf+CXS1QqMOJ/pShzOCv2m5C3W9kJt479P93SQ6ZG
+         TVB7G3HsQhtbQHl5JvI+k+bRWyRHNUtVBpbUX4wmAf59qYW+ia/s7UxDUgM61RklnHZt
+         G7ku7EQ0yB9xhVROiOM92KEPXVmxf32WhFyjmz08nOwBfE09EDkzTfd8uh8azKIu/NxM
+         /a7gl4KhMa0NXLqwo3iY6YbQTJ8RwHxCC614bcjfyHzJLg1Wtj9NCPRj2Jpf5oa5WbPq
+         yDNhY3M93DwD/uYGXYqAxcTlM4MiGyZH/H3YKmAR4dOGErWFkwxwUA1NMj9MIHf7/0rI
+         kfUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Duyck <alexander.h.duyck@intel.com>,
-	Andrew Bowers <andrewx.bowers@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Felix Janda <felix.janda@posteo.de>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 43/56] i40e/i40evf: Account for frags split over multiple descriptors in check linearize
-Date: Fri,  2 Mar 2018 09:51:29 +0100
-Message-Id: <20180302084451.738400938@linuxfoundation.org>
+Subject: [PATCH 4.9 42/56] uapi libc compat: add fallback for unsupported libcs
+Date: Fri,  2 Mar 2018 09:51:28 +0100
+Message-Id: <20180302084451.692935272@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815687679033951?=
-X-GMAIL-MSGID: =?utf-8?q?1593815687679033951?=
+X-GMAIL-THRID: =?utf-8?q?1593815683631546105?=
+X-GMAIL-MSGID: =?utf-8?q?1593815683631546105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,120 +51,153 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+From: Felix Janda <felix.janda@posteo.de>
 
 
-[ Upstream commit 248de22e638f10bd5bfc7624a357f940f66ba137 ]
+[ Upstream commit c0bace798436bca0fdc221ff61143f1376a9c3de ]
 
-The original code for __i40e_chk_linearize didn't take into account the
-fact that if a fragment is 16K in size or larger it has to be split over 2
-descriptors and the smaller of those 2 descriptors will be on the trailing
-edge of the transmit. As a result we can get into situations where we didn't
-catch requests that could result in a Tx hang.
+libc-compat.h aims to prevent symbol collisions between uapi and libc
+headers for each supported libc. This requires continuous coordination
+between them.
 
-This patch takes care of that by subtracting the length of all but the
-trailing edge of the stale fragment before we test for sum. By doing this
-we can guarantee that we have all cases covered, including the case of a
-fragment that spans multiple descriptors. We don't need to worry about
-checking the inner portions of this since 12K is the maximum aligned DMA
-size and that is larger than any MSS will ever be since the MTU limit for
-jumbos is something on the order of 9K.
+The goal of this commit is to improve the situation for libcs (such as
+musl) which are not yet supported and/or do not wish to be explicitly
+supported, while not affecting supported libcs. More precisely, with
+this commit, unsupported libcs can request the suppression of any
+specific uapi definition by defining the correspondings _UAPI_DEF_*
+macro as 0. This can fix symbol collisions for them, as long as the
+libc headers are included before the uapi headers. Inclusion in the
+other order is outside the scope of this commit.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+All infrastructure in order to enable this fallback for unsupported
+libcs is already in place, except that libc-compat.h unconditionally
+defines all _UAPI_DEF_* macros to 1 for all unsupported libcs so that
+any previous definitions are ignored. In order to fix this, this commit
+merely makes these definitions conditional.
+
+This commit together with the musl libc commit
+
+http://git.musl-libc.org/cgit/musl/commit/?id=04983f2272382af92eb8f8838964ff944fbb8258
+
+fixes for example the following compiler errors when <linux/in6.h> is
+included after musl's <netinet/in.h>:
+
+./linux/in6.h:32:8: error: redefinition of 'struct in6_addr'
+./linux/in6.h:49:8: error: redefinition of 'struct sockaddr_in6'
+./linux/in6.h:59:8: error: redefinition of 'struct ipv6_mreq'
+
+The comments referencing glibc are still correct, but this file is not
+only used for glibc any more.
+
+Signed-off-by: Felix Janda <felix.janda@posteo.de>
+Reviewed-by: Hauke Mehrtens <hauke@hauke-m.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_txrx.c   |   26 +++++++++++++++++++++++---
- drivers/net/ethernet/intel/i40evf/i40e_txrx.c |   26 +++++++++++++++++++++++---
- 2 files changed, 46 insertions(+), 6 deletions(-)
+ include/uapi/linux/libc-compat.h |   55 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-@@ -2670,10 +2670,30 @@ bool __i40e_chk_linearize(struct sk_buff
- 	/* Walk through fragments adding latest fragment, testing it, and
- 	 * then removing stale fragments from the sum.
- 	 */
--	stale = &skb_shinfo(skb)->frags[0];
--	for (;;) {
-+	for (stale = &skb_shinfo(skb)->frags[0];; stale++) {
-+		int stale_size = skb_frag_size(stale);
-+
- 		sum += skb_frag_size(frag++);
+--- a/include/uapi/linux/libc-compat.h
++++ b/include/uapi/linux/libc-compat.h
+@@ -167,46 +167,99 @@
  
-+		/* The stale fragment may present us with a smaller
-+		 * descriptor than the actual fragment size. To account
-+		 * for that we need to remove all the data on the front and
-+		 * figure out what the remainder would be in the last
-+		 * descriptor associated with the fragment.
-+		 */
-+		if (stale_size > I40E_MAX_DATA_PER_TXD) {
-+			int align_pad = -(stale->page_offset) &
-+					(I40E_MAX_READ_REQ_SIZE - 1);
-+
-+			sum -= align_pad;
-+			stale_size -= align_pad;
-+
-+			do {
-+				sum -= I40E_MAX_DATA_PER_TXD_ALIGNED;
-+				stale_size -= I40E_MAX_DATA_PER_TXD_ALIGNED;
-+			} while (stale_size > I40E_MAX_DATA_PER_TXD);
-+		}
-+
- 		/* if sum is negative we failed to make sufficient progress */
- 		if (sum < 0)
- 			return true;
-@@ -2681,7 +2701,7 @@ bool __i40e_chk_linearize(struct sk_buff
- 		if (!nr_frags--)
- 			break;
+ /* If we did not see any headers from any supported C libraries,
+  * or we are being included in the kernel, then define everything
+- * that we need. */
++ * that we need. Check for previous __UAPI_* definitions to give
++ * unsupported C libraries a way to opt out of any kernel definition. */
+ #else /* !defined(__GLIBC__) */
  
--		sum -= skb_frag_size(stale++);
-+		sum -= stale_size;
- 	}
+ /* Definitions for if.h */
++#ifndef __UAPI_DEF_IF_IFCONF
+ #define __UAPI_DEF_IF_IFCONF 1
++#endif
++#ifndef __UAPI_DEF_IF_IFMAP
+ #define __UAPI_DEF_IF_IFMAP 1
++#endif
++#ifndef __UAPI_DEF_IF_IFNAMSIZ
+ #define __UAPI_DEF_IF_IFNAMSIZ 1
++#endif
++#ifndef __UAPI_DEF_IF_IFREQ
+ #define __UAPI_DEF_IF_IFREQ 1
++#endif
+ /* Everything up to IFF_DYNAMIC, matches net/if.h until glibc 2.23 */
++#ifndef __UAPI_DEF_IF_NET_DEVICE_FLAGS
+ #define __UAPI_DEF_IF_NET_DEVICE_FLAGS 1
++#endif
+ /* For the future if glibc adds IFF_LOWER_UP, IFF_DORMANT and IFF_ECHO */
++#ifndef __UAPI_DEF_IF_NET_DEVICE_FLAGS_LOWER_UP_DORMANT_ECHO
+ #define __UAPI_DEF_IF_NET_DEVICE_FLAGS_LOWER_UP_DORMANT_ECHO 1
++#endif
  
- 	return false;
---- a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
-@@ -1872,10 +1872,30 @@ bool __i40evf_chk_linearize(struct sk_bu
- 	/* Walk through fragments adding latest fragment, testing it, and
- 	 * then removing stale fragments from the sum.
- 	 */
--	stale = &skb_shinfo(skb)->frags[0];
--	for (;;) {
-+	for (stale = &skb_shinfo(skb)->frags[0];; stale++) {
-+		int stale_size = skb_frag_size(stale);
-+
- 		sum += skb_frag_size(frag++);
+ /* Definitions for in.h */
++#ifndef __UAPI_DEF_IN_ADDR
+ #define __UAPI_DEF_IN_ADDR		1
++#endif
++#ifndef __UAPI_DEF_IN_IPPROTO
+ #define __UAPI_DEF_IN_IPPROTO		1
++#endif
++#ifndef __UAPI_DEF_IN_PKTINFO
+ #define __UAPI_DEF_IN_PKTINFO		1
++#endif
++#ifndef __UAPI_DEF_IP_MREQ
+ #define __UAPI_DEF_IP_MREQ		1
++#endif
++#ifndef __UAPI_DEF_SOCKADDR_IN
+ #define __UAPI_DEF_SOCKADDR_IN		1
++#endif
++#ifndef __UAPI_DEF_IN_CLASS
+ #define __UAPI_DEF_IN_CLASS		1
++#endif
  
-+		/* The stale fragment may present us with a smaller
-+		 * descriptor than the actual fragment size. To account
-+		 * for that we need to remove all the data on the front and
-+		 * figure out what the remainder would be in the last
-+		 * descriptor associated with the fragment.
-+		 */
-+		if (stale_size > I40E_MAX_DATA_PER_TXD) {
-+			int align_pad = -(stale->page_offset) &
-+					(I40E_MAX_READ_REQ_SIZE - 1);
-+
-+			sum -= align_pad;
-+			stale_size -= align_pad;
-+
-+			do {
-+				sum -= I40E_MAX_DATA_PER_TXD_ALIGNED;
-+				stale_size -= I40E_MAX_DATA_PER_TXD_ALIGNED;
-+			} while (stale_size > I40E_MAX_DATA_PER_TXD);
-+		}
-+
- 		/* if sum is negative we failed to make sufficient progress */
- 		if (sum < 0)
- 			return true;
-@@ -1883,7 +1903,7 @@ bool __i40evf_chk_linearize(struct sk_bu
- 		if (!nr_frags--)
- 			break;
+ /* Definitions for in6.h */
++#ifndef __UAPI_DEF_IN6_ADDR
+ #define __UAPI_DEF_IN6_ADDR		1
++#endif
++#ifndef __UAPI_DEF_IN6_ADDR_ALT
+ #define __UAPI_DEF_IN6_ADDR_ALT		1
++#endif
++#ifndef __UAPI_DEF_SOCKADDR_IN6
+ #define __UAPI_DEF_SOCKADDR_IN6		1
++#endif
++#ifndef __UAPI_DEF_IPV6_MREQ
+ #define __UAPI_DEF_IPV6_MREQ		1
++#endif
++#ifndef __UAPI_DEF_IPPROTO_V6
+ #define __UAPI_DEF_IPPROTO_V6		1
++#endif
++#ifndef __UAPI_DEF_IPV6_OPTIONS
+ #define __UAPI_DEF_IPV6_OPTIONS		1
++#endif
++#ifndef __UAPI_DEF_IN6_PKTINFO
+ #define __UAPI_DEF_IN6_PKTINFO		1
++#endif
++#ifndef __UAPI_DEF_IP6_MTUINFO
+ #define __UAPI_DEF_IP6_MTUINFO		1
++#endif
  
--		sum -= skb_frag_size(stale++);
-+		sum -= stale_size;
- 	}
+ /* Definitions for ipx.h */
++#ifndef __UAPI_DEF_SOCKADDR_IPX
+ #define __UAPI_DEF_SOCKADDR_IPX			1
++#endif
++#ifndef __UAPI_DEF_IPX_ROUTE_DEFINITION
+ #define __UAPI_DEF_IPX_ROUTE_DEFINITION		1
++#endif
++#ifndef __UAPI_DEF_IPX_INTERFACE_DEFINITION
+ #define __UAPI_DEF_IPX_INTERFACE_DEFINITION	1
++#endif
++#ifndef __UAPI_DEF_IPX_CONFIG_DATA
+ #define __UAPI_DEF_IPX_CONFIG_DATA		1
++#endif
++#ifndef __UAPI_DEF_IPX_ROUTE_DEF
+ #define __UAPI_DEF_IPX_ROUTE_DEF		1
++#endif
  
- 	return false;
+ /* Definitions for xattr.h */
++#ifndef __UAPI_DEF_XATTR
+ #define __UAPI_DEF_XATTR		1
++#endif
+ 
+ #endif /* __GLIBC__ */
+ 
