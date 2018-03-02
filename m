@@ -1,289 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932835AbeCBFYh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:24:37 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42153 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753316AbeCBFYf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:24:35 -0500
-X-Google-Smtp-Source: AG47ELsMgqKAQxSCAIuhmHRVZnJIE8qEW6N91IVg/Uh+ILrKwroXDT8b1hpYQ7YtCHjZpmLCfKQN8Q==
-Date: Fri, 2 Mar 2018 14:24:46 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Dave Young <dyoung@redhat.com>
+        id S935776AbeCBFcG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:32:06 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55426 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932845AbeCBFcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 00:32:03 -0500
+Date: Fri, 2 Mar 2018 13:31:53 +0800
+From: Dave Young <dyoung@redhat.com>
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>
 Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
         bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 2/7] kexec_file,x86,powerpc: factor out kexec_file_ops
- functions
-Message-ID: <20180302052444.GN6019@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, vgoyal@redhat.com, bhe@redhat.com,
-        mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
-        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
+Subject: Re: [PATCH 5/7] x86: kexec_file: lift CRASH_MAX_RANGES limit on
+ crash_mem buffer
+Message-ID: <20180302053153.GC2952@dhcp-128-65.nay.redhat.com>
 References: <20180227044814.24808-1-takahiro.akashi@linaro.org>
- <20180227044814.24808-3-takahiro.akashi@linaro.org>
- <20180302050426.GA2952@dhcp-128-65.nay.redhat.com>
+ <20180227044814.24808-6-takahiro.akashi@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302050426.GA2952@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180227044814.24808-6-takahiro.akashi@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 01:04:26PM +0800, Dave Young wrote:
-> On 02/27/18 at 01:48pm, AKASHI Takahiro wrote:
-> > As arch_kexec_kernel_image_{probe,load}(),
-> > arch_kimage_file_post_load_cleanup() and arch_kexec_kernel_verify_sig()
-> > are almost duplicated among architectures, they can be commonalized with
-> > an architecture-defined kexec_file_ops array. So let's factor them out.
-> > 
-> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > Cc: Dave Young <dyoung@redhat.com>
-> > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > Cc: Baoquan He <bhe@redhat.com>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> > ---
-> >  arch/powerpc/include/asm/kexec.h            |  2 +-
-> >  arch/powerpc/kernel/kexec_elf_64.c          |  2 +-
-> >  arch/powerpc/kernel/machine_kexec_file_64.c | 39 ++------------------
-> >  arch/x86/include/asm/kexec-bzimage64.h      |  2 +-
-> >  arch/x86/kernel/kexec-bzimage64.c           |  2 +-
-> >  arch/x86/kernel/machine_kexec_64.c          | 45 ++---------------------
-> >  include/linux/kexec.h                       | 17 +++++----
-> >  kernel/kexec_file.c                         | 55 ++++++++++++++++++++++++++---
-> >  8 files changed, 70 insertions(+), 94 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-> > index d8b1e8e7e035..4a585cba1787 100644
-> > --- a/arch/powerpc/include/asm/kexec.h
-> > +++ b/arch/powerpc/include/asm/kexec.h
-> > @@ -95,7 +95,7 @@ static inline bool kdump_in_progress(void)
-> >  }
-> >  
-> >  #ifdef CONFIG_KEXEC_FILE
-> > -extern struct kexec_file_ops kexec_elf64_ops;
-> > +extern const struct kexec_file_ops kexec_elf64_ops;
-> >  
-> >  #ifdef CONFIG_IMA_KEXEC
-> >  #define ARCH_HAS_KIMAGE_ARCH
-> > diff --git a/arch/powerpc/kernel/kexec_elf_64.c b/arch/powerpc/kernel/kexec_elf_64.c
-> > index 9a42309b091a..6c78c11c7faf 100644
-> > --- a/arch/powerpc/kernel/kexec_elf_64.c
-> > +++ b/arch/powerpc/kernel/kexec_elf_64.c
-> > @@ -657,7 +657,7 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
-> >  	return ret ? ERR_PTR(ret) : fdt;
-> >  }
-> >  
-> > -struct kexec_file_ops kexec_elf64_ops = {
-> > +const struct kexec_file_ops kexec_elf64_ops = {
-> >  	.probe = elf64_probe,
-> >  	.load = elf64_load,
-> >  };
-> > diff --git a/arch/powerpc/kernel/machine_kexec_file_64.c b/arch/powerpc/kernel/machine_kexec_file_64.c
-> > index e4395f937d63..a27ec647350c 100644
-> > --- a/arch/powerpc/kernel/machine_kexec_file_64.c
-> > +++ b/arch/powerpc/kernel/machine_kexec_file_64.c
-> > @@ -31,52 +31,19 @@
-> >  
-> >  #define SLAVE_CODE_SIZE		256
-> >  
-> > -static struct kexec_file_ops *kexec_file_loaders[] = {
-> > +const struct kexec_file_ops * const kexec_file_loaders[] = {
-> >  	&kexec_elf64_ops,
-> > +	NULL
-> >  };
-> >  
-> >  int arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
-> >  				  unsigned long buf_len)
-> >  {
-> > -	int i, ret = -ENOEXEC;
-> > -	struct kexec_file_ops *fops;
-> > -
-> >  	/* We don't support crash kernels yet. */
-> >  	if (image->type == KEXEC_TYPE_CRASH)
-> >  		return -ENOTSUPP;
-> >  
-> > -	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
-> > -		fops = kexec_file_loaders[i];
-> > -		if (!fops || !fops->probe)
-> > -			continue;
-> > -
-> > -		ret = fops->probe(buf, buf_len);
-> > -		if (!ret) {
-> > -			image->fops = fops;
-> > -			return ret;
-> > -		}
-> > -	}
-> > -
-> > -	return ret;
-> > -}
-> > -
-> > -void *arch_kexec_kernel_image_load(struct kimage *image)
-> > -{
-> > -	if (!image->fops || !image->fops->load)
-> > -		return ERR_PTR(-ENOEXEC);
-> > -
-> > -	return image->fops->load(image, image->kernel_buf,
-> > -				 image->kernel_buf_len, image->initrd_buf,
-> > -				 image->initrd_buf_len, image->cmdline_buf,
-> > -				 image->cmdline_buf_len);
-> > -}
-> > -
-> > -int arch_kimage_file_post_load_cleanup(struct kimage *image)
-> > -{
-> > -	if (!image->fops || !image->fops->cleanup)
-> > -		return 0;
-> > -
-> > -	return image->fops->cleanup(image->image_loader_data);
-> > +	return _kexec_kernel_image_probe(image, buf, buf_len);
-> >  }
-> >  
-> >  /**
-> > diff --git a/arch/x86/include/asm/kexec-bzimage64.h b/arch/x86/include/asm/kexec-bzimage64.h
-> > index 9f07cff43705..df89ee7d3e9e 100644
-> > --- a/arch/x86/include/asm/kexec-bzimage64.h
-> > +++ b/arch/x86/include/asm/kexec-bzimage64.h
-> > @@ -2,6 +2,6 @@
-> >  #ifndef _ASM_KEXEC_BZIMAGE64_H
-> >  #define _ASM_KEXEC_BZIMAGE64_H
-> >  
-> > -extern struct kexec_file_ops kexec_bzImage64_ops;
-> > +extern const struct kexec_file_ops kexec_bzImage64_ops;
-> >  
-> >  #endif  /* _ASM_KEXE_BZIMAGE64_H */
-> > diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> > index fb095ba0c02f..705654776c0c 100644
-> > --- a/arch/x86/kernel/kexec-bzimage64.c
-> > +++ b/arch/x86/kernel/kexec-bzimage64.c
-> > @@ -538,7 +538,7 @@ static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
-> >  }
-> >  #endif
-> >  
-> > -struct kexec_file_ops kexec_bzImage64_ops = {
-> > +const struct kexec_file_ops kexec_bzImage64_ops = {
-> >  	.probe = bzImage64_probe,
-> >  	.load = bzImage64_load,
-> >  	.cleanup = bzImage64_cleanup,
-> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-> > index 1f790cf9d38f..2cdd29d64181 100644
-> > --- a/arch/x86/kernel/machine_kexec_64.c
-> > +++ b/arch/x86/kernel/machine_kexec_64.c
-> > @@ -30,8 +30,9 @@
-> >  #include <asm/set_memory.h>
-> >  
-> >  #ifdef CONFIG_KEXEC_FILE
-> > -static struct kexec_file_ops *kexec_file_loaders[] = {
-> > +const struct kexec_file_ops * const kexec_file_loaders[] = {
-> >  		&kexec_bzImage64_ops,
-> > +		NULL
-> >  };
-> >  #endif
-> >  
-> > @@ -363,27 +364,6 @@ void arch_crash_save_vmcoreinfo(void)
-> >  /* arch-dependent functionality related to kexec file-based syscall */
-> >  
-> >  #ifdef CONFIG_KEXEC_FILE
-> > -int arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
-> > -				  unsigned long buf_len)
-> > -{
-> > -	int i, ret = -ENOEXEC;
-> > -	struct kexec_file_ops *fops;
-> > -
-> > -	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
-> > -		fops = kexec_file_loaders[i];
-> > -		if (!fops || !fops->probe)
-> > -			continue;
-> > -
-> > -		ret = fops->probe(buf, buf_len);
-> > -		if (!ret) {
-> > -			image->fops = fops;
-> > -			return ret;
-> > -		}
-> > -	}
-> > -
-> > -	return ret;
-> > -}
-> > -
-> >  void *arch_kexec_kernel_image_load(struct kimage *image)
-> >  {
-> >  	vfree(image->arch.elf_headers);
-> > @@ -398,27 +378,6 @@ void *arch_kexec_kernel_image_load(struct kimage *image)
-> >  				 image->cmdline_buf_len);
-> >  }
-> >  
-> > -int arch_kimage_file_post_load_cleanup(struct kimage *image)
-> > -{
-> > -	if (!image->fops || !image->fops->cleanup)
-> > -		return 0;
-> > -
-> > -	return image->fops->cleanup(image->image_loader_data);
-> > -}
-> > -
-> > -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> > -int arch_kexec_kernel_verify_sig(struct kimage *image, void *kernel,
-> > -				 unsigned long kernel_len)
-> > -{
-> > -	if (!image->fops || !image->fops->verify_sig) {
-> > -		pr_debug("kernel loader does not support signature verification.");
-> > -		return -EKEYREJECTED;
-> > -	}
-> > -
-> > -	return image->fops->verify_sig(kernel, kernel_len);
-> > -}
-> > -#endif
-> > -
-> >  /*
-> >   * Apply purgatory relocations.
-> >   *
-> > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> > index f16f6ceb3875..2e095c3b4537 100644
-> > --- a/include/linux/kexec.h
-> > +++ b/include/linux/kexec.h
-> > @@ -159,6 +159,15 @@ struct kexec_buf {
-> >  	bool top_down;
-> >  };
-> >  
-> > +extern const struct kexec_file_ops * const kexec_file_loaders[];
-> > +
-> > +int _kexec_kernel_image_probe(struct kimage *image, void *buf,
-> > +			      unsigned long buf_len);
-> > +void *_kexec_kernel_image_load(struct kimage *image);
-> > +int _kimage_file_post_load_cleanup(struct kimage *image);
-> > +int _kexec_kernel_verify_sig(struct kimage *image, void *buf,
-> > +			     unsigned long buf_len);
+On 02/27/18 at 01:48pm, AKASHI Takahiro wrote:
+> While CRASH_MAX_RANGES (== 16) seems to be good enough, fixed-number
+> array is not a good idea in general.
 > 
-> AKASHI, since the above 3 functions nobody else used, suppose it is for
-> future use, they can be made static for now.  Later if someone needs
-> they can remove the static easily.
-
-OK.
-May I change those names, for example, to kexec_kernel_image_probe_default()
-and so on? I don't like to export _XYZ as a global symbol.
-
--Takahiro AKASHI
-      
-
-
-> > +}
-> > +
-> >  int __weak arch_kexec_kernel_verify_sig(struct kimage *image, void *buf,
-> >  					unsigned long buf_len)
-> >  {
-> > -	return -EKEYREJECTED;
-> > +	return _kexec_kernel_verify_sig(image, buf, buf_len);
-> >  }
-> >  #endif
-> >  
-> > -- 
-> > 2.16.2
-> > 
+> In this patch, size of crash_mem buffer is calculated as before and
+> the buffer is now dynamically allocated. This change also allows removing
+> crash_elf_data structure.
 > 
-> Thanks
-> Dave
+> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/kernel/crash.c | 80 ++++++++++++++++++-------------------------------
+>  1 file changed, 29 insertions(+), 51 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> index 913fd8021f8a..bfc37ad20d4a 100644
+> --- a/arch/x86/kernel/crash.c
+> +++ b/arch/x86/kernel/crash.c
+> @@ -41,32 +41,14 @@
+>  /* Alignment required for elf header segment */
+>  #define ELF_CORE_HEADER_ALIGN   4096
+>  
+> -/* This primarily represents number of split ranges due to exclusion */
+> -#define CRASH_MAX_RANGES	16
+> -
+>  struct crash_mem_range {
+>  	u64 start, end;
+>  };
+>  
+>  struct crash_mem {
+> -	unsigned int nr_ranges;
+> -	struct crash_mem_range ranges[CRASH_MAX_RANGES];
+> -};
+> -
+> -/* Misc data about ram ranges needed to prepare elf headers */
+> -struct crash_elf_data {
+> -	struct kimage *image;
+> -	/*
+> -	 * Total number of ram ranges we have after various adjustments for
+> -	 * crash reserved region, etc.
+> -	 */
+>  	unsigned int max_nr_ranges;
+> -
+> -	/* Pointer to elf header */
+> -	void *ehdr;
+> -	/* Pointer to next phdr */
+> -	void *bufp;
+> -	struct crash_mem mem;
+> +	unsigned int nr_ranges;
+> +	struct crash_mem_range ranges[0];
+>  };
+>  
+>  /* Used while preparing memory map entries for second kernel */
+> @@ -217,26 +199,29 @@ static int get_nr_ram_ranges_callback(struct resource *res, void *arg)
+>  	return 0;
+>  }
+>  
+> -
+>  /* Gather all the required information to prepare elf headers for ram regions */
+> -static void fill_up_crash_elf_data(struct crash_elf_data *ced,
+> -				   struct kimage *image)
+> +static struct crash_mem *fill_up_crash_elf_data(void)
+>  {
+>  	unsigned int nr_ranges = 0;
+> -
+> -	ced->image = image;
+> +	struct crash_mem *cmem;
+>  
+>  	walk_system_ram_res(0, -1, &nr_ranges,
+>  				get_nr_ram_ranges_callback);
+
+I know it is probably not possible fail here, but for safe we can check
+if nr_ranges == 0
+
+>  
+> -	ced->max_nr_ranges = nr_ranges;
+> +	/*
+> +	 * Exclusion of crash region and/or crashk_low_res may cause
+> +	 * another range split. So add extra two slots here.
+> +	 */
+> +	nr_ranges += 2;
+> +	cmem = vmalloc(sizeof(struct crash_mem) +
+> +			sizeof(struct crash_mem_range) * nr_ranges);
+> +	if (!cmem)
+> +		return NULL;
+
+vzalloc will be better. 
+
+>  
+> -	/* Exclusion of crash region could split memory ranges */
+> -	ced->max_nr_ranges++;
+> +	cmem->max_nr_ranges = nr_ranges;
+> +	cmem->nr_ranges = 0;
+>  
+> -	/* If crashk_low_res is not 0, another range split possible */
+> -	if (crashk_low_res.end)
+> -		ced->max_nr_ranges++;
+> +	return cmem;
+>  }
+>  
+>  static int exclude_mem_range(struct crash_mem *mem,
+> @@ -293,10 +278,8 @@ static int exclude_mem_range(struct crash_mem *mem,
+>  		return 0;
+>  
+>  	/* Split happened */
+> -	if (i == CRASH_MAX_RANGES - 1) {
+> -		pr_err("Too many crash ranges after split\n");
+> +	if (i == mem->max_nr_ranges - 1)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	/* Location where new range should go */
+>  	j = i + 1;
+> @@ -314,11 +297,10 @@ static int exclude_mem_range(struct crash_mem *mem,
+>  
+>  /*
+>   * Look for any unwanted ranges between mstart, mend and remove them. This
+> - * might lead to split and split ranges are put in ced->mem.ranges[] array
+> + * might lead to split and split ranges are put in cmem->ranges[] array
+>   */
+> -static int elf_header_exclude_ranges(struct crash_elf_data *ced)
+> +static int elf_header_exclude_ranges(struct crash_mem *cmem)
+>  {
+> -	struct crash_mem *cmem = &ced->mem;
+>  	int ret = 0;
+>  
+>  	/* Exclude crashkernel region */
+> @@ -337,8 +319,7 @@ static int elf_header_exclude_ranges(struct crash_elf_data *ced)
+>  
+>  static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
+>  {
+> -	struct crash_elf_data *ced = arg;
+> -	struct crash_mem *cmem = &ced->mem;
+> +	struct crash_mem *cmem = arg;
+>  
+>  	cmem->ranges[cmem->nr_ranges].start = res->start;
+>  	cmem->ranges[cmem->nr_ranges].end = res->end;
+> @@ -347,7 +328,7 @@ static int prepare_elf64_ram_headers_callback(struct resource *res, void *arg)
+>  	return 0;
+>  }
+>  
+> -static int prepare_elf64_headers(struct crash_elf_data *ced, int kernel_map,
+> +static int prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
+>  		void **addr, unsigned long *sz)
+>  {
+>  	Elf64_Ehdr *ehdr;
+> @@ -356,12 +337,11 @@ static int prepare_elf64_headers(struct crash_elf_data *ced, int kernel_map,
+>  	unsigned char *buf, *bufp;
+>  	unsigned int cpu, i;
+>  	unsigned long long notes_addr;
+> -	struct crash_mem *cmem = &ced->mem;
+>  	unsigned long mstart, mend;
+>  
+>  	/* extra phdr for vmcoreinfo elf note */
+>  	nr_phdr = nr_cpus + 1;
+> -	nr_phdr += ced->max_nr_ranges;
+> +	nr_phdr += cmem->nr_ranges;
+>  
+>  	/*
+>  	 * kexec-tools creates an extra PT_LOAD phdr for kernel text mapping
+> @@ -455,29 +435,27 @@ static int prepare_elf64_headers(struct crash_elf_data *ced, int kernel_map,
+>  static int prepare_elf_headers(struct kimage *image, void **addr,
+>  					unsigned long *sz)
+>  {
+> -	struct crash_elf_data *ced;
+> +	struct crash_mem *cmem;
+>  	Elf64_Ehdr *ehdr;
+>  	Elf64_Phdr *phdr;
+>  	int ret, i;
+>  
+> -	ced = kzalloc(sizeof(*ced), GFP_KERNEL);
+> -	if (!ced)
+> +	cmem = fill_up_crash_elf_data();
+> +	if (!cmem)
+>  		return -ENOMEM;
+>  
+> -	fill_up_crash_elf_data(ced, image);
+> -
+> -	ret = walk_system_ram_res(0, -1, ced,
+> +	ret = walk_system_ram_res(0, -1, cmem,
+>  				prepare_elf64_ram_headers_callback);
+>  	if (ret)
+>  		goto out;
+>  
+>  	/* Exclude unwanted mem ranges */
+> -	ret = elf_header_exclude_ranges(ced);
+> +	ret = elf_header_exclude_ranges(cmem);
+>  	if (ret)
+>  		goto out;
+>  
+>  	/* By default prepare 64bit headers */
+> -	ret =  prepare_elf64_headers(ced,
+> +	ret =  prepare_elf64_headers(cmem,
+>  				(int)IS_ENABLED(CONFIG_X86_64), addr, sz);
+>  	if (ret)
+>  		goto out;
+> @@ -496,7 +474,7 @@ static int prepare_elf_headers(struct kimage *image, void **addr,
+>  			break;
+>  		}
+>  out:
+> -	kfree(ced);
+> +	vfree(cmem);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.16.2
+> 
+
+Thanks
+Dave
