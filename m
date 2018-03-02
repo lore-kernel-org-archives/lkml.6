@@ -1,154 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427574AbeCBMXB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:23:01 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46376 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423721AbeCBMW6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:22:58 -0500
-Subject: Re: [PATCH v8 4/8] drm/rockchip: dw-mipi-dsi: Fix error handling path
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sandy Huang <hjc@rock-chips.com>, linux-rockchip@lists.infradead.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
-References: <20180110162348.22765-1-thierry.escande@collabora.com>
- <13219770.NOTAg9tncx@diego>
- <68537204-0c41-5210-935a-0a7743ea847c@collabora.com>
- <1552223.kPgI5s5XdI@phil>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <a3140d3d-d6bc-afa9-30fa-00980511dd82@collabora.com>
-Date: Fri, 2 Mar 2018 13:22:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1423982AbeCBM0T (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:26:19 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1423847AbeCBM0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:26:17 -0500
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+To: Marc Zyngier <marc.zyngier@arm.com>
+References: <20180215175803.6870-1-marc.zyngier@arm.com>
+ <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
+Date: Fri, 2 Mar 2018 13:26:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <1552223.kPgI5s5XdI@phil>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <86o9k63f7a.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiko,
+Hi Marc,
+On 02/03/18 12:11, Marc Zyngier wrote:
+> On Fri, 02 Mar 2018 10:44:48 +0000,
+> Auger Eric wrote:
+>>
+>> Hi Marc,
+>>
+>> On 15/02/18 18:58, Marc Zyngier wrote:
+>>> Although we've implemented PSCI 0.1, 0.2 and 1.0, we expose either 0.1
+>>> or 1.0 to a guest, defaulting to the latest version of the PSCI
+>>> implementation that is compatible with the requested version. This is
+>>> no different from doing a firmware upgrade on KVM.
+>>>
+>>> But in order to give a chance to hypothetical badly implemented guests
+>>> that would have a fit by discovering something other than PSCI 0.2,
+>>> let's provide a new API that allows userspace to pick one particular
+>>> version of the API.
+>>
+>> I understand the get/set is called as part of the migration process.
+>> So my understanding is the benefit of this series is migration fails in
+>> those cases:
+>>
+>>> =0.2 source -> 0.1 destination
+>> 0.1 source -> >=0.2 destination
+> 
+> It also fails in the case where you migrate a 1.0 guest to something
+> that cannot support it.
 
-On 02/03/18 13:17, Heiko Stuebner wrote:
-> Hi Enric,
-> 
-> Am Freitag, 2. März 2018, 13:09:02 CET schrieb Enric Balletbo i Serra:
->> Hi Heiko,
->>
->> On 01/03/18 16:50, Heiko Stübner wrote:
->>> Hi Jeffy, Thierry, Enric,
->>>
->>> Am Mittwoch, 10. Januar 2018, 17:23:44 CET schrieb Thierry Escande:
->>>> From: Jeffy Chen <jeffy.chen@rock-chips.com>
->>>>
->>>> Add missing pm_runtime_disable() in bind()'s error handling path.
->>>>
->>>> Also cleanup encoder & connector in unbind().
->>>
->>> Can you please split all these surprise "Also" sections into separate
->>> patches?
->>>
->>
->> I'll take a look.
->>
->>> It looks like this is true for all following patch to some degree and
->>> the inno-hdmi patch even has a unbind reordering-change without
->>> mentioning it in the commit message.
->>>
->>
->> Actually, I think this patch is not correct against current mainline, see below.
->>
->>>
->>> Thanks
->>> Heiko
->>>
->>>> Fixes: 80a9a059d4e4 ("drm/rockchip/dsi: add dw-mipi power domain support")
->>>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
->>>> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
->>>> ---
->>>>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 21 +++++++++++++--------
->>>>  1 file changed, 13 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
->>>> b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c index b1fe0639227e..78e6b7919bf7
->>>> 100644
->>>> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
->>>> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
->>>> @@ -1282,7 +1282,7 @@ static int dw_mipi_dsi_bind(struct device *dev, struct
->>>> device *master, ret = dw_mipi_dsi_register(drm, dsi);
->>>>  	if (ret) {
->>>>  		DRM_DEV_ERROR(dev, "Failed to register mipi_dsi: %d\n", ret);
->>>> -		goto err_pllref;
->>>> +		goto err_disable_pllref;
->>>>  	}
->>>>
->>>>  	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
->>>> @@ -1290,24 +1290,25 @@ static int dw_mipi_dsi_bind(struct device *dev,
->>>> struct device *master, ret = mipi_dsi_host_register(&dsi->dsi_host);
->>>>  	if (ret) {
->>>>  		DRM_DEV_ERROR(dev, "Failed to register MIPI host: %d\n", ret);
->>>> -		goto err_cleanup;
->>>> +		goto err_disable_pm_runtime;
->>>>  	}
->>>>
->>>>  	if (!dsi->panel) {
->>>>  		ret = -EPROBE_DEFER;
->>>> -		goto err_mipi_dsi_host;
->>>> +		goto err_unreg_mipi_dsi_host;
->>>>  	}
->>>>
->>>>  	dev_set_drvdata(dev, dsi);
->>>>  	pm_runtime_enable(dev);
->>>>  	return 0;
->>>>
->>>> -err_mipi_dsi_host:
->>>> +err_unreg_mipi_dsi_host:
->>>>  	mipi_dsi_host_unregister(&dsi->dsi_host);
->>>> -err_cleanup:
->>>> -	drm_encoder_cleanup(&dsi->encoder);
->>>> -	drm_connector_cleanup(&dsi->connector);
->>>> -err_pllref:
->>>> +err_disable_pm_runtime:
->>>> +	pm_runtime_disable(dev);
->>
->> I think that this is not required, 'pm_runtime_enable' is called just before the
->> 'return 0' (see above). Commit 517f56839f58 'drm/rockchip: dw-mipi-dsi: fix
->> possible un-balanced runtime PM enable' moved the call to that place. So, now
->> the call to pm_runtime_disable is not needed.
->>
->>>> +	dsi->connector.funcs->destroy(&dsi->connector);
->>>> +	dsi->encoder.funcs->destroy(&dsi->encoder);
->>
->> Here, there is a reordering and also a function replacement. The reorder makes
->> sense to me, first cleanup the connector and then the encoder, but I'm not sure
->> about the function change and if is needed, anyway, in the case is needed,
->> shouldn't be
->>
->> +	drm_connector_cleanup(&dsi->connector);
->> +	drm_encoder_cleanup(&dsi->encoder);
->>
->> instead?
-> 
-> If you look at drm/rockchip/dw-mipi-dsi.c you'll see that
-> dw_mipi_dsi_drm_connector_destroy() does both connector_unregister()
-> and drm_connector_cleanup().
-> 
-> And looking at other drivers it really seems that calling that destroy
-> callback is really the way to go.
-> 
+That's because on the destination, the number of regs is less than on
+source, right?
 
-Right, thanks for pointing me in the right direction. Learning about this
-graphics stuff ;)
+My previous reasoning was:
 
-Regards,
- Enric
+At the moment, in QEMU, IIUC, we check the KVM_CAP_ARM_PSCI_0_2
+capability and if it is advertised, we initialize the vpcu with
+KVM_ARM_VCPU_PSCI_0_2. This holds for a 0.2 or 1.0 kernel.
+
+Assuming the source is 1.0 capable and the destination has a < 4.16
+kernel so 0.2 only. On migration the fw reg get() returns
+KVM_ARM_PSCI_1_0. On Set, wants_02 is set and
+vcpu->kvm->arch.psci_version gets set to KVM_ARM_PSCI_1_0.
+
 > 
-> Heiko
+>> However in the above mentioned use case where the guest would absolutely
+>> need a 0.2 and not a 1.0 I don't get on which event the userspace would
+>> do a set to force 0.2?
+> 
+> You'd have to know that your guest cannot support 0.2, and force 0.2
+> by doing a SET_ONE_REG(KVM_REG_ARM_PSCI_VERSION, PSCI_VERSION(0, 2)).
+> 
+> Or am I missing what you're asking for?
+My question rather was how do you get to know?
+> 
+>>>
+>>> This is implemented as a new class of "firmware" registers, where
+>>> we expose the PSCI version. This allows the PSCI version to be
+>>> save/restored as part of a guest migration, and also set to
+>>> any supported version if the guest requires it.
+>>>
+>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>> ---
+>>> This is a repost of this proposal for a firmware selection API, as
+>>> there was some discussion during the merging window. Now that the core
+>>> variant-2 stuff is merged, we can have a go at more
+>>> bikesheding. Please open fire!
+>>>
+>>>  Documentation/virtual/kvm/api.txt      |  9 ++++-
+>>>  Documentation/virtual/kvm/arm/psci.txt | 30 +++++++++++++++++
+>>>  arch/arm/include/asm/kvm_host.h        |  3 ++
+>>>  arch/arm/include/uapi/asm/kvm.h        |  6 ++++
+>>>  arch/arm/kvm/guest.c                   | 13 ++++++++
+>>>  arch/arm64/include/asm/kvm_host.h      |  3 ++
+>>>  arch/arm64/include/uapi/asm/kvm.h      |  6 ++++
+>>>  arch/arm64/kvm/guest.c                 | 14 +++++++-
+>>>  include/kvm/arm_psci.h                 | 16 +++++++--
+>>>  virt/kvm/arm/psci.c                    | 60 ++++++++++++++++++++++++++++++++++
+>>>  10 files changed, 156 insertions(+), 4 deletions(-)
+>>>  create mode 100644 Documentation/virtual/kvm/arm/psci.txt
+>>
+>>>
+>>> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+>>> index 57d3ee9e4bde..d2b41e1608b4 100644
+>>> --- a/Documentation/virtual/kvm/api.txt
+>>> +++ b/Documentation/virtual/kvm/api.txt
+>>> @@ -1943,6 +1943,9 @@ ARM 32-bit VFP control registers have the following id bit patterns:
+>>>  ARM 64-bit FP registers have the following id bit patterns:
+>>>    0x4030 0000 0012 0 <regno:12>
+>>>  
+>>> +ARM firmware pseudo-registers have the following bit pattern:
+>> s/bit pattern/id bit patterns?
+>>> +  0x4030 0000 0014 <regno:16>
+>>> +
+>>>  
+>>>  arm64 registers are mapped using the lower 32 bits. The upper 16 of
+>>>  that is the register group type, or coprocessor number:
+>>> @@ -1959,6 +1962,9 @@ arm64 CCSIDR registers are demultiplexed by CSSELR value:
+>>>  arm64 system registers have the following id bit patterns:
+>>>    0x6030 0000 0013 <op0:2> <op1:3> <crn:4> <crm:4> <op2:3>
+>>>  
+>>> +arm64 firmware pseudo-registers have the following bit pattern:
+>> s/bit pattern/id bit patterns?
+>>> +  0x6030 0000 0014 <regno:16>
+>>> +
+>>>  
+>>>  MIPS registers are mapped using the lower 32 bits.  The upper 16 of that is
+>>>  the register group type:
+>>> @@ -2493,7 +2499,8 @@ Possible features:
+>>>  	  and execute guest code when KVM_RUN is called.
+>>>  	- KVM_ARM_VCPU_EL1_32BIT: Starts the CPU in a 32bit mode.
+>>>  	  Depends on KVM_CAP_ARM_EL1_32BIT (arm64 only).
+>>> -	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 for the CPU.
+>>> +	- KVM_ARM_VCPU_PSCI_0_2: Emulate PSCI v0.2 (or a future revision
+>>> +          backward compatible with v0.2) for the CPU.
+>>>  	  Depends on KVM_CAP_ARM_PSCI_0_2.
+>>>  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
+>>>  	  Depends on KVM_CAP_ARM_PMU_V3.
+>>> diff --git a/Documentation/virtual/kvm/arm/psci.txt b/Documentation/virtual/kvm/arm/psci.txt
+>>> new file mode 100644
+>>> index 000000000000..aafdab887b04
+>>> --- /dev/null
+>>> +++ b/Documentation/virtual/kvm/arm/psci.txt
+>>> @@ -0,0 +1,30 @@
+>>> +KVM implements the PSCI (Power State Coordination Interface)
+>>> +specification in order to provide services such as CPU on/off, reset
+>>> +and power-off to the guest.
+>>> +
+>>> +The PSCI specification is regularly updated to provide new features,
+>>> +and KVM implements these updates if they make sense from a virtualization
+>>> +point of view.
+>>> +
+>>> +This means that a guest booted on two different versions of KVM can
+>>> +observe two different "firmware" revisions. This could cause issues if
+>>> +a given guest is tied to a particular PSCI revision (unlikely), or if
+>>> +a migration causes a different PSCI version to be exposed out of the
+>>> +blue to an unsuspecting guest.
+>>> +
+>>> +In order to remedy this situation, KVM exposes a set of "firmware
+>>> +pseudo-registers" that can be manipulated using the GET/SET_ONE_REG
+>>> +interface. These registers can be saved/restored by userspace, and set
+>>> +to a convenient value if required.
+>>> +
+>>> +The following register is defined:
+>>> +
+>>> +* KVM_REG_ARM_PSCI_VERSION:
+>>> +
+>>> +  - Only valid if the vcpu has the KVM_ARM_VCPU_PSCI_0_2 feature set
+>>> +    (and thus has already been initialized)
+>>> +  - Returns the current PSCI version on GET_ONE_REG (defaulting to the
+>>> +    highest PSCI version implemented by KVM and compatible with v0.2)
+>> backwards compatible?
+>>> +  - Allows any PSCI version implemented by KVM and compatible with
+>> backwards compatible?
+>>> +    v0.2 to be set with SET_ONE_REG
+>>> +  - Affects the whole VM (even if the register view is per-vcpu)
+>>> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+>>> index ef54013b5b9f..6c05e3b13081 100644
+>>> --- a/arch/arm/include/asm/kvm_host.h
+>>> +++ b/arch/arm/include/asm/kvm_host.h
+>>> @@ -75,6 +75,9 @@ struct kvm_arch {
+>>>  	/* Interrupt controller */
+>>>  	struct vgic_dist	vgic;
+>>>  	int max_vcpus;
+>>> +
+>>> +	/* Mandated version of PSCI */
+>>> +	u32 psci_version;
+>>>  };
+>>>  
+>>>  #define KVM_NR_MEM_OBJS     40
+>>> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+>>> index 6edd177bb1c7..47dfc99f5cd0 100644
+>>> --- a/arch/arm/include/uapi/asm/kvm.h
+>>> +++ b/arch/arm/include/uapi/asm/kvm.h
+>>> @@ -186,6 +186,12 @@ struct kvm_arch_memory_slot {
+>>>  #define KVM_REG_ARM_VFP_FPINST		0x1009
+>>>  #define KVM_REG_ARM_VFP_FPINST2		0x100A
+>>>  
+>>> +/* KVM-as-firmware specific pseudo-registers */
+>>> +#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
+>>> +#define KVM_REG_ARM_FW_REG(r)		(KVM_REG_ARM | KVM_REG_SIZE_U64 | \
+>>> +					 KVM_REG_ARM_FW | ((r) & 0xffff))
+>>> +#define KVM_REG_ARM_PSCI_VERSION	KVM_REG_ARM_FW_REG(0)
+>>
+>> #define KVM_ARM_VCPU_PSCI_0_2           2 /* CPU uses PSCI v0.2 */
+>> Comment may deserve an upgrade too
+> 
+> I'm not sure we want this. KVM_REG_PSCI_VERSION takes a PSCI version
+> number, as indicated in the PSCI spec. You should use
+> PSCI_VERSION(0,2), as defined in include/uapi/linux/psci.h.
+The above define is used when initializing the vcpu, right? This now
+means we are likely to have a >=0.2 PSCI version and not strictly
+speaking a 0.2 one?
+
+Thanks
+
+Eric
+> 
+> Thanks,
+> 
+> 	M.
 > 
