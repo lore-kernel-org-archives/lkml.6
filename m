@@ -1,96 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428479AbeCBSOP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:14:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53464 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751841AbeCBSON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:14:13 -0500
-Date: Fri, 2 Mar 2018 11:14:11 -0700
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Alexander Duyck <alexander.duyck@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        Ilya Lesokhin <ilyal@mellanox.com>, Don Dutile <ddutile@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Message-ID: <20180302111411.47a58371@t450s.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
-References: <20180227190520.3273.79728.stgit@localhost.localdomain>
-        <20180227144015.228d4f5c@w520.home>
-        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
-        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
-        <20180228155949.00fde8ae@w520.home>
-        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
-        <20180301132224.1ca06949@w520.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
+        id S1428555AbeCBSQm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:16:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60396 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1427204AbeCBSQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 13:16:41 -0500
+Date: Fri, 2 Mar 2018 18:16:37 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Douglas Anderson <dianders@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, briannorris@chromium.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        Ingo Molnar <mingo@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64/debug: Fix registers on sleeping tasks
+Message-ID: <20180302181636.a2nqgm4ezrbcdxkc@lakrids.cambridge.arm.com>
+References: <20180301193803.129195-1-dianders@chromium.org>
+ <20180302180131.GA20579@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302180131.GA20579@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Mar 2018 06:54:17 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
-
-> > From: Alex Williamson
-> > Sent: Friday, March 2, 2018 4:22 AM  
-> > >
-> > > I am pretty sure that you are describing is true of some, but not for
-> > > all. I think the Amazon solutions and the virtio solution are doing
-> > > hard partitioning of the part. I will leave it to those guys to speak
-> > > for themselves since I don't know anything about the hardware design
-> > > of those parts.  
-> > 
-> > I think we'd need device specific knowledge and enablement to be able
-> > to take advantage of any hardware partitioning, otherwise we need to
-> > assume the pf is privileged, as implemented in other sriov devices.
-> > 
-> > I'm also trying to imagine whether there's a solution via the new
-> > vfio/mdev interface, where the mdev vendor driver would bind to the pf
-> > and effectively present itself as the mdev device.  The vendor driver
-> > could provide sriov capabilities and bear the burden of ensuring that
-> > the pf is used cooperatively.  The only existing mdev vendor drivers are
-> > vGPUs and rely on on-device DMA translation and isolation, such as
-> > through GTTs, but there have been some thoughts on providing IOMMU
-> > based
-> > isolation of mdev/sriov mixed devices (assuming DMA is even required
-> > for userspace management of the pf in this use case).  [Cc Kirti]
-> > Thanks,
-> >   
+On Fri, Mar 02, 2018 at 06:01:31PM +0000, Will Deacon wrote:
+> On Thu, Mar 01, 2018 at 11:38:03AM -0800, Douglas Anderson wrote:
+> > This is the equivalent of commit 001bf455d206 ("ARM: 8428/1: kgdb: Fix
+> > registers on sleeping tasks") but for arm64.  Nuff said.
 > 
-> Hope not distracting this thread, but above sounds like an interesting
-> idea. Actually we ever brainstormed similar thought for another 
-> potential usage - supporting VF live migration. We are already working
-> on an generic extension to allow state save/restore of mdev instance.
-> If vendor driver could further wrap pf as a mdev instance, it could 
-> leverage the same framework for a clean state migration on VF. based
-> on mmap callback the vendor driver can easily switch back-and-forth
-> between pass through and trap/emulation of the VF resources. Of
-> course doing so alone doesn't address all the demands of VF live
-> migration (e.g. dirty page tracking still requires other techniques), 
-> but it does pave a way toward a general framework to support VF
-> live migration.
-> 
-> If above is feasible, finally we could use one mdev framework to
-> manage both mdev and pf/vf assignment, while providing added
-> values which are difficult to achieve today. :-)
+> It's a pity that 001bf455d206 doesn't explain *why* past_pt_regs doesn't
+> work.
 
-mdev drivers may be the first to support migration, but I wonder if a
-full mdev implementation is necessary for it.  Once the vfio api is
-define, device specific extensions to vfio-pci might be able to
-implement migration more directly.  Thanks,
+The task_pt_regs are the userspace regs at the highest address on the
+kernel stack:
 
-Alex
+#define task_pt_regs(p) \
+	((struct pt_regs *)(THREAD_SIZE + task_stack_page(p)) - 1)
+
+... for kernel tasks, that's meaningless, and for user tasks, that won't
+correspond to kernel state.
+
+> > diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
+> > index 2122cd187f19..01285d4dcdc3 100644
+> > --- a/arch/arm64/kernel/kgdb.c
+> > +++ b/arch/arm64/kernel/kgdb.c
+> > @@ -138,14 +138,26 @@ int dbg_set_reg(int regno, void *mem, struct pt_regs *regs)
+> >  void
+> >  sleeping_thread_to_gdb_regs(unsigned long *gdb_regs, struct task_struct *task)
+> >  {
+> > -	struct pt_regs *thread_regs;
+> > +	struct thread_struct *thread = &task->thread;
+> > +	struct cpu_context *cpu_context = &thread->cpu_context;
+
+We can do this in one go:
+
+	struct cpu_context *cpu_context = &task->thread.cpu_context;
+
+... since we don't need the thread variable otherwise.
+
+> >  
+> >  	/* Initialize to zero */
+> >  	memset((char *)gdb_regs, 0, NUMREGBYTES);
+> > -	thread_regs = task_pt_regs(task);
+> > -	memcpy((void *)gdb_regs, (void *)thread_regs->regs, GP_REG_BYTES);
+> > -	/* Special case for PSTATE (check comments in asm/kgdb.h for details) */
+> > -	dbg_get_reg(33, gdb_regs + GP_REG_BYTES, thread_regs);
+> > +
+> > +	gdb_regs[19] = cpu_context->x19;
+> > +	gdb_regs[20] = cpu_context->x20;
+> > +	gdb_regs[21] = cpu_context->x21;
+> > +	gdb_regs[22] = cpu_context->x22;
+> > +	gdb_regs[23] = cpu_context->x23;
+> > +	gdb_regs[24] = cpu_context->x24;
+> > +	gdb_regs[25] = cpu_context->x25;
+> > +	gdb_regs[26] = cpu_context->x26;
+> > +	gdb_regs[27] = cpu_context->x27;
+> > +	gdb_regs[28] = cpu_context->x28;
+> > +	gdb_regs[29] = cpu_context->fp;
+> > +
+> > +	gdb_regs[31] = cpu_context->sp;
+> > +	gdb_regs[32] = cpu_context->pc;
+
+Are the other reg fields initialised elsewhere?
+
+We might want to zero them here.
+
+Thanks,
+Mark.
