@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtkRiPTN77Dr9zNnkZZkrBeOS28swGf3YXbo/9fbJov7oLEnnz6lOuf5y0+LCksy1pJLuhD
-ARC-Seal: i=1; a=rsa-sha256; t=1519981299; cv=none;
+X-Google-Smtp-Source: AG47ELtt6XbbO1TAiWfm+WrQdnPQjYO4RNxr8/ugkSYatrVznjh8Eq2oxsyBZw0knKiEJS0GW2js
+ARC-Seal: i=1; a=rsa-sha256; t=1519981296; cv=none;
         d=google.com; s=arc-20160816;
-        b=jU3f2UqGd4w3YKyEG0GRtUtMtEUtg0OPoGc2EMJyxrrwBBRJmAua1rrIAwzpjK3Fzv
-         OqR6JrjQqg/AAxzduC7efONniX5v7pr5ZEGEMbFixSEpl5uPzjHG4Omm8m8iJ1pwnN1j
-         k+E1Dvzhfwq5cmKPFeBpkV4SDz4jQyNV7QKnFWfF6FkP2H3l3hjlQHraNSrhxuBsum59
-         h0x+v5cSXO4wTI8Czn9i/ICqpBI2PpN7AVIkVAmZWahAqg01jFH7VhF+ljhq7DJOgTti
-         gWN7o0a/R/o0tmYQfIYf7sqhQ3KYUF+7dgYxYK8Jt3bbax7XDVm3TunGk+vx0UpM5ZI/
-         ILqg==
+        b=MngOtlNchzCN/1oT4B/qr5U5ZqAKvRTP3lcswve4wfWkcRJKyUcPQO9lG3L1j5H0v+
+         AkpymOTc4QH3rCfWE1B4PB+OINoMrrOWknxeldZBDsy4jWli63Ck/jwmKr4XNNkwICXj
+         sF+IcAFb4W8XGN0PIU+V9bK4HQXpRIOmBlOv9yzIX7bsdCnCoImmhY/NA1sy8ntrCITj
+         ALUtYKoJ5aakh/r2fPId4rD96kGcdAfL3vw8bNg13h8z9yuym189qsM5i3tbZ8nU6eoo
+         5lY2YdlyGywEUra5LN784QiG8QE4dG8eBqV+YlyUVbdYSWVl+nx2WLltZhWKxnLnRNi4
+         at0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Smks3/BYWN160j51Vt5+/pwQYQ8mx23DFKLn5G5EUaQ=;
-        b=ZHat+02EltOAZP8/OAOu9ed37irpHvld9f4RvrCM3T9jOgQgOc+IhjFNxjzCcSBiqs
-         YDjPo3Jxv28bQZCCICxCcqIC6wxEN2GZJ/36TLuMfA4N2XoW8HDT7ONdUuPNMPoJd35x
-         PHLv3q9x4PiZFcl9uRdvuI8WS/xlRMeeCwt8iS3hio1pv7trVBng8GgMaeW4NLBgjzSu
-         bEmHGohtiDdixib/O/SAd8ef4xqEXWr8DC+2hUJc/G1Ew0zYnUbrq+T6yg8zsMtUvEA5
-         t0Vqw9x4NRQB2z76M6KX/SEJpP6CFir8u4YdMuI5s8YTFxm+2LnNUMH6EC7tdJ3dlwnR
-         Ucvg==
+        bh=kJoRTtF16mxzHk0EOd9x3fEcGO2HZHsO6Xffknprmpo=;
+        b=w7aVC3s7QH8XL7ZqS/h5NVLgIDpGLd4IwgdeQm2xM3D3OiJjLA7WsUZRY4AXgP9vgm
+         TeCpLHq95U19yDZnf5BnRikUGULtBefv0QSRnKGeJxL5d9rcKAGyfKSuD98ZXilvk8HS
+         WRuJTyj8DZqA+0TcA5f0zFPjPBxtlew7d8nweshjQ/M0+v1Yt+VgEnTPwd4pc1bPO/vd
+         1Bz3/OF+JO+H7um+zrUqZFjnJIth58/5g1dB87v0gZ4bd0ZjeCYOEuxgVj47j4ctAGhq
+         O8DfLWpDSHfo/vybnzZV04UlYubMpTntgv48ijKJ02MLTjoWf+gPF/i43Sh3QI+DYj2r
+         92Mg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-mips@linux-mips.org,
-	linux-crypto@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	live-patching@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 050/115] lib/mpi: Fix umul_ppmm() for MIPS64r6
-Date: Fri,  2 Mar 2018 09:50:53 +0100
-Message-Id: <20180302084505.903142217@linuxfoundation.org>
+Subject: [PATCH 4.14 023/115] x86/stacktrace: Make zombie stack traces reliable
+Date: Fri,  2 Mar 2018 09:50:26 +0100
+Message-Id: <20180302084504.810028961@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815446124575806?=
-X-GMAIL-MSGID: =?utf-8?q?1593815910804181105?=
+X-GMAIL-THRID: =?utf-8?q?1593815907610974479?=
+X-GMAIL-MSGID: =?utf-8?q?1593815907610974479?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,76 +55,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
 
-[ Upstream commit bbc25bee37d2b32cf3a1fab9195b6da3a185614a ]
+[ Upstream commit 6454b3bdd138dfc640deb5e7b9a0668fca2d55dd ]
 
-Current MIPS64r6 toolchains aren't able to generate efficient
-DMULU/DMUHU based code for the C implementation of umul_ppmm(), which
-performs an unsigned 64 x 64 bit multiply and returns the upper and
-lower 64-bit halves of the 128-bit result. Instead it widens the 64-bit
-inputs to 128-bits and emits a __multi3 intrinsic call to perform a 128
-x 128 multiply. This is both inefficient, and it results in a link error
-since we don't include __multi3 in MIPS linux.
+Commit:
 
-For example commit 90a53e4432b1 ("cfg80211: implement regdb signature
-checking") merged in v4.15-rc1 recently broke the 64r6_defconfig and
-64r6el_defconfig builds by indirectly selecting MPILIB. The same build
-errors can be reproduced on older kernels by enabling e.g. CRYPTO_RSA:
+  1959a60182f4 ("x86/dumpstack: Pin the target stack when dumping it")
 
-lib/mpi/generic_mpih-mul1.o: In function `mpihelp_mul_1':
-lib/mpi/generic_mpih-mul1.c:50: undefined reference to `__multi3'
-lib/mpi/generic_mpih-mul2.o: In function `mpihelp_addmul_1':
-lib/mpi/generic_mpih-mul2.c:49: undefined reference to `__multi3'
-lib/mpi/generic_mpih-mul3.o: In function `mpihelp_submul_1':
-lib/mpi/generic_mpih-mul3.c:49: undefined reference to `__multi3'
-lib/mpi/mpih-div.o In function `mpihelp_divrem':
-lib/mpi/mpih-div.c:205: undefined reference to `__multi3'
-lib/mpi/mpih-div.c:142: undefined reference to `__multi3'
+changed the behavior of stack traces for zombies.  Before that commit,
+/proc/<pid>/stack reported the last execution path of the zombie before
+it died:
 
-Therefore add an efficient MIPS64r6 implementation of umul_ppmm() using
-inline assembly and the DMULU/DMUHU instructions, to prevent __multi3
-calls being emitted.
+  [<ffffffff8105b877>] do_exit+0x6f7/0xa80
+  [<ffffffff8105bc79>] do_group_exit+0x39/0xa0
+  [<ffffffff8105bcf0>] __wake_up_parent+0x0/0x30
+  [<ffffffff8152dd09>] system_call_fastpath+0x16/0x1b
+  [<00007fd128f9c4f9>] 0x7fd128f9c4f9
+  [<ffffffffffffffff>] 0xffffffffffffffff
 
-Fixes: 7fd08ca58ae6 ("MIPS: Add build support for the MIPS R6 ISA")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: linux-mips@linux-mips.org
-Cc: linux-crypto@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+After the commit, it just reports an empty stack trace.
+
+The new behavior is actually probably more correct.  If the stack
+refcount has gone down to zero, then the task has already gone through
+do_exit() and isn't going to run anymore.  The stack could be freed at
+any time and is basically gone, so reporting an empty stack makes sense.
+
+However, save_stack_trace_tsk_reliable() treats such a missing stack
+condition as an error.  That can cause livepatch transition stalls if
+there are any unreaped zombies.  Instead, just treat it as a reliable,
+empty stack.
+
+Reported-and-tested-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: live-patching@vger.kernel.org
+Fixes: af085d9084b4 ("stacktrace/x86: add function for detecting reliable stack traces")
+Link: http://lkml.kernel.org/r/e4b09e630e99d0c1080528f0821fc9d9dbaeea82.1513631620.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- lib/mpi/longlong.h |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ arch/x86/kernel/stacktrace.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/lib/mpi/longlong.h
-+++ b/lib/mpi/longlong.h
-@@ -671,7 +671,23 @@ do {						\
- 	**************  MIPS/64  **************
- 	***************************************/
- #if (defined(__mips) && __mips >= 3) && W_TYPE_SIZE == 64
--#if (__GNUC__ >= 5) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 4)
-+#if defined(__mips_isa_rev) && __mips_isa_rev >= 6
-+/*
-+ * GCC ends up emitting a __multi3 intrinsic call for MIPS64r6 with the plain C
-+ * code below, so we special case MIPS64r6 until the compiler can do better.
-+ */
-+#define umul_ppmm(w1, w0, u, v)						\
-+do {									\
-+	__asm__ ("dmulu %0,%1,%2"					\
-+		 : "=d" ((UDItype)(w0))					\
-+		 : "d" ((UDItype)(u)),					\
-+		   "d" ((UDItype)(v)));					\
-+	__asm__ ("dmuhu %0,%1,%2"					\
-+		 : "=d" ((UDItype)(w1))					\
-+		 : "d" ((UDItype)(u)),					\
-+		   "d" ((UDItype)(v)));					\
-+} while (0)
-+#elif (__GNUC__ >= 5) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 4)
- #define umul_ppmm(w1, w0, u, v) \
- do {									\
- 	typedef unsigned int __ll_UTItype __attribute__((mode(TI)));	\
+--- a/arch/x86/kernel/stacktrace.c
++++ b/arch/x86/kernel/stacktrace.c
+@@ -160,8 +160,12 @@ int save_stack_trace_tsk_reliable(struct
+ {
+ 	int ret;
+ 
++	/*
++	 * If the task doesn't have a stack (e.g., a zombie), the stack is
++	 * "reliably" empty.
++	 */
+ 	if (!try_get_task_stack(tsk))
+-		return -EINVAL;
++		return 0;
+ 
+ 	ret = __save_stack_trace_reliable(trace, tsk);
+ 
