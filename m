@@ -1,15 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427342AbeCBMKx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:10:53 -0500
-Received: from mail-eopbgr00109.outbound.protection.outlook.com ([40.107.0.109]:18656
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S1946482AbeCBML2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:11:28 -0500
+Received: from mail-eopbgr50091.outbound.protection.outlook.com ([40.107.5.91]:21568
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1423004AbeCBMKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:10:48 -0500
+        id S1423004AbeCBMLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:11:23 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aryabinin@virtuozzo.com;
-Subject: Re: [PATCH 1/2] kasan: fix invalid-free test crashing the kernel
+Subject: Re: [PATCH 2/2] kasan: disallow compiler to optimize away memset in
+ tests
 To: Andrey Konovalov <andreyknvl@google.com>,
         Alexander Potapenko <glider@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
@@ -26,76 +27,75 @@ To: Andrey Konovalov <andreyknvl@google.com>,
         kasan-dev@googlegroups.com, linux-mm@kvack.org
 Cc: Kostya Serebryany <kcc@google.com>
 References: <cover.1519924383.git.andreyknvl@google.com>
- <286eaefc0a6c3fa9b83b87e7d6dc0fbb5b5c9926.1519924383.git.andreyknvl@google.com>
+ <105ec9a308b2abedb1a0d1fdced0c22d765e4732.1519924383.git.andreyknvl@google.com>
 From: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <818fe418-01cd-4664-9844-46455b06842d@virtuozzo.com>
-Date: Fri, 2 Mar 2018 15:11:21 +0300
+Message-ID: <41d0e9bd-9102-6a50-e0d6-c193696381c9@virtuozzo.com>
+Date: Fri, 2 Mar 2018 15:11:56 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <286eaefc0a6c3fa9b83b87e7d6dc0fbb5b5c9926.1519924383.git.andreyknvl@google.com>
+In-Reply-To: <105ec9a308b2abedb1a0d1fdced0c22d765e4732.1519924383.git.andreyknvl@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: AM4PR08CA0050.eurprd08.prod.outlook.com
- (2603:10a6:205:2::21) To DB7PR08MB3258.eurprd08.prod.outlook.com
- (2603:10a6:5:1f::20)
+X-ClientProxiedBy: AM4PR08CA0071.eurprd08.prod.outlook.com
+ (2603:10a6:205:2::42) To AM6PR08MB3256.eurprd08.prod.outlook.com
+ (2603:10a6:209:47::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 128aace1-e811-4f3b-7616-08d58036a0a2
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:DB7PR08MB3258;
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;3:NWEkJe2IOa2AXf8b+XVtJF+0lDMWkROjZ6lIZU7BFzmqu8aMBsL7I7cMjzzvKU9dw0t1UJMKF79KTsErfzEAW/R4WG4zZkqTetcTe6InkDIYs+ggQQwmXkrdCiNvEzzW+tsB7eXUHEEBMMmr6YDd7iNA3KgfCblRoW3kfnx3ldJQsoNP6snTM7gFeCX1z7F0TnNj0Z0waTg4znvQoH8Wa3EdgsS6GjK8vVLWzETwo0l83p6Z1i/2teT8tYT0RTaY;25:cJXwFNa37/fRBpq+v0meklkwzYluodq95/EukBuCVKm9LgTSo/EHhRT0x5oZ3DJeiKrzRqWTwSZGpbmQeQ+8DrFC0liDVXRP+ZmM6ahE5cEJn8c3+XbFO0kjTrnBlRoDH/t0RD3GQxiBglQ072k6dIhdkhnbdX1h0AuSv9KTWpEG8BxDjm71aoMNCEUn4xF2aslyhChWgldyh3+F39ZFFRrH67AokKeasNB8H8oK01DTCe8e5bzGLlsiqmyiWDMkd442Do7BFzkwTWKYPdeXpcbnXswQ8Er3bVgnRmt9BV94OJt0U49oBhI2At5itciZO4pewrRK4mm5w9n4VOhLQA==;31:pNMG6FZk/Sw5m3QatvM/+UKdYjZdaMGylK+/qGQtrSjFsAfNN4AuLqLI4yljJtXYYe/pnrpnBdSCpgF0HeuJQblZKoEGKFXPt612xBtteiLlUj9Po1CPqiKWXT7C4ZL8dAHbWM4AaV6Rlz1LETDs1lINCdVKuYXol6P2+lIinWbUbHDBDw24Po6NSqyqwZAgPf2OXjFZepY3X9IdJL3rwet1N97pbNHGtIO3gew0+Cw=
-X-MS-TrafficTypeDiagnostic: DB7PR08MB3258:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;20:jMX0hRCYRreVMy+GFSQEEqdWtBiBlSl350Z4R7BatBSnP3u2l0TJs2Q6jAY7Bl9KBuK2NokjUnDvrGndQmXe04OIp7Fc9QQKzorhrVN/65J6/Z5nHnLR0eazBGxrqyoPPCi/3e+TTsL9GVHwaxtkwSDaiCecobPCRCLlOVFpbz9bZWtxEWySQhB6nlnNw9AmmjLp/4THE6VKrTcYVFBRWfXxR8DjR9JVd/+51zhxvNJZB5bKsEqvijQlzJJ8qUnHUX/qXGCjcsT+7R5zoBUFXzLXnvH0OFm8soyOwVv6IlzTpSvdw9PVbECn1q605s7tkpKfHUiel99p1RiEGKuBB9P35PMdf9GhX1nFcUaBGmQsjUDifL8nu/yDJiDPwBibzbxjwpRRkvZ+1GiQvSWtb/823gWli9giWG77DRKsL1rIRHxkg4Z+lC6pCmW63kT5zc1JH0hiyeWAN6O4ZDb7NmBsl3ibNNORRR853hG3f7bRC+HALoB41/peAXLjP0C3;4:2sbbKychy33m79lc70xCscrdGj6z+ewC2+XM0FvegP5DVdrcEkyADXMZUt61ixY5lE09UtgRLVFDo0VI2GqW7oTFESpX1pw/f5ZCALVKmSTs9pZYF+kOasvB4Ucq+zGZ6rm+xHf/sTTNc5tlpX5BFiT/oieWs1272VPKrN3N5Ac9tmxQ/eUwCPM+SNLoyD3d0T7pvjdfVXoQqEMlzp/0PAfAFxLfquh4mBEF0ipFbW3GoF5Hy9Dz/JyoW/mm7ek/WnaJjkzZwkzXa1HCOviQzOQnQix2W7tFEkivizUJlzt3NhFZ0s/GCkIckZwFhP5YlcCLQSH1muI5dZKq6MK61riccOogppBVGVUGaOFbAZY=
-X-Microsoft-Antispam-PRVS: <DB7PR08MB32580994B8586D76947576C9B0C50@DB7PR08MB3258.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 4033d822-628d-4751-55d4-08d58036b53d
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:AM6PR08MB3256;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;3:EB3kqht/GFibnMeGOAPsCuOo2S8jTiQ4HX1kb+VxG1hBJWgfzUut0X/98GqeX55CS6iYxCLsib9ypskJl6QbigEknUg0Z9VziptxuCpcq1bS1GDH27wcN6MfW5FJha0xFvzjyM6rm4kGBo17OWgFrmMkNwrngmVlrSlD56GcmTvPtkeQwJtFt1q65MO5R8mpViQUlr0XfKhRX2IfwVNAX1hN83ZFfZWebzxNWIJw10yusxh1E0SMdJworZitqI81;25:4XCbNBCtjilmA8o+OC3F2EqoEt3fIPUIKAJ4VqHywdO5mc1umZnjdK5JkgEWcrDBkgqtTBpDRSgiMsS1TCstKs7ioa7OuKER2Ioej8M3lvKJhZNNtvcM/bZjGd8WYaeW1NtKpmrQ+17iJKz9hqGBQC59w059njOM4qylUqOBrt15JN2kR2Nsj0dayLh7gs3kykW9YgpplzabHCsC31Bw5EumBzylsRHX+NvBGhpK2ShRXtWL37vUZ3EBCGRxNLuXvNwaVuNeI3B3ML2XpAoVIu/U0XJkBdpAH19CVmDIfzwVYUcgmKkPMvxPv8zfCDXuaBSMasnbzhZlciGDjYQmpg==;31:4GVZjUE9/9o0qhfjK9rOgKAjfHgEQLfZ4/HWQPJuz9m/fqUAzSDaH02gz5kK7RuuoG5g2PxEw61gWSVIeZTyddHJfVmApQcAPKfpOZdWGsPTxSZvog8MqOogxBPXYIhIkvD7+6/tk8UPNXnyBA0KspAJNlgt3ok6esiGNoS2JEV/QcnBzXBy8lLG7zfHQYHHDsWpuedYS7hck0DS4nrAxEpXKTz6jkGrMRcfHIJax58=
+X-MS-TrafficTypeDiagnostic: AM6PR08MB3256:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;20:3L5ge2k0a2rlG5JzGGVg5VJk/VENcS+2S1oKw9u69xQDY4xikPGAhzEXleTpVGmCN0HOgpfc2NT4QVkW5lTkIQx2jah2EdoTihutFvEIjBPpGCCzkuqZScVqafARf84YcpAxt/UagJ6ix+ojqeembib2/IFg91BBLoMHoecCCmZhGpAyjFHAobNeC9v/uaSYFd16CZBbNWHngN2QfwZOJY84wyhh5l1d0GuHEnoy8slQAu2Vesqlf6NSYem4YUID9KA5OzNbVqe5ipdNvGZxBoXszn0TWkwheDhNSGmOD10UlW9razvhlNj5oi5LNTsJuD/9N5anhLHuoJl7ME+T+czR9Z5XLYgpPGJvvMjfhtdaRIv5NbjcHK+dzKQFCgMwz2lo6o1ZQv7sGhT/qYZ52dslNCZhKyRXBuH4TFb+HVMR+YG6XUh4R5v5hXq9nBkngWbl1uqKOTkTj2n29So2w6sf93d+NRyl1fY4fdAo7ty6G4Dj/aZ3qD97JYQXN6oh;4:WPGt48yZ0lBkczNY6xoCOl8sU/3qbHQRvmJbR19xaAig27Iy/vJBc50Q22xQfQWUTG4fyCaytrpqjGBv/hSZj7Mbxixq6Q264gWvoD8aKb3J7bfhWAlNMZAYBnGE2WIKI6niphPuepTWawv9C1l0ca6b4LJMoXO6mFqPF2uiNoXmqIGYonANsZVss3gycz743lFzUaZWcPHBqYB/qdA5A0MlhCQGb7Kyl95dSGj9nx5RzHURmh0BNaQdBnuMv9Sf/TZGphH0/2R6GWrqxDFpZV0+7P1Y9LeOPSoECwR9nb6HPxONoXp6OYTnseDM0om9ZFtaa/pxfTbcsgElZbV8+A==
+X-Microsoft-Antispam-PRVS: <AM6PR08MB32567C51CAC835A3D9E8E358B0C50@AM6PR08MB3256.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(211936372134217)(153496737603132);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501239)(52105095)(6041288)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB7PR08MB3258;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3258;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231220)(944501239)(52105095)(93006095)(93001095)(6041288)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:AM6PR08MB3256;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3256;
 X-Forefront-PRVS: 05991796DF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39840400004)(39380400002)(346002)(366004)(376002)(396003)(189003)(199004)(230700001)(478600001)(7736002)(81166006)(68736007)(76176011)(23676004)(106356001)(55236004)(5660300001)(97736004)(6486002)(6246003)(53936002)(52116002)(81156014)(305945005)(8936002)(86362001)(8676002)(31696002)(52146003)(53546011)(7416002)(186003)(59450400001)(16526019)(316002)(66066001)(64126003)(65826007)(105586002)(47776003)(31686004)(58126008)(65956001)(25786009)(4326008)(386003)(16576012)(2486003)(36756003)(229853002)(3846002)(6666003)(6116002)(65806001)(110136005)(77096007)(50466002)(2906002)(26005)(2950100002)(20703003)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3258;H:[172.16.25.12];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjdQUjA4TUIzMjU4OzIzOnRFR3VNVVVRNFVsaTZ5V1JvT3hCOWQrbWFP?=
- =?utf-8?B?VThBOWNDRnNNN3U2RkpTRGoxRWpCK2l4b0FCWXQwWjdjN2NYN0QybHFwTnkz?=
- =?utf-8?B?dnd6ZVQ5c2Y2SmZ5QlVVS0M3R1BXeFcvai9FRzFDN25XbCtpQ2xpMEc5MTl4?=
- =?utf-8?B?TEJLVS9lckNBV0d3Ulkvd0paQlgySFhoMHBVNWd0NzMrbGd0NXRCZW5iQlh5?=
- =?utf-8?B?U3ZaQnNMR3dPVFJPYm1qU1kxZE15cUZnMG03YmNFRVVKNko5WS9uQmRpNU1p?=
- =?utf-8?B?b3RVSWZYTVFRRnE1OFlSWjlKQlNWY0pnNlVWMEYrdUFDOWFlUTBWQlp0azBs?=
- =?utf-8?B?cTZ5MjMxcTdrM2UwS0VmYksrajlHcksrKzdoc0RGMzJ3ZllaWHhua0VieDh3?=
- =?utf-8?B?amtVUWhZbllyS25UaVFTcnJqa21TcUIxSGNsN2I2RnJCOFVQaWdEc2RwWkZY?=
- =?utf-8?B?eVk5aER0U2N6RUZLRWV6QmNSZHgwTWdOZFpMeDVBZGQ3Ujc4T2dCMHJtM1I3?=
- =?utf-8?B?QkVESGhMOFJ6WWl2MjF5YnpuUEF0bzMyK0d3UU5EaVlRbnlmYUd4SjJudVJh?=
- =?utf-8?B?ckJwNzIvWEJvbkVsU0tZMElDdFhUZG12c0hlcW9JTXdDRWsrM0s1eDFXdnVH?=
- =?utf-8?B?V1Z4cm55a04vdjZ0cWVaZVNKRXU5dlJZcHk2WEEwclpJYWt2bkZSRGlyZmdu?=
- =?utf-8?B?YmFzeWtTVGVRR1BkbzBnWDc5RXBDMlhJQ0FNbzYxZW1hejYwQmx0ZE5FRTlM?=
- =?utf-8?B?UUlDTEtMbStDeEJ2RnQxK3hWU2Z4VlNmbTd0dGt6Y0VITjAzMEdRT1pHeW9Y?=
- =?utf-8?B?TWxHZkdQQVRMU2dVbjJMUG1OOWs3VW8xU2JLOXRPam44UUVDRjZEeXlYRjNN?=
- =?utf-8?B?aFpqWXF0TW9oSDhHOW1QYWo1TUd4NWJKeVcrM3BVQ0JTZ0djRlNZVVU3Qkpm?=
- =?utf-8?B?NFNWZlhDTGhUY2VaM25SNGhFR0hnb1VvckRDMzRlOFg5dUxUQlYyU1BmWWFW?=
- =?utf-8?B?STRmQ0EvamEwSTlTVVp1YWlHbUFudW5aQThlWkdBYVdmQkp0aFdTTnJPcUQ5?=
- =?utf-8?B?ejZHYjVmMWlHcThuNm1UdmhHc2NES3IrelRrVTJPSzdVRXJCQU16UTF6UFNs?=
- =?utf-8?B?dGFVWFZ3UUNBRmVpWWxxL2FYSkc3QnlpTzJOaFZHS3RXQmUzdk0xcjJuN0pw?=
- =?utf-8?B?Y0drWDFzQnUrQWdBY2NRRVhZVUkwbEEzS0ZPeHROdEY1K2pjMTBsOXF2L0J4?=
- =?utf-8?B?QlY4OXJ1UlRzZlZwZGVRWk9TRDlSN0dRaHBQQ3B6d1lEZVNtMnhFQnladHdT?=
- =?utf-8?B?N1E0WCtwWm1VdzVzbkJDUnROaG90aUg1VXV2cDhNN3FFT0hzcGZvUG40bDIy?=
- =?utf-8?B?MEQ1RXJxOFpQSGhVcFd1bE9sem4vRXBsV0hGNFoxNDZGSjVSaDFiaDVjNWFB?=
- =?utf-8?B?eXVRSEhsNlQ0SkJlM2ord0xEd1M4SFcyUUZObnRYWUNXMmRWcmxiaEN5NUVS?=
- =?utf-8?B?NGRhcjFlQkhUWDgwd2ZHVEhZMWU5U0ltUEVMNEI0YTMvbnRWSDZkaWc3ZEJl?=
- =?utf-8?B?YTVlRWFkWTBrV0xSZlZwQmJaVFBZRmNpeEkrK3pLM1JQc0QyOFI4ZzBjSWNE?=
- =?utf-8?B?ZTRBVnFkaCtUeXU1Q1pkYmxrTEx2ekxobEdrSGFLOEgyb1YwV1gxZFZ3OFkr?=
- =?utf-8?B?MjlXS3JCMG1SRzJLTzJKeHBVQXI5NFFoQ1YyWWY3MkE3U2ZxWnU4R0kzcjBH?=
- =?utf-8?B?WkFaSnhqYWJxNW42cEtPT1JtN3BTZ1RJUkdQZ0hvNnF3T214dkc2Uk5MM2Vz?=
- =?utf-8?B?OXVWSUlCQmc1MDgyeWgyby9MMnhqenVDSHgzeHdvUksxR1ZUWkpjeThCRmx5?=
- =?utf-8?B?R1BrTzJEZWxvVC84c0JVU0R3REpiSEh0UHBUSFljdWtXcU1hYmZqcUp0Sjlj?=
- =?utf-8?B?OHhTam5OcktXdFFUWnMrVWJXMHl5TmV5dCtPR0tkT29XRFZZMmVsaEFOeE1z?=
- =?utf-8?Q?FLGQIy?=
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;6:Hqmx42oKFLremJjaGyfy/NapVsB/b+SUnUBsxadYbqzBO7oV4+EIsLfZneYD/ghkdl0mnOsCwy/iL1P5N5S+nCbdJdywfhA+p4QNh2rVkIksHbZHpc1BVqmCQZ4Bt+dH+k/g/Y0EjsYlYFEAl8O1yHrODg9rEI+eyFClVKbxHHsJURNsoA9vMsdL5N2lO6o1AR2nBA8/sG3H3DsyNQj4AnMAp2779NDroNSM39Z/XRYPwH9gCkleomqqFc1JzCBvxL6N7LOUa5NYOX7TZHsYcxKkRqQ2QHpcD7H+YS3RjiMqT2a5GuPHI1qYs/2IuoNvS4hdt/rjTrWXGRV4zEyQltdLW6THilXlTXnNAKVOaJ0=;5:Isk22wZ//sVFlmRKeAZGb1lIoG8f/LqCLHQN4AlOJ/+hKQoEBv8Mc/HUOgsy17m2Bg18lEnnLA2JEWckoavFtRwbt+/gNHwPNefLsgSmfQ1vAunrMfVsmhzNxdopZTPQsmjcVYAFq6GLpYGPZaLhXw9zOMZSsOtdKWZczk7Ww5Q=;24:w5iWgGi7ugsl72Kj/pq3q4rk3iuiVn0a7ml/uOWSmjcIMys3ppOTbHNGHuJsT0V+AmzXaIG7Jf1DWK9itbssQwFJSV6p70okjHemPCDQAEo=;7:R7TbG2lEhJanv6pCFOT5dVzNaHWmAnAVNQvhOoizp/NKcDViQFQwsMufv3GVzGy5B2cxIdGGc3a+n4gI47Lr3qNbxCfgmhwPLPZR+Ymj3HVvbU/CA9cPa2dizgzafxtCFm4cvc/DXW+8Fx4JuETAsbL1Fcn8K8Qh7mcvI0rcXBYA1NTpFPcKbfWlwc/TzA3KtcHGIRZ8ard3xhCWT2e1csEPr2bp4vTAw196zGaJ2eyfCZt13130gGVTsShc2Is9
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(366004)(39380400002)(39850400004)(376002)(346002)(396003)(199004)(189003)(86362001)(81166006)(50466002)(55236004)(4326008)(65956001)(64126003)(68736007)(386003)(6666003)(65806001)(76176011)(105586002)(31696002)(53546011)(47776003)(66066001)(65826007)(478600001)(230700001)(6246003)(23676004)(25786009)(8936002)(106356001)(7736002)(2950100002)(305945005)(31686004)(229853002)(53936002)(58126008)(81156014)(8676002)(7416002)(5660300001)(36756003)(6486002)(316002)(16576012)(110136005)(52116002)(52146003)(2906002)(26005)(2486003)(186003)(6116002)(16526019)(3846002)(77096007)(97736004)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR08MB3256;H:[172.16.25.12];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA4TUIzMjU2OzIzOmd4MTlsNEhaUTgvV0ZRNk9nZWVkVFJDYTZj?=
+ =?utf-8?B?clU3eWVOOTdBV0tjb1dLVTQzM1ZXeTRheTJyWkgvRDU4aXJ1aU9XVUlKMllI?=
+ =?utf-8?B?MW5wTEpNTUJhSDRNVnZma01PTTNZeERNaDNpbm80WGpSME9mSXFJYURaWUpN?=
+ =?utf-8?B?aWFqVC9oTkVKU2d1SWJPMERISGsvWVU5NC8vc2QrWU01STc2ZFYySXJlUkdF?=
+ =?utf-8?B?NmRLRlFGdnpDMndPenpLTGJlaHl5Z0RvRFJWc2o1YnhqZy9TOHRnU1hQM0w3?=
+ =?utf-8?B?eVkxSGVWb0dadlp5Z0ZXWWk2cHYrMlcrRGVXbTQ5eEN2MjJDcUU1d2l6aDZD?=
+ =?utf-8?B?NDV5bHJ1clphYzRtWEloSHBCZTIyMDBaOGlCcmtMenEzWEcrdUs5Q1l1S3hL?=
+ =?utf-8?B?ZUlMMTlZbDI3MCtLb1lqNGpTRFVXNWF0MEgyelZMN2J0Unl4YVA0ekIrZUpS?=
+ =?utf-8?B?QWRtVUJuVm5IRUxxUy80RnRtR3BOQkROc2lyMkFYeW5zYTlsbzJIWjI0UG9Z?=
+ =?utf-8?B?MDRNaEpmUEtvTm1xOG5XOE01Z1krVWh1dmVWYkszRGZmZGw1REtzbFJyaXQ0?=
+ =?utf-8?B?ZUF4YXppaW5kRTJPaERjcGNPWUJiK28rWGtPNzNwNWJ2Y3g2bWo3RlNZcmky?=
+ =?utf-8?B?UGVYTjZKczRvV2JKWEVRNmpuT2JjTE15S0VBWTNPd0ZrNlp4R0p6RW1DYXdE?=
+ =?utf-8?B?T3JmaEpPMkl6MUVkbmxvbXk0ZEluZXlUdW41aHdPeXdyWklzZ0xWREQ3ZGVs?=
+ =?utf-8?B?NlJ4Z0l4cEZkRk9nYmNpTnpXRlhsQTVMUExpazVuelFON2hjcmR3Tlo2Y1o4?=
+ =?utf-8?B?bHpvNlR3V21oT0kyd2EzcktqdjVEdzFUV0lyY29KbFovaHBUTHJtOElrZm5j?=
+ =?utf-8?B?TEdTc1pVWitOcWxhN1dyUjZMR21OWkNJbkpHcjZhMFJIQ3BBNlh0YmFjRHA5?=
+ =?utf-8?B?TEhoaTY3NDU2STl2cEI3NnN0bWRmeUFnUERZY0pDdmtwWnFDa2ljQVppTFEy?=
+ =?utf-8?B?akFIMTF2dytmVkJZOUIyWHc1bDB6MnJSaE1jSXprLzRNNDNpNHhLSzJtZ0du?=
+ =?utf-8?B?eTk1ak5wN3YxSWcyZ3dEV0NvM0hjMDVuY2xjRDN2TXU3TDlhUGZjcmdybStQ?=
+ =?utf-8?B?SUhzaHRUWlJpYTVzc2JxYW5ESVozSGVpdmk2WDNkY045Sys2WTJuc2lNYjNp?=
+ =?utf-8?B?NWdGb0xsNWpZa1phekJnQmU3NnlxSlhFMXYwSVR0dU1jbkVHOXVsemxKellR?=
+ =?utf-8?B?diszc2FjenlBOVVuMnpmSjJWUGMvRzlVcjluVDJ3NWNrS0FlZjZMTmFMbkND?=
+ =?utf-8?B?cExtOGE0Mjl1U0RYVXFKbVlhbXp0RzlKMXcweXlaUlpNanpwUjJJd00yWWFM?=
+ =?utf-8?B?eXlpWlhWVVVMa211SjQ0MjVKcFlRaEtqOUxEejJlZDVjdHpzU0NvNjAxQjFN?=
+ =?utf-8?B?cnhZNmdleWdEZWlMTkZHTWVwWDNrWjV0MXBTNU1ROXRDYmEzeFVzMUtLTDV0?=
+ =?utf-8?B?YWpEOVNMd3RJQkpWb3hPWDNDOVJ1M29QQTlHWldGWkltZjhXTXh4Sy9KSGt2?=
+ =?utf-8?B?WC81bTRpbVZPT29RNFZjOFA1QnJCa0pCeGtZVmhrVk1Gd29pb2RSeVZ1U1BN?=
+ =?utf-8?B?c1B2UlVJZVduRGgzaE5iZWdCMkJQYVlKRTR1VVhmejRJbWZEOGZibUU0UHd0?=
+ =?utf-8?B?MERudmxFUnlxdmwzMkJQbkE5aFR1MHBuTUdKSGNUWFE0aE4wYVQwWGdnVXJS?=
+ =?utf-8?B?ZzJqdmdNRjBtT3VrcnF4cGU5bHhuOUUySGtsc05Od2wwTjk1ZFV1K3ZGTGhi?=
+ =?utf-8?B?V2NISWZVOHNyNVdyQ0ZSeGk1T1d0N25saWJsOXBEY2NMd2lUc2hEZkpmSGxy?=
+ =?utf-8?B?VWRyb01yQXo1bHJGWmxXMVhoekk3RnRoYjFNaE5OTjkyWlllR1VmcFBhYW9X?=
+ =?utf-8?B?NDRRdTNHRmZRPT0=?=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;6:NwsvbGaafYHprEXn//BPAFLPPRAzZsqHeQ6KHrpXM1vLwgMbmaWIKMRxS1AssldjNluNgJGw+cPGnZxlS/EvkPsWHK9AcQHocGPqx6mIhg5gaIGUcT2cOqRd4QlqydiW90HcZyqgW3EN84B13IVorbjrxJjyGvelKO+9FJ+7iTazEaj2RDl66P/O5h9WMf1bvcFHf3crkKcIrfzJYDG6tZK0AV1VYyVDA8MLihBcG92Mc0tFIOzUZwiAKLf9brefroQdJmNnPiz4ltAQF6Fl/0hgYcIMPd0fy8PI9nfxHjhnl5uRJKGIeOHwJHn0Uaj9UNluAlcTCWcCiDF7CTJlDxoB/roUWU3Yqzyqrao/1OI=;5:B+ZH+UI2X3lq5P7Af1fFoHSspznCa6oSLa+MWPbNwK1a261HKXz53FJ2TU2IU32/z9DmA+8Q1W12eRpAh8QeXwhRE/q33ZYvkd0sfubgBOb+q9dSbOQu4g2emoI+7PWOCvdLDRgssieYI508Lpdd4YpYG1rAsRQsn2P+tYbJJ1A=;24:/qKS2hNWqxiiAvuOsnneSV0l/dIThevJlxR+y96SowtQ4h1igTnohY4fwq7iFUlmvAOSMI2dnm7Qszga5oHh7TNhrSbyr2ufLkeSO/aUrEY=;7:LGKIJr3z5kpU5mmjGV5Vx5AmG4UGdRiLhkqKRtYzp+1TuBaoXx9CFcmxhMJJj71tjGS3p+iJImA/IW235cR5sTKHz0H3Aksyl5yogyRNnqXizthTRIdE2vB1oDlzgSx0F74TX1EY6LZPJgixvGl+BLsL1Cu9I+P1STYZu4MJoQdxMOgZjj1bzYZF5vdQHKMKxgSKlbzU41vdg6kSPcZOKHachLqBhDUHuWdmT5uP5v+s+7YcnDm2oATJY1hOm26N
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;20:r/nRmr+YbLaSI82/3mj2gXxKmc+CpyFNJbSKkjWTQ5v11N/mUETfoNlRnuHnAWwwKeU/IS69OJipHScTTReNsXMwbHf2zWQlT+SRtTyEw6ZTDVaVgMbZSUEC1SeghnWu4ttqlIdaCl7IFFwdfffH9QjqO0ScVN+2GpQxpj5UTr4=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;20:flo2gUFK7NtYFo5OlWeeA0vTPTHdU9a4qNcv7qzF08HxCHuv/NAOIcxG0seSVYa1VuBALz2ylE9nD65m5QY8d300z6D57bNDZOc6F97+3zHmstDYGjl/yg+Kp1LaSHU8qZo++aLpUOT6KGzcxlHkSgy0w8tgpP/QpA49+n6Oksk=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2018 12:10:44.0009 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 128aace1-e811-4f3b-7616-08d58036a0a2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2018 12:11:19.0546 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4033d822-628d-4751-55d4-08d58036b53d
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3258
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3256
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -103,11 +103,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 03/01/2018 08:15 PM, Andrey Konovalov wrote:
-> When an invalid-free is triggered by one of the KASAN tests, the object
-> doesn't actually get freed. This later leads to a BUG failure in
-> kmem_cache_destroy that checks that there are no allocated objects in the
-> cache that is being destroyed. Fix this by calling kmem_cache_free with
-> the proper object address after the call that triggers invalid-free.
+> A compiler can optimize away memset calls by replacing them with mov
+> instructions. There are KASAN tests, that specifically test that KASAN
+> correctly handles memset calls, we don't want this optimization to
+> happen.
+> 
+> The solution is to add -fno-builtin flag to test_kasan.ko
 > 
 > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 
