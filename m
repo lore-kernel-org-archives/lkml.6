@@ -1,64 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936226AbeCBPmU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:42:20 -0500
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35216 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934173AbeCBPmR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:42:17 -0500
-X-Google-Smtp-Source: AG47ELseZZoS8Iyh8sDP+21IGx4KLWkx6Aq++eu0gP2pmDiByBp1o4JWsbj/cYoyUdN2l9JSRBzS9Q==
-Date: Fri, 2 Mar 2018 09:42:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: matthias.bgg@gmail.com, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 16/19] arm: dts: mt7623: fixup available memory size
- on bananapi-r2
-Message-ID: <20180302154215.xr3b2zlmuojw5i6l@rob-hp-laptop>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
- <e49485aac14bec85c14514c1953f8d7ea5401695.1519378872.git.sean.wang@mediatek.com>
+        id S936242AbeCBPna (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:43:30 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:34336 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935392AbeCBPn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:43:29 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
+        wxt@rock-chips.com, linux-rockchip@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] soc: rockchip: power-domain: use clk_bulk APIs
+Date: Fri, 02 Mar 2018 16:43:09 +0100
+Message-ID: <2683576.o9hXnVZqaR@phil>
+In-Reply-To: <20180228124143.8364-1-jeffy.chen@rock-chips.com>
+References: <20180228124143.8364-1-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e49485aac14bec85c14514c1953f8d7ea5401695.1519378872.git.sean.wang@mediatek.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 06:16:36PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+Hi Jeffy,
+
+Am Mittwoch, 28. Februar 2018, 13:41:43 CET schrieb Jeffy Chen:
+> Use clk_bulk APIs, and also add error handling for clk enable.
 > 
-> There is 2GB DDR3 available on bananapi-r2 board as [1] specified.
-> 
-> [1] http://www.banana-pi.org/r2.html
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> index 140ff78..3e8d02c 100644
-> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> @@ -38,6 +38,11 @@
->  			default-state = "off";
->  		};
->  	};
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+
+[...]
+
+> -	for (i = 0; i < clk_cnt; i++) {
+> -		clk = of_clk_get(node, i);
+> -		if (IS_ERR(clk)) {
+> -			error = PTR_ERR(clk);
+> +	pd->num_clks = of_count_phandle_with_args(node, "clocks",
+> +						  "#clock-cells");
 > +
-> +	memory {
+> +	pd->clks = devm_kzalloc(pmu->dev, pd->num_clks * sizeof(pd->clks[0]),
 
-Unit address?
+applied for 4.17, after changing to devm_kcalloc like below:
 
-> +		device_type = "memory";
-> +		reg = <0 0x80000000 0 0x80000000>;
-> +	};
->  };
->  
->  &afe {
-> -- 
-> 2.7.4
-> 
+pd->clks = devm_kcalloc(pmu->dev, pd->num_clks, sizeof(*pd->clks),
+
+
+Thanks
+Heiko
