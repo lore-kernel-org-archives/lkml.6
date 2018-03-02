@@ -1,92 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426232AbeCBPy7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:54:59 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52768 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1424068AbeCBPy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:54:56 -0500
-Subject: Re: [PATCH v3 3/3] arm64: dts: Hi3660: Add binding for stub clock
-To: Leo Yan <leo.yan@linaro.org>, Xu YiPing <xuyiping@hisilicon.com>
-References: <1510910852-2175-1-git-send-email-xuyiping@hisilicon.com>
- <1510910852-2175-4-git-send-email-xuyiping@hisilicon.com>
- <20180228050639.GA20745@leoy-ThinkPad-T440>
-CC: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <xuejiancheng@hisilicon.com>, <wenpan@hisilicon.com>,
-        <zhangfei.gao@linaro.org>, <guodong.xu@linaro.org>,
-        <zhongkaihua@huawei.com>, <chenjun14@huawei.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <suzhuangluan@hisilicon.com>, <xuezhiliang@hisilicon.com>,
-        <kevin.wangtao@hisilicon.com>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5A9973BB.7030907@hisilicon.com>
-Date: Fri, 2 Mar 2018 15:54:35 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1427978AbeCBPzL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:55:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45106 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1425921AbeCBPy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:54:58 -0500
+Date: Fri, 2 Mar 2018 16:54:54 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the printk tree
+Message-ID: <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
+References: <20180302160732.12691fbc@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180228050639.GA20745@leoy-ThinkPad-T440>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.47]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302160732.12691fbc@canb.auug.org.au>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo, YiPing,
-
-On 2018/2/28 5:06, Leo Yan wrote:
-> Hi Wei,
+On Fri 2018-03-02 16:07:32, Stephen Rothwell wrote:
+> Hi Petr,
 > 
-> On Fri, Nov 17, 2017 at 05:27:32PM +0800, Xu YiPing wrote:
->> From: Kaihua Zhong <zhongkaihua@huawei.com>
->>
->> Add DT binding for Hi3660 stub clock driver.
->>
->> Reviewed-by: Leo Yan <leo.yan@linaro.org>
->> Signed-off-by: Kai Zhao <zhaokai1@hisilicon.com>
->> Signed-off-by: Tao Wang <kevin.wangtao@hisilicon.com>
->> Signed-off-by: Ruyi Wang <wangruyi@huawei.com>
->> Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
+> After merging the printk tree, today's linux-next build (bfin
+> BF518F-EZBRD_defconfig) failed like this:
 > 
-> Could you help to pick up this patch? Thanks!
+> lib/dump_stack.o: In function `dump_stack':
+> lib/dump_stack.c:122: multiple definition of `dump_stack'
+> arch/blackfin/kernel/dumpstack.o:arch/blackfin/kernel/dumpstack.c:166: first defined here
+> 
+> Presumably caused by commit
+> 
+>   8040af489957 ("printk: move dump stack related code to lib/dump_stack.c")
 
-It failed to merge because of the mailbox part.
-Once the mailbox driver is accepted, I will pick up this.
-Thanks!
+I could confirm that it is caused by this commit. I have temporary
+removed it from printk.git.
+
+> (Though it is not immediately obvious why.)
+
+It is a mistery to me. The error appears when I move any of
+dump_stack_print_info() or show_regs_print_info() function
+definitions from kernel/printk/printk.c to lib/dump_stack.c.
+All the other changes seems unrelated.
+
+The thing is that we basically do not touch dump_stack() definition
+by that patch.
+
+> This fails all the blackfin builds.  nds32 (a new architecture) also
+> has a dump_stack function.
+
+Good to know!
 
 Best Regards,
-Wei
-
-> 
->> ---
->>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> index 451b6bf..cbbc7f1 100644
->> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> @@ -293,6 +293,13 @@
->>  			#mbox-cells = <3>;
->>  		};
->>  
->> +		stub_clock: stub_clock@e896b500 {
->> +			compatible = "hisilicon,hi3660-stub-clk";
->> +			reg = <0x0 0xe896b500 0x0 0x0100>;
->> +			#clock-cells = <1>;
->> +			mboxes = <&mailbox 13 3 0>;
->> +		};
->> +
->>  		dual_timer0: timer@fff14000 {
->>  			compatible = "arm,sp804", "arm,primecell";
->>  			reg = <0x0 0xfff14000 0x0 0x1000>;
->> -- 
->> 1.9.1
->>
-> 
-> .
-> 
+Petr
