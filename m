@@ -1,100 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163993AbeCBCIg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 21:08:36 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38817 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163696AbeCBCId (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 21:08:33 -0500
-X-Google-Smtp-Source: AG47ELvIRT8LrP9ngbRHTZiA8IsEBUtj+0FH9xHVVkWYW0CvsWBIYtVctDa4qDq9hfQgvCtkcMHuGTi6fxJX53LmKEQ=
+        id S1164185AbeCBCPy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 21:15:54 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54252 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1163939AbeCBCPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 21:15:52 -0500
+Subject: Re: [Ocfs2-devel] [PATCH] Correct a comment error
+To: Changwei Ge <ge.changwei@h3c.com>, Larry Chen <lchen@suse.com>,
+        "mfasheh@versity.com" <mfasheh@versity.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>
+References: <20180228101720.20725-1-lchen@suse.com>
+ <5A97F88E.4010303@huawei.com>
+ <63ADC13FD55D6546B7DECE290D39E373F292C0FC@H3CMLB12-EX.srv.huawei-3com.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+From: piaojun <piaojun@huawei.com>
+Message-ID: <5A98B3BB.3040408@huawei.com>
+Date: Fri, 2 Mar 2018 10:15:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-In-Reply-To: <0a74f87a-027a-df7d-ca2d-fc164ec9cdf7@arm.com>
-References: <20180301054820.42847-1-dbasehore@chromium.org>
- <20180301054820.42847-2-dbasehore@chromium.org> <20180301114144.nmwu4qtslvj7ogj5@lakrids.cambridge.arm.com>
- <0a74f87a-027a-df7d-ca2d-fc164ec9cdf7@arm.com>
-From: "dbasehore ." <dbasehore@chromium.org>
-Date: Thu, 1 Mar 2018 18:08:31 -0800
-X-Google-Sender-Auth: STK8InTaVnMRxtWfXgaYL19H4CE
-Message-ID: <CAGAzgsqLgujex--HCo3dRGvOPXG0zu-RwkbuGhgNhBTc3sURJA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] irqchip/gic-v3-its: add ability to save/restore
- ITS state
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Soby Mathew <Soby.Mathew@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <63ADC13FD55D6546B7DECE290D39E373F292C0FC@H3CMLB12-EX.srv.huawei-3com.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 4:29 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Hi Mark,
->
-> On 01/03/18 11:41, Mark Rutland wrote:
->> On Wed, Feb 28, 2018 at 09:48:18PM -0800, Derek Basehore wrote:
->>> Some platforms power off GIC logic in suspend, so we need to
->>> save/restore state. The distributor and redistributor registers need
->>> to be handled in platform code due to access permissions on those
->>> registers, but the ITS registers can be restored in the kernel.
+Hi Changwei,
+
+On 2018/3/2 9:59, Changwei Ge wrote:
+> Hi Jun,
+> I think the comments for both two functions are OK.
+> No need to rework them.
+> As we know, ocfs2 lock name(lock id) are composed of several parts including 
+> block number.
+I looked though the comments involved 'lockid', and found 'lockid' is a
+concept in dlm level, so ocfs2 level should not be aware of it.
+
+thanks,
+Jun
+> 
+> Thanks,
+> Changw2ei
+> 
+> On 2018/3/1 20:58, piaojun wrote:
+>> Hi Larry,
+>>
+>> There is the same mistake in ocfs2_reflink_inodes_lock(), could you help
+>> fixing them all?
+>>
+>> thanks,
+>> Jun
+>>
+>> On 2018/2/28 18:17, Larry Chen wrote:
+>>> The function ocfs2_double_lock tries to lock the inode with lower
+>>> blockid first, not lockid.
 >>>
->>> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
->>
->> How much state do we have to save/restore?
->>
->> Given we can apparently read all this state, couldn't we *always* save
->> the state, then upon resume detect if the state has been lost, restoring
->> it if so?
->>
->> That way, we don't need a property in FW tables for DT or ACPI.
->
-> That's a good point. I guess that we could just compare the saved
-> GITS_CTLR register and restore the full state only if the ITS comes back
-> as disabled.
->
-> I'm just a bit worried that it makes it an implicit convention between
-> kernel an FW, which could change in funny ways. Importantly, the PSCI
-> spec says states FW should restore *the whole state*. Obviously, it
-> cannot to that on HW that doesn't allow you to read out the state, hence
-> the DT flag that outlines the departure from the expected behaviour.
->
-> I'm happy to go either way, but then I have the feeling that we should
-> go back to quirking it on the actual implementation (GIC500 in this
-> case) if we're to from the property.
->
->>
->> [...]
->>
->>> @@ -3261,6 +3363,9 @@ static int __init its_probe_one(struct resource *res,
->>>              ctlr |= GITS_CTLR_ImDe;
->>>      writel_relaxed(ctlr, its->base + GITS_CTLR);
+>>> Signed-off-by: Larry Chen <lchen@suse.com>
+>>> ---
+>>>   fs/ocfs2/namei.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>>
->>> +    if (fwnode_property_present(handle, "reset-on-suspend"))
->>> +            its->flags |= ITS_FLAGS_SAVE_SUSPEND_STATE;
+>>> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+>>> index c801eddc4bf3..30d454de35a8 100644
+>>> --- a/fs/ocfs2/namei.c
+>>> +++ b/fs/ocfs2/namei.c
+>>> @@ -1133,7 +1133,7 @@ static int ocfs2_double_lock(struct ocfs2_super *osb,
+>>>   	if (*bh2)
+>>>   		*bh2 = NULL;
+>>>   
+>>> -	/* we always want to lock the one with the lower lockid first.
+>>> +	/* we always want to lock the one with the lower blockid first.
+>>>   	 * and if they are nested, we lock ancestor first */
+>>>   	if (oi1->ip_blkno != oi2->ip_blkno) {
+>>>   		inode1_is_ancestor = ocfs2_check_if_ancestor(osb, oi2->ip_blkno,
+>>>
 >>
->> Does this allow this property on an ACPI system?
+>> _______________________________________________
+>> Ocfs2-devel mailing list
+>> Ocfs2-devel@oss.oracle.com
+>> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 >>
->> If we need this on ACPI, we need a spec update to handle this properly,
->> and shouldn't use device properties like this.
->
-> Well spotted. I guess that dropping the property would fix that
-> altogether, assuming we feel that the above is safe enough.
->
-> Thoughts?
-
-I'm fine changing it to get rid of the devicetree property.
-
-What's the reason for quirking the behavior though? It's not that much
-code + data and nothing else relies on the state of the ITS getting
-disabled across suspend/resume. Even if something did, we'd have to
-resolve it with this feature anyways.
-
->
->         M.
-> --
-> Jazz is not dead. It just smells funny...
+> .
+> 
