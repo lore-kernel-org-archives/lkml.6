@@ -1,77 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422910AbeCBIY4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 03:24:56 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1422781AbeCBIYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 03:24:54 -0500
-Subject: Re: [PATCH v2 00/11] perf events patches for improved ARM64 support
-References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
- <20180227095028.GG21033@krava>
-CC: Jiri Olsa <jolsa@redhat.com>, <ak@linux.intel.com>,
-        <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-        <alexander.shishkin@linux.intel.com>, <namhyung@kernel.org>,
-        <will.deacon@arm.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <zhangshaokun@hisilicon.com>
-To: <wcohen@redhat.com>, <ganapatrao.kulkarni@cavium.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <6250a69e-71ab-5119-cc3f-7e2661aa8c0b@huawei.com>
-Date: Fri, 2 Mar 2018 08:24:23 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1422914AbeCBI06 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 03:26:58 -0500
+Received: from mga09.intel.com ([134.134.136.24]:19901 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1422857AbeCBI05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 03:26:57 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
+   d="scan'208";a="30902997"
+Date: Fri, 2 Mar 2018 16:27:56 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
+ holding lock
+Message-ID: <20180302082756.GC6356@intel.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-4-aaron.lu@intel.com>
+ <20180301160950.b561d6b8b561217bad511229@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180227095028.GG21033@krava>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.89.34]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301160950.b561d6b8b561217bad511229@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2018 09:50, Jiri Olsa wrote:
-> On Sat, Feb 24, 2018 at 12:05:21AM +0800, John Garry wrote:
->> This patchset adds support for some perf events features,
->> targeted at ARM64, implemented in a generic fashion.
->>
->> The two main features are as follows:
->> - support for arch/vendor/platform pmu events directory structure
->>    - to support this, topic subdirectory support needs to be dropped
->> - support for parsing standard architecture pmu events
->>
->> On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
->> and HiSilicon hip08 JSONs are relocated/added/updated.
->>
->> In addition, there is a patch to drop mutli-mapfile.csv support and
->> also a bugfix in jevents.c for an error code value.
->>
->> Differences to v1:
->> - Address coding issues from Jiri Olsa in adding arch std event
->>    support (https://lkml.org/lkml/2018/2/6/501)
->> - add patch to drop topic subdirectory support
->> - add patch for bug fix in json_events()
->> - add review tags from Jiri Olsa
->
-> can't tell if those json file changes are ok, but for all the code changes:
->
+On Thu, Mar 01, 2018 at 04:09:50PM -0800, Andrew Morton wrote:
+> On Thu,  1 Mar 2018 14:28:45 +0800 Aaron Lu <aaron.lu@intel.com> wrote:
+> 
+> > When a page is freed back to the global pool, its buddy will be checked
+> > to see if it's possible to do a merge. This requires accessing buddy's
+> > page structure and that access could take a long time if it's cache cold.
+> > 
+> > This patch adds a prefetch to the to-be-freed page's buddy outside of
+> > zone->lock in hope of accessing buddy's page structure later under
+> > zone->lock will be faster. Since we *always* do buddy merging and check
+> > an order-0 page's buddy to try to merge it when it goes into the main
+> > allocator, the cacheline will always come in, i.e. the prefetched data
+> > will never be unused.
+> > 
+> > In the meantime, there are two concerns:
+> > 1 the prefetch could potentially evict existing cachelines, especially
+> >   for L1D cache since it is not huge;
+> > 2 there is some additional instruction overhead, namely calculating
+> >   buddy pfn twice.
+> > 
+> > For 1, it's hard to say, this microbenchmark though shows good result but
+> > the actual benefit of this patch will be workload/CPU dependant;
+> > For 2, since the calculation is a XOR on two local variables, it's expected
+> > in many cases that cycles spent will be offset by reduced memory latency
+> > later. This is especially true for NUMA machines where multiple CPUs are
+> > contending on zone->lock and the most time consuming part under zone->lock
+> > is the wait of 'struct page' cacheline of the to-be-freed pages and their
+> > buddies.
+> > 
+> > Test with will-it-scale/page_fault1 full load:
+> > 
+> > kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
+> > v4.16-rc2+  9034215        7971818       13667135       15677465
+> > patch2/3    9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
+> > this patch 10338868 +8.4%  8544477 +2.8% 14839808 +5.5% 17155464 +2.9%
+> > Note: this patch's performance improvement percent is against patch2/3.
+> > 
+> > ...
+> >
+> > @@ -1150,6 +1153,18 @@ static void free_pcppages_bulk(struct zone *zone, int count,
+> >  				continue;
+> >  
+> >  			list_add_tail(&page->lru, &head);
+> > +
+> > +			/*
+> > +			 * We are going to put the page back to the global
+> > +			 * pool, prefetch its buddy to speed up later access
+> > +			 * under zone->lock. It is believed the overhead of
+> > +			 * calculating buddy_pfn here can be offset by reduced
+> > +			 * memory latency later.
+> > +			 */
+> > +			pfn = page_to_pfn(page);
+> > +			buddy_pfn = __find_buddy_pfn(pfn, 0);
+> > +			buddy = page + (buddy_pfn - pfn);
+> > +			prefetch(buddy);
+> 
+> What is the typical list length here?  Maybe it's approximately the pcp
+> batch size which is typically 128 pages?
 
-Hi William, Ganapatrao,
+Most of time it is pcp->batch, unless when pcp's pages need to be
+all drained like in drain_local_pages(zone).
 
-Can you check the modifications to the ARM64 JSONs you originally 
-submitted in the patchset please?
+The pcp->batch has a default value of 31 and its upper limit is 96 for
+x86_64. For this test, it is 31 here, I didn't manipulate
+/proc/sys/vm/percpu_pagelist_fraction to change it.
 
-If they are not checked, I'll have to see if the maintainers will accept 
-without your review. If not, I'll have to drop them.
+With this said, the count here could be pcp->count when pcp's pages
+need to be all drained and though pcp->count's default value is
+(6*pcp->batch)=186, user can increase that value through the above
+mentioned procfs interface and the resulting pcp->count could be too
+big for prefetch. Ying also mentioned this today and suggested adding
+an upper limit here to avoid prefetching too much. Perhaps just prefetch
+the last pcp->batch pages if count here > pcp->batch? Since pcp->batch
+has an upper limit, we won't need to worry prefetching too much.
 
-Thanks,
-John
-
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
->
-> thanks,
-> jirka
->
-> .
->
+> 
+> If so, I'm a bit surprised that it is effective to prefetch 128 page
+> frames before using any them for real.  I guess they'll fit in the L2
+> cache.   Thoughts?
