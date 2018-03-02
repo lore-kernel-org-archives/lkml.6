@@ -1,54 +1,83 @@
-Return-Path: <jikos@kernel.org>
-X-Google-Smtp-Source: AG47ELsN/Cs+3bjbVYcYGRZZKCL3mRshc9QuB7REPv72k654GlPLrlg6ahnY5ujwse29NVqT2jGa
-ARC-Seal: i=1; a=rsa-sha256; t=1520433987; cv=none;
+Return-Path: <aishpant@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1519996619; cv=none;
         d=google.com; s=arc-20160816;
-        b=NF39bK3yrAvMRAumGNpSYuhkw+miJeRz1WOk3wgC4/SGpWInBRTPIqRvpr+2Wsj0Gm
-         rM6fno9ggQLd1UCXWR1sIHg8tgXABXUaZdCkM8CBgLWXm3jMV5vOCKwnZGmDI/jJ9lI6
-         w+uxnuCNjWKMBafqcyi2McJ5z6wEDE7qhcYS9Yai7KE1v4ceYMeqx5rVMNdDzJTpkdfS
-         iLToAMxWOnZDXegEyD+mss5jOPF57ig6YviZCUPhs7+ya4AMY0HXwhZ2zpOXIuEoIjJc
-         WFQHEeS897hOWU82P1Or+4eL4EdHuIuilTzwBMkvBZ/Bu83eCWXspz/VwCXITx8Je5L2
-         Ycyg==
+        b=uxN62vF6Gtf8vtrn0MxOakdlInbnqMF8anHcj97DHKgrDUNWFcrz25Ga+gKuZwYpfY
+         WnYHb/aD5AgGp+zCZOrIVG3yugkNJAz/zLoVdjbsFkh3beARJPgp1GsasNWDEMSujdps
+         LeW7CHvIGRs53ZZAHt9NFo+U4B/+47IWVRLWLJgAHEhCqTjEqaawBCtlxsz7qW1GxLOS
+         45qmjxPGSPCXo7X+cTCDe4+e17AXNBlAxIHyGWaLmM+QoTBZl2AMdTPZzQwtYLdUy87X
+         +OmTFSy0WCHgMGcohDe/MUCYYPi40+Ke+f0xdC7z6C+lvPVW+BEvTuTJCEXmUetoohir
+         F7aA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=S3km4jM2ogoo+fshVYOtmwyTilXUoy1q47zo5I7CGW0=;
-        b=hVpLTsGV94duZVw5Wr4XfIXF+T/hJLTPkZBDBEo+wfpOR1kWKbFn5TVf1IJSDfkmaU
-         EOwPfyqbbYpk2X2/dhUG7NLYXVjYYAg1zJY2SXQQRdTLWFwsP8M/nzS3JXAwGIcFs5x0
-         kBeVGvrK5Q7jpywjm++PgxkQbW/ouDcKOtG9d17CvvZv1vTOcci3l5YHNMojVumMqy8I
-         OvIS5WY4MBH2pG38KekqzttkpRPgwzzkQHmPrg66STtN4gVKKtOObW9TFg/xiqTwRylm
-         jEhoZBsO7NoJVy39Do3PXaFspwgITpF+W0W/g6FtA3VvTE6brU6YfYRmzCMLOkXK4hGZ
-         tMOw==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=/c/v8m0ONk5DalxCyAZvPiHHkI8OSDThXBbg8q/HPPg=;
+        b=eQAX0uBEPIYuYK5DLmjgTYVB+t6TtYDQpJynBwu72MBKdCeLvuyO/8o8Q1QdbRTr3a
+         bSKJN68a/6k3HG59H9SI7A0hNvx2LkHVFUGvqoJf1ZrCDJ1QApkw/5c8cglstsHGlssF
+         hLbHin/XXWaWueAXpgzkG1eeitn9r+I4IXci4q80WqKpp2VksxlshRwk7WSgiOgRMtzH
+         h0chrMDmdAW2qWcM47BsIdI1OJpzxh/6K8FyGZ06ZpVKzT4SmBE30tsYiJxvOwu4G/+m
+         tvM0UgIbvidv5Y+E1bgDOZG6j7FkvwOBAYZ94rb7NLzbsK+0BvswFYy1Z3y2cgM8wsSL
+         WoJg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of jikos@kernel.org) smtp.mailfrom=jikos@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rkDtTcEH;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of jikos@kernel.org) smtp.mailfrom=jikos@kernel.org
-Date: Wed, 7 Mar 2018 15:46:25 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Aishwarya Pant <aishpant@gmail.com>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Jonathan Corbet <corbet@lwn.net>, Greg KH <gregkh@linuxfoundation.org>,
-    Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] HID: ntrig: document sysfs interface
-In-Reply-To: <20180302053017.GA23123@mordor.localdomain>
-Message-ID: <nycvar.YFH.7.76.1803071546100.15778@cbobk.fhfr.pm>
-References: <20180302053017.GA23123@mordor.localdomain>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rkDtTcEH;
+       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELvPffTjbzAMVu37MSafOjhLKZ+oRcUJQCdivuscfY9mwnF66nDp26nbeuVTXzPHNrP6/6Jqgg==
+Date: Fri, 2 Mar 2018 18:46:53 +0530
+From: Aishwarya Pant <aishpant@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
+Subject: [PATCH] HID: logitech-hidpp: document sysfs interface
+Message-ID: <20180302131653.GA24934@mordor.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593802620168296630?=
-X-GMAIL-MSGID: =?utf-8?q?1594290588563583276?=
+X-GMAIL-THRID: =?utf-8?q?1593831975590179411?=
+X-GMAIL-MSGID: =?utf-8?q?1593831975590179411?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2 Mar 2018, Aishwarya Pant wrote:
+Descriptions have been collected from git commit logs.
 
-> Add sysfs documentation for N-Trig touchscreens under Documentation/ABI.
-> Descriptions have been collected from code comments.
+Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+---
+ .../ABI/testing/sysfs-driver-hid-logitech-hidpp       | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-logitech-hidpp
 
-Applied, thanks.
-
+diff --git a/Documentation/ABI/testing/sysfs-driver-hid-logitech-hidpp b/Documentation/ABI/testing/sysfs-driver-hid-logitech-hidpp
+new file mode 100644
+index 000000000000..d8f831f2d6b5
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-hid-logitech-hidpp
+@@ -0,0 +1,19 @@
++What:		/sys/bus/hid/drivers/logitech-hidpp-device/<dev>/range
++Date:		Jan, 2016
++KernelVersion:	4.6
++Contact:	linux-input@vger.kernel.org
++Description:
++		(RW) This attribute controls the amount of 'turn' permitted in
++		Logitech G920 wheel. Reading from the file shows the current
++		range of the steering wheel. Writing a value within the min and
++		max boundary sets the range of the wheel.
++
++What:		/sys/bus/hid/drivers/logitech-hidpp-device/<dev>/builtin_power_supply
++Date:		Apr, 2017
++KernelVersion:	4.12
++Contact:	linux-input@vger.kernel.org
++Description:
++		Presence of this file indicates that HID++ driver is capable of
++		handling battery properties in the kernel. This way, upower can
++		add a udev rule to decide whether or not it should use the
++		internal unifying support or the generic kernel one.
 -- 
-Jiri Kosina
-SUSE Labs
+2.16.2
