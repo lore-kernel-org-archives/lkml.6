@@ -1,68 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164224AbeCBG0T (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 01:26:19 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:43500 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933010AbeCBG0R (ORCPT
+        id S1164704AbeCBGfR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 01:35:17 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34384 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933010AbeCBGfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 01:26:17 -0500
-Subject: Re: [PATCH v3 1/2] dt-bindings: add bindings doc for HiSilicon INNO
- USB2 PHY
-To: Shawn Guo <shawn.guo@linaro.org>
-References: <1519888940-23235-1-git-send-email-shawn.guo@linaro.org>
- <1519888940-23235-2-git-send-email-shawn.guo@linaro.org>
-CC: Rob Herring <robh+dt@kernel.org>, Jianguo Sun <sunjianguo1@huawei.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Pengcheng Li <lpc.li@hisilicon.com>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <c1f60df2-20d1-53ac-6cf7-9c81baea789c@ti.com>
-Date: Fri, 2 Mar 2018 11:55:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
-MIME-Version: 1.0
-In-Reply-To: <1519888940-23235-2-git-send-email-shawn.guo@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 2 Mar 2018 01:35:14 -0500
+X-Google-Smtp-Source: AG47ELseOOhupj4673xUzyCHjMRW/ixUmge6iWh3h+FDzRHDaDfuzeK04qW1rlCuooklKZAKctGp/g==
+From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Lee, Chun-Yi" <jlee@suse.com>, Michal Hocko <mhocko@kernel.org>,
+        Len Brown <lenb@kernel.org>
+Subject: [PATCH] ACPI / scan: Send the change uevent with offine environmental data
+Date: Fri,  2 Mar 2018 14:35:08 +0800
+Message-Id: <20180302063508.15818-1-jlee@suse.com>
+X-Mailer: git-send-email 2.10.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In current design of ACPI container offline, Kernel emits
+KOBJ_CHANGE uevent to user space to indidate that the ejection of
+the container was triggered by platform. (caa73ea15 patch)
 
+A pure KOBJ_CHANGE uevent is not enough for user space to identify
+the purpose. For example, a "udevadm trigger" command can also
+be used to emit change event to all udev rules. A udev rule can not
+identify that the event is from kernel for offline or from udevadm
+for other purpose. Then the offline action in udev rule may also be
+triggered by udevadm tool.
 
-On Thursday 01 March 2018 12:52 PM, Shawn Guo wrote:
-> From: Pengcheng Li <lpc.li@hisilicon.com>
-> 
-> It adds device tree bindings document for HiSilicon INNO USB2 PHY.
-> 
-> Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 52 ++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> new file mode 100644
-> index 000000000000..b563cf54ca7b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> @@ -0,0 +1,52 @@
-> +HiSilicon INNO USB2 PHY
-> +
-> +Required properties:
-> +- compatible: Should be one of the following strings:
-> +	"hisilicon,inno-usb2-phy",
-> +	"hisilicon,hi3798cv200-usb2-phy".
-> +- reg: Should be the address space for PHY configuration register in peripheral
-> +  controller, e.g. PERI_USB0 for USB 2.0 PHY01 on Hi3798cv200 SoC.
-> +- #phy-cells: Should be 1. The specifier is the index of the PHY port to
-> +  reference.
+So, similar to the change uevent of dock, kernel sends the
+KOBJ_CHANGE uevent with a offline environmental data to indicate
+purpose. It's useful by udev rule for using ENV{EVENT} filter.
 
-This can be '0' if the consumers directly use phandle to the subnodes.
+Cc: Michal Hocko <mhocko@kernel.org> 
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> 
+Cc: Len Brown <lenb@kernel.org> 
+Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+---
+ drivers/acpi/scan.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks
-Kishon
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 8e63d93..f6dca9b 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -116,6 +116,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+ {
+ 	struct acpi_device_physical_node *pn;
+ 	bool offline = true;
++	static const char *envp[] = { "EVENT=offline", NULL };
+ 
+ 	/*
+ 	 * acpi_container_offline() calls this for all of the container's
+@@ -126,7 +127,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+ 	list_for_each_entry(pn, &adev->physical_node_list, node)
+ 		if (device_supports_offline(pn->dev) && !pn->dev->offline) {
+ 			if (uevent)
+-				kobject_uevent(&pn->dev->kobj, KOBJ_CHANGE);
++				kobject_uevent_env(&pn->dev->kobj, KOBJ_CHANGE, envp);
+ 
+ 			offline = false;
+ 			break;
+-- 
+2.10.2
