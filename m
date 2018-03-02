@@ -1,155 +1,106 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4022553-1520325550-2-11148562389889800936
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520325549; b=uTGiQP9KxblvfHyR4rHd75ccCu8CpYNbD4EZr/FqiqrbwS+
-    z5Y2z9scKSH9iyc+UvA2jlNwRAhvLucNuPlaOpon58yvFzUQyL05Xo8/4KyIum7I
-    OiGCEulgHuBqvIq9kfD3cfAf8bW4k6YZCWEQvs/ltFqR166F8BeZ2HixWQenjbsZ
-    aTdQaSrkIy4JCBXBIZEcRCK6dkTnmcDk16+BKz7lXWWTLBO/5Ii1y0yN3DK/eX82
-    1/qS4oEHW73+nkqPdO3N5v2b0xCluz+yMP41Yb/0H8bH4w40Z8N75aJmeGuNg8DL
-    a0lv8oxAeFIuCY7KblyjF0tRDnrk9gWWEcdOg0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1520325549; bh=MyUWsnk9iIyZSjS85f3mmcLJCJ
-    mrX7FBbjxn4DumzT8=; b=Ij/j2gqVfywscHlfeJqMw2LqsK7/YHLHp37yx5/wSr
-    dxcJE9BAUfjUGJYbEYyv8JkRVjNV9wuNDNcAxnUKEPz+PkCW+yEIsF/LWsNV7D0q
-    CRv0NkP+qPb4MecQUV01e4b3O/vDec53Bw84x4+xTj9d9kjRitYT50pBxiwxaQKv
-    vSDdVzxYaohVxFTbdt1brX7uP5u1orUkhMm/StgE9IlMavKewqBZwRDQFNOcksNq
-    gBFwJfFMvF1oXsWKOmrNpU7yNph2R5kaVkTr3qvzYvWAbIxy4v8m99j5LBqXYFaA
-    c1eo4tyrYJKQbHj29sE7WIj4twlcKmhG3snUJoPdusIQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dk-develop.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dk-develop.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dk-develop.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dk-develop.de header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753223AbeCFIjH (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Mar 2018 03:39:07 -0500
-Received: from hs01.dk-develop.de ([213.136.71.231]:58567 "EHLO
-        hs01.dk-develop.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750769AbeCFIjG (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 6 Mar 2018 03:39:06 -0500
-From: Danilo Krummrich <danilokrummrich@dk-develop.de>
-To: gregkh@linuxfoundation.org, felipe.balbi@linux.intel.com
-Cc: linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kai.heng.feng@canonical.com,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>,
-        stable@vger.kernel.org
-Subject: [PATCH resend] usb: quirks: add control message delay for 1b1c:1b20
-Date: Tue,  6 Mar 2018 09:38:49 +0100
-Message-Id: <20180306083849.3293-1-danilokrummrich@dk-develop.de>
-X-Mailer: git-send-email 2.16.2
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <jeffy.chen@rock-chips.com>
+X-Google-Smtp-Source: AG47ELtM0yasfBFIRbVBMtHF3gAkRVnJ1nEr9ij0U0Vyvic+njVNC/ivBngHfxFf78ClSCTWvCMN
+ARC-Seal: i=1; a=rsa-sha256; t=1519962706; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xQMLgaNxIL5TE/O9vHP7H0aWmtJ82JEMN3ClV9KEkT0WlvYrF712AXByx5bRrEQTQh
+         GZ+nuNQspDAYTzuZYV/aSrukSSQfvme1MCbsoNrzC6l5sbxQt/8zqZ6JtOTQZenCBeEn
+         6ZYumfPvxDPB5JiPvo5ogUZsji9A2HSMmt8rf/BG5XWyq1BiTEwwtr8KhfaCyl6r7rxZ
+         myY5IQzcR92twrVMPGxbhYGina7c0KAqgyIsgeGE6xom8V7l9fE1VUIZjDs4qPBeNOOm
+         3QZzXkOm7HnJvaZHDiyPBJNM/W+qbiSeK3R3uQwbO3h+15RonoLOe+c6l646xcCcx8Fy
+         XVLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=xN1nZkbsy/FXN6oh0zEn7n4iJVz5npzRrVrkLGDnaGQ=;
+        b=i8BBEvOaU1LBgJ+ZKld67o176SE6csQowa8xCDL1HzDXDFyui8vQeW7TslkqyHI+SY
+         Dx3BVHzd0BRcG1HVshq53zXmcMlSP7iJG3h2NFl4ol+JdIYNFaFqR04iseb/W00zsqE7
+         qEyxEj0rEVE0MvrUvOG8LcI6fAeBrZEgiuNFWPHXQvs2tnM7zPOyHXGHooK0zOi1fyt9
+         5dOuW1UuW69oIudvZ4dMyPunY/pooi86gjvy7ElJoe0cSh75RNLwO2okpDYlVn2eifG1
+         1EYqouwgnLKT3MdZCbzR2Riw9LHkCSjvTPNwW7/Wr95d1gEM4vUeX6FyTHnGnyp0BLHp
+         D0tg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.25 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.25 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <9a10a6e118595b04a2a76f7962c4bfc0>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com,
+	heiko@sntech.de,
+	dtor@google.com,
+	dianders@google.com,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joseph Lo <josephl@nvidia.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Yao <markyao0591@gmail.com>,
+	Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-rockchip@lists.infradead.org,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	devicetree@vger.kernel.org,
+	stephen lu <lumotuwe@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v3 0/3] gpio-keys: Add support for specifying wakeup event action
+Date: Fri,  2 Mar 2018 11:50:59 +0800
+Message-Id: <20180302035102.10084-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593796413605255897?=
+X-GMAIL-MSGID: =?utf-8?q?1593796413605255897?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Corsair Strafe RGB keyboard does not respond to usb control messages
-sometimes and hence generates timeouts.
 
-Commit de3af5bf259d ("usb: quirks: add delay init quirk for Corsair
-Strafe RGB keyboard") tried to fix those timeouts by adding
-USB_QUIRK_DELAY_INIT.
+On chromebook kevin, we are using gpio-keys for pen insert event. But
+we only want it to wakeup the system when ejecting the pen.
 
-Unfortunately, even with this quirk timeouts of usb_control_msg()
-can still be seen, but with a lower frequency (approx. 1 out of 15):
+So we may need to change the interrupt trigger type during suspending.
 
-[   29.103520] usb 1-8: string descriptor 0 read error: -110
-[   34.363097] usb 1-8: can't set config #1, error -110
+Changes in v3:
+Adding more comments as Brian suggested.
 
-Adding further delays to different locations where usb control
-messages are issued just moves the timeouts to other locations,
-e.g.:
+Changes in v2:
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
 
-[   35.400533] usbhid 1-8:1.0: can't add hid device: -110
-[   35.401014] usbhid: probe of 1-8:1.0 failed with error -110
+Jeffy Chen (3):
+  Input: gpio-keys - add support for wakeup event action
+  Input: gpio-keys - allow setting wakeup event action in DT
+  arm64: dts: rockchip: Avoid wakeup when inserting the pen
 
-The only way to reliably avoid those issues is having a pause after
-each usb control message. In approx. 200 boot cycles no more timeouts
-were seen.
+ .../devicetree/bindings/input/gpio-keys.txt        |  8 +++++
+ arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts  |  2 ++
+ drivers/input/keyboard/gpio_keys.c                 | 39 ++++++++++++++++++++++
+ include/linux/gpio_keys.h                          |  2 ++
+ include/uapi/linux/input-event-codes.h             |  9 +++++
+ 5 files changed, 60 insertions(+)
 
-Addionaly, keep USB_QUIRK_DELAY_INIT as it turned out to be necessary
-to have the delay in hub_port_connect() after hub_port_init().
-
-The overall boot time seems not to be influenced by these additional
-delays, even on fast machines and lightweight distributions.
-
-Fixes: de3af5bf259d ("usb: quirks: add delay init quirk for Corsair Strafe RGB keyboard")
-Cc: stable@vger.kernel.org
-Signed-off-by: Danilo Krummrich <danilokrummrich@dk-develop.de>
----
- drivers/usb/core/message.c | 4 ++++
- drivers/usb/core/quirks.c  | 3 ++-
- include/linux/usb/quirks.h | 3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index c64cf6c4a83d..0c11d40a12bc 100644
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -151,6 +151,10 @@ int usb_control_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
- 
- 	ret = usb_internal_control_msg(dev, pipe, dr, data, size, timeout);
- 
-+	/* Linger a bit, prior to the next control message. */
-+	if (dev->quirks & USB_QUIRK_DELAY_CTRL_MSG)
-+		msleep(200);
-+
- 	kfree(dr);
- 
- 	return ret;
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index f4a548471f0f..54b019e267c5 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -230,7 +230,8 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
- 
- 	/* Corsair Strafe RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
-diff --git a/include/linux/usb/quirks.h b/include/linux/usb/quirks.h
-index f1fcec2fd5f8..b7a99ce56bc9 100644
---- a/include/linux/usb/quirks.h
-+++ b/include/linux/usb/quirks.h
-@@ -63,4 +63,7 @@
-  */
- #define USB_QUIRK_DISCONNECT_SUSPEND		BIT(12)
- 
-+/* Device needs a pause after every control message. */
-+#define USB_QUIRK_DELAY_CTRL_MSG		BIT(13)
-+
- #endif /* __LINUX_USB_QUIRKS_H */
 -- 
-2.16.2
-
+2.11.0
