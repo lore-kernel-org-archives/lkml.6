@@ -1,38 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtOiUqgTSHCZ73PD0Xk7bHX23kJOpTofhuuZtzAT24yAFwRBX8AdxkCNvfia1il6ewgwR1p
-ARC-Seal: i=1; a=rsa-sha256; t=1519981095; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Urmj+6qKMZyt/lTi+vPRDbdfuQYogZ2kwQ3qh47hACGeIx2TcLDItNfS1WgjSFxJx5
-         DuEhabfE+oczAL+ic+Y72Amfx4RVKIxrLQtFum9+ax1ZnfreEWwu2gE0+dXijoThuodS
-         ZKMCcEhriznN2GwFDRLENKcZb1a06vkJySvK0mmVea06q4ON8y6ValkwXfy1JqjnDwQ+
-         D9KcgWS4Wp/axc8HClRPVJSEUASk2XhMIZaJ2Ymim5AGZfUPJ1xXuVWAe+sZkPhtjGZ+
-         tzJX/WO1IS/11jafymK1QHBPvy1u/XU9z6MjGYD3793n89P8WG9/Sp8pIlJd1gbmU4HQ
-         TACw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=0OlhBHARvhyVnUsixBqAbTKUib7fQWIirojInsgZfoc=;
-        b=xzi8jD0OUDCvxgIhxCCEDMS4KLn+5NETvIxXJVJyd7gR9kHOQwWfTNW8P6/Dx9Vt30
-         5dWOaJsnmdJrO8dnxRxpzUVrfoFxlNHipVrNojy0AVs/CdFcufSLNuB1BTB3laJ+g+Oe
-         5K4itFu4NvjvrG5rbIvPybF8gPyVEH19KNbbDRH922TMerpEJL81NVfUWm2SYJxo9RmC
-         V4j7GXhi7WB+PdI5sOgLbWUrvj7BEYkvzXR2YiJc0NpuqoUSy5HLoGbY3Ieo5JOldaih
-         0eHNCOe7Pekx1LnQ7xLTVIj29TSTkO9gsPwdqoGcSyss4LblSYoViZqBk1zC0PgCAXOu
-         hTqA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519981095-2-7906425533939038927
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519981095; b=vXmAvG5IZ847+n6lU2o1Lcoq9kVR7HPuws7EcNGLtfiBP6w
+    zscVZlRAoiJhY0rjQ8Z//AXChNa+xFGGdMNCRtm1h0SCn9ogGDFKk7kjMsJrEUns
+    2Q/5WE/AMNsP8vcNDk1FTysrYcaSpw+XGIYtfmtO+jHDKj5BlEk0eMll7IdYAT8E
+    0qbhQ+tyq56wRd80X6Gd5eiZaIW0uCv7+Rw3t2jqVCnM4kCTibnwOC92ciyVYtcx
+    Q+0/fAQzjtpnQny+R33S2ASBpmGuhl/4KKjxeeJU9Pvul/mKtlvglPjQCeYC9gGe
+    05xsRfl8irnqVzrFdwVXAXpmf3StCXg0Jx/k1wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519981095; bh=9ERH1cEkryGQzxqroT5A+GVtO5
+    XqSiiglgWHbc5CjPo=; b=uM1QshlUt7F8tYffbZsJZ/dWwZO0JYiaTe3XqzFl7N
+    55iMCB9x4nX+DtDcpemDHgR0xztLMZpnc2m7VwU5DMjoIL1Zk0dPWz5YIFZpRkWw
+    PqmRnlaTNAdT3POe3Eq3QhmTVjbEqFi1h9eb+JxrwhHDUJfBR1SCILVa3zQRypTF
+    Mvitwk70+K21lRBYLEK3tEpWI2dwBoc7vaesfokZG8OU5CnOUo7XCKtC1aIs41uv
+    15L4BMbrBzATS/xozfZWsaoZfXanYO12XnoAOEKGkNFE2XQ9pEqN3OR9EgfWglZU
+    +M3yqzlPa4VGDrxng4XEEc2T4NzNiRhp90EzmpQYPMUw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1424169AbeCBI6M (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 03:58:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52616 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423251AbeCBI6L (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:58:11 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Luu An Phu <phu.luuan@nxp.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 46/56] can: flex_can: Correct the checking for frame length in flexcan_start_xmit()
-Date: Fri,  2 Mar 2018 09:51:32 +0100
-Message-Id: <20180302084451.887462391@linuxfoundation.org>
+        stable@vger.kernel.org, Gui Iribarren <gui@altermundi.net>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 45/56] mac80211: mesh: drop frames appearing to be from us
+Date: Fri,  2 Mar 2018 09:51:31 +0100
+Message-Id: <20180302084451.829492398@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -40,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815491970045896?=
-X-GMAIL-MSGID: =?utf-8?q?1593815697254379095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +79,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luu An Phu <phu.luuan@nxp.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
 
-[ Upstream commit 13454c14550065fcc1705d6bd4ee6d40e057099f ]
+[ Upstream commit 736a80bbfda709fb3631f5f62056f250a38e5804 ]
 
-The flexcan_start_xmit() function compares the frame length with data
-register length to write frame content into data[0] and data[1]
-register. Data register length is 4 bytes and frame maximum length is 8
-bytes.
+If there are multiple mesh stations with the same MAC address,
+they will both get confused and start throwing warnings.
 
-Fix the check that compares frame length with 3. Because the register
-length is 4.
+Obviously in this case nothing can actually work anyway, so just
+drop frames that look like they're from ourselves early on.
 
-Signed-off-by: Luu An Phu <phu.luuan@nxp.com>
-Reviewed-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: Gui Iribarren <gui@altermundi.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/flexcan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/rx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -493,7 +493,7 @@ static int flexcan_start_xmit(struct sk_
- 		data = be32_to_cpup((__be32 *)&cf->data[0]);
- 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[0]);
- 	}
--	if (cf->can_dlc > 3) {
-+	if (cf->can_dlc > 4) {
- 		data = be32_to_cpup((__be32 *)&cf->data[4]);
- 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[1]);
- 	}
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -3611,6 +3611,8 @@ static bool ieee80211_accept_frame(struc
+ 		}
+ 		return true;
+ 	case NL80211_IFTYPE_MESH_POINT:
++		if (ether_addr_equal(sdata->vif.addr, hdr->addr2))
++			return false;
+ 		if (multicast)
+ 			return true;
+ 		return ether_addr_equal(sdata->vif.addr, hdr->addr1);
