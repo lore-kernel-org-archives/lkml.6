@@ -1,91 +1,79 @@
-Return-Path: <anders.roxell@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519979474; cv=none;
+Return-Path: <shuahkh@osg.samsung.com>
+X-Google-Smtp-Source: AG47ELtVl97AvDax87OYDuF92G7JE5sV/wmnpoLMIUgWEaAX8pfWS1rjmeNTDQT1AEO5iZjMGM/y
+ARC-Seal: i=1; a=rsa-sha256; t=1520011047; cv=none;
         d=google.com; s=arc-20160816;
-        b=pnpvxBOsTeDLCbxI1cJDAvWLUvQTMDrUDmJ2xs39xL/LF52EM2Vh2licsUcgFuhRrQ
-         Xq6fwA1fo2DcDCbFLd8tdPvyERi8YbbSYxMdMnBi7dbYyGJ2uaIZ/8tC75ynBtBs3WSn
-         4/ZcCABUSb1fpVH5O7Bsxvn6BH2R/WN0Mst/Xd36bddp3FXgmILAqKRBUTtuI+Pjmqfg
-         FcnejoxycwGe98/O4sPo5MwZLwKBfe0qPjDXFDXcweklTGVy8XnmwIQFCqMPQFFnD7rC
-         S9qifi4ShT37Ik5aRWKoAy/N4eNEQI8GTr/Jepv4ll4rI8CWWaY/mWbLVz43lKInWmyw
-         44pg==
+        b=BFwTUz/VgcVqHbmG/p1wd3dUSdzH+cil4XgdpAb780MkuvNxoWczADh7KRx+RKWOqt
+         b7BSjGd2/Smq6KZdw8J8LeqDPX7Mv7iaFK8mKuebzqpCJLRcQl9sDgzdY9ar3ogVLunV
+         NzbP0a/KuEw+vUqQkNmT/D2Q//fuE23RzAUP6dF/8i+PZidJMkLScpvszXnKl4kmNXKu
+         j0qQ0iyi9Z+JLsdgNcy4I+7848RePbtzOFRwXjoGM+JO7QBqKHGhXpMFZ7uvVIREQUGT
+         NyH5aCsRsgfGZnWi/eodsMXNRJMuEJRsA7iDw4wBDzCVvlFfByPI+yhr5Aq+tFi2Cojr
+         c5Gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=SFZb7os1Cxr8rxK6DLU9N6Sl6gHT6UNVHg3jbG36KHg=;
-        b=YkDFuM9gxE/Jfl0SrRKg0zimnG+nP5BncAZAWfph6CjA58PWUo7FjnJBlbJ2+Hg2IE
-         W8Dp6hds4Xve8KS7Nf3fUXOmlEMCmZjImFAD7QRv1biRtrzMRPtEmL+79JRnKI7IyBg4
-         RYsO8SMkUllkO1V1KpVk3Dcysjcfzg+AMHn87WIZy0mnyx/KcopkPp/m13rMymELaZLc
-         CB4kiQx74E/Nbx3tQCHcSuVNbpvaOTuIxkoHZ2n3GtrTB4UKfgATpNRFsCS/j9sijlm+
-         p8WOEQFiLjnWjrMWqH2jZfkKGNIVI8wdZqkUTGQgvQjI3L2WKjIjfsCymhzua6Wqn8YQ
-         /B8w==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=N0si3yZ8V95hEWoQ9En8E3V16VmXw12rc+b+k/abkfc=;
+        b=W7LYG6t2ACR8xTszUSaNj5drPGwOsIRzrM4crRPxyFUch8NgBU7Y36WeQItQ2EeQ/a
+         o26RGqPxZdVIxiBAtUAfKkveit53K/vRgAX0WN6KwTbRfV37QlZgdi+xTNyltVbHxfQS
+         NWiSHwoXqa3t49IRRvH3NGrIVsFRQreWKHoifRspujUQu/+xe4vUb1G7CoAIpL78qDHN
+         dgTyx4DQlbTZEQfKqgGmzmVSvGgWL1S4x4SDuXSmHgu11+JXzYxgSzlvFaSdPgFvGtSR
+         xARhPTs9tfRD3EUXRovZDPO716bTU+bxZh007DD8OouuDnKy4ndW4d8YIaRAO7DgIqzF
+         1G/g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=CPcrNLsm;
-       spf=pass (google.com: domain of anders.roxell@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=anders.roxell@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=CPcrNLsm;
-       spf=pass (google.com: domain of anders.roxell@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=anders.roxell@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELvZkDu2XVMy8cmNX/wiKE2pIyyobfSLtjXivuR9oxpZc0tpZTLpbQAiq4u5XytTrft81rkUVqLAc1JdayMmJMg=
-MIME-Version: 1.0
-In-Reply-To: <20180301201626.17347-1-shuahkh@osg.samsung.com>
-References: <20180301201626.17347-1-shuahkh@osg.samsung.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 2 Mar 2018 09:31:13 +0100
-Message-ID: <CADYN=9LGPa+rfnuGJ-nrpxPvw+tuAYNjxCCqefxAuRe-B_tq4w@mail.gmail.com>
+       spf=pass (google.com: domain of shuahkh@osg.samsung.com designates 64.30.133.232 as permitted sender) smtp.mailfrom=shuahkh@osg.samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Subject: Re: [PATCH] selftests: memory-hotplug: fix emit_tests regression
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: shuah@kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>, tglx@linutronix.de,
-	gregkh@linuxfoundation.org, Philippe Ombredanne <pombredanne@nexb.com>, lei.yang@windriver.com,
-	linux-kselftest@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Anders Roxell <anders.roxell@linaro.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: shuah@kernel.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
+ Philippe Ombredanne <pombredanne@nexb.com>, lei.yang@windriver.com,
+ linux-kselftest@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Shuah Khan <shuahkh@osg.samsung.com>
+References: <20180301201626.17347-1-shuahkh@osg.samsung.com>
+ <CADYN=9LGPa+rfnuGJ-nrpxPvw+tuAYNjxCCqefxAuRe-B_tq4w@mail.gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Message-ID: <98a5211d-2b88-1c0c-c5d5-7cfcfa31ef2a@osg.samsung.com>
+Date: Fri, 2 Mar 2018 10:17:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CADYN=9LGPa+rfnuGJ-nrpxPvw+tuAYNjxCCqefxAuRe-B_tq4w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593767802289906258?=
-X-GMAIL-MSGID: =?utf-8?q?1593813997335425168?=
+X-GMAIL-MSGID: =?utf-8?q?1593847104094356164?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 1 March 2018 at 21:16, Shuah Khan <shuahkh@osg.samsung.com> wrote:
-> Commit 16c513b13477
-> ("selftests: memory-hotplug: silence test command echo")
->
-> introduced regression in emit_tests and results in the following
-> failure when selftests are installed and run. Fix it.
->
-> Running tests in memory-hotplug
-> ========================================
-> ./run_kselftest.sh: line 121: @./mem-on-off-test.sh: No such file or
-> directory
-> selftests: memory-hotplug [FAIL]
->
-> Fixes: 16c513b13477 (selftests: memory-hotplug: silence test command echo")
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+On 03/02/2018 01:31 AM, Anders Roxell wrote:
+> On 1 March 2018 at 21:16, Shuah Khan <shuahkh@osg.samsung.com> wrote:
+>> Commit 16c513b13477
+>> ("selftests: memory-hotplug: silence test command echo")
+>>
+>> introduced regression in emit_tests and results in the following
+>> failure when selftests are installed and run. Fix it.
+>>
+>> Running tests in memory-hotplug
+>> ========================================
+>> ./run_kselftest.sh: line 121: @./mem-on-off-test.sh: No such file or
+>> directory
+>> selftests: memory-hotplug [FAIL]
+>>
+>> Fixes: 16c513b13477 (selftests: memory-hotplug: silence test command echo")
+>> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> 
+> Tested-by: Anders Roxell <anders.roxell@linaro.org>
+> 
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Thanks for testing. It is now in linux-kselftest fixes for the next
+4.16-rc
 
-> ---
->  tools/testing/selftests/memory-hotplug/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/memory-hotplug/Makefile b/tools/testing/selftests/memory-hotplug/Makefile
-> index 183b46883875..686da510f989 100644
-> --- a/tools/testing/selftests/memory-hotplug/Makefile
-> +++ b/tools/testing/selftests/memory-hotplug/Makefile
-> @@ -5,7 +5,8 @@ include ../lib.mk
->
->  TEST_PROGS := mem-on-off-test.sh
->  override RUN_TESTS := @./mem-on-off-test.sh -r 2 && echo "selftests: memory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
-> -override EMIT_TESTS := echo "$(RUN_TESTS)"
-> +
-> +override EMIT_TESTS := echo "$(subst @,,$(RUN_TESTS))"
->
->  run_full_test:
->         @/bin/bash ./mem-on-off-test.sh && echo "memory-hotplug selftests: [PASS]" || echo "memory-hotplug selftests: [FAIL]"
-> --
-> 2.14.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kselftest" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+thanks,
+-- Shuah
