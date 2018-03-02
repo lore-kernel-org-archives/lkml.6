@@ -1,5 +1,5 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3944332-1519938938-2-14054168439813348452
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-517306-1519965782-2-17031830393645436828
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,171 +7,176 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_H
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519938937; b=DhrhTmOyYBQvcA2QuQRtVYuw/dPeWNtc/UPv5NJo6xfAS7L
-    WrsxubGuhqpKyujxd+BdZWzWK9ZWI6sZmpKfYibuwJ0m/ZIfpdJ/TxW9iaasqES9
-    P6ZVB537c6FvRkRd/f3prgACgaqNcUQs12b8IR0+xX9kYMjr5bPQxuhh7E0dwvUy
-    Z6eB+kPjGrwBg/NUqU7FDzGV+tsP5ioRSBCVHonubA3EmNkaR6/5ZqpG84Q1a4u7
-    1vGtGZGEJpuyEFeEaFpTRdcIOTm+4+pznmRu2q2k2aGJOWVHtsn4KRMGZpFdWOFm
-    VHDKI3A6m3eKklChDH+EsbofnlIzg90/yvPEJEQ==
+    t=1519965781; b=d24Qbvd6HJuBHb55iyj0tWh0EP2F8UFEWNTFi4gw0fTsHO/
+    E8GGebu06vpabgui8rAhlcjonKBhSZAw8EKhhTYUUYJcPntppBgAwyM5A2GKNPu5
+    MntGm2prfQP9diJam24aUxzWKepaPDG0NrZPYsILrfaH6qDSXFFJBU33+EYAa26D
+    oeUVGIdQuvk8JFmrNKor3qCaQlUEqcMzi9+E9rCl0w8QWGt7PBgKra3SGhpSrkTh
+    5MQzFlS5aG66Jnb4NhsvBU4KeGe7Ph2NXcSIKG5ULhGl8q0WwK3H3jj16/Fe6wQO
+    +CWqZZe+3VuMoJruLlcZ34xwe6IdiJlV60bTHQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1519938937;
-    bh=/l/TbMyn0FrCPQSlPpyoGmxIdJgsz7T4g+cdsstYx3o=; b=PWZ38SJxcIFj
-    9YeGLiLsb/2UlnJG8mwGHAeYXu+1aC+Ofye+B0QsVg5T5bEpOH/ZWVZenzoXmNac
-    hvOXn5oOo0bPZm7JmrZE1VyoR+xeyQz0Tq3WdmG2NbeBfNxs9HqWqqb8h2liXB6K
-    YgfC2WiguV+IcerFkxmZXR3eTsYfnvNOAZ2hgVKNX+D6r6eAiDzbTyj0MDhfAMJZ
-    XM7tUiSylwkJTLqCrTOd2FeVmNkOpuohnCZfAGj3cPoAt8dzuRXvwon2f8bBKMlf
-    Kn13as787LvsuLl8RKclHjKDHwjNhBKIHfQ8NegSs5GnPmS4txZm+NzwHmEC6YYD
-    /Ybj7Lq0Tw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sb4zLQ8+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1519965781; bh=HQivaLxPpxita7Kh4Aew5K9DBC3Gkrw+N9FlaKYKq2Q=; b=l
+    MHU1eRl4eN+Pmt/7egWBlTDP3NzEypqVxrknjnQOQO+1V3/m8AMq6ky5NNH6qNn2
+    QINhDiqE8n9aY/2G4wVJJMfM4GTyfw0uZs/Gm6XkWQjHsEUK7biii7J6sOgvllWz
+    CF9cAdgubeevFYxcqa+2onoBFinBFaV0E29FOBXc+VuLj3m8W/DV7qOtyquZCbJk
+    LXg11uPugr9zprC2wnzIb5QQWyJX1050eLEvOQOdZ720rUKdGx/koni7x8la0MdX
+    Px44+la1N/8XZz9XD1XwUYg3c74IU4cj7MUpjIHCidcBBCdZWTvCyVuSXs55KmcR
+    x8dkgFTiHpigVk1fNHB2w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Th4BAnn5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Uu1c1re3;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sb4zLQ8+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Th4BAnn5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Uu1c1re3;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034216AbeCAVPe (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 16:15:34 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49136 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1033870AbeCAVPb (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 1 Mar 2018 16:15:31 -0500
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        linux-api@vger.kernel.org
-Subject: [PATCH v4 1/4] s390: Use _refcount for pgtables
-Date: Thu,  1 Mar 2018 13:15:20 -0800
-Message-Id: <20180301211523.21104-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180301211523.21104-1-willy@infradead.org>
-References: <20180301211523.21104-1-willy@infradead.org>
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1422797AbeCBEnA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 23:43:00 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36753 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422796AbeCBEm6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 1 Mar 2018 23:42:58 -0500
+X-Google-Smtp-Source: AG47ELslUQOYFFExWmZYJCZyc1cdW9eLfgDUKpM9M5Uph8q/MSJEWZBqo2EFIOPhpwDzz7Ler+4qOw==
+Subject: Re: [PATCH v5 2/9] watchdog/hpwdt: Remove legacy NMI sourcing.
+To: Jerry.Hoemann@hpe.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rwright@hpe.com, maurice.a.saldivar@hpe.com,
+        Ingo Molnar <mingo@kernel.org>, marcus.folkesson@gmail.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable <stable@vger.kernel.org>
+References: <20180226032227.14615-1-jerry.hoemann@hpe.com>
+ <20180226032227.14615-3-jerry.hoemann@hpe.com>
+ <CAK8P3a1A5d52g-3Wgs1xP3P=dT6K0RVjmamfqAi9vE5TT=mo3g@mail.gmail.com>
+ <03b13d44-9ce3-ead8-020d-4b1b8114079d@roeck-us.net>
+ <20180227010250.GC8244@anatevka.americas.hpqcorp.net>
+ <8766f2ee-428a-d72f-b0c3-e5fe68fd0a33@roeck-us.net>
+ <20180228194558.GB28906@anatevka.americas.hpqcorp.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f61a92c4-f923-77d7-22a8-11481baca79b@roeck-us.net>
+Date: Thu, 1 Mar 2018 20:42:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180228194558.GB28906@anatevka.americas.hpqcorp.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On 02/28/2018 11:45 AM, Jerry Hoemann wrote:
+> On Mon, Feb 26, 2018 at 05:29:55PM -0800, Guenter Roeck wrote:
+>> On 02/26/2018 05:02 PM, Jerry Hoemann wrote:
+>>> On Mon, Feb 26, 2018 at 06:32:30AM -0800, Guenter Roeck wrote:
+>>>> On 02/26/2018 06:11 AM, Arnd Bergmann wrote:
+>>>>> On Mon, Feb 26, 2018 at 4:22 AM, Jerry Hoemann <jerry.hoemann@hpe.com> wrote:
+>>>>>> Gen8 and prior Proliant systems supported the "CRU" interface
+>>>>>> to firmware.  This interfaces allows linux to "call back" into firmware
+>>>>>> to source the cause of an NMI.  This feature isn't fully utilized
+>>>>>> as the actual source of the NMI isn't printed, the driver only
+>>>>>> indicates that the source couldn't be determined when the call
+>>>>>> fails.
+>>>>>>
+>>>>>> With the advent of Gen9, iCRU replaces the CRU. The call back
+>>>>>> feature is no longer available in firmware.  To be compatible and
+>>>>>> not attempt to call back into firmware on system not supporting CRU,
+>>>>>> the SMBIOS table is consulted to determine if it is safe to
+>>>>>> make the call back or not.
+>>>>>>
+>>>>>> This results in about half of the driver code being devoted
+>>>>>> to either making CRU calls or determing if it is safe to make
+>>>>>> CRU calls.  As noted, the driver isn't really using the results of
+>>>>>> the CRU calls.
+>>>>>>
+>>>>>> Furthermore, as a consequence of the Spectre security issue, the
+>>>>>> BIOS/EFI calls are being wrapped into Spectre-disabling section.
+>>>>>> Removing the call back in hpwdt_pretimeout assists in this effort.
+>>>>>>
+>>>>>> As the CRU sourcing of the NMI isn't required for handling the
+>>>>>> NMI and there are security concerns with making the call back, remove
+>>>>>> the legacy (pre Gen9) NMI sourcing and the DMI code to determine if
+>>>>>> the system had the CRU interface.
+>>>>>>
+>>>>>> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+>>>>>
+>>>>> This avoids a warning in mainline kernels, so that's great:
+>>>>>
+>>>>> drivers/watchdog/hpwdt.o: warning: objtool: .text+0x24: indirect call
+>>>>> found in RETPOLINE build
+>>>>>
+>>>>> I wonder what we do about stable kernels. Are both this patch and the patch
+>>>>> that added the objtool warning message candidates for backports to
+>>>>> stable kernels?
+>>>>>
+>>>>
+>>>> Makes sense to me, but it is really a bit more than a bug fix, so I'll
+>>>> leave it up to Jerry/HPE to make the call in respect to hpwdt.
+>>>>
+>>>
+>>> Generally speaking, HPE customers who run linux do so through a distro
+>>> vendor and pick up patches from them.  But I'm sure there are some
+>>> customers who do things differently.
+>>>
+>>> The distro vendor's have their own repos and we'll work with them
+>>> to back port patches to their code base.  So, I typically don't do a lot
+>>> of kernel.org stable branch work.
+>>>
+>>> Looks like objtool has been enhanced to find Spectre vulnerable code.
+>>> Are the other kernel patches related to Spectre being back ported
+>>> to stable release lines?  If yes, it probably make sense to do
+>>> the hpwdt change as well.
+>>>
+>>
+>> Spectre has been backported to v4.4 and later. I don't know about earlier kernels.
+>>
+>>> Is just the patch removing the firmware call back wanted/needed? Or the
+>>> whole driver rewrite?  (The older baseline don't have all the watchdog
+>>> features that the patch set uses.)
+>>>
+>>
+>> We would only want to backport this patch. The rest is really out of scope.
+>>
+>>> Which stable baseline(s) would need to be patched?  Priority?
+>>>
+>>> Who does it?  (i.e. do you want me to submit patches to the stable baseline?)
+>>>
+>> We would tag the patch for stable (and submit it into v4.16-rc). Greg would
+>> take care of the rest unless there are conflicts, in which case we get a note
+>> telling us that a backport is needed.
+>>
+> 
+> Guenter,
+> 
+> Are you waiting for anything more from me on this patch, or are we
+> good for now until the back ports to v.15 etc.,?
+> 
 
-s390 borrows the storage used for _mapcount in struct page in order to
-account whether the bottom or top half is being used for 2kB page
-tables.  I want to use that for something else, so use the top byte of
-_refcount instead of the bottom byte of _mapcount.  _refcount may
-temporarily be incremented by other CPUs that see a stale pointer to
-this page in the page cache, but each CPU can only increment it by one,
-and there are no systems with 2^24 CPUs today, so they will not change
-the upper byte of _refcount.  We do have to be a little careful not to
-lose any of their writes (as they will subsequently decrement the
-counter).
+We are good. I'll need to ask Wim to send a pull request to Linus.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Acked-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
----
- arch/s390/mm/pgalloc.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
-
-diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
-index cb364153c43c..412c5f48a8e7 100644
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -189,14 +189,15 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
- 		if (!list_empty(&mm->context.pgtable_list)) {
- 			page = list_first_entry(&mm->context.pgtable_list,
- 						struct page, lru);
--			mask = atomic_read(&page->_mapcount);
-+			mask = atomic_read(&page->_refcount) >> 24;
- 			mask = (mask | (mask >> 4)) & 3;
- 			if (mask != 3) {
- 				table = (unsigned long *) page_to_phys(page);
- 				bit = mask & 1;		/* =1 -> second 2K */
- 				if (bit)
- 					table += PTRS_PER_PTE;
--				atomic_xor_bits(&page->_mapcount, 1U << bit);
-+				atomic_xor_bits(&page->_refcount,
-+							1U << (bit + 24));
- 				list_del(&page->lru);
- 			}
- 		}
-@@ -217,12 +218,12 @@ unsigned long *page_table_alloc(struct mm_struct *mm)
- 	table = (unsigned long *) page_to_phys(page);
- 	if (mm_alloc_pgste(mm)) {
- 		/* Return 4K page table with PGSTEs */
--		atomic_set(&page->_mapcount, 3);
-+		atomic_xor_bits(&page->_refcount, 3 << 24);
- 		memset64((u64 *)table, _PAGE_INVALID, PTRS_PER_PTE);
- 		memset64((u64 *)table + PTRS_PER_PTE, 0, PTRS_PER_PTE);
- 	} else {
- 		/* Return the first 2K fragment of the page */
--		atomic_set(&page->_mapcount, 1);
-+		atomic_xor_bits(&page->_refcount, 1 << 24);
- 		memset64((u64 *)table, _PAGE_INVALID, 2 * PTRS_PER_PTE);
- 		spin_lock_bh(&mm->context.lock);
- 		list_add(&page->lru, &mm->context.pgtable_list);
-@@ -241,7 +242,8 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
- 		/* Free 2K page table fragment of a 4K page */
- 		bit = (__pa(table) & ~PAGE_MASK)/(PTRS_PER_PTE*sizeof(pte_t));
- 		spin_lock_bh(&mm->context.lock);
--		mask = atomic_xor_bits(&page->_mapcount, 1U << bit);
-+		mask = atomic_xor_bits(&page->_refcount, 1U << (bit + 24));
-+		mask >>= 24;
- 		if (mask & 3)
- 			list_add(&page->lru, &mm->context.pgtable_list);
- 		else
-@@ -252,7 +254,6 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
- 	}
- 
- 	pgtable_page_dtor(page);
--	atomic_set(&page->_mapcount, -1);
- 	__free_page(page);
- }
- 
-@@ -273,7 +274,8 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table,
- 	}
- 	bit = (__pa(table) & ~PAGE_MASK) / (PTRS_PER_PTE*sizeof(pte_t));
- 	spin_lock_bh(&mm->context.lock);
--	mask = atomic_xor_bits(&page->_mapcount, 0x11U << bit);
-+	mask = atomic_xor_bits(&page->_refcount, 0x11U << (bit + 24));
-+	mask >>= 24;
- 	if (mask & 3)
- 		list_add_tail(&page->lru, &mm->context.pgtable_list);
- 	else
-@@ -295,12 +297,13 @@ static void __tlb_remove_table(void *_table)
- 		break;
- 	case 1:		/* lower 2K of a 4K page table */
- 	case 2:		/* higher 2K of a 4K page table */
--		if (atomic_xor_bits(&page->_mapcount, mask << 4) != 0)
-+		mask = atomic_xor_bits(&page->_refcount, mask << (4 + 24));
-+		mask >>= 24;
-+		if (mask != 0)
- 			break;
- 		/* fallthrough */
- 	case 3:		/* 4K page table with pgstes */
- 		pgtable_page_dtor(page);
--		atomic_set(&page->_mapcount, -1);
- 		__free_page(page);
- 		break;
- 	}
--- 
-2.16.1
-
+Guenter
