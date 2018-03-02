@@ -1,79 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163672AbeCBABZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 19:01:25 -0500
-Received: from LGEAMRELO13.lge.com ([156.147.23.53]:56909 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163541AbeCBABX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 19:01:23 -0500
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.184
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] rcu: Clean up rcu_init_nohz() by removing unnecessary
- statements
-To: paulmck@linux.vnet.ibm.com
-Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com
-References: <1519808695-28097-1-git-send-email-byungchul.park@lge.com>
- <20180228184106.GN3777@linux.vnet.ibm.com>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <166b5b47-8b6f-4b35-df4c-b42b47a173da@lge.com>
-Date: Fri, 2 Mar 2018 09:01:19 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1163649AbeCBADW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 19:03:22 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:39994 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163541AbeCBADT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 19:03:19 -0500
+To: Stephen Bates <sbates@raithlin.com>,
+        Keith Busch <keith.busch@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Sagi Grimberg <sagi@grimberg.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+ <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+ <20180301224540.GL19007@ziepe.ca>
+ <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
+ <20180301234930.GG14799@localhost.localdomain>
+ <CE2A5D93-E735-4414-8DC1-B308B74A1C5B@raithlin.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <9de7d9d1-3469-c315-ce47-0faa67a4e4c4@deltatee.com>
+Date: Thu, 1 Mar 2018 17:03:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228184106.GN3777@linux.vnet.ibm.com>
+In-Reply-To: <CE2A5D93-E735-4414-8DC1-B308B74A1C5B@raithlin.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, jgg@ziepe.ca, keith.busch@intel.com, sbates@raithlin.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/1/2018 3:41 AM, Paul E. McKenney wrote:
-> On Wed, Feb 28, 2018 at 06:04:55PM +0900, Byungchul Park wrote:
->> Since the commit 44c65ff2e3b0(rcu: Eliminate NOCBs CPU-state Kconfig
->> options) made nocb-cpus identified only through the rcu_nocbs= boot
->> parameter, we don't have to care NOCBs CPU-state Kconfig options
->> anymore, which means now we can just rely on rcu_nocb_mask to
->> decide whether going ahead in rcu_init_nohz().
->>
->> Remove the deprecated code.
->>
->> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+
+
+On 01/03/18 04:57 PM, Stephen  Bates wrote:
+>> We don't want to lump these all together without knowing which region you're allocating from, right?
 > 
-> Good catch!  However, you missed a (relatively harmless) bug in my commit
-> 44c65ff2e3b0, namely that if neither the nohz_full= nor the rcu_nocbs=
-> kernel boot parameters specify any CPUs, we don't need to allocate
-> rcu_nocb_mask.  (That is, when both of those parameters are omitted.)
-> 
-> Now, if the rcu_nocbs= kernel boot parameter was specified, we know that
-> rcu_nocb_mask was already allocated in rcu_nocb_setup().  So in
-> rcu_init_nohz() we only need to do the allocation if NO_HZ_FULL needs
-> some NOCBs CPUs, that is, when tick_nohz_full_running and when there
-> is at least one CPU specified in tick_nohz_full_mask.
+> In all seriousness I do agree with you on these Keith in the long term. We would consider adding property flags for the memory as it is added to the p2p core and then the allocator could evolve to intelligently dish it out. Attributes like endurance, latency and special write commit requirements could all become attributes in time. Perhaps one more reason for a central entity for p2p memory allocation so this code does not end up having to go into many different drivers?
 
-Why didn't I catch it in advance? :)
+Ugh, I don't know... An allocator for PMR is going to be quite a 
+different animal. It would probably need to look more like a filesystem 
+given you'd need to access the same regions across reboots. I don't 
+think it fits the p2pmem paradigm at all. I think it's something 
+entirely new all together and who knows exactly what it will look like.
 
-> So the change that is actually needed is to reverse the initialization
-> of need_rcu_nocb_mask, that is, to initialize it to false rather than
-> to true.  I annotated your patch with my reasoning and have a patch
-> below with your Reported-by.  Please take a look and let me know what
-> you think.
-
-No doubt. I agree with you.
-
-Acked-by: Byungchul Park <byungchul.park@lge.com>
-
-> If I am not too confused, the only effect of this bug was to needlessly
-> allocate rcu_nocb_mask and to initialize it to all zeros bits, but please
-> let me know if I missed something.
-
-I think so as you.
-
--- 
-Thanks,
-Byungchul
+Logan
