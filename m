@@ -1,64 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425874AbeCBJn3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:43:29 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37339 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424874AbeCBJml (ORCPT
+        id S1425925AbeCBJn7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:43:59 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14505 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424830AbeCBJCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:42:41 -0500
-X-Google-Smtp-Source: AG47ELvXdRJe2dwSTn44R9d27qnNjt/FAKYOadx5gBhaFhr6KPAEe9VA1NGwwNy1/FiVbmF+wKaTzrPfo484eUsJhnM=
+        Fri, 2 Mar 2018 04:02:14 -0500
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 02 Mar 2018 01:02:12 -0800
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+ <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+ <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
+Date: Fri, 2 Mar 2018 09:02:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <ad15f3beb9f44c77b79f3038cb75b69c@ausx13mpc124.AMER.DELL.COM>
-References: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VcdsALCUBNoO4BoOj0rHuxurhr6B3GL2i7D79BxRL77kQ@mail.gmail.com> <ad15f3beb9f44c77b79f3038cb75b69c@ausx13mpc124.AMER.DELL.COM>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Mar 2018 10:42:40 +0100
-X-Google-Sender-Auth: fcyR7PjylfTv_HxSmqN4oIB4As0
-Message-ID: <CAJZ5v0jGr0VP9bNXprvyHfLvvvEgva6S9rAZM8EZEpGw=0PG+g@mail.gmail.com>
-Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
-To: Mario Limonciello <Mario.Limonciello@dell.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+X-Originating-IP: [10.26.11.101]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 9:05 PM,  <Mario.Limonciello@dell.com> wrote:
->
->
->> -----Original Message-----
->> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
->> Sent: Wednesday, February 28, 2018 12:11 PM
->> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
->> Cc: Rafael J . Wysocki <rjw@rjwysocki.net>; ACPI Devel Maling List <linux-
->> acpi@vger.kernel.org>; LKML <linux-kernel@vger.kernel.org>
->> Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
->>
->> On Wed, Feb 28, 2018 at 7:43 PM, Mario Limonciello
->> <mario.limonciello@dell.com> wrote:
->> > Currently the only way to specify a hibernate offset for a swap
->> > file is on the kernel command line.
->> >
->> > This makes some changes to improve:
->> > 1) Add a new /sys/power/disk_offset that lets userspace specify
->> > the offset and disk to use when initiating a hibernate cycle.
->> >
->> > 2) Adjust /sys/power/resume interpretation to also read in an
->> > offset.
->>
->> Read is okay per se (not consistent though), showing is not.
->> It might break an ABI.
->
-> Right this is part of why I was proposing making a new attribute.
->
-> The current RFC implementation I sent keeps the read output the
-> same for /sys/power/resume.
 
-You also need to retain the write behavior of it.
+On 01/03/18 07:41, Peter De Schrijver wrote:
+> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
+>> On 28.02.2018 17:14, Peter De Schrijver wrote:
+>>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+>>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+>>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+>>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>>>>>>>> which
+>>>>>>>>> leaves it at some default rate of 500 kHz:
+>>>>>>>>>
+>>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>>>>>>>> pll_u
+>>>>>>>>>        pll_u                  3        3        0      500000      
+>>>>>>>>>     0
+>>>>>>>>>
+>>>>>>>>> Of course this won't quite work leading to the following messages:
+>>>>>>>>>
+>>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>>>>>>>> tegra-
+>>>>>>>>> ehci
+>>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>>>>>>>
+>>>>>>>>> Fix this by actually allowing the rate also being set from within
+>>>>>>>>> the Linux kernel.
+>>>>>
+>>>>> I think the best solution to this problem would be to make pll_u a fixed
+>>>>> clock and enable it and program the rate if it's not enabled at boot.
+>>>>
+>>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+>>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+>>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+>>>> there.
+>>>>
+>>>
+>>> AFAIK we only use one rate ever?
+>>
+>> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+>> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
+>>
+> 
+> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
+> it a fixed clock and handle the init at kernel boot depending on what the
+> bootloader has done.
 
-A new attribute is fine if it helps, but the behavior of the existing
-one cannot change (both sides).
+Peter, are you suggesting we implement the equivalent to
+tegra210_init_pllu()? This does look a bit more involved that what this
+change is doing. Is there a simple way to do what you are suggesting?
+
+Cheers
+Jon
+
+-- 
+nvpublic
