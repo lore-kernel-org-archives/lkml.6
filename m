@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsNA4n1XnizPf/N3Sx1hKb/K9jDo9gdv2K9xU/jSCGtPMOQxiDbpilDunpv+M9ydkuq2rtZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519981464; cv=none;
+X-Google-Smtp-Source: AG47ELvLQFO5QNFAfgUR1QJKfWmv869nNGW5AvrvYFmgWPsPfAfLZJvCKaDs5UfQIcnQHO/4IMkr
+ARC-Seal: i=1; a=rsa-sha256; t=1519981458; cv=none;
         d=google.com; s=arc-20160816;
-        b=K1ztu5W3jTeHR/7y+v5XreD6BG3P+4A7P8PjAx/EjK8DPQkeqMhdzdQYWvuQZP4XD3
-         jVlEZA919oH260bWuMwSe6YnUTA3+4XgY5pRTJCT82STdm1R3Cdmsyin4BCH+EY1xnqw
-         BEUs8E03lsFnNLsJ575d4G3nR1tGfb44HOHk/+IvUtQ3rnUjkU30fFVwoToO88tuPapt
-         qfKAXQSdq9vVs03OCZwdhPgD2fcJIaKT37SKt6XK8cvgkmm1IJvmCh3ywoUlOFcuu/wI
-         oSueqBmB+763hl7/AfYMPpcrBTfpj3IGXYdecLBQxo2COBo1ZYsKvkPZiyvR1w+bmEEg
-         5Wzg==
+        b=MtK2J4O4XoegHamlO2ktuoRJsuu0/RkCQ25C6J4X863K1raf3HhkryWBvwnu96N3qv
+         HIOCw7z6XrJ4XNWH7yBFYEK1C1aMkblOrm35F3uorJsdaNFc5t+CmuMe0D9tIt14ajDz
+         nRx4Qngo9CsBdBkEDUKl+NYZc8dOVaB/sASMY+KDwwYHMdLsPPs93TsQY/4PlQvW8POU
+         oTqUWjOA0hJPWYyzE/6TjUm13q4GdnC/Pp4BcLp/GMApKiVi6es3xE0RUMJksWrkauj9
+         GgJgY2sl6XrQIKNOvO59htGNcaWT3kx/ueh9yreJ/vcFE2+qFaoGWo7/dvaio61AdhcQ
+         d7Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LmSUN//iUYnLzVtFRbwOXLI3s0b3VYSjp+Fyswds4SA=;
-        b=ho6f0gYf3UrNK7YYP0Oz6bWQ7huMgmXWWww7pWLIW+rwwvOwl3GqKv/LMyklGk6iD1
-         L9K8LEMQ0t9F1xpazAqbX8LWnZ7TWmUC2oppgDmGQnFg6v9DhtWvJJvoPa3cCHOdPgNT
-         RY+j4LZzvMkEq/yJsfpxyJV3sac0YUkMe780XD4mmvEi6wXm+1ZViTJvP7ebaeDc2tkE
-         ntAg3NG7g5kS/47Ma5iJfzNYQHVLt40/ZWlfzE1938mmqBRsNOwEHUOqO7bm0eewRnOF
-         jBV0MD6Kzuhwdektwb2f3WCo1OOwJuuLKcY/wz0WGAoPB/SPVKf2qzlfHDFehavTxjrc
-         YGdw==
+        bh=+LuQ86/q4s12pv6AgXeoFq9SU+9HzTieoyXRaHm1CGk=;
+        b=IMozvI0AQ+7bsgIH8gfRt60OXBJTj4sh8RtqDDM3F0s4ftqh7rzceHham5/u4yMyYd
+         yB6mvyyrajJ5ypFi4uXrtigstGEW6umdlup55hn6QTZaxsvMtc/o7X4gJIx2LXdCfrnf
+         xuB8+1rHDV9/RmewLWJstwY9MQmJ+Fs4k3obnOROuitk080xtHgCg5c/BNfb2w9dufwQ
+         Nu07wRkRTgUPBuPYZ4m9wlQ+VDwMxQcP7NApaYgPgaq7aNFILf2NVgWYR/N56Qmbkxkh
+         rmNVLDQ0RJNwTgK6hGZdOPkWoYq90C0r9Y76An8BJhDmafufKUma0NHaVxHqEaZeKDCv
+         b/ZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dmitry Torokhov <dtor@chromium.org>,
-	Joe Perches <joe@perches.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 064/115] genirq: Guard handle_bad_irq log messages
-Date: Fri,  2 Mar 2018 09:51:07 +0100
-Message-Id: <20180302084506.465824039@linuxfoundation.org>
+Subject: [PATCH 4.14 096/115] bnxt_en: Fix the Invalid VF id check in bnxt_vf_ndo_prep routine.
+Date: Fri,  2 Mar 2018 09:51:39 +0100
+Message-Id: <20180302084507.726620179@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -45,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815642898421195?=
-X-GMAIL-MSGID: =?utf-8?q?1593816084157243516?=
+X-GMAIL-THRID: =?utf-8?q?1593815495001614943?=
+X-GMAIL-MSGID: =?utf-8?q?1593816077567029478?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,58 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
 
 
-[ Upstream commit 11bca0a83f83f6093d816295668e74ef24595944 ]
+[ Upstream commit 78f300049335ae81a5cc6b4b232481dc5e1f9d41 ]
 
-An interrupt storm on a bad interrupt will cause the kernel
-log to be clogged.
+In bnxt_vf_ndo_prep (which is called by bnxt_get_vf_config ndo), there is a
+check for "Invalid VF id". Currently, the check is done against max_vfs.
+However, the user doesn't always create max_vfs. So, the check should be
+against the created number of VFs. The number of bnxt_vf_info structures
+that are allocated in bnxt_alloc_vf_resources routine is the "number of
+requested VFs". So, if an "invalid VF id" falls between the requested
+number of VFs and the max_vfs, the driver will be dereferencing an invalid
+pointer.
 
-[   60.089234] ->handle_irq():  ffffffffbe2f803f,
-[   60.090455] 0xffffffffbf2af380
-[   60.090510] handle_bad_irq+0x0/0x2e5
-[   60.090522] ->irq_data.chip(): ffffffffbf2af380,
-[   60.090553]    IRQ_NOPROBE set
-[   60.090584] ->handle_irq():  ffffffffbe2f803f,
-[   60.090590] handle_bad_irq+0x0/0x2e5
-[   60.090596] ->irq_data.chip(): ffffffffbf2af380,
-[   60.090602] 0xffffffffbf2af380
-[   60.090608] ->action():           (null)
-[   60.090779] handle_bad_irq+0x0/0x2e5
-
-This was seen when running an upstream kernel on Acer Chromebook R11.  The
-system was unstable as result.
-
-Guard the log message with __printk_ratelimit to reduce the impact.  This
-won't prevent the interrupt storm from happening, but at least the system
-remains stable.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dmitry Torokhov <dtor@chromium.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-Link: https://lkml.kernel.org/r/1512234784-21038-1-git-send-email-linux@roeck-us.net
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/irq/debug.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/irq/debug.h
-+++ b/kernel/irq/debug.h
-@@ -12,6 +12,11 @@
- 
- static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
- {
-+	static DEFINE_RATELIMIT_STATE(ratelimit, 5 * HZ, 5);
-+
-+	if (!__ratelimit(&ratelimit))
-+		return;
-+
- 	printk("irq %d, desc: %p, depth: %d, count: %d, unhandled: %d\n",
- 		irq, desc, desc->depth, desc->irq_count, desc->irqs_unhandled);
- 	printk("->handle_irq():  %p, ", desc->handle_irq);
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
+@@ -70,7 +70,7 @@ static int bnxt_vf_ndo_prep(struct bnxt
+ 		netdev_err(bp->dev, "vf ndo called though sriov is disabled\n");
+ 		return -EINVAL;
+ 	}
+-	if (vf_id >= bp->pf.max_vfs) {
++	if (vf_id >= bp->pf.active_vfs) {
+ 		netdev_err(bp->dev, "Invalid VF id %d\n", vf_id);
+ 		return -EINVAL;
+ 	}
