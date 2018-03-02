@@ -1,146 +1,600 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947672AbeCBTVs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:21:48 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35955 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1428510AbeCBTVp (ORCPT
+        id S1428737AbeCBTEw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:04:52 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44335 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1428129AbeCBTEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:21:45 -0500
-X-Google-Smtp-Source: AG47ELvp51BsU+wQhHBykNib7+UUxT6lrzcql1z+LE7u1D8hfrzE8JyhGFmarpYMlWVNyZCZ72akbQ==
+        Fri, 2 Mar 2018 14:04:48 -0500
+X-Google-Smtp-Source: AG47ELu3E0P3C0Zwe/9YnAKO3SQKArQcguAUQULQ51jKkc5jPiyUEQGxGDwRWQ74OVlddu9IWGyJsw==
 From: Michal Simek <michal.simek@xilinx.com>
 To: devicetree@vger.kernel.org
-Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>, Rob Herring <robherring2@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        Russell King <linux@armlinux.org.uk>,
+Cc: monstr@monstr.eu, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/5] arm: zynq: Add support for Xilinx zc770 xm011 dc2 board
-Date: Fri,  2 Mar 2018 20:21:35 +0100
-Message-Id: <1723ff499e33d7d6b2dd677d78c83bf4fe98d8e7.1520018484.git.michal.simek@xilinx.com>
+Subject: [PATCH v3 5/8] arm64: zynqmp: Add support for Xilinx zcu106-revA
+Date: Fri,  2 Mar 2018 20:04:31 +0100
+Message-Id: <8a597d5fa5d7ded87bb709acf86b653454e13a8a.1520017397.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1520018484.git.michal.simek@xilinx.com>
-References: <cover.1520018484.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1520018484.git.michal.simek@xilinx.com>
-References: <cover.1520018484.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1520017397.git.michal.simek@xilinx.com>
+References: <cover.1520017397.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1520017397.git.michal.simek@xilinx.com>
+References: <cover.1520017397.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zc770 is based board which is extended by FMC/DC cards for SoC
-validation. FMCs/DCs are supposed to cover all SoC configurations.
-FMC/DC contains can, i2c, nand uart, spi and usb.
+Xilinx zcu106 is a customer board. It is reusing some parts from zcu102.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Changes in v3: None
+Changes in v3:
+- remove gpio and usb aliases
+
 Changes in v2:
+- Remove i2c mw u-boot commands
+- Use i2c-mux instead of i2cswitch
+- Use clock generator without numbers
 - Record compatible string to xilinx.txt
 
- Documentation/devicetree/bindings/arm/xilinx.txt |  1 +
- arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/zynq-zc770-xm011.dts           | 64 ++++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm011.dts
+ Documentation/devicetree/bindings/arm/xilinx.txt  |   3 +
+ arch/arm64/boot/dts/xilinx/Makefile               |   1 +
+ arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts | 522 ++++++++++++++++++++++
+ 3 files changed, 526 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index 019e69037d42..80139a7cfcdc 100644
+index a9ce08a68711..8503fabf90ee 100644
 --- a/Documentation/devicetree/bindings/arm/xilinx.txt
 +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-@@ -13,6 +13,7 @@ Additional compatible strings:
+@@ -29,3 +29,6 @@ Additional compatible strings:
  
- - Xilinx internal board zc770 with different FMC cards
-   "xlnx,zynq-zc770-xm010"
-+  "xlnx,zynq-zc770-xm011"
- 
- ---------------------------------------------------------------
- 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index be9ffae2a1ec..801a46a88e93 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1068,6 +1068,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
- 	zynq-zc702.dtb \
- 	zynq-zc706.dtb \
- 	zynq-zc770-xm010.dtb \
-+	zynq-zc770-xm011.dtb \
- 	zynq-zed.dtb \
- 	zynq-zybo.dtb
- dtb-$(CONFIG_MACH_ARMADA_370) += \
-diff --git a/arch/arm/boot/dts/zynq-zc770-xm011.dts b/arch/arm/boot/dts/zynq-zc770-xm011.dts
+ - Xilinx evaluation board zcu104
+   "xlnx,zynqmp-zcu104-revA", "xlnx,zynqmp-zcu104"
++
++- Xilinx evaluation board zcu106
++  "xlnx,zynqmp-zcu106-revA", "xlnx,zynqmp-zcu106"
+diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/xilinx/Makefile
+index 1c039e59c7c3..922c5da39600 100644
+--- a/arch/arm64/boot/dts/xilinx/Makefile
++++ b/arch/arm64/boot/dts/xilinx/Makefile
+@@ -5,3 +5,4 @@ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revA.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-revB.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu102-rev1.0.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu104-revA.dtb
++dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zcu106-revA.dtb
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
 new file mode 100644
-index 000000000000..b78883cee96a
+index 000000000000..668f7f26716a
 --- /dev/null
-+++ b/arch/arm/boot/dts/zynq-zc770-xm011.dts
-@@ -0,0 +1,64 @@
++++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
+@@ -0,0 +1,522 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Xilinx ZC770 XM013 board DTS
++ * dts file for Xilinx ZynqMP ZCU106
 + *
-+ * Copyright (C) 2013-2018 Xilinx, Inc.
++ * (C) Copyright 2016, Xilinx, Inc.
++ *
++ * Michal Simek <michal.simek@xilinx.com>
 + */
++
 +/dts-v1/;
-+#include "zynq-7000.dtsi"
++
++#include "zynqmp.dtsi"
++#include "zynqmp-clk.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
 +
 +/ {
-+	compatible = "xlnx,zynq-zc770-xm011", "xlnx,zynq-7000";
-+	model = "Xilinx Zynq";
++	model = "ZynqMP ZCU106 RevA";
++	compatible = "xlnx,zynqmp-zcu106-revA", "xlnx,zynqmp-zcu106", "xlnx,zynqmp";
 +
 +	aliases {
-+		i2c0 = &i2c1;
-+		serial0 = &uart1;
-+		spi0 = &spi0;
++		ethernet0 = &gem3;
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		mmc0 = &sdhci1;
++		rtc0 = &rtc;
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &dcc;
 +	};
 +
 +	chosen {
-+		bootargs = "";
++		bootargs = "earlycon";
 +		stdout-path = "serial0:115200n8";
 +	};
 +
 +	memory@0 {
 +		device_type = "memory";
-+		reg = <0x0 0x40000000>;
++		reg = <0x0 0x0 0x0 0x80000000>, <0x8 0x00000000 0x0 0x80000000>;
 +	};
 +
-+	usb_phy1: phy1 {
-+		compatible = "usb-nop-xceiv";
-+		#phy-cells = <0>;
++	gpio-keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		autorepeat;
++		sw19 {
++			label = "sw19";
++			gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
++			linux,code = <KEY_DOWN>;
++			gpio-key,wakeup;
++			autorepeat;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		heartbeat_led {
++			label = "heartbeat";
++			gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
 +	};
 +};
 +
-+&can0 {
++&can1 {
 +	status = "okay";
++};
++
++&dcc {
++	status = "okay";
++};
++
++/* fpd_dma clk 667MHz, lpd_dma 500MHz */
++&fpd_dma_chan1 {
++	status = "okay";
++};
++
++&fpd_dma_chan2 {
++	status = "okay";
++};
++
++&fpd_dma_chan3 {
++	status = "okay";
++};
++
++&fpd_dma_chan4 {
++	status = "okay";
++};
++
++&fpd_dma_chan5 {
++	status = "okay";
++};
++
++&fpd_dma_chan6 {
++	status = "okay";
++};
++
++&fpd_dma_chan7 {
++	status = "okay";
++};
++
++&fpd_dma_chan8 {
++	status = "okay";
++};
++
++&gem3 {
++	status = "okay";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
++	phy0: phy@c {
++		reg = <0xc>;
++		ti,rx-internal-delay = <0x8>;
++		ti,tx-internal-delay = <0xa>;
++		ti,fifo-depth = <0x1>;
++	};
++};
++
++&gpio {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++	clock-frequency = <400000>;
++
++	tca6416_u97: gpio@20 {
++		compatible = "ti,tca6416";
++		reg = <0x20>;
++		gpio-controller; /* interrupt not connected */
++		#gpio-cells = <2>;
++		/*
++		 * IRQ not connected
++		 * Lines:
++		 * 0 - SFP_SI5328_INT_ALM
++		 * 1 - HDMI_SI5328_INT_ALM
++		 * 5 - IIC_MUX_RESET_B
++		 * 6 - GEM3_EXP_RESET_B
++		 * 10 - FMC_HPC0_PRSNT_M2C_B
++		 * 11 - FMC_HPC1_PRSNT_M2C_B
++		 * 2-4, 7, 12-17 - not connected
++		 */
++	};
++
++	tca6416_u61: gpio@21 {
++		compatible = "ti,tca6416";
++		reg = <0x21>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		/*
++		 * IRQ not connected
++		 * Lines:
++		 * 0 - VCCPSPLL_EN
++		 * 1 - MGTRAVCC_EN
++		 * 2 - MGTRAVTT_EN
++		 * 3 - VCCPSDDRPLL_EN
++		 * 4 - MIO26_PMU_INPUT_LS
++		 * 5 - PL_PMBUS_ALERT
++		 * 6 - PS_PMBUS_ALERT
++		 * 7 - MAXIM_PMBUS_ALERT
++		 * 10 - PL_DDR4_VTERM_EN
++		 * 11 - PL_DDR4_VPP_2V5_EN
++		 * 12 - PS_DIMM_VDDQ_TO_PSVCCO_ON
++		 * 13 - PS_DIMM_SUSPEND_EN
++		 * 14 - PS_DDR4_VTERM_EN
++		 * 15 - PS_DDR4_VPP_2V5_EN
++		 * 16 - 17 - not connected
++		 */
++	};
++
++	i2c-mux@75 { /* u60 */
++		compatible = "nxp,pca9544";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x75>;
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++			/* PS_PMBUS */
++			ina226@40 { /* u76 */
++				compatible = "ti,ina226";
++				reg = <0x40>;
++				shunt-resistor = <5000>;
++			};
++			ina226@41 { /* u77 */
++				compatible = "ti,ina226";
++				reg = <0x41>;
++				shunt-resistor = <5000>;
++			};
++			ina226@42 { /* u78 */
++				compatible = "ti,ina226";
++				reg = <0x42>;
++				shunt-resistor = <5000>;
++			};
++			ina226@43 { /* u87 */
++				compatible = "ti,ina226";
++				reg = <0x43>;
++				shunt-resistor = <5000>;
++			};
++			ina226@44 { /* u85 */
++				compatible = "ti,ina226";
++				reg = <0x44>;
++				shunt-resistor = <5000>;
++			};
++			ina226@45 { /* u86 */
++				compatible = "ti,ina226";
++				reg = <0x45>;
++				shunt-resistor = <5000>;
++			};
++			ina226@46 { /* u93 */
++				compatible = "ti,ina226";
++				reg = <0x46>;
++				shunt-resistor = <5000>;
++			};
++			ina226@47 { /* u88 */
++				compatible = "ti,ina226";
++				reg = <0x47>;
++				shunt-resistor = <5000>;
++			};
++			ina226@4a { /* u15 */
++				compatible = "ti,ina226";
++				reg = <0x4a>;
++				shunt-resistor = <5000>;
++			};
++			ina226@4b { /* u92 */
++				compatible = "ti,ina226";
++				reg = <0x4b>;
++				shunt-resistor = <5000>;
++			};
++		};
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			/* PL_PMBUS */
++			ina226@40 { /* u79 */
++				compatible = "ti,ina226";
++				reg = <0x40>;
++				shunt-resistor = <2000>;
++			};
++			ina226@41 { /* u81 */
++				compatible = "ti,ina226";
++				reg = <0x41>;
++				shunt-resistor = <5000>;
++			};
++			ina226@42 { /* u80 */
++				compatible = "ti,ina226";
++				reg = <0x42>;
++				shunt-resistor = <5000>;
++			};
++			ina226@43 { /* u84 */
++				compatible = "ti,ina226";
++				reg = <0x43>;
++				shunt-resistor = <5000>;
++			};
++			ina226@44 { /* u16 */
++				compatible = "ti,ina226";
++				reg = <0x44>;
++				shunt-resistor = <5000>;
++			};
++			ina226@45 { /* u65 */
++				compatible = "ti,ina226";
++				reg = <0x45>;
++				shunt-resistor = <5000>;
++			};
++			ina226@46 { /* u74 */
++				compatible = "ti,ina226";
++				reg = <0x46>;
++				shunt-resistor = <5000>;
++			};
++			ina226@47 { /* u75 */
++				compatible = "ti,ina226";
++				reg = <0x47>;
++				shunt-resistor = <5000>;
++			};
++		};
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			/* MAXIM_PMBUS - 00 */
++			max15301@a { /* u46 */
++				compatible = "maxim,max15301";
++				reg = <0xa>;
++			};
++			max15303@b { /* u4 */
++				compatible = "maxim,max15303";
++				reg = <0xb>;
++			};
++			max15303@10 { /* u13 */
++				compatible = "maxim,max15303";
++				reg = <0x10>;
++			};
++			max15301@13 { /* u47 */
++				compatible = "maxim,max15301";
++				reg = <0x13>;
++			};
++			max15303@14 { /* u7 */
++				compatible = "maxim,max15303";
++				reg = <0x14>;
++			};
++			max15303@15 { /* u6 */
++				compatible = "maxim,max15303";
++				reg = <0x15>;
++			};
++			max15303@16 { /* u10 */
++				compatible = "maxim,max15303";
++				reg = <0x16>;
++			};
++			max15303@17 { /* u9 */
++				compatible = "maxim,max15303";
++				reg = <0x17>;
++			};
++			max15301@18 { /* u63 */
++				compatible = "maxim,max15301";
++				reg = <0x18>;
++			};
++			max15303@1a { /* u49 */
++				compatible = "maxim,max15303";
++				reg = <0x1a>;
++			};
++			max15303@1b { /* u8 */
++				compatible = "maxim,max15303";
++				reg = <0x1b>;
++			};
++			max15303@1d { /* u18 */
++				compatible = "maxim,max15303";
++				reg = <0x1d>;
++			};
++
++			max20751@72 { /* u95 */
++				compatible = "maxim,max20751";
++				reg = <0x72>;
++			};
++			max20751@73 { /* u96 */
++				compatible = "maxim,max20751";
++				reg = <0x73>;
++			};
++		};
++		/* Bus 3 is not connected */
++	};
 +};
 +
 +&i2c1 {
 +	status = "okay";
 +	clock-frequency = <400000>;
 +
-+	eeprom: eeprom@52 {
-+		compatible = "atmel,24c02";
-+		reg = <0x52>;
++	/* PL i2c via PCA9306 - u45 */
++	i2c-mux@74 { /* u34 */
++		compatible = "nxp,pca9548";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x74>;
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++			/*
++			 * IIC_EEPROM 1kB memory which uses 256B blocks
++			 * where every block has different address.
++			 *    0 - 256B address 0x54
++			 * 256B - 512B address 0x55
++			 * 512B - 768B address 0x56
++			 * 768B - 1024B address 0x57
++			 */
++			eeprom: eeprom@54 { /* u23 */
++				compatible = "atmel,24c08";
++				reg = <0x54>;
++			};
++		};
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			si5341: clock-generator@36 { /* SI5341 - u69 */
++				reg = <0x36>;
++			};
++
++		};
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			si570_1: clock-generator@5d { /* USER SI570 - u42 */
++				#clock-cells = <0>;
++				compatible = "silabs,si570";
++				reg = <0x5d>;
++				temperature-stability = <50>;
++				factory-fout = <300000000>;
++				clock-frequency = <300000000>;
++			};
++		};
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++			si570_2: clock-generator@5d { /* USER MGT SI570 - u56 */
++				#clock-cells = <0>;
++				compatible = "silabs,si570";
++				reg = <0x5d>;
++				temperature-stability = <50>; /* copy from zc702 */
++				factory-fout = <156250000>;
++				clock-frequency = <148500000>;
++			};
++		};
++		i2c@4 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <4>;
++			si5328: clock-generator@69 {/* SI5328 - u20 */
++				reg = <0x69>;
++			};
++		};
++		i2c@5 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <5>; /* FAN controller */
++			temp@4c {/* lm96163 - u128 */
++				compatible = "national,lm96163";
++				reg = <0x4c>;
++			};
++		};
++		/* 6 - 7 unconnected */
++	};
++
++	i2c-mux@75 {
++		compatible = "nxp,pca9548"; /* u135 */
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x75>;
++
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++			/* HPC0_IIC */
++		};
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			/* HPC1_IIC */
++		};
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			/* SYSMON */
++		};
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++			/* DDR4 SODIMM */
++		};
++		i2c@4 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <4>;
++			/* SEP 3 */
++		};
++		i2c@5 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <5>;
++			/* SEP 2 */
++		};
++		i2c@6 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <6>;
++			/* SEP 1 */
++		};
++		i2c@7 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <7>;
++			/* SEP 0 */
++		};
 +	};
 +};
 +
-+&spi0 {
++&rtc {
 +	status = "okay";
-+	num-cs = <4>;
-+	is-decoded-cs = <0>;
++};
++
++&sata {
++	status = "okay";
++	/* SATA OOB timing settings */
++	ceva,p0-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
++	ceva,p0-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
++	ceva,p0-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
++	ceva,p0-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
++	ceva,p1-cominit-params = /bits/ 8 <0x18 0x40 0x18 0x28>;
++	ceva,p1-comwake-params = /bits/ 8 <0x06 0x14 0x08 0x0E>;
++	ceva,p1-burst-params = /bits/ 8 <0x13 0x08 0x4A 0x06>;
++	ceva,p1-retry-params = /bits/ 16 <0x96A4 0x3FFC>;
++};
++
++/* SD1 with level shifter */
++&sdhci1 {
++	status = "okay";
++	no-1-8-v;
++};
++
++&uart0 {
++	status = "okay";
 +};
 +
 +&uart1 {
 +	status = "okay";
 +};
 +
-+&usb1 {
++/* ULPI SMSC USB3320 */
++&usb0 {
 +	status = "okay";
-+	dr_mode = "host";
-+	usb-phy = <&usb_phy1>;
++};
++
++&watchdog0 {
++	status = "okay";
 +};
 -- 
 1.9.1
