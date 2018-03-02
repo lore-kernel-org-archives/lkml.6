@@ -1,110 +1,111 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3563148-1520436672-2-16724060629939883039
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520436672; b=GPPhnHLGjtppCCYLBn6IulnNcPKyvnm8Sa1PMGV54yT9lY4
-    IX3168/iteLO5WdwCtHTUrzSopL+raeCktAV+SOttTcX+Ggiin7rpKmbQotaw1SM
-    emoA+wlUyXH6SLeNhpOcsGNu+ME5ERl+Zb56DKZYV6n2J/UUvWsGDS7DaDbIhISN
-    ilw31i1YqjHSX1/I1kF/tDte7JkBZSi2BKg+29r2SEx533kE2MSOojO4l3qi70el
-    XrxDfvDpq/aVpceUSfLeNDgtB/sxnwV2t72m78HbBICjUUK6Lmzvex78qsEf6L2v
-    8HUDVu/FwG8dnuhmmg1ZX3FnoTY0/06qFs3+ZxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520436672; bh=K4q8N76yb6MTlxcBHRCM0puNoCC04HnLZ5tBqkPrM68=; b=R
-    BYgdLHVJhN6l4GJz5ht3VAu69qZkuPE/wx9SE0/hvMRH4TL/6xvabMlOZmmt/h8r
-    D2EKaMgZkkFLpksEMsOBr8CL0fA6Ti6qFBO1NyOD8ESEjKHOCvdNyh+wzUdmTLYZ
-    nhlDcO0qKYCp3gYi11MgmA/7Qs3SIQPPI1WIfN+dDEUzhWDXLgrBKeEOjsNHyuq/
-    sSDPuR4tOkFHkFWw57buB3q0ZY66TLAxEEN91eKj1ME60sLQUiTHuUJrqsm8b5B9
-    Z1FOhl8klzve87jFLPgcP7h+EIPrXQMDuux99iUKGomE3dXPXQ4ozKmqmih3XtBg
-    UhzQGxTw7lxqyYi0W2+8Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933842AbeCGPao (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 10:30:44 -0500
-Received: from imap1.codethink.co.uk ([176.9.8.82]:52979 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933335AbeCGPan (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 10:30:43 -0500
-Message-ID: <1520436639.23626.31.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 16/34] led: core: Fix brightness setting when
- setting delay_off=0
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Date: Wed, 07 Mar 2018 15:30:39 +0000
-In-Reply-To: <20180302084437.007951262@linuxfoundation.org>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvlUofyG/hCMKU/CZGg3qfEkfn6H4GmqBB72PeLSlyyR5PwP6VvWBJvyEz3v6qzfFHCAOXV
+ARC-Seal: i=1; a=rsa-sha256; t=1519980912; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0ldktcCeKd0ESawxQrc5oCyC07lPP9ilP3N5ZdVF1Lg/BDlCRUX66xPHIMYkSsi41F
+         NHY9oFwMHWYjj9lw8oMgdVpusX66fJfEqPPZQX5jhlij26xVrB7nX5B1RrbgW00S2tvz
+         pmVfyYORxOYZhu3ZXvJi1+yaHNbIs7eTnHA4GVFPifGEys5OB5D5Tg6wHJpuu+9wg2yL
+         4R/uPbI3eCmr/NO0HAO6ThqxDj0MPvr5Jsj5Qz6K038LrTuv6FK9sPcWOreMG3XKQNKw
+         ubp8jfMI80Bc7F+7c3LiB1vCle/3Euqr7dG5VPMfEh6MSuaRbpWoQlzpeYLl+9WzwHHi
+         5g0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=WRVIrsRaQ9tIJecP4ZY/bvmpf8qQdOZETx+5sXRZh+A=;
+        b=A4vU1/GjawAWomDGHWK/8V/7OBUsRxwN8D8XG97v+G5UDKHoZ1NJanzYmXQrwndyIo
+         dFozHHJvK1xgwIKjsXEEc03hCwQ/lOc1ccg19ybIro355yJU7SrIOBcLXWScWQgRcSfK
+         5ZWP7lY0K+iEfe05qBUlhBDhuLFjB5UblFkwKP4NYBLJs1tdhvZpQkLGdqyqJDpAsPh1
+         qQPas6m/w/wlLWdv4WgCf0I9sHePeTESMv07RnSA6OhfvIBs3scVRAqFWf3i/6xewPJW
+         1Ur7kxvBWB0cx0q54TIad6eGVmFrfvibKWrudsywv5Fq+zFGK19FzvFqKMCb2zvOTbA6
+         awMA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 03/34] mtd: nand: gpmi: Fix failure when a erased page has a bitflip at BBM
+Date: Fri,  2 Mar 2018 09:50:59 +0100
+Message-Id: <20180302084436.171257760@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
-         <20180302084437.007951262@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815412959122192?=
+X-GMAIL-MSGID: =?utf-8?q?1593815505979225830?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-03-02 at 09:51 +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Matthieu CASTET <matthieu.castet@parrot.com>
-> 
-> 
-> [ Upstream commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c ]
-> 
-> With the current code, the following sequence won't work :
-> echo timer > trigger
-> 
-> echo 0 >  delay_off
-> * at this point we call
-> ** led_delay_off_store
-> ** led_blink_set
-[...]
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-The commit message got cut truncated here, but the upstream commit
-message refers to a LED_BLINK_SW flag which is not used in 4.4.  So
-this fix probably isn't needed, though I can't tell whether it does any
-harm.
+------------------
 
-Ben.
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
--- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+
+[ Upstream commit fdf2e821052958a114618a95ab18a300d0b080cb ]
+
+When erased subpages are read then the BCH decoder returns STATUS_ERASED
+if they are all empty, or STATUS_UNCORRECTABLE if there are bitflips.
+When there are bitflips, we have to set these bits again to show the
+upper layers a completely erased page. When a bitflip happens in the
+exact byte where the bad block marker is, then this byte is swapped
+with another byte in block_mark_swapping(). The correction code then
+detects a bitflip in another subpage and no longer corrects the bitflip
+where it really happens.
+
+Correct this behaviour by calling block_mark_swapping() after the
+bitflips have been corrected.
+
+In our case UBIFS failed with this bug because it expects erased
+pages to be really empty:
+
+UBIFS error (pid 187): ubifs_scan: corrupt empty space at LEB 36:118735
+UBIFS error (pid 187): ubifs_scanned_corruption: corruption at LEB 36:118735
+UBIFS error (pid 187): ubifs_scanned_corruption: first 8192 bytes from LEB 36:118735
+UBIFS error (pid 187): ubifs_scan: LEB 36 scanning failed
+UBIFS error (pid 187): do_commit: commit failed, error -117
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+@@ -1029,9 +1029,6 @@ static int gpmi_ecc_read_page(struct mtd
+ 		return ret;
+ 	}
+ 
+-	/* handle the block mark swapping */
+-	block_mark_swapping(this, payload_virt, auxiliary_virt);
+-
+ 	/* Loop over status bytes, accumulating ECC status. */
+ 	status = auxiliary_virt + nfc_geo->auxiliary_status_offset;
+ 
+@@ -1047,6 +1044,9 @@ static int gpmi_ecc_read_page(struct mtd
+ 		max_bitflips = max_t(unsigned int, max_bitflips, *status);
+ 	}
+ 
++	/* handle the block mark swapping */
++	block_mark_swapping(this, buf, auxiliary_virt);
++
+ 	if (oob_required) {
+ 		/*
+ 		 * It's time to deliver the OOB bytes. See gpmi_ecc_read_oob()
