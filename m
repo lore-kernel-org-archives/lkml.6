@@ -1,80 +1,76 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-229752-1519956792-2-18126546036564576615
+X-Cyrus-Session-Id: sloti22d1t05-1258868-1519985593-2-10214768991218366718
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519956792; b=PXhfUqHGhtExmlCZdT0NkAu2TH1M9j6A0Rxlscp+u8pHIRY
-    6arB5tKdfkIJ8csEuuxFH2HxM5XRyZtMCXKgt9PBWg6Txw6BvidtmTNXkLvVtZdv
-    scMBepRKEs2kN7LyE1PnLac0Nb4H2NO/QGN61/t35zG2jxjA2dvzAbRz5ZIDVg8o
-    DBlzQW5kz5W8ksyUvMoE+wl021EPiFmYCrZXSnG6485gTScWy8n4nONoHPIpjRq9
-    wpdzWICgiMZaLFl3Z+RVYCHAiIe7qUdKet8Wj6KV95ujMOiNW5o6ng24MimA5Z9S
-    sslU96pl9kQNZozM2DeuKOvHEAWStW0BXrk1PCA==
+    t=1519985593; b=Ax8ixWJkjIJG6CTXByk3m/h2RQsl059jPWpkfaXdI4gOnJ3
+    ZmcSGgl615GFyEMA20iPw34TOdytgEmOnMNra1lbJVlFAFWUnlHjryPbQd/6/hAS
+    O7VxeKBqLU3wIVKiPH4jBM/159A5fpq+hko4sjOnIygNsE+93QKy3WpcxxbLjkh5
+    XxUXRb3b4d07NnVtvJovgBvygATSg1AOy+6wyX682GwPv5X8kL3cpggIuCV9g9TK
+    IXA2zf1d9HFWI/92pB38K8C4jTPtZ3TkhycbKyNz6NDX0xwmd/3lmAypyZ+zcQ2v
+    /krijxfFPQHMrf3To5PKqDieVYDFnVvcfLeagvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519956792; bh=1
-    /rzXDaiFub+Tj/tQ/zrDhxZPITJJFQClh/MXIn5A7M=; b=wi4tGDQ7pwR+w3XpB
-    62s0Wc7f3IXoYz+b3ad5GMYj4hnXWElD1+tz1eOsyOxSJidFJXsjlvp03zeqJc34
-    z7NRWc02NjvX/mcu3OYrYRjCQaHtN5sawT3kPG9t9yFlIuzP/9Zs5cALIE7v/2OO
-    o7vi6a5zkDFIaUg9OX1xtI68yB4kaEKFy783n3dsIrz0DkmsPK4vvybhMAJm2ub3
-    RYrFtuTM+iuPK4D6DFkuKJ9J16aYI0kda+Zk3aVwE63nY5yYfW+ZBf+L3qpzvtNG
-    BYw1o6AJqQaF/fGDV+58KOu1ivzMTnSgTvofOBovGnP5xCiht1fXWtz5sfPHvaaK
-    vudMw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1519985593; bh=E
+    sFGUucn2hWAUm4Bl65qb1JLxMcNlg1jbIkuGk9GwqA=; b=iUPP35KJ+OJ3VXedZ
+    BJBSt2r4nZOu84Fgmhg0eerkvj/gjXb3hnjwrLx31emQDQ8F+TexVEEs7k+TPPcL
+    bm/k3DGtUxIdGP96+Gtn8pMrld4qjVSNXIEuBsdbl7tgTZc/lCr2n6iDNI8b+DAS
+    9Rhyh4nXSPQTr084sWA+B2Q+BAiEJFiYxGsQe+dNDYGiRnVo4dEC5LhuVaFNEFdV
+    N+kw5bgsxAN1HlDea2q7ZfQPiK5s/7XDFTW2rHx2FLsMLmntzxSbzXYtoBfsjltr
+    snYV+Ii8kpH8lObft/J7PdowSojyilPKPMO+LuF3N5/PT0XHfoLDmxgDuCXbiFr9
+    BTPUg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=OCdjZxdB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=OCdjZxdB x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH 2/2] staging: most: Fix a coding style problem
-Date: Thu,  1 Mar 2018 18:11:44 -0800
-Message-Id: <20180302021144.10795-2-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180302021144.10795-1-quytelda@tamalin.org>
+Date: Fri, 2 Mar 2018 13:12:21 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Quytelda Kahja <quytelda@tamalin.org>
+Subject: Re: [PATCH 2/2] staging: most: Fix a coding style problem
+Message-ID: <20180302101221.f26ehzc6kvbowq5r@mwanda>
 References: <20180301162034.GA15087@kroah.com>
  <20180302021144.10795-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:dty7cdaOUTMhIW0Si/5Nh/7fl6w6o9uk2AQJcj1jQHc7h2MnIJn
- yrqDbds7SYCYmFyFamx2SbvEJIobtPw+MdcN9CIyCGc8sd1b5kqnSlGrLFEE4efLVwOLQQ1
- jPWd4ZK0IFwTNFZWp3jBcoEUDMRyBhsqSVkzdm/9EpJFEjV/YHQv8bQIZ8nivaXqVVUJHbw
- 8p5WSWajpuNyj9OONKqCQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:imCFzA4o9G8=:IkC6+85PPuDOYyjSpz1hIM
- tAHalsXn7XBYWlRwvlgMRZxFuRXFXvmilETtbVAdIWc7x1B1ELfj49rH9Qn3Y++wfXUAPQeSJ
- A6T5mRxJJ6dGgjQzCPUusfrw4bRuybivSkrMD+vX6CfwGeLTRExhdecPUupOTxb6yqBsDe4yF
- gI1JK7w1+ha8dCKxZ0tFRY9cgKGzpsIfDqEA1fGN0S+STKIPvtc5ptTohpbYWV59timEcMBSt
- kvHHRzHO1tyL1hHZKg6LX2VfF793qoVqKs0kcCgaWzAWzA0NUjMAlzRW31sjjl59LvQ+X3fSh
- DhAZRtVGnsH0WtpyaXb4JzBSdH8nsUqmrIp3oqBGbtk5TruPyqONo3R3pS0opB+Qk+iWRyoRx
- OAmcWfV/PIaF9d/s1anLp8JyHFTs36Y+Tkm9VKBM8RgFqu4CMG9iKB0Uts9SMhqdI8ozg4dnn
- u9nI3pUwOw6xBydxA9LDKb1KWB6rzgbEVNmuRWCwjdeTkvr7W4OVghZiOQ9ZPbHLowgDHaD6C
- rWXghJRkoKc+LZkZL3kf9Brc/nezRAa9YQqXoYbGzmGYvI8QwRMBv1Kqa74Mo3cxx0vEuQUM1
- 19wVqlsngtKSOQhqynFcQiSE1jeNknovWf4F+gnG5AaZQIc4BwsmfC1noV2VngfXPe+ampbRv
- PqkWnLmcPknzfYrjE1xQRovX4kjb9YN3Y2+B7QZAZDB8bccFv+uaddAvpBoNimJk7X6poTRfp
- x/ZOyvWbjnk0qm/PNxhqu3/OS6YZ5zZ2ohDn3g==
+ <20180302021144.10795-2-quytelda@tamalin.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180302021144.10795-2-quytelda@tamalin.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819
+ signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=475
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803020119
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -85,10 +81,9 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, chris@engineersdelight.de,
- linux-kernel@vger.kernel.org, Michael.Fabry@microchip.com,
- christian.gromm@microchip.com, Quytelda Kahja <quytelda@tamalin.org>
-MIME-Version: 1.0
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ chris@engineersdelight.de, linux-kernel@vger.kernel.org,
+ Michael.Fabry@microchip.com, christian.gromm@microchip.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -97,29 +92,14 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Indent the parameters for a function call that extends past 80 characters.
+You've got two subjects which are the same.  That's not allowed, sorry.
+You could just say:
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
- drivers/staging/most/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+[PATCH 1/2] staging: most: Add a blank line
+[PATCH 2/2] staging: most: Silence a long line warning
 
-diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index 67e2d7f29967..8d311970225e 100644
---- a/drivers/staging/most/core.c
-+++ b/drivers/staging/most/core.c
-@@ -1473,7 +1473,8 @@ void most_deregister_interface(struct most_interface *iface)
- 	int i;
- 	struct most_channel *c;
- 
--	pr_info("deregistering device %s (%s)\n", dev_name(&iface->dev), iface->description);
-+	pr_info("deregistering device %s (%s)\n", dev_name(&iface->dev),
-+		iface->description);
- 	for (i = 0; i < iface->num_channels; i++) {
- 		c = iface->p->channel[i];
- 		if (c->pipe0.comp)
--- 
-2.16.2
+regards,
+dan carpenter
 
 _______________________________________________
 devel mailing list
