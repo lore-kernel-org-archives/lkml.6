@@ -1,80 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428333AbeCBNwK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:52:10 -0500
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:40565 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424338AbeCBNwI (ORCPT
+        id S1428350AbeCBNwZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:52:25 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38074 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424338AbeCBNwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:52:08 -0500
-X-Google-Smtp-Source: AG47ELsPfOHVfVW+IC3ZJOVNK8xyyo0Orq6AE3cqymqCgUcJR4bXnRDraduxwSfuX+XWbH4XmiRS7hsDXnZRBOtPNIA=
+        Fri, 2 Mar 2018 08:52:20 -0500
+X-Google-Smtp-Source: AG47ELvlphIEVRTCTnTOJ/OwU4IzvU7vXR1H/Zppcy2rN/wix9LnS/kNn/Nfmor6X61EnyaqvZbaxw==
+Subject: Re: [PATCH v3 14/25] ASoC: qcom: qdsp6: Add support to q6afe dai
+ driver
+To: Mark Brown <broonie@kernel.org>
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com, linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
+References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
+ <20180213165837.1620-15-srinivas.kandagatla@linaro.org>
+ <20180302125054.GH6255@sirena.org.uk>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <7c17e021-e2ab-f177-713e-f332bafca522@linaro.org>
+Date: Fri, 2 Mar 2018 13:52:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180302131545.q2vf6uc3yofofqdb@lakrids.cambridge.arm.com>
-References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
- <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
- <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com> <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
- <20180302120556.xujh3hoy44y7ouz7@lakrids.cambridge.arm.com>
- <CAH76GKNw=irEY8BjhkaMnKm5m6AeCz8ZN67vrWSC6ByBmMMh8g@mail.gmail.com> <20180302131545.q2vf6uc3yofofqdb@lakrids.cambridge.arm.com>
-From: Grzegorz Jaszczyk <jaz@semihalf.com>
-Date: Fri, 2 Mar 2018 14:52:07 +0100
-Message-ID: <CAH76GKOe=+WTrw8QEJ43+fyEfRPuo7+ds8VNoMCUqSNBMtxkyg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during machine_crash_shutdown
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180302125054.GH6255@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-02 14:15 GMT+01:00 Mark Rutland <mark.rutland@arm.com>:
-> On Fri, Mar 02, 2018 at 01:59:27PM +0100, Grzegorz Jaszczyk wrote:
->> 2018-03-02 13:05 GMT+01:00 Mark Rutland <mark.rutland@arm.com>:
->> > Do you have a way to reproduce the problem?
->> >
->> > Is there an easy way to cause the watchdog to trigger a kdump as above,
->> > e.g. via LKDTM?
->>
->> You can reproduce this problem by:
->> - enabling CONFIG_ARM_SBSA_WATCHDOG in your kernel
->> - passing via command-line: sbsa_gwdt.action=1 sbsa_gwdt.timeout=170
->> - then load/prepare crasdump kernel (I am doing it via kexec tool)
->> - echo 1 > /dev/watchdog
->>
->> and after 170s the watchdog interrupt will hit triggering panic and
->> the whole kexec machinery will run. The sbsa_gwdt.timeout can't be too
->> small since it is also used for reset:
->> |----timeout-----(panic)----timeout-----reset.
->> If it is too small the crasdump kernel will not have enough time to start.
->>
->> It is also reproducible with different interrupts, e.g. for test I put
->> the panic to i2c interrupt handler and it was behaving the same.
->
-> Do you see this for a panic() in *any* interrupt handler?
+Thanks for the review comments,
 
-I only test with this two interrupt handlers: watchdog and i2c but I
-think it will behave the same with others - I can try with other if
-you want, any suggestion which? Maybe with some PPI interrupt instead?
->
-> Can you trigger the issue with magic-sysrq c, for example?
+On 02/03/18 12:50, Mark Brown wrote:
+> On Tue, Feb 13, 2018 at 04:58:26PM +0000, srinivas.kandagatla@linaro.org wrote:
+> 
+>> +static int q6hdmi_format_put(struct snd_kcontrol *kcontrol,
+>> +				struct snd_ctl_elem_value *ucontrol)
+>> +{
+>> +	struct q6afe_dai_data *dai_data = kcontrol->private_data;
+>> +	int value = ucontrol->value.integer.value[0];
+>> +
+>> +	dai_data->port_config[AFE_PORT_HDMI_RX].hdmi.datatype = value;
+>> +
+>> +	return 0;
+>> +}
+> 
+> No validation, and do we not need to tell a currently running stream if
+> the format changed on it (or block such changes if they're not going to
+> work, which seems more likely)?
+Yes, It would not work if the stream is running.
+This mixer has to be setup before the stream/port is prepared/started.
+TBH, I have no means to test Compr format, I should probably remove this 
+control until am able to test this format.
 
-There is no problem when I trigger it via 'echo c >
-/proc/sysrq-trigger' - it works well all the time. The problem appears
-only, when the kexec/kdump procedure is triggered from interrupt
-context - as I said it seems that deactivating the interrupt via
-irq_set_irqchip_state doesn't do the job and because of that any new
-interrupt (e.g. timer interrupt) can't interrupt the CPU (the previous
-irq watchdog/i2c irq seems to be still active preventing other irq to
-interrupt the CPU). This result with crashdump kernel hang (it waits
-for the timer interrupt, which never interrupts the CPU).
+> 
+>> +static int q6hdmi_hw_params(struct snd_pcm_substream *substream,
+>> +				struct snd_pcm_hw_params *params,
+>> +				struct snd_soc_dai *dai)
+>> +{
+>> +	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
+>> +	int channels = params_channels(params);
+>> +	struct q6afe_hdmi_cfg *hdmi = &dai_data->port_config[dai->id].hdmi;
+>> +
+>> +	hdmi->sample_rate = params_rate(params);
+>> +	switch (params_format(params)) {
+>> +	case SNDRV_PCM_FORMAT_S16_LE:
+>> +		hdmi->bit_width = 16;
+>> +		break;
+>> +	case SNDRV_PCM_FORMAT_S24_LE:
+>> +		hdmi->bit_width = 24;
+>> +		break;
+>> +	}
+> 
+> This silently accepts invalid values.
+> 
+Yep, I will fix this in next version.
 
-Reworking the machine_kexec_mask_interrupts routine so it will call
-'chip->irq_eoi(&desc->irq_data);' independently of
-irq_set_irqchip_state return value, solves the problem.
+>> +	/*refer to HDMI spec CEA-861-E: Table 28 Audio InfoFrame Data Byte 4*/
+> 
+> Coding style, spaces around the /* */.
+Agreed! Will fix it in next version.
 
-Thank you,
-Grzegorz
+> 
+>> +static int q6afe_dai_startup(struct snd_pcm_substream *substream,
+>> +				struct snd_soc_dai *dai)
+>> +{
+>> +	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
+>> +
+>> +	dai_data->is_port_started[dai->id] = false;
+>> +
+>> +	return 0;
+>> +}
+> 
+> If this is needed it makes me a bit worried that we've got some kind of
+> bug with not shutting things down properly somewhere - what's going on
+> here?
+
+This looks over done, we do not need to set this flag in startup, as it 
+would be properly reset in shutdown.
+
+Will remove this function totally as its not required.
+
+> 
+>> +static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
+>> +				struct snd_soc_dai *dai)
+>> +{
+>> +	struct q6afe_dai_data *dai_data = q6afe_get_dai_data(dai->dev);
+>> +	int rc;
+>> +
+>> +	rc = q6afe_port_stop(dai_data->port[dai->id]);
+>> +	if (rc < 0)
+>> +		dev_err(dai->dev, "fail to close AFE port\n");
+> 
+> Better to print the error code so users have more information to debug
+> the problem.
+
+Yep.
+
+> 
+>> +			.stream_name = "HDMI Playback",
+>> +			.rates = SNDRV_PCM_RATE_48000 |
+>> +				 SNDRV_PCM_RATE_96000 |
+>> +			 SNDRV_PCM_RATE_192000,
+> 
+> Indentation again.
+Will sort it out in next version.
+> 
+>> +static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
+>> +				   struct of_phandle_args *args,
+>> +				   const char **dai_name)
+>> +{
+>> +	int id = args->args[0];
+>> +	int i, ret = -EINVAL;
+> 
+> Coding style, don't mix initialization in with other variable
+> declarations on the same line like this.
+
+Will fix all such instances in next version.
+
+> 
+>> +int q6afe_dai_dev_remove(struct device *dev)
+>> +{
+>> +	return 0;
+>> +}
+> 
+> Remove empty functions, if they can't be removed it's probably not OK
+> for them to be empty either.
+Sure will do that.
+
+> 
+thanks,
+srini
