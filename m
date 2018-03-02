@@ -1,49 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuE9Ddi3l82uQ8SQD+v+UHNrdM51I6i3wLzhfzjCQBDDJufa0cc9iHE+Y8iQVg8whavugIk
-ARC-Seal: i=1; a=rsa-sha256; t=1519980893; cv=none;
-        d=google.com; s=arc-20160816;
-        b=o7CnYthozJjFVZjOVf98TR+mAyZiT5WphEp0O3hllJ2zZgI4X9AXmilFreMKjasj8s
-         EmzABDF/Fefpr8qUn82k0MMyCzsFIx0YFYSoOlGk4jhlBIIZkyghyj2zLQE8VwGTI3ok
-         MtD9xKXjXttebw5BJ5RqIkINM/wAhDabFTM+1Bf0ndZQGk5kKeqIrKwY+WS0iIcPn4Gj
-         M/2dUw/d5WqgWO9fy1gQBlQmFsvVrSOZAsPpxLOHoE/Rsgyz8IuNKeiogAmgbcRJwb7S
-         kukcs+FNSerRwiBH568tmHT/+fiXSoVDg2Ca2dKwBkTPz+2S5AqmfWo7Icbw5gF1qS51
-         UPzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=RodYCVExXASpgTAmtPKxok6FuY7Y5A/Z3sSpX2Xnnyw=;
-        b=Ta5LF6LvgYkEq3aDfEcUtadfuJ0BnoPcDOK/IJMzEVy4Rkmxx5WPkiK9J+QCV3xMO2
-         1Ip8WhncZ9E25DUZmZTF2O4eM/PNGTeI23wKX+3tcKk6rdstA8gZHv5mEamnWWiTVHK6
-         u9UFRihzX3hrVwq7H7GYmn03y7wnbb8W+zZiVAz31Yj+xQCwtqUn0ov5R//41PzgVnLU
-         mwT87izp3+MRfBxwYTxNVqjHPkP/YU/Ld8LW6lcbE5fDweBE23Czh+0XpyYNaxE4IZO1
-         ZC41+z+DlDcSDkh+LjgEs4Zk5PH1hEzW5mSns3f7PPefMZHI0f424qHCkekzRz9FRf3X
-         CZ3Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519980851-2-14277196179527629843
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519980850; b=BmeudyJ0dBjvS/dVCRuN9o99BvE21OHC6sI3xmBQlmT3Dm4
+    WAzgO3o/Pl0b9oIJ8odu90b5+HqdqnxpxRoy48kcW32tCoWRW/Tf9O5k/xik76aj
+    r0c4a85O66+nVVeg6feCxTthg9f0p7obgK4OMus2FaefU3LudQ7n92wHM6sMjNbB
+    ewixFr8FB8yGJp5xu9BG6ZHqYUF0ZqRDt4btqhMRJdomglCAOcA8tXmg9tm2Pr5+
+    daVL1MW6pZyWmgJuwpCd0XGU1bhhumMfo0zBqueWJn2O9PUTkQKdMMJ28PP9vhsm
+    P4da3978qPvQQAkgl8/0Pa7Glf1prdccnI+1a8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519980850; bh=EX8RGO8lLjyApK9KzUrhJv/Trn
+    iGcT/BQSZFl8qu5t8=; b=Y7oGcsB21SRuE2YqVCEX6EowTwSOnOu602ogoF3FGO
+    QrHSN00QIMMMgSr/sZri2m+XXL/VaWQbfehJaLkg/0EIHjnHkAwzhD076ly7k1JC
+    XY/XEhVw3uR6vnTBImDTwG4F/ZQY2FkcbHFrLRwJQ7YMtMpRhV8LG+ecNhwUowxw
+    Ber9dCcHWUkaA5FXHPBmyUpPywnjRv6FJjerTQ+ixPSdE5msgE0VGfISGWsAB19Q
+    hlkQtRBtjJ6eL7PS6MO45WWaeeueAia0DzSeY2SF5VqPBNiZIxOqtXGJPoYfAB16
+    TvC5iPMTOgLx1t5NpqjaLA9zCXjMMschxcksjeXx3h6g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1423049AbeCBIyG (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 03:54:06 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50308 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423387AbeCBIyF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:54:05 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Xiongwei Song <sxwjean@gmail.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 23/34] drm/ttm: check the return value of kzalloc
-Date: Fri,  2 Mar 2018 09:51:19 +0100
-Message-Id: <20180302084437.535534570@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>
+Subject: [PATCH 4.4 01/34] hrtimer: Ensure POSIX compliance (relative CLOCK_REALTIME hrtimers)
+Date: Fri,  2 Mar 2018 09:50:57 +0100
+Message-Id: <20180302084436.004061183@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815303183169989?=
-X-GMAIL-MSGID: =?utf-8?q?1593815485522915694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +83,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xiongwei Song <sxwjean@gmail.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
+commit 48d0c9becc7f3c66874c100c126459a9da0fdced upstream.
 
-[ Upstream commit 19d859a7205bc59ffc38303eb25ae394f61d21dc ]
+The POSIX specification defines that relative CLOCK_REALTIME timers are not
+affected by clock modifications. Those timers have to use CLOCK_MONOTONIC
+to ensure POSIX compliance.
 
-In the function ttm_page_alloc_init, kzalloc call is made for variable
-_manager, we need to check its return value, it may return NULL.
+The introduction of the additional HRTIMER_MODE_PINNED mode broke this
+requirement for pinned timers.
 
-Signed-off-by: Xiongwei Song <sxwjean@gmail.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+There is no user space visible impact because user space timers are not
+using pinned mode, but for consistency reasons this needs to be fixed.
+
+Check whether the mode has the HRTIMER_MODE_REL bit set instead of
+comparing with HRTIMER_MODE_ABS.
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Fixes: 597d0275736d ("timers: Framework for identifying pinned timers")
+Link: http://lkml.kernel.org/r/20171221104205.7269-7-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/ttm/ttm_page_alloc.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -818,6 +818,8 @@ int ttm_page_alloc_init(struct ttm_mem_g
- 	pr_info("Initializing pool allocator\n");
+---
+ kernel/time/hrtimer.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1139,7 +1139,12 @@ static void __hrtimer_init(struct hrtime
  
- 	_manager = kzalloc(sizeof(*_manager), GFP_KERNEL);
-+	if (!_manager)
-+		return -ENOMEM;
+ 	cpu_base = raw_cpu_ptr(&hrtimer_bases);
  
- 	ttm_page_pool_init_locked(&_manager->wc_pool, GFP_HIGHUSER, "wc");
+-	if (clock_id == CLOCK_REALTIME && mode != HRTIMER_MODE_ABS)
++	/*
++	 * POSIX magic: Relative CLOCK_REALTIME timers are not affected by
++	 * clock modifications, so they needs to become CLOCK_MONOTONIC to
++	 * ensure POSIX compliance.
++	 */
++	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
+ 		clock_id = CLOCK_MONOTONIC;
  
+ 	base = hrtimer_clockid_to_base(clock_id);
