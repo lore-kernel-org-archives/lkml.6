@@ -1,103 +1,129 @@
-Return-Path: <alex.shi@linaro.org>
-X-Cyrus-Session-Id: sloti22d1t05-2934828-1520038463-2-4387438510545683400
+Return-Path: <marc.zyngier@arm.com>
+X-Cyrus-Session-Id: sloti22d1t05-1243504-1519986612-2-17875165394229253957
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H2 -0.001,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.192.194', Host='mail-pf0-f194.google.com', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, SPF_PASS -0.001,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='217.140.101.70', Host='foss.arm.com', Country='US', FromHeader='com',
+  MailFrom='com'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: alex.shi@linaro.org
+X-Mail-from: marc.zyngier@arm.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520038462; b=UQY3YuiXub5dRPkOmz5MCBWSJ45gg68j9MePSmN4ikEEPmb
-    3fPlhDzUhrp6FnIr/2VXciB1EXCupPS3stYg2yRgnj1/uwaMeYjvt3HR6/qdUJo1
-    GonVxRL76MBwEGbpfVqoAEo3iBouGXBVYL1bsaGix535MoOq42lTxbG+dpgtGKt/
-    uaKXNcBpgr8OUaBRm10H2PFB1YDxNJsYwBNKoWZfZUUWdhExfgIckjUFHgVLz6W8
-    CAzC190w+jfjiiZuZ8GVYhjeL6ABJSnL+RoJFPF+5i7X6F07AuuFWDi566i9nnKe
-    Fw62CCeSbPIcDowMwY3GszET+xwSbirgGmHMotw==
+    t=1519986612; b=VnchUr3C2+uTtb0OPvUi5CPMF+jwTIjPDO/Ks9rijQn0gne
+    2d7crm8eoL6a7gUg4OrRDCm0OBYuwvllVGEgR6snBxQaQcjRre1G9Su/8tY4Komr
+    I7lciKzyMhsEYaDFGizsHPjQv5FO6s15wfLK8eTYJqXP/CFaSgKsR2ppXTVAeJev
+    Mnupgjg85IwhaaIpHyDuQMfav2gbII5zwKahebMiKPW/aizTQODNQoYBaJ46vhHJ
+    mLSgotXQhMOYRnBf/T/sWSf4azsHturH9hCEWo516tnIbjdvOgFzGQcyHkXIz+aF
+    j8IUCjdPH90E8B/sFe9xVu05iiQpgurf2ju7aew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding; s=arctest; t=1520038462; bh=7oFJ1hLM
-    XeLEH4Mumm8V3lGsMwYIl5SiaBNQjpqfxOA=; b=g8+EJydedGte/wZMN42w9Qsc
-    d32iukzP9DmqidOQShfmngICkYLrGO2Zs8rwc+DPAMHQsh9mNAOUONfNCKaS7x0u
-    62FIGVEDTx9JqLXXWfQhUim4z17QapXvZl3ooLBWyRH0FrbcOuPwpq9IXyHAIpsl
-    AEEp9qX5s9hOtuKUDI9p21bpuF6tJHDxssvMujuVMdF8QZhUdqP72+jqNS+fXsL5
-    qqieQ9rcinBjhuLKOM6yjJyODTT0HXNnPpaof2AATUe2N0yHN4ddG2H42ICmG6hg
-    Cw4pDXrR3zNylKr+XevedhWm55doeeKPbm6UxzWtwBadrgZ+NT5UO/WuqME+VQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=IZUBn5f7 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.85.192.194 (mail-pf0-f194.google.com);
-    spf=pass smtp.mailfrom=alex.shi@linaro.org smtp.helo=mail-pf0-f194.google.com;
+    messagingengine.com; h=date:message-id:from:to:cc:subject
+    :in-reply-to:references:mime-version:content-type; s=arctest; t=
+    1519986612; bh=rtBXQokYiqcCHixnjkpWMUOei+Fz2bPoVpbHczOcFsw=; b=X
+    32VUuR5TQjEAdlJpzIgZ4mKt8zbHDsV7q0dZJ45ofoCgs4Y5V3DPzGsAzwx6U0h3
+    cZhhz7Moy5+wAG6yIegRr94l6jaTcA2EpRlX9Zhoq5fmtBCRsejypY2/qqnpsLbc
+    /GtROpaXUip/Wgb5rn4bAhQ1a+TAN470TysG9GvbHU0fKQv9RAXlHs6MizUbw45l
+    fQicUayXM9Cz4ShUptlceqG7LLvUeFQgttGyKJFhybE2yMlGFPTSHNKr6ubgPPh5
+    SGVmQU/GsKF6AQ0VPIybaZPDt3zXyw/2KgrQ7toWfSPw8Z2k7nUPGI1+q+AopFFC
+    b2bESZpN2XxYv0QXzzDxw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=217.140.101.70 (foss.arm.com,usa-sjc-mx-foss1.foss.arm.com);
+    spf=pass smtp.mailfrom=marc.zyngier@arm.com smtp.helo=foss.arm.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JvqpA9ms;
-    x-ptr=pass x-ptr-helo=mail-pf0-f194.google.com x-ptr-lookup=mail-pf0-f194.google.com;
-    x-return-mx=pass smtp.domain=linaro.org smtp.result=pass smtp_is_org_domain=yes header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+    x-ptr=pass x-ptr-helo=foss.arm.com x-ptr-lookup=foss.arm.com,usa-sjc-mx-foss1.foss.arm.com;
+    x-return-mx=pass smtp.domain=arm.com smtp.result=pass smtp_is_org_domain=yes header.domain=arm.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=IZUBn5f7 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.85.192.194 (mail-pf0-f194.google.com);
-    spf=pass smtp.mailfrom=alex.shi@linaro.org smtp.helo=mail-pf0-f194.google.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=217.140.101.70 (foss.arm.com,usa-sjc-mx-foss1.foss.arm.com);
+    spf=pass smtp.mailfrom=marc.zyngier@arm.com smtp.helo=foss.arm.com;
     x-aligned-from=pass;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=JvqpA9ms;
-    x-ptr=pass x-ptr-helo=mail-pf0-f194.google.com x-ptr-lookup=mail-pf0-f194.google.com;
-    x-return-mx=pass smtp.domain=linaro.org smtp.result=pass smtp_is_org_domain=yes header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AG47ELsHVrSwfJaRJ1Uo0uIdGMsgh4YdXof+WnymJVDZdWd0LROFFoPsWlOMNcu6QuZlLzXEJobMkg==
+    x-ptr=pass x-ptr-helo=foss.arm.com x-ptr-lookup=foss.arm.com,usa-sjc-mx-foss1.foss.arm.com;
+    x-return-mx=pass smtp.domain=arm.com smtp.result=pass smtp_is_org_domain=yes header.domain=arm.com header.result=pass header_is_org_domain=yes
+Date: Fri, 02 Mar 2018 10:29:56 +0000
+Message-ID: <86r2p23h3v.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Alex Shi <alex.shi@linaro.org>
+Cc: Greg KH <greg@kroah.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	stable@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 00/45] arm Spectre fix backport review for LTS 4.9
-To: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>, Marc Zyngier <marc.zyngier@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, stable@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <c96bc4d8-25b8-684b-83f6-7d6c6c0fea4b@linaro.org>
 References: <1519908862-11425-1-git-send-email-alex.shi@linaro.org>
- <20180301164630.GB23321@kroah.com>
- <c96bc4d8-25b8-684b-83f6-7d6c6c0fea4b@linaro.org>
- <20180302103046.GC19323@arm.com>
-From: Alex Shi <alex.shi@linaro.org>
-Message-ID: <f12aee2c-556b-f146-17eb-707bb901dbd8@linaro.org>
-Date: Sat, 3 Mar 2018 08:54:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180302103046.GC19323@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+	<20180301164630.GB23321@kroah.com>
+	<c96bc4d8-25b8-684b-83f6-7d6c6c0fea4b@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-On 03/02/2018 06:30 PM, Will Deacon wrote:
-> On Fri, Mar 02, 2018 at 05:02:32PM +0800, Alex Shi wrote:
->> As testing the spectre bug fix, that's a good question. I also asked
->> this question to original patch authors, like Marc. They said they just
->> figure out these patches could block spectre or meltdown issue. From my
->> side, I just reproduced the process internal spectre. But all fix on arm
->> can not resolve the user space internal spectre. It can block from user
->> to kernel or kernel to user spectre according the code purose. So I
->> believe these patch could do their job. And arm cpu would drop the
->> spectre branches if it has 20+ 'nop' instructions...
+On Fri, 02 Mar 2018 09:02:32 +0000,
+Alex Shi wrote:
 > 
-> Since this is archived on a public list and I don't want people to rely on
-> this, no, you cannot rely on "20+ 'nop' instructions" to work around
-> spectre on arm/arm64. It might prevent a particular PoC working on a
-> particular SoC, but it's fragile at best.
 > 
+> 
+> On 03/02/2018 12:46 AM, Greg KH wrote:
+> > On Thu, Mar 01, 2018 at 08:53:37PM +0800, Alex Shi wrote:
+> >> Hi All,
+> >>
+> >> Resent without non-upstream patches.
+> >>
+> >> This backport patchset fixed the spectre issue, it's original branch:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=kpti
+> >> A few dependency or fixingpatches are also picked up, if they are necessary
+> >>  and no functional changes.
+> >>
+> >> No bug found from kernelci.org and lkft testing. It also could be gotten from:
+> >>
+> >> git://git.linaro.org/kernel/linux-linaro-stable.git v4.9-spectre-upstream-only
+> > 
+> > Also, how did you test, what platforms did you test, and did you test
+> > that this actually did fix the spectre issue on your platforms?  If so,
+> > what test did you use?
+> > 
+> 
+> On the kernelci, there are 18 kinds of platoforms with different
+> configure tested booting, detailed info is here:
+> https://kernelci.org/boot/all/job/lsk/branch/linux-linaro-lsk-v4.9-test/kernel/lsk-v4.9-17.03-4844-g6f782cff6edb/
+> 
+> I also tested the qemu boot on hikey620. and normal boot on
 
+Did you try QEMU in conjunction with KVM? Or just in emulation?
 
-Thanks for comments, Will!
+> hikey620/db410c/junor2. The other testing include the LKFT testing which
+> is reported by email, same as test for LTS. None of testing show
+> regressions.
+> 
+> 
+> As testing the spectre bug fix, that's a good question. I also asked
+> this question to original patch authors, like Marc. They said they just
+> figure out these patches could block spectre or meltdown issue. From my
+> side, I just reproduced the process internal spectre. But all fix on arm
+> can not resolve the user space internal spectre. It can block from user
+> to kernel or kernel to user spectre according the code purose. So I
+> believe these patch could do their job. And arm cpu would drop the
+> spectre branches if it has 20+ 'nop' instructions...
 
-Yes, I full understand the difference between SoCs. Thanks for point it out!
+What are you talking about? What's that story about NOPs? There are
+clear mitigation guidelines for ARM cores, please don't make things
+up.
 
+	M.
 
-Regards
-Alex
+-- 
+Jazz is not dead, it just smell funny.
