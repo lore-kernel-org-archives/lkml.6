@@ -1,182 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932676AbeCBWAh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:00:37 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:39217 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932428AbeCBWAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:00:31 -0500
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, Alban Crequy <alban@kinvolk.io>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Fri,  2 Mar 2018 15:59:15 -0600
-Message-Id: <20180302215919.27207-2-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <87r2p287i8.fsf_-_@xmission.com>
-References: <87r2p287i8.fsf_-_@xmission.com>
-X-XM-SPF: eid=1ersj7-0000ts-2D;;;mid=<20180302215919.27207-2-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/Zz7KVxhZyxVoIB4fNdVSuvTwxWA2eyjY=
-X-SA-Exim-Connect-IP: 174.19.85.160
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1336 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 4.1 (0.3%), b_tie_ro: 2.1 (0.2%), parse: 0.86 (0.1%),
-        extract_message_metadata: 11 (0.8%), get_uri_detail_list: 2.5 (0.2%),
-        tests_pri_-1000: 5 (0.4%), tests_pri_-950: 1.14 (0.1%), tests_pri_-900: 0.91
-        (0.1%), tests_pri_-400: 26 (1.9%), check_bayes: 25 (1.9%), b_tokenize: 10
-        (0.7%), b_tok_get_all: 8 (0.6%), b_comp_prob: 2.2 (0.2%), b_tok_touch_all:
-        3.3 (0.2%), b_finish: 0.55 (0.0%), tests_pri_0: 1276 (95.5%),
-        check_dkim_signature: 0.59 (0.0%), check_dkim_adsp: 2.8 (0.2%),
-        tests_pri_500: 7 (0.6%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v8 2/6] fuse: Simplfiy the posix acl handling logic.
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        id S932794AbeCBWA4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:00:56 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41760 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932681AbeCBWAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:00:41 -0500
+Subject: Re: [PATCH v8 7/8] livepatch: Correctly handle atomic replace for not
+ yet loaded modules
+To: Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180221132914.4809-1-pmladek@suse.com>
+ <20180221132914.4809-8-pmladek@suse.com>
+ <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
+ <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <7f920ec3-dfe0-6a4d-dd25-5d5c4fa75714@redhat.com>
+Date: Fri, 2 Mar 2018 17:00:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the fuse connection flag posix_acl to cached_posix_acl as that
-is what it actually means.  That fuse will cache and operate on the
-cached value of the posix acl.
+On 03/01/2018 05:28 AM, Petr Mladek wrote:
+> On Thu 2018-02-22 22:00:28, Miroslav Benes wrote:
+>> On Wed, 21 Feb 2018, Petr Mladek wrote:
+>>> This patch allows the late initialization.
+>>>
+>>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+>>> index ad508a86b2f9..da1438d47d83 100644
+>>> --- a/kernel/livepatch/core.c
+>>> +++ b/kernel/livepatch/core.c
+>>> @@ -984,7 +988,12 @@ static void klp_free_patch(struct klp_patch *patch)
+>>>  
+>>>  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+>>>  {
+>>> -	if (!func->old_name || !func->new_func)
+>>> +	if (!func->old_name)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* NOPs do not know the address until the patched module is loaded. */
+>>> +	if (!func->new_func &&
+>>> +	    (!klp_is_func_type(func, KLP_FUNC_NOP) || klp_is_object_loaded(obj)))
+>>>  		return -EINVAL;
+>>
+>> If we changed the order of klp_init_func() and klp_init_object_loaded() 
+>> calls in klp_init_object(), the hunk would not be needed. Is that correct? 
+> 
+> Not really. klp_init_object_loaded() would set func->new_func only
+> when the object was loaded. But we want to proceed here and create
+> the kobject for NOPs even when it was not loaded.
+> 
+> 
+>>>  	INIT_LIST_HEAD(&func->stack_node);
+>>> @@ -1039,6 +1048,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+>>>  			return -ENOENT;
+>>>  		}
+>>>  
+>>> +		if (klp_is_func_type(func, KLP_FUNC_NOP))
+>>> +			func->new_func = (void *)func->old_addr;
+>>
+>> Is there a reason why you left the same assignment in 
+>> klp_alloc_func_nop()? This one is enough, no?
+> 
+> Good point! I am going to replace the obsolete assignment
+> with a comment in v8.
 
-Always use posix_acl_access_xattr_handler so the fuse code benefits
-from the generic posix acl handlers as much as possible.  This will
-become important as the code works on translation of uid and gid in
-the posix acls when fuse is not mounted in the initial user namespace.
+Hi Petr, Miroslav,
 
-Update fuse_get_acl so that it does not cache the acl if the code is
-not caching the acl.  This is all that is needed to ensure the
-fuse_getxattr calls down into the fuse server when posix_acl_xattr_get
-is called.  The updated code goes through fuse_getacl, and as such has
-posix acl specific sanity checks and attribute handling but no real
-difference from the previous code that skipped it.
+I don't think the assignment in klp_alloc_func_nop() was necessarily
+redundant.  It was removed in v9 and that breaks my atomic replace
+sample module when I try to load it.  (Perhaps the sample patch has
+issues, but here are my debug notes):
 
-It can safely be assumed that fuse filesystems where acls are not
-cached in the kernel do not set fc->default_permissions as
-default_permissions only checked posix acls if .get_acl was defined
-and before the cached acl flag was introduced fuse did not implement a
-get_acl method.
+To recap:
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- fs/fuse/acl.c    | 6 ++++--
- fs/fuse/dir.c    | 2 +-
- fs/fuse/fuse_i.h | 3 +--
- fs/fuse/inode.c  | 3 +--
- fs/fuse/xattr.c  | 5 -----
- 5 files changed, 7 insertions(+), 12 deletions(-)
+  patch 1 - modifies cmdline_proc_show()
+  patch 2 - modifies only meminfo_proc_show()
 
-diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-index ec85765502f1..cfa58ee0c10b 100644
---- a/fs/fuse/acl.c
-+++ b/fs/fuse/acl.c
-@@ -19,7 +19,7 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type)
- 	void *value = NULL;
- 	struct posix_acl *acl;
- 
--	if (!fc->posix_acl || fc->no_getxattr)
-+	if (fc->no_getxattr)
- 		return NULL;
- 
- 	if (type == ACL_TYPE_ACCESS)
-@@ -44,6 +44,8 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type)
- 		acl = ERR_PTR(size);
- 
- 	kfree(value);
-+	if (!IS_ERR(acl) && !fc->cached_posix_acl)
-+		acl = to_uncacheable_acl(acl);
- 	return acl;
- }
- 
-@@ -53,7 +55,7 @@ int fuse_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 	const char *name;
- 	int ret;
- 
--	if (!fc->posix_acl || fc->no_setxattr)
-+	if (fc->no_setxattr)
- 		return -EOPNOTSUPP;
- 
- 	if (type == ACL_TYPE_ACCESS)
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 24967382a7b1..43a45e83d313 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1764,7 +1764,7 @@ static int fuse_setattr(struct dentry *entry, struct iattr *attr)
- 		 * If filesystem supports acls it may have updated acl xattrs in
- 		 * the filesystem, so forget cached acls for the inode.
- 		 */
--		if (fc->posix_acl)
-+		if (fc->cached_posix_acl)
- 			forget_all_cached_acls(inode);
- 
- 		/* Directory mode changed, may need to revalidate access */
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index c4c093bbf456..74ce02fb16d6 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -619,7 +619,7 @@ struct fuse_conn {
- 	unsigned no_lseek:1;
- 
- 	/** Does the filesystem support posix acls? */
--	unsigned posix_acl:1;
-+	unsigned cached_posix_acl:1;
- 
- 	/** Check permissions based on the file mode or not? */
- 	unsigned default_permissions:1;
-@@ -974,7 +974,6 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
- ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
- int fuse_removexattr(struct inode *inode, const char *name);
- extern const struct xattr_handler *fuse_xattr_handlers[];
--extern const struct xattr_handler *fuse_acl_xattr_handlers[];
- 
- struct posix_acl;
- struct posix_acl *fuse_get_acl(struct inode *inode, int type);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 624f18bbfd2b..507f780046c5 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -915,8 +915,7 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_req *req)
- 				fc->sb->s_time_gran = arg->time_gran;
- 			if ((arg->flags & FUSE_POSIX_ACL)) {
- 				fc->default_permissions = 1;
--				fc->posix_acl = 1;
--				fc->sb->s_xattr = fuse_acl_xattr_handlers;
-+				fc->cached_posix_acl = 1;
- 			}
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
-diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
-index 3caac46b08b0..ed64c508585a 100644
---- a/fs/fuse/xattr.c
-+++ b/fs/fuse/xattr.c
-@@ -199,11 +199,6 @@ static const struct xattr_handler fuse_xattr_handler = {
- };
- 
- const struct xattr_handler *fuse_xattr_handlers[] = {
--	&fuse_xattr_handler,
--	NULL
--};
--
--const struct xattr_handler *fuse_acl_xattr_handlers[] = {
- 	&posix_acl_access_xattr_handler,
- 	&posix_acl_default_xattr_handler,
- 	&fuse_xattr_handler,
--- 
-2.14.1
+when I load patch 2 with .replace=1, klp_add_nops() is called and this
+adds a nop function to patch 2 so it reverts cmdline_proc_show():
+
+klp_init_patch()
+  if (patch->replace)
+    klp_add_nops()
+      list_for_each_entry(old_patch, &klp_patches, list) {
+        klp_for_each_object(old_patch, old_obj) {
+          klp_add_object_nops()
+            klp_add_func_nop()
+              klp_alloc_func_nop()
+
+the patch continues initialization and I hit the second -EINVAL
+condition on that nop function in klp_init_func():
+
+  klp_init_object
+    klp_init_func
+
+(from added debug):
+[   48.456980] livepatch: func->old_name=cmdline_proc_show
+[   48.457620] livepatch: func->new_func=          (null)
+[   48.458042] livepatch: klp_is_func_type(func, KLP_FUNC_NOP)=1
+[   48.458573] livepatch: klp_is_object_loaded(obj)=1
+
+If I restore the assignment of func->new_func to klp_alloc_func_nop()
+then the replacement patch properly loads.  (Reordering the code may
+have similar effect?)
+
+I think this problem is contained to only replacement patches that need
+the nop-revert feature... if the replacement patch provides a new
+function definition, then it shouldn't be affected.
+
+Man, we need a regression test suite for all these cases :)
+
+-- Joe
