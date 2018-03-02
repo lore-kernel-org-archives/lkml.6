@@ -1,74 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946707AbeCBQCE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:02:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37188 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1946678AbeCBQCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1946687AbeCBQCB (ORCPT <rfc822;w@1wt.eu>);
         Fri, 2 Mar 2018 11:02:01 -0500
-Date: Fri, 2 Mar 2018 17:01:59 +0100
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, Stefan Chulski <stefanc@marvell.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for
- all ports
-Message-ID: <20180302170159.258bcdbc@windsurf.lan>
-In-Reply-To: <20180302154044.25204-2-antoine.tenart@bootlin.com>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-2-antoine.tenart@bootlin.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Received: from mga05.intel.com ([192.55.52.43]:4004 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1946669AbeCBQB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:01:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,412,1515484800";
+   d="scan'208";a="35004613"
+From: Jani Nikula <jani.nikula@intel.com>
+To: Takashi Iwai <tiwai@suse.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: Jiri Slaby <jslaby@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation/sphinx: Fix Directive import error
+In-Reply-To: <20180302152831.11510-1-tiwai@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180302152831.11510-1-tiwai@suse.de>
+Date: Fri, 02 Mar 2018 18:01:50 +0200
+Message-ID: <871sh2v53l.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 02 Mar 2018, Takashi Iwai <tiwai@suse.de> wrote:
+> The sphinx.util.compat for Directive stuff was deprecated in the
+> recent Sphinx version, and now we get a build error.
+>
+> Let's import from the new place, docutils.parsers.rst, while keeping
+> the old sphinx.util.compat as fallback.
+>
+> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+> v1->v2: Change the fallback order as Matthew suggested, the new one at first
 
-On Fri,  2 Mar 2018 16:40:40 +0100, Antoine Tenart wrote:
-> +static struct {
-> +	int pkt_size;
-> +	int buf_num;
-> +} mvpp2_pools[MVPP2_BM_POOLS_NUM];
+So this crossed my mind as well... and then I thought it'll probably
+succeed on older Sphinx, and the fallback is not needed. The question
+is, are these equal? Can we just import from docutils.parsers.rst?
 
-Any reason for not doing:
+I'm sorry I don't have the time to find the answers to these questions
+as well. :(
 
-} mvpp2_pools[MVPP2_BM_POOLS_NUM] = {
-	[MVPP2_BM_SHORT] = {
-		.pkt_size = MVPP2_BM_SHORT_PKT_SIZE,
-		.buf_num = MVPP2_BM_SHORT_BUF_NUM
-	},
-	[MVPP2_BM_LONG] = {
-		.pkt_size = MVPP2_BM_LONG_PKT_SIZE,
-		.buf_num = MVPP2_BM_LONG_BUF_NUM,
-	},
-};
+BR,
+Jani.
 
-And get rid of:
 
-> +static void mvpp2_setup_bm_pool(void)
-> +{
-> +	/* Short pool */
-> +	mvpp2_pools[MVPP2_BM_SHORT].buf_num  = MVPP2_BM_SHORT_BUF_NUM;
-> +	mvpp2_pools[MVPP2_BM_SHORT].pkt_size = MVPP2_BM_SHORT_PKT_SIZE;
-> +
-> +	/* Long pool */
-> +	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
-> +	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
-> +}
+>
+>  Documentation/sphinx/kerneldoc.py | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+> index 39aa9e8697cc..34396976eb0a 100644
+> --- a/Documentation/sphinx/kerneldoc.py
+> +++ b/Documentation/sphinx/kerneldoc.py
+> @@ -37,7 +37,10 @@ import glob
+>  from docutils import nodes, statemachine
+>  from docutils.statemachine import ViewList
+>  from docutils.parsers.rst import directives
+> -from sphinx.util.compat import Directive
+> +try:
+> +    from docutils.parsers.rst import directives, Directive
+> +except ImportError:
+> +    from sphinx.util.compat import Directive
+>  from sphinx.ext.autodoc import AutodocReporter
+>  
+>  __version__  = '1.0'
 
- ?
-
-Best regards,
-
-Thomas
 -- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Jani Nikula, Intel Open Source Technology Center
