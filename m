@@ -1,72 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427265AbeCBLay (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:30:54 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56243 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423169AbeCBLat (ORCPT
+        id S1427282AbeCBLgr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:36:47 -0500
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:44952 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423169AbeCBLgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:30:49 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: David Wang <davidwang@zhaoxin.com>
-Cc: len.brown@intel.com, pavel@ucw.cz, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-pm@kernel.org,
-        linux-kernel@vger.kernel.org, brucechang@via-alliance.com,
-        cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com, benjaminpan@viatech.com,
-        lukelin@viacpu.com, timguo@zhaoxin.com, cobechen@zhaoxin.com,
-        jiangbowang@zhaoxin.com
-Subject: Re: [PATCH] Delete some unusefull operations for centaur CPU/platform
-Date: Fri, 02 Mar 2018 12:31:34 +0100
-Message-ID: <1983196.2xaV79s388@aspire.rjw.lan>
-In-Reply-To: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
-References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+        Fri, 2 Mar 2018 06:36:42 -0500
+X-Google-Smtp-Source: AG47ELu0FtAD72KwrWhSy0B//fF8yHM2cZHvFQtaKrM0lGsKkPU5K/yrk1J/AovImC6idaJCGNwb70zQk1LLA0ueCp8=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 Mar 2018 12:36:40 +0100
+X-Google-Sender-Auth: oE7_dURwYp8LKvHwH9lRG5EI2FE
+Message-ID: <CAJZ5v0hD3MDOzNNWu4XNOXWTX2PcP2+PgfKFk1TJ7_Yd+JHncw@mail.gmail.com>
+Subject: [GIT PULL] Power management fixes for v4.16-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 2, 2018 5:11:48 AM CET David Wang wrote:
-> For Centaur CPU, the ucode will make sure that each CPU core can keep cache
-> coherency with each other when the CPU core entering to any C state. So the
-> cache flush operations when enter C3 is not necessary and will cause large
-> C3 enter/exit latency.
-> And the bus master disable operation when CPU core entering C3 state is not
-> needed too. Because the chipset will automatically do this operation.
-> 
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Hi Linus,
 
-I've queued up the previous version of your patch with some changes to
-comments/subject/changelog made by me for v4.17.
+Please pull from the tag
 
-Please see linux-next.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.16-rc4
 
-> ---
->  arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-> index dde437f..1cd357b 100644
-> --- a/arch/x86/kernel/acpi/cstate.c
-> +++ b/arch/x86/kernel/acpi/cstate.c
-> @@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
->  	if (c->x86_vendor == X86_VENDOR_INTEL &&
->  	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
->  			flags->bm_control = 0;
-> +
-> +        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-> +		/*
-> +		 * on all centaur CPUs, sw need not execute cache flush operation
-> +		 * when entering C3 type State.
-> +		 *
-> +		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
-> +		 * entering C3 type state.
-> +		 */
-> +		flags->bm_check = 1;
-> +		flags->bm_control = 0;
-> +	}
->  }
->  EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
->  
-> 
+with top-most commit b61e0703053321d2cdf397c438ce8d21c7317f7a
+
+ Merge branch 'cpufreq-scpi'
+
+on top of commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb
+
+ Linux 4.16-rc3
+
+to receive power management fixes for 4.16-rc4.
+
+These fix three issues in cpufreq drivers: one recent regression, one
+leftover Kconfig dependency and one old but "stable" material.
+
+Specifics:
+
+ - Make the task scheduler load and utilization signals be
+   frequency-invariant again after recent changes in the SCPI
+   cpufreq driver (Dietmar Eggemann).
+
+ - Drop an unnecessary leftover Kconfig dependency from the SCPI
+   cpufreq driver (Sudeep Holla).
+
+ - Fix the initialization of the s3c24xx cpufreq driver (Viresh
+   Kumar).
+
+Thanks!
+
+
+---------------
+
+Dietmar Eggemann (1):
+      cpufreq: scpi: invoke frequency-invariance setter function
+
+Sudeep Holla (1):
+      cpufreq: scpi: Fix incorrect arm_big_little config dependency
+
+Viresh Kumar (1):
+      cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
+
+---------------
+
+ drivers/cpufreq/Kconfig.arm       |  6 +++---
+ drivers/cpufreq/s3c24xx-cpufreq.c |  8 +++++++-
+ drivers/cpufreq/scpi-cpufreq.c    | 16 ++++++++++++----
+ 3 files changed, 22 insertions(+), 8 deletions(-)
