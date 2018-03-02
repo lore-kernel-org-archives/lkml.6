@@ -1,81 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947160AbeCBSVN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:21:13 -0500
-Received: from mout.web.de ([217.72.192.78]:60683 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423207AbeCBSVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:21:11 -0500
-From: Mario Leinweber <marioleinweber@web.de>
-To: mingo@redhat.com
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org,
-        Mario Leinweber <marioleinweber@web.de>
-Subject: [PATCH] kernel/sched/cpudeadline.c: Fixed coding style error and warnings.
-Date: Fri,  2 Mar 2018 13:20:07 -0500
-Message-Id: <20180302182007.28691-1-marioleinweber@web.de>
-X-Mailer: git-send-email 2.14.3
-X-Provags-ID: V03:K0:PUawGF3YjR2PKWpbJyFpQKHI0OXwnOe7EKwyZQ4musAxpJpccyN
- 68DlWmNIgRB44UOhkvfN/vjbE8jXmQZ2ckzBGXHhACc5li+od0lnk6nfryTJHV92RJnf1Ba
- tT46UIOXXr8HL89Rm48xh9bEZo795eAzxVE8VLXS5QlaGv3YKCiYX4/P2TDy5fOXukf7DMb
- 0Xib1oyX4AcXAiPnTdSCw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7njO842jy+M=:eh/1MX/qEJnpAWnw6iflsM
- OVHTiql4mmczdMMfXNYuNzx1OA5OMXaqTuMjrVURTUhhP0raH3xcTGVR+yRw+Lw6NoHejbcO8
- exlZlLdZKXHVS1aTiiChUMe+PUOMkEiJabyqLiMyUTMvt6uDsf+nLXzQykPyJG+VmsHVXuDIr
- EQNv+u+gBBpn5rDaVTvE+EQRWp1XX5EGv5uXVLOASSvrUnZvXfUFyGDiVrGkRB8JLSUPKOZRT
- PgNznau7jiyezzJbE7P0xni1eBOj2uqjYd7XL4bTCNYSbxt9O1fi9vE0uoswJi/LNKqeuUXqB
- 3k/Bxp0MrAnrkVeEAhpcOk8mnZc2enLRJM14daPd7TPr9/edxmKQd2/sVIZ/msq0Ck5uuo+z0
- 4JTdzVqGTtC7hghNlNgtMg9Fcr0H+d7wESYxTfMcvOE18MPQpsHdVcWytysAASyCzbQ6vl/DC
- 16vkrD655pkJeDBWPaiocv9IJBvF5TtUJqo/1x/mNVeWHnmCFy60aNu0uMoD7jW+7tVlu9WS6
- ecpjft+XRtyvRBqzYAQqjzgRPvSM+ptVbgZzH6jl3xmJkEfEXBQNhJIu9here48gEWCV1faNV
- S19xJnOH8c8K6ou85WVHG1v6BX1i5KwUhR67QccMl9ZSO2ph9OM+H7qzdxYMUsqNjmIVww7OV
- /6MaEBhNPhpdO3MIVW2OGmKW8ugUv+4yhlB04aY7ApNhwVLmRThW18em5y13b/dt6+G0MxXbH
- 5uk/BsSZE0FNtdxy3elCuBgDTj1JWJtHipvdjrCs1qakUVnTwiHbOhnw6qX3HkNC1C6bWQytp
- vZcJeyMRxs1/Lk3WV/GhAVsqWSgFg==
+        id S1947251AbeCBSXp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:23:45 -0500
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42463 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1947238AbeCBSXk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 13:23:40 -0500
+X-Google-Smtp-Source: AG47ELsABUOv3/eVeslMQNe0g5LpVLCGvQmWwOAcYT75jbcS6CF5lZpxRAFXZxuxguid5iupnluscNOrreB4tuNFH6o=
+MIME-Version: 1.0
+In-Reply-To: <1518415278-59062-2-git-send-email-vviswana@codeaurora.org>
+References: <1518415278-59062-1-git-send-email-vviswana@codeaurora.org> <1518415278-59062-2-git-send-email-vviswana@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 2 Mar 2018 10:23:37 -0800
+X-Google-Sender-Auth: ebd14wOPFmJ_PpWFhN2Q0VZqfGs
+Message-ID: <CAD=FV=VZVcN+47=KVkjDsoMtEaznDrNQSOj_iOdVpXDN8NURig@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] mmc: sdhci-msm: Add support to store supported
+ vdd-io voltages
+To: Vijay Viswanath <vviswana@codeaurora.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com, evgreen@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Fixed style error: Missing space before the open parenthesis
-- Fixed style warnings: 2x Missing blank line after declaration
+Hi,
 
-One warning left: else after return
- (I don't feel comfortable fixing that without side effects)
+On Sun, Feb 11, 2018 at 10:01 PM, Vijay Viswanath
+<vviswana@codeaurora.org> wrote:
+> During probe check whether the vdd-io regulator of sdhc platform device
+> can support 1.8V and 3V and store this information as a capability of
+> platform device.
+>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c283291..5c23e92 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/iopoll.h>
+>
+>  #include "sdhci-pltfm.h"
+> +#include <linux/regulator/consumer.h>
 
-Signed-off-by: Mario Leinweber <marioleinweber@web.de>
----
- kernel/sched/cpudeadline.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This is a strange sort order for this include file.  Why is it after
+the local include?
 
-diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-index 8d9562d890d3..6a9defebbb54 100644
---- a/kernel/sched/cpudeadline.c
-+++ b/kernel/sched/cpudeadline.c
-@@ -42,8 +42,9 @@ static void cpudl_heapify_down(struct cpudl *cp, int idx)
- 		return;
- 
- 	/* adapted from lib/prio_heap.c */
--	while(1) {
-+	while (1) {
- 		u64 largest_dl;
-+
- 		l = left_child(idx);
- 		r = right_child(idx);
- 		largest = idx;
-@@ -131,6 +132,7 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
- 		return 1;
- 	} else {
- 		int best_cpu = cpudl_maximum(cp);
-+
- 		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
- 
- 		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
-@@ -205,6 +207,7 @@ void cpudl_set(struct cpudl *cp, int cpu, u64 dl)
- 	old_idx = cp->elements[cpu].idx;
- 	if (old_idx == IDX_INVALID) {
- 		int new_idx = cp->size++;
-+
- 		cp->elements[new_idx].dl = dl;
- 		cp->elements[new_idx].cpu = cpu;
- 		cp->elements[cpu].idx = new_idx;
--- 
-2.14.3
+
+>  #define CORE_MCI_VERSION               0x50
+>  #define CORE_VERSION_MAJOR_SHIFT       28
+> @@ -81,6 +82,9 @@
+>  #define CORE_HC_SELECT_IN_HS400        (6 << 19)
+>  #define CORE_HC_SELECT_IN_MASK (7 << 19)
+>
+> +#define CORE_3_0V_SUPPORT      (1 << 25)
+> +#define CORE_1_8V_SUPPORT      (1 << 26)
+> +
+
+Is there something magical about 25 and 26?  This is a new caps field,
+so I'd have expected 0 and 1.
+
+
+>  #define CORE_CSR_CDC_CTLR_CFG0         0x130
+>  #define CORE_SW_TRIG_FULL_CALIB                BIT(16)
+>  #define CORE_HW_AUTOCAL_ENA            BIT(17)
+> @@ -148,6 +152,7 @@ struct sdhci_msm_host {
+>         u32 curr_io_level;
+>         wait_queue_head_t pwr_irq_wait;
+>         bool pwr_irq_flag;
+> +       u32 caps_0;
+>  };
+>
+>  static unsigned int msm_get_clock_rate_for_bus_mode(struct sdhci_host *host,
+> @@ -1313,6 +1318,35 @@ static void sdhci_msm_writeb(struct sdhci_host *host, u8 val, int reg)
+>                 sdhci_msm_check_power_status(host, req_type);
+>  }
+>
+> +static int sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+> +{
+> +       struct mmc_host *mmc = msm_host->mmc;
+> +       struct regulator *supply = mmc->supply.vqmmc;
+> +       int i, count;
+> +       u32 caps = 0, vdd_uV;
+> +
+> +       if (!IS_ERR(mmc->supply.vqmmc)) {
+> +               count = regulator_count_voltages(supply);
+> +               if (count < 0)
+> +                       return count;
+> +               for (i = 0; i < count; i++) {
+> +                       vdd_uV = regulator_list_voltage(supply, i);
+> +                       if (vdd_uV <= 0)
+> +                               continue;
+> +                       if (vdd_uV > 2700000)
+> +                               caps |= CORE_3_0V_SUPPORT;
+> +                       if (vdd_uV < 1950000)
+> +                               caps |= CORE_1_8V_SUPPORT;
+> +               }
+
+Shouldn't you be using regulator_is_supported_voltage() rather than
+open coding?  Also: I've never personally worked on a device where it
+was used, but there is definitely a concept floating about of a
+voltage level of 1.2V.  Maybe should copy the ranges from
+mmc_regulator_set_vqmmc()?
+
+
+Also: seems like you should have some way to deal with "caps" ending
+up w/ no bits set.  IIRC you can have a regulator that can be enabled
+/ disabled but doesn't list a voltage, so if someone messed up their
+device tree you could end up in this case.  Should you print a
+warning?  ...or treat it as if we support "3.0V"?  ...or ?  I guess it
+depends on how do you want patch #2 to behave in that case.
+
+
+> +       }
+
+How should things behave if vqmmc is an error?  In that case is it
+important to not set "CORE_IO_PAD_PWR_SWITCH_EN" in patch set #2?
+...or should you set "CORE_IO_PAD_PWR_SWITCH_EN" but then make sure
+you don't set "CORE_IO_PAD_PWR_SWITCH"?
+
+
+> +       msm_host->caps_0 |= caps;
+> +       pr_debug("%s: %s: supported caps: 0x%08x\n", mmc_hostname(mmc),
+> +                       __func__, caps);
+> +
+> +       return 0;
+> +}
+> +
+> +
+>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>         { .compatible = "qcom,sdhci-msm-v4" },
+>         {},
+> @@ -1530,6 +1564,10 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>         ret = sdhci_add_host(host);
+>         if (ret)
+>                 goto pm_runtime_disable;
+> +       ret = sdhci_msm_set_regulator_caps(msm_host);
+> +       if (ret)
+> +               dev_err(&pdev->dev, "%s: Failed to set regulator caps: %d\n",
+> +                               __func__, ret);
+
+Why do you need __func__ here?  You're already using dev_err(), that
+gives an idea of where we are.
+
+
+>
+>         pm_runtime_mark_last_busy(&pdev->dev);
+>         pm_runtime_put_autosuspend(&pdev->dev);
+> --
+>  Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
