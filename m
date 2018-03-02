@@ -1,43 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164356AbeCBCha (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 21:37:30 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:55784 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164179AbeCBCh3 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 1 Mar 2018 21:37:29 -0500
-Subject: Re: [Ocfs2-devel] [PATCH] Correct a comment error
-To: piaojun <piaojun@huawei.com>, Changwei Ge <ge.changwei@h3c.com>,
+        id S1164408AbeCBCjq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 21:39:46 -0500
+Received: from smtp.h3c.com ([60.191.123.56]:30106 "EHLO h3cmg01-ex.h3c.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1164293AbeCBCjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 21:39:45 -0500
+From: Changwei Ge <ge.changwei@h3c.com>
+To: piaojun <piaojun@huawei.com>, Larry Chen <lchen@suse.com>,
         "mfasheh@versity.com" <mfasheh@versity.com>,
         "jlbec@evilplan.org" <jlbec@evilplan.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: Re: [Ocfs2-devel] [PATCH] Correct a comment error
+Thread-Topic: [Ocfs2-devel] [PATCH] Correct a comment error
+Thread-Index: AQHTsH2KCDugZkjy6km/xN7cimww6Q==
+Date: Fri, 2 Mar 2018 02:38:46 +0000
+Message-ID: <63ADC13FD55D6546B7DECE290D39E373F292C163@H3CMLB12-EX.srv.huawei-3com.com>
 References: <20180228101720.20725-1-lchen@suse.com>
  <5A97F88E.4010303@huawei.com>
  <63ADC13FD55D6546B7DECE290D39E373F292C0FC@H3CMLB12-EX.srv.huawei-3com.com>
  <5A98B3BB.3040408@huawei.com>
-From: Larry Chen <lchen@suse.com>
-Message-ID: <40b08149-1a35-0dcc-116a-9df71b629950@suse.com>
-Date: Fri, 2 Mar 2018 10:37:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <5A98B3BB.3040408@huawei.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Accept-Language: en-US, zh-CN
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.125.136.231]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Changwei and Jun,
+Hi Jun,
 
-Thanks for your advice.
-
-On 03/02/2018 10:15 AM, piaojun wrote:
+On 2018/3/2 10:16, piaojun wrote:
 > Hi Changwei,
->
+> 
 > On 2018/3/2 9:59, Changwei Ge wrote:
 >> Hi Jun,
 >> I think the comments for both two functions are OK.
@@ -46,19 +46,17 @@ On 03/02/2018 10:15 AM, piaojun wrote:
 >> block number.
 > I looked though the comments involved 'lockid', and found 'lockid' is a
 > concept in dlm level, so ocfs2 level should not be aware of it.
-When reading source code of ocfs2 level, you'll find that 'lockid' is a new
-concept that has not occurred or be explained before.
+I don't agree.
+Please refer to ocfs2_build_lock_name().
+DLM should not know how ocfs2 distinguishes objects it wants to protected.
+Moreover, ocfs2 has a abstraction layer called dlmglue.
 
-It's kind of difficult to understand.
+-Changwei
 
-Maybe 'blockno' or 'blockid' is more sensible than 'lockid'
-
-I'm willing to fix them all.
-
-Thanks
-Larry
+> 
 > thanks,
 > Jun
+>>
 >> Thanks,
 >> Changw2ei
 >>
@@ -94,6 +92,7 @@ Larry
 >>>>    	if (oi1->ip_blkno != oi2->ip_blkno) {
 >>>>    		inode1_is_ancestor = ocfs2_check_if_ancestor(osb, oi2->ip_blkno,
 >>>>
+>>>
 >>> _______________________________________________
 >>> Ocfs2-devel mailing list
 >>> Ocfs2-devel@oss.oracle.com
@@ -101,3 +100,4 @@ Larry
 >>>
 >> .
 >>
+> 
