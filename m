@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELshs/rgeJUtLc+s6qSudeMj4yKRI3OZvRTC7a+x4lA9JWfPt5xImN455tuYbr/iCleo/dwL
-ARC-Seal: i=1; a=rsa-sha256; t=1519980922; cv=none;
+X-Google-Smtp-Source: AG47ELvf7nlsHIUo0HwVuEgf3q+KuvMM8B4O6t7LIifCHk3otzgkyThiIsUvb0rd08bAP2ZtJv9I
+ARC-Seal: i=1; a=rsa-sha256; t=1519980959; cv=none;
         d=google.com; s=arc-20160816;
-        b=qzizlozgAZDhMVBIGrwv9emnWvgBMZUT4Kqzsd5iSEIKiwM0hS5q3ehtH+BIOuilWL
-         6ILjDxds2xQqp+2o1lWx8oMmv2/PIq/s+At3BZttsPMG//aCp/eBT2p0yalBNWZjRJjr
-         huzq/5g9l0RTQeASrsldifJfGURVwJ+tj44z6yS/fUCXdB9mWjxvVhXL2z5vWaROECDl
-         PMpWmN6SNTKUfLP1rgCfDJ7glP6cDX90C8vJQHxXEAc5fPh5kMLZQ64r/RaZsKcy8Z1y
-         FtYiLDt4JmacZBUKc8YfO9A3JUYCFrwuXJbKdLTl5pqavLYq4luN5tu7q/ez1layfJGB
-         CnVQ==
+        b=HlsBTMuDLiRQL1vFcVNNZ0v/+hxMSWipHd7AXzTeUzJB+qPfmusOSU1XV/x1+zUsh+
+         GJXipYaxy1RcDHKkdFv2v37CMet4+wJVtE9T5jYV4Wa2NsjtuM1UvlwcFttzOziYju1t
+         u34IWMBXHkRRfT2icc1QQ2jZREtJVItICFGdNSEHGjPyH9g+SdykbYJ9DrUvgCr3CcKK
+         GdPbYZnK6IZTvqEAK9wMpHOYXtgm2ZO/M0nBAoTVSIfD3O46hbiNrHnW29155RP5DYLf
+         CdvZla6oJCYEtABi55i6BanLoSuCVm6VdNgHE0OHKrbHC7ZMtT2wboO7oWSGhE5A4W+n
+         2ieQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ft8r5qEG190OYAEhxT4yEOWuWcU+eZj9EBonQKx5JVY=;
-        b=v7VQoKh6U0TIeRCa4Vd1JWAbVX3DJh9yXxxUfZGJz1BV5bwXuJLdCaS/oXvzOv2Inr
-         9XTMpwXiXeR4SOWs1+EJaLGpD43gA7SEyRbJkMEfqK7lKCygF+OI0f7aZAJpVzdYKu3n
-         8HF9Z0O+xXWURHUF6PpR9Zcacdzb16f2/3aI+7PTepQnZFcyZIsM/uFca0XuOw5evyw9
-         JfQq+YJLHoTBihAoZSYuVdVxLpoLLx5bD9xp1QXT1GSUu7F7w1gPvpgItgfaNmdR8kEv
-         icEM/iE0Fr06SGJDLPOB7M181i4wGeUX7eoXmM18i9NNxMsRDXBrWW4Zjp5HzB8sLwBm
-         rKtQ==
+        bh=fdP8GqDuYWsLgKZL5YrfvA50SHyFbHtHIdVvOzmjdvU=;
+        b=Q3funbBAYlnAsjl8xkbAsg3INm4O/yhrcWuj8ILaK9xf9ki6cmWNyc+fFfsGs40ZJj
+         I3PLJxgPRmve4zE+dUAMoKd0ieSvXs/gyMG6XGt2EX6+wIXKXEprCNQFDXwTfK0auden
+         EhaSVgJSbaTgiHMvfb6hOJn7ouhMIC41N8of9ilXx/H4tcrRzd4FQX8vHEdbvx7OKWUB
+         gcrjFvhcIXNzF0511BgTt1yxGHHcXQZM0lGCGzOVSDFycAZBTQaMFqmsC4zlYZaDQtAh
+         im0AxxfAInL3GaCZ6MAwdY8XsgPcewaZaTMirjAKqODhxXYxlhDR8O16ljHSGn77x5w6
+         nyhw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 05/34] ARM: 8731/1: Fix csum_partial_copy_from_user() stack mismatch
-Date: Fri,  2 Mar 2018 09:51:01 +0100
-Message-Id: <20180302084436.333276338@linuxfoundation.org>
+Subject: [PATCH 4.4 29/34] SolutionEngine771x: fix Ether platform data
+Date: Fri,  2 Mar 2018 09:51:25 +0100
+Message-Id: <20180302084437.868320664@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815515532586116?=
-X-GMAIL-MSGID: =?utf-8?q?1593815515532586116?=
+X-GMAIL-THRID: =?utf-8?q?1593815317239776648?=
+X-GMAIL-MSGID: =?utf-8?q?1593815554887679024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,41 +50,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chunyan Zhang <zhang.lyra@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 
-[ Upstream commit 36b0cb84ee858f02c256d26f0cb4229c78e3399e ]
+[ Upstream commit 195e2addbce09e5afbc766efc1e6567c9ce840d3 ]
 
-An additional 'ip' will be pushed to the stack, for restoring the
-DACR later, if CONFIG_CPU_SW_DOMAIN_PAN defined.
+The 'sh_eth' driver's probe() method would fail  on the SolutionEngine7710
+board and crash on SolutionEngine7712 board  as the platform code is
+hopelessly behind the driver's platform data --  it passes the PHY address
+instead of 'struct sh_eth_plat_data *'; pass the latter to the driver in
+order to fix the bug...
 
-However, the fixup still get the err_ptr by add #8*4 to sp, which
-results in the fact that the code area pointed by the LR will be
-overwritten, or the kernel will crash if CONFIG_DEBUG_RODATA is enabled.
-
-This patch fixes the stack mismatch.
-
-Fixes: a5e090acbf54 ("ARM: software-based priviledged-no-access support")
-Signed-off-by: Lvqiang Huang <Lvqiang.Huang@spreadtrum.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 71557a37adb5 ("[netdrvr] sh_eth: Add SH7619 support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/lib/csumpartialcopyuser.S |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/sh/boards/mach-se/770x/setup.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/arm/lib/csumpartialcopyuser.S
-+++ b/arch/arm/lib/csumpartialcopyuser.S
-@@ -85,7 +85,11 @@
- 		.pushsection .text.fixup,"ax"
- 		.align	4
- 9001:		mov	r4, #-EFAULT
-+#ifdef CONFIG_CPU_SW_DOMAIN_PAN
-+		ldr	r5, [sp, #9*4]		@ *err_ptr
-+#else
- 		ldr	r5, [sp, #8*4]		@ *err_ptr
-+#endif
- 		str	r4, [r5]
- 		ldmia	sp, {r1, r2}		@ retrieve dst, len
- 		add	r2, r2, r1
+--- a/arch/sh/boards/mach-se/770x/setup.c
++++ b/arch/sh/boards/mach-se/770x/setup.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/sh_eth.h>
+ #include <mach-se/mach/se.h>
+ #include <mach-se/mach/mrshpc.h>
+ #include <asm/machvec.h>
+@@ -114,6 +115,11 @@ static struct platform_device heartbeat_
+ #if defined(CONFIG_CPU_SUBTYPE_SH7710) ||\
+ 	defined(CONFIG_CPU_SUBTYPE_SH7712)
+ /* SH771X Ethernet driver */
++static struct sh_eth_plat_data sh_eth_plat = {
++	.phy = PHY_ID,
++	.phy_interface = PHY_INTERFACE_MODE_MII,
++};
++
+ static struct resource sh_eth0_resources[] = {
+ 	[0] = {
+ 		.start = SH_ETH0_BASE,
+@@ -131,7 +137,7 @@ static struct platform_device sh_eth0_de
+ 	.name = "sh771x-ether",
+ 	.id = 0,
+ 	.dev = {
+-		.platform_data = PHY_ID,
++		.platform_data = &sh_eth_plat,
+ 	},
+ 	.num_resources = ARRAY_SIZE(sh_eth0_resources),
+ 	.resource = sh_eth0_resources,
+@@ -154,7 +160,7 @@ static struct platform_device sh_eth1_de
+ 	.name = "sh771x-ether",
+ 	.id = 1,
+ 	.dev = {
+-		.platform_data = PHY_ID,
++		.platform_data = &sh_eth_plat,
+ 	},
+ 	.num_resources = ARRAY_SIZE(sh_eth1_resources),
+ 	.resource = sh_eth1_resources,
