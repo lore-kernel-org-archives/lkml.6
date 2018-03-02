@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv+mHbhHREK/AyndPKWO4WmZmbW3t9dGlbm5w31Mf4eI+C0SaCMU9N4CXVxiBJtf+DOMLgL
-ARC-Seal: i=1; a=rsa-sha256; t=1519981507; cv=none;
+X-Google-Smtp-Source: AG47ELuBAft5wgoE2Gj2KsXR+ZOgWW4AsHIzqf+nA1HHuqgaO975iCVKi9Uq9APys/h+NSP81Ogr
+ARC-Seal: i=1; a=rsa-sha256; t=1519981504; cv=none;
         d=google.com; s=arc-20160816;
-        b=LYpZ3OQ1rL1Kh6Xy/lfvJ5PRuy8/MbyHT/z3E5ltpzWF4+9cE1bpH7OGMbkdUDmrIr
-         /IHc9CYO1BBo8O1m1nZYNfUJADY992lOpm4Yu4CukA6D9RQVgF5DbCZnHYsaOoCNddAF
-         49h5r6FVc0TJvZmJq0cgv1lxdNWKUVZz6wn5qEHLFzPC2rygwkJEH1V7e3MRWY2ofyiU
-         KnLqTpQABx1loe7g9bzP8un/+8nB0SccgLICTrj7CW7DVMRs2p1iX2FAcevqUtNC6v6x
-         pwCrrB3FtAR8FD81ldTaBHPcr4XdZKk56b52xJ5eDuaCXh3COOynt1iQCCc6RgUzxxpN
-         CtPA==
+        b=R7kyux11HIFO3qbzEieZRaGuFY+IOWzw7vT6zhdMvaLvf5yFGUY+3V4sClaQgUFLAd
+         8zCKlYdYfS1hVtfgP5xy7YYZ0X7uBMedr6T6/jj88tDnBIt55O3xUFffK96yypsbOfBh
+         fhpL5X1r7rNSF0H1s/kp00/cqGwXEr/x5jws+hJNUUofoyHImhGtVP2WfN4w/Jr9rD/7
+         BxXeAu0HA8GLppsCuJ/cuzPVS+83OHLLphvXzu2EjxY+llY07J4+b0znZ16AJyHGxLno
+         7cs3WcP27qwBp06NDJqBRq3XBlpNOPzLPBd4wMHVAWoWgzqqE0vZCxcZKIPMkegN2fqP
+         dFOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iphriPUKeAUCsdaXckCHUsMqlv85mRvh9DYDiE2ASt4=;
-        b=jGFm7xLxb7rtMsu7v634eBPW4p45aHtf0RLJx15NMzEzBO0zxYHEJgnOyQuaB6gIZn
-         0+WYgOx2yDvNcKjZ4nNYJlurs+xO6uEA3NQ7p/vgRa9LdBi70uspgmIeXQU7Gd/xDmiq
-         jpb+kqqDfqt944PEeTqQ6s6WZ/mjH5itAVTujWoV8eBCDKX4/rcXbtl3VZJYT4/HX/6K
-         f/gw6rOc04b3mZj4O1GN8DvvTSFHTtdmBJYJJTWKKkhQ9XPwQv22W9K0YNBOf57ek9h6
-         CZif7d5sDvEyPZCbuT5YmV0RyzWdKtC0KPRCuCiNVGm6NogMsKhX63uEiQVzLFpPFUD6
-         at8Q==
+        bh=L3PV5ZBsCufuej0Lngz1JHMGx7nxY3YJRx1bziqdVa0=;
+        b=S1HAgbRRK58CiLHontgIngL9n4BjxVJy7MxIfVY2tfMt9O3T/5pulPlW/7fdxqP1AJ
+         CSKnXFZBTj08hfyFJVGeXxtSeSAacnRP02u5cGt5PoNQSEFiPn/5TFjfNF+JqrjRcBx4
+         LbaqC0EqYWGyrJgEuHqQ0qlR+6hfiExv3GeS3SZxadw0vepgAualxtOFC3qaSjm48q5B
+         xAH0OqH1/DJoxwYovGNbctiDNSRdKL2ti71mrBqO6ndIbgn00ssimVqgYjrKvcfb9zRW
+         qXz+zNIu3nV2mGMNPKHIc1A9qnA+AbR1rcMqIB5L31nfSiOPFg84a9AIdRtu03jbeWbn
+         E9SQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roman Kapl <code@rkapl.cz>,
 	Jiri Pirko <jiri@mellanox.com>,
+	Roman Kapl <code@rkapl.cz>,
 	"David S. Miller" <davem@davemloft.net>,
 	Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [PATCH 4.14 113/115] net: sched: crash on blocks with goto chain action
-Date: Fri,  2 Mar 2018 09:51:56 +0100
-Message-Id: <20180302084508.410381673@linuxfoundation.org>
+Subject: [PATCH 4.14 112/115] net: sched: fix crash when deleting secondary chains
+Date: Fri,  2 Mar 2018 09:51:55 +0100
+Message-Id: <20180302084508.373570078@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816128926878592?=
-X-GMAIL-MSGID: =?utf-8?q?1593816128926878592?=
+X-GMAIL-THRID: =?utf-8?q?1593816125875521944?=
+X-GMAIL-MSGID: =?utf-8?q?1593816125875521944?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,69 +53,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Roman Kapl <code@rkapl.cz>
 
-commit a60b3f515d30d0fe8537c64671926879a3548103 upstream.
+commit d7aa04a5e82b4f254d306926c81eae8df69e5200 upstream.
 
-tcf_block_put_ext has assumed that all filters (and thus their goto
-actions) are destroyed in RCU callback and thus can not race with our
-list iteration. However, that is not true during netns cleanup (see
-tcf_exts_get_net comment).
+If you flush (delete) a filter chain other than chain 0 (such as when
+deleting the device), the kernel may run into a use-after-free. The
+chain refcount must not be decremented unless we are sure we are done
+with the chain.
 
-Prevent the user after free by holding all chains (except 0, that one is
-already held). foreach_safe is not enough in this case.
-
-To reproduce, run the following in a netns and then delete the ns:
+To reproduce the bug, run:
     ip link add dtest type dummy
     tc qdisc add dev dtest ingress
-    tc filter add dev dtest chain 1 parent ffff: handle 1 prio 1 flower action goto chain 2
+    tc filter add dev dtest chain 1  parent ffff: flower
+    ip link del dtest
 
-Fixes: 822e86d997 ("net_sched: remove tcf_block_put_deferred()")
-Signed-off-by: Roman Kapl <code@rkapl.cz>
+Introduced in: commit f93e1cdcf42c ("net/sched: fix filter flushing"),
+but unless you have KAsan or luck, you won't notice it until
+commit 0dadc117ac8b ("cls_flower: use tcf_exts_get_net() before call_rcu()")
+
+Fixes: f93e1cdcf42c ("net/sched: fix filter flushing")
 Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Roman Kapl <code@rkapl.cz>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Cc: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sched/cls_api.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ net/sched/cls_api.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 --- a/net/sched/cls_api.c
 +++ b/net/sched/cls_api.c
-@@ -282,7 +282,8 @@ static void tcf_block_put_final(struct w
- 	struct tcf_chain *chain, *tmp;
+@@ -197,14 +197,15 @@ static struct tcf_chain *tcf_chain_creat
  
- 	rtnl_lock();
--	/* Only chain 0 should be still here. */
-+
-+	/* At this point, all the chains should have refcnt == 1. */
- 	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
- 		tcf_chain_put(chain);
- 	rtnl_unlock();
-@@ -290,17 +291,23 @@ static void tcf_block_put_final(struct w
+ static void tcf_chain_flush(struct tcf_chain *chain)
+ {
+-	struct tcf_proto *tp;
++	struct tcf_proto *tp = rtnl_dereference(chain->filter_chain);
+ 
+ 	if (chain->p_filter_chain)
+ 		RCU_INIT_POINTER(*chain->p_filter_chain, NULL);
+-	while ((tp = rtnl_dereference(chain->filter_chain)) != NULL) {
++	while (tp) {
+ 		RCU_INIT_POINTER(chain->filter_chain, tp->next);
+-		tcf_chain_put(chain);
+ 		tcf_proto_destroy(tp);
++		tp = rtnl_dereference(chain->filter_chain);
++		tcf_chain_put(chain);
+ 	}
  }
  
- /* XXX: Standalone actions are not allowed to jump to any chain, and bound
-- * actions should be all removed after flushing. However, filters are now
-- * destroyed in tc filter workqueue with RTNL lock, they can not race here.
-+ * actions should be all removed after flushing.
-  */
- void tcf_block_put(struct tcf_block *block)
- {
--	struct tcf_chain *chain, *tmp;
-+	struct tcf_chain *chain;
- 
- 	if (!block)
- 		return;
- 
--	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
-+	/* Hold a refcnt for all chains, except 0, so that they don't disappear
-+	 * while we are iterating.
-+	 */
-+	list_for_each_entry(chain, &block->chain_list, list)
-+		if (chain->index)
-+			tcf_chain_hold(chain);
-+
-+	list_for_each_entry(chain, &block->chain_list, list)
- 		tcf_chain_flush(chain);
- 
- 	INIT_WORK(&block->work, tcf_block_put_final);
