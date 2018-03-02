@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvJlGYZvWykmSS9LaimepIBPRJ3hJ1aMZowC3Ywnj2pC9ipAc0Ze2pb8plM+1tL07KrD9z2
-ARC-Seal: i=1; a=rsa-sha256; t=1519981402; cv=none;
+X-Google-Smtp-Source: AG47ELvB1IpqYxMbT/TUiNmiBGemeLnFzthXeCWDnj0dXF0G7az5aQRVbVibpieeloLeNczqo3WS
+ARC-Seal: i=1; a=rsa-sha256; t=1519981399; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qrz7z/Cum4+k8Ps4fZ3+56b2xFIEx1tTyM+rnbh3iY7MAWTTs2bfnVGB0HfxseAHVp
-         s7Po6We0/RHkxanREUFwnR0hnXiiaf5ERITmaT6tA4m1HjrfQJPdbAJkwtze1gwSBVwS
-         WhnyTijsNtcsrqQR+KD3t1uF1nJtEAoudOfbtBUWMe2dtkrnHPT0EJ+0O/Tzmu5UcB9/
-         OwzvRygazsamnGTpZma+O/X1FJ2PX6u0MgWJogIeifIfa/SYPCYHJSM8iV3TBEU1s4ay
-         jqbHkGoyfEquWBcMeLJMkitnXToY2KTRU3IgzczeBD8iqHo0jqPK5u746TAkP+63amd5
-         H/PQ==
+        b=a80Swjj80jnRN8P1EEBZN4pQC4L1yRGKUnq2xCW8GNaHQR76pib5liWwtkEbXhykEX
+         tnH6f0WNML/Z/vY0SA3ZHlrhJaVa38h3pShmkI+S7sPwIZDJSSUjt8dlAaW1ZKzyWLjW
+         PHRMC7E7omtB0KkB/d3Igkzb+UNXww8z69JLR/hiz4qfuB3zswQHvgCv93B2qPmhJ5RZ
+         EfgEvq72/Mq5MN8KkoTLgr4snfQEjg+n+/3IC/xZHPkDMzhFTZLR+tOviEHJLk0GTqV+
+         wbWiowJYm4C/7NEnKJwmqu/V4yoBzQz1WAKUqOzdScEQokPhkJ235aHo9tJioOvUqaMB
+         rkEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r/cehkTGDgVjEngMVikUUUHhBRYzU5+6bJSAT2HswUY=;
-        b=rgl6oxfIeeQl9k1cPW+hBB/P3j+w6UHj9gpXrx+RjRTiKFaLGCvMM410uI+Yp1lh6I
-         2p0dLE5zKk0Z6oZcxqkUxqpofBckAy/X7xnQ7pfblzeG75wp3X/TwJqKPN9gfrJugf5v
-         EDe6L6tPu65mNSkm7RiTTkGRPlqioPQWXS8ZWMUZQcaemN3v6oumRXlNAl47oCJxMXCY
-         IZRkg9oOvqptFxno4V1nfg7CLq0AeTN4jKN64pAhH9YLhUksokw2ZMeYNN9+O0+WmnQG
-         /LkyLZq53W3swYJmMcE/2I9NHYPj1MLa44zn4FUrsTRXWqmUma9/vIDqgSaW4IHW+oR8
-         1KcA==
+        bh=4aYawlAWu5fqLsdjXYUgjxDBYW3uM+rUaljIH1uUddo=;
+        b=U4mn6PzwbI8BE3ECLyTsNDOtzDmgFMC35JPrUXdOGPj6eZTCZ237eCHFgH3JVXuB7h
+         uEaOegm0/Ddpq+RfH/iRy5D2J2RJzzecP6V1bTPRI/5kn/1WdYsM8We5VimK5H0hgttP
+         KGxrdk3vgUMOHWAcy2oSBfav4gHhrLOSAkj4lITQVB1hyfWGzEex2r00neNaYBziRe4y
+         mlYE4Q6fYwMv/JOdZRviAuz5tioQRaSs01gRqTpmkTEgKSATJpVeBKukhqfRPlnrw/pM
+         mGBKdzhedyi3IOUTWsa9lwUh7+pizHYuSY+981FU17ha6bo6LTBtjK2VfxbEu0ZkR7if
+         X4mA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Felix Janda <felix.janda@posteo.de>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	"David S. Miller" <davem@davemloft.net>,
+	Dave Young <dyoung@redhat.com>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Bryan ODonoghue <pure.logic@nexus-software.ie>,
+	Ge Song <ge.song@hxt-semitech.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-efi@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 080/115] uapi libc compat: add fallback for unsupported libcs
-Date: Fri,  2 Mar 2018 09:51:23 +0100
-Message-Id: <20180302084507.091129962@linuxfoundation.org>
+Subject: [PATCH 4.14 079/115] x86/efi: Fix kernel param add_efi_memmap regression
+Date: Fri,  2 Mar 2018 09:51:22 +0100
+Message-Id: <20180302084507.050323187@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815683631546105?=
-X-GMAIL-MSGID: =?utf-8?q?1593816019278211672?=
+X-GMAIL-THRID: =?utf-8?q?1593816015729604737?=
+X-GMAIL-MSGID: =?utf-8?q?1593816015729604737?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,153 +58,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Felix Janda <felix.janda@posteo.de>
+From: Dave Young <dyoung@redhat.com>
 
 
-[ Upstream commit c0bace798436bca0fdc221ff61143f1376a9c3de ]
+[ Upstream commit 835bcec5fdf3f9e880111b482177e7e70e3596da ]
 
-libc-compat.h aims to prevent symbol collisions between uapi and libc
-headers for each supported libc. This requires continuous coordination
-between them.
+'add_efi_memmap' is an early param, but do_add_efi_memmap() has no
+chance to run because the code path is before parse_early_param().
+I believe it worked when the param was introduced but probably later
+some other changes caused the wrong order and nobody noticed it.
 
-The goal of this commit is to improve the situation for libcs (such as
-musl) which are not yet supported and/or do not wish to be explicitly
-supported, while not affecting supported libcs. More precisely, with
-this commit, unsupported libcs can request the suppression of any
-specific uapi definition by defining the correspondings _UAPI_DEF_*
-macro as 0. This can fix symbol collisions for them, as long as the
-libc headers are included before the uapi headers. Inclusion in the
-other order is outside the scope of this commit.
+Move efi_memblock_x86_reserve_range() after parse_early_param()
+to fix it.
 
-All infrastructure in order to enable this fallback for unsupported
-libcs is already in place, except that libc-compat.h unconditionally
-defines all _UAPI_DEF_* macros to 1 for all unsupported libcs so that
-any previous definitions are ignored. In order to fix this, this commit
-merely makes these definitions conditional.
-
-This commit together with the musl libc commit
-
-http://git.musl-libc.org/cgit/musl/commit/?id=04983f2272382af92eb8f8838964ff944fbb8258
-
-fixes for example the following compiler errors when <linux/in6.h> is
-included after musl's <netinet/in.h>:
-
-./linux/in6.h:32:8: error: redefinition of 'struct in6_addr'
-./linux/in6.h:49:8: error: redefinition of 'struct sockaddr_in6'
-./linux/in6.h:59:8: error: redefinition of 'struct ipv6_mreq'
-
-The comments referencing glibc are still correct, but this file is not
-only used for glibc any more.
-
-Signed-off-by: Felix Janda <felix.janda@posteo.de>
-Reviewed-by: Hauke Mehrtens <hauke@hauke-m.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc: Ge Song <ge.song@hxt-semitech.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180102172110.17018-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/libc-compat.h |   55 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
+ arch/x86/kernel/setup.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/include/uapi/linux/libc-compat.h
-+++ b/include/uapi/linux/libc-compat.h
-@@ -168,46 +168,99 @@
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -928,9 +928,6 @@ void __init setup_arch(char **cmdline_p)
+ 		set_bit(EFI_BOOT, &efi.flags);
+ 		set_bit(EFI_64BIT, &efi.flags);
+ 	}
+-
+-	if (efi_enabled(EFI_BOOT))
+-		efi_memblock_x86_reserve_range();
+ #endif
  
- /* If we did not see any headers from any supported C libraries,
-  * or we are being included in the kernel, then define everything
-- * that we need. */
-+ * that we need. Check for previous __UAPI_* definitions to give
-+ * unsupported C libraries a way to opt out of any kernel definition. */
- #else /* !defined(__GLIBC__) */
+ 	x86_init.oem.arch_setup();
+@@ -984,6 +981,8 @@ void __init setup_arch(char **cmdline_p)
  
- /* Definitions for if.h */
-+#ifndef __UAPI_DEF_IF_IFCONF
- #define __UAPI_DEF_IF_IFCONF 1
-+#endif
-+#ifndef __UAPI_DEF_IF_IFMAP
- #define __UAPI_DEF_IF_IFMAP 1
-+#endif
-+#ifndef __UAPI_DEF_IF_IFNAMSIZ
- #define __UAPI_DEF_IF_IFNAMSIZ 1
-+#endif
-+#ifndef __UAPI_DEF_IF_IFREQ
- #define __UAPI_DEF_IF_IFREQ 1
-+#endif
- /* Everything up to IFF_DYNAMIC, matches net/if.h until glibc 2.23 */
-+#ifndef __UAPI_DEF_IF_NET_DEVICE_FLAGS
- #define __UAPI_DEF_IF_NET_DEVICE_FLAGS 1
-+#endif
- /* For the future if glibc adds IFF_LOWER_UP, IFF_DORMANT and IFF_ECHO */
-+#ifndef __UAPI_DEF_IF_NET_DEVICE_FLAGS_LOWER_UP_DORMANT_ECHO
- #define __UAPI_DEF_IF_NET_DEVICE_FLAGS_LOWER_UP_DORMANT_ECHO 1
-+#endif
+ 	parse_early_param();
  
- /* Definitions for in.h */
-+#ifndef __UAPI_DEF_IN_ADDR
- #define __UAPI_DEF_IN_ADDR		1
-+#endif
-+#ifndef __UAPI_DEF_IN_IPPROTO
- #define __UAPI_DEF_IN_IPPROTO		1
-+#endif
-+#ifndef __UAPI_DEF_IN_PKTINFO
- #define __UAPI_DEF_IN_PKTINFO		1
-+#endif
-+#ifndef __UAPI_DEF_IP_MREQ
- #define __UAPI_DEF_IP_MREQ		1
-+#endif
-+#ifndef __UAPI_DEF_SOCKADDR_IN
- #define __UAPI_DEF_SOCKADDR_IN		1
-+#endif
-+#ifndef __UAPI_DEF_IN_CLASS
- #define __UAPI_DEF_IN_CLASS		1
-+#endif
- 
- /* Definitions for in6.h */
-+#ifndef __UAPI_DEF_IN6_ADDR
- #define __UAPI_DEF_IN6_ADDR		1
-+#endif
-+#ifndef __UAPI_DEF_IN6_ADDR_ALT
- #define __UAPI_DEF_IN6_ADDR_ALT		1
-+#endif
-+#ifndef __UAPI_DEF_SOCKADDR_IN6
- #define __UAPI_DEF_SOCKADDR_IN6		1
-+#endif
-+#ifndef __UAPI_DEF_IPV6_MREQ
- #define __UAPI_DEF_IPV6_MREQ		1
-+#endif
-+#ifndef __UAPI_DEF_IPPROTO_V6
- #define __UAPI_DEF_IPPROTO_V6		1
-+#endif
-+#ifndef __UAPI_DEF_IPV6_OPTIONS
- #define __UAPI_DEF_IPV6_OPTIONS		1
-+#endif
-+#ifndef __UAPI_DEF_IN6_PKTINFO
- #define __UAPI_DEF_IN6_PKTINFO		1
-+#endif
-+#ifndef __UAPI_DEF_IP6_MTUINFO
- #define __UAPI_DEF_IP6_MTUINFO		1
-+#endif
- 
- /* Definitions for ipx.h */
-+#ifndef __UAPI_DEF_SOCKADDR_IPX
- #define __UAPI_DEF_SOCKADDR_IPX			1
-+#endif
-+#ifndef __UAPI_DEF_IPX_ROUTE_DEFINITION
- #define __UAPI_DEF_IPX_ROUTE_DEFINITION		1
-+#endif
-+#ifndef __UAPI_DEF_IPX_INTERFACE_DEFINITION
- #define __UAPI_DEF_IPX_INTERFACE_DEFINITION	1
-+#endif
-+#ifndef __UAPI_DEF_IPX_CONFIG_DATA
- #define __UAPI_DEF_IPX_CONFIG_DATA		1
-+#endif
-+#ifndef __UAPI_DEF_IPX_ROUTE_DEF
- #define __UAPI_DEF_IPX_ROUTE_DEF		1
-+#endif
- 
- /* Definitions for xattr.h */
-+#ifndef __UAPI_DEF_XATTR
- #define __UAPI_DEF_XATTR		1
-+#endif
- 
- #endif /* __GLIBC__ */
- 
++	if (efi_enabled(EFI_BOOT))
++		efi_memblock_x86_reserve_range();
+ #ifdef CONFIG_MEMORY_HOTPLUG
+ 	/*
+ 	 * Memory used by the kernel cannot be hot-removed because Linux
