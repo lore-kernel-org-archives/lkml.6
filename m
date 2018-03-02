@@ -1,68 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932238AbeCBTtv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:49:51 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50992 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752744AbeCBTtt (ORCPT
+        id S932186AbeCBTtj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:49:39 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33744 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752744AbeCBTth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:49:49 -0500
-X-Google-Smtp-Source: AG47ELvpDuRxoM25LiFSFb+OrS/Q5PXCTIJmTXu2FkO+6hF040R+XeKeX/2LUwbnRrv8c6MbmqNtbg==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Christophe LEROY <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/21] powerpc: Remove warning on array size when empty
-Date: Fri,  2 Mar 2018 20:49:18 +0100
-Message-Id: <20180302194918.4358-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180225172236.29650-2-malat@debian.org>
-References: <20180225172236.29650-2-malat@debian.org>
+        Fri, 2 Mar 2018 14:49:37 -0500
+X-Google-Smtp-Source: AG47ELvtUYTV8rOQnZencTU32gAHBK3858bD30iGrP7tUcQu0wfak2rDld3oEl3cP669zKJAbp8mSQ==
+Date: Fri, 2 Mar 2018 13:49:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Shawn Guo <shawnguo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Andy Tang <andy.tang@nxp.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] dt/bindings: Add bindings for Layerscape external
+ irqs
+Message-ID: <20180302194935.yq3xw4nxyrxuonz5@rob-hp-laptop>
+References: <20180125150230.7234-1-rasmus.villemoes@prevas.dk>
+ <20180223210901.23480-1-rasmus.villemoes@prevas.dk>
+ <20180223210901.23480-3-rasmus.villemoes@prevas.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180223210901.23480-3-rasmus.villemoes@prevas.dk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When neither CONFIG_ALTIVEC, nor CONFIG_VSX or CONFIG_PPC64 is defined, the
-array feature_properties is defined as an empty array, which in turn
-triggers the following warning (treated as error on W=1):
+On Fri, Feb 23, 2018 at 10:09:00PM +0100, Rasmus Villemoes wrote:
+> This adds Device Tree binding documentation for the external interrupt
+> lines with configurable polarity present on some Layerscape SOCs.
+> 
+> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+> ---
+>  .../interrupt-controller/fsl,ls-extirq.txt         | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
+> new file mode 100644
+> index 000000000000..e510c715e8f6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
+> @@ -0,0 +1,44 @@
+> +* Freescale Layerscape external IRQs
+> +
+> +Some Layerscape SOCs (LS1021A, LS1043A, LS1046A) support inverting
+> +the polarity of certain external interrupt lines.
+> +
+> +The device node must be a child of the node representing the
+> +Supplemental Configuration Unit (SCFG).
+> +
+> +Required properties:
+> +- compatible: should be "fsl,<soc-name>-extirq", e.g. "fsl,ls1021a-extirq".
+> +- interrupt-controller: Identifies the node as an interrupt controller
+> +- #interrupt-cells: Must be 2. The first element is the index of the
+> +  external interrupt line. The second element is the trigger type.
+> +- interrupt-parent: phandle of GIC.
+> +- reg: Specifies the Interrupt Polarity Control Register (INTPCR) in the SCFG.
+> +- fsl,extirq-map: Specifies the mapping to interrupt numbers in the parent
+> +  interrupt controller. Interrupts are mapped one-to-one to parent
+> +  interrupts.
 
-  CC      arch/powerpc/kernel/prom.o
-arch/powerpc/kernel/prom.c: In function ‘check_cpu_feature_properties’:
-arch/powerpc/kernel/prom.c:298:16: error: comparison of unsigned expression < 0 is always false [-Werror=type-limits]
-  for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
-                ^
-cc1: all warnings being treated as errors
+Use the interrupt-map property for this.
 
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- arch/powerpc/kernel/prom.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +
+> +Optional properties:
+> +- fsl,bit-reverse: This boolean property should be set on the LS1021A
+> +  if the SCFGREVCR register has been set to all-ones (which is usually
+> +  the case), meaning that all reads and writes of SCFG registers are
+> +  implicitly bit-reversed. Other compatible platforms do not have such
+> +  a register.
+> +
+> +Example:
+> +	scfg: scfg@1570000 {
+> +		compatible = "fsl,ls1021a-scfg", "syscon";
+> +		...
+> +		extirq: interrupt-controller {
+> +			compatible = "fsl,ls1021a-extirq";
+> +			#interrupt-cells = <2>;
+> +			interrupt-controller;
+> +			interrupt-parent = <&gic>;
+> +			reg = <0x1ac>;
 
-diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
-index 4dffef947b8a..330c65f04820 100644
---- a/arch/powerpc/kernel/prom.c
-+++ b/arch/powerpc/kernel/prom.c
-@@ -291,11 +291,11 @@ static inline void identical_pvr_fixup(unsigned long node)
- 
- static void __init check_cpu_feature_properties(unsigned long node)
- {
--	unsigned long i;
-+	int i;
- 	struct feature_property *fp = feature_properties;
- 	const __be32 *prop;
- 
--	for (i = 0; i < ARRAY_SIZE(feature_properties); ++i, ++fp) {
-+	for (i = 0; i < (int)ARRAY_SIZE(feature_properties); ++i, ++fp) {
- 		prop = of_get_flat_dt_prop(node, fp->name, NULL);
- 		if (prop && be32_to_cpup(prop) >= fp->min_value) {
- 			cur_cpu_spec->cpu_features |= fp->cpu_feature;
--- 
-2.11.0
+This needs the length too. What is buys us is following the standard in 
+which mmio has a #size-cells >= 1. BTW, you need a #size-cells and 
+#address-cells properties in the parent. (I think dtc will complain if 
+not).
+
+> +			fsl,extirq-map = <163 164 165 167 168 169>;
+> +			fsl,bit-reverse;
+> +		};
+> +	};
+> +
+> +
+> +	interrupts-extended = <&gic GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
+> +			      <&extirq 1 IRQ_TYPE_LEVEL_LOW>;
+> -- 
+> 2.15.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
