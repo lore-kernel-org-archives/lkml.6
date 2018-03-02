@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtfoHlTtHebCRZU5tsVCTSXMfr79ig6DWZueaFgyRfbdbviP1p1MXuund4L9yL6z37QU3w2
-ARC-Seal: i=1; a=rsa-sha256; t=1519981370; cv=none;
+X-Google-Smtp-Source: AG47ELtELWBFE4te4Oeu/oboiRG5wodcEnlCG6UUyzd9e5Lbz79Fb91K2IB02T+rkmdIlEU1z8gI
+ARC-Seal: i=1; a=rsa-sha256; t=1519981367; cv=none;
         d=google.com; s=arc-20160816;
-        b=SDyJntLG7JOvBqkSZRmA44BxjLQfzFu7YXuHCGXMC+PkGGDuP98GTOS9OBwjD1Wh7O
-         19EZdPMmj+N9wX5JgHm/hlg0NiW776WcgCFn3QeuMohJvhw8kbHSqH5BocKAn3D534l4
-         cI87f2O9D1pKNf2RR5JxFpQb6ZVrzrp4NY+jRuKoqm6IZkKVyJibj9S0jIJxbzI8QmTd
-         Her8Z5z0Es0N6VoIGh7GFmZfBIBggsf8XR1u4QgnqoaUOZ3/ByBkkHuZ7/J+HaGW6yoE
-         50PFJrHiMbdBLXo5WgrqX3qUnWajhGjE2JhtZ7Y6CPBizF9SfUBKoWRR1HIhA3vZ5zV9
-         PTxw==
+        b=iAE+CieeWt3NBVZjwt7+Sa3xubQSFxT55QX1NUrL2T1+WAVQdYF4CdMqBD/GdeOUU3
+         /GCcO/tVKTYPT7gL0SRN0fWyVcYAw5cBSCoeKxpiMqwlK7txcLPRrHbmz8RkPqgKidY2
+         RbjfVVf0xAxUd76YMj3D2YuHQ1RUrkMKB3SpWt+vG3YU7gCy9oxnlAxTA3i6zzlL1d8B
+         MFEiFFjKajwOpEaetNMElXo4SFX+JvSQhKQ4oKMMR7xBje76WRwQvgH0sg5qd65M9BCe
+         6QOPheOJWjKkCvMXmUFirOTc531F5OaMS2krygNG6RvEG5SXhtyc1bO6pQku+nitKoZn
+         V+qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=feqZLO9OnWGgua9Z2O27d9WvlzplHtvQItKzui/ZxTo=;
-        b=UBuGxTslkNwYyYkL59kFRhYJTO3SPbz/+e9+FR0FNfNQj3T4YR2dDlBAcBOBlTurwT
-         X9DqGYky65KkVIt9p22dofyAMoyPqG5i3GxCXuEtuseuA+gjkBKTnRcYaK+dQPPrgQFm
-         c91r8wp1psxDBZtqud1Tc0CcW0iRBWW86PVZyTLPoJ3Qruq990rabJT90427hakGwRNl
-         w5Y32I/SSqseD27LH/Qu+57VPtNyj26ToZKVS2WFoCPkTBGWP9J6x4Wqumadj1bD1R+s
-         unaMCGgFcTGDs4cadxdtJ3D8jnjM+m8p8taiDVgXOvEa9Wt4kUl/ryjxSaV4QMEoPKuF
-         7CdQ==
+        bh=mwsW6W4QjTiHlepUvgSkInFy1QeLV3GjMCaKrcd/zi8=;
+        b=Lj/QVnuL2F3Wpp3f0s2Q85yctOxdUa/FALD8MxeM923ZscfC/+sLuQ5D2FdP0nPuSW
+         l5OqwedImU93+SLqwfmd2wOghBHgOK6ZEtYtOPonx6hWWK1B6rvxqb2nEHeHzutyck1N
+         iVbDhgaHQx4sbTYVP7sRxKrbA6GEFF5tiRHyo7ke6ZcyQk3gucB7HozdjVmQXwVugst6
+         jhLMG7wqZCcXJQ4XyaNASS8q4esr+LCrw/CVHP3a3qSkuPkLtxJlXXLGgSPHHrLGJdMz
+         hH2j/TctizpFup81R/mwt0yz8054KP5IXlnFc2bZWnqn8uUhEo+YaafruPQERTzyzQOY
+         QGDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Erez Shitrit <erezsh@mellanox.com>,
-	Alex Vesker <valex@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
+	Nitzan Carmi <nitzanc@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
 	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 071/115] IB/ipoib: Fix race condition in neigh creation
-Date: Fri,  2 Mar 2018 09:51:14 +0100
-Message-Id: <20180302084506.736021770@linuxfoundation.org>
+Subject: [PATCH 4.14 070/115] IB/mlx4: Fix mlx4_ib_alloc_mr error flow
+Date: Fri,  2 Mar 2018 09:51:13 +0100
+Message-Id: <20180302084506.696176172@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815468895692685?=
-X-GMAIL-MSGID: =?utf-8?q?1593815986160347529?=
+X-GMAIL-THRID: =?utf-8?q?1593815465283752260?=
+X-GMAIL-MSGID: =?utf-8?q?1593815982003540979?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,134 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
 
-[ Upstream commit 16ba3defb8bd01a9464ba4820a487f5b196b455b ]
+[ Upstream commit 5a371cf87e145b86efd32007e46146e78c1eff6d ]
 
-When using enhanced mode for IPoIB, two threads may execute xmit in
-parallel to two different TX queues while the target is the same.
-In this case, both of them will add the same neighbor to the path's
-neigh link list and we might see the following message:
+ibmr.device is being set only after ib_alloc_mr() is successfully complete.
+Therefore, in case imlx4_mr_enable() returns with error, the error flow
+unwinder calls to mlx4_free_priv_pages(), which uses ibmr.device.
 
-  list_add double add: new=ffff88024767a348, prev=ffff88024767a348...
-  WARNING: lib/list_debug.c:31__list_add_valid+0x4e/0x70
-  ipoib_start_xmit+0x477/0x680 [ib_ipoib]
-  dev_hard_start_xmit+0xb9/0x3e0
-  sch_direct_xmit+0xf9/0x250
-  __qdisc_run+0x176/0x5d0
-  __dev_queue_xmit+0x1f5/0xb10
-  __dev_queue_xmit+0x55/0xb10
+Such usage causes to NULL dereference oops and to fix it, the IB device
+should be set in the mr struct earlier stage (e.g. prior to calling
+mlx4_free_priv_pages()).
 
-Analysis:
-Two SKB are scheduled to be transmitted from two cores.
-In ipoib_start_xmit, both gets NULL when calling ipoib_neigh_get.
-Two calls to neigh_add_path are made. One thread takes the spin-lock
-and calls ipoib_neigh_alloc which creates the neigh structure,
-then (after the __path_find) the neigh is added to the path's neigh
-link list. When the second thread enters the critical section it also
-calls ipoib_neigh_alloc but in this case it gets the already allocated
-ipoib_neigh structure, which is already linked to the path's neigh
-link list and adds it again to the list. Which beside of triggering
-the list, it creates a loop in the linked list. This loop leads to
-endless loop inside path_rec_completion.
-
-Solution:
-Check list_empty(&neigh->list) before adding to the list.
-Add a similar fix in "ipoib_multicast.c::ipoib_mcast_send"
-
-Fixes: b63b70d87741 ('IPoIB: Use a private hash table for path lookup in xmit path')
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Fixes: 1b2cd0fc673c ("IB/mlx4: Support the new memory registration API")
+Signed-off-by: Nitzan Carmi <nitzanc@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c      |   25 ++++++++++++++++++-------
- drivers/infiniband/ulp/ipoib/ipoib_multicast.c |    5 ++++-
- 2 files changed, 22 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/mlx4/mr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -903,8 +903,8 @@ static int path_rec_start(struct net_dev
- 	return 0;
- }
+--- a/drivers/infiniband/hw/mlx4/mr.c
++++ b/drivers/infiniband/hw/mlx4/mr.c
+@@ -406,7 +406,6 @@ struct ib_mr *mlx4_ib_alloc_mr(struct ib
+ 		goto err_free_mr;
  
--static void neigh_add_path(struct sk_buff *skb, u8 *daddr,
--			   struct net_device *dev)
-+static struct ipoib_neigh *neigh_add_path(struct sk_buff *skb, u8 *daddr,
-+					  struct net_device *dev)
- {
- 	struct ipoib_dev_priv *priv = ipoib_priv(dev);
- 	struct rdma_netdev *rn = netdev_priv(dev);
-@@ -918,7 +918,15 @@ static void neigh_add_path(struct sk_buf
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		++dev->stats.tx_dropped;
- 		dev_kfree_skb_any(skb);
--		return;
-+		return NULL;
-+	}
-+
-+	/* To avoid race condition, make sure that the
-+	 * neigh will be added only once.
-+	 */
-+	if (unlikely(!list_empty(&neigh->list))) {
-+		spin_unlock_irqrestore(&priv->lock, flags);
-+		return neigh;
- 	}
+ 	mr->max_pages = max_num_sg;
+-
+ 	err = mlx4_mr_enable(dev->dev, &mr->mmr);
+ 	if (err)
+ 		goto err_free_pl;
+@@ -417,6 +416,7 @@ struct ib_mr *mlx4_ib_alloc_mr(struct ib
+ 	return &mr->ibmr;
  
- 	path = __path_find(dev, daddr + 4);
-@@ -957,7 +965,7 @@ static void neigh_add_path(struct sk_buf
- 			path->ah->last_send = rn->send(dev, skb, path->ah->ah,
- 						       IPOIB_QPN(daddr));
- 			ipoib_neigh_put(neigh);
--			return;
-+			return NULL;
- 		}
- 	} else {
- 		neigh->ah  = NULL;
-@@ -974,7 +982,7 @@ static void neigh_add_path(struct sk_buf
- 
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 	ipoib_neigh_put(neigh);
--	return;
-+	return NULL;
- 
- err_path:
- 	ipoib_neigh_free(neigh);
-@@ -984,6 +992,8 @@ err_drop:
- 
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 	ipoib_neigh_put(neigh);
-+
-+	return NULL;
- }
- 
- static void unicast_arp_send(struct sk_buff *skb, struct net_device *dev,
-@@ -1092,8 +1102,9 @@ static int ipoib_start_xmit(struct sk_bu
- 	case htons(ETH_P_TIPC):
- 		neigh = ipoib_neigh_get(dev, phdr->hwaddr);
- 		if (unlikely(!neigh)) {
--			neigh_add_path(skb, phdr->hwaddr, dev);
--			return NETDEV_TX_OK;
-+			neigh = neigh_add_path(skb, phdr->hwaddr, dev);
-+			if (likely(!neigh))
-+				return NETDEV_TX_OK;
- 		}
- 		break;
- 	case htons(ETH_P_ARP):
---- a/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_multicast.c
-@@ -816,7 +816,10 @@ void ipoib_mcast_send(struct net_device
- 		spin_lock_irqsave(&priv->lock, flags);
- 		if (!neigh) {
- 			neigh = ipoib_neigh_alloc(daddr, dev);
--			if (neigh) {
-+			/* Make sure that the neigh will be added only
-+			 * once to mcast list.
-+			 */
-+			if (neigh && list_empty(&neigh->list)) {
- 				kref_get(&mcast->ah->ref);
- 				neigh->ah	= mcast->ah;
- 				list_add_tail(&neigh->list, &mcast->neigh_list);
+ err_free_pl:
++	mr->ibmr.device = pd->device;
+ 	mlx4_free_priv_pages(mr);
+ err_free_mr:
+ 	(void) mlx4_mr_free(dev->dev, &mr->mmr);
