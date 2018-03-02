@@ -1,101 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934511AbeCBXNE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:13:04 -0500
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33956 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934345AbeCBXNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:13:01 -0500
-X-Google-Smtp-Source: AG47ELulh0hB1szXaQnpWxW5MLnlyr30ytifQ7baeznomMZPXQTnrYQsq485XwFEKBFYAYtZqspIUw==
-Date: Fri, 2 Mar 2018 13:12:56 -1000
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, Arnaud Lacombe <lacombar@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scripts/kconfig: replace single character strcat()
- appends
-Message-ID: <20180302231256.4aevdu2b5ylyrzkr@gmail.com>
-References: <20180302074424.2myh3zhxnbpaohjq@gmail.com>
- <20180302134453.mtd4uepeiviicyef@huvuddator>
+        id S934538AbeCBXPa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:15:30 -0500
+Received: from vps-vb.mhejs.net ([37.28.154.113]:59754 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934228AbeCBXP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 18:15:29 -0500
+Subject: Re: [PATCH 2/3] crypto: ccp - return an actual key size from RSA
+ max_size callback
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <51c265e4-6153-3e5e-316a-ebef059ac36a@maciej.szmigiero.name>
+ <20180302164451.GJ21579@gondor.apana.org.au>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <087e7b27-f839-8d4b-8da8-5d0fa2f8caf1@maciej.szmigiero.name>
+Date: Sat, 3 Mar 2018 00:15:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5c6njx6tk3sxs4db"
-Content-Disposition: inline
-In-Reply-To: <20180302134453.mtd4uepeiviicyef@huvuddator>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180302164451.GJ21579@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02.03.2018 17:44, Herbert Xu wrote:
+> On Sat, Feb 24, 2018 at 05:03:21PM +0100, Maciej S. Szmigiero wrote:
+>> rsa-pkcs1pad uses a value returned from a RSA implementation max_size
+>> callback as a size of an input buffer passed to the RSA implementation for
+>> encrypt and sign operations.
+>>
+>> CCP RSA implementation uses a hardware input buffer which size depends only
+>> on the current RSA key length, so it should return this key length in
+>> the max_size callback, too.
+>> This also matches what the kernel software RSA implementation does.
+>>
+>> Previously, the value returned from this callback was always the maximum
+>> RSA key size the CCP hardware supports.
+>> This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
+>> for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
+>> tried to copy this large input buffer into a RSA key length-sized hardware
+>> input buffer.
+>>
+>> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+>> Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
+>> Cc: stable@vger.kernel.org
+> 
+> Patch applied.  Thanks.
 
---5c6njx6tk3sxs4db
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks.
 
-On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
-> Not sure this is an improvement. Zeroing the bytes after the initial
-> null terminator is redundant, and the explicit '\0' makes it clearer to
-> me what's going on.
+However, what about the first patch from this series?
+Without it, while it no longer should cause a buffer overflow, in-kernel
+X.509 certificate verification will still fail with CCP driver loaded
+(since CCP RSA implementation has a higher priority than the software
+RSA implementation).
 
-Yes, I agree with you, that is definitely quite true. This along with
-the other comments you made me want to rethink this a little bit.
-
-On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
-> I like the approach, but I wonder if we can take it a bit further.
-> Here's what I'd do:
->=20
-> 	1. Rename the 'in' parameter to 's'.
-> 	2. Rename 'p' to 'in'.
-> 	3. Rename 'end' to 'out'
->=20
-> At that point, you're reading from 'in' and writing to 'out', which
-> seems pretty nice and readable.
->=20
-> This code is pretty cold by the way, so it wouldn't matter for
-> performance. GCC knows how functions like strcat() work too, and uses
-> that to optimize (see
-> https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html).
->=20
-> I'm all for trying to make Kconfig's code neater though.
-
-Since this code is pretty cold (completely agree with you there), I
-think it would actually be much more useful to rework my patch to
-have a more style-centric approach rather than an optimization-centric
-one; this code would definitely benefit from being neater.
-
-Some useful changes would be to rename of the _atrociously_ short
-identifiers like p and l.
-
-Anyway I'll give that link a read over and try and make a V2 later
-on today.
-
-Appreciate the feedback, thanks for the comments!
-
---=20
-Cheers,
-Joey Pabalinas
-
---5c6njx6tk3sxs4db
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlqZ2ngACgkQruvLfWhy
-VBl/2hAA0tVRbvfSQVQv/LRD8Wp+CAcnvnLwI4VPp0vrCh/f/oxqUV533/6Cj2o6
-0AatrgS4Qa1VyiIZjaMUaerwnzsWQAnBA2+iXpP5RbcicreMCfN/YI6qtr/brzvR
-Q35wOtU6QqM6s4tg5Se0gS71UkgPgItwRLN4tZoGCSWooBPjOtU58tY69YzxJVBk
-Vi1Os3RiuJzMwEjdv/ztwjSTWN37op9ZwjFFB9X7WEGiJw3VI8iZ5fANI0OR+niH
-6QTp4Hmz1OzHqze837pn7T8xY02pwU2IsZkGAWxrdZgPip1iTaQxEOQGLNWSSvQ9
-WWmd/H2a0+ifxx22FdtFhBviip+gK0xcSCYaOeh8MVphWwuWsC7FCWmszw8H2blz
-47SfjCsHsAKisxwCMIZH/q2YegFUvqjKnfQ1aK2AmgWvek44oknDUA40XHQyUQyw
-Cl8/Rr+LTTcAtX+Xb4HDOOflSQq5YpX6N4ZwxI6z0wuxdcnLQM3KSgACjdrgp+YS
-TfvHu+jabiI5p/Wi7SQ+Otw3imAzrexfX42GPnno0xGPOrgleBAuNgMq9P99rMf4
-5WkqKFOdqRh6w9sSFQvzLQdEltXgfxkZxm+sevao70YFE98rutIOrd2/V+Qrs8wt
-nVjQeN3BSxUl/msIuTmK6g584+6QvSL7N5IGNnkXzI7XUpnLWqA=
-=Uaaf
------END PGP SIGNATURE-----
-
---5c6njx6tk3sxs4db--
+Maciej
