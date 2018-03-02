@@ -1,156 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427096AbeCBPKe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:10:34 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5728 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1429001AbeCBPHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:07:51 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH v2 3/8] scsi: hisi_sas: fix the issue of link rate inconsistency
-Date: Fri, 2 Mar 2018 23:06:17 +0800
-Message-ID: <1520003182-26277-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520003182-26277-1-git-send-email-john.garry@huawei.com>
-References: <1520003182-26277-1-git-send-email-john.garry@huawei.com>
+        id S1427158AbeCBPKr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:10:47 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:36070 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1427101AbeCBPKl (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 2 Mar 2018 10:10:41 -0500
+Date: Fri, 2 Mar 2018 23:10:22 +0800
+From: joeyli <jlee@suse.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH] ACPI / scan: Send the change uevent with offine
+ environmental data
+Message-ID: <20180302151022.GB6140@linux-l9pv.suse>
+References: <20180302063508.15818-1-jlee@suse.com>
+ <20180302140059.GA12772@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302140059.GA12772@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+On Fri, Mar 02, 2018 at 03:00:59PM +0100, Michal Hocko wrote:
+> On Fri 02-03-18 14:35:08, Lee, Chun-Yi wrote:
+> > In current design of ACPI container offline, Kernel emits
+> > KOBJ_CHANGE uevent to user space to indidate that the ejection of
+> > the container was triggered by platform. (caa73ea15 patch)
+> > 
+> > A pure KOBJ_CHANGE uevent is not enough for user space to identify
+> > the purpose. For example, a "udevadm trigger" command can also
+> > be used to emit change event to all udev rules. A udev rule can not
+> > identify that the event is from kernel for offline or from udevadm
+> > for other purpose. Then the offline action in udev rule may also be
+> > triggered by udevadm tool.
+> > 
+> > So, similar to the change uevent of dock, kernel sends the
+> > KOBJ_CHANGE uevent with a offline environmental data to indicate
+> > purpose. It's useful by udev rule for using ENV{EVENT} filter.
+> 
+> Looks reasonable to me. I have also tested this on Huawei Kunlun server
+> which hits the offline & online storm as a result of udevadm triggered
+> and a container udev rule which hooks into change event and offlines
+> all devices attached to the container. This patch allowed the udev rule
+> to be more targeted at the offline event.
+> 
+> > Cc: Michal Hocko <mhocko@kernel.org> 
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> 
+> > Cc: Len Brown <lenb@kernel.org> 
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Tested-by: Michal Hocko <mhocko@suse.com>
+>
 
-In sysfs, there are two files about minimum linkrate, and also
-two files for maximum linkrate. Take maximum linkrate example,
-maximum_linkrate_hw is read-only and indicated by the register
-HARD_PHY_LINKRATE, and maximum_linkrate is read-write and
-corresponding to the register PROG_PHY_LINK_RATE.
+Thank you for review and testing.
 
-But in the function phy_up_v*_hw(), we get *_linkrate value from
-HARD_PHY_LINKRATE. It is not right. This patch is to fix this issue.
-
-Unreferenced PHY-interrupt enum is also removed for v3 hw.
-
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c  |  2 ++
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |  1 -
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  8 +-------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 13 +------------
- 4 files changed, 4 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 2d4dbed..9d16372 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -683,6 +683,8 @@ static void hisi_sas_phy_init(struct hisi_hba *hisi_hba, int phy_no)
+Joey Lee
  
- 	phy->hisi_hba = hisi_hba;
- 	phy->port = NULL;
-+	phy->minimum_linkrate = SAS_LINK_RATE_1_5_GBPS;
-+	phy->maximum_linkrate = hisi_hba->hw->phy_get_max_linkrate();
- 	sas_phy->enabled = (phy_no < hisi_hba->n_phy) ? 1 : 0;
- 	sas_phy->class = SAS;
- 	sas_phy->iproto = SAS_PROTOCOL_ALL;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 679e76f..38bbda9 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -873,7 +873,6 @@ static void phy_set_linkrate_v1_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 3a0b4ed..edd0c89 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -1603,7 +1603,6 @@ static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
-@@ -2684,7 +2683,7 @@ static int prep_abort_v2_hw(struct hisi_hba *hisi_hba,
- static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
- {
- 	int i, res = IRQ_HANDLED;
--	u32 port_id, link_rate, hard_phy_linkrate;
-+	u32 port_id, link_rate;
- 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
- 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
- 	struct device *dev = hisi_hba->dev;
-@@ -2723,11 +2722,6 @@ static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
- 	}
- 
- 	sas_phy->linkrate = link_rate;
--	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
--						HARD_PHY_LINKRATE);
--	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
--	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
--
- 	sas_phy->oob_mode = SAS_OOB_MODE;
- 	memcpy(sas_phy->attached_sas_addr, &id->sas_addr, SAS_ADDR_SIZE);
- 	dev_info(dev, "phyup: phy%d link_rate=%d\n", phy_no, link_rate);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a1f1868..1ee95ab 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -340,12 +340,6 @@ struct hisi_sas_err_record_v3 {
- #define HISI_SAS_COMMAND_ENTRIES_V3_HW 4096
- #define HISI_SAS_MSI_COUNT_V3_HW 32
- 
--enum {
--	HISI_SAS_PHY_PHY_UPDOWN,
--	HISI_SAS_PHY_CHNL_INT,
--	HISI_SAS_PHY_INT_NR
--};
--
- #define DIR_NO_DATA 0
- #define DIR_TO_INI 1
- #define DIR_TO_DEVICE 2
-@@ -1121,7 +1115,7 @@ static int prep_abort_v3_hw(struct hisi_hba *hisi_hba,
- static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- {
- 	int i, res = 0;
--	u32 context, port_id, link_rate, hard_phy_linkrate;
-+	u32 context, port_id, link_rate;
- 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
- 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
- 	struct device *dev = hisi_hba->dev;
-@@ -1139,10 +1133,6 @@ static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- 		goto end;
- 	}
- 	sas_phy->linkrate = link_rate;
--	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
--						HARD_PHY_LINKRATE);
--	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
--	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
- 	phy->phy_type &= ~(PORT_TYPE_SAS | PORT_TYPE_SATA);
- 
- 	/* Check for SATA dev */
-@@ -1864,7 +1854,6 @@ static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
--- 
-1.9.1
+> > ---
+> >  drivers/acpi/scan.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> > index 8e63d93..f6dca9b 100644
+> > --- a/drivers/acpi/scan.c
+> > +++ b/drivers/acpi/scan.c
+> > @@ -116,6 +116,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+> >  {
+> >  	struct acpi_device_physical_node *pn;
+> >  	bool offline = true;
+> > +	static const char *envp[] = { "EVENT=offline", NULL };
+> >  
+> >  	/*
+> >  	 * acpi_container_offline() calls this for all of the container's
+> > @@ -126,7 +127,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+> >  	list_for_each_entry(pn, &adev->physical_node_list, node)
+> >  		if (device_supports_offline(pn->dev) && !pn->dev->offline) {
+> >  			if (uevent)
+> > -				kobject_uevent(&pn->dev->kobj, KOBJ_CHANGE);
+> > +				kobject_uevent_env(&pn->dev->kobj, KOBJ_CHANGE, envp);
+> >  
+> >  			offline = false;
+> >  			break;
+> > -- 
+> > 2.10.2
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
