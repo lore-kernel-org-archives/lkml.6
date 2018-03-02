@@ -1,38 +1,39 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtfDiloDtT0EQu7T9NnGLLGecOvnyt9LKLf3NEdyNkZ0i+EVqpOpsZuQdlzhfRBENb3fe6l
-ARC-Seal: i=1; a=rsa-sha256; t=1519981143; cv=none;
+X-Google-Smtp-Source: AG47ELt1JjNVZXVsFTq39pHQoK+k35BW0st83beMgua8+3WyOUjc/7kI/i8SWEJwaTYK56JjpFIC
+ARC-Seal: i=1; a=rsa-sha256; t=1519981140; cv=none;
         d=google.com; s=arc-20160816;
-        b=yqkffAduEVoYwyTnktruAJDvtgyJRDWa6kqQFkCbduPlQ7wzEBZXnjEWYv6IS0LB3+
-         sisqB5+eKLipsJ2peeuhw4ljhm0IaUBurBlyJ9ITq2g+h5VhMxRNnKSzqvBfczVjJJjx
-         VL4wIWynQRXXFWwhI/w605dgmLqRts5ER7btS8diL9SviAs5JxJRHIPtABOJCR31V8Nq
-         IF1jMyWPq8kK8aTS8BJfwsTbYeS6LkZg/edfb6ecdQmZUZFNdVmKHvf8OPFWh0iuccAe
-         uDvwLLMfDaOja37ZFmILmct1w4S7ujLfiJS8PZub2Ci9weq0CLFMkLyBjXLl1OlemZcn
-         GZbQ==
+        b=xLJIXl9vSUMz1Kxsu02NgnQ/Ftrq23QP/TfUQrP1ICK2RYMVpJO50i4Exc1HFTq6ft
+         +Ctbzu37X4Oi/A4oUgtHutTR+dFVlDkGbYYy3Oc3vgLxI4osFWRE9ZDjITFQ4hevVcIS
+         xaStNQrDmG4SlFJ/ZiMt0d4D0H4Hp3Su1y9FVVDAYUZ4wqEMd3/mgkVAOdYXvIQlWqsw
+         PJ/KaDS6lEj+3sU39AedxegrjhoJT2cW3fibda+EU1OYTxlHnIolo1kTMUxc7iSVv0nr
+         kCKYyz+EkpOvCHQ1Yre7FvsVOy+rRr3bttGLDVBrEiDb0fkNyP/bADGewFAVe9eOETfw
+         kmTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tdgllXIeXDu8DrI38pj+xLo0FQIZk5Us4HYLmEfH6cE=;
-        b=KFQd0JGsZdz6PIpV1ehVpOJDcZfPUoEUreWvPDgH1ZITyxfhVNaj8yLAaqIN+vzcQH
-         TT/aak2L0gFse8OcSxtMcaSGvnvGuCL+VG8ilz8yIAyEaiIQiFwcS8yNkB01ZjmA4sNW
-         T3jmkSL+Zyo+yANnGH9Wpyf3INr1YyhK8ZhmmPVv1sCrcs1npsL7Zr2qxsYu1hzlEh2V
-         P/ZpJ5gKXX17f4KSN4gOJ8diIODPpVihJi2Rhcmo9cnUhBbqj6Tw60x6bTrp0idTZJb4
-         SMEnfIqRaokFbhmYSBYbAzXZY22aLe/HK94dF01Yg7yZ8lkZLERLszfaazs4Ewj4XQKX
-         MGPw==
+        bh=mhha/PAKBvjl7UScIGCuJcVi1fM4HAXgvOU2frgzIPA=;
+        b=U8NnaCsDzYwnd1dI9jz1F3ZKBmcBeX/jw1j327hTzldKqPfx5u8wHcB763jcEyh2QP
+         M9ek/R+919WiJiWYhd2odqUsDfdzSBDJIt8HnjogXouiFH2UialLmzUJ1HZMWUWgxR76
+         Ig43WL/AvuvflYCgt/FrITFw43m3hIaTRx+wNfFdC45+sK8r20nsvHXa0+bvEdH8A/QL
+         MThUIeuqu2QG1MkOFewd3wTKbEE65/Ie9Nh0ERel136JBO9defPQYegBN+AWS7oILLnA
+         x3xr57uxpSyK60l1ofIwmpuoDL8teRK7EzFpE7maKCmToaVenv8+6HtQAjvwKd5x4ojQ
+         ZieA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Christoffer Dall <christoffer.dall@linaro.org>
-Subject: [PATCH 4.9 55/56] KVM: arm/arm64: Fix check for hugepage size when allocating at Stage 2
-Date: Fri,  2 Mar 2018 09:51:41 +0100
-Message-Id: <20180302084452.305135827@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 54/56] net: gianfar_ptp: move set_fipers() to spinlock protecting area
+Date: Fri,  2 Mar 2018 09:51:40 +0100
+Message-Id: <20180302084452.259285030@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815747293852483?=
-X-GMAIL-MSGID: =?utf-8?q?1593815747293852483?=
+X-GMAIL-THRID: =?utf-8?q?1593815408893754625?=
+X-GMAIL-MSGID: =?utf-8?q?1593815744331555060?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +52,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Yangbo Lu <yangbo.lu@nxp.com>
 
-Commit 45ee9d5e97a4 ("KVM: arm/arm64: Check pagesize when allocating a
-hugepage at Stage 2") lost the check for PMD_SIZE during the backport
-to 4.9.
 
-Fix this by correcting the condition to detect hugepages during stage
-2 allocation.
+[ Upstream commit 11d827a993a969c3c6ec56758ff63a44ba19b466 ]
 
-Fixes: 45ee9d5e97a4 ("KVM: arm/arm64: Check pagesize when allocating a hugepage at Stage 2")
-Reported-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>
+set_fipers() calling should be protected by spinlock in
+case that any interrupt breaks related registers setting
+and the function we expect. This patch is to move set_fipers()
+to spinlock protecting area in ptp_gianfar_adjtime().
+
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kvm/mmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/gianfar_ptp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/arm/kvm/mmu.c
-+++ b/arch/arm/kvm/mmu.c
-@@ -1284,7 +1284,7 @@ static int user_mem_abort(struct kvm_vcp
- 		return -EFAULT;
- 	}
+--- a/drivers/net/ethernet/freescale/gianfar_ptp.c
++++ b/drivers/net/ethernet/freescale/gianfar_ptp.c
+@@ -314,11 +314,10 @@ static int ptp_gianfar_adjtime(struct pt
+ 	now = tmr_cnt_read(etsects);
+ 	now += delta;
+ 	tmr_cnt_write(etsects, now);
++	set_fipers(etsects);
  
--	if (vma_kernel_pagesize(vma) && !logging_active) {
-+	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
- 		hugetlb = true;
- 		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
- 	} else {
+ 	spin_unlock_irqrestore(&etsects->lock, flags);
+ 
+-	set_fipers(etsects);
+-
+ 	return 0;
+ }
+ 
