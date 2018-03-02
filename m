@@ -1,69 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1073259-1519981274-2-5107582821945884093
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519981274; b=Bar/rjZTp1awBQ2YfSECt80DMm6QcJWPB8/oHplSVVgq+Ni
-    JMTWf1U2U9LtbSsRL3gz+u3vsMLQa7d5OfEc/Nc8L5+8rkO5vsMH5jSGUMMzcmjJ
-    l3KKR4sI40C5cXkYTp76iPc4vnkOuu8+2vU7dylY923fbX/w3b+w46jpEcZJvAZO
-    3pDLlIj/t+9eoN2yN9Ry+Ypiv4ht8O9wAjVJeosf+y3fzeNfk+h2kPsiqyBk45CM
-    QVJVneDvDmsGPD/tHQ5ZXN9kaJZto9Ai2grEdxtaPBvj2vfj+B1LOJYla6G3Clb6
-    Ec15oVluCK4CEqoF/VKQ+sYzWY50XG4HAU93EIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519981274; bh=NwsISIpHc1GpNQ3Q4Y060/ktGE
-    r4MQRMOF+kw/D+OUw=; b=eykGsCX6lAl13RqwDYqs/4yHOvtrzFR2frTHsys3+W
-    VBIwZi+f8mxY4AwhTSp2fCPP/fq1Hk2k1ofldShLelu6Fh4vu8S/2m1ESjgiuZwW
-    Q8rMrEHHBC8dqjDpkL+nwYeFf/mJL+GbGoXRX5rWJDJhuLatwdLLJVEcQh+Y9Cqy
-    90bYapY4yZgCHQ5C0wiSUpyw9fnYd8DmG074q1pAcoZUdHBsMwtmqvmrqjH0vwQ4
-    xzfAgW/uYp20q8c/fgFtotZhQ39AZ8foZjL8g/IHm6v0afCn4wNLflmCurzjfYBl
-    op+z6Jax+RS3+y/e80ddOqVTehHp66DWdrd89eIaXLTg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424678AbeCBJBK (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 04:01:10 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53744 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424659AbeCBJBH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:07 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELugFMo6uaP6KG8K6G9PAn0Dm3jaww14rnmWqLQmT3lzkQJzce9mIGv9KVs76WzOk+H1NNOZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519981271; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xKcmSiJpL9QgqqrqHmpJzT4VfzhZ1epEyBa4wy7jgIfLW64pB6e6tyWvLf9WfAtWRu
+         ib+fKo2XPFyKsmzL7APIXcn4vyEzU6nBjKYam9c6LSdyjD1KDMXdx1jiTyPe8o3aIO6j
+         8yAKc1xr7TkPfgRYxQ3GAw0iSG0DdAtyq/FR1MslVsUbMSSLwmSsk4GGzeupjDTA6Fbt
+         U8lL9CNJ4YK/bbl3d5JsRC0bulXmTMHgq0tYPkA65V2PnTGUhOwMorwkIvMYvvo3mVAQ
+         60HYKV/xIuvUjQJiZ8EqRI+BOrXUVIg9MpLFmz+Hir+SSugdENdaMVV12QB4MfmGh7gM
+         mT0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=QMfBQp6UAJwyzScklcJAVrRwbKo1VRU6tLDmOxcQykE=;
+        b=Q5CRCsqDrwyHR4F3Siz1GPvoHtxJw9/Wq44JjQyjcpbu6UGkcXEM9RKc1tDZcLxTpH
+         mDvxUTC7WbZivuULLkWWDoVCX4hGTOsEgqlBla8pDHcvYxnAn08a+LOKFT0DcGlPb0sJ
+         HiBHYY8D7wxNWB1mEhyVFMkKSP2VAUvmDHtQ2HbEMcnl7SNilpo+NX/mMCVXWZPxcZFH
+         JA/4V2Wml8N/unhh/iihwKjsxvO6M3aN0aXZ2TJc0jlCgJsExlokbUp3zsPZT2fSUKeY
+         l/3h/OFvrC+ZUriK4LmHT9KZQjs0tXAtFmFM84Nco7xm3W6ajeuBkUvyVHkINzqYojw4
+         6jhQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 041/115] ASoC: rsnd: fixup ADG register mask
-Date: Fri,  2 Mar 2018 09:50:44 +0100
-Message-Id: <20180302084505.546515387@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 042/115] xen/balloon: Mark unallocated host memory as UNUSABLE
+Date: Fri,  2 Mar 2018 09:50:45 +0100
+Message-Id: <20180302084505.587710322@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -71,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815881731360817?=
+X-GMAIL-MSGID: =?utf-8?q?1593815881731360817?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,52 +50,260 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
 
-[ Upstream commit d5aa24825da5711f8cb829f873160ddf1a29b19c ]
+[ Upstream commit b3cf8528bb21febb650a7ecbf080d0647be40b9f ]
 
-BRGCKR should use 0x80770000, instead of 0x80FF0000.
+Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
+reservation") left host memory not assigned to dom0 as available for
+memory hotplug.
 
-R-Car Gen2 xxx_TIMSEL should use 0x0F1F,
-R-Car Gen3 xxx_TIMSEL should use 0x1F1F.
-Here, Gen3 doesn't support AVD, thus, both case can use 0x0F1F.
+Unfortunately this also meant that those regions could be used by
+others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
+on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
+addresses as MMIO.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
+effectively reverting f5775e0b6116) and keep track of that region as
+a hostmem resource that can be used for the hotplug.
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/sh/rcar/adg.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/xen/enlighten.c |   81 +++++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/xen/setup.c     |    6 +--
+ drivers/xen/balloon.c    |   65 ++++++++++++++++++++++++++++++++-----
+ include/xen/balloon.h    |    5 ++
+ 4 files changed, 144 insertions(+), 13 deletions(-)
 
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -216,7 +216,7 @@ int rsnd_adg_set_cmd_timsel_gen2(struct
- 				   NULL, &val, NULL);
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -1,8 +1,12 @@
++#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
++#include <linux/bootmem.h>
++#endif
+ #include <linux/cpu.h>
+ #include <linux/kexec.h>
  
- 	val  = val	<< shift;
--	mask = 0xffff	<< shift;
-+	mask = 0x0f1f	<< shift;
+ #include <xen/features.h>
+ #include <xen/page.h>
++#include <xen/interface/memory.h>
  
- 	rsnd_mod_bset(adg_mod, CMDOUT_TIMSEL, mask, val);
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/hypervisor.h>
+@@ -331,3 +335,80 @@ void xen_arch_unregister_cpu(int num)
+ }
+ EXPORT_SYMBOL(xen_arch_unregister_cpu);
+ #endif
++
++#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
++void __init arch_xen_balloon_init(struct resource *hostmem_resource)
++{
++	struct xen_memory_map memmap;
++	int rc;
++	unsigned int i, last_guest_ram;
++	phys_addr_t max_addr = PFN_PHYS(max_pfn);
++	struct e820_table *xen_e820_table;
++	const struct e820_entry *entry;
++	struct resource *res;
++
++	if (!xen_initial_domain())
++		return;
++
++	xen_e820_table = kmalloc(sizeof(*xen_e820_table), GFP_KERNEL);
++	if (!xen_e820_table)
++		return;
++
++	memmap.nr_entries = ARRAY_SIZE(xen_e820_table->entries);
++	set_xen_guest_handle(memmap.buffer, xen_e820_table->entries);
++	rc = HYPERVISOR_memory_op(XENMEM_machine_memory_map, &memmap);
++	if (rc) {
++		pr_warn("%s: Can't read host e820 (%d)\n", __func__, rc);
++		goto out;
++	}
++
++	last_guest_ram = 0;
++	for (i = 0; i < memmap.nr_entries; i++) {
++		if (xen_e820_table->entries[i].addr >= max_addr)
++			break;
++		if (xen_e820_table->entries[i].type == E820_TYPE_RAM)
++			last_guest_ram = i;
++	}
++
++	entry = &xen_e820_table->entries[last_guest_ram];
++	if (max_addr >= entry->addr + entry->size)
++		goto out; /* No unallocated host RAM. */
++
++	hostmem_resource->start = max_addr;
++	hostmem_resource->end = entry->addr + entry->size;
++
++	/*
++	 * Mark non-RAM regions between the end of dom0 RAM and end of host RAM
++	 * as unavailable. The rest of that region can be used for hotplug-based
++	 * ballooning.
++	 */
++	for (; i < memmap.nr_entries; i++) {
++		entry = &xen_e820_table->entries[i];
++
++		if (entry->type == E820_TYPE_RAM)
++			continue;
++
++		if (entry->addr >= hostmem_resource->end)
++			break;
++
++		res = kzalloc(sizeof(*res), GFP_KERNEL);
++		if (!res)
++			goto out;
++
++		res->name = "Unavailable host RAM";
++		res->start = entry->addr;
++		res->end = (entry->addr + entry->size < hostmem_resource->end) ?
++			    entry->addr + entry->size : hostmem_resource->end;
++		rc = insert_resource(hostmem_resource, res);
++		if (rc) {
++			pr_warn("%s: Can't insert [%llx - %llx) (%d)\n",
++				__func__, res->start, res->end, rc);
++			kfree(res);
++			goto  out;
++		}
++	}
++
++ out:
++	kfree(xen_e820_table);
++}
++#endif /* CONFIG_XEN_BALLOON_MEMORY_HOTPLUG */
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -808,7 +808,6 @@ char * __init xen_memory_setup(void)
+ 	addr = xen_e820_table.entries[0].addr;
+ 	size = xen_e820_table.entries[0].size;
+ 	while (i < xen_e820_table.nr_entries) {
+-		bool discard = false;
  
-@@ -244,7 +244,7 @@ int rsnd_adg_set_src_timesel_gen2(struct
+ 		chunk_size = size;
+ 		type = xen_e820_table.entries[i].type;
+@@ -824,11 +823,10 @@ char * __init xen_memory_setup(void)
+ 				xen_add_extra_mem(pfn_s, n_pfns);
+ 				xen_max_p2m_pfn = pfn_s + n_pfns;
+ 			} else
+-				discard = true;
++				type = E820_TYPE_UNUSABLE;
+ 		}
  
- 	in   = in	<< shift;
- 	out  = out	<< shift;
--	mask = 0xffff	<< shift;
-+	mask = 0x0f1f	<< shift;
+-		if (!discard)
+-			xen_align_and_add_e820_region(addr, chunk_size, type);
++		xen_align_and_add_e820_region(addr, chunk_size, type);
  
- 	switch (id / 2) {
- 	case 0:
-@@ -374,7 +374,7 @@ int rsnd_adg_ssi_clk_try_start(struct rs
- 			ckr = 0x80000000;
+ 		addr += chunk_size;
+ 		size -= chunk_size;
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -257,10 +257,25 @@ static void release_memory_resource(stru
+ 	kfree(resource);
+ }
+ 
++/*
++ * Host memory not allocated to dom0. We can use this range for hotplug-based
++ * ballooning.
++ *
++ * It's a type-less resource. Setting IORESOURCE_MEM will make resource
++ * management algorithms (arch_remove_reservations()) look into guest e820,
++ * which we don't want.
++ */
++static struct resource hostmem_resource = {
++	.name   = "Host RAM",
++};
++
++void __attribute__((weak)) __init arch_xen_balloon_init(struct resource *res)
++{}
++
+ static struct resource *additional_memory_resource(phys_addr_t size)
+ {
+-	struct resource *res;
+-	int ret;
++	struct resource *res, *res_hostmem;
++	int ret = -ENOMEM;
+ 
+ 	res = kzalloc(sizeof(*res), GFP_KERNEL);
+ 	if (!res)
+@@ -269,13 +284,42 @@ static struct resource *additional_memor
+ 	res->name = "System RAM";
+ 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+ 
+-	ret = allocate_resource(&iomem_resource, res,
+-				size, 0, -1,
+-				PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
+-	if (ret < 0) {
+-		pr_err("Cannot allocate new System RAM resource\n");
+-		kfree(res);
+-		return NULL;
++	res_hostmem = kzalloc(sizeof(*res), GFP_KERNEL);
++	if (res_hostmem) {
++		/* Try to grab a range from hostmem */
++		res_hostmem->name = "Host memory";
++		ret = allocate_resource(&hostmem_resource, res_hostmem,
++					size, 0, -1,
++					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
++	}
++
++	if (!ret) {
++		/*
++		 * Insert this resource into iomem. Because hostmem_resource
++		 * tracks portion of guest e820 marked as UNUSABLE noone else
++		 * should try to use it.
++		 */
++		res->start = res_hostmem->start;
++		res->end = res_hostmem->end;
++		ret = insert_resource(&iomem_resource, res);
++		if (ret < 0) {
++			pr_err("Can't insert iomem_resource [%llx - %llx]\n",
++				res->start, res->end);
++			release_memory_resource(res_hostmem);
++			res_hostmem = NULL;
++			res->start = res->end = 0;
++		}
++	}
++
++	if (ret) {
++		ret = allocate_resource(&iomem_resource, res,
++					size, 0, -1,
++					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
++		if (ret < 0) {
++			pr_err("Cannot allocate new System RAM resource\n");
++			kfree(res);
++			return NULL;
++		}
  	}
  
--	rsnd_mod_bset(adg_mod, BRGCKR, 0x80FF0000, adg->ckr | ckr);
-+	rsnd_mod_bset(adg_mod, BRGCKR, 0x80770000, adg->ckr | ckr);
- 	rsnd_mod_write(adg_mod, BRRA,  adg->rbga);
- 	rsnd_mod_write(adg_mod, BRRB,  adg->rbgb);
+ #ifdef CONFIG_SPARSEMEM
+@@ -287,6 +331,7 @@ static struct resource *additional_memor
+ 			pr_err("New System RAM resource outside addressable RAM (%lu > %lu)\n",
+ 			       pfn, limit);
+ 			release_memory_resource(res);
++			release_memory_resource(res_hostmem);
+ 			return NULL;
+ 		}
+ 	}
+@@ -765,6 +810,8 @@ static int __init balloon_init(void)
+ 	set_online_page_callback(&xen_online_page);
+ 	register_memory_notifier(&xen_memory_nb);
+ 	register_sysctl_table(xen_root);
++
++	arch_xen_balloon_init(&hostmem_resource);
+ #endif
  
+ #ifdef CONFIG_XEN_PV
+--- a/include/xen/balloon.h
++++ b/include/xen/balloon.h
+@@ -44,3 +44,8 @@ static inline void xen_balloon_init(void
+ {
+ }
+ #endif
++
++#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
++struct resource;
++void arch_xen_balloon_init(struct resource *hostmem_resource);
++#endif
