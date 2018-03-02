@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427758AbeCBMlx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:41:53 -0500
-Received: from mga17.intel.com ([192.55.52.151]:3942 "EHLO mga17.intel.com"
+        id S1427744AbeCBMlv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:41:51 -0500
+Received: from mga12.intel.com ([192.55.52.136]:46412 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1427649AbeCBMjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1427650AbeCBMjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 2 Mar 2018 07:39:03 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,412,1515484800";
-   d="scan'208";a="204989815"
+   d="scan'208";a="34131866"
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: Andreas Noever <andreas.noever@gmail.com>,
@@ -23,9 +23,9 @@ Cc: Andreas Noever <andreas.noever@gmail.com>,
         Jeremy McNicoll <jmcnicol@redhat.com>,
         Andrei Emeltchenko <andrei.emeltchenko@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v3 10/18] thunderbolt: Add tb_switch_get()
-Date: Fri,  2 Mar 2018 15:38:44 +0300
-Message-Id: <20180302123852.50463-11-mika.westerberg@linux.intel.com>
+Subject: [PATCH v3 15/18] thunderbolt: Add 'boot' attribute for devices
+Date: Fri,  2 Mar 2018 15:38:49 +0300
+Message-Id: <20180302123852.50463-16-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180302123852.50463-1-mika.westerberg@linux.intel.com>
 References: <20180302123852.50463-1-mika.westerberg@linux.intel.com>
@@ -33,32 +33,188 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes there is need for increasing reference count of a switch as
-well. This also follows what we have for xdomains.
+From: Yehezkel Bernat <yehezkel.bernat@intel.com>
 
+In various cases, Thunderbolt device can be connected by ICM on boot
+without waiting for approval from user. Most cases are related to
+OEM-specific BIOS configurations. This information is interesting for
+user-space as if the device isn't in SW ACL, it may create a friction in
+the user experience where the device is automatically authorized if it's
+connected on boot but requires an explicit user action if connected
+after OS is up. User-space can use this information to suggest adding
+the device to SW ACL for auto-authorization on later connections.
+
+Signed-off-by: Yehezkel Bernat <yehezkel.bernat@intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/thunderbolt/tb.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/ABI/testing/sysfs-bus-thunderbolt |  7 +++++++
+ drivers/thunderbolt/icm.c                       | 12 ++++++++----
+ drivers/thunderbolt/switch.c                    | 14 ++++++++++++++
+ drivers/thunderbolt/tb.h                        |  2 ++
+ drivers/thunderbolt/tb_msgs.h                   |  1 +
+ 5 files changed, 32 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+index 93798c02e28b..1f145b727d76 100644
+--- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
++++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+@@ -38,6 +38,13 @@ Description:	This attribute is used to authorize Thunderbolt devices
+ 		   the device did not contain a key at all, and
+ 		   EKEYREJECTED if the challenge response did not match.
+ 
++What: /sys/bus/thunderbolt/devices/.../boot
++Date:		Jun 2018
++KernelVersion:	4.17
++Contact:	thunderbolt-software@lists.01.org
++Description:	This attribute contains 1 if Thunderbolt device was already
++		authorized on boot and 0 otherwise.
++
+ What: /sys/bus/thunderbolt/devices/.../key
+ Date:		Sep 2017
+ KernelVersion:	4.13
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index 5d3cd740b71f..bece5540b06b 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -402,7 +402,7 @@ static int icm_fr_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
+ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 		       const uuid_t *uuid, u8 connection_id, u8 connection_key,
+ 		       u8 link, u8 depth, enum tb_security_level security_level,
+-		       bool authorized)
++		       bool authorized, bool boot)
+ {
+ 	struct tb_switch *sw;
+ 
+@@ -417,6 +417,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 	sw->depth = depth;
+ 	sw->authorized = authorized;
+ 	sw->security_level = security_level;
++	sw->boot = boot;
+ 
+ 	/* Link the two switches now */
+ 	tb_port_at(route, parent_sw)->remote = tb_upstream_port(sw);
+@@ -431,7 +432,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 
+ static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
+ 			  u64 route, u8 connection_id, u8 connection_key,
+-			  u8 link, u8 depth)
++			  u8 link, u8 depth, bool boot)
+ {
+ 	/* Disconnect from parent */
+ 	tb_port_at(tb_route(sw), parent_sw)->remote = NULL;
+@@ -445,6 +446,7 @@ static void update_switch(struct tb_switch *parent_sw, struct tb_switch *sw,
+ 	sw->connection_key = connection_key;
+ 	sw->link = link;
+ 	sw->depth = depth;
++	sw->boot = boot;
+ 
+ 	/* This switch still exists */
+ 	sw->is_unplugged = false;
+@@ -504,6 +506,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	bool authorized = false;
+ 	struct tb_xdomain *xd;
+ 	u8 link, depth;
++	bool boot;
+ 	u64 route;
+ 	int ret;
+ 
+@@ -513,6 +516,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
+ 	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
+ 			 ICM_FLAGS_SLEVEL_SHIFT;
++	boot = pkg->link_info & ICM_LINK_INFO_BOOT;
+ 
+ 	if (pkg->link_info & ICM_LINK_INFO_REJECTED) {
+ 		tb_info(tb, "switch at %u.%u was rejected by ICM firmware because topology limit exceeded\n",
+@@ -546,7 +550,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		if (sw->depth == depth && sw_phy_port == phy_port &&
+ 		    !!sw->authorized == authorized) {
+ 			update_switch(parent_sw, sw, route, pkg->connection_id,
+-				      pkg->connection_key, link, depth);
++				      pkg->connection_key, link, depth, boot);
+ 			tb_switch_put(sw);
+ 			return;
+ 		}
+@@ -595,7 +599,7 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 
+ 	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
+ 		   pkg->connection_key, link, depth, security_level,
+-		   authorized);
++		   authorized, boot);
+ 
+ 	tb_switch_put(parent_sw);
+ }
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 4e2b2097bbfc..e9e30aaab2a3 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -775,6 +775,15 @@ static ssize_t authorized_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(authorized);
+ 
++static ssize_t boot_show(struct device *dev, struct device_attribute *attr,
++			 char *buf)
++{
++	struct tb_switch *sw = tb_to_switch(dev);
++
++	return sprintf(buf, "%u\n", sw->boot);
++}
++static DEVICE_ATTR_RO(boot);
++
+ static ssize_t device_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+@@ -951,6 +960,7 @@ static DEVICE_ATTR_RO(unique_id);
+ 
+ static struct attribute *switch_attrs[] = {
+ 	&dev_attr_authorized.attr,
++	&dev_attr_boot.attr,
+ 	&dev_attr_device.attr,
+ 	&dev_attr_device_name.attr,
+ 	&dev_attr_key.attr,
+@@ -979,6 +989,10 @@ static umode_t switch_attr_is_visible(struct kobject *kobj,
+ 		if (sw->dma_port)
+ 			return attr->mode;
+ 		return 0;
++	} else if (attr == &dev_attr_boot.attr) {
++		if (tb_route(sw))
++			return attr->mode;
++		return 0;
+ 	}
+ 
+ 	return sw->safe_mode ? 0 : attr->mode;
 diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 895c57a0a090..c7bd77e9c2c3 100644
+index 2cd6085a6e10..9c9cef875ca8 100644
 --- a/drivers/thunderbolt/tb.h
 +++ b/drivers/thunderbolt/tb.h
-@@ -387,6 +387,13 @@ struct tb_switch *tb_switch_find_by_link_depth(struct tb *tb, u8 link,
- 					       u8 depth);
- struct tb_switch *tb_switch_find_by_uuid(struct tb *tb, const uuid_t *uuid);
+@@ -66,6 +66,7 @@ struct tb_switch_nvm {
+  * @nvm: Pointer to the NVM if the switch has one (%NULL otherwise)
+  * @no_nvm_upgrade: Prevent NVM upgrade of this switch
+  * @safe_mode: The switch is in safe-mode
++ * @boot: Whether the switch was already authorized on boot or not
+  * @authorized: Whether the switch is authorized by user or policy
+  * @work: Work used to automatically authorize a switch
+  * @security_level: Switch supported security level
+@@ -99,6 +100,7 @@ struct tb_switch {
+ 	struct tb_switch_nvm *nvm;
+ 	bool no_nvm_upgrade;
+ 	bool safe_mode;
++	bool boot;
+ 	unsigned int authorized;
+ 	struct work_struct work;
+ 	enum tb_security_level security_level;
+diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
+index 931db2a7c7b3..9f52f842257a 100644
+--- a/drivers/thunderbolt/tb_msgs.h
++++ b/drivers/thunderbolt/tb_msgs.h
+@@ -179,6 +179,7 @@ struct icm_fr_event_device_connected {
+ #define ICM_LINK_INFO_DEPTH_MASK	GENMASK(7, 4)
+ #define ICM_LINK_INFO_APPROVED		BIT(8)
+ #define ICM_LINK_INFO_REJECTED		BIT(9)
++#define ICM_LINK_INFO_BOOT		BIT(10)
  
-+static inline struct tb_switch *tb_switch_get(struct tb_switch *sw)
-+{
-+	if (sw)
-+		get_device(&sw->dev);
-+	return sw;
-+}
-+
- static inline void tb_switch_put(struct tb_switch *sw)
- {
- 	put_device(&sw->dev);
+ struct icm_fr_pkg_approve_device {
+ 	struct icm_pkg_header hdr;
 -- 
 2.16.1
