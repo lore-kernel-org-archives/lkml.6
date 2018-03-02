@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtLyJj2ZrJiPMuAd2/KlX9VXkM1XwVMrg5Gr7QoHtGy2ghlHZZmoCI/fyrCH7hmOfqZ3OLy
-ARC-Seal: i=1; a=rsa-sha256; t=1519980944; cv=none;
+X-Google-Smtp-Source: AG47ELtLqgZ0CqM9Y+h0HAlgbwrM5WBSQf4R7moM46QMcSEjbg0Waur9u1WltEkt3mDMj4NPi6EM
+ARC-Seal: i=1; a=rsa-sha256; t=1519980938; cv=none;
         d=google.com; s=arc-20160816;
-        b=TyBk28zzTtyCqNed9etdZCb3L7cKSGOQqVVynnuZvTzpMTMDEql+hFi7JEOZojc2oR
-         QDeLfKMJ20x9toS1iZM+P6jcpLOe3seKp/pRLrhxOZ7/GRN8pUWv8WT0P2Bj50mmzIQ6
-         Yc/6GaK/CKLrTlWPxjkMRkbopQGYU90wzI8GtlM5ogdxDSFCmfwCynsJUr3FGv8L175I
-         Oe1PM+kC4e43T2k6NZeV8wQbE+/l5O8MnxbVqogIOGckVeWihj9RJBJs544TwaXf+Z/1
-         sv6AwsJ//LelA5s89k06vKp1hmdkkrTSDSuVy23bsCrI8WdrYyk7YCiRnZxGar2HgJoh
-         I+7g==
+        b=RhPqPS9gYeQB7hacboVV3XE1uLMEKVKTvwVTVqwp1TeIFA5FJE/xhPCucUq1bKi31g
+         1pFPMph6TfdtCZ9Seth4IJg06bYJZD5MwESIpQJo4fGph8X8PsKz2793JK8mN19izmt1
+         cE3U6nWYnCCaeZ9k4bOefRNUg/08C0yQdjtrME9bNTfj4ei00Ugh0xgD1gp8iHNVAxRZ
+         jtJ4QRAhSKtyVrIXXQ11+FDGOIgyRO1Q5lgLIYI7gJ3aS6Ymrlvdyl5Ryri+/QYJ9j9U
+         UEXI0AvmebYfcLE2hfau560Vopz81KGnh8bhVpNzikAqjKZXZpo830hTCyKX7vmu4ZI6
+         cmzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XSrNnHqRM9xh0L+iolGLKGwdc1di6TP8Rc2w68lhiPo=;
-        b=e/In4oSVRUdU/y65dR8q9TV2sY2BRjTOYujjNbJWoecL2mFf8SwbdI0lfJlRfB1XrV
-         LchGLRcOBaejn89+yke91qNKJsU7IeQIRaiI+OdEXhTNgH3Ov0hX9PDEXILDzV3rTT61
-         dNtFKeCEL1mbfGPOeZZzdZmlqFeZ4jMzzdMmqlFWvF9DWYHCQNhXKKkHgrgHfA1KLpek
-         i3Jv5Pzx0DWmBXxjrX2NjG7rRRnBx9AQdtn94zNDzyE7G5BYbGEL5g46cpZFOBQuvwmQ
-         ozH7SZ9MoxCLJmzdq3KMhfZ21QnIZdA6VXUn0icnbzHh5YFlSzQyOvzSQW2xBfyhnjwR
-         Wz8Q==
+        bh=NYoZi0guakBBEKxsjYa6jHLwpYp1GKeq5yWwEabMcP0=;
+        b=yAW8wmG1ekzl+RorzVtD8DFZ1A3m+mcxPvdR7XC6K8SYktthzog2fmcSyRgfHj25G/
+         IkMyLQlPh2OgyIHm6l27YdQFEz9KLKLhh+4AR1ATp5iHYI05PL1PBhq5SwerAw3SUAyF
+         aIOVI0Bnv9kShC6/mdtxUE5TESlIl2GyFNxlvd8/AsQOCTnj7BLBWHXdwNg1THO9YXXb
+         pgMPefa6gYybo3ntZp0CF6dDoeNNPBo2RU4FR4y8aCRYA/9sLQrDDnk+0yspmzoyFlt0
+         1pNBq83tf0IVjgrbVAfQE6dIDD8QVkEx+NQcBvQ8Fyq9ccqugvipSgB6oyLQrof8lY5O
+         dyTA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ross Lagerwall <ross.lagerwall@citrix.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Alexander Kochetkov <al.kochet@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 30/34] xen/gntdev: Fix off-by-one error when unmapping with holes
-Date: Fri,  2 Mar 2018 09:51:26 +0100
-Message-Id: <20180302084437.935522961@linuxfoundation.org>
+Subject: [PATCH 4.4 09/34] net: arc_emac: fix arc_emac_rx() error paths
+Date: Fri,  2 Mar 2018 09:51:05 +0100
+Message-Id: <20180302084436.580586591@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815399059107290?=
-X-GMAIL-MSGID: =?utf-8?q?1593815539023373886?=
+X-GMAIL-THRID: =?utf-8?q?1593815426038908739?=
+X-GMAIL-MSGID: =?utf-8?q?1593815532822426447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +50,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Alexander Kochetkov <al.kochet@gmail.com>
 
 
-[ Upstream commit 951a010233625b77cde3430b4b8785a9a22968d1 ]
+[ Upstream commit e688822d035b494071ecbadcccbd6f3325fb0f59 ]
 
-If the requested range has a hole, the calculation of the number of
-pages to unmap is off by one. Fix it.
+arc_emac_rx() has some issues found by code review.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+In case netdev_alloc_skb_ip_align() or dma_map_single() failure
+rx fifo entry will not be returned to EMAC.
+
+In case dma_map_single() failure previously allocated skb became
+lost to driver. At the same time address of newly allocated skb
+will not be provided to EMAC.
+
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/gntdev.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/arc/emac_main.c |   53 ++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 22 deletions(-)
 
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -378,10 +378,8 @@ static int unmap_grant_pages(struct gran
+--- a/drivers/net/ethernet/arc/emac_main.c
++++ b/drivers/net/ethernet/arc/emac_main.c
+@@ -250,39 +250,48 @@ static int arc_emac_rx(struct net_device
+ 			continue;
  		}
- 		range = 0;
- 		while (range < pages) {
--			if (map->unmap_ops[offset+range].handle == -1) {
--				range--;
-+			if (map->unmap_ops[offset+range].handle == -1)
- 				break;
--			}
- 			range++;
+ 
+-		pktlen = info & LEN_MASK;
+-		stats->rx_packets++;
+-		stats->rx_bytes += pktlen;
+-		skb = rx_buff->skb;
+-		skb_put(skb, pktlen);
+-		skb->dev = ndev;
+-		skb->protocol = eth_type_trans(skb, ndev);
+-
+-		dma_unmap_single(&ndev->dev, dma_unmap_addr(rx_buff, addr),
+-				 dma_unmap_len(rx_buff, len), DMA_FROM_DEVICE);
+-
+-		/* Prepare the BD for next cycle */
+-		rx_buff->skb = netdev_alloc_skb_ip_align(ndev,
+-							 EMAC_BUFFER_SIZE);
+-		if (unlikely(!rx_buff->skb)) {
++		/* Prepare the BD for next cycle. netif_receive_skb()
++		 * only if new skb was allocated and mapped to avoid holes
++		 * in the RX fifo.
++		 */
++		skb = netdev_alloc_skb_ip_align(ndev, EMAC_BUFFER_SIZE);
++		if (unlikely(!skb)) {
++			if (net_ratelimit())
++				netdev_err(ndev, "cannot allocate skb\n");
++			/* Return ownership to EMAC */
++			rxbd->info = cpu_to_le32(FOR_EMAC | EMAC_BUFFER_SIZE);
+ 			stats->rx_errors++;
+-			/* Because receive_skb is below, increment rx_dropped */
+ 			stats->rx_dropped++;
+ 			continue;
  		}
- 		err = __unmap_grant_pages(map, offset, range);
+ 
+-		/* receive_skb only if new skb was allocated to avoid holes */
+-		netif_receive_skb(skb);
+-
+-		addr = dma_map_single(&ndev->dev, (void *)rx_buff->skb->data,
++		addr = dma_map_single(&ndev->dev, (void *)skb->data,
+ 				      EMAC_BUFFER_SIZE, DMA_FROM_DEVICE);
+ 		if (dma_mapping_error(&ndev->dev, addr)) {
+ 			if (net_ratelimit())
+-				netdev_err(ndev, "cannot dma map\n");
+-			dev_kfree_skb(rx_buff->skb);
++				netdev_err(ndev, "cannot map dma buffer\n");
++			dev_kfree_skb(skb);
++			/* Return ownership to EMAC */
++			rxbd->info = cpu_to_le32(FOR_EMAC | EMAC_BUFFER_SIZE);
+ 			stats->rx_errors++;
++			stats->rx_dropped++;
+ 			continue;
+ 		}
++
++		/* unmap previosly mapped skb */
++		dma_unmap_single(&ndev->dev, dma_unmap_addr(rx_buff, addr),
++				 dma_unmap_len(rx_buff, len), DMA_FROM_DEVICE);
++
++		pktlen = info & LEN_MASK;
++		stats->rx_packets++;
++		stats->rx_bytes += pktlen;
++		skb_put(rx_buff->skb, pktlen);
++		rx_buff->skb->dev = ndev;
++		rx_buff->skb->protocol = eth_type_trans(rx_buff->skb, ndev);
++
++		netif_receive_skb(rx_buff->skb);
++
++		rx_buff->skb = skb;
+ 		dma_unmap_addr_set(rx_buff, addr, addr);
+ 		dma_unmap_len_set(rx_buff, len, EMAC_BUFFER_SIZE);
+ 
