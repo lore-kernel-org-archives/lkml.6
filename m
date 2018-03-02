@@ -1,132 +1,156 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2531373-1520027005-2-6062371612540953276
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-494696-1519963603-2-3719804177391959387
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES endaro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520027004; b=TX/vJog2essJyshnJ8ho3zDPGlrTWnWPEHqLEuTyPN1bKeO
-    Xnv84jqEEwt6OpEe/tMAh/5n1ShaFsuw/+iHojkam8ECg8B0AGN5RwGeLQAWV1Ko
-    twvB3nZt/Ta5HBukAuCYbQNv2Pkj0fsqDgtXZjU8eDFVDxAV8TKunJIUWCFb7Gow
-    jVXig1hpdFnIf45l1jcVTj1vDFDybr3KqBlScqyWG0KO/zlJtt17NENS4Vymdgbf
-    sxZhskvf7oeb7zMBboU27S5x4TX1plYaj51UEfiW0eJvjFjPd216GCRUTAiPwb+o
-    5mVzfJUugn81mZLbLnTHXwQEr9PkJC3avSxnzzA==
+    t=1519963602; b=PwgxoFSqrpgaNvRghYxFqMF/RWpD8RO3DEVWxaHOomeduOx
+    o+qSNuC8CGRUQkehL4C2KLS+cuWKs2JZmarbM5CfhLZI0O/eWqaH6bmRR+QJt2QX
+    WZegdeGF3vPRbodcTwsyapx11vIv0u72OcNr759NU1XHKIHxYDRrS6oZaWzoponM
+    GMNsNxBlH6MWOA+uxUWMPWDO7CTEkrdPf5SavtDNwrmUrOg0TVKmtq0K+W390N0U
+    olTCoBRQDZ1gtp+RQNqLFRn4x7uRHN6i0+85mmTy70+pmoJYIyRVFOiE920506hV
+    7bfh2hn3/Orj9I691lU9vHXH1mXcVyDAQ7bunkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520027004; bh=l
-    XdBmzrEkfB+gJWl3SWGEgsiRFyhgd6sDLtmjv+uSQ0=; b=mVqmfAPZrHZHAELxV
-    VlUtVY5YyBdFo1VLU54gbdkEucRwSN2YyPTEOA4uEaByNMhvQKA1ng2rvU11/pIM
-    4GaLyLOOXzqFq3um+4fYmbG+h0dPE6YydGGDP17wUo5uojs2dq4c4ZkJGs+eDSr3
-    xRvI1URKiAWzTvodgccJtGxtbNLewgSSXX9rbeXVnW7QP2oZv+siLSMsMCBmSo6g
-    EcUG5yvSdYe4RuDN1a2w/gW4h5Lyya/SzVkE+N03ILzuEa1XSb1XyK4ibLjsnX73
-    BRqsah0hdTihurGATGq/mUmJxLsVGXWa/ryViHFVklu6h83zKNSLjYXjD8L4te/J
-    T8Geg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KVglC6sI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=arctest; t=1519963602; bh=aE2QBStWHO9FABnDJIvZw/bC6J
+    QJbz9+OOEsXbOnpDk=; b=iganM9CYtzukK3YdSSDU8nRVMc4F9qB0nQwsjlySy9
+    OCdmmXsvP+HLKpHQq80LbNwRjOQuCLNrieygPdmx3N44U/4s3ERJynQExh4uOIUJ
+    pdnD7tDN78U3g+aEfqde/u3zGRwjIzb78MqGKaaYwpwZAlyLvsFT7sIlTwXsJsAJ
+    G75YlmxHA93ewTmJHwqvaF4pSUsAITxk1dV1vyInM0wlFV7KrD+yMoaBjzyldfzi
+    GsznV3zqw7l7Rhf19VLEqBnjXcc9M3kZ1ZnYuoov0huUGw/r1tA7pLAeK5IkmLnl
+    sbk9uqPLnsAVKlEVq2W2+HOPNbEiq+Aq8cQwtD8yVjIw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HXYaN+EN;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KVglC6sI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=HXYaN+EN;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELtjIwCUdjn4oRX0lXc41hlAa0maN1w1evjeqmuV3A0RKmVWby9XiYmZ9uKhC1Ss342PAkBqIQ==
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: Larry.Finger@lwfinger.net
-Subject: [PATCH 3/4] staging: rtl8712: Add spaces around '|'
-Date: Sat,  3 Mar 2018 03:12:20 +0530
-Message-Id: <1520026941-16548-4-git-send-email-arushisinghal19971997@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520026941-16548-1-git-send-email-arushisinghal19971997@gmail.com>
-References: <1520026941-16548-1-git-send-email-arushisinghal19971997@gmail.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- Arushi Singhal <arushisinghal19971997@gmail.com>,
- outreachy-kernel@googlegroups.com, Arushi Singhal <arushisinghal@gmail.com>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1164120AbeCBECm (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 1 Mar 2018 23:02:42 -0500
+Received: from mga17.intel.com ([192.55.52.151]:20032 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163935AbeCBECk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 1 Mar 2018 23:02:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="38656139"
+Subject: [PATCH v5 00/12] vfio,
+ dax: prevent long term filesystem-dax pins and other fixes
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: linux-xfs@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>, kvm@vger.kernel.org,
+        Haozhong Zhang <haozhong.zhang@intel.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Gerd Rausch <gerd.rausch@oracle.com>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Christoph Hellwig <hch@lst.de>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Thu, 01 Mar 2018 19:53:33 -0800
+Message-ID: <151996281307.28483.12343847096989509127.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arushi Singhal <arushisinghal@gmail.com>
+Changes since v4 [1]:
+* Fix the changelog of "dax: introduce IS_DEVDAX() and IS_FSDAX()" to
+  better clarify the need for new helpers (Jan)
+* Replace dax_sem_is_locked() with dax_sem_assert_held() (Jan)
+* Use file_inode() in vma_is_dax() (Jan)
+* Resend the full series to linux-xfs@ (Dave)
+* Collect Jan's Reviewed-by
 
-Add spaces around '|' to fix the checkpatch issue.
-CHECK: spaces preferred around that '|'.
-
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+[1]: https://lists.01.org/pipermail/linux-nvdimm/2018-February/014271.html
 ---
- drivers/staging/rtl8712/rtl8712_cmdctrl_bitdef.h | 2 +-
- drivers/staging/rtl8712/rtl8712_gp_bitdef.h      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8712/rtl8712_cmdctrl_bitdef.h b/drivers/staging/rtl8712/rtl8712_cmdctrl_bitdef.h
-index b7dda90..4b8985d 100644
---- a/drivers/staging/rtl8712/rtl8712_cmdctrl_bitdef.h
-+++ b/drivers/staging/rtl8712/rtl8712_cmdctrl_bitdef.h
-@@ -63,7 +63,7 @@
- #define _IMEM_CHK_RPT			BIT(1)
- #define _IMEM_CODE_DONE			BIT(0)
- 
--#define	_TXDMA_INIT_VALUE	(_IMEM_CHK_RPT|_EMEM_CHK_RPT)
-+#define	_TXDMA_INIT_VALUE	(_IMEM_CHK_RPT | _EMEM_CHK_RPT)
- 
- /*RCR*/
- #define	_ENMBID				BIT(27)
-diff --git a/drivers/staging/rtl8712/rtl8712_gp_bitdef.h b/drivers/staging/rtl8712/rtl8712_gp_bitdef.h
-index 44c9060..66c35c9 100644
---- a/drivers/staging/rtl8712/rtl8712_gp_bitdef.h
-+++ b/drivers/staging/rtl8712/rtl8712_gp_bitdef.h
-@@ -70,7 +70,7 @@
- #define		GPIOSEL_PHYDBG	1	/* PHYDBG*/
- #define		GPIOSEL_BT	2	/* BT_coex*/
- #define		GPIOSEL_WLANDBG	3	/* WLANDBG*/
--#define		GPIOSEL_GPIO_MASK	(~(BIT(0)|BIT(1)))
-+#define		GPIOSEL_GPIO_MASK	(~(BIT(0) | BIT(1)))
- /* HW Radio OFF switch (GPIO BIT) */
- #define		HAL_8192S_HW_GPIO_OFF_BIT	BIT(3)
- #define		HAL_8192S_HW_GPIO_OFF_MASK	0xF7
--- 
-2.7.4
+The vfio interface, like RDMA, wants to setup long term (indefinite)
+pins of the pages backing an address range so that a guest or userspace
+driver can perform DMA to the with physical address. Given that this
+pinning may lead to filesystem operations deadlocking in the
+filesystem-dax case, the pinning request needs to be rejected.
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+The longer term fix for vfio, RDMA, and any other long term pin user, is
+to provide a 'pin with lease' mechanism. Similar to the leases that are
+hold for pNFS RDMA layouts, this userspace lease gives the kernel a way
+to notify userspace that the block layout of the file is changing and
+the kernel is revoking access to pinned pages.
+
+Related to this change is the discovery that vma_is_fsdax() was causing
+device-dax inode detection to fail. That lead to series of fixes and
+cleanups to make sure that S_DAX is defined correctly in the
+CONFIG_FS_DAX=n + CONFIG_DEV_DAX=y case.
+
+---
+
+Dan Williams (12):
+      dax: fix vma_is_fsdax() helper
+      dax: introduce IS_DEVDAX() and IS_FSDAX()
+      ext2, dax: finish implementing dax_sem helpers
+      ext2, dax: define ext2_dax_*() infrastructure in all cases
+      ext4, dax: define ext4_dax_*() infrastructure in all cases
+      ext2, dax: replace IS_DAX() with IS_FSDAX()
+      ext4, dax: replace IS_DAX() with IS_FSDAX()
+      xfs, dax: replace IS_DAX() with IS_FSDAX()
+      mm, dax: replace IS_DAX() with IS_DEVDAX() or IS_FSDAX()
+      fs, dax: kill IS_DAX()
+      dax: fix S_DAX definition
+      vfio: disable filesystem-dax page pinning
+
+
+ drivers/vfio/vfio_iommu_type1.c |   18 ++++++++++++++--
+ fs/ext2/ext2.h                  |    6 +++++
+ fs/ext2/file.c                  |   19 +++++------------
+ fs/ext2/inode.c                 |   10 ++++-----
+ fs/ext4/file.c                  |   18 +++++-----------
+ fs/ext4/inode.c                 |    4 ++--
+ fs/ext4/ioctl.c                 |    2 +-
+ fs/ext4/super.c                 |    2 +-
+ fs/iomap.c                      |    2 +-
+ fs/xfs/xfs_file.c               |   14 ++++++-------
+ fs/xfs/xfs_ioctl.c              |    4 ++--
+ fs/xfs/xfs_iomap.c              |    6 +++--
+ fs/xfs/xfs_reflink.c            |    2 +-
+ include/linux/dax.h             |   12 ++++++++---
+ include/linux/fs.h              |   43 ++++++++++++++++++++++++++++-----------
+ mm/fadvise.c                    |    3 ++-
+ mm/filemap.c                    |    4 ++--
+ mm/huge_memory.c                |    4 +++-
+ mm/madvise.c                    |    3 ++-
+ 19 files changed, 102 insertions(+), 74 deletions(-)
