@@ -1,61 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165010AbeCBEwl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:52:41 -0500
-Received: from ozlabs.org ([103.22.144.67]:39617 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164429AbeCBEwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 23:52:39 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 2 Mar 2018 15:52:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the net-next tree
-Message-ID: <20180302155215.7653987d@canb.auug.org.au>
+        id S1165021AbeCBE42 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:56:28 -0500
+Received: from mail-it0-f50.google.com ([209.85.214.50]:35246 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164400AbeCBE41 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 23:56:27 -0500
+X-Google-Smtp-Source: AG47ELtkFmIaUvb0TxTvKh5HOSoNSlFvAxPBVov0IJcgYyx9kQoh/uin1SqzNQeRw2bdvaq6tR1p7kfukG2Wjms8Sg8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o_XjIvKMJhbRFFIt+hmhf_R"; protocol="application/pgp-signature"
+In-Reply-To: <1519945861.2675.9.camel@sandisk.com>
+References: <1496655478-4039-1-git-send-email-opensource.ganesh@gmail.com> <1519945861.2675.9.camel@sandisk.com>
+From: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Date: Fri, 2 Mar 2018 12:56:26 +0800
+Message-ID: <CADAEsF8OySXKpqBmN-Vi+8md=RpHAyUghO99UnrwJRdD72yWCQ@mail.gmail.com>
+Subject: Re: [PATCH] scsi_lib: increase {host|target|device}_busy count after
+ dispatch cmd
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Bart:
 
-Hi all,
+2018-03-02 7:11 GMT+08:00 Bart Van Assche <Bart.VanAssche@wdc.com>:
+> On Mon, 2017-06-05 at 17:37 +0800, Ganesh Mahendran wrote:
+>> In android system, when there are lots of threads running. Thread A
+>> holding *host_busy* count is easily to be preempted, and if at the
+>> same time, thread B set *host_blocked*, then all other threads will
+>> be io blocked.
+>
+> Hello Ganesh,
+>
+> Have you considered to insert preempt_disable() and preempt_enable() calls
+> where necessary to achieve the same effect? I think that would result in a
+> much less intrusive patch.
 
-Commits
+Yes, preempt_disable()preempt_enable will also achieve the same effect.
+But I just think preempt_disable()preempt_enable may be a little heavy for
+this problem which can be fixed by increaseing {host|target|device}_busy count
+after dispatch cmd.
 
-  568477045f80 (" phy: marvell10g: Utilize gen10g_no_soft_reset()")
-  0adfdb667ab5 (" phy: cortina: Utilize generic functions")
-  aebc78a40b88 (" phy: teranetics: Utilize generic functions")
-  e8a714e086e4 (" phy: Export gen10g_* functions")
-  6ed33d3a06e6 (" phy: aquantia: Utilize genphy_c45_aneg_done()")
+Thanks.
 
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqY2H8ACgkQAVBC80lX
-0GxCAQf/StJ7Z4Hq6ZrMaHRrjcJtn7A+UJrIaRUtjt2SabZgKrCkQrw5sfMAsH1d
-ezb2ZMoewHmJnOkbmwd314HKOzslRQ6QNS4krX8rC8xVbTl1Dw3KIaHOaBaCzqQ1
-zrSF85CmTDV7auRWuy9+VU8bp59iVD6AagS/L6loKeqXFonakwJ9k+slnP5Hifmj
-ixTaTuoao3duXvJSP9ciWhaIwkRGM8NDTE8pyJtEajQCo246kRz+rWXuLoyNWBbT
-nfMRfmNlaIl/PVmTi/aL1h/bpGzsyba+jC6YNUVb3gtfpDCFjLrNVqU7oSVlcupc
-VxlqtAGDa38oksStGtwV8kR3ECgUgQ==
-=IdR8
------END PGP SIGNATURE-----
-
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R--
+>
+> Thanks,
+>
+> Bart.
+>
+>
