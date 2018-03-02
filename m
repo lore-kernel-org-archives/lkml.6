@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1414047-1519989836-2-9870943339317357311
+X-Cyrus-Session-Id: sloti22d1t05-1414047-1519989801-2-14442424499072201411
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519989835; b=VoHS3DEr63goh0T2qqfjybA6Ef7BeHzMuAmixjgG7e/jZ2Y
-    tY/RVJqs+AyB1AM4B/37pSu2acrEw5iMpRvMlMl5C3f06EiQpCjOb6Z4IrcQbRgX
-    2/fH/F3TtRbAVle8D2l/N49IXZnBF9XjShzy/CVS4ADW4RQ459C19cKrZ2Cc0k2x
-    BI0msf4MZeuRBy5zZczGurueEXNN9phskGr8EFOtnAmO+TX8kB0nb4paLFIaxGtF
-    qvL0R+jEcofbr33PQtukxVmUwdSVf5ROgAlkAq9mOxY1m9+yqIwTAKY0Tll9D2PU
-    VQxgaH9EH3V3FKTAaZTKvSKdNr493EvFr7lxVmw==
+    t=1519989800; b=J4TvlCkWFg0QAjniYgnCwB9Wp15zz2XEpyfOhNX4qY/dFoO
+    +jkXf5LDMoEpFVfL6vbKuz3t1cMzDbi1WN0PsH73s+vrZw3zQyYAk9t5e79PaYV2
+    9Xrz05H6B2AUi/r2klBJlkAAigPfCTRoxDntgYKjNCU1MwIbiKl8cV2jDwXd70kZ
+    V8KVS0Zk7mIPLpVjBk0YZQK+p8mv7fwNJorBpNPz98qA0OVSMlNdYzCGRxjc9J5D
+    BtYQHfmkjvSP/YcLfRZoSh1rfsvRAnXtzpwOauF+DxL9AvuWquut2KKD24IyNvtQ
+    uQeeq2k21Wu2Q+USpDyfu9LP3Q67lJYwW4rmPHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519989835; bh=i3uN3nb0VcHpoqMzlbBy0RAlK2
-    SQhEzonQ6X4HKBa9U=; b=v0l8V+Hz529kBIcekLF50FAgQEX/z9mIljIeRORtKa
-    HpYRLkENs13l8lJn3VfRzh0pQzLYIC27Dz9Dr1/Px6ADN1YdxoyxyFt3Gqp+SK5Z
-    sYSPdPzSxS2PQ4aGCPzB/jM3JYZ9Ccq0cmbLRvSt1tEQOld8vl4M91fr5V/wxIeV
-    so2q+wk7g7ZWvPkISx/NxcI7mCsnqjKDXEBNFosIn04PRpm/rLR2jU48Id7qx6P0
-    nC2z2+BZb+KxulsVtJjJ3nDtCsHec5/9fJlR6fH3U2Yz3rfhI4AY+Ez8YyLx5rCL
-    OceYI5yCfx6jlQmimIHbqh4V1L/lVYPWCGuCExTrwqtg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519989800; bh=MFNktj7QRNWdHUv57hxeJpZqx/
+    TXBUwCRXu/NAFjDSg=; b=n0p6VkBiodYZkk3ss2ty93gf984LloBFCz+jLPI4f/
+    smhVb8lz5ZXNndg4kG8kXnckvRm95zpWEFRttApYOkWLlMuxecmElpFpjtU21Qom
+    1GbhS4UcR5FJ2+EEV/vwUb/qoDo94qCnuzdYl4a12FMHejgqTHvH33u/naIOsMH2
+    b+ZLaeeQp4wdepc5xHfdToL0V6D8KgMq53d27V2EE6G2tyHeZi+zI2ZTDjmHKlla
+    gPRmkXrpGvhZ7fYfLM56QeRfK2IVhIL1Pyz2vBy9P6GSy+yDSI0oN5/rtRc5saIP
+    2Gc8iLf0c4jrVbzEFx4VehXxzW/wbWnjw2y9BuZKQzbw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,23 +47,23 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423166AbeCBLXc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 06:23:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49022 "EHLO
+        id S1423211AbeCBLWt (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 06:22:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423161AbeCBIve (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:51:34 -0500
+        with ESMTP id S1164824AbeCBIvh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:51:37 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Shahed Shaikh <Shahed.Shaikh@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 10/24] tg3: Enable PHY reset in MTU change path for 5720
-Date: Fri,  2 Mar 2018 09:51:07 +0100
-Message-Id: <20180302084239.669158320@linuxfoundation.org>
+Subject: [PATCH 3.18 11/24] bnx2x: Improve reliability in case of nested PCI errors
+Date: Fri,  2 Mar 2018 09:51:08 +0100
+Message-Id: <20180302084239.716238623@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084239.157503766@linuxfoundation.org>
 References: <20180302084239.157503766@linuxfoundation.org>
@@ -81,34 +81,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Siva Reddy Kallam <siva.kallam@broadcom.com>
+From: "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
 
 
-[ Upstream commit e60ee41aaf898584205a6af5c996860d0fe6a836 ]
+[ Upstream commit f7084059a9cb9e56a186e1677b1dcffd76c2cd24 ]
 
-A customer noticed RX path hang when MTU is changed on the fly while
-running heavy traffic with NCSI enabled for 5717 and 5719. Since 5720
-belongs to same ASIC family, we observed same issue and same fix
-could solve this problem for 5720.
+While in recovery process of PCI error (called EEH on PowerPC arch),
+another PCI transaction could be corrupted causing a situation of
+nested PCI errors. Also, this scenario could be reproduced with
+error injection mechanisms (for debug purposes).
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+We observe that in case of nested PCI errors, bnx2x might attempt to
+initialize its shmem and cause a kernel crash due to bad addresses
+read from MCP. Multiple different stack traces were observed depending
+on the point the second PCI error happens.
+
+This patch avoids the crashes by:
+
+ * failing PCI recovery in case of nested errors (since multiple
+ PCI errors in a row are not expected to lead to a functional
+ adapter anyway), and by,
+
+ * preventing access to adapter FW when MCP is failed (we mark it as
+ failed when shmem cannot get initialized properly).
+
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Acked-by: Shahed Shaikh <Shahed.Shaikh@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    4 ++--
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   14 +++++++++++++-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -14214,7 +14214,8 @@ static int tg3_change_mtu(struct net_dev
- 	 */
- 	if (tg3_asic_rev(tp) == ASIC_REV_57766 ||
- 	    tg3_asic_rev(tp) == ASIC_REV_5717 ||
--	    tg3_asic_rev(tp) == ASIC_REV_5719)
-+	    tg3_asic_rev(tp) == ASIC_REV_5719 ||
-+	    tg3_asic_rev(tp) == ASIC_REV_5720)
- 		reset_phy = true;
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -2994,7 +2994,7 @@ int bnx2x_nic_unload(struct bnx2x *bp, i
  
- 	err = tg3_restart_hw(tp, reset_phy);
+ 	del_timer_sync(&bp->timer);
+ 
+-	if (IS_PF(bp)) {
++	if (IS_PF(bp) && !BP_NOMCP(bp)) {
+ 		/* Set ALWAYS_ALIVE bit in shmem */
+ 		bp->fw_drv_pulse_wr_seq |= DRV_PULSE_ALWAYS_ALIVE;
+ 		bnx2x_drv_pulse(bp);
+@@ -3076,7 +3076,7 @@ int bnx2x_nic_unload(struct bnx2x *bp, i
+ 	bp->cnic_loaded = false;
+ 
+ 	/* Clear driver version indication in shmem */
+-	if (IS_PF(bp))
++	if (IS_PF(bp) && !BP_NOMCP(bp))
+ 		bnx2x_update_mng_version(bp);
+ 
+ 	/* Check if there are pending parity attentions. If there are - set
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -9472,6 +9472,15 @@ static int bnx2x_init_shmem(struct bnx2x
+ 
+ 	do {
+ 		bp->common.shmem_base = REG_RD(bp, MISC_REG_SHARED_MEM_ADDR);
++
++		/* If we read all 0xFFs, means we are in PCI error state and
++		 * should bail out to avoid crashes on adapter's FW reads.
++		 */
++		if (bp->common.shmem_base == 0xFFFFFFFF) {
++			bp->flags |= NO_MCP_FLAG;
++			return -ENODEV;
++		}
++
+ 		if (bp->common.shmem_base) {
+ 			val = SHMEM_RD(bp, validity_map[BP_PORT(bp)]);
+ 			if (val & SHR_MEM_VALIDITY_MB)
+@@ -13743,7 +13752,10 @@ static pci_ers_result_t bnx2x_io_slot_re
+ 		BNX2X_ERR("IO slot reset --> driver unload\n");
+ 
+ 		/* MCP should have been reset; Need to wait for validity */
+-		bnx2x_init_shmem(bp);
++		if (bnx2x_init_shmem(bp)) {
++			rtnl_unlock();
++			return PCI_ERS_RESULT_DISCONNECT;
++		}
+ 
+ 		if (IS_PF(bp) && SHMEM2_HAS(bp, drv_capabilities_flag)) {
+ 			u32 v;
