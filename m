@@ -1,78 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423855AbeCBPdp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:33:45 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49242 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1423376AbeCBPdD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:33:03 -0500
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Andrzej Hajda <a.hajda@samsung.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        "Benjamin Gaignard" <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH v2 1/2] dt-bindings/display/panel: Add support for Raydium rm68200 dsi panel
-Date: Fri, 2 Mar 2018 16:32:21 +0100
-Message-ID: <20180302153222.4377-2-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180302153222.4377-1-philippe.cornu@st.com>
-References: <20180302153222.4377-1-philippe.cornu@st.com>
+        id S1424157AbeCBPeI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:34:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:38783 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423376AbeCBPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:34:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,412,1515484800";
+   d="scan'208";a="205024748"
+Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when
+ picking pages to free
+To: Aaron Lu <aaron.lu@intel.com>, Michal Hocko <mhocko@kernel.org>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-3-aaron.lu@intel.com>
+ <20180301135518.GJ15057@dhcp22.suse.cz> <20180302071533.GA6356@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <aa14d724-525c-7532-2e8e-6c4c6094e03f@intel.com>
+Date: Fri, 2 Mar 2018 07:34:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.32]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_08:,,
- signatures=0
+In-Reply-To: <20180302071533.GA6356@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Raydium Semiconductor Corporation RM68200 is a 5.5" 720x1280
-TFT LCD panel connected using a MIPI-DSI video interface.
+On 03/01/2018 11:15 PM, Aaron Lu wrote:
+> 
+>> I am still quite surprised that this would have such a large impact.
+> Most likely due to the cachelines for these page structures are warmed
+> up outside of zone->lock.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
----
- .../bindings/display/panel/raydium,rm68200.txt     | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt
+The workload here is a pretty tight microbenchmark and single biggest
+bottleneck is cache misses on 'struct page'.  It's not memory bandwidth
+bound.  So, anything you can give the CPU keep it fed and not waiting on
+cache misses will be a win.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt
-new file mode 100644
-index 000000000000..cbb79ef3bfc9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/raydium,rm68200.txt
-@@ -0,0 +1,25 @@
-+Raydium Semiconductor Corporation RM68200 5.5" 720p MIPI-DSI TFT LCD panel
-+
-+The Raydium Semiconductor Corporation RM68200 is a 5.5" 720x1280 TFT LCD
-+panel connected using a MIPI-DSI video interface.
-+
-+Required properties:
-+  - compatible: "raydium,rm68200"
-+  - reg: the virtual channel number of a DSI peripheral
-+
-+Optional properties:
-+  - reset-gpios: a GPIO spec for the reset pin (active low).
-+  - power-supply: phandle of the regulator that provides the supply voltage.
-+  - backlight: phandle of the backlight device attached to the panel.
-+
-+Example:
-+&dsi {
-+	...
-+	panel@0 {
-+		compatible = "raydium,rm68200";
-+		reg = <0>;
-+		reset-gpios = <&gpiof 15 GPIO_ACTIVE_LOW>;
-+		power-supply = <&v1v8>;
-+		backlight = <&pwm_backlight>;
-+	};
-+};
--- 
-2.15.1
+There's never going to be a real-world workload that sees this kind of
+increase, but the change in the micro isn't super-surprising because it
+so directly targets the bottleneck.
