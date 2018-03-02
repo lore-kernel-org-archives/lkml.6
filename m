@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvLQFO5QNFAfgUR1QJKfWmv869nNGW5AvrvYFmgWPsPfAfLZJvCKaDs5UfQIcnQHO/4IMkr
-ARC-Seal: i=1; a=rsa-sha256; t=1519981458; cv=none;
+X-Google-Smtp-Source: AG47ELsPQIqC50jlSPzaMgPLE3eJ1MTk42B8i1YSP0WYAlQCfRq2wZWZK9idrmlpA8SKND5vDWJv
+ARC-Seal: i=1; a=rsa-sha256; t=1519981454; cv=none;
         d=google.com; s=arc-20160816;
-        b=MtK2J4O4XoegHamlO2ktuoRJsuu0/RkCQ25C6J4X863K1raf3HhkryWBvwnu96N3qv
-         HIOCw7z6XrJ4XNWH7yBFYEK1C1aMkblOrm35F3uorJsdaNFc5t+CmuMe0D9tIt14ajDz
-         nRx4Qngo9CsBdBkEDUKl+NYZc8dOVaB/sASMY+KDwwYHMdLsPPs93TsQY/4PlQvW8POU
-         oTqUWjOA0hJPWYyzE/6TjUm13q4GdnC/Pp4BcLp/GMApKiVi6es3xE0RUMJksWrkauj9
-         GgJgY2sl6XrQIKNOvO59htGNcaWT3kx/ueh9yreJ/vcFE2+qFaoGWo7/dvaio61AdhcQ
-         d7Lw==
+        b=hOvc2GJ81RjuxgNEh03nhLMcyJbOlkpIRsUqLwNfX8865Fde0EWLglJG0y7c/SW2M6
+         FzcJZTv+NGevDarWbp9jZlWsbs1B341z5RRmp7Nf55LXEnnsKdWQ7vkKst3rmm03EPGB
+         CBrggvccT3CYTau8CTpzUpmoprE6B8WjoR44qDtVk0lw/aiU1y5vExLWPnL+Q7NJlAc7
+         g1bx/O5Bv2fip9lCWhvIHvS4BBnlRcDNZINhKq9sl4dCPz1S+PlPs3ZOixb3IuWhDdOH
+         IlxLhkNKRQfSox5tRPZwehYWZf7Bwm90YJ5LCgvXbtDjVxdqWJAzOUfGIZ92wy8TZQj7
+         66cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+LuQ86/q4s12pv6AgXeoFq9SU+9HzTieoyXRaHm1CGk=;
-        b=IMozvI0AQ+7bsgIH8gfRt60OXBJTj4sh8RtqDDM3F0s4ftqh7rzceHham5/u4yMyYd
-         yB6mvyyrajJ5ypFi4uXrtigstGEW6umdlup55hn6QTZaxsvMtc/o7X4gJIx2LXdCfrnf
-         xuB8+1rHDV9/RmewLWJstwY9MQmJ+Fs4k3obnOROuitk080xtHgCg5c/BNfb2w9dufwQ
-         Nu07wRkRTgUPBuPYZ4m9wlQ+VDwMxQcP7NApaYgPgaq7aNFILf2NVgWYR/N56Qmbkxkh
-         rmNVLDQ0RJNwTgK6hGZdOPkWoYq90C0r9Y76An8BJhDmafufKUma0NHaVxHqEaZeKDCv
-         b/ZQ==
+        bh=Vvgd7vlLkIim8SGgA/I7KS803N+iuDNF9XMHyB/KRvM=;
+        b=sNR3T4EWMt7oLWRAhxwi7Zoc6CfMjAh7EIDuxBRZaBhDcUEwBABcPwYn3zWfKa7shI
+         IAmfORp6SJHiLWijc8KKxBAnht+jYbAON+cei+X14bGxu3pVkXPoaEruAPpVtBX8ddwG
+         6G2V+fGZ/AqCTzFZ4xQdDDUhiA97i7cvJ3997IINsgFs2mjXPwB3SO8qpLcP2/7RP5RI
+         eQc08L+oTDyXNNR1aQOuzcXyE6dj6QX4TKHPSTyAPUCtI4RsnB1ct3MoN0t5+LdlfyjM
+         6h4gFPC6SndzlQjl7SeXiEdOkwTYtuXlu7nS5P0HP4JyatrG+uEowpM8dhEdb7yzFrER
+         gN1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>,
+	Sunil Challa <sunilkumar.challa@broadcom.com>,
+	Sathya Perla <sathya.perla@broadcom.com>,
+	Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>,
 	Michael Chan <michael.chan@broadcom.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 096/115] bnxt_en: Fix the Invalid VF id check in bnxt_vf_ndo_prep routine.
-Date: Fri,  2 Mar 2018 09:51:39 +0100
-Message-Id: <20180302084507.726620179@linuxfoundation.org>
+Subject: [PATCH 4.14 095/115] bnxt_en: Fix population of flow_type in bnxt_hwrm_cfa_flow_alloc()
+Date: Fri,  2 Mar 2018 09:51:38 +0100
+Message-Id: <20180302084507.683630736@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815495001614943?=
-X-GMAIL-MSGID: =?utf-8?q?1593816077567029478?=
+X-GMAIL-THRID: =?utf-8?q?1593816074409761267?=
+X-GMAIL-MSGID: =?utf-8?q?1593816074409761267?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +53,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
+From: Sunil Challa <sunilkumar.challa@broadcom.com>
 
 
-[ Upstream commit 78f300049335ae81a5cc6b4b232481dc5e1f9d41 ]
+[ Upstream commit 7deea450eb912f269d999de62c8ab922d1461748 ]
 
-In bnxt_vf_ndo_prep (which is called by bnxt_get_vf_config ndo), there is a
-check for "Invalid VF id". Currently, the check is done against max_vfs.
-However, the user doesn't always create max_vfs. So, the check should be
-against the created number of VFs. The number of bnxt_vf_info structures
-that are allocated in bnxt_alloc_vf_resources routine is the "number of
-requested VFs". So, if an "invalid VF id" falls between the requested
-number of VFs and the max_vfs, the driver will be dereferencing an invalid
-pointer.
+flow_type in HWRM_FLOW_ALLOC is not being populated correctly due to
+incorrect passing of pointer and size of l3_mask argument of is_wildcard().
+Fixed this.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>
+Fixes: db1d36a27324 ("bnxt_en: add TC flower offload flow_alloc/free FW cmds")
+Signed-off-by: Sunil Challa <sunilkumar.challa@broadcom.com>
+Reviewed-by: Sathya Perla <sathya.perla@broadcom.com>
+Reviewed-by: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
 Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
-@@ -70,7 +70,7 @@ static int bnxt_vf_ndo_prep(struct bnxt
- 		netdev_err(bp->dev, "vf ndo called though sriov is disabled\n");
- 		return -EINVAL;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -327,7 +327,7 @@ static int bnxt_hwrm_cfa_flow_alloc(stru
  	}
--	if (vf_id >= bp->pf.max_vfs) {
-+	if (vf_id >= bp->pf.active_vfs) {
- 		netdev_err(bp->dev, "Invalid VF id %d\n", vf_id);
- 		return -EINVAL;
- 	}
+ 
+ 	/* If all IP and L4 fields are wildcarded then this is an L2 flow */
+-	if (is_wildcard(&l3_mask, sizeof(l3_mask)) &&
++	if (is_wildcard(l3_mask, sizeof(*l3_mask)) &&
+ 	    is_wildcard(&flow->l4_mask, sizeof(flow->l4_mask))) {
+ 		flow_flags |= CFA_FLOW_ALLOC_REQ_FLAGS_FLOWTYPE_L2;
+ 	} else {
