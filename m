@@ -1,79 +1,80 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-229752-1519956738-2-4930908471105660408
+X-Cyrus-Session-Id: sloti22d1t05-229752-1519956792-2-18126546036564576615
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519956737; b=hTVxev55x899o9fo+lGLPjwGj15lWVXxB0/6j1GPNtd6tPt
-    M1p9vOybZwkH3uojABxluL9kDsF0NxBwTzgPlPfl89rFYFT+4yl+4AS7mGzFus1m
-    KXmt1XPvgWTGEfSxdsHsxAOyqcMZ/Wqas0DIRDZ4Pybqo0TJsHaliUQbDnIJuoT6
-    9qGovBLCjAYFXduh1X2oFseugR/8wcZ2W6zXO5ESgy4mOMVTzOjARGrgss3KgK2b
-    oE+Tnr5s3NYQlN7C7AYEjnqBG1cnxXy68wlO3TGQLB2ZVU8rK6FrQ9eiy7gAeNtf
-    30ib/rxyjKgYg4f+Km4FYLRURdlzXklySa9bY5Q==
+    t=1519956792; b=PXhfUqHGhtExmlCZdT0NkAu2TH1M9j6A0Rxlscp+u8pHIRY
+    6arB5tKdfkIJ8csEuuxFH2HxM5XRyZtMCXKgt9PBWg6Txw6BvidtmTNXkLvVtZdv
+    scMBepRKEs2kN7LyE1PnLac0Nb4H2NO/QGN61/t35zG2jxjA2dvzAbRz5ZIDVg8o
+    DBlzQW5kz5W8ksyUvMoE+wl021EPiFmYCrZXSnG6485gTScWy8n4nONoHPIpjRq9
+    wpdzWICgiMZaLFl3Z+RVYCHAiIe7qUdKet8Wj6KV95ujMOiNW5o6ng24MimA5Z9S
+    sslU96pl9kQNZozM2DeuKOvHEAWStW0BXrk1PCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519956737; bh=T
-    wuvVorD6ne82tXrYMreBoUpnrhDOwuBv7FgJmEhADo=; b=Z82ObDbagtz9EozMp
-    PJtBv22E9JTh+7b6FRvS1AKFhuMqZKXEK2IV2C7baMK7RRpNshWD5qmewfM5kyga
-    3OeDzoA9jIKi00FmsNBqHkY1w9nC1QGaT62GK6gecRVa6w0CgUBBroqf/5o1B1As
-    T9McqbbdWuNdrcQiDCHPSUG7unab1DUlH9pntFZX5JXCHucjhdsyjQzoAzd2vztQ
-    ViemKxzfiLDxTudUPg9Z9Om8ihe2ulw8Ocq3cOZWO/SI6O4xHzDiOye/9QxTCGm3
-    dgs8/6/yaMgSYOfTIbQESu8jwL6iVydg+4ouEWrUbaXTzffzdMTdPjBsf85n6DHS
-    OslIQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1519956792; bh=1
+    /rzXDaiFub+Tj/tQ/zrDhxZPITJJFQClh/MXIn5A7M=; b=wi4tGDQ7pwR+w3XpB
+    62s0Wc7f3IXoYz+b3ad5GMYj4hnXWElD1+tz1eOsyOxSJidFJXsjlvp03zeqJc34
+    z7NRWc02NjvX/mcu3OYrYRjCQaHtN5sawT3kPG9t9yFlIuzP/9Zs5cALIE7v/2OO
+    o7vi6a5zkDFIaUg9OX1xtI68yB4kaEKFy783n3dsIrz0DkmsPK4vvybhMAJm2ub3
+    RYrFtuTM+iuPK4D6DFkuKJ9J16aYI0kda+Zk3aVwE63nY5yYfW+ZBf+L3qpzvtNG
+    BYw1o6AJqQaF/fGDV+58KOu1ivzMTnSgTvofOBovGnP5xCiht1fXWtz5sfPHvaaK
+    vudMw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 1/2] staging: most: Fix a coding style problem.
-Date: Thu,  1 Mar 2018 18:11:43 -0800
-Message-Id: <20180302021144.10795-1-quytelda@tamalin.org>
+Subject: [PATCH 2/2] staging: most: Fix a coding style problem
+Date: Thu,  1 Mar 2018 18:11:44 -0800
+Message-Id: <20180302021144.10795-2-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180301162034.GA15087@kroah.com>
+In-Reply-To: <20180302021144.10795-1-quytelda@tamalin.org>
 References: <20180301162034.GA15087@kroah.com>
-X-Provags-ID: V03:K0:e/BQx/jANVLbwPjzMUyoAPruyO4xa6DdQPgfYTCIS1OQieH2aBe
- C+0RSoi4MVYhdBswB5lY71v5gepoUs2Qcqe61jDtwZdacEVh0VMssSxaovta2oPKRdr05mp
- LHY8TjEBB6pUGZOsT205TMtNVikIKtGypISIMD8D5UdE6+VMreP/kfbx9cb7Ac9FBkr3NV0
- iM1Iqvh/mI8Uq/NWYp7ZQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:n7RnU5d5gDg=:Oeme/wAmoksiYijIYBkA8k
- mUmV9TneMn+nQdOXYH9pHcXoV7+8vcxA8BWwflNI1J24aPxLnMG8n6Umb+RkkIedZfVY5U/4G
- bSQ4rXa3F86udg57SNKgeeSDQ7wtmbmE7piIB/Mt3y9Msrxyqq8VIJhGjiviSLGTLWvb8Z/y5
- KslDGdh3waDe2+Bji1Gn9MmQJx2k6T7Sufzj7qU9t2/RRXM5je0pQiDNZIE3y/ux4KivvBP6s
- bepjIWTRniYTPvyabK/Ddejr/Ued+2S/8UxjB6GYFmL22BGtdN5UvW6OEMuWQ50aDL20BaMVb
- me9IrKq91sGvtcyEhW6j71J1yby3wXtdw123Wr2r/a2H0dHZePGf9DcOBpOqHwftp+dVVI3D5
- 3XIms+XFxFED4lkwhQ7ZBkmC9Jp+iDAcwhuJgS2Am++ymVTBbIgNtPobR3Imjbe2ezI6m0+Q1
- +7ZN2DNSPuCn/z2+IwkuuIU/xNRlIZkHqj99EW1q3B5XUmon5FmIMemKvRyw4COvI+GG6cmZq
- 9nIi4PsTiSg+Ze8ghybzJldnxhUvQlqZVMS1wCYhIP1M3xyA5K1Kiu08dGL0tbN1IONEIfjxz
- XmZJ2t+bu2JUNbxgU79bpElMqe1QgBE3L01mPsVBAiw1OrmVwsnslQlzw6iIgubBW7tQwYh1u
- Py8ZW3gl+rhDZzmgdWjK7TajSsQuafTdDTj7sPdsQe2ExIqrmXieNB06Z5wXNLYAXxw3QnY8F
- xifxUBHrKswOnP/SnB7M3PRtdKWigjOMiT/wdw==
+ <20180302021144.10795-1-quytelda@tamalin.org>
+X-Provags-ID: V03:K0:dty7cdaOUTMhIW0Si/5Nh/7fl6w6o9uk2AQJcj1jQHc7h2MnIJn
+ yrqDbds7SYCYmFyFamx2SbvEJIobtPw+MdcN9CIyCGc8sd1b5kqnSlGrLFEE4efLVwOLQQ1
+ jPWd4ZK0IFwTNFZWp3jBcoEUDMRyBhsqSVkzdm/9EpJFEjV/YHQv8bQIZ8nivaXqVVUJHbw
+ 8p5WSWajpuNyj9OONKqCQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:imCFzA4o9G8=:IkC6+85PPuDOYyjSpz1hIM
+ tAHalsXn7XBYWlRwvlgMRZxFuRXFXvmilETtbVAdIWc7x1B1ELfj49rH9Qn3Y++wfXUAPQeSJ
+ A6T5mRxJJ6dGgjQzCPUusfrw4bRuybivSkrMD+vX6CfwGeLTRExhdecPUupOTxb6yqBsDe4yF
+ gI1JK7w1+ha8dCKxZ0tFRY9cgKGzpsIfDqEA1fGN0S+STKIPvtc5ptTohpbYWV59timEcMBSt
+ kvHHRzHO1tyL1hHZKg6LX2VfF793qoVqKs0kcCgaWzAWzA0NUjMAlzRW31sjjl59LvQ+X3fSh
+ DhAZRtVGnsH0WtpyaXb4JzBSdH8nsUqmrIp3oqBGbtk5TruPyqONo3R3pS0opB+Qk+iWRyoRx
+ OAmcWfV/PIaF9d/s1anLp8JyHFTs36Y+Tkm9VKBM8RgFqu4CMG9iKB0Uts9SMhqdI8ozg4dnn
+ u9nI3pUwOw6xBydxA9LDKb1KWB6rzgbEVNmuRWCwjdeTkvr7W4OVghZiOQ9ZPbHLowgDHaD6C
+ rWXghJRkoKc+LZkZL3kf9Brc/nezRAa9YQqXoYbGzmGYvI8QwRMBv1Kqa74Mo3cxx0vEuQUM1
+ 19wVqlsngtKSOQhqynFcQiSE1jeNknovWf4F+gnG5AaZQIc4BwsmfC1noV2VngfXPe+ampbRv
+ PqkWnLmcPknzfYrjE1xQRovX4kjb9YN3Y2+B7QZAZDB8bccFv+uaddAvpBoNimJk7X6poTRfp
+ x/ZOyvWbjnk0qm/PNxhqu3/OS6YZ5zZ2ohDn3g==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -96,25 +97,27 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use a blank line after components_show() function declaration.
+Indent the parameters for a function call that extends past 80 characters.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/most/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/most/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index 0ab2de5ecf18..67e2d7f29967 100644
+index 67e2d7f29967..8d311970225e 100644
 --- a/drivers/staging/most/core.c
 +++ b/drivers/staging/most/core.c
-@@ -583,6 +583,7 @@ static ssize_t components_show(struct device_driver *drv, char *buf)
- 	}
- 	return offs;
- }
-+
- /**
-  * split_string - parses buf and extracts ':' separated substrings.
-  *
+@@ -1473,7 +1473,8 @@ void most_deregister_interface(struct most_interface *iface)
+ 	int i;
+ 	struct most_channel *c;
+ 
+-	pr_info("deregistering device %s (%s)\n", dev_name(&iface->dev), iface->description);
++	pr_info("deregistering device %s (%s)\n", dev_name(&iface->dev),
++		iface->description);
+ 	for (i = 0; i < iface->num_channels; i++) {
+ 		c = iface->p->channel[i];
+ 		if (c->pipe0.comp)
 -- 
 2.16.2
 
