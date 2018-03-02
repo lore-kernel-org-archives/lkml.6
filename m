@@ -1,66 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425968AbeCBJup (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:50:45 -0500
-Received: from mga18.intel.com ([134.134.136.126]:52412 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424456AbeCBJuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:50:40 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
-   d="scan'208";a="35379315"
-Date: Fri, 2 Mar 2018 17:41:40 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Du, Changbin" <changbin.du@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tracing/power: Polish the tracepoints cpu_idle and
- cpu_frequency
-Message-ID: <20180302094140.ncypewkdg6g6rs2g@intel.com>
-References: <1519809638-24248-1-git-send-email-changbin.du@intel.com>
- <CAJZ5v0jqG0pcqOuvAVoP7sNKoOe+3ByMk4X5AZASp84OPcrgPg@mail.gmail.com>
- <20180301022719.xyfcu5tpmadjxbut@intel.com>
- <CAJZ5v0j8GsaK7kJ4hyvyQYOpa6QmoP2Pc69egg0hb=tb2EwpuA@mail.gmail.com>
+        id S1425997AbeCBJwG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:52:06 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:51175 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1424708AbeCBJva (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:51:30 -0500
+X-UUID: 914360f5fe16491a84a004b762a6cd43-20180302
+Message-ID: <1519984283.8089.182.camel@mtkswgap22>
+Subject: Re: [PATCH v5 2/3] dmaengine: mediatek: Add MediaTek High-Speed DMA
+ controller for MT7622 and MT7623 SoC
+From: Sean Wang <sean.wang@mediatek.com>
+To: Vinod Koul <vinod.koul@intel.com>
+CC: <dan.j.williams@intel.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 2 Mar 2018 17:51:23 +0800
+In-Reply-To: <20180302081706.GL15443@localhost>
+References: <cover.1518857746.git.sean.wang@mediatek.com>
+         <de4177cb2269c99f8d7c5738ac8a64f512122dfd.1518857747.git.sean.wang@mediatek.com>
+         <20180301082329.GD15443@localhost> <1519900021.8089.136.camel@mtkswgap22>
+         <20180301125649.GH15443@localhost> <1519973271.8089.166.camel@mtkswgap22>
+         <20180302081706.GL15443@localhost>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0j8GsaK7kJ4hyvyQYOpa6QmoP2Pc69egg0hb=tb2EwpuA@mail.gmail.com>
-User-Agent: NeoMutt/20171027-42-ad8712
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> That rather isn't the case if negative values are ever passed to the
-> >> tracepoint, right?
-> >>
-> > yes.
-> >> Which seems to be the reason why you want to make this change, isn't it?
-> >>
-> > yes, to improve readability.
-> >
-> >> So maybe fix the code using the tracepoint(s) to avoid passing
-> >> negative values to it(them)?
-> > For cpu_idle event, [0, CPUIDLE_STATE_MAX) are used to index the idle state arrary,
-> > so I think a appropriate value for PWR_EVENT_EXIT is -1 (defined in include/trace/events/power.h).
-> > Or do you have a better idea? Thanks!
+On Fri, 2018-03-02 at 13:47 +0530, Vinod Koul wrote:
+> On Fri, Mar 02, 2018 at 02:47:51PM +0800, Sean Wang wrote:
+> > Hi, Vinod
+> > 
+> > On Thu, 2018-03-01 at 18:26 +0530, Vinod Koul wrote:
+> > > On Thu, Mar 01, 2018 at 06:27:01PM +0800, Sean Wang wrote:
+> > > > On Thu, 2018-03-01 at 13:53 +0530, Vinod Koul wrote:
+> > > > > On Sun, Feb 18, 2018 at 03:08:30AM +0800, sean.wang@mediatek.com wrote:
+> > > > > 
+> > > > > > @@ -0,0 +1,1054 @@
+> > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > // Copyright ...
+> > > > > 
+> > > > > The copyright line needs to follow SPDX tag line
+> > > > > 
+> > > > 
+> > > > okay, I will make it reorder and be something like that
+> > > > 
+> > > > // SPDX-License-Identifier: GPL-2.0
+> > > > /*
+> > > >  * Copyright (c) 2017-2018 MediaTek Inc.
+> > > >  * Author: Sean Wang <sean.wang@mediatek.com>
+> > > >  *
+> > > >  * Driver for MediaTek High-Speed DMA Controller
+> > > >  *
+> > > >  */
+> > > 
+> > > It needs to be:
+> > > 
+> > > // SPDX-License-Identifier: GPL-2.0
+> > > // Copyright (c) 2017-2018 MediaTek Inc.
+> > > 
+> > > /*
+> > >  * whatever else you want
+> > >  */
+> > > 
+> > > The first two lines are in C99 style comment and need to have SPDX tag and
+> > > Copyright info
+> > 
+> > Sure, I can do it using C99 style comments at the first two lines.
+> > 
+> > In addition, I'm really curious where we can find a reference to the
+> > rule and if it 's a strict rule for all the drivers.
+> > 
+> > Because I'm considering whether I should turn other driver into using
+> > the same rule.
 > 
-> Sorry, I'm not sure what you mean.
+> Yes that seems to be the rule now https://lkml.org/lkml/2017/11/2/715
 > 
-> I'm saying that the code using the CPU PM tracepoints is not expected
-> to pass -1 as the CPU number to them.  IOW, neither -1 nor its UL
-> representation should ever appear in the output of these tracepoints.
-> If that happens, it is a problem with the code using the tracepoints
-> which needs to be fixed.  Users should not see any of these values.
 
-This patch only changed 'state' field but cpuid. For cpu_idle event, 'state' is
-singned value, but for cpu_frequency it is unsinged.
-The cpuid is always unsinged value. So no one passes -1 as CPU number.
+Where could I find the rule for the copyright line needed to follow SPDX
+tag line ?
 
--- 
-Thanks,
-Changbin Du
+currently, I still seen tons of drivers putting its copyright inside 
+/* ... 
+ * 
+ */
+
+> > > > > > +#define MTK_HSDMA_USEC_POLL		20
+> > > > > > +#define MTK_HSDMA_TIMEOUT_POLL		200000
+> > > > > > +#define MTK_HSDMA_DMA_BUSWIDTHS		BIT(DMA_SLAVE_BUSWIDTH_UNDEFINED)
+> > > > > 
+> > > > > Undefined buswidth??
+> > > 
+> > > ??
+> > 
+> > Sorry for I didn't answer the question in the short time.
+> > 
+> > After spending some time on a confirmation with design, it is
+> > DMA_SLAVE_BUSWIDTH_4_BYTES and not be configurable. 
+> 
+> Then it should be DMA_SLAVE_BUSWIDTH_4_BYTES and not
+> DMA_SLAVE_BUSWIDTH_UNDEFINED...
+> 
+
+understood, I will do it.
+
+> > > > > shouldn't we check if next is in range, we can crash if we get bad value
+> > > > > from hardware..
+> > > > 
+> > > > okay, there are checks for next with ddone bit check and null check in
+> > > > the corresponding descriptor as the following.
+> > > 
+> > > what if you get bad next value
+> > > 
+> > 
+> > next is not hardware value. it's maintained by software which is always
+> > between 0 to MTK_DMA_SIZE - 1, and definitely doesn't get a bad value.
+> > 
+> > > > 
+> > > > > > +		rxd = &pc->ring.rxd[next];
+> > > 
+> > > resulting in bad ref here
+> > 
+> > rxd is also definitely a good ref
+> 
+> not if next is out of range, say you read -1 or 200000?
+> 
+
+next must be in range because next is calculated by
+MTK_HSDMA_NEXT_DESP_IDX macro which is just a modulo operation
+with MTK_DMA_SIZE.
+
+Currently, MTK_DMA_SIZE is equal to 64 and thus next must be 0 to 63 and
+wraparound.
+
+As to MTK_HSDMA_NEXT_DESP_IDX , it is defined as the following
+#define MTK_HSDMA_NEXT_DESP_IDX(x, y)   (((x) + 1) & ((y) - 1))
