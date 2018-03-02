@@ -1,91 +1,118 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1519997937; cv=none;
-        d=google.com; s=arc-20160816;
-        b=lxScjWlFV7loS/pW/RkrFBXlZaNzQ8YO1FuAOvagfaDk6IUuGjXE+Wdli27kq5pKgz
-         jnyRxYISxXAXARQsOLv3p/yXd7yTceh95KEm8rbm6wGzGqJORcy4q418RasngKG7GiX9
-         dJSDxJgWFmTHD+g7DoMnFcJeBYf66tmGpwqH6krwuRQyf/YcffXgXTXFEHXtweu+mJaP
-         px6xMn262t9IjO+FfA7Ofj6sRFrxTn3GcF56xO0NPQcTYIUuR7eLg1ANL+ttiDAoUc/c
-         g2Y1vDs7GMiMu/OhXobj+gPQUSBrg9UGvjTJASooZihJtdh75eDtigEWV6YHQLiuuHZn
-         7ujg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=SQKfedcfvQ9sFSZOSb+zhzEI5ZVpmwFuEB0dGNF0kxQ=;
-        b=R/aVbCahBr5n1Fp6YyiTptRx2ksDcuvgAERSI3twQEg9lWtG+Z+ITSuUwSgkv1vffk
-         1U0+xrmZ2cTXsgfYUzxa69MnC6++TY6xLY6ocjS9QJTKTgB+c+NuqQDndBxoWBZSQbLS
-         0mBFW/BK+IIaeUVGnB3ID0zkKqdoipubFZtVkEJjyYlG2wzLHPkxqFVitHYDYcMogoDh
-         4KULEEyIm9uHMi82n0NUccdClTT/nPmLcI9wNTZvWOUKQuGDektlTz0RgigLG6amLycE
-         CrRYpziHiI5sFI6f2pHoagpKvVZHpQRx/0Rp6K3L2ZLLG0i9eVhQqsGcqKejDKg/PrMM
-         w98A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELtMPteFO4z2p4rQY0PA+aAR/ugurw38cU+onAbCrwxC2bvAX7tg1Qig5D0srWJetp9Z9XEMRg==
-Message-ID: <5a9953ef.d1e0df0a.2b4e8.dfd5@mx.google.com>
-Date: Fri, 02 Mar 2018 05:38:55 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Kernel: v4.14.23-116-g0ae11358b0bd
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519981805-2-13393955510739362282
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519981805; b=ds3M23Jb0Vgkk/akbJ6fn5rhHOBP8oPjIUj0cDAdmZ1gx3V
+    Y59Iy21a1Fl+Jrw2NX818Q2pnBv4vL+HdT7wKFrL1IOdLaTIlbyc/aJ7NYEHyztS
+    /NQ3pfMJ+N0Z7XngQRKhzWM5YsHevlgHDD+0ydt+hC/TJAy6N/5cvVJ7xyTM64J/
+    +6vaykiNaklo1nzUcQ2iXQa5OT+U0IYMQ31ZiHbsnyod0cE3M1TIFnE6o+H1Gnzf
+    pad7kBOF0du65NFWniI2VZm6iC44TIQErnjcnfiHo9aSALMChTbYJq/l54HSrQfT
+    pjx2p/Q7S74O8lmhbedRF8Q52WKes2T6hcBJ4fQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519981805; bh=qYiljePMhEEKFcfPMmBGZ3CxA8
+    YJY2i7b4fXQ/oeE3Q=; b=bJGWD+tSiMkl4iWt0K7CYYYliyQlGRSYLvGBS5f2qW
+    iyyEIDyR8UHseyHNwpjx3S10L9dWzZdvFcX3GvoeCsfJQ6xOlmTo37IOuOe5FB7X
+    RvJaESEjytzmI/PqghB8CNwZXqDedJZLMJbjaS6Acl8xq7JKooTGI3XTbEajW1u+
+    3dQNCNHgFNEJjD1I20a0/u7lWOlksYbbp+i+2DF57mqadocdvxapOtQ8ns7lt/ox
+    MlvGqKE7EfZ8IZZCl0/x09jPFT0lGatQ+s5DxplFqeGDcnEeBzNbQ8zeJc3VpUc3
+    BAI6dpjmLCWmVLFte3CtjDI9vZbHUIHb8vi5QUlGVqkQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1424747AbeCBJJV (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 04:09:21 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56216 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425251AbeCBJFc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:05:32 -0500
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 104/115] net: gianfar_ptp: move set_fipers() to spinlock protecting area
+Date: Fri,  2 Mar 2018 09:51:47 +0100
+Message-Id: <20180302084508.048657005@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/115] 4.14.24-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593815830874843893?=
-X-GMAIL-MSGID: =?utf-8?q?1593833356510787851?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 62 boots: 1 failed, 59 passed with 2 offline (=
-v4.14.23-116-g0ae11358b0bd)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.23-116-g0ae11358b0bd/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.23-116-g0ae11358b0bd/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.23-116-g0ae11358b0bd
-Git Commit: 0ae11358b0bdffc782ee655fd103b95cbcafb899
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 38 unique boards, 19 SoC families, 13 builds out of 185
+From: Yangbo Lu <yangbo.lu@nxp.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 11d827a993a969c3c6ec56758ff63a44ba19b466 ]
 
-    sunxi_defconfig:
-        sun8i-h3-orangepi-pc:
-            lab-free-electrons: new failure (last pass: v4.14.18-23-g8d861f=
-5b27b0)
+set_fipers() calling should be protected by spinlock in
+case that any interrupt breaks related registers setting
+and the function we expect. This patch is to move set_fipers()
+to spinlock protecting area in ptp_gianfar_adjtime().
 
-Boot Failure Detected:
-
-arm:
-
-    sunxi_defconfig
-        sun8i-h3-orangepi-pc: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/net/ethernet/freescale/gianfar_ptp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/freescale/gianfar_ptp.c
++++ b/drivers/net/ethernet/freescale/gianfar_ptp.c
+@@ -319,11 +319,10 @@ static int ptp_gianfar_adjtime(struct pt
+ 	now = tmr_cnt_read(etsects);
+ 	now += delta;
+ 	tmr_cnt_write(etsects, now);
++	set_fipers(etsects);
+ 
+ 	spin_unlock_irqrestore(&etsects->lock, flags);
+ 
+-	set_fipers(etsects);
+-
+ 	return 0;
+ }
+ 
