@@ -1,109 +1,133 @@
-Return-Path: <leechu729@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521207586; cv=none;
+Return-Path: <richard.gong@linux.intel.com>
+X-Google-Smtp-Source: AG47ELsuKGW2hL9iXWsfZ7QvrMNcZAxZkC2YqPMMKBjqM1KwZh01cqHWWMpuE/QbnKBNYawFRbCF
+ARC-Seal: i=1; a=rsa-sha256; t=1519950203; cv=none;
         d=google.com; s=arc-20160816;
-        b=IWkHI0oE+MDgyyj4cLj4sEqLWQpByndVSYDkehBz2CW2PLWKtkFtF1FShfiKHroFZ9
-         s7wEVm9FvgP4HTiXBdnpBUN12ZMqAXv4Okd0X/IPSFX/6VCFQPvt8pfumGAMw78dt2oy
-         QCFfw7soyFRPS24GNt5D5zJ28RJrei9BwmNtUcY35vnYLQzET3PqvdmlQ/6RxGMEuojI
-         +t+S7xRHUq7YwAc3lCKNaOpqEzc797lPZpRaWB/S2T+P4vMAjhd9TwDIRVO4xuRbeXBW
-         3NxbdZp6egv1NTjRZ0InFjbuSgKEefG6ejwmGNkd3jvlHt/3H1b6Aak3u/rQzhwmeoDw
-         LovQ==
+        b=ZvyfHYoilEfSpJeI1U10nrxaQny227JjZ/68MGIIRZf+ggCVuCn0t71hg9otntThja
+         vC7ZJGCIYpUGvm6uhtYv85SqRpFHJYSYgjEblIWWQ+FYYAVagaOoC3G5uVB+rYUVvzzZ
+         ytCv+9o3uV+uGghTS6g0B6moyfbECSTDe8YcdippwP6N02ZbLbi7owOo0QkZx0Z8IMFZ
+         n+xj55mz2jpIOEDQ+2dJxZ97gpzlXqNjDFaH1Qpg3Nb3YByokG3ZP5doKgSBsZ8JxlsH
+         4byOsUOmblu7zIhbPBXgesXPntR6Culd6g5mXgboyo3yZ5zHZ0/hxqCzn72Wvl/Eu90p
+         fgzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=u3DNvdbIsyV6V+ydqkf3oglYjzgOtoqFIsl8iDMVBpc=;
-        b=CnaPrUWjHvC02RK7Sy+2ch4b7EizTQaw0Wi2TgDskKezrk1YZmYTQKkmfEdkWffiy1
-         pzKVtQDjmyItMxKdfg7ppZ9IVBFI7MHpaBm1MHvvuusUbZKloP43PunYzBkjTLpPaAbP
-         5nnuGUT8HoKDkmlK2xP74A0iuF77mQ+9caxogjyKzZxxWkTyKBbUF8NN6vpDI3NKaBfB
-         wheOUHFjr5RLhq8hsnOOLQPrpLw9ohBnuDt3EgS26fZQo6xdsUmGLazZa9kTCh4PvGfd
-         ODUdpTaq2uI9hL7ID0EB5usr1Qo9+Jb8ChcHAbHLBzpUlgcVDZAESAzrLEaIQSyNX/hP
-         qfdA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=5xfg0EukzRTj34M0+J9KIrftJNsEq3fZpJ86sjDlSsw=;
+        b=tt4iSjYO6r5Y+o9bOotdVscOFHKHsE3KcEBTs3luOjUiNLgFzgFRM0oCKkMQURti/m
+         UB8wbMm+bQ3Q4wkIoIUmVODDQmwXxFw8GL41n4BHoakmvBPzX/QQC+WYaT0V5Gf6q4mN
+         lTQfOwb9oCWQb0Dv4QvP+bL+pKGaEEiqAw/zitEhVTabi3jkGxh0/snyZBPgypzq9B49
+         iNTfH5c4Fdrp8yq15T3ub5sFafduhupxWYO4GGR3iOUaP40QuSRvo49mUPnFVF8cvqRH
+         0nAH7QltgaCuBsUAlwYjYHrQb71Y6lgKvRJWDhGJST9U5qYiIk3ayHJHaSN78AExm140
+         Iq7A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ihlHDchZ;
-       spf=pass (google.com: domain of leechu729@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=leechu729@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ihlHDchZ;
-       spf=pass (google.com: domain of leechu729@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=leechu729@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuUj6D2bnJ1tqaDULXhUkKRdS+lHr7udvErHRBI8hPGoNcja/i+416N2KnNUjd6VxRnGzbIFcQwdOjqdmYilxw=
-MIME-Version: 1.0
-In-Reply-To: <aa838cdd-6333-68fc-0ead-8ad9e7fd8ff9@gmail.com>
-References: <1521191569-21221-1-git-send-email-leechu729@gmail.com>
- <20180316125811.GB22994@kroah.com> <aa838cdd-6333-68fc-0ead-8ad9e7fd8ff9@gmail.com>
-From: =?UTF-8?B?5p2O5pu45biG?= <leechu729@gmail.com>
-Date: Fri, 16 Mar 2018 21:39:45 +0800
-Message-ID: <CAFaeLdRkjy+fsYny4kXjsq2qOZqL9o8iqPn7hPP5wbeTrEHypw@mail.gmail.com>
-Subject: Re: [PATCH] staging: typec: rt1711h typec chip driver
-To: Mats Karrman <mats.dev.list@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, heikki.krogerus@linux.intel.com,
-	Guenter Roeck <linux@roeck-us.net>, =?UTF-8?B?c2h1ZmFuX2xlZSjmnY7mm7jluIYp?= <shufan_lee@richtek.com>,
-	=?UTF-8?B?Y3lfaHVhbmco6buD5ZWf5Y6fKQ==?= <cy_huang@richtek.com>,
-	Jun Li <jun.li@nxp.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="35279622"
+From: richard.gong@linux.intel.com
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	dinguyen@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	atull@kernel.org,
+	mdf@kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	yves.vandervennet@linux.intel.com,
+	richard.gong@linux.intel.com,
+	Richard Gong <richard.gong@intel.com>
+Subject: [PATCHv2 0/7] Add Intel Stratix10 FPGA manager and service layer
+Date: Thu,  1 Mar 2018 18:19:28 -0600
+Message-Id: <1519949975-13548-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1595101134568694264?=
-X-GMAIL-MSGID: =?utf-8?q?1595101766068067196?=
+X-GMAIL-THRID: =?utf-8?q?1593783304889555222?=
+X-GMAIL-MSGID: =?utf-8?q?1593783304889555222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+From: Richard Gong <richard.gong@intel.com>
 
-2018-03-16 21:29 GMT+08:00 Mats Karrman <mats.dev.list@gmail.com>:
-> Hi,
->
-> On 2018-03-16 13:58, Greg KH wrote:
->
->> On Fri, Mar 16, 2018 at 05:12:49PM +0800, ShuFan Lee wrote:
->>>
->>> From: ShuFan Lee <shufan_lee@richtek.com>
->>>
->>> Richtek RT1711H Type-C chip driver that works with
->>> Type-C Port Controller Manager to provide USB PD and
->>> USB Type-C functionalities.
->>> Add definition of TCPC_CC_STATUS_TOGGLING.
->>>
->>> Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
->>> ---
->>>   drivers/staging/typec/Kconfig         |   8 +
->>>   drivers/staging/typec/Makefile        |   1 +
->>>   drivers/staging/typec/tcpci.h         |   1 +
->>>   drivers/staging/typec/tcpci_rt1711h.c | 344
->>> ++++++++++++++++++++++++++++++++++
->>>   4 files changed, 354 insertions(+)
->>>   create mode 100644 drivers/staging/typec/tcpci_rt1711h.c
->>
->> This looks nice and simple to me, any reason it has to live in
->> drivers/staging/ and we can't just move it to drivers/usb/typec/ now?
->>
->> Or are there still api things that need to be resolved with the existing
->> drivers/staging/typec/ code?
->
->
-> For one thing it depends on the tcpci driver that is still in staging unt=
-il
-> Jun Li's patches, [1], comes through.
->
-> // Mats
->
-> [1] https://marc.info/?l=3Dlinux-usb&m=3D152093458605648&w=3D2
->
->> thanks,
->>
->> greg k-h
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+This is the 2nd submission of Intel service layer patches. Intel Stratix10
+FPGA manager, which is 1st service layer client, is included in this submission.
 
-Just like Mats said. Because tcpci_rt1711h.c depends on tcpci driver.
-I'm not sure if I can put it to drivers/usb/typec/. So, I put it
-staging first and move out after Jun's patches.
+Service layer patches have been reviewed internally by Alan Tull and other
+colleagues at Intel.
 
---=20
-Best Regards,
-=E6=9B=B8=E5=B8=86
+Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
+processor system (HPS) and Secure Device Manager (SDM). SDM is the hardware
+which does the FPGA configuration, QSPI, Crypto and warm reset.
+
+When the FPGA is configured from HPS, there needs to be a way for HPS to
+notify SDM the location and size of the configuration data. Then SDM will
+get the configuration data from that location and perform the FPGA configuration.
+
+To meet the whole system security needs and support virtual machine
+requesting communication with SDM, only the secure world of software (EL3,
+Exception Level 3) can interface with SDM. All software entities running
+on other exception levels must channel through the EL3 software whenever it
+needs service from SDM.
+
+Intel Stratix10 service layer driver is added to provide the service for
+FPGA configuration. Running at privileged exception level (EL1, Exception
+Level 1), Intel Stratix10 service layer driver interfaces with the service
+provider at EL1 (Intel Stratix10 FPGA Manager) and manages secure monitor
+call (SMC) to communicate with secure monitor software at secure monitor
+exception level (EL3).
+
+Later the Intel Stratix10 service layer driver will be extended to provide
+services for QSPI, Crypto and warm reset.
+
+v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
+    remove intel-service subdirectory and intel-service.h, move intel-smc.h
+    and intel-service.c to driver/misc subdirectory
+    remove global variables
+    change service layer driver be 'default n'
+    correct SPDX markers
+    add timeout for do..while() loop
+    add kernel-doc for the functions and structs, correct multiline comments
+    replace kfifo_in/kfifo_out with kfifo_in_spinlocked/kfifo_out_spinlocked
+    rename struct intel_svc_data (at client header) to intel_svc_client_msg
+    rename struct intel_svc_private_mem to intel_svc_data
+    other corrections/changes from Intel internal code reviews
+
+Alan Tull (3):
+  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
+  arm64: dts: stratix10: add fpga manager and region
+  fpga: add intel stratix10 soc fpga manager driver
+
+Richard Gong (4):
+  dt-bindings, firmware: add Intel Stratix10 service layer binding
+  arm64: dts: stratix10: add service driver binding to base dtsi
+  driver, misc: add Intel Stratix10 service layer driver
+  defconfig: enable fpga and service layer
+
+ .../bindings/firmware/intel,stratix10-svc.txt      |  57 ++
+ .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |  10 +
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |  34 +
+ arch/arm64/configs/defconfig                       |   5 +
+ drivers/fpga/Kconfig                               |   6 +
+ drivers/fpga/Makefile                              |   1 +
+ drivers/fpga/stratix10-soc.c                       | 503 +++++++++++
+ drivers/misc/Kconfig                               |  12 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/intel-service.c                       | 960 +++++++++++++++++++++
+ drivers/misc/intel-smc.h                           | 205 +++++
+ include/linux/intel-service-client.h               | 188 ++++
+ 12 files changed, 1982 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+ create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+ create mode 100644 drivers/fpga/stratix10-soc.c
+ create mode 100644 drivers/misc/intel-service.c
+ create mode 100644 drivers/misc/intel-smc.h
+ create mode 100644 include/linux/intel-service-client.h
+
+-- 
+2.7.4
