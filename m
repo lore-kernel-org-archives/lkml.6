@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427126AbeCBPWA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:22:00 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55785 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423301AbeCBPV4 (ORCPT
+        id S1427249AbeCBPWJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:22:09 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54724 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1427056AbeCBPWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:21:56 -0500
-X-Google-Smtp-Source: AG47ELsPidRvhwtD7fBjOrShoWVOI6aajtN4H01h9tcTp3jWlJ38OtSaZxOId1D0Lo20YIFPDMQF6g==
+        Fri, 2 Mar 2018 10:22:00 -0500
+X-Google-Smtp-Source: AG47ELvdNT/yILcK5ZVQKvMiGUajjQX/r+9k5tW1P3bSresRrfVd1stQbSSuBMFN3X6emASPRfyMbQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH V5 00/12] lightnvm: pblk: implement 2.0 support
-Date: Fri,  2 Mar 2018 16:21:08 +0100
-Message-Id: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 04/12] lightnvm: complete geo structure with maxoc*
+Date: Fri,  2 Mar 2018 16:21:12 +0100
+Message-Id: <1520004080-27760-5-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
+References: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -24,139 +26,83 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchet applies on top of Matias' for-17/core, with the following
-patches applied:
-  lightnvm: pblk: refactor init/exit sequences (V2)
-  nvme: implement log page low/high offset and dwords (V2)
+Complete the generic geometry structure with the maxoc and maxocpu
+felds, present in the 2.0 spec. Also, expose them through sysfs.
 
-# Changes since V4
-- Remove init/exit sequences as it has been sent separately
--Rebase on top of latest for-4.17/core
+Signed-off-by: Javier González <javier@cnexlabs.com>
+---
+ drivers/nvme/host/lightnvm.c | 17 +++++++++++++++++
+ include/linux/lightnvm.h     |  2 ++
+ 2 files changed, 19 insertions(+)
 
->From Matias:
-- Fix pblk sysfs
-- squash related patches
-- remove capabilities patch - Matias will take this later on
-- Various renamings
-
-# Changes since V3.1
-
-- Rebase on top of Matias' for-4.17/core
-- Fix pblk's write buffer size when using mw_cuints
-- Remove chunk information from pblk's sysfs. We intend to clean up
-  sysfs, as it is messy as it is now, and use trace points instead. So,
-    avoid an extra refactoring in the near future.
-
->From Matias:
-- Squash geometry patches
-- Squash chunk support in lightnvm core
-- Use core structure for chunk metadata
-- Remove intermediate values for csecs and sos before disk
-  revalidation.
-- Various renamings
-
-# Changes since V3
->From Matias:
-- Remove nvm_common_geo
-- Do appropriate renames when having a single geometry for device and
-    targets
-
-# Changes since V2:
-
-Apply Matias' feedback:
- - Remove generic nvm_id identify structure.
- - Do not remap capabilities (cap) to media and controlled capabilities
-   (mccap). Instead, add a comment to prevent confusion when
-   crosschecking with 2.0 spec.
- - Change maxoc and maxocpu defaults from 1 block to the max number of
-   blocks.
- - Re-implement the generic geometry to use nvm_geo on both device and
-   targets. Maintain nvm_common_geo to make it easier to copy the common
-   part of the geometry (without having to overwrite target-specific
-   fields, which is ugly and error prone). Matias, if you still want to
-   get rid of this, we can do it.
- - Re-order patches with renaming to make them more meaningful. These
-   belong to the series, since the name changes are motivated by 2.0
-   inclusions. The only exception would be 36d10bfd3234, but I hope it
-   is OK I include it here.
-
-Also,
- - Eliminate a dependency between luns and lines in the init/exit
-   refactoring.
- - Use the global address format when possible to avoid defaulting on
-   the 1.2 path. This will safe headaches if the address format changes
-   at some point.
-
-I took out the patch allowing to do bit shifts on non power-of-2 media
-formats on pblk's mapping since it requires touching many places that
-are not 2.0 related. I'll submit this separately.
-
-# Changes since V1:
-
-Apply Matias' feedback:
- - Rebase on top of Matias' latest patches.
- - Use nvme_get_log_ext to submit report chunk and export it.
- - Re-write report chunk based on Matias' suggestions. Here, I
-   maintained the lba interface, but it was necessary to redo the
-   address formatting to match the chunk log page format. For pblk,
-   this means a double address transformation, but it enables the
-   standard path to use lbas, plus, this is not in the fast path.
- - Fold address format together with address transformations.
- - Split the generic geometry patch in different patches.
- - Remove refactoring of ligthnvm's core sysfs.
-
-Feedback not applied:
- - Not letting pblk know about 1.2 and 2.0 bad block paths.
-   Since the interfaces for get/set bad block and report chunk are so
-   different, moving this logic to core adds assumptions on how the
-   targets would want to get the data back. A way of doing this is
-   creating a logical report chunk on the 1.2 path, but this would
-   mean that values like the wear-index are invalid, which requires
-   the target knowledge. I'm open to suggestions here.
-
-Also:
- - Do some further renamings
- - Create a generic address format to make it explicit where we share
-   1.2 and 2.0 fields to avoid address formatting in the fast path.
- - Add new fields to sysfs to complete spec and show major/minor
-   versions (version and subversion to respect current interface).
-
-Implement 2.0 support in pblk. This includes the address formatting and
-mapping paths, as well as the sysfs entries for them.
-
-Javier
-
-
-Javier González (12):
-  lightnvm: simplify geometry structure.
-  lightnvm: add minor version to generic geometry
-  lightnvm: add shorten OCSSD version in geo
-  lightnvm: complete geo structure with maxoc*
-  lightnvm: normalize geometry nomenclature
-  lightnvm: add support for 2.0 address format
-  lightnvm: make address conversions depend on generic device
-  lightnvm: implement get log report chunk helpers
-  lightnvm: pblk: check for supported version
-  lightnvm: pblk: rename ppaf* to addrf*
-  lightnvm: pblk: implement get log report chunk
-  lightnvm: pblk: implement 2.0 support
-
- drivers/lightnvm/core.c          | 178 +++++++---------
- drivers/lightnvm/pblk-core.c     | 168 ++++++++++++---
- drivers/lightnvm/pblk-gc.c       |   2 +-
- drivers/lightnvm/pblk-init.c     | 413 +++++++++++++++++++++++------------
- drivers/lightnvm/pblk-map.c      |   4 +-
- drivers/lightnvm/pblk-read.c     |   2 +-
- drivers/lightnvm/pblk-recovery.c |  14 +-
- drivers/lightnvm/pblk-rl.c       |   2 +-
- drivers/lightnvm/pblk-sysfs.c    |  63 ++++--
- drivers/lightnvm/pblk-write.c    |   2 +-
- drivers/lightnvm/pblk.h          | 240 +++++++++++++++------
- drivers/nvme/host/core.c         |   6 +-
- drivers/nvme/host/lightnvm.c     | 449 +++++++++++++++++++++++++++------------
- drivers/nvme/host/nvme.h         |   3 +
- include/linux/lightnvm.h         | 327 ++++++++++++++++++----------
- 15 files changed, 1251 insertions(+), 622 deletions(-)
-
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index f7f7769e7588..41b38ebdb1f3 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -323,6 +323,13 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
+ 	geo->ws_opt = sec_per_pg;
+ 	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values */
+ 
++	/* Do not impose values for maximum number of open blocks as it is
++	 * unspecified in 1.2. Users of 1.2 must be aware of this and eventually
++	 * specify these values through a quirk if restrictions apply.
++	 */
++	geo->maxoc = geo->all_luns * geo->nr_chks;
++	geo->maxocpu = geo->nr_chks;
++
+ 	geo->mccap = le32_to_cpu(src->mccap);
+ 
+ 	geo->trdt = le32_to_cpu(src->trdt);
+@@ -409,6 +416,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
+ 	geo->ws_min = le32_to_cpu(id->ws_min);
+ 	geo->ws_opt = le32_to_cpu(id->ws_opt);
+ 	geo->mw_cunits = le32_to_cpu(id->mw_cunits);
++	geo->maxoc = le32_to_cpu(id->maxoc);
++	geo->maxocpu = le32_to_cpu(id->maxocpu);
+ 
+ 	geo->trdt = le32_to_cpu(id->trdt);
+ 	geo->trdm = le32_to_cpu(id->trdm);
+@@ -1050,6 +1059,10 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_min);
+ 	} else if (strcmp(attr->name, "ws_opt") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_opt);
++	} else if (strcmp(attr->name, "maxoc") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxoc);
++	} else if (strcmp(attr->name, "maxocpu") == 0) {
++		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxocpu);
+ 	} else if (strcmp(attr->name, "mw_cunits") == 0) {
+ 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->mw_cunits);
+ 	} else if (strcmp(attr->name, "write_typ") == 0) {
+@@ -1147,6 +1160,8 @@ static NVM_DEV_ATTR_20_RO(chunks);
+ static NVM_DEV_ATTR_20_RO(clba);
+ static NVM_DEV_ATTR_20_RO(ws_min);
+ static NVM_DEV_ATTR_20_RO(ws_opt);
++static NVM_DEV_ATTR_20_RO(maxoc);
++static NVM_DEV_ATTR_20_RO(maxocpu);
+ static NVM_DEV_ATTR_20_RO(mw_cunits);
+ static NVM_DEV_ATTR_20_RO(write_typ);
+ static NVM_DEV_ATTR_20_RO(write_max);
+@@ -1163,6 +1178,8 @@ static struct attribute *nvm_dev_attrs_20[] = {
+ 	&dev_attr_clba.attr,
+ 	&dev_attr_ws_min.attr,
+ 	&dev_attr_ws_opt.attr,
++	&dev_attr_maxoc.attr,
++	&dev_attr_maxocpu.attr,
+ 	&dev_attr_mw_cunits.attr,
+ 
+ 	&dev_attr_read_typ.attr,
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index a073c0c76260..870959a58fef 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -296,6 +296,8 @@ struct nvm_geo {
+ 	u32	ws_min;		/* minimum write size */
+ 	u32	ws_opt;		/* optimal write size */
+ 	u32	mw_cunits;	/* distance required for successful read */
++	u32	maxoc;		/* maximum open chunks */
++	u32	maxocpu;	/* maximum open chunks per parallel unit */
+ 
+ 	/* device capabilities */
+ 	u32	mccap;
 -- 
 2.7.4
