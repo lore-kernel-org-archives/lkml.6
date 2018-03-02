@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936086AbeCBGyZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 01:54:25 -0500
-Received: from mga14.intel.com ([192.55.52.115]:2929 "EHLO mga14.intel.com"
+        id S936114AbeCBGzx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 01:55:53 -0500
+Received: from mga01.intel.com ([192.55.52.88]:26005 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935863AbeCBGyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 01:54:22 -0500
+        id S935863AbeCBGzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 01:55:49 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
-   d="scan'208";a="204937672"
+   d="scan'208";a="31848745"
 From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Alex Williamson <alex.williamson@redhat.com>,
+To: "'Alex Williamson'" <alex.williamson@redhat.com>,
         Alexander Duyck <alexander.duyck@gmail.com>
 CC: Bjorn Helgaas <bhelgaas@google.com>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
@@ -30,9 +30,9 @@ CC: Bjorn Helgaas <bhelgaas@google.com>,
         Kirti Wankhede <kwankhede@nvidia.com>
 Subject: RE: [PATCH] pci-iov: Add support for unmanaged SR-IOV
 Thread-Topic: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lg
-Date: Fri, 2 Mar 2018 06:54:17 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
+Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lggAAHpJA=
+Date: Fri, 2 Mar 2018 06:55:44 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910253DC@SHSMSX101.ccr.corp.intel.com>
 References: <20180227190520.3273.79728.stgit@localhost.localdomain>
         <20180227144015.228d4f5c@w520.home>
         <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
@@ -40,7 +40,8 @@ References: <20180227190520.3273.79728.stgit@localhost.localdomain>
         <20180228155949.00fde8ae@w520.home>
         <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
  <20180301132224.1ca06949@w520.home>
-In-Reply-To: <20180301132224.1ca06949@w520.home>
+ <AADFC41AFE54684AB9EE6CBC0274A5D1910253BF@SHSMSX101.ccr.corp.intel.com>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D1910253BF@SHSMSX101.ccr.corp.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -58,48 +59,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Alex Williamson
-> Sent: Friday, March 2, 2018 4:22 AM
+> From: Tian, Kevin
+> Sent: Friday, March 2, 2018 2:54 PM
+> 
+> > From: Alex Williamson
+> > Sent: Friday, March 2, 2018 4:22 AM
+> > >
+> > > I am pretty sure that you are describing is true of some, but not for
+> > > all. I think the Amazon solutions and the virtio solution are doing
+> > > hard partitioning of the part. I will leave it to those guys to speak
+> > > for themselves since I don't know anything about the hardware design
+> > > of those parts.
 > >
-> > I am pretty sure that you are describing is true of some, but not for
-> > all. I think the Amazon solutions and the virtio solution are doing
-> > hard partitioning of the part. I will leave it to those guys to speak
-> > for themselves since I don't know anything about the hardware design
-> > of those parts.
+> > I think we'd need device specific knowledge and enablement to be able
+> > to take advantage of any hardware partitioning, otherwise we need to
+> > assume the pf is privileged, as implemented in other sriov devices.
+> >
+> > I'm also trying to imagine whether there's a solution via the new
+> > vfio/mdev interface, where the mdev vendor driver would bind to the pf
+> > and effectively present itself as the mdev device.  The vendor driver
+> > could provide sriov capabilities and bear the burden of ensuring that
+> > the pf is used cooperatively.  The only existing mdev vendor drivers are
+> > vGPUs and rely on on-device DMA translation and isolation, such as
+> > through GTTs, but there have been some thoughts on providing IOMMU
+> > based
+> > isolation of mdev/sriov mixed devices (assuming DMA is even required
+> > for userspace management of the pf in this use case).  [Cc Kirti]
+> > Thanks,
+> >
 > 
-> I think we'd need device specific knowledge and enablement to be able
-> to take advantage of any hardware partitioning, otherwise we need to
-> assume the pf is privileged, as implemented in other sriov devices.
+> Hope not distracting this thread, but above sounds like an interesting
+> idea. Actually we ever brainstormed similar thought for another
+> potential usage - supporting VF live migration. We are already working
+> on an generic extension to allow state save/restore of mdev instance.
+> If vendor driver could further wrap pf as a mdev instance, it could
+
+I meant "wrap vf as a mdev instance" here.
+
+> leverage the same framework for a clean state migration on VF. based
+> on mmap callback the vendor driver can easily switch back-and-forth
+> between pass through and trap/emulation of the VF resources. Of
+> course doing so alone doesn't address all the demands of VF live
+> migration (e.g. dirty page tracking still requires other techniques),
+> but it does pave a way toward a general framework to support VF
+> live migration.
 > 
-> I'm also trying to imagine whether there's a solution via the new
-> vfio/mdev interface, where the mdev vendor driver would bind to the pf
-> and effectively present itself as the mdev device.  The vendor driver
-> could provide sriov capabilities and bear the burden of ensuring that
-> the pf is used cooperatively.  The only existing mdev vendor drivers are
-> vGPUs and rely on on-device DMA translation and isolation, such as
-> through GTTs, but there have been some thoughts on providing IOMMU
-> based
-> isolation of mdev/sriov mixed devices (assuming DMA is even required
-> for userspace management of the pf in this use case).  [Cc Kirti]
-> Thanks,
+> If above is feasible, finally we could use one mdev framework to
+> manage both mdev and pf/vf assignment, while providing added
+> values which are difficult to achieve today. :-)
 > 
-
-Hope not distracting this thread, but above sounds like an interesting
-idea. Actually we ever brainstormed similar thought for another 
-potential usage - supporting VF live migration. We are already working
-on an generic extension to allow state save/restore of mdev instance.
-If vendor driver could further wrap pf as a mdev instance, it could 
-leverage the same framework for a clean state migration on VF. based
-on mmap callback the vendor driver can easily switch back-and-forth
-between pass through and trap/emulation of the VF resources. Of
-course doing so alone doesn't address all the demands of VF live
-migration (e.g. dirty page tracking still requires other techniques), 
-but it does pave a way toward a general framework to support VF
-live migration.
-
-If above is feasible, finally we could use one mdev framework to
-manage both mdev and pf/vf assignment, while providing added
-values which are difficult to achieve today. :-)
-
-Thanks
-Kevin
+> Thanks
+> Kevin
