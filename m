@@ -1,54 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946074AbeCBKZD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:25:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52560 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1426446AbeCBKZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:25:01 -0500
-Date: Fri, 2 Mar 2018 10:24:54 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infraded.org>,
-        Rik van Riel <riel@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] Detect early free of a live mm
-Message-ID: <20180302102453.4jhp6cmuqr4yodr5@lakrids.cambridge.arm.com>
-References: <20180228121458.2230-1-mark.rutland@arm.com>
- <20180301171609.c1968b89a15320186122e34e@linux-foundation.org>
+        id S1426476AbeCBK21 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:28:27 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:42489 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1426319AbeCBK2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:28:11 -0500
+Subject: Re: [PATCH v3 3/6] x86/jailhouse: Enable PCI mmconfig access in
+ inmates
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <cover.1519882849.git.jan.kiszka@siemens.com>
+ <188edc11aa5fa11d4915097831a2a4a153f6ed83.1519882849.git.jan.kiszka@siemens.com>
+ <CAHp75VeH5tBBY4D-1_VVaYiCdRyBG+2vA8ZGg_QBfVujawh=iA@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Message-ID: <cb20d2c8-761d-1aca-2b3b-07e25a54a803@siemens.com>
+Date: Fri, 2 Mar 2018 11:27:47 +0100
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301171609.c1968b89a15320186122e34e@linux-foundation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAHp75VeH5tBBY4D-1_VVaYiCdRyBG+2vA8ZGg_QBfVujawh=iA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 05:16:09PM -0800, Andrew Morton wrote:
-> On Wed, 28 Feb 2018 12:14:58 +0000 Mark Rutland <mark.rutland@arm.com> wrote:
+On 2018-03-01 11:31, Andy Shevchenko wrote:
+> On Thu, Mar 1, 2018 at 7:40 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 > 
-> > KASAN splats indicate that in some cases we free a live mm, then
-> > continue to access it, with potentially disastrous results. This is
-> > likely due to a mismatched mmdrop() somewhere in the kernel, but so far
-> > the culprit remains elusive.
-> > 
-> > Let's have __mmdrop() verify that the mm isn't live for the current
-> > task, similar to the existing check for init_mm. This way, we can catch
-> > this class of issue earlier, and without requiring KASAN.
+>> Use the PCI mmconfig base address exported by jailhouse in boot
+>> parameters in order to access the memory mapped PCI configuration space.
 > 
-> Presumably the results usually aren't disastrous. 
+> 
+>> --- a/arch/x86/kernel/jailhouse.c
+>> +++ b/arch/x86/kernel/jailhouse.c
+>> @@ -124,6 +124,13 @@ static int __init jailhouse_pci_arch_init(void)
+>>         if (pcibios_last_bus < 0)
+>>                 pcibios_last_bus = 0xff;
+>>
+>> +#ifdef CONFIG_PCI_MMCONFIG
+>> +       if (setup_data.pci_mmconfig_base) {
+> 
+>> +               pci_mmconfig_add(0, 0, 0xff, setup_data.pci_mmconfig_base);
+> 
+> Hmm... Shouldn't be pcibios_last_bus instead of 0xff?
+> 
 
-It seems so.
-
-> But they will be if we go and add BUG_ON()s!  Can we make this
-> WARN_ON[_ONCE]()?  We should still get the same info from testers.
-
-I fuzz the kernel with panic_on_warn=1, so that's practically the same
-for me.
-
-I'll respin to that effect.
+Indeed.
 
 Thanks,
-Mark.
+Jan
+
+>> +               pci_mmcfg_arch_init();
+>> +       }
+>> +#endif
+> 
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
