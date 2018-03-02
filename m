@@ -1,244 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932330AbeCBVuX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 16:50:23 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35286 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932131AbeCBVuW (ORCPT
+        id S932387AbeCBVug (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 16:50:36 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:48920 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932131AbeCBVue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 16:50:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D36C6602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-From: Shanker Donthineni <shankerd@codeaurora.org>
-To: Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Sean Campbell <scampbel@codeaurora.org>,
-        Thomas Speier <tspeier@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP hardening
-Date: Fri,  2 Mar 2018 15:50:18 -0600
-Message-Id: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 2 Mar 2018 16:50:34 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <87po4rz4ui.fsf_-_@xmission.com>
+        <20180226235302.12708-5-ebiederm@xmission.com>
+        <CAOssrKeWvYpgj4_cgsRBL_kTOHyRS-9_mfO9JHP-JahgqFnfHQ@mail.gmail.com>
+Date: Fri, 02 Mar 2018 15:49:56 -0600
+In-Reply-To: <CAOssrKeWvYpgj4_cgsRBL_kTOHyRS-9_mfO9JHP-JahgqFnfHQ@mail.gmail.com>
+        (Miklos Szeredi's message of "Tue, 27 Feb 2018 10:00:25 +0100")
+Message-ID: <87fu5i9mgr.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1ersZU-00067Y-6n;;;mid=<87fu5i9mgr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18M8r3PpH9aWfkmmNgc6Uai8WKA3qn5Ehg=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4782]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <mszeredi@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 190 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.9 (1.5%), b_tie_ro: 1.86 (1.0%), parse: 0.75 (0.4%),
+        extract_message_metadata: 9 (4.9%), get_uri_detail_list: 1.22 (0.6%),
+        tests_pri_-1000: 5 (2.8%), tests_pri_-950: 1.11 (0.6%), tests_pri_-900: 0.99
+        (0.5%), tests_pri_-400: 18 (9.7%), check_bayes: 17 (9.2%), b_tokenize: 6
+        (3.0%), b_tok_get_all: 6 (3.1%), b_comp_prob: 1.88 (1.0%), b_tok_touch_all:
+        2.4 (1.3%), b_finish: 0.54 (0.3%), tests_pri_0: 145 (76.2%),
+        check_dkim_signature: 0.47 (0.2%), check_dkim_adsp: 2.4 (1.3%),
+        tests_pri_500: 4.0 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v7 5/7] fuse: Simplfiy the posix acl handling logic.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function SMCCC_ARCH_WORKAROUND_1 was introduced as part of SMC
-V1.1 Calling Convention to mitigate CVE-2017-5715. This patch uses
-the standard call SMCCC_ARCH_WORKAROUND_1 for Falkor chips instead
-of Silicon provider service ID 0xC2001700.
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
----
- arch/arm64/include/asm/cpucaps.h |  2 +-
- arch/arm64/include/asm/kvm_asm.h |  2 --
- arch/arm64/kernel/bpi.S          |  8 ------
- arch/arm64/kernel/cpu_errata.c   | 55 ++++++++++++++--------------------------
- arch/arm64/kvm/hyp/entry.S       | 12 ---------
- arch/arm64/kvm/hyp/switch.c      | 10 --------
- 6 files changed, 20 insertions(+), 69 deletions(-)
+> On Tue, Feb 27, 2018 at 12:53 AM, Eric W. Biederman
+> <ebiederm@xmission.com> wrote:
+>> Rename the fuse connection flag posix_acl to cached_posix_acl as that
+>> is what it actually means.  That fuse will cache and operate on the
+>> cached value of the posix acl.
+>>
+>> When fc->cached_posix_acl is not set, set ACL_DONT_CACHE on the inode
+>> so that get_acl and friends won't cache the acl values even if they
+>> are called.
+>>
+>> Replace forget_all_cached_acls with fuse_forget_cached_acls.  This
+>> wrapper only takes effect when cached_posix_acl is true to prevent
+>> losing the nocache or noxattr status in when posix acls are not
+>> cached.
+>
+> Shouldn't forget_cached_acl() be taught about ACL_DONT_CACHE?  I think
+> it makes sense to generally not clear ACL_DONT_CACHE, since it's not
+> an actual acl value that needs forgetting.
 
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index bb26382..6ecc249 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -43,7 +43,7 @@
- #define ARM64_SVE				22
- #define ARM64_UNMAP_KERNEL_AT_EL0		23
- #define ARM64_HARDEN_BRANCH_PREDICTOR		24
--#define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
-+/* #define ARM64_UNALLOCATED_ENTRY			25 */
- #define ARM64_HAS_RAS_EXTN			26
- 
- #define ARM64_NCAPS				27
-diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-index 24961b7..ab4d0a9 100644
---- a/arch/arm64/include/asm/kvm_asm.h
-+++ b/arch/arm64/include/asm/kvm_asm.h
-@@ -68,8 +68,6 @@
- 
- extern u32 __init_stage2_translation(void);
- 
--extern void __qcom_hyp_sanitize_btac_predictors(void);
--
- #endif
- 
- #endif /* __ARM_KVM_ASM_H__ */
-diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
-index e5de335..dc4eb15 100644
---- a/arch/arm64/kernel/bpi.S
-+++ b/arch/arm64/kernel/bpi.S
-@@ -55,14 +55,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
- 	.endr
- ENTRY(__bp_harden_hyp_vecs_end)
- 
--ENTRY(__qcom_hyp_sanitize_link_stack_start)
--	stp     x29, x30, [sp, #-16]!
--	.rept	16
--	bl	. + 4
--	.endr
--	ldp	x29, x30, [sp], #16
--ENTRY(__qcom_hyp_sanitize_link_stack_end)
--
- .macro smccc_workaround_1 inst
- 	sub	sp, sp, #(8 * 4)
- 	stp	x2, x3, [sp, #(8 * 0)]
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 52f15cd..d779ffd4 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -67,8 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
- DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
- 
- #ifdef CONFIG_KVM
--extern char __qcom_hyp_sanitize_link_stack_start[];
--extern char __qcom_hyp_sanitize_link_stack_end[];
- extern char __smccc_workaround_1_smc_start[];
- extern char __smccc_workaround_1_smc_end[];
- extern char __smccc_workaround_1_hvc_start[];
-@@ -115,8 +113,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 	spin_unlock(&bp_lock);
- }
- #else
--#define __qcom_hyp_sanitize_link_stack_start	NULL
--#define __qcom_hyp_sanitize_link_stack_end	NULL
- #define __smccc_workaround_1_smc_start		NULL
- #define __smccc_workaround_1_smc_end		NULL
- #define __smccc_workaround_1_hvc_start		NULL
-@@ -161,12 +157,25 @@ static void call_hvc_arch_workaround_1(void)
- 	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
- }
- 
-+static void qcom_link_stack_sanitization(void)
-+{
-+	u64 tmp;
-+
-+	asm volatile("mov	%0, x30		\n"
-+		     ".rept	16		\n"
-+		     "bl	. + 4		\n"
-+		     ".endr			\n"
-+		     "mov	x30, %0		\n"
-+		     : "=&r" (tmp));
-+}
-+
- static int enable_smccc_arch_workaround_1(void *data)
- {
- 	const struct arm64_cpu_capabilities *entry = data;
- 	bp_hardening_cb_t cb;
- 	void *smccc_start, *smccc_end;
- 	struct arm_smccc_res res;
-+	u32 midr = read_cpuid_id();
- 
- 	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
- 		return 0;
-@@ -199,33 +208,15 @@ static int enable_smccc_arch_workaround_1(void *data)
- 		return 0;
- 	}
- 
-+	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
-+	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
-+		cb = qcom_link_stack_sanitization;
-+
- 	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
- 
- 	return 0;
- }
- 
--static void qcom_link_stack_sanitization(void)
--{
--	u64 tmp;
--
--	asm volatile("mov	%0, x30		\n"
--		     ".rept	16		\n"
--		     "bl	. + 4		\n"
--		     ".endr			\n"
--		     "mov	x30, %0		\n"
--		     : "=&r" (tmp));
--}
--
--static int qcom_enable_link_stack_sanitization(void *data)
--{
--	const struct arm64_cpu_capabilities *entry = data;
--
--	install_bp_hardening_cb(entry, qcom_link_stack_sanitization,
--				__qcom_hyp_sanitize_link_stack_start,
--				__qcom_hyp_sanitize_link_stack_end);
--
--	return 0;
--}
- #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
- 
- #define MIDR_RANGE(model, min, max) \
-@@ -400,20 +391,12 @@ static int qcom_enable_link_stack_sanitization(void *data)
- 	{
- 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
- 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
--		.enable = qcom_enable_link_stack_sanitization,
--	},
--	{
--		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
--		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
-+		.enable = enable_smccc_arch_workaround_1,
- 	},
- 	{
- 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
- 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
--		.enable = qcom_enable_link_stack_sanitization,
--	},
--	{
--		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
--		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
-+		.enable = enable_smccc_arch_workaround_1,
- 	},
- 	{
- 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-diff --git a/arch/arm64/kvm/hyp/entry.S b/arch/arm64/kvm/hyp/entry.S
-index fdd1068..56fc2bb 100644
---- a/arch/arm64/kvm/hyp/entry.S
-+++ b/arch/arm64/kvm/hyp/entry.S
-@@ -213,15 +213,3 @@ alternative_endif
- 
- 	eret
- ENDPROC(__fpsimd_guest_restore)
--
--ENTRY(__qcom_hyp_sanitize_btac_predictors)
--	/**
--	 * Call SMC64 with Silicon provider serviceID 23<<8 (0xc2001700)
--	 * 0xC2000000-0xC200FFFF: assigned to SiP Service Calls
--	 * b15-b0: contains SiP functionID
--	 */
--	movz    x0, #0x1700
--	movk    x0, #0xc200, lsl #16
--	smc     #0
--	ret
--ENDPROC(__qcom_hyp_sanitize_btac_predictors)
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 870f4b1..d4a336e 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -403,16 +403,6 @@ int __hyp_text __kvm_vcpu_run(struct kvm_vcpu *vcpu)
- 		/* 0 falls through to be handled out of EL2 */
- 	}
- 
--	if (cpus_have_const_cap(ARM64_HARDEN_BP_POST_GUEST_EXIT)) {
--		u32 midr = read_cpuid_id();
--
--		/* Apply BTAC predictors mitigation to all Falkor chips */
--		if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
--		    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1)) {
--			__qcom_hyp_sanitize_btac_predictors();
--		}
--	}
--
- 	fp_enabled = __fpsimd_enabled();
- 
- 	__sysreg_save_guest_state(guest_ctxt);
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+After stopping to make certain I understand the issues, I don't think
+it makes sense to teach forget_cached_acl about ACL_DONT_CACHE.
+
+If you are fogetting a cached attribute ACL_DONT_CACHE simply doesn't
+make sense.
+
+Further it makes sense to cache a negative result for fuse when
+!fc->no_getxattr.  Even if you would ordinarily not cache posix acls.
+
+So I think the better plan is to teach the posix acl code how to not
+cache results on a case by case basis.  As I did in my rfc patch I
+posted a little earlier today.  That works with forget_cached_acl and it
+supports local reasoning.  Further while the performance might not be as
+good as ACL_DONT_CACHE I don't think that matters as always going to the
+fuse server to get acls is almost certainly going to dominate the acl
+costs.
+
+Eric
