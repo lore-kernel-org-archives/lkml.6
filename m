@@ -1,26 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947699AbeCBTWe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:22:34 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39780 "EHLO
+        id S1947686AbeCBTV6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:21:58 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35960 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422823AbeCBTVn (ORCPT
+        with ESMTP id S1428577AbeCBTVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:21:43 -0500
-X-Google-Smtp-Source: AG47ELtoX6a8YBJrMEICpyPnDqV/pMaZm7RCFueTE6VE6Kp1u9Lkh+4CZ2GDLbIjqTWgCi26xDlsng==
+        Fri, 2 Mar 2018 14:21:47 -0500
+X-Google-Smtp-Source: AG47ELusRDiAnYgkGrIQnC4quBAKCvSc7B7XMhP6AKCGiEcL+Ca1taNyX00oXwHHRaWX+WPLYoWGVA==
 From: Michal Simek <michal.simek@xilinx.com>
 To: devicetree@vger.kernel.org
-Cc: monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>, Rob Herring <robherring2@gmail.com>,
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Josh Cartwright <josh.cartwright@ni.com>,
         Russell King <linux@armlinux.org.uk>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/5] arm: zynq: Add support for Xilinx zc770 xm010 dc1 board
-Date: Fri,  2 Mar 2018 20:21:34 +0100
-Message-Id: <44eba6a11ccc653a07b8c44640cecb78e711a2be.1520018484.git.michal.simek@xilinx.com>
+Subject: [PATCH v3 5/5]  arm: zynq: Add support for Xilinx zc770 xm013 dc4 board
+Date: Fri,  2 Mar 2018 20:21:37 +0100
+Message-Id: <4e4589659d3d8f77cc8917dfa7bfe201d1d631ab.1520018484.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1520018484.git.michal.simek@xilinx.com>
 References: <cover.1520018484.git.michal.simek@xilinx.com>
@@ -32,73 +28,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 zc770 is based board which is extended by FMC/DC cards for SoC
 validation. FMCs/DCs are supposed to cover all SoC configurations.
-FMC/DC contains ethernet port, can, i2c, sd, qspi, spi, uart and usb.
+FMC/DC contains can, ethernet, i2c, qspi, spi and uart.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Changes in v3:
-- Fix partition for flash
-
+Changes in v3: None
 Changes in v2:
+- use eeprom as node name instead of at25
 - Record compatible string to xilinx.txt
 
- Documentation/devicetree/bindings/arm/xilinx.txt |  3 +
+ Documentation/devicetree/bindings/arm/xilinx.txt |  1 +
  arch/arm/boot/dts/Makefile                       |  1 +
- arch/arm/boot/dts/zynq-zc770-xm010.dts           | 95 ++++++++++++++++++++++++
- 3 files changed, 99 insertions(+)
- create mode 100644 arch/arm/boot/dts/zynq-zc770-xm010.dts
+ arch/arm/boot/dts/zynq-zc770-xm013.dts           | 78 ++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+)
+ create mode 100644 arch/arm/boot/dts/zynq-zc770-xm013.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index 425c74fcc560..019e69037d42 100644
+index 745c898f2f7f..63705a451251 100644
 --- a/Documentation/devicetree/bindings/arm/xilinx.txt
 +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-@@ -11,6 +11,9 @@ Additional compatible strings:
- - Xilinx internal board cc108
-   "xlnx,zynq-cc108"
+@@ -15,6 +15,7 @@ Additional compatible strings:
+   "xlnx,zynq-zc770-xm010"
+   "xlnx,zynq-zc770-xm011"
+   "xlnx,zynq-zc770-xm012"
++  "xlnx,zynq-zc770-xm013"
  
-+- Xilinx internal board zc770 with different FMC cards
-+  "xlnx,zynq-zc770-xm010"
-+
  ---------------------------------------------------------------
  
- Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c6810e84d4d7..be9ffae2a1ec 100644
+index 2c74b935ad1c..d5de3748a80a 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -1067,6 +1067,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
- 	zynq-parallella.dtb \
- 	zynq-zc702.dtb \
- 	zynq-zc706.dtb \
-+	zynq-zc770-xm010.dtb \
+@@ -1070,6 +1070,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
+ 	zynq-zc770-xm010.dtb \
+ 	zynq-zc770-xm011.dtb \
+ 	zynq-zc770-xm012.dtb \
++	zynq-zc770-xm013.dtb \
  	zynq-zed.dtb \
  	zynq-zybo.dtb
  dtb-$(CONFIG_MACH_ARMADA_370) += \
-diff --git a/arch/arm/boot/dts/zynq-zc770-xm010.dts b/arch/arm/boot/dts/zynq-zc770-xm010.dts
+diff --git a/arch/arm/boot/dts/zynq-zc770-xm013.dts b/arch/arm/boot/dts/zynq-zc770-xm013.dts
 new file mode 100644
-index 000000000000..6884f1ad66b7
+index 000000000000..8bb66859d774
 --- /dev/null
-+++ b/arch/arm/boot/dts/zynq-zc770-xm010.dts
-@@ -0,0 +1,95 @@
++++ b/arch/arm/boot/dts/zynq-zc770-xm013.dts
+@@ -0,0 +1,78 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Xilinx ZC770 XM010 board DTS
++ * Xilinx ZC770 XM013 board DTS
 + *
-+ * Copyright (C) 2013-2018 Xilinx, Inc.
++ * Copyright (C) 2013 Xilinx, Inc.
 + */
 +/dts-v1/;
 +#include "zynq-7000.dtsi"
 +
 +/ {
-+	compatible = "xlnx,zynq-zc770-xm010", "xlnx,zynq-7000";
++	compatible = "xlnx,zynq-zc770-xm013", "xlnx,zynq-7000";
 +	model = "Xilinx Zynq";
 +
 +	aliases {
-+		ethernet0 = &gem0;
-+		i2c0 = &i2c0;
-+		serial0 = &uart1;
-+		spi1 = &spi1;
++		ethernet0 = &gem1;
++		i2c0 = &i2c1;
++		serial0 = &uart0;
++		spi1 = &spi0;
 +	};
 +
 +	chosen {
@@ -110,18 +104,13 @@ index 000000000000..6884f1ad66b7
 +		device_type = "memory";
 +		reg = <0x0 0x40000000>;
 +	};
-+
-+	usb_phy0: phy0 {
-+		compatible = "usb-nop-xceiv";
-+		#phy-cells = <0>;
-+	};
 +};
 +
-+&can0 {
++&can1 {
 +	status = "okay";
 +};
 +
-+&gem0 {
++&gem1 {
 +	status = "okay";
 +	phy-mode = "rgmii-id";
 +	phy-handle = <&ethernet_phy>;
@@ -132,49 +121,37 @@ index 000000000000..6884f1ad66b7
 +	};
 +};
 +
-+&i2c0 {
++&i2c1 {
 +	status = "okay";
 +	clock-frequency = <400000>;
 +
-+	eeprom: eeprom@52 {
-+		compatible = "atmel,24c02";
-+		reg = <0x52>;
++	si570: clock-generator@55 {
++		#clock-cells = <0>;
++		compatible = "silabs,si570";
++		temperature-stability = <50>;
++		reg = <0x55>;
++		factory-fout = <156250000>;
++		clock-frequency = <148500000>;
 +	};
-+
 +};
 +
-+&sdhci0 {
-+	status = "okay";
-+};
-+
-+&spi1 {
++&spi0 {
 +	status = "okay";
 +	num-cs = <4>;
 +	is-decoded-cs = <0>;
-+	flash@0 {
-+		compatible = "sst25wf080", "jedec,spi-nor";
-+		reg = <1>;
++	eeprom: eeprom@0 {
++		at25,byte-len = <8192>;
++		at25,addr-mode = <2>;
++		at25,page-size = <32>;
++
++		compatible = "atmel,at25";
++		reg = <2>;
 +		spi-max-frequency = <1000000>;
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			partition@0 {
-+				label = "data";
-+				reg = <0x0 0x100000>;
-+			};
-+		};
 +	};
 +};
 +
-+&uart1 {
++&uart0 {
 +	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+	dr_mode = "host";
-+	usb-phy = <&usb_phy0>;
 +};
 -- 
 1.9.1
