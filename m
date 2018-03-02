@@ -1,72 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947557AbeCBSxT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:53:19 -0500
-Received: from mail-it0-f46.google.com ([209.85.214.46]:33793 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1947528AbeCBSxI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:53:08 -0500
-X-Google-Smtp-Source: AG47ELse83ziafawl6yNR1xU95vxjrOZZN+kusFDOsTA8w5zll1J6QnPlNqBjjV0REiq3+nZbRZ/5t4GMu3/lD3WIMY=
+        id S1428060AbeCBTBG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:01:06 -0500
+Received: from mga04.intel.com ([192.55.52.120]:51210 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424211AbeCBTBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 14:01:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,413,1515484800";
+   d="scan'208";a="35047675"
+From: Jani Nikula <jani.nikula@intel.com>
+To: Matthew Wilcox <willy@infradead.org>, Takashi Iwai <tiwai@suse.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation/sphinx: Fix Directive import error
+In-Reply-To: <20180302184014.GG31400@bombadil.infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180302152831.11510-1-tiwai@suse.de> <20180302184014.GG31400@bombadil.infradead.org>
+Date: Fri, 02 Mar 2018 21:00:53 +0200
+Message-ID: <87tvtyti8q.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301225934.GA34350@beast>
-References: <20180301225934.GA34350@beast>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 2 Mar 2018 10:53:07 -0800
-X-Google-Sender-Auth: WhqYTwst5x5GCGiFPuvZkC7jj6Y
-Message-ID: <CA+55aFzG6od5cy_mmepygSb_9m3Em336T00LoOK-MVkVPsJ-hg@mail.gmail.com>
-Subject: Re: [RESEND][PATCH] bug: Exclude non-BUG/WARN exceptions from report_bug()
-To: Kees Cook <keescook@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 1, 2018 at 2:59 PM, Kees Cook <keescook@chromium.org> wrote:
+On Fri, 02 Mar 2018, Matthew Wilcox <willy@infradead.org> wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
 >
-> Resending through akpm since this technically isn't x86-specific.
+> Sphinx 1.7 removed sphinx.util.compat.Directive so people
+> who have upgraded cannot build the documentation.  Switch to
+> docutils.parsers.rst.Directive which has been available since
+> docutils 0.5 released in 2009.
+>
+> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
+> Co-developed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-Just a note on this part, because I think this is a general issue (and
-has nothing to do with the particular patch itself).
+I think this is the best approach.
 
-Saying who you expect things to go through can definitely be a good
-idea, because I generally ignore patches that get sent to me from
-people I take pull requests from - I assume that I'm on the
-participants list as a heads-up for for comments, rather than
-applying. In fact, even if you don't send me pull requests, that's
-generally what I assume, because the bulk of patches should be going
-through some submaintainer that _does_ send me pull requests (or, like
-Andrew, is known to send patches).
+FWIW,
 
-I'd expect that many other people face the same issue - particularly
-when a patch doesn't have a very clear area, and there are multiple
-people on the participants list, it's easy to assume that the intended
-target is "somebody else". I do not, for example, tend to look at my
-emails so closely that I care who is in the "To:" field, and who is in
-the "Cc:" fields. I'd have to be very curious indeed to care that
-deeply.
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-Which brings me to my point: maybe we should encourage people to make
-this "for whom the patch tolls" information more obvious and more
-explicit. It wasn't obvious in the first submission (yes, I saw the
-patch then too), and even in this second one I actually initially
-didn't notice this one line in between the commit message and the
-actual patch. Maybe I get too much email, but I bet _that_ is very
-true of others too.
+>
+> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
+> index 39aa9e8697cc..fbedcc39460b 100644
+> --- a/Documentation/sphinx/kerneldoc.py
+> +++ b/Documentation/sphinx/kerneldoc.py
+> @@ -36,8 +36,7 @@ import glob
+>  
+>  from docutils import nodes, statemachine
+>  from docutils.statemachine import ViewList
+> -from docutils.parsers.rst import directives
+> -from sphinx.util.compat import Directive
+> +from docutils.parsers.rst import directives, Directive
+>  from sphinx.ext.autodoc import AutodocReporter
+>  
+>  __version__  = '1.0'
 
-The obvious place to encourage people to do it is in the [PATCH] part
-in the subject, ie something like [PATCH/mm] or similar if you expect
-it to go through Andrew's mm tree, or [PATCH/x86] it you expect the
-x86 maintainers to pick it up. Or [PATCH/linus] if it's something that
-you really expect to bypass all maintainers (why? I'd prefer for that
-to then be explained).
-
-But maybe other potential patch recipients would hate that kind of
-extra mess in the subject line?
-
-                   Linus
+-- 
+Jani Nikula, Intel Open Source Technology Center
