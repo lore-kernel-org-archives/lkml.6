@@ -1,204 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422793AbeCBEmW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:42:22 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33409 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164297AbeCBEmV (ORCPT
+        id S1422815AbeCBEuB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:50:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33728 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1164978AbeCBEtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 23:42:21 -0500
-X-Google-Smtp-Source: AG47ELtf8FDVUeadb1zh8zI0TnGefO5D3RyXtgVWh40xdqSVp0/clp4evmLu/BSiPEuSm9ctGt2sKA==
-Subject: Re: [PATCH v5 0/9] watchdog/hpwdt: Update driver to use watchdog
- core.
-To: Jerry Hoemann <jerry.hoemann@hpe.com>, wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rwright@hpe.com, maurice.a.saldivar@hpe.com, mingo@kernel.org,
-        marcus.folkesson@gmail.com
-References: <20180226032227.14615-1-jerry.hoemann@hpe.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <9f35de2d-f716-3a57-de96-e9ff7bf4d9ef@roeck-us.net>
-Date: Thu, 1 Mar 2018 20:42:17 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 1 Mar 2018 23:49:53 -0500
+Date: Thu, 1 Mar 2018 20:50:15 -0800
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
+ rcu-fence
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180301015531.olvuu5g35eta5xhr@tardis>
+ <Pine.LNX.4.44L0.1803011027120.1394-100000@iolanthe.rowland.org>
+ <20180301174906.GC3777@linux.vnet.ibm.com>
+ <20180301183758.GA31761@linux.vnet.ibm.com>
+ <20180302043141.fgmjyysrws55pi7q@tardis>
 MIME-Version: 1.0
-In-Reply-To: <20180226032227.14615-1-jerry.hoemann@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302043141.fgmjyysrws55pi7q@tardis>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18030204-0044-0000-0000-000003ED013B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008609; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00997107; UDB=6.00506974; IPR=6.00776425;
+ MB=3.00019811; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-02 04:49:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030204-0045-0000-0000-0000081D0280
+Message-Id: <20180302045015.GO3777@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803020054
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/25/2018 07:22 PM, Jerry Hoemann wrote:
-> == v5 ==
-> 
-> Patch numbers changing due to squash and reorder.
-> Using Prior (v4) Patch number noting *new* patch numbers as bullet item.
-> 
-> 
-> Patch 0001 & 0004 Merged into: Update-Module-info-and-copyright
-> 1) New Patch 0001
-> 
-> Patch 0002 Remove legacy NMI sourcing
-> 1) Unmodified
-> 
-> Patch 0003 Update nmi_panic message.
-> 1) Unmodified
-> 
-> Patch 0004 Update Module info.
-> 1) Merged into 0001 above.
-> 
-> Patch 0005 Modify to use watchdog core
-> 1) syntatic sugar.
-> 2) Now Patch 0004
-> 
-> Patch 0006 condition-early-return-of-NMI-handler
-> 1) Now Patch 0005
-> 2) Casing on iLO5
-> 3) true for boolean
-> 
-> Patch 0007 remove allow_kdump module param
-> 1) Now patch 0006
-> 
-> Patch 0008 Programable Pretimeout NMI
-> 1) Now patch 00007
-> 
-> Patch 0009 Add dynamic debug
-> 1) Now patch 0008
-> 
-> Patch 0010 Update driver version.
-> 1) Now Patch 0009
-> 
-> 
-> == v4 ==
-> 
-> Modifications from prior version:
-> 
-> Manual merging and patch reordering has cause minor white
-> space and diff changes.  Such change shouldn't have effected
-> the logic and are omitted below:
-> 
-> Patch 001  Remove legacy NMI sourcing.
-> 1) Updated patch documentation to reflect Spectre concerns.
-> 2) Restored comment at #endif
->>>>>>>>>> 3) New Patch 0002  <<<<<<<<
-> 
-> Patch 002 watchdog/hpwdt: remove include files no longer
-> 1) Squashed onto Patch001.
->>>>>>>>>> 3) Still Patch 0002  <<<<<<<<
-> 
-> 
-> Patch 0003: watchdog/hpwdt: Update nmi_panic message.
-> 1) Unchanged
-> 
-> 
-> Patch 0004:  watchdog/hpwdt: white space changes
-> 1) Redacted.
-> 
-> Patch 0005: watchdog/hpwdt: Update Module info.
-> 1) Now Patch 0004
-> 2) Update only module description to reflect branding changes.
-> 3) Rest of patch redacted.
-> 
-> Patch 0006 Select CORE
-> 1) Merged with 0007
-> 
-> Patch 0007 Modify to use watchdog core
-> 1) squashed on Patch 0006.
-> 2) Now Patch 0005
-> 3) Requested white space changes.
-> 4) Use "wdd" for watchdog_device like other watchdog drivers do
-> 
-> Patch 0008 Programable-Pretimeout
-> 1) hpwdt_settimeout re-worked to take into account timeout <= pretimeout.
->     Patterned after watchdog_set_timeout.
-> 2) hpwdt_set_pretimeout re-worked to take into account requested
->     pretimeout <= timeout.
-> 3) Clarify patch doc to reflect above.
-> 
-> Patch 0009 condition-early-return-of-NMI
-> 1) Requested syntatic surgar.
-> 2) Now Patch 0006
-> 
-> Patch 0010 remove-allow_kdump
-> 1) Now Patch 0007
-> 
-> Patch 0011 Add-dynamic-debug
-> 1) Now Patch 0009
-> 2) Typo fix
-> 3) New dev_dbg resulting from changes to set timeout and pretimeout.
-> 
-> Patch 0012 Update driver version.
-> 1) Now Patch 0010
-> 
->   
-> New Patch
-> 1) Patch 0001 Update Copyright
-> 
-> 
-> 
-> == v3 ==
-> 
-> Incorperating code review feedback.
-> 
-> 1) Patch 0003: Use existing hex_byte_pack instead of creating new function.
-> 2) Patch 0005: Redacted change in module_param permission.
-> 3) Patch 0006: switch from pr_debug etc., to dev_dbg where possible.
-> 4) Patch 0006: No longer updating soft_margin post module load.
-> 5) Patch 0006: Initialize hpwdt_dev.parent before registering watchdog.
-> 6) Patch 0006: Redacted change to dev_info message w.r.t. allow_kdump
-> 7) Patch 0006 & 0007: Reorder patches to maintain bisectability.
-> 8) Patch 0008: Change pr_debug to dev_dbg
-> 9) Patch 0010: Change dev_info message w.r.t. allow_kdump where feature
-> 		is removed.
-> 
-> Note, I am explicitly ignoring the checkpatch error on Patch 0008
-> for specifying permisson of "0" instead of "0000".
-> 
-> == v2 ==
-> 
-> 1) Fix compiler error when CONFIG_HPWDT_NMI_DECODING is not defined.
-> 
-> 2) Break out driver version change to its own patch (0011).
-> 
-> 
-> == v1 ==
-> 
-> The primary purposes of this patch set are to
-> 
-> 1) Update the hpwdt driver to use the watchdog core.
-> 2) Reduce complexity by removing unnecessary features.
-> 3) Add customer requested features like optional pretimeout.
-> 4) Enhance readability/maintainability of the driver.
-> 
-> The size of the resultant driver is reduced from over 900
-> lines to 350 lines.
-> 
-> Patch 1& 2 remove legacy NMI sourcing.
-> Patch 3	adds useful indication of NMI cause to panic message
-> Patch 4 & 5 are general cleanup
-> Patch 6 & 7 updates the driver to user the watchdog core.
-> Patch 8 makes the pretimeout NMI programmable.
-> Patch 9 modifies whether the NMI handler claims the NMI.
-> Patch 10 retracts the allow_kdump module parameter.
-> 
-> 
-> 
-> Jerry Hoemann (9):
->    watchdog/hpwdt: Update Module info and copyright.
->    watchdog/hpwdt: Remove legacy NMI sourcing.
->    watchdog/hpwdt: Update nmi_panic message.
->    watchdog/hpwdt: Modify to use watchdog core.
->    watchdog/hpwdt: condition early return of NMI handler on iLO5
->    watchdog/hpwdt: remove allow_kdump module parameter.
->    watchdog/hpwdt: Programable Pretimeout NMI
->    watchdog/hpwdt: Add dynamic debug
->    watchdog/hpwdt: Update driver version.
-> 
->   drivers/watchdog/Kconfig |   1 +
->   drivers/watchdog/hpwdt.c | 791 +++++++----------------------------------------
->   2 files changed, 121 insertions(+), 671 deletions(-)
-> 
-For the series:
+On Fri, Mar 02, 2018 at 12:31:41PM +0800, Boqun Feng wrote:
+> On Thu, Mar 01, 2018 at 10:37:58AM -0800, Paul E. McKenney wrote:
+> > On Thu, Mar 01, 2018 at 09:49:06AM -0800, Paul E. McKenney wrote:
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+[ . . . ]
+
+> > And as Andrea pointed out off-list, I did indeed mess up Boqun's change.
+> > I forgot to change the "irreflexive" into "acyclic".  Applying that change
+> > makes everything work.
+> > 
+> > Please accept my apologies for my confusion!
+> > 
+> 
+> np, also I should have provided a proper patch for your testing.
+> 
+> For this Alan's patch, feel free to add:
+> 
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+
+Alan's last submission was still RFC, so I have not yet queued it.
+So this ball is still in Alan's court.
+
+							Thanx, Paul
+
+> Regards,
+> Boqun
+> 
+> > 							Thanx, Paul
+> > 
+> > > > > I prefer this because we already treat "gp" as "strong-fence", which
+> > > > > already is a "rcu-link".
+> > > > 
+> > > > That's a good point; it had not occurred to me.
+> > > 
+> > > And if I remove the "gp" but leave the last line, it does properly
+> > > classify the two new litmus tests.
+> > > 
+> > > 							Thanx, Paul
+> > > 
+> > > > >  Also, recurisively extending rcu-fence with
+> > > > > itself is exactly calculating the transitive closure, which we can avoid
+> > > > > by using a "acycle" rule. Besides, it looks more consistent with hb and
+> > > > > pb.
+> > > > 
+> > > > That _had_ occurred to me.  But I couldn't see any way to do it while 
+> > > > still defining rcu-fence correctly.
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> > > index 1e5c4653dd12..75d3c225146c 100644
+> > > --- a/tools/memory-model/linux-kernel.cat
+> > > +++ b/tools/memory-model/linux-kernel.cat
+> > > @@ -106,12 +106,11 @@ let rcu-link = hb* ; pb* ; prop
+> > >   * Any sequence containing at least as many grace periods as RCU read-side
+> > >   * critical sections (joined by rcu-link) acts as a generalized strong fence.
+> > >   *)
+> > > -let rec rcu-fence = gp |
+> > > +let rec rcu-fence =
+> > >  	(gp ; rcu-link ; rscs) |
+> > >  	(rscs ; rcu-link ; gp) |
+> > >  	(gp ; rcu-link ; rcu-fence ; rcu-link ; rscs) |
+> > > -	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp) |
+> > > -	(rcu-fence ; rcu-link ; rcu-fence)
+> > > +	(rscs ; rcu-link ; rcu-fence ; rcu-link ; gp)
+> > >  
+> > >  (* rb orders instructions just as pb does *)
+> > >  let rb = prop ; rcu-fence ; hb* ; pb*
+> > 
