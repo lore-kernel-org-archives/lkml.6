@@ -1,42 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163932AbeCBBQM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 20:16:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38778 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163425AbeCBBQL (ORCPT
+        id S1163733AbeCBBoW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 20:44:22 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55588 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163100AbeCBBoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:16:11 -0500
-Date: Thu, 1 Mar 2018 17:16:09 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michal Hocko <mhocko@suse.com>, Peter Zijlstra <peterz@infraded.org>,
-        Rik van Riel <riel@redhat.com>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] Detect early free of a live mm
-Message-Id: <20180301171609.c1968b89a15320186122e34e@linux-foundation.org>
-In-Reply-To: <20180228121458.2230-1-mark.rutland@arm.com>
-References: <20180228121458.2230-1-mark.rutland@arm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 1 Mar 2018 20:44:18 -0500
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH V2] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
+Date: Thu, 01 Mar 2018 20:44:10 -0500
+In-Reply-To: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
+        (Jianchao Wang's message of "Wed, 28 Feb 2018 16:55:13 +0800")
+Message-ID: <yq1371jz1xx.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803020014
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Feb 2018 12:14:58 +0000 Mark Rutland <mark.rutland@arm.com> wrote:
 
-> KASAN splats indicate that in some cases we free a live mm, then
-> continue to access it, with potentially disastrous results. This is
-> likely due to a mismatched mmdrop() somewhere in the kernel, but so far
-> the culprit remains elusive.
-> 
-> Let's have __mmdrop() verify that the mm isn't live for the current
-> task, similar to the existing check for init_mm. This way, we can catch
-> this class of issue earlier, and without requiring KASAN.
+Jianchao,
 
-Presumably the results usually aren't disastrous.  But they will be if
-we go and add BUG_ON()s!  Can we make this WARN_ON[_ONCE]()?  We should
-still get the same info from testers.
+> In scsi core, __scsi_queue_insert should just put request back on the
+> queue and retry using the same command as before. However, for blk-mq,
+> scsi_mq_requeue_cmd is employed here which will unprepare the
+> request. To align with the semantics of __scsi_queue_insert, use
+> blk_mq_requeue_request with kick_requeue_list == true and put the
+> reference of scsi_device.
+>
+> V1 -> V2:
+>  - add put_device on scsi_device->sdev_gendev
+
+Also, please put changelog after the --- delimiter.
+
+> Cc: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  drivers/scsi/scsi_lib.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index a86df9c..6fa7b0c 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -191,7 +191,8 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+>  	 */
+>  	cmd->result = 0;
+>  	if (q->mq_ops) {
+> -		scsi_mq_requeue_cmd(cmd);
+> +		blk_mq_requeue_request(cmd->request, true);
+> +		put_device(&device->sdev_gendev);
+>  		return;
+>  	}
+>  	spin_lock_irqsave(q->queue_lock, flags);
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
