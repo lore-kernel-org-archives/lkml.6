@@ -1,178 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425771AbeCBJ3s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:29:48 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38016 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1425058AbeCBJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:29:31 -0500
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: brouer@redhat.com, john.fastabend@gmail.com,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net V2] virtio-net: re enable XDP_REDIRECT for mergeable buffer
-Date: Fri,  2 Mar 2018 17:29:14 +0800
-Message-Id: <1519982954-14360-1-git-send-email-jasowang@redhat.com>
+        id S1424006AbeCBJeD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:34:03 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51135 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425043AbeCBJdZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:33:25 -0500
+X-Google-Smtp-Source: AG47ELtiVZ66UqvFjXnDx2mjXyUche7+LxaFwp8If2E+DlWYREr2tMi4hc1yRB/TOX2tKu4zDGxMvjgR2F6UCBdUp9c=
+MIME-Version: 1.0
+In-Reply-To: <20180302091025.GC30267@amd>
+References: <20180224214617.GA22619@amd> <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
+ <20180226131318.GA14045@amd> <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
+ <20180226231336.GA18565@amd> <CACRpkdarR_7HqGMPwfa8YpG9wnFs5mJrNwuctycn=MrdwaRxyw@mail.gmail.com>
+ <20180302091025.GC30267@amd>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 2 Mar 2018 10:33:24 +0100
+Message-ID: <CACRpkda=deFSmk2iyrtde3Z-aj6rW9_jNfE3Ep4X=ejprGxRUw@mail.gmail.com>
+Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Daniel Baluta <daniel.baluta@gmail.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Ivajlo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Martijn Braam <martijn@brixit.nl>,
+        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        =?UTF-8?B?TWlja3Vsw6HFoSBRd2VydHo=?= <abcloriens@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        clayton@craftyguy.net, Linux-OMAP <linux-omap@vger.kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Patrik Bachan <patrikbachan@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-XDP_REDIRECT support for mergeable buffer was removed since commit
-7324f5399b06 ("virtio_net: disable XDP_REDIRECT in receive_mergeable()
-case"). This is because we don't reserve enough tailroom for struct
-skb_shared_info which breaks XDP assumption. So this patch fixes this
-by reserving enough tailroom and using fixed size of rx buffer.
+On Fri, Mar 2, 2018 at 10:10 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> Linux-Regression-ID: lr#4b650f
+>
+> On Tue 2018-02-27 09:43:32, Linus Walleij wrote:
+>> On Tue, Feb 27, 2018 at 12:13 AM, Pavel Machek <pavel@ucw.cz> wrote:
+>>
+>> > I did git bisect, and the winner seems to be:
+>> >
+>> > pavel@duo:/data/l/linux-n900$ git bisect bad
+>> > c85823390215e52d68d3826df92a447ed31e5c80 is the first bad commit
+>> > commit c85823390215e52d68d3826df92a447ed31e5c80
+>> > Author: Linus Walleij <linus.walleij@linaro.org>
+>> > Date:   Wed Dec 27 16:37:44 2017 +0100
+>> >
+>> >     gpio: of: Support SPI nonstandard GPIO properties
+>>
+>> I have fixes queued for this, tried to send a pull request yesterday
+>> but it turns out the fixes need fixing... OK I'm onto it anyways.
+>
+> Do you have any updates? Is there way to fix dts so that this does not
+> trigger on N900?
+>
+> If this is taking longer to fix, should c85823390215 be reverted in
+> the meantime? It does not seem particulary important/urgent...
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
-Changes from V1:
-- do not add duplicated tracepoint when redirection fails
----
- drivers/net/virtio_net.c | 54 +++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 42 insertions(+), 12 deletions(-)
+No patience between the v4.16 release candidates eh ;)
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 9bb9e56..426dcf7 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -504,6 +504,7 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
- 	page_off += *len;
- 
- 	while (--*num_buf) {
-+		int tailroom = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
- 		unsigned int buflen;
- 		void *buf;
- 		int off;
-@@ -518,7 +519,7 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
- 		/* guard against a misconfigured or uncooperative backend that
- 		 * is sending packet larger than the MTU.
- 		 */
--		if ((page_off + buflen) > PAGE_SIZE) {
-+		if ((page_off + buflen + tailroom) > PAGE_SIZE) {
- 			put_page(p);
- 			goto err_buf;
- 		}
-@@ -690,6 +691,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 	unsigned int truesize;
- 	unsigned int headroom = mergeable_ctx_to_headroom(ctx);
- 	bool sent;
-+	int err;
- 
- 	head_skb = NULL;
- 
-@@ -701,7 +703,12 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 		void *data;
- 		u32 act;
- 
--		/* This happens when rx buffer size is underestimated */
-+		/* This happens when rx buffer size is underestimated
-+		 * or headroom is not enough because of the buffer
-+		 * was refilled before XDP is set. This should only
-+		 * happen for the first several packets, so we don't
-+		 * care much about its performance.
-+		 */
- 		if (unlikely(num_buf > 1 ||
- 			     headroom < virtnet_get_headroom(vi))) {
- 			/* linearize data for XDP */
-@@ -736,9 +743,6 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 
- 		act = bpf_prog_run_xdp(xdp_prog, &xdp);
- 
--		if (act != XDP_PASS)
--			ewma_pkt_len_add(&rq->mrg_avg_pkt_len, len);
--
- 		switch (act) {
- 		case XDP_PASS:
- 			/* recalculate offset to account for any header
-@@ -770,6 +774,18 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
- 				goto err_xdp;
- 			rcu_read_unlock();
- 			goto xdp_xmit;
-+		case XDP_REDIRECT:
-+			err = xdp_do_redirect(dev, &xdp, xdp_prog);
-+			if (err) {
-+				if (unlikely(xdp_page != page))
-+					put_page(xdp_page);
-+				goto err_xdp;
-+			}
-+			*xdp_xmit = true;
-+			if (unlikely(xdp_page != page))
-+				goto err_xdp;
-+			rcu_read_unlock();
-+			goto xdp_xmit;
- 		default:
- 			bpf_warn_invalid_xdp_action(act);
- 		case XDP_ABORTED:
-@@ -1013,13 +1029,18 @@ static int add_recvbuf_big(struct virtnet_info *vi, struct receive_queue *rq,
- }
- 
- static unsigned int get_mergeable_buf_len(struct receive_queue *rq,
--					  struct ewma_pkt_len *avg_pkt_len)
-+					  struct ewma_pkt_len *avg_pkt_len,
-+					  unsigned int room)
- {
- 	const size_t hdr_len = sizeof(struct virtio_net_hdr_mrg_rxbuf);
- 	unsigned int len;
- 
--	len = hdr_len + clamp_t(unsigned int, ewma_pkt_len_read(avg_pkt_len),
-+	if (room)
-+		return PAGE_SIZE - room;
-+
-+	len = hdr_len +	clamp_t(unsigned int, ewma_pkt_len_read(avg_pkt_len),
- 				rq->min_buf_len, PAGE_SIZE - hdr_len);
-+
- 	return ALIGN(len, L1_CACHE_BYTES);
- }
- 
-@@ -1028,21 +1049,27 @@ static int add_recvbuf_mergeable(struct virtnet_info *vi,
- {
- 	struct page_frag *alloc_frag = &rq->alloc_frag;
- 	unsigned int headroom = virtnet_get_headroom(vi);
-+	unsigned int tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
-+	unsigned int room = SKB_DATA_ALIGN(headroom + tailroom);
- 	char *buf;
- 	void *ctx;
- 	int err;
- 	unsigned int len, hole;
- 
--	len = get_mergeable_buf_len(rq, &rq->mrg_avg_pkt_len);
--	if (unlikely(!skb_page_frag_refill(len + headroom, alloc_frag, gfp)))
-+	/* Extra tailroom is needed to satisfy XDP's assumption. This
-+	 * means rx frags coalescing won't work, but consider we've
-+	 * disabled GSO for XDP, it won't be a big issue.
-+	 */
-+	len = get_mergeable_buf_len(rq, &rq->mrg_avg_pkt_len, room);
-+	if (unlikely(!skb_page_frag_refill(len + room, alloc_frag, gfp)))
- 		return -ENOMEM;
- 
- 	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
- 	buf += headroom; /* advance address leaving hole at front of pkt */
- 	get_page(alloc_frag->page);
--	alloc_frag->offset += len + headroom;
-+	alloc_frag->offset += len + room;
- 	hole = alloc_frag->size - alloc_frag->offset;
--	if (hole < len + headroom) {
-+	if (hole < len + room) {
- 		/* To avoid internal fragmentation, if there is very likely not
- 		 * enough space for another buffer, add the remaining space to
- 		 * the current buffer.
-@@ -2576,12 +2603,15 @@ static ssize_t mergeable_rx_buffer_size_show(struct netdev_rx_queue *queue,
- {
- 	struct virtnet_info *vi = netdev_priv(queue->dev);
- 	unsigned int queue_index = get_netdev_rx_queue_index(queue);
-+	unsigned int headroom = virtnet_get_headroom(vi);
-+	unsigned int tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
- 	struct ewma_pkt_len *avg;
- 
- 	BUG_ON(queue_index >= vi->max_queue_pairs);
- 	avg = &vi->rq[queue_index].mrg_avg_pkt_len;
- 	return sprintf(buf, "%u\n",
--		       get_mergeable_buf_len(&vi->rq[queue_index], avg));
-+		       get_mergeable_buf_len(&vi->rq[queue_index], avg,
-+				       SKB_DATA_ALIGN(headroom + tailroom)));
- }
- 
- static struct rx_queue_attribute mergeable_rx_buffer_size_attribute =
--- 
-2.7.4
+commit 6662ae6af82df10259a70c7569b4c12ea7f3ba93
+("gpiolib: Keep returning EPROBE_DEFER when we should")
+
+and
+
+commit ce27fb2c56db6ccfe8099343bb4afdab15e77e7b
+("gpio: Handle deferred probing in of_find_gpio() properly")
+
+that are both in Torvalds' tree since yesterday should be fixing
+this, I think? Did you try just using the upstream HEAD?
+
+Yours,
+Linus Walleij
