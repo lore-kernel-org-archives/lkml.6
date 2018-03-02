@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtL9mCtPjCddgR1ebPbpZOzIrdJCOny01Rhwxtq1SMmlZYS30UbDq6PY7z2Btc5irEkOFS9
-ARC-Seal: i=1; a=rsa-sha256; t=1519981070; cv=none;
+X-Google-Smtp-Source: AG47ELtM4B1nGWH7q0rpmrEW/opjYVCF1S7CRFYrWDdaGB2SQ6FGax7l2u9Kjk17TUs+ZX47CETa
+ARC-Seal: i=1; a=rsa-sha256; t=1519981067; cv=none;
         d=google.com; s=arc-20160816;
-        b=AryA1obrSow+ddczt9y4Da8AZveeKzfzvFqLK474KN8iz32RFHH3/zWHdZzY05MMRZ
-         q5Jd3v96s1imkib82Zx0YpTvn9R+lNO1ohoq8z4q5O6xkpe4Ey4Vm1eP7FRJaGbO4yPv
-         YjabIgOYamx/vWTRQUZYFhlLt8FoEkpXrc3Y5Hy/UT5/iGT50XiaudLjIS5hL073WvpQ
-         /BX/SFwLZcbzGlI2FZ9AIlIfTuGrJPyyRNUCZZFPf6V7P5steEtuQnORDJPYvJA2egi1
-         jH+v0VUAq9urqSwM24L5Hhbz9a9SH4+mj0/rY8Jx9lAZHtCpHUGegByEzEk4AgsohRg9
-         8Zxg==
+        b=drr9VQpli7jMjFaiUQPdQdHsWemly7vDaHR3SdROyRfyGmmV52YpZvtL41H9E0B7ZK
+         ojTyLmJflZUpS7HY3mRIswevC9tlSDSkHbkm4TMqNrIjanhFSk3mHjl7ZltRmFZNuCcU
+         cH82GucjW2BlCqTqHAm5W7zsZVAR9cXY0e4fYZ00Zp0YJuLD6fL/Hybh0hy4DIErXryn
+         w9o2pFWKoxiYHkDYhCLyafVLaknAsiT11hSdpo4AR5dr6km1pwPKecO4gR3/Ep0ullx9
+         ROnIN7ZTBwE4SGZwJY5XeNd9AsLN2437zxRRX/O+AOmsuYQul17JUa9cH/ADAZEIKsS+
+         AquA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4+Rb7dRZiXtAQVJQEGjfhiX39WL4bkUMgxNt06+XmsE=;
-        b=cRvs92KmpOAQN43xmJe64cZ745u++teLc6EuR2BTyA6+apfc5LRPTwfoaek1Mn1bZJ
-         XONsCVXp8G76Mi5AEm0qoNS3lxF/Wne+AJ7C/5U6tEOEl0I2n2okZtBYoCp4VZtEkX6i
-         W1cjFlqSaoGwNAe1W82R/68ICQLKGdGMadTuzrtJFXix9aJweNTmpBvu4zAbo3g/nW+K
-         +4IfH4Mj/A72Zx5xMOWNSy7GZJHKmtzf5CcURHt1Bjq4QswBb0NZCPtoH1iHcrt9JnTr
-         Nn84MwmKHipKnx4f86BtgI4vP8g1rjfzHNVrrW2usgZq2CBd0LBHn1my2rVXClFGb2lZ
-         Zjvw==
+        bh=qCyxlM4CmlmaF3JW3gllC7AOC15LeV3KyxITUZvVyk0=;
+        b=Ttjb0shxsC4on5uF1mgIUT8v53jQMKbdeRnNuwfVbRf/WCGX2X0Xhj1pyL4wQTHfNW
+         XmlzpQcyg96u3JB9oGQo2hxDbuCP6ceGPOuSPWAr0hFMfQYJV2w8Ho6REB+ybEOj/VuE
+         YCFAcuwtRAs9COKbLFxRtsZAHuxrCFnAYSZ/p3eJYV74Le6X8X8i2EHfirQ8QLgItjqX
+         sskgwRsYaxnTyaQCxCOliaQmU5+p9qK1DNmIVX0Llys41vc2rP+1L+48JzzRfVxILQ+F
+         MFdyyadTOl65PB1HDQ+ppnMqCBxEijG7UsdZdJObDXJO/B2HlJDYjYs/jAnxl8IO7rsx
+         VCkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	"David S. Miller" <davem@davemloft.net>,
+	Tushar Dave <tushar.n.dave@oracle.com>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 13/56] net: phy: xgene: disable clk on error paths
-Date: Fri,  2 Mar 2018 09:50:59 +0100
-Message-Id: <20180302084450.300845854@linuxfoundation.org>
+Subject: [PATCH 4.9 39/56] e1000: fix disabling already-disabled warning
+Date: Fri,  2 Mar 2018 09:51:25 +0100
+Message-Id: <20180302084451.554988761@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815671358161748?=
-X-GMAIL-MSGID: =?utf-8?q?1593815671358161748?=
+X-GMAIL-THRID: =?utf-8?q?1593815300525436676?=
+X-GMAIL-MSGID: =?utf-8?q?1593815667996076679?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,81 +51,179 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Tushar Dave <tushar.n.dave@oracle.com>
 
 
-[ Upstream commit ab14436065c8066c265540312742390d6d07ddd2 ]
+[ Upstream commit 0b76aae741abb9d16d2c0e67f8b1e766576f897d ]
 
-There are several error paths in xgene_mdio_probe(),
-where clk is left undisabled. The patch fixes them.
+This patch adds check so that driver does not disable already
+disabled device.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+[   44.637743] advantechwdt: Unexpected close, not stopping watchdog!
+[   44.997548] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input6
+[   45.013419] e1000 0000:00:03.0: disabling already-disabled device
+[   45.013447] ------------[ cut here ]------------
+[   45.014868] WARNING: CPU: 1 PID: 71 at drivers/pci/pci.c:1641 pci_disable_device+0xa1/0x105:
+						pci_disable_device at drivers/pci/pci.c:1640
+[   45.016171] CPU: 1 PID: 71 Comm: rcu_perf_shutdo Not tainted 4.14.0-01330-g3c07399 #1
+[   45.017197] task: ffff88011bee9e40 task.stack: ffffc90000860000
+[   45.017987] RIP: 0010:pci_disable_device+0xa1/0x105:
+						pci_disable_device at drivers/pci/pci.c:1640
+[   45.018603] RSP: 0000:ffffc90000863e30 EFLAGS: 00010286
+[   45.019282] RAX: 0000000000000035 RBX: ffff88013a230008 RCX: 0000000000000000
+[   45.020182] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000203
+[   45.021084] RBP: ffff88013a3f31e8 R08: 0000000000000001 R09: 0000000000000000
+[   45.021986] R10: ffffffff827ec29c R11: 0000000000000002 R12: 0000000000000001
+[   45.022946] R13: ffff88013a230008 R14: ffff880117802b20 R15: ffffc90000863e8f
+[   45.023842] FS:  0000000000000000(0000) GS:ffff88013fd00000(0000) knlGS:0000000000000000
+[   45.024863] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   45.025583] CR2: ffffc900006d4000 CR3: 000000000220f000 CR4: 00000000000006a0
+[   45.026478] Call Trace:
+[   45.026811]  __e1000_shutdown+0x1d4/0x1e2:
+						__e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:5162
+[   45.027344]  ? rcu_perf_cleanup+0x2a1/0x2a1:
+						rcu_perf_shutdown at kernel/rcu/rcuperf.c:627
+[   45.027883]  e1000_shutdown+0x14/0x3a:
+						e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:5235
+[   45.028351]  device_shutdown+0x110/0x1aa:
+						device_shutdown at drivers/base/core.c:2807
+[   45.028858]  kernel_power_off+0x31/0x64:
+						kernel_power_off at kernel/reboot.c:260
+[   45.029343]  rcu_perf_shutdown+0x9b/0xa7:
+						rcu_perf_shutdown at kernel/rcu/rcuperf.c:637
+[   45.029852]  ? __wake_up_common_lock+0xa2/0xa2:
+						autoremove_wake_function at kernel/sched/wait.c:376
+[   45.030414]  kthread+0x126/0x12e:
+						kthread at kernel/kthread.c:233
+[   45.030834]  ? __kthread_bind_mask+0x8e/0x8e:
+						kthread at kernel/kthread.c:190
+[   45.031399]  ? ret_from_fork+0x1f/0x30:
+						ret_from_fork at arch/x86/entry/entry_64.S:443
+[   45.031883]  ? kernel_init+0xa/0xf5:
+						kernel_init at init/main.c:997
+[   45.032325]  ret_from_fork+0x1f/0x30:
+						ret_from_fork at arch/x86/entry/entry_64.S:443
+[   45.032777] Code: 00 48 85 ed 75 07 48 8b ab a8 00 00 00 48 8d bb 98 00 00 00 e8 aa d1 11 00 48 89 ea 48 89 c6 48 c7 c7 d8 e4 0b 82 e8 55 7d da ff <0f> ff b9 01 00 00 00 31 d2 be 01 00 00 00 48 c7 c7 f0 b1 61 82
+[   45.035222] ---[ end trace c257137b1b1976ef ]---
+[   45.037838] ACPI: Preparing to enter system sleep state S5
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tushar Dave <tushar.n.dave@oracle.com>
+Tested-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-xgene.c |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000.h      |    3 +-
+ drivers/net/ethernet/intel/e1000/e1000_main.c |   27 +++++++++++++++++++++-----
+ 2 files changed, 24 insertions(+), 6 deletions(-)
 
---- a/drivers/net/phy/mdio-xgene.c
-+++ b/drivers/net/phy/mdio-xgene.c
-@@ -197,8 +197,11 @@ static int xgene_mdio_reset(struct xgene
- 	}
+--- a/drivers/net/ethernet/intel/e1000/e1000.h
++++ b/drivers/net/ethernet/intel/e1000/e1000.h
+@@ -331,7 +331,8 @@ struct e1000_adapter {
+ enum e1000_state_t {
+ 	__E1000_TESTING,
+ 	__E1000_RESETTING,
+-	__E1000_DOWN
++	__E1000_DOWN,
++	__E1000_DISABLED
+ };
  
- 	ret = xgene_enet_ecc_init(pdata);
--	if (ret)
-+	if (ret) {
-+		if (pdata->dev->of_node)
-+			clk_disable_unprepare(pdata->clk);
- 		return ret;
-+	}
- 	xgene_gmac_reset(pdata);
+ #undef pr_fmt
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -940,7 +940,7 @@ static int e1000_init_hw_struct(struct e
+ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	struct net_device *netdev;
+-	struct e1000_adapter *adapter;
++	struct e1000_adapter *adapter = NULL;
+ 	struct e1000_hw *hw;
  
- 	return 0;
-@@ -364,8 +367,10 @@ static int xgene_mdio_probe(struct platf
- 		return ret;
+ 	static int cards_found;
+@@ -950,6 +950,7 @@ static int e1000_probe(struct pci_dev *p
+ 	u16 tmp = 0;
+ 	u16 eeprom_apme_mask = E1000_EEPROM_APME;
+ 	int bars, need_ioport;
++	bool disable_dev = false;
  
- 	mdio_bus = mdiobus_alloc();
--	if (!mdio_bus)
--		return -ENOMEM;
-+	if (!mdio_bus) {
-+		ret = -ENOMEM;
-+		goto out_clk;
-+	}
- 
- 	mdio_bus->name = "APM X-Gene MDIO bus";
- 
-@@ -394,7 +399,7 @@ static int xgene_mdio_probe(struct platf
- 		mdio_bus->phy_mask = ~0;
- 		ret = mdiobus_register(mdio_bus);
- 		if (ret)
--			goto out;
-+			goto out_mdiobus;
- 
- 		acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_HANDLE(dev), 1,
- 				    acpi_register_phy, NULL, mdio_bus, NULL);
-@@ -402,16 +407,20 @@ static int xgene_mdio_probe(struct platf
- 	}
- 
- 	if (ret)
--		goto out;
-+		goto out_mdiobus;
- 
- 	pdata->mdio_bus = mdio_bus;
- 	xgene_mdio_status = true;
- 
- 	return 0;
- 
--out:
-+out_mdiobus:
- 	mdiobus_free(mdio_bus);
- 
-+out_clk:
-+	if (dev->of_node)
-+		clk_disable_unprepare(pdata->clk);
-+
- 	return ret;
+ 	/* do not allocate ioport bars when not needed */
+ 	need_ioport = e1000_is_need_ioport(pdev);
+@@ -1250,11 +1251,13 @@ err_mdio_ioremap:
+ 	iounmap(hw->ce4100_gbe_mdio_base_virt);
+ 	iounmap(hw->hw_addr);
+ err_ioremap:
++	disable_dev = !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
+ 	free_netdev(netdev);
+ err_alloc_etherdev:
+ 	pci_release_selected_regions(pdev, bars);
+ err_pci_reg:
+-	pci_disable_device(pdev);
++	if (!adapter || disable_dev)
++		pci_disable_device(pdev);
+ 	return err;
  }
  
+@@ -1272,6 +1275,7 @@ static void e1000_remove(struct pci_dev
+ 	struct net_device *netdev = pci_get_drvdata(pdev);
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
+ 	struct e1000_hw *hw = &adapter->hw;
++	bool disable_dev;
+ 
+ 	e1000_down_and_stop(adapter);
+ 	e1000_release_manageability(adapter);
+@@ -1290,9 +1294,11 @@ static void e1000_remove(struct pci_dev
+ 		iounmap(hw->flash_address);
+ 	pci_release_selected_regions(pdev, adapter->bars);
+ 
++	disable_dev = !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
+ 	free_netdev(netdev);
+ 
+-	pci_disable_device(pdev);
++	if (disable_dev)
++		pci_disable_device(pdev);
+ }
+ 
+ /**
+@@ -5166,7 +5172,8 @@ static int __e1000_shutdown(struct pci_d
+ 	if (netif_running(netdev))
+ 		e1000_free_irq(adapter);
+ 
+-	pci_disable_device(pdev);
++	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
++		pci_disable_device(pdev);
+ 
+ 	return 0;
+ }
+@@ -5210,6 +5217,10 @@ static int e1000_resume(struct pci_dev *
+ 		pr_err("Cannot enable PCI device from suspend\n");
+ 		return err;
+ 	}
++
++	/* flush memory to make sure state is correct */
++	smp_mb__before_atomic();
++	clear_bit(__E1000_DISABLED, &adapter->flags);
+ 	pci_set_master(pdev);
+ 
+ 	pci_enable_wake(pdev, PCI_D3hot, 0);
+@@ -5284,7 +5295,9 @@ static pci_ers_result_t e1000_io_error_d
+ 
+ 	if (netif_running(netdev))
+ 		e1000_down(adapter);
+-	pci_disable_device(pdev);
++
++	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
++		pci_disable_device(pdev);
+ 
+ 	/* Request a slot slot reset. */
+ 	return PCI_ERS_RESULT_NEED_RESET;
+@@ -5312,6 +5325,10 @@ static pci_ers_result_t e1000_io_slot_re
+ 		pr_err("Cannot re-enable PCI device after reset.\n");
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 	}
++
++	/* flush memory to make sure state is correct */
++	smp_mb__before_atomic();
++	clear_bit(__E1000_DISABLED, &adapter->flags);
+ 	pci_set_master(pdev);
+ 
+ 	pci_enable_wake(pdev, PCI_D3hot, 0);
