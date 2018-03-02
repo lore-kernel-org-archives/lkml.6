@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsPDYmskoexLRKqT9NFBkfjqHW1ul8EsuJSw1Uwix9bm/j7wHTlmraz0nNXmdS5dThC3Abb
-ARC-Seal: i=1; a=rsa-sha256; t=1519981043; cv=none;
+X-Google-Smtp-Source: AG47ELu7X4YiGFyy0Aw8ebgGvEH+beXdqoF6ZkSR9F2bDVo0aoo//uCFg0asPKqOQaXybR/8+r0n
+ARC-Seal: i=1; a=rsa-sha256; t=1519981037; cv=none;
         d=google.com; s=arc-20160816;
-        b=aQBKDjMBQjHmhPF3etJT//h3OdUhO2wrkZKTlDXKYiXU044spiH/L5ugQlD6kQGZ9s
-         iDvucx4Ipix3/RETF/8fpelA4oR9YQD93ppIPLnSzkATsYdUFAc7Ouksnj5WWlgcDHgD
-         8RxSZDfXH+TyJ0BdzagP3kNf9sjhvaHzd1Q9E84iz3LGSf8SaXIitOzM1VVLA/fGcysp
-         cBAIdMQWXUaio3F+QoJ4QDF9xP6bIYMh4i/QboSjGYQc4avWFbUt+T4yP08gFbQ0MoqV
-         N1e/MAu92UvZBX+UmBbA7OnKxOvn2tS95K9W3JQkbsUHaVz/MmReUI9JfRHR+ENZa4/J
-         N/gg==
+        b=xZ/p1SE1u+VxUCM/xS8gVqxKmpXnEjuh22ZFiiZaWcslXbdZc4Wu+gDQ34EAWUUpjG
+         /qLcwVbD+4RxBeuiJH4A3jBfc7LA9GWxGkt6wrs3NqUPOhN33YGlv9NbyspQ3yFuA29R
+         2mu0QKcKX4v0YE+tMayPEvyYqvlHpm64Yy+1Z0BcdWGXcZcQLUcw8Hz1mqkGBCOUpiZF
+         usZm19TtAU9LOnbak6D1wVbPw1dmaQOqb758/30Vky2lU6BaoWWaHHO7KC8xs2WdI34z
+         tXDcR3riWgnMTPeR4Nj5RUnz1rdaWx6akWnB+kmxzvkSGJF+147LqT+65/9zWZvt4zXo
+         eaVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PGEqqXItbC9IU0zDTPdL1NU0sheZGr2vna5ShnXUgXY=;
-        b=RjEyW20do9FWq+RvhGn/ekLsJrtG5XIZsOXtQCjJN+67EDnzxFS0dwpFXhtJps2Kia
-         7VGXkeiovonENtygj8kIyIyXofvdsvhNj6WzY4PL/4yhkK31Uv9SFRyr0z22YrF427h7
-         c2kAzvD/JkXhjJBxrK5fR0RUkYXBIql0Q44+RYZHONi75lNi8x1ruSkMjp20dQtFM754
-         TvhvfIiLzclSU+dYBUP+udQ5+40P5gGia9NbcROpDcav5jVJrl8vNBFfwq6jTnk2CPvB
-         AuPrhy3ZbueO1tKpXoeMZrsttQxutb2kCuxyiuP4CWzy3bnRUWzM9LFjoRRoG5ZIrDJx
-         54Eg==
+        bh=fhevZFI3ux3ozyOMVtpWP417Vr/guplhoofjSvJknV0=;
+        b=hRaBv1LgYh1vl4qFurUOPfyjQxhPaSD8JW1x6QkZNQuuEsU/NDXlcaBzb/2QmqQ0js
+         tIkmWJI0fpHWiZPsnYTmONVG7+TVCSIPx8lF0SdkwVy8dm6cST2EiUmgsQTPwKmaAxV5
+         TJOMbsvpLr4Ct0aFePZqWxBFMOlaO5XabHk6JUejJnQp0VOCnhp03MNFBZ6RgWqoBS1q
+         ZcUHA+kIcXiqnbI/LiKXvzzdIKtIBUOJUBVkoKRDivR3T0FwmNRK/uYwZaMPDAlzVW/A
+         lpE3FFeDmM1XMZXuQpUS9rRht8anImKhYYXbIJE7goq5nU/vaaqwHKCa9Gb48fysPLAk
+         s+CA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dmitry Torokhov <dtor@chromium.org>,
-	Joe Perches <joe@perches.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Max Gurtovoy <maxg@mellanox.com>,
+	Nitzan Carmi <nitzanc@mellanox.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 32/56] genirq: Guard handle_bad_irq log messages
-Date: Fri,  2 Mar 2018 09:51:18 +0100
-Message-Id: <20180302084451.205385572@linuxfoundation.org>
+Subject: [PATCH 4.9 31/56] IB/mlx5: Fix mlx5_ib_alloc_mr error flow
+Date: Fri,  2 Mar 2018 09:51:17 +0100
+Message-Id: <20180302084451.153286363@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815642898421195?=
-X-GMAIL-MSGID: =?utf-8?q?1593815642898421195?=
+X-GMAIL-THRID: =?utf-8?q?1593815636035615151?=
+X-GMAIL-MSGID: =?utf-8?q?1593815636035615151?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,58 +52,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Nitzan Carmi <nitzanc@mellanox.com>
 
 
-[ Upstream commit 11bca0a83f83f6093d816295668e74ef24595944 ]
+[ Upstream commit 45e6ae7ef21b907dacb18da62d5787d74a31d860 ]
 
-An interrupt storm on a bad interrupt will cause the kernel
-log to be clogged.
+ibmr.device is being set only after ib_alloc_mr() is
+(successfully) complete. Therefore, in case mlx5_core_create_mkey()
+return with error, the error flow calls mlx5_free_priv_descs()
+which uses ibmr.device (which doesn't exist yet), causing
+a NULL dereference oops.
 
-[   60.089234] ->handle_irq():  ffffffffbe2f803f,
-[   60.090455] 0xffffffffbf2af380
-[   60.090510] handle_bad_irq+0x0/0x2e5
-[   60.090522] ->irq_data.chip(): ffffffffbf2af380,
-[   60.090553]    IRQ_NOPROBE set
-[   60.090584] ->handle_irq():  ffffffffbe2f803f,
-[   60.090590] handle_bad_irq+0x0/0x2e5
-[   60.090596] ->irq_data.chip(): ffffffffbf2af380,
-[   60.090602] 0xffffffffbf2af380
-[   60.090608] ->action():           (null)
-[   60.090779] handle_bad_irq+0x0/0x2e5
+To fix this, the IB device should be set in the mr struct earlier
+stage (e.g. prior to calling mlx5_core_create_mkey()).
 
-This was seen when running an upstream kernel on Acer Chromebook R11.  The
-system was unstable as result.
-
-Guard the log message with __printk_ratelimit to reduce the impact.  This
-won't prevent the interrupt storm from happening, but at least the system
-remains stable.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dmitry Torokhov <dtor@chromium.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-Link: https://lkml.kernel.org/r/1512234784-21038-1-git-send-email-linux@roeck-us.net
+Fixes: 8a187ee52b04 ("IB/mlx5: Support the new memory registration API")
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Nitzan Carmi <nitzanc@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/irq/debug.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/infiniband/hw/mlx5/mr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/irq/debug.h
-+++ b/kernel/irq/debug.h
-@@ -11,6 +11,11 @@
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -1648,6 +1648,7 @@ struct ib_mr *mlx5_ib_alloc_mr(struct ib
+ 	MLX5_SET(mkc, mkc, access_mode, mr->access_mode);
+ 	MLX5_SET(mkc, mkc, umr_en, 1);
  
- static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
- {
-+	static DEFINE_RATELIMIT_STATE(ratelimit, 5 * HZ, 5);
-+
-+	if (!__ratelimit(&ratelimit))
-+		return;
-+
- 	printk("irq %d, desc: %p, depth: %d, count: %d, unhandled: %d\n",
- 		irq, desc, desc->depth, desc->irq_count, desc->irqs_unhandled);
- 	printk("->handle_irq():  %p, ", desc->handle_irq);
++	mr->ibmr.device = pd->device;
+ 	err = mlx5_core_create_mkey(dev->mdev, &mr->mmkey, in, inlen);
+ 	if (err)
+ 		goto err_destroy_psv;
