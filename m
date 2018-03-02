@@ -1,54 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428722AbeCBOsk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 09:48:40 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35766 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1426414AbeCBOsi (ORCPT
+        id S1428743AbeCBOux (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 09:50:53 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35045 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1426414AbeCBOuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 09:48:38 -0500
-X-Google-Smtp-Source: AG47ELvd4OSO5njB4O9Sqm4yo37KvGDdBoeSgGl/H7kTwzWuaWICVd341E6W8vXQ4l7JDoGOeQCOjg==
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 4.16-rc4
-Date: Fri,  2 Mar 2018 15:48:24 +0100
-Message-Id: <1520002104-12128-1-git-send-email-idryomov@gmail.com>
-X-Mailer: git-send-email 2.4.3
+        Fri, 2 Mar 2018 09:50:51 -0500
+X-Google-Smtp-Source: AG47ELsE6xAbf2I1Lh1jNpKdOZlhXqt9aRHCrSVNoj/TNxTx6bXThsJAuMj1E7DhsyfG6fH/AAfnlQ==
+Date: Fri, 2 Mar 2018 23:47:32 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: "Du, Changbin" <changbin.du@intel.com>, acme@kernel.org,
+        peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180302144732.GA2471@danjae.aot.lge.com>
+References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
+ <20180302105254.234axj7b3nixakav@intel.com>
+ <20180302113845.GC16348@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180302113845.GC16348@krava>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
+On Fri, Mar 02, 2018 at 12:38:45PM +0100, Jiri Olsa wrote:
+> On Fri, Mar 02, 2018 at 06:52:54PM +0800, Du, Changbin wrote:
+> > Hello, any comment?
+> 
+> sry, overlooked this one
+> 
+> SNIP
+> 
+> > > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+> > > index 68b65b1..c660fe6 100644
+> > > --- a/tools/perf/util/thread.c
+> > > +++ b/tools/perf/util/thread.c
+> > > @@ -212,6 +212,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
+> > >  			unwind__flush_access(thread);
+> > >  	}
+> > >  
+> > > +	thread->comm_changed = true;
+> > >  	thread->comm_set = true;
+> > >  
+> > >  	return 0;
+> > > diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+> > > index 40cfa36..b9a328b 100644
+> > > --- a/tools/perf/util/thread.h
+> > > +++ b/tools/perf/util/thread.h
+> > > @@ -27,6 +27,7 @@ struct thread {
+> > >  	int			cpu;
+> > >  	refcount_t		refcnt;
+> > >  	char			shortname[3];
+> > > +	bool			comm_changed;
+> 
+> I don't like that it's in struct thread and set by generic function,
+> and just one command (sched) checks/sets it back.. I'd rather see it
+> in thread::priv area..
 
-  Linux 4.16-rc3 (2018-02-25 18:50:41 -0800)
+100% agreed.
 
-are available in the git repository at:
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-4.16-rc4
+> on the other hand it's simple enough and looks
+> like generic solution would be more tricky
 
-for you to fetch changes up to 1c789249578895bb14ab62b4327306439b754857:
+What about adding perf_sched__process_comm() to set it in the
+thread::priv?
 
-  ceph: fix potential memory leak in init_caches() (2018-03-01 16:39:47 +0100)
-
-----------------------------------------------------------------
-A cap handling fix from Zhi that ensures that metadata writeback isn't
-delayed and three error path memory leak fixups from Chengguang.
-
-----------------------------------------------------------------
-Chengguang Xu (3):
-      libceph, ceph: avoid memory leak when specifying same option several times
-      ceph: fix dentry leak when failing to init debugfs
-      ceph: fix potential memory leak in init_caches()
-
-Zhi Zhang (1):
-      ceph: flush dirty caps of unlinked inode ASAP
-
- fs/ceph/caps.c         | 26 ++++++++++++++++++++++++++
- fs/ceph/dir.c          | 28 +++++-----------------------
- fs/ceph/super.c        | 27 +++++++++++++--------------
- fs/ceph/super.h        |  2 +-
- net/ceph/ceph_common.c |  7 +++++++
- 5 files changed, 52 insertions(+), 38 deletions(-)
+Thanks,
+Namhyung
