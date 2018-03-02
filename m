@@ -1,87 +1,162 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AG47ELuN3tZqPjzGiIgQddUvtRB3D52fHxspMYYt3TRb1goHZJfvXyZ+ZKfElj1EWxQsYl/Iz0Fo
-ARC-Seal: i=1; a=rsa-sha256; t=1520522275; cv=none;
+Return-Path: <kkamagui@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520022621; cv=none;
         d=google.com; s=arc-20160816;
-        b=xqMvXPpr3D5e91dH1u0qyf6Ttj0icyooWFLAMjlY/MGh6LcCcCVmw80dv6g/bJMF+P
-         HRoGW++pgtVWCMsn2owinWCERdh4lECzu0Sdmn/VBrjUeRD3PdS94jyfYF0vSpr7w46k
-         Cd8Jn5JEp34H/vuqU0+IJEpz7y+cbghMHWBNhWBUuwgnlhC1y4gIf2Q2wAU7Y66kZyiT
-         1l8jrfUX8B1KuTA4g6CY60wGBHBglLnkFxblesD0tW3Zq2w0AJ7vmxFaPnSlbCbSyzEQ
-         DG+OdjmgLJivsF0w8zNUyIgVBzm2MHEa4vLbdTRcsyiO/c0vUoojjGOgcVOuHbspRck0
-         0sCQ==
+        b=U3bYtL1KwJfC6LSVCkNffqefoyvxdGBQZ1x62q745g+m1bLq7cdt3t5DBVHjzuVSTO
+         cXHMEI3g2cWY1DT70KSQNXimuwdlXEeCsBpuqW3uVlyWgOQfy0fCP+v6tVtioWFuYbG3
+         c6GR6sHf4+cM8vRdicmPsRMkK0Ee37Thl+Cgqq61/yT9G/0BNHwgrdQzU+n6Nz5Cc0+T
+         BM/Ugsz93lVnGR0xyQXgNy5CG/WJhZzzZCBZ3TFRSItEilutGWxsgV6WeJR8ysrczcuM
+         5HTLzwEx2fKF/C5wunvU2Re0fLGOHfqSaIhI59UNqcQGeiFfXhGu4LyAZHgU6wKfZAT1
+         bb/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=XLDlG1ayQrHgcJVmgqHNvAzIHO+uGbl9799YPd18G7k=;
-        b=0XrCiRTM3qt4pl+N4Ut5YNtGmL23RWX7TQw8qluBVtvzocTpmwF2vZYEDE1v4jRBN6
-         V2VaK+oWLu/CWy0moTjiMjbqGAn4JtIiY19l/vFGyAm13P39PnKaI4DZigRMzWUxc5YM
-         P0IAUxREUd1r6aRZME3MF03rh1AM6DyoL/1+6/V6Afs75Hr1SYfKoVZjzryEP8J9vKUn
-         mf6ChbhsZvTuHg/Lodn454yrOgjfWrokM7ShbpIp0CogVLwhMG+LXtbgpis5YgDLjW6P
-         dKU00LCT2HSz0GcVpw2tzeMghHGOlfWWRm/Om0Pws4ALzxdLVEuM9TQVXA38KgNIT958
-         YeKA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=iQblxkFK1kkjRY4xHANKMjPuyPE1MmBgMJ80VqMY5+c=;
+        b=OLFnaJf/e8xapBz/K33aZ8UeRpp+76tEe9XxEZSH1EYLQ9979VnzQV6y7LEeIqiVKO
+         /QYE6fUDkn60q+tXW6zvmzMw8vSKQcc8cvq4PVviaSfvXWbNF5IbnnC5Rt9FDjxC9uKU
+         r8V+mlNI7tRKzolxykS7VfFm8WyxgkOFptuESVDs/+L5jsVv4fRIa8iWPffaD4CXlb28
+         y+mnnJO7k8c5M6+TUq/F6pC7MTCi1FCq4tCKBvXndRSdylEbMZB/yDUMSlGJIaKZcAxp
+         3X+LW9ivJK+j/FMOPKCt0pqoi+sz2O+oeRbFA00kbH9ibkvX+zPHl2UpjwwMdBrIKaM5
+         k0lw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YgX0entC;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Thu, 8 Mar 2018 09:17:54 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YgX0entC;
+       spf=pass (google.com: domain of kkamagui@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=kkamagui@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuW5SkanUcxjjzjSQVc9gM5ftWAZmbIAn8OzGRSD+gw5jV4XbzT6s4vxvSNM6vvs7cubB6YIQ==
+From: Seunghun Han <kkamagui@gmail.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix compilation of 64-bit kernel with 32-bit compiler
-Message-ID: <20180308151754.d7wozkcuapi4bpvn@treble>
-References: <alpine.LRH.2.02.1803080107001.7847@file01.intranet.prod.int.rdu2.redhat.com>
- <20180308073940.GT25181@hirez.programming.kicks-ass.net>
- <alpine.LRH.2.02.1803080406590.2871@file01.intranet.prod.int.rdu2.redhat.com>
- <20180308093944.GU25181@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180308093944.GU25181@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+	Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH V3] x86: mce: fix kernel panic when check_interval is changed
+Date: Sat,  3 Mar 2018 05:27:06 +0900
+Message-Id: <20180302202706.9434-1-kkamagui@gmail.com>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594348785980298320?=
-X-GMAIL-MSGID: =?utf-8?q?1594383165773232178?=
+X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
+X-GMAIL-MSGID: =?utf-8?q?1593859239985076756?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 10:39:44AM +0100, Peter Zijlstra wrote:
-> On Thu, Mar 08, 2018 at 04:09:30AM -0500, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Thu, 8 Mar 2018, Peter Zijlstra wrote:
-> > 
-> > > On Thu, Mar 08, 2018 at 01:11:26AM -0500, Mikulas Patocka wrote:
-> > > > The patch b5bc2231b8ad4387c9641f235ca0ad8cd300b6df ("objtool: Add 
-> > > > retpoline validation") broke compiling 64-bit kernel with 32-bit compiler.
-> > > > 
-> > > > This patch fixes the following error and a large number of "can't find
-> > > > rela for retpoline_safe" errors that occur when using x32 or i386 gcc.
-> > > > 
-> > > > You shouldn't use the type 'unsigned long' in objtool at all - because its
-> > > > size depends on the compiler and not on the kernel you are compiling.
-> > > 
-> > > Your patch is wrong because the data field is actually a long. A correct
-> > > patch is already in merged in tip.
-> > 
-> > I'm wondering, why is objtool using 'unsigned long' at all? Why not 
-> > uint32_t and uint64_t? The size of 'unsigned long' is dependent on the 
-> > compiler, so it will lead to different behavior.
-> 
-> Because pointers... As Josh said, I should've used the right ELF methods
-> which use the object's ABI.
+I am Seunghun Han and a senior security researcher at National Security
+Research Institute of South Korea.
 
-But there are still a few other places where objtool uses longs
-unnecessarily.  Those should probably be converted.  Patches welcome...
+I found a security issue which can make kernel panic in userspace. After
+analyzing the issue carefully, I found that MCE driver in the kernel has a
+problem which can be occurred in SMP environment.
 
+The check_interval file in
+/sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
+global timer value for MCE polling. If it is changed by one CPU, MCE driver
+in kernel calls mce_restart() function in store_int_with_restart() function
+and broadcasts the event to other CPUs to delete and restart MCE polling
+timer.
+
+The __mcheck_cpu_init_timer() function which is called by mce_restart()
+function initializes the mce_timer variable, and the "lock" in mce_timer is
+also reinitialized. If more than one CPU write a specific value to
+check_interval file concurrently, one can initialize the "lock" in mce_timer
+while the others are handling "lock" in mce_timer. This problem causes some
+synchronization errors such as kernel panic and kernel hang. Other functions
+such as set_ignore_ce(), set_cmci_disabled(), and mce_enable_ce() also
+have synchronization problems.
+
+It could be a security problem because the attacker could make kernel panic
+by writing a value to the check_interval file in userspace, and it could be
+used for Denial-of-Service (DoS) attack.
+
+To fix this problem, I added a mce_sysfs_mutex to serialize requests for
+timer and sysfs functions.
+
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+---
+Changes since v2: add a mutex to sysfs functions according to review
+result.
+Changes since v1: add mce_sysfs_mutex according to review result.
+
+ arch/x86/kernel/cpu/mcheck/mce.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 706584681a4c..243f46a40efb 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -55,6 +55,7 @@
+ #include "mce-internal.h"
+ 
+ static DEFINE_MUTEX(mce_log_mutex);
++static DEFINE_MUTEX(mce_sysfs_mutex);
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/mce.h>
+@@ -2045,8 +2046,11 @@ static void mce_enable_ce(void *all)
+ 		return;
+ 	cmci_reenable();
+ 	cmci_recheck();
+-	if (all)
++	if (all) {
++		mutex_lock(&mce_sysfs_mutex);
+ 		__mcheck_cpu_init_timer();
++		mutex_unlock(&mce_sysfs_mutex);
++	}
+ }
+ 
+ static struct bus_type mce_subsys = {
+@@ -2090,6 +2094,7 @@ static ssize_t set_ignore_ce(struct device *s,
+ 	if (kstrtou64(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.ignore_ce ^ !!new) {
+ 		if (new) {
+ 			/* disable ce features */
+@@ -2102,6 +2107,8 @@ static ssize_t set_ignore_ce(struct device *s,
+ 			on_each_cpu(mce_enable_ce, (void *)1, 1);
+ 		}
+ 	}
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
+ }
+ 
+@@ -2114,6 +2121,7 @@ static ssize_t set_cmci_disabled(struct device *s,
+ 	if (kstrtou64(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.cmci_disabled ^ !!new) {
+ 		if (new) {
+ 			/* disable cmci */
+@@ -2125,6 +2133,8 @@ static ssize_t set_cmci_disabled(struct device *s,
+ 			on_each_cpu(mce_enable_ce, NULL, 1);
+ 		}
+ 	}
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
+ }
+ 
+@@ -2132,8 +2142,16 @@ static ssize_t store_int_with_restart(struct device *s,
+ 				      struct device_attribute *attr,
+ 				      const char *buf, size_t size)
+ {
++	unsigned long old_check_interval = check_interval;
+ 	ssize_t ret = device_store_int(s, attr, buf, size);
++
++	if (check_interval == old_check_interval)
++		return ret;
++
++	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return ret;
+ }
+ 
 -- 
-Josh
+2.16.2
