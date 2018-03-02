@@ -1,183 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946223AbeCBKcZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:32:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35694 "EHLO mx2.suse.de"
+        id S1946261AbeCBKdU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:33:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35617 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1946133AbeCBKaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:30:10 -0500
-Subject: Re: [patch] mm, compaction: drain pcps for zone when kcompactd fails
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <alpine.DEB.2.20.1803010340100.88270@chino.kir.corp.google.com>
- <672ebefc-483d-2932-37b5-4ffe58156f0f@suse.cz>
- <alpine.DEB.2.20.1803010446090.96418@chino.kir.corp.google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d516bac6-84de-dc5d-5ddb-1057e6337620@suse.cz>
-Date: Fri, 2 Mar 2018 11:28:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803010446090.96418@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1946111AbeCBK3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:29:52 -0500
+From: Petr Mladek <pmladek@suse.com>
+To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc: Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v9 7/9] livepatch: Correctly handle atomic replace for not yet loaded modules
+Date: Fri,  2 Mar 2018 11:29:33 +0100
+Message-Id: <20180302102935.14564-8-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180302102935.14564-1-pmladek@suse.com>
+References: <20180302102935.14564-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2018 02:05 PM, David Rientjes wrote:
-> On Thu, 1 Mar 2018, Vlastimil Babka wrote:
-> 
->> On 03/01/2018 12:42 PM, David Rientjes wrote:
->>> Consider a verbose example using the tools/vm/page-types tool at the
->>> beginning of a ZONE_NORMAL, where 'B' indicates a buddy page and 'S'
->>> indicates a slab page, which the migration scanner is attempting to
->>> defragment (and doing it well, absent coalescing up to cc.order):
->>
->> How can the migration scanner defragment a slab page?
->>
-> 
-> Hi Vlastimil,
+The atomic replace feature uses dynamically allocated struct klp_func to
+handle functions that will no longer be patched. These structures are
+of the type KLP_FUNC_NOP. They cause the ftrace handler to jump to
+the original code. But the address of the original code is not known
+until the patched module is loaded.
 
-Hi David,
+This patch allows the late initialization. Also it adds a sanity check
+into the ftrace handler.
 
-> It doesn't, I'm showing an entire span of buddy pages that could be 
-> coalesced into order >= 9 pages, so I thought to include the border pages.
-Sure. But "slab page, which the migration scanner is attempting to
-defragment (and doing it well..." sounds rather confusing, so please
-reword it :)
+Alternative solution would be not to set the address at all. The ftrace
+handler could just return to the original code when NOP struct klp_func
+is used. But this would require another changes. For example, in the stack
+checking. Note that NOP structures might be available even when the patch
+is being disabled. This would happen when the patch enable transition is
+reverted.
 
-...
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/livepatch/core.c  | 22 ++++++++++++++++++----
+ kernel/livepatch/patch.c |  5 +++++
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
->>> These buddy pages, spanning 1,621 pages, could be coalesced and allow for
->>> three transparent hugepages to be dynamically allocated.  Totaling all
->>> hugepage length spans that could be coalesced, this could yield over 400
->>> hugepages on the zone's free area when at the time this /proc/kpageflags
->>
->> I don't understand the numbers here. With order-9 hugepages it's 512
->> pages per hugepage. If the buddy pages span 1621 pages, how can they
->> yield 400 hugepages?
->>
-> 
-> The above span is 0x109faa - 0x109955 = 1,621 pages as an example which 
-> could be coalesced into three transparent hugepages as stated if not 
-> stranded on pcps and rather on the zone's free area.  For this system, 
-> running the numbers on the extremely large /proc/kpageflags, I identified 
-> spans >512 pages which could be coalesced into >400 hugepages if pcps were 
-> drained.
-
-Looks like I just didn't read that part properly, looks clear to me now.
-
-> Check this out:
-> 
-> Node 1 MemTotal:       132115772 kB
-> Node 1 MemFree:        125468300 kB
-> 
-> Free pages count per migrate type at order         0      1      2      3      4      5      6      7      8      9     10 
-> Node    1, zone   Normal, type      Unmovable  18418  24325  10190   5545   1893    976    487    259     20      0      0 
-> Node    1, zone   Normal, type        Movable 172691 177791 145558 125810 101482  82792  67745  58527  49923      0      0 
-> Node    1, zone   Normal, type    Reclaimable   3909   4828   3505   2543   1246    410     47      5      0      0      0 
-> Node    1, zone   Normal, type  Memcg_Reserve      0      0      0      0      0      0      0      0      0      0      0 
-> Node    1, zone   Normal, type        Reserve      0      0      0      0      0      0      0      0      0      0      0 
-> 
-> I can't avoid cringing at that.  There is fragmentation as the result of 
-> slab pages being allocated, which we have additional patches for that I'll 
-> propose soon after I gather more data, but for this system I gathered 
-> /proc/kpageflags and found >400 hugepages that could be coalesced from 
-> this zone if pcps were drained.
-
-Yeah that doesn't look very nice :(
-
->>> was collected, there was _no_ order-9 or order-10 pages available for
->>> allocation even after triggering compaction through procfs.
->>>
->>> When kcompactd fails to defragment memory such that a cc.order page can
->>> be allocated, drain all pcps for the zone back to the buddy allocator so
->>> this stranding cannot occur.  Compaction for that order will subsequently
->>> be deferred, which acts as a ratelimit on this drain.
->>
->> I don't mind the change given the ratelimit, but what difference was
->> observed in practice?
->>
-> 
-> It's hard to make a direct correlation given the workloads that are 
-> scheduled over this set of machines; it takes more than two weeks to get a 
-> system this fragmented (the uptime from the above examples is ~34 days) so 
-> any comparison between unpatched and patched kernels depends very heavily 
-> on what happened over those 34 days and doesn't yield useful results.  The 
-> significant data is that from collecting /proc/kpageflags at this moment 
-> in time, I can identify 400 spans of >=512 buddy pages.  The reason we 
-> have no order-9 and order-10 memory is that these buddy pages cannot be 
-> coalesced because of stranding on pcps.
-> 
-> I wouldn't consider this a separate type of fragmentation such as 
-> allocating one slab page from a pageblock that doesn't allow a hugepage to 
-> be allocated.  Rather, it's a byproduct of a fast page allocator that 
-> utilizes pcps for super fast allocation and freeing, which results in 
-> stranding as a side effect.
-> 
-> The change here is to drain all pcp pages so they have a chance to be 
-> coalesced into high-order pages in the chance that compaction fails on a 
-> fragmented system, such as in the above examples.  I'm most interested in 
-> the kcompactd failure case because that's where it would be most useful 
-
-Right, I'm fine with the patch for kcompactd. You can add
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> for our configurations, but I would understand if we'd want a similar 
-> change for direct compaction (it would reasonably be done any time we 
-> choose to defer).
-
-I don't think that's needed. kcompactd should be woken up for any such
-direct compaction anyway. Also with multiple parallel direct compaction
-attempts, the drain might be too frequent even with deferring, without
-any gain from it?
-
->> BTW I wonder if we could be smarter and quicker about the drains. Let a
->> pcp struct page be easily recognized as such, and store the cpu number
->> in there. Migration scanner could then maintain a cpumask, and recognize
->> if the only missing pages for coalescing a cc->order block are on the
->> pcplists, and then do a targeted drain.
->> But that only makes sense to implement if it can make a noticeable
->> difference to offset the additional overhead, of course.
->>
-> 
-> Right, that sounds doable with the extra overhead that I'm not sure is 
-> warranted in this case.  We could certainly have the migration scanner 
-> look at every buddy page on the pageblock
-
-IIRC the pages on pcplists don't have PageBuddy, just page_count of 0
-and migratetype in page->index.
-
-> and set the cpu in a cpumask if 
-> we store it as part of the pcp, and flag it if anything is non-buddy in 
-> the case of cc.order >= 9.  It's more complicated for smaller orders.  
-> Then isolate_migratepages() would store the cpumask for such blocks and 
-> eventually drain pcps from those cpus only if compaction fails. 
-
-My idea was that compaction would maintain an initially empty cpumask in
-compact_control, when detecting a page that sits on some cpu's pcplist,
-add it to the mask. Also a do_drain flag initially true, that would be
-set to false if e.g. a slab page is encountered (cannot be migrated and
-is not already free). If the flag is still true and mask non-empty as we
-finish a block, drain the cpus in the mask.
-
-> Most of 
-> the time it won't fail until the extreme presented above, in which case 
-> all that work wouldn't be valuable.
-
-Yeah, maybe the kcompactd change will take care of most such cases already.
-
-> In the cases that it is useful, I 
-> found that doing drain_all_pages(zone) is most beneficial for the 
-> side-effect of also freeing pcp pages back to MIGRATE_UNMOVABLE pageblocks 
-> on the zone's free area to avoid falling back to MIGRATE_MOVABLE 
-> pageblocks when pages from MIGRATE_UNMOVABLE pageblocks are similarly 
-> stranded on pcps.
-
-Interesting, there might be some value in trying to drain those before
-falling back (independently of this patch).
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index ad508a86b2f9..ce9f40a175d9 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -781,8 +781,10 @@ static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
+ 		}
+ 	}
+ 	func->old_sympos = old_func->old_sympos;
+-	/* NOP func is the same as using the original implementation. */
+-	func->new_func = (void *)old_func->old_addr;
++	/*
++	 * func->new_func is same as func->old_addr. These addresses are
++	 * set when the object is loaded, see klp_init_object_loaded().
++	 */
+ 	func->ftype = KLP_FUNC_NOP;
+ 
+ 	return func;
+@@ -945,8 +947,12 @@ static void klp_free_object_loaded(struct klp_object *obj)
+ 
+ 	obj->mod = NULL;
+ 
+-	klp_for_each_func(obj, func)
++	klp_for_each_func(obj, func) {
+ 		func->old_addr = 0;
++
++		if (klp_is_func_type(func, KLP_FUNC_NOP))
++			func->new_func = NULL;
++	}
+ }
+ 
+ /*
+@@ -984,7 +990,12 @@ static void klp_free_patch(struct klp_patch *patch)
+ 
+ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+ {
+-	if (!func->old_name || !func->new_func)
++	if (!func->old_name)
++		return -EINVAL;
++
++	/* NOPs do not know the address until the patched module is loaded. */
++	if (!func->new_func &&
++	    (!klp_is_func_type(func, KLP_FUNC_NOP) || klp_is_object_loaded(obj)))
+ 		return -EINVAL;
+ 
+ 	INIT_LIST_HEAD(&func->stack_node);
+@@ -1039,6 +1050,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+ 			return -ENOENT;
+ 		}
+ 
++		if (klp_is_func_type(func, KLP_FUNC_NOP))
++			func->new_func = (void *)func->old_addr;
++
+ 		ret = kallsyms_lookup_size_offset((unsigned long)func->new_func,
+ 						  &func->new_size, NULL);
+ 		if (!ret) {
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 54b3c379bb0f..1f5c3eea9ee1 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -118,7 +118,12 @@ static void notrace klp_ftrace_handler(unsigned long ip,
+ 		}
+ 	}
+ 
++	/* Survive ugly mistakes, for example, when handling NOPs. */
++	if (WARN_ON_ONCE(!func->new_func))
++		goto unlock;
++
+ 	klp_arch_set_pc(regs, (unsigned long)func->new_func);
++
+ unlock:
+ 	preempt_enable_notrace();
+ }
+-- 
+2.13.6
