@@ -1,66 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946816AbeCBRmE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:42:04 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:17177 "EHLO pegase1.c-s.fr"
+        id S1946938AbeCBRwn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:52:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45922 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966197AbeCBRmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:42:02 -0500
-Subject: Re: [PATCH 17/18] crypto: talitos - chain in buffered data for ahash
- on SEC1
-To: =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1507284818.git.christophe.leroy@c-s.fr>
- <28d351a973d31d140239c7e7e64999d95a011e8c.1507284818.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB3342BDF9D4E389B4E296A53298C50@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <355bc65b-fbc4-deee-058a-999e5b740819@c-s.fr>
-Date: Fri, 2 Mar 2018 18:42:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1946901AbeCBRwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:52:41 -0500
+Date: Fri, 2 Mar 2018 10:52:37 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk,
+        Don Dutile <ddutile@redhat.com>, Kirti Wankhede <kwankhede@nvidia.com>
+Subject: Re: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+Message-ID: <20180302105237.286bbbd2@t450s.home>
+In-Reply-To: <CAKgT0UcBX5o3BFZGXpLQGWjNGnqgEPQv=g=yd_PXCv-9uFNadA@mail.gmail.com>
+References: <20180227190520.3273.79728.stgit@localhost.localdomain>
+        <20180227144015.228d4f5c@w520.home>
+        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
+        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
+        <20180228155949.00fde8ae@w520.home>
+        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
+        <20180301132224.1ca06949@w520.home>
+        <CAKgT0Ufo_wJPuRYBYK3j_jB_5rnhgdhO6ijEH4h=ypRztaveZA@mail.gmail.com>
+        <20180301165841.5f8c8edc@w520.home>
+        <CAKgT0UcBX5o3BFZGXpLQGWjNGnqgEPQv=g=yd_PXCv-9uFNadA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB3342BDF9D4E389B4E296A53298C50@VI1PR0402MB3342.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 1 Mar 2018 18:49:53 -0800
+Alexander Duyck <alexander.duyck@gmail.com> wrote:
 
+> On Thu, Mar 1, 2018 at 3:58 PM, Alex Williamson
+> <alex.williamson@redhat.com> wrote:
+> > On Thu, 1 Mar 2018 14:42:40 -0800
+> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
+> >  
+> >> On Thu, Mar 1, 2018 at 12:22 PM, Alex Williamson
+> >> <alex.williamson@redhat.com> wrote:  
+> >> > On Wed, 28 Feb 2018 16:36:38 -0800
+> >> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
+> >> >  
+> >> >> On Wed, Feb 28, 2018 at 2:59 PM, Alex Williamson
+> >> >> <alex.williamson@redhat.com> wrote:  
+> >> >> > On Wed, 28 Feb 2018 09:49:21 -0800
+> >> >> > Alexander Duyck <alexander.duyck@gmail.com> wrote:
+> >> >> >  
+> >> >> >> On Tue, Feb 27, 2018 at 2:25 PM, Alexander Duyck
+> >> >> >> <alexander.duyck@gmail.com> wrote:    
+> >> >> >> So I was thinking about this some more. In the case of vfio-pci things
+> >> >> >> are a bit different since you are essentially taking a given device
+> >> >> >> and handing it to a VM or userspace and it doesn't guarantee a
+> >> >> >> communication between the two.  
+> >> >> >
+> >> >> > Doesn't guarantee communication or cooperation or even trust.  
+> >> >>
+> >> >> Right, but at the same time I consider this to be a shoot yourself in
+> >> >> the foot type scenario. If you are going to hand off your PF while VFs
+> >> >> are active then you are asking for whatever repercussions you end up
+> >> >> getting. I've added a warning and a TAINT_USER flag to my code at this
+> >> >> point if you load an active PF in vfio, and I have added a function
+> >> >> that locks the setting so it cannot be changed once we place a PF in
+> >> >> the control of vfio-pci.
+> >> >>
+> >> >> The way I see it there are two scenarios. One where the PF is just a
+> >> >> VF with an extra bit of SR-IOV configuration space floating off of it.
+> >> >> The other is where we want to have SR-IOV enabled and have some third
+> >> >> party managing the PF.  The first one doesn't really care about the
+> >> >> communication and would prefer that whatever owns the driver on the PF
+> >> >> just ignore the SR-IOV portion of the configuration space. The second
+> >> >> one actually cares and would want some sort of
+> >> >> communication/cooperation but for now I don't see that as being the
+> >> >> easiest thing to do so it might be best to just let it see a fixed
+> >> >> number of VFs it just has to work with that.  
+> >> >
+> >> > There's no such thing as a read-only sriov capability in the spec,
+> >> > which is a problem we ran into a while ago, vfio-pci exposes the
+> >> > capability, but protects it as read-only so the user cannot create
+> >> > devices on the host.  QEMU passed this through to the guest, but that
+> >> > failed as soon as OVMF started supporting sriov as it's unable to size
+> >> > the VF BAR resources.  Now QEMU drops the sriov capability from the
+> >> > guest capability chain.  So it's not clear how this fixed number of vfs
+> >> > plan works.  Are we inventing our own capability for this?  If the pf
+> >> > driver is just a userspace driver and not a VM, maybe what we do now is
+> >> > sufficient, otherwise there's no standard for exposing fixed vfs.  
+> >>
+> >> So one thought I had is what if we provide an ioctl command that
+> >> allows for setting the number of VFs through VFIO? Basically it
+> >> wouldn't be exposed through the sysfs, but would be totally controlled
+> >> by the userspace using the sriov_configure_unmanged call to
+> >> enable/disable the VFs and ultimately cleaning it up when the device
+> >> it is released. I would imagine all the Amazon guys were looking for
+> >> is something where they could just have some sort of command that
+> >> could reach through and manage their VF count from some daemon. If
+> >> they assigned the interface to a guest it would not be able to touch
+> >> the SR-IOV capability unless QEMU went and implemented it which likely
+> >> isn't happening anytime soon. It would provide the userspace guys a
+> >> way to allocate the VF resources, call this ioctl, and then start
+> >> managing VFs in the case of a userspace managed entity instead of it
+> >> just being a firmware or preallocated type SR-IOV configuration.  
+> >
+> > Wait a sec, we were considering that a user owned pf sourcing vfs would
+> > taint the host kernel and now we want to give the user the ability to
+> > enable those vfs and trigger that tainting?  I saw the route through
+> > sysfs to enable sriov on a user owned device as a feature because it
+> > would require an existing privilege path rather than creating one
+> > through vfio.  For example, an unprivileged QEMU could submit a
+> > request to a privileged entity to enable sriov through sysfs.  If we
+> > wanted to allow the user to enable sriov directly, the user would at
+> > least need to run with privileges like CAP_SYS_ADMIN.  
+> 
+> The issue in all this ends up being how to handle the synchronization
+> between userspace and the kernel. That was the only reason why I was
+> thinking of that.
+> 
+> An alternative thought I had was to look at just making it so that we
+> did a minimal vfio version of sriov_configure that only allowed
+> changing the number of VFs when the device was not already in use,
+> specifically if the vdev->refcnt was non-zero. So the usage in such a
+> case would be to bind the driver, set the number of VFs, and then
+> start the application. On driver unload we would then call
+> pci_disable_sriov and just clean everything up on the way out.
 
-Le 02/03/2018 à 18:27, Horia Geantă a écrit :
-> On 10/6/2017 4:05 PM, Christophe Leroy wrote:
-> [...]
->> @@ -1778,6 +1814,36 @@ static int common_nonsnoop_hash(struct talitos_edesc *edesc,
->>   	if (is_sec1 && from_talitos_ptr_len(&desc->ptr[3], true) == 0)
->>   		talitos_handle_buggy_hash(ctx, edesc, &desc->ptr[3]);
->>   
->> +	if (is_sec1 && req_ctx->nbuf && length) {
->> +		struct talitos_desc *desc2 = desc + 1;
->> +		dma_addr_t next_desc;
-> [...]
->> +		next_desc = dma_map_single(dev, &desc2->hdr1, TALITOS_DESC_SIZE,
->> +					   DMA_BIDIRECTIONAL);
->> +		desc->next_desc = cpu_to_be32(next_desc);
-> Where is desc->next_desc initialized for the !is_sec1 case?
-> Memory allocation is done using kmalloc(), and since desc->next_desc is checked
-> in some cases also for SEC 2.x+, it should be initialized to 0.
+Yep, aside from asking Amazon to submit a native host driver, this is
+the only option I'm seeing as well.  Of course vfio would need to taint
+the kernel since it's not doing anything to restrict the usage of those
+potentially compromised vfs, and then we need to think about how much
+code we're willing to introduce and maintain to enable unsupported use
+cases.
+ 
+> > Side note: we could just enable emulation of the sriov capability
+> > through config space in vfio-pci if we wanted to allow that, rather
+> > than adding a new ioctl.  
+> 
+> That seems like a really messy way of doing things though since there
+> isn't really any way to report exceptions other than just refusing to
+> set the bit and for all we know that could be the result of a hardware
+> error.
 
-See 
-https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/crypto/talitos.c#L1411
+Re-reading a register doesn't seem so terrible.  Of course, unless we
+can solve the tainting problem, it doesn't matter.  Either an ioctl or
+emulation is more code than I'm willing to maintain for a taint-only
+interface.  Thanks,
 
-	edesc = kmalloc(alloc_len, GFP_DMA | flags);
-	if (!edesc) {
-		dev_err(dev, "could not allocate edescriptor\n");
-		err = ERR_PTR(-ENOMEM);
-		goto error_sg;
-	}
-	memset(&edesc->desc, 0, sizeof(edesc->desc));
-
-
-Christophe
+Alex
