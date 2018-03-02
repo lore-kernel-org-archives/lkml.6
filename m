@@ -1,106 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947089AbeCBR7b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:59:31 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48708 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1947001AbeCBR6S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:58:18 -0500
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-        linux-rockchip@lists.infradead.org,
-        Archit Taneja <architt@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, kernel@collabora.com,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v9 2/5] drm/rockchip: inno_hdmi: Fix error handling path.
-Date: Fri,  2 Mar 2018 18:57:54 +0100
-Message-Id: <20180302175757.28192-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180302175757.28192-1-enric.balletbo@collabora.com>
-References: <20180302175757.28192-1-enric.balletbo@collabora.com>
+        id S1947125AbeCBSAa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:00:30 -0500
+Received: from mga02.intel.com ([134.134.136.20]:9986 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1947104AbeCBSA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 13:00:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,413,1515484800";
+   d="scan'208";a="35471163"
+Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
+ holding lock
+To: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+        Aaron Lu <aaron.lu@intel.com>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-4-aaron.lu@intel.com>
+ <20180301140044.GK15057@dhcp22.suse.cz>
+ <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <2433e857-fea7-9af4-d124-538ad17de454@intel.com>
+Date: Fri, 2 Mar 2018 10:00:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
+On 03/02/2018 09:55 AM, Vlastimil Babka wrote:
+> It's even stranger to me. Struct page is 64 bytes these days, exactly a
+> a cache line. Unless that changed, Intel CPUs prefetched a "buddy" cache
+> line (that forms an aligned 128 bytes block with the one we touch).
 
-Add missing error handling in bind().
-
-Fixes: 412d4ae6b7a5 ("drm/rockchip: hdmi: add Innosilicon HDMI support")
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-[moved clk_disable_unprepare reordering in unbind to separate patch]
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-
-Changes in v9:
-- Moved clk_disable_unprepare reordering in unbin to separate patch.
-
- drivers/gpu/drm/rockchip/inno_hdmi.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-index f6ad48766d49..a5c661930250 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-@@ -849,8 +849,10 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	if (irq < 0) {
-+		ret = irq;
-+		goto err_disable_clk;
-+	}
- 
- 	inno_hdmi_reset(hdmi);
- 
-@@ -858,7 +860,7 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
- 	if (IS_ERR(hdmi->ddc)) {
- 		ret = PTR_ERR(hdmi->ddc);
- 		hdmi->ddc = NULL;
--		return ret;
-+		goto err_disable_clk;
- 	}
- 
- 	/*
-@@ -872,7 +874,7 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
- 
- 	ret = inno_hdmi_register(drm, hdmi);
- 	if (ret)
--		return ret;
-+		goto err_put_adapter;
- 
- 	dev_set_drvdata(dev, hdmi);
- 
-@@ -882,7 +884,17 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
- 	ret = devm_request_threaded_irq(dev, irq, inno_hdmi_hardirq,
- 					inno_hdmi_irq, IRQF_SHARED,
- 					dev_name(dev), hdmi);
-+	if (ret < 0)
-+		goto err_cleanup_hdmi;
- 
-+	return 0;
-+err_cleanup_hdmi:
-+	hdmi->connector.funcs->destroy(&hdmi->connector);
-+	hdmi->encoder.funcs->destroy(&hdmi->encoder);
-+err_put_adapter:
-+	i2c_put_adapter(hdmi->ddc);
-+err_disable_clk:
-+	clk_disable_unprepare(hdmi->pclk);
- 	return ret;
- }
- 
--- 
-2.16.1
+I believe that was a behavior that was specific to the Pentium 4
+"Netburst" era.  I don't think the 128-byte line behavior exists on
+modern Intel cpus.
