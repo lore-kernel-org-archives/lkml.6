@@ -1,111 +1,108 @@
-Return-Path: <msfjarvis@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520012499; cv=none;
-        d=google.com; s=arc-20160816;
-        b=CCUpM5mNp2xGyanM9mcZTfIHG4+A9P5glWKbN9hEWbTuVXBGHKDJ1EDK4pX8FbSza3
-         OQE8Ynai+kWS+VxQKlgCCpgKJQvjo/Pv1R+Sb68pD+bY/wAC4FjpkijpotnzF4TxwG5P
-         UQhcRcIyUy1epNpk/30txAX+FDfWMdK3j9eVR6Egqibl85TkqF8fJbM5I9V+tFuuPVCm
-         6b94XR/xdJyRP94oMt0Fs+kUsS1hh6ZxoNzZ2bTUtxHvjJh3/waEgyk1tduVFxO/r382
-         r4o9Lo9W8qPxRq6d4DMPN6JR6A8dz+viqnAcnxX0/t+8Tgn2DIVwWhDmx6NLgWxlzvW9
-         Jj8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=Yk85fke+CPqyQpsYqSDJV18EJcl6Thm4jpZp4ZTLIx4=;
-        b=gigP3Wg2OkPwwPhKCTAFJhI6OlniXSCyqGeNl1Z+/hndkpTZE00RWk3S7X92Q0JbnA
-         tyukvY6gr4EIRubZeJfZH+YQP149XCd7EfHyRlHR9BU1l+6ebrvYu8f/dMuEprYBITKD
-         AAtCzbygRw1cWvxapnGzHoTIHk5wDrF5+aQYue3VkAvP10iJ7qWVrebm8HSgw/Rgm5+R
-         +hB/jb9cF1zHuhnd+zHKzJ0JDEzCg1nfIs0rA9st1xMTV1zRHkcjaFdFuLkRRtcak1l/
-         lhW/EzoA4X8MsrNWBC+ZbeiP5uqXxH6XRBFYPwKWTHw+7V4noTOYWZWK6ghbNrwhcbhK
-         kohg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L49HvsSE;
-       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L49HvsSE;
-       spf=pass (google.com: domain of msfjarvis@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=msfjarvis@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuaTtvkmKSfs6SZVDFMy5ehzr4AQYPEzo/BAMFcawElvWL5Evv4fPke5GmrS1U0bgbqB7uAvsNOk7VxWLxp49s=
-MIME-Version: 1.0
-References: <20180302084239.157503766@linuxfoundation.org>
-In-Reply-To: <20180302084239.157503766@linuxfoundation.org>
-From: Harsh Shandilya <msfjarvis@gmail.com>
-Date: Fri, 02 Mar 2018 17:41:28 +0000
-Message-ID: <CALpmF+Ess8+k+N0q6YyVEUL+YmM5m1rS2ORs9xyR=sZoYXTwHA@mail.gmail.com>
-Subject: Re: [PATCH 3.18 00/24] 3.18.98-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2297825-1520016804-2-2804522325436781155
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520016803; b=Yv5zidnzCYIivZmhaH4aSg9xTgIUQv8A9H9kz92axk6VcoA
+    jNfWlQrqJW1FKlsLE5JZ1iAPNhqgpGDF+9TksOr4QHscrW4bx5+tWnzfa6oigAmM
+    DWyJAY8yuXOtOrC4mdjsGK1IGQhNf0K8zFV07wOEIHTpdFEPrEMS+PRjNaH3zVKP
+    vV4e1AperWS72Ie9Q6e2k85trpPh8snN8UsvjF+hGLW0PIUlzohwXflFsuWz9Y1R
+    kTj7j0K566kDhnJQ36WDaUyGNItByG1R8Hiy4asO3YMKZN03udp5+mQjSmP0udLW
+    GTHnj5mY8hvAyzl9l9yGCw5ahsgOn5wntEwxHFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520016803; bh=B5CfKyjInvDI6NQphADhbd5VG+
+    bItcF2ZWlp3dw+uYY=; b=jjhi5J4Cjiowbtn+0aoXTlUv+Aki7Ud/Cs3r2vRsRn
+    CLcUZldB0Wg8k8cwO2+Tr+q7MSt1+9ybbHwvZzpZZ6y9M4YyolsJ+76ULplwZm7n
+    nX43zemB331eJ95pa59O3Fv6h6EON03Ag4KNTnnN+zYoc0s9idQ04ZwagvkEn8tf
+    jdbIGK6f8/RtMrjwPpWoIlbPJxCWg07KrDi7pqKS8KEg6M7Pavo8GWuBHIO0G7PJ
+    mXqVuh2TEdMzJ1G9g3laEZVOYz9PWAfHzisOluFFP8+aEqTrE2T7nDw/p+MTyi3r
+    CJV85kIspzrp1RpKrptOCB/mg26cEMfcpzf+AO3II2Xw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1947560AbeCBSxU (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 13:53:20 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37332 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1947551AbeCBSxR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 13:53:17 -0500
+Date: Fri, 2 Mar 2018 19:53:17 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harsh Shandilya <msfjarvis@gmail.com>
 Cc: akpm@linux-foundation.org, ben.hutchings@codethink.co.uk,
-	linux@roeck-us.net, linux-kernel@vger.kernel.org,
-	lkft-triage@lists.linaro.org, patches@kernelci.org, shuahkh@osg.samsung.com,
-	stable@vger.kernel.org, torvalds@linux-foundation.org
-Content-Type: multipart/alternative; boundary="001a114873380fba560566717d02"
+        linux@roeck-us.net, linux-kernel@vger.kernel.org,
+        lkft-triage@lists.linaro.org, patches@kernelci.org,
+        shuahkh@osg.samsung.com, stable@vger.kernel.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 3.18 00/24] 3.18.98-stable review
+Message-ID: <20180302185317.GC16331@kroah.com>
+References: <20180302084239.157503766@linuxfoundation.org>
+ <CALpmF+Ess8+k+N0q6YyVEUL+YmM5m1rS2ORs9xyR=sZoYXTwHA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALpmF+Ess8+k+N0q6YyVEUL+YmM5m1rS2ORs9xyR=sZoYXTwHA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593815265016315476?=
-X-GMAIL-MSGID: =?utf-8?q?1593848627093780755?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---001a114873380fba560566717d02
-Content-Type: text/plain; charset="UTF-8"
+On Fri, Mar 02, 2018 at 05:41:28PM +0000, Harsh Shandilya wrote:
+> On Fri 2 Mar, 2018, 2:25 PM Greg Kroah-Hartman, <gregkh@linuxfoundation.org>
+> wrote:
+> 
+> > This is the start of the stable review cycle for the 3.18.98 release.
+> > There are 24 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sun Mar  4 08:42:22 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >
+> > https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.98-rc1.gz
+> > or in the git tree and branch at:
+> >         git://
+> > git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > linux-3.18.y
+> > and the diffstat can be found below.
+> >
+> 
+> Builds and boots on the OnePlus 3T, no merge issues with CAF's msm-3.18
+> tree.
 
-On Fri 2 Mar, 2018, 2:25 PM Greg Kroah-Hartman, <gregkh@linuxfoundation.org>
-wrote:
 
-> This is the start of the stable review cycle for the 3.18.98 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Mar  4 08:42:22 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->
-> https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.98-rc1.gz
-> or in the git tree and branch at:
->         git://
-> git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> linux-3.18.y
-> and the diffstat can be found below.
->
+Great, thanks for testing and letting me know.
 
-Builds and boots on the OnePlus 3T, no merge issues with CAF's msm-3.18
-tree.
-
->
-
---001a114873380fba560566717d02
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<br><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Fri 2 Mar, 2018, 2:2=
-5 PM Greg Kroah-Hartman, &lt;<a href=3D"mailto:gregkh@linuxfoundation.org">=
-gregkh@linuxfoundation.org</a>&gt; wrote:<br></div><blockquote class=3D"gma=
-il_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-lef=
-t:1ex">This is the start of the stable review cycle for the 3.18.98 release=
-.<br>
-There are 24 patches in this series, all will be posted as a response<br>
-to this one.=C2=A0 If anyone has any issues with these being applied, pleas=
-e<br>
-let me know.<br>
-<br>
-Responses should be made by Sun Mar=C2=A0 4 08:42:22 UTC 2018.<br>
-Anything received after that time might be too late.<br>
-<br>
-The whole patch series can be found in one patch at:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://www.kernel.org/pub/linux/ker=
-nel/v3.x/stable-review/patch-3.18.98-rc1.gz" rel=3D"noreferrer" target=3D"_=
-blank">https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.1=
-8.98-rc1.gz</a><br>
-or in the git tree and branch at:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 git://<a href=3D"http://git.kernel.org/pub/scm/=
-linux/kernel/git/stable/linux-stable-rc.git" rel=3D"noreferrer" target=3D"_=
-blank">git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git</=
-a> linux-3.18.y<br>
-and the diffstat can be found below.<br></blockquote></div><div><br></div><=
-div>Builds and boots on the OnePlus 3T, no merge issues with CAF&#39;s msm-=
-3.18 tree.</div><div class=3D"gmail_quote"><blockquote class=3D"gmail_quote=
-" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-</blockquote></div>
-
---001a114873380fba560566717d02--
+greg k-h
+> >
