@@ -1,207 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934143AbeCBVgn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 16:36:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933995AbeCBVgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 16:36:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A3621783
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 2 Mar 2018 15:36:39 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v3 1/2] PCI/IOV: Store more data about VFs into the SRIOV
- struct
-Message-ID: <20180302213639.GC202062@bhelgaas-glaptop.roam.corp.google.com>
-References: <1519939897-14596-1-git-send-email-karahmed@amazon.de>
+        id S934172AbeCBViv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 16:38:51 -0500
+Received: from mail-eopbgr670120.outbound.protection.outlook.com ([40.107.67.120]:34080
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933995AbeCBVis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 16:38:48 -0500
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Jerome Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+CC: Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oliver OHalloran <oliveroh@au1.ibm.com>
+Subject: Re: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Thread-Topic: [PATCH v2 00/10] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+Thread-Index: AQHTsO2GEDgA2h38ikWGpBGerXYMdKO6wDyAgAAAX4CAAO0JAIAAKJ+AgAAHPICAAAIhAIAAAgEAgAEk1QA=
+Date: Fri, 2 Mar 2018 21:38:43 +0000
+Message-ID: <8D3B5C26-39E0-478D-B51F-A22B3F36C4D7@raithlin.com>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <1519876489.4592.3.camel@kernel.crashing.org>
+ <1519876569.4592.4.camel@au1.ibm.com>
+ <8e808448-fc01-5da0-51e7-1a6657d5a23a@deltatee.com>
+ <1519936195.4592.18.camel@au1.ibm.com> <20180301205548.GA6742@redhat.com>
+ <a512edf9-2d96-9229-fe60-e0ea60b3922b@deltatee.com>
+ <20180301211036.GB6742@redhat.com>
+In-Reply-To: <20180301211036.GB6742@redhat.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.a.0.180210
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.224.121]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1312;7:3zSrt6Czejpic+k5Q1Osp99XvmT0mWXKw9GtAhfI9UWO26JtdWmqhIot/+Gsua0FKlJJN0ngEiQRgn6QkYszfsVdPtpsO/z4xgeZKlxlGXbrXb851eRNzXdtAVVzd9Rma/AiB2YwfeHtJc02OwhIXnyubfvcFIqVeNN04w2xp2LezAfsMkTi2ElVUQ8yFrew1udkWLEdgGMdT9ykyXrqG9nVC5UtTA2Umf/PNR0nrebG1twWFtttM/cSFhgThdSs
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-correlation-id: 1e31f900-c836-4461-224f-08d58085f8de
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:YTXPR0101MB1312;
+x-ms-traffictypediagnostic: YTXPR0101MB1312:
+x-microsoft-antispam-prvs: <YTXPR0101MB13128A37C4137616D9FFE7E2AAC50@YTXPR0101MB1312.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(6041288)(2016111802025)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:YTXPR0101MB1312;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1312;
+x-forefront-prvs: 05991796DF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(39830400003)(396003)(366004)(199004)(189003)(305945005)(6506007)(81166006)(97736004)(81156014)(4326008)(3846002)(33656002)(93886005)(8676002)(6116002)(25786009)(105586002)(59450400001)(6246003)(7416002)(102836004)(8936002)(229853002)(82746002)(5660300001)(3660700001)(99286004)(2906002)(66066001)(106356001)(3280700002)(7736002)(2950100002)(478600001)(76176011)(86362001)(68736007)(110136005)(54906003)(6436002)(5250100002)(186003)(58126008)(6512007)(316002)(83716003)(26005)(36756003)(6486002)(53936002)(2900100001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1312;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: sATQ4mfaUERoJ14bannfFllG281RUrqmAlzjO1cyLrqrQd+T2vpYrpo4Krpn1UUwkiOUPd6sswLceUFrbarf5W4hv3faTy6a5VSvwNaw1zdRICN+IJZuZHyi++oAxFw9ihOUp/8PLqKn8MzXrce1l9COaI19DTsNivUQlEIrJ8Q=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0AF11F09DBD48946B0DE6C3030518A52@CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519939897-14596-1-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e31f900-c836-4461-224f-08d58085f8de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2018 21:38:43.6481
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1312
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w22LeT3P005425
 
-On Thu, Mar 01, 2018 at 10:31:36PM +0100, KarimAllah Ahmed wrote:
-> Store more data about PCI VFs into the SRIOV to avoid reading them from the
-> config space of all the PCI VFs. This is specially a useful optimization
-> when bringing up thousands of VFs.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> It seems people miss-understand HMM :( 
 
-Applied to pci/virtualization for v4.17, thanks!
+Hi Jerome
 
-I removed the pci_sriov.device field, which seemed to be unused, and
-tweaked a few other things, so make sure I didn't break anything.  Here's
-what I have currently applied:
+Your unhappy face emoticon made me sad so I went off to (re)read up on HMM. Along the way I came up with a couple of things.
 
-commit e17b7b429b095200f93ad37c4efeb7a99b6fce3b
-Author: KarimAllah Ahmed <karahmed@amazon.de>
-Date:   Thu Mar 1 22:31:36 2018 +0100
+While hmm.txt is really nice to read it makes no mention of DEVICE_PRIVATE and DEVICE_PUBLIC. It also gives no indication when one might choose to use one over the other. Would it be possible to update hmm.txt to include some discussion on this? I understand that DEVICE_PUBLIC creates a mapping in the kernel's linear address space for the device memory and DEVICE_PRIVATE does not. However, like I said, I am not sure when you would use either one and the pros and cons of doing so. I actually ended up finding some useful information in memremap.h but I don't think it is fair to expect people to dig *that* deep to find this information ;-).
 
-    PCI/IOV: Use VF0 cached config registers for other VFs
-    
-    Cache some config data from VF0 and use it for all other VFs instead of
-    reading it from the config space of each VF.  We assume these items are the
-    same across all associated VFs:
-    
-      Revision ID
-      Class Code
-      Subsystem Vendor ID
-      Subsystem ID
-    
-    This is an optimization when enabling SR-IOV on a device with many VFs.
-    
-    Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-    [bhelgaas: changelog, simplify comments, remove unused "device"]
-    Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+A quick grep shows no drivers using the HMM API in the upstream code today. Is this correct? Are there any examples of out of tree drivers that use HMM you can point me too? As a driver developer what resources exist to help me write a HMM aware driver?
 
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 677924ae0350..30bf8f706ed9 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -114,6 +114,29 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
- 	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
- }
- 
-+static void pci_read_vf_config_common(struct pci_dev *virtfn)
-+{
-+	struct pci_dev *physfn = virtfn->physfn;
-+
-+	/*
-+	 * Some config registers are the same across all associated VFs.
-+	 * Read them once from VF0 so we can skip reading them from the
-+	 * other VFs.
-+	 *
-+	 * PCIe r4.0, sec 9.3.4.1, technically doesn't require all VFs to
-+	 * have the same Revision ID and Subsystem ID, but we assume they
-+	 * do.
-+	 */
-+	pci_read_config_dword(virtfn, PCI_CLASS_REVISION,
-+			      &physfn->sriov->class);
-+	pci_read_config_byte(virtfn, PCI_HEADER_TYPE,
-+			     &physfn->sriov->hdr_type);
-+	pci_read_config_word(virtfn, PCI_SUBSYSTEM_VENDOR_ID,
-+			     &physfn->sriov->subsystem_vendor);
-+	pci_read_config_word(virtfn, PCI_SUBSYSTEM_ID,
-+			     &physfn->sriov->subsystem_device);
-+}
-+
- int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- {
- 	int i;
-@@ -136,13 +159,17 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
- 	virtfn->vendor = dev->vendor;
- 	virtfn->device = iov->vf_device;
-+	virtfn->is_virtfn = 1;
-+	virtfn->physfn = pci_dev_get(dev);
-+
-+	if (id == 0)
-+		pci_read_vf_config_common(virtfn);
-+
- 	rc = pci_setup_device(virtfn);
- 	if (rc)
--		goto failed0;
-+		goto failed1;
- 
- 	virtfn->dev.parent = dev->dev.parent;
--	virtfn->physfn = pci_dev_get(dev);
--	virtfn->is_virtfn = 1;
- 	virtfn->multifunction = 0;
- 
- 	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
-@@ -163,10 +190,10 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 	sprintf(buf, "virtfn%u", id);
- 	rc = sysfs_create_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
- 	if (rc)
--		goto failed1;
-+		goto failed2;
- 	rc = sysfs_create_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
- 	if (rc)
--		goto failed2;
-+		goto failed3;
- 
- 	kobject_uevent(&virtfn->dev.kobj, KOBJ_CHANGE);
- 
-@@ -174,11 +201,12 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
- 
- 	return 0;
- 
--failed2:
-+failed3:
- 	sysfs_remove_link(&dev->dev.kobj, buf);
-+failed2:
-+	pci_stop_and_remove_bus_device(virtfn);
- failed1:
- 	pci_dev_put(dev);
--	pci_stop_and_remove_bus_device(virtfn);
- failed0:
- 	virtfn_remove_bus(dev->bus, bus);
- failed:
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index fcd81911b127..db76933be859 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -271,6 +271,10 @@ struct pci_sriov {
- 	u16		driver_max_VFs;	/* Max num VFs driver supports */
- 	struct pci_dev	*dev;		/* Lowest numbered PF */
- 	struct pci_dev	*self;		/* This PF */
-+	u32		class;		/* VF class */
-+	u8		hdr_type;	/* VF header type */
-+	u16		subsystem_vendor; /* VF subsystem vendor */
-+	u16		subsystem_device; /* VF subsystem device */
- 	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
- 	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
- };
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index a1cddca37793..78deb950bda1 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1461,7 +1461,9 @@ int pci_setup_device(struct pci_dev *dev)
- 	struct pci_bus_region region;
- 	struct resource *res;
- 
--	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
-+	if (dev->is_virtfn)
-+		hdr_type = dev->physfn->sriov->hdr_type;
-+	else if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
- 		return -EIO;
- 
- 	dev->sysdata = dev->bus->sysdata;
-@@ -1484,7 +1486,10 @@ int pci_setup_device(struct pci_dev *dev)
- 		     dev->bus->number, PCI_SLOT(dev->devfn),
- 		     PCI_FUNC(dev->devfn));
- 
--	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-+	if (dev->is_virtfn)
-+		class = dev->physfn->sriov->class;
-+	else
-+		pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
- 	dev->revision = class & 0xff;
- 	dev->class = class >> 8;		    /* upper 3 bytes */
- 
-@@ -1524,8 +1529,13 @@ int pci_setup_device(struct pci_dev *dev)
- 			goto bad;
- 		pci_read_irq(dev);
- 		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
--		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-+		if (dev->is_virtfn) {
-+			dev->subsystem_vendor = dev->physfn->sriov->subsystem_vendor;
-+			dev->subsystem_device = dev->physfn->sriov->subsystem_device;
-+		} else {
-+			pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
-+			pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-+		}
- 
- 		/*
- 		 * Do the ugly legacy mode stuff here rather than broken chip
+The (very nice) hmm.txt document is not references in the MAINTAINERS file? You might want to fix that when you have a moment.
+
+Stephen
