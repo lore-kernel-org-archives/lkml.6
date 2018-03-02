@@ -1,112 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935887AbeCBFj4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:39:56 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57618 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750750AbeCBFjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:39:54 -0500
-Date: Fri, 2 Mar 2018 13:39:45 +0800
-From: Dave Young <dyoung@redhat.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
-        bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 6/7] x86: kexec_file: clean up prepare_elf64_headers()
-Message-ID: <20180302053945.GD2952@dhcp-128-65.nay.redhat.com>
-References: <20180227044814.24808-1-takahiro.akashi@linaro.org>
- <20180227044814.24808-7-takahiro.akashi@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180227044814.24808-7-takahiro.akashi@linaro.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S935913AbeCBFua (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:50:30 -0500
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35871 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935899AbeCBFu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 00:50:28 -0500
+X-Google-Smtp-Source: AG47ELvrY8NUI2f9uiU5vcNVOoevjd19qjFzeuYpJvoe8Iuj/j8tKBVBEgHvG9L1cNs44K4cAGMz/w==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 00/11] Add clock driver for Actions S900 SoC
+Date: Fri,  2 Mar 2018 11:18:49 +0530
+Message-Id: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/27/18 at 01:48pm, AKASHI Takahiro wrote:
-> removing bufp variable in prepare_elf64_headers() makes the code simpler
-> and more understandable.
-> 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Dave Young <dyoung@redhat.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> ---
->  arch/x86/kernel/crash.c | 18 +++++++-----------
->  1 file changed, 7 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index bfc37ad20d4a..a842fd847684 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -334,7 +334,7 @@ static int prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
->  	Elf64_Ehdr *ehdr;
->  	Elf64_Phdr *phdr;
->  	unsigned long nr_cpus = num_possible_cpus(), nr_phdr, elf_sz;
-> -	unsigned char *buf, *bufp;
-> +	unsigned char *buf;
->  	unsigned int cpu, i;
->  	unsigned long long notes_addr;
->  	unsigned long mstart, mend;
-> @@ -359,9 +359,8 @@ static int prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
->  	if (!buf)
->  		return -ENOMEM;
->  
-> -	bufp = buf;
-> -	ehdr = (Elf64_Ehdr *)bufp;
-> -	bufp += sizeof(Elf64_Ehdr);
-> +	ehdr = (Elf64_Ehdr *)buf;
-> +	phdr = (Elf64_Phdr *)(ehdr + 1);
+This patchset adds clock support for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree info.
 
-phdr should start with ehdr + sizeof(Elf64_Ehdr);
+Driver has been validated on Bubblegum-96 board.
 
->  	memcpy(ehdr->e_ident, ELFMAG, SELFMAG);
->  	ehdr->e_ident[EI_CLASS] = ELFCLASS64;
->  	ehdr->e_ident[EI_DATA] = ELFDATA2LSB;
-> @@ -377,33 +376,30 @@ static int prepare_elf64_headers(struct crash_mem *cmem, int kernel_map,
->  
->  	/* Prepare one phdr of type PT_NOTE for each present cpu */
->  	for_each_present_cpu(cpu) {
-> -		phdr = (Elf64_Phdr *)bufp;
-> -		bufp += sizeof(Elf64_Phdr);
->  		phdr->p_type = PT_NOTE;
->  		notes_addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpu));
->  		phdr->p_offset = phdr->p_paddr = notes_addr;
->  		phdr->p_filesz = phdr->p_memsz = sizeof(note_buf_t);
->  		(ehdr->e_phnum)++;
-> +		phdr++;
->  	}
->  
->  	/* Prepare one PT_NOTE header for vmcoreinfo */
-> -	phdr = (Elf64_Phdr *)bufp;
-> -	bufp += sizeof(Elf64_Phdr);
->  	phdr->p_type = PT_NOTE;
->  	phdr->p_offset = phdr->p_paddr = paddr_vmcoreinfo_note();
->  	phdr->p_filesz = phdr->p_memsz = VMCOREINFO_NOTE_SIZE;
->  	(ehdr->e_phnum)++;
-> +	phdr++;
->  
->  	/* Prepare PT_LOAD type program header for kernel text region */
->  	if (kernel_map) {
-> -		phdr = (Elf64_Phdr *)bufp;
-> -		bufp += sizeof(Elf64_Phdr);
->  		phdr->p_type = PT_LOAD;
->  		phdr->p_flags = PF_R|PF_W|PF_X;
->  		phdr->p_vaddr = (Elf64_Addr)_text;
->  		phdr->p_filesz = phdr->p_memsz = _end - _text;
->  		phdr->p_offset = phdr->p_paddr = __pa_symbol(_text);
-> -		(ehdr->e_phnum)++;
-> +		ehdr->e_phnum++;
-> +		phdr++;
->  	}
->  
->  	/* Go through all the ranges in cmem->ranges[] and prepare phdr */
-> -- 
-> 2.16.2
-> 
+Thanks,
+Mani
 
-Thanks
-Dave
+Changes in V4:
+
+* Moved to SPDX license tag for dt-bindings
+* Fixed a warning in owl-common.h
+* Rebased on top of 4.16-rc3
+
+Changes in V3:
+
+* Completely refactored the clock driver based on sunxi-ng
+  clock structure
+* Removed all owl_ prefixed functions for registering the
+  clock driver and used the registration functions directly
+* Moved to SPDX based license tag
+* Removed module dependencies from the driver
+* Made I2C clocks as simple gate clocks due to the lack of
+  information about factor rates
+* Added Ack from Rob for DT bindings
+* Sourced CMU clock for UART5
+
+Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
+
+* Changed the directory structure to actions/ and used owl- prefix
+  for sources.
+* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
+* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
+* Changed the license from GPLv2 to GPLv2+.
+* Moved fixed clock sources to DT
+* Changed clock-controller node name to cmu in DT
+* Added clocks property to cmu node in DT
+* Changed compatible property value to "actions,s900-cmu"
+* Fixed example UART controller node in documentation
+* Fixed tab vs space issue
+
+Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
+
+* Addressed last year's review comments from Stephen
+- https://patchwork.kernel.org/patch/9254471/
+
+Manivannan Sadhasivam (11):
+  dt-bindings: clock: Add Actions S900 clock bindings
+  arm64: dts: actions: Add S900 clock management unit nodes
+  arm64: dts: actions: Source CMU clock for UART5
+  clk: actions: Add common clock driver support
+  clk: actions: Add gate clock support
+  clk: actions: Add mux clock support
+  clk: actions: Add divider clock support
+  clk: actions: Add factor clock support
+  clk: actions: Add composite clock support
+  clk: actions: Add pll clock support
+  clk: actions: Add S900 SoC clock support
+
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
+ arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |  12 +
+ drivers/clk/actions/owl-common.c                   |  84 +++
+ drivers/clk/actions/owl-common.h                   |  41 ++
+ drivers/clk/actions/owl-composite.c                | 155 +++++
+ drivers/clk/actions/owl-composite.h                | 101 ++++
+ drivers/clk/actions/owl-divider.c                  |  94 +++
+ drivers/clk/actions/owl-divider.h                  |  75 +++
+ drivers/clk/actions/owl-factor.c                   | 222 +++++++
+ drivers/clk/actions/owl-factor.h                   |  83 +++
+ drivers/clk/actions/owl-gate.c                     |  77 +++
+ drivers/clk/actions/owl-gate.h                     |  73 +++
+ drivers/clk/actions/owl-mux.c                      |  60 ++
+ drivers/clk/actions/owl-mux.h                      |  61 ++
+ drivers/clk/actions/owl-pll.c                      | 194 ++++++
+ drivers/clk/actions/owl-pll.h                      |  92 +++
+ drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
+ drivers/clk/actions/owl-s900.h                     |  61 ++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 ++++
+ 24 files changed, 2364 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
+ create mode 100644 drivers/clk/actions/owl-s900.c
+ create mode 100644 drivers/clk/actions/owl-s900.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
+
+-- 
+2.14.1
