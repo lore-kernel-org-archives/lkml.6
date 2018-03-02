@@ -1,120 +1,101 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3941094-1520068488-2-9897207677853856087
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2835548-1520033963-2-7921250441455963973
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520068488; b=jlqOfiFKltQ61wz/oMDcbwGXzljRPmZnIJWfZoxKch/Zv2N
-    HcLKpqvSJyvjcECiuhZuveDIWFBh21EsQYe5pX2TMCfOmUsRafnOrI4Fr7aFtXnh
-    X95VGXQrHvKaNY+1IzzH3p8Cxr281nQfU38GLu2Ze8X45Wuy0gen64y2/Vi/A1Sy
-    OYWTesHjytSzm1QWAaIOcrTXHHpEjvSzuwJV+D0hsrwimZ0MJXCycCYp+DY58Nj4
-    ydU89hW4jKTzXZilTjm9X4/JA8XJ2+X7D6WXaOD7KzqZ9O7teT3gW5OLf7K3Braq
-    D5aMTDUjC0tAYkBn0mqFqkmgf4xRk3R11wEIDzQ==
+    t=1520033963; b=U1l9pltY5YkEQ/icwx3Lpii+iB3Dx0wCgMI0OJ8emJifxig
+    eENkgwlkVvlqTxHzoUbxAoURgcK3eQSZlsSRRJElih0g537Wpn63JqY/BPU6E1Ko
+    Y7GCuuqNHCbXmd+PKxA47zi4+UAc6nRJ0NVL+/FHGOMOXCOvEUO1wZMOP/3hxoKo
+    lLUMWe0mLQi29rM06I3ozBq4De2emxvTCBR5CjF6fRd7HLgJk1DbpGFvSAYdjm02
+    f0B9Rpz1xCvaEq1T1oXzTyGH3TYHDKHb5rlHzzp91Q60eJmkp8SogddVm/geqPVb
+    jXzJk5+B60mssix6POQRe3w1VaUfRbjYDJZYRKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :in-reply-to:references:mime-version:content-type
     :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520068488; bh=GByzKZk2HF+E3QjlACTvBgwpBgv4BY5/iB0CzLxWo7k=; b=F
-    nIo0A1WEqy75OMtAyn3H2jk7I5ww63MYRz/SvgXEYmdonvCL3ZMWaHvGU8nKK7xG
-    A5drOelpT7NO7IyofPdeEboBN/GfP74RLIyYnc1qEyf6isyrJkk5Li9xYAL2MQ33
-    KGUeCAGeMXg9w/x4hbHUMOR3u4XfdaEomy+RxTYHOR3u43ZzW5A5QcKHn7Bt0GQW
-    fbqMItztnYLBL7TqQlByoAQGLXIS7pHD2ewdRtlWSHxH5iuWAK9WRAFQcBRgoRWi
-    2MDnsUWsn4pp5T7iLzWDriF13D5arFcrxJ2DVWJXL/YrNtbk80OI2pdCHAxuuHMd
-    Qt9ESHrRhlL7JOc7FFO+g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    1520033963; bh=edT/FAXM/ooHsfWGCmKU8sWibIcGjcWxtDsfvr85a54=; b=t
+    BR4HaVCwe1Y3eGgVNuRLxk2yIyan1La/wiFgqOxhRv5Jvl34H30TS7YsGnvrGMdm
+    ZZibpZQT8RMAYMe7yND9wWYR0AGYpPFyYK9wkenVM14v/t9oS+8rgvp6erYD3UOE
+    aFxy8hGw33+e6bi9dHlRG8nRC5pAmInYGNUI/Gdv7Ii8keW5JCxZAVLnqwxmokwQ
+    Vf7sUcJ+dkCtIi3zOHDNl4zG+avSKMlD9lF4u9Ne7qN9cNpBKvuwyhjxUjfucj9e
+    6btyLsm5kgyfqGcjx3JqMs+lwNgP2LIqPRzRXD9I9UxHDdLwd+AQT+TRH7ofOMBu
+    pdVVhy7FoZDAfreHb03Sw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rXdLNn3+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=rXdLNn3+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751885AbeCCJOp (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 04:14:45 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34747 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751568AbeCCJOo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 3 Mar 2018 04:14:44 -0500
-X-Google-Smtp-Source: AG47ELu9pBZ3VllMDsMaSi5ubjbBBJOwYSNoJ3A5YYhz2WxMFOcsplOK4OoGCYlqbFFEYlVc7gLo0Q==
-Subject: Re: [PATCH 4.4 64/67] usb: uas: unconditionally bring back host after
- reset
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Oliver Neukum <oneukum@suse.com>
-Cc: stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180202140815.091718203@linuxfoundation.org>
- <20180202140822.268335379@linuxfoundation.org>
- <1520036364.2786.39.camel@codethink.co.uk>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5ed38173-5fd6-eaa2-b838-632829471aec@redhat.com>
-Date: Sat, 3 Mar 2018 10:14:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1520036364.2786.39.camel@codethink.co.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S934732AbeCBXix (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 18:38:53 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52824 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934410AbeCBXiv (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 2 Mar 2018 18:38:51 -0500
+Date: Fri, 2 Mar 2018 15:38:49 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, crml <criu@openvz.org>
+Subject: Re: [PATCH 0/3] userfaultfd: non-cooperative: syncronous events
+Message-Id: <20180302153849.d9d7b9a873755c6f5e883d0d@linux-foundation.org>
+In-Reply-To: <1519719592-22668-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1519719592-22668-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+On Tue, 27 Feb 2018 10:19:49 +0200 Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 
-On 03-03-18 01:19, Ben Hutchings wrote:
-> On Fri, 2018-02-02 at 17:58 +0100, Greg Kroah-Hartman wrote:
->> 4.4-stable review patch.  If anyone has any objections, please let me know.
->>
->> ------------------
->>
->> From: Oliver Neukum <oneukum@suse.com>
->>
->> commit cbeef22fd611c4f47c494b821b2b105b8af970bb upstream.
-> [...]
->> --- a/drivers/usb/storage/uas.c
->> +++ b/drivers/usb/storage/uas.c
->> @@ -1052,20 +1052,19 @@ static int uas_post_reset(struct usb_int
->>   		return 0;
->>   
->>   	err = uas_configure_endpoints(devinfo);
->> -	if (err) {
->> +	if (err && err != ENODEV)
->>   		shost_printk(KERN_ERR, shost,
->>   			     "%s: alloc streams error %d after reset",
->>   			     __func__, err);
-> [...]
+> Hi,
 > 
-> This should be checking for -ENODEV, shouldn't it?
+> These patches add ability to generate userfaultfd events so that their
+> processing will be synchronized with the non-cooperative thread that caused
+> the event.
+> 
+> In the non-cooperative case userfaultfd resumes execution of the thread
+> that caused an event when the notification is read() by the uffd monitor.
+> In some cases, like, for example, madvise(MADV_REMOVE), it might be
+> desirable to keep the thread that caused the event suspended until the
+> uffd monitor had the event handled to avoid races between the thread that
+> caused the and userfaultfd ioctls.
+> 
+> Theses patches extend the userfaultfd API with an implementation of
+> UFFD_EVENT_REMOVE_SYNC that allows to keep the thread that triggered
+> UFFD_EVENT_REMOVE until the uffd monitor would not wake it explicitly.
 
-Yes you're right, the check should be != -ENODEV.
+"might be desirable" is a bit weak.  It might not be desirable, too ;)
 
-Oliver can you do a follow-up patch fixing this please?
-
-Regards,
-
-Hans
+_Is_ it desirable?  What are the use-cases and what is the end-user
+benefit?
