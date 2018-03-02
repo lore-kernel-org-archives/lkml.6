@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv36mBrnAcT3UxQOlX/Q/5QAK8OuS528RaX8vlYui/sUPn2Eo5GabEATX+gVcon+nGuRa8p
-ARC-Seal: i=1; a=rsa-sha256; t=1519981516; cv=none;
+X-Google-Smtp-Source: AG47ELv7LL/CFNLSHatWQo16SvBOkU3+GqL5irNBXMzcy2m56fIOx1RlIvaFBFYGQCShi1XD0rPk
+ARC-Seal: i=1; a=rsa-sha256; t=1519981513; cv=none;
         d=google.com; s=arc-20160816;
-        b=WjLIybtUOIJ8acpWvrRow2Bnvwuu2MJeEdulpEpziitSLRLzd2zZgNY+Uino7yvnz1
-         XY24j50a1Qk2UTsXxGI/wx8/Xm4vK+VVoYzGZ6zTPogj15rVddphJpDyx51hKv1ieKfI
-         DmiGoGgxCtZDN2cxVy1NiQOWXQAWUBsj4paNBlIVc984o6Vmjb4eYgCxeIBSQmkbYnMK
-         G3mbVw8YDHX3ElgnKZqh4BDqOvUsCAy45D2uaYfJcUygeTrflyZx3RrV/9JQGiM1wsTY
-         XPnisMsLsmMzCYrBbcNcxezwqT7DD08E+305tDzuHr/YKHL13bXDhH1eCxT081YbOkqo
-         b2jg==
+        b=JiswkrpyFDBhIpsGOy8BtBxD/ErFgAuGTv/t14e9BvH1e96nmh7xCSyuyVBqhCoXdx
+         r0cYxrY9NsKrZ5VsNEEjqisH6+29ecRsWZ3xIVueff94lVAQQVnWsxKQ6CQCMWXa4d3X
+         cU7UwsaJsLcCRVqGZ4AZTXowWIdriEekwPBJBdiN4vViyfoDVmz3EhZy+PPnLKU+nx8U
+         umHUQcFHUC8AUxsI/Z80fs9qKqYIzO1Kfq/7FJCuV7nL3v/5XU92uj5CRzEqsyb9isQi
+         FcVI63m+vzpQiCeb0A/8ITr0KD3JWs+2Ay/f4YwNLKj5XYigk1xPXDzfurc9uwoLKvKE
+         WOIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ruZa3HtSSsVuoiKCF8HHUDydYSRN31D+YC7DfDVUDIg=;
-        b=qMDpD/b2kBzbMQsXPS1xbrYwOcO7lwCsszAgnclxHxd+IkBC16QD2n4iCo+kfaoc3+
-         a3lp6VXzpF3O9/IJr117WWstzWeyW0qm/kyPV3SBqW/iSGWctLS5p9Xwx/NGlqZbxhm7
-         Evi+L+SMt8IOX1s2bJ4EphMNY57ldjy8K1qwGnGXyI1T71K9E8v4fIkzhatlPe7lDq7x
-         AsgxC4FXFOOgTD9z6GZRAHIcB3q4bat9okPvrYvYGcuJ1hflv1iEXlIfDCafYHxgIw+4
-         NQZShakFWKI+sx9lUt9nHJ6RFxoPwi5//+sDgxxHhbM4Umc16+6dNyoHRGMrC3Yqpycx
-         aygw==
+        bh=Dt2d5iJFzlCS2h2ARnyYOoN5nszagPDShyvI0yEJnOw=;
+        b=R6f+2RQAda5TFtxscrN/sHqIAQbe0xSRHsUv6CZbWetxUnGfoJXmHYpB/ZWNH/mvnm
+         lDviohBMNyMEN9ywyiSw4tpof+kHH6I2yNmY+TtVAlk5jVUnl28d6iPKjPcTroagcYWF
+         N/k7R24hOG13NDYhMYSskxuna/nrk4tFsKAE3+lNzWgck97o5nx7O+3yjLSiecINHoj7
+         VY7xLio3cHCAyPrfDwDcp8MwiFWi1HgCii6JYHOz8J9HyPVBj0W8x3xT7kR5QLDLu0BO
+         6xV10Pmye9ktn25bZ2k8QKYL/r1oOQsclZwJQaE3+mD4l1+h6qlYQVamH7id+Wf3Ac72
+         jCGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Jiri Pirko <jiri@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 099/115] SolutionEngine771x: fix Ether platform data
-Date: Fri,  2 Mar 2018 09:51:42 +0100
-Message-Id: <20180302084507.849994760@linuxfoundation.org>
+	Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [PATCH 4.14 115/115] net: sched: fix use-after-free in tcf_block_put_ext
+Date: Fri,  2 Mar 2018 09:51:58 +0100
+Message-Id: <20180302084508.490842564@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815317239776648?=
-X-GMAIL-MSGID: =?utf-8?q?1593816138601790018?=
+X-GMAIL-THRID: =?utf-8?q?1593816135243715312?=
+X-GMAIL-MSGID: =?utf-8?q?1593816135243715312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,63 +50,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jiri Pirko <jiri@mellanox.com>
 
+commit df45bf84e4f5a48f23d4b1a07d21d566e8b587b2 upstream.
 
-[ Upstream commit 195e2addbce09e5afbc766efc1e6567c9ce840d3 ]
+Since the block is freed with last chain being put, once we reach the
+end of iteration of list_for_each_entry_safe, the block may be
+already freed. I'm hitting this only by creating and deleting clsact:
 
-The 'sh_eth' driver's probe() method would fail  on the SolutionEngine7710
-board and crash on SolutionEngine7712 board  as the platform code is
-hopelessly behind the driver's platform data --  it passes the PHY address
-instead of 'struct sh_eth_plat_data *'; pass the latter to the driver in
-order to fix the bug...
+[  202.171952] ==================================================================
+[  202.180182] BUG: KASAN: use-after-free in tcf_block_put_ext+0x240/0x390
+[  202.187590] Read of size 8 at addr ffff880225539a80 by task tc/796
+[  202.194508]
+[  202.196185] CPU: 0 PID: 796 Comm: tc Not tainted 4.15.0-rc2jiri+ #5
+[  202.203200] Hardware name: Mellanox Technologies Ltd. "MSN2100-CB2F"/"SA001017", BIOS 5.6.5 06/07/2016
+[  202.213613] Call Trace:
+[  202.216369]  dump_stack+0xda/0x169
+[  202.220192]  ? dma_virt_map_sg+0x147/0x147
+[  202.224790]  ? show_regs_print_info+0x54/0x54
+[  202.229691]  ? tcf_chain_destroy+0x1dc/0x250
+[  202.234494]  print_address_description+0x83/0x3d0
+[  202.239781]  ? tcf_block_put_ext+0x240/0x390
+[  202.244575]  kasan_report+0x1ba/0x460
+[  202.248707]  ? tcf_block_put_ext+0x240/0x390
+[  202.253518]  tcf_block_put_ext+0x240/0x390
+[  202.258117]  ? tcf_chain_flush+0x290/0x290
+[  202.262708]  ? qdisc_hash_del+0x82/0x1a0
+[  202.267111]  ? qdisc_hash_add+0x50/0x50
+[  202.271411]  ? __lock_is_held+0x5f/0x1a0
+[  202.275843]  clsact_destroy+0x3d/0x80 [sch_ingress]
+[  202.281323]  qdisc_destroy+0xcb/0x240
+[  202.285445]  qdisc_graft+0x216/0x7b0
+[  202.289497]  tc_get_qdisc+0x260/0x560
 
-Fixes: 71557a37adb5 ("[netdrvr] sh_eth: Add SH7619 support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fix this by holding the block also by chain 0 and put chain 0
+explicitly, out of the list_for_each_entry_safe loop at the very
+end of tcf_block_put_ext.
+
+Fixes: efbf78973978 ("net_sched: get rid of rcu_barrier() in tcf_block_put_ext()")
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/sh/boards/mach-se/770x/setup.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/sh/boards/mach-se/770x/setup.c
-+++ b/arch/sh/boards/mach-se/770x/setup.c
-@@ -9,6 +9,7 @@
-  */
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/sh_eth.h>
- #include <mach-se/mach/se.h>
- #include <mach-se/mach/mrshpc.h>
- #include <asm/machvec.h>
-@@ -115,6 +116,11 @@ static struct platform_device heartbeat_
- #if defined(CONFIG_CPU_SUBTYPE_SH7710) ||\
- 	defined(CONFIG_CPU_SUBTYPE_SH7712)
- /* SH771X Ethernet driver */
-+static struct sh_eth_plat_data sh_eth_plat = {
-+	.phy = PHY_ID,
-+	.phy_interface = PHY_INTERFACE_MODE_MII,
-+};
+
+---
+ net/sched/cls_api.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+--- a/net/sched/cls_api.c
++++ b/net/sched/cls_api.c
+@@ -290,21 +290,22 @@ void tcf_block_put(struct tcf_block *blo
+ 	if (!block)
+ 		return;
+ 
+-	/* Hold a refcnt for all chains, except 0, so that they don't disappear
++	/* Hold a refcnt for all chains, so that they don't disappear
+ 	 * while we are iterating.
+ 	 */
+ 	list_for_each_entry(chain, &block->chain_list, list)
+-		if (chain->index)
+-			tcf_chain_hold(chain);
++		tcf_chain_hold(chain);
+ 
+ 	list_for_each_entry(chain, &block->chain_list, list)
+ 		tcf_chain_flush(chain);
+ 
+-	/* At this point, all the chains should have refcnt >= 1. Block will be
+-	 * freed after all chains are gone.
+-	 */
++	/* At this point, all the chains should have refcnt >= 1. */
+ 	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
+ 		tcf_chain_put(chain);
 +
- static struct resource sh_eth0_resources[] = {
- 	[0] = {
- 		.start = SH_ETH0_BASE,
-@@ -132,7 +138,7 @@ static struct platform_device sh_eth0_de
- 	.name = "sh771x-ether",
- 	.id = 0,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth0_resources),
- 	.resource = sh_eth0_resources,
-@@ -155,7 +161,7 @@ static struct platform_device sh_eth1_de
- 	.name = "sh771x-ether",
- 	.id = 1,
- 	.dev = {
--		.platform_data = PHY_ID,
-+		.platform_data = &sh_eth_plat,
- 	},
- 	.num_resources = ARRAY_SIZE(sh_eth1_resources),
- 	.resource = sh_eth1_resources,
++	/* Finally, put chain 0 and allow block to be freed. */
++	chain = list_first_entry(&block->chain_list, struct tcf_chain, list);
++	tcf_chain_put(chain);
+ }
+ EXPORT_SYMBOL(tcf_block_put);
+ 
