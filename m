@@ -1,34 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164371AbeCBCYN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 21:24:13 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:41072 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164346AbeCBCYJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 21:24:09 -0500
-Date: Thu, 01 Mar 2018 21:24:07 -0500 (EST)
-Message-Id: <20180301.212407.1353464039047216968.davem@davemloft.net>
-To: f.fainelli@gmail.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, rmk@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, moritz.fischer@ettus.com
-Subject: Re: [PATCH net-next v3 0/5] net: phy: Reduce duplication
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180302000859.17309-1-f.fainelli@gmail.com>
-References: <20180302000859.17309-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1164376AbeCBCa0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 21:30:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:16665 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1164179AbeCBCaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 21:30:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="179258885"
+Date: Thu, 1 Mar 2018 18:30:23 -0800
+From: Jesse Brandeburg <jesse.brandeburg@intel.com>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: <richard@nod.at>, Andi Kleen <ak@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>,
+        <user-mode-linux-devel@lists.sourceforge.net>,
+        jesse.brandeburg@intel.com
+Subject: Re: [uml-devel] [PATCH] uml: Fix build with recent glibc
+Message-ID: <20180301183023.00002ddf@intel.com>
+In-Reply-To: <20180301030844.23448-1-andi@firstfloor.org>
+References: <20180301030844.23448-1-andi@firstfloor.org>
+X-Mailer: Claws Mail 3.14.0 (GTK+ 2.24.30; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Thu,  1 Mar 2018 16:08:54 -0800
+On Wed, 28 Feb 2018 19:08:44 -0800
+Andi Kleen <andi@firstfloor.org> wrote:
 
-> This patch series reduces the duplication among 10G PHY drivers that just
-> essentially stub most functions, but do that while replicating what the existing
-> generic functions do.
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> Newer glibc did some include namespace "cleanups" and removed
+> struct ucontext and friends. This already broke a lot of software,
+> and UML seems to be the latest victim.
+> 
+> Use the typedefs which are still available. They also work on
+> older glibcs.
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
 
-Series applied, thanks Florian.
+same patch that I sent on Feb 1st.  Hope you can get more traction than
+I did.
+
+https://www.mail-archive.com/user-mode-linux-devel@lists.sourceforge.net/msg10071.html
+
+Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
