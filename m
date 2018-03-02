@@ -1,39 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsAieIZf1tJawknEum7hvE3mlh90JQbVzzfjawG1wlX7+DjVu7ANiio4CDayVdW9anwtEQX
-ARC-Seal: i=1; a=rsa-sha256; t=1519981321; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IGwc8XPmwxJOQ4pRyfJte12yFATANupIHP18hnCdDr0wY4qFBlYuhTigNqrwRcqH13
-         OFYn/W63966AJSQvEZcZItf4fkjTMBrMfMv61m4WRlOst4ofmyw3f9v+7vgLjSEJSw7q
-         wbR/t87d0J8rKu0cKb/+51Bl59owy4Cla9MXjDH7FjgFDHkv1WeYSAweQ8jXkOKdPfTf
-         WdQhbC0eTagHCw/YEc429VC4aJPc2Q9kuGEeKgY3UiMiASqwNeRmSsZ4m1EZzx4z8X8Z
-         ZaiK/FEu3skC7Vm9n06Iojeo7M6rnIH3U4MfAWhKyG5ceVtzwGlr7VaeXTzEBSPvRD1w
-         tJMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=7n6lJobQr7qr/tMxXuB6Fe2UKX9i1TUThptR8n/N+68=;
-        b=txsUlL4DIY8vxDzqwLzq2ToF1OC9xfvRdGDmOAdmGKaEKLSb716Ht+UxKZpnK5cvXR
-         w1KmotvkzmQ3I4ap9Z9IwPHrQly4JKILgtXr5IudARfAbcavPr3DNPxcWRqNwGkqLAIw
-         XN8T3LWtqLgXT8i+xIyiuv0QDc2iprXhV8+K1KS0seOLhY8P5Ya6WTL1yZjpfmVtrU/2
-         UVeEoKIuyfEIO3G+lIuahPYvE+O0qM42bmfI4LU0PuhlV1JERUS0unlVN8OGE9dY/YiB
-         wZr1OllEBcIyX0H3bPvZGpQAu3l/yKvCl8VFXi/JHD7Pysi5YfOwmqLU6NPEFS6iKGJ1
-         s8lw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1164852-1519981321-2-547810571500370932
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519981321; b=nx0VcT0mhukfaBQ243PLtvi/1FrdQgWnaymGf215+NMM51l
+    t1TuYcaWLbXxhhuD8JERMXGz7CYN/voIhhTT04UwXFO11/gyT+6YgmoJFuBOLHSr
+    SJycgKLX/vGqn5qMWsUVzwfyWxvwzOyXszed7Ylc/bFe9g3OcH8AfJXIwFglmRLu
+    B+Lp6KFfzTFLHj6Vi3iN2i+d5taEUj0cAIsTSuGXoBJ2So5WZHJu6zYmyfNKuB08
+    vbEYT7aQBvfrdUJkZNBZEBj3T0z1CLfe+j3k16ikV+VHvvuslIPYNTznr0WDwSYA
+    oIZBbzgazoawvTaeH6TgrbOuZpFavHiGG6lUfeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519981321; bh=Sd8keOvDx2mt+cTw5aqrQIqzQi
+    UTmQnEPnrWzoPE1IE=; b=q17krb7bPAhDyZGSBf4Y4eeKXbJwcBjBM/iWWuUCJt
+    Pvg2f6jAyUxIPbD7znlqeGAUmTwnKa3esU+oinG9zF/tmuOpS2JIpTQYL866qsdl
+    4yDcHPDpwzCHuCHI/NWOz8eG2bR4XEVAbEZdLEU58seSOPEa04g6/Y2bMjrMNdO9
+    jbtgF1mpX04MNcNebw51/OmJ9hp+rSJ4k9Tcq28uTI80LSs/KNo0JNscoZT+Rzef
+    cLTMPRBOuhSVkRJPR3nW1GlMSs5DPvqzGXRdO7heMy0L7FRsz3j+1/QeKjkvkl7U
+    I6brNNeXfYoT2BJEP1nJrjjZipPZdcEanANL7h0U2agw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1424795AbeCBJB7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 04:01:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54214 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424433AbeCBJB5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:57 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Ying Xue <ying.xue@windriver.com>,
-	Jon Maloy <jon.maloy@ericsson.com>,
-	Tommi Rantala <tommi.t.rantala@nokia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 056/115] tipc: error path leak fixes in tipc_enable_bearer()
-Date: Fri,  2 Mar 2018 09:50:59 +0100
-Message-Id: <20180302084506.152029437@linuxfoundation.org>
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        Phil Sutter <phil@nwl.cc>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 055/115] netfilter: nf_tables: fix potential NULL-ptr deref in nf_tables_dump_obj_done()
+Date: Fri,  2 Mar 2018 09:50:58 +0100
+Message-Id: <20180302084506.107331139@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815612315964266?=
-X-GMAIL-MSGID: =?utf-8?q?1593815934477082558?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,43 +80,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tommi Rantala <tommi.t.rantala@nokia.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
 
-[ Upstream commit 19142551b2be4a9e13838099fde1351386e5e007 ]
+[ Upstream commit 8bea728dce8972e534e6b99fd550f7b5cc3864e8 ]
 
-Fix memory leak in tipc_enable_bearer() if enable_media() fails, and
-cleanup with bearer_disable() if tipc_mon_create() fails.
+If there is no NFTA_OBJ_TABLE and NFTA_OBJ_TYPE, the c.data will be NULL in
+nf_tables_getobj(). So before free filter->table in nf_tables_dump_obj_done(),
+we need to check if filter is NULL first.
 
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Acked-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e46abbcc05aa ("netfilter: nf_tables: Allow table names of up to 255 chars")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/bearer.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/tipc/bearer.c
-+++ b/net/tipc/bearer.c
-@@ -324,6 +324,7 @@ restart:
- 	if (res) {
- 		pr_warn("Bearer <%s> rejected, enable failure (%d)\n",
- 			name, -res);
-+		kfree(b);
- 		return -EINVAL;
- 	}
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4596,8 +4596,10 @@ static int nf_tables_dump_obj_done(struc
+ {
+ 	struct nft_obj_filter *filter = cb->data;
  
-@@ -347,8 +348,10 @@ restart:
- 	if (skb)
- 		tipc_bearer_xmit_skb(net, bearer_id, skb, &b->bcast_addr);
- 
--	if (tipc_mon_create(net, bearer_id))
-+	if (tipc_mon_create(net, bearer_id)) {
-+		bearer_disable(net, b);
- 		return -ENOMEM;
+-	kfree(filter->table);
+-	kfree(filter);
++	if (filter) {
++		kfree(filter->table);
++		kfree(filter);
 +	}
  
- 	pr_info("Enabled bearer <%s>, discovery domain %s, priority %u\n",
- 		name,
+ 	return 0;
+ }
