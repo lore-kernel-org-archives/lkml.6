@@ -1,68 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753192AbeCBFHt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:07:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:38487 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753155AbeCBFHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:07:47 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 2 Mar 2018 16:07:32 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Young <dyoung@redhat.com>
-Subject: linux-next: build failure after merge of the printk tree
-Message-ID: <20180302160732.12691fbc@canb.auug.org.au>
+        id S1753213AbeCBFKx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:10:53 -0500
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:39389 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbeCBFKv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 00:10:51 -0500
+X-Google-Smtp-Source: AG47ELvWQNAf2TmJsyeuSbT0Q2eTbPSjUYYJmklP+HvI6e5cZvYcW/KGXXReLFoQ3e3SCWFwlm+2LA==
+Date: Fri, 2 Mar 2018 14:10:46 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, kernel test robot <shun.hao@intel.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+Message-ID: <20180302051046.GA899@jagdpanzerIV>
+References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian>
+ <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
+ <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz>
+ <20180301013722.GA6763@tigerII.localdomain>
+ <CACT4Y+ZUDu588gwgCbqru5D1RD5C+s3+E5ydhP7h9RoCjwQWJw@mail.gmail.com>
+ <20180301151934.GA507@tigerII.localdomain>
+ <CACT4Y+byVgvjzTush=Zft_iQmZ3e46QS8X6ooZ15CmAxvPu-oA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yoqieWGv87Mi0RcsMD8bxDF"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+byVgvjzTush=Zft_iQmZ3e46QS8X6ooZ15CmAxvPu-oA@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yoqieWGv87Mi0RcsMD8bxDF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On (03/01/18 16:53), Dmitry Vyukov wrote:
+[..]
+> > Hello Dmitry,
+> >
+> > I believe it's this one
+> >
+> > https://marc.info/?l=linux-kernel&m=151200883525299
+> 
+> 
+> Thanks, but now that I debugged this one, I think that one is the same issue.
+> Amusingly a write in READ_ONCE is actually legitimate because
+> GCC_PLUGIN_STRUCTLEAK emits an initializing write for __u variable in
+> READ_ONCE implementation.
 
-Hi Petr,
+Thanks. It's great to have you in Cc ;)
 
-After merging the printk tree, today's linux-next build (bfin
-BF518F-EZBRD_defconfig) failed like this:
-
-lib/dump_stack.o: In function `dump_stack':
-lib/dump_stack.c:122: multiple definition of `dump_stack'
-arch/blackfin/kernel/dumpstack.o:arch/blackfin/kernel/dumpstack.c:166: firs=
-t defined here
-
-Presumably caused by commit
-
-  8040af489957 ("printk: move dump stack related code to lib/dump_stack.c")
-
-(Though it is not immediately obvious why.)
-
-This fails all the blackfin builds.  nds32 (a new architecture) also
-has a dump_stack function.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yoqieWGv87Mi0RcsMD8bxDF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqY3BQACgkQAVBC80lX
-0GygNQf+IRQoifxVZuc0RnIl0ixRgCPwQA/9e0XnKOSupZbQX2WvNs6Anm89O14R
-EblB3JzPU/BcGtCqPeVfrsCC5ILM9YniTecd97W6yjaASdcxG+GZc3lATb7Ao7vY
-VS9oJoH1zQH/BE8tQ+TVl6tNA0r+Avx9HDekwEXtj5CyzHHcWdnPfkhKY9Vcpi7d
-2/og4vXKsjeDTwvnhkzX9Bmg5YBpJnSoLKlOLpSAt2uXWzPVO9rfZos42XyTHX95
-2CHkjEd3A2epgx+ggP9Pc/6vOxIvFhuJYx86Zz4j6qWlCkB5X2aymTT7NE7N6HpR
-lOH/u1Zb6WqMyNHP0HYQxWVU0P5OdA==
-=EiWY
------END PGP SIGNATURE-----
-
---Sig_/yoqieWGv87Mi0RcsMD8bxDF--
+	-ss
