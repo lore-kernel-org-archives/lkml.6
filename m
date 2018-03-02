@@ -1,225 +1,265 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946251AbeCBPpq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:45:46 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:33879 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1424353AbeCBPpm (ORCPT
+        id S1946324AbeCBPpz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:45:55 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:42661 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946256AbeCBPpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:45:42 -0500
-From: yannick fertre <yannick.fertre@st.com>
-To: Vikas Manocha <vikas.manocha@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Patrick DELAUNAY <patrick.delaunay@st.com>,
-        Christophe KERELLO <christophe.kerello@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Albert Aribaud <albert.u.boot@aribaud.net>,
-        "Simon Glass" <sjg@chromium.org>, Anatolij Gustschin <agust@denx.de>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: <u-boot@lists.denx.de>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 02/10] video: stm32: stm32_ltdc: update debug log
-Date: Fri, 2 Mar 2018 16:44:03 +0100
-Message-ID: <1520005451-23217-3-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
-References: <1520005451-23217-1-git-send-email-yannick.fertre@st.com>
+        Fri, 2 Mar 2018 10:45:49 -0500
+X-Google-Smtp-Source: AG47ELvmarQXsIBMcUYrUzSrNhw4NCuHVGk4+LFAeFWajtwm97mqidbfwpBxDO6oCeP4VXyijuqhiA==
+Date: Fri, 2 Mar 2018 09:45:47 -0600
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: matthias.bgg@gmail.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 18/19] arm: dts: mt7623: add MT7623A reference boards
+Message-ID: <20180302154547.xq5nkmkdk3oenbta@rob-hp-laptop>
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+ <ddffdff293734954ba368be8a54edd3c84a4f4e6.1519378872.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.68]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddffdff293734954ba368be8a54edd3c84a4f4e6.1519378872.git.sean.wang@mediatek.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace  macro debug by pr_error, pr_warn or pr_info.
+On Fri, Feb 23, 2018 at 06:16:38PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Add mt7623a-rfb.dtsi where most nodes can be inherited from
+> mt7623n-rfb.dtsi and keep these distinctions from MT7623A boards in
+> mt7623a-rfb.dtsi for most definition can be reused among MT7623A board
+> variants.
+> 
+> MT7623A has its specific definition of power domain and thus we need
+> to change related devices such as audio, ethernet, crypto, high-speed
+> DMA, NAND, and USB controller to the power domain they specifically
+> belong to. In addition, MT7530 exists as built-in module inside MT7623A
+> SoC and I2C2 and UART[0-1] get being removed and UART2 have distinct pin
+> usage. Those all differences can be totally seen in mt7623a-rfb.dtsi.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  arch/arm/boot/dts/Makefile             |  2 +
+>  arch/arm/boot/dts/mt7623a-rfb-emmc.dts | 22 +++++++++
+>  arch/arm/boot/dts/mt7623a-rfb-nand.dts | 26 +++++++++++
+>  arch/arm/boot/dts/mt7623a-rfb.dtsi     | 84 ++++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/mt7623n-rfb.dtsi     | 15 ++++++
+>  5 files changed, 149 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+>  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-nand.dts
+>  create mode 100644 arch/arm/boot/dts/mt7623a-rfb.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 5af6fce..818817c 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1122,6 +1122,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
+>  	mt6580-evbp1.dtb \
+>  	mt6589-aquaris5.dtb \
+>  	mt6592-evb.dtb \
+> +	mt7623a-rfb-emmc.dtb \
+> +	mt7623a-rfb-nand.dtb \
+>  	mt7623n-rfb-emmc.dtb \
+>  	mt7623n-rfb-nand.dtb \
+>  	mt7623n-bananapi-bpi-r2.dtb \
+> diff --git a/arch/arm/boot/dts/mt7623a-rfb-emmc.dts b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+> new file mode 100644
+> index 0000000..ef6398e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2017-2018 MediaTek Inc.
+> + * Author: Sean Wang <sean.wang@mediatek.com>
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt7623a-rfb.dtsi"
+> +
+> +/ {
+> +	model = "MediaTek MT7623A with eMMC reference board";
+> +	compatible = "mediatek,mt7623a-rfb-emmc", "mediatek,mt7623";
+> +
+> +	chosen {
+> +		bootargs = "console=ttyS0,115200n8 earlyprintk";
 
-Signed-off-by: yannick fertre <yannick.fertre@st.com>
----
- drivers/video/stm32/stm32_ltdc.c | 62 ++++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+Use stdout-path instead. earlyprintk option only works for a kernel 
+built with a debug uart at a fixed address, so drop it.
 
-diff --git a/drivers/video/stm32/stm32_ltdc.c b/drivers/video/stm32/stm32_ltdc.c
-index bd9c0de..e95f35c 100644
---- a/drivers/video/stm32/stm32_ltdc.c
-+++ b/drivers/video/stm32/stm32_ltdc.c
-@@ -176,13 +176,13 @@ static u32 stm32_ltdc_get_pixel_format(enum video_log2_bpp l2bpp)
- 	case VIDEO_BPP2:
- 	case VIDEO_BPP4:
- 	default:
--		debug("%s: warning %dbpp not supported yet, %dbpp instead\n",
--		      __func__, VNBITS(l2bpp), VNBITS(VIDEO_BPP16));
-+		pr_warn("%s: warning %dbpp not supported yet, %dbpp instead\n",
-+			__func__, VNBITS(l2bpp), VNBITS(VIDEO_BPP16));
- 		pf = PF_RGB565;
- 		break;
- 	}
- 
--	debug("%s: %d bpp -> ltdc pf %d\n", __func__, VNBITS(l2bpp), pf);
-+	pr_info("%s: %d bpp -> ltdc pf %d\n", __func__, VNBITS(l2bpp), pf);
- 
- 	return (u32)pf;
- }
-@@ -249,7 +249,7 @@ static void stm32_ltdc_set_mode(struct stm32_ltdc_priv *priv,
- 
- 	/* Signal polarities */
- 	val = 0;
--	debug("%s: timing->flags 0x%08x\n", __func__, timings->flags);
-+	pr_info("%s: timing->flags 0x%08x\n", __func__, timings->flags);
- 	if (timings->flags & DISPLAY_FLAGS_HSYNC_HIGH)
- 		val |= GCR_HSPOL;
- 	if (timings->flags & DISPLAY_FLAGS_VSYNC_HIGH)
-@@ -343,26 +343,26 @@ static int stm32_ltdc_probe(struct udevice *dev)
- 
- 	priv->regs = (void *)dev_read_addr(dev);
- 	if ((fdt_addr_t)priv->regs == FDT_ADDR_T_NONE) {
--		debug("%s: ltdc dt register address error\n", __func__);
-+		pr_err("%s: ltdc dt register address error\n", __func__);
- 		return -EINVAL;
- 	}
- 
- 	ret = clk_get_by_index(dev, 0, &pclk);
- 	if (ret) {
--		debug("%s: peripheral clock get error %d\n", __func__, ret);
-+		pr_err("%s: peripheral clock get error %d\n", __func__, ret);
- 		return ret;
- 	}
- 
- 	ret = clk_enable(&pclk);
- 	if (ret) {
--		debug("%s: peripheral clock enable error %d\n",
--		      __func__, ret);
-+		pr_err("%s: peripheral clock enable error %d\n",
-+		       __func__, ret);
- 		return ret;
- 	}
- 
- 	ret = reset_get_by_index(dev, 0, &rst);
- 	if (ret) {
--		debug("%s: missing ltdc hardware reset\n", __func__);
-+		pr_err("%s: missing ltdc hardware reset\n", __func__);
- 		return -ENODEV;
- 	}
- 
-@@ -372,41 +372,40 @@ static int stm32_ltdc_probe(struct udevice *dev)
- #ifdef CONFIG_VIDEO_BRIDGE
- 	ret = uclass_get_device(UCLASS_VIDEO_BRIDGE, 0, &bridge);
- 	if (ret) {
--		debug("%s: No video bridge, or no backlight on bridge\n",
--		      __func__);
-+		pr_info("%s: No video bridge, or no backlight on bridge\n",
-+			__func__);
- 	}
- 
- 	if (bridge) {
- 		ret = video_bridge_attach(bridge);
- 		if (ret) {
--			debug("%s: fail to attach bridge\n", __func__);
-+			pr_err("%s: fail to attach bridge\n", __func__);
- 			return ret;
- 		}
- 	}
- #endif
- 	ret = uclass_first_device(UCLASS_PANEL, &panel);
- 	if (ret) {
--		debug("%s: panel device error %d\n", __func__, ret);
-+		pr_err("%s: panel device error %d\n", __func__, ret);
- 		return ret;
- 	}
- 
- 	ret = fdtdec_decode_display_timing(gd->fdt_blob, dev_of_offset(panel),
- 					   0, &timings);
- 	if (ret) {
--		debug("%s: decode display timing error %d\n",
--		      __func__, ret);
-+		pr_err("%s: decode display timing error %d\n", __func__, ret);
- 		return ret;
- 	}
- 
- 	rate = clk_set_rate(&pclk, timings.pixelclock.typ);
- 	if (rate < 0) {
--		debug("%s: fail to set pixel clock %d hz %d hz\n",
--		      __func__, timings.pixelclock.typ, rate);
-+		pr_err("%s: fail to set pixel clock %d hz %d hz\n",
-+		       __func__, timings.pixelclock.typ, rate);
- 		return rate;
- 	}
- 
--	debug("%s: Set pixel clock req %d hz get %d hz\n", __func__,
--	      timings.pixelclock.typ, rate);
-+	pr_info("%s: Set pixel clock req %d hz get %d hz\n", __func__,
-+		timings.pixelclock.typ, rate);
- 
- 	/* TODO Below parameters are hard-coded for the moment... */
- 	priv->l2bpp = VIDEO_BPP16;
-@@ -417,12 +416,12 @@ static int stm32_ltdc_probe(struct udevice *dev)
- 	priv->crop_h = timings.vactive.typ;
- 	priv->alpha = 0xFF;
- 
--	debug("%s: %dx%d %dbpp frame buffer at 0x%lx\n", __func__,
--	      timings.hactive.typ, timings.vactive.typ,
--	      VNBITS(priv->l2bpp), uc_plat->base);
--	debug("%s: crop %d,%d %dx%d bg 0x%08x alpha %d\n", __func__,
--	      priv->crop_x, priv->crop_y, priv->crop_w, priv->crop_h,
--	      priv->bg_col_argb, priv->alpha);
-+	pr_info("%s: %dx%d %dbpp frame buffer at 0x%lx\n", __func__,
-+		timings.hactive.typ, timings.vactive.typ,
-+		VNBITS(priv->l2bpp), uc_plat->base);
-+	pr_info("%s: crop %d,%d %dx%d bg 0x%08x alpha %d\n", __func__,
-+		priv->crop_x, priv->crop_y, priv->crop_w, priv->crop_h,
-+		priv->bg_col_argb, priv->alpha);
- 
- 	/* Configure & start LTDC */
- 	stm32_ltdc_set_mode(priv, &timings);
-@@ -437,22 +436,22 @@ static int stm32_ltdc_probe(struct udevice *dev)
- 	if (bridge) {
- 		ret = video_bridge_set_backlight(bridge, 80);
- 		if (ret) {
--			debug("%s: fail to set backlight\n", __func__);
-+			pr_err("%s: fail to set backlight\n", __func__);
- 			return ret;
- 		}
- 	} else {
- 		ret = panel_enable_backlight(panel);
- 		if (ret) {
--			debug("%s: panel %s enable backlight error %d\n",
--			      __func__, panel->name, ret);
-+			pr_err("%s: panel %s enable backlight error %d\n",
-+			       __func__, panel->name, ret);
- 			return ret;
- 		}
- 	}
- #else
- 	ret = panel_enable_backlight(panel);
- 	if (ret) {
--		debug("%s: panel %s enable backlight error %d\n",
--		      __func__, panel->name, ret);
-+		pr_err("%s: panel %s enable backlight error %d\n",
-+		       __func__, panel->name, ret);
- 		return ret;
- 	}
- #endif
-@@ -468,7 +467,8 @@ static int stm32_ltdc_bind(struct udevice *dev)
- 	uc_plat->size = CONFIG_VIDEO_STM32_MAX_XRES *
- 			CONFIG_VIDEO_STM32_MAX_YRES *
- 			(CONFIG_VIDEO_STM32_MAX_BPP >> 3);
--	debug("%s: frame buffer max size %d bytes\n", __func__, uc_plat->size);
-+	pr_info("%s: frame buffer max size %d bytes\n", __func__,
-+		uc_plat->size);
- 
- 	return 0;
- }
--- 
-1.9.1
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/mt7623a-rfb-nand.dts b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
+> new file mode 100644
+> index 0000000..592d5d7
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2017-2018 MediaTek Inc.
+> + * Author: Sean Wang <sean.wang@mediatek.com>
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +#include "mt7623a-rfb.dtsi"
+> +
+> +/ {
+> +	model = "MediaTek MT7623A with NAND reference board";
+> +	compatible = "mediatek,mt7623a-rfb-nand", "mediatek,mt7623";
+> +
+> +	chosen {
+> +		bootargs = "console=ttyS0,115200n8 earlyprintk";
+
+ditto.
+
+> +	};
+> +};
+> +
+> +&bch {
+> +	status = "okay";
+> +};
+> +
+> +&nandc {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/mt7623a-rfb.dtsi b/arch/arm/boot/dts/mt7623a-rfb.dtsi
+> new file mode 100644
+> index 0000000..3a15c46
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/mt7623a-rfb.dtsi
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2017-2018 MediaTek Inc.
+> + * Author: Sean Wang <sean.wang@mediatek.com>
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/power/mt7623a-power.h>
+> +#include "mt7623n-rfb.dtsi"
+> +
+> +/ {
+> +	memory {
+
+Unit-address?
+
+> +		device_type = "memory";
+> +		reg = <0 0x80000000 0 0x20000000>;
+> +	};
+> +};
+> +
+> +&afe {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
+> +};
+> +
+> +&cir {
+> +	status = "disabled";
+> +};
+> +
+> +&crypto {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> +};
+> +
+> +&eth {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> +};
+> +
+> +&hsdma {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> +};
+> +
+> +&i2c2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c2_pins_b>;
+> +};
+> +
+> +&mt7530 {
+> +	mediatek,mcm;
+> +	resets = <&ethsys MT2701_ETHSYS_MCM_RST>;
+> +	reset-names = "mcm";
+> +};
+> +
+> +&nandc {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
+> +};
+> +
+> +&pcie {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> +};
+> +
+> +&scpsys {
+> +	compatible = "mediatek,mt7623a-scpsys",
+> +		     "syscon";
+> +	clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
+> +	clock-names = "ethif";
+> +};
+> +
+> +&uart0 {
+> +	status = "disabled";
+> +};
+> +
+> +&uart1 {
+> +	status = "disabled";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart2_pins_b>;
+> +};
+> +
+> +&usb1 {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> +};
+> +
+> +&usb2 {
+> +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> +};
+> diff --git a/arch/arm/boot/dts/mt7623n-rfb.dtsi b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> index 0237476..07ed15d 100644
+> --- a/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> +++ b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> @@ -380,6 +380,14 @@
+>  		};
+>  	};
+>  
+> +	i2c2_pins_b: i2c2-alt {
+> +		pin-i2c2 {
+> +			pinmux = <MT7623_PIN_122_GPIO122_FUNC_SDA2>,
+> +				 <MT7623_PIN_123_HTPLG_FUNC_SCL2>;
+> +			bias-disable;
+> +		};
+> +	};
+> +
+>  	i2s0_pins_a: i2s0-default {
+>  		pin-i2s0 {
+>  			pinmux = <MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA>,
+> @@ -629,6 +637,13 @@
+>  				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
+>  		};
+>  	};
+> +
+> +	uart2_pins_b: uart2-alt {
+> +		pins-dat {
+> +			pinmux = <MT7623_PIN_200_URXD2_FUNC_URXD2>,
+> +				 <MT7623_PIN_201_UTXD2_FUNC_UTXD2>;
+> +		};
+> +	};
+>  };
+>  
+>  &pwm {
+> -- 
+> 2.7.4
+> 
