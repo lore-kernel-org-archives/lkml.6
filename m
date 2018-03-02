@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELugFMo6uaP6KG8K6G9PAn0Dm3jaww14rnmWqLQmT3lzkQJzce9mIGv9KVs76WzOk+H1NNOZ
-ARC-Seal: i=1; a=rsa-sha256; t=1519981271; cv=none;
+X-Google-Smtp-Source: AG47ELtmE3KsKYQOhMiQkJmAYkRDVK4sV7KMjEvGfxLgPrcJVdg/oExo2vL1cuBSv9372eYdz/kE
+ARC-Seal: i=1; a=rsa-sha256; t=1519981264; cv=none;
         d=google.com; s=arc-20160816;
-        b=xKcmSiJpL9QgqqrqHmpJzT4VfzhZ1epEyBa4wy7jgIfLW64pB6e6tyWvLf9WfAtWRu
-         ib+fKo2XPFyKsmzL7APIXcn4vyEzU6nBjKYam9c6LSdyjD1KDMXdx1jiTyPe8o3aIO6j
-         8yAKc1xr7TkPfgRYxQ3GAw0iSG0DdAtyq/FR1MslVsUbMSSLwmSsk4GGzeupjDTA6Fbt
-         U8lL9CNJ4YK/bbl3d5JsRC0bulXmTMHgq0tYPkA65V2PnTGUhOwMorwkIvMYvvo3mVAQ
-         60HYKV/xIuvUjQJiZ8EqRI+BOrXUVIg9MpLFmz+Hir+SSugdENdaMVV12QB4MfmGh7gM
-         mT0A==
+        b=r+P22EHWH80gULYIBvn2mhoOHrLTolQ5xLIuD+GChYHxf2wJoXheiB3giPjBjAebyQ
+         lMkj5m2Jmf+wxCcZv/34pRq6RoGQBlargdtccR5LCHrfIGU5IKwDPgXL1pDXmASXslD+
+         2k9kToADhJEfvSV6EzGAFnLt4O5nrmaGRmDxyo/89Fl3g35GlZOL+WVWyAREPNkK6mLq
+         OmMWPLep8n6/ihAzmx+1WoNNJ6H6jP99xrCgwg+NuZZatlII4QZlWroxB7FikEBisD+B
+         cNXuTWf16RsTTna6gu9mm+tv3DKudu0Yoob5s/C1J2BsZJb60KOPwvBZFsHpvPIu+1fp
+         04jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QMfBQp6UAJwyzScklcJAVrRwbKo1VRU6tLDmOxcQykE=;
-        b=Q5CRCsqDrwyHR4F3Siz1GPvoHtxJw9/Wq44JjQyjcpbu6UGkcXEM9RKc1tDZcLxTpH
-         mDvxUTC7WbZivuULLkWWDoVCX4hGTOsEgqlBla8pDHcvYxnAn08a+LOKFT0DcGlPb0sJ
-         HiBHYY8D7wxNWB1mEhyVFMkKSP2VAUvmDHtQ2HbEMcnl7SNilpo+NX/mMCVXWZPxcZFH
-         JA/4V2Wml8N/unhh/iihwKjsxvO6M3aN0aXZ2TJc0jlCgJsExlokbUp3zsPZT2fSUKeY
-         l/3h/OFvrC+ZUriK4LmHT9KZQjs0tXAtFmFM84Nco7xm3W6ajeuBkUvyVHkINzqYojw4
-         6jhQ==
+        bh=s8r+XWvPorh/ZJCbLHgotPayw85j6sYucS6Zlv2LTVU=;
+        b=xjR5Ik4N4t/1c/9zqfPJbEKlm99OSkOU1MBz4tQq51YZhSX0xQuy80RH+n+8KVqsaf
+         f/rnH23pulACPr+O+CHt+MQNPBNR3y92zGvnUNn//lghn71h5bdnwWr+1wi6pRijXdN/
+         yLqn5nlMV8PULYicJAQ/wuugEzyzICBCXIgIzEX233OEF6Wh/32ce45vhWrGQuEvWeDw
+         PhPU+8YF8NZsk5cmz4BzvV2SoR5bGWc01UcKx4shhbRM0fqi1PibeG0n3THJaZnTXPRh
+         X3lCEtAoiUsCAENzQGC3BuibeZ+gzg77gQupFZnSy7VPuuMdzp2cGhkjG55vIP1fcEDm
+         E25w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>,
+	Moshe Shemesh <moshe@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 042/115] xen/balloon: Mark unallocated host memory as UNUSABLE
-Date: Fri,  2 Mar 2018 09:50:45 +0100
-Message-Id: <20180302084505.587710322@linuxfoundation.org>
+Subject: [PATCH 4.14 040/115] net/mlx5: Stay in polling mode when command EQ destroy fails
+Date: Fri,  2 Mar 2018 09:50:43 +0100
+Message-Id: <20180302084505.511127237@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815881731360817?=
-X-GMAIL-MSGID: =?utf-8?q?1593815881731360817?=
+X-GMAIL-THRID: =?utf-8?q?1593815874527686302?=
+X-GMAIL-MSGID: =?utf-8?q?1593815874527686302?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,260 +50,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Moshe Shemesh <moshe@mellanox.com>
 
 
-[ Upstream commit b3cf8528bb21febb650a7ecbf080d0647be40b9f ]
+[ Upstream commit a2fba188fd5eadd6061bef4f2f2577a43231ebf3 ]
 
-Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
-reservation") left host memory not assigned to dom0 as available for
-memory hotplug.
+During unload, on mlx5_stop_eqs we move command interface from events
+mode to polling mode, but if command interface EQ destroy fail we move
+back to events mode.
+That's wrong since even if we fail to destroy command interface EQ, we
+do release its irq, so no interrupts will be received.
 
-Unfortunately this also meant that those regions could be used by
-others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
-on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
-addresses as MMIO.
-
-To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
-effectively reverting f5775e0b6116) and keep track of that region as
-a hostmem resource that can be used for the hotplug.
-
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/xen/enlighten.c |   81 +++++++++++++++++++++++++++++++++++++++++++++++
- arch/x86/xen/setup.c     |    6 +--
- drivers/xen/balloon.c    |   65 ++++++++++++++++++++++++++++++++-----
- include/xen/balloon.h    |    5 ++
- 4 files changed, 144 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -1,8 +1,12 @@
-+#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
-+#include <linux/bootmem.h>
-+#endif
- #include <linux/cpu.h>
- #include <linux/kexec.h>
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -802,11 +802,9 @@ void mlx5_stop_eqs(struct mlx5_core_dev
+ 	mlx5_cmd_use_polling(dev);
  
- #include <xen/features.h>
- #include <xen/page.h>
-+#include <xen/interface/memory.h>
- 
- #include <asm/xen/hypercall.h>
- #include <asm/xen/hypervisor.h>
-@@ -331,3 +335,80 @@ void xen_arch_unregister_cpu(int num)
- }
- EXPORT_SYMBOL(xen_arch_unregister_cpu);
- #endif
-+
-+#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
-+void __init arch_xen_balloon_init(struct resource *hostmem_resource)
-+{
-+	struct xen_memory_map memmap;
-+	int rc;
-+	unsigned int i, last_guest_ram;
-+	phys_addr_t max_addr = PFN_PHYS(max_pfn);
-+	struct e820_table *xen_e820_table;
-+	const struct e820_entry *entry;
-+	struct resource *res;
-+
-+	if (!xen_initial_domain())
-+		return;
-+
-+	xen_e820_table = kmalloc(sizeof(*xen_e820_table), GFP_KERNEL);
-+	if (!xen_e820_table)
-+		return;
-+
-+	memmap.nr_entries = ARRAY_SIZE(xen_e820_table->entries);
-+	set_xen_guest_handle(memmap.buffer, xen_e820_table->entries);
-+	rc = HYPERVISOR_memory_op(XENMEM_machine_memory_map, &memmap);
-+	if (rc) {
-+		pr_warn("%s: Can't read host e820 (%d)\n", __func__, rc);
-+		goto out;
-+	}
-+
-+	last_guest_ram = 0;
-+	for (i = 0; i < memmap.nr_entries; i++) {
-+		if (xen_e820_table->entries[i].addr >= max_addr)
-+			break;
-+		if (xen_e820_table->entries[i].type == E820_TYPE_RAM)
-+			last_guest_ram = i;
-+	}
-+
-+	entry = &xen_e820_table->entries[last_guest_ram];
-+	if (max_addr >= entry->addr + entry->size)
-+		goto out; /* No unallocated host RAM. */
-+
-+	hostmem_resource->start = max_addr;
-+	hostmem_resource->end = entry->addr + entry->size;
-+
-+	/*
-+	 * Mark non-RAM regions between the end of dom0 RAM and end of host RAM
-+	 * as unavailable. The rest of that region can be used for hotplug-based
-+	 * ballooning.
-+	 */
-+	for (; i < memmap.nr_entries; i++) {
-+		entry = &xen_e820_table->entries[i];
-+
-+		if (entry->type == E820_TYPE_RAM)
-+			continue;
-+
-+		if (entry->addr >= hostmem_resource->end)
-+			break;
-+
-+		res = kzalloc(sizeof(*res), GFP_KERNEL);
-+		if (!res)
-+			goto out;
-+
-+		res->name = "Unavailable host RAM";
-+		res->start = entry->addr;
-+		res->end = (entry->addr + entry->size < hostmem_resource->end) ?
-+			    entry->addr + entry->size : hostmem_resource->end;
-+		rc = insert_resource(hostmem_resource, res);
-+		if (rc) {
-+			pr_warn("%s: Can't insert [%llx - %llx) (%d)\n",
-+				__func__, res->start, res->end, rc);
-+			kfree(res);
-+			goto  out;
-+		}
-+	}
-+
-+ out:
-+	kfree(xen_e820_table);
-+}
-+#endif /* CONFIG_XEN_BALLOON_MEMORY_HOTPLUG */
---- a/arch/x86/xen/setup.c
-+++ b/arch/x86/xen/setup.c
-@@ -808,7 +808,6 @@ char * __init xen_memory_setup(void)
- 	addr = xen_e820_table.entries[0].addr;
- 	size = xen_e820_table.entries[0].size;
- 	while (i < xen_e820_table.nr_entries) {
--		bool discard = false;
- 
- 		chunk_size = size;
- 		type = xen_e820_table.entries[i].type;
-@@ -824,11 +823,10 @@ char * __init xen_memory_setup(void)
- 				xen_add_extra_mem(pfn_s, n_pfns);
- 				xen_max_p2m_pfn = pfn_s + n_pfns;
- 			} else
--				discard = true;
-+				type = E820_TYPE_UNUSABLE;
- 		}
- 
--		if (!discard)
--			xen_align_and_add_e820_region(addr, chunk_size, type);
-+		xen_align_and_add_e820_region(addr, chunk_size, type);
- 
- 		addr += chunk_size;
- 		size -= chunk_size;
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -257,10 +257,25 @@ static void release_memory_resource(stru
- 	kfree(resource);
+ 	err = mlx5_destroy_unmap_eq(dev, &table->cmd_eq);
+-	if (err) {
++	if (err)
+ 		mlx5_core_err(dev, "failed to destroy command eq, err(%d)\n",
+ 			      err);
+-		mlx5_cmd_use_events(dev);
+-	}
  }
  
-+/*
-+ * Host memory not allocated to dom0. We can use this range for hotplug-based
-+ * ballooning.
-+ *
-+ * It's a type-less resource. Setting IORESOURCE_MEM will make resource
-+ * management algorithms (arch_remove_reservations()) look into guest e820,
-+ * which we don't want.
-+ */
-+static struct resource hostmem_resource = {
-+	.name   = "Host RAM",
-+};
-+
-+void __attribute__((weak)) __init arch_xen_balloon_init(struct resource *res)
-+{}
-+
- static struct resource *additional_memory_resource(phys_addr_t size)
- {
--	struct resource *res;
--	int ret;
-+	struct resource *res, *res_hostmem;
-+	int ret = -ENOMEM;
- 
- 	res = kzalloc(sizeof(*res), GFP_KERNEL);
- 	if (!res)
-@@ -269,13 +284,42 @@ static struct resource *additional_memor
- 	res->name = "System RAM";
- 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
- 
--	ret = allocate_resource(&iomem_resource, res,
--				size, 0, -1,
--				PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
--	if (ret < 0) {
--		pr_err("Cannot allocate new System RAM resource\n");
--		kfree(res);
--		return NULL;
-+	res_hostmem = kzalloc(sizeof(*res), GFP_KERNEL);
-+	if (res_hostmem) {
-+		/* Try to grab a range from hostmem */
-+		res_hostmem->name = "Host memory";
-+		ret = allocate_resource(&hostmem_resource, res_hostmem,
-+					size, 0, -1,
-+					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
-+	}
-+
-+	if (!ret) {
-+		/*
-+		 * Insert this resource into iomem. Because hostmem_resource
-+		 * tracks portion of guest e820 marked as UNUSABLE noone else
-+		 * should try to use it.
-+		 */
-+		res->start = res_hostmem->start;
-+		res->end = res_hostmem->end;
-+		ret = insert_resource(&iomem_resource, res);
-+		if (ret < 0) {
-+			pr_err("Can't insert iomem_resource [%llx - %llx]\n",
-+				res->start, res->end);
-+			release_memory_resource(res_hostmem);
-+			res_hostmem = NULL;
-+			res->start = res->end = 0;
-+		}
-+	}
-+
-+	if (ret) {
-+		ret = allocate_resource(&iomem_resource, res,
-+					size, 0, -1,
-+					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
-+		if (ret < 0) {
-+			pr_err("Cannot allocate new System RAM resource\n");
-+			kfree(res);
-+			return NULL;
-+		}
- 	}
- 
- #ifdef CONFIG_SPARSEMEM
-@@ -287,6 +331,7 @@ static struct resource *additional_memor
- 			pr_err("New System RAM resource outside addressable RAM (%lu > %lu)\n",
- 			       pfn, limit);
- 			release_memory_resource(res);
-+			release_memory_resource(res_hostmem);
- 			return NULL;
- 		}
- 	}
-@@ -765,6 +810,8 @@ static int __init balloon_init(void)
- 	set_online_page_callback(&xen_online_page);
- 	register_memory_notifier(&xen_memory_nb);
- 	register_sysctl_table(xen_root);
-+
-+	arch_xen_balloon_init(&hostmem_resource);
- #endif
- 
- #ifdef CONFIG_XEN_PV
---- a/include/xen/balloon.h
-+++ b/include/xen/balloon.h
-@@ -44,3 +44,8 @@ static inline void xen_balloon_init(void
- {
- }
- #endif
-+
-+#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
-+struct resource;
-+void arch_xen_balloon_init(struct resource *hostmem_resource);
-+#endif
+ int mlx5_core_eq_query(struct mlx5_core_dev *dev, struct mlx5_eq *eq,
