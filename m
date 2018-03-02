@@ -1,99 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934608AbeCBX1Q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:27:16 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:6767 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934230AbeCBX1P (ORCPT
+        id S934636AbeCBX26 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:28:58 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:33576 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934230AbeCBX24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:27:15 -0500
-X-UUID: d2b64133b6474cf793904b76986f70aa-20180303
-Message-ID: <1520033229.8089.198.camel@mtkswgap22>
-Subject: Re: [PATCH v1 16/19] arm: dts: mt7623: fixup available memory size
- on bananapi-r2
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Sat, 3 Mar 2018 07:27:09 +0800
-In-Reply-To: <20180302154215.xr3b2zlmuojw5i6l@rob-hp-laptop>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
-         <e49485aac14bec85c14514c1953f8d7ea5401695.1519378872.git.sean.wang@mediatek.com>
-         <20180302154215.xr3b2zlmuojw5i6l@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 2 Mar 2018 18:28:56 -0500
+Date: Sat, 3 Mar 2018 00:28:53 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: David Miller <davem@davemloft.net>
+Cc: pavel@ucw.cz, peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        Jose.Abreu@synopsys.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/4] net: stmmac: use correct barrier between
+ coherent memory and MMIO
+Message-ID: <20180302232853.GA11108@axis.com>
+References: <20180226214709.4359-1-niklas.cassel@axis.com>
+ <20180226214709.4359-3-niklas.cassel@axis.com>
+ <20180302091959.GC15948@amd>
+ <20180302.095411.1270630534912987342.davem@davemloft.net>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302.095411.1270630534912987342.davem@davemloft.net>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-02 at 09:42 -0600, Rob Herring wrote:
-> On Fri, Feb 23, 2018 at 06:16:36PM +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
+On Fri, Mar 02, 2018 at 09:54:11AM -0500, David Miller wrote:
+> From: Pavel Machek <pavel@ucw.cz>
+> Date: Fri, 2 Mar 2018 10:20:00 +0100
+>
+
+Hello Pavel, David
+
+> >> This barrier cannot be a simple dma_wmb(), since a dma_wmb() is only
+> >> used to guarantee the ordering, with respect to other writes,
+> >> to cache coherent DMA memory.
 > > 
-> > There is 2GB DDR3 available on bananapi-r2 board as [1] specified.
+> > Could you explain this a bit more (and perhaps in code comment)?
+
+Have a look at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/memory-barriers.txt?h=v4.16-rc1#n1913
+
+AFAICT, a dma_wmb() can only be used to guarantee that the
+writes to cache coherent memory (e.g. memory allocated with
+dma_alloc_coherent()) before the dma_wmb() will be performed
+before the writes to cache coherent memory after the dma_wmb().
+
+Since most of our writes are simply writing new buffer addresses
+and sizes to TDES0/TDES1/TDES2/TDES3, and since these TX DMA
+descriptors have been allocated with dma_alloc_coherent(),
+a dma_wmb() should be enough to e.g. make sure that TDES3
+(which contains the OWN bit), is written after the writes to
+TDES0/TDES1/TDES2.
+
+However, the last write we do is "DMA start transmission",
+this is a register in the IP, i.e. it is a write to the cache
+incoherent MMIO region (rather than a write to cache coherent memory).
+To ensure that all writes to cache coherent memory have
+completed before we start the DMA, we have to use the barrier
+wmb() (which performs a more extensive flush compared to
+dma_wmb()).
+
+So the only place where we have to use a wmb() instead
+of a dma_wmb() is where we have a write to coherent memory,
+followed by a write to cache incoherent MMIO.
+The only obvious place where we have this situtation is
+where we write the OWN bit immediately followed by a write
+to the "DMA start transmission" register.
+
+Note that this also matches how it's done in other other drivers:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/amd/xgbe/xgbe-dev.c?h=v4.16-rc1#n1638
+
+There is already a comment describing the barrier in
+stmmac_xmit() and stmmac_tso_xmit() that says:
+/* The own bit must be the latest setting done when prepare the
+ * descriptor and then barrier is needed to make sure that
+ * all is coherent before granting the DMA engine.
+ */
+However, if you want, we could mention wmb() explicitly in this comment.
+
 > > 
-> > [1] http://www.banana-pi.org/r2.html
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > index 140ff78..3e8d02c 100644
-> > --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-> > @@ -38,6 +38,11 @@
-> >  			default-state = "off";
-> >  		};
-> >  	};
-> > +
-> > +	memory {
+> > Ensuring other writes are done before writing the "GO!" bit should be
+> > enough, no?
 > 
-> Unit address?
+> Indeed, the chip should never look at the descriptor contents unless
+> the GO bit is set.
 > 
+> If there are ways that it can, this must be explained and documented
+> since it is quite unusual compared to other hardware.
+> 
+> > (If it is not, do we need heavier barriers in other places, too?)
+> 
+> Right.
 
-If I did it with adding unit address
-
--       memory {
-+       memory@80000000 {
-                device_type = "memory";
-                reg = <0 0x80000000 0 0x80000000>;
-        };
-
-
-bad dtc blob is being generated and contains two memory nodes, one is
-memory and the other is memory@80000000 whose blob disassembly detail is
-as the following.
-
-      memory {
-                device_type = "memory";
-                reg = <0x0 0x0 0x0 0x0>;
-        };
+I hope that my explaination above has cleared any potential confusion.
 
 
-
-      memory@80000000 {
-                device_type = "memory";
-                reg = <0x0 0x80000000 0x0 0x80000000>;
-        };
-
-
-and bad memory node with size 0 would cause the boot fails.
-
-
-is it a dtc compiler problem ?
-
-> > +		device_type = "memory";
-> > +		reg = <0 0x80000000 0 0x80000000>;
-> > +	};
-> >  };
-> >  
-> >  &afe {
-> > -- 
-> > 2.7.4
-> > 
+Best regards,
+Niklas
