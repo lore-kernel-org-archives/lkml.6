@@ -1,50 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164838AbeCBDyd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 22:54:33 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34227 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164700AbeCBDvn (ORCPT
+        id S1164648AbeCBENX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:13:23 -0500
+Received: from zxshcas1.zhaoxin.com ([180.169.121.91]:48863 "EHLO
+        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1164198AbeCBENW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 22:51:43 -0500
-X-Google-Smtp-Source: AG47ELsilBDP+y0uCIFnVHAcY7W+M2YrSi+XiicxNC7TbRxm9hA3lrTv1MVHDthce8HTdojiTzAqVw==
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 03/10] arm64: actions: Enable PINCTRL in platforms Kconfig
-Date: Fri,  2 Mar 2018 09:20:38 +0530
-Message-Id: <20180302035045.14660-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
-References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org>
+        Thu, 1 Mar 2018 23:13:22 -0500
+From: David Wang <davidwang@zhaoxin.com>
+To: <rjw@rjwysocki.net>, <len.brown@intel.com>, <pavel@ucw.cz>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <x86@kernel.org>, <linux-pm@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+        <lukelin@viacpu.com>, <timguo@zhaoxin.com>, <cobechen@zhaoxin.com>,
+        <jiangbowang@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH] Delete some unusefull operations for centaur CPU/platform
+Date: Fri, 2 Mar 2018 12:11:48 +0800
+Message-ID: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.93]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select PINCTRL for Actions Semi SoCs
+For Centaur CPU, the ucode will make sure that each CPU core can keep cache
+coherency with each other when the CPU core entering to any C state. So the
+cache flush operations when enter C3 is not necessary and will cause large
+C3 enter/exit latency.
+And the bus master disable operation when CPU core entering C3 state is not
+needed too. Because the chipset will automatically do this operation.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fbedbd8f619a..bae1289bdc3f 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -3,6 +3,7 @@ menu "Platform selection"
- config ARCH_ACTIONS
- 	bool "Actions Semi Platforms"
- 	select OWL_TIMER
-+	select PINCTRL
- 	help
- 	  This enables support for the Actions Semiconductor S900 SoC family.
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index dde437f..1cd357b 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+ 	if (c->x86_vendor == X86_VENDOR_INTEL &&
+ 	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
+ 			flags->bm_control = 0;
++
++        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
++		/*
++		 * on all centaur CPUs, sw need not execute cache flush operation
++		 * when entering C3 type State.
++		 *
++		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
++		 * entering C3 type state.
++		 */
++		flags->bm_check = 1;
++		flags->bm_control = 0;
++	}
+ }
+ EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
  
 -- 
-2.14.1
+1.9.1
