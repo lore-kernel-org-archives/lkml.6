@@ -1,99 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426515AbeCBKmh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:42:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52882 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424102AbeCBKm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:42:28 -0500
-Date: Fri, 2 Mar 2018 10:42:23 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: robh@kernel.org, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>, peterz@infradead.org,
-        jonathan.cameron@huawei.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        sudeep.holla@arm.com, frowand.list@gmail.com, leo.yan@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-Message-ID: <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5A90B77E.8040105@codeaurora.org>
- <20180225143653.peb4quk3ha5h3t5x@salmiak>
- <5A972A7D.9020301@codeaurora.org>
- <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
- <5A986425.9080007@codeaurora.org>
+        id S1426539AbeCBKo1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:44:27 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:53624 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423977AbeCBKoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:44:22 -0500
+Date: Fri, 2 Mar 2018 11:44:18 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ivan Gorinov <ivan.gorinov@intel.com>
+cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v3 2/3] x86: devicetree: enable multiprocessing in DT
+In-Reply-To: <20180301230640.GA48521@intel.com>
+Message-ID: <alpine.DEB.2.21.1803021103070.1803@nanos.tec.linutronix.de>
+References: <20180301230640.GA48521@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5A986425.9080007@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 12:35:49PM -0800, Saravana Kannan wrote:
-> On 03/01/2018 03:49 AM, Mark Rutland wrote:
-> > On Wed, Feb 28, 2018 at 02:17:33PM -0800, Saravana Kannan wrote:
-> > > On 02/25/2018 06:36 AM, Mark Rutland wrote:
-> > > > On Fri, Feb 23, 2018 at 04:53:18PM -0800, Saravana Kannan wrote:
-> > > > > On 01/02/2018 03:25 AM, Suzuki K Poulose wrote:
-> > > > > > +static void dsu_pmu_event_update(struct perf_event *event)
-> > > > > > +{
-> > > > > > +	struct hw_perf_event *hwc = &event->hw;
-> > > > > > +	u64 delta, prev_count, new_count;
-> > > > > > +
-> > > > > > +	do {
-> > > > > > +		/* We may also be called from the irq handler */
-> > > > > > +		prev_count = local64_read(&hwc->prev_count);
-> > > > > > +		new_count = dsu_pmu_read_counter(event);
-> > > > > > +	} while (local64_cmpxchg(&hwc->prev_count, prev_count, new_count) !=
-> > > > > > +			prev_count);
-> > > > > > +	delta = (new_count - prev_count) & DSU_PMU_COUNTER_MASK(hwc->idx);
-> > > > > > +	local64_add(delta, &event->count);
-> > > > > > +}
-> > > > > > +
-> > > > > > +static void dsu_pmu_read(struct perf_event *event)
-> > > > > > +{
-> > > > > > +	dsu_pmu_event_update(event);
-> > > > > > +}
-> > > > 
-> > > > > I sent out a patch that'll allow PMUs to set an event flag to avoid
-> > > > > unnecessary smp calls when the event can be read from any CPU. You could
-> > > > > just always set that if you can't have multiple DSU's running the kernel (I
-> > > > > don't know if the current ARM designs support having multiple DSUs in a
-> > > > > SoC/system) or set it if associated_cpus == cpu_present_mask.
-> > > > 
-> > > > As-is, that won't be safe, given the read function calls the event_update()
-> > > > function, which has side-effects on hwc->prec_count and event->count. Those
-> > > > need to be serialized somehow.
-> > > 
-> > > You have to grab the dsu_pmu->pmu_lock spin lock anyway because the system
-> > > registers are shared across all CPUs.
-> > 
-> > I believe that lock is currently superfluous, because the perf core
-> > ensures operations are cpu-affine, and have interrupts disabled in most
-> > cases (thanks to the context lock).
+On Thu, 1 Mar 2018, Ivan Gorinov wrote:
+
+The patch order is wrong. Fixes first and then features simply because you
+cannot test the feature patch standalone as the fix (3/3) is missing ....
+
+> Adding code to register the processors described in Device Tree.
+
+'Adding code...' is a pointless filler phrase. 
+
+> APIC ID is specified in 'intel-apic_id' propery as used in U-Boot.
+
+s/propery/property/
+
+Also this has nothing to do with U-Boot. The DT properties are described in
+the DT bindings and not specified in U-Boot.
+
+Where is the matching devicetree binding documented? This should be a
+separate patch and needs to go into Documentation/devicetree/x86/
+
+Please Cc the DT maintainers as we need their ack for that.
+
+> First address specified in 'reg' is used as default APIC ID.
+
+Changelogs should describe the context/problem and the approach how this is
+fixed or made working. Something like this:
+
+  The current x86 device tree implementation does not support SMP.
+
+  Use the new DT bindings for describing CPUs and their APIC resources.
+
+Hmm?
+
+> Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
+> ---
+>  arch/x86/kernel/devicetree.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
 > 
-> I don't think it's superfluous. You have a common "event counter" selection
-> register and a common "event counter value" register. You can two CPUs
-> racing to read two unrelated event counters and end up causing one of them
-> to read a bogus value from the wrong event counter.
+> diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+> index 44189ee..ef1cd85 100644
+> --- a/arch/x86/kernel/devicetree.c
+> +++ b/arch/x86/kernel/devicetree.c
+> @@ -130,6 +130,29 @@ static void __init dtb_setup_hpet(void)
+>  #endif
+>  }
+>  
+> +static void __init dtb_cpu_setup(void)
+> +{
+> +	struct device_node *dn;
+> +	struct resource r;
+> +	const void *prop;
+> +	int apic_id, version;
+> +	int ret;
+> +
+> +	version = GET_APIC_VERSION(apic_read(APIC_LVR));
+> +	for_each_node_by_type(dn, "cpu") {
+> +		prop = of_get_property(dn, "intel,apic-id", NULL);
+> +		if (prop) {
+> +			apic_id = be32_to_cpup(prop);
+> +		} else {
+> +			ret = of_address_to_resource(dn, 0, &r);
+> +			if (WARN_ON_ONCE(ret))
+> +				continue;
+> +			apic_id = r.start;
+> +		}
 
-It's important to note that the DSU PMU's event_init() ensures events
-are affine to a single CPU, and the perf core code serializes operations
-on those events via the context lock.
-
-Therefore, two CPUs *won't* try to access the registers simultaneously.
-
-If events could be active on multiple CPUs simultaneously, I agree that
-the lock would be necessary. However, there would also be other problems
-to deal with in that case.
-
-If we want to allow pmu::read() from arbitrary CPUs the DSU is affine
-to, I agree we'd need the lock to serialize accesses to the registers
-and data structures.
+What kind of logic is this? If a CPU node does not have apic id property
+then it's invalid. That else clause is just voodoo programming at least
+without a proper comment explaining it.
 
 Thanks,
-Mark.
+
+	tglx
