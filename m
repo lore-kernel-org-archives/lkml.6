@@ -1,67 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426476AbeCBK21 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:28:27 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:42489 "EHLO thoth.sbs.de"
+        id S1946130AbeCBK36 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:29:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35630 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1426319AbeCBK2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:28:11 -0500
-Subject: Re: [PATCH v3 3/6] x86/jailhouse: Enable PCI mmconfig access in
- inmates
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <cover.1519882849.git.jan.kiszka@siemens.com>
- <188edc11aa5fa11d4915097831a2a4a153f6ed83.1519882849.git.jan.kiszka@siemens.com>
- <CAHp75VeH5tBBY4D-1_VVaYiCdRyBG+2vA8ZGg_QBfVujawh=iA@mail.gmail.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <cb20d2c8-761d-1aca-2b3b-07e25a54a803@siemens.com>
-Date: Fri, 2 Mar 2018 11:27:47 +0100
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VeH5tBBY4D-1_VVaYiCdRyBG+2vA8ZGg_QBfVujawh=iA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1946112AbeCBK3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:29:51 -0500
+From: Petr Mladek <pmladek@suse.com>
+To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc: Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v9 5/9] livepatch: Support separate list for replaced patches.
+Date: Fri,  2 Mar 2018 11:29:31 +0100
+Message-Id: <20180302102935.14564-6-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180302102935.14564-1-pmladek@suse.com>
+References: <20180302102935.14564-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-01 11:31, Andy Shevchenko wrote:
-> On Thu, Mar 1, 2018 at 7:40 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> 
->> Use the PCI mmconfig base address exported by jailhouse in boot
->> parameters in order to access the memory mapped PCI configuration space.
-> 
-> 
->> --- a/arch/x86/kernel/jailhouse.c
->> +++ b/arch/x86/kernel/jailhouse.c
->> @@ -124,6 +124,13 @@ static int __init jailhouse_pci_arch_init(void)
->>         if (pcibios_last_bus < 0)
->>                 pcibios_last_bus = 0xff;
->>
->> +#ifdef CONFIG_PCI_MMCONFIG
->> +       if (setup_data.pci_mmconfig_base) {
-> 
->> +               pci_mmconfig_add(0, 0, 0xff, setup_data.pci_mmconfig_base);
-> 
-> Hmm... Shouldn't be pcibios_last_bus instead of 0xff?
-> 
+From: Jason Baron <jbaron@akamai.com>
 
-Indeed.
+We are going to add a feature called atomic replace. It will allow to
+create a patch that would replace all already registered patches.
 
-Thanks,
-Jan
+The replaced patches will stay registered because they are typically
+unregistered by some package uninstall scripts. But we will remove
+these patches from @klp_patches list to keep the enabled patch
+on the bottom of the stack. Otherwise, we would need to implement
+rather complex logic for moving the patches on the stack. Also
+it would complicate implementation of the atomic replace feature.
+It is not worth it.
 
->> +               pci_mmcfg_arch_init();
->> +       }
->> +#endif
-> 
+As a result, we will have patches that are registered but that
+are no longer usable. Let's get prepared for this and use
+a better descriptive name for klp_is_patch_registered() function.
+
+Also create separate list for the replaced patches and allow to
+unregister them. Alternative solution would be to add a flag
+into struct klp_patch. Note that patch->kobj.state_initialized
+is not safe because it can be cleared outside klp_mutex.
+
+This patch does not change the existing behavior.
+
+Signed-off-by: Jason Baron <jbaron@akamai.com>
+[pmladek@suse.com: Split and renamed klp_is_patch_usable()]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+---
+ kernel/livepatch/core.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index ab1f6a371fc8..fd0296859ff4 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -47,6 +47,13 @@ DEFINE_MUTEX(klp_mutex);
+ 
+ static LIST_HEAD(klp_patches);
+ 
++/*
++ * List of 'replaced' patches that have been replaced by a patch that has the
++ * 'replace' bit set. When they are added to this list, they are disabled and
++ * can not be re-enabled, but they can be unregistered().
++ */
++static LIST_HEAD(klp_replaced_patches);
++
+ static struct kobject *klp_root_kobj;
+ 
+ static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
+@@ -108,17 +115,28 @@ static void klp_find_object_module(struct klp_object *obj)
+ 	mutex_unlock(&module_mutex);
+ }
+ 
+-static bool klp_is_patch_registered(struct klp_patch *patch)
++static bool klp_is_patch_in_list(struct klp_patch *patch,
++				 struct list_head *head)
+ {
+ 	struct klp_patch *mypatch;
+ 
+-	list_for_each_entry(mypatch, &klp_patches, list)
++	list_for_each_entry(mypatch, head, list)
+ 		if (mypatch == patch)
+ 			return true;
+ 
+ 	return false;
+ }
+ 
++static bool klp_is_patch_usable(struct klp_patch *patch)
++{
++	return klp_is_patch_in_list(patch, &klp_patches);
++}
++
++static bool klp_is_patch_replaced(struct klp_patch *patch)
++{
++	return klp_is_patch_in_list(patch, &klp_replaced_patches);
++}
++
+ static bool klp_initialized(void)
+ {
+ 	return !!klp_root_kobj;
+@@ -375,7 +393,7 @@ int klp_disable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -475,7 +493,7 @@ int klp_enable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -516,7 +534,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch)) {
+ 		/*
+ 		 * Module with the patch could either disappear meanwhile or is
+ 		 * not properly initialized yet.
+@@ -971,7 +989,7 @@ int klp_unregister_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!klp_is_patch_usable(patch) && !klp_is_patch_replaced(patch)) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+2.13.6
