@@ -1,126 +1,137 @@
-Return-Path: <robh@kernel.org>
-X-Google-Smtp-Source: AG47ELtFf+XEYYXIt75xjOCp3rGQ0+En0ErvR39kfnYcsLHnjGjqVSbtHY9MgNCnve/32NYaffWa
-ARC-Seal: i=1; a=rsa-sha256; t=1520548058; cv=none;
+Return-Path: <richard.gong@linux.intel.com>
+X-Google-Smtp-Source: AG47ELssksE2AuE0DWHTUB4Ff+ZLpU8JiB5U5d1ZukD/o7g5hs+5R5qRJSiYu5wLlOUr1rQ8szkW
+ARC-Seal: i=1; a=rsa-sha256; t=1519950204; cv=none;
         d=google.com; s=arc-20160816;
-        b=z4Gd47EfZWjT4wgCERvogWtSsP063VqEd8CB+jbbIoSXS3cP0ehfY4O0Y4Bl5xNHMn
-         g4zQMKC+te7XiVVs74ocdjlKYrl2S1K/CY5/Cor1/mFd11z5c9NOUU/tCIYMEselMKZx
-         QrKKur7qNw+JJ+vHcnNXqpEr8b6Hrv8weub1taL9ODiKqy/NTwp4XK0uWZPVJcKkOjJy
-         z6yRRmw1Y+djfWiHNogvf1qODYFINss0AbRCj/5PRZ5NFdrFKD1yXyPmVUGTViT+zaMA
-         moEv7EPL35C4Rm0TDCTPyAAlXYNV0AFyxikoYLluOqrykpEVjjOjvjc0Mmuxs/SkNQeU
-         afSQ==
+        b=On/QEu1ZvX6o4Rk1KOirBEoeu9K9QdzloHlaKd4ttA3bVDxWeVm+XypBda8IeJoJPN
+         fJsOv5gokzAIOaXJbuDzOdOY7JQ7wlnHKxiGvoaD3l2cM7tf2VXo+bY+D0w7uq9QdZ8H
+         h7qgc9tL3OfRiKnzMJ1MNel1lFv93gK38YMcnAn2H3UOoq5FIGqQ5IBpSrYE8tI52jjt
+         nSphHtSG7If5/zuXPEB982QlBTaqWWOyBljRgMmXLeyxSSnZ6OY61JB2cJtbvOOR1o6U
+         nJ1eNFnXjl0nh8/c3x3UFSMD2n4svwIlypKfEOt+8qwIDe/Zn0nxZwxVoisGlQavSdAn
+         h1cQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=352CFyWaGY5UdbX1v0lzlTQIuPnb3TBnAjmjFNHwu54=;
-        b=SQIwDCImStspYz2tdy6KW5IDfFNacQ42mDhqUdwDD5j7c7fW21YjE5AXiCKSW6TmNC
-         3nPbqzze40NhS+vKRZBTkeJd/mWpVZY0IAaAMwDx5R5HNRKcFPbtea8d6eaT5iC/ylDF
-         7LWXpY3qf5jNKIf+A5wkzhEKXmHcpb6xvr4ovf2EJWc7hLPJmHtPi6SviNZKxfTM89He
-         3IGNDscdZxtFewm2K8fwBFAiQ0ub88opVAFW7k3be/6Pyk870AhKoN6OF59cNHfVMrGf
-         9LzuG+5TjEIcdjjr/8tu1/+tVBjAfdADhBW3txS5lH725PDhIrNh9tfanbqGUjC/6Cm0
-         twdQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=kyvQmzlDWEEAZE1c4J+CD3qOj0ZZvP2iXNc8AXOY2U0=;
+        b=Oib5OczF0vCvjL7oW++D0EOnzgnmfYbbJGRliN7ut2ev8+ZG7u680HDG1few2sMP7Q
+         Yo6qhoMjjVztIvuK2dl4z9qApZOfEqJtk6g0JkdRHeKAsGgLsoRstNQMOOHQEolO2Qwa
+         eVMIP8LKWgKyOJ813pycF4eJJJ4SLqD2F/0+PVKlPwgQS/6AAhzLTbhKWngZMTZA6kMb
+         J0lkBdPDHxKBX4Ut9dAAuiEfx5PyTYk5a2aEZwCcqnoHRZ177XCpqQMsfghJGjsB85UI
+         tyPEe328kPxIz8N/Eudya9f4vVBHzH42BVAivXx8XR55YcnRxnFXndG7s8z/ImwMVsFf
+         XdLg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
+       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of robh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E682172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-MIME-Version: 1.0
-In-Reply-To: <CANk1AXQRsAyFOGnUGcdWa0g0SdWu1PD=osYazj3nXJVq8ErABQ@mail.gmail.com>
+       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="35279639"
+From: richard.gong@linux.intel.com
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	dinguyen@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	atull@kernel.org,
+	mdf@kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	yves.vandervennet@linux.intel.com,
+	richard.gong@linux.intel.com,
+	Richard Gong <richard.gong@intel.com>
+Subject: [PATCHv2 1/7] dt-bindings, firmware: add Intel Stratix10 service layer binding
+Date: Thu,  1 Mar 2018 18:19:29 -0600
+Message-Id: <1519949975-13548-2-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519949975-13548-1-git-send-email-richard.gong@linux.intel.com>
 References: <1519949975-13548-1-git-send-email-richard.gong@linux.intel.com>
- <1519949975-13548-5-git-send-email-richard.gong@linux.intel.com>
- <20180307194745.657ewa6rtcta6eqm@rob-hp-laptop> <CANk1AXS3gbLLy5fvyxcmeSBEaV2LZY9P=M3sOUHUceTgso5YkQ@mail.gmail.com>
- <CAL_JsqLNxsVaMoefYfLi7ow8BjLkipNJwjvXgpEuXZZF8PT6+A@mail.gmail.com> <CANk1AXQRsAyFOGnUGcdWa0g0SdWu1PD=osYazj3nXJVq8ErABQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 8 Mar 2018 16:27:16 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKNKZOCGhAJiuVMvYWK-27=AAo63xa5jF-gbezBky1tUQ@mail.gmail.com>
-Message-ID: <CAL_JsqKNKZOCGhAJiuVMvYWK-27=AAo63xa5jF-gbezBky1tUQ@mail.gmail.com>
-Subject: Re: [PATCHv2 4/7] dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-To: Alan Tull <atull@kernel.org>
-Cc: Richard Gong <richard.gong@linux.intel.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Dinh Nguyen <dinguyen@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Moritz Fischer <mdf@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org,
-	Yves Vandervennet <yves.vandervennet@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593783311696826067?=
-X-GMAIL-MSGID: =?utf-8?q?1594410200791188588?=
+X-GMAIL-THRID: =?utf-8?q?1593783306027832989?=
+X-GMAIL-MSGID: =?utf-8?q?1593783306027832989?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 9:32 AM, Alan Tull <atull@kernel.org> wrote:
-> On Wed, Mar 7, 2018 at 7:24 PM, Rob Herring <robh@kernel.org> wrote:
->> On Wed, Mar 7, 2018 at 4:20 PM, Alan Tull <atull@kernel.org> wrote:
->>> On Wed, Mar 7, 2018 at 1:47 PM, Rob Herring <robh@kernel.org> wrote:
->>>> On Thu, Mar 01, 2018 at 06:19:32PM -0600, richard.gong@linux.intel.com wrote:
->>>>> From: Alan Tull <atull@kernel.org>
->>>>>
->>>>> Add a Device Tree binding for the Intel Stratix10 SoC FPGA manager.
->>>>>
->>>>> Signed-off-by: Alan Tull <atull@kernel.org>
->>>>> ---
->>>>> v2: this patch is added in patch set version 2
->>>>> ---
->>>>>  .../devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt  | 10 ++++++++++
->>>>>  1 file changed, 10 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
->>>>> new file mode 100644
->>>>> index 0000000..78de689
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
->>>>> @@ -0,0 +1,10 @@
->>>>> +Intel Stratix10 SoC FPGA Manager
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible : should contain "intel,stratix10-soc-fpga-mgr"
->>>>> +
->>>>> +Example:
->>>>> +
->>>>> +     fpga_mgr: fpga-mgr@0 {
->>>>> +             compatible = "intel,stratix10-soc-fpga-mgr";
->>>>
->>>> No reg or anything else? Is that because it all goes thru the service
->>>> layer firmware?
->>>
->>> Yes.
->>>
->>> There will be a few more clients of the service layer: QSPI, Crypto
->>> and warm reset.
->>>
->>>> Just get the service layer driver to instantiate a
->>>> device for this driver or get rid of the 2 layers if that's all the
->>>> firmware interface does. DT is not a Linux driver instantiation
->>>> mechanism.
->>>
->>> Right, this should be describing hardware.
->>>
->>> I could add this to the service layer binding:
->>>
->>> firmware {
->>>         svc {
->>>                 compatible = "intel,stratix10-svc";
->>>                 method = "smc";
->>>                 memory-region = <&service_reserved>;
->>>                 fpga-mgr {
->
-> Actually, add a label.
->
->                   fpga_mgr: fpga-mgr {
->
->>>                         compatible = "intel,stratix10-soc-fpga-mgr";
->>
->> Still, why do you need this node? If you don't have any other cross
->> tree connections, then the service layer can instantiate the
->> device(s).
->
-> It's used for the FPGA region to know what mgr can program the region.
+From: Richard Gong <richard.gong@intel.com>
 
-Ah yes, that's probably good enough reason.
+Add a device tree binding for the Intel Stratix10 service layer driver
 
-Rob
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+v2: Change to put service layer driver node under the firmware node
+    Change compatible to "intel, stratix10-svc"
+---
+ .../bindings/firmware/intel,stratix10-svc.txt      | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+
+diff --git a/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+new file mode 100644
+index 0000000..1fa6606
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+@@ -0,0 +1,57 @@
++Intel Service Layer Driver for Stratix10 SoC
++============================================
++Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
++processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
++configured from HPS, there needs to be a way for HPS to notify SDM the
++location and size of the configuration data. Then SDM will get the
++configuration data from that location and perform the FPGA configuration.
++
++To meet the whole system security needs and support virtual machine requesting
++communication with SDM, only the secure world of software (EL3, Exception
++Layer 3) can interface with SDM. All software entities running on other
++exception layers must channel through the EL3 software whenever it needs
++service from SDM.
++
++Intel Stratix10 service layer driver, running at privileged exception level
++(EL1, Exception Layer 1), interfaces with the service providers and provides
++the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
++driver also manages secure monitor call (SMC) to communicate with secure monitor
++code running in EL3.
++
++Required properties:
++-------------------
++The svc node has the following mandatory properties, must be located under
++the firmware node.
++
++- compatible: "intel,stratix10-svc"
++- method: smc or hvc
++        smc - Secure Monitor Call
++        hvc - Hypervisor Call
++- memory-region:
++	phandle to the reserved memory node. See
++	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++	for details
++
++Example:
++-------
++
++	reserved-memory {
++                #address-cells = <2>;
++                #size-cells = <2>;
++                ranges;
++
++                service_reserved: svcbuffer@0 {
++                        compatible = "shared-dma-pool";
++                        reg = <0x0 0x0 0x0 0x1000000>;
++                        alignment = <0x1000>;
++                        no-map;
++                };
++        };
++
++	firmware {
++		svc {
++			compatible = "intel,stratix10-svc";
++			method = "smc";
++			memory-region = <&service_reserved>;
++		};
++	};
+-- 
+2.7.4
