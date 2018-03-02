@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935913AbeCBFua (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:50:30 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35871 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935899AbeCBFu2 (ORCPT
+        id S935930AbeCBFuo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:50:44 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43605 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935916AbeCBFuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:50:28 -0500
-X-Google-Smtp-Source: AG47ELvrY8NUI2f9uiU5vcNVOoevjd19qjFzeuYpJvoe8Iuj/j8tKBVBEgHvG9L1cNs44K4cAGMz/w==
+        Fri, 2 Mar 2018 00:50:39 -0500
+X-Google-Smtp-Source: AG47ELuz51E2H5sdAs1TvDDt0msY5PbQOqP/jFYWVFhrj2KLwaBp+XnhUnZIdvzFU8Fqi0huEOzB3A==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,118 +18,214 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 00/11] Add clock driver for Actions S900 SoC
-Date: Fri,  2 Mar 2018 11:18:49 +0530
-Message-Id: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 01/11] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Fri,  2 Mar 2018 11:18:50 +0530
+Message-Id: <20180302054900.11275-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds clock support for Actions Semi OWL series
-S900 SoC with relevant clock bindings and device tree info.
+Add Actions Semi S900 clock bindings.
 
-Driver has been validated on Bubblegum-96 board.
-
-Thanks,
-Mani
-
-Changes in V4:
-
-* Moved to SPDX license tag for dt-bindings
-* Fixed a warning in owl-common.h
-* Rebased on top of 4.16-rc3
-
-Changes in V3:
-
-* Completely refactored the clock driver based on sunxi-ng
-  clock structure
-* Removed all owl_ prefixed functions for registering the
-  clock driver and used the registration functions directly
-* Moved to SPDX based license tag
-* Removed module dependencies from the driver
-* Made I2C clocks as simple gate clocks due to the lack of
-  information about factor rates
-* Added Ack from Rob for DT bindings
-* Sourced CMU clock for UART5
-
-Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
-
-* Changed the directory structure to actions/ and used owl- prefix
-  for sources.
-* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
-* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
-* Changed the license from GPLv2 to GPLv2+.
-* Moved fixed clock sources to DT
-* Changed clock-controller node name to cmu in DT
-* Added clocks property to cmu node in DT
-* Changed compatible property value to "actions,s900-cmu"
-* Fixed example UART controller node in documentation
-* Fixed tab vs space issue
-
-Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
-
-* Addressed last year's review comments from Stephen
-- https://patchwork.kernel.org/patch/9254471/
-
-Manivannan Sadhasivam (11):
-  dt-bindings: clock: Add Actions S900 clock bindings
-  arm64: dts: actions: Add S900 clock management unit nodes
-  arm64: dts: actions: Source CMU clock for UART5
-  clk: actions: Add common clock driver support
-  clk: actions: Add gate clock support
-  clk: actions: Add mux clock support
-  clk: actions: Add divider clock support
-  clk: actions: Add factor clock support
-  clk: actions: Add composite clock support
-  clk: actions: Add pll clock support
-  clk: actions: Add S900 SoC clock support
-
- .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
- arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/actions/Kconfig                        |  14 +
- drivers/clk/actions/Makefile                       |  12 +
- drivers/clk/actions/owl-common.c                   |  84 +++
- drivers/clk/actions/owl-common.h                   |  41 ++
- drivers/clk/actions/owl-composite.c                | 155 +++++
- drivers/clk/actions/owl-composite.h                | 101 ++++
- drivers/clk/actions/owl-divider.c                  |  94 +++
- drivers/clk/actions/owl-divider.h                  |  75 +++
- drivers/clk/actions/owl-factor.c                   | 222 +++++++
- drivers/clk/actions/owl-factor.h                   |  83 +++
- drivers/clk/actions/owl-gate.c                     |  77 +++
- drivers/clk/actions/owl-gate.h                     |  73 +++
- drivers/clk/actions/owl-mux.c                      |  60 ++
- drivers/clk/actions/owl-mux.h                      |  61 ++
- drivers/clk/actions/owl-pll.c                      | 194 ++++++
- drivers/clk/actions/owl-pll.h                      |  92 +++
- drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
- drivers/clk/actions/owl-s900.h                     |  61 ++
- include/dt-bindings/clock/actions,s900-cmu.h       | 129 ++++
- 24 files changed, 2364 insertions(+), 7 deletions(-)
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++++++++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 +++++++++++++++++++++
+ 2 files changed, 176 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
- create mode 100644 drivers/clk/actions/owl-composite.c
- create mode 100644 drivers/clk/actions/owl-composite.h
- create mode 100644 drivers/clk/actions/owl-divider.c
- create mode 100644 drivers/clk/actions/owl-divider.h
- create mode 100644 drivers/clk/actions/owl-factor.c
- create mode 100644 drivers/clk/actions/owl-factor.h
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
- create mode 100644 drivers/clk/actions/owl-mux.c
- create mode 100644 drivers/clk/actions/owl-mux.h
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
- create mode 100644 drivers/clk/actions/owl-s900.c
- create mode 100644 drivers/clk/actions/owl-s900.h
  create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+new file mode 100644
+index 000000000000..93e4fb827cd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+@@ -0,0 +1,47 @@
++* Actions S900 Clock Management Unit (CMU)
++
++The Actions S900 clock management unit generates and supplies clock to various
++controllers within the SoC. The clock binding described here is applicable to
++S900 SoC.
++
++Required Properties:
++
++- compatible: should be "actions,s900-cmu"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- clocks: Reference to the parent clocks ("hosc", "losc")
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier, and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/actions,s900-cmu.h header and can be used in device
++tree sources.
++
++External clocks:
++
++The hosc clock used as input for the plls is generated outside the SoC. It is
++expected that it is defined using standard clock bindings as "hosc".
++
++Actions S900 CMU also requires one more clock:
++ - "losc" - internal low frequency oscillator
++
++Example: Clock Management Unit node:
++
++        cmu: clock-controller@e0160000 {
++                compatible = "actions,s900-cmu";
++                reg = <0x0 0xe0160000 0x0 0x1000>;
++                clocks = <&hosc>, <&losc>;
++                #clock-cells = <1>;
++        };
++
++Example: UART controller node that consumes clock generated by the clock
++management unit:
++
++        uart: serial@e012a000 {
++                compatible = "actions,s900-uart", "actions,owl-uart";
++                reg = <0x0 0xe012a000 0x0 0x2000>;
++                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cmu CLK_UART5>;
++        };
+diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+new file mode 100644
+index 000000000000..7c1251565f43
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s900-cmu.h
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S900 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
++#define __DT_BINDINGS_CLOCK_S900_CMU_H
++
++#define CLK_NONE			0
++
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
++
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_DSI_PLL			8
++#define CLK_ASSIST_PLL			9
++#define CLK_AUDIO_PLL			10
++
++/* system clock */
++#define CLK_CPU				15
++#define CLK_DEV				16
++#define CLK_NOC				17
++#define CLK_NOC_MUX			18
++#define CLK_NOC_DIV			19
++#define CLK_AHB				20
++#define CLK_APB				21
++#define CLK_DMAC			22
++
++/* peripheral device clock */
++#define CLK_GPIO			23
++
++#define CLK_BISP			24
++#define CLK_CSI0			25
++#define CLK_CSI1			26
++
++#define CLK_DE0				27
++#define CLK_DE1				28
++#define CLK_DE2				29
++#define CLK_DE3				30
++#define CLK_DSI				32
++
++#define CLK_GPU				33
++#define CLK_GPU_CORE			34
++#define CLK_GPU_MEM			35
++#define CLK_GPU_SYS			36
++
++#define CLK_HDE				37
++#define CLK_I2C0			38
++#define CLK_I2C1			39
++#define CLK_I2C2			40
++#define CLK_I2C3			41
++#define CLK_I2C4			42
++#define CLK_I2C5			43
++#define CLK_I2SRX			44
++#define CLK_I2STX			45
++#define CLK_IMX				46
++#define CLK_LCD				47
++#define CLK_NAND0			48
++#define CLK_NAND1			49
++#define CLK_PWM0			50
++#define CLK_PWM1			51
++#define CLK_PWM2			52
++#define CLK_PWM3			53
++#define CLK_PWM4			54
++#define CLK_PWM5			55
++#define CLK_SD0				56
++#define CLK_SD1				57
++#define CLK_SD2				58
++#define CLK_SD3				59
++#define CLK_SENSOR			60
++#define CLK_SPEED_SENSOR		61
++#define CLK_SPI0			62
++#define CLK_SPI1			63
++#define CLK_SPI2			64
++#define CLK_SPI3			65
++#define CLK_THERMAL_SENSOR		66
++#define CLK_UART0			67
++#define CLK_UART1			68
++#define CLK_UART2			69
++#define CLK_UART3			70
++#define CLK_UART4			71
++#define CLK_UART5			72
++#define CLK_UART6			73
++#define CLK_VCE				74
++#define CLK_VDE				75
++
++#define CLK_USB3_480MPLL0		76
++#define CLK_USB3_480MPHY0		77
++#define CLK_USB3_5GPHY			78
++#define CLK_USB3_CCE			79
++#define CLK_USB3_MAC			80
++
++#define CLK_TIMER			83
++
++#define CLK_HDMI_AUDIO			84
++
++#define CLK_24M				85
++
++#define CLK_EDP				86
++
++#define CLK_24M_EDP			87
++#define CLK_EDP_PLL			88
++#define CLK_EDP_LINK			89
++
++#define CLK_USB2H0_PLLEN		90
++#define CLK_USB2H0_PHY			91
++#define CLK_USB2H0_CCE			92
++#define CLK_USB2H1_PLLEN		93
++#define CLK_USB2H1_PHY			94
++#define CLK_USB2H1_CCE			95
++
++#define CLK_DDR0			96
++#define CLK_DDR1			97
++#define CLK_DMM				98
++
++#define CLK_ETH_MAC			99
++#define CLK_RMII_REF			100
++
++#define CLK_NR_CLKS			(CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
 -- 
 2.14.1
