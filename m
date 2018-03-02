@@ -1,101 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423001AbeCBIc3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 03:32:29 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:42691 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422901AbeCBIcY (ORCPT
+        id S1422985AbeCBIga (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 03:36:30 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:53288 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422947AbeCBIg3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 03:32:24 -0500
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: "vinod.koul@intel.com" <vinod.koul@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "wan.ahmad.zainie.wan.mohamad@intel.com"
-        <wan.ahmad.zainie.wan.mohamad@intel.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: Document the Synopsys DW AXI DMA
- bindings
-Thread-Topic: [PATCH v2 2/2] dt-bindings: Document the Synopsys DW AXI DMA
- bindings
-Thread-Index: AQHTrxIPnicNe7clKkuHCzSXAZ6+oqO8jfgAgAAFEwA=
-Date: Fri, 2 Mar 2018 08:32:20 +0000
-Message-ID: <1519979538.4430.7.camel@synopsys.com>
-References: <20180226145628.11892-1-Eugeniy.Paltsev@synopsys.com>
-         <20180226145628.11892-3-Eugeniy.Paltsev@synopsys.com>
-         <20180302081408.GK15443@localhost>
-In-Reply-To: <20180302081408.GK15443@localhost>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FBD9BA228095204CB9DA256D7E8097A1@internal.synopsys.com>
+        Fri, 2 Mar 2018 03:36:29 -0500
+Date: Fri, 2 Mar 2018 09:36:06 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+cc: Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/kprobe: unbalanced preempt counter with
+ CONFIG_PREEMPT=y
+In-Reply-To: <20180302094239.34c88e000aa86c4126cae99a@kernel.org>
+Message-ID: <alpine.DEB.2.21.1803020935170.1803@nanos.tec.linutronix.de>
+References: <20180115042501.20882-1-yangbo@deepin.com> <alpine.DEB.2.21.1803012057300.1391@nanos.tec.linutronix.de> <20180302094239.34c88e000aa86c4126cae99a@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w228WpuY014910
 
-Hi Vinod,
-
-On Fri, 2018-03-02 at 13:44 +0530, Vinod Koul wrote:
-> On Mon, Feb 26, 2018 at 05:56:28PM +0300, Eugeniy Paltsev wrote:
-> > This patch adds documentation of device tree bindings for the Synopsys
-> > DesignWare AXI DMA controller.
+On Fri, 2 Mar 2018, Masami Hiramatsu wrote:
+> On Thu, 1 Mar 2018 22:12:56 +0100 (CET)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > For each kprobe hook, preempt_disable() is called twice, but
+> > > preempt_enable() is called once, when CONFIG_PREEMPT=y. No
+> > > matter kprobe uses ftrace or int3. Then the preempt counter
+> > > overflows, the process might be preempted and migrate to another
+> > > cpu. It causes the kprobe int3 being treated as not kprobe's int3,
+> > > kernel dies.
+> > > 
+> > > The backtrace looks like this:
+> > > 
+> > > int3: 0000 [#1] PREEMPT SMP
+> > > Modules linkedd in: ...
+> > > CPU: 1 PID: 2618 COMM: ...
+> > > Hardware: ...
+> > > task: ...
+> > > RIP: 0010[<ffffffff81457cd5>] [<ffffffff81457cd5>] jprobe_return_end+0x0/0xb
+> > > ...
+> > > RIP [<ffffffff81457cd5>] jprobe_return_end+0x0/0xb
+> > > RSP ...
+> > > 
+> > > Signed-off-by: Yang Bo <yangbo@deepin.com>
+> > > ---
+> > >  arch/x86/kernel/kprobes/core.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> > > index bd36f3c33cd0..1ea5c9caa8f1 100644
+> > > --- a/arch/x86/kernel/kprobes/core.c
+> > > +++ b/arch/x86/kernel/kprobes/core.c
+> > > @@ -611,6 +611,7 @@ static void setup_singlestep(struct kprobe *p, struct pt_regs *regs,
+> > >  		regs->ip = (unsigned long)p->addr;
+> > >  	else
+> > >  		regs->ip = (unsigned long)p->ainsn.insn;
+> > > +	preempt_enable_no_resched();
 > > 
-> > Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > ---
-> >  .../devicetree/bindings/dma/snps,dw-axi-dmac.txt   | 41 ++++++++++++++++++++++
-> >  1 file changed, 41 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-> > new file mode 100644
-> > index 0000000..f237b79
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-> > @@ -0,0 +1,41 @@
-> > +Synopsys DesignWare AXI DMA Controller
-> > +
-> > +Required properties:
-> > +- compatible: "snps,axi-dma-1.01a"
-> > +- reg: Address range of the DMAC registers. This should include
-> > +  all of the per-channel registers.
-> > +- interrupt: Should contain the DMAC interrupt number.
-> > +- interrupt-parent: Should be the phandle for the interrupt controller
-> > +  that services interrupts for this device.
-> > +- dma-channels: Number of channels supported by hardware.
-> > +- snps,dma-masters: Number of AXI masters supported by the hardware.
-> > +- snps,data-width: Maximum AXI data width supported by hardware.
-> > +  (0 - 8bits, 1 - 16bits, 2 - 32bits, ..., 6 - 512bits)
-> > +- snps,priority: Priority of channel. Array size is equal to the number of
-> > +  dma-channels. Priority value must be programmed within [0:dma-channels-1]
-> > +  range. (0 - minimum priority)
-> > +- snps,block-size: Maximum block size supported by the controller channel.
-> > +  Array size is equal to the number of dma-channels.
-> > +
-> > +Optional properties:
-> > +- snps,axi-max-burst-len: Restrict master AXI burst length by value specified
-> > +  in this property. If this property is missing the maximum AXI burst length
-> > +  supported by DMAC is used. [1:256]
-> > +
-> > +Example:
-> > +
-> > +dmac: dma-controller@80000 {
-> > +	compatible = "snps,axi-dma-1.01a";
+> > Good catch, but to be honest the proper fix is to move the preempt_enable()
+> > invocation to the callsite. This kind of asymetric handling is error prone
+> > and leads exactly to that type of bugs. Just adding more preempt_enable()
+> > invocations is proliferating the problem.
 > 
-> do we need "snps here..?
+> Oops, I missed to send my NACK not to ML...
+> 
+> ----
+> > NACK. While single-stepping we have to disable preemption, this
+> > is balanced right after debug-exception is handled (which you
+> > removed next patch).
+> > 
+> > kprobes does not use only int3, but also debug (single step) exception.
+> > So, basically its sequence is;
+> > 1) disable preemption at int3 handler and return
+> > 2) do single-step on returned instruction
+> > 3) enable preemption at debug exception handler
 
-Synopsys is this IP-block vendor so shouldn't we put it that way?
+Well, but that does not make the crash Yang is seeing magically go
+away. There must be a bug in that logic somewhere and that needs to be
+addressed.
 
--Alexey
+> > Looking deeper into kprobe_int3_handler() there are more places which do
+> > this completely unomprehensible conditional preempt count handling via
+> > skip_singlestep() and setup_detour_execution(). What an unholy mess.
+> > 
+> > Masami?
+> 
+> As I pointed above, since kprobe has to disable preempt while singlestepping,
+> preempt_disable()/enable() must be separated in int3 handler and debug handler
+> by default. There are some exception paths for skipping singlestep to speed up
+> the process. Maybe I can make it better to handle it in kprobe_int3_handler()
+>
+> E.g. check singlestep setup in the end of kprobe_int3_handler() and decide
+>  to enable preempt again or keep disabled.
+> 
+> Does it match to your thought?
+
+Yes. Doing it at the callsite and documenting the rules proper is much
+preferred. Right now the code looks like:
+
+
+	preempt_disable();
+	if (foo) {
+		if (baz())
+			return;
+		....
+		return;
+	} else {
+		more of this....
+	}
+	preempt_enable();
+
+And the preempt_enable() is conditionally inside of baz() and other
+functions, which is completely non-obvious.
+
+	preempt_disable();
+	if (foo) {
+		if (baz()) {
+			preempt_enable();
+			return;
+		}
+		....
+		/* Keep preemption disabled across the probe operation */
+		return;
+	} else {
+		more of this....
+	}
+	preempt_enable();
+
+That's a bit more understandable, but still confusing.
+
+Preemption needs to be disabled when the probe hits and reenabled when the
+probe operation finishes, right?
+
+So I'd rather have an indicator for probe in progress and use that to
+control preemption:
+
+handler()
+{
+	if (!current->probe_active) {
+		if (is_probe()) {
+			do_stuff();
+			current->probe_active = true;
+			/* Keep preemption disabled across the probe operation */
+			preempt_disable();
+			return 1;
+		}
+		return 0;
+	}
+
+	if (probe_done()) {
+	   	do_other_stuff();
+		current->probe_active = false;
+		preempt_enable();
+		return 1;
+	}
+	do_more_stuff();
+	return 1;
+}
+
+See how that automatically documents the mode of operation and the
+preemption semantics? No need for all that conditional preempt_enable()
+stuff all over the place. It's in reality probably not that simple, but you
+get the idea.
+
+Thanks,
+
+	tglx
