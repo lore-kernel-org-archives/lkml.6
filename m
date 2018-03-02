@@ -1,329 +1,980 @@
-Return-Path: <jun.li@nxp.com>
-X-Cyrus-Session-Id: sloti22d1t05-1786296-1520001538-2-12616168437885407976
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-2195869-1520015964-2-8245713541698376015
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H4 -0.01,
-  RCVD_IN_MSPIKE_WL -0.01, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='104.47.0.62',
-  Host='mail-he1eur01on0062.outbound.protection.outlook.com', Country='FI',
-  FromHeader='com', MailFrom='com', XOriginatingCountry='NL'
-X-Spam-charsets: to='utf-8', cc='utf-8', plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  HTML_MESSAGE 0.001, RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
+  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.216.174', Host='mail-qt0-f174.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: from='UTF-8', cc='UTF-8', plain='UTF-8', html='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: jun.li@nxp.com
+X-Mail-from: leechu729@gmail.com
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520001536; b=J4juAJDC2daYAt25EDToyQp3IDJvlst/B6dZGrxU9d1T6ld
-    UXgs/So519yaOHtdpusmVYAxoKgDzy8K6S7tvtAgPMWxaDxAEPUeAf+uPwqcU2wN
-    dEwf3rJmm5Gkm4eeHTf/KE2wYPM9S9ojfpkzZ8QHqZ237lluq8PHYRWUOKaTETcu
-    E4GuYqhW5UxhNeCnVrZ+6CWt99nLDbMjqstwS/IhcGJZ6Cox07aeh4lv8i71O2qJ
-    UQcjIRUAVqZrKcRqSY1Fi8NRuIw6yDJlGyFE1hgWVDjgdNr2womrI8aQVeSTq4/5
-    8+k4jaDUKji3CZjBQ7iqstCKlHImLFaDVRE7WhQ==
+    t=1520015963; b=O7r8z0KdZdF7LrbtzwSlDI5M5rpF/NsPDH8d2EjNCFKD8WD
+    3AajuHW88jcrGXzHEBvCUqsYFJelunVfFvrPBB/ZJt21r1UAqvTlu1yYAGjzQHEm
+    7eXd330tPOhRYJlmnYI5+IZs+d3WmF1JXewunuOAC/PvwbEp8lXvH9UURFF61fD0
+    ots+jIRNY6S1voCHQErL9Kz+FdT1wTRfDqsjvkAHga1wkttLxXlfi+i/8d8+u3AN
+    yF7bV82TPNkvYRMq/tVvuZGOwA8iYtWnFuxUX/PLLxaiS3/Rv0W79nZyrsqQFqSu
+    iI8t5o4VRThNpRdAInQzqOsY+kOmnzq6BBcHDGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version; s=arctest; t=1520001536; bh=egC9XEuItfZbXlmMjHH4N
-    WS3t0Zxpbxv2ecrqE0kfFI=; b=tpzJVi0UWoKOzXj+FxXjn3LjQKoV6CBAzj/D6
-    nWkm+EB63Qfm6UuU97vIaPgI4ZNLXrvsS2h21iZSbsTI2unRbm+HqrPKmpiE64iX
-    5v785FC59T2vbpB8d8NDy5kmR97W3hlJHx9zBBCZ0JovDlLX3m0lfrAcrv+1L9Ip
-    KAEdvlO2IzxFcvb0rlTHOuLFeBWRQUnPpijMJBZ71NFo4CR7WmIbTVrHOPb+UCtu
-    xJNoUG/SIU6tMO99rkUdFusfsCu6QOQyYM+N0FLi8fg+R2NeRSrvTal8iw5pXDit
-    6AY79+rtxv+N8D3ldBrxGnnTLH+ZonUr6F/m9d00ZssCyiRyg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=gCftH0W/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=none,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=104.47.0.62 (mail-he1eur01on0062.outbound.protection.outlook.com);
-    spf=pass smtp.mailfrom=jun.li@nxp.com smtp.helo=EUR01-HE1-obe.outbound.protection.outlook.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type; s=arctest; t=
+    1520015963; bh=ATNY0GwUv3pkGBrPij/hUXgzld7eroURvwAjtF6X/Dw=; b=e
+    6wcBDoja2I9GNLfR2CFlA3EdOX8GvczacbAyEbSZ4rzG9jJFHj1EGvHhjeodTlsg
+    5jvxf9lh9ba//itWvQPIAs7jKthcwR0fevXX3GHTZS0SeOHE4ATHakNDY20Vrvnr
+    VQ4hv+/Z5/xOCNTHWeMBsOUH2OYXbZ33hU57yY5Ppe5gbx8HyZnK1LNUHLdO1+7C
+    SxjayQoSBJqhUqrnV9pK20lfpm3TIp7351xRog2rI3wtqMZfLMUdbs7H2IC34pwa
+    6/y6RDWEjTWxYbCGgpDDfUJKZ35udpcJLFtXtD68zn3dTS+7tqNVJoGmlM8tbbyK
+    IVohVDzlxvtonMaLq5+gw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FNOu2hr1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.216.174 (mail-qt0-f174.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qt0-f174.google.com;
     x-aligned-from=pass;
-    x-ptr=fail x-ptr-helo=EUR01-HE1-obe.outbound.protection.outlook.com x-ptr-lookup=mail-he1eur01on0062.outbound.protection.outlook.com;
-    x-return-mx=pass smtp.domain=nxp.com smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aD1enpQ5;
+    x-ptr=pass x-ptr-helo=mail-qt0-f174.google.com x-ptr-lookup=mail-qt0-f174.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=gCftH0W/ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=none,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=104.47.0.62 (mail-he1eur01on0062.outbound.protection.outlook.com);
-    spf=pass smtp.mailfrom=jun.li@nxp.com smtp.helo=EUR01-HE1-obe.outbound.protection.outlook.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FNOu2hr1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.216.174 (mail-qt0-f174.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qt0-f174.google.com;
     x-aligned-from=pass;
-    x-ptr=fail x-ptr-helo=EUR01-HE1-obe.outbound.protection.outlook.com x-ptr-lookup=mail-he1eur01on0062.outbound.protection.outlook.com;
-    x-return-mx=pass smtp.domain=nxp.com smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128
-From: Jun Li <jun.li@nxp.com>
-To: =?utf-8?B?c2h1ZmFuX2xlZSjmnY7mm7jluIYp?= <shufan_lee@richtek.com>,
-	ShuFanLee <leechu729@gmail.com>, "heikki.krogerus@linux.intel.com"
-	<heikki.krogerus@linux.intel.com>, "linux@roeck-us.net" <linux@roeck-us.net>,
-	"greg@kroah.com" <greg@kroah.com>
-CC: =?utf-8?B?Y3lfaHVhbmco6buD5ZWf5Y6fKQ==?= <cy_huang@richtek.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>
-Subject: RE: [PATCH] staging: typec: handle vendor defined part and modify drp
- toggling flow
-Thread-Topic: [PATCH] staging: typec: handle vendor defined part and modify
- drp toggling flow
-Thread-Index: AQHTqyUdFvVGBwfZp02pyfGoxbo4UqOwKcjQgAkL0QCAAZ22kIAASrEAgAACPMCAADFkAIABYD/w
-Date: Fri, 2 Mar 2018 14:38:50 +0000
-Message-ID: <VI1PR0402MB3917B92CFDDF46F83A3C4B6B89C50@VI1PR0402MB3917.eurprd04.prod.outlook.com>
-References: <1519225343-2929-1-git-send-email-leechu729@gmail.com>,<VI1PR0402MB39173D6439D8999EDEA080DE89CD0@VI1PR0402MB3917.eurprd04.prod.outlook.com>
- <1519789258692.80587@richtek.com>
- <VI1PR0402MB3917A4BF4E176CD6C767348E89C60@VI1PR0402MB3917.eurprd04.prod.outlook.com>
- <06ae73ba737e4b5197874080384e178d@ex1.rt.l>
- <VI1PR0402MB3917B33C7716810B12DCE63B89C60@VI1PR0402MB3917.eurprd04.prod.outlook.com>
- <524719c21a4d4c5bb32480ced557d948@ex1.rt.l>
-In-Reply-To: <524719c21a4d4c5bb32480ced557d948@ex1.rt.l>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
-x-originating-ip: [185.114.77.231]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3645;7:wnzEXw/vw1oXJOtZCHrVP1tH1Nfj1E2QypfJ8TC/w5Ao6BEbYrHXhudZPCaijZSkBAgj9miGZ3LnfhB5gnWf5RtqeS/blo5SN/uB6Ro36o4wXL38Zf8+SQRfR/wOg9dh5aFoZ+FxuexeouScRdsFSvDkUhsxD3nA0fzeL8y4G5gAkegTNN/p9Xlh1luWeB8NpEArMPFVzZK7Z6XpZT0hppESrHJOBFjIwiKDhKefOm1ySmwozSIfnzdQr6zfzChG
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 997d4442-a531-47f8-2e00-08d5804b508b
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:VI1PR0402MB3645;
-x-ms-traffictypediagnostic: VI1PR0402MB3645:
-x-microsoft-antispam-prvs: <VI1PR0402MB3645AA376CAE5E9C26EEB17A89C50@VI1PR0402MB3645.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(20558992708506)(9452136761055)(189930954265078)(185117386973197)(85827821059158)(45079756050767)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501240)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041288)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:VI1PR0402MB3645;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3645;
-x-forefront-prvs: 05991796DF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(39380400002)(39860400002)(346002)(13464003)(199004)(189003)(14454004)(305945005)(966005)(3846002)(6116002)(6246003)(33656002)(478600001)(45080400002)(5250100002)(7696005)(53936002)(2201001)(93886005)(2950100002)(39060400002)(4326008)(105586002)(9686003)(25786009)(55016002)(76176011)(6436002)(6306002)(2501003)(8676002)(106356001)(99286004)(6506007)(53546011)(86362001)(229853002)(66066001)(186003)(2906002)(81156014)(102836004)(316002)(97736004)(26005)(2900100001)(110136005)(54906003)(59450400001)(3660700001)(7736002)(5660300001)(3280700002)(68736007)(8936002)(5890100001)(74316002)(81166006)(19627235001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3645;H:VI1PR0402MB3917.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: j4Kf0TvGLZJtuqlYxUToe4DUEMl87tshHfp0iUC6jdS+faRokHVSsfgyBvQzNvua3+7+N182OM6xRp1WJSosRGikrha0FCafiTWCaGHhFBLSKFa5EwMmgxPMiGS5EruA4co1pJLdZoHfJasuf8U4+RxQApvpgW4mhDNxCxMJWrc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=aD1enpQ5;
+    x-ptr=pass x-ptr-helo=mail-qt0-f174.google.com x-ptr-lookup=mail-qt0-f174.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELs6UoLjpHwsxi/XC9BiB8gddcpG+pDU49TGriBk3OdE7UnC3HzcyOEo7SAJ5BrcbTWT0QS39SUIPbgmkxVKiBw=
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 997d4442-a531-47f8-2e00-08d5804b508b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2018 14:38:50.3275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3645
+In-Reply-To: <VI1PR0402MB3917B92CFDDF46F83A3C4B6B89C50@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+References: <1519225343-2929-1-git-send-email-leechu729@gmail.com>
+ <VI1PR0402MB39173D6439D8999EDEA080DE89CD0@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+ <1519789258692.80587@richtek.com> <VI1PR0402MB3917A4BF4E176CD6C767348E89C60@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+ <06ae73ba737e4b5197874080384e178d@ex1.rt.l> <VI1PR0402MB3917B33C7716810B12DCE63B89C60@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+ <524719c21a4d4c5bb32480ced557d948@ex1.rt.l> <VI1PR0402MB3917B92CFDDF46F83A3C4B6B89C50@VI1PR0402MB3917.eurprd04.prod.outlook.com>
+From: =?UTF-8?B?5p2O5pu45biG?= <leechu729@gmail.com>
+Date: Sat, 3 Mar 2018 02:39:20 +0800
+Message-ID: <CAFaeLdTfmgqCWEo306D+i+eOr80KDucaVjzi2frFxm--qHi1qg@mail.gmail.com>
+Subject: Re: [PATCH] staging: typec: handle vendor defined part and modify drp
+ toggling flow
+To: Jun Li <jun.li@nxp.com>
+Cc: =?UTF-8?B?c2h1ZmFuX2xlZSjmnY7mm7jluIYp?= <shufan_lee@richtek.com>,
+	"heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "linux@roeck-us.net" <linux@roeck-us.net>,
+	"greg@kroah.com" <greg@kroah.com>, =?UTF-8?B?Y3lfaHVhbmco6buD5ZWf5Y6fKQ==?= <cy_huang@richtek.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Content-Type: multipart/alternative; boundary="001a11425e866b60da0566724bcd"
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogc2h1ZmFuX2xlZSjmnY7m
-m7jluIYpIFttYWlsdG86c2h1ZmFuX2xlZUByaWNodGVrLmNvbV0NCj4gU2VudDogMjAxOOW5tDPm
-nIgx5pelIDE5OjU0DQo+IFRvOiBKdW4gTGkgPGp1bi5saUBueHAuY29tPjsgU2h1RmFuTGVlIDxs
-ZWVjaHU3MjlAZ21haWwuY29tPjsNCj4gaGVpa2tpLmtyb2dlcnVzQGxpbnV4LmludGVsLmNvbTsg
-bGludXhAcm9lY2stdXMubmV0OyBncmVnQGtyb2FoLmNvbQ0KPiBDYzogY3lfaHVhbmco6buD5ZWf
-5Y6fKSA8Y3lfaHVhbmdAcmljaHRlay5jb20+Ow0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnOyBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBkbC1saW51eC1pbXgNCj4gPGxpbnV4LWlt
-eEBueHAuY29tPg0KPiBTdWJqZWN0OiBSRTogW1BBVENIXSBzdGFnaW5nOiB0eXBlYzogaGFuZGxl
-IHZlbmRvciBkZWZpbmVkIHBhcnQgYW5kIG1vZGlmeQ0KPiBkcnAgdG9nZ2xpbmcgZmxvdw0KPiAN
-Cj4gSGkgSnVuLA0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206
-IEp1biBMaSBbbWFpbHRvOmp1bi5saUBueHAuY29tXQ0KPiA+IFNlbnQ6IFRodXJzZGF5LCBNYXJj
-aCAwMSwgMjAxOCA2OjA2IFBNDQo+ID4gVG86IHNodWZhbl9sZWUo5p2O5pu45biGKTsgU2h1RmFu
-TGVlOyBoZWlra2kua3JvZ2VydXNAbGludXguaW50ZWwuY29tOw0KPiA+IGxpbnV4QHJvZWNrLXVz
-Lm5ldDsgZ3JlZ0Brcm9haC5jb20NCj4gPiBDYzogY3lfaHVhbmco6buD5ZWf5Y6fKTsgbGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBk
-bC1saW51eC1pbXgNCj4gPiBTdWJqZWN0OiBSRTogW1BBVENIXSBzdGFnaW5nOiB0eXBlYzogaGFu
-ZGxlIHZlbmRvciBkZWZpbmVkIHBhcnQgYW5kDQo+ID4gbW9kaWZ5IGRycCB0b2dnbGluZyBmbG93
-DQo+ID4NCj4gPiBIaSBTaHVmYW4NCj4gPg0KPiA+IFBsZWFzZSBkb24ndCB0b3AgcG9zdGluZw0K
-PiA+DQo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiBGcm9tOiBzaHVmYW5fbGVl
-KOadjuabuOW4hikgW21haWx0bzpzaHVmYW5fbGVlQHJpY2h0ZWsuY29tXQ0KPiA+IFNlbnQ6IDIw
-MTjlubQz5pyIMeaXpSAxNjo0OQ0KPiA+IFRvOiBKdW4gTGkgPGp1bi5saUBueHAuY29tPjsgU2h1
-RmFuTGVlIDxsZWVjaHU3MjlAZ21haWwuY29tPjsNCj4gPiBoZWlra2kua3JvZ2VydXNAbGludXgu
-aW50ZWwuY29tOyBsaW51eEByb2Vjay11cy5uZXQ7IGdyZWdAa3JvYWguY29tDQo+ID4gQ2M6IGN5
-X2h1YW5nKOm7g+WVn+WOnykgPGN5X2h1YW5nQHJpY2h0ZWsuY29tPjsNCj4gPiBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5rZXJuZWwub3JnOyBkbC1saW51eC1p
-bXgNCj4gPiA8bGludXgtaW14QG54cC5jb20+DQo+ID4gU3ViamVjdDogUkU6IFtQQVRDSF0gc3Rh
-Z2luZzogdHlwZWM6IGhhbmRsZSB2ZW5kb3IgZGVmaW5lZCBwYXJ0IGFuZA0KPiA+IG1vZGlmeSBk
-cnAgdG9nZ2xpbmcgZmxvdw0KPiA+DQo+ID4gSGkgSnVuLA0KPiA+DQo+ID4gICBUaGUgYXR0YWNo
-bWVudCBpcyB3YXZlZm9ybSBvZiB0aGUgY29uZGl0aW9uIHdlIG1ldCBidXQgSSdtIG5vdCBzdXJl
-DQo+ID4gd2hldGhlciB5b3UgY2FuIGRvd25sb2FkIHRoZSBhdHRhY2htZW50Lg0KPiA+ICAgSSBh
-ZGQgbG9nIGluIFJUMTcxMUggaXQgc2hvd3MgYXMgZm9sbG93aW5nOg0KPiA+DQo+ID4gWW91IGRv
-bid0IG5lZWQgYWRkIGxvZyBieSB5b3VyIG93bi4NCj4gPiBUaGVyZSBpcyB0Y3BtKC4vZHJpdmVy
-cy91c2IvdHlwZWMvdGNwbS5jKSBsb2cgZm9yIGRlYnVnIGFscmVhZHksIHdoaWNoIGNhbg0KPiBz
-aG93IGFsbCB0aGUgZXZlbnRzIGFuZCBzdGF0ZSB0cmFuc2l0aW9ucywgeW91IGNhbiBnZXQgaXQg
-YnkgYmVsb3cgY29tbWFuZA0KPiBhcyBJIGNvbW1lbnRlZDoNCj4gPg0KPiA+IGNhdCAvc3lzL2tl
-cm5lbC9kZWJ1Zy90Y3BtL3h4eHh4KHlvdXIgdGNwYyBpMmMgZGV2aWNlKQ0KPiA+DQo+IEFmdGVy
-IGFwcGx5aW5nIHlvdXIgcGF0Y2hbMl0sIFRDUE0gbG9nIGlzIGFzIGZvbGxvd2luZzoNCg0KSSBh
-c3N1bWUgeW91IGFsc28gYXBwbGllZCBteSBwYXRjaCBbMV0uDQpbMV0gaHR0cHM6Ly93d3cuc3Bp
-bmljcy5uZXQvbGlzdHMvZGV2aWNldHJlZS9tc2cyMTY4NTEuaHRtbA0KDQo+IA0KPiBbICAgNTMu
-MDUwNjAyXSBDQzE6IDAgLT4gMiwgQ0MyOiAwIC0+IDAgW3N0YXRlIERSUF9UT0dHTElORywgcG9s
-YXJpdHkgMCwNCj4gY29ubmVjdGVkXQ0KPiBbICAgNTMuMDUwNjEzXSBzdGF0ZSBjaGFuZ2UgRFJQ
-X1RPR0dMSU5HIC0+IFNSQ19BVFRBQ0hfV0FJVA0KPiBbICAgNTMuMDUwNjc4XSBwZW5kaW5nIHN0
-YXRlIGNoYW5nZSBTUkNfQVRUQUNIX1dBSVQgLT4gU05LX1RSWSBADQo+IDIwMCBtcw0KPiA9PiBS
-ZCBpcyBwbHVnZ2VkIG91dA0KPiBbICAgNTMuMTc4ODA0XSBDQzE6IDIgLT4gMCwgQ0MyOiAwIC0+
-IDAgW3N0YXRlIFNSQ19BVFRBQ0hfV0FJVCwgcG9sYXJpdHkgMCwNCj4gZGlzY29ubmVjdGVkXQ0K
-PiBbICAgNTMuMTc4ODE1XSBzdGF0ZSBjaGFuZ2UgU1JDX0FUVEFDSF9XQUlUIC0+IFNSQ19VTkFU
-VEFDSEVEDQo+ID0+IFJkIGlzIHBsdWdnZWQgaW4NCj4gWyAgIDUzLjE3ODg3NF0gU3RhcnQgRFJQ
-IHRvZ2dsaW5nDQo+IFsgICA1My4xODg0NzJdIENDMTogMCAtPiAwLCBDQzI6IDAgLT4gMCBbc3Rh
-dGUgRFJQX1RPR0dMSU5HLCBwb2xhcml0eSAwLA0KPiBkaXNjb25uZWN0ZWRdDQoNCjEuIFRoZSBw
-bHVnIG91dCBhbmQgdGhlbiBwbHVnIGluIGhhcHBlbnMgaW4gMTBtcz8gKDUzLjE4ODQ3MiAtIDUz
-LjE3ODgwNCkNCldhcyB0aGlzIGRvbmUgbWFudWFsbHk/IE9yIGJ5IHNvbWUgc3BlY2lhbCB0ZXN0
-IG1ldGhvZD8NCjIuIFRoaXMgaXMgYWxsIHRjcG0gbG9nIGlmIHlvdSBmaW5hbGx5IGtlZXAgdGhl
-IFJkLWRldmljZSBjb25uZWN0ZWQgb24gdHlwZWMNCnBvcnQ/IFRoZXJlIGlzIG5vIG1vcmUgdGNw
-bSBsb2cgYWZ0ZXIgNTMuMTg4NDcyIGlmIHlvdSBwbHVnIGluIFJkLWRldmljZQ0KYW5kIGRvbid0
-IHJlbW92ZSBpdD8gDQozLiBJZiB0aGUgYW5zd2VyIG9mIFEyIGlzIHllcywgdGhlbiBJIG11c3Qg
-YXNrIHdoeSB5b3UgdGNwYyBjaGlwK2ludGVybmFsIGZpcm13YXJlDQpjYW4ndCByZXBvcnQgZnVy
-dGhlciBjYyBjaGFuZ2UgZXZlbnQgYWZ0ZXIgeW91ciBkcnAgdG9nZ2xpbmcgc3RhcnRzIHRvIHBy
-ZXNlbnQgUnAoSSBrbm93DQppdCBmaXJzdGx5IHByZXNlbnQgUmQgYWZ0ZXIgeW91IHdyaXRlIHRv
-IExPT0s0Q09OTkVDVElPTiwgYnV0IHRoZW4gaXQgc2hvdWxkIGNoYW5nZQ0KdG8gcHJlc2VudCBS
-cCwgc28gaXQgc2hvdWxkIGJlIGFibGUgdG8gZGV0ZWN0IHRoZSBSZC1kZXZpY2UgZmluYWxseSkN
-Cg0KPiANCj4gSWYgVENQTSBkb2VzIG5vdCBlbnRlciBTUkNfQVRUQUNIRUQgc3RhdGUsIFJDLkRS
-UCB3aWxsIG5vdCBiZSBjbGVhcmVkLg0KDQpJbiB0aGlzIGNhc2UsIHlvdSBkb27igJl0IG5lZWQg
-Y2xlYXIgUkMuRFJQLCBzZWUgVENQQ0kgc3BlYzoNCiJGaWd1cmUgNC0xOC4gU2luayBEaXNjb25u
-ZWN0Ig0KVENQTSBzaW5rIGRvZXNuJ3QgY2xlYXIgaXQgaW4gd2hvbGUgc2VxdWVuY2UsIGp1c3Qg
-ZGlyZWN0bHkgc2V0IGl0Og0KUmVzdGFydCBEUlAgVG9nZ2xpbmcNClBDLkF1dG9EaXNjaGFyZ2VE
-aXNjb25uZWN0PTBiDQpTZXQgUkMuRFJQPTFiIChEUlApDQpTZXQgUkMuQ0MxPTEwYiAoUmQpDQpT
-ZXQgUkMuQ0MyPTEwYiAoUmQpDQpDT01NQU5ELkxvb2s0Q29ubmVjdGlvbiAoRFJQIHRvZ2dsZSkN
-Cg0KPiBXaGVuIFRDUE0gd3JpdGVzIFJkL1JkIG9yIFJwL1JwIGluIHRoZSBkcnBfdG9nZ2xpbmcg
-ZnVuY3Rpb24sIGl0IGRvZXMgbm90DQo+IHRha2UgZWZmZWN0IHVudGlsIExPT0s0Q09OTkVDVElP
-TiBjb21tYW5kIGlzIHNldC4NCj4gVGhlIGFib3ZlIGNvbmRpdGlvbiBjYXVzZXMgUlQxNzExSCBy
-ZXBvcnRzIG9wZW4vb3BlbiBhdCBbNTMuMTg4NDcyXQ0KPiANCj4gPiBbIDkxNC45MzczNDBdIHR5
-cGVjX3J0MTcxMWggMi0wMDRlOiBfX3J0MTcxMWhfaXJxX2hhbmRsZXIgWw0KPiA+IDkxNC45NDM4
-MzhdIHR5cGVjX3J0MTcxMWggMi0wMDRlOiBfX3RjcG1fZ2V0X2NjIGNjMSA9IE9wZW4sIGNjMiA9
-DQo+IE9wZW4NCj4gPiA9PiBEZXZpY2UoUmQpIGlzIHBsdWdnZWQgb3V0DQo+ID4NCj4gPiBbIDkx
-NC45NTgwNDFdIHR5cGVjX3J0MTcxMWggMi0wMDRlOiB0Y3BtX3NldF9wZF9yeCAwIFsgOTE0Ljk2
-MzAxMV0NCj4gPiB0eXBlY19ydDE3MTFoIDItMDA0ZTogdGNwbV9zZXRfdmJ1cyB2YnVzID0gMCBb
-IDkxNC45Njg0MDddDQo+ID4gdHlwZWNfcnQxNzExaA0KPiA+IDItMDA0ZTogdGNwbV9zZXRfdmJ1
-cyBjaGcgaXMgYWxyZWFkeSAwIFsgOTE0Ljk3NDU0MV0gdHlwZWNfcnQxNzExaA0KPiAyLTAwNGU6
-DQo+ID4gdGNwbV9zZXRfdmNvbm4gdmNvbm4gaXMgYWxyZWFkeSAwIFsgOTE0Ljk4MDkyMV0gdHlw
-ZWNfcnQxNzExaCAyLTAwNGU6DQo+ID4gdGNwbV9zZXRfY3VycmVudF9saW1pdCAwIG1hLCAwIG12
-IChub3QgaW1wbGVtZW50ZWQpIFsgOTE0Ljk4ODg5NF0NCj4gPiB0eXBlY19ydDE3MTFoIDItMDA0
-ZTogdGNwbV9zZXRfcG9sYXJpdHkgUG9sYXJpdHlfQ0MxIFsgOTE1LjAwMzIwMV0NCj4gPiB0eXBl
-Y19ydDE3MTFoIDItMDA0ZTogdGNwbV9zZXRfcm9sZXMgU291cmNlIEhvc3QgWyA5MTUuMDA5MjY0
-XQ0KPiA+IHR5cGVjX3J0MTcxMWggMi0wMDRlOiB0Y3BtX3N0YXJ0X2RycF90b2dnbGluZyA9PiBz
-dGF0ZV9tYWNoaW5lX3dvcmsNCj4gb2YNCj4gPiBUQ1BNIGNhbGxzIHN0YXJ0X2RycF90b2dnbGlu
-ZyBmdW5jdGlvbiBidXQgZG9lcyBub3Qgc2V0DQo+ID4gTE9PSzRDT05ORUNUSU9OIGNvbW1hbmQg
-eWV0ID0+IChOb3RlMSkgRGV2aWNlKFJkKSBpcyBwbHVnZ2VkIGluDQo+ID4gKFJUMTcxMUgncyBp
-bnRlcm5hbCBmaXJtd2FyZSBkZXRlY3RzIFJkIHBsdWdnZWQgaW4uIGNjX2NoYW5nZSBpcw0KPiA+
-IHRyaWdnZXJlZCBhbmQgaXQgd2lsbCBiZSB2UmQtY29ubmVjdGVkIGF0IHRoaXMgbW9tZW50KSA9
-PiBUQ1BNIHdyaXRlcw0KPiA+IExPT0s0Q09OTkVDVElPTiBjb21tYW5kDQo+ID4gLSBCZWNhdXNl
-IFJDLkRSUCBpcyBzdGlsbCAxLCBSVDE3MTFIIHdpbGwgbm90IHB1bGwgY2MxL2NjMiB0byBSZCB3
-aGlsZQ0KPiA+IHdyaXRpbmcgUmQvUmQgdG8gUkMuQ0MxL1JDLkNDMi4NCj4gPiAtIChOb3RlMikg
-UmlnaHQgYWZ0ZXIgTE9PSzRDT05ORUNUSU9OIGNvbW1hbmQgaXMgd3JpdHRlbiwgUlQxNzExSA0K
-PiA+IHB1bGxzIENDIHRvIFJkJ3MgbGV2ZWwgKGJlY2F1c2UgUkMuUm9sZSBpcyBSZC9SZCksIHN0
-b3AgdG9nZ2xpbmcNCj4gPiAoYmVjYXVzZQ0KPiA+IGRldmljZShSZCkgaXMgYWxyZWFkeSBjb25u
-ZWN0ZWQpIGFuZCBDQyBzdGF0dXMgd2lsbCBiZSBvcGVuL29wZW4gbm93DQo+ID4gKGJlY2F1c2Ug
-UlQxNzExSCBwcmVzZW50cyBSZCBhbmQgZGV2aWNlIGlzIGNvbm5lY3RlZChSZCkpDQo+ID4NCj4g
-PiBbIDkxNS4wMzcyNjNdIHR5cGVjX3J0MTcxMWggMi0wMDRlOiBfX3RjcG1fZ2V0X2NjIGNjMSA9
-IE9wZW4sIGNjMiA9DQo+ID4gT3BlbiA9PiBFbnRlciBSVDE3MTFIJ3MgaXJxIGhhbmRsZXIgYW5k
-IGl0IHJlcG9ydHMgb3Blbi9vcGVuDQo+ID4NCj4gPiBJIHRoaW5rIHRoZSBwb2ludCBpcyB0byB3
-cml0ZSBSQy5EUlAgPSAwIGF0IHRoZSBiZWdpbm5pbmcgb2YNCj4gPiBkcnBfdG9nZ2xpbmcgc28g
-dGhhdCBSVDE3MTFIIHdpbGwgcHVsbCBjYzEvY2MyIHRvIFJkIHdoaWxlIHdyaXRpbmcNCj4gPiBS
-ZC9SZCB0byBSQy5DQzEvUkMuQ0MyIFRoaXMgb3BlcmF0aW9uIHdpbGwgbWFrZSBSVDE3MTFIJ3Mg
-aW50ZXJuYWwNCj4gPiBmaXJtd2FyZSByZXN0YXJ0cyBmcm9tIGRpc2Nvbm5lY3RlZCBzdGF0ZSBh
-bmQgdG9nZ2xlcyBjb3JyZWN0bHkuDQo+ID4NCj4gPiBBY2NvcmRpbmcgdG8gVENQQ0kgc3BlYyAo
-NC40LjUuMik6DQo+ID4gSXQgaXMgcmVjb21tZW5kZWQgdGhlIFRDUE0gd3JpdGUgUk9MRV9DT05U
-Uk9MLkRSUD0wIGJlZm9yZSB3cml0aW5nDQo+IHRvDQo+ID4gUE9XRVJfQ09OVFJPTC5BdXRvRGlz
-Y2hhcmdlRGlzY29ubmVjdCBhbmQgc3RhcnRpbmcgdGhlIERSUCB0b2dnbGluZw0KPiA+IHVzaW5n
-IENPTU1BTkQuTG9vazRDb25uZWN0aW9uIFJlc3RhcnQgRFJQIFRvZ2dsaW5nID0+IEl0IGlzDQo+
-ID4gcmVjb21tZW5kZWQgdGhlIFRDUE0gd3JpdGUgUk9MRV9DT05UUk9MLkRSUD0wIGhlcmUgU2V0
-DQo+ID4NCj4gPiBUaGlzIHN0YXRlbWVudCBpc19ub3RfIHJlY29tbWVuZCB5b3UgZG8gdGhpcyhS
-Qy5EUlA9MCkgZm9yIHN0YXJ0IGRycA0KPiB0b2dnbGluZywgUGxlYXNlIGNhcmVmdWxseSBjaGVj
-ayB0aGUgd2hvbGUgc2VudGVuY2U6DQo+ID4gIi4uLiBhcyBzaG93biBpbiBGaWd1cmUgNC0xNiwg
-Ig0KPiA+IElmIHlvdSBsb29rIGF0ICJGaWd1cmUgNC0xNi4gRFJQIEluaXRpYWxpemF0aW9uIGFu
-ZCBDb25uZWN0aW9uIERldGVjdGlvbiINCj4gPiBJdCBnaXZlcyBjbGVhciBkcnAgdG9nZ2xpbmcg
-c3RhcnQgb3BlcmF0aW9uczoNCj4gPg0KPiA+IFNldCBUQ1BDIHRvIERSUA0KPiA+IC0gUmVhZCBQ
-Uy5UQ1BDSW5pdGlhbGl6YXRpb25TdGF0dXMNCj4gPiAtIFdyaXRlIFJPTEVfQ09OVFJPTA0KPiA+
-IC0gUkMuRFJQID0gMWINCj4gPiAtIFJDLkNDMj0wMWIgb3IgMTBiDQo+ID4gLSBSQy5DQzE9MDFi
-IG9yIDEwYg0KPiA+IC0gUkMuQ0MxPVJDLkNDMg0KPiA+IC0gV3JpdGUgQ09NTUFORC5Mb29rNENv
-bm5lY3Rpb25QUy4NCj4gPg0KPiA+IEFib3ZlIGlzIGFsbCBvcGVyYXRpb25zIHJlcXVpcmVkIHRv
-IHN0YXJ0IGRycCB0b2dnbGluZy4gWW91IGFsc28gY2FuIHNlZQ0KPiBSQy5DQ3ggPSAwMWIgb3Ig
-MTBiLCBub3QgZml4ZWQgdG8gYmUgUmQsIHJpZ2h0Pw0KPiBZZXMsIHRoaXMgb25lIHNob3VsZCBi
-ZSBsaWtlIHlvdXIgcGF0Y2hbMDcvMTJdLiBXcml0ZSBSZCBvciBScCB0byBSQy5DQ3gNCj4gYWNj
-b3JkaW5nIHRvIHRoZSBjYyBwYXJhbWV0ZXIgb2YgZHJwX3RvZ2dsaW5nIGZ1bmN0aW9uLg0KPiA+
-DQo+ID4gR28gb24gdG8gY2hlY2sgdGhlIEZpZ3VyZSA0LTE2DQo+ID4gQWZ0ZXIgZGVib3VuY2Us
-IHdlIG5lZWQgZG8gZm9sbG93aW5nOg0KPiA+DQo+ID4gQ29ubmVjdGlvbkRldGVybWluZSBDQyAm
-IFZDT05ODQo+ID4gLSBXcml0ZSBSQy5DQzEgJiBSQy5DQzIgcGVyIGRlY2lzaW9uDQo+ID4gLSBX
-cml0ZSBSQy5EUlA9MA0KPiA+IC0gV3JpdGUgVENQQ19DT05UUk9sLlBsdWdPcmllbnRhdGlvbg0K
-PiA+IC0gV3JpdGUgUEMuQXV0b0Rpc2NoYXJnZURpc2Nvbm5lY3Q9MQ0KPiA+ICAmIFBDLkVuYWJs
-ZVZjb25uQ29ubmVjdGlvbg0KPiA+DQo+ID4gQ3VycmVudCBleGlzdGluZyB0Y3BtK3RjcGNpIHdp
-bGwgbm90IGNsZWFyIFJDLkRSUCBhZnRlciBhdHRhY2gsIFRoYXQgbWVhbnMNCj4gUkMuRFJQIGNs
-ZWFyIG1heSBiZSBkb25lIGFmdGVyIGF0dGFjaCwgbm90IGluIHN0YXJ0X2RycF90b2dnbGluZy4N
-Cj4gPiBJIGFtIG5vdCBzdXJlIGlmIHRoaXMgY2FuIHJlc29sdmUgeW91ciBwcm9ibGVtLCBidXQg
-SSB0aGluayBpdCBkZXNlcnZlIGEgdHJ5LA0KPiB5b3UgY2FuIGZvbGxvdyBhYm92ZSBvcGVyYXRp
-b24gc2VxdWVuY2Ugd2hpbGUgZW50ZXJpbmcgYXR0YWNoIHN0YXRlLCByZWZlcg0KPiB0byBteSBw
-YXRjaFsyXToNCj4gPg0KPiA+IFsyXQ0KPiA+DQo+IGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5w
-cm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZ3DQo+IHd3DQo+ID4gLnNw
-aW5pY3MubmV0JTJGbGlzdHMlMkZkZXZpY2V0cmVlJTJGbXNnMjE2ODUyLmh0bWwmZGF0YT0wMiU3
-QzAxJTcNCj4gQ2p1bi4NCj4gPg0KPiBsaSU0MG54cC5jb20lN0M5MTE3NDI1NTUwZDI0ZGRjODZk
-ODA4ZDU3ZjZiMWI0ZSU3QzY4NmVhMWQzYmMyYg0KPiA0YzZmYTkyYw0KPiA+DQo+IGQ5OWM1YzMw
-MTYzNSU3QzAlN0MwJTdDNjM2NTU1MDIwMzY2NDgzNDU2JnNkYXRhPTklMkJ5d1lsJTJCUg0KPiBQ
-WXRrNjBXZzZwDQo+ID4gUjYzY0NXMkFuUlhzJTJCcklOdnZxVXBxTDE4JTNEJnJlc2VydmVkPTAN
-Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvdHlwZWMvdGNwY2kuYw0KPiA+
-IGIvZHJpdmVycy9zdGFnaW5nL3R5cGVjL3RjcGNpLmMgaW5kZXggNTMwYTVkNy4uNzE0NTc3MSAx
-MDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvdHlwZWMvdGNwY2kuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+ID4gQEAgLTE4NCw2ICsxODQsNyBAQCBz
-dGF0aWMgaW50IHRjcGNpX3NldF9wb2xhcml0eShzdHJ1Y3QgdGNwY19kZXYgKnRjcGMsDQo+ID4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZW51bSB0eXBlY19jY19wb2xhcml0eSBwb2xh
-cml0eSkgIHsNCj4gPiAgICAgICAgIHN0cnVjdCB0Y3BjaSAqdGNwY2kgPSB0Y3BjX3RvX3RjcGNp
-KHRjcGMpOw0KPiA+ICsgICAgICAgdW5zaWduZWQgaW50IHJlZzsNCj4gPiAgICAgICAgIGludCBy
-ZXQ7DQo+ID4NCj4gPiAgICAgICAgIHJldCA9IHJlZ21hcF93cml0ZSh0Y3BjaS0+cmVnbWFwLCBU
-Q1BDX1RDUENfQ1RSTCwgQEANCj4gLTE5Miw2ICsxOTMsMjAgQEAgc3RhdGljIGludCB0Y3BjaV9z
-ZXRfcG9sYXJpdHkoc3RydWN0IHRjcGNfZGV2ICp0Y3BjLA0KPiA+ICAgICAgICAgaWYgKHJldCA8
-IDApDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ID4NCj4gPiArICAgICAgIHJl
-dCA9IHJlZ21hcF9yZWFkKHRjcGNpLT5yZWdtYXAsIFRDUENfUk9MRV9DVFJMLCAmcmVnKTsNCj4g
-PiArICAgICAgIGlmIChyZXQgPCAwKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0K
-PiA+ICsNCj4gPiArICAgICAgIGlmIChwb2xhcml0eSA9PSBUWVBFQ19QT0xBUklUWV9DQzIpDQo+
-ID4gKyAgICAgICAgICAgICAgIHJldCA9IFRDUENfUk9MRV9DVFJMX0NDMV9TSElGVDsNCj4gPiAr
-ICAgICAgIGVsc2UNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gVENQQ19ST0xFX0NUUkxfQ0My
-X1NISUZUOw0KPiA+ICsgICAgICAgcmVnIHw9IFRDUENfUk9MRV9DVFJMX0NDX09QRU4gPDwgcmV0
-Ow0KPiA+ICsgICAgICAgcmVnICY9IH5UQ1BDX1JPTEVfQ1RSTF9EUlA7DQo+ID4gKyAgICAgICBy
-ZXQgPSByZWdtYXBfd3JpdGUodGNwY2ktPnJlZ21hcCwgVENQQ19ST0xFX0NUUkwsIHJlZyk7DQo+
-ID4gKyAgICAgICBpZiAocmV0IDwgMCkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsN
-Cj4gPiArDQo+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gUEMuQXV0b0Rp
-c2NoYXJnZURpc2Nvbm5lY3Q9MGIgU2V0IFJDLkRSUD0xYiAoRFJQKSBTZXQgUkMuUnBWYWx1ZT0w
-MGINCj4gPiAoc21hbGxlc3QgUnAgdG8gc2F2ZSBwb3dlcikgU2V0IFJDLkNDMT0wMWIgU2V0DQo+
-ID4gUkMuQ0MyPTAxYkNPTU1BTkQuTG9vazRDb25uZWN0aW9uTm8NCj4gPg0KPiA+IEl0IHNlZW1z
-IGxpa2UgaXQgaXMgbm90IGEgZ2VuZXJhbCBjYXNlIGhlcmUgKGJlY2F1c2UgaXQgaXMgb25seQ0K
-PiA+IHJlY29tbWVuZGVkIGJ1dCBub3QgbmVjZXNzYXJ5KSwgd2UgY2FuIG1vdmUgaXQgdG8gdmVu
-ZG9yX29wcyBpbiB0aGUNCj4gbmV4dCBwYXRjaC4NCj4gPg0KPiA+IFRoZSBUQ1BNIHNob3VsZCBi
-ZSBhYmxlIHRvIGNvdmVyIGFsbCBjYXNlcywgYW5kIHdlIHNob3VsZCBmb2xsb3cgdGhlDQo+IHJl
-Y29tbWVuZGVkIHNlcXVlbmNlKGlmIHdoYXQgeW91IGFyZSB0cnlpbmcgdG8gZG8gaXMgcmVhbGx5
-IGFzIHNwZWMgc2F5cykuDQo+IEFncmVlIQ0KPiBNeSB1bmRlcnN0YW5kaW5nIGlzIHRoYXQgd2Ug
-bmVlZCB0byBzZXQgUkMuRFJQIHRvIDAgZXZlcnkgdGltZSBiZWZvcmUNCj4gVENQTSByZXN0YXJ0
-cyB0b2dnbGluZyBidXQgbm90IGp1c3QgZm9yIGF0dGFjaGVkLg0KDQpBY3R1YWxseSBJIGhhdmUg
-bm8gb2JqZWN0aW9uIG9uIGFkZGluZyBhIFJDLkRSUCBjbGVhciwgdGhlIHF1ZXN0aW9uIGlzDQp3
-aGVyZSBpcyB0aGUgcmlnaHQgcGxhY2UgdG8gZG8gdGhpcywgdGlsbCBub3cgSSBkb27igJl0IHNl
-ZSBob3cgdGhpcyBEUlAgYml0IGtlZXAgc2V0DQp3aGlsZSBzdGFydCBkcnAgdG9nZ2xpbmcgaXMg
-Y2F1c2luZyBwcm9ibGVtLCBZb3Ugd2FudCB0byBzdGFydCBwcmVzZW50IFJkIGFmdGVyIHdyaXRl
-DQpDQzEvQ0MyIHRvIGJlIFJkL1JkIGFuZCBiZWZvcmUgd3JpdGUgdG8gTE9PSzRDT05ORUNUSU9O
-LCB0aGlzIGlzIG5vdCByZXF1aXJlZA0KcGVyIHRjcGNpIHNwZWMuDQoNCi1CZWhhdmlvciBhZnRl
-ciB5b3VyIHBhdGNoOg0KLy9iZWdpbiB3aXRoIE9wZW4gYXMgUkMuRFJQID0gMQ0KUkMuQ0N4PVJk
-ICYgUkMuRFJQID0gMDsgLy9TdGFydCBwcmVzZW50IFJkDQpXYWl0IDFtczsgLy8gU3RpbGwgUmQN
-ClJDLkNDeD1SZCAmIFJDLkRSUCA9IDE7IC8vT3Blbj8NCkxvb2s0Q09OTkVDVElPTiA9IDE7IC8v
-RFJQIHRvZ2dsaW5nIGNvbnRpbnVlIHByZXNldCBSZA0KDQpJcyBteSBhYm92ZSBDQyBzdGF0ZSBk
-ZXNjcmlwdGlvbiBjb3JyZWN0PyBJcyB0aGlzIHdoYXQgeW91IHdhbnQ/DQoNCi1Pbmx5IGFwcGx5
-IG15IHBhdGNoZXM6DQovL2JlZ2luIHdpdGggT3BlbiBhcyBSQy5EUlAgPSAxDQpSQy5DQ3g9UmQg
-JiBSQy5EUlAgPSAxOyAvL3N0aWxsIE9wZW4NCkxvb2s0Q29ubmVjdGlvbiA9IDE7IC8vU3RhcnQg
-cHJlc2V0IFJkDQoNCj4gRm9yIFJUMTcxMUgsIGl0IGZvbGxvd3MgYWJvdmUgZmxvdy4gSWYgaXQg
-aXMgbm90IGNvcnJlY3QsIHRoaXMgb3BlcmF0aW9uIHNob3VsZA0KPiBiZSBtb3ZlZCB0byB2ZW5k
-b3Jfb3BzLg0KPiA+DQo+ID4gRm9yIHlvdXIgcXVlc3Rpb246DQo+ID4gV2h5IFJUMTcxMUggcmVw
-b3J0cyBvcGVuL29wZW4gYWZ0ZXIgZHJwX3RvZ2dsaW5nIGlzIGVuYWJsZWQ/DQo+ID4gPT4gU2Vl
-IE5vdGUyIGFib3ZlLg0KPiA+IFRoaXMgb3Blbi9vcGVuIGlzIGZvciB5b3UgcGx1ZyBvdXQgdGhl
-IGRldmljZSwgcmlnaHQ/DQo+ID4gPT4gTm8sIHNlZSBOb3RlMiBhYm92ZS4NCj4gPiBXaHkgUlQx
-NzExSCBjYW4ndCByZXBvcnQgbmV3IGNjIGNoYW5nZSBldmVudHMgYWZ0ZXIgeW91IHBsdWcgaW4g
-dGhlDQo+ID4gZGV2aWNlPw0KPiA+ID0+IFJUMTcxMUggY2FuIGdlbmVyYXRlIG5ldyBjYyBjaGFu
-Z2UgZXZlbnRzIGFmdGVyIHBsdWdnaW5nIGluIHRoZQ0KPiBkZXZpY2UuDQo+ID4gV2hhdCBjYyBj
-aGFuZ2UgZXZlbnQgdGNwYyB3aWxsIHJlcG9ydCBvbiBzdGVwIDQ/DQo+ID4gPT4gU2VlIE5vdGUx
-IGFib3ZlDQo+ID4gRGlkIHlvdSB2ZXJpZnkgeW91ciBjaGFuZ2UgY2FuIHBhc3MgdGhlIHR5cGVj
-IGNvbXBsaWFuY2UgdGVzdD8NCj4gPiA9PiBXZSBkaWRuJ3QgdGVzdCBpdCB5ZXQgYnV0IHRyeSB0
-byBtYWtlIGFsbCBmdW5jdGlvbnMgd29yayBjb3JyZWN0bHkgZmlyc3QuDQo+ID4NCj4gPiBCZXN0
-IFJlZ2FyZHMsDQo+ID4gKioqKioqKioqKioqKioqKioqKioqKioqKioqKioNCj4gPiBTaHUtRmFu
-IExlZQ0KPiA+IFJpY2h0ZWsgVGVjaG5vbG9neSBDb3Jwb3JhdGlvbg0KPiA+IFRFTDogKzg4Ni0z
-LTU1MjY3ODkgIzIzNTkNCj4gPiBGQVg6ICs4ODYtMy01NTI2NjEyDQo+ID4gKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioNCj4gPg0KPiANCj4gKioqKioqKioqKioqKiBFbWFpbCBDb25maWRl
-bnRpYWxpdHkgTm90aWNlICoqKioqKioqKioqKioqKioqKioqDQo+IA0KPiBUaGUgaW5mb3JtYXRp
-b24gY29udGFpbmVkIGluIHRoaXMgZS1tYWlsIG1lc3NhZ2UgKGluY2x1ZGluZyBhbnkgYXR0YWNo
-bWVudHMpDQo+IG1heSBiZSBjb25maWRlbnRpYWwsIHByb3ByaWV0YXJ5LCBwcml2aWxlZ2VkLCBv
-ciBvdGhlcndpc2UgZXhlbXB0IGZyb20NCj4gZGlzY2xvc3VyZSB1bmRlciBhcHBsaWNhYmxlIGxh
-d3MuIEl0IGlzIGludGVuZGVkIHRvIGJlIGNvbnZleWVkIG9ubHkgdG8gdGhlDQo+IGRlc2lnbmF0
-ZWQgcmVjaXBpZW50KHMpLiBBbnkgdXNlLCBkaXNzZW1pbmF0aW9uLCBkaXN0cmlidXRpb24sIHBy
-aW50aW5nLA0KPiByZXRhaW5pbmcgb3IgY29weWluZyBvZiB0aGlzIGUtbWFpbCAoaW5jbHVkaW5n
-IGl0cyBhdHRhY2htZW50cykgYnkgdW5pbnRlbmRlZA0KPiByZWNpcGllbnQocykgaXMgc3RyaWN0
-bHkgcHJvaGliaXRlZCBhbmQgbWF5IGJlIHVubGF3ZnVsLiBJZiB5b3UgYXJlIG5vdCBhbg0KPiBp
-bnRlbmRlZCByZWNpcGllbnQgb2YgdGhpcyBlLW1haWwsIG9yIGJlbGlldmUgdGhhdCB5b3UgaGF2
-ZSByZWNlaXZlZCB0aGlzDQo+IGUtbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2Vu
-ZGVyIGltbWVkaWF0ZWx5IChieSByZXBseWluZyB0byB0aGlzDQo+IGUtbWFpbCksIGRlbGV0ZSBh
-bnkgYW5kIGFsbCBjb3BpZXMgb2YgdGhpcyBlLW1haWwgKGluY2x1ZGluZyBhbnkgYXR0YWNobWVu
-dHMpDQo+IGZyb20geW91ciBzeXN0ZW0sIGFuZCBkbyBub3QgZGlzY2xvc2UgdGhlIGNvbnRlbnQg
-b2YgdGhpcyBlLW1haWwgdG8gYW55IG90aGVyDQo+IHBlcnNvbi4gVGhhbmsgeW91IQ0K
+--001a11425e866b60da0566724bcd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jun,
+
+  I think this operation should be moved to vendor's operation after
+rechecking the specification.
+
+2018-03-02 22:38 GMT+08:00 Jun Li <jun.li@nxp.com>:
+
+> Hi
+> > -----Original Message-----
+> > From: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86) [mailto:shufan_lee@richte=
+k.com]
+> > Sent: 2018=E5=B9=B43=E6=9C=881=E6=97=A5 19:54
+> > To: Jun Li <jun.li@nxp.com>; ShuFanLee <leechu729@gmail.com>;
+> > heikki.krogerus@linux.intel.com; linux@roeck-us.net; greg@kroah.com
+> > Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F) <cy_huang@richtek.com>;
+> > linux-kernel@vger.kernel.org; linux-usb@vger.kernel.org; dl-linux-imx
+> > <linux-imx@nxp.com>
+> > Subject: RE: [PATCH] staging: typec: handle vendor defined part and
+> modify
+> > drp toggling flow
+> >
+> > Hi Jun,
+> >
+> > > -----Original Message-----
+> > > From: Jun Li [mailto:jun.li@nxp.com]
+> > > Sent: Thursday, March 01, 2018 6:06 PM
+> > > To: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86); ShuFanLee; heikki.kroger=
+us@linux.intel.com;
+> > > linux@roeck-us.net; greg@kroah.com
+> > > Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F); linux-kernel@vger.kernel.o=
+rg;
+> > > linux-usb@vger.kernel.org; dl-linux-imx
+> > > Subject: RE: [PATCH] staging: typec: handle vendor defined part and
+> > > modify drp toggling flow
+> > >
+> > > Hi Shufan
+> > >
+> > > Please don't top posting
+> > >
+> > > -----Original Message-----
+> > > From: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86) [mailto:shufan_lee@rich=
+tek.com]
+> > > Sent: 2018=E5=B9=B43=E6=9C=881=E6=97=A5 16:49
+> > > To: Jun Li <jun.li@nxp.com>; ShuFanLee <leechu729@gmail.com>;
+> > > heikki.krogerus@linux.intel.com; linux@roeck-us.net; greg@kroah.com
+> > > Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F) <cy_huang@richtek.com>;
+> > > linux-kernel@vger.kernel.org; linux-usb@vger.kernel.org; dl-linux-imx
+> > > <linux-imx@nxp.com>
+> > > Subject: RE: [PATCH] staging: typec: handle vendor defined part and
+> > > modify drp toggling flow
+> > >
+> > > Hi Jun,
+> > >
+> > >   The attachment is waveform of the condition we met but I'm not sure
+> > > whether you can download the attachment.
+> > >   I add log in RT1711H it shows as following:
+> > >
+> > > You don't need add log by your own.
+> > > There is tcpm(./drivers/usb/typec/tcpm.c) log for debug already,
+> which can
+> > show all the events and state transitions, you can get it by below
+> command
+> > as I commented:
+> > >
+> > > cat /sys/kernel/debug/tcpm/xxxxx(your tcpc i2c device)
+> > >
+> > After applying your patch[2], TCPM log is as following:
+>
+> I assume you also applied my patch [1].
+> [1] https://www.spinics.net/lists/devicetree/msg216851.html
+>
+> Yes, this patch is also applied.
+
+> >
+> > [   53.050602] CC1: 0 -> 2, CC2: 0 -> 0 [state DRP_TOGGLING, polarity 0=
+,
+> > connected]
+> > [   53.050613] state change DRP_TOGGLING -> SRC_ATTACH_WAIT
+> > [   53.050678] pending state change SRC_ATTACH_WAIT -> SNK_TRY @
+> > 200 ms
+> > =3D> Rd is plugged out
+> > [   53.178804] CC1: 2 -> 0, CC2: 0 -> 0 [state SRC_ATTACH_WAIT, polarit=
+y
+> 0,
+> > disconnected]
+> > [   53.178815] state change SRC_ATTACH_WAIT -> SRC_UNATTACHED
+> > =3D> Rd is plugged in
+> > [   53.178874] Start DRP toggling
+> > [   53.188472] CC1: 0 -> 0, CC2: 0 -> 0 [state DRP_TOGGLING, polarity 0=
+,
+> > disconnected]
+>
+> 1. The plug out and then plug in happens in 10ms? (53.188472 - 53.178804)
+> Was this done manually? Or by some special test method?
+>
+It's done manually. If you can download the waveform attached in previous
+email, you can see Rd is plugged out/in within ms level.
+We connect a bridge board with test points of CC1, CC2 and GND to our
+platform's Typec receptacle. Then we can simulate a device plugging in/out
+by connecting/disconnecting a 5.1k resistor between CC1 and GND.
+
+
+> 2. This is all tcpm log if you finally keep the Rd-device connected on
+> typec
+> port? There is no more tcpm log after 53.188472 if you plug in Rd-device
+
+and don't remove it?
+>
+Yes, RT1711H reports open/open to TCPM in drp_toggling state and stops
+toggling. Currently, TCPM does not restart drp_toggling if it receives
+open/open in drp_toggling state.
+I remember the specification of TypeC does not depict what TCPM should do
+if it receives open/open in drp_toggling state.
+Maybe restart toggling is an option.
+
+3. If the answer of Q2 is yes, then I must ask why you tcpc chip+internal
+> firmware
+> can't report further cc change event after your drp toggling starts to
+> present Rp(I know
+> it firstly present Rd after you write to LOOK4CONNECTION, but then it
+> should change
+> to present Rp, so it should be able to detect the Rd-device finally)
+>
+Because RT1711H's internal firmware changes to attached state when Rd is
+re-plugged in(cc level is default Rp (around 400mV) now).
+Then, LOOK4CONNECTION is set and RT1711H changes CCx to Rd that makes it
+reports open/open(because cc level changes from default Rp(around 400mV) to
+0mV)
+
+>
+> >
+> > If TCPM does not enter SRC_ATTACHED state, RC.DRP will not be cleared.
+>
+> In this case, you don=E2=80=99t need clear RC.DRP, see TCPCI spec:
+> "Figure 4-18. Sink Disconnect"
+> TCPM sink doesn't clear it in whole sequence, just directly set it:
+> Restart DRP Toggling
+> PC.AutoDischargeDisconnect=3D0b
+> Set RC.DRP=3D1b (DRP)
+> Set RC.CC1=3D10b (Rd)
+> Set RC.CC2=3D10b (Rd)
+> COMMAND.Look4Connection (DRP toggle)
+
+
+> > When TCPM writes Rd/Rd or Rp/Rp in the drp_toggling function, it does n=
+ot
+> > take effect until LOOK4CONNECTION command is set.
+> > The above condition causes RT1711H reports open/open at [53.188472]
+> >
+> > > [ 914.937340] typec_rt1711h 2-004e: __rt1711h_irq_handler [
+> > > 914.943838] typec_rt1711h 2-004e: __tcpm_get_cc cc1 =3D Open, cc2 =3D
+> > Open
+> > > =3D> Device(Rd) is plugged out
+> > >
+> > > [ 914.958041] typec_rt1711h 2-004e: tcpm_set_pd_rx 0 [ 914.963011]
+> > > typec_rt1711h 2-004e: tcpm_set_vbus vbus =3D 0 [ 914.968407]
+> > > typec_rt1711h
+> > > 2-004e: tcpm_set_vbus chg is already 0 [ 914.974541] typec_rt1711h
+> > 2-004e:
+> > > tcpm_set_vconn vconn is already 0 [ 914.980921] typec_rt1711h 2-004e:
+> > > tcpm_set_current_limit 0 ma, 0 mv (not implemented) [ 914.988894]
+> > > typec_rt1711h 2-004e: tcpm_set_polarity Polarity_CC1 [ 915.003201]
+> > > typec_rt1711h 2-004e: tcpm_set_roles Source Host [ 915.009264]
+> > > typec_rt1711h 2-004e: tcpm_start_drp_toggling =3D> state_machine_work
+> > of
+> > > TCPM calls start_drp_toggling function but does not set
+> > > LOOK4CONNECTION command yet =3D> (Note1) Device(Rd) is plugged in
+> > > (RT1711H's internal firmware detects Rd plugged in. cc_change is
+> > > triggered and it will be vRd-connected at this moment) =3D> TCPM writ=
+es
+> > > LOOK4CONNECTION command
+> > > - Because RC.DRP is still 1, RT1711H will not pull cc1/cc2 to Rd whil=
+e
+> > > writing Rd/Rd to RC.CC1/RC.CC2.
+> > > - (Note2) Right after LOOK4CONNECTION command is written, RT1711H
+> > > pulls CC to Rd's level (because RC.Role is Rd/Rd), stop toggling
+> > > (because
+> > > device(Rd) is already connected) and CC status will be open/open now
+> > > (because RT1711H presents Rd and device is connected(Rd))
+> > >
+> > > [ 915.037263] typec_rt1711h 2-004e: __tcpm_get_cc cc1 =3D Open, cc2 =
+=3D
+> > > Open =3D> Enter RT1711H's irq handler and it reports open/open
+> > >
+> > > I think the point is to write RC.DRP =3D 0 at the beginning of
+> > > drp_toggling so that RT1711H will pull cc1/cc2 to Rd while writing
+> > > Rd/Rd to RC.CC1/RC.CC2 This operation will make RT1711H's internal
+> > > firmware restarts from disconnected state and toggles correctly.
+> > >
+> > > According to TCPCI spec (4.4.5.2):
+> > > It is recommended the TCPM write ROLE_CONTROL.DRP=3D0 before writing
+> > to
+> > > POWER_CONTROL.AutoDischargeDisconnect and starting the DRP toggling
+> > > using COMMAND.Look4Connection Restart DRP Toggling =3D> It is
+> > > recommended the TCPM write ROLE_CONTROL.DRP=3D0 here Set
+> > >
+> > > This statement is_not_ recommend you do this(RC.DRP=3D0) for start dr=
+p
+> > toggling, Please carefully check the whole sentence:
+> > > "... as shown in Figure 4-16, "
+> > > If you look at "Figure 4-16. DRP Initialization and Connection
+> Detection"
+> > > It gives clear drp toggling start operations:
+> > >
+> > > Set TCPC to DRP
+> > > - Read PS.TCPCInitializationStatus
+> > > - Write ROLE_CONTROL
+> > > - RC.DRP =3D 1b
+> > > - RC.CC2=3D01b or 10b
+> > > - RC.CC1=3D01b or 10b
+> > > - RC.CC1=3DRC.CC2
+> > > - Write COMMAND.Look4ConnectionPS.
+> > >
+> > > Above is all operations required to start drp toggling. You also can
+> see
+> > RC.CCx =3D 01b or 10b, not fixed to be Rd, right?
+> > Yes, this one should be like your patch[07/12]. Write Rd or Rp to RC.CC=
+x
+> > according to the cc parameter of drp_toggling function.
+> > >
+> > > Go on to check the Figure 4-16
+> > > After debounce, we need do following:
+> > >
+> > > ConnectionDetermine CC & VCONN
+> > > - Write RC.CC1 & RC.CC2 per decision
+> > > - Write RC.DRP=3D0
+> > > - Write TCPC_CONTROl.PlugOrientation
+> > > - Write PC.AutoDischargeDisconnect=3D1
+> > >  & PC.EnableVconnConnection
+> > >
+> > > Current existing tcpm+tcpci will not clear RC.DRP after attach, That
+> means
+> > RC.DRP clear may be done after attach, not in start_drp_toggling.
+> > > I am not sure if this can resolve your problem, but I think it deserv=
+e
+> a try,
+> > you can follow above operation sequence while entering attach state,
+> refer
+> > to my patch[2]:
+> > >
+> > > [2]
+> > >
+> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fw
+> > ww
+> > > .spinics.net%2Flists%2Fdevicetree%2Fmsg216852.html&data=3D02%7C01%7
+> > Cjun.
+> > >
+> > li%40nxp.com%7C9117425550d24ddc86d808d57f6b1b4e%7C686ea1d3bc2b
+> > 4c6fa92c
+> > >
+> > d99c5c301635%7C0%7C0%7C636555020366483456&sdata=3D9%2BywYl%2BR
+> > PYtk60Wg6p
+> > > R63cCW2AnRXs%2BrINvvqUpqL18%3D&reserved=3D0
+> > >
+> > > diff --git a/drivers/staging/typec/tcpci.c
+> > > b/drivers/staging/typec/tcpci.c index 530a5d7..7145771 100644
+> > > --- a/drivers/staging/typec/tcpci.c
+> > > +++ b/drivers/staging/typec/tcpci.c
+> > > @@ -184,6 +184,7 @@ static int tcpci_set_polarity(struct tcpc_dev
+> *tcpc,
+> > >                               enum typec_cc_polarity polarity)  {
+> > >         struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);
+> > > +       unsigned int reg;
+> > >         int ret;
+> > >
+> > >         ret =3D regmap_write(tcpci->regmap, TCPC_TCPC_CTRL, @@
+> > -192,6 +193,20 @@ static int tcpci_set_polarity(struct tcpc_dev *tcpc,
+> > >         if (ret < 0)
+> > >                 return ret;
+> > >
+> > > +       ret =3D regmap_read(tcpci->regmap, TCPC_ROLE_CTRL, &reg);
+> > > +       if (ret < 0)
+> > > +               return ret;
+> > > +
+> > > +       if (polarity =3D=3D TYPEC_POLARITY_CC2)
+> > > +               ret =3D TCPC_ROLE_CTRL_CC1_SHIFT;
+> > > +       else
+> > > +               ret =3D TCPC_ROLE_CTRL_CC2_SHIFT;
+> > > +       reg |=3D TCPC_ROLE_CTRL_CC_OPEN << ret;
+> > > +       reg &=3D ~TCPC_ROLE_CTRL_DRP;
+> > > +       ret =3D regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
+> > > +       if (ret < 0)
+> > > +               return ret;
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > PC.AutoDischargeDisconnect=3D0b Set RC.DRP=3D1b (DRP) Set RC.RpValue=
+=3D00b
+> > > (smallest Rp to save power) Set RC.CC1=3D01b Set
+> > > RC.CC2=3D01bCOMMAND.Look4ConnectionNo
+> > >
+> > > It seems like it is not a general case here (because it is only
+> > > recommended but not necessary), we can move it to vendor_ops in the
+> > next patch.
+> > >
+> > > The TCPM should be able to cover all cases, and we should follow the
+> > recommended sequence(if what you are trying to do is really as spec
+> says).
+> > Agree!
+> > My understanding is that we need to set RC.DRP to 0 every time before
+> > TCPM restarts toggling but not just for attached.
+>
+> Actually I have no objection on adding a RC.DRP clear, the question is
+> where is the right place to do this, till now I don=E2=80=99t see how thi=
+s DRP bit
+> keep set
+> while start drp toggling is causing problem, You want to start present Rd
+> after write
+> CC1/CC2 to be Rd/Rd and before write to LOOK4CONNECTION, this is not
+> required
+> per tcpci spec.
+>
+According to TCPCI's specification, it is recommended the TCPM write RC.DRP
+=3D 0 before changing AutoDischargeDisconnecd.
+Maybe, an interface for controlling AutoDischargeDisconnecd can be added.
+Then clear RC.DRP in the beginning of that interface.
+
+>
+> -Behavior after your patch:
+> //begin with Open as RC.DRP =3D 1
+> RC.CCx=3DRd & RC.DRP =3D 0; //Start present Rd
+> Wait 1ms; // Still Rd
+> RC.CCx=3DRd & RC.DRP =3D 1; //Open?
+> Look4CONNECTION =3D 1; //DRP toggling continue preset Rd
+>
+> Is my above CC state description correct? Is this what you want?
+>
+Correct. But the purpose of setting RC.CCx =3D Rd & RC.DRP =3D 0 is to make
+RT1711H's internal firmware leave attached state.
+Because RT1711H is still presenting Rp after the device is plugged out,
+it's internal firmware enters attached state when the device re-plugged in.
+When we write RC.CCx =3D Rd & RC.DRP =3D 0, RT1711H's internal firmware lea=
+ves
+attached state. So it will keep toggling from Rd to Rp but not report
+open/open when LOOK4CONNECTION is set.
+After rechecking the specification of TCPCI, I think TCPC's internal
+firmware should start toggling from detached state when LOOK4CONNECTION is
+set even if RC.DRP is not cleared before
+I've discussed with my colleagues, we think this should be in vendor ops.
+I'll update it in the patch v6.
+Could I also apply your patch [1] in the patch v6?
+Thank you for your time to clarify this condition.
+
+>
+> -Only apply my patches:
+> //begin with Open as RC.DRP =3D 1
+> RC.CCx=3DRd & RC.DRP =3D 1; //still Open
+> Look4Connection =3D 1; //Start preset Rd
+>
+> > For RT1711H, it follows above flow. If it is not correct, this operatio=
+n
+> should
+> > be moved to vendor_ops.
+> > >
+> > > For your question:
+> > > Why RT1711H reports open/open after drp_toggling is enabled?
+> > > =3D> See Note2 above.
+> > > This open/open is for you plug out the device, right?
+> > > =3D> No, see Note2 above.
+> > > Why RT1711H can't report new cc change events after you plug in the
+> > > device?
+> > > =3D> RT1711H can generate new cc change events after plugging in the
+> > device.
+> > > What cc change event tcpc will report on step 4?
+> > > =3D> See Note1 above
+> > > Did you verify your change can pass the typec compliance test?
+> > > =3D> We didn't test it yet but try to make all functions work correct=
+ly
+> first.
+> > >
+> > > Best Regards,
+> > > *****************************
+> > > Shu-Fan Lee
+> > > Richtek Technology Corporation
+> > > TEL: +886-3-5526789 #2359
+> > > FAX: +886-3-5526612
+> > > *****************************
+> > >
+> >
+> > ************* Email Confidentiality Notice ********************
+> >
+> > The information contained in this e-mail message (including any
+> attachments)
+> > may be confidential, proprietary, privileged, or otherwise exempt from
+> > disclosure under applicable laws. It is intended to be conveyed only to
+> the
+> > designated recipient(s). Any use, dissemination, distribution, printing=
+,
+> > retaining or copying of this e-mail (including its attachments) by
+> unintended
+> > recipient(s) is strictly prohibited and may be unlawful. If you are not
+> an
+> > intended recipient of this e-mail, or believe that you have received th=
+is
+> > e-mail in error, please notify the sender immediately (by replying to
+> this
+> > e-mail), delete any and all copies of this e-mail (including any
+> attachments)
+> > from your system, and do not disclose the content of this e-mail to any
+> other
+> > person. Thank you!
+>
+
+
+
+--=20
+Best Regards,
+=E6=9B=B8=E5=B8=86
+
+--001a11425e866b60da0566724bcd
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Jun,<div><br></div><div>=C2=A0 I think this operation s=
+hould be moved to vendor&#39;s operation after rechecking the specification=
+.</div><div><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">2018-=
+03-02 22:38 GMT+08:00 Jun Li <span dir=3D"ltr">&lt;<a href=3D"mailto:jun.li=
+@nxp.com" target=3D"_blank">jun.li@nxp.com</a>&gt;</span>:<br><blockquote c=
+lass=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px soli=
+d rgb(204,204,204);padding-left:1ex">Hi<br>
+<span class=3D"gmail-">&gt; -----Original Message-----<br>
+&gt; From: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86) [mailto:<a href=3D"mailt=
+o:shufan_lee@richtek.com">shufan_lee@richtek.com</a><wbr>]<br>
+</span><div><div class=3D"gmail-h5">&gt; Sent: 2018=E5=B9=B43=E6=9C=881=E6=
+=97=A5 19:54<br>
+&gt; To: Jun Li &lt;<a href=3D"mailto:jun.li@nxp.com">jun.li@nxp.com</a>&gt=
+;; ShuFanLee &lt;<a href=3D"mailto:leechu729@gmail.com">leechu729@gmail.com=
+</a>&gt;;<br>
+&gt; <a href=3D"mailto:heikki.krogerus@linux.intel.com">heikki.krogerus@lin=
+ux.intel.<wbr>com</a>; <a href=3D"mailto:linux@roeck-us.net">linux@roeck-us=
+.net</a>; <a href=3D"mailto:greg@kroah.com">greg@kroah.com</a><br>
+&gt; Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F) &lt;<a href=3D"mailto:cy_hua=
+ng@richtek.com">cy_huang@richtek.com</a>&gt;;<br>
+&gt; <a href=3D"mailto:linux-kernel@vger.kernel.org">linux-kernel@vger.kern=
+el.org</a>; <a href=3D"mailto:linux-usb@vger.kernel.org">linux-usb@vger.ker=
+nel.org</a>; dl-linux-imx<br>
+&gt; &lt;<a href=3D"mailto:linux-imx@nxp.com">linux-imx@nxp.com</a>&gt;<br>
+&gt; Subject: RE: [PATCH] staging: typec: handle vendor defined part and mo=
+dify<br>
+&gt; drp toggling flow<br>
+&gt;<br>
+&gt; Hi Jun,<br>
+&gt;<br>
+&gt; &gt; -----Original Message-----<br>
+&gt; &gt; From: Jun Li [mailto:<a href=3D"mailto:jun.li@nxp.com">jun.li@nxp=
+.com</a>]<br>
+&gt; &gt; Sent: Thursday, March 01, 2018 6:06 PM<br>
+&gt; &gt; To: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86); ShuFanLee; <a href=
+=3D"mailto:heikki.krogerus@linux.intel.com">heikki.krogerus@linux.intel.<wb=
+r>com</a>;<br>
+&gt; &gt; <a href=3D"mailto:linux@roeck-us.net">linux@roeck-us.net</a>; <a =
+href=3D"mailto:greg@kroah.com">greg@kroah.com</a><br>
+&gt; &gt; Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F); <a href=3D"mailto:linu=
+x-kernel@vger.kernel.org">linux-kernel@vger.kernel.org</a>;<br>
+&gt; &gt; <a href=3D"mailto:linux-usb@vger.kernel.org">linux-usb@vger.kerne=
+l.org</a>; dl-linux-imx<br>
+&gt; &gt; Subject: RE: [PATCH] staging: typec: handle vendor defined part a=
+nd<br>
+&gt; &gt; modify drp toggling flow<br>
+&gt; &gt;<br>
+&gt; &gt; Hi Shufan<br>
+&gt; &gt;<br>
+&gt; &gt; Please don&#39;t top posting<br>
+&gt; &gt;<br>
+&gt; &gt; -----Original Message-----<br>
+&gt; &gt; From: shufan_lee(=E6=9D=8E=E6=9B=B8=E5=B8=86) [mailto:<a href=3D"=
+mailto:shufan_lee@richtek.com">shufan_lee@richtek.com</a><wbr>]<br>
+&gt; &gt; Sent: 2018=E5=B9=B43=E6=9C=881=E6=97=A5 16:49<br>
+&gt; &gt; To: Jun Li &lt;<a href=3D"mailto:jun.li@nxp.com">jun.li@nxp.com</=
+a>&gt;; ShuFanLee &lt;<a href=3D"mailto:leechu729@gmail.com">leechu729@gmai=
+l.com</a>&gt;;<br>
+&gt; &gt; <a href=3D"mailto:heikki.krogerus@linux.intel.com">heikki.krogeru=
+s@linux.intel.<wbr>com</a>; <a href=3D"mailto:linux@roeck-us.net">linux@roe=
+ck-us.net</a>; <a href=3D"mailto:greg@kroah.com">greg@kroah.com</a><br>
+&gt; &gt; Cc: cy_huang(=E9=BB=83=E5=95=9F=E5=8E=9F) &lt;<a href=3D"mailto:c=
+y_huang@richtek.com">cy_huang@richtek.com</a>&gt;;<br>
+&gt; &gt; <a href=3D"mailto:linux-kernel@vger.kernel.org">linux-kernel@vger=
+.kernel.org</a>; <a href=3D"mailto:linux-usb@vger.kernel.org">linux-usb@vge=
+r.kernel.org</a>; dl-linux-imx<br>
+&gt; &gt; &lt;<a href=3D"mailto:linux-imx@nxp.com">linux-imx@nxp.com</a>&gt=
+;<br>
+&gt; &gt; Subject: RE: [PATCH] staging: typec: handle vendor defined part a=
+nd<br>
+&gt; &gt; modify drp toggling flow<br>
+&gt; &gt;<br>
+&gt; &gt; Hi Jun,<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0The attachment is waveform of the condition we met bu=
+t I&#39;m not sure<br>
+&gt; &gt; whether you can download the attachment.<br>
+&gt; &gt;=C2=A0 =C2=A0I add log in RT1711H it shows as following:<br>
+&gt; &gt;<br>
+&gt; &gt; You don&#39;t need add log by your own.<br>
+&gt; &gt; There is tcpm(./drivers/usb/typec/tcpm.<wbr>c) log for debug alre=
+ady, which can<br>
+&gt; show all the events and state transitions, you can get it by below com=
+mand<br>
+&gt; as I commented:<br>
+&gt; &gt;<br>
+&gt; &gt; cat /sys/kernel/debug/tcpm/xxxxx(<wbr>your tcpc i2c device)<br>
+&gt; &gt;<br>
+&gt; After applying your patch[2], TCPM log is as following:<br>
+<br>
+</div></div>I assume you also applied my patch [1].<br>
+[1] <a href=3D"https://www.spinics.net/lists/devicetree/msg216851.html" rel=
+=3D"noreferrer" target=3D"_blank">https://www.spinics.net/lists/<wbr>device=
+tree/msg216851.html</a><br>
+<span class=3D"gmail-"><br></span></blockquote><div>Yes, this patch is also=
+ applied. =C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><sp=
+an class=3D"gmail-">
+&gt;<br>
+&gt; [=C2=A0 =C2=A053.050602] CC1: 0 -&gt; 2, CC2: 0 -&gt; 0 [state DRP_TOG=
+GLING, polarity 0,<br>
+&gt; connected]<br>
+&gt; [=C2=A0 =C2=A053.050613] state change DRP_TOGGLING -&gt; SRC_ATTACH_WA=
+IT<br>
+&gt; [=C2=A0 =C2=A053.050678] pending state change SRC_ATTACH_WAIT -&gt; SN=
+K_TRY @<br>
+&gt; 200 ms<br>
+&gt; =3D&gt; Rd is plugged out<br>
+&gt; [=C2=A0 =C2=A053.178804] CC1: 2 -&gt; 0, CC2: 0 -&gt; 0 [state SRC_ATT=
+ACH_WAIT, polarity 0,<br>
+&gt; disconnected]<br>
+&gt; [=C2=A0 =C2=A053.178815] state change SRC_ATTACH_WAIT -&gt; SRC_UNATTA=
+CHED<br>
+&gt; =3D&gt; Rd is plugged in<br>
+&gt; [=C2=A0 =C2=A053.178874] Start DRP toggling<br>
+&gt; [=C2=A0 =C2=A053.188472] CC1: 0 -&gt; 0, CC2: 0 -&gt; 0 [state DRP_TOG=
+GLING, polarity 0,<br>
+&gt; disconnected]<br>
+<br>
+</span>1. The plug out and then plug in happens in 10ms? (53.188472 - 53.17=
+8804)<br>
+Was this done manually? Or by some special test method?<br></blockquote><di=
+v>It&#39;s done manually. If you can download the waveform attached in prev=
+ious email, you can see Rd is plugged out/in within ms level.</div><div>We =
+connect a bridge board with test points of CC1, CC2 and GND to our platform=
+&#39;s Typec receptacle. Then we can simulate a device plugging in/out by c=
+onnecting/disconnecting a 5.1k resistor between CC1 and GND.</div><div>=C2=
+=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+2. This is all tcpm log if you finally keep the Rd-device connected on type=
+c<br>
+port? There is no more tcpm log after 53.188472 if you plug in Rd-device</b=
+lockquote><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8=
+ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+and don&#39;t remove it?<br></blockquote><div>Yes, RT1711H reports open/ope=
+n to TCPM in drp_toggling state and stops toggling. Currently, TCPM does no=
+t restart drp_toggling if it receives open/open in drp_toggling state.</div=
+><div>I remember the specification of TypeC does not depict what TCPM shoul=
+d do if it receives open/open in drp_toggling state.</div><div>Maybe restar=
+t toggling is an option.</div><div><br></div><blockquote class=3D"gmail_quo=
+te" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204=
+);padding-left:1ex">
+3. If the answer of Q2 is yes, then I must ask why you tcpc chip+internal f=
+irmware<br>
+can&#39;t report further cc change event after your drp toggling starts to =
+present Rp(I know<br>
+it firstly present Rd after you write to LOOK4CONNECTION, but then it shoul=
+d change<br>
+to present Rp, so it should be able to detect the Rd-device finally)<br></b=
+lockquote><div>Because RT1711H&#39;s internal firmware changes to attached =
+state when Rd is re-plugged in(cc level is default Rp (around 400mV) now).<=
+/div><div>Then, LOOK4CONNECTION is set and RT1711H changes CCx to Rd that m=
+akes it reports open/open(because cc level changes from default Rp(around 4=
+00mV) to 0mV)=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:=
+0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<span class=3D"gmail-"><br>
+&gt;<br>
+&gt; If TCPM does not enter SRC_ATTACHED state, RC.DRP will not be cleared.=
+<br>
+<br>
+</span>In this case, you don=E2=80=99t need clear RC.DRP, see TCPCI spec:<b=
+r>
+&quot;Figure 4-18. Sink Disconnect&quot;<br>
+TCPM sink doesn&#39;t clear it in whole sequence, just directly set it:<br>
+Restart DRP Toggling<br>
+PC.AutoDischargeDisconnect=3D0b<br>
+Set RC.DRP=3D1b (DRP)<br>
+Set RC.CC1=3D10b (Rd)<br>
+Set RC.CC2=3D10b (Rd)<br>
+COMMAND.Look4Connection (DRP toggle)</blockquote><blockquote class=3D"gmail=
+_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
+,204);padding-left:1ex">
+<div><div class=3D"gmail-h5"><br>
+&gt; When TCPM writes Rd/Rd or Rp/Rp in the drp_toggling function, it does =
+not<br>
+&gt; take effect until LOOK4CONNECTION command is set.<br>
+&gt; The above condition causes RT1711H reports open/open at [53.188472]<br=
+>
+&gt;<br>
+&gt; &gt; [ 914.937340] typec_rt1711h 2-004e: __rt1711h_irq_handler [<br>
+&gt; &gt; 914.943838] typec_rt1711h 2-004e: __tcpm_get_cc cc1 =3D Open, cc2=
+ =3D<br>
+&gt; Open<br>
+&gt; &gt; =3D&gt; Device(Rd) is plugged out<br>
+&gt; &gt;<br>
+&gt; &gt; [ 914.958041] typec_rt1711h 2-004e: tcpm_set_pd_rx 0 [ 914.963011=
+]<br>
+&gt; &gt; typec_rt1711h 2-004e: tcpm_set_vbus vbus =3D 0 [ 914.968407]<br>
+&gt; &gt; typec_rt1711h<br>
+&gt; &gt; 2-004e: tcpm_set_vbus chg is already 0 [ 914.974541] typec_rt1711=
+h<br>
+&gt; 2-004e:<br>
+&gt; &gt; tcpm_set_vconn vconn is already 0 [ 914.980921] typec_rt1711h 2-0=
+04e:<br>
+&gt; &gt; tcpm_set_current_limit 0 ma, 0 mv (not implemented) [ 914.988894]=
+<br>
+&gt; &gt; typec_rt1711h 2-004e: tcpm_set_polarity Polarity_CC1 [ 915.003201=
+]<br>
+&gt; &gt; typec_rt1711h 2-004e: tcpm_set_roles Source Host [ 915.009264]<br=
+>
+&gt; &gt; typec_rt1711h 2-004e: tcpm_start_drp_toggling =3D&gt; state_machi=
+ne_work<br>
+&gt; of<br>
+&gt; &gt; TCPM calls start_drp_toggling function but does not set<br>
+&gt; &gt; LOOK4CONNECTION command yet =3D&gt; (Note1) Device(Rd) is plugged=
+ in<br>
+&gt; &gt; (RT1711H&#39;s internal firmware detects Rd plugged in. cc_change=
+ is<br>
+&gt; &gt; triggered and it will be vRd-connected at this moment) =3D&gt; TC=
+PM writes<br>
+&gt; &gt; LOOK4CONNECTION command<br>
+&gt; &gt; - Because RC.DRP is still 1, RT1711H will not pull cc1/cc2 to Rd =
+while<br>
+&gt; &gt; writing Rd/Rd to RC.CC1/RC.CC2.<br>
+&gt; &gt; - (Note2) Right after LOOK4CONNECTION command is written, RT1711H=
+<br>
+&gt; &gt; pulls CC to Rd&#39;s level (because RC.Role is Rd/Rd), stop toggl=
+ing<br>
+&gt; &gt; (because<br>
+&gt; &gt; device(Rd) is already connected) and CC status will be open/open =
+now<br>
+&gt; &gt; (because RT1711H presents Rd and device is connected(Rd))<br>
+&gt; &gt;<br>
+&gt; &gt; [ 915.037263] typec_rt1711h 2-004e: __tcpm_get_cc cc1 =3D Open, c=
+c2 =3D<br>
+&gt; &gt; Open =3D&gt; Enter RT1711H&#39;s irq handler and it reports open/=
+open<br>
+&gt; &gt;<br>
+&gt; &gt; I think the point is to write RC.DRP =3D 0 at the beginning of<br=
+>
+&gt; &gt; drp_toggling so that RT1711H will pull cc1/cc2 to Rd while writin=
+g<br>
+&gt; &gt; Rd/Rd to RC.CC1/RC.CC2 This operation will make RT1711H&#39;s int=
+ernal<br>
+&gt; &gt; firmware restarts from disconnected state and toggles correctly.<=
+br>
+&gt; &gt;<br>
+&gt; &gt; According to TCPCI spec (4.4.5.2):<br>
+&gt; &gt; It is recommended the TCPM write ROLE_CONTROL.DRP=3D0 before writ=
+ing<br>
+&gt; to<br>
+&gt; &gt; POWER_CONTROL.<wbr>AutoDischargeDisconnect and starting the DRP t=
+oggling<br>
+&gt; &gt; using COMMAND.Look4Connection Restart DRP Toggling =3D&gt; It is<=
+br>
+&gt; &gt; recommended the TCPM write ROLE_CONTROL.DRP=3D0 here Set<br>
+&gt; &gt;<br>
+&gt; &gt; This statement is_not_ recommend you do this(RC.DRP=3D0) for star=
+t drp<br>
+&gt; toggling, Please carefully check the whole sentence:<br>
+&gt; &gt; &quot;... as shown in Figure 4-16, &quot;<br>
+&gt; &gt; If you look at &quot;Figure 4-16. DRP Initialization and Connecti=
+on Detection&quot;<br>
+&gt; &gt; It gives clear drp toggling start operations:<br>
+&gt; &gt;<br>
+&gt; &gt; Set TCPC to DRP<br>
+&gt; &gt; - Read PS.TCPCInitializationStatus<br>
+&gt; &gt; - Write ROLE_CONTROL<br>
+&gt; &gt; - RC.DRP =3D 1b<br>
+&gt; &gt; - RC.CC2=3D01b or 10b<br>
+&gt; &gt; - RC.CC1=3D01b or 10b<br>
+&gt; &gt; - RC.CC1=3DRC.CC2<br>
+&gt; &gt; - Write COMMAND.Look4ConnectionPS.<br>
+&gt; &gt;<br>
+&gt; &gt; Above is all operations required to start drp toggling. You also =
+can see<br>
+&gt; RC.CCx =3D 01b or 10b, not fixed to be Rd, right?<br>
+&gt; Yes, this one should be like your patch[07/12]. Write Rd or Rp to RC.C=
+Cx<br>
+&gt; according to the cc parameter of drp_toggling function.<br>
+&gt; &gt;<br>
+&gt; &gt; Go on to check the Figure 4-16<br>
+&gt; &gt; After debounce, we need do following:<br>
+&gt; &gt;<br>
+&gt; &gt; ConnectionDetermine CC &amp; VCONN<br>
+&gt; &gt; - Write RC.CC1 &amp; RC.CC2 per decision<br>
+&gt; &gt; - Write RC.DRP=3D0<br>
+&gt; &gt; - Write TCPC_CONTROl.PlugOrientation<br>
+&gt; &gt; - Write PC.AutoDischargeDisconnect=3D1<br>
+&gt; &gt;=C2=A0 &amp; PC.EnableVconnConnection<br>
+&gt; &gt;<br>
+&gt; &gt; Current existing tcpm+tcpci will not clear RC.DRP after attach, T=
+hat means<br>
+&gt; RC.DRP clear may be done after attach, not in start_drp_toggling.<br>
+&gt; &gt; I am not sure if this can resolve your problem, but I think it de=
+serve a try,<br>
+&gt; you can follow above operation sequence while entering attach state, r=
+efer<br>
+&gt; to my patch[2]:<br>
+&gt; &gt;<br>
+&gt; &gt; [2]<br>
+&gt; &gt;<br>
+</div></div>&gt; <a href=3D"https://emea01.safelinks.protection.outlook.com=
+/?url=3Dhttps%3A%2F%2Fw" rel=3D"noreferrer" target=3D"_blank">https://emea0=
+1.safelinks.<wbr>protection.outlook.com/?url=3D<wbr>https%3A%2F%2Fw</a><br>
+&gt; ww<br>
+&gt; &gt; .<a href=3D"http://spinics.net" rel=3D"noreferrer" target=3D"_bla=
+nk">spinics.net</a>%2Flists%<wbr>2Fdevicetree%2Fmsg216852.html&amp;<wbr>dat=
+a=3D02%7C01%7<br>
+&gt; Cjun.<br>
+&gt; &gt;<br>
+&gt; li%<a href=3D"http://40nxp.com" rel=3D"noreferrer" target=3D"_blank">4=
+0nxp.com</a>%<wbr>7C9117425550d24ddc86d808d57f6b<wbr>1b4e%7C686ea1d3bc2b<br=
+>
+&gt; 4c6fa92c<br>
+&gt; &gt;<br>
+&gt; d99c5c301635%7C0%7C0%<wbr>7C636555020366483456&amp;sdata=3D9%<wbr>2Byw=
+Yl%2BR<br>
+&gt; PYtk60Wg6p<br>
+&gt; &gt; R63cCW2AnRXs%2BrINvvqUpqL18%<wbr>3D&amp;reserved=3D0<br>
+<div><div class=3D"gmail-h5">&gt; &gt;<br>
+&gt; &gt; diff --git a/drivers/staging/typec/tcpci.<wbr>c<br>
+&gt; &gt; b/drivers/staging/typec/tcpci.<wbr>c index 530a5d7..7145771 10064=
+4<br>
+&gt; &gt; --- a/drivers/staging/typec/tcpci.<wbr>c<br>
+&gt; &gt; +++ b/drivers/staging/typec/tcpci.<wbr>c<br>
+&gt; &gt; @@ -184,6 +184,7 @@ static int tcpci_set_polarity(struct tcpc_dev=
+ *tcpc,<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0enum typec_cc_polarity polarit=
+y)=C2=A0 {<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct tcpci *tcpci =3D tcpc_to_=
+tcpci(tcpc);<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int reg;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;<br>
+&gt; &gt;<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;r=
+egmap, TCPC_TCPC_CTRL, @@<br>
+&gt; -192,6 +193,20 @@ static int tcpci_set_polarity(struct tcpc_dev *tcpc,=
+<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0retu=
+rn ret;<br>
+&gt; &gt;<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D regmap_read(tcpci-&gt;regmap,=
+ TCPC_ROLE_CTRL, &amp;reg);<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return re=
+t;<br>
+&gt; &gt; +<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (polarity =3D=3D TYPEC_POLARITY_CC=
+2)<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D T=
+CPC_ROLE_CTRL_CC1_SHIFT;<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0else<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D T=
+CPC_ROLE_CTRL_CC2_SHIFT;<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0reg |=3D TCPC_ROLE_CTRL_CC_OPEN &lt;&=
+lt; ret;<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0reg &amp;=3D ~TCPC_ROLE_CTRL_DRP;<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D regmap_write(tcpci-&gt;regmap=
+, TCPC_ROLE_CTRL, reg);<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0if (ret &lt; 0)<br>
+&gt; &gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return re=
+t;<br>
+&gt; &gt; +<br>
+&gt; &gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;<br>
+&gt; &gt;=C2=A0 }<br>
+&gt; &gt;<br>
+&gt; &gt; PC.AutoDischargeDisconnect=3D0b Set RC.DRP=3D1b (DRP) Set RC.RpVa=
+lue=3D00b<br>
+&gt; &gt; (smallest Rp to save power) Set RC.CC1=3D01b Set<br>
+&gt; &gt; RC.CC2=3D01bCOMMAND.<wbr>Look4ConnectionNo<br>
+&gt; &gt;<br>
+&gt; &gt; It seems like it is not a general case here (because it is only<b=
+r>
+&gt; &gt; recommended but not necessary), we can move it to vendor_ops in t=
+he<br>
+&gt; next patch.<br>
+&gt; &gt;<br>
+&gt; &gt; The TCPM should be able to cover all cases, and we should follow =
+the<br>
+&gt; recommended sequence(if what you are trying to do is really as spec sa=
+ys).<br>
+&gt; Agree!<br>
+&gt; My understanding is that we need to set RC.DRP to 0 every time before<=
+br>
+&gt; TCPM restarts toggling but not just for attached.<br>
+<br>
+</div></div>Actually I have no objection on adding a RC.DRP clear, the ques=
+tion is<br>
+where is the right place to do this, till now I don=E2=80=99t see how this =
+DRP bit keep set<br>
+while start drp toggling is causing problem, You want to start present Rd a=
+fter write<br>
+CC1/CC2 to be Rd/Rd and before write to LOOK4CONNECTION, this is not requir=
+ed<br>
+per tcpci spec.<br></blockquote><div>According to TCPCI&#39;s specification=
+, it is recommended the TCPM write RC.DRP =3D 0 before changing AutoDischar=
+geDisconnecd.</div><div>Maybe, an interface for controlling AutoDischargeDi=
+sconnecd can be added. Then clear RC.DRP in the beginning of that interface=
+.</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;=
+border-left:1px solid rgb(204,204,204);padding-left:1ex">
+<br>
+-Behavior after your patch:<br>
+//begin with Open as RC.DRP =3D 1<br>
+RC.CCx=3DRd &amp; RC.DRP =3D 0; //Start present Rd<br>
+Wait 1ms; // Still Rd<br>
+RC.CCx=3DRd &amp; RC.DRP =3D 1; //Open?<br>
+Look4CONNECTION =3D 1; //DRP toggling continue preset Rd<br>
+<br>
+Is my above CC state description correct? Is this what you want?<br></block=
+quote><div>Correct. But the purpose of setting RC.CCx =3D Rd &amp; RC.DRP =
+=3D 0 is to make RT1711H&#39;s internal firmware leave attached state.</div=
+><div>Because RT1711H is still presenting Rp after the device is plugged ou=
+t, it&#39;s internal firmware enters attached state when the device re-plug=
+ged in.</div><div>When we write RC.CCx =3D Rd &amp; RC.DRP =3D 0, RT1711H&#=
+39;s internal firmware leaves attached state. So it will keep toggling from=
+ Rd to Rp but not report open/open when LOOK4CONNECTION is set.</div><div>A=
+fter rechecking the specification of TCPCI, I think TCPC&#39;s internal fir=
+mware should start toggling from detached state when LOOK4CONNECTION is set=
+ even if RC.DRP is not cleared before</div><div>I&#39;ve discussed with my =
+colleagues, we think this should be in vendor ops. I&#39;ll update it in th=
+e patch v6.</div><div>Could I also apply your patch [1] in the patch v6?</d=
+iv><div>Thank you for your time to clarify this condition.</div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px so=
+lid rgb(204,204,204);padding-left:1ex">
+<br>
+-Only apply my patches:<br>
+//begin with Open as RC.DRP =3D 1<br>
+RC.CCx=3DRd &amp; RC.DRP =3D 1; //still Open<br>
+Look4Connection =3D 1; //Start preset Rd<br>
+<div class=3D"gmail-HOEnZb"><div class=3D"gmail-h5"><br>
+&gt; For RT1711H, it follows above flow. If it is not correct, this operati=
+on should<br>
+&gt; be moved to vendor_ops.<br>
+&gt; &gt;<br>
+&gt; &gt; For your question:<br>
+&gt; &gt; Why RT1711H reports open/open after drp_toggling is enabled?<br>
+&gt; &gt; =3D&gt; See Note2 above.<br>
+&gt; &gt; This open/open is for you plug out the device, right?<br>
+&gt; &gt; =3D&gt; No, see Note2 above.<br>
+&gt; &gt; Why RT1711H can&#39;t report new cc change events after you plug =
+in the<br>
+&gt; &gt; device?<br>
+&gt; &gt; =3D&gt; RT1711H can generate new cc change events after plugging =
+in the<br>
+&gt; device.<br>
+&gt; &gt; What cc change event tcpc will report on step 4?<br>
+&gt; &gt; =3D&gt; See Note1 above<br>
+&gt; &gt; Did you verify your change can pass the typec compliance test?<br=
+>
+&gt; &gt; =3D&gt; We didn&#39;t test it yet but try to make all functions w=
+ork correctly first.<br>
+&gt; &gt;<br>
+&gt; &gt; Best Regards,<br>
+&gt; &gt; *****************************<br>
+&gt; &gt; Shu-Fan Lee<br>
+&gt; &gt; Richtek Technology Corporation<br>
+&gt; &gt; TEL: <a href=3D"tel:%2B886-3-5526789%20%232359" value=3D"+8863552=
+6789">+886-3-5526789 #2359</a><br>
+&gt; &gt; FAX: <a href=3D"tel:%2B886-3-5526612" value=3D"+88635526612">+886=
+-3-5526612</a><br>
+&gt; &gt; *****************************<br>
+&gt; &gt;<br>
+&gt;<br>
+&gt; ************* Email Confidentiality Notice ********************<br>
+&gt;<br>
+&gt; The information contained in this e-mail message (including any attach=
+ments)<br>
+&gt; may be confidential, proprietary, privileged, or otherwise exempt from=
+<br>
+&gt; disclosure under applicable laws. It is intended to be conveyed only t=
+o the<br>
+&gt; designated recipient(s). Any use, dissemination, distribution, printin=
+g,<br>
+&gt; retaining or copying of this e-mail (including its attachments) by uni=
+ntended<br>
+&gt; recipient(s) is strictly prohibited and may be unlawful. If you are no=
+t an<br>
+&gt; intended recipient of this e-mail, or believe that you have received t=
+his<br>
+&gt; e-mail in error, please notify the sender immediately (by replying to =
+this<br>
+&gt; e-mail), delete any and all copies of this e-mail (including any attac=
+hments)<br>
+&gt; from your system, and do not disclose the content of this e-mail to an=
+y other<br>
+&gt; person. Thank you!<br>
+</div></div></blockquote></div><br><br clear=3D"all"><div><br></div>-- <br>=
+<div class=3D"gmail_signature"><div dir=3D"ltr">Best Regards,<div>=E6=9B=B8=
+=E5=B8=86</div></div></div>
+</div></div></div>
+
+--001a11425e866b60da0566724bcd--
