@@ -1,98 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936261AbeCBLpd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:45:33 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34580 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935632AbeCBLp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:45:29 -0500
-Date: Fri, 2 Mar 2018 12:45:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH] x86/mce: Save microcode revision in machine check records
-Message-ID: <20180302114523.GA7406@pd.tnic>
-References: <20180301233449.24311-1-tony.luck@intel.com>
- <3908561D78D1C84285E8C5FCA982C28F7B388EF7@ORSMSX110.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7B388EF7@ORSMSX110.amr.corp.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S936270AbeCBLsD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:48:03 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43041 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936210AbeCBLr7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 06:47:59 -0500
+X-Google-Smtp-Source: AG47ELvv9uQ5OUKSjNp/7sG9I5ZOLn2t8BzAEibj228+WfcKe+TzHWayhieSopJ2RJbpaU0LkzdFng==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v.4.16-rc4
+Date: Fri,  2 Mar 2018 12:47:55 +0100
+Message-Id: <1519991275-31436-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 11:40:31PM +0000, Luck, Tony wrote:
-> +	c = &cpu_data(m->cpu);
-> 
-> Bother. Breaks on systems with >255 cpus because "cpu" is __u8.
+Hi Linus,
 
-No worries, I committed an even better version:
+Here's a PR with some MMC fixes intended for v4.16-rc4. Details about the
+highlights are as usual found in the signed tag.
 
----
-From: Tony Luck <tony.luck@intel.com>
-Date: Thu, 1 Mar 2018 15:34:49 -0800
-Subject: [PATCH] x86/MCE: Save microcode revision in machine check records
+Please pull this in!
 
-Updating microcode used to be relatively rare. Now that it has become
-more common we should save the microcode version in a machine check
-record to make sure that those people looking at the error have this
-important information bundled with the rest of the logged information.
+Kind regards
+Ulf Hansson
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20180301233449.24311-1-tony.luck@intel.com
-[ Simplify a bit. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/uapi/asm/mce.h  | 1 +
- arch/x86/kernel/cpu/mcheck/mce.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/uapi/asm/mce.h b/arch/x86/include/uapi/asm/mce.h
-index 91723461dc1f..435db58a7bad 100644
---- a/arch/x86/include/uapi/asm/mce.h
-+++ b/arch/x86/include/uapi/asm/mce.h
-@@ -30,6 +30,7 @@ struct mce {
- 	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
- 	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
- 	__u64 ppin;	/* Protected Processor Inventory Number */
-+	__u32 microcode;/* Microcode revision */
- };
- 
- #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 3c9a25b93538..181f6cf25895 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -130,6 +130,8 @@ void mce_setup(struct mce *m)
- 
- 	if (this_cpu_has(X86_FEATURE_INTEL_PPIN))
- 		rdmsrl(MSR_PPIN, m->ppin);
-+
-+	m->microcode = boot_cpu_data.microcode;
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
-@@ -262,7 +264,7 @@ static void __print_mce(struct mce *m)
- 	 */
- 	pr_emerg(HW_ERR "PROCESSOR %u:%x TIME %llu SOCKET %u APIC %x microcode %x\n",
- 		m->cpuvendor, m->cpuid, m->time, m->socketid, m->apicid,
--		cpu_data(m->extcpu).microcode);
-+		m->microcode);
- }
- 
- static void print_mce(struct mce *m)
--- 
-2.13.0
+The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
 
--- 
-Regards/Gruss,
-    Boris.
+  Linux 4.16-rc3 (2018-02-25 18:50:41 -0800)
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-rc3
+
+for you to fetch changes up to 3a574919f0cc15a46ec14c3e5e08300908991915:
+
+  mmc: core: Avoid hanging to claim host for mmc via some nested calls (2018-02-27 15:12:37 +0100)
+
+----------------------------------------------------------------
+MMC core:
+ - mmc: core: Avoid hang when claiming host
+
+MMC host:
+ - dw_mmc: Avoid hang when accessing registers
+ - dw_mmc: Fix out-of-bounds access for slot's caps
+ - dw_mmc-k3: Fix out-of-bounds access through DT alias
+ - sdhci-pci: Fix S0i3 for Intel BYT-based controllers
+
+----------------------------------------------------------------
+Adrian Hunter (1):
+      mmc: sdhci-pci: Fix S0i3 for Intel BYT-based controllers
+
+Geert Uytterhoeven (1):
+      mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
+
+Shawn Lin (3):
+      mmc: dw_mmc: Factor out dw_mci_init_slot_caps
+      mmc: dw_mmc: Fix out-of-bounds access for slot's caps
+      mmc: dw_mmc: Avoid accessing registers in runtime suspended state
+
+Ulf Hansson (1):
+      mmc: core: Avoid hanging to claim host for mmc via some nested calls
+
+ drivers/mmc/core/mmc_ops.c         |  4 --
+ drivers/mmc/host/dw_mmc-exynos.c   |  1 +
+ drivers/mmc/host/dw_mmc-k3.c       |  4 ++
+ drivers/mmc/host/dw_mmc-rockchip.c |  1 +
+ drivers/mmc/host/dw_mmc-zx.c       |  1 +
+ drivers/mmc/host/dw_mmc.c          | 84 ++++++++++++++++++++++++--------------
+ drivers/mmc/host/dw_mmc.h          |  2 +
+ drivers/mmc/host/sdhci-pci-core.c  | 35 ++++++++++++++--
+ 8 files changed, 94 insertions(+), 38 deletions(-)
