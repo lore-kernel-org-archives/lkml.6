@@ -1,48 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425953AbeCBJsm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:48:42 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:55277 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424764AbeCBJsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:48:14 -0500
-From: Baruch Siach <baruch@tkos.co.il>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Baruch Siach <baruch@tkos.co.il>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] gpio: raspberrypi-exp: explain Kconfig dependency
-Date: Fri,  2 Mar 2018 11:47:01 +0200
-Message-Id: <3c3b8755d186b1f762081ee18efb718886814e51.1519984021.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.16.1
+        id S1425968AbeCBJup (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:50:45 -0500
+Received: from mga18.intel.com ([134.134.136.126]:52412 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1424456AbeCBJuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:50:40 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
+   d="scan'208";a="35379315"
+Date: Fri, 2 Mar 2018 17:41:40 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Du, Changbin" <changbin.du@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tracing/power: Polish the tracepoints cpu_idle and
+ cpu_frequency
+Message-ID: <20180302094140.ncypewkdg6g6rs2g@intel.com>
+References: <1519809638-24248-1-git-send-email-changbin.du@intel.com>
+ <CAJZ5v0jqG0pcqOuvAVoP7sNKoOe+3ByMk4X5AZASp84OPcrgPg@mail.gmail.com>
+ <20180301022719.xyfcu5tpmadjxbut@intel.com>
+ <CAJZ5v0j8GsaK7kJ4hyvyQYOpa6QmoP2Pc69egg0hb=tb2EwpuA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0j8GsaK7kJ4hyvyQYOpa6QmoP2Pc69egg0hb=tb2EwpuA@mail.gmail.com>
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7ed915059c3001 (gpio: raspberrypi-ext: fix firmware dependency)
-fixed the Kconfig dependency to ensure that gpio-raspberrypi-exp is not
-built-in when the firmware is a module. But the Kconfig syntax for doing
-so is cryptic. Add a comment to make it a little easier.
+> >> That rather isn't the case if negative values are ever passed to the
+> >> tracepoint, right?
+> >>
+> > yes.
+> >> Which seems to be the reason why you want to make this change, isn't it?
+> >>
+> > yes, to improve readability.
+> >
+> >> So maybe fix the code using the tracepoint(s) to avoid passing
+> >> negative values to it(them)?
+> > For cpu_idle event, [0, CPUIDLE_STATE_MAX) are used to index the idle state arrary,
+> > so I think a appropriate value for PWR_EVENT_EXIT is -1 (defined in include/trace/events/power.h).
+> > Or do you have a better idea? Thanks!
+> 
+> Sorry, I'm not sure what you mean.
+> 
+> I'm saying that the code using the CPU PM tracepoints is not expected
+> to pass -1 as the CPU number to them.  IOW, neither -1 nor its UL
+> representation should ever appear in the output of these tracepoints.
+> If that happens, it is a problem with the code using the tracepoints
+> which needs to be fixed.  Users should not see any of these values.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- drivers/gpio/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+This patch only changed 'state' field but cpuid. For cpu_idle event, 'state' is
+singned value, but for cpu_frequency it is unsinged.
+The cpuid is always unsinged value. So no one passes -1 as CPU number.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 52a8b0a6f4e1..1bb25c1ff2d8 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -126,6 +126,8 @@ config GPIO_RASPBERRYPI_EXP
- 	tristate "Raspberry Pi 3 GPIO Expander"
- 	default RASPBERRYPI_FIRMWARE
- 	depends on OF_GPIO
-+	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
-+	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
- 	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
- 	help
- 	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
 -- 
-2.16.1
+Thanks,
+Changbin Du
