@@ -1,101 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428231AbeCBNlR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:41:17 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:58266 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1424222AbeCBNlP (ORCPT
+        id S1428267AbeCBNn3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:43:29 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:42878 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424532AbeCBNn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:41:15 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FsAACoU5lah2Ka6ERcGQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQcBAQEBAYUmKAqDSoojjXmCAoEWhyGNDIIVCoUwAhqCRyE0GAECAQEBAQE?=
- =?us-ascii?q?BAgECEAEBAQoLCQgoLoI4IoJKAQEBAQMjEToLDAQCAQgRBAEBAQICIwMCAgIfJ?=
- =?us-ascii?q?QEICAIEDgUIhHsDFakjgieHJg2BMIIrgQ+EF4Ipgz2DLYJqghsjECMSgj+CYgS?=
- =?us-ascii?q?aLTEJjUGDMoFxh1OFPoo1hyCBLh6CC3BPgkOCQYIHd4s0gRgBAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FsAACoU5lah2Ka6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYU?=
- =?us-ascii?q?mKAqDSoojjXmCAoEWhyGNDIIVCoUwAhqCRyE0GAECAQEBAQEBAgECEAEBAQoLC?=
- =?us-ascii?q?QgoLoI4IoJKAQEBAQMjEToLDAQCAQgRBAEBAQICIwMCAgIfJQEICAIEDgUIhHs?=
- =?us-ascii?q?DFakjgieHJg2BMIIrgQ+EF4Ipgz2DLYJqghsjECMSgj+CYgSaLTEJjUGDMoFxh?=
- =?us-ascii?q?1OFPoo1hyCBLh6CC3BPgkOCQYIHd4s0gRgBAQE?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.47,412,1515477600";
-   d="scan'208";a="1058886243"
-X-DLP: DLP_GlobalPCIDSS
-To: <rafael@kernel.org>
-CC: <andy.shevchenko@gmail.com>, <rjw@rjwysocki.net>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Topic: [RFC] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Index: AQHTsLvZsEmrPWpV1EW9TBL1ic3Lf6O6giwAgAIyAIyAAEJ4UA==
-Date: Fri, 2 Mar 2018 13:41:12 +0000
-Message-ID: <836fd1d7923d4432b17607351b302a56@ausx13mpc124.AMER.DELL.COM>
-References: <1519839829-2191-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VcdsALCUBNoO4BoOj0rHuxurhr6B3GL2i7D79BxRL77kQ@mail.gmail.com>
- <ad15f3beb9f44c77b79f3038cb75b69c@ausx13mpc124.AMER.DELL.COM>
- <CAJZ5v0jGr0VP9bNXprvyHfLvvvEgva6S9rAZM8EZEpGw=0PG+g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jGr0VP9bNXprvyHfLvvvEgva6S9rAZM8EZEpGw=0PG+g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Fri, 2 Mar 2018 08:43:27 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jiri Kosina <trivial@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Samuel Chessman <chessman@tux.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Johannes Berg <johannes@sipsolutions.net>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH trivial resend^2] net: Spelling s/stucture/structure/
+Date: Fri,  2 Mar 2018 14:43:23 +0100
+Message-Id: <1519998203-13020-1-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w22DfOwV002187
 
-> -----Original Message-----
-> From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of Rafael J.
-> Wysocki
-> Sent: Friday, March 2, 2018 3:43 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>; Rafael J. Wysocki
-> <rjw@rjwysocki.net>; ACPI Devel Maling List <linux-acpi@vger.kernel.org>; Linux
-> Kernel Mailing List <linux-kernel@vger.kernel.org>
-> Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
-> 
-> On Wed, Feb 28, 2018 at 9:05 PM,  <Mario.Limonciello@dell.com> wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> >> Sent: Wednesday, February 28, 2018 12:11 PM
-> >> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> >> Cc: Rafael J . Wysocki <rjw@rjwysocki.net>; ACPI Devel Maling List <linux-
-> >> acpi@vger.kernel.org>; LKML <linux-kernel@vger.kernel.org>
-> >> Subject: Re: [RFC] power/hibernate: Make passing hibernate offsets more friendly
-> >>
-> >> On Wed, Feb 28, 2018 at 7:43 PM, Mario Limonciello
-> >> <mario.limonciello@dell.com> wrote:
-> >> > Currently the only way to specify a hibernate offset for a swap
-> >> > file is on the kernel command line.
-> >> >
-> >> > This makes some changes to improve:
-> >> > 1) Add a new /sys/power/disk_offset that lets userspace specify
-> >> > the offset and disk to use when initiating a hibernate cycle.
-> >> >
-> >> > 2) Adjust /sys/power/resume interpretation to also read in an
-> >> > offset.
-> >>
-> >> Read is okay per se (not consistent though), showing is not.
-> >> It might break an ABI.
-> >
-> > Right this is part of why I was proposing making a new attribute.
-> >
-> > The current RFC implementation I sent keeps the read output the
-> > same for /sys/power/resume.
-> 
-> You also need to retain the write behavior of it.
-> 
-> A new attribute is fine if it helps, but the behavior of the existing
-> one cannot change (both sides).
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/net/ethernet/ti/tlan.c     | 2 +-
+ drivers/net/wireless/atmel/atmel.c | 2 +-
+ include/net/iw_handler.h           | 2 +-
+ net/socket.c                       | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Thanks for your feedback, I'll adjust it as such.
+diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
+index 5a4e78fde530ad4a..c769cd9d11e74948 100644
+--- a/drivers/net/ethernet/ti/tlan.c
++++ b/drivers/net/ethernet/ti/tlan.c
+@@ -1901,7 +1901,7 @@ ThunderLAN driver adapter related routines
+  *		Nothing
+  *	Parms:
+  *		dev	The device structure with the list
+- *			stuctures to be reset.
++ *			structures to be reset.
+  *
+  *	This routine sets the variables associated with managing
+  *	the TLAN lists to their initial values.
+diff --git a/drivers/net/wireless/atmel/atmel.c b/drivers/net/wireless/atmel/atmel.c
+index c9dd5e44c9c6de6d..d122386c382bcef2 100644
+--- a/drivers/net/wireless/atmel/atmel.c
++++ b/drivers/net/wireless/atmel/atmel.c
+@@ -3861,7 +3861,7 @@ static int reset_atmel_card(struct net_device *dev)
+ 
+ 	   set all the Mib values which matter in the card to match
+ 	   their settings in the atmel_private structure. Some of these
+-	   can be altered on the fly, but many (WEP, infrastucture or ad-hoc)
++	   can be altered on the fly, but many (WEP, infrastructure or ad-hoc)
+ 	   can only be changed by tearing down the world and coming back through
+ 	   here.
+ 
+diff --git a/include/net/iw_handler.h b/include/net/iw_handler.h
+index 725282095840b853..d2ea5863eedca5ce 100644
+--- a/include/net/iw_handler.h
++++ b/include/net/iw_handler.h
+@@ -364,7 +364,7 @@ struct iw_handler_def {
+  * defined in struct iw_priv_args.
+  *
+  * For standard IOCTLs, things are quite different and we need to
+- * use the stuctures below. Actually, this struct is also more
++ * use the structures below. Actually, this struct is also more
+  * efficient, but that's another story...
+  */
+ 
+diff --git a/net/socket.c b/net/socket.c
+index 645d32b4872cb5d8..63e0a6e17cc54e58 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1516,7 +1516,7 @@ SYSCALL_DEFINE2(listen, int, fd, int, backlog)
+  *
+  *	1003.1g adds the ability to recvmsg() to query connection pending
+  *	status to recvmsg. We need to add that support in a way thats
+- *	clean when we restucture accept also.
++ *	clean when we restructure accept also.
+  */
+ 
+ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
+-- 
+2.7.4
