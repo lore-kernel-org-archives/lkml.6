@@ -1,71 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428161AbeCBP4k (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:56:40 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36233 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427997AbeCBP4f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:56:35 -0500
-X-Google-Smtp-Source: AG47ELtkWd1vFi1nJtbq15TjkCHePfIT/IprbwQiBJalFaykNMUZZkR7I3cwHVZ4pBYbdz093obZhZrklgJoSpNUKu8=
+        id S1428045AbeCBP5o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:57:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1426653AbeCBP5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:57:42 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE2421725
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AG47ELvTS3duKgLy6vAsNLoYuKkuvnQ7+fbfVfEOhQWvhcOmPOynat/sf/URl9wi6biAkwMmKwLQCB5pa06k/C7BXOo=
 MIME-Version: 1.0
-In-Reply-To: <20180302143530.1713-1-colin.king@canonical.com>
-References: <20180302143530.1713-1-colin.king@canonical.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Fri, 2 Mar 2018 15:56:34 +0000
-Message-ID: <CAKv+Gu9+hBnu9BF1MrwD7PWn9uqpbQqcwZVq9LdxhBUJC+9vDg@mail.gmail.com>
-Subject: Re: [PATCH] efi: make const array 'apple' static
-To: Colin King <colin.king@canonical.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, linux-efi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <1520003182-26277-2-git-send-email-john.garry@huawei.com>
+References: <1520003182-26277-1-git-send-email-john.garry@huawei.com> <1520003182-26277-2-git-send-email-john.garry@huawei.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 2 Mar 2018 09:57:20 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJNxxyBDk_u=Wf2vGbgwa7act2NNc+zmxP7Ne80bFGqRA@mail.gmail.com>
+Message-ID: <CAL_JsqJNxxyBDk_u=Wf2vGbgwa7act2NNc+zmxP7Ne80bFGqRA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: scsi: hisi_sas: add an property of
+ signal attenuation
+To: John Garry <john.garry@huawei.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiaofei Tan <tanxiaofei@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 March 2018 at 14:35, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, Mar 2, 2018 at 9:06 AM, John Garry <john.garry@huawei.com> wrote:
+> From: Xiaofei Tan <tanxiaofei@huawei.com>
 >
-> Don't populate the const read-only array 'buf' on the stack but instead
-> make it static. Makes the object code smaller by 64 bytes:
+> For some new boards with hip07 chipset we are required to
+> set PHY config registers differently. The hw property which
+> determines how to set these registers is in the PHY signal
+> attenuation readings.
 >
-> Before:
->    text    data     bss     dec     hex filename
->    9264       1      16    9281    2441 arch/x86/boot/compressed/eboot.o
+> This patch add an devicetree property, hisi-signal-attenuation,
+> which is used to describe the signal attenuation of an board.
 >
-> After:
->    text    data     bss     dec     hex filename
->    9200       1      16    9217    2401 arch/x86/boot/compressed/eboot.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Thanks Colin
-
-Queued in efi-next.
-
-
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> Signed-off-by: John Garry <john.garry@huawei.com>
 > ---
->  arch/x86/boot/compressed/eboot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-> index 886a9115af62..f2251c1c9853 100644
-> --- a/arch/x86/boot/compressed/eboot.c
-> +++ b/arch/x86/boot/compressed/eboot.c
-> @@ -423,7 +423,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+> diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> index df3bef7..6f6876a 100644
+> --- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> +++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+> @@ -53,6 +53,13 @@ Main node required properties:
+>  Optional main node properties:
+>   - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
+>                             "am-max-transmissions" limitation.
+> + - hisi-signal-attenuation : array of 3 32-bit values, containing de-emphasis,
+
+The format for vendor prefixes is: <vendor prefix>,property-name
+
+And should only be ones defined in vendor-prefixes.txt
+
+> +               preshoot, and boost attenuation readings for the board. They
+> +               are used to describe the signal attenuation of the board. These
+> +               values' range is 7600 to 12400, and used to represent -24dB to
+> +               24dB.
+> +               The formula is "y = (x-10000)/10000". For example, 10478
+> +               means 4.78dB.
 >
->  static void setup_quirks(struct boot_params *boot_params)
->  {
-> -       efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
-> +       static efi_char16_t const apple[] = { 'A', 'p', 'p', 'l', 'e', 0 };
->         efi_char16_t *fw_vendor = (efi_char16_t *)(unsigned long)
->                 efi_table_attr(efi_system_table, fw_vendor, sys_table);
->
+>  Example:
+>         sas0: sas@c1000000 {
 > --
-> 2.15.1
+> 1.9.1
 >
