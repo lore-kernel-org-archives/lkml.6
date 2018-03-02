@@ -1,62 +1,61 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1330799-1519988913-2-11920477761646300314
+X-Cyrus-Session-Id: sloti22d1t05-1330670-1519988601-2-9100884379744126992
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519988913; b=N3OYvMZQ+ncClu0vo7V30/gCjcmuNz1DAxAirXrdAV1AV8b
-    j8/9nWdk8BSNP4CmkkNVRR927d0XSC4lLSr+SVKiUrVghNYQH/1NTRGWoQhr+wFZ
-    RBmzO6zi+M5ey0nBq2hkAv+xwy64WCd7IUB4o/g8CfWJSpzulM3J8BnNARZYLDML
-    Gi5jwvqXmRKGYz+X2Wcl8We6VLTzF9W12Z83J+zyspqYfLW2Ak/ihqESctNzjhO6
-    /MdQK38C3oX2dUyKSLSIqheybWz+YaCeEYOFNA5LwxksP7bIQeEFgS6PaD5Eqoeg
-    NJwD4VbZzGjjMfqzZ8IWSEZk0X0SzNxTQSqw8YQ==
+    t=1519988600; b=dqUAAfKhfyhNTP3Mpm6IB0xRtb1YQuAzYHHICMvGo9wntux
+    2Wtjse0DObxnF65iKcUJoFtZ2i0875gTzk1D2LiDxRZ/B5CApUAIp2eUfNb6uXSU
+    VtbqbLIWCtgpwP/pZ0CA+K+TtpHd7F0DUSSG42S/T8SFDYtEk+ygUwpUxfAHaEK8
+    axqLT+jIqTQjIbT88E9MYIWUvqTE0wBzL3eop6qnPrluBeX+JCDyd3NKYud4DYaZ
+    JKFz37xcaEwI857t+e4W9eDVAzYlTeHhfontUCaopjunF00uIF9CYiPEVrKnsBNW
+    smpR97U5RJdyLYHkvm5PxxVosCq78zV9zu5Sk8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1519988913; bh=hLuROCxKI8efrWvjfES+xDF1In
-    X7uumYF75OU1DRkR0=; b=UN3ipqQrhhah9yywj3H9N+fmi1YtJ3DR2wBE9iP3ZU
-    QrkG0m/qS5kMFo/+M2VhAa9sR9GJ8xXFL0dvXxJBdXCNJV1kIP164RqgyXwady2A
-    5NMmxHMvvqZ0e9sNrdzN7wIj1ssNTQrRFIi4aNu9KTPaQvXMLcoF6By4fQQrcgNm
-    5RQs8GHtNIHkD9DwziCy7eHo1N7kXW06ULYepc1PPdXvu9pPqrJoCFUslPkBhkDw
-    sDyhewf/KiESLU269O4b/rpmuqpMHamms8/CUocQ/Z2sZs8mgLrpxVlgypRw5SJs
-    ha9SL+J4I8eB1KCwdMSXf4bd9VhXL9Jti0bakylVZHhg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=the-dreams.de;
+    :list-id; s=arctest; t=1519988600; bh=AdrNPALNIXN8qakYmv4wms/o71
+    wS3DdZPMkCVvy0SH0=; b=k3e9GkXhxMP6u1La6NbsgV3/MCt2c5JsMS15gvJXm4
+    xQ7DtcnVS5ISTjdG/IuP2NOtGXKZ8KaWuvkLyLitMRr+LErCyONw2U28jZtobcFn
+    mZpl7iohTE7rpV6jk0SpLE5gjYpk5SVsbMdPI/Wqt3fkuyil0o6ttnNp56n48/BP
+    npOM2hgwEO7jSo5H04Vszz+dlZQNIpRTXcaaeL2h0RgJn5NJkDYRFQoW9hquLeP+
+    YIQJBA6afjT8e2EMSQpK02laDjDiwS0OuuvOvpRCFGkPOkRD30ed8FsVIKlHmlz3
+    bhRY6NQbf0fbzwjL28JJC9KnKdGngqs9Ec8YmGm7LACQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=VWk7n9Py x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=the-dreams.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=the-dreams.de;
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=VWk7n9Py x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=the-dreams.de header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423610AbeCBLIL (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 06:08:11 -0500
-Received: from www.zeus03.de ([194.117.254.33]:39762 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423524AbeCBLII (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:08:08 -0500
-Date: Fri, 2 Mar 2018 12:08:06 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Dan Carpenter <dan.carpenter@oracle.com>
+        id S1426826AbeCBLCy (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 06:02:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46138 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423716AbeCBLCs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 06:02:48 -0500
+Date: Fri, 2 Mar 2018 14:02:12 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
@@ -64,55 +63,47 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
         linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>,
         stable@vger.kernel.org
 Subject: Re: [PATCH] i2c: s3c2410: Properly handle interrupts of number 0
-Message-ID: <20180302110806.naskbf5n7eiugsjd@katana>
+Message-ID: <20180302110212.7wfk6hn4tf5l7ax4@mwanda>
 References: <1519936484-23132-1-git-send-email-krzk@kernel.org>
  <20180302102926.fuqmfyaxiujjwill@ninjato>
  <20180302110002.wmkvktobi7ssmin5@mwanda>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vekmjfjlo5nu3242"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180302110002.wmkvktobi7ssmin5@mwanda>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=840
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803020129
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---vekmjfjlo5nu3242
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
+On Fri, Mar 02, 2018 at 02:00:03PM +0300, Dan Carpenter wrote:
+> On Fri, Mar 02, 2018 at 11:29:26AM +0100, Wolfram Sang wrote:
+> > On Thu, Mar 01, 2018 at 09:34:44PM +0100, Krzysztof Kozlowski wrote:
+> > > Interrupt number 0 (returned by platform_get_irq()) might be a valid IRQ
+> > > so do not treat it as an error.  If interrupt 0 was configured, the driver
+> > > would exit the probe early, before finishing initialization, but with
+> > > 0-exit status.
+> > > 
+> > > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: e0d1ec97853f ("i2c-s3c2410: Change IRQ to be plain integer.")
+> > 
+> > Please configure git to use 14 digits here.
+> 
 > Wait, when did we decide that 12 wasn't enough?
+> 
+> I just did a `git log | grep Fixes | tee baz | head -n 200` and only on
+> my git tree tehre were only 2 which used exactly 14 digits.  The
+> standard is 12.
 
-I stand corrected. Sorry. I recall some discussion about using 14 and I
-changed my git config according to that back then. I see now in
-submitting patches that 12 is documented.
+Wow...  I clearly did not read that email before sending it...  :(
 
-I will change my setting back. Sorry for the noise.
-
-
---vekmjfjlo5nu3242
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqZMJIACgkQFA3kzBSg
-KbaB5hAAksGeCgwN25/AKYu44jL6fjXjGfRM+TdyE36ZTenZCXoicpR2LnDD5WbD
-H1LoTw+KijlYYGy9PylW1MZsqS/u2Rq0DR7BNyNTag3SxQAuKz9MJmSnFo0M975V
-57T+lD63X2qDA6AJlj4oU28s3kmf2URJXuItsTbTRD9uxQq+3Bsf/yUp5tWpiOxN
-OBamLT3O/YLWZ8quV71lKFWL/Ayz+GzoO8yxTyqw6AF8YwpV5o6fI+1ZXkSgbhLE
-34xB3cmO71i4HtH/sT2XhS8cGvNGM/U0pJ6adre27fIMZTyczMW84mMC7Pq/5BYs
-pNSKGhMTTwGl9uOChFuR3tbT+vb1mzYak8YEInETblUEB12gCtMqBjX2INlP9gle
-yL6eTw0CT+JxmtTFOG3CreN1ioI725id2dQeGnRUnYffB0GpSAZv3HiMsovsuwQw
-DGJN0UHUJrsD4W3b0Om04sPlGQwM3rZlwFlENxzV55+/ALtYBoBZhG/gxiMJBh6Q
-gi4rmpCOa8uJ0Pk5SkhPE2BA7/501J06+TZuxaY24MvekZCYnyVQ4gJF8dDEEoDN
-R4u6y66ReShja4a5dL9JnPJp/gDWZIKPebFQ8MYK0ruq//8Y9g/E4CKaYp1H36tD
-d4cvhdNsLymSJz4nn6aYTk86sBUkkzobBX6HO8Kq3Uw3Mn/J+zQ=
-=YJzZ
------END PGP SIGNATURE-----
-
---vekmjfjlo5nu3242--
+regards,
+dan carpenter
