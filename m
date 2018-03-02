@@ -1,75 +1,91 @@
-Return-Path: <luto@kernel.org>
-X-Google-Smtp-Source: AG47ELt87j5mdsg7wcJf4BAklIdicAzwxcAKQ/4r4Cz0dHZtlFq4Mfaw36q4qQ7zipJQdB/uUnVB
-ARC-Seal: i=1; a=rsa-sha256; t=1521233751; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AG47ELtNgBOqqPgedHyD74FXQ6IcxdXd0+s1SeWVniv3AQTnaARio+Eo8ZBHJ0gn+RFb6hVUQpYw
+ARC-Seal: i=1; a=rsa-sha256; t=1519981662; cv=none;
         d=google.com; s=arc-20160816;
-        b=AKhZ9LE0qppjTVqv3UBrfy/A/RlIJ4yeU0QZCeRGqg4hZoFZXnrN78adE11d+shaE1
-         JS/XJkPGCGc9Se4U4ceYAYvtN21sAyiUr2ujJj/M6vGl37b+9jTa756OiX0QtnUPIud6
-         69Abut7rA/T7X3uUfihvfmKxWeluFtywY9reJfxVgWU9k6Dh6/jggleVjZdkHbAalX2Q
-         RgKb8g7QBBIuDcoPdI7nESMFF8KV6ilbrWJjdHrY+0jIuGvIW8wb7Wvlx1InYUIn+t/h
-         vX7qJgToE2cRaOy9paKOZe0xsk5bWXKz4+jrEE2tvawlIyhT3Xhdg5ruPkxv78+EEzDb
-         8e1w==
+        b=Pgdmy4PJisQborGVEeKyD5CaG0i3SC9awfPwS6oJ7hfMVd8LBAz/KeuZ0VdQ5sD2wy
+         uLblt6MWvIBEVabx6Wi0keCebaMhxjOgNes61PAh/b7sWJrfZXbbC1uzUS1O0eYHLw9C
+         PAZg8T2wxS1wZ1PJVFCPyF8RRMkO5yBfXNXR528bRk7DHhWsS156NHsZX3xoBHbYxDpE
+         5x7uhR3oz51nb3ok98k7RtxvBu53h5QlWgGDFfS8Aw1AcgsQifxxhRp7zoFv2VWNMEto
+         8Sl39qBYMlTofcCQdQNGlC20mG09D+IwV9+3h3Ll3WTjB4aK2WfoeU82G1mp9eEI+8sQ
+         HG0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=41yrR9n2TaFIZsjH88N0P4juVQjIGUBRRROPHTSCJhg=;
-        b=YFif4YgZD8Z0tfZ+ySu023JbCM99OHgbwNPZOlhtQOY80PVmjDlvNCuCKR7OMvAFrz
-         2qUNa5YW5aGk6kiVV7CoBzwsJ6YMha7zEZ5EdK8ltXiBI31yaHtDk7HLQFAg9IvXUjQ3
-         XgFE8VxfoaEreYgXt8UdHBkq+yEbPaQtEFPF4TK8gbVqJkfaHgpHIUv0uMj0qncBpvSn
-         AXEwkHHxt01YiD7zc4T0huK0jnytiEKIaXLGYsyaUvIKdXkjQvqlfbY5W0O7UEUh6xig
-         Va9l+YB1LhDhLwE1xiDwT+0BxWynP4KTUuH9IPui6tAmMeRdPcFSMVk+CD8ZPoy4wZ6g
-         AxSg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=PU7EPMVKak34ckKvfYRXb97B5t49eWkZpEfK/TDi5t4=;
+        b=eKnrMkJP+858C7AeT4d6X/vqcEydtogjSgCr/1+amCJSagbkHdd7g4tGBDX/ob/lVn
+         QA9MqyjjZkF/DzsuAQSRSVFZqMrSqFFuS47faUokoKe1Njajb8egOSWIXIiAx4hknCW6
+         bRp66u38vmrdR+Ja2dt3v+ddVJcpS7CoqEZ0hHG5JTUycgU4w6X5fOZSeiXO0Of99FaI
+         /b02r5i6MPm85+wil+RFFz8fazTf8yIK+TkYCQFdIAnUzNvnZ9557ff0J1mI1+3jZ3rX
+         mNfZqtP4HguDJIvX5RPen64T6PfDl1/Az9xKFxB98Ru1RVwVHjUgO1ccI+UbjXWr7KRH
+         8dXw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=can9wVTh;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4DA217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-MIME-Version: 1.0
-In-Reply-To: <20180302091049.GP16484@8bytes.org>
-References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
- <1518168340-9392-13-git-send-email-joro@8bytes.org> <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
- <20180301133430.wda4qesqhxnww7d6@8bytes.org> <2ae8b01f-844b-b8b1-3198-5db70c3e083b@redhat.com>
- <20180301165019.kuynvb6fkcwdpxjx@suse.de> <CAMzpN2gxVnb65LHXbBioM4LAMN2d-d1-xx3QyQrmsHECBXC29g@mail.gmail.com>
- <CA+55aFynSZgf1wnWrweODJiRw5hLkUPzFF7T8QJ7vBo=zWTfqw@mail.gmail.com> <20180302091049.GP16484@8bytes.org>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Fri, 16 Mar 2018 20:55:28 +0000
-X-Gmail-Original-Message-ID: <CALCETrXt9Wc1YVO=v=+J9XaZPOX=wwUJiM30UK59_uBL1arG3w@mail.gmail.com>
-Message-ID: <CALCETrXt9Wc1YVO=v=+J9XaZPOX=wwUJiM30UK59_uBL1arG3w@mail.gmail.com>
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=can9wVTh;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Date: Fri, 2 Mar 2018 10:07:37 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Joerg Roedel <jroedel@suse.de>, Waiman Long <longman@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	the arch/x86 maintainers <x86@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux-MM <linux-mm@kvack.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	"Liguori, Anthony" <aliguori@amazon.com>,
+	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
 Subject: Re: [PATCH 12/31] x86/entry/32: Add PTI cr3 switch to non-NMI
  entry/exit points
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Brian Gerst <brgerst@gmail.com>,
-	Joerg Roedel <jroedel@suse.de>, Waiman Long <longman@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	"the arch/x86 maintainers" <x86@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-	Jiri Kosina <jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
-	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180302090737.GO16484@8bytes.org>
+References: <1518168340-9392-1-git-send-email-joro@8bytes.org>
+ <1518168340-9392-13-git-send-email-joro@8bytes.org>
+ <afd5bae9-f53e-a225-58f1-4ba2422044e3@redhat.com>
+ <20180301133430.wda4qesqhxnww7d6@8bytes.org>
+ <2ae8b01f-844b-b8b1-3198-5db70c3e083b@redhat.com>
+ <20180301165019.kuynvb6fkcwdpxjx@suse.de>
+ <CAMzpN2gxVnb65LHXbBioM4LAMN2d-d1-xx3QyQrmsHECBXC29g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMzpN2gxVnb65LHXbBioM4LAMN2d-d1-xx3QyQrmsHECBXC29g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1591914904588119761?=
-X-GMAIL-MSGID: =?utf-8?q?1595129202545603411?=
+X-GMAIL-MSGID: =?utf-8?q?1593816290604219939?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 2, 2018 at 9:10 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> On Thu, Mar 01, 2018 at 10:38:21AM -0800, Linus Torvalds wrote:
->> Note that debug traps can happen regardless of TF, Think kgdb etc.
->> Arguably kgdb users get what they deserve, but still.. I think root
->> can set kernel breakpoints too.
->
-> But that seems to be broken right now at least wrt. to the espfix code
-> where there is no handling for in the #DB handler. Can userspace really
-> set arbitrary kernel breakpoints?
->
+On Thu, Mar 01, 2018 at 01:24:39PM -0500, Brian Gerst wrote:
+> The IF flag only affects external maskable interrupts, not traps or
+> faults.  You do need to check CR3 because SYSENTER does not clear TF
+> and will immediately cause a debug trap on kernel entry (with user
+> CR3) if set.  That is why the code existed before to check for the
+> entry stack for debug/NMI.
 
-As far as I'm concerned, I don't try to support kernel debugger users
-setting arbitrary breakpoints in the kernel entry text.
+Yeah, okay, thanks for the clarification. This also means the #DB
+handler needs to leave with the same cr3 as it entered. I'll work that
+into my patches.
+
+Thanks,
+
+	Joerg
