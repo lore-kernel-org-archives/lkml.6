@@ -1,72 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946492AbeCBMdH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:33:07 -0500
-Received: from mail-io0-f172.google.com ([209.85.223.172]:38151 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427595AbeCBMdF (ORCPT
+        id S1165131AbeCBMfa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:35:30 -0500
+Received: from mail-ot0-f172.google.com ([74.125.82.172]:38424 "EHLO
+        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1164824AbeCBMf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:33:05 -0500
-X-Google-Smtp-Source: AG47ELuGhPVxXbwdUVIUXFw9E3oM791WumxlkTUhpDzk6I7yXtnKCHzIfWtlj3gU6v+uUYGtodb7+mbLi/tNf3iAndY=
+        Fri, 2 Mar 2018 07:35:28 -0500
+X-Google-Smtp-Source: AG47ELsBcCuWk5EQ9nA1v+LuUml1xnxoseu3PTE84eSzPoPjq7gswwMjnNbsaX2QjLGnIhrr0SWDloKSFKtEjPa8czs=
 MIME-Version: 1.0
-In-Reply-To: <20180302121442.GB28931@amd>
-References: <20180224214617.GA22619@amd> <71aa88ec-d4df-b49c-7d73-27197f468491@leemhuis.info>
- <20180226131318.GA14045@amd> <CAEnQRZBbMTeaxb+=AaarX6PSGasfVjtAUdpbPvJavZyTRMpdgQ@mail.gmail.com>
- <20180226231336.GA18565@amd> <CACRpkdarR_7HqGMPwfa8YpG9wnFs5mJrNwuctycn=MrdwaRxyw@mail.gmail.com>
- <20180302091025.GC30267@amd> <CACRpkda=deFSmk2iyrtde3Z-aj6rW9_jNfE3Ep4X=ejprGxRUw@mail.gmail.com>
- <20180302103127.GA2081@amd> <CACRpkda-VLsMVqYx3Y6+3JtLJERhmeJZF5g4Gd9ecvgR1Nnr0A@mail.gmail.com>
- <20180302121442.GB28931@amd>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 13:33:04 +0100
-Message-ID: <CACRpkdawRd6aGpj7hjVPv7TZ+YqLjgJaqphkDnkX6xR+3Gx-xA@mail.gmail.com>
-Subject: Re: [alsa-devel] regression v4.16 on Nokia N900: sound does not work
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Daniel Baluta <daniel.baluta@gmail.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Ivajlo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Martijn Braam <martijn@brixit.nl>,
-        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        =?UTF-8?B?TWlja3Vsw6HFoSBRd2VydHo=?= <abcloriens@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        clayton@craftyguy.net, Linux-OMAP <linux-omap@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Patrik Bachan <patrikbachan@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        serge@hallyn.com
+In-Reply-To: <CAOMZO5CnePJqXnb_14FaWxjx0AC4oT0m_SqFtwPjwjskquSYPw@mail.gmail.com>
+References: <CAOMZO5BsSpi_40ky5L_XafxNULnprphv9nhPCQVNgi+vmexD+Q@mail.gmail.com>
+ <20180301182436.GI12864@sirena.org.uk> <CAOMZO5CnePJqXnb_14FaWxjx0AC4oT0m_SqFtwPjwjskquSYPw@mail.gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 2 Mar 2018 09:35:27 -0300
+Message-ID: <CAOMZO5Bad2OkWhxFrQax+V4_DrtajwjisMe3O39WfCU3qGd5zg@mail.gmail.com>
+Subject: Re: regmap: Failed to create debugfs directory
+To: Mark Brown <broonie@kernel.org>
+Cc: brgl@bgdev.pl, David Lechner <david@lechnology.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 1:14 PM, Pavel Machek <pavel@ucw.cz> wrote:
->> >> Ok, so this code looks pretty crazy to me: I tried removing the
->> >> "of_find_spi_gpio" part, and audio started working.
->> >
->> > Hmm. Looks like audio is working w/o any changes, too. Not sure why
->> > festival hung on me before.
->>
->> Does it mean that mainline is working find for you or
->> do we need to look deeper into the problem in the OF
->> lookup?
+Hi Mark,
+
+On Thu, Mar 1, 2018 at 9:27 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Mark,
 >
-> It now works for me.
+> On Thu, Mar 1, 2018 at 3:24 PM, Mark Brown <broonie@kernel.org> wrote:
 >
-> (But take a look at the patch I sent -- I believe you are still
-> overwriting return values in a bad way, and code is quite confusing).
+>> Is this triggered by 9b947a13e7f6017f18 (regmap: use debugfs even when
+>> no device)?
+>
+> Yes, exactly. If I revert this commit the warnings are gone.
+>
+> Should I send a revert or is there another way to solve it?
 
-I think that code is a result of piled fixes, so noone
-really designed it to look like that.
+Does the change below look good?
 
-I'll try to look at it, I am a bit afraid of the code since I've
-broken so many things with it.
+diff --git a/drivers/base/regmap/regmap-debugfs.c
+b/drivers/base/regmap/regmap-debugfs.c
+index 7eb512b..018d3a2 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -575,7 +575,8 @@ void regmap_debugfs_init(struct regmap *map, const
+char *name)
 
-Yours,
-Linus Walleij
+        map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
+        if (!map->debugfs) {
+-               dev_warn(map->dev, "Failed to create debugfs directory\n");
++               if (map->dev)
++                       dev_warn(map->dev, "Failed to create debugfs
+directory\n");
+                return;
+        }
