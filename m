@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968000AbeCBQno (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:43:44 -0500
+        id S968111AbeCBQqI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:46:08 -0500
 Received: from smtp.codeaurora.org ([198.145.29.96]:41030 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967980AbeCBQni (ORCPT
+        with ESMTP id S967983AbeCBQnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:43:38 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89A036081C
+        Fri, 2 Mar 2018 11:43:41 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D1E86053B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,9 +15,9 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v3 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
-Date: Fri,  2 Mar 2018 09:43:12 -0700
-Message-Id: <20180302164317.10554-6-ilina@codeaurora.org>
+Subject: [PATCH v3 08/10] drivers: qcom: rpmh: allow requests to be sent asynchronously
+Date: Fri,  2 Mar 2018 09:43:15 -0700
+Message-Id: <20180302164317.10554-9-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302164317.10554-1-ilina@codeaurora.org>
 References: <20180302164317.10554-1-ilina@codeaurora.org>
@@ -25,222 +25,139 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sleep and wake requests are sent when the application processor
-subsystem of the SoC is entering deep sleep states like in suspend.
-These requests help lower the system power requirements when the
-resources are not in use.
+Platform drivers that want to send a request but do not want to block
+until the RPMH request completes have now a new API -
+rpmh_write_async().
 
-Sleep and wake requests are written to the TCS slots but are not
-triggered at the time of writing. The TCS are triggered by the firmware
-after the last of the CPUs has executed its WFI. Since these requests
-may come in different batches of requests, it is job of this controller
-driver to find arrange the requests into the available TCSes.
+The API allocates memory and send the requests and returns the control
+back to the platform driver. The tx_done callback from the controller is
+handled in the context of the controller's thread and frees the
+allocated memory. This API allows RPMH requests from atomic contexts as
+well.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/soc/qcom/rpmh-internal.h |   7 +++
- drivers/soc/qcom/rpmh-rsc.c      | 128 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 135 insertions(+)
+ drivers/soc/qcom/rpmh.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h |  8 ++++++++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index 1442a64ac4c5..65dfe1716265 100644
---- a/drivers/soc/qcom/rpmh-internal.h
-+++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -13,6 +13,7 @@
- #define MAX_CMDS_PER_TCS		16
- #define MAX_TCS_PER_TYPE		3
- #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
-+#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index 8a04009075b8..a02d9f685b2b 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -35,6 +35,7 @@
+ 		.completion = q,			\
+ 		.wait_count = c,			\
+ 		.rc = rc,				\
++		.free = NULL,				\
+ 	}
  
- struct rsc_drv;
  
-@@ -44,6 +45,8 @@ struct tcs_response {
-  * @ncpt: number of commands in each TCS
-  * @tcs_lock: lock for synchronizing this TCS writes
-  * @responses: response objects for requests sent from each TCS
-+ * @cmd_addr: flattened cache of cmds in sleep/wake TCS
-+ * @slots: indicates which of @cmd_addr are occupied
+@@ -61,6 +62,7 @@ struct cache_req {
+  * @completion: triggered when request is done
+  * @wait_count: count of waiters for this completion
+  * @err: err return from the controller
++ * @free: the request object to be freed at tx_done
   */
- struct tcs_group {
- 	struct rsc_drv *drv;
-@@ -54,6 +57,9 @@ struct tcs_group {
- 	int ncpt;
- 	spinlock_t tcs_lock;
- 	struct tcs_response *responses[MAX_TCS_PER_TYPE];
-+	u32 *cmd_addr;
-+	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
-+
+ struct rpmh_request {
+ 	struct tcs_request msg;
+@@ -69,6 +71,7 @@ struct rpmh_request {
+ 	atomic_t *wait_count;
+ 	struct rpmh_client *rc;
+ 	int err;
++	struct rpmh_request *free;
  };
  
  /**
-@@ -83,6 +89,7 @@ struct rsc_drv {
+@@ -114,6 +117,8 @@ void rpmh_tx_done(struct tcs_request *msg, int r)
+ 		       "RPMH TX fail in msg addr 0x%x, err=%d\n",
+ 		       rpm_msg->msg.payload[0].addr, r);
  
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, struct tcs_request *msg);
-+int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, struct tcs_request *msg);
- 
- void rpmh_tx_done(struct tcs_request *msg, int r);
- 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index b5b39b86f904..34e780d9670f 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt) "%s " fmt, KBUILD_MODNAME
- 
- #include <linux/atomic.h>
-+#include <linux/bitmap.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
-@@ -178,6 +179,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 	case RPMH_ACTIVE_ONLY_STATE:
- 		type = ACTIVE_TCS;
- 		break;
-+	case RPMH_WAKE_ONLY_STATE:
-+		type = WAKE_TCS;
-+		break;
-+	case RPMH_SLEEP_STATE:
-+		type = SLEEP_TCS;
-+		break;
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -450,6 +457,114 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, struct tcs_request *msg)
++	kfree(rpm_msg->free);
++
+ 	/* Signal the blocking thread we are done */
+ 	if (wc && atomic_dec_and_test(wc) && compl)
+ 		complete(compl);
+@@ -257,6 +262,53 @@ static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+ 	return ret;
  }
- EXPORT_SYMBOL(rpmh_rsc_send_data);
  
-+static int find_match(struct tcs_group *tcs, struct tcs_cmd *cmd, int len)
++static struct rpmh_request *__get_rpmh_msg_async(struct rpmh_client *rc,
++						enum rpmh_state state,
++						struct tcs_cmd *cmd, int n)
 +{
-+	bool found = false;
-+	int i = 0, j;
++	struct rpmh_request *req;
 +
-+	/* Check for already cached commands */
-+	while ((i = find_next_bit(tcs->slots, MAX_TCS_SLOTS, i)) <
-+	      MAX_TCS_SLOTS) {
-+		if (tcs->cmd_addr[i] != cmd[0].addr) {
-+			i++;
-+			continue;
-+		}
-+		/* sanity check to ensure the seq is same */
-+		for (j = 1; j < len; j++) {
-+			WARN((tcs->cmd_addr[i + j] != cmd[j].addr),
-+			    "Message does not match previous sequence.\n");
-+			return -EINVAL;
-+		}
-+		found = true;
-+		break;
-+	}
++	if (IS_ERR_OR_NULL(rc) || !cmd || n <= 0 || n > MAX_RPMH_PAYLOAD)
++		return ERR_PTR(-EINVAL);
 +
-+	return found ? i : -1;
-+}
++	req = kcalloc(1, sizeof(*req), GFP_ATOMIC);
++	if (!req)
++		return ERR_PTR(-ENOMEM);
 +
-+static int find_slots(struct tcs_group *tcs, struct tcs_request *msg,
-+		     int *m, int *n)
-+{
-+	int slot, offset;
-+	int i = 0;
++	memcpy(req->cmd, cmd, n * sizeof(*cmd));
 +
-+	/* Find if we already have the msg in our TCS */
-+	slot = find_match(tcs, msg->payload, msg->num_payload);
-+	if (slot >= 0)
-+		goto copy_data;
++	req->msg.state = state;
++	req->msg.payload = req->cmd;
++	req->msg.num_payload = n;
++	req->free = req;
 +
-+	/* Do over, until we can fit the full payload in a TCS */
-+	do {
-+		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
-+						 i, msg->num_payload, 0);
-+		if (slot == MAX_TCS_SLOTS)
-+			break;
-+		i += tcs->ncpt;
-+	} while (slot + msg->num_payload - 1 >= i);
-+
-+	if (slot == MAX_TCS_SLOTS)
-+		return -ENOMEM;
-+
-+copy_data:
-+	bitmap_set(tcs->slots, slot, msg->num_payload);
-+	/* Copy the addresses of the resources over to the slots */
-+	if (tcs->cmd_addr) {
-+		for (i = 0; i < msg->num_payload; i++)
-+			tcs->cmd_addr[slot + i] = msg->payload[i].addr;
-+	}
-+
-+	offset = slot / tcs->ncpt;
-+	*m = offset + tcs->tcs_offset;
-+	*n = slot % tcs->ncpt;
-+
-+	return 0;
-+}
-+
-+static int tcs_ctrl_write(struct rsc_drv *drv, struct tcs_request *msg)
-+{
-+	struct tcs_group *tcs;
-+	int m = 0, n = 0;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	tcs = get_tcs_for_msg(drv, msg);
-+	if (IS_ERR(tcs))
-+		return PTR_ERR(tcs);
-+
-+	spin_lock_irqsave(&tcs->tcs_lock, flags);
-+	/* find the m-th TCS and the n-th position in the TCS to write to */
-+	ret = find_slots(tcs, msg, &m, &n);
-+	if (!ret)
-+		__tcs_buffer_write(drv, m, n, msg);
-+	spin_unlock_irqrestore(&tcs->tcs_lock, flags);
-+
-+	return ret;
++	return req;
 +}
 +
 +/**
-+ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ * rpmh_write_async: Write a set of RPMH commands
 + *
-+ * @drv: the controller
-+ * @msg: the data to be written to the controller
++ * @rc: The RPMh handle got from rpmh_get_dev_channel
++ * @state: Active/sleep set
++ * @cmd: The payload data
++ * @n: The number of elements in payload
 + *
-+ * There is no response returned for writing the request to the controller.
++ * Write a set of RPMH commands, the order of commands is maintained
++ * and will be sent as a single shot.
 + */
-+int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, struct tcs_request *msg)
++int rpmh_write_async(struct rpmh_client *rc, enum rpmh_state state,
++		    struct tcs_cmd *cmd, int n)
 +{
-+	if (!msg || !msg->payload || !msg->num_payload ||
-+	   msg->num_payload > MAX_RPMH_PAYLOAD) {
-+		pr_err("Payload error\n");
-+		return -EINVAL;
-+	}
++	struct rpmh_request *rpm_msg;
 +
-+	/* Data sent to this API will not be sent immediately */
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
-+		return -EINVAL;
++	rpm_msg = __get_rpmh_msg_async(rc, state, cmd, n);
++	if (IS_ERR(rpm_msg))
++		return PTR_ERR(rpm_msg);
 +
-+	return tcs_ctrl_write(drv, msg);
++	return __rpmh_write(rc, state, rpm_msg);
 +}
-+EXPORT_SYMBOL(rpmh_rsc_write_ctrl_data);
++EXPORT_SYMBOL(rpmh_write_async);
 +
- static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 				struct rsc_drv *drv)
- {
-@@ -530,6 +645,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 		tcs->tcs_mask = ((1 << tcs->num_tcs) - 1) << st;
- 		tcs->tcs_offset = st;
- 		st += tcs->num_tcs;
-+
-+		/*
-+		 * Allocate memory to cache sleep and wake requests to
-+		 * avoid reading TCS register memory.
-+		 */
-+		if (tcs->type == ACTIVE_TCS)
-+			continue;
-+
-+		tcs->cmd_addr = devm_kzalloc(&pdev->dev,
-+					    sizeof(u32) * tcs->num_tcs * ncpt,
-+					    GFP_KERNEL);
-+		if (!tcs->cmd_addr)
-+			return -ENOMEM;
- 	}
+ /**
+  * rpmh_write: Write a set of RPMH commands and block until response
+  *
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index a3f1246ce49a..172a649f1a1c 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -15,6 +15,9 @@ struct rpmh_client;
+ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+ 	      struct tcs_cmd *cmd, int n);
  
- 	drv->num_tcs = st;
++int rpmh_write_async(struct rpmh_client *rc, enum rpmh_state state,
++		    struct tcs_cmd *cmd, int n);
++
+ struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
+ 
+ int rpmh_flush(struct rpmh_client *rc);
+@@ -32,6 +35,11 @@ static inline int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
+ static inline struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
+ { return ERR_PTR(-ENODEV); }
+ 
++static inline int rpmh_write_async(struct rpmh_client *rc,
++				  enum rpmh_state state,
++				  struct tcs_cmd *cmd, int n)
++{ return -ENODEV; }
++
+ static inline int rpmh_flush(struct rpmh_client *rc)
+ { return -ENODEV; }
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
