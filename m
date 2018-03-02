@@ -1,66 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425849AbeCBJhg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:37:36 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1424982AbeCBJg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:36:26 -0500
-Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
- userspace
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
- <20180226221300.GK22024@char.us.oracle.com> <20180301213205.GB29001@flask>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ccead1df-ba70-f365-c816-7892834a290c@redhat.com>
-Date: Fri, 2 Mar 2018 10:36:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180301213205.GB29001@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1424924AbeCBJiu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:38:50 -0500
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:51795 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425880AbeCBJhb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:37:31 -0500
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH] media: doc: poll: fix links to dual-ioctl sections
+Date: Fri,  2 Mar 2018 10:37:20 +0100
+Message-Id: <1519983440-9724-1-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/03/2018 22:39, Radim Krčmář wrote:
-> [Resent after removing g@char.us.oracle.com.]
-> 
-> 2018-02-26 17:13-0500, Konrad Rzeszutek Wilk:
->> On Sat, Feb 24, 2018 at 01:52:26AM +0100, Paolo Bonzini wrote:
->>> Use the new MSR feature framework to expose the ARCH_CAPABILITIES MSR to
->>> userspace.  This way, userspace can access the capabilities even if it
->>> does not have the permissions to read MSRs.
->>
->> ... That is good but could you expand a bit of why it would want this?
->>
->> I am 99% sure it is due to the lovely spectre_v2 mitigation but
->> could you include that in the commit message so that in say a year
->> folks would know what this is?
-> 
-> Userspace can currently get the MSR by creating a VCPU and reading its
-> MSR_IA32_ARCH_CAPABILITIES, because it is set from the hardware MSR.
-> 
-> I thought that "permissions to read MSRs" talked about hardware MSRs, so
-> the purpose of this patch would be a better interface, but I don't see
-> how if we keep the auto-setting on VCPU creation.
+Links like :ref:`VIDIOC_STREAMON` expand to "ioctl VIDIOC_STREAMON,
+VIDIOC_STREAMOFF". Thus our reader will think we are talking about
+STREAMON _and_ STREAMOFF, but only one of the two actually applies
+in some cases.
 
-Yeah, it's mostly about a better interface and being able to do checks
-before creating the VCPU.  The commit message was written before I
-noticed the auto-setting on VCPU creation, and I failed to update it.
+Fix by adding a link title, so the reader will read only the correct
+ioctl name.
 
-Thanks,
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+---
+ Documentation/media/uapi/v4l/func-poll.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Paolo
-
-> Is this aimed towards userspaces that want nothing else from KVM than
-> the MSR value?
-> 
-> Thanks.
-> 
+diff --git a/Documentation/media/uapi/v4l/func-poll.rst b/Documentation/media/uapi/v4l/func-poll.rst
+index d0432dc09b05..360bc6523ae2 100644
+--- a/Documentation/media/uapi/v4l/func-poll.rst
++++ b/Documentation/media/uapi/v4l/func-poll.rst
+@@ -39,7 +39,7 @@ When streaming I/O has been negotiated this function waits until a
+ buffer has been filled by the capture device and can be dequeued with
+ the :ref:`VIDIOC_DQBUF <VIDIOC_QBUF>` ioctl. For output devices this
+ function waits until the device is ready to accept a new buffer to be
+-queued up with the :ref:`VIDIOC_QBUF` ioctl for
++queued up with the :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` ioctl for
+ display. When buffers are already in the outgoing queue of the driver
+ (capture) or the incoming queue isn't full (display) the function
+ returns immediately.
+@@ -52,11 +52,11 @@ flags in the ``revents`` field, output devices the ``POLLOUT`` and
+ ``POLLWRNORM`` flags. When the function timed out it returns a value of
+ zero, on failure it returns -1 and the ``errno`` variable is set
+ appropriately. When the application did not call
+-:ref:`VIDIOC_STREAMON` the :ref:`poll() <func-poll>`
++:ref:`VIDIOC_STREAMON <VIDIOC_STREAMON>` the :ref:`poll() <func-poll>`
+ function succeeds, but sets the ``POLLERR`` flag in the ``revents``
+ field. When the application has called
+-:ref:`VIDIOC_STREAMON` for a capture device but
+-hasn't yet called :ref:`VIDIOC_QBUF`, the
++:ref:`VIDIOC_STREAMON <VIDIOC_STREAMON>` for a capture device but
++hasn't yet called :ref:`VIDIOC_QBUF <VIDIOC_QBUF>`, the
+ :ref:`poll() <func-poll>` function succeeds and sets the ``POLLERR`` flag in
+ the ``revents`` field. For output devices this same situation will cause
+ :ref:`poll() <func-poll>` to succeed as well, but it sets the ``POLLOUT`` and
+-- 
+2.7.4
