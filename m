@@ -1,89 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932379AbeCBTv2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:51:28 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33261 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932243AbeCBTv1 (ORCPT
+        id S932423AbeCBTyZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:54:25 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:38724 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932387AbeCBTyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:51:27 -0500
-X-Google-Smtp-Source: AG47ELsBJCyK4JLUMCIqflSGS52AV53TzGJwBmaKhwXbgdtpMmG0OMHjEnJLwPbSzTTpGR5/Qvlosw==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
-Date: Fri,  2 Mar 2018 20:50:51 +0100
-Message-Id: <20180302195051.4472-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180225172236.29650-7-malat@debian.org>
-References: <20180225172236.29650-7-malat@debian.org>
+        Fri, 2 Mar 2018 14:54:23 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <87po4rz4ui.fsf_-_@xmission.com>
+        <20180226235302.12708-3-ebiederm@xmission.com>
+        <CA+55aFySgJyR6JLcS9HLC9wEpWU1isdyTkchHxZHbJWsh7HFpg@mail.gmail.com>
+        <87r2p7rvn5.fsf@xmission.com> <87tvu3qg2b.fsf@xmission.com>
+        <CA+55aFwPo7Pbq+3Oup-oo8MUFHeEpFXp7qr6z2PrzKp7S0ON+A@mail.gmail.com>
+Date: Fri, 02 Mar 2018 13:53:45 -0600
+In-Reply-To: <CA+55aFwPo7Pbq+3Oup-oo8MUFHeEpFXp7qr6z2PrzKp7S0ON+A@mail.gmail.com>
+        (Linus Torvalds's message of "Mon, 26 Feb 2018 19:41:21 -0800")
+Message-ID: <87r2p2b6eu.fsf_-_@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1erql3-0005vv-3M;;;mid=<87r2p2b6eu.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/4t4hSeajxuYNMhrp57GHLiqpesI6YFTw=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.0 XMSlimDrugH Weight loss drug headers
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.7 XMSubLong Long Subject
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 353 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.7 (0.8%), b_tie_ro: 1.83 (0.5%), parse: 0.95 (0.3%),
+        extract_message_metadata: 11 (3.2%), get_uri_detail_list: 2.7 (0.8%),
+        tests_pri_-1000: 6 (1.6%), tests_pri_-950: 1.15 (0.3%), tests_pri_-900: 0.93
+        (0.3%), tests_pri_-400: 31 (8.8%), check_bayes: 30 (8.5%), b_tokenize: 10
+        (3.0%), b_tok_get_all: 11 (3.1%), b_comp_prob: 2.5 (0.7%), b_tok_touch_all:
+        3.0 (0.9%), b_finish: 0.59 (0.2%), tests_pri_0: 290 (82.1%),
+        check_dkim_signature: 0.57 (0.2%), check_dkim_adsp: 2.6 (0.7%),
+        tests_pri_500: 6 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [RFC][PATCH] fs/posix_acl: Update the comments and support lightweight cache skipping
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rewrite function-like macro into regular static inline function to avoid a
-warning during macro expansion.
-Fix warning (treated as error in W=1):
 
-  CC      arch/powerpc/kernel/signal_32.o
-In file included from ./include/linux/uaccess.h:14:0,
-                 from ./include/asm-generic/termios-base.h:8,
-                 from ./arch/powerpc/include/asm/termios.h:20,
-                 from ./include/uapi/linux/termios.h:6,
-                 from ./include/linux/tty.h:7,
-                 from arch/powerpc/kernel/signal_32.c:36:
-./include/asm-generic/termios-base.h: In function ‘user_termio_to_kernel_termios’:
-./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
-   (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
-                                   ^
-./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro ‘__access_ok’
-   __access_ok((__force unsigned long)(addr), (size), get_fs()))
-   ^~~~~~~~~~~
-./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro ‘access_ok’
-  if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
-      ^~~~~~~~~
-./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro ‘__get_user_check’
-  __get_user_check((x), (ptr), sizeof(*(ptr)))
-  ^~~~~~~~~~~~~~~~
-./include/asm-generic/termios-base.h:36:6: note: in expansion of macro ‘get_user’
-  if (get_user(termios->c_line, &termio->c_line) < 0)
-      ^~~~~~~~
-[...]
-cc1: all warnings being treated as errors
+The code has been missing a way for a ->get_acl method to not cache
+a return value without risking invalidating a cached value
+that was set while get_acl() was returning.
 
-Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Add that support by implementing to_uncachable_acl, to_cachable_acl,
+is_uncacheable_acl, and dealing with uncachable acls in get_acl().
+
+Update the comments so that they are a little clearer about
+what is going on in get_acl()
+
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- arch/powerpc/include/asm/uaccess.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 51bfeb8777f0..a62ee663b2c8 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -47,9 +47,13 @@
+Linus my issue with the forget_cached_acl case was really that it was
+too big of a hammer.  If you care about caching acls only somtimes
+forget_cached_acl called from ->get_acl can stomp that acl you
+explicitly cached with set_cached_acl.
+
+With this change I can unify the legacy horrible fuse posix acl case
+that requires not caching acls with a single if statement in the get_acl
+method. AKA:
+
++	if (!IS_ERR(acl) && !fc->posix_acl)
++		acl = to_uncacheable_acl(acl);
+ 	return acl;
+
+That code I know is locally correct even if later fuse decides to cache
+negative acls when the underlying filesystem does not support xattrs.
+
+ fs/posix_acl.c            | 56 ++++++++++++++++++++++++++++++++++-------------
+ include/linux/posix_acl.h | 17 ++++++++++++++
+ 2 files changed, 58 insertions(+), 15 deletions(-)
+
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 2fd0fde16fe1..e58a68e18603 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -96,12 +96,16 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+ {
+ 	void *sentinel;
+ 	struct posix_acl **p;
+-	struct posix_acl *acl;
++	struct posix_acl *acl, *to_cache;
  
- #else
+ 	/*
+ 	 * The sentinel is used to detect when another operation like
+ 	 * set_cached_acl() or forget_cached_acl() races with get_acl().
+ 	 * It is guaranteed that is_uncached_acl(sentinel) is true.
++	 *
++	 * This is sufficient to prevent races between ->set_acl
++	 * calling set_cached_acl (outside of filesystem specific
++	 * locking) and get_acl() caching the returned acl.
+ 	 */
  
--#define __access_ok(addr, size, segment)	\
--	(((addr) <= (segment).seg) &&		\
--	 (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
-+static inline int __access_ok(unsigned long addr, unsigned long size,
-+			mm_segment_t seg)
+ 	acl = get_cached_acl(inode, type);
+@@ -126,12 +130,18 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+ 		/* fall through */ ;
+ 
+ 	/*
+-	 * Normally, the ACL returned by ->get_acl will be cached.
+-	 * A filesystem can prevent that by calling
+-	 * forget_cached_acl(inode, type) in ->get_acl.
++	 * Normally, the ACL returned by ->get_acl() will be cached.
++	 *
++	 * A filesystem can prevent the acl returned by ->get_acl()
++	 * from being cached by wrapping it with to_uncachable_acl().
++	 *
++	 * A filesystem can at anytime effect the cache directly and
++	 * cause in process calls of get_acl() not to update the cache
++	 * by calling forget_cache_acl(inode, type) or
++	 * set_cached_acl(inode, type, acl).
+ 	 *
+-	 * If the filesystem doesn't have a get_acl() function at all, we'll
+-	 * just create the negative cache entry.
++	 * If the filesystem doesn't have a ->get_acl() function at
++	 * all, we'll just create the negative cache entry.
+ 	 */
+ 	if (!inode->i_op->get_acl) {
+ 		set_cached_acl(inode, type, NULL);
+@@ -139,21 +149,37 @@ struct posix_acl *get_acl(struct inode *inode, int type)
+ 	}
+ 	acl = inode->i_op->get_acl(inode, type);
+ 
++
++	/* To keep the logic simple default to not caching an acl when
++	 * the sentinel is cleared.
++	 */
++	to_cache = ACL_NOT_CACHED;
+ 	if (IS_ERR(acl)) {
+-		/*
+-		 * Remove our sentinel so that we don't block future attempts
+-		 * to cache the ACL.
++		/* Clears the sentinel so that we don't block future
++		 * attempts to cache the ACL, and return an error.
+ 		 */
+-		cmpxchg(p, sentinel, ACL_NOT_CACHED);
+-		return acl;
++	}
++	else if (is_uncacheable_acl(acl)) {
++		/* Clears the sentinel so that we don't block future
++		 * attempts to cache the ACL, and return a valid ACL.
++		 */
++		acl = to_cacheable_acl(acl);
++	}
++	else {
++		to_cache = acl;
++		posix_acl_dup(to_cache);
+ 	}
+ 
+ 	/*
+-	 * Cache the result, but only if our sentinel is still in place.
++	 * Remove the sentinel and replace it with the value that
++	 * needs to be cached, but only if the sentinel is still in
++	 * place.
+ 	 */
+-	posix_acl_dup(acl);
+-	if (unlikely(cmpxchg(p, sentinel, acl) != sentinel))
+-		posix_acl_release(acl);
++	if (unlikely(cmpxchg(p, sentinel, to_cache) != sentinel)) {
++		if (!is_uncached_acl(to_cache))
++			posix_acl_release(to_cache);
++	}
++
+ 	return acl;
+ }
+ EXPORT_SYMBOL(get_acl);
+diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+index 540595a321a7..3be8929b9f48 100644
+--- a/include/linux/posix_acl.h
++++ b/include/linux/posix_acl.h
+@@ -56,6 +56,23 @@ posix_acl_release(struct posix_acl *acl)
+ 		kfree_rcu(acl, a_rcu);
+ }
+ 
++/*
++ * Allow for acls returned from ->get_acl() to not be cached.
++ */
++static inline bool is_uncacheable_acl(struct posix_acl *acl)
 +{
-+	if (addr > seg.seg)
-+		return 0;
-+	return (size == 0 || size - 1 <= seg.seg - addr);
++	return ((unsigned long)acl) & 1UL;
++}
++
++static inline struct posix_acl *to_uncacheable_acl(struct posix_acl *acl)
++{
++	return (struct posix_acl *)(((unsigned long)acl) | 1UL);
++}
++
++static inline struct posix_acl *to_cacheable_acl(struct posix_acl *acl)
++{
++	return (struct posix_acl *)(((unsigned long)acl) & ~1UL);
 +}
  
- #endif
+ /* posix_acl.c */
  
 -- 
-2.11.0
+2.14.1
