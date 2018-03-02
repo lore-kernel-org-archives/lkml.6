@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsRge+oFHv/hyVO5WiydjEHss5p1oi6N+b5QP7u9FThUkCboq3DFhvaHtUJJvFRI0+wROEL
-ARC-Seal: i=1; a=rsa-sha256; t=1519981335; cv=none;
+X-Google-Smtp-Source: AG47ELt45JV8DqB758bG+MueI6gt28hjDLq2ykFetv8hmGWbdbnwe4vjOybAGW+Qca5XzdKnRkv4
+ARC-Seal: i=1; a=rsa-sha256; t=1519981328; cv=none;
         d=google.com; s=arc-20160816;
-        b=q7KP2l0l6RLoXRlbjmxKWD4/zhot4+z3PErySkB+dsCD7QaczI321+eV8V/muI8bEg
-         x9liv7FyN3U15C3wzA3TYf6F+hsQKmnQFazX8CLxnMPBc4qHkPsJoyVaYvxM9CKuU1oW
-         tg3grsAP3eFdOB294PrRSohRgXaJsAUSSFOBPKsBBXSISnmf0osRoXV5VAi9BdiX7Szk
-         5PHNe2UKScrTjcwn6/rzGaSYOFqCmETs//LiJGuXQ0AQjp3FrJ3StunwQCDxAHolS4bk
-         v2hlIdgVuRaHlgPZxlDLoaxpxQCtQDqOiNftTm6Nd5P3uiG5uenRj18Jz3lEu5XH5Kcb
-         9S8g==
+        b=kifVQ+WtndOMDWSIiB67R9PVUa8b1g3u+obTd2GwQ9KsTChBeH5fx3VDsAaw48fXPe
+         23XaOOyaHAF/+0aTpoG5epTP7VGECqLTt848YqWtQ1CpRsSmVy5DhnlW3pk0DDl4Z7BZ
+         ax96pOsjb94Vc38BfI5pEvCkEthIgqMMSUFZXH3jKSkD4d/AqMnL2Z6KneACeEWSsr0p
+         6ooup5X9vY3P6ZOr+UBYYNqNOp5YwC1MSQ4mnIsS8Ppd7dtNVz2FUodcNa2p9Fn/HNRh
+         RsbanoivNa4cl/0JBIj70XbbdVIlA6Z20tlSRtm+nZZ71fli83H/jQU050iM+cTiRaMG
+         NdNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CPa4Ip5mhrIQEDlqPhFhEUbL49kWT1ot8jFW/tx8CnQ=;
-        b=fXC0ntthjjJ6NnMCaKmiZiWAmt0tXyZlithnkfopkmhI4OeHkzP6q7V5i6u1Agwz3g
-         zAgTNr//9WGpTCIcSIDssJCBEqxaIls6T1UTfDAorbbIkP/godPe/MXRT5J0myYDSgcK
-         D5Pc3NeAt/EY/iMRYurE7m7MsiyVZ/K2budUIWXPJQ0Po6r+GKt3b+WTVOVDnItMJXwu
-         pbRU9zKIe8Zw+PP+A6etYD5fK+pOP9Af0bPN0jR0B+1gx9npqgBy9Udw0EbR/ZngmXZd
-         dhTpwxIXpHohtz668vHjq/y091839GyEP/LWWabU4dbrU5wZm8qEGqNVL9gzQvV6pOEi
-         kpJg==
+        bh=tcfTeCUIqliN9wURORT76o6IQ9Q1LgOpBecaN932tcg=;
+        b=Bgfotoxg9RfoFEOV+WatRLVZZlERHpH5EfLDZwzWYr5QFiC0DGIbKXc8QEJ+I3psz/
+         3bCckq4qTqyy1In3qrf2WR+U7QuNaDLfdyuOA2w5iIHBcOt2ufBPJEAy2B8O2R1/KJMl
+         df4TnzbkMZiF0euppA/7o0yRGldjINCBr8psCiwMIdAjk+TbPFp7H0HA9kXhwZnaKo8g
+         jrOClXtvns9LS3yppMvdJ/MFcpkIgcNc/WZBKbk4Aen9fvCYMsi2zD4+MSeOtLngoYe4
+         kmBxhHqRD1hcI7S3HoySP/3fcFcc9QAfTAiINrT45Ixs4vkNQfwtorftszQ57qJTGjMp
+         DYxw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Radu Pirea <radu.pirea@microchip.com>,
-	Mark Brown <broonie@kernel.org>,
+	Siva Reddy Kallam <siva.kallam@broadcom.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 025/115] spi: atmel: fixed spin_lock usage inside atmel_spi_remove
-Date: Fri,  2 Mar 2018 09:50:28 +0100
-Message-Id: <20180302084504.889444448@linuxfoundation.org>
+Subject: [PATCH 4.14 058/115] tg3: Add workaround to restrict 5762 MRRS to 2048
+Date: Fri,  2 Mar 2018 09:51:01 +0100
+Message-Id: <20180302084506.229367324@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815423105817995?=
-X-GMAIL-MSGID: =?utf-8?q?1593815948467198448?=
+X-GMAIL-THRID: =?utf-8?q?1593815433008003046?=
+X-GMAIL-MSGID: =?utf-8?q?1593815941622120821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Radu Pirea <radu.pirea@microchip.com>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
 
 
-[ Upstream commit 66e900a3d225575c8b48b59ae1fe74bb6e5a65cc ]
+[ Upstream commit 4419bb1cedcda0272e1dc410345c5a1d1da0e367 ]
 
-The only part of atmel_spi_remove which needs to be atomic is hardware
-reset.
+One of AMD based server with 5762 hangs with jumbo frame traffic.
+This AMD platform has southbridge limitation which is restricting MRRS
+to 4000. As a work around, driver to restricts the MRRS to 2048 for
+this particular 5762 NX1 card.
 
-atmel_spi_stop_dma calls dma_terminate_all and this needs interrupts
-enabled.
-atmel_spi_release_dma calls dma_release_channel and dma_release_channel
-locks a mutex inside of spin_lock.
-
-So the call of these functions can't be inside a spin_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-atmel.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/tg3.c |   10 ++++++++++
+ drivers/net/ethernet/broadcom/tg3.h |    4 ++++
+ 2 files changed, 14 insertions(+)
 
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1661,12 +1661,12 @@ static int atmel_spi_remove(struct platf
- 	pm_runtime_get_sync(&pdev->dev);
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -10052,6 +10052,16 @@ static int tg3_reset_hw(struct tg3 *tp,
  
- 	/* reset the hardware and block queue progress */
--	spin_lock_irq(&as->lock);
- 	if (as->use_dma) {
- 		atmel_spi_stop_dma(master);
- 		atmel_spi_release_dma(master);
- 	}
+ 	tw32(GRC_MODE, tp->grc_mode | val);
  
-+	spin_lock_irq(&as->lock);
- 	spi_writel(as, CR, SPI_BIT(SWRST));
- 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
- 	spi_readl(as, SR);
++	/* On one of the AMD platform, MRRS is restricted to 4000 because of
++	 * south bridge limitation. As a workaround, Driver is setting MRRS
++	 * to 2048 instead of default 4096.
++	 */
++	if (tp->pdev->subsystem_vendor == PCI_VENDOR_ID_DELL &&
++	    tp->pdev->subsystem_device == TG3PCI_SUBDEVICE_ID_DELL_5762) {
++		val = tr32(TG3PCI_DEV_STATUS_CTRL) & ~MAX_READ_REQ_MASK;
++		tw32(TG3PCI_DEV_STATUS_CTRL, val | MAX_READ_REQ_SIZE_2048);
++	}
++
+ 	/* Setup the timer prescalar register.  Clock is always 66Mhz. */
+ 	val = tr32(GRC_MISC_CFG);
+ 	val &= ~0xff;
+--- a/drivers/net/ethernet/broadcom/tg3.h
++++ b/drivers/net/ethernet/broadcom/tg3.h
+@@ -96,6 +96,7 @@
+ #define TG3PCI_SUBDEVICE_ID_DELL_JAGUAR		0x0106
+ #define TG3PCI_SUBDEVICE_ID_DELL_MERLOT		0x0109
+ #define TG3PCI_SUBDEVICE_ID_DELL_SLIM_MERLOT	0x010a
++#define TG3PCI_SUBDEVICE_ID_DELL_5762		0x07f0
+ #define TG3PCI_SUBVENDOR_ID_COMPAQ		PCI_VENDOR_ID_COMPAQ
+ #define TG3PCI_SUBDEVICE_ID_COMPAQ_BANSHEE	0x007c
+ #define TG3PCI_SUBDEVICE_ID_COMPAQ_BANSHEE_2	0x009a
+@@ -281,6 +282,9 @@
+ #define TG3PCI_STD_RING_PROD_IDX	0x00000098 /* 64-bit */
+ #define TG3PCI_RCV_RET_RING_CON_IDX	0x000000a0 /* 64-bit */
+ /* 0xa8 --> 0xb8 unused */
++#define TG3PCI_DEV_STATUS_CTRL		0x000000b4
++#define  MAX_READ_REQ_SIZE_2048		 0x00004000
++#define  MAX_READ_REQ_MASK		 0x00007000
+ #define TG3PCI_DUAL_MAC_CTRL		0x000000b8
+ #define  DUAL_MAC_CTRL_CH_MASK		 0x00000003
+ #define  DUAL_MAC_CTRL_ID		 0x00000004
