@@ -1,75 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423052AbeCBIov (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 03:44:51 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34332 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423038AbeCBIor (ORCPT
+        id S1423067AbeCBIpJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 03:45:09 -0500
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:42725 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423038AbeCBIpH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 03:44:47 -0500
-X-Google-Smtp-Source: AG47ELuXFyx/r+YFd3H5hKCY3y2RyFMsQsaJG04J0qylF8VipWo/sQNHQEvirvzryI3P4c8wluonrVSMhhulxJX05+4=
+        Fri, 2 Mar 2018 03:45:07 -0500
+X-Google-Smtp-Source: AG47ELsmQHazRO6W3dwZiovUIt6jpBAy5M2m0b5jN5T79LeUuhcLFyl3PVaT98dougRzTjPjTo9OnKdnIzFejH0lpCY=
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
-References: <1518443713-1835-1-git-send-email-geert+renesas@glider.be>
- <1518443713-1835-4-git-send-email-geert+renesas@glider.be>
- <CACRpkdbnJ7W4EPqXtMAM_z1aO5UpuKh=-CCCSQFEToca1LU2=A@mail.gmail.com> <CAMuHMdUGga9j6FKwKt+jO=kGvJ2+_znkFmfgmYx-_h5oTTs3pw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 09:44:46 +0100
-Message-ID: <CACRpkdapq0i1uJwXknHKWsWoobXev885R2JeMZRoXi7ucoTMjA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] gpio: rcar: Use wakeup_path i.s.o. explicit clock handling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <6250a69e-71ab-5119-cc3f-7e2661aa8c0b@huawei.com>
+References: <1519401932-205051-1-git-send-email-john.garry@huawei.com>
+ <20180227095028.GG21033@krava> <6250a69e-71ab-5119-cc3f-7e2661aa8c0b@huawei.com>
+From: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date: Fri, 2 Mar 2018 14:15:05 +0530
+Message-ID: <CAKTKpr4vDByhQ_16XT_+Uo4An3KF_UOB7CTYBrG7Miu0ujDaXA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] perf events patches for improved ARM64 support
+To: John Garry <john.garry@huawei.com>
+Cc: wcohen@redhat.com,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        ak@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>, Linuxarm <linuxarm@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Zhangshaokun <zhangshaokun@hisilicon.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, namhyung@kernel.org,
+        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org,
+        Jayachandran.Nair@cavium.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 9:20 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> On Thu, Mar 1, 2018 at 5:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Mon, Feb 12, 2018 at 2:55 PM, Geert Uytterhoeven
->> <geert+renesas@glider.be> wrote:
+Hi John,
+
+On Fri, Mar 2, 2018 at 1:54 PM, John Garry <john.garry@huawei.com> wrote:
+> On 27/02/2018 09:50, Jiri Olsa wrote:
 >>
->>> Since commit ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable
->>> when wake-up is enabled"), when a GPIO is used for wakeup, the GPIO
->>> block's module clock (if exists) is manually kept running during system
->>> suspend, to make sure the device stays active.
+>> On Sat, Feb 24, 2018 at 12:05:21AM +0800, John Garry wrote:
 >>>
->>> However, this explicit clock handling is merely a workaround for a
->>> failure to properly communicate wakeup information to the device core.
+>>> This patchset adds support for some perf events features,
+>>> targeted at ARM64, implemented in a generic fashion.
 >>>
->>> Instead, set the device's power.wakeup_path field, to indicate this
->>> device is part of the wakeup path.  Depending on the PM Domain's
->>> active_wakeup configuration, the genpd core code will keep the device
->>> enabled (and the clock running) during system suspend when needed.
->>> This allows for the removal of all explicit clock handling code from the
->>> driver.
+>>> The two main features are as follows:
+>>> - support for arch/vendor/platform pmu events directory structure
+>>>    - to support this, topic subdirectory support needs to be dropped
+>>> - support for parsing standard architecture pmu events
 >>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> v3:
+>>> On the back of these, the Cavium ThunderX2, ARM Cortex-A53,
+>>> and HiSilicon hip08 JSONs are relocated/added/updated.
+>>>
+>>> In addition, there is a patch to drop mutli-mapfile.csv support and
+>>> also a bugfix in jevents.c for an error code value.
+>>>
+>>> Differences to v1:
+>>> - Address coding issues from Jiri Olsa in adding arch std event
+>>>    support (https://lkml.org/lkml/2018/2/6/501)
+>>> - add patch to drop topic subdirectory support
+>>> - add patch for bug fix in json_events()
+>>> - add review tags from Jiri Olsa
 >>
->> Patch applied for v4.16 fixes.
+>>
+>> can't tell if those json file changes are ok, but for all the code
+>> changes:
+>>
 >
-> Are you aware this conflicts with commit 51750fb167a05468 ("gpio: gpio-rcar:
-> Support S2RAM") in gpio/for-next?
+> Hi William, Ganapatrao,
+>
+> Can you check the modifications to the ARM64 JSONs you originally submitted
+> in the patchset please?
 
-No but I guess I will become aware.
+Sorry,  i have missed to notice. I will go through this series and
+share my feedback in couple of days.
 
-I have not yet mixed the fixes and devel branches for next.
+>
+> If they are not checked, I'll have to see if the maintainers will accept
+> without your review. If not, I'll have to drop them.
+>
+> Thanks,
+> John
+>
+>> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>>
+>> thanks,
+>> jirka
+>>
+>> .
 
-> You can find the resolution in
-> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpio/gpio-rcar.c?h=renesas-drivers-2018-02-28-v4.16-rc3
-
-Thanks!
-
-Yours,
-Linus Walleij
+thanks
+Ganapat
+>>
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
