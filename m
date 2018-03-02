@@ -1,120 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428184AbeCBN1R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:27:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:54542 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425249AbeCBN1O (ORCPT
+        id S1946599AbeCBNa0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:30:26 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33491 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946584AbeCBNaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:27:14 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D05C601CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
-Subject: Re: [PATCH 0/2] ESRT fixes for relocatable kexec'd kernel
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>, ard.biesheuvel@linaro.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sgoel@codeaurora.org, timur@codeaurora.org
-References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
- <20180228061901.GJ6019@linaro.org>
- <1f03865f-2d22-8ba1-a276-a6b49d7c14de@codeaurora.org>
- <20180301025026.GK6019@linaro.org>
- <7cd3f462-c619-9d82-73a0-2f3bc9de095e@codeaurora.org>
- <20180302055325.GQ6019@linaro.org>
-From: Tyler Baicar <tbaicar@codeaurora.org>
-Message-ID: <4d21342c-a81e-c3ef-8c5f-9d952c7d8fac@codeaurora.org>
-Date: Fri, 2 Mar 2018 08:27:11 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180302055325.GQ6019@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 2 Mar 2018 08:30:23 -0500
+X-Google-Smtp-Source: AG47ELsb7vfg1QfM3h7Q+C7FhWXEH+NN9mVkW5BSSb0kc78P5sCJQENOrdqrlliLBgt5ge7PnCrTOw==
+From: Masanari Iida <standby24x7@gmail.com>
+To: darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Cc: Masanari Iida <standby24x7@gmail.com>
+Subject: [PATCH] xfs: Change URL for the project in xfs.txt
+Date: Fri,  2 Mar 2018 22:30:13 +0900
+Message-Id: <20180302133013.9744-1-standby24x7@gmail.com>
+X-Mailer: git-send-email 2.16.2.345.g7e31236f652a
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/2/2018 12:53 AM, AKASHI Takahiro wrote:
-> Tyler, Jeffrey,
->
-> [Note: This issue takes place in kexec, not kdump. So to be precise,
-> it is not the same phenomenon as what I addressed in [1],[2]:
->    [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557254.html
->    [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/553098.html
-> ]
->
-> On Thu, Mar 01, 2018 at 12:56:38PM -0500, Tyler Baicar wrote:
->> Hello,
->>
->> On 2/28/2018 9:50 PM, AKASHI Takahiro wrote:
->>> Hi,
->>>
->>> On Wed, Feb 28, 2018 at 08:39:42AM -0700, Jeffrey Hugo wrote:
->>>> On 2/27/2018 11:19 PM, AKASHI Takahiro wrote:
->>>>> Tyler,
->>>>>
->>>>> # I missed catching your patch as its subject doesn't contain arm64.
->>>>>
->>>>> On Fri, Feb 23, 2018 at 12:42:31PM -0700, Tyler Baicar wrote:
->>>>>> Currently on arm64 ESRT memory does not appear to be properly blocked off.
->>>>>> Upon successful initialization, ESRT prints out the memory region that it
->>>>>> exists in like:
->>>>>>
->>>>>> esrt: Reserving ESRT space from 0x000000000a4c1c18 to 0x000000000a4c1cf0.
->>>>>>
->>>>>> But then by dumping /proc/iomem this region appears as part of System RAM
->>>>>> rather than being reserved:
->>>>>>
->>>>>> 08f10000-0deeffff : System RAM
->>>>>>
->>>>>> This causes issues when trying to kexec if the kernel is relocatable. When
->>>>>> kexec tries to execute, this memory can be selected to relocate the kernel to
->>>>>> which then overwrites all the ESRT information. Then when the kexec'd kernel
->>>>>> tries to initialize ESRT, it doesn't recognize the ESRT version number and
->>>>>> just returns from efi_esrt_init().
->>>>> I'm not sure what is the root cause of your problem.
->>>>> Do you have good confidence that the kernel (2nd kernel image in this case?)
->>>>> really overwrite ESRT region?
->>>> According to my debug, yes.
->>>> Using JTAG, I was able to determine that the ESRT memory region was getting
->>>> overwritten by the secondary kernel in
->>>> kernel/arch/arm64/kernel/relocate_kernel.S - specifically the "copy_page"
->>>> line of arm64_relocate_new_kernel()
->>>>
->>>>> To my best knowledge, kexec is carefully designed not to do such a thing
->>>>> as it allocates a temporary buffer for kernel image and copies it to the
->>>>> final destination at the very end of the 1st kernel.
->>>>>
->>>>> My guess is that kexec, or rather kexec-tools, tries to load the kernel image
->>>>> at 0x8f80000 (or 0x9080000?, not sure) in your case. It may or may not be
->>>>> overlapped with ESRT.
->>>>> (Try "-d" option when executing kexec command for confirmation.)
->>>> With -d, I see
->>>>
->>>> get_memory_ranges_iomem_cb: 0000000009611000 - 000000000e5fffff : System RAM
->>>>
->>>> That overlaps the ESRT reservation -
->>>> [ 0.000000] esrt: Reserving ESRT space from 0x000000000b708718 to
->>>> 0x000000000b7087f0
->>>>
->>>>> Are you using initrd with kexec?
->>>> Yes
->>> To make the things clear, can you show me, if possible, the followings:
->> I have attached all of these:
-> Many thanks.
-> According to the data, ESRT was overwritten by initrd, not the kernel image.
-> It doesn't matter to you though :)
->
-> The solution would be, as Ard suggested, that more information be
-> added to /proc/iomem.
-> I'm going to fix the issue as quickly as possible.
-Great, thank you!! Please add us to the fix and we will gladly test it out.
+The oss.sgi.com doesn't exist any more.
+Change it to current project URL, https://xfs.wiki.kernel.org/
 
-Thanks,
-Tyler
+Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+---
+ Documentation/filesystems/xfs.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
+index 3b9b5c149f32..4d9ff0a7f8e1 100644
+--- a/Documentation/filesystems/xfs.txt
++++ b/Documentation/filesystems/xfs.txt
+@@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
+ Btrees (directories, extents, free space) to aid both performance
+ and scalability.
+ 
+-Refer to the documentation at http://oss.sgi.com/projects/xfs/
++Refer to the documentation at https://xfs.wiki.kernel.org/
+ for further details.  This implementation is on-disk compatible
+ with the IRIX version of XFS.
+ 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.16.2.345.g7e31236f652a
