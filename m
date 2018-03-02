@@ -1,75 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163817AbeCBAiL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 19:38:11 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:40390 "EHLO ale.deltatee.com"
+        id S1163878AbeCBAmp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 19:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1162941AbeCBAiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 19:38:09 -0500
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-3-logang@deltatee.com>
- <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com>
- <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
- <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <c97fb967-966d-4a8e-91ab-e3f216ebdd97@deltatee.com>
-Date: Thu, 1 Mar 2018 17:37:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1163856AbeCBAmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 19:42:43 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0571021737
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Fri, 2 Mar 2018 09:42:39 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/kprobe: unbalanced preempt counter with
+ CONFIG_PREEMPT=y
+Message-Id: <20180302094239.34c88e000aa86c4126cae99a@kernel.org>
+In-Reply-To: <alpine.DEB.2.21.1803012057300.1391@nanos.tec.linutronix.de>
+References: <20180115042501.20882-1-yangbo@deepin.com>
+        <alpine.DEB.2.21.1803012057300.1391@nanos.tec.linutronix.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, dan.j.williams@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem
- stats
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 1 Mar 2018 22:12:56 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-
-On 01/03/18 05:36 PM, Dan Williams wrote:
-> On Thu, Mar 1, 2018 at 4:15 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->>
->>
->> On 01/03/18 10:44 AM, Bjorn Helgaas wrote:
->>>
->>> I think these two statements are out of order, since the attributes
->>> dereference pdev->p2pdma.  And it looks like you set "error"
->>> unnecessarily, since you return immediately looking at it.
->>
->>
->> Per the previous series, sysfs_create_group is must_check for some reason. I
->> had a printk there but you didn't think it was necessary. So assigning it to
->> error is the only way to squash the warning.
+> On Mon, 15 Jan 2018, yangbo@deepin.com wrote:
 > 
-> Why not fail the setup if the sysfs_create_group() fails? Sure, it may
-> not be strictly required for userspace to have access to these
-> attributes, but it seems hostile that userspace can't make assumptions
-> about the presence of the "p2pmem" directory relative to the
-> capability being setup.
+> > From: Yang Bo <yangbo@deepin.com>
+> > 
+> > For each kprobe hook, preempt_disable() is called twice, but
+> > preempt_enable() is called once, when CONFIG_PREEMPT=y. No
+> > matter kprobe uses ftrace or int3. Then the preempt counter
+> > overflows, the process might be preempted and migrate to another
+> > cpu. It causes the kprobe int3 being treated as not kprobe's int3,
+> > kernel dies.
+> > 
+> > The backtrace looks like this:
+> > 
+> > int3: 0000 [#1] PREEMPT SMP
+> > Modules linkedd in: ...
+> > CPU: 1 PID: 2618 COMM: ...
+> > Hardware: ...
+> > task: ...
+> > RIP: 0010[<ffffffff81457cd5>] [<ffffffff81457cd5>] jprobe_return_end+0x0/0xb
+> > ...
+> > RIP [<ffffffff81457cd5>] jprobe_return_end+0x0/0xb
+> > RSP ...
+> > 
+> > Signed-off-by: Yang Bo <yangbo@deepin.com>
+> > ---
+> >  arch/x86/kernel/kprobes/core.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> > index bd36f3c33cd0..1ea5c9caa8f1 100644
+> > --- a/arch/x86/kernel/kprobes/core.c
+> > +++ b/arch/x86/kernel/kprobes/core.c
+> > @@ -611,6 +611,7 @@ static void setup_singlestep(struct kprobe *p, struct pt_regs *regs,
+> >  		regs->ip = (unsigned long)p->addr;
+> >  	else
+> >  		regs->ip = (unsigned long)p->ainsn.insn;
+> > +	preempt_enable_no_resched();
+> 
+> Good catch, but to be honest the proper fix is to move the preempt_enable()
+> invocation to the callsite. This kind of asymetric handling is error prone
+> and leads exactly to that type of bugs. Just adding more preempt_enable()
+> invocations is proliferating the problem.
 
-Works for me. I'll do that.
+Oops, I missed to send my NACK not to ML...
 
-Thanks,
+----
+> NACK. While single-stepping we have to disable preemption, this
+> is balanced right after debug-exception is handled (which you
+> removed next patch).
+> 
+> kprobes does not use only int3, but also debug (single step) exception.
+> So, basically its sequence is;
+> 1) disable preemption at int3 handler and return
+> 2) do single-step on returned instruction
+> 3) enable preemption at debug exception handler
+----
 
-Logan
+
+> 
+> Looking deeper into kprobe_int3_handler() there are more places which do
+> this completely unomprehensible conditional preempt count handling via
+> skip_singlestep() and setup_detour_execution(). What an unholy mess.
+> 
+> Masami?
+
+As I pointed above, since kprobe has to disable preempt while singlestepping,
+preempt_disable()/enable() must be separated in int3 handler and debug handler
+by default. There are some exception paths for skipping singlestep to speed up
+the process. Maybe I can make it better to handle it in kprobe_int3_handler()
+
+E.g. check singlestep setup in the end of kprobe_int3_handler() and decide
+ to enable preempt again or keep disabled.
+
+Does it match to your thought?
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
