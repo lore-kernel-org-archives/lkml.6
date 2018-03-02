@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELttZdHYUNw2L8Aj+jwhwVd5eputiZS6cWQe7LLMoJnIfcniOxLkL0CE17uDX0ROVsGnHBUC
-ARC-Seal: i=1; a=rsa-sha256; t=1519981149; cv=none;
+X-Google-Smtp-Source: AG47ELvZ03lnFzZ3vu3PyK3lPa2lDF6DQSdM9C61ku5lKNpmoH28q15ZlnPaZXweNQtwwnKjg9DV
+ARC-Seal: i=1; a=rsa-sha256; t=1519981146; cv=none;
         d=google.com; s=arc-20160816;
-        b=cGb2oQNPD2Bpy7mUxsiyuuMshKGoELn4TdufrJORdd8vF/oqUcGqdQme0GX5nI8Q9z
-         JrPmioCtZqDqbYuv7fGAnBix9Yga5Al1qv8ykhElxSOKEEB+mY5FSkP25C+ASGCuOxVW
-         TrJ/alfBcUGB8apbwe31QJ7k+k8wrKQlOkla1dtYS2wPWivN6StIV74jKnUpI48dkdTT
-         idhAyxTREX7VZF0n8G5l1FQw4xNeFat2uw+ECs2gU8I8wOeFTZtXTBUUF7YPkU3yPEuD
-         MqEJsvVK9uWOJlLAibvQUkJsqrtxgBX11X6N8xVa3Es6Hl930YKrO8GFipTPqhoe5eRr
-         2MRQ==
+        b=v+luLZLzxpoky3QgoTb8kiiMTh89qQLTjrdaz1tdU3qH93DKZz5IrgyrPOHzX+9PaV
+         HUyS1eWN0W0SQ9dVzG8r1R00Muaziox72Ry1Xt3v6SxGqOcTCrZGkNwSwP1HEAHbzAuu
+         WG0i/i/W/P4dB/pzL3KHFZSwgfuGqtITGUPXL0MVjjD0d3B2+mChryaqT+AYYtpqOIPc
+         /+4IP8Iz6tRJWqS/dp6dfUforo3yvHYJjXTJwPaJp8yqFZGSkFRXEyRYFKFFIfGz6h8c
+         Ftvx+0PcSjbbN/bJ6zooRlBmtJ3+7XuPIMVuRmgo9qDJYB44sqLPhs5ukk8x6PUGgG41
+         11Kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fy8ft5X1/1Y03Qjz/QP/EvyNdzlIu4zSrzkn+6+uIJE=;
-        b=BBuqVmkvoxuqU7i2uCHH5wnTR5/cct6IMVS7l5s60W3OHbFMdapiSZHybJxmiquBph
-         DezHMFSbFlWirRzLgM2WWx+NxdjVBd/8VgKK/eKs0M1MgwgVpdtcVxSFWmfonIzLnGfC
-         lh9nPiA3p/yowm3n0ixGBAVs3RDRBUtyZS/1DN2Trdyeoi6ysZmC3BC5LxlRABizJhLA
-         ++cg0VP7y/6eo+BBFxZJ/AS4VBXv99z74kSFfCjbXMjemB0/dbBmbh/kGolPjzdf5weS
-         JFXQUwy8I641JH1GWLBV+0+ltfwwyyzt0qlLUUxqBo7e06Pt5kbMau0EUxeQJUbwYXCX
-         usCg==
+        bh=KSY9oUcim9CMBEvE766+7IWN05NH8uqYNi96t+R33Uk=;
+        b=Pma+5VmtYMsjcpr2in6YEqHjxnYW56Gi9AjyDu23OTA0pSwNYrksofNNihj7wPJPfe
+         vmOfYLdJpUYJqjKgLSbY2X2o2UBFofwwry5mRwCp+baChPKXHvs72C8cAQGxxNIPRgDb
+         pq6RJ0qsupPbZj+qssiqKagwEY5n650YPiS/Ip8PlJv4RKFUaPGTl/WelqsEP8VsBqGN
+         OvFHZV0Z5fYBBtqsrDkfDWXMVHsUw8abLB8B4YK4lb77NFU10yZ5oVrrBg1BgybjdidJ
+         zdXKLxTJtVehzgT6KfZR0t2Lq9KVgup86FcYjqZLqT70Am/ALzQ7wMyL/LmHe2rF0El/
+         NSdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eduardo Otubo <otubo@redhat.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 48/56] xen-netfront: enable device after manual module load
-Date: Fri,  2 Mar 2018 09:51:34 +0100
-Message-Id: <20180302084451.981249355@linuxfoundation.org>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	James Hogan <jhogan@kernel.org>,
+	Waldemar Brodkorb <wbx@openadk.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	"Maciej W. Rozycki" <macro@mips.com>,
+	Matthew Fortune <matthew.fortune@mips.com>,
+	Florian Fainelli <florian@openwrt.org>,
+	linux-mips@linux-mips.org,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 56/56] MIPS: Implement __multi3 for GCC7 MIPS64r6 builds
+Date: Fri,  2 Mar 2018 09:51:42 +0100
+Message-Id: <20180302084452.354487935@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815306641088117?=
-X-GMAIL-MSGID: =?utf-8?q?1593815753536508216?=
+X-GMAIL-THRID: =?utf-8?q?1593815551950805083?=
+X-GMAIL-MSGID: =?utf-8?q?1593815750277078701?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +56,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eduardo Otubo <otubo@redhat.com>
+From: James Hogan <jhogan@kernel.org>
 
+commit ebabcf17bcd7ce968b1631ebe08236275698f39b upstream.
 
-[ Upstream commit b707fda2df4070785d0fa8a278aa13944c5f51f8 ]
+GCC7 is a bit too eager to generate suboptimal __multi3 calls (128bit
+multiply with 128bit result) for MIPS64r6 builds, even in code which
+doesn't explicitly use 128bit types, such as the following:
 
-When loading the module after unloading it, the network interface would
-not be enabled and thus wouldn't have a backend counterpart and unable
-to be used by the guest.
+unsigned long func(unsigned long a, unsigned long b)
+{
+	return a > (~0UL) / b;
+}
 
-The guest would face errors like:
+Which GCC rearanges to:
 
-  [root@guest ~]# ethtool -i eth0
-  Cannot get driver information: No such device
+return (unsigned __int128)a * (unsigned __int128)b > 0xffffffffffffffff;
 
-  [root@guest ~]# ifconfig eth0
-  eth0: error fetching interface information: Device not found
+Therefore implement __multi3, but only for MIPS64r6 with GCC7 as under
+normal circumstances we wouldn't expect any calls to __multi3 to be
+generated from kernel code.
 
-This patch initializes the state of the netfront device whenever it is
-loaded manually, this state would communicate the netback to create its
-device and establish the connection between them.
-
-Signed-off-by: Eduardo Otubo <otubo@redhat.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Tested-by: Waldemar Brodkorb <wbx@openadk.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maciej W. Rozycki <macro@mips.com>
+Cc: Matthew Fortune <matthew.fortune@mips.com>
+Cc: Florian Fainelli <florian@openwrt.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17890/
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netfront.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1345,6 +1345,7 @@ static struct net_device *xennet_create_
+---
+ arch/mips/lib/Makefile |    3 +-
+ arch/mips/lib/libgcc.h |   17 +++++++++++++++
+ arch/mips/lib/multi3.c |   54 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 73 insertions(+), 1 deletion(-)
+
+--- a/arch/mips/lib/Makefile
++++ b/arch/mips/lib/Makefile
+@@ -15,4 +15,5 @@ obj-$(CONFIG_CPU_R3000)		+= r3k_dump_tlb
+ obj-$(CONFIG_CPU_TX39XX)	+= r3k_dump_tlb.o
  
- 	netif_carrier_off(netdev);
+ # libgcc-style stuff needed in the kernel
+-obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o ucmpdi2.o
++obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o multi3.o \
++	 ucmpdi2.o
+--- a/arch/mips/lib/libgcc.h
++++ b/arch/mips/lib/libgcc.h
+@@ -9,10 +9,18 @@ typedef int word_type __attribute__ ((mo
+ struct DWstruct {
+ 	int high, low;
+ };
++
++struct TWstruct {
++	long long high, low;
++};
+ #elif defined(__LITTLE_ENDIAN)
+ struct DWstruct {
+ 	int low, high;
+ };
++
++struct TWstruct {
++	long long low, high;
++};
+ #else
+ #error I feel sick.
+ #endif
+@@ -22,4 +30,13 @@ typedef union {
+ 	long long ll;
+ } DWunion;
  
-+	xenbus_switch_state(dev, XenbusStateInitialising);
- 	return netdev;
- 
-  exit:
++#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6)
++typedef int ti_type __attribute__((mode(TI)));
++
++typedef union {
++	struct TWstruct s;
++	ti_type ti;
++} TWunion;
++#endif
++
+ #endif /* __ASM_LIBGCC_H */
+--- /dev/null
++++ b/arch/mips/lib/multi3.c
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/export.h>
++
++#include "libgcc.h"
++
++/*
++ * GCC 7 suboptimally generates __multi3 calls for mips64r6, so for that
++ * specific case only we'll implement it here.
++ *
++ * See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82981
++ */
++#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6) && (__GNUC__ == 7)
++
++/* multiply 64-bit values, low 64-bits returned */
++static inline long long notrace dmulu(long long a, long long b)
++{
++	long long res;
++
++	asm ("dmulu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
++	return res;
++}
++
++/* multiply 64-bit unsigned values, high 64-bits of 128-bit result returned */
++static inline long long notrace dmuhu(long long a, long long b)
++{
++	long long res;
++
++	asm ("dmuhu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
++	return res;
++}
++
++/* multiply 128-bit values, low 128-bits returned */
++ti_type notrace __multi3(ti_type a, ti_type b)
++{
++	TWunion res, aa, bb;
++
++	aa.ti = a;
++	bb.ti = b;
++
++	/*
++	 * a * b =           (a.lo * b.lo)
++	 *         + 2^64  * (a.hi * b.lo + a.lo * b.hi)
++	 *        [+ 2^128 * (a.hi * b.hi)]
++	 */
++	res.s.low = dmulu(aa.s.low, bb.s.low);
++	res.s.high = dmuhu(aa.s.low, bb.s.low);
++	res.s.high += dmulu(aa.s.high, bb.s.low);
++	res.s.high += dmulu(aa.s.low, bb.s.high);
++
++	return res.ti;
++}
++EXPORT_SYMBOL(__multi3);
++
++#endif /* 64BIT && CPU_MIPSR6 && GCC7 */
