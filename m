@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1148518-1519980775-2-6445541342949209201
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519980766-2-15828121966921718791
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519980775; b=XOmuKePfcUyhOB7tk+sOSAuZNojHyVL4tqxW0Va9SY9hJUJ
-    QQnPTwdphR+JGGOLEta039oqQh/rj2+KnQSXDXvzAe1WdT48q6WuiRp8YVrqt4Tn
-    8Kb7BgBHkyNZGMjWgHHwBX46KRJvXA5YFu/t5a6HjI8XJZ1LRWPO0vfWMSU3zoM9
-    vqNTkg/y8knxoC29SE4xUEQV8E//F3RkJP29Bmloha/FluAyXQO1IuJT7Eafc94N
-    BhLIRJ1yIFDVnzQXwmmv+g78ZUReoTabUe0FZ8eLML8NMiYRAxl4lFxdEYxgIpwa
-    U+HYGr5pXmu+Ek4SRAmtNQZUytZvrzm5pJvbxDQ==
+    t=1519980765; b=H3L2urJyGdEIkwi9VMiY3wFQByCfaLFhDb1gqxoKP3pb7CW
+    fDTSeF1IeuR+D2zGUn87loU/IAPZmtUW8hiaZc96iYMoV17oUauZczm5DUFX0aSG
+    idS9WRT0Z1/hdGK+jz86PUnOnIlZMTqB/xigdcTXoWkA+Ht8coyFefHg+8kUjadI
+    160F248QZCo01LeC2TuAQqXjLr3R78RJarQiH1pNrQnHOg03Z4sXkFi4mGFV1Fo3
+    d8V7aci42mKMZ4cnKJ22uUP+QkrFCW9GGEdNw6bJU579h/GsIlRyC3DdDwsTM94f
+    LM0hArVI/LOE/QQb/38LgIzt0BItkZzzqQmds+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519980775; bh=HGBn1aw7nFpce8HU3Fx++Pufoc
-    JaarG7Us6XtP/pIpk=; b=Xw8E1L5kyH5Z9crFnBDGxIwlMpHkBXmIaVchSRlm8+
-    XYXiFHQlGjclu/Ns3sDKNuBLNxEpBidDJE0nDC0L6GmynRgTCrchjFowkvvsW06p
-    u84hA8qrDWtcXDESgsa8euRvOMbLyIqVNTE5oVPkpnhrpnl5IMTTqYVzzTHbkiU0
-    oZle/CYP1iAP+Ri4sqrIClklU8qIYck2AVSuBd4FSf8qYRF4r09BRlzja1VHaxfN
-    KwmaxzSeAHBSbZXFiV/CCaf3/G5y+d2Hd96+Papd2I4lU9BuJVpDeZrL+OtbTffT
-    tF0KDZoURK/dywFxOvAPDBzaeGODa2GSdO/grQ09MriA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1519980765; bh=bm3wBPx2hRiBid6CLVzQf8cw5X
+    m004aFbqHNHRejdaQ=; b=N8YoiwrCZfWZKSxfUpLJjCveED+C7lFqsl4tcP5kN0
+    pafQMCXp1NtcPT+6fcG2VXNjCuHaYf2KbcIdRfXr6Hp1BpBTYqaU+1o3yy4VXcJV
+    KcxakoA5gUMzAujJFCovwrM9jUVf5lW23U2ZaO9ecjFR1r73Ay7RnqOrVXFcm24A
+    5AeJB/q5FS0ND5mX2+nQ+TW1oXTdYNEr5rs/yHC5jXHnkJ2/YwyLSXix+aEDJZpV
+    M0z9XndoPzk+shLCKm33WN+ow2AbCdEarLNNYwja1qT0A1oWRM+YSyD3oUchckXv
+    HbGDjXY1cytgDBYREIG1+4A109e3R6meA/ZAysozD6RA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +37,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,22 +47,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423241AbeCBIwF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 03:52:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49398 "EHLO
+        id S1423257AbeCBIwM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 03:52:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423193AbeCBIwB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:52:01 -0500
+        with ESMTP id S1422891AbeCBIwI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:52:08 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eduardo Otubo <otubo@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 18/24] xen-netfront: enable device after manual module load
-Date: Fri,  2 Mar 2018 09:51:15 +0100
-Message-Id: <20180302084240.039276337@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>
+Subject: [PATCH 3.18 02/24] hrtimer: Ensure POSIX compliance (relative CLOCK_REALTIME hrtimers)
+Date: Fri,  2 Mar 2018 09:50:59 +0100
+Message-Id: <20180302084239.298163471@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084239.157503766@linuxfoundation.org>
 References: <20180302084239.157503766@linuxfoundation.org>
@@ -80,43 +84,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eduardo Otubo <otubo@redhat.com>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
+commit 48d0c9becc7f3c66874c100c126459a9da0fdced upstream.
 
-[ Upstream commit b707fda2df4070785d0fa8a278aa13944c5f51f8 ]
+The POSIX specification defines that relative CLOCK_REALTIME timers are not
+affected by clock modifications. Those timers have to use CLOCK_MONOTONIC
+to ensure POSIX compliance.
 
-When loading the module after unloading it, the network interface would
-not be enabled and thus wouldn't have a backend counterpart and unable
-to be used by the guest.
+The introduction of the additional HRTIMER_MODE_PINNED mode broke this
+requirement for pinned timers.
 
-The guest would face errors like:
+There is no user space visible impact because user space timers are not
+using pinned mode, but for consistency reasons this needs to be fixed.
 
-  [root@guest ~]# ethtool -i eth0
-  Cannot get driver information: No such device
+Check whether the mode has the HRTIMER_MODE_REL bit set instead of
+comparing with HRTIMER_MODE_ABS.
 
-  [root@guest ~]# ifconfig eth0
-  eth0: error fetching interface information: Device not found
-
-This patch initializes the state of the netfront device whenever it is
-loaded manually, this state would communicate the netback to create its
-device and establish the connection between them.
-
-Signed-off-by: Eduardo Otubo <otubo@redhat.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Fixes: 597d0275736d ("timers: Framework for identifying pinned timers")
+Link: http://lkml.kernel.org/r/20171221104205.7269-7-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netfront.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1358,6 +1358,7 @@ static struct net_device *xennet_create_
+---
+ kernel/time/hrtimer.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1149,7 +1149,12 @@ static void __hrtimer_init(struct hrtime
  
- 	netif_carrier_off(netdev);
+ 	cpu_base = raw_cpu_ptr(&hrtimer_bases);
  
-+	xenbus_switch_state(dev, XenbusStateInitialising);
- 	return netdev;
+-	if (clock_id == CLOCK_REALTIME && mode != HRTIMER_MODE_ABS)
++	/*
++	 * POSIX magic: Relative CLOCK_REALTIME timers are not affected by
++	 * clock modifications, so they needs to become CLOCK_MONOTONIC to
++	 * ensure POSIX compliance.
++	 */
++	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
+ 		clock_id = CLOCK_MONOTONIC;
  
-  exit:
+ 	base = hrtimer_clockid_to_base(clock_id);
