@@ -1,79 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936293AbeCBL6S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:58:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44310 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934881AbeCBL6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:58:15 -0500
-Date: Fri, 2 Mar 2018 12:58:13 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-Subject: Re: [PATCH v0 3/3] livepatch: update documentation for shadow
- variables
-Message-ID: <20180302115813.gjn7k67dkfe4szzj@pathway.suse.cz>
-References: <1519421630-12025-1-git-send-email-joe.lawrence@redhat.com>
- <1519421630-12025-4-git-send-email-joe.lawrence@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519421630-12025-4-git-send-email-joe.lawrence@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S967818AbeCBMAN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:00:13 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51356 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936298AbeCBMAE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:00:04 -0500
+X-Google-Smtp-Source: AG47ELtdISsxq4+gHkdyT7AaU28SMaC3ih4AIE96cZcEMI6J5o5zDKCPijUPEVj4ZTVNoSCnEorwEg==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <jg@lightnvm.io>
+Message-Id: <7965F260-45CD-47F4-8063-33F392295950@lightnvm.io>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_C0B23A2F-F0E4-4840-B979-AE5C2F8FFA17";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 02/15] lightnvm: add controller capabilities to 2.0
+Date: Fri, 2 Mar 2018 12:59:59 +0100
+In-Reply-To: <e435dd71-a83d-1888-0e1b-cd1b62181e4c@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <1519832975-25432-1-git-send-email-javier@cnexlabs.com>
+ <1519832975-25432-3-git-send-email-javier@cnexlabs.com>
+ <e435dd71-a83d-1888-0e1b-cd1b62181e4c@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-02-23 16:33:50, Joe Lawrence wrote:
-> Update livepatch shadow variable documentation with respect to new
-> atomic replace / cumulative patch functionality.
-> 
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> ---
->  Documentation/livepatch/shadow-vars.txt | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/livepatch/shadow-vars.txt b/Documentation/livepatch/shadow-vars.txt
-> index 89c66634d600..9a2754cf551c 100644
-> --- a/Documentation/livepatch/shadow-vars.txt
-> +++ b/Documentation/livepatch/shadow-vars.txt
-> @@ -179,6 +179,30 @@ doesn't matter what data value the shadow variable holds, its existence
->  suggests how to handle the parent object.
->  
->  
-> +Use in cumulative patches
-> +-------------------------
-> +
-> +Cumulative livepatches provide a "one-stop" module containing all active
-> +livepatch code.
 
-I would remove the above sentence. I had troubles to parse and
-understand it. I think that the sentence below is better descriptive
-and enough :-)
+--Apple-Mail=_C0B23A2F-F0E4-4840-B979-AE5C2F8FFA17
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-+ A cumulative patch disables and replaces any previously
-> +loaded livepatch.  Shadow variable lifetimes should be carefully
-> +considered when loading cumulative livepatches:
-> +
-> +- If shadow variables lifetimes are specific to livepatch module
-> +  versions, it may make sense to free them when the corresponding
-> +  livepatch module is unloaded.
-> +
-> +- If shadow variable instances may be safely handled across cumulative
-> +  livepatch module versions, then it may make sense to free them from
-> +  unpatch callbacks.  When a cumulative patch replaces an existing
-> +  livepatch, only the cumulative patch's callbacks will be executed.
-> +  This means that new cumulative livepatches may be loaded while
-> +  deprecated / disabled livepatches may be unloaded without clearing
-> +  existing shadow variables.
-> +
-> +See Documentation/livepatch/callbacks.txt and cumulative.txt for more
+> On 1 Mar 2018, at 11.33, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 02/28/2018 04:49 PM, Javier Gonz=C3=A1lez wrote:
+>> Assign missing mccap value on 2.0 path
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>> ---
+>>  drivers/nvme/host/lightnvm.c | 4 +++-
+>>  include/linux/lightnvm.h     | 8 +++++---
+>>  2 files changed, 8 insertions(+), 4 deletions(-)
+>> diff --git a/drivers/nvme/host/lightnvm.c =
+b/drivers/nvme/host/lightnvm.c
+>> index e276ace28c64..5b2024ebac76 100644
+>> --- a/drivers/nvme/host/lightnvm.c
+>> +++ b/drivers/nvme/host/lightnvm.c
+>> @@ -318,7 +318,7 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 =
+*id,
+>>  	geo->ws_opt =3D sec_per_pg;
+>>  	geo->mw_cunits =3D geo->ws_opt << 3;	/* default to MLC safe =
+values */
+>>  -	geo->mccap =3D le32_to_cpu(src->mccap);
+>> +	geo->cap =3D le32_to_cpu(src->mccap);
+>>    	geo->trdt =3D le32_to_cpu(src->trdt);
+>>  	geo->trdm =3D le32_to_cpu(src->trdm);
+>> @@ -396,6 +396,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 =
+*id,
+>>  	geo->ws_opt =3D le32_to_cpu(id->ws_opt);
+>>  	geo->mw_cunits =3D le32_to_cpu(id->mw_cunits);
+>>  +	geo->cap =3D le32_to_cpu(id->mccap);
+>> +
+>>  	geo->trdt =3D le32_to_cpu(id->trdt);
+>>  	geo->trdm =3D le32_to_cpu(id->trdm);
+>>  	geo->tprt =3D le32_to_cpu(id->twrt);
+>> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+>> index 16255fcd5250..b9f0d2070de9 100644
+>> --- a/include/linux/lightnvm.h
+>> +++ b/include/linux/lightnvm.h
+>> @@ -288,8 +288,10 @@ struct nvm_geo {
+>>  	u32	ws_opt;		/* optimal write size */
+>>  	u32	mw_cunits;	/* distance required for successful read =
+*/
+>>  -	/* device capabilities */
+>> -	u32	mccap;
+>> +	/* device capabilities. Note that this represents capabilities =
+in 1.2
+>> +	 * and media and controller capabilities in 2.0
+>> +	 */
+>> +	u32	cap;
+>=20
+> Here is a list of capabilities:
+>=20
+> 1.2
+> Bad block mgmt
+> Hybrid command support
+>=20
+> 2.0
+>=20
+> Vector copy
+> Double reset
+>=20
+> The way I was thinking it would be implemented is to split the upper =
+cap bits to 2.0, and let the lower bits be reserved for 1.2.
+>=20
+> Such that one would define the following:
+>=20
+> enum {
+> 	NVM_CAP_BBM 	1 << 0;
+> 	NVM_CAP_HCS 	1 << 1;
+>=20
+> 	NVM_CAP_VCPY 	1 << 16;
+> 	NVM_CAP_DRST	1 << 17;
+> };
+>=20
+> That way, the assignment from 2.0 can easily be done with cap =3D =
+le32_to_cpu(id->mccap) << 16;
+>=20
+> and targets and other don't need to understand the difference between =
+1.2 and 2.0 format.
 
-s/cumulative.txt/cumulative-patches.txt/
+I can see that you already have a way to do it in mind. I'll remove this
+patch and you can implement it later on.
 
-Best Regards,
-Petr
+Javier
+
+--Apple-Mail=_C0B23A2F-F0E4-4840-B979-AE5C2F8FFA17
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEm1mT7zen+vs9+T8kYx8FO3WZGMoFAlqZPL8ACgkQYx8FO3WZ
+GMoSQw/5AYXtlBMYpgem4lSVvJqWIn3oRfLMnCK82eonCw52bmvuktvRLsxO1A4t
+0sA/ku1k7isnnI4NbyF47Hl1+f4sdZZ6i8+okvytQjJcFz63Jg3Mn62g/gne42yO
+RSCXwpta1G0VEJoJog4YCdW+bFrFfd6pr4ZrqSokwY/NMNc9vARKKR8ysferXXPq
+fCym8rWZWuTxMjMmR1PwfGfcIIAOMgzqBcWOtvYqK8uhawiIae7XADQh5yj4fRiq
+0AqpOAhMStpeXfFEtfjEjI+A/ds78qM1bBx27p11e0pnkZxaSfdc7A/mMADOzf8Q
+w9HFLPJ6h8qqBHjAF/y0wF8oEgImw5XtDKPBczv1rEnmmxBxauebiUB5xQHU33MF
+c2ifNvu2HdV/4SQbC9d9nOANV5uP/cYtgpxpv21GCpMvHC5Vdb9GbqHumiJSRpOZ
+ogJSL6RcA6Gft+e7LSqACsA6/WSKC3ay7Qo9Y3Ud31YUq25AL9MMf23NOA1sGCdz
+eShM4FlY+WUQFOfFulUBj9OoLK+RSqDNA5PIN0IqacUbKdqzzg1/SyGM9ri/zViQ
+s3vDH+9b+7wuBac3zwIDKQkxApgWd+eOmH7eEWeJJRH42ZRbiliOy5/sm/bkszNl
+i/e/YPKu+SBMe1qB/Ow2rtJmWUUPtYzY4xlKdm9Wsj+hrvO5CQA=
+=bWAG
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_C0B23A2F-F0E4-4840-B979-AE5C2F8FFA17--
