@@ -1,41 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936203AbeCBPRv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:17:51 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33092 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936165AbeCBPRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:17:50 -0500
-Date: Fri, 2 Mar 2018 08:17:48 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Jani Nikula <jani.nikula@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/sphinx: Fix Directive import error
-Message-ID: <20180302081748.2ccc93b9@lwn.net>
-In-Reply-To: <s5hr2p2frxx.wl-tiwai@suse.de>
-References: <s5hbmg6hf4g.wl-tiwai@suse.de>
-        <20180302145055.GA18137@bombadil.infradead.org>
-        <s5hr2p2frxx.wl-tiwai@suse.de>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1164821AbeCBPR7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:17:59 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:36120 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S936165AbeCBPR4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:17:56 -0500
+Date: Fri, 2 Mar 2018 10:17:55 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Boqun Feng <boqun.feng@gmail.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2 v2 RFC] tools/memory-model: redefine rb in terms of
+ rcu-fence
+In-Reply-To: <20180302045015.GO3777@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1803021017150.1408-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 02 Mar 2018 15:55:06 +0100
-Takashi Iwai <tiwai@suse.de> wrote:
+On Thu, 1 Mar 2018, Paul E. McKenney wrote:
 
-> Jon, would you like me resending the patch?  Or it's trivial enough as
-> you can fix in place.
+> On Fri, Mar 02, 2018 at 12:31:41PM +0800, Boqun Feng wrote:
+> > On Thu, Mar 01, 2018 at 10:37:58AM -0800, Paul E. McKenney wrote:
+> > > On Thu, Mar 01, 2018 at 09:49:06AM -0800, Paul E. McKenney wrote:
+> 
+> [ . . . ]
+> 
+> > > And as Andrea pointed out off-list, I did indeed mess up Boqun's change.
+> > > I forgot to change the "irreflexive" into "acyclic".  Applying that change
+> > > makes everything work.
+> > > 
+> > > Please accept my apologies for my confusion!
+> > > 
+> > 
+> > np, also I should have provided a proper patch for your testing.
+> > 
+> > For this Alan's patch, feel free to add:
+> > 
+> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> 
+> Alan's last submission was still RFC, so I have not yet queued it.
+> So this ball is still in Alan's court.
 
-If you can resend that would be great - one less thing for me to have to
-squeeze in :)
+I'll wait a few more days to see if there are any other comments and 
+then submit it officially.
 
-Thanks,
-
-jon
+Alan
