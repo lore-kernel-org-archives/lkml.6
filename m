@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1330670-1519988855-2-12933945065139577380
+X-Cyrus-Session-Id: sloti22d1t05-1330799-1519988833-2-12865168171060278495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519988855; b=T+k3aUF0EawYo5PA6q+JvxmqIsT6HhwLPXKFw7y65kkLxhM
-    Qd4KDgy/7RcxyJVfXu3QHxrHjrTtKtImWgXazcXsGYXDN3CAgQA+L74LQkfqYj6M
-    XJ5X704Mx7V6hNCmnaNXqtwv3EBQEIfPu2fPN5QdALthkcOtNoT7A91WPoh6iUe0
-    ueGGlLpbWozphZuOYsb0cRDhDAH0pVQtJ1tCNzTyxMtSJuqjaov/7orkLfFrnCf5
-    V8RX+WKkzWe0SmuDlCLhu5BzMe+lzlz6cGCt9FjxSqsWwoHD5CdR2oxyPNN4Uiy4
-    /nXLnydxIZs307Cg8XuWbSXrq2MXUNbVoFR9wew==
+    t=1519988832; b=LF5e3E6WFHz4iBMb1vASJkYyzroYvd+otdpIWpwk0FV8nNm
+    +GP5toXVkMzWDtbUqx62Ks+wdlzplFjPxBpwZWygu91HFupgTOECYD32WJ3yhBsU
+    X9K8D44pyGKjvqgbU7ritKRKcP4kI8tH/mSrfCEkwzi1ZI2GcNA4/LPGqjojH7ig
+    cMqUCxyX8rqyXmtAi18zEd2n3e/So1+/mz6udGt9BzYuOusqG/5h9bzT3YUAesYu
+    jXXBrC6kqRFkh1BGoYhE9+fDts7TiXE3pH7opYKyvAA04q3YVNs2bTRBeGkY3s40
+    yUNkIBQ3FRUNXynX8Z07opygVTFhLF4si5JBBlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519988855; bh=ILXQkfiYkra+6YeKwLrTaM+5m7
-    la+P63LPOS2gLP+u0=; b=LZor0gPlbXLOHlzdXGRR7Rd5FMRCX3F/oss3crQCG3
-    rQ33pEVl95sva1BKeJ/lUJ89+yAaeUM/ES0De2wp4f0urnEmYmWZxrGzfN4yOYBk
-    D6n369V1vQ1fsq/SFoZZv8kq6H1iHvSNpso+FQ2zVgjitVMzjHc9A/X9McDwgZjb
-    AOk4ahJTqPUMAvQeXWqibyKSMHZ+C/TrzaefQWTv41sIi/Uqf/VIShZX+6ia5JeA
-    1vdabMe74WCHQ6tAlCy3LBCdjscg/YKUGyLJumOkxRGkBs3usLiWFRT+EcgvxROl
-    edykcqn1ZkuCH9WIAM/byzG4RsvLDafylPpGHzNtNLqg==
+    :list-id; s=arctest; t=1519988832; bh=6Erz9jp8Xvv7sVt0b2C7ahaVJN
+    LHpyILg1SxgqvjxZA=; b=CTqrJzkD9laq1eELTg1TjsO9sIUxTbqpgOXQB52pz9
+    3sylWonyXkk60v9JzgZ3DBTS7Z+KMlJKpr1UBU9Uk1f+fhOcRiIBpH5f3g0vrfGP
+    maVC1f5QldhS/cBrLtGFrJrhhZNWjIue/fAvXRJih3bekljSTkGo7KgNvO8GnZQD
+    ec+HMSyrg3GybeEMMGHki5Gyfd5995DblFVSeRWiTVgHe4vOGO7D1z9B/aoaPzBG
+    +Mp1w6eB6GZX7wDg1L40Lruyn668/xdcPFH0YhmrTOh/HFq4xBNWJFubMN6s2ZDi
+    HaX/dhRz6SrKk5MjYnS7TDGSBHiLRJu8FznKUQwLX1YQ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -47,21 +47,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423609AbeCBLHM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 06:07:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50594 "EHLO
+        id S1426896AbeCBLGr (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 06:06:47 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423570AbeCBIyz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:54:55 -0500
+        with ESMTP id S1423583AbeCBIzB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:55:01 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gui Iribarren <gui@altermundi.net>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 24/34] mac80211: mesh: drop frames appearing to be from us
-Date: Fri,  2 Mar 2018 09:51:20 +0100
-Message-Id: <20180302084437.595058321@linuxfoundation.org>
+Subject: [PATCH 4.4 26/34] bnxt_en: Fix the Invalid VF id check in bnxt_vf_ndo_prep routine.
+Date: Fri,  2 Mar 2018 09:51:22 +0100
+Message-Id: <20180302084437.693698886@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -79,33 +81,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
 
 
-[ Upstream commit 736a80bbfda709fb3631f5f62056f250a38e5804 ]
+[ Upstream commit 78f300049335ae81a5cc6b4b232481dc5e1f9d41 ]
 
-If there are multiple mesh stations with the same MAC address,
-they will both get confused and start throwing warnings.
+In bnxt_vf_ndo_prep (which is called by bnxt_get_vf_config ndo), there is a
+check for "Invalid VF id". Currently, the check is done against max_vfs.
+However, the user doesn't always create max_vfs. So, the check should be
+against the created number of VFs. The number of bnxt_vf_info structures
+that are allocated in bnxt_alloc_vf_resources routine is the "number of
+requested VFs". So, if an "invalid VF id" falls between the requested
+number of VFs and the max_vfs, the driver will be dereferencing an invalid
+pointer.
 
-Obviously in this case nothing can actually work anyway, so just
-drop frames that look like they're from ourselves early on.
-
-Reported-by: Gui Iribarren <gui@altermundi.net>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Venkat Devvuru <venkatkumar.duvvuru@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/rx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -3367,6 +3367,8 @@ static bool ieee80211_accept_frame(struc
- 		}
- 		return true;
- 	case NL80211_IFTYPE_MESH_POINT:
-+		if (ether_addr_equal(sdata->vif.addr, hdr->addr2))
-+			return false;
- 		if (multicast)
- 			return true;
- 		return ether_addr_equal(sdata->vif.addr, hdr->addr1);
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
+@@ -29,7 +29,7 @@ static int bnxt_vf_ndo_prep(struct bnxt
+ 		netdev_err(bp->dev, "vf ndo called though sriov is disabled\n");
+ 		return -EINVAL;
+ 	}
+-	if (vf_id >= bp->pf.max_vfs) {
++	if (vf_id >= bp->pf.active_vfs) {
+ 		netdev_err(bp->dev, "Invalid VF id %d\n", vf_id);
+ 		return -EINVAL;
+ 	}
