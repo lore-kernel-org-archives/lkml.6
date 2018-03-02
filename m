@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034354AbeCBPpN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:45:13 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36256 "EHLO mail.bootlin.com"
+        id S1946489AbeCBPrn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:47:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36277 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1033791AbeCBPpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:45:09 -0500
+        id S1033795AbeCBPpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:45:10 -0500
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: davem@davemloft.net
 Cc: Stefan Chulski <stefanc@marvell.com>, netdev@vger.kernel.org,
@@ -13,9 +13,9 @@ Cc: Stefan Chulski <stefanc@marvell.com>, netdev@vger.kernel.org,
         maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
         mw@semihalf.com, Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for all ports
-Date: Fri,  2 Mar 2018 16:40:40 +0100
-Message-Id: <20180302154044.25204-2-antoine.tenart@bootlin.com>
+Subject: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
+Date: Fri,  2 Mar 2018 16:40:44 +0100
+Message-Id: <20180302154044.25204-6-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180302154044.25204-1-antoine.tenart@bootlin.com>
 References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
@@ -25,221 +25,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Chulski <stefanc@marvell.com>
 
-This patch configures the buffer manager long pool for all ports part of
-the same CP. Long pool separation between ports is redundant since there
-are no performance improvement when different pools are used.
+This patch adds the support for jumbo frames in the Marvell PPv2 driver.
+A third buffer pool is added with 10KB buffers, which is used if the MTU
+is higher than 1518B for packets larger than 1518B. Please note only the
+port 0 supports hardware checksum offload due to the Tx FIFO size
+limitation.
 
 Signed-off-by: Stefan Chulski <stefanc@marvell.com>
 [Antoine: cosmetic cleanup, commit message]
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 76 ++++++++++++++++++------------------
- 1 file changed, 37 insertions(+), 39 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 96 +++++++++++++++++++++++++++---------
+ 1 file changed, 74 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 2acf499fc317..ca349d520d22 100644
+index 31a2c3039e2e..543e8c11a47f 100644
 --- a/drivers/net/ethernet/marvell/mvpp2.c
 +++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -808,23 +808,23 @@ enum mvpp2_prs_l3_cast {
+@@ -815,6 +815,7 @@ enum mvpp2_prs_l3_cast {
  #define MVPP22_RSS_TABLE_ENTRIES	32
  
  /* BM constants */
--#define MVPP2_BM_POOLS_NUM		8
++#define MVPP2_BM_JUMBO_BUF_NUM		512
  #define MVPP2_BM_LONG_BUF_NUM		1024
  #define MVPP2_BM_SHORT_BUF_NUM		2048
  #define MVPP2_BM_POOL_SIZE_MAX		(16*1024 - MVPP2_BM_POOL_PTR_ALIGN/4)
- #define MVPP2_BM_POOL_PTR_ALIGN		128
--#define MVPP2_BM_SWF_LONG_POOL(port)	((port > 2) ? 2 : port)
--#define MVPP2_BM_SWF_SHORT_POOL		3
+@@ -826,12 +827,14 @@ enum mvpp2_prs_l3_cast {
  
- /* BM cookie (32 bits) definition */
- #define MVPP2_BM_COOKIE_POOL_OFFS	8
- #define MVPP2_BM_COOKIE_CPU_OFFS	24
- 
-+#define MVPP2_BM_SHORT_FRAME_SIZE		512
-+#define MVPP2_BM_LONG_FRAME_SIZE		2048
+ #define MVPP2_BM_SHORT_FRAME_SIZE		512
+ #define MVPP2_BM_LONG_FRAME_SIZE		2048
++#define MVPP2_BM_JUMBO_FRAME_SIZE		10240
  /* BM short pool packet size
   * These value assure that for SWF the total number
   * of bytes allocated for each buffer will be 512
   */
--#define MVPP2_BM_SHORT_PKT_SIZE		MVPP2_RX_MAX_PKT_SIZE(512)
-+#define MVPP2_BM_SHORT_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_SHORT_FRAME_SIZE)
-+#define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
+ #define MVPP2_BM_SHORT_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_SHORT_FRAME_SIZE)
+ #define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
++#define MVPP2_BM_JUMBO_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_JUMBO_FRAME_SIZE)
  
  #define MVPP21_ADDR_SPACE_SZ		0
  #define MVPP22_ADDR_SPACE_SZ		SZ_64K
-@@ -832,12 +832,17 @@ enum mvpp2_prs_l3_cast {
- #define MVPP2_MAX_THREADS		8
- #define MVPP2_MAX_QVECS			MVPP2_MAX_THREADS
- 
--enum mvpp2_bm_type {
--	MVPP2_BM_FREE,
--	MVPP2_BM_SWF_LONG,
--	MVPP2_BM_SWF_SHORT
-+enum mvpp2_bm_pool_log_num {
-+	MVPP2_BM_SHORT,
-+	MVPP2_BM_LONG,
-+	MVPP2_BM_POOLS_NUM
+@@ -842,6 +845,7 @@ enum mvpp2_prs_l3_cast {
+ enum mvpp2_bm_pool_log_num {
+ 	MVPP2_BM_SHORT,
+ 	MVPP2_BM_LONG,
++	MVPP2_BM_JUMBO,
+ 	MVPP2_BM_POOLS_NUM
  };
  
-+static struct {
-+	int pkt_size;
-+	int buf_num;
-+} mvpp2_pools[MVPP2_BM_POOLS_NUM];
+@@ -4393,6 +4397,10 @@ static void mvpp2_setup_bm_pool(void)
+ 	/* Long pool */
+ 	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
+ 	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
 +
- /* GMAC MIB Counters register definitions */
- #define MVPP21_MIB_COUNTERS_OFFSET		0x1000
- #define MVPP21_MIB_COUNTERS_PORT_SZ		0x400
-@@ -1266,7 +1271,6 @@ struct mvpp2_cls_lookup_entry {
- struct mvpp2_bm_pool {
- 	/* Pool number in the range 0-7 */
- 	int id;
--	enum mvpp2_bm_type type;
- 
- 	/* Buffer Pointers Pool External (BPPE) size */
- 	int size;
-@@ -4195,7 +4199,6 @@ static int mvpp2_bm_pool_create(struct platform_device *pdev,
- 	val |= MVPP2_BM_START_MASK;
- 	mvpp2_write(priv, MVPP2_BM_POOL_CTRL_REG(bm_pool->id), val);
- 
--	bm_pool->type = MVPP2_BM_FREE;
- 	bm_pool->size = size;
- 	bm_pool->pkt_size = 0;
- 	bm_pool->buf_num = 0;
-@@ -4345,6 +4348,17 @@ static int mvpp2_bm_init(struct platform_device *pdev, struct mvpp2 *priv)
- 	return 0;
++	/* Jumbo pool */
++	mvpp2_pools[MVPP2_BM_JUMBO].buf_num  = MVPP2_BM_JUMBO_BUF_NUM;
++	mvpp2_pools[MVPP2_BM_JUMBO].pkt_size = MVPP2_BM_JUMBO_PKT_SIZE;
  }
  
-+static void mvpp2_setup_bm_pool(void)
-+{
-+	/* Short pool */
-+	mvpp2_pools[MVPP2_BM_SHORT].buf_num  = MVPP2_BM_SHORT_BUF_NUM;
-+	mvpp2_pools[MVPP2_BM_SHORT].pkt_size = MVPP2_BM_SHORT_PKT_SIZE;
-+
-+	/* Long pool */
-+	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
-+	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
-+}
-+
  /* Attach long pool to rxq */
- static void mvpp2_rxq_long_pool_set(struct mvpp2_port *port,
- 				    int lrxq, int long_pool)
-@@ -4483,13 +4497,11 @@ static int mvpp2_bm_bufs_add(struct mvpp2_port *port,
- 	bm_pool->buf_num += i;
- 
- 	netdev_dbg(port->dev,
--		   "%s pool %d: pkt_size=%4d, buf_size=%4d, total_size=%4d\n",
--		   bm_pool->type == MVPP2_BM_SWF_SHORT ? "short" : " long",
-+		   "pool %d: pkt_size=%4d, buf_size=%4d, total_size=%4d\n",
- 		   bm_pool->id, bm_pool->pkt_size, buf_size, total_size);
- 
- 	netdev_dbg(port->dev,
--		   "%s pool %d: %d of %d buffers added\n",
--		   bm_pool->type == MVPP2_BM_SWF_SHORT ? "short" : " long",
-+		   "pool %d: %d of %d buffers added\n",
- 		   bm_pool->id, i, buf_num);
- 	return i;
- }
-@@ -4498,25 +4510,20 @@ static int mvpp2_bm_bufs_add(struct mvpp2_port *port,
-  * pool pointer on success
-  */
- static struct mvpp2_bm_pool *
--mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, enum mvpp2_bm_type type,
--		  int pkt_size)
-+mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, int pkt_size)
- {
+@@ -4551,7 +4559,7 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, int pkt_size)
  	struct mvpp2_bm_pool *new_pool = &port->priv->bm_pools[pool];
  	int num;
  
--	if (new_pool->type != MVPP2_BM_FREE && new_pool->type != type) {
--		netdev_err(port->dev, "mixing pool types is forbidden\n");
-+	if (pool < MVPP2_BM_SHORT || pool > MVPP2_BM_LONG) {
-+		netdev_err(port->dev, "Invalid pool %d\n", pool);
+-	if (pool < MVPP2_BM_SHORT || pool > MVPP2_BM_LONG) {
++	if (pool < MVPP2_BM_SHORT || pool > MVPP2_BM_JUMBO) {
+ 		netdev_err(port->dev, "Invalid pool %d\n", pool);
  		return NULL;
  	}
- 
--	if (new_pool->type == MVPP2_BM_FREE)
--		new_pool->type = type;
--
- 	/* Allocate buffers in case BM pool is used as long pool, but packet
- 	 * size doesn't match MTU or BM pool hasn't being used yet
- 	 */
--	if (((type == MVPP2_BM_SWF_LONG) && (pkt_size > new_pool->pkt_size)) ||
--	    (new_pool->pkt_size == 0)) {
-+	if (new_pool->pkt_size == 0) {
- 		int pkts_num;
- 
- 		/* Set default buffer number or free all the buffers in case
-@@ -4524,9 +4531,7 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, enum mvpp2_bm_type type,
- 		 */
- 		pkts_num = new_pool->buf_num;
- 		if (pkts_num == 0)
--			pkts_num = type == MVPP2_BM_SWF_LONG ?
--				   MVPP2_BM_LONG_BUF_NUM :
--				   MVPP2_BM_SHORT_BUF_NUM;
-+			pkts_num = mvpp2_pools[pool].buf_num;
- 		else
- 			mvpp2_bm_bufs_free(port->dev->dev.parent,
- 					   port->priv, new_pool);
-@@ -4558,9 +4563,8 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+@@ -4596,11 +4604,24 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, int pool, int pkt_size)
+ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+ {
+ 	int rxq;
++	enum mvpp2_bm_pool_log_num long_log_pool, short_log_pool;
++
++	/* If port pkt_size is higher than 1518B:
++	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Short pool
++	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
++	 */
++	if (port->pkt_size > MVPP2_BM_LONG_PKT_SIZE) {
++		long_log_pool = MVPP2_BM_JUMBO;
++		short_log_pool = MVPP2_BM_LONG;
++	} else {
++		long_log_pool = MVPP2_BM_LONG;
++		short_log_pool = MVPP2_BM_SHORT;
++	}
  
  	if (!port->pool_long) {
  		port->pool_long =
--		       mvpp2_bm_pool_use(port, MVPP2_BM_SWF_LONG_POOL(port->id),
--					 MVPP2_BM_SWF_LONG,
--					 port->pkt_size);
-+			mvpp2_bm_pool_use(port, MVPP2_BM_LONG,
-+					  mvpp2_pools[MVPP2_BM_LONG].pkt_size);
+-			mvpp2_bm_pool_use(port, MVPP2_BM_LONG,
+-					  mvpp2_pools[MVPP2_BM_LONG].pkt_size);
++			mvpp2_bm_pool_use(port, long_log_pool,
++					  mvpp2_pools[long_log_pool].pkt_size);
  		if (!port->pool_long)
  			return -ENOMEM;
  
-@@ -4572,9 +4576,8 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+@@ -4612,8 +4633,8 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
  
  	if (!port->pool_short) {
  		port->pool_short =
--			mvpp2_bm_pool_use(port, MVPP2_BM_SWF_SHORT_POOL,
--					  MVPP2_BM_SWF_SHORT,
--					  MVPP2_BM_SHORT_PKT_SIZE);
-+			mvpp2_bm_pool_use(port, MVPP2_BM_SHORT,
-+					  mvpp2_pools[MVPP2_BM_SHORT].pkt_size);
+-			mvpp2_bm_pool_use(port, MVPP2_BM_SHORT,
+-					  mvpp2_pools[MVPP2_BM_SHORT].pkt_size);
++			mvpp2_bm_pool_use(port, short_log_pool,
++					  mvpp2_pools[long_log_pool].pkt_size);
  		if (!port->pool_short)
  			return -ENOMEM;
  
-@@ -4593,7 +4596,6 @@ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
+@@ -4630,24 +4651,49 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
+ {
  	struct mvpp2_port *port = netdev_priv(dev);
- 	struct mvpp2_bm_pool *port_pool = port->pool_long;
- 	int num, pkts_num = port_pool->buf_num;
--	int pkt_size = MVPP2_RX_PKT_SIZE(mtu);
+-	struct mvpp2_bm_pool *port_pool = port->pool_long;
+-	int num, pkts_num = port_pool->buf_num;
++	enum mvpp2_bm_pool_log_num new_long_pool;
++	int pkt_size = MVPP2_RX_PKT_SIZE(mtu);
  
- 	/* Update BM pool with new buffer size */
- 	mvpp2_bm_bufs_free(dev->dev.parent, port->priv, port_pool);
-@@ -4602,18 +4604,12 @@ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
- 		return -EIO;
+-	/* Update BM pool with new buffer size */
+-	mvpp2_bm_bufs_free(dev->dev.parent, port->priv, port_pool,
+-			   port_pool->buf_num);
+-	if (port_pool->buf_num) {
+-		WARN(1, "cannot free all buffers in pool %d\n", port_pool->id);
+-		return -EIO;
++	/* If port MTU is higher than 1518B:
++	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Short pool
++	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
++	 */
++	if (pkt_size > MVPP2_BM_LONG_PKT_SIZE)
++		new_long_pool = MVPP2_BM_JUMBO;
++	else
++		new_long_pool = MVPP2_BM_LONG;
++
++	if (new_long_pool != port->pool_long->id) {
++		/* Remove port from old short & long pool */
++		port->pool_long = mvpp2_bm_pool_use(port, port->pool_long->id,
++						    port->pool_long->pkt_size);
++		port->pool_long->port_map &= ~(1 << port->id);
++		port->pool_long = NULL;
++
++		port->pool_short = mvpp2_bm_pool_use(port, port->pool_short->id,
++						     port->pool_short->pkt_size);
++		port->pool_short->port_map &= ~(1 << port->id);
++		port->pool_short = NULL;
++
++		port->pkt_size =  pkt_size;
++
++		/* Add port to new short & long pool */
++		mvpp2_swf_bm_pool_init(port);
++
++		/* Update L4 checksum when jumbo enable/disable on port */
++		if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
++			dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
++			dev->hw_features &= ~(NETIF_F_IP_CSUM |
++					      NETIF_F_IPV6_CSUM);
++		} else {
++			dev->features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
++			dev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
++		}
  	}
  
--	port_pool->pkt_size = pkt_size;
--	port_pool->frag_size = SKB_DATA_ALIGN(MVPP2_RX_BUF_SIZE(pkt_size)) +
--		MVPP2_SKB_SHINFO_SIZE;
- 	num = mvpp2_bm_bufs_add(port, port_pool, pkts_num);
- 	if (num != pkts_num) {
- 		WARN(1, "pool %d: %d of %d allocated\n",
- 		     port_pool->id, num, pkts_num);
- 		return -EIO;
- 	}
--
--	mvpp2_bm_pool_bufsize_set(port->priv, port_pool,
--				  MVPP2_RX_BUF_SIZE(port_pool->pkt_size));
+-	num = mvpp2_bm_bufs_add(port, port_pool, pkts_num);
+-	if (num != pkts_num) {
+-		WARN(1, "pool %d: %d of %d allocated\n",
+-		     port_pool->id, num, pkts_num);
+-		return -EIO;
+-	}
  	dev->mtu = mtu;
++	dev->wanted_features = dev->features;
++
  	netdev_update_features(dev);
  	return 0;
-@@ -8630,6 +8626,8 @@ static int mvpp2_probe(struct platform_device *pdev)
- 			priv->sysctrl_base = NULL;
- 	}
- 
-+	mvpp2_setup_bm_pool();
+ }
+@@ -8326,13 +8372,19 @@ static int mvpp2_port_probe(struct platform_device *pdev,
+ 	dev->features = features | NETIF_F_RXCSUM;
+ 	dev->hw_features |= features | NETIF_F_RXCSUM | NETIF_F_GRO |
+ 			    NETIF_F_HW_VLAN_CTAG_FILTER;
 +
- 	for (i = 0; i < MVPP2_MAX_THREADS; i++) {
- 		u32 addr_space_sz;
++	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
++		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
++		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
++	}
++
+ 	dev->vlan_features |= features;
+ 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
  
+-	/* MTU range: 68 - 9676 */
++	/* MTU range: 68 - 9704 */
+ 	dev->min_mtu = ETH_MIN_MTU;
+-	/* 9676 == 9700 - 20 and rounding to 8 */
+-	dev->max_mtu = 9676;
++	/* 9704 == 9728 - 20 and rounding to 8 */
++	dev->max_mtu = MVPP2_BM_JUMBO_PKT_SIZE;
+ 
+ 	err = register_netdev(dev);
+ 	if (err < 0) {
 -- 
 2.14.3
