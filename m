@@ -1,48 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu6XGTl69n3sctTDQ9CHl3vuHtpnA/bYLAbwY/H2y0Ih/8llHN9c1E9kBUhmED/aGPPV4Jq
-ARC-Seal: i=1; a=rsa-sha256; t=1519980973; cv=none;
-        d=google.com; s=arc-20160816;
-        b=blSPYJK4Fz46qFt8lfbvT8bLT98yjclN+ZEIZc7OSPILvIcOOPFd55D1lpVrQJ/tsN
-         giaFSdhBFsBEDmR6vHAu9tYDaxO4U5oumZxFJBd9D+rgxZm5zDVEKFtyliDAe0MLhLpi
-         ZzI9K7ZrK3gevrbNDeQHv1G2nocz1AF1eRCaO8L1hg8jBN9AhEgaxuzJ/v3rJuh4tziK
-         RkTpxh69nxiBkJvwJ5bT13KZ7suDnPQ0u2VZ+nCZPT0jWdktUQRV6c0JU7lQ6uolK66F
-         XZiiyyXcZtRj7jQv9R03zoTb9Op/xDYdUNhby/XKG8b3OkZbDun1Zxv82Ouj78frkQRd
-         e1kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6jrnm9oqJMzhUNy3KSt2w/lMv/YeebSJJHhTRY3Lgv4=;
-        b=MWsy9UnuKtRGCi+VsH5hmqWb7tZk69SuPLQWUf4wWu4Y/sSpt/OYbwkfnIL18Xe4W0
-         yAVA9b6UgVSs0DQPwC5I0hmyREVOsZpTEKx4PfP4T0oQrIZUR0wdWItv1tR6Qn5+1dyX
-         HL67OjdC6nEgM6kCDuk0Oq9oMRzvJwDV2SLisF3WbxdNxQ4aJO8k4Oy3350y3yLbS7m9
-         EbaYMI0VGpM5n+RE6a6ZvM4zvJhs20oSUlFvzI/q2slbPtyNbdfyMknAIciQk3/KM7Ef
-         9eHgd5zt94KKpg/YlBVKhMEuxJYeviircFrqAnNBTCEOFDHJszInw4nhHF91N5Is6HcY
-         JZzQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1073259-1519980969-2-16960143795757359193
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519980968; b=E3vGsfw+sSSE++8Th/JGaSGOzbi97vt0jyPJRbOXF7S7R9A
+    5pKVe4qohcdLE9Ac8A3A5YOl12lxDVR6SycKzoVgEbfvft8yJvV5SeqAYBpx8CIp
+    kzWPloI+X+wyifX7V9w1WmUdpVrWF20gxDzSQ9bLQCYy/p+mEZyLntc0xF2hW9ra
+    hbWUOC/I7hlqQrQ86nrtd9dfuBwwFSfaL3d0GSxW2ACXw21JSXBSIPMuY/4CMAXQ
+    PgC1r/lY+r6P/TN+dYC0dZnLC5yGu22K3lBArb6yNQ/SEZcRJro4DSuAA/l1t1BV
+    DWSscvRs1sDhkR7KFTOAE13LuIMcuE51AVh8a+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1519980968; bh=Wvw8osYRItgYTwPxB9/1Yk82cw
+    b/VB826H4NtMxGXok=; b=fpwrShLpQyaEybbUKUigE/YsifRh2M+rctmABMhIhy
+    f7Q4NWUEZrrzMug0O+eSOU0BkTH0zy3OjizCjzVA6ZDRcUOuCo/rgLDW3OkbGTwR
+    sryETLnUhX0sdvfIHgWNi2Tl55XotoP0yJjz0/vrMOx0qya2MplIMWY4fcqGlt2J
+    PDmZ4Nk+03qIKIHsn61eKmsRtQ2RNElCpJyJn7hJUh9lG/Aa8wTMRAirrc3zz7VC
+    /HPLzLwoMmcwAB4kzbkcbqL1i2/43XjYRj27s1zklu7h75fH9z5ziyMMelWBwlUd
+    96ynGkxieMvGyIZgnIy/iH2tEb+sVp8ISV5zqGZL2Icw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1423782AbeCBI4D (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 03:56:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50962 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423748AbeCBI4C (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 03:56:02 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Andreas Platschek <andreas.platschek@opentech.at>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 04/56] dmaengine: fsl-edma: disable clks on all error paths
-Date: Fri,  2 Mar 2018 09:50:50 +0100
-Message-Id: <20180302084449.866993911@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, keescook@chromium.org,
+        Ingo Molnar <mingo@kernel.org>, Mike Galbraith <efault@gmx.de>
+Subject: [PATCH 4.9 01/56] hrtimer: Ensure POSIX compliance (relative CLOCK_REALTIME hrtimers)
+Date: Fri,  2 Mar 2018 09:50:47 +0100
+Message-Id: <20180302084449.690035246@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815569196394585?=
-X-GMAIL-MSGID: =?utf-8?q?1593815569196394585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,109 +83,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andreas Platschek <andreas.platschek@opentech.at>
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
+commit 48d0c9becc7f3c66874c100c126459a9da0fdced upstream.
 
-[ Upstream commit 2610acf46b9ed528ec2cacd717bc9d354e452b73 ]
+The POSIX specification defines that relative CLOCK_REALTIME timers are not
+affected by clock modifications. Those timers have to use CLOCK_MONOTONIC
+to ensure POSIX compliance.
 
-Previously enabled clks are only disabled if clk_prepare_enable() fails.
-However, there are other error paths were the previously enabled
-clocks are not disabled.
+The introduction of the additional HRTIMER_MODE_PINNED mode broke this
+requirement for pinned timers.
 
-To fix the problem, fsl_disable_clocks() now takes the number of clocks
-that shall be disabled + unprepared. For existing calls were all clocks
-were already successfully prepared + enabled, DMAMUX_NR is passed to
-disable + unprepare all clocks.
+There is no user space visible impact because user space timers are not
+using pinned mode, but for consistency reasons this needs to be fixed.
 
-In error paths were only some clocks were successfully prepared +
-enabled the loop counter is passed, in order to disable + unprepare
-all successfully prepared + enabled clocks.
+Check whether the mode has the HRTIMER_MODE_REL bit set instead of
+comparing with HRTIMER_MODE_ABS.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Andreas Platschek <andreas.platschek@opentech.at>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: keescook@chromium.org
+Fixes: 597d0275736d ("timers: Framework for identifying pinned timers")
+Link: http://lkml.kernel.org/r/20171221104205.7269-7-anna-maria@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Mike Galbraith <efault@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/fsl-edma.c |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
 
---- a/drivers/dma/fsl-edma.c
-+++ b/drivers/dma/fsl-edma.c
-@@ -863,11 +863,11 @@ static void fsl_edma_irq_exit(
- 	}
- }
+---
+ kernel/time/hrtimer.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1134,7 +1134,12 @@ static void __hrtimer_init(struct hrtime
  
--static void fsl_disable_clocks(struct fsl_edma_engine *fsl_edma)
-+static void fsl_disable_clocks(struct fsl_edma_engine *fsl_edma, int nr_clocks)
- {
- 	int i;
+ 	cpu_base = raw_cpu_ptr(&hrtimer_bases);
  
--	for (i = 0; i < DMAMUX_NR; i++)
-+	for (i = 0; i < nr_clocks; i++)
- 		clk_disable_unprepare(fsl_edma->muxclk[i]);
- }
+-	if (clock_id == CLOCK_REALTIME && mode != HRTIMER_MODE_ABS)
++	/*
++	 * POSIX magic: Relative CLOCK_REALTIME timers are not affected by
++	 * clock modifications, so they needs to become CLOCK_MONOTONIC to
++	 * ensure POSIX compliance.
++	 */
++	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
+ 		clock_id = CLOCK_MONOTONIC;
  
-@@ -904,25 +904,25 @@ static int fsl_edma_probe(struct platfor
- 
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1 + i);
- 		fsl_edma->muxbase[i] = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(fsl_edma->muxbase[i]))
-+		if (IS_ERR(fsl_edma->muxbase[i])) {
-+			/* on error: disable all previously enabled clks */
-+			fsl_disable_clocks(fsl_edma, i);
- 			return PTR_ERR(fsl_edma->muxbase[i]);
-+		}
- 
- 		sprintf(clkname, "dmamux%d", i);
- 		fsl_edma->muxclk[i] = devm_clk_get(&pdev->dev, clkname);
- 		if (IS_ERR(fsl_edma->muxclk[i])) {
- 			dev_err(&pdev->dev, "Missing DMAMUX block clock.\n");
-+			/* on error: disable all previously enabled clks */
-+			fsl_disable_clocks(fsl_edma, i);
- 			return PTR_ERR(fsl_edma->muxclk[i]);
- 		}
- 
- 		ret = clk_prepare_enable(fsl_edma->muxclk[i]);
--		if (ret) {
--			/* disable only clks which were enabled on error */
--			for (; i >= 0; i--)
--				clk_disable_unprepare(fsl_edma->muxclk[i]);
--
--			dev_err(&pdev->dev, "DMAMUX clk block failed.\n");
--			return ret;
--		}
-+		if (ret)
-+			/* on error: disable all previously enabled clks */
-+			fsl_disable_clocks(fsl_edma, i);
- 
- 	}
- 
-@@ -976,7 +976,7 @@ static int fsl_edma_probe(struct platfor
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"Can't register Freescale eDMA engine. (%d)\n", ret);
--		fsl_disable_clocks(fsl_edma);
-+		fsl_disable_clocks(fsl_edma, DMAMUX_NR);
- 		return ret;
- 	}
- 
-@@ -985,7 +985,7 @@ static int fsl_edma_probe(struct platfor
- 		dev_err(&pdev->dev,
- 			"Can't register Freescale eDMA of_dma. (%d)\n", ret);
- 		dma_async_device_unregister(&fsl_edma->dma_dev);
--		fsl_disable_clocks(fsl_edma);
-+		fsl_disable_clocks(fsl_edma, DMAMUX_NR);
- 		return ret;
- 	}
- 
-@@ -1015,7 +1015,7 @@ static int fsl_edma_remove(struct platfo
- 	fsl_edma_cleanup_vchan(&fsl_edma->dma_dev);
- 	of_dma_controller_free(np);
- 	dma_async_device_unregister(&fsl_edma->dma_dev);
--	fsl_disable_clocks(fsl_edma);
-+	fsl_disable_clocks(fsl_edma, DMAMUX_NR);
- 
- 	return 0;
- }
+ 	base = hrtimer_clockid_to_base(clock_id);
