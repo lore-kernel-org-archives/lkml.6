@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935006AbeCBXo6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:44:58 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36023 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934783AbeCBXoz (ORCPT
+        id S935040AbeCBXp0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:45:26 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36027 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935015AbeCBXpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:44:55 -0500
-X-Google-Smtp-Source: AG47ELtZWqoJcU8Z0llbCajCKy+NHROpC+wtovEROqwhRGzMD+EPQ5VjE0q3OKro1DOgYunfBoS1Dg==
-Subject: [PATCH 2/3] vfio: Add support for unmanaged or userspace managed
- SR-IOV
+        Fri, 2 Mar 2018 18:45:23 -0500
+X-Google-Smtp-Source: AG47ELtwqyuPoV6fjKnu5ZGqd6jhbVM4wVLjhRxSVefG5Kl0nCMTcTG9vbD+8617M+mdn+ba3Nka+w==
+Subject: [PATCH 3/3] virtio_pci: Add support for unmanaged SR-IOV on
+ virtio_pci devices
 From: Alexander Duyck <alexander.duyck@gmail.com>
 To: bhelgaas@google.com, alexander.h.duyck@intel.com,
         linux-pci@vger.kernel.org
@@ -18,8 +18,8 @@ Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, mheyne@amazon.de,
         liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
         dwmw@amazon.co.uk
-Date: Fri, 02 Mar 2018 15:44:52 -0800
-Message-ID: <20180302234432.3337.96123.stgit@localhost.localdomain>
+Date: Fri, 02 Mar 2018 15:45:20 -0800
+Message-ID: <20180302234459.3337.5625.stgit@localhost.localdomain>
 In-Reply-To: <20180302234218.3337.16486.stgit@localhost.localdomain>
 References: <20180302234218.3337.16486.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -32,117 +32,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexander Duyck <alexander.h.duyck@intel.com>
 
-This patch is meant to allow assignment of an SR-IOV enabled PF, as in VFs
-have been generated, with vfio-pci. My understanding is the primary use
-case for this is something like DPDK running the PF while the VFs are all
-assigned to guests.
+Hardware-realized virtio_pci devices can implement SR-IOV, so this
+patch enables its use. The device in question is an upcoming Intel
+NIC that implements both a virtio_net PF and virtio_net VFs. These
+are hardware realizations of what has been up to now been a software
+interface.
 
-A secondary effect of this is that it provides an interface through which
-it would be possible to enable SR-IOV on drivers that may not have a
-physical function that actually manages the device.
+The device in question has the following 4-part PCI IDs:
 
-Enabling SR-IOV should be pretty straight forward. As long as there are no
-userspace processes currently controlling the interface the number of VFs
-can be changed, and VFs will be generated without drivers being loaded on
-the host. Once the userspace process begins controlling the interface the
-number of VFs cannot be updated via the sysfs until the control is
-released.
+PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
 
-Note the VFs will have drivers load on them in the host if the
-sriov_unmanaged_autoprobe is updated to a value of 1. However the behavior
-of the VFs in such a setup cannot be guaranteed as the PF will not be
-available until the userspace process starts and begins to manage the
-device.
+The patch currently needs no check for device ID, because the callback
+will never be made for devices that do not assert the capability or
+when run on a platform incapable of SR-IOV.
 
-For now I am leaving the value as locked when the PF is being controlled
-from userspace as a form of synchronization. Basically this way we cannot
-have the number of VFs change out from under the process so it should not
-require any notification framework, and the configuration can just be read
-out via configuration space accesses.
+One reason for this patch is because the hardware requires the
+vendor ID of a VF to be the same as the vendor ID of the PF that
+created it. So it seemed logical to simply have a fully-functioning
+virtio_net PF create the VFs. This patch makes that possible.
 
+Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
 ---
- drivers/vfio/pci/vfio_pci.c |   57 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/virtio/virtio_pci_common.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index b0f759476900..3023bda39aa9 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -1224,6 +1224,8 @@ static void vfio_pci_remove(struct pci_dev *pdev)
- 				VGA_RSRC_LEGACY_IO | VGA_RSRC_LEGACY_MEM);
- 	}
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index 48d4d1cf1cb6..ca1549393255 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ 	else
+ 		virtio_pci_modern_remove(vp_dev);
  
-+	pci_disable_sriov(pdev);
-+
- 	if (!disable_idle_d3)
- 		pci_set_power_state(pdev, PCI_D0);
++	pci_disable_sriov(pci_dev);
+ 	pci_disable_device(pci_dev);
+ 	put_device(dev);
  }
-@@ -1260,12 +1262,67 @@ static pci_ers_result_t vfio_pci_aer_err_detected(struct pci_dev *pdev,
- 	.error_detected = vfio_pci_aer_err_detected,
- };
- 
-+static int vfio_pci_sriov_configure(struct pci_dev *pdev, int nr_virtfn)
-+{
-+	struct vfio_pci_device *vdev;
-+	struct vfio_device *device;
-+	int err;
-+
-+	device = vfio_device_get_from_dev(&pdev->dev);
-+	if (device == NULL)
-+		return -ENODEV;
-+
-+	vdev = vfio_device_data(device);
-+	if (vdev == NULL) {
-+		vfio_device_put(device);
-+		return -ENODEV;
-+	}
-+
-+	/*
-+	 * If a userspace process is already using this device just return
-+	 * busy and don't allow for any changes.
-+	 */
-+	if (vdev->refcnt) {
-+		pci_warn(pdev,
-+			 "PF is currently in use, blocked until released by user\n");
-+		return -EBUSY;
-+	}
-+
-+	err = pci_sriov_configure_unmanaged(pdev, nr_virtfn);
-+	if (err <= 0)
-+		return err;
-+
-+	/*
-+	 * We are now leaving VFs in the control of some unknown PF entity.
-+	 *
-+	 * Best case is a well behaved userspace PF is expected and any VMs
-+	 * that the VFs will be assigned to are dependent on the userspace
-+	 * entity anyway. An example being NFV where maybe the PF is acting
-+	 * as an accelerated interface for a firewall or switch.
-+	 *
-+	 * Worst case is somebody really messed up and just enabled SR-IOV
-+	 * on a device they were planning to assign to a VM somwhere.
-+	 *
-+	 * In either case it is probably best for us to set the taint flag
-+	 * and warn the user since this could get really ugly really quick
-+	 * if this wasn't what they were planning to do.
-+	 */
-+	add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-+	pci_warn(pdev,
-+		 "Adding kernel taint for vfio-pci now managing SR-IOV PF device\n");
-+
-+	return nr_virtfn;
-+}
-+
- static struct pci_driver vfio_pci_driver = {
- 	.name		= "vfio-pci",
- 	.id_table	= NULL, /* only dynamic ids */
- 	.probe		= vfio_pci_probe,
- 	.remove		= vfio_pci_remove,
- 	.err_handler	= &vfio_err_handlers,
+@@ -596,6 +597,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+ #ifdef CONFIG_PM_SLEEP
+ 	.driver.pm	= &virtio_pci_pm_ops,
+ #endif
 +#ifdef CONFIG_PCI_IOV
-+	.sriov_configure = vfio_pci_sriov_configure,
++	.sriov_configure = pci_sriov_configure_unmanaged,
 +#endif
  };
  
- struct vfio_devices {
+ module_pci_driver(virtio_pci_driver);
