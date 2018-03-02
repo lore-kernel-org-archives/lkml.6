@@ -1,63 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752851AbeCBWO5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:14:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752591AbeCBWO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:14:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672BE217B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 2 Mar 2018 16:14:54 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?=
-        <ckoenig.leichtzumerken@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [GIT PULL] PCI fixes for v4.16
-Message-ID: <20180302221454.GA12069@bhelgaas-glaptop.roam.corp.google.com>
+        id S1752876AbeCBWQT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:16:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60590 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbeCBWQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 17:16:18 -0500
+Subject: Re: [PATCH] virtio_balloon: export huge page allocation statistics
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <1518846272-5216-1-git-send-email-jonathan.helman@oracle.com>
+ <20180227170250-mutt-send-email-mst@kernel.org>
+From: Jonathan Helman <jonathan.helman@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <9d7e605f-5a91-1431-61e4-78c9110bf4f2@oracle.com>
+Date: Fri, 2 Mar 2018 14:16:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180227170250-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803020261
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
-
-  - Update pci.ids location (documentation only) (Randy Dunlap)
-
-  - Fix a crash when BIOS didn't assign a BAR and we try to enlarge it
-    (Christian König)
 
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+On 02/27/2018 07:20 AM, Michael S. Tsirkin wrote:
+> On Fri, Feb 16, 2018 at 09:44:32PM -0800, Jonathan Helman wrote:
+>> Export statistics for successful and failed huge page allocations
+>> from the virtio balloon driver. These 2 stats come directly from
+>> the vm_events HTLB_BUDDY_PGALLOC and HTLB_BUDDY_PGALLOC_FAIL.
+>> Signed-off-by: Jonathan Helman <jonathan.helman@oracle.com>
+> 
+> Any host/guest intergace changes need to be copied to
+> the virtio TC mailing list (subscriber-only, sorry about that):
+> virtio-dev@lists.oasis-open.org
+> 
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+Sorry, will do on v2.
 
-are available in the Git repository at:
+>> ---
+>>   drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>   include/uapi/linux/virtio_balloon.h | 4 +++-
+>>   2 files changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+>> index dfe5684..6b237e3 100644
+>> --- a/drivers/virtio/virtio_balloon.c
+>> +++ b/drivers/virtio/virtio_balloon.c
+>> @@ -272,6 +272,12 @@ static unsigned int update_balloon_stats(struct virtio_balloon *vb)
+>>   				pages_to_bytes(events[PSWPOUT]));
+>>   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, events[PGMAJFAULT]);
+>>   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, events[PGFAULT]);
+>> +#ifdef CONFIG_HUGETLB_PAGE
+>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>> +		    events[HTLB_BUDDY_PGALLOC]);
+>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>> +		    events[HTLB_BUDDY_PGALLOC_FAIL]);
+>> +#endif
+>>   #endif
+>>   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>   				pages_to_bytes(i.freeram));
+>> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+>> index 4e8b830..e3e8071 100644
+>> --- a/include/uapi/linux/virtio_balloon.h
+>> +++ b/include/uapi/linux/virtio_balloon.h
+>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>   #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
+>>   #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in /proc */
+>>   #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>> -#define VIRTIO_BALLOON_S_NR       8
+>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Number of htlb pgalloc successes */
+>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Number of htlb pgalloc failures */
+>> +#define VIRTIO_BALLOON_S_NR       10
+> 
+> Can you clarify the comments pls? Eschew abbreviation.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.16-fixes-2
+Sure. How about the following instead? Hoping it makes things clearer, 
+without going over the 80 character limit ;)
 
-for you to fetch changes up to c37406e05d1e541df40b8b81c4bd40753fcaf414:
+#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page allocations */
+#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation 
+failures */
 
-  PCI: Allow release of resources that were never assigned (2018-02-26 14:51:13 -0600)
+If this is better, I'll send out a v2.
 
-----------------------------------------------------------------
-pci-v4.16-fixes-2
+Thanks,
+Jon
 
-----------------------------------------------------------------
-Christian König (1):
-      PCI: Allow release of resources that were never assigned
-
-Randy Dunlap (1):
-      PCI: Update location of pci.ids file
-
- Documentation/PCI/pci.txt | 4 +++-
- drivers/pci/setup-res.c   | 4 ++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+>>   
+>>   /*
+>>    * Memory statistics structure.
+>> -- 
+>> 1.8.3.1
