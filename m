@@ -1,61 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426034AbeCBPx0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:53:26 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54814 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424377AbeCBPxW (ORCPT
+        id S1427952AbeCBPxh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:53:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38080 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424068AbeCBPxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:53:22 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] block: Add default switch case to blk_pm_allow_request() to kill warning
-Date: Fri,  2 Mar 2018 16:53:19 +0100
-Message-Id: <1520005999-13679-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Fri, 2 Mar 2018 10:53:33 -0500
+Date: Fri, 2 Mar 2018 07:53:22 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Stephen Bates <sbates@raithlin.com>
+Cc: Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@kernel.dk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Steve Wise <swise@opengridcomputing.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
+Message-ID: <20180302155322.GA5934@infradead.org>
+References: <20180228234006.21093-11-logang@deltatee.com>
+ <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
+ <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
+ <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
+ <20180301184249.GI19007@ziepe.ca>
+ <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
+ <20180301224540.GL19007@ziepe.ca>
+ <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
+ <20180301234930.GG14799@localhost.localdomain>
+ <6B6A0FD9-14F5-4AF2-A74A-DAA562C34AB9@raithlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6B6A0FD9-14F5-4AF2-A74A-DAA562C34AB9@raithlin.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc 4.9.0:
+On Thu, Mar 01, 2018 at 11:53:16PM +0000, Stephen  Bates wrote:
+> > There's a meaningful difference between writing to an NVMe CMB vs PMR
+> 
+> When the PMR spec becomes public we can discuss how best to integrate it into the P2P framework (if at all) ;-).
 
-    block/blk-core.c: In function 'blk_pm_allow_request':
-    block/blk-core.c:2653:2: warning: enumeration value 'RPM_ACTIVE' not handled in switch [-Wswitch]
-      switch (rq->q->rpm_status) {
-      ^
-
-Convert the return statement below the switch() block into a default
-case to fix this.
-
-Fixes: e4f36b249b4d4e75 ("block: fix peeking requests during PM")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-v2:
-  - Add Reviewed-by,
-  - Update line number.
----
- block/blk-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 2d1a7bbe063437bf..81d2928ce4e9d370 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2656,9 +2656,9 @@ static bool blk_pm_allow_request(struct request *rq)
- 		return rq->rq_flags & RQF_PM;
- 	case RPM_SUSPENDED:
- 		return false;
-+	default:
-+		return true;
- 	}
--
--	return true;
- }
- #else
- static bool blk_pm_allow_request(struct request *rq)
--- 
-2.7.4
+http://nvmexpress.org/wp-content/uploads/NVM-Express-1.3-Ratified-TPs.zip
