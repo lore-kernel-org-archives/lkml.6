@@ -1,169 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034495AbeCBQ4F (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:56:05 -0500
-Received: from rgout0306.bt.lon5.cpcloud.co.uk ([65.20.0.212]:59689 "EHLO
-        rgout03.bt.lon5.cpcloud.co.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1034475AbeCBQ4D (ORCPT
+        id S1034517AbeCBQ5G (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:57:06 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35474 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030599AbeCBQ5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:56:03 -0500
-X-OWM-Source-IP: 86.134.48.2 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-RazorGate-Vade-Classification: clean
-X-RazorGate-Vade-Verdict: clean 0
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-SNCR-VADESECURE: CLEAN
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedtfedrieelgdelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfhgtofgggfesthejredtredtjeenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpphgruhhlqdhmohhorhgvrdgtohhmnecukfhppeekiedrudefgedrgeekrddvnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghl
-Message-ID: <1520009758.23261.2.camel@btinternet.com>
-Subject: Re: Regression found when running LTP connect01 on next-20180301
-From: Richard Haines <richard_c_haines@btinternet.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: netdev@vger.kernel.org, selinux@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org, anders.roxell@linaro.org
-Date: Fri, 02 Mar 2018 16:55:58 +0000
-In-Reply-To: <161e2bc0f58.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-References: <20180301083316.GA6779@localhost.localdomain>
-         <CAHC9VhQAnsSTK4V2w3+CiikR6465Jpnu7_vr=3VFEQch7LECtA@mail.gmail.com>
-         <1519914989.3063.1.camel@btinternet.com>
-         <161e2bc0f58.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+        Fri, 2 Mar 2018 11:57:03 -0500
+X-Google-Smtp-Source: AG47ELsc/xGRN76NRR5/LM9FR6HLO+6+ZTr4nicQ0ywvI0kxUmSi+5zmeiqtcfCEFQkOftvDUNoTfo2UHyvM7q6b6zA=
+MIME-Version: 1.0
+In-Reply-To: <20180302121750.12865-1-lukma@denx.de>
+References: <20180302121750.12865-1-lukma@denx.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 2 Mar 2018 13:57:02 -0300
+Message-ID: <CAOMZO5BTnfHRkGnROh3LJoGVPcBcQk=rroYip4V1DDBUbkRuKw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: tpc: Device tree description of the TPC board
+To: Lukasz Majewski <lukma@denx.de>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 13:03 -0500, Paul Moore wrote:
-> On March 1, 2018 9:36:37 AM Richard Haines <richard_c_haines@btintern
-> et.com> wrote:
-> > On Thu, 2018-03-01 at 08:42 -0500, Paul Moore wrote:
-> > > On Thu, Mar 1, 2018 at 3:33 AM, Anders Roxell <anders.roxell@lina
-> > > ro.o
-> > > rg> wrote:
-> > > > Hi,
-> > > > 
-> > > > I was running LTP's testcase connect01 [1] and found a
-> > > > regression
-> > > > in linux-next
-> > > > (next-20180301).  Bisect gave me this patch as the problematic
-> > > > patch (sha
-> > > > d452930fd3b9 "selinux: Add SCTP support") on a x86 target.
-> > > > 
-> > > > Output from the test(LTP release 20180118):
-> > > > $ cd /opt/ltp/
-> > > > $ cat runtest/syscalls |grep connect01>runtest/connect-syscall
-> > > > $ ./runltp -pq -f connect-syscall
-> > > > "
-> > > > Running tests.......
-> > > > connect01    1  TPASS  :  bad file descriptor successful
-> > > > connect01    2  TPASS  :  invalid socket buffer successful
-> > > > connect01    3  TPASS  :  invalid salen successful
-> > > > connect01    4  TPASS  :  invalid socket successful
-> > > > connect01    5  TPASS  :  already connected successful
-> > > > connect01    6  TPASS  :  connection refused successful
-> > > > connect01    7  TFAIL  :  connect01.c:146: invalid address
-> > > > family ;
-> > > > returned -1 (expected -1), errno 22 (expected 97)
-> > > > INFO: ltp-pan reported some tests FAIL
-> > > > LTP Version: 20180118
-> > > > "
-> > > > 
-> > > > The output from the test expected 97 and we received 22, can
-> > > > you
-> > > > please
-> > > > elaborate on what have been changed?
-> > > > 
-> > > > Cheers,
-> > > > Anders
-> > > > [1] https://github.com/linux-test-project/ltp/blob/20180118/tes
-> > > > tcas
-> > > > es/kernel/syscalls/connect/connect01.c#L146
-> > > 
-> > > Hi Anders,
-> > > 
-> > > Thanks for the report.  Out of curiosity, we're you running the
-> > > full
-> > > LTP test suite and this was the only failure, or did you just run
-> > > the
-> > > connect01 test?  Either answer is fine, I'm just trying to
-> > > understand
-> > > the scope of the regression.
-> > > 
-> > > Richard, are you able to look into this?  If not, let me know and
-> > > I'll
-> > > dig a bit deeper (I'll likely take a quick look today, but if the
-> > > failure is subtle it might require some digging).
-> > 
-> > I'll have a look today.
-> 
-> One more thing I forgot to mention earlier, if there is a patch to
-> fix this, could you please base it on top of the existing
-> SELinux/SCTP patches that have already been merged, and not respin an
-> earlier patch?
-> 
-> Thank you.
+Hi Lukasz,
+
+In addition to Sascha's comments:
+
+On Fri, Mar 2, 2018 at 9:17 AM, Lukasz Majewski <lukma@denx.de> wrote:
+
+> diff --git a/arch/arm/boot/dts/imx6q-kp-tpc.dts b/arch/arm/boot/dts/imx6q-kp-tpc.dts
+> new file mode 100644
+> index 000000000000..955462e778c9
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6q-kp-tpc.dts
+> @@ -0,0 +1,84 @@
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is licensed under the terms of the GNU General Public
+> + *     License version 2.  This program is licensed "as is" without
+> + *     any warranty of any kind, whether express or implied.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+
+Please consider using SPDX tag instead.
+
+> +/dts-v1/;
+> +
+> +#include "imx6q-kp.dtsi"
+> +
+> +/ {
+> +       model = "Freescale i.MX6 Quad K+P TPC Board";
+> +       compatible = "fsl,imx6q-tpc", "fsl,imx6q";
+
+Use the board manufacturer symbol instead.
+
+If needed, add an entry for the vendor at
+Documentation/devicetree/bindings/vendor-prefixes.txt
+
+> +};
+> +
+> +&lcd_display {
+> +       display-timings {
+> +               800x480x60 {
+> +                       clock-frequency = <34209000>;
+> +                       hactive = <800>;
+> +                       vactive = <480>;
+> +                       hback-porch = <85>;
+> +                       hfront-porch = <15>;
+> +                       vback-porch = <34>;
+> +                       vfront-porch = <10>;
+> +                       hsync-len = <28>;
+> +                       vsync-len = <1>;
+> +                       hsync-active = <1>;
+> +                       vsync-active = <1>;
+> +                       de-active = <1>;
+> +               };
+> +       };
+> +};
+
+We prefer to use a compatible panel entry instead of keeping the panel
+timings inside the dts.
+
+> +
+> +&ipu1_di0_disp0 {
+> +       remote-endpoint = <&lcd_display_in>;
+> +};
+> +
+> +&can1 {
+> +       status = "disabled";
+> +};
+> +
+> +&can2 {
+> +       status = "disabled";
+> +};
+> +
+> +&uart1 {
+> +       status = "okay";
+> +};
+> +
+> +&uart2 {
+> +       status = "disabled";
+> +};
+> diff --git a/arch/arm/boot/dts/imx6q-kp.dtsi b/arch/arm/boot/dts/imx6q-kp.dtsi
+> new file mode 100644
+> index 000000000000..47a10fb1d46b
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6q-kp.dtsi
+> @@ -0,0 +1,468 @@
+> +/*
+> + * Copyright 2018
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This file is licensed under the terms of the GNU General Public
+> + *     License version 2.  This program is licensed "as is" without
+> + *     any warranty of any kind, whether express or implied.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+
+SPDX, please.
 
 
-Just to keep you informed:
+> +       leds {
+> +               compatible = "gpio-leds";
+> +
+> +               green {
+> +                       label = "led1";
+> +                       gpios = <&gpio3 16 0>;
 
-It appears that with the original hooks.c selinux_socket_connect()
-function check: if (sk->sk_family == PF_INET) {, the test fell through
-as sk->sk_family = 2 (AF_INET) with the error being picked up by the
-caller - even though the test set an illegal family of 47 - but not on
-the sk->sk_family, hence:
+gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
 
-With the new check: if (address->sa_family == AF_INET) {, the address-
->sa_family = 47 and therefore treated it as an IPv6 address and failed
-with -EINVAL. By a fluke this is what SCTP services expects when
-invalid address family, however TCP and DCCP requires -EAFNOSUPPORT.
+> +                       linux,default-trigger = "gpio";
+> +                       default-state = "off";
+> +               };
+> +
+> +               red {
+> +                       label = "led0";
+> +                       gpios = <&gpio3 23 0>;
 
-I can fix this with the following simple patch:
-	switch (address->sa_family) {
-	case AF_INET:
-		addr4 = (struct sockaddr_in *)address;
-		if (addrlen < sizeof(struct sockaddr_in))
-			return -EINVAL;
-		snum = ntohs(addr4->sin_port);
-		break;
-	case AF_INET6:
-		addr6 = (struct sockaddr_in6 *)address;
-		if (addrlen < SIN6_LEN_RFC2133)
-			return -EINVAL;
-		snum = ntohs(addr6->sin6_port);
-		break;
-	default:
-		/* Note that SCTP services expect -EINVAL, whereas
-		 * others expect -EAFNOSUPPORT.
-		 */
-		if (sksec->sclass == SECCLASS_SCTP_SOCKET)
-			return -EINVAL;
-		else
-			return -EAFNOSUPPORT;
-	}
+GPIO_ACTIVE_HIGH
 
-This will pass the following LTP tests:
-./runltp -pq -f connect-syscall
-./runltp -pq -f net.sctp
+> +                       linux,default-trigger = "gpio";
+> +                       default-state = "off";
+> +               };
+> +       };
+> +
+> +       memory: memory {
+> +               reg = <0x10000000 0x40000000>;
+> +       };
 
-The selinux-testsuite inet_socket and sctp tests all pass as well.
+ memory@10000000 otherwise warnings are seen when building with W=1.
 
-However: The selinux_socket_bind() function has the same issue that can
-be fixed by the same type of patch.
+Make sure that building the dtb with W=1 introduces no warnings.
 
-So far I've tested three different patches to fix this problem and
-this one above seems best. I'll post a patch based on this covering
-the bind issue as well once I've done more testing.
+> +&i2c1 {
+> +       clock-frequency = <400000>;
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_i2c1>;
+> +       status = "okay";
+> +
+> +       goodix_ts@5d {
+> +               compatible = "goodix,gt911";
+> +               reg = <0x5d>;
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_ts>;
+> +
 
-I think the SCTP services should return -EAFNOSUPPORT for this (as
-their sctp_connectx(3) man page states this), that will require kernel
-patch and patches to their test services (plus of course may impact
-some apps already out there ??).
+No need for these blank lines.
 
+> +               interrupt-parent = <&gpio1>;
+> +               interrupts = <9 2>;
 
-> 
-> --
-> paul moore
-> www.paul-moore.com
-> 
-> 
+Please use an IRQ flag.
+
+> +               irq-gpios = <&gpio1 9 0>;
+
+GPIO_ACTIVE_HIGH
+
+> +               reset-gpios = <&gpio5 2 0>;
+
+GPIO_ACTIVE_HIGH.
+
+> +&i2c2 {
+> +       clock-frequency = <400000>;
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_i2c2>;
+> +       status = "okay";
+> +
+> +       codec: sgtl5000@a {
+> +               compatible = "fsl,sgtl5000";
+> +               #sound-dai-cells = <0>;
+> +               reg = <0x0a>;
+> +
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&pinctrl_codec>;
+> +
+
+No need for these blank lines.
+
+> +               clocks = <&clks IMX6QDL_CLK_CKO>;
+> +               VDDA-supply = <&reg_3p3v>;
+> +               VDDIO-supply = <&reg_3p3v>;
+
+> +&uart2 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&pinctrl_uart2>;
+> +       fsl,uart-has-rtscts;
+
+ fsl,uart-has-rtscts has been deprecated. Please use  uart-has-rtscts instead.
