@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946248AbeCBKdP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:33:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35630 "EHLO mx2.suse.de"
+        id S1946114AbeCBK3u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:29:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35585 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1945995AbeCBK3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:29:53 -0500
+        id S1945990AbeCBK3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:29:44 -0500
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,103 +14,75 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v9 8/9] livepatch: Improve dynamic struct klp_object detection and manipulation
-Date: Fri,  2 Mar 2018 11:29:34 +0100
-Message-Id: <20180302102935.14564-9-pmladek@suse.com>
+Subject: [PATCH v9 0/9] livepatch: Atomic replace feature
+Date: Fri,  2 Mar 2018 11:29:26 +0100
+Message-Id: <20180302102935.14564-1-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180302102935.14564-1-pmladek@suse.com>
-References: <20180302102935.14564-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The check for dynamically allocated objects was too optimistic. There
-might exist livepatches that modify an object only with callbacks. They
-are statically defined and have "funcs" array empty.
+The atomic replace allows to create cumulative patches. They
+are useful when you maintain many livepatches and want to remove
+one that is lower on the stack. In addition it is very useful when
+more patches touch the same function and there are dependencies
+between them.
 
-A solution would be to check also the callback pointers in
-klp_is_object_dynamic(). But it still might be error prone.
+I fixed the bug found by Joe in separate patch. It should make
+the review easier for those who already did one. Feel free
+to ask me to squash it though.
 
-Note that we must avoid calling klp_free_object_dynamic() even for useless
-structures that were defined statically.
 
-Therefore this patch takes a more safe approach. It adds an extra flag
-into struct klp_object. The type is different from a similar flag on
-the func level. It is because one object structure might point to func
-structures of different types. In general, only two states make sense
-on the object level.
+Changes against v8:
 
-This fixed the problem _how_ the structures were freed. But there
-was also a bug _when_ this happened. For this we added a check
-to keep statically defined structures until the statically defined
-function structures are being freed.
+  + Fixed handling of statically defined struct klp_object
+    with empty array of functions [Joe, Mirek]
+  + Removed redundant func->new_func assignment for NOPs [Mirek]
+  + Improved some wording [Mirek]
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- include/linux/livepatch.h |  8 +++++++-
- kernel/livepatch/core.c   | 10 ++++++++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+Changes against v7:
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index ed598d849029..7222b801d63a 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -45,6 +45,11 @@ enum klp_func_type {
- 	KLP_FUNC_NOP,		/* Dynamically allocated NOP function patch */
- };
- 
-+enum klp_object_type {
-+	KLP_OBJECT_STATIC = 0,  /* Original statically defined structure */
-+	KLP_OBJECT_DYNAMIC,	/* Dynamically allocated structure. */
-+};
-+
- /**
-  * struct klp_func - function structure for live patching
-  * @old_name:	name of the function to be patched
-@@ -143,6 +148,7 @@ struct klp_object {
- 	struct klp_callbacks callbacks;
- 
- 	/* internal */
-+	enum klp_object_type otype;
- 	struct kobject kobj;
- 	struct list_head func_list;
- 	struct list_head obj_entry;
-@@ -198,7 +204,7 @@ struct klp_patch {
- 
- static inline bool klp_is_object_dynamic(struct klp_object *obj)
- {
--	return !obj->funcs;
-+	return obj->otype == KLP_OBJECT_DYNAMIC;
- }
- 
- static inline bool klp_is_func_dynamic(struct klp_func *func)
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index ce9f40a175d9..6fa022cce4bf 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -743,6 +743,7 @@ static struct klp_object *klp_alloc_object_dynamic(const char *name)
- 			return ERR_PTR(-ENOMEM);
- 		}
- 	}
-+	obj->otype = KLP_OBJECT_DYNAMIC;
- 
- 	return obj;
- }
-@@ -970,6 +971,15 @@ void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
- 		if (!list_empty(&obj->func_list))
- 			continue;
- 
-+		/*
-+		 * Keep objects from the original patch initialized until
-+		 * the entire patch is being freed.
-+		 */
-+		if (!klp_is_object_dynamic(obj) &&
-+		    ftype != KLP_FUNC_STATIC &&
-+		    ftype != KLP_FUNC_ANY)
-+			continue;
-+
- 		/* Avoid freeing the object twice. */
- 		list_del(&obj->obj_entry);
- 
+  + Fixed handling of NOPs for not-yet-loaded modules
+  + Made klp_replaced_patches list static [Mirek]
+  + Made klp_free_object() public later [Mirek]
+  + Fixed several reported typos [Mirek, Joe]
+  + Updated documentation according to the feedback [Joe]
+  + Added some Acks [Mirek]
+
+Changes against v6:
+
+  + used list_move when disabling replaced patches [Jason]
+  + renamed KLP_FUNC_ORIGINAL -> KLP_FUNC_STATIC [Mirek]
+  + used klp_is_func_type() in klp_unpatch_object() [Mirek]
+  + moved static definition of klp_get_or_add_object() [Mirek]
+  + updated comment about synchronization in forced mode [Mirek]
+  + added user documentation
+  + fixed several typos
+
+
+Jason Baron (5):
+  livepatch: Use lists to manage patches, objects and functions
+  livepatch: Initial support for dynamic structures
+  livepatch: Allow to unpatch only functions of the given type
+  livepatch: Support separate list for replaced patches.
+  livepatch: Add atomic replace
+
+Petr Mladek (4):
+  livepatch: Free only structures with initialized kobject
+  livepatch: Correctly handle atomic replace for not yet loaded modules
+  livepatch: Improve dynamic struct klp_object detection and
+    manipulation
+  livepatch: Atomic replace and cumulative patches documentation
+
+ Documentation/livepatch/cumulative-patches.txt |  83 +++++
+ include/linux/livepatch.h                      |  65 +++-
+ kernel/livepatch/core.c                        | 406 ++++++++++++++++++++++---
+ kernel/livepatch/core.h                        |   4 +
+ kernel/livepatch/patch.c                       |  31 +-
+ kernel/livepatch/patch.h                       |   4 +-
+ kernel/livepatch/transition.c                  |  41 ++-
+ 7 files changed, 584 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/livepatch/cumulative-patches.txt
+
 -- 
 2.13.6
