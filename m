@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtM4B1nGWH7q0rpmrEW/opjYVCF1S7CRFYrWDdaGB2SQ6FGax7l2u9Kjk17TUs+ZX47CETa
-ARC-Seal: i=1; a=rsa-sha256; t=1519981067; cv=none;
+X-Google-Smtp-Source: AG47ELud5hV0YONq2+9ym+key+B0hn4vs9ixAnD9jAIU/k+uLIw7SI6YRgJcoEFN7EuTxBLiV6vb
+ARC-Seal: i=1; a=rsa-sha256; t=1519981063; cv=none;
         d=google.com; s=arc-20160816;
-        b=drr9VQpli7jMjFaiUQPdQdHsWemly7vDaHR3SdROyRfyGmmV52YpZvtL41H9E0B7ZK
-         ojTyLmJflZUpS7HY3mRIswevC9tlSDSkHbkm4TMqNrIjanhFSk3mHjl7ZltRmFZNuCcU
-         cH82GucjW2BlCqTqHAm5W7zsZVAR9cXY0e4fYZ00Zp0YJuLD6fL/Hybh0hy4DIErXryn
-         w9o2pFWKoxiYHkDYhCLyafVLaknAsiT11hSdpo4AR5dr6km1pwPKecO4gR3/Ep0ullx9
-         ROnIN7ZTBwE4SGZwJY5XeNd9AsLN2437zxRRX/O+AOmsuYQul17JUa9cH/ADAZEIKsS+
-         AquA==
+        b=IdRFNnjZ9C9V5+NWZux0ekd1s9BC5B5/2jSTuwF6JqQNVRZcbSiQEgyIed/k2o26Yb
+         dL7gKsZG9fKz6W7cx5iYaiUpoTda01KzRdZGQvGr2EJAodHLid9q5JqEzkDltCV+umkY
+         oDUnOFo8K9A3bt+4xGzyolPUhg/hJcnPwnQU/OtJfF/AtbzNju4xbwHz0s9KMRnRJsQO
+         xF/nc3iOIvRZX47tvQNb2gNlJEx81P3gHw9ZlFJAWNYX2cvUvyzGrTEOiSFFQkFmihv3
+         ne9Rd/c+dZ/QlsA0s0PyLTYYb1ku8Foyvot7QjmiBpmQ+V6vsOmbMh75Wa3g2go+RI6R
+         acBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qCyxlM4CmlmaF3JW3gllC7AOC15LeV3KyxITUZvVyk0=;
-        b=Ttjb0shxsC4on5uF1mgIUT8v53jQMKbdeRnNuwfVbRf/WCGX2X0Xhj1pyL4wQTHfNW
-         XmlzpQcyg96u3JB9oGQo2hxDbuCP6ceGPOuSPWAr0hFMfQYJV2w8Ho6REB+ybEOj/VuE
-         YCFAcuwtRAs9COKbLFxRtsZAHuxrCFnAYSZ/p3eJYV74Le6X8X8i2EHfirQ8QLgItjqX
-         sskgwRsYaxnTyaQCxCOliaQmU5+p9qK1DNmIVX0Llys41vc2rP+1L+48JzzRfVxILQ+F
-         MFdyyadTOl65PB1HDQ+ppnMqCBxEijG7UsdZdJObDXJO/B2HlJDYjYs/jAnxl8IO7rsx
-         VCkQ==
+        bh=E9UTBSATOSL5bSwvIi+DUOlOBmGtx03ix8DCeSvRdco=;
+        b=KZWhgyh/Y5zS6YUuWafIU7EGMjlC560ain3ZKRkuIlMGp/WiDQAEmOGf0WqzTVRmvJ
+         Qtrw+5O94aj17nBB5Bb27CjFG0M+2YepRkIpAVp5At0CYRXAcZQWpvrhlm/avBGxXNpK
+         TORLrLL9LG68dSxlxecV6xqqF/1PVbe3R6DbGCcX6qAYgCXCM9rIX0GLTlSAOZisKFxS
+         OI9hQv8wU72d4wa4YiW4R6cuBuTPLKMwgyq1k6DPiZL+bFSVFcmHyvU3POEqgbKgGxGK
+         96UgZM8f5rtkc45TQd4k9gdkXLbAy6c56NapbpaCAgRzQRc9g2AfltRfsZDnP5KQ0ekD
+         4P4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tushar Dave <tushar.n.dave@oracle.com>,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Gao Feng <gfree.wind@vip.163.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 39/56] e1000: fix disabling already-disabled warning
-Date: Fri,  2 Mar 2018 09:51:25 +0100
-Message-Id: <20180302084451.554988761@linuxfoundation.org>
+Subject: [PATCH 4.9 38/56] macvlan: Fix one possible double free
+Date: Fri,  2 Mar 2018 09:51:24 +0100
+Message-Id: <20180302084451.506174136@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815300525436676?=
-X-GMAIL-MSGID: =?utf-8?q?1593815667996076679?=
+X-GMAIL-THRID: =?utf-8?q?1593815663437822141?=
+X-GMAIL-MSGID: =?utf-8?q?1593815663437822141?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,179 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tushar Dave <tushar.n.dave@oracle.com>
+From: Gao Feng <gfree.wind@vip.163.com>
 
 
-[ Upstream commit 0b76aae741abb9d16d2c0e67f8b1e766576f897d ]
+[ Upstream commit d02fd6e7d2933ede6478a15f9e4ce8a93845824e ]
 
-This patch adds check so that driver does not disable already
-disabled device.
+Because the macvlan_uninit would free the macvlan port, so there is one
+double free case in macvlan_common_newlink. When the macvlan port is just
+created, then register_netdevice or netdev_upper_dev_link failed and they
+would invoke macvlan_uninit. Then it would reach the macvlan_port_destroy
+which triggers the double free.
 
-[   44.637743] advantechwdt: Unexpected close, not stopping watchdog!
-[   44.997548] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input6
-[   45.013419] e1000 0000:00:03.0: disabling already-disabled device
-[   45.013447] ------------[ cut here ]------------
-[   45.014868] WARNING: CPU: 1 PID: 71 at drivers/pci/pci.c:1641 pci_disable_device+0xa1/0x105:
-						pci_disable_device at drivers/pci/pci.c:1640
-[   45.016171] CPU: 1 PID: 71 Comm: rcu_perf_shutdo Not tainted 4.14.0-01330-g3c07399 #1
-[   45.017197] task: ffff88011bee9e40 task.stack: ffffc90000860000
-[   45.017987] RIP: 0010:pci_disable_device+0xa1/0x105:
-						pci_disable_device at drivers/pci/pci.c:1640
-[   45.018603] RSP: 0000:ffffc90000863e30 EFLAGS: 00010286
-[   45.019282] RAX: 0000000000000035 RBX: ffff88013a230008 RCX: 0000000000000000
-[   45.020182] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000203
-[   45.021084] RBP: ffff88013a3f31e8 R08: 0000000000000001 R09: 0000000000000000
-[   45.021986] R10: ffffffff827ec29c R11: 0000000000000002 R12: 0000000000000001
-[   45.022946] R13: ffff88013a230008 R14: ffff880117802b20 R15: ffffc90000863e8f
-[   45.023842] FS:  0000000000000000(0000) GS:ffff88013fd00000(0000) knlGS:0000000000000000
-[   45.024863] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   45.025583] CR2: ffffc900006d4000 CR3: 000000000220f000 CR4: 00000000000006a0
-[   45.026478] Call Trace:
-[   45.026811]  __e1000_shutdown+0x1d4/0x1e2:
-						__e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:5162
-[   45.027344]  ? rcu_perf_cleanup+0x2a1/0x2a1:
-						rcu_perf_shutdown at kernel/rcu/rcuperf.c:627
-[   45.027883]  e1000_shutdown+0x14/0x3a:
-						e1000_shutdown at drivers/net/ethernet/intel/e1000/e1000_main.c:5235
-[   45.028351]  device_shutdown+0x110/0x1aa:
-						device_shutdown at drivers/base/core.c:2807
-[   45.028858]  kernel_power_off+0x31/0x64:
-						kernel_power_off at kernel/reboot.c:260
-[   45.029343]  rcu_perf_shutdown+0x9b/0xa7:
-						rcu_perf_shutdown at kernel/rcu/rcuperf.c:637
-[   45.029852]  ? __wake_up_common_lock+0xa2/0xa2:
-						autoremove_wake_function at kernel/sched/wait.c:376
-[   45.030414]  kthread+0x126/0x12e:
-						kthread at kernel/kthread.c:233
-[   45.030834]  ? __kthread_bind_mask+0x8e/0x8e:
-						kthread at kernel/kthread.c:190
-[   45.031399]  ? ret_from_fork+0x1f/0x30:
-						ret_from_fork at arch/x86/entry/entry_64.S:443
-[   45.031883]  ? kernel_init+0xa/0xf5:
-						kernel_init at init/main.c:997
-[   45.032325]  ret_from_fork+0x1f/0x30:
-						ret_from_fork at arch/x86/entry/entry_64.S:443
-[   45.032777] Code: 00 48 85 ed 75 07 48 8b ab a8 00 00 00 48 8d bb 98 00 00 00 e8 aa d1 11 00 48 89 ea 48 89 c6 48 c7 c7 d8 e4 0b 82 e8 55 7d da ff <0f> ff b9 01 00 00 00 31 d2 be 01 00 00 00 48 c7 c7 f0 b1 61 82
-[   45.035222] ---[ end trace c257137b1b1976ef ]---
-[   45.037838] ACPI: Preparing to enter system sleep state S5
-
-Signed-off-by: Tushar Dave <tushar.n.dave@oracle.com>
-Tested-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Gao Feng <gfree.wind@vip.163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000/e1000.h      |    3 +-
- drivers/net/ethernet/intel/e1000/e1000_main.c |   27 +++++++++++++++++++++-----
- 2 files changed, 24 insertions(+), 6 deletions(-)
+ drivers/net/macvlan.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/e1000/e1000.h
-+++ b/drivers/net/ethernet/intel/e1000/e1000.h
-@@ -331,7 +331,8 @@ struct e1000_adapter {
- enum e1000_state_t {
- 	__E1000_TESTING,
- 	__E1000_RESETTING,
--	__E1000_DOWN
-+	__E1000_DOWN,
-+	__E1000_DISABLED
- };
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -1377,9 +1377,14 @@ int macvlan_common_newlink(struct net *s
+ 	return 0;
  
- #undef pr_fmt
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -940,7 +940,7 @@ static int e1000_init_hw_struct(struct e
- static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	struct net_device *netdev;
--	struct e1000_adapter *adapter;
-+	struct e1000_adapter *adapter = NULL;
- 	struct e1000_hw *hw;
- 
- 	static int cards_found;
-@@ -950,6 +950,7 @@ static int e1000_probe(struct pci_dev *p
- 	u16 tmp = 0;
- 	u16 eeprom_apme_mask = E1000_EEPROM_APME;
- 	int bars, need_ioport;
-+	bool disable_dev = false;
- 
- 	/* do not allocate ioport bars when not needed */
- 	need_ioport = e1000_is_need_ioport(pdev);
-@@ -1250,11 +1251,13 @@ err_mdio_ioremap:
- 	iounmap(hw->ce4100_gbe_mdio_base_virt);
- 	iounmap(hw->hw_addr);
- err_ioremap:
-+	disable_dev = !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
- 	free_netdev(netdev);
- err_alloc_etherdev:
- 	pci_release_selected_regions(pdev, bars);
- err_pci_reg:
--	pci_disable_device(pdev);
-+	if (!adapter || disable_dev)
-+		pci_disable_device(pdev);
+ unregister_netdev:
++	/* macvlan_uninit would free the macvlan port */
+ 	unregister_netdevice(dev);
++	return err;
+ destroy_macvlan_port:
+-	if (create)
++	/* the macvlan port may be freed by macvlan_uninit when fail to register.
++	 * so we destroy the macvlan port only when it's valid.
++	 */
++	if (create && macvlan_port_get_rtnl(dev))
+ 		macvlan_port_destroy(port->dev);
  	return err;
  }
- 
-@@ -1272,6 +1275,7 @@ static void e1000_remove(struct pci_dev
- 	struct net_device *netdev = pci_get_drvdata(pdev);
- 	struct e1000_adapter *adapter = netdev_priv(netdev);
- 	struct e1000_hw *hw = &adapter->hw;
-+	bool disable_dev;
- 
- 	e1000_down_and_stop(adapter);
- 	e1000_release_manageability(adapter);
-@@ -1290,9 +1294,11 @@ static void e1000_remove(struct pci_dev
- 		iounmap(hw->flash_address);
- 	pci_release_selected_regions(pdev, adapter->bars);
- 
-+	disable_dev = !test_and_set_bit(__E1000_DISABLED, &adapter->flags);
- 	free_netdev(netdev);
- 
--	pci_disable_device(pdev);
-+	if (disable_dev)
-+		pci_disable_device(pdev);
- }
- 
- /**
-@@ -5166,7 +5172,8 @@ static int __e1000_shutdown(struct pci_d
- 	if (netif_running(netdev))
- 		e1000_free_irq(adapter);
- 
--	pci_disable_device(pdev);
-+	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
-+		pci_disable_device(pdev);
- 
- 	return 0;
- }
-@@ -5210,6 +5217,10 @@ static int e1000_resume(struct pci_dev *
- 		pr_err("Cannot enable PCI device from suspend\n");
- 		return err;
- 	}
-+
-+	/* flush memory to make sure state is correct */
-+	smp_mb__before_atomic();
-+	clear_bit(__E1000_DISABLED, &adapter->flags);
- 	pci_set_master(pdev);
- 
- 	pci_enable_wake(pdev, PCI_D3hot, 0);
-@@ -5284,7 +5295,9 @@ static pci_ers_result_t e1000_io_error_d
- 
- 	if (netif_running(netdev))
- 		e1000_down(adapter);
--	pci_disable_device(pdev);
-+
-+	if (!test_and_set_bit(__E1000_DISABLED, &adapter->flags))
-+		pci_disable_device(pdev);
- 
- 	/* Request a slot slot reset. */
- 	return PCI_ERS_RESULT_NEED_RESET;
-@@ -5312,6 +5325,10 @@ static pci_ers_result_t e1000_io_slot_re
- 		pr_err("Cannot re-enable PCI device after reset.\n");
- 		return PCI_ERS_RESULT_DISCONNECT;
- 	}
-+
-+	/* flush memory to make sure state is correct */
-+	smp_mb__before_atomic();
-+	clear_bit(__E1000_DISABLED, &adapter->flags);
- 	pci_set_master(pdev);
- 
- 	pci_enable_wake(pdev, PCI_D3hot, 0);
