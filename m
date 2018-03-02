@@ -1,145 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946524AbeCBP6E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:58:04 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5699 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1426385AbeCBP6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:58:01 -0500
-Subject: Re: [PATCH] arm64: dts: Hi3660: Remove 'CPU_NAP' idle state
-To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1515472362-19979-1-git-send-email-leo.yan@linaro.org>
- <20180228050803.GB20745@leoy-ThinkPad-T440>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kevin Wang <jean.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5A997473.40706@hisilicon.com>
-Date: Fri, 2 Mar 2018 15:57:39 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1946558AbeCBP7n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:59:43 -0500
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:42702 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423884AbeCBP7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:59:41 -0500
+X-Google-Smtp-Source: AG47ELu6j6qoXyEzhFyK5sEMo/WBrlDgFkuda+KlvstjCeNMJGOJS4NZoqf4gHylfWo722zojtE+bQ==
+Subject: Re: Regression in IPMI on 4.15.6
+To: minyard@acm.org
+Cc: openipmi-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <7b4cd699-1a77-5412-5346-b30e44bfc9c9@redhat.com>
+ <33fb6125-7ffa-0d3a-e1d6-1a849b816867@acm.org>
+ <bdb67791-9a2c-bd04-5678-efb6b3cdf962@acm.org>
+ <dc401118-8398-5985-3cb0-9a63bfe26148@acm.org>
+ <1b8caafa-0611-c431-a292-38c895db4660@acm.org>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <a544b6e7-6355-3635-8fc9-688daee403c8@redhat.com>
+Date: Fri, 2 Mar 2018 07:59:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180228050803.GB20745@leoy-ThinkPad-T440>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.47]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1b8caafa-0611-c431-a292-38c895db4660@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
-
-On 2018/2/28 5:08, Leo Yan wrote:
-> Hi Wei,
-> 
-> On Tue, Jan 09, 2018 at 12:32:42PM +0800, Leo Yan wrote:
->> Thanks a lot for Vincent Guittot careful work to find bug for 'CPU_NAP'
->> idle state.  At early time, the CPU CA73 CPU_NAP idle state has been
->> supported on Hikey960.  Later we found the system has the hang issue
->> and for resolving this issue Hisilicon released new MCU firmware, but
->> unfortunately the new MCU firmware has side effect and results in the
->> CA73 CPU cannot really enter CPU_NAP state and roll back to WFI state.
+On 03/02/2018 05:46 AM, Corey Minyard wrote:
+> On 02/28/2018 01:07 PM, Corey Minyard wrote:
+>> On 02/28/2018 08:17 AM, Corey Minyard wrote:
+>>> On 02/28/2018 07:53 AM, Corey Minyard wrote:
+>>>> On 02/27/2018 05:55 PM, Laura Abbott wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Fedora got a bug report of a crash in IPMI on 4.15.6
+>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1549316
+>>>>> Unfortunately, it's only a screenshot but it's fairly
+>>>>> clear. It looks like a panic in the error handling path
+>>>>> in platform_device_unregister. Any ideas?
+>>>>>
+>>>>
+>>>
+>>> You may also run into another issue.  You can pull the
+>>> individual patch at
+>>>
+>>> https://github.com/cminyard/linux-ipmi.git c8a1972e77dbe321ce5ce0247056e727234cbaec
 >>
->> After discussion we cannot see the possibility to enable CA73 CPU_NAP
->> state anymore on Hikey960, based on this conclusion we should remove
->> this state from DT binding.
+>> Actually, it needed a few more tweaks.  Can you do change
+>> 426fa6179dae677134dfb37b21d057819418515b
+>> instead?  It's "ipmi: Fix some error cleanup issues"
 >>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Kevin Wang <jean.wangtao@linaro.org>
->> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+>> I can send you patches, if you like.  If you could test and get back
+>> to me, that would be great.
 > 
-> Could you help to pick up this patch? Thanks!
-
-Applied into hisilicon dt tree.
-Thanks!
-
-Best Regards,
-Wei
-
+> Laura, have you had a chance to test this?  I'd like to get it in soon,
+> if possible.
 > 
->> ---
->>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 32 ++++---------------------------
->>  1 file changed, 4 insertions(+), 28 deletions(-)
+> Thanks,
+> 
+> -corey
+> 
+
+Sorry, this got missed. I'll ask the reporter to reproduce today.
+
 >>
->> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> index ab0b95b..8fddf0d 100644
->> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> @@ -96,11 +96,7 @@
->>  			reg = <0x0 0x100>;
->>  			enable-method = "psci";
->>  			next-level-cache = <&A73_L2>;
->> -			cpu-idle-states = <
->> -					&CPU_NAP
->> -					&CPU_SLEEP
->> -					&CLUSTER_SLEEP_1
->> -			>;
->> +			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
->>  		};
->>  
->>  		cpu5: cpu@101 {
->> @@ -109,11 +105,7 @@
->>  			reg = <0x0 0x101>;
->>  			enable-method = "psci";
->>  			next-level-cache = <&A73_L2>;
->> -			cpu-idle-states = <
->> -					&CPU_NAP
->> -					&CPU_SLEEP
->> -					&CLUSTER_SLEEP_1
->> -			>;
->> +			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
->>  		};
->>  
->>  		cpu6: cpu@102 {
->> @@ -122,11 +114,7 @@
->>  			reg = <0x0 0x102>;
->>  			enable-method = "psci";
->>  			next-level-cache = <&A73_L2>;
->> -			cpu-idle-states = <
->> -					&CPU_NAP
->> -					&CPU_SLEEP
->> -					&CLUSTER_SLEEP_1
->> -			>;
->> +			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
->>  		};
->>  
->>  		cpu7: cpu@103 {
->> @@ -135,24 +123,12 @@
->>  			reg = <0x0 0x103>;
->>  			enable-method = "psci";
->>  			next-level-cache = <&A73_L2>;
->> -			cpu-idle-states = <
->> -					&CPU_NAP
->> -					&CPU_SLEEP
->> -					&CLUSTER_SLEEP_1
->> -			>;
->> +			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
->>  		};
->>  
->>  		idle-states {
->>  			entry-method = "psci";
->>  
->> -			CPU_NAP: cpu-nap {
->> -				compatible = "arm,idle-state";
->> -				arm,psci-suspend-param = <0x0000001>;
->> -				entry-latency-us = <7>;
->> -				exit-latency-us = <2>;
->> -				min-residency-us = <15>;
->> -			};
->> -
->>  			CPU_SLEEP: cpu-sleep {
->>  				compatible = "arm,idle-state";
->>  				local-timer-stop;
->> -- 
->> 2.7.4
+>> BTW, the IPMI setup in your system is incorrect.  SMBIOS says it's at a
+>> memory address, but it's at an I/O address.  And the address given
+>> doesn't appear to be a valid address, the value read doesn't appear
+>> to be a valid value.
 >>
-> 
-> .
+>> -corey
+>>
+>>>
+>>> for that fix.
+>>>
+>>> -corey
+>>>
+>>>> Yeah, this is fixed by 174134ac7602 "ipmi_si: Fix error
+>>>> handling of platform device" in mainstream.
+>>>>
+>>>> I guess I need to request a backport of this.
+>>>>
+>>>> Thanks for reporting.
+>>>>
+>>>> -corey
+>>>>
+>>>>
+>>>>> Thanks,
+>>>>> Laura
+>>>>
+>>>>
+>>>
+>>
 > 
