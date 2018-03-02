@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuTej9zB5t4i3XLvehBauKic5HiztOdkOfCQXa4MZ9loOIfwptSMmQpRcIXZG6c4uIvxLjK
-ARC-Seal: i=1; a=rsa-sha256; t=1519981490; cv=none;
+X-Google-Smtp-Source: AG47ELtxTRDV0MUNz8gwNGQW+oKfdtrUjXJ5zJbezTF2XyCwxsG3OEhtgE3LMSlyaaodjhqsJY3a
+ARC-Seal: i=1; a=rsa-sha256; t=1519981486; cv=none;
         d=google.com; s=arc-20160816;
-        b=mebRHHy02nPe5ag9kiYtibg5sX5tyDoAyb+oFndNd3TVuCxLeTO7+PlESlZ2Mq2T6A
-         qzHa50zR41pUfDmTZFldHBLTcvvXEMvFtRST8hv1c/FvGFCcV5mCU/vW38bYw7ZlBGLA
-         HbHQI2EGtT3U64FqsUH2J2mlN70/94JdsdbKjyWzKezp7SbSFa9sjl1x3Z7dOOgbaSnD
-         YpfhRylS/Gt6RcKXmP74oN38Gj9DYjCIP4va6XQsnTmWKl+hcByU8gzQw3t8UYCjdRMY
-         BPWm7h22mipITtBiy5L6SMg2NloIfbPeV+DXLLZxi/Zcs+Stb1Lp00CUZHDk+hXh5m0P
-         TOcQ==
+        b=K2SBwN0wvdy09DatOBHOHefbW0wLfHG91XaF0yfAyYglLJZtZZLP8cIO3ksf+U1tcg
+         WgwKInnF653lkSn9VMWQNYRMK0E82o70NQlhWqBhArU9nEY2LLZv2zupeBSrtj0L7+S2
+         6HpNiITjoZUuoP1z9bdXg3/Xin/r4hcKlb6C2HVhJ3v4TXQlnkN5S69AGIusvx+Gq/Y+
+         6k31B2g/M8bXen/txVzcGiSncgh4OkB0CNpuCOcMx9QAdE0Z3gGnZtww14XQ62M+ZXbb
+         Bt+DFosOed4mZ1K4a4GmdAS5XJKu/mGYMHs96agStlbJ6gY8VDv/PfXIbUAHKKPe7t5f
+         CjZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EC9gMYQzht8iATryIVPJC+xXidPL/jzXLZku984Aje8=;
-        b=yruRFw3zCWX5WNVZ5a1NYLW6KNIntwZ/GzxZQHjNzae72UgidEfEHir00cco0KRkuk
-         kKaM6JqrSMNshcN/nGgokXcfTe3O6hfTAZB5qZUQCwYA+k23J9kroOBFQiVEGQoL97Rd
-         JS1ABjdP70mttN4DeFVWR6yJ6JyrqL1Fm3xt076s84Wqp//MR2LpGJJ8bzo6L6RbvY7p
-         +G+mz1dmGCUiabC3/ttqAXQvwvRJCQ94z3RFwDDr7S1pNAuc/z3lc4iGdWtyjXDtpQtb
-         rBQjbbnVr5QIxB7fGE+Ky9O9jYG0qkEK6i+74Yv4Cq8dDQx56Xl3jgaXb7a6DDo2WSpv
-         QTwQ==
+        bh=fjYy6d+o4lqgqdsqZLjXYdv7w0Lpp18K7wWqJOHj7Uc=;
+        b=FwV19tZyhwGmfou5f16x6llDqT1GTzXwk0FRQb7BbsgWPBGHP96vfu06Ni/PPNxFxV
+         n7vw5RuCqkVm0J7GiYY0P3PwCaSB/IfPPosPsd7n0k5aP0FwnjIqX+5Ap5t0vYcsV84r
+         5hkO//cBIyf6Q0RKIGj/p/jCMTA/vfhZxQKtaIl+dR3L2APH3ZPt9gbj0KG42eZ5L0ax
+         +STiPO7BdN7FC1Csfc/4uAp6NgjNucMDwOiZ59M3C17vU+TPqKEv9wII+5mIbXMo5PC2
+         wtzNN9e+AbHGGh6D6xwum1B6IzP3/EtlnFKrr2C5a9xFrRhWsdI8XQJeKD56nL3TOHl3
+         8cog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	James Hogan <jhogan@kernel.org>,
-	Waldemar Brodkorb <wbx@openadk.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	"Maciej W. Rozycki" <macro@mips.com>,
-	Matthew Fortune <matthew.fortune@mips.com>,
-	Florian Fainelli <florian@openwrt.org>,
-	linux-mips@linux-mips.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 108/115] MIPS: Implement __multi3 for GCC7 MIPS64r6 builds
-Date: Fri,  2 Mar 2018 09:51:51 +0100
-Message-Id: <20180302084508.208558023@linuxfoundation.org>
+	Yuval Mintz <yuvalm@mellanox.com>,
+	Ido Schimmel <idosch@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 107/115] mlxsw: pci: Wait after reset before accessing HW
+Date: Fri,  2 Mar 2018 09:51:50 +0100
+Message-Id: <20180302084508.170296674@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -47,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815551950805083?=
-X-GMAIL-MSGID: =?utf-8?q?1593816111075372600?=
+X-GMAIL-THRID: =?utf-8?q?1593816107624577054?=
+X-GMAIL-MSGID: =?utf-8?q?1593816107624577054?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,143 +52,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Yuval Mintz <yuvalm@mellanox.com>
 
-commit ebabcf17bcd7ce968b1631ebe08236275698f39b upstream.
 
-GCC7 is a bit too eager to generate suboptimal __multi3 calls (128bit
-multiply with 128bit result) for MIPS64r6 builds, even in code which
-doesn't explicitly use 128bit types, such as the following:
+[ Upstream commit 8e033a93b37f37aa9fca71a370a895155320af60 ]
 
-unsigned long func(unsigned long a, unsigned long b)
-{
-	return a > (~0UL) / b;
-}
+After performing reset driver polls on HW indication until learning
+that the reset is done, but immediately after reset the device becomes
+unresponsive which might lead to completion timeout on the first read.
 
-Which GCC rearanges to:
+Wait for 100ms before starting the polling.
 
-return (unsigned __int128)a * (unsigned __int128)b > 0xffffffffffffffff;
-
-Therefore implement __multi3, but only for MIPS64r6 with GCC7 as under
-normal circumstances we wouldn't expect any calls to __multi3 to be
-generated from kernel code.
-
-Reported-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Tested-by: Waldemar Brodkorb <wbx@openadk.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Maciej W. Rozycki <macro@mips.com>
-Cc: Matthew Fortune <matthew.fortune@mips.com>
-Cc: Florian Fainelli <florian@openwrt.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/17890/
-Cc: Guenter Roeck <linux@roeck-us.net>
+Fixes: 233fa44bd67a ("mlxsw: pci: Implement reset done check")
+Signed-off-by: Yuval Mintz <yuvalm@mellanox.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/lib/Makefile |    3 +-
- arch/mips/lib/libgcc.h |   17 +++++++++++++++
- arch/mips/lib/multi3.c |   54 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 73 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/pci.c    |    7 ++++++-
+ drivers/net/ethernet/mellanox/mlxsw/pci_hw.h |    1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
---- a/arch/mips/lib/Makefile
-+++ b/arch/mips/lib/Makefile
-@@ -16,4 +16,5 @@ obj-$(CONFIG_CPU_R3000)		+= r3k_dump_tlb
- obj-$(CONFIG_CPU_TX39XX)	+= r3k_dump_tlb.o
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+@@ -1643,7 +1643,12 @@ static int mlxsw_pci_sw_reset(struct mlx
+ 		return 0;
+ 	}
  
- # libgcc-style stuff needed in the kernel
--obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o ucmpdi2.o
-+obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o multi3.o \
-+	 ucmpdi2.o
---- a/arch/mips/lib/libgcc.h
-+++ b/arch/mips/lib/libgcc.h
-@@ -10,10 +10,18 @@ typedef int word_type __attribute__ ((mo
- struct DWstruct {
- 	int high, low;
- };
-+
-+struct TWstruct {
-+	long long high, low;
-+};
- #elif defined(__LITTLE_ENDIAN)
- struct DWstruct {
- 	int low, high;
- };
-+
-+struct TWstruct {
-+	long long low, high;
-+};
- #else
- #error I feel sick.
- #endif
-@@ -23,4 +31,13 @@ typedef union {
- 	long long ll;
- } DWunion;
- 
-+#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6)
-+typedef int ti_type __attribute__((mode(TI)));
-+
-+typedef union {
-+	struct TWstruct s;
-+	ti_type ti;
-+} TWunion;
-+#endif
-+
- #endif /* __ASM_LIBGCC_H */
---- /dev/null
-+++ b/arch/mips/lib/multi3.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/export.h>
-+
-+#include "libgcc.h"
-+
-+/*
-+ * GCC 7 suboptimally generates __multi3 calls for mips64r6, so for that
-+ * specific case only we'll implement it here.
-+ *
-+ * See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82981
-+ */
-+#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6) && (__GNUC__ == 7)
-+
-+/* multiply 64-bit values, low 64-bits returned */
-+static inline long long notrace dmulu(long long a, long long b)
-+{
-+	long long res;
-+
-+	asm ("dmulu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
-+	return res;
-+}
-+
-+/* multiply 64-bit unsigned values, high 64-bits of 128-bit result returned */
-+static inline long long notrace dmuhu(long long a, long long b)
-+{
-+	long long res;
-+
-+	asm ("dmuhu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
-+	return res;
-+}
-+
-+/* multiply 128-bit values, low 128-bits returned */
-+ti_type notrace __multi3(ti_type a, ti_type b)
-+{
-+	TWunion res, aa, bb;
-+
-+	aa.ti = a;
-+	bb.ti = b;
-+
-+	/*
-+	 * a * b =           (a.lo * b.lo)
-+	 *         + 2^64  * (a.hi * b.lo + a.lo * b.hi)
-+	 *        [+ 2^128 * (a.hi * b.hi)]
+-	wmb(); /* reset needs to be written before we read control register */
++	/* Reset needs to be written before we read control register, and
++	 * we must wait for the HW to become responsive once again
 +	 */
-+	res.s.low = dmulu(aa.s.low, bb.s.low);
-+	res.s.high = dmuhu(aa.s.low, bb.s.low);
-+	res.s.high += dmulu(aa.s.high, bb.s.low);
-+	res.s.high += dmulu(aa.s.low, bb.s.high);
++	wmb();
++	msleep(MLXSW_PCI_SW_RESET_WAIT_MSECS);
 +
-+	return res.ti;
-+}
-+EXPORT_SYMBOL(__multi3);
-+
-+#endif /* 64BIT && CPU_MIPSR6 && GCC7 */
+ 	end = jiffies + msecs_to_jiffies(MLXSW_PCI_SW_RESET_TIMEOUT_MSECS);
+ 	do {
+ 		u32 val = mlxsw_pci_read32(mlxsw_pci, FW_READY);
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
+@@ -59,6 +59,7 @@
+ #define MLXSW_PCI_SW_RESET			0xF0010
+ #define MLXSW_PCI_SW_RESET_RST_BIT		BIT(0)
+ #define MLXSW_PCI_SW_RESET_TIMEOUT_MSECS	5000
++#define MLXSW_PCI_SW_RESET_WAIT_MSECS		100
+ #define MLXSW_PCI_FW_READY			0xA1844
+ #define MLXSW_PCI_FW_READY_MASK			0xFFFF
+ #define MLXSW_PCI_FW_READY_MAGIC		0x5E
