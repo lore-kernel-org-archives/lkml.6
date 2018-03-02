@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422770AbeCBEg0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:36:26 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:53156 "EHLO
+        id S1422756AbeCBEgY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:36:24 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:53163 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164988AbeCBEdr (ORCPT
+        with ESMTP id S1164987AbeCBEdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Mar 2018 23:33:47 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w224WURG022085
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w224WURJ022085
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,9 +18,9 @@ Cc: Sam Ravnborg <sam@ravnborg.org>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/11] kconfig: unittest: test if new symbols in choice are asked
-Date: Fri,  2 Mar 2018 13:31:55 +0900
-Message-Id: <1519965121-12017-6-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 08/11] kconfig: unittest: test defconfig when two choices interact
+Date: Fri,  2 Mar 2018 13:31:58 +0900
+Message-Id: <1519965121-12017-9-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
@@ -28,119 +28,172 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If new choice values are added with new dependency, and they become
-visible during user configuration, oldconfig should recognize them
-as (NEW), and ask the user for choice.
+Commit fbe98bb9ed3d ("kconfig: Fix defconfig when one choice menu
+selects options that another choice menu depends on") fixed defconfig
+when two choices interact (i.e. calculating the visibility of a choice
+requires to calculate another choice).
 
-This issue was fixed by commit 5d09598d488f ("kconfig: fix new choices
-being skipped upon config update").
+The test code in that commit log was based on the real world example,
+and complicated.  So, I shrunk it down to the following:
 
-This is a subtle corner case.  Add a test case to avoid breakage.
+defconfig.choice:
+---8<---
+CONFIG_CHOICE_VAL0=y
+---8<---
+
+---8<---
+config MODULES
+        bool "Enable loadable module support"
+        option modules
+        default y
+
+choice
+        prompt "Choice"
+
+config CHOICE_VAL0
+        tristate "Choice 0"
+
+config CHOICE_VAL1
+        tristate "Choice 1"
+
+endchoice
+
+choice
+        prompt "Another choice"
+        depends on CHOICE_VAL0
+
+config DUMMY
+        bool "dummy"
+
+endchoice
+---8<---
+
+Prior to commit fbe98bb9ed3d,
+
+  $ scripts/kconfig/conf --defconfig=defconfig.choice Kconfig.choice
+
+resulted in:
+
+  CONFIG_MODULES=y
+  CONFIG_CHOICE_VAL0=m
+  # CONFIG_CHOICE_VAL1 is not set
+  CONFIG_DUMMY=y
+
+where the expected result would be:
+
+  CONFIG_MODULES=y
+  CONFIG_CHOICE_VAL0=y
+  # CONFIG_CHOICE_VAL1 is not set
+  CONFIG_DUMMY=y
+
+Roughly, this weird behavior happened like this:
+
+Symbols are calculated a couple of times.  First, all symbols are
+calculated in conf_read().  The first 'choice' is evaluated to 'y'
+due to the SYMBOL_DEF_USER flag, but sym_calc_choice() clears it
+unless all of its choice values are explicitly set by the user.
+
+conf_set_all_new_symbols() clears all SYMBOL_VALID flags.  Then, only
+choices are calculated.  At this point, the SYMBOL_DEF_USER for the
+first choice is unset, so, it is evaluated to 'm'.  (this is weird)
+set_all_choice_values() sets SYMBOL_DEF_USER again to choice symbols.
+
+When calculating the second choice, due to 'depends on CHOICE_VAL0',
+it triggers the calculation of CHOICE_VAL0.  As a result, SYMBOL_VALID
+is set for CHOICE_VAL0.
+
+Symbols except choices get the final chance of re-calculation in
+conf_write().  In a normal case, CHOICE_VAL0 would be re-caluculated,
+then the first choice would be indirectly re-calculated with the
+SYMBOL_DEF_USER which has been set by set_all_choice_values(), which
+would be evaluated to 'y'.  But, in this case, CHOICE_VAL0 has been
+marked SYMBOL_VALID, so it is simply skipped.  Then, =m is written out
+to the .config file.
+
+Add a unit test for this naive case.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 ---
 
 Changes in v2:
-  - coding style clean-up based on PEP8, PEP257
+  - Newly added
 
- scripts/kconfig/tests/new_choice_with_dep/Kconfig  | 37 ++++++++++++++++++++++
- .../kconfig/tests/new_choice_with_dep/__init__.py  | 14 ++++++++
- scripts/kconfig/tests/new_choice_with_dep/config   |  3 ++
- .../tests/new_choice_with_dep/expected_stdout      | 10 ++++++
- 4 files changed, 64 insertions(+)
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/config
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/expected_stdout
+ scripts/kconfig/tests/inter_choice/Kconfig         | 24 ++++++++++++++++++++++
+ scripts/kconfig/tests/inter_choice/__init__.py     | 14 +++++++++++++
+ scripts/kconfig/tests/inter_choice/defconfig       |  1 +
+ scripts/kconfig/tests/inter_choice/expected_config |  4 ++++
+ 4 files changed, 43 insertions(+)
+ create mode 100644 scripts/kconfig/tests/inter_choice/Kconfig
+ create mode 100644 scripts/kconfig/tests/inter_choice/__init__.py
+ create mode 100644 scripts/kconfig/tests/inter_choice/defconfig
+ create mode 100644 scripts/kconfig/tests/inter_choice/expected_config
 
-diff --git a/scripts/kconfig/tests/new_choice_with_dep/Kconfig b/scripts/kconfig/tests/new_choice_with_dep/Kconfig
+diff --git a/scripts/kconfig/tests/inter_choice/Kconfig b/scripts/kconfig/tests/inter_choice/Kconfig
 new file mode 100644
-index 0000000..53ef1b8
+index 0000000..57d55c4
 --- /dev/null
-+++ b/scripts/kconfig/tests/new_choice_with_dep/Kconfig
-@@ -0,0 +1,37 @@
-+config A
-+	bool "A"
-+	help
-+	  This is a new symbol.
++++ b/scripts/kconfig/tests/inter_choice/Kconfig
+@@ -0,0 +1,24 @@
++config MODULES
++	bool "Enable loadable module support"
++	option modules
++	default y
 +
 +choice
-+	prompt "Choice ?"
-+	depends on A
-+	help
-+	  "depends on A" has been newly added.
++	prompt "Choice"
 +
-+config CHOICE_B
-+	bool "Choice B"
++config CHOICE_VAL0
++	tristate "Choice 0"
 +
-+config CHOICE_C
-+	bool "Choice C"
-+	help
-+	  This is a new symbol, so should be asked.
++config CHOIVE_VAL1
++	tristate "Choice 1"
 +
 +endchoice
 +
 +choice
-+	prompt "Choice2 ?"
++	prompt "Another choice"
++	depends on CHOICE_VAL0
 +
-+config CHOICE_D
-+	bool "Choice D"
-+
-+config CHOICE_E
-+	bool "Choice E"
-+
-+config CHOICE_F
-+	bool "Choice F"
-+	depends on A
-+	help
-+	  This is a new symbol, so should be asked.
++config DUMMY
++	bool "dummy"
 +
 +endchoice
-diff --git a/scripts/kconfig/tests/new_choice_with_dep/__init__.py b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
+diff --git a/scripts/kconfig/tests/inter_choice/__init__.py b/scripts/kconfig/tests/inter_choice/__init__.py
 new file mode 100644
-index 0000000..f0e0ead
+index 0000000..5c7fc36
 --- /dev/null
-+++ b/scripts/kconfig/tests/new_choice_with_dep/__init__.py
++++ b/scripts/kconfig/tests/inter_choice/__init__.py
 @@ -0,0 +1,14 @@
 +"""
-+Ask new choice values when they become visible.
++Do not affect user-assigned choice value by another choice.
 +
-+If new choice values are added with new dependency, and they become
-+visible during user configuration, oldconfig should recognize them
-+as (NEW), and ask the user for choice.
++Handling of state flags for choices is complecated.  In old days,
++the defconfig result of a choice could be affected by another choice
++if those choices interact by 'depends on', 'select', etc.
 +
-+Related Linux commit: 5d09598d488f081e3be23f885ed65cbbe2d073b5
++Related Linux commit: fbe98bb9ed3dae23e320c6b113e35f129538d14a
 +"""
 +
 +
 +def test(conf):
-+    assert conf.oldconfig('config', 'y') == 0
-+    assert conf.stdout_contains('expected_stdout')
-diff --git a/scripts/kconfig/tests/new_choice_with_dep/config b/scripts/kconfig/tests/new_choice_with_dep/config
++    assert conf.defconfig('defconfig') == 0
++    assert conf.config_contains('expected_config')
+diff --git a/scripts/kconfig/tests/inter_choice/defconfig b/scripts/kconfig/tests/inter_choice/defconfig
 new file mode 100644
-index 0000000..47ef95d
+index 0000000..162c414
 --- /dev/null
-+++ b/scripts/kconfig/tests/new_choice_with_dep/config
-@@ -0,0 +1,3 @@
-+CONFIG_CHOICE_B=y
-+# CONFIG_CHOICE_D is not set
-+CONFIG_CHOICE_E=y
-diff --git a/scripts/kconfig/tests/new_choice_with_dep/expected_stdout b/scripts/kconfig/tests/new_choice_with_dep/expected_stdout
++++ b/scripts/kconfig/tests/inter_choice/defconfig
+@@ -0,0 +1 @@
++CONFIG_CHOICE_VAL0=y
+diff --git a/scripts/kconfig/tests/inter_choice/expected_config b/scripts/kconfig/tests/inter_choice/expected_config
 new file mode 100644
-index 0000000..74dc0bc
+index 0000000..5dceefb
 --- /dev/null
-+++ b/scripts/kconfig/tests/new_choice_with_dep/expected_stdout
-@@ -0,0 +1,10 @@
-+A (A) [N/y/?] (NEW) y
-+  Choice ?
-+  > 1. Choice B (CHOICE_B)
-+    2. Choice C (CHOICE_C) (NEW)
-+  choice[1-2?]: 
-+Choice2 ?
-+  1. Choice D (CHOICE_D)
-+> 2. Choice E (CHOICE_E)
-+  3. Choice F (CHOICE_F) (NEW)
-+choice[1-3?]: 
++++ b/scripts/kconfig/tests/inter_choice/expected_config
+@@ -0,0 +1,4 @@
++CONFIG_MODULES=y
++CONFIG_CHOICE_VAL0=y
++# CONFIG_CHOIVE_VAL1 is not set
++CONFIG_DUMMY=y
 -- 
 2.7.4
