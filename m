@@ -1,50 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427259AbeCBL0I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:26:08 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:53751 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1427120AbeCBL0F (ORCPT
+        id S1427265AbeCBLay (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:30:54 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56243 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423169AbeCBLat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:26:05 -0500
-Date: Fri, 2 Mar 2018 12:26:03 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc: Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Subject: Re: [RFC/PATCH RT] Revert "rt,ntp: Move call to schedule_delayed_work()
- to helper thread"
-In-Reply-To: <20180302111050.dlrh4egvgns6wwwj@linutronix.de>
-Message-ID: <alpine.DEB.2.21.1803021221010.1803@nanos.tec.linutronix.de>
-References: <20180302111050.dlrh4egvgns6wwwj@linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 2 Mar 2018 06:30:49 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: David Wang <davidwang@zhaoxin.com>
+Cc: len.brown@intel.com, pavel@ucw.cz, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-pm@kernel.org,
+        linux-kernel@vger.kernel.org, brucechang@via-alliance.com,
+        cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com, benjaminpan@viatech.com,
+        lukelin@viacpu.com, timguo@zhaoxin.com, cobechen@zhaoxin.com,
+        jiangbowang@zhaoxin.com
+Subject: Re: [PATCH] Delete some unusefull operations for centaur CPU/platform
+Date: Fri, 02 Mar 2018 12:31:34 +0100
+Message-ID: <1983196.2xaV79s388@aspire.rjw.lan>
+In-Reply-To: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Mar 2018, Sebastian Andrzej Siewior wrote:
-
-> I've been looking at this in v3.10-RT where it got in. The patch
-> description says
+On Friday, March 2, 2018 5:11:48 AM CET David Wang wrote:
+> For Centaur CPU, the ucode will make sure that each CPU core can keep cache
+> coherency with each other when the CPU core entering to any C state. So the
+> cache flush operations when enter C3 is not necessary and will cause large
+> C3 enter/exit latency.
+> And the bus master disable operation when CPU core entering C3 state is not
+> needed too. Because the chipset will automatically do this operation.
 > 
-> |The ntp code for notify_cmos_timer() is called from a hard interrupt
-> |context.
+> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+
+I've queued up the previous version of your patch with some changes to
+comments/subject/changelog made by me for v4.17.
+
+Please see linux-next.
+
+> ---
+>  arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> I see only one caller of ntp_notify_cmos_timer() and that is
-> do_adjtimex() after "raw_spin_unlock_irqrestore()".
-> I see a few callers of do_adjtimex() which is SYS_adjtimex() (+compat)
-> and posix_clock_realtime_adj() which in turn is called by
-> SYS_clock_adjtime().
+> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+> index dde437f..1cd357b 100644
+> --- a/arch/x86/kernel/acpi/cstate.c
+> +++ b/arch/x86/kernel/acpi/cstate.c
+> @@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+>  	if (c->x86_vendor == X86_VENDOR_INTEL &&
+>  	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
+>  			flags->bm_control = 0;
+> +
+> +        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
+> +		/*
+> +		 * on all centaur CPUs, sw need not execute cache flush operation
+> +		 * when entering C3 type State.
+> +		 *
+> +		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
+> +		 * entering C3 type state.
+> +		 */
+> +		flags->bm_check = 1;
+> +		flags->bm_control = 0;
+> +	}
+>  }
+>  EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
+>  
 > 
-> I can't find the hard interrupt context. May I revert this patch?
-
-That really looks bogus. ntp_notify_cmos_timer() has never been invoked
-from hard interrupt context or from a atomic region. No idea how that patch
-ended up in RT...
-
-Thanks,
-
-	tglx
