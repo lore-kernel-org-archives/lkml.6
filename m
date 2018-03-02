@@ -1,91 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427467AbeCBRMb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:12:31 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:44528 "EHLO ale.deltatee.com"
+        id S1946472AbeCBRQk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 12:16:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:58974 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1424699AbeCBRM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 12:12:28 -0500
-To: Jason Gunthorpe <jgg@ziepe.ca>, Stephen Bates <sbates@raithlin.com>
-Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        id S1946081AbeCBRQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:16:39 -0500
+Subject: Re: [PATCH v4 4/6] vfio/type1: check dma map request is within a
+ valid iova range
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Shameerali Kolothum Thodi
+        <shameerali.kolothum.thodi@huawei.com>
+Cc: Auger Eric <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Steve Wise <swise@opengridcomputing.com>
-References: <20180228234006.21093-11-logang@deltatee.com>
- <749e3752-4349-0bdf-5243-3d510c2b26db@grimberg.me>
- <40d69074-31a8-d06a-ade9-90de7712c553@deltatee.com>
- <5649098f-b775-815b-8b9a-f34628873ff4@grimberg.me>
- <20180301184249.GI19007@ziepe.ca>
- <edaf476a-cfe9-0598-1aa5-14802a9a1477@deltatee.com>
- <20180301224540.GL19007@ziepe.ca>
- <77591162-4CCD-446E-A27C-1CDB4996ACB7@raithlin.com>
- <20180301234930.GG14799@localhost.localdomain>
- <CE2A5D93-E735-4414-8DC1-B308B74A1C5B@raithlin.com>
- <20180302161842.GB14861@ziepe.ca>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a9e2eb46-50ff-e8c6-3b00-a297876c190b@deltatee.com>
-Date: Fri, 2 Mar 2018 10:10:31 -0700
+        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>
+References: <20180221122209.9292-1-shameerali.kolothum.thodi@huawei.com>
+ <20180221122209.9292-5-shameerali.kolothum.thodi@huawei.com>
+ <818b3bc3-e2e1-e8df-8cca-17e6ecaf4ef9@redhat.com>
+ <20180226161310.061ce3a8@w520.home>
+ <aefca16f-570f-36d1-a493-f0a477736ef0@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865CDE3@FRAEML521-MBX.china.huawei.com>
+ <238c74e1-dd3c-f626-0cda-82c6d840d772@redhat.com>
+ <5FC3163CFD30C246ABAA99954A238FA83865DBD3@FRAEML521-MBX.china.huawei.com>
+ <2056267c-dab1-fa71-5dcb-4db80266c568@redhat.com>
+ <20180228082417.07c42a88@w520.home>
+ <5FC3163CFD30C246ABAA99954A238FA838664702@FRAEML521-MBX.china.huawei.com>
+ <20180302090417.05ade6df@t450s.home>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <22b61209-61b6-207d-9d70-1db6ae630fc1@arm.com>
+Date: Fri, 2 Mar 2018 17:16:35 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180302161842.GB14861@ziepe.ca>
+In-Reply-To: <20180302090417.05ade6df@t450s.home>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, sagi@grimberg.me, keith.busch@intel.com, sbates@raithlin.com, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 10/10] nvmet: Optionally use PCI P2P memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/03/18 09:18 AM, Jason Gunthorpe wrote:
-
-> This allocator is already seems not useful for the P2P target memory
-> on a Mellanox NIC due to the way it has a special allocation flow
-> (windowing) and special usage requirements..
+On 02/03/18 16:04, Alex Williamson wrote:
+[...]
+>>> I still think you're overstretching the IOMMU reserved region interface
+>>> by trying to report possible ACS conflicts.  Are we going to update the
+>>> reserved list on device hotplug?  Are we going to update the list when
+>>> MMIO is enabled or disabled for each device?  What if the BARs are
+>>> reprogrammed or bridge apertures changed?  IMO, the IOMMU reserved list
+>>> should account for specific IOVA exclusions that apply to transactions
+>>> that actually reach the IOMMU, not aliasing that might occur in the
+>>> downstream topology.  Additionally, the IOMMU group composition must be
+>>> such that these sorts of aliasing issues can only occur within an IOMMU
+>>> group.  If a transaction can be affected by the MMIO programming of
+>>> another group, then the groups are drawn incorrectly for the isolation
+>>> capabilities of the hardware.  Thanks,
+>>
+>> Agree that this is not a perfect thing to do covering all scenarios. As Robin
+>> pointed out, the current code is playing safe by reserving the full windows.
+>>
+>> My suggestion will be to limit this reservation to non-ACS cases only.  This will
+>> make sure that ACS ARM hardware is not broken by this series and nos-ACS
+>> ones has a chance to run once Qemu is updated to take care of the reserved
+>> regions (at least in some user scenarios).
+>>
+>> If you all are fine with this, I can include the ACS check I mentioned earlier in
+>> iommu_dma_get_resv_regions() and sent out the revised  series.
+>>
+>> Please let me know your thoughts.
 > 
-> Nor can it be usefull for the doorbell memory in the NIC.
+> IMO, the IOMMU should be concerned with ACS as far as isolation is
+> concerned and reporting reserved ranges that are imposed at the IOMMU
+> and leave any aliasing or routing issues in the downstream topology to
+> other layers, or perhaps to the user.  Unfortunately, enforcing the
+> iova list in vfio is gated by some movement here since we can't break
+> existing users.  Thanks,
 
-No one says every P2P use has to use P2P memory. Doorbells are obviously 
-not P2P memory. But it's the p2mem interface that's important and the 
-interface absolutely does not belong in the NVMe driver. Once you have 
-the P2P memory interface you need an allocator behind it and the obvious 
-place is in the P2P code to handle the common case where you're just 
-mapping a BAR. We don't need to implement a genalloc in every driver 
-that has P2P memory attached with it. If some hardware wants to expose 
-memory that requires complicated allocation it's up to them to solve 
-that problem but that isn't enough justification, to me, to push common 
-code into every driver.
+FWIW, given the discussion we've had here I wouldn't object to pushing 
+the PCI window reservation back into the DMA-specific path, such that it 
+doesn't get exposed via the general IOMMU API interface. We *do* want to 
+do it there where we are in total control of our own address space and 
+it just avoids a whole class of problems (even with ACS I'm not sure the 
+root complex can be guaranteed to send a "bad" IOVA out to the SMMU 
+instead of just terminating it for looking like a peer-to-peer attempt).
 
-> Both of these are existing use cases for P2P with out of tree patches..
+I do agree that it's not scalable for the IOMMU layer to attempt to 
+detect and describe upstream PCI limitations to userspace by itself - 
+they are "reserved regions" rather than "may or may not work regions" 
+after all. If there is a genuine integration issue between an IOMMU and 
+an upstream PCI RC which restricts usable addresses on a given system, 
+that probably needs to be explicitly communicated from firmware to the 
+IOMMU driver anyway, at which point that driver can report the relevant 
+region(s) directly from its own callback.
 
-And we have out of tree code that uses the generic allocator part of 
-p2pmem.
+I suppose there's an in-between option of keeping generic window 
+reservations but giving them a new "only reserve this if you're being 
+super-cautious or don't know better" region type which we hide from 
+userspace and ignore in VFIO, but maybe that leaves the lines a but too 
+blurred still.
 
-> The allocator seems to only be able to solve the CMB problem, and I
-> think due to that it is better to put this allocator in the NVMe
-> driver and not the core code.. At least until we find a 2nd user that
-> needs the same allocation scheme...
-
-See the first P2PMEM RFC. We used Chelsio's NIC instead of the CMB with 
-a very similar allocation scheme. We'd still be enabling that NIC in the 
-same way if we didn't run into hardware issues with it. A simple BAR 
-with memory behind it is always going to be the most common case.
-
-Logan
+Robin.
