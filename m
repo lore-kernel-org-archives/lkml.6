@@ -1,65 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934538AbeCBXPa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:15:30 -0500
-Received: from vps-vb.mhejs.net ([37.28.154.113]:59754 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934228AbeCBXP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:15:29 -0500
-Subject: Re: [PATCH 2/3] crypto: ccp - return an actual key size from RSA
- max_size callback
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <51c265e4-6153-3e5e-316a-ebef059ac36a@maciej.szmigiero.name>
- <20180302164451.GJ21579@gondor.apana.org.au>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <087e7b27-f839-8d4b-8da8-5d0fa2f8caf1@maciej.szmigiero.name>
-Date: Sat, 3 Mar 2018 00:15:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180302164451.GJ21579@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S934560AbeCBXXu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:23:50 -0500
+Received: from 6.mo68.mail-out.ovh.net ([46.105.63.100]:58042 "EHLO
+        6.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751105AbeCBXXt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 18:23:49 -0500
+From: Florent Flament <contact@florentflament.com>
+To: jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Florent Flament <contact@florentflament.com>
+Subject: [PATCH] HID: Logitech K290: Add driver for the Logitech K290 USB keyboard
+Date: Fri,  2 Mar 2018 23:04:25 +0100
+Message-Id: <20180302220425.27707-1-contact@florentflament.com>
+X-Mailer: git-send-email 2.14.3
+X-Ovh-Tracer-Id: 14594196071721695831
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrieelgdduheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenuc
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.03.2018 17:44, Herbert Xu wrote:
-> On Sat, Feb 24, 2018 at 05:03:21PM +0100, Maciej S. Szmigiero wrote:
->> rsa-pkcs1pad uses a value returned from a RSA implementation max_size
->> callback as a size of an input buffer passed to the RSA implementation for
->> encrypt and sign operations.
->>
->> CCP RSA implementation uses a hardware input buffer which size depends only
->> on the current RSA key length, so it should return this key length in
->> the max_size callback, too.
->> This also matches what the kernel software RSA implementation does.
->>
->> Previously, the value returned from this callback was always the maximum
->> RSA key size the CCP hardware supports.
->> This resulted in this huge buffer being passed by rsa-pkcs1pad to CCP even
->> for smaller key sizes and then in a buffer overflow when ccp_run_rsa_cmd()
->> tried to copy this large input buffer into a RSA key length-sized hardware
->> input buffer.
->>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
->> Fixes: ceeec0afd684 ("crypto: ccp - Add support for RSA on the CCP")
->> Cc: stable@vger.kernel.org
-> 
-> Patch applied.  Thanks.
+With the generic HID driver, K290 keyboards' F1 to F12 keys send
+multimedia events by default, and standard keycodes when the function
+key is pressed. This driver allows to configure K290 keyboards, so
+that F1 to F12 have a standard behavior and send multimedia events
+when the function key is pressed. The keyboard mode is set through the
+fn_mode module parameter: when set to 1 (default setting) the keyboard
+behaves as with the generic HID driver, when set to 0 the keyboard is
+configured to work as standard keyboards.
 
-Thanks.
+Signed-off-by: Florent Flament <contact@florentflament.com>
+---
+ drivers/hid/Kconfig             |  18 +++++++
+ drivers/hid/Makefile            |   1 +
+ drivers/hid/hid-ids.h           |   1 +
+ drivers/hid/hid-logitech-k290.c | 103 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 123 insertions(+)
+ create mode 100644 drivers/hid/hid-logitech-k290.c
 
-However, what about the first patch from this series?
-Without it, while it no longer should cause a buffer overflow, in-kernel
-X.509 certificate verification will still fail with CCP driver loaded
-(since CCP RSA implementation has a higher priority than the software
-RSA implementation).
-
-Maciej
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 19c499f5623d..6686da8daac6 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -488,6 +488,24 @@ config HID_LOGITECH_HIDPP
+ 	T651, TK820), some mice (Zone Touch mouse), or even keyboards (Solar
+ 	Keyboard).
+ 
++config HID_LOGITECH_K290
++	tristate "Logitech K290 Keyboard support"
++	depends on USB_HID
++	---help---
++	This enhances support of Logitech K290 keyboards.
++
++	With the generic HID driver, K290 keyboards' F1 to F12 keys
++	send multimedia events by default, and standard keycodes when
++	the function key is pressed. This driver allows to configure
++	K290 keyboards, so that F1 to F12 have a standard behavior and
++	send multimedia events when the function key is pressed. The
++	keyboard mode is set through the fn_mode module parameter:
++	when set to 1 (default setting) the keyboard behaves as with
++	the generic HID driver, when set to 0 the keyboard is
++	configured to work as standard keyboards.
++
++	Say Y if you have a Logitech K290 keyboard.
++
+ config LOGITECH_FF
+ 	bool "Logitech force feedback support"
+ 	depends on HID_LOGITECH
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index eb13b9e92d85..78079d3a5d58 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_HID_LENOVO)	+= hid-lenovo.o
+ obj-$(CONFIG_HID_LOGITECH)	+= hid-logitech.o
+ obj-$(CONFIG_HID_LOGITECH_DJ)	+= hid-logitech-dj.o
+ obj-$(CONFIG_HID_LOGITECH_HIDPP)	+= hid-logitech-hidpp.o
++obj-$(CONFIG_HID_LOGITECH_K290)	+= hid-logitech-k290.o
+ obj-$(CONFIG_HID_MAGICMOUSE)	+= hid-magicmouse.o
+ obj-$(CONFIG_HID_MAYFLASH)	+= hid-mf.o
+ obj-$(CONFIG_HID_MICROSOFT)	+= hid-microsoft.o
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 9454ac134ce2..68caba7e666c 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -693,6 +693,7 @@
+ #define USB_DEVICE_ID_LOGITECH_HARMONY_LAST 0xc14f
+ #define USB_DEVICE_ID_LOGITECH_HARMONY_PS3 0x0306
+ #define USB_DEVICE_ID_LOGITECH_KEYBOARD_G710_PLUS 0xc24d
++#define USB_DEVICE_ID_LOGITECH_KEYBOARD_K290	0xc31f
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C01A	0xc01a
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C05A	0xc05a
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C06A	0xc06a
+diff --git a/drivers/hid/hid-logitech-k290.c b/drivers/hid/hid-logitech-k290.c
+new file mode 100644
+index 000000000000..37045da8cc02
+--- /dev/null
++++ b/drivers/hid/hid-logitech-k290.c
+@@ -0,0 +1,103 @@
++/*
++ * HID driver for Logitech K290 keyboard
++ *
++ * Copyright (c) 2018 Florent Flament
++ *
++ * This drivers allows to configure the K290 keyboard's function key
++ * behaviour (whether function mode is activated or not by default).
++ *
++ * Logitech custom commands taken from Marcus Ilgner k290-fnkeyctl
++ * (https://github.com/milgner/k290-fnkeyctl):
++ * K290_SET_FUNCTION_CMD
++ * K290_SET_FUNCTION_VAL
++ * K290_SET_FUNCTION_OFF
++ * K290_SET_FUNCTION_ON
++ *
++ * Based on hid-accutouch.c and hid-elo.c
++ *
++ * This driver is licensed under the terms of GPLv2.
++ */
++
++#include <linux/device.h>
++#include <linux/hid.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/mod_devicetable.h>
++#include <linux/stat.h>
++#include <linux/types.h>
++#include <linux/usb.h>
++
++#include "hid-ids.h"
++#include "usbhid/usbhid.h"
++
++// Logitech K290 custom USB command and value to setup function key
++#define	K290_SET_FUNCTION_CMD 0x02
++#define K290_SET_FUNCTION_VAL 0x001a
++
++// Have function mode turned off (as with standard keyboards)
++#define K290_SET_FUNCTION_OFF 0x0001
++// Have function mode turned on (default k290 behavior)
++#define K290_SET_FUNCTION_ON  0x0000
++
++// Function key default mode is set at module load time for every K290
++// keyboards plugged on the machine. By default fn_mode = 1, i.e
++// sending K290_SET_FUNCTION_ON (default K290 behavior).
++static bool fn_mode = 1;
++module_param(fn_mode, bool, 0444);
++MODULE_PARM_DESC(fn_mode, "Logitech K290 function key mode (default = 1)");
++
++static void k290_set_function(struct usb_device *dev, uint16_t function_mode)
++{
++	int ret;
++
++	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
++			      K290_SET_FUNCTION_CMD,
++			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++			      K290_SET_FUNCTION_VAL,
++			      function_mode, 0, 0, USB_CTRL_SET_TIMEOUT);
++
++	if (ret < 0)
++		dev_err(&dev->dev,
++			"Failed to setup K290 function key, error %d\n", ret);
++}
++
++static int k290_set_function_hid_device(struct hid_device *hid)
++{
++	struct usb_device *usb_dev = hid_to_usb_dev(hid);
++
++	k290_set_function(usb_dev,
++			fn_mode ? K290_SET_FUNCTION_ON : K290_SET_FUNCTION_OFF);
++	return 0;
++}
++
++static int k290_input_configured(struct hid_device *hid,
++				 struct hid_input *hidinput)
++{
++	return k290_set_function_hid_device(hid);
++}
++
++static int k290_resume(struct hid_device *hid)
++{
++	return k290_set_function_hid_device(hid);
++}
++
++static const struct hid_device_id k290_devices[] = {
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
++			 USB_DEVICE_ID_LOGITECH_KEYBOARD_K290) },
++	{ }
++};
++MODULE_DEVICE_TABLE(hid, k290_devices);
++
++static struct hid_driver k290_driver = {
++	.name = "hid-logitech-k290",
++	.id_table = k290_devices,
++	.input_configured = k290_input_configured,
++	.resume = k290_resume,
++	.reset_resume = k290_resume,
++};
++
++module_hid_driver(k290_driver);
++
++MODULE_AUTHOR("Florent Flament <contact@florentflament.com>");
++MODULE_DESCRIPTION("Logitech K290 keyboard driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.14.3
