@@ -1,68 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427438AbeCBMRs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 07:17:48 -0500
-Received: from ozlabs.org ([103.22.144.67]:44577 "EHLO ozlabs.org"
+        id S1427424AbeCBMRq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 07:17:46 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:60228 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1423042AbeCBMRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 07:17:44 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH] powerpc: boot: add strrchr function
-In-Reply-To: <20180301152654.29275-1-robh@kernel.org>
-References: <20180301152654.29275-1-robh@kernel.org>
-Date: Fri, 02 Mar 2018 23:17:41 +1100
-Message-ID: <87h8pywu1m.fsf@concordia.ellerman.id.au>
+        id S1423032AbeCBMRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 07:17:42 -0500
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>, linux-rockchip@lists.infradead.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 4/8] drm/rockchip: dw-mipi-dsi: Fix error handling path
+Date: Fri, 02 Mar 2018 13:17:16 +0100
+Message-ID: <1552223.kPgI5s5XdI@phil>
+In-Reply-To: <68537204-0c41-5210-935a-0a7743ea847c@collabora.com>
+References: <20180110162348.22765-1-thierry.escande@collabora.com> <13219770.NOTAg9tncx@diego> <68537204-0c41-5210-935a-0a7743ea847c@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
+Hi Enric,
 
-> libfdt gained a new dependency on strrchr, so copy the implementation
-> from lib/string.c. Most of the string functions are in assembly, but
-> stdio.c already has strnlen, so add strrchr there.
->
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Please ack. This is a dependency for dtc/libfdt sync with upstream.
+Am Freitag, 2. März 2018, 13:09:02 CET schrieb Enric Balletbo i Serra:
+> Hi Heiko,
+> 
+> On 01/03/18 16:50, Heiko Stübner wrote:
+> > Hi Jeffy, Thierry, Enric,
+> > 
+> > Am Mittwoch, 10. Januar 2018, 17:23:44 CET schrieb Thierry Escande:
+> >> From: Jeffy Chen <jeffy.chen@rock-chips.com>
+> >>
+> >> Add missing pm_runtime_disable() in bind()'s error handling path.
+> >>
+> >> Also cleanup encoder & connector in unbind().
+> > 
+> > Can you please split all these surprise "Also" sections into separate
+> > patches?
+> > 
+> 
+> I'll take a look.
+> 
+> > It looks like this is true for all following patch to some degree and
+> > the inno-hdmi patch even has a unbind reordering-change without
+> > mentioning it in the commit message.
+> > 
+> 
+> Actually, I think this patch is not correct against current mainline, see below.
+> 
+> > 
+> > Thanks
+> > Heiko
+> > 
+> >> Fixes: 80a9a059d4e4 ("drm/rockchip/dsi: add dw-mipi power domain support")
+> >> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> >> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> >> ---
+> >>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 21 +++++++++++++--------
+> >>  1 file changed, 13 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+> >> b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c index b1fe0639227e..78e6b7919bf7
+> >> 100644
+> >> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+> >> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+> >> @@ -1282,7 +1282,7 @@ static int dw_mipi_dsi_bind(struct device *dev, struct
+> >> device *master, ret = dw_mipi_dsi_register(drm, dsi);
+> >>  	if (ret) {
+> >>  		DRM_DEV_ERROR(dev, "Failed to register mipi_dsi: %d\n", ret);
+> >> -		goto err_pllref;
+> >> +		goto err_disable_pllref;
+> >>  	}
+> >>
+> >>  	dsi->dsi_host.ops = &dw_mipi_dsi_host_ops;
+> >> @@ -1290,24 +1290,25 @@ static int dw_mipi_dsi_bind(struct device *dev,
+> >> struct device *master, ret = mipi_dsi_host_register(&dsi->dsi_host);
+> >>  	if (ret) {
+> >>  		DRM_DEV_ERROR(dev, "Failed to register MIPI host: %d\n", ret);
+> >> -		goto err_cleanup;
+> >> +		goto err_disable_pm_runtime;
+> >>  	}
+> >>
+> >>  	if (!dsi->panel) {
+> >>  		ret = -EPROBE_DEFER;
+> >> -		goto err_mipi_dsi_host;
+> >> +		goto err_unreg_mipi_dsi_host;
+> >>  	}
+> >>
+> >>  	dev_set_drvdata(dev, dsi);
+> >>  	pm_runtime_enable(dev);
+> >>  	return 0;
+> >>
+> >> -err_mipi_dsi_host:
+> >> +err_unreg_mipi_dsi_host:
+> >>  	mipi_dsi_host_unregister(&dsi->dsi_host);
+> >> -err_cleanup:
+> >> -	drm_encoder_cleanup(&dsi->encoder);
+> >> -	drm_connector_cleanup(&dsi->connector);
+> >> -err_pllref:
+> >> +err_disable_pm_runtime:
+> >> +	pm_runtime_disable(dev);
+> 
+> I think that this is not required, 'pm_runtime_enable' is called just before the
+> 'return 0' (see above). Commit 517f56839f58 'drm/rockchip: dw-mipi-dsi: fix
+> possible un-balanced runtime PM enable' moved the call to that place. So, now
+> the call to pm_runtime_disable is not needed.
+> 
+> >> +	dsi->connector.funcs->destroy(&dsi->connector);
+> >> +	dsi->encoder.funcs->destroy(&dsi->encoder);
+> 
+> Here, there is a reordering and also a function replacement. The reorder makes
+> sense to me, first cleanup the connector and then the encoder, but I'm not sure
+> about the function change and if is needed, anyway, in the case is needed,
+> shouldn't be
+> 
+> +	drm_connector_cleanup(&dsi->connector);
+> +	drm_encoder_cleanup(&dsi->encoder);
+> 
+> instead?
 
-Yeah seems fine. At some point we should try and duplicate less code in
-boot, but now is not that time.
+If you look at drm/rockchip/dw-mipi-dsi.c you'll see that
+dw_mipi_dsi_drm_connector_destroy() does both connector_unregister()
+and drm_connector_cleanup().
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+And looking at other drivers it really seems that calling that destroy
+callback is really the way to go.
 
-cheers
 
-> diff --git a/arch/powerpc/boot/stdio.c b/arch/powerpc/boot/stdio.c
-> index a701261b1781..98042eff7b26 100644
-> --- a/arch/powerpc/boot/stdio.c
-> +++ b/arch/powerpc/boot/stdio.c
-> @@ -21,6 +21,16 @@ size_t strnlen(const char * s, size_t count)
->  	return sc - s;
->  }
->  
-> +char *strrchr(const char *s, int c)
-> +{
-> +	const char *last = NULL;
-> +	do {
-> +		if (*s == (char)c)
-> +			last = s;
-> +	} while (*s++);
-> +	return (char *)last;
-> +}
-> +
->  #ifdef __powerpc64__
->  
->  # define do_div(n, base) ({						\
-> -- 
-> 2.14.1
+Heiko
