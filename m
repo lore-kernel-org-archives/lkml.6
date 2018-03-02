@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuZ49OyYvovwSmVDdZb+W1sl43KfsPWQ9wAWjy7i0OmVRsiBSAQMBT2VHnQQKLrKJN8Sp5q
-ARC-Seal: i=1; a=rsa-sha256; t=1519980989; cv=none;
+X-Google-Smtp-Source: AG47ELt/RWgoc6Bl95M67lZAntEQRqPaBQpIyvUCjctYpWBSdw/aWM58//oe0PpEuxBj2zubqIsI
+ARC-Seal: i=1; a=rsa-sha256; t=1519980986; cv=none;
         d=google.com; s=arc-20160816;
-        b=j02t9aNQbYYA2479vdGCJ5M+K1W9Zle0aMXXSjmGDkNVtgALcwtNAJwp/QptPtJOfY
-         SG52L5gV+03TW/sDM0/JhMLr4+GVKoA3xYUDfeW7Rl4CYKzcAc/dX39c6TwKWmVLbXr4
-         MdbY+PlpuijeETu4ILZhz4uHuyhDtK9bzjTqzVkJHxRzoV8z3FeKTeZoxG1PYt/TeODi
-         DYegsH2R1NsuZ76lkWo/CooT+wu5U40xKvhem61XLf+FWsy5R1p/IevJUXJd38wHfZqb
-         XsS5UsVzTn6iBY5de5wXuWbVgFyNxl9ar1JkhLrffpATz2CsYBAZoVHLn4WLrxsfVpBM
-         sRmQ==
+        b=EmGq+UQbiOZpZ1ioKwEUSvr/rzn5Gp2ON4uiScxKme9iqZ4ZlEcHVlz5pY54kURWHB
+         XMmDvUz3mVhnOU0fTFtWuAL4iZY4ZWpxSLaUJ2xGPp6ukg43tuUKA/jcpE76/U++Nili
+         gA9/Zxl9RcVGjP48vizjq4CVGYbI4Oj34cjY3X6GT/DIVQ2jAR0Z2DcZeywmvGIjiMHk
+         faKCmBtiOik/eZd/rs5cmU7o1DX19JE97okVmuu35UQ8xufJRTdqsEDrZ7j2Qal4K0Q2
+         K/VR0r0CNruEZnfHM6t1DsU7OqZrGvIODxOqw5PVwVPXqIMILousJknOxBHDMljOJo44
+         aDDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MXO7DuXnwk6CAHXv++9jXiZDYMsxk+OAXYCDQle96R8=;
-        b=N90N1g3JDmtr39hDMYKtHnQwx4zD6AoEFYv7XHunK7nbg9WYeiGFyc4/apl/sKAHDR
-         ifVnfrI6U5t1jmqf4OV+fG7Wa1PB3OGgq2MfV2b+voPHyJ/reEoS+kBCiDoWOER0GN1P
-         GozSvmvqqwivrIBj6aDXeBECFULkOZJP1Prum/LhrjmpSRaPmHIUY7ZmRViDk4bYCdtb
-         cEzDidfSqPG4hP03GHFlPQx5EKqVhIFkV8mX6zev6ztovKLyLOjFiFIp3DPsx9uZAHGn
-         cK51NbSDZFkxva4NpgMaqjAdHJTqFsYNQrMKHz4ZwC1vARtcDPx0AumOGbnuMWrIY7CL
-         k08A==
+        bh=N5qwh6ZuK4p0iDkKEMS0dyIQEtthg42CrTby3jKkNqU=;
+        b=MXywrhsyOasTe9Sbk1CB6kYnxUVI7dmCsgifibffSzfbS5e5nKV1uxAfm1pB4N+5ta
+         2yjbd9i1oImggRygCjaRDxEuSuqEicZzMNT8qQUCddLpPI661+gE6zllQe38wKamN/Dl
+         2a0IvQ4btPiTYE+Z9pFAPlWdRvpXApdxvQJSPbmZr1X/CVpaJsPIwHiFRJ+TJTX5/W4Y
+         leKZuwezG/Y/OogX5ygaNyZNOGD7GV8wT0BgOtVb8OfoZANHyPAHgNJ8z+sBC1Xm18ML
+         ShGjcasFNyCmA0QZ/uoaxePKz7HsdyD3AQdB4O7vBkC1uzqQjrKPTlFG+NFmU2qdFsiM
+         zgNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brendan McGrath <redmcg@redmandi.dyndns.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	Albert Hsieh <wen.hsieh@broadcom.com>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 09/56] ipv6: icmp6: Allow icmp messages to be looped back
-Date: Fri,  2 Mar 2018 09:50:55 +0100
-Message-Id: <20180302084450.098758743@linuxfoundation.org>
+Subject: [PATCH 4.9 08/56] mtd: nand: brcmnand: Zero bitflip is not an error
+Date: Fri,  2 Mar 2018 09:50:54 +0100
+Message-Id: <20180302084450.053785624@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815416857818806?=
-X-GMAIL-MSGID: =?utf-8?q?1593815586484283180?=
+X-GMAIL-THRID: =?utf-8?q?1593815582710886048?=
+X-GMAIL-MSGID: =?utf-8?q?1593815582710886048?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brendan McGrath <redmcg@redmandi.dyndns.org>
+From: Albert Hsieh <wen.hsieh@broadcom.com>
 
 
-[ Upstream commit 588753f1eb18978512b1c9b85fddb457d46f9033 ]
+[ Upstream commit e44b9a9c135727f3410e029910275f40681dc8bc ]
 
-One example of when an ICMPv6 packet is required to be looped back is
-when a host acts as both a Multicast Listener and a Multicast Router.
+A negative return value of brcmstb_nand_verify_erased_page() indicates a
+real bitflip error of an erased page, and other return values (>= 0) show
+the corrected bitflip number. Zero return value means no bitflip, but the
+current driver code treats it as an error, and eventually leads to
+falsely reported ECC error.
 
-A Multicast Router will listen on address ff02::16 for MLDv2 messages.
-
-Currently, MLDv2 messages originating from a Multicast Listener running
-on the same host as the Multicast Router are not being delivered to the
-Multicast Router. This is due to dst.input being assigned the default
-value of dst_discard.
-
-This results in the packet being looped back but discarded before being
-delivered to the Multicast Router.
-
-This patch sets dst.input to ip6_input to ensure a looped back packet
-is delivered to the Multicast Router.
-
-Signed-off-by: Brendan McGrath <redmcg@redmandi.dyndns.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 02b88eea9f9c ("mtd: brcmnand: Add check for erased page bitflip")
+Signed-off-by: Albert Hsieh <wen.hsieh@broadcom.com>
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/nand/brcmnand/brcmnand.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1651,6 +1651,7 @@ struct dst_entry *icmp6_dst_alloc(struct
- 	}
+--- a/drivers/mtd/nand/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/brcmnand/brcmnand.c
+@@ -1763,7 +1763,7 @@ try_dmaread:
+ 			err = brcmstb_nand_verify_erased_page(mtd, chip, buf,
+ 							      addr);
+ 			/* erased page bitflips corrected */
+-			if (err > 0)
++			if (err >= 0)
+ 				return err;
+ 		}
  
- 	rt->dst.flags |= DST_HOST;
-+	rt->dst.input = ip6_input;
- 	rt->dst.output  = ip6_output;
- 	atomic_set(&rt->dst.__refcnt, 1);
- 	rt->rt6i_gateway  = fl6->daddr;
