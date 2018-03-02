@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935983AbeCBFvN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:51:13 -0500
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46619 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935969AbeCBFvJ (ORCPT
+        id S935999AbeCBFvX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:51:23 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39046 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935951AbeCBFvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:51:09 -0500
-X-Google-Smtp-Source: AG47ELtWTOVh1dKp/jbbLJtt/aJc0DtGyJsUSExYw51OmrMkGCQ55tYWmU1Z0y7TdV/AWrTJaU3TxA==
+        Fri, 2 Mar 2018 00:51:19 -0500
+X-Google-Smtp-Source: AG47ELsCFYqDXmDoQn6AUuCPs/180abLnMzVe1XDy4xYGGfoXvn911NdQEurDHyMRr41lOOX054xDQ==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,9 +18,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 04/11] clk: actions: Add common clock driver support
-Date: Fri,  2 Mar 2018 11:18:53 +0530
-Message-Id: <20180302054900.11275-5-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 05/11] clk: actions: Add gate clock support
+Date: Fri,  2 Mar 2018 11:18:54 +0530
+Message-Id: <20180302054900.11275-6-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
@@ -28,75 +28,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Actions Semi common clock driver with generic structures
-and interface functions.
+Add support for Actions Semi gate clock together with helper
+functions to be used in composite clock.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/Kconfig              |  1 +
- drivers/clk/Makefile             |  1 +
- drivers/clk/actions/Kconfig      |  4 ++
- drivers/clk/actions/Makefile     |  3 ++
- drivers/clk/actions/owl-common.c | 84 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-common.h | 41 ++++++++++++++++++++
- 6 files changed, 134 insertions(+)
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
+ drivers/clk/actions/Makefile   |  1 +
+ drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 151 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc6e6c0..6313a4f4327a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
- 
-+source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e6364f..b7909df532ed 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
- # please keep this section sorted lexicographically by directory path name
-+obj-y					+= actions/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
- obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
- obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-new file mode 100644
-index 000000000000..13a3e5083d43
---- /dev/null
-+++ b/drivers/clk/actions/Kconfig
-@@ -0,0 +1,4 @@
-+config CLK_ACTIONS
-+	bool "Clock driver for Actions Semi SoCs"
-+	depends on ARCH_ACTIONS || COMPILE_TEST
-+	default ARCH_ACTIONS
 diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-new file mode 100644
-index 000000000000..64a50fc2d335
---- /dev/null
+index 64a50fc2d335..1f0917872c9d 100644
+--- a/drivers/clk/actions/Makefile
 +++ b/drivers/clk/actions/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
-+
-+clk-owl-y			+= owl-common.o
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ 
+ clk-owl-y			+= owl-common.o
++clk-owl-y			+= owl-gate.o
+diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
 new file mode 100644
-index 000000000000..a7cb698fdc86
+index 000000000000..25dd94ac0f35
 --- /dev/null
-+++ b/drivers/clk/actions/owl-common.c
-@@ -0,0 +1,84 @@
++++ b/drivers/clk/actions/owl-gate.c
+@@ -0,0 +1,77 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL common clock driver
++// OWL gate clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -104,89 +65,82 @@ index 000000000000..a7cb698fdc86
 +// Copyright (c) 2018 Linaro Ltd.
 +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
++#include <linux/clk-provider.h>
 +#include <linux/regmap.h>
 +
-+#include "owl-common.h"
++#include "owl-gate.h"
 +
-+static const struct regmap_config owl_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xffff,
-+	.fast_io	= true,
-+};
-+
-+static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
-+			 struct regmap *regmap)
++void clk_gate_set(const struct owl_clk_common *common,
++		 const struct owl_gate_hw *gate_hw, bool enable)
 +{
-+	int i;
-+	struct owl_clk_common *clks;
++	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++	u32 reg;
 +
-+	for (i = 0; i < desc->num_clks; i++) {
-+		clks = desc->clks[i];
-+		if (!clks)
-+			continue;
++	set ^= enable;
 +
-+		clks->regmap = regmap;
-+	}
++	regmap_read(common->regmap, gate_hw->reg, &reg);
++
++	if (set)
++		reg |= BIT(gate_hw->bit_idx);
++	else
++		reg &= ~BIT(gate_hw->bit_idx);
++
++	regmap_write(common->regmap, gate_hw->reg, reg);
 +}
 +
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc)
++static void owl_gate_disable(struct clk_hw *hw)
 +{
-+	void __iomem *base;
-+	struct device_node *node = pdev->dev.of_node;
-+	struct regmap *regmap;
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
 +
-+	base = of_iomap(node, 0);
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
-+	if (IS_ERR_OR_NULL(regmap)) {
-+		pr_err("failed to init regmap\n");
-+		return PTR_ERR(regmap);
-+	}
++	clk_gate_set(common, &gate->gate_hw, false);
++}
 +
-+	owl_clk_set_regmap(desc, regmap);
++static int owl_gate_enable(struct clk_hw *hw)
++{
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
++
++	clk_gate_set(common, &gate->gate_hw, true);
 +
 +	return 0;
 +}
 +
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
++int clk_is_enabled(const struct owl_clk_common *common,
++		   const struct owl_gate_hw *gate_hw)
 +{
-+	int i, ret;
-+	struct clk_hw *hw;
++	u32 reg;
 +
-+	for (i = 0; i < hw_clks->num; i++) {
++	regmap_read(common->regmap, gate_hw->reg, &reg);
 +
-+		hw = hw_clks->hws[i];
++	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
++		reg ^= BIT(gate_hw->bit_idx);
 +
-+		if (!hw)
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider\n");
-+
-+	return ret;
++	return !!(reg & BIT(gate_hw->bit_idx));
 +}
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
++
++static int owl_gate_is_enabled(struct clk_hw *hw)
++{
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
++
++	return clk_is_enabled(common, &gate->gate_hw);
++}
++
++const struct clk_ops owl_gate_ops = {
++	.disable	= owl_gate_disable,
++	.enable		= owl_gate_enable,
++	.is_enabled	= owl_gate_is_enabled,
++};
+diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
 new file mode 100644
-index 000000000000..4fd726ec54a6
+index 000000000000..4fc609647ae4
 --- /dev/null
-+++ b/drivers/clk/actions/owl-common.h
-@@ -0,0 +1,41 @@
++++ b/drivers/clk/actions/owl-gate.h
+@@ -0,0 +1,73 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL common clock driver
++// OWL gate clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -194,36 +148,68 @@ index 000000000000..4fd726ec54a6
 +// Copyright (c) 2018 Linaro Ltd.
 +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#ifndef _OWL_COMMON_H_
-+#define _OWL_COMMON_H_
++#ifndef _OWL_GATE_H_
++#define _OWL_GATE_H_
 +
-+#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
++#include "owl-common.h"
 +
-+struct device_node;
-+
-+struct owl_clk_common {
-+	struct regmap			*regmap;
-+	struct clk_hw			hw;
++struct owl_gate_hw {
++	u32			reg;
++	u8			bit_idx;
++	u8			gate_flags;
 +};
 +
-+struct owl_clk_desc {
-+	struct owl_clk_common		**clks;
-+	unsigned long			num_clks;
-+	struct clk_hw_onecell_data	*hw_clks;
++struct owl_gate {
++	struct owl_gate_hw	gate_hw;
++	struct owl_clk_common	common;
 +};
 +
-+static inline struct owl_clk_common *
-+	hw_to_owl_clk_common(const struct clk_hw *hw)
++#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
++	{						\
++		.reg		= _reg,			\
++		.bit_idx	= _bit_idx,		\
++		.gate_flags	= _gate_flags,		\
++	}
++
++#define OWL_GATE(_struct, _name, _parent, _reg,				\
++		_bit_idx, _gate_flags, _flags)				\
++	struct owl_gate _struct = {					\
++		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &owl_gate_ops,	\
++						      _flags),		\
++		}							\
++	}								\
++
++#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
++		_bit_idx, _gate_flags, _flags)				\
++	struct owl_gate _struct = {					\
++		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
++						      &owl_gate_ops,	\
++						      _flags),		\
++		},							\
++	}								\
++
++static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
 +{
-+	return container_of(hw, struct owl_clk_common, hw);
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_gate, common);
 +}
 +
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc);
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
++void clk_gate_set(const struct owl_clk_common *common,
++		 const struct owl_gate_hw *gate_hw, bool enable);
++int clk_is_enabled(const struct owl_clk_common *common,
++		   const struct owl_gate_hw *gate_hw);
 +
-+#endif /* _OWL_COMMON_H_ */
++extern const struct clk_ops owl_gate_ops;
++
++#endif /* _OWL_GATE_H_ */
 -- 
 2.14.1
