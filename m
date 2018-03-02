@@ -1,66 +1,41 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1148518-1519981302-2-12468025915354397446
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519981301; b=cZi1mIqNdHwmT9XbqaF4aUKSA0SI0or/3w4JS4tpHwMz/bO
-    U+I3xmvCpQZqJCPeO/JTQow/3UrrAZe88er8q8aPD/25lzO9t1Z/qHzxh3zQVTS+
-    Z6m/wmz4ap1XcpdkuoYzfdgCSMsveOb7lqxfYf3rFyYGGrlzDzTn0yPo0YU6j6Sy
-    GjHlRDGS7rkoneDW/FRR0Fur7HMS89ATIqj7cSuBXJV29Y1U2JeLJzk1YxK9WcbY
-    H2p1orj4n2oZ7ZbYAabzL9ZBXP38RxTyXU2wXFvI3OOL8dWkfcB7gUxTPPFSpQ+L
-    mCyAasLEjSQcpP1iOQk9IhmS81iaXrjBkiDBb2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519981301; bh=k0G4KBW7Mmxc/WTf1BN+9x8Sgo
-    XRKXw0aM5pzcYNmZ0=; b=jczlbAOEVulN5CnJ6/KTEdHWVKmMScWrlmaIgD/6+o
-    UITBn8G5zvNnU6wyYaAPFk7FCmQgxEm8nICtElcpoUbwdiPYAcvUpkbbfWzdGroE
-    NWvxI985oPKb92mNoIrznHcHRNyCsVyQ99etaMp8hhsNGmL9JUllMVQKrzUlOfxo
-    vuzurNh4Ai8He7Sl7fB7zjkc3KXPvtxB4GC97ZV21BXsZGwBwicx0Jozhsz7TDE3
-    B8do7SEx+l9XCtexgp61LufHB2UqSSK0qGLHrtcXytVx8OXzpoUWjkEBuX4EvUon
-    foM0CbSnocld5CQnoCoSOortQ/6BMdbSpqg7yjWiE1OA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424716AbeCBJBa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 04:01:30 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53908 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424734AbeCBJB2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:28 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELtkRiPTN77Dr9zNnkZZkrBeOS28swGf3YXbo/9fbJov7oLEnnz6lOuf5y0+LCksy1pJLuhD
+ARC-Seal: i=1; a=rsa-sha256; t=1519981299; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jU3f2UqGd4w3YKyEG0GRtUtMtEUtg0OPoGc2EMJyxrrwBBRJmAua1rrIAwzpjK3Fzv
+         OqR6JrjQqg/AAxzduC7efONniX5v7pr5ZEGEMbFixSEpl5uPzjHG4Omm8m8iJ1pwnN1j
+         k+E1Dvzhfwq5cmKPFeBpkV4SDz4jQyNV7QKnFWfF6FkP2H3l3hjlQHraNSrhxuBsum59
+         h0x+v5cSXO4wTI8Czn9i/ICqpBI2PpN7AVIkVAmZWahAqg01jFH7VhF+ljhq7DJOgTti
+         gWN7o0a/R/o0tmYQfIYf7sqhQ3KYUF+7dgYxYK8Jt3bbax7XDVm3TunGk+vx0UpM5ZI/
+         ILqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Smks3/BYWN160j51Vt5+/pwQYQ8mx23DFKLn5G5EUaQ=;
+        b=ZHat+02EltOAZP8/OAOu9ed37irpHvld9f4RvrCM3T9jOgQgOc+IhjFNxjzCcSBiqs
+         YDjPo3Jxv28bQZCCICxCcqIC6wxEN2GZJ/36TLuMfA4N2XoW8HDT7ONdUuPNMPoJd35x
+         PHLv3q9x4PiZFcl9uRdvuI8WS/xlRMeeCwt8iS3hio1pv7trVBng8GgMaeW4NLBgjzSu
+         bEmHGohtiDdixib/O/SAd8ef4xqEXWr8DC+2hUJc/G1Ew0zYnUbrq+T6yg8zsMtUvEA5
+         t0Vqw9x4NRQB2z76M6KX/SEJpP6CFir8u4YdMuI5s8YTFxm+2LnNUMH6EC7tdJ3dlwnR
+         Ucvg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 048/115] ARM: dts: ls1021a: fix incorrect clock references
-Date: Fri,  2 Mar 2018 09:50:51 +0100
-Message-Id: <20180302084505.824437515@linuxfoundation.org>
+	stable@vger.kernel.org,
+	James Hogan <jhogan@kernel.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-mips@linux-mips.org,
+	linux-crypto@vger.kernel.org,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 050/115] lib/mpi: Fix umul_ppmm() for MIPS64r6
+Date: Fri,  2 Mar 2018 09:50:53 +0100
+Message-Id: <20180302084505.903142217@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -68,9 +43,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815446124575806?=
+X-GMAIL-MSGID: =?utf-8?q?1593815910804181105?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -78,50 +54,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: James Hogan <jhogan@kernel.org>
 
 
-[ Upstream commit 506e8a912661c97b41adc8a286b875d01323ec45 ]
+[ Upstream commit bbc25bee37d2b32cf3a1fab9195b6da3a185614a ]
 
-dtc warns about two 'clocks' properties that have an extraneous '1'
-at the end:
+Current MIPS64r6 toolchains aren't able to generate efficient
+DMULU/DMUHU based code for the C implementation of umul_ppmm(), which
+performs an unsigned 64 x 64 bit multiply and returns the upper and
+lower 64-bit halves of the 128-bit result. Instead it widens the 64-bit
+inputs to 128-bits and emits a __multi3 intrinsic call to perform a 128
+x 128 multiply. This is both inefficient, and it results in a link error
+since we don't include __multi3 in MIPS linux.
 
-arch/arm/boot/dts/ls1021a-qds.dtb: Warning (clocks_property): arch/arm/boot/dts/ls1021a-twr.dtb: Warning (clocks_property): Property 'clocks', cell 1 is not a phandle reference in /soc/i2c@2180000/mux@77/i2c@4/sgtl5000@2a
-arch/arm/boot/dts/ls1021a-qds.dtb: Warning (clocks_property): Missing property '#clock-cells' in node /soc/interrupt-controller@1400000 or bad phandle (referred from /soc/i2c@2180000/mux@77/i2c@4/sgtl5000@2a:clocks[1])
-Property 'clocks', cell 1 is not a phandle reference in /soc/i2c@2190000/sgtl5000@a
-arch/arm/boot/dts/ls1021a-twr.dtb: Warning (clocks_property): Missing property '#clock-cells' in node /soc/interrupt-controller@1400000 or bad phandle (referred from /soc/i2c@2190000/sgtl5000@a:clocks[1])
+For example commit 90a53e4432b1 ("cfg80211: implement regdb signature
+checking") merged in v4.15-rc1 recently broke the 64r6_defconfig and
+64r6el_defconfig builds by indirectly selecting MPILIB. The same build
+errors can be reproduced on older kernels by enabling e.g. CRYPTO_RSA:
 
-The clocks that get referenced here are fixed-rate, so they do not
-take any argument, and dtc interprets the next cell as a phandle, which
-is invalid.
+lib/mpi/generic_mpih-mul1.o: In function `mpihelp_mul_1':
+lib/mpi/generic_mpih-mul1.c:50: undefined reference to `__multi3'
+lib/mpi/generic_mpih-mul2.o: In function `mpihelp_addmul_1':
+lib/mpi/generic_mpih-mul2.c:49: undefined reference to `__multi3'
+lib/mpi/generic_mpih-mul3.o: In function `mpihelp_submul_1':
+lib/mpi/generic_mpih-mul3.c:49: undefined reference to `__multi3'
+lib/mpi/mpih-div.o In function `mpihelp_divrem':
+lib/mpi/mpih-div.c:205: undefined reference to `__multi3'
+lib/mpi/mpih-div.c:142: undefined reference to `__multi3'
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Therefore add an efficient MIPS64r6 implementation of umul_ppmm() using
+inline assembly and the DMULU/DMUHU instructions, to prevent __multi3
+calls being emitted.
+
+Fixes: 7fd08ca58ae6 ("MIPS: Add build support for the MIPS R6 ISA")
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linux-mips@linux-mips.org
+Cc: linux-crypto@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/ls1021a-qds.dts |    2 +-
- arch/arm/boot/dts/ls1021a-twr.dts |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ lib/mpi/longlong.h |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/ls1021a-qds.dts
-+++ b/arch/arm/boot/dts/ls1021a-qds.dts
-@@ -215,7 +215,7 @@
- 				reg = <0x2a>;
- 				VDDA-supply = <&reg_3p3v>;
- 				VDDIO-supply = <&reg_3p3v>;
--				clocks = <&sys_mclk 1>;
-+				clocks = <&sys_mclk>;
- 			};
- 		};
- 	};
---- a/arch/arm/boot/dts/ls1021a-twr.dts
-+++ b/arch/arm/boot/dts/ls1021a-twr.dts
-@@ -187,7 +187,7 @@
- 		reg = <0x0a>;
- 		VDDA-supply = <&reg_3p3v>;
- 		VDDIO-supply = <&reg_3p3v>;
--		clocks = <&sys_mclk 1>;
-+		clocks = <&sys_mclk>;
- 	};
- };
- 
+--- a/lib/mpi/longlong.h
++++ b/lib/mpi/longlong.h
+@@ -671,7 +671,23 @@ do {						\
+ 	**************  MIPS/64  **************
+ 	***************************************/
+ #if (defined(__mips) && __mips >= 3) && W_TYPE_SIZE == 64
+-#if (__GNUC__ >= 5) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 4)
++#if defined(__mips_isa_rev) && __mips_isa_rev >= 6
++/*
++ * GCC ends up emitting a __multi3 intrinsic call for MIPS64r6 with the plain C
++ * code below, so we special case MIPS64r6 until the compiler can do better.
++ */
++#define umul_ppmm(w1, w0, u, v)						\
++do {									\
++	__asm__ ("dmulu %0,%1,%2"					\
++		 : "=d" ((UDItype)(w0))					\
++		 : "d" ((UDItype)(u)),					\
++		   "d" ((UDItype)(v)));					\
++	__asm__ ("dmuhu %0,%1,%2"					\
++		 : "=d" ((UDItype)(w1))					\
++		 : "d" ((UDItype)(u)),					\
++		   "d" ((UDItype)(v)));					\
++} while (0)
++#elif (__GNUC__ >= 5) || (__GNUC__ >= 4 && __GNUC_MINOR__ >= 4)
+ #define umul_ppmm(w1, w0, u, v) \
+ do {									\
+ 	typedef unsigned int __ll_UTItype __attribute__((mode(TI)));	\
