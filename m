@@ -1,71 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164616AbeCBDbR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 22:31:17 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:57062 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163935AbeCBDbP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 22:31:15 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V3] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
-Date: Fri,  2 Mar 2018 11:31:14 +0800
-Message-Id: <1519961474-15236-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020036
+        id S1164640AbeCBDs6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 22:48:58 -0500
+Received: from mga14.intel.com ([192.55.52.115]:54655 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1163301AbeCBDsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 22:48:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,409,1515484800";
+   d="scan'208";a="24496597"
+From: "Hao, Shun" <shun.hao@intel.com>
+To: "dvyukov@google.com" <dvyukov@google.com>,
+        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "penguin-kernel@i-love.sakura.ne.jp"
+        <penguin-kernel@i-love.sakura.ne.jp>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "xiyou.wangcong@gmail.com" <xiyou.wangcong@gmail.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "byungchul.park@lge.com" <byungchul.park@lge.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "tj@kernel.org" <tj@kernel.org>, "mgorman@suse.de" <mgorman@suse.de>,
+        "lkp@01.org" <lkp@01.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jack@suse.cz" <jack@suse.cz>
+Subject: Re: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+Thread-Topic: [lkp-robot] [printk] c162d5b433: BUG:KASAN:use-after-scope_in_c
+Thread-Index: AQHTsTn7yCWG5lWk/kWDgvQ2usmy8KO7yk2A
+Date: Fri, 2 Mar 2018 03:48:40 +0000
+Message-ID: <1519962555.10510.1.camel@intel.com>
+References: <20180224053405.ksymb5yurtpwmfs6@shao2-debian>
+         <20180228102334.65iqne6lu5faan52@pathway.suse.cz>
+         <20180228155941.34z45rjz3bjqde7w@pathway.suse.cz>
+         <20180301013722.GA6763@tigerII.localdomain>
+         <CACT4Y+ZuCq+yN3YwusmHuv1CN86CfEYEhaJGoaD7xLG9irgyYw@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZuCq+yN3YwusmHuv1CN86CfEYEhaJGoaD7xLG9irgyYw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.4.80]
+Content-Type: multipart/mixed;
+        boundary="_002_1519962555105101camelintelcom_"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In scsi core, __scsi_queue_insert should just put request back on
-the queue and retry using the same command as before. However, for
-blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
-the request. To align with the semantics of __scsi_queue_insert,
-use blk_mq_requeue_request with kick_requeue_list == true and put
-the reference of scsi_device.
+--_002_1519962555105101camelintelcom_
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DF736D54B131204B91F80DB6A19DDD80@intel.com>
+Content-Transfer-Encoding: base64
 
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+c29ycnkgZm9yIG1pc3NpbmcgdGhlIGF0dGFjaGVkIHNjcmlwdCBpbiBvcmlnaW5hbCBtYWlsLCBo
+ZXJlIHRvIGFkZCBpdC4NCg0KT24gVGh1LCAyMDE4LTAzLTAxIGF0IDA4OjQ3ICswMDAwLCBEbWl0
+cnkgVnl1a292IHdyb3RlOg0KPiBPbiBUaHUsIE1hciAxLCAyMDE4IGF0IDI6MzcgQU0sIFNlcmdl
+eSBTZW5vemhhdHNreQ0KPiA8c2VyZ2V5LnNlbm96aGF0c2t5QGdtYWlsLmNvbT4gd3JvdGU6DQo+
+ID4gSGVsbG8sDQo+ID4gDQo+ID4gQ2MtaW5nIERtaXRyeSBWeXVrb3YgYW5kIGthc2FuLWRldiBv
+biB0aGlzLg0KPiA+IA0KPiA+IE9uICgwMi8yOC8xOCAxNjo1OSksIFBldHIgTWxhZGVrIHdyb3Rl
+Og0KPiA+IFsuLl0NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBbwqDCoMKgwqAwLjAwMzMzM10gQlVH
+OiBLQVNBTjogdXNlLWFmdGVyLXNjb3BlIGluDQo+ID4gPiA+ID4gY29uc29sZV91bmxvY2srMHgx
+ODUvMHg5NjANCj4gPiA+ID4gPiBbwqDCoMKgwqAwLjAwMzMzM10gQlVHOiBLQVNBTjogdXNlLWFm
+dGVyLXNjb3BlIGluDQo+ID4gPiA+ID4gY29uc29sZV91bmxvY2srMHgxODUvMHg5NjANCj4gPiA+
+ID4gDQo+ID4gPiA+IElzIHRoZXJlIGFueSBjaGFuZ2UgdG8gZ2V0IGRpc2Fzc2VtYmx5IG9mIGNv
+bnNvbGVfdW5sb2NrKCkgZnJvbQ0KPiA+ID4gPiB0aGUNCj4gPiA+ID4gcHJvYmxlbWF0aWMgYnVp
+bGQ/DQo+ID4gPiA+IA0KPiA+ID4gPiBJIGhhdmUgdHJvdWJsZXMgdG8gcmVwcm9kdWNlIHRoaXMg
+bXlzZWxmLiBBbHNvIEkgd2FzIG5vdCBhYmxlDQo+ID4gPiA+IHRvIGZpbmQgYW55DQo+ID4gPiA+
+IGJ1ZyBqdXN0IGJ5IGxvb2tpbmcgaW50byB0aGUgY29kZSB5ZXQuIFRoZSBkaXNhc3NlbWJseSBt
+aWdodA0KPiA+ID4gPiBoZWxwDQo+ID4gPiA+IGEgbG90IGhlcmUuDQo+ID4gPiA+IA0KPiA+ID4g
+PiANCj4gPiA+ID4gSW50ZXJlc3Rpbmcgc3ltcHRvbXMgKGZvciBteXNlbGYgYW5kIG90aGVyIGRl
+YnVnZ2Vycyk6DQo+ID4gPiA+IA0KPiA+ID4gPiBUaGUgbGluZXMgYXJlIGR1cGxpY2F0ZWQuIFRo
+ZXJlZm9yZSBpdCBoYXBwZW5lZCB3aGVuIHJlYWwNCj4gPiA+ID4gY29uc29sZSB3YXMgcmVnaXN0
+ZXJlZCBhbmQgYmVmb3JlIHRoZSBlYXJseSBjb25zb2xlIHdhcw0KPiA+ID4gPiB1bnJlZ2lzdGVy
+ZWQuDQo+ID4gPiA+IFNlZSBhbHNvIHRoZSBmdWxsIGRtZXNnIGZvciB0aGVzZSBhY3Rpb25zLiBU
+aGUgcmVsYXRlZCBwcmludGsNCj4gPiA+ID4gbWVzc2FnZXMNCj4gPiA+ID4gYXJlIHJpZ2h0IGFm
+dGVyIHRoZSBLQVNBTiByZXBvcnQuDQo+ID4gPiA+IA0KPiA+ID4gPiBJIHdvbmRlciBpZiBpdCBp
+cyB1bnNhZmUgdG8gcGFzcyB0aGUgY29uc29sZV9sb2NrIHZpYQ0KPiA+ID4gPiBjb25zb2xlX3Ry
+eWxvY2tfc3Bpbm5uaW5nKCkgZnJvbSBjb25zb2xlX3VubG9jaygpIGNhbGxlZA0KPiA+ID4gPiBp
+biByZWdpc3Rlcl9jb25zb2xlKCkuIEkgZG8gbm90IHNlZSBhbnkgcHJvYmxlbSBidXQgSSBtaWdo
+dA0KPiA+ID4gPiBiZSBibGluZC4NCj4gPiANCj4gPiBJJ20gbm90IHN1cmUgaXQgd2UgYWN0dWFs
+bHkgaGF2ZSBjb25jdXJyZW50IHByaW50a3MgYXQgdGhhdCBzdGF0ZQ0KPiA+IHlldCwNCj4gPiBt
+aWdodCBiZSB0b28gZWFybHkgZm9yIGFueSBwcmludGsgb2ZmbG9hZGluZy4gVGhlIGJhY2t0cmFj
+ZSBzdGlsbA0KPiA+IG1ha2VzIG5vIHNlbnNlIHRvIG1lIGF0IGFsbCwgdGhvLiBXZSBoYWQgdGhp
+cyByZXBvcnQgdHdpY2UsDQo+ID4gcHJvYmFibHksDQo+ID4gYWxyZWFkeSAoZXZlbiBiZWZvcmUg
+dGhlIG9mZmxvYWRpbmcgcGF0Y2hzZXQsIGlmIEknbSBub3QgbWlzdGFrZW4pLg0KPiA+IA0KPiA+
+IGh0dHBzOi8vbWFyYy5pbmZvLz9sPWxpbnV4LWtlcm5lbCZtPTE1MTIwMDg4MzUyNTI5OQ0KPiA+
+IA0KPiA+IFsuLl0NCj4gPiA+IEkgZmVlbCBsb3N0IGEgYml0Lg0KPiA+IA0KPiA+IFllYWguLi4g
+Y2FuJ3QgdW5kZXJzdGFuZCB3aGF0J3MgZ29pbmcgb24gdGhlcmUuDQo+ID4gDQo+ID4gVGhlIGxh
+c3QgdGltZSBrYXNhbiBkaWRuJ3QgbGlrZSB0aGlzIHBhcnQNCj4gPiANCj4gPiBbwqDCoMKgwqAw
+LjAwMzMzM13CoMKgPyBjb25zb2xlX3VubG9jaysweDYwNS8weGNjMDoNCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhdG9taWNf
+cmVhZCBhdA0KPiA+IGFyY2gveDg2L2luY2x1ZGUvYXNtL2F0b21pYy5oOjI3DQo+ID4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAo
+aW5saW5lZCBieSkgc3RhdGljX2tleV9jb3VudCBhdA0KPiA+IGluY2x1ZGUvbGludXgvanVtcF9s
+YWJlbC5oOjE5MQ0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgKGlubGluZWQgYnkpIHN0YXRpY19rZXlfZmFsc2UgYXQNCj4g
+PiBpbmNsdWRlL2xpbnV4L2p1bXBfbGFiZWwuaDoyMDENCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoChpbmxpbmVkIGJ5KSB0
+cmFjZV9jb25zb2xlX3JjdWlkbGUNCj4gPiBhdCBpbmNsdWRlL3RyYWNlL2V2ZW50cy9wcmludGsu
+aDoxMA0KPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgKGlubGluZWQgYnkpIGNhbGxfY29uc29sZV9kcml2ZXJzIGF0DQo+ID4g
+a2VybmVsL3ByaW50ay9wcmludGsuYzoxNTU2DQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAoaW5saW5lZCBieSkgY29uc29s
+ZV91bmxvY2sgYXQNCj4gPiBrZXJuZWwvcHJpbnRrL3ByaW50ay5jOjIyMzMNCj4gPiANCj4gPiBj
+b21wbGFpbmluZyB0aGF0IHRoZXJlIHdhcyBhIHdyaXRlIG9mIHNpemUgNC4uLiBhdCBhdG9taWNf
+cmVhZCgpLg0KPiA+IA0KPiA+IE5vdyBpdCdzIHJlcG9ydGluZyB0aGF0IHRoZSB3cml0ZSBvZiBz
+aXplIDEgd2FzIG91dCBvZiBzY29wZS4NCj4gPiANCj4gPiA+IEkgYW0gcmVhbGx5IGN1cmlvdXMg
+d2hhdCBjb2RlIGlzIHByb2NlZWQgb24gdGhlIGxpbmUNCj4gPiA+IGNvbnNvbGVfdW5sb2NrKzB4
+MTg1LzB4OTYwLg0KPiA+IA0KPiA+IEFncmVlZC4NCj4gPiANCj4gPiBPbiBteSBzeXN0ZW0gMHgx
+ODUvMHg5NjAgaXMgc29tZXdoZXJlIGFyb3VuZA0KPiA+IA0KPiA+IA0KPiA+IMKgwqDCoMKgwqAx
+OTFlOsKgwqDCoMKgwqDCoMKgODkgZDfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoG1vdsKgwqDCoMKgJWVkeCwlZWRpDQo+ID4gwqDCoMKgwqDCoDE5MjA6wqDCoMKgwqDCoMKg
+wqBlOCAwNiBlNyBmZiBmZsKgwqDCoMKgwqDCoMKgwqDCoMKgY2FsbHHCoMKgMmIgPGxvZ19uZXh0
+Pg0KPiA+IMKgwqDCoMKgwqAxOTI1OsKgwqDCoMKgwqDCoMKgNDggODkgMmQgMDAgMDAgMDANCj4g
+PiAwMMKgwqDCoMKgbW92wqDCoMKgwqAlcmJwLDB4MCglcmlwKcKgwqDCoMKgwqDCoMKgwqAjIDE5
+MmMgPGNvbnNvbGVfdW5sb2NrKzB4MTdmPg0KPiA+IMKgwqDCoMKgwqAxOTJjOsKgwqDCoMKgwqDC
+oMKgODkgMDUgMDAgMDAgMDANCj4gPiAwMMKgwqDCoMKgwqDCoMKgbW92wqDCoMKgwqAlZWF4LDB4
+MCglcmlwKcKgwqDCoMKgwqDCoMKgwqAjIDE5MzIgPGNvbnNvbGVfdW5sb2NrKzB4MTg1Pg0KPiA+
+ID4gPiDCoCAxOTMyOsKgwqDCoMKgwqDCoMKgZWIgYTnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoGptcMKgwqDCoMKgMThkZA0KPiA+ID4gPiA8Y29uc29sZV91bmxvY2srMHgx
+MzA+DQo+ID4gDQo+ID4gwqDCoMKgwqDCoDE5MzQ6wqDCoMKgwqDCoMKgwqA4YiAzNSAwMCAwMCAw
+MA0KPiA+IDAwwqDCoMKgwqDCoMKgwqBtb3bCoMKgwqDCoDB4MCglcmlwKSwlZXNpwqDCoMKgwqDC
+oMKgwqDCoCMgMTkzYSA8Y29uc29sZV91bmxvY2srMHgxOGQ+DQo+ID4gwqDCoMKgwqDCoDE5M2E6
+wqDCoMKgwqDCoMKgwqBiOSAwMCAwNCAwMCAwMMKgwqDCoMKgwqDCoMKgwqDCoMKgbW92wqDCoMKg
+wqAkMHg0MDAsJWVjeA0KPiA+IMKgwqDCoMKgwqAxOTNmOsKgwqDCoMKgwqDCoMKgNGMgODkgZWbC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG1vdsKgwqDCoMKgJXIxMywlcmRpDQo+ID4g
+wqDCoMKgwqDCoDE5NDI6wqDCoMKgwqDCoMKgwqAzMSBlZMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgeG9ywqDCoMKgwqAlZWJwLCVlYnANCj4gPiANCj4gPiANCj4gPiBUaGF0
+IGptcCAxOGRkIGFmdGVyIGxvZ19uZXh0KCkgaXMgYSBgZ290byBza2lwJyBpbg0KPiA+IHN1cHBy
+ZXNzX21lc3NhZ2VfcHJpbnRpbmcoKSBicmFuY2gNCj4gPiANCj4gPiBza2lwOg0KPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGNvbnNvbGVfc2VxID09IGxvZ19uZXh0X3Nl
+cSkNCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBi
+cmVhazsNCj4gPiANCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG1zZyA9IGxv
+Z19mcm9tX2lkeChjb25zb2xlX2lkeCk7DQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqBpZiAoc3VwcHJlc3NfbWVzc2FnZV9wcmludGluZyhtc2ctPmxldmVsKSkgew0KPiA+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qDQo+ID4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIFNraXAgcmVj
+b3JkIHdlIGhhdmUgYnVmZmVyZWQgYW5kIGFscmVhZHkNCj4gPiBwcmludGVkDQo+ID4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIGRpcmVjdGx5IHRv
+IHRoZSBjb25zb2xlIHdoZW4gd2UgcmVjZWl2ZWQNCj4gPiBpdCwgYW5kDQo+ID4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIHJlY29yZCB0aGF0IGhh
+cyBsZXZlbCBhYm92ZSB0aGUgY29uc29sZQ0KPiA+IGxvZ2xldmVsLg0KPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKi8NCj4gPiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjb25zb2xlX2lkeCA9IGxvZ19u
+ZXh0KGNvbnNvbGVfaWR4KTsNCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBjb25zb2xlX3NlcSsrOw0KPiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnb3RvIHNraXA7DQo+ID4gDQo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqB9DQo+ID4gDQo+ID4gDQo+ID4gQXMgZmFyIGFzIEkgY2FuIHRl
+bGwuDQo+IA0KPiANCj4gSGkgU2h1biwNCj4gDQo+IFRoZSByZXBvcnQgc2F5cyAiam9iLXNjcmlw
+dCBpcyBhdHRhY2hlZCBpbiB0aGlzIGVtYWlsIiwgYnV0IEkgZG9uJ3QNCj4gc2VlIGl0IGF0dGFj
+aGVkLiBEaWQgeW91IGZvcmdldCB0byBhdHRhY2ggaXQ/IEhvdyBjYW4gSSByZXByb2R1Y2UNCj4g
+dGhpcw0KPiBleGFjdCBidWlsZD8NCj4gQ291bGQgeW91IHBvc3QgYSBzeW1ib2xpemVkIHJlcG9y
+dCB3aXRoIGlubGluZXMgZnJhbWVzPw==
 
----
-Changelog:
-V2 -> V3:
- - add commit to explain why we need a put_device in
-   __scsi_queue_insert
- - add reviewed-by
+--_002_1519962555105101camelintelcom_
+Content-Type: application/x-shellscript; name="job-script"
+Content-Description: job-script
+Content-Disposition: attachment; filename="job-script"; size=4415;
+	creation-date="Fri, 02 Mar 2018 03:48:40 GMT";
+	modification-date="Fri, 02 Mar 2018 03:48:40 GMT"
+Content-ID: <14E7B387F35BCD4384866C0B090292C9@intel.com>
+Content-Transfer-Encoding: base64
 
-V1 -> V2:
- - add put_device on scsi_device->sdev_gendev
+IyEvYmluL3NoDQoNCmV4cG9ydF90b3BfZW52KCkNCnsNCglleHBvcnQgc3VpdGU9J2Jvb3QnDQoJ
+ZXhwb3J0IHRlc3RjYXNlPSdib290Jw0KCWV4cG9ydCB0aW1lb3V0PScxMG0nDQoJZXhwb3J0IGpv
+Yl9vcmlnaW49Jy9sa3AvbGtwL3NyYy9qb2JzL2Jvb3QueWFtbCcNCglleHBvcnQgcXVldWU9J2Jp
+c2VjdCcNCglleHBvcnQgdGVzdGJveD0ndm0tbGtwLW5leDA0LTFHLTI1Jw0KCWV4cG9ydCB0Ym94
+X2dyb3VwPSd2bS1sa3AtbmV4MDQtMUcnDQoJZXhwb3J0IGJyYW5jaD0nbGludXgtZGV2ZWwvZGV2
+ZWwtaG91cmx5LTIwMTgwMjAzMjInDQoJZXhwb3J0IGNvbW1pdD0nYzE2MmQ1YjQzMzhkNzJkZWVk
+NjFhYTY1ZWQwZjJmNGJhMmJiYzhhYicNCglleHBvcnQga2NvbmZpZz0neDg2XzY0LXJhbmRjb25m
+aWctdjAtMDIwNDAyNTknDQoJZXhwb3J0IHN1Ym1pdF9pZD0nNWE4MDAzYjIwYjlhOTM0MTcyYjhj
+MzliJw0KCWV4cG9ydCBqb2JfZmlsZT0nL2xrcC9zY2hlZHVsZWQvdm0tbGtwLW5leDA0LTFHLTI1
+L2Jvb3QtMS1kZWJpYW4teDg2XzY0LTIwMTYtMDgtMzEuY2d6LWMxNjJkNWI0MzM4ZDcyZGVlZDYx
+YWE2NWVkMGYyZjRiYTJiYmM4YWItMjAxODAyMTEtODIyOTAtZmMwdzRqLTAueWFtbCcNCglleHBv
+cnQgaWQ9J2ZkNWY1YjA3MGJiZDk0ODFkOWNlYjcxMDIxNDhhNzcyMTAxNDUyNDcnDQoJZXhwb3J0
+IG1vZGVsPSdxZW11LXN5c3RlbS14ODZfNjQgLWVuYWJsZS1rdm0gLWNwdSBob3N0Jw0KCWV4cG9y
+dCBucl92bT0zMA0KCWV4cG9ydCBucl9jcHU9Mg0KCWV4cG9ydCBtZW1vcnk9JzFHJw0KCWV4cG9y
+dCBuZWVkX2tjb25maWc9J0NPTkZJR19LVk1fR1VFU1Q9eScNCglleHBvcnQgc3NoX2Jhc2VfcG9y
+dD0yMzIwMA0KCWV4cG9ydCBjb21waWxlcj0nZ2NjLTcnDQoJZXhwb3J0IHJvb3Rmcz0nZGViaWFu
+LXg4Nl82NC0yMDE2LTA4LTMxLmNneicNCglleHBvcnQgZW5xdWV1ZV90aW1lPScyMDE4LTAyLTEx
+IDE2OjQ5OjU0ICswODAwJw0KCWV4cG9ydCBfaWQ9JzVhODAwM2IyMGI5YTkzNDE3MmI4YzM5YicN
+CglleHBvcnQgX3J0PScvcmVzdWx0L2Jvb3QvMS92bS1sa3AtbmV4MDQtMUcvZGViaWFuLXg4Nl82
+NC0yMDE2LTA4LTMxLmNnei94ODZfNjQtcmFuZGNvbmZpZy12MC0wMjA0MDI1OS9nY2MtNy9jMTYy
+ZDViNDMzOGQ3MmRlZWQ2MWFhNjVlZDBmMmY0YmEyYmJjOGFiJw0KCWV4cG9ydCB1c2VyPSdsa3An
+DQoJZXhwb3J0IHJlc3VsdF9yb290PScvcmVzdWx0L2Jvb3QvMS92bS1sa3AtbmV4MDQtMUcvZGVi
+aWFuLXg4Nl82NC0yMDE2LTA4LTMxLmNnei94ODZfNjQtcmFuZGNvbmZpZy12MC0wMjA0MDI1OS9n
+Y2MtNy9jMTYyZDViNDMzOGQ3MmRlZWQ2MWFhNjVlZDBmMmY0YmEyYmJjOGFiLzAnDQoJZXhwb3J0
+IExLUF9TRVJWRVI9J2lubicNCglleHBvcnQgbWF4X3VwdGltZT02MDANCglleHBvcnQgaW5pdHJk
+PScvb3NpbWFnZS9kZWJpYW4vZGViaWFuLXg4Nl82NC0yMDE2LTA4LTMxLmNneicNCglleHBvcnQg
+Ym9vdGxvYWRlcl9hcHBlbmQ9J3Jvb3Q9L2Rldi9yYW0wDQp1c2VyPWxrcA0Kam9iPS9sa3Avc2No
+ZWR1bGVkL3ZtLWxrcC1uZXgwNC0xRy0yNS9ib290LTEtZGViaWFuLXg4Nl82NC0yMDE2LTA4LTMx
+LmNnei1jMTYyZDViNDMzOGQ3MmRlZWQ2MWFhNjVlZDBmMmY0YmEyYmJjOGFiLTIwMTgwMjExLTgy
+MjkwLWZjMHc0ai0wLnlhbWwNCkFSQ0g9eDg2XzY0DQprY29uZmlnPXg4Nl82NC1yYW5kY29uZmln
+LXYwLTAyMDQwMjU5DQpicmFuY2g9bGludXgtZGV2ZWwvZGV2ZWwtaG91cmx5LTIwMTgwMjAzMjIN
+CmNvbW1pdD1jMTYyZDViNDMzOGQ3MmRlZWQ2MWFhNjVlZDBmMmY0YmEyYmJjOGFiDQpCT09UX0lN
+QUdFPS9wa2cvbGludXgveDg2XzY0LXJhbmRjb25maWctdjAtMDIwNDAyNTkvZ2NjLTcvYzE2MmQ1
+YjQzMzhkNzJkZWVkNjFhYTY1ZWQwZjJmNGJhMmJiYzhhYi92bWxpbnV6LTQuMTQuMC0xMjk1My1n
+YzE2MmQ1Yg0KbWF4X3VwdGltZT02MDANClJFU1VMVF9ST09UPS9yZXN1bHQvYm9vdC8xL3ZtLWxr
+cC1uZXgwNC0xRy9kZWJpYW4teDg2XzY0LTIwMTYtMDgtMzEuY2d6L3g4Nl82NC1yYW5kY29uZmln
+LXYwLTAyMDQwMjU5L2djYy03L2MxNjJkNWI0MzM4ZDcyZGVlZDYxYWE2NWVkMGYyZjRiYTJiYmM4
+YWIvMA0KTEtQX1NFUlZFUj1pbm4NCmRlYnVnDQphcGljPWRlYnVnDQpzeXNycV9hbHdheXNfZW5h
+YmxlZA0KcmN1cGRhdGUucmN1X2NwdV9zdGFsbF90aW1lb3V0PTEwMA0KbmV0LmlmbmFtZXM9MA0K
+cHJpbnRrLmRldmttc2c9b24NCnBhbmljPS0xDQpzb2Z0bG9ja3VwX3BhbmljPTENCm5taV93YXRj
+aGRvZz1wYW5pYw0Kb29wcz1wYW5pYw0KbG9hZF9yYW1kaXNrPTINCnByb21wdF9yYW1kaXNrPTAN
+CmRyYmQubWlub3JfY291bnQ9OA0Kc3lzdGVtZC5sb2dfbGV2ZWw9ZXJyDQppZ25vcmVfbG9nbGV2
+ZWwNCmNvbnNvbGU9dHR5MA0KZWFybHlwcmludGs9dHR5UzAsMTE1MjAwDQpjb25zb2xlPXR0eVMw
+LDExNTIwMA0KdmdhPW5vcm1hbA0KcncnDQoJZXhwb3J0IG1vZHVsZXNfaW5pdHJkPScvcGtnL2xp
+bnV4L3g4Nl82NC1yYW5kY29uZmlnLXYwLTAyMDQwMjU5L2djYy03L2MxNjJkNWI0MzM4ZDcyZGVl
+ZDYxYWE2NWVkMGYyZjRiYTJiYmM4YWIvbW9kdWxlcy5jZ3onDQoJZXhwb3J0IGJtX2luaXRyZD0n
+L29zaW1hZ2UvZGVwcy9kZWJpYW4teDg2XzY0LTIwMTYtMDgtMzEuY2d6L2xrcF8yMDE3LTEyLTE0
+LmNneiwvb3NpbWFnZS9kZXBzL2RlYmlhbi14ODZfNjQtMjAxNi0wOC0zMS5jZ3ovcnN5bmMtcm9v
+dGZzXzIwMTYtMTEtMTUuY2d6LC9vc2ltYWdlL2RlcHMvZGViaWFuLXg4Nl82NC0yMDE2LTA4LTMx
+LmNnei9ydW4taXBjb25maWdfMjAxNi0xMS0xNS5jZ3onDQoJZXhwb3J0IGxrcF9pbml0cmQ9Jy9s
+a3AvbGtwL2xrcC14ODZfNjQuY2d6Jw0KCWV4cG9ydCBzaXRlPSdpbm4nDQoJZXhwb3J0IExLUF9D
+R0lfUE9SVD04MA0KCWV4cG9ydCBMS1BfQ0lGU19QT1JUPTEzOQ0KCWV4cG9ydCBrZXJuZWw9Jy9w
+a2cvbGludXgveDg2XzY0LXJhbmRjb25maWctdjAtMDIwNDAyNTkvZ2NjLTcvYzE2MmQ1YjQzMzhk
+NzJkZWVkNjFhYTY1ZWQwZjJmNGJhMmJiYzhhYi92bWxpbnV6LTQuMTQuMC0xMjk1My1nYzE2MmQ1
+YicNCglleHBvcnQgZGVxdWV1ZV90aW1lPScyMDE4LTAyLTExIDE2OjUxOjA2ICswODAwJw0KCWV4
+cG9ydCBqb2JfaW5pdHJkPScvbGtwL3NjaGVkdWxlZC92bS1sa3AtbmV4MDQtMUctMjUvYm9vdC0x
+LWRlYmlhbi14ODZfNjQtMjAxNi0wOC0zMS5jZ3otYzE2MmQ1YjQzMzhkNzJkZWVkNjFhYTY1ZWQw
+ZjJmNGJhMmJiYzhhYi0yMDE4MDIxMS04MjI5MC1mYzB3NGotMC5jZ3onDQoNCglbIC1uICIkTEtQ
+X1NSQyIgXSB8fA0KCWV4cG9ydCBMS1BfU1JDPS9sa3AvJHt1c2VyOi1sa3B9L3NyYw0KfQ0KDQpy
+dW5fam9iKCkNCnsNCgllY2hvICQkID4gJFRNUC9ydW4tam9iLnBpZA0KDQoJLiAkTEtQX1NSQy9s
+aWIvaHR0cC5zaA0KCS4gJExLUF9TUkMvbGliL2pvYi5zaA0KCS4gJExLUF9TUkMvbGliL2Vudi5z
+aA0KDQoJZXhwb3J0X3RvcF9lbnYNCg0KCXJ1bl9tb25pdG9yICRMS1BfU1JDL21vbml0b3JzL29u
+ZS1zaG90L3dyYXBwZXIgYm9vdC1zbGFiaW5mbw0KCXJ1bl9tb25pdG9yICRMS1BfU1JDL21vbml0
+b3JzL29uZS1zaG90L3dyYXBwZXIgYm9vdC1tZW1pbmZvDQoJcnVuX21vbml0b3IgJExLUF9TUkMv
+bW9uaXRvcnMvb25lLXNob3Qvd3JhcHBlciBtZW1tYXANCglydW5fbW9uaXRvciAkTEtQX1NSQy9t
+b25pdG9ycy9uby1zdGRvdXQvd3JhcHBlciBib290LXRpbWUNCglydW5fbW9uaXRvciAkTEtQX1NS
+Qy9tb25pdG9ycy93cmFwcGVyIGttc2cNCglydW5fbW9uaXRvciAkTEtQX1NSQy9tb25pdG9ycy93
+cmFwcGVyIG9vbS1raWxsZXINCglydW5fbW9uaXRvciAkTEtQX1NSQy9tb25pdG9ycy9wbGFpbi93
+YXRjaGRvZw0KDQoJcnVuX3Rlc3QgJExLUF9TUkMvdGVzdHMvd3JhcHBlciBzbGVlcCAxDQp9DQoN
+CmV4dHJhY3Rfc3RhdHMoKQ0Kew0KCSRMS1BfU1JDL3N0YXRzL3dyYXBwZXIgYm9vdC1zbGFiaW5m
+bw0KCSRMS1BfU1JDL3N0YXRzL3dyYXBwZXIgYm9vdC1tZW1pbmZvDQoJJExLUF9TUkMvc3RhdHMv
+d3JhcHBlciBtZW1tYXANCgkkTEtQX1NSQy9zdGF0cy93cmFwcGVyIGJvb3QtbWVtb3J5DQoJJExL
+UF9TUkMvc3RhdHMvd3JhcHBlciBib290LXRpbWUNCgkkTEtQX1NSQy9zdGF0cy93cmFwcGVyIGtl
+cm5lbC1zaXplDQoJJExLUF9TUkMvc3RhdHMvd3JhcHBlciBrbXNnDQoNCgkkTEtQX1NSQy9zdGF0
+cy93cmFwcGVyIHRpbWUgc2xlZXAudGltZQ0KCSRMS1BfU1JDL3N0YXRzL3dyYXBwZXIgdGltZQ0K
+CSRMS1BfU1JDL3N0YXRzL3dyYXBwZXIgZG1lc2cNCgkkTEtQX1NSQy9zdGF0cy93cmFwcGVyIGtt
+c2cNCgkkTEtQX1NSQy9zdGF0cy93cmFwcGVyIHN0ZGVycg0KCSRMS1BfU1JDL3N0YXRzL3dyYXBw
+ZXIgbGFzdF9zdGF0ZQ0KfQ0KDQoiJEAiDQo=
 
- drivers/scsi/scsi_lib.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index a86df9c..d2f1838 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -191,7 +191,13 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
- 	 */
- 	cmd->result = 0;
- 	if (q->mq_ops) {
--		scsi_mq_requeue_cmd(cmd);
-+		/*
-+		 * scsi_device.sdev_gendev will be get every time in .get_budget and
-+		 * be put in scsi_end_request. Hence we need to put the reference
-+		 * here when we decide to requeue request.
-+		 */
-+		blk_mq_requeue_request(cmd->request, true);
-+		put_device(&device->sdev_gendev);
- 		return;
- 	}
- 	spin_lock_irqsave(q->queue_lock, flags);
--- 
-2.7.4
+--_002_1519962555105101camelintelcom_--
