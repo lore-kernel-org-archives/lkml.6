@@ -1,106 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947440AbeCBSpa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 13:45:30 -0500
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:41897 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1947427AbeCBSp1 (ORCPT
+        id S1947477AbeCBSuJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 13:50:09 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34298 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1422764AbeCBSuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 13:45:27 -0500
-X-Google-Smtp-Source: AG47ELtbPYXDksp9Wpz6uVcdQb4clVzDqhSPGoB5u4DNFs4jfy/8sY+Z11qm+9bDzmEOF2m/t4FFrdMvk+7VYb1famg=
+        Fri, 2 Mar 2018 13:50:08 -0500
+X-Google-Smtp-Source: AG47ELuiLrO3BKNYfyynqht3EANON3ev+wJbQPN23JVTqu6npm/B+9hMB0vcYChRfk79dx7d51K0QQ==
+Date: Fri, 2 Mar 2018 12:50:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: devicetree@vger.kernel.org, monstr@monstr.eu,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        Rob Herring <robherring2@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Josh Cartwright <josh.cartwright@ni.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] arm: zynq: Add support for Xilinx zc770 xm010 dc1
+ board
+Message-ID: <20180302185006.yciyjcchsx4aa7lu@rob-hp-laptop>
+References: <cover.1519398009.git.michal.simek@xilinx.com>
+ <f049c5121edab27227337ccd607db4f38f8d76f3.1519398009.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <20180302181636.a2nqgm4ezrbcdxkc@lakrids.cambridge.arm.com>
-References: <20180301193803.129195-1-dianders@chromium.org>
- <20180302180131.GA20579@arm.com> <20180302181636.a2nqgm4ezrbcdxkc@lakrids.cambridge.arm.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 2 Mar 2018 10:45:25 -0800
-X-Google-Sender-Auth: DDSJUtIUS5YgV62-JZrQXHq928s
-Message-ID: <CAD=FV=U5QFqn3PU_H1rU0KMJBD9yt1FCLJd=E0afGVPg19wgWA@mail.gmail.com>
-Subject: Re: [PATCH] arm64/debug: Fix registers on sleeping tasks
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Brian Norris <briannorris@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, evgreen@chromium.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f049c5121edab27227337ccd607db4f38f8d76f3.1519398009.git.michal.simek@xilinx.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Feb 23, 2018 at 04:00:20PM +0100, Michal Simek wrote:
+> zc770 is based board which is extended by FMC/DC cards for SoC
+> validation. FMCs/DCs are supposed to cover all SoC configurations.
+> FMC/DC contains ethernet port, can, i2c, sd, qspi, spi, uart and usb.
+> 
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+> Changes in v2:
+> - Record compatible string to xilinx.txt
+> 
+>  Documentation/devicetree/bindings/arm/xilinx.txt |  3 +
+>  arch/arm/boot/dts/Makefile                       |  1 +
+>  arch/arm/boot/dts/zynq-zc770-xm010.dts           | 92 ++++++++++++++++++++++++
+>  3 files changed, 96 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/zynq-zc770-xm010.dts
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
+> index 425c74fcc560..019e69037d42 100644
+> --- a/Documentation/devicetree/bindings/arm/xilinx.txt
+> +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
+> @@ -11,6 +11,9 @@ Additional compatible strings:
+>  - Xilinx internal board cc108
+>    "xlnx,zynq-cc108"
+>  
+> +- Xilinx internal board zc770 with different FMC cards
+> +  "xlnx,zynq-zc770-xm010"
+> +
+>  ---------------------------------------------------------------
+>  
+>  Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index c6810e84d4d7..be9ffae2a1ec 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1067,6 +1067,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
+>  	zynq-parallella.dtb \
+>  	zynq-zc702.dtb \
+>  	zynq-zc706.dtb \
+> +	zynq-zc770-xm010.dtb \
+>  	zynq-zed.dtb \
+>  	zynq-zybo.dtb
+>  dtb-$(CONFIG_MACH_ARMADA_370) += \
+> diff --git a/arch/arm/boot/dts/zynq-zc770-xm010.dts b/arch/arm/boot/dts/zynq-zc770-xm010.dts
+> new file mode 100644
+> index 000000000000..b1cfb4ede434
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/zynq-zc770-xm010.dts
+> @@ -0,0 +1,92 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Xilinx ZC770 XM010 board DTS
+> + *
+> + * Copyright (C) 2013-2018 Xilinx, Inc.
+> + */
+> +/dts-v1/;
+> +#include "zynq-7000.dtsi"
+> +
+> +/ {
+> +	compatible = "xlnx,zynq-zc770-xm010", "xlnx,zynq-7000";
+> +	model = "Xilinx Zynq";
+> +
+> +	aliases {
+> +		ethernet0 = &gem0;
+> +		i2c0 = &i2c0;
+> +		serial0 = &uart1;
+> +		spi1 = &spi1;
+> +	};
+> +
+> +	chosen {
+> +		bootargs = "";
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000>;
+> +	};
+> +
+> +	usb_phy0: phy0 {
+> +		compatible = "usb-nop-xceiv";
+> +		#phy-cells = <0>;
+> +	};
+> +};
+> +
+> +&can0 {
+> +	status = "okay";
+> +};
+> +
+> +&gem0 {
+> +	status = "okay";
+> +	phy-mode = "rgmii-id";
+> +	phy-handle = <&ethernet_phy>;
+> +
+> +	ethernet_phy: ethernet-phy@7 {
+> +		reg = <7>;
+> +		device_type = "ethernet-phy";
+> +	};
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +	clock-frequency = <400000>;
+> +
+> +	eeprom: eeprom@52 {
+> +		compatible = "atmel,24c02";
+> +		reg = <0x52>;
+> +	};
+> +
+> +};
+> +
+> +&sdhci0 {
+> +	status = "okay";
+> +};
+> +
+> +&spi1 {
+> +	status = "okay";
+> +	num-cs = <4>;
+> +	is-decoded-cs = <0>;
+> +	flash@0 {
+> +		compatible = "sst25wf080", "jedec,spi-nor";
+> +		reg = <1>;
+> +		spi-max-frequency = <1000000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		partition@test {
 
-On Fri, Mar 2, 2018 at 10:16 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Fri, Mar 02, 2018 at 06:01:31PM +0000, Will Deacon wrote:
->> On Thu, Mar 01, 2018 at 11:38:03AM -0800, Douglas Anderson wrote:
->> > This is the equivalent of commit 001bf455d206 ("ARM: 8428/1: kgdb: Fix
->> > registers on sleeping tasks") but for arm64.  Nuff said.
->>
->> It's a pity that 001bf455d206 doesn't explain *why* past_pt_regs doesn't
->> work.
->
-> The task_pt_regs are the userspace regs at the highest address on the
-> kernel stack:
->
-> #define task_pt_regs(p) \
->         ((struct pt_regs *)(THREAD_SIZE + task_stack_page(p)) - 1)
->
-> ... for kernel tasks, that's meaningless, and for user tasks, that won't
-> correspond to kernel state.
->
->> > diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
->> > index 2122cd187f19..01285d4dcdc3 100644
->> > --- a/arch/arm64/kernel/kgdb.c
->> > +++ b/arch/arm64/kernel/kgdb.c
->> > @@ -138,14 +138,26 @@ int dbg_set_reg(int regno, void *mem, struct pt_regs *regs)
->> >  void
->> >  sleeping_thread_to_gdb_regs(unsigned long *gdb_regs, struct task_struct *task)
->> >  {
->> > -   struct pt_regs *thread_regs;
->> > +   struct thread_struct *thread = &task->thread;
->> > +   struct cpu_context *cpu_context = &thread->cpu_context;
->
-> We can do this in one go:
->
->         struct cpu_context *cpu_context = &task->thread.cpu_context;
->
-> ... since we don't need the thread variable otherwise.
+@test?
 
-Sure, I can spin it that way if it makes you happy.
+Use a partitions node too.
 
+> +			label = "spi-flash";
 
->> >
->> >     /* Initialize to zero */
->> >     memset((char *)gdb_regs, 0, NUMREGBYTES);
->> > -   thread_regs = task_pt_regs(task);
->> > -   memcpy((void *)gdb_regs, (void *)thread_regs->regs, GP_REG_BYTES);
->> > -   /* Special case for PSTATE (check comments in asm/kgdb.h for details) */
->> > -   dbg_get_reg(33, gdb_regs + GP_REG_BYTES, thread_regs);
->> > +
->> > +   gdb_regs[19] = cpu_context->x19;
->> > +   gdb_regs[20] = cpu_context->x20;
->> > +   gdb_regs[21] = cpu_context->x21;
->> > +   gdb_regs[22] = cpu_context->x22;
->> > +   gdb_regs[23] = cpu_context->x23;
->> > +   gdb_regs[24] = cpu_context->x24;
->> > +   gdb_regs[25] = cpu_context->x25;
->> > +   gdb_regs[26] = cpu_context->x26;
->> > +   gdb_regs[27] = cpu_context->x27;
->> > +   gdb_regs[28] = cpu_context->x28;
->> > +   gdb_regs[29] = cpu_context->fp;
->> > +
->> > +   gdb_regs[31] = cpu_context->sp;
->> > +   gdb_regs[32] = cpu_context->pc;
->
-> Are the other reg fields initialised elsewhere?
->
-> We might want to zero them here.
+Should be what the partition contains.
 
-Isn't that covered by the the "/* Initialize to zero */" comment and
-and "memset((char *)gdb_regs, 0, NUMREGBYTES);"
-
-...or are you thinking of initting something else to zero?
-
-
--Doug
+> +			reg = <0x0 0x100000>;
+> +		};
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb0 {
+> +	status = "okay";
+> +	dr_mode = "host";
+> +	usb-phy = <&usb_phy0>;
+> +};
+> -- 
+> 1.9.1
+> 
