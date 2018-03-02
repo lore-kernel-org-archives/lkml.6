@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvCjU8mBjJbtLFnkA1NiVmShNG6on4nAE9TMKylh4a6eTFgYr+i3PEnOAnQ1eLZw8Ev9C7c
-ARC-Seal: i=1; a=rsa-sha256; t=1519981102; cv=none;
+X-Google-Smtp-Source: AG47ELtOiUqgTSHCZ73PD0Xk7bHX23kJOpTofhuuZtzAT24yAFwRBX8AdxkCNvfia1il6ewgwR1p
+ARC-Seal: i=1; a=rsa-sha256; t=1519981095; cv=none;
         d=google.com; s=arc-20160816;
-        b=VUZmYe2V0pF0vz/xMnZd25bfcw+HYFvXqrD2eSvGLeb4e2LtNHvXdVz6V0TpoahT5g
-         tkF2ULd4eQXgqvqqRv3jmqkV2z8/ZRanLWLmnyeStAF+5mWnA5FIBJR5Z5ArEI/kKsV2
-         HonLfFFIkO526v+z7avxZScm42UX7SMZ700J4bQJtNPIi/n9JEn+Lqf7EvNYQicFDwXp
-         sFiYZJNeF+Oz598o2/N/8czpsTC/KOw2hYHQLEYqy/1ul0mEmp90bV7YcXJhtu5nqjcg
-         obZvVgYrQLZKWAdlByCp4CvA6qiHJMRqZcrsQ8v87LEm0hp/Y5T2gv7C5WtLJdqNe82v
-         gqIA==
+        b=Urmj+6qKMZyt/lTi+vPRDbdfuQYogZ2kwQ3qh47hACGeIx2TcLDItNfS1WgjSFxJx5
+         DuEhabfE+oczAL+ic+Y72Amfx4RVKIxrLQtFum9+ax1ZnfreEWwu2gE0+dXijoThuodS
+         ZKMCcEhriznN2GwFDRLENKcZb1a06vkJySvK0mmVea06q4ON8y6ValkwXfy1JqjnDwQ+
+         D9KcgWS4Wp/axc8HClRPVJSEUASk2XhMIZaJ2Ymim5AGZfUPJ1xXuVWAe+sZkPhtjGZ+
+         tzJX/WO1IS/11jafymK1QHBPvy1u/XU9z6MjGYD3793n89P8WG9/Sp8pIlJd1gbmU4HQ
+         TACw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=m/PmhkCuLUke9Qn+ye+Tgxrb+uITZjnyBiTEGnfP7S4=;
-        b=t6rI2WEtakz1zM8vo0ruHeMlKLtFA7u3pAuihrdVVfn5/alQ1TOx7esNhOdot0eYzO
-         IKX6ceaRkdX3ZM57TuLR0E30XtkEFPRekrHvIiKJQt3SUbOB1TArh2fQf2Oa6J5rQ1gZ
-         QHZaoXXUs7ssCjxyocN9KDrOA/byqt9fv6cfZwNf9jW+Wp39CK+A1fiP981R9YGy431G
-         CQstpuZwC0KljfhNMOhd+7e5WbRFYe8+4j4bPiJKwgexAYsfErgUqKrvPm7Q0fwGcOqx
-         vsyeGkh0ges+k68f0Afy2xsu2wNAFgEjmU1QAqrXjtgtxmaAHvQGI9XeDrvjr06Xo2PH
-         Gf8A==
+        bh=0OlhBHARvhyVnUsixBqAbTKUib7fQWIirojInsgZfoc=;
+        b=xzi8jD0OUDCvxgIhxCCEDMS4KLn+5NETvIxXJVJyd7gR9kHOQwWfTNW8P6/Dx9Vt30
+         5dWOaJsnmdJrO8dnxRxpzUVrfoFxlNHipVrNojy0AVs/CdFcufSLNuB1BTB3laJ+g+Oe
+         5K4itFu4NvjvrG5rbIvPybF8gPyVEH19KNbbDRH922TMerpEJL81NVfUWm2SYJxo9RmC
+         V4j7GXhi7WB+PdI5sOgLbWUrvj7BEYkvzXR2YiJc0NpuqoUSy5HLoGbY3Ieo5JOldaih
+         0eHNCOe7Pekx1LnQ7xLTVIj29TSTkO9gsPwdqoGcSyss4LblSYoViZqBk1zC0PgCAXOu
+         hTqA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Karol Herbst <kherbst@redhat.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Ben Skeggs <bskeggs@redhat.com>,
+	Luu An Phu <phu.luuan@nxp.com>,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 14/56] drm/nouveau/pci: do a msi rearm on init
-Date: Fri,  2 Mar 2018 09:51:00 +0100
-Message-Id: <20180302084450.347327488@linuxfoundation.org>
+Subject: [PATCH 4.9 46/56] can: flex_can: Correct the checking for frame length in flexcan_start_xmit()
+Date: Fri,  2 Mar 2018 09:51:32 +0100
+Message-Id: <20180302084451.887462391@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084449.568562222@linuxfoundation.org>
 References: <20180302084449.568562222@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815522892231705?=
-X-GMAIL-MSGID: =?utf-8?q?1593815704333476743?=
+X-GMAIL-THRID: =?utf-8?q?1593815491970045896?=
+X-GMAIL-MSGID: =?utf-8?q?1593815697254379095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Karol Herbst <kherbst@redhat.com>
+From: Luu An Phu <phu.luuan@nxp.com>
 
 
-[ Upstream commit a121027d2747168df0aac0c3da35509eea39f61c ]
+[ Upstream commit 13454c14550065fcc1705d6bd4ee6d40e057099f ]
 
-On my GP107 when I load nouveau after unloading it, for some reason the
-GPU stopped sending or the CPU stopped receiving interrupts if MSI was
-enabled.
+The flexcan_start_xmit() function compares the frame length with data
+register length to write frame content into data[0] and data[1]
+register. Data register length is 4 bytes and frame maximum length is 8
+bytes.
 
-Doing a rearm once before getting any interrupts fixes this.
+Fix the check that compares frame length with 3. Because the register
+length is 4.
 
-Signed-off-by: Karol Herbst <kherbst@redhat.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Luu An Phu <phu.luuan@nxp.com>
+Reviewed-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/can/flexcan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c
-@@ -136,6 +136,13 @@ nvkm_pci_init(struct nvkm_subdev *subdev
- 		return ret;
- 
- 	pci->irq = pdev->irq;
-+
-+	/* Ensure MSI interrupts are armed, for the case where there are
-+	 * already interrupts pending (for whatever reason) at load time.
-+	 */
-+	if (pci->msi)
-+		pci->func->msi_rearm(pci);
-+
- 	return ret;
- }
- 
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -493,7 +493,7 @@ static int flexcan_start_xmit(struct sk_
+ 		data = be32_to_cpup((__be32 *)&cf->data[0]);
+ 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[0]);
+ 	}
+-	if (cf->can_dlc > 3) {
++	if (cf->can_dlc > 4) {
+ 		data = be32_to_cpup((__be32 *)&cf->data[4]);
+ 		flexcan_write(data, &regs->mb[FLEXCAN_TX_BUF_ID].data[1]);
+ 	}
