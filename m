@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvUbUdQnOLYVV/zp9HSwEF/4oQ1zWcKwLw5gi9+mCcDjDgzxAEOKihnLyejJgHv8BbJYHwN
-ARC-Seal: i=1; a=rsa-sha256; t=1519981216; cv=none;
+X-Google-Smtp-Source: AG47ELttiF1F2gCTOnrJPqsTmu41dq8ixt1G1a50KekrWwiAwRZPoH4Sk82XkBI+7m0F2/2qmO7m
+ARC-Seal: i=1; a=rsa-sha256; t=1519981211; cv=none;
         d=google.com; s=arc-20160816;
-        b=vMmfcq5Gg/MKQQnopC/xXlKo/+gUuTneqxBfUG64nZEJV0+30VGbPLZ+aZT1/rOAVs
-         j5bXjh6X6uPCGPMsuyqxudoA/ZVz5/6guodhxHKAv8s6caj1TQTCJhGXRN91HxIVSZon
-         alBRNOSA14M/uSU5XcyrSrjgsuXCRl7pXGWBhAvVIsRs18Q/wAljkW+L0vkyB/vTPyhM
-         7O4hj0NTbDAVS+XqlaOEWHveI8dqUR6JGyGyb4lxntdczlhG1pbtiAae/9aDRgHYvPWX
-         ZifpL3MITlaVwKYNuzesQAtUqnAZbobhVPKMXVmN7QilFYCwBkyy4XZanBrZmGEMZeNh
-         f+EA==
+        b=eNtO0rmbpb2P3iON96Imq0lihEivOOdN4I2jWwWuxKNeHvBX5e5oAzBeczKkZlPgQs
+         qmtiZaYY+/siczCFIDNUxLfPwcJsWVnNINkNl18RNx3lIobLFRh38VEUhPZi5vzc2J6f
+         +tidJrK6jK6qiwE8uW2vYgDa4lKoduNNdJsFfwMdF1SMlufzhAkLBE9CrsM7U1GlSCZt
+         cNZuzgBx5H86Pwnsl5JrXOJQhIKp5xWn2LzZsczK4aH5Dy8auIeUwY3rkD1iVBK1/72Z
+         3dNxoiO6SEorpwzUStksmJfNASys+ef8LNKQocmJqLpOXNydLXhhBLwYyCJkX6jgW+Nz
+         L7Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t4qIVdM7TwBjaHA+pR7UOAyAJu07+yYyyHqaFoZKXFw=;
-        b=eIpvdXflfDpSnTyhPlel4+3y47p3fVdDKfbUyV53dBSA0L2v2gf4g8T+QJ0CvcbPyh
-         kbk1x6vKPqFMWjiUWDVeUDq6Xy8zT0+47f6trUO8rBcWoWIPp0okZb3ghSg4vGgA+f5S
-         Z5HjuHLFSSZDw9JA5lQaEg1S8j7HbDPZgfTTrF9ZMIejYVsRKmrfQ6kOyDPXOO/c8Tg5
-         aVSCw2IITMeZflin8iMTbhgceHtsM0jlPajZfdjgYqzDy8wDiax/ojaodsTmjawfBAEf
-         X8MLpGbgR7NGOwamPu0c7uhkVq+1deB5w+3zZohcnwUQ3kINnIgaDM3iX/EnTyIMOHEa
-         IAjQ==
+        bh=aNNu6dPo29p0W8vZrYv0NGiHGi8dfmuylsbqBaoIjV8=;
+        b=0rjgOFlnf3iwGw40QvYsYlXjS1FlGAqXO8GKFtXHK8ECvn3VfpLuM3Klpw9kjC1+do
+         +4+sCCV2MsWvQ667TzSNb7SRuXKP6K2ec0aigvJT1OqL4moeEvy1G5bIkyj8OwU1sjg2
+         VDYfM+rRBag+RqKVU0kCMEYtyhG2Sjqtz7jvy3PUOoFfXJBYwSVu2QtFon1m/W2Bu3+p
+         VgOJZ09RcVcNOMzmL2DrXV+vfoUFqG+RSrSsE2e935lQWunNLfyDCdNJRGG92nb9mhKP
+         G6JLgQLOa/gqfJfIhGvorvQcyrj3nnb4DJCuLZFJCASYngHHZGD7KtECOZEb3uKrCVFK
+         aLUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Keith Busch <keith.busch@intel.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	James Smart <james.smart@broadcom.com>,
 	Christoph Hellwig <hch@lst.de>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 008/115] nvme: check hw sectors before setting chunk sectors
-Date: Fri,  2 Mar 2018 09:50:11 +0100
-Message-Id: <20180302084504.197208635@linuxfoundation.org>
+Subject: [PATCH 4.14 007/115] nvme-fc: remove double put reference if admin connect fails
+Date: Fri,  2 Mar 2018 09:50:10 +0100
+Message-Id: <20180302084504.154688765@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815572088438650?=
-X-GMAIL-MSGID: =?utf-8?q?1593815823327418817?=
+X-GMAIL-THRID: =?utf-8?q?1593815818981863605?=
+X-GMAIL-MSGID: =?utf-8?q?1593815818981863605?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +50,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Keith Busch <keith.busch@intel.com>
+From: James Smart <jsmart2021@gmail.com>
 
 
-[ Upstream commit 249159c5f15812140fa216f9997d799ac0023a1f ]
+[ Upstream commit 4596e752db02d47038cd7c965419789ab15d1985 ]
 
-Some devices with IDs matching the "stripe" quirk don't actually have
-this quirk, and don't have an MDTS value. When MDTS is not set, the
-driver sets the max sectors to UINT_MAX, which is not a power of 2,
-hitting a BUG_ON from blk_queue_chunk_sectors. This patch skips setting
-chunk sectors for such devices.
+There are two put references in the failure case of initial
+create_association. The first put actually frees the controller, thus the
+second put references freed memory.
 
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Remove the unnecessary 2nd put.
+
+Signed-off-by: James Smart <james.smart@broadcom.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvme/host/fc.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1515,7 +1515,8 @@ static void nvme_set_queue_limits(struct
- 		blk_queue_max_hw_sectors(q, ctrl->max_hw_sectors);
- 		blk_queue_max_segments(q, min_t(u32, max_segments, USHRT_MAX));
- 	}
--	if (ctrl->quirks & NVME_QUIRK_STRIPE_SIZE)
-+	if ((ctrl->quirks & NVME_QUIRK_STRIPE_SIZE) &&
-+	    is_power_of_2(ctrl->max_hw_sectors))
- 		blk_queue_chunk_sectors(q, ctrl->max_hw_sectors);
- 	blk_queue_virt_boundary(q, ctrl->page_size - 1);
- 	if (ctrl->vwc & NVME_CTRL_VWC_PRESENT)
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -2876,7 +2876,6 @@ nvme_fc_init_ctrl(struct device *dev, st
+ 
+ 		/* initiate nvme ctrl ref counting teardown */
+ 		nvme_uninit_ctrl(&ctrl->ctrl);
+-		nvme_put_ctrl(&ctrl->ctrl);
+ 
+ 		/* Remove core ctrl ref. */
+ 		nvme_put_ctrl(&ctrl->ctrl);
