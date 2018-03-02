@@ -1,140 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1425752AbeCBJ2u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 04:28:50 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:59064 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425206AbeCBJ2V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 04:28:21 -0500
-X-IronPort-AV: E=Sophos;i="5.47,411,1515481200";
-   d="scan'208";a="11692114"
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <joonas.lahtinen@linux.intel.com>,
-        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
-        <b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
-        <dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
-        <sean@mess.org>, <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
-        <jingoohan1@gmail.com>, <milo.kim@ti.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <corbet@lwn.net>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
-        <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180228194429.GD22932@mithrandir> <87r2p4hod7.fsf@intel.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <585cc4ae-3674-c119-295b-e59f4242e619@microchip.com>
-Date: Fri, 2 Mar 2018 11:28:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <87r2p4hod7.fsf@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1425771AbeCBJ3s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 04:29:48 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1425058AbeCBJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 04:29:31 -0500
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: brouer@redhat.com, john.fastabend@gmail.com,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net V2] virtio-net: re enable XDP_REDIRECT for mergeable buffer
+Date: Fri,  2 Mar 2018 17:29:14 +0800
+Message-Id: <1519982954-14360-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+XDP_REDIRECT support for mergeable buffer was removed since commit
+7324f5399b06 ("virtio_net: disable XDP_REDIRECT in receive_mergeable()
+case"). This is because we don't reserve enough tailroom for struct
+skb_shared_info which breaks XDP assumption. So this patch fixes this
+by reserving enough tailroom and using fixed size of rx buffer.
 
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+Changes from V1:
+- do not add duplicated tracepoint when redirection fails
+---
+ drivers/net/virtio_net.c | 54 +++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
 
-On 28.02.2018 22:04, Jani Nikula wrote:
-> On Wed, 28 Feb 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
->> Anyone that needs something other than normal mode should use the new
->> atomic PWM API.
-> 
-> At the risk of revealing my true ignorance, what is the new atomic PWM
-> API? Where? Examples of how one would convert old code over to the new
-> API?
-As far as I know, the old PWM core code uses config(), set_polarity(),
-enable(), disable() methods of driver, registered as pwm_ops:
-struct pwm_ops {
-
-        int (*request)(struct pwm_chip *chip, struct pwm_device *pwm);
-
-        void (*free)(struct pwm_chip *chip, struct pwm_device *pwm);
-
-        int (*config)(struct pwm_chip *chip, struct pwm_device *pwm,
-
-                      int duty_ns, int period_ns);
-
-        int (*set_polarity)(struct pwm_chip *chip, struct pwm_device *pwm,
-
-                            enum pwm_polarity polarity);
-
-        int (*capture)(struct pwm_chip *chip, struct pwm_device *pwm,
-
-                       struct pwm_capture *result, unsigned long timeout);
-
-        int (*enable)(struct pwm_chip *chip, struct pwm_device *pwm);
-
-        void (*disable)(struct pwm_chip *chip, struct pwm_device *pwm);
-
-        int (*apply)(struct pwm_chip *chip, struct pwm_device *pwm,
-
-                     struct pwm_state *state);
-
-        void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
-
-                          struct pwm_state *state);
-
-#ifdef CONFIG_DEBUG_FS
-
-        void (*dbg_show)(struct pwm_chip *chip, struct seq_file *s);
-
-#endif
-
-        struct module *owner;
-
-};
-
-
-to do settings on hardware. In order to so settings on a PWM the users
-should have been follow the below steps:
-->config()
-->set_polarity()
-->enable()
-Moreover, if the PWM was previously enabled it should have been first
-disable and then to follow the above steps in order to apply a new settings
-on hardware.
-The driver should have been provide, at probe, all the above function:
-->config(), ->set_polarity(), ->disable(), ->enable(), function that were
-used by PWM core.
-
-Now, having atomic PWM, the driver should provide one function to PWM core,
-which is ->apply() function. Every PWM has a state associated, which keeps
-the period, duty cycle, polarity and enable/disable status. The driver's
-->apply() function takes as argument the state that should be applied and
-it takes care of applying this new state directly without asking user to
-call ->disable(), then ->config()/->set_polarity(), then ->enable() to
-apply new hardware settings.
-
-The PWM consumer could set a new state for PWM it uses, using
-pwm_apply_state(pwm, new_state);
-
-Regarding the models to switch on atomic PWM, on the controller side you
-can check for drivers that registers apply function at probe time.
-Regarding the PWM users, you can look for pwm_apply_state()
-(drivers/hwmon/pwm-fan.c or drivers/input/misc/pwm-beeper.c are some examples).
-
-Thierry, please correct me if I'm wrong.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> BR,
-> Jani.
-> 
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 9bb9e56..426dcf7 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -504,6 +504,7 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
+ 	page_off += *len;
+ 
+ 	while (--*num_buf) {
++		int tailroom = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 		unsigned int buflen;
+ 		void *buf;
+ 		int off;
+@@ -518,7 +519,7 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
+ 		/* guard against a misconfigured or uncooperative backend that
+ 		 * is sending packet larger than the MTU.
+ 		 */
+-		if ((page_off + buflen) > PAGE_SIZE) {
++		if ((page_off + buflen + tailroom) > PAGE_SIZE) {
+ 			put_page(p);
+ 			goto err_buf;
+ 		}
+@@ -690,6 +691,7 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 	unsigned int truesize;
+ 	unsigned int headroom = mergeable_ctx_to_headroom(ctx);
+ 	bool sent;
++	int err;
+ 
+ 	head_skb = NULL;
+ 
+@@ -701,7 +703,12 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 		void *data;
+ 		u32 act;
+ 
+-		/* This happens when rx buffer size is underestimated */
++		/* This happens when rx buffer size is underestimated
++		 * or headroom is not enough because of the buffer
++		 * was refilled before XDP is set. This should only
++		 * happen for the first several packets, so we don't
++		 * care much about its performance.
++		 */
+ 		if (unlikely(num_buf > 1 ||
+ 			     headroom < virtnet_get_headroom(vi))) {
+ 			/* linearize data for XDP */
+@@ -736,9 +743,6 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 
+ 		act = bpf_prog_run_xdp(xdp_prog, &xdp);
+ 
+-		if (act != XDP_PASS)
+-			ewma_pkt_len_add(&rq->mrg_avg_pkt_len, len);
+-
+ 		switch (act) {
+ 		case XDP_PASS:
+ 			/* recalculate offset to account for any header
+@@ -770,6 +774,18 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 				goto err_xdp;
+ 			rcu_read_unlock();
+ 			goto xdp_xmit;
++		case XDP_REDIRECT:
++			err = xdp_do_redirect(dev, &xdp, xdp_prog);
++			if (err) {
++				if (unlikely(xdp_page != page))
++					put_page(xdp_page);
++				goto err_xdp;
++			}
++			*xdp_xmit = true;
++			if (unlikely(xdp_page != page))
++				goto err_xdp;
++			rcu_read_unlock();
++			goto xdp_xmit;
+ 		default:
+ 			bpf_warn_invalid_xdp_action(act);
+ 		case XDP_ABORTED:
+@@ -1013,13 +1029,18 @@ static int add_recvbuf_big(struct virtnet_info *vi, struct receive_queue *rq,
+ }
+ 
+ static unsigned int get_mergeable_buf_len(struct receive_queue *rq,
+-					  struct ewma_pkt_len *avg_pkt_len)
++					  struct ewma_pkt_len *avg_pkt_len,
++					  unsigned int room)
+ {
+ 	const size_t hdr_len = sizeof(struct virtio_net_hdr_mrg_rxbuf);
+ 	unsigned int len;
+ 
+-	len = hdr_len + clamp_t(unsigned int, ewma_pkt_len_read(avg_pkt_len),
++	if (room)
++		return PAGE_SIZE - room;
++
++	len = hdr_len +	clamp_t(unsigned int, ewma_pkt_len_read(avg_pkt_len),
+ 				rq->min_buf_len, PAGE_SIZE - hdr_len);
++
+ 	return ALIGN(len, L1_CACHE_BYTES);
+ }
+ 
+@@ -1028,21 +1049,27 @@ static int add_recvbuf_mergeable(struct virtnet_info *vi,
+ {
+ 	struct page_frag *alloc_frag = &rq->alloc_frag;
+ 	unsigned int headroom = virtnet_get_headroom(vi);
++	unsigned int tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
++	unsigned int room = SKB_DATA_ALIGN(headroom + tailroom);
+ 	char *buf;
+ 	void *ctx;
+ 	int err;
+ 	unsigned int len, hole;
+ 
+-	len = get_mergeable_buf_len(rq, &rq->mrg_avg_pkt_len);
+-	if (unlikely(!skb_page_frag_refill(len + headroom, alloc_frag, gfp)))
++	/* Extra tailroom is needed to satisfy XDP's assumption. This
++	 * means rx frags coalescing won't work, but consider we've
++	 * disabled GSO for XDP, it won't be a big issue.
++	 */
++	len = get_mergeable_buf_len(rq, &rq->mrg_avg_pkt_len, room);
++	if (unlikely(!skb_page_frag_refill(len + room, alloc_frag, gfp)))
+ 		return -ENOMEM;
+ 
+ 	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
+ 	buf += headroom; /* advance address leaving hole at front of pkt */
+ 	get_page(alloc_frag->page);
+-	alloc_frag->offset += len + headroom;
++	alloc_frag->offset += len + room;
+ 	hole = alloc_frag->size - alloc_frag->offset;
+-	if (hole < len + headroom) {
++	if (hole < len + room) {
+ 		/* To avoid internal fragmentation, if there is very likely not
+ 		 * enough space for another buffer, add the remaining space to
+ 		 * the current buffer.
+@@ -2576,12 +2603,15 @@ static ssize_t mergeable_rx_buffer_size_show(struct netdev_rx_queue *queue,
+ {
+ 	struct virtnet_info *vi = netdev_priv(queue->dev);
+ 	unsigned int queue_index = get_netdev_rx_queue_index(queue);
++	unsigned int headroom = virtnet_get_headroom(vi);
++	unsigned int tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
+ 	struct ewma_pkt_len *avg;
+ 
+ 	BUG_ON(queue_index >= vi->max_queue_pairs);
+ 	avg = &vi->rq[queue_index].mrg_avg_pkt_len;
+ 	return sprintf(buf, "%u\n",
+-		       get_mergeable_buf_len(&vi->rq[queue_index], avg));
++		       get_mergeable_buf_len(&vi->rq[queue_index], avg,
++				       SKB_DATA_ALIGN(headroom + tailroom)));
+ }
+ 
+ static struct rx_queue_attribute mergeable_rx_buffer_size_attribute =
+-- 
+2.7.4
