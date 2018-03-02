@@ -1,79 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932355AbeCBTuX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:50:23 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:36055 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932243AbeCBTuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:50:19 -0500
-X-Google-Smtp-Source: AG47ELv+JTISUeITkW0f2Vovmy1oaL5RH9APhFkINUZIsKcygs3Q6KE66qKenxEKc3M9lA3waS9Vm63OuPLK1CiEWFg=
+        id S932379AbeCBTv2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:51:28 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33261 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932243AbeCBTv1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 14:51:27 -0500
+X-Google-Smtp-Source: AG47ELsBJCyK4JLUMCIqflSGS52AV53TzGJwBmaKhwXbgdtpMmG0OMHjEnJLwPbSzTTpGR5/Qvlosw==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe LEROY <christophe.leroy@c-s.fr>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 06/21] powerpc: Avoid comparison of unsigned long >= 0 in __access_ok
+Date: Fri,  2 Mar 2018 20:50:51 +0100
+Message-Id: <20180302195051.4472-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180225172236.29650-7-malat@debian.org>
+References: <20180225172236.29650-7-malat@debian.org>
 MIME-Version: 1.0
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Fri, 2 Mar 2018 20:50:17 +0100
-X-Gmail-Original-Message-ID: <CAHmME9phM2+ZrdA8jGxOAVnQSvrcO94ekvcgCH4X1xD8Dndiuw@mail.gmail.com>
-Message-ID: <CAHmME9phM2+ZrdA8jGxOAVnQSvrcO94ekvcgCH4X1xD8Dndiuw@mail.gmail.com>
-Subject: C tricks for efficient stack zeroing
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: pageexec@freemail.hu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi list,
+Rewrite function-like macro into regular static inline function to avoid a
+warning during macro expansion.
+Fix warning (treated as error in W=1):
 
-I'm writing this email to solicit tricks for efficiently zeroing out
-the stack upon returning from a function. The reason this is often
-desirable is if the stack contains intermediate values that could
-assist in some form of cryptographic attack if compromised at a later
-point in time. It turns out many surprising things could be such an
-aid to an attacker, and so generally it's important to clean things up
-upon returning.
+  CC      arch/powerpc/kernel/signal_32.o
+In file included from ./include/linux/uaccess.h:14:0,
+                 from ./include/asm-generic/termios-base.h:8,
+                 from ./arch/powerpc/include/asm/termios.h:20,
+                 from ./include/uapi/linux/termios.h:6,
+                 from ./include/linux/tty.h:7,
+                 from arch/powerpc/kernel/signal_32.c:36:
+./include/asm-generic/termios-base.h: In function ‘user_termio_to_kernel_termios’:
+./arch/powerpc/include/asm/uaccess.h:52:35: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
+   (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
+                                   ^
+./arch/powerpc/include/asm/uaccess.h:58:3: note: in expansion of macro ‘__access_ok’
+   __access_ok((__force unsigned long)(addr), (size), get_fs()))
+   ^~~~~~~~~~~
+./arch/powerpc/include/asm/uaccess.h:262:6: note: in expansion of macro ‘access_ok’
+  if (access_ok(VERIFY_READ, __gu_addr, (size)))   \
+      ^~~~~~~~~
+./arch/powerpc/include/asm/uaccess.h:80:2: note: in expansion of macro ‘__get_user_check’
+  __get_user_check((x), (ptr), sizeof(*(ptr)))
+  ^~~~~~~~~~~~~~~~
+./include/asm-generic/termios-base.h:36:6: note: in expansion of macro ‘get_user’
+  if (get_user(termios->c_line, &termio->c_line) < 0)
+      ^~~~~~~~
+[...]
+cc1: all warnings being treated as errors
 
-Often times complicated cryptographic functions -- say elliptic curve
-scalar multiplication -- use a decent amount of stack (say, 1k or 2k),
-with a variety of functions, and then copy a result into a return
-argument. Imagine a call graph like this:
+Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/include/asm/uaccess.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-do_something(u8 *output, const u8 *input)
-    thing1(...)
-    thing2(...)
-        thinga(...)
-        thingb(...)
-           thingi(...)
-        thingc(...)
-    thing3(...)
-    thing4(...)
-        thinga(...)
-        thingc(...)
-
-Each one of these functions have a few stack variables. The current
-solution is to call memzero_explicit() on each of those stack
-variables when each function return. But let's say that thingb uses as
-much or more stack as thinga. In this case, I'm wasting cycles (and
-gcc optimizations) by clearing the stack in both thinga and thingb,
-and I could probably get away with doing this in thingb only.
-Probably. But to hand estimate those seems a bit brittle.
-
-What would be really nice would be to somehow keep track of the
-maximum stack depth, and just before the function returns, clear from
-the maximum depth to its stack base, all in one single call. This
-would not only make the code faster and less brittle, but it would
-also clean up some algorithms quite a bit.
-
-Ideally this would take the form of a gcc attribute on the function,
-but I was unable to find anything of that nature. I started looking
-for little C tricks for this, and came up dry too. I realize I could
-probably just take the current stack address and zero out until _the
-very end_ but that seems to overshoot and would probably be bad for
-performance. The best I've been able to do come up with are some
-x86-specific macros, but that approach seems a bit underwhelming.
-Other approaches include adding a new attribute via the gcc plugin
-system, which could make this kind of thing more complete [cc'ing
-pipacs in case he's thought about that before].
-
-I thought maybe somebody on the list has thought about this problem in
-depth before and might have some insights to share.
-
-Regards,
-Jason
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 51bfeb8777f0..a62ee663b2c8 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -47,9 +47,13 @@
+ 
+ #else
+ 
+-#define __access_ok(addr, size, segment)	\
+-	(((addr) <= (segment).seg) &&		\
+-	 (((size) == 0) || (((size) - 1) <= ((segment).seg - (addr)))))
++static inline int __access_ok(unsigned long addr, unsigned long size,
++			mm_segment_t seg)
++{
++	if (addr > seg.seg)
++		return 0;
++	return (size == 0 || size - 1 <= seg.seg - addr);
++}
+ 
+ #endif
+ 
+-- 
+2.11.0
