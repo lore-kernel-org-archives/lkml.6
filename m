@@ -1,68 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1164852-1519981321-2-547810571500370932
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519981321; b=nx0VcT0mhukfaBQ243PLtvi/1FrdQgWnaymGf215+NMM51l
-    t1TuYcaWLbXxhhuD8JERMXGz7CYN/voIhhTT04UwXFO11/gyT+6YgmoJFuBOLHSr
-    SJycgKLX/vGqn5qMWsUVzwfyWxvwzOyXszed7Ylc/bFe9g3OcH8AfJXIwFglmRLu
-    B+Lp6KFfzTFLHj6Vi3iN2i+d5taEUj0cAIsTSuGXoBJ2So5WZHJu6zYmyfNKuB08
-    vbEYT7aQBvfrdUJkZNBZEBj3T0z1CLfe+j3k16ikV+VHvvuslIPYNTznr0WDwSYA
-    oIZBbzgazoawvTaeH6TgrbOuZpFavHiGG6lUfeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1519981321; bh=Sd8keOvDx2mt+cTw5aqrQIqzQi
-    UTmQnEPnrWzoPE1IE=; b=q17krb7bPAhDyZGSBf4Y4eeKXbJwcBjBM/iWWuUCJt
-    Pvg2f6jAyUxIPbD7znlqeGAUmTwnKa3esU+oinG9zF/tmuOpS2JIpTQYL866qsdl
-    4yDcHPDpwzCHuCHI/NWOz8eG2bR4XEVAbEZdLEU58seSOPEa04g6/Y2bMjrMNdO9
-    jbtgF1mpX04MNcNebw51/OmJ9hp+rSJ4k9Tcq28uTI80LSs/KNo0JNscoZT+Rzef
-    cLTMPRBOuhSVkRJPR3nW1GlMSs5DPvqzGXRdO7heMy0L7FRsz3j+1/QeKjkvkl7U
-    I6brNNeXfYoT2BJEP1nJrjjZipPZdcEanANL7h0U2agw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424795AbeCBJB7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 2 Mar 2018 04:01:59 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54214 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424433AbeCBJB5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 04:01:57 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvfabro/h6bAyXaBxYcsmWEx6LuUJKuAAxtp9ZsWEK7Z3BeiCFe1aShwkbN1xUT8p4prsHh
+ARC-Seal: i=1; a=rsa-sha256; t=1519981313; cv=none;
+        d=google.com; s=arc-20160816;
+        b=T5jVVDPMWhccBvHu1/+mfYh/qE3E/SHFp5qS0xHmS8X3kVB7pYUVX/YBt8sLJMR9Pz
+         4lUTeE5ZacDA/WHIVQxZjszHXldp8Xs3tweCivj9UTBI3y8qNU46LW/+m9JRqBcgMEK9
+         hweXmQbCPB1B57c3ZO13wx/77CWX9AoHqekPJJM1x2x19jDzx6hHw1wvujBS+cWaDCfv
+         vNIlHMbT4d7tVyaSd1Ud73mi8uG6NL/L9xSxqsii2nW0x6NDcvwo9TzQtJoId2M3PfRU
+         DNH1P3eO4+p5yx8F21qBFd8L7DlvUeNskrMupdt/ObUiIN7l4bt9a9eLMOewHQozYs/b
+         NgPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=+ccQbjlkto00GHaaJFFpX/13npSev51MmgXYFwfaR34=;
+        b=Y8/j3QlHYRYZRDO+fSnlK2iyUbc1LIPZ/pgHXVSp732uTZZlvtstKr7aJ7fcemE21M
+         ZoxHIoWYhQj3KOD5sElhXMDSpQpKNMfDxAMR1QvsW5u7KfcteKNfEh6EDeiIq9d7cpBc
+         fqP3eYUpZj8lEGZFIlnouAUWpXG1jUfS5kjLhU1wFDphlkH2yH7Fp880G7t5AgPC4p5y
+         OIMkabEx8VYaA8v9csJangzuO2Sj7nuYNLssW0atzRZAi9qJTitRQMwzEtXBCveheIw9
+         FT+x8Hue2SeFmB+w6KqKIlMlYTWsO7ZtPzyr2WDHDjg9O3dOnmzR86PdnNh/nGnaQDdD
+         q+/g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Phil Sutter <phil@nwl.cc>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 055/115] netfilter: nf_tables: fix potential NULL-ptr deref in nf_tables_dump_obj_done()
-Date: Fri,  2 Mar 2018 09:50:58 +0100
-Message-Id: <20180302084506.107331139@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Ofer Heifetz <oferh@marvell.com>,
+	Antoine Tenart <antoine.tenart@free-electrons.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Sasha Levin <alexander.levin@verizon.com>
+Subject: [PATCH 4.14 054/115] crypto: inside-secure - fix request allocations in invalidation path
+Date: Fri,  2 Mar 2018 09:50:57 +0100
+Message-Id: <20180302084506.062619778@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -70,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1593815925668667596?=
+X-GMAIL-MSGID: =?utf-8?q?1593815925668667596?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,37 +51,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: "Antoine Ténart" <antoine.tenart@free-electrons.com>
 
 
-[ Upstream commit 8bea728dce8972e534e6b99fd550f7b5cc3864e8 ]
+[ Upstream commit 7cad2fabd5691dbb17762877d4e7f236fe4bc181 ]
 
-If there is no NFTA_OBJ_TABLE and NFTA_OBJ_TYPE, the c.data will be NULL in
-nf_tables_getobj(). So before free filter->table in nf_tables_dump_obj_done(),
-we need to check if filter is NULL first.
+This patch makes use of the SKCIPHER_REQUEST_ON_STACK and
+AHASH_REQUEST_ON_STACK helpers to allocate enough memory to contain both
+the crypto request structures and their embedded context (__ctx).
 
-Fixes: e46abbcc05aa ("netfilter: nf_tables: Allow table names of up to 255 chars")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Phil Sutter <phil@nwl.cc>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 1b44c5a60c13 ("crypto: inside-secure - add SafeXcel EIP197 crypto engine driver")
+Suggested-by: Ofer Heifetz <oferh@marvell.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_tables_api.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/inside-secure/safexcel_cipher.c |   16 ++++++++--------
+ drivers/crypto/inside-secure/safexcel_hash.c   |   14 +++++++-------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4596,8 +4596,10 @@ static int nf_tables_dump_obj_done(struc
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -422,25 +422,25 @@ static int safexcel_cipher_exit_inv(stru
  {
- 	struct nft_obj_filter *filter = cb->data;
+ 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+-	struct skcipher_request req;
+-	struct safexcel_cipher_req *sreq = skcipher_request_ctx(&req);
++	SKCIPHER_REQUEST_ON_STACK(req, __crypto_skcipher_cast(tfm));
++	struct safexcel_cipher_req *sreq = skcipher_request_ctx(req);
+ 	struct safexcel_inv_result result = {};
+ 	int ring = ctx->base.ring;
  
--	kfree(filter->table);
--	kfree(filter);
-+	if (filter) {
-+		kfree(filter->table);
-+		kfree(filter);
-+	}
+-	memset(&req, 0, sizeof(struct skcipher_request));
++	memset(req, 0, sizeof(struct skcipher_request));
  
- 	return 0;
- }
+ 	/* create invalidation request */
+ 	init_completion(&result.completion);
+-	skcipher_request_set_callback(&req, CRYPTO_TFM_REQ_MAY_BACKLOG,
+-					safexcel_inv_complete, &result);
++	skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
++				      safexcel_inv_complete, &result);
+ 
+-	skcipher_request_set_tfm(&req, __crypto_skcipher_cast(tfm));
+-	ctx = crypto_tfm_ctx(req.base.tfm);
++	skcipher_request_set_tfm(req, __crypto_skcipher_cast(tfm));
++	ctx = crypto_tfm_ctx(req->base.tfm);
+ 	ctx->base.exit_inv = true;
+ 	sreq->needs_inv = true;
+ 
+ 	spin_lock_bh(&priv->ring[ring].queue_lock);
+-	crypto_enqueue_request(&priv->ring[ring].queue, &req.base);
++	crypto_enqueue_request(&priv->ring[ring].queue, &req->base);
+ 	spin_unlock_bh(&priv->ring[ring].queue_lock);
+ 
+ 	if (!priv->ring[ring].need_dequeue)
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -470,25 +470,25 @@ static int safexcel_ahash_exit_inv(struc
+ {
+ 	struct safexcel_ahash_ctx *ctx = crypto_tfm_ctx(tfm);
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+-	struct ahash_request req;
+-	struct safexcel_ahash_req *rctx = ahash_request_ctx(&req);
++	AHASH_REQUEST_ON_STACK(req, __crypto_ahash_cast(tfm));
++	struct safexcel_ahash_req *rctx = ahash_request_ctx(req);
+ 	struct safexcel_inv_result result = {};
+ 	int ring = ctx->base.ring;
+ 
+-	memset(&req, 0, sizeof(struct ahash_request));
++	memset(req, 0, sizeof(struct ahash_request));
+ 
+ 	/* create invalidation request */
+ 	init_completion(&result.completion);
+-	ahash_request_set_callback(&req, CRYPTO_TFM_REQ_MAY_BACKLOG,
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
+ 				   safexcel_inv_complete, &result);
+ 
+-	ahash_request_set_tfm(&req, __crypto_ahash_cast(tfm));
+-	ctx = crypto_tfm_ctx(req.base.tfm);
++	ahash_request_set_tfm(req, __crypto_ahash_cast(tfm));
++	ctx = crypto_tfm_ctx(req->base.tfm);
+ 	ctx->base.exit_inv = true;
+ 	rctx->needs_inv = true;
+ 
+ 	spin_lock_bh(&priv->ring[ring].queue_lock);
+-	crypto_enqueue_request(&priv->ring[ring].queue, &req.base);
++	crypto_enqueue_request(&priv->ring[ring].queue, &req->base);
+ 	spin_unlock_bh(&priv->ring[ring].queue_lock);
+ 
+ 	if (!priv->ring[ring].need_dequeue)
