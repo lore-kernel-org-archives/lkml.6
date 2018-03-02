@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtrf5HhvmzSrOc6XTdj4cSuYFKNBvnS0O5alIPKK3rB+KhWwVZdFnEZR94r91gvByIJSB4e
-ARC-Seal: i=1; a=rsa-sha256; t=1519981467; cv=none;
+X-Google-Smtp-Source: AG47ELsNA4n1XnizPf/N3Sx1hKb/K9jDo9gdv2K9xU/jSCGtPMOQxiDbpilDunpv+M9ydkuq2rtZ
+ARC-Seal: i=1; a=rsa-sha256; t=1519981464; cv=none;
         d=google.com; s=arc-20160816;
-        b=n79S7Nace/iMK6AzZOBaQe4CfyCxVKLp3DeTHSTe7tvl9MJYN3rNj7XEtiIGWpCIq7
-         IMz9jZKqzhwwSSsKech4G9pajXaIjUWzYcVgw6EqjOwclqPiocslNTNolAHkxGrc2D94
-         XME6VmMHRR9T+wd7mM8KW01twZELtXiXjKT1e2bT6Nw15coqP3s2Gt3t5bgbpUAmZYi+
-         vINxZEM2yczzYWCK3Q8TEOxG9SR3oOGoEWxAgaWpTauk4FYVpVjTcMSRyJsqaw+y87p9
-         kStZdUTSNAok6AYvK/xOW57weA+8zK2IJjtNQB9XDGMcYv2UoUJVa34jbH3/XdJMB2iP
-         M4bQ==
+        b=K1ztu5W3jTeHR/7y+v5XreD6BG3P+4A7P8PjAx/EjK8DPQkeqMhdzdQYWvuQZP4XD3
+         jVlEZA919oH260bWuMwSe6YnUTA3+4XgY5pRTJCT82STdm1R3Cdmsyin4BCH+EY1xnqw
+         BEUs8E03lsFnNLsJ575d4G3nR1tGfb44HOHk/+IvUtQ3rnUjkU30fFVwoToO88tuPapt
+         qfKAXQSdq9vVs03OCZwdhPgD2fcJIaKT37SKt6XK8cvgkmm1IJvmCh3ywoUlOFcuu/wI
+         oSueqBmB+763hl7/AfYMPpcrBTfpj3IGXYdecLBQxo2COBo1ZYsKvkPZiyvR1w+bmEEg
+         5Wzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IRhZEC2QKmEMozRqAsjDp8rrildZvYsuHm+2WBW07SA=;
-        b=FQkIg5Zehaon8i1fROZI84rwbVDc8MBN+G5TNeEGytAuNhiq0cQnOzdK+lSS9fqhbG
-         3Cz6o7iKcsuEVZAfzaqOlXDNxKPsa/HYUtmYA2WkQz9oyz0xg+4VUO+GQU4zZ8Hfqsyi
-         xBV6RPECkIKJdus82tTcFVrUeWIPjyCNbH32K8hK3L+P0SL7Lg7VtDBkKWHSiNugRg4n
-         rOkRK1oX1wOaUDuXnDZBf9fLt/IIP0p+tL35szhasrXo7HjNjWdUAQMo6Y+uPETLvC6g
-         MtJ0ihUzpRQoyxcOf4dm45CzKqu0DQsSJYLnK/UT872epMZwagERykcH5/LXfeTGldWX
-         8uOg==
+        bh=LmSUN//iUYnLzVtFRbwOXLI3s0b3VYSjp+Fyswds4SA=;
+        b=ho6f0gYf3UrNK7YYP0Oz6bWQ7huMgmXWWww7pWLIW+rwwvOwl3GqKv/LMyklGk6iD1
+         L9K8LEMQ0t9F1xpazAqbX8LWnZ7TWmUC2oppgDmGQnFg6v9DhtWvJJvoPa3cCHOdPgNT
+         RY+j4LZzvMkEq/yJsfpxyJV3sac0YUkMe780XD4mmvEi6wXm+1ZViTJvP7ebaeDc2tkE
+         ntAg3NG7g5kS/47Ma5iJfzNYQHVLt40/ZWlfzE1938mmqBRsNOwEHUOqO7bm0eewRnOF
+         jBV0MD6Kzuhwdektwb2f3WCo1OOwJuuLKcY/wz0WGAoPB/SPVKf2qzlfHDFehavTxjrc
+         YGdw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	David Howells <dhowells@redhat.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dmitry Torokhov <dtor@chromium.org>,
+	Joe Perches <joe@perches.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 065/115] afs: Fix missing error handling in afs_write_end()
-Date: Fri,  2 Mar 2018 09:51:08 +0100
-Message-Id: <20180302084506.501337925@linuxfoundation.org>
+Subject: [PATCH 4.14 064/115] genirq: Guard handle_bad_irq log messages
+Date: Fri,  2 Mar 2018 09:51:07 +0100
+Message-Id: <20180302084506.465824039@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816087580422158?=
-X-GMAIL-MSGID: =?utf-8?q?1593816087580422158?=
+X-GMAIL-THRID: =?utf-8?q?1593815642898421195?=
+X-GMAIL-MSGID: =?utf-8?q?1593816084157243516?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +54,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
 
-[ Upstream commit afae457d874860a7e299d334f59eede5f3ad4b47 ]
+[ Upstream commit 11bca0a83f83f6093d816295668e74ef24595944 ]
 
-afs_write_end() is missing page unlock and put if afs_fill_page() fails.
+An interrupt storm on a bad interrupt will cause the kernel
+log to be clogged.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
+[   60.089234] ->handle_irq():  ffffffffbe2f803f,
+[   60.090455] 0xffffffffbf2af380
+[   60.090510] handle_bad_irq+0x0/0x2e5
+[   60.090522] ->irq_data.chip(): ffffffffbf2af380,
+[   60.090553]    IRQ_NOPROBE set
+[   60.090584] ->handle_irq():  ffffffffbe2f803f,
+[   60.090590] handle_bad_irq+0x0/0x2e5
+[   60.090596] ->irq_data.chip(): ffffffffbf2af380,
+[   60.090602] 0xffffffffbf2af380
+[   60.090608] ->action():           (null)
+[   60.090779] handle_bad_irq+0x0/0x2e5
+
+This was seen when running an upstream kernel on Acer Chromebook R11.  The
+system was unstable as result.
+
+Guard the log message with __printk_ratelimit to reduce the impact.  This
+won't prevent the interrupt storm from happening, but at least the system
+remains stable.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dmitry Torokhov <dtor@chromium.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Link: https://lkml.kernel.org/r/1512234784-21038-1-git-send-email-linux@roeck-us.net
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/afs/write.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ kernel/irq/debug.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -282,7 +282,7 @@ int afs_write_end(struct file *file, str
- 			ret = afs_fill_page(vnode, key, pos + copied,
- 					    len - copied, page);
- 			if (ret < 0)
--				return ret;
-+				goto out;
- 		}
- 		SetPageUptodate(page);
- 	}
-@@ -290,10 +290,12 @@ int afs_write_end(struct file *file, str
- 	set_page_dirty(page);
- 	if (PageDirty(page))
- 		_debug("dirtied");
-+	ret = copied;
-+
-+out:
- 	unlock_page(page);
- 	put_page(page);
--
--	return copied;
-+	return ret;
- }
+--- a/kernel/irq/debug.h
++++ b/kernel/irq/debug.h
+@@ -12,6 +12,11 @@
  
- /*
+ static inline void print_irq_desc(unsigned int irq, struct irq_desc *desc)
+ {
++	static DEFINE_RATELIMIT_STATE(ratelimit, 5 * HZ, 5);
++
++	if (!__ratelimit(&ratelimit))
++		return;
++
+ 	printk("irq %d, desc: %p, depth: %d, count: %d, unhandled: %d\n",
+ 		irq, desc, desc->depth, desc->irq_count, desc->irqs_unhandled);
+ 	printk("->handle_irq():  %p, ", desc->handle_irq);
