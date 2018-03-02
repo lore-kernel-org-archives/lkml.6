@@ -1,61 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164014AbeCBBsU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 20:48:20 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:59596 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163120AbeCBBsR (ORCPT
+        id S1164062AbeCBBwU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 20:52:20 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:46637 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163120AbeCBBwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 20:48:17 -0500
-To: "jianchao.w.wang\@oracle.com" <jianchao.w.wang@oracle.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb\@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen\@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch\@lst.de" <hch@lst.de>
-Subject: Re: [PATCH V2] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1519808113-2863-1-git-send-email-jianchao.w.wang@oracle.com>
-        <1519840355.2777.8.camel@wdc.com>
-        <624cedc6-9658-7b76-9c63-61c30fdfe6be@oracle.com>
-        <1519926225.2675.6.camel@wdc.com>
-Date: Thu, 01 Mar 2018 20:43:08 -0500
-In-Reply-To: <1519926225.2675.6.camel@wdc.com> (Bart Van Assche's message of
-        "Thu, 1 Mar 2018 17:43:46 +0000")
-Message-ID: <yq17eqvz1zn.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 1 Mar 2018 20:52:18 -0500
+X-Google-Smtp-Source: AG47ELvrzyLxkjCp9xhHOCgM0J0jpFX0vr42yB4Le/m8QpZLTdbRsqh5KlwzeIe8XtVADciDjHlqdDVkPBN4laUgfaI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8819 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=873
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803020015
+In-Reply-To: <1519655769-25836-2-git-send-email-tmaimon77@gmail.com>
+References: <1519655769-25836-1-git-send-email-tmaimon77@gmail.com> <1519655769-25836-2-git-send-email-tmaimon77@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Fri, 2 Mar 2018 12:21:57 +1030
+X-Google-Sender-Auth: pNjvUWkc9RTOb91wocDVyV7bXEE
+Message-ID: <CACPK8Xeb3ryfi+FXr+mdpk2fPtSTwJXkuBjRhW76vx1SxGQfYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-binding: timer: document NPCM7xx timer DT bindings
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tomer,
 
-Jianchao,
-
-> Yes, the block layer core guarantees that scsi_mq_get_budget() will be
-> called before scsi_queue_rq(). I think the full picture is as follows:
-
-> * Before scsi_queue_rq() calls .queuecommand(), get_device() is called for the
->   SCSI device and the device, target and host busy counters are incremented.
-> * If the SCSI core decides to requeue a command, scsi_queue_insert() causes
->   __scsi_queue_insert() to call scsi_device_unbusy(). That last function
->   decreases the device, target and host busy counters but not put_device(sdev).
->   Hence the need for a separate put_device() call after requeuing.
+On Tue, Feb 27, 2018 at 1:06 AM, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> Added device tree binding documentation for Nuvoton NPCM7xx timer.
 >
-> It's unfortunate that the SCSI core became so asymmetric. Anyway,
-> since I am now convinced that this patch is correct, feel free to add:
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> ---
+>  .../bindings/timer/nuvoton,npcm7xx-timer.txt       | 25 ++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+>
+> diff --git a/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+> new file mode 100644
+> index 000000000000..c5150522e618
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+> @@ -0,0 +1,25 @@
+> +Nuvoton NPCM7xx timer
 
-Please add something akin to Bart's explanation as a comment and repost.
+Would it make more sense to all this Nuvoton NPCM Timer? This way the
+name stays generic for when you add other systems.
 
-Thanks!
+> +
+> +Nuvoton NPCM7xx have three timer modules, each timer module provides five 24-bit
+> +timer counters.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+
+I notice the timer has a register in the middle of it that is used for
+the watchdog. Should we describe this in the same binding? Even if we
+just add some text that adds
+
+ ... and one watchdog register.
+
+> +
+> +Required properties:
+> +- compatible      : "nuvoton,npcm750-timer" for Poleg NPCM750.
+> +- reg             : Offset and length of the register set for the device.
+> +- interrupts      : Contain the timer interrupt with flags for
+> +                    falling edge.
+> +
+> +Required clocking property, have to be one of:
+> +- clocks          : phandle of timer reference clock.
+> +- clock-frequency : The frequency in Hz of the clock that drives the NPCM7xx
+> +                    timer (usually 25000000).
+> +
+> +Example:
+> +
+> +timer@f0008000 {
+> +    compatible = "nuvoton,npcm750-timer";
+> +    interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> +    reg = <0xf0008000 0x1000>;
+
+This can probably be <0xf0008000 0x50>, as tthe timer hardware only
+has registers up to base + 0x50.
+
+> +    clocks = <&clk NPCM7XX_CLK_TIMER>;
+> +};
+> +
+> --
+> 2.14.1
+>
