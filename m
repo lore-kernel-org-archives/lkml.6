@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuMYsOIEbj/iqfC2RCgyqhvTsVYKeNbFntVnQaT+bbjiP9n0iNgivLLON4G0674XJwpHUh6
-ARC-Seal: i=1; a=rsa-sha256; t=1519981493; cv=none;
+X-Google-Smtp-Source: AG47ELuTej9zB5t4i3XLvehBauKic5HiztOdkOfCQXa4MZ9loOIfwptSMmQpRcIXZG6c4uIvxLjK
+ARC-Seal: i=1; a=rsa-sha256; t=1519981490; cv=none;
         d=google.com; s=arc-20160816;
-        b=0ZDVycofTKa4oSl52BqQjggVYGMXr1oaqFWb1DcswC+T2ZD1k7f8wQ/AllEM9q5Bf9
-         pGHfKb8VezyKvYBkmm5AjcccSCSXU2xMNrMUwevSuaiDYWcEyEd1+N65UN/jguBx1A8x
-         8vS+zpf1WBVS9BF2yfeSCNJoBb5dWWbJ3L5Shd4RqmRyUvqH6sJ+W3EzwtMf2ReIBo5h
-         J4Ho7BLWIQCB4VYFZOrmYY4QR+yJ2k3iGndsevk6xc/X4iqzHJj5QaU996PEX2NFu6F0
-         LW80Izm1JT3uGJnhayRIDlURkHn+HVoRQaMn9KJ8gNuF6hpzD8rkgLxGu1ywzJKQpEvv
-         3MCw==
+        b=mebRHHy02nPe5ag9kiYtibg5sX5tyDoAyb+oFndNd3TVuCxLeTO7+PlESlZ2Mq2T6A
+         qzHa50zR41pUfDmTZFldHBLTcvvXEMvFtRST8hv1c/FvGFCcV5mCU/vW38bYw7ZlBGLA
+         HbHQI2EGtT3U64FqsUH2J2mlN70/94JdsdbKjyWzKezp7SbSFa9sjl1x3Z7dOOgbaSnD
+         YpfhRylS/Gt6RcKXmP74oN38Gj9DYjCIP4va6XQsnTmWKl+hcByU8gzQw3t8UYCjdRMY
+         BPWm7h22mipITtBiy5L6SMg2NloIfbPeV+DXLLZxi/Zcs+Stb1Lp00CUZHDk+hXh5m0P
+         TOcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TdIXvucEns1GDawYVc/B3inwyavr5gVlOjwq7OUcLWQ=;
-        b=oOO/E0ewuoaFopj7PUnNA2IVE4eeB8/Kvm7YJTT91f9FPRWD+w+SbElcPTqPa2mi9v
-         TDkeMBb9Z4hwvauSqZ9hsqzmhRHQCqTg7F47g0gTFHmJgjfKIKaQ83CMFcvxH+407iQA
-         bVQ6hRVeRjP6k2PoD+rKXrMEh6k7TaAerc+ltL6NBcNDBSkWTa6Zmd7HOPl7/XmaU/vd
-         MJUwHb/ox/mLuLLMDtwgVHB/yJSxN5lpJX6hcLR6yyHGN/qcuQFd4z4VAqhWcCllYwud
-         zRx+kUIVyefjzEnCK3RkMBummphrBbtxcQ4zvn0qbc0n0p4mNDzwEfO05u0RGi7i8ZiO
-         dQ8Q==
+        bh=EC9gMYQzht8iATryIVPJC+xXidPL/jzXLZku984Aje8=;
+        b=yruRFw3zCWX5WNVZ5a1NYLW6KNIntwZ/GzxZQHjNzae72UgidEfEHir00cco0KRkuk
+         kKaM6JqrSMNshcN/nGgokXcfTe3O6hfTAZB5qZUQCwYA+k23J9kroOBFQiVEGQoL97Rd
+         JS1ABjdP70mttN4DeFVWR6yJ6JyrqL1Fm3xt076s84Wqp//MR2LpGJJ8bzo6L6RbvY7p
+         +G+mz1dmGCUiabC3/ttqAXQvwvRJCQ94z3RFwDDr7S1pNAuc/z3lc4iGdWtyjXDtpQtb
+         rBQjbbnVr5QIxB7fGE+Ky9O9jYG0qkEK6i+74Yv4Cq8dDQx56Xl3jgaXb7a6DDo2WSpv
+         QTwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sam Bobroff <sam.bobroff@au1.ibm.com>,
-	Balbir Singh <bsingharora@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 109/115] powerpc/pseries: Enable RAS hotplug events later
-Date: Fri,  2 Mar 2018 09:51:52 +0100
-Message-Id: <20180302084508.249780395@linuxfoundation.org>
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	James Hogan <jhogan@kernel.org>,
+	Waldemar Brodkorb <wbx@openadk.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	"Maciej W. Rozycki" <macro@mips.com>,
+	Matthew Fortune <matthew.fortune@mips.com>,
+	Florian Fainelli <florian@openwrt.org>,
+	linux-mips@linux-mips.org,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 108/115] MIPS: Implement __multi3 for GCC7 MIPS64r6 builds
+Date: Fri,  2 Mar 2018 09:51:51 +0100
+Message-Id: <20180302084508.208558023@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -41,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593816114761371342?=
-X-GMAIL-MSGID: =?utf-8?q?1593816114761371342?=
+X-GMAIL-THRID: =?utf-8?q?1593815551950805083?=
+X-GMAIL-MSGID: =?utf-8?q?1593816111075372600?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,77 +56,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sam Bobroff <sam.bobroff@au1.ibm.com>
+From: James Hogan <jhogan@kernel.org>
 
-commit c9dccf1d074a67d36c510845f663980d69e3409b upstream.
+commit ebabcf17bcd7ce968b1631ebe08236275698f39b upstream.
 
-Currently if the kernel receives a memory hot-unplug event early
-enough, it may get stuck in an infinite loop in
-dissolve_free_huge_pages(). This appears as a stall just after:
+GCC7 is a bit too eager to generate suboptimal __multi3 calls (128bit
+multiply with 128bit result) for MIPS64r6 builds, even in code which
+doesn't explicitly use 128bit types, such as the following:
 
-  pseries-hotplug-mem: Attempting to hot-remove XX LMB(s) at YYYYYYYY
+unsigned long func(unsigned long a, unsigned long b)
+{
+	return a > (~0UL) / b;
+}
 
-It appears to be caused by "minimum_order" being uninitialized, due to
-init_ras_IRQ() executing before hugetlb_init().
+Which GCC rearanges to:
 
-To correct this, extract the part of init_ras_IRQ() that enables
-hotplug event processing and place it in the machine_late_initcall
-phase, which is guaranteed to be after hugetlb_init() is called.
+return (unsigned __int128)a * (unsigned __int128)b > 0xffffffffffffffff;
 
-Signed-off-by: Sam Bobroff <sam.bobroff@au1.ibm.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-[mpe: Reorder the functions to make the diff readable]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Therefore implement __multi3, but only for MIPS64r6 with GCC7 as under
+normal circumstances we wouldn't expect any calls to __multi3 to be
+generated from kernel code.
+
+Reported-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Tested-by: Waldemar Brodkorb <wbx@openadk.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Maciej W. Rozycki <macro@mips.com>
+Cc: Matthew Fortune <matthew.fortune@mips.com>
+Cc: Florian Fainelli <florian@openwrt.org>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/17890/
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/pseries/ras.c |   31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
+ arch/mips/lib/Makefile |    3 +-
+ arch/mips/lib/libgcc.h |   17 +++++++++++++++
+ arch/mips/lib/multi3.c |   54 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 73 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/pseries/ras.c
-+++ b/arch/powerpc/platforms/pseries/ras.c
-@@ -49,6 +49,28 @@ static irqreturn_t ras_error_interrupt(i
+--- a/arch/mips/lib/Makefile
++++ b/arch/mips/lib/Makefile
+@@ -16,4 +16,5 @@ obj-$(CONFIG_CPU_R3000)		+= r3k_dump_tlb
+ obj-$(CONFIG_CPU_TX39XX)	+= r3k_dump_tlb.o
  
+ # libgcc-style stuff needed in the kernel
+-obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o ucmpdi2.o
++obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o multi3.o \
++	 ucmpdi2.o
+--- a/arch/mips/lib/libgcc.h
++++ b/arch/mips/lib/libgcc.h
+@@ -10,10 +10,18 @@ typedef int word_type __attribute__ ((mo
+ struct DWstruct {
+ 	int high, low;
+ };
++
++struct TWstruct {
++	long long high, low;
++};
+ #elif defined(__LITTLE_ENDIAN)
+ struct DWstruct {
+ 	int low, high;
+ };
++
++struct TWstruct {
++	long long low, high;
++};
+ #else
+ #error I feel sick.
+ #endif
+@@ -23,4 +31,13 @@ typedef union {
+ 	long long ll;
+ } DWunion;
  
- /*
-+ * Enable the hotplug interrupt late because processing them may touch other
-+ * devices or systems (e.g. hugepages) that have not been initialized at the
-+ * subsys stage.
-+ */
-+int __init init_ras_hotplug_IRQ(void)
-+{
-+	struct device_node *np;
++#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6)
++typedef int ti_type __attribute__((mode(TI)));
 +
-+	/* Hotplug Events */
-+	np = of_find_node_by_path("/event-sources/hot-plug-events");
-+	if (np != NULL) {
-+		if (dlpar_workqueue_init() == 0)
-+			request_event_sources_irqs(np, ras_hotplug_interrupt,
-+						   "RAS_HOTPLUG");
-+		of_node_put(np);
-+	}
++typedef union {
++	struct TWstruct s;
++	ti_type ti;
++} TWunion;
++#endif
 +
-+	return 0;
-+}
-+machine_late_initcall(pseries, init_ras_hotplug_IRQ);
+ #endif /* __ASM_LIBGCC_H */
+--- /dev/null
++++ b/arch/mips/lib/multi3.c
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/export.h>
++
++#include "libgcc.h"
 +
 +/*
-  * Initialize handlers for the set of interrupts caused by hardware errors
-  * and power system events.
-  */
-@@ -66,15 +88,6 @@ static int __init init_ras_IRQ(void)
- 		of_node_put(np);
- 	}
- 
--	/* Hotplug Events */
--	np = of_find_node_by_path("/event-sources/hot-plug-events");
--	if (np != NULL) {
--		if (dlpar_workqueue_init() == 0)
--			request_event_sources_irqs(np, ras_hotplug_interrupt,
--					   "RAS_HOTPLUG");
--		of_node_put(np);
--	}
--
- 	/* EPOW Events */
- 	np = of_find_node_by_path("/event-sources/epow-events");
- 	if (np != NULL) {
++ * GCC 7 suboptimally generates __multi3 calls for mips64r6, so for that
++ * specific case only we'll implement it here.
++ *
++ * See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82981
++ */
++#if defined(CONFIG_64BIT) && defined(CONFIG_CPU_MIPSR6) && (__GNUC__ == 7)
++
++/* multiply 64-bit values, low 64-bits returned */
++static inline long long notrace dmulu(long long a, long long b)
++{
++	long long res;
++
++	asm ("dmulu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
++	return res;
++}
++
++/* multiply 64-bit unsigned values, high 64-bits of 128-bit result returned */
++static inline long long notrace dmuhu(long long a, long long b)
++{
++	long long res;
++
++	asm ("dmuhu %0,%1,%2" : "=r" (res) : "r" (a), "r" (b));
++	return res;
++}
++
++/* multiply 128-bit values, low 128-bits returned */
++ti_type notrace __multi3(ti_type a, ti_type b)
++{
++	TWunion res, aa, bb;
++
++	aa.ti = a;
++	bb.ti = b;
++
++	/*
++	 * a * b =           (a.lo * b.lo)
++	 *         + 2^64  * (a.hi * b.lo + a.lo * b.hi)
++	 *        [+ 2^128 * (a.hi * b.hi)]
++	 */
++	res.s.low = dmulu(aa.s.low, bb.s.low);
++	res.s.high = dmuhu(aa.s.low, bb.s.low);
++	res.s.high += dmulu(aa.s.high, bb.s.low);
++	res.s.high += dmulu(aa.s.low, bb.s.high);
++
++	return res.ti;
++}
++EXPORT_SYMBOL(__multi3);
++
++#endif /* 64BIT && CPU_MIPSR6 && GCC7 */
