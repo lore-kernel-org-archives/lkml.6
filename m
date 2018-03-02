@@ -1,160 +1,110 @@
-Return-Path: <outreachy-kernel+bncBAABBL464PKAKGQE7KGBUFY@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1519963952; cv=pass;
+Return-Path: <briannorris@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1519957954; cv=none;
         d=google.com; s=arc-20160816;
-        b=HlsD6RfMExrxfo+KC6FX1+g81dLoxmhYxsRV+NXKquRkjP8WOhZenPbUBkTHtCASl4
-         2wJy4yznA1nf5wKU3zMdH3PGXlpvRsSErwNlmNWuS5JpBo6DGyWqQ+5hqQAv3hzBfdfv
-         AtVx0NG3e33SnOZ7R8Sb8gC1qqCO58NEERXCyZjBus9kLj66I9OxjOYq2GAgNXvvNRDV
-         /D5gRzzPHX3KQK7uKQyF2s9pmPAZDVL4+fyoSWSWvxtYgKU6b7QqF4iPsZj6ip2qyrS6
-         H9k4lUSBceMrbd2iR03dt1n5pE4cTZHIZmVD/YGTxPH0ORoM4IrL/tfSuPbtfkU7PTcV
-         BuiQ==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:content-language
-         :in-reply-to:mime-version:user-agent:date:message-id:organization
-         :from:references:cc:to:subject:reply-to:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature
-         :arc-authentication-results:arc-message-signature
-         :arc-authentication-results;
-        bh=075oZUzBfNGqVu+BO4OZh5Esz1Z+cZeFel4SfOO8yPs=;
-        b=Z2RGKCb0Ty8aZIYNqr4fF/YvqoR6T+dY8h7pscit/StOkNBo45S6znb6/pUv3Bzdd1
-         DK84+SE15lhwDVuxyK2SK+6Wklk8JslwkwOnjI8T9x+TCfWgF9UKfIoEu9emfrI1uHC3
-         JDNgMHIAvi55yfSLiTE6XFxlrRk67clu0W+iYmKGZM8zqlMj7JxuEC5p1ydYIBKRVlNA
-         Y8q2qNxDAtQHsDKqp1zQUHGr0HKxqGRu+kMP7ZVXx00kEOs/7gRmDHwzb0bv7xa8yY+r
-         N+QXHx+ZkNtG39ljCZby2LoJvANPxHRDtj9Yx8jZ+FblfC4c+iZM/o4xCKkLwRfLkOm/
-         Pm0g==
-ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ACKqRtTT;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbaabbl464pkakgqe7kgbufy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBAABBL464PKAKGQE7KGBUFY@googlegroups.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=ACKqRtTT;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbaabbl464pkakgqe7kgbufy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBAABBL464PKAKGQE7KGBUFY@googlegroups.com
-ARC-Seal: i=2; a=rsa-sha256; t=1519963952; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=vaxCzcSZ2K53gvXqYVIbkI+QGzlpcKr16a6FG8IZNmqVBDVXPK8kUImsriDEUe2zqC
-         oa1eDmQrlo2aRVdakEiviK3sHFztMWeTnMw+apYlJz65MOq91yGxi0wCZp2ccUXcwoW3
-         gKUTjpGz9BVz5vF+rw+Vkz/c2tV1eSkZriKHkXQm30bJVx8SWyA47BGfgZzuYbTaBz61
-         pUeNRvpvdRdp3tnqH6J41Jyr78Kz38InTLWBUIWvTvWe1WpUfaVyptnTvbwW4h5VFX/k
-         fB0GyIHu+LSbPPQ+2jbEzztX5QVq0xwrxGk4G0kHDiWCetAWONf7O4ffy6BKsnkVzVw7
-         Nc8g==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:content-language
-         :in-reply-to:mime-version:user-agent:date:message-id:organization
-         :from:references:cc:to:subject:reply-to:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature
-         :arc-authentication-results;
-        bh=075oZUzBfNGqVu+BO4OZh5Esz1Z+cZeFel4SfOO8yPs=;
-        b=iA2ZhKpVn2j29p3dqiTZH7HxhZCVyWGFhwYajW4PdyUm0GE4fyGlaBTwcO/puAGpGe
-         3U1PI2i3sJpT4nW6SHzau2ckDUO80HXbz4ofTJe5Lcl6SXb1Bdx/kUWDvuAeHzug9Cu3
-         dbqrYJHq+Des8PmoUXFoeiglybXXnlQk67waXxioZyVWK0iLtWyWntI3U+ufGbDJhvw+
-         IsIwILOhmPVFTxXMBC1D5KZPlB7pyiwUotpZN8fQAer62qoE9DbBN4bLaQi5RQRLM2BI
-         exQBgA+Uwp1APhL7rfZLXq/9li3ilUdsLVny0qRaErBfMitI8QaEbGL6a/LKODWK0byj
-         K2Ww==
-ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       spf=neutral (google.com: 152.77.200.57 is neither permitted nor denied by domain of nicolas.palix@imag.fr) smtp.mailfrom=Nicolas.Palix@imag.fr
-Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AG47ELtQguNQMQ5xVveM/Z/peDkaFvjTTjnk9hQrC9BqSB2LRJo8/lvQv4lm00UFkkWc0D9EhdSNMQ==
-X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1519933560; cv=none;
-        d=google.com; s=arc-20160816;
-        b=optkjBemoGFBQJTziDzRd2KWzSch5ku79EGvhJD3KfT1ZZVgUwdfM7vX0BcA8alIU7
-         z9sMg/l6fNmRYMN2YXSUWHBBZ8dnZF4+mle/tMpo1m9Ir7hIpoDuXWifSRwaADyU4647
-         Kbbez9ycBipLCxRXCU4WKvu5nxQdq6CyTixUJCotmMEh9ByWBg/0YS+ArpbjVyPWEAcb
-         vcRRKy62Mj/vww3as8dFvPjmqAjNQf2IsI2BRUG7qyY5nUaMfw55dorKn9lRIequx6Es
-         JyArfz5WGsInI2hlFmEdFWnQF9GLtocykvlnYxQ/8W0Gzb/os3mI09dtZwIhi/W2xFOv
-         zO5Q==
+        b=U7PdW3M+HtSIQq9UvWrNlYC0JhxSbf3xwB4j5ci+3MaYxnb5TigTgoURTQBQ4naIJL
+         8sJj6X2sT/nLUiGb6es7b7QdOoKrev+72m5GfekykIcJFb/cpU/HWMtOy6NsIuysIH/+
+         yY8xM+8/OqoZpy1Y93hWDMGREAYmkiVFtDkOvEndhxLJe90kayW7Tg7Igk6aHLaBvX50
+         pyRFgOWNeVwwXGg8pAkvvysQz0/TzmVL2lM4j8VmDJld0yAMx1jEvHGe2+/vt5EqYdNX
+         h4Vw1YSXGtQ8Ka9L3Nr4hcpDHUm3GxFMbjDMjS6l9wUWw4Il1HxGYslaylEidtrZ6s7u
+         scJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:cc:to
-         :subject:reply-to:arc-authentication-results;
-        bh=W5nQd1cIELLM+mf8yvPQo9s9DGhckW3wGvNXV8U+NOs=;
-        b=K2Qv+vFJTE3i7bbKMwESeQPymQVvJlJsWdR98nZwy32MPGHWGHGggFwT2Nph8DtZ2W
-         +4bsyhFWKEPHqRafIAcU0cmyB9jxYzPowwWDdKozJuVJxjmU0/dSy0ROYeVG/xf77FD6
-         ScWueIBbYvB5gXLBbXfaUZ7cFpEHfWqBUaTj/PtpkMEExDhxER0RDsh7eOnrHZrWig0M
-         VsDVREc1hFnVI+m1p6836UkKGJQmfDW67W3pVCquF0ZWLpA8FdX3CaDlEePU8puS0Nxo
-         d661dMxLUfRhUZz5D6XD4gG7i5qDR7ThJrE+1tI3gnQabFg82/4JYeV9lROm5hRf3Og2
-         7uiw==
-ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       spf=neutral (google.com: 152.77.200.57 is neither permitted nor denied by domain of nicolas.palix@imag.fr) smtp.mailfrom=Nicolas.Palix@imag.fr
-Reply-To: nicolas.palix@univ-grenoble-alpes.fr
-Subject: [Outreachy kernel] Re: [PATCH] Coccinelle: memdup: Fix typo in
- warning messages
-To: Dafna Hirschfeld <dafna3@gmail.com>, Julia.Lawall@lip6.fr,
- Gilles.Muller@lip6.fr, michal.lkml@markovi.net,
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Cc: outreachy-kernel@googlegroups.com
-References: <20180301085717.GA4508@gmail.com>
-From: "Nicolas Palix (LIG)" <Nicolas.Palix@imag.fr>
-Organization: UJF Polytech / LIG Erods
-Message-ID: <8cc75580-b29a-a599-4af1-6bb3783bc705@imag.fr>
-Date: Thu, 1 Mar 2018 20:45:59 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=Z2dsUOwyJVJGwOVIKgNI2Jx/Y2GK4+SA8ZvYdGtMf1Q=;
+        b=FmMtNrcnX55VJOcCOb7mX1DjTzcL5YLqYQKIBtWDSHd6xhZAwtj17MSHHaFUqIEXkP
+         EI10njEaM27zzi9xMRjubEnwkdvxyg4nA9bjzwWlJvl4rTb3g+SM/qjeMyUnlrc3UZoT
+         rbskJP5fEffAqKMiWjDmLh+OTGdhJuughjDQUTGVvAqgwcR3ejwF8wi1BLynnZ9T2ABI
+         ZTjf3JY48CvJ2ZbKQjmM6JPgNroDrM94XodHO7mjvdiDKfrAtIicnSQGOltph4ZwKoJD
+         bln5OXkq6Icl+nGSag7cBx1W1PNt1ZUcLloDV2tR7P296eDNXXTx36UBOT0UzmAh5fuX
+         ZUaA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=lsegCvYw;
+       spf=pass (google.com: domain of briannorris@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=briannorris@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=lsegCvYw;
+       spf=pass (google.com: domain of briannorris@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=briannorris@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELsxIbvparsjqgHqc+cFfd+bJcXcJjmLprPc8/SMKsOV2Zb8D5Pv8lg8brdLeesMAqURfPzlDA==
+Date: Thu, 1 Mar 2018 18:32:30 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: JeffyChen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, briannorris@google.com, dtor@google.com,
+	dianders@google.com,
+	Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joseph Lo <josephl@nvidia.com>, stephen lu <lumotuwe@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v2 1/3] Input: gpio-keys - add support for wakeup event
+ action
+Message-ID: <20180302023229.GA164361@rodete-desktop-imager.corp.google.com>
+References: <20180210110907.5504-1-jeffy.chen@rock-chips.com>
+ <20180210110907.5504-2-jeffy.chen@rock-chips.com>
+ <20180212221309.GA66974@ban.mtv.corp.google.com>
+ <5A8FE726.6080903@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301085717.GA4508@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: quoted-printable
-X-Original-Sender: nicolas.palix@imag.fr
-X-Original-Authentication-Results: gmr-mx.google.com;       spf=neutral
- (google.com: 152.77.200.57 is neither permitted nor denied by domain of
- nicolas.palix@imag.fr) smtp.mailfrom=Nicolas.Palix@imag.fr
-Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Google-Group-Id: 672804067692
-List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
-List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
-List-Archive: <https://groups.google.com/group/outreachy-kernel
-List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
- <https://groups.google.com/group/outreachy-kernel/subscribe>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5A8FE726.6080903@rock-chips.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593725048662035735?=
-X-GMAIL-MSGID: =?utf-8?q?1593797722088611094?=
+X-GMAIL-THRID: =?utf-8?q?1592012049405115473?=
+X-GMAIL-MSGID: =?utf-8?q?1593791432077327236?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Le 01/03/2018 =C3=A0 09:57, Dafna Hirschfeld a =C3=A9crit=C2=A0:
-> Replace 'kmemdep' with 'kmemdup' in warning messages.
->=20
-> Signed-off-by: Dafna Hirschfeld <dafna3@gmail.com>
-> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
-Acked-by: Nicolas Palix <nicolas.palix@imag.fr>
-> ---
->   scripts/coccinelle/api/memdup.cocci | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api=
-/memdup.cocci
-> index 1249b72..8fd6437 100644
-> --- a/scripts/coccinelle/api/memdup.cocci
-> +++ b/scripts/coccinelle/api/memdup.cocci
-> @@ -56,10 +56,10 @@ statement S;
->   p << r.p;
->   @@
->  =20
-> -coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdep")
-> +coccilib.org.print_todo(p[0], "WARNING opportunity for kmemdup")
->  =20
->   @script:python depends on report@
->   p << r.p;
->   @@
->  =20
-> -coccilib.report.print_report(p[0], "WARNING opportunity for kmemdep")
-> +coccilib.report.print_report(p[0], "WARNING opportunity for kmemdup")
->=20
+Hi,
 
+On Fri, Feb 23, 2018 at 06:04:22PM +0800, Jeffy Chen wrote:
+> On 02/13/2018 06:13 AM, Brian Norris wrote:
+> > > >
+> > > >  	if (bdata->gpiod) {
+> > > >+		int active_low = gpiod_is_active_low(bdata->gpiod);
+> > > >+
+> > > >  		if (button->debounce_interval) {
+> > > >  			error = gpiod_set_debounce(bdata->gpiod,
+> > > >  					button->debounce_interval * 1000);
+> > > >@@ -568,6 +572,16 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+> > > >  		isr = gpio_keys_gpio_isr;
+> > > >  		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
+> > > >
+> > > >+		switch (button->wakeup_event_action) {
+> > > >+		case EV_ACT_ASSERTED:
+> > > >+			bdata->wakeup_trigger_type = active_low ?
+> > > >+				IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
+> > > >+			break;
+> > > >+		case EV_ACT_DEASSERTED:
+> > > >+			bdata->wakeup_trigger_type = active_low ?
+> > > >+				IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
+> > > >+			break;
+> > What about EV_ACT_ANY? And default case? I think for ANY, we're OK
+> > letting suspend/resume not reconfigure the trigger type, but maybe a
+> > comment here to note that?
+> right, will add comment in the next version.
+> > 
+> > > >+		}
+> > > >  	} else {
+> > What about the 'else' case? Shouldn't we try to handle that?
+> i think the else case is for irq key, which would generate down and up
+> events in one irq, so it would use the same trigger type for all these 3
+> cases.
 
---=20
-Nicolas Palix
-http://lig-membres.imag.fr/palix/
+Not necessarily. It uses whatever trigger was provided in
+platform/DT/etc. data. You could retrieve that with
+irq_get_trigger_type() and try to interpret that. Or you could just
+outlaw using that combination (e.g., in the binding documentation).
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-outreachy-kernel" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to outreachy-kernel+unsubscribe@googlegroups.com.
-To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/=
-outreachy-kernel/8cc75580-b29a-a599-4af1-6bb3783bc705%40imag.fr.
-For more options, visit https://groups.google.com/d/optout.
+Brian
+
+> i'll add comment in the next version too.
+> > 
+> > Brian
+> > 
+> 
+> 
