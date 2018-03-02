@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1947045AbeCBR6Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 12:58:24 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48790 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1947031AbeCBR6W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1947030AbeCBR6W (ORCPT <rfc822;w@1wt.eu>);
         Fri, 2 Mar 2018 12:58:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48644 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1946969AbeCBR6Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 12:58:16 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: Sandy Huang <hjc@rock-chips.com>,
         =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
@@ -22,55 +22,54 @@ Cc: Andrzej Hajda <a.hajda@samsung.com>,
         linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
         Jeffy Chen <jeffy.chen@rock-chips.com>, kernel@collabora.com,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v9 5/5] drm/bridge/synopsys: dw-hdmi: Add missing bridge detach
-Date: Fri,  2 Mar 2018 18:57:57 +0100
-Message-Id: <20180302175757.28192-6-enric.balletbo@collabora.com>
+Subject: [PATCH v9 0/5] rockchip: kevin: Enable edp display
+Date: Fri,  2 Mar 2018 18:57:52 +0100
+Message-Id: <20180302175757.28192-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180302175757.28192-1-enric.balletbo@collabora.com>
-References: <20180302175757.28192-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Hi,
 
-We inited connector in attach(), so need a detach() to cleanup.
+Actually the name of this patch series is not really true as the edp
+display is working, but to not confuse I decided to maintain it. Now this
+patchset is more a group of cleanups, the patchset has been originally
+posted by Jeffy Chen and the 2 first commits from a previous version (v6)
+are already merged in mainline. In v8, four patches more landed. And
+this version are the remaining patches.
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Regards,
+ Enric
 
-Changes in v9: None
+Changes in v9:
+- The following patches from v8 has been applied:
+  - [PATCH v8 1/8] drm/bridge: analogix: Do not use device's drvdata
+  - [PATCH v8 2/8] drm/bridge: analogix_dp: Fix connector and encoder
+    cleanup
+  - [PATCH v8 3/8] drm/rockchip: analogix_dp: Add a sanity check for
+    rockchip_drm_psr_register()
+- The following patches from v8 has been superseeded.
+  - [PATCH v8 7/8] drm/bridge/synopsys: dw-hdmi: Do not use device's
+    drvdata
+    - Superseeded by https://cgit.freedesktop.org/drm/drm-misc/commit/?id=eea034af90c64802fd747a9dc534c26a7ebe7754
+- Moved clk_disable_unprepare reordering in unbin to separate patch.
+- Added new patch to reorder clk_disable_unprepare call in inno_hdmi
+  unbind()
+- dw_hdmi: Rewrite the commit message to reflect the change.
 
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Jeffy Chen (5):
+  drm/rockchip: dw-mipi-dsi: Fix connector and encoder cleanup.
+  drm/rockchip: inno_hdmi: Fix error handling path.
+  drm/rockchip: inno_hdmi: reorder clk_disable_unprepare call in unbind
+  drm/rockchip: dw_hdmi: Move HDMI vpll clock enable to bind()
+  drm/bridge/synopsys: dw-hdmi: Add missing bridge detach
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index f9802399cc0d..5626922f95f9 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1985,6 +1985,13 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
- 	return 0;
- }
- 
-+static void dw_hdmi_bridge_detach(struct drm_bridge *bridge)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+
-+	drm_connector_cleanup(&hdmi->connector);
-+}
-+
- static enum drm_mode_status
- dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
- 			  const struct drm_display_mode *mode)
-@@ -2041,6 +2048,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
- 
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.attach = dw_hdmi_bridge_attach,
-+	.detach = dw_hdmi_bridge_detach,
- 	.enable = dw_hdmi_bridge_enable,
- 	.disable = dw_hdmi_bridge_disable,
- 	.mode_set = dw_hdmi_bridge_mode_set,
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   |  8 ++++++++
+ drivers/gpu/drm/rockchip/dw-mipi-dsi.c      |  8 ++++++--
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 17 +++++++++--------
+ drivers/gpu/drm/rockchip/inno_hdmi.c        | 22 +++++++++++++++++-----
+ 4 files changed, 40 insertions(+), 15 deletions(-)
+
 -- 
 2.16.1
