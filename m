@@ -1,73 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934681AbeCBXa1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:30:27 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50782 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934230AbeCBXaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:30:25 -0500
-Date: Sat, 3 Mar 2018 00:30:22 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: kan.liang@linux.intel.com
-Cc: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, wangnan0@huawei.com, ak@linux.intel.com
-Subject: Re: [PATCH 02/14] perf trace: Apply new perf_mmap__read_event()
- interface
-Message-ID: <20180302233022.GB8970@krava>
-References: <1519945751-37786-1-git-send-email-kan.liang@linux.intel.com>
- <1519945751-37786-2-git-send-email-kan.liang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519945751-37786-2-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S934707AbeCBXey (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:34:54 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51496 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934690AbeCBXex (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 18:34:53 -0500
+Date: Fri, 2 Mar 2018 15:34:52 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC v1] mm: add the preempt check into alloc_vmap_area()
+Message-Id: <20180302153452.748892bd70bb23b9cee23691@linux-foundation.org>
+In-Reply-To: <20180227130643.GA12781@bombadil.infradead.org>
+References: <20180227102259.4629-1-urezki@gmail.com>
+        <20180227130643.GA12781@bombadil.infradead.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 06:08:59PM -0500, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The perf trace still use the legacy interface.
-> 
-> Apply the new perf_mmap__read_event() interface for perf trace.
-> 
-> No functional change.
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  tools/perf/builtin-trace.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index e7f1b18..a46644f 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -2472,8 +2472,14 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  
->  	for (i = 0; i < evlist->nr_mmaps; i++) {
->  		union perf_event *event;
-> +		struct perf_mmap *md;
-> +		u64 end, start;
->  
-> -		while ((event = perf_evlist__mmap_read(evlist, i)) != NULL) {
-> +		md = &evlist->mmap[i];
-> +		if (perf_mmap__read_init(md, 0, &start, &end) < 0)
-> +			continue;
-> +
-> +		while ((event = perf_mmap__read_event(md, 0, &start, end)) != NULL) {
->  			struct perf_sample sample;
->  
->  			++trace->nr_events;
-> @@ -2486,7 +2492,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
->  
->  			trace__handle_event(trace, event, &sample);
->  next_event:
-> -			perf_evlist__mmap_consume(evlist, i);
-> +			perf_mmap__consume(md, 0);
+On Tue, 27 Feb 2018 05:06:43 -0800 Matthew Wilcox <willy@infradead.org> wrote:
 
-could you call this with 'false' instead of 0, it's 'bool overwrite'
-applies also to the rest of the patchset
+> On Tue, Feb 27, 2018 at 11:22:59AM +0100, Uladzislau Rezki (Sony) wrote:
+> > During finding a suitable hole in the vmap_area_list
+> > there is an explicit rescheduling check for latency reduction.
+> > We do it, since there are workloads which are sensitive for
+> > long (more than 1 millisecond) preemption off scenario.
+> 
+> I understand your problem, but this is a horrid solution.  If it takes
+> us a millisecond to find a suitable chunk of free address space, something
+> is terribly wrong.  On a 3GHz CPU, that's 3 million clock ticks!
 
-thanks,
-jirka
+Yup.
+
+> I think our real problem is that we have no data structure that stores
+> free VA space.  We have the vmap_area which stores allocated space, but no
+> data structure to store free space.
+
+I wonder if we can reuse free_vmap_cache as a quick fix: if
+need_resched(), point free_vmap_cache at the current rb_node, drop the
+lock, cond_resched, goto retry?
