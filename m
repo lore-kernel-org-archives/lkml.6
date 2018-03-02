@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvwmYNd56Vlp7H1YCH5UkKgpQAZPGms/NjUqPbYqO6ckJhqKHJsaLoWypLIR7GHk5gXMzvR
-ARC-Seal: i=1; a=rsa-sha256; t=1519981421; cv=none;
+X-Google-Smtp-Source: AG47ELs6D+o2DTzp8R4wRDiCGTsIZ/Y2leLhL2HF93aI7O3REhilnhSYdz58aECp4ec7k7XwPZHo
+ARC-Seal: i=1; a=rsa-sha256; t=1519981418; cv=none;
         d=google.com; s=arc-20160816;
-        b=QL6XvobOAY0Pe9B8MMi969EPiAf7OB7qXk3HleA/ztyF2xIz1yEbeXfCu7RcAI3zOS
-         LUfd2T4e6gsFChZpZ3ISRjqj+RWrvw+Ny6xug9KOYrm4NwO2JoQEu4s0xQpFwJkIn2uc
-         gQBUA+tOREq3t8eBrBhfrd1gIoSJe4dfa0a+VbOrbzFoJZxWTnvjes2r7WwkQl1PTL1B
-         ytD3YQC+hjnqImovFpQJ6nxjBmCffmPTfYoxatoIncyXbX7FykPpXiWBkbPGVLSINeKE
-         dxKdDoqRDUKx3m1C3pQtEptoRciM3fBi9MlV8H8ctAsmm41m7arXQXYwsZwto/ZKqFBP
-         2yKw==
+        b=lYhbtQp3dlj/Trvh2ohny5nxxOOJwHxxuWUxt3BHvS9Itecrau8i8YITnCgrvx5ije
+         O8wgdK4VO444UhAzH85Xuy2S3Kyu2Dpb6DW2UMCLm4lmmx/uP3ohESARy4tM8W6yGGoV
+         eoo7y7AkMbbYbOExEB7iwUgbmR1Kg1J0aHiQ4Pw9QjxNS9g8b7OF6RuNbAuEc67UJXV3
+         cL3LcyVY8AIkY3za/swY/ReHMa58kFV0XNBl2E1OvWyp3Smw3IfT4rXGEkwlb1jxvTF5
+         VrAPG8aTMybQ/9HEZ3dn3DeliwDvHu9jIIk7X2bR6pXPBSOHAVpiRo+JHEq2MRHoBBTi
+         yYdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nBOI6bA4Bz3UQi992pEGxnpbb6bFBNRhZTCYu7Nn3IY=;
-        b=Kia7qynIauCCwqeuF8/Ihc0OyMF53gMktwAixwbP3UKoaRTzMjHIpe2MsSqO++dpNg
-         XjTVUh6Pah87yy2cW+vKCaUKlRbX8d4NKPfODNZ+x/eq6GWBdmabB3vmfOnKbTvCQw3y
-         0tXv4B6jWIHOKba30e+gpDgSzwQ1CHK0huD0bHIQGHN5MTSX9m4pieV33Dzxz1jIKp11
-         EimWzLx4pWnFCZ95EjwsmjrVR2stv4BhjczIjLzj/gGnVtkfZBOuRbwcdqPvzKJLdl7I
-         CyO9got7zjl3f/eQZEiXFnO6kani0FROxo0T0WE1lSe9mwM6tqa3+QRWlTgP69bNEMv7
-         mhbQ==
+        bh=EBksJ0PLKMELuC2WD+/XamtVEFikEcsu9nVaWDDui0k=;
+        b=nznHMTNpIE1wXSABTjuOyTHSnulJA65GEMyv3QjL/vkBjNNXFikNdVOTZulWBO6hNB
+         M2Q2HA61lzx81WuL6CY2BAHn9slp/RAPyMu1lmwS77hkC8kYuG2JnWfgbQQVBocGIGAH
+         KctYe70VPVkmEEgb08KUzWgXhEoPPyY07yCQxc0kyRa0scMSrZyv5+Z4DXmQ6z7lKQ0d
+         0X97GLUSf/9W1p9oaqbEiF9Q86TyOibHal91IwAB9QWs6yq8kxuCq6WkB25Ozc+LcXJj
+         gCzD2L7mZlnejCf6En5fXfS8jGgT+wh0zdmyBaBp9+/Jr8u61VpB4TTtDvtojLNgPVCj
+         OpgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Luu An Phu <phu.luuan@nxp.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Gui Iribarren <gui@altermundi.net>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 086/115] can: flex_can: Correct the checking for frame length in flexcan_start_xmit()
-Date: Fri,  2 Mar 2018 09:51:29 +0100
-Message-Id: <20180302084507.328590650@linuxfoundation.org>
+Subject: [PATCH 4.14 085/115] mac80211: mesh: drop frames appearing to be from us
+Date: Fri,  2 Mar 2018 09:51:28 +0100
+Message-Id: <20180302084507.286094765@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815491970045896?=
-X-GMAIL-MSGID: =?utf-8?q?1593816039535950473?=
+X-GMAIL-THRID: =?utf-8?q?1593815488517777633?=
+X-GMAIL-MSGID: =?utf-8?q?1593816036039648305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luu An Phu <phu.luuan@nxp.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
 
-[ Upstream commit 13454c14550065fcc1705d6bd4ee6d40e057099f ]
+[ Upstream commit 736a80bbfda709fb3631f5f62056f250a38e5804 ]
 
-The flexcan_start_xmit() function compares the frame length with data
-register length to write frame content into data[0] and data[1]
-register. Data register length is 4 bytes and frame maximum length is 8
-bytes.
+If there are multiple mesh stations with the same MAC address,
+they will both get confused and start throwing warnings.
 
-Fix the check that compares frame length with 3. Because the register
-length is 4.
+Obviously in this case nothing can actually work anyway, so just
+drop frames that look like they're from ourselves early on.
 
-Signed-off-by: Luu An Phu <phu.luuan@nxp.com>
-Reviewed-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: Gui Iribarren <gui@altermundi.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/flexcan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/rx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/can/flexcan.c
-+++ b/drivers/net/can/flexcan.c
-@@ -526,7 +526,7 @@ static int flexcan_start_xmit(struct sk_
- 		data = be32_to_cpup((__be32 *)&cf->data[0]);
- 		flexcan_write(data, &priv->tx_mb->data[0]);
- 	}
--	if (cf->can_dlc > 3) {
-+	if (cf->can_dlc > 4) {
- 		data = be32_to_cpup((__be32 *)&cf->data[4]);
- 		flexcan_write(data, &priv->tx_mb->data[1]);
- 	}
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -3632,6 +3632,8 @@ static bool ieee80211_accept_frame(struc
+ 		}
+ 		return true;
+ 	case NL80211_IFTYPE_MESH_POINT:
++		if (ether_addr_equal(sdata->vif.addr, hdr->addr2))
++			return false;
+ 		if (multicast)
+ 			return true;
+ 		return ether_addr_equal(sdata->vif.addr, hdr->addr1);
