@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423490AbeCBNKk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:10:40 -0500
-Received: from mail-io0-f174.google.com ([209.85.223.174]:44822 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423109AbeCBNKi (ORCPT
+        id S1423578AbeCBNLa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:11:30 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51956 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1423521AbeCBNL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:10:38 -0500
-X-Google-Smtp-Source: AG47ELst2xSFUGz25gdRGY31K3Q3+18OXq+xwFw8mIpyqVYn2PK1xppI/WbMT0FEzYPFv8HUx8YmwqCSRqx33qoGp5I=
+        Fri, 2 Mar 2018 08:11:26 -0500
+X-Google-Smtp-Source: AG47ELvo6LuWUQVBrd+IWcEJGd4uLrTfMFFb4W7/TeBrMp/LIa6eVAce5OJqnfGQ5FBSY8+jRDhweKvgYokqfR0GNqQ=
 MIME-Version: 1.0
-In-Reply-To: <20180302035045.14660-2-manivannan.sadhasivam@linaro.org>
-References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org> <20180302035045.14660-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302035045.14660-3-manivannan.sadhasivam@linaro.org>
+References: <20180302035045.14660-1-manivannan.sadhasivam@linaro.org> <20180302035045.14660-3-manivannan.sadhasivam@linaro.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Mar 2018 14:10:37 +0100
-Message-ID: <CACRpkdY12MHJE7qFDmLBMe6E4JsQ7OZWTCHTMYJvoj_QjbcRhg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/10] dt-bindings: pinctrl: Add bindings for Actions
- S900 SoC
+Date: Fri, 2 Mar 2018 14:11:25 +0100
+Message-ID: <CACRpkdaGPnvEitHWuDuqMWeCF0VkTCrbtV3Fine05JBM09dMSw@mail.gmail.com>
+Subject: Re: [PATCH v4 02/10] arm64: dts: actions: Add pinctrl node for S900
 To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc: Rob Herring <robh+dt@kernel.org>,
         =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
@@ -38,15 +37,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Fri, Mar 2, 2018 at 4:50 AM, Manivannan Sadhasivam
 <manivannan.sadhasivam@linaro.org> wrote:
 
-> Add pinctrl bindings for Actions Semi S900 SoC
+> Add pinctrl nodes for Actions Semi S900 SoC
 >
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Patch applied.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-These bindings are definately good looking and finalized,
-so no point in keeping iterating them, good work!
+Please funnel this patch through the ARM SoC
+tree.
 
 Yours,
 Linus Walleij
