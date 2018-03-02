@@ -1,81 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936270AbeCBLsD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 06:48:03 -0500
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43041 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936210AbeCBLr7 (ORCPT
+        id S1164971AbeCBLsp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 06:48:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935896AbeCBLsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 06:47:59 -0500
-X-Google-Smtp-Source: AG47ELvv9uQ5OUKSjNp/7sG9I5ZOLn2t8BzAEibj228+WfcKe+TzHWayhieSopJ2RJbpaU0LkzdFng==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.16-rc4
-Date: Fri,  2 Mar 2018 12:47:55 +0100
-Message-Id: <1519991275-31436-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 2 Mar 2018 06:48:20 -0500
+Date: Fri, 2 Mar 2018 12:48:12 +0100
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [RFC PATCH] s390: Fix runtime warning about negative
+ pgtables_bytes
+In-Reply-To: <1519944052-19992-1-git-send-email-linux@roeck-us.net>
+References: <1519944052-19992-1-git-send-email-linux@roeck-us.net>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030211-0040-0000-0000-00000439E31E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030211-0041-0000-0000-000020DCEB95
+Message-Id: <20180302124812.5aaab323@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803020138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu,  1 Mar 2018 14:40:52 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Here's a PR with some MMC fixes intended for v4.16-rc4. Details about the
-highlights are as usual found in the signed tag.
+> When running s390 images with 'compat' processes, the following
+> BUG is seen repeatedly.
+> 
+> BUG: non-zero pgtables_bytes on freeing mm: -16384
+> 
+> Bisect points to commit b4e98d9ac775 ("mm: account pud page tables").
+> Analysis shows that init_new_context() is called with
+> mm->context.asce_limit set to _REGION3_SIZE. In this situation,
+> pgtables_bytes remains set to 0 and is not increased. The message is
+> displayed when the affected process dies and mm_dec_nr_puds() is called.
+> 
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Fixes: b4e98d9ac775 ("mm: account pud page tables")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> RFC since I have no idea if this is correct (or complete, for that matter).
+> All I can say is that the message is no longer seen after the patch is
+> applied.
+> 
+>  arch/s390/include/asm/mmu_context.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+> index 65154eaa3714..6c8ce15cde7b 100644
+> --- a/arch/s390/include/asm/mmu_context.h
+> +++ b/arch/s390/include/asm/mmu_context.h
+> @@ -63,6 +63,7 @@ static inline int init_new_context(struct task_struct *tsk,
+>  				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+>  		/* pgd_alloc() did not account this pmd */
+>  		mm_inc_nr_pmds(mm);
+> +		mm_inc_nr_puds(mm);
+>  	}
+>  	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
+>  	return 0;
 
-Please pull this in!
+The page table folding always makes a knot in my brain. After staring
+at the code for a while I am now convinced that your patch is correct.
+On free of a 2 level page table free_pud_range() does a p4d_clear()
+which is turned into a nop as the page table is folded. But the
+mm_dec_nr_puds() is done unconditionally and that is where the imbalance
+comes from. Adding a counter mm_inc_nr_puds to init_new_context fixes
+it.
 
-Kind regards
-Ulf Hansson
+Applied to s390/linux:fixes. Thanks.
 
+-- 
+blue skies,
+   Martin.
 
-The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
-
-  Linux 4.16-rc3 (2018-02-25 18:50:41 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-rc3
-
-for you to fetch changes up to 3a574919f0cc15a46ec14c3e5e08300908991915:
-
-  mmc: core: Avoid hanging to claim host for mmc via some nested calls (2018-02-27 15:12:37 +0100)
-
-----------------------------------------------------------------
-MMC core:
- - mmc: core: Avoid hang when claiming host
-
-MMC host:
- - dw_mmc: Avoid hang when accessing registers
- - dw_mmc: Fix out-of-bounds access for slot's caps
- - dw_mmc-k3: Fix out-of-bounds access through DT alias
- - sdhci-pci: Fix S0i3 for Intel BYT-based controllers
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      mmc: sdhci-pci: Fix S0i3 for Intel BYT-based controllers
-
-Geert Uytterhoeven (1):
-      mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
-
-Shawn Lin (3):
-      mmc: dw_mmc: Factor out dw_mci_init_slot_caps
-      mmc: dw_mmc: Fix out-of-bounds access for slot's caps
-      mmc: dw_mmc: Avoid accessing registers in runtime suspended state
-
-Ulf Hansson (1):
-      mmc: core: Avoid hanging to claim host for mmc via some nested calls
-
- drivers/mmc/core/mmc_ops.c         |  4 --
- drivers/mmc/host/dw_mmc-exynos.c   |  1 +
- drivers/mmc/host/dw_mmc-k3.c       |  4 ++
- drivers/mmc/host/dw_mmc-rockchip.c |  1 +
- drivers/mmc/host/dw_mmc-zx.c       |  1 +
- drivers/mmc/host/dw_mmc.c          | 84 ++++++++++++++++++++++++--------------
- drivers/mmc/host/dw_mmc.h          |  2 +
- drivers/mmc/host/sdhci-pci-core.c  | 35 ++++++++++++++--
- 8 files changed, 94 insertions(+), 38 deletions(-)
+"Reality continues to ruin my life." - Calvin.
