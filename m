@@ -1,73 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1426666AbeCBKwb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:52:31 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34256 "EHLO mx1.redhat.com"
+        id S1426729AbeCBKzM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:55:12 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47628 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1426610AbeCBKwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:52:13 -0500
-From: Laurent Vivier <lvivier@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org,
-        Paul Mackerras <paulus@ozlabs.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
+        id S1426677AbeCBKzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:55:07 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH] KVM: PPC: Book3S HV: Fix guest time accounting with VIRT_CPU_ACCOUNTING_GEN
-Date: Fri,  2 Mar 2018 11:51:56 +0100
-Message-Id: <20180302105156.19506-1-lvivier@redhat.com>
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH RFC 0/3] x86/kvm: avoid expensive rdmsrs for FS/GS base MSRs
+Date: Fri,  2 Mar 2018 11:55:00 +0100
+Message-Id: <20180302105503.24428-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 8b24e69fc47e ("KVM: PPC: Book3S HV: Close race with testing
-for signals on guest entry"), if CONFIG_VIRT_CPU_ACCOUNTING_GEN is set, the
-guest time is not accounted to guest time and user time, but instead to
-system time.
+Some time ago Paolo suggested to take a look at probably unneeded expensive
+rdmsrs for FS/GS base MSR in vmx_save_host_state(). This is called on every
+vcpu run when we need to handle vmexit in userspace.
 
-This is because guest_enter()/guest_exit() are called while interrupts
-are disabled and the tick counter cannot be updated between them.
+I have to admit I got a bit lost in our kernel FS/GS magic. I managed to 
+convince myself that in the well defined context (ioctl from userspace)
+we can always get the required values from in-kernel variables and avoid
+rdmsrs. But I may have missed something really important, thus RFC.
 
-To fix that, move guest_exit() after local_irq_enable(), and as
-guest_enter() is called with IRQ disabled, calls guest_enter_irqoff()
-instead.
+My debug shows we're shaving off 240 cpu cycles (E5-2603 v3).
 
-Fixes: 8b24e69fc47e
-("KVM: PPC: Book3S HV: Close race with testing for signals on guest entry")
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
- arch/powerpc/kvm/book3s_hv.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+In case these patches turn out to be worthwile AMD SVM can probably be
+optimized the ame way.
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 89707354c2ef..8274c2807202 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -2885,7 +2885,7 @@ static noinline void kvmppc_run_core(struct kvmppc_vcore *vc)
- 	 */
- 	trace_hardirqs_on();
- 
--	guest_enter();
-+	guest_enter_irqoff();
- 
- 	srcu_idx = srcu_read_lock(&vc->kvm->srcu);
- 
-@@ -2893,8 +2893,6 @@ static noinline void kvmppc_run_core(struct kvmppc_vcore *vc)
- 
- 	srcu_read_unlock(&vc->kvm->srcu, srcu_idx);
- 
--	guest_exit();
--
- 	trace_hardirqs_off();
- 	set_irq_happened(trap);
- 
-@@ -2937,6 +2935,7 @@ static noinline void kvmppc_run_core(struct kvmppc_vcore *vc)
- 	kvmppc_set_host_core(pcpu);
- 
- 	local_irq_enable();
-+	guest_exit();
- 
- 	/* Let secondaries go back to the offline loop */
- 	for (i = 0; i < controlled_threads; ++i) {
+Vitaly Kuznetsov (3):
+  x86/kvm/vmx: read MSR_FS_BASE from current->thread
+  x86/kvm/vmx: read MSR_KERNEL_GS_BASE from current->thread
+  x86/kvm/vmx: avoid expensive rdmsr for MSR_GS_BASE
+
+ arch/x86/kernel/cpu/common.c | 1 +
+ arch/x86/kvm/vmx.c           | 7 ++++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
 -- 
 2.14.3
