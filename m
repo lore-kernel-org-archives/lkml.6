@@ -1,146 +1,142 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvksaLE6HAfhrnWw6582K/veUyh6pY/lICZneT55BBBwwAOMyZ+AtRlbnUQQGC0kdiToz+5
-ARC-Seal: i=1; a=rsa-sha256; t=1520641421; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PLjQNPhng5Krx13tz1Dmeans1R5mm8aYBOJeC5W0uXzYPb7MUnj8j7dcRgDpA6QM+P
-         Ix/F8A+NnxnMr7icmpn4pl3PCpoNEB4F3xpdSMIveK9Ruy2GRR5cCJ7Nsv5XWiPPqTDU
-         vAAq+p1cW/DQnUK+cdjuOPVQg4oSRZyDxaO1UCB1yoite8n4PG4Owg949GiJFeGYmQcO
-         8jmEdbqSOPJoEfbs7uyCGgjKK1LxqNZB8rS4ENo2Gdnb83xFH2rzGyG21oKQ/I5WYmgP
-         HzDmpNoXtwWlwEnMh76PNfhIjZsZJdW4+gvEm43jzyUZ2qq6letAH86f/gnovPSzhl5g
-         WNYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=kYlEC0u6yZ4TvqvjP1+AOJWPSPEZ9pQyy/HAJZ50TRk=;
-        b=YCDos71f4kB5SvB2LO9BgOM8fUaixwk5GRlGLHoK1OcIxymm3XYDAXTPcG+4SPX5B/
-         oSMTn28yMX5CRtwn7a/JRA6WMwkd4eUKqAWOGOvLqtu0Bm6fZSZa9zdXWO1XvmqDfrHs
-         1tOYSr55uaaNJ6ehq+IiCO8iCx0pYGjKeNsdEoygyv+4tX4Hh6ssNMHG2GdXWJ0/67CG
-         ewLauES6tO86+UbMM6+8EpTWY+wfX2qyJdnrXUpYLoToIYAUiD0f5YE9I6+NiPOYPR0y
-         r2F7Hlubfsao3oICG5cl3l+Ys6UN7ZDxr0G/O6Tg6eIb5JejsB3MXcBcD0kC0B2GEd9i
-         LaMA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Wanpeng Li <wanpengli@tencent.com>,
-	David Hildenbrand <david@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH 4.15 11/11] KVM: x86: fix backward migration with async_PF
-Date: Fri,  9 Mar 2018 16:19:25 -0800
-Message-Id: <20180310001835.172970815@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180310001834.560857664@linuxfoundation.org>
-References: <20180310001834.560857664@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1243504-1519986117-2-10955444321298898776
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1519986117; b=BVKImfJPNHsDnSWhW0ubnRF2oSYG//1i2FPbK0QsNznEP1o
+    kXL3oolqIzc5ktDY0oiL8co58GQ7WJtwkhIH7rUH5uBzP525W1ecrpohzsmr7npS
+    aD1n1BBBfBib0BDGZne/9d96E/h4Hy3MsIVOccEgiP84jCRVSM++CgEA2/nsVHfb
+    c7n/lqooJsRsLnpfrz1D8Mw7VF2i+zBMOYTgMC4U6chMVEep9xVE3WaSAvy7GtL5
+    fQZ23mfRHJXTYAi6Kxu2Au573p6yYSe2Hm6LrZEKcymsH0NFDYQeILGTny/93GcP
+    qfGHXV4TtCFjGGBJY/S+cvWPb1Ua8R0sTNNUNVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1519986117; bh=mf/lEInHyEzSRRWDH4qc4Xt2WW
+    mcja+KGYwizRbDbBc=; b=MBgOLhbTYDYiK2yzcvXGwxsR2PCvlK8/aP645EgooV
+    YNo8qe6CBUxBngeDROIWJc50FfUvY3s+NtEFOTZhgcA1btszJukKY9m1A4R6rVjP
+    WUpxgLcOgEU0xctQwRNE2HeoZCk3qeLII6PepTKWZB+4uKh8oOA0koSptWPO1XC3
+    bpePFgwa3Hl7wK/8C3EPlsz8s6ioKjoQCqeQxVk7Y8mIkESwJfCc0RfSTTeDY8+e
+    TOEIxDlh8DabCXYXF22PFdE6mQszNVTLDNheQTkJre2sxVES/MiHHhJAheTcGYhe
+    K+gymvn6JUR6+qt3In+lVFy5jR4DHUb3Vh+QpUKZMC2w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1426342AbeCBKV2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 05:21:28 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1424224AbeCBKVD (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:21:03 -0500
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH v6 00/12] USB Type-C device-connection, mux and switch support
+Date: Fri,  2 Mar 2018 11:20:45 +0100
+Message-Id: <20180302102057.8917-1-hdegoede@redhat.com>
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594508090342902873?=
-X-GMAIL-MSGID: =?utf-8?q?1594508098846170890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+Hi All,
 
-------------------
+Here is version 6 of Heikki's and my USB Type-C device-connection, mux and
+switch support series. Versions 2 - 5 bring various small code and style
+fixes based on review (no major changes). Version 6 is rebased on top of
+the latest usb-next and brings one small but important code fix in
+the devcon code.
 
-From: Radim Krčmář <rkrcmar@redhat.com>
+Here is the original cover-letter of v1:
 
-commit fe2a3027e74e40a3ece3a4c1e4e51403090a907a upstream.
+Some devices with an USB Type-C connector have a bunch of muxes
+behind that connector which need to be controlled by the kernel (rather
+then having them controlled by firmware as on most devices).
 
-Guests on new hypersiors might set KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT
-bit when enabling async_PF, but this bit is reserved on old hypervisors,
-which results in a failure upon migration.
+Quite a while back I submitted a patch-series to tie together these muxes
+and the Type-C Port Manager (tcpm) code, using the then new drivers/mux
+framework. But the way I used the mux framework went against what it was
+designed for, so in the end that series got nowhere.
 
-To avoid breaking different cases, we are checking for CPUID feature bit
-before enabling the feature and nothing else.
+Heikki Krogerus from Intel, who maintains the USB TYPEC subsystem, has
+recently been working on solving the same problem for some boards he is
+doing hardware-enablement for.
 
-Fixes: 52a5c155cf79 ("KVM: async_pf: Let guest support delivery of async_pf from guest mode")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[jwang: port to 4.14]
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/virtual/kvm/cpuid.txt  |    4 ++++
- Documentation/virtual/kvm/msr.txt    |    3 ++-
- arch/x86/include/uapi/asm/kvm_para.h |    1 +
- arch/x86/kernel/kvm.c                |    8 ++++----
- arch/x86/kvm/cpuid.c                 |    3 ++-
- 5 files changed, 13 insertions(+), 6 deletions(-)
+Heikki has come up with a number of infrastructure patches for this.
+The first one is a new device-connection framework. This solves the
+problem of describing non bus device-links on x86 in what in my experience
+with this problematic area is a really nice simple, clean and *generic*
+way. This could for example in the near future also replace the custom
+lookup code in the pwm subsys and the custom pwm_add_table() /
+pwm_remove_table() functions.
 
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -54,6 +54,10 @@ KVM_FEATURE_PV_UNHALT              ||
-                                    ||       || before enabling paravirtualized
-                                    ||       || spinlock support.
- ------------------------------------------------------------------------------
-+KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
-+                                   ||       || can be enabled by setting bit 2
-+                                   ||       || when writing to msr 0x4b564d02
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
---- a/Documentation/virtual/kvm/msr.txt
-+++ b/Documentation/virtual/kvm/msr.txt
-@@ -170,7 +170,8 @@ MSR_KVM_ASYNC_PF_EN: 0x4b564d02
- 	when asynchronous page faults are enabled on the vcpu 0 when
- 	disabled. Bit 1 is 1 if asynchronous page faults can be injected
- 	when vcpu is in cpl == 0. Bit 2 is 1 if asynchronous page faults
--	are delivered to L1 as #PF vmexits.
-+	are delivered to L1 as #PF vmexits.  Bit 2 can be set only if
-+	KVM_FEATURE_ASYNC_PF_VMEXIT is present in CPUID.
- 
- 	First 4 byte of 64 byte memory location will be written to by
- 	the hypervisor at the time of asynchronous page fault (APF)
---- a/arch/x86/include/uapi/asm/kvm_para.h
-+++ b/arch/x86/include/uapi/asm/kvm_para.h
-@@ -25,6 +25,7 @@
- #define KVM_FEATURE_STEAL_TIME		5
- #define KVM_FEATURE_PV_EOI		6
- #define KVM_FEATURE_PV_UNHALT		7
-+#define KVM_FEATURE_ASYNC_PF_VMEXIT	10
- 
- /* The last 8 bits are used to indicate how to interpret the flags field
-  * in pvclock structure. If no bits are set, all flags are ignored.
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -341,10 +341,10 @@ static void kvm_guest_cpu_init(void)
- #endif
- 		pa |= KVM_ASYNC_PF_ENABLED;
- 
--		/* Async page fault support for L1 hypervisor is optional */
--		if (wrmsr_safe(MSR_KVM_ASYNC_PF_EN,
--			(pa | KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT) & 0xffffffff, pa >> 32) < 0)
--			wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
-+		if (kvm_para_has_feature(KVM_FEATURE_ASYNC_PF_VMEXIT))
-+			pa |= KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT;
-+
-+		wrmsrl(MSR_KVM_ASYNC_PF_EN, pa);
- 		__this_cpu_write(apf_reason.enabled, 1);
- 		printk(KERN_INFO"KVM setup async PF for cpu %d\n",
- 		       smp_processor_id());
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -597,7 +597,8 @@ static inline int __do_cpuid_ent(struct
- 			     (1 << KVM_FEATURE_ASYNC_PF) |
- 			     (1 << KVM_FEATURE_PV_EOI) |
- 			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
--			     (1 << KVM_FEATURE_PV_UNHALT);
-+			     (1 << KVM_FEATURE_PV_UNHALT) |
-+			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
+The other 3 patches add a framework for the different type of Type-C /
+USB "muxes".
+
+Heikki and I have gone through a number of iterations of these patches
+together and we believe these are now ready for merging. Since merging
+infrastructure patches without users is not done and Heikki's own use-case
+for these is not yet ready for merging, the rest of this series consists
+of patches by me to make the Type-C connector found on some Cherry Trail
+devices (finally) be able to actually work as an USB port and not just
+a charge port.
+
+The last patch uses the new usb-role-switch framework to also do proper
+devcie / host switching on CHT devices with a USB micro AB connector.
+This is also a big feature for CHT users, because before this they had
+to do a reboot to get an OTG-host cable recognized (on some devices).
+
+Part of this series is an usb-role-switch driver for the role-switch
+found inside the xhci controller on e.g. CHT devices, this is currently
+implemented as the generic xhci controller instantiating a platform
+child-device for this, since this really is a separate chunk of HW
+which happens to sit in the XHCI mmio space. This approach may not be
+universally liked, given that in this new series the role-switch driver
+is much smaller and does not have any external deps anymore we could
+just integrate it into the xhci code if that is preferred.
+
+About merging this series (once everything is reviewed, etc.), there are
+quite some interdependencies in it esp. a lot of the patches depend on
+the first patch. Luckily patches 1-10 all apply to subsystems which are
+maintained by Greg (most to the USB subsys). Which just leaves patches
+11 and 12 once 1-10 are merged. Greg, can you create an immutable branch
+for the platform/x86 and extcon maintainers to merge once this is done?
+
+Regards,
+
+Hans
