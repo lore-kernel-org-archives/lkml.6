@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeCBFwB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 00:52:01 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41189 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936042AbeCBFv5 (ORCPT
+        id S1753268AbeCBFwL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 00:52:11 -0500
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35999 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753202AbeCBFwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 00:51:57 -0500
-X-Google-Smtp-Source: AG47ELusGICRy0B3QYPo7jndryxFNaS/pRuHqQhEWZvY5Wc148JihWcMKQf6kZuOWQyFbcgmVQlJAA==
+        Fri, 2 Mar 2018 00:52:07 -0500
+X-Google-Smtp-Source: AG47ELtN69PHLCHgtTk0rnRJtiPlUYc9+JWIyh4c08uu689h4gt5JgnT0Zay+pMF634PihuphJKT1w==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
         robh+dt@kernel.org, mark.rutland@arm.com
@@ -18,9 +18,9 @@ Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 09/11] clk: actions: Add composite clock support
-Date: Fri,  2 Mar 2018 11:18:58 +0530
-Message-Id: <20180302054900.11275-10-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 10/11] clk: actions: Add pll clock support
+Date: Fri,  2 Mar 2018 11:18:59 +0530
+Message-Id: <20180302054900.11275-11-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
@@ -28,36 +28,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Actions Semi composite clock. This clock
-consists of gate, mux, divider and factor clocks.
+Add support for Actions Semi PLL clock
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/actions/Makefile        |   1 +
- drivers/clk/actions/owl-composite.c | 155 ++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-composite.h | 101 +++++++++++++++++++++++
- 3 files changed, 257 insertions(+)
- create mode 100644 drivers/clk/actions/owl-composite.c
- create mode 100644 drivers/clk/actions/owl-composite.h
+ drivers/clk/actions/Makefile  |   1 +
+ drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
 
 diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 994357fa560b..53431aef6e9c 100644
+index 53431aef6e9c..31b68eab9309 100644
 --- a/drivers/clk/actions/Makefile
 +++ b/drivers/clk/actions/Makefile
-@@ -5,3 +5,4 @@ clk-owl-y			+= owl-gate.o
- clk-owl-y			+= owl-mux.o
+@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
  clk-owl-y			+= owl-divider.o
  clk-owl-y			+= owl-factor.o
-+clk-owl-y			+= owl-composite.o
-diff --git a/drivers/clk/actions/owl-composite.c b/drivers/clk/actions/owl-composite.c
+ clk-owl-y			+= owl-composite.o
++clk-owl-y			+= owl-pll.o
+diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
 new file mode 100644
-index 000000000000..04fe1645a60d
+index 000000000000..3560c7324f9c
 --- /dev/null
-+++ b/drivers/clk/actions/owl-composite.c
-@@ -0,0 +1,155 @@
++++ b/drivers/clk/actions/owl-pll.c
+@@ -0,0 +1,194 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL composite clock driver
++// OWL pll clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -66,159 +65,198 @@ index 000000000000..04fe1645a60d
 +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
 +#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/delay.h>
 +
-+#include "owl-composite.h"
++#include "owl-pll.h"
 +
-+static u8 owl_comp_get_parent(struct clk_hw *hw)
++static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	u32 mul;
 +
-+	return owl_mux_helper_get_parent(&comp->common, &comp->mux_hw);
++	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
++	if (mul < pll_hw->min_mul)
++		mul = pll_hw->min_mul;
++	else if (mul > pll_hw->max_mul)
++		mul = pll_hw->max_mul;
++
++	return mul &= mul_mask(pll_hw);
 +}
 +
-+static int owl_comp_set_parent(struct clk_hw *hw, u8 index)
++static unsigned int _get_table_rate(const struct clk_pll_table *table,
++		unsigned int val)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	const struct clk_pll_table *clkt;
 +
-+	return owl_mux_helper_set_parent(&comp->common, &comp->mux_hw, index);
-+}
-+
-+static void owl_comp_disable(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
-+
-+	clk_gate_set(common, &comp->gate_hw, false);
-+}
-+
-+static int owl_comp_enable(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
-+
-+	clk_gate_set(common, &comp->gate_hw, true);
++	for (clkt = table; clkt->rate; clkt++)
++		if (clkt->val == val)
++			return clkt->rate;
 +
 +	return 0;
 +}
 +
-+static int owl_comp_is_enabled(struct clk_hw *hw)
++static const struct clk_pll_table *_get_pll_table(
++		const struct clk_pll_table *table, unsigned long rate)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
++	const struct clk_pll_table *clkt;
 +
-+	return clk_is_enabled(common, &comp->gate_hw);
++	for (clkt = table; clkt->rate; clkt++) {
++		if (clkt->rate == rate) {
++			table = clkt;
++			break;
++		} else if (clkt->rate < rate)
++			table = clkt;
++	}
++
++	return table;
 +}
 +
-+static long owl_comp_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
++static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct clk_pll_table *clkt;
++	u32 mul;
 +
-+	return owl_divider_helper_round_rate(&comp->common, &comp->rate.div_hw,
-+					rate, parent_rate);
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		return clkt->rate;
++	}
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	mul = owl_pll_calculate_mul(pll_hw, rate);
++
++	return pll_hw->bfreq * mul;
 +}
 +
-+static unsigned long owl_comp_div_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
++static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 val;
 +
-+	return owl_divider_helper_recalc_rate(&comp->common, &comp->rate.div_hw,
-+					parent_rate);
++	if (pll_hw->table) {
++		regmap_read(common->regmap, pll_hw->reg, &val);
++
++		val = val >> pll_hw->shift;
++		val &= mul_mask(pll_hw);
++
++		return _get_table_rate(pll_hw->table, val);
++	}
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	regmap_read(common->regmap, pll_hw->reg, &val);
++
++	val = val >> pll_hw->shift;
++	val &= mul_mask(pll_hw);
++
++	return pll_hw->bfreq * val;
 +}
 +
-+static int owl_comp_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
++static int owl_pll_is_enabled(struct clk_hw *hw)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 reg;
 +
-+	return owl_divider_helper_set_rate(&comp->common, &comp->rate.div_hw,
-+					rate, parent_rate);
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	return !!(reg & BIT(pll_hw->bit_idx));
 +}
 +
-+static long owl_comp_fact_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *parent_rate)
++static void owl_pll_set(const struct owl_clk_common *common,
++		       const struct owl_pll_hw *pll_hw, bool enable)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	u32 reg;
 +
-+	return owl_factor_helper_round_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					rate, parent_rate);
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	if (enable)
++		reg |= BIT(pll_hw->bit_idx);
++	else
++		reg &= ~BIT(pll_hw->bit_idx);
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
 +}
 +
-+static unsigned long owl_comp_fact_recalc_rate(struct clk_hw *hw,
-+			unsigned long parent_rate)
++static int owl_pll_enable(struct clk_hw *hw)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
 +
-+	return owl_factor_helper_recalc_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					parent_rate);
++	owl_pll_set(common, &pll->pll_hw, true);
++
++	return 0;
 +}
 +
-+static int owl_comp_fact_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
++static void owl_pll_disable(struct clk_hw *hw)
 +{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
 +
-+	return owl_factor_helper_set_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					rate, parent_rate);
++	owl_pll_set(common, &pll->pll_hw, false);
 +}
 +
-+const struct clk_ops owl_comp_div_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
++static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	const struct clk_pll_table *clkt;
++	u32 val, reg;
 +
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return 0;
 +
-+	/* div_ops */
-+	.round_rate	= owl_comp_div_round_rate,
-+	.recalc_rate	= owl_comp_div_recalc_rate,
-+	.set_rate	= owl_comp_div_set_rate,
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		val = clkt->val;
++	} else {
++		val = owl_pll_calculate_mul(pll_hw, rate);
++	}
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	reg &= ~mul_mask(pll_hw);
++	reg |= val << pll_hw->shift;
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
++
++	udelay(PLL_STABILITY_WAIT_US);
++
++	return 0;
++}
++
++const struct clk_ops owl_pll_ops = {
++	.enable = owl_pll_enable,
++	.disable = owl_pll_disable,
++	.is_enabled = owl_pll_is_enabled,
++	.round_rate = owl_pll_round_rate,
++	.recalc_rate = owl_pll_recalc_rate,
++	.set_rate = owl_pll_set_rate,
 +};
-+
-+
-+const struct clk_ops owl_comp_fact_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
-+
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+
-+	/* fact_ops */
-+	.round_rate	= owl_comp_fact_round_rate,
-+	.recalc_rate	= owl_comp_fact_recalc_rate,
-+	.set_rate	= owl_comp_fact_set_rate,
-+};
-+
-+const struct clk_ops owl_comp_pass_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
-+
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-composite.h b/drivers/clk/actions/owl-composite.h
+diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
 new file mode 100644
-index 000000000000..386a93ac951e
+index 000000000000..0aae30abd5dc
 --- /dev/null
-+++ b/drivers/clk/actions/owl-composite.h
-@@ -0,0 +1,101 @@
++++ b/drivers/clk/actions/owl-pll.h
+@@ -0,0 +1,92 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// OWL composite clock driver
++// OWL pll clock driver
 +//
 +// Copyright (c) 2014 Actions Semi Inc.
 +// Author: David Liu <liuwei@actions-semi.com>
@@ -226,96 +264,87 @@ index 000000000000..386a93ac951e
 +// Copyright (c) 2018 Linaro Ltd.
 +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#ifndef _OWL_COMPOSITE_H_
-+#define _OWL_COMPOSITE_H_
++#ifndef _OWL_PLL_H_
++#define _OWL_PLL_H_
 +
 +#include "owl-common.h"
-+#include "owl-mux.h"
-+#include "owl-gate.h"
-+#include "owl-factor.h"
-+#include "owl-divider.h"
 +
-+union owl_rate {
-+	struct owl_divider_hw	div_hw;
-+	struct owl_factor_hw	factor_hw;
++/* last entry should have rate = 0 */
++struct clk_pll_table {
++	unsigned int		val;
++	unsigned long		rate;
 +};
 +
-+struct owl_composite {
-+	struct owl_mux_hw	mux_hw;
-+	struct owl_gate_hw	gate_hw;
-+	union owl_rate		rate;
++struct owl_pll_hw {
++	u32			reg;
++	u32			bfreq;
++	u8			bit_idx;
++	u8			shift;
++	u8			width;
++	u8			min_mul;
++	u8			max_mul;
++	const struct clk_pll_table *table;
++};
++
++struct owl_pll {
++	struct owl_pll_hw	pll_hw;
 +	struct owl_clk_common	common;
 +};
 +
-+#define OWL_COMP_DIV(_struct, _name, _parent,				\
-+		     _mux, _gate, _div, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.rate.div_hw	= _div,					\
++#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
++		   _width, _min_mul, _max_mul, _table)			\
++	{								\
++		.reg		= _reg,					\
++		.bfreq		= _bfreq,				\
++		.bit_idx	= _bit_idx,				\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.min_mul	= _min_mul,				\
++		.max_mul	= _max_mul,				\
++		.table		= _table,				\
++	}
++
++#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
 +		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						      &owl_comp_div_ops,\
-+						     _flags),		\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT(_name,			\
++					       _parent,			\
++					       &owl_pll_ops,		\
++					       _flags),			\
 +		},							\
 +	}
 +
-+#define OWL_COMP_DIV_FIXED(_struct, _name, _parent,			\
-+		     _gate, _div, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.gate_hw	= _gate,				\
-+		.rate.div_hw	= _div,					\
++#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
 +		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						     _parent,		\
-+						      &owl_comp_div_ops,\
-+						     _flags),		\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
++					       &owl_pll_ops,		\
++					       _flags),			\
 +		},							\
 +	}
 +
-+#define OWL_COMP_FACTOR(_struct, _name, _parent,			\
-+			_mux, _gate, _factor, _flags)			\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.rate.factor_hw	= _factor,				\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						     &owl_comp_fact_ops,\
-+						     _flags),		\
-+		},							\
-+	}
++#define mul_mask(m)		((1 << ((m)->width)) - 1)
++#define PLL_STABILITY_WAIT_US	(50)
 +
-+#define OWL_COMP_PASS(_struct, _name, _parent,				\
-+		      _mux, _gate, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						     &owl_comp_pass_ops,\
-+						     _flags),		\
-+		},							\
-+	}
-+
-+static inline struct owl_composite *hw_to_owl_comp(const struct clk_hw *hw)
++static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
 +{
 +	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
 +
-+	return container_of(common, struct owl_composite, common);
++	return container_of(common, struct owl_pll, common);
 +}
 +
-+extern const struct clk_ops owl_comp_div_ops;
-+extern const struct clk_ops owl_comp_fact_ops;
-+extern const struct clk_ops owl_comp_pass_ops;
++extern const struct clk_ops owl_pll_ops;
 +
-+#endif /* _OWL_COMPOSITE_H_ */
++#endif /* _OWL_PLL_H_ */
 -- 
 2.14.1
