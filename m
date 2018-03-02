@@ -1,68 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164648AbeCBENX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:13:23 -0500
-Received: from zxshcas1.zhaoxin.com ([180.169.121.91]:48863 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1164198AbeCBENW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 23:13:22 -0500
-From: David Wang <davidwang@zhaoxin.com>
-To: <rjw@rjwysocki.net>, <len.brown@intel.com>, <pavel@ucw.cz>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <x86@kernel.org>, <linux-pm@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>, <cobechen@zhaoxin.com>,
-        <jiangbowang@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH] Delete some unusefull operations for centaur CPU/platform
-Date: Fri, 2 Mar 2018 12:11:48 +0800
-Message-ID: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+        id S1164863AbeCBER5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:17:57 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1164680AbeCBER4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Mar 2018 23:17:56 -0500
+Subject: Re: [PATCH net-next 0/2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john.fastabend@gmail.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+References: <1519874345-10235-1-git-send-email-jasowang@redhat.com>
+ <20180301101038.4253424d@redhat.com>
+ <b0f55100-183d-a507-8510-3c67f6106031@redhat.com>
+ <20180301113531.7b25e2df@redhat.com>
+ <872bf3ea-7631-4e5f-9a6a-d632213cd15c@redhat.com>
+ <20180301151601.611d6b83@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <ec0cc7ef-56b8-ec92-b532-24d45dd1c6e8@redhat.com>
+Date: Fri, 2 Mar 2018 12:17:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.93]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+In-Reply-To: <20180301151601.611d6b83@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For Centaur CPU, the ucode will make sure that each CPU core can keep cache
-coherency with each other when the CPU core entering to any C state. So the
-cache flush operations when enter C3 is not necessary and will cause large
-C3 enter/exit latency.
-And the bus master disable operation when CPU core entering C3 state is not
-needed too. Because the chipset will automatically do this operation.
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
----
- arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index dde437f..1cd357b 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
- 	if (c->x86_vendor == X86_VENDOR_INTEL &&
- 	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
- 			flags->bm_control = 0;
-+
-+        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-+		/*
-+		 * on all centaur CPUs, sw need not execute cache flush operation
-+		 * when entering C3 type State.
-+		 *
-+		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
-+		 * entering C3 type state.
-+		 */
-+		flags->bm_check = 1;
-+		flags->bm_control = 0;
-+	}
- }
- EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
- 
--- 
-1.9.1
+On 2018年03月01日 22:16, Jesper Dangaard Brouer wrote:
+> On Thu, 1 Mar 2018 21:15:36 +0800
+> Jason Wang <jasowang@redhat.com> wrote:
+>
+>> On 2018年03月01日 18:35, Jesper Dangaard Brouer wrote:
+>>> On Thu, 1 Mar 2018 17:23:37 +0800
+>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>   
+>>>> On 2018年03月01日 17:10, Jesper Dangaard Brouer wrote:
+>>>>> On Thu,  1 Mar 2018 11:19:03 +0800
+>>>>> Jason Wang <jasowang@redhat.com> wrote:
+>>>>>      
+>>>>>> This series tries to re-enable XDP_REDIRECT for mergeable buffer which
+>>>>>> was removed since commit 7324f5399b06 ("virtio_net: disable
+>>>>>> XDP_REDIRECT in receive_mergeable() case"). Main concerns are:
+>>>>>>
+>>>>>> - not enough tailroom was reserved which breaks cpumap
+>>>>> To address this at a more fundamental level, I would suggest that we/you
+>>>>> instead extend XDP to know it's buffers "frame" size/end.  (The
+>>>>> assumption use to be, xdp_buff->data_hard_start + PAGE_SIZE, but
+>>>>> ixgbe+virtio_net broke that assumption).
+>>>>>
+>>>>> It should actually be fairly easy to implement:
+>>>>>     * Simply extend xdp_buff with a "data_hard_end" pointer.
+>>>> Right, and then cpumap can warn and drop packets with insufficient
+>>>> tailroom.
+>>>>
+>>>> But it should be a patch on top of this I think.
+>>> Hmmm, not really.  If we/you instead fix the issue of XDP doesn't know
+>>> the end/size of the frame, then we don't need this mixed XDP
+>>> generic/native code path mixing.
+>> I know this but I'm still a little bit confused. According to the commit
+>> log of 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in
+>> receive_mergeable() case"), you said:
+>>
+>> """
+>>       The longer explaination is that receive_mergeable() tries to
+>>       work-around and satisfy these XDP requiresments e.g. by having a
+>>       function xdp_linearize_page() that allocates and memcpy RX buffers
+>>       around (in case packet is scattered across multiple rx buffers).  This
+>>       does currently satisfy XDP_PASS, XDP_DROP and XDP_TX (but only because
+>>       we have not implemented bpf_xdp_adjust_tail yet).
+>> """
+>>
+>> So I consider the tailroom is a must for the (future) tail adjustment.
+> That is true, BUT implementing the "data_hard_end" extension is a
+> pre-requisite.  It will also be to catch the issue of too little
+> tail-room if/when implementing bpf_xdp_adjust_tail().
+>
+> It is of-cause a "nice-to-have", to fix this virtio_net driver's
+> receive_mergeable() call to have enough tail-room, but I don't see it
+> as a solution to the fundamental problem.
+>
+>
+>>> You could re-enable native redirect, and push the responsibility to
+>>> cpumap for detecting this too-small frame "missing tailroom" (and avoid
+>>> crashing...). (If we really want to support this, cpumap could fallback
+>>> to dev_alloc_skb, and handle it gracefully).
+>>>   
+>> Right but it will be slower than build_skb().
+> True, but bad argument in this context, as you are already using a
+> similar function call napi_alloc_skb().  And it will be even slower to
+> call generic-XDP code path.
+>
+
+Well, there's no generic skb implementation for cpumap redirection so I 
+think we're talking about native XDP for cpumap, In this case, we won't 
+even use napi_alloc_skb().
+
+Thanks
