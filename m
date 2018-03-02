@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuydvZMMFjNqfiCLhDERhnOgXlWzOOSWYR6hixMvSk1WVqDk2Nl8wn1unUUmmILZK18itr+
-ARC-Seal: i=1; a=rsa-sha256; t=1519981286; cv=none;
+X-Google-Smtp-Source: AG47ELtgyw1nFJnmsy+lM/mkA2glplUskvRpWFn1bi9DFmBLf5z3scUpLxv/KtHDaMEUd14rdvGG
+ARC-Seal: i=1; a=rsa-sha256; t=1519981280; cv=none;
         d=google.com; s=arc-20160816;
-        b=oNdrc/2I7mdm7tsD3OZ70qepjV03/FzRuDB8YvdVYQ0bt5TXE8jV+mjIJOw0lZhBEO
-         RxaDgExjEp8TI7Xlb+FjNsYBCWdkYRFTtix6YVKo4G6nIfyZpUgXZUsp3qD21SWFILzj
-         AchUmA0d2tNNwbrmao5A+R84pt98ZY1rHg5Gr7fmfWQmxz9UlVkhsoJrYNZn660Hw+wO
-         z/K3OKFoKesSQD5VrI5XSc9amJszkharJhnVUM1l38uLlwlFM+/ygN15cxqh34O9aU1v
-         qyMPkbpyw6gJ0UnP05NBZrS6VnFYcmpD4FU5jIU4e5gwL38N7eq8TrP7G9dn+HwdwDEQ
-         LVFw==
+        b=Qh8MtgXcJ1eE7hJgnX1AuB/LM7bMRusoC9+YHnfb0f1Ms+I6+JZBDu/HsQXkMe0whX
+         hQl1LVCrgI4cqkQhJsgNe4HK6ryoY12PQHO9V0DOtlaa1AidC4zl4Bo20kHmcpLBKxRm
+         YXtMRdw08tffSN7MTRpT0jKMMv3Uy+gOoJNz93uCQaN2ahW+E8/JFYZO1NuwePxfdljc
+         lu4SewSHO9HKvFb10sUYSQZP7R3Io42OOknshgqRZw97HXue16wTT3lhnOEuE2XAB06m
+         cjdGAC6O4f+jVg9Uqx1mNANzbWjcu1n/Gpc7hbMCBHsPssbhHKJ1udFQtfvJsgvrrmdw
+         S7iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8jDSFGu57EC/cH3MMWgihtdKh6YOmrrdRdPMf+r4P5I=;
-        b=xqeYS+K91oyBhhcRUXVgp99tFLsdhYNdFHp5OY81CORfDJzahNHSgzQ7lSjlm3Fzjt
-         E/lMa+GkLs8scIaEFbSdvxOZMSx2A2XUEZB2OVxM18Ns9vou8mYyzevGo8FsWpX9evTn
-         /RCBwRYYu0uFu9jPqe11Mhe2ARquTIQkSXzRGZTvd74uerFm5J9sAH+0e5P60n2/BwtX
-         YKgqYNxHKE/FogiCulCEYpgYasUSW2uPUbU9ecJQWYS1eNUhJFrpnAImjiuur2LpOjsB
-         +zT7arbOvc1WLUZ8LliFJDY9hEqyBwghVEbyWksIHbcB+m7HET9TnUlb7mPwXddigt8V
-         4pkw==
+        bh=DH6zXOWumibU4slls4PS41IxqAHJGjmmN+ueGCUd0p8=;
+        b=Kg+aQrnvhbb/fZ/J4NJuyaCvMoRgsw/52iiISZnUG89h3NFmzie/JNz6crw3omT9HB
+         9U5Pe7p1/Sy0QIBOwpcTG8fMHYVpPp5wvEt3RnETge3IwOXkQm+HZ7zoEAaSaG6PJwCH
+         cQey3oN2TuPApJUUM3enDMTBJDk9X7wwq26cWiFgLq2uSSjKyDY1Tbkzkq7ezAwRzbBj
+         sbNkADTRc/UhDM2rsvTtC571wMcwj3gYAyORrbH5uhvt/t/FMC+1cUqHdOeBLKfffww2
+         4BABjMws5rCI2aQWK/96uRS+wwPmMs16clNfTC5M40LrZZeGX7mlqJfYqkyph+qyw2lS
+         33GQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adit Ranadive <aditr@vmware.com>,
-	Aditya Sarwade <asarwade@vmware.com>,
-	Jorgen Hansen <jhansen@vmware.com>,
-	Bryan Tan <bryantan@vmware.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Li Shuang <shuali@redhat.com>,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
 	Sasha Levin <alexander.levin@verizon.com>
-Subject: [PATCH 4.14 047/115] RDMA/vmw_pvrdma: Call ib_umem_release on destroy QP path
-Date: Fri,  2 Mar 2018 09:50:50 +0100
-Message-Id: <20180302084505.785880970@linuxfoundation.org>
+Subject: [PATCH 4.14 045/115] netfilter: uapi: correct UNTRACKED conntrack state bit number
+Date: Fri,  2 Mar 2018 09:50:48 +0100
+Message-Id: <20180302084505.703190662@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084503.856536800@linuxfoundation.org>
 References: <20180302084503.856536800@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815897550624784?=
-X-GMAIL-MSGID: =?utf-8?q?1593815897550624784?=
+X-GMAIL-THRID: =?utf-8?q?1593815891383698453?=
+X-GMAIL-MSGID: =?utf-8?q?1593815891383698453?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,39 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bryan Tan <bryantan@vmware.com>
+From: Florian Westphal <fw@strlen.de>
 
 
-[ Upstream commit 17748056ce123ee37fb7382bc698fc721e3c4a09 ]
+[ Upstream commit 4c82fd0abb87e20d0d68ef5237e74732352806c8 ]
 
-The QP cleanup did not previously call ib_umem_release,
-resulting in a user-triggerable kernel resource leak.
+nft_ct exposes this bit to userspace.  This used to be
 
-Fixes: 29c8d9eba550 ("IB: Add vmw_pvrdma driver")
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Aditya Sarwade <asarwade@vmware.com>
-Reviewed-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Bryan Tan <bryantan@vmware.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+  #define NF_CT_STATE_UNTRACKED_BIT              (1 << (IP_CT_NUMBER + 1))
+  (IP_CT_NUMBER is 5, so this was 0x40)
+
+.. but this got changed to 8 (0x100) when the untracked object got removed.
+Replace this with a literal 6 to prevent further incompatible changes
+in case IP_CT_NUMBER ever increases.
+
+Fixes: cc41c84b7e7f2 ("netfilter: kill the fake untracked conntrack objects")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/uapi/linux/netfilter/nf_conntrack_common.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c
-@@ -406,6 +406,13 @@ static void pvrdma_free_qp(struct pvrdma
- 	atomic_dec(&qp->refcnt);
- 	wait_event(qp->wait, !atomic_read(&qp->refcnt));
+--- a/include/uapi/linux/netfilter/nf_conntrack_common.h
++++ b/include/uapi/linux/netfilter/nf_conntrack_common.h
+@@ -36,7 +36,7 @@ enum ip_conntrack_info {
  
-+	if (!qp->is_kernel) {
-+		if (qp->rumem)
-+			ib_umem_release(qp->rumem);
-+		if (qp->sumem)
-+			ib_umem_release(qp->sumem);
-+	}
-+
- 	pvrdma_page_dir_cleanup(dev, &qp->pdir);
+ #define NF_CT_STATE_INVALID_BIT			(1 << 0)
+ #define NF_CT_STATE_BIT(ctinfo)			(1 << ((ctinfo) % IP_CT_IS_REPLY + 1))
+-#define NF_CT_STATE_UNTRACKED_BIT		(1 << (IP_CT_UNTRACKED + 1))
++#define NF_CT_STATE_UNTRACKED_BIT		(1 << 6)
  
- 	kfree(qp);
+ /* Bitset representing status of connection. */
+ enum ip_conntrack_status {
