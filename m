@@ -1,38 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1163736AbeCBA2A (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 19:28:00 -0500
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:33538 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1163255AbeCBA16 (ORCPT
+        id S1163677AbeCBAgQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 19:36:16 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:39550 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163343AbeCBAgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 19:27:58 -0500
-X-Google-Smtp-Source: AG47ELudOTHwNhJhPjnkaqP5pBXMOVISD0EOuNcSwO6NWYxe8mRGhzyHAJ9rjO9b9ePij2VkFCCZChPxJmc/FTZpjI8=
+        Thu, 1 Mar 2018 19:36:13 -0500
+X-Google-Smtp-Source: AG47ELvZUWCpZSguPuIyrZdyNLFEgCBMIpbs51txNGrr7vQtMYouYvFbioRRq+eg1fMVt7nk7m9x16VJ/w9g3XasN6o=
 MIME-Version: 1.0
-In-Reply-To: <20180301182436.GI12864@sirena.org.uk>
-References: <CAOMZO5BsSpi_40ky5L_XafxNULnprphv9nhPCQVNgi+vmexD+Q@mail.gmail.com>
- <20180301182436.GI12864@sirena.org.uk>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 1 Mar 2018 21:27:57 -0300
-Message-ID: <CAOMZO5CnePJqXnb_14FaWxjx0AC4oT0m_SqFtwPjwjskquSYPw@mail.gmail.com>
-Subject: Re: regmap: Failed to create debugfs directory
-To: Mark Brown <broonie@kernel.org>
-Cc: brgl@bgdev.pl, david@lechnology.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
+References: <20180228234006.21093-1-logang@deltatee.com> <20180228234006.21093-3-logang@deltatee.com>
+ <20180301174450.GF13722@bhelgaas-glaptop.roam.corp.google.com> <d69d59c0-6182-cce7-7ba4-8552ba95bef5@deltatee.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 1 Mar 2018 16:36:12 -0800
+Message-ID: <CAPcyv4hj5XJrsKHxZEWTSdrDAv0k7tf1ptb7_2FpTGpxqY5jUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] PCI/P2PDMA: Add sysfs group to display p2pmem stats
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Thu, Mar 1, 2018 at 4:15 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+> On 01/03/18 10:44 AM, Bjorn Helgaas wrote:
+>>
+>> I think these two statements are out of order, since the attributes
+>> dereference pdev->p2pdma.  And it looks like you set "error"
+>> unnecessarily, since you return immediately looking at it.
+>
+>
+> Per the previous series, sysfs_create_group is must_check for some reason. I
+> had a printk there but you didn't think it was necessary. So assigning it to
+> error is the only way to squash the warning.
 
-On Thu, Mar 1, 2018 at 3:24 PM, Mark Brown <broonie@kernel.org> wrote:
-
-> Is this triggered by 9b947a13e7f6017f18 (regmap: use debugfs even when
-> no device)?
-
-Yes, exactly. If I revert this commit the warnings are gone.
-
-Should I send a revert or is there another way to solve it?
-
-Thanks
+Why not fail the setup if the sysfs_create_group() fails? Sure, it may
+not be strictly required for userspace to have access to these
+attributes, but it seems hostile that userspace can't make assumptions
+about the presence of the "p2pmem" directory relative to the
+capability being setup.
