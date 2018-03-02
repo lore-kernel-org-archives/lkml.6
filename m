@@ -1,81 +1,71 @@
-Return-Path: <tcminyard@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520001571; cv=none;
+Return-Path: <ukl@pengutronix.de>
+X-Google-Smtp-Source: AG47ELsAYmQ9dGbBqwtVfnVQ5QO0GuJmK9yk6z/MlsDqTysGCPbfq4VFVj0EFTcmYy7P8Rddw554
+ARC-Seal: i=1; a=rsa-sha256; t=1519999251; cv=none;
         d=google.com; s=arc-20160816;
-        b=wLlT1RK+wuWMaRKsRzBt/M2fNQftri7uFKwsy4YmUdZfzz/vdYzT3BEaMxPMjZWnN4
-         nZavvQTsvRmvV+fAmIjq4Z9Wv+WOHzboEv9n8C9WkMSvWoMYdW2WEOF/pQrnL8s3B7F7
-         QMFAwJrqSERCMcWVXZ5gCbpW4O+pxxyZxthxMlTsR43JFnGkIJTu9n3FdotN2o6YhOzp
-         nkM5zNORAOtFytOeUo+Ggl5OubUpVK4hQgjN7AE1v57Z90BBKvt5gyMdp2Ycu3nXl6fD
-         8QiyXNEqq7j13c4MIye6Kdu1IDJICh9eS7t94+GTEshcLm0rV896FhWr6dAfkDQWw6r8
-         bxFA==
+        b=DFAnAOKgM/NaENvdqv6EHtRio4ci35e1wp3S5ukuUCqmB9tw1en37dBi7nQC4zGjj4
+         oLc2zo7mG+U2e/5K57jNZGAq7a/snzBFI+ubdTjpUo0R4hoTkV9PrENoYezHiWjr3WWm
+         3g8qvlba8zi+ikz4t2OanciN/mFZRFDfIBS+ox7TWMnRQFNRGnDuG/1vDvhA7WwkgC1W
+         /BeZ+eibkyeyMtSJj3iY/4us0WvQBwEpa9lZ6hM8gY6llzaIIQ/JJXvg6Oa3Ehj6Ct/0
+         unM7oqD/XqkywH3MhzcCCHBG4l22XTyac7e7rQRpC6ylBkXPzv6rTwgJrxSnOr7r/hzI
+         HdCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:reply-to
-         :sender:dkim-signature:arc-authentication-results;
-        bh=/tvyef9u9h4cFj9mJgLmj+vwzsfaRavuUjQuGMMd3Og=;
-        b=mJf/jEa8vhG9oXD/rPg8OeRE87gfXR2G22XMUpds9ukVEQDrBwWE1BvFZTC3peCOKU
-         9Wp5TgTi6rnKDGvSkvvaS289jWa/g6RKV3mbNx7puTGKR9kJ4LfoIQIO7N3izALhfYxB
-         KXNYGOZM5CMwNK2MuAQd2ZpJzNTgp2QkIxO/QlBuvBGdhoFEtXke5ZpstDqniXVNj/DK
-         eY9gn1MdThpIlcSdHCyJJqFsX8f/Bqva/wSU2CAVA23a88r5PFhSspjl8HvbKafLNo/m
-         WZA9e8OP+wkKQOpKw4EXTe8grUrJkMF/bpssU7Uo+KiRMmdmh+AUN0Mv9INR78L798Co
-         0qqg==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=V+osiN+6ZU1jmhYsCGSRwIj3EFDU3Pi9tS6ZojeSb2g=;
+        b=05UsFkwJGzx8vPvN9vi5dbeWFJHTYLkAyMenpY12Go7L4kfWXqmvV7Pq9OLU1rAMe/
+         TOHIxWjCewUhszpr2i5GL3TTmhplfpOK+lASgCsy9A6QnG8LjKIUj+oRUUvd8HOH++vN
+         JDCxPm/sm12UyA6oi4UJWZWjvVwslb8HKQ2dpTshjHmFsJgciO2A/+tT/OBgqSMcbwko
+         A8fKPld4OSH26AUKaFgH1rOwBOb59cEq+/3RHv5d+hDPLrCXTqbJv7dgkeXGYGqv25TV
+         Zu3VkqlZ6dKKekp2+ZhHPoR1ym/ORJC22nT6ZeYwDcJNz9xLuAiWfWMDE2TsDAWliXAp
+         JfiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OOUelweo;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
+       spf=pass (google.com: domain of ukl@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=ukl@pengutronix.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OOUelweo;
-       spf=pass (google.com: domain of tcminyard@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tcminyard@gmail.com
-X-Google-Smtp-Source: AG47ELvHoD24HY6MDFhq+ATFAULVDVE9Ru/v1EVUOsAMyEvhxDmM+8ME0aKadcHPRnID4wDF+IHchQ==
-Sender: Corey Minyard <tcminyard@gmail.com>
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH] ipmi: use ARRAY_SIZE for poweroff_functions array sizing
- calculation
-To: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- openipmi-developer@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180302141451.656-1-colin.king@canonical.com>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <73ab71b3-a2dd-1aa9-4c4c-57b761c6cdab@acm.org>
-Date: Fri, 2 Mar 2018 08:39:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+       spf=pass (google.com: domain of ukl@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=ukl@pengutronix.de
+Date: Fri, 2 Mar 2018 15:00:50 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Gavin Schenk <g.schenk@eckelmann.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, dcb314@hotmail.com
+Subject: Re: [PATCH] siox: fix possible buffer overflow in device_add_store
+Message-ID: <20180302140050.eawswobo3fpkj52i@pengutronix.de>
+References: <20180214142502.20787-1-g.schenk@eckelmann.de>
+ <20180214170021.pf2di46t2ggfepim@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180302141451.656-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <20180214170021.pf2di46t2ggfepim@pengutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: gregkh@linuxfoundation.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593835618533277959?=
-X-GMAIL-MSGID: =?utf-8?q?1593837168483726962?=
+X-GMAIL-THRID: =?utf-8?q?1592386720059475890?=
+X-GMAIL-MSGID: =?utf-8?q?1593834734822080123?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/02/2018 08:14 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Use the ARRAY_SIZE macro on a array poweroff_functions to determine
-> size of the array. Improvement suggested by Coccinelle.
+Hello Greg,
 
-Queued for next release.Â  Thanks!
+On Wed, Feb 14, 2018 at 06:00:21PM +0100, Uwe Kleine-König wrote:
+> On Wed, Feb 14, 2018 at 03:25:02PM +0100, Gavin Schenk wrote:
+> > Width 20 given in format string is larger than destination
+> > buffer 'type[20]', use %19s to prevent overflowing it.
+> > 
+> > Fixes: bbecb07fa0af ("siox: new driver framework for eckelmann SIOX")
+> > Reported-by: David Binderman <dcb314@hotmail.com>
+> > Signed-off-by: Gavin Schenk <g.schenk@eckelmann.de>
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
--corey
+is this patch still in your patch queue? The patch didn't appear in next
+yet.
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/char/ipmi/ipmi_poweroff.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_poweroff.c b/drivers/char/ipmi/ipmi_poweroff.c
-> index 07fa366bc8f0..fccb1e9fd3b7 100644
-> --- a/drivers/char/ipmi/ipmi_poweroff.c
-> +++ b/drivers/char/ipmi/ipmi_poweroff.c
-> @@ -519,8 +519,7 @@ static struct poweroff_function poweroff_functions[] = {
->   	  .detect		= ipmi_chassis_detect,
->   	  .poweroff_func	= ipmi_poweroff_chassis },
->   };
-> -#define NUM_PO_FUNCS (sizeof(poweroff_functions) \
-> -		      / sizeof(struct poweroff_function))
-> +#define NUM_PO_FUNCS ARRAY_SIZE(poweroff_functions)
->   
->   
->   /* Called on a powerdown request. */
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
