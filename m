@@ -1,83 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1424035AbeCBNNm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:13:42 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55852 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1423737AbeCBNNX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:13:23 -0500
-X-Google-Smtp-Source: AG47ELvVuRQPAjKuMVIE54t1TZTEtAX048v5js1yelOHFKtpcE3ibMAGBkCtNrzx3S9Mq9+TY3oFWA==
-Subject: Re: [PATCH v3 01/25] dt-bindings: soc: qcom: Add bindings for APR bus
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        rohkumar@qti.qualcomm.com, spatakok@qti.qualcomm.com
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-2-srinivas.kandagatla@linaro.org>
- <20180213231244.ama4bwsehzuh5sr7@rob-hp-laptop>
- <ae65a9c8-85a3-5494-f4cc-1038fd8c9bd1@linaro.org>
- <20180218230414.dkd6kb6kd35arcyv@rob-hp-laptop>
- <636d4ac2-3bc2-7290-1645-0451c089cb8a@linaro.org>
- <CAL_JsqK3KFBGqpHRaURSrHew1HhObUvFYxuhND-FOQ4tCUaAHg@mail.gmail.com>
- <465a2ca7-9f74-8977-37ea-29fe3944c27c@linaro.org>
- <20180301203413.GN12864@sirena.org.uk>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <2608d36a-cf4e-5b06-a26a-8d4ee0bb41ad@linaro.org>
-Date: Fri, 2 Mar 2018 13:13:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1424258AbeCBNPw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:15:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:55100 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1423742AbeCBNPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 08:15:51 -0500
+Date: Fri, 2 Mar 2018 13:15:46 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Grzegorz Jaszczyk <jaz@semihalf.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during
+ machine_crash_shutdown
+Message-ID: <20180302131545.q2vf6uc3yofofqdb@lakrids.cambridge.arm.com>
+References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
+ <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
+ <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com>
+ <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
+ <20180302120556.xujh3hoy44y7ouz7@lakrids.cambridge.arm.com>
+ <CAH76GKNw=irEY8BjhkaMnKm5m6AeCz8ZN67vrWSC6ByBmMMh8g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301203413.GN12864@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH76GKNw=irEY8BjhkaMnKm5m6AeCz8ZN67vrWSC6ByBmMMh8g@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review,
+On Fri, Mar 02, 2018 at 01:59:27PM +0100, Grzegorz Jaszczyk wrote:
+> 2018-03-02 13:05 GMT+01:00 Mark Rutland <mark.rutland@arm.com>:
+> > Do you have a way to reproduce the problem?
+> >
+> > Is there an easy way to cause the watchdog to trigger a kdump as above,
+> > e.g. via LKDTM?
+> 
+> You can reproduce this problem by:
+> - enabling CONFIG_ARM_SBSA_WATCHDOG in your kernel
+> - passing via command-line: sbsa_gwdt.action=1 sbsa_gwdt.timeout=170
+> - then load/prepare crasdump kernel (I am doing it via kexec tool)
+> - echo 1 > /dev/watchdog
+> 
+> and after 170s the watchdog interrupt will hit triggering panic and
+> the whole kexec machinery will run. The sbsa_gwdt.timeout can't be too
+> small since it is also used for reset:
+> |----timeout-----(panic)----timeout-----reset.
+> If it is too small the crasdump kernel will not have enough time to start.
+> 
+> It is also reproducible with different interrupts, e.g. for test I put
+> the panic to i2c interrupt handler and it was behaving the same.
 
-On 01/03/18 20:34, Mark Brown wrote:
-> On Thu, Feb 22, 2018 at 10:03:42AM +0000, Srinivas Kandagatla wrote:
->> On 22/02/18 00:14, Rob Herring wrote:
+Do you see this for a panic() in *any* interrupt handler?
+
+Can you trigger the issue with magic-sysrq c, for example?
+
+> > I think you just mean GICv2 here. GICv2m is an MSI controller, and
+> > shouldn't interact with the SBSA watchdog's SPI.
 > 
->>> Am I saying a single DT node for this? Yes, perhaps.
->> Yes, I will give that a go.
->>
->> So we will endup having something like this in DT for one frontend and
->> backend dailink:
-> 
-> Let's not start encoding DPCM into DT, DPCM is very much an
-> implemntation detail of the current stack which we're gradually pushing
-> towards replacing with something better.  What we want to be doing is
-> just treating components inside the SoC the same as components in a
-> CODEC, the routing within a SoC being the same as in a CODEC and
-> similarly for externally connected devices.
-> 
->> 		fe@1 {
->>                  	is-fe;
->>                          link-name = "MultiMedia1";
-> 
-> In particular having the concept of "front end" in the DT is *very*
-> implementation specific.  We should just be describing the connections
-> that exist in the system.
-Yep, it makes sense. is-fe flag will be removed in next version, we can 
-determine this based on codec dai, so from DT side FE or BE should not 
-be any different.
+> Yes of course, I just wanted to mention that it has MSI controller.
+
+Can you please tell us which platform you're seeing this on?
 
 Thanks,
-srini
-
-> 
+Mark.
