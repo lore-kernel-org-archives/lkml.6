@@ -1,162 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1034214AbeCBH0s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 02:26:48 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33028 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932820AbeCBH0o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 02:26:44 -0500
-X-Google-Smtp-Source: AG47ELtxzTqfa0K3M0YyBcPPRVmPHzMtNhD8ZNtjByjvXNHbc1RtzkroTj4czc40IBHXRLv3CHMZvw==
-Date: Fri, 2 Mar 2018 16:26:56 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Dave Young <dyoung@redhat.com>
-Cc: vgoyal@redhat.com, bhe@redhat.com, mpe@ellerman.id.au,
-        bauerman@linux.vnet.ibm.com, prudo@linux.vnet.ibm.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 1/7] kexec_file: make an use of purgatory optional
-Message-ID: <20180302072655.GT6019@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Dave Young <dyoung@redhat.com>, vgoyal@redhat.com, bhe@redhat.com,
-        mpe@ellerman.id.au, bauerman@linux.vnet.ibm.com,
-        prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <20180227044814.24808-1-takahiro.akashi@linaro.org>
- <20180227044814.24808-2-takahiro.akashi@linaro.org>
- <20180302055859.GB15422@dhcp-128-65.nay.redhat.com>
- <20180302061114.GE15422@dhcp-128-65.nay.redhat.com>
+        id S936146AbeCBHbs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 02:31:48 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46928 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935717AbeCBHbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 02:31:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,411,1515484800";
+   d="scan'208";a="22274212"
+From: "Huang\, Ying" <ying.huang@intel.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Aaron Lu <aaron.lu@intel.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>, Kemi Wang <kemi.wang@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when picking pages to free
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+        <20180301062845.26038-3-aaron.lu@intel.com>
+        <20180301135518.GJ15057@dhcp22.suse.cz>
+Date: Fri, 02 Mar 2018 15:31:40 +0800
+In-Reply-To: <20180301135518.GJ15057@dhcp22.suse.cz> (Michal Hocko's message
+        of "Thu, 1 Mar 2018 14:55:18 +0100")
+Message-ID: <87r2p3c4rn.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180302061114.GE15422@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 02:11:14PM +0800, Dave Young wrote:
-> On 03/02/18 at 01:58pm, Dave Young wrote:
-> > On 02/27/18 at 01:48pm, AKASHI Takahiro wrote:
-> > > On arm64, crash dump kernel's usable memory is protected by
-> > > *unmapping* it from kernel virtual space unlike other architectures
-> > > where the region is just made read-only. It is highly unlikely that
-> > > the region is accidentally corrupted and this observation rationalizes
-> > > that digest check code can also be dropped from purgatory.
-> > > The resulting code is so simple as it doesn't require a bit ugly
-> > > re-linking/relocation stuff, i.e. arch_kexec_apply_relocations_add().
-> > > 
-> > > Please see:
-> > >    http://lists.infradead.org/pipermail/linux-arm-kernel/2017-December/545428.html
-> > > All that the purgatory does is to shuffle arguments and jump into a new
-> > > kernel, while we still need to have some space for a hash value
-> > > (purgatory_sha256_digest) which is never checked against.
-> > > 
-> > > As such, it doesn't make sense to have trampline code between old kernel
-> > > and new kernel on arm64.
-> > > 
-> > > This patch introduces a new configuration, ARCH_HAS_KEXEC_PURGATORY, and
-> > > allows related code to be compiled in only if necessary.
-> > > 
-> > > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > Cc: Baoquan He <bhe@redhat.com>
-> > > ---
-> > >  arch/powerpc/Kconfig | 3 +++
-> > >  arch/x86/Kconfig     | 3 +++
-> > >  kernel/kexec_file.c  | 6 ++++++
-> > >  3 files changed, 12 insertions(+)
-> > > 
-> > > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> > > index 73ce5dd07642..c32a181a7cbb 100644
-> > > --- a/arch/powerpc/Kconfig
-> > > +++ b/arch/powerpc/Kconfig
-> > > @@ -552,6 +552,9 @@ config KEXEC_FILE
-> > >  	  for kernel and initramfs as opposed to a list of segments as is the
-> > >  	  case for the older kexec call.
-> > >  
-> > > +config ARCH_HAS_KEXEC_PURGATORY
-> > > +	def_bool KEXEC_FILE
-> > > +
-> > >  config RELOCATABLE
-> > >  	bool "Build a relocatable kernel"
-> > >  	depends on PPC64 || (FLATMEM && (44x || FSL_BOOKE))
-> > > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > > index c1236b187824..f031c3efe47e 100644
-> > > --- a/arch/x86/Kconfig
-> > > +++ b/arch/x86/Kconfig
-> > > @@ -2019,6 +2019,9 @@ config KEXEC_FILE
-> > >  	  for kernel and initramfs as opposed to list of segments as
-> > >  	  accepted by previous system call.
-> > >  
-> > > +config ARCH_HAS_KEXEC_PURGATORY
-> > > +	def_bool KEXEC_FILE
-> > > +
-> > >  config KEXEC_VERIFY_SIG
-> > >  	bool "Verify kernel signature during kexec_file_load() syscall"
-> > >  	depends on KEXEC_FILE
-> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > index e5bcd94c1efb..990adae52151 100644
-> > > --- a/kernel/kexec_file.c
-> > > +++ b/kernel/kexec_file.c
-> > > @@ -26,7 +26,11 @@
-> > >  #include <linux/vmalloc.h>
-> > >  #include "kexec_internal.h"
-> > >  
-> > > +#ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
-> > >  static int kexec_calculate_store_digests(struct kimage *image);
-> > > +#else
-> > > +static int kexec_calculate_store_digests(struct kimage *image) { return 0; };
-> > > +#endif
-> > >  
-> > >  /* Architectures can provide this probe function */
-> > >  int __weak arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
-> > > @@ -520,6 +524,7 @@ int kexec_add_buffer(struct kexec_buf *kbuf)
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +#ifdef CONFIG_ARCH_HAS_KEXEC_PURGATORY
-> > >  /* Calculate and store the digest of segments */
-> > >  static int kexec_calculate_store_digests(struct kimage *image)
-> > >  {
-> > > @@ -1022,3 +1027,4 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
-> > >  
-> > >  	return 0;
-> > >  }
-> > > +#endif /* CONFIG_ARCH_HAS_KEXEC_PURGATORY */
-> > > -- 
-> > > 2.16.2
-> > > 
-> > 
-> > For this one, I think purgatory digest verification is still good to
-> > have, but I do not insist since this is arch specific.
-> > 
-> > If nobody else objects then I think I can ack the series after some
-> > testing passed.
-> 
-> For the #ifdefs, they can be changed to IS_ENABLED like other similar
-> thing.
+Michal Hocko <mhocko@kernel.org> writes:
 
-Ah, OK.
+> On Thu 01-03-18 14:28:44, Aaron Lu wrote:
+>> When freeing a batch of pages from Per-CPU-Pages(PCP) back to buddy,
+>> the zone->lock is held and then pages are chosen from PCP's migratetype
+>> list. While there is actually no need to do this 'choose part' under
+>> lock since it's PCP pages, the only CPU that can touch them is us and
+>> irq is also disabled.
+>> 
+>> Moving this part outside could reduce lock held time and improve
+>> performance. Test with will-it-scale/page_fault1 full load:
+>> 
+>> kernel      Broadwell(2S)  Skylake(2S)   Broadwell(4S)  Skylake(4S)
+>> v4.16-rc2+  9034215        7971818       13667135       15677465
+>> this patch  9536374 +5.6%  8314710 +4.3% 14070408 +3.0% 16675866 +6.4%
+>> 
+>> What the test does is: starts $nr_cpu processes and each will repeatedly
+>> do the following for 5 minutes:
+>> 1 mmap 128M anonymouse space;
+>> 2 write access to that space;
+>> 3 munmap.
+>> The score is the aggregated iteration.
+>
+> Iteration count I assume. I am still quite surprised that this would
+> have such a large impact.
 
-/* Calculate and store the digest of segments */
-static int kexec_calculate_store_digests(struct kimage *image)
-{
-        if (IS_ENABLED(ARCH_HAS_PURGATORY)) {
-                /* ... */
-        } else {
-                return 0;
-        }
-}
+The test is run with full load, this means near or more than 100
+processes will allocate memory in parallel.  According to Amdahl's law,
+the performance of a parallel program will be dominated by the serial
+part.  For this case, the part protected by zone->lock.  So small
+changes to code under zone->lock could make bigger changes to overall
+score.
 
-Many thanks,
--Takahiro AKASHI
-
-
-
-> 
-> > 
-> > Thanks
-> > Dave
+Best Regards,
+Huang, Ying
