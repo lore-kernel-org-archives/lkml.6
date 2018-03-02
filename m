@@ -1,420 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932120AbeCBTnV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 14:43:21 -0500
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34769 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752266AbeCBTnS (ORCPT
+        id S1752731AbeCBTtB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 14:49:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750924AbeCBTs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 14:43:18 -0500
-X-Google-Smtp-Source: AG47ELs9RvW3ULe6bLw4YdC76L/YCA6R1zEkYfwQzIeQSGx5fzqmdjTvXAuhNbB7yBWxAEwMIQy9Rg==
-From: Vivek Unune <npcomplete13@gmail.com>
-To: florian.fainelli@broadcom.com, hauke@hauke-m.de, zajec5@gmail.com,
-        jonmason@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vivek Unune <npcomplete13@gmail.com>
-Subject: [PATCH v2] ARM: dts: BCM5301X: Add support for Linksys EA9500
-Date: Fri,  2 Mar 2018 14:41:55 -0500
-Message-Id: <20180302194155.50808-1-npcomplete13@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <1489590033-4946-1-git-send-email-npcomplete13@gmail.com>
-References: <1489590033-4946-1-git-send-email-npcomplete13@gmail.com>
+        Fri, 2 Mar 2018 14:48:59 -0500
+Subject: Re: [PATCH v2 13/15] KVM: s390: Configure the guest's CRYCB
+To: David Hildenbrand <david@redhat.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+References: <1519741693-17440-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1519741693-17440-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <99b24fc7-3df9-6620-d1df-917214fbdda2@redhat.com>
+ <fdb264da-dd74-f380-78dc-7abc61f1484b@linux.vnet.ibm.com>
+ <081eab40-0bbd-5842-76bc-2974f4544529@redhat.com>
+ <4763e223-1c78-c9a3-42bc-2d3569a716ff@linux.vnet.ibm.com>
+ <56f576ba-4eee-696e-45aa-f4db1e96bd57@redhat.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Fri, 2 Mar 2018 14:48:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <56f576ba-4eee-696e-45aa-f4db1e96bd57@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18030219-0040-0000-0000-000004012448
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008610; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00997407; UDB=6.00507153; IPR=6.00776725;
+ MB=3.00019824; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-02 19:48:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030219-0041-0000-0000-0000080225AE
+Message-Id: <6e5e25e3-271e-bc19-cc82-75b62ca407f9@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-02_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803020232
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hardware Info
--------------
+On 03/02/2018 05:08 AM, David Hildenbrand wrote:
+> On 01.03.2018 21:42, Tony Krowiak wrote:
+>> On 03/01/2018 04:37 AM, David Hildenbrand wrote:
+>>> On 28.02.2018 21:45, Tony Krowiak wrote:
+>>>> On 02/28/2018 04:49 AM, David Hildenbrand wrote:
+>>>>>> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
+>>>>>> +{
+>>>>>> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>>>>> +	unsigned long events;
+>>>>>> +	int ret;
+>>>>>> +
+>>>>>> +	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
+>>>>>> +	events = VFIO_GROUP_NOTIFY_SET_KVM;
+>>>>>> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>>>>> +				     &events, &matrix_mdev->group_notifier);
+>>>>>> +
+>>>>>> +	ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
+>>>>>> +				      matrix_mdev->matrix);
+>>>>>> +	if (ret)
+>>>>>> +		return ret;
+>>>>>> +
+>>>>>> +	ret = kvm_ap_enable_ie_mode(matrix_mdev->kvm);
+>>>>> Can't this happen while the guest is already running? Or what hinders us
+>>>>> from doing that?
+>>>> I'm not sure exactly what you're asking here. Are you asking if the
+>>>> vfio_ap_mdev_open()
+>>>> function can be called multiple times while the guest is running? AFAIK
+>>>> this will be
+>>>> called only once when the mediated device's file descriptor is opened.
+>>>> This happens in
+>>>> QEMU when the -device vfio-ap device is realized.
+>>> Okay, but from a pure interface point of view, this could happen any
+>>> time, even while the guest is already running. Patching in the SCB of a
+>>> running VCPU is evil.
+>> How can this happen while the guest is running? QEMU opens the fd when the
+>> device is realized and AFAIK vfio mdev will not allow any other process to
+>> open it until the guest is terminated. What am I missing?
+> It can't happen right now (the way QEMU uses it), but the kernel
+> interface allows it, no?
+>
+> Anyhow, as discussed this should be handled directly while creating a
+> VCPU. Then also CPU hotplug is properly covered.
+Here is what I think we should do:
 
-Processor	- Broadcom BCM4709C0KFEBG dual-core @ 1.4 GHz
-Switch		- BCM53012 in BCM4709C0KFEBG & external BCM53125
-DDR3 RAM	- 256 MB
-Flash		- 128 MB (Toshiba TC58BVG0S3HTA00)
-2.4GHz		- BCM4366 4×4 2.4/5G single chip 802.11ac SoC
-Power Amp	- Skyworks SE2623L 2.4 GHz power amp (x4)
-5GHz x 2	- BCM4366 4×4 2.4/5G single chip 802.11ac SoC
-Power Amp	- PLX Technology PEX8603 3-lane, 3-port PCIe switch
-Ports		- 8 Ports, 1 WAN Ports
-Antennas	- 8 Antennas
-Serial Port	- @J6 [GND,TX,RX] (VCC NC)    115200 8n1
+* Set ECA.28 in the VCPU setup function based on whether the CPU model 
+feature
+   has been turned on by user space as you suggest.
 
-Tested with OpenWrt built with DSA driver and Kernel v4.14
+* Replace the kvm_ap_enable_ie_mode() call in the open() above with a 
+query of
+   the CPU model feature and return an error if it is not turned on.
 
-Note:
+Does this sound reasonable?
 
-"make sure that port 0 of the internal switch is not accidentally
-configured back to untagged since that would cause problem when
-terminating the VLAN tag on the SW side." - Florian Fainelli [1]
-
-This can be ensured by running following command in OpenWrt:
-
-bridge vlan add vid 1 dev extsw pvid tagged
-
-[1] https://www.spinics.net/lists/arm-kernel/msg590992.html
-
-Signed-off-by: Vivek Unune <npcomplete13@gmail.com>
----
-Changes in v2:
- - Properly define mdio mux, internal mdio, external mdio, mii bus
- - Now we define usb3 phy as a mdio node connected to internal mdio,
-   thanks to work done by Rafał Miłecki on the bcm usb3 phy mdio driver
- - Define external SW as a mdio-mii node connected to external mdio
----
- arch/arm/boot/dts/bcm47094-linksys-panamera.dts | 239 +++++++++++++++++++++++-
- arch/arm/boot/dts/bcm47094.dtsi                 |   6 +-
- arch/arm/boot/dts/bcm5301x.dtsi                 |  55 +++++-
- 3 files changed, 288 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm47094-linksys-panamera.dts b/arch/arm/boot/dts/bcm47094-linksys-panamera.dts
-index b6750f7..5f53207 100644
---- a/arch/arm/boot/dts/bcm47094-linksys-panamera.dts
-+++ b/arch/arm/boot/dts/bcm47094-linksys-panamera.dts
-@@ -7,7 +7,7 @@
- /dts-v1/;
- 
- #include "bcm47094.dtsi"
--#include "bcm5301x-nand-cs0-bch8.dtsi"
-+#include "bcm5301x-nand-cs0-bch1.dtsi"
- 
- / {
- 	compatible = "linksys,panamera", "brcm,bcm47094", "brcm,bcm4708";
-@@ -32,5 +32,242 @@
- 			linux,code = <KEY_WPS_BUTTON>;
- 			gpios = <&chipcommon 3 GPIO_ACTIVE_LOW>;
- 		};
-+
-+		rfkill {
-+				label = "WiFi";
-+				linux,code = <KEY_RFKILL>;
-+				gpios = <&chipcommon 16 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		reset {
-+				label = "Reset";
-+				linux,code = <KEY_RESTART>;
-+				gpios = <&chipcommon 17 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		wps {
-+			label = "bcm53xx:white:wps";
-+			gpios = <&chipcommon 22 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		usb2 {
-+			label = "bcm53xx:green:usb2";
-+			gpios = <&chipcommon 1 GPIO_ACTIVE_LOW>;
-+			trigger-sources = <&ohci_port2>, <&ehci_port2>;
-+			linux,default-trigger = "usbport";
-+		};
-+
-+		usb3 {
-+			label = "bcm53xx:green:usb3";
-+			gpios = <&chipcommon 2 GPIO_ACTIVE_LOW>;
-+			trigger-sources = <&ohci_port1>, <&ehci_port1>,
-+					  <&xhci_port1>;
-+			linux,default-trigger = "usbport";
-+		};
-+
-+		power {
-+			label = "bcm53xx:white:power";
-+			gpios = <&chipcommon 4 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		wifi-disabled {
-+			label = "bcm53xx:amber:wifi-disabled";
-+			gpios = <&chipcommon 0 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		wifi-enabled {
-+			label = "bcm53xx:white:wifi-enabled";
-+			gpios = <&chipcommon 5 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar1 {
-+			label = "bcm53xx:white:bluebar1";
-+			gpios = <&chipcommon 11 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar2 {
-+			label = "bcm53xx:white:bluebar2";
-+			gpios = <&chipcommon 12 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar3 {
-+			label = "bcm53xx:white:bluebar3";
-+			gpios = <&chipcommon 15 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		bluebar4 {
-+			label = "bcm53xx:white:bluebar4";
-+			gpios = <&chipcommon 18 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar5 {
-+			label = "bcm53xx:white:bluebar5";
-+			gpios = <&chipcommon 19 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar6 {
-+			label = "bcm53xx:white:bluebar6";
-+			gpios = <&chipcommon 20 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar7 {
-+			label = "bcm53xx:white:bluebar7";
-+			gpios = <&chipcommon 21 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		bluebar8 {
-+			label = "bcm53xx:white:bluebar8";
-+			gpios = <&chipcommon 8 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+};
-+
-+&usb2 {
-+	vcc-gpio = <&chipcommon 13 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&usb3 {
-+	vcc-gpio = <&chipcommon 14 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&mdio_mii_mux {
-+	status = "okay";
-+};
-+
-+&mdio_ext {
-+	status = "okay";
-+};
-+
-+&srab {
-+	compatible = "brcm,bcm53012-srab", "brcm,bcm5301x-srab";
-+	status = "okay";
-+	dsa,member = <0 0>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+			label = "lan7";
-+		};
-+
-+		port@2 {
-+			reg = <2>;
-+			label = "lan4";
-+		};
-+
-+		port@3 {
-+			reg = <3>;
-+			label = "lan8";
-+		};
-+
-+		port@4 {
-+			reg = <4>;
-+			label = "wan";
-+		};
-+
-+		port@5 {
-+			reg = <5>;
-+			ethernet = <&gmac0>;
-+			label = "cpu";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
-+		};
-+
-+		port@7 {
-+			reg = <7>;
-+			ethernet = <&gmac1>;
-+			label = "cpu";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
-+		};
-+
-+		port@8 {
-+			reg = <8>;
-+			ethernet = <&gmac2>;
-+			label = "cpu";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
-+		};
-+
-+		sw0_p0: port@0 {
-+			reg = <0>;
-+			label = "extsw";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+			};
-+		};
- 	};
- };
-+
-+&mdio_mii {
-+	status = "okay";
-+
-+		switch@0  {
-+			compatible = "brcm,bcm53125";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reset-gpios = <&chipcommon 10 GPIO_ACTIVE_LOW>;
-+			reset-names = "robo_reset";
-+			reg = <0>;
-+			dsa,member = <1 0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					label = "lan1";
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					label = "lan5";
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					label = "lan2";
-+				};
-+
-+				port@3 {
-+					reg = <3>;
-+					label = "lan6";
-+				};
-+
-+				port@4 {
-+					reg = <4>;
-+					label = "lan3";
-+				};
-+
-+				sw1_p8: port@8 {
-+					reg = <8>;
-+					ethernet = <&sw0_p0>;
-+					label = "cpu";
-+
-+					fixed-link {
-+						speed = <1000>;
-+						full-duplex;
-+					};
-+				};
-+			};
-+		};
-+};
-+
-diff --git a/arch/arm/boot/dts/bcm47094.dtsi b/arch/arm/boot/dts/bcm47094.dtsi
-index 4840a78..8f3ec57 100644
---- a/arch/arm/boot/dts/bcm47094.dtsi
-+++ b/arch/arm/boot/dts/bcm47094.dtsi
-@@ -6,10 +6,8 @@
- 
- #include "bcm4708.dtsi"
- 
--/ {
--	usb3_phy: usb3-phy {
--		compatible = "brcm,ns-bx-usb3-phy";
--	};
-+&usb3_phy {
-+	compatible = "brcm,ns-bx-usb3-phy";
- };
- 
- &uart0 {
-diff --git a/arch/arm/boot/dts/bcm5301x.dtsi b/arch/arm/boot/dts/bcm5301x.dtsi
-index 9a076c4..9e4386a 100644
---- a/arch/arm/boot/dts/bcm5301x.dtsi
-+++ b/arch/arm/boot/dts/bcm5301x.dtsi
-@@ -154,13 +154,6 @@
- 		clock-names = "phy-ref-clk";
- 	};
- 
--	usb3_phy: usb3-phy {
--		compatible = "brcm,ns-ax-usb3-phy";
--		reg = <0x18105000 0x1000>, <0x18003000 0x1000>;
--		reg-names = "dmp", "ccb-mii";
--		#phy-cells = <0>;
--	};
--
- 	axi@18000000 {
- 		compatible = "brcm,bus-axi";
- 		reg = <0x18000000 0x1000>;
-@@ -359,7 +352,55 @@
- 		reg = <0x18003000 0x8>;
- 		#size-cells = <1>;
- 		#address-cells = <0>;
-+	};
-+
-+	mdio-bus-mux {
-+		compatible = "mdio-mux-mmioreg";
-+		mdio-parent-bus = <&mdio>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x18003000 0x4>;
-+		mux-mask = <0x200>;
-+
-+		mdio_int: mdio@0 {		/* BIT(9) = 0 => internal mdio */
-+			reg = <0x0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			usb3_phy: usb3-phy@10 {
-+				compatible = "brcm,ns-ax-usb3-phy";
-+				reg = <0x10>;
-+				usb3-dmp-syscon = <&usb3_dmp>;
-+				#phy-cells = <0>;
-+			};
-+		};
-+
-+		mdio_ext: mdio@200 {		/* BIT(9) = 1 => external mdio */
-+			reg = <0x200>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+	};
-+
-+	mdio_mii_mux: mdio-mii-mux {
-+		compatible = "mdio-mux-mmioreg";
-+		mdio-parent-bus = <&mdio_ext>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x1800c1c0 0x4>;
-+		mux-mask = <0xc0>;		/* BIT(6) = mdc, BIT(7) = mdio */
- 		status = "disabled";
-+
-+		mdio_mii: mdio-mii@0 {
-+			reg = <0x0>;		/* Enable mii function */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+
-+	usb3_dmp: syscon@18105000 {
-+		reg = <0x18105000 0x1000>;
- 	};
- 
- 	i2c0: i2c@18009000 {
--- 
-2.9.3
+Would it be more appropriate in this case to rename the feature to
+KVM_S390_VM_CPU_FEAT_APIE?
+>
+>
