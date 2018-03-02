@@ -1,53 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1427455AbeCBPXl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 10:23:41 -0500
-Received: from mga02.intel.com ([134.134.136.20]:63442 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1427201AbeCBPXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 10:23:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,412,1515484800";
-   d="scan'208";a="21585475"
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: ak@linux.intel.com, eranian@google.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel/uncore: Fix Skylake UPI event format
-Date: Fri,  2 Mar 2018 07:22:30 -0800
-Message-Id: <1520004150-4855-1-git-send-email-kan.liang@linux.intel.com>
+        id S1427399AbeCBPXV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 10:23:21 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40629 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1427201AbeCBPWF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 10:22:05 -0500
+X-Google-Smtp-Source: AG47ELtwTzQ44gL9+tYtadICAwEb5fEQvQsYPxCXAEuJjf7Zf4l1DgyB4fWVmnVFeEBOrLHgwE4dFw==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH 10/12] lightnvm: pblk: rename ppaf* to addrf*
+Date: Fri,  2 Mar 2018 16:21:18 +0100
+Message-Id: <1520004080-27760-11-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
+References: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+In preparation for 2.0 support in pblk, rename variables referring to
+the address format to addrf and reserve ppaf for the 1.2 path.
 
-There is no event extension (bit 21) for SKX UPI.
-
-Using event instead of event_ext.
-
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Reported-by: Stephane Eranian <eranian@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- arch/x86/events/intel/uncore_snbep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/lightnvm/pblk-init.c  |  8 ++++----
+ drivers/lightnvm/pblk-sysfs.c |  4 ++--
+ drivers/lightnvm/pblk.h       | 16 ++++++++--------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 5be5e15..8ff1aac 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3618,7 +3618,7 @@ static struct intel_uncore_type skx_uncore_imc = {
- };
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 0ad06fa8c7c7..4df68a802551 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -80,7 +80,7 @@ static size_t pblk_trans_map_size(struct pblk *pblk)
+ {
+ 	int entry_size = 8;
  
- static struct attribute *skx_upi_uncore_formats_attr[] = {
--	&format_attr_event_ext.attr,
-+	&format_attr_event.attr,
- 	&format_attr_umask_ext.attr,
- 	&format_attr_edge.attr,
- 	&format_attr_inv.attr,
+-	if (pblk->ppaf_bitsize < 32)
++	if (pblk->addrf_len < 32)
+ 		entry_size = 4;
+ 
+ 	return entry_size * pblk->rl.nr_secs;
+@@ -229,7 +229,7 @@ static int pblk_set_addrf_12(struct nvm_geo *geo, struct nvm_addrf_12 *dst)
+ 	return dst->blk_offset + src->blk_len;
+ }
+ 
+-static int pblk_set_ppaf(struct pblk *pblk)
++static int pblk_set_addrf(struct pblk *pblk)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+@@ -241,7 +241,7 @@ static int pblk_set_ppaf(struct pblk *pblk)
+ 		return -EINVAL;
+ 	}
+ 
+-	pblk->ppaf_bitsize = pblk_set_addrf_12(geo, (void *)&pblk->ppaf);
++	pblk->addrf_len = pblk_set_addrf_12(geo, (void *)&pblk->addrf);
+ 
+ 	return 0;
+ }
+@@ -377,7 +377,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 	if (!pblk->r_end_wq)
+ 		goto free_bb_wq;
+ 
+-	if (pblk_set_ppaf(pblk))
++	if (pblk_set_addrf(pblk))
+ 		goto free_r_end_wq;
+ 
+ 	INIT_LIST_HEAD(&pblk->compl_list);
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index a4b3c6ca45a3..87bf51d13f48 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -117,12 +117,12 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+ 	struct nvm_addrf_12 *geo_ppaf;
+ 	ssize_t sz = 0;
+ 
+-	ppaf = (struct nvm_addrf_12 *)&pblk->ppaf;
++	ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
+ 	geo_ppaf = (struct nvm_addrf_12 *)&geo->addrf;
+ 
+ 	sz = snprintf(page, PAGE_SIZE,
+ 		"g:(b:%d)blk:%d/%d,pg:%d/%d,lun:%d/%d,ch:%d/%d,pl:%d/%d,sec:%d/%d\n",
+-			pblk->ppaf_bitsize,
++			pblk->addrf_len,
+ 			ppaf->blk_offset, ppaf->blk_len,
+ 			ppaf->pg_offset, ppaf->pg_len,
+ 			ppaf->lun_offset, ppaf->lun_len,
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 6607c41b23c0..40aee9e48af4 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -570,8 +570,8 @@ struct pblk {
+ 	struct pblk_line_mgmt l_mg;		/* Line management */
+ 	struct pblk_line_meta lm;		/* Line metadata */
+ 
+-	struct nvm_addrf ppaf;
+-	int ppaf_bitsize;
++	struct nvm_addrf addrf;
++	int addrf_len;
+ 
+ 	struct pblk_rb rwb;
+ 
+@@ -947,7 +947,7 @@ static inline int pblk_ppa_to_pos(struct nvm_geo *geo, struct ppa_addr p)
+ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+ 					      u64 line_id)
+ {
+-	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->ppaf;
++	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
+ 	struct ppa_addr ppa;
+ 
+ 	ppa.ppa = 0;
+@@ -964,7 +964,7 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+ static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
+ 							struct ppa_addr p)
+ {
+-	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->ppaf;
++	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
+ 	u64 paddr;
+ 
+ 	paddr = (u64)p.g.ch << ppaf->ch_offset;
+@@ -988,7 +988,7 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
+ 		ppa64.c.line = ppa32 & ((~0U) >> 1);
+ 		ppa64.c.is_cached = 1;
+ 	} else {
+-		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->ppaf;
++		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
+ 
+ 		ppa64.g.ch = (ppa32 & ppaf->ch_mask) >> ppaf->ch_offset;
+ 		ppa64.g.lun = (ppa32 & ppaf->lun_mask) >> ppaf->lun_offset;
+@@ -1011,7 +1011,7 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
+ 		ppa32 |= ppa64.c.line;
+ 		ppa32 |= 1U << 31;
+ 	} else {
+-		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->ppaf;
++		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
+ 
+ 		ppa32 |= ppa64.g.ch << ppaf->ch_offset;
+ 		ppa32 |= ppa64.g.lun << ppaf->lun_offset;
+@@ -1029,7 +1029,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
+ {
+ 	struct ppa_addr ppa;
+ 
+-	if (pblk->ppaf_bitsize < 32) {
++	if (pblk->addrf_len < 32) {
+ 		u32 *map = (u32 *)pblk->trans_map;
+ 
+ 		ppa = pblk_ppa32_to_ppa64(pblk, map[lba]);
+@@ -1045,7 +1045,7 @@ static inline struct ppa_addr pblk_trans_map_get(struct pblk *pblk,
+ static inline void pblk_trans_map_set(struct pblk *pblk, sector_t lba,
+ 						struct ppa_addr ppa)
+ {
+-	if (pblk->ppaf_bitsize < 32) {
++	if (pblk->addrf_len < 32) {
+ 		u32 *map = (u32 *)pblk->trans_map;
+ 
+ 		map[lba] = pblk_ppa64_to_ppa32(pblk, ppa);
 -- 
 2.7.4
