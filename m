@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1165063AbeCBEez (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 1 Mar 2018 23:34:55 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:53225 "EHLO
+        id S1422741AbeCBEfe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 1 Mar 2018 23:35:34 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:53186 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164994AbeCBEds (ORCPT
+        with ESMTP id S1164989AbeCBEdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Mar 2018 23:33:48 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w224WURB022085
+        Thu, 1 Mar 2018 23:33:47 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w224WURK022085
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -17,191 +17,154 @@ Cc: Sam Ravnborg <sam@ravnborg.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 00/11] Add Kconfig unit tests
-Date: Fri,  2 Mar 2018 13:31:50 +0900
-Message-Id: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 09/11] kconfig: unittest: test randconfig for choice in choice
+Date: Fri,  2 Mar 2018 13:31:59 +0900
+Message-Id: <1519965121-12017-10-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit 3b9a19e08960 ("kconfig: loop as long as we changed some symbols
+in randconfig") fixed randconfig where a choice contains a sub-choice.
+Prior to that commit, the sub-choice values were not set.
 
-I am applying various cleanups to Kconfig these days.
+This is complicated usage, but it is still used in the real world;
+drivers/usb/gadget/legacy/Kconfig is source'd in a choice context,
+then creates a sub-choice in it.
 
-However, I fear regressions.  I have been thinking of unit-tests.
+For the test case in this commit, there are 3 possible results.
 
-There are various cryptic parts in Kconfig and corner cases where
-it is difficult to notice breakage.  If unit-tests cover those,
-I will be able to apply changes more confidently.
+Case 1:
+  CONFIG_A=y
+  # CONFIG_B is not set
 
-This series introduces a unit-tests.  The framework is written based
-on pytest.  Also, this is written in Python 3.  Python 2 will retire
-in 2020.  So, I believe new python tools should be written in Python 3.
+Case 2:
+  # CONFIG_A is not set
+  CONFIG_B=y
+  CONFIG_C=y
+  # CONFIG_D is not set
 
-This is my Python 3 and pytest versions.
+Case 3:
+  # CONFIG_A is not set
+  CONFIG_B=y
+  # CONFIG_C is not set
+  CONFIG_D=y
+  CONFIG_E=y
 
-$ python3 --version
-Python 3.5.2
-$ python3 -m pytest --version
-This is pytest version 3.4.1, imported from /home/masahiro/.local/lib/python3.5/site-packages/pytest.py
+So, this test iterates several times, and checks if the result is
+either of the three.
 
-How to use?
------------
-
-Please make sure Python3 and pytest are installed on your system.
-
-Then, run "make testconfig"
-
-The result looks like as follows:
-
-$ make testconfig
-python3 -B -m pytest ./scripts/kconfig/tests \
--o cache_dir=/home/masahiro/workspace/bsp/linux-yamada/scripts/kconfig/tests/.cache \
-
-================================= test session starts =================================
-platform linux -- Python 3.5.2, pytest-3.4.1, py-1.5.2, pluggy-0.6.0 -- /usr/bin/python3
-cachedir: scripts/kconfig/tests/.cache
-rootdir: /home/masahiro/workspace/bsp/linux-yamada/scripts/kconfig/tests, inifile: pytest.ini
-collected 14 items
-
-scripts/kconfig/tests/auto_submenu/__init__.py::test PASSED                     [  7%]
-scripts/kconfig/tests/choice/__init__.py::test_oldask0 PASSED                   [ 14%]
-scripts/kconfig/tests/choice/__init__.py::test_oldask1 PASSED                   [ 21%]
-scripts/kconfig/tests/choice/__init__.py::test_allyes PASSED                    [ 28%]
-scripts/kconfig/tests/choice/__init__.py::test_allmod PASSED                    [ 35%]
-scripts/kconfig/tests/choice/__init__.py::test_allno PASSED                     [ 42%]
-scripts/kconfig/tests/choice/__init__.py::test_alldef PASSED                    [ 50%]
-scripts/kconfig/tests/choice_value_with_m_dep/__init__.py::test PASSED          [ 57%]
-scripts/kconfig/tests/err_recursive_inc/__init__.py::test PASSED                [ 64%]
-scripts/kconfig/tests/inter_choice/__init__.py::test PASSED                     [ 71%]
-scripts/kconfig/tests/new_choice_with_dep/__init__.py::test PASSED              [ 78%]
-scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py::test PASSED            [ 85%]
-scripts/kconfig/tests/rand_nested_choice/__init__.py::test PASSED               [ 92%]
-scripts/kconfig/tests/warn_recursive_dep/__init__.py::test PASSED               [100%]
-
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
 Changes in v2:
-  - Add backward compatibility for PYTHON
-  - Add 'randconfig' support
-  - Add docstring
-  - Fix various style errors detected by 'pep8' and 'pep257'
-  - coding style clean-up based on PEP8, PEP257
-  - shorten directory name  'auto_submenu_creation' -> 'auto_submenu'
-  - coding style clean-up based on PEP8, PEP257
-  - coding style clean-up based on PEP8, PEP257
-  - coding style clean-up based on PEP8, PEP257
-  - coding style clean-up based on PEP8, PEP257
   - Newly added
-  - Newly added
-  - Fix missing end quote
-  - coding style clean-up based on PEP8, PEP257
-  - coding style clean-up based on PEP8, PEP257
 
-Masahiro Yamada (11):
-  kbuild: define PYTHON2 and PYTHON3 variables instead of PYTHON
-  kconfig: unittest: add framework for Kconfig unit testing
-  kconfig: unittest: add basic 'choice' tests
-  kconfig: unittest: test automatic submenu creation
-  kconfig: unittest: test if new symbols in choice are asked
-  kconfig: unittest: check unneeded "is not set" with unmet dependency
-  kconfig: unittest: check visibility of tri-choice values in y choice
-  kconfig: unittest: test defconfig when two choices interact
-  kconfig: unittest: test randconfig for choice in choice
-  kconfig: unittest: test if recursive dependencies are detected
-  kconfig: unittest: test if recursive inclusion is detected
-
- Makefile                                           |   5 +-
- arch/ia64/Makefile                                 |   2 +-
- scripts/kconfig/Makefile                           |   8 +
- scripts/kconfig/tests/auto_submenu/Kconfig         |  50 ++++
- scripts/kconfig/tests/auto_submenu/__init__.py     |  12 +
- scripts/kconfig/tests/auto_submenu/expected_stdout |  10 +
- scripts/kconfig/tests/choice/Kconfig               |  54 ++++
- scripts/kconfig/tests/choice/__init__.py           |  40 +++
- .../kconfig/tests/choice/alldef_expected_config    |   5 +
- .../kconfig/tests/choice/allmod_expected_config    |   9 +
- scripts/kconfig/tests/choice/allno_expected_config |   5 +
- .../kconfig/tests/choice/allyes_expected_config    |   9 +
- .../kconfig/tests/choice/oldask0_expected_stdout   |  10 +
- scripts/kconfig/tests/choice/oldask1_config        |   2 +
- .../kconfig/tests/choice/oldask1_expected_stdout   |  15 ++
- .../kconfig/tests/choice_value_with_m_dep/Kconfig  |  20 ++
- .../tests/choice_value_with_m_dep/__init__.py      |  15 ++
- .../kconfig/tests/choice_value_with_m_dep/config   |   2 +
- .../tests/choice_value_with_m_dep/expected_config  |   3 +
- .../tests/choice_value_with_m_dep/expected_stdout  |   4 +
- scripts/kconfig/tests/conftest.py                  | 291 +++++++++++++++++++++
- scripts/kconfig/tests/err_recursive_inc/Kconfig    |   1 +
- .../kconfig/tests/err_recursive_inc/Kconfig.inc    |   1 +
- .../kconfig/tests/err_recursive_inc/__init__.py    |  10 +
- .../tests/err_recursive_inc/expected_stderr        |   4 +
- scripts/kconfig/tests/inter_choice/Kconfig         |  24 ++
- scripts/kconfig/tests/inter_choice/__init__.py     |  14 +
- scripts/kconfig/tests/inter_choice/defconfig       |   1 +
- scripts/kconfig/tests/inter_choice/expected_config |   4 +
- scripts/kconfig/tests/new_choice_with_dep/Kconfig  |  37 +++
- .../kconfig/tests/new_choice_with_dep/__init__.py  |  14 +
- scripts/kconfig/tests/new_choice_with_dep/config   |   3 +
- .../tests/new_choice_with_dep/expected_stdout      |  10 +
- .../kconfig/tests/no_write_if_dep_unmet/Kconfig    |  14 +
- .../tests/no_write_if_dep_unmet/__init__.py        |  19 ++
- scripts/kconfig/tests/no_write_if_dep_unmet/config |   1 +
- .../tests/no_write_if_dep_unmet/expected_config    |   5 +
- scripts/kconfig/tests/pytest.ini                   |   6 +
- scripts/kconfig/tests/rand_nested_choice/Kconfig   |  33 +++
- .../kconfig/tests/rand_nested_choice/__init__.py   |  16 ++
- .../tests/rand_nested_choice/expected_stdout0      |   2 +
- .../tests/rand_nested_choice/expected_stdout1      |   4 +
- .../tests/rand_nested_choice/expected_stdout2      |   5 +
- scripts/kconfig/tests/warn_recursive_dep/Kconfig   |  62 +++++
- .../kconfig/tests/warn_recursive_dep/__init__.py   |   9 +
- .../tests/warn_recursive_dep/expected_stderr       |  30 +++
- 46 files changed, 897 insertions(+), 3 deletions(-)
- create mode 100644 scripts/kconfig/tests/auto_submenu/Kconfig
- create mode 100644 scripts/kconfig/tests/auto_submenu/__init__.py
- create mode 100644 scripts/kconfig/tests/auto_submenu/expected_stdout
- create mode 100644 scripts/kconfig/tests/choice/Kconfig
- create mode 100644 scripts/kconfig/tests/choice/__init__.py
- create mode 100644 scripts/kconfig/tests/choice/alldef_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allmod_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allno_expected_config
- create mode 100644 scripts/kconfig/tests/choice/allyes_expected_config
- create mode 100644 scripts/kconfig/tests/choice/oldask0_expected_stdout
- create mode 100644 scripts/kconfig/tests/choice/oldask1_config
- create mode 100644 scripts/kconfig/tests/choice/oldask1_expected_stdout
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/config
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/expected_config
- create mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/expected_stdout
- create mode 100644 scripts/kconfig/tests/conftest.py
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/Kconfig.inc
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/__init__.py
- create mode 100644 scripts/kconfig/tests/err_recursive_inc/expected_stderr
- create mode 100644 scripts/kconfig/tests/inter_choice/Kconfig
- create mode 100644 scripts/kconfig/tests/inter_choice/__init__.py
- create mode 100644 scripts/kconfig/tests/inter_choice/defconfig
- create mode 100644 scripts/kconfig/tests/inter_choice/expected_config
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/config
- create mode 100644 scripts/kconfig/tests/new_choice_with_dep/expected_stdout
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/Kconfig
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/__init__.py
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/config
- create mode 100644 scripts/kconfig/tests/no_write_if_dep_unmet/expected_config
- create mode 100644 scripts/kconfig/tests/pytest.ini
+ scripts/kconfig/tests/rand_nested_choice/Kconfig   | 33 ++++++++++++++++++++++
+ .../kconfig/tests/rand_nested_choice/__init__.py   | 16 +++++++++++
+ .../tests/rand_nested_choice/expected_stdout0      |  2 ++
+ .../tests/rand_nested_choice/expected_stdout1      |  4 +++
+ .../tests/rand_nested_choice/expected_stdout2      |  5 ++++
+ 5 files changed, 60 insertions(+)
  create mode 100644 scripts/kconfig/tests/rand_nested_choice/Kconfig
  create mode 100644 scripts/kconfig/tests/rand_nested_choice/__init__.py
  create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout0
  create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout1
  create mode 100644 scripts/kconfig/tests/rand_nested_choice/expected_stdout2
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/Kconfig
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/__init__.py
- create mode 100644 scripts/kconfig/tests/warn_recursive_dep/expected_stderr
 
+diff --git a/scripts/kconfig/tests/rand_nested_choice/Kconfig b/scripts/kconfig/tests/rand_nested_choice/Kconfig
+new file mode 100644
+index 0000000..c591d51
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/Kconfig
+@@ -0,0 +1,33 @@
++choice
++	prompt "choice"
++
++config A
++	bool "A"
++
++config B
++	bool "B"
++
++if B
++choice
++	prompt "sub choice"
++
++config C
++	bool "C"
++
++config D
++	bool "D"
++
++if D
++choice
++	prompt "subsub choice"
++
++config E
++	bool "E"
++
++endchoice
++endif # D
++
++endchoice
++endif # B
++
++endchoice
+diff --git a/scripts/kconfig/tests/rand_nested_choice/__init__.py b/scripts/kconfig/tests/rand_nested_choice/__init__.py
+new file mode 100644
+index 0000000..9ceadf6
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/__init__.py
+@@ -0,0 +1,16 @@
++"""
++Set random values resursively in netsted choices.
++
++Kconfig can create a choice-in-choice structure by using 'if' statement.
++randconfig should correctly set randome choice values.
++
++Related Linux commit: 3b9a19e08960e5cdad5253998637653e592a3c29
++"""
++
++
++def test(conf):
++    for i in range(20):
++        assert conf.randconfig() == 0
++        assert (conf.config_contains('expected_stdout0') or
++                conf.config_contains('expected_stdout1') or
++                conf.config_contains('expected_stdout2'))
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout0 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
+new file mode 100644
+index 0000000..05450f3
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout0
+@@ -0,0 +1,2 @@
++CONFIG_A=y
++# CONFIG_B is not set
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout1 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
+new file mode 100644
+index 0000000..37ab295
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout1
+@@ -0,0 +1,4 @@
++# CONFIG_A is not set
++CONFIG_B=y
++CONFIG_C=y
++# CONFIG_D is not set
+diff --git a/scripts/kconfig/tests/rand_nested_choice/expected_stdout2 b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
+new file mode 100644
+index 0000000..849ff47
+--- /dev/null
++++ b/scripts/kconfig/tests/rand_nested_choice/expected_stdout2
+@@ -0,0 +1,5 @@
++# CONFIG_A is not set
++CONFIG_B=y
++# CONFIG_C is not set
++CONFIG_D=y
++CONFIG_E=y
 -- 
 2.7.4
