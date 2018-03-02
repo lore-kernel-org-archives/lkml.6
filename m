@@ -1,99 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1423358AbeCBQoN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 11:44:13 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:59282 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967014AbeCBQoL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 11:44:11 -0500
-Date: Sat, 3 Mar 2018 00:44:03 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: horia.geanta@nxp.com, aymen.sghaier@nxp.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
-Subject: Re: [PATCH v4 0/4] Enable CAAM on i.MX7s fix TrustZone issues
-Message-ID: <20180302164403.GG21579@gondor.apana.org.au>
-References: <20180222142250.31348-1-rui.silva@linaro.org>
+        id S968053AbeCBQoY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 11:44:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58214 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967014AbeCBQoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 11:44:18 -0500
+Date: Fri, 2 Mar 2018 16:44:13 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Grzegorz Jaszczyk <jaz@semihalf.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during
+ machine_crash_shutdown
+Message-ID: <20180302164411.fxdx72ttz7livz2e@lakrids.cambridge.arm.com>
+References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
+ <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
+ <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com>
+ <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
+ <20180302120556.xujh3hoy44y7ouz7@lakrids.cambridge.arm.com>
+ <CAH76GKNw=irEY8BjhkaMnKm5m6AeCz8ZN67vrWSC6ByBmMMh8g@mail.gmail.com>
+ <20180302131545.q2vf6uc3yofofqdb@lakrids.cambridge.arm.com>
+ <CAH76GKOe=+WTrw8QEJ43+fyEfRPuo7+ds8VNoMCUqSNBMtxkyg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180222142250.31348-1-rui.silva@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAH76GKOe=+WTrw8QEJ43+fyEfRPuo7+ds8VNoMCUqSNBMtxkyg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 22, 2018 at 02:22:46PM +0000, Rui Miguel Silva wrote:
-> For v4 I am taking over this patch series as all the left over patches were
-> implemented by me.
+On Fri, Mar 02, 2018 at 02:52:07PM +0100, Grzegorz Jaszczyk wrote:
+> 2018-03-02 14:15 GMT+01:00 Mark Rutland <mark.rutland@arm.com>:
+> > Do you see this for a panic() in *any* interrupt handler?
 > 
-> V4:
-> - removed patch: [PATCH v3 2/5] crypto: caam: Fix endless loop when RNG is
-> already initialized from the series since Horia presented a better fix for the
->  endless loop in case of fail to acquire DECO:
->  225ece3e7dad4 crypto: caam - fix endless loop when DECO acquire fails
-> - add Fabio Estevam reviewed by tag in PATCH 3/3.
-> - removed CAAM ERA from dts since bootloader will add it - Horia.
+> I only test with this two interrupt handlers: watchdog and i2c but I
+> think it will behave the same with others - I can try with other if
+> you want, any suggestion which? Maybe with some PPI interrupt instead?
+> >
+> > Can you trigger the issue with magic-sysrq c, for example?
 > 
-> V3:
-> - Added Cc: clk driver maintainers - Fabio Estevam
-> - Added Cc: i.MX arch maintainers - Fabio Estevam
-> - Removed bouncing email address for Herbert Xu
-> 
-> V2-resend:
-> - Patch 0005 lost in the ether - resending
-> 
-> V2:
-> - Endian detection is ok with TrustZone enabled Horia.
->   Endian detection logic tested with TrustZone enabled. The register that
->   this relies on though isn't affected by the lock-down in the first page.
->   Assuming set of affected registers is actually just the 'deco' registers
->   though there is no formal statement of that, that I am aware of.
-> 
-> - Moving of TrustZone work-around into u-boot
->   This set actually doesn't need to deal with TrustZone at all now but, for
->   the sake of consistency keeping thread title
-> 
->   https://patchwork.ozlabs.org/patch/866460/
->   https://patchwork.ozlabs.org/patch/866462/
->   https://patchwork.ozlabs.org/patch/865890/
-> 
-> - Reworded endless loop fix to read a bit better
-> 
-> - Fixes to DTS additions - Rui
-> 
-> - Fixes to number of clocks declared - Rui
-> 
-> V1:
-> This patch-set enables CAAM on the i.MX7s and fixes a number of issues
-> identified with the CAAM driver and hardware when TrustZone mode is
-> enabled.
-> 
-> The first block of patches are simple bug-fixes, followed by a second block
-> of patches which are simple enabling patches for the i.MX7Solo - note we
-> aren't enabling for the i.MX7Dual since we don't have hardware to test that
-> out but it should be a 1:1 mapping for others to enable when appropriate.
-> 
-> Cheers,
->     Rui
-> 
-> Rui Miguel Silva (4):
->   crypto: caam - Fix null dereference at error path
->   crypto: caam - do not use mem and emi_slow clock for imx7x
->   clk: imx7d: add CAAM clock
->   ARM: dts: imx7s: add CAAM device node
-> 
->  arch/arm/boot/dts/imx7s.dtsi            | 30 +++++++++++++++++++++++
->  drivers/clk/imx/clk-imx7d.c             |  1 +
->  drivers/crypto/caam/ctrl.c              | 42 +++++++++++++++++++--------------
->  include/dt-bindings/clock/imx7d-clock.h |  3 ++-
->  4 files changed, 57 insertions(+), 19 deletions(-)
+> There is no problem when I trigger it via 'echo c >
+> /proc/sysrq-trigger' - it works well all the time. The problem appears
+> only, when the kexec/kdump procedure is triggered from interrupt
+> context
 
-Patches 1 and 2 applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I'd meant that you'd send sysrq + c over serial, rather than writing to
+/proc/sysrq-trigger. That way, the panic will be in the context of the
+UART IRQ handler.
+
+If that shows the issue, that's ilikely to be the easiest way for
+someone else to reproduce and investigate this.
+
+Thanks,
+Mark.
