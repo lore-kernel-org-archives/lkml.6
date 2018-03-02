@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt3HfFFsfQNaOyTg/o8IKbfWCufob30xKlQDssrwSmvNRWFM89GWlB07dbMX2PE+eDlcc3B
-ARC-Seal: i=1; a=rsa-sha256; t=1519980909; cv=none;
+X-Google-Smtp-Source: AG47ELvZX0MtcwGhF5pvn5/Ak90T1G6/6lmws6EqQOh71T18cLe+UkUuf7CfLI/xsVY7Jhr6+EyA
+ARC-Seal: i=1; a=rsa-sha256; t=1519980905; cv=none;
         d=google.com; s=arc-20160816;
-        b=yWCFiUEd36ce33RDPLclMA5cSOv0U3bCxhT/Z3Av3IAi+NTgZKFwIDhWT55AjxzdUy
-         btik9KO6F4Jiyf3+bovyLkl18Ns1jR8yBQh++hA2+85YIVNQtOYpBWGZiebTzIgA6kGV
-         kW9YR73R56umFQnEDxZAFIdxs6KZvL9w/l6aDWdwg/3xR9I1WCgo83RnqxWYzQ+ziVpU
-         ApAR7F8i5bot3vULYVSgxE7i2ZmIIW4ouOGeWOGSzT1dgTs7Wa/trsfGAGkoP2QaicuO
-         ruRpMRF7dR8o2O+CiI0ZmI5hq65cwCOH9joHNWfA96ghasuAokVrdsxsRf2mLAIMUOTL
-         QYZw==
+        b=EcBsu/2F+4CE0n9eWTlLvRSyiTIzZzCYYsBdNx54tx3+FJD6/J10TV+nA4HX/zK7rG
+         GDHqCRV4z61Q1C8AuvpOPnVmz18cUAmEfrpRYTP7HoR2qNwa4th63Mc/u8YQ82exj2mI
+         9TiEXGaqe5x4yk15Qoc+nIhrSP1H/odhnsOywFBAhf+qOYUzgqY5PVwHvti2tlrAywHY
+         oLU0xmTkg6ak8GNJXA1zCY/JWorFo9G/UcJEc7gOWN/IBpyHTpkofMfZzNvqDwlW5RwQ
+         76JXb9hhsJz2abAzRHni+kR73g/aaAgJUCaPjPWHz0yWB/3U6Ba2josnMHt6qb1C4s0u
+         w6qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fny+T23kWrBWIUV2RVYeO8H7mGx5LJBymKWCGY9tjQQ=;
-        b=PAGS0SV+firlgaE7oVLh4V18AziNZzxwJKfdM+6mp3iSjnNBDueR/k/XaPmJHGocHm
-         lejsHXSyaqBvMjCIOEzDEhdS/e0utEGlblA0xIJBs5FUmXLXkHFmxFDNzig5W/OezPfY
-         QVzmbP17KKTLWYtxNrdXkQez20m454Ic0VC/yFNi1P+MENCTAnPsLQJ5RVZXHoR+17Jo
-         zbKBNTT5pBIu5MqmjiSeWzmt1oTLhw0rjMIdF6N9qpwTcA/sZTRcDTLzazekRhyQb92t
-         DX4j8mGLGn/deENIh99TSMSbV92+o7D6EdLhsWqYZ/jX1Nx/Ofl209q/TZNk7VWu8N2r
-         gEQQ==
+        bh=1UkJJRYATthk9mA+e09yK7DmgZcJGO4aWRB9DZ0e7i4=;
+        b=Mru75aUcEQC53zjhEHfDOEuLeP4NcDaI/mn8a0MROMG7b9DFVOAJ0kPpjl4mCPXJjC
+         yorWW3mSvg+aF9JSaRZASHStb+kdO3ZQng54Rmu3CToxAUsHeKtvdZsP4aWunGaDDbZ7
+         BjDDFyBxtyUpaM7NRa0K/kd6MkfhlOg2tlk8RkXBBv9dYXbEn1TA7iWVgZhLo4jAUa+4
+         3z1S/d2Fyh+5/lL2dR/ObX3l9sQKdlgyJ1lU/DpQXo9+G+KTj28BvU8lCTTld2qUbK/u
+         DkoR9c+6lLe1MYUqhY6ld58bWSPcjYe8OCVCh5lK6pu4EoBmGXd9kaA3qMBrTBkPtGsT
+         julw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 83.175.124.243 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Eduardo Otubo <otubo@redhat.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 28/34] mdio-sun4i: Fix a memory leak
-Date: Fri,  2 Mar 2018 09:51:24 +0100
-Message-Id: <20180302084437.813692671@linuxfoundation.org>
+Subject: [PATCH 4.4 27/34] xen-netfront: enable device after manual module load
+Date: Fri,  2 Mar 2018 09:51:23 +0100
+Message-Id: <20180302084437.763619472@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180302084435.842679610@linuxfoundation.org>
 References: <20180302084435.842679610@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1593815310363107750?=
-X-GMAIL-MSGID: =?utf-8?q?1593815501884490113?=
+X-GMAIL-THRID: =?utf-8?q?1593815306641088117?=
+X-GMAIL-MSGID: =?utf-8?q?1593815498444500138?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +51,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Eduardo Otubo <otubo@redhat.com>
 
 
-[ Upstream commit 56c0290202ab94a2f2780c449395d4ae8495fab4 ]
+[ Upstream commit b707fda2df4070785d0fa8a278aa13944c5f51f8 ]
 
-If the probing of the regulator is deferred, the memory allocated by
-'mdiobus_alloc_size()' will be leaking.
-It should be freed before the next call to 'sun4i_mdio_probe()' which will
-reallocate it.
+When loading the module after unloading it, the network interface would
+not be enabled and thus wouldn't have a backend counterpart and unable
+to be used by the guest.
 
-Fixes: 4bdcb1dd9feb ("net: Add MDIO bus driver for the Allwinner EMAC")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The guest would face errors like:
+
+  [root@guest ~]# ethtool -i eth0
+  Cannot get driver information: No such device
+
+  [root@guest ~]# ifconfig eth0
+  eth0: error fetching interface information: Device not found
+
+This patch initializes the state of the netfront device whenever it is
+loaded manually, this state would communicate the netback to create its
+device and establish the connection between them.
+
+Signed-off-by: Eduardo Otubo <otubo@redhat.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio-sun4i.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/xen-netfront.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/phy/mdio-sun4i.c
-+++ b/drivers/net/phy/mdio-sun4i.c
-@@ -128,8 +128,10 @@ static int sun4i_mdio_probe(struct platf
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1331,6 +1331,7 @@ static struct net_device *xennet_create_
  
- 	data->regulator = devm_regulator_get(&pdev->dev, "phy");
- 	if (IS_ERR(data->regulator)) {
--		if (PTR_ERR(data->regulator) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(data->regulator) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto err_out_free_mdiobus;
-+		}
+ 	netif_carrier_off(netdev);
  
- 		dev_info(&pdev->dev, "no regulator found\n");
- 	} else {
++	xenbus_switch_state(dev, XenbusStateInitialising);
+ 	return netdev;
+ 
+  exit:
