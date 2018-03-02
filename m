@@ -1,56 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934357AbeCBXJW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 18:09:22 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:40535 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934231AbeCBXJA (ORCPT
+        id S934382AbeCBXJb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 18:09:31 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39176 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934231AbeCBXJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 18:09:00 -0500
-X-Google-Smtp-Source: AG47ELs9eGRopixhW3VF1r6EdY2InNLGHYjc6lfHRX8lI5iUBBkv3uyYjRdg5d44T0URohlh3ADwEg==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: david.laight@aculab.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        linux-kernel@vger.kernel.org (open list), opendmb@gmail.com,
-        davem@davemloft.net
-Subject: [PATCH v2 4/4] net: phy: broadcom: Use strlcpy() for ethtool::get_strings
-Date: Fri,  2 Mar 2018 15:08:39 -0800
-Message-Id: <20180302230839.31468-5-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180302230839.31468-1-f.fainelli@gmail.com>
-References: <20180302230839.31468-1-f.fainelli@gmail.com>
+        Fri, 2 Mar 2018 18:09:28 -0500
+X-Google-Smtp-Source: AG47ELswpOVG9e8mtiG+uhiWr4+5l/2/15lAyeDFsZLkxFd4T44XVqQLLc+CkP/WLv2Gu3vrSVmERw==
+To: Rob Herring <robh+dt@kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Subject: [GIT PULL] of_overlay_fdt_apply() for 4.17
+Message-ID: <6868959a-029f-01b0-3411-fcd47d3cd001@gmail.com>
+Date: Fri, 2 Mar 2018 15:09:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our statistics strings are allocated at initialization without being
-bound to a specific size, yet, we would copy ETH_GSTRING_LEN bytes using
-memcpy() which would create out of bounds accesses, this was flagged by
-KASAN. Replace this with strlcpy() to make sure we are bound the source
-buffer size and we also always NUL-terminate strings.
+Hi Rob,
 
-Fixes: 820ee17b8d3b ("net: phy: broadcom: Add support code for reading PHY counters")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/phy/bcm-phy-lib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please pull the changes to create the overlay FDT apply API.
 
-diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
-index 171010eb4d9c..5ad130c3da43 100644
---- a/drivers/net/phy/bcm-phy-lib.c
-+++ b/drivers/net/phy/bcm-phy-lib.c
-@@ -341,8 +341,8 @@ void bcm_phy_get_strings(struct phy_device *phydev, u8 *data)
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(bcm_phy_hw_stats); i++)
--		memcpy(data + i * ETH_GSTRING_LEN,
--		       bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
-+		strlcpy(data + i * ETH_GSTRING_LEN,
-+			bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
- }
- EXPORT_SYMBOL_GPL(bcm_phy_get_strings);
- 
--- 
-2.14.1
+This is the v6 changes.
+
+-Frank
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/frowand/linux.git tags/overlay_apply_fdt_v6-for-4.17
+
+for you to fetch changes up to 50079779c77ed1639645604f8ecfbd38cb3cec79:
+
+  of: improve reporting invalid overlay target path (2018-03-02 14:16:29 -0800)
+
+----------------------------------------------------------------
+Move duplicating and unflattening of an overlay flattened devicetree
+(FDT) into the overlay application code.  To accomplish this,
+of_overlay_apply() is replaced by of_overlay_fdt_apply().
+
+----------------------------------------------------------------
+Frank Rowand (4):
+      of: change overlay apply input data from unflattened to FDT
+      of: Documentation: of_overlay_apply() replaced by of_overlay_fdt_apply()
+      of: convert unittest overlay devicetree source to sugar syntax
+      of: improve reporting invalid overlay target path
+
+ Documentation/devicetree/overlay-notes.txt       |   4 +-
+ drivers/of/Kconfig                               |   1 +
+ drivers/of/overlay.c                             | 134 ++++++++--
+ drivers/of/resolver.c                            |   6 -
+ drivers/of/unittest-data/Makefile                |  28 ++-
+ drivers/of/unittest-data/overlay.dts             | 101 ++++----
+ drivers/of/unittest-data/overlay_0.dts           |  14 ++
+ drivers/of/unittest-data/overlay_1.dts           |  14 ++
+ drivers/of/unittest-data/overlay_10.dts          |  27 ++
+ drivers/of/unittest-data/overlay_11.dts          |  28 +++
+ drivers/of/unittest-data/overlay_12.dts          |  14 ++
+ drivers/of/unittest-data/overlay_13.dts          |  14 ++
+ drivers/of/unittest-data/overlay_15.dts          |  30 +++
+ drivers/of/unittest-data/overlay_2.dts           |   9 +
+ drivers/of/unittest-data/overlay_3.dts           |   9 +
+ drivers/of/unittest-data/overlay_4.dts           |  18 ++
+ drivers/of/unittest-data/overlay_5.dts           |   9 +
+ drivers/of/unittest-data/overlay_6.dts           |  10 +
+ drivers/of/unittest-data/overlay_7.dts           |  10 +
+ drivers/of/unittest-data/overlay_8.dts           |  10 +
+ drivers/of/unittest-data/overlay_9.dts           |  10 +
+ drivers/of/unittest-data/overlay_bad_phandle.dts |  23 +-
+ drivers/of/unittest-data/overlay_bad_symbol.dts  |  25 +-
+ drivers/of/unittest-data/tests-overlay.dtsi      | 217 +---------------
+ drivers/of/unittest.c                            | 300 +++++++++++------------
+ include/linux/of.h                               |   6 +-
+ 26 files changed, 585 insertions(+), 486 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_0.dts
+ create mode 100644 drivers/of/unittest-data/overlay_1.dts
+ create mode 100644 drivers/of/unittest-data/overlay_10.dts
+ create mode 100644 drivers/of/unittest-data/overlay_11.dts
+ create mode 100644 drivers/of/unittest-data/overlay_12.dts
+ create mode 100644 drivers/of/unittest-data/overlay_13.dts
+ create mode 100644 drivers/of/unittest-data/overlay_15.dts
+ create mode 100644 drivers/of/unittest-data/overlay_2.dts
+ create mode 100644 drivers/of/unittest-data/overlay_3.dts
+ create mode 100644 drivers/of/unittest-data/overlay_4.dts
+ create mode 100644 drivers/of/unittest-data/overlay_5.dts
+ create mode 100644 drivers/of/unittest-data/overlay_6.dts
+ create mode 100644 drivers/of/unittest-data/overlay_7.dts
+ create mode 100644 drivers/of/unittest-data/overlay_8.dts
+ create mode 100644 drivers/of/unittest-data/overlay_9.dts
