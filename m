@@ -1,54 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932513AbeCBWae (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 17:30:34 -0500
-Received: from mail-ua0-f169.google.com ([209.85.217.169]:34112 "EHLO
-        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752837AbeCBWac (ORCPT
+        id S932759AbeCBWnO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 17:43:14 -0500
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:62753 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932121AbeCBWnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 17:30:32 -0500
-X-Google-Smtp-Source: AG47ELvBtxvf6Z0Eed40l/AWhH0ucMj1+ZE3wqXBDRHl3/3UO+K48ChIhq067H+ZaPEeJpkTPMYdkQkOGL2lMe0nMwk=
+        Fri, 2 Mar 2018 17:43:13 -0500
+Date: Sat, 3 Mar 2018 09:43:10 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Masanari Iida <standby24x7@gmail.com>, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] xfs: Change URL for the project in xfs.txt
+Message-ID: <20180302224310.GV30854@dastard>
+References: <20180302133013.9744-1-standby24x7@gmail.com>
+ <20180302172401.GT19312@magnolia>
+ <20180302215731.GT30854@dastard>
+ <27d9f522-fa75-6766-3ca6-79f99522e861@sandeen.net>
 MIME-Version: 1.0
-In-Reply-To: <20180302212919.GJ3887@localhost.localdomain>
-References: <1508200182-104605-1-git-send-email-keescook@chromium.org>
- <1508200182-104605-10-git-send-email-keescook@chromium.org> <20180302212919.GJ3887@localhost.localdomain>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 2 Mar 2018 14:30:30 -0800
-X-Google-Sender-Auth: He8H6NxTfUBc-qA6jhn_csJA1nQ
-Message-ID: <CAGXu5jKvEcywh-NhMngNph376H3bXy=ZC9jxm6k5QdfJ_w64ZA@mail.gmail.com>
-Subject: Re: [PATCH 09/58] net/irda: Convert timers to use timer_setup()
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Samuel Ortiz <samuel@sortiz.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27d9f522-fa75-6766-3ca6-79f99522e861@sandeen.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 1:29 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> Note how it is using the irda_start_timer definition from
-> include/net/irda/timer.h instead of
-> drivers/staging/irda/include/net/irda/timer.h which was patched in
-> this patch.
+On Fri, Mar 02, 2018 at 04:08:24PM -0600, Eric Sandeen wrote:
+> 
+> 
+> On 3/2/18 3:57 PM, Dave Chinner wrote:
+> > On Fri, Mar 02, 2018 at 09:24:01AM -0800, Darrick J. Wong wrote:
+> >> On Fri, Mar 02, 2018 at 10:30:13PM +0900, Masanari Iida wrote:
+> >>> The oss.sgi.com doesn't exist any more.
+> >>> Change it to current project URL, https://xfs.wiki.kernel.org/
+> >>>
+> >>> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> >>> ---
+> >>>  Documentation/filesystems/xfs.txt | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
+> >>> index 3b9b5c149f32..4d9ff0a7f8e1 100644
+> >>> --- a/Documentation/filesystems/xfs.txt
+> >>> +++ b/Documentation/filesystems/xfs.txt
+> >>> @@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
+> >>>  Btrees (directories, extents, free space) to aid both performance
+> >>>  and scalability.
+> >>>  
+> >>> -Refer to the documentation at http://oss.sgi.com/projects/xfs/
+> >>> +Refer to the documentation at https://xfs.wiki.kernel.org/
+> > 
+> > Did I miss a memo?
+> 
+> About which part, the loss of oss.sgi or the addition of the kernel.org wiki?
+> 
+> The kernel.org wiki is pretty bare though.  OTOH xfs.org is a bit less
+> official.  We really need to resolve this issue.
 
-$ git show net-next/master:include/net/irda/iriap.h
-fatal: Path 'include/net/irda/iriap.h' does not exist in 'net-next/master'
+Moving everything to kernel.org wiki. As I mentioned on IRC, I'd
+much prefer we move away from wiki's to something we can edit
+locally, review via email, has proper revision control and a
+"publish" mechanism that pushes built documentation out to the
+public website.
 
-4.14 moved include/net/irda/iriap.h into the staging directory:
+Cheers,
 
-5bf916ee0ab6 ("irda: move include/net/irda into staging subdirectory")
-
-I think you've got a stale copy of the old file in your tree...
-
--Kees
-
+Dave.
 -- 
-Kees Cook
-Pixel Security
+Dave Chinner
+david@fromorbit.com
