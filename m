@@ -1,277 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1428151AbeCBNZx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 08:25:53 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:32772 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1425249AbeCBNZv (ORCPT
+        id S1428184AbeCBN1R (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 08:27:17 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54542 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1425249AbeCBN1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 08:25:51 -0500
-X-Auth-Info: tvtoVWAiRXWT9gq0fxjudQnnBQzv1Xp4oe0GwlspXws=
-Date: Fri, 2 Mar 2018 14:25:37 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: tpc: Device tree description of the TPC board
-Message-ID: <20180302142537.25764c8e@jawa>
-In-Reply-To: <20180302125159.gufvhyy4ipyunmil@pengutronix.de>
-References: <20180302121750.12865-1-lukma@denx.de>
-        <20180302125159.gufvhyy4ipyunmil@pengutronix.de>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 2 Mar 2018 08:27:14 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D05C601CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
+Subject: Re: [PATCH 0/2] ESRT fixes for relocatable kexec'd kernel
+To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>, ard.biesheuvel@linaro.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sgoel@codeaurora.org, timur@codeaurora.org
+References: <1519414953-5478-1-git-send-email-tbaicar@codeaurora.org>
+ <20180228061901.GJ6019@linaro.org>
+ <1f03865f-2d22-8ba1-a276-a6b49d7c14de@codeaurora.org>
+ <20180301025026.GK6019@linaro.org>
+ <7cd3f462-c619-9d82-73a0-2f3bc9de095e@codeaurora.org>
+ <20180302055325.GQ6019@linaro.org>
+From: Tyler Baicar <tbaicar@codeaurora.org>
+Message-ID: <4d21342c-a81e-c3ef-8c5f-9d952c7d8fac@codeaurora.org>
+Date: Fri, 2 Mar 2018 08:27:11 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/h.BJlyA/0KeqW92nKq8/ngG"; protocol="application/pgp-signature"
+In-Reply-To: <20180302055325.GQ6019@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/h.BJlyA/0KeqW92nKq8/ngG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 3/2/2018 12:53 AM, AKASHI Takahiro wrote:
+> Tyler, Jeffrey,
+>
+> [Note: This issue takes place in kexec, not kdump. So to be precise,
+> it is not the same phenomenon as what I addressed in [1],[2]:
+>    [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/557254.html
+>    [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-January/553098.html
+> ]
+>
+> On Thu, Mar 01, 2018 at 12:56:38PM -0500, Tyler Baicar wrote:
+>> Hello,
+>>
+>> On 2/28/2018 9:50 PM, AKASHI Takahiro wrote:
+>>> Hi,
+>>>
+>>> On Wed, Feb 28, 2018 at 08:39:42AM -0700, Jeffrey Hugo wrote:
+>>>> On 2/27/2018 11:19 PM, AKASHI Takahiro wrote:
+>>>>> Tyler,
+>>>>>
+>>>>> # I missed catching your patch as its subject doesn't contain arm64.
+>>>>>
+>>>>> On Fri, Feb 23, 2018 at 12:42:31PM -0700, Tyler Baicar wrote:
+>>>>>> Currently on arm64 ESRT memory does not appear to be properly blocked off.
+>>>>>> Upon successful initialization, ESRT prints out the memory region that it
+>>>>>> exists in like:
+>>>>>>
+>>>>>> esrt: Reserving ESRT space from 0x000000000a4c1c18 to 0x000000000a4c1cf0.
+>>>>>>
+>>>>>> But then by dumping /proc/iomem this region appears as part of System RAM
+>>>>>> rather than being reserved:
+>>>>>>
+>>>>>> 08f10000-0deeffff : System RAM
+>>>>>>
+>>>>>> This causes issues when trying to kexec if the kernel is relocatable. When
+>>>>>> kexec tries to execute, this memory can be selected to relocate the kernel to
+>>>>>> which then overwrites all the ESRT information. Then when the kexec'd kernel
+>>>>>> tries to initialize ESRT, it doesn't recognize the ESRT version number and
+>>>>>> just returns from efi_esrt_init().
+>>>>> I'm not sure what is the root cause of your problem.
+>>>>> Do you have good confidence that the kernel (2nd kernel image in this case?)
+>>>>> really overwrite ESRT region?
+>>>> According to my debug, yes.
+>>>> Using JTAG, I was able to determine that the ESRT memory region was getting
+>>>> overwritten by the secondary kernel in
+>>>> kernel/arch/arm64/kernel/relocate_kernel.S - specifically the "copy_page"
+>>>> line of arm64_relocate_new_kernel()
+>>>>
+>>>>> To my best knowledge, kexec is carefully designed not to do such a thing
+>>>>> as it allocates a temporary buffer for kernel image and copies it to the
+>>>>> final destination at the very end of the 1st kernel.
+>>>>>
+>>>>> My guess is that kexec, or rather kexec-tools, tries to load the kernel image
+>>>>> at 0x8f80000 (or 0x9080000?, not sure) in your case. It may or may not be
+>>>>> overlapped with ESRT.
+>>>>> (Try "-d" option when executing kexec command for confirmation.)
+>>>> With -d, I see
+>>>>
+>>>> get_memory_ranges_iomem_cb: 0000000009611000 - 000000000e5fffff : System RAM
+>>>>
+>>>> That overlaps the ESRT reservation -
+>>>> [ 0.000000] esrt: Reserving ESRT space from 0x000000000b708718 to
+>>>> 0x000000000b7087f0
+>>>>
+>>>>> Are you using initrd with kexec?
+>>>> Yes
+>>> To make the things clear, can you show me, if possible, the followings:
+>> I have attached all of these:
+> Many thanks.
+> According to the data, ESRT was overwritten by initrd, not the kernel image.
+> It doesn't matter to you though :)
+>
+> The solution would be, as Ard suggested, that more information be
+> added to /proc/iomem.
+> I'm going to fix the issue as quickly as possible.
+Great, thank you!! Please add us to the fix and we will gladly test it out.
 
-Hi Sascha,
+Thanks,
+Tyler
 
-> Hi Lukasz,
->=20
-> On Fri, Mar 02, 2018 at 01:17:50PM +0100, Lukasz Majewski wrote:
-> > This commit adds device tree description of K+P's TPC board. =20
->=20
-> Can we get a hint what this board is? I assume this one:
->=20
-> Technologic Systems' Full i.MX6 Portfolio Including SBC, COM, and
-> Touch Panel PCs
-
-I just took other imx6q boards as an example - e.g.=20
-
-420127e5a5b53ff2cb5effaa781aed93709b09bb
-
-Generally, descriptions of DTSes are rather short and simple.
-
->=20
-> Anyway, future developers are thankful if they have the information
-> around when they have to work on that file or have to decide if it is
-> to be removed.
-
-IMHO, there is plenty of information around (iMX6 Quad SoC, with
-components described in dts).
-
->=20
-> >=20
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> > ---
-> >  arch/arm/boot/dts/Makefile         |   1 +
-> >  arch/arm/boot/dts/imx6q-kp-tpc.dts |  84 +++++++
-> >  arch/arm/boot/dts/imx6q-kp.dtsi    | 468
-> > +++++++++++++++++++++++++++++++++++++ 3 files changed, 553
-> > insertions(+) create mode 100644 arch/arm/boot/dts/imx6q-kp-tpc.dts
-> >  create mode 100644 arch/arm/boot/dts/imx6q-kp.dtsi
-> >=20
-> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> > index ade7a38543dc..c148c4cf28f2 100644
-> > --- a/arch/arm/boot/dts/Makefile
-> > +++ b/arch/arm/boot/dts/Makefile
-> > @@ -459,6 +459,7 @@ dtb-$(CONFIG_SOC_IMX6Q) +=3D \
-> >  	imx6q-icore-ofcap10.dtb \
-> >  	imx6q-icore-ofcap12.dtb \
-> >  	imx6q-icore-rqs.dtb \
-> > +	imx6q-kp-tpc.dtb \
-> >  	imx6q-marsboard.dtb \
-> >  	imx6q-mccmon6.dtb \
-> >  	imx6q-nitrogen6x.dtb \
-> > diff --git a/arch/arm/boot/dts/imx6q-kp-tpc.dts
-> > b/arch/arm/boot/dts/imx6q-kp-tpc.dts new file mode 100644
-> > index 000000000000..955462e778c9
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/imx6q-kp-tpc.dts
-> > +/dts-v1/;
-> > +
-> > +#include "imx6q-kp.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "Freescale i.MX6 Quad K+P TPC Board";
-> > +	compatible =3D "fsl,imx6q-tpc", "fsl,imx6q"; =20
->=20
-> If it is what I think it is the vendor is not fsl.
-
-Yes. It is not from fsl.
-
->=20
-> > +};
-> > +
-> > +&lcd_display {
-> > +	display-timings {
-> > +		800x480x60 {
-> > +			clock-frequency =3D <34209000>;
-> > +			hactive =3D <800>;
-> > +			vactive =3D <480>;
-> > +			hback-porch =3D <85>;
-> > +			hfront-porch =3D <15>;
-> > +			vback-porch =3D <34>;
-> > +			vfront-porch =3D <10>;
-> > +			hsync-len =3D <28>;
-> > +			vsync-len =3D <1>;
-> > +			hsync-active =3D <1>;
-> > +			vsync-active =3D <1>;
-> > +			de-active =3D <1>;
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +&ipu1_di0_disp0 {
-> > +	remote-endpoint =3D <&lcd_display_in>;
-> > +};
-> > +
-> > +&can1 {
-> > +	status =3D "disabled";
-> > +};
-> > +
-> > +&can2 {
-> > +	status =3D "disabled";
-> > +}; =20
->=20
-> These are not enabled in your base dtsi, so no need to disabled it
-> here.
-
-But they can be enabled if needed.
-
->=20
-> > +
-> > +&uart1 {
-> > +	status =3D "okay";
-> > +}; =20
->=20
-> This is already enabled in your base dtsi.
->=20
-> > +
-> > +&uart2 {
-> > +	status =3D "disabled";
-> > +}; =20
->=20
-> This is still disabled, no need to enable.
-
-The goal here is to group those buses in one "logical" item - to allow
-easy enabling if needed.
-
->=20
-> > diff --git a/arch/arm/boot/dts/imx6q-kp.dtsi
-> > b/arch/arm/boot/dts/imx6q-kp.dtsi new file mode 100644
-> > index 000000000000..47a10fb1d46b
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/imx6q-kp.dtsi
-> > +
-> > +	memory: memory {
-> > +		reg =3D <0x10000000 0x40000000>;
-> > +	};
-> > +
-> > +	pwm-buzzer {
-> > +		compatible =3D "pwm-backlight"; =20
->=20
-> What is it? A backlight or a buzzer?
-
-It is a buzzer, which is controlled by PWM.
-
->=20
-> > +		pwms =3D <&pwm2 0 500000>; //2kHz
-> > +		brightness-levels =3D <
-> > +			0   7  8  9
-> > +			10 11 12 13 14 15 16 17 18 19
-> > +			20 21 22 23 24 25 26 27 28 29
-> > +			30 31 32 33 34 35 36 37 38 39
-> > +			40 41 42 43 44 45 46 47 48 49
-> > +			50 51 52 53 54 55 56 57 58 59
-> > +			60 61 62 63 64 65 66 67 68 69
-> > +			70 71 72 73 74 75 76 77 78 79
-> > +			80 81 82 83 84 85 86 87 88 89
-> > +			90 91 92 93 94 95 96 97 98 99
-> > +			100
-> > +			>;
-> > +		default-brightness-level =3D <0>;
-> > +	};
-> > +
-> > +	regulators { =20
->=20
-> AFAIK regulators shall no longer be in a separate subnode.
->=20
-> > +		compatible =3D "simple-bus";
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <0>;
-> > +
-> > +		reg_usb_h1_vbus: regulator@1 {
-> > +			compatible =3D "regulator-fixed";
-> > +			reg =3D <1>; =20
->=20
-> drop the reg property and also the @1 in the name.
->=20
-> > +			regulator-name =3D "usb_h1_vbus";
-> > +			regulator-min-microvolt =3D <5000000>;
-> > +			regulator-max-microvolt =3D <5000000>;
-> > +			enable-active-high;
-> > +		};
-> > +
-> > +		reg_audio: regulator@2 {
-> > +			compatible =3D "regulator-fixed";
-> > +			reg =3D <2>; =20
->=20
-> ditto
-
-Ok.
-
->=20
-> > +			regulator-name =3D "sgtl5000-supply";
-> > +			gpio =3D <&gpio6 31 GPIO_ACTIVE_HIGH>;
-> > +			enable-active-high;
-> > +			regulator-always-on;
-> > +		};
-> > +
-> > +		reg_3p3v: regulator@3 {
-> > +			compatible =3D "regulator-fixed";
-> > +			reg =3D <4>; =20
->=20
-> ditto.
->=20
-> (You have to change the node names of course to make them unique
-> again)
-
-Yes. correct.
-
-Thanks for your review.
-
->=20
->=20
-> Sascha
->=20
->=20
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/h.BJlyA/0KeqW92nKq8/ngG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlqZUNEACgkQAR8vZIA0
-zr0DmQgAtwo+bLVkFqZJ9EZFJZ7GboWPJdVODX3umayG8Td8YbU55Slsu/kYQuAO
-wphZ57yCKuHi6lQRhK34q03kaWtmWqiPn1AFZY9pBCs6yMUWux9DpcLFL7Krxb0/
-YDfUEIT9DVKCBSqNTTrKXRsLxQkIw5dcUmJCigu0IgEq/+aIVqLSI3INPq5Esi7C
-8pJrGgLaxrBhmoMB9BkvOcxI1iuQ5d1kBskw3Y/UcmxbRJuQVwBgarACUsmKbtns
-0L/QZqh0we1Q6cvAVBxQhFSLsWL/ru38hjclUOz2uODaYFbNUBVgBbYS+DoEiPQN
-KryjDz3eSPnR5P/9y9bzfpzg2g/UlA==
-=Fpld
------END PGP SIGNATURE-----
-
---Sig_/h.BJlyA/0KeqW92nKq8/ngG--
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
