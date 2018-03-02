@@ -1,377 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1946185AbeCBKad (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 05:30:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36981 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1946171AbeCBKaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 05:30:25 -0500
-Message-ID: <1519986620.16239.3.camel@pengutronix.de>
-Subject: Re: [PATCH 1/6] reset: qcom: AOSS (Always on subsystem) reset
- controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: sibis <sibis@codeaurora.org>, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
-        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
-        robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org,
-        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
-Date: Fri, 02 Mar 2018 11:30:20 +0100
-In-Reply-To: <1519982619-28336-2-git-send-email-sibis@codeaurora.org>
-References: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
-         <1519982619-28336-2-git-send-email-sibis@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1946149AbeCBKaO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 05:30:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35663 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1946120AbeCBK34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 05:29:56 -0500
+From: Petr Mladek <pmladek@suse.com>
+To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc: Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v9 9/9] livepatch: Atomic replace and cumulative patches documentation
+Date: Fri,  2 Mar 2018 11:29:35 +0100
+Message-Id: <20180302102935.14564-10-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180302102935.14564-1-pmladek@suse.com>
+References: <20180302102935.14564-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi sibis,
+User documentation for the atomic replace feature. It makes it easier
+to maintain livepatches using so-called cumulative patches.
 
-thank you for the patch. I have a few questions and comments below.
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+---
+ Documentation/livepatch/cumulative-patches.txt | 83 ++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/livepatch/cumulative-patches.txt
 
-On Fri, 2018-03-02 at 14:53 +0530, sibis wrote:
-> Add reset controller driver for Qualcomm SDM845 SoC to
-> control reset signals provided by AOSS for Modem, Venus
-> ADSP, GPU, Camera, Wireless, Display subsystem
-> 
-> Signed-off-by: sibis <sibis@codeaurora.org>
-> ---
->  .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
->  drivers/reset/Kconfig                              |  10 ++
->  drivers/reset/Makefile                             |   1 +
->  drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
->  include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
->  5 files changed, 243 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->  create mode 100644 drivers/reset/reset-qcom-aoss.c
->  create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> new file mode 100644
-> index 0000000..5318e14
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> @@ -0,0 +1,54 @@
-> +Qualcomm AOSS Reset Controller
-> +======================================
-> +
-> +This binding describes a reset-controller found on AOSS (Always on SubSysem)
-> +for Qualcomm SDM845 SoCs.
-> +
-> +Required properties:
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be:
-> +		    "qcom,aoss-reset-sdm845", "syscon"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must specify the base address and size of the
-> +		    syscon device.
-> +
-> +
-> +- #reset-cells:
-> +	Usage: required
-> +	Value type: <uint>
-> +	Definition: must be 1; cell entry represents the reset index.
-> +
-> +example:
-> +
-> +aoss_reset: qcom,reset-controller@b2e0100 {
-> +	compatible = "qcom,aoss-reset-sdm845", "syscon";
-> +	reg = <0xc2b0000 0x20004>;
-> +	#reset-cells = <1>;
-> +};
-> +
-> +
-> +Specifying reset lines connected to IP modules
-> +==============================================
-> +
-> +Device nodes that need access to reset lines should
-> +specify them as a reset phandle in their corresponding node as
-> +specified in reset.txt.
-> +
-> +Example:
-> +
-> +	modem-pil@4080000 {
-> +		...
-> +
-> +		resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
-> +		reset-names = "mss_restart";
-> +
-> +		...
-> +        };
-> +
-> +For list of all valid reset indicies see
-> +<dt-bindings/reset/qcom,aoss-sdm845.h>
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 7fc7769..4b1da86 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -81,6 +81,16 @@ config RESET_PISTACHIO
->  	help
->  	  This enables the reset driver for ImgTec Pistachio SoCs.
->  
-> +config RESET_QCOM_AOSS
-> +	bool "Qcom AOSS Reset Driver"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-
-Do all ARCH_QCOM have AOSS? If so, should this be enabled by default?
-
-> +	select MFD_SYSCON
-> +	help
-> +	  This enables the AOSS (Always On SubSystem) reset driver
-> +	  for Qcom SoCs. Say Y if you want to control reset signals
-
-Is Qcom and Qualcomm interchangeable?
-
-> +	  provided by AOSS for Modem, Venus, ADSP, GPU, Camera,
-> +	  Wireless, Display subsystem. Otherwise, say N.
-> +
->  config RESET_SIMPLE
->  	bool "Simple Reset Controller Driver" if COMPILE_TEST
->  	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 132c24f..c30044a 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->  obj-$(CONFIG_RESET_MESON) += reset-meson.o
->  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-> +obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
->  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
->  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
-> diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-> new file mode 100644
-> index 0000000..eb8c69b
-> --- /dev/null
-> +++ b/drivers/reset/reset-qcom-aoss.c
-> @@ -0,0 +1,161 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/regmap.h>
-> +#include <linux/of_device.h>
-> +#include <dt-bindings/reset/qcom,aoss-sdm845.h>
-> +
-> +struct qcom_aoss_reset_map {
-> +	unsigned int reg;
-> +	u8 bit;
-> +};
-> +
-> +struct qcom_aoss_desc {
-> +	const struct regmap_config *config;
-> +	const struct qcom_aoss_reset_map *resets;
-> +	int delay;
-> +	size_t num_resets;
-> +};
-> +
-> +struct qcom_aoss_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +	const struct qcom_aoss_desc *desc;
-> +};
-> +
-> +static const struct regmap_config aoss_sdm845_regmap_config = {
-> +	.name		= "aoss-reset",
-> +	.reg_bits	= 32,
-> +	.reg_stride	= 4,
-> +	.val_bits	= 32,
-> +	.max_register	= 0x20000,
-> +	.fast_io	= true,
-> +};
-> +
-> +static const struct qcom_aoss_reset_map aoss_sdm845_resets[] = {
-> +	[AOSS_CC_MSS_RESTART] = { 0x0, 0 },
-> +	[AOSS_CC_CAMSS_RESTART] = { 0x1000, 0 },
-> +	[AOSS_CC_VENUS_RESTART] = { 0x2000, 0 },
-> +	[AOSS_CC_GPU_RESTART] = { 0x3000, 0 },
-> +	[AOSS_CC_DISPSS_RESTART] = { 0x4000, 0 },
-> +	[AOSS_CC_WCSS_RESTART] = { 0x10000, 0 },
-> +	[AOSS_CC_LPASS_RESTART] = { 0x20000, 0 },
-> +};
-> +
-> +static const struct qcom_aoss_desc aoss_sdm845_desc = {
-> +	.config = &aoss_sdm845_regmap_config,
-> +	.resets = aoss_sdm845_resets,
-> +	/* Wait 6 32kHz sleep cycles for reset */
-> +	.delay = 200,
-> +	.num_resets = ARRAY_SIZE(aoss_sdm845_resets),
-> +};
-> +
-> +static struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
-> +				struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
-> +}
-> +
-> +static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-> +
-> +	if (idx >= rcdev->nr_resets)
-> +		return -EINVAL;
-
-This check is not necessary. For all drivers that don't set of_xlate,
-the default of_reset_simple_xlate already makes sure no reset_control
-is ever returned with rstc->id >= rcdev->nr_resets.
-
-> +	return regmap_update_bits(data->regmap, map->reg,
-> +					BIT(map->bit), BIT(map->bit));
-> +}
-> +
-> +static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-> +
-> +	if (idx >= rcdev->nr_resets)
-> +		return -EINVAL;
-
-Same here.
-
-> +	return regmap_update_bits(data->regmap, map->reg, BIT(map->bit), 0);
-> +}
-> +
-> +static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-> +	int ret;
-> +
-> +	ret = rcdev->ops->assert(rcdev, idx);
-
-Don't use the ops function pointers here, just call
-qcom_aoss_control_assert directly.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	udelay(data->desc->delay);
-> +
-> +	ret = rcdev->ops->deassert(rcdev, idx);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-This can be simplified to just
-
-	return qcom_aoss_control_deassert(rcdev, idx);
-
-> +}
-> +
-> +static const struct reset_control_ops qcom_aoss_reset_ops = {
-> +	.reset = qcom_aoss_control_reset,
-> +	.assert = qcom_aoss_control_assert,
-> +	.deassert = qcom_aoss_control_deassert,
-> +};
-> +
-> +static int qcom_aoss_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct qcom_aoss_reset_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	const struct qcom_aoss_desc *desc;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-
-You could use dev here instead of pdev->dev.
-
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->desc = desc;
-> +	data->regmap = syscon_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(data->regmap)) {
-> +		dev_err(dev, "Unable to get aoss-reset regmap");
-> +		return PTR_ERR(data->regmap);
-> +	}
-> +	regmap_attach_dev(dev, data->regmap, desc->config);
-> +
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.ops = &qcom_aoss_reset_ops;
-> +	data->rcdev.nr_resets = desc->num_resets;
-> +	data->rcdev.of_node = pdev->dev.of_node;
-
-And here.
-
-> +	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-
-And here.
-
-> +}
-> +
-> +static const struct of_device_id qcom_aoss_reset_of_match[] = {
-> +	{ .compatible = "qcom,aoss-reset-sdm845", .data = &aoss_sdm845_desc},
-
-Consider adding a space between &aoss_sdm845_desc and } ...
-
-> +	{}
-> +};
-> +
-> +static struct platform_driver qcom_aoss_reset_driver = {
-> +	.probe = qcom_aoss_reset_probe,
-> +	.driver  = {
-> +		.name  = "qcom_aoss_reset",
-
-... and removing the superfluous space here.
-
-> +		.of_match_table = qcom_aoss_reset_of_match,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(qcom_aoss_reset_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/dt-bindings/reset/qcom,aoss-sdm845.h b/include/dt-bindings/reset/qcom,aoss-sdm845.h
-> new file mode 100644
-> index 0000000..e9b38fc
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/qcom,aoss-sdm845.h
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
-> +#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
-> +
-> +#define AOSS_CC_MSS_RESTART	0
-> +#define AOSS_CC_CAMSS_RESTART	1
-> +#define AOSS_CC_VENUS_RESTART	2
-> +#define AOSS_CC_GPU_RESTART	3
-> +#define AOSS_CC_DISPSS_RESTART	4
-> +#define AOSS_CC_WCSS_RESTART	5
-> +#define AOSS_CC_LPASS_RESTART	6
-> +
-> +#endif
-
-regards
-Philipp
+diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
+new file mode 100644
+index 000000000000..c041fc1bd259
+--- /dev/null
++++ b/Documentation/livepatch/cumulative-patches.txt
+@@ -0,0 +1,83 @@
++===================================
++Atomic Replace & Cumulative Patches
++===================================
++
++There might be dependencies between livepatches. If multiple patches need
++to do different changes to the same function(s) then we need to define
++an order in which the patches will be installed. And function implementations
++from any newer livepatch must be done on top of the older ones.
++
++This might become a maintenance nightmare. Especially if anyone would want
++to remove a patch that is in the middle of the stack.
++
++An elegant solution comes with the feature called "Atomic Replace". It allows
++to create so called "Cumulative Patches". They include all wanted changes
++from all older livepatches and completely replace them in one transition.
++
++Usage
++-----
++
++The atomic replace can be enabled by setting "replace" flag in struct klp_patch,
++for example:
++
++	static struct klp_patch patch = {
++		.mod = THIS_MODULE,
++		.objs = objs,
++		.replace = true,
++	};
++
++Such a patch is added on top of the livepatch stack when registered. It can
++be enabled even when some earlier patches have not been enabled yet.
++
++All processes are then migrated to use the code only from the new patch.
++Once the transition is finished, all older patches are removed from the stack
++of patches. Even the older not-enabled patches mentioned above.
++
++Ftrace handlers are transparently removed from functions that are no
++longer modified by the new cumulative patch.
++
++As a result, the livepatch author might maintain sources only for one
++cumulative patch. It helps to keep the patch consistent while adding or
++removing various fixes or features.
++
++
++Limitations:
++------------
++
++  + Replaced patches can no longer be enabled. But if the transition
++    to the cumulative patch was not forced, the kernel modules with
++    the older livepatches can be removed and eventually added again.
++
++    A good practice is to set .replace flag in any released livepatch.
++    Then re-adding an older livepatch is equivalent to downgrading
++    to that patch. This is safe as long as the livepatches do _not_ do
++    extra modifications in (un)patching callbacks or in the module_init()
++    or module_exit() functions, see below.
++
++
++  + Only the (un)patching callbacks from the _new_ cumulative livepatch are
++    executed. Any callbacks from the replaced patches are ignored.
++
++    By other words, the cumulative patch is responsible for doing any actions
++    that are necessary to properly replace any older patch.
++
++    As a result, it might be dangerous to replace newer cumulative patches by
++    older ones. The old livepatches might not provide the necessary callbacks.
++
++    This might be seen as a limitation in some scenarios. But it makes the life
++    easier in many others. Only the new cumulative livepatch knows what
++    fixes/features are added/removed and what special actions are necessary
++    for a smooth transition.
++
++    In each case, it would be a nightmare to think about the order of
++    the various callbacks and their interactions if the callbacks from all
++    enabled patches were called.
++
++
++  + There is no special handling of shadow variables. Livepatch authors
++    must create their own rules how to pass them from one cumulative
++    patch to the other. Especially they should not blindly remove them
++    in module_exit() functions.
++
++    A good practice might be to remove shadow variables in the post-unpatch
++    callback. It is called only when the livepatch is properly disabled.
+-- 
+2.13.6
