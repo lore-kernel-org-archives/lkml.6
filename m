@@ -1,112 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935621AbeCCAjG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:39:06 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:42800 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935606AbeCCAjF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:39:05 -0500
-Subject: Re: [PATCH 1/1] mm: make start_isolate_page_range() fail if already
- isolated
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20180226191054.14025-1-mike.kravetz@oracle.com>
- <20180226191054.14025-2-mike.kravetz@oracle.com>
- <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
-Date: Fri, 2 Mar 2018 16:38:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
+        id S1753038AbeCCAng convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 19:43:36 -0500
+Received: from mga14.intel.com ([192.55.52.115]:46462 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753006AbeCCAne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 19:43:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
+   d="scan'208";a="208447869"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>
+Subject: RE: [PATCH 0/3] vfio/pci: ioeventfd support
+Thread-Topic: [PATCH 0/3] vfio/pci: ioeventfd support
+Thread-Index: AQHTsNDlMLSEP3bOBEe6xhmmuixhi6O8hlzggAAzSYCAAPKE0A==
+Date: Sat, 3 Mar 2018 00:43:31 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910274D1@SHSMSX101.ccr.corp.intel.com>
+References: <20180228195504.25283.45666.stgit@gimli.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19102545C@SHSMSX101.ccr.corp.intel.com>
+ <20180302110257.36cc0ed3@t450s.home>
+In-Reply-To: <20180302110257.36cc0ed3@t450s.home>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=931
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803030007
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTBhMmM1ZDItZTFkZC00NjEzLTg5OTgtMjQwNjFlMWFjZjZlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImcrbkNKUHhHY2xxRG55bUZ4UXRXQ1JEaFhVWXJoRDZuZXhVV2dcL0czbkY4PSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 04:06 PM, Andrew Morton wrote:
-> On Mon, 26 Feb 2018 11:10:54 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Saturday, March 3, 2018 2:03 AM
 > 
->> start_isolate_page_range() is used to set the migrate type of a
->> set of page blocks to MIGRATE_ISOLATE while attempting to start
->> a migration operation.  It assumes that only one thread is
->> calling it for the specified range.  This routine is used by
->> CMA, memory hotplug and gigantic huge pages.  Each of these users
->> synchronize access to the range within their subsystem.  However,
->> two subsystems (CMA and gigantic huge pages for example) could
->> attempt operations on the same range.  If this happens, page
->> blocks may be incorrectly left marked as MIGRATE_ISOLATE and
->> therefore not available for page allocation.
->>
->> Without 'locking code' there is no easy way to synchronize access
->> to the range of page blocks passed to start_isolate_page_range.
->> However, if two threads are working on the same set of page blocks
->> one will stumble upon blocks set to MIGRATE_ISOLATE by the other.
->> In such conditions, make the thread noticing MIGRATE_ISOLATE
->> clean up as normal and return -EBUSY to the caller.
->>
->> This will allow start_isolate_page_range to serve as a
->> synchronization mechanism and will allow for more general use
->> of callers making use of these interfaces.  So, update comments
->> in alloc_contig_range to reflect this new functionality.
->>
->> ...
->>
->> --- a/mm/page_isolation.c
->> +++ b/mm/page_isolation.c
->> @@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
->>  
->>  	spin_lock_irqsave(&zone->lock, flags);
->>  
->> +	/*
->> +	 * We assume we are the only ones trying to isolate this block.
->> +	 * If MIGRATE_ISOLATE already set, return -EBUSY
->> +	 */
->> +	if (is_migrate_isolate_page(page))
->> +		goto out;
->> +
->>  	pfn = page_to_pfn(page);
->>  	arg.start_pfn = pfn;
->>  	arg.nr_pages = pageblock_nr_pages;
+> On Fri, 2 Mar 2018 07:08:51 +0000
+> "Tian, Kevin" <kevin.tian@intel.com> wrote:
 > 
-> Seems a bit ugly and I'm not sure that it's correct.  If the loop in
-> start_isolate_page_range() gets partway through a number of pages then
-> we hit the race, start_isolate_page_range() will then go and "undo" the
-> work being done by the thread which it is racing against?
-
-I agree that it is a bit ugly.  However, when a thread hits the above
-condition it will only undo what it has done.  Only one thread is able
-to set migrate state to isolate (under the zone lock).  So, a thread
-will only undo what it has done.
-
-The exact problem of one thread undoing what another thread has done
-is possible with the code today and is what this patch is attempting
-to address.
-
-> Even if that can't happen, blundering through a whole bunch of pages
-> then saying whoops then undoing everything is unpleasing.
+> > > From: Alex Williamson
+> > > Sent: Thursday, March 1, 2018 4:15 AM
+> > >
+> > > A vfio ioeventfd will perform the pre-specified device write on
+> > > triggering of an eventfd.  When coupled with KVM ioeventfds, this
+> > > feature allows a VM to trap a device page for virtualization, while
+> > > also registering targeted ioeventfds to maintain performance of high
+> > > frequency register writes within the trapped range.  Much like the
+> > > existing interrupt eventfd/irqfd coupling, such writes can be handled
+> > > entirely in the host kernel.
+> > >
+> > > The new VFIO device ioctl may be supported by any vfio bus driver,
+> > > including mdev drivers, but the implementation here only enables
+> > > vfio-pci.  This is intended as an acceleration path, bus drivers
+> > > may choose which regions to support and userspace should always
+> > > intend to fall back to non-accelerated handling when unavailable.
+> > >
+> >
+> > it's a nice feature! A curious question. Is it possible for mdev driver
+> > to directly create ioeventfd on specified offset? Currently ioeventfd
+> > requires quirks in Qemu, which must know the device detail to
+> > create ioeventfd and then connect vfio and kvm together. However
+> > mdev instance is more software defined thus I'm not sure whether
+> > asking Qemu to catch up quirk with underlying software logic could
+> > be overwhelmed. Also in case of vendor driver emulating mdev
+> > with same DID/VID as a real device, it might be difficult for Qemu
+> > to figure out whether a vfio device is a real one or mdev one to
+> > apply a mdev specific quirk. On the other hand, since vendor
+> > driver knows all the logic constructing mdev, it would be more
+> > convenient allowing vendor driver to directly create/destroy
+> > ioeventfd on its demand?
 > 
-> Should we be looking at preventing these races at a higher level?
+> Are file descriptors the right interface between kernel components if
+> userspace is not involved in connecting them?  Seems like not.  vfio is
+> designed to be independent of KVM with the necessary interactions
+> between them orchestrated by userspace.  KVMGT is about the only
+> exception to that and TBH I'm not thrilled about extending that
+> further.  Thanks,
+> 
 
-I could not immediately come up with a good idea here.  The zone lock
-would be the obvious choice, but I don't think we want to hold it while
-examining each of the page blocks.  Perhaps a new lock or semaphore
-associated with the zone?  I'm open to suggestions.
+why do you think KVMGT is the only exception? Isn't above scenario
+general enough to any mdev implementation, just as what you're
+trying to solve, that if a trapped operation happens too frequently on
+mdev then we may want to optimize it? I understand fd is not a good 
+way in-between kernel components, just asking here in case you
+have some good idea in mind. If adding mdev specific quirk in 
+Qemu is the only way for similar optimization, I'm fine with it. One
+thing which I was not sure though is still about the scenario where 
+mdev is constructed same as a real device then what would happen
+if Qemu applies a mdev-specific quirk to both sides - of course 
+just a mental thinking, not sure whether it happens in real...
 
--- 
-Mike Kravetz
+Thanks
+Kevin
