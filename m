@@ -1,116 +1,211 @@
-Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AG47ELvaiZYDhMzKg2I8TxQKEu5EYtGW8ZywacJL3DJmymk9DEjXoJDcts6H/CkGf3mkIvKHdJS2
-ARC-Seal: i=1; a=rsa-sha256; t=1520116089; cv=none;
-        d=google.com; s=arc-20160816;
-        b=EgEiAQRHJJvuJ5CG+aFG4pl6Mocl6eACufgIrvkdXiWAZUDg7o3v3RP82gdMZmXhUJ
-         rlezOXoNkWWqV02aSxah13lN7S005LRwHSs0Ns6Chqvl3z23yPoUysWNiZEUp0lO1muH
-         xVT6I2bErwZcQUcyB+zQjMotyWEL38wQ6jpdKvRneeLipwb3j4+9HCa3hYrq9Ad2iQJD
-         /iOeb0BOuJtb/sx743JkQpKrJtSyOg6G5KNPQ0cUt9dMWGXYfvJd4UipS2HldLUU4aKK
-         Ivuv5frGuzaIDGzOVtC2ZsZlyXxcXSrui6xEKAJJiQghSCDBbRnsu9qWW8Qsj1pM5LKX
-         rLxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=WX4HiqPGTBkubu+5fXlSuB3AcbzfdaAdeEtxbTB4r8k=;
-        b=vddFFnCXV9maYl55Sm8kOJAUi9bDH4XKYROvmhUn4aBvu9dgetkHXtn73pxmhNvs0t
-         uPPDktgaUX80M/IktqXBd23/Q/ODWKfx4yNSImWsuWMpWGl852+gknFGSbfWiH7unSpX
-         v+Vh3zpAb8sRc6ss/zK17R/eOWNUSNryPdLtoppIseIqFBZsLObXhW81lFxUsoInHUUJ
-         qGm4IJ03Q/f8UWAvdoNB4rJqnC+QxCJOaX5BuObZlkGmL0/rwRK8UnFv1dabUo6N6ueQ
-         izzGYPBhAL4JdHk3IRLJWaqembxJTvIlEiUphQHMk+5ERPuppMsPRVuhdh9KiB+Dm9j4
-         7fVw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=dX1OYn+H;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.108 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=dX1OYn+H;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.108 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Colin Ian King <colin.king@canonical.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 11/84] staging: rtl8822be: fix missing null
- check on dev_alloc_skb return
-Thread-Topic: [PATCH AUTOSEL for 4.14 11/84] staging: rtl8822be: fix missing
- null check on dev_alloc_skb return
-Thread-Index: AQHTsz6f3wEllRfQY0eRytv18pZdYQ==
-Date: Sat, 3 Mar 2018 22:26:06 +0000
-Message-ID: <20180303222518.26271-11-alexander.levin@microsoft.com>
-References: <20180303222518.26271-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1067;6:6+RruL7R6mRHOealLAaqxO0v3HlUWWmMmMj/9Zb2PbkXWxi7z6htGDZ/gv1+8EqCbYsTtWHTbANri+tjuUX2OmyN5W0vGlSbm9jMoDx4gZorjtzW731BsRAeVKFAodmwlroo57HLTdZUVL1aKG+z5odqAJtIOxVe/If4sqgzveCzufhbSJVz2/JLFhNWDDTf79VMRU58SnFr1uA5YFdsMQJ1a+eka9JOBQ6YasxvJ/revuIhGCYPH5B5w/Wzm5TGwMGOJcfo8vxqMtouoFYD56yYOutNydNgNt3iLNuWfIMhRBM9yeQK+AUJMEM0c9wgPPizISYVeMf1EfS8wIlhD9paDZO9c4MzEd1KBM2dV14HatIIQzyaRFmy8G5O1t6z;5:kxztXAGVEzOlEXgT7cnoVIZM3eBTZOQkLEaW2cYcq8qK26uTsUE2qbOYDeFOEOMys0vBjnD8HF0EnboS4PB3mP1GGQ/7vPcHmmR/Q/dlXtdbqLL+d/u47Tvpc9YDtLiQk0Oo+tdWZBcWZcI9iV2rxMqM6QtlqlfOpSWE6TaIHFE=;24:xzUhIgGve68bmkvLw9ubqyHbo8FYunsdiG0Tgy8YxwFmYrloZeWLBHO2IwvrNXrcl5YPSpoVsI/wT55QtaeeUqtnY1Ir1oScRNNP/kADi9w=;7:NXO3NlhzjjCABQ/M7gh2nc84q7BsDFR8p4/nv9aiU+Gq03NQJj1K5meWFkRd8X8dXzrpKxcSr0K/vGgh9HHmNKCXzSGhSA6c9lT7wuet0rPmsgIawNQkJ3Vw7006ONvZpKrA3wzrhLHfqSCDXHnqC5X58mijEqiUQO52AwqEtLSVfDSJp5ucqREFju2aWnlOBS/ze+Al04Jq8Q2B2EVL4y+hBbDIfAMI65hNNNOKGioOgei2H3jLVEp9aBKyxAGy
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 791109e4-26b7-4f74-7715-08d581560a07
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1067;
-x-ms-traffictypediagnostic: MW2PR2101MB1067:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB106748AE740E22A15E73D220FBC40@MW2PR2101MB1067.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(198206253151910);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1067;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1067;
-x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(366004)(396003)(199004)(189003)(6512007)(99286004)(10090500001)(86612001)(106356001)(53936002)(66066001)(316002)(97736004)(6436002)(68736007)(22452003)(105586002)(14454004)(54906003)(36756003)(6486002)(110136005)(8936002)(305945005)(81166006)(2950100002)(81156014)(2906002)(5250100002)(4326008)(2501003)(1076002)(86362001)(76176011)(3846002)(6116002)(25786009)(6506007)(5660300001)(102836004)(478600001)(107886003)(72206003)(10290500003)(7736002)(26005)(186003)(3660700001)(2900100001)(3280700002)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1067;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: sqT19cdoegauWMHlyf3PaEo6RurQmui1q/EupJ80yJnN/2sUCO0ANmCmUkyVMoldumuASUjXCc+R+ZChVo265/u/KaovzLKDTwbebQKAQwHnz7T8rJolYYB2xc4p79VSurzChWykFn4M7EiXfXt1e330ey/xbDrr0KXGaU6M0ho=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1015056-1520111537-2-1660672297414145556
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520111536; b=Jx9B+/5Kxs4Rz/GNQLIJvzxUBojoUQ6JTPZcLUSG+p4cnqp
+    T44V7IdhVjk3oguKt9oLnVQx3/8wVMtRdtMdELjXKC0bOJA0/4r6v9VVp8A18Cqi
+    1qtLkW5GNRQa4neRFDzoLncezzEbOVMTUrnlb05LN2iQBDWAWIaDzXN0xcZJP4+e
+    epD9v44VBbbe+1r/wqwxnkP7BiIp58Xe08Ms9kevQXQb5eiHE6RFcU3LwWDEviku
+    CztG7twsCzamjF0ei0ALpppVI+hRCZTGlJluYEgOJHuFu7pWBfFQVLWXSUdVwf3z
+    EHfi1qoQANAzIlV/QFtchZb7NRMuscOavSOFNdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520111536; bh=J
+    9UEpMTY6h3/7fTxf13IYkX2cinb/RtdyCW/gZA7Z8M=; b=WO+Js+rQsj5h9y24M
+    011JyoCQ//IgHk6U1JEXlxQh3Bdz6ZJX8PgGyQB3kw+43nFZoZUr0sByUVuCyfsL
+    GJDxILsv2OLrHBCeNSqRrBvtkcpVnuCDwiXfiRJOIpPRpa8NIHxugVQhpqaYDUMA
+    UFTl7INIokq6NIoWUy4Miqk3CVwvVpsOZa8C8rH3lPZmw7K7L4olr7hVanr5B/YS
+    LtCoxz2xTE8evdapQJ7FdLm+dtHA6GXVPJntw3KH/P1ItZM+SCAuxu/tDd3RAHzO
+    pRfsZOmpiLEtSJfl3v3qV30m4KV+Nnzhy+A/vUZweT9SE8Bj0pEzVDe4dApyMlNb
+    xJa/A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tMiWR76U x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h5xvSaVd;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tMiWR76U x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h5xvSaVd;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELt8D4Egpkoin5udmzBXRfHUF4cfMuxgPFDniZEdpfFwBN0zwiRilNDwBDa4HnyATQsd5mZhZQ==
+Date: Sun, 4 Mar 2018 02:41:42 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] staging: rtl8723bs: Replace memset with eth_zero_addr
+Message-ID: <20180303211142.GA10078@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 791109e4-26b7-4f74-7715-08d581560a07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:06.2754
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1067
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, outreachy-kernel@googlegroups.com,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593957033208948384?=
-X-GMAIL-MSGID: =?utf-8?q?1593957248601932219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Use eth_zero_addr to assign zero address to the given address array
+instead of memset when the second argument in memset is address
+of zero. Coccinelle was used to do the replacement and add the
+header file linux/etherdevice.h if not already present.
 
-[ Upstream commit 3eb23426e1749a0483bc4c9b18e51f657569e3ed ]
+The Coccinelle semantic patch that makes this change is as follows:
+@header@
+@@
+#include <linux/etherdevice.h>
 
-dev_alloc_skb can potentially return NULL, so add a null check to
-avoid a null pointer dereference on skb
+@r1@
+expression e;
+@@
 
-Detected by CoverityScan, CID#1454558 ("Dereference on null return")
+-memset(e,0x00,ETH_ALEN);
++eth_zero_addr(e);
 
-Fixes: 7e5b796cde7e ("staging: r8822be: Add the driver code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+@includeheader depends on r1 && !header@
+@@
++ #include <linux/etherdevice.h>
+#include <...> 
+
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
 ---
- drivers/staging/rtlwifi/rtl8822be/fw.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c         | 3 ++-
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 3 ++-
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c    | 9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtlwifi/rtl8822be/fw.c b/drivers/staging/rtlwi=
-fi/rtl8822be/fw.c
-index a2cc54866e79..acabb2470d55 100644
---- a/drivers/staging/rtlwifi/rtl8822be/fw.c
-+++ b/drivers/staging/rtlwifi/rtl8822be/fw.c
-@@ -464,6 +464,8 @@ bool rtl8822b_halmac_cb_write_data_rsvd_page(struct rtl=
-_priv *rtlpriv, u8 *buf,
- 	int count;
-=20
- 	skb =3D dev_alloc_skb(size);
-+	if (!skb)
-+		return false;
- 	memcpy((u8 *)skb_put(skb, size), buf, size);
-=20
- 	if (!_rtl8822be_send_bcn_or_cmd_packet(rtlpriv->hw, skb, BEACON_QUEUE))
---=20
-2.14.1
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index fe739eb..c13e514 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -14,6 +14,7 @@
+  ******************************************************************************/
+ #define _RTW_MLME_C_
+ 
++#include <linux/etherdevice.h>
+ #include <drv_types.h>
+ #include <rtw_debug.h>
+ #include <linux/jiffies.h>
+@@ -2109,7 +2110,7 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
+ 		mlme->roam_network = candidate;
+ 
+ 		if (!memcmp(candidate->network.MacAddress, mlme->roam_tgt_addr, ETH_ALEN))
+-			memset(mlme->roam_tgt_addr, 0, ETH_ALEN);
++			eth_zero_addr(mlme->roam_tgt_addr);
+ 	}
+ 
+ 	ret = _SUCCESS;
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 1e6c587..75a4b23 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -14,6 +14,7 @@
+  ******************************************************************************/
+ #define  _IOCTL_CFG80211_C_
+ 
++#include <linux/etherdevice.h>
+ #include <drv_types.h>
+ #include <rtw_debug.h>
+ #include <linux/jiffies.h>
+@@ -2391,7 +2392,7 @@ static int cfg80211_rtw_del_pmksa(struct wiphy *wiphy,
+ 	{
+ 		if (!memcmp(psecuritypriv->PMKIDList[index].Bssid, (u8 *)pmksa->bssid, ETH_ALEN))
+ 		{ /*  BSSID is matched, the same AP => Remove this PMKID information and reset it. */
+-			memset(psecuritypriv->PMKIDList[index].Bssid, 0x00, ETH_ALEN);
++			eth_zero_addr(psecuritypriv->PMKIDList[index].Bssid);
+ 			memset(psecuritypriv->PMKIDList[index].PMKID, 0x00, WLAN_PMKID_LEN);
+ 			psecuritypriv->PMKIDList[index].bUsed = false;
+ 			bMatched = true;
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index cc18d0a..bf437c8 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -14,6 +14,7 @@
+  ******************************************************************************/
+ #define _IOCTL_LINUX_C_
+ 
++#include <linux/etherdevice.h>
+ #include <drv_types.h>
+ #include <rtw_debug.h>
+ #include <rtw_mp.h>
+@@ -124,7 +125,7 @@ void rtw_indicate_wx_disassoc_event(struct adapter *padapter)
+ 	memset(&wrqu, 0, sizeof(union iwreq_data));
+ 
+ 	wrqu.ap_addr.sa_family = ARPHRD_ETHER;
+-	memset(wrqu.ap_addr.sa_data, 0, ETH_ALEN);
++	eth_zero_addr(wrqu.ap_addr.sa_data);
+ }
+ 
+ /*
+@@ -1080,7 +1081,7 @@ static int rtw_wx_set_pmkid(struct net_device *dev,
+ 		for (j = 0 ; j<NUM_PMKID_CACHE; j++) {
+ 			if (!memcmp(psecuritypriv->PMKIDList[j].Bssid, strIssueBssid, ETH_ALEN)) {
+ 				/*  BSSID is matched, the same AP => Remove this PMKID information and reset it. */
+-                                memset(psecuritypriv->PMKIDList[ j ].Bssid, 0x00, ETH_ALEN);
++                                eth_zero_addr(psecuritypriv->PMKIDList[j].Bssid);
+                                 psecuritypriv->PMKIDList[ j ].bUsed = false;
+ 				break;
+ 			}
+@@ -1294,7 +1295,7 @@ static int rtw_wx_get_wap(struct net_device *dev,
+ 
+ 	wrqu->ap_addr.sa_family = ARPHRD_ETHER;
+ 
+-	memset(wrqu->ap_addr.sa_data, 0, ETH_ALEN);
++	eth_zero_addr(wrqu->ap_addr.sa_data);
+ 
+ 	RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_wap\n"));
+ 
+@@ -1303,7 +1304,7 @@ static int rtw_wx_get_wap(struct net_device *dev,
+ 			((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == true)) {
+ 		memcpy(wrqu->ap_addr.sa_data, pcur_bss->MacAddress, ETH_ALEN);
+ 	} else {
+-		memset(wrqu->ap_addr.sa_data, 0, ETH_ALEN);
++		eth_zero_addr(wrqu->ap_addr.sa_data);
+ 	}
+ 
+ 	return 0;
+-- 
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
