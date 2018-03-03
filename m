@@ -1,97 +1,115 @@
-Return-Path: <julia.lawall@lip6.fr>
-X-Google-Smtp-Source: AG47ELvvO1nX+UDnt/SintsdSRroZiE4ApUwMFh0o1vCGpmrVu2d9zYWamQFR2hoB7nZKUtPNGXb
-ARC-Seal: i=1; a=rsa-sha256; t=1520110362; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bTPzSWNB0KvNHM4Lf24mGRwZOSsm+aDMRYDDCLUVzQR/9gmYOKJri5xMok1r+NW7+g
-         BqSt9r0LdavGMnIZJZIMVQ96EjCXXKbv1jKe7U10/wVZJ5sIiUTB5mTI5QLQpxEmiZrz
-         mZ4d3KCDgcHSc8rP+qE1OwXDcY1LPiYkF96XznFcxZaEybkhDDn5oDcC/Eii+Nub0xxK
-         LzTDNWAjnH6sWxEL0T69l6X2Fc//0Y4z7KH/c2JjXUL1uAw96f2HhAYOsHvUuAzuVpnk
-         /UQ0qj2ZBeSRhG0xc+WZDvcpiqRqwf5wxzW3Im4sh7lqVYrxu49LVaINHXof6AI2cwm4
-         D/0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=zdmsXkYGCHB8/db6iyjow5zIFnkKdzuTERHdjEKliPE=;
-        b=p4Dxh5vAOE3AWH7d/ECwHW36BF0pMXIy8On+wjQQjVtGXAtA4JZACYcfbDMdaBkILd
-         ueOGUMIyDFd22iihB+sqb7K79Zr7WAL/36tDKOLZVWr1ixrKMRuOjq7j6lYMx5gD5L4L
-         iXGctFxnbX4jRqm1KGCENuCHvonvR1dSzaQAc9CEKYludMsQ7CFf9w1vacdmH+UQqS5X
-         jRAwHtdYigtpCpC+h6D2nc8iCzmGZCqPCdVlzUujymZFCGg9eXxcJWjHf2iC7RPTdadh
-         Je/LQHje8uiVs4hp4XR59dLvzRbVVwk35Z/MDrjH3D3H0k6L8z6RcOTAZBEXTYxkm4qO
-         mM2A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
-X-IronPort-AV: E=Sophos;i="5.47,419,1515452400";
-   d="scan'208";a="316240577"
-Date: Sat, 3 Mar 2018 21:52:41 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-cc: gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-    linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [PATCH] staging: rtl8723bs: Remove unnecessary
- semicolon.
-In-Reply-To: <20180303191726.GA4986@seema-Inspiron-15-3567>
-Message-ID: <alpine.DEB.2.20.1803032152260.9544@hadrien>
-References: <20180303191726.GA4986@seema-Inspiron-15-3567>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-794649-1520105227-2-6693932817737654505
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520105226; b=ppV6tNq9qpb7d884SgdmU7kW4/CBf5M8RDDdyadUeeEtE/+
+    oNMDkRpRUyruD1HZhTEeFHBcPVlZIvW2aBOiL07sJNGjBBoDJIIktKA5r38iqhxp
+    zVrT/lHLrPjqNZCiq+PC3oIeMUr68kHQIBHttnR1BrWeIbsRQ4W5Evx5Fd+rlKr2
+    izqEPMIX4CHIa8QT298jp6AQZGpNAEMpC/qaKseAFJHC6VDZYfxgslE5Gzlk7VNA
+    Uk3UXFatj9yo5vURzLXgp9QyAHwzEbL8g51WPUtVN5xNyqcsC/6NlH9zEyOfYo4K
+    4NR17AXxfNhLsKhpz2kuP5Kxq6vMxMgCvf7j9Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520105226; bh=A
+    wufiOQ/5tVkHR1ZN+52lMsPn3+5LfRWIKArnuuy+O4=; b=fJM+rhe1q/N16Og76
+    aItiV7cbxhgdRzxqKR6utE+KB0nTnMo5gKtTkxsgwHhMnqAlCvoQreCXx1BSRB5A
+    apVZ7xSDpcR/TLvOKHTyShq6Crc03lP52yXFIRXVkvMH5YoUE9kRCpjAu0wK7Woj
+    ctMKgh3XznHXYGkM77uXgG0DJutaV51Azbel/rAVMXpZI3V5+G3LKV6OvUQzJE+e
+    VCbXi/3DaIRrPf5SZOwXPgxRAN/A3uqyxLZ8hDXu31N2oQ+XxhKbs9QHuRG/DmP5
+    8oi1r8Fxe9vfAY7T6I5Qcz8up4nY/cnTBV/XTxQ5ifKPBvf7jKdEcsLXSqUCU0ZK
+    Jl8iQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=q27sMiSa x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LvEvaScn;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=q27sMiSa x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=LvEvaScn;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELtaShKBmnJSNDEogt38EYxewPIZcMGVtb510rgriXqpP540vL3DtzbkGKrHIZagJEAr5piHPQ==
+Date: Sun, 4 Mar 2018 00:56:29 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: alan@linux.intel.com
+Subject: [PATCH] staging: media: Remove unnecessary semicolon
+Message-ID: <20180303192629.GA5198@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593945276088463100?=
-X-GMAIL-MSGID: =?utf-8?q?1593951243280959167?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Remove unnecessary semicolon found using semicolon.cocci Coccinelle
+script.
 
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+ .../media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, 4 Mar 2018, Arushi Singhal wrote:
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
+index 5faa89a..7562bea 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/runtime/frame/src/frame.c
+@@ -196,7 +196,7 @@ enum ia_css_err ia_css_frame_map(struct ia_css_frame **frame,
+ 						  attribute, context);
+ 		if (me->data == mmgr_NULL)
+ 			err = IA_CSS_ERR_INVALID_ARGUMENTS;
+-	};
++	}
+ 
+ 	if (err != IA_CSS_SUCCESS) {
+ 		sh_css_free(me);
+-- 
+2.7.4
 
-> Remove unnecessary semicolon using semicolon.cocci Coccinelle script.
->
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
-
-Acked-by: Julia Lawall <julia.lawall@lip6.fr>
-
-> ---
->  drivers/staging/rtl8723bs/core/rtw_recv.c       | 2 +-
->  drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_recv.c b/drivers/staging/rtl8723bs/core/rtw_recv.c
-> index 9c7c3be..86f995b 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_recv.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_recv.c
-> @@ -1785,7 +1785,7 @@ static union recv_frame *recvframe_defrag(struct adapter *adapter,
->  		pfhdr->attrib.icv_len = pnfhdr->attrib.icv_len;
->  		plist = get_next(plist);
->
-> -	};
-> +	}
->
->  	/* free the defrag_q queue and return the prframe */
->  	rtw_free_recvframe_queue(defrag_q, pfree_recv_queue);
-> diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-> index a71b552..f6aeb26 100644
-> --- a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-> +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
-> @@ -163,7 +163,7 @@ static int phy_RF6052_Config_ParaFile(struct adapter *Adapter)
->  			break;
->  		}
->
-> -		/*----Restore RFENV control type----*/;
-> +		/*----Restore RFENV control type----*/
->  		switch (eRFPath) {
->  		case RF_PATH_A:
->  		case RF_PATH_C:
-> --
-> 2.7.4
->
-> --
-> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> To post to this group, send email to outreachy-kernel@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180303191726.GA4986%40seema-Inspiron-15-3567.
-> For more options, visit https://groups.google.com/d/optout.
->
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
