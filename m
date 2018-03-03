@@ -1,80 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeCCMZu (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 07:25:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750775AbeCCMZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 07:25:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944A221782
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sat, 3 Mar 2018 21:25:45 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH -tip] x86: kprobes: Cleanup preempt disabling and
- enabling
-Message-Id: <20180303212545.8aa1ddb856975ffcac4672b5@kernel.org>
-In-Reply-To: <20180303095823.phaoeuvcjhoirwg3@gmail.com>
-References: <152004878307.12012.17534094592580782444.stgit@devbox>
-        <20180303095823.phaoeuvcjhoirwg3@gmail.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751973AbeCCMid (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 07:38:33 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46096 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751721AbeCCMia (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 07:38:30 -0500
+X-Google-Smtp-Source: AG47ELuObLaJlp/ArvWIv4SSAGM/DS+u/9Oio5MkiG9yrL1KMikKB9bK3OoWgQWzT9FowSKHIQIMjyL9JHxj+HihNKE=
+MIME-Version: 1.0
+In-Reply-To: <20180303080604.6fe8a9d3@jawa>
+References: <20180302121750.12865-1-lukma@denx.de> <CAOMZO5BTnfHRkGnROh3LJoGVPcBcQk=rroYip4V1DDBUbkRuKw@mail.gmail.com>
+ <20180303080604.6fe8a9d3@jawa>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 3 Mar 2018 09:38:28 -0300
+Message-ID: <CAOMZO5CL7kiiw-y2Tdt7C+G1T2GxFRR3bJKQi_mzWeMSNugutQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: tpc: Device tree description of the TPC board
+To: Lukasz Majewski <lukma@denx.de>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Mar 2018 10:58:23 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
+Hi Lukasz,
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > +/*
-> > + * Interrupts are disabled on entry as trap3 is an interrupt gate and they
-> > + * remain disabled throughout this function.
-> > + */
-> > +int kprobe_int3_handler(struct pt_regs *regs)
-> > +{
-> > +	struct kprobe_ctlblk *kcb;
-> > +	int ret;
-> > +
-> > +	if (user_mode(regs))
-> > +		return 0;
-> > +
-> > +	/*
-> > +	 * We don't want to be preempted for the entire
-> > +	 * duration of kprobe processing.
-> > +	 */
-> > +	preempt_disable();
-> > +
-> > +	kcb = get_kprobe_ctlblk();
-> > +	ret = kprobe_int3_dispatcher(regs, kcb);
-> > +
-> > +	if (!kprobe_ready_for_singlestep(regs))
-> > +		preempt_enable_no_resched();
-> > +
-> > +	return ret;
-> 
-> What's the point of disabling preemption, if IRQs are disabled already?
-> 
-> There's no preemption when IRQs are off...
+On Sat, Mar 3, 2018 at 4:06 AM, Lukasz Majewski <lukma@denx.de> wrote:
 
-Ahh, right! Whole the kprobe singlestepping, IRQs are off (kprobes drops
-IF from regs->flags for single stepping) so we don't need to care about
-preempt count anymore...
+> Previously (for other imx6q board) I've added entry to e.g.
+> panel-simple.c file [1] to describe the display.
+>
+> I thought that adding timings to DTS is more welcome - hence we do not
+> need to add any extra code to Linux when porting new board?
 
-Thank you!
+Adding an entry to panel-simple helps when people want to use this
+panel into their dts, as they need only to pass a compatible string
+line instead of passing all the LCD timings.
 
+> The other upstreamed imx6q board used dual license - GPLv2 or X11
+> (which is also called MIT license).
+>
+> I suppose that this license header shall be replaced with:
+>
+> SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>
+> Am I correct?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Yes, correct.
