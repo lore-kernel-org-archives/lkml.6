@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2498535-1520280405-2-10162366045714533911
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520120523-2-11977466915995176160
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,142 +8,138 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_H
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520280404; b=Nh/HM3FgVuYiGfftVpKVlTojAWrxvscLjYp+2hLZdsiY7zx
-    B65fKmQWdLHY4lr542v9ivoFhQCvvBSi4n+55/Q5bCwu585Af6CESD/KcBIDG9/L
-    pp2la9+c/mOdS5pJA0HrrJp/S3KAfGbbF4NDjapmeaN5jKRWHrLmPWZxmS2TzHrL
-    IdbC5T3IkIlTeIkclnguZT263RACQGekjBan2vDRWqgQYAsLXxnsPaxJp911oqZL
-    MaPHEUjwNMCYFp/PCnnfKEJPZlvfeBU4VkwYa4/rB/kzdawylzayYIBvwQHkEdHI
-    C0anbEe2G2Q6ash9qrog72y7JT7ukoiY/n/TRKA==
+    t=1520120523; b=KqMeUOkmQdg4op4OW7w5RKiG8Sx7wy0TsdKFB/pN2bmWU74
+    M5U86dw9A1JP1vd1jas4L6QkK8WSQVYWxluM4jjvjtlgr4IcfRNIzA94L63RzseP
+    lITXtEm62ZgaRfWDTm6IrIvq27lfM/0Zg6FdU9XVUKXV6S0sRL+2Z3yMXaUi6CIF
+    w5IhtkLXDovfXaLsBuHKWtBufu1ypMrFhLdbkP8L9zFuozOjjEQgzZ4V/QLaroy5
+    3coLCFWCMRKZyXglMiAwk5HXcZhmLPNMPKix4OXfDKWpza6LG40zXt9GYem1ug1O
+    yK3NsE6fyTLJbGZbkainYGtdE1MIdnm+Eljw6RQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1520280404; bh=wcWAynNzoT/T3Ja93cnF8TsfXV9TSETFvw8VnI
-    420dA=; b=STxt8aEbPDAbMB8EFcrFGvvPNgzb2YuptcA1YEig/WkzD1ty2Pj7uX
-    ipRuF2N03PYnahHYU+DqznddSR9WbIe8jwKfpODxF39IDtdAZB04nItyByJYeTDe
-    DZxfTYnKR9rCXGT1R7V+F3onOjf2FBumdp6LWZYhKQ7lCWvUXyJkw94tKqG06CFY
-    xRTED4KFabjwNQjesBBnIA5BdYUuxsj7+ypW58SkjS3azwv81c+Q300tDRvOBUxd
-    eVAQMD9L5wGtY3pd4sY3dzYTJFplNDD/HDpuuW2K96xX0tHaCNlYTlWa+5ZqUeLH
-    RGdOZvbfIfk5O9bR+TlqePh5SulodiLg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZTdjJk33 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520120523; bh=Dnvc42
+    X0+LIi5DcueHKwb8ICgWH/RYHYmJW07c1gsQM=; b=dlhQPICQ7aglWeojNY++/q
+    aIZpsJWeZWtfxeRXyvU0FCSTczigO72w7L4jc9nUauxmgECy583C2BWSpGSlVbSa
+    VehYUZ2EMkqg9AuzaHDCk3UUuOrBk4WkorA8Np6/jEYkSY09an7SHWa3zGgpASDt
+    1o/b2iVmFB0DyZWgdglfmSRCIFV9lec5MOOlUwQw7vKRrCUIr//ewcP7lGS4lN6w
+    HlDLjGbJwb/UQ+vMcWHmopa4YEb7YrjXYaWGUkN1Z37F7RRcxgYS8wikalvhkkQm
+    Cq00e9WHRCykXwTJFu3gE5BXD7cbUjSJKZLDPXzbTR61ak8RLVp/+3YbA86TnxhQ
+    ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Mgznicr7 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZTdjJk33 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Mgznicr7 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeCEUGn (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 15:06:43 -0500
-Received: from mail-bl2nam02on0111.outbound.protection.outlook.com ([104.47.38.111]:7008
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S934290AbeCCWe4 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:34:56 -0500
+Received: from mail-by2nam03on0119.outbound.protection.outlook.com ([104.47.42.119]:12016
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751764AbeCEUGm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:06:42 -0500
+        id S933677AbeCCWev (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:34:51 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH AUTOSEL for 4.9 005/219] kretprobes: Ensure probe location
- is at function entry
-Thread-Topic: [PATCH AUTOSEL for 4.9 005/219] kretprobes: Ensure probe
- location is at function entry
-Thread-Index: AQHTsz7h+vIeWDcysk6ztI3Ut2DD/KPBOXyAgADa9gA=
-Date: Mon, 5 Mar 2018 20:06:39 +0000
-Message-ID: <20180305200638.fp3lxnkslgnlysxs@sasha-lappy>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Alexander Kochetkov <al.kochet@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 124/219] ARM: dts: rockchip: disable
+ arm-global-timer for rk3188
+Thread-Topic: [PATCH AUTOSEL for 4.9 124/219] ARM: dts: rockchip: disable
+ arm-global-timer for rk3188
+Thread-Index: AQHTsz8L1flxeEzS70aMpxWbN8EqTQ==
+Date: Sat, 3 Mar 2018 22:29:08 +0000
+Message-ID: <20180303222716.26640-124-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
- <20180303222716.26640-5-alexander.levin@microsoft.com>
- <1520232322.k5aakv6abc.naveen@linux.ibm.com>
-In-Reply-To: <1520232322.k5aakv6abc.naveen@linux.ibm.com>
+In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;20:6lA9lQqPLYCFm56fE2zeHON0HorY7EqcPHK1TxJm9JroaDZ2todVJS3A6dAVFlz7PDuvCIZeH4FQtJsyydNDssOm01xyDGvHzKzjNSuCc8cve5zf7sxKVMAqucD8VHD7zPyyNX4lb6VzqQQehbe1WMeWhRgutuGYwacMHRf9ccw=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1068;7:uQ9vGnA8WJOFjEniYe8BC/RkBhIzNm/kNK0yxASV4nZSxK3W1KRpFPe8NvFjxGc0I0nqeRu5xwmdHMPCNKm+8xbmK/0Xh0fyrXhUt8+o+l1dgck4DllFLjRd118uLsM0rlwIjNwCU5TEblmYkFvuU0thxyAhaSMNRShKX8465lKci/vVTgF+adgw0ng6MGWccPoudtBsd77D3LrJhG1L8ymek3HjMuVxVUpQa2zvsxj0OA7qUBWCNJPZRheU9w4n
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e96013ca-a0d4-46da-1dd2-08d582d49bc9
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603322)(7193020);SRVR:DM5PR2101MB0726;
-x-ms-traffictypediagnostic: DM5PR2101MB0726:
+x-ms-office365-filtering-correlation-id: 503f8825-a325-4a89-7c86-08d58156f632
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1068;
+x-ms-traffictypediagnostic: MW2PR2101MB1068:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0726DFEE87A085E228E8218EFBDA0@DM5PR2101MB0726.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
-x-forefront-prvs: 06022AA85F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(366004)(39380400002)(39860400002)(346002)(376002)(189003)(199004)(4326008)(22452003)(6116002)(3846002)(1076002)(97736004)(3660700001)(66066001)(99286004)(81166006)(316002)(54906003)(33716001)(5250100002)(478600001)(3280700002)(10290500003)(86612001)(25786009)(2906002)(72206003)(14454004)(5660300001)(33896004)(105586002)(6512007)(9686003)(106356001)(6436002)(10090500001)(6486002)(6916009)(26005)(76176011)(229853002)(2950100002)(6246003)(68736007)(6506007)(53936002)(186003)(86362001)(2900100001)(81156014)(7736002)(8936002)(8676002)(305945005)(102836004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 8t2mJwQY1CamaNgU+muCRw1ty36ieGqK7kt9vRJ+a0YsVL5ZHhUuM1D+r3mcL8AxtRE+lrEKd/Pyr0x7tBlBjVrRo53WbTyykO/ob6Wi13OuYM2X1FWG13ZGOWGPc096pnaX5EeOU8iJruYufwoiG4J51jIMfeCgscf3tlLENMRVmAOPAaUYh1WGhNylGhYcsHMS1hhjoulWwlDKVVkqSyPHJTNzHdDiIXa2KU0GWtgsptco/YmqpfvvltyprPKmi54X4de8TnA4n4rmvqKPgVMztskR5yF0AKQlc8YZ+drkhuH/0QcxR7c8Dt1iV9m3xpKPzFRfHrj3EE4SplmUOg==
+x-microsoft-antispam-prvs: <MW2PR2101MB1068CC611B77F6B7C28E7F13FBC40@MW2PR2101MB1068.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231220)(944501244)(52105095)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1068;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1068;
+x-forefront-prvs: 0600F93FE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(376002)(39860400002)(346002)(199004)(189003)(102836004)(59450400001)(6506007)(26005)(66066001)(4326008)(1076002)(105586002)(10290500003)(478600001)(72206003)(86612001)(14454004)(186003)(2906002)(2501003)(305945005)(7736002)(36756003)(3660700001)(5250100002)(25786009)(2950100002)(39060400002)(5660300001)(3846002)(2900100001)(3280700002)(6116002)(106356001)(22452003)(97736004)(316002)(575784001)(81166006)(10090500001)(81156014)(8936002)(8676002)(76176011)(6436002)(110136005)(53936002)(6486002)(54906003)(6512007)(86362001)(107886003)(68736007)(99286004)(6666003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1068;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: IWHjXQvjYO/TZ1N/a+rsLkKNEXUQIdTq/0v53ecqjtYE+DeXu6Bq7sfRD5w9n4GW0M6ZxkdP0lNnCX7yjUWB3BEhCny5OEQDnDFFo8OsokIdE6gkf+BktmpxeD56NpbDjg/C+yTm7cW+pRb8qZlIDTdU+NJQGR/jyCCHhui+5HM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0D529F911EC88346AC1E2FA2AA017B8E@namprd21.prod.outlook.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e96013ca-a0d4-46da-1dd2-08d582d49bc9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2018 20:06:39.9628
+X-MS-Exchange-CrossTenant-Network-Message-Id: 503f8825-a325-4a89-7c86-08d58156f632
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:08.0882
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1068
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 12:32:57PM +0530, Naveen N. Rao wrote:
->Hi Sasha,
->
->Sasha Levin wrote:
->>From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
->>
->>[ Upstream commit 90ec5e89e393c76e19afc845d8f88a5dc8315919 ]
->>
->
->Sorry if this is obvious, but why was this patch picked up for=20
->-stable?  I don't see the upstream commit tagging -stable, so curious=20
->why this was done.
->
->I don't think this patch should be pushed to -stable since this is not=20
->really a bug fix. There are also other dependencies for this change=20
->(see commit a64e3f35a45f4a, for instance), including how userspace=20
->(perf) builds out the retprobe argument. As such, please drop this=20
->from -stable (for 3.18. 4.4 and 4.9).
+From: Alexander Kochetkov <al.kochet@gmail.com>
 
-Hi Naveen,
+[ Upstream commit 500d0aa918a2ea6bb918fee8adcf27dc2912bcd1 ]
 
-It's an automatic selection process that attempts to find commits that
-should be in stable but weren't tagged as such.
+The clocksource and the sched_clock provided by the arm_global_timer
+are quite unstable because their rates depend on the cpu frequency.
 
-I'll drop this patch, thanks!
+On the other side, the arm_global_timer has a higher rating than the
+rockchip_timer, it will be selected by default by the time framework
+while we want to use the stable rockchip clocksource.
 
+Let's disable the arm_global_timer in order to have the rockchip
+clocksource selected by default.
+
+Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ arch/arm/boot/dts/rk3188.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/rk3188.dtsi b/arch/arm/boot/dts/rk3188.dtsi
+index 31f81b265cef..73a200914f0b 100644
+--- a/arch/arm/boot/dts/rk3188.dtsi
++++ b/arch/arm/boot/dts/rk3188.dtsi
+@@ -530,6 +530,7 @@
+=20
+ &global_timer {
+ 	interrupts =3D <GIC_PPI 11 0xf04>;
++	status =3D "disabled";
+ };
+=20
+ &local_timer {
 --=20
-
-Thanks,
-Sasha=
+2.14.1
