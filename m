@@ -1,155 +1,109 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1145125-1520116626-2-18204072772146945972
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520116626; b=C+rESvnHDSPhKxdO0GUG3Xn5vLdguvQJubj35PtdhhODddH
-    ZligXgPwmHbdAsOlOy9sdlsOt23D4k/eLPS9jto6uciYYCF8fEbJF3zg1o17IDL8
-    P5MgNBR2vSaGmsOKEOrqI1IxOCV+6vaAHzCnvhh2CjPoIkihriZ3P1jK92KpQvO2
-    Lk9qaC0SfWU7daz1kcUwr0yeksNJF4olQ3usH+LEJbHUuASwX4K5HbdoppT/tomV
-    DywSD44TgZLisoOvSqOAukyLhFQdJpv7eEbF47QPNlscr7iwe+mUdlLSX5Opuz0+
-    ovTU7DbhGB/49OdKw7HVi4Ue0BzaY2eeBW+OUUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520116626; bh=sgg5e0
-    /lUreyXvszM1vHxSbGIWrJp/frSOCQnaoYWUY=; b=fTWaTX5sU4rAr6VJ4hkySr
-    1qD8qyoXY685Vljz3DnhAHxGkHHnRAGWQqcG9RvLPysc6PHRBxKuokhVfRg3kdAd
-    8J2CxuxB7jZJ98TwilThErnmc28mumkLpKpG7pn7PFDno/EHZzK5EXEvsGsC7WOK
-    zcdQbJHe88Y1uKtK6z2KyBY8BPB9jJIHYHVHB21aWr91xr/yuohvhqe0FuM2gWWK
-    CmzaDYYmQGf2DfxoCkpATCOx5hmBQf/xP07y5YVWEcgVsViygEjEMf0Mmdccg1aN
-    YNJ/1dXZg6KT1FPke8aSMnQI8rPQDPGg6taVJAm2AvVIfHXt7MUfqtnT4XrWIYsw
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SlCAxC2P x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SlCAxC2P x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeCCWgT (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:36:19 -0500
-Received: from mail-by2nam03on0118.outbound.protection.outlook.com ([104.47.42.118]:7707
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934506AbeCCWgN (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:36:13 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELvKo4oZbq7AIVFHF6cmlo74Q/D88Bg1ezypnx3XhRqfZujHvdKstLCB3c1QYso3raUji/ux
+ARC-Seal: i=1; a=rsa-sha256; t=1520116622; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ObmeXO7TqkX8Up6AJI+bk7vBTkl/+akoVmAA0NGYxe9xBsUGybgAsQsa9Pw7vD2W+j
+         9Eau8ZdnWXHHrMjeImf3C3zwWDEyJXA0oGp38CpxJWce9479Jpg+3rohmr3us3IsiJtF
+         T0qrTffrkxBk6rYdA9ex0oabPn1Hsq+rIWXOxSSyeESIetnKeKawm75KFVaRMezC0rEa
+         CFMkO6tPxnAe2+q/KJPbsjOFOZINyxDTgCAaZokQEfmkp1CHcdzFmUhI0oW1enFi9glX
+         laHPC04UoO8SK/5J5OpimEKIjFMMqeHKhPgehyyEoRtulBjpcvYkGYgPYkTGqccbdTwC
+         mnmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=cFeB1TrgMtZngp0wwDtx1od604UigPepXX0cJiGvXIY=;
+        b=sKSt0g2csCqxOso9lj9UsNR5RYBNGekTEm++rYzAdwrkBQ2kClRkRJ0fkEL3j11smR
+         H/8sW7x3bqelUWpCpCvl9UGELzydQZVcVE4QCkx/iFleaCPiZ2Dc2WOz6kFPi31f6Wu5
+         n6Sa9vu71mshCrq5Qz84qV5o3V3mI89lPS5AqgutMGbW98ev4brMNvoYjOvp7Ar9W5nd
+         9D3j9Wqc3vlh41QQTNXznXRhxXfvEBOz40/GQx5YVByGdFjLQbNj/wc6Ju13ZT47TTfX
+         Kby0K9zUug1pgZzhSwv5fnQ/y25F4uSVxzLDWQCpemQ4H8dKQWRtYz6B70sc775e11vb
+         mnDg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cDJmMp9g;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cDJmMp9g;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 179/219] test_firmware: fix setting old custom
- fw path back on exit
-Thread-Topic: [PATCH AUTOSEL for 4.9 179/219] test_firmware: fix setting old
- custom fw path back on exit
-Thread-Index: AQHTsz8f1RAhmcVCf0+ENO/SWwckUw==
-Date: Sat, 3 Mar 2018 22:29:41 +0000
-Message-ID: <20180303222716.26640-179-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Julien BOIBESSOT <julien.boibessot@armadeus.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 201/219] tools/usbip: fixes build with musl
+ libc toolchain
+Thread-Topic: [PATCH AUTOSEL for 4.9 201/219] tools/usbip: fixes build with
+ musl libc toolchain
+Thread-Index: AQHTsz8m3KFIkTbWO0WqkWkpyimITQ==
+Date: Sat, 3 Mar 2018 22:29:53 +0000
+Message-ID: <20180303222716.26640-201-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1020;7:UfSiyCPaDT+OgxgO1pOesnkauw+OCFTh/nUwahebGtfZ7UuhW8CQutPsGKORXJSa/gkOT20seSau7Jpdqqpib49OK54qO+5SJRQeweShWBC+Veut4ldv3fSP7YXJvo5fIxcbJ1Od6utZ1aZhnONCagY9bllzA1OtjxhkQa9bmI4MzCMhNN+vrhNWAoK4enJWoWJahRaPnEWhp3uuQtGsPLejvleoFOXA+OKw75Jh9jPCLjzHR9W6oqxsJ8KDXQt/
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 145f664c-2417-4688-e98e-08d5815728e3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1020;
-x-ms-traffictypediagnostic: MW2PR2101MB1020:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB10200577565AB0C174333866FBC40@MW2PR2101MB1020.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1020;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1020;
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0969;7:PHyOUFXci/KjjFyDu+o1+F90v4Dc9QwlEv+ZJqzxgf/ie+CdzxMt3UJSb50B1g6HB+aKbjqN32LPsF90B58VFC9QS0wuKPPgmbmifKxpYiD45OzD4+tqH8hWxoJiWl0FMfTgNINkQVk9FBX0VLNzZiV4LxjKgE/ijtGJblyIjRVd5GyzT058VDdcWVMxm7EbGegAnfq78znGnM4Ym/Otx+CqFysFxo5cD2eQuU23+0iw6VrkIQvVwWRRauWQiHXO
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ce0c7997-f08a-4cc8-bf25-08d581574354
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB0969;
+x-ms-traffictypediagnostic: MW2PR2101MB0969:
+x-microsoft-antispam-prvs: <MW2PR2101MB096924F87B013A04CECE6F04FBC40@MW2PR2101MB0969.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0969;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0969;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(6436002)(5250100002)(99286004)(3846002)(6116002)(8936002)(22452003)(86612001)(86362001)(575784001)(4326008)(10090500001)(68736007)(6512007)(7736002)(97736004)(25786009)(76176011)(1076002)(6486002)(2501003)(66066001)(36756003)(107886003)(2950100002)(8676002)(305945005)(5660300001)(105586002)(53936002)(6666003)(3280700002)(81166006)(6506007)(106356001)(2906002)(81156014)(316002)(478600001)(72206003)(10290500003)(2900100001)(54906003)(110136005)(59450400001)(186003)(102836004)(26005)(14454004)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1020;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: ZUw/BGh05FuEPPtPaIg9PnCrkQxb0PnHuWSDHyYs0QcZ1Sq2XZEB3LCVmEcXEqIa1FrEcoqC+ORFAo0L+QhvMMha9r1TzDzqfPhN3aI/LVZRK0Rgw9KnVD2/RgkbSI222DRSQ3ifA1AeBJlPreyHIb8JsGXrssTI2zcRiQTcy44=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(366004)(396003)(39860400002)(189003)(199004)(105586002)(5250100002)(53936002)(107886003)(36756003)(6436002)(4326008)(2501003)(6486002)(1076002)(2906002)(6512007)(2900100001)(54906003)(110136005)(305945005)(106356001)(7736002)(316002)(3280700002)(478600001)(14454004)(59450400001)(10290500003)(68736007)(2950100002)(72206003)(3660700001)(66066001)(3846002)(6116002)(102836004)(6506007)(5660300001)(10090500001)(25786009)(186003)(26005)(99286004)(22452003)(81166006)(76176011)(86362001)(81156014)(97736004)(86612001)(8676002)(8936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0969;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: Pi4vHy3jdpsKi0L1VJUp2oBZDTGi1xP6lRgmCJmIRbaVXXTZEnNAV/j3UsnDu9NWS89PKtFtMd0dTKdabI0NPiNGByNsF5lBwF47FiTkymkHQiG4wB+MEV43+ehoD1LP4s038VWuZzkiQozTo3c1c06JAmRT9+O0Toyc4mxJxgo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D8D94EF0EA66D74283F156C9F87A7816@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 145f664c-2417-4688-e98e-08d5815728e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:41.5726
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce0c7997-f08a-4cc8-bf25-08d581574354
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:53.4945
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1020
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0969
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593957177068415875?=
+X-GMAIL-MSGID: =?utf-8?q?1593957807027698161?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-
-[ Upstream commit 65c79230576873b312c3599479c1e42355c9f349 ]
-
-The file /sys/module/firmware_class/parameters/path can be used
-to set a custom firmware path. The fw_filesystem.sh script creates
-a temporary directory to add a test firmware file to be used during
-testing, in order for this to work it uses the custom path syfs file
-and it was supposed to reset back the file on execution exit. The
-script failed to do this due to a typo, it was using OLD_PATH instead
-of OLD_FWPATH, since its inception since v3.17.
-
-Its not as easy to just keep the old setting, it turns out that
-resetting an empty setting won't actually do what we want, we need
-to check if it was empty and set an empty space.
-
-Without this we end up having the temporary path always set after
-we run these tests.
-
-Fixes: 0a8adf58475 ("test: add firmware_class loader test")
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- tools/testing/selftests/firmware/fw_filesystem.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/test=
-ing/selftests/firmware/fw_filesystem.sh
-index d8ac9ba67688..17e16fcaa0cc 100755
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -28,7 +28,10 @@ test_finish()
- 	if [ "$HAS_FW_LOADER_USER_HELPER" =3D "yes" ]; then
- 		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
- 	fi
--	echo -n "$OLD_PATH" >/sys/module/firmware_class/parameters/path
-+	if [ "$OLD_FWPATH" =3D "" ]; then
-+		OLD_FWPATH=3D" "
-+	fi
-+	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
- 	rm -f "$FW"
- 	rmdir "$FWPATH"
- }
---=20
-2.14.1
+RnJvbTogSnVsaWVuIEJPSUJFU1NPVCA8anVsaWVuLmJvaWJlc3NvdEBhcm1hZGV1cy5jb20+DQoN
+ClsgVXBzdHJlYW0gY29tbWl0IDc3YmU0Yzg3OGM3MmU0MTFhZDIyYWY5NmI2ZjgxZGQ0NWMyNjQ1
+MGEgXQ0KDQpJbmRlZWQgbXVzbCBkb2Vzbid0IGRlZmluZSBvbGQgU0lHQ0xEIHNpZ25hbCBuYW1l
+IGJ1dCBvbmx5IG5ldyBvbmUgU0lHQ0hMRC4NClNJR0NITEQgaXMgdGhlIG5ldyBQT1NJWCBuYW1l
+IGZvciB0aGF0IHNpZ25hbCBzbyBpdCBkb2Vzbid0IGNoYW5nZQ0KYW55dGhpbmcgb24gb3RoZXIg
+bGliY3MuDQoNClRoaXMgZml4ZXMgdGhpcyBraW5kIG9mIGJ1aWxkIGVycm9yOg0KDQp1c2JpcGQu
+YzogSW4gZnVuY3Rpb24g4oCYc2V0X3NpZ25hbOKAmToNCnVzYmlwZC5jOjQ1OToxMjogZXJyb3I6
+ICdTSUdDTEQnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlzIGZ1bmN0aW9uKQ0KICBzaWdh
+Y3Rpb24oU0lHQ0xELCAmYWN0LCBOVUxMKTsNCiAgICAgICAgICAgIF5+fn5+fg0KdXNiaXBkLmM6
+NDU5OjEyOiBub3RlOiBlYWNoIHVuZGVjbGFyZWQgaWRlbnRpZmllciBpcyByZXBvcnRlZCBvbmx5
+IG9uY2UNCglmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluDQpNYWtlZmlsZTo0MDc6IHJl
+Y2lwZSBmb3IgdGFyZ2V0ICd1c2JpcGQubycgZmFpbGVkDQptYWtlWzNdOiAqKiogW3VzYmlwZC5v
+XSBFcnJvciAxDQoNClNpZ25lZC1vZmYtYnk6IEp1bGllbiBCT0lCRVNTT1QgPGp1bGllbi5ib2li
+ZXNzb3RAYXJtYWRldXMuY29tPg0KQWNrZWQtYnk6IFNodWFoIEtoYW4gPHNodWFoa2hAb3NnLnNh
+bXN1bmcuY29tPg0KU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGlu
+dXhmb3VuZGF0aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIu
+bGV2aW5AbWljcm9zb2Z0LmNvbT4NCi0tLQ0KIHRvb2xzL3VzYi91c2JpcC9zcmMvdXNiaXBkLmMg
+fCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoN
+CmRpZmYgLS1naXQgYS90b29scy91c2IvdXNiaXAvc3JjL3VzYmlwZC5jIGIvdG9vbHMvdXNiL3Vz
+YmlwL3NyYy91c2JpcGQuYw0KaW5kZXggYTA5NzJkZWE5ZTZjLi4xOTM1NTY1MDc5NTcgMTAwNjQ0
+DQotLS0gYS90b29scy91c2IvdXNiaXAvc3JjL3VzYmlwZC5jDQorKysgYi90b29scy91c2IvdXNi
+aXAvc3JjL3VzYmlwZC5jDQpAQCAtNDYzLDcgKzQ2Myw3IEBAIHN0YXRpYyB2b2lkIHNldF9zaWdu
+YWwodm9pZCkNCiAJc2lnYWN0aW9uKFNJR1RFUk0sICZhY3QsIE5VTEwpOw0KIAlzaWdhY3Rpb24o
+U0lHSU5ULCAmYWN0LCBOVUxMKTsNCiAJYWN0LnNhX2hhbmRsZXIgPSBTSUdfSUdOOw0KLQlzaWdh
+Y3Rpb24oU0lHQ0xELCAmYWN0LCBOVUxMKTsNCisJc2lnYWN0aW9uKFNJR0NITEQsICZhY3QsIE5V
+TEwpOw0KIH0NCiANCiBzdGF0aWMgY29uc3QgY2hhciAqcGlkX2ZpbGU7DQotLSANCjIuMTQuMQ0K
