@@ -1,73 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153505-1520116063-5-8459156139600365260
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enfr, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520116062; b=W+MxrhC/ChWVP8zkxJqdJKu01JA/0n9OX3JynulhyK1kFyw
-    YgqPy7vCbSIznUMf7N2K7GU+bdg9q+BnpASpxnxJgP5hbRx6YU4anlqEJ3DizWjL
-    IWpT0j9B3NAMpSCpRy8RROXUim+1wcylVoQeSkvt+nNeETHhkbWGTjeEmuuhcf4Y
-    QsGn36V7TW6nyyfOINSW8JjdMzxihP0o5/olQqwP/NOpFhP15B7JFV5cK4zkSiux
-    R2y5RVuurjTydLufE3Irdd47W2s76hko6aMZv4bjbrT2sG+DaCG004O4hyOwHzkn
-    lXX5Oi/o76vu+7bMyhhd+HZvgJnxWDV8EK7Ww9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520116062; bh=7nU44y
-    9L3XERk8wLQt8wbcj6labQlUwn/9YZnSg6Og4=; b=sBEJ6dbyleXq9Qf60QK7mn
-    a+JN/TPfqwbhKI9ZtR/Ljtw5M4A3OQe5DOIQYD1kJfYWwyqotXVCDzVQ7JAp1Ni0
-    Mo3UmiFKJIrrhVvdkBQNTYobUldoIg1kl6HbFpPiPYdyU4PMH1Nxr52vjjR7M49y
-    fLT08oA4N7yqAdDiPxgPxvzh2ZrlPU3JdebmCrBd/RIOayKsNc5zsZcbvDTXRpr8
-    4Dz4+gBIv27bKkyKP2iNYzAx5hH21ArxYqi0S6HxFhK9PmW0y0lKsdIQ3MAlilDd
-    PhyefdyftiHM6AZlxxAOXouMSWZqkvkK7UcnP5wMdt7Drw5GklCbCvtRH+l79FIg
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GA1O0TOi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GA1O0TOi x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932649AbeCCW01 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:26:27 -0500
-Received: from mail-by2nam01on0123.outbound.protection.outlook.com ([104.47.34.123]:26076
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932651AbeCCW0T (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:26:19 -0500
+Return-Path: <Alexander.Levin@microsoft.com>
+X-Google-Smtp-Source: AG47ELvrJL3Vq6GfGMUY5AUQvphrgfGT8tTx6pIjrF9br4W0eCuMeW5cd1OrdCejeTcGb9zeNlfz
+ARC-Seal: i=1; a=rsa-sha256; t=1520116027; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gsbmQwDw7ROwn/hWhpl3A2i27jOBg58fI3dn4WUsxsKJpc4Z3A4GkmqxAYtRPdUlNp
+         hSijaBrnCaex2jXe0KQKxOBC2DLE2/VzISj4cMbmN3vi8cTbzwXNxyk8A5vnVk3y08j4
+         IMS+HH1S7FfOrw8LSAsOuPbATfI558eGMmB6wrpu+t1qAiA7yXqBDevim4d9vq3ZM+Fr
+         ashFLIMjiUduQvW+lRzxkupr5qtQ3tNLuh66L/8qdHMMaOVgz4epP3WD1gy54jMZHxl5
+         dvCcbWYLN9wwQ1oM6/5UZTFo0XSfmaY8a0OAq/LD5Sx5M+CFI3GPTAAqjT0aaZkZD+gS
+         JNcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=GhOt77s6wyjP/Z4KBPN+gd6omDb811QcdJM5WM9igpw=;
+        b=j2DXoJL8ky4mRW32/7LOEGCb+f3I/GWKiSrhqYBk7O8nEaUSlEcgqjHCvSg68mrokd
+         7fUMlLb9MQGOmr6SMjo2R3if1XqZZmnfurdwGA6ynWw9gCnHjXkseXCkVfTK4H7ZYCgf
+         cIZ3/2o0Q0JMIPkcQWk8U+WgF8yRg8mgpY8BpsDO6/lhLBlZVl1xwQIJgw/brLqXxMFa
+         /DwW1NDGxgfCrmy4zsJQK2NeJAKOLEXfCkjuzU8X+gjyvI7+8aim5faY7AVPkzMS8pSn
+         6RROaXcJXH6Y4HPrlM2wsqN0+43/1O9mdBiRvQxQAzQrzb5qemnBKY4RzdWVIYy0FMTz
+         b3pg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=DXyZlL7X;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.91 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=DXyZlL7X;
+       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.40.91 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 060/102] pinctrl: sh-pfc: r8a7791: Add
- can_clk function
-Thread-Topic: [PATCH AUTOSEL for 4.15 060/102] pinctrl: sh-pfc: r8a7791: Add
- can_clk function
-Thread-Index: AQHTsz5uywnIoVAcpESoObeOieELaw==
-Date: Sat, 3 Mar 2018 22:24:44 +0000
-Message-ID: <20180303222318.26006-60-alexander.levin@microsoft.com>
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Ioana Radulescu <ruxandra.radulescu@nxp.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 078/102] staging: fsl-dpaa2/eth: Fix access
+ to FAS field
+Thread-Topic: [PATCH AUTOSEL for 4.15 078/102] staging: fsl-dpaa2/eth: Fix
+ access to FAS field
+Thread-Index: AQHTsz50VBzONfJUh0Sevg9kt4sYDw==
+Date: Sat, 3 Mar 2018 22:24:54 +0000
+Message-ID: <20180303222318.26006-78-alexander.levin@microsoft.com>
 References: <20180303222318.26006-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222318.26006-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,110 +48,130 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2SPR01MB06;6:0083Tuqyg/NnP+KTNpgcgyQKigj1/nk4zp2JnbjxhWJMxcpehBsu0cdQaqXJub+TpCKbg4tZ+v3EbxrHRiinFxC6q0ozZxSimVo1tmgXN3kluy9NireHe3i4LUrhcRdkCUa/xC7jA993sG7ug17qL1vbbu1UDqpF1NHFESb2quSa/VPa+zQ5353klsvhS8VpBUFx2YLWmgVK+jXn4xWLzcRJXs5tFyJB1Eh/ENKvo0CDvHTcN5VsmuWJQeP8gbSZUYRQ4xVzxtwpEB83nsdzGEj8NLuSVX4SF+8bCYqKHiOcEc6++p3ZINorh/VFuFtXhMUYmeLvxBtHb4vyDPiSIfaQLC5g1jjiXzl8JRomHLiAkR69eg1/XYfcaf5VgVYj;5:8rp2JmtHGvlmLyXZaxeG+RT9wfMfmMIzkTrIjdSwkpfotL97UOaecTUs1oGJ76SHcvYFibpOXZnU41mA0M2zf5WK73n6NEu9UVdkbHf5MnBlR8jSe1mr0A3uh/oWutLLyq+NsbPTZ82IxvDHyZBfosncjUMNNZaPd1u6Pe1fHEI=;24:luEJPztGOjsdqt+qXES+jJWt9umJVh4S7/zryDwH5/KCUpKtL1riceeLTOhU4IuEIO+XoS6IdnVxGi7nmBQL07xu6IRzGiEAxhFxAyW7o00=;7:yv5MIP8qapZUt0YMiIShVY8eumpQA8zWm5sJDBX0tU3gG7sXAU1j54wwKHlY7oJg25xNlXUCY2CH8YZAhA3eBkEppWquQZRqsGeyzhO20QEe5Q64cmwqdthQStqQIu1fg+9jUJPZEHScwlasKUorfU5nJhU60w32yXBw8ZJwBn126wb/qQ4ge5JO5YCtW1dp5y9YtNL/4bQERkAkbue8C8kcGUPgKt3x/KmfvWj22z/iVnzCY1yYtimEvoatKW5V
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1067;7:u4Nr8jYuaCjqzWi0zZ4WFdOZIvYgQOHv/tptJZ7+ajQ8AcOIu28i9KzoQBhEmmWkJVFszKNy+aobsLAsMeLhFlNnoPUfR2pyvCPogFcA1gbQ1cIsmLhzplLWZis5zZhmkhQ3bQC0/Qi9ZGs1zo9T9IlsspRLvDHQV4tMitWlO82zp2N8aRhEXArxb0l4vGftAOcp0BKxziUHI6LUc4B3iwdx4DNyTcBNMX7C9uUJ9ovIEBvGG3RYRtl04qQOEmSR
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3965bfb5-6ce7-4bd2-17eb-08d58155c828
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2SPR01MB06;
-x-ms-traffictypediagnostic: MW2SPR01MB06:
+x-ms-office365-filtering-correlation-id: 43b71309-5f79-46bb-32df-08d58155e422
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1067;
+x-ms-traffictypediagnostic: MW2PR2101MB1067:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2SPR01MB06CFF790F6EB538359BA34FBC40@MW2SPR01MB06.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2SPR01MB06;BCL:0;PCL:0;RULEID:;SRVR:MW2SPR01MB06;
+x-microsoft-antispam-prvs: <MW2PR2101MB10672E3F11F24214D158595CFBC40@MW2PR2101MB1067.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1067;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1067;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(396003)(346002)(39860400002)(189003)(199004)(68736007)(2900100001)(97736004)(107886003)(36756003)(1076002)(76176011)(86612001)(6666003)(6116002)(99286004)(22452003)(10090500001)(3280700002)(105586002)(2950100002)(3846002)(26005)(2501003)(6506007)(4326008)(305945005)(25786009)(7736002)(66066001)(54906003)(86362001)(8936002)(72206003)(3660700001)(6512007)(110136005)(14454004)(5660300001)(5250100002)(478600001)(102836004)(106356001)(8676002)(81166006)(6486002)(186003)(316002)(10290500003)(53936002)(6436002)(59450400001)(2906002)(81156014)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2SPR01MB06;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: Ru7uRnUwJxBjUrkmkG5TpQHesGwHkAG5cVjtF7toTsBXV/XGe7fBWb2nZMaM6Qw8GknOp1RV8oyq7bK7sCwgL1+BxJKTWecpwOaIvJw3Unp/S1mytNg+bKHeUDptXi7V6YQaHO42yLot7cG5m0qaLFEgLWx+UIVzVdt6zWjOpWQ=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(366004)(396003)(199004)(189003)(6512007)(99286004)(10090500001)(86612001)(106356001)(8656006)(53936002)(66066001)(316002)(97736004)(6436002)(68736007)(22452003)(105586002)(14454004)(54906003)(36756003)(6486002)(110136005)(8936002)(305945005)(81166006)(2950100002)(81156014)(2906002)(6666003)(5250100002)(4326008)(2501003)(1076002)(86362001)(76176011)(3846002)(6116002)(25786009)(6506007)(5660300001)(102836004)(478600001)(107886003)(72206003)(10290500003)(7736002)(26005)(186003)(3660700001)(59450400001)(2900100001)(3280700002)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1067;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: W1g9fGCaR0JcTgvetHsDfY9f4UhyQWD+9+EfE69iOmTiTjufpJIEVSvH0C6tuJFiHGpOiI4JXX4VpilBc1fYRpPipa0rOxoXMbx3qqXJRw8Y6AoICs7KMNU0b57Yi0kTvqhgC/c0B59WkqK0m+fQg9+Wv+MAim3G2XmZvYSLDNc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3965bfb5-6ce7-4bd2-17eb-08d58155c828
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:24:44.2284
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43b71309-5f79-46bb-32df-08d58155e422
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:24:54.9472
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2SPR01MB06
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1067
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593957183142643823?=
+X-GMAIL-MSGID: =?utf-8?q?1593957183142643823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-[ Upstream commit 57eec02caee60332b8052615e7257f932ae07abc ]
+[ Upstream commit 54ce891779888e85a2db04942dbaadd3f40fe223 ]
 
-This patch adds can_clk function to r8a7743/r8a7791 which is cleaner,
-and allows for independent configuration.
-We keep the can_clk* pins definitions from within can0_groups and
-can1_groups for uniformity and backwards compatibility.
+Commit 4b2d9fe87950 ("staging: fsl-dpaa2/eth: Extra headroom in RX
+buffers") removes the software annotation (SWA) area from the RX
+buffer layout, as it's not used by anyone, but fails to update the
+macros for accessing hardware annotation (HWA) fields, which is
+right after the SWA in the buffer headroom.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.co=
-m>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This may lead to some frame annotation status fields (e.g. indication
+if L3/L4 checksum is valid) to be read incorrectly.
+
+Turn the accessor macros into inline functions and add a bool param
+to specify if SWA is present or not.
+
+Fixes: 4b2d9fe87950 ("staging: fsl-dpaa2/eth: Extra headroom in RX buffers"=
+)
+
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c |  8 ++++----
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/=
-pfc-r8a7791.c
-index 10bd35f8c894..c01ef02d326b 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -4826,6 +4826,10 @@ static const char * const can0_groups[] =3D {
- 	"can0_data_d",
- 	"can0_data_e",
- 	"can0_data_f",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -4837,6 +4841,21 @@ static const char * const can1_groups[] =3D {
- 	"can1_data_b",
- 	"can1_data_c",
- 	"can1_data_d",
-+	/*
-+	 * Retained for backwards compatibility, use can_clk_groups in new
-+	 * designs.
-+	 */
-+	"can_clk",
-+	"can_clk_b",
-+	"can_clk_c",
-+	"can_clk_d",
-+};
-+
-+/*
-+ * can_clk_groups allows for independent configuration, use can_clk functi=
-on
-+ * in new designs.
-+ */
-+static const char * const can_clk_groups[] =3D {
- 	"can_clk",
- 	"can_clk_b",
- 	"can_clk_c",
-@@ -5308,7 +5327,7 @@ static const char * const vin2_groups[] =3D {
- };
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/stagi=
+ng/fsl-dpaa2/ethernet/dpaa2-eth.c
+index 0d8ed002adcb..c8a8e3abfc3a 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -249,7 +249,7 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv *priv,
+ 	vaddr =3D dpaa2_iova_to_virt(priv->iommu_domain, addr);
+ 	dma_unmap_single(dev, addr, DPAA2_ETH_RX_BUF_SIZE, DMA_FROM_DEVICE);
 =20
- static const struct {
--	struct sh_pfc_function common[56];
-+	struct sh_pfc_function common[57];
- 	struct sh_pfc_function r8a779x[2];
- } pinmux_functions =3D {
- 	.common =3D {
-@@ -5316,6 +5335,7 @@ static const struct {
- 		SH_PFC_FUNCTION(avb),
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
-+		SH_PFC_FUNCTION(can_clk),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(du0),
- 		SH_PFC_FUNCTION(du1),
+-	fas =3D dpaa2_get_fas(vaddr);
++	fas =3D dpaa2_get_fas(vaddr, false);
+ 	prefetch(fas);
+ 	buf_data =3D vaddr + dpaa2_fd_get_offset(fd);
+ 	prefetch(buf_data);
+@@ -385,7 +385,7 @@ static int build_sg_fd(struct dpaa2_eth_priv *priv,
+ 	 * on TX confirmation. We are clearing FAS (Frame Annotation Status)
+ 	 * field from the hardware annotation area
+ 	 */
+-	fas =3D dpaa2_get_fas(sgt_buf);
++	fas =3D dpaa2_get_fas(sgt_buf, true);
+ 	memset(fas, 0, DPAA2_FAS_SIZE);
+=20
+ 	sgt =3D (struct dpaa2_sg_entry *)(sgt_buf + priv->tx_data_offset);
+@@ -458,7 +458,7 @@ static int build_single_fd(struct dpaa2_eth_priv *priv,
+ 	 * on TX confirmation. We are clearing FAS (Frame Annotation Status)
+ 	 * field from the hardware annotation area
+ 	 */
+-	fas =3D dpaa2_get_fas(buffer_start);
++	fas =3D dpaa2_get_fas(buffer_start, true);
+ 	memset(fas, 0, DPAA2_FAS_SIZE);
+=20
+ 	/* Store a backpointer to the skb at the beginning of the buffer
+@@ -510,7 +510,7 @@ static void free_tx_fd(const struct dpaa2_eth_priv *pri=
+v,
+=20
+ 	fd_addr =3D dpaa2_fd_get_addr(fd);
+ 	skbh =3D dpaa2_iova_to_virt(priv->iommu_domain, fd_addr);
+-	fas =3D dpaa2_get_fas(skbh);
++	fas =3D dpaa2_get_fas(skbh, true);
+=20
+ 	if (fd_format =3D=3D dpaa2_fd_single) {
+ 		skb =3D *skbh;
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/stagi=
+ng/fsl-dpaa2/ethernet/dpaa2-eth.h
+index 5b3ab9f62d5e..3a4e9395acdc 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+@@ -153,10 +153,15 @@ struct dpaa2_fas {
+ #define DPAA2_FAS_SIZE			(sizeof(struct dpaa2_fas))
+=20
+ /* Accessors for the hardware annotation fields that we use */
+-#define dpaa2_get_hwa(buf_addr) \
+-	((void *)(buf_addr) + DPAA2_ETH_SWA_SIZE)
+-#define dpaa2_get_fas(buf_addr) \
+-	(struct dpaa2_fas *)(dpaa2_get_hwa(buf_addr) + DPAA2_FAS_OFFSET)
++static inline void *dpaa2_get_hwa(void *buf_addr, bool swa)
++{
++	return buf_addr + (swa ? DPAA2_ETH_SWA_SIZE : 0);
++}
++
++static inline struct dpaa2_fas *dpaa2_get_fas(void *buf_addr, bool swa)
++{
++	return dpaa2_get_hwa(buf_addr, swa) + DPAA2_FAS_OFFSET;
++}
+=20
+ /* Error and status bits in the frame annotation status word */
+ /* Debug frame, otherwise supposed to be discarded */
 --=20
 2.14.1
