@@ -1,72 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeCCIWU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 03:22:20 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:40777 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751568AbeCCIWS (ORCPT
+        id S1751876AbeCCId7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 03:33:59 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:32906 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbeCCId5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 03:22:18 -0500
-To: masanobu2.koike@toshiba.co.jp, casey@schaufler-ca.com
-Cc: jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 1/2] WhiteEgret: Add WhiteEgret core functions.
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20180301073830.2551-1-masanobu2.koike@toshiba.co.jp>
-        <458a466a-78bc-80d4-4d52-64b92d39f416@schaufler-ca.com>
-        <TYXPR01MB18540A7EDCE6F5BE8CFE130EF1C50@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYXPR01MB18540A7EDCE6F5BE8CFE130EF1C50@TYXPR01MB1854.jpnprd01.prod.outlook.com>
-Message-Id: <201803031722.EDF21804.QHMOtFJOFFOLSV@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sat, 3 Mar 2018 17:22:05 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Sat, 3 Mar 2018 03:33:57 -0500
+X-Google-Smtp-Source: AG47ELs1k1VcltROPAENsIYO9Vyuj/HgbHfu5LWLEJDKFmqqZOMG53TW1Pc/xZ9Ly/kfwSojtDoPmQ==
+Subject: Re: [PATCH v4 4/6] MIPS: mscc: add ocelot PCB123 device tree
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+References: <20180302224811.26840-1-alexandre.belloni@bootlin.com>
+ <20180302224811.26840-5-alexandre.belloni@bootlin.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <39189775-0c56-93b6-21e5-ac4d814d1879@cogentembedded.com>
+Date: Sat, 3 Mar 2018 11:33:55 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180302224811.26840-5-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masanobu Koike wrote:
-> On Friday, March 02, 2018 12:43 AM, Casey Schaufler wrote:
-> > On 2/28/2018 11:38 PM, Masanobu Koike wrote:
-> > > @@ -264,6 +266,9 @@ choice
-> > >  	config DEFAULT_SECURITY_APPARMOR
-> > >  		bool "AppArmor" if SECURITY_APPARMOR=y
-> > >
-> > > +	config DEFAULT_SECURITY_WHITEEGRET
-> > > +		bool "WhiteEgret" if SECURITY_WHITEEGRET=y
-> > > +
-> > 
-> > I don't see this module using any security blobs. Is there
-> > a reason you're not making this a minor (like yama) module
-> > instead of a major (like AppArmor) module?
+Hello!
+
+On 3/3/2018 1:48 AM, Alexandre Belloni wrote:
+
+> Add a device tree for the Microsemi Ocelot PCB123 evaluation board.
 > 
-> Thank you for your suggestion.
-> We are now developing WhiteEgret on the environment
-> it works certainly.
-> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[...]
+> diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+> new file mode 100644
+> index 000000000000..42bd404471f6
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/* Copyright (c) 2017 Microsemi Corporation */
+> +
+> +/dts-v1/;
+> +
+> +#include "ocelot.dtsi"
+> +
+> +/ {
+> +	compatible = "mscc,ocelot-pcb123", "mscc,ocelot";
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	memory {
 
-??? What Casey suggested is effectively
+    Needs to be "memory@0" as you have the "regs" prop.
 
-----------
---- a/security/whiteegret/init.c
-+++ b/security/whiteegret/init.c
-@@ -48,9 +48,6 @@ static int __init we_init(void)
- {
- 	int rc;
- 
--	if (!security_module_enable("whiteegret"))
--		return 0;
--
- 	security_add_hooks(we_hooks, ARRAY_SIZE(we_hooks), "whiteegret");
- 
- 	rc = we_specific_init();
-----------
+> +		device_type = "memory";
+> +		reg = <0x0 0x0e000000>;
+> +	};
+> +};
+[...]
 
-, isn't it? Unlike Yama, adding whiteegret_add_hooks() to security_init()
-is not useful, for security_init() is called too early to create securityfs
-entries for WhiteEgret.
-
-Current version uses security= parameter as a switch for enabling/disabling
-WhiteEgret, doesn't it? If WhiteEgret does not use security= as a switch,
-is some other switch (e.g. __setup()) expected?
+MBR, Sergei
