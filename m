@@ -1,223 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752098AbeCCOz0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 09:55:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47282 "EHLO mail.kernel.org"
+        id S1752110AbeCCPIN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 10:08:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751896AbeCCOzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 09:55:24 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B2E2178D
+        id S1751923AbeCCPIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 10:08:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6FD2133D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
-Message-ID: <1520088922.4280.47.camel@kernel.org>
-Subject: Re: [PATCH v7 08/61] xarray: Add the xa_lock to the radix_tree_root
-From: Jeff Layton <jlayton@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date: Sat, 03 Mar 2018 09:55:22 -0500
-In-Reply-To: <20180219194556.6575-9-willy@infradead.org>
-References: <20180219194556.6575-1-willy@infradead.org>
-         <20180219194556.6575-9-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 3 Mar 2018 15:08:05 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Fabrice Gasnier <fabrice.gasnier@st.com>, linux@armlinux.org.uk,
+        mark.rutland@arm.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, lars@metafoo.de, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, benjamin.gaignard@linaro.org,
+        arnaud.pouliquen@st.com
+Subject: Re: [PATCH] dt-bindings: iio: adc: stm32-dfsdm: fix types, add
+ missing pinctrl
+Message-ID: <20180303150805.39f07a54@archlinux>
+In-Reply-To: <20180302162513.umh2a2g4io3x26uz@rob-hp-laptop>
+References: <1519384260-23875-1-git-send-email-fabrice.gasnier@st.com>
+        <20180302162513.umh2a2g4io3x26uz@rob-hp-laptop>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-19 at 11:45 -0800, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> This results in no change in structure size on 64-bit x86 as it fits in
-> the padding between the gfp_t and the void *.
-> 
+On Fri, 2 Mar 2018 10:25:13 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-While the patch itself looks fine, we should take note that this will
-likely increase the size of radix_tree_root on 32-bit arches.
-
-I don't think that's necessarily a deal breaker, but there are a lot of
-users of radix_tree_root. Many of those users have their own spinlock
-for radix tree accesses, and could be trivially changed to use the
-xa_lock. That would need to be done piecemeal though.
-
-A less disruptive idea might be to just create some new struct that's a
-spinlock + radix_tree_root, and then use that going forward in the
-xarray conversion. That might be better anyway if you're considering a
-more phased approach for getting this merged.
-
-> Initialising the spinlock requires a name for the benefit of lockdep,
-> so RADIX_TREE_INIT() now needs to know the name of the radix tree it's
-> initialising, and so do IDR_INIT() and IDA_INIT().
+> On Fri, Feb 23, 2018 at 12:11:00PM +0100, Fabrice Gasnier wrote:
+> > - Add missing pinctrl description. Support is made optional as dfsdm
+> >   may use internal sources (e.g. via registers)
+> > - Fix typo in IIO STM32 DFSDM filter "MANCH_F" description.
+> > Basically, this should be "falling edge = logic 0", not "1" that applies
+> > to "MANCH_R".
+> > BTW, make the description complete by describing both rising/falling
+> > edges as described in reference manuals.
+> > 
+> > Fixes: 6c82f947fc97 ("IIO: add DT bindings for stm32 DFSDM filter")
+> > 
+> > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)  
 > 
-> Also add the xa_lock() and xa_unlock() family of wrappers to make it
-> easier to use the lock.  If we could rely on -fplan9-extensions in
-> the compiler, we could avoid all of this syntactic sugar, but that
-> wasn't added until gcc 4.6.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> ---
->  fs/f2fs/gc.c                   |  2 +-
->  include/linux/idr.h            | 19 ++++++++++---------
->  include/linux/radix-tree.h     |  7 +++++--
->  include/linux/xarray.h         | 24 ++++++++++++++++++++++++
->  kernel/pid.c                   |  2 +-
->  tools/include/linux/spinlock.h |  1 +
->  6 files changed, 42 insertions(+), 13 deletions(-)
->  create mode 100644 include/linux/xarray.h
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index aa720cc44509..7aa15134180e 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1006,7 +1006,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  	unsigned int init_segno = segno;
->  	struct gc_inode_list gc_list = {
->  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
-> -		.iroot = RADIX_TREE_INIT(GFP_NOFS),
-> +		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
->  	};
->  
->  	trace_f2fs_gc_begin(sbi->sb, sync, background,
-> diff --git a/include/linux/idr.h b/include/linux/idr.h
-> index 913c335054f0..e856f4e0ab35 100644
-> --- a/include/linux/idr.h
-> +++ b/include/linux/idr.h
-> @@ -32,27 +32,28 @@ struct idr {
->  #define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
->  					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
->  
-> -#define IDR_INIT_BASE(base) {						\
-> -	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER),			\
-> +#define IDR_INIT_BASE(name, base) {					\
-> +	.idr_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER),			\
->  	.idr_base = (base),						\
->  	.idr_next = 0,							\
->  }
->  
->  /**
->   * IDR_INIT() - Initialise an IDR.
-> + * @name: Name of IDR.
->   *
->   * A freshly-initialised IDR contains no IDs.
->   */
-> -#define IDR_INIT	IDR_INIT_BASE(0)
-> +#define IDR_INIT(name)	IDR_INIT_BASE(name, 0)
->  
->  /**
-> - * DEFINE_IDR() - Define a statically-allocated IDR
-> - * @name: Name of IDR
-> + * DEFINE_IDR() - Define a statically-allocated IDR.
-> + * @name: Name of IDR.
->   *
->   * An IDR defined using this macro is ready for use with no additional
->   * initialisation required.  It contains no IDs.
->   */
-> -#define DEFINE_IDR(name)	struct idr name = IDR_INIT
-> +#define DEFINE_IDR(name)	struct idr name = IDR_INIT(name)
->  
->  /**
->   * idr_get_cursor - Return the current position of the cyclic allocator
-> @@ -219,10 +220,10 @@ struct ida {
->  	struct radix_tree_root	ida_rt;
->  };
->  
-> -#define IDA_INIT	{						\
-> -	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
-> +#define IDA_INIT(name)	{						\
-> +	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
->  }
-> -#define DEFINE_IDA(name)	struct ida name = IDA_INIT
-> +#define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
->  
->  int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
->  int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
-> diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-> index 6c4e2e716dac..34149e8b5f73 100644
-> --- a/include/linux/radix-tree.h
-> +++ b/include/linux/radix-tree.h
-> @@ -110,20 +110,23 @@ struct radix_tree_node {
->  #define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
->  
->  struct radix_tree_root {
-> +	spinlock_t		xa_lock;
->  	gfp_t			gfp_mask;
->  	struct radix_tree_node	__rcu *rnode;
->  };
->  
-> -#define RADIX_TREE_INIT(mask)	{					\
-> +#define RADIX_TREE_INIT(name, mask)	{				\
-> +	.xa_lock = __SPIN_LOCK_UNLOCKED(name.xa_lock),			\
->  	.gfp_mask = (mask),						\
->  	.rnode = NULL,							\
->  }
->  
->  #define RADIX_TREE(name, mask) \
-> -	struct radix_tree_root name = RADIX_TREE_INIT(mask)
-> +	struct radix_tree_root name = RADIX_TREE_INIT(name, mask)
->  
->  #define INIT_RADIX_TREE(root, mask)					\
->  do {									\
-> +	spin_lock_init(&(root)->xa_lock);				\
->  	(root)->gfp_mask = (mask);					\
->  	(root)->rnode = NULL;						\
->  } while (0)
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> new file mode 100644
-> index 000000000000..2dfc8006fe64
-> --- /dev/null
-> +++ b/include/linux/xarray.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +#ifndef _LINUX_XARRAY_H
-> +#define _LINUX_XARRAY_H
-> +/*
-> + * eXtensible Arrays
-> + * Copyright (c) 2017 Microsoft Corporation
-> + * Author: Matthew Wilcox <mawilcox@microsoft.com>
-> + */
-> +
-> +#include <linux/spinlock.h>
-> +
-> +#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
-> +#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
-> +#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-> +#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
-> +#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
-> +#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
-> +#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
-> +#define xa_lock_irqsave(xa, flags) \
-> +				spin_lock_irqsave(&(xa)->xa_lock, flags)
-> +#define xa_unlock_irqrestore(xa, flags) \
-> +				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
-> +
-> +#endif /* _LINUX_XARRAY_H */
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index ed6c343fe50d..157fe4b19971 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -70,7 +70,7 @@ int pid_max_max = PID_MAX_LIMIT;
->   */
->  struct pid_namespace init_pid_ns = {
->  	.kref = KREF_INIT(2),
-> -	.idr = IDR_INIT,
-> +	.idr = IDR_INIT(init_pid_ns.idr),
->  	.pid_allocated = PIDNS_ADDING,
->  	.level = 0,
->  	.child_reaper = &init_task,
-> diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
-> index 4ed569fcb139..b21b586b9854 100644
-> --- a/tools/include/linux/spinlock.h
-> +++ b/tools/include/linux/spinlock.h
-> @@ -7,6 +7,7 @@
->  
->  #define spinlock_t		pthread_mutex_t
->  #define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
-> +#define __SPIN_LOCK_UNLOCKED(x)	(pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER
->  
->  #define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
->  #define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
--- 
-Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to the togreg branch of iio.git and pushed out as testing.
+
+Thanks,
+
+Jonathan
