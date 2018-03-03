@@ -1,78 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965114AbeCCByA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:54:00 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42122 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965064AbeCCBx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:53:58 -0500
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V4] scsi: core: use blk_mq_requeue_request in __scsi_queue_insert
-Date: Sat,  3 Mar 2018 09:54:09 +0800
-Message-Id: <1520042049-8874-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803030017
+        id S965134AbeCCB4p (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:56:45 -0500
+Received: from mga01.intel.com ([192.55.52.88]:12687 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965064AbeCCB4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 20:56:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
+   d="scan'208";a="31078699"
+Date: Sat, 3 Mar 2018 09:56:41 +0800
+From: Fengguang Wu <fengguang.wu@intel.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>, LKP <lkp@intel.com>,
+        "Hao, Shun" <shun.hao@intel.com>
+Subject: Re: ERROR: "ia64_delay_loop" [drivers/spi/spi-thunderx.ko] undefined!
+Message-ID: <20180303015641.amwarmtsskxcnnv5@wfg-t540p.sh.intel.com>
+References: <201803011134.bk1IHi9I%fengguang.wu@intel.com>
+ <a7358051-b4a0-c07c-1747-f4702abf220f@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <a7358051-b4a0-c07c-1747-f4702abf220f@arm.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In scsi core, __scsi_queue_insert should just put request back on
-the queue and retry using the same command as before. However, for
-blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
-the request. To align with the semantics of __scsi_queue_insert,
-use blk_mq_requeue_request with kick_requeue_list == true and put
-the reference of scsi_device.
+On Thu, Mar 01, 2018 at 04:25:45PM +0000, Robin Murphy wrote:
+>On 01/03/18 03:18, kbuild test robot wrote:
+>> Hi Robin,
+>>
+>> First bad commit (maybe != root cause):
+>
+>I have to admit I'm slightly intrigued how this commit could possibly
+>appear relevant to the IA64 build at all, let alone to this error :/
 
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
----
-Changelog:
-V3 -> V4:
- - modify the comment and make it more clearly
+Yeah it looks like a bisect error -- the commit merely changed an ARM
+header file.
 
-V2 -> V3:
- - add comment to explain why we need a put_device in
-   __scsi_queue_insert
- - add reviewed-by
+Thanks,
+Fengguang
 
-V1 -> V2:
- - add put_device on scsi_device->sdev_gendev
- drivers/scsi/scsi_lib.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index a86df9c..6ce33f6 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -191,7 +191,19 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
- 	 */
- 	cmd->result = 0;
- 	if (q->mq_ops) {
--		scsi_mq_requeue_cmd(cmd);
-+		/*
-+		 * Before a SCSI command is dispatched,
-+		 * get_device(&sdev->sdev_gendev) is called and the host,
-+		 * target and device busy counters are increased. Since
-+		 * requeuing a request causes these actions to be repeated and
-+		 * since scsi_device_unbusy() has already been called,
-+		 * put_device(&device->sdev_gendev) must still be called. Call
-+		 * put_device() after blk_mq_requeue_request() to avoid that
-+		 * removal of the SCSI device can start before requeueing has
-+		 * happened.
-+		 */
-+		blk_mq_requeue_request(cmd->request, true);
-+		put_device(&device->sdev_gendev);
- 		return;
- 	}
- 	spin_lock_irqsave(q->queue_lock, flags);
--- 
-2.7.4
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> head:   97ace515f01439d4cf6e898b4094040dc12d36e7
+>> commit: e1a50de37860b3a93a9d643b09638db5aff47650 arm64: cputype: Silence Sparse warnings
+>> date:   12 days ago
+>> config: ia64-allmodconfig (attached as .config)
+>> compiler: ia64-linux-gcc (GCC) 7.2.0
+>> reproduce:
+>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>          chmod +x ~/bin/make.cross
+>>          git checkout e1a50de37860b3a93a9d643b09638db5aff47650
+>>          # save the attached .config to linux build tree
+>>          make.cross ARCH=ia64
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>>> ERROR: "ia64_delay_loop" [drivers/spi/spi-thunderx.ko] undefined!
+>>     ERROR: "ia64_delay_loop" [drivers/net/phy/mdio-cavium.ko] undefined!
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>>
+>
