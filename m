@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1254417-1520120045-2-10575586843196362629
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520120020-2-12884750786931213648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,30 +8,30 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_H
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520120044; b=NKyF/gmSygIsJZ66F8ghE6Jqq0gO2dq40FliUtAi1RBC/fM
-    Ot0qv4ajz0eAzCHOuUDaPUzo5gnm0ZVs4yBCExJOdnbiQOlFSv1HPRKD5W3iGLaq
-    1u083W2DYeoT9XSviyk+O7N50ZJGX13EYt/BLl0BT4VlYU6p5KSh52mQmovuCoLh
-    hr4F41mr6wPjTeg1FrJVVENxgghqRwGdMIxqR2T64x7H0StkEf3Jt2dRTwYfZ56k
-    /CgSWgm5YtUBhOWy3/oOCHj7AM6wVEFMEUxXIJ9ftO4DeH39xD2dsEt3Funa2PKL
-    F2vrWjWDP+dNp3f59KIfWbiA6C3L/EVyBev3fcQ==
+    t=1520120019; b=QOjcjR8etZmfYGRFaSIptqjqyKfyxnE56j39mc3pEseuEFY
+    SMZY4bPSvlzw6j8xyCDyCCHh3M7ly/qfRLW93+7hdSh7DykGAGnsClzgJVb7480x
+    Pk5NhQ6He7rvDw7/ie344sUXqT/BJ/sntzUMH+ivotw4+IP8Hi4iTnYcLE/q2W+N
+    Z7LMuhoZv7lotQPIFJkJCCArHTMcm1ztpnoVbwfpO0Uu+mn+K2/G3vAxCHsev3Lg
+    5iuDNq98p3PP5DWJf0WRs9Af94m7E8bB9QFMMyfex6m0KRUAjYR32Lia/3b3/02H
+    bLx6uHp07SqNTrarM0G/T0ymeMPwBC77ZO3YwPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1520120044; bh=sDXSrGVRf517sRix1ox11FQGoOZdtRHC1dDlP9
-    PkFAU=; b=pwuajmdDm41uIsMQNmvB5XhNZmCzNmFSf/bvi09EvnM8f2NFjHKHtV
-    o1F2XIDeORWcSWFduLflZd801TuiV+j/iaKmy1+1xMs04c/i2RpTeoJqx4Ns3c1O
-    PYanoLEi34neWLAOZOe6twBv6JKrcis1zRxoaV5/mysriZnp00/FRq9uUW07W/NK
-    bIwVl90oDSls4Q97SCAxd/hSQlYGJZ0RGJCQof85fCUts98qYoWjvLBENeJRbwAL
-    NyEw3LbzYJtFn/hxOjnXXlQaMeOB5aipeKQwHj6b4Do4KRGRMUvPWbw5qY7q5n9B
-    PsO2P04dwV+9MoYOZh+DkI8mb3rgP1yQ==
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520120019; bh=4ga8oe
+    VdBwLe98n5aHG7kjzGegEveYoZvua6OXoUy2k=; b=OwvQmuciONrFHVYubOEriE
+    cPNMySJQXvi6a3l8usifDxHeO2zjgIXW54sTadh8HqGclsmt/RzYvMxDS5goSCjq
+    NGe/ZigJFa2n6q/Un+yQLwVuHZI+287dIwykE0jY7vy2hHKYRu05CYgMYX9luvSn
+    PrkRZum1IyZA8S9FuejXDyoH3rRP57dQ3AtSox3gerxvXysf+ueXvAxtjKK/hpH8
+    x1w+SyuNPmMwn0H9WYbb2zbu9rsT5wyo8P/rP7+mI4t3+mppFxL5LhEk/7OITpCQ
+    u+ky4H8PWef2SmIRJNoqHQyGJmuJ68lOxsKLLVLhJAFSlB+dhIRsfXLRSBrYN7WQ
+    ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lmYplGVw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SRDquE9o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=lmYplGVw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=SRDquE9o x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,38 +48,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932641AbeCCXdf (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:33:35 -0500
-Received: from mail-by2nam03on0118.outbound.protection.outlook.com ([104.47.42.118]:7707
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S1752389AbeCCXdg (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:33:36 -0500
+Received: from mail-bn3nam01on0139.outbound.protection.outlook.com ([104.47.33.139]:45280
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934095AbeCCWgG (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:36:06 -0500
+        id S933950AbeCCWgF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:36:05 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Jani Nikula <jani.nikula@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
+CC: Michael Scott <michael.scott@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 171/219] drm/edid: set ELD connector type in
- drm_edid_to_eld()
-Thread-Topic: [PATCH AUTOSEL for 4.9 171/219] drm/edid: set ELD connector type
- in drm_edid_to_eld()
-Thread-Index: AQHTsz8cnq9cG6nTFkCTiUJvHNGwOQ==
-Date: Sat, 3 Mar 2018 22:29:37 +0000
-Message-ID: <20180303222716.26640-171-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 164/219] Bluetooth: 6lowpan: fix delay work
+ init in add_peer_chan()
+Thread-Topic: [PATCH AUTOSEL for 4.9 164/219] Bluetooth: 6lowpan: fix delay
+ work init in add_peer_chan()
+Thread-Index: AQHTsz8aSGewpgldmUmM5u3GZ5VDjg==
+Date: Sat, 3 Mar 2018 22:29:32 +0000
+Message-ID: <20180303222716.26640-164-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -88,85 +76,119 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1020;7:vW/EZycUn+QrwPxdq4SiS5NYotMyxePAzE6PXJ8UQOkWVdnUhnmc3717/n9fYv8sRNAy4pyp67yrS46Lkpq9NAKs9Ufuyyy9YVDkuQjigy99dQuPu8Wqn7crjWD7mTMo+R5CweTuth3magdung/mN9WTZlA/kMTnibA9GfA2DWPswopH+JyqBXI66UP1imUtawvdTfbX5TKEt32JGm5sLGEKG9qnDFbQ5ghLfsXS4Uz3WihF0B4A0lynJ/6qthnZ
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1034;7:J1xesqNJ3TfhzJeYqvq9DFWOrWirglW5czAH2fHFBjzlz1SC44O6Ll/gs5zZKMuCE2sTHXfR2zCBcumXpF2bDmbqV02oe5sPFFIQGAcXSYp0L44U6pnNpO6Fj1qXX13xkmi3KkltTF5c5TnGOwbZ9ORkIR26ZYd8x4Jhcvw/JFNBNPPrpJ5u+ekL7gcNhfJcq3InuX6P/gHAM2nerHmEBKGf4JtOSNkYVkzl+ppTeWTLoknyAaa33RVnM+SwX0F0
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 46583e92-365c-4524-a2d5-08d581572637
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1020;
-x-ms-traffictypediagnostic: MW2PR2101MB1020:
+x-ms-office365-filtering-correlation-id: 1aa422d2-50e1-4adb-d10d-08d581571c10
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1034;
+x-ms-traffictypediagnostic: MW2PR2101MB1034:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB1020AE4EAC13359DB8B4B876FBC40@MW2PR2101MB1020.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(18589796830644)(767451399110)(7411616537696)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1020;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1020;
+x-microsoft-antispam-prvs: <MW2PR2101MB1034055420AF28A514BD437DFBC40@MW2PR2101MB1034.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:MW2PR2101MB1034;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1034;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(8666007)(6436002)(5250100002)(99286004)(3846002)(39060400002)(6116002)(8936002)(22452003)(86612001)(86362001)(575784001)(4326008)(10090500001)(68736007)(6512007)(7736002)(97736004)(25786009)(76176011)(1076002)(6486002)(2501003)(6306002)(66066001)(36756003)(107886003)(2950100002)(8676002)(305945005)(5660300001)(105586002)(53936002)(6666003)(3280700002)(81166006)(6506007)(106356001)(2906002)(81156014)(316002)(478600001)(72206003)(10290500003)(2900100001)(54906003)(966005)(110136005)(59450400001)(7416002)(186003)(102836004)(26005)(14454004)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1020;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: PK+ez4xugvlkLdNMRwVAPMIOevRdPfyWe5eNry4k9aCP2mpQvwdCy9g9z6kuVrES4s8S7JRCyy9alSEfO7nn4M6htLHjJ9z44ENrotlqqcqAePEkMNhEsz8WIaIF8rvNAon9Am+Q3u3KT+YoapePpH/DgOGqNbOh88wuUErTcdo=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(39380400002)(366004)(396003)(199004)(189003)(99286004)(22452003)(72206003)(316002)(3846002)(6116002)(186003)(26005)(478600001)(76176011)(54906003)(110136005)(102836004)(97736004)(1076002)(2501003)(3660700001)(66066001)(5250100002)(5660300001)(86362001)(10090500001)(10290500003)(86612001)(6506007)(68736007)(106356001)(25786009)(8676002)(4326008)(59450400001)(6512007)(305945005)(2906002)(14454004)(107886003)(8936002)(7736002)(81166006)(3280700002)(53936002)(105586002)(81156014)(6666003)(6486002)(36756003)(2900100001)(6436002)(2950100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1034;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: XUeB9TEkgMlElbHgwFRktjCDzEVmWJqqo1cdXrm7V83EHkVUuXselyOJ/SAsmfLlSpmoFzswVAL/IjcJVNiu2sxLuXyd383T/6U0K8iHNIG9eJnia5RJOwfbW03IeewITHD1cSBZRjr7Z+Vs2lCjRODp0/JW5POnLoGDf9G/CuU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <259C8A3E51D1E244BF0436A56140E32E@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46583e92-365c-4524-a2d5-08d581572637
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:37.0570
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1aa422d2-50e1-4adb-d10d-08d581571c10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:32.6507
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1020
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1034
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGludGVsLmNvbT4NCg0KWyBVcHN0cmVhbSBj
-b21taXQgMWQxYzM2NjUwNzUyYjdmYjgxY2VlNTE1YTliYmE0MTMxY2FjNGI3YyBdDQoNClNpbmNl
-IGRybV9lZGlkX3RvX2VsZCgpIGtub3dzIHRoZSBjb25uZWN0b3IgdHlwZSwgd2UgY2FuIHNldCB0
-aGUgdHlwZSBpbg0KRUxEIHdoaWxlIGF0IGl0LiBNb3N0IGNvbm5lY3RvcnMgdGhpcyBnZXRzIGNh
-bGxlZCBvbiBhcmUgbm90IERQDQplbmNvZGVycywgYW5kIHdpdGggdGhlIEhETUkgdHlwZSBiZWlu
-ZyAwLCB0aGlzIGRvZXMgbm90IGNoYW5nZSBiZWhhdmlvdXINCmZvciBub24tRFAuDQoNCkZvciBp
-OTE1IGhhdmluZyB0aGlzIGluIHBsYWNlIGVhcmxpZXIgd291bGQgaGF2ZSBzYXZlZCBhIGNvbnNp
-ZGVyYWJsZQ0KYW1vdW50IG9mIGRlYnVnZ2luZyB0aGF0IGxlYWQgdG8gdGhlIGZpeCAyZDhmNjMy
-OTdiOWYgKCJkcm0vaTkxNTogYWx3YXlzDQp1cGRhdGUgRUxEIGNvbm5lY3RvciB0eXBlIGFmdGVy
-IGdldCBtb2RlcyIpLiBJIGRvbid0IHNlZSBvdGhlciBkcml2ZXJzLA0KZXZlbiB0aGUgb25lcyBj
-YWxsaW5nIGRybV9lZGlkX3RvX2VsZCgpIG9uIERQIGNvbm5lY3RvcnMsIHNldHRpbmcgdGhlDQpj
-b25uZWN0b3IgdHlwZSBpbiBFTEQuDQoNCkNjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVj
-aGVyQGFtZC5jb20+DQpDYzogQ2hyaXN0aWFuIEvDtm5pZyA8Y2hyaXN0aWFuLmtvZW5pZ0BhbWQu
-Y29tPg0KQ2M6IEFyY2hpdCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+DQpDYzogQW5k
-cnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4NCkNjOiBSdXNzZWxsIEtpbmcgPGxpbnV4
-QGFybWxpbnV4Lm9yZy51az4NCkNjOiBDSyBIdSA8Y2suaHVAbWVkaWF0ZWsuY29tPg0KQ2M6IFBo
-aWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+DQpDYzogQmVuIFNrZWdncyA8YnNr
-ZWdnc0ByZWRoYXQuY29tPg0KQ2M6IE1hcmsgWWFvIDxtYXJrLnlhb0Byb2NrLWNoaXBzLmNvbT4N
-CkNjOiBCZW5qYW1pbiBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4NCkNj
-OiBWaW5jZW50IEFicmlvdSA8dmluY2VudC5hYnJpb3VAc3QuY29tPg0KQ2M6IFRoaWVycnkgUmVk
-aW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+DQpDYzogRXJpYyBBbmhvbHQgPGVyaWNAYW5o
-b2x0Lm5ldD4NClJldmlld2VkLWJ5OiBWaWxsZSBTeXJqw6Rsw6QgPHZpbGxlLnN5cmphbGFAbGlu
-dXguaW50ZWwuY29tPg0KUmV2aWV3ZWQtYnk6IEFsZXggRGV1Y2hlciA8YWxleGFuZGVyLmRldWNo
-ZXJAYW1kLmNvbT4NCkFja2VkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29t
-Pg0KU2lnbmVkLW9mZi1ieTogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGludGVsLmNvbT4NCkxp
-bms6IGh0dHBzOi8vcGF0Y2h3b3JrLmZyZWVkZXNrdG9wLm9yZy9wYXRjaC9tc2dpZC9kNTI3YjMx
-NjE5NTI4YzQ3N2MyYzEzNmYyNWNkZjExOGJjMGNmYzFkLjE1MDk1NDU2NDEuZ2l0Lmphbmkubmlr
-dWxhQGludGVsLmNvbQ0KU2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5sZXZp
-bkBtaWNyb3NvZnQuY29tPg0KLS0tDQogZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMgfCA5ICsr
-KysrKystLQ0KIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
-DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9kcm1fZWRpZC5jDQppbmRleCBjNmIyODFhYTc2MmYuLjZiMzFlMDQ3NDI3MSAxMDA2NDQN
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0v
-ZHJtX2VkaWQuYw0KQEAgLTMzNDcsOCArMzM0Nyw3IEBAIEVYUE9SVF9TWU1CT0woZHJtX2VkaWRf
-Z2V0X21vbml0b3JfbmFtZSk7DQogICogQGVkaWQ6IEVESUQgdG8gcGFyc2UNCiAgKg0KICAqIEZp
-bGwgdGhlIEVMRCAoRURJRC1MaWtlIERhdGEpIGJ1ZmZlciBmb3IgcGFzc2luZyB0byB0aGUgYXVk
-aW8gZHJpdmVyLiBUaGUNCi0gKiBDb25uX1R5cGUsIEhEQ1AgYW5kIFBvcnRfSUQgRUxEIGZpZWxk
-cyBhcmUgbGVmdCBmb3IgdGhlIGdyYXBoaWNzIGRyaXZlciB0bw0KLSAqIGZpbGwgaW4uDQorICog
-SERDUCBhbmQgUG9ydF9JRCBFTEQgZmllbGRzIGFyZSBsZWZ0IGZvciB0aGUgZ3JhcGhpY3MgZHJp
-dmVyIHRvIGZpbGwgaW4uDQogICovDQogdm9pZCBkcm1fZWRpZF90b19lbGQoc3RydWN0IGRybV9j
-b25uZWN0b3IgKmNvbm5lY3Rvciwgc3RydWN0IGVkaWQgKmVkaWQpDQogew0KQEAgLTM0MjYsNiAr
-MzQyNSwxMiBAQCB2b2lkIGRybV9lZGlkX3RvX2VsZChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29u
-bmVjdG9yLCBzdHJ1Y3QgZWRpZCAqZWRpZCkNCiAJfQ0KIAllbGRbNV0gfD0gdG90YWxfc2FkX2Nv
-dW50IDw8IDQ7DQogDQorCWlmIChjb25uZWN0b3ItPmNvbm5lY3Rvcl90eXBlID09IERSTV9NT0RF
-X0NPTk5FQ1RPUl9EaXNwbGF5UG9ydCB8fA0KKwkgICAgY29ubmVjdG9yLT5jb25uZWN0b3JfdHlw
-ZSA9PSBEUk1fTU9ERV9DT05ORUNUT1JfZURQKQ0KKwkJZWxkW0RSTV9FTERfU0FEX0NPVU5UX0NP
-Tk5fVFlQRV0gfD0gRFJNX0VMRF9DT05OX1RZUEVfRFA7DQorCWVsc2UNCisJCWVsZFtEUk1fRUxE
-X1NBRF9DT1VOVF9DT05OX1RZUEVdIHw9IERSTV9FTERfQ09OTl9UWVBFX0hETUk7DQorDQogCWVs
-ZFtEUk1fRUxEX0JBU0VMSU5FX0VMRF9MRU5dID0NCiAJCURJVl9ST1VORF9VUChkcm1fZWxkX2Nh
-bGNfYmFzZWxpbmVfYmxvY2tfc2l6ZShlbGQpLCA0KTsNCiANCi0tIA0KMi4xNC4xDQo=
+From: Michael Scott <michael.scott@linaro.org>
+
+[ Upstream commit d2891c4d071d807f01cc911dc42a68f4568d65cf ]
+
+When adding 6lowpan devices very rapidly we sometimes see a crash:
+[23122.306615] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.9.0-43-arm64 #1 =
+Debian 4.9.9.linaro.43-1
+[23122.315400] Hardware name: HiKey Development Board (DT)
+[23122.320623] task: ffff800075443080 task.stack: ffff800075484000
+[23122.326551] PC is at expire_timers+0x70/0x150
+[23122.330907] LR is at run_timer_softirq+0xa0/0x1a0
+[23122.335616] pc : [<ffff000008142dd8>] lr : [<ffff000008142f58>] pstate: =
+600001c5
+
+This was due to add_peer_chan() unconditionally initializing the
+lowpan_btle_dev->notify_peers delayed work structure, even if the
+lowpan_btle_dev passed into add_peer_chan() had previously been
+initialized.
+
+Normally, this would go unnoticed as the delayed work timer is set for
+100 msec, however when calling add_peer_chan() faster than 100 msec it
+clears out a previously queued delay work causing the crash above.
+
+To fix this, let add_peer_chan() know when a new lowpan_btle_dev is passed
+in so that it only performs the delay work initialization when needed.
+
+Signed-off-by: Michael Scott <michael.scott@linaro.org>
+Acked-by: Jukka Rissanen <jukka.rissanen@linux.intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ net/bluetooth/6lowpan.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+index 1904a93f47d5..de7b82ece499 100644
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@ -755,7 +755,8 @@ static void set_ip_addr_bits(u8 addr_type, u8 *addr)
+ }
+=20
+ static struct l2cap_chan *add_peer_chan(struct l2cap_chan *chan,
+-					struct lowpan_btle_dev *dev)
++					struct lowpan_btle_dev *dev,
++					bool new_netdev)
+ {
+ 	struct lowpan_peer *peer;
+=20
+@@ -786,7 +787,8 @@ static struct l2cap_chan *add_peer_chan(struct l2cap_ch=
+an *chan,
+ 	spin_unlock(&devices_lock);
+=20
+ 	/* Notifying peers about us needs to be done without locks held */
+-	INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
++	if (new_netdev)
++		INIT_DELAYED_WORK(&dev->notify_peers, do_notify_peers);
+ 	schedule_delayed_work(&dev->notify_peers, msecs_to_jiffies(100));
+=20
+ 	return peer->chan;
+@@ -843,6 +845,7 @@ out:
+ static inline void chan_ready_cb(struct l2cap_chan *chan)
+ {
+ 	struct lowpan_btle_dev *dev;
++	bool new_netdev =3D false;
+=20
+ 	dev =3D lookup_dev(chan->conn);
+=20
+@@ -853,12 +856,13 @@ static inline void chan_ready_cb(struct l2cap_chan *c=
+han)
+ 			l2cap_chan_del(chan, -ENOENT);
+ 			return;
+ 		}
++		new_netdev =3D true;
+ 	}
+=20
+ 	if (!try_module_get(THIS_MODULE))
+ 		return;
+=20
+-	add_peer_chan(chan, dev);
++	add_peer_chan(chan, dev, new_netdev);
+ 	ifup(dev->netdev);
+ }
+=20
+--=20
+2.14.1
