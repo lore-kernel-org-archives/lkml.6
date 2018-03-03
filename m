@@ -1,108 +1,110 @@
-Return-Path: <kernel-hardening-return-12066-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsJqLCpU8NN58bgoKjjAIE5iKVvi4nfwRSbQ1UOO90lxPKA3PWLgYGJ38kZz1pgIApygvOd
-ARC-Seal: i=1; a=rsa-sha256; t=1519944403; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ers/9yVRFWUnqEvhnJg6D7eXaBzl01AMgvhhtdg5UhN+8DD1QIeWvCictatvWTYMBg
-         OPIE8/DZvOLriKrRt+1kUm5KUVt54tpmwOjXl7wS0+Dflg+HMpodXzaasERSozS/x9bS
-         ABiIlbKNQjVIkwGNmzhSEqyN/5h+O/Qmk3GTt4QqZkiYNrttIumz7f00hnKOm37L3bGL
-         j/Zxlrt4uUI3Es7lfZduAWNfeSEE+WgdbiTqP7Bfdp9o1Q+ll1bMwat3NBvq9Sgzi0Pa
-         nN3hARZ14L9PMLsE8LGS5D1W1vrY8aFgdvBiyJ20ykd1nlEBBq+E2NyojY15mCzB+tX6
-         gfjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=GZSTPt8KsBoN0w0B2SU4YMAozuGNvMI/BR5xAR7cYh4=;
-        b=nvXlRzo3pCBdrV4qZM0d9WzFPM9BZu2gp4RVia1e6YXs5n1Pwo8ENIcGVoYfvAga6G
-         JEMds/9BUdBxvs84azype3hLGxZB51yTU7t47gS8SiTvWbay3wyDez3jyNVQ6JZZUyZs
-         CC4baFt8g3O9Y9DN9exNcQ07necwhDcu17VdHtYOAYmtTaYp//yjQOs4G2+rVcpPcCf+
-         /UR2H/73YWlLtXRBj5p3aOrE/Dpwk80y8srfCKW5Q+4J1uMQaIcDvRu3tW6CqSEo4L58
-         91aE/hqI26z3DzzsTOkY+kALkKcgo9hUtXy8vreUCCyLHdw9n/RjzDtTb5ahqDTj1Wf+
-         WwVA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=EbMmZp8l;
-       spf=pass (google.com: domain of kernel-hardening-return-12066-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12066-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=EbMmZp8l;
-       spf=pass (google.com: domain of kernel-hardening-return-12066-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12066-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Thu, 1 Mar 2018 15:46:23 -0700
-From: Tycho Andersen <tycho@tycho.ws>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Subject: Re: [PATCH 1/3] leaking_addresses: skip all /proc/PID except /proc/1
-Message-ID: <20180301224623.ehujx7gj26nu54ql@cisco>
-References: <1519706711-18580-1-git-send-email-me@tobin.cc>
- <1519706711-18580-2-git-send-email-me@tobin.cc>
- <20180301210623.GA15198@eros>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301210623.GA15198@eros>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2878775-1520036374-2-2337655676533886235
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520036374; b=MqP94DT7rskSEKznXyFjUViujuenq05i9UhdsLjqCIPcPb0
+    Yx2HGRS6BEfyUVySGaY6dVm/k3WqjhSnwZNW2j1GP+zOW8Bu9kyIPWc74DVblnL0
+    xu9BjECLglbIpWnRCX0FPnpYlnq83Wo2SH9BanxVMnW5v9XnmzbLlUFlHi8+wOEz
+    Ego2axvTkuo5WsLHzTNpMrfFgnDE+trNXbakEELXGCxUmy+i6ccFwchI3XYC4epY
+    WrPML/DXxcPWG1e6ZScaIY3cdRLmT+Nh81sALawCqbtszMMK1dtGzMLCCZWaXrc9
+    fXwm04pe1DC+bILz45Cg1AiBzfhalQL9dIk79FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520036374; bh=8RlhPBfhqzfj5lBP/RBvHW7Iz+6IdtheaMl7J8Hz5Cg=; b=I
+    ocOuoWa4GR/LUtJ134RmaY4tOSOoPPXIno+1XYV/iTxKsWHoloIjLG0oN7VLCwUJ
+    wyVtgoBoyBwWVK582hff5Jqbtk7QiUu5MouekEr9shNqxXrrqQN7GL9LrUyGDBpc
+    2U4wmF2yPpyMEabaGrRu+xbpq2ZleVdIepZVvFr/ETxYhvEw/824mKXGkdPBW08Q
+    s+EarxX4mDB2Lv8mKPr5Mx9UT18F/cJMA8lQp9b6raMwD0wj24kfnVtFgryZ7S1D
+    8hF1V0cttIOsA4UVy33f27SnTUdROYJPSROQWVh8syOoddv5k0SHN5X+QIMeF9i1
+    a2S7ETJS3w5bYJ6bo28dA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933324AbeCCATb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 19:19:31 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:41292 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932890AbeCCATa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 2 Mar 2018 19:19:30 -0500
+Message-ID: <1520036364.2786.39.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 64/67] usb: uas: unconditionally bring back host
+ after reset
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Oliver Neukum <oneukum@suse.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc: stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Sat, 03 Mar 2018 00:19:24 +0000
+In-Reply-To: <20180202140822.268335379@linuxfoundation.org>
+References: <20180202140815.091718203@linuxfoundation.org>
+         <20180202140822.268335379@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593528026509077926?=
-X-GMAIL-MSGID: =?utf-8?q?1593777222992283134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 02, 2018 at 08:06:23AM +1100, Tobin C. Harding wrote:
-> On Tue, Feb 27, 2018 at 03:45:09PM +1100, Tobin C. Harding wrote:
-> > When the system is idle it is likely that most files under /proc/PID
-> > will be identical for various processes.  Scanning _all_ the PIDs under
-> > /proc is unnecessary and implies that we are thoroughly scanning /proc.
-> > This is _not_ the case because there may be ways userspace can trigger
-> > creation of /proc files that leak addresses but were not present during
-> > a scan.  For these two reasons we should exclude all PID directories
-> > under /proc except '1/'
-> > 
-> > Exclude all /proc/PID except /proc/1.
-> > 
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> > ---
-> >  scripts/leaking_addresses.pl | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-> > index 6e5bc57caeaa..fb40e2828f43 100755
-> > --- a/scripts/leaking_addresses.pl
-> > +++ b/scripts/leaking_addresses.pl
-> > @@ -10,6 +10,14 @@
-> >  # Use --debug to output path before parsing, this is useful to find files that
-> >  # cause the script to choke.
-> >  
-> > +#
-> > +# When the system is idle it is likely that most files under /proc/PID will be
-> > +# identical for various processes.  Scanning _all_ the PIDs under /proc is
-> > +# unnecessary and implies that we are thoroughly scanning /proc.  This is _not_
-> > +# the case because there may be ways userspace can trigger creation of /proc
-> > +# files that leak addresses but were not present during a scan.  For these two
-> > +# reasons we exclude all PID directories under /proc except '1/'
-> > +
-> >  use warnings;
-> >  use strict;
-> >  use POSIX;
-> > @@ -472,6 +480,9 @@ sub walk
-> >  			my $path = "$pwd/$file";
-> >  			next if (-l $path);
-> >  
-> > +			# skip /proc/PID except /proc/1
-> > +			next if ($path =~ /\/proc\/(?:[2-9][0-9]*|1[0-9]+)/);
+On Fri, 2018-02-02 at 17:58 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
 > 
-> Perhaps the intent of this is clearer?
+> ------------------
 > 
-> 			next if (($path =~ /^\/proc\/[0-9]+$/) &&
-> 			     	 ($path !~ /^\/proc\/1$/));
+> From: Oliver Neukum <oneukum@suse.com>
+> 
+> commit cbeef22fd611c4f47c494b821b2b105b8af970bb upstream.
+[...]
+> --- a/drivers/usb/storage/uas.c
+> +++ b/drivers/usb/storage/uas.c
+> @@ -1052,20 +1052,19 @@ static int uas_post_reset(struct usb_int
+>  		return 0;
+>  
+> 	err = uas_configure_endpoints(devinfo);
+> -	if (err) {
+> +	if (err && err != ENODEV)
+>  		shost_printk(KERN_ERR, shost,
+>  			     "%s: alloc streams error %d after reset",
+>  			     __func__, err);
+[...]
 
-+1, works for me.
+This should be checking for -ENODEV, shouldn't it?
 
-Cheers,
+Ben.
 
-Tycho
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
