@@ -1,112 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751926AbeCCMLC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 07:11:02 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58586 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751721AbeCCMLB (ORCPT
+        id S1751957AbeCCMU7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 07:20:59 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40620 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751721AbeCCMU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 07:11:01 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=jason.cai@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Syr2ub4_1520079035;
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
-Subject: [RFC v2] vfio iommu type1: improve memory pinning process for raw PFN
- mapping
-From: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-In-Reply-To: <20180226121930.5e1f6300@w520.home>
-Date: Sat, 3 Mar 2018 20:10:33 +0800
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <25959294-E232-43EB-9CE2-E558A8D62F57@linux.alibaba.com>
-References: <7090CB2E-8D63-44B1-A739-932FFA649BC9@linux.alibaba.com>
- <20180226121930.5e1f6300@w520.home>
-To: Alex Williamson <alex.williamson@redhat.com>
-X-Mailer: Apple Mail (2.3259)
+        Sat, 3 Mar 2018 07:20:57 -0500
+X-Google-Smtp-Source: AG47ELuwrBzf2H8AcDhQyrzK7Q28m7te7VJ8XsWLOqbJnrwOIC1I+DP/2G5It0fdOUvo9za14HZAAA==
+From: tomoki.sekiyama@gmail.com
+To: mchehab@s-opensource.com
+Cc: elfring@users.sourceforge.net, tomoki.sekiyama@gmail.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] media: siano: Fix coherent memory allocation failure on arm64
+Date: Sat,  3 Mar 2018 21:20:17 +0900
+Message-Id: <20180303122017.32669-1-tomoki.sekiyama@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using vfio to pass through a PCIe device (e.g. a GPU card) that
-has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
-pinning because PFNs of PCI BAR are not backed by struct page, and
-the corresponding VMA has flag VM_PFNMAP.
+From: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
 
-With this change, when pinning a region which is a raw PFN mapping,
-it can skip unnecessary user memory pinning process. Thus, it can
-significantly improve VM's boot up time when passing through devices
-via VFIO.
+On some architectures such as arm64, siano chip based TV-tuner
+USB devices are not recognized correctly due to coherent memory
+allocation failure with the following error:
 
-Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
+[  663.556135] usbcore: deregistering interface driver smsusb
+[  683.624809] smsusb:smsusb_probe: board id=18, interface number 0
+[  683.633530] smsusb:smsusb_init_device: smscore_register_device(...) failed, rc -12
+[  683.641501] smsusb:smsusb_probe: Device initialized with return code -12
+[  683.652978] smsusb: probe of 1-1:1.0 failed with error -12
+
+This is caused by dma_alloc_coherent(NULL, ...) returning NULL in
+smscoreapi.c.
+
+To fix this error, usb_alloc_coherent() must be used for DMA
+memory allocation for USB devices in such architectures.
+
+v2: non-usb `device' is also be passed to dma_alloc_coherent()
+
+Signed-off-by: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ drivers/media/common/siano/smscoreapi.c | 36 ++++++++++++++++++++++++---------
+ drivers/media/common/siano/smscoreapi.h |  2 ++
+ drivers/media/usb/siano/smsusb.c        |  1 +
+ 3 files changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index e30e29ae4819..82ccfa350315 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -385,7 +385,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- {
-        unsigned long pfn = 0;
-        long ret, pinned = 0, lock_acct = 0;
--       bool rsvd;
-        dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
-
-        /* This code path is only user initiated */
-@@ -396,14 +395,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-        if (ret)
-                return ret;
-
-+       if (is_invalid_reserved_pfn(*pfn_base)) {
-+               struct vm_area_struct *vma;
-+               down_read(&current->mm->mmap_sem);
-+               vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
-+               pinned = min(npage, (long)vma_pages(vma));
-+               up_read(&current->mm->mmap_sem);
-+               return pinned;
-+       }
-+
-        pinned++;
--       rsvd = is_invalid_reserved_pfn(*pfn_base);
-
-        /*
-         * Reserved pages aren't counted against the user, externally pinned
-         * pages are already counted against the user.
-         */
--       if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+       if (!vfio_find_vpfn(dma, iova)) {
-                if (!lock_cap && current->mm->locked_vm + 1 > limit) {
-                        put_pfn(*pfn_base, dma->prot);
-                        pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-@@ -423,13 +430,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-                if (ret)
-                        break;
-
--               if (pfn != *pfn_base + pinned ||
--                   rsvd != is_invalid_reserved_pfn(pfn)) {
-+               if (pfn != *pfn_base + pinned) {
-                        put_pfn(pfn, dma->prot);
-                        break;
-                }
-
--               if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-+               if (!vfio_find_vpfn(dma, iova)) {
-                        if (!lock_cap &&
-                            current->mm->locked_vm + lock_acct + 1 > limit) {
-                                put_pfn(pfn, dma->prot);
-@@ -447,10 +453,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
-
- unpin_out:
-        if (ret) {
--               if (!rsvd) {
--                       for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
--                               put_pfn(pfn, dma->prot);
--               }
-+               for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-+                       put_pfn(pfn, dma->prot);
-
-                return ret;
-        }
---
-2.13.6
+diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
+index c5c827e11b64..34622b562963 100644
+--- a/drivers/media/common/siano/smscoreapi.c
++++ b/drivers/media/common/siano/smscoreapi.c
+@@ -690,17 +690,24 @@ int smscore_register_device(struct smsdevice_params_t *params,
+ 
+ 	/* alloc common buffer */
+ 	dev->common_buffer_size = params->buffer_size * params->num_buffers;
+-	dev->common_buffer = dma_alloc_coherent(NULL, dev->common_buffer_size,
+-						&dev->common_buffer_phys,
+-						GFP_KERNEL | GFP_DMA);
+-	if (!dev->common_buffer) {
++	if (params->usb_device)
++		buffer = usb_alloc_coherent(params->usb_device,
++					    dev->common_buffer_size,
++					    GFP_KERNEL | GFP_DMA,
++					    &dev->common_buffer_phys);
++	else
++		buffer = dma_alloc_coherent(params->device,
++					    dev->common_buffer_size,
++					    &dev->common_buffer_phys,
++					    GFP_KERNEL | GFP_DMA);
++	if (!buffer) {
+ 		smscore_unregister_device(dev);
+ 		return -ENOMEM;
+ 	}
++	dev->common_buffer = buffer;
+ 
+ 	/* prepare dma buffers */
+-	for (buffer = dev->common_buffer;
+-	     dev->num_buffers < params->num_buffers;
++	for (; dev->num_buffers < params->num_buffers;
+ 	     dev->num_buffers++, buffer += params->buffer_size) {
+ 		struct smscore_buffer_t *cb;
+ 
+@@ -720,6 +727,7 @@ int smscore_register_device(struct smsdevice_params_t *params,
+ 	dev->board_id = SMS_BOARD_UNKNOWN;
+ 	dev->context = params->context;
+ 	dev->device = params->device;
++	dev->usb_device = params->usb_device;
+ 	dev->setmode_handler = params->setmode_handler;
+ 	dev->detectmode_handler = params->detectmode_handler;
+ 	dev->sendrequest_handler = params->sendrequest_handler;
+@@ -1231,10 +1239,18 @@ void smscore_unregister_device(struct smscore_device_t *coredev)
+ 
+ 	pr_debug("freed %d buffers\n", num_buffers);
+ 
+-	if (coredev->common_buffer)
+-		dma_free_coherent(NULL, coredev->common_buffer_size,
+-			coredev->common_buffer, coredev->common_buffer_phys);
+-
++	if (coredev->common_buffer) {
++		if (coredev->usb_device)
++			usb_free_coherent(coredev->usb_device,
++					  coredev->common_buffer_size,
++					  coredev->common_buffer,
++					  coredev->common_buffer_phys);
++		else
++			dma_free_coherent(coredev->device,
++					  coredev->common_buffer_size,
++					  coredev->common_buffer,
++					  coredev->common_buffer_phys);
++	}
+ 	kfree(coredev->fw_buf);
+ 
+ 	list_del(&coredev->entry);
+diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
+index 4cc39e4a8318..134c69f7ea7b 100644
+--- a/drivers/media/common/siano/smscoreapi.h
++++ b/drivers/media/common/siano/smscoreapi.h
+@@ -134,6 +134,7 @@ struct smscore_buffer_t {
+ 
+ struct smsdevice_params_t {
+ 	struct device	*device;
++	struct usb_device	*usb_device;
+ 
+ 	int				buffer_size;
+ 	int				num_buffers;
+@@ -176,6 +177,7 @@ struct smscore_device_t {
+ 
+ 	void *context;
+ 	struct device *device;
++	struct usb_device *usb_device;
+ 
+ 	char devpath[32];
+ 	unsigned long device_flags;
+diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
+index f13e4b01b5a5..3c605a573ce4 100644
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -446,6 +446,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 		dev->in_ep, dev->out_ep);
+ 
+ 	params.device = &dev->udev->dev;
++	params.usb_device = dev->udev;
+ 	params.buffer_size = dev->buffer_size;
+ 	params.num_buffers = MAX_BUFFERS;
+ 	params.sendrequest_handler = smsusb_sendrequest;
+-- 
+2.14.3
