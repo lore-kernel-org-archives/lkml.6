@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1312649-1520122719-2-12567227125141180026
+X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122718-2-13183503249457724740
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122719; b=ghAH3I/a6e0MqLSinTAd2+N7u8BLOZ0SvIOK27d7fWhLPFQ
-    4GMsFrOebh9XoHvVIxQ+6EgzwcjqjmsTRgD2tBRqEdNUqVRfUDDU834lw+d/HOXu
-    wQ2vE0VB3ZQk9taEL5VYL/9Kf6TkFbSosJR8lLRtP1vAsvSIVa182XiGX3uVy+kO
-    0ZylEw2ZZrVzQ3uk+xRzmk2eLV34teDBvH56XHQ1GBxn+UKYtebU7kgHpsm9Ih/d
-    iXXzpiVlGarXGeNq2JOALRNkRH7OegEbWibUfFHd9iO/G2UC83E6QTxxjOTXcWMG
-    ur+eICJtwUZs1lHRrQmpNwtuGrmnAax7CmEVUFQ==
+    t=1520122717; b=XmLYZzFt5ujMWvH7w6WMpGSZSMIbaBDt8r3P+ORvCWnP/xI
+    cu9sFB6y6QVFgazxxQxiVPkBLPC7MaGHLd7RoprQMRLArnCOE23dsjsNR1edMNFO
+    B1A6rLgcUoIrmsrE0SPSSXVl/kQVVTWXjsvvLksVTMXqzMN9i7DCtrM68W5ni0Qo
+    m45SUsjUiUzGzw2QewMEL3JVsAVabUYXimCJF05kROdWSiyp93dDjLVUn81gjS6h
+    kULZT9/ozH8TXi1biEQBAYp5ni284lRrfmIvGLE1uZga/au8OrqSoU9AnpSsoBDC
+    Tp/RKmvlLdXutATgT1U68C0d87Cd+fDvTK5Fb7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122719; bh=3nKsHQ
-    n0Oiea72ybHzVw6FT2Pyp3CuqB3nQLp5uui7U=; b=vyLEqjX+p89mb+TbxRyW5p
-    Hj1kn2j396SZ1c3Wm6H3SRlYF+euScn0bYbNSzDUZLPcJ0S1eWVGy+LOXDyd6Fv3
-    qh7b4Vtws/7wXZNaPBbfqQejRk3YzBvzdPrhaM2+H92pNholi44Y9y+3QpX3JDv4
-    w4LNuTw0CkWmTSamICuzdno1Ar0BtvhKrfFb3cE2Cja1WmHR+exmClegeiXHi5kC
-    C5268yL1fNdcrTiCsiYhHSFLhBsgpvUbv+21o0zc/vjO02kGk/ZcKmqQiZ+XmFsL
-    Azr/cZvWFSdbnhCbCULRvX07Yro4tYF5206yvEih1Zwbg/bnEjIB+DNkIFuvN1zQ
+    :mime-version:sender:list-id; s=arctest; t=1520122717; bh=B4Iamc
+    6yrPiBclueMkx7uHcMDwnzsGnYD3fWg6a1NBY=; b=MUwSCe8C9IwUP6JyogJPHa
+    31JVpSBqj15xLxo2Kx6vLg4tKfs8OUdneeHMGvVzY2yfVILry4GWcReX2usgGGzk
+    HjpXxX60Kg4hUUMquUuvTXjEvEjCfJP02v1+cTmz/2mXd0s0zMvgfeeRQgpMBvMb
+    vskswnVMOYONPuNXrZyjuGvmtEgQpTDU8JPWHdZPu2aNVZ039CK2wLjWsvCcu4+F
+    gaVad7F5LFRyV0N7obeBK+ofWhp+71PiZd12uzkmyuu5SwtV8KDoeHTPze/fS+3+
+    2lf5gZpl2sZPgjrskraL2qM+n3JvUXiPdx7m/XfUo4529ZllRIjDLd9oL9w5CMEg
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HC+4stR3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hp69DNTo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=HC+4stR3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=hp69DNTo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,28 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933312AbeCCW3J (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:29:09 -0500
-Received: from mail-sn1nam01on0126.outbound.protection.outlook.com ([104.47.32.126]:12224
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S932498AbeCDASA (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 19:18:00 -0500
+Received: from mail-bl2nam02on0122.outbound.protection.outlook.com ([104.47.38.122]:14153
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932402AbeCCW3G (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:29:06 -0500
+        id S932405AbeCCW3N (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:29:13 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+CC: Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 39/84] cpufreq: Fix governor module removal
- race
-Thread-Topic: [PATCH AUTOSEL for 4.14 39/84] cpufreq: Fix governor module
- removal race
-Thread-Index: AQHTsz6oFdNQ6OjqP0+kNvGMOv/yjQ==
-Date: Sat, 3 Mar 2018 22:26:22 +0000
-Message-ID: <20180303222518.26271-39-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 48/84] perf annotate: Fix unnecessary memory
+ allocation for s390x
+Thread-Topic: [PATCH AUTOSEL for 4.14 48/84] perf annotate: Fix unnecessary
+ memory allocation for s390x
+Thread-Index: AQHTsz6rLLj3YR+NGUCC4OERLUa0jw==
+Date: Sat, 3 Mar 2018 22:26:27 +0000
+Message-ID: <20180303222518.26271-48-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,88 +78,130 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;6:M0qLy0xbmdTlNSAxgYkr6nQ/YEaGHgs4c6kdeOP4fCk8OldhGFWaomX6GebG1/OHpvFQgg3WBipZ+re48d5QVrOnn6e5mM3t//3cXO4M4hqBqsUQ1Ga3yULRvnxZ3EZjntjXD8BXqte+PFxcqYIYtpeC7Uw4rwekSpb/XPKBH/4sH27tn+2pvBoKcoKbZKII4DYMDSn1l0hZ7ffhRQdc0ekPSK9su6bMmpMQ+BtBQackeqwoW83C6LQhn+SguyIQe5X/qq0qJnU5oJ3qXjMrlRcmC88+6QT5fVBSbmSqB8mXYepkn6XFhat2tL6AxDHJBQgnWpT0JTCnuu1qSAXGaTqbU56YEueKvcB29G2NwikWnk42y8aSm6TFuA1D+8Tc;5:Of85o17VXkOdWj6euANBteStYRz/EnvOpa5gBf2u2Fv0A9PhvX/GBdqOWC9ULAfgt0TKNXaORax9D82JeFujOByiYGMpKX69J6r0T+Zx234u6vCOPQlwMHp2y5u8kF0gS0qBl3ZzDe93AmcULdTeKMX/yjkEzvfPMxY4neilFDY=;24:1Olmn4sDF6f1zW5Vz9Gl17/8yhB4WtgvYEPXnHwfdbivd4Db/b+JWViwACGuYlKOBxwENlgKzrMu5RxNQ3b8pngYTOmzcfId8EYIT31IsJo=;7:ukN5G1B422PR1LrVpcWJnjY1VrtIiVtX59K17qQKpgMKezg1I4ilpOTid/CqS8O4koDB85m4eqwihPZqQh9g+kxnt0QgP+iJvBdSnCCTyn2cmG/iCSPo07yBHGy5BPaW1wBrSBAZ0gsRNoRi+HiLn/ZTzwlt0BbMYv1LfpFdLU2FMAUH6Fp9v+wIYzGCpaV5fxB0mBjg53Jl9wUoQ0cwzLAvCA1bQoMt5+FzY0uj75HbFes2WH794Bbe03YlCDQw
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1065;7:Nv1FGToEBsoLXthhvgTHmA+5LInPJKpHe9xlyyusHAZkft2XGSU/H64f54dnqNORXjbzmGDU00zzZZLdJtRXPBllAfmkzMxJWyUHgPtMd8/dBcoieRQWIfMvqmRj+6J+A+PdL2N+iemr5K8Pwr4AR0d+kG88uDZY7xWtY3/YzopryL/5MiChCJ4n5RoLRVdZraZAXPpwVZG0GA7EZhkhSKFZFTu2vZXgeB6+omWdXhUWYzwgAwj/iYAVP9w0WKNL
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 34ae6ecf-1ba0-4850-f37d-08d5815627c8
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
-x-ms-traffictypediagnostic: MW2PR2101MB0970:
+x-ms-office365-filtering-correlation-id: d1921eb9-ed2e-485a-7476-08d581562f43
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1065;
+x-ms-traffictypediagnostic: MW2PR2101MB1065:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB0970DCF1497FFFE05EB160D4FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
+x-microsoft-antispam-prvs: <MW2PR2101MB10655BA8CAFC6DB7991F6126FBC40@MW2PR2101MB1065.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(131327999870524)(190383065149520)(42068640409301)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1065;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1065;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(86362001)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(7736002)(8676002)(6512007)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: cdp/lP9Fo8sSTjJ4VlDVnKbj0PGsgH3WaVoPjnppytRQfOtctMLjGZzUaHVca/vCor9xK5g/8XZyUzvRo7c0Ab2//STODqAXS6ZYvQjOnVOC18Py6wcfBmvHolvp2wHkmu+lhosZpQ9EJv4t9ZDFFmFIlTaUzlE8PsQqmesFnhM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39380400002)(39860400002)(189003)(199004)(6506007)(22452003)(54906003)(25786009)(6666003)(186003)(2950100002)(102836004)(5250100002)(2501003)(110136005)(97736004)(316002)(2900100001)(36756003)(76176011)(6436002)(59450400001)(6486002)(26005)(4326008)(99286004)(68736007)(6512007)(6116002)(10090500001)(6306002)(106356001)(105586002)(478600001)(66066001)(107886003)(3660700001)(966005)(305945005)(86612001)(14454004)(81166006)(7736002)(86362001)(575784001)(1076002)(72206003)(2906002)(10290500003)(8676002)(8936002)(81156014)(3846002)(5660300001)(3280700002)(53936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1065;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: l+Nd9LV4NwBeqqoGPutLLuzL3NCtVSnpj/c1l0lKB/vvfsW4p1lmNOvSxLMMUlVZTLMkyUZFn2QjTwgiGJRGpQYvcPtBsmbpfJT1CeyDrqUl6qlPO81WWODnnMLC7YPO1Z0fqn3lwl0g3TfyFrJqtmjkcyKlspJcRPBLCVvV8Vc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34ae6ecf-1ba0-4850-f37d-08d5815627c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:22.3848
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1921eb9-ed2e-485a-7476-08d581562f43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:27.6817
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1065
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-[ Upstream commit a8b149d32b663c1a4105273295184b78f53d33cf ]
+[ Upstream commit 36c263607d36c6a3788c09301d9f5fe35404048a ]
 
-It is possible to remove a cpufreq governor module after
-cpufreq_parse_governor() has returned success in
-store_scaling_governor() and before cpufreq_set_policy()
-acquires a reference to it, because the governor list is
-not protected during that period and nothing prevents the
-governor from being unregistered then.
+This patch fixes a bug introduced with commit d9f8dfa9baf9 ("perf
+annotate s390: Implement jump types for perf annotate").
 
-Prevent that from happening by acquiring an extra reference
-to the governor module temporarily in cpufreq_parse_governor(),
-under cpufreq_governor_mutex, and dropping it in
-store_scaling_governor(), when cpufreq_set_policy() returns.
+'perf annotate' displays annotated assembler output by reading output of
+command objdump and parsing the disassembled lines. For each shown
+mnemonic this function sequence is executed:
 
-Note that the second cpufreq_parse_governor() call site is fine,
-because it only cares about the policy member of new_policy.
+  disasm_line__new()
+  |
+  +--> disasm_line__init_ins()
+       |
+       +--> ins__find()
+            |
+            +--> arch->associate_instruction_ops()
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The s390x specific function assigned to function pointer
+associate_instruction_ops refers to function s390__associate_ins_ops().
+
+This function checks for supported mnemonics and assigns a NULL pointer
+to unsupported mnemonics.  However even the NULL pointer is added to the
+architecture dependend instruction array.
+
+This leads to an extremely large architecture instruction array
+(due to array resize logic in function arch__grow_instructions()).
+
+Depending on the objdump output being parsed the array can end up
+with several ten-thousand elements.
+
+This patch checks if a mnemonic is supported and only adds supported
+ones into the architecture instruction array. The array does not contain
+elements with NULL pointers anymore.
+
+Before the patch (With some debug printf output):
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxbb
+
+real	8m49.679s
+user	7m13.008s
+sys	0m1.649s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxbb | tail -1
+__ins__find sorted:1 nr_instructions:87433 ins:0x341583c0
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 87433.
+
+After the patch (With some printf debug output:)
+
+[root@s35lp76 perf]# time ./perf annotate --stdio > /tmp/xxxaa
+
+real	1m24.553s
+user	0m0.587s
+sys	0m1.530s
+[root@s35lp76 perf]# fgrep '__ins__find sorted:1 nr_instructions:'
+			/tmp/xxxaa | tail -1
+__ins__find sorted:1 nr_instructions:56 ins:0x3f406570
+[root@s35lp76 perf]#
+
+The number of different s390x branch/jump/call/return instructions
+entered into the array is 56 which is sensible.
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20171124094637.55558-1-tmricht@linux.vnet.ib=
+m.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/cpufreq/cpufreq.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/arch/s390/annotate/instructions.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index ea43b147a7fe..bb1e148ebfd4 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -631,6 +631,8 @@ static int cpufreq_parse_governor(char *str_governor, u=
-nsigned int *policy,
- 			*governor =3D t;
- 			err =3D 0;
- 		}
-+		if (t && !try_module_get(t->owner))
-+			t =3D NULL;
+diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch=
+/s390/annotate/instructions.c
+index c9a81673e8aa..89f0b6c00e3f 100644
+--- a/tools/perf/arch/s390/annotate/instructions.c
++++ b/tools/perf/arch/s390/annotate/instructions.c
+@@ -16,7 +16,8 @@ static struct ins_ops *s390__associate_ins_ops(struct arc=
+h *arch, const char *na
+ 	if (!strcmp(name, "br"))
+ 		ops =3D &ret_ops;
 =20
- 		mutex_unlock(&cpufreq_governor_mutex);
- 	}
-@@ -759,6 +761,10 @@ static ssize_t store_scaling_governor(struct cpufreq_p=
-olicy *policy,
- 		return -EINVAL;
-=20
- 	ret =3D cpufreq_set_policy(policy, &new_policy);
-+
-+	if (new_policy.governor)
-+		module_put(new_policy.governor->owner);
-+
- 	return ret ? ret : count;
+-	arch__associate_ins_ops(arch, name, ops);
++	if (ops)
++		arch__associate_ins_ops(arch, name, ops);
+ 	return ops;
  }
 =20
 --=20
