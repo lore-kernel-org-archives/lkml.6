@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1312649-1520122499-2-664358273011979714
+X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122476-5-17600222284534206301
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122499; b=ttw8oy6py91zj3ORf2GnK6MKAuKnhrCxbQt4ilUQtFklV+D
-    94PF+DBK9aZSPjDBtU+qAk56u+O0BzqncFWBwZlKRPTlA/6TXCT+oTDaPDkWcf6y
-    V2uSxzR1PusfcySZYt4mGMs4n+CL7fDwqiAZXkSLt4oTwMf454UDRDe21fOuCrqi
-    +97UMuANs64Uwq/Qsoi05rjQmf1YfOWzI+GkMpS3+dqxIWG7qAgDfFTlCh3x6rLu
-    Aapehhpeg56caZxHHTAneWnNyhO6GC+YqWaroUwZcLmygsi4ouz5U73RxE0ie2pV
-    1zc5duT/QVXs7TFfBqC46IW5F10x8qi5CPR7nnQ==
+    t=1520122476; b=SEKrtUjAJbMQnUszT/xRwmfrZSgrLNEKle4OaJ9B9VQU/6U
+    lm8JXcM0IAcgbprEfyoIUK6b1hr1vLTH5QWUpEJ6/KZtVsTNHrOWcQn+a9x3ivB4
+    mlV/UpS6cx5O7Vqzr9Y9vsABACLkdfXHGiRqTVIqMHsiIx0l3uC/1FUn5gp08yC3
+    vgVOuvGFlb7/u/ORZCyURuZC3Nd9NOeQqR2aKcOMxH3SdiT0vZOQ8WJX1Apf4hJr
+    rF3KKLtyuDqr7nM0ElYKL65nZRcX77OJR17w0zNktjPnU84Jkx67qSB/BVE+2NsI
+    sIRNomzvjatT2fyLR6qS3+ymCodGdxEb2T4n0zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122499; bh=hFLykV
-    dUwrHvjmMuCFsIUqB4s2C8gdiopNmddwSEMsg=; b=sFbchp6C3YdFMSO6o4hUSF
-    ey6I8axrESKs9uaxaOqU26FUaJMoom51GQj6KYXQpbnmjQUnzUbxcpeG3lGfxc1Z
-    8fxTU24mRLCGKwEEHe+J8KhaH4yMjJ3S8Ba8YIC0SZ8IZrWnuhlU3uxWYGa3cel4
-    FMgzGe37QB2PN6FOsbX6LRgMLyV5KiHQnkHe5bpoucAUE4WSFBrAUkMGii6dveCM
-    QdBxxxxBuqqaWw+C45beZ24iXoGFZjmhZ3aho0uEkZDVleZ/bfnwI3EG1X12qFbQ
-    RsCQzOZOTQvWty+areMDWWpuGpwGbT4F8AGVpGtRBnYSA8Ha7sRtFFSoeW9l5fqQ
+    :mime-version:sender:list-id; s=arctest; t=1520122476; bh=ZpOkH/
+    S221oPWJPDh+NvNH39fozrRvFjTrd+vYxykk8=; b=h2lXH53utmCvuXFiYuZ+IG
+    PdfFWl74RzrwqhLIQ9Lf6QNmUSebrh3WHrQf3PDfQFQjFsGOEYj7PlWIGJ6tIMFk
+    aeMno3Pf9fLX7NfP7ew0TnROFkupbg8CLz+JQ1ilxBCDlRzVqYBzeQyKkdkDZa6R
+    zA6Ycp3sDB6i7aVT3iBLLTvHujvP/VqKHvv7/4vcCCmqB/CgvxISZDPp8D9aowGZ
+    T5rQuT0m/+48FDgMLoposcVhMKQ/ikNW8X9C9TTSy5gyG+OcTsCBvQyL0GgJk+iY
+    uzoDVwuZ29/S2YBpc2ifa/ga9Owoz9V5onyg/CqXT70O+qg1a4b1nK1NhiYphmeQ
     ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NWEwY+Ig x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=X4m+8JRO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NWEwY+Ig x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=X4m+8JRO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933549AbeCDAOO (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 19:14:14 -0500
-Received: from mail-sn1nam01on0112.outbound.protection.outlook.com ([104.47.32.112]:31677
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S932906AbeCDAOQ (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 19:14:16 -0500
+Received: from mail-by2nam01on0115.outbound.protection.outlook.com ([104.47.34.115]:14144
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932989AbeCCWaq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:30:46 -0500
+        id S932978AbeCCWap (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:30:45 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: John Fastabend <john.fastabend@gmail.com>,
+CC: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 66/84] net: sched: drop qdisc_reset from
- dev_graft_qdisc
-Thread-Topic: [PATCH AUTOSEL for 4.14 66/84] net: sched: drop qdisc_reset from
- dev_graft_qdisc
-Thread-Index: AQHTsz6yud1o77Dc0Eu3/y6mwDhO2w==
+Subject: [PATCH AUTOSEL for 4.14 65/84] virtio_net: Disable interrupts if
+ napi_complete_done rescheduled napi
+Thread-Topic: [PATCH AUTOSEL for 4.14 65/84] virtio_net: Disable interrupts if
+ napi_complete_done rescheduled napi
+Thread-Index: AQHTsz6y+2dBloUrREu69sy7fpGZyw==
 Date: Sat, 3 Mar 2018 22:26:38 +0000
-Message-ID: <20180303222518.26271-66-alexander.levin@microsoft.com>
+Message-ID: <20180303222518.26271-65-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,134 +76,115 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;6:OYVKL1l1PFXBXIxRUm8BifPdEulrA4IciV6PkmAokp0pTAc3nWBVIgSQuQOWrBXg/n/54kAuiLiyukrqCu3v1FsN4yGpt6PFaOMTomlCXEIjxv6BfkpjLQQ7w7aw/mMZccF7UaPZR/CrPCz4dx0iW1JmOziygS7jo++bMEBQymAI7uWpReVsPoW3+I4JMPS/L3/rqLyiJaAZC37gAKuJteRC6NSFPENLfrzJaeG6WdJ3UJH06al+ppZ8OluhJTERuN+S7T7wrpalmNHGW6B3FxXvpjaf2tzpJK5+PThns2759t0cqkZAFrP7NPMMbwpGBS6GtavLCbLsqpdxXqSqGleC/ennj/2A3wJIxAthfWmyMejJk75LpNpsuBjWvemI;5:AyXKlonDBDdDS/t3OQHQ5KqkZkCYDebZWo9upzcSMr1GQWOP0iRshl7BHj4bpmlY9IKrGMGUcyoYBbyR+KIdF1G1zbTz8KUezFr8TwNJs27jJkAU1USvZ1TRz/lHvRYTcTatEPzcvujiTcwj5LsQw7e5DqXH3UkksFDzozskpts=;24:LR3PElgk86om8zC8AOI8uBaL3qVl/q11jnUD1ccOC/IqMPpiwi3KMMthhRdG2JA1m1mQwuy00kXCBQLb6atQMlr1CpREIAxPxTsUULAmUXI=;7:REMeH7NeCbQwR/EEgY3x+fLz0QDo1YVZzvZabsI7Ax66X8fsN9NNfTIdzZoH3hGj4S0KZTBr2dxXSEf1qwh3OqeQYCKqFYSJEKsyOFtGYLprx5co5cXoWq6lt71AFS9o4gVfyBZNrze3tJJKQVFxRTogJ6zSpM/wsjp9OQDr6nMsklnJiHk/+UxwrD9IKe0fwKXhsuh6oUU0vqzdGzfq6RsActRTHmHkcvFHMXroKbt5yJrldX/Xs2fq1Wk1ZgA5
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1115;6:uJezok8AX7C57ydMJ4rPttuRRCbjsc22BdHPlX8ineKZ02lv5VvBGJXN4rYlXD0yZOWE2nhOE6DvPB2jERi9jLQCqfaPq1G7DL8DDznx3ToJvHWLM4t+llIc7Wl5B7XyiUQuEH8TFTbbVVgjgrXm5E6NwuFBsyNKp1QYduEWbBY1dM4pUeqWE3C9sX3HqUEofTxejMf0wZI/ZQrsBIXanB+VF81LyBKGz8hJo00OrR1QJq3LffipKl8WP+QgwMfD045AgE3YgVuee0uY27HSSlh5FTZXrarih6evgHxZGTWNHc9xenqoT/FTZJMZu6/7Xfu48neh+lGQWaYvcc2kWqhPbTdyfvZZwD1/3NISHksYuLfpShMiHSyoa17zft9w;5:TRCQThczNrKW8OhY+FfG00Xa/hoMez8HZwOmetPGHAwXaQeGnQzSkfNceoaU7acwdhn9DbzhtwpfLKdWrrW1cbdMQ7ZerZtyNnZJ30CH/4PNVY2zsWsjhLECMENubyJjEtL7kemBZqROzRuKWYIuLmLyWsduOIgp4sf0byNgw3Q=;24:PoMtSXhALMnlsJh17VxWrgqtA5/W2MSZeHi/apEvuQ+x+GaCOAe1Felj9o8EtguPl1jYxLCb295CYR2i/OYdF7n9QUGM3a2hABQRKROMjkA=;7:cP0KRg1arYWRAwqlA96iK7EHdTsrstxb3WbPbnglHmnCKMkiVvmyJ1pYFWr/xtspAMNKVENQ7jsO7ZeIgIZ5nkr3qoTUsiSrLhfHYKx6tXJ/DD9S7eMbNOReDkZP5h/nqho3KK7kvy32CJyxFtwn8T8L7QW9GldZvtVWRPwZRqgRLVRdLJ01qN/h85nid3RKbLh9HMp+IMCTh5qlb6nw7RvgTO/bs8w0qmRUBpMh+yy8tXaFUUNbhclgp1YqdvJj
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 094590eb-1e44-4c24-20b5-08d58156672e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
-x-ms-traffictypediagnostic: MW2PR2101MB0970:
+x-ms-office365-filtering-correlation-id: e27c8cb3-dbf8-46c4-7328-08d5815666df
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1115;
+x-ms-traffictypediagnostic: MW2PR2101MB1115:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB097044938B7F52954B425143FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
+x-microsoft-antispam-prvs: <MW2PR2101MB1115845BDEB5088492305571FBC40@MW2PR2101MB1115.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(200054503718035);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1115;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1115;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(86362001)(39060400002)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(7736002)(8676002)(6512007)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(5890100001)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: P3J8OovyiAMw5m+gq/LdpOKHlBY5qFhOIm7DkAdcn21C2ynNxBV/1l/F/0+2Y5K9vNzyoNxyADLWe3ur2M9UVJy+9vrsYoFxVT+OC+96/BoCeY0InvdOJLPuMrQ/JoT+M79E024dGEx79GvMT/KBBzkwBdWNlIhfuN+x+gwkCKA=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(346002)(366004)(39380400002)(189003)(199004)(26005)(97736004)(186003)(2900100001)(316002)(59450400001)(6506007)(102836004)(36756003)(110136005)(106356001)(54906003)(72206003)(4326008)(8676002)(81156014)(25786009)(2950100002)(6666003)(305945005)(10290500003)(5660300001)(107886003)(14454004)(8936002)(3660700001)(3280700002)(105586002)(81166006)(478600001)(2906002)(6116002)(3846002)(1076002)(2501003)(6436002)(5250100002)(6486002)(68736007)(7736002)(10090500001)(6512007)(66066001)(53936002)(99286004)(86612001)(76176011)(575784001)(22452003)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1115;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: eLEU0Mq4SWwFEOlBz5zUDughPik7g7d7DYUcfaZXFfzDzRJ/Km41m+QopWaA4Jz5MDerOOF2dZ7crtKmc20w3QE65rJqFGfXnch09debLMHqpNl5zNQiaLbXUC7SPzwRI9QlmNqKW4c/mB3fAsD2kYwc3YaxcR7o5weS+FO8KCY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 094590eb-1e44-4c24-20b5-08d58156672e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:38.8380
+X-MS-Exchange-CrossTenant-Network-Message-Id: e27c8cb3-dbf8-46c4-7328-08d5815666df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:38.2911
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1115
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit 7bbde83b1860c28a1cc35516352c4e7e5172c29a ]
+[ Upstream commit fdaa767aefc1685f9a41e91f447c9aea94103df6 ]
 
-In qdisc_graft_qdisc a "new" qdisc is attached and the 'qdisc_destroy'
-operation is called on the old qdisc. The destroy operation will wait
-a rcu grace period and call qdisc_rcu_free(). At which point
-gso_cpu_skb is free'd along with all stats so no need to zero stats
-and gso_cpu_skb from the graft operation itself.
+Since commit 39e6c8208d7b ("net: solve a NAPI race") napi has been able
+to be rescheduled within napi_complete_done() even in non-busypoll case,
+but virtnet_poll() always enabled interrupts before complete, and when
+napi was rescheduled within napi_complete_done() it did not disable
+interrupts.
+This caused more interrupts when event idx is disabled.
 
-Further after dropping the qdisc locks we can not continue to call
-qdisc_reset before waiting an rcu grace period so that the qdisc is
-detached from all cpus. By removing the qdisc_reset() here we get
-the correct property of waiting an rcu grace period and letting the
-qdisc_destroy operation clean up the qdisc correctly.
+According to commit cbdadbbf0c79 ("virtio_net: fix race in RX VQ
+processing") we cannot place virtqueue_enable_cb_prepare() after
+NAPI_STATE_SCHED is cleared, so disable interrupts again if
+napi_complete_done() returned false.
 
-Note, a refcnt greater than 1 would cause the destroy operation to
-be aborted however if this ever happened the reference to the qdisc
-would be lost and we would have a memory leak.
+Tested with vhost-user of OVS 2.7 on host, which does not have the event
+idx feature.
 
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+* Before patch:
+
+$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
+MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.1=
+50.253 () port 0 AF_INET
+Socket  Message  Elapsed      Messages
+Size    Size     Time         Okay Errors   Throughput
+bytes   bytes    secs            #      #   10^6bits/sec
+
+212992    1472   60.00     32763206      0    6430.32
+212992           60.00     23384299           4589.56
+
+Interrupts on guest: 9872369
+Packets/interrupt:   2.37
+
+* After patch
+
+$ netperf -t UDP_STREAM -H 192.168.150.253 -l 60 -- -m 1472
+MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 192.168.1=
+50.253 () port 0 AF_INET
+Socket  Message  Elapsed      Messages
+Size    Size     Time         Okay Errors   Throughput
+bytes   bytes    secs            #      #   10^6bits/sec
+
+212992    1472   60.00     32794646      0    6436.49
+212992           60.00     32793501           6436.27
+
+Interrupts on guest: 4941299
+Packets/interrupt:   6.64
+
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/sched/sch_generic.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/net/virtio_net.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index bf8c81e07c70..79549baf5804 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -743,10 +743,6 @@ struct Qdisc *dev_graft_qdisc(struct netdev_queue *dev=
-_queue,
- 	root_lock =3D qdisc_lock(oqdisc);
- 	spin_lock_bh(root_lock);
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 7927e28f5336..c366aaab2b69 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -260,9 +260,12 @@ static void virtqueue_napi_complete(struct napi_struct=
+ *napi,
+ 	int opaque;
 =20
--	/* Prune old scheduler */
--	if (oqdisc && refcount_read(&oqdisc->refcnt) <=3D 1)
--		qdisc_reset(oqdisc);
--
- 	/* ... and graft new one */
- 	if (qdisc =3D=3D NULL)
- 		qdisc =3D &noop_qdisc;
-@@ -897,6 +893,16 @@ static bool some_qdisc_is_busy(struct net_device *dev)
- 	return false;
- }
-=20
-+static void dev_qdisc_reset(struct net_device *dev,
-+			    struct netdev_queue *dev_queue,
-+			    void *none)
-+{
-+	struct Qdisc *qdisc =3D dev_queue->qdisc_sleeping;
-+
-+	if (qdisc)
-+		qdisc_reset(qdisc);
-+}
-+
- /**
-  * 	dev_deactivate_many - deactivate transmissions on several devices
-  * 	@head: list of devices to deactivate
-@@ -907,7 +913,6 @@ static bool some_qdisc_is_busy(struct net_device *dev)
- void dev_deactivate_many(struct list_head *head)
- {
- 	struct net_device *dev;
--	bool sync_needed =3D false;
-=20
- 	list_for_each_entry(dev, head, close_list) {
- 		netdev_for_each_tx_queue(dev, dev_deactivate_queue,
-@@ -917,20 +922,25 @@ void dev_deactivate_many(struct list_head *head)
- 					     &noop_qdisc);
-=20
- 		dev_watchdog_down(dev);
--		sync_needed |=3D !dev->dismantle;
- 	}
-=20
- 	/* Wait for outstanding qdisc-less dev_queue_xmit calls.
- 	 * This is avoided if all devices are in dismantle phase :
- 	 * Caller will call synchronize_net() for us
- 	 */
--	if (sync_needed)
--		synchronize_net();
-+	synchronize_net();
-=20
- 	/* Wait for outstanding qdisc_run calls. */
--	list_for_each_entry(dev, head, close_list)
-+	list_for_each_entry(dev, head, close_list) {
- 		while (some_qdisc_is_busy(dev))
- 			yield();
-+		/* The new qdisc is assigned at this point so we can safely
-+		 * unwind stale skb lists and qdisc statistics
-+		 */
-+		netdev_for_each_tx_queue(dev, dev_qdisc_reset, NULL);
-+		if (dev_ingress_queue(dev))
-+			dev_qdisc_reset(dev, dev_ingress_queue(dev), NULL);
+ 	opaque =3D virtqueue_enable_cb_prepare(vq);
+-	if (napi_complete_done(napi, processed) &&
+-	    unlikely(virtqueue_poll(vq, opaque)))
+-		virtqueue_napi_schedule(napi, vq);
++	if (napi_complete_done(napi, processed)) {
++		if (unlikely(virtqueue_poll(vq, opaque)))
++			virtqueue_napi_schedule(napi, vq);
++	} else {
++		virtqueue_disable_cb(vq);
 +	}
  }
 =20
- void dev_deactivate(struct net_device *dev)
+ static void skb_xmit_done(struct virtqueue *vq)
 --=20
 2.14.1
