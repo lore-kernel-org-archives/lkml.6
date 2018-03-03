@@ -1,296 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964986AbeCCBeh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:34:37 -0500
-Received: from anholt.net ([50.246.234.109]:56948 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964963AbeCCBeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:34:36 -0500
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        Eric Anholt <eric@anholt.net>, Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Stone <daniels@collabora.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH] drm/vc4: Add support for SAND modifier.
-Date: Fri,  2 Mar 2018 17:34:31 -0800
-Message-Id: <20180303013431.1088-1-eric@anholt.net>
-X-Mailer: git-send-email 2.16.2
+        id S965007AbeCCBj4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:39:56 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57756 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964973AbeCCBjy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 20:39:54 -0500
+Subject: Re: [PATCH 1/1] mm: make start_isolate_page_range() fail if already
+ isolated
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20180226191054.14025-1-mike.kravetz@oracle.com>
+ <20180226191054.14025-2-mike.kravetz@oracle.com>
+ <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
+ <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
+ <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <40e790c9-cd78-3d41-a69b-bff4f024c9f1@oracle.com>
+Date: Fri, 2 Mar 2018 17:39:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=869
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803030015
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
+On 03/02/2018 04:56 PM, Andrew Morton wrote:
+> On Fri, 2 Mar 2018 16:38:33 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+> 
+>> On 03/02/2018 04:06 PM, Andrew Morton wrote:
+>>> On Mon, 26 Feb 2018 11:10:54 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>>>
+>>>> start_isolate_page_range() is used to set the migrate type of a
+>>>> set of page blocks to MIGRATE_ISOLATE while attempting to start
+>>>> a migration operation.  It assumes that only one thread is
+>>>> calling it for the specified range.  This routine is used by
+>>>> CMA, memory hotplug and gigantic huge pages.  Each of these users
+>>>> synchronize access to the range within their subsystem.  However,
+>>>> two subsystems (CMA and gigantic huge pages for example) could
+>>>> attempt operations on the same range.  If this happens, page
+>>>> blocks may be incorrectly left marked as MIGRATE_ISOLATE and
+>>>> therefore not available for page allocation.
+>>>>
+>>>> Without 'locking code' there is no easy way to synchronize access
+>>>> to the range of page blocks passed to start_isolate_page_range.
+>>>> However, if two threads are working on the same set of page blocks
+>>>> one will stumble upon blocks set to MIGRATE_ISOLATE by the other.
+>>>> In such conditions, make the thread noticing MIGRATE_ISOLATE
+>>>> clean up as normal and return -EBUSY to the caller.
+>>>>
+>>>> This will allow start_isolate_page_range to serve as a
+>>>> synchronization mechanism and will allow for more general use
+>>>> of callers making use of these interfaces.  So, update comments
+>>>> in alloc_contig_range to reflect this new functionality.
+>>>>
+>>>> ...
+>>>>
+>>>> --- a/mm/page_isolation.c
+>>>> +++ b/mm/page_isolation.c
+>>>> @@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
+>>>>  
+>>>>  	spin_lock_irqsave(&zone->lock, flags);
+>>>>  
+>>>> +	/*
+>>>> +	 * We assume we are the only ones trying to isolate this block.
+>>>> +	 * If MIGRATE_ISOLATE already set, return -EBUSY
+>>>> +	 */
+>>>> +	if (is_migrate_isolate_page(page))
+>>>> +		goto out;
+>>>> +
+>>>>  	pfn = page_to_pfn(page);
+>>>>  	arg.start_pfn = pfn;
+>>>>  	arg.nr_pages = pageblock_nr_pages;
+>>>
+>>> Seems a bit ugly and I'm not sure that it's correct.  If the loop in
+>>> start_isolate_page_range() gets partway through a number of pages then
+>>> we hit the race, start_isolate_page_range() will then go and "undo" the
+>>> work being done by the thread which it is racing against?
+>>
+>> I agree that it is a bit ugly.  However, when a thread hits the above
+>> condition it will only undo what it has done.  Only one thread is able
+>> to set migrate state to isolate (under the zone lock).  So, a thread
+>> will only undo what it has done.
+> 
+> I don't get it.  That would make sense if start_isolate_page_range()
+> held zone->lock across the entire loop, but it doesn't do that.
+> 
 
-This is the format generated by VC4's H.264 engine, and preferred by
-the ISP as well.  By displaying SAND buffers directly, we can avoid
-needing to use the ISP to rewrite the SAND H.264 output to linear
-before display.
+It works because all threads set migrate isolate on page blocks going
+from pfn low to pfn high.  When they encounter a conflict, they know
+exactly which blocks they set and only undo those blocks.  Perhaps, I
+am missing something, but it does not matter because ...
 
-This is a joint effort by Dave Stevenson (who wrote the initial patch
-and DRM demo) and Eric Anholt (drm_fourcc.h generalization, safety
-checks, RGBA support).
+>> The exact problem of one thread undoing what another thread has done
+>> is possible with the code today and is what this patch is attempting
+>> to address.
+>>
+>>> Even if that can't happen, blundering through a whole bunch of pages
+>>> then saying whoops then undoing everything is unpleasing.
+>>>
+>>> Should we be looking at preventing these races at a higher level?
+>>
+>> I could not immediately come up with a good idea here.  The zone lock
+>> would be the obvious choice, but I don't think we want to hold it while
+>> examining each of the page blocks.  Perhaps a new lock or semaphore
+>> associated with the zone?  I'm open to suggestions.
+> 
+> Yes, I think it would need a new lock.  Hopefully a mutex.
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Stone <daniels@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
----
+I'll look into adding an 'isolate' mutex to the zone structure and reworking
+this patch.
 
-Ccing a couple of folks who are likely to have opinions about
-drm_fourcc.h additions (Do we have enough docs?  Are the macros OK?),
-and Bootlin who are likely reviewers.
-
-The plan is to use these modifiers in VC4 GL imports as well, and for
-buffers coming from the v4l2 mmal camera driver.  You can find a demo
-using this in KMS planes at
-https://github.com/anholt/drm_mmal/commit/sand for now.
-
- drivers/gpu/drm/vc4/vc4_plane.c | 84 +++++++++++++++++++++++++++++++++++++----
- drivers/gpu/drm/vc4/vc4_regs.h  |  6 +++
- include/uapi/drm/drm_fourcc.h   | 59 +++++++++++++++++++++++++++++
- 3 files changed, 142 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index c4c7af11fec5..97de9c7821c7 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -520,10 +520,12 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
- 	struct drm_framebuffer *fb = state->fb;
- 	u32 ctl0_offset = vc4_state->dlist_count;
- 	const struct hvs_format *format = vc4_get_hvs_format(fb->format->format);
-+	u64 base_format_mod = fourcc_mod_broadcom_mod(fb->modifier);
- 	int num_planes = drm_format_num_planes(format->drm);
- 	u32 scl0, scl1, pitch0;
- 	u32 lbm_size, tiling;
- 	unsigned long irqflags;
-+	u32 hvs_format = format->hvs;
- 	int ret, i;
- 
- 	ret = vc4_plane_setup_clipping_and_scaling(state);
-@@ -563,7 +565,7 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
- 		scl1 = vc4_get_scl_field(state, 0);
- 	}
- 
--	switch (fb->modifier) {
-+	switch (base_format_mod) {
- 	case DRM_FORMAT_MOD_LINEAR:
- 		tiling = SCALER_CTL0_TILING_LINEAR;
- 		pitch0 = VC4_SET_FIELD(fb->pitches[0], SCALER_SRC_PITCH);
-@@ -586,6 +588,49 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
- 		break;
- 	}
- 
-+	case DRM_FORMAT_MOD_BROADCOM_SAND64:
-+	case DRM_FORMAT_MOD_BROADCOM_SAND128:
-+	case DRM_FORMAT_MOD_BROADCOM_SAND256: {
-+		uint32_t param = fourcc_mod_broadcom_param(fb->modifier);
-+
-+		/* Column-based NV12 or RGBA.
-+		 */
-+		if (fb->format->num_planes > 1) {
-+			if (hvs_format != HVS_PIXEL_FORMAT_YCBCR_YUV420_2PLANE) {
-+				DRM_DEBUG_KMS("SAND format only valid for NV12/21");
-+				return -EINVAL;
-+			}
-+			hvs_format = HVS_PIXEL_FORMAT_H264;
-+		} else {
-+			if (base_format_mod == DRM_FORMAT_MOD_BROADCOM_SAND256) {
-+				DRM_DEBUG_KMS("SAND256 format only valid for H.264");
-+				return -EINVAL;
-+			}
-+		}
-+
-+		switch (base_format_mod) {
-+		case DRM_FORMAT_MOD_BROADCOM_SAND64:
-+			tiling = SCALER_CTL0_TILING_64B;
-+			break;
-+		case DRM_FORMAT_MOD_BROADCOM_SAND128:
-+			tiling = SCALER_CTL0_TILING_128B;
-+			break;
-+		case DRM_FORMAT_MOD_BROADCOM_SAND256:
-+			tiling = SCALER_CTL0_TILING_256B_OR_T;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		if (param > SCALER_TILE_HEIGHT_MASK) {
-+			DRM_DEBUG_KMS("SAND height too large (%d)\n", param);
-+			return -EINVAL;
-+		}
-+
-+		pitch0 = VC4_SET_FIELD(param, SCALER_TILE_HEIGHT);
-+		break;
-+	}
-+
- 	default:
- 		DRM_DEBUG_KMS("Unsupported FB tiling flag 0x%16llx",
- 			      (long long)fb->modifier);
-@@ -596,7 +641,7 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
- 	vc4_dlist_write(vc4_state,
- 			SCALER_CTL0_VALID |
- 			(format->pixel_order << SCALER_CTL0_ORDER_SHIFT) |
--			(format->hvs << SCALER_CTL0_PIXEL_FORMAT_SHIFT) |
-+			(hvs_format << SCALER_CTL0_PIXEL_FORMAT_SHIFT) |
- 			VC4_SET_FIELD(tiling, SCALER_CTL0_TILING) |
- 			(vc4_state->is_unity ? SCALER_CTL0_UNITY : 0) |
- 			VC4_SET_FIELD(scl0, SCALER_CTL0_SCL0) |
-@@ -649,8 +694,13 @@ static int vc4_plane_mode_set(struct drm_plane *plane,
- 
- 	/* Pitch word 1/2 */
- 	for (i = 1; i < num_planes; i++) {
--		vc4_dlist_write(vc4_state,
--				VC4_SET_FIELD(fb->pitches[i], SCALER_SRC_PITCH));
-+		if (hvs_format != HVS_PIXEL_FORMAT_H264) {
-+			vc4_dlist_write(vc4_state,
-+					VC4_SET_FIELD(fb->pitches[i],
-+						      SCALER_SRC_PITCH));
-+		} else {
-+			vc4_dlist_write(vc4_state, pitch0);
-+		}
- 	}
- 
- 	/* Colorspace conversion words */
-@@ -920,11 +970,28 @@ static bool vc4_format_mod_supported(struct drm_plane *plane,
- 	case DRM_FORMAT_BGR565:
- 	case DRM_FORMAT_ARGB1555:
- 	case DRM_FORMAT_XRGB1555:
--		return true;
--	case DRM_FORMAT_YUV422:
--	case DRM_FORMAT_YVU422:
-+		switch (fourcc_mod_broadcom_mod(modifier)) {
-+		case DRM_FORMAT_MOD_LINEAR:
-+		case DRM_FORMAT_MOD_BROADCOM_VC4_T_TILED:
-+		case DRM_FORMAT_MOD_BROADCOM_SAND64:
-+		case DRM_FORMAT_MOD_BROADCOM_SAND128:
-+			return true;
-+		default:
-+			return false;
-+		}
- 	case DRM_FORMAT_YUV420:
- 	case DRM_FORMAT_YVU420:
-+		switch (fourcc_mod_broadcom_mod(modifier)) {
-+		case DRM_FORMAT_MOD_LINEAR:
-+		case DRM_FORMAT_MOD_BROADCOM_SAND64:
-+		case DRM_FORMAT_MOD_BROADCOM_SAND128:
-+		case DRM_FORMAT_MOD_BROADCOM_SAND256:
-+			return true;
-+		default:
-+			return false;
-+		}
-+	case DRM_FORMAT_YUV422:
-+	case DRM_FORMAT_YVU422:
- 	case DRM_FORMAT_NV12:
- 	case DRM_FORMAT_NV16:
- 	default:
-@@ -954,6 +1021,9 @@ struct drm_plane *vc4_plane_init(struct drm_device *dev,
- 	unsigned i;
- 	static const uint64_t modifiers[] = {
- 		DRM_FORMAT_MOD_BROADCOM_VC4_T_TILED,
-+		DRM_FORMAT_MOD_BROADCOM_SAND128,
-+		DRM_FORMAT_MOD_BROADCOM_SAND64,
-+		DRM_FORMAT_MOD_BROADCOM_SAND256,
- 		DRM_FORMAT_MOD_LINEAR,
- 		DRM_FORMAT_MOD_INVALID
- 	};
-diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-index ce8bb7486456..00d2d90069b0 100644
---- a/drivers/gpu/drm/vc4/vc4_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_regs.h
-@@ -1029,6 +1029,12 @@ enum hvs_pixel_format {
- #define SCALER_SRC_PITCH_MASK			VC4_MASK(15, 0)
- #define SCALER_SRC_PITCH_SHIFT			0
- 
-+/* PITCH0/1/2 fields for tiled (SAND). */
-+#define SCALER_TILE_SKIP_0_MASK			VC4_MASK(18, 16)
-+#define SCALER_TILE_SKIP_0_SHIFT		16
-+#define SCALER_TILE_HEIGHT_MASK			VC4_MASK(15, 0)
-+#define SCALER_TILE_HEIGHT_SHIFT		0
-+
- /* PITCH0 fields for T-tiled. */
- #define SCALER_PITCH0_TILE_WIDTH_L_MASK		VC4_MASK(22, 16)
- #define SCALER_PITCH0_TILE_WIDTH_L_SHIFT	16
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index e04613d30a13..f6b7aab3dab1 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -384,6 +384,23 @@ extern "C" {
- #define DRM_FORMAT_MOD_NVIDIA_16BX2_BLOCK_THIRTYTWO_GOB \
- 	fourcc_mod_code(NVIDIA, 0x15)
- 
-+/*
-+ * Some Broadcom modifiers take parameters, for example the number of
-+ * vertical lines in the image. Reserve the lower 32 bits for modifier
-+ * type, and the next 24 bits for parameters. Top 8 bits are the
-+ * vendor code.
-+ */
-+#define __fourcc_mod_broadcom_param_shift 32
-+#define __fourcc_mod_broadcom_param_bits 24
-+#define fourcc_mod_broadcom_code(val, params) \
-+	fourcc_mod_code(BROADCOM, ((((__u64)params) << __fourcc_mod_broadcom_param_shift) | val))
-+#define fourcc_mod_broadcom_param(m) \
-+	((int)(((m) >> __fourcc_mod_broadcom_param_shift) &	\
-+	       ((1ULL << __fourcc_mod_broadcom_param_bits) - 1)))
-+#define fourcc_mod_broadcom_mod(m) \
-+	((m) & ~(((1ULL << __fourcc_mod_broadcom_param_shift) - 1) <<	\
-+		 __fourcc_mod_broadcom_param_bits))
-+
- /*
-  * Broadcom VC4 "T" format
-  *
-@@ -405,6 +422,48 @@ extern "C" {
-  */
- #define DRM_FORMAT_MOD_BROADCOM_VC4_T_TILED fourcc_mod_code(BROADCOM, 1)
- 
-+/*
-+ * Broadcom SAND format
-+ *
-+ * This is the native format that the H.264 codec block uses.  For VC4
-+ * HVS, it is only valid for H.264 (NV12/21) and RGBA modes.
-+ *
-+ * The image can be considered to be split into columns, and the
-+ * columns are placed consecutively into memory.  The width of those
-+ * columns can be either 32, 64, 128, or 256 pixels, but in practice
-+ * only 128 pixel columns are used.
-+ *
-+ * The pitch between the start of each column is set to optimally
-+ * switch between SDRAM banks. This is passed as the number of lines
-+ * of column width in the modifier (we can't use the stride value due
-+ * to various core checks that look at it , so you should set the
-+ * stride to width*cpp).
-+ *
-+ * Note that the column height for this format modifier is the same
-+ * for all of the planes, assuming that each column contains both Y
-+ * and UV.  Some SAND-using hardware stores UV in a separate tiled
-+ * image from Y to reduce the column height, which is not supported
-+ * with these modifiers.
-+ */
-+
-+#define DRM_FORMAT_MOD_BROADCOM_SAND32_COL_HEIGHT(v) \
-+	fourcc_mod_broadcom_code(2, v)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND64_COL_HEIGHT(v) \
-+	fourcc_mod_broadcom_code(3, v)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND128_COL_HEIGHT(v) \
-+	fourcc_mod_broadcom_code(4, v)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND256_COL_HEIGHT(v) \
-+	fourcc_mod_broadcom_code(5, v)
-+
-+#define DRM_FORMAT_MOD_BROADCOM_SAND32 \
-+	DRM_FORMAT_MOD_BROADCOM_SAND32_COL_HEIGHT(0)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND64 \
-+	DRM_FORMAT_MOD_BROADCOM_SAND64_COL_HEIGHT(0)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND128 \
-+	DRM_FORMAT_MOD_BROADCOM_SAND128_COL_HEIGHT(0)
-+#define DRM_FORMAT_MOD_BROADCOM_SAND256 \
-+	DRM_FORMAT_MOD_BROADCOM_SAND256_COL_HEIGHT(0)
-+
- #if defined(__cplusplus)
- }
- #endif
 -- 
-2.16.2
+Mike Kravetz
