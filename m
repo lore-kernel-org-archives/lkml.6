@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1145125-1520116347-2-9611239480891784244
+X-Cyrus-Session-Id: sloti22d1t05-1153505-1520116346-2-11016402892343932725
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520116346; b=M7USusNrPbgfmpQRrVRIQ/LEthxSfx7phNw6C8jtLhI/Gfu
-    yZ6N/R9BQDqXB0x/5lTtrRS0asz6Kn4Z2JD6r+QnPe8aF5hfG2r0nyPiIiII99bF
-    zbXNk9QuLia1Lti0mvjLD5bOLzhtjvJ/AhPsDBp3spLd/18nU6fIcq3zyHucgkzU
-    qSrcCgs9t6jXbzuhegrPKvX7nYK+VIJza2Cn9QNJ5LxNt5rSRJEZKj7ZSgbuLhR7
-    Yw60iGAA71yr8dHy1Lk6BhW3SLOjBmk+BGge/oBf9zZH68gybZjIKdJ3NJP1UxYt
-    HTqrR/GleExz6i3w8AqIkoQdz2AI1XRE0sSDFdA==
+    t=1520116345; b=sqpIexHGo77gdegWe0a66iu/jFxPQl7zF/WiQFvF1e9zR9u
+    73oAnNADp4BkrN9LXyTAvxEY+RjDnk05Kl3LLsQWjsy0uq15p4+mXWmph0sgGKjG
+    Um535eojXMmJOWG7tVOleVWcNBGjMZx4CqatEim5H74dD/fHayOv/jUp1X4Gj+hr
+    V7/u7zRNa2u3Hw5slO0NpLRrdXfytmbU2ZY1FScjUvzTtmOVVnNHm+Rw3fJtqSze
+    UzAs93+PKTDgj7k76ApgEjgUt8OnM2nOb0Rm568neOnRBGub32I9g1uGAzzQFuNA
+    vg9T/1t8xnzHT7XNo6pfAXqkcSR0mbqSYY+6lmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520116346; bh=RofD87
-    lIIa0tLo8MvPY+6QSOGr3B67WPkFrpkfBotGU=; b=mhqfyF2yVOJU9ETonwnsSt
-    D7cGPm4wSfAr5rcJ6Nb88FPwBUIR11P367bqOMX3tj99j3UfQSBzsVwa91i+TfnM
-    caCqid1NQ3GcMiWEDOaOtRvp2cHPlUa2sEjzx7aW46PvZdU6qMRoPjKLks6+ZYUD
-    ZbDefgAj+Im2SrUzjG/6exTydgF8ac8ZbH9qroB7reXfpqGt2BYHeenzz/SvZVyb
-    4dj+/Ow/K9rp5owXVl8mX9QX/akPrIXarL8qtlF5ABzp1TRpnkeqehRiTyXO+uUr
-    rkXSUwSwisY1NkUJWk+OPk/iW79wx1M3w8aWUZPP1Ml+phYFRd6zxF35OwNab+fw
+    :mime-version:sender:list-id; s=arctest; t=1520116345; bh=0ayMVN
+    5vEujOU70VzWG/jBSft45jaYO8hQFrG+6LmNw=; b=jxleMjaxAKXR064KrhwyOM
+    9DJPSXMEhve2FXnLR7S6OlEB9Za5vC+Eg/qKoQigM328f4cLS1cKcmTV4cF6uELA
+    bNnnh5AU1Wb6gZaH6nT/7WqiV8EgCnh9+OuVLFF9/HQJfZKnT1WmMTfvVdWg6r06
+    a0RUEamKOaA6e4FOF43tcuCkVDseLKSoHIlLEvW/rFw7JFPe/GP86GT1nF5uNeI9
+    5D+gEMW2WWfamtp7kSEXfuj1jJ4QfMEK8i1rw+tCqfnAAR2aIphxv+f4zjvro7/W
+    9V/XvNGdao9eanoT+ylXsqAQhmEr3PnxPqaJKiOdMdkvh9LXtwIDrGvBhHeFeRNw
     ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dvgQY8hG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QQzxrLTk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dvgQY8hG x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=QQzxrLTk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,29 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933774AbeCCWcF (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:32:05 -0500
-Received: from mail-co1nam03on0109.outbound.protection.outlook.com ([104.47.40.109]:6764
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S933355AbeCCWbf (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:31:35 -0500
+Received: from mail-sn1nam01on0104.outbound.protection.outlook.com ([104.47.32.104]:49722
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933765AbeCCWcD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:32:03 -0500
+        id S933694AbeCCWb2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:31:28 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Stefan Wahren <stefan.wahren@i2se.com>,
+CC: Stephane Eranian <eranian@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 038/219] ARM: bcm2835: Enable missing CMA
- settings for VC4 driver
-Thread-Topic: [PATCH AUTOSEL for 4.9 038/219] ARM: bcm2835: Enable missing CMA
- settings for VC4 driver
-Thread-Index: AQHTsz7tUlzQ4fnLhkuyZLIR6Z18gQ==
-Date: Sat, 3 Mar 2018 22:28:17 +0000
-Message-ID: <20180303222716.26640-38-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 028/219] perf tools: Make
+ perf_event__synthesize_mmap_events() scale
+Thread-Topic: [PATCH AUTOSEL for 4.9 028/219] perf tools: Make
+ perf_event__synthesize_mmap_events() scale
+Thread-Index: AQHTsz7qFH7IlbHWoE2wAhj8JY6qlg==
+Date: Sat, 3 Mar 2018 22:28:12 +0000
+Message-ID: <20180303222716.26640-28-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,98 +79,100 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1083;7:LchnkmIoa6W6Klo5D5ovYJwF3zK2hdHIf4KNCT6Ijtd7JzgUig/G141lmdHfQGS0Sw3ncYz46ssZLJPcg8jaj5pGOri96/PtcZuH2kHYlj0Kts3CdlZaHTZqFHlNfg8QnNdTTlBpM6lVYVYt7zlystW62h57k8Y9usCBr/YrrzD7/jvpPgnfVH2RpNn6aQWu04IsVqE5cGHs2WD/2vhZOzvHNsQMRL89j6SEheA1SdhxC/T5ILUn/QETNhLrHW37
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;7:4p9PqEFWSxISgz8I8uY/IXE20Jlow72/peT15zHiC12IzTRQFsV8eJJnZ34PJkDOAcbAp/4p5e3ALKTgKRbjjREMo1ddgHho/vrpCQjeiNPUOQ71wJng7nmcbrli9JoTybqKQ0hKR/8UYCVAU0mTrrpv8uMDb9ZTh+9V9f9MTJrGJezkZQ/x9bDuZvS97/NhuovGeHcKKP8u4H0p9TuXMCAU2lMsl8zd+OwDtVsXU7vypF/bgvHgTh8V/wDe8CHs
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 36ce84a0-85e4-4047-86e1-08d581569484
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1083;
-x-ms-traffictypediagnostic: MW2PR2101MB1083:
+x-ms-office365-filtering-correlation-id: feaceb55-7cdd-462e-51b1-08d581567dec
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
+x-ms-traffictypediagnostic: MW2PR2101MB0970:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB1083FCE9C669CFDC3432DF80FBC40@MW2PR2101MB1083.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1083;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1083;
+x-microsoft-antispam-prvs: <MW2PR2101MB0970E60C4DDE3BFEC6C81F2FFBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(211936372134217)(42068640409301)(153496737603132);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(396003)(346002)(366004)(189003)(199004)(106356001)(53936002)(316002)(305945005)(7736002)(3280700002)(107886003)(2906002)(6512007)(6436002)(97736004)(3660700001)(6486002)(99286004)(81166006)(8936002)(81156014)(76176011)(8676002)(25786009)(2950100002)(6506007)(4326008)(110136005)(5250100002)(54906003)(36756003)(105586002)(6116002)(6666003)(22452003)(86612001)(10090500001)(186003)(68736007)(26005)(2900100001)(86362001)(66066001)(102836004)(3846002)(14454004)(478600001)(72206003)(10290500003)(5660300001)(59450400001)(1076002)(2501003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1083;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: wIauE6bo61G2JoOWZYb3zGci8L3FSwLIOmNKgtvmInkyAcbIQ5WFIhSbYeusEUtwg/nyayQ3zPc3NkPXcYAkKiqFzMyKQP18nrj9IkGzSjDJmgCjzVasafGhuziEkiwP0BbRdUDi+QQwpFknpxcTMlfRnCOjQHviPl5KfzMA7Po=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(575784001)(86362001)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(966005)(7736002)(8676002)(6512007)(6306002)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(105586002)(22906009)(101420200001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: DRdYne2D2IQT+KOZQMXv1g8o5Aepb4so2yT2cJO5azF0Eb1RvbgOCXMhHSV9SDPNLrehSB1WkhM6GlAu2cp4ovZq6ueSPfdrGDyVKvoQrhNRm7TS1LroHcxH7QHiCQR/Tp/iAuBPweOJAiCgQt3A+2uTPHi3kVipm2bXqOaryoY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36ce84a0-85e4-4047-86e1-08d581569484
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:17.7131
+X-MS-Exchange-CrossTenant-Network-Message-Id: feaceb55-7cdd-462e-51b1-08d581567dec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:12.1037
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1083
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit bdd3c25423cb42171446940bca0946e0443e1a84 ]
+[ Upstream commit 88b897a30c525c2eee6e7f16e1e8d0f18830845e ]
 
-Currently bcm2835_defconfig has CMA disabled which makes the
-HDMI output on a Raspberry Pi 1 stop working during boot:
+This patch significantly improves the execution time of
+perf_event__synthesize_mmap_events() when running perf record on systems
+where processes have lots of threads.
 
-    fb: switching to vc4drmfb from simple
-    Console: switching to colour dummy device 80x30
-    [drm] Initialized vc4 0.0.0 20140616 for soc:gpu on minor 0
-    [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-    [drm] Driver supports precise vblank timestamp query.
-    vc4-drm soc:gpu: failed to allocate buffer with size 9216000
-    vc4-drm soc:gpu: Failed to set initial hw configuration.
+It just happens that cat /proc/pid/maps support uses a O(N^2) algorithm to
+generate each map line in the maps file.  If you have 1000 threads, then yo=
+u
+have necessarily 1000 stacks.  For each vma, you need to check if it
+corresponds to a thread's stack.  With a large number of threads, this can =
+take
+a very long time. I have seen latencies >> 10mn.
 
-So enable CMA and DMA_CMA in bcm2835_defconfig.
+As of today, perf does not use the fact that a mapping is a stack, therefor=
+e we
+can work around the issue by using /proc/pid/tasks/pid/maps.  This entry do=
+es
+not try to map a vma to stack and is thus much faster with no loss of
+functonality.
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Fixes: 4400d9ac05ee ("ARM: bcm2835: Enable the VC4 graphics driver in the d=
-efconfig")
-Reviewed-by: Eric Anholt <eric@anholt.net>
+The proc-map-timeout logic is kept in case users still want some upper limi=
+t.
+
+In V2, we fix the file path from /proc/pid/tasks/pid/maps to actual
+/proc/pid/task/pid/maps, tasks -> task.  Thanks Arnaldo for catching this.
+
+Committer note:
+
+This problem seems to have been elliminated in the kernel since commit :
+b18cb64ead40 ("fs/proc: Stop trying to report thread stacks").
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20170315135059.GC2177@redhat.com
+Link: http://lkml.kernel.org/r/1489598233-25586-1-git-send-email-eranian@go=
+ogle.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm/configs/bcm2835_defconfig | 4 ++--
+ tools/perf/util/event.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_=
-defconfig
-index 79de828e49ad..e32b0550a338 100644
---- a/arch/arm/configs/bcm2835_defconfig
-+++ b/arch/arm/configs/bcm2835_defconfig
-@@ -1,6 +1,5 @@
- # CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_SYSVIPC=3Dy
--CONFIG_FHANDLE=3Dy
- CONFIG_NO_HZ=3Dy
- CONFIG_HIGH_RES_TIMERS=3Dy
- CONFIG_BSD_PROCESS_ACCT=3Dy
-@@ -32,6 +31,7 @@ CONFIG_PREEMPT_VOLUNTARY=3Dy
- CONFIG_AEABI=3Dy
- CONFIG_KSM=3Dy
- CONFIG_CLEANCACHE=3Dy
-+CONFIG_CMA=3Dy
- CONFIG_SECCOMP=3Dy
- CONFIG_KEXEC=3Dy
- CONFIG_CRASH_DUMP=3Dy
-@@ -52,6 +52,7 @@ CONFIG_MAC80211=3Dy
- CONFIG_DEVTMPFS=3Dy
- CONFIG_DEVTMPFS_MOUNT=3Dy
- # CONFIG_STANDALONE is not set
-+CONFIG_DMA_CMA=3Dy
- CONFIG_SCSI=3Dy
- CONFIG_BLK_DEV_SD=3Dy
- CONFIG_SCSI_CONSTANTS=3Dy
-@@ -62,7 +63,6 @@ CONFIG_USB_NET_SMSC95XX=3Dy
- CONFIG_ZD1211RW=3Dy
- CONFIG_INPUT_EVDEV=3Dy
- # CONFIG_LEGACY_PTYS is not set
--# CONFIG_DEVKMEM is not set
- CONFIG_SERIAL_AMBA_PL011=3Dy
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=3Dy
- CONFIG_TTY_PRINTK=3Dy
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 8ab0d7da956b..663192395780 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -255,8 +255,8 @@ int perf_event__synthesize_mmap_events(struct perf_tool=
+ *tool,
+ 	if (machine__is_default_guest(machine))
+ 		return 0;
+=20
+-	snprintf(filename, sizeof(filename), "%s/proc/%d/maps",
+-		 machine->root_dir, pid);
++	snprintf(filename, sizeof(filename), "%s/proc/%d/task/%d/maps",
++		 machine->root_dir, pid, pid);
+=20
+ 	fp =3D fopen(filename, "r");
+ 	if (fp =3D=3D NULL) {
 --=20
 2.14.1
