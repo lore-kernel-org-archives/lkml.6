@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122292-2-4458233380547856498
+X-Cyrus-Session-Id: sloti22d1t05-1312649-1520122259-2-11925756814863432464
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122292; b=J97QFzdo9Lt03FNU4x++eeIx1SN2C3MjQMNioL6WW8cjsl0
-    xR3J2H53DJKYjm+LOsQlG/UHBFxkJ05RXOjJ2xTgM3pcllKX2+K8+9oY2wMEZyh+
-    bI0nVZQoVAiPqGQkTx5yGK+2um61Ii2+5/NkP546SzyPv/vDudK2Azv3I8WxH66c
-    grFZCoNwG2H6kH1yojxcFx1rZWWdFZbEWsXa/unnnVMGNKbCF2nyZTnCzZaQKBXY
-    5NHxwhFSG5z6KUK9riVrmiHhkhitb4SDgijCeQyyOFRgDsIEklRfjf9jrJTDe0uK
-    woWKbiQTIK72V/jn4kgmThFdma6nLaFxkmTdnmg==
+    t=1520122258; b=Yiy54yvLHSyHw+HDbDCxzc1+hVhCeWrfw6BH1JIyweI5e8x
+    zTkufyIweapDvt1SCYXQE6ECQxGchCn0K0oNw4pZrVZ4f36qDpsVpGnm4agi9Prr
+    YW35PEwLKKe02QFkk+AFynWjb9KiHe5COusWj+68gmwkggdL7M6Rkxwhi7Hr4eYK
+    lNRF319J7deeT/1Df3vQ1J1S2DH0Vb/mQQ2AAaLSckFxsoP9mmoREGaKKCzeWdDA
+    mGc01W85rbsA+gqYf69aV8JgG6eYpG2J5FLAMoj1mtfvcu0jY5U0WThGI4rj2raz
+    3UjAKFmAYXCMmGGD9GhZJv5lIqDM10gJYr9KJkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122292; bh=mt4nG4
-    sUT74HEaxl3b8c5FbOEu3tjr70KGyumiXEEoU=; b=O4GMKpCjLeh3t/opJz5E8o
-    mcTZZi5qZkAod5WOavUkfD9fj2Hpo3WNkCf4c7fIuw4oFF/X+ngno/Zz30wtUVrl
-    sGQ4yc5vAMQ/b+FZmzaUPfWatcdk1c8ANR0/cTEaJkHHbFj84s4giAh9nhf5DwCJ
-    YME+ZskScGZ7FzPFuVb28J9TJEZ9aUtSoqJqGdKfMwddUa3EGmto1ll7QQfbw6wB
-    AKRncYWoBPjsq/kA96toNCzQjYqaiBlCtt8ReFtksE/9UpGP7yxOKbMcCWUUy4mP
-    WNsrHcSD7BnLQxu6L+kHJfZG1IE7c++fVc2plulLLzYyn4FQ+3yYiHzWkXWNr2OQ
+    :mime-version:sender:list-id; s=arctest; t=1520122258; bh=SZuRgh
+    N20NMFejqxziYWfihlHyhSe4dJ3nFfiJKY4Go=; b=g4kyaHZUtzBubryu2NMb5y
+    VPRGpcm996tHEQEmRPm5vit4WYD3pirIYULNz2ga6DKPm6gNdalfbKpPgA04w6ML
+    d3BOs1ARNFmrYnV1YGqVMFW1SoVEG+cBi3sMtLspVw65Y0CgSCOo5JCsdEV1x5vZ
+    dYXCNthVfI1SrqMLQcP6XUGTmdUoAthkIIwOWiJJjiRh/8SpFZznYUB1IYGcI18V
+    3W4GiwIDQAW9X5VM64zh1xl9wcW8v4bFwt8oPI2qsEofWWiMFC8R1sVlalGsiAR+
+    NFjRrJmSTNqvSph1S8wgZD3NmUUcUmvDVaO1U9KMUh7rlxPnOtkGzD7UXfwYrkZw
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Zi37r9od x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fdiRQLrp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Zi37r9od x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fdiRQLrp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,26 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933532AbeCDAKz (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 19:10:55 -0500
-Received: from mail-sn1nam01on0137.outbound.protection.outlook.com ([104.47.32.137]:51749
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S933361AbeCDAK4 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 19:10:56 -0500
+Received: from mail-by2nam01on0117.outbound.protection.outlook.com ([104.47.34.117]:32496
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933263AbeCCWa5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:30:57 -0500
+        id S933382AbeCCWa4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:30:56 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@mellanox.com>,
+CC: SeongJae Park <sj38.park@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 83/84] IB/mlx5: revisit -Wmaybe-uninitialized
- warning
-Thread-Topic: [PATCH AUTOSEL for 4.14 83/84] IB/mlx5: revisit
- -Wmaybe-uninitialized warning
-Thread-Index: AQHTsz64dPWHHYQF+UCzdJRp0t5ltQ==
-Date: Sat, 3 Mar 2018 22:26:48 +0000
-Message-ID: <20180303222518.26271-83-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 80/84] rcutorture/configinit: Fix build
+ directory error message
+Thread-Topic: [PATCH AUTOSEL for 4.14 80/84] rcutorture/configinit: Fix build
+ directory error message
+Thread-Index: AQHTsz63CyHslBuvCkGPNGBUv7bNkg==
+Date: Sat, 3 Mar 2018 22:26:47 +0000
+Message-ID: <20180303222518.26271-80-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,94 +76,69 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;7:TBv08pD5h1F2H7ptOByN31i7dCzKiW5DlAP9zkZt8JkHYq0ECbauNcFWZjllN8EVfK9669TQ1BAAB4FNUrRYATISp6Dwm3wrLdcA9RQQ7y8Ffvm/9XeARGaj4IIFMk3tiazHL24l65UHxa6oziS3lucVOia/f56UpcJ7ODoKQd/cC7MeLoyGajeyPHjK6+GKvkPvGr4EOk+6JH9bpOgu8AxZdI+B0TDrUwzgbKQqqzqOFoy+ke7IF89ibYXBURjQ
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1115;7:vyAc+6BUpkXcVT6gqeWUiwPHJbWR6OUg+6B+ULfrHsl4K1HZ+vmNRko5mFrcCTVTTVM1GVC7d/o4tqM9Os+JjF0ZefQuu3zSQIvefgvokk4NYwbGueb4YUvS/RIR7l4edFqBZsuT7q0knbkAtvnb80DNce1cmgZ4n/RAOQuqrkvIGaOXvNUTNzZPvBdz/2wW/r7RJknrSB+pwf+ZfKgwjUByESmZamARgRyQxbOm/lC+fOdeCUmPGBXltntX6DOn
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 5a52c0a1-3986-4b74-16b5-08d581566d18
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
-x-ms-traffictypediagnostic: MW2PR2101MB0970:
+x-ms-office365-filtering-correlation-id: 648fd58d-2e74-4a30-85c4-08d581566c03
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1115;
+x-ms-traffictypediagnostic: MW2PR2101MB1115:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB09708A9F8F47464A0CE9BF90FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
+x-microsoft-antispam-prvs: <MW2PR2101MB11152AD108C7C870AA57700DFBC40@MW2PR2101MB1115.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1115;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1115;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(575784001)(86362001)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(7736002)(8676002)(6512007)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: TiDhZ0qHZmmY4f5Ghf4odr718re+TNv7fFZpI1RXd2NsM59WMHhD6mmrDYJGU18QXrc0ifAZALXI9Yeg/5a/YW1N1WZoTFYK0jPyNDoNyagSberOsWsVHJFZepi7nuFeSVZrtlPCnNKejRMPUib5ZQfX6sH6jsvFL3nma9AxwI8=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(346002)(366004)(39380400002)(189003)(199004)(26005)(97736004)(186003)(2900100001)(316002)(59450400001)(6506007)(102836004)(36756003)(110136005)(106356001)(54906003)(72206003)(4326008)(8676002)(81156014)(25786009)(2950100002)(6666003)(39060400002)(305945005)(10290500003)(5660300001)(107886003)(14454004)(8936002)(3660700001)(3280700002)(105586002)(81166006)(15650500001)(478600001)(2906002)(6116002)(3846002)(1076002)(2501003)(6436002)(5250100002)(6486002)(68736007)(7736002)(10090500001)(6512007)(66066001)(53936002)(99286004)(86612001)(76176011)(22452003)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1115;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: Jz3CPDJ/rdTrBXpjoXSvFahjkwzNBFdVy8FxHtny8CqHWQ0uuWIuRXipk3VBNVGLnJGUFs1bc76024J60QGpE/RhEGCChUFhz5pbnLytEqnNrqXalVdOw7QIBklR8LuYCXcKUuBTO1Poa+FLpO/KgXu0aH6F4molM0GtSucg02E=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a52c0a1-3986-4b74-16b5-08d581566d18
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:48.9161
+X-MS-Exchange-CrossTenant-Network-Message-Id: 648fd58d-2e74-4a30-85c4-08d581566c03
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:47.1348
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1115
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: SeongJae Park <sj38.park@gmail.com>
 
-[ Upstream commit 1b19b95169cd52fe82cd442fec0b279fe25cc838 ]
+[ Upstream commit 2adfa4210f8f35cdfb4e08318cc06b99752964c2 ]
 
-A warning that I thought I had fixed before occasionally comes
-back in rare randconfig builds (I found 7 instances in the last
-100000 builds, originally it was much more frequent):
+The 'configinit.sh' script checks the format of optional argument for the
+build directory, printing an error message if the format is not valid.
+However, the error message uses the wrong variable, indicating an empty
+string even though the user entered a non-empty (but erroneous) string.
+This commit fixes the script to use the correct variable.
 
-drivers/infiniband/hw/mlx5/mr.c: In function 'mlx5_ib_reg_user_mr':
-drivers/infiniband/hw/mlx5/mr.c:1229:5: error: 'order' may be used uninitia=
-lized in this function [-Werror=3Dmaybe-uninitialized]
-  if (order <=3D mr_cache_max_order(dev)) {
-     ^
-drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'ncont' may be used uninitia=
-lized in this function [-Werror=3Dmaybe-uninitialized]
-drivers/infiniband/hw/mlx5/mr.c:1247:8: error: 'page_shift' may be used uni=
-nitialized in this function [-Werror=3Dmaybe-uninitialized]
-drivers/infiniband/hw/mlx5/mr.c:1260:2: error: 'npages' may be used uniniti=
-alized in this function [-Werror=3Dmaybe-uninitialized]
+Fixes: c87b9c601ac8 ("rcutorture: Add KVM-based test framework")
 
-I've looked at all those findings again and noticed that they are all
-with CONFIG_INFINIBAND_USER_MEM=3Dn, which means ib_umem_get() returns
-an error unconditionally and we never initialize or use those variables.
-This triggers a condition in gcc iff mr_umem_get() is partially but not
-entirely inlined, which in turn depends on the exact combination of
-optimization settings. This is a known problem with gcc, with no
-easy solution in the compiler, so this adds another workaround that
-should be more reliable than my previous attempt.
-
-Returning an error from mlx5_ib_reg_user_mr() earlier means that we
-can completely bypass the logic that caused the warning, the compiler
-can now see that the variable is never accessed.
-
-Fixes: 14ab8896f5d9 ("IB/mlx5: avoid bogus -Wmaybe-uninitialized warning")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/infiniband/hw/mlx5/mr.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/testing/selftests/rcutorture/bin/configinit.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/m=
-r.c
-index 37bbc543847a..2520320845ee 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -1206,6 +1206,9 @@ struct ib_mr *mlx5_ib_reg_user_mr(struct ib_pd *pd, u=
-64 start, u64 length,
- 	int err;
- 	bool use_umr =3D true;
-=20
-+	if (!IS_ENABLED(CONFIG_INFINIBAND_USER_MEM))
-+		return ERR_PTR(-EINVAL);
-+
- 	mlx5_ib_dbg(dev, "start 0x%llx, virt_addr 0x%llx, length 0x%llx, access_f=
-lags 0x%x\n",
- 		    start, virt_addr, length, access_flags);
-=20
+diff --git a/tools/testing/selftests/rcutorture/bin/configinit.sh b/tools/t=
+esting/selftests/rcutorture/bin/configinit.sh
+index 3f81a1095206..50a6371b2b2e 100755
+--- a/tools/testing/selftests/rcutorture/bin/configinit.sh
++++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
+@@ -51,7 +51,7 @@ then
+ 			mkdir $builddir
+ 		fi
+ 	else
+-		echo Bad build directory: \"$builddir\"
++		echo Bad build directory: \"$buildloc\"
+ 		exit 2
+ 	fi
+ fi
 --=20
 2.14.1
