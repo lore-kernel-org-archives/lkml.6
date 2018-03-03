@@ -1,110 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964786AbeCCA4S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:56:18 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49728 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935684AbeCCA4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:56:17 -0500
-Date: Fri, 2 Mar 2018 16:56:14 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 1/1] mm: make start_isolate_page_range() fail if already
- isolated
-Message-Id: <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
-In-Reply-To: <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
-References: <20180226191054.14025-1-mike.kravetz@oracle.com>
-        <20180226191054.14025-2-mike.kravetz@oracle.com>
-        <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
-        <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S964820AbeCCA7X convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 19:59:23 -0500
+Received: from mga02.intel.com ([134.134.136.20]:41176 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935377AbeCCA7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 19:59:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
+   d="scan'208";a="32046605"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: Alexander Duyck <alexander.duyck@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+        Ilya Lesokhin <ilyal@mellanox.com>, Don Dutile <ddutile@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Subject: RE: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+Thread-Topic: [PATCH] pci-iov: Add support for unmanaged SR-IOV
+Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lggAA/S4CAAPNaIA==
+Date: Sat, 3 Mar 2018 00:59:15 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910274F6@SHSMSX101.ccr.corp.intel.com>
+References: <20180227190520.3273.79728.stgit@localhost.localdomain>
+        <20180227144015.228d4f5c@w520.home>
+        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
+        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
+        <20180228155949.00fde8ae@w520.home>
+        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
+        <20180301132224.1ca06949@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
+ <20180302111411.47a58371@t450s.home>
+In-Reply-To: <20180302111411.47a58371@t450s.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDlkZmYzZDQtNzA3Mi00MDA0LThhZWYtZDQzZTE4ZmMzMTE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IkxBUHpreDFxVVlYNVwvWE9YenNRN3hnaXpDMXg5TktXMTBjQXlycXdlRnVjPSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Mar 2018 16:38:33 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
-
-> On 03/02/2018 04:06 PM, Andrew Morton wrote:
-> > On Mon, 26 Feb 2018 11:10:54 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
-> > 
-> >> start_isolate_page_range() is used to set the migrate type of a
-> >> set of page blocks to MIGRATE_ISOLATE while attempting to start
-> >> a migration operation.  It assumes that only one thread is
-> >> calling it for the specified range.  This routine is used by
-> >> CMA, memory hotplug and gigantic huge pages.  Each of these users
-> >> synchronize access to the range within their subsystem.  However,
-> >> two subsystems (CMA and gigantic huge pages for example) could
-> >> attempt operations on the same range.  If this happens, page
-> >> blocks may be incorrectly left marked as MIGRATE_ISOLATE and
-> >> therefore not available for page allocation.
-> >>
-> >> Without 'locking code' there is no easy way to synchronize access
-> >> to the range of page blocks passed to start_isolate_page_range.
-> >> However, if two threads are working on the same set of page blocks
-> >> one will stumble upon blocks set to MIGRATE_ISOLATE by the other.
-> >> In such conditions, make the thread noticing MIGRATE_ISOLATE
-> >> clean up as normal and return -EBUSY to the caller.
-> >>
-> >> This will allow start_isolate_page_range to serve as a
-> >> synchronization mechanism and will allow for more general use
-> >> of callers making use of these interfaces.  So, update comments
-> >> in alloc_contig_range to reflect this new functionality.
-> >>
-> >> ...
-> >>
-> >> --- a/mm/page_isolation.c
-> >> +++ b/mm/page_isolation.c
-> >> @@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
-> >>  
-> >>  	spin_lock_irqsave(&zone->lock, flags);
-> >>  
-> >> +	/*
-> >> +	 * We assume we are the only ones trying to isolate this block.
-> >> +	 * If MIGRATE_ISOLATE already set, return -EBUSY
-> >> +	 */
-> >> +	if (is_migrate_isolate_page(page))
-> >> +		goto out;
-> >> +
-> >>  	pfn = page_to_pfn(page);
-> >>  	arg.start_pfn = pfn;
-> >>  	arg.nr_pages = pageblock_nr_pages;
-> > 
-> > Seems a bit ugly and I'm not sure that it's correct.  If the loop in
-> > start_isolate_page_range() gets partway through a number of pages then
-> > we hit the race, start_isolate_page_range() will then go and "undo" the
-> > work being done by the thread which it is racing against?
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Saturday, March 3, 2018 2:14 AM
 > 
-> I agree that it is a bit ugly.  However, when a thread hits the above
-> condition it will only undo what it has done.  Only one thread is able
-> to set migrate state to isolate (under the zone lock).  So, a thread
-> will only undo what it has done.
-
-I don't get it.  That would make sense if start_isolate_page_range()
-held zone->lock across the entire loop, but it doesn't do that.
-
-> The exact problem of one thread undoing what another thread has done
-> is possible with the code today and is what this patch is attempting
-> to address.
+> On Fri, 2 Mar 2018 06:54:17 +0000
+> "Tian, Kevin" <kevin.tian@intel.com> wrote:
 > 
-> > Even if that can't happen, blundering through a whole bunch of pages
-> > then saying whoops then undoing everything is unpleasing.
-> > 
-> > Should we be looking at preventing these races at a higher level?
+> > > From: Alex Williamson
+> > > Sent: Friday, March 2, 2018 4:22 AM
+> > > >
+> > > > I am pretty sure that you are describing is true of some, but not for
+> > > > all. I think the Amazon solutions and the virtio solution are doing
+> > > > hard partitioning of the part. I will leave it to those guys to speak
+> > > > for themselves since I don't know anything about the hardware design
+> > > > of those parts.
+> > >
+> > > I think we'd need device specific knowledge and enablement to be able
+> > > to take advantage of any hardware partitioning, otherwise we need to
+> > > assume the pf is privileged, as implemented in other sriov devices.
+> > >
+> > > I'm also trying to imagine whether there's a solution via the new
+> > > vfio/mdev interface, where the mdev vendor driver would bind to the
+> pf
+> > > and effectively present itself as the mdev device.  The vendor driver
+> > > could provide sriov capabilities and bear the burden of ensuring that
+> > > the pf is used cooperatively.  The only existing mdev vendor drivers are
+> > > vGPUs and rely on on-device DMA translation and isolation, such as
+> > > through GTTs, but there have been some thoughts on providing IOMMU
+> > > based
+> > > isolation of mdev/sriov mixed devices (assuming DMA is even required
+> > > for userspace management of the pf in this use case).  [Cc Kirti]
+> > > Thanks,
+> > >
+> >
+> > Hope not distracting this thread, but above sounds like an interesting
+> > idea. Actually we ever brainstormed similar thought for another
+> > potential usage - supporting VF live migration. We are already working
+> > on an generic extension to allow state save/restore of mdev instance.
+> > If vendor driver could further wrap pf as a mdev instance, it could
+> > leverage the same framework for a clean state migration on VF. based
+> > on mmap callback the vendor driver can easily switch back-and-forth
+> > between pass through and trap/emulation of the VF resources. Of
+> > course doing so alone doesn't address all the demands of VF live
+> > migration (e.g. dirty page tracking still requires other techniques),
+> > but it does pave a way toward a general framework to support VF
+> > live migration.
+> >
+> > If above is feasible, finally we could use one mdev framework to
+> > manage both mdev and pf/vf assignment, while providing added
+> > values which are difficult to achieve today. :-)
 > 
-> I could not immediately come up with a good idea here.  The zone lock
-> would be the obvious choice, but I don't think we want to hold it while
-> examining each of the page blocks.  Perhaps a new lock or semaphore
-> associated with the zone?  I'm open to suggestions.
+> mdev drivers may be the first to support migration, but I wonder if a
+> full mdev implementation is necessary for it.  Once the vfio api is
+> define, device specific extensions to vfio-pci might be able to
+> implement migration more directly.  Thanks,
+> 
+> Alex
 
-Yes, I think it would need a new lock.  Hopefully a mutex.
+yes technically a full mdev implementation is not necessary. If
+device specific extensions will be placed within vfio module, it's
+obviously straightforward. What I thought earlier was in case vfio
+wants to stay device-agnostic then we probably want device
+specific extensions in vendor driver which is loaded but in a 
+dummy mode which simply do basic PCI initialization as vfio-pci
+and then wrap vf as mdev (since vfio-pci is not the vf driver in
+this scenario). It's especially useful for vendor drivers which aim
+to support both mdev and sr-iov by sharing common state mgmt.
+knowledge, but looks an overkill to other vendor drivers. Possibly
+finally we'll allow both - simple device extensions in vfio-pci and 
+complex device extensions in vendor drivers through vfio-mdev.
+
+Thanks
+Kevin
