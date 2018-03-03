@@ -1,76 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965023AbeCCBlt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:41:49 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:59246 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964973AbeCCBlr (ORCPT
+        id S965052AbeCCBnG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:43:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35622 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964973AbeCCBnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:41:47 -0500
-Subject: Re: [PATCH V3] scsi: core: use blk_mq_requeue_request in
- __scsi_queue_insert
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-References: <1519961474-15236-1-git-send-email-jianchao.w.wang@oracle.com>
- <1520008291.2855.7.camel@wdc.com>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <e867f55a-a027-4658-1e11-50a65f383626@oracle.com>
-Date: Sat, 3 Mar 2018 09:41:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 2 Mar 2018 20:43:04 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7695C60316
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rkuo@codeaurora.org
+Date: Fri, 2 Mar 2018 19:43:06 -0600
+From: Richard Kuo <rkuo@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        Chen Liqin <liqin.linux@gmail.com>, Lennox Wu <lennox.wu@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, James Hogan <jhogan@kernel.org>,
+        "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>, openrisc@lists.librecores.org,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Removing architectures without upstream gcc support
+Message-ID: <20180303014306.GA6911@codeaurora.org>
+References: <CAK8P3a2-6YwRR3j7J78fVHSvDpq8Kf4wRj6d9mnGgAxgkYypxg@mail.gmail.com>
+ <20180222191758.GB5180@codeaurora.org>
+ <CAK8P3a3r=3wDtqV5feLUT-hOkE+9yWOLjLVm+nejqdaN7MtMFw@mail.gmail.com>
+ <20180228020631.GB3780@codeaurora.org>
+ <CAK8P3a13VDiH8+NG00p5oM2j5KMNU3JnCUurFn6EdJgztZsKHg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1520008291.2855.7.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803030015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a13VDiH8+NG00p5oM2j5KMNU3JnCUurFn6EdJgztZsKHg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
-
-Thanks for your kindly response and directive.
-
-On 03/03/2018 12:31 AM, Bart Van Assche wrote:
-> On Fri, 2018-03-02 at 11:31 +0800, Jianchao Wang wrote:
->> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
->> index a86df9c..d2f1838 100644
->> --- a/drivers/scsi/scsi_lib.c
->> +++ b/drivers/scsi/scsi_lib.c
->> @@ -191,7 +191,13 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
->>  	 */
->>  	cmd->result = 0;
->>  	if (q->mq_ops) {
->> -		scsi_mq_requeue_cmd(cmd);
->> +		/*
->> +		 * scsi_device.sdev_gendev will be get every time in .get_budget and
->> +		 * be put in scsi_end_request. Hence we need to put the reference
->> +		 * here when we decide to requeue request.
->> +		 */
->> +		blk_mq_requeue_request(cmd->request, true);
->> +		put_device(&device->sdev_gendev);
->>  		return;
->>  	}
->>  	spin_lock_irqsave(q->queue_lock, flags);
+On Wed, Feb 28, 2018 at 09:37:09AM +0100, Arnd Bergmann wrote:
+> On Wed, Feb 28, 2018 at 3:06 AM, Richard Kuo <rkuo@codeaurora.org> wrote:
+> > On Thu, Feb 22, 2018 at 11:43:10PM +0100, Arnd Bergmann wrote:
+> >> - How do I build an llvm based toolchain for Hexagon? Do I need patches
+> >>   on top of the llvm-6 release branch? Where can I find the corresponding
+> >>   binutils-2.30 sources?
+> >
+> > Just to follow up on this, the closest thing right now to compile the kernel
+> > for Hexagon is the toolchain included with the Hexagon SDK.  However, the
+> > linker will fail because of something in the kernel build process that
+> > I think produces empty sections, which that linker can't handle.  A newer
+> > linker can handle it, but that's not scheduled to be released until much later
+> > this year.
+> >
+> > That's actually the closest option currently.  I tried the upstream source
+> > but it seems to lack some specific patches to support kernel compilation,
+> > so I will need to chase those down.
 > 
-> Please consider to change the new comment into something like the following:
-> "Before a SCSI command is dispatched, get_device(&sdev->sdev_gendev) is called
-> and the host, target and device busy counters are increased. Since requeuing a
-> request causes these actions to be repeated and since scsi_device_unbusy() has
-> already been called, put_device(&device->sdev_gendev) must still be called. Call
-> put_device() after blk_mq_requeue_request() to avoid that removal of the SCSI
-> device can start before requeueing has happened."
+> Thanks for trying it out. Can you point me to the sources? I tried downloading
+> a Hexagon SDK when I first looked at it, but only got a huge chunk of binary
+> java files and gave up before finding the llvm patches.
 
-Yes, your comment is more detailed and clearly.
 
-Sincerely
-Jianchao
+I don't think the SDK patches are available externally.
+
+The good news is I think we're now one patch away from the upstream LLVM
+compiling a functional kernel for Hexagon (a few fixes to LLVM/clang have
+been committed already).  It technically compiles but produces an abort (from
+a null deref) which the linker doesn't like.
+
+The linker itself unfortunately is going to be a different matter.
+
+
+Thanks,
+Richard Kuo
+
+
+-- 
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, 
+a Linux Foundation Collaborative Project
