@@ -1,95 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932183AbeCCVGx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 16:06:53 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54166 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932149AbeCCVGw (ORCPT
+        id S1752440AbeCCVM1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 16:12:27 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45268 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeCCVMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 16:06:52 -0500
-Date: Sat, 3 Mar 2018 22:06:53 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, r.marek@assembler.cz,
-        ricardo.neri-calderon@linux.intel.com, rkrcmar@redhat.com,
-        Janakarajan.Natarajan@amd.com, bp@suse.de, x86@kernel.org,
-        hpa@zytor.com, mingo@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] clarify how insecure CPU is
-Message-ID: <20180303210653.GB22392@amd>
-References: <20180108201017.GA20588@amd>
- <alpine.DEB.2.20.1801082125530.2253@nanos>
- <20180108230355.GA25349@amd>
- <alpine.DEB.2.20.1801090043160.2253@nanos>
+        Sat, 3 Mar 2018 16:12:25 -0500
+X-Google-Smtp-Source: AG47ELsIStbqjLRZwOKIk8cn7TF1nguX/OAOCQFGF0jMA23yqsDc15ScBevqS3XBheHsQEra2aeS0g==
+Subject: Re: lost interrupts when running sabrelite images (v4.15+) in qemu
+From: Guenter Roeck <linux@roeck-us.net>
+To: Troy Kisky <troy.kisky@boundarydevices.com>
+Cc: Fugang Duan <fugang.duan@nxp.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180303163236.GA29514@roeck-us.net>
+ <88917ab4-ade0-dcfc-e81a-eeaa8a4d15b8@boundarydevices.com>
+ <2801dae5-1334-a127-d36c-244d35e71222@roeck-us.net>
+Message-ID: <bd6121f1-0466-c6d8-57a9-1c8b03d3ab99@roeck-us.net>
+Date: Sat, 3 Mar 2018 13:12:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="GRPZ8SYKNexpdSJ7"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1801090043160.2253@nanos>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <2801dae5-1334-a127-d36c-244d35e71222@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/03/2018 12:48 PM, Guenter Roeck wrote:
+> On 03/03/2018 11:07 AM, Troy Kisky wrote:
+>> On 3/3/2018 8:32 AM, Guenter Roeck wrote:
+>>> Hi,
+>>>
+>>> since v4.15, I get the following runtime warning when running sabrelite images
+>>> in qemu.
+>>>
+>>> irq 65: nobody cared (try booting with the "irqpoll" option)
+>>> ...
+>>> handlers:
+>>> [<26292474>] fec_pps_interrupt
+>>> Disabling IRQ #65
+>>> fec 2188000.ethernet (unnamed net_device) (uninitialized): MDIO read timeout
+>>>
+>>> Bisect points to commit 4ad1ceec05e491 ("net: fec: Let fec_ptp have its
+>>> own interrupt routine"). Analysis shows that platform_irq_count()
+>>> returns 2, which is reduced to 1 by fec_enet_get_irq_cnt().
+>>> If I let fec_enet_get_irq_cnt() return 2, the problem is gone.
+>>> Reverting commit 4ad1ceec05e491 also fixes the problem.
+>>>
+>>> Bisect log is attached.
+>>>
+>>
+>> Sounds like you found a bug with qemu. I just booted sabrelite over nfs fine.
+>> My interrupts look like this.
+>>
+>>
+>>   64:      98767          0          0          0     GIC-0 150 Level     2188000.ethernet
+>>   65:          0          0          0          0     GIC-0 151 Level     2188000.ethernet
+>> ___________
+>> Irq 65 is only for ptp interrrupts now. If qemu is signaling an tx/rx frame interrupt on 65,
+>> then qemu is wrong. Of course, I've never used qemu so feel free to ignore me if I make no sense.
+>>
+> 
+> Thanks for checking with real hardware.
+> 
+> This is what I see (with your patch reverted):
+> 
+>   64:          0     GIC-0 150 Level     2188000.ethernet
+>   65:         64     GIC-0 151 Level     2188000.ethernet
+> 
+> Looking into the qemu source, I see:
+> 
+> #define FSL_IMX6_ENET_MAC_1588_IRQ 118
+> #define FSL_IMX6_ENET_MAC_IRQ 119
+> 
+> FSL_IMX6_ENET_MAC_IRQ is then connected to fec interrupt index 0, and FSL_IMX6_ENET_MAC_1588_IRQ
+> is connected to fec interrupt index 1.
+> 
+> This may suggest that the defines are reversed. I'll see what happens if I swap them.
+> 
 
---GRPZ8SYKNexpdSJ7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Confirmed. If I swap the above defines, everything works fine. At the same time,
+the modified qemu works with older kernels.
 
-On Tue 2018-01-09 00:44:30, Thomas Gleixner wrote:
-> On Tue, 9 Jan 2018, Pavel Machek wrote:
->=20
-> > On Mon 2018-01-08 21:27:25, Thomas Gleixner wrote:
-> > > On Mon, 8 Jan 2018, Pavel Machek wrote:
-> > >=20
-> > > >=20
-> > > > First, what is going on with X86_BUG_AMD_E400 and X86_BUG_AMD_APIC_=
-C1E
-> > > > ? They seem to refer to the same bug, perhaps comment should mention
-> > > > that? (Do we need two flags for one bug?)
-> > > >=20
-> > > > Next, maybe X86_BUG_CPU_INSECURE is a bit too generic? This seems to
-> > > > address "Meltdown" problem, but not "Spectre". Should it be limited=
- to
-> > > > PPro and newer Intel CPUs?
-> > > >=20
-> > > > Should another erratum be added for "Spectre"? This is present even=
- on
-> > > > AMD CPUs, but should not be present in 486, maybe Pentium, and some
-> > > > Atom chips?
-> > > >=20
-> > > > Plus... is this reasonable interface?
-> > > >=20
-> > > > bugs		: cpu_insecure
-> > >=20
-> > > We've renamed it to meltdown already and added spectre_v1/v2 bits for=
- the
-> > > rest of the mess.
-> >=20
-> > Could you explain (best with code comment) what is going on with
-> > X86_BUG_AMD_E400 and X86_BUG_AMD_APIC_C1E ? They seem to refer to the
-> > same bug.
->=20
-> Sorry, that;s really not the time for this.
+Thanks a lot for the hint, and sorry for the noise.
 
-Ok, is there better time now? The code is a bit confusing...
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---GRPZ8SYKNexpdSJ7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqbDm0ACgkQMOfwapXb+vJeSQCfWe5MIt1G5x54yMolLm6ceP+o
-7JYAn2IGEaxyBP/leE32dSczuxOcMz/E
-=G9BQ
------END PGP SIGNATURE-----
-
---GRPZ8SYKNexpdSJ7--
+Guenter
