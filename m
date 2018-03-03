@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCCJ62 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 04:58:28 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36799 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751908AbeCCJ61 (ORCPT
+        id S1752044AbeCCKAa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 05:00:30 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:33250 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751908AbeCCKA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 04:58:27 -0500
-X-Google-Smtp-Source: AG47ELvKOITfMv5wmd9ZCbfwGl1D2BtqlouokADIPsivL5BLiM5sdt7LsZM6UvksgG90718UPHix9Q==
-Date: Sat, 3 Mar 2018 10:58:23 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Yang Bo <yangbo@deepin.com>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: [PATCH -tip] x86: kprobes: Cleanup preempt disabling and enabling
-Message-ID: <20180303095823.phaoeuvcjhoirwg3@gmail.com>
-References: <152004878307.12012.17534094592580782444.stgit@devbox>
+        Sat, 3 Mar 2018 05:00:29 -0500
+X-Google-Smtp-Source: AG47ELsXvWy8QSJ0rmTgFsMwqNfwEBzE+S1/YhKQwfVUAtHYAz/BLyu1yD3E03J0IoL5ekl/rnyxr0kKXJHuVx6vybw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152004878307.12012.17534094592580782444.stgit@devbox>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180303092417.GA30917@amd>
+References: <CA+Y=x3=U_zheHBxeNSzL9nSdXOZB7rs-JDNr36323uJ9Uhx0Hg@mail.gmail.com>
+ <CA+Y=x3=+kPXJRNYo91i4yJiqqVHDsMhn2pAwkmAH2LV3usd7Hg@mail.gmail.com> <20180303092417.GA30917@amd>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 3 Mar 2018 11:00:28 +0100
+X-Google-Sender-Auth: P4n038nPgO9bouGA5G0OZX1zJPQ
+Message-ID: <CAJZ5v0iVmE0jwRW1f6hnohSVzKsZbLr0axi+VKoR+FQcHM+_7w@mail.gmail.com>
+Subject: Re: 4.16-rc3 fails to resume on MacBookPro10,1 -
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Andrew Worsley <amworsley@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, 844788@bugs.debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Mar 3, 2018 at 10:24 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+> On Sat 2018-03-03 17:27:36, Andrew Worsley wrote:
+>> On 3 March 2018 at 16:41, Andrew Worsley <amworsley@gmail.com> wrote:
+>> > Basically hangs on resuming after decompressing. The last statement
+>> > displayed is "resume: Image successfully loaded"
+>> >  - I attach a photo as I can't get access to it
+>> ....
+>> > Bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=844788
+>> >
+>> > I couldn't get anything from the function keys with this latest kernel.
+>> ...
+>>
+>> By plugging in a USB keyboard I can get sysrq stuff to work - but
+>> stupidly the kernel disables all the useful ones so I will have to
+>> compile a new kernel with it set to 1 so I can get some traces.
+>> Really annoyed by this default setting, presumably from debian?
+>> Wished there was a boot command line option to configure the allowed
+> options.
+>
+> So hibernation is broken on x86-64?
+>
+> Ideas for debugging:
+>
+> 1) get that sysrq to work, backtrace where it is hung would be very
+> useful.
+>
+> 2) try v4.15.
 
-* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+That one works for me FWIW.
 
-> +/*
-> + * Interrupts are disabled on entry as trap3 is an interrupt gate and they
-> + * remain disabled throughout this function.
-> + */
-> +int kprobe_int3_handler(struct pt_regs *regs)
-> +{
-> +	struct kprobe_ctlblk *kcb;
-> +	int ret;
-> +
-> +	if (user_mode(regs))
-> +		return 0;
-> +
-> +	/*
-> +	 * We don't want to be preempted for the entire
-> +	 * duration of kprobe processing.
-> +	 */
-> +	preempt_disable();
-> +
-> +	kcb = get_kprobe_ctlblk();
-> +	ret = kprobe_int3_dispatcher(regs, kcb);
-> +
-> +	if (!kprobe_ready_for_singlestep(regs))
-> +		preempt_enable_no_resched();
-> +
-> +	return ret;
+> 3) try without KPTI enabled. Probably noone knows how it interacts
+> with that...
+>
+> (And 4), we should really start doing some periodic testing of hibernation).
 
-What's the point of disabling preemption, if IRQs are disabled already?
-
-There's no preemption when IRQs are off...
-
-Thanks,
-
-	Ingo
+I do that, but the period is not particularly short ...
