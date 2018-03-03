@@ -1,266 +1,257 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-568472-1520226721-2-4957031823332237922
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2878775-1520036466-2-4044515271437855850
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520226720; b=ryhRcITveXvk31YLfOykLTkTSLlQgPQusDmpIkK08zNt29x
-    Zby77DhUoyVgcTszenYLz5tWCsqLG/Shu+3c0dpr05C9zZ+bfKP2N91L7VCiZamP
-    Y3wCkeAsjhsf09kL7HAKsNyt//x2a4FPPxOMBbKoJ2KBHmqK5SjVkFnUXYOTMrDx
-    9EedLcxfVP7TK/W99nqpcdXZIi/nV2O2aQnmhm3pVADVckwdDonf9izisonjpYxk
-    KKS0ZQwdoQKsI+fv4muo9gkpwQv42RCXJo0aWtLZivgsjCw8sE9Z1pN5fTrqyMq0
-    UT5sEUEexuBbaHMclvG9+zxiGnDlDGt5JPtDC4Q==
+    t=1520036465; b=UQ5eLg1DG6T6INyJf3FG++sDK5JRTIf1RzJnS4OzfIILspS
+    LPisyjn/1gEylDK8VfkKGd6PXzNewzdKk6i38NrsLWHA2wtkx5JbQdTsdH59mzjy
+    3HpH+luiY1YBMcCgcUuQKzmDsKOey1ncxr/Hdia9A4BIyRatS06znoEmzyy2Xw10
+    EaDzANTfE5RGOmpdUV4PNnt6Y1BV/RfboRaJxlp8a0Jh4XSVg+8C5qhEWxuLaq+0
+    79g4EaGEVDl1RKztJJlBoA1Us9XbZIQSL6NGpT8VTtE2kPGg3ptHkthoBbQCugN+
+    kbZWDV0kzvOI3n4a0XsXfUZMjjSBxm4NfXfZutQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520226720; bh=3mqrcV
-    ScJ+qpQidv5BGYQdVqpXVWSHv2kLDojoCpRGU=; b=ReEz5lDzkaP9ZLl+EBgivo
-    CO3jX6yMOXTLKDKIo2IGtJ2Ao43ACIhXneya9bmF6KtHggrgPXSnMFemphh6Kx3H
-    imiKLrGfg6hl/WuOT3gtkJcPJRu4Cw27IdJfhUtsz0vlAuPlxjMbGsDTfPKnL8T8
-    cehSVvw+FGijh5Ywra4/ZywiIlYyOZjAnnqi0E7rUkfkma9++3BSElf6GHtUK98X
-    XMJNYsFVMO4bCHZ63ehvZP8WouE0+v4EvjQzG64E99QGoTCZX7kyfMnGXATVTK9E
-    w4ZnLC+1U8gUfQj+2RL2fW16Gz+2ll5bhxe7DfPkHmd7qsYXGwYtgd3hqTWWCh2w
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MjTDpPWV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :references:in-reply-to:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520036465; bh=b
+    ICTXCwACnyEO/2a/QJ9gFU+fdDZZPLiyBZpKdp1aX0=; b=QDA8zBmh03JzRe9l0
+    BQBx1eHXQKhtATb6709KVmFnSL7QyIV9vHTGujHQoNX3abqgiqWx/E5HeehgT3dm
+    GNPR0mPWSuidUhmnu2G6t/TARH7cyPgySG8IVRRvm7l2t7buycXgOIFXf+MQZXwY
+    90mgtSLHlA3wHvHgSWfgzKaYKX0BqcCpDGczx3Fs0qEOVUTGuC9ybkwEXRakgvbo
+    5x3c4U2CAkE79cgMo3Hb1CH14LsVUJtEMrUn9bFP3D1zT7eLcCMoQBWWxaEuTfr4
+    ABfrb+xdyFBZ0VQBpwl429nwJyms4QbQhhKrjttwI0wq/oGUyj1DkDWuKD6jV3Fw
+    cElsw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PMesG9Fd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=MjTDpPWV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PMesG9Fd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932563AbeCEFLz (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 00:11:55 -0500
-Received: from mail-pu1apc01on0122.outbound.protection.outlook.com ([104.47.126.122]:13753
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751144AbeCEFLv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 5 Mar 2018 00:11:51 -0500
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Dexuan Cui <decui@microsoft.com>
-To: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org"
-        <driverdev-devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        Jack Morgenstein <jackm@mellanox.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH 2/3] PCI: hv: serialize the present/eject work items
-Thread-Topic: [PATCH 2/3] PCI: hv: serialize the present/eject work items
-Thread-Index: AQHTsoV58ygEHWMoYEeyKVqO+bn/hqO+rw0AgAIpgWA=
-Date: Mon, 5 Mar 2018 05:11:35 +0000
-Message-ID: <KL1P15301MB0006F7C015D8D113FC2ACD1DBFDA0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+To: "bhelgaas@google.com" <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+ <linux-pci@vger.kernel.org>, KY Srinivasan <kys@microsoft.com>, Stephen
+ Hemminger <sthemmin@microsoft.com>
+Subject: [PATCH 3/3] PCI: hv: fix 2 hang issues in hv_compose_msi_msg()
+Thread-Topic: [PATCH 3/3] PCI: hv: fix 2 hang issues in hv_compose_msi_msg()
+Thread-Index: AQHTsoV6L95yC1dTN0ioPU1T64sHqw==
+Date: Sat, 3 Mar 2018 00:20:47 +0000
+Message-ID: <20180303001947.20564-3-decui@microsoft.com>
 References: <20180303001947.20564-1-decui@microsoft.com>
- <20180303001947.20564-2-decui@microsoft.com>
- <DM5PR2101MB1030BC8E7A263D65A1A64B26DCC40@DM5PR2101MB1030.namprd21.prod.outlook.com>
-In-Reply-To: <DM5PR2101MB1030BC8E7A263D65A1A64B26DCC40@DM5PR2101MB1030.namprd21.prod.outlook.com>
+In-Reply-To: <20180303001947.20564-1-decui@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-03-03T16:09:44.3000079Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
+x-mailer: git-send-email 2.15.1
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=decui@microsoft.com;
-x-originating-ip: [73.225.236.69]
+x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;KL1P15301MB0022;7:4Y79d+TkLeEbyMAsqtm1ZHuvr/I9tx0Q+PeQXe+1vG88k5QUC8/AzNJuhkpw4Ueqb+0yvuvJ/4fPgmxgLaZy1DlQYH67W2OAT8uknk3Lfs2as8h517gWBKfltpPlVvFPHSqGhENXWEtbUYlOmMlJKqdFWAVXBzuv+rqSmKs2V/14OWu2L60jPCb91qwzpw4FMWT8BrNm+z8KOEW59vrZnUObS7HcvY9WAlH1aghJLUjromdMSKwk4TTBap4LZDiX
+x-microsoft-exchange-diagnostics: 1; KL1P15301MB0054;
+ 6:R4WaJhpG4KHsj/7ZXrbrFw/0mjcuqViw6kaSi8xIlJIAsZdHh+kz76kleTUZiWJ34AJHfcwgXUwAE7lCrRicOPNz9QOE29lG+WM6qxlYzISqkNeLAeMq6PAhq339hRXGE85w0xcnARRGnGsAuLY2r6t5NNGf2B0XDLM67m6RUXXx/tk4AViFsrWBVVGtDifICdge9h5LN+rGNA3n0TQIKaSMyRQun0ZAMJ6CA/z77/N7tX15ufp9BS4qYL+qJt/iV8lBbFo6fGGYvHvH7DDRZTOMtCo1FjaY3Z8IPB+UdRh5DtDnR63cfa2kA9RdVNzS3R69HkZfSdGSbk8Mw7hiWGvcIb057PRbn3gI8Rbc/042C+uq+Oh4HngDl7ez1PgN;
+ 5:0GDHJTrd+yT4ST+SkbntEU/0R6MF2Rdfx+w6wOq0k7S/PC9Im0Oxd/f9aYXjt22+1Rlql+sWcWWhOw4ljj1iUJ+vCo7H/ewPLMsgEyeSrMq+aCSkr3l784ECfjc4nm+5D/sdeyzPWe4BuD87g46ydQ+5iB40Z/vkmxq/KJV4EPM=;
+ 24:LOvUWXXDgg36Sxa1ZX9MVvXlC9kH5WCrZEmjs/TJuygdu8TFrsB+fLrHV8yStYdH07oTikPCFbFGPXrjaXMnxG7j2R4N83BQiLB2ujX9U9s=;
+ 7:vi5aAjl+IDD8XVY4HpWDzTmgoi7ETacs4djZdJsbH3+I+t0NtvnePQh7I+ypDLWzpvClaLRn+4qkkUl4R2fCszHxoPIorIOsXYBuVVZTDg+ivsNLqoC0skPQE0iWt5X+pBZX6k7geXmWVErzJON1xrPjDy0fAS7exOj0vc+pZxeRLlzLz60SdhGogA2R+XJTRK/N2uMhoCFk0yyo15YWHARykLNWMWfNhTky3queuqFgeQazMnVUUbfZLlUWYd3I
 x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d89c48e0-563b-4a83-43fd-08d582579184
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:KL1P15301MB0022;
-x-ms-traffictypediagnostic: KL1P15301MB0022:
-x-microsoft-antispam-prvs: <KL1P15301MB0022C9383DC7BD0A13D24F7CBFDA0@KL1P15301MB0022.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:KL1P15301MB0022;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0022;
-x-forefront-prvs: 06022AA85F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39380400002)(346002)(39860400002)(189003)(199004)(110136005)(81156014)(6636002)(2900100001)(7696005)(76176011)(5660300001)(53936002)(105586002)(10090500001)(9686003)(6246003)(68736007)(8936002)(25786009)(81166006)(54906003)(8676002)(4326008)(316002)(97736004)(2950100002)(55016002)(99286004)(229853002)(33656002)(3660700001)(22452003)(478600001)(2501003)(86362001)(106356001)(305945005)(6506007)(7416002)(8990500004)(3280700002)(66066001)(102836004)(1511001)(74316002)(26005)(77096007)(2201001)(14454004)(6116002)(2906002)(59450400001)(86612001)(10290500003)(3846002)(6436002)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0022;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: VaXCzZxN3fp/hKs95AeFqc5jreNri1p+HI2V3sstwkeR4/faAAxUt3QV+6n9gOwey1gw8KFDYauoZd5KCuo4umfuBWR9JOsGYjvm90Xe0YykQMRj3LA+IpdSyKNYwwo/LhC9cWGsqcL1RIDavh3wTeuGJHngs9L8V3l/+wUyBJbC8Dr6twEcavkwTG9GXvNN/oIpMdFVDDbbBQQbla3YteSoIH7PY3aypK9Dj2rcWiWoO5bBg8iI69PXSHMUZy7029GqqUBdBfxjb0wjedQmv6CqaNd9iLeshWhZcH7dcApenCeSfsxoFMu1SWYzXbFZqmPR7XfoOvBYSiJrb3KlrA==
+x-ms-office365-filtering-correlation-id: c3070aba-d2f6-4335-50d9-08d5809c9d01
+x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);
+ SRVR:KL1P15301MB0054;
+x-ms-traffictypediagnostic: KL1P15301MB0054:
+x-microsoft-antispam-prvs: <KL1P15301MB005406526BE175109D1059CEBFC40@KL1P15301MB0054.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055); 
+x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
+ RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);
+ SRVR:KL1P15301MB0054; BCL:0; PCL:0; RULEID:; SRVR:KL1P15301MB0054;
+x-forefront-prvs: 0600F93FE1
+x-forefront-antispam-report: SFV:NSPM;
+ SFS:(10019020)(39860400002)(396003)(39380400002)(346002)(366004)(376002)(189003)(199004)(5660300001)(2906002)(4326008)(6116002)(8936002)(86362001)(2501003)(8676002)(6506007)(2900100001)(6436002)(14454004)(3660700001)(86612001)(305945005)(36756003)(99286004)(316002)(97736004)(25786009)(110136005)(1511001)(102836004)(54906003)(81166006)(10090500001)(81156014)(59450400001)(3280700002)(26005)(186003)(77096007)(6512007)(6636002)(76176011)(478600001)(2950100002)(3846002)(1076002)(22452003)(10290500003)(106356001)(66066001)(6486002)(50226002)(7416002)(68736007)(7736002)(105586002)(53936002)(22906009);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:KL1P15301MB0054;
+ H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM; FPR:; SPF:None; PTR:InfoNoRecords;
+ MX:1; A:1; LANG:en;
+x-microsoft-antispam-message-info: ksyLwVvxzSFbl08WN4s2dp5vNH86iz12D5fRmPUt6Sfrs1EHXnQEotzONA2DzDyQJMyCFZiZbhVtKaiNSzKcvt5LUFzD3BwN8ZtW2BULSBMFZeGWg5sj3ZPfSBMn2iMKxNsoUdZvUyzzAEPqXQgBMDbno51INKBcQ3/hxmr3D4I=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d89c48e0-563b-4a83-43fd-08d582579184
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2018 05:11:35.3089
- (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3070aba-d2f6-4335-50d9-08d5809c9d01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 00:20:47.5321 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0022
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0054
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: "olaf@aepfle.de" <olaf@aepfle.de>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "driverdev-devel@linuxdriverproject.org"
+ <driverdev-devel@linuxdriverproject.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Jack Morgenstein <jackm@mellanox.com>,
+ "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+ "apw@canonical.com" <apw@canonical.com>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "jasowang@redhat.com" <jasowang@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> From: Michael Kelley (EOSG)
-> Sent: Saturday, March 3, 2018 08:10
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> owner@vger.kernel.org> On Behalf Of Dexuan Cui
-> > Sent: Friday, March 2, 2018 4:21 PM
-> > When we hot-remove the device, we first receive a PCI_EJECT message and
-> > then receive a PCI_BUS_RELATIONS message with bus_rel->device_count =3D=
-=3D
-> 0.
-> >
-> > The first message is offloaded to hv_eject_device_work(), and the secon=
-d
-> > is offloaded to pci_devices_present_work(). Both the paths can be runni=
-ng
-> > list_del(&hpdev->list_entry), causing general protection fault, because
-> > system_wq can run them concurrently.
-> >
-> > The patch eliminates the race condition.
->=20
-> With this patch, the enum_sem field in struct hv_pcibus_device
-> is no longer needed.  The semaphore serializes execution in
-> hv_pci_devices_present_work(), and that serialization is now done
-> with the ordered workqueue.  Also, the last paragraph of the top level
-> comment for hv_pci_devices_present_work() should be updated to
-> reflect the new ordering assumptions.
+1. With the patch "x86/vector/msi: Switch to global reservation mode"
+(4900be8360), the recent v4.15 and newer kernels always hang for 1-vCPU
+Hyper-V VM with SR-IOV. This is because when we reach hv_compose_msi_msg()
+by request_irq()  -> request_threaded_irq() -> __setup_irq()->irq_startup()
+ -> __irq_startup() -> irq_domain_activate_irq() -> ... ->
+msi_domain_activate() -> ... -> hv_compose_msi_msg(), local irq is
+disabled in __setup_irq().
 
-Thanks! I'll make an extra patch for this.
+Fix this by polling the channel.
 
-> Separately, an unrelated bug:  At the top of hv_eject_device_work(),
-> the first test may do a put_pcichild() and return.  This exit path also
-> needs to do put_hvpcibus() to balance the ref counts, or do a goto
-> the last two lines at the bottom of the function.
+2. If the host is ejecting the VF device before we reach
+hv_compose_msi_msg(), in a UP VM, we can hang in hv_compose_msi_msg()
+forever, because at this time the host doesn't respond to the
+CREATE_INTERRUPT request. This issue also happens to old kernels like
+v4.14, v4.13, etc.
 
-When we're in hv_eject_device_work(), IMO hpdev->state must be=20
-hv_pcichild_ejecting, so I'm going to make a patch like this:
+Fix this by polling the channel for the PCI_EJECT message and
+hpdev->state, and by checking the PCI vendor ID.
 
-@@ -1867,10 +1867,7 @@ static void hv_eject_device_work(struct work_struct =
-*work)
+Note: actually the above issues also happen to a SMP VM, if
+"hbus->hdev->channel->target_cpu == smp_processor_id()" is true.
 
-        hpdev =3D container_of(work, struct hv_pci_dev, wrk);
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Tested-by: Adrian Suhov <v-adsuho@microsoft.com>
+Tested-by: Chris Valean <v-chvale@microsoft.com>
+Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Jack Morgenstein <jackm@mellanox.com>
+---
+ drivers/pci/host/pci-hyperv.c | 58 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 1 deletion(-)
 
--       if (hpdev->state !=3D hv_pcichild_ejecting) {
--               put_pcichild(hpdev, hv_pcidev_ref_pnp);
--               return;
--       }
-+       WARN_ON(hpdev->state !=3D hv_pcichild_ejecting);
-
-        /*
-         * Ejection can come before or after the PCI bus has been set up, s=
-o
-=20
-> > @@ -1770,7 +1772,7 @@ static void hv_pci_devices_present(struct
-> hv_pcibus_device *hbus,
-> >  	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
-> >
-> >  	get_hvpcibus(hbus);
-> > -	schedule_work(&dr_wrk->wrk);
-> > +	queue_work(hbus->wq, &dr_wrk->wrk);
->=20
-> This invocation of get_hvpcibus() and queue_work() could be made
-> conditional on whether the preceding list_add_tail() transitioned
-> the list from empty to non-empty.  If the list was already non-empty,
-> a previously queued invocation of hv_pci_devices_present_work()
-> will find the new entry and process it.   But this is an
-> optimization in a non-perf sensitive code path, so may not be
-> worth it.
-
-Exactly. I'll add the the optimization.
-
-> > @@ -1848,7 +1850,7 @@ static void hv_pci_eject_device(struct hv_pci_dev
-> *hpdev)
-> >  	get_pcichild(hpdev, hv_pcidev_ref_pnp);
-> >  	INIT_WORK(&hpdev->wrk, hv_eject_device_work);
-> >  	get_hvpcibus(hpdev->hbus);
-> > -	schedule_work(&hpdev->wrk);
-> > +	queue_work(hpdev->hbus->wq, &hpdev->wrk);
-> >  }
-> >
-> >  /**
-> > @@ -2463,11 +2465,17 @@ static int hv_pci_probe(struct hv_device *hdev,
-> >  	spin_lock_init(&hbus->retarget_msi_interrupt_lock);
-> >  	sema_init(&hbus->enum_sem, 1);
-> >  	init_completion(&hbus->remove_event);
-> > +	hbus->wq =3D alloc_ordered_workqueue("hv_pci_%x", 0,
-> > +					   hbus->sysdata.domain);
-> > +	if (!hbus->wq) {
-> > +		ret =3D -ENOMEM;
-> > +		goto free_bus;
-> > +	}
-> >
-> >  	ret =3D vmbus_open(hdev->channel, pci_ring_size, pci_ring_size, NULL,=
- 0,
-> >  			 hv_pci_onchannelcallback, hbus);
-> >  	if (ret)
-> > -		goto free_bus;
-> > +		goto destroy_wq;
-> >
-> >  	hv_set_drvdata(hdev, hbus);
-> >
-> > @@ -2536,6 +2544,9 @@ static int hv_pci_probe(struct hv_device *hdev,
-> >  	hv_free_config_window(hbus);
-> >  close:
-> >  	vmbus_close(hdev->channel);
-> > +destroy_wq:
-> > +	drain_workqueue(hbus->wq);
->=20
-> The drain_workqueue() call isn't necessary.  destroy_workqueue() calls
-> drain_workqueue() and there better not be anything in the workqueue
-> anyway since all the ref counts are zero.
-
-OK. Will remove it.
-
-> > +	destroy_workqueue(hbus->wq);
-> >  free_bus:
-> >  	free_page((unsigned long)hbus);
-> >  	return ret;
-> > @@ -2615,6 +2626,8 @@ static int hv_pci_remove(struct hv_device *hdev)
-> >  	irq_domain_free_fwnode(hbus->sysdata.fwnode);
-> >  	put_hvpcibus(hbus);
-> >  	wait_for_completion(&hbus->remove_event);
-> > +	drain_workqueue(hbus->wq);
->=20
-> Same here -- drain_workqueue() isn't needed.  The workqueue
-> must be empty anyway since the remove_event has completed
-> and the ref counts will all be zero.
-
-Will remove it.
-
-> > +	destroy_workqueue(hbus->wq);
-
-I'm going to post a v2 patchset tomorrow.
-
-Thanks,
--- Dexuan
+diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
+index 57b1fb3ebdb9..32d6b03cdd40 100644
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -522,6 +522,8 @@ struct hv_pci_compl {
+ 	s32 completion_status;
+ };
+ 
++static void hv_pci_onchannelcallback(void *context);
++
+ /**
+  * hv_pci_generic_compl() - Invoked for a completion packet
+  * @context:		Set up by the sender of the packet.
+@@ -666,6 +668,31 @@ static void _hv_pcifront_read_config(struct hv_pci_dev *hpdev, int where,
+ 	}
+ }
+ 
++static u16 hv_pcifront_get_vendor_id(struct hv_pci_dev *hpdev)
++{
++	u16 ret;
++	unsigned long flags;
++	void __iomem *addr = hpdev->hbus->cfg_addr + CFG_PAGE_OFFSET +
++			     PCI_VENDOR_ID;
++
++	spin_lock_irqsave(&hpdev->hbus->config_lock, flags);
++
++	/* Choose the function to be read. (See comment above) */
++	writel(hpdev->desc.win_slot.slot, hpdev->hbus->cfg_addr);
++	/* Make sure the function was chosen before we start reading. */
++	mb();
++	/* Read from that function's config space. */
++	ret = readw(addr);
++	/*
++	 * mb() is not required here, because the spin_unlock_irqrestore()
++	 * is a barrier.
++	 */
++
++	spin_unlock_irqrestore(&hpdev->hbus->config_lock, flags);
++
++	return ret;
++}
++
+ /**
+  * _hv_pcifront_write_config() - Internal PCI config write
+  * @hpdev:	The PCI driver's representation of the device
+@@ -1108,8 +1135,37 @@ static void hv_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+ 	 * Since this function is called with IRQ locks held, can't
+ 	 * do normal wait for completion; instead poll.
+ 	 */
+-	while (!try_wait_for_completion(&comp.comp_pkt.host_event))
++	while (!try_wait_for_completion(&comp.comp_pkt.host_event)) {
++		/* 0xFFFF means an invalid PCI VENDOR ID. */
++		if (hv_pcifront_get_vendor_id(hpdev) == 0xFFFF) {
++			dev_err_once(&hbus->hdev->device,
++				     "the device has gone\n");
++			goto free_int_desc;
++		}
++
++		/*
++		 * When the higher level interrupt code calls us with
++		 * interrupt disabled, we must poll the channel by calling
++		 * the channel callback directly when channel->target_cpu is
++		 * the current CPU. When the higher level interrupt code
++		 * calls us with interrupt enabled, let's add the
++		 * local_bh_disable()/enable() to avoid race.
++		 */
++		local_bh_disable();
++
++		if (hbus->hdev->channel->target_cpu == smp_processor_id())
++			hv_pci_onchannelcallback(hbus);
++
++		local_bh_enable();
++
++		if (hpdev->state == hv_pcichild_ejecting) {
++			dev_err_once(&hbus->hdev->device,
++				     "the device is being ejected\n");
++			goto free_int_desc;
++		}
++
+ 		udelay(100);
++	}
+ 
+ 	if (comp.comp_pkt.completion_status < 0) {
+ 		dev_err(&hbus->hdev->device,
+-- 
+2.7.4
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
