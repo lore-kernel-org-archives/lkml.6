@@ -1,48 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeCCRsP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 12:48:15 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43274 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752091AbeCCRsO (ORCPT
+        id S1752238AbeCCSPB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 13:15:01 -0500
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:32783 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752116AbeCCSO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 12:48:14 -0500
-Date: Sat, 3 Mar 2018 18:48:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [RFC] perf: a different approach to perf_rotate_context()
-Message-ID: <20180303174808.GJ25201@hirez.programming.kicks-ass.net>
-References: <20180301195321.2608515-1-songliubraving@fb.com>
- <20180303152631.GF25201@hirez.programming.kicks-ass.net>
- <E3827285-28C6-4CFD-9990-1FA922CC792C@fb.com>
+        Sat, 3 Mar 2018 13:14:59 -0500
+X-Google-Smtp-Source: AG47ELugRMzAWuZq4+iYvSbJjjdmtQezIZhvMHIu26aJ1m6RPjEPRxR3mRHOGcVTatVBmv/fYkjl2CFFTN9JG6Nqbb8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E3827285-28C6-4CFD-9990-1FA922CC792C@fb.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180302231256.4aevdu2b5ylyrzkr@gmail.com>
+References: <20180302074424.2myh3zhxnbpaohjq@gmail.com> <20180302134453.mtd4uepeiviicyef@huvuddator>
+ <20180302231256.4aevdu2b5ylyrzkr@gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sat, 3 Mar 2018 19:14:57 +0100
+Message-ID: <CAFkk2KST+RcRxnYCPKN5yQCr7vfMZUL3TTytFJ+Ad0B_Au4DVw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/kconfig: replace single character strcat() appends
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnaud Lacombe <lacombar@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 03, 2018 at 04:43:16PM +0000, Song Liu wrote:
-> > In any case, there's a ton of conflict against the patches here:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=perf/testing
-> > 
-> > And with those the idea was to move to a virtual time based scheduler
-> > (basically schedule those flexible events that have the biggest lag --
-> > that also solves 1).
-> 
-> Thanks for these information. I will study this approach. Maybe that is 
-> our path to PMU sharing. 
+On Sat, Mar 3, 2018 at 12:12 AM, Joey Pabalinas <joeypabalinas@gmail.com> wrote:
+> On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
+>> Not sure this is an improvement. Zeroing the bytes after the initial
+>> null terminator is redundant, and the explicit '\0' makes it clearer to
+>> me what's going on.
+>
+> Yes, I agree with you, that is definitely quite true. This along with
+> the other comments you made me want to rethink this a little bit.
+>
+> On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
+>> I like the approach, but I wonder if we can take it a bit further.
+>> Here's what I'd do:
+>>
+>>       1. Rename the 'in' parameter to 's'.
+>>       2. Rename 'p' to 'in'.
+>>       3. Rename 'end' to 'out'
+>>
+>> At that point, you're reading from 'in' and writing to 'out', which
+>> seems pretty nice and readable.
+>>
+>> This code is pretty cold by the way, so it wouldn't matter for
+>> performance. GCC knows how functions like strcat() work too, and uses
+>> that to optimize (see
+>> https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html).
+>>
+>> I'm all for trying to make Kconfig's code neater though.
+>
+> Since this code is pretty cold (completely agree with you there), I
+> think it would actually be much more useful to rework my patch to
+> have a more style-centric approach rather than an optimization-centric
+> one; this code would definitely benefit from being neater.
 
-So I'm really not convinced on that whole PMU sharing.
+I actually prefer the memcpy() version for style reasons, even though
+it might've looked like an optimization:
 
-> What's is the status of this work? Would it 
-> land in 4.17? 
+With strncat(), the result string is written via both 'res' and 'end'.
+With memcpy(), it's only written via the 'end'. That seems less
+twisty.
 
-These patches might make 4.17, they got held up because of the whole
-meltdown/spectre crap and I need to get back to them.
+Maybe this is outside the scope of the original patch, but while we're here. :)
+
+>
+> Some useful changes would be to rename of the _atrociously_ short
+> identifiers like p and l.
+
+Yeah, 'l' in particular isn't the best name, IMO ('len' is both short
+and explicit, and won't be confused for 1). 'p' can be fine if it's
+obvious in context (bit dubious here), but 'in' and 'out' (for 'end')
+would be more informative.
+
+'s' is clear from convention to me. In general, I fully agree that you
+should avoid hard-to-guess names though.
+
+>
+> Anyway I'll give that link a read over and try and make a V2 later
+> on today.
+>
+> Appreciate the feedback, thanks for the comments!
+>
+> --
+> Cheers,
+> Joey Pabalinas
+
+Cheers,
+Ulf
