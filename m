@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1352585-1520123249-2-3591014025194095451
+X-Cyrus-Session-Id: sloti22d1t05-1352585-1520123204-3-7550797780939385455
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520123249; b=jtusGUYATvXqS4D0PrMqBmMUv1IveOe/Sbri3aCUFbwVkUm
-    pu4slTDwmT77j5O5d02qkU4aPFfZ3taA2JBhSNywAP5RmKr4Zh3PFHoBXrkbesyi
-    Fa4UoAxLtIHPamnHfqKypI0nypoEAdLq/t/GoFkKUmBSVKjQZY1vnRQuba+jY/3D
-    uPBYlHWm9stupi++n9Z33OTHH9hhANzZGlQNKWuaQrYzVb2q9yqxw9/xogRSxJpy
-    0RUjztDVkmz1dfYnJlxmdFUWBjS6pSQS+WV9hss3dLCApdcWnBGnc+XPHQkZpaVJ
-    DSrela+tfaP7Sa2C2Mq+cgfiZORKk4jypmz2YGQ==
+    t=1520123204; b=EbRxXS59lFjtmgsnZDLD8owBB9gqSi1S7VvWYjfSXW3OA1I
+    heN6Dx0X8Um0q4xo5YSB4sKW/8Q5mdHQkjBaf+4qP3ZlIzVBJUy1IxLEEll/LH2j
+    +UtdsfDxGYiq2T6qG5rDUbqoSh+W14zdQ/ou9/SOMg/raI72GA/7rQUAPivjGdUc
+    2uVZkUrc1GdgMmmscR7ICYovq0mcqxh48zPSo8kQqQc3KuFzVpDkBp7NjIL+3Y+P
+    vSXgyyGtqT9yzRyOEUnQNUESeEuWYWeNcHcXy1PMO+Fu9XO6HKHc/gG3RGNgZO9C
+    aJMbSg/+Kl/kwaEcLOkd2BXWQcvCkcHBKygXK1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520123249; bh=ILnzR/
-    MtQA46YPdXkmNUscGw0l/HiUihb1SxT5+m0Jw=; b=T+dLRzHAzszgE4a1/cQ74P
-    AWK7WQwmmY3Zg0V2n56ZdLup+JY6chl+NDQ2RM4eKAwtwDQg6JSCaL7LEgmIHey9
-    rMlocjy0FixkZ4nC9koNZcf780XIlKtbcEQAvfariKOj3fZI9vN5jRBLRpGZV+LE
-    Wb6x7HgeIFNmcGG/fa0yrOj1ZaVRMOhajzMxeTp3ogglo4jpfW2Id5oVwVvMm6Wd
-    5KCr7JK6jxe1CSYsNaHEoIaWf7njiOA3O+3hKnsrpUvLCCBJVzEO3LB5S6rsvg/B
-    KnUdyFtEJmet83WFUyMo0b27He05DxovMFNXDUStOrp6+SHphO1q4OMDaEL3EncQ
+    :mime-version:sender:list-id; s=arctest; t=1520123204; bh=mUbJOS
+    ATL3TgOaKNiHA+kqB64T0wRsYvzpJ6kJgmWfA=; b=C0VtpEULe0BHis1bXWVK0M
+    42BwCt1HdBAFPNHgr63gIOOYzDXqQKyAxxj38Q+VgUY9AoiUCOQ0HQ12dvmVfmht
+    YWqT8SdYOUB4WA6EobLQWaSenMN4nVWycHzYXqtQ6G6Mr0hApAxo6E4q1iB/oOMd
+    Z4L2gH16De8TBHly5Oi/LtTOpUd4J0ekySbfpBBwWeUdLrqRE/ETmFhk1uX7QeV0
+    DyjavXjcEAXQQl1upSIn943GsNvG/Yjvp6+lKqSJxKFSdbRCGyeYc0lXKmkOsjb0
+    8DWPHBBLj+eY+MYsaTxeiI5Y0ZUThwH09bGfG++OvOuDUsqmpfl9yuzwCIjMdI4A
     ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fnX6cyQJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gCPx/jvT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fnX6cyQJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=gCPx/jvT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933102AbeCCW2J (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:28:09 -0500
-Received: from mail-co1nam03on0110.outbound.protection.outlook.com ([104.47.40.110]:19475
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S933213AbeCDA0R (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 19:26:17 -0500
+Received: from mail-by2nam01on0106.outbound.protection.outlook.com ([104.47.34.106]:13662
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933049AbeCCW2G (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:28:06 -0500
+        id S933127AbeCCW2M (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:28:12 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 06/84] iwlwifi: mvm: rs: don't override the
- rate history in the search cycle
-Thread-Topic: [PATCH AUTOSEL for 4.14 06/84] iwlwifi: mvm: rs: don't override
- the rate history in the search cycle
-Thread-Index: AQHTsz6dW6A+Cfjsnke2+K7wGIS/tQ==
-Date: Sat, 3 Mar 2018 22:26:03 +0000
-Message-ID: <20180303222518.26271-6-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 15/84] sched: Stop resched_cpu() from sending
+ IPIs to offline CPUs
+Thread-Topic: [PATCH AUTOSEL for 4.14 15/84] sched: Stop resched_cpu() from
+ sending IPIs to offline CPUs
+Thread-Index: AQHTsz6gmuqY3YutF0auD/kh0uA6tQ==
+Date: Sat, 3 Mar 2018 22:26:08 +0000
+Message-ID: <20180303222518.26271-15-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,91 +77,109 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1067;7:r4AgUD+9LEmDTOB5QffjzI5rkdiZTv1dp7W2P/MUXVVgxZ/jEx6cyhp+FarR8BqVAB6OZe9FsExm1EOYTyxkFJiQNReWeWnUB+TNhGWw7k6XxpRX0TsOktWNb3DV+S8eMezpoi+Eol6dRHIjk61O6e0R7JlI9K3EDzaSKXfiPrPFF1giEwzMg4fmGX0sos8cf89frh4t2Lk+QFv4JxrQtYXsAcDTh5DLsgtvupj47u1NjnyKpoEJQVgWhsT8i4TX
+x-microsoft-exchange-diagnostics: 1;MW2SPR01MB06;7:UpdL633oMny7/ynWVq8MoTEgcYddzYlEDIMhfjTZNsjRtRsWA/47THe9lotVYpHpUVa6Ggv1Gg4pdHAitvXhuGxJdUoSTs+GSVv9HyL/wa/B+jD2XfEIzapo/OhpYPpFG7VVJXJOuTuV80L/rNpso4HtmEqw6kxlMP2ArailrnuhCMng2tlvByHlVKNKkz2u4F5476Gx0Y3CyRfEi4t2s99ghCqnXus3guqcsopo4KPn6DDD9K+52XZzqNK0upvi
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 99965a53-1f36-4403-d2af-08d581560593
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1067;
-x-ms-traffictypediagnostic: MW2PR2101MB1067:
+x-ms-office365-filtering-correlation-id: 3c70180d-a459-4e93-8bdb-08d581560ba1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2SPR01MB06;
+x-ms-traffictypediagnostic: MW2SPR01MB06:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB10670CBD1D0A5F7F01F73018FBC40@MW2PR2101MB1067.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1067;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1067;
+x-microsoft-antispam-prvs: <MW2SPR01MB06E81892DE29A3FD2020E0FBC40@MW2SPR01MB06.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(104084551191319);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2SPR01MB06;BCL:0;PCL:0;RULEID:;SRVR:MW2SPR01MB06;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(366004)(396003)(199004)(189003)(6512007)(99286004)(10090500001)(86612001)(106356001)(53936002)(66066001)(316002)(97736004)(6436002)(68736007)(22452003)(105586002)(14454004)(54906003)(36756003)(6486002)(110136005)(8936002)(305945005)(81166006)(2950100002)(81156014)(2906002)(5250100002)(4326008)(2501003)(1076002)(86362001)(76176011)(3846002)(6116002)(25786009)(6506007)(5660300001)(102836004)(575784001)(478600001)(107886003)(72206003)(10290500003)(7736002)(26005)(186003)(3660700001)(2900100001)(3280700002)(8676002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1067;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: oTNie4BvHFR5f2nYdwX0oc2GDVd3tN5BMh7s777YN2PE2uvI+8MROwocRLiTRczDfv/foTnLr87EIEtIX+Ie27MlEJVlmLsiKz9g67GWLyppdrY5jsVjUrbbEPP6KnM9zPhq3QTItY5EQh9WYlWAAqGV6EDBQboUdV0gTyRH4sA=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(39380400002)(366004)(376002)(189003)(199004)(3660700001)(575784001)(8936002)(72206003)(5660300001)(14454004)(110136005)(6512007)(4326008)(6506007)(26005)(2501003)(66066001)(86362001)(7736002)(54906003)(305945005)(25786009)(10290500003)(53936002)(6436002)(2906002)(81156014)(59450400001)(8676002)(478600001)(102836004)(106356001)(316002)(186003)(5250100002)(81166006)(6486002)(76176011)(86612001)(2900100001)(3846002)(68736007)(97736004)(36756003)(1076002)(107886003)(2950100002)(105586002)(99286004)(6116002)(3280700002)(22452003)(10090500001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2SPR01MB06;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: ej8dMA558gkKHJfFzWku+yx3MZTAJeHwsutQiIiZiCa9RNf8rPTsi3Lv985V3ka9aVTBIeBH8/cApGgeKvKXQQHY7ZT2s+8qSrjsDxfO4e0cJMc9sHbc+qMuDk74d/fkMzEyxcTypgCahzK3a9ax+5n60JdWeApXmgmRS0NHPEc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99965a53-1f36-4403-d2af-08d581560593
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:03.6035
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c70180d-a459-4e93-8bdb-08d581560ba1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:08.6035
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1067
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2SPR01MB06
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-[ Upstream commit 992172e3aec19e5b0ea5b757ba40a146b9282d1e ]
+[ Upstream commit a0982dfa03efca6c239c52cabebcea4afb93ea6b ]
 
-When we are in a search cycle, we try different combinations
-of parameters. Those combinations are called 'columns'.
-When we switch to a new column, we first need to check if
-this column has a suitable rate, if not, we can't try it.
-This means we must not erase the statistics we gathered
-for the previous column until we are sure that we are
-indeed switching column.
+The rcutorture test suite occasionally provokes a splat due to invoking
+resched_cpu() on an offline CPU:
 
-The code that tries to switch to a new column first sets
-a whole bunch of things for the new column, and only then
-checks that we can find suitable rates in that column.
-While doing that, the code mistakenly erased the rate
-statistics. This code was right until
-struct iwl_scale_tbl_info grew up for TPC.
+WARNING: CPU: 2 PID: 8 at /home/paulmck/public_git/linux-rcu/arch/x86/kerne=
+l/smp.c:128 native_smp_send_reschedule+0x37/0x40
+Modules linked in:
+CPU: 2 PID: 8 Comm: rcu_preempt Not tainted 4.14.0-rc4+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1u=
+buntu1 04/01/2014
+task: ffff902ede9daf00 task.stack: ffff96c50010c000
+RIP: 0010:native_smp_send_reschedule+0x37/0x40
+RSP: 0018:ffff96c50010fdb8 EFLAGS: 00010096
+RAX: 000000000000002e RBX: ffff902edaab4680 RCX: 0000000000000003
+RDX: 0000000080000003 RSI: 0000000000000000 RDI: 00000000ffffffff
+RBP: ffff96c50010fdb8 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000299f36ae R12: 0000000000000001
+R13: ffffffff9de64240 R14: 0000000000000001 R15: ffffffff9de64240
+FS:  0000000000000000(0000) GS:ffff902edfc80000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7d4c642 CR3: 000000001e0e2000 CR4: 00000000000006e0
+Call Trace:
+ resched_curr+0x8f/0x1c0
+ resched_cpu+0x2c/0x40
+ rcu_implicit_dynticks_qs+0x152/0x220
+ force_qs_rnp+0x147/0x1d0
+ ? sync_rcu_exp_select_cpus+0x450/0x450
+ rcu_gp_kthread+0x5a9/0x950
+ kthread+0x142/0x180
+ ? force_qs_rnp+0x1d0/0x1d0
+ ? kthread_create_on_node+0x40/0x40
+ ret_from_fork+0x27/0x40
+Code: 14 01 0f 92 c0 84 c0 74 14 48 8b 05 14 4f f4 00 be fd 00 00 00 ff 90 =
+a0 00 00 00 5d c3 89 fe 48 c7 c7 38 89 ca 9d e8 e5 56 08 00 <0f> ff 5d c3 0=
+f 1f 44 00 00 8b 05 52 9e 37 02 85 c0 75 38 55 48
+---[ end trace 26df9e5df4bba4ac ]---
 
-Fix this to make sure we don't erase the rate statistics
-until we are sure that we can indeed switch to the new
-column.
+This splat cannot be generated by expedited grace periods because they
+always invoke resched_cpu() on the current CPU, which is good because
+expedited grace periods require that resched_cpu() unconditionally
+succeed.  However, other parts of RCU can tolerate resched_cpu() acting
+as a no-op, at least as long as it doesn't happen too often.
 
-Note that this bug is really harmless since it causes a
-change in the behavior only when we can't find any rate
-in the new column which should really not happen. In the
-case we do find a suitable we reset the rate statistics
-a few lines later anyway.
+This commit therefore makes resched_cpu() invoke resched_curr() only if
+the CPU is either online or is the current CPU.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/sched/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wire=
-less/intel/iwlwifi/mvm/rs.c
-index 0fe723ca844e..d22cef7381ba 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -1881,12 +1881,10 @@ static int rs_switch_to_column(struct iwl_mvm *mvm,
- 	struct rs_rate *rate =3D &search_tbl->rate;
- 	const struct rs_tx_column *column =3D &rs_tx_columns[col_id];
- 	const struct rs_tx_column *curr_column =3D &rs_tx_columns[tbl->column];
--	u32 sz =3D (sizeof(struct iwl_scale_tbl_info) -
--		  (sizeof(struct iwl_rate_scale_data) * IWL_RATE_COUNT));
- 	unsigned long rate_mask =3D 0;
- 	u32 rate_idx =3D 0;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 55062461b2fd..8cf36b30a006 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -506,7 +506,8 @@ void resched_cpu(int cpu)
+ 	unsigned long flags;
 =20
--	memcpy(search_tbl, tbl, sz);
-+	memcpy(search_tbl, tbl, offsetof(struct iwl_scale_tbl_info, win));
+ 	raw_spin_lock_irqsave(&rq->lock, flags);
+-	resched_curr(rq);
++	if (cpu_online(cpu) || cpu =3D=3D smp_processor_id())
++		resched_curr(rq);
+ 	raw_spin_unlock_irqrestore(&rq->lock, flags);
+ }
 =20
- 	rate->sgi =3D column->sgi;
- 	rate->ant =3D column->ant;
 --=20
 2.14.1
