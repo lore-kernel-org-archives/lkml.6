@@ -1,115 +1,201 @@
-Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AG47ELtI5S32UNiddk6RrRzT9XLz/26KaVXSftiz7e3ahOFD/ln5uBMHD8W9mCm8WDj1FGcDWb1h
-ARC-Seal: i=1; a=rsa-sha256; t=1520115884; cv=none;
+Return-Path: <kernel-hardening-return-12085-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvey/eeKkg7dXbXXNpoEOj6NNm1lzk3thSpccQn6QwB+e78KLpLNwEjCUk3Q5gmYyF0CkjD
+ARC-Seal: i=1; a=rsa-sha256; t=1520085542; cv=none;
         d=google.com; s=arc-20160816;
-        b=fcE7y0SAhMiIIfBLoFfo1niMcSxjBrAT2HnA7EIUxwafr2l1YHoo/34z0kcvNfrKii
-         579ey3/Mr42zSOKc0SVi9fda41A5j/UPVXdcezzt5tYVMvCHxLdkXdzNBdjOsBJBybGw
-         S8KvRuM0e6PfOMux7ar+GU9FkGFqwuLoH1SWflGAJEmuvHeMXWZQG4T0w2MEjkl8vrFY
-         E6Oabag+38NzTbnPTYyXeaWRzNGAGIx4h0wurVjMCQxsZ4cCu188InKFuLRQU7clHSGi
-         pdsrHe1gsrJaJpH8YTt/pHmgi37z+3r5xLxvK0QiDkTBVueQBu80f6N2bMtth/li8Qpn
-         aHBw==
+        b=KsjMkDbYRG9nuxxeC1ksqc8SCi9RRFkwUYQl/Au/2tloSdoLn1VQWond7EusFmU73X
+         md0906LlGgPKFKaqacIHV6gEYA+tLsykGwG7OAjFMx25vamXPD6olbGZV/YsWrU5ry1j
+         YmqPUuz4wCqbjCkwygryK0khvbqCTa9Y+R7uQwo02zWB2iY/3u0MbMlD5Gi59IZv4TZb
+         dKOyswU91z+NCB4ZlkUDO8NkMUhSdOiVcyKJnzgeURdLz2W9NccQKpU5ZETrm/sqrva4
+         bayQ7L+Rc3KBzKsTJd1NP5/DI0BbQrvzMFho6Hk34WBBxfrZi/9DkuGhj1wTcg7eBrvX
+         XLPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=Vk+BA1BGUi1eXJidfdCpbZ3oasjdcM/jjVl7RrI9YUo=;
-        b=yeV8L47OfrCHNzoofh/cggpouGd+g+tIjOXH3GYQ77PQO1NR8qOf1bRDPpT8kDrXKZ
-         9ZEDDmO+iTbmM0o6PPsvDxkpKepYkJdwGUK4BVwcOoopkCiD/yUhFKYTI6iWT5zZ8S7/
-         W+bA6HQJXUsRJW773cJX56+Ts/T2DD4XEuqum1KCAc9qow4SMPAkvojSh/3iTcKlHpf4
-         1IL2W+DFOLN5ze3T0W1IOgoSXhqbGxhRM5buVyXKf7gt+I2OAP+X1Ji/5u1YmPdVBkkh
-         pIy09GjqpapJLHrr2Z3qr+FFAv4vCgHPMeVuqMKvgBwsnpm8IMTrVbUOXj2jkO0nJCXT
-         lXZQ==
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=96DGP6ZbXyck9pxHya3Acq1KJi9dsOu4NVoGIgPibA8=;
+        b=J/ndfimB85jyZvl5b6iUiFGOHU9tsHRcZ0/MIdWO9+H8AJ6lQTTZag3iJo0JNa2++E
+         GvA3cBa+9EjjjsjG321WIFZK1CDmgB+GUhV5Z3Lj98NVwxuNw2ToREFadYtp0v5LnowV
+         wSjjYBjGYAh5n4PcBMrcJztKXEnHCTJXZqw/uDDpIifXLqs/JhGBg0jQSxNUEowTMnX4
+         W26b5U8AK7iwhVtttCja90FikQ8nkfjXqrNyyqUKA4ZPS25KQL2rB2YPksIpjrnbiVdc
+         xprt0GeSOrB6XO5tYwTQ6Kj+lVdktmiV8sQjFwnMZ9IlwSU/AHnimlB+HtoT/6ZuNOb0
+         fQ5g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=LJZAuZc5;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.36.108 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LfcFa0ms;
+       spf=pass (google.com: domain of kernel-hardening-return-12085-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12085-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=LJZAuZc5;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.36.108 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Johan Hovold <johan@kernel.org>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?=
-	<rafal@milecki.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha
- Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 017/102] USB: ledtrig-usbport: fix of-node
- leak
-Thread-Topic: [PATCH AUTOSEL for 4.15 017/102] USB: ledtrig-usbport: fix
- of-node leak
-Thread-Index: AQHTsz5f3xDwpl9zXUu5LqbruIUdWQ==
-Date: Sat, 3 Mar 2018 22:24:19 +0000
-Message-ID: <20180303222318.26006-17-alexander.levin@microsoft.com>
-References: <20180303222318.26006-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180303222318.26006-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0890;7:Q7wrjLyYGthm3WzKr4ry87HNjJs/SMwLFJCuPuWohov7O7jG+/fdz7mdBy8rjxMhkj1mPONUntLOXvNNXZgAt58cY3t4jQApIaN38HJl57yeunSA753Qx8/HYjMIzaEjisC6egvL1XvyIGTnjNiAoKte2ZrUkQ1rn5LeHXAoXmDB9vhweovMf7xg2Zh0Q9eF901GbxLXyZPJOBCrjupiAnQYAn1XGjjQTVa7l2u4ibcYTd+LeGy2+FaYCkGmCDVL
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 6b92d640-b104-4e5a-d220-08d581558fe2
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0890;
-x-ms-traffictypediagnostic: MW2PR2101MB0890:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB089078D94A122DC6003DECB7FBC40@MW2PR2101MB0890.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB0890;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0890;
-x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(346002)(376002)(396003)(39860400002)(199004)(189003)(86362001)(105586002)(1076002)(14454004)(8936002)(6436002)(66066001)(59450400001)(6506007)(2906002)(99286004)(53936002)(6512007)(25786009)(97736004)(76176011)(6116002)(6486002)(3846002)(4326008)(86612001)(186003)(3280700002)(2501003)(316002)(22452003)(72206003)(5660300001)(2950100002)(8676002)(81156014)(102836004)(81166006)(6666003)(68736007)(107886003)(305945005)(478600001)(54906003)(10090500001)(7736002)(10290500003)(106356001)(110136005)(36756003)(2900100001)(3660700001)(5250100002)(26005)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0890;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: QVHbCLak9vurcR8/QIZAr1YmeykR2VID5XSQgv3HfzJdPT3DwgPW5dDGncn5DdAA9vh8Eq4+aBBg1CpJE/HIN7lVNBtXmhKlg+gPpEVREP4QriGU7fxsvQu8V7MCrXRJPI2JEHCrak1XWf2LqPgXBmJ44cIpVr4fZ2DTRRlKgqw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FCFC43C77A01784988E3BA0C4296E791@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b92d640-b104-4e5a-d220-08d581558fe2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:24:19.0721
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0890
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=LfcFa0ms;
+       spf=pass (google.com: domain of kernel-hardening-return-12085-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12085-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Content-Type: text/plain;
+	charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [RFC PATCH] Randomization of address chosen by mmap.
+From: Ilya Smith <blackzert@gmail.com>
+In-Reply-To: <CA+DvKQKoo1U7T_iOOLhfEf9c+K1pzD068au+kGtx0RokFFNKHw@mail.gmail.com>
+Date: Sat, 3 Mar 2018 16:58:40 +0300
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Kees Cook <keescook@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Michal Hocko <mhocko@suse.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Jan Kara <jack@suse.cz>,
+ Jerome Glisse <jglisse@redhat.com>,
+ Hugh Dickins <hughd@google.com>,
+ Helge Deller <deller@gmx.de>,
+ Andrea Arcangeli <aarcange@redhat.com>,
+ Oleg Nesterov <oleg@redhat.com>,
+ Linux-MM <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2CF957C6-53F2-4B00-920F-245BEF3CA1F6@gmail.com>
+References: <20180227131338.3699-1-blackzert@gmail.com>
+ <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
+ <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
+ <20180228183349.GA16336@bombadil.infradead.org>
+ <CA+DvKQKoo1U7T_iOOLhfEf9c+K1pzD068au+kGtx0RokFFNKHw@mail.gmail.com>
+To: Daniel Micay <danielmicay@gmail.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593957034021312284?=
-X-GMAIL-MSGID: =?utf-8?q?1593957034021312284?=
+X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
+X-GMAIL-MSGID: =?utf-8?q?1593925217881898327?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogSm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwub3JnPg0KDQpbIFVwc3RyZWFtIGNvbW1p
-dCAwMzMxMGExNTQ4NGFiNmE4ZjZkOTFiYmY3ZmU0ODZiMTcyNzVjMDlhIF0NCg0KVGhpcyBjb2Rl
-IGxvb2tzIHVwIGEgVVNCIGRldmljZSBub2RlIGZyb20gYSBnaXZlbiBwYXJlbnQgVVNCIGRldmlj
-ZSBidXQNCm5ldmVyIGRyb3BwZWQgaXRzIHJlZmVyZW5jZSB0byB0aGUgcmV0dXJuZWQgbm9kZS4N
-Cg0KQXMgb25seSB0aGUgYWRkcmVzcyBvZiB0aGUgbm9kZSBpcyB1c2VkIGZvciBhIGxhdGVyIG1h
-dGNoaW5nLCB0aGUNCnJlZmVyZW5jZSBjYW4gYmUgZHJvcHBlZCBpbW1lZGlhdGVseS4NCg0KTm90
-ZSB0aGF0IHRoaXMgdHJpZ2dlciBpbXBsZW1lbnRhdGlvbiBjb25mdXNlcyB0aGUgZGVzY3JpcHRp
-b24gb2YgdGhlDQpVU0IgZGV2aWNlIGNvbm5lY3RlZCB0byBhIHBvcnQgd2l0aCB0aGUgcG9ydCBp
-dHNlbGYgKHdoaWNoIGRvZXMgbm90IGhhdmUNCmEgZGV2aWNlLXRyZWUgcmVwcmVzZW50YXRpb24p
-Lg0KDQpGaXhlczogNGYwNGMyMTBkMDMxICgidXNiOiBjb3JlOiByZWFkIFVTQiBwb3J0cyBmcm9t
-IERUIGluIHRoZSB1c2Jwb3J0IExFRCB0cmlnZ2VyIGRyaXZlciIpDQpDYzogUmFmYcWCIE1pxYJl
-Y2tpIDxyYWZhbEBtaWxlY2tpLnBsPg0KU2lnbmVkLW9mZi1ieTogSm9oYW4gSG92b2xkIDxqb2hh
-bkBrZXJuZWwub3JnPg0KU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hA
-bGludXhmb3VuZGF0aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5k
-ZXIubGV2aW5AbWljcm9zb2Z0LmNvbT4NCi0tLQ0KIGRyaXZlcnMvdXNiL2NvcmUvbGVkdHJpZy11
-c2Jwb3J0LmMgfCA4ICsrKysrKystDQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvY29yZS9sZWR0cmlnLXVz
-YnBvcnQuYyBiL2RyaXZlcnMvdXNiL2NvcmUvbGVkdHJpZy11c2Jwb3J0LmMNCmluZGV4IDlkYmI0
-MjljZDQ3MS4uZjFmZGU1MTY1MDY4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy91c2IvY29yZS9sZWR0
-cmlnLXVzYnBvcnQuYw0KKysrIGIvZHJpdmVycy91c2IvY29yZS9sZWR0cmlnLXVzYnBvcnQuYw0K
-QEAgLTEzNywxMSArMTM3LDE3IEBAIHN0YXRpYyBib29sIHVzYnBvcnRfdHJpZ19wb3J0X29ic2Vy
-dmVkKHN0cnVjdCB1c2Jwb3J0X3RyaWdfZGF0YSAqdXNicG9ydF9kYXRhLA0KIAlpZiAoIWxlZF9u
-cCkNCiAJCXJldHVybiBmYWxzZTsNCiANCi0JLyogR2V0IG5vZGUgb2YgcG9ydCBiZWluZyBhZGRl
-ZCAqLw0KKwkvKg0KKwkgKiBHZXQgbm9kZSBvZiBwb3J0IGJlaW5nIGFkZGVkDQorCSAqDQorCSAq
-IEZJWE1FOiBUaGlzIGlzIHJlYWxseSB0aGUgZGV2aWNlIG5vZGUgb2YgdGhlIGNvbm5lY3RlZCBk
-ZXZpY2UNCisJICovDQogCXBvcnRfbnAgPSB1c2Jfb2ZfZ2V0X2NoaWxkX25vZGUodXNiX2Rldi0+
-ZGV2Lm9mX25vZGUsIHBvcnQxKTsNCiAJaWYgKCFwb3J0X25wKQ0KIAkJcmV0dXJuIGZhbHNlOw0K
-IA0KKwlvZl9ub2RlX3B1dChwb3J0X25wKTsNCisNCiAJLyogQW1vdW50IG9mIHRyaWdnZXIgc291
-cmNlcyBmb3IgdGhpcyBMRUQgKi8NCiAJY291bnQgPSBvZl9jb3VudF9waGFuZGxlX3dpdGhfYXJn
-cyhsZWRfbnAsICJ0cmlnZ2VyLXNvdXJjZXMiLA0KIAkJCQkJICAgIiN0cmlnZ2VyLXNvdXJjZS1j
-ZWxscyIpOw0KLS0gDQoyLjE0LjENCg==
+Hello Daniel, thanks for sharing you experience!
+
+> On 1 Mar 2018, at 00:02, Daniel Micay <danielmicay@gmail.com> wrote:
+>=20
+> I don't think it makes sense for the kernel to attempt mitigations to
+> hide libraries. The best way to do that is in userspace, by having the
+> linker reserve a large PROT_NONE region for mapping libraries (both at
+> initialization and for dlopen) including a random gap to act as a
+> separate ASLR base.
+Why this is the best and what is the limit of this large region?
+Let=E2=80=99s think out of the box.
+What you say here means you made a separate memory region for libraries =
+without=20
+changing kernel. But the basic idea - you have a separate region for =
+libraries=20
+only. Probably you also want to have separate regions for any thread =
+stack, for=20
+mmaped files, shared memory, etc. This allows to protect memory regions =
+of=20
+different types from each other. It is impossible to implement this =
+without=20
+keeping the whole memory map. This map should be secure from any leak =
+attack to=20
+prevent ASLR bypass. The only one way to do it is to implement it in the =
+kernel=20
+and provide different syscalls like uselib or allocstack, etc. This one =
+is=20
+really hard in current kernel implementation.
+
+My approach was to hide memory regions from attacker and from each =
+other.
+
+> If an attacker has library addresses, it's hard to
+> see much point in hiding the other libraries from them.
+
+In some cases attacker has only one leak for whole attack. And we should =
+do the best
+to make even this leak useless.
+
+> It does make
+> sense to keep them from knowing the location of any executable code if
+> they leak non-library addresses. An isolated library region + gap is a
+> feature we implemented in CopperheadOS and it works well, although we
+> haven't ported it to Android 7.x or 8.x.
+This one interesting to know and I would like to try to attack it, but =
+it's out of the
+scope of current conversation.
+
+> I don't think the kernel can
+> bring much / anything to the table for it. It's inherently the
+> responsibility of libc to randomize the lower bits for secondary
+> stacks too.
+
+I think any bit of secondary stack should be randomized to provide =
+attacker as
+less information as we can.
+
+> Fine-grained randomized mmap isn't going to be used if it causes
+> unpredictable levels of fragmentation or has a high / unpredictable
+> performance cost.
+
+Lets pretend any chosen address is pure random and always satisfies =
+request. At=20
+some time we failed to mmap new chunk with size N. What does this means? =
+This=20
+means that all chunks with size of N are occupied and we even can=E2=80=99=
+t find place=20
+between them. Now lets count already allocated memory. Let=E2=80=99s =
+pretend on all of=20
+these occupied chunks lies one page minimum. So count of these pages is=20=
+
+TASK_SIZE / N. Total bytes already allocated is PASGE_SIZE * TASK_SIZE / =
+N. Now=20
+we can calculate. TASK_SIZE is 2^48 bytes. PAGE_SIZE 4096. If N is 1MB,=20=
+
+allocated memory minimum 1125899906842624, that is very big number. Ok. =
+is N is=20
+256 MB, we already consumed 4TB of memory. And this one is still ok. if =
+N is=20
+1GB we allocated 1GB and it looks like a problem. If we allocated 1GB of =
+memory=20
+we can=E2=80=99t mmap chunk size of 1GB. Sounds scary, but this is =
+absolutely bad case=20
+when we consume 1 page on 1GB chunk. In reality  this number would be =
+much=20
+bigger and random according this patch.
+
+Here lets stop and think - if we know that application going to consume =
+memory.=20
+The question here would be can we protect it? Attacker will know he has =
+a good=20
+probability to guess address with read permissions. In this case ASLR =
+may not=20
+work at all. For such applications we can turn off address randomization =
+or=20
+decrease entropy level since it any way will not help much.
+
+Would be good to know whats the performance costs you can see here. Can
+you please tell?
+
+> I don't think it makes sense to approach it
+> aggressively in a way that people can't use. The OpenBSD randomized
+> mmap is a fairly conservative implementation to avoid causing
+> excessive fragmentation. I think they do a bit more than adding random
+> gaps by switching between different 'pivots' but that isn't very high
+> benefit. The main benefit is having random bits of unmapped space all
+> over the heap when combined with their hardened allocator which
+> heavily uses small mmap mappings and has a fair bit of malloc-level
+> randomization (it's a bitmap / hash table based slab allocator using
+> 4k regions with a page span cache and we use a port of it to Android
+> with added hardening features but we're missing the fine-grained mmap
+> rand it's meant to have underneath what it does itself).
+>=20
+
+So you think OpenBSD implementation even better? It seems like you like =
+it
+after all.
+
+> The default vm.max_map_count =3D 65530 is also a major problem for =
+doing
+> fine-grained mmap randomization of any kind and there's the 32-bit
+> reference count overflow issue on high memory machines with
+> max_map_count * pid_max which isn't resolved yet.
+
+I=E2=80=99ve read a thread about it. This one is what should be fixed =
+anyway.
+
+Thanks,
+Ilya
