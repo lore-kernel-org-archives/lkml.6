@@ -1,222 +1,142 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4156032-1522167363-2-4555743181051057568
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1247250-1520119338-3-12761652359557433712
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522167363; b=MYR5YUANeIIzUPKwKYob83RO4wTIMaLRNOjiS4SRIbJvjWI
-    FHn2R7XU6hAUOUFn1rQARdGozwCqIK42K0Pvd0MYMigaltWIOtGvJQ4r8F63Q4tS
-    Jrb8STTIS20ZnPTCbr4bG58D2hUxJjXQhni2S45YtykuJ1EqSbYRd3dQBCiXcWRS
-    RU8rrO/nhj50L5SRv78Tix5lmawvN6Gwo9Vf35GxEi+9Iwq9hazWs1T5ijTH5i7R
-    s8pLg2T+6VrbUJGv6VK8lXnH+1xCn0LHODBrh9ruiC0H1oJ18xYNGiZJL1mSQd1m
-    kFUtjvjqYuXBD9+l3R3f6+7y5sHawZU33h1p6VQ==
+    t=1520119338; b=UfCowco3AGEiKzDJoru9aElR4375kFoygF7LKmoK+CdbvAm
+    vECLvfDJAt9SyHoPXyzOeQZLicHXLc25YmCwOZbDUMEOfKV7AS/JP3Iavg65WKYe
+    M7nb3f14vW/DaGpvNXjQorCFgjBL6NGemUQ/pc6ZTPVl+VdpLfnKuDy23tTIr+DT
+    rk/qs+J0kI/LxCVKHRSxvL0okYPK7L2FyuEAlXbDQ2kZmuHKcqqqgasGPPJAEx0b
+    Lv7zLn4/+ZeDkPg4j4s7MHG5taJN0UaPOAIQ81B00FxBFWHlN/uEGou8keiw5+w8
+    kDrvpIZEneKBZv70iKUwsOFS2gG3WW9i8+gjjFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1522167363;
-    bh=ioM3AhQi/S3Zjav5ffOzJgPVZk2pZUQN8iIzMVwgNyQ=; b=O3Dxc8DTPn0C
-    5pOO0wfsDIdXzXPLix/RIhJPb72si2bIxWBYxOLEzVug8e9Gb9jx2uAnF52Wr7hN
-    hESGb3J1F1rcnEl+5xF7FnpYB0IBxc3o1lrPlfjJAHnCPGi/4Y8SMKGCrjro0BmP
-    DSZko2YMKRjYR5cFLWv3IEsKlJS2D5juQLI7p+pF449h6tjxxQNcgUOp2OIZ9e4J
-    iRxnqVt6Qs9eKXHGgmZclpL3mNn/cJzCTf+wwZ8WmoTeSq4+0SJuTkjWQlmF4sYs
-    0bAeDQbzD3otsUBtCRuMooNNzqHohzIU7VZSxQLKkmUAaswkqOP7Wpf9Cd858zwx
-    OO3AADDKqQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    :content-type:content-transfer-encoding:mime-version:sender
+    :list-id; s=arctest; t=1520119338; bh=NAhB/NqYbOpzevgXmiQEIHKY/3
+    SyCjcFaCRj7dTMztE=; b=SkBFPKJ8jLUJQnKG2eNqAJ+fqBKN9IxODZZ2VxuK0q
+    m5t3RqCA/Ujqk2LjjaQjY716JOn5XJUjNvuH9nFpJ/exETRfhPp/bdqMuDVYs1KT
+    Atfm2SBCdwZXvwbkmZQKFIa8d1h6imL/JOacjrVlpRgEKwaJYKOuJvwJzEvzDTVC
+    taEWaXqa5hny2Wh+12YIircs1yvXlVfWDIJtYboI6acCHWuXOGNHlYh/Y5os6E+6
+    //Fy72eHP6zAd6QgBw9J33+NX3mMuAXzuj8lViBPsJDxl2gaF85ZMpEidcb+3JCO
+    QAv929LKrVqMIN/wpwb5r5HZRDv5fdDlcoXmddwV9zdA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Cn4CoId6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Cn4CoId6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPIzdvYbck5qtD6/NeMA6L30rv7g/oR7a8MIvAgJk1k+qirxk01u8AUZX3CKtUXzA7LFdH/EpfNzx0GKTfMU2ZPqirl8MPvfyatWbhLAXIxM1yS2syNP
-    srIhEzxq1oiZyrik6NHoj5Nr4zz2Nbqq29xY3qEJ7daux4SxloT4LyVkFYznwEnKcWtDgEo0pJTkCICrz8AyxZeW/D5rCboSm/GOCp1abx+0Hj59AcnBGNFz
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=7d_E57ReAAAA:8
-    a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
-    a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
-    a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=7Yi-VXTq316iJd_TQ4oA:9 a=88-slHNK9ndyOO1w:21 a=aetLQcmGiqOPMwaQ:21
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22
-    a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=2JgSa4NbpEOStq-L5dxp:22
-    a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeC0QQB (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:16:01 -0400
-Received: from mail.efficios.com ([167.114.142.138]:53296 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeC0QP7 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 27 Mar 2018 12:15:59 -0400
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.17 01/21] uapi headers: Provide types_32_64.h
-Date: Tue, 27 Mar 2018 12:05:22 -0400
-Message-Id: <20180327160542.28457-2-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180327160542.28457-1-mathieu.desnoyers@efficios.com>
-References: <20180327160542.28457-1-mathieu.desnoyers@efficios.com>
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1752050AbeCCXWC (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:22:02 -0500
+Received: from mail-co1nam03on0134.outbound.protection.outlook.com ([104.47.40.134]:45128
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934684AbeCCWhz (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:37:55 -0500
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 001/115] Input: tsc2007 - check for presence
+ and power down tsc2007 during probe
+Thread-Topic: [PATCH AUTOSEL for 4.4 001/115] Input: tsc2007 - check for
+ presence and power down tsc2007 during probe
+Thread-Index: AQHTsz9GMP6bSjhR/0q/yavqjp9ymw==
+Date: Sat, 3 Mar 2018 22:30:47 +0000
+Message-ID: <20180303223010.27106-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1100;6:P78veYsAmIomg/ycLwjrGCOIOpPEtHoktUcDMaMfdb4SLNsepFkhKyICbjsg9Giy10hBpNFzfAkVMf16zycY6pBmaKQd0a64G7UzezdF5fICaj7Q64lCf3SAWhXpg2bfqaOu5EOLdttfb4lfC9cu4bEZ2352bVN3K6mvJmv6BGQkruzw+OiWvD1yNVrFQNb9vXuOI6Z2Y0y//HVzgUOMUeU+wQPajKjMudnKHzCbNpqmbvmaO3+86naoAbEAZrhxsb+7hCMNMZ8NZ1HGgoABmoHXLa+vI5oYBaQTx7fLDIu23V5NdEWQ6S+qdQkE+hRxGHLkP6PboBZS4VRUMmjkLnJDMxyK/JtxAjtiGxLigevFR95YKmmSGeUH+MKDNtz8;5:I/hvRcGFa+RvcfbKbYyHCDr2n3a0ac0NprL8N/NYqgtF/mD5TJCTvx58GZ8qn758saA63M67/AFxZFp/W20eWi73FJxGY90IgvqIjEGDDlnDWtbwEIaIbAW/dY05J1vtleeLY2FygCXYv9giBfdK2SgkLDAAff37iEHxxuM8JH8=;24:u3rs0GDcugRtSLTC/uC6IzErRwR2YfUHwtQ8WLIEblwaGIDPyMfxe9PLGx7iucWi/PnAhWZpZCvlEJBVYlc1aoZmI887otSpGqtLuFkyN8Y=;7:ZtJt0sFMoLnMwNfFnHiUgilvSthBOi8oYRH/fZbAsZKBl18I6BjZqjGTFUoF5mwHwQWk6X4QP+stvWO3oWg55XNrgouIS1nnSMVnWtmpzG+WTAaSYLRT5lNZZdRPND3CCScIE1DeHbM1xJCqfC6Ucnc5lETTqVBmJpdNPLaGezUPhuksoOSRA8TUR8Z8v4SnYJfvRJwo9Yhr0+1c7z+iYX7SYcRlJx2+Cd7BUqe+qf8p510SJrGN0xxMqvNJuBGL
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: edf57e90-9f26-4200-f7ef-08d581576624
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1100;
+x-ms-traffictypediagnostic: MW2PR2101MB1100:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <MW2PR2101MB1100ADDFDD74969B15AFD0B6FBC40@MW2PR2101MB1100.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2PR2101MB1100;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1100;
+x-forefront-prvs: 0600F93FE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(39860400002)(396003)(366004)(346002)(199004)(189003)(22452003)(97736004)(7736002)(5250100002)(105586002)(2906002)(6506007)(72206003)(66066001)(4326008)(305945005)(10290500003)(186003)(3280700002)(39060400002)(102836004)(6666003)(2501003)(478600001)(26005)(2900100001)(10090500001)(53936002)(8676002)(25786009)(81166006)(81156014)(575784001)(54906003)(86362001)(6436002)(106356001)(110136005)(68736007)(36756003)(316002)(6512007)(5660300001)(107886003)(8936002)(1076002)(6486002)(3660700001)(99286004)(3846002)(86612001)(14454004)(6116002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1100;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: qX0FLBJnzjL86jUzw1RN+5qeDuAobtlkAuHNzPYKryPIHL8eBBvsVj+X3k9TUHB2gs48Lxoy5TOUCtnoRFrX8D8q8rpXD3OH6ddKBx/UiMVjZg4+DSgz0O1eTvZi1wPgYJrjag1h74r4ejmT6DgwvT4CqTuI467K2DFWxBCyOo4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edf57e90-9f26-4200-f7ef-08d581576624
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:30:47.6352
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1100
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Provide helper macros for fields which represent pointers in
-kernel-userspace ABI. This facilitates handling of 32-bit
-user-space by 64-bit kernels by defining those fields as
-32-bit 0-padding and 32-bit integer on 32-bit architectures,
-which allows the kernel to treat those as 64-bit integers.
-The order of padding and 32-bit integer depends on the
-endianness.
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andrew Hunter <ahh@google.com>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
+[ Upstream commit 934df23171e7c5b71d937104d4957891c39748ff ]
+
+1. check if chip is really present and don't succeed if it isn't.
+2. if it succeeds, power down the chip until accessed
+
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/uapi/linux/types_32_64.h | 67 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 include/uapi/linux/types_32_64.h
+ drivers/input/touchscreen/tsc2007.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/uapi/linux/types_32_64.h b/include/uapi/linux/types_32_64.h
-new file mode 100644
-index 000000000000..18dc8808d026
---- /dev/null
-+++ b/include/uapi/linux/types_32_64.h
-@@ -0,0 +1,67 @@
-+#ifndef _UAPI_LINUX_TYPES_32_64_H
-+#define _UAPI_LINUX_TYPES_32_64_H
+diff --git a/drivers/input/touchscreen/tsc2007.c b/drivers/input/touchscree=
+n/tsc2007.c
+index 5d0cd51c6f41..a4b7b4c3d27b 100644
+--- a/drivers/input/touchscreen/tsc2007.c
++++ b/drivers/input/touchscreen/tsc2007.c
+@@ -455,6 +455,14 @@ static int tsc2007_probe(struct i2c_client *client,
+=20
+ 	tsc2007_stop(ts);
+=20
++	/* power down the chip (TSC2007_SETUP does not ACK on I2C) */
++	err =3D tsc2007_xfer(ts, PWRDOWN);
++	if (err < 0) {
++		dev_err(&client->dev,
++			"Failed to setup chip: %d\n", err);
++		return err;	/* usually, chip does not respond */
++	}
 +
-+/*
-+ * linux/types_32_64.h
-+ *
-+ * Integer type declaration for pointers across 32-bit and 64-bit systems.
-+ *
-+ * Copyright (c) 2015-2017 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a copy
-+ * of this software and associated documentation files (the "Software"), to deal
-+ * in the Software without restriction, including without limitation the rights
-+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-+ * copies of the Software, and to permit persons to whom the Software is
-+ * furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
-+ */
-+
-+#ifdef __KERNEL__
-+# include <linux/types.h>
-+#else
-+# include <stdint.h>
-+#endif
-+
-+#include <asm/byteorder.h>
-+
-+#ifdef __BYTE_ORDER
-+# if (__BYTE_ORDER == __BIG_ENDIAN)
-+#  define LINUX_BYTE_ORDER_BIG_ENDIAN
-+# else
-+#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
-+# endif
-+#else
-+# ifdef __BIG_ENDIAN
-+#  define LINUX_BYTE_ORDER_BIG_ENDIAN
-+# else
-+#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
-+# endif
-+#endif
-+
-+#ifdef __LP64__
-+# define LINUX_FIELD_u32_u64(field)			uint64_t field
-+# define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	field = (intptr_t)v
-+#else
-+# ifdef LINUX_BYTE_ORDER_BIG_ENDIAN
-+#  define LINUX_FIELD_u32_u64(field)	uint32_t field ## _padding, field
-+#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
-+	field ## _padding = 0, field = (intptr_t)v
-+# else
-+#  define LINUX_FIELD_u32_u64(field)	uint32_t field, field ## _padding
-+#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
-+	field = (intptr_t)v, field ## _padding = 0
-+# endif
-+#endif
-+
-+#endif /* _UAPI_LINUX_TYPES_32_64_H */
--- 
-2.11.0
-
+ 	err =3D input_register_device(input_dev);
+ 	if (err) {
+ 		dev_err(&client->dev,
+--=20
+2.14.1
