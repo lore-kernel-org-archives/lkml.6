@@ -1,149 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935361AbeCCAU1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:20:27 -0500
-Received: from regular1.263xmail.com ([211.150.99.141]:56717 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932890AbeCCAUZ (ORCPT
+        id S935393AbeCCAUg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 19:20:36 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:42171 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932890AbeCCAUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:20:25 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: laurent.pinchart@ideasonboard.com
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <ae582945c0639de38d7bc1ddbe299896>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5A99EA37.6070006@rock-chips.com>
-Date: Sat, 03 Mar 2018 08:20:07 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+        Fri, 2 Mar 2018 19:20:32 -0500
+X-Google-Smtp-Source: AG47ELvIsrI/bOl+CmFYop02tR6lM+RBg4ypNJsYGMw+amTiEkVl0qDnYAcLNYyKrPefhJAz0YP6U2XcI9v1I8jhZsw=
 MIME-Version: 1.0
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC: Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-rockchip@lists.infradead.org,
-        Archit Taneja <architt@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, Jose Abreu <Jose.Abreu@synopsys.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        kernel@collabora.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v9 5/5] drm/bridge/synopsys: dw-hdmi: Add missing bridge
- detach
-References: <20180302175757.28192-1-enric.balletbo@collabora.com> <20180302175757.28192-6-enric.balletbo@collabora.com> <2714218.VptbnhJPkd@avalon>
-In-Reply-To: <2714218.VptbnhJPkd@avalon>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180302165919.423cd45b@t450s.home>
+References: <20180302234218.3337.16486.stgit@localhost.localdomain>
+ <20180302234412.3337.71321.stgit@localhost.localdomain> <20180302165919.423cd45b@t450s.home>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 2 Mar 2018 16:20:30 -0800
+Message-ID: <CAKgT0UcXf+w6P2=EbbZKzOxfK5vAf2tgtnTeLh9mRaysKJStwQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pci-iov: Add support for unmanaged SR-IOV
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-On 03/03/2018 05:49 AM, Laurent Pinchart wrote:
-> Hi Enric,
+On Fri, Mar 2, 2018 at 3:59 PM, Alex Williamson
+<alex.williamson@redhat.com> wrote:
+> On Fri, 02 Mar 2018 15:44:25 -0800
+> Alexander Duyck <alexander.duyck@gmail.com> wrote:
 >
-> Thank you for the patch.
->
-> On Friday, 2 March 2018 19:57:57 EET Enric Balletbo i Serra wrote:
->> From: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> From: Alexander Duyck <alexander.h.duyck@intel.com>
 >>
->> We inited connector in attach(), so need a detach() to cleanup.
->
-> Do we ? The dw-hdmi driver already sets drm_connector_cleanup() as the
-> connector .destroy() handler, and the .destroy() operation is called by the
-> DRM core. None of the other bridge drivers call drm_connector_cleanup()
-> directly.
-
-hmmm, checking the code, there are also lots of drivers do the 
-cleanup(drm_connector_cleanup or funcs->destroy):
-drm# grep -r "connector.*funcs->destroy" .
-./rockchip/inno_hdmi.c: hdmi->connector.funcs->destroy(&hdmi->connector);
-./rockchip/cdn-dp-core.c:       connector->funcs->destroy(connector);
-./bridge/analogix/analogix_dp_core.c: 
-dp->connector.funcs->destroy(&dp->connector);
-./msm/hdmi/hdmi.c: 
-hdmi->connector->funcs->destroy(hdmi->connector);
-./msm/dsi/dsi.c: 
-msm_dsi->connector->funcs->destroy(msm_dsi->connector);
-./msm/edp/edp.c: 
-edp->connector->funcs->destroy(edp->connector);
-./zte/zx_hdmi.c:        hdmi->connector.funcs->destroy(&hdmi->connector);
-./drm_connector.c:      connector->funcs->destroy(connector);
-./drm_connector.c:              connector->funcs->destroy(connector);
-./nouveau/dispnv04/disp.c: 
-connector->funcs->destroy(connector);
-./nouveau/nv50_display.c: 
-mstc->connector.funcs->destroy(&mstc->connector);
-./nouveau/nv50_display.c: 
-connector->funcs->destroy(connector);
-
-
-
-when i debug analogix_dp bind/unbind, i found that we need to cleanup 
-the connector(reported by kmemleak). so i added it to 
-./bridge/analogix/analogix_dp_core.c...after that i saw dw-hdmi missing 
-that too(by checking the code), so make this patch.
-
-but i didn't really tested it on devices using dw-hdmi, so i'm not very 
-sure the dw-hdmi(maybe also other bridges) is the same with analogix_dp.
-
-i can try to find a chromebook veyron to check it next week :)
-
-but even there's a leak, i'm still not very sure about:
-should the caller of drm_connector_init cleanup it
-or the caller of drm_bridge_attach should do it(for example 
-analogix_dp_bind/analogix_dp_unbind)
-or should the DRM core take care of that?
-
->
->> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
->> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> This patch is meant to add some basic functionality to support for SR-IOV
+>> on devices when the VFs are not managed by the kernel. The functions
+>> provided here can be used by drivers such as vfio-pci and virtio to enable
+>> SR-IOV on devices that are either managed by userspace, or by some sort of
+>> firmware entity respectively.
+>>
+>> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
+>> value is used as the drivers_autoprobe setting of the VFs when they are
+>> being managed by an external entity such as userspace or device firmware
+>> instead of being managed by the kernel.
+>>
+>> One side effect of this change is that the sriov_drivers_autoprobe and
+>> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
+>> disabled. Attempts to update them when SR-IOV is in use will only update
+>> the local value and will not update sriov->autoprobe.
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
 >> ---
+>>  Documentation/ABI/testing/sysfs-bus-pci |   17 ++++++++++++++
+>>  drivers/pci/iov.c                       |   37 +++++++++++++++++++++++++++++++
+>>  drivers/pci/pci-driver.c                |    2 +-
+>>  drivers/pci/pci-sysfs.c                 |   29 ++++++++++++++++++++++++
+>>  drivers/pci/pci.h                       |    4 +++
+>>  include/linux/pci.h                     |    1 +
+>>  6 files changed, 88 insertions(+), 2 deletions(-)
 >>
->> Changes in v9: None
+>> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+>> index 44d4b2be92fd..ff0b6c19cb1a 100644
+>> --- a/Documentation/ABI/testing/sysfs-bus-pci
+>> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+>> @@ -323,3 +323,20 @@ Description:
 >>
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
->> f9802399cc0d..5626922f95f9 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -1985,6 +1985,13 @@ static int dw_hdmi_bridge_attach(struct drm_bridge
->> *bridge) return 0;
->>   }
->>
->> +static void dw_hdmi_bridge_detach(struct drm_bridge *bridge)
->> +{
->> +	struct dw_hdmi *hdmi = bridge->driver_private;
+>>               This is similar to /sys/bus/pci/drivers_autoprobe, but
+>>               affects only the VFs associated with a specific PF.
 >> +
->> +	drm_connector_cleanup(&hdmi->connector);
->> +}
+>> +What:                /sys/bus/pci/devices/.../sriov_unmanaged_autoprobe
+>> +Date:                March 2018
+>> +Contact:     Alexander Duyck <alexander.h.duyck@intel.com>
+>> +Description:
+>> +             This file is associated with the PF of a device that
+>> +             supports SR-IOV.  It determines whether newly-enabled VFs
+>> +             are immediately bound to a driver when the PF driver does
+>> +             not manage the VFs itself.  It initially contains 0, which
+>> +             means the kernel will not automatically bind VFs to a driver.
+>> +             If an application writes 1 to the file before enabling VFs,
+>> +             the kernel will bind VFs to a compatible driver immediately
+>> +             after they are enabled.
 >> +
->>   static enum drm_mode_status
->>   dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
->>   			  const struct drm_display_mode *mode)
->> @@ -2041,6 +2048,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge
->> *bridge)
->>
->>   static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
->>   	.attach = dw_hdmi_bridge_attach,
->> +	.detach = dw_hdmi_bridge_detach,
->>   	.enable = dw_hdmi_bridge_enable,
->>   	.disable = dw_hdmi_bridge_disable,
->>   	.mode_set = dw_hdmi_bridge_mode_set,
+>> +             This overrides /sys/bus/pci/devices/.../sriov_drivers_autoprobe
+>> +             when a PF driver is not present to manage a device, or the PF
+>> +             driver does not provide functionality to support SR-IOV.
 >
+>
+> Given a pf, how does a user determine whether it is managed or unmanaged
+> and therefore which autoprobe attributes are in effect?  Thanks,
+>
+> Alex
+
+Basically it comes down to what driver is loaded on it. For now
+vfio-pci and virtio would be the only two using the "unmanaged"
+version of things.
+
+Really you don't know which autoprobe is in effect until SR-IOV is
+enabled by whatever driver. As such you should really be setting both
+the drivers_autoprobe and the unmanaged_autoprobe based on the
+expected use case.
+
+- Alex
