@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1254417-1520121339-2-17224851597544695496
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520121322-2-4757133116784874755
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enrosk.us-ascii, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520121338; b=INiSbsooBeSDflu6jEoEsI9TK2nrqr0qA+5eMzInbo0yfdY
-    45Yi024ZV2KozURCnd3pIRYUWWc2wGNnfpu5Qo1dQjVAZU6F75n4ggXhnuNys46a
-    NDNjpZ37+/0/kBMz3oZk8AANY4Syx2PfJvDCuxcuybNgUjoXRGzRPt+A7Y7Oyznl
-    xcqXzifvf3vodyR6aCCZkqyCQMLzKDhm6qs1ulReu4tTFXJxhWPt/NvjpukXLQu2
-    Z9v1QmE+5Qb5t5OvHEoD/MsAHn2KuZmkd//Y+0U5RaokYD12w/72w91NNpr672lH
-    9xFC/XrKRrSvhnqFB7kywcK0nVcymBUK5RHCbAw==
+    t=1520121322; b=gRh2i3xVOkEVbfzs4vWBQBmUL48CjSsoRMFxSsuWsLXbplT
+    dujlOf9F9cWwc/B3y3gs2CJSWRmeTL/uL+BmmjbnMuvXs00kJK05U1QOmSVZ8Mda
+    MyAljGcmCc4yUjWhnlMaLwy81P2On7LXg6VS52/kE4w4A4IBazfLP6zXxe0qFz/J
+    hdD7h1U489dAjrjr97ieCBndpyr7aAhSucMub+0LZGJeULzDyhJhUeTlDAKpGZCW
+    IESkMJwCnOwKgXI9rNGfT6D3NpS7+6e/NGL9t6QvkkRTU9YkfTk9bh1GJw71x/4t
+    iJxHZYSrG0JphrhPob4m5V2tWOYXAHe7BsB4nlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520121338; bh=ofqXQD
-    YOEyzMu6QMi4SHTEfwDScFi8ynvGvYB1s1NW4=; b=VXkh0S20Usmlr/IbS/Lalx
-    X6YG5kdv51KNPRJOJNJwKJBmb93/nT/rulSRk5mBWviqtFzZPw4AmP+IvWZ6rW2f
-    S2LlYLdQRAsj/kvkNEd7cYLKFXFoQm/PuDdIv3FJltkK/GTG4a8XtY3qxE0sKOh9
-    Hy+6fEpfG8GlZNd8Aj0hX2qzIhTeZEOP2wdbw9eTkoyokbLk9qSRx4675WFNYtHP
-    xxnydCYYEAUM7BAkxTeuq18TpQaAd24DHE5DIQpgoAPE5JopRmErC1nsYu4+DftN
-    z0m15dCRPcS7/jV/6LDH7pIU2UlF1X7VXWR9Os0mK6Pm/5ooqxPcIq0B7F4DqE0g
+    :mime-version:sender:list-id; s=arctest; t=1520121322; bh=wWp/ex
+    G5kjJNYBuKf47jAb7rs82BGfi3yoY7G626eKo=; b=hvufyC7gyHSTQLwrpfVat4
+    Q649bT/zFrufKcNAVqLk9+0Dur4o2SxqHGlbx7hHng+g1Heygtlq6lcHfyKbXeej
+    xX9qmU29AFSnb/p3fuZiDS6oZ+Bc5jtkbZh2slNdowH/+lm9IXZGxffWUkVIPhQk
+    CS98lUkzYTqMUIeogOzlqFUCcNKHQjMNQg1CZ0GJmmMKo+LRM3zUQoKafNQSIVJ8
+    U8TReT1hLBzx7kg3SBDtK4LOKrHQUVelncX1tNCChWODVdAXF1/FbtTmC7KtXeXl
+    p+DV3pzGSxamDDvpV5wx+GXGHz5gSN+RvDaYJzCtpMDFSUxzO7mHrvsYb22tQ2vw
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ARxyamXB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BPYWrXZY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ARxyamXB x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=BPYWrXZY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,28 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933912AbeCCWc4 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:32:56 -0500
-Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:47215
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S933463AbeCCXzD (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:55:03 -0500
+Received: from mail-by2nam01on0092.outbound.protection.outlook.com ([104.47.34.92]:32992
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932419AbeCCWcv (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:32:51 -0500
+        id S933911AbeCCWc4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:32:56 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Davide Caratti <dcaratti@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 061/219] sched: act_csum: don't mangle TCP and
- UDP GSO packets
-Thread-Topic: [PATCH AUTOSEL for 4.9 061/219] sched: act_csum: don't mangle
- TCP and UDP GSO packets
-Thread-Index: AQHTsz71A1IZ9HcaVEuLjKGcrKkRVg==
-Date: Sat, 3 Mar 2018 22:28:31 +0000
-Message-ID: <20180303222716.26640-61-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 071/219] perf buildid: Do not assume that
+ readlink() returns a null terminated string
+Thread-Topic: [PATCH AUTOSEL for 4.9 071/219] perf buildid: Do not assume that
+ readlink() returns a null terminated string
+Thread-Index: AQHTsz75nv6a20QuvUWTqTcO1Pvl0Q==
+Date: Sat, 3 Mar 2018 22:28:37 +0000
+Message-ID: <20180303222716.26640-71-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,116 +78,104 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1098;6:1OO32LjOmM3q4cTA4+0YcvKUUW+TFh95E/BBhvoMCLPYijGAl9tZ7isD+A51K727z+kqrggSoFZTaJLSktBujP7/vH9QBCxrZ7jssgckkMtOnNu7XLZHyqwLsGBNSSKi6q3Fr3zzWfGXVUm9i9SppY3+10DeJqQqk42tlSTfedQB/OshY9V105FyQHIUmiY53mk1grFvwXd9Y++eW11o9Ust+be8fbVgj8FWbQSp/tgjQqcCIarKAE/HPhuKM6zZjVXpMcqURBej9gEg8DB/CBR1mgblcL290jn6lVOyJD3Nbt3fdmMIlL6z9j5A2lGiIuCjWfaRgZmF9v0QIytdX1+SDusPJpARHJOlyv1gGqZMkn6U+uBC8YbL8NurQj92;5:pLtR3JYf5pnAp+6tPGv/Ys3a3Di5movunn0cbqtHJ4QslB5oCv08eohVBW7ipKNUX3X/vTovg2MAB/ZAwMcYi9cG93hRorwgQuLT/IQURobUpV6/HyFx+Fy7ObKbhL7XWGXRqhW/cQZ3QQ+a0e6RQ/0zu4SRx4xgt6llvdaQCLs=;24:uKR5vwQGZ4/andKhvBZbGFv7Xi1qPXadSgx2+05RaKF00WCIHUK/C1YGKSPX8/6YhOo6/6xXhLo/imBvjHeo27uQzHpND4ktWq+jg9pbVgA=;7:Fl1Lv1RhhdRhtKtO7Ide1hVb1sLer9ZuRKcBHMl0Y8BTPCgqcWo0h6yngKsQ8iF+x5BjTyKihAs522iCLGtdVR9W5maqozqmBD8QZFMtss/ygUGNUw/D0jMQVZh8vEbYcFcqvZnMHY1N9iVnbAZ6W/qNgQ29ggQw443a9BBjjdbWxqlH1+4Z+S1yTvN7hNMaojZRXC5yJGR2QkN3YmHxQ3IoSJpmiH/bdkatMq0r+xWUUjns8jnOlicoB65KsEac
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1097;7:tqR21AmqIawdTzMzZnDelbhaGCxQzQpypzPlf9Xd0tnYXuL2UONvhSDY+3/CEaef52fUic6aHt9Un5WCcUABcsI4OSCeIKQGG82oGDPy1+QwtZ1QdYVHaZ58oTRieE9GuZ/xi6QyJVFRuYm5YIZUDq6t07z3LuqSFVxsksjfDMUEmqZgwxFoDsTImdpwY/HEjf0DNtgktnb3d8t5lgbux+TGZQ4vZmeMDwPkzgyKIL+6C9KJo0NEInNcBrcVhh7q
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d357e49a-82a5-43fc-570a-08d58156b1d8
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1098;
-x-ms-traffictypediagnostic: MW2PR2101MB1098:
+x-ms-office365-filtering-correlation-id: a1a4a9a3-ded4-4a96-44f6-08d58156b511
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1097;
+x-ms-traffictypediagnostic: MW2PR2101MB1097:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB109826EC043CCE8B4678309EFBC40@MW2PR2101MB1098.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1098;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1098;
+x-microsoft-antispam-prvs: <MW2PR2101MB10972451D873C0B647F371F0FBC40@MW2PR2101MB1097.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(82608151540597)(42068640409301)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2PR2101MB1097;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1097;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(376002)(39380400002)(366004)(396003)(346002)(199004)(189003)(2906002)(8936002)(36756003)(6512007)(81156014)(10290500003)(81166006)(99286004)(6436002)(68736007)(478600001)(3846002)(22452003)(53936002)(8676002)(110136005)(54906003)(4326008)(316002)(76176011)(6116002)(7736002)(105586002)(305945005)(3660700001)(1076002)(14454004)(97736004)(575784001)(25786009)(186003)(72206003)(26005)(102836004)(86362001)(6666003)(2501003)(3280700002)(6506007)(5660300001)(10090500001)(59450400001)(66066001)(106356001)(5250100002)(2900100001)(2950100002)(86612001)(6486002)(107886003)(22906009)(217873001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1098;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: jSKhJb8mzcmiLD1bqjb2JGh416fx+/YqS0TXlkCrO49/Lf1IGvBNuXMlAGf4hj39yEiSKzcZjEnghzm5mKvO6PKO2pWLupn8f9EUVpI+QzHxgVIFDVwgMMPSiqcAItNZ5qA8tpujnvPR2IuGOuLz/euoC+DRCbDF3VyyBexbDkQ=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(396003)(39860400002)(346002)(189003)(199004)(305945005)(105586002)(36756003)(3660700001)(86362001)(575784001)(6666003)(66066001)(2900100001)(5660300001)(8676002)(10090500001)(81166006)(81156014)(8936002)(22452003)(10290500003)(2950100002)(4326008)(25786009)(5250100002)(2501003)(68736007)(7736002)(72206003)(14454004)(966005)(478600001)(186003)(110136005)(26005)(316002)(2906002)(6306002)(97736004)(6512007)(99286004)(107886003)(54906003)(1076002)(6506007)(106356001)(53936002)(59450400001)(6116002)(3846002)(102836004)(6486002)(86612001)(3280700002)(8656006)(6436002)(76176011)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1097;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: rE9WGHiMZCV3sQnkYJWgtVorgmgxQ7lypblUtffNVfzYSzI1vydCdE+/k4CqcoYTfCjdmUtssAndDn2kPrHre7qN+dsVm06Uq/Uop5F7V6r/UvABsj9Frf3njemPu4VokxTd+e+FjANcpZdFdskbWJ7w1z94LzArWORl03EgwCo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d357e49a-82a5-43fc-570a-08d58156b1d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:31.6663
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1a4a9a3-ded4-4a96-44f6-08d58156b511
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:37.3381
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1098
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1097
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Tommi Rantala <tommi.t.rantala@nokia.com>
 
-[ Upstream commit add641e7dee31b36aee83412c29e39dd1f5e0c9c ]
+[ Upstream commit 5a2342111c68e623e27ee7ea3d0492d8dad6bda0 ]
 
-after act_csum computes the checksum on skbs carrying GSO TCP/UDP packets,
-subsequent segmentation fails because skb_needs_check(skb, true) returns
-true. Because of that, skb_warn_bad_offload() is invoked and the following
-message is displayed:
+Valgrind was complaining:
 
-WARNING: CPU: 3 PID: 28 at net/core/dev.c:2553 skb_warn_bad_offload+0xf0/0x=
-fd
-<...>
+  $ valgrind ./perf list >/dev/null
+  =3D=3D11643=3D=3D Memcheck, a memory error detector
+  =3D=3D11643=3D=3D Copyright (C) 2002-2015, and GNU GPL'd, by Julian Sewar=
+d et al.
+  =3D=3D11643=3D=3D Using Valgrind-3.12.0 and LibVEX; rerun with -h for cop=
+yright info
+  =3D=3D11643=3D=3D Command: ./perf list
+  =3D=3D11643=3D=3D
+  =3D=3D11643=3D=3D Conditional jump or move depends on uninitialised value=
+(s)
+  =3D=3D11643=3D=3D    at 0x4C30620: rindex (vg_replace_strmem.c:199)
+  =3D=3D11643=3D=3D    by 0x49DAA9: build_id_cache__origname (build-id.c:19=
+8)
+  =3D=3D11643=3D=3D    by 0x49E1C7: build_id_cache__valid_id (build-id.c:22=
+2)
+  =3D=3D11643=3D=3D    by 0x49E1C7: build_id_cache__list_all (build-id.c:50=
+7)
+  =3D=3D11643=3D=3D    by 0x4B9C8F: print_sdt_events (parse-events.c:2067)
+  =3D=3D11643=3D=3D    by 0x4BB0B3: print_events (parse-events.c:2313)
+  =3D=3D11643=3D=3D    by 0x439501: cmd_list (builtin-list.c:53)
+  =3D=3D11643=3D=3D    by 0x497150: run_builtin (perf.c:359)
+  =3D=3D11643=3D=3D    by 0x428CE0: handle_internal_command (perf.c:421)
+  =3D=3D11643=3D=3D    by 0x428CE0: run_argv (perf.c:467)
+  =3D=3D11643=3D=3D    by 0x428CE0: main (perf.c:614)
+  [...]
 
-  [<ffffffff8171f486>] skb_warn_bad_offload+0xf0/0xfd
-  [<ffffffff8161304c>] __skb_gso_segment+0xec/0x110
-  [<ffffffff8161340d>] validate_xmit_skb+0x12d/0x2b0
-  [<ffffffff816135d2>] validate_xmit_skb_list+0x42/0x70
-  [<ffffffff8163c560>] sch_direct_xmit+0xd0/0x1b0
-  [<ffffffff8163c760>] __qdisc_run+0x120/0x270
-  [<ffffffff81613b3d>] __dev_queue_xmit+0x23d/0x690
-  [<ffffffff81613fa0>] dev_queue_xmit+0x10/0x20
+Additionally, a zero length result from readlink() is not very interesting.
 
-Since GSO is able to compute checksum on individual segments of such skbs,
-we can simply skip mangling the packet.
-
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20170322130624.21881-3-tommi.t.rantala@nokia=
+.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/sched/act_csum.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ tools/perf/util/build-id.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/net/sched/act_csum.c b/net/sched/act_csum.c
-index e0defcef376d..24a0c66394a0 100644
---- a/net/sched/act_csum.c
-+++ b/net/sched/act_csum.c
-@@ -180,6 +180,9 @@ static int tcf_csum_ipv4_tcp(struct sk_buff *skb, unsig=
-ned int ihl,
- 	struct tcphdr *tcph;
- 	const struct iphdr *iph;
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index e528c40739cc..993ef2762508 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -182,13 +182,17 @@ char *build_id_cache__origname(const char *sbuild_id)
+ 	char buf[PATH_MAX];
+ 	char *ret =3D NULL, *p;
+ 	size_t offs =3D 5;	/* =3D=3D strlen("../..") */
++	ssize_t len;
 =20
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4)
-+		return 1;
-+
- 	tcph =3D tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
- 	if (tcph =3D=3D NULL)
- 		return 0;
-@@ -201,6 +204,9 @@ static int tcf_csum_ipv6_tcp(struct sk_buff *skb, unsig=
-ned int ihl,
- 	struct tcphdr *tcph;
- 	const struct ipv6hdr *ip6h;
+ 	linkname =3D build_id_cache__linkname(sbuild_id, NULL, 0);
+ 	if (!linkname)
+ 		return NULL;
 =20
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_TCPV6)
-+		return 1;
+-	if (readlink(linkname, buf, PATH_MAX) < 0)
++	len =3D readlink(linkname, buf, sizeof(buf) - 1);
++	if (len <=3D 0)
+ 		goto out;
++	buf[len] =3D '\0';
 +
- 	tcph =3D tcf_csum_skb_nextlayer(skb, ihl, ipl, sizeof(*tcph));
- 	if (tcph =3D=3D NULL)
- 		return 0;
-@@ -224,6 +230,9 @@ static int tcf_csum_ipv4_udp(struct sk_buff *skb, unsig=
-ned int ihl,
- 	const struct iphdr *iph;
- 	u16 ul;
-=20
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
-+		return 1;
-+
- 	/*
- 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
- 	 * udph->len to get the real length without any protocol check,
-@@ -277,6 +286,9 @@ static int tcf_csum_ipv6_udp(struct sk_buff *skb, unsig=
-ned int ihl,
- 	const struct ipv6hdr *ip6h;
- 	u16 ul;
-=20
-+	if (skb_is_gso(skb) && skb_shinfo(skb)->gso_type & SKB_GSO_UDP)
-+		return 1;
-+
- 	/*
- 	 * Support both UDP and UDPLITE checksum algorithms, Don't use
- 	 * udph->len to get the real length without any protocol check,
+ 	/* The link should be "../..<origpath>/<sbuild_id>" */
+ 	p =3D strrchr(buf, '/');	/* Cut off the "/<sbuild_id>" */
+ 	if (p && (p > buf + offs)) {
 --=20
 2.14.1
