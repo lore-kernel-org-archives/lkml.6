@@ -1,164 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeCCSVr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 13:21:47 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45738 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeCCSVq (ORCPT
+        id S1752284AbeCCSXD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 13:23:03 -0500
+Received: from mail-vk0-f50.google.com ([209.85.213.50]:42706 "EHLO
+        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbeCCSXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 13:21:46 -0500
-X-Google-Smtp-Source: AG47ELt9RdSa83SORpERcsVphY6B0SvfSoQGY+AfKbJVDcmQwVGKeRG/g0+R7bU6LJ9YlG1LRKX9Dg==
-From: tomoki.sekiyama@gmail.com
-To: mchehab@s-opensource.com
-Cc: elfring@users.sourceforge.net, tomoki.sekiyama@gmail.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] media: siano: Fix coherent memory allocation failure on arm64
-Date: Sun,  4 Mar 2018 03:20:56 +0900
-Message-Id: <20180303182056.5109-1-tomoki.sekiyama@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        Sat, 3 Mar 2018 13:23:01 -0500
+X-Google-Smtp-Source: AG47ELtCnjR8IPbWmonVBj/zkKB8/Fod2OQlYrB/YbMePVl2gFYWPi0Nd6D0VJHcH0RRfX/GoW4CyPJzxIiGSoQh27U=
+MIME-Version: 1.0
+In-Reply-To: <CAFkk2KST+RcRxnYCPKN5yQCr7vfMZUL3TTytFJ+Ad0B_Au4DVw@mail.gmail.com>
+References: <20180302074424.2myh3zhxnbpaohjq@gmail.com> <20180302134453.mtd4uepeiviicyef@huvuddator>
+ <20180302231256.4aevdu2b5ylyrzkr@gmail.com> <CAFkk2KST+RcRxnYCPKN5yQCr7vfMZUL3TTytFJ+Ad0B_Au4DVw@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sat, 3 Mar 2018 19:23:00 +0100
+Message-ID: <CAFkk2KSPFL6aPNwD5Xsg9bzTHC3GSjYaUrOtvbEq=CJhm1tEKA@mail.gmail.com>
+Subject: Re: [PATCH] scripts/kconfig: replace single character strcat() appends
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnaud Lacombe <lacombar@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
+On Sat, Mar 3, 2018 at 7:14 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
+> On Sat, Mar 3, 2018 at 12:12 AM, Joey Pabalinas <joeypabalinas@gmail.com> wrote:
+>> On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
+>>> Not sure this is an improvement. Zeroing the bytes after the initial
+>>> null terminator is redundant, and the explicit '\0' makes it clearer to
+>>> me what's going on.
+>>
+>> Yes, I agree with you, that is definitely quite true. This along with
+>> the other comments you made me want to rethink this a little bit.
+>>
+>> On Fri, Mar 02, 2018 at 02:44:53PM +0100, Ulf Magnusson wrote:
+>>> I like the approach, but I wonder if we can take it a bit further.
+>>> Here's what I'd do:
+>>>
+>>>       1. Rename the 'in' parameter to 's'.
+>>>       2. Rename 'p' to 'in'.
+>>>       3. Rename 'end' to 'out'
+>>>
+>>> At that point, you're reading from 'in' and writing to 'out', which
+>>> seems pretty nice and readable.
+>>>
+>>> This code is pretty cold by the way, so it wouldn't matter for
+>>> performance. GCC knows how functions like strcat() work too, and uses
+>>> that to optimize (see
+>>> https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html).
+>>>
+>>> I'm all for trying to make Kconfig's code neater though.
+>>
+>> Since this code is pretty cold (completely agree with you there), I
+>> think it would actually be much more useful to rework my patch to
+>> have a more style-centric approach rather than an optimization-centric
+>> one; this code would definitely benefit from being neater.
+>
+> I actually prefer the memcpy() version for style reasons, even though
+> it might've looked like an optimization:
+>
+> With strncat(), the result string is written via both 'res' and 'end'.
+> With memcpy(), it's only written via the 'end'. That seems less
+> twisty.
+>
+> Maybe this is outside the scope of the original patch, but while we're here. :)
+>
+>>
+>> Some useful changes would be to rename of the _atrociously_ short
+>> identifiers like p and l.
+>
+> Yeah, 'l' in particular isn't the best name, IMO ('len' is both short
+> and explicit, and won't be confused for 1). 'p' can be fine if it's
+> obvious in context (bit dubious here), but 'in' and 'out' (for 'end')
+> would be more informative.
 
-On some architectures such as arm64, siano chip based TV-tuner
-USB devices are not recognized correctly due to coherent memory
-allocation failure with the following error:
+Another alternative: src/dst
 
-[  663.556135] usbcore: deregistering interface driver smsusb
-[  683.624809] smsusb:smsusb_probe: board id=18, interface number 0
-[  683.633530] smsusb:smsusb_init_device: smscore_register_device(...) failed, rc -12
-[  683.641501] smsusb:smsusb_probe: Device initialized with return code -12
-[  683.652978] smsusb: probe of 1-1:1.0 failed with error -12
+>
+> 's' is clear from convention to me. In general, I fully agree that you
+> should avoid hard-to-guess names though.
+>
+>>
+>> Anyway I'll give that link a read over and try and make a V2 later
+>> on today.
+>>
+>> Appreciate the feedback, thanks for the comments!
+>>
+>> --
+>> Cheers,
+>> Joey Pabalinas
+>
+> Cheers,
+> Ulf
 
-This is caused by dma_alloc_coherent(NULL, ...) returning NULL in
-smscoreapi.c.
-
-To fix this error, allocate the buffer memory for the USB devices
-via kmalloc() and let the USB core do the DMA mapping and free.
-
-v3: let the usb core do the DMA mapping and free
-v2: non-usb `device' is also be passed to dma_alloc_coherent()
-
-Signed-off-by: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
----
- drivers/media/common/siano/smscoreapi.c | 33 ++++++++++++++++++++++-----------
- drivers/media/common/siano/smscoreapi.h |  2 ++
- drivers/media/usb/siano/smsusb.c        |  4 ++--
- 3 files changed, 26 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-index c5c827e11b64..b5dcc6d1fe90 100644
---- a/drivers/media/common/siano/smscoreapi.c
-+++ b/drivers/media/common/siano/smscoreapi.c
-@@ -631,7 +631,8 @@ smscore_buffer_t *smscore_createbuffer(u8 *buffer, void *common_buffer,
- 
- 	cb->p = buffer;
- 	cb->offset_in_common = buffer - (u8 *) common_buffer;
--	cb->phys = common_buffer_phys + cb->offset_in_common;
-+	if (common_buffer_phys)
-+		cb->phys = common_buffer_phys + cb->offset_in_common;
- 
- 	return cb;
- }
-@@ -690,17 +691,21 @@ int smscore_register_device(struct smsdevice_params_t *params,
- 
- 	/* alloc common buffer */
- 	dev->common_buffer_size = params->buffer_size * params->num_buffers;
--	dev->common_buffer = dma_alloc_coherent(NULL, dev->common_buffer_size,
--						&dev->common_buffer_phys,
--						GFP_KERNEL | GFP_DMA);
--	if (!dev->common_buffer) {
-+	if (params->usb_device)
-+		buffer = kzalloc(dev->common_buffer_size, GFP_KERNEL);
-+	else
-+		buffer = dma_alloc_coherent(params->device,
-+					    dev->common_buffer_size,
-+					    &dev->common_buffer_phys,
-+					    GFP_KERNEL | GFP_DMA);
-+	if (!buffer) {
- 		smscore_unregister_device(dev);
- 		return -ENOMEM;
- 	}
-+	dev->common_buffer = buffer;
- 
- 	/* prepare dma buffers */
--	for (buffer = dev->common_buffer;
--	     dev->num_buffers < params->num_buffers;
-+	for (; dev->num_buffers < params->num_buffers;
- 	     dev->num_buffers++, buffer += params->buffer_size) {
- 		struct smscore_buffer_t *cb;
- 
-@@ -720,6 +725,7 @@ int smscore_register_device(struct smsdevice_params_t *params,
- 	dev->board_id = SMS_BOARD_UNKNOWN;
- 	dev->context = params->context;
- 	dev->device = params->device;
-+	dev->usb_device = params->usb_device;
- 	dev->setmode_handler = params->setmode_handler;
- 	dev->detectmode_handler = params->detectmode_handler;
- 	dev->sendrequest_handler = params->sendrequest_handler;
-@@ -1231,10 +1237,15 @@ void smscore_unregister_device(struct smscore_device_t *coredev)
- 
- 	pr_debug("freed %d buffers\n", num_buffers);
- 
--	if (coredev->common_buffer)
--		dma_free_coherent(NULL, coredev->common_buffer_size,
--			coredev->common_buffer, coredev->common_buffer_phys);
--
-+	if (coredev->common_buffer) {
-+		if (coredev->usb_device)
-+			kfree(coredev->common_buffer);
-+		else
-+			dma_free_coherent(coredev->device,
-+					  coredev->common_buffer_size,
-+					  coredev->common_buffer,
-+					  coredev->common_buffer_phys);
-+	}
- 	kfree(coredev->fw_buf);
- 
- 	list_del(&coredev->entry);
-diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-index 4cc39e4a8318..134c69f7ea7b 100644
---- a/drivers/media/common/siano/smscoreapi.h
-+++ b/drivers/media/common/siano/smscoreapi.h
-@@ -134,6 +134,7 @@ struct smscore_buffer_t {
- 
- struct smsdevice_params_t {
- 	struct device	*device;
-+	struct usb_device	*usb_device;
- 
- 	int				buffer_size;
- 	int				num_buffers;
-@@ -176,6 +177,7 @@ struct smscore_device_t {
- 
- 	void *context;
- 	struct device *device;
-+	struct usb_device *usb_device;
- 
- 	char devpath[32];
- 	unsigned long device_flags;
-diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
-index f13e4b01b5a5..6d436e9e454f 100644
---- a/drivers/media/usb/siano/smsusb.c
-+++ b/drivers/media/usb/siano/smsusb.c
-@@ -179,8 +179,7 @@ static int smsusb_submit_urb(struct smsusb_device_t *dev,
- 		smsusb_onresponse,
- 		surb
- 	);
--	surb->urb.transfer_dma = surb->cb->phys;
--	surb->urb.transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-+	surb->urb.transfer_flags |= URB_FREE_BUFFER;
- 
- 	return usb_submit_urb(&surb->urb, GFP_ATOMIC);
- }
-@@ -446,6 +445,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
- 		dev->in_ep, dev->out_ep);
- 
- 	params.device = &dev->udev->dev;
-+	params.usb_device = dev->udev;
- 	params.buffer_size = dev->buffer_size;
- 	params.num_buffers = MAX_BUFFERS;
- 	params.sendrequest_handler = smsusb_sendrequest;
--- 
-2.14.3
+Cheers,
+Ulf
