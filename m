@@ -1,131 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965007AbeCCBj4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:39:56 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57756 "EHLO
+        id S965023AbeCCBlt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:41:49 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59246 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964973AbeCCBjy (ORCPT
+        with ESMTP id S964973AbeCCBlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:39:54 -0500
-Subject: Re: [PATCH 1/1] mm: make start_isolate_page_range() fail if already
- isolated
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20180226191054.14025-1-mike.kravetz@oracle.com>
- <20180226191054.14025-2-mike.kravetz@oracle.com>
- <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
- <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
- <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <40e790c9-cd78-3d41-a69b-bff4f024c9f1@oracle.com>
-Date: Fri, 2 Mar 2018 17:39:25 -0800
+        Fri, 2 Mar 2018 20:41:47 -0500
+Subject: Re: [PATCH V3] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>
+References: <1519961474-15236-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1520008291.2855.7.camel@wdc.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <e867f55a-a027-4658-1e11-50a65f383626@oracle.com>
+Date: Sat, 3 Mar 2018 09:41:40 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
+In-Reply-To: <1520008291.2855.7.camel@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8820 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=869
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803030015
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 04:56 PM, Andrew Morton wrote:
-> On Fri, 2 Mar 2018 16:38:33 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
-> 
->> On 03/02/2018 04:06 PM, Andrew Morton wrote:
->>> On Mon, 26 Feb 2018 11:10:54 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
->>>
->>>> start_isolate_page_range() is used to set the migrate type of a
->>>> set of page blocks to MIGRATE_ISOLATE while attempting to start
->>>> a migration operation.  It assumes that only one thread is
->>>> calling it for the specified range.  This routine is used by
->>>> CMA, memory hotplug and gigantic huge pages.  Each of these users
->>>> synchronize access to the range within their subsystem.  However,
->>>> two subsystems (CMA and gigantic huge pages for example) could
->>>> attempt operations on the same range.  If this happens, page
->>>> blocks may be incorrectly left marked as MIGRATE_ISOLATE and
->>>> therefore not available for page allocation.
->>>>
->>>> Without 'locking code' there is no easy way to synchronize access
->>>> to the range of page blocks passed to start_isolate_page_range.
->>>> However, if two threads are working on the same set of page blocks
->>>> one will stumble upon blocks set to MIGRATE_ISOLATE by the other.
->>>> In such conditions, make the thread noticing MIGRATE_ISOLATE
->>>> clean up as normal and return -EBUSY to the caller.
->>>>
->>>> This will allow start_isolate_page_range to serve as a
->>>> synchronization mechanism and will allow for more general use
->>>> of callers making use of these interfaces.  So, update comments
->>>> in alloc_contig_range to reflect this new functionality.
->>>>
->>>> ...
->>>>
->>>> --- a/mm/page_isolation.c
->>>> +++ b/mm/page_isolation.c
->>>> @@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
->>>>  
->>>>  	spin_lock_irqsave(&zone->lock, flags);
->>>>  
->>>> +	/*
->>>> +	 * We assume we are the only ones trying to isolate this block.
->>>> +	 * If MIGRATE_ISOLATE already set, return -EBUSY
->>>> +	 */
->>>> +	if (is_migrate_isolate_page(page))
->>>> +		goto out;
->>>> +
->>>>  	pfn = page_to_pfn(page);
->>>>  	arg.start_pfn = pfn;
->>>>  	arg.nr_pages = pageblock_nr_pages;
->>>
->>> Seems a bit ugly and I'm not sure that it's correct.  If the loop in
->>> start_isolate_page_range() gets partway through a number of pages then
->>> we hit the race, start_isolate_page_range() will then go and "undo" the
->>> work being done by the thread which it is racing against?
->>
->> I agree that it is a bit ugly.  However, when a thread hits the above
->> condition it will only undo what it has done.  Only one thread is able
->> to set migrate state to isolate (under the zone lock).  So, a thread
->> will only undo what it has done.
-> 
-> I don't get it.  That would make sense if start_isolate_page_range()
-> held zone->lock across the entire loop, but it doesn't do that.
-> 
+Hi Bart
 
-It works because all threads set migrate isolate on page blocks going
-from pfn low to pfn high.  When they encounter a conflict, they know
-exactly which blocks they set and only undo those blocks.  Perhaps, I
-am missing something, but it does not matter because ...
+Thanks for your kindly response and directive.
 
->> The exact problem of one thread undoing what another thread has done
->> is possible with the code today and is what this patch is attempting
->> to address.
->>
->>> Even if that can't happen, blundering through a whole bunch of pages
->>> then saying whoops then undoing everything is unpleasing.
->>>
->>> Should we be looking at preventing these races at a higher level?
->>
->> I could not immediately come up with a good idea here.  The zone lock
->> would be the obvious choice, but I don't think we want to hold it while
->> examining each of the page blocks.  Perhaps a new lock or semaphore
->> associated with the zone?  I'm open to suggestions.
+On 03/03/2018 12:31 AM, Bart Van Assche wrote:
+> On Fri, 2018-03-02 at 11:31 +0800, Jianchao Wang wrote:
+>> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+>> index a86df9c..d2f1838 100644
+>> --- a/drivers/scsi/scsi_lib.c
+>> +++ b/drivers/scsi/scsi_lib.c
+>> @@ -191,7 +191,13 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+>>  	 */
+>>  	cmd->result = 0;
+>>  	if (q->mq_ops) {
+>> -		scsi_mq_requeue_cmd(cmd);
+>> +		/*
+>> +		 * scsi_device.sdev_gendev will be get every time in .get_budget and
+>> +		 * be put in scsi_end_request. Hence we need to put the reference
+>> +		 * here when we decide to requeue request.
+>> +		 */
+>> +		blk_mq_requeue_request(cmd->request, true);
+>> +		put_device(&device->sdev_gendev);
+>>  		return;
+>>  	}
+>>  	spin_lock_irqsave(q->queue_lock, flags);
 > 
-> Yes, I think it would need a new lock.  Hopefully a mutex.
+> Please consider to change the new comment into something like the following:
+> "Before a SCSI command is dispatched, get_device(&sdev->sdev_gendev) is called
+> and the host, target and device busy counters are increased. Since requeuing a
+> request causes these actions to be repeated and since scsi_device_unbusy() has
+> already been called, put_device(&device->sdev_gendev) must still be called. Call
+> put_device() after blk_mq_requeue_request() to avoid that removal of the SCSI
+> device can start before requeueing has happened."
 
-I'll look into adding an 'isolate' mutex to the zone structure and reworking
-this patch.
+Yes, your comment is more detailed and clearly.
 
--- 
-Mike Kravetz
+Sincerely
+Jianchao
