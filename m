@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1247250-1520121036-2-14117300130032791813
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520121028-2-14925966335370833818
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,39 +8,39 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_H
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: cc='utf-8', plain='utf-8'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520121036; b=FmN23Qqoc4CVxySYB+ROyU4vLCwRc+Ao5NP5o50YFKndHAU
-    npeqV6fKE1FPka2fINSfuakP6Il8hxSii6i2u/RztmoNM779nPLA+OajzF/bueAF
-    unBGQnHW0n4cM71i+4At/RsSlbm+q9yeSevzIHw1U0DiY0d9pArdKY4wmCF5qszS
-    5gvCf9NxFb5On9p+/eRvP6lrn9DwBYtKs3inR8wItNwCXxM2wv5264XcXL86wkUd
-    VOkqorSmLWT4N7J7ffOJllt11vyQsqKUra/KdxREas4uY+tqSmCc6bYzYVe23nSK
-    WTzqfxqCTJ/VSufUqImAXpnNJ1qmNiImwwUOTjA==
+    t=1520121028; b=AN+LRYDZkjtIoVHomWJ/uuXzahk5n3tdUa1F8hBR5SGfkRi
+    xKJoSby08DhR5NEBWDJzkOmwyvNV47AbNBxdIzwWeb3Tqz8tSdp+8S9R1QN8m9K4
+    plgxrWuAJ1Tqks0nCMjLb8+gJp4j9ARweHoraBIITgeXCnX5MeQYpPcPvFL6O3AW
+    LdI3mlEewAmE5foB9f7XR0I5pYaKzY6272gWNezExrawmJYp0PhKrKIq9zG1+wfg
+    rwAr/PSOuPsgQ7fUMHRva6os0+OCjGkmHqr9b8hGSeWL4R+Q2DlHyFKAUIXNdhsH
+    DqL028CFmRMPk3+BsLC4+Q6bAluyg/Xg2S1u9fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1520121036; bh=uZhHO++kvzoFTDfCSHbc7PFH7gSRB7TqOXLvzE
-    zcCI8=; b=CI+XPSGWOr5HJP1R8WJXeu5IXgQ5E1Sdig3YJT8FCTwmjMt3sHJJLP
-    mHI++NdMfYrYx+d39RoUW75L6vuN+p9KsEDtKt4GgFQjKq2pW9i74uVSf1w3JNPB
-    u2I6OYK4C8cg9agTSOvETiptWyVZkaE20etFkLJVFR6xanivsLxTq8e1K8TSyIxj
-    x6u3DUPWQXdKkuFzGHsBZB7ximbOd/ojNC10ewntdZLxKoxZD6/l1K204lLosCFu
-    5TESdpMyX3/JgfUvKYpPWgbkYkCyNvO9OjBrVpwmZ7JuiQQDLBwo0Zw+NXy+Dwzv
-    rbNdZZVw2n2T37RfIXvp/iywejAzWu5Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Io0n4CVk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520121028; bh=f3jN9q
+    3zKjgnCeytot2E1XrLayRj4ts2irYuiwOA8a8=; b=VKzbwI70NRwGxXWwOHzKWf
+    k+/qtg1JiVVUd9Kk2PpB89m2lF+wEdKt4UM56UexiQTNGwI/SI+aMfwYCkWlj3pN
+    NH87ekEu4QpcK8nKy2GXsyAMIm5H5BcIJLXBpUJH5maZo3yTGLhOQfxHhbGfhNPe
+    QkbPenDIXOtAyYP5lk/FotFaCxRzKXRNGbckjR74EahTvPfTo0xb6CpXmU7m+wf+
+    rzB8yXnwAFMvqEJsJsYCKsoilr00Du6wrskXhoV65oWpUrbTklYgfqcHfXgKM+M9
+    4vrCGgNiHhmVKkl76/ns2gCNR7PrgRtRwppfCRib/ydDZvxVvysBSelYtVffuMeA
+    ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GM0nfsx5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Io0n4CVk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=GM0nfsx5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,27 +48,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934017AbeCCWdW (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:33:22 -0500
-Received: from mail-by2nam01on0090.outbound.protection.outlook.com ([104.47.34.90]:47151
+        id S933747AbeCCXuP (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:50:15 -0500
+Received: from mail-by2nam01on0118.outbound.protection.outlook.com ([104.47.34.118]:24760
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934014AbeCCWdT (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:33:19 -0500
+        id S934018AbeCCWdW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:33:22 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: =?utf-8?B?Tmljb2xhaSBIw6Robmxl?= <nicolai.haehnle@amd.com>,
-        zhoucm1 <david1.zhou@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+CC: Manish Jaggi <mjaggi@caviumnetworks.com>,
+        Manish Jaggi <mjaggi@cavium.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 086/219] drm/ttm: never add BO that failed to
- validate to the LRU list
-Thread-Topic: [PATCH AUTOSEL for 4.9 086/219] drm/ttm: never add BO that
- failed to validate to the LRU list
-Thread-Index: AQHTsz7+JlqwZ5DZqkGVsCOubfQKTA==
-Date: Sat, 3 Mar 2018 22:28:45 +0000
-Message-ID: <20180303222716.26640-86-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 088/219] PCI: Apply Cavium ACS quirk only to
+ CN81xx/CN83xx/CN88xx devices
+Thread-Topic: [PATCH AUTOSEL for 4.9 088/219] PCI: Apply Cavium ACS quirk only
+ to CN81xx/CN83xx/CN88xx devices
+Thread-Index: AQHTsz7+4GBRJtVJmEOH4NmRdEyhbQ==
+Date: Sat, 3 Mar 2018 22:28:46 +0000
+Message-ID: <20180303222716.26640-88-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,71 +76,68 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1036;7:7VcRw+4fpWkVodzVP3QoG30ZNLdk/MFUuiwdSJm5/tQMRsdbpFDuS0XjxCmfqdSOzIZmQPaysPjyD0KZliZthVJXGk6ON17i3k7AHQ6OYh9ATvS5CYpYcqSNa/yHCEj68/4FyLr7rtMA02m4qdup4BFdwy+c64UdPOh+OxZppSmSv9+lC/i2XJJw+al9+KEYxjFHF2Z7967+V7bRVwAOVeFRNV4PqOh+MtJPTbfHqn+X5GoN2Ld3hIsYO2V1iEXI
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1097;7:GP6oFgIfAeC2xRXgjE1hiMiaBHFt4CLdLt3A04AMwlD5sJHiSMXHWOG5/xIzi8IxTqWFcEvbyOzo77/bDkoNMNhdbHsPdETrAUsYYnPtIbaHPjCiwclS1ovzvfvgr2oDf+gtCTsKIFEEa70Rmaqxg9Gzdn/tSUafu3EtoDyFsdY2RGNZQY6suHrUxf+MCGubOpEyReZtcpYClX1a/28M+BN4Q/ne2f9RL/6meJZul/NI2r2KltduaqAGLYJTKHyf
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 5396215d-5c3a-4f11-9a66-08d58156c2e3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1036;
-x-ms-traffictypediagnostic: MW2PR2101MB1036:
+x-ms-office365-filtering-correlation-id: 157eacb1-4710-4182-9223-08d58156c39d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1097;
+x-ms-traffictypediagnostic: MW2PR2101MB1097:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB10361AB23D71843BB2E7FA4FFBC40@MW2PR2101MB1036.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(767451399110);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1036;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1036;
+x-microsoft-antispam-prvs: <MW2PR2101MB1097227AF377F42BBF7E32D2FBC40@MW2PR2101MB1097.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2PR2101MB1097;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1097;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39380400002)(346002)(376002)(39860400002)(199004)(189003)(10290500003)(81166006)(5660300001)(107886003)(8936002)(81156014)(3846002)(6506007)(2906002)(8676002)(3280700002)(59450400001)(72206003)(76176011)(4326008)(478600001)(6116002)(6486002)(53936002)(1076002)(68736007)(6512007)(102836004)(8666007)(2501003)(66066001)(3660700001)(5250100002)(6436002)(105586002)(86612001)(36756003)(316002)(7736002)(97736004)(26005)(186003)(110136005)(305945005)(22452003)(86362001)(99286004)(6666003)(25786009)(106356001)(2900100001)(14454004)(54906003)(10090500001)(2950100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1036;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: dwix3A7GTwgCeHqBZxK6y1rtNxVv0O9g3rkhdlh6B7zP5QlooEHYIhBoGebtFYgzR5xLEYeYTsJknhSpbpehYIt9zxZmuKrbQfeoVLUNB4uMsQojf0PK7bXsstm5ETnAqwgNKwck/q7GWjmxRmZBbkMT80GiS73s+TcHdQnwrys=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(396003)(39860400002)(346002)(189003)(199004)(305945005)(105586002)(36756003)(3660700001)(86362001)(575784001)(6666003)(66066001)(2900100001)(5660300001)(8676002)(10090500001)(81166006)(81156014)(8936002)(22452003)(10290500003)(2950100002)(4326008)(25786009)(5250100002)(2501003)(68736007)(7736002)(72206003)(14454004)(478600001)(186003)(110136005)(26005)(316002)(2906002)(97736004)(6512007)(99286004)(107886003)(54906003)(1076002)(6506007)(106356001)(53936002)(6116002)(3846002)(102836004)(6486002)(86612001)(3280700002)(6436002)(76176011)(22906009)(217873001)(19627235001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1097;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: HuIgtCJH5IWeDlMxYNTTQ8ST9BNEqoTugpDDCPo79X3VWJbM1uRw2aPIQSSKY8yHglqzezf/dddYOtOn+L2EcBLgtIXJCsOawfR8tskU4YLq75NdTNPX+o06ygEja0Zky8fh8CvI7U5vBR9j5N5BtZNhBzFZ0bP2MwiEgR3oAm0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <098C10856C861B44B1F1C1DE9407BAD1@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5396215d-5c3a-4f11-9a66-08d58156c2e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:45.8694
+X-MS-Exchange-CrossTenant-Network-Message-Id: 157eacb1-4710-4182-9223-08d58156c39d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:46.9475
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1036
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1097
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogTmljb2xhaSBIw6RobmxlIDxuaWNvbGFpLmhhZWhubGVAYW1kLmNvbT4NCg0KWyBVcHN0
-cmVhbSBjb21taXQgYzJjMTM5Y2Y0MzViMTg5MzkyMDQ4MDBmYTcyYzUzYTcyMDdiZGQ2OCBdDQoN
-CkZpeGVzIGEgcG90ZW50aWFsIHJhY2UgY29uZGl0aW9uIGluIGFtZGdwdSB0aGF0IGxvb2tzIGFz
-IGZvbGxvd3M6DQoNClRhc2sgMTogYXR0ZW1wdCB0dG1fYm9faW5pdCwgYnV0IHR0bV9ib192YWxp
-ZGF0ZSBmYWlscw0KVGFzayAxOiBhZGQgQk8gdG8gZ2xvYmFsIGxpc3QgYW55d2F5DQpUYXNrIDI6
-IGdyYWJzIGhvbGQgb2YgdGhlIEJPLCB3YWl0cyBvbiBpdHMgcmVzZXJ2YXRpb24gbG9jaw0KVGFz
-ayAxOiByZWxlYXNlcyBpdHMgcmVmZXJlbmNlIG9mIHRoZSBCTzsgbmV2ZXIgZ2l2ZXMgdXAgdGhl
-DQogICAgICAgIHJlc2VydmF0aW9uIGxvY2sNCg0KVGhlIHBhdGNoICJkcm0vYW1kZ3B1OiBmaXgg
-YSBwb3RlbnRpYWwgZGVhZGxvY2sgaW4NCmFtZGdwdV9ib19jcmVhdGVfcmVzdHJpY3RlZCgpIiBh
-dHRlbXB0cyB0byBmaXggdGhhdCBieSByZWxlYXNpbmcNCnRoZSByZXNlcnZhdGlvbiBsb2NrIGlu
-IGFtZGdwdSBjb2RlOyB1bmZvcnR1bmF0ZWx5LCBpdCBpbnRyb2R1Y2VzDQphIHVzZS1hZnRlci1m
-cmVlIHdoZW4gdGhpcyByYWNlIF9kb2Vzbid0XyBoYXBwZW4uDQoNClRoaXMgcGF0Y2ggc2hvdWxk
-IGZpeCB0aGUgcmFjZSBwcm9wZXJseSBieSBuZXZlciBhZGRpbmcgdGhlIEJPDQp0byB0aGUgZ2xv
-YmFsIGxpc3QgaW4gdGhlIGZpcnN0IHBsYWNlLg0KDQpDYzogemhvdWNtMSA8ZGF2aWQxLnpob3VA
-YW1kLmNvbT4NClNpZ25lZC1vZmYtYnk6IE5pY29sYWkgSMOkaG5sZSA8bmljb2xhaS5oYWVobmxl
-QGFtZC5jb20+DQpUZXN0ZWQtYnk6IFNhbXVlbCBQaXRvaXNldCA8c2FtdWVsLnBpdG9pc2V0QGdt
-YWlsLmNvbT4NClJldmlld2VkLWJ5OiBDaHJpc3RpYW4gS8O2bmlnIDxjaHJpc3RpYW4ua29lbmln
-QGFtZC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVy
-QGFtZC5jb20+DQpTaWduZWQtb2ZmLWJ5OiBTYXNoYSBMZXZpbiA8YWxleGFuZGVyLmxldmluQG1p
-Y3Jvc29mdC5jb20+DQotLS0NCiBkcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV9iby5jIHwgMTIgKysr
-KysrKy0tLS0tDQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMo
-LSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX2JvLmMgYi9kcml2ZXJz
-L2dwdS9kcm0vdHRtL3R0bV9iby5jDQppbmRleCBkMDkyNzZlYzdlOTAuLjUyYTJhMWE3NTY4MiAx
-MDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX2JvLmMNCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS90dG0vdHRtX2JvLmMNCkBAIC0xMjA5LDE4ICsxMjA5LDIwIEBAIGludCB0dG1fYm9f
-aW5pdChzdHJ1Y3QgdHRtX2JvX2RldmljZSAqYmRldiwNCiAJaWYgKGxpa2VseSghcmV0KSkNCiAJ
-CXJldCA9IHR0bV9ib192YWxpZGF0ZShibywgcGxhY2VtZW50LCBpbnRlcnJ1cHRpYmxlLCBmYWxz
-ZSk7DQogDQotCWlmICghcmVzdikgew0KKwlpZiAoIXJlc3YpDQogCQl0dG1fYm9fdW5yZXNlcnZl
-KGJvKTsNCiANCi0JfSBlbHNlIGlmICghKGJvLT5tZW0ucGxhY2VtZW50ICYgVFRNX1BMX0ZMQUdf
-Tk9fRVZJQ1QpKSB7DQorCWlmICh1bmxpa2VseShyZXQpKSB7DQorCQl0dG1fYm9fdW5yZWYoJmJv
-KTsNCisJCXJldHVybiByZXQ7DQorCX0NCisNCisJaWYgKHJlc3YgJiYgIShiby0+bWVtLnBsYWNl
-bWVudCAmIFRUTV9QTF9GTEFHX05PX0VWSUNUKSkgew0KIAkJc3Bpbl9sb2NrKCZiby0+Z2xvYi0+
-bHJ1X2xvY2spOw0KIAkJdHRtX2JvX2FkZF90b19scnUoYm8pOw0KIAkJc3Bpbl91bmxvY2soJmJv
-LT5nbG9iLT5scnVfbG9jayk7DQogCX0NCiANCi0JaWYgKHVubGlrZWx5KHJldCkpDQotCQl0dG1f
-Ym9fdW5yZWYoJmJvKTsNCi0NCiAJcmV0dXJuIHJldDsNCiB9DQogRVhQT1JUX1NZTUJPTCh0dG1f
-Ym9faW5pdCk7DQotLSANCjIuMTQuMQ0K
+From: Manish Jaggi <mjaggi@caviumnetworks.com>
+
+[ Upstream commit b77d537d00d08fcf0bf641cd3491dd7df0ad1475 ]
+
+Only apply the Cavium ACS quirk to devices with ID in the range
+0xa000-0xa0ff.  These are the on-chip PCI devices for CN81xx/CN83xx/CN88xx.
+
+Fixes: b404bcfbf035 ("PCI: Add ACS quirk for all Cavium devices")
+Reported-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Manish Jaggi <mjaggi@cavium.com>
+Acked-by: David Daney <david.daney@cavium.com>
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/pci/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 0c9edc9d7c44..4c9fb8b323e8 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4104,6 +4104,9 @@ static int pci_quirk_cavium_acs(struct pci_dev *dev, =
+u16 acs_flags)
+ 	 */
+ 	acs_flags &=3D ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_SV | PCI_ACS_UF);
+=20
++	if (!((dev->device >=3D 0xa000) && (dev->device <=3D 0xa0ff)))
++		return -ENOTTY;
++
+ 	return acs_flags ? 0 : 1;
+ }
+=20
+--=20
+2.14.1
