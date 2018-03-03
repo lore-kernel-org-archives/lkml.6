@@ -1,50 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752134AbeCCPbw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 10:31:52 -0500
-Received: from mga01.intel.com ([192.55.52.88]:56393 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752095AbeCCPbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 10:31:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,418,1515484800";
-   d="scan'208";a="21612489"
-Subject: Re: [PATCH 2/2] IB/qib: Move char *qib_sdma_state_names[] and
- constify while there.
-To: =?UTF-8?Q?Hern=c3=a1n_Gonzalez?= <hernan@vanguardiasur.com.ar>,
-        mike.marciniszyn@intel.com, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1519769143-20000-1-git-send-email-hernan@vanguardiasur.com.ar>
- <1519769143-20000-2-git-send-email-hernan@vanguardiasur.com.ar>
-From: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Message-ID: <ce0ddb85-e008-9895-6508-7d721edeb1de@intel.com>
-Date: Sat, 3 Mar 2018 10:31:48 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752183AbeCCPfW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 10:35:22 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:53938 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752088AbeCCPfV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 10:35:21 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w23FZB4X018127
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AG47ELtemcTieaHtaIX9itUPaVfwp3FpAWU6EGh7XsqiNSZUxk8jlybFc+fq4Kv+gBqnsARlJDecWXXtJZVCqqHwqEs=
 MIME-Version: 1.0
-In-Reply-To: <1519769143-20000-2-git-send-email-hernan@vanguardiasur.com.ar>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519974312-20477-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519974312-20477-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 4 Mar 2018 00:34:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARDFMoPQ4iwV-FKXxWiNOSxU5cFcSw18tHChMEqAmrQNg@mail.gmail.com>
+Message-ID: <CAK7LNARDFMoPQ4iwV-FKXxWiNOSxU5cFcSw18tHChMEqAmrQNg@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: fix line number in recursive inclusion error message
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/2018 5:05 PM, Hernán Gonzalez wrote:
-> Note: This is compile only tested as I have no access to the hw.
-> This variable was not used in qib_sdma.c but in qib_iba7322.c. Declaring it
-> there, as static, saves 56 bytes.
-> 
-> add/remove: 0/2 grow/shrink: 0/0 up/down: 0/-144 (-144)
-> Function                                     old     new   delta
-> qib_sdma_state_names                          56       -     -56
-> qib_sdma_event_names                          88       -     -88
-> Total: Before=2874565, After=2874421, chg -0.01%
-> 
-> Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+2018-03-02 16:05 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> When recursive inclusion is detected, the line number of the last
+> 'included from:' is wrong.
+>
+> [Test Case]
+>
+> Kconfig:
+>   -------->8--------
+>   source "Kconfig2"
+>   -------->8--------
+>
+> Kconfig2:
+>   -------->8--------
+>   source "Kconfig3"
+>   -------->8--------
+>
+> Kconfig3:
+>   -------->8--------
+>   source "Kconfig"
+>   -------->8--------
+>
+> [Result]
+>
+>   $ make allyesconfig
+>   scripts/kconfig/conf  --allyesconfig Kconfig
+>   Kconfig:1: recursive inclusion detected. Inclusion path:
+>     current file : 'Kconfig'
+>     included from: 'Kconfig3:1'
+>     included from: 'Kconfig2:1'
+>     included from: 'Kconfig:3'
+>   scripts/kconfig/Makefile:89: recipe for target 'allyesconfig' failed
+>   make[1]: *** [allyesconfig] Error 1
+>   Makefile:512: recipe for target 'allyesconfig' failed
+>   make: *** [allyesconfig] Error 2
+>
+> where we expect
+>
+>     current file : 'Kconfig'
+>     included from: 'Kconfig3:1'
+>     included from: 'Kconfig2:1'
+>     included from: 'Kconfig:1'
+>
+> The 'iter->lineno+1' in the second fpinrtf() should be 'iter->lineno-1'.
+> I refactored the code to merge two fprintf().
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
 
-Looks OK to me, thanks.
+Applied to linux-kbuild/fixes.
 
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+
+
+-- 
+Best Regards
+Masahiro Yamada
