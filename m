@@ -1,204 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeCCNjx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 08:39:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751847AbeCCNjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 08:39:52 -0500
-Date: Sat, 3 Mar 2018 14:39:50 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, kernel-team@fb.com
-Subject: Re: [RFC] perf: a different approach to perf_rotate_context()
-Message-ID: <20180303133950.GA2704@krava>
-References: <20180301195321.2608515-1-songliubraving@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301195321.2608515-1-songliubraving@fb.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751990AbeCCN4w (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 08:56:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45010 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751847AbeCCN4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 08:56:51 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B742121783
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <1520085408.4280.21.camel@kernel.org>
+Subject: Re: [PATCH v7 05/61] Export __set_page_dirty
+From: Jeff Layton <jlayton@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Date: Sat, 03 Mar 2018 08:56:48 -0500
+In-Reply-To: <20180219194556.6575-6-willy@infradead.org>
+References: <20180219194556.6575-1-willy@infradead.org>
+         <20180219194556.6575-6-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 11:53:21AM -0800, Song Liu wrote:
-> When there are more perf_event's than hardware PMCs, perf rotate events
-> so that all events get chance to run. Currently, the rotation works as:
->   sched_out flexible_groups in cpuctx->ctx and cpuctx->task_ctx;
->   rotate_left flexible_groups in cpuctx->ctx and cpuctx->task_ctx;
->   try sched_in flexible_groups in cpuctx->ctx;
->   try sched_in flexible_groups in cpuctx->task_ctx.
+On Mon, 2018-02-19 at 11:45 -0800, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
 > 
-> This approach has some potential issues:
->   1. if different rotations of flexible_groups in cpuctx->ctx occupy
->      all hardware PMC, flexible_groups in cpuctx->task_ctx cannot run
->      at all.
->   2. if pinned_groups occupy all hardware PMC, the rotation triggers per
->      perf_event_mux_interval_ms. But it couldn't schedule any events.
->   3. since flexible_groups in cpuctx->ctx and cpuctx->task_ctx are
->      rotated separately, there are N x M possible combinations. It is
->      difficult to remember all the rotation combinations and reuse these
->      combinations. As a result, it is necessary to try sched_in the
->      flexible_groups on each rotation.
+> XFS currently contains a copy-and-paste of __set_page_dirty().  Export
+> it from buffer.c instead.
 > 
-> This patch tries to do the rotation differently. Each perf_event in the
-> cpuctx (ctx and task_ctx) is assigned a rotation_id. The rotation_id's
-> are assigned during the first few rotations after any changes in
-> perf_events attached to the cpuctx. Once all the rotation_id's are
-> assigned for all events in the cpuctx, perf_rotate_context() simply
-> picks the next rotation to use, so there is no more "try to sched_in"
-> for future rotations.
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  fs/buffer.c        |  3 ++-
+>  fs/xfs/xfs_aops.c  | 15 ++-------------
+>  include/linux/mm.h |  1 +
+>  3 files changed, 5 insertions(+), 14 deletions(-)
 > 
-> Special rotation_id's are introduced to handle the issues above.
-> flexible_groups that conflicts with pinned_groups are marked as
-> ALWAYS_OFF, so they are not rotated (fixes issue 2). flexible_groups
-> in cpuctx->ctx and cpuctx->task_ctx are rotated together, so they all get
-> equal chance to run (improves issue 1).
-
-hum, so the improvement is that cpuctx could eventually give
-up some space for task_ctx events, but both ctxs still rotate
-separately no? you keep rotation ID per single context..
-
-> 
-> With this approach, we only do complex scheduling of flexible_groups
-> once. This enables us to do more complex schduling, for example, Sharing
-> PMU counters across compatible events:
->    https://lkml.org/lkml/2017/12/1/410.
-
-how could this code do that?
-
-> 
-> There are also some potential downsides of this approach.
-> 
-> First, it gives all flexible_groups exactly same chance to run, so it
-> may waste some PMC cycles. For examples, if 5 groups, ABCDE, are assigned
-> to two rotations: rotation-0: ABCD and rotation-1: E, this approach will
-> NOT try any of ABCD in rotation-1.
-> 
-> Second, flexible_groups in cpuctx->ctx and cpuctx->task_ctx now have
-> exact same priority and equal chance to run. I am not sure whether this
-> will change the behavior in some use cases.
-> 
-> Please kindly let me know whether this approach makes sense.
-
-SNIP
-
-> +/*
-> + * identify always_on and always_off groups in flexible_groups, call
-> + * group_sched_in() for always_on groups
-> + */
-> +static void ctx_pick_always_on_off_groups(struct perf_event_context *ctx,
-> +					  struct perf_cpu_context *cpuctx)
-> +{
-> +	struct perf_event *event;
-> +
-> +	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
-> +		if (event->group_caps & PERF_EV_CAP_SOFTWARE) {
-> +			event->rotation_id = PERF_ROTATION_ID_ALWAYS_ON;
-> +			ctx->nr_sched++;
-> +			WARN_ON(group_sched_in(event, cpuctx, ctx));
-> +			continue;
-> +		}
-> +		if (group_sched_in(event, cpuctx, ctx)) {
-> +			event->rotation_id = PERF_ROTATION_ID_ALWAYS_OFF;
-> +			ctx->nr_sched++;
-
-should ctx->nr_sched be incremented in the 'else' leg?
-
-> +		}
-> +		group_sched_out(event, cpuctx, ctx);
-> +	}
-> +}
-> +
-> +/* add unassigned flexible_groups to new rotation_id */
-> +static void ctx_add_rotation(struct perf_event_context *ctx,
-> +			     struct perf_cpu_context *cpuctx)
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 9a73924db22f..0b487cdb7124 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -594,7 +594,7 @@ EXPORT_SYMBOL(mark_buffer_dirty_inode);
+>   *
+>   * The caller must hold lock_page_memcg().
+>   */
+> -static void __set_page_dirty(struct page *page, struct address_space *mapping,
+> +void __set_page_dirty(struct page *page, struct address_space *mapping,
+>  			     int warn)
 >  {
->  	struct perf_event *event;
-> +	int group_added = 0;
->  	int can_add_hw = 1;
+>  	unsigned long flags;
+> @@ -608,6 +608,7 @@ static void __set_page_dirty(struct page *page, struct address_space *mapping,
+>  	}
+>  	spin_unlock_irqrestore(&mapping->tree_lock, flags);
+>  }
+> +EXPORT_SYMBOL_GPL(__set_page_dirty);
 >  
-> +	ctx->curr_rotation = ctx->num_rotations;
-> +	ctx->num_rotations++;
-> +
->  	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
->  		/* Ignore events in OFF or ERROR state */
->  		if (event->state <= PERF_EVENT_STATE_OFF)
-> @@ -3034,13 +3099,77 @@ ctx_flexible_sched_in(struct perf_event_context *ctx,
->  		if (!event_filter_match(event))
->  			continue;
+>  /*
+>   * Add a page to the dirty page list.
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 9c6a830da0ee..31f2c4895a46 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -1472,19 +1472,8 @@ xfs_vm_set_page_dirty(
+>  	newly_dirty = !TestSetPageDirty(page);
+>  	spin_unlock(&mapping->private_lock);
 >  
-> +		if (event->rotation_id != PERF_ROTATION_ID_NOT_ASSGINED)
-> +			continue;
-> +
->  		if (group_can_go_on(event, cpuctx, can_add_hw)) {
->  			if (group_sched_in(event, cpuctx, ctx))
->  				can_add_hw = 0;
-> +			else {
-> +				event->rotation_id = ctx->curr_rotation;
-> +				ctx->nr_sched++;
-> +				group_added++;
-
-group_added is not used
-
-SNIP
-
->  static int perf_rotate_context(struct perf_cpu_context *cpuctx)
->  {
-> -	struct perf_event_context *ctx = NULL;
-> +	struct perf_event_context *ctx = cpuctx->task_ctx;
->  	int rotate = 0;
-> +	u64 now;
->  
-> -	if (cpuctx->ctx.nr_events) {
-> -		if (cpuctx->ctx.nr_events != cpuctx->ctx.nr_active)
-> -			rotate = 1;
-> -	}
+> -	if (newly_dirty) {
+> -		/* sigh - __set_page_dirty() is static, so copy it here, too */
+> -		unsigned long flags;
 > -
-> -	ctx = cpuctx->task_ctx;
-> -	if (ctx && ctx->nr_events) {
-> -		if (ctx->nr_events != ctx->nr_active)
-> -			rotate = 1;
+> -		spin_lock_irqsave(&mapping->tree_lock, flags);
+> -		if (page->mapping) {	/* Race with truncate? */
+> -			WARN_ON_ONCE(!PageUptodate(page));
+> -			account_page_dirtied(page, mapping);
+> -			radix_tree_tag_set(&mapping->page_tree,
+> -					page_index(page), PAGECACHE_TAG_DIRTY);
+> -		}
+> -		spin_unlock_irqrestore(&mapping->tree_lock, flags);
 > -	}
-> +	if (!flexible_sched_done(cpuctx) ||
-> +	    cpuctx->ctx.num_rotations > 1)
-> +		rotate = 1;
+> +	if (newly_dirty)
+> +		__set_page_dirty(page, mapping, 1);
+>  	unlock_page_memcg(page);
+>  	if (newly_dirty)
+>  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ad06d42adb1a..47b0fb0a6e41 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1454,6 +1454,7 @@ extern int try_to_release_page(struct page * page, gfp_t gfp_mask);
+>  extern void do_invalidatepage(struct page *page, unsigned int offset,
+>  			      unsigned int length);
 >  
->  	if (!rotate)
->  		goto done;
-> @@ -3382,15 +3492,35 @@ static int perf_rotate_context(struct perf_cpu_context *cpuctx)
->  	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
->  	perf_pmu_disable(cpuctx->ctx.pmu);
->  
-> -	cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
-> +	update_context_time(&cpuctx->ctx);
->  	if (ctx)
-> -		ctx_sched_out(ctx, cpuctx, EVENT_FLEXIBLE);
-> +		update_context_time(ctx);
-> +	update_cgrp_time_from_cpuctx(cpuctx);
->  
-> -	rotate_ctx(&cpuctx->ctx);
-> +	ctx_switch_rotation_out(&cpuctx->ctx, cpuctx);
->  	if (ctx)
-> -		rotate_ctx(ctx);
-> +		ctx_switch_rotation_out(ctx, cpuctx);
->  
-> -	perf_event_sched_in(cpuctx, ctx, current);
-> +	if (flexible_sched_done(cpuctx)) {
-> +		/* simply repeat previous calculated rotations */
-> +		ctx_switch_rotation_in(&cpuctx->ctx, cpuctx);
-> +		if (ctx)
-> +			ctx_switch_rotation_in(ctx, cpuctx);
-> +	} else {
-> +		/* create new rotation */
-> +		ctx_add_rotation(&cpuctx->ctx, cpuctx);
-> +		if (ctx)
-> +			ctx_add_rotation(ctx, cpuctx);
-> +	}
+> +void __set_page_dirty(struct page *, struct address_space *, int warn);
+>  int __set_page_dirty_nobuffers(struct page *page);
+>  int __set_page_dirty_no_writeback(struct page *page);
+>  int redirty_page_for_writepage(struct writeback_control *wbc,
 
-that seems messy.. could this be done just by setting
-the rotation ID and let perf_event_sched_in skip over
-different IDs and sched-in/set un-assigned events?
-
-jirka
+Acked-by: Jeff Layton <jlayton@kernel.org>
