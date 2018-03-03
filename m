@@ -1,90 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935515AbeCCAVl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:21:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932890AbeCCAVi (ORCPT
+        id S935573AbeCCAYD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 19:24:03 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39862 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935479AbeCCAYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:21:38 -0500
-Date: Fri, 2 Mar 2018 16:21:35 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, pali.rohar@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-Message-ID: <20180303002135.GD25613@fury>
-References: <1519755784-2155-1-git-send-email-mario.limonciello@dell.com>
- <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Fri, 2 Mar 2018 19:24:02 -0500
+Date: Fri, 2 Mar 2018 16:24:00 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Nikolay Borisov <nborisov@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] direct-io: Minor cleanups in do_blockdev_direct_IO
+Message-Id: <20180302162400.f36d0d068bd0a08442536a2c@linux-foundation.org>
+In-Reply-To: <1519638870-17756-1-git-send-email-nborisov@suse.com>
+References: <1519638870-17756-1-git-send-email-nborisov@suse.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 12:23:04PM -0600, Mario Limonciello wrote:
-> Some race conditions were raised due to dell-smbios and its backends
-> not being ready by the time that a consumer would call one of the
-> exported methods.
+On Mon, 26 Feb 2018 11:54:30 +0200 Nikolay Borisov <nborisov@suse.com> wrote:
+
+> We already get the block counts and the calculate the end block at the
+> beginning of the function. Let's use the local variables for consistency and
+> readability. No functional changes
 > 
-> To avoid this problem, guarantee that all initialization has been
-> done by linking them all together and running init for them all.
-> 
-> As part of this change the Kconfig needs to be adjusted so that
-> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
-> rather than modules.
-> 
-> CONFIG_DELL_SMBIOS is a visually selectable option again and both
-> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> ---
-> Changes from v2:
->  * Move rest of #ifdef out of source files
->  * Only compile units as necessary
-> 
->  drivers/platform/x86/Kconfig            | 11 ++++++++---
->  drivers/platform/x86/Makefile           |  4 ++--
->  drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
->  drivers/platform/x86/dell-smbios-smm.c  | 18 ++++--------------
->  drivers/platform/x86/dell-smbios-wmi.c  | 14 ++++----------
->  drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
->  6 files changed, 64 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 9a8f964..0c0897e 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -106,10 +106,15 @@ config ASUS_LAPTOP
->  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+
+Fair enough.
+
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -1200,7 +1200,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	}
 >  
->  config DELL_SMBIOS
-> -	tristate
-> +	tristate "Dell SMBIOS driver"
-> +	---help---
-> +	This provides support for the Dell SMBIOS calling interface.
-> +	If you have a Dell computer you should enable this option.
-> +
-> +	Be sure to select at least one backend for it to work properly.
+>  	/* watch out for a 0 len io from a tricksy fs */
+> -	if (iov_iter_rw(iter) == READ && !iov_iter_count(iter))
+> +	if (iov_iter_rw(iter) == READ && !count)
+>  		return 0;
 >  
->  config DELL_SMBIOS_WMI
-> -	tristate "Dell SMBIOS calling interface (WMI implementation)"
-> +	bool "Dell SMBIOS driver WMI support"
+>  	dio = kmem_cache_alloc(dio_cache, GFP_KERNEL);
+> @@ -1316,8 +1316,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  
+>  	dio->should_dirty = (iter->type == ITER_IOVEC);
+>  	sdio.iter = iter;
+> -	sdio.final_block_in_request =
+> -		(offset + iov_iter_count(iter)) >> blkbits;
+> +	sdio.final_block_in_request = end >> blkbits;
+>  
+>  	/*
+>  	 * In case of non-aligned buffers, we may need 2 more
 
-Would you be happy with using "backend" here and for SMM?
+It's always scary to see a local being used in this fashion so far away
+from where it was initialized.  However, we can get our warm fuzzy
+feelings by doing this:
 
-	bool "Dell SMBIOS driver WMI backend"
-
-It makes it obvious what the help text is referring to by "select at
-least one backend".
-
-Happy to just make this change locally, no need to resubmit.
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+--- a/fs/direct-io.c~direct-io-minor-cleanups-in-do_blockdev_direct_io-fix
++++ a/fs/direct-io.c
+@@ -1178,9 +1178,9 @@ do_blockdev_direct_IO(struct kiocb *iocb
+ 	unsigned blkbits = i_blkbits;
+ 	unsigned blocksize_mask = (1 << blkbits) - 1;
+ 	ssize_t retval = -EINVAL;
+-	size_t count = iov_iter_count(iter);
++	const size_t count = iov_iter_count(iter);
+ 	loff_t offset = iocb->ki_pos;
+-	loff_t end = offset + count;
++	const loff_t end = offset + count;
+ 	struct dio *dio;
+ 	struct dio_submit sdio = { 0, };
+ 	struct buffer_head map_bh = { 0, };
+_
