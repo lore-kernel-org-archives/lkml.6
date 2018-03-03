@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1312649-1520122858-2-7426698311900366363
+X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122858-2-194447186741730270
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122857; b=fhRRDh2/jYSUYLp6g8V2zwWBxzy57kV2ZgQg+7YyRA2ZR78
-    E9ZtFd8VK/FHxiF/07fLHa4vPcNVLey9jS1/rTcSi2aalTuF7V+DqZ3EvVT3ugTC
-    7YXexk+aA0W6SJUFLgkoY8lM+/7437LbbsqTva1r6KgMGQJuEsegyrtTRORHMaVY
-    RB6HpY29TbePxoHvBWyGFR/IJOXwmealHCV++IKBaBDOE975GCrPJWkhcl5WpX5D
-    3x/1iEeBImizpMymX9TGTPeQXs8KDfzP9z7VLQaqtiAljEB88G4vPn+gai268aUg
-    /3wqxaKRXDb3sa4gLMVThGueHFTWCcmQsxZDxIg==
+    t=1520122858; b=VstoqfslDVhxEea+XX1CSpCbhAuKQFj/SJtkWpsnjJ2T3nb
+    1tSbMeSCU7SGPaK/vuHGAQrkSa8Kf24F/c20AQwiKgcx3WOhMIORxAqf2+EQWDDQ
+    iRwFoXxK1xae/toBhp9ImZ9GnuZFIyLge3Aj0fmwq73Q6irwpgWhrXYTseEzpcVo
+    ugzxPps46mJr15EXjYnGuW1uZTQPYCo3IqXRJwXRU+v7afcvYuvEFGIOtsEDNszZ
+    vrAulMtU5ZhHHLKW1z7aXotwS5tc5PGdBfaD/DaGcYkF1cjMG3p5HemfkX6LIg7J
+    kZ7JmJeV9RH+9Dv2IsPE/ZvjDoJoFjteURQi+lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122857; bh=j+ULWd
-    GaJEqzYPoj0LYdLiNXXGYmQuJQ2kxgbZYLJS0=; b=VFpVX6MiNYYkc04ZEmiotc
-    5anxr1Nhndkf2bXkUB5DhxeznrGZWAISXvE8tE+MmSLb5Fs/K7u/Z5O8B3t39FrF
-    3mQHZyLxDNM0iCz41Fk6RC+S+2sr5r2Zy8ErCepfArUjAIKuotUhCZ3QF6tQcoVH
-    8+UakWrvUJOigLpijwg9L+0XWXUFrd15CHrX7SfzyvHO5jNglFV9fSoCrOT4MeuR
-    urm/Yx/LDcEuHwaJ/zTourRoKNoHdFn5k2vhaMMMsCM4pQw63xYtqw5Q2cLPXqM8
-    z5eOY7w+JCP09kfO3PbhbAAYqbOmIoPh+zWhs82nKRYL/Ye4X4ijjd3OFPw3lMKw
+    :mime-version:sender:list-id; s=arctest; t=1520122858; bh=IcUTtJ
+    C66x6vVROkR0xvKyx1h8Mjk5tDOPNMDNn02ow=; b=cWRuc/tfn5FZf7RoF6yVp8
+    6ejqbbI1idhiZU4231Y0kYZJpMn227wvzB9tCvKKvSN5jHRxavem5SYOJRue9ElE
+    Lk9CoM3ADChXYlh/nXFRHmn1oOaLl8cAQS29mQ8x+ydsE3koSLP7paFVBS7qv0zv
+    xvMLZg/PcRpU0vXImOzIA6fyhxcmIdqyHJ30dP8CRjTjtg8TaEImH4OQlXZTuEt9
+    +C2YJxZUMuDXTuj9rnilCAtDp18nZCrh0a/MuVnbijTGTmDHGs+kLla0JU6jy2c/
+    Z3WcX1/p2Isd6fu3dz/LCmzJke4YftJpSDlMqjjfutL1TRy67Fsx9yI6Ocr13bkw
     ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iIas9FMO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=URlDxON+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=iIas9FMO x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=URlDxON+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,26 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932970AbeCDAUW (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 19:20:22 -0500
-Received: from mail-sn1nam01on0126.outbound.protection.outlook.com ([104.47.32.126]:12224
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S932722AbeCCW3C (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:29:02 -0500
+Received: from mail-by2nam01on0114.outbound.protection.outlook.com ([104.47.34.114]:45301
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932830AbeCCW3I (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:29:08 -0500
+        id S932402AbeCCW3A (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:29:00 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+CC: Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 41/84] dmaengine: amba-pl08x: Use
- vchan_terminate_vdesc() instead of desc_free
-Thread-Topic: [PATCH AUTOSEL for 4.14 41/84] dmaengine: amba-pl08x: Use
- vchan_terminate_vdesc() instead of desc_free
-Thread-Index: AQHTsz6pSbwU0JLV5E6NB1UC0GWY2A==
-Date: Sat, 3 Mar 2018 22:26:23 +0000
-Message-ID: <20180303222518.26271-41-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 37/84] iio: health: max30102: Add power
+ enable parameter to get_temp function
+Thread-Topic: [PATCH AUTOSEL for 4.14 37/84] iio: health: max30102: Add power
+ enable parameter to get_temp function
+Thread-Index: AQHTsz6n8lD1qh5cnk68zmMZDOU1XA==
+Date: Sat, 3 Mar 2018 22:26:21 +0000
+Message-ID: <20180303222518.26271-37-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,100 +76,123 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;7:tyxUBzz0xWUNpcaZMRF/ojkvU8yWYAbFTvFSi2tExQg5m5YY00DwF08DSW6xqZSrkErTe5sCnaJ/r0+tMCqebcgNybpw2YHg72CB6khs1tGjRBnc2at3K9TFuyVLvaP1yLVRL0YN6o6JT9Y2/hS1/7PXkTkvkhp9gqjuaBsH7R1yknn0c3WeMPGct9km44YxTXkZduDUBeIc7BMxoEdfiUbSbE0LhKg12oMRWOt9M8u1ZFcLXm4big8dJ6+99a1q
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1115;7:h6h9AJb7OhryuK9kTQZ4mkpMqzzNfOIFFocnW6PPpiY0yUWjBupK3rYBmAZLsE9AnbgSKZwlOqPJHYORR33BX14OmvGnVL3pCUDNTaUJSoWPro59AvogMWmROxb/E6VKzyblGCG/LT7m8za8IwRcjCbP2RgQBWzz0NtaBs3ugjx/Ld/JgGN09f2xNg7fT8NTTM8SXXnfEfTyS41+xIS2lPn/dm9XUYhSiNor7vi3oeLrgUc69ew8+iMK30SCV9PX
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: cfef9354-4ca9-41b5-921f-08d581562cb8
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
-x-ms-traffictypediagnostic: MW2PR2101MB0970:
+x-ms-office365-filtering-correlation-id: 30461b5f-007f-4013-8552-08d581562718
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1115;
+x-ms-traffictypediagnostic: MW2PR2101MB1115:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB097090C700B151A07C6EC8E5FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(31051911155226)(89211679590171)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
+x-microsoft-antispam-prvs: <MW2PR2101MB11157ECCCE965669828DB8B0FBC40@MW2PR2101MB1115.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1115;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1115;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(575784001)(86362001)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(7736002)(8676002)(6512007)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: mBVylMdmHodCi5+8pIYwWplgTDlhXG8wc772Kb+fLPylD8zybYtR2tXF5w1Gc+sTbx+mSiskwVUGVdW8tvH2lJ8lp3wAgnml0QWzQAFvCRLgpYKR0p8ArYx8jZVI5x0+MaxEJP7oGoeO9Ooh49IuQnLFyqb0syzpg0McmFOcJIM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(346002)(366004)(39380400002)(189003)(199004)(26005)(97736004)(186003)(2900100001)(316002)(59450400001)(6506007)(102836004)(36756003)(110136005)(106356001)(54906003)(72206003)(4326008)(8676002)(81156014)(25786009)(2950100002)(6666003)(305945005)(10290500003)(5660300001)(107886003)(14454004)(8936002)(3660700001)(3280700002)(105586002)(81166006)(478600001)(2906002)(6116002)(3846002)(1076002)(2501003)(6436002)(5250100002)(6486002)(68736007)(7736002)(10090500001)(6512007)(66066001)(53936002)(99286004)(86612001)(76176011)(22452003)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1115;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: WsxNYV9UnAAZRttAa/Mgp7U4QFJ3SAznVHkgWmuT2EEEzWPzWJIzBeGREfywVopTwgy1pQ7CmZc67BP4kj9Fq85iZbC1gMR68B8Kw2jmotumtMTSLIyyicLlit4E1kfFBpE0YYd9GMVELSW22jzKbPlOdzezFA2fP24r9W9rnnQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfef9354-4ca9-41b5-921f-08d581562cb8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:23.6348
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30461b5f-007f-4013-8552-08d581562718
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:21.2911
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1115
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
-[ Upstream commit 47d71bc75d072ce25c1063aa629e55e1cfb961b2 ]
+[ Upstream commit a9c47abbdd71dceeaf1b923e5ce10e700e036905 ]
 
-To avoid race with vchan_complete, use the race free way to terminate
-running transfer.
+Chip must not be in shutdown for reading temperature, so briefly leave
+shutdown if buffer is not already running
 
-Implement the device_synchronize callback to make sure that the terminated
-descriptor is freed.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/dma/amba-pl08x.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/iio/health/max30102.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index b52b0d55247e..97483df1f82e 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2182,7 +2182,7 @@ static int pl08x_terminate_all(struct dma_chan *chan)
- 	}
- 	/* Dequeue jobs and free LLIs */
- 	if (plchan->at) {
--		pl08x_desc_free(&plchan->at->vd);
-+		vchan_terminate_vdesc(&plchan->at->vd);
- 		plchan->at =3D NULL;
- 	}
- 	/* Dequeue jobs not yet fired as well */
-@@ -2193,6 +2193,13 @@ static int pl08x_terminate_all(struct dma_chan *chan=
-)
+diff --git a/drivers/iio/health/max30102.c b/drivers/iio/health/max30102.c
+index 9fb4bc73a6bc..3ac25b21cbfc 100644
+--- a/drivers/iio/health/max30102.c
++++ b/drivers/iio/health/max30102.c
+@@ -329,20 +329,31 @@ static int max30102_read_temp(struct max30102_data *d=
+ata, int *val)
  	return 0;
  }
 =20
-+static void pl08x_synchronize(struct dma_chan *chan)
-+{
-+	struct pl08x_dma_chan *plchan =3D to_pl08x_chan(chan);
-+
-+	vchan_synchronize(&plchan->vc);
-+}
-+
- static int pl08x_pause(struct dma_chan *chan)
+-static int max30102_get_temp(struct max30102_data *data, int *val)
++static int max30102_get_temp(struct max30102_data *data, int *val, bool en=
+)
  {
- 	struct pl08x_dma_chan *plchan =3D to_pl08x_chan(chan);
-@@ -2773,6 +2780,7 @@ static int pl08x_probe(struct amba_device *adev, cons=
-t struct amba_id *id)
- 	pl08x->memcpy.device_pause =3D pl08x_pause;
- 	pl08x->memcpy.device_resume =3D pl08x_resume;
- 	pl08x->memcpy.device_terminate_all =3D pl08x_terminate_all;
-+	pl08x->memcpy.device_synchronize =3D pl08x_synchronize;
- 	pl08x->memcpy.src_addr_widths =3D PL80X_DMA_BUSWIDTHS;
- 	pl08x->memcpy.dst_addr_widths =3D PL80X_DMA_BUSWIDTHS;
- 	pl08x->memcpy.directions =3D BIT(DMA_MEM_TO_MEM);
-@@ -2802,6 +2810,7 @@ static int pl08x_probe(struct amba_device *adev, cons=
-t struct amba_id *id)
- 		pl08x->slave.device_pause =3D pl08x_pause;
- 		pl08x->slave.device_resume =3D pl08x_resume;
- 		pl08x->slave.device_terminate_all =3D pl08x_terminate_all;
-+		pl08x->slave.device_synchronize =3D pl08x_synchronize;
- 		pl08x->slave.src_addr_widths =3D PL80X_DMA_BUSWIDTHS;
- 		pl08x->slave.dst_addr_widths =3D PL80X_DMA_BUSWIDTHS;
- 		pl08x->slave.directions =3D
+ 	int ret;
+=20
++	if (en) {
++		ret =3D max30102_set_powermode(data, true);
++		if (ret)
++			return ret;
++	}
++
+ 	/* start acquisition */
+ 	ret =3D regmap_update_bits(data->regmap, MAX30102_REG_TEMP_CONFIG,
+ 				 MAX30102_REG_TEMP_CONFIG_TEMP_EN,
+ 				 MAX30102_REG_TEMP_CONFIG_TEMP_EN);
+ 	if (ret)
+-		return ret;
++		goto out;
+=20
+ 	msleep(35);
++	ret =3D max30102_read_temp(data, val);
++
++out:
++	if (en)
++		max30102_set_powermode(data, false);
+=20
+-	return max30102_read_temp(data, val);
++	return ret;
+ }
+=20
+ static int max30102_read_raw(struct iio_dev *indio_dev,
+@@ -355,20 +366,19 @@ static int max30102_read_raw(struct iio_dev *indio_de=
+v,
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		/*
+-		 * Temperature reading can only be acquired while engine
+-		 * is running
++		 * Temperature reading can only be acquired when not in
++		 * shutdown; leave shutdown briefly when buffer not running
+ 		 */
+ 		mutex_lock(&indio_dev->mlock);
+-
+ 		if (!iio_buffer_enabled(indio_dev))
+-			ret =3D -EBUSY;
+-		else {
+-			ret =3D max30102_get_temp(data, val);
+-			if (!ret)
+-				ret =3D IIO_VAL_INT;
+-		}
+-
++			ret =3D max30102_get_temp(data, val, true);
++		else
++			ret =3D max30102_get_temp(data, val, false);
+ 		mutex_unlock(&indio_dev->mlock);
++		if (ret)
++			return ret;
++
++		ret =3D IIO_VAL_INT;
+ 		break;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val =3D 1000;  /* 62.5 */
 --=20
 2.14.1
