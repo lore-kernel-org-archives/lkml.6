@@ -1,118 +1,152 @@
-Return-Path: <gkohli@codeaurora.org>
-X-Google-Smtp-Source: AG47ELu7so/Po8TvvvcEYUgFnyldxAeJyFo81FRPsTOei+/zVHtfq/kK1NWNKwYiQEKGFtXVYtp+
-ARC-Seal: i=1; a=rsa-sha256; t=1520249803; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ukk4QZDaqxVUDKqG3K7dZwo6FCn1cTm6zni6sY5SF1bEdsB1ynix4RmPEwe08M/Ls9
-         FrshudfRqTCVdUEFhSb03OtfD1XwpUo67wPnT3Ne8oYTxM7vIuSFuqZdzCaaZgYUOXGd
-         f2e7o/Ml+ZSqioAJ9rym0jOgAy6Nv+dWprB5XTM3qeB8G+AphAXNBIpImWppAIrS2Sp4
-         WaUu21sDVpzjJ1gQhl1OQaMxr10z6eHu654+bFJapCmZa9TYrJ4/hsx78zs6QyPSDVV2
-         tNFvQagrkuQTuAU4RP9emJtLwrzIP/VSgV4OWBqj7IIpRLSJJtScSOfI6rQWHd9zgyEp
-         19VQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:dmarc-filter:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=PcuEUPtaNMlzgXjidhxNnHDTAkdRRc2eRDO4FbDtw2Q=;
-        b=nGo/tbk7upkGu1StMgEMb238dv6/WicJ2MzeERUsdD4rgTFNaJtxjTxPa3G1isyAQ0
-         BYVhRRlsqt6wTsBy88GDR8wQK++sPlZsKEb7pMTe+3ShJ+YzAkyf6t3nlthl/DhwV1xI
-         Slp4Osy5iBflt/niLlHi0U0C814iTVT7d6kaDrivuIb5PZrey/k0bfNV83wa8JcauN5/
-         fvQjp7yODA1vTBRaDLSLgUqPlSqff+HlMIPuE3bsrWMRTaZUejQkqZ8xsGiznKIoiUjc
-         9UrZNpy/1Dbae10UTIHyIsf6DzqPSWUIwe2lrdxjCYwJwOn1PWL2p4+WT++gIzPvxruR
-         y7fw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=K+KvR7oE;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=K+KvR7oE;
-       spf=pass (google.com: domain of gkohli@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=gkohli@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=K+KvR7oE;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=K+KvR7oE;
-       spf=pass (google.com: domain of gkohli@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=gkohli@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57F5D602B7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-To: jslaby@suse.com, mikey@neuling.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-From: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Subject: Query Regarding init block up due to tty_wait_until_sent
-Message-ID: <9863fc6d-bae1-4847-161a-40df4e914081@codeaurora.org>
-Date: Mon, 5 Mar 2018 17:06:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-923215-1520107939-2-5153228776378211222
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520107938; b=bihK22HW6CuvFkJK4WVM0JYqS6b4zMGh3vhb0FMyJumchwJ
+    s+lCQciBMJOXzjsCmjE/C8mLFldTy926gcVwRznGFzAqh387A0Nlt7ZOaG96SSN6
+    tq4kvLE5eJF2vD9VLyWGSWOYCY9h9SGCr7HMvaaov+MKJYtHcZX3xNgJvWgMiLnH
+    WqcAcMnFh/JlktnLYzmhMEGSJiSxodbSscvYJUPMb2cllOXOkrykXhXs67JS8PSw
+    t0bBfBcwrYrk1tKqH7bKvuJGq/dZBeLecFNiYAkYgkOdr6hfNRMGOH5jmfCZIdQW
+    ppW5Zx2XMISSu5UhZJcWAQVudi0PKAf5ckffIhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520107938; bh=2snNDMdLGzpmnBFlyAjUN0WYSVZY3BV/m/4JfbugPtM=; b=l
+    CeTRlsE7eKk+9DgY5HsuhU0Y4dcumfpAV6ekMfMuWxMjMWb72sBkLC1oRNtzL30k
+    GKxVW68gtPz75nLLHWaxM9GOHyfdnZKTfEiYsMENpFo9vQNeWafG+0bs/ndJrZ/j
+    iFeWneBPcP2278jASmqlyhQvwVpZQtzSR4kz/3ngPcF7I06lpgsRcwylX1ck1pxS
+    o3xpGDZD4OgF7Ic9jBvpHKpt7l5q3BiXanNfg3IHafjMy5aPw8ZDZuDLGj6Xj6/m
+    IUqvi/3uIzTaMaRVYgJgdfJf2VXqjrd/2DdmOwDXz1jyp8ga6kxeRnhtwZxu6VJD
+    /sqqpo3SEpsxDSey1hnJA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fYk0QCM5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20151216;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=hansenpartnership.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hansenpartnership.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fYk0QCM5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20151216;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=hansenpartnership.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hansenpartnership.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932098AbeCCUME (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 15:12:04 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49746 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752330AbeCCUMC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 3 Mar 2018 15:12:02 -0500
+Message-ID: <1520107919.3105.9.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/5] tpm: Trigger only missing TPM 2.0 self tests
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date: Sat, 03 Mar 2018 12:11:59 -0800
+In-Reply-To: <20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
+References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
+         <20180228195819.22231-2-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594097458647037599?=
-X-GMAIL-MSGID: =?utf-8?q?1594097458647037599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+On Wed, 2018-02-28 at 21:58 +0200, Jarkko Sakkinen wrote:
+> From: Alexander Steffen <Alexander.Steffen@infineon.com>
+> 
+> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to
+> work (necessitating a reboot). The problem seems to be that the TPM
+> gets into a state where the partial self-test doesn't return
+> TPM_RC_SUCCESS (meaning all tests have run to completion), but
+> instead returns TPM_RC_TESTING (meaning some tests are still running
+> in the background).  There are various theories that resending the
+> self-test command actually causes the tests to restart and thus
+> triggers more TPM_RC_TESTING returns until the timeout is exceeded.
+> 
+> There are several issues here: firstly being we shouldn't slow down
+> the boot sequence waiting for the self test to complete once the TPM
+> backgrounds them.  It will actually make available all functions that
+> have passed and if it gets a failure return TPM_RC_FAILURE to every
+> subsequent command.  So the fix is to kick off self tests once and if
+> they return TPM_RC_TESTING log that as a backgrounded self test
 
-We have seen few instances, where init is getting blocked due to wait in below call:
+I still think removing all logging traces is a mistake for something
+that can consume a significant amount of time in the boot sequence.
+ It's going to cause lost of people doing boot timings to waste lots of
+effort.
 
--002|schedule()
--003|schedule_timeout()  -> timeout for 30 seconds
--004|tty_wait_until_sent()
--005|tty_port_close_start.part.3()
--006|tty_port_close()
--007|uart_close()
--008|tty_name(inline)
--008|tty_release()
--009|__fput()
--010|____fput()
--011|task_work_run()
--012|do_notify_resume()
--013|work_pending(asm)
-  ---|end of frame
+However, removing the log messages makes the above statement a lie, so
+one of the two needs fixing.
 
-When i have checked the data structures, it seems there is pending data available in buffer, but uart_port got seems to free.
+[...]
+> @@ -852,27 +837,24 @@ static const struct tpm_input_header
+> tpm2_selftest_header = {
+>   */
+>  static int tpm2_do_selftest(struct tpm_chip *chip)
+>  {
+> +	struct tpm_buf buf;
+> +	int full;
+>  	int rc;
+> -	unsigned int delay_msec = 10;
+> -	long duration;
+> -	struct tpm2_cmd cmd;
+>  
+> -	duration = jiffies_to_msecs(
+> -		tpm2_calc_ordinal_duration(chip,
+> TPM2_CC_SELF_TEST));
+> -
+> -	while (1) {
+> -		cmd.header.in = tpm2_selftest_header;
+> -		cmd.params.selftest_in.full_test = 0;
+> -
+> -		rc = tpm_transmit_cmd(chip, NULL, &cmd,
+> TPM2_SELF_TEST_IN_SIZE,
+> -				      0, 0, "continue selftest");
+> +	for (full = 0; full < 2; full++) {
+> +		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS,
+> TPM2_CC_SELF_TEST);
+> +		if (rc)
+> +			return rc;
+>  
+> -		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
+> -			break;
+> +		tpm_buf_append_u8(&buf, full);
+> +		rc = tpm_transmit_cmd(chip, NULL, buf.data,
+> PAGE_SIZE, 0, 0,
+> +				      "attempting the self test\n");
 
-   (struct uart_state *)0xFFFFFFC3EDCE4000 = 0xFFFFFFC3EDCE4000 -> (
-     port = (
-       buf = (head = 0xFFFFFFC3E772BC80, work = (data = (counter = 1024), entry = (next = 0xFFFFFFC3EDCE4010, prev = 0xFFFFFFC3E
-       tty = 0xFFFFFFC3E772C280,
-       itty = 0xFFFFFFC3E772C280,
-       ops = 0xFFFFFF89D3E7EBB0,
-       lock = (rlock = (raw_lock = (owner = 3, next = 3), magic = 3735899821, owner_cpu = 4294967295, owner = 0xFFFFFFFFFFFFFFFF
-       blocked_open = 0,
-       count = 0,
-       open_wait = (lock = (rlock = (raw_lock = (owner = 0, next = 0), magic = 3735899821, owner_cpu = 4294967295, owner = 0xFFF
-       delta_msr_wait = (lock = (rlock = (raw_lock = (owner = 0, next = 0), magic = 3735899821, owner_cpu = 4294967295, owner =
-       flags = 0,
-       iflags = 5,
-       console = 1,
-       low_latency = 0,
-       mutex = (count = (counter = 1), wait_lock = (rlock = (raw_lock = (owner = 4, next = 4), magic = 3735899821, owner_cpu = 4
-       buf_mutex = (count = (counter = 1), wait_lock = (rlock = (raw_lock = (owner = 0, next = 0), magic = 3735899821, owner_cpu
-       xmit_buf = 0x0,
-       close_delay = 50,
-       closing_wait = 3000,
-       drain_delay = 0,
-       kref = (refcount = (counter = 1))),
-     pm_state = UART_PM_STATE_ON = 0x0,
-     xmit = (buf = 0xFFFFFFC3E7507000, head = 1, tail = 0),
-     refcount = (counter = 1),
-     remove_wait = (lock = (rlock = (raw_lock = (owner = 0, next = 0), magic = 3735899821, owner_cpu = 4294967295, owner = 0xFFF
-     uart_port = 0xFFFFFF89D58582A0 -> (
-       lock = (rlock = (raw_lock = (owner = 604, next = 604), magic = 3735899821, owner_cpu = 4294967295, owner = 0xFFFFFFFFFFFF
-       iobase = 0,
-       membase = 0xFFFFFF800C7C4000,
-       serial_in = 0x0,
-       serial_out = 0x0,
-       set_termios = 0x0,
-  
-So in that case write of data won't be possible, So to avoid that do we have to reduce timeout which seems high in current case.
-And how can we avoid this if data is available in tty, but uart_port seems to be free.
+There shouldn't be a \n in the string: the failure message already
+appends one.
 
-Please let me know, In case further info is required.
-
-Regards
-Gaurav
-
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+James
