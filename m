@@ -1,176 +1,160 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-727864-1520104347-2-2191245321462054582
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520104346; b=KK3KijKslwKzbi9Cnwcwa8g6g0MA2p1+JqmEQl/v67olCp7
-    +T03dfi49fea3CPw49pyCmbVzlLO/gyoYfq+8/Jqspvb95D0J3XZlfLBdn+Lh6uv
-    qVdrGHkxKIiAgcwlh4hMtIgbs79gY8om7uByQdy54QEut+BjIlYYWaIPkyAVnX45
-    ptW0C9ZcuNX/wey+lipGpCxVOl2RJuJ3W8hvL47k+k00K8TdcNd4gGt00zz6InmS
-    p/FIFOz8RehVDhhvQbu1GEMSWB1RvSqCsI0zMUf+njmi3q/jF8ETpjV1WO9D2Sg+
-    FBadyLLJJw0R1wMLdVl6tcI7+v6FbvH7rhEZGHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520104346; bh=zD2on6S51D7sa0dU5i1w70CnBjqvtn/Lgu4k7l
-    b8WhA=; b=u7r+Yocpa4RhoRsHf1rzDguxYF9xs8QhiDI38ApB2pR0SBZtVVpXp5
-    PYMKtxItjWtB95VqH25/Uh1jKVC6rRii/CFQGjZYzvgxmKFKvTciw0uUSuHj6JGp
-    0ykY5T0DNEE54SxdTgeXbQ+pmfNNsUTKUHoDXhTkJhlJpTlROb8agOJVpdzQSep0
-    aT/+5N070dXjEG69d6ckwVj81RGbm15lVkQdTY8ylWc7n/nsRl2UyK3tMyppWSuw
-    7iheGACHf3PeZnRlm5Pkl9Pi7gPFTZRqfAbx+dm01j8TS4DAqMjfHrMtVbetGb46
-    3H0hw97N+QMg2qnz73CCr17Q0AVg6CdA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=XShZJ/ts x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=T2t3z+Bd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tKlsHee1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=XShZJ/ts x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=T2t3z+Bd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tKlsHee1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeCCTMZ (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 14:12:25 -0500
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:38119 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752175AbeCCTMX (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Sat, 3 Mar 2018 14:12:23 -0500
-X-Google-Smtp-Source: AG47ELs4Q6F0zL+d/3JVK4ivpg5S0Pl7XWWM56J5CU6im4nOEm4lUwUUp37W0v9E8T/QLxoFHzLKebPKRIbfLmkrNPw=
+Return-Path: <outreachy-kernel+bncBCAMTT4T6ABRBFOW5LKAKGQE3LUW5TA@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1520085781; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=KADAW/PZWRtu/gZKWlYjQLRgZryaX4zE0Yx9IhdRW+tR/5IQGM/r40vmCYdN/XhFNO
+         eBRywVovkaal882JlnuYLOnf8duaU+WjCKqq5eLq/6ow1YYzN5oclQOL+F96Qj1uMQCt
+         29M7lKDc7vYUsjvmuxZ6FHu8jdhk80wK76YFogiGg00tRIBW+VMFaW90tObEgA81WE8R
+         OV1hPgrrZM04fGX6nrZDcrNitDx2h58CYt8H9IMYXIcu5LOc6/gM8tzJLxuURCVgjtgK
+         1GOkLjHXNkArQkH6lZHqLLUdPA0lZLGMkZ7BS8rasEITHrOC6pR+JCiyrsuM5V9CgExy
+         43KQ==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results:arc-message-signature
+         :arc-authentication-results;
+        bh=HD7+5F8K/fiG6Xx6TxMjNkWTzr3/g9VvEny8fMFAgcM=;
+        b=JKiNHysm5eoLyefvQURly/9dMf9bOU88JW7s+vvHwZFmD6tEMDEWtG89zJJ/DrRdp3
+         vIB5lN5A4rGeNa6YSWy+zA+N8qE9H6KPK4awd05sFHJLBDOCXjycG0uiMLMECwdau9mM
+         KEYFOPk9w19aUeot7732QqZivZMaX35CSFC9sy2BdIUPLKfnqa3wJzBJlCCcRnaJic56
+         4oDU+HwlrQcgdJJ2OzaWlUPLljL7dUVt6DtryNialS4eh9KaF2aXk8C4TsxiHw3VVQRU
+         ZAD1K05jdayqq0omrh74lWz65JgZDymtDF8xGIATSAX21V4ebKucULTvAuZfvcUAuH2U
+         pRBg==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=brsnESaq;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ef1FL8JB;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrbfow5lkakgqe3luw5ta@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRBFOW5LKAKGQE3LUW5TA@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=brsnESaq;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ef1FL8JB;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrbfow5lkakgqe3luw5ta@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRBFOW5LKAKGQE3LUW5TA@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1520085781; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=VogfZhtjSUX2w+aO9hiI2UI5Syn5wCyZPpEuUEOHaGe18x1cdM2YaeAmc/JmWSYPmW
+         KNL6sP35yhgmrPMHHiLzTQabFgukoitWR31fAxQK1Nf7+coOv8drWyIXNWME8dOzOYjj
+         Kpxtz04aZ4DyfO2atJqezxVVGCF6yxEHRcz+REwICrfc9xj95VKff8TX+M2qVV+TXRTZ
+         n1HzHaDQuQuDjPhVaP2eaUa3CGZNy/J4RbMUgpvJcp5qetr++fmIn0qN0U0VSPBTsGWN
+         g3Sq2Whh7DStlVVIW8+CPVTYqBM2sRar+ACsolstc5WyiuyLRUGaG+6MZnOdC8PHyqAV
+         vLng==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=HD7+5F8K/fiG6Xx6TxMjNkWTzr3/g9VvEny8fMFAgcM=;
+        b=uunjHQ83gDWF3cQNVgpuN+4EJhwC3QINiAn1pSL01VN4OCr9zygUtsXXXMB+FxdubS
+         VI+bEVr/BaCr+Jf2awaAmUeU6YubeMx3chS+3AtZjSc5NDjXAgxJOuwXXayYnrkxe+v9
+         DkU7b7d3qLofPu0E5FQNHqnsxK61PaiZShL4ScJ6o697iypvwKbw7O5MqBbWR+F7Ey8J
+         SS+1MpMEXKvHJHeONyUcye9/mVcpZ/7nXE39IeyaYz/OUcTGU7G9K7H7tviaiT2g0XsW
+         wx7v/wH+fpCDq/mN7ac71sA2SUgjTMhtWekeew/+5iJvyOk5lsrrCfSmxw8a4SXdV9Jm
+         f0HQ==
+ARC-Authentication-Results: i=2; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ER9jmqXj;
+       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c01::242 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Sender: outreachy-kernel@googlegroups.com
+X-Google-Smtp-Source: AG47ELt/dIJDrgow/BH7NDssrG9JGVSCQESdjQ+Xp9sGrq1W95E66c+35wrxgQmI18XQQmTKD4m01A==
+X-BeenThere: outreachy-kernel@googlegroups.com
+ARC-Seal: i=1; a=rsa-sha256; t=1520085780; cv=none;
+        d=google.com; s=arc-20160816;
+        b=HUJmY73RWfCsBqcJR4TaQg062/H8ZaXTIw2NZo3Bl4Yre9ERha/JIxB0Orn13lsp9o
+         zwxgEUp9Slb+p+VKSuIyUT9icbD5hkP0pc5qJacetTS0Lv9fL/oxJ+9dfVNcRGkyXtyA
+         3nTKVlnhf91TF/EfBAXZzm4pbm+ribuoYR+FhrdoP5pIxMu68MHfBdXFk1obaUdMDEvB
+         v7rbtlc1iMECxL4YrczQFjeyfKgY3jiE9CLNfyQh5MvLiniFUc+6i5Cs7iFlSxlccksp
+         Lkz5laH8TZsnS4yyeGohCVaYLq/YUIy1RjwXrAQHrJOMtv5zKnBdpNTHXzNCabd+nuoe
+         vIpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=IJh65k/VwyEPUk/YIa+GbIL5NJYiFGUgwl6s4o/vvSA=;
+        b=mSUpfrzUVLjHaX5cM1DNZlTQwv4wI3E52UcKm9Awy/pSz1XFszcaG6Z+lp9hBTRr8U
+         8miky67oC72Pv00S9KO7xtwM6BhBzPsL4Vp16LYVaACUCa6x4P2mCGSFpQ8Bxa0KY3Z+
+         YxIZjLL4YDMcgbyrZ/LV27cb3qfJenXEjgbLIYF8XHF7PUBnZtsanpd3wWxGMaQQT52v
+         yPT/NI11BJkXXc33ZGpxIIq+F+jDrlA2DJbD6h7CzohdLTfN/wIEb06ftj6JpXkZD0zw
+         cv9WkMpPP0eWPVJm9b5/KsmoH5QuFP3AViMs7QgYl66tNgqpWaebLHLValWxNfmQvq1N
+         IvPA==
+ARC-Authentication-Results: i=1; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ER9jmqXj;
+       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c01::242 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Sat, 3 Mar 2018 19:32:33 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: boris.brezillon@free-electrons.com
+Cc: Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	outreachy-kernel@googlegroups.com
+Subject: [Outreachy kernel] [PATCH] mtd: nand: Added spaces around ('=' and '<')
+Message-ID: <20180303140233.GA9634@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcnuc48xb167hu5nz3iv9uSp2jRw+M-w=yBihex6RTXYQ@mail.gmail.com>
-References: <20180301184335.248378-1-djkurtz@chromium.org> <CAHp75VfHuNHnjMqsvLZPSNeP57YX1CDZgf=EH-JNSh5bAVdUBA@mail.gmail.com>
- <CAGS+omCfVUPb0yq3XOEqO_zQ0_uppkKaGhqtB0OqXmQDK9xH1Q@mail.gmail.com>
- <CAHp75VfL82ujwBa1h0B8nEgBtFcBJPmS9ir7H5YWByDgxFGskA@mail.gmail.com>
- <CAE2855vbQyMwu8pmH-Sq1kA+=h5TJPWddTWPQoVdEqOn6sAyBw@mail.gmail.com> <CAHp75Vcnuc48xb167hu5nz3iv9uSp2jRw+M-w=yBihex6RTXYQ@mail.gmail.com>
-From: Aaron Durbin <adurbin@chromium.org>
-Date: Sat, 3 Mar 2018 12:12:21 -0700
-X-Google-Sender-Auth: _r9b5AfMxxhb9TKp7BHG7gw0QJU
-Message-ID: <CAE2855vimGkRscxZ4tOQ90NGECWe8x2Xg=OV0hgh=Ktf41SU=g@mail.gmail.com>
-Subject: Re: [PATCH v2] earlycon: Allow specifying a uartclk in options
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Aaron Durbin <adurbin@chromium.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Original-Sender: arushisinghal19971997@gmail.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@gmail.com header.s=20161025 header.b=ER9jmqXj;       spf=pass
+ (google.com: domain of arushisinghal19971997@gmail.com designates
+ 2607:f8b0:400e:c01::242 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
+X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
+X-Google-Group-Id: 672804067692
+List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
+List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
+List-Archive: <https://groups.google.com/group/outreachy-kernel
+List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
+ <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593925468888777014?=
+X-GMAIL-MSGID: =?utf-8?q?1593925468888777014?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 3, 2018 at 8:38 AM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Thu, Mar 1, 2018 at 11:24 PM, Aaron Durbin <adurbin@chromium.org> wrote:
->> On Thu, Mar 1, 2018 at 1:02 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>> On Thu, Mar 1, 2018 at 9:22 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
->>>> On Thu, Mar 1, 2018 at 11:47 AM Andy Shevchenko <andy.shevchenko@gmail.com>
->>>> wrote:
->>>
->>>> "earlycon simply does not utilize the information".
->>>>
->>>> earlycon parses iotype, mapbase and baud (from options).  However, it is
->>>> hard-coded to assume that the clock used to generate the UART bitclock is
->>>> always "BASE_BAUD * 16" (1843200).  While this may be true for many UARTs,
->>>> it isn't true for AMD's CZ/ST which has a 8250_dw and uses a fixed 48 MHz
->>>> clock.  The main 8250_dw driver uses devm_clk_get to get the "baudclk" and
->>>> uses its rate to initialize uartclk.  For AMD CZ/ST, this "baudclk" is
->>>> actually a set up in acpi_apd.c when there is an acpi match for "AMD0020",
->>>> with a rate read from the .fixed_clk_rate param of the corresponding
->>>> apd_device_desc.
->>>>
->>>> This patch attempts to add a way to inform earlycon about this clock.  As
->>>> noted above, the information is actually already in the kernel and used by
->>>> 8250_dw - I would happy be to hear recommendations for wiring this data
->>>> into earlycon that doesn't require adding another command line arg.
->>>
->>> And it should not require that for sure!
->>
->> But it does require that. There's an input clock to the uart ip block.
->> That is a design constraint by the hardware and is required to make
->> baud calculation work.
->
-> I mean it should not be user's headache to provide this information to
-> the system.
->
->> It's not a firmware problem.
->
-> If it's ACPI, then it's definitely firmware issue, since SPCR provides
-> a baudrate.
->
+Add spaces around ('=' and '<'),  to conform to the Linux
+kernel coding style. Issue found using checkpatch.
 
-earlycon is another implemetnation of driver binding/settings that is
-done before the rest of the kernel driver stack. SPCR provides
-baudrate, but that's only one piece to the puzzle. You need to know
-the UART input clock which you admit is hard coded in the current
-driver. It's not possible to configure the divisor in the UART without
-knowing the external clock. That's a real dependency that can't be
-worked around. The moment the code attempts to configure the baud it
-has to know the input clock -- otherwise the calculation is inherently
-wrong. Or are you suggesting to lie about the baud such that the the
-math works out even though the values are not real?
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+ drivers/mtd/nand/ams-delta.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->> Its the driver's problem in that it
->> assumes an input clock to the uart block that does not reflect
->> reality.
->
-> So, driver can't get this info from device tree or what?
+diff --git a/drivers/mtd/nand/ams-delta.c b/drivers/mtd/nand/ams-delta.c
+index d60ada4..9de6572 100644
+--- a/drivers/mtd/nand/ams-delta.c
++++ b/drivers/mtd/nand/ams-delta.c
+@@ -94,7 +94,7 @@ static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
+ {
+ 	int i;
+ 
+-	for (i=0; i<len; i++)
++	for (i = 0; i < len; i++)
+ 		ams_delta_write_byte(mtd, buf[i]);
+ }
+ 
+@@ -102,7 +102,7 @@ static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
+ {
+ 	int i;
+ 
+-	for (i=0; i<len; i++)
++	for (i = 0; i < len; i++)
+ 		buf[i] = ams_delta_read_byte(mtd);
+ }
+ 
+-- 
+2.7.4
 
-There is no device tree on x86. And ACPI driver binding is not fully
-initialized when earlycon is being processed. Yes, this can be solved
-by getting up the entire ACPI stack, but then that's not really
-'early' in the kernel's initialization sequence.
-
->
->>> Okay, configures a necessary IPs to feed UART with expected 1.8432M clock.
->>
->> That's only possible if there is a clock divider on the front end of
->> the uart block. For this hardware that's not the case. I actually did
->> this very thing on intel chromebook devices, but it was only possible
->> because there was a hardware divider that could be tuned to reach the
->> assumed clock that the code currently assumes.
->
-> OK.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180303140233.GA9634%40seema-Inspiron-15-3567.
+For more options, visit https://groups.google.com/d/optout.
