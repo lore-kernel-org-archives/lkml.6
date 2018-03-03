@@ -1,122 +1,86 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1625397-1519996778-2-2015486707899899760
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519996777; b=Fv1zSuvMZAXjo/Gxa7UMZPF0+7jBgwR0Wrm92CmiP7o363L
-    sRKvSy2LGi7Zm9JWG8O+MJJstOcSXAo/q9hzI/1Z+Xjua5AybOxhszm9zJGA3Saa
-    TwG1TmEnirTiIRyk4BvJxL6GOEyF4J6s4uRa3SzwBDQUd+35l2qAQnTH2iX2es8T
-    9tQe2mGIqT6Z3jYYz/QUqxwA4lb8AHgzAmX4h/ygqoPRrenkru0k7Q6nND5THst4
-    6mSLGsA23pYemK3+7f8sVt6HWP0aP/A6JYs996TGd8MJHXkzC6Z0v+jk02fVorZy
-    R33/1DYisGf2D8BFSalbd85Ta5FMr2XjNnq3k9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519996777; bh=L
-    /HwbyQa4fHJiCzoJGEZyT8AgDB6wmMTlxftGczVTL4=; b=YAvKoBetqrU/eepW/
-    N+Tx2LVGTErYswqmIB3PeF6T6lwzEyhMWoDkdnycNt0LzOmjRrnZsGDXY5suEpNA
-    /C19KlEK2PZNN2Fhcq3KZeYnFmfUKygEgHdwDjlIsadqYAt2y3a5aQ8fwavTKGfF
-    lS/Gw86uZmsEiuq2uY/xKMC1a+tcTKsVZqFjlI7VTBsIzJp6tK76ZRxPqkxifwTw
-    AtsMZXVD6RMX4D0EFWeERMwg7MPFzoB9ecy9Fs7Jq5Oof2nY/mhbkYzmYOt21Auf
-    a6yaYoKewwAGNB5YtZKbq/XhK38X68kZ1KGa3OIc65sa2Sva3ZfqIUMevMW5Z/e9
-    w1Wkw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f0wr0c0g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SXM99bJj;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=f0wr0c0g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SXM99bJj;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELuGs64Cphem+ZpP7QpIvwlWb2uQDoWcaq93O9GJr4ea1EEHMU3r6Dm49k5DCE7dt6ox962BOg==
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
-To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
- linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org, daniel.baluta@gmail.com
-Subject: [PATCH 1/6] Staging: iio: adis16209: Arrange headers in alphabetical
- order
-Date: Fri,  2 Mar 2018 18:49:23 +0530
-Message-Id: <ebfbecaba2151b9ec9f1369f42ad43cc7e9fe758.1519995673.git.shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1519995673.git.shreeya.patel23498@gmail.com>
+Return-Path: <jic23@kernel.org>
+X-Google-Smtp-Source: AG47ELsgA5ul+GXgrHCZu84MNXhep4GA9jEEZSFJQpM0wm7z1KyzKEW5oHEv/1X8gQOLw+rhPITA
+ARC-Seal: i=1; a=rsa-sha256; t=1520091552; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oDQr9bgTtap3eaHi44r33hKQS7KnXz8oW35zeWezabl0EovgRC3o/OhJX5AZZBy/J/
+         Zanz7JuI7HqAJy6HoYbkbKNuLaES7NefMXD4zppNE9wPX+VfwgfGx+AiYm3hwl0Y5ASb
+         TpzThrao+l5M2ScWOTQqj/Nkyc1IH742l6nnIO6fkRas59xFBjA9qoiL/qXu9uS+XJDU
+         a/+GYL6kJnBs4fi6JpUSVk529ecS7QST+xVXqxsfM2pJCv36fH6rFE3LLKPz3ytzGDpi
+         dndnTYb2McaMTNyqohL5qI46KtSX/RpBXyajrqUgUTAYuzsfLs/vLATcTevRZIIrXzNB
+         ABlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=A+HeEsWf2yUKjnFyXqjZvlr44/uEJGN0RYVu30NJ674=;
+        b=V8Z3yLXiYbbozRLdYQtUbxCAzPuyv0o8Iopowk1Z1dPugDAjLFiAbkaf3trURx/VeO
+         SuQHTJQ0Cdlp4ChlqQHxLJX/4Ep1sHzaOit7xDe7mSaQjqO6GwQUyikwU4ZfyCHzDYyI
+         GGxvvG8KYrLwZKr+ZZputF94+2SH+7oarc3CL88Dl4zfH+yNrBIwF3VTdaVf9Aae7mWM
+         q879udTgiTsP9GYE1f7SiNK1ueYIlPo4YaWVyRFxIItntAJrL2LSa3kfKs4QodwUH+hF
+         3zA4xn0MFasrlQP/g/0mF7UcQ0AbAC1A9bbMmkcfVYPU5J0S1zNnv5q2qVY/G+Ks+kOj
+         +GPQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7ADE2178D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sat, 3 Mar 2018 15:39:07 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Shreeya Patel <shreeya.patel23498@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+ pmeerw@pmeerw.net, gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+ devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+ daniel.baluta@gmail.com
+Subject: Re: [PATCH 1/6] Staging: iio: adis16209: Arrange headers in
+ alphabetical order
+Message-ID: <20180303153907.5b0616c0@archlinux>
+In-Reply-To: <ebfbecaba2151b9ec9f1369f42ad43cc7e9fe758.1519995673.git.shreeya.patel23498@gmail.com>
 References: <cover.1519995673.git.shreeya.patel23498@gmail.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Shreeya Patel <shreeya.patel23498@gmail.com>
+	<ebfbecaba2151b9ec9f1369f42ad43cc7e9fe758.1519995673.git.shreeya.patel23498@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593832133026828279?=
+X-GMAIL-MSGID: =?utf-8?q?1593931520242634948?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Arrange the headers in alphabetical order for cleanup
-purpose.
+On Fri,  2 Mar 2018 18:49:23 +0530
+Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
----
- drivers/staging/iio/accel/adis16209.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Arrange the headers in alphabetical order for cleanup
+> purpose.
+> 
+> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+(mostly to test other patches as I'd be really surprised if this one
+broke anything :)
 
-diff --git a/drivers/staging/iio/accel/adis16209.c b/drivers/staging/iio/accel/adis16209.c
-index 7fcef9a..58f604d 100644
---- a/drivers/staging/iio/accel/adis16209.c
-+++ b/drivers/staging/iio/accel/adis16209.c
-@@ -9,11 +9,11 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
- #include <linux/spi/spi.h>
- #include <linux/slab.h>
- #include <linux/sysfs.h>
--#include <linux/list.h>
--#include <linux/module.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
--- 
-2.7.4
+Jonathan
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> ---
+>  drivers/staging/iio/accel/adis16209.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/accel/adis16209.c b/drivers/staging/iio/accel/adis16209.c
+> index 7fcef9a..58f604d 100644
+> --- a/drivers/staging/iio/accel/adis16209.c
+> +++ b/drivers/staging/iio/accel/adis16209.c
+> @@ -9,11 +9,11 @@
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+>  #include <linux/spi/spi.h>
+>  #include <linux/slab.h>
+>  #include <linux/sysfs.h>
+> -#include <linux/list.h>
+> -#include <linux/module.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
