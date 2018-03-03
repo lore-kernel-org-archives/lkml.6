@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153505-1520117012-2-16057614048859394630
+X-Cyrus-Session-Id: sloti22d1t05-1145125-1520116978-3-614532402788499835
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520117012; b=IbjjPHXnCZJe2VNN9Z/Ug12Id6kYwZ06GuHGh/NqUBoancI
-    RnYcHaq72elFqu4Ap4A1MlJeCey+yglScVmk7K5+FN7OOc8iwUvmZNpUm2l6x15a
-    Zq46sv2MctIGmG9F3LN9GZDa6Fmo29AALLNA/2tcfYs9Qr0EA8yM/t9RS22eyvxg
-    xlz925e+q3X+Hes6raaomHbPC96zHrzsh0aKIjPG0BAUs61lqTnfFVYaS5nTIzto
-    Mm9ywCNiF3V6SSqUl+0rRQwkdop1H4vOHZ55xUVaOZPqqzlGAvGM/w/3jLkTF8M/
-    +qRLvclgiNQhfDWxGJEsS7M6NwF2pMQmDq41dhg==
+    t=1520116977; b=tqf1WTON8udpyh8NTIz0lYRDVI2RapjLIyuDJl/R0wd8ZwL
+    qgv+26/mVXX0deXjDXHP0Mw2tgfND21PPdPMluaeRiey7p9Z73HYBulYtzDdHijb
+    yXO2x/73FgQDvsrtcpcFsxG+NzbnlPnnSeUZv2cr7kHjirBDyCTy63HCbrus+p9A
+    T3V6ylZXtDx2NLgsCXpb/dq9+yW7M9gfCeARIcmHm+upIZnHWKwIO50GVDTUXToI
+    89nM+4j1En+h7fx9+VSqMzH34VJGdv8ATpSLwddk5G2KzJQkXeSUdGoFHfJsIfTx
+    X9cOhr/PrNs3Dm+7F0jaMbgfYsKl7hhUNuKVS4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520117012; bh=yI+rBC
-    I6miPUpfbBBKL8Z2wKiRgqxuam9AEFgX20ctw=; b=NhWEPht7WENJj9qLwg9100
-    UuMVGuWA4ZhFHBLcYnEQuQXcsGctGPJ4ysOQGZVb4WNrj0i+FOgQI2pLgVKsPc9s
-    UYjfvlu+v+JZKm3cPR7BY0iScO0/pAdNYKR4ABW5ah84hILdOUYOb8h8B1jhTN3/
-    TgqnAzybf2iT/Hc/8gc5/AnehgdJp0fgFnIAcjCqhoHv5FyynyI9mkp4fk4p4Y8R
-    ERZ/V55lFPXgcdRzdRAuINakzbcdf0/R3CbwAbgBpW0erOUwdHKhmXaEfZyihpcf
-    cTSUV1wCwYALJT932HTg4+HbIvk9mmU4dSpG8XeL+vjijHVTnAjfvbZyBcU70d8A
+    :mime-version:sender:list-id; s=arctest; t=1520116977; bh=I2RYKT
+    nFwqb8z+tWVjUhlS3Anlg1uh9/2kBvS0D0+UY=; b=vHbJVcBfzwMBUNGnjDxa6m
+    NyPiPaRxsASr2DF6y8ilMyNh9hXQtgxW8V4GrXWrsbW3Cge52C7QcNylN8ogFHBY
+    h0J416naEgY2mY1VBt3pFP0VFdu069PPoHstP4ItWM6kHwuy16Sl+3MamS4bl+t5
+    4ujpHW8K4CLOMK4lan7d30DMVH/xYUe/2C9n5t+q70AA9NVAmNtRSrU6y8vlWe+Z
+    fNVixKy4itVYmzYf6MB75Mh3oN8UyEOm+gIobsp561s8AlglhSo6TNlr3zmt8jqa
+    Psg9qNqGJXQv40Q3i7jzdGJQF95Lv2dtfNjCewFLC8CSG7JRrmjKB+rbDZOEtLRQ
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Hg6ZOcy2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=VJHKuC3+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Hg6ZOcy2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=VJHKuC3+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934978AbeCCWnK (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:43:10 -0500
-Received: from mail-bn3nam01on0119.outbound.protection.outlook.com ([104.47.33.119]:9830
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935616AbeCCWmm (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S932984AbeCCWmm (ORCPT <rfc822;greg@kroah.com>);
         Sat, 3 Mar 2018 17:42:42 -0500
+Received: from mail-by2nam03on0124.outbound.protection.outlook.com ([104.47.42.124]:55195
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935609AbeCCWmk (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:42:40 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+CC: Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 3.18 63/63] ima: relax requiring a file signature
- for new files with zero length
-Thread-Topic: [PATCH AUTOSEL for 3.18 63/63] ima: relax requiring a file
- signature for new files with zero length
-Thread-Index: AQHTsz+zQt9pvSXie0yumIJAgEVNmQ==
-Date: Sat, 3 Mar 2018 22:33:50 +0000
-Message-ID: <20180303223228.27323-63-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 3.18 61/63] ASoC: nuc900: Fix a loop timeout test
+Thread-Topic: [PATCH AUTOSEL for 3.18 61/63] ASoC: nuc900: Fix a loop timeout
+ test
+Thread-Index: AQHTsz+zNsDUo+gz/0Krj4U9qVvdlQ==
+Date: Sat, 3 Mar 2018 22:33:49 +0000
+Message-ID: <20180303223228.27323-61-alexander.levin@microsoft.com>
 References: <20180303223228.27323-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303223228.27323-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,76 +75,76 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1020;7:HJVCugpoXtjAlepKWaQ0np+A7NBrCV6KDRU+gZmIotQ7j81DIUKxrS2vCuN4xmPGsOQUnObZYIDR5Gs+sStehzbyhvmdQIA63q+oA+73JXETcx+fon3HAzCHFaMBJ2gWuFInPejlZjvXC/nhNLs87dqD0TcqdkMbkSBrq/FPpbUwiZp/AAaBitcyrrCu7wkJnMJqnNL4Jm8AVgsQ79l1V4mp1PvilEKdvzHElVZIxdTxfTeh4xDTY/uXGNcXoHqQ
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1018;7:4JgGwGDNYmpiCIVMSrx8597YQ9N1pm7iJ+qyWdS3HzJl8pu7EkJLdbYEWSacEnwcChy5Dnou9PRtejOZ4zFMVgNJ/MTKu3r9y3tYRZ66+muPL5zXHjBThYVc4Jtbc7njC1K1F53oMCBjFm3yL6dK4jaHhiZ6sBRhUhPy7+uokSXXcgvOewC8zNu55zRITQPrgQP3H6x95nagCOBMjIq6E+LqcIW30M8GKbLPGZRLcwbSgBA0UIymE/X4EBCgCMe6
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: bb33ea9b-1c87-4805-d1d8-08d5815811c2
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1020;
-x-ms-traffictypediagnostic: MW2PR2101MB1020:
+x-ms-office365-filtering-correlation-id: 0348623a-a6cd-49b2-9d65-08d58158112c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1018;
+x-ms-traffictypediagnostic: MW2PR2101MB1018:
+x-microsoft-antispam-prvs: <MW2PR2101MB101805DB32FDE6EC55325B35FBC40@MW2PR2101MB1018.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1018;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1018;
+x-forefront-prvs: 0600F93FE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39380400002)(39860400002)(376002)(396003)(199004)(189003)(478600001)(99286004)(6666003)(105586002)(1076002)(3660700001)(66066001)(14454004)(6116002)(3846002)(36756003)(8936002)(2501003)(68736007)(53936002)(22452003)(316002)(10090500001)(86612001)(2906002)(2900100001)(5250100002)(6346003)(81166006)(8676002)(5660300001)(2950100002)(6512007)(26005)(25786009)(3280700002)(81156014)(10290500003)(4326008)(107886003)(102836004)(86362001)(6486002)(54906003)(186003)(7736002)(6436002)(305945005)(97736004)(6506007)(106356001)(110136005)(72206003)(76176011)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1018;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB102056CAD16DE6D65A0BE3AEFBC40@MW2PR2101MB1020.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(192374486261705)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1020;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1020;
-x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(6436002)(5250100002)(99286004)(3846002)(6116002)(8936002)(22452003)(86612001)(86362001)(575784001)(4326008)(10090500001)(68736007)(6512007)(7736002)(97736004)(25786009)(76176011)(1076002)(6486002)(2501003)(66066001)(36756003)(107886003)(2950100002)(8676002)(305945005)(5660300001)(105586002)(53936002)(6666003)(3280700002)(81166006)(6506007)(106356001)(2906002)(81156014)(316002)(478600001)(72206003)(10290500003)(2900100001)(54906003)(110136005)(59450400001)(186003)(102836004)(26005)(14454004)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1020;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: gOOC/811kBiu9xZgvN6IaIV01k2gJEtUCfzcIaE8FJvgaAG90l4D+8Z4ul9K91V6fpA7RPGS9M8gONUSSbwmYMxfVpHsld5mRxlQsuUYwM0+lsojbSOJuF7K5SzwixcKYnNuHznJxDjqsTGrMfXsbewXfyvr+1h9lF+ZRhQ22+Y=
+x-microsoft-antispam-message-info: Gps9Sia97qD2UJx/epYBMWEyh05+adanvN8kinllhE8zIx+nW4+RHt55F5ENO8cPIoBzvuL3IRXxZaFdQR17j8PX+OywG8+cEmevRHC6PV7pfrxZNoRlJRt1SbtB9d5AoL5fYfAPe5nGscueAubhR36Ax1nVBzQy2cneI80N+hs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb33ea9b-1c87-4805-d1d8-08d5815811c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:33:50.2795
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0348623a-a6cd-49b2-9d65-08d58158112c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:33:49.3732
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1020
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1018
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit b7e27bc1d42e8e0cc58b602b529c25cd0071b336 ]
+[ Upstream commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 ]
 
-Custom policies can require file signatures based on LSM labels.  These
-files are normally created and only afterwards labeled, requiring them
-to be signed.
+We should be finishing the loop with timeout set to zero but because
+this is a post-op we finish with timeout =3D=3D -1.
 
-Instead of requiring file signatures based on LSM labels, entire
-filesystems could require file signatures.  In this case, we need the
-ability of writing new files without requiring file signatures.
-
-The definition of a "new" file was originally defined as any file with
-a length of zero.  Subsequent patches redefined a "new" file to be based
-on the FILE_CREATE open flag.  By combining the open flag with a file
-size of zero, this patch relaxes the file signature requirement.
-
-Fixes: 1ac202e978e1 ima: accept previously set IMA_NEW_FILE
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- security/integrity/ima/ima_appraise.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/nuc900/nuc900-ac97.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima=
-/ima_appraise.c
-index ee7618115756..0bdf01decb63 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -206,7 +206,8 @@ int ima_appraise_measurement(int func, struct integrity=
-_iint_cache *iint,
- 		if (opened & FILE_CREATED)
- 			iint->flags |=3D IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
--		    !(iint->flags & IMA_DIGSIG_REQUIRED))
-+		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-+		     (inode->i_size =3D=3D 0)))
- 			status =3D INTEGRITY_PASS;
- 		goto out;
- 	}
+diff --git a/sound/soc/nuc900/nuc900-ac97.c b/sound/soc/nuc900/nuc900-ac97.=
+c
+index f2f67942b229..84a4fc84d688 100644
+--- a/sound/soc/nuc900/nuc900-ac97.c
++++ b/sound/soc/nuc900/nuc900-ac97.c
+@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(struct snd_ac97 *a=
+c97,
+=20
+ 	/* polling the AC_R_FINISH */
+ 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+=20
+ 	if (!timeout) {
+@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd_ac97 *ac97, un=
+signed short reg,
+=20
+ 	/* polling the AC_W_FINISH */
+ 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
+-								&& timeout--)
++								&& --timeout)
+ 		mdelay(1);
+=20
+ 	if (!timeout)
 --=20
 2.14.1
