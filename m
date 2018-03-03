@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2899084-1519908536-2-13397509292787535485
+X-Cyrus-Session-Id: sloti22d1t05-2835548-1520036014-2-13746701029119898257
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,22 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519908535; b=LUliqGdmL63HyBTLCRGDV2CBr2T+2P60cDgRkQhS4DyfgpV
-    piK2DHJ9N9zz0HH5FXUM8E9SbGkii4MfwdISqX4Jb0N9Klfadupgkd/Dh9qS63OM
-    DqN8zpBosMwJ5wf+Mkqi47rfbAGkGJje+nXcaCqnGY9C/AN26kjI/vYaVHApE6dA
-    W6kkffKqstvvPVa0SrfFl4tHouh7wvLMGHVClEH1G7vcldu18Uh4Cgr6J0dFURxJ
-    3tQhiUr+6DuO4Z9ifpqzNeRD4zKHi+Z1jzFZ6LrP7oJDEu636g3zoYKCPssQho2O
-    nGqmaihQ6kUFrG2OgJIGGE5ARpCFoSbQjdVip2w==
+    t=1520036013; b=avi++Gf5j/4oo8IYmIAikfjY+F6LV+YxREYNm0DkALxff2x
+    5g89RIG4Qm7c+rmIn+/9DHqEtFANqnQf8YoEpV7PWslb9LYKOevyTC7odOmwvnVb
+    ostjCYtPQtPcNkTcc2tS3EmG253lpf42SEQ0/BB3IrSRQ1BUjmPA8/9EKdnVbFtl
+    On2emq+QGzM7+i4gnepv7qFKbYODsoY6x16gZTfjkJxLFpyRJCzJI7HxQxpDpvZu
+    H0gFKEiljuqpeGd6VS/ZJ//h8y0A3DYpZ2WUYl8xeBZJUg9SfrHym9begppdh1mq
+    MfG6GPx1Bio3aNKPIgDVujsASLiUY8tnN0kYARg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1519908535; bh=jSrjkyWZAp067yqj6RfzXfag4n
-    hzvG7DS6py7o2dDP0=; b=aQAgD52x9OKcaIvCmxLjFkMk1Wd/YVIm3hxE7qBbUr
-    pwwVX0wakRWoiHASoS6HjGfmSKnMZTyhyWstoeQIKqR6tLQgy14FeQcjPPX756fk
-    Ef1VIJLpN4qVyYM6860p4lmN/9g6yDlyBWP0Xe5qQVR31nocN+f+aHSYTMKvic6P
-    G+HJg+uG9LnDI7AqsAk1YhAJqj/iVRtwzEiDzfN8OORbr9AnMy8CsPR6YwGyk0G2
-    30G1HAe3cjV1g6EDsGLkYyUjpeqYriRYlph3OISW+/ffxXqdHCwCvRlGUR72CTz1
-    VxsFnx24504D4x0fIl/zY84nIMuAvBxAalSDZTy4i+fg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:in-reply-to:references:sender:list-id;
+    s=arctest; t=1520036013; bh=Gjnb8RUhOTODsB7dyEhsErJphvnU96EPcf2
+    VbBbVKlw=; b=SNG/MMtt1V+zxRXVL1IrITzHkrnYhfF22CwjIFYpesJL+MQE60o
+    7/ySY8jk9nEsHYpjSbNtkS9RGPtTi+vgKlsycxl0luG8Al2DPRTYOYavJTmaJIhZ
+    usywQwDl9GAAQxHm6MtPaSUgNKOjFyR1r+q7OcYGu1nwQwFQsgsaF8mK3PuBWz1K
+    gtV0aBn/PJC3MkVMp0ZyqC9JS+y07+ao+JzGQ/5x8ux9TcPmw+1BELkeUrDgHTJn
+    rLhtndh8SAtv8qEEudd3jndSZVr/QSOjkFMAFaKYcOVxUFiI9fB9YQxOoyZi/zKn
+    k+16M7Zx76/U57WQWYoJJXAbMWPDTW3UVFA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -37,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -47,12 +48,12 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030482AbeCAMsy (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 1 Mar 2018 07:48:54 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59676 "EHLO mx1.redhat.com"
+        id S935242AbeCCAMq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 2 Mar 2018 19:12:46 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57946 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1030347AbeCAMsx (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 1 Mar 2018 07:48:53 -0500
+        id S935239AbeCCAMp (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 2 Mar 2018 19:12:45 -0500
 From: Daniel Vacek <neelx@redhat.com>
 To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -62,46 +63,47 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
         Paul Burton <paul.burton@imgtec.com>,
         Daniel Vacek <neelx@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH] mm/page_alloc: fix memmap_init_zone pageblock alignment
-Date: Thu,  1 Mar 2018 13:47:45 +0100
-Message-Id: <1519908465-12328-1-git-send-email-neelx@redhat.com>
+Subject: [PATCH v3 0/2] mm/page_alloc: fix kernel BUG at mm/page_alloc.c:1913! crash in move_freepages()
+Date: Sat,  3 Mar 2018 01:12:24 +0100
+Message-Id: <cover.1520011944.git.neelx@redhat.com>
+In-Reply-To: <1519908465-12328-1-git-send-email-neelx@redhat.com>
+References: <1519908465-12328-1-git-send-email-neelx@redhat.com>
+In-Reply-To: <1519908465-12328-1-git-send-email-neelx@redhat.com>
+References: <1519908465-12328-1-git-send-email-neelx@redhat.com>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In move_freepages() a BUG_ON() can be triggered on uninitialized page structures
-due to pageblock alignment. Aligning the skipped pfns in memmap_init_zone() the
-same way as in move_freepages_block() simply fixes those crashes.
+Kernel can crash on failed VM_BUG_ON assertion in function move_freepages()
+on some rare physical memory mappings (with huge range(s) of memory
+reserved by BIOS followed by usable memory not aligned to pageblock).
 
-Fixes: b92df1de5d28 ("[mm] page_alloc: skip over regions of invalid pfns where possible")
-Signed-off-by: Daniel Vacek <neelx@redhat.com>
+crash> page_init_bug -v | grep resource | sed '/RAM .3/,/RAM .4/!d'
+<struct resource 0xffff88067fffd480>      4bfac000 -     646b1fff	System RAM (391.02 MiB = 400408.00 KiB)
+<struct resource 0xffff88067fffd4b8>      646b2000 -     793fefff	reserved (333.30 MiB = 341300.00 KiB)
+<struct resource 0xffff88067fffd4f0>      793ff000 -     7b3fefff	ACPI Non-volatile Storage ( 32.00 MiB)
+<struct resource 0xffff88067fffd528>      7b3ff000 -     7b787fff	ACPI Tables (  3.54 MiB = 3620.00 KiB)
+<struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff	System RAM (480.00 KiB)
+
+More details in second patch.
+
+v2: Use -1 constant for max_pfn and remove the parameter. That's
+    mostly just a cosmetics.
+v3: Split to two patches series to make clear what is the actual fix
+    and what is just a clean up. No code changes compared to v2 and
+    second patch is identical to original v1.
+
 Cc: stable@vger.kernel.org
----
- mm/page_alloc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cb416723538f..9edee36e6a74 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5359,9 +5359,14 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 			/*
- 			 * Skip to the pfn preceding the next valid one (or
- 			 * end_pfn), such that we hit a valid pfn (or end_pfn)
--			 * on our next iteration of the loop.
-+			 * on our next iteration of the loop. Note that it needs
-+			 * to be pageblock aligned even when the region itself
-+			 * is not as move_freepages_block() can shift ahead of
-+			 * the valid region but still depends on correct page
-+			 * metadata.
- 			 */
--			pfn = memblock_next_valid_pfn(pfn, end_pfn) - 1;
-+			pfn = (memblock_next_valid_pfn(pfn, end_pfn) &
-+						~(pageblock_nr_pages-1)) - 1;
- #endif
- 			continue;
- 		}
+Daniel Vacek (2):
+  mm/memblock: hardcode the max_pfn being -1
+  mm/page_alloc: fix memmap_init_zone pageblock alignment
+
+ mm/memblock.c   | 13 ++++++-------
+ mm/page_alloc.c |  9 +++++++--
+ 2 files changed, 13 insertions(+), 9 deletions(-)
+
 -- 
 2.16.2
