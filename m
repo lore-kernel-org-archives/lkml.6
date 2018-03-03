@@ -1,262 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932206AbeCCVvg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 16:51:36 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52501 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeCCVvf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 16:51:35 -0500
-X-Google-Smtp-Source: AG47ELsGwB066ELnussuE5qZQuFMUjkqsT+r+xpr9lx4xguzODJgT0z4LBZRRmXb4cyeRRnMmClurA==
-Date: Sun, 4 Mar 2018 00:51:30 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, xemul@parallels.com, gorcunov@openvz.org
-Subject: [PATCH v2] proc: fix /proc/*/map_files lookup some more
-Message-ID: <20180303215130.GA23480@avx2>
+        id S933946AbeCCWdE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 17:33:04 -0500
+Received: from sauhun.de ([88.99.104.3]:59748 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933915AbeCCWdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:33:00 -0500
+Date: Sat, 3 Mar 2018 23:32:57 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for 4.16
+Message-ID: <20180303223240.q3xmnxasstin4tfh@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="477lwxfjb7h2czfk"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.7.2 (2016-11-26)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I totally forgot that _parse_integer() accepts arbitrary amount of
-leading zeroes leading to the following lookups:
 
-		OK
-	# readlink /proc/1/map_files/56427ecba000-56427eddc000
-	/lib/systemd/systemd
+--477lwxfjb7h2czfk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-		bogus
-	# readlink /proc/1/map_files/00000000000056427ecba000-56427eddc000
-	/lib/systemd/systemd
-	# readlink /proc/1/map_files/56427ecba000-00000000000056427eddc000
-	/lib/systemd/systemd
+Linus,
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+here is a driver fix and a documentation fix (which makes dependency
+handling for the next cycle easier) from I2C.
 
- fs/proc/base.c                                         |    4 
- tools/testing/selftests/proc/.gitignore                |    4 
- tools/testing/selftests/proc/Makefile                  |    2 
- tools/testing/selftests/proc/proc-self-map-files-001.c |   82 ++++++++++++++++
- tools/testing/selftests/proc/proc-self-map-files-002.c |   85 +++++++++++++++++
- 5 files changed, 176 insertions(+), 1 deletion(-)
+Please pull.
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1916,6 +1916,8 @@ static int dname_to_vma_addr(struct dentry *dentry,
- 	unsigned long long sval, eval;
- 	unsigned int len;
- 
-+	if (str[0] == '0' && str[1] != '-')
-+		return -EINVAL;
- 	len = _parse_integer(str, 16, &sval);
- 	if (len & KSTRTOX_OVERFLOW)
- 		return -EINVAL;
-@@ -1927,6 +1929,8 @@ static int dname_to_vma_addr(struct dentry *dentry,
- 		return -EINVAL;
- 	str++;
- 
-+	if (str[0] == '0' && str[1])
-+		return -EINVAL;
- 	len = _parse_integer(str, 16, &eval);
- 	if (len & KSTRTOX_OVERFLOW)
- 		return -EINVAL;
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -1,2 +1,4 @@
--/proc-self-mem
-+/proc-self-map-files-001
-+/proc-self-map-files-002
- /proc-self-syscall
-+/proc-self-wchan
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -1,6 +1,8 @@
- CFLAGS += -Wall -O2
- 
- TEST_GEN_PROGS :=
-+TEST_GEN_PROGS += proc-self-map-files-001
-+TEST_GEN_PROGS += proc-self-map-files-002
- TEST_GEN_PROGS += proc-self-syscall
- TEST_GEN_PROGS += proc-self-wchan
- 
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-self-map-files-001.c
-@@ -0,0 +1,82 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+/* Test readlink /proc/self/map_files/... */
-+#include <errno.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <stdlib.h>
-+
-+static void pass(const char *fmt, unsigned long a, unsigned long b)
-+{
-+	char name[64];
-+	char buf[64];
-+
-+	snprintf(name, sizeof(name), fmt, a, b);
-+	if (readlink(name, buf, sizeof(buf)) == -1)
-+		exit(1);
-+}
-+
-+static void fail(const char *fmt, unsigned long a, unsigned long b)
-+{
-+	char name[64];
-+	char buf[64];
-+
-+	snprintf(name, sizeof(name), fmt, a, b);
-+	if (readlink(name, buf, sizeof(buf)) == -1 && errno == ENOENT)
-+		return;
-+	exit(1);
-+}
-+
-+int main(void)
-+{
-+	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
-+	void *p;
-+	int fd;
-+	unsigned long a, b;
-+
-+	fd = open("/dev/zero", O_RDONLY);
-+	if (fd == -1)
-+		return 1;
-+
-+	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE, fd, 0);
-+	if (p == MAP_FAILED)
-+		return 1;
-+
-+	a = (unsigned long)p;
-+	b = (unsigned long)p + PAGE_SIZE;
-+
-+	pass("/proc/self/map_files/%lx-%lx", a, b);
-+	fail("/proc/self/map_files/ %lx-%lx", a, b);
-+	fail("/proc/self/map_files/%lx -%lx", a, b);
-+	fail("/proc/self/map_files/%lx- %lx", a, b);
-+	fail("/proc/self/map_files/%lx-%lx ", a, b);
-+	fail("/proc/self/map_files/0%lx-%lx", a, b);
-+	fail("/proc/self/map_files/%lx-0%lx", a, b);
-+	if (sizeof(long) == 4) {
-+		fail("/proc/self/map_files/100000000%lx-%lx", a, b);
-+		fail("/proc/self/map_files/%lx-100000000%lx", a, b);
-+	} else if (sizeof(long) == 8) {
-+		fail("/proc/self/map_files/10000000000000000%lx-%lx", a, b);
-+		fail("/proc/self/map_files/%lx-10000000000000000%lx", a, b);
-+	} else
-+		return 1;
-+
-+	return 0;
-+}
-new file mode 100644
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-@@ -0,0 +1,85 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+/* Test readlink /proc/self/map_files/... with address 0. */
-+#include <errno.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+#include <stdlib.h>
-+
-+static void pass(const char *fmt, unsigned long a, unsigned long b)
-+{
-+	char name[64];
-+	char buf[64];
-+
-+	snprintf(name, sizeof(name), fmt, a, b);
-+	if (readlink(name, buf, sizeof(buf)) == -1)
-+		exit(1);
-+}
-+
-+static void fail(const char *fmt, unsigned long a, unsigned long b)
-+{
-+	char name[64];
-+	char buf[64];
-+
-+	snprintf(name, sizeof(name), fmt, a, b);
-+	if (readlink(name, buf, sizeof(buf)) == -1 && errno == ENOENT)
-+		return;
-+	exit(1);
-+}
-+
-+int main(void)
-+{
-+	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
-+	void *p;
-+	int fd;
-+	unsigned long a, b;
-+
-+	fd = open("/dev/zero", O_RDONLY);
-+	if (fd == -1)
-+		return 1;
-+
-+	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-+	if (p == MAP_FAILED) {
-+		if (errno == EPERM)
-+			return 2;
-+		return 1;
-+	}
-+
-+	a = (unsigned long)p;
-+	b = (unsigned long)p + PAGE_SIZE;
-+
-+	pass("/proc/self/map_files/%lx-%lx", a, b);
-+	fail("/proc/self/map_files/ %lx-%lx", a, b);
-+	fail("/proc/self/map_files/%lx -%lx", a, b);
-+	fail("/proc/self/map_files/%lx- %lx", a, b);
-+	fail("/proc/self/map_files/%lx-%lx ", a, b);
-+	fail("/proc/self/map_files/0%lx-%lx", a, b);
-+	fail("/proc/self/map_files/%lx-0%lx", a, b);
-+	if (sizeof(long) == 4) {
-+		fail("/proc/self/map_files/100000000%lx-%lx", a, b);
-+		fail("/proc/self/map_files/%lx-100000000%lx", a, b);
-+	} else if (sizeof(long) == 8) {
-+		fail("/proc/self/map_files/10000000000000000%lx-%lx", a, b);
-+		fail("/proc/self/map_files/%lx-10000000000000000%lx", a, b);
-+	} else
-+		return 1;
-+
-+	return 0;
-+}
+Thanks,
+
+   Wolfram
+
+
+The following changes since commit 4a3928c6f8a53fa1aed28ccba227742486e8ddcb:
+
+  Linux 4.16-rc3 (2018-02-25 18:50:41 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current-fixed
+
+for you to fetch changes up to 7c4246797b84e55e2dfaaf8a18033de9df7c18c1:
+
+  i2c: octeon: Prevent error message on bus error (2018-03-02 11:11:15 +0100)
+
+----------------------------------------------------------------
+Jan Glauber (1):
+      i2c: octeon: Prevent error message on bus error
+
+Peter Rosin (1):
+      dt-bindings: at24: sort manufacturers alphabetically
+
+Wolfram Sang (1):
+      Merge tag 'at24-4.16-rc4-for-wolfram' of git://git.kernel.org/.../brgl/linux into i2c/for-current
+
+ Documentation/devicetree/bindings/eeprom/at24.txt | 2 +-
+ drivers/i2c/busses/i2c-octeon-core.c              | 1 +
+ drivers/i2c/busses/i2c-octeon-core.h              | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+--477lwxfjb7h2czfk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqbIoQACgkQFA3kzBSg
+KbYBPhAAnZ0oENmfbmSKS3NZO4Cpvqsn2nlvW1IXj+oJhYfOa2VsMj4FApJs/g5S
+Tc+1/O1IkgYce3Rc/zhJqwM2ZoANkPNK609BPu28opkj4YVyZW5Nyuk8AyIMIt73
+kFizFz9KcNniHpOXnD3VhOmHBiqSnDepRqeQBTNBniFL6pKCVji99MllRx0OJHF7
+mFdONhU+2wEr2+RGVRpXiFw4qEW4xx2K35BluvKLDcmrGUMlPFj27kpPLeVbc2Rn
+HkFp5+TQh3jfw3yQeeOk9QeVEq8aUQ8FcngB84iHD7FQHGkp9G/5zzrMvHybzRsq
+Ej/ZK7X44b9n3szqI7EKNH02uRJnwV8aeSnR5GFOimOWpgnBSOX0kYa7Z4c0ubEk
+222KQyse/VVwj5RVDsHlFKhgv7yUwLPEb85ZBOR7dmwv+0Q+Dn4Gtp+dupIJ/vZx
+pKgoAu2/MForu9TEkIpLobMtB+eD59KP0ne8KHS5HZhvH3EaVs7ckB7K3E5qyZSg
+4jB2BhNMMdIZAdvlQsL6xozFnt43d/U/ag/QM6dE9loWmyXS1cy+5D5C4D6pVoTy
+crOv/Km11F9DpMTMqi1QZQ9gKBW55zRDcrBJtzbsn5qMCamGlURlkkoEvQOhCRyQ
+6mLxeVCEOnsBeQj+IwObLhhptUuXqKi4FIveTa3P6xbKUe1BROQ=
+=Bk5S
+-----END PGP SIGNATURE-----
+
+--477lwxfjb7h2czfk--
