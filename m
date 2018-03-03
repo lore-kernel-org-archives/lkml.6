@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1145125-1520115986-2-17908617117936930674
+X-Cyrus-Session-Id: sloti22d1t05-1145125-1520115985-2-7877983866772270307
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520115985; b=wSyERX57jK2EGwTTJ2UPfcLdbmHxH/tUWOXwo5LJR/J5GjH
-    vgEK0gXkX4Iv3yi7ge9WhLAnHtzqqJZ1pW+XJ6zSevqg3NMAGYwvnFtB/SIej9Yd
-    gt5YV0rRnXEiXdwSVdLR3l+PDrAocG5GsCk65esJkvus6AE8IRP4xni/pbH1jLWc
-    VPVFTmEAChIEwtFPp1CSpfR7wn+I204Gn7IMt0nUXOQX7Moi3DdEYDTeYdIO/oaI
-    ESrK1JDd5lCD+PNAqq1lo0SzuPfGrMdXGljxJE1kQOLs28zDAg2SWV7IDo08n7p+
-    nw3ZN+mNMYkzURSTv9du7qYmDUySZeHypRjxxlg==
+    t=1520115984; b=QeVpdXbNifGfWv8WCae+KW8mcYNqECXqOBllpn1eG+glEt+
+    D0MNcHL6s2ErdkZZKWIFeqYm2uqQ+GiEBWyqOxJSIXcUaDeeQm3cHOX4qffzQRru
+    nbIf2sLwkwP9FkqtXOP0Xgldc91YfzCRLLliLG6qS1eFoqjBESncc9t/tE33MUdD
+    vqDgFNiDx71zHYpuUgH/olcAv+2WCUBfQPTb/2/Aupm9kLvcX1aDLTNoe+RTLUmW
+    X0B/Z4jYWPFZHHwLsY9oCPjro3EYtFAHaC742Dz/D4H7THvozMt9twgnLsfyn+E7
+    ULEAhbf2ulLiHFxSI8t1T26jGRReWAllH+aWNmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520115985; bh=5tPS+d
-    +KmWCtkhEe7agsEKrEEZax+cPm5pm+zT/mjlk=; b=FDjfPta7T0ClxlHtshIxdf
-    5PkvPsymSs597eVJLuqkStNP7EtpWnOOKG94rR7G78oDg4T8g115RtPAd+3fSG6A
-    f+B6YvqW1PvDCY3RABOHbJ0wG7R9LVXd75Lyjh3DvbLSSKz0c4uvfrXXt+KRahoK
-    6BPvchGcXnqEp7UlLKyP22GD6KUL4m32AmHOqEGVAUfSMbgSZRd8QdQsALInIX9Y
-    3deum8mwraPF2AccDc8x8wQaJp1GwLfVHzNsvcRfEpJbVQ/9ocYr2Su41PQnLx2V
-    QhY9AL1A1OyOw2WDwcA9zT92B6R85huAc3iWMdMM3T5XA6tsRIlehBRJ4axulonA
+    :mime-version:sender:list-id; s=arctest; t=1520115984; bh=i4RusG
+    9MVCNR46m6Gj3/AyUe1Xpx8BLdIHh4ezc76AI=; b=JVMw0kJrfOlTW04GukSnDa
+    Uur/IX6zGTDh6z7+RsxaC+Jr7AUzn3sUbppphvCGmukClmTh2xll1BqUUxpWYhCO
+    ia3vKJpYmwAr3IYcWJs7OBYfMHXV/6PXcgzNCWUtdtPGD796Y9f2hJu2ITzISytL
+    7o2Fbu+38X1oWOGHnbA/U7JJogpb6U48MBU65Jn8tfVNVyv8HzxqGhbenIazE9sQ
+    VQCJ74fqI2x9fD7sFx8jkDSGN0PX+KpCn7tkiGOrs1is5BkI6+8nr78MY9VxdYLg
+    KjIa4z+F3EWTOBU2fXSZaKtQovQZTWDAWVPTy/1DSuRpSiLvGlHX6RDjR4zWrVwQ
     ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=j3Atz8Bg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ea+bKY88 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=j3Atz8Bg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ea+bKY88 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932516AbeCCW0A (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:26:00 -0500
-Received: from mail-bl2nam02on0099.outbound.protection.outlook.com ([104.47.38.99]:14560
+        id S932481AbeCCWZc (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:25:32 -0500
+Received: from mail-bl2nam02on0132.outbound.protection.outlook.com ([104.47.38.132]:39076
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932455AbeCCWZ6 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:25:58 -0500
+        id S932448AbeCCWZ2 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:25:28 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Lorenzo Colitti <lorenzo@google.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+CC: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 031/102] net: xfrm: allow clearing socket
- xfrm policies.
-Thread-Topic: [PATCH AUTOSEL for 4.15 031/102] net: xfrm: allow clearing
- socket xfrm policies.
-Thread-Index: AQHTsz5k6vidm2Jm3kat1VS31EbCBg==
-Date: Sat, 3 Mar 2018 22:24:27 +0000
-Message-ID: <20180303222318.26006-31-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 030/102] perf report: Fix -D output for user
+ metadata events
+Thread-Topic: [PATCH AUTOSEL for 4.15 030/102] perf report: Fix -D output for
+ user metadata events
+Thread-Index: AQHTsz5jsIAHAv6kX06xBIvU5c0c2Q==
+Date: Sat, 3 Mar 2018 22:24:26 +0000
+Message-ID: <20180303222318.26006-30-alexander.levin@microsoft.com>
 References: <20180303222318.26006-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222318.26006-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,27 +81,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHSPR01MB353;7:oJfhfEuwUZyOu/EgqEOHh08S1N2IXWlh3lJIusruuDW6mdsshzHR/ckc4W/MnTezJFiDyHLSwL5MK9ftWW2z5Opj/6v4+adcV5/OwnzmDX0U6azk2NgXiVcQfLd3/tnAz8crU4uKVV1j8drT6Q25M9WKbFs9tyefwFeSZKnglj9UhuTPJCm2bbmn9GuW5Zsj9veI1idw6wik36Y5KV6Z38RXXguKMfgTtkhOyUP+0MNik5mhvDg0E8xrtLG2eYVN
+x-microsoft-exchange-diagnostics: 1;MWHSPR01MB353;7:DJuT6uP9C7NUqPfqzGnmpL1ab31A6tY2tYVMI1Ycf4flTyi2fO9dupXMeFhfd4ZWqwDDAJhP2zf0S1TbQGj/hcmwx6czuBS1VT1VRpR9AtxqwKXigGh+ydjHGYCVuSQDhxFw2jsJYPMitR+sN7HCFZVvFv0Nb4gXO2EzhZLLXB5wOTdZKTm9UDjp7ObIFSvVMzvA7PGYRCl+kIY64/W+uhdvZ/yrDJINcCm4MYVARMgX9pqliEB6ZMpFLFRIoUGR
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 98951461-240a-41f8-209c-08d58155bba6
+x-ms-office365-filtering-correlation-id: f263ff3c-547d-462b-6b7e-08d58155a7cd
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MWHSPR01MB353;
 x-ms-traffictypediagnostic: MWHSPR01MB353:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MWHSPR01MB353B904E9407EF6B3A56F36FBC40@MWHSPR01MB353.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(211936372134217)(153496737603132);
+x-microsoft-antispam-prvs: <MWHSPR01MB3534DF7F9BFAFC1D3671237FBC40@MWHSPR01MB353.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(85827821059158)(42068640409301)(84791874153150)(228905959029699);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MWHSPR01MB353;BCL:0;PCL:0;RULEID:;SRVR:MWHSPR01MB353;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39860400002)(39380400002)(199004)(189003)(6506007)(966005)(8676002)(59450400001)(8936002)(575784001)(36756003)(105586002)(2900100001)(3280700002)(81166006)(81156014)(99286004)(6116002)(1076002)(316002)(110136005)(26005)(3846002)(72206003)(5660300001)(102836004)(68736007)(305945005)(10290500003)(76176011)(86612001)(2906002)(478600001)(7736002)(14454004)(86362001)(3660700001)(186003)(97736004)(54906003)(6486002)(6436002)(6306002)(10090500001)(53936002)(66066001)(6512007)(25786009)(2950100002)(6666003)(2501003)(107886003)(5250100002)(106356001)(4326008)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHSPR01MB353;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: g7SHTWuUuDowida6b23Zc2fE7esp66RKF09fSxYFi4tKO031QA8Lf9B6LTZBIx7QRPCThdlwTKDWhpPjrVbLCD52P3dsuiZlQaqL15uX3k1oIOjRT07YdRwjF+FkAQLrnZqn/9NXWgIct32/NSW7DGrmcv/gfR4iwYgLg4UVpgE=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39860400002)(39380400002)(199004)(189003)(6506007)(966005)(8676002)(59450400001)(8936002)(7416002)(575784001)(36756003)(105586002)(2900100001)(3280700002)(81166006)(81156014)(99286004)(6116002)(1076002)(316002)(110136005)(26005)(3846002)(72206003)(5660300001)(102836004)(68736007)(305945005)(10290500003)(76176011)(86612001)(2906002)(478600001)(7736002)(14454004)(86362001)(3660700001)(186003)(97736004)(54906003)(6486002)(6436002)(6306002)(10090500001)(53936002)(66066001)(6512007)(25786009)(2950100002)(2501003)(107886003)(39060400002)(5250100002)(106356001)(4326008)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHSPR01MB353;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: nzgEis81TlU6c0++YHE24h6rEVjBdQUyXd6aT67zKW5+/spMSAYNuO0fi9GzvPCZjSWsOVVfV8Qu//TUqRJvxiYYOUd5Jj7AzCs31K9Y/Tv+oslOECPj3qr1lSwmuyNhanRe8FO2p1ZHnsRaj5xgZjX4wu35wUliikpO0hcBcGU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98951461-240a-41f8-209c-08d58155bba6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:24:27.5409
+X-MS-Exchange-CrossTenant-Network-Message-Id: f263ff3c-547d-462b-6b7e-08d58155a7cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:24:26.9471
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -107,72 +112,81 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Lorenzo Colitti <lorenzo@google.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit be8f8284cd897af2482d4e54fbc2bdfc15557259 ]
+[ Upstream commit f250b09c779550e4a7a412dae6d3ad34d5201019 ]
 
-Currently it is possible to add or update socket policies, but
-not clear them. Therefore, once a socket policy has been applied,
-the socket cannot be used for unencrypted traffic.
+The PERF_RECORD_USER_ events are synthesized by the tool to assist in
+processing the PERF_RECORD_ ones generated by the kernel, the printing
+of that information doesn't come with a perf_sample structure, so, when
+dumping the event fields using 'perf report -D' there were columns that
+end up not being printed.
 
-This patch allows (privileged) users to clear socket policies by
-passing in a NULL pointer and zero length argument to the
-{IP,IPV6}_{IPSEC,XFRM}_POLICY setsockopts. This results in both
-the incoming and outgoing policies being cleared.
+To tidy up a bit this, fake a perf_sample structure with zeroes to have
+the missing columns printed and avoid the occasional surprise with that.
 
-The simple approach taken in this patch cannot clear socket
-policies in only one direction. If desired this could be added
-in the future, for example by continuing to pass in a length of
-zero (which currently is guaranteed to return EMSGSIZE) and
-making the policy be a pointer to an integer that contains one
-of the XFRM_POLICY_{IN,OUT} enum values.
+Before:
 
-An alternative would have been to interpret the length as a
-signed integer and use XFRM_POLICY_IN (i.e., 0) to clear the
-input policy and -XFRM_POLICY_OUT (i.e., -1) to clear the output
-policy.
+0 0x45b8 [0x68]: PERF_RECORD_MMAP -1/0: [0xffffffffc12ec000(0x4000) @ 0]: x=
+ /lib/modules/4.14.0+/kernel/fs/nls/nls_utf8.ko
+0x4620 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 27820
+0x4648 [0x18]: PERF_RECORD_CPU_MAP: 0-3
+0 0x4660 [0x28]: PERF_RECORD_COMM: perf:27820/27820
+0x4a58 [0x8]: PERF_RECORD_FINISHED_ROUND
+447723433020976 0x4688 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4001): 27820/27820:=
+ 0xffffffff8f1b6d7a period: 1 addr: 0
 
-Tested: https://android-review.googlesource.com/539816
-Signed-off-by: Lorenzo Colitti <lorenzo@google.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+After:
+
+  $ perf report -D | grep PERF_RECORD_ | head
+  0 0xe8 [0x20]: PERF_RECORD_TIME_CONV: unhandled!
+  0 0x108 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 32555
+  0 0x130 [0x18]: PERF_RECORD_CPU_MAP: 0-3
+  0 0x148 [0x28]: PERF_RECORD_COMM: perf:32555/32555
+  0 0x4e8 [0x8]: PERF_RECORD_FINISHED_ROUND
+  448743409421205 0x170 [0x28]: PERF_RECORD_COMM exec: sleep:32555/32555
+  448743409431883 0x198 [0x68]: PERF_RECORD_MMAP2 32555/32555: [0x55e11d75a=
+000(0x208000) @ 0 fd:00 3147174 2566255743]: r-xp /usr/bin/sleep
+  448743409443873 0x200 [0x70]: PERF_RECORD_MMAP2 32555/32555: [0x7f0ced316=
+000(0x229000) @ 0 fd:00 3151761 2566238119]: r-xp /usr/lib64/ld-2.25.so
+  448743409454790 0x270 [0x60]: PERF_RECORD_MMAP2 32555/32555: [0x7ffe84f6d=
+000(0x2000) @ 0 00:00 0 0]: r-xp [vdso]
+  448743409479500 0x2d0 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4002): 32555/32555=
+: 0xffffffff8f84c7e7 period: 1 addr: 0
+  $
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 9aefcab0de47 ("perf session: Consolidate the dump code")
+Link: https://lkml.kernel.org/n/tip-todcu15x0cwgppkh1gi6uhru@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/xfrm/xfrm_policy.c | 2 +-
- net/xfrm/xfrm_state.c  | 7 +++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ tools/perf/util/session.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index bd6b0e7a0ee4..c135ed9bc8c4 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1256,7 +1256,7 @@ EXPORT_SYMBOL(xfrm_policy_delete);
-=20
- int xfrm_sk_policy_insert(struct sock *sk, int dir, struct xfrm_policy *po=
-l)
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 5c412310f266..1ea5b95ee93e 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1350,10 +1350,11 @@ static s64 perf_session__process_user_event(struct =
+perf_session *session,
  {
--	struct net *net =3D xp_net(pol);
-+	struct net *net =3D sock_net(sk);
- 	struct xfrm_policy *old_pol;
+ 	struct ordered_events *oe =3D &session->ordered_events;
+ 	struct perf_tool *tool =3D session->tool;
++	struct perf_sample sample =3D { .time =3D 0, };
+ 	int fd =3D perf_data__fd(session->data);
+ 	int err;
 =20
- #ifdef CONFIG_XFRM_SUB_POLICY
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index a3785f538018..54e21f19d722 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2056,6 +2056,13 @@ int xfrm_user_policy(struct sock *sk, int optname, u=
-8 __user *optval, int optlen
- 	struct xfrm_mgr *km;
- 	struct xfrm_policy *pol =3D NULL;
+-	dump_event(session->evlist, event, file_offset, NULL);
++	dump_event(session->evlist, event, file_offset, &sample);
 =20
-+	if (!optval && !optlen) {
-+		xfrm_sk_policy_insert(sk, XFRM_POLICY_IN, NULL);
-+		xfrm_sk_policy_insert(sk, XFRM_POLICY_OUT, NULL);
-+		__sk_dst_reset(sk);
-+		return 0;
-+	}
-+
- 	if (optlen <=3D 0 || optlen > PAGE_SIZE)
- 		return -EMSGSIZE;
-=20
+ 	/* These events are processed right away */
+ 	switch (event->header.type) {
 --=20
 2.14.1
