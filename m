@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1211789-1520118938-2-4034509581249981343
+X-Cyrus-Session-Id: sloti22d1t05-1204544-1520118937-2-15669646940087545965
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520118938; b=pXJn3hi0pg+wTLKyt6UMP3mfa9h8rUC8UUSL2eEeqLt3cV6
-    Ulh4IixCISZ/UtiSMPf2jN0DAgTEv04Ru7kI2i/yal0hqiEKaiXwutMEbQXNcTwu
-    KiWvrFGOCKZQvevgSoZTFix0ONmgicDUqIPZhD4nZEyCE/VGUcJ9m0dnLcgk+LM+
-    ijvb//+aEnPlzWkgg6gi8jdzNnGpS08Kd3zX7ONS1ceqsnC4bALNMKyqskJTgK/f
-    nZArXyQoj5d3RGBVqz17KC6+UFxSEjBBU+u0dj4I4H7rtwZFsX1JWnPtwkX5SyFU
-    N2iE/N3RyLaqgFBSvc/iT13m2Px8cZLlEpkb+bA==
+    t=1520118936; b=sDdIxfor5elr0mqAsuVqDZRnTVcc5H8vatProG+j3TXug2+
+    TD4lAImKN2Yy8HLiGtHRQpH6ojyeuTdghcaF3a0LY9NOWXFzPK4rs0GGfo8fRF8B
+    iGEpKLqHpBrGH/C30sdMJNRydJA2nIsN1Ssv61pla9RXy80ZKfqVQ9V1KRxHD5mQ
+    rgIzPhVjy4XiFIorfxCoJcRqkGxhXeJ7yvutt0SEG3IXAXBSuSu/aHIulqBSMh/D
+    geR5vCnclGHAFHD+BlnTR6ljIo3CHG6WS3F8nqq9/Icob3tKzFjGseYIZLj3eKVF
+    QvdjTuk6RT9qm5yYMJMGUWDanD65o97Mlb+Sfug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520118938; bh=wzHzvZ
-    H9sN1p39Jn+iVdyRj9LlwMiavWllhUjziLXjk=; b=AUgi9zJdq2XDiNLY+oROis
-    tAYhxetupos/93SlHRKlO5sNCTgHj08UXGs8wcXdQd+duqyg7G+FLmFhr6UhXbXU
-    srBRldo57Y8fHXWV0mExqGSCuq5Lefpm28vkgyK3aIS+HTxJgv/TTcCYRiOeGZqz
-    dSAQbZI5QLkEXfn8SQzmn+S1J7PTKNVNpXvdqeGSoYcMrF5yYGUVLEKbh86HZV2f
-    yeydObr4b5akb5brnGKNXTXwkghKdIpozXMzBmCqv1twdfaFGbJJ/NuAGmFNFLvS
-    L+3EYOqQUOU2QsYmbwA4T4oQn8gC2UWyLohPmtkAgTgZ+UtV8lNRHyPLYrEX7dcQ
+    :mime-version:sender:list-id; s=arctest; t=1520118936; bh=Ms7WjO
+    g1MczygxUj+nraci2EWiSkc7CB/bkaIXfxSyg=; b=vtmeGu9SCVHgaslKidgXVT
+    fKXoRGuje/9A28W4L+meBbEglVohONorqom227K+E9OhwQ5ijDWdhLt9w94K2yQ1
+    rISt2myH37gUPm9uXmuM2q+dSrQgRUFaUBvOqTfhXTxQYwdpEpNqrOyfw+5Jpoh7
+    AR2Wr7YvDksouc+OyHlDLEA0/4H9rEoL5Q5We047W1A2SdwG9WsCLy2MwHKB555R
+    1CyAzqGF92hs+DNHXnsgj6JGqslVsDd0sbqqVEoLONcBPeCQRNZiNvGVbatmOGyz
+    rXz09dbVK1fiGCgQEb0Jtk6u+gI5zKYuH25cwMZFfQJmMYMKUwOJmycOGrubAoUw
     ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P8ywlOT+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dG6uf02B x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=P8ywlOT+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dG6uf02B x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,26 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934939AbeCCWiT (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:38:19 -0500
-Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:19904
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S932069AbeCCXOh (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:14:37 -0500
+Received: from mail-by2nam01on0114.outbound.protection.outlook.com ([104.47.34.114]:65056
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934892AbeCCWiP (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:38:15 -0500
+        id S935001AbeCCWjG (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:39:06 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Tom Hromatka <tom.hromatka@oracle.com>,
-        John Stultz <john.stultz@linaro.org>,
+CC: Shikhar Dogra <shidogra@cisco.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 028/115] sysrq: Reset the watchdog timers
- while displaying high-resolution timers
-Thread-Topic: [PATCH AUTOSEL for 4.4 028/115] sysrq: Reset the watchdog timers
- while displaying high-resolution timers
-Thread-Index: AQHTsz9RcR/xsnyaVk2rtxGZDjECDQ==
-Date: Sat, 3 Mar 2018 22:31:04 +0000
-Message-ID: <20180303223010.27106-28-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 036/115] driver: (adm1275) set the m,b and R
+ coefficients correctly for power
+Thread-Topic: [PATCH AUTOSEL for 4.4 036/115] driver: (adm1275) set the m,b
+ and R coefficients correctly for power
+Thread-Index: AQHTsz9TtSgJAAWslkS3MvRrnk7CQA==
+Date: Sat, 3 Mar 2018 22:31:09 +0000
+Message-ID: <20180303223010.27106-36-alexander.levin@microsoft.com>
 References: <20180303223010.27106-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303223010.27106-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,104 +76,73 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1067;7:gczo8N2wMvVvIGVAPgc+A6xm19oJJHggbkM/oGwAMBj2/zfJM4AhWzG9k5WpRafZP9wbkJXJg1zmkg1ptDBIjPgd+ZyQ1Qk5DyF5VivLaBWujPwWyApE2K5AIfMMSi8HFc0lERs0xGDF8umakazbiH+/gwWpvmr1HH/NinBGgGNH0obctkVWuovHN2bQXH5sRypt264uVjJh/mA/5qo4ERdNUmi9TLv+U57wxbKoz8x6FD+NN8GXcpHTKpHr8WmU
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0938;7:LIOcAMGudURUQljjcJCgaXmf0wuUTUBp7QfdSDIGCi6L8hOJ5DiRn03KWTrY9i8mPhFxRUYlyLHRZzYupICdKVKErF0r8K6qgWUAYTZkQNZZuZYED6Z5pgEB4qaqa/3AaCOhxcekoFNmoicESQpjMA7HyM/N1dVn6N4HQu0EpJPwBZ2L2+aAmXfG07SxAWZ4gwF6/JpdC1hCLoPOqyBFGkfFqno99cNYAW1HBgck67wwJ5ImtgVCqRaXVhx5uraC
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a767c910-cf04-4db3-59b2-08d581577122
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1067;
-x-ms-traffictypediagnostic: MW2PR2101MB1067:
+x-ms-office365-filtering-correlation-id: 4699441b-8b5b-4c67-2831-08d581579101
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0938;
+x-ms-traffictypediagnostic: MW2PR2101MB0938:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB1067899B2ABCBA4D43F4E24AFBC40@MW2PR2101MB1067.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1067;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1067;
+x-microsoft-antispam-prvs: <MW2PR2101MB093806B70350BD3E6A840E40FBC40@MW2PR2101MB0938.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(270121546159015)(28532068793085)(89211679590171)(232431446821674)(95692535739014);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231220)(944501244)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0938;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0938;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39860400002)(39380400002)(346002)(199004)(189003)(4326008)(5250100002)(86362001)(1076002)(2501003)(110136005)(6666003)(81156014)(2906002)(8936002)(305945005)(81166006)(2950100002)(7736002)(10290500003)(26005)(186003)(3660700001)(478600001)(72206003)(107886003)(8676002)(3280700002)(59450400001)(2900100001)(76176011)(6116002)(25786009)(3846002)(102836004)(6506007)(5660300001)(97736004)(10090500001)(86612001)(106356001)(99286004)(6512007)(66066001)(316002)(53936002)(14454004)(105586002)(36756003)(6486002)(54906003)(6436002)(68736007)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1067;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: KbKU0cUQ9RhrtzBFJw3BuDDvrgJpxXPXFFPu7TIVAkmpZ0NF3R0pK3Ij+KAh/rZbeNz7RaGRx2/YHIpqCvk1u6hdYnh8XJowLryGrlL7aU5GBPlRWv/i2eGs5RxClDZj2cxCoFAhF0L03D7Os4F6z8shgScPdywiVtMyMu4YP1g=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(199004)(189003)(54906003)(4326008)(72206003)(22452003)(478600001)(25786009)(66066001)(966005)(6436002)(6512007)(14454004)(6306002)(53936002)(2906002)(6486002)(105586002)(99286004)(10290500003)(3846002)(106356001)(6116002)(305945005)(5660300001)(110136005)(1076002)(36756003)(316002)(2900100001)(2501003)(5250100002)(10090500001)(59450400001)(102836004)(68736007)(2950100002)(26005)(97736004)(186003)(6506007)(8676002)(107886003)(3660700001)(7736002)(575784001)(86362001)(81166006)(86612001)(81156014)(76176011)(8936002)(3280700002)(22906009)(142933001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0938;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: d5VmOtCh3eQAHsSreWqxVKEqCEEnwVxs21SilfqFho3JjRt/g9c7CyGOWkbHxzcDuvS5KjfUwSS6ICwPBxavwy1oWe5Rb33m2UKC+2UUrSOAnSb3bvoImlJ1aT9U3WMLlwVAiczLZSJ58eKWhH7ECeP2X0gJr0nCweGdec45ydA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a767c910-cf04-4db3-59b2-08d581577122
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:04.9946
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4699441b-8b5b-4c67-2831-08d581579101
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:09.7759
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1067
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0938
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Tom Hromatka <tom.hromatka@oracle.com>
+From: Shikhar Dogra <shidogra@cisco.com>
 
-[ Upstream commit 0107042768658fea9f5f5a9c00b1c90f5dab6a06 ]
+[ Upstream commit 6faecba0b3da7b617bf72bef422bf0d3bb6dfe7d ]
 
-On systems with a large number of CPUs, running sysrq-<q> can cause
-watchdog timeouts.  There are two slow sections of code in the sysrq-<q>
-path in timer_list.c.
+Seems like coefficient values for m, b and R under power have been
+put in the wrong order. Rearranging them properly to get correct
+values of coefficients for power.
 
-1. print_active_timers() - This function is called by print_cpu() and
-   contains a slow goto loop.  On a machine with hundreds of CPUs, this
-   loop took approximately 100ms for the first CPU in a NUMA node.
-   (Subsequent CPUs in the same node ran much quicker.)  The total time
-   to print all of the CPUs is ultimately long enough to trigger the
-   soft lockup watchdog.
+For specs, please refer to table 7 (page 35) on
+http://www.analog.com/media/en/technical-documentation/data-sheets/ADM1075.=
+pdf
 
-2. print_tickdevice() - This function outputs a large amount of textual
-   information.  This function also took approximately 100ms per CPU.
-
-Since sysrq-<q> is not a performance critical path, there should be no
-harm in touching the nmi watchdog in both slow sections above.  Touching
-it in just one location was insufficient on systems with hundreds of
-CPUs as occasional timeouts were still observed during testing.
-
-This issue was observed on an Oracle T7 machine with 128 CPUs, but I
-anticipate it may affect other systems with similarly large numbers of
-CPUs.
-
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
-Reviewed-by: Rob Gardner <rob.gardner@oracle.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+Fixes: 904b296f308d ("hwmon: (adm1275) Introduce configuration data structu=
+re for coeffcients")
+Signed-off-by: Shikhar Dogra <shidogra@cisco.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- kernel/time/timer_list.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/hwmon/pmbus/adm1275.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index ba7d8b288bb3..ef4f16e81283 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -16,6 +16,7 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/kallsyms.h>
-+#include <linux/nmi.h>
+diff --git a/drivers/hwmon/pmbus/adm1275.c b/drivers/hwmon/pmbus/adm1275.c
+index 188af4c89f40..18477dd1e243 100644
+--- a/drivers/hwmon/pmbus/adm1275.c
++++ b/drivers/hwmon/pmbus/adm1275.c
+@@ -95,8 +95,8 @@ static const struct coefficients adm1075_coefficients[] =
+=3D {
+ 	[0] =3D { 27169, 0, -1 },		/* voltage */
+ 	[1] =3D { 806, 20475, -1 },	/* current, irange25 */
+ 	[2] =3D { 404, 20475, -1 },	/* current, irange50 */
+-	[3] =3D { 0, -1, 8549 },		/* power, irange25 */
+-	[4] =3D { 0, -1, 4279 },		/* power, irange50 */
++	[3] =3D { 8549, 0, -1 },		/* power, irange25 */
++	[4] =3D { 4279, 0, -1 },		/* power, irange50 */
+ };
 =20
- #include <asm/uaccess.h>
-=20
-@@ -96,6 +97,9 @@ print_active_timers(struct seq_file *m, struct hrtimer_cl=
-ock_base *base,
-=20
- next_one:
- 	i =3D 0;
-+
-+	touch_nmi_watchdog();
-+
- 	raw_spin_lock_irqsave(&base->cpu_base->lock, flags);
-=20
- 	curr =3D timerqueue_getnext(&base->active);
-@@ -207,6 +211,8 @@ print_tickdevice(struct seq_file *m, struct tick_device=
- *td, int cpu)
- {
- 	struct clock_event_device *dev =3D td->evtdev;
-=20
-+	touch_nmi_watchdog();
-+
- 	SEQ_printf(m, "Tick Device: mode:     %d\n", td->mode);
- 	if (cpu < 0)
- 		SEQ_printf(m, "Broadcast device\n");
+ static const struct coefficients adm1275_coefficients[] =3D {
 --=20
 2.14.1
