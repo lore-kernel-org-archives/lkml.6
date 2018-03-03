@@ -1,74 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751836AbeCCHqC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 02:46:02 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:64444 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751331AbeCCHqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 02:46:01 -0500
-Subject: Re: [PATCH 05/21] powerpc: Avoid comparison of unsigned long >= 0 in
- pfn_valid
-To: Mathieu Malaterre <malat@debian.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-References: <20180225172236.29650-1-malat@debian.org>
- <20180225172236.29650-6-malat@debian.org>
- <55d52f37-c24d-c2da-43c6-73a55403d3b6@c-s.fr>
- <20180226084602.GR21977@gate.crashing.org>
- <CA+7wUsz7srOXwehLjuSn_SEgCUkGxu9bq6aOw5AeOaiiipBNtg@mail.gmail.com>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <298c9ecc-831b-4d70-b86c-f586a319a133@c-s.fr>
-Date: Sat, 3 Mar 2018 08:45:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751877AbeCCIDv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 03:03:51 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43826 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751814AbeCCIDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 03:03:49 -0500
+From: Dongjiu Geng <gengdongjiu@huawei.com>
+To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@linaro.org>,
+        <marc.zyngier@arm.com>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
+        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
+        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
+        <devel@acpica.org>
+CC: <gengdongjiu@huawei.com>, <huangshaoyu@huawei.com>
+Subject: [PATCH v10 0/5] set VSESR_EL2 by user space and support NOTIFY_SEI notification
+Date: Sun, 4 Mar 2018 00:09:35 +0800
+Message-ID: <1520093380-42577-1-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUsz7srOXwehLjuSn_SEgCUkGxu9bq6aOw5AeOaiiipBNtg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.90]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+1. Detect whether KVM can set set guest SError syndrome
+2. Support to Set VSESR_EL2 and inject SError by user space.
+3. Support live migration to keep SError pending state and VSESR_EL2 value.
+4. ACPI 6.1 adds support for NOTIFY_SEI as a GHES notification mechanism, so support this
+   notification in software, KVM or kernel ARCH code call handle_guest_sei() to let ACP driver
+   to handle this notification.
 
+Dongjiu Geng (5):
+  arm64: KVM: Prepare set virtual SEI syndrome value
+  arm64: KVM: export the capability to set guest SError syndrome
+  arm/arm64: KVM: Introduce set and get per-vcpu event
+  ACPI / APEI: Add SEI notification type support for ARMv8
+  arm64: handle NOTIFY_SEI notification by the APEI driver
 
-Le 02/03/2018 à 20:54, Mathieu Malaterre a écrit :
-> On Mon, Feb 26, 2018 at 9:46 AM, Segher Boessenkool
-> <segher@kernel.crashing.org> wrote:
->> On Mon, Feb 26, 2018 at 07:32:03AM +0100, Christophe LEROY wrote:
->>> Le 25/02/2018 à 18:22, Mathieu Malaterre a écrit :
->>>> -#define pfn_valid(pfn)              ((pfn) >= ARCH_PFN_OFFSET && (pfn) <
->>>> max_mapnr)
->>>> +#define pfn_valid(pfn) \
->>>> +            (((pfn) - ARCH_PFN_OFFSET) < (max_mapnr - ARCH_PFN_OFFSET))
->>>
->>> What will happen when ARCH_PFN_OFFSET is not nul and pfn is lower than
->>> ARCH_PFN_OFFSET ?
->>
->> It will work fine.
->>
->> Say you are asking for  a <= x < b  so (in actual integers, no overflow)
->> that is  0 <= x-a < b-a  and you also assume x-a overflows, so that we
->> are actually comparing  x-a+M < b-a  with M = 2**32 or such (the maximum
->> value in the unsigned integer type plus one).  This comparison is
->> obviously always false.
->>
->> (It also works if b < a btw).
->>
->>
-> Thanks Segher !
-> 
-> Christophe does that clarify things or do you want me to update the
-> commit message ?
-> 
+ Documentation/virtual/kvm/api.txt    | 37 +++++++++++++++++++++++--
+ arch/arm/include/asm/kvm_host.h      |  6 ++++
+ arch/arm/kvm/guest.c                 | 12 ++++++++
+ arch/arm64/include/asm/kvm_emulate.h |  5 ++++
+ arch/arm64/include/asm/kvm_host.h    |  7 +++++
+ arch/arm64/include/asm/system_misc.h |  1 +
+ arch/arm64/include/uapi/asm/kvm.h    | 10 +++++++
+ arch/arm64/kernel/traps.c            |  4 +++
+ arch/arm64/kvm/guest.c               | 26 ++++++++++++++++++
+ arch/arm64/kvm/inject_fault.c        |  5 ++++
+ arch/arm64/kvm/reset.c               |  4 +++
+ arch/arm64/mm/fault.c                | 10 +++++++
+ drivers/acpi/apei/Kconfig            | 15 ++++++++++
+ drivers/acpi/apei/ghes.c             | 53 ++++++++++++++++++++++++++++++++++++
+ include/acpi/ghes.h                  |  1 +
+ include/uapi/linux/kvm.h             |  1 +
+ virt/kvm/arm/arm.c                   | 18 ++++++++++++
+ 17 files changed, 213 insertions(+), 2 deletions(-)
 
-No it is fine for me.
-
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+-- 
+1.9.1
