@@ -1,27 +1,27 @@
 Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520107258; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520107255; cv=none;
         d=google.com; s=arc-20160816;
-        b=qwZhfhlBQ+7fUQJncnlK9iPk2ICcYe6a856FzMuHJM8ET+Ow6kUnYJNY0pCYA77BYp
-         7X5YAueykdnQHeZur9bpzq8uuFZ/gStJVgaOiubV45FZIBrwVEC0Z2KUYAziYxzc7Ppi
-         AIUQ1TeYOz63utpIaDdG4NzJeNi3k04ateQYfCEAo6ycAGfBGTHTHbGvVVQOxEU85Nt/
-         Ui1gFLsG5kvYRBZo/xdoOc382WgEAT06Eza2PDbhYqYm0gwgNs2kVn4Yq25mMB77nghj
-         wgsgWt2c+bBHlWFRMHh79ZpjCoIRSlcvN6Kp7ElzesFArYfm54U6BjebCO0NWCVTClyN
-         kncw==
+        b=iNLAAu3s3+E8xrtRCmrJGyEZpCKlkpVtzNL72D6PHoITupzML6EBpS1cwrhIe8rX9d
+         ZWUgnSFMSlkixeqo+p4Yy2ARTMw0NffF2u4+0NTGpujELdD7XN4cPRDrFJgKHOee3Zfb
+         oglp6R1FLWD0JpZnqt233po58LcI5Rmys1jEusA/jotl652TG6FxsltMltwXIbymakna
+         tKhxwOZYGoy27ZeC8Q1IwQPQkrphomyDLGmgniKwHgaoQIHuNEE5E5wkxKHB27jLrC4v
+         ynGBL/lqltJe7y/VMGhNmlm+b+944lTYODhu1eM8SVZtK6bdcZyb7zGQfTt0e05skMke
+         4d+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=KQyraGzgL2BfWmdWMxkT4k6zq5PQe0AOt35gZYsjocA=;
-        b=LRIVpmeEb8jB7eIPDjDf7X9S6VrkehDVvhVuriVbBD82mMwI/OZEbWmvtPwljkQd2g
-         /fyufqiPAj7chVKQsrITtADvx7cMP8jAa4Z0gYxQDVdmEj+iLTDBsQnSWZFFN+Ko1NeS
-         r09rLobYw5ETC2LCCjch7hDuy3mHy2x+YgQKUYT60feXV/l4P0HJibdOwHaNfiwSsliR
-         Z0UW1OcZDllZbFsIXZLGHqVRXOCP0KURG4i0oqpxCvCY59nWEwenasxAHPFkecnApSdp
-         dv8MVZP2svdPvYr71mBhpsDd4ny2+R4M8C6zba0lu1p7FUte7ybwFGTmBKrcbe1vUiQ6
-         aWAg==
+        bh=5TxvGdsaV9Q3GCtsaATV+rvjt6uBoMZsYF001PO/C7A=;
+        b=MIyzuIAVS+uztDRRYUDw+tVXHrzqii5czKSS3tTUtR3d5525LJKgfp1EqXG1/+xVgS
+         8619Azcaoj9bl9El3/3XAhDWHt569wZaHHxnt0Ikn5JwHSBLw8Zpno9duFSuIpwhI9lx
+         +NrU9oOOmW6QlayNBEXPxgWmUfdpbde98Z7YXq4V4ERDriX8vorachTVbuvp+2hdJQge
+         8jweoxbRboXRQbq+kNMdsRHQ5sTazEstLSJOBA6tYglLQsJnP78/aD/jD6G9dOzppDny
+         tALFNXm4NrTAVj7OzOToUqvz4wNzIGB+og468pQ6MlYju6kbUyPzKge3gii1d+Dg67zE
+         rtfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AG47ELsiupmziPuiEBDLerBcCJHbJQMS9bKOBfW2dhrevi0+9CcN/ZlYpCS9hBiSBzPhPchnZ8N5Fw==
+X-Google-Smtp-Source: AG47ELtANWcLpdlvBmrE4Ev/kWHgWeEjs3AGw0afBwzOLM8VmwIfAXVBBOJoXu8n948E7PsYeNNteg==
 From: Alexander Popov <alex.popov@linux.com>
 To: kernel-hardening@lists.openwall.com,
 	Kees Cook <keescook@chromium.org>,
@@ -69,222 +69,644 @@ To: kernel-hardening@lists.openwall.com,
 	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	alex.popov@linux.com
-Subject: [PATCH RFC v9 5/7] lkdtm: Add a test for STACKLEAK
-Date: Sat,  3 Mar 2018 23:00:30 +0300
-Message-Id: <1520107232-14111-6-git-send-email-alex.popov@linux.com>
+Subject: [PATCH RFC v9 3/7] gcc-plugins: Add STACKLEAK plugin for tracking the kernel stack
+Date: Sat,  3 Mar 2018 23:00:28 +0300
+Message-Id: <1520107232-14111-4-git-send-email-alex.popov@linux.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593947988928753257?=
-X-GMAIL-MSGID: =?utf-8?q?1593947988928753257?=
+X-GMAIL-THRID: =?utf-8?q?1593947985029435564?=
+X-GMAIL-MSGID: =?utf-8?q?1593947985029435564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Introduce two lkdtm tests for the STACKLEAK feature: STACKLEAK_ALLOCA
-and STACKLEAK_DEEP_RECURSION. Both of them check that the current task
-stack is properly erased (filled with STACKLEAK_POISON).
+The STACKLEAK feature erases the kernel stack before returning from
+syscalls. That reduces the information which kernel stack leak bugs can
+reveal and blocks some uninitialized stack variable attacks. Moreover,
+STACKLEAK provides runtime checks for kernel stack overflow detection.
 
-STACKLEAK_ALLOCA tests that:
- - check_alloca() allows alloca calls which don't exhaust the kernel stack;
- - alloca calls which exhaust/overflow the kernel stack hit BUG() in
-    check_alloca().
+This commit introduces the STACKLEAK gcc plugin. It is needed for:
+ - tracking the lowest border of the kernel stack, which is important
+    for the code erasing the used part of the kernel stack at the end
+    of syscalls (comes in a separate commit);
+ - checking that alloca calls don't cause stack overflow.
 
-STACKLEAK_DEEP_RECURSION tests that exhausting the current task stack
-with a deep recursion is detected by CONFIG_VMAP_STACK (which is implied
-by CONFIG_GCC_PLUGIN_STACKLEAK).
+So this plugin instruments the kernel code inserting:
+ - the check_alloca() call before alloca and the track_stack() call
+    after it;
+ - the track_stack() call for the functions with a stack frame size
+    greater than or equal to CONFIG_STACKLEAK_TRACK_MIN_SIZE.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+The STACKLEAK feature is ported from grsecurity/PaX. More information at:
+  https://grsecurity.net/
+  https://pax.grsecurity.net/
+
+This code is modified from Brad Spengler/PaX Team's code in the last
+public patch of grsecurity/PaX based on our understanding of the code.
+Changes or omissions from the original code are ours and don't reflect
+the original grsecurity/PaX code.
+
 Signed-off-by: Alexander Popov <alex.popov@linux.com>
 ---
- drivers/misc/Makefile          |   3 +
- drivers/misc/lkdtm.h           |   4 ++
- drivers/misc/lkdtm_core.c      |   2 +
- drivers/misc/lkdtm_stackleak.c | 136 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 145 insertions(+)
- create mode 100644 drivers/misc/lkdtm_stackleak.c
+ arch/Kconfig                           |  14 +
+ arch/x86/kernel/dumpstack.c            |  20 ++
+ fs/exec.c                              |  33 +++
+ scripts/Makefile.gcc-plugins           |   3 +
+ scripts/gcc-plugins/stackleak_plugin.c | 470 +++++++++++++++++++++++++++++++++
+ 5 files changed, 540 insertions(+)
+ create mode 100644 scripts/gcc-plugins/stackleak_plugin.c
 
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index c3c8624..2b11823 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -65,6 +65,9 @@ lkdtm-$(CONFIG_LKDTM)		+= lkdtm_perms.o
- lkdtm-$(CONFIG_LKDTM)		+= lkdtm_refcount.o
- lkdtm-$(CONFIG_LKDTM)		+= lkdtm_rodata_objcopy.o
- lkdtm-$(CONFIG_LKDTM)		+= lkdtm_usercopy.o
-+lkdtm-$(CONFIG_LKDTM)		+= lkdtm_stackleak.o
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 368e2fb..a4a8fba 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -542,6 +542,8 @@ config GCC_PLUGIN_STACKLEAK
+ 	bool "Erase the kernel stack before returning from syscalls"
+ 	depends on GCC_PLUGINS
+ 	depends on HAVE_ARCH_STACKLEAK
++	imply VMAP_STACK
++	imply SCHED_STACK_END_CHECK
+ 	help
+ 	  This option makes the kernel erase the kernel stack before it
+ 	  returns from a system call. That reduces the information which
+@@ -558,6 +560,18 @@ config GCC_PLUGIN_STACKLEAK
+ 	   * https://grsecurity.net/
+ 	   * https://pax.grsecurity.net/
+ 
++config STACKLEAK_TRACK_MIN_SIZE
++	int "Minimum stack frame size of functions tracked by STACKLEAK"
++	default 100
++	range 0 4096
++	depends on GCC_PLUGIN_STACKLEAK
++	help
++	  The STACKLEAK gcc plugin instruments the kernel code for tracking
++	  the lowest border of the kernel stack (and for some other purposes).
++	  It inserts the track_stack() call for the functions with a stack
++	  frame size greater than or equal to this parameter.
++	  If unsure, leave the default value 100.
 +
-+KASAN_SANITIZE_lkdtm_stackleak.o := n
- 
- KCOV_INSTRUMENT_lkdtm_rodata.o	:= n
- 
-diff --git a/drivers/misc/lkdtm.h b/drivers/misc/lkdtm.h
-index 9e513dc..4b2b8e3 100644
---- a/drivers/misc/lkdtm.h
-+++ b/drivers/misc/lkdtm.h
-@@ -83,4 +83,8 @@ void lkdtm_USERCOPY_STACK_FRAME_FROM(void);
- void lkdtm_USERCOPY_STACK_BEYOND(void);
- void lkdtm_USERCOPY_KERNEL(void);
- 
-+/* lkdtm_stackleak.c */
-+void lkdtm_STACKLEAK_ALLOCA(void);
-+void lkdtm_STACKLEAK_DEEP_RECURSION(void);
+ config HAVE_CC_STACKPROTECTOR
+ 	bool
+ 	help
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index a2d8a39..b53163f 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -375,3 +375,23 @@ static int __init code_bytes_setup(char *s)
+ 	return 1;
+ }
+ __setup("code_bytes=", code_bytes_setup);
 +
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++
++#define MIN_STACK_LEFT 256
++
++void __used check_alloca(unsigned long size)
++{
++	unsigned long sp = (unsigned long)&sp;
++	struct stack_info stack_info = {0};
++	unsigned long visit_mask = 0;
++	unsigned long stack_left;
++
++	BUG_ON(get_stack_info(&sp, current, &stack_info, &visit_mask));
++
++	stack_left = sp - (unsigned long)stack_info.begin;
++	BUG_ON(stack_left < MIN_STACK_LEFT ||
++				size >= stack_left - MIN_STACK_LEFT);
++}
++EXPORT_SYMBOL(check_alloca);
++#endif
+diff --git a/fs/exec.c b/fs/exec.c
+index 7eb8d21..9865612 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1962,3 +1962,36 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+ 				  argv, envp, flags);
+ }
  #endif
-diff --git a/drivers/misc/lkdtm_core.c b/drivers/misc/lkdtm_core.c
-index 2154d1b..c37fd85 100644
---- a/drivers/misc/lkdtm_core.c
-+++ b/drivers/misc/lkdtm_core.c
-@@ -183,6 +183,8 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
- 	CRASHTYPE(USERCOPY_STACK_BEYOND),
- 	CRASHTYPE(USERCOPY_KERNEL),
-+	CRASHTYPE(STACKLEAK_ALLOCA),
-+	CRASHTYPE(STACKLEAK_DEEP_RECURSION),
- };
++
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++void __used track_stack(void)
++{
++	/*
++	 * N.B. The arch-specific part of the STACKLEAK feature fills the
++	 * kernel stack with the poison value, which has the register width.
++	 * That code assumes that the value of thread.lowest_stack is aligned
++	 * on the register width boundary.
++	 *
++	 * That is true for x86 and x86_64 because of the kernel stack
++	 * alignment on these platforms (for details, see cc_stack_align in
++	 * arch/x86/Makefile). Take care of that when you port STACKLEAK to
++	 * new platforms.
++	 */
++	unsigned long sp = (unsigned long)&sp;
++
++	/*
++	 * Having CONFIG_STACKLEAK_TRACK_MIN_SIZE larger than
++	 * STACKLEAK_POISON_CHECK_DEPTH makes the poison search in
++	 * erase_kstack() unreliable. Let's prevent that.
++	 */
++	BUILD_BUG_ON(CONFIG_STACKLEAK_TRACK_MIN_SIZE >
++						STACKLEAK_POISON_CHECK_DEPTH);
++
++	if (sp < current->thread.lowest_stack &&
++	    sp >= (unsigned long)task_stack_page(current) +
++					2 * sizeof(unsigned long)) {
++		current->thread.lowest_stack = sp;
++	}
++}
++EXPORT_SYMBOL(track_stack);
++#endif /* CONFIG_GCC_PLUGIN_STACKLEAK */
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index b2a95af..8d6070f 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -35,6 +35,9 @@ ifdef CONFIG_GCC_PLUGINS
+   gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT)	+= -DRANDSTRUCT_PLUGIN
+   gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE)	+= -fplugin-arg-randomize_layout_plugin-performance-mode
  
++  gcc-plugin-$(CONFIG_GCC_PLUGIN_STACKLEAK)	+= stackleak_plugin.so
++  gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK)	+= -DSTACKLEAK_PLUGIN -fplugin-arg-stackleak_plugin-track-min-size=$(CONFIG_STACKLEAK_TRACK_MIN_SIZE)
++
+   GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
  
-diff --git a/drivers/misc/lkdtm_stackleak.c b/drivers/misc/lkdtm_stackleak.c
+   export PLUGINCC GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
+diff --git a/scripts/gcc-plugins/stackleak_plugin.c b/scripts/gcc-plugins/stackleak_plugin.c
 new file mode 100644
-index 0000000..b1d2a9c
+index 0000000..6ac2a05
 --- /dev/null
-+++ b/drivers/misc/lkdtm_stackleak.c
-@@ -0,0 +1,136 @@
++++ b/scripts/gcc-plugins/stackleak_plugin.c
+@@ -0,0 +1,470 @@
 +/*
-+ * This code tests several aspects of the STACKLEAK feature:
-+ *  - the current task stack is properly erased (filled with STACKLEAK_POISON);
-+ *  - check_alloca() allows alloca calls which don't exhaust the kernel stack;
-+ *  - alloca calls which exhaust/overflow the kernel stack hit BUG() in
-+ *     check_alloca();
-+ *  - exhausting the current task stack with a deep recursion is detected by
-+ *     CONFIG_VMAP_STACK (which is implied by CONFIG_GCC_PLUGIN_STACKLEAK).
++ * Copyright 2011-2017 by the PaX Team <pageexec@freemail.hu>
++ * Modified by Alexander Popov <alex.popov@linux.com>
++ * Licensed under the GPL v2
 + *
-+ * Authors:
-+ *   Tycho Andersen <tycho@tycho.ws>
-+ *   Alexander Popov <alex.popov@linux.com>
++ * Note: the choice of the license means that the compilation process is
++ * NOT 'eligible' as defined by gcc's library exception to the GPL v3,
++ * but for the kernel it doesn't matter since it doesn't link against
++ * any of the gcc libraries
++ *
++ * This gcc plugin is needed for tracking the lowest border of the kernel stack
++ * and checking that alloca calls don't cause stack overflow. It instruments
++ * the kernel code inserting:
++ *  - the check_alloca() call before alloca and the track_stack() call after it;
++ *  - the track_stack() call for the functions with a stack frame size greater
++ *     than or equal to the "track-min-size" plugin parameter.
++ *
++ * This plugin is ported from grsecurity/PaX. For more information see:
++ *   https://grsecurity.net/
++ *   https://pax.grsecurity.net/
++ *
++ * Debugging:
++ *  - use fprintf() to stderr, debug_generic_expr(), debug_gimple_stmt(),
++ *     print_rtl() and print_simple_rtl();
++ *  - add "-fdump-tree-all -fdump-rtl-all" to the plugin CFLAGS in
++ *     Makefile.gcc-plugins to see the verbose dumps of the gcc passes;
++ *  - use gcc -E to understand the preprocessing shenanigans;
++ *  - use gcc with enabled CFG/GIMPLE/SSA verification (--enable-checking).
 + */
 +
-+#include "lkdtm.h"
-+#include <linux/sched.h>
-+#include <linux/compiler.h>
++#include "gcc-common.h"
 +
-+#ifndef CONFIG_GCC_PLUGIN_STACKLEAK
-+# define STACKLEAK_POISON -0xBEEF
-+# define CONFIG_STACKLEAK_TRACK_MIN_SIZE 100
++__visible int plugin_is_GPL_compatible;
++
++static int track_frame_size = -1;
++static const char track_function[] = "track_stack";
++static const char check_function[] = "check_alloca";
++
++/*
++ * Mark these global variables (roots) for gcc garbage collector since
++ * they point to the garbage-collected memory.
++ */
++static GTY(()) tree track_function_decl;
++static GTY(()) tree check_function_decl;
++
++static struct plugin_info stackleak_plugin_info = {
++	.version = "201707101337",
++	.help = "track-min-size=nn\ttrack stack for functions with a stack frame size >= nn bytes\n"
++		"disable\t\tdo not activate the plugin\n"
++};
++
++static void stackleak_add_check_alloca(gimple_stmt_iterator *gsi)
++{
++	gimple stmt;
++	gcall *check_alloca;
++	tree alloca_size;
++	cgraph_node_ptr node;
++	int frequency;
++	basic_block bb;
++
++	/* Insert call to void check_alloca(unsigned long size) */
++	alloca_size = gimple_call_arg(gsi_stmt(*gsi), 0);
++	stmt = gimple_build_call(check_function_decl, 1, alloca_size);
++	check_alloca = as_a_gcall(stmt);
++	gsi_insert_before(gsi, check_alloca, GSI_SAME_STMT);
++
++	/* Update the cgraph */
++	bb = gimple_bb(check_alloca);
++	node = cgraph_get_create_node(check_function_decl);
++	gcc_assert(node);
++	frequency = compute_call_stmt_bb_frequency(current_function_decl, bb);
++	cgraph_create_edge(cgraph_get_node(current_function_decl), node,
++			check_alloca, bb->count, frequency);
++}
++
++static void stackleak_add_track_stack(gimple_stmt_iterator *gsi, bool after)
++{
++	gimple stmt;
++	gcall *track_stack;
++	cgraph_node_ptr node;
++	int frequency;
++	basic_block bb;
++
++	/* Insert call to void track_stack(void) */
++	stmt = gimple_build_call(track_function_decl, 0);
++	track_stack = as_a_gcall(stmt);
++	if (after)
++		gsi_insert_after(gsi, track_stack, GSI_CONTINUE_LINKING);
++	else
++		gsi_insert_before(gsi, track_stack, GSI_SAME_STMT);
++
++	/* Update the cgraph */
++	bb = gimple_bb(track_stack);
++	node = cgraph_get_create_node(track_function_decl);
++	gcc_assert(node);
++	frequency = compute_call_stmt_bb_frequency(current_function_decl, bb);
++	cgraph_create_edge(cgraph_get_node(current_function_decl), node,
++			track_stack, bb->count, frequency);
++}
++
++static bool is_alloca(gimple stmt)
++{
++	if (gimple_call_builtin_p(stmt, BUILT_IN_ALLOCA))
++		return true;
++
++#if BUILDING_GCC_VERSION >= 4007
++	if (gimple_call_builtin_p(stmt, BUILT_IN_ALLOCA_WITH_ALIGN))
++		return true;
 +#endif
 +
-+static noinline bool stack_is_erased(void)
++	return false;
++}
++
++/*
++ * Work with the GIMPLE representation of the code.
++ * Insert the check_alloca() call before alloca and track_stack() call after
++ * it. Also insert track_stack() call into the beginning of the function
++ * if it is not instrumented.
++ */
++static unsigned int stackleak_instrument_execute(void)
 +{
-+	unsigned long *sp, left, found, i;
++	basic_block bb, entry_bb;
++	bool prologue_instrumented = false, is_leaf = true;
++	gimple_stmt_iterator gsi;
 +
 +	/*
-+	 * For the details about the alignment of the poison values, see
-+	 * the comment in track_stack().
++	 * ENTRY_BLOCK_PTR is a basic block which represents possible entry
++	 * point of a function. This block does not contain any code and
++	 * has a CFG edge to its successor.
 +	 */
-+	sp = PTR_ALIGN(&i, sizeof(unsigned long));
-+
-+	left = ((unsigned long)sp & (THREAD_SIZE - 1)) / sizeof(unsigned long);
-+	sp--;
++	gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
++	entry_bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
 +
 +	/*
-+	 * Two unsigned long ints at the bottom of the thread stack are
-+	 * reserved and not poisoned.
++	 * 1. Loop through the GIMPLE statements in each of cfun basic blocks.
++	 * cfun is a global variable which represents the function that is
++	 * currently processed.
 +	 */
-+	if (left <= 2)
-+		return false;
++	FOR_EACH_BB_FN(bb, cfun) {
++		for (gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
++			gimple stmt;
 +
-+	left -= 2;
-+	pr_info("checking unused part of the thread stack (%lu bytes)...\n",
-+					left * sizeof(unsigned long));
++			stmt = gsi_stmt(gsi);
 +
-+	/* Search for 17 poison values in a row (like erase_kstack() does) */
-+	for (i = 0, found = 0; i < left && found < 17; i++) {
-+		if (*(sp - i) == STACKLEAK_POISON)
-+			found++;
-+		else
-+			found = 0;
-+	}
++			/* Leaf function is a function which makes no calls */
++			if (is_gimple_call(stmt))
++				is_leaf = false;
 +
-+	if (found < 17) {
-+		pr_err("FAIL: thread stack is not erased (checked %lu bytes)\n",
-+						i * sizeof(unsigned long));
-+		return false;
-+	}
++			if (!is_alloca(stmt))
++				continue;
 +
-+	pr_info("first %lu bytes are unpoisoned\n",
-+				(i - found) * sizeof(unsigned long));
++			/* 2. Insert stack overflow check before alloca call */
++			stackleak_add_check_alloca(&gsi);
 +
-+	/* The rest of thread stack should be erased */
-+	for (; i < left; i++) {
-+		if (*(sp - i) != STACKLEAK_POISON) {
-+			pr_err("FAIL: thread stack is NOT properly erased\n");
-+			return false;
++			/* 3. Insert track_stack() call after alloca call */
++			stackleak_add_track_stack(&gsi, true);
++			if (bb == entry_bb)
++				prologue_instrumented = true;
 +		}
 +	}
 +
-+	pr_info("the rest of the thread stack is properly erased\n");
-+	return true;
++	if (prologue_instrumented)
++		return 0;
++
++	/*
++	 * Special cases to skip the instrumentation.
++	 *
++	 * Taking the address of static inline functions materializes them,
++	 * but we mustn't instrument some of them as the resulting stack
++	 * alignment required by the function call ABI will break other
++	 * assumptions regarding the expected (but not otherwise enforced)
++	 * register clobbering ABI.
++	 *
++	 * Case in point: native_save_fl on amd64 when optimized for size
++	 * clobbers rdx if it were instrumented here.
++	 *
++	 * TODO: any more special cases?
++	 */
++	if (is_leaf &&
++	    !TREE_PUBLIC(current_function_decl) &&
++	    DECL_DECLARED_INLINE_P(current_function_decl)) {
++		return 0;
++	}
++
++	if (is_leaf &&
++	    !strncmp(IDENTIFIER_POINTER(DECL_NAME(current_function_decl)),
++		     "_paravirt_", 10)) {
++		return 0;
++	}
++
++	/* 4. Insert track_stack() call at the function beginning */
++	bb = entry_bb;
++	if (!single_pred_p(bb)) {
++		/* gcc_assert(bb_loop_depth(bb) ||
++				(bb->flags & BB_IRREDUCIBLE_LOOP)); */
++		split_edge(single_succ_edge(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
++		gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
++		bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
++	}
++	gsi = gsi_after_labels(bb);
++	stackleak_add_track_stack(&gsi, false);
++
++	return 0;
 +}
 +
-+static noinline void do_alloca(unsigned long size)
++static bool large_stack_frame(void)
 +{
-+	char buf[size];
-+
-+	/* So this doesn't get inlined or optimized out */
-+	snprintf(buf, size, "testing alloca...\n");
-+}
-+
-+void lkdtm_STACKLEAK_ALLOCA(void)
-+{
-+	unsigned long left = (unsigned long)&left & (THREAD_SIZE - 1);
-+
-+	if (!stack_is_erased())
-+		return;
-+
-+	/* Try a small alloca to see if it works */
-+	pr_info("try a small alloca of 16 bytes...\n");
-+	do_alloca(16);
-+	pr_info("small alloca is successful\n");
-+
-+	/* Try to hit the BUG() in check_alloca() */
-+	pr_info("try a large alloca of %lu bytes (stack overflow)...\n", left);
-+	do_alloca(left);
-+	pr_err("FAIL: large alloca overstepped the thread stack boundary\n");
++#if BUILDING_GCC_VERSION >= 8000
++	return maybe_ge(get_frame_size(), track_frame_size);
++#else
++	return (get_frame_size() >= track_frame_size);
++#endif
 +}
 +
 +/*
-+ * The stack frame size of recursion() is bigger than the
-+ * CONFIG_STACKLEAK_TRACK_MIN_SIZE, hence that function is instrumented
-+ * by the STACKLEAK gcc plugin and it calls track_stack() at the beginning.
++ * Work with the RTL representation of the code.
++ * Remove the unneeded track_stack() calls from the functions which don't
++ * call alloca and don't have a large enough stack frame size.
 + */
-+static noinline unsigned long recursion(unsigned long prev_sp)
++static unsigned int stackleak_cleanup_execute(void)
 +{
-+	char buf[CONFIG_STACKLEAK_TRACK_MIN_SIZE + 42];
-+	unsigned long sp = (unsigned long)&sp;
++	rtx_insn *insn, *next;
 +
-+	snprintf(buf, sizeof(buf), "testing deep recursion...\n");
++	if (cfun->calls_alloca)
++		return 0;
 +
-+	if (prev_sp < sp + THREAD_SIZE)
-+		sp = recursion(prev_sp);
-+
-+	return sp;
-+}
-+
-+void lkdtm_STACKLEAK_DEEP_RECURSION(void)
-+{
-+	unsigned long sp = (unsigned long)&sp;
-+
-+	if (!stack_is_erased())
-+		return;
++	if (large_stack_frame())
++		return 0;
 +
 +	/*
-+	 * Exhaust the thread stack with a deep recursion. It should hit the
-+	 * guard page provided by CONFIG_VMAP_STACK (which is implied by
-+	 * CONFIG_GCC_PLUGIN_STACKLEAK).
++	 * 1. Find track_stack() calls. Loop through the chain of insns,
++	 * which is an RTL representation of the code for a function.
++	 *
++	 * The example of a matching insn:
++	 *    (call_insn 8 4 10 2 (call (mem (symbol_ref ("track_stack")
++	 *    [flags 0x41] <function_decl 0x7f7cd3302a80 track_stack>)
++	 *    [0 track_stack S1 A8]) (0)) 675 {*call} (expr_list
++	 *    (symbol_ref ("track_stack") [flags 0x41] <function_decl
++	 *    0x7f7cd3302a80 track_stack>) (expr_list (0) (nil))) (nil))
 +	 */
-+	pr_info("try to exhaust the thread stack with a deep recursion...\n");
-+	pr_err("FAIL: thread stack exhaustion (%lu bytes) is not detected\n",
-+							sp - recursion(sp));
++	for (insn = get_insns(); insn; insn = next) {
++		rtx body;
++
++		next = NEXT_INSN(insn);
++
++		/* Check the expression code of the insn */
++		if (!CALL_P(insn))
++			continue;
++
++		/*
++		 * Check the expression code of the insn body, which is an RTL
++		 * Expression (RTX) describing the side effect performed by
++		 * that insn.
++		 */
++		body = PATTERN(insn);
++		if (GET_CODE(body) != CALL)
++			continue;
++
++		/*
++		 * Check the first operand of the call expression. It should
++		 * be a mem RTX describing the needed subroutine with a
++		 * symbol_ref RTX.
++		 */
++		body = XEXP(body, 0);
++		if (GET_CODE(body) != MEM)
++			continue;
++
++		body = XEXP(body, 0);
++		if (GET_CODE(body) != SYMBOL_REF)
++			continue;
++
++		if (SYMBOL_REF_DECL(body) != track_function_decl)
++			continue;
++
++		/* 2. Delete the track_stack() call */
++		delete_insn_and_edges(insn);
++#if BUILDING_GCC_VERSION >= 4007 && BUILDING_GCC_VERSION < 8000
++		if (GET_CODE(next) == NOTE &&
++		    NOTE_KIND(next) == NOTE_INSN_CALL_ARG_LOCATION) {
++			insn = next;
++			next = NEXT_INSN(insn);
++			delete_insn_and_edges(insn);
++		}
++#endif
++	}
++
++	return 0;
++}
++
++static bool stackleak_gate(void)
++{
++	tree section;
++
++	section = lookup_attribute("section",
++				   DECL_ATTRIBUTES(current_function_decl));
++	if (section && TREE_VALUE(section)) {
++		section = TREE_VALUE(TREE_VALUE(section));
++
++		if (!strncmp(TREE_STRING_POINTER(section), ".init.text", 10))
++			return false;
++		if (!strncmp(TREE_STRING_POINTER(section), ".devinit.text", 13))
++			return false;
++		if (!strncmp(TREE_STRING_POINTER(section), ".cpuinit.text", 13))
++			return false;
++		if (!strncmp(TREE_STRING_POINTER(section), ".meminit.text", 13))
++			return false;
++	}
++
++	return track_frame_size >= 0;
++}
++
++/* Build function declarations for track_stack() and check_alloca() */
++static void stackleak_start_unit(void *gcc_data __unused,
++				 void *user_data __unused)
++{
++	tree fntype;
++
++	/* void track_stack(void) */
++	fntype = build_function_type_list(void_type_node, NULL_TREE);
++	track_function_decl = build_fn_decl(track_function, fntype);
++	DECL_ASSEMBLER_NAME(track_function_decl); /* for LTO */
++	TREE_PUBLIC(track_function_decl) = 1;
++	TREE_USED(track_function_decl) = 1;
++	DECL_EXTERNAL(track_function_decl) = 1;
++	DECL_ARTIFICIAL(track_function_decl) = 1;
++	DECL_PRESERVE_P(track_function_decl) = 1;
++
++	/* void check_alloca(unsigned long) */
++	fntype = build_function_type_list(void_type_node,
++				long_unsigned_type_node, NULL_TREE);
++	check_function_decl = build_fn_decl(check_function, fntype);
++	DECL_ASSEMBLER_NAME(check_function_decl); /* for LTO */
++	TREE_PUBLIC(check_function_decl) = 1;
++	TREE_USED(check_function_decl) = 1;
++	DECL_EXTERNAL(check_function_decl) = 1;
++	DECL_ARTIFICIAL(check_function_decl) = 1;
++	DECL_PRESERVE_P(check_function_decl) = 1;
++}
++
++/*
++ * Pass gate function is a predicate function that gets executed before the
++ * corresponding pass. If the return value is 'true' the pass gets executed,
++ * otherwise, it is skipped.
++ */
++static bool stackleak_instrument_gate(void)
++{
++	return stackleak_gate();
++}
++
++#define PASS_NAME stackleak_instrument
++#define PROPERTIES_REQUIRED PROP_gimple_leh | PROP_cfg
++#define TODO_FLAGS_START TODO_verify_ssa | TODO_verify_flow | TODO_verify_stmts
++#define TODO_FLAGS_FINISH TODO_verify_ssa | TODO_verify_stmts | TODO_dump_func \
++			| TODO_update_ssa | TODO_rebuild_cgraph_edges
++#include "gcc-generate-gimple-pass.h"
++
++static bool stackleak_cleanup_gate(void)
++{
++	return stackleak_gate();
++}
++
++#define PASS_NAME stackleak_cleanup
++#define TODO_FLAGS_FINISH TODO_dump_func
++#include "gcc-generate-rtl-pass.h"
++
++/*
++ * Every gcc plugin exports a plugin_init() function that is called right
++ * after the plugin is loaded. This function is responsible for registering
++ * the plugin callbacks and doing other required initialization.
++ */
++__visible int plugin_init(struct plugin_name_args *plugin_info,
++			  struct plugin_gcc_version *version)
++{
++	const char * const plugin_name = plugin_info->base_name;
++	const int argc = plugin_info->argc;
++	const struct plugin_argument * const argv = plugin_info->argv;
++	int i = 0;
++
++	/* Extra GGC root tables describing our GTY-ed data */
++	static const struct ggc_root_tab gt_ggc_r_gt_stackleak[] = {
++		{
++			.base = &track_function_decl,
++			.nelt = 1,
++			.stride = sizeof(track_function_decl),
++			.cb = &gt_ggc_mx_tree_node,
++			.pchw = &gt_pch_nx_tree_node
++		},
++		{
++			.base = &check_function_decl,
++			.nelt = 1,
++			.stride = sizeof(check_function_decl),
++			.cb = &gt_ggc_mx_tree_node,
++			.pchw = &gt_pch_nx_tree_node
++		},
++		LAST_GGC_ROOT_TAB
++	};
++
++	/*
++	 * The stackleak_instrument pass should be executed before the
++	 * "optimized" pass, which is the control flow graph cleanup that is
++	 * performed just before expanding gcc trees to the RTL. In former
++	 * versions of the plugin this new pass was inserted before the
++	 * "tree_profile" pass, which is currently called "profile".
++	 */
++	PASS_INFO(stackleak_instrument, "optimized", 1,
++						PASS_POS_INSERT_BEFORE);
++
++	/*
++	 * The stackleak_cleanup pass should be executed after the
++	 * "reload" pass, when the stack frame size is final.
++	 */
++	PASS_INFO(stackleak_cleanup, "reload", 1, PASS_POS_INSERT_AFTER);
++
++	if (!plugin_default_version_check(version, &gcc_version)) {
++		error(G_("incompatible gcc/plugin versions"));
++		return 1;
++	}
++
++	/* Parse the plugin arguments */
++	for (i = 0; i < argc; i++) {
++		if (!strcmp(argv[i].key, "disable"))
++			return 0;
++
++		if (!strcmp(argv[i].key, "track-min-size")) {
++			if (!argv[i].value) {
++				error(G_("no value supplied for option '-fplugin-arg-%s-%s'"),
++					plugin_name, argv[i].key);
++				return 1;
++			}
++
++			track_frame_size = atoi(argv[i].value);
++			if (track_frame_size < 0) {
++				error(G_("invalid option argument '-fplugin-arg-%s-%s=%s'"),
++					plugin_name, argv[i].key, argv[i].value);
++				return 1;
++			}
++		} else {
++			error(G_("unknown option '-fplugin-arg-%s-%s'"),
++					plugin_name, argv[i].key);
++			return 1;
++		}
++	}
++
++	/* Give the information about the plugin */
++	register_callback(plugin_name, PLUGIN_INFO, NULL,
++						&stackleak_plugin_info);
++
++	/* Register to be called before processing a translation unit */
++	register_callback(plugin_name, PLUGIN_START_UNIT,
++					&stackleak_start_unit, NULL);
++
++	/* Register an extra GCC garbage collector (GGC) root table */
++	register_callback(plugin_name, PLUGIN_REGISTER_GGC_ROOTS, NULL,
++					(void *)&gt_ggc_r_gt_stackleak);
++
++	/*
++	 * Hook into the Pass Manager to register new gcc passes.
++	 *
++	 * The stack frame size info is available only at the last RTL pass,
++	 * when it's too late to insert complex code like a function call.
++	 * So we register two gcc passes to instrument every function at first
++	 * and remove the unneeded instrumentation later.
++	 */
++	register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL,
++					&stackleak_instrument_pass_info);
++	register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL,
++					&stackleak_cleanup_pass_info);
++
++	return 0;
 +}
 -- 
 2.7.4
