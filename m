@@ -1,211 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCCOTG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 09:19:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751863AbeCCOTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 09:19:04 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C73D2133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
-Message-ID: <1520086742.4280.27.camel@kernel.org>
-Subject: Re: [PATCH v7 08/61] xarray: Add the xa_lock to the radix_tree_root
-From: Jeff Layton <jlayton@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date: Sat, 03 Mar 2018 09:19:02 -0500
-In-Reply-To: <20180219194556.6575-9-willy@infradead.org>
-References: <20180219194556.6575-1-willy@infradead.org>
-         <20180219194556.6575-9-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
+        id S1752054AbeCCOWT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 09:22:19 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:58579 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751863AbeCCOWR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 09:22:17 -0500
+Date: Sat, 3 Mar 2018 15:21:56 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Matheus Castello <matheus@castello.eng.br>
+Cc: linus.walleij@linaro.org, eric@anholt.net,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Message-ID: <431699005.307231.1520086916739@email.1und1.de>
+In-Reply-To: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
+References: <1519321475-973-1-git-send-email-matheus@castello.eng.br>
+Subject: Re: [PATCH] pinctrl: bc2835: Add brcm,level property
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:BR37JSdNSmTJq+S7A+lgWaIZvknAW7RkTWrATTHYUU3TTNLBvYf
+ skHChT+MqPhpCMudsZAd1FO5FXScpOh4EyH3qfEUFLrcn1Zmm4n/t/ksHULNRq4+2Hkyqu4
+ ArXfVYvi4NcdyyK3bpj/8MaWiMQCtPMMrV1+F94oz7ug3b08D3DQn58twqr1Us0fwH73kYo
+ Wq4Ofp82zNJ6TMOuPqKsA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:uwrajxUHSQ4=:dkIvNYUNEaijQn/zPDiinE
+ TYOlMuzLEXiwbShraRM69kNFnVauqdJMW36aNwenjTCTy5QJ2jFiSE73xsAkEbjVszD5FCj0H
+ fq7S7C6zKFxtt42Aq952bI9hqQmyZnukhGBt6YYDvXeBzWxhMzG9ezXBrPbX15PwFPR5OK5D/
+ Q0pR6kAsWdhLyU1OYysfpFUbv15Sn2iT0Y5lXajD3nceyQ7vERmQHvKlv6dJsGc9PgcNvTKmV
+ w8PwwTojKbH/rmBqwz4wjYNRpPpAFvGGqjy00D0W4FqC8qMcsi1r6sW+Mxw4B1IEU58TYaSeR
+ qHn7De+T/z/g2TldrIuFDeC8v+TahLnHa7ZvZ7TOuCqx3EBnTVgAa8Zage0OOELPTkUyFkORx
+ 2jnknnYqUKEzS7BQFT75+YG0wnbM79UwMDeZYo7h4rngo/MAHfJGbZH40+bOs15ckJvOlS5Ie
+ rwwFw1IQSDRtD2O/ZGNiw+V9io9cuHzyHEWafNeNLgtnVWbowcmiJrdFkcorT7C4JQiRXosmS
+ ecZMxTcItLAtHvInbM86oviGdb/ZW1xedneC0bribZTcjKMfb6eXD3qc2ZRfQPEDoT2TYEUCR
+ zcjgaIDXhffbZBeQlH+M66goqv8LXfFLDrYirwlZE4JKITMmACkzRyIuZjVI4L61dlqSznNPX
+ 68TG0bm1AHT9h+/qfiev4uumoELMnDwcqAahF64Yv+WE8O6pSMVxbJYEpgOENpyEzDc25esZX
+ b49io4RkUzR0uBNqLYc+Qg6ht2ukBEyTfKChSn3t+9HIjBJoupSctXQNvvI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-02-19 at 11:45 -0800, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi Matheus,
+
+sorry for my late reply.
+
+> Matheus Castello <matheus@castello.eng.br> hat am 22. Februar 2018 um 18:44 geschrieben:
 > 
-> This results in no change in structure size on 64-bit x86 as it fits in
-> the padding between the gfp_t and the void *.
 > 
-> Initialising the spinlock requires a name for the benefit of lockdep,
-> so RADIX_TREE_INIT() now needs to know the name of the radix tree it's
-> initialising, and so do IDR_INIT() and IDA_INIT().
+> Property to set initial value of pin output buffer.
 > 
-> Also add the xa_lock() and xa_unlock() family of wrappers to make it
-> easier to use the lock.  If we could rely on -fplan9-extensions in
-> the compiler, we could avoid all of this syntactic sugar, but that
-> wasn't added until gcc 4.6.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
 > ---
->  fs/f2fs/gc.c                   |  2 +-
->  include/linux/idr.h            | 19 ++++++++++---------
->  include/linux/radix-tree.h     |  7 +++++--
->  include/linux/xarray.h         | 24 ++++++++++++++++++++++++
->  kernel/pid.c                   |  2 +-
->  tools/include/linux/spinlock.h |  1 +
->  6 files changed, 42 insertions(+), 13 deletions(-)
->  create mode 100644 include/linux/xarray.h
+>  .../bindings/pinctrl/brcm,bcm2835-gpio.txt         |  5 +-
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c              | 90 +++++++++++++++++-----
+>  2 files changed, 75 insertions(+), 20 deletions(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index aa720cc44509..7aa15134180e 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1006,7 +1006,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  	unsigned int init_segno = segno;
->  	struct gc_inode_list gc_list = {
->  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
-> -		.iroot = RADIX_TREE_INIT(GFP_NOFS),
-> +		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
->  	};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+> index 2569866..6834f1d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt
+
+Changes to the devicetree binding should be a separate patch. Please read [1] and use the get_maintainers script for all patches.
+
+[1] - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/submitting-patches.txt
+
+> @@ -54,8 +54,11 @@ Optional subnode-properties:
+>    0: none
+>    1: down
+>    2: up
+> +- brcm,level: Integer, representing the value of output buffer to apply to the pin(s):
+> +  0: low
+> +  1: high
+
+As Linus suggested please don't introduce new legacy properties. We already have generic ones for this. After mention the supported properties, simply make a reference to the generic binding.
+
 >  
->  	trace_f2fs_gc_begin(sbi->sb, sync, background,
-> diff --git a/include/linux/idr.h b/include/linux/idr.h
-> index 913c335054f0..e856f4e0ab35 100644
-> --- a/include/linux/idr.h
-> +++ b/include/linux/idr.h
-> @@ -32,27 +32,28 @@ struct idr {
->  #define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
->  					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
+> -Each of brcm,function and brcm,pull may contain either a single value which
+> +Each of brcm,function, brcm,pull and brcm,level may contain either a single value which
+>  will be applied to all pins in brcm,pins, or 1 value for each entry in
+>  brcm,pins.
 >  
-> -#define IDR_INIT_BASE(base) {						\
-> -	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER),			\
-> +#define IDR_INIT_BASE(name, base) {					\
-> +	.idr_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER),			\
->  	.idr_base = (base),						\
->  	.idr_next = 0,							\
->  }
->  
->  /**
->   * IDR_INIT() - Initialise an IDR.
-> + * @name: Name of IDR.
->   *
->   * A freshly-initialised IDR contains no IDs.
->   */
-> -#define IDR_INIT	IDR_INIT_BASE(0)
-> +#define IDR_INIT(name)	IDR_INIT_BASE(name, 0)
->  
->  /**
-> - * DEFINE_IDR() - Define a statically-allocated IDR
-> - * @name: Name of IDR
-> + * DEFINE_IDR() - Define a statically-allocated IDR.
-> + * @name: Name of IDR.
->   *
->   * An IDR defined using this macro is ready for use with no additional
->   * initialisation required.  It contains no IDs.
->   */
-> -#define DEFINE_IDR(name)	struct idr name = IDR_INIT
-> +#define DEFINE_IDR(name)	struct idr name = IDR_INIT(name)
->  
->  /**
->   * idr_get_cursor - Return the current position of the cyclic allocator
-> @@ -219,10 +220,10 @@ struct ida {
->  	struct radix_tree_root	ida_rt;
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index 785c366..0ace548 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> @@ -73,6 +73,8 @@
+>  enum bcm2835_pinconf_param {
+>  	/* argument: bcm2835_pinconf_pull */
+>  	BCM2835_PINCONF_PARAM_PULL,
+> +	/* argument: bcm2835_pinconf_level */
+> +	BCM2835_PINCONF_PARAM_LEVEL,
 >  };
 >  
-> -#define IDA_INIT	{						\
-> -	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
-> +#define IDA_INIT(name)	{						\
-> +	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
->  }
-> -#define DEFINE_IDA(name)	struct ida name = IDA_INIT
-> +#define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
->  
->  int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
->  int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
-> diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-> index 6c4e2e716dac..34149e8b5f73 100644
-> --- a/include/linux/radix-tree.h
-> +++ b/include/linux/radix-tree.h
-> @@ -110,20 +110,23 @@ struct radix_tree_node {
->  #define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
->  
->  struct radix_tree_root {
-> +	spinlock_t		xa_lock;
->  	gfp_t			gfp_mask;
->  	struct radix_tree_node	__rcu *rnode;
->  };
->  
-> -#define RADIX_TREE_INIT(mask)	{					\
-> +#define RADIX_TREE_INIT(name, mask)	{				\
-> +	.xa_lock = __SPIN_LOCK_UNLOCKED(name.xa_lock),			\
->  	.gfp_mask = (mask),						\
->  	.rnode = NULL,							\
+>  #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
+> @@ -725,16 +727,42 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
+>  	return 0;
 >  }
 >  
->  #define RADIX_TREE(name, mask) \
-> -	struct radix_tree_root name = RADIX_TREE_INIT(mask)
-> +	struct radix_tree_root name = RADIX_TREE_INIT(name, mask)
->  
->  #define INIT_RADIX_TREE(root, mask)					\
->  do {									\
-> +	spin_lock_init(&(root)->xa_lock);				\
->  	(root)->gfp_mask = (mask);					\
->  	(root)->rnode = NULL;						\
->  } while (0)
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> new file mode 100644
-> index 000000000000..2dfc8006fe64
-> --- /dev/null
-> +++ b/include/linux/xarray.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +#ifndef _LINUX_XARRAY_H
-> +#define _LINUX_XARRAY_H
-> +/*
-> + * eXtensible Arrays
-> + * Copyright (c) 2017 Microsoft Corporation
-> + * Author: Matthew Wilcox <mawilcox@microsoft.com>
-> + */
+> +static int bcm2835_pctl_dt_node_to_map_level(struct bcm2835_pinctrl *pc,
+> +		struct device_node *np, u32 pin, u32 level,
+> +		struct pinctrl_map **maps)
+> +{
+> +	struct pinctrl_map *map = *maps;
+> +	unsigned long *configs;
 > +
-> +#include <linux/spinlock.h>
+> +	if (level > 2) {
+> +		dev_err(pc->dev, "%pOF: invalid brcm,level %d\n", np, level);
+> +		return -EINVAL;
+> +	}
 > +
-> +#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
-> +#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
-> +#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-> +#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
-> +#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
-> +#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
-> +#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
-> +#define xa_lock_irqsave(xa, flags) \
-> +				spin_lock_irqsave(&(xa)->xa_lock, flags)
-> +#define xa_unlock_irqrestore(xa, flags) \
-> +				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
+> +	configs = kzalloc(sizeof(*configs), GFP_KERNEL);
+> +	if (!configs)
+> +		return -ENOMEM;
+> +	configs[0] = BCM2835_PINCONF_PACK(BCM2835_PINCONF_PARAM_LEVEL, level);
 > +
-> +#endif /* _LINUX_XARRAY_H */
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index ed6c343fe50d..157fe4b19971 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -70,7 +70,7 @@ int pid_max_max = PID_MAX_LIMIT;
->   */
->  struct pid_namespace init_pid_ns = {
->  	.kref = KREF_INIT(2),
-> -	.idr = IDR_INIT,
-> +	.idr = IDR_INIT(init_pid_ns.idr),
->  	.pid_allocated = PIDNS_ADDING,
->  	.level = 0,
->  	.child_reaper = &init_task,
-> diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
-> index 4ed569fcb139..b21b586b9854 100644
-> --- a/tools/include/linux/spinlock.h
-> +++ b/tools/include/linux/spinlock.h
-> @@ -7,6 +7,7 @@
+> +	map->type = PIN_MAP_TYPE_CONFIGS_PIN;
+> +	map->data.configs.group_or_pin = bcm2835_gpio_pins[pin].name;
+> +	map->data.configs.configs = configs;
+> +	map->data.configs.num_configs = 1;
+> +	(*maps)++;
+> +
+> +	return 0;
+> +}
+> +
+>  static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  		struct device_node *np,
+>  		struct pinctrl_map **map, unsigned *num_maps)
+>  {
+>  	struct bcm2835_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
+> -	struct property *pins, *funcs, *pulls;
+> -	int num_pins, num_funcs, num_pulls, maps_per_pin;
+> +	struct property *pins, *funcs, *pulls, *levels;
+> +	int num_pins, num_funcs, num_pulls, num_levels, maps_per_pin;
+>  	struct pinctrl_map *maps, *cur_map;
+>  	int i, err;
+> -	u32 pin, func, pull;
+> +	u32 pin, func, pull, level;
 >  
->  #define spinlock_t		pthread_mutex_t
->  #define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
-> +#define __SPIN_LOCK_UNLOCKED(x)	(pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER
+>  	pins = of_find_property(np, "brcm,pins", NULL);
+>  	if (!pins) {
+> @@ -744,6 +772,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
 >  
->  #define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
->  #define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
+>  	funcs = of_find_property(np, "brcm,function", NULL);
+>  	pulls = of_find_property(np, "brcm,pull", NULL);
+> +	levels = of_find_property(np, "brcm,level", NULL);
+>  
+>  	if (!funcs && !pulls) {
+>  		dev_err(pc->dev,
+> @@ -755,6 +784,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	num_pins = pins->length / 4;
+>  	num_funcs = funcs ? (funcs->length / 4) : 0;
+>  	num_pulls = pulls ? (pulls->length / 4) : 0;
+> +	num_levels = levels ? (levels->length / 4) : 0;
+>  
+>  	if (num_funcs > 1 && num_funcs != num_pins) {
+>  		dev_err(pc->dev,
+> @@ -770,11 +800,20 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (num_levels > 1 && num_levels != num_pins) {
+> +		dev_err(pc->dev,
+> +			"%pOF: brcm,level must have 1 or %d entries\n",
+> +			np, num_pins);
+> +		return -EINVAL;
+> +	}
+> +
+>  	maps_per_pin = 0;
+>  	if (num_funcs)
+>  		maps_per_pin++;
+>  	if (num_pulls)
+>  		maps_per_pin++;
+> +	if (num_levels)
+> +		maps_per_pin++;
+>  	cur_map = maps = kzalloc(num_pins * maps_per_pin * sizeof(*maps),
+>  				GFP_KERNEL);
+>  	if (!maps)
+> @@ -811,6 +850,17 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  			if (err)
+>  				goto out;
+>  		}
+> +		if (num_levels) {
+> +			err = of_property_read_u32_index(np, "brcm,level",
+> +					(num_levels > 1) ? i : 0, &level);
+> +			if (err)
+> +				goto out;
+> +
+> +			err = bcm2835_pctl_dt_node_to_map_level(pc, np, pin,
+> +							level, &cur_map);
+> +			if (err)
+> +				goto out;
+> +		}
+>  	}
+>  
+>  	*map = maps;
+> @@ -931,23 +981,25 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+>  		param = BCM2835_PINCONF_UNPACK_PARAM(configs[i]);
+>  		arg = BCM2835_PINCONF_UNPACK_ARG(configs[i]);
+>  
+> -		if (param != BCM2835_PINCONF_PARAM_PULL)
+> +		if (param == BCM2835_PINCONF_PARAM_PULL) {
+> +			off = GPIO_REG_OFFSET(pin);
+> +			bit = GPIO_REG_SHIFT(pin);
+> +
+> +			bcm2835_gpio_wr(pc, GPPUD, arg & 3);
+> +			/*
+> +			* Docs say to wait 150 cycles, but not of what. We assume a
+> +			* 1 MHz clock here, which is pretty slow...
+> +			*/
+> +			udelay(150);
+> +			bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
+> +			udelay(150);
+> +			bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
+> +		} else if (param == BCM2835_PINCONF_PARAM_LEVEL) {
+> +			/* write in register */
+> +			bcm2835_gpio_set_bit(pc, arg ? GPSET0 : GPCLR0, pin);
+> +		} else {
 
-Looks sane enough.
+Please separate the restructuring and the really new code into 2 patches. This make it easier to review.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Thanks
+Stefan
+
+>  			return -EINVAL;
+> -
+> -		off = GPIO_REG_OFFSET(pin);
+> -		bit = GPIO_REG_SHIFT(pin);
+> -
+> -		bcm2835_gpio_wr(pc, GPPUD, arg & 3);
+> -		/*
+> -		 * BCM2835 datasheet say to wait 150 cycles, but not of what.
+> -		 * But the VideoCore firmware delay for this operation
+> -		 * based nearly on the same amount of VPU cycles and this clock
+> -		 * runs at 250 MHz.
+> -		 */
+> -		udelay(1);
+> -		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
+> -		udelay(1);
+> -		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
+> +		}
+>  	} /* for each config */
+>  
+>  	return 0;
+> -- 
+> 2.7.4
+>
