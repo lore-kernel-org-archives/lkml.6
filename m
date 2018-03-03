@@ -1,71 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965134AbeCCB4p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:56:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:12687 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965064AbeCCB4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:56:44 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
-   d="scan'208";a="31078699"
-Date: Sat, 3 Mar 2018 09:56:41 +0800
-From: Fengguang Wu <fengguang.wu@intel.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>, LKP <lkp@intel.com>,
-        "Hao, Shun" <shun.hao@intel.com>
-Subject: Re: ERROR: "ia64_delay_loop" [drivers/spi/spi-thunderx.ko] undefined!
-Message-ID: <20180303015641.amwarmtsskxcnnv5@wfg-t540p.sh.intel.com>
-References: <201803011134.bk1IHi9I%fengguang.wu@intel.com>
- <a7358051-b4a0-c07c-1747-f4702abf220f@arm.com>
+        id S965177AbeCCCKs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 21:10:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41550 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965093AbeCCCKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 21:10:45 -0500
+Date: Fri, 2 Mar 2018 18:10:42 -0800
+From: Darren Hart <dvhart@infradead.org>
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, pali.rohar@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
+ modules together
+Message-ID: <20180303021042.GA11088@fury>
+References: <1519755784-2155-1-git-send-email-mario.limonciello@dell.com>
+ <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7358051-b4a0-c07c-1747-f4702abf220f@arm.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 04:25:45PM +0000, Robin Murphy wrote:
->On 01/03/18 03:18, kbuild test robot wrote:
->> Hi Robin,
->>
->> First bad commit (maybe != root cause):
->
->I have to admit I'm slightly intrigued how this commit could possibly
->appear relevant to the IA64 build at all, let alone to this error :/
+On Tue, Feb 27, 2018 at 12:23:04PM -0600, Mario Limonciello wrote:
+> Some race conditions were raised due to dell-smbios and its backends
+> not being ready by the time that a consumer would call one of the
+> exported methods.
+> 
+> To avoid this problem, guarantee that all initialization has been
+> done by linking them all together and running init for them all.
+> 
+> As part of this change the Kconfig needs to be adjusted so that
+> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
+> rather than modules.
+> 
+> CONFIG_DELL_SMBIOS is a visually selectable option again and both
+> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+> ---
+> Changes from v2:
+>  * Move rest of #ifdef out of source files
+>  * Only compile units as necessary
+> 
+>  drivers/platform/x86/Kconfig            | 11 ++++++++---
+>  drivers/platform/x86/Makefile           |  4 ++--
+>  drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
+>  drivers/platform/x86/dell-smbios-smm.c  | 18 ++++--------------
+>  drivers/platform/x86/dell-smbios-wmi.c  | 14 ++++----------
+>  drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
+>  6 files changed, 64 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 9a8f964..0c0897e 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -106,10 +106,15 @@ config ASUS_LAPTOP
+>  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
+>  
+>  config DELL_SMBIOS
+> -	tristate
+> +	tristate "Dell SMBIOS driver"
+> +	---help---
+> +	This provides support for the Dell SMBIOS calling interface.
+> +	If you have a Dell computer you should enable this option.
+> +
+> +	Be sure to select at least one backend for it to work properly.
+>  
+>  config DELL_SMBIOS_WMI
+> -	tristate "Dell SMBIOS calling interface (WMI implementation)"
+> +	bool "Dell SMBIOS driver WMI support"
+>  	depends on ACPI_WMI
+>  	select DELL_WMI_DESCRIPTOR
+>  	select DELL_SMBIOS
 
-Yeah it looks like a bisect error -- the commit merely changed an ARM
-header file.
+Blarg, this also violates the kconfig-language guidance for using select
+only for non-visible symbols with no dependencies.
 
-Thanks,
-Fengguang
+I have a patch that works, but I don't love it. We can remove the prompt
+from DELL_SMBIOS, and make DELL_SMBIOS_WMI|SMM "depend on" DELL_SMBIOS.
+The options just appear sort of randomly when either DELL_LAPTOP or
+DELL_WMI are selected - but they can default to y, which is nice.
 
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->> head:   97ace515f01439d4cf6e898b4094040dc12d36e7
->> commit: e1a50de37860b3a93a9d643b09638db5aff47650 arm64: cputype: Silence Sparse warnings
->> date:   12 days ago
->> config: ia64-allmodconfig (attached as .config)
->> compiler: ia64-linux-gcc (GCC) 7.2.0
->> reproduce:
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          git checkout e1a50de37860b3a93a9d643b09638db5aff47650
->>          # save the attached .config to linux build tree
->>          make.cross ARCH=ia64
->>
->> All errors (new ones prefixed by >>):
->>
->>>> ERROR: "ia64_delay_loop" [drivers/spi/spi-thunderx.ko] undefined!
->>     ERROR: "ia64_delay_loop" [drivers/net/phy/mdio-cavium.ko] undefined!
->>
->> ---
->> 0-DAY kernel test infrastructure                Open Source Technology Center
->> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->>
->
+I have a subsequent patch which makes DELL_SMBIOS_WMI|SMM "depend on"
+DELL_LAPTOP, which makes this look a lot nicer. These just appear under
+DELL_LAPTOP as bool options. The problem with this approach is DELL_WMI
+also requires DELL_SMBIOS and DELL_WMI doesn't currently depend on
+DELL_LAPTOP. One option is to make it depend on DELL_LAPTOP as it seems
+unlikely for them to ever be used separately.  I don't love this either.
+Thoughts?
+
+Perhaps the compromise is leave the DELL_SMBIOS prompt. This doesn't
+have the negative consequences the kconfig-languages is trying to guard
+against, and it makes it obvious what the DELL_SMBIOS_* options are -
+and we can still default them to y. See below.
+
+This seems like it might be the least bad option at the moment. I'll
+keep thinking on it a bit...
+
+From: "Darren Hart (VMware)" <dvhart@infradead.org>
+Date: Fri, 2 Mar 2018 17:40:32 -0800
+Subject: [PATCH] platform/x86: Allow for SMBIOS backend defaults
+
+Avoid accidental configurations by setting default y for DELL_SMBIOS
+backends. Avoid this impacting the default build size, by making them
+dependent on DELL_SMBIOS, so they only appear when DELL_SMBIOS is
+manually selected, or by DELL_LAPTOP or DELL_WMI.
+
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+---
+ drivers/platform/x86/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index e3f682c..022c837 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -115,9 +115,10 @@ config DELL_SMBIOS
+ 
+ config DELL_SMBIOS_WMI
+ 	bool "Dell SMBIOS driver WMI backend"
++	default y
+ 	depends on ACPI_WMI
+ 	select DELL_WMI_DESCRIPTOR
+-	select DELL_SMBIOS
++	depends on DELL_SMBIOS
+ 	---help---
+ 	This provides an implementation for the Dell SMBIOS calling interface
+ 	communicated over ACPI-WMI.
+@@ -128,8 +129,9 @@ config DELL_SMBIOS_WMI
+ 
+ config DELL_SMBIOS_SMM
+ 	bool "Dell SMBIOS driver SMM backend"
++	default y
+ 	depends on DCDBAS
+-	select DELL_SMBIOS
++	depends on DELL_SMBIOS
+ 	---help---
+ 	This provides an implementation for the Dell SMBIOS calling interface
+ 	communicated over SMI/SMM.
+-- 
+2.9.5
+
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
