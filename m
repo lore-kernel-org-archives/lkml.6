@@ -1,108 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935393AbeCCAUg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:20:36 -0500
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42171 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932890AbeCCAUc (ORCPT
+        id S935467AbeCCAVP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 19:21:15 -0500
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:41769 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932890AbeCCAVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:20:32 -0500
-X-Google-Smtp-Source: AG47ELvIsrI/bOl+CmFYop02tR6lM+RBg4ypNJsYGMw+amTiEkVl0qDnYAcLNYyKrPefhJAz0YP6U2XcI9v1I8jhZsw=
+        Fri, 2 Mar 2018 19:21:13 -0500
+X-Google-Smtp-Source: AG47ELuRk3NNtN/mJItgS9Qx166d2SgB02RgIp/BO7hTXRvyOS8Qz9Mt3HUVyj/rQg1qUUgw5qnJsQ==
+Subject: Re: "x86/boot/compressed/64: Prepare trampoline memory" breaks boot
+ on Zotac CI-321
+To: Dexuan-Linux Cui <dexuan.linux@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>
+References: <12357ee3-0276-906a-0e7c-2c3055675af3@gmail.com>
+ <CAA42JLZRxCGSsW5FKpH3AjZGbaUyrcRPdVBtMQcc4ZcxKNuDQw@mail.gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <8c6c0f9d-0f47-2fc9-5cb5-6335ef1152cd@gmail.com>
+Date: Sat, 3 Mar 2018 01:21:07 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180302165919.423cd45b@t450s.home>
-References: <20180302234218.3337.16486.stgit@localhost.localdomain>
- <20180302234412.3337.71321.stgit@localhost.localdomain> <20180302165919.423cd45b@t450s.home>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Fri, 2 Mar 2018 16:20:30 -0800
-Message-ID: <CAKgT0UcXf+w6P2=EbbZKzOxfK5vAf2tgtnTeLh9mRaysKJStwQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pci-iov: Add support for unmanaged SR-IOV
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAA42JLZRxCGSsW5FKpH3AjZGbaUyrcRPdVBtMQcc4ZcxKNuDQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 3:59 PM, Alex Williamson
-<alex.williamson@redhat.com> wrote:
-> On Fri, 02 Mar 2018 15:44:25 -0800
-> Alexander Duyck <alexander.duyck@gmail.com> wrote:
->
->> From: Alexander Duyck <alexander.h.duyck@intel.com>
->>
->> This patch is meant to add some basic functionality to support for SR-IOV
->> on devices when the VFs are not managed by the kernel. The functions
->> provided here can be used by drivers such as vfio-pci and virtio to enable
->> SR-IOV on devices that are either managed by userspace, or by some sort of
->> firmware entity respectively.
->>
->> A new sysfs value called sriov_unmanaged_autoprobe has been added. This
->> value is used as the drivers_autoprobe setting of the VFs when they are
->> being managed by an external entity such as userspace or device firmware
->> instead of being managed by the kernel.
->>
->> One side effect of this change is that the sriov_drivers_autoprobe and
->> sriov_unmanaged_autoprobe will only apply their updates when SR-IOV is
->> disabled. Attempts to update them when SR-IOV is in use will only update
->> the local value and will not update sriov->autoprobe.
->>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
->> ---
->>  Documentation/ABI/testing/sysfs-bus-pci |   17 ++++++++++++++
->>  drivers/pci/iov.c                       |   37 +++++++++++++++++++++++++++++++
->>  drivers/pci/pci-driver.c                |    2 +-
->>  drivers/pci/pci-sysfs.c                 |   29 ++++++++++++++++++++++++
->>  drivers/pci/pci.h                       |    4 +++
->>  include/linux/pci.h                     |    1 +
->>  6 files changed, 88 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
->> index 44d4b2be92fd..ff0b6c19cb1a 100644
->> --- a/Documentation/ABI/testing/sysfs-bus-pci
->> +++ b/Documentation/ABI/testing/sysfs-bus-pci
->> @@ -323,3 +323,20 @@ Description:
->>
->>               This is similar to /sys/bus/pci/drivers_autoprobe, but
->>               affects only the VFs associated with a specific PF.
->> +
->> +What:                /sys/bus/pci/devices/.../sriov_unmanaged_autoprobe
->> +Date:                March 2018
->> +Contact:     Alexander Duyck <alexander.h.duyck@intel.com>
->> +Description:
->> +             This file is associated with the PF of a device that
->> +             supports SR-IOV.  It determines whether newly-enabled VFs
->> +             are immediately bound to a driver when the PF driver does
->> +             not manage the VFs itself.  It initially contains 0, which
->> +             means the kernel will not automatically bind VFs to a driver.
->> +             If an application writes 1 to the file before enabling VFs,
->> +             the kernel will bind VFs to a compatible driver immediately
->> +             after they are enabled.
->> +
->> +             This overrides /sys/bus/pci/devices/.../sriov_drivers_autoprobe
->> +             when a PF driver is not present to manage a device, or the PF
->> +             driver does not provide functionality to support SR-IOV.
->
->
-> Given a pf, how does a user determine whether it is managed or unmanaged
-> and therefore which autoprobe attributes are in effect?  Thanks,
->
-> Alex
+Am 03.03.2018 um 00:50 schrieb Dexuan-Linux Cui:
+> On Fri, Mar 2, 2018 at 12:57 PM, Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
+> 
+>     Recently my Mini PC Zotac CI-321 started to reboot immediately before
+>     anything was written to the console.
+> 
+>     Bisecting lead to b91993a87aff "x86/boot/compressed/64: Prepare
+>     trampoline memory" being the change breaking boot.
+> 
+>     If you need any more information, please let me know.
+> 
+>     Rgds, Heiner
+> 
+> 
+> This may fix the issue: https://lkml.org/lkml/2018/2/13/668
+> 
+> Kirill posted a v2 patchset 3 days ago and I suppose the patchset should include the fix.
+> 
+Thanks for the link. I bisected based on the latest next kernel including
+v2 of the patchset (IOW - the potential fix is included already).
 
-Basically it comes down to what driver is loaded on it. For now
-vfio-pci and virtio would be the only two using the "unmanaged"
-version of things.
+So it seems that the proposed fix fixes certain scenarios but not all.
 
-Really you don't know which autoprobe is in effect until SR-IOV is
-enabled by whatever driver. As such you should really be setting both
-the drivers_autoprobe and the unmanaged_autoprobe based on the
-expected use case.
+> -- Dexuan
 
-- Alex
+Using the content of arch/x86/boot/compressed from Feb 9th the system boots
+and dmesg looks like this (HTH). CPU is a Celeron 2961Y, distro is Arch Linux.
+
+
+[Mar 3 01:04] microcode: microcode updated early to revision 0x21, date = 2017-11-20
+[  +0.000000] Linux version 4.16.0-rc3-next-20180302+ (root@zotac) (gcc version 7.3.0 (GCC)) #3 SMP Sat Mar 3 00:53:52 CET 2018
+[  +0.000000] Command line: root=/dev/sda2 rw initrd=/intel-ucode.img initrd=/initramfs-linux.img
+[  +0.000000] Intel Spectre v2 broken microcode detected; disabling Speculation Control
+[  +0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[  +0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[  +0.000000] x86/fpu: Enabled xstate features 0x3, context size is 576 bytes, using 'standard' format.
+[  +0.000000] e820: BIOS-provided physical RAM map:
+[  +0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000057fff] usable
+[  +0.000000] BIOS-e820: [mem 0x0000000000058000-0x0000000000058fff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000000059000-0x000000000009dfff] usable
+[  +0.000000] BIOS-e820: [mem 0x000000000009e000-0x000000000009ffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000cb2ddfff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000cb2de000-0x00000000cb2e4fff] ACPI NVS
+[  +0.000000] BIOS-e820: [mem 0x00000000cb2e5000-0x00000000cba53fff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000cba54000-0x00000000cbcfefff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000cbcff000-0x00000000db778fff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000db779000-0x00000000db82efff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000db82f000-0x00000000db87dfff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000db87e000-0x00000000db9acfff] ACPI NVS
+[  +0.000000] BIOS-e820: [mem 0x00000000db9ad000-0x00000000dbffefff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000dbfff000-0x00000000dbffffff] usable
+[  +0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
+[  +0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
+[  +0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000011fdfffff] usable
+[  +0.000000] NX (Execute Disable) protection: active
+[  +0.000000] efi: EFI v2.31 by American Megatrends
+[  +0.000000] efi:  ESRT=0xdbf84998  ACPI=0xdb980000  ACPI 2.0=0xdb980000  SMBIOS=0xdbf84598
+[  +0.000000] secureboot: Secure boot disabled
+[  +0.000000] random: fast init done
+[  +0.000000] SMBIOS 2.8 present.
+[  +0.000000] DMI: ZOTAC ZBOX-CI321NANO/ZBOX-CI321NANO, BIOS B246P105 06/01/2015
