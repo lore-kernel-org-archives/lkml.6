@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1204544-1520118328-2-6432632210644212455
+X-Cyrus-Session-Id: sloti22d1t05-1204544-1520118307-2-10292633795898924932
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520118327; b=uEkAH4GW/qEO6zeVmqQpwB5iSTdYBmdniOhIlQfuoeTIJ3c
-    Cy9NM/UVttzz23yLsAiIzwHulAJ/kDkVGqPd3PZe5f7ZteINPEPi19At87oUTGTe
-    zfktTicKEmkrBStSoYcTTuMJupu47kbXom2uWptTshR3wqVBpZ40926mEI65zZX5
-    NSMpvgXJijuWZbtqY15jpTrhSNCbsnrS8PppwOOIhGPzJ7KSmMweGMwN+8DtxIr5
-    0aPkVzKj07DqvI1DZ0MNMcjHfzQGe5mHJIxFkPG0Yg4ga11Um9CtgtgF9QqczcBI
-    b0G+VSwrHZEKTliGtuKL/O7TJip9+2O+oHR33gw==
+    t=1520118306; b=HOWUTphCCmr7ZteUoqglNLpoP1SC1qMdklF1Cugrgd0tETx
+    giB4Lw40piyO6vNGqAyNr0m4syjwHvHFpOv1RGkO1Ve1LsVQuNLgGRvSUOzhDiC0
+    ZdO1hk8OBrHXDZ9+i8gLo3G/XDg5sy9ZHEg9mIprUxi+6/QTwde8VaQzXCmaSmQc
+    PZFWcMyK0uWOhb1OewHJG9UoOcLPnu2a9bezhVze8ZAcwoSDDzAw/6E/fyqt0FLW
+    yjCComVMkaviCM0bejgBWGikb6zolUNgtq0Ip1B7TD2vp/LZ5BC/y99DO/8rD9oY
+    TU+QMfxYlkD0U16rWrP6S6GfuCOsKe5lTxKtlbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520118327; bh=x32ets
-    5zdnfBU2g/8Fpv9YXi36nQl7lbHot7jH1Jh6Q=; b=OzR7+M562dNzZlAGJTO1rE
-    dNgig/1CjhGLJC8vGtJxmK6GNdsrhh14UUQBL0Crj9PQVp8V/vMXsMH+NH7lYvLM
-    ETn/eFKzR8jlunrV8cLkUhTaFR3Ajg2RrNcyQfF4C094nX8T0+zG4DGQUUeTDVqx
-    r2yNwuRF+Q5Ai4Vysn69K6QIxCjxwrXt3/QBH7S/GgK/ZP+RY+JUg0GTn1Ngb9ET
-    e0wYR8OnLvwHZeX00xvlq9BqbwyFILvrYWVByuCdNiyMvdnq0tTfC8PvaFYbmCw4
-    6ig7DOJM4dIfcVElWaQJjqV8c6W9ovHHbTwXRI3rYIVofbBn53VMk1T/z3LMUUEg
+    :mime-version:sender:list-id; s=arctest; t=1520118306; bh=UQNss4
+    l7dxeWSOORXOsMJ1MT0/1QrmQtnCiJJuW7Opk=; b=IPdwd7PhP7EaFAVbtc3MuS
+    wsNWLho0oLYmE6E96KY/jZfhrxMu8YsIZHuqb97lX63CSw7Vd2fjR1rQnFEayT2o
+    OSUEn6Kb1A3aSPkOOlQ+W3rRnbX7Py9JlHByqa+gOmEihJIdUegkr4LiZDK3TPNY
+    +tVIVyt6XgSGT+Ag0nzO8A5l/tMM/FrhZO16jW5Z+jz288IyHRJ14UN69iDADkZr
+    SBmfdBkYDb1EnkohqbMNSjV5G1VRLK0+8/4BLRROdwiXBOIJn5Zg3t6xj5Q2Tc16
+    c4pTQdN1nVjml5hCiVSRBykXw1x5Xrf2FpLDrkv4Nos+KxNSo1SGpLoEV84qLYfQ
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=elY1Uuxb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZKunE0Kj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=elY1Uuxb x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=ZKunE0Kj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,27 +48,38 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934500AbeCCXFH (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:05:07 -0500
-Received: from mail-bl2nam02on0129.outbound.protection.outlook.com ([104.47.38.129]:62880
+        id S932475AbeCCXEq (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:04:46 -0500
+Received: from mail-bl2nam02on0124.outbound.protection.outlook.com ([104.47.38.124]:62688
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934686AbeCCWkO (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S935213AbeCCWkO (ORCPT <rfc822;stable@vger.kernel.org>);
         Sat, 3 Mar 2018 17:40:14 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Dedy Lansky <qca_dlansky@qca.qualcomm.com>,
-        Maya Erez <qca_merez@qca.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
+CC: Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 083/115] wil6210: fix memory access violation
- in wil_memcpy_from/toio_32
-Thread-Topic: [PATCH AUTOSEL for 4.4 083/115] wil6210: fix memory access
- violation in wil_memcpy_from/toio_32
-Thread-Index: AQHTsz9l6Lq9vcRUyU+eNKMVirKWNw==
-Date: Sat, 3 Mar 2018 22:31:39 +0000
-Message-ID: <20180303223010.27106-83-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 081/115] kprobes/x86: Set kprobes pages
+ read-only
+Thread-Topic: [PATCH AUTOSEL for 4.4 081/115] kprobes/x86: Set kprobes pages
+ read-only
+Thread-Index: AQHTsz9kUOnWfuJNXkO6DLcgMcusoA==
+Date: Sat, 3 Mar 2018 22:31:38 +0000
+Message-ID: <20180303223010.27106-81-alexander.levin@microsoft.com>
 References: <20180303223010.27106-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303223010.27106-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -77,27 +88,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1033;7:GT0mvgOGyworoKvkW9JTOBYluWB2KmO1CdhnKcGboZrLpyA+1PtUluFHfQ8BTE7xuCkZstyyi/iXXcdF6rzetgD+50Ex/6oujmERgELCbySPGrhlcNrXpjBXIobttnNSPkpvxCUrDxMRImccJcX/w1WdTLoqBybP3CmG7o7XgF8JziPniloYgG9rnYlDqAKfvl+Qldeyb9JWpk3UhtiDomfWyQIliftd8oeBhj+JzjeqeiDdHLyP2JHhofzRESeA
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1033;7:Gn3UJxkq/19WtP7pB+qGD10bRa6gvAvnIFVzU8q1YokguP6dLFrZhx3zRlNiXOSRItiOMR3cpcpHCvtN+1wFe8agh38Oz+MucC/taxQRdFnHQ7KU59MRSyUl/iFk5AyzUK77sAz2KkXM3PA1TBN1s1n5xv3jnhmw0MRRL0/VaMp5Iez5iyaa36l0Qcc1jM8oga3Vs8V9o8OVsHxSgw5tvt5TAlvAHx+cAFLL7p2pB/TIiHaf5usCu6tUgIGDhMyl
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fa968f44-6dc1-4ba4-9c72-08d58157b7c6
+x-ms-office365-filtering-correlation-id: 9cd9eaba-ae2f-47c2-53be-08d58157b73c
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1033;
 x-ms-traffictypediagnostic: MW2PR2101MB1033:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB1033587181540B57ED3670D9FBC40@MW2PR2101MB1033.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <MW2PR2101MB1033B01F212A6966B789B78DFBC40@MW2PR2101MB1033.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158)(42068640409301)(104084551191319)(228905959029699);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1033;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1033;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(376002)(366004)(346002)(396003)(189003)(199004)(3280700002)(3846002)(316002)(6666003)(99286004)(110136005)(2900100001)(54906003)(2501003)(10090500001)(53936002)(5250100002)(106356001)(76176011)(36756003)(107886003)(2950100002)(6486002)(22452003)(6512007)(6436002)(86362001)(6116002)(1076002)(6506007)(2906002)(68736007)(102836004)(4326008)(59450400001)(97736004)(186003)(478600001)(72206003)(26005)(3660700001)(8676002)(25786009)(66066001)(14454004)(5660300001)(305945005)(86612001)(81166006)(8936002)(10290500003)(105586002)(7736002)(81156014)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1033;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: VyMLXkF627nCBB3CBFxflUbUpac9EF3QP6PIcYcfg0FzJ7skEsh4XkMqNPQT0g346ucKHAbbVNu1qJ7VVruOxYcuPCpqzE+bOmeT2lmFNMrSVz2aNj8lrnLhAA628+KwxzY0eWcCkznLzD1cE/g7PDTPyzpT0DwspE6TwuQjrbQ=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(376002)(366004)(346002)(396003)(189003)(199004)(3280700002)(3846002)(316002)(6666003)(99286004)(110136005)(2900100001)(54906003)(2501003)(10090500001)(53936002)(5250100002)(106356001)(76176011)(36756003)(107886003)(2950100002)(6486002)(22452003)(6306002)(6512007)(6436002)(575784001)(86362001)(6116002)(1076002)(6506007)(2906002)(68736007)(102836004)(4326008)(59450400001)(97736004)(186003)(478600001)(72206003)(26005)(3660700001)(8676002)(25786009)(966005)(7416002)(66066001)(14454004)(39060400002)(5660300001)(305945005)(86612001)(81166006)(8936002)(10290500003)(105586002)(7736002)(81156014)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1033;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: 5nxKYJdZmkNjtUhjrzjFClTTtCDkBdizcnL0gCLdwNpvNd7uikyzrVPWBQ2gOhZAvugVbr32q9fVigob3ZNvelg5KF6RUld/sgq//Ne5IZ1gN/oaHW5rbAvKqVzHPurzyMKpmhIbCwJq9fd+FNj/hkXuCM7ui5Za6WHerMEeXJU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa968f44-6dc1-4ba4-9c72-08d58157b7c6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:39.1207
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cd9eaba-ae2f-47c2-53be-08d58157b73c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:38.0270
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -108,67 +119,97 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dedy Lansky <qca_dlansky@qca.qualcomm.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 0f6edfe2bbbb59d161580cb4870fcc46f5490f85 ]
+[ Upstream commit d0381c81c2f782fa2131178d11e0cfb23d50d631 ]
 
-In case count is not multiple of 4, there is a read access in
-wil_memcpy_toio_32() from outside src buffer boundary.
-In wil_memcpy_fromio_32(), in case count is not multiple of 4, there is
-a write access to outside dst io memory boundary.
+Set the pages which is used for kprobes' singlestep buffer
+and optprobe's trampoline instruction buffer to readonly.
+This can prevent unexpected (or unintended) instruction
+modification.
 
-Fix these issues with proper handling of the last 1 to 4 copied bytes.
+This also passes rodata_test as below.
 
-Signed-off-by: Dedy Lansky <qca_dlansky@qca.qualcomm.com>
-Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Without this patch, rodata_test shows a warning:
+
+  WARNING: CPU: 0 PID: 1 at arch/x86/mm/dump_pagetables.c:235 note_page+0x7=
+a9/0xa20
+  x86/mm: Found insecure W+X mapping at address ffffffffa0000000/0xffffffff=
+a0000000
+
+With this fix, no W+X pages are found:
+
+  x86/mm: Checked W+X mappings: passed, no W+X pages found.
+  rodata_test: all tests were successful
+
+Reported-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ye Xiaolong <xiaolong.ye@intel.com>
+Link: http://lkml.kernel.org/r/149076375592.22469.14174394514338612247.stgi=
+t@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/wireless/ath/wil6210/main.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ arch/x86/kernel/kprobes/core.c | 4 ++++
+ arch/x86/kernel/kprobes/opt.c  | 3 +++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless=
-/ath/wil6210/main.c
-index 85bca557a339..f09fafaaaf1a 100644
---- a/drivers/net/wireless/ath/wil6210/main.c
-+++ b/drivers/net/wireless/ath/wil6210/main.c
-@@ -125,9 +125,15 @@ void wil_memcpy_fromio_32(void *dst, const volatile vo=
-id __iomem *src,
- 	u32 *d =3D dst;
- 	const volatile u32 __iomem *s =3D src;
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.=
+c
+index 5d11d01f75de..565e24e9ddf2 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -406,6 +406,8 @@ static int arch_copy_kprobe(struct kprobe *p)
+ {
+ 	int ret;
 =20
--	/* size_t is unsigned, if (count%4 !=3D 0) it will wrap */
--	for (count +=3D 4; count > 4; count -=3D 4)
-+	for (; count >=3D 4; count -=3D 4)
- 		*d++ =3D __raw_readl(s++);
++	set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
 +
-+	if (unlikely(count)) {
-+		/* count can be 1..3 */
-+		u32 tmp =3D __raw_readl(s);
-+
-+		memcpy(d, &tmp, count);
-+	}
- }
+ 	/* Copy an instruction with recovering if other optprobe modifies it.*/
+ 	ret =3D __copy_instruction(p->ainsn.insn, p->addr);
+ 	if (!ret)
+@@ -420,6 +422,8 @@ static int arch_copy_kprobe(struct kprobe *p)
+ 	else
+ 		p->ainsn.boostable =3D -1;
 =20
- void wil_memcpy_toio_32(volatile void __iomem *dst, const void *src,
-@@ -136,8 +142,16 @@ void wil_memcpy_toio_32(volatile void __iomem *dst, co=
-nst void *src,
- 	volatile u32 __iomem *d =3D dst;
- 	const u32 *s =3D src;
-=20
--	for (count +=3D 4; count > 4; count -=3D 4)
-+	for (; count >=3D 4; count -=3D 4)
- 		__raw_writel(*s++, d++);
++	set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
 +
-+	if (unlikely(count)) {
-+		/* count can be 1..3 */
-+		u32 tmp =3D 0;
-+
-+		memcpy(&tmp, s, count);
-+		__raw_writel(tmp, d);
-+	}
- }
+ 	/* Check whether the instruction modifies Interrupt Flag or not */
+ 	p->ainsn.if_modifier =3D is_IF_modifier(p->ainsn.insn);
 =20
- static void wil_disconnect_cid(struct wil6210_priv *wil, int cid,
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index ea8e2b846101..7aba9d6475a5 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -370,6 +370,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kpro=
+be *op,
+ 	}
+=20
+ 	buf =3D (u8 *)op->optinsn.insn;
++	set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
+=20
+ 	/* Copy instructions into the out-of-line buffer */
+ 	ret =3D copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr);
+@@ -392,6 +393,8 @@ int arch_prepare_optimized_kprobe(struct optimized_kpro=
+be *op,
+ 	synthesize_reljump(buf + TMPL_END_IDX + op->optinsn.size,
+ 			   (u8 *)op->kp.addr + op->optinsn.size);
+=20
++	set_memory_ro((unsigned long)buf & PAGE_MASK, 1);
++
+ 	flush_icache_range((unsigned long) buf,
+ 			   (unsigned long) buf + TMPL_END_IDX +
+ 			   op->optinsn.size + RELATIVEJUMP_SIZE);
 --=20
 2.14.1
