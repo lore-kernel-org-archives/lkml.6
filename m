@@ -1,271 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752150AbeCCQRG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 11:17:06 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47152 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751898AbeCCQRE (ORCPT
+        id S1752164AbeCCQcm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 11:32:42 -0500
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:38575 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752109AbeCCQck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 11:17:04 -0500
-From: Song Liu <songliubraving@fb.com>
-To: Jiri Olsa <jolsa@redhat.com>
-CC: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [RFC] perf: a different approach to perf_rotate_context()
-Thread-Topic: [RFC] perf: a different approach to perf_rotate_context()
-Thread-Index: AQHTsZcV+ejFiFHeiEK2h1wCYdO9K6O+hwYAgAAryAA=
-Date: Sat, 3 Mar 2018 16:16:33 +0000
-Message-ID: <F0DB38F8-7A56-4E8B-AEF7-77D9AE71852B@fb.com>
-References: <20180301195321.2608515-1-songliubraving@fb.com>
- <20180303133950.GA2704@krava>
-In-Reply-To: <20180303133950.GA2704@krava>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.5.20)
-x-originating-ip: [199.201.64.3]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR15MB1180;7:s3jpYd38mQPG8vE6XnjUHK1RKhmUSQ7cvwtXbADn3MFuPRDZ63PX1E4vkk+B2BRgo50gdNZTLX1v+t5OSUa+oAQCWpx/HlqVERjRp4xtFehzQg6nqhNLXqUnmjUQnk1KujlhEnhAD0769DzhtG7j8/BocBJKlwVwFBP/0RKSCNJGMOycAiLUxnJIpkEV5Jtt/SMVL9gKonrD71wghKtzKD/xMPyLVOB/wK1ZXgCNz2Cgc8hD2ktiWM3oN0nPRdTp;20:31oDxZdmSlajHy+F2woSkJbpLfpRO4ZZ0tVsC+B+0XtH6GYhGaXHgRj1504p+iNp+teHsyR+Xzc1JM3hNb/Mo02ltgts5ZHuKkledqQ9ziq5pF1ftTIXCbZmcRW4CMNF2pFOqxPLeVh8kEiyYQWryRcVrqDaaawuUmrkvUd3Ths=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-correlation-id: cef6b193-324f-4cd1-6fc3-08d58122218c
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:DM5PR15MB1180;
-x-ms-traffictypediagnostic: DM5PR15MB1180:
-x-microsoft-antispam-prvs: <DM5PR15MB1180E74BDC88910282E1BD14B3C40@DM5PR15MB1180.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(11241501184)(944501244)(52105095)(93006095)(93001095)(10201501046)(6041288)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR15MB1180;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1180;
-x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(376002)(39860400002)(39380400002)(189003)(199004)(6116002)(5660300001)(186003)(86362001)(3846002)(14454004)(2900100001)(99286004)(36756003)(6916009)(478600001)(106356001)(966005)(4326008)(54906003)(33656002)(68736007)(25786009)(316002)(26005)(7736002)(2950100002)(105586002)(8676002)(2906002)(97736004)(6246003)(57306001)(81156014)(3660700001)(50226002)(81166006)(6486002)(305945005)(66066001)(6506007)(53546011)(8936002)(83716003)(3280700002)(6436002)(59450400001)(53936002)(5250100002)(229853002)(82746002)(76176011)(6306002)(6512007)(102836004)(5890100001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1180;H:DM5PR15MB1548.namprd15.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: iaajiUxzbjzE+ELwvTJqCCBPJtVY3X09JRbwEsaqHvtLSjv+CwkhIdmzNZ+zwBIiJFtWN7w3A3EbPBfS4hCFSLJpSeXgjKe7kgHTup82grSaTZjRqYTtYtYt6KcvqoaYhZv/+W76Ghcu2Xw7iGyzkhQFVFZiyPMh4l+RP2GtYtE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E5ECBDF360BA2646838A592C83B7D0A7@namprd15.prod.outlook.com>
+        Sat, 3 Mar 2018 11:32:40 -0500
+X-Google-Smtp-Source: AG47ELvJqIXBLK9IAOjfZv8wtkq/YcXiKNfB56WpkAia6wfzAkys1/AkNbuTOY5AqSyk4PqJJK+dxQ==
+Date: Sat, 3 Mar 2018 08:32:36 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Troy Kisky <troy.kisky@boundarydevices.com>
+Cc: Fugang Duan <fugang.duan@nxp.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: lost interrupts when running sabrelite images (v4.15+) in qemu
+Message-ID: <20180303163236.GA29514@roeck-us.net>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: cef6b193-324f-4cd1-6fc3-08d58122218c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 16:16:33.3422
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1180
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w23GHAoq019518
 
+Hi,
 
+since v4.15, I get the following runtime warning when running sabrelite images
+in qemu.
 
-> On Mar 3, 2018, at 5:39 AM, Jiri Olsa <jolsa@redhat.com> wrote:
-> 
-> On Thu, Mar 01, 2018 at 11:53:21AM -0800, Song Liu wrote:
->> When there are more perf_event's than hardware PMCs, perf rotate events
->> so that all events get chance to run. Currently, the rotation works as:
->>  sched_out flexible_groups in cpuctx->ctx and cpuctx->task_ctx;
->>  rotate_left flexible_groups in cpuctx->ctx and cpuctx->task_ctx;
->>  try sched_in flexible_groups in cpuctx->ctx;
->>  try sched_in flexible_groups in cpuctx->task_ctx.
->> 
->> This approach has some potential issues:
->>  1. if different rotations of flexible_groups in cpuctx->ctx occupy
->>     all hardware PMC, flexible_groups in cpuctx->task_ctx cannot run
->>     at all.
->>  2. if pinned_groups occupy all hardware PMC, the rotation triggers per
->>     perf_event_mux_interval_ms. But it couldn't schedule any events.
->>  3. since flexible_groups in cpuctx->ctx and cpuctx->task_ctx are
->>     rotated separately, there are N x M possible combinations. It is
->>     difficult to remember all the rotation combinations and reuse these
->>     combinations. As a result, it is necessary to try sched_in the
->>     flexible_groups on each rotation.
->> 
->> This patch tries to do the rotation differently. Each perf_event in the
->> cpuctx (ctx and task_ctx) is assigned a rotation_id. The rotation_id's
->> are assigned during the first few rotations after any changes in
->> perf_events attached to the cpuctx. Once all the rotation_id's are
->> assigned for all events in the cpuctx, perf_rotate_context() simply
->> picks the next rotation to use, so there is no more "try to sched_in"
->> for future rotations.
->> 
->> Special rotation_id's are introduced to handle the issues above.
->> flexible_groups that conflicts with pinned_groups are marked as
->> ALWAYS_OFF, so they are not rotated (fixes issue 2). flexible_groups
->> in cpuctx->ctx and cpuctx->task_ctx are rotated together, so they all get
->> equal chance to run (improves issue 1).
-> 
-> hum, so the improvement is that cpuctx could eventually give
-> up some space for task_ctx events, but both ctxs still rotate
-> separately no? you keep rotation ID per single context..
+irq 65: nobody cared (try booting with the "irqpoll" option)
+...
+handlers:
+[<26292474>] fec_pps_interrupt
+Disabling IRQ #65
+fec 2188000.ethernet (unnamed net_device) (uninitialized): MDIO read timeout
 
-With this approach, both ctxs are rotated together. It is possible that
-cpuctx->ctx only has events for rotation 0, 1; while cpuctx->task_ctx 
-only has events for rotation 2, 3. But both of them will rotate among
-0, 1, 2, 3. 
+Bisect points to commit 4ad1ceec05e491 ("net: fec: Let fec_ptp have its
+own interrupt routine"). Analysis shows that platform_irq_count()
+returns 2, which is reduced to 1 by fec_enet_get_irq_cnt().
+If I let fec_enet_get_irq_cnt() return 2, the problem is gone.
+Reverting commit 4ad1ceec05e491 also fixes the problem.
 
-num_rotations and curr_rotation could be part of cpuctx, as it is 
-eventually shared among two contexts. 
+Bisect log is attached.
 
->> 
->> With this approach, we only do complex scheduling of flexible_groups
->> once. This enables us to do more complex schduling, for example, Sharing
->> PMU counters across compatible events:
->>   https://lkml.org/lkml/2017/12/1/410.
-> 
-> how could this code do that?
+Guenter
 
-We still need a lot more work to get PMU sharing work. I think one of the 
-problem with Tejun's RFC is more expensive scheduling. This RFC tries to 
-pre-compute all rotations, so we only need to these expensive scheduling 
-once. 
-
-> 
->> 
->> There are also some potential downsides of this approach.
->> 
->> First, it gives all flexible_groups exactly same chance to run, so it
->> may waste some PMC cycles. For examples, if 5 groups, ABCDE, are assigned
->> to two rotations: rotation-0: ABCD and rotation-1: E, this approach will
->> NOT try any of ABCD in rotation-1.
->> 
->> Second, flexible_groups in cpuctx->ctx and cpuctx->task_ctx now have
->> exact same priority and equal chance to run. I am not sure whether this
->> will change the behavior in some use cases.
->> 
->> Please kindly let me know whether this approach makes sense.
-> 
-> SNIP
-> 
->> +/*
->> + * identify always_on and always_off groups in flexible_groups, call
->> + * group_sched_in() for always_on groups
->> + */
->> +static void ctx_pick_always_on_off_groups(struct perf_event_context *ctx,
->> +					  struct perf_cpu_context *cpuctx)
->> +{
->> +	struct perf_event *event;
->> +
->> +	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
->> +		if (event->group_caps & PERF_EV_CAP_SOFTWARE) {
->> +			event->rotation_id = PERF_ROTATION_ID_ALWAYS_ON;
->> +			ctx->nr_sched++;
->> +			WARN_ON(group_sched_in(event, cpuctx, ctx));
->> +			continue;
->> +		}
->> +		if (group_sched_in(event, cpuctx, ctx)) {
->> +			event->rotation_id = PERF_ROTATION_ID_ALWAYS_OFF;
->> +			ctx->nr_sched++;
-> 
-> should ctx->nr_sched be incremented in the 'else' leg?
-
-The else leg means the event does not conflict with pinned groups, so it 
-will be scheduled later in ctx_add_rotation(). This function only handles
-always_on and always_off events. 
-
-> 
->> +		}
->> +		group_sched_out(event, cpuctx, ctx);
->> +	}
->> +}
->> +
->> +/* add unassigned flexible_groups to new rotation_id */
->> +static void ctx_add_rotation(struct perf_event_context *ctx,
->> +			     struct perf_cpu_context *cpuctx)
->> {
->> 	struct perf_event *event;
->> +	int group_added = 0;
->> 	int can_add_hw = 1;
->> 
->> +	ctx->curr_rotation = ctx->num_rotations;
->> +	ctx->num_rotations++;
->> +
->> 	list_for_each_entry(event, &ctx->flexible_groups, group_entry) {
->> 		/* Ignore events in OFF or ERROR state */
->> 		if (event->state <= PERF_EVENT_STATE_OFF)
->> @@ -3034,13 +3099,77 @@ ctx_flexible_sched_in(struct perf_event_context *ctx,
->> 		if (!event_filter_match(event))
->> 			continue;
->> 
->> +		if (event->rotation_id != PERF_ROTATION_ID_NOT_ASSGINED)
->> +			continue;
->> +
->> 		if (group_can_go_on(event, cpuctx, can_add_hw)) {
->> 			if (group_sched_in(event, cpuctx, ctx))
->> 				can_add_hw = 0;
->> +			else {
->> +				event->rotation_id = ctx->curr_rotation;
->> +				ctx->nr_sched++;
->> +				group_added++;
-> 
-> group_added is not used
-
-I should have removed it. Thanks!
-
-> 
-> SNIP
-> 
->> static int perf_rotate_context(struct perf_cpu_context *cpuctx)
->> {
->> -	struct perf_event_context *ctx = NULL;
->> +	struct perf_event_context *ctx = cpuctx->task_ctx;
->> 	int rotate = 0;
->> +	u64 now;
->> 
->> -	if (cpuctx->ctx.nr_events) {
->> -		if (cpuctx->ctx.nr_events != cpuctx->ctx.nr_active)
->> -			rotate = 1;
->> -	}
->> -
->> -	ctx = cpuctx->task_ctx;
->> -	if (ctx && ctx->nr_events) {
->> -		if (ctx->nr_events != ctx->nr_active)
->> -			rotate = 1;
->> -	}
->> +	if (!flexible_sched_done(cpuctx) ||
->> +	    cpuctx->ctx.num_rotations > 1)
->> +		rotate = 1;
->> 
->> 	if (!rotate)
->> 		goto done;
->> @@ -3382,15 +3492,35 @@ static int perf_rotate_context(struct perf_cpu_context *cpuctx)
->> 	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
->> 	perf_pmu_disable(cpuctx->ctx.pmu);
->> 
->> -	cpu_ctx_sched_out(cpuctx, EVENT_FLEXIBLE);
->> +	update_context_time(&cpuctx->ctx);
->> 	if (ctx)
->> -		ctx_sched_out(ctx, cpuctx, EVENT_FLEXIBLE);
->> +		update_context_time(ctx);
->> +	update_cgrp_time_from_cpuctx(cpuctx);
->> 
->> -	rotate_ctx(&cpuctx->ctx);
->> +	ctx_switch_rotation_out(&cpuctx->ctx, cpuctx);
->> 	if (ctx)
->> -		rotate_ctx(ctx);
->> +		ctx_switch_rotation_out(ctx, cpuctx);
->> 
->> -	perf_event_sched_in(cpuctx, ctx, current);
->> +	if (flexible_sched_done(cpuctx)) {
->> +		/* simply repeat previous calculated rotations */
->> +		ctx_switch_rotation_in(&cpuctx->ctx, cpuctx);
->> +		if (ctx)
->> +			ctx_switch_rotation_in(ctx, cpuctx);
->> +	} else {
->> +		/* create new rotation */
->> +		ctx_add_rotation(&cpuctx->ctx, cpuctx);
->> +		if (ctx)
->> +			ctx_add_rotation(ctx, cpuctx);
->> +	}
-> 
-> that seems messy.. could this be done just by setting
-> the rotation ID and let perf_event_sched_in skip over
-> different IDs and sched-in/set un-assigned events?
-
-Yeah, that could be a cleaner implementation. 
-
-Thanks,
-Song
+----
+# bad: [d8a5b80568a9cb66810e75b182018e9edb68e8ff] Linux 4.15
+# good: [bebc6082da0a9f5d47a1ea2edc099bf671058bd4] Linux 4.14
+git bisect start 'v4.15' 'v4.14'
+# bad: [5d352e69c60e54b5f04d6e337a1d2bf0dbf3d94a] Merge tag 'media/v4.15-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+git bisect bad 5d352e69c60e54b5f04d6e337a1d2bf0dbf3d94a
+# good: [4e4510fec4af08ead21f6934c1410af1f19a8cad] Merge tag 'sound-4.15-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good 4e4510fec4af08ead21f6934c1410af1f19a8cad
+# good: [9fb7bd77d11ab03b4a969279de9f54d8fd6fe988] mlxsw: spectrum_ipip: Split accessor functions
+git bisect good 9fb7bd77d11ab03b4a969279de9f54d8fd6fe988
+# bad: [22714a2ba4b55737cd7d5299db7aaf1fa8287354] Merge branch 'for-4.15' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup
+git bisect bad 22714a2ba4b55737cd7d5299db7aaf1fa8287354
+# bad: [f6b3716dcdcd1a4c3fa05ecb6ab0a1e52b6785d0] Merge branch 'net-devname_alloc_cleanups'
+git bisect bad f6b3716dcdcd1a4c3fa05ecb6ab0a1e52b6785d0
+# bad: [f938daeee95eb36ef6b431bf054a5cc6cdada112] net/mlx5e: CHECKSUM_COMPLETE offload for VLAN/QinQ packets
+git bisect bad f938daeee95eb36ef6b431bf054a5cc6cdada112
+# good: [6c49b5e26004eef86e7a47093a53be290554351c] Merge branch 'dsa-parsing-stage'
+git bisect good 6c49b5e26004eef86e7a47093a53be290554351c
+# bad: [ec5c91c6ca8b2d5ca6edfc968dbfeeaae4ed5572] net: dsa: lan9303: Replace msleep(1) with usleep_range()
+git bisect bad ec5c91c6ca8b2d5ca6edfc968dbfeeaae4ed5572
+# good: [fffcefe967a02997be7a296a4f0766b29dcd1a67] ipv6: addrconf: fix a lockdep splat
+git bisect good fffcefe967a02997be7a296a4f0766b29dcd1a67
+# bad: [aaf151b9e68101b03ba42d581e8a424bdd0110fe] bpf: Rename tcp_bbf.readme to tcp_bpf.readme
+git bisect bad aaf151b9e68101b03ba42d581e8a424bdd0110fe
+# bad: [3e29cd0e6563d5fefd59e7225750ee9922f2dad5] xdp: Sample xdp program implementing ip forward
+git bisect bad 3e29cd0e6563d5fefd59e7225750ee9922f2dad5
+# good: [0cf737808ae7cb25e952be619db46b9147a92f46] hv_netvsc: netvsc_teardown_gpadl() split
+git bisect good 0cf737808ae7cb25e952be619db46b9147a92f46
+# good: [ca1b17b7e843123f5a1e4c8bd2d7b6596ffe6e93] Merge branch 'hv_netvsc-fix-a-hang-on-channel-mtu-changes'
+git bisect good ca1b17b7e843123f5a1e4c8bd2d7b6596ffe6e93
+# bad: [4ad1ceec05e49175d0f967cc87628101e79176f6] net: fec: Let fec_ptp have its own interrupt routine
+git bisect bad 4ad1ceec05e49175d0f967cc87628101e79176f6
+# first bad commit: [4ad1ceec05e49175d0f967cc87628101e79176f6] net: fec: Let fec_ptp have its own interrupt routine
