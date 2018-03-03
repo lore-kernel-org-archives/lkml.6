@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1211789-1520118850-2-15917951989218488541
+X-Cyrus-Session-Id: sloti22d1t05-1204544-1520118830-2-16155622448127068048
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520118850; b=cNFekeSPwmcorLUe83qzttXO8v5GrrIDSXer8pojZ4WZz76
-    DcAhPEt/VUlvOXY7C6pVsR1mu0CnQ5rUOJUqAXlcCPNxRbMqjN8gkG13jYsD4GMh
-    jyCzQw/dKSVBI2sr+9nXcC/W5dUt0JbitWlTk+/zsSjE8gI2DUzBTtZUvVyvtJaL
-    h8ACM/YmRcZDMH4njmQmY1cnwh2BOGQ6PrNw8u6ZmoOIpX3BetgtcY6uULviT5ez
-    PWb/bsXRLRFCFVnVeROciQNjVdKOhz9yt3DzOSzFRcUeGaQAQF7FbQLHT8b1cPuk
-    5jHHAnLdn4KVyTK6T4IEHcNNLcMi7Pujj9rJwTg==
+    t=1520118829; b=CMqFk6Ycm1xIILCG6L2bqxRHP+yMo00gd4adsIixJnW2hmO
+    A1QYecfsCUn9wRaPZ2J7FI9Vh0YWLOmh/CkSwcjfuAfhBlGhi0hvVqj90pFxLZz2
+    455qA8SgwaykAJYukP0Wd3iv6oGdiCu5bGtuZL4Hk7eX1mKyPj39q1NYn8p8SmOp
+    nXJCaIACZ7c6BNdoSUGlPF2w3gY/jCBbEYZGcl+qCc8Vgxmt/PITREq5toVPqIAG
+    fCZ8S3I3fzSk7lh48TRNFu9qC7Z778rs40w2cPE7q8LbJtxnahVRl0ZSPdw/h8xd
+    06532UnrQSK0EuY2ZQ8SjCqJ7IZZm0Qs4FAeFBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520118850; bh=z9rxiu
-    7KCMKpDjFA7vzlkQwfSjUYcP+p8Zanh3X8d8w=; b=joYb5SwGqY/o1NyQiloqGJ
-    C8pMyi21b8AQlHeNTFuCl0HBJlIeLguIRHJ2bsw7W6eIduR9BiztXvYXhCU+NyKu
-    l9vQSXZt+CKKCokzHS4YMrioXTdopCCPg8Ym3vUtMFeHf7+7vhndwQ9Vi3N5TiD1
-    zNWirER8ZkZUl2567u7NSqn40ma3Y+NUQd2KhWbKgRZSagDHr6e9MAuOtFHyJ+lp
-    /XpTWjG5mQ3SRunpxS8n/QwyrgzYDRbX1eScXJmdKFjkcr0tJVc6VhU8vxBmoIPK
-    JUfpiXQP9qLErW3xjvEGMdv39LlJkXDB5JQpozpTq9VKJtY1LFmpGuko5sAasA3Q
+    :mime-version:sender:list-id; s=arctest; t=1520118829; bh=yVjjti
+    WKWqy3obQLuTNG71Kkl88vrfeNYNa3D5P2KC8=; b=BTdL/mMC/WKQQoBb8+lj4n
+    os0ocTfideNXNXRqueDuHsFL0fvWpdsEnMPxr9oi4wpnx9ZMoQSemtgkx0SRy3NR
+    LPt2rO8g8f9NRJOPqoostCtClohdCLED7How4WSVw2JSrkcEVy2W3ac+kgsr2Bfy
+    xlLJs2wOSb0TGPclCEYOZa4KwQUCsbl/7XLyXIS0Lwzgr/7S/T/DipVqKWsDgrKp
+    I0DTA7eKga5Wi9blPeFYBFufYW7hplbCuEuwTGFzNtejE+xNR7Sw5bE9lpFDGU3a
+    w9CHVdaBy86j/WIxse9HtrDtNd+ek/v0UMl/KPQ/7P5e+8SxRLP7uNDeY9/emD9w
     ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TsEls9/2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=megSsTKE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TsEls9/2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=megSsTKE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933867AbeCCXNh (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:13:37 -0500
-Received: from mail-by2nam01on0100.outbound.protection.outlook.com ([104.47.34.100]:14848
+        id S935020AbeCCWjJ (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:39:09 -0500
+Received: from mail-by2nam01on0114.outbound.protection.outlook.com ([104.47.34.114]:65056
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935021AbeCCWjJ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:39:09 -0500
+        id S934197AbeCCWjF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:39:05 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Jaegeuk Kim <jaegeuk@kernel.org>,
+CC: Jiada Wang <jiada_wang@mentor.com>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.4 040/115] f2fs: relax node version check for
- victim data in gc
-Thread-Topic: [PATCH AUTOSEL for 4.4 040/115] f2fs: relax node version check
- for victim data in gc
-Thread-Index: AQHTsz9VFFZ88wunzEqZA6gc5o5yNw==
-Date: Sat, 3 Mar 2018 22:31:12 +0000
-Message-ID: <20180303223010.27106-40-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.4 034/115] dmaengine: imx-sdma: add 1ms delay to
+ ensure SDMA channel is stopped
+Thread-Topic: [PATCH AUTOSEL for 4.4 034/115] dmaengine: imx-sdma: add 1ms
+ delay to ensure SDMA channel is stopped
+Thread-Index: AQHTsz9TOm0n6iIbGUKC+14bBirp9g==
+Date: Sat, 3 Mar 2018 22:31:08 +0000
+Message-ID: <20180303223010.27106-34-alexander.levin@microsoft.com>
 References: <20180303223010.27106-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303223010.27106-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,27 +76,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0938;7:U6uFJfjcjHOEX5YiGND5cT9FRD2t/r6cP2XDpo4/8XjHdcKUDTzc+bYgbSBlBPY67aK43Zi0mRuTc7G1I9BQQG3oatsQs6KnySzpQDv20yrKss695JnxcAsUSd1UbpOINNUHDTj/A6lpTLI++DnLQ/xuj2fipReTgAWidlJL++51OS4omgYg6NWbsjbAS7UZIAcjrk47lv5MI4Q8k1RX8Ho+dbLYuw64a2ZgSBm7CM+HJZ9PK1vYIzQvGw5BVMd7
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0938;7:qI9FdGlvv+Of7cCS7N8Z1Cb06ORJYKbaLupZkAubWGA83gnHTAZ+04LOsKo9MJPVvfFXfhbMjW65xPbAOzeW43GN0MJ5nbvO7+5gx9+tOR62vSS8DcjP3XWOb1pUKkydtPaIj8F8lMJ74q/3DpBQ21fUP91HrX6azSnDYk/tQ8pJI24u8SBZJZ4NvpXmXJrPeFL6KF0txFEtq3qwKJjvejk68Z4b4JtkNwJWRo6Xp0IKC52cCQR3gsyEFwY5bFVq
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 718f4535-94ce-4331-2ac5-08d581579288
+x-ms-office365-filtering-correlation-id: 744ff752-ff81-4fee-86e5-08d5815784a0
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0938;
 x-ms-traffictypediagnostic: MW2PR2101MB0938:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB093800D82662AA12DC7C960CFBC40@MW2PR2101MB0938.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513);
+x-microsoft-antispam-prvs: <MW2PR2101MB093845691B0DCE394C4079D1FBC40@MW2PR2101MB0938.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231220)(944501244)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0938;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0938;
 x-forefront-prvs: 0600F93FE1
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(199004)(189003)(54906003)(4326008)(72206003)(22452003)(478600001)(25786009)(66066001)(6436002)(6512007)(14454004)(53936002)(2906002)(6486002)(105586002)(99286004)(10290500003)(3846002)(106356001)(6116002)(305945005)(5660300001)(110136005)(1076002)(36756003)(316002)(2900100001)(2501003)(5250100002)(10090500001)(59450400001)(102836004)(68736007)(2950100002)(26005)(97736004)(186003)(6506007)(8676002)(107886003)(3660700001)(6666003)(7736002)(86362001)(81166006)(86612001)(81156014)(76176011)(8936002)(3280700002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0938;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: URssTC1zaG9RzyGyONMG/z92/1uCNdxxEfjqRVO9GN8s9lvREO7Mn28DTlAeppbF6PZTmyYqiWTzQgH8TBoI6l9GA5rbVljbV3WMWCRskSKEzEeygnEeLWWeoJoNeEvTc7pUcy1WGTYOFSia0L8rTVMEgL4UkJ26QmuBjRAYF+k=
+x-microsoft-antispam-message-info: LSscY1DIj61dWkSuf1P0lx0cQbH9hQJbiCHkMSC9F3HVDzEAdYT24+V5zOQNq6sj80I1PbjzAKRh+T4OPCAhBs4UgP8sSSQZg2r0II5SjbobJvq1CMNo9oqmCm7vbEmN2TpYlPPGogWX/1+afth1wRst5jLMIXJhOxP/SwPKq5k=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 718f4535-94ce-4331-2ac5-08d581579288
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:12.2915
+X-MS-Exchange-CrossTenant-Network-Message-Id: 744ff752-ff81-4fee-86e5-08d5815784a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:31:08.5884
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -106,54 +107,68 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-[ Upstream commit c13ff37e359bb3eacf4e1760dcea8d9760aa7459 ]
+[ Upstream commit 7f3ff14b7eb1ffad132117f08a1973b48e653d43 ]
 
-- has_not_enough_free_secs
-node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+sdma_disable_channel() cannot ensure dma is stopped to access
+module's FIFOs. There is chance SDMA core is running and accessing
+BD when disable of corresponding channel, this may cause sometimes
+even after call of .sdma_disable_channel(), SDMA core still be
+running and accessing module's FIFOs.
 
-          - f2fs_gc
-             - get_victim_by_default
-alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
+According to NXP R&D team a delay of one BD SDMA cost time (maximum
+is 1ms) should be added after disable of the channel bit, to ensure
+SDMA core has really been stopped after SDMA clients call
+.device_terminate_all.
 
-                - do_garbage_collect
-start_segno 3976, end_segno 3977   type 0
+This patch introduces adds a new function sdma_disable_channel_with_delay()
+which simply adds 1ms delay after call sdma_disable_channel(),
+and set it as .device_terminate_all.
 
-                  - is_alive
-nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
-
-                   - gc_data_segment 766, segno 3976, block 512/426 not ali=
-ve
-
-So, this patch fixes subtle corrupted case where node version does not matc=
-h
-to summary version which results in infinite loop by gc.
-
-Reported-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- fs/f2fs/gc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/dma/imx-sdma.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index fedbf67a0842..928b9e046d8a 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -522,8 +522,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct =
-f2fs_summary *sum,
- 	get_node_info(sbi, nid, dni);
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index 0f6fd42f55ca..f8d740a6740d 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -911,6 +911,21 @@ static int sdma_disable_channel(struct dma_chan *chan)
+ 	return 0;
+ }
 =20
- 	if (sum->version !=3D dni->version) {
--		f2fs_put_page(node_page, 1);
--		return false;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: valid data with mismatched node version.",
-+				__func__);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 	}
-=20
- 	*nofs =3D ofs_of_node(node_page);
++static int sdma_disable_channel_with_delay(struct dma_chan *chan)
++{
++	sdma_disable_channel(chan);
++
++	/*
++	 * According to NXP R&D team a delay of one BD SDMA cost time
++	 * (maximum is 1ms) should be added after disable of the channel
++	 * bit, to ensure SDMA core has really been stopped after SDMA
++	 * clients call .device_terminate_all.
++	 */
++	mdelay(1);
++
++	return 0;
++}
++
+ static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
+ {
+ 	struct sdma_engine *sdma =3D sdmac->sdma;
+@@ -1793,7 +1808,7 @@ static int sdma_probe(struct platform_device *pdev)
+ 	sdma->dma_device.device_prep_slave_sg =3D sdma_prep_slave_sg;
+ 	sdma->dma_device.device_prep_dma_cyclic =3D sdma_prep_dma_cyclic;
+ 	sdma->dma_device.device_config =3D sdma_config;
+-	sdma->dma_device.device_terminate_all =3D sdma_disable_channel;
++	sdma->dma_device.device_terminate_all =3D sdma_disable_channel_with_delay=
+;
+ 	sdma->dma_device.src_addr_widths =3D BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	sdma->dma_device.dst_addr_widths =3D BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	sdma->dma_device.directions =3D BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV)=
+;
 --=20
 2.14.1
