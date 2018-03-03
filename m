@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1310899-1520121393-2-6157328437407992006
+X-Cyrus-Session-Id: sloti22d1t05-1310899-1520121378-3-16069259385607869928
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES ensk.us-ascii, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520121393; b=X24oG4rMLA4iiYRHTau9rVOBQFpsoU5vT8AXEtU7Rc5If24
-    R4QuqgsXTLbPH8ByTWy5CUwWCiQlWOnJwmvAkH3yLh66nPHdsE/lTIZ3QOFKmOYl
-    tv4Z2jydRUA3KHsvn9IPKmyID9/mwA13yGkJWqzBz0o0IR7qHf97Y/4G7fkE3OrP
-    HpIN72ERXY4aP5LjJGChtfpxvD5dCWtlK5ZMbSNgkhvgn5yl+9WOINigKmFdSQzx
-    FkRW5Ip2GI6hg1gNc/o977ShXJEdUX9+QXUGQE3dQGU4dpj3F2aOaUtTZvXK+rjF
-    Zzic6PtxD8QLGShf/r9ZMNNkBzFvp8Bgz3lddRQ==
+    t=1520121378; b=FdXaahY56M94Gu9mdOdpxcQ0lwNpiKMXgc8L3sV6+NrD9BF
+    OSyScqe+nPtApgQqt3F9s2nR/3XB/PbGzY63iHzMVKzgTvBfDYnjkfPwystu02s+
+    Du8K7EFQS3co7qFIb+rWkviAhQDcMmHL0j7lr5v2XJGPEBiOxPSjORckjcKZVuI5
+    IJd/JLDhphkhpNkNG22OtBPQQeRLLRBUisBMn9M2in7cPJWThhVbpzHh8C/y8xDE
+    ryftjynrUPymNXyhKJjc4zKrvvxrmbaB0lvaKpB349oRobT1BI/76wkpnm1SgAhs
+    v1U5ZpSn0tt5Bvk1wuzFxPo/JjjQ/mOrRcdNQOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520121393; bh=JZJMGv
-    4IFT4NmV2XQFD1w0wd3cJ+PcLAVlL8NOpErds=; b=Cu3/eugvBcJFBMRXhDIcG5
-    Du/fo1Abmdx2OGZAoiht8AvBigqc71EVoYk7ylDvf7/f7bP9xVBWX3cLjKBJA+gu
-    r+rFDiIdEWEEmJc5ehzfC2gZ4iolsfzJZ8Cv/fgWk+qeEt+/eQHvxrABvdmypX40
-    1gY/It3ON7zKeKgsWZK4WKChrpejq6l0Ol6R8OXoN33KkoWWL/irg22lHm7NZzQM
-    xDcuSDHiU9PFxxAweRUFSfFMGarFDw0uQ64K2b67+Woe7FYTAPq8E6rTtl5AgED+
-    uwWt9CgUhCmxXTp8DZPT+Tp4jUm9k9KUlZ0IEfhpo3wq55NYtpa+7Sw1MI62dolA
+    :mime-version:sender:list-id; s=arctest; t=1520121378; bh=xI+4JB
+    jZCtYQnidH9bL2jSaWa6M+rM4Glt68qFdp5/8=; b=o/11CZhkRfu00RIJZ+ThUR
+    +uW/b0F50nAIexXp8w/Y7lX3t9qxNaT0xHrszdQNZr/YNePgj/g12fL5wwXZugfr
+    OUQrhjMiXDtBp48NvUelt6C7IA7Dj7EFecNMVrpotHTFo7kv6jfdYI8EYDQXTAS7
+    sODwogZ2k5zUASbfCAuq46vC4LQt8thFxFa3nzwAI76WAhFOdk4sNv2S6Qr6F590
+    QDJ2PqQHy6alaP9SljWla5B/dUHcfSUzdNW19vfZiCKkaO1dzL9J0plSrCjvZqaF
+    2wNadACKfEslnDuNXL13UPViYcRToNzNQHST1S+B06DTYs4aTGD4sPEBdKcUjFWw
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Js8BU4zV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=OyQwYllw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Js8BU4zV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=OyQwYllw x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932861AbeCCX4Q (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:56:16 -0500
-Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:47215
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S932657AbeCCXz7 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:55:59 -0500
+Received: from mail-by2nam01on0107.outbound.protection.outlook.com ([104.47.34.107]:32944
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933898AbeCCWcy (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:32:54 -0500
+        id S933259AbeCCWcz (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:32:55 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Gao Feng <fgao@ikuai8.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Baruch Siach <baruch@tkos.co.il>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 066/219] tcp: sysctl: Fix a race to avoid
- unexpected 0 window from space
-Thread-Topic: [PATCH AUTOSEL for 4.9 066/219] tcp: sysctl: Fix a race to avoid
- unexpected 0 window from space
-Thread-Index: AQHTsz73/P0X5bkOO0KFo9zMB2xmUQ==
-Date: Sat, 3 Mar 2018 22:28:34 +0000
-Message-ID: <20180303222716.26640-66-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 069/219] ARM: dts: bcm2835: add index to the
+ ethernet alias
+Thread-Topic: [PATCH AUTOSEL for 4.9 069/219] ARM: dts: bcm2835: add index to
+ the ethernet alias
+Thread-Index: AQHTsz74vmXGJPolzE+3igo6G/gDGA==
+Date: Sat, 3 Mar 2018 22:28:36 +0000
+Message-ID: <20180303222716.26640-69-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,80 +75,82 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1098;7:+69PQ6AJIDXg6Nx7KYeNddUrXwn4dhscZ2Q91VKewQ6R+UhPul4/1StzxrEh+ymvVkTYsg0P1ss9jjzaYW8P63udLRnrLo2lpaHLj7IDCGnCI/smkZkvOEKRSefzmf6d+K/W2p+4zkBJR+4DBv2FGmyHT1mk3qIaFF3yU4Y0chnKrVydHahcqVXjUH5QZa4UW1uw+fQbx5stZ+r/LvwXRXj63PWVdEfj43zqYSUYo+q27QBJLFHiElZKW8HRuXBJ
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1097;7:x87Gs0Cr27fFsUp0FKRhAL7XQFwD+/hLJ2Cm1Gh+gmpkUykbMG3n7hncgHtCkG/tqerjMpBWNSeMrPOvgKS4kJVEIqSye8ByCBVaRDEG9iNmXlolhG60hTTM+WOUk/Qzn6eqD47QNADFlDP5rLSEJb/VF8qjg3pnIb10AQtlI+nvX9QVUVLi2wwnXQnROQw3+zSxDt1K5EFt9h8kXvLDcBrVZ1HsFPsFtEXaW2b6SKhasmDRXlZlPBnFd97wPE2h
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d03ba52e-f34e-4b63-d0b9-08d58156b336
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1098;
-x-ms-traffictypediagnostic: MW2PR2101MB1098:
+x-ms-office365-filtering-correlation-id: 780c508e-fd58-4218-1385-08d58156b43d
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1097;
+x-ms-traffictypediagnostic: MW2PR2101MB1097:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB1098378CC517A4821F163D5DFBC40@MW2PR2101MB1098.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <MW2PR2101MB109790363A6A16339C66B6ECFBC40@MW2PR2101MB1097.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1098;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1098;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231220)(944501244)(52105095)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MW2PR2101MB1097;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1097;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(39380400002)(366004)(396003)(346002)(199004)(189003)(2906002)(8936002)(36756003)(6512007)(81156014)(10290500003)(81166006)(99286004)(6436002)(68736007)(478600001)(3846002)(22452003)(53936002)(8676002)(110136005)(54906003)(4326008)(316002)(76176011)(6116002)(7736002)(105586002)(305945005)(3660700001)(1076002)(14454004)(97736004)(575784001)(25786009)(186003)(72206003)(26005)(102836004)(86362001)(6666003)(2501003)(3280700002)(6506007)(5660300001)(10090500001)(66066001)(106356001)(5250100002)(2900100001)(2950100002)(86612001)(6486002)(107886003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1098;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: mHjOcu/qBTu1LKyOzi9E8KHraqgjeICS44iGM2EJZKiV2L2/SCYHyhhrzAQ+uI3iQFtEMQfgq14TQqAmAJJDgodO4/Vc8ZqSb9tVpKniYSh29/1FiGezlMjgTrwb/bk4TC6J563sfVIYF8BhFv86A4vqMVDbMKMNhp1OpuSu3Go=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(396003)(39860400002)(346002)(189003)(199004)(305945005)(105586002)(36756003)(3660700001)(86362001)(575784001)(6666003)(66066001)(2900100001)(5660300001)(8676002)(10090500001)(81166006)(81156014)(8936002)(22452003)(10290500003)(2950100002)(4326008)(25786009)(5250100002)(2501003)(68736007)(7736002)(72206003)(14454004)(478600001)(186003)(110136005)(26005)(316002)(2906002)(97736004)(6512007)(99286004)(107886003)(54906003)(1076002)(6506007)(106356001)(53936002)(6116002)(3846002)(102836004)(6486002)(86612001)(3280700002)(6436002)(76176011)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1097;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: ZoTBnjht6QkJrMxHsNcgKn6zv7HYN6Bug15RAI8EmdreiFllqp9ARvR1bkM0tIPvFfGjNasotTPKmeFBVjNBXctYQSuzN0IrZzKa3SMEK+ILt4uysjlkQDBpJqmZxpkU6cUi+k0CaItnEosnD5vAl1Q8igDh2p/jTFIz/wv2dQ8=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d03ba52e-f34e-4b63-d0b9-08d58156b336
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:34.5256
+X-MS-Exchange-CrossTenant-Network-Message-Id: 780c508e-fd58-4218-1385-08d58156b43d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:36.0725
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1098
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1097
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Gao Feng <fgao@ikuai8.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit c48367427a39ea0b85c7cf018fe4256627abfd9e ]
+[ Upstream commit 10b6c0c2e2bb8cd1be682f8d36ef597e3419cb88 ]
 
-Because sysctl_tcp_adv_win_scale could be changed any time, so there
-is one race in tcp_win_from_space.
-For example,
-1.sysctl_tcp_adv_win_scale<=3D0 (sysctl_tcp_adv_win_scale is negative now)
-2.space>>(-sysctl_tcp_adv_win_scale) (sysctl_tcp_adv_win_scale is postive n=
-ow)
+An alias name should have an index number even when it is the only of its t=
+ype.
+This allows U-Boot to add the local-mac-address property. Otherwise U-Boot
+skips the alias.
 
-As a result, tcp_win_from_space returns 0. It is unexpected.
-
-Certainly if the compiler put the sysctl_tcp_adv_win_scale into one
-register firstly, then use the register directly, it would be ok.
-But we could not depend on the compiler behavior.
-
-Signed-off-by: Gao Feng <fgao@ikuai8.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6a93792774 ("ARM: bcm2835: dt: Add the ethernet to the device trees"=
+)
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Acked-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- include/net/tcp.h | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi | 2 +-
+ arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index caf35e062639..18f029bcb8c7 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1265,9 +1265,11 @@ void tcp_select_initial_window(int __space, __u32 ms=
-s, __u32 *rcv_wnd,
+diff --git a/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi b/arch/arm/boot/dt=
+s/bcm283x-rpi-smsc9512.dtsi
+index 12c981e51134..9a0599f711ff 100644
+--- a/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
++++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
+@@ -1,6 +1,6 @@
+ / {
+ 	aliases {
+-		ethernet =3D &ethernet;
++		ethernet0 =3D &ethernet;
+ 	};
+ };
 =20
- static inline int tcp_win_from_space(int space)
- {
--	return sysctl_tcp_adv_win_scale<=3D0 ?
--		(space>>(-sysctl_tcp_adv_win_scale)) :
--		space - (space>>sysctl_tcp_adv_win_scale);
-+	int tcp_adv_win_scale =3D sysctl_tcp_adv_win_scale;
-+
-+	return tcp_adv_win_scale <=3D 0 ?
-+		(space>>(-tcp_adv_win_scale)) :
-+		space - (space>>tcp_adv_win_scale);
- }
+diff --git a/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi b/arch/arm/boot/dt=
+s/bcm283x-rpi-smsc9514.dtsi
+index 3f0a56ebcf1f..dc7ae776db5f 100644
+--- a/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
++++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
+@@ -1,6 +1,6 @@
+ / {
+ 	aliases {
+-		ethernet =3D &ethernet;
++		ethernet0 =3D &ethernet;
+ 	};
+ };
 =20
- /* Note: caller must be prepared to deal with negative returns */
 --=20
 2.14.1
