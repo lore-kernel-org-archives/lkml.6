@@ -1,172 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752089AbeCCOhe (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 09:37:34 -0500
-Received: from osg.samsung.com ([64.30.133.232]:41381 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751907AbeCCOhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 09:37:32 -0500
-Date: Sat, 3 Mar 2018 11:37:26 -0300
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: tomoki.sekiyama@gmail.com
-Cc: elfring@users.sourceforge.net, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: siano: Fix coherent memory allocation failure
- on arm64
-Message-ID: <20180303113726.28c48296@vento.lan>
-In-Reply-To: <20180303122017.32669-1-tomoki.sekiyama@gmail.com>
-References: <20180303122017.32669-1-tomoki.sekiyama@gmail.com>
-Organization: Samsung
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1752083AbeCCOrp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 09:47:45 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44238 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeCCOrn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 09:47:43 -0500
+X-Google-Smtp-Source: AG47ELtXVj9yw+Vb9TG0FnTuv1AHiO+79mpx7T31N7EtfMQu0bsbf2nm/vHRR6i8aRNxwJGHbmcoFg==
+Date: Sat, 3 Mar 2018 23:47:39 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Young <dyoung@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the printk tree
+Message-ID: <20180303144739.GA516@tigerII.localdomain>
+References: <20180302160732.12691fbc@canb.auug.org.au>
+ <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomoki,
+Cc-ing Tejun
 
-Em Sat,  3 Mar 2018 21:20:17 +0900
-tomoki.sekiyama@gmail.com escreveu:
-
-> From: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
+On (03/02/18 16:54), Petr Mladek wrote:
+[..]
+> > (Though it is not immediately obvious why.)
 > 
-> On some architectures such as arm64, siano chip based TV-tuner
-> USB devices are not recognized correctly due to coherent memory
-> allocation failure with the following error:
+> It is a mistery to me. The error appears when I move any of
+> dump_stack_print_info() or show_regs_print_info() function
+> definitions from kernel/printk/printk.c to lib/dump_stack.c.
+> All the other changes seems unrelated.
 > 
-> [  663.556135] usbcore: deregistering interface driver smsusb
-> [  683.624809] smsusb:smsusb_probe: board id=18, interface number 0
-> [  683.633530] smsusb:smsusb_init_device: smscore_register_device(...) failed, rc -12
-> [  683.641501] smsusb:smsusb_probe: Device initialized with return code -12
-> [  683.652978] smsusb: probe of 1-1:1.0 failed with error -12
-> 
-> This is caused by dma_alloc_coherent(NULL, ...) returning NULL in
-> smscoreapi.c.
-> 
-> To fix this error, usb_alloc_coherent() must be used for DMA
-> memory allocation for USB devices in such architectures.
+> The thing is that we basically do not touch dump_stack() definition
+> by that patch.
 
-Actually, I was thinking on taking a different approach, for all media
-USB devices: to let USB core to do the DMA mapping itself, and
-not use coherent memory. E. g. something like the approach taken
-on this patch:
-	https://patchwork.linuxtv.org/patch/47592/
+Apparently dump_stack_print_info() was in lib/dump_stack.c a long
+time ago, but it was deliberately moved to printk.c, when kernel gained
+a "generic" (dummy) dump_stack() fallback. Some archs, like blackfin,
+define their own dump_stack() symbol and make it global via EXPORT_SYMBOL.
 
-That should give an additional performance improvements to the driver
-when used on non-x86 hardware.
+In case of blackfin that arch-specific dump_stack() symbol invokes a
+global dump_stack_print_info(). If we move dump_stack_print_info() back
+to lib/dump_stack.c then we link both with arch/blackfin/dumpstack.o
+and lib/dump_stack.o, which results in multiple definitions error.
+If we move dump_stack_print_info() out on libdump_stack.o, then we
+never link with lib/dump_stack.o
 
-> 
-> v2: non-usb `device' is also be passed to dma_alloc_coherent()
-> 
-> Signed-off-by: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
-> ---
->  drivers/media/common/siano/smscoreapi.c | 36 ++++++++++++++++++++++++---------
->  drivers/media/common/siano/smscoreapi.h |  2 ++
->  drivers/media/usb/siano/smsusb.c        |  1 +
->  3 files changed, 29 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
-> index c5c827e11b64..34622b562963 100644
-> --- a/drivers/media/common/siano/smscoreapi.c
-> +++ b/drivers/media/common/siano/smscoreapi.c
-> @@ -690,17 +690,24 @@ int smscore_register_device(struct smsdevice_params_t *params,
->  
->  	/* alloc common buffer */
->  	dev->common_buffer_size = params->buffer_size * params->num_buffers;
-> -	dev->common_buffer = dma_alloc_coherent(NULL, dev->common_buffer_size,
-> -						&dev->common_buffer_phys,
-> -						GFP_KERNEL | GFP_DMA);
-> -	if (!dev->common_buffer) {
-> +	if (params->usb_device)
-> +		buffer = usb_alloc_coherent(params->usb_device,
-> +					    dev->common_buffer_size,
-> +					    GFP_KERNEL | GFP_DMA,
-> +					    &dev->common_buffer_phys);
-> +	else
-> +		buffer = dma_alloc_coherent(params->device,
-> +					    dev->common_buffer_size,
-> +					    &dev->common_buffer_phys,
-> +					    GFP_KERNEL | GFP_DMA);
-> +	if (!buffer) {
->  		smscore_unregister_device(dev);
->  		return -ENOMEM;
->  	}
-> +	dev->common_buffer = buffer;
->  
->  	/* prepare dma buffers */
-> -	for (buffer = dev->common_buffer;
-> -	     dev->num_buffers < params->num_buffers;
-> +	for (; dev->num_buffers < params->num_buffers;
->  	     dev->num_buffers++, buffer += params->buffer_size) {
->  		struct smscore_buffer_t *cb;
->  
-> @@ -720,6 +727,7 @@ int smscore_register_device(struct smsdevice_params_t *params,
->  	dev->board_id = SMS_BOARD_UNKNOWN;
->  	dev->context = params->context;
->  	dev->device = params->device;
-> +	dev->usb_device = params->usb_device;
->  	dev->setmode_handler = params->setmode_handler;
->  	dev->detectmode_handler = params->detectmode_handler;
->  	dev->sendrequest_handler = params->sendrequest_handler;
-> @@ -1231,10 +1239,18 @@ void smscore_unregister_device(struct smscore_device_t *coredev)
->  
->  	pr_debug("freed %d buffers\n", num_buffers);
->  
-> -	if (coredev->common_buffer)
-> -		dma_free_coherent(NULL, coredev->common_buffer_size,
-> -			coredev->common_buffer, coredev->common_buffer_phys);
-> -
-> +	if (coredev->common_buffer) {
-> +		if (coredev->usb_device)
-> +			usb_free_coherent(coredev->usb_device,
-> +					  coredev->common_buffer_size,
-> +					  coredev->common_buffer,
-> +					  coredev->common_buffer_phys);
-> +		else
-> +			dma_free_coherent(coredev->device,
-> +					  coredev->common_buffer_size,
-> +					  coredev->common_buffer,
-> +					  coredev->common_buffer_phys);
-> +	}
->  	kfree(coredev->fw_buf);
->  
->  	list_del(&coredev->entry);
-> diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-> index 4cc39e4a8318..134c69f7ea7b 100644
-> --- a/drivers/media/common/siano/smscoreapi.h
-> +++ b/drivers/media/common/siano/smscoreapi.h
-> @@ -134,6 +134,7 @@ struct smscore_buffer_t {
->  
->  struct smsdevice_params_t {
->  	struct device	*device;
-> +	struct usb_device	*usb_device;
->  
->  	int				buffer_size;
->  	int				num_buffers;
-> @@ -176,6 +177,7 @@ struct smscore_device_t {
->  
->  	void *context;
->  	struct device *device;
-> +	struct usb_device *usb_device;
->  
->  	char devpath[32];
->  	unsigned long device_flags;
-> diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
-> index f13e4b01b5a5..3c605a573ce4 100644
-> --- a/drivers/media/usb/siano/smsusb.c
-> +++ b/drivers/media/usb/siano/smsusb.c
-> @@ -446,6 +446,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
->  		dev->in_ep, dev->out_ep);
->  
->  	params.device = &dev->udev->dev;
-> +	params.usb_device = dev->udev;
->  	params.buffer_size = dev->buffer_size;
->  	params.num_buffers = MAX_BUFFERS;
->  	params.sendrequest_handler = smsusb_sendrequest;
+... so what are we going to do with that.
+
+a) we can drop the patch and cherry pick only the kexec part
+
+b) we can try to mark dummy lib/dump_stack() as __weak
+   EXPORT_SYMBOL and remove EXPORT_SYMBOL from arch-specific
+   definitions.
+
+   So we will end up with EXPORT_SYMBOL dump_stack() and archs
+   may re-define it. If some arch will accidentally mark its
+   own dump_stack() as EXPORT_SYMBOL then there should be a
+   linkage warning - a symbol is exported twice.
 
 
+Something like below.
 
-Thanks,
-Mauro
+Opinions? Will this work?
+
+
+========= 8< =========
+
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH] dump_stack: mark dummy dump_stack() as weak
+
+---
+ arch/blackfin/kernel/dumpstack.c | 1 -
+ arch/nds32/kernel/traps.c        | 2 --
+ lib/dump_stack.c                 | 4 ++--
+ 3 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/arch/blackfin/kernel/dumpstack.c b/arch/blackfin/kernel/dumpstack.c
+index 3c992c1f8ef2..61af017130cd 100644
+--- a/arch/blackfin/kernel/dumpstack.c
++++ b/arch/blackfin/kernel/dumpstack.c
+@@ -174,4 +174,3 @@ void dump_stack(void)
+ 	show_stack(current, &stack);
+ 	trace_buffer_restore(tflags);
+ }
+-EXPORT_SYMBOL(dump_stack);
+diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
+index 8828b4aeb72b..455bb0787367 100644
+--- a/arch/nds32/kernel/traps.c
++++ b/arch/nds32/kernel/traps.c
+@@ -166,8 +166,6 @@ void dump_stack(void)
+ 	__dump(NULL, base_reg);
+ }
+ 
+-EXPORT_SYMBOL(dump_stack);
+-
+ void show_stack(struct task_struct *tsk, unsigned long *sp)
+ {
+ 	unsigned long *base_reg;
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 5cff72f18c4a..9cf4465dbffa 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -85,7 +85,7 @@ static void __dump_stack(void)
+ #ifdef CONFIG_SMP
+ static atomic_t dump_lock = ATOMIC_INIT(-1);
+ 
+-asmlinkage __visible void dump_stack(void)
++asmlinkage __weak __visible void dump_stack(void)
+ {
+ 	unsigned long flags;
+ 	int was_locked;
+@@ -118,7 +118,7 @@ asmlinkage __visible void dump_stack(void)
+ 	local_irq_restore(flags);
+ }
+ #else
+-asmlinkage __visible void dump_stack(void)
++asmlinkage __weak __visible void dump_stack(void)
+ {
+ 	__dump_stack();
+ }
+-- 
+2.16.2
