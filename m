@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122500-2-10836084262681970199
+X-Cyrus-Session-Id: sloti22d1t05-1312649-1520122499-2-664358273011979714
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES daensv, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122499; b=ll9E6npLbWxd9YHY0cpZCtZ9zRDew3NeTSPC8D6/bL2mVQW
-    d2L1tDkV7CMV9038SwopZ1BLhE1BWH9UOV4vOMxPt/n4lxdtv8hcp9D5akrKeUbD
-    qvl+JwsoBcoSOOgIN1Tmi22xOZXFBp7wPUsy/k9qX7zti94BZe4z/XGAU55DP/4i
-    vZTi9/yZMflE07IVd0OsjwW0kkiZz39YMCr+AH04YBk0P/pGrCJfohgtolEJotYg
-    ebVKTIiy4gWUqt8fB22HUF9/8dK8BS4fdULpyYbWmXAMWfYyxCHYibZ3qq5a/ZBq
-    Ssn9Fg1mv2sXKeBs8LL4djZlcIXP7pu5H5psqmA==
+    t=1520122499; b=ttw8oy6py91zj3ORf2GnK6MKAuKnhrCxbQt4ilUQtFklV+D
+    94PF+DBK9aZSPjDBtU+qAk56u+O0BzqncFWBwZlKRPTlA/6TXCT+oTDaPDkWcf6y
+    V2uSxzR1PusfcySZYt4mGMs4n+CL7fDwqiAZXkSLt4oTwMf454UDRDe21fOuCrqi
+    +97UMuANs64Uwq/Qsoi05rjQmf1YfOWzI+GkMpS3+dqxIWG7qAgDfFTlCh3x6rLu
+    Aapehhpeg56caZxHHTAneWnNyhO6GC+YqWaroUwZcLmygsi4ouz5U73RxE0ie2pV
+    1zc5duT/QVXs7TFfBqC46IW5F10x8qi5CPR7nnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122499; bh=c++KPK
-    wGw1HrsNHJV0EH3avCjxj2E13xvmjCuecjLp4=; b=s30U9FDLH4cPwByGzLknXA
-    f0Y7p4Y94t65oWwmegf/bH/uS4JT6etZuFpoxxquRP8PRJ+5AdoNGfjOcRH6IbY2
-    oanBx71kSjJ+WwAcI+zNlI1vvyKeOEdK5QZ77wJUq8AsLNklZo43JZj6q6mU+Nq1
-    qAQzY/4/jodxl2aN68r+1BebtKlS/czwa3LOoaNLG27Qn4TusTTCgKrYgPyxOuvi
-    yZBcqvaPndQ4Tnd0NKkQGP34qfhE/+JMjJxnaN8XswLHkLEQWfuvoXSYVWaV9fdV
-    syvc1vwDcKgZT9Fr/dlFWPvbX9W8qG5QkzyLcxuH2bS8FPUq0rxyIF/exYQXvXeg
+    :mime-version:sender:list-id; s=arctest; t=1520122499; bh=hFLykV
+    dUwrHvjmMuCFsIUqB4s2C8gdiopNmddwSEMsg=; b=sFbchp6C3YdFMSO6o4hUSF
+    ey6I8axrESKs9uaxaOqU26FUaJMoom51GQj6KYXQpbnmjQUnzUbxcpeG3lGfxc1Z
+    8fxTU24mRLCGKwEEHe+J8KhaH4yMjJ3S8Ba8YIC0SZ8IZrWnuhlU3uxWYGa3cel4
+    FMgzGe37QB2PN6FOsbX6LRgMLyV5KiHQnkHe5bpoucAUE4WSFBrAUkMGii6dveCM
+    QdBxxxxBuqqaWw+C45beZ24iXoGFZjmhZ3aho0uEkZDVleZ/bfnwI3EG1X12qFbQ
+    RsCQzOZOTQvWty+areMDWWpuGpwGbT4F8AGVpGtRBnYSA8Ha7sRtFFSoeW9l5fqQ
     ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=B5q6Xeso x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NWEwY+Ig x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=B5q6Xeso x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=NWEwY+Ig x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933010AbeCDAON (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 19:14:13 -0500
-Received: from mail-by2nam01on0115.outbound.protection.outlook.com ([104.47.34.115]:14144
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S933549AbeCDAOO (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 19:14:14 -0500
+Received: from mail-sn1nam01on0112.outbound.protection.outlook.com ([104.47.32.112]:31677
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932906AbeCCWaq (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S932989AbeCCWaq (ORCPT <rfc822;stable@vger.kernel.org>);
         Sat, 3 Mar 2018 17:30:46 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Stephen Hemminger <stephen@networkplumber.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
+CC: John Fastabend <john.fastabend@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.14 67/84] veth: set peer GSO values
-Thread-Topic: [PATCH AUTOSEL for 4.14 67/84] veth: set peer GSO values
-Thread-Index: AQHTsz6yyN8JAGENOkueyuNRYRmu6g==
-Date: Sat, 3 Mar 2018 22:26:39 +0000
-Message-ID: <20180303222518.26271-67-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.14 66/84] net: sched: drop qdisc_reset from
+ dev_graft_qdisc
+Thread-Topic: [PATCH AUTOSEL for 4.14 66/84] net: sched: drop qdisc_reset from
+ dev_graft_qdisc
+Thread-Index: AQHTsz6yud1o77Dc0Eu3/y6mwDhO2w==
+Date: Sat, 3 Mar 2018 22:26:38 +0000
+Message-ID: <20180303222518.26271-66-alexander.levin@microsoft.com>
 References: <20180303222518.26271-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222518.26271-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,71 +76,134 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1115;6:ISCQL+ClTkuD43BgcJpPie8y+8ndldBOgSWfZcDKrt6YI+dkHdijAkMxzJ9WrjL9h42WPMzwpwT4/kHz2G6l84YdzGUWs1NT+xbyPCJD0i3pvp6T71W/a6ifgIRXkStYfd7+ozIJVWKPManNrgJF6mly/k37qVM69T6K4bH7rvxZAJxwaMKi5dt+qabYGdHmX++CUtAfoHmMyAMS3iG1lZa68YIL7+XAPP4yw+sdZnFnc4ziZ7IAyWE3CXX6/7hI9ioGdqb8Q57/XmcSDyTPgXnjJ9VmX+Xrbu7cK293GNaGam7LbJu7qzNIL0eTpPbu0pcTt1M627dyewz64g0uevjSim5wugrf6rzMdmhB7dTpJtJvZsnQPjXqkZrPqqwG;5:MwTg+yhAq3SPBdMBia7oxUCPds2AVBXv4oldoZIwm5qibDxhQALw3koN33m6uKdEhHknO6v0mWMNOECWMwYQB995Sr2T0mHGjQSgAWCTDQrNjgP/jhyP3qAAiccThN6tom/PhO836XazSwOUQBzl/yMVa9ker/8QT71mDMMM0vE=;24:Rl/1VKV2eXfxtxYFl4Wnh8f36h0hqEorA2sOErRIwDXg2OFZqToKkSqGzw9XDoEGbrjXpb7MsG3yv5e/CplmcZlqSVbr5BuNEJBsLyeQP4c=;7:criULmdp4V84xVkxSZ0J0fkLjmcJ8Gm17qAl85MPbce/+W+3yDCiYNNy2AqH3ByJA1Lius8Tgox1Gf38paNAjXb7+jP4kfw7Fxok1EdBJgQanscltxXmazeXW6J++xHaACe8xyl3Tk32njYjf0XQ4BwVenfay+LYDoK2W82hlfpBKbB6CQoxX1DbzWH97K3plc0uFjoHJ3FSGJvLRxbIxXkIVaU51QVwhxhkxR67LH8c29hg/mGSPVDWb56nA3Ac
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;6:OYVKL1l1PFXBXIxRUm8BifPdEulrA4IciV6PkmAokp0pTAc3nWBVIgSQuQOWrBXg/n/54kAuiLiyukrqCu3v1FsN4yGpt6PFaOMTomlCXEIjxv6BfkpjLQQ7w7aw/mMZccF7UaPZR/CrPCz4dx0iW1JmOziygS7jo++bMEBQymAI7uWpReVsPoW3+I4JMPS/L3/rqLyiJaAZC37gAKuJteRC6NSFPENLfrzJaeG6WdJ3UJH06al+ppZ8OluhJTERuN+S7T7wrpalmNHGW6B3FxXvpjaf2tzpJK5+PThns2759t0cqkZAFrP7NPMMbwpGBS6GtavLCbLsqpdxXqSqGleC/ennj/2A3wJIxAthfWmyMejJk75LpNpsuBjWvemI;5:AyXKlonDBDdDS/t3OQHQ5KqkZkCYDebZWo9upzcSMr1GQWOP0iRshl7BHj4bpmlY9IKrGMGUcyoYBbyR+KIdF1G1zbTz8KUezFr8TwNJs27jJkAU1USvZ1TRz/lHvRYTcTatEPzcvujiTcwj5LsQw7e5DqXH3UkksFDzozskpts=;24:LR3PElgk86om8zC8AOI8uBaL3qVl/q11jnUD1ccOC/IqMPpiwi3KMMthhRdG2JA1m1mQwuy00kXCBQLb6atQMlr1CpREIAxPxTsUULAmUXI=;7:REMeH7NeCbQwR/EEgY3x+fLz0QDo1YVZzvZabsI7Ax66X8fsN9NNfTIdzZoH3hGj4S0KZTBr2dxXSEf1qwh3OqeQYCKqFYSJEKsyOFtGYLprx5co5cXoWq6lt71AFS9o4gVfyBZNrze3tJJKQVFxRTogJ6zSpM/wsjp9OQDr6nMsklnJiHk/+UxwrD9IKe0fwKXhsuh6oUU0vqzdGzfq6RsActRTHmHkcvFHMXroKbt5yJrldX/Xs2fq1Wk1ZgA5
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fafe1954-37e4-4ee6-30bb-08d58156677f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1115;
-x-ms-traffictypediagnostic: MW2PR2101MB1115:
+x-ms-office365-filtering-correlation-id: 094590eb-1e44-4c24-20b5-08d58156672e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
+x-ms-traffictypediagnostic: MW2PR2101MB0970:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB11159CC208F9E26B988721B3FBC40@MW2PR2101MB1115.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MW2PR2101MB1115;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1115;
+x-microsoft-antispam-prvs: <MW2PR2101MB097044938B7F52954B425143FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(346002)(366004)(39380400002)(189003)(199004)(26005)(97736004)(186003)(2900100001)(316002)(6506007)(102836004)(36756003)(110136005)(106356001)(54906003)(72206003)(4326008)(8676002)(81156014)(25786009)(2950100002)(6666003)(305945005)(10290500003)(5660300001)(107886003)(14454004)(8936002)(3660700001)(3280700002)(105586002)(81166006)(478600001)(2906002)(6116002)(3846002)(1076002)(2501003)(6436002)(5250100002)(6486002)(68736007)(7736002)(10090500001)(6512007)(66066001)(53936002)(99286004)(86612001)(76176011)(22452003)(86362001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1115;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: GjDO0HNCA0QXHTnHlZzeODLLPEF69rx2P70Uk9/2IobKW1IXy70jcKhdcEmzTRNI2U/67YYq+AdNjPtXpVWkPADLR78IU1hYmShmx8h2liNxnHhmSZx38fnvxvA5ZW5SmzN6uLTyKy/nrv38b85F4kYfE/5PtAqEqBDYrvIFepQ=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(86362001)(39060400002)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(7736002)(8676002)(6512007)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(6666003)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(5890100001)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: P3J8OovyiAMw5m+gq/LdpOKHlBY5qFhOIm7DkAdcn21C2ynNxBV/1l/F/0+2Y5K9vNzyoNxyADLWe3ur2M9UVJy+9vrsYoFxVT+OC+96/BoCeY0InvdOJLPuMrQ/JoT+M79E024dGEx79GvMT/KBBzkwBdWNlIhfuN+x+gwkCKA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fafe1954-37e4-4ee6-30bb-08d58156677f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:39.4630
+X-MS-Exchange-CrossTenant-Network-Message-Id: 094590eb-1e44-4c24-20b5-08d58156672e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:26:38.8380
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1115
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 72d24955b44a4039db54a1c252b5031969eeaac3 ]
+[ Upstream commit 7bbde83b1860c28a1cc35516352c4e7e5172c29a ]
 
-When new veth is created, and GSO values have been configured
-on one device, clone those values to the peer.
+In qdisc_graft_qdisc a "new" qdisc is attached and the 'qdisc_destroy'
+operation is called on the old qdisc. The destroy operation will wait
+a rcu grace period and call qdisc_rcu_free(). At which point
+gso_cpu_skb is free'd along with all stats so no need to zero stats
+and gso_cpu_skb from the graft operation itself.
 
-For example:
-   # ip link add dev vm1 gso_max_size 65530 type veth peer name vm2
+Further after dropping the qdisc locks we can not continue to call
+qdisc_reset before waiting an rcu grace period so that the qdisc is
+detached from all cpus. By removing the qdisc_reset() here we get
+the correct property of waiting an rcu grace period and letting the
+qdisc_destroy operation clean up the qdisc correctly.
 
-This should create vm1 <--> vm2 with both having GSO maximum
-size set to 65530.
+Note, a refcnt greater than 1 would cause the destroy operation to
+be aborted however if this ever happened the reference to the qdisc
+would be lost and we would have a memory leak.
 
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/veth.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/sched/sch_generic.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index f5438d0978ca..a69ad39ee57e 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -410,6 +410,9 @@ static int veth_newlink(struct net *src_net, struct net=
-_device *dev,
- 	if (ifmp && (dev->ifindex !=3D 0))
- 		peer->ifindex =3D ifmp->ifi_index;
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index bf8c81e07c70..79549baf5804 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -743,10 +743,6 @@ struct Qdisc *dev_graft_qdisc(struct netdev_queue *dev=
+_queue,
+ 	root_lock =3D qdisc_lock(oqdisc);
+ 	spin_lock_bh(root_lock);
 =20
-+	peer->gso_max_size =3D dev->gso_max_size;
-+	peer->gso_max_segs =3D dev->gso_max_segs;
+-	/* Prune old scheduler */
+-	if (oqdisc && refcount_read(&oqdisc->refcnt) <=3D 1)
+-		qdisc_reset(oqdisc);
+-
+ 	/* ... and graft new one */
+ 	if (qdisc =3D=3D NULL)
+ 		qdisc =3D &noop_qdisc;
+@@ -897,6 +893,16 @@ static bool some_qdisc_is_busy(struct net_device *dev)
+ 	return false;
+ }
+=20
++static void dev_qdisc_reset(struct net_device *dev,
++			    struct netdev_queue *dev_queue,
++			    void *none)
++{
++	struct Qdisc *qdisc =3D dev_queue->qdisc_sleeping;
 +
- 	err =3D register_netdevice(peer);
- 	put_net(net);
- 	net =3D NULL;
++	if (qdisc)
++		qdisc_reset(qdisc);
++}
++
+ /**
+  * 	dev_deactivate_many - deactivate transmissions on several devices
+  * 	@head: list of devices to deactivate
+@@ -907,7 +913,6 @@ static bool some_qdisc_is_busy(struct net_device *dev)
+ void dev_deactivate_many(struct list_head *head)
+ {
+ 	struct net_device *dev;
+-	bool sync_needed =3D false;
+=20
+ 	list_for_each_entry(dev, head, close_list) {
+ 		netdev_for_each_tx_queue(dev, dev_deactivate_queue,
+@@ -917,20 +922,25 @@ void dev_deactivate_many(struct list_head *head)
+ 					     &noop_qdisc);
+=20
+ 		dev_watchdog_down(dev);
+-		sync_needed |=3D !dev->dismantle;
+ 	}
+=20
+ 	/* Wait for outstanding qdisc-less dev_queue_xmit calls.
+ 	 * This is avoided if all devices are in dismantle phase :
+ 	 * Caller will call synchronize_net() for us
+ 	 */
+-	if (sync_needed)
+-		synchronize_net();
++	synchronize_net();
+=20
+ 	/* Wait for outstanding qdisc_run calls. */
+-	list_for_each_entry(dev, head, close_list)
++	list_for_each_entry(dev, head, close_list) {
+ 		while (some_qdisc_is_busy(dev))
+ 			yield();
++		/* The new qdisc is assigned at this point so we can safely
++		 * unwind stale skb lists and qdisc statistics
++		 */
++		netdev_for_each_tx_queue(dev, dev_qdisc_reset, NULL);
++		if (dev_ingress_queue(dev))
++			dev_qdisc_reset(dev, dev_ingress_queue(dev), NULL);
++	}
+ }
+=20
+ void dev_deactivate(struct net_device *dev)
 --=20
 2.14.1
