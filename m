@@ -1,109 +1,202 @@
-Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AG47ELvKo4oZbq7AIVFHF6cmlo74Q/D88Bg1ezypnx3XhRqfZujHvdKstLCB3c1QYso3raUji/ux
-ARC-Seal: i=1; a=rsa-sha256; t=1520116622; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ObmeXO7TqkX8Up6AJI+bk7vBTkl/+akoVmAA0NGYxe9xBsUGybgAsQsa9Pw7vD2W+j
-         9Eau8ZdnWXHHrMjeImf3C3zwWDEyJXA0oGp38CpxJWce9479Jpg+3rohmr3us3IsiJtF
-         T0qrTffrkxBk6rYdA9ex0oabPn1Hsq+rIWXOxSSyeESIetnKeKawm75KFVaRMezC0rEa
-         CFMkO6tPxnAe2+q/KJPbsjOFOZINyxDTgCAaZokQEfmkp1CHcdzFmUhI0oW1enFi9glX
-         laHPC04UoO8SK/5J5OpimEKIjFMMqeHKhPgehyyEoRtulBjpcvYkGYgPYkTGqccbdTwC
-         mnmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=cFeB1TrgMtZngp0wwDtx1od604UigPepXX0cJiGvXIY=;
-        b=sKSt0g2csCqxOso9lj9UsNR5RYBNGekTEm++rYzAdwrkBQ2kClRkRJ0fkEL3j11smR
-         H/8sW7x3bqelUWpCpCvl9UGELzydQZVcVE4QCkx/iFleaCPiZ2Dc2WOz6kFPi31f6Wu5
-         n6Sa9vu71mshCrq5Qz84qV5o3V3mI89lPS5AqgutMGbW98ev4brMNvoYjOvp7Ar9W5nd
-         9D3j9Wqc3vlh41QQTNXznXRhxXfvEBOz40/GQx5YVByGdFjLQbNj/wc6Ju13ZT47TTfX
-         Kby0K9zUug1pgZzhSwv5fnQ/y25F4uSVxzLDWQCpemQ4H8dKQWRtYz6B70sc775e11vb
-         mnDg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cDJmMp9g;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=cDJmMp9g;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.117 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1145125-1520116565-2-270586181573572227
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520116564; b=KweXeH8XUrYIxV0tzfvvTJXs6O+HSBaA8RtgsZNFiObaYxL
+    Qq1YgFGGD3nyXj0VMMc+UZSf6ASZVKycuRfpaLXpDWD5woGw+WfUBTcQ5dmy4yEa
+    /xTDJ/gGTaL2MHhfvcJRByvKz1m/nJOxC/Nb7DbRF4wEzmY3v2ttloawQGgf2xNV
+    ytQK2YYE7ceD7s9EnvULw5bjoErsZP69daizNc9kaojm9CbB7jMnzOYAd0L/gWZv
+    NXyUOK64EWYuk0biWRr8AiRdf0UhdI/R4etM+5iTLbgzmVCz/rpWCBCs8Dtw0fjT
+    nM8oGpE2QC9XU20ebQDfSazXHpz8szlU2f0W2zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=arctest; t=1520116564; bh=7mk7dN
+    jFm/D+1YKZYgoaT56ARq3RQ8SGQoUlRzpy2jc=; b=n1gPsC3fxHl4SWK/lpKb7g
+    OHSEN1igw6/eYGO30ODueoXJhnQ3xldjN0dXL8Qyq64xIbFXTzniyM+4lkQRMFXr
+    K5ZbO4ApjKwbiMI6dnHoWvY/AaYYPmMP321a23plbupYqUaDuVnus7jnfot71W4j
+    52SgpJ5JG3T6+31j9R9zxCZF+0hDlogRr5+xgEl+QYqAjvkSWyznP2/fdbw4/Du6
+    txTTClPEaU95K1J2ZUiLiuCMhISO7w4t9ACgGjsVSPkjwsmSfvj6O7ElaghBv2p0
+    wyAIJGZ5CZ9PydW5DrGs9fyalCGwhNAO0kBVtCPNFZZDkkLuhabyYM9hSgO9vkRg
+    ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XCF9mEnd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=XCF9mEnd x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934470AbeCCWf5 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 17:35:57 -0500
+Received: from mail-bn3nam01on0090.outbound.protection.outlook.com ([104.47.33.90]:43384
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933950AbeCCWfx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:35:53 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Julien BOIBESSOT <julien.boibessot@armadeus.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 201/219] tools/usbip: fixes build with musl
- libc toolchain
-Thread-Topic: [PATCH AUTOSEL for 4.9 201/219] tools/usbip: fixes build with
- musl libc toolchain
-Thread-Index: AQHTsz8m3KFIkTbWO0WqkWkpyimITQ==
-Date: Sat, 3 Mar 2018 22:29:53 +0000
-Message-ID: <20180303222716.26640-201-alexander.levin@microsoft.com>
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+CC: Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 157/219] scsi: sg: close race condition in
+ sg_remove_sfp_usercontext()
+Thread-Topic: [PATCH AUTOSEL for 4.9 157/219] scsi: sg: close race condition
+ in sg_remove_sfp_usercontext()
+Thread-Index: AQHTsz8XzS/2fURCLUeKAmp1feheug==
+Date: Sat, 3 Mar 2018 22:29:28 +0000
+Message-ID: <20180303222716.26640-157-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0969;7:PHyOUFXci/KjjFyDu+o1+F90v4Dc9QwlEv+ZJqzxgf/ie+CdzxMt3UJSb50B1g6HB+aKbjqN32LPsF90B58VFC9QS0wuKPPgmbmifKxpYiD45OzD4+tqH8hWxoJiWl0FMfTgNINkQVk9FBX0VLNzZiV4LxjKgE/ijtGJblyIjRVd5GyzT058VDdcWVMxm7EbGegAnfq78znGnM4Ym/Otx+CqFysFxo5cD2eQuU23+0iw6VrkIQvVwWRRauWQiHXO
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1034;7:lbpMI+ed9NWDJCx8D+zyMPhjUkPdLcnbdsirv5grHeBAYQUgvBsGOEAcBy7XKk3F/LN7OK+X/K/xtONJh+tYrkIRgfwU8dxUIkUXhWDknqCYrCC/YQ+O/pyyd6iMcHAYhQ0DBJLrLFgYiJ+BVZGrJHmCCBopRHN86l27FOvVEe+hYpq9//lyEk9XTqaZPI7Y7JSP+lDf3fo0ALhbS7Jw/bN1OF0RCLX4EVn3DoQafxVkqo6zqd/yKTcM8C4jeNkN
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ce0c7997-f08a-4cc8-bf25-08d581574354
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB0969;
-x-ms-traffictypediagnostic: MW2PR2101MB0969:
-x-microsoft-antispam-prvs: <MW2PR2101MB096924F87B013A04CECE6F04FBC40@MW2PR2101MB0969.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(7411616537696);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0969;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0969;
+x-ms-office365-filtering-correlation-id: 8eddea73-c341-44f8-c458-08d58157197e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1034;
+x-ms-traffictypediagnostic: MW2PR2101MB1034:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <MW2PR2101MB10346D5F322552C5DD79AE78FBC40@MW2PR2101MB1034.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:MW2PR2101MB1034;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1034;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(366004)(396003)(39860400002)(189003)(199004)(105586002)(5250100002)(53936002)(107886003)(36756003)(6436002)(4326008)(2501003)(6486002)(1076002)(2906002)(6512007)(2900100001)(54906003)(110136005)(305945005)(106356001)(7736002)(316002)(3280700002)(478600001)(14454004)(59450400001)(10290500003)(68736007)(2950100002)(72206003)(3660700001)(66066001)(3846002)(6116002)(102836004)(6506007)(5660300001)(10090500001)(25786009)(186003)(26005)(99286004)(22452003)(81166006)(76176011)(86362001)(81156014)(97736004)(86612001)(8676002)(8936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0969;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: Pi4vHy3jdpsKi0L1VJUp2oBZDTGi1xP6lRgmCJmIRbaVXXTZEnNAV/j3UsnDu9NWS89PKtFtMd0dTKdabI0NPiNGByNsF5lBwF47FiTkymkHQiG4wB+MEV43+ehoD1LP4s038VWuZzkiQozTo3c1c06JAmRT9+O0Toyc4mxJxgo=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(39380400002)(366004)(396003)(199004)(189003)(99286004)(22452003)(72206003)(316002)(3846002)(6116002)(186003)(26005)(478600001)(76176011)(54906003)(110136005)(102836004)(97736004)(1076002)(2501003)(3660700001)(66066001)(5250100002)(5660300001)(86362001)(10090500001)(10290500003)(86612001)(6506007)(68736007)(575784001)(106356001)(25786009)(8676002)(4326008)(59450400001)(6512007)(305945005)(2906002)(14454004)(107886003)(8936002)(7736002)(81166006)(3280700002)(53936002)(105586002)(81156014)(6666003)(6486002)(36756003)(2900100001)(6436002)(2950100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1034;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: CFHv1XFZkZIvJXWTkVemqielqrbWCEDkxIZMzRBjifccRMx6Y9gEAuSgS8QB6uXOZgYUxUsCQjvRwnxXbjm5T5yZbmOsPhLgDbX3CUZBH0+aU4PH5xM+EopewMwZ8/9XMb46q847vFQy+vzGuefLFyhJTWxJmImEq+tOT5IIrxA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D8D94EF0EA66D74283F156C9F87A7816@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce0c7997-f08a-4cc8-bf25-08d581574354
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:53.4945
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eddea73-c341-44f8-c458-08d58157197e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:28.1038
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0969
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1034
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593957177068415875?=
-X-GMAIL-MSGID: =?utf-8?q?1593957807027698161?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-RnJvbTogSnVsaWVuIEJPSUJFU1NPVCA8anVsaWVuLmJvaWJlc3NvdEBhcm1hZGV1cy5jb20+DQoN
-ClsgVXBzdHJlYW0gY29tbWl0IDc3YmU0Yzg3OGM3MmU0MTFhZDIyYWY5NmI2ZjgxZGQ0NWMyNjQ1
-MGEgXQ0KDQpJbmRlZWQgbXVzbCBkb2Vzbid0IGRlZmluZSBvbGQgU0lHQ0xEIHNpZ25hbCBuYW1l
-IGJ1dCBvbmx5IG5ldyBvbmUgU0lHQ0hMRC4NClNJR0NITEQgaXMgdGhlIG5ldyBQT1NJWCBuYW1l
-IGZvciB0aGF0IHNpZ25hbCBzbyBpdCBkb2Vzbid0IGNoYW5nZQ0KYW55dGhpbmcgb24gb3RoZXIg
-bGliY3MuDQoNClRoaXMgZml4ZXMgdGhpcyBraW5kIG9mIGJ1aWxkIGVycm9yOg0KDQp1c2JpcGQu
-YzogSW4gZnVuY3Rpb24g4oCYc2V0X3NpZ25hbOKAmToNCnVzYmlwZC5jOjQ1OToxMjogZXJyb3I6
-ICdTSUdDTEQnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlzIGZ1bmN0aW9uKQ0KICBzaWdh
-Y3Rpb24oU0lHQ0xELCAmYWN0LCBOVUxMKTsNCiAgICAgICAgICAgIF5+fn5+fg0KdXNiaXBkLmM6
-NDU5OjEyOiBub3RlOiBlYWNoIHVuZGVjbGFyZWQgaWRlbnRpZmllciBpcyByZXBvcnRlZCBvbmx5
-IG9uY2UNCglmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluDQpNYWtlZmlsZTo0MDc6IHJl
-Y2lwZSBmb3IgdGFyZ2V0ICd1c2JpcGQubycgZmFpbGVkDQptYWtlWzNdOiAqKiogW3VzYmlwZC5v
-XSBFcnJvciAxDQoNClNpZ25lZC1vZmYtYnk6IEp1bGllbiBCT0lCRVNTT1QgPGp1bGllbi5ib2li
-ZXNzb3RAYXJtYWRldXMuY29tPg0KQWNrZWQtYnk6IFNodWFoIEtoYW4gPHNodWFoa2hAb3NnLnNh
-bXN1bmcuY29tPg0KU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGlu
-dXhmb3VuZGF0aW9uLm9yZz4NClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIu
-bGV2aW5AbWljcm9zb2Z0LmNvbT4NCi0tLQ0KIHRvb2xzL3VzYi91c2JpcC9zcmMvdXNiaXBkLmMg
-fCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoN
-CmRpZmYgLS1naXQgYS90b29scy91c2IvdXNiaXAvc3JjL3VzYmlwZC5jIGIvdG9vbHMvdXNiL3Vz
-YmlwL3NyYy91c2JpcGQuYw0KaW5kZXggYTA5NzJkZWE5ZTZjLi4xOTM1NTY1MDc5NTcgMTAwNjQ0
-DQotLS0gYS90b29scy91c2IvdXNiaXAvc3JjL3VzYmlwZC5jDQorKysgYi90b29scy91c2IvdXNi
-aXAvc3JjL3VzYmlwZC5jDQpAQCAtNDYzLDcgKzQ2Myw3IEBAIHN0YXRpYyB2b2lkIHNldF9zaWdu
-YWwodm9pZCkNCiAJc2lnYWN0aW9uKFNJR1RFUk0sICZhY3QsIE5VTEwpOw0KIAlzaWdhY3Rpb24o
-U0lHSU5ULCAmYWN0LCBOVUxMKTsNCiAJYWN0LnNhX2hhbmRsZXIgPSBTSUdfSUdOOw0KLQlzaWdh
-Y3Rpb24oU0lHQ0xELCAmYWN0LCBOVUxMKTsNCisJc2lnYWN0aW9uKFNJR0NITEQsICZhY3QsIE5V
-TEwpOw0KIH0NCiANCiBzdGF0aWMgY29uc3QgY2hhciAqcGlkX2ZpbGU7DQotLSANCjIuMTQuMQ0K
+From: Hannes Reinecke <hare@suse.de>
+
+[ Upstream commit 97d27b0dd015e980ade63fda111fd1353276e28b ]
+
+sg_remove_sfp_usercontext() is clearing any sg requests, but needs to
+take 'rq_list_lock' when modifying the list.
+
+Reported-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Tested-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/scsi/sg.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 6b6064dc3467..e6333cae8550 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -524,6 +524,7 @@ sg_read(struct file *filp, char __user *buf, size_t cou=
+nt, loff_t * ppos)
+ 	} else
+ 		count =3D (old_hdr->result =3D=3D 0) ? 0 : -EIO;
+ 	sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	retval =3D count;
+ free_old_hdr:
+ 	kfree(old_hdr);
+@@ -564,6 +565,7 @@ sg_new_read(Sg_fd * sfp, char __user *buf, size_t count=
+, Sg_request * srp)
+ 	}
+ err_out:
+ 	err2 =3D sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	return err ? : err2 ? : count;
+ }
+=20
+@@ -800,6 +802,7 @@ sg_common_write(Sg_fd * sfp, Sg_request * srp,
+ 		SCSI_LOG_TIMEOUT(1, sg_printk(KERN_INFO, sfp->parentdp,
+ 			"sg_common_write: start_req err=3D%d\n", k));
+ 		sg_finish_rem_req(srp);
++		sg_remove_request(sfp, srp);
+ 		return k;	/* probably out of space --> ENOMEM */
+ 	}
+ 	if (atomic_read(&sdp->detaching)) {
+@@ -812,6 +815,7 @@ sg_common_write(Sg_fd * sfp, Sg_request * srp,
+ 		}
+=20
+ 		sg_finish_rem_req(srp);
++		sg_remove_request(sfp, srp);
+ 		return -ENODEV;
+ 	}
+=20
+@@ -1302,6 +1306,7 @@ sg_rq_end_io_usercontext(struct work_struct *work)
+ 	struct sg_fd *sfp =3D srp->parentfp;
+=20
+ 	sg_finish_rem_req(srp);
++	sg_remove_request(sfp, srp);
+ 	kref_put(&sfp->f_ref, sg_remove_sfp);
+ }
+=20
+@@ -1846,8 +1851,6 @@ sg_finish_rem_req(Sg_request *srp)
+ 	else
+ 		sg_remove_scat(sfp, req_schp);
+=20
+-	sg_remove_request(sfp, srp);
+-
+ 	return ret;
+ }
+=20
+@@ -2194,12 +2197,17 @@ sg_remove_sfp_usercontext(struct work_struct *work)
+ 	struct sg_fd *sfp =3D container_of(work, struct sg_fd, ew.work);
+ 	struct sg_device *sdp =3D sfp->parentdp;
+ 	Sg_request *srp;
++	unsigned long iflags;
+=20
+ 	/* Cleanup any responses which were never read(). */
++	write_lock_irqsave(&sfp->rq_list_lock, iflags);
+ 	while (!list_empty(&sfp->rq_list)) {
+ 		srp =3D list_first_entry(&sfp->rq_list, Sg_request, entry);
+ 		sg_finish_rem_req(srp);
++		list_del(&srp->entry);
++		srp->parentfp =3D NULL;
+ 	}
++	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+=20
+ 	if (sfp->reserve.bufflen > 0) {
+ 		SCSI_LOG_TIMEOUT(6, sg_printk(KERN_INFO, sdp,
+--=20
+2.14.1
