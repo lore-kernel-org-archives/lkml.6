@@ -1,153 +1,287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965177AbeCCCKs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 21:10:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41550 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965093AbeCCCKp (ORCPT
+        id S965200AbeCCCPy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 21:15:54 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:6356 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965153AbeCCCPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 21:10:45 -0500
-Date: Fri, 2 Mar 2018 18:10:42 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: Mario Limonciello <mario.limonciello@dell.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, pali.rohar@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] platform/x86: dell-smbios: Link all dell-smbios-*
- modules together
-Message-ID: <20180303021042.GA11088@fury>
-References: <1519755784-2155-1-git-send-email-mario.limonciello@dell.com>
- <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
+        Fri, 2 Mar 2018 21:15:52 -0500
+X-UUID: eaf80cb1fd45466290a0af5ac39a45f4-20180303
+Message-ID: <1520043343.8089.216.camel@mtkswgap22>
+Subject: Re: [PATCH v1 18/19] arm: dts: mt7623: add MT7623A reference boards
+From: Sean Wang <sean.wang@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Sat, 3 Mar 2018 10:15:43 +0800
+In-Reply-To: <20180302154547.xq5nkmkdk3oenbta@rob-hp-laptop>
+References: <cover.1519378871.git.sean.wang@mediatek.com>
+         <ddffdff293734954ba368be8a54edd3c84a4f4e6.1519378872.git.sean.wang@mediatek.com>
+         <20180302154547.xq5nkmkdk3oenbta@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519755784-2155-3-git-send-email-mario.limonciello@dell.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 12:23:04PM -0600, Mario Limonciello wrote:
-> Some race conditions were raised due to dell-smbios and its backends
-> not being ready by the time that a consumer would call one of the
-> exported methods.
+On Fri, 2018-03-02 at 09:45 -0600, Rob Herring wrote:
+> On Fri, Feb 23, 2018 at 06:16:38PM +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Add mt7623a-rfb.dtsi where most nodes can be inherited from
+> > mt7623n-rfb.dtsi and keep these distinctions from MT7623A boards in
+> > mt7623a-rfb.dtsi for most definition can be reused among MT7623A board
+> > variants.
+> > 
+> > MT7623A has its specific definition of power domain and thus we need
+> > to change related devices such as audio, ethernet, crypto, high-speed
+> > DMA, NAND, and USB controller to the power domain they specifically
+> > belong to. In addition, MT7530 exists as built-in module inside MT7623A
+> > SoC and I2C2 and UART[0-1] get being removed and UART2 have distinct pin
+> > usage. Those all differences can be totally seen in mt7623a-rfb.dtsi.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  arch/arm/boot/dts/Makefile             |  2 +
+> >  arch/arm/boot/dts/mt7623a-rfb-emmc.dts | 22 +++++++++
+> >  arch/arm/boot/dts/mt7623a-rfb-nand.dts | 26 +++++++++++
+> >  arch/arm/boot/dts/mt7623a-rfb.dtsi     | 84 ++++++++++++++++++++++++++++++++++
+> >  arch/arm/boot/dts/mt7623n-rfb.dtsi     | 15 ++++++
+> >  5 files changed, 149 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-nand.dts
+> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb.dtsi
+> > 
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index 5af6fce..818817c 100644
+> > --- a/arch/arm/boot/dts/Makefile
+> > +++ b/arch/arm/boot/dts/Makefile
+> > @@ -1122,6 +1122,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
+> >  	mt6580-evbp1.dtb \
+> >  	mt6589-aquaris5.dtb \
+> >  	mt6592-evb.dtb \
+> > +	mt7623a-rfb-emmc.dtb \
+> > +	mt7623a-rfb-nand.dtb \
+> >  	mt7623n-rfb-emmc.dtb \
+> >  	mt7623n-rfb-nand.dtb \
+> >  	mt7623n-bananapi-bpi-r2.dtb \
+> > diff --git a/arch/arm/boot/dts/mt7623a-rfb-emmc.dts b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+> > new file mode 100644
+> > index 0000000..ef6398e
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
+> > @@ -0,0 +1,22 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2017-2018 MediaTek Inc.
+> > + * Author: Sean Wang <sean.wang@mediatek.com>
+> > + *
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt7623a-rfb.dtsi"
+> > +
+> > +/ {
+> > +	model = "MediaTek MT7623A with eMMC reference board";
+> > +	compatible = "mediatek,mt7623a-rfb-emmc", "mediatek,mt7623";
+> > +
+> > +	chosen {
+> > +		bootargs = "console=ttyS0,115200n8 earlyprintk";
 > 
-> To avoid this problem, guarantee that all initialization has been
-> done by linking them all together and running init for them all.
+> Use stdout-path instead. earlyprintk option only works for a kernel 
+> built with a debug uart at a fixed address, so drop it.
 > 
-> As part of this change the Kconfig needs to be adjusted so that
-> CONFIG_DELL_SMBIOS_SMM and CONFIG_DELL_SMBIOS_WMI are boolean
-> rather than modules.
+
+thanks, I will try and have stdout-path instead. 
+
+But for earlyprintk, our kernel can support and be built with a debug
+uart at a fixed address and it is greatly useful to know what's going
+on when a system hang happens on certain device's initialization prior
+to uart initialization such as PCI device.
+
+Thus, I consider to keep it there in special on such kinds of
+development boards for debugging purpose.
+
+> > +	};
+> > +};
+> > +
+> > +&mmc0 {
+> > +	status = "okay";
+> > +};
+> > diff --git a/arch/arm/boot/dts/mt7623a-rfb-nand.dts b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
+> > new file mode 100644
+> > index 0000000..592d5d7
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/mt7623a-rfb-nand.dts
+> > @@ -0,0 +1,26 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2017-2018 MediaTek Inc.
+> > + * Author: Sean Wang <sean.wang@mediatek.com>
+> > + *
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt7623a-rfb.dtsi"
+> > +
+> > +/ {
+> > +	model = "MediaTek MT7623A with NAND reference board";
+> > +	compatible = "mediatek,mt7623a-rfb-nand", "mediatek,mt7623";
+> > +
+> > +	chosen {
+> > +		bootargs = "console=ttyS0,115200n8 earlyprintk";
 > 
-> CONFIG_DELL_SMBIOS is a visually selectable option again and both
-> CONFIG_DELL_SMBIOS_WMI and CONFIG_DELL_SMBIOS_SMM are optional.
+> ditto.
 > 
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> ---
-> Changes from v2:
->  * Move rest of #ifdef out of source files
->  * Only compile units as necessary
+> > +	};
+> > +};
+> > +
+> > +&bch {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&nandc {
+> > +	status = "okay";
+> > +};
+> > diff --git a/arch/arm/boot/dts/mt7623a-rfb.dtsi b/arch/arm/boot/dts/mt7623a-rfb.dtsi
+> > new file mode 100644
+> > index 0000000..3a15c46
+> > --- /dev/null
+> > +++ b/arch/arm/boot/dts/mt7623a-rfb.dtsi
+> > @@ -0,0 +1,84 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2017-2018 MediaTek Inc.
+> > + * Author: Sean Wang <sean.wang@mediatek.com>
+> > + *
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include <dt-bindings/power/mt7623a-power.h>
+> > +#include "mt7623n-rfb.dtsi"
+> > +
+> > +/ {
+> > +	memory {
 > 
->  drivers/platform/x86/Kconfig            | 11 ++++++++---
->  drivers/platform/x86/Makefile           |  4 ++--
->  drivers/platform/x86/dell-smbios-base.c | 21 ++++++++++++++++++++-
->  drivers/platform/x86/dell-smbios-smm.c  | 18 ++++--------------
->  drivers/platform/x86/dell-smbios-wmi.c  | 14 ++++----------
->  drivers/platform/x86/dell-smbios.h      | 27 ++++++++++++++++++++++++++-
->  6 files changed, 64 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 9a8f964..0c0897e 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -106,10 +106,15 @@ config ASUS_LAPTOP
->  	  If you have an ACPI-compatible ASUS laptop, say Y or M here.
->  
->  config DELL_SMBIOS
-> -	tristate
-> +	tristate "Dell SMBIOS driver"
-> +	---help---
-> +	This provides support for the Dell SMBIOS calling interface.
-> +	If you have a Dell computer you should enable this option.
-> +
-> +	Be sure to select at least one backend for it to work properly.
->  
->  config DELL_SMBIOS_WMI
-> -	tristate "Dell SMBIOS calling interface (WMI implementation)"
-> +	bool "Dell SMBIOS driver WMI support"
->  	depends on ACPI_WMI
->  	select DELL_WMI_DESCRIPTOR
->  	select DELL_SMBIOS
+> Unit-address?
 
-Blarg, this also violates the kconfig-language guidance for using select
-only for non-visible symbols with no dependencies.
+If unit-address is being included, it seem there is dtc problem two ,
+memory nodes are generated, one with invalid size 0 would cause boot
+fails as [1] I addressed.
 
-I have a patch that works, but I don't love it. We can remove the prompt
-from DELL_SMBIOS, and make DELL_SMBIOS_WMI|SMM "depend on" DELL_SMBIOS.
-The options just appear sort of randomly when either DELL_LAPTOP or
-DELL_WMI are selected - but they can default to y, which is nice.
-
-I have a subsequent patch which makes DELL_SMBIOS_WMI|SMM "depend on"
-DELL_LAPTOP, which makes this look a lot nicer. These just appear under
-DELL_LAPTOP as bool options. The problem with this approach is DELL_WMI
-also requires DELL_SMBIOS and DELL_WMI doesn't currently depend on
-DELL_LAPTOP. One option is to make it depend on DELL_LAPTOP as it seems
-unlikely for them to ever be used separately.  I don't love this either.
-Thoughts?
-
-Perhaps the compromise is leave the DELL_SMBIOS prompt. This doesn't
-have the negative consequences the kconfig-languages is trying to guard
-against, and it makes it obvious what the DELL_SMBIOS_* options are -
-and we can still default them to y. See below.
-
-This seems like it might be the least bad option at the moment. I'll
-keep thinking on it a bit...
-
-From: "Darren Hart (VMware)" <dvhart@infradead.org>
-Date: Fri, 2 Mar 2018 17:40:32 -0800
-Subject: [PATCH] platform/x86: Allow for SMBIOS backend defaults
-
-Avoid accidental configurations by setting default y for DELL_SMBIOS
-backends. Avoid this impacting the default build size, by making them
-dependent on DELL_SMBIOS, so they only appear when DELL_SMBIOS is
-manually selected, or by DELL_LAPTOP or DELL_WMI.
-
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
----
- drivers/platform/x86/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index e3f682c..022c837 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -115,9 +115,10 @@ config DELL_SMBIOS
- 
- config DELL_SMBIOS_WMI
- 	bool "Dell SMBIOS driver WMI backend"
-+	default y
- 	depends on ACPI_WMI
- 	select DELL_WMI_DESCRIPTOR
--	select DELL_SMBIOS
-+	depends on DELL_SMBIOS
- 	---help---
- 	This provides an implementation for the Dell SMBIOS calling interface
- 	communicated over ACPI-WMI.
-@@ -128,8 +129,9 @@ config DELL_SMBIOS_WMI
- 
- config DELL_SMBIOS_SMM
- 	bool "Dell SMBIOS driver SMM backend"
-+	default y
- 	depends on DCDBAS
--	select DELL_SMBIOS
-+	depends on DELL_SMBIOS
- 	---help---
- 	This provides an implementation for the Dell SMBIOS calling interface
- 	communicated over SMI/SMM.
--- 
-2.9.5
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-March/012249.html
 
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+> > +		device_type = "memory";
+> > +		reg = <0 0x80000000 0 0x20000000>;
+> > +	};
+> > +};
+> > +
+> > +&afe {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
+> > +};
+> > +
+> > +&cir {
+> > +	status = "disabled";
+> > +};
+> > +
+> > +&crypto {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> > +};
+> > +
+> > +&eth {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> > +};
+> > +
+> > +&hsdma {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+> > +};
+> > +
+> > +&i2c2 {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&i2c2_pins_b>;
+> > +};
+> > +
+> > +&mt7530 {
+> > +	mediatek,mcm;
+> > +	resets = <&ethsys MT2701_ETHSYS_MCM_RST>;
+> > +	reset-names = "mcm";
+> > +};
+> > +
+> > +&nandc {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
+> > +};
+> > +
+> > +&pcie {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> > +};
+> > +
+> > +&scpsys {
+> > +	compatible = "mediatek,mt7623a-scpsys",
+> > +		     "syscon";
+> > +	clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
+> > +	clock-names = "ethif";
+> > +};
+> > +
+> > +&uart0 {
+> > +	status = "disabled";
+> > +};
+> > +
+> > +&uart1 {
+> > +	status = "disabled";
+> > +};
+> > +
+> > +&uart2 {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&uart2_pins_b>;
+> > +};
+> > +
+> > +&usb1 {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> > +};
+> > +
+> > +&usb2 {
+> > +	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
+> > +};
+> > diff --git a/arch/arm/boot/dts/mt7623n-rfb.dtsi b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> > index 0237476..07ed15d 100644
+> > --- a/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> > +++ b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+> > @@ -380,6 +380,14 @@
+> >  		};
+> >  	};
+> >  
+> > +	i2c2_pins_b: i2c2-alt {
+> > +		pin-i2c2 {
+> > +			pinmux = <MT7623_PIN_122_GPIO122_FUNC_SDA2>,
+> > +				 <MT7623_PIN_123_HTPLG_FUNC_SCL2>;
+> > +			bias-disable;
+> > +		};
+> > +	};
+> > +
+> >  	i2s0_pins_a: i2s0-default {
+> >  		pin-i2s0 {
+> >  			pinmux = <MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA>,
+> > @@ -629,6 +637,13 @@
+> >  				 <MT7623_PIN_15_GPIO15_FUNC_UTXD2>;
+> >  		};
+> >  	};
+> > +
+> > +	uart2_pins_b: uart2-alt {
+> > +		pins-dat {
+> > +			pinmux = <MT7623_PIN_200_URXD2_FUNC_URXD2>,
+> > +				 <MT7623_PIN_201_UTXD2_FUNC_UTXD2>;
+> > +		};
+> > +	};
+> >  };
+> >  
+> >  &pwm {
+> > -- 
+> > 2.7.4
+> > 
