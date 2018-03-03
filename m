@@ -1,145 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932082AbeCCN7e convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 08:59:34 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:55323 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeCCN7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 08:59:33 -0500
-Date: Sat, 3 Mar 2018 14:58:45 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stefan Schake <stschake@gmail.com>
-Message-ID: <166274019.307112.1520085525833@email.1und1.de>
-In-Reply-To: <20180214202454.6e7ebeaf@naga.suse.cz>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
- <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
- <20180214163649.3a0c9476@kitsune.suse.cz>
- <20180214165827.386b9bb1@kitsune.suse.cz>
- <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
- <20180214202454.6e7ebeaf@naga.suse.cz>
-Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:DZQbqeU5p7EFyoVJCOLpPyciAHYp2ElL0/f0EvGbNzne9BGege7
- a0xWBPW+2H8OkzxLjUvYqiOHZsSeoYfsXLY8fHMESyAKRXBFmMWKSdcaOmu83muc3CM8CwO
- GTtWjxydipLDxQEftHkuRaBcIf7kUs/0NYHQooF0Lg4Cc7cRi0f6uvERRts/L5ql+vH0Dnt
- CZ5Z1ziz8zAz+aHLUGEDw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eWHaWAa8YbA=:LlQlCCKbODIzYKCd2VcXHw
- Hq+fbgjmUK/mCgf76XJX1TWQz7wDCuCc2MSN6OgfHOw5iKIkVT8rz5TQj7vB1wukrmbp298kO
- uaMCdYVTkwiVeYL9dagT/Tv47NKnsPynsi68Q5KjaEs4L4K9avgPWOOjyv13QS7Uir+4qieb6
- CPjKZ0ep6tiXhh5rtdll/BDwchu3vbX3GofWLedtChQEL53Djv5/pM7wM7Wm6V+VDPYNIedVR
- BV0NcTqK3chA8YSi+5gWVA3kZvz84Ip3HbeIQcuYOMYoG3hDBKIEJj3sXF+hXsiXFhphHjeFC
- n5cq24OpitOWm1gOXjFkZ4K+8daAfZj0YFYc4FSJ67C4HjatchEdnEQ0MXgkDpucySoaZA1YF
- kk6GoSUBd816ls1UypkIBfHExKpTcOoEQnyV0jG2R30wSiuhtdEzK5yd7S7ZbK2xAcXu90SfM
- lQQ/6JbcL9Hxtb6vJz80CKYLv38KShjpZ5NZeF8PGoIA72KTZoe4G3FbQ5oCqhgmh5mOgV5kw
- RePflBLEz0fiLiLIuzNkhXCSC7/nJXqzh4A6bZ5XsVqI4LCq2EtLdttJjao+TBhtr4kziNM0X
- iJ2Y3AkLaaPt/l+Ki6LvcTNGqBCEUukbz3sTNvQ+SLWzdR5eeagL+BJGrTDd7O6ZPh6AHddOf
- c1RO6NAbWLxt1oaaehUPz2ikBkgf6mhH39lkbZuJIf1vypljSP3sA8CJ90tB9IfYdR4ovbXZp
- ZcyiEzs8YGBx95ucvu0Bf2FDzhUYZh6AXi62dtUkDidIUObovc6It8Pg6i4=
+        id S1752004AbeCCOTG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 09:19:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751863AbeCCOTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 09:19:04 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C73D2133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <1520086742.4280.27.camel@kernel.org>
+Subject: Re: [PATCH v7 08/61] xarray: Add the xa_lock to the radix_tree_root
+From: Jeff Layton <jlayton@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Date: Sat, 03 Mar 2018 09:19:02 -0500
+In-Reply-To: <20180219194556.6575-9-willy@infradead.org>
+References: <20180219194556.6575-1-willy@infradead.org>
+         <20180219194556.6575-9-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On Mon, 2018-02-19 at 11:45 -0800, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
+> 
+> This results in no change in structure size on 64-bit x86 as it fits in
+> the padding between the gfp_t and the void *.
+> 
+> Initialising the spinlock requires a name for the benefit of lockdep,
+> so RADIX_TREE_INIT() now needs to know the name of the radix tree it's
+> initialising, and so do IDR_INIT() and IDA_INIT().
+> 
+> Also add the xa_lock() and xa_unlock() family of wrappers to make it
+> easier to use the lock.  If we could rely on -fplan9-extensions in
+> the compiler, we could avoid all of this syntactic sugar, but that
+> wasn't added until gcc 4.6.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  fs/f2fs/gc.c                   |  2 +-
+>  include/linux/idr.h            | 19 ++++++++++---------
+>  include/linux/radix-tree.h     |  7 +++++--
+>  include/linux/xarray.h         | 24 ++++++++++++++++++++++++
+>  kernel/pid.c                   |  2 +-
+>  tools/include/linux/spinlock.h |  1 +
+>  6 files changed, 42 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/xarray.h
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index aa720cc44509..7aa15134180e 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1006,7 +1006,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>  	unsigned int init_segno = segno;
+>  	struct gc_inode_list gc_list = {
+>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+> -		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+> +		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+>  	};
+>  
+>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+> diff --git a/include/linux/idr.h b/include/linux/idr.h
+> index 913c335054f0..e856f4e0ab35 100644
+> --- a/include/linux/idr.h
+> +++ b/include/linux/idr.h
+> @@ -32,27 +32,28 @@ struct idr {
+>  #define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
+>  					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
+>  
+> -#define IDR_INIT_BASE(base) {						\
+> -	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER),			\
+> +#define IDR_INIT_BASE(name, base) {					\
+> +	.idr_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER),			\
+>  	.idr_base = (base),						\
+>  	.idr_next = 0,							\
+>  }
+>  
+>  /**
+>   * IDR_INIT() - Initialise an IDR.
+> + * @name: Name of IDR.
+>   *
+>   * A freshly-initialised IDR contains no IDs.
+>   */
+> -#define IDR_INIT	IDR_INIT_BASE(0)
+> +#define IDR_INIT(name)	IDR_INIT_BASE(name, 0)
+>  
+>  /**
+> - * DEFINE_IDR() - Define a statically-allocated IDR
+> - * @name: Name of IDR
+> + * DEFINE_IDR() - Define a statically-allocated IDR.
+> + * @name: Name of IDR.
+>   *
+>   * An IDR defined using this macro is ready for use with no additional
+>   * initialisation required.  It contains no IDs.
+>   */
+> -#define DEFINE_IDR(name)	struct idr name = IDR_INIT
+> +#define DEFINE_IDR(name)	struct idr name = IDR_INIT(name)
+>  
+>  /**
+>   * idr_get_cursor - Return the current position of the cyclic allocator
+> @@ -219,10 +220,10 @@ struct ida {
+>  	struct radix_tree_root	ida_rt;
+>  };
+>  
+> -#define IDA_INIT	{						\
+> -	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
+> +#define IDA_INIT(name)	{						\
+> +	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
+>  }
+> -#define DEFINE_IDA(name)	struct ida name = IDA_INIT
+> +#define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
+>  
+>  int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
+>  int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
+> diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+> index 6c4e2e716dac..34149e8b5f73 100644
+> --- a/include/linux/radix-tree.h
+> +++ b/include/linux/radix-tree.h
+> @@ -110,20 +110,23 @@ struct radix_tree_node {
+>  #define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
+>  
+>  struct radix_tree_root {
+> +	spinlock_t		xa_lock;
+>  	gfp_t			gfp_mask;
+>  	struct radix_tree_node	__rcu *rnode;
+>  };
+>  
+> -#define RADIX_TREE_INIT(mask)	{					\
+> +#define RADIX_TREE_INIT(name, mask)	{				\
+> +	.xa_lock = __SPIN_LOCK_UNLOCKED(name.xa_lock),			\
+>  	.gfp_mask = (mask),						\
+>  	.rnode = NULL,							\
+>  }
+>  
+>  #define RADIX_TREE(name, mask) \
+> -	struct radix_tree_root name = RADIX_TREE_INIT(mask)
+> +	struct radix_tree_root name = RADIX_TREE_INIT(name, mask)
+>  
+>  #define INIT_RADIX_TREE(root, mask)					\
+>  do {									\
+> +	spin_lock_init(&(root)->xa_lock);				\
+>  	(root)->gfp_mask = (mask);					\
+>  	(root)->rnode = NULL;						\
+>  } while (0)
+> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> new file mode 100644
+> index 000000000000..2dfc8006fe64
+> --- /dev/null
+> +++ b/include/linux/xarray.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +#ifndef _LINUX_XARRAY_H
+> +#define _LINUX_XARRAY_H
+> +/*
+> + * eXtensible Arrays
+> + * Copyright (c) 2017 Microsoft Corporation
+> + * Author: Matthew Wilcox <mawilcox@microsoft.com>
+> + */
+> +
+> +#include <linux/spinlock.h>
+> +
+> +#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
+> +#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
+> +#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
+> +#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
+> +#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
+> +#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
+> +#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
+> +#define xa_lock_irqsave(xa, flags) \
+> +				spin_lock_irqsave(&(xa)->xa_lock, flags)
+> +#define xa_unlock_irqrestore(xa, flags) \
+> +				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
+> +
+> +#endif /* _LINUX_XARRAY_H */
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index ed6c343fe50d..157fe4b19971 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -70,7 +70,7 @@ int pid_max_max = PID_MAX_LIMIT;
+>   */
+>  struct pid_namespace init_pid_ns = {
+>  	.kref = KREF_INIT(2),
+> -	.idr = IDR_INIT,
+> +	.idr = IDR_INIT(init_pid_ns.idr),
+>  	.pid_allocated = PIDNS_ADDING,
+>  	.level = 0,
+>  	.child_reaper = &init_task,
+> diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
+> index 4ed569fcb139..b21b586b9854 100644
+> --- a/tools/include/linux/spinlock.h
+> +++ b/tools/include/linux/spinlock.h
+> @@ -7,6 +7,7 @@
+>  
+>  #define spinlock_t		pthread_mutex_t
+>  #define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
+> +#define __SPIN_LOCK_UNLOCKED(x)	(pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER
+>  
+>  #define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
+>  #define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
 
-[add Stefan to CC]
+Looks sane enough.
 
-> Michal Suchánek <msuchanek@suse.de> hat am 14. Februar 2018 um 20:24 geschrieben:
-> 
-> 
-> On Wed, 14 Feb 2018 17:49:31 +0100
-> Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> 
-> > Hi Michal,
-> > 
-> > [add Phil]
-> > 
-> > Am 14.02.2018 um 17:13 schrieb Michal Suchánek:
-> > > On Wed, 14 Feb 2018 16:36:49 +0100
-> > > Michal Suchánek <msuchanek@suse.de> wrote:
-> > >  
-> > >> On Wed, 14 Feb 2018 15:58:31 +0100
-> > >> Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > >>  
-> > >>> Hi Michal,
-> > >>>
-> > >>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:    
-> > >>>> The bcm2835 mmc host tends to lock up for unknown reason so reset
-> > >>>> it on timeout. The upper mmc block layer tries retransimitting
-> > >>>> with single blocks which tends to work out after a long wait.
-> > >>>>
-> > >>>> This is better than giving up and leaving the machine broken for
-> > >>>> no obvious reason.      
-> > >>> could you please provide more information about this issue
-> > >>> (affected hardware, kernel config, version, dmesg, reproducible
-> > >>> scenario)? 
-> > > It tends to reproduce when upgrading a few packages with zypper and
-> > > otherwise at random during system operation. It seems that for my
-> > > card it worsens with age to some degree so perhaps it depends on the
-> > > fragmentation of the internal card flash.
-> > >
-> > > Attaching dmesg and kernel config.  
-> > 
-> > do you noticed this issue before 4.15-rc4?
-> 
-> I initially noticed it with 4.4 kernel with some backports to make it
-> bootable on RPi.
-> > 
-> > Could you please test with 4.15 final again?
-> 
-> Right, I can apply the patches on something more recent.
-> 
-> > 
-> > What kind of SD card (name) triggers the issue?
-> 
-> Samsung EVO MB-MP16D
-> 
-> Also see https://elinux.org/RPi_SD_cards#Which_SD_card.3F
-> 
-> Thanks
-> 
-> Michal
-> 
-
-yesterday i finished my stress tests with Raspberry Pi 3.
-
-Scenario:
-- copy Tumbleweed on SD card (openSUSE-Tumbleweed-ARM-JeOS-raspberrypi3.aarch64-2018.02.02-Build1.2.raw, Linux 4.14.15)
-- setup locales with yast
-- run zypper update
-- reboot
-- install and remove java 1.8 in a loop for at least 1 hour
-
-Results of the different SD cards:
-Toshiba uSDHC Class 10 UHS-1 32 GB: PASS
-BASETech uSDHC Class 10 16 GB: PASS
-Samsung uSDHC EVO+ UHS-1 16 GB: PASS
-Samsung uSDHC Class 6 32 GB: PASS
-SanDisk Edge Class 4 16 GB: PASS
-Kingston uSDHC Class 10 UHS-1 32 GB: PASS
-QUMOX uSDHC Class 10 UHS-1 16 GB: FAIL (zypper segfaulted permantently)
-Transcend uSDHC Class 10 UHS-1 32 GB: PASS
-
-I was never able to reproduce this timeout. So i still need the feedback about the 4.15 and i a reliable test scenario.
-
-In a github issue, i've read that badblocks could reproduce the issue more likely.
-
-Regards
-Stefan
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
