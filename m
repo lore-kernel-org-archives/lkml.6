@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1247250-1520119969-2-4714694555474859069
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520119969-2-13554792576040302232
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES daensv, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520119968; b=sc5xiGExftqEZRc5edXOQP1jEphPUliNURHoDl3cSSkoLz2
-    plaQFDBD9vFRLEHgAYNixfEVVuupgzy76LCZSGPwRtA5ePwNqxHtJpwLZx7OGUfN
-    78hH/iegg6gJ0B97aS/SuCJru2v82cWDdPavHrjZo5SWBjgx1XBveCcLkS2F3hLn
-    Gvtjt3wLSPks90CxUu+xx1xirBl9eCW75FuMc3TecrfIbklcxFwQULhmMBryGsux
-    UUqgbWcXQ83brIIivfzL88vIdPB2fNGLxye+EXbJZc04vxU+3sOffYqwDKWj307S
-    xfjCuL5rQv2DuqiWRXN6Tpzxn3hmk65OTHDxR2A==
+    t=1520119969; b=D5OnzFek9SzDHT/t9sV7/F+njdt7DYe4p97iP+Ik4zNbpJj
+    A2J8Nj+7MoEuKr7bXJMoAoRzaRYpl8SUl+8VQqQ1D4J9fdITkHEWzN3c5/NSBKH+
+    aPkngfm/37EQkiHmDeQtyzMsaPxmJnoGosnhRhP0uuAtdZteCElGOc0uTPeJAOHC
+    kRS4FjAHfWELGOaVKwsdDLibW5qPFcxR6BJ982QbU6SMpbeq38vP9AyssLGMlDj1
+    /BYpNCLIprfr1kH1rXzyz72c3sUEqfZkiJUbEBhupTF5vORn+QaWfnz2Kk3Sz4FW
+    8C9fltOaEDekq5TEa4M4U/WviHmopbj4LGIkaQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520119968; bh=nQYjPv
-    DwmjvR/KKmvqmTDUtwwzj8GZfQ6ANQ/ugZ5+Y=; b=rr54tvSwhBIrnmaAFZSDhs
-    JMm5qNTsmx7EANMQ7b6q0g78EOdMjW0BZpsbzwyECcX498Mjr5VWKn54+Ml3oY8i
-    WEOMisycM+mRKDKvP0TTDtbg/Bhj3Yp194nlmBsrt4EW+wESLAbRz+TVIf3xlEVJ
-    jzdyM23LZ1AUJtxE8nlNJre0w0DwVFBlW+YYXI2YLjOKvLxrMwnTivFFcJroQydF
-    cYx2gBkziGLH2DcFC/7wfjUSgq1Z4TK9IJe5nucZC0fFx845n4FnAYwKhK5W/O1W
-    OzkNA/hdlT+XjA5oC/hnE/6RNOGosJSFxR/cE/MEMjuLTqflAtP5FSR5UiQ8JLIQ
+    :mime-version:sender:list-id; s=arctest; t=1520119969; bh=i2+mut
+    XLXwSGarWA03/Y7on14+ZwNyAPeQLBfRxS34Y=; b=hZFLAAYay+qgKwS816bxi+
+    RiP2K0fhYprxzTGH5OG9u6fh7at8L/7tLTAm3oeZvgQ+swWHfV6eAuXQ9+SDqfPK
+    KIahV3NrYhI5iMIhFVvUKHx3jkvRtIjOA2AinqkfMyrETNbvg2b89xcXd2Bizm90
+    Heat9skAPgTrROzac97ixgEOSQZo9TSkbDOrnJEx0EiSkFoB1FmfHPBtF1FOKBFi
+    JxA/EpbnvFjABymyzqmWZGlmOzwEAAwgv9BPhECejrNew0zwBVjHAJPvz1QIytyl
+    bCtExE3M3Y6jNaUkRqyhdsbM3wrNI3CaPgWB/mdGRcNKKKwRNcP2xCI/5d5kqogg
     ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ndm5BVge x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EhfviiNl x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Ndm5BVge x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=EhfviiNl x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,26 +48,27 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933690AbeCCXcC (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:32:02 -0500
-Received: from mail-by2nam03on0118.outbound.protection.outlook.com ([104.47.42.118]:7707
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        id S933475AbeCCXcU (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:32:20 -0500
+Received: from mail-bn3nam01on0139.outbound.protection.outlook.com ([104.47.33.139]:45280
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934521AbeCCWgL (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:36:11 -0500
+        id S934493AbeCCWgK (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:36:10 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+CC: Hamad Kadmany <qca_hkadmany@qca.qualcomm.com>,
+        Maya Erez <qca_merez@qca.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 175/219] clk: meson: gxbb: fix wrong clock for
- SARADC/SANA
-Thread-Topic: [PATCH AUTOSEL for 4.9 175/219] clk: meson: gxbb: fix wrong
- clock for SARADC/SANA
-Thread-Index: AQHTsz8eBD1TrYcPHkWCHdKcHZTULA==
-Date: Sat, 3 Mar 2018 22:29:39 +0000
-Message-ID: <20180303222716.26640-175-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 167/219] wil6210: fix protection against
+ connections during reset
+Thread-Topic: [PATCH AUTOSEL for 4.9 167/219] wil6210: fix protection against
+ connections during reset
+Thread-Index: AQHTsz8blGAeGyH1pUiR41mMODPiEA==
+Date: Sat, 3 Mar 2018 22:29:34 +0000
+Message-ID: <20180303222716.26640-167-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -76,82 +77,95 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1020;7:rSlH0F4PmmXXG7KM0vXHpLECvPp1hHPUsyCDSxeb3LwOY5X62UFWtL5ekwv7uh/Wy9pA4Umj2+ghfmEfWvd2f4mGFjhuD0q3ZMt3UXUm1wSBL2ruTG2aenM4550DOPGIww2KFYCoqzoIbhJYtbUnTaiB1+2MujCuX2L78yTLAR+x2mS6FSlZ5LqLHLQaGAF+WOijx62qdATL7YXB9B3RzZOEpsxjQi0p0Wdn0sCPFpdGFTo8xtP2EfELYF7+i1NR
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1034;7:p8lSsn3PIhO+ucDUnsq4xZJH8pUSbgwbBIcBJOBk1s89AkHZrxdDP/6EW07x65yOb+6OsFAe0PuiDmoLVj8JMF3waDjhMnn4Lu+YbVk+AuFtUBuItaVzS6cXEx/USgdqYwoLzpO4UgcczAbxFnYA5rRrPlezsrbB2f+RwBNtN1AusDUn/m1Lel6drf55qQlcznHlQVsPj2/aVA5oqi1pEgzLjfkiv+6wOU88+hp+9GGQS3WTqzDG2hGa7Jgh1nhH
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4f16890b-bf21-40ee-59bb-08d581572791
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307)(7193020);SRVR:MW2PR2101MB1020;
-x-ms-traffictypediagnostic: MW2PR2101MB1020:
+x-ms-office365-filtering-correlation-id: 68f39bd1-e56a-4583-ee6e-08d58157249f
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1034;
+x-ms-traffictypediagnostic: MW2PR2101MB1034:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB102060E64F728A6C00328B6BFBC40@MW2PR2101MB1020.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1020;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1020;
+x-microsoft-antispam-prvs: <MW2PR2101MB1034DEF0D88A13123795360BFBC40@MW2PR2101MB1034.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(21532816269658);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3231220)(944501244)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:MW2PR2101MB1034;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1034;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(366004)(346002)(376002)(39860400002)(199004)(189003)(6436002)(5250100002)(99286004)(3846002)(6116002)(8936002)(22452003)(86612001)(86362001)(575784001)(4326008)(10090500001)(68736007)(6512007)(7736002)(97736004)(25786009)(76176011)(1076002)(6486002)(2501003)(66066001)(36756003)(107886003)(2950100002)(8676002)(305945005)(5660300001)(105586002)(53936002)(6666003)(3280700002)(81166006)(6506007)(106356001)(2906002)(81156014)(316002)(478600001)(72206003)(10290500003)(2900100001)(54906003)(110136005)(186003)(102836004)(26005)(14454004)(3660700001)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1020;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: NlBvx/v8SY8+DZFJ+gdupLlStfznAA3DR0FQsQ0JqnlWFDeTl8aSKz/uhndSqp556wCAKyVotl28XWpGQavSG9VE7ZjhJ+JY1FPnaOPLSkmk3GVfqHf7bB7dUIr/mxwluikjCDTCv7lz8/Fh6SPYF7ZDm4ayqPL2WteFRoB13sc=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(39380400002)(366004)(396003)(199004)(189003)(99286004)(22452003)(72206003)(316002)(3846002)(6116002)(186003)(26005)(478600001)(76176011)(54906003)(110136005)(102836004)(97736004)(1076002)(2501003)(3660700001)(66066001)(5250100002)(5660300001)(86362001)(10090500001)(10290500003)(86612001)(6506007)(68736007)(106356001)(25786009)(8676002)(4326008)(59450400001)(6512007)(305945005)(2906002)(14454004)(107886003)(8936002)(7736002)(81166006)(3280700002)(53936002)(105586002)(81156014)(6666003)(6486002)(36756003)(2900100001)(6436002)(2950100002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1034;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: H/t2dL9KnZJa88hlnghmpM3zSHtsIzYCWdibTSxa9V++eu5ewWTDXD88Ss2FRCGSTvsqW53vRvJxN6mECfttISr0U1xAhQaYZ3Ya+EGx5LtWsFhrz7F+DCdkv1Vavwgl/qsSAycRXbL0bAmnNUA0IFdUh8MrvZiYMCQVRFj/MtM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f16890b-bf21-40ee-59bb-08d581572791
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:39.2601
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68f39bd1-e56a-4583-ee6e-08d58157249f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:29:34.2913
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1020
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1034
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+From: Hamad Kadmany <qca_hkadmany@qca.qualcomm.com>
 
-[ Upstream commit 75eccf5ed83250c0aeaeeb76f7288254ac0a87b4 ]
+[ Upstream commit b819447dfc4bd120c9d6cd8521252d544fce8fe7 ]
 
-According to the datasheet, in Meson-GXBB/GXL series,
-The clock gate bit for SARADC is HHI_GCLK_MPEG2 bit[22],
-while clock gate bit for SANA is HHI_GCLK_MPEG0 bit[10].
+Existing code that ignores connection events during
+reset flow will never take effect since it locks the
+same mutex taken by the reset flow.
 
-Test passed at gxl-s905x-p212 board.
+In addition, in case of unsolicited disconnect events ignore
+those as well since device is about to get reset.
 
-The following published datasheets are wrong and should be updated
-[1] GXBB v1.1.4
-[2] GXL v0.3_20170314
-
-Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
-Tested-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Hamad Kadmany <qca_hkadmany@qca.qualcomm.com>
+Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/clk/meson/gxbb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ath/wil6210/wmi.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 9d9af446bafc..37e05d6e010a 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -572,7 +572,7 @@ static MESON_GATE(gxbb_pl301, HHI_GCLK_MPEG0, 6);
- static MESON_GATE(gxbb_periphs, HHI_GCLK_MPEG0, 7);
- static MESON_GATE(gxbb_spicc, HHI_GCLK_MPEG0, 8);
- static MESON_GATE(gxbb_i2c, HHI_GCLK_MPEG0, 9);
--static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG0, 10);
-+static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG0, 10);
- static MESON_GATE(gxbb_smart_card, HHI_GCLK_MPEG0, 11);
- static MESON_GATE(gxbb_rng0, HHI_GCLK_MPEG0, 12);
- static MESON_GATE(gxbb_uart0, HHI_GCLK_MPEG0, 13);
-@@ -623,7 +623,7 @@ static MESON_GATE(gxbb_usb0_ddr_bridge, HHI_GCLK_MPEG2,=
- 9);
- static MESON_GATE(gxbb_mmc_pclk, HHI_GCLK_MPEG2, 11);
- static MESON_GATE(gxbb_dvin, HHI_GCLK_MPEG2, 12);
- static MESON_GATE(gxbb_uart2, HHI_GCLK_MPEG2, 15);
--static MESON_GATE(gxbb_sana, HHI_GCLK_MPEG2, 22);
-+static MESON_GATE(gxbb_sar_adc, HHI_GCLK_MPEG2, 22);
- static MESON_GATE(gxbb_vpu_intr, HHI_GCLK_MPEG2, 25);
- static MESON_GATE(gxbb_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
- static MESON_GATE(gxbb_clk81_a53, HHI_GCLK_MPEG2, 29);
+diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/=
+ath/wil6210/wmi.c
+index fae4f1285d08..94a356bbb6b9 100644
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -501,16 +501,16 @@ static void wmi_evt_connect(struct wil6210_priv *wil,=
+ int id, void *d, int len)
+ 		assoc_resp_ielen =3D 0;
+ 	}
+=20
+-	mutex_lock(&wil->mutex);
+ 	if (test_bit(wil_status_resetting, wil->status) ||
+ 	    !test_bit(wil_status_fwready, wil->status)) {
+ 		wil_err(wil, "status_resetting, cancel connect event, CID %d\n",
+ 			evt->cid);
+-		mutex_unlock(&wil->mutex);
+ 		/* no need for cleanup, wil_reset will do that */
+ 		return;
+ 	}
+=20
++	mutex_lock(&wil->mutex);
++
+ 	if ((wdev->iftype =3D=3D NL80211_IFTYPE_STATION) ||
+ 	    (wdev->iftype =3D=3D NL80211_IFTYPE_P2P_CLIENT)) {
+ 		if (!test_bit(wil_status_fwconnecting, wil->status)) {
+@@ -608,6 +608,13 @@ static void wmi_evt_disconnect(struct wil6210_priv *wi=
+l, int id,
+=20
+ 	wil->sinfo_gen++;
+=20
++	if (test_bit(wil_status_resetting, wil->status) ||
++	    !test_bit(wil_status_fwready, wil->status)) {
++		wil_err(wil, "status_resetting, cancel disconnect event\n");
++		/* no need for cleanup, wil_reset will do that */
++		return;
++	}
++
+ 	mutex_lock(&wil->mutex);
+ 	wil6210_disconnect(wil, evt->bssid, reason_code, true);
+ 	mutex_unlock(&wil->mutex);
 --=20
 2.14.1
