@@ -1,121 +1,155 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2751116-1520412489-2-18285212657684576418
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520412489; b=q314Dn9fCxLLMEKdpVimkORRk7zr87o6aRsRLBvlRFrya1a
-    lZ8nm1h6z76pVM0vyw2TzwiIkgRKaVEiaoUmRlc2fMK9zDBbVkUE6t3IPFrFRd6p
-    jNL/D/aTfQ1id9CFldzQ8sgSTxcMLovC3lIzgSZ/fIoLvDw/7YvwdKmBUrKdhszT
-    UGYt0JdYAjjzTe6eMuIVhE/ePVVKFbm6j+2Cs6jLAqhw7lHVfYPwzvLy1OqD6LuA
-    ZzetFE8cmO2jedS7re9HGbhrBcAZ3vZCV3osG5jg+oGnqElloDv95Pa8Lk+gb5LI
-    6Ok+uzLgvZJXk7keWwCLhDHRWaSJsNXZERz9oDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1520412489; bh=KeGmvLkWPHfSVdQB+Kk8+lhfLwFPwIgSc2X58T
-    Ud3O4=; b=MFPyErTdk7e4JaKxRc28AyCyidr14Vh0d3ulQzVBQPiE6BcEYKrexA
-    fc0DVuZZ4rRNPxVG3x4sLSN/dYbLAwcflnfFyb5DEgvN9lV+/wsYAoddM8boD0Yx
-    iLMjt+lBon5pgZvECY4Pq9zyWkfQDiTf9XO15KdzGkJPmTBUmWDbrdM17oIcu/cM
-    IVDd2MHE41ooHFPmmfGPtj2i/Q3g4H9IBUK5hFQZI0Lb2lt/WysHySGHTM7ZVZqU
-    BvnqlYy6Q6/n0M2Tj0ADQHVEJ16eERFqgll1I21Nkg5FGVG+PtdpcaPLdh4ZN6GE
-    xgyEShYvnFsWfzYr/PfsjR5q1IkVZesw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CpVNnG3O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=r+dj4yFA;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CpVNnG3O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=r+dj4yFA;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751177AbeCGIsH (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 03:48:07 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:37843 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbeCGIsH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 03:48:07 -0500
-X-Google-Smtp-Source: AG47ELvxU90sW8oaSKZe+Bp96mT9a4ZaY/W/mTtn9QSSqcrmcCiWfTlV2Lvkq+1y9LBmN6HSO4fJcH9FTeuOmzP7dzU=
+Return-Path: <outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1520094324; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=OofJ5HIDhH66NpfXLh2gXUevPSVp/SXs93/l4O0ScPftaI5qjtYqied+HD/fpCtCtm
+         ghV3ZS5oGsqD6MPCxJ0nSxvP9yPFoUokec4qjc7/8aWKbIbjStlAOW9kQZMBwuZMvgyP
+         BhUnoTAjPZEqdg0xC+TEMDMxiUu1cVsQTDbjX16WhpeFk0yiICbA9UV0sSb5+kUdylVK
+         KBWMA5g0EdVfH+r96xrIvINFsKF1BJwvOykQG3MAbwDjejYUW0qCgz4hWXron9oiSJxl
+         6gFetANtMZJGsC5mENAHWP2gBqRUfUt2laO/3Hgt1bG2utO9DFNEfOXH9jAJgCKbImC2
+         Exjg==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results:arc-message-signature
+         :arc-authentication-results;
+        bh=JmPGQOP2g3UVm8k5QrtCUpmUdjpJHzsD/PdqID5p0sg=;
+        b=tqu36K5UEekaBCnDV0PFSDNNEPYXWD3djERK88S6zmcKx5Yt9kRtcCJr+kUAi77dW5
+         1d+KHaj1DfLmQ7fJI4a1Gb05fkeOhUuPWosOeMi/efniq6l+iY0CdFvj8o/KnhwuXWJ5
+         kCrWfc2iQ7dw9fREB/tMH3ugqXi5DHS/jRTcONYIFTUe/xYP2wCc947+0jw3S+bvVbp+
+         dmgZcEWC7UVFbAkAxaa2eU1PXr7TWnJODeqFfpx14GHxGfV2WVohElvwEsiehUh4ih83
+         fnQ4rpTagDdXvdzrJI43u2g5T58VnsiD8qMk6YhwI0H5wcAh7B6ewrCSVYCNepZWnrzR
+         bYBQ==
+ARC-Authentication-Results: i=3; mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=kIubnAV8;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QKcNgJK9;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrb5ey5pkakgqej35on6a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=kIubnAV8;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QKcNgJK9;
+       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrb5ey5pkakgqej35on6a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1520094324; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=BQi3dAAsQmALuAVpJf6fHFD6Dy3qzMHlEm3mbJOfyBF8YvA/HO19kvp/079Y40t+FY
+         AkezycheCpP12JG8slUmusKkLn58GOircWe3MiMIbEpvXjslNYXiXmABUwgUQifHZ8Cv
+         ZyZyU5Tttx50UxnAgnmffMkilf5J6OZKaqUZD9mRPQ7Zh3hbu+Mo/y3SVv2Kp/qxF4xz
+         rh3pkxkieblCMnbg3+Hc/oXpgGMZofdNHbfNoyx/hsW0XntEyEHxYQNmjuEwjVgjbdIq
+         GoCNg4nUxng4UNlyKh9U/25hLrMg6q54GXvD+U+wYFKBEzRcmGi+lDWwmWspDRLWZ864
+         S2eA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-unsubscribe:list-archive:list-help:list-post:list-id
+         :mailing-list:precedence:user-agent:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:arc-authentication-results
+         :arc-message-signature:sender:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=JmPGQOP2g3UVm8k5QrtCUpmUdjpJHzsD/PdqID5p0sg=;
+        b=Of0wUGb58vqK0W4/DfDwjLCajEwVTfVA/iWeclucjvBq3+xn34fl92lc7HwAKA9oO1
+         clYif/ieTuc0q0oy6xr+gDv5qCTZPGW9F0wIIbBAG+DIxbrGgqy9zQpixH7n5LA/1sKb
+         gglPoRJgIenbbK91SoLhZ1f23UQgC69Kfnkg22ZqSQGYRGb3jup2w5MMWqqYyFCRqQA6
+         oosWsPBJYM/cAlFzzNfU5C78J4Wv7BFRUEyP3HxuPBT0dMDwwpRoV0B4+YhIbNDvF3s4
+         5mdZ+d+QQdCjCPFY2xPrpDJmtYW64R20cY4uOM0Fbwr5mt/nZ37sCKKaaDG27iLopkFO
+         TPRg==
+ARC-Authentication-Results: i=2; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;
+       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Sender: outreachy-kernel@googlegroups.com
+X-Google-Smtp-Source: AG47ELsr2ubFZSO4KYFvyamwMNPbAekuhgedsFveIKawdC7iSp4z/3Fa37nq00/FIJA04UI7PjjQdQ==
+X-BeenThere: outreachy-kernel@googlegroups.com
+ARC-Seal: i=1; a=rsa-sha256; t=1520094324; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YL7cWd7Py4HlYdKORM6VCmJ8faxZupVZk1p+9E9CYIjU02XMxNjETbuV46yrZoGn2y
+         ox6E0oWo5mlpCY2bu5d4/8PKYcLkAoIojEzFt09gJ4Mr2Ept0mh2+mlwhVHiIYVC1rN+
+         lKm3lrwWGdeq0dncdKHry0CFYHLiJimAZ/ogKcPTRzN1F4QsCwmTbXL5a0AtLHpbiNJ6
+         t04N04fFHvkBlbOZu5i9/ZuS8GFlIyhltjY4gMYVXifZM0r8S82rCQHKbGYZEahz3HR3
+         ck4VuLcMCAvh6ULUq0aidjw9q2VVuXiIJAnOAlSeSp/XAeZS1TcHS+1Sj96tF2db9i1j
+         3FAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=jAoRDVk9MoJjPtavbOkBMRGgEROpWxXEBz5fKKpM5+I=;
+        b=oiBtJ+QF2OrcMI8Aib0k2Q17AuxPc6UJWMWKB2HPu+OJMimDYcXzCGWUrT4MMc6t09
+         vWWg7C63z3/Y/oPwhnYBeBCI1+QSL1GTfOM+Q3X+Jmw17PKx51TXeVnmKMA3ybdlY0r7
+         wsI0H6kL6WLpR7Sy7lGd5TS2EXxBDcE/knVGVrwEv+VG6JVbcu1DTDUUjES+2QUZ7FRV
+         JECRTn5siwSWMnT7LWUAVA8x4u025euBEo9Nt3d5iVNb+UF3pwy2xcMBl5Bw8ll7eiKx
+         oCIGFL1AiJk7o9VOaek4ag03VowJqI686Ts0DS5jbOFLbNJGmjagDOHYROk7U6UcBgtY
+         mZwA==
+ARC-Authentication-Results: i=1; gmr-mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;
+       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Sat, 3 Mar 2018 21:54:57 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: dennis.dalessandro@intel.com
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	outreachy-kernel@googlegroups.com
+Subject: [Outreachy kernel] [PATCH v2] infiniband: hw: Drop unnecessary continue
+Message-ID: <20180303162457.GA21730@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-In-Reply-To: <20180307012941.GA27250@redhat.com>
-References: <20180222155627.1800948-1-arnd@arndb.de> <20180222160432.GA16971@redhat.com>
- <CAK8P3a1jpj0ZCs81YJu0Dx3QFSypQ+VBr348UfEaagcuvM_1gA@mail.gmail.com> <20180307012941.GA27250@redhat.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 09:48:05 +0100
-X-Google-Sender-Auth: h0uD5fUx_lQxGsNBYtz7oJC80aU
-Message-ID: <CAK8P3a3fnHYRSZ8X5G7fd5oVORM3fm7PLcuuPytkR9VQWHJygg@mail.gmail.com>
-Subject: Re: dm-bufio: avoid false-positive Wmaybe-uninitialized warning
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Aliaksei Karaliou <akaraliou.dev@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Original-Sender: arushisinghal19971997@gmail.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;       spf=pass
+ (google.com: domain of arushisinghal19971997@gmail.com designates
+ 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
+X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
+X-Google-Group-Id: 672804067692
+List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
+List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
+List-Archive: <https://groups.google.com/group/outreachy-kernel
+List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
+ <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593934427022927872?=
+X-GMAIL-MSGID: =?utf-8?q?1593934427022927872?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 7, 2018 at 2:29 AM, Mike Snitzer <snitzer@redhat.com> wrote:
-> On Tue, Mar 06 2018 at  4:33pm -0500,
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
->> On Thu, Feb 22, 2018 at 5:04 PM, Mike Snitzer <snitzer@redhat.com> wrote:
->> > On Thu, Feb 22 2018 at 10:56am -0500,
->> > Arnd Bergmann <arnd@arndb.de> wrote:
->>
->> >
->> > Mikulas already sent a fix for this:
->> > https://patchwork.kernel.org/patch/10211631/
->> >
->> > But I like yours a bit better, though I'll likely move the declaration
->> > of 'noio_flag' temporary inside the conditional.
->> >
->> > Anyway, I'll get this fixed up shortly, thanks.
->>
->> I see the fix made it into linux-next on the same day, but the build bots still
->> report the warning for mainline kernels and now also for stable kernels
->> that got a backport of the patch that introduced it on arm64.
->>
->> I assume you had not planned to send it for mainline, any chance you
->> could change that and send it as a bugfix with a 'Cc:
->> stable@vger.kernel.org' tag to restore a clean build?
->
-> I did/do plan to send to Linus this week.
->
-> But I've updated the commit header to include the CC: stable like you
-> asked.
+Continue at the bottom of a loop are removed.
+Issue found using drop_continue.cocci Coccinelle script.
 
-Got it, thanks a lot, that brings us down to two kernelci warnings for 4.16
-and one for 4.15-stable then.
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+Changes in v2:
+- Braces is dropped from if with single statement.
 
-      Arnd
+ drivers/infiniband/hw/qib/qib_init.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/infiniband/hw/qib/qib_init.c b/drivers/infiniband/hw/qib/qib_init.c
+index 3990f38..6c68f8a 100644
+--- a/drivers/infiniband/hw/qib/qib_init.c
++++ b/drivers/infiniband/hw/qib/qib_init.c
+@@ -678,11 +678,9 @@ int qib_init(struct qib_devdata *dd, int reinit)
+ 		lastfail = qib_create_rcvhdrq(dd, rcd);
+ 		if (!lastfail)
+ 			lastfail = qib_setup_eagerbufs(rcd);
+-		if (lastfail) {
++		if (lastfail)
+ 			qib_dev_err(dd,
+ 				"failed to allocate kernel ctxt's rcvhdrq and/or egr bufs\n");
+-			continue;
+-		}
+ 	}
+ 
+ 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
+-- 
+2.7.4
+
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180303162457.GA21730%40seema-Inspiron-15-3567.
+For more options, visit https://groups.google.com/d/optout.
