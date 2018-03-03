@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1254417-1520120885-2-10729449751367817769
+X-Cyrus-Session-Id: sloti22d1t05-1254417-1520120873-2-17356612924122454524
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,34 +13,34 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520120884; b=RC9SoJlJVqZkHVXqDNYHwObIdpbQuFADrS1w0jTn9fNgWW7
-    RCEBF11Imf7srbiEZdIuk5m6i0/y0eq2EqAFRZ/yOjue88ECVe/Cf3vHXzHs50t7
-    MUKG+RhsMUa6nDbEFYOY7GHy+YzfuGvN9Jk+SKBFSs2EegzT9JvmEv/9afWpGezV
-    d7aCuNorpIPpW4yc4qvJTeSGm7tWZgr+TBxs3g8ktoWm6Ry9tmhTwUmfpAotB+2s
-    6Fc7b4+iNzkMhPG2wEhLKrnSS6rnJIQMgYJ1HcUZMWgXM2YGIEpVpyYPbbpY6gSk
-    TN1MG3bS6NCGuPyDmK18XDUuiqga0lcPBJEeP9Q==
+    t=1520120872; b=YtuH678uL0Yhp3UF4MhucK1uvaUvN+vyZBA5t9ubMhXXGAW
+    3mix7msY200hab+evX6x+EDVXbmnBqL4ktM8Xls7b0sbm0XV1apcvyHczSJpB+MQ
+    qMTFV55XQ/o04HgyCwG9cXrFgXFgVdO39cwf2Hu4ibIvzIIgwGCFY6Y5ppZtoLkU
+    mejMjI+BW82rGGGg19JR3RaUo+kfea8cfgEjqtRD2Ueyp/hTydxw9rcT40Zj9XPY
+    w3h/+1gCDhE8B70WzaZ6Eyn3lLbJ9dHsNtxxJWmEH9UYWe+zSZrn6X8kq8kqSq1K
+    u2prJTXmE+Ty0erXySOOltaOT8x3/PIZk3Z3Mkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520120884; bh=OenLXc
-    GcacL8VfFHStGZFFsnRp4AOG8OlEh8o8QaMVc=; b=Eer/ArwMkEEJb3PvfJ2g3O
-    676hyfmPBjKU+eBEcEFaKgrsuGsOYs6EhYARbQu2CYD4OA9QjISsGDHdSUBOf3+u
-    E87Xn/vdBuou2Z21aINAf9iPrCSN5EbRQ7PmqBE0lHW3VK6x4wwp6r3o6ND2b6/S
-    FPCIcksfRFfRbTEG0MF8J47jgrRQPoBG/xdd+9zBYr/VQjUlI77LcLv9BUWGiQqA
-    UcoS1yhEuzF7RGc8Wa71frd0V3+Qq7cYzLrNf47Cd7wLfHz+Y2g5gu9THDTWx/YH
-    n6AkTQwK6pGMCQeP1RjTVQuCtKXxM+lwIHlX0tPvmRhNNAwR3dKgsraxoaJFSyuQ
+    :mime-version:sender:list-id; s=arctest; t=1520120872; bh=9bmtbw
+    0khGlxvFriu5WTIGaddUmj0RTo1cGPtld7zD0=; b=PzdP6EBA8TjdOGBCWZvxXt
+    uJB5ArmakY4lzng3LI86t2ws2bvzNvAd693FxOkrR63DjFaouX4brvsG6aBria1x
+    nxNLpWsuNRD4/LJeaLdQB8Z1oNbT5S0x4P1Iib83wS5Wlm68cH6dtgBZRnjGrKWt
+    eP/HFUIacKAo0CNnA9jHheH4hB86Xg4eiIzAZgzDW6qBxIm0qaK7PTwtt3JDWXOl
+    6iF3JSLIdtUJVloA+L1TnNPBv3woYhTS1QkY4rv/NRhXKbfX4QMzo/zmRt2oi+Ui
+    6Hs54JV6IhR/XINwjKqElfsM786oZJ8DT+uYiqpuQWmdJlxduuhvQ9ONTuThun4Q
     ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CTw3oCUk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TVdYFLc3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=CTw3oCUk x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=TVdYFLc3 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -48,25 +48,32 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932515AbeCCXsD (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 18:48:03 -0500
-Received: from mail-bn3nam01on0116.outbound.protection.outlook.com ([104.47.33.116]:3173
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S933966AbeCCXrs (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 3 Mar 2018 18:47:48 -0500
+Received: from mail-by2nam03on0128.outbound.protection.outlook.com ([104.47.42.128]:37280
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934099AbeCCWeB (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:34:01 -0500
+        id S933058AbeCCWeC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 3 Mar 2018 17:34:02 -0500
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Yuval Mintz <Yuval.Mintz@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC: Peter Zijlstra <peterz@infradead.org>,
+        "juri.lelli@arm.com" <juri.lelli@arm.com>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "xlpang@redhat.com" <xlpang@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jdesfossez@efficios.com" <jdesfossez@efficios.com>,
+        "bristot@redhat.com" <bristot@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 103/219] qed: Fix TM block ILT allocation
-Thread-Topic: [PATCH AUTOSEL for 4.9 103/219] qed: Fix TM block ILT allocation
-Thread-Index: AQHTsz8DR5ASA27e5E+1JlNKkiXTWQ==
-Date: Sat, 3 Mar 2018 22:28:55 +0000
-Message-ID: <20180303222716.26640-103-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.9 104/219] rtmutex: Fix PI chain order integrity
+Thread-Topic: [PATCH AUTOSEL for 4.9 104/219] rtmutex: Fix PI chain order
+ integrity
+Thread-Index: AQHTsz8EdS8EOF0QP0iBWGHu1X/0lA==
+Date: Sat, 3 Mar 2018 22:28:56 +0000
+Message-ID: <20180303222716.26640-104-alexander.levin@microsoft.com>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -75,27 +82,27 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1065;7:f+BmKKT17W2JWUFVLupze25yvgTZxpZYwZwv1HnbJpQu/LjcnZ1VbG1uCckhPUGQJlEZMZQAAWq/ll6RKjznZ30tKaFKb1vtPuTs+mOJhogo56Iho3UFi1VFk+x+kM2aUg+e9ZkjEPXe5FGZsrRdeo0yFyRv6SrJLF1KAJYpNDyqVPfQFGdVvLFgEuSID1RYQ3fvwDeDrAOHTUOLWISSZLMP4GA/+4CMXm7AOFNMvS0Q87gGxaxvFWrew0urHzBl
+x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1065;7:HFVHH3HMCZfvipO/WbHGI0HYMJogW/n2OIBHQHM6AqD5ZYLHqLtamWOLeqWjdoVlTfygIsDjrRRnn316jOf965w7pflK1+sKZryTGLSMBWhgBVxB/6JWj0B4o3r63NZG3uvbYDXt1DKNVfvbCVM/txbtP+ulDfDN/urue7h84Ltp56PVM2QGrMN27+ALPEK8gVR352k/v0rA8m4TLD//2lPns+f7LGfRzsvVhjo+xOSPr3oqXWqjKgBC7L8yooQU
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 739d1534-148d-474d-0893-08d58156da50
+x-ms-office365-filtering-correlation-id: 5934ca8d-e018-4d48-2c0a-08d58156dab4
 x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB1065;
 x-ms-traffictypediagnostic: MW2PR2101MB1065:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB106527DB31639000997003AEFBC40@MW2PR2101MB1065.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <MW2PR2101MB1065861DA4F3360309B28CF0FBC40@MW2PR2101MB1065.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(42068640409301);
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB1065;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1065;
 x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39380400002)(39860400002)(189003)(199004)(6506007)(22452003)(54906003)(25786009)(186003)(2950100002)(102836004)(5250100002)(2501003)(110136005)(97736004)(316002)(2900100001)(36756003)(76176011)(6436002)(59450400001)(6486002)(26005)(4326008)(99286004)(68736007)(6512007)(6116002)(10090500001)(106356001)(105586002)(478600001)(66066001)(107886003)(3660700001)(305945005)(86612001)(14454004)(81166006)(7736002)(86362001)(1076002)(72206003)(2906002)(10290500003)(8676002)(8936002)(81156014)(3846002)(5660300001)(3280700002)(53936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1065;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 0C1oTNVk19SP04OgTLQlaVOjgJ+/c0cegSrPKS9Tuz5oF4cNFaB9rZrFW3zfF6rrxOJzD63SnMR/5wQwyL5xcx/tXB6WHiyTbIBHfmQbWGcGEB7M4asnP8zs4gc+qDH6RxfpdRq+9uSHLTvslczcDqUFUJIzxKR0X1UpcvW9Q34=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39380400002)(39860400002)(189003)(199004)(6506007)(22452003)(54906003)(25786009)(186003)(2950100002)(102836004)(5250100002)(2501003)(110136005)(97736004)(316002)(2900100001)(36756003)(76176011)(6436002)(59450400001)(6486002)(26005)(4326008)(99286004)(68736007)(6512007)(6116002)(10090500001)(6306002)(106356001)(105586002)(478600001)(66066001)(7416002)(107886003)(3660700001)(966005)(305945005)(86612001)(14454004)(81166006)(7736002)(86362001)(575784001)(1076002)(72206003)(2906002)(10290500003)(8676002)(8936002)(81156014)(3846002)(5660300001)(3280700002)(53936002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1065;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: XuK2Ph7mMYD1nKadm1XDT0O5ADu87LverTQwPcNqM/v4d4zg609+6+BTZ5RoYjvImfvQAcUo48J+K2MN4/HJ/KcNr9iH3IhRokzTkWue0yDaI8no8Ss/ybt4CtiLTSmZhQtZGA2yVgzK7vnxvGynjmiDMO+IA/8BRGA2NPdpmVI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 739d1534-148d-474d-0893-08d58156da50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:55.2757
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5934ca8d-e018-4d48-2c0a-08d58156dab4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:28:56.1975
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -106,89 +113,135 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 44531ba45dbf3c23cc7ae0934ec9b33ef340ac56 ]
+[ Upstream commit e0aad5b44ff5d28ac1d6ae70cdf84ca228e889dc ]
 
-When configuring the HW timers block we should set the number of CIDs
-up until the last CID that require timers, instead of only those CIDs
-whose protocol needs timers support.
+rt_mutex_waiter::prio is a copy of task_struct::prio which is updated
+during the PI chain walk, such that the PI chain order isn't messed up
+by (asynchronous) task state updates.
 
-Today, the protocols that require HW timers' support have their CIDs
-before any other protocol, but that would change in future [when we
-add iWARP support].
+Currently rt_mutex_waiter_less() uses task state for deadline tasks;
+this is broken, since the task state can, as said above, change
+asynchronously, causing the RB tree order to change without actual
+tree update -> FAIL.
 
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by also copying the deadline into the rt_mutex_waiter state
+and updating it along with its prio field.
+
+Ideally we would also force PI chain updates whenever DL tasks update
+their deadline parameter, but for first approximation this is less
+broken than it was.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: juri.lelli@arm.com
+Cc: bigeasy@linutronix.de
+Cc: xlpang@redhat.com
+Cc: rostedt@goodmis.org
+Cc: mathieu.desnoyers@efficios.com
+Cc: jdesfossez@efficios.com
+Cc: bristot@redhat.com
+Link: http://lkml.kernel.org/r/20170323150216.403992539@infradead.org
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_cxt.c | 32 ++++++++++++++++++++++++---=
-----
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ kernel/locking/rtmutex.c        | 29 +++++++++++++++++++++++++++--
+ kernel/locking/rtmutex_common.h |  1 +
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethern=
-et/qlogic/qed/qed_cxt.c
-index ed014bdbbabd..457e30427535 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-@@ -271,16 +271,34 @@ struct qed_tm_iids {
- 	u32 per_vf_tids;
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 2c49d76f96c3..196cc460e38d 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -236,8 +236,7 @@ rt_mutex_waiter_less(struct rt_mutex_waiter *left,
+ 	 * then right waiter has a dl_prio() too.
+ 	 */
+ 	if (dl_prio(left->prio))
+-		return dl_time_before(left->task->dl.deadline,
+-				      right->task->dl.deadline);
++		return dl_time_before(left->deadline, right->deadline);
+=20
+ 	return 0;
+ }
+@@ -704,7 +703,26 @@ static int rt_mutex_adjust_prio_chain(struct task_stru=
+ct *task,
+=20
+ 	/* [7] Requeue the waiter in the lock waiter tree. */
+ 	rt_mutex_dequeue(lock, waiter);
++
++	/*
++	 * Update the waiter prio fields now that we're dequeued.
++	 *
++	 * These values can have changed through either:
++	 *
++	 *   sys_sched_set_scheduler() / sys_sched_setattr()
++	 *
++	 * or
++	 *
++	 *   DL CBS enforcement advancing the effective deadline.
++	 *
++	 * Even though pi_waiters also uses these fields, and that tree is only
++	 * updated in [11], we can do this here, since we hold [L], which
++	 * serializes all pi_waiters access and rb_erase() does not care about
++	 * the values of the node being removed.
++	 */
+ 	waiter->prio =3D task->prio;
++	waiter->deadline =3D task->dl.deadline;
++
+ 	rt_mutex_enqueue(lock, waiter);
+=20
+ 	/* [8] Release the task */
+@@ -831,6 +849,8 @@ static int rt_mutex_adjust_prio_chain(struct task_struc=
+t *task,
+ static int try_to_take_rt_mutex(struct rt_mutex *lock, struct task_struct =
+*task,
+ 				struct rt_mutex_waiter *waiter)
+ {
++	lockdep_assert_held(&lock->wait_lock);
++
+ 	/*
+ 	 * Before testing whether we can acquire @lock, we set the
+ 	 * RT_MUTEX_HAS_WAITERS bit in @lock->owner. This forces all
+@@ -958,6 +978,8 @@ static int task_blocks_on_rt_mutex(struct rt_mutex *loc=
+k,
+ 	struct rt_mutex *next_lock;
+ 	int chain_walk =3D 0, res;
+=20
++	lockdep_assert_held(&lock->wait_lock);
++
+ 	/*
+ 	 * Early deadlock detection. We really don't want the task to
+ 	 * enqueue on itself just to untangle the mess later. It's not
+@@ -975,6 +997,7 @@ static int task_blocks_on_rt_mutex(struct rt_mutex *loc=
+k,
+ 	waiter->task =3D task;
+ 	waiter->lock =3D lock;
+ 	waiter->prio =3D task->prio;
++	waiter->deadline =3D task->dl.deadline;
+=20
+ 	/* Get the top priority waiter on the lock */
+ 	if (rt_mutex_has_waiters(lock))
+@@ -1080,6 +1103,8 @@ static void remove_waiter(struct rt_mutex *lock,
+ 	struct task_struct *owner =3D rt_mutex_owner(lock);
+ 	struct rt_mutex *next_lock;
+=20
++	lockdep_assert_held(&lock->wait_lock);
++
+ 	raw_spin_lock(&current->pi_lock);
+ 	rt_mutex_dequeue(lock, waiter);
+ 	current->pi_blocked_on =3D NULL;
+diff --git a/kernel/locking/rtmutex_common.h b/kernel/locking/rtmutex_commo=
+n.h
+index e317e1cbb3eb..50848b460851 100644
+--- a/kernel/locking/rtmutex_common.h
++++ b/kernel/locking/rtmutex_common.h
+@@ -33,6 +33,7 @@ struct rt_mutex_waiter {
+ 	struct rt_mutex		*deadlock_lock;
+ #endif
+ 	int prio;
++	u64 deadline;
  };
 =20
--static void qed_cxt_tm_iids(struct qed_cxt_mngr *p_mngr,
-+static void qed_cxt_tm_iids(struct qed_hwfn *p_hwfn,
-+			    struct qed_cxt_mngr *p_mngr,
- 			    struct qed_tm_iids *iids)
- {
--	u32 i, j;
--
--	for (i =3D 0; i < MAX_CONN_TYPES; i++) {
-+	bool tm_vf_required =3D false;
-+	bool tm_required =3D false;
-+	int i, j;
-+
-+	/* Timers is a special case -> we don't count how many cids require
-+	 * timers but what's the max cid that will be used by the timer block.
-+	 * therefore we traverse in reverse order, and once we hit a protocol
-+	 * that requires the timers memory, we'll sum all the protocols up
-+	 * to that one.
-+	 */
-+	for (i =3D MAX_CONN_TYPES - 1; i >=3D 0; i--) {
- 		struct qed_conn_type_cfg *p_cfg =3D &p_mngr->conn_cfg[i];
-=20
--		if (tm_cid_proto(i)) {
-+		if (tm_cid_proto(i) || tm_required) {
-+			if (p_cfg->cid_count)
-+				tm_required =3D true;
-+
- 			iids->pf_cids +=3D p_cfg->cid_count;
-+		}
-+
-+		if (tm_cid_proto(i) || tm_vf_required) {
-+			if (p_cfg->cids_per_vf)
-+				tm_vf_required =3D true;
-+
- 			iids->per_vf_cids +=3D p_cfg->cids_per_vf;
- 		}
- 	}
-@@ -696,7 +714,7 @@ int qed_cxt_cfg_ilt_compute(struct qed_hwfn *p_hwfn)
-=20
- 	/* TM PF */
- 	p_cli =3D &p_mngr->clients[ILT_CLI_TM];
--	qed_cxt_tm_iids(p_mngr, &tm_iids);
-+	qed_cxt_tm_iids(p_hwfn, p_mngr, &tm_iids);
- 	total =3D tm_iids.pf_cids + tm_iids.pf_tids_total;
- 	if (total) {
- 		p_blk =3D &p_cli->pf_blks[0];
-@@ -1591,7 +1609,7 @@ static void qed_tm_init_pf(struct qed_hwfn *p_hwfn)
- 	u8 i;
-=20
- 	memset(&tm_iids, 0, sizeof(tm_iids));
--	qed_cxt_tm_iids(p_mngr, &tm_iids);
-+	qed_cxt_tm_iids(p_hwfn, p_mngr, &tm_iids);
-=20
- 	/* @@@TBD No pre-scan for now */
-=20
+ /*
 --=20
 2.14.1
