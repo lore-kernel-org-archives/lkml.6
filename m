@@ -1,114 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964896AbeCCBPD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 20:15:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964863AbeCCBPC (ORCPT
+        id S964917AbeCCBSF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:18:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58194 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964806AbeCCBSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 20:15:02 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B10E6601A1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
-From: Saravana Kannan <skannan@codeaurora.org>
-To: mark.rutland@arm.com, suzuki.poulose@arm.com,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Cc: skannan@codeaurora.org, avilaj@codeaurora.org, rananta@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] perf/core: Add support for PMUs that can be read from more than 1 CPU
-Date: Fri,  2 Mar 2018 17:14:53 -0800
-Message-Id: <1520039693-30914-1-git-send-email-skannan@codeaurora.org>
-X-Mailer: git-send-email 1.8.2.1
+        Fri, 2 Mar 2018 20:18:03 -0500
+Date: Fri, 2 Mar 2018 17:18:01 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-security-module@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jforbes@redhat.com
+Subject: Re: [PATCH 00/30] security, efi: Add kernel lockdown
+Message-Id: <20180302171801.6ed00ef19e0b970d90094556@linux-foundation.org>
+In-Reply-To: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+References: <151024863544.28329.2436580122759221600.stgit@warthog.procyon.org.uk>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some PMUs events can be read from more than the one CPU. So allow the
-PMU driver to mark events as such. For these events, we don't need to
-reject reads or make smp calls to the event's CPU (and cause
-unnecessary overhead and wake ups).
+On Thu,  9 Nov 2017 17:30:36 +0000 David Howells <dhowells@redhat.com> wrote:
 
-When a PMU driver marks an event as such, care must be taken by the
-driver to make sure they can handle the event being read/updated from
-more than 1 CPU at the same time (Eg: due to an IRQ indicating event
-counter overflow and another thread trying to read the latest values).
+> Here's a set of patches to institute a "locked-down mode" in the kernel and
+> to trigger that mode if the kernel is booted in secure-boot mode or through
+> the command line.
+> 
+> Enabling CONFIG_LOCK_DOWN_KERNEL makes lockdown mode available.
+> 
+> Enabling CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ will allow a SysRq combination
+> to lift the lockdown.  On x86 this is SysRq+x.  The keys must be pressed on
+> an attached keyboard.
+> 
+> Enabling CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT will cause EFI secure boot to
+> trigger kernel lockdown.
+> 
+> Inside the kernel, kernel_is_locked_down() is used to check if the kernel
+> is in lockdown mode.
+> 
+> Note that the secure boot mode entry doesn't work if the kernel is booted
+> from older versions of i386/x86_64 Grub as there's a bug in Grub whereby it
+> doesn't initialise the boot_params correctly.  The incorrect initialisation
+> causes sanitize_boot_params() to be triggered, thereby zapping the secure
+> boot flag determined by the EFI boot wrapper.
+> 
+> A manual page, kernel_lockdown.7, is proposed, to which people will be
+> directed by messages in dmesg.  This lists the features that are restricted
+> amongst other things.  [Note: I need to update this to mention IMA, so I'll
+> reply with that later].
 
-Good examples of such events would be events from caches shared across
-CPUs.
+I saw all this pop up in linux-next and got curious.
 
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
----
-Changes since v1:
-- Use cpumasks instead of capability flag as that's more flexible.
+This changelog didn't uncurious me at all.  The
+LOCK_DOWN_IN_EFI_SECURE_BOOT Kconfig help is unilluminating.  A bit of
+googling led me to kernel_lockdown.7 (https://lwn.net/Articles/735564/)
+which kinda helped.
 
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 14 +++++++++-----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+But still.  This is a big, straggly feature and presumably is still
+missing things and presumably will require ongoing maintenance as we
+add new kernel capabilities.  What do we get in return for all of this?
+What are the usecases for this feature and why would anyone want one? 
+What's the value to our users?
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 7546822..4cec431 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -629,6 +629,7 @@ struct perf_event {
- 
- 	int				oncpu;
- 	int				cpu;
-+	cpumask_t			readable_on_cpus;
- 
- 	struct list_head		owner_entry;
- 	struct task_struct		*owner;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5d3df58..1a8fbfa 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3483,10 +3483,12 @@ struct perf_read_data {
- static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
- {
- 	u16 local_pkg, event_pkg;
-+	int local_cpu = smp_processor_id();
- 
--	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
--		int local_cpu = smp_processor_id();
-+	if (cpumask_test_cpu(local_cpu, &event->readable_on_cpus))
-+		return local_cpu;
- 
-+	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
- 		event_pkg = topology_physical_package_id(event_cpu);
- 		local_pkg = topology_physical_package_id(local_cpu);
- 
-@@ -3575,7 +3577,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- {
- 	unsigned long flags;
- 	int ret = 0;
--
-+	int local_cpu = smp_processor_id();
-+	bool readable = cpumask_test_cpu(local_cpu, &event->readable_on_cpus);
- 	/*
- 	 * Disabling interrupts avoids all counter scheduling (context
- 	 * switches, timer based rotation and IPIs).
-@@ -3600,7 +3603,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- 
- 	/* If this is a per-CPU event, it must be for this CPU */
- 	if (!(event->attach_state & PERF_ATTACH_TASK) &&
--	    event->cpu != smp_processor_id()) {
-+	    event->cpu != local_cpu &&
-+	    !readable) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -3610,7 +3614,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- 	 * or local to this CPU. Furthermore it means its ACTIVE (otherwise
- 	 * oncpu == -1).
- 	 */
--	if (event->oncpu == smp_processor_id())
-+	if (event->oncpu == smp_processor_id() || readable)
- 		event->pmu->read(event);
- 
- 	*value = local64_read(&event->count);
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks.
