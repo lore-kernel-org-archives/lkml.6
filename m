@@ -1,78 +1,95 @@
-Return-Path: <kernel-hardening-return-12077-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtpcPG1AHqqYpfMEBKx/MLuQM14Jn6x/BQ8wX6lzQLWUsT/GlFeror4vxOAoTX9xcFqjw/3
-ARC-Seal: i=1; a=rsa-sha256; t=1520023723; cv=none;
+Return-Path: <kernel-hardening-return-12087-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtGzlHpawVKXMAeXa4Rkc1FH5g8flzgn+UznEwCDlhLiI+fw+Sl0DiGcD2t2OpYhHbc2ID+
+ARC-Seal: i=1; a=rsa-sha256; t=1520090030; cv=none;
         d=google.com; s=arc-20160816;
-        b=Mhz5DW+N7PMOmdgqwSvVK50rmphRG6LU+2PblI6n8n8Kq3iFR5EKfj0xEOcpzChWvR
-         BJ04AQLQn06M0Q3f/hCvA7M+7HbHbFvGRdPNQvnXej778jHjV1mnZKYXiOmuHB0Vq2p1
-         gT1607GAfjTeoBd6Ga6t6VAASGDkthtDYEi8PcWtXkrPuS5YFWNQPfy1QRjmI+1FhOAx
-         E1PiWB/fuve6i1y6IylfZ6sFAqx3OhyPL8Eczuo/kMRJL/Y6rgiC1PxL3wY3RgECZzM5
-         8IAj1Y6+AetS58x4P9QJ2e1Ka7ZfSym2f/1gNx7TGrkx2V6jppdPPFG2R+ElsSGhHEI1
-         Qzlg==
+        b=AnGPPj+tlRQeHWWZA6Tsx3sS+qeQ2LtX0yLb17s+2G1qjyTJXTnt5HRslIbzk6+MAj
+         9QrNktgkQAQYIuDnOW7ZBT28gDoVfd77oRqFIByspZ2TygxnlTmYPJzSyYr3RvVvHLUE
+         C4jkJ3eWxDwmBAxoIbChGuY8/BR3aX4q+MUFeL+qJKoexlr/cDoG9IHgP5KI8DAn3d4W
+         51O8KosYaEBD8icirAVkVrB4Uvv4LJ+8sno9K0UeZ9uZ9IcDF5y3jRYXZdBKqNon/tj/
+         4LDgT2Bx5//CJHtIxs9viYcHqcDS3UEyTGTRWjeWzbs3xYj21W/ihIgak016BzTpCrwF
+         YVgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature:delivered-to
          :list-id:list-subscribe:list-unsubscribe:list-help:list-post
          :precedence:mailing-list:arc-authentication-results;
-        bh=rkePfZZVIDrCZLnbxKPRY5ghHgdY7yBMosIY8485V0I=;
-        b=t2qgRua0uwRkOqNp6NXrgqh10X0Hpe90vIxLAp9CCVBcrFLEEU2HHz99Ab+ySahKGR
-         BMR0S+BZZn1VsId1BN8xvXPOgn9LOAk3dci+isXArjS809Or3C/Vl/+iQqps1KcWKBRa
-         yKEO8DdO1pvflZYHjdhM2tRKi6vfMSf4z9jcI9sIg68Z9UkXSWJtRdSPyLHUqRXJ6Qad
-         68W6mYIPhq6yKOx3QOjbfQHhcZiu/X2sYUobgHBT1+W4spK3NseG06Mdt63+j8dOtNUx
-         DTS3E7URvyT+OGTmR+87BQjsahk7jijVSddxr6it9H2S9m7pqlIbsuX6T7nqi0lV+84R
-         QgiA==
+        bh=ggYTqIygwWNZ1gzpnb4lYEpgDrUqph/wYXSBgZo0vYM=;
+        b=N8F6QEx83dgIyhcyRXYUfyTPDAaUoWB9pNuaRo2uBooqEK6XMl6ReDaHU9DzsyqoU6
+         sXVxfm5649Maxy+Wz8TkdXop5/Ljf+KXIGpzSta/XJsR81XDB/Qx6uYShxRB2U81r+gL
+         0Nc/t4zxTzIMBPvwukHswG64mV5/kUmIDAxfNKz8ZIlgxbZzeuLJomAnXu+knIyGO4X5
+         dIo9H2QOdqIHB8LIrJpzoxLN42/IKL5LAghxE33bxkIKB4Y/E8ixsagcVe3bnTKHGmir
+         XJ8dSB6KGXPlpwqmT1x+N8F5w7jjJvLpoD6hLnLccgm0BEqYsDUmIoY4f4tyypqdZiU4
+         +tKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=DEh84WSp;
-       spf=pass (google.com: domain of kernel-hardening-return-12077-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12077-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nprPTKCh;
+       spf=pass (google.com: domain of kernel-hardening-return-12087-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12087-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=fail header.i=@infradead.org header.s=bombadil.20170209 header.b=DEh84WSp;
-       spf=pass (google.com: domain of kernel-hardening-return-12077-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12077-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nprPTKCh;
+       spf=pass (google.com: domain of kernel-hardening-return-12087-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12087-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 2 Mar 2018 12:48:08 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Ilya Smith <blackzert@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
-	Hugh Dickins <hughd@google.com>, Helge Deller <deller@gmx.de>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Oleg Nesterov <oleg@redhat.com>, Linux-MM <linux-mm@kvack.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain;
+	charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: [RFC PATCH] Randomization of address chosen by mmap.
-Message-ID: <20180302204808.GA671@bombadil.infradead.org>
+From: Ilya Smith <blackzert@gmail.com>
+In-Reply-To: <20180302204808.GA671@bombadil.infradead.org>
+Date: Sat, 3 Mar 2018 18:13:28 +0300
+Cc: Kees Cook <keescook@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Michal Hocko <mhocko@suse.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Jan Kara <jack@suse.cz>,
+ Jerome Glisse <jglisse@redhat.com>,
+ Hugh Dickins <hughd@google.com>,
+ Helge Deller <deller@gmx.de>,
+ Andrea Arcangeli <aarcange@redhat.com>,
+ Oleg Nesterov <oleg@redhat.com>,
+ Linux-MM <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <221A2345-53FF-4471-B4FA-C79AF90B70CE@gmail.com>
 References: <20180227131338.3699-1-blackzert@gmail.com>
  <CAGXu5jKF7ysJqj57ZktrcVL4G2NWOFHCud8dtXFHLs=tvVLXnQ@mail.gmail.com>
  <55C92196-5398-4C19-B7A7-6C122CD78F32@gmail.com>
  <20180228183349.GA16336@bombadil.infradead.org>
  <C9D0E3BA-3AB9-4F0E-BDA5-32378E440986@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C9D0E3BA-3AB9-4F0E-BDA5-32378E440986@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+ <20180302204808.GA671@bombadil.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593560218941631465?=
-X-GMAIL-MSGID: =?utf-8?q?1593860396065748361?=
+X-GMAIL-MSGID: =?utf-8?q?1593929924163177154?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 02, 2018 at 11:30:28PM +0300, Ilya Smith wrote:
-> This is a really good question. Lets think we choose address with random-length 
-> guard hole. This length is limited by some configuration as you described. For 
-> instance let it be 1MB. Now according to current implementation, we still may 
-> fill this gap with small allocations with size less than 1MB. Attacker will 
-> going to build attack base on this predictable behaviour - he jus need to spray 
-> with 1 MB chunks (or less, with some expectation). This attack harder but not 
-> impossible.
+> On 2 Mar 2018, at 23:48, Matthew Wilcox <willy@infradead.org> wrote:
+> Ah, I didn't mean that.  I was thinking that we can change the
+> implementation to reserve 1-N pages after the end of the mapping.
+> So you can't map anything else in there, and any load/store into that
+> region will segfault.
+>=20
 
-Ah, I didn't mean that.  I was thinking that we can change the
-implementation to reserve 1-N pages after the end of the mapping.
-So you can't map anything else in there, and any load/store into that
-region will segfault.
+I=E2=80=99m afraid it still will allow many attacks. The formula for new =
+address would=20
+be like: address_next =3D address_prev - mmap_size - random(N) as you =
+suggested.=20
+To prevent brute-force attacks N should be big enough  like more 2^32 =
+for=20
+example. This number 2^32 is just an example and right now I don=E2=80=99t=
+ know the=20
+exact value. What I=E2=80=99m trying to say that address computation =
+formula has=20
+dependency on concrete predictable address. In my scheme even =
+address_prev was=20
+chose randomly.=20
+
+Best regards,
+Ilya
