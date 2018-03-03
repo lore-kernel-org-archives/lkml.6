@@ -1,134 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964820AbeCCA7X convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 2 Mar 2018 19:59:23 -0500
-Received: from mga02.intel.com ([134.134.136.20]:41176 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935377AbeCCA7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Mar 2018 19:59:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,414,1515484800";
-   d="scan'208";a="32046605"
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: Alexander Duyck <alexander.duyck@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-        Ilya Lesokhin <ilyal@mellanox.com>, Don Dutile <ddutile@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-Subject: RE: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Thread-Topic: [PATCH] pci-iov: Add support for unmanaged SR-IOV
-Thread-Index: AQHTsZsUOTRX+fT3dEWaUU3A75Oj+KO8e+lggAA/S4CAAPNaIA==
-Date: Sat, 3 Mar 2018 00:59:15 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910274F6@SHSMSX101.ccr.corp.intel.com>
-References: <20180227190520.3273.79728.stgit@localhost.localdomain>
-        <20180227144015.228d4f5c@w520.home>
-        <CAKgT0Ucq8vF9Kxx31QMG=OUwRr61vurHCPw5NCjxPhR_2JM5MQ@mail.gmail.com>
-        <CAKgT0Ufq7EHCErECEbK2urHczZSpOoJKR2a5GWn5BxhZshx0vA@mail.gmail.com>
-        <20180228155949.00fde8ae@w520.home>
-        <CAKgT0UeVZUB7h6g=Eqppt-6VP=X4=Ko3=kB_rh_1JanFJXZF9g@mail.gmail.com>
-        <20180301132224.1ca06949@w520.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1910253B9@SHSMSX101.ccr.corp.intel.com>
- <20180302111411.47a58371@t450s.home>
-In-Reply-To: <20180302111411.47a58371@t450s.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDlkZmYzZDQtNzA3Mi00MDA0LThhZWYtZDQzZTE4ZmMzMTE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IkxBUHpreDFxVVlYNVwvWE9YenNRN3hnaXpDMXg5TktXMTBjQXlycXdlRnVjPSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S964896AbeCCBPD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 2 Mar 2018 20:15:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51468 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964863AbeCCBPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Mar 2018 20:15:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B10E6601A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+From: Saravana Kannan <skannan@codeaurora.org>
+To: mark.rutland@arm.com, suzuki.poulose@arm.com,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: skannan@codeaurora.org, avilaj@codeaurora.org, rananta@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] perf/core: Add support for PMUs that can be read from more than 1 CPU
+Date: Fri,  2 Mar 2018 17:14:53 -0800
+Message-Id: <1520039693-30914-1-git-send-email-skannan@codeaurora.org>
+X-Mailer: git-send-email 1.8.2.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> Sent: Saturday, March 3, 2018 2:14 AM
-> 
-> On Fri, 2 Mar 2018 06:54:17 +0000
-> "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> 
-> > > From: Alex Williamson
-> > > Sent: Friday, March 2, 2018 4:22 AM
-> > > >
-> > > > I am pretty sure that you are describing is true of some, but not for
-> > > > all. I think the Amazon solutions and the virtio solution are doing
-> > > > hard partitioning of the part. I will leave it to those guys to speak
-> > > > for themselves since I don't know anything about the hardware design
-> > > > of those parts.
-> > >
-> > > I think we'd need device specific knowledge and enablement to be able
-> > > to take advantage of any hardware partitioning, otherwise we need to
-> > > assume the pf is privileged, as implemented in other sriov devices.
-> > >
-> > > I'm also trying to imagine whether there's a solution via the new
-> > > vfio/mdev interface, where the mdev vendor driver would bind to the
-> pf
-> > > and effectively present itself as the mdev device.  The vendor driver
-> > > could provide sriov capabilities and bear the burden of ensuring that
-> > > the pf is used cooperatively.  The only existing mdev vendor drivers are
-> > > vGPUs and rely on on-device DMA translation and isolation, such as
-> > > through GTTs, but there have been some thoughts on providing IOMMU
-> > > based
-> > > isolation of mdev/sriov mixed devices (assuming DMA is even required
-> > > for userspace management of the pf in this use case).  [Cc Kirti]
-> > > Thanks,
-> > >
-> >
-> > Hope not distracting this thread, but above sounds like an interesting
-> > idea. Actually we ever brainstormed similar thought for another
-> > potential usage - supporting VF live migration. We are already working
-> > on an generic extension to allow state save/restore of mdev instance.
-> > If vendor driver could further wrap pf as a mdev instance, it could
-> > leverage the same framework for a clean state migration on VF. based
-> > on mmap callback the vendor driver can easily switch back-and-forth
-> > between pass through and trap/emulation of the VF resources. Of
-> > course doing so alone doesn't address all the demands of VF live
-> > migration (e.g. dirty page tracking still requires other techniques),
-> > but it does pave a way toward a general framework to support VF
-> > live migration.
-> >
-> > If above is feasible, finally we could use one mdev framework to
-> > manage both mdev and pf/vf assignment, while providing added
-> > values which are difficult to achieve today. :-)
-> 
-> mdev drivers may be the first to support migration, but I wonder if a
-> full mdev implementation is necessary for it.  Once the vfio api is
-> define, device specific extensions to vfio-pci might be able to
-> implement migration more directly.  Thanks,
-> 
-> Alex
+Some PMUs events can be read from more than the one CPU. So allow the
+PMU driver to mark events as such. For these events, we don't need to
+reject reads or make smp calls to the event's CPU (and cause
+unnecessary overhead and wake ups).
 
-yes technically a full mdev implementation is not necessary. If
-device specific extensions will be placed within vfio module, it's
-obviously straightforward. What I thought earlier was in case vfio
-wants to stay device-agnostic then we probably want device
-specific extensions in vendor driver which is loaded but in a 
-dummy mode which simply do basic PCI initialization as vfio-pci
-and then wrap vf as mdev (since vfio-pci is not the vf driver in
-this scenario). It's especially useful for vendor drivers which aim
-to support both mdev and sr-iov by sharing common state mgmt.
-knowledge, but looks an overkill to other vendor drivers. Possibly
-finally we'll allow both - simple device extensions in vfio-pci and 
-complex device extensions in vendor drivers through vfio-mdev.
+When a PMU driver marks an event as such, care must be taken by the
+driver to make sure they can handle the event being read/updated from
+more than 1 CPU at the same time (Eg: due to an IRQ indicating event
+counter overflow and another thread trying to read the latest values).
 
-Thanks
-Kevin
+Good examples of such events would be events from caches shared across
+CPUs.
+
+Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+---
+Changes since v1:
+- Use cpumasks instead of capability flag as that's more flexible.
+
+ include/linux/perf_event.h |  1 +
+ kernel/events/core.c       | 14 +++++++++-----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 7546822..4cec431 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -629,6 +629,7 @@ struct perf_event {
+ 
+ 	int				oncpu;
+ 	int				cpu;
++	cpumask_t			readable_on_cpus;
+ 
+ 	struct list_head		owner_entry;
+ 	struct task_struct		*owner;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 5d3df58..1a8fbfa 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -3483,10 +3483,12 @@ struct perf_read_data {
+ static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+ {
+ 	u16 local_pkg, event_pkg;
++	int local_cpu = smp_processor_id();
+ 
+-	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+-		int local_cpu = smp_processor_id();
++	if (cpumask_test_cpu(local_cpu, &event->readable_on_cpus))
++		return local_cpu;
+ 
++	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+ 		event_pkg = topology_physical_package_id(event_cpu);
+ 		local_pkg = topology_physical_package_id(local_cpu);
+ 
+@@ -3575,7 +3577,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+ {
+ 	unsigned long flags;
+ 	int ret = 0;
+-
++	int local_cpu = smp_processor_id();
++	bool readable = cpumask_test_cpu(local_cpu, &event->readable_on_cpus);
+ 	/*
+ 	 * Disabling interrupts avoids all counter scheduling (context
+ 	 * switches, timer based rotation and IPIs).
+@@ -3600,7 +3603,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+ 
+ 	/* If this is a per-CPU event, it must be for this CPU */
+ 	if (!(event->attach_state & PERF_ATTACH_TASK) &&
+-	    event->cpu != smp_processor_id()) {
++	    event->cpu != local_cpu &&
++	    !readable) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -3610,7 +3614,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+ 	 * or local to this CPU. Furthermore it means its ACTIVE (otherwise
+ 	 * oncpu == -1).
+ 	 */
+-	if (event->oncpu == smp_processor_id())
++	if (event->oncpu == smp_processor_id() || readable)
+ 		event->pmu->read(event);
+ 
+ 	*value = local64_read(&event->count);
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
