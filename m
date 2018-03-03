@@ -1,89 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932065AbeCCJYV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 04:24:21 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36149 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751566AbeCCJYT (ORCPT
+        id S1752018AbeCCJe4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 04:34:56 -0500
+Received: from mail-ua0-f170.google.com ([209.85.217.170]:37497 "EHLO
+        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbeCCJey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 04:24:19 -0500
-Date: Sat, 3 Mar 2018 10:24:17 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Andrew Worsley <amworsley@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, 844788@bugs.debian.org
-Subject: Re: 4.16-rc3 fails to resume on MacBookPro10,1 -
-Message-ID: <20180303092417.GA30917@amd>
-References: <CA+Y=x3=U_zheHBxeNSzL9nSdXOZB7rs-JDNr36323uJ9Uhx0Hg@mail.gmail.com>
- <CA+Y=x3=+kPXJRNYo91i4yJiqqVHDsMhn2pAwkmAH2LV3usd7Hg@mail.gmail.com>
+        Sat, 3 Mar 2018 04:34:54 -0500
+X-Google-Smtp-Source: AG47ELsYRQNKflwCS864XXtCV3WTb0J0KLLZ2SfAzl+QZYL0JIm6Oxkyu9NJR2pS6iPm2MeLkn/fQSNw35rcF3QqUE8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <CA+Y=x3=+kPXJRNYo91i4yJiqqVHDsMhn2pAwkmAH2LV3usd7Hg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAB=NE6V+5MK-ytS+-QBppSBLz7T4hRQV8eMA2Vv9-crcbj7NYg@mail.gmail.com>
+References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
+ <1519965121-12017-10-git-send-email-yamada.masahiro@socionext.com>
+ <CAFkk2KQTjnTLkBx_8jXLejxVJLHV6gijN0_MCYDwbsL+KNkp=w@mail.gmail.com> <CAB=NE6V+5MK-ytS+-QBppSBLz7T4hRQV8eMA2Vv9-crcbj7NYg@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sat, 3 Mar 2018 10:34:53 +0100
+Message-ID: <CAFkk2KT70V-bKpUKi_pczO30bh7mAfSPPxghvESG16_CuXJpWg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] kconfig: unittest: test randconfig for choice in choice
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 2, 2018 at 10:29 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+>
+>
+> On Fri, Mar 2, 2018, 3:14 AM Ulf Magnusson <ulfalizer@gmail.com> wrote:
+>>
+>> On Fri, Mar 2, 2018 at 5:31 AM, Masahiro Yamada
+>> > This is complicated usage, but it is still used in the real world;
+>> > drivers/usb/gadget/legacy/Kconfig is source'd in a choice context,
+>> > then creates a sub-choice in it.
+>>
+>> That file is the only one that does all that weird choice stuff btw.
+>>
+>> It's as if it was written to make use of as much obscure Kconfig stuff
+>> as possible. :P
+>
+>
+> Can't we just use another way to describe this requirement on this file,
+> with the trade-off of simplifying kconfig semantics?
+>
+>   Luis
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't think changing how drivers/usb/gadget/legacy/Kconfig does
+things would allow for any simplifications, unfortunately (except to
+get rid of the fix tested by this patch, maybe).
 
-Hi!
+Being able to have non-choice-value symbols and choices in choices is
+a side effect of automatic submenu creation. Symbols and choices that
+depend on the symbol before them end up in a submenu, and only the
+top-level symbols in the choice are marked as choice value symbols.
 
-On Sat 2018-03-03 17:27:36, Andrew Worsley wrote:
-> On 3 March 2018 at 16:41, Andrew Worsley <amworsley@gmail.com> wrote:
-> > Basically hangs on resuming after decompressing. The last statement
-> > displayed is "resume: Image successfully loaded"
-> >  - I attach a photo as I can't get access to it
-> ....
-> > Bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D844788
-> >
-> > I couldn't get anything from the function keys with this latest kernel.
-> ...
->=20
-> By plugging in a USB keyboard I can get sysrq stuff to work - but
-> stupidly the kernel disables all the useful ones so I will have to
-> compile a new kernel with it set to 1 so I can get some traces.
-> Really annoyed by this default setting, presumably from debian?
-> Wished there was a boot command line option to configure the allowed
-options.
+I always wondered whether that was an intended feature or just
+something people discovered works (it seems to work anyway...). It
+feels pretty iffy to have cosmetic submenus affect behavior like that,
+but playing devil's advocate, it kinda makes sense to put symbols
+close to the symbols they depend on if you can get away with it.
 
-So hibernation is broken on x86-64?
-
-Ideas for debugging:
-
-1) get that sysrq to work, backtrace where it is hung would be very
-useful.
-
-2) try v4.15.
-
-3) try without KPTI enabled. Probably noone knows how it interacts
-with that...
-
-(And 4), we should really start doing some periodic testing of hibernation).
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqaacEACgkQMOfwapXb+vLkhgCfcJqRQfeEDvwGEhbtmszTvyP0
-KF0AnjWyMWfjbUI2w/vLc/apw2uc0n3F
-=ve+5
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+Cheers,
+Ulf
