@@ -1,87 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeCDJ2c (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:28:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37896 "EHLO mail.bootlin.com"
+        id S1752643AbeCDJ3d (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:29:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60638 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751844AbeCDJ2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:28:30 -0500
-Date: Sun, 4 Mar 2018 10:28:28 +0100
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Stefan Chulski <stefanc@marvell.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>
-Subject: Re: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
-Message-ID: <20180304102828.1437fbc3@windsurf.home>
-In-Reply-To: <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-6-antoine.tenart@bootlin.com>
-        <20180302171713.54beaad0@windsurf.lan>
-        <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1751839AbeCDJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 04:29:31 -0500
+Date: Sun, 4 Mar 2018 10:29:18 +0100
+From: Borislav Petkov <bp@suse.de>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        r.marek@assembler.cz, ricardo.neri-calderon@linux.intel.com,
+        rkrcmar@redhat.com, Janakarajan.Natarajan@amd.com, x86@kernel.org,
+        hpa@zytor.com, mingo@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] clarify how insecure CPU is
+Message-ID: <20180304092918.GA1142@pd.tnic>
+References: <20180108201017.GA20588@amd>
+ <alpine.DEB.2.20.1801082125530.2253@nanos>
+ <20180108230355.GA25349@amd>
+ <alpine.DEB.2.20.1801090043160.2253@nanos>
+ <20180303210653.GB22392@amd>
+ <alpine.DEB.2.21.1803040825130.1654@nanos.tec.linutronix.de>
+ <20180304085159.GB7931@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180304085159.GB7931@amd>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sun, Mar 04, 2018 at 09:51:59AM +0100, Pavel Machek wrote:
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index f41079d..4901742 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -341,7 +341,7 @@
+>  #define X86_BUG_FDIV			X86_BUG(1) /* FPU FDIV */
+>  #define X86_BUG_COMA			X86_BUG(2) /* Cyrix 6x86 coma */
+>  #define X86_BUG_AMD_TLB_MMATCH		X86_BUG(3) /* "tlb_mmatch" AMD Erratum 383 */
+> -#define X86_BUG_AMD_APIC_C1E		X86_BUG(4) /* "apic_c1e" AMD Erratum 400 */
+> +#define X86_BUG_AMD_APIC_C1E		X86_BUG(4) /* System is affected AMD Erratum 400, special idle routine is needed */
+>  #define X86_BUG_11AP			X86_BUG(5) /* Bad local APIC aka 11AP */
+>  #define X86_BUG_FXSAVE_LEAK		X86_BUG(6) /* FXSAVE leaks FOP/FIP/FOP */
+>  #define X86_BUG_CLFLUSH_MONITOR		X86_BUG(7) /* AAI65, CLFLUSH required before MONITOR */
+> @@ -356,7 +356,7 @@
+>  #define X86_BUG_NULL_SEG		X86_BUG(10) /* Nulling a selector preserves the base */
+>  #define X86_BUG_SWAPGS_FENCE		X86_BUG(11) /* SWAPGS without input dep on GS */
+>  #define X86_BUG_MONITOR			X86_BUG(12) /* IPI required to wake up remote CPU */
+> -#define X86_BUG_AMD_E400		X86_BUG(13) /* CPU is among the affected by Erratum 400 */
+> +#define X86_BUG_AMD_E400		X86_BUG(13) /* System may be affected by Erratum 400, X86_BUG_AMD_APIC_C1E might be needed  */
 
-On Sun, 4 Mar 2018 06:56:02 +0000, Stefan Chulski wrote:
+Not "might be needed" - "X86_BUG_AMD_APIC_C1E will be set if platform is
+affected".
 
-> > > +	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {  
-> > 
-> > Again, all over the place we hardcode the fact that Jumbo frames can only be
-> > used on port 0. I know port 0 is the only one that can do 10G, but are there
-> > possibly some use cases where you may want Jumbo frame on another port
-> > ?
-> > 
-> > This all really feels very hardcoded to me.
-> >   
-> 
-> All ports support Jumbo frames.
-> But only port 0 can do TX HW checksum offload(due to TX FIFO size).
-> 
-> Packet processor 2.2 has only 19KB TX FIFO size.
-> So in TX FIFO config code assign for Port 0 - 10KB, Port 1 - 3KB and Port 1 - 3KB.
+And then you don't need the above comment change. And you can't remove
+"apic_c1e" there because it is magical.
 
-Yes, but I was also questioning whether hardcoding this configuration
-was correct.
-
-> To perform checksum in HW, HW obviously should work in store and forward mode. Store all frame in TX FIFO and then check checksum.
-> If mtu 1500B, everything fine and all port can do this.
-> 
-> If mtu is 9KB and 9KB frame transmitted, Port 0 still can do HW checksum. But ports 1 and 2 doesn't has enough FIFO for this.
-> So we cannot offload this feature and SW should perform checksum.
-
-So perhaps the real check should not be "port 0", but whether the MTU
-is higher or lower than the TX FIFO size assigned to the current port.
-This would express in much better way the reason why HW checksum can be
-used or not.
-
-> > > +	/* 9704 == 9728 - 20 and rounding to 8 */
-> > > +	dev->max_mtu = MVPP2_BM_JUMBO_PKT_SIZE;  
-> > 
-> > Is this correct for all ports ? Shouldn't the maximum MTU be different
-> > between port 0 (that supports Jumbo frames) and the other ports ?  
-> 
-> This is correct for all ports. All ports can support Jumbo frames.
-
-OK. With your explanation above, I understand better.
-
-Best regards,
-
-Thomas
 -- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
