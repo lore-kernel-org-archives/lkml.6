@@ -1,116 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932149AbeCDJby (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:31:54 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34113 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeCDJbv (ORCPT
+        id S932246AbeCDJdN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:33:13 -0500
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:54014 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932179AbeCDJdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:31:51 -0500
-X-Google-Smtp-Source: AG47ELsWMti73SVVAv0g6YMolIYF5rivQnMZFsW0coitwsjNEeb/t2tXXujD0LEjB9vAhOsseRTHpw==
-Date: Sun, 4 Mar 2018 10:31:46 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: David Wang <davidwang@zhaoxin.com>
-Cc: rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-pm@kernel.org, linux-kernel@vger.kernel.org,
-        brucechang@via-alliance.com, cooperyan@zhaoxin.com,
-        qiyuanwang@zhaoxin.com, benjaminpan@viatech.com, lukelin@viacpu.com,
-        timguo@zhaoxin.com, cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
-Subject: Re: [PATCH] Delete some unusefull operations for centaur CPU/platform
-Message-ID: <20180304093146.rujp4f62fv6xotb7@gmail.com>
-References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+        Sun, 4 Mar 2018 04:33:10 -0500
+From: Stefan Chulski <stefanc@marvell.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+CC: Antoine Tenart <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Yan Markman <ymarkman@marvell.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, "mw@semihalf.com" <mw@semihalf.com>
+Subject: RE: [PATCH net-next 3/5] net: mvpp2: use a data size of 10kB for Tx
+ FIFO on port 0
+Thread-Topic: [PATCH net-next 3/5] net: mvpp2: use a data size of 10kB for Tx
+ FIFO on port 0
+Thread-Index: AQHTsj192xJjJ5DFzUShqEYMfMH8kaO8/C6AgAKgx/CAABJ0AIAAIbwA
+Date: Sun, 4 Mar 2018 09:33:01 +0000
+Message-ID: <e4401911afa749949b9f478c65e887cc@IL-EXCH01.marvell.com>
+References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
+        <20180302154044.25204-4-antoine.tenart@bootlin.com>
+        <20180302171117.2344a893@windsurf.lan>
+        <bd3a0e716e1c44938b7a216ea54b9c7e@IL-EXCH01.marvell.com>
+ <20180304102518.1963cb8a@windsurf.home>
+In-Reply-To: <20180304102518.1963cb8a@windsurf.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.5.102.207]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_05:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=694 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1803040121
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* David Wang <davidwang@zhaoxin.com> wrote:
 
-> For Centaur CPU, the ucode will make sure that each CPU core can keep cache
-> coherency with each other when the CPU core entering to any C state. So the
-> cache flush operations when enter C3 is not necessary and will cause large
-> C3 enter/exit latency.
-> And the bus master disable operation when CPU core entering C3 state is not
-> needed too. Because the chipset will automatically do this operation.
+
+> -----Original Message-----
+> From: Thomas Petazzoni [mailto:thomas.petazzoni@bootlin.com]
+> Sent: Sunday, March 04, 2018 11:25 AM
+> To: Stefan Chulski <stefanc@marvell.com>
+> Cc: Antoine Tenart <antoine.tenart@bootlin.com>; davem@davemloft.net;
+> Yan Markman <ymarkman@marvell.com>; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; maxime.chevallier@bootlin.com;
+> gregory.clement@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai
+> <nadavh@marvell.com>; mw@semihalf.com
+> Subject: Re: [PATCH net-next 3/5] net: mvpp2: use a data size of 10kB for Tx
+> FIFO on port 0
 > 
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
-> ---
->  arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Hello,
 > 
-> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-> index dde437f..1cd357b 100644
-> --- a/arch/x86/kernel/acpi/cstate.c
-> +++ b/arch/x86/kernel/acpi/cstate.c
-> @@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
->  	if (c->x86_vendor == X86_VENDOR_INTEL &&
->  	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
->  			flags->bm_control = 0;
-> +
-> +        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-> +		/*
-> +		 * on all centaur CPUs, sw need not execute cache flush operation
-> +		 * when entering C3 type State.
-> +		 *
-> +		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
-> +		 * entering C3 type state.
-> +		 */
-> +		flags->bm_check = 1;
-> +		flags->bm_control = 0;
-> +	}
+> On Sun, 4 Mar 2018 06:29:59 +0000, Stefan Chulski wrote:
+> 
+> > > Is there a reason to hardcode 10KB for port 0, and 3KB for the other ports
+> ?
+> > > Would there be use cases where the user may want different
+> > > configurations ?
+> >
+> > Design requirement are 10KB TX FIFO for the 10Gb/sec and 2.5KB for the
+> 2.5Gb/sec.
+> 
+> What is a "design requirement" ? Is it a HW design limitation ?
 
-Please clean up capitalization and spelling of the comment, and please also 
-explain the ACPI-idle settings a bit better, i.e. something like:
+We can call it HW design limitation. Anyway to support 10Gb/sec port should have at least 10KB TX FIFO.
 
-		/*
-		 * On all Centaur CPUs the kernel does not have to 
-		 * execute a cache flush operation (WBINVD) when
-		 * entering C3 state.
-		 *
-		 * On all Centaur platforms the kernel does not have to
-		 * disable bus-master arbitration (ARB_DISABLE) when
-		 * entering C3 state.
-		 */
+> So, the limitation has nothing to do with CP110 really, it's just a limitation of
+> PPv2.2, and mentioning CP110 in the comment doesn't make much sense,
+> correct ?
 
-Also, two questions:
+I will change it.
 
-1)
-
-I'm wondering about this logic in acpi_processor_power_verify_c3():
-
-        if (pr->flags.bm_check) {
-                if (!pr->flags.bm_control) {
-                        if (pr->flags.has_cst != 1) {
-                                /* bus mastering control is necessary */
-                                ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-                                        "C3 support requires BM control\n"));
-                                return;
-
-So ->has_cst is set on Centaur CPUs?
-
-2)
-
-There's this comment in acpi_idle_enter_bm():
-
-        /*
-         * disable bus master
-         * bm_check implies we need ARB_DIS
-         * bm_control implies whether we can do ARB_DIS
-         *
-         * That leaves a case where bm_check is set and bm_control is
-         * not set. In that case we cannot do much, we enter C3
-         * without doing anything.
-         */
-        if (pr->flags.bm_control) {
-
-It says 'bm_check == 1 implies we need ARB_DIS' - but we do the opposite in the 
-Centaur case? It it me who is confused or the comment?
-
-Thanks,
-
-	Ingo
+Stefan.
