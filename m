@@ -1,107 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932390AbeCDMcR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 07:32:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56676 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932292AbeCDMcB (ORCPT
+        id S1752776AbeCDMp5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 07:45:57 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43514 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752566AbeCDMpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 07:32:01 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4BE76043F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com
-Cc: ilialin@codeaurora.org, amit.kucheria@linaro.org,
-        nicolas.dechesne@linaro.org, celster@codeaurora.org,
-        tfinkel@codeaurora.org
-Subject: [PATCH 2/2] dt-bindings: Add support for SAW documentation
-Date: Sun,  4 Mar 2018 14:31:49 +0200
-Message-Id: <1520166709-554-3-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520166709-554-1-git-send-email-ilialin@codeaurora.org>
-References: <1520166709-554-1-git-send-email-ilialin@codeaurora.org>
+        Sun, 4 Mar 2018 07:45:55 -0500
+X-Google-Smtp-Source: AG47ELsYfmobYxK6iKM2mFsQiNhSvECtUEyYnskf9OnREmM/ApFir6fqqVhyXn77US+ZpMtqQzmHJw==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpio: mockup: fix a potential crash when creating debugfs entries
+Date: Sun,  4 Mar 2018 13:45:51 +0100
+Message-Id: <20180304124551.22565-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SAW controlled regulators in 8x96.
-Document it.
+If we failed to create the top debugfs directory, we must not try to
+create the child nodes. We currently only check if gpio_mockup_dbg_dir
+is not NULL, but it can also contain an errno if debugfs is disabled
+in build options. Use IS_ERR_OR_NULL() instead.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/gpio/gpio-mockup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 57d2c65..406f2e5 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
- 	Definition: Reference to regulator supplying the input pin, as
- 		    described in the data sheet.
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 3a545ad17817..b5876b07b0f7 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -314,7 +314,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	if (rv)
+ 		return rv;
  
-+- qcom,saw-reg:
-+	Usage: optional
-+	Value type: <phandle>
-+	Description: Reference to syscon node defining the SAW registers.
-+
+-	if (gpio_mockup_dbg_dir)
++	if (!IS_ERR_OR_NULL(gpio_mockup_dbg_dir))
+ 		gpio_mockup_debugfs_setup(dev, chip);
  
- The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
-@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
- 			2 = 0.55 uA
- 			3 = 0.75 uA
- 
-+- qcom,saw-slave:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang slave. Will not be configured.
-+
-+- qcom,saw-leader:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang leader. Will be configured as
-+		     SAW regulator.
-+
- Example:
- 
- 	regulators {
-@@ -221,3 +237,32 @@ Example:
- 
- 		....
- 	};
-+
-+Example 2:
-+
-+	saw3: syscon@9A10000 {
-+		compatible = "syscon";
-+		reg = <0x9A10000 0x1000>;
-+	};
-+
-+	...
-+
-+	spm-regulators {
-+		compatible = "qcom,pm8994-regulators";
-+		qcom,saw-reg = <&saw3>;
-+		s8 {
-+			qcom,saw-slave;
-+		};
-+		s9 {
-+			qcom,saw-slave;
-+		};
-+		s10 {
-+			qcom,saw-slave;
-+		};
-+		pm8994_s11_saw: s11 {
-+			qcom,saw-leader;
-+			regulator-always-on;
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1140000>;
-+		};
-+	};
+ 	return 0;
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.16.1
