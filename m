@@ -1,72 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCDFJF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 00:09:05 -0500
-Received: from server.atrad.com.au ([150.101.241.2]:48924 "EHLO
+        id S1752295AbeCDFhh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 00:37:37 -0500
+Received: from server.atrad.com.au ([150.101.241.2]:48934 "EHLO
         server.atrad.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeCDFJD (ORCPT
+        with ESMTP id S1750759AbeCDFhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 00:09:03 -0500
-Date: Sun, 4 Mar 2018 15:38:13 +1030
+        Sun, 4 Mar 2018 00:37:36 -0500
+Date: Sun, 4 Mar 2018 16:07:11 +1030
 From: Jonathan Woithe <jwoithe@just42.net>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Micha?? K??pie?? <kernel@kempniu.pl>,
-        Darren Hart <dvhart@infradead.org>,
+To: Micha?? K??pie?? <kernel@kempniu.pl>
+Cc: Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/7] platform/x86: fujitsu-laptop: Define constants for
- FUNC operations
-Message-ID: <20180304050813.GA3129@marvin.atrad.com.au>
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] fujitsu-laptop: Consistent naming of constants
+Message-ID: <20180304053711.GB3129@marvin.atrad.com.au>
 References: <20180227211539.5708-1-kernel@kempniu.pl>
- <20180227211539.5708-2-kernel@kempniu.pl>
- <CAHp75VdDQ1xAYcXEN04kSug2sgi-G8+7PBEOC8MJSBw7gSCyRQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VdDQ1xAYcXEN04kSug2sgi-G8+7PBEOC8MJSBw7gSCyRQ@mail.gmail.com>
+In-Reply-To: <20180227211539.5708-1-kernel@kempniu.pl>
 User-Agent: Mutt/1.6.1 (2016-04-27)
 X-MIMEDefang-action: accept
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 06:08:52PM +0200, Andy Shevchenko wrote:
-> On Tue, Feb 27, 2018 at 11:15 PM, Micha?? K??pie?? <kernel@kempniu.pl> wrote:
-> > Various functions exposed by the firmware through the FUNC interface
-> > tend to use a consistent set of integers for denoting the type of
-> > operation to be performed for a specified feature.  Use named constants
-> > instead of integers in each call_fext_func() invocation in order to more
-> > clearly convey the intent of each call.
-> >
-> > Note that FUNC_FLAGS is a bit peculiar:
-> 
-> > +/* FUNC interface - operations */
-> > +#define OP_GET                         BIT(1)
-> > +#define OP_GET_CAPS                    0
-> > +#define OP_GET_EVENTS                  BIT(0)
-> > +#define OP_GET_EXT                     BIT(2)
-> > +#define OP_SET                         BIT(0)
-> > +#define OP_SET_EXT                     (BIT(2) | BIT(0))
-> 
-> Hmm... this looks unordered a bit.
+Hi Michal
 
-It seems to be ordered alphabetically on the identifier.  Andy, is it
-preferred to order defines like this based on resolved numeric order?
+On Tue, Feb 27, 2018 at 10:15:32PM +0100, Micha?? K??pie?? wrote:
+> This patch series is an attempt to organize all the named constants used
+> throughout fujitsu-laptop so that their names more clearly convey their
+> purpose: a set of prefixes is introduced to "map" constant names to
+> call_fext_func() parameters.
 
-There is a lack of apparent consistency in the numeric mapping; for example,
-OP_SET_EXT includes the OP_SET bit, but OP_GET_EXT does not include the
-OP_GET bit.  However, after inspecting the code I think this is simply
-reflecting what the hardware expects.
+While fairly superficial in nature I think this patch set is worthwhile. 
+Features have been progressively added to fujitsu-laptop over the last 10 or
+so years from a number of sources but a consistent naming methodology for
+constants has not emerged.  Having at least some consistency across the
+constant names will help clarify the intent of the code.
 
-> And plain 0 doesn't look right in this concept (something like (0 <<
-> 0) would probably do it).
+> Some changes (like those in patches 4/7 and 5/7) may be perceived as
+> bikeshedding, so please just think of them as proposals, not fixes.
 
-Given that all other definitions are in terms of BIT(), to my eye "(0 << 0)"
-looks as much out of place as plain "0".  However, if the convention in this
-case would be to use the former then I have no objections.  I presume the
-"(0 << 0)" idea comes from the fact that BIT() ultimately expands to some
-form of shift.
+Patches 4 and 5 don't bother me within the context of the patch series as a
+whole.
+
+> Finally, patch 7/7 again [1] proposes a set of helper functions which
+> seem to be making quite a difference in terms of code readability in
+> certain places (especially in long conditional expressions).  YMMV,
+> though, feel free to disagree.
+
+As before, I can't see any strong arguments one way or the other.  The
+helper functions certainly save a line in many of the call sites, but
+whether they provide significant advantages I cannot say (I personally have
+no fundamental problems with either version).  I guess if pushed I'd
+probably come down on the side of leaving things as they are: in principle
+defining a bunch of thin wrapper functions to save one parameter isn't
+something I tend to do since it doesn't seem worth it.  However, what has
+changed since the last iteration of this idea is the use of identifiers
+rather than numbers for many of call_fext_func()'s parameters, which adds
+length to each call site.
+
+If there is general agreement that using these functions is beneficial in
+this context I certainly won't block it.
 
 Regards
   jonathan
