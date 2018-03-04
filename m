@@ -1,65 +1,68 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2727825-1520170806-2-2435407706507051363
+X-Cyrus-Session-Id: sloti22d1t05-2187568-1520154016-2-961802925425562145
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520170806; b=KSgD2N9ARzlD5RbEgld+gwKRF9eB4cg/qZ6/u0aR1SSXhWu
-    0622BREn3yRFm+ZgB7gRh2u5NK/5QE3noZiRCzUyinc+p5RX3+ubStxLoa/JtmOf
-    N2uox8pPKzbdfBXPFE3kzeX0hlRix2FWj4guMkgrZmBCTgmDce4ARk/OiEbqECTd
-    odOb79AXwnYtpvSXWgC0t8rxwbTSO5rrOXCOII1LhOEbbhDIzRi8wQGTqyIOWHYb
-    WYEF71wuZYIOgK3AMKOsX/MQ49cPtwcwv4tnxnJTF1p2TnbYlrIKOZIDuAhjTZ3P
-    hP3VCJTEMkVZknybxLcLD93Gx3sUCNIvzywGrNw==
+    t=1520154015; b=AkxdIXtfQASJI/M4/ohJ83MscTjX9Fdx/UcKppgQ+WFT0xP
+    0HfgJQgacMNpII7GCJk+TPpI33G6LDrMzXvqgEXOMe7LhVtTt+x4QQtEAojToj+N
+    zMT5RlrsjeNrj8dCYR1o3bNuJXL2PAKlD73t6Xf2HEUeEUn+yQwEwz2/jZr1DJhm
+    SCl2YC/mJBgqnwlhm422Zz0AylUAmDxvfRp+V2Swsn2DbLVyzvW+ppc2Kava2TWb
+    Wwo4w/Ub5Es2DZHRNW2TrRf+Z7figCkuxWRxIuDZYSjUvJWeW6d5bl/H3ETzPEib
+    jffHP1IO+ppI6Nn2SlUMZFY4MrfLi6SyzizLe0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520170806; bh=s
-    R55mXpWY9cQZLSdssxC8guS4jB1kgxKDoZ/x+7+7nM=; b=ATV3JtKMo9/tnsO9o
-    1aItcexDT89c4skpnU0phK9VE2ekj2BXSt57wdEJjDSRdqBMFxDTjI9j8S8JmR31
-    MTSodWpYIe+YM4zgouyZe3qKEf1M9DLUIOPEVfEwD2B6xfJQwRUNrK75lIdUzGWE
-    BpxpFvAMOudbY7tA1vegq6UFKYgM39VynmggMnq41PqwYQcVGef8EihCMHqeYEna
-    N6bMxIxBP2EVQ/XV/IOCTFUth52uWLb8ZI4BR61+qBDkXnPu8n38hmnveGhUN/j9
-    aa8u+Tlr9vWt8GMvh6GPvZaFkMxrLDJBvJmo6mPtoEGmfJc2RNzXwR79LkhEDqKO
-    b7VxQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520154015; bh=G
+    0sqpxGtAyQgCkUSJtrIPlRMUERN+0lYN3DmJohDdbI=; b=jB+Mp38g7w8u8n4hg
+    ljN3DfU4hJ8ZWx1ErpFPJcaOVb2mLZ3vd9+Vs/U6M5RSeARGu5e58xwCFUseg1Ew
+    kNxDcXUq+MF+bmWtZDcGUT1bjxjn9OtVFYnuvpR1vEz8+9fKZG4aQ4LuEDCHQwfy
+    SmMhhH4RIzVZxlRaU3R2KxzXPzioDnNM5nDtG7QN5SReJ0uZOrzWgjwTLBOF5FPh
+    FtYyOVuFR45C15pymJXKeVcp066m6naRlC1KDLRJChayayepdsX9RmaQktc0LjQo
+    ifZ/+mPx9O7O1GCUi9XFjd53DcXAVCWsYDpOlEIWbwQHVWs+QvyH3N7j3Tq7mtIC
+    Siz4w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UcsyAB6w x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h24z3bXZ;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UcsyAB6w x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h24z3bXZ;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sun, 4 Mar 2018 14:38:37 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Subject: Re: [PATCH] staging: pi433: fix CamelCase for packetFormat enum
-Message-ID: <20180304133837.GA5215@kroah.com>
-References: <20180304095556.10335-1-Valentin.Vidic@CARNet.hr>
+X-Google-Smtp-Source: AG47ELtqDE5NGwyNVyuIEm3MoYXlICDFnSPuENB0DxDHPd7wLx9HhIiYzARAfKLpqGzeo336H29S5g==
+Date: Sun, 4 Mar 2018 14:29:35 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] staging: ipx: Replace printk() with appropriate pr_*() macro
+Message-ID: <20180304085935.GA20591@seema-Inspiron-15-3567>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20180304095556.10335-1-Valentin.Vidic@CARNet.hr>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -70,12 +73,8 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Derek Robson <robsonde@gmail.com>,
- Michael Panzlaff <michael.panzlaff@fau.de>,
- Luca =?iso-8859-1?Q?S=F6the?= <luca@acul.me>, linux-kernel@vger.kernel.org,
- Marcin Ciupak <marcin.s.ciupak@gmail.com>,
- Marcus Wolf <linux@Wolf-Entwicklungen.de>,
- Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
+Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -84,44 +83,30 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Mar 04, 2018 at 10:55:56AM +0100, Valentin Vidic wrote:
-> Fixes checkpatch warnings:
-> 
->   CHECK: Avoid CamelCase: <packetFormat>
->   CHECK: Avoid CamelCase: <packetLengthFix>
->   CHECK: Avoid CamelCase: <packetLengthVar>
-> 
-> Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-> ---
+Using pr_<loglevel>() is more concise than printk(KERN_<LOGLEVEL>).
+Replace printks having a log level with the appropriate pr_*() macros.
 
-Hi,
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+ drivers/staging/ipx/af_ipx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/drivers/staging/ipx/af_ipx.c b/drivers/staging/ipx/af_ipx.c
+index d21a9d1..27f4461 100644
+--- a/drivers/staging/ipx/af_ipx.c
++++ b/drivers/staging/ipx/af_ipx.c
+@@ -744,7 +744,7 @@ static void ipxitf_discover_netnum(struct ipx_interface *intrfc,
+ 			intrfc->if_netnum = cb->ipx_source_net;
+ 			ipxitf_add_local_route(intrfc);
+ 		} else {
+-			printk(KERN_WARNING "IPX: Network number collision "
++			pr_warn("IPX: Network number collision "
+ 				"%lx\n        %s %s and %s %s\n",
+ 				(unsigned long) ntohl(cb->ipx_source_net),
+ 				ipx_device_name(i),
+-- 
+2.7.4
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You sent multiple patches, yet no indication of which ones should be
-  applied in which order.  Greg could just guess, but if you are
-  receiving this email, he guessed wrong and the patches didn't apply.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/SubmittingPatches for a description of how
-  to do this so that Greg has a chance to apply these correctly.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
