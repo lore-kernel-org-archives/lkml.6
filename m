@@ -1,126 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeCDJus (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:50:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751793AbeCDJup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:50:45 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C66D2133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Sun, 4 Mar 2018 18:50:39 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH -tip] x86: kprobes: Cleanup preempt disabling and
- enabling
-Message-Id: <20180304185039.4ce71a8018307287814585fc@kernel.org>
-In-Reply-To: <20180303212545.8aa1ddb856975ffcac4672b5@kernel.org>
-References: <152004878307.12012.17534094592580782444.stgit@devbox>
-        <20180303095823.phaoeuvcjhoirwg3@gmail.com>
-        <20180303212545.8aa1ddb856975ffcac4672b5@kernel.org>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752632AbeCDKQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 05:16:57 -0500
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:21519 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752453AbeCDKQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 05:16:55 -0500
+X-IronPort-AV: E=Sophos;i="5.47,422,1515456000";
+   d="scan'208";a="722625929"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] nvmx: Check exit qualification RD/WR permission for MMIO accesses
+Date: Sun,  4 Mar 2018 11:16:32 +0100
+Message-Id: <1520158592-16952-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1519841208-23349-1-git-send-email-karahmed@amazon.de>
+References: <1519841208-23349-1-git-send-email-karahmed@amazon.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 3 Mar 2018 21:25:45 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Validate that a write MMIO access that follows a read MMIO access would
+have the correct access captured in the exit qualification.
 
-> On Sat, 3 Mar 2018 10:58:23 +0100
-> Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > 
-> > * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > > +/*
-> > > + * Interrupts are disabled on entry as trap3 is an interrupt gate and they
-> > > + * remain disabled throughout this function.
-> > > + */
-> > > +int kprobe_int3_handler(struct pt_regs *regs)
-> > > +{
-> > > +	struct kprobe_ctlblk *kcb;
-> > > +	int ret;
-> > > +
-> > > +	if (user_mode(regs))
-> > > +		return 0;
-> > > +
-> > > +	/*
-> > > +	 * We don't want to be preempted for the entire
-> > > +	 * duration of kprobe processing.
-> > > +	 */
-> > > +	preempt_disable();
-> > > +
-> > > +	kcb = get_kprobe_ctlblk();
-> > > +	ret = kprobe_int3_dispatcher(regs, kcb);
-> > > +
-> > > +	if (!kprobe_ready_for_singlestep(regs))
-> > > +		preempt_enable_no_resched();
-> > > +
-> > > +	return ret;
-> > 
-> > What's the point of disabling preemption, if IRQs are disabled already?
-> > 
-> > There's no preemption when IRQs are off...
-> 
-> Ahh, right! Whole the kprobe singlestepping, IRQs are off (kprobes drops
-> IF from regs->flags for single stepping) so we don't need to care about
-> preempt count anymore...
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Message-Id: <1519841208-23349-1-git-send-email-karahmed@amazon.de>
+---
+ x86/vmx_tests.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 48 insertions(+), 4 deletions(-)
 
-Hmm, I've found one issue for removing preemption... This is caused by error-
-injection framework and similar routines.
-
-OK, let me explain it. Histrically, jprobe needs to run its handler with preempt
-disabled. So kprobes skips preempt_enable() (and singlestep too) when its 
-pre_handler returns 1 (which is the signal that the handler is jprobe pre_handler).
-Thus, this patch has a bug IF jprobe is survived. Fortunatelly(?) the jprobe has
-gone now, actual code is still there but interface has gone.
-
-Then, we have no problem?
-No, actually not, because of new error injection framework. The error injection
-framework uses similar techniq of jprobe. But it actually doesn't call back to
-longjmp-restore function, it changes regs->ip, enable preemption and return 1.
-In this path, since it doesn't setup singlestep (because return 1), above patch
-preempt_enable() again in the end of kprobe_int3_handler(). This may cause
-double decrement the preemt count when we use error_injection feature on bpf
-and fault-injection.
-
-So it must check "does kprobes set up singlestep, or kprobe pre_handler returns 1?"
-
-To tell the truth, this never happen currently because all error-injectable
-functions are ftrace-based, which will preempt_enable() if it pre_handler
-returns 1. But this means the behaviors of ftrace-based kprobes (and optprobe) and
-normal kprobes are different. That is a bug.
-
-So please ignore this patch. 
+diff --git a/x86/vmx_tests.c b/x86/vmx_tests.c
+index 598dd88..a72af1a 100644
+--- a/x86/vmx_tests.c
++++ b/x86/vmx_tests.c
+@@ -7,6 +7,7 @@
+ #include "msr.h"
+ #include "processor.h"
+ #include "vm.h"
++#include "pci.h"
+ #include "fwcfg.h"
+ #include "isr.h"
+ #include "desc.h"
+@@ -28,6 +29,8 @@ unsigned long *pml4;
+ u64 eptp;
+ void *data_page1, *data_page2;
  
-Anyway, I would like to change this behavior among archs after removing jprobe code.
-If we don't have jprobe, there is no reason to skip preempt_enable() if pre_handler
-returns 1. (including ftrace-based kprobe and optprobe)
-
-My plan is
- 1. Remove arch-independent jprobe code
- 2. Remove jprobes related code from each architecture.
- 3. Change preempt behavior for each arch and update error-injection/bpf code.
-
-In step3, if I split patches for each arch, there is a chance to make a buggy kernel in
-error injection code. I will make a unified patch (for tree wide) or introduce some
-temporal flag (like ARCH_NO_PREEMPT_FIXUP) so that error-injection/bpf can check it.
-
-Thank you,
-
-
++phys_addr_t pci_physaddr;
++
+ void *pml_log;
+ #define PML_INDEX 512
+ 
+@@ -1041,6 +1044,9 @@ static int apic_version;
+ 
+ static int ept_init_common(bool have_ad)
+ {
++	int ret;
++	struct pci_dev pcidev;
++
+ 	if (setup_ept(have_ad))
+ 		return VMX_TEST_EXIT;
+ 	data_page1 = alloc_page();
+@@ -1053,6 +1059,13 @@ static int ept_init_common(bool have_ad)
+ 			EPT_RA | EPT_WA | EPT_EA);
+ 
+ 	apic_version = apic_read(APIC_LVR);
++
++	ret = pci_find_dev(PCI_VENDOR_ID_REDHAT, PCI_DEVICE_ID_REDHAT_TEST);
++	if (ret != PCIDEVADDR_INVALID) {
++		pci_dev_init(&pcidev, ret);
++		pci_physaddr = pcidev.resource[PCI_TESTDEV_BAR_MEM];
++	}
++
+ 	return VMX_TEST_START;
+ }
+ 
+@@ -1101,6 +1114,16 @@ t1:
+ 	vmcall();
+ 	*((u32 *)data_page1) = MAGIC_VAL_2;
+ 	report("EPT violation - paging structure", vmx_get_test_stage() == 5);
++
++	// MMIO Read/Write
++	vmx_set_test_stage(5);
++	vmcall();
++
++	*(u32 volatile *)pci_physaddr;
++	report("MMIO EPT violation - read", vmx_get_test_stage() == 6);
++
++	*(u32 volatile *)pci_physaddr = MAGIC_VAL_1;
++	report("MMIO EPT violation - write", vmx_get_test_stage() == 7);
+ }
+ 
+ static void ept_main()
+@@ -1108,12 +1131,12 @@ static void ept_main()
+ 	ept_common();
+ 
+ 	// Test EPT access to L1 MMIO
+-	vmx_set_test_stage(6);
++	vmx_set_test_stage(7);
+ 	report("EPT - MMIO access", *((u32 *)0xfee00030UL) == apic_version);
+ 
+ 	// Test invalid operand for INVEPT
+ 	vmcall();
+-	report("EPT - unsupported INVEPT", vmx_get_test_stage() == 7);
++	report("EPT - unsupported INVEPT", vmx_get_test_stage() == 8);
+ }
+ 
+ bool invept_test(int type, u64 eptp)
+@@ -1187,7 +1210,7 @@ static int ept_exit_handler_common(bool have_ad)
+ 	ulong reason;
+ 	u32 insn_len;
+ 	u32 exit_qual;
+-	static unsigned long data_page1_pte, data_page1_pte_pte;
++	static unsigned long data_page1_pte, data_page1_pte_pte, memaddr_pte;
+ 
+ 	guest_rip = vmcs_read(GUEST_RIP);
+ 	guest_cr3 = vmcs_read(GUEST_CR3);
+@@ -1249,7 +1272,12 @@ static int ept_exit_handler_common(bool have_ad)
+ 				data_page1_pte_pte & ~EPT_PRESENT);
+ 			ept_sync(INVEPT_SINGLE, eptp);
+ 			break;
+-		case 6:
++		case 5:
++			install_ept(pml4, (unsigned long)pci_physaddr,
++				(unsigned long)pci_physaddr, 0);
++			ept_sync(INVEPT_SINGLE, eptp);
++			break;
++		case 7:
+ 			if (!invept_test(0, eptp))
+ 				vmx_inc_test_stage();
+ 			break;
+@@ -1305,6 +1333,22 @@ static int ept_exit_handler_common(bool have_ad)
+ 				data_page1_pte_pte | (EPT_PRESENT));
+ 			ept_sync(INVEPT_SINGLE, eptp);
+ 			break;
++		case 5:
++			if (exit_qual & EPT_VLT_RD)
++				vmx_inc_test_stage();
++			TEST_ASSERT(get_ept_pte(pml4, (unsigned long)pci_physaddr,
++						1, &memaddr_pte));
++			set_ept_pte(pml4, memaddr_pte, 1, memaddr_pte | EPT_RA);
++			ept_sync(INVEPT_SINGLE, eptp);
++			break;
++		case 6:
++			if (exit_qual & EPT_VLT_WR)
++				vmx_inc_test_stage();
++			TEST_ASSERT(get_ept_pte(pml4, (unsigned long)pci_physaddr,
++						1, &memaddr_pte));
++			set_ept_pte(pml4, memaddr_pte, 1, memaddr_pte | EPT_RA | EPT_WA);
++			ept_sync(INVEPT_SINGLE, eptp);
++			break;
+ 		default:
+ 			// Should not reach here
+ 			report("ERROR : unexpected stage, %d", false,
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
