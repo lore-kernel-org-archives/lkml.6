@@ -1,100 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeCDRbT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 12:31:19 -0500
-Received: from 1.mo177.mail-out.ovh.net ([178.33.107.143]:35065 "EHLO
-        1.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751427AbeCDRbS (ORCPT
+        id S1751973AbeCDRbb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 12:31:31 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39874 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751878AbeCDRb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 12:31:18 -0500
-Message-ID: <1520182292.14077.2.camel@florentflament.com>
-Subject: Re: [PATCH] HID: Logitech K290: Add driver for the Logitech K290
- USB keyboard
-From: Florent Flament <contact@florentflament.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
-Date: Sun, 04 Mar 2018 17:51:32 +0100
-In-Reply-To: <CAHp75VeLaXb+wOUJOXojOwXSm68=oaiA7=RCKH_tOsBT7OzUxg@mail.gmail.com>
-References: <20180302220425.27707-1-contact@florentflament.com>
-         <CAHp75VeLaXb+wOUJOXojOwXSm68=oaiA7=RCKH_tOsBT7OzUxg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 2601110263949785759
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrjeehgdelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+        Sun, 4 Mar 2018 12:31:28 -0500
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>
+Cc: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Douglas Miller <dougmill@linux.vnet.ibm.com>
+Subject: [PATCH v2] xmon: Setup xmon debugger hooks when first break-point is set
+Date: Sun,  4 Mar 2018 23:00:25 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18030417-0012-0000-0000-000005B893A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030417-0013-0000-0000-00001934A27E
+Message-Id: <20180304173025.19520-1-vaibhav@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803040227
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-03 at 18:08 +0200, Andy Shevchenko wrote:
-> On Sat, Mar 3, 2018 at 12:04 AM, Florent Flament
-> <contact@florentflament.com> wrote:
-> > With the generic HID driver, K290 keyboards' F1 to F12 keys send
-> > multimedia events by default, and standard keycodes when the
-> > function
-> > key is pressed. This driver allows to configure K290 keyboards, so
-> > that F1 to F12 have a standard behavior and send multimedia events
-> > when the function key is pressed. The keyboard mode is set through
-> > the
-> > fn_mode module parameter: when set to 1 (default setting) the
-> > keyboard
-> > behaves as with the generic HID driver, when set to 0 the keyboard
-> > is
-> > configured to work as standard keyboards.
-> 
-> SPDX ID?
-> 
-> > +/*
-> > + * HID driver for Logitech K290 keyboard
-> > + *
-> > + * Copyright (c) 2018 Florent Flament
-> > + *
-> > + * This drivers allows to configure the K290 keyboard's function
-> > key
-> > + * behaviour (whether function mode is activated or not by
-> > default).
-> > + *
-> > + * Logitech custom commands taken from Marcus Ilgner k290-fnkeyctl
-> > + * (https://github.com/milgner/k290-fnkeyctl):
-> > + * K290_SET_FUNCTION_CMD
-> > + * K290_SET_FUNCTION_VAL
-> > + * K290_SET_FUNCTION_OFF
-> > + * K290_SET_FUNCTION_ON
-> > + *
-> > + * Based on hid-accutouch.c and hid-elo.c
-> > + *
-> > + * This driver is licensed under the terms of GPLv2.
-> 
-> ...instead of this.
+Presently sysrq key for xmon('x') is registered during kernel init
+irrespective of the value of kernel param 'xmon'. Thus xmon is enabled
+even if 'xmon=off' is passed on the kernel command line. However this
+doesn't enable the kernel debugger hooks needed for instruction or data
+breakpoints. Thus when a break-point is hit with xmon=off a kernel oops
+of the form below is reported:
 
-Fine, I'll replace this with the appropriate SPDX ID.
+Oops: Exception in kernel mode, sig: 5 [#1]
+< snip >
+Trace/breakpoint trap
 
-> 
-> > + */
-> > +
-> > +#include <linux/device.h>
-> > +#include <linux/hid.h>
-> > +#include <linux/module.h>
-> > +#include <linux/moduleparam.h>
-> > +#include <linux/mod_devicetable.h>
-> 
-> Do you need these both? I suppose module.h effectively provides them.
+To fix this the patch checks and enables debugger hooks when an
+instruction or data break-point is set via xmon console.
 
-Indeed, module.h is enough. The 2 following includes are not necessary.
-Fixing this.
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+---
+Change-log:
 
-> 
-> > +#include <linux/stat.h>
-> > +#include <linux/types.h>
-> > +#include <linux/usb.h>
-> 
-> 
+v2 -> Moved the code that was force enabling xmon to a separate inline
+      function (Balbir)
 
-Regards,
-Florent
+      The change related to clearing all breakpoints when xmon is
+      disabled via debugfs will be respinned as a separate
+      patch. (Mpe)
+---
+ arch/powerpc/xmon/xmon.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index 82e1a3ee6e0f..e9c7ec8f15f8 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -1273,6 +1273,18 @@ static long check_bp_loc(unsigned long addr)
+ 	return 1;
+ }
+ 
++/* Force enable xmon if not already enabled */
++static inline void force_enable_xmon(void)
++{
++	static const char warnxmon[] = "xmon: Enabling debugger hooks\n";
++
++	/* Enable xmon hooks if needed */
++	if (!xmon_on) {
++		printf(warnxmon);
++		xmon_on = 1;
++	}
++}
++
+ static char *breakpoint_help_string =
+     "Breakpoint command usage:\n"
+     "b                show breakpoints\n"
+@@ -1315,6 +1327,8 @@ bpt_cmds(void)
+ 			dabr.address &= ~HW_BRK_TYPE_DABR;
+ 			dabr.enabled = mode | BP_DABR;
+ 		}
++
++		force_enable_xmon();
+ 		break;
+ 
+ 	case 'i':	/* bi - hardware instr breakpoint */
+@@ -1335,6 +1349,7 @@ bpt_cmds(void)
+ 		if (bp != NULL) {
+ 			bp->enabled |= BP_CIABR;
+ 			iabr = bp;
++			force_enable_xmon();
+ 		}
+ 		break;
+ #endif
+@@ -1399,8 +1414,10 @@ bpt_cmds(void)
+ 		if (!check_bp_loc(a))
+ 			break;
+ 		bp = new_breakpoint(a);
+-		if (bp != NULL)
++		if (bp != NULL) {
+ 			bp->enabled |= BP_TRAP;
++			force_enable_xmon();
++		}
+ 		break;
+ 	}
+ }
+-- 
+2.14.3
