@@ -1,96 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeCDSZG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 13:25:06 -0500
-Received: from bran.ispras.ru ([83.149.199.196]:12824 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751611AbeCDSZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 13:25:03 -0500
-From: Alexander Monakov <amonakov@ispras.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Alexander Monakov <amonakov@ispras.ru>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH] phy: berlin-usb: adjust USB_PHY_RX_CTRL init flags
-Date: Sun,  4 Mar 2018 21:18:07 +0300
-Message-Id: <20180304181807.20825-1-amonakov@ispras.ru>
-X-Mailer: git-send-email 2.11.0
+        id S932120AbeCDScK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 13:32:10 -0500
+Received: from goliath.siemens.de ([192.35.17.28]:60005 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751838AbeCDSb6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 13:31:58 -0500
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v4 5/7] x86: Consolidate PCI_MMCONFIG configs
+Date: Sun,  4 Mar 2018 19:31:37 +0100
+Message-Id: <544801a13f892a18a0cba0a55ab1d8d2885ca8f6.1520188299.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
+References: <cover.1520188299.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
+References: <cover.1520188299.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the value written into the USB_PHY_RX_CTRL configuration register
-match 0xAA79 value written by manufacturer-supplied kernels for Sony
-NSZ-GS7 (Berlin2 SoC), Google Chromecast and Valve Steam Link (BG2CD).
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-This fixes timeouts communicating to the internal hub on Steam Link.
+Since e279b6c1d329 ("x86: start unification of arch/x86/Kconfig.*"), we
+have two PCI_MMCONFIG entries, one from the original i386 and another
+from x86_64. This consolidates both entries into a single one.
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com> 
-Signed-off-by: Alexander Monakov <amonakov@ispras.ru>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
-Hello,
+ arch/x86/Kconfig | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-I'm trying to run mainline kernel on "Steam Link" device built around
-Marvell BG2CD SoC, and in doing so I've found that USB almost always
-fails to initialize with timeout errors when connecting to the hub:
-
-[    0.223563] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002
-[    0.223580] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
-[    0.223596] usb usb1: Product: EHCI Host Controller
-[    0.223608] usb usb1: Manufacturer: Linux 4.15.0-00014-gc6f881cd62dc-dirty ehci_hcd
-[    0.223624] usb usb1: SerialNumber: ci_hdrc.0
-[    0.223985] hub 1-0:1.0: USB hub found
-[    0.224022] hub 1-0:1.0: 1 port detected
-[    0.524726] ci_hdrc ci_hdrc.0: port 1 reset error -110
-[    1.044673] ci_hdrc ci_hdrc.0: port 1 reset error -110
-[    1.399721] mwifiex_sdio mmc0:0001:1: info: FW download over, size 814048 bytes
-[    1.484666] ci_hdrc ci_hdrc.0: port 1 reset error -110
-[    2.113451] mwifiex_sdio mmc0:0001:1: WLAN FW is active
-[    2.113725] sdio platform data not available
-[    2.192570] mwifiex_sdio mmc0:0001:1: info: MWIFIEX VERSION: mwifiex 1.0 (15.68.7.p112) 
-[    2.192599] mwifiex_sdio mmc0:0001:1: driver_version = mwifiex 1.0 (15.68.7.p112) 
-[    2.213433] usb 1-1: new high-speed USB device number 2 using ci_hdrc
-[    2.294676] ci_hdrc ci_hdrc.0: port 1 reset error -110
-
-and so on until...
-
-[   19.254658] ci_hdrc ci_hdrc.0: port 1 reset error -110
-[   19.913433] usb usb1-port1: Cannot enable. Maybe the USB cable is bad?
-[   19.913472] usb usb1-port1: unable to enumerate USB device
-
-I've inspected how the original kernel performs phy initialization, and
-found that the value written into the USB_PHY_RX_CTRL register differs
-in one field. Correcting the field is enough to stabilize it in my case.
-
-I don't know where the _260 choice in mainline source comes from. I've
-checked three publicly available kernels for devices with this phy, and
-they all write the same value, 0xAA79.
-
-FWIW, this is not the only difference I've found. Other kernels also:
-- do not touch TX config registers;
-- drive a particular GPIO low before and high after configuring the phy.
-
-I am unsure if anything needs to or can be done about those differences.
-
-Thanks.
-Alexander
-
- drivers/phy/marvell/phy-berlin-usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/phy/marvell/phy-berlin-usb.c b/drivers/phy/marvell/phy-berlin-usb.c
-index 2017751ede26..8f2b5cae360f 100644
---- a/drivers/phy/marvell/phy-berlin-usb.c
-+++ b/drivers/phy/marvell/phy-berlin-usb.c
-@@ -127,7 +127,7 @@ static int phy_berlin_usb_power_on(struct phy *phy)
- 	writel(V2I_VCO_RATIO(0x5) | R_ROTATE_0 | ANA_TEST_DC_CTRL(0x5),
- 	       priv->base + USB_PHY_ANALOG);
- 	writel(PHASE_FREEZE_DLY_4_CL | ACK_LENGTH_16_CL | SQ_LENGTH_12 |
--	       DISCON_THRESHOLD_260 | SQ_THRESHOLD(0xa) | LPF_COEF(0x2) |
-+	       DISCON_THRESHOLD_270 | SQ_THRESHOLD(0xa) | LPF_COEF(0x2) |
- 	       INTPL_CUR_30, priv->base + USB_PHY_RX_CTRL);
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c19f5342ec2b..8986a6b6e3df 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2641,8 +2641,10 @@ config PCI_DIRECT
+ 	depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
  
- 	writel(TX_VDD12_13 | TX_OUT_AMP(0x3), priv->base + USB_PHY_TX_CTRL1);
+ config PCI_MMCONFIG
+-	def_bool y
+-	depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
++	bool "Support mmconfig PCI config space access" if X86_64
++	default y
++	depends on PCI && (ACPI || SFI)
++	depends on X86_64 || (PCI_GOANY || PCI_GOMMCONFIG)
+ 
+ config PCI_OLPC
+ 	def_bool y
+@@ -2657,11 +2659,6 @@ config PCI_DOMAINS
+ 	def_bool y
+ 	depends on PCI
+ 
+-config PCI_MMCONFIG
+-	bool "Support mmconfig PCI config space access"
+-	default y
+-	depends on X86_64 && PCI && (ACPI || SFI)
+-
+ config PCI_CNB20LE_QUIRK
+ 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
+ 	depends on PCI
 -- 
-2.11.0
+2.13.6
