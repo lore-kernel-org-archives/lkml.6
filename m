@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752548AbeCEB7F (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 20:59:05 -0500
+        id S932610AbeCEB7h (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 20:59:37 -0500
 Received: from mga14.intel.com ([192.55.52.115]:39574 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932578AbeCEB5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 20:57:09 -0500
+        id S932101AbeCEB4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 20:56:54 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,425,1515484800";
-   d="scan'208";a="21986096"
+   d="scan'208";a="21986056"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, Chao Peng <chao.p.peng@linux.intel.com>,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v5 07/11] KVM: x86: Implement Intel Processor Trace context switch
-Date: Sun,  4 Mar 2018 20:07:17 +0800
-Message-Id: <1520165241-15819-8-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v5 02/11] perf/x86/intel/pt: Change pt_cap_get() to a public function
+Date: Sun,  4 Mar 2018 20:07:12 +0800
+Message-Id: <1520165241-15819-3-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
 References: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
@@ -29,109 +29,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Load/Store Intel processor trace register in context switch.
-MSR IA32_RTIT_CTL is loaded/stored automatically from VMCS.
-In HOST mode, we just need to restore the status of IA32_RTIT_CTL.
-In HOST_GUEST mode, we need load/resore PT MSRs only when PT is
-enabled in guest.
+Change pt_cap_get() to a public function so that KVM can access it.
+Introduce new capablility PT_CAP_output_subsys to support
+of output to Trace Transport subsystem.
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/x86/events/intel/pt.c      |  4 +++-
+ arch/x86/events/intel/pt.h      | 21 ---------------------
+ arch/x86/include/asm/intel_pt.h | 24 ++++++++++++++++++++++++
+ 3 files changed, 27 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 3d0de12..dab020b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2156,6 +2156,55 @@ static unsigned long segment_base(u16 selector)
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 6d6dd4f..d89dd8c 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -68,6 +68,7 @@
+ 	PT_CAP(topa_output,		0, CPUID_ECX, BIT(0)),
+ 	PT_CAP(topa_multiple_entries,	0, CPUID_ECX, BIT(1)),
+ 	PT_CAP(single_range_output,	0, CPUID_ECX, BIT(2)),
++	PT_CAP(output_subsys,		0, CPUID_ECX, BIT(3)),
+ 	PT_CAP(payloads_lip,		0, CPUID_ECX, BIT(31)),
+ 	PT_CAP(num_address_ranges,	1, CPUID_EAX, 0x3),
+ 	PT_CAP(mtc_periods,		1, CPUID_EAX, 0xffff0000),
+@@ -75,7 +76,7 @@
+ 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
+ };
+ 
+-static u32 pt_cap_get(enum pt_capabilities cap)
++u32 pt_cap_get(enum pt_capabilities cap)
+ {
+ 	struct pt_cap_desc *cd = &pt_caps[cap];
+ 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
+@@ -83,6 +84,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
+ 
+ 	return (c & cd->mask) >> shift;
  }
++EXPORT_SYMBOL_GPL(pt_cap_get);
+ 
+ static ssize_t pt_cap_show(struct device *cdev,
+ 			   struct device_attribute *attr,
+diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
+index 0050ca1..269e15a 100644
+--- a/arch/x86/events/intel/pt.h
++++ b/arch/x86/events/intel/pt.h
+@@ -45,30 +45,9 @@ struct topa_entry {
+ 	u64	rsvd4	: 16;
+ };
+ 
+-#define PT_CPUID_LEAVES		2
+-#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
+-
+ /* TSC to Core Crystal Clock Ratio */
+ #define CPUID_TSC_LEAF		0x15
+ 
+-enum pt_capabilities {
+-	PT_CAP_max_subleaf = 0,
+-	PT_CAP_cr3_filtering,
+-	PT_CAP_psb_cyc,
+-	PT_CAP_ip_filtering,
+-	PT_CAP_mtc,
+-	PT_CAP_ptwrite,
+-	PT_CAP_power_event_trace,
+-	PT_CAP_topa_output,
+-	PT_CAP_topa_multiple_entries,
+-	PT_CAP_single_range_output,
+-	PT_CAP_payloads_lip,
+-	PT_CAP_num_address_ranges,
+-	PT_CAP_mtc_periods,
+-	PT_CAP_cycle_thresholds,
+-	PT_CAP_psb_periods,
+-};
+-
+ struct pt_pmu {
+ 	struct pmu		pmu;
+ 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
+diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+index b523f51..2de4db0 100644
+--- a/arch/x86/include/asm/intel_pt.h
++++ b/arch/x86/include/asm/intel_pt.h
+@@ -2,10 +2,34 @@
+ #ifndef _ASM_X86_INTEL_PT_H
+ #define _ASM_X86_INTEL_PT_H
+ 
++#define PT_CPUID_LEAVES		2
++#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
++
++enum pt_capabilities {
++	PT_CAP_max_subleaf = 0,
++	PT_CAP_cr3_filtering,
++	PT_CAP_psb_cyc,
++	PT_CAP_ip_filtering,
++	PT_CAP_mtc,
++	PT_CAP_ptwrite,
++	PT_CAP_power_event_trace,
++	PT_CAP_topa_output,
++	PT_CAP_topa_multiple_entries,
++	PT_CAP_single_range_output,
++	PT_CAP_output_subsys,
++	PT_CAP_payloads_lip,
++	PT_CAP_num_address_ranges,
++	PT_CAP_mtc_periods,
++	PT_CAP_cycle_thresholds,
++	PT_CAP_psb_periods,
++};
++
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
+ void cpu_emergency_stop_pt(void);
++extern u32 pt_cap_get(enum pt_capabilities cap);
+ #else
+ static inline void cpu_emergency_stop_pt(void) {}
++static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
  #endif
  
-+static inline void pt_load_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	wrmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	wrmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		wrmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static inline void pt_save_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	rdmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	rdmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		rdmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static void pt_guest_enter(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		wrmsrl(MSR_IA32_RTIT_CTL, 0);
-+		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+	}
-+}
-+
-+static void pt_guest_exit(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+	}
-+
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+}
-+
- static void vmx_save_host_state(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -5845,6 +5894,13 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
- 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
- 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
- 	}
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		memset(&vmx->pt_desc, 0, sizeof(vmx->pt_desc));
-+		/* Bit[6~0] are forced to 1, writes are ignored. */
-+		vmx->pt_desc.guest.output_mask = 0x7F;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+	}
- }
- 
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -9542,6 +9598,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	    vcpu->arch.pkru != vmx->host_pkru)
- 		__write_pkru(vcpu->arch.pkru);
- 
-+	pt_guest_enter(vmx);
-+
- 	atomic_switch_perf_msrs(vmx);
- 
- 	vmx_arm_hv_timer(vcpu);
-@@ -9721,6 +9779,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 				  | (1 << VCPU_EXREG_CR3));
- 	vcpu->arch.regs_dirty = 0;
- 
-+	pt_guest_exit(vmx);
-+
- 	/*
- 	 * eager fpu is enabled if PKEY is supported and CR4 is switched
- 	 * back on host, so it is safe to read guest PKRU from current
+ #endif /* _ASM_X86_INTEL_PT_H */
 -- 
 1.8.3.1
