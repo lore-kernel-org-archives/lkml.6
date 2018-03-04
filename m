@@ -1,51 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeCDUGN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 15:06:13 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:55763 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751848AbeCDUGH (ORCPT
+        id S932141AbeCDUOY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 15:14:24 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37362 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751848AbeCDUOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 15:06:07 -0500
-From: Stefan Agner <stefan@agner.ch>
-To: han.xu@nxp.com, boris.brezillon@free-electrons.com
-Cc: marek.vasut@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        cyrille.pitchen@wedev4u.fr, max.oss.09@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 2/2] dt-bindings: mtd: rawnand: gpmi: document specific ECC strength
-Date: Sun,  4 Mar 2018 21:06:02 +0100
-Message-Id: <20180304200602.11475-2-stefan@agner.ch>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180304200602.11475-1-stefan@agner.ch>
-References: <20180304200602.11475-1-stefan@agner.ch>
+        Sun, 4 Mar 2018 15:14:22 -0500
+X-Google-Smtp-Source: AG47ELt7TOrfyz72yUlokzYvibFVjkWCAsUvMF7kJIoLBSMdueIFARIapyrJ/244sSC0Lbo/XbvhfhIYP8O79KU4H38=
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFxPi=XNUUdL+rJbKLLiJsYPSh=7nZwoQBYJk69EUJ8rPg@mail.gmail.com>
+References: <alpine.DEB.2.21.1803041558530.2394@nanos.tec.linutronix.de> <CA+55aFxPi=XNUUdL+rJbKLLiJsYPSh=7nZwoQBYJk69EUJ8rPg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 4 Mar 2018 12:14:21 -0800
+X-Google-Sender-Auth: 0WnalcYZnJL8YampKWk-7P7curo
+Message-ID: <CA+55aFwKQWbjdY8wWuzHgHDP8rQEZpfAu06VpVKDjkV1NcQisA@mail.gmail.com>
+Subject: Re: [GIT pull] x86 fixes for 4.16
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document newly supported device tree properties nand-ecc-strength/
-nand-ecc-step-size to specify ECC strength/size.
+On Sun, Mar 4, 2018 at 11:40 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sun, Mar 4, 2018 at 7:02 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>> please pull the latest x86-urgent-for-linus git tree from:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+>
+> Nothing there.
+>
+> Did you forget to push out?
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- Documentation/devicetree/bindings/mtd/gpmi-nand.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+I pulled from x86/urgent, which has the same contents. I think you
+just forgot to update the "for-linus" version.
 
-diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-index b289ef3c1b7e..393588385c6e 100644
---- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
-@@ -47,6 +47,11 @@ Optional properties:
-                        partitions written from Linux with this feature
-                        turned on may not be accessible by the BootROM
-                        code.
-+  - nand-ecc-strength: integer representing the number of bits to correct
-+                       per ECC step. Needs to be a multiple of 2.
-+  - nand-ecc-step-size: integer representing the number of data bytes
-+                       that are covered by a single ECC step. The driver
-+                       supports 512 and 1024.
- 
- The device tree may optionally contain sub-nodes describing partitions of the
- address space. See partition.txt for more detail.
--- 
-2.16.2
+                 Linus
