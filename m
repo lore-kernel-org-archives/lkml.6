@@ -1,89 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeCDJeZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:34:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60844 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752465AbeCDJeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:34:23 -0500
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>, clm@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 4.16-rc4
-Date: Sun,  4 Mar 2018 10:31:48 +0100
-Message-Id: <cover.1520154785.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.16.2
+        id S1752630AbeCDJmt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:42:49 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:49130 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751831AbeCDJmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 04:42:47 -0500
+From: Stefan Chulski <stefanc@marvell.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+CC: Antoine Tenart <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>
+Subject: RE: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
+Thread-Topic: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
+Thread-Index: AQHTsj18um8XkydR1EKUeFQympSTGqO8/daAgAKiLNCAABBKAIAAItKg
+Date: Sun, 4 Mar 2018 09:42:39 +0000
+Message-ID: <7d2e6deeb8a8435593b5c08615b192e1@IL-EXCH01.marvell.com>
+References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
+        <20180302154044.25204-6-antoine.tenart@bootlin.com>
+        <20180302171713.54beaad0@windsurf.lan>
+        <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
+ <20180304102828.1437fbc3@windsurf.home>
+In-Reply-To: <20180304102828.1437fbc3@windsurf.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.5.102.207]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_05:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=756 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1711220000 definitions=main-1803040124
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> > To perform checksum in HW, HW obviously should work in store and
+> forward mode. Store all frame in TX FIFO and then check checksum.
+> > If mtu 1500B, everything fine and all port can do this.
+> >
+> > If mtu is 9KB and 9KB frame transmitted, Port 0 still can do HW checksum.
+> But ports 1 and 2 doesn't has enough FIFO for this.
+> > So we cannot offload this feature and SW should perform checksum.
+> 
+> So perhaps the real check should not be "port 0", but whether the MTU is
+> higher or lower than the TX FIFO size assigned to the current port.
+> This would express in much better way the reason why HW checksum can be
+> used or not.
 
-please consider the follwing btrfs updates, there are bugfixes or fixes
-for user visible behaviour.
+I really don't want involve MTU size here, for each packet we should add to MTU overhead added by HW(offset, CRC, DSA tags and etc).
+I prefer just to check: port TX FIFO size is 10KB -> port can support HW checksum offload.
+Do you suggest to keep some shadow table with ports TX FIFO sizes for this?  
 
-No merge conflicts. Please pull, thanks.
-
-- when NR_CPUS is large, a SRCU structure can significantly inflate size
-  of the main filesystem structure that would not be possible to
-  allocate by kmalloc, so the kvalloc fallback is used
-
-- improved error handling
-
-- fix endiannes when printing some filesystem attributes via sysfs, this
-  is could happen when a filesystem is moved between different endianity
-  hosts
-
-- send fixes: the NO_HOLE mode should not send a write operation for a
-  file hole
-
-- fix log replay for for special files followed by file hardlinks
-
-- fix log replay failure after unlink and link combination
-
-- fix max chunk size calculation for DUP allocation
-
-----------------------------------------------------------------
-The following changes since commit fd649f10c3d21ee9d7542c609f29978bdf73ab94:
-
-  btrfs: Fix use-after-free when cleaning up fs_devs with a single stale device (2018-02-05 17:15:14 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.16-rc3-tag
-
-for you to fetch changes up to 1f250e929a9c9332fd6ea34da684afee73837cfe:
-
-  Btrfs: fix log replay failure after unlink and link combination (2018-03-01 16:18:40 +0100)
-
-----------------------------------------------------------------
-Anand Jain (1):
-      btrfs: use proper endianness accessors for super_copy
-
-Filipe Manana (3):
-      Btrfs: send, fix issuing write op when processing hole in no data mode
-      Btrfs: fix log replay failure after linking special file and fsync
-      Btrfs: fix log replay failure after unlink and link combination
-
-Hans van Kranenburg (1):
-      btrfs: alloc_chunk: fix DUP stripe size handling
-
-Jeff Mahoney (1):
-      btrfs: use kvzalloc to allocate btrfs_fs_info
-
-Nikolay Borisov (2):
-      btrfs: handle failure of add_pending_csums
-      btrfs: Handle btrfs_set_extent_delalloc failure in relocate_file_extent_cluster
-
- fs/btrfs/ctree.h       |   7 ++-
- fs/btrfs/inode-item.c  |  44 +++++++++++--------
- fs/btrfs/inode.c       |  11 ++++-
- fs/btrfs/relocation.c  |  18 +++++++-
- fs/btrfs/send.c        |   3 ++
- fs/btrfs/super.c       |   2 +-
- fs/btrfs/sysfs.c       |   8 ++--
- fs/btrfs/transaction.c |  20 +++++----
- fs/btrfs/tree-log.c    | 114 +++++++++++++++++++++++++++++++++++++++++++++++--
- fs/btrfs/volumes.c     |  11 ++---
- 10 files changed, 191 insertions(+), 47 deletions(-)
+Thanks,
+Stefan.
