@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeCEB55 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 20:57:57 -0500
+        id S932716AbeCEB6P (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 20:58:15 -0500
 Received: from mga14.intel.com ([192.55.52.115]:39574 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932653AbeCEB5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 20:57:22 -0500
+        id S932628AbeCEB5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 20:57:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,425,1515484800";
-   d="scan'208";a="21986126"
+   d="scan'208";a="21986115"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v5 11/11] KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
-Date: Sun,  4 Mar 2018 20:07:21 +0800
-Message-Id: <1520165241-15819-12-git-send-email-luwei.kang@intel.com>
+        joro@8bytes.org, Chao Peng <chao.p.peng@linux.intel.com>,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v5 09/11] KVM: x86: Implement Intel Processor Trace MSRs read/write
+Date: Sun,  4 Mar 2018 20:07:19 +0800
+Message-Id: <1520165241-15819-10-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
 References: <1520165241-15819-1-git-send-email-luwei.kang@intel.com>
@@ -26,43 +27,293 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Intel Processor Trace do not support tracing in L1 guest
-VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
-on these type of processors, execution of the VMXON instruction will
-clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
-causes a general-protection exception (#GP).
+From: Chao Peng <chao.p.peng@linux.intel.com>
 
+Implement Intel Processor Trace MSRs read/write.
+
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/intel_pt.h |   8 ++
+ arch/x86/kvm/vmx.c              | 167 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c              |  33 +++++++-
+ 3 files changed, 207 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+index 13e9499..fc3f728 100644
+--- a/arch/x86/include/asm/intel_pt.h
++++ b/arch/x86/include/asm/intel_pt.h
+@@ -5,6 +5,14 @@
+ #define PT_CPUID_LEAVES		2
+ #define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
+ 
++#define MSR_IA32_RTIT_STATUS_MASK (~(RTIT_STATUS_FILTEREN | \
++		RTIT_STATUS_CONTEXTEN | RTIT_STATUS_TRIGGEREN | \
++		RTIT_STATUS_ERROR | RTIT_STATUS_STOPPED | \
++		RTIT_STATUS_BYTECNT))
++
++#define MSR_IA32_RTIT_OUTPUT_BASE_MASK \
++	(~((1UL << cpuid_query_maxphyaddr(vcpu)) - 1) | 0x7f)
++
+ enum pt_mode {
+ 	PT_MODE_SYSTEM = 0,
+ 	PT_MODE_HOST,
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 0a55772..a1ec71d 100644
+index 455a87e..16943a8 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -3710,7 +3710,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+@@ -934,6 +934,7 @@ static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
+ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
+ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
+ 							  u32 msr, int type);
++static bool vmx_pt_supported(void);
+ 
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+ static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+@@ -2534,6 +2535,77 @@ static void vmx_set_interrupt_shadow(struct kvm_vcpu *vcpu, int mask)
+ 		vmcs_write32(GUEST_INTERRUPTIBILITY_INFO, interruptibility);
+ }
+ 
++static int vmx_rtit_ctl_check(struct kvm_vcpu *vcpu, u64 data)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	unsigned long value;
++
++	/*
++	 * Any MSR write that attempts to change bits marked reserved will
++	 * case a #GP fault.
++	 */
++	if (data & vmx->pt_desc.ctl_bitmask)
++		return 1;
++
++	/*
++	 * Any attempt to modify IA32_RTIT_CTL while TraceEn is set will
++	 * result in a #GP unless the same write also clears TraceEn.
++	 */
++	if ((vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) &&
++		((vmx->pt_desc.guest.ctl ^ data) & ~RTIT_CTL_TRACEEN))
++		return 1;
++
++	/*
++	 * WRMSR to IA32_RTIT_CTL that sets TraceEn but clears this bit
++	 * and FabricEn would cause #GP, if
++	 * CPUID.(EAX=14H, ECX=0):ECX.SNGLRGNOUT[bit 2] = 0
++	 */
++	if ((data & RTIT_CTL_TRACEEN) && !(data & RTIT_CTL_TOPA) &&
++		!(data & RTIT_CTL_FABRIC_EN) &&
++		!pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_single_range_output))
++		return 1;
++
++	/*
++	 * MTCFreq, CycThresh and PSBFreq encodings check, any MSR write that
++	 * utilize encodings marked reserved will casue a #GP fault.
++	 */
++	value = pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_mtc_periods);
++	if (pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_mtc) &&
++			!test_bit((data & RTIT_CTL_MTC_RANGE) >>
++			RTIT_CTL_MTC_RANGE_OFFSET, &value))
++		return 1;
++	value = pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_cycle_thresholds);
++	if (pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_psb_cyc) &&
++			!test_bit((data & RTIT_CTL_CYC_THRESH) >>
++			RTIT_CTL_CYC_THRESH_OFFSET, &value))
++		return 1;
++	value = pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_psb_periods);
++	if (pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_psb_cyc) &&
++			!test_bit((data & RTIT_CTL_PSB_FREQ) >>
++			RTIT_CTL_PSB_FREQ_OFFSET, &value))
++		return 1;
++
++	/*
++	 * If ADDRx_CFG is reserved or the encodings is >2 will
++	 * cause a #GP fault.
++	 */
++	value = (data & RTIT_CTL_ADDR0) >> RTIT_CTL_ADDR0_OFFSET;
++	if ((value && (vmx->pt_desc.range_cnt < 1)) || (value > 2))
++		return 1;
++	value = (data & RTIT_CTL_ADDR1) >> RTIT_CTL_ADDR1_OFFSET;
++	if ((value && (vmx->pt_desc.range_cnt < 2)) || (value > 2))
++		return 1;
++	value = (data & RTIT_CTL_ADDR2) >> RTIT_CTL_ADDR2_OFFSET;
++	if ((value && (vmx->pt_desc.range_cnt < 3)) || (value > 2))
++		return 1;
++	value = (data & RTIT_CTL_ADDR3) >> RTIT_CTL_ADDR3_OFFSET;
++	if ((value && (vmx->pt_desc.range_cnt < 4)) || (value > 2))
++		return 1;
++
++	return 0;
++}
++
++
+ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
+ {
+ 	unsigned long rip;
+@@ -3404,6 +3476,50 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 			return 1;
+ 		msr_info->data = vcpu->arch.ia32_xss;
+ 		break;
++	case MSR_IA32_RTIT_CTL:
++		if (!vmx_pt_supported())
++			return 1;
++		msr_info->data = vmx->pt_desc.guest.ctl;
++		break;
++	case MSR_IA32_RTIT_STATUS:
++		if (!vmx_pt_supported())
++			return 1;
++		msr_info->data = vmx->pt_desc.guest.status;
++		break;
++	case MSR_IA32_RTIT_CR3_MATCH:
++		if (!vmx_pt_supported() ||
++			!pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
++			return 1;
++		msr_info->data = vmx->pt_desc.guest.cr3_match;
++		break;
++	case MSR_IA32_RTIT_OUTPUT_BASE:
++		if (!vmx_pt_supported() ||
++			(!pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_topa_output) &&
++			 !pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_single_range_output)))
++			return 1;
++		msr_info->data = vmx->pt_desc.guest.output_base;
++		break;
++	case MSR_IA32_RTIT_OUTPUT_MASK:
++		if (!vmx_pt_supported() ||
++			(!pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_topa_output) &&
++			 !pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_single_range_output)))
++			return 1;
++		msr_info->data = vmx->pt_desc.guest.output_mask;
++		break;
++	case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B:
++		if (!vmx_pt_supported() ||
++			(msr_info->index - MSR_IA32_RTIT_ADDR0_A >=
++				2 * pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_num_address_ranges)))
++			return 1;
++		msr_info->data =
++			vmx->pt_desc.guest.addrs[msr_info->index -
++						MSR_IA32_RTIT_ADDR0_A];
++		break;
+ 	case MSR_TSC_AUX:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
+@@ -3592,6 +3708,57 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		else
  			clear_atomic_switch_msr(vmx, MSR_IA32_XSS);
  		break;
- 	case MSR_IA32_RTIT_CTL:
--		if (!vmx_pt_supported() || vmx_rtit_ctl_check(vcpu, data))
-+		if (!vmx_pt_supported() || vmx_rtit_ctl_check(vcpu, data) ||
-+			vmx->nested.vmxon)
- 			return 1;
- 		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
- 		vmx->pt_desc.guest.ctl = data;
-@@ -7783,6 +7784,12 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	if (ret)
- 		return ret;
++	case MSR_IA32_RTIT_CTL:
++		if (!vmx_pt_supported() || vmx_rtit_ctl_check(vcpu, data))
++			return 1;
++		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
++		vmx->pt_desc.guest.ctl = data;
++		break;
++	case MSR_IA32_RTIT_STATUS:
++		if (!vmx_pt_supported() ||
++			(vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) ||
++			(data & MSR_IA32_RTIT_STATUS_MASK))
++			return 1;
++		vmx->pt_desc.guest.status = data;
++		break;
++	case MSR_IA32_RTIT_CR3_MATCH:
++		if (!vmx_pt_supported() ||
++			(vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) ||
++			!pt_cap_get_ex(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
++			return 1;
++		vmx->pt_desc.guest.cr3_match = data;
++		break;
++	case MSR_IA32_RTIT_OUTPUT_BASE:
++		if (!vmx_pt_supported() ||
++			(vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) ||
++			(!pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_topa_output) &&
++			 !pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_single_range_output)) ||
++			(data & MSR_IA32_RTIT_OUTPUT_BASE_MASK))
++			return 1;
++		vmx->pt_desc.guest.output_base = data;
++		break;
++	case MSR_IA32_RTIT_OUTPUT_MASK:
++		if (!vmx_pt_supported() ||
++			(vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) ||
++			(!pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_topa_output) &&
++			 !pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_single_range_output)))
++			return 1;
++		vmx->pt_desc.guest.output_mask = data;
++		break;
++	case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B:
++		if (!vmx_pt_supported() ||
++			(vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) ||
++			(msr_info->index - MSR_IA32_RTIT_ADDR0_A >=
++				2 * pt_cap_get_ex(vmx->pt_desc.caps,
++					PT_CAP_num_address_ranges)))
++			return 1;
++		vmx->pt_desc.guest.addrs[msr_info->index -
++				MSR_IA32_RTIT_ADDR0_A] = data;
++		break;
+ 	case MSR_TSC_AUX:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 7cfdd22..1d1bc39 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -69,6 +69,7 @@
+ #include <asm/irq_remapping.h>
+ #include <asm/mshyperv.h>
+ #include <asm/hypervisor.h>
++#include <asm/intel_pt.h>
  
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		vmx->pt_desc.guest.ctl = 0;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+		pt_set_intercept_for_msr(vmx, 1);
-+	}
-+
- 	nested_vmx_succeed(vcpu);
- 	return kvm_skip_emulated_instruction(vcpu);
- }
+ #define CREATE_TRACE_POINTS
+ #include "trace.h"
+@@ -1016,7 +1017,13 @@ bool kvm_rdpmc(struct kvm_vcpu *vcpu)
+ #endif
+ 	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
+ 	MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
+-	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES
++	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES,
++	MSR_IA32_RTIT_CTL, MSR_IA32_RTIT_STATUS, MSR_IA32_RTIT_CR3_MATCH,
++	MSR_IA32_RTIT_OUTPUT_BASE, MSR_IA32_RTIT_OUTPUT_MASK,
++	MSR_IA32_RTIT_ADDR0_A, MSR_IA32_RTIT_ADDR0_B,
++	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
++	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
++	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+ };
+ 
+ static unsigned num_msrs_to_save;
+@@ -4527,6 +4534,30 @@ static void kvm_init_msr_list(void)
+ 			if (!kvm_x86_ops->rdtscp_supported())
+ 				continue;
+ 			break;
++		case MSR_IA32_RTIT_CTL:
++		case MSR_IA32_RTIT_STATUS:
++			if (!kvm_x86_ops->pt_supported())
++				continue;
++			break;
++		case MSR_IA32_RTIT_CR3_MATCH:
++			if (!kvm_x86_ops->pt_supported() ||
++					!pt_cap_get(PT_CAP_cr3_filtering))
++				continue;
++			break;
++		case MSR_IA32_RTIT_OUTPUT_BASE:
++		case MSR_IA32_RTIT_OUTPUT_MASK:
++			if (!kvm_x86_ops->pt_supported() ||
++				(!pt_cap_get(PT_CAP_topa_output) &&
++				 !pt_cap_get(PT_CAP_single_range_output)))
++				continue;
++			break;
++		case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: {
++			if (!kvm_x86_ops->pt_supported() ||
++				msrs_to_save[i] - MSR_IA32_RTIT_ADDR0_A >=
++				2 * pt_cap_get(PT_CAP_num_address_ranges))
++				continue;
++			break;
++		}
+ 		default:
+ 			break;
+ 		}
 -- 
 1.8.3.1
