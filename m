@@ -1,200 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932515AbeCDWbx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 17:31:53 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48145 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752098AbeCDWaT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 17:30:19 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: [RFC/RFT][PATCH 5/7] cpuidle: New governor callback for predicting idle duration
-Date: Sun, 04 Mar 2018 23:27:32 +0100
-Message-ID: <24524352.zYArR4Buth@aspire.rjw.lan>
-In-Reply-To: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
-References: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
+        id S932346AbeCDWez (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 17:34:55 -0500
+Received: from sauhun.de ([88.99.104.3]:36331 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932118AbeCDWey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 17:34:54 -0500
+Date: Sun, 4 Mar 2018 23:34:51 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mmc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 14/16] mmc: tmio: move TMIO_MASK_{READOP,WRITEOP}
+ handling to correct place
+Message-ID: <20180304223451.joqs2yoopwogncvj@ninjato>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7gyjdunorgun5zsi"
+Content-Disposition: inline
+In-Reply-To: <1516206496-16612-15-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-In order to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, introduce a
-new cpuidle governor callback for predicting idle duration and make
-cpuidle_select() use it to obtain an idle duration estimate.  Also
-make cpuidle_select() return the expected idle duration to its caller
-through an additional argument pointer.
+--7gyjdunorgun5zsi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For the menu governor, make the new callback pointer point to the
-menu_predict() routine introduced previously and stop calling it
-directly from menu_select().
+On Thu, Jan 18, 2018 at 01:28:14AM +0900, Masahiro Yamada wrote:
+> As far as I tested the IP on UniPhier SoCs, TMIO_STAT_{RXRDY,TXRQ}
+> are asserted for DMA mode as well as for PIO.  I need to disable the
+> those IRQs in dma_ops->start hook, otherwise the DMA transfer fails
+> with the following error message:
+>   PIO IRQ in DMA mode!
+>=20
+> Renesas chips are the same cases since I see their dma_ops->start
+> hooks explicitly clear TMIO_STAT_{RXRDY,TXRQ} (with nice comment!).
+>=20
+> If we do this sanity check in TMIO MMC core, RXRDY/TXRQ handling
+> should be entirely moved to the core.  tmio_mmc_cmd_irq() will
+> be a suitable place to disable them.
+>=20
+> The probe function sets TMIO_MASK_{READOP,WRITEOP} but this is odd.
+>=20
+>     /* Unmask the IRQs we want to know about */
+>     if (!_host->chan_rx)
+>             irq_mask |=3D TMIO_MASK_READOP;
+>     if (!_host->chan_tx)
+>             irq_mask |=3D TMIO_MASK_WRITEOP;
+>=20
+> At this point, _host->{chan_rx,chan_tx} are _always_ NULL because
+> tmio_mmc_request_dma() is called after this code.  Consequently,
+> TMIO_MASK_{READOP,WRITEOP} are set here whether DMA is used or not.
+> Remove this pointless code.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-This change is not expected to alter the functionality of the code.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpuidle/cpuidle.c        |   37 +++++++++++++++++++++++++++++++++++--
- drivers/cpuidle/governors/menu.c |   10 ++++++----
- include/linux/cpuidle.h          |    5 ++++-
- kernel/sched/idle.c              |    4 +++-
- 4 files changed, 48 insertions(+), 8 deletions(-)
 
-Index: linux-pm/include/linux/cpuidle.h
-===================================================================
---- linux-pm.orig/include/linux/cpuidle.h
-+++ linux-pm/include/linux/cpuidle.h
-@@ -131,7 +131,8 @@ extern bool cpuidle_not_available(struct
- 				  struct cpuidle_device *dev);
- 
- extern int cpuidle_select(struct cpuidle_driver *drv,
--			  struct cpuidle_device *dev);
-+			  struct cpuidle_device *dev,
-+			  unsigned int *duration_us_ptr);
- extern int cpuidle_enter(struct cpuidle_driver *drv,
- 			 struct cpuidle_device *dev, int index);
- extern void cpuidle_reflect(struct cpuidle_device *dev, int index);
-@@ -245,6 +246,8 @@ struct cpuidle_governor {
- 	void (*disable)		(struct cpuidle_driver *drv,
- 					struct cpuidle_device *dev);
- 
-+	unsigned int (*predict) (struct cpuidle_driver *drv,
-+					struct cpuidle_device *dev);
- 	int  (*select)		(struct cpuidle_driver *drv,
- 					struct cpuidle_device *dev);
- 	void (*reflect)		(struct cpuidle_device *dev, int index);
-Index: linux-pm/drivers/cpuidle/governors/menu.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/menu.c
-+++ linux-pm/drivers/cpuidle/governors/menu.c
-@@ -276,7 +276,8 @@ again:
- 	goto again;
- }
- 
--static void menu_predict(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-+static unsigned int menu_predict(struct cpuidle_driver *drv,
-+				 struct cpuidle_device *dev)
- {
- 	struct menu_device *data = this_cpu_ptr(&menu_devices);
- 	struct device *device = get_cpu_device(dev->cpu);
-@@ -298,7 +299,7 @@ static void menu_predict(struct cpuidle_
- 	/* Special case when user has set very strict latency requirement */
- 	if (unlikely(data->latency_req == 0)) {
- 		data->predicted_us = 0;
--		return;
-+		return 0;
- 	}
- 
- 	/* determine the expected residency time, round up */
-@@ -331,6 +332,8 @@ static void menu_predict(struct cpuidle_
- 	interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
- 	if (data->latency_req > interactivity_req)
- 		data->latency_req = interactivity_req;
-+
-+	return data->predicted_us;
- }
- 
- /**
-@@ -343,8 +346,6 @@ static int menu_select(struct cpuidle_dr
- 	struct menu_device *data = this_cpu_ptr(&menu_devices);
- 	int first_idx, idx, i;
- 
--	menu_predict(drv, dev);
--
- 	first_idx = 0;
- 	if (drv->states[0].flags & CPUIDLE_FLAG_POLLING) {
- 		struct cpuidle_state *s = &drv->states[1];
-@@ -505,6 +506,7 @@ static struct cpuidle_governor menu_gove
- 	.name =		"menu",
- 	.rating =	20,
- 	.enable =	menu_enable_device,
-+	.predict =	menu_predict,
- 	.select =	menu_select,
- 	.reflect =	menu_reflect,
- };
-Index: linux-pm/drivers/cpuidle/cpuidle.c
-===================================================================
---- linux-pm.orig/drivers/cpuidle/cpuidle.c
-+++ linux-pm/drivers/cpuidle/cpuidle.c
-@@ -263,12 +263,45 @@ int cpuidle_enter_state(struct cpuidle_d
-  *
-  * @drv: the cpuidle driver
-  * @dev: the cpuidle device
-+ * @duration_us_ptr: pointer to return the expected duration of idle period
-  *
-  * Returns the index of the idle state.  The return value must not be negative.
-+ *
-+ * The memory location pointed to by @duration_us_ptr is written the expected
-+ * duration of the upcoming idle period, in microseconds.
-  */
--int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-+int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-+		   unsigned int *duration_us_ptr)
- {
--	return cpuidle_curr_governor->select(drv, dev);
-+	unsigned int duration_us;
-+	int ret, i;
-+
-+	if (!cpuidle_curr_governor->predict) {
-+		ret = cpuidle_curr_governor->select(drv, dev);
-+		*duration_us_ptr = drv->states[ret].target_residency;
-+		return ret;
-+	}
-+
-+	duration_us = cpuidle_curr_governor->predict(drv, dev);
-+
-+	ret = cpuidle_curr_governor->select(drv, dev);
-+
-+	/*
-+	 * Return the target residency of the selected state as the expected
-+	 * idle period duration if there are any states available with target
-+	 * residencies greater than the predicted idle period duration (to
-+	 * avoid staying in a shallow state for too long).
-+	 */
-+	for (i = ret + 1; i < drv->state_count; i++)
-+		if (!drv->states[i].disabled &&
-+		    !dev->states_usage[i].disable &&
-+		    drv->states[i].target_residency > duration_us) {
-+			duration_us = drv->states[ret].target_residency;
-+			break;
-+		}
-+
-+	*duration_us_ptr = duration_us;
-+	return ret;
- }
- 
- /**
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -186,13 +186,15 @@ static void cpuidle_idle_call(void)
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		unsigned int duration_us;
-+
- 		tick_nohz_idle_go_idle(true);
- 		rcu_idle_enter();
- 
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
--		next_state = cpuidle_select(drv, dev);
-+		next_state = cpuidle_select(drv, dev, &duration_us);
- 		entered_state = call_cpuidle(drv, dev, next_state);
- 		/*
- 		 * Give the governor an opportunity to reflect on the outcome
+--7gyjdunorgun5zsi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqcdIcACgkQFA3kzBSg
+KbbQ1Q//bxdR3m/BVVyL+YM+FHh5fhacmQn4jWGsiuAoMJxwnoF+7UTkf8esucKs
+VAtJVb+l3nlCDzOKoc25R6o+kJO4RKSKdYRAp2hFQzXPUbA/R34cuANqhdP021JW
+huAbKtbd03f3I5n1HOzplwh5dwUIaSUxK7vMfyRQjeQSJAyFn1K0I10amoVLVEeE
+v2p9AvH/SVsEm5FS+XR+ODEoxs6JXChBdsB6RRuNqDwySpjGy8GI02d3rOpYCLlZ
+ruohLPN7rKUBu344pwHgneb9jlExfQRC81AP1TlVlddPFs1+1xJ5Y0akiZQuYtXs
+PpUnO8z/jZt1Jc/KIiCgZvSm9eYEPf5S/LBJCg2Cb+eNt7z2pMC/NPrm1JWoFsWi
+9MY2bsj/Gzquq3GgwMgIuMZtYNouT41AZXriTdt7ODcM4s67g0RUpAoadejwxQ14
+G2C3cBlZTGneiB/Vi2h3pN7BSAxzuDcBMebyTXwnnf/CDzc2Jf+TGs6K9mONqdKG
+9iVMD3in/d7AOTknxlVo3mrX3usFq1NHhAx7BfcqI02WOoMt6aR2sXDyeIvd+91c
+6Mfg0LWr9mcGSbeRMVSyxakB0ZGC6/xAIxSje+pAbXGNG+s6qeLQtk+VdGL+4Syu
+ZQuN4iMZYOVKFaT8hrC+O/PfyEmMISeP+D78EBuOOikWW7aV230=
+=u/GX
+-----END PGP SIGNATURE-----
+
+--7gyjdunorgun5zsi--
