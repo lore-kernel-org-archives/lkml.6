@@ -1,132 +1,106 @@
-Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELuxXD7M5yhdqQ7wtB9VHA3Be2EzJaTjDbS2/fVDb9kQ1JYN0CCpdMpt9hr68cSwjRT/MabB
-ARC-Seal: i=1; a=rsa-sha256; t=1520276926; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YEMgx220iLygF5/PQloTMDbrNsE6K2WsXWKyUKFLlv8dFfKgFxxu4T9yt7TJNeIWnI
-         cEjufzeII7truWr8e/EXKMZc7TrvIWkrmR40nnz17EkigPGmFrRR0YNCiGziFOWp8IDt
-         /ouoOjMR6ncIIOjjhTNry0pstUqFhZIyFuEVf4Lm0YDsvUn/4K+v0aVPaqUy38wg5nZt
-         QzHBHc6llqsstgZgAxrmdY/twUIBNfldI7bFz9uZr5VeeIPErIaFWjdB4fyx+XkihfNz
-         TW14nYe1V34nDyoyUPu4yFqkckcipx4gPrYXiCFyAfwdrEzlsjRxQvYNz9lth0AFDpkm
-         L2Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:references:in-reply-to:message-id:date:cc:to:from
-         :arc-authentication-results;
-        bh=b2R3K1MGR381zb/JEvhh3b8EdrG078tvQ3ZdSFBFOHM=;
-        b=dW1bXsu0yCSwFuHK75sUW2eIO2BBavU15c8xrfgQlbL94lDdol5DkDKyIn9sBkITSp
-         iglmTKdyVz4M9uTRaj9CsW7KzDOF8PE2h7HYxZcab8ruwVrUdME25bmv0Q6AxzsY1D5f
-         MVu7540zg+2MADrxpRnT4JJNyRSH9GZhi4Rw+CGMXtdDjq6u/H2fQXszRZnukLRP9ylY
-         A5pudkTUfh1S/gpKl9JXbNzau72kiLWgBgqmknGCA3ZGnP9YVNTGyQBLlsmCnt/1MSOw
-         AaGMzTkfPbTwe4juftPIBRkGZJ3BbCvDnFGrhxeev+GD707HJLWpf0I0vT0oIHR58np/
-         Q6gA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-ntb@googlegroups.com,
-	linux-crypto@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>
-Date: Mon,  5 Mar 2018 12:08:22 -0700
-Message-Id: <20180305190824.847-6-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180305190824.847-1-logang@deltatee.com>
-References: <20180305190824.847-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v11 5/7] ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2908601-1520178562-2-10744052950440619576
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES endanl, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520178561; b=g/lg2Zk9su6vC2h45ufvMOK091yk0psAj6WYwlg6bQb6JuW
+    ZdV40lctFUojPYyeY1guxfqgdSjeZOF0NNY/iTR1B5SSKSHj41/k2nbA9nEgsY4v
+    hrN288FbciOYROCj3evkG8ww2bI83pyJdjRjn55bkQfl2MyNz6wKwecJhcov2bQt
+    +A+4WGdAoH/kEV41LRXmCq8NyvSWGzEw1vKgC0KFPgN/axXHWt3JfIU8p3PuuZFA
+    IAseZ7nEobYdhO+ge03smekW5zmo5SsNHaCNYMtQapcOkGyhZetEafX5bl1/5okm
+    hkkQRUEZxwyQuSEOXuzP4DVUvThWd9HuGuE683w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520178561; bh=n
+    TpO9abDoR5u9lLdsO8+tq9X1IPcf2fawVUEX57CMHo=; b=RR37J0Pe/rafgW8KQ
+    kxWd+MSGKHADEYexI+uflbnFfD+ghbaof5wlymbxuMOkffFUOV+WBG4/Mnpcr6pl
+    Ure3Bq0DB3blOb7aiC/g/QmfX/dhw0SUgYiMZEIG1lBZQbnZ2oxowLPFedZXZNyd
+    QQn7DWR0Nx4P5FsOLWHdI76OjS1aR+D3hTvgH3n2Tza51BTJeeQSykDEBzp0so7x
+    C+KeTonm/kyF73c77vF3odBZceUTsKPkQk6jmruJnzCoIpuyB1gDp07lLv6aILlS
+    Fk//9k3gI4E1C1rEFwJfH2OqCPGkuJHZDX231gF9Smv8qK9cZ4wH+gn+uQgfBP1l
+    kRq2g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KGQPU2pA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F5aCBHMS;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KGQPU2pA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=F5aCBHMS;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELsCaFQ0xTJnhC7oPuYq5IvR7UwjqeC9gkWGzYI5097Rex072a+xX3hDuY8IbvNXl8wBJ3VnqA==
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: alan@linux.intel.com
+Subject: [PATCH 0/3] staging: media: cleanup
+Date: Sun,  4 Mar 2018 21:18:24 +0530
+Message-Id: <1520178507-25141-1-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org,
+ Arushi Singhal <arushisinghal19971997@gmail.com>, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+ sakari.ailus@linux.intel.com, mchehab@kernel.org, linux-media@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594125898766823916?=
-X-GMAIL-MSGID: =?utf-8?q?1594125898766823916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now that ioread64 and iowrite64 are available in io-64-nonatomic,
-we can remove the hack at the top of ntb_hw_intel.c and replace it
-with an include.
+Spellcheck the comments.
+Remove the repeated, consecutive words with single word.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Dave Jiang <dave.jiang@intel.com>
-Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
-Acked-by: Jon Mason <jdmason@kudzu.us>
+Arushi Singhal (3):
+  staging: media: Replace "be be" with "be"
+  staging: media: Replace "cant" with "can't"
+  staging: media: Replace "dont" with "don't"
 
-# Please enter the commit message for your changes. Lines starting
-# with '#' will be ignored, and an empty message aborts the commit.
-#
-# Date:      Mon Jun 19 12:18:31 2017 -0600
-#
-# interactive rebase in progress; onto ae64f9bd1d36
-# Last commands done (6 commands done):
-#    pick cf3e4dab2173 io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
-#    r 79b4c4b8490c ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-# Next commands to do (2 remaining commands):
-#    r 19b6c1f3b15d crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
-#    r f3c8723446ef ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
-# You are currently editing a commit while rebasing branch 'io64_v9' on 'ae64f9bd1d36'.
-#
-# Changes to be committed:
-#	modified:   drivers/ntb/hw/intel/ntb_hw_intel.c
-#
----
- drivers/ntb/hw/intel/ntb_hw_intel.c | 30 +-----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
+ drivers/staging/media/atomisp/pci/atomisp2/css2400/ia_css_pipe_public.h | 2 +-
+ drivers/staging/media/atomisp/pci/atomisp2/mmu/isp_mmu.c                | 2 +-
+ drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c                    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.c b/drivers/ntb/hw/intel/ntb_hw_intel.c
-index 156b45cd4a19..5cf40ab21366 100644
---- a/drivers/ntb/hw/intel/ntb_hw_intel.c
-+++ b/drivers/ntb/hw/intel/ntb_hw_intel.c
-@@ -59,6 +59,7 @@
- #include <linux/random.h>
- #include <linux/slab.h>
- #include <linux/ntb.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- 
- #include "ntb_hw_intel.h"
- 
-@@ -149,35 +150,6 @@ MODULE_PARM_DESC(xeon_b2b_dsd_bar5_addr32,
- static inline enum ntb_topo xeon_ppd_topo(struct intel_ntb_dev *ndev, u8 ppd);
- static int xeon_init_isr(struct intel_ntb_dev *ndev);
- 
--#ifndef ioread64
--#ifdef readq
--#define ioread64 readq
--#else
--#define ioread64 _ioread64
--static inline u64 _ioread64(void __iomem *mmio)
--{
--	u64 low, high;
--
--	low = ioread32(mmio);
--	high = ioread32(mmio + sizeof(u32));
--	return low | (high << 32);
--}
--#endif
--#endif
--
--#ifndef iowrite64
--#ifdef writeq
--#define iowrite64 writeq
--#else
--#define iowrite64 _iowrite64
--static inline void _iowrite64(u64 val, void __iomem *mmio)
--{
--	iowrite32(val, mmio);
--	iowrite32(val >> 32, mmio + sizeof(u32));
--}
--#endif
--#endif
--
- static inline int pdev_is_xeon(struct pci_dev *pdev)
- {
- 	switch (pdev->device) {
 -- 
-2.11.0
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
