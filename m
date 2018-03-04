@@ -1,52 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932188AbeCDUgq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 15:36:46 -0500
-Received: from mail-yw0-f176.google.com ([209.85.161.176]:43166 "EHLO
-        mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751848AbeCDUgn (ORCPT
+        id S932261AbeCDUj3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 15:39:29 -0500
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:36608 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932090AbeCDUj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 15:36:43 -0500
-X-Google-Smtp-Source: AG47ELuRufoZHPDAKa4B+5lfDx5l6YUfkaW4Y17DlBCuCXLgLRRHcvOMv2OPuzzYPQ3sknBBcVcHRg==
-Date: Sun, 4 Mar 2018 12:36:40 -0800
-From: Tejun Heo <tj@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] ahci/pci-quirks: Add PCI-id for the Highpoint
- Rocketraid 644L card
-Message-ID: <20180304203640.GF231488@devbig577.frc2.facebook.com>
-References: <20180302103633.10592-1-hdegoede@redhat.com>
- <20180302192907.GB202062@bhelgaas-glaptop.roam.corp.google.com>
+        Sun, 4 Mar 2018 15:39:28 -0500
+Date: Sun, 4 Mar 2018 22:39:26 +0200
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] init/ramdisk: use pr_cont() at the end of ramdisk loading
+Message-ID: <20180304203926.fdimiyyunogejlas@darkstar.musicnaut.iki.fi>
+References: <20180302205552.16031-1-aaro.koskinen@iki.fi>
+ <CAHp75VcY4+nO26jEq4NgXAPVq2rB2uDnM0Syh=R-=sh9gPOtZQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302192907.GB202062@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAHp75VcY4+nO26jEq4NgXAPVq2rB2uDnM0Syh=R-=sh9gPOtZQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 01:29:07PM -0600, Bjorn Helgaas wrote:
-> On Fri, Mar 02, 2018 at 11:36:31AM +0100, Hans de Goede wrote:
-> > Hi All,
-> > 
-> > Here are 2 patches adding support for Highpoint Rocketraid 644L cards,
-> > they can be merged independently from each-other into their resp. subsys,
-> > but since they belong together I'm sending them out as a series.
-> 
-> Seems like it'd be nice to keep these together, so Tejun, feel free to
-> take both patches with my
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> on the pci/quirks.c patch.  If you'd prefer me to take them, just let
-> me know.
+Hi,
 
-Applied both to libata/for-4.16-fixes with ack added.
+On Sat, Mar 03, 2018 at 06:14:33PM +0200, Andy Shevchenko wrote:
+> On Fri, Mar 2, 2018 at 10:55 PM, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> > Use pr_cont() at the end of ramdisk loading. This will avoid the rotator
+> > and an extra newline appearing in the dmesg.
+> 
+> >                                 printk("Error closing the disk.\n");
+> 
+> What about this one?
 
-Thanks.
+I think it should be left as is.
 
--- 
-tejun
+A.
