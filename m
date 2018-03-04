@@ -1,70 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeCDJmt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:42:49 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:49130 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751831AbeCDJmr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:42:47 -0500
-From: Stefan Chulski <stefanc@marvell.com>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-CC: Antoine Tenart <antoine.tenart@bootlin.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>
-Subject: RE: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
-Thread-Topic: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
-Thread-Index: AQHTsj18um8XkydR1EKUeFQympSTGqO8/daAgAKiLNCAABBKAIAAItKg
-Date: Sun, 4 Mar 2018 09:42:39 +0000
-Message-ID: <7d2e6deeb8a8435593b5c08615b192e1@IL-EXCH01.marvell.com>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-6-antoine.tenart@bootlin.com>
-        <20180302171713.54beaad0@windsurf.lan>
-        <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
- <20180304102828.1437fbc3@windsurf.home>
-In-Reply-To: <20180304102828.1437fbc3@windsurf.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.5.102.207]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_05:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=756 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1803040124
+        id S1752525AbeCDJus (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:50:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751793AbeCDJup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 04:50:45 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C66D2133D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Sun, 4 Mar 2018 18:50:39 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        x86@kernel.org, Yang Bo <yangbo@deepin.com>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH -tip] x86: kprobes: Cleanup preempt disabling and
+ enabling
+Message-Id: <20180304185039.4ce71a8018307287814585fc@kernel.org>
+In-Reply-To: <20180303212545.8aa1ddb856975ffcac4672b5@kernel.org>
+References: <152004878307.12012.17534094592580782444.stgit@devbox>
+        <20180303095823.phaoeuvcjhoirwg3@gmail.com>
+        <20180303212545.8aa1ddb856975ffcac4672b5@kernel.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > To perform checksum in HW, HW obviously should work in store and
-> forward mode. Store all frame in TX FIFO and then check checksum.
-> > If mtu 1500B, everything fine and all port can do this.
-> >
-> > If mtu is 9KB and 9KB frame transmitted, Port 0 still can do HW checksum.
-> But ports 1 and 2 doesn't has enough FIFO for this.
-> > So we cannot offload this feature and SW should perform checksum.
+On Sat, 3 Mar 2018 21:25:45 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> On Sat, 3 Mar 2018 10:58:23 +0100
+> Ingo Molnar <mingo@kernel.org> wrote:
 > 
-> So perhaps the real check should not be "port 0", but whether the MTU is
-> higher or lower than the TX FIFO size assigned to the current port.
-> This would express in much better way the reason why HW checksum can be
-> used or not.
+> > 
+> > * Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > > +/*
+> > > + * Interrupts are disabled on entry as trap3 is an interrupt gate and they
+> > > + * remain disabled throughout this function.
+> > > + */
+> > > +int kprobe_int3_handler(struct pt_regs *regs)
+> > > +{
+> > > +	struct kprobe_ctlblk *kcb;
+> > > +	int ret;
+> > > +
+> > > +	if (user_mode(regs))
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * We don't want to be preempted for the entire
+> > > +	 * duration of kprobe processing.
+> > > +	 */
+> > > +	preempt_disable();
+> > > +
+> > > +	kcb = get_kprobe_ctlblk();
+> > > +	ret = kprobe_int3_dispatcher(regs, kcb);
+> > > +
+> > > +	if (!kprobe_ready_for_singlestep(regs))
+> > > +		preempt_enable_no_resched();
+> > > +
+> > > +	return ret;
+> > 
+> > What's the point of disabling preemption, if IRQs are disabled already?
+> > 
+> > There's no preemption when IRQs are off...
+> 
+> Ahh, right! Whole the kprobe singlestepping, IRQs are off (kprobes drops
+> IF from regs->flags for single stepping) so we don't need to care about
+> preempt count anymore...
 
-I really don't want involve MTU size here, for each packet we should add to MTU overhead added by HW(offset, CRC, DSA tags and etc).
-I prefer just to check: port TX FIFO size is 10KB -> port can support HW checksum offload.
-Do you suggest to keep some shadow table with ports TX FIFO sizes for this?  
+Hmm, I've found one issue for removing preemption... This is caused by error-
+injection framework and similar routines.
 
-Thanks,
-Stefan.
+OK, let me explain it. Histrically, jprobe needs to run its handler with preempt
+disabled. So kprobes skips preempt_enable() (and singlestep too) when its 
+pre_handler returns 1 (which is the signal that the handler is jprobe pre_handler).
+Thus, this patch has a bug IF jprobe is survived. Fortunatelly(?) the jprobe has
+gone now, actual code is still there but interface has gone.
+
+Then, we have no problem?
+No, actually not, because of new error injection framework. The error injection
+framework uses similar techniq of jprobe. But it actually doesn't call back to
+longjmp-restore function, it changes regs->ip, enable preemption and return 1.
+In this path, since it doesn't setup singlestep (because return 1), above patch
+preempt_enable() again in the end of kprobe_int3_handler(). This may cause
+double decrement the preemt count when we use error_injection feature on bpf
+and fault-injection.
+
+So it must check "does kprobes set up singlestep, or kprobe pre_handler returns 1?"
+
+To tell the truth, this never happen currently because all error-injectable
+functions are ftrace-based, which will preempt_enable() if it pre_handler
+returns 1. But this means the behaviors of ftrace-based kprobes (and optprobe) and
+normal kprobes are different. That is a bug.
+
+So please ignore this patch. 
+ 
+Anyway, I would like to change this behavior among archs after removing jprobe code.
+If we don't have jprobe, there is no reason to skip preempt_enable() if pre_handler
+returns 1. (including ftrace-based kprobe and optprobe)
+
+My plan is
+ 1. Remove arch-independent jprobe code
+ 2. Remove jprobes related code from each architecture.
+ 3. Change preempt behavior for each arch and update error-injection/bpf code.
+
+In step3, if I split patches for each arch, there is a chance to make a buggy kernel in
+error injection code. I will make a unified patch (for tree wide) or introduce some
+temporal flag (like ARCH_NO_PREEMPT_FIXUP) so that error-injection/bpf can check it.
+
+Thank you,
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
