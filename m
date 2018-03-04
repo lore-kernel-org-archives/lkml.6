@@ -1,66 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752508AbeCDCaQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 3 Mar 2018 21:30:16 -0500
-Received: from mout.gmx.net ([212.227.17.22]:57201 "EHLO mout.gmx.net"
+        id S1752050AbeCDCaM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 3 Mar 2018 21:30:12 -0500
+Received: from mout.gmx.net ([212.227.17.21]:55633 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752409AbeCDCaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 3 Mar 2018 21:30:14 -0500
+        id S1751309AbeCDCaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 3 Mar 2018 21:30:10 -0500
 From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCH 3/3] net: core: dst: Add kernel-doc for 'net' parameter
-Date: Sun,  4 Mar 2018 03:29:53 +0100
-Message-Id: <20180304022953.4508-3-j.neuschaefer@gmx.net>
+Subject: [PATCH 1/3] net: core: dst_cache: Fix a typo in a comment
+Date: Sun,  4 Mar 2018 03:29:51 +0100
+Message-Id: <20180304022953.4508-1-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180304022953.4508-1-j.neuschaefer@gmx.net>
-References: <20180304022953.4508-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:ymtn87BSSHgLp7NedXUq1pd3aoC/rkoJ0l/WjZ4ZzyU5QVyQ38o
- B/LoidkOk/SHzg6YjsGKXsVL1qOkuJI1K8a+COJ3xzJNfRGjm/q16H3doJ+TFm4P+VytBps
- eV6wLwMmucnA6WBbDwthjdTZwcsMXy023oLRlzebEcOish6fKFS8lFgcHU4Zm8Acd3WtBsj
- 9801hiXLDd1sRiBw+ze4Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cygDGMWrtzw=:BhKicx7UIcunwOGZvLRCyJ
- NS0qUCe9SdirHlrY4c799sSo30CzweHxDumFFF5sysPebWPg3nFycIRSGBR+ejQW8fHm/NY0L
- VgbanXeb39klW+VFLRyH5d+TYBdaof6nrBfcfZBLZ5tQoL+EaJ4irLIvYwr96zsbr2HR0wpFp
- mhOQwDx0Zpth30QEHzwHfrH+oQFa1eNoJUR6WNnzLYIZ8h1V3AccPy6mM1et1h9P/6f0PIpn8
- vTHZlf8hNr3NHAWo0Sv431dHBxqvkaOGnxPqvZ+ZJmqPTKgYwc+HjZkbJBL5xvuYwRAqGwsl8
- mxrXYd8sm8/lmH+jTefBGeembhRvCyQauA+nR94B2zELFxXJ/RFX8pFwnwapbGTuWyNJP1nbt
- kRKLOfNylr54tJ2+0aG4sJXMMQE+j298jnVenGEtRBGqfjyjaSoHnSKjnGSJh1r1XQzY+kvNn
- wu9Ayrb6FAXimJSf87hUpVD/VMngg7CajPQT+plkwTVjmytHnR0qtA7UFnQDP9/SBz02q6M3c
- MbKlRARn0NHSKWgiF+nMZy9cd/8gftqxG+NjO/Hl8WmgPTlR9uNkqt2nt3hsSAg8KuJ39TcOF
- eg0/ogAjvw7JOo32NiSfvZu83JT4CHiF0nIWZ6JhFnH7ZS9G354l7Xk+c79Aa/1S2KjzEOgBr
- HapO4FUbm+UVpExxzgNbeAibdOYMqN+JA92ouRwvvXc8PsZBasLi4L68r4+Kin12XYkDtDVXi
- h+9shExOu1XynBKzjAfG+2jr/ZEpAK1DMfsw2CHiFcd7LC2AGeVOCTj1fAoLE1RsHLbnYsTsH
- IzKfOuyrRpQj+qRflhXYyvkwi9JKcJi5iDuiDCeAjrmBrDL58c=
+X-Provags-ID: V03:K0:prrSDsyYumpL8hk8Vp0cRurG7cdM/0nR3vMd3mL5vYzu2Sij5z5
+ LEZVvMccZxHiDF5JYegJEskg1Iu5u2V1eZ5K3Die2PnNvG4VEh7mZXC2cvevDWrpw6X2AE4
+ UR6ivwhwcXKl05v11EWcprHX7aoJ7uToe2/ZqnWmULQvIp3dylBJzcI+2lp6FaMcOdWCJEB
+ yxBdVC720PTfkHrL3iWIw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rhh74UpawhA=:hcn0nUZLKdep2uGpmlbZRk
+ itFlYFdKsubOcBdcHB5KhAI74YcIKiT3PeeIM58ba55bk3vBSE2wF4eyPZzgiWLQH/DC/1Pxq
+ 8ocaW8SlE/qGl8F/goM4Th2q2IHWpV5dKJ28A1nnEbRQc7gTdxeGNEBsphaPflVWtyS2dWBM1
+ +o7mdhmpmtw8mabjoat81u7YBxpw9G7B7qoi4vhAEb9RO+305t43XZK37yrluzMA7Mday1w/R
+ 0wTmJpV3dz7vDxaSOqX3PH57DqaGFgUxUvw2WiGi8XwSATiDobXGldEh9AhARKMa+U4OTyj6t
+ mWgYe2nzASA8t/pkSc2sRJTu/YLpMmvLZXqjPkJOvPhDdnX8+XmFsh3IqKDJ1ZgFuQ7YlBmvq
+ /ePhS8pAXPaFVvyZgdSamUV9ZGfnZxjeBEKAQcEAyCt3ezvEMnU4gqGKRLTbhD/GayTRQkqz6
+ rDtokt7FLixG7QOWA1fMwujqCt35vGuX9qMIQSttUnUYC+jrTkypTUW1zIt/LJ1X7zSJw3V1F
+ rYbKRIowl4Uti8yI+sOjLT1tIyas6YF3yQp/UJZkuYqi0L7EDDxf8MDwgp1nOff687AEZg2Vb
+ 492DRFf6ZQiuS3AudswYmHGB7AIkEK1OV+WWcHGbegCaQFgi/T+FpxKwaWtbwXuMDb5h+26BR
+ 03ZkZNxTxiy/GiGaz5QNhAXzxZu0sYdmaHMiYSnBdw5zPUDlj+r3RD5zpwkxW77G5tpUDRpo+
+ HODh76svOtlAOqGLtsqLGiHlZlzx9UQmhN1/vXeiUoNSS0eUFLUoU83dLy5I14ZjdeDCmB0Hc
+ XLaeBJG7McPtsEueHkb3axlefp0SAyvXMh196RxF0Xlvw1xZwk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the following kernel-doc warning:
-
-./include/net/dst.h:366: warning: Function parameter or member 'net' not described in 'skb_tunnel_rx'
-
-Fixes: ea23192e8e57 ("tunnels: harmonize cleanup done on skb on rx path")
 Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- include/net/dst.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/net/dst_cache.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/dst.h b/include/net/dst.h
-index c63d2c37f6e9..b3219cd8a5a1 100644
---- a/include/net/dst.h
-+++ b/include/net/dst.h
-@@ -356,6 +356,7 @@ static inline void __skb_tunnel_rx(struct sk_buff *skb, struct net_device *dev,
-  *	skb_tunnel_rx - prepare skb for rx reinsert
-  *	@skb: buffer
-  *	@dev: tunnel device
-+ *	@net: netns for packet i/o
+diff --git a/include/net/dst_cache.h b/include/net/dst_cache.h
+index 72fd5067c353..844906fbf8c9 100644
+--- a/include/net/dst_cache.h
++++ b/include/net/dst_cache.h
+@@ -71,7 +71,7 @@ struct dst_entry *dst_cache_get_ip6(struct dst_cache *dst_cache,
+  *	dst_cache_reset - invalidate the cache contents
+  *	@dst_cache: the cache
   *
-  *	After decapsulation, packet is going to re-enter (netif_rx()) our stack,
-  *	so make some cleanups, and perform accounting.
+- *	This do not free the cached dst to avoid races and contentions.
++ *	This does not free the cached dst to avoid races and contentions.
+  *	the dst will be freed on later cache lookup.
+  */
+ static inline void dst_cache_reset(struct dst_cache *dst_cache)
 -- 
 2.16.1
