@@ -1,31 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752589AbeCDJZX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:25:23 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37875 "EHLO mail.bootlin.com"
+        id S1752618AbeCDJ2c (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:28:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37896 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751793AbeCDJZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:25:21 -0500
-Date: Sun, 4 Mar 2018 10:25:18 +0100
+        id S1751844AbeCDJ2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 04:28:30 -0500
+Date: Sun, 4 Mar 2018 10:28:28 +0100
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 To: Stefan Chulski <stefanc@marvell.com>
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         "davem@davemloft.net" <davem@davemloft.net>,
-        Yan Markman <ymarkman@marvell.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
         "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
         "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, "mw@semihalf.com" <mw@semihalf.com>
-Subject: Re: [PATCH net-next 3/5] net: mvpp2: use a data size of 10kB for Tx
- FIFO on port 0
-Message-ID: <20180304102518.1963cb8a@windsurf.home>
-In-Reply-To: <bd3a0e716e1c44938b7a216ea54b9c7e@IL-EXCH01.marvell.com>
+        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>
+Subject: Re: [PATCH net-next 5/5] net: mvpp2: jumbo frames support
+Message-ID: <20180304102828.1437fbc3@windsurf.home>
+In-Reply-To: <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
 References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-4-antoine.tenart@bootlin.com>
-        <20180302171117.2344a893@windsurf.lan>
-        <bd3a0e716e1c44938b7a216ea54b9c7e@IL-EXCH01.marvell.com>
+        <20180302154044.25204-6-antoine.tenart@bootlin.com>
+        <20180302171713.54beaad0@windsurf.lan>
+        <31a2c6c988bd4d5190e1fb3332f3bc35@IL-EXCH01.marvell.com>
 Organization: Bootlin (formerly Free Electrons)
 X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -37,35 +36,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-On Sun, 4 Mar 2018 06:29:59 +0000, Stefan Chulski wrote:
+On Sun, 4 Mar 2018 06:56:02 +0000, Stefan Chulski wrote:
 
-> > Is there a reason to hardcode 10KB for port 0, and 3KB for the other ports ?
-> > Would there be use cases where the user may want different configurations
-> > ?
-> 
-> Design requirement are 10KB TX FIFO for the 10Gb/sec and 2.5KB for the 2.5Gb/sec.
-
-What is a "design requirement" ? Is it a HW design limitation ?
-
-> Since only port 0 support 10Gb/sec and ports 1&2 support up to 2.5Gb/sec.
-> I don't see any reason to change this configurations.
-> Also TX FIFO size could be set only during probe.
-> 
-> > It's just that it feels very "hardcoded" to enforce specifically those numbers.
+> > > +	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {  
 > > 
-> > Also, does it make sense to mention the CP110 here ? Is this 19 KB limitation
-> > a limit of the PPv2.2 IP, or of the CP110 ?  
+> > Again, all over the place we hardcode the fact that Jumbo frames can only be
+> > used on port 0. I know port 0 is the only one that can do 10G, but are there
+> > possibly some use cases where you may want Jumbo frame on another port
+> > ?
+> > 
+> > This all really feels very hardcoded to me.
+> >   
 > 
-> PPv2.2 IP is part of 110 communication processor.
+> All ports support Jumbo frames.
+> But only port 0 can do TX HW checksum offload(due to TX FIFO size).
+> 
+> Packet processor 2.2 has only 19KB TX FIFO size.
+> So in TX FIFO config code assign for Port 0 - 10KB, Port 1 - 3KB and Port 1 - 3KB.
 
-Thanks, I know this :-)
+Yes, but I was also questioning whether hardcoding this configuration
+was correct.
 
-> Next communication processor will has different Packet processor or next generation of PPv2.x
-> Limit is PPv2.2 TX FIFO.
+> To perform checksum in HW, HW obviously should work in store and forward mode. Store all frame in TX FIFO and then check checksum.
+> If mtu 1500B, everything fine and all port can do this.
+> 
+> If mtu is 9KB and 9KB frame transmitted, Port 0 still can do HW checksum. But ports 1 and 2 doesn't has enough FIFO for this.
+> So we cannot offload this feature and SW should perform checksum.
 
-So, the limitation has nothing to do with CP110 really, it's just a
-limitation of PPv2.2, and mentioning CP110 in the comment doesn't make
-much sense, correct ?
+So perhaps the real check should not be "port 0", but whether the MTU
+is higher or lower than the TX FIFO size assigned to the current port.
+This would express in much better way the reason why HW checksum can be
+used or not.
+
+> > > +	/* 9704 == 9728 - 20 and rounding to 8 */
+> > > +	dev->max_mtu = MVPP2_BM_JUMBO_PKT_SIZE;  
+> > 
+> > Is this correct for all ports ? Shouldn't the maximum MTU be different
+> > between port 0 (that supports Jumbo frames) and the other ports ?  
+> 
+> This is correct for all ports. All ports can support Jumbo frames.
+
+OK. With your explanation above, I understand better.
 
 Best regards,
 
