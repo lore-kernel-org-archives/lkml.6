@@ -1,93 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752527AbeCDG7a convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 01:59:30 -0500
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:42192 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751793AbeCDG73 (ORCPT
+        id S1752480AbeCDHQh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 02:16:37 -0500
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46524 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751793AbeCDHQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 01:59:29 -0500
-From: Stefan Chulski <stefanc@marvell.com>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>
-Subject: RE: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for all
- ports
-Thread-Topic: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for
- all ports
-Thread-Index: AQHTsj18Q7zohIDi9EOdxXOWqy0sHKO8+ZSAgAKuY9A=
-Date: Sun, 4 Mar 2018 06:59:20 +0000
-Message-ID: <732b36eb681a4254b654f08636fa9204@IL-EXCH01.marvell.com>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-2-antoine.tenart@bootlin.com>
- <20180302170159.258bcdbc@windsurf.lan>
-In-Reply-To: <20180302170159.258bcdbc@windsurf.lan>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.5.102.207]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_03:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=944 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1803040089
+        Sun, 4 Mar 2018 02:16:36 -0500
+X-Google-Smtp-Source: AG47ELta3QfY9tetzIo3o5DLo/4uc9EkF525FFFObJsIji8WFI+x6oUK63Q//vLyO4LCXzqT/X0cVg==
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc: Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jan Kara <jack@suse.cz>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] memory-failure: fix section mismatch
+Date: Sat,  3 Mar 2018 23:16:11 -0800
+Message-Id: <20180304071613.16899-1-nick.desaulniers@gmail.com>
+X-Mailer: git-send-email 2.14.1
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hello,
-> 
-> On Fri,  2 Mar 2018 16:40:40 +0100, Antoine Tenart wrote:
-> > +static struct {
-> > +	int pkt_size;
-> > +	int buf_num;
-> > +} mvpp2_pools[MVPP2_BM_POOLS_NUM];
-> 
-> Any reason for not doing:
-> 
-> } mvpp2_pools[MVPP2_BM_POOLS_NUM] = {
-> 	[MVPP2_BM_SHORT] = {
-> 		.pkt_size = MVPP2_BM_SHORT_PKT_SIZE,
-> 		.buf_num = MVPP2_BM_SHORT_BUF_NUM
-> 	},
-> 	[MVPP2_BM_LONG] = {
-> 		.pkt_size = MVPP2_BM_LONG_PKT_SIZE,
-> 		.buf_num = MVPP2_BM_LONG_BUF_NUM,
-> 	},
-> };
-> 
-> And get rid of:
-> 
-> > +static void mvpp2_setup_bm_pool(void) {
-> > +	/* Short pool */
-> > +	mvpp2_pools[MVPP2_BM_SHORT].buf_num  =
-> MVPP2_BM_SHORT_BUF_NUM;
-> > +	mvpp2_pools[MVPP2_BM_SHORT].pkt_size =
-> MVPP2_BM_SHORT_PKT_SIZE;
-> > +
-> > +	/* Long pool */
-> > +	mvpp2_pools[MVPP2_BM_LONG].buf_num  =
-> MVPP2_BM_LONG_BUF_NUM;
-> > +	mvpp2_pools[MVPP2_BM_LONG].pkt_size =
-> MVPP2_BM_LONG_PKT_SIZE; }
-> 
->  ?
-> 
+Clang complains when a variable is declared extern twice, but with two
+different sections. num_poisoned_pages is marked extern and __read_mostly
+in include/linux/swapops.h, but only extern in include/linux/mm.h. Some
+c source files must include both, and thus see the conflicting
+declarations.
 
-No, we can change it.
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+---
+ include/linux/mm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Stefan.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..bd4bd59f02c1 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2582,7 +2582,7 @@ extern int get_hwpoison_page(struct page *page);
+ extern int sysctl_memory_failure_early_kill;
+ extern int sysctl_memory_failure_recovery;
+ extern void shake_page(struct page *p, int access);
+-extern atomic_long_t num_poisoned_pages;
++extern atomic_long_t num_poisoned_pages __read_mostly;
+ extern int soft_offline_page(struct page *page, int flags);
+ 
+ 
+-- 
+2.14.1
