@@ -1,95 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeCDRcK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 12:32:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34692 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751838AbeCDRcJ (ORCPT
+        id S1751868AbeCDRgJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 12:36:09 -0500
+Received: from 10.mo177.mail-out.ovh.net ([46.105.73.133]:51457 "EHLO
+        10.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeCDRgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 12:32:09 -0500
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Balbir Singh <bsingharora@gmail.com>
-Cc: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Douglas Miller <dougmill@linux.vnet.ibm.com>
-Subject: [PATCH] xmon: Clear all breakpoints when xmon is disabled via debugfs
-Date: Sun,  4 Mar 2018 23:01:32 +0530
+        Sun, 4 Mar 2018 12:36:07 -0500
+From: Florent Flament <contact@florentflament.com>
+To: jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Cc: Florent Flament <contact@florentflament.com>
+Subject: [PATCH] HID: Logitech K290: Add driver for the Logitech K290 USB keyboard
+Date: Sun,  4 Mar 2018 18:00:04 +0100
+Message-Id: <20180304170004.26553-1-contact@florentflament.com>
 X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18030417-0040-0000-0000-0000041A93F4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030417-0041-0000-0000-0000261DA03D
-Message-Id: <20180304173132.19677-1-vaibhav@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-04_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803040227
+X-Ovh-Tracer-Id: 2755077072895179351
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrjeehgdeljecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecu
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Presently when xmon is disabled by debugfs any existing
-instruction/data-access breakpoints set are not disabled. This may
-lead to kernel oops when those breakpoints are hit as the necessary
-debugger hooks aren't installed.
+With the generic HID driver, K290 keyboards' F1 to F12 keys send
+multimedia events by default, and standard keycodes when the function
+key is pressed. This driver allows to configure K290 keyboards, so
+that F1 to F12 have a standard behavior and send multimedia events
+when the function key is pressed. The keyboard mode is set through the
+fn_mode module parameter: when set to 1 (default setting) the keyboard
+behaves as with the generic HID driver, when set to 0 the keyboard is
+configured to work as standard keyboards.
 
-Hence this patch introduces a new function named clear_all_bpt()
-which is called when xmon is disabled via debugfs. The function will
-unpatch/clear all the trap and ciabr/dab based breakpoints.
-
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Signed-off-by: Florent Flament <contact@florentflament.com>
 ---
- arch/powerpc/xmon/xmon.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/hid/Kconfig             |  18 ++++++++
+ drivers/hid/Makefile            |   1 +
+ drivers/hid/hid-ids.h           |   1 +
+ drivers/hid/hid-logitech-k290.c | 100 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 120 insertions(+)
+ create mode 100644 drivers/hid/hid-logitech-k290.c
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index e9c7ec8f15f8..f43aacd74625 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -903,6 +903,27 @@ static void remove_bpts(void)
- 	}
- }
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 19c499f5623d..6686da8daac6 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -488,6 +488,24 @@ config HID_LOGITECH_HIDPP
+ 	T651, TK820), some mice (Zone Touch mouse), or even keyboards (Solar
+ 	Keyboard).
  
-+static void clear_all_bpt(void)
++config HID_LOGITECH_K290
++	tristate "Logitech K290 Keyboard support"
++	depends on USB_HID
++	---help---
++	This enhances support of Logitech K290 keyboards.
++
++	With the generic HID driver, K290 keyboards' F1 to F12 keys
++	send multimedia events by default, and standard keycodes when
++	the function key is pressed. This driver allows to configure
++	K290 keyboards, so that F1 to F12 have a standard behavior and
++	send multimedia events when the function key is pressed. The
++	keyboard mode is set through the fn_mode module parameter:
++	when set to 1 (default setting) the keyboard behaves as with
++	the generic HID driver, when set to 0 the keyboard is
++	configured to work as standard keyboards.
++
++	Say Y if you have a Logitech K290 keyboard.
++
+ config LOGITECH_FF
+ 	bool "Logitech force feedback support"
+ 	depends on HID_LOGITECH
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index eb13b9e92d85..78079d3a5d58 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -61,6 +61,7 @@ obj-$(CONFIG_HID_LENOVO)	+= hid-lenovo.o
+ obj-$(CONFIG_HID_LOGITECH)	+= hid-logitech.o
+ obj-$(CONFIG_HID_LOGITECH_DJ)	+= hid-logitech-dj.o
+ obj-$(CONFIG_HID_LOGITECH_HIDPP)	+= hid-logitech-hidpp.o
++obj-$(CONFIG_HID_LOGITECH_K290)	+= hid-logitech-k290.o
+ obj-$(CONFIG_HID_MAGICMOUSE)	+= hid-magicmouse.o
+ obj-$(CONFIG_HID_MAYFLASH)	+= hid-mf.o
+ obj-$(CONFIG_HID_MICROSOFT)	+= hid-microsoft.o
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 9454ac134ce2..68caba7e666c 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -693,6 +693,7 @@
+ #define USB_DEVICE_ID_LOGITECH_HARMONY_LAST 0xc14f
+ #define USB_DEVICE_ID_LOGITECH_HARMONY_PS3 0x0306
+ #define USB_DEVICE_ID_LOGITECH_KEYBOARD_G710_PLUS 0xc24d
++#define USB_DEVICE_ID_LOGITECH_KEYBOARD_K290	0xc31f
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C01A	0xc01a
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C05A	0xc05a
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C06A	0xc06a
+diff --git a/drivers/hid/hid-logitech-k290.c b/drivers/hid/hid-logitech-k290.c
+new file mode 100644
+index 000000000000..36fdb5838842
+--- /dev/null
++++ b/drivers/hid/hid-logitech-k290.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * HID driver for Logitech K290 keyboard
++ *
++ * Copyright (c) 2018 Florent Flament
++ *
++ * This drivers allows to configure the K290 keyboard's function key
++ * behaviour (whether function mode is activated or not by default).
++ *
++ * Logitech custom commands taken from Marcus Ilgner k290-fnkeyctl
++ * (https://github.com/milgner/k290-fnkeyctl):
++ * K290_SET_FUNCTION_CMD
++ * K290_SET_FUNCTION_VAL
++ * K290_SET_FUNCTION_OFF
++ * K290_SET_FUNCTION_ON
++ *
++ * Based on hid-accutouch.c and hid-elo.c
++ */
++
++#include <linux/device.h>
++#include <linux/hid.h>
++#include <linux/module.h>
++#include <linux/stat.h>
++#include <linux/types.h>
++#include <linux/usb.h>
++
++#include "hid-ids.h"
++#include "usbhid/usbhid.h"
++
++// Logitech K290 custom USB command and value to setup function key
++#define K290_SET_FUNCTION_CMD 0x02
++#define K290_SET_FUNCTION_VAL 0x001a
++
++// Have function mode turned off (as with standard keyboards)
++#define K290_SET_FUNCTION_OFF 0x0001
++// Have function mode turned on (default k290 behavior)
++#define K290_SET_FUNCTION_ON  0x0000
++
++// Function key default mode is set at module load time for every K290
++// keyboards plugged on the machine. By default fn_mode = 1, i.e
++// sending K290_SET_FUNCTION_ON (default K290 behavior).
++static bool fn_mode = 1;
++module_param(fn_mode, bool, 0444);
++MODULE_PARM_DESC(fn_mode, "Logitech K290 function key mode (default = 1)");
++
++static void k290_set_function(struct usb_device *dev, uint16_t function_mode)
 +{
-+	int i;
++	int ret;
 +
-+	/* clear/unpatch all breakpoints */
-+	remove_bpts();
-+	remove_cpu_bpts();
++	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
++			      K290_SET_FUNCTION_CMD,
++			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++			      K290_SET_FUNCTION_VAL,
++			      function_mode, 0, 0, USB_CTRL_SET_TIMEOUT);
 +
-+	/* Disable all breakpoints */
-+	for (i = 0; i < NBPTS; ++i)
-+		bpts[i].enabled = 0;
-+
-+	/* Clear any data or iabr breakpoints */
-+	if (iabr || dabr.enabled) {
-+		iabr = NULL;
-+		dabr.enabled = 0;
-+	}
-+
-+	printf("xmon: All breakpoints cleared\n");
++	if (ret < 0)
++		dev_err(&dev->dev,
++			"Failed to setup K290 function key, error %d\n", ret);
 +}
 +
- static void remove_cpu_bpts(void)
- {
- 	hw_breakpoint_disable();
-@@ -3671,6 +3692,9 @@ static int xmon_dbgfs_set(void *data, u64 val)
- 	xmon_on = !!val;
- 	xmon_init(xmon_on);
- 
-+	/* make sure all breakpoints removed when disabling */
-+	if (!xmon_on)
-+		clear_all_bpt();
- 	return 0;
- }
- 
++static int k290_set_function_hid_device(struct hid_device *hid)
++{
++	struct usb_device *usb_dev = hid_to_usb_dev(hid);
++
++	k290_set_function(usb_dev,
++			fn_mode ? K290_SET_FUNCTION_ON : K290_SET_FUNCTION_OFF);
++	return 0;
++}
++
++static int k290_input_configured(struct hid_device *hid,
++				 struct hid_input *hidinput)
++{
++	return k290_set_function_hid_device(hid);
++}
++
++static int k290_resume(struct hid_device *hid)
++{
++	return k290_set_function_hid_device(hid);
++}
++
++static const struct hid_device_id k290_devices[] = {
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
++			 USB_DEVICE_ID_LOGITECH_KEYBOARD_K290) },
++	{ }
++};
++MODULE_DEVICE_TABLE(hid, k290_devices);
++
++static struct hid_driver k290_driver = {
++	.name = "hid-logitech-k290",
++	.id_table = k290_devices,
++	.input_configured = k290_input_configured,
++	.resume = k290_resume,
++	.reset_resume = k290_resume,
++};
++
++module_hid_driver(k290_driver);
++
++MODULE_AUTHOR("Florent Flament <contact@florentflament.com>");
++MODULE_DESCRIPTION("Logitech K290 keyboard driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.14.3
