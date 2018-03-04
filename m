@@ -1,106 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeCDTqs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 14:46:48 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:2096 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932090AbeCDTqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 14:46:46 -0500
-Subject: Re: [PATCH 05/21] powerpc: Avoid comparison of unsigned long >= 0 in
- pfn_valid
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Mathieu Malaterre <malat@debian.org>
-Cc: linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Jiri Slaby <jslaby@suse.com>, linuxppc-dev@lists.ozlabs.org
-References: <20180225172236.29650-1-malat@debian.org>
- <20180225172236.29650-6-malat@debian.org>
- <87lgf8gley.fsf@concordia.ellerman.id.au>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <8be155ab-ec2c-2b1e-89a2-02f8e9f0d0ba@c-s.fr>
-Date: Sun, 4 Mar 2018 20:46:44 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932150AbeCDT5f (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 14:57:35 -0500
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:44163 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751848AbeCDT5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 14:57:32 -0500
+X-Google-Smtp-Source: AG47ELvOOlkXXEkBlD53cUl0MBaRQQYtm6b4htEF7J+FfQznt9M1m7+v4xihN+S8dVivS8JHed+Sng==
+Date: Sun, 4 Mar 2018 20:57:28 +0100
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Woithe <jwoithe@just42.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] platform/x86: fujitsu-laptop: More accurately
+ represent the hotkey ring buffer managed by firmware
+Message-ID: <20180304195728.GB1428@kmp-mobile.hq.kempniu.pl>
+References: <20180227211539.5708-1-kernel@kempniu.pl>
+ <20180227211539.5708-7-kernel@kempniu.pl>
+ <CAHp75VeANKg+L7GsA=onScQ6mBeWzhthd0cP6=36rFB4KHWr7w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87lgf8gley.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VeANKg+L7GsA=onScQ6mBeWzhthd0cP6=36rFB4KHWr7w@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 04/03/2018 à 11:55, Michael Ellerman a écrit :
-> Mathieu Malaterre <malat@debian.org> writes:
+> On Tue, Feb 27, 2018 at 11:15 PM, Michał Kępień <kernel@kempniu.pl> wrote:
+> > The MAX_HOTKEY_RINGBUFFER_SIZE constant is set to 100, which allows up
+> > to 100 hotkey events to be drained from the firmware ring buffer upon
+> > module load.  However, no known firmware is capable of holding more than
+> > 16 hotkey events in its internal ring buffer:
 > 
->> Rewrite comparison since all values compared are of type `unsigned long`.
->>
->> Fix a warning (treated as error in W=1):
->>
->>    CC      arch/powerpc/kernel/irq.o
->> In file included from ./include/linux/bug.h:5:0,
->>                   from ./include/linux/cpumask.h:13,
->>                   from ./include/linux/smp.h:13,
->>                   from ./include/linux/kernel_stat.h:5,
->>                   from arch/powerpc/kernel/irq.c:35:
->> ./include/linux/dma-mapping.h: In function ‘dma_map_resource’:
->> ./arch/powerpc/include/asm/page.h:129:32: error: comparison of unsigned expression >= 0 is always true [-Werror=type-limits]
->>   #define pfn_valid(pfn)  ((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
->>                                  ^
->> Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->> ---
->>   arch/powerpc/include/asm/page.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
->> index 8da5d4c1cab2..19dea64e7ed2 100644
->> --- a/arch/powerpc/include/asm/page.h
->> +++ b/arch/powerpc/include/asm/page.h
->> @@ -126,7 +126,8 @@ extern long long virt_phys_offset;
->>   
->>   #ifdef CONFIG_FLATMEM
->>   #define ARCH_PFN_OFFSET		((unsigned long)(MEMORY_START >> PAGE_SHIFT))
->> -#define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
->> +#define pfn_valid(pfn) \
->> +		(((pfn) - ARCH_PFN_OFFSET) < (max_mapnr - ARCH_PFN_OFFSET))
+> > The RINGBUFFERSIZE constant is set to 40, which allows the module to
+> > queue up to 40 hotkey events for delivery to user space.  As this value
+> > seems arbitrarily chosen and 16 should be more than enough for any
+> > practical use case, merge the two aforementioned constants into one
+> > (HOTKEY_RINGBUFFER_SIZE) in order to simplify code and more accurately
+> > represent the underlying data structure.
 > 
-> I'm not a big fan of this one, because the original code is *far* more
-> obvious as to what it's doing.
+> > +#define HOTKEY_RINGBUFFER_SIZE         16
 > 
-> I'm not sure if we can make this one a static inline, or whether that
-> would help, but it would be worth investigating.
+> This need the comment or a
 > 
+> BUILD_BUG_ON(!is_power_of_2(...));
 
-The following seems to give a good result:
+Okay, I will probably take the comment route in v2.
 
-diff --git a/arch/powerpc/include/asm/page.h 
-b/arch/powerpc/include/asm/page.h
-index 8da5d4c1cab2..6f74938483b7 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -126,7 +126,15 @@ extern long long virt_phys_offset;
+> > -       ret = kfifo_alloc(&priv->fifo, RINGBUFFERSIZE * sizeof(int),
+> > +       ret = kfifo_alloc(&priv->fifo, HOTKEY_RINGBUFFER_SIZE * sizeof(int),
+> >                           GFP_KERNEL);
+> 
+> >         while (call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
+> >                               0x0, 0x0) != 0 &&
+> > -              i++ < MAX_HOTKEY_RINGBUFFER_SIZE)
+> > +              i++ < HOTKEY_RINGBUFFER_SIZE)
+> >                 ; /* No action, result is discarded */
+> 
+> This looks horrible.
 
-  #ifdef CONFIG_FLATMEM
-  #define ARCH_PFN_OFFSET		((unsigned long)(MEMORY_START >> PAGE_SHIFT))
--#define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && (pfn) < max_mapnr)
-+#ifndef __ASSEMBLY__
-+extern unsigned long max_mapnr;
-+static inline bool pfn_valid(unsigned long pfn)
-+{
-+	unsigned long min_pfn = ARCH_PFN_OFFSET;
-+
-+	return pfn >= min_pfn && pfn < max_mapnr;
-+}
-+#endif
-  #endif
+It sure does!  Hence patch 7/7, which does the following:
 
-  #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
+-	while (call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
+-			      0x0, 0x0) != 0 &&
++	while (fext_buttons(device, OP_GET_EVENTS, 0x0, 0x0) != 0 &&
+	       i++ < HOTKEY_RINGBUFFER_SIZE)
 
+In other words, patch 6/7 is just a stopover on the way to shorten
+current module code:
 
-Christophe
+-	while (call_fext_func(device, FUNC_BUTTONS, 0x1, 0x0, 0x0) != 0 &&
+-	       i++ < MAX_HOTKEY_RINGBUFFER_SIZE)
++	while (fext_buttons(device, OP_GET_EVENTS, 0x0, 0x0) != 0 &&
++	       i++ < HOTKEY_RINGBUFFER_SIZE)
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+> >         while ((irb = call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
+> >                                      0x0, 0x0)) != 0 &&
+> > -              i++ < MAX_HOTKEY_RINGBUFFER_SIZE) {
+> > +              i++ < HOTKEY_RINGBUFFER_SIZE) {
+> 
+> Ditto.
+
+Similarly, patch 7/7 does the following:
+
+-	while ((irb = call_fext_func(device, FUNC_BUTTONS, OP_GET_EVENTS,
+-				     0x0, 0x0)) != 0 &&
++	while ((irb = fext_buttons(device, OP_GET_EVENTS, 0x0, 0x0)) != 0 &&
+	       i++ < HOTKEY_RINGBUFFER_SIZE) {
+
+The diff against current module code is thus:
+
+-	while ((irb = call_fext_func(device,
+-				     FUNC_BUTTONS, 0x1, 0x0, 0x0)) != 0 &&
+-	       i++ < MAX_HOTKEY_RINGBUFFER_SIZE) {
++	while ((irb = fext_buttons(device, OP_GET_EVENTS, 0x0, 0x0)) != 0 &&
++	       i++ < HOTKEY_RINGBUFFER_SIZE) {
+
+-- 
+Best regards,
+Michał Kępień
