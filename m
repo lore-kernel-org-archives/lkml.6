@@ -1,99 +1,107 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3529689-1520193352-2-17631176158713819250
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2841113-1520173041-2-3424890785827310342
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520193352; b=W4DAsb2LLgVcgwTal9t1v+ghdLuTjHC20+bGrKOG/3HZpnA
-    +nvp7pPZAC5KEdgIk5zT1FHxc7AvQpEPE6+aUTgdI8HEB4v15AWSykMfm1dwq5ri
-    jZ6Ryf7HxyuEngFz3SwisiYVDwoa0bJCSByugdU+6FKyQLmVvuMyHcVLMRjduOLU
-    ZeInMqXl85JhOTix/QIf99u1/BB8a4nqdue5FLU9XudN9Ck1AQj/NLmBLHRn1xFj
-    /lzg+CZ+EZt7Vtjv/fzuK4Ci7pqRdCAUx611S2fXvVAztidUw4XwmWIQYVC80hNl
-    maE6aglX+lqbQenntmXo9u93aaaH8g8lAErtQHg==
+    t=1520173040; b=k9ksudSzrxu5dY/83/ZMPxpcRmRrtd3X+YEQO4H/np+dSg5
+    BVuM2RShDshQwfM0wmXj9euMAZrRf+VsKC4FjShUXcGjXnlLx1Q9dI+uziMMqw0X
+    sb1rJdi+bcoZ3RcNU14t478FHOM837E6Qx9mvKzdw+HXx+VkbidpG0VmDZWxdQCw
+    RZuprcFqqmhHtYacKLkU6Cln4D+0omraaGCBFnb0PCOcMJzVd69vhIFsEH0jaJsm
+    RQWmfZi4ysq6+st/9ArVG+2GYf+sx93EUT5V0JFvifHiOaPXrn4DK3GfKtwXRGf+
+    dVDmeM4iLBlOoOAwYMnIEu1vYquP8q8kQTAc+Qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520193352; bh=fo5/XWRBK9ftou0xJCdFMVoGKq
-    FCCnRDPAiNW6BeGgM=; b=bWHo56hjw8cr7w6e9vwvGn9ehCXwqAgYJuXjzFdldj
-    AUpTTYiXvPs0b62WpQzhV+wxILH6YQ0SGt/4CL2NlcRPWanaEeVxA5AGCbgZ7BbO
-    KO2uULh0sH2LilSy6f4IQN3MciSq3lLhBp7dcNclY+hpgDUFATcPTY7DHhVcS0uF
-    YGSc0enIwuShwe1DCnsY5153Vv59xOfHx5ldfqatkoL0zKOpH7J0krUOWIiIdNjS
-    IQHGDHd7mJW+MhyVSbYDL+VIZNRiEfd3GrYGxxFHSIEHWs5tgIMf8EfAVqiQwqoP
-    KAxdF8ZMBVGj174g8KMnsIieUaKalLDiMlLA6TMwfRMQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=R689bLb2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520173040; bh=3
+    aOTSiJdZHAPkwCvkkUrx/SIZOGEDj9jroKgssZ09tk=; b=KfGkYLSn5LhSjwpyS
+    EJMDCT315uJHhjHjZJwU8vQnzzz/099Y6Lnnnc4LU+dbXck/bUDN+7T+lzfERfqa
+    njyFq2CDYUhrtzwfZa1bB8j7oEf/hAJXrUvH2P42JF4j2xbCKeTZ04RS+wKG4jqM
+    jePiKq8cGsn/geLBvezuDe8Cxpez0Jbxzn/Hl2EAVvXqVBA/OBHmKO+VHihYb/zR
+    JlXLGsL6wCMhAVPGRFpPeI7GuoQ8F+vfKZMHnQq4lE2pL8W81OM/J7WiOBZdYkC3
+    sFubCHtbNNTCfXXd5nKvVW7ugXb0ZkEFv68wKXy2eV+sgNCG4m5xEL5OLe2QsfQx
+    FcS5w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BN9r3qvc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g3cBHU7B;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gxn/fsuM;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=R689bLb2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BN9r3qvc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=g3cBHU7B;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752164AbeCDTze (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 4 Mar 2018 14:55:34 -0500
-Received: from mail-pg0-f48.google.com ([74.125.83.48]:35441 "EHLO
-        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeCDTzc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sun, 4 Mar 2018 14:55:32 -0500
-X-Google-Smtp-Source: AG47ELuDB1bZcjw8jRe6WXQzEZrK1NxD9FBKIg9w7I+LBnMmrrUxEt4DChIcIMl3lcv88gx8ezgBrQ==
-Date: Sun, 4 Mar 2018 11:55:27 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: btqcomsmd: Fix channel open check
-Message-ID: <20180304195527.GP93895@bjorns-mbp-2.lan>
-References: <20180228001738.11131-1-bjorn.andersson@linaro.org>
- <1498F44F-02AE-4384-9227-0BABE3F4764E@holtmann.org>
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Gxn/fsuM;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELtr3yDkpu5wkwq+UQwVg9TsKD1bl/76pH+TpnWHAip/8gRuqwlDPP+sCJFu4yR5Nz1DzrUg0w==
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: oleg.drokin@intel.com
+Subject: [PATCH 0/3] staging: lustre: cleanup
+Date: Sun,  4 Mar 2018 19:46:05 +0530
+Message-Id: <1520172968-17448-1-git-send-email-arushisinghal19971997@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org,
+ Arushi Singhal <arushisinghal19971997@gmail.com>, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com,
+ andreas.dilger@intel.com, lustre-devel@lists.lustre.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1498F44F-02AE-4384-9227-0BABE3F4764E@holtmann.org>
-User-Agent: Mutt/1.8.0 (2017-02-23)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 27 Feb 22:25 PST 2018, Marcel Holtmann wrote:
-> > 	btq->cmd_channel = qcom_wcnss_open_channel(wcnss, "APPS_RIVA_BT_CMD",
-> > 						   btqcomsmd_cmd_callback, btq);
-> > -	if (IS_ERR(btq->cmd_channel))
-> > -		return PTR_ERR(btq->cmd_channel);
-> > +	if (!btq->cmd_channel)
-> > +		return -ENOENT;
-> 
-> Any reason not to fix qcom_wcnss_open_channel to use PTR_ERR?
-> 
+Spellcheck the comments. 
+Remove the repeated, consecutive words with single word.
 
-Not that I can come up with, and obviously I did expect it to do so in
-the past. I'll do that.
+Arushi Singhal (3):
+  staging: lustre: Replace "be be" with "be"
+  staging: lustre: Replace "to to" with "to"
+  staging: lustre: Replace "dont" with "don't"
 
-Thanks,
-Bjorn
+ drivers/staging/lustre/lnet/libcfs/debug.c             | 2 +-
+ drivers/staging/lustre/lustre/fld/fld_cache.c          | 2 +-
+ drivers/staging/lustre/lustre/include/cl_object.h      | 2 +-
+ drivers/staging/lustre/lustre/include/lprocfs_status.h | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
