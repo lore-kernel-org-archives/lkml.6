@@ -1,140 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCDSMi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 13:12:38 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:33625 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751692AbeCDSMf (ORCPT
+        id S1752143AbeCDSMt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 13:12:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33118 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751692AbeCDSMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 13:12:35 -0500
-Date: Sun, 4 Mar 2018 19:11:49 +0100 (CET)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <46261671.179357.1520187109844@email.1und1.de>
-In-Reply-To: <20180304165717.6d4d8e68@naga.suse.cz>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
- <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
- <20180214163649.3a0c9476@kitsune.suse.cz>
- <20180214165827.386b9bb1@kitsune.suse.cz>
- <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
- <20180214202454.6e7ebeaf@naga.suse.cz>
- <431948292.48734.1518640216077@email.1und1.de>
- <20180304165717.6d4d8e68@naga.suse.cz>
-Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+        Sun, 4 Mar 2018 13:12:46 -0500
+Subject: Re: [tip:WIP.sched/core 19/22] kernel/sched/core.c:2836:18: error:
+ passing argument 1 of 'mips_install_watch_registers' from incompatible
+ pointer type
+To: kbuild test robot <fengguang.wu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
+References: <201803041803.gY4ddHfJ%fengguang.wu@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b8be96d0-8a53-104e-c90d-72a3ea158f8d@infradead.org>
+Date: Sun, 4 Mar 2018 10:12:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K0:XZxKzR/V/Z93KpLqm46D24ZUkP/HZ4cpiopdbm+GMXWlAAFSHHl
- NYR9GPMpxkp2ZeXWCcIoeaKi9wo8fiboZgKhSbD2q6L3wQAD4Vhk2yCYhEip9ABeoVDoFdf
- a6yFI0ABed8GRrubyjADJ0VaoNLCvl7QHZJTHzB7R4b0RH/xq4Y1GJRTlpfKTObQ7TV1B16
- nikZfibyoYeNTylt4TZhg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/fnAZeESTos=:HjmeoBJpzRsZcWhkuKQ+BX
- h6h5/MtHWIWG+pkOkwQ9Cg2tV1xBJWXfSyqtN2unnJmrzATQlmJ099wJLdpLs+Tq+uDGQZIQ7
- b5IdhfD7iejEmrqud9aogDYm4/74PoxZ2M0F1grMgr1+069KHypWbCvf4Wv6R4FBSnqB2/b/A
- y/dnvkSKcHq5Lx/jdq1dtOOS2l4N9KrB3MzRp9IyzkUZsQVySO5FGysjHvj1d7pO5zpYlpfqZ
- 3BLxHomYK5LnVsvrC+Kk/TZn+FWT6LANIChS7mBLtP1FDNNFiUXN18WiY4xSvawGA6gPtJ/eZ
- S6eT36gK4ScJPePbnr4Xfg7MTQAuw/4dvdhi4R+onCoVHg/9G4DbdsNgBaXV9iIdCZho8FD7b
- NdnrZi0iY+BuapggeTwxE5B0QRguQR6Riwyk6qHbjDSG9GOUx+P+e6fdhWPc2/HBBxU9Kxysv
- MvGGpC53EIcWVLP0s1PjeBj9k3fd5fJ/wXNjVxV/Qk5EddFTqiSMjEHKL0v7dQHtw+/eQsCMb
- rwptEG8Y7R0lsZmdgtXUZQdr6lgBJSw06fI9VjP/a9nYtoa2aqJN81/i3YWPS7SEeOlPZPXaM
- g4xTJESl7+8HgkAWRc7TwodD7xq1QQeHTg4TmNWnjk7gpmznDPxesnG+ojosDojZrv4lV3eEc
- wqNfCRfMV5Il0VH5EKQRvaWB1lp/NbE5YElSBiOae4ilRrdNU+TuXSqPsckdIYOtLIUsHD1ZO
- ZIPI+chQdCDf3jRn+zMyZBowFlmJXK4GKfKqg9lKuL7LVUGd20vfhfhfrs8=
+In-Reply-To: <201803041803.gY4ddHfJ%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On 03/04/2018 02:52 AM, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.sched/core
+> head:   ffce6fffa0033fa54d1bac1c7494862b71316978
+> commit: ecaf52c9ec5ad31395e5c06c01e293ebcf0e4350 [19/22] sched/headers: Simplify and clean up header usage in the scheduler
+> config: mips-jz4740 (attached as .config)
+> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout ecaf52c9ec5ad31395e5c06c01e293ebcf0e4350
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=mips 
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+>    In file included from arch/mips/include/asm/switch_to.h:16:0,
+>                     from kernel/sched/core.c:8:
+>>> arch/mips/include/asm/watch.h:15:42: warning: 'struct task_struct' declared inside parameter list will not be visible outside of this definition or declaration
+>     void mips_install_watch_registers(struct task_struct *t);
+>                                              ^~~~~~~~~~~
+>    In file included from arch/mips/include/asm/switch_to.h:16:0,
+>                     from kernel/sched/core.c:8:
+>    kernel/sched/core.c: In function 'context_switch':
+>>> kernel/sched/core.c:2836:18: error: passing argument 1 of 'mips_install_watch_registers' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      switch_to(prev, next, prev);
+>                      ^
+>    arch/mips/include/asm/watch.h:24:32: note: in definition of macro '__restore_watch'
+>       mips_install_watch_registers(task);   \
+>                                    ^~~~
+>    kernel/sched/core.c:2836:2: note: in expansion of macro 'switch_to'
+>      switch_to(prev, next, prev);
+>      ^~~~~~~~~
+>    arch/mips/include/asm/watch.h:15:6: note: expected 'struct task_struct *' but argument is of type 'struct task_struct *'
+>     void mips_install_watch_registers(struct task_struct *t);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+> --
+>    In file included from arch/mips/include/asm/switch_to.h:16:0,
+>                     from kernel//sched/core.c:8:
+>>> arch/mips/include/asm/watch.h:15:42: warning: 'struct task_struct' declared inside parameter list will not be visible outside of this definition or declaration
+>     void mips_install_watch_registers(struct task_struct *t);
+>                                              ^~~~~~~~~~~
+>    In file included from arch/mips/include/asm/switch_to.h:16:0,
+>                     from kernel//sched/core.c:8:
+>    kernel//sched/core.c: In function 'context_switch':
+>    kernel//sched/core.c:2836:18: error: passing argument 1 of 'mips_install_watch_registers' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      switch_to(prev, next, prev);
+>                      ^
+>    arch/mips/include/asm/watch.h:24:32: note: in definition of macro '__restore_watch'
+>       mips_install_watch_registers(task);   \
+>                                    ^~~~
+>    kernel//sched/core.c:2836:2: note: in expansion of macro 'switch_to'
+>      switch_to(prev, next, prev);
+>      ^~~~~~~~~
+>    arch/mips/include/asm/watch.h:15:6: note: expected 'struct task_struct *' but argument is of type 'struct task_struct *'
+>     void mips_install_watch_registers(struct task_struct *t);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
 
-> Michal Suchánek <msuchanek@suse.de> hat am 4. März 2018 um 16:57 geschrieben:
+I don't have a tip git repo, but it looks like this would fix it (based on most
+recent -next):
+
+--- linux-next-20180302.orig/arch/mips/include/asm/watch.h
++++ linux-next-20180302/arch/mips/include/asm/watch.h
+@@ -12,6 +12,8 @@
+ 
+ #include <asm/mipsregs.h>
+ 
++struct task_struct;
++
+ void mips_install_watch_registers(struct task_struct *t);
+ void mips_read_watch_registers(void);
+ void mips_clear_watch_registers(void);
+
+
+
+> vim +/mips_install_watch_registers +2836 kernel/sched/core.c
 > 
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2791  
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2792  /*
+> dfa50b60 kernel/sched/core.c Oleg Nesterov       2014-10-09  2793   * context_switch - switch to the new MM and the new thread's register state.
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2794   */
+> 04936948 kernel/sched/core.c Josh Poimboeuf      2016-02-28  2795  static __always_inline struct rq *
+> 70b97a7f kernel/sched.c      Ingo Molnar         2006-07-03  2796  context_switch(struct rq *rq, struct task_struct *prev,
+> d8ac8971 kernel/sched/core.c Matt Fleming        2016-09-21  2797  	       struct task_struct *next, struct rq_flags *rf)
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2798  {
+> dd41f596 kernel/sched.c      Ingo Molnar         2007-07-09  2799  	struct mm_struct *mm, *oldmm;
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2800  
+> e107be36 kernel/sched.c      Avi Kivity          2007-07-26  2801  	prepare_task_switch(rq, prev, next);
+> fe4b04fa kernel/sched.c      Peter Zijlstra      2011-02-02  2802  
+> dd41f596 kernel/sched.c      Ingo Molnar         2007-07-09  2803  	mm = next->mm;
+> dd41f596 kernel/sched.c      Ingo Molnar         2007-07-09  2804  	oldmm = prev->active_mm;
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2805  	/*
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2806  	 * For paravirt, this is coupled with an exit in switch_to to
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2807  	 * combine the page table reload and the switch backend into
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2808  	 * one hypercall.
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2809  	 */
+> 224101ed kernel/sched.c      Jeremy Fitzhardinge 2009-02-18  2810  	arch_start_context_switch(prev);
+> 9226d125 kernel/sched.c      Zachary Amsden      2007-02-13  2811  
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2812  	/*
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2813  	 * If mm is non-NULL, we pass through switch_mm(). If mm is
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2814  	 * NULL, we will pass through mmdrop() in finish_task_switch().
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2815  	 * Both of these contain the full memory barrier required by
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2816  	 * membarrier after storing to rq->curr, before returning to
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2817  	 * user-space.
+> 306e0604 kernel/sched/core.c Mathieu Desnoyers   2018-01-29  2818  	 */
+> 31915ab4 kernel/sched.c      Heiko Carstens      2010-09-16  2819  	if (!mm) {
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2820  		next->active_mm = oldmm;
+> f1f10076 kernel/sched/core.c Vegard Nossum       2017-02-27  2821  		mmgrab(oldmm);
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2822  		enter_lazy_tlb(oldmm, next);
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2823  	} else
+> f98db601 kernel/sched/core.c Andy Lutomirski     2016-04-26  2824  		switch_mm_irqs_off(oldmm, mm, next);
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2825  
+> 31915ab4 kernel/sched.c      Heiko Carstens      2010-09-16  2826  	if (!prev->mm) {
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2827  		prev->active_mm = NULL;
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2828  		rq->prev_mm = oldmm;
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2829  	}
+> 92509b73 kernel/sched/core.c Matt Fleming        2016-09-21  2830  
+> cb42c9a3 kernel/sched/core.c Matt Fleming        2016-09-21  2831  	rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
+> 92509b73 kernel/sched/core.c Matt Fleming        2016-09-21  2832  
+> 269d5992 kernel/sched/core.c Peter Zijlstra      2018-02-06  2833  	prepare_lock_switch(rq, next, rf);
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2834  
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2835  	/* Here we just switch the register state and the stack. */
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16 @2836  	switch_to(prev, next, prev);
+> dd41f596 kernel/sched.c      Ingo Molnar         2007-07-09  2837  	barrier();
+> dfa50b60 kernel/sched/core.c Oleg Nesterov       2014-10-09  2838  
+> dfa50b60 kernel/sched/core.c Oleg Nesterov       2014-10-09  2839  	return finish_task_switch(prev);
+> ^1da177e kernel/sched.c      Linus Torvalds      2005-04-16  2840  }
+> f711f609 kernel/sched.c      Gautham R Shenoy    2009-04-14  2841  
 > 
-> On Wed, 14 Feb 2018 21:30:16 +0100 (CET)
-> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> :::::: The code at line 2836 was first introduced by commit
+> :::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
 > 
-> > Hi Michal,
-> > 
-> > > Michal Suchánek <msuchanek@suse.de> hat am 14. Februar 2018 um
-> > > 20:24 geschrieben:
-> > > 
-> > > 
-> > > On Wed, 14 Feb 2018 17:49:31 +0100
-> > > Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > >   
-> > > > Hi Michal,
-> > > > 
-> > > > [add Phil]
-> > > > 
-> > > > Am 14.02.2018 um 17:13 schrieb Michal Suchánek:  
-> > > > > On Wed, 14 Feb 2018 16:36:49 +0100
-> > > > > Michal Suchánek <msuchanek@suse.de> wrote:
-> > > > >    
-> > > > >> On Wed, 14 Feb 2018 15:58:31 +0100
-> > > > >> Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > > > >>    
-> > > > >>> Hi Michal,
-> > > > >>>
-> > > > >>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:      
-> > > > >>>> The bcm2835 mmc host tends to lock up for unknown reason so
-> > > > >>>> reset it on timeout. The upper mmc block layer tries
-> > > > >>>> retransimitting with single blocks which tends to work out
-> > > > >>>> after a long wait.
-> > > > >>>>
-> > > > >>>> This is better than giving up and leaving the machine broken
-> > > > >>>> for no obvious reason.        
-> > > > >>> could you please provide more information about this issue
-> > > > >>> (affected hardware, kernel config, version, dmesg,
-> > > > >>> reproducible scenario)?   
-> > > > > It tends to reproduce when upgrading a few packages with zypper
-> > > > > and otherwise at random during system operation. It seems that
-> > > > > for my card it worsens with age to some degree so perhaps it
-> > > > > depends on the fragmentation of the internal card flash.
-> > > > >
-> > > > > Attaching dmesg and kernel config.    
-> > > > 
-> > > > do you noticed this issue before 4.15-rc4?  
-> > > 
-> > > I initially noticed it with 4.4 kernel with some backports to make
-> > > it bootable on RPi.  
-> > 
-> > this confuses me. Gerd and i ported this driver from downstream and
-> > finally it's got merged in 4.12. 
-> > 
-> > So do you mean that you backported the mainline version to 4.4 or the
-> > downstream version of 4.4?
+> :::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+> :::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
 > 
-> I did not backport it but looking at the changelog it is backport of
-> the 4.12 driver. It does not look as the 4.15 driver though. Looks like
-> there was some reorganization of the bcm mmc since then.
-> 
-> > 
-> > On a quick look they seems identical, but they aren't.
-> > 
-> > > > 
-> > > > Could you please test with 4.15 final again?  
-> > >
-> 
-> I tried upgrading to the current master (4.16-rc3+) and the issue is
-> still reproducible although less frequent. I did full upgrade from the
-> install image which installs over 300 packages and the issue triggered
-> somewhere around 200th while before installing a half dozen packages
-> would usually trigger it.
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 > 
 
-this is the same what i did during my stress tests. The step installed 475 packages. The timeout never occured.
 
-Stefan
+-- 
+~Randy
