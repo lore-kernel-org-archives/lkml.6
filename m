@@ -1,135 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932251AbeCDSdl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 13:33:41 -0500
-Received: from goliath.siemens.de ([192.35.17.28]:60007 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751935AbeCDSb7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 13:31:59 -0500
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>
-Subject: [PATCH v4 2/7] PCI: Scan all functions when running over Jailhouse
-Date: Sun,  4 Mar 2018 19:31:34 +0100
-Message-Id: <86e0cb9e63cd766c23e9c33f67e094357d1afa87.1520188299.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
-References: <cover.1520188299.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
-References: <cover.1520188299.git.jan.kiszka@siemens.com>
+        id S1752076AbeCDSoM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 13:44:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58838 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751791AbeCDSoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 13:44:11 -0500
+Date: Sun, 4 Mar 2018 19:44:05 +0100
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+Message-ID: <20180304194405.442ef90d@naga.suse.cz>
+In-Reply-To: <46261671.179357.1520187109844@email.1und1.de>
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+        <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+        <20180214163649.3a0c9476@kitsune.suse.cz>
+        <20180214165827.386b9bb1@kitsune.suse.cz>
+        <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
+        <20180214202454.6e7ebeaf@naga.suse.cz>
+        <431948292.48734.1518640216077@email.1und1.de>
+        <20180304165717.6d4d8e68@naga.suse.cz>
+        <46261671.179357.1520187109844@email.1und1.de>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Sun, 4 Mar 2018 19:11:49 +0100 (CET)
+Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
-have a function 0.  Therefore, Linux scans for devices at function 0
-(devfn 0/8/16/...) and only scans for other functions if function 0
-has its Multi-Function Device bit set or ARI or SR-IOV indicate
-there are more functions.
+> Hi Michal,
+> 
+> > Michal Suchánek <msuchanek@suse.de> hat am 4. März 2018 um 16:57
+> > geschrieben:
+> > 
+> > 
+> > On Wed, 14 Feb 2018 21:30:16 +0100 (CET)
+> > Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> >   
+> > > Hi Michal,
+> > >   
+> > > > Michal Suchánek <msuchanek@suse.de> hat am 14. Februar 2018 um
+> > > > 20:24 geschrieben:
+> > > > 
+> > > > 
+> > > > On Wed, 14 Feb 2018 17:49:31 +0100
+> > > > Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> > > >     
+> > > > > Hi Michal,
+> > > > > 
+> > > > > [add Phil]
+> > > > > 
+> > > > > Am 14.02.2018 um 17:13 schrieb Michal Suchánek:    
+> > > > > > On Wed, 14 Feb 2018 16:36:49 +0100
+> > > > > > Michal Suchánek <msuchanek@suse.de> wrote:
+> > > > > >      
+> > > > > >> On Wed, 14 Feb 2018 15:58:31 +0100
+> > > > > >> Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> > > > > >>      
+> > > > > >>> Hi Michal,
+> > > > > >>>
+> > > > > >>> Am 14.02.2018 um 15:38 schrieb Michal Suchanek:        
+> > > > > >>>> The bcm2835 mmc host tends to lock up for unknown reason
+> > > > > >>>> so reset it on timeout. The upper mmc block layer tries
+> > > > > >>>> retransimitting with single blocks which tends to work
+> > > > > >>>> out after a long wait.
+> > > > > >>>>
+> > > > > >>>> This is better than giving up and leaving the machine
+> > > > > >>>> broken for no obvious reason.          
+> > > > > >>> could you please provide more information about this issue
+> > > > > >>> (affected hardware, kernel config, version, dmesg,
+> > > > > >>> reproducible scenario)?     
+> > > > > > It tends to reproduce when upgrading a few packages with
+> > > > > > zypper and otherwise at random during system operation. It
+> > > > > > seems that for my card it worsens with age to some degree
+> > > > > > so perhaps it depends on the fragmentation of the internal
+> > > > > > card flash.
+> > > > > >
+> > > > > > Attaching dmesg and kernel config.      
+> > > > > 
+> > > > > do you noticed this issue before 4.15-rc4?    
+> > > > 
+> > > > I initially noticed it with 4.4 kernel with some backports to
+> > > > make it bootable on RPi.    
+> > > 
+> > > this confuses me. Gerd and i ported this driver from downstream
+> > > and finally it's got merged in 4.12. 
+> > > 
+> > > So do you mean that you backported the mainline version to 4.4 or
+> > > the downstream version of 4.4?  
+> > 
+> > I did not backport it but looking at the changelog it is backport of
+> > the 4.12 driver. It does not look as the 4.15 driver though. Looks
+> > like there was some reorganization of the bcm mmc since then.
+> >   
+> > > 
+> > > On a quick look they seems identical, but they aren't.
+> > >   
+> > > > > 
+> > > > > Could you please test with 4.15 final again?    
+> > > >  
+> > 
+> > I tried upgrading to the current master (4.16-rc3+) and the issue is
+> > still reproducible although less frequent. I did full upgrade from
+> > the install image which installs over 300 packages and the issue
+> > triggered somewhere around 200th while before installing a half
+> > dozen packages would usually trigger it.
+> >   
+> 
+> this is the same what i did during my stress tests. The step
+> installed 475 packages. The timeout never occured.
 
-The Jailhouse hypervisor may pass individual functions of a
-multi-function device to a guest without passing function 0, which
-means a Linux guest won't find them.
+First off, you did your testing with Tumbleweed image which probably
+uses btrfs for / while I use Leap 42.3 image which uses ext4.
 
-Change Linux PCI probing so it scans all function numbers when
-running as a guest over Jailhouse.
+I was not able to reproduce the issue with installing packages so far -
+installed GNOME which is over 700 packages and the issue did not
+trigger. However, the upgrades also unlink the old files as does
+removing packages - removing GNOME removed over 200 packages and the
+issue triggered. However, re-installing and removing GNOME again did
+not trigger the issue. So nothing so far reproduces the issue reliably.
+With the new kernel the issue even reproduces less frequently than the
+4.4 and 4.15 kernel - probably some i/o scheduler change affects the
+disk i/o patterns.
 
-This is technically prohibited by the spec, so it is possible that
-PCI devices without the Multi-Function Device bit set may have
-unexpected behavior in response to this probe.
+Thanks
 
-Derived from original patch by Benedikt Spranger.
-
-CC: Benedikt Spranger <b.spranger@linutronix.de>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- arch/x86/pci/legacy.c |  4 +++-
- drivers/pci/probe.c   | 22 +++++++++++++++++++---
- 2 files changed, 22 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 1cb01abcb1be..dfbe6ac38830 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -4,6 +4,7 @@
- #include <linux/init.h>
- #include <linux/export.h>
- #include <linux/pci.h>
-+#include <asm/jailhouse_para.h>
- #include <asm/pci_x86.h>
- 
- /*
-@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
- 
- void pcibios_scan_specific_bus(int busn)
- {
-+	int stride = jailhouse_paravirt() ? 1 : 8;
- 	int devfn;
- 	u32 l;
- 
- 	if (pci_find_bus(0, busn))
- 		return;
- 
--	for (devfn = 0; devfn < 256; devfn += 8) {
-+	for (devfn = 0; devfn < 256; devfn += stride) {
- 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
- 		    l != 0x0000 && l != 0xffff) {
- 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef5377438a1e..3c365dc996e7 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -16,6 +16,7 @@
- #include <linux/pci-aspm.h>
- #include <linux/aer.h>
- #include <linux/acpi.h>
-+#include <linux/hypervisor.h>
- #include <linux/irqdomain.h>
- #include <linux/pm_runtime.h>
- #include "pci.h"
-@@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
- {
- 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
- 	unsigned int start = bus->busn_res.start;
--	unsigned int devfn, cmax, max = start;
-+	unsigned int devfn, fn, cmax, max = start;
- 	struct pci_dev *dev;
-+	int nr_devs;
- 
- 	dev_dbg(&bus->dev, "scanning bus\n");
- 
- 	/* Go find them, Rover! */
--	for (devfn = 0; devfn < 0x100; devfn += 8)
--		pci_scan_slot(bus, devfn);
-+	for (devfn = 0; devfn < 256; devfn += 8) {
-+		nr_devs = pci_scan_slot(bus, devfn);
-+
-+		/*
-+		 * The Jailhouse hypervisor may pass individual functions of a
-+		 * multi-function device to a guest without passing function 0.
-+		 * Look for them as well.
-+		 */
-+		if (jailhouse_paravirt() && nr_devs == 0) {
-+			for (fn = 1; fn < 8; fn++) {
-+				dev = pci_scan_single_device(bus, devfn + fn);
-+				if (dev)
-+					dev->multifunction = 1;
-+			}
-+		}
-+	}
- 
- 	/* Reserve buses for SR-IOV capability */
- 	used_buses = pci_iov_bus_range(bus);
--- 
-2.13.6
+Michal
