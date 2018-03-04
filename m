@@ -1,41 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932141AbeCDUOY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 15:14:24 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37362 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751848AbeCDUOW (ORCPT
+        id S932188AbeCDUgq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 15:36:46 -0500
+Received: from mail-yw0-f176.google.com ([209.85.161.176]:43166 "EHLO
+        mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751848AbeCDUgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 15:14:22 -0500
-X-Google-Smtp-Source: AG47ELt7TOrfyz72yUlokzYvibFVjkWCAsUvMF7kJIoLBSMdueIFARIapyrJ/244sSC0Lbo/XbvhfhIYP8O79KU4H38=
+        Sun, 4 Mar 2018 15:36:43 -0500
+X-Google-Smtp-Source: AG47ELuRufoZHPDAKa4B+5lfDx5l6YUfkaW4Y17DlBCuCXLgLRRHcvOMv2OPuzzYPQ3sknBBcVcHRg==
+Date: Sun, 4 Mar 2018 12:36:40 -0800
+From: Tejun Heo <tj@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] ahci/pci-quirks: Add PCI-id for the Highpoint
+ Rocketraid 644L card
+Message-ID: <20180304203640.GF231488@devbig577.frc2.facebook.com>
+References: <20180302103633.10592-1-hdegoede@redhat.com>
+ <20180302192907.GB202062@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxPi=XNUUdL+rJbKLLiJsYPSh=7nZwoQBYJk69EUJ8rPg@mail.gmail.com>
-References: <alpine.DEB.2.21.1803041558530.2394@nanos.tec.linutronix.de> <CA+55aFxPi=XNUUdL+rJbKLLiJsYPSh=7nZwoQBYJk69EUJ8rPg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 4 Mar 2018 12:14:21 -0800
-X-Google-Sender-Auth: 0WnalcYZnJL8YampKWk-7P7curo
-Message-ID: <CA+55aFwKQWbjdY8wWuzHgHDP8rQEZpfAu06VpVKDjkV1NcQisA@mail.gmail.com>
-Subject: Re: [GIT pull] x86 fixes for 4.16
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302192907.GB202062@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 4, 2018 at 11:40 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sun, Mar 4, 2018 at 7:02 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->>
->> please pull the latest x86-urgent-for-linus git tree from:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
->
-> Nothing there.
->
-> Did you forget to push out?
+On Fri, Mar 02, 2018 at 01:29:07PM -0600, Bjorn Helgaas wrote:
+> On Fri, Mar 02, 2018 at 11:36:31AM +0100, Hans de Goede wrote:
+> > Hi All,
+> > 
+> > Here are 2 patches adding support for Highpoint Rocketraid 644L cards,
+> > they can be merged independently from each-other into their resp. subsys,
+> > but since they belong together I'm sending them out as a series.
+> 
+> Seems like it'd be nice to keep these together, so Tejun, feel free to
+> take both patches with my
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> on the pci/quirks.c patch.  If you'd prefer me to take them, just let
+> me know.
 
-I pulled from x86/urgent, which has the same contents. I think you
-just forgot to update the "for-linus" version.
+Applied both to libata/for-4.16-fixes with ack added.
 
-                 Linus
+Thanks.
+
+-- 
+tejun
