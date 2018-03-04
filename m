@@ -1,73 +1,77 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvRl9fjMoJk8TldLFeKyLKMf0skIY+4ghMb2XxGEGC9kvWzBn+0qPMJ7DgT/ybnx1HPkxAj
-ARC-Seal: i=1; a=rsa-sha256; t=1520777644; cv=none;
+Return-Path: <masneyb@onstation.org>
+X-Google-Smtp-Source: AG47ELuAd1FEuSfEtYKAYz5MR+VwPwxfGSY06Dk52gnSczBkUTrDqYbPqkn9Dwq3thnXpyAZVhft
+ARC-Seal: i=1; a=rsa-sha256; t=1520128191; cv=none;
         d=google.com; s=arc-20160816;
-        b=QjEc4nZsAnMTEOZ2SMRBWOMGDLHp5rjQOyJQA+mymmCN/lFT0cQ2yQBEqk2PFlrXRA
-         ynaXdaHfwpKzgEyJ3KiMoisdqMa+GFSOUqoBAx6lzdHibgU36vQTi24VAwPmRXWVZKGY
-         zzEwuyw9ek+E4yVNpFw+05vqMg1Ut+TX4sqF+U0YZx3xqEJZO/Png7TRJUGPC28f81r4
-         Tzdh39HnXE600iCeVjYhlJoZYZzPkagQuc8t6S9FDudjXNC9Tk9xEp42SC1kfV9Q/VuJ
-         U7iCMnpYejE023YqLZ1j7kj5p7CFg47jHINa3kB6hdqaXY/Nm1nMtcZ2p1C1PzFdCzaF
-         R6Fg==
+        b=GwhMhW7fVQ0gjOYj8SCF5anwOSAfcjI0MHeJV3Uj2wJujO6Flu3+Zirct062tD+JUh
+         nCxVGkLXE8hyvoU44YZXWN+yBMRKovATm/tmVHK3nBD6/wXnz+uKW89TROdeZn9ock0N
+         0IiIqBn4TyuLcbBqjUQ5JCv1boWPkcdKgRR5R27h1PYGQq7G8AwJRTv7hKHOrOPUc71N
+         j1Fd0LQwrbZMs1EqXhSOPseuWbWTSKoYMfJ9CfVTCwx2diz5OxrPUBwkoLGrFLtWapPy
+         VaJoCaPhHIbGn1CNEAFUYy3yirYaHt5J+MnC3helSPOrVYFJxEN4Kq+la+8HeGJ9PD2v
+         EnpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:user-agent:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:dkim-signature
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=FVxLj5UW3XvCk8yKDzg0W9hLpY/SJYfAuY2Izkg5Zw8=;
-        b=okbqmNtdXh0FT2980gJP7kOJ6Qv4ZratkHKr9i9yVihF6Yiu6CCoPSi15eHpgluD+f
-         sbEvkhDdS5aCw9oaLQla8U2Qk330JBI0p7QeL5BooqbSMIXaOn8UPC/B/juJUbodoGkp
-         yHg8zQjuP1Ciw/fktIOQc4ScBKLKXVtvYeD4yyTvrgP10hLHwg/2Ep3JXXhQYvVK/zja
-         clsUSSVrG+P3TPF4Piic79hSdSVP6kWXjpCkQzJ5vZ3Q05FUtaPj7KOCb67OPhDkXB8F
-         bTqkYIX/uthk50fUtHhGs/BxAzB1Y8Lpm+QAL19MTRMaId+VHKntgTc7QjuMcfznuJ9P
-         0adQ==
+        bh=inV+wxq/WJlk7VobsjPukh3b8sV0dm8bQFRobKPDvYI=;
+        b=sHbhIxNcR21s6lExiIj5sfkevicWTW7IkBs2Lg31egVWgqnD3Ybp/3nohJzJ6yqdgZ
+         fpcd4QCQrAuD/7H9S7+nOFUT75JCRWAir8xT+HcJASggnASk+pP4UQQRbDH2305shOYQ
+         7x34l//vNnlmjjYGyBy1S7hSquDKewdzB1Doyyy3Wyr6FPmYD1Xvgiq7ORwViXqeD76B
+         Nw7fJU8XOJ+MyIIErDpvsipW5B3lhtZG14Vao0Q51A3eY9wmkUiNZvbgKNwey7Gj4Jrx
+         znZbJXoiEVjaiHVGR2jCk7mH+XhhdrZAnNf+tIUQl7heE+8IBUVQJJCO1T3zbxXW1DWj
+         n/1w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=rOEVfdPu;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass (test mode) header.i=@onstation.org header.s=default header.b=JfszT+Hh;
+       spf=pass (google.com: best guess record for domain of masneyb@onstation.org designates 52.200.56.107 as permitted sender) smtp.mailfrom=masneyb@onstation.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=rOEVfdPu;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932144AbeCKOOD (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sun, 11 Mar 2018 10:14:03 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40507 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932136AbeCKOOC (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Sun, 11 Mar 2018 10:14:02 -0400
-Date: Sun, 11 Mar 2018 17:13:58 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: shuahkh@osg.samsung.com, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: prevent carpal tunnel
-Message-ID: <20180311141358.GA22705@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass (test mode) header.i=@onstation.org header.s=default header.b=JfszT+Hh;
+       spf=pass (google.com: best guess record for domain of masneyb@onstation.org designates 52.200.56.107 as permitted sender) smtp.mailfrom=masneyb@onstation.org
+From: Brian Masney <masneyb@onstation.org>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	devel@driverdev.osuosl.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	linux-kernel@vger.kernel.org,
+	Jon.Brenner@ams.com
+Subject: [PATCH 00/12] staging cleanups
+Date: Sat,  3 Mar 2018 20:49:30 -0500
+Message-Id: <20180304014942.18727-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594650939397463300?=
-X-GMAIL-MSGID: =?utf-8?q?1594650939397463300?=
+X-GMAIL-THRID: =?utf-8?q?1593969938494708923?=
+X-GMAIL-MSGID: =?utf-8?q?1593969938494708923?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Shuah, please do
+Here is another patch series that inches the driver closer to moving out
+of staging. The most interesting changes are the last two in the series.
+One gets the proximity sensor working and the other one removes the
+unnecessary in_proximity0_calibscale_available sysfs attribute from two
+of the supported devices. The rest of the patches are not that
+interesting and either reduce duplicate code, add error handling, or
+other minor cosmetic changes.
 
-	ln -s tools/testing/selftests test
+Brian Masney (12):
+  staging: iio: tsl2x7x: remove power functions from
+    tsl2X7X_platform_data
+  staging: iio: tsl2x7x: add common function for clearing interrupts
+  staging: iio: tsl2x7x: add common function for reading chip status
+  staging: iio: tsl2x7x: add common function for writing to the control
+    register
+  staging: iio: tsl2x7x: convert mutex_trylock() to mutex_lock()
+  staging: iio: tsl2x7x: correctly return errors in tsl2x7x_get_prox()
+  staging: iio: tsl2x7x: correct 'Avoid CamelCase' warning from
+    checkpatch
+  staging: iio: tsl2x7x: add error handling to tsl2x7x_prox_cal()
+  staging: iio: tsl2x7x: add missing error checks
+  staging: iio: tsl2x7x: make logging consistent and correct newlines
+  staging: iio: tsl2x7x: remove unnecessary sysfs attribute
+  staging: iio: tsl2x7x: make proximity sensor function correctly
 
-It will save a lot of typing for everyone over the years.
+ drivers/staging/iio/light/tsl2x7x.c | 346 ++++++++++++++++++------------------
+ drivers/staging/iio/light/tsl2x7x.h |   6 +-
+ 2 files changed, 179 insertions(+), 173 deletions(-)
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- test |    1 +
- 1 file changed, 1 insertion(+)
-
-new file mode 120000
---- /dev/null
-+++ b/test
-@@ -0,0 +1 @@
-+tools/testing/selftests
-\ No newline at end of file
+-- 
+2.14.3
