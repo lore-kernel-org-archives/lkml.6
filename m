@@ -1,63 +1,65 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2187568-1520157375-2-17334539150048757191
+X-Cyrus-Session-Id: sloti22d1t05-2727825-1520170806-2-2435407706507051363
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='hr', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520157375; b=oOlljnmQU03ej8jK4iOeyCcFGyh6e5QthZK9h4/cNvyEWKy
-    nTp6Qa3S0+RhwVD8JZA2r4KSWOnDln0gtBuQJLWlKJOHCfW7GzkFVZLuJXqAPk/K
-    VYaX7uVGbg629wR4EA4aHCOSdUE5awxdnsemrRMRnQxNVgEr9wWoLP1Rlk2s7LME
-    QjtadS16FALQ6KvU7UgaEXd/d6FMNU2kxXAMhNCf9rue7cVtRVNIraHsPHUly5ue
-    p++IJsZmMBVJbSsVZZd4Qc+QvVIRpdP/T4KszdJMXQb5Nx9aZY0/1ngAnDlwdgtM
-    4py+3C+0paOuIClqdtdwRmzFF8IcZa2+DxZ10og==
+    t=1520170806; b=KSgD2N9ARzlD5RbEgld+gwKRF9eB4cg/qZ6/u0aR1SSXhWu
+    0622BREn3yRFm+ZgB7gRh2u5NK/5QE3noZiRCzUyinc+p5RX3+ubStxLoa/JtmOf
+    N2uox8pPKzbdfBXPFE3kzeX0hlRix2FWj4guMkgrZmBCTgmDce4ARk/OiEbqECTd
+    odOb79AXwnYtpvSXWgC0t8rxwbTSO5rrOXCOII1LhOEbbhDIzRi8wQGTqyIOWHYb
+    WYEF71wuZYIOgK3AMKOsX/MQ49cPtwcwv4tnxnJTF1p2TnbYlrIKOZIDuAhjTZ3P
+    hP3VCJTEMkVZknybxLcLD93Gx3sUCNIvzywGrNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:message-id:subject:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520157375; bh=W
-    ilnT008N5aSor1T19pjyVyvbpcDALrRcOp6BlPJ+Mo=; b=Khq9UM1LOjx9dH59c
-    Vq10gn/Y3RYWqdJ+iK3AIYxfeXVojDkgH3z7cuJOgp83PS2t2+yL9xh/NibcujFq
-    GzHXxZJwbAYefAQvbp+dNK71d0cAAdbnQQsZeqcGrmVmtBf1sGUoJiXgEZ0KdGah
-    TxDBGGFJv8Diq0xz7y5V2t2Sv+QjzKYClqYMD6y9vLzJLkJ02tbrjHaz3Ehkm4Fv
-    VDcWy2Gv2uDg/3AX3HOPk6EqKmMKcPOqirKgJLmtDam4FYQcSeYfJI5OuPpWyGqm
-    VRrgVbxEgaN5OjqsE81UY5Uqctjth3zHPQH+hltltLHu2Tp0WxRBxQmCyBDayUFc
-    8u0yw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520170806; bh=s
+    R55mXpWY9cQZLSdssxC8guS4jB1kgxKDoZ/x+7+7nM=; b=ATV3JtKMo9/tnsO9o
+    1aItcexDT89c4skpnU0phK9VE2ekj2BXSt57wdEJjDSRdqBMFxDTjI9j8S8JmR31
+    MTSodWpYIe+YM4zgouyZe3qKEf1M9DLUIOPEVfEwD2B6xfJQwRUNrK75lIdUzGWE
+    BpxpFvAMOudbY7tA1vegq6UFKYgM39VynmggMnq41PqwYQcVGef8EihCMHqeYEna
+    N6bMxIxBP2EVQ/XV/IOCTFUth52uWLb8ZI4BR61+qBDkXnPu8n38hmnveGhUN/j9
+    aa8u+Tlr9vWt8GMvh6GPvZaFkMxrLDJBvJmo6mPtoEGmfJc2RNzXwR79LkhEDqKO
+    b7VxQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun,  4 Mar 2018 10:55:56 +0100
-Message-Id: <20180304095556.10335-1-Valentin.Vidic@CARNet.hr>
-X-Mailer: git-send-email 2.16.1
-X-SA-Exim-Connect-IP: 2001:b68:ff:12::131
-Subject: [PATCH] staging: pi433: fix CamelCase for packetFormat enum
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+Date: Sun, 4 Mar 2018 14:38:37 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Valentin Vidic <Valentin.Vidic@CARNet.hr>
+Subject: Re: [PATCH] staging: pi433: fix CamelCase for packetFormat enum
+Message-ID: <20180304133837.GA5215@kroah.com>
+References: <20180304095556.10335-1-Valentin.Vidic@CARNet.hr>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180304095556.10335-1-Valentin.Vidic@CARNet.hr>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -70,12 +72,10 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, Derek Robson <robsonde@gmail.com>,
  Michael Panzlaff <michael.panzlaff@fau.de>,
- Valentin Vidic <Valentin.Vidic@CARNet.hr>,
- =?UTF-8?q?Luca=20S=C3=B6the?= <luca@acul.me>, linux-kernel@vger.kernel.org,
+ Luca =?iso-8859-1?Q?S=F6the?= <luca@acul.me>, linux-kernel@vger.kernel.org,
  Marcin Ciupak <marcin.s.ciupak@gmail.com>,
  Marcus Wolf <linux@Wolf-Entwicklungen.de>,
- =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-MIME-Version: 1.0
+ Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -84,106 +84,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixes checkpatch warnings:
+On Sun, Mar 04, 2018 at 10:55:56AM +0100, Valentin Vidic wrote:
+> Fixes checkpatch warnings:
+> 
+>   CHECK: Avoid CamelCase: <packetFormat>
+>   CHECK: Avoid CamelCase: <packetLengthFix>
+>   CHECK: Avoid CamelCase: <packetLengthVar>
+> 
+> Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
+> ---
 
-  CHECK: Avoid CamelCase: <packetFormat>
-  CHECK: Avoid CamelCase: <packetLengthFix>
-  CHECK: Avoid CamelCase: <packetLengthVar>
+Hi,
 
-Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
----
- drivers/staging/pi433/pi433_if.c  | 8 ++++----
- drivers/staging/pi433/rf69.c      | 8 ++++----
- drivers/staging/pi433/rf69.h      | 2 +-
- drivers/staging/pi433/rf69_enum.h | 6 +++---
- 4 files changed, 12 insertions(+), 12 deletions(-)
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index aad1debd34a2..b1cbec876857 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -222,11 +222,11 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
- 			return ret;
- 	}
- 	if (rx_cfg->enable_length_byte == OPTION_ON) {
--		ret = rf69_set_packet_format(dev->spi, packetLengthVar);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_var);
- 		if (ret < 0)
- 			return ret;
- 	} else {
--		ret = rf69_set_packet_format(dev->spi, packetLengthFix);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_fix);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -337,11 +337,11 @@ rf69_set_tx_cfg(struct pi433_device *dev, struct pi433_tx_cfg *tx_cfg)
- 	}
- 
- 	if (tx_cfg->enable_length_byte == OPTION_ON) {
--		ret = rf69_set_packet_format(dev->spi, packetLengthVar);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_var);
- 		if (ret < 0)
- 			return ret;
- 	} else {
--		ret = rf69_set_packet_format(dev->spi, packetLengthFix);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_fix);
- 		if (ret < 0)
- 			return ret;
- 	}
-diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index b2cea5f52eea..54d8105b5812 100644
---- a/drivers/staging/pi433/rf69.c
-+++ b/drivers/staging/pi433/rf69.c
-@@ -661,12 +661,12 @@ int rf69_set_sync_values(struct spi_device *spi, u8 sync_values[8])
- 	return retval;
- }
- 
--int rf69_set_packet_format(struct spi_device *spi, enum packetFormat packetFormat)
-+int rf69_set_packet_format(struct spi_device *spi, enum packet_format packet_format)
- {
--	switch (packetFormat) {
--	case packetLengthVar:
-+	switch (packet_format) {
-+	case packet_length_var:
- 		return rf69_set_bit(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
--	case packetLengthFix:
-+	case packet_length_fix:
- 		return rf69_clear_bit(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
- 	default:
- 		dev_dbg(&spi->dev, "set: illegal input param");
-diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
-index cf89b556cb00..7b7932a553e8 100644
---- a/drivers/staging/pi433/rf69.h
-+++ b/drivers/staging/pi433/rf69.h
-@@ -50,7 +50,7 @@ int rf69_disable_sync(struct spi_device *spi);
- int rf69_set_fifo_fill_condition(struct spi_device *spi, enum fifo_fill_condition fifo_fill_condition);
- int rf69_set_sync_size(struct spi_device *spi, u8 sync_size);
- int rf69_set_sync_values(struct spi_device *spi, u8 sync_values[8]);
--int rf69_set_packet_format(struct spi_device *spi, enum packetFormat packetFormat);
-+int rf69_set_packet_format(struct spi_device *spi, enum packet_format packet_format);
- int rf69_enable_crc(struct spi_device *spi);
- int rf69_disable_crc(struct spi_device *spi);
- int rf69_set_address_filtering(struct spi_device *spi, enum address_filtering address_filtering);
-diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
-index cba3c5b3995c..682b667bf342 100644
---- a/drivers/staging/pi433/rf69_enum.h
-+++ b/drivers/staging/pi433/rf69_enum.h
-@@ -118,9 +118,9 @@ enum fifo_fill_condition {
- 	always
- };
- 
--enum packetFormat {
--	packetLengthFix,
--	packetLengthVar
-+enum packet_format {
-+	packet_length_fix,
-+	packet_length_var
- };
- 
- enum tx_start_condition {
--- 
-2.16.1
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- You sent multiple patches, yet no indication of which ones should be
+  applied in which order.  Greg could just guess, but if you are
+  receiving this email, he guessed wrong and the patches didn't apply.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/SubmittingPatches for a description of how
+  to do this so that Greg has a chance to apply these correctly.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
