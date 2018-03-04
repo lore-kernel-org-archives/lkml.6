@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932069AbeCDScH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 13:32:07 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:54521 "EHLO thoth.sbs.de"
+        id S1752198AbeCDScE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 13:32:04 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:54520 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751818AbeCDSb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751791AbeCDSb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 4 Mar 2018 13:31:58 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -14,9 +14,9 @@ Cc: x86@kernel.org,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v4 7/7] MAINTAINERS: Add entry for Jailhouse
-Date: Sun,  4 Mar 2018 19:31:39 +0100
-Message-Id: <36142d5c54b217e2e6df8c80936764d883180e93.1520188299.git.jan.kiszka@siemens.com>
+Subject: [PATCH v4 4/7] x86: Align x86_64 PCI_MMCONFIG with 32-bit variant
+Date: Sun,  4 Mar 2018 19:31:36 +0100
+Message-Id: <1767f3f0605af8ae9981adcab5b294edf07b2c95.1520188299.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
 References: <cover.1520188299.git.jan.kiszka@siemens.com>
@@ -28,28 +28,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
+Allow to enable PCI_MMCONFIG when only SFI is present and make this
+option default on. This will help consolidating both into one Kconfig
+statement.
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4623caf8d72d..6dc0b8f3ae0e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7523,6 +7523,13 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
- S:	Maintained
- F:	drivers/media/dvb-frontends/ix2505v*
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f23521..c19f5342ec2b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2659,7 +2659,8 @@ config PCI_DOMAINS
  
-+JAILHOUSE HYPERVISOR INTERFACE
-+M:	Jan Kiszka <jan.kiszka@siemens.com>
-+L:	jailhouse-dev@googlegroups.com
-+S:	Maintained
-+F:	arch/x86/kernel/jailhouse.c
-+F:	arch/x86/include/asm/jailhouse_para.h
-+
- JC42.4 TEMPERATURE SENSOR DRIVER
- M:	Guenter Roeck <linux@roeck-us.net>
- L:	linux-hwmon@vger.kernel.org
+ config PCI_MMCONFIG
+ 	bool "Support mmconfig PCI config space access"
+-	depends on X86_64 && PCI && ACPI
++	default y
++	depends on X86_64 && PCI && (ACPI || SFI)
+ 
+ config PCI_CNB20LE_QUIRK
+ 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
 -- 
 2.13.6
