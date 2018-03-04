@@ -1,68 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeCDJ3d (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 04:29:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60638 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751839AbeCDJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 04:29:31 -0500
-Date: Sun, 4 Mar 2018 10:29:18 +0100
-From: Borislav Petkov <bp@suse.de>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        r.marek@assembler.cz, ricardo.neri-calderon@linux.intel.com,
-        rkrcmar@redhat.com, Janakarajan.Natarajan@amd.com, x86@kernel.org,
-        hpa@zytor.com, mingo@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] clarify how insecure CPU is
-Message-ID: <20180304092918.GA1142@pd.tnic>
-References: <20180108201017.GA20588@amd>
- <alpine.DEB.2.20.1801082125530.2253@nanos>
- <20180108230355.GA25349@amd>
- <alpine.DEB.2.20.1801090043160.2253@nanos>
- <20180303210653.GB22392@amd>
- <alpine.DEB.2.21.1803040825130.1654@nanos.tec.linutronix.de>
- <20180304085159.GB7931@amd>
+        id S932149AbeCDJby (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 04:31:54 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34113 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeCDJbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 04:31:51 -0500
+X-Google-Smtp-Source: AG47ELsWMti73SVVAv0g6YMolIYF5rivQnMZFsW0coitwsjNEeb/t2tXXujD0LEjB9vAhOsseRTHpw==
+Date: Sun, 4 Mar 2018 10:31:46 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: David Wang <davidwang@zhaoxin.com>
+Cc: rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-pm@kernel.org, linux-kernel@vger.kernel.org,
+        brucechang@via-alliance.com, cooperyan@zhaoxin.com,
+        qiyuanwang@zhaoxin.com, benjaminpan@viatech.com, lukelin@viacpu.com,
+        timguo@zhaoxin.com, cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
+Subject: Re: [PATCH] Delete some unusefull operations for centaur CPU/platform
+Message-ID: <20180304093146.rujp4f62fv6xotb7@gmail.com>
+References: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180304085159.GB7931@amd>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1519963908-4359-1-git-send-email-davidwang@zhaoxin.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 04, 2018 at 09:51:59AM +0100, Pavel Machek wrote:
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index f41079d..4901742 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -341,7 +341,7 @@
->  #define X86_BUG_FDIV			X86_BUG(1) /* FPU FDIV */
->  #define X86_BUG_COMA			X86_BUG(2) /* Cyrix 6x86 coma */
->  #define X86_BUG_AMD_TLB_MMATCH		X86_BUG(3) /* "tlb_mmatch" AMD Erratum 383 */
-> -#define X86_BUG_AMD_APIC_C1E		X86_BUG(4) /* "apic_c1e" AMD Erratum 400 */
-> +#define X86_BUG_AMD_APIC_C1E		X86_BUG(4) /* System is affected AMD Erratum 400, special idle routine is needed */
->  #define X86_BUG_11AP			X86_BUG(5) /* Bad local APIC aka 11AP */
->  #define X86_BUG_FXSAVE_LEAK		X86_BUG(6) /* FXSAVE leaks FOP/FIP/FOP */
->  #define X86_BUG_CLFLUSH_MONITOR		X86_BUG(7) /* AAI65, CLFLUSH required before MONITOR */
-> @@ -356,7 +356,7 @@
->  #define X86_BUG_NULL_SEG		X86_BUG(10) /* Nulling a selector preserves the base */
->  #define X86_BUG_SWAPGS_FENCE		X86_BUG(11) /* SWAPGS without input dep on GS */
->  #define X86_BUG_MONITOR			X86_BUG(12) /* IPI required to wake up remote CPU */
-> -#define X86_BUG_AMD_E400		X86_BUG(13) /* CPU is among the affected by Erratum 400 */
-> +#define X86_BUG_AMD_E400		X86_BUG(13) /* System may be affected by Erratum 400, X86_BUG_AMD_APIC_C1E might be needed  */
+* David Wang <davidwang@zhaoxin.com> wrote:
 
-Not "might be needed" - "X86_BUG_AMD_APIC_C1E will be set if platform is
-affected".
+> For Centaur CPU, the ucode will make sure that each CPU core can keep cache
+> coherency with each other when the CPU core entering to any C state. So the
+> cache flush operations when enter C3 is not necessary and will cause large
+> C3 enter/exit latency.
+> And the bus master disable operation when CPU core entering C3 state is not
+> needed too. Because the chipset will automatically do this operation.
+> 
+> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> ---
+>  arch/x86/kernel/acpi/cstate.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+> index dde437f..1cd357b 100644
+> --- a/arch/x86/kernel/acpi/cstate.c
+> +++ b/arch/x86/kernel/acpi/cstate.c
+> @@ -51,6 +51,18 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+>  	if (c->x86_vendor == X86_VENDOR_INTEL &&
+>  	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
+>  			flags->bm_control = 0;
+> +
+> +        if (c->x86_vendor == X86_VENDOR_CENTAUR) {
+> +		/*
+> +		 * on all centaur CPUs, sw need not execute cache flush operation
+> +		 * when entering C3 type State.
+> +		 *
+> +		 * On all Centaur platforms, sw need not execute ARB_DISABLE while
+> +		 * entering C3 type state.
+> +		 */
+> +		flags->bm_check = 1;
+> +		flags->bm_control = 0;
+> +	}
 
-And then you don't need the above comment change. And you can't remove
-"apic_c1e" there because it is magical.
+Please clean up capitalization and spelling of the comment, and please also 
+explain the ACPI-idle settings a bit better, i.e. something like:
 
--- 
-Regards/Gruss,
-    Boris.
+		/*
+		 * On all Centaur CPUs the kernel does not have to 
+		 * execute a cache flush operation (WBINVD) when
+		 * entering C3 state.
+		 *
+		 * On all Centaur platforms the kernel does not have to
+		 * disable bus-master arbitration (ARB_DISABLE) when
+		 * entering C3 state.
+		 */
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Also, two questions:
+
+1)
+
+I'm wondering about this logic in acpi_processor_power_verify_c3():
+
+        if (pr->flags.bm_check) {
+                if (!pr->flags.bm_control) {
+                        if (pr->flags.has_cst != 1) {
+                                /* bus mastering control is necessary */
+                                ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+                                        "C3 support requires BM control\n"));
+                                return;
+
+So ->has_cst is set on Centaur CPUs?
+
+2)
+
+There's this comment in acpi_idle_enter_bm():
+
+        /*
+         * disable bus master
+         * bm_check implies we need ARB_DIS
+         * bm_control implies whether we can do ARB_DIS
+         *
+         * That leaves a case where bm_check is set and bm_control is
+         * not set. In that case we cannot do much, we enter C3
+         * without doing anything.
+         */
+        if (pr->flags.bm_control) {
+
+It says 'bm_check == 1 implies we need ARB_DIS' - but we do the opposite in the 
+Centaur case? It it me who is confused or the comment?
+
+Thanks,
+
+	Ingo
