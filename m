@@ -1,12 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932120AbeCDScK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 13:32:10 -0500
-Received: from goliath.siemens.de ([192.35.17.28]:60005 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751838AbeCDSb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 13:31:58 -0500
+        id S1752284AbeCDScN (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 13:32:13 -0500
+Received: from david.siemens.de ([192.35.17.14]:44418 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752083AbeCDScC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 13:32:02 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
@@ -14,10 +13,12 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v4 5/7] x86: Consolidate PCI_MMCONFIG configs
-Date: Sun,  4 Mar 2018 19:31:37 +0100
-Message-Id: <544801a13f892a18a0cba0a55ab1d8d2885ca8f6.1520188299.git.jan.kiszka@siemens.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH v4 1/7] jailhouse: Provide detection for non-x86 systems
+Date: Sun,  4 Mar 2018 19:31:33 +0100
+Message-Id: <7b24a9f00261e20e0dd12934a663ab552500bded.1520188299.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520188299.git.jan.kiszka@siemens.com>
 References: <cover.1520188299.git.jan.kiszka@siemens.com>
@@ -29,43 +30,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Since e279b6c1d329 ("x86: start unification of arch/x86/Kconfig.*"), we
-have two PCI_MMCONFIG entries, one from the original i386 and another
-from x86_64. This consolidates both entries into a single one.
+Implement jailhouse_paravirt() via device tree probing on architectures
+!= x86. Will be used by the PCI core.
 
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Juergen Gross <jgross@suse.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/Kconfig | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+ arch/x86/include/asm/jailhouse_para.h           |  2 +-
+ include/linux/hypervisor.h                      | 17 +++++++++++++++--
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c19f5342ec2b..8986a6b6e3df 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2641,8 +2641,10 @@ config PCI_DIRECT
- 	depends on PCI && (X86_64 || (PCI_GODIRECT || PCI_GOANY || PCI_GOOLPC || PCI_GOMMCONFIG))
+diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
+new file mode 100644
+index 000000000000..2901c25ff340
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jailhouse.txt
+@@ -0,0 +1,8 @@
++Jailhouse non-root cell device tree bindings
++--------------------------------------------
++
++When running in a non-root Jailhouse cell (partition), the device tree of this
++platform shall have a top-level "hypervisor" node with the following
++properties:
++
++- compatible = "jailhouse,cell"
+diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
+index 875b54376689..b885a961a150 100644
+--- a/arch/x86/include/asm/jailhouse_para.h
++++ b/arch/x86/include/asm/jailhouse_para.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL2.0 */
  
- config PCI_MMCONFIG
--	def_bool y
--	depends on X86_32 && PCI && (ACPI || SFI) && (PCI_GOMMCONFIG || PCI_GOANY)
-+	bool "Support mmconfig PCI config space access" if X86_64
-+	default y
-+	depends on PCI && (ACPI || SFI)
-+	depends on X86_64 || (PCI_GOANY || PCI_GOMMCONFIG)
+ /*
+- * Jailhouse paravirt_ops implementation
++ * Jailhouse paravirt detection
+  *
+  * Copyright (c) Siemens AG, 2015-2017
+  *
+diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
+index b19563f9a8eb..fc08b433c856 100644
+--- a/include/linux/hypervisor.h
++++ b/include/linux/hypervisor.h
+@@ -8,15 +8,28 @@
+  */
  
- config PCI_OLPC
- 	def_bool y
-@@ -2657,11 +2659,6 @@ config PCI_DOMAINS
- 	def_bool y
- 	depends on PCI
+ #ifdef CONFIG_X86
++
++#include <asm/jailhouse_para.h>
+ #include <asm/x86_init.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ 	x86_platform.hyper.pin_vcpu(cpu);
+ }
+-#else
++
++#else /* !CONFIG_X86 */
++
++#include <linux/of.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ }
+-#endif
++
++static inline bool jailhouse_paravirt(void)
++{
++	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
++}
++
++#endif /* !CONFIG_X86 */
  
--config PCI_MMCONFIG
--	bool "Support mmconfig PCI config space access"
--	default y
--	depends on X86_64 && PCI && (ACPI || SFI)
--
- config PCI_CNB20LE_QUIRK
- 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
- 	depends on PCI
+ #endif /* __LINUX_HYPEVISOR_H */
 -- 
 2.13.6
