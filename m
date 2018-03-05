@@ -1,29 +1,29 @@
-Return-Path: <dvlasenk@redhat.com>
-X-Google-Smtp-Source: AG47ELunzED+2JlHdpBBvkkkkgenFWmhY7YzFhNBV1aJEenun3uL0IMXJ4nWhViwstiufgPwdwL0
-ARC-Seal: i=1; a=rsa-sha256; t=1520266190; cv=none;
+Return-Path: <longman@redhat.com>
+X-Google-Smtp-Source: AG47ELtpAH5PgASzaoNq1PoYRpH/CGFMCR8yLY0dvmxpNDCsmih0+Jf1XiBJAIk8A8xbBwwx8fKK
+ARC-Seal: i=1; a=rsa-sha256; t=1520257174; cv=none;
         d=google.com; s=arc-20160816;
-        b=vElHKjIdkL0Zp7wSNvfGvRf3aJhEkNCZG+9QC52O1v6bujGH1J7mG9138e+ED/yTUi
-         /5wKdTpttu+OlTMS+ofXJXIXx///K67zj/yH/aM+fo4m6G45FlPFoJ+VRY9kfCG7Bb1m
-         Vr/WZREWmSVViIFvtcBytwaA98cbpWakEEWadhf63S7IN0YynC3VSRfQGInOVXBtf7jd
-         J8M+LEZwL3B9U2htUWpliNW0TWk6uzMZvHfxEJXc5WoB7+1KrECByq/DA6Gvy2vAOQES
-         f+AJ6JakpHR4dYp4UWYirzDYbGGlg4gn1275cRIkX5w7J6DWWqIJXwE75EBQR74Gu8ZF
-         kPIw==
+        b=QR3vi6btguerfNwGMpDQlFcoR8L5kLB8t8NGIKDalAJvKHjMZm37EXjRgp6Ei05WV0
+         j+268aPCkvn83lW8wjgOpY2MtzGzwb01HNcq9xR+C26XR2Monl6OrHhioODeROIwK2TS
+         aT1S15O8iUa9/wxRvHyA6VcxmGZkLQOAEA5DCeOAWJRoMZhaGfXV7Pr8MUnYd/NvaMji
+         /cGcNkZ87zssEf8IIgLOKBe94tMbQ63DNl1qsGWKi5OgtjoW96dnKCYazosMv/vNrEQb
+         P28QBhsWYQ+sr2C2JZi7k0W1aMDNhRUxJNHW83YiscE2igVzs/iigVBK2Lu9L8sOkHAt
+         p3kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=AuQmjhLaNleeevZy8wKTkhHX20fJQCyxh2iu1cS3j0Y=;
-        b=a4zIXRPkzS/CdiXIndhjq4w2ZD+FFkTHRAhoczBNHpjseJeKO651Vhu6BbMNxhCjW5
-         Eky76/nUk/g37J7jjs/JU6bpA73ry+33UHKEjMikArutro+3VNaMn8Rbscxs/qoRSA2D
-         eJoPzKhVyjHSg/8GUbK/VPYmWKg46TjeGdBxCmjxF90V0ErJ5zMwSYwCMXCAA/2QO3J/
-         BPI/nmEa1XtYkk44QRZbrjnuGNOKxQDNSfSWnp0x48Fcjot+H4OZjhZQ/YzitXKDwL+p
-         5NTgJd3dhl5rbROniZaVJEb8YyYBjKpux4M687slfzpZM+fc6gdgSsmrgCM1yx7bU5a5
-         uTbg==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:arc-authentication-results;
+        bh=oleO6uIqKRxgciax9wsNzwK6Jl4Sl9EveCSbxNpaUq4=;
+        b=Ywdlv7fARoeTehkkuMNMOISUYJQome1eluq+9MwlilaQl8ixtkhSkBiBx/+LVXnUFt
+         vs/FOh+WGt5Rcvb1OKiXDDjL1MQiYeLPxIgDej91UjGkTYtNB/7q/lK2Ag2UcgiHuouM
+         KbLOGoeZH31wO0UcvTSchVxXqBCFOg8snfEd8fA+xpkX4Zxn3+2iv0amEvE2w9gP6iWK
+         iA90bqu8KTo14aMxHv49PueiP9jCag8BetcrstiBf92g8ib2alnXwX+RGBO5BJMXUMNk
+         wl8z1oZv6zEwdv6zDEM1cFkMHODn2uTVh0OAFJFGt+eAtdhdInRzdJqVPhR7giAlIVeD
+         mp0g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of dvlasenk@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dvlasenk@redhat.com;
+       spf=pass (google.com: domain of longman@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=longman@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of dvlasenk@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=dvlasenk@redhat.com;
+       spf=pass (google.com: domain of longman@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=longman@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Subject: Re: [PATCH 34/34] x86/mm/pti: Add Warning when booting on a PCIE
  capable CPU
@@ -36,49 +36,50 @@ Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
  Jiri Kosina <jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
  Brian Gerst <brgerst@gmail.com>, David Laight <David.Laight@aculab.com>,
- Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
- Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
- daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
- Andrea Arcangeli <aarcange@redhat.com>, Waiman Long <llong@redhat.com>,
- Pavel Machek <pavel@ucw.cz>, jroedel@suse.de
+ Denys Vlasenko <dvlasenk@redhat.com>, Eduardo Valentin <eduval@amazon.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Will Deacon <will.deacon@arm.com>,
+ aliguori@amazon.com, daniel.gruss@iaik.tugraz.at, hughd@google.com,
+ keescook@google.com, Andrea Arcangeli <aarcange@redhat.com>,
+ Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>, jroedel@suse.de
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
  <1520245563-8444-35-git-send-email-joro@8bytes.org>
-From: Denys Vlasenko <dvlasenk@redhat.com>
-Message-ID: <c024f4d3-4780-5d62-a36a-8ccd79bc6299@redhat.com>
-Date: Mon, 5 Mar 2018 17:09:44 +0100
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <d879496a-887d-9077-3a7d-ee878a691bdc@redhat.com>
+Date: Mon, 5 Mar 2018 08:39:28 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
 In-Reply-To: <1520245563-8444-35-git-send-email-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594093033976694451?=
-X-GMAIL-MSGID: =?utf-8?q?1594114640648598393?=
+X-GMAIL-MSGID: =?utf-8?q?1594105186846531756?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/05/2018 11:26 AM, Joerg Roedel wrote:
+On 03/05/2018 05:26 AM, Joerg Roedel wrote:
 > From: Joerg Roedel <jroedel@suse.de>
-> 
+>
 > Warn the user in case the performance can be significantly
 > improved by switching to a 64-bit kernel.
-> 
+>
 > Suggested-by: Andy Lutomirski <luto@kernel.org>
 > Signed-off-by: Joerg Roedel <jroedel@suse.de>
 > ---
->   arch/x86/mm/pti.c | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
-> 
+>  arch/x86/mm/pti.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
 > diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
 > index 3ffd923..8f5aa0d 100644
 > --- a/arch/x86/mm/pti.c
 > +++ b/arch/x86/mm/pti.c
 > @@ -385,6 +385,22 @@ void __init pti_init(void)
->   
->   	pr_info("enabled\n");
->   
+>  
+>  	pr_info("enabled\n");
+>  
 > +#ifdef CONFIG_X86_32
 > +	if (boot_cpu_has(X86_FEATURE_PCID)) {
 > +		/* Use printk to work around pr_fmt() */
@@ -92,16 +93,13 @@ On 03/05/2018 11:26 AM, Joerg Roedel wrote:
 > +		printk(KERN_WARNING "**                                                        **\n");
 > +		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
 > +		printk(KERN_WARNING "************************************************************\n");
+> +	}
+> +#endif
+> +
+>  	pti_clone_user_shared();
+>  	pti_clone_entry_text();
+>  	pti_setup_espfix64();
 
-Isn't it a bit too dramatic? Not one, but two lines of big fat warnings?
+Typo in the patch title: PCIE => PCID.
 
-There are people who run 32-bit kernels on purpose, not because they
-did not yet realize 64 bits are upon us.
-
-E.g. industrial setups with strict regulations and licensing requirements.
-In many such cases they already are more than satisfied with CPU speeds,
-thus not interested in 64-bit migration for performance reasons,
-and avoid it because it would incur mountains of paperwork
-with no tangible gains.
-
-The big fat warning on every boot would be irritating.
+-Longman
