@@ -1,68 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeCEPeZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:34:25 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35838 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeCEPeY (ORCPT
+        id S1752096AbeCEPgv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:36:51 -0500
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:43150 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751779AbeCEPgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:34:24 -0500
-Date: Mon, 5 Mar 2018 15:34:17 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] ASoC: Intel: bytcr_rt5640: Drop unwanted
- ignore_suspend settings
-Message-ID: <20180305153417.GH8588@sirena.org.uk>
-References: <20180218220146.22485-1-hdegoede@redhat.com>
- <20180218220146.22485-9-hdegoede@redhat.com>
- <20180301162215.GC12864@sirena.org.uk>
- <55819630-6198-6227-63ef-69311b21b255@redhat.com>
- <20180301164819.GD12864@sirena.org.uk>
- <2aa03d98-7f61-0699-98d6-ac3ca3497c41@redhat.com>
- <20180301171744.GE12864@sirena.org.uk>
- <8ed79e1c-0a64-47d5-8076-9febfe896d3d@redhat.com>
+        Mon, 5 Mar 2018 10:36:49 -0500
+X-Google-Smtp-Source: AG47ELtGee8FMWXguepMPtwB82H/kgGxmSZhHoDgFNGgZIarM3G0mCJ7D3GDHK5o57LcATLk7tiyvYKoningP1inOPI=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="it/zdz3K1bH9Y8/E"
-Content-Disposition: inline
-In-Reply-To: <8ed79e1c-0a64-47d5-8076-9febfe896d3d@redhat.com>
-X-Cookie: Do not write below this line.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <d780e72d7a0992c891f6787aa517f8f090cb54d9.1520188299.git.jan.kiszka@siemens.com>
+References: <cover.1520188299.git.jan.kiszka@siemens.com> <d780e72d7a0992c891f6787aa517f8f090cb54d9.1520188299.git.jan.kiszka@siemens.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 5 Mar 2018 17:36:48 +0200
+Message-ID: <CAHp75VenhScnx2rY+BiQ=8JTkwjXGQ1bipRC7vFRAyCfgOSVtQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] x86/jailhouse: Enable PCI mmconfig access in inmates
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Mar 4, 2018 at 8:31 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> From: Otavio Pontes <otavio.pontes@intel.com>
+>
+> Use the PCI mmconfig base address exported by jailhouse in boot
+> parameters in order to access the memory mapped PCI configuration space.
+>
 
---it/zdz3K1bH9Y8/E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-On Sun, Mar 04, 2018 at 03:11:09PM +0100, Hans de Goede wrote:
-> On 01-03-18 18:17, Mark Brown wrote:
+> Signed-off-by: Otavio Pontes <otavio.pontes@intel.com>
+> [Jan: rebased, fixed !CONFIG_PCI_MMCONFIG, used pcibios_last_bus]
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  arch/x86/include/asm/pci_x86.h | 2 ++
+>  arch/x86/kernel/jailhouse.c    | 8 ++++++++
+>  arch/x86/pci/mmconfig-shared.c | 4 ++--
+>  3 files changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
+> index eb66fa9cd0fc..959d618dbb17 100644
+> --- a/arch/x86/include/asm/pci_x86.h
+> +++ b/arch/x86/include/asm/pci_x86.h
+> @@ -151,6 +151,8 @@ extern int pci_mmconfig_insert(struct device *dev, u16 seg, u8 start, u8 end,
+>                                phys_addr_t addr);
+>  extern int pci_mmconfig_delete(u16 seg, u8 start, u8 end);
+>  extern struct pci_mmcfg_region *pci_mmconfig_lookup(int segment, int bus);
+> +extern struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
+> +                                                       int end, u64 addr);
+>
+>  extern struct list_head pci_mmcfg_list;
+>
+> diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
+> index b68fd895235a..fa183a131edc 100644
+> --- a/arch/x86/kernel/jailhouse.c
+> +++ b/arch/x86/kernel/jailhouse.c
+> @@ -124,6 +124,14 @@ static int __init jailhouse_pci_arch_init(void)
+>         if (pcibios_last_bus < 0)
+>                 pcibios_last_bus = 0xff;
+>
+> +#ifdef CONFIG_PCI_MMCONFIG
+> +       if (setup_data.pci_mmconfig_base) {
+> +               pci_mmconfig_add(0, 0, pcibios_last_bus,
+> +                                setup_data.pci_mmconfig_base);
+> +               pci_mmcfg_arch_init();
+> +       }
+> +#endif
+> +
+>         return 0;
+>  }
+>
+> diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+> index 96684d0adcf9..0e590272366b 100644
+> --- a/arch/x86/pci/mmconfig-shared.c
+> +++ b/arch/x86/pci/mmconfig-shared.c
+> @@ -94,8 +94,8 @@ static struct pci_mmcfg_region *pci_mmconfig_alloc(int segment, int start,
+>         return new;
+>  }
+>
+> -static struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
+> -                                                       int end, u64 addr)
+> +struct pci_mmcfg_region *__init pci_mmconfig_add(int segment, int start,
+> +                                                int end, u64 addr)
+>  {
+>         struct pci_mmcfg_region *new;
+>
+> --
+> 2.13.6
+>
 
-> > Sure, but do such userspaces exist - ChromeOS or something for example?
 
-> ChromeOS has a more or less standard userspace I believe.
 
-No, they've got their own sound server for historical reasons.  There's
-Android too of course who definitely do have facilities for compressed
-audio offload.
-
---it/zdz3K1bH9Y8/E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqdY3gACgkQJNaLcl1U
-h9AIQQf9GGDi/JBjrTaghiksbEuXIM+XUxCvYkIiwhIYqdE+wTJ3dgLYdI9XHcUw
-LhS5pSWo8bCr+YiPs+l2vJToZvxTdXxGgyveYbpwgA0F5C2+O5t8UFiwvnHaLoWI
-qBRPxBFpg22v0H6QvsmoJJHGRYn/JExc7Ks47+pvNpkWXwm1os7Ci3PISfFUQgWs
-yjvtgTfFLf0XMCIjY32InFcl0eaEg3s33un95KFcLC5Ml+pgC583XnltMGxmYp/G
-9JlP815Jk1DayvdXQQl+lGd2oY6SAcqY+PNYu9vDUlIwR6Mc/cdrfFSR4KqcXreE
-Zdk1fGhJEUyA2ezlP64epObuEbW9wA==
-=VbLz
------END PGP SIGNATURE-----
-
---it/zdz3K1bH9Y8/E--
+-- 
+With Best Regards,
+Andy Shevchenko
