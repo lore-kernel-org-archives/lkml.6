@@ -1,79 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933432AbeCEKWp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:22:45 -0500
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:36057 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeCEKWl (ORCPT
+        id S933680AbeCEKZo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:25:44 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39221 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933576AbeCEKZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:22:41 -0500
-X-Google-Smtp-Source: AG47ELsRGLaDBUm5NolbDbK78TPi76D6O2ntMfF7+Rraae8cGxdxbWoQbMQj+j1JiQm4vKMcAmey77ZNUES8pvgUpkM=
-MIME-Version: 1.0
-In-Reply-To: <20180302035102.10084-4-jeffy.chen@rock-chips.com>
-References: <20180302035102.10084-1-jeffy.chen@rock-chips.com> <20180302035102.10084-4-jeffy.chen@rock-chips.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 5 Mar 2018 11:22:39 +0100
-Message-ID: <CAFqH_50YFm7EYEtt=9AoCUwvVU+Vuw51PYx=hF_u=KBgKmPTDg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: Avoid wakeup when inserting
- the pen
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@google.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Dmitry Torokhov <dtor@google.com>, Doug Anderson <dianders@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Yao <markyao0591@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Mar 2018 05:25:35 -0500
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Mon,  5 Mar 2018 11:25:20 +0100
+Message-Id: <20180305102524.5905-4-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeffy,
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
-Thanks for the patch.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-2018-03-02 4:51 GMT+01:00 Jeffy Chen <jeffy.chen@rock-chips.com>:
-> Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
-> inserting the pen.
->
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> ---
->
-> Changes in v3: None
-> Changes in v2:
-> Specify wakeup event action instead of irq trigger type as Brian
-> suggested.
->
->  arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-> index 191a6bcb1704..ef2de0057c5c 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-> @@ -134,6 +134,8 @@
->                 gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
->                 linux,code = <SW_PEN_INSERTED>;
->                 linux,input-type = <EV_SW>;
-> +               /* Wakeup only when ejecting */
-> +               wakeup-event-action = <EV_ACT_DEASSERTED>;
->                 wakeup-source;
->         };
->  };
-> --
-> 2.11.0
->
->
-
-Works as expected on my Kevin
-
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e4ced883d8de..350be6baa60d 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
+ 
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL(pm_power_off_prepare);
+ 
+ /**
+  *	emergency_restart - reboot the system
+-- 
+2.16.1
