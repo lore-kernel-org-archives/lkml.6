@@ -1,151 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932959AbeCENJR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 08:09:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:28145 "EHLO mga17.intel.com"
+        id S964847AbeCENJY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 08:09:24 -0500
+Received: from mga01.intel.com ([192.55.52.88]:38644 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751294AbeCENJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:09:13 -0500
+        id S932459AbeCENJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 08:09:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="22086734"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Topic: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Index: AQHTs7KEInSI42HCTUSCFlGLoOJ8nqPBeeQAgAAiLaA=
-Date: Mon, 5 Mar 2018 13:09:09 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180305125642.GA3425@linux.intel.com>
-In-Reply-To: <20180305125642.GA3425@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZmMxOGU1MjgtMTI2OC00MTdiLWIzZjgtNTEzNGZjYzM3ZWYxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJzM1VHTHVicU5hek10eUNcL1JsU2U4Rm92OXZ4N281OWpyYk5vZkxSUGJSXC9YVEZQY3E1WFJySGJCbmJ1MnEyWWMifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.226]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="208907609"
+Subject: Re: [PATCH 1/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
+To: Avri Altman <Avri.Altman@wdc.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Potomski <michalx.potomski@intel.com>,
+        Szymon Mielczarek <szymonx.mielczarek@intel.com>
+References: <1518782464-28847-1-git-send-email-adrian.hunter@intel.com>
+ <1518782464-28847-2-git-send-email-adrian.hunter@intel.com>
+ <DM5PR04MB10857B795CCBBD945062DCCDFCC90@DM5PR04MB1085.namprd04.prod.outlook.com>
+ <5b6cc5c9-0045-9270-fec7-29ac6d0b4fcb@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <4403f748-b7c6-7996-f44d-4a2775d2ffa6@intel.com>
+Date: Mon, 5 Mar 2018 15:08:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <5b6cc5c9-0045-9270-fec7-29ac6d0b4fcb@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19/02/18 08:35, Adrian Hunter wrote:
+> On 18/02/18 11:45, Avri Altman wrote:
+>>
+>>
+>>> -----Original Message-----
+>>> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
+>>> owner@vger.kernel.org] On Behalf Of Adrian Hunter
+>>> Sent: Friday, February 16, 2018 2:01 PM
+>>> To: Vinayak Holikatti <vinholikatti@gmail.com>; Martin K. Petersen
+>>> <martin.petersen@oracle.com>; James E.J. Bottomley
+>>> <jejb@linux.vnet.ibm.com>
+>>> Cc: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>; Jaegeuk Kim
+>>> <jaegeuk@kernel.org>; Bart Van Assche <Bart.VanAssche@wdc.com>; linux-
+>>> scsi@vger.kernel.org; linux-kernel@vger.kernel.org; Michal Potomski
+>>> <michalx.potomski@intel.com>; Szymon Mielczarek
+>>> <szymonx.mielczarek@intel.com>
+>>> Subject: [PATCH 1/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
+>>>
+>>> UFS host controllers may support an autonomous power management
+>>> feature called the Auto-Hibernate Idle Timer. The timer is set to the number
+>>> of microseconds of idle time before the UFS host controller will
+>>> autonomously put the link into Hibernate state. That will save power at the
+>>> expense of increased latency. Any access to the host controller interface
+>>> registers will automatically put the link out of Hibernate state. So once
+>>> configured, the feature is transparent to the driver.
+>>>
+>>> Expose the Auto-Hibernate Idle Timer value via SysFS to allow users to
+>>> choose between power efficiency or lower latency. Set a default value of
+>>> 150 ms.
+>>>
+>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>> ---
+>>>  Documentation/ABI/testing/sysfs-driver-ufs | 15 ++++++
+>>>  drivers/scsi/ufs/ufs-sysfs.c               | 77 ++++++++++++++++++++++++++++++
+>>>  drivers/scsi/ufs/ufshcd.c                  | 26 ++++++++++
+>>>  drivers/scsi/ufs/ufshcd.h                  |  3 ++
+>>>  drivers/scsi/ufs/ufshci.h                  |  7 +++
+>>>  5 files changed, 128 insertions(+)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs
+>>> b/Documentation/ABI/testing/sysfs-driver-ufs
+>>> index 07f1c2f8dbfc..c7f9441079eb 100644
+>>> --- a/Documentation/ABI/testing/sysfs-driver-ufs
+>>> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
+>>> @@ -1,3 +1,18 @@
+>>> +What:		/sys/bus/*/drivers/ufshcd/*/auto_hibern8
+>>> +Date:		February 2018
+>>> +Contact:	linux-scsi@vger.kernel.org
+>>> +Description:
+>>> +		This file contains the auto-hibernate idle timer setting of a
+>>> +		UFS host controller. A value of '-1' means auto-hibernate is
+>>> not
+>>> +		supported. A value of '0' means auto-hibernate is not
+>>> enabled.
+>>> +		Otherwise the value is the number of microseconds of idle
+>>> time
+>>> +		before the UFS host controller will autonomously put the link
+>>> +		into hibernate state. That will save power at the expense of
+>>> +		increased latency. Note that the hardware supports 10-bit
+>>> values
+>>> +		with a power-of-ten multiplier which allows a maximum
+>>> value of
+>>> +		102300000. Refer to the UFS Host Controller Interface
+>>> +		specification for more details.
+>>> +
+>>>  What:
+>>> 	/sys/bus/platform/drivers/ufshcd/*/device_descriptor/device_type
+>>>  Date:		February 2018
+>>>  Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+>>> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c index
+>>> cd7174d2d225..a0e38776dc92 100644
 
+SNIP
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Monday, March 05, 2018 14:57
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Usyskin, Alexander
-> <alexander.usyskin@intel.com>; linux-integrity@vger.kernel.org; linux-
-> security-module@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
-> commands.
+>>> @@ -7843,6 +7863,12 @@ int ufshcd_init(struct ufs_hba *hba, void
+>>> __iomem *mmio_base, unsigned int irq)
+>>>  						UFS_SLEEP_PWR_MODE,
+>>>  						UIC_LINK_HIBERN8_STATE);
+>>>
+>>> +	/* Set the default auto-hiberate idle timer value to 150 ms */
+>> Your commit said you are setting an idle timer in microseconds,  Better use usec to avoid confusion? 
 > 
-> On Sun, Mar 04, 2018 at 02:12:03PM +0200, Tomas Winkler wrote:
-> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > generation of crypto keys which can be a computationally intensive task.
-> > The timeout is set to 3min.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> Where is the cover letter? Please send separate patches if they are unrelated
-> *or* add a cover letter that describes what they do as a whole.
->
-Why you need cover letter?  What are u missing in the patch description
- 
-> I will not review the next version if it does not have cover letter describing
-> the high level change and containing the change log.
+> As the SysFS documentation says "Note that the hardware supports 10-bit
+> values with a power-of-ten multiplier ... Refer to the UFS Host Controller
+> Interface specification for more details.", so 150,000 us is still a value
+> of 150 with a power-of-ten multiplier of 3.
 
-Don't follow.
-
-> 
-> > ---
-> >  drivers/char/tpm/tpm-interface.c |  4 ++++
-> >  drivers/char/tpm/tpm.h           | 27 ++++++++++++++++-----------
-> >  drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
-> >  3 files changed, 25 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 85bdfa8c3348..c0aa9d11ec7a 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -699,6 +699,10 @@ int tpm_get_timeouts(struct tpm_chip *chip)
-> >  		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-> >  		chip->duration[TPM_LONG] =
-> >  		    msecs_to_jiffies(TPM2_DURATION_LONG);
-> > +		chip->duration[TPM_LONG_LONG] =
-> > +		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-> > +		chip->duration[TPM_UNDEFINED] =
-> > +		    msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> >
-> >  		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-> >  		return 0;
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > f895fba4e20d..192ba68b39c2 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -67,7 +67,9 @@ enum tpm_duration {
-> >  	TPM_SHORT = 0,
-> >  	TPM_MEDIUM = 1,
-> >  	TPM_LONG = 2,
-> > -	TPM_UNDEFINED,
-> > +	TPM_LONG_LONG = 3,
-> > +	TPM_UNDEFINED = 4,
-> > +	TPM_DURATION_MAX,
-> 
-> This is starting to rotten to become unmaintainable.
-
-> Here is what I suggest to move forward:
-
-I fixed that in next patch, but this also moves the code to new spec,  so I didn't want to make too much noise in this one. 
- 
-> * Have essentially two duration types:
->   1. Default
->   2. Long
->   'default' is the old long duration i.e. two seconds. 'long' is a
-
-> 
-> We should probably have two durations:
-> 
-> enum tpm_duration {
-> 	TPM_DURATION_DEFAULT = 2000,
-> 	TPM_DURATION_LONG = 300000,
-> };
-> 
-How is this aligned with the spec PTP spec?
-
-> These would be both for TPM 1.2 and TPM 2.0. Instead of having table for
-> every ordinal there should be a small tables describing commands that
-> require long timeout.
-
-Yeah I didn't cover the 1.2. 
-> 
-> > -		duration = 2 * 60 * HZ;
-> > +		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> 
-> NAK for this change.
-
-
-You should explain your NAKs, .... in general, doesn't look good.
-
-
-Thanks
-Tomas
+Are there any other comments?
