@@ -1,71 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932555AbeCEU6G (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:58:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752162AbeCEU6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:58:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD4A20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 5 Mar 2018 15:58:02 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
-        linux-kernel-owner <linux-kernel-owner@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
-        caijingxian <caijingxian@linux.alibaba.com>,
-        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>
-Subject: Re: Would you help to tell why async printk solution was not taken
- to upstream kernel ?
-Message-ID: <20180305155802.5c0f73fc@gandalf.local.home>
-In-Reply-To: <20180305021416.GA6202@jagdpanzerIV>
-References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>
-        <20180304130151.GA483@tigerII.localdomain>
-        <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
-        <20180304104324.6bbbaa53@gandalf.local.home>
-        <20180305021416.GA6202@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752986AbeCEU6J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:58:09 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44990 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932567AbeCEU6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:58:07 -0500
+X-Google-Smtp-Source: AG47ELtklMoO2wzYLNUVVlybZqrPwDB9sIS8FgBHJx0flOkkS1tD3WtLS+fmxPtz0oXIk/xC0c+mpA==
+From: Tim Harvey <tharvey@gateworks.com>
+To: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Guo Zeng <Guo.Zeng@csr.com>
+Subject: [PATCH v2] regmap: irq: fix ack-invert
+Date: Mon,  5 Mar 2018 12:57:37 -0800
+Message-Id: <1520283457-31637-1-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Mar 2018 11:14:16 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+When acking irqs we need to take into account the ack-invert case.
+Without this chips that require 0's to ACK interrupts will never clear
+the interrupt.
 
-> But I still think that it makes sense to change that "print it all" approach.
-> With more clear/explicit watchdog-dependent limits - we do direct printk for
-> 1/2 (or 2/3) of a current watchdog threshold value and offload if there is
-> more stuff in the logbuf. Implicit "logbuf size * console throughput" is
-> harder to understand. Disabling watchdog because of printk is a bit too much
-> of a compromise, probably.
+By using regmap_irq_update_bits to ACK the interrupts we use the masked
+status bits so we take care not to affect any other bits then use
+ack_invert to determine if we clear or set those bits.
 
-If you know the baud rate, logbuf size * console throughput is actually
-trivial to calculate.
+The only user of ack_invert currently appears to be the motorola-cpcap
+driver which we find is incorrectly setting ack_invert and thus we
+fix that at the same time as otherwise it would break.
 
-Let's see. CONFIG_LOG_BUF_SHIFT defaults to 18 (2^18 = 262144).
-Lets say we have a slow 9600 baud serial, which would give us:
+Cc: Guo Zeng <Guo.Zeng@csr.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+v2:
+ - use regmap_irq_update_bits for readability as well as taking into account
+   only affecting bits we are acking
+ - add fix for affected motorola-cpcap driver
+---
+ drivers/base/regmap/regmap-irq.c | 5 ++++-
+ drivers/mfd/motorola-cpcap.c     | 3 ---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
- 262144 * 8 / 9600 = 219 (rounded up).
-
-Thus, the worse case scenario would be 219 seconds to output the entire
-buffer. Add 10 seconds more for extra overhead, and then you have 229
-second watchdog that should never trigger because of a very slow
-console.
-
-(A more common 151200 baud modem would empty the buffer in 14 seconds).
-
-> 
-> IOW, is logbuf worth of messages so critically important after all that we
-> are ready to jeopardize the system stability?
-
-The stability is only in jeopardy if the watchdogs trigger, right?
-
--- Steve
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 429ca8e..840cadee 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -360,7 +360,10 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
+ 		if (data->status_buf[i] && (chip->ack_base || chip->use_ack)) {
+ 			reg = chip->ack_base +
+ 				(i * map->reg_stride * data->irq_reg_stride);
+-			ret = regmap_write(map, reg, data->status_buf[i]);
++			ret = regmap_irq_update_bits(d, reg,
++						     data->status_buf[i],
++						     chip->ack_invert ?
++						     0x00 : 0xFF);
+ 			if (ret != 0)
+ 				dev_err(map->dev, "Failed to ack 0x%x: %d\n",
+ 					reg, ret);
+diff --git a/drivers/mfd/motorola-cpcap.c b/drivers/mfd/motorola-cpcap.c
+index d2cc1ea..59082cf 100644
+--- a/drivers/mfd/motorola-cpcap.c
++++ b/drivers/mfd/motorola-cpcap.c
+@@ -99,7 +99,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_MI1,
+ 		.mask_base = CPCAP_REG_MIM1,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ 	{
+ 		.name = "cpcap-m2",
+@@ -108,7 +107,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_MI2,
+ 		.mask_base = CPCAP_REG_MIM2,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ 	{
+ 		.name = "cpcap1-4",
+@@ -117,7 +115,6 @@ static struct regmap_irq_chip cpcap_irq_chip[CPCAP_NR_IRQ_CHIPS] = {
+ 		.ack_base = CPCAP_REG_INT1,
+ 		.mask_base = CPCAP_REG_INTM1,
+ 		.use_ack = true,
+-		.ack_invert = true,
+ 	},
+ };
+ 
+-- 
+2.7.4
