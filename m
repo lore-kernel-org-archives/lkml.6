@@ -1,100 +1,101 @@
-Return-Path: <outreachy-kernel+bncBCFPF2XH6UDBB35WQDKQKGQEFQ5NC2I@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1520442224; cv=pass;
+Return-Path: <outreachy-kernel+bncBCWJFEEKWIDRBKOK6PKAKGQEB3FRFYY@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1520231721; cv=pass;
         d=google.com; s=arc-20160816;
-        b=Hx3XdQhS+am4UaZGU52KlpP7Ftu1wHeSA2ERB0ZyUWxGzoo3uk36ii/7+w/G3aiS9P
-         LMfS2CD/KL4s1b25ZoODI/npd/yVayswtLXMAaFJVWdzCrSEHP5axwzEJi5VjpK8xq7I
-         URBDlxbVYTkd6KlKHRiZa8AumagAjMIoTHJTVSJE10Zm2ygEGHvN9cgYRyVHqu7599qY
-         1vvHVlgkoqSq6QEfYVf0FeFnzF2hgLgVjgElg0zB+audkl5o118EeWxXHlMni1wT/xAu
-         BXCNPE69gitMWXivzKTEqfNoQa6GC+xhI5/kGT+FOqMPvM81q3xmlTB1nj7+T6I/eGOz
-         Vs8w==
+        b=w/z551GDqATV3pTJHENrhO9HLU1HngBD/UPe8iZsEfUIe757GdymIrAZw81IxokML/
+         gPnjJkG/rHc9v4+0sSZz6/J6n5K68AbQqFecFpIgHiT7JhQMw9ByiMJPcqmJNWhKB3ij
+         dSGdANMVU93hIQszy21WyUGJvlR98pMI3Sa43AnPGL0lGHhQFOPVpmXazgJhnCt3pB+K
+         wamsehowBKW+AiZFndntPeDiO5fbItg8HlYi7BSpw/vbhtLjfxpMBDjB57gIgXimZBOq
+         2S/hZpiOcr+ukth2zZwdnUizVOXOAoNUHEVmVTrrHvb5PpdqVmBT3qhDnQzmqUZioIKD
+         a32g==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:mime-version
-         :references:in-reply-to:from:subject:cc:to:message-id:date
+         :mailing-list:precedence:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
          :arc-authentication-results:arc-message-signature:sender
          :dkim-signature:arc-authentication-results:arc-message-signature
          :arc-authentication-results;
-        bh=kbNb5cmDCbJ3yd4wNa/ggfeSrJ5x2fEWCbLiCuHTTtk=;
-        b=dtp6x5mIosAIjct8SW35acFRTmFpJpx4+N1DopxF1++qyos2Y7ra9dtKbdoKLPxD1Q
-         cYNhP3EewNZpzCezuE4LVuq2AznHiy6sMeKihXAff0qHEuj4y7WyE66JDkNFf0dfM6wq
-         RLWTND63l+cs7HNQPmI7hxzkSQzBRyptrOUi/7PqhU4bBhJGogh01xsyR/jJd3E1voJR
-         WE0VuuZrwqrMZLCqDtzEmJktS86edxNTGgLk/1wCoTXt4iRDQeToBbtHpsFSWzGWu/va
-         BzLJ+rVl5lfFd3RU7Vk7QaVGUUxPfIyj3hPxkdWSQ6GTbBM8LX0A229QfJwZhj1qWRpA
-         vaHg==
+        bh=qjBSaA5BpEwmYOIyqRhNE2ICTYTDQQ/b4mmXR90WY7Q=;
+        b=NHAB3kExAxFOKg6ZQQt3lL1S0bWshNeR13Ah+q0JkLOLzJGmA91yC22iIn/I3lWWsX
+         aCreqlSbXgdNOq0FRgoSx8E0WV6Twt+o5lWO81motSpkjFkS/7V5TlHNCEpwoEn7fwua
+         ve9mLqAw1k+q+zizBS63+2MeqQaTX0nSdXhAbUYUbvp2xXEZ5kZxCqo/i2FCjPetU2QD
+         sgcyhiXcMSenXXwHkzs1b2qOgBikJHAo/plI9EPwmMwp94Ys11JOTbBj4oPVtjvyKAbi
+         oztahEqDhupCUaGxjqzCPp2sjd/XZ9ijFi4Ou6ivNygtpVAY2zhrw9czNDW9Ts98+j8R
+         l5oQ==
 ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=AvoWGTyL;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcfpf2xh6udbb35wqdkqkgqefq5nc2i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCFPF2XH6UDBB35WQDKQKGQEFQ5NC2I@googlegroups.com
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=Xy+rBr42;
+       arc=pass (i=2 dkim=pass dkdomain=netronome-com.20150623.gappssmtp.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcwjfeekwidrbkok6pkakgqeb3frfyy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCWJFEEKWIDRBKOK6PKAKGQEB3FRFYY@googlegroups.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=AvoWGTyL;
-       arc=pass (i=2);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcfpf2xh6udbb35wqdkqkgqefq5nc2i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCFPF2XH6UDBB35WQDKQKGQEFQ5NC2I@googlegroups.com
-ARC-Seal: i=2; a=rsa-sha256; t=1520442224; cv=pass;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=Xy+rBr42;
+       arc=pass (i=2 dkim=pass dkdomain=netronome-com.20150623.gappssmtp.com);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcwjfeekwidrbkok6pkakgqeb3frfyy@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCWJFEEKWIDRBKOK6PKAKGQEB3FRFYY@googlegroups.com
+ARC-Seal: i=2; a=rsa-sha256; t=1520231721; cv=pass;
         d=google.com; s=arc-20160816;
-        b=iKTdPET6L0xhqp9sEZSgluX6odUI2I2XH7/tlxnOHFS4sucMJrTLP64+Wqw4GZm5m6
-         o4xUq+CU44NGEGuVwVVC+7ehDkO3qAbhYVBu394s3pLZG96pbmPU3Ni0y2XX6WG7WG7r
-         R9l2xpFpZq2tlaPkGEqzSFZK/71/gulvGghugAPTn0a/t/ifdRUMJnIrbfIr5pk9xPmd
-         QNY6tbFtYzPd0dDyqqz5EXoOx4IxaOPm7UkzQNUJPNQSRmnX9nls7J+Rk8eVhWlJDolX
-         0EMrCH9aXlUVldWkjoLnxDnf0jBycUZMS6WHw7gnTQwQwN5sUUeLNNpi2S9suL8Sp7V8
-         XeIw==
+        b=DfmquD0pdiyzPhafEvzCl2w/m61avFMz1+MOcaHMIWACo9zdVS8UbPZ8ouWiFeKpNF
+         2UMG1P18XLVph2in8kw2kqMeOnUlXbuTN7lsuSZb4kJB0ucyPfy2Y4uQzomOBNSOAJnj
+         Y/gvt8jxfEJSz1QY9Jmm57rRfI1v3qx0Ta2Ol4E0PGPKZQRXBx6H9gVSazXy7qfLW9Fp
+         n48brCzBKZfxpe3blDQI1AB0zKABYAXTXg4MmTDvCwpzbTAHq79p5k+sbuSW74G9T7cp
+         RXQIkP7m1Zf6MGJHy2lh8yu08SdCo2R0b8uUflQlUXlUGsY+jPCi4Z37b0JcpNm6TT/x
+         Ro0A==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:content-transfer-encoding:mime-version
-         :references:in-reply-to:from:subject:cc:to:message-id:date
+         :mailing-list:precedence:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
          :arc-authentication-results:arc-message-signature:sender
          :dkim-signature:arc-authentication-results;
-        bh=kbNb5cmDCbJ3yd4wNa/ggfeSrJ5x2fEWCbLiCuHTTtk=;
-        b=IL9WE2slgGXOYRunNp8k2DUxEhdNJu745++cnEX6tMzks7YlEIihVQUh9ojPExu7EM
-         M1Y6XzpKkbxAKf4u9ijUmSvFYFe1kErHDBj8xranY1U+NqIzD0xdLnNSDeF/ORyZGC7L
-         SSRPLoPxu768zAwayETvoKbJ9E6EscFHJd+QRM4f4pawhlx7XizF6pQJ5ifHssiQKNnC
-         jlQo7r4lfMJ22+IF5D/q5PRmMiKImVs0JfKVolODbJNN6IeWBbDKpcxSUS/MRkVA8BIu
-         jjaLs5IBg1okwc0MwuYmqp0tv31v0Odjvv3DfHUH/DtOnhDLS/k3Nml6unmv+MrN8xWw
-         F69A==
+        bh=qjBSaA5BpEwmYOIyqRhNE2ICTYTDQQ/b4mmXR90WY7Q=;
+        b=SUXimB80npojgf647hxiFLkiNskx+19/cc0RVotOFN64cBgtht3s3HXD65L8CCCQd2
+         +1pQvfdiuHzRBFHsVJMNptpo1ysd4p0s275QTemIWQEtmHtu5tbcEdPHAsvDpRj+bGMe
+         WP43FO0mr7fnCxuDiYfPebjKVHoz+V33NgnUZER8Lobmhy+VtG0oy3NdiT3kNqM1TA8A
+         6nJyx7dIRzvxwMdQwy5r+fGPgbehVOgn8iEqN7xAec55EeOjnLRhmKpgjZjZXzAHxPTG
+         YVIhglNZL7dXQmnTXFRGtOHC7TV3r9PEtwT4O37pNmLFETc40bieuApU7n7D7gkYXqY/
+         gCDg==
 ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+       dkim=pass header.i=@netronome-com.20150623.gappssmtp.com header.s=20150623 header.b=18TOPH3+;
+       spf=neutral (google.com: 2607:f8b0:400d:c09::232 is neither permitted nor denied by best guess record for domain of jakub.kicinski@netronome.com) smtp.mailfrom=jakub.kicinski@netronome.com
 Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AG47ELt+qVRaaM/bDvntASy85c55UAvtKmS/q79wblLX0VcWClRJMcLlW9XgH2HeKol2rNsRqqTQ9A==
+X-Google-Smtp-Source: AG47ELtRPmog5QVyDv7hokJd40NTF4SB0/4pdhOATP0q2ig6XMoP9BvQFEsVD55H2OZtEAZsIC7aIw==
 X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1520442110; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520215037; cv=none;
         d=google.com; s=arc-20160816;
-        b=ztTwrBPMDU+eoq/wj8aoVeois4Tv4O3VhacXC2S573x7fP5cmvwHKKiqvtrN2EBwb2
-         wYWJ31amJE0e4qft92fdv4J6Oqsku7zPUvgrCiOBGteBVWkEjc7k0q/EqWztgI+ikbaQ
-         XRctge5ngFfMwXciesPdTcfRgywPImrxxu8Bnc7OkM1OWu34Dhkor2qYGs5YqbR0xPt1
-         EhZbIvjlTXWsxr70TaKmtKu6AczR0Af4cvQenRCBoAWC6/sBbrD27qO0v8ZVIHI08k1G
-         TaIOwQWePvXPfqrt/ejBuRqHVPXpvI4SbGMkp1Msd2pP7paUhDTpMKX1jb/fi2/WpYnf
-         bqpQ==
+        b=aSq1+5w8BqT4k2OmxZH7mEbxtKmDQbCNeEiyE6anm75FrxpkLkmCFO++r2L74w9IGI
+         6Npjg7uNOx1+aiCr8rAozpd0O8K7asFtyxVH5lJs0JzOmCWmSOdSZrUz2ZQdimeCchrn
+         iv8FhgkZ40gjNHut/gfhVY5hC3uRDzDkkQbYWfXn+RLXTjdTB6c36+yWpMyDCxsJAMKA
+         0c6V8QHOlcTwOFoXs9s/aUBNdD+Zx3n/kASbiRVGe0nonAQCpl82fIoSmfLG/IRQq7jI
+         VbI2a6o4rATg/7AEDUSJBXs18J/4z5YT6rzDEk2aIP4nUSd/el8qYGYl0/KAYWvZnpqA
+         Bi+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:arc-authentication-results;
-        bh=kbNb5cmDCbJ3yd4wNa/ggfeSrJ5x2fEWCbLiCuHTTtk=;
-        b=K4limaZh0swhKw1XP+DTWAHo91aaL+X9kEApB237DaQXR1K0Rr+7P5m6fz9lqHHWXA
-         i0blh4PTYCRwqv767OwLjxbaS7Az/3BldlPnJb+cAoKhl+Wj8+hhyYaxPbZQpg9/4wm5
-         Tf/n0qdobCEITKKZs44i6NqRAL1JcqlyLi17Br09nLTokHANl2fmHpqOtjzzLrGWpX6s
-         KMxX9xSy1Do9xxPDZtCJnphtkEAZj4Cinh+Z9FkPrk41H7ep+LdLTg/seKi0e6GPyDux
-         Rghi6W5kPtY46ZfuPW7YCOSr4e9JwFld4pSxcna+oq/cUF7PLRez/TA8aDTm1nN54E+Q
-         9PZQ==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=BU7RsmZupkUe75oebmaixL8G1y3csUrVmnPrFnpZPao=;
+        b=IL/ZFaoIRhjAWGvf7Ig5OX2Z0zclJtPJAU8BusiDvmdUuIbbDDJbLcvyskzeZVT8M2
+         aKOiGyNWPxmPoWoq9rlbrjykHWzHGCisMJddD13ejaQ3Qz/iNEG/SKuOjAsViqb++rqX
+         eNYU8XEPeusDaBr6j/Q/UZBiwZ8Qu49JLO3nQ3vcBWNDwG+NI/pCzz0uk+YYVhJZmvEr
+         JTk7zkUWonm/E6OIYOU1h3Gde3Ws0UKDr/xWbVq/nQbiXJ8GJsklYLLxP55Y2rKN3rur
+         K6hmkGt7SN70HJh+kZLDpEuftgm3j3D9KlOqIfiKayPus08Dd7GP//sJce30ppSWtmSK
+         Y+Ww==
 ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
-Date: Wed, 07 Mar 2018 12:01:47 -0500 (EST)
-Message-Id: <20180307.120147.195464731584241423.davem@davemloft.net>
-To: arushisinghal19971997@gmail.com
-Cc: jdmason@kudzu.us, jakub.kicinski@netronome.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, oss-drivers@netronome.com,
- outreachy-kernel@googlegroups.com
+       dkim=pass header.i=@netronome-com.20150623.gappssmtp.com header.s=20150623 header.b=18TOPH3+;
+       spf=neutral (google.com: 2607:f8b0:400d:c09::232 is neither permitted nor denied by best guess record for domain of jakub.kicinski@netronome.com) smtp.mailfrom=jakub.kicinski@netronome.com
+Date: Sun, 4 Mar 2018 17:57:13 -0800
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: jdmason@kudzu.us, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ oss-drivers@netronome.com, outreachy-kernel@googlegroups.com
 Subject: [Outreachy kernel] Re: [PATCH v2] net: ethernet: Drop unnecessary continue
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <CA+XqjF8_axeTnahPmokxmDnm4NmWo8QWSEmLejN4fO1nAiDaBA@mail.gmail.com>
+Message-ID: <20180304175713.25a44ac6@cakuba.netronome.com>
+In-Reply-To: <20180303161456.GA20194@seema-Inspiron-15-3567>
 References: <20180303161456.GA20194@seema-Inspiron-15-3567>
-	<20180307.103901.1771176275743006915.davem@davemloft.net>
-	<CA+XqjF8_axeTnahPmokxmDnm4NmWo8QWSEmLejN4fO1nAiDaBA@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Original-Sender: davem@davemloft.net
-X-Original-Authentication-Results: gmr-mx.google.com;       spf=neutral
- (google.com: 184.105.139.130 is neither permitted nor denied by best guess
- record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+X-Original-Sender: jakub.kicinski@netronome.com
+X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
+ header.i=@netronome-com.20150623.gappssmtp.com header.s=20150623
+ header.b=18TOPH3+;       spf=neutral (google.com: 2607:f8b0:400d:c09::232 is
+ neither permitted nor denied by best guess record for domain of
+ jakub.kicinski@netronome.com) smtp.mailfrom=jakub.kicinski@netronome.com
 Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
 X-Google-Group-Id: 672804067692
 List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
@@ -104,16 +105,36 @@ List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegro
  <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593933797410411478?=
-X-GMAIL-MSGID: =?utf-8?q?1594299225901950822?=
+X-GMAIL-MSGID: =?utf-8?q?1594078497618752325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-Date: Wed, 7 Mar 2018 22:22:13 +0530
+On Sat, 3 Mar 2018 21:44:56 +0530, Arushi Singhal wrote:
+> diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> index 15fa47f..5cd4f3f 100644
+> --- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> +++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> @@ -258,10 +258,8 @@ nfp_net_pf_alloc_vnics(struct nfp_pf *pf, void __iomem *ctrl_bar,
+>  		ctrl_bar += NFP_PF_CSR_SLICE_SIZE;
+>  
+>  		/* Kill the vNIC if app init marked it as invalid */
+> -		if (nn->port && nn->port->type == NFP_PORT_INVALID) {
+> +		if (nn->port && nn->port->type == NFP_PORT_INVALID)
+>  			nfp_net_pf_free_vnic(pf, nn);
+> -			continue;
+> -		}
 
-> Yes I know it's for the inner loop.
-> But I am not able to find, where I am wrong here
+This is an error handling path so the continue makes sense here to
+indicate the processing can't ever fall through if more statements are
+ever added to the loop.  But OK.
 
-You are making what is essentially a nop change to a piece of code,
-which if you had instead read carefully would have instead inspired
-you to fix a real genuine bug instead.
+>  	}
+>  
+>  	if (list_empty(&pf->vnics))
+
+-- 
+You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+To post to this group, send email to outreachy-kernel@googlegroups.com.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180304175713.25a44ac6%40cakuba.netronome.com.
+For more options, visit https://groups.google.com/d/optout.
