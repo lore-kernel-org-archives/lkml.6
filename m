@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964925AbeCENig (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 08:38:36 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:53834 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932954AbeCENi0 (ORCPT
+        id S935142AbeCENim (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 08:38:42 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48600 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934037AbeCENia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:38:26 -0500
+        Mon, 5 Mar 2018 08:38:30 -0500
 From: Roman Gushchin <guro@fb.com>
 To: <linux-mm@kvack.org>
 CC: Roman Gushchin <guro@fb.com>,
@@ -15,9 +15,9 @@ CC: Roman Gushchin <guro@fb.com>,
         Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kernel-team@fb.com>
-Subject: [PATCH 2/3] mm: treat indirectly reclaimable memory as available in MemAvailable
-Date: Mon, 5 Mar 2018 13:37:42 +0000
-Message-ID: <20180305133743.12746-4-guro@fb.com>
+Subject: [PATCH 3/3] dcache: account external names as indirectly reclaimable memory
+Date: Mon, 5 Mar 2018 13:37:43 +0000
+Message-ID: <20180305133743.12746-5-guro@fb.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305133743.12746-1-guro@fb.com>
 References: <20180305133743.12746-1-guro@fb.com>
@@ -28,45 +28,46 @@ X-ClientProxiedBy: VI1PR02CA0076.eurprd02.prod.outlook.com
  (2603:10a6:802:14::47) To BL2PR15MB1076.namprd15.prod.outlook.com
  (2603:10b6:201:17::10)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0de66e3c-1f49-4d44-c301-08d5829e570f
+X-MS-Office365-Filtering-Correlation-Id: c0c1f60a-0011-4f96-184d-08d5829e5867
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603307)(7153060)(7193020);SRVR:BL2PR15MB1076;
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;3:Pn6SVUG7H02kJd67+O6clksHoZkhSbGpvRzhGS7h/eKp//D4ZDFm00dZGP3xYz7Juy34xlHetQ9Z3qNeIqaKKst46wEFscjAZvsAlvCXCC1LLmD1ZbfVpKwOwwlNValRZ1cfZh/u+EO98xE5fladAMp8KcBi4Vo8+tV/kkZb8bxAyXXMlkNhM4JcMs7PctkVSYgNB59OYCnZl0zF445tdy+1o2bvZ0a0bXQejdZzcZVIYMv7OWGMAKKVNwkHffK2;25:Fiv1mr8H20FHG09DYY4WXqTPrpO5vo+mDyDukcEZIM6vWwdIsAMw8kKDmZxxUIlPEDhxI/dJ5lbGNXwQHK/LwHKelv6Ki7NKEkCMrKyBDqoIP5J4DQx1uCkvTJ5mUuZlzU2mYZ37edpd3jxFmdxjldSKepzyqX60+nPV/vQKxdlZBSp1N8sqxF8bZ3w6eLVvlVsl1r1mLnkO6mg85BieLqvmt+brg46ZbHpkcWsGkIRiElqglg6Yy5uwWchnxuhRld28ub6jiTcPep42OMnrihOgJPhK5ahFwy7b0TutgBi/K6tovmslQazSMhU+dOq1NT5VLV/J0uuOWh0HNWFZZw==;31:iqaBl3GPDbGjjpRuZr+8GPc/o5x6tFFE4a4EzOrdjxK+Ulc4rYJpYe8L4EX4EdzrtPx8MY2NVRzcdyEh+Jx7rNyRZYnTGl1jQjyWHDvp5GFQ3gq27ADv9jUiNHtizi3HJ8Q6ibtgYRzJZLyRcp6Q2TWiPd3yN52SIOVy3WfFqyMYXa0rUhkhZ11ShyF+PwkKhXsqH/RuWV6i6SuHz16A4gcz4ADgh24/qIBGlACql5M=
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;3:0zPiRMlX8Rqb6SbyUoCsj6b9lhs7CcDYE8IYXsaxv8HAhPpKDc3exneQJqpHp0X4FfwNUD3tTSnKZSUiU7i9hrx2SXmm9l4H0owLFChI1SupAmMcTUgBrrSSqVQZkltqTNnseTSzVpqe5GYqgwbjYUa2eSk3/lyCg29h03YhbOTa3qYUtg2PHhxWZua/SiTgz2gvq39wB2AZnhJvLa9JnFhxu22dMZwj2pn0M2Y+FhGSqz5YQ2GrKxo/2nbp3LdI;25:svw9XjI0yt/2P9Cl/hB0pIhvYAoMVbDgM1g6M5+Qfnkg+d/Xftqt+oN4doqmd9YGsSsYQoFFDt7xXGJ51wp42HnKZCkjbnnAOnZ0DqGryavIVGrLMSskgpHP9m5YH1dm3IeZeG8XnjpDVFyXhjyp+rHfUcMhKyn74tBTVOKzXGPG0HKHhp7ws0mUYvXsT/HQgkYoOxPgPMsWQtQurq/xmaw+ZG+NGNpkmStTb2J7GwYGeml+/ihT5P1Wu6jRUTsb6aBI4NifPnRCZYIMYaVB11IxFYqIspI3RGfSJ50/L2h00st4Jyc8tIBD/Ln4HlFvVDWtZYiZ/v84S+VBnn2C4Q==;31:T1AqYAYRUbtj8VSqSErAVzxEVxmdVUWS8gj8CL/XrMBV1AlJoKaThdtvooFPNuzORFldM7lS93CrJT91pakTKRxmNMoZg60IwncGehh/46LRmTB8sGTE7nDdMYRqkytgodrfj3t1HO9QDvv6hSbDrBVuivZrItc+nXX5QlEr8GnaDRsOTBdtbvf+valI4rnKIXN7sA1xJiJOsqW94iljajlpf830IlkOKvoCF/WkJ6w=
 X-MS-TrafficTypeDiagnostic: BL2PR15MB1076:
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;20:TDQ/8uP0J4QFwnV84U0EaSSZye8XiRKyy9oUrdDMdXgJP0YCizmhFE2Xz52DL48T/XI7c9SH3W40vYnEjp9cHFiOG1Jn00+t2/AnkqRlUoEZ8B2FyvXUsps11KmW+6mAtk3XS1gtvai0Ai54n5RXQlYH7+4hexOaO42thXkGOWL2huOSPKkwBNn0ECHu2lmiKFMfPyXdNashT+0MF80BKfAhRbUCG9qmkx/ajf3zTyi7rRAB3cKTcXlj6ISZFUjAeIQgoz1Yt9i2J0jQKFcOmwpFvuJBN0g3+vobS5UQNOzTRCWtW/YBXIn9NuL5E6T1l6GUUbOPEHgQquBRkEXFgKtuFJaTQS58ymZ8sE0fiOnPyflGFIUPHcwGFfzedvD36bSqgsiErWuT1XndRdqCI6fYGdFzClEbu0yBZ1XVhPwApO9gfTBdGfIyrv92aLwakXTdy42XV6Py3YmKQNtMS37fRRtajRHpPm9VxK3vfO9aZBvWFJtJKxUFx5nMaSYY;4:YauVVyDybaWocToRGf+5WLrEbN+CfVvRXOWnekcTjStlLlWcb8SpQ1+7q8x3yc3VkfEAkxRvLPpp9h0hN07wzaTtx0kG4QM1cxedb2zY4g2IaSEazngVRAj6d8RaWWiM4bclpV/IlE614cUNauCXq/V0k0ewzIuokYn57VkniviLbi8raVAbGgtKWCMZK3rwgKA9Q/54I01AhgcZl2mHrHlCW/kNW9veTpYJjQ8pDkrBPYo/QZpBMw/CY8HZybR9MwDd1iaMnRHzE5xdUExzWamWz3fSGDSyHSZRSTiPfpND8t29uZXu4pOhDmvR4UaNIuSmvc7td++HbBYUVQwzrc5z4xBPPDH9D1kKe3yJAAE=
-X-Microsoft-Antispam-PRVS: <BL2PR15MB1076C99FEE9BF084E5A9F3D8BEDA0@BL2PR15MB1076.namprd15.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;20:sYYg1zGKOiEu9iNrAaRa49gdL4o7PLvQ3oes0DxXomVY2jzW2OKqdTuPc1Rw4/qBUShrzxTp2Posh4GS2leR5iOILiVm3rsbuvfFdirYnTemPGw88xgUhfAMyIAbKRZj1/zMvgkTQCTHMyBbBUlsOL5qV83tT+Fl4l/eI79+Hm3BZ9yssc9I/Slbix8yZdvOUkyv5Y3u+0RO1a4iGKxazko2/6EATsBUd7k8isOl0FXQGPvv/6ADAfu7u9yctKYakeFiHGWLgsQmsUIsnUswDNvZVUka0x2RdNlvFCwhR/RZ7TCuBuU+Hzp5XUsAYUJlR+5CrZXp/DsP4x7HRb5q4G8D3ok8tr324vy7j4G2KnSnGikU1PWul1QYZ1YryQQSPvIh6/546k2pNN7HS6M1De4wlLJjhU4Z30BlJdqHd9ZO/P61h4plF9vqmY0chTN0EonsLo2AbyzXD7mHIfRKdWQNGMstUiMwYm9216LrvZcstJPKuSJPElm6a+b1Lsb4;4:/8OPcfwKlhNiuPaoo1mquygmwRPm8Gm4D/yFDdy63ralG7dtCEeiPt+MprTY8vTT/W7b57DApGXqiLWbdOwDjBGDt4RToB4jldDI+IPsPQJLgWQY4uE6sde4S0xXjgp5HPD5PPENlx7eNOJG40phTtWeeolOvoyZ4iiS3E9MJ86pvXRXdwJOnrU71fBj0rhFr7VD1OOeeJdlIc68LXP1o0BhkFcLB/Xr0FGGP7tlqBwsFb9b2gcuYm/yhjF2Ow6RJ1YRvGfzOvWhh1s8r6WzNv+AT3OwudoM26swVp0XvwqTAZNIaah9XLc8AAAvaCv3JQ1D0b/1dR2eVWrZm+iFxe40ocEHL1A5604XqUix2Iw=
+X-Microsoft-Antispam-PRVS: <BL2PR15MB1076DFA9F54985BC4A82C1E1BEDA0@BL2PR15MB1076.namprd15.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(67672495146484);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(11241501184)(944501244)(52105095)(10201501046)(3002001)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:BL2PR15MB1076;BCL:0;PCL:0;RULEID:;SRVR:BL2PR15MB1076;
 X-Forefront-PRVS: 06022AA85F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(366004)(346002)(376002)(189003)(199004)(8936002)(47776003)(50466002)(1076002)(50226002)(48376002)(7736002)(16526019)(186003)(4326008)(305945005)(8676002)(81156014)(81166006)(2906002)(6506007)(386003)(2950100002)(5660300001)(2351001)(478600001)(36756003)(106356001)(2361001)(6666003)(6916009)(6116002)(6486002)(16586007)(316002)(97736004)(54906003)(52396003)(76176011)(52116002)(46003)(51416003)(53936002)(6512007)(69596002)(105586002)(25786009)(68736007)(86362001)(53416004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL2PR15MB1076;H:castle.thefacebook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR15MB1076;23:7H0Ift8Y+MbDuCyepBRpQxubIRIJFkAtXxwyxgkdN?=
- =?us-ascii?Q?djt1mobvnD2G6KtNdBhSDKkod5dLzTF5D8YFJ8/TbKvo9TvdgkajcXpZIsAA?=
- =?us-ascii?Q?GWyXTEZnwA9IPe35SjvyIJSDiWeeJrLcxeRymlXpln8HX4TSg9+pCnek7HKW?=
- =?us-ascii?Q?+kdvD78njHxTy7u9YDuE2GlWE/txbeYAoeEow12dquqEO+guG9hyD65UgzZX?=
- =?us-ascii?Q?LR39uHK4+zd4qBwKhSD9GB/jiphvtcpHO0pXCTUokmyiELBLNVi5cboWnZZT?=
- =?us-ascii?Q?tRS19Ou9/4LpB7Pq+D/gANnl6lmhYrVTlQhcLIWf/dq6YdvXumPR94IUU/ip?=
- =?us-ascii?Q?1EvpAUlEM97TRimNQqEl85VpgcMhgomobhartkF7vI/7nu3lEsFL72T4mjJ5?=
- =?us-ascii?Q?+YMi//hzOdepB78GSzYpKUhsk0wFi4ZxmP/gDj7razUr+3r8i43B6GmexBbr?=
- =?us-ascii?Q?YF65qP13UQyTVG37gRDNheyIUdRzmUXg2gOVWNpYkSfjn3IBdlTQ3mliVA0v?=
- =?us-ascii?Q?QfphZYlX6nIe9YRUFrP9l/qyh3DW6PPT+O5N7Jk1bozIWy0NEh1mf9xywVWL?=
- =?us-ascii?Q?XhBAbvwvNwn7k+KaOMlCVnL7fxu2zUsStnoG1XJNh2v7gC5RdLjhXThg0UTI?=
- =?us-ascii?Q?sWXTsUHSDLyYdxn57PBpjACyUnyEjbUq8eEjTeohpuNnjdqCEqYruW0Y2LYz?=
- =?us-ascii?Q?hZDMRpJSt2JuYGuLIxen7Lkmjh7VOrlVE9fCU9Evhw6sROPEBYGa9YTWPu6l?=
- =?us-ascii?Q?/UyHrVNIbe+9jto+MZxufZSrVl2dhdjmQn/zpzjlWOjF+7TfazpxrHeGh1+W?=
- =?us-ascii?Q?I3LNjIYG/SR/nAlHq+OzlHhb/dkvi3Ki1itE4Wh0rQvvHsdUDA6R3pO2MxrJ?=
- =?us-ascii?Q?qE04iCqUVYP5iSGiSr/S7E3oS/vYGNy2OvGUZetFX97//eh9Q6KJefVWjD6M?=
- =?us-ascii?Q?7KdV19xnxqeSzNUUyOjaUhKWcM6MQIkNlPuojVLfQOzmLRIpY1TaJjWbF1ge?=
- =?us-ascii?Q?n2uLy14E0mQOwHi+6b3N0CqYaTu6u+u/snvfT14HpRN3PlqBrB701PagnLoj?=
- =?us-ascii?Q?arxhHZC/iAkWf1NCbzP3hm/CFP7E6KmjJm6tid7H1mxXggFWi/kIDwtWdqOa?=
- =?us-ascii?Q?U3pjoyhV5W4Prg18rE7XMJ70X7WbVG7+CTInCyNqTdOCc0E5PKnw8gOIWKAH?=
- =?us-ascii?Q?XVdmQq8zFJK7GPkHlzVnmmIAIFrM4o/QIYCO2TWx8XlevP32T5dT4d1QQ=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: MrMptHuYtaGIh5e9N3ZfD6z3aNLQGH7xIaEcNhWEdy0yjC7Mg1ATZYzy1l2Klf81soc94L5VhVRMhZ3i82RIUwMZZiuEfPnEQ4w83NthisAlOhR8VLZD0IrdVFBasarSEJ1PmYtai7eogojzQSf8L5Ea6S7vbIfesGcFbHD+z5yaW70U4vq+kqO9EZHYNIf8
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;6:PIl6s2cqh03DFAG0tis3jA0SVQfrx2kkVff328Tcn4NLA41szewGmJXaHODLduqFVEKMSdGH7pK2WphIUuUewrklXkyfVzATtBeJOGmSm3EX/WMg8zCyaEP1bevV9KMUswF7gZfFbt61suVxvwp0ntAGTMW2igtFwq6hxesOQivReG+A5A8lmwbQ0l8izSNYBbugAqYSaFWDHajZcc90zw18SGystoraCKgt/U4Eenm7KUeSoiSHtnLXVRL8yiXcWXDJfarAX9753JNiaddHPOaEj35gGIlO2eZxPJzHBx5UUUJqo6eY9AREvT37cm+9qKuynxX+AdzvWqeFdO7H9EcyWkmQiLVpfzg+9hUO23E=;5:/IBEFnOPep4WQnj0cmVSrvSz+9JN7vt7BkWtQQoeQQ8QqRbkUq23FysXgkYXX9UKiTDHesljawp+Djt80j3gYifNejtDR9uY1hj3w3C6SVgd/Ewgf264zpHpXigJtrSSEalLNh4Zp6qhe7Ja9ldqr+x6zaF13WwNNYLYGHiN11s=;24:4f54Mtw93BWBAqoclYSs9orlnYA4BqaUZhMWKu89FJWwOWox6wIM1o4REp/UKJN3c/pLQh8l8hrBUN3c4amXkoc3+BjXjk3iClK44v4fBiM=;7:7CUE6Jwo4BMrbgDA00dqczAzWaw/j9/yuKbmyIsm5HmLwgZ7mslFvk8KGIQyR/Huksa7HeKd+LhdhA9YNUOmEJr/ULoj74KoMEBnb6H3rY9gWK8xzTkdZU+Dtpj9x9SdF/bGR/J1QM0DnFCyzefqGfo0RmtTBv+LPFLDHU2EMKlTkFgQUMbndTy6b55dMhsmKk9aCtCIP+ECeh9pVsif4B5wlW4eXOmtdIse+dk9ALWhDVoRJhtKnOxy1cWgf5OH
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(366004)(346002)(376002)(189003)(199004)(8936002)(47776003)(50466002)(1076002)(50226002)(48376002)(7736002)(5890100001)(16526019)(186003)(4326008)(305945005)(8676002)(81156014)(81166006)(2906002)(59450400001)(6506007)(386003)(2950100002)(5660300001)(2351001)(478600001)(36756003)(106356001)(2361001)(6666003)(6916009)(6116002)(6486002)(16586007)(316002)(97736004)(54906003)(52396003)(76176011)(52116002)(46003)(51416003)(53936002)(6512007)(69596002)(105586002)(25786009)(68736007)(15650500001)(86362001)(53416004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL2PR15MB1076;H:castle.thefacebook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR15MB1076;23:QG47vYHY9o/JQVy3HxhUVkn9ufm05bIaQrhDCUHGa?=
+ =?us-ascii?Q?8lEyh2bDexqfbpbfFmmJLB7u68nfBcq64EICusn+eK8SZxB0papp5wHur/l4?=
+ =?us-ascii?Q?NFujMawl9chk01Ysur0RWeOI0f/fFn8B6OL0tHh0sJcCSr5xhvpna5BmJPGC?=
+ =?us-ascii?Q?EyWujYgav6vRlqLycf1GnQVmsZPAw7w+s5PiQbpZpe5LzqrnL9dSNK89n8zs?=
+ =?us-ascii?Q?T72L0ESau+ccafJglqQ3jltaRbcaqTsf6vRzYkMgYIeueLXi+Caf2mvnXd62?=
+ =?us-ascii?Q?sjQs/wLJnjHIvrt2LOb78DqYoIK+DANScEFGZqKkNjAQn3lwYpcA4LhKiQrR?=
+ =?us-ascii?Q?EiV/3WtH8YH7A3Mm6r9WqEzeF/ri8JZFpoATdz44UNxwBUjXzx0k17ZWR+4I?=
+ =?us-ascii?Q?RUMUBtr9ES3esfS52XwvFf5q66luWAgh62xcVKezlS6mJXEJt/E0G6Rpa3Gd?=
+ =?us-ascii?Q?UAzMDSU0wYPfmBv4hQlBqrFeQ5aWeXFINAQJaBSHXrbQ2M1p0LCgF+19anVa?=
+ =?us-ascii?Q?RDhBa/NKv6FOX3lR09T/e1HcJ2h49JZhtq0OYN2UXS10jCo8XqhwPj6bY7fj?=
+ =?us-ascii?Q?O4hiAIqdRHY6hn58adNrVTRjFZDUWomVWlhZPQ3uNpyA8bJVV7KwBplrnzN+?=
+ =?us-ascii?Q?E93Jlk5kWbRPRbvIYDqXI9vrMLcrAvY3sh2NxsnyUp8ZgE5vqWeHki3Abapi?=
+ =?us-ascii?Q?gjOMrp40weyTEVS+WLBMM7rnSrv+bnLMNEO/PqqFzPSaDThryvr5dJXYAO6z?=
+ =?us-ascii?Q?m24Yl3f8DrAPLtnB0xX2JSfk1RZuyGbX/otQrVTZnPmDCZOnkhlEY4N3KYzL?=
+ =?us-ascii?Q?C9MpY0mhx+H2DQ+pf/DT8UZ7kkFiJL6qf00DkRrHRRjPQ7RYzkMGIXKo8npL?=
+ =?us-ascii?Q?igrf4F4MqTg81ZXuE5mKLprVoXwPuwlKQQ28CPkGYXZJ+kU5WzkDqaH7KBDB?=
+ =?us-ascii?Q?cT7zeHQBDTp5ncB8IavV+ON3PZPCyRu7J9FK5s+yMnVLJbSw9/LWiLCGgxTI?=
+ =?us-ascii?Q?1B3he4EllPXYyXlGrw6U/YFN8SNiEkQWNvfAUzN1mIxZahU6a+1rWb1ejZ2q?=
+ =?us-ascii?Q?AjBxrPJ1TNmGZxJHmoLuTGvsKKYDD8uu7ujgvDCC26ZDQ1UbQEnqtY58kG/P?=
+ =?us-ascii?Q?w8fTJTebzX64UI4P4V3N79hd3lHlYMNvIPqFNF5q4yrVaABStweMp0jy0iF5?=
+ =?us-ascii?Q?MiIf6l2ev4sWW+HFPUEEEMc3r/lvpv1yU/VxuQu/CTtMBAdrcQ1vPP4WnoKo?=
+ =?us-ascii?Q?GDMSMblE4BFiJ20nw0f5UcosaNMFF63hhYeimNiD/+n0V+9qYybD/INxHm98?=
+ =?us-ascii?Q?aLBGE6Fdz6E1LgYNR/BGUQ=3D?=
+X-Microsoft-Antispam-Message-Info: D0pn9PK1nMpqlBBJKBYWxOxieXteW5lTVLX8P4kptMBKSn63AMRuKdoBoV8B1eCmgSmdj+YB6OEwZSLwzqmc5n6sAIvKFugoth2KEegmUxpXc0rN+Iwnr9YJAOvuIU6lZ1yuxCJ1JbWM4leKbh8zFZYfLnONT3N/oDLx55q3MK1j5GKz3cvXi032qKXynZ2A
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;6:z2vG0trKLwBZZwavKUy7Y52c2a1aaGSEpKu+6ANjkTJdxeM90cGl2QTuTkJR6R6R11myw2obRh7e/0Pa7i4ykojx/g3xTcTd6+uX0lcVxGng1dHHMHksesHIzJH1t+aCDLIkQpfg2Q5JUsgbHbuNM7wJlJGgy0H2Zx6uUHgn2z+MdTnYtIjjSu+q0qPe+sHFp9ImAPxk8yFEyrtWuDJlQBWaYQOrWXUgrcXOqo2K8C6tFqWNa5cPBvJBgfSQHh8pwg0ahKYeyGSiFDEfjlJCMKWFtS1LPLEPsPskLYUPlbMh4+IRUmR2Yc+QYkXqRDhUAanVzJYURgJuXRF5mJTFn3RtHfFl20tYvYxmyGSQlS0=;5:GXy1r5RqZTNXBF+Z9HsAd6hdH+CHw8Ag1I3fWCZ315BcqaHO5O/Vkxhgk74FcPmc88A4cjHQ3BRifx/JlMQmCGykmTM5g9+OjIjd7z0jXNsf60wz+L+pReD8hrN+y4wBBciGq0CNZsRaIwOz38WBFuQtBx9T4+q2sK6yxgvwi1g=;24:S9us2uGfnXgt105kZy2iQmB9vR23qJcIlJYV/3N4t/KcqPm985+GvZyppXmYujrBfoSf6Tms1IGlXVZaPg+vf2zfN1a/zzGNDivFkGDYtEg=;7:Vta0rZv5anQMHn++nT0QirYFNe9wDKP8Y1eUhh2SsMLGe1N0pmMkskjqYcHkDoIehNrwM/mW2F5j6xQOqz199Lk7GIZSVzewWg7PvI6gxlOUwS8NB7aN/uLXxcH5ALt06stxQFrDI5E3iiKBR0rD3I8RTjS4pOV9fWIItYV6Db18/41bynCNGzfUgqmUblH3+PYKtpAXqpzGSE6aCphemrBSnFc7b8vwEFgcRdcpfFfT3gUmGQFgbuY3irk23Gmx
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;20:3tQvQJJXs5Fq7xEy5DLemXjGVAzfrnapz2KZ8XvoqNirqJKIgkjjJGFSPwpPj8B8DpCEBVFQN+ZJ4teEDV+97479a2hD9PnVUTciL1FAWIEg/JKiyRPXHFFug5YXc8J1pMBXjj1sfRwOuRMMdJTqMrDec0enIyMPkxYpOv2wo4U=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2018 13:38:10.5043 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0de66e3c-1f49-4d44-c301-08d5829e570f
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR15MB1076;20:H57OM+wE/UJhA0emr43N5RliSj/ANoON5QWl66N4NrktTVu3mqXPwYOL8YsspCGkriP2xQK/vAlrt1QXZNgaGUHPwD4IKA1j4JRa6ymn/utvxFQAdmu8QOnycip2Pz8NNjtdqJY6RP7HFH64aFtUKbwo9ghiPBN9dfNxlohY1+I=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2018 13:38:12.6919 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0c1f60a-0011-4f96-184d-08d5829e5867
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR15MB1076
@@ -79,9 +80,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adjusts /proc/meminfo MemAvailable calculation
-by adding the amount of indirectly reclaimable memory
-(rounded to the PAGE_SIZE).
+I was reported about suspicious growth of unreclaimable slabs
+on some machines. I've found that it happens on machines
+with low memory pressure, and these unreclaimable slabs
+are external names attached to dentries.
+
+External names are allocated using generic kmalloc() function,
+so they are accounted as unreclaimable. But they are held
+by dentries, which are reclaimable, and they will be reclaimed
+under the memory pressure.
+
+In particular, this breaks MemAvailable calculation, as it
+doesn't take unreclaimable slabs into account.
+This leads to a silly situation, when a machine is almost idle,
+has no memory pressure and therefore has a big dentry cache.
+And the resulting MemAvailable is too low to start a new workload.
+
+To address the issue, the NR_INDIRECTLY_RECLAIMABLE_BYTES counter
+is used to track the amount of memory, consumed by external names.
+The counter is increased in the dentry allocation path, if an external
+name structure is allocated; and it's decreased in the dentry freeing
+path.
+
+To reproduce the problem I've used the following Python script:
+  import os
+
+  for iter in range (0, 10000000):
+      try:
+          name = ("/some_long_name_%d" % iter) + "_" * 220
+          os.stat(name)
+      except Exception:
+          pass
+
+Without this patch:
+  $ cat /proc/meminfo | grep MemAvailable
+  MemAvailable:    7811688 kB
+  $ python indirect.py
+  $ cat /proc/meminfo | grep MemAvailable
+  MemAvailable:    2753052 kB
+
+With the patch:
+  $ cat /proc/meminfo | grep MemAvailable
+  MemAvailable:    7809516 kB
+  $ python indirect.py
+  $ cat /proc/meminfo | grep MemAvailable
+  MemAvailable:    7749144 kB
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -93,26 +136,69 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org
 Cc: kernel-team@fb.com
 ---
- mm/page_alloc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/dcache.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2836bc9e0999..2247cda9e94e 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4695,6 +4695,13 @@ long si_mem_available(void)
- 		     min(global_node_page_state(NR_SLAB_RECLAIMABLE) / 2,
- 			 wmark_low);
- 
-+	/*
-+	 * Part of the kernel memory, which can be released under memory
-+	 * pressure.
-+	 */
-+	available += global_node_page_state(NR_INDIRECTLY_RECLAIMABLE_BYTES) >>
-+		PAGE_SHIFT;
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 5c7df1df81ff..a0312d73f575 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -273,8 +273,16 @@ static void __d_free(struct rcu_head *head)
+ static void __d_free_external(struct rcu_head *head)
+ {
+ 	struct dentry *dentry = container_of(head, struct dentry, d_u.d_rcu);
+-	kfree(external_name(dentry));
+-	kmem_cache_free(dentry_cache, dentry); 
++	struct external_name *name = external_name(dentry);
++	unsigned long bytes;
 +
- 	if (available < 0)
- 		available = 0;
- 	return available;
++	bytes = dentry->d_name.len + offsetof(struct external_name, name[1]);
++	mod_node_page_state(page_pgdat(virt_to_page(name)),
++			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
++			    -kmalloc_size(kmalloc_index(bytes)));
++
++	kfree(name);
++	kmem_cache_free(dentry_cache, dentry);
+ }
+ 
+ static inline int dname_external(const struct dentry *dentry)
+@@ -1598,6 +1606,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 	struct dentry *dentry;
+ 	char *dname;
+ 	int err;
++	size_t reclaimable = 0;
+ 
+ 	dentry = kmem_cache_alloc(dentry_cache, GFP_KERNEL);
+ 	if (!dentry)
+@@ -1614,9 +1623,11 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 		name = &slash_name;
+ 		dname = dentry->d_iname;
+ 	} else if (name->len > DNAME_INLINE_LEN-1) {
+-		size_t size = offsetof(struct external_name, name[1]);
+-		struct external_name *p = kmalloc(size + name->len,
+-						  GFP_KERNEL_ACCOUNT);
++		struct external_name *p;
++
++		reclaimable = offsetof(struct external_name, name[1]) +
++			name->len;
++		p = kmalloc(reclaimable, GFP_KERNEL_ACCOUNT);
+ 		if (!p) {
+ 			kmem_cache_free(dentry_cache, dentry); 
+ 			return NULL;
+@@ -1665,6 +1676,14 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 		}
+ 	}
+ 
++	if (unlikely(reclaimable)) {
++		pg_data_t *pgdat;
++
++		pgdat = page_pgdat(virt_to_page(external_name(dentry)));
++		mod_node_page_state(pgdat, NR_INDIRECTLY_RECLAIMABLE_BYTES,
++				    kmalloc_size(kmalloc_index(reclaimable)));
++	}
++
+ 	this_cpu_inc(nr_dentry);
+ 
+ 	return dentry;
 -- 
 2.14.3
