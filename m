@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeCEJYD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:24:03 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51613 "EHLO
+        id S933244AbeCEJZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:25:26 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54052 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752482AbeCEJX5 (ORCPT
+        with ESMTP id S1751776AbeCEJZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:23:57 -0500
-X-Google-Smtp-Source: AG47ELu/EhLxzjKAXAPbbvFbNRaw73KP083geVtaOinhtseqoJ1lbZFj6UNJTUPHYGCoKtlVX2UIlQ==
-Date: Mon, 5 Mar 2018 10:23:53 +0100
+        Mon, 5 Mar 2018 04:25:19 -0500
+X-Google-Smtp-Source: AG47ELtQGoVBJ0Wa7OUoed6nBEUuceFrBfN3e+bbJ0bV1DqTD0N7JoGEny0aOY5c/oEGtBmPjnRltw==
+Date: Mon, 5 Mar 2018 10:25:15 +0100
 From: Daniel Vetter <daniel@ffwll.ch>
 To: Oleksandr Andrushchenko <andr2000@gmail.com>
 Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
@@ -16,8 +16,8 @@ Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH 7/9] drm/xen-front: Implement KMS/connector handling
-Message-ID: <20180305092353.GI22212@phenom.ffwll.local>
+Subject: Re: [PATCH 9/9] drm/xen-front: Implement communication with backend
+Message-ID: <20180305092515.GJ22212@phenom.ffwll.local>
 Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
@@ -25,708 +25,448 @@ Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
         jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
- <1519200222-20623-8-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-10-git-send-email-andr2000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519200222-20623-8-git-send-email-andr2000@gmail.com>
+In-Reply-To: <1519200222-20623-10-git-send-email-andr2000@gmail.com>
 X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 10:03:40AM +0200, Oleksandr Andrushchenko wrote:
+On Wed, Feb 21, 2018 at 10:03:42AM +0200, Oleksandr Andrushchenko wrote:
 > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
-> Implement kernel modesetiing/connector handling using
-> DRM simple KMS helper pipeline:
-> 
-> - implement KMS part of the driver with the help of DRM
->   simple pipepline helper which is possible due to the fact
->   that the para-virtualized driver only supports a single
->   (primary) plane:
->   - initialize connectors according to XenStore configuration
->   - handle frame done events from the backend
->   - generate vblank events
->   - create and destroy frame buffers and propagate those
->     to the backend
->   - propagate set/reset mode configuration to the backend on display
->     enable/disable callbacks
->   - send page flip request to the backend and implement logic for
->     reporting backend IO errors on prepare fb callback
-> 
-> - implement virtual connector handling:
->   - support only pixel formats suitable for single plane modes
->   - make sure the connector is always connected
->   - support a single video mode as per para-virtualized driver
->     configuration
+> Handle communication with the backend:
+>  - send requests and wait for the responses according
+>    to the displif protocol
+>  - serialize access to the communication channel
+>  - time-out used for backend communication is set to 3000 ms
+>  - manage display buffers shared with the backend
 > 
 > Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-I think once you've removed the midlayer in the previous patch it would
-makes sense to merge the 2 patches into 1.
-
-Bunch more comments below.
+After the demidlayering it probably makes sense to merge this with the
+overall kms/basic-drm-driver patch. Up to you really.
 -Daniel
-
 > ---
->  drivers/gpu/drm/xen/Makefile             |   2 +
->  drivers/gpu/drm/xen/xen_drm_front_conn.c | 125 +++++++++++++
->  drivers/gpu/drm/xen/xen_drm_front_conn.h |  35 ++++
->  drivers/gpu/drm/xen/xen_drm_front_drv.c  |  15 ++
->  drivers/gpu/drm/xen/xen_drm_front_drv.h  |  12 ++
->  drivers/gpu/drm/xen/xen_drm_front_kms.c  | 299 +++++++++++++++++++++++++++++++
->  drivers/gpu/drm/xen/xen_drm_front_kms.h  |  30 ++++
->  7 files changed, 518 insertions(+)
->  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
->  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
->  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
->  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+>  drivers/gpu/drm/xen/xen_drm_front.c | 327 +++++++++++++++++++++++++++++++++++-
+>  drivers/gpu/drm/xen/xen_drm_front.h |   5 +
+>  2 files changed, 327 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
-> index d3068202590f..4fcb0da1a9c5 100644
-> --- a/drivers/gpu/drm/xen/Makefile
-> +++ b/drivers/gpu/drm/xen/Makefile
-> @@ -2,6 +2,8 @@
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
+> index 8de88e359d5e..5ad546231d30 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front.c
+> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
+> @@ -31,12 +31,146 @@
+>  #include "xen_drm_front_evtchnl.h"
+>  #include "xen_drm_front_shbuf.h"
 >  
->  drm_xen_front-objs := xen_drm_front.o \
->  		      xen_drm_front_drv.o \
-> +		      xen_drm_front_kms.o \
-> +		      xen_drm_front_conn.o \
->  		      xen_drm_front_evtchnl.o \
->  		      xen_drm_front_shbuf.o \
->  		      xen_drm_front_cfg.o
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_conn.c b/drivers/gpu/drm/xen/xen_drm_front_conn.c
-> new file mode 100644
-> index 000000000000..d9986a2e1a3b
-> --- /dev/null
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_conn.c
-> @@ -0,0 +1,125 @@
-> +/*
-> + *  Xen para-virtual DRM device
-> + *
-> + *   This program is free software; you can redistribute it and/or modify
-> + *   it under the terms of the GNU General Public License as published by
-> + *   the Free Software Foundation; either version 2 of the License, or
-> + *   (at your option) any later version.
-> + *
-> + *   This program is distributed in the hope that it will be useful,
-> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *   GNU General Public License for more details.
-> + *
-> + * Copyright (C) 2016-2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
+> +/* timeout in ms to wait for backend to respond */
+> +#define VDRM_WAIT_BACK_MS	3000
 > +
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_crtc_helper.h>
-> +
-> +#include <video/videomode.h>
-> +
-> +#include "xen_drm_front_conn.h"
-> +#include "xen_drm_front_drv.h"
-> +
-> +static struct xen_drm_front_drm_pipeline *
-> +to_xen_drm_pipeline(struct drm_connector *connector)
-> +{
-> +	return container_of(connector, struct xen_drm_front_drm_pipeline, conn);
-> +}
-> +
-> +static const uint32_t plane_formats[] = {
-> +	DRM_FORMAT_RGB565,
-> +	DRM_FORMAT_RGB888,
-> +	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_ARGB8888,
-> +	DRM_FORMAT_XRGB4444,
-> +	DRM_FORMAT_ARGB4444,
-> +	DRM_FORMAT_XRGB1555,
-> +	DRM_FORMAT_ARGB1555,
+> +struct xen_drm_front_dbuf {
+> +	struct list_head list;
+> +	uint64_t dbuf_cookie;
+> +	uint64_t fb_cookie;
+> +	struct xen_drm_front_shbuf *shbuf;
 > +};
 > +
-> +const uint32_t *xen_drm_front_conn_get_formats(int *format_count)
+> +static int dbuf_add_to_list(struct xen_drm_front_info *front_info,
+> +		struct xen_drm_front_shbuf *shbuf, uint64_t dbuf_cookie)
 > +{
-> +	*format_count = ARRAY_SIZE(plane_formats);
-> +	return plane_formats;
-> +}
-> +
-> +static enum drm_connector_status connector_detect(
-> +		struct drm_connector *connector, bool force)
-> +{
-> +	if (drm_dev_is_unplugged(connector->dev))
-> +		return connector_status_disconnected;
-> +
-> +	return connector_status_connected;
-> +}
-> +
-> +#define XEN_DRM_NUM_VIDEO_MODES		1
-> +#define XEN_DRM_CRTC_VREFRESH_HZ	60
-> +
-> +static int connector_get_modes(struct drm_connector *connector)
-> +{
-> +	struct xen_drm_front_drm_pipeline *pipeline =
-> +		to_xen_drm_pipeline(connector);
-> +	struct drm_display_mode *mode;
-> +	struct videomode videomode;
-> +	int width, height;
-> +
-> +	mode = drm_mode_create(connector->dev);
-> +	if (!mode)
-> +		return 0;
-> +
-> +	memset(&videomode, 0, sizeof(videomode));
-> +	videomode.hactive = pipeline->width;
-> +	videomode.vactive = pipeline->height;
-> +	width = videomode.hactive + videomode.hfront_porch +
-> +		videomode.hback_porch + videomode.hsync_len;
-> +	height = videomode.vactive + videomode.vfront_porch +
-> +		videomode.vback_porch + videomode.vsync_len;
-> +	videomode.pixelclock = width * height * XEN_DRM_CRTC_VREFRESH_HZ;
-> +	mode->type = DRM_MODE_TYPE_PREFERRED | DRM_MODE_TYPE_DRIVER;
-> +
-> +	drm_display_mode_from_videomode(&videomode, mode);
-> +	drm_mode_probed_add(connector, mode);
-> +	return XEN_DRM_NUM_VIDEO_MODES;
-> +}
-> +
-> +static int connector_mode_valid(struct drm_connector *connector,
-> +		struct drm_display_mode *mode)
-> +{
-> +	struct xen_drm_front_drm_pipeline *pipeline =
-> +			to_xen_drm_pipeline(connector);
-> +
-> +	if (mode->hdisplay != pipeline->width)
-> +		return MODE_ERROR;
-> +
-> +	if (mode->vdisplay != pipeline->height)
-> +		return MODE_ERROR;
-> +
-> +	return MODE_OK;
-> +}
-> +
-> +static const struct drm_connector_helper_funcs connector_helper_funcs = {
-> +	.get_modes = connector_get_modes,
-> +	.mode_valid = connector_mode_valid,
-> +};
-> +
-> +static const struct drm_connector_funcs connector_funcs = {
-> +	.detect = connector_detect,
-> +	.fill_modes = drm_helper_probe_single_connector_modes,
-> +	.destroy = drm_connector_cleanup,
-> +	.reset = drm_atomic_helper_connector_reset,
-> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> +};
-> +
-> +int xen_drm_front_conn_init(struct xen_drm_front_drm_info *drm_info,
-> +		struct drm_connector *connector)
-> +{
-> +	drm_connector_helper_add(connector, &connector_helper_funcs);
-> +
-> +	return drm_connector_init(drm_info->drm_dev, connector,
-> +		&connector_funcs, DRM_MODE_CONNECTOR_VIRTUAL);
-> +}
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_conn.h b/drivers/gpu/drm/xen/xen_drm_front_conn.h
-> new file mode 100644
-> index 000000000000..708e80d45985
-> --- /dev/null
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_conn.h
-> @@ -0,0 +1,35 @@
-> +/*
-> + *  Xen para-virtual DRM device
-> + *
-> + *   This program is free software; you can redistribute it and/or modify
-> + *   it under the terms of the GNU General Public License as published by
-> + *   the Free Software Foundation; either version 2 of the License, or
-> + *   (at your option) any later version.
-> + *
-> + *   This program is distributed in the hope that it will be useful,
-> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *   GNU General Public License for more details.
-> + *
-> + * Copyright (C) 2016-2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
-> +
-> +#ifndef __XEN_DRM_FRONT_CONN_H_
-> +#define __XEN_DRM_FRONT_CONN_H_
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_crtc.h>
-> +#include <drm/drm_encoder.h>
-> +
-> +#include <linux/wait.h>
-> +
-> +struct xen_drm_front_drm_info;
-> +
-> +const uint32_t *xen_drm_front_conn_get_formats(int *format_count);
-> +
-> +int xen_drm_front_conn_init(struct xen_drm_front_drm_info *drm_info,
-> +		struct drm_connector *connector);
-> +
-> +#endif /* __XEN_DRM_FRONT_CONN_H_ */
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.c b/drivers/gpu/drm/xen/xen_drm_front_drv.c
-> index b3764d5ed0f6..e8862d26ba27 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.c
-> @@ -23,6 +23,7 @@
->  #include "xen_drm_front.h"
->  #include "xen_drm_front_cfg.h"
->  #include "xen_drm_front_drv.h"
-> +#include "xen_drm_front_kms.h"
->  
->  static int dumb_create(struct drm_file *filp,
->  		struct drm_device *dev, struct drm_mode_create_dumb *args)
-> @@ -41,6 +42,13 @@ static void free_object(struct drm_gem_object *obj)
->  static void on_frame_done(struct platform_device *pdev,
->  		int conn_idx, uint64_t fb_cookie)
->  {
-> +	struct xen_drm_front_drm_info *drm_info = platform_get_drvdata(pdev);
-> +
-> +	if (unlikely(conn_idx >= drm_info->cfg->num_connectors))
-> +		return;
-> +
-> +	xen_drm_front_kms_on_frame_done(&drm_info->pipeline[conn_idx],
-> +			fb_cookie);
->  }
->  
->  static void lastclose(struct drm_device *dev)
-> @@ -157,6 +165,12 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
->  		return ret;
->  	}
->  
-> +	ret = xen_drm_front_kms_init(drm_info);
-> +	if (ret) {
-> +		DRM_ERROR("Failed to initialize DRM/KMS, ret %d\n", ret);
-> +		goto fail_modeset;
-> +	}
-> +
->  	dev->irq_enabled = 1;
->  
->  	ret = drm_dev_register(dev, 0);
-> @@ -172,6 +186,7 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
->  
->  fail_register:
->  	drm_dev_unregister(dev);
-> +fail_modeset:
->  	drm_mode_config_cleanup(dev);
->  	return ret;
->  }
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.h b/drivers/gpu/drm/xen/xen_drm_front_drv.h
-> index aaa476535c13..563318b19f34 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.h
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.h
-> @@ -20,14 +20,24 @@
->  #define __XEN_DRM_FRONT_DRV_H_
->  
->  #include <drm/drmP.h>
-> +#include <drm/drm_simple_kms_helper.h>
->  
->  #include "xen_drm_front.h"
->  #include "xen_drm_front_cfg.h"
-> +#include "xen_drm_front_conn.h"
->  
->  struct xen_drm_front_drm_pipeline {
->  	struct xen_drm_front_drm_info *drm_info;
->  
->  	int index;
-> +
-> +	struct drm_simple_display_pipe pipe;
-> +
-> +	struct drm_connector conn;
-> +	/* these are only for connector mode checking */
-> +	int width, height;
-> +	/* last backend error seen on page flip */
-> +	int pgflip_last_error;
->  };
->  
->  struct xen_drm_front_drm_info {
-> @@ -35,6 +45,8 @@ struct xen_drm_front_drm_info {
->  	struct xen_drm_front_ops *front_ops;
->  	struct drm_device *drm_dev;
->  	struct xen_drm_front_cfg *cfg;
-> +
-> +	struct xen_drm_front_drm_pipeline pipeline[XEN_DRM_FRONT_MAX_CRTCS];
->  };
->  
->  static inline uint64_t xen_drm_front_fb_to_cookie(
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-> new file mode 100644
-> index 000000000000..ad94c28835cd
-> --- /dev/null
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-> @@ -0,0 +1,299 @@
-> +/*
-> + *  Xen para-virtual DRM device
-> + *
-> + *   This program is free software; you can redistribute it and/or modify
-> + *   it under the terms of the GNU General Public License as published by
-> + *   the Free Software Foundation; either version 2 of the License, or
-> + *   (at your option) any later version.
-> + *
-> + *   This program is distributed in the hope that it will be useful,
-> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *   GNU General Public License for more details.
-> + *
-> + * Copyright (C) 2016-2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
-> +
-> +#include "xen_drm_front_kms.h"
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_gem.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
-> +
-> +#include "xen_drm_front.h"
-> +#include "xen_drm_front_conn.h"
-> +#include "xen_drm_front_drv.h"
-> +
-> +static struct xen_drm_front_drm_pipeline *
-> +to_xen_drm_pipeline(struct drm_simple_display_pipe *pipe)
-> +{
-> +	return container_of(pipe, struct xen_drm_front_drm_pipeline, pipe);
-> +}
-> +
-> +static void fb_destroy(struct drm_framebuffer *fb)
-> +{
-> +	struct xen_drm_front_drm_info *drm_info = fb->dev->dev_private;
-> +
-> +	drm_info->front_ops->fb_detach(drm_info->front_info,
-> +			xen_drm_front_fb_to_cookie(fb));
-> +	drm_gem_fb_destroy(fb);
-> +}
-> +
-> +static struct drm_framebuffer_funcs fb_funcs = {
-> +	.destroy = fb_destroy,
-> +};
-> +
-> +static struct drm_framebuffer *fb_create(struct drm_device *dev,
-> +		struct drm_file *filp, const struct drm_mode_fb_cmd2 *mode_cmd)
-> +{
-> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
-> +	static struct drm_framebuffer *fb;
-> +	struct drm_gem_object *gem_obj;
-> +	int ret;
-> +
-> +	fb = drm_gem_fb_create_with_funcs(dev, filp, mode_cmd, &fb_funcs);
-> +	if (IS_ERR_OR_NULL(fb))
-> +		return fb;
-> +
-> +	gem_obj = drm_gem_object_lookup(filp, mode_cmd->handles[0]);
-> +	if (!gem_obj) {
-> +		DRM_ERROR("Failed to lookup GEM object\n");
-> +		ret = -ENOENT;
-> +		goto fail;
-> +	}
-> +
-> +	drm_gem_object_unreference_unlocked(gem_obj);
-> +
-> +	ret = drm_info->front_ops->fb_attach(
-> +			drm_info->front_info,
-> +			xen_drm_front_dbuf_to_cookie(gem_obj),
-> +			xen_drm_front_fb_to_cookie(fb),
-> +			fb->width, fb->height, fb->format->format);
-> +	if (ret < 0) {
-> +		DRM_ERROR("Back failed to attach FB %p: %d\n", fb, ret);
-> +		goto fail;
-> +	}
-> +
-> +	return fb;
-> +
-> +fail:
-> +	drm_gem_fb_destroy(fb);
-> +	return ERR_PTR(ret);
-> +}
-> +
-> +static const struct drm_mode_config_funcs mode_config_funcs = {
-> +	.fb_create = fb_create,
-> +	.atomic_check = drm_atomic_helper_check,
-> +	.atomic_commit = drm_atomic_helper_commit,
-> +};
-> +
-> +static int display_set_config(struct drm_simple_display_pipe *pipe,
-> +	struct drm_framebuffer *fb)
-> +{
-> +	struct xen_drm_front_drm_pipeline *pipeline =
-> +			to_xen_drm_pipeline(pipe);
-> +	struct drm_crtc *crtc = &pipe->crtc;
-> +	struct xen_drm_front_drm_info *drm_info = pipeline->drm_info;
-> +	int ret;
-> +
-> +	if (fb)
-> +		ret = drm_info->front_ops->mode_set(pipeline,
-> +				crtc->x, crtc->y,
-> +				fb->width, fb->height, fb->format->cpp[0] * 8,
-> +				xen_drm_front_fb_to_cookie(fb));
-> +	else
-> +		ret = drm_info->front_ops->mode_set(pipeline,
-> +				0, 0, 0, 0, 0,
-> +				xen_drm_front_fb_to_cookie(NULL));
-
-This is a bit much layering, the if (fb) case corresponds to the
-display_enable/disable hooks, pls fold that in instead of the indirection.
-simple helpers guarantee that when the display is on, then you have an fb.
-
-Maybe we need to fix the docs, pls check and if that's not clear, submit a
-kernel-doc patch for the simple pipe helpers.
-
-> +
-> +	if (ret)
-> +		DRM_ERROR("Failed to set mode to back: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static void display_enable(struct drm_simple_display_pipe *pipe,
-> +		struct drm_crtc_state *crtc_state)
-> +{
-> +	struct drm_crtc *crtc = &pipe->crtc;
-> +	struct drm_framebuffer *fb = pipe->plane.state->fb;
-> +
-> +	if (display_set_config(pipe, fb) == 0)
-> +		drm_crtc_vblank_on(crtc);
-
-I get the impression your driver doesn't support vblanks (the page flip
-code at least looks like it's only generating a single event), you also
-don't have a enable/disable_vblank implementation. If there's no vblank
-handling then this shouldn't be needed.
-
-> +	else
-> +		DRM_ERROR("Failed to enable display\n");
-> +}
-> +
-> +static void display_disable(struct drm_simple_display_pipe *pipe)
-> +{
-> +	struct drm_crtc *crtc = &pipe->crtc;
-> +
-> +	display_set_config(pipe, NULL);
-> +	drm_crtc_vblank_off(crtc);
-> +	/* final check for stalled events */
-> +	if (crtc->state->event && !crtc->state->active) {
-> +		unsigned long flags;
-> +
-> +		spin_lock_irqsave(&crtc->dev->event_lock, flags);
-> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-> +		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
-> +		crtc->state->event = NULL;
-> +	}
-> +}
-> +
-> +void xen_drm_front_kms_on_frame_done(
-> +		struct xen_drm_front_drm_pipeline *pipeline,
-> +		uint64_t fb_cookie)
-> +{
-> +	drm_crtc_handle_vblank(&pipeline->pipe.crtc);
-
-Hm, again this doesn't look like real vblank, but only a page-flip done
-event. If that's correct then please don't use the vblank machinery, but
-just store the event internally (protected with your own private spinlock)
-and send it out using drm_crtc_send_vblank_event directly. No calls to
-arm_vblank_event or any of the other vblank infrastructure should be
-needed.
-
-Also please remove the drm_vblank_init() call, since your hw doesn't
-really have vblanks. And exposing vblanks to userspace without
-implementing them is confusing.
-
-> +}
-> +
-> +static void display_send_page_flip(struct drm_simple_display_pipe *pipe,
-> +		struct drm_plane_state *old_plane_state)
-> +{
-> +	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(
-> +			old_plane_state->state, &pipe->plane);
-> +
-> +	/*
-> +	 * If old_plane_state->fb is NULL and plane_state->fb is not,
-> +	 * then this is an atomic commit which will enable display.
-> +	 * If old_plane_state->fb is not NULL and plane_state->fb is,
-> +	 * then this is an atomic commit which will disable display.
-> +	 * Ignore these and do not send page flip as this framebuffer will be
-> +	 * sent to the backend as a part of display_set_config call.
-> +	 */
-> +	if (old_plane_state->fb && plane_state->fb) {
-> +		struct xen_drm_front_drm_pipeline *pipeline =
-> +				to_xen_drm_pipeline(pipe);
-> +		struct xen_drm_front_drm_info *drm_info = pipeline->drm_info;
-> +		int ret;
-> +
-> +		ret = drm_info->front_ops->page_flip(drm_info->front_info,
-> +				pipeline->index,
-> +				xen_drm_front_fb_to_cookie(plane_state->fb));
-> +		pipeline->pgflip_last_error = ret;
-> +		if (ret) {
-> +			DRM_ERROR("Failed to send page flip request to backend: %d\n", ret);
-> +			/*
-> +			 * As we are at commit stage the DRM core will anyways
-> +			 * wait for the vblank and knows nothing about our
-> +			 * failure. The best we can do is to handle
-> +			 * vblank now, so there is no vblank/flip_done
-> +			 * time outs
-> +			 */
-> +			drm_crtc_handle_vblank(&pipeline->pipe.crtc);
-> +		}
-> +	}
-> +}
-> +
-> +static int display_prepare_fb(struct drm_simple_display_pipe *pipe,
-> +		struct drm_plane_state *plane_state)
-> +{
-> +	struct xen_drm_front_drm_pipeline *pipeline =
-> +			to_xen_drm_pipeline(pipe);
-> +
-> +	if (pipeline->pgflip_last_error) {
-> +		int ret;
-> +
-> +		/* if previous page flip didn't succeed then report the error */
-> +		ret = pipeline->pgflip_last_error;
-> +		/* and let us try to page flip next time */
-> +		pipeline->pgflip_last_error = 0;
-> +		return ret;
-> +	}
-
-Nope, this isn't how the uapi works. If your flips fail then we might need
-to add some error status thing to the drm events, but you can't make the
-next flip fail.
--Daniel
-
-> +	return drm_gem_fb_prepare_fb(&pipe->plane, plane_state);
-> +}
-> +
-> +static void display_update(struct drm_simple_display_pipe *pipe,
-> +		struct drm_plane_state *old_plane_state)
-> +{
-> +	struct drm_crtc *crtc = &pipe->crtc;
-> +	struct drm_pending_vblank_event *event;
-> +
-> +	event = crtc->state->event;
-> +	if (event) {
-> +		struct drm_device *dev = crtc->dev;
-> +		unsigned long flags;
-> +
-> +		crtc->state->event = NULL;
-> +
-> +		spin_lock_irqsave(&dev->event_lock, flags);
-> +		if (drm_crtc_vblank_get(crtc) == 0)
-> +			drm_crtc_arm_vblank_event(crtc, event);
-> +		else
-> +			drm_crtc_send_vblank_event(crtc, event);
-> +		spin_unlock_irqrestore(&dev->event_lock, flags);
-> +	}
-> +	/*
-> +	 * Send page flip request to the backend *after* we have event armed/
-> +	 * sent above, so on page flip done event from the backend we can
-> +	 * deliver it while handling vblank.
-> +	 */
-> +	display_send_page_flip(pipe, old_plane_state);
-> +}
-> +
-> +static const struct drm_simple_display_pipe_funcs display_funcs = {
-> +	.enable = display_enable,
-> +	.disable = display_disable,
-> +	.prepare_fb = display_prepare_fb,
-> +	.update = display_update,
-> +};
-> +
-> +static int display_pipe_init(struct xen_drm_front_drm_info *drm_info,
-> +		int index, struct xen_drm_front_cfg_connector *cfg,
-> +		struct xen_drm_front_drm_pipeline *pipeline)
-> +{
-> +	struct drm_device *dev = drm_info->drm_dev;
-> +	const uint32_t *formats;
-> +	int format_count;
-> +	int ret;
-> +
-> +	pipeline->drm_info = drm_info;
-> +	pipeline->index = index;
-> +	pipeline->height = cfg->height;
-> +	pipeline->width = cfg->width;
-> +
-> +	ret = xen_drm_front_conn_init(drm_info, &pipeline->conn);
-> +	if (ret)
-> +		return ret;
-> +
-> +	formats = xen_drm_front_conn_get_formats(&format_count);
-> +
-> +	return drm_simple_display_pipe_init(dev, &pipeline->pipe,
-> +			&display_funcs, formats, format_count,
-> +			NULL, &pipeline->conn);
-> +}
-> +
-> +int xen_drm_front_kms_init(struct xen_drm_front_drm_info *drm_info)
-> +{
-> +	struct drm_device *dev = drm_info->drm_dev;
-> +	int i, ret;
-> +
-> +	drm_mode_config_init(dev);
-> +
-> +	dev->mode_config.min_width = 0;
-> +	dev->mode_config.min_height = 0;
-> +	dev->mode_config.max_width = 4095;
-> +	dev->mode_config.max_height = 2047;
-> +	dev->mode_config.funcs = &mode_config_funcs;
-> +
-> +	for (i = 0; i < drm_info->cfg->num_connectors; i++) {
-> +		struct xen_drm_front_cfg_connector *cfg =
-> +				&drm_info->cfg->connectors[i];
-> +		struct xen_drm_front_drm_pipeline *pipeline =
-> +				&drm_info->pipeline[i];
-> +
-> +		ret = display_pipe_init(drm_info, i, cfg, pipeline);
-> +		if (ret) {
-> +			drm_mode_config_cleanup(dev);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	drm_mode_config_reset(dev);
+> +	struct xen_drm_front_dbuf *dbuf;
+> +
+> +	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
+> +	if (!dbuf)
+> +		return -ENOMEM;
+> +
+> +	dbuf->dbuf_cookie = dbuf_cookie;
+> +	dbuf->shbuf = shbuf;
+> +	list_add(&dbuf->list, &front_info->dbuf_list);
 > +	return 0;
 > +}
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.h b/drivers/gpu/drm/xen/xen_drm_front_kms.h
-> new file mode 100644
-> index 000000000000..65a50033bb9b
-> --- /dev/null
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.h
-> @@ -0,0 +1,30 @@
-> +/*
-> + *  Xen para-virtual DRM device
-> + *
-> + *   This program is free software; you can redistribute it and/or modify
-> + *   it under the terms of the GNU General Public License as published by
-> + *   the Free Software Foundation; either version 2 of the License, or
-> + *   (at your option) any later version.
-> + *
-> + *   This program is distributed in the hope that it will be useful,
-> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *   GNU General Public License for more details.
-> + *
-> + * Copyright (C) 2016-2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
 > +
-> +#ifndef __XEN_DRM_FRONT_KMS_H_
-> +#define __XEN_DRM_FRONT_KMS_H_
+> +static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
+> +		uint64_t dbuf_cookie)
+> +{
+> +	struct xen_drm_front_dbuf *buf, *q;
 > +
-> +#include "xen_drm_front_drv.h"
+> +	list_for_each_entry_safe(buf, q, dbuf_list, list)
+> +		if (buf->dbuf_cookie == dbuf_cookie)
+> +			return buf;
 > +
-> +int xen_drm_front_kms_init(struct xen_drm_front_drm_info *drm_info);
+> +	return NULL;
+> +}
 > +
-> +void xen_drm_front_kms_on_frame_done(
-> +		struct xen_drm_front_drm_pipeline *pipeline,
-> +		uint64_t fb_cookie);
+> +static void dbuf_flush_fb(struct list_head *dbuf_list, uint64_t fb_cookie)
+> +{
+> +	struct xen_drm_front_dbuf *buf, *q;
 > +
-> +#endif /* __XEN_DRM_FRONT_KMS_H_ */
+> +	list_for_each_entry_safe(buf, q, dbuf_list, list)
+> +		if (buf->fb_cookie == fb_cookie)
+> +			xen_drm_front_shbuf_flush(buf->shbuf);
+> +}
+> +
+> +static void dbuf_free(struct list_head *dbuf_list, uint64_t dbuf_cookie)
+> +{
+> +	struct xen_drm_front_dbuf *buf, *q;
+> +
+> +	list_for_each_entry_safe(buf, q, dbuf_list, list)
+> +		if (buf->dbuf_cookie == dbuf_cookie) {
+> +			list_del(&buf->list);
+> +			xen_drm_front_shbuf_unmap(buf->shbuf);
+> +			xen_drm_front_shbuf_free(buf->shbuf);
+> +			kfree(buf);
+> +			break;
+> +		}
+> +}
+> +
+> +static void dbuf_free_all(struct list_head *dbuf_list)
+> +{
+> +	struct xen_drm_front_dbuf *buf, *q;
+> +
+> +	list_for_each_entry_safe(buf, q, dbuf_list, list) {
+> +		list_del(&buf->list);
+> +		xen_drm_front_shbuf_unmap(buf->shbuf);
+> +		xen_drm_front_shbuf_free(buf->shbuf);
+> +		kfree(buf);
+> +	}
+> +}
+> +
+> +static struct xendispl_req *be_prepare_req(
+> +		struct xen_drm_front_evtchnl *evtchnl, uint8_t operation)
+> +{
+> +	struct xendispl_req *req;
+> +
+> +	req = RING_GET_REQUEST(&evtchnl->u.req.ring,
+> +			evtchnl->u.req.ring.req_prod_pvt);
+> +	req->operation = operation;
+> +	req->id = evtchnl->evt_next_id++;
+> +	evtchnl->evt_id = req->id;
+> +	return req;
+> +}
+> +
+> +static int be_stream_do_io(struct xen_drm_front_evtchnl *evtchnl,
+> +		struct xendispl_req *req)
+> +{
+> +	reinit_completion(&evtchnl->u.req.completion);
+> +	if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
+> +		return -EIO;
+> +
+> +	xen_drm_front_evtchnl_flush(evtchnl);
+> +	return 0;
+> +}
+> +
+> +static int be_stream_wait_io(struct xen_drm_front_evtchnl *evtchnl)
+> +{
+> +	if (wait_for_completion_timeout(&evtchnl->u.req.completion,
+> +			msecs_to_jiffies(VDRM_WAIT_BACK_MS)) <= 0)
+> +		return -ETIMEDOUT;
+> +
+> +	return evtchnl->u.req.resp_status;
+> +}
+> +
+>  static int be_mode_set(struct xen_drm_front_drm_pipeline *pipeline, uint32_t x,
+>  		uint32_t y, uint32_t width, uint32_t height, uint32_t bpp,
+>  		uint64_t fb_cookie)
+>  
+>  {
+> -	return 0;
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xen_drm_front_info *front_info;
+> +	struct xendispl_req *req;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	front_info = pipeline->drm_info->front_info;
+> +	evtchnl = &front_info->evt_pairs[pipeline->index].req;
+> +	if (unlikely(!evtchnl))
+> +		return -EIO;
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_SET_CONFIG);
+> +	req->op.set_config.x = x;
+> +	req->op.set_config.y = y;
+> +	req->op.set_config.width = width;
+> +	req->op.set_config.height = height;
+> +	req->op.set_config.bpp = bpp;
+> +	req->op.set_config.fb_cookie = fb_cookie;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret == 0)
+> +		ret = be_stream_wait_io(evtchnl);
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	return ret;
+>  }
+>  
+>  static int be_dbuf_create_int(struct xen_drm_front_info *front_info,
+> @@ -44,7 +178,69 @@ static int be_dbuf_create_int(struct xen_drm_front_info *front_info,
+>  		uint32_t bpp, uint64_t size, struct page **pages,
+>  		struct sg_table *sgt)
+>  {
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xen_drm_front_shbuf *shbuf;
+> +	struct xendispl_req *req;
+> +	struct xen_drm_front_shbuf_cfg buf_cfg;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	evtchnl = &front_info->evt_pairs[GENERIC_OP_EVT_CHNL].req;
+> +	if (unlikely(!evtchnl))
+> +		return -EIO;
+> +
+> +	memset(&buf_cfg, 0, sizeof(buf_cfg));
+> +	buf_cfg.xb_dev = front_info->xb_dev;
+> +	buf_cfg.pages = pages;
+> +	buf_cfg.size = size;
+> +	buf_cfg.sgt = sgt;
+> +	buf_cfg.be_alloc = front_info->cfg.be_alloc;
+> +
+> +	shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
+> +	if (!shbuf)
+> +		return -ENOMEM;
+> +
+> +	ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
+> +	if (ret < 0) {
+> +		xen_drm_front_shbuf_free(shbuf);
+> +		return ret;
+> +	}
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_DBUF_CREATE);
+> +	req->op.dbuf_create.gref_directory =
+> +			xen_drm_front_shbuf_get_dir_start(shbuf);
+> +	req->op.dbuf_create.buffer_sz = size;
+> +	req->op.dbuf_create.dbuf_cookie = dbuf_cookie;
+> +	req->op.dbuf_create.width = width;
+> +	req->op.dbuf_create.height = height;
+> +	req->op.dbuf_create.bpp = bpp;
+> +	if (buf_cfg.be_alloc)
+> +		req->op.dbuf_create.flags |= XENDISPL_DBUF_FLG_REQ_ALLOC;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	ret = be_stream_wait_io(evtchnl);
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	ret = xen_drm_front_shbuf_map(shbuf);
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+>  	return 0;
+> +
+> +fail:
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	dbuf_free(&front_info->dbuf_list, dbuf_cookie);
+> +	return ret;
+>  }
+>  
+>  static int be_dbuf_create_from_sgt(struct xen_drm_front_info *front_info,
+> @@ -66,26 +262,144 @@ static int be_dbuf_create_from_pages(struct xen_drm_front_info *front_info,
+>  static int be_dbuf_destroy(struct xen_drm_front_info *front_info,
+>  		uint64_t dbuf_cookie)
+>  {
+> -	return 0;
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xendispl_req *req;
+> +	unsigned long flags;
+> +	bool be_alloc;
+> +	int ret;
+> +
+> +	evtchnl = &front_info->evt_pairs[GENERIC_OP_EVT_CHNL].req;
+> +	if (unlikely(!evtchnl))
+> +		return -EIO;
+> +
+> +	be_alloc = front_info->cfg.be_alloc;
+> +
+> +	/*
+> +	 * for the backend allocated buffer release references now, so backend
+> +	 * can free the buffer
+> +	 */
+> +	if (be_alloc)
+> +		dbuf_free(&front_info->dbuf_list, dbuf_cookie);
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_DBUF_DESTROY);
+> +	req->op.dbuf_destroy.dbuf_cookie = dbuf_cookie;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret == 0)
+> +		ret = be_stream_wait_io(evtchnl);
+> +
+> +	/*
+> +	 * do this regardless of communication status with the backend:
+> +	 * if we cannot remove remote resources remove what we can locally
+> +	 */
+> +	if (!be_alloc)
+> +		dbuf_free(&front_info->dbuf_list, dbuf_cookie);
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	return ret;
+>  }
+>  
+>  static int be_fb_attach(struct xen_drm_front_info *front_info,
+>  		uint64_t dbuf_cookie, uint64_t fb_cookie, uint32_t width,
+>  		uint32_t height, uint32_t pixel_format)
+>  {
+> -	return 0;
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xen_drm_front_dbuf *buf;
+> +	struct xendispl_req *req;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	evtchnl = &front_info->evt_pairs[GENERIC_OP_EVT_CHNL].req;
+> +	if (unlikely(!evtchnl))
+> +		return -EIO;
+> +
+> +	buf = dbuf_get(&front_info->dbuf_list, dbuf_cookie);
+> +	if (!buf)
+> +		return -EINVAL;
+> +
+> +	buf->fb_cookie = fb_cookie;
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_FB_ATTACH);
+> +	req->op.fb_attach.dbuf_cookie = dbuf_cookie;
+> +	req->op.fb_attach.fb_cookie = fb_cookie;
+> +	req->op.fb_attach.width = width;
+> +	req->op.fb_attach.height = height;
+> +	req->op.fb_attach.pixel_format = pixel_format;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret == 0)
+> +		ret = be_stream_wait_io(evtchnl);
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	return ret;
+>  }
+>  
+>  static int be_fb_detach(struct xen_drm_front_info *front_info,
+>  		uint64_t fb_cookie)
+>  {
+> -	return 0;
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xendispl_req *req;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	evtchnl = &front_info->evt_pairs[GENERIC_OP_EVT_CHNL].req;
+> +	if (unlikely(!evtchnl))
+> +		return -EIO;
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_FB_DETACH);
+> +	req->op.fb_detach.fb_cookie = fb_cookie;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret == 0)
+> +		ret = be_stream_wait_io(evtchnl);
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	return ret;
+>  }
+>  
+>  static int be_page_flip(struct xen_drm_front_info *front_info, int conn_idx,
+>  		uint64_t fb_cookie)
+>  {
+> -	return 0;
+> +	struct xen_drm_front_evtchnl *evtchnl;
+> +	struct xendispl_req *req;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	if (unlikely(conn_idx >= front_info->num_evt_pairs))
+> +		return -EINVAL;
+> +
+> +	dbuf_flush_fb(&front_info->dbuf_list, fb_cookie);
+> +	evtchnl = &front_info->evt_pairs[conn_idx].req;
+> +
+> +	mutex_lock(&front_info->req_io_lock);
+> +
+> +	spin_lock_irqsave(&front_info->io_lock, flags);
+> +	req = be_prepare_req(evtchnl, XENDISPL_OP_PG_FLIP);
+> +	req->op.pg_flip.fb_cookie = fb_cookie;
+> +
+> +	ret = be_stream_do_io(evtchnl, req);
+> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
+> +
+> +	if (ret == 0)
+> +		ret = be_stream_wait_io(evtchnl);
+> +
+> +	mutex_unlock(&front_info->req_io_lock);
+> +	return ret;
+>  }
+>  
+>  static void xen_drm_drv_unload(struct xen_drm_front_info *front_info)
+> @@ -183,6 +497,7 @@ static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
+>  {
+>  	xen_drm_drv_deinit(front_info);
+>  	xen_drm_front_evtchnl_free_all(front_info);
+> +	dbuf_free_all(&front_info->dbuf_list);
+>  }
+>  
+>  static int backend_on_initwait(struct xen_drm_front_info *front_info)
+> @@ -310,6 +625,8 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
+>  
+>  	front_info->xb_dev = xb_dev;
+>  	spin_lock_init(&front_info->io_lock);
+> +	mutex_init(&front_info->req_io_lock);
+> +	INIT_LIST_HEAD(&front_info->dbuf_list);
+>  	front_info->drm_pdrv_registered = false;
+>  	dev_set_drvdata(&xb_dev->dev, front_info);
+>  	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+> index c6f52c892434..db32d00145d1 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front.h
+> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
+> @@ -137,6 +137,8 @@ struct xen_drm_front_info {
+>  	struct xenbus_device *xb_dev;
+>  	/* to protect data between backend IO code and interrupt handler */
+>  	spinlock_t io_lock;
+> +	/* serializer for backend IO: request/response */
+> +	struct mutex req_io_lock;
+>  	bool drm_pdrv_registered;
+>  	/* virtual DRM platform device */
+>  	struct platform_device *drm_pdev;
+> @@ -144,6 +146,9 @@ struct xen_drm_front_info {
+>  	int num_evt_pairs;
+>  	struct xen_drm_front_evtchnl_pair *evt_pairs;
+>  	struct xen_drm_front_cfg cfg;
+> +
+> +	/* display buffers */
+> +	struct list_head dbuf_list;
+>  };
+>  
+>  #endif /* __XEN_DRM_FRONT_H_ */
 > -- 
 > 2.7.4
 > 
