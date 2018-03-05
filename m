@@ -1,68 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932112AbeCEP7w (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:59:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50370 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCEP7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:59:50 -0500
-Date: Mon, 5 Mar 2018 15:59:38 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand
-        <mylene.josserand@bootlin.com>,
-        lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, michael@amarulasolutions.com
-Subject: Re: [PATCH v2 1/2] ASoC: codecs: Add support for PCM1789
-Message-ID: <20180305155938.GL8588@sirena.org.uk>
-References: <20180305124817.7421-1-mylene.josserand@bootlin.com>
- <20180305124817.7421-2-mylene.josserand@bootlin.com>
- <20180305154910.GJ8588@sirena.org.uk>
- <20180305155715.GJ3035@piout.net>
+        id S1752482AbeCEQAG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:00:06 -0500
+Received: from mga12.intel.com ([192.55.52.136]:7355 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751144AbeCEQAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:00:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="208947363"
+Date: Mon, 5 Mar 2018 09:00:05 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Oliver <oohall@gmail.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage
+ the CMB
+Message-ID: <20180305160004.GA30975@localhost.localdomain>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-8-logang@deltatee.com>
+ <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="j3olVFx0FsM75XyV"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180305155715.GJ3035@piout.net>
-X-Cookie: Do not write below this line.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 05, 2018 at 12:33:29PM +1100, Oliver wrote:
+> On Thu, Mar 1, 2018 at 10:40 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> > @@ -429,10 +429,7 @@ static void __nvme_submit_cmd(struct nvme_queue *nvmeq,
+> >  {
+> >         u16 tail = nvmeq->sq_tail;
+> 
+> > -       if (nvmeq->sq_cmds_io)
+> > -               memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
+> > -       else
+> > -               memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+> > +       memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+> 
+> Hmm, how safe is replacing memcpy_toio() with regular memcpy()? On PPC
+> the _toio() variant enforces alignment, does the copy with 4 byte
+> stores, and has a full barrier after the copy. In comparison our
+> regular memcpy() does none of those things and may use unaligned and
+> vector load/stores. For normal (cacheable) memory that is perfectly
+> fine, but they can cause alignment faults when targeted at MMIO
+> (cache-inhibited) memory.
+> 
+> I think in this particular case it might be ok since we know SEQs are
+> aligned to 64 byte boundaries and the copy is too small to use our
+> vectorised memcpy(). I'll assume we don't need explicit ordering
+> between writes of SEQs since the existing code doesn't seem to care
+> unless the doorbell is being rung, so you're probably fine there too.
+> That said, I still think this is a little bit sketchy and at the very
+> least you should add a comment explaining what's going on when the CMB
+> is being used. If someone more familiar with the NVMe driver could
+> chime in I would appreciate it.
 
---j3olVFx0FsM75XyV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I may not be understanding the concern, but I'll give it a shot.
 
-On Mon, Mar 05, 2018 at 04:57:15PM +0100, Alexandre Belloni wrote:
-> On 05/03/2018 at 15:49:10 +0000, Mark Brown wrote:
+You're right, the start of any SQE is always 64-byte aligned, so that
+should satisfy alignment requirements.
 
-> > Please don't mix C and C++ style comments in a single comment like this
-> > - it looks unintentional.  Just use the same style for the whole thing.
-> > You also don't need to include all the boilerplate with the SPDX header.
+The order when writing multiple/successive SQEs in a submission queue
+does matter, and this is currently serialized through the q_lock.
 
-> I think Linus made it clear that he wants the SPDX header to be a
-> C++ comment, the documentation has:
+The order in which the bytes of a single SQE is written doesn't really
+matter as long as the entire SQE is written into the CMB prior to writing
+that SQ's doorbell register.
 
-Sure, so make the entire thing a C++ comment then.
+The doorbell register is written immediately after copying a command
+entry into the submission queue (ignore "shadow buffer" features),
+so the doorbells written to commands submitted is 1:1.
 
---j3olVFx0FsM75XyV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqdaWkACgkQJNaLcl1U
-h9CiUgf40Hp+gzXwR2TkhGpq5wjdnZSOKngsP8WUfonuZTnnEkE2ejOVjAMVgpOM
-U0ljr1dg/Hg6tfbWNFRYflY31V+PPjfw+KnPuqNxjNFYj1t5GTL3sTrjrLf8RwSU
-v1mgbevFejwxwk4vDhhdx869XZIiWUfnGk7vfAxJIQDi0BWfB6b31nBQmPv11sO0
-pXi/l/ZBtmP29pfLoM1XxzKC3zwZ3dn9ESVkKMgKlnBUGGjsqHpNZTEmj+VB3KHL
-Sg9nTyqmF5zwiNBNnddqriWee+2M+/7ZUBUWj+inCCfC7mLkbFZfB43BHVfl20cl
-kY2El6N9CDLWgJHJUYA4Y8RQRhAe
-=er+z
------END PGP SIGNATURE-----
-
---j3olVFx0FsM75XyV--
+If a CMB SQE and DB order is not enforced with the memcpy, then we do
+need a barrier after the SQE's memcpy and before the doorbell's writel.
