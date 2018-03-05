@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvQA311O7ChkZsO7aurhPjH+sdbNLw5Lmoa4D1hM8Vs+C8/oeKSEnqHGaumhxKtgYGgEfCw
+X-Google-Smtp-Source: AG47ELvf7NZjC9RV0H/+OdIgXz2NruXHOHLGEuhgmTZks1JrG1w8OURZr7VJMiy1LPZ7rulCS6bQ
 ARC-Seal: i=1; a=rsa-sha256; t=1520245576; cv=none;
         d=google.com; s=arc-20160816;
-        b=ouDfhK2cqA+jw7WD241SBO90yiUAUWtjkPnV1hapQ2Thym70Iwf7GPejh1nJ2RXtZ7
-         NRf58L5Cp0W/mNsHzqJ0tuV6Lbf64ckTZ02oKQ7AgaUo1Z+Ly8oZOJuVlrjKK0aL/1s8
-         jCPkkx32LKoJQM4LJ70kphofjGfPNx9XsAAYQxfHWzTlPbtcECOovN4LYvmtBYBj8oh8
-         3jAV9+agAP6AkR2C1tGaZMbH0EE4JHTIFJYRcrYl4KC6yGV4NVQt83AQjR6BDo0JY77S
-         uR37ulhblssj7upZZcIdhkfv/dedmejncHfotibSXxYDyi/4sQc+xC1dBd1/WwUuq6TC
-         q1Hw==
+        b=pgr9M3dI4uwEpWrmGXUDUB/u4Q9KQ37Vi1QwwWpkcvYKxXO4qKvuGLvdkUeSCTxxlm
+         dz2u6r0H4Xqagy3CKxONraVih0ffU33dlEQYRjcb5xA8/qPURrszhGmW/2b3gC2zc2ho
+         kiRk5DET9kKOp33PbJXgLghCi3bymCvtukvfWaG7Au7262VrMpcYR6lG4JSosBL0p9bE
+         nMDBVQFv7ey2M/czNBUm9E8kJDZHQOlrQsa6ky2MNlG6NYW0IKYnfHsDWlbGvbsjSc9J
+         EWtEyOUqEISR0LIJII8ESQQhaCFPSXd9zrPjaS5jNoj5Q7IV8T9/sgdz73AHlvyqr1UE
+         Rayg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=OtmgrQzGNTF1dKS8rsrXdj2gmkkzEVOS8D3O/x8SeY0=;
-        b=Xygp7VkUWI2FvjP3oIy+IKeT/4P2EAJ6iF9bQJe6CyKDX0P/n0UOvAWzWsjnxha1C2
-         SoqxcGga28lidWXxp9ZhSGMEW2WjWi5eP4xqpziZdBcSNtV7SHW8QDPU2+mtxupkFfcS
-         N1cqn6SXALd5AB+IxSj/uzMmjk3MVu2Vl3wOOzge3Emv/Rt9pxyHmsTkOZiPjIVEjooc
-         9Vn0ia9/zoITcvM4W3Mkxusa5R10q6mUGxnVsjhAYtgNwKfFknWrBrYSGh91cVlLPieZ
-         i40JnVkSR2YltQbOvUfD4eoIFeicSmhTSCcZ4O9FGKtuZpN88Bz2ZbXDCAT2Jw/9luGS
-         5ApA==
+        bh=5pIUFR3j827UoBgxXj6zwaByJODpiTnnoQVsy0h1RsQ=;
+        b=Gtk9w1Il/lAJiJNAT1PfFKnY2QGcaO8ppwfe9zwtc24mB1rxOSEf5Hy9TaagtUaj3A
+         i0Iv+yNOZs0fuYnApMzld/PYLrvdf8WqpWIQ6V6dUKVCYTLGNRBWiB/U9KQxW8ljMBJr
+         V7fXUwjaufZG+n+yxaU9a3oI7oBIEmmWDXvgRbHfz6V5NIRIGGHHQwD2D58ysaMHz9y8
+         WI+Sdhm8lZdb/GbF1aOVWul2/Ek/vSnZWWwx5UWSubd/TzpFKTU9eKY8CTtUZX05v8jO
+         zh9g7I/8yiCuVJnMj19A/D0Cf0xqc5kjvqWkrNrc+oljcmeQjaqUiK4zj92p363yJhhQ
+         j1nQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=pKB12yeu;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=HE+aEPls;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=pKB12yeu;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=HE+aEPls;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,84 +57,95 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 21/34] x86/mm/pae: Populate valid user PGD entries
-Date: Mon,  5 Mar 2018 11:25:50 +0100
-Message-Id: <1520245563-8444-22-git-send-email-joro@8bytes.org>
+Subject: [PATCH 19/34] x86/pgtable: Move pti_set_user_pgtbl() to pgtable.h
+Date: Mon,  5 Mar 2018 11:25:48 +0100
+Message-Id: <1520245563-8444-20-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093025378373035?=
-X-GMAIL-MSGID: =?utf-8?q?1594093025378373035?=
+X-GMAIL-THRID: =?utf-8?q?1594093026255069886?=
+X-GMAIL-MSGID: =?utf-8?q?1594093026255069886?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Generic page-table code populates all non-leaf entries with
-_KERNPG_TABLE bits set. This is fine for all paging modes
-except PAE.
-
-In PAE mode only a subset of the bits is allowed to be set.
-Make sure we only set allowed bits by masking out the
-reserved bits.
+There it is also usable from 32 bit code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable.h    | 23 +++++++++++++++++++++++
+ arch/x86/include/asm/pgtable_64.h | 21 ---------------------
+ 2 files changed, 23 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 3696398..48fc70b 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -50,6 +50,7 @@
- #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
- #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
- #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
-+#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
- #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
- #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
- #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
-@@ -267,14 +268,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 0a9f746..1e900c1 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -618,8 +618,31 @@ static inline int is_new_memtype_allowed(u64 paddr, unsigned long size,
  
- typedef struct { pgdval_t pgd; } pgd_t;
- 
-+#ifdef CONFIG_X86_PAE
+ pmd_t *populate_extra_pmd(unsigned long vaddr);
+ pte_t *populate_extra_pte(unsigned long vaddr);
++
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
 +
 +/*
-+ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
-+ * use it here.
++ * Take a PGD location (pgdp) and a pgd value that needs to be set there.
++ * Populates the user and returns the resulting PGD that must be set in
++ * the kernel copy of the page tables.
 + */
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
++{
++	if (!static_cpu_has(X86_FEATURE_PTI))
++		return pgd;
++	return __pti_set_user_pgtbl(pgdp, pgd);
++}
++#else   /* CONFIG_PAGE_TABLE_ISOLATION */
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
++{
++	return pgd;
++}
++#endif  /* CONFIG_PAGE_TABLE_ISOLATION */
 +
-+#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
-+#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
+ #endif	/* __ASSEMBLY__ */
+ 
 +
-+/*
-+ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
-+ * All other bits are Reserved MBZ
-+ */
-+#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
-+				 _PAGE_PWT | _PAGE_PCD | \
-+				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3 )
-+
-+#else
-+/* No need to mask any bits for !PAE */
-+#define PGD_ALLOWED_BITS	(~0ULL)
-+#endif
-+
- static inline pgd_t native_make_pgd(pgdval_t val)
- {
--	return (pgd_t) { val };
-+	return (pgd_t) { val & PGD_ALLOWED_BITS };
+ #ifdef CONFIG_X86_32
+ # include <asm/pgtable_32.h>
+ #else
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 5e68083..4cbf517 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -145,27 +145,6 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ 	return (ptr & ~PAGE_MASK) < (PAGE_SIZE / 2);
  }
  
- static inline pgdval_t native_pgd_val(pgd_t pgd)
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
+-
+-/*
+- * Take a PGD location (pgdp) and a pgd value that needs to be set there.
+- * Populates the user and returns the resulting PGD that must be set in
+- * the kernel copy of the page tables.
+- */
+-static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+-{
+-	if (!static_cpu_has(X86_FEATURE_PTI))
+-		return pgd;
+-	return __pti_set_user_pgtbl(pgdp, pgd);
+-}
+-#else
+-static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+-{
+-	return pgd;
+-}
+-#endif
+-
+ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
  {
--	return pgd.pgd;
-+	return pgd.pgd & PGD_ALLOWED_BITS;
- }
- 
- static inline pgdval_t pgd_flags(pgd_t pgd)
+ #if defined(CONFIG_PAGE_TABLE_ISOLATION) && !defined(CONFIG_X86_5LEVEL)
 -- 
 2.7.4
