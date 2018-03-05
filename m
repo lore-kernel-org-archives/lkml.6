@@ -1,186 +1,116 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1310899-1520122129-2-15459645311757010184
+X-Cyrus-Session-Id: sloti22d1t05-819802-1520233405-3-7487455150799661868
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520122128; b=lV4WAiNDyUepOUFKehwpgeCG73Gi1Y5SgwvhJJeKpc6JRgS
-    cZyiVIOlgn0rh1J6MuRAYNWorOQEnvAmJ3Ocf3sCGflIEhB6iVnGf1qBVUnGObZf
-    IWAUsan1jNNcZ7i98i4NjvX5oCRDnklpsP1HFzgjmWF9GPNLMckgGk6fOyG9V90R
-    O6SZpv/3MIxnf2VrUxjX1+S5nyN+fSnx5QTQZiVko7F/Qng6cqBzWzW04p9MU0HG
-    cg/OKkBsjKULojIocLmd3iwqUqyehnKEByhrWT4hKqH6Mt1bMwH6nf5hulMqG1jB
-    9GTBNgxH5p/4XCCv/Va5aKlSW1m0Im+TrYZkb9Q==
+    t=1520233405; b=VMGa5BQajKQWB/r+kTdbima+fBZmMJ1wMWRzQSEwtZOYxV2
+    sBP58evxhNOtDZyZelJhtqNV0MXf4hN8uqgXz6O9HM4IIvm6SRpsjyeKH9DgwZgu
+    J0RWEN2GQZXAMMB1+CieY17C/64vcnZKWYF5m4lOx0oZ3OLjH8vY0zwKq7+UXXsJ
+    5kwZh88/Yd53l4qTb94WCC+IX2p+LSgmbHsJFuFsQE4SsMJYlzVZ8TzJCuO7OQAJ
+    Mr5mhaOFxFa6C9cuXKbMDsPkiK5AXHBcI8HWXmWBn2W+dM8FO4FaGyJQcLtdLl+l
+    qzmwLFusLlGQvQGWN1zGQYh400wGQm2gYYY98bA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520122128; bh=3hF8iX
-    f+9fhTM8z7xX4RSjFfWgsYFI2cDMM6fPeiszI=; b=vHUKkrCSp90ceiyd433wHr
-    MbGgnONFL1M8iziIZvMhQDAhpi5YVrMC3mME5ouu7+8guzww5+/eX2uhcbExJqlJ
-    N5zKqbidMpiKSG1E+u1kBTE1UkiqN/MsvrrV+iBK4dQ121m11SAZGqodWyENPuV4
-    fudY4911HZCn6VNoLthRpG5oNAfgsP2XOutJ+M8nQuSfvTAli+s2hBhSOslpzMYR
-    7RHhl6h77iGvpleOHVyEWGIXChYK1H34ZEc7cB+vjAJde6U5z2vCXVN1G6tCkHiL
-    cDc5KAKo6pKcAm4SM94j8MH5SFiRgL2CpiWfOahQ0TTWW84rNrWk6s7xwGR9JiUg
-    ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YHXgHaA1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    messagingengine.com; h=date:from:subject:to:cc:references
+    :in-reply-to:mime-version:content-type:content-transfer-encoding
+    :message-id:sender:list-id; s=arctest; t=1520233405; bh=wZfjGvia
+    q0uCBr6DY9zkq3jz7OwdWltgkCfcQjCOSRM=; b=BpBMlry81TiNSmQaOb7Dy+BF
+    xu2enWYskY9gQmJWka62dIemK+LbpeHoQ3SARdYp8Gxlt49zYJvmoShlfy59F4c0
+    1rYAKmVgFw43+Xjn1XTEdrJJB55hwgHlwSmZiSgv2ZlIeSDcLzqFvddIYnwgdR9C
+    vxdLWoO8mO8DwCAmIPBAkmwgxt17uF01+GQC7O37I6sphQrRZ61jfQLjygQOeTM+
+    9jKVljZlxe2DXOPwgKsv0unj3y7HLm4sSi2Ap4cbtLP9wg5+MYWw/ZoWuFIP9+Pm
+    +Eqb4WZrM0dSxWRcm8NLGG+G0UupQEcw7DQFQtT/1oaLw3SnjhJ/44JdSWq4tg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=YHXgHaA1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932853AbeCCWbF (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 3 Mar 2018 17:31:05 -0500
-Received: from mail-sn1nam01on0137.outbound.protection.outlook.com ([104.47.32.137]:51749
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933566AbeCCWbD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 3 Mar 2018 17:31:03 -0500
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        id S933004AbeCEHDJ convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Mon, 5 Mar 2018 02:03:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56082 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932997AbeCEHDG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Mar 2018 02:03:06 -0500
+Date: Mon, 05 Mar 2018 12:32:57 +0530
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH AUTOSEL for 4.9 005/219] kretprobes: Ensure probe location
+ is at function entry
+To: Sasha Levin <Alexander.Levin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-CC: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Steven Rostedt <rostedt@goodmis.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 005/219] kretprobes: Ensure probe location is
- at function entry
-Thread-Topic: [PATCH AUTOSEL for 4.9 005/219] kretprobes: Ensure probe
- location is at function entry
-Thread-Index: AQHTsz7h+vIeWDcysk6ztI3Ut2DD/A==
-Date: Sat, 3 Mar 2018 22:27:58 +0000
-Message-ID: <20180303222716.26640-5-alexander.levin@microsoft.com>
+        Masami Hiramatsu <mhiramat@kernel.org>
 References: <20180303222716.26640-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180303222716.26640-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0970;7:Ug3nGh/gN9Wc/mqKhuoCkOcFkD0X+vUvIz/1KwEIcvzxqcMTdp4lnCm6DnN3AGot399JweEwnXUSUDaqmZWvmf2j3zVkz8gqGXOKftwydawUD0i8JmKqegJEDf4OfhjAG+gdbB/L9By8i4h/QhP6OcKFCUnylrZ0tDq+2aOBi3mUBk9ygzqtkgnE9gtJPO1w961ksgog55Ie8xprjL/UPkhMvhtzZpYVllAzWimETR2qq/rvUYVz+sx6ctVmUUSB
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 07b1cfd7-806b-4d9f-42d2-08d58156700e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7193020);SRVR:MW2PR2101MB0970;
-x-ms-traffictypediagnostic: MW2PR2101MB0970:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB097053A147167299F9195BC6FBC40@MW2PR2101MB0970.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(65623756079841)(42068640409301)(104084551191319);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231220)(944501244)(52105095)(6055026)(61426038)(61427038)(6041288)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR2101MB0970;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0970;
-x-forefront-prvs: 0600F93FE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(396003)(39860400002)(346002)(199004)(189003)(86362001)(110136005)(4326008)(6506007)(14454004)(99286004)(8936002)(1076002)(36756003)(2906002)(102836004)(76176011)(25786009)(6486002)(316002)(478600001)(3280700002)(107886003)(186003)(54906003)(26005)(81166006)(966005)(7736002)(8676002)(6512007)(6306002)(81156014)(305945005)(72206003)(59450400001)(6436002)(53936002)(6116002)(86612001)(68736007)(3846002)(2950100002)(3660700001)(10290500003)(22452003)(10090500001)(2900100001)(106356001)(2501003)(66066001)(97736004)(5660300001)(5250100002)(105586002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0970;H:MW2PR2101MB1034.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: v17vIabGKgxEPI9qKASaWOsjkR9mD5gUELgHayeGRb/7Rjn3oFFbxdWxacK0NefsVW8honfZnJ7Ywo0+4pllsbNZpWulQGDvlDztIOuTdIXBRPmN0IRIy9SJcWNgPv3Bu58HEbK/v2nFitNkofpVq3GZFk/NCZbzN98oT+76sKU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        <20180303222716.26640-5-alexander.levin@microsoft.com>
+In-Reply-To: <20180303222716.26640-5-alexander.levin@microsoft.com>
+User-Agent: astroid/0.11.0 (https://github.com/astroidmail/astroid)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07b1cfd7-806b-4d9f-42d2-08d58156700e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2018 22:27:58.2443
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0970
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18030507-0016-0000-0000-0000052CC3C8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030507-0017-0000-0000-00002869D3A9
+Message-Id: <1520232322.k5aakv6abc.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1031 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803050083
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Hi Sasha,
 
-[ Upstream commit 90ec5e89e393c76e19afc845d8f88a5dc8315919 ]
+Sasha Levin wrote:
+> From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+> 
+> [ Upstream commit 90ec5e89e393c76e19afc845d8f88a5dc8315919 ]
+> 
 
-kretprobes can be registered by specifying an absolute address or by
-specifying offset to a symbol. However, we need to ensure this falls at
-function entry so as to be able to determine the return address.
+Sorry if this is obvious, but why was this patch picked up for -stable?  
+I don't see the upstream commit tagging -stable, so curious why this was 
+done.
 
-Validate the same during kretprobe registration. By default, there
-should not be any offset from a function entry, as determined through a
-kallsyms_lookup(). Introduce arch_function_offset_within_entry() as a
-way for architectures to override this.
+I don't think this patch should be pushed to -stable since this is not 
+really a bug fix. There are also other dependencies for this change (see 
+commit a64e3f35a45f4a, for instance), including how userspace (perf) 
+builds out the retprobe argument. As such, please drop this from -stable 
+(for 3.18. 4.4 and 4.9).
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Link: http://lkml.kernel.org/r/f1583bc4839a3862cfc2acefcc56f9c8837fa2ba.148=
-7770934.git.naveen.n.rao@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- include/linux/kprobes.h |  1 +
- kernel/kprobes.c        | 13 +++++++++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index e23392517db9..56a998f34bdd 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -266,6 +266,7 @@ extern int arch_init_kprobes(void);
- extern void show_registers(struct pt_regs *regs);
- extern void kprobes_inc_nmissed_count(struct kprobe *p);
- extern bool arch_within_kprobe_blacklist(unsigned long addr);
-+extern bool arch_function_offset_within_entry(unsigned long offset);
-=20
- extern bool within_kprobe_blacklist(unsigned long addr);
-=20
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index a1a07cf1101f..2ede39e4227f 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1834,12 +1834,25 @@ static int pre_handler_kretprobe(struct kprobe *p, =
-struct pt_regs *regs)
- }
- NOKPROBE_SYMBOL(pre_handler_kretprobe);
-=20
-+bool __weak arch_function_offset_within_entry(unsigned long offset)
-+{
-+	return !offset;
-+}
-+
- int register_kretprobe(struct kretprobe *rp)
- {
- 	int ret =3D 0;
- 	struct kretprobe_instance *inst;
- 	int i;
- 	void *addr;
-+	unsigned long offset;
-+
-+	addr =3D kprobe_addr(&rp->kp);
-+	if (!kallsyms_lookup_size_offset((unsigned long)addr, NULL, &offset))
-+		return -EINVAL;
-+
-+	if (!arch_function_offset_within_entry(offset))
-+		return -EINVAL;
-=20
- 	if (kretprobe_blacklist_size) {
- 		addr =3D kprobe_addr(&rp->kp);
---=20
-2.14.1
+Thanks,
+Naveen
