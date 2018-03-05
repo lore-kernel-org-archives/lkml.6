@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-703119-1520227129-2-7746058169347394611
+X-Cyrus-Session-Id: sloti22d1t05-703119-1520227125-2-12112867579020911729
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -13,42 +13,42 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520227128; b=jarrbqik2EVmSgI80wAgxeaMaF4VnFRO7WA996M6S//70po
-    3OYk9tXRTjilyl7EpB/Lm7IDfZnaT0dmyPEr1PPNNP17P9n8UZodqJ+Xy8o75OPz
-    kJQBri5o8cQ+ITq5Uq4y/lZ1FRG4SRz+m9WCry36TGd50fIB7KxKe4TxJ1HiJqCe
-    KJzQy3c8L652vZH7LkQ0IV+W/AcO1a/43aVbH5SZBd65Kc6bVaCJkMAA7w9H6Oy6
-    Wk+r91PfJ6DgjS4O/dDXWBEqNwDOJwsjMuT4RbMyW8sZaQoe1u1/krrAtiKzUna0
-    cqsPjVOBkyN3TtXi/tehHct/hDxp5VQwMFpBRdg==
+    t=1520227124; b=AM1+TC5IQjFWhfHdI9/yAgL3jyQij2m0M/hGCu6we2VCuk0
+    4JIysftGjV51vpp8kLwY4crsb0OhC7JncBQeUSnfTUltqFXQmbt8hqjQP1gLNWCj
+    s8rkd23xA9HQO0NwxVV1VEV/LFSH+RuLNTLmAi1huCPIEjwt6YoSGiOktzICgSGI
+    9ylTpAf897YVDlPF09z41IJuxDGQZ41NSEJH2/KnnWgctS+z7R5jRY39F8by0A9N
+    cTe7ZguplzFdJXUE4oJ5il+d3W4/bAoPOudXDPtjK5Z7BLmT9SpXNSvdTThsvOy1
+    +zO8z2rRcWsyMa3MGIj/qkK9QxZwi1EZTQexmIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:reply-to:cc:mime-version
     :content-type:content-transfer-encoding:sender; s=arctest; t=
-    1520227128; bh=kqi3QDiMZ2nQXCMkmk9jgkmzHulZHc7KewHqgny7RB4=; b=R
-    ek1dhfZolJcT9fw0MSen1L/mot1NOAolSxB9u+qWez1KkRLUkQyyli2CJCuZog+j
-    8KnVw1UO3XVbqujG7WUMIXzGrUrYnTzKweX/cEyYOOP+Hy84M99/NQ3r+zVN96gc
-    JlfLSVFePvyMD5iWP1lhFNRzhG/CzEdoWYUZO3oNWh1lE1ZquaeUWqPsPzS/Lzic
-    V577HhUIkEvkobs6Nq6x8fRJsQ8aowO6LSZkf3inHhdPDmR8EMsrqjoO8QXI4UoE
-    1DqKsUnMcZHaG3xOk3aNZ/X2pp1T/2E4jF4wD++t42XGoiZyCXxI8M8hskaUjWcB
-    04bFpo6KqmIEuumWXm1OQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    1520227124; bh=hlfnbbCV8SaO4HR5pUiEQn7MsHMhQTEO+1CcZMYV4EY=; b=b
+    Spc47gBUOKGwv/UqYybE2igCsWvF74hzp0ASbqoWJ7/WatR/cQeyD8mVT45NS9GL
+    3NnEKGLv3t/S1NEKKWFXYUNPmmDCgXwtvP0L7D+aaZukapaFcSMYBY+c+2QSDMuy
+    Bo5X1E/3SsMeeaSBHNnXnS8p0/q60/TN8UzxvrQ4I1puEpwnQTQHgebOS9irha7s
+    eUKKIZ9qBLn7Y2EQ/NLgZi0z5Ro6khnQbKWEUK8RZsjXNnXYcCUYe4V+tn0GGstZ
+    z0lcdfxFlxgExbReQOuOXr3S8ntd5YLv8O66XljnjFV2ncbFhDQYUbQl3/NsfJlX
+    76I9LoCk9bYmo/op7Zb3w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=exchange.microsoft.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=exchange.microsoft.com header.result=pass header_org.domain=microsoft.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=exchange.microsoft.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=exchange.microsoft.com header.result=pass header_org.domain=microsoft.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
@@ -59,20 +59,19 @@ To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
  devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
  vkuznets@redhat.com, jasowang@redhat.com, leann.ogasawara@canonical.com,
  marcelo.cerri@canonical.com, sthemmin@microsoft.com
-Subject: [PATCH V2 07/12] hv_vmbus: Correct the stale comments regarding cpu
- affinity
-Date: Sun,  4 Mar 2018 22:17:17 -0700
-Message-Id: <20180305051722.19157-7-kys@exchange.microsoft.com>
+Subject: [PATCH V2 02/12] hyper-v: use GFP_KERNEL for hv_context.hv_numa_map
+Date: Sun,  4 Mar 2018 22:17:12 -0700
+Message-Id: <20180305051722.19157-2-kys@exchange.microsoft.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180305051722.19157-1-kys@exchange.microsoft.com>
 References: <20180305051539.19079-1-kys@exchange.microsoft.com>
  <20180305051722.19157-1-kys@exchange.microsoft.com>
-X-CMAE-Envelope: MS4wfOOgjQbpPLEUACaNnRs532IZZhW10v2/CAvkpP8QMK38D5DC67IgtyT/OHtKlK+5mjKbPeFz3UPXZqLwpfv11xvUugHnytD+cR0gP9X27wKzA7mhHGrQ
- m6ZNpALEhnzk8IWiK6gUhQ85SB4/jTxJfXfTqqRqeVw9Mf0F2JjLGaW6VAMaCR/ywGiCCQ0zlA/O93/8F81fZkO0ARFI69kLXLQHl2qA8kJGdgTSk1UEyW8C
- A/9Q0DpIjXYFzX/nirnXAp6CMgQM2kW0q4HxfElxdtLEMxxZdjgyvVSQFwjnlH06q4DfM5e1H/t6QJFQkzk1T7zJGqf5F5wh1e0+iVdcVE4QRCoDILgHAHP6
- p+Y7PsYIAY4Y6CKDz+v6Ohb+PHL8jY9540meIaIAIM8BlLscWSJE+VbT1wFjdhT4Wh7Uw8JUiPfuKQkpEgVHo2NZJ02yiDNoRLrpqUFeQh1ERqJE+GCUo+5x
- vD/LeMDrUcozyoklBbdbmIVYVJNx6eLHND8ta7rfRL7ENW0dbzTAExs39pcMbOIKgK+o+rDWkzUfUFp/OplFUvg8gEUkYzCXH8c1uzWOKaldyfQ32miB5j8x
- 6It2M+15dWN7BjSnGv03PBGe
+X-CMAE-Envelope: MS4wfDch5AamIWLDIzqOgePNspxa5B1ze5PJbibwdrjSc3LyMWF2ZybMGi3dCzZ7J9zAtyWmyyIv1rKPJeoCszvBXIOdDLmw2oDbzJk/pVfza0ouxX4xKr/X
+ X3knNurBSkIIxrmCdv3vUaGKcyJRdmxV0CoHNTxov+rAIi8S4a5NsDlp+adK1dUvCK5R4cB7H9FnGHPPgA0e9wGwdwY/4XxrCcqMf6oKOO7SKrQoBfivCC0K
+ rBDWgt5Wvz1nuJ6O7GCrYsyuj9kQVebkCiB5lGYel/vvh3tJto6qJc5nLY/7Ymqf+lakPhrC+p74znwa8uRJywQkj88+v4tp4Bmc8l98dqADmZ+dFJ5jQJuq
+ MEbb6Qxh7qC1uwkNnL37RhRHeAFuwFz3Mhvt1Gg1TNdaNyE9/kiTDv8nNe3iP6aWIcsL6Iqvb8bkfQX+QnQ54Wb8sk9fwnubFT6jrGNBoi1hf5Y8gZNx5MxX
+ H7t8/gExlXC/VzwXFqg9uAY1jduLDde6B1sjmECskw+eMkWp0NXM8cFYsfGaIwh739NiEp8kxSzxPNqSF6a3qgav64Ooi8jQQWcuyfvnVXdSIinMqBeXyhEU
+ 9qX5VVVys4rA88TjVCwwwQIe
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -84,7 +83,7 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Reply-To: kys@microsoft.com
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Jia-Ju Bai <baijiaju1990@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -94,48 +93,34 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-The comments doesn't match what the current code does, also have a
-typo. This patch corrects them.
+The kzalloc function is called with GFP_ATOMIC.
+But according to driver call graph, it is not in atomic context,
+namely no spinlock is held nor in an interrupt handler.
 
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+This GFP_ATOMIC is unnecessary, and replace with GFP_KERNEL.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- drivers/hv/channel_mgmt.c | 6 ++----
- include/linux/hyperv.h    | 2 +-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/hv/hv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index c21020b69114..c6d9d19bc04e 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -596,10 +596,8 @@ static int next_numa_node_id;
- /*
-  * Starting with Win8, we can statically distribute the incoming
-  * channel interrupt load by binding a channel to VCPU.
-- * We do this in a hierarchical fashion:
-- * First distribute the primary channels across available NUMA nodes
-- * and then distribute the subchannels amongst the CPUs in the NUMA
-- * node assigned to the primary channel.
-+ * We distribute the interrupt loads to one or more NUMA nodes based on
-+ * the channel's affinity_policy.
-  *
-  * For pre-win8 hosts or non-performance critical channels we assign the
-  * first CPU in the first NUMA node.
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 93bd6fcd6e62..2048f3c3b68a 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -844,7 +844,7 @@ struct vmbus_channel {
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index fe96aab9e794..b6cacc4cccf2 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -147,7 +147,7 @@ int hv_synic_alloc(void)
+ 	int cpu;
  
- 	/*
- 	 * NUMA distribution policy:
--	 * We support teo policies:
-+	 * We support two policies:
- 	 * 1) Balanced: Here all performance critical channels are
- 	 *    distributed evenly amongst all the NUMA nodes.
- 	 *    This policy will be the default policy.
+ 	hv_context.hv_numa_map = kzalloc(sizeof(struct cpumask) * nr_node_ids,
+-					 GFP_ATOMIC);
++					 GFP_KERNEL);
+ 	if (hv_context.hv_numa_map == NULL) {
+ 		pr_err("Unable to allocate NUMA map\n");
+ 		goto err;
 -- 
 2.15.1
 
