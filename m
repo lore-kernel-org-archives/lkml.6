@@ -1,108 +1,284 @@
-Return-Path: <oneukum@suse.com>
-X-Google-Smtp-Source: AG47ELvcYRtw2JEGdQRqbd/ZSEL3LilJc6ndryRkms09i9sjlxoxNscCPJ1xk2NQ8R+PpoUwo+2f
-ARC-Seal: i=1; a=rsa-sha256; t=1520266207; cv=none;
+Return-Path: <mmoese@suse.de>
+X-Google-Smtp-Source: AG47ELtKYIreb7fPblcOtEy6wliNOCqVLsoPFtd/kUTX71Fbj96pOklKExcBce8by4DxW1XLBVOF
+ARC-Seal: i=1; a=rsa-sha256; t=1520263463; cv=none;
         d=google.com; s=arc-20160816;
-        b=iFkLBDjCZwxaGGCyoqZZfepa28fsevCzWVPHoNfwfikvHWpSFBReXjvMPXWrbIWd6h
-         y+fhEaQE60kFPTimSPVZGkfZZjdMNJABFadTaH4mBQaTeF9yFQG4b7GslNVBhz4BjhVO
-         4MPIY8auchB440rksfU0/zrp+BBGmVahqC0r1fHSwVdXNeXo+H9h12Ap+RN9IYUlVxXB
-         ihm7RThSb0wVgFiImZ9rBfisAQ6DogRJOc42CaYw5YQqiilSsSrfr923PUt01ClNu5XQ
-         no8gFAHFrmQatwFLUplgj5NtZk8WOoP8M92xF4ctCzmFxVhwszEaED7n/REud7MzwC/n
-         2gfA==
+        b=ELkBXUWaVJok5hVeoBhDbfszzWF/dGvB0gKaxUCF5sZxm4urrQKY/MtyC98VRK/h2G
+         /xqC9fHZAL0nY+5Ty0FE3m6PY7kKTUh/lNj+oIi5Cdv4qMrbVXwJzQ8ePBSYcKbyh8ON
+         0PSp7k49nVjsR9pVy2k4tioudzoUKpmyxZecGd3I/ZckNidIiVi3gx/v5jhmQ3qc0lkJ
+         2u4UIjJjlIdteKZUtEgPsng//pyXBhy6Im/g9rq18vzqrObXmjrb0+/UhqeAibT2LRyu
+         Fn5ZcmegQvAGiN+X9p/JWjrdssQ9El71JQiA1A16yJ0OTLsuqgoM0CawU14Q6EXAtC9C
+         YBOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=tEeu/A0hsJ8QeWXDTm47x704mAdBEufp+sv+6Lkumo0=;
-        b=rSfvD4I8IY8J7XRw+y9Rt6L8TO0iG9EKKTTAhEJxQ84g/cwBxlTbkZhUY8IwTUsXyP
-         yyI9ubsUdBgwUYDSBhYoXJ8Dwr03w9ioNNKAZ5NebKYkuITccLq/bpEOAmSdwDkTKKRe
-         6mV565I6MViLu9E0XQ9JskYqFVmt+3ukkgTsuERkbpnc+/OO0xKejZs6LoJcId/pYDjv
-         gUOb0IcLf+0YuXtoMi1FkYdNEN13m7CtDd9tASikdJzqGPhCeH3JjMkf6nedpwvuC3GP
-         p0BGFSLBKsyWW8snrQuMvUlpomHEQKhCvWFv7pj+FmAbHX+ZrRbQ5txAifyxswLx5645
-         Gsmw==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=1jAz0XCn2aP4nzsh8KpSU8N/XRltw9EUxn2xIYgEGUA=;
+        b=EpSlztrTLOuOGT/qZN1MgDITlM2MssiJlAbqveOKTIXV3NiiMVe3Oh433/4fo8Damo
+         26pkHVy5KmJpzAVSBtuf5PE6kPviqb5FqIadatv9y7vS8JtYn/KVQKhTGg+TadwU0Zn0
+         wvxbAddZ9xx4KEQUkJTQvQGYDR2e7uk5wDUTkPz/OhLX9JXxM6T3s8OJxS82jr2gDVYJ
+         AEQ+hWg9lnbzlaUa1EdRBs8IXMcsJFYzECmBnhf0D9hW0MLgrkpL7LR0xJQU2tvb/7sn
+         gsYP097YunPvmTrHZoVZdB257rLNsU7WAZdgGwKHsQkXbrNTZZf8ShXbIy49oi0+wC0L
+         P+mg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of oneukum@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=oneukum@suse.com
+       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of oneukum@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=oneukum@suse.com
-Message-ID: <1520265871.6256.15.camel@suse.com>
-Subject: Re: [RFC PATCH] cdc-acm: do not drop data from fast devices
-From: Oliver Neukum <oneukum@suse.com>
-To: Romain Izard <romain.izard.pro@gmail.com>, johan@kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Date: Mon, 05 Mar 2018 17:04:31 +0100
-In-Reply-To: <20180305095539.13698-1-romain.izard.pro@gmail.com>
-References: <20180305095539.13698-1-romain.izard.pro@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.12.11 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
+From: Michael Moese <mmoese@suse.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	Michael Moese <mmoese@suse.de>,
+	Andreas Geissler <andreas.geissler@men.de>,
+	Ben Turner <ben.turner@21net.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v3] 8250-men-mcb: add support for 16z025 and 16z057
+Date: Mon,  5 Mar 2018 16:24:21 +0100
+Message-Id: <20180305152421.29808-1-mmoese@suse.de>
+X-Mailer: git-send-email 2.13.6
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594091152410964571?=
-X-GMAIL-MSGID: =?utf-8?q?1594114658384813921?=
+X-GMAIL-THRID: =?utf-8?q?1594085248786012954?=
+X-GMAIL-MSGID: =?utf-8?q?1594111781900364793?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-03-05 at 10:55 +0100, Romain Izard wrote:
+Add support for two MEN UARTs (16z025 and 16z057) to the
+8250_men_mcb driver.
+The 16z025 consists of up to four ports, the 16z057 has
+exactly four ports. Apart from that, all of them share the
+Port settings.
 
-> The TTY buffer is 4096 bytes large, throttling when there are only 128
-> free bytes left, and unthrottling when there are only 128 bytes available.
-> But the TTY buffer is filled from an intermediate flip buffer that
-> contains up to 64 KiB of data, and each time unthrottle() is called 16
-> URBs are scheduled by the driver, sending up to 16 KiB to the flip buffer.
-> As the result of tty_insert_flip_string() is not checked in the URB
-> reception callback, data can be lost when the flip buffer is filled faster
-> than the TTY is emptied.
+Signed-off-by: Michael Moese <mmoese@suse.de>
+Reported-by: Ben Turner <ben.turner@21net.com>
+Tested-by: Ben Turner <ben.turner@21net.com>
 
-It seems to me that the problem is in the concept here. If you cannot
-take all data, you should tell the lower layer how much data you can
-take.
+---
+Sorry for the resend, I messed up the previoius patch..
 
-> Moreover, as the URB callbacks are called from a tasklet context, whereas
-> throttling is called from the system workqueue, it is possible for the
-> throttling to be delayed by high traffic in the tasklet. As a result,
-> completed URBs can be resubmitted even if the flip buffer is full, and we
-> request more data from the device only to drop it immediately.
+Changes to v2:
+Added include of linux/io.h due to finding of kbuild robot.
 
-That points to a deficiency with how we throttle. Maybe we should poison
-URBs upon throttle() being called?
+Changes to v1:
+Deduplicated the two switch() blocks into a function returning
+the number of ports.
+Minor style corrections.
+---
+ drivers/tty/serial/8250/8250_men_mcb.c | 125 ++++++++++++++++++++++++---------
+ drivers/tty/serial/8250/Kconfig        |   5 +-
+ 2 files changed, 94 insertions(+), 36 deletions(-)
 
-> To prevent this problem, the URBs whose data did not reach the flip buffer
-> are placed in a waiting list, which is only processed when the serial port
-> is unthrottled.
-
-So we introduce yet another buffer? That does look like we are papering
-over a design problem.
-
-
-> This is working when using the normal line discipline on ttyACM. But
-> there is a big hole in this: other line disciplines do not use throttling
-> and thus unthrottle is never called. The URBs will never get resubmitted,
-
-Now that is a real problem. This introduces a regression.
-
-> and the port is dead. Unfortunately, there is no notification when the
-> flip buffer is ready to receive new data, so the only alternative would
-> be to schedule a timer polling the flip buffer. But with an additional
-> asynchronous process in the mix, the code starts to be very brittle.
-
-Well, no. This tells us something is broken in the tty layer.
-
-> I believe this issue is not limited to ttyACM. As the TTY layer is not
-> performance-oriented, it can be easy to overwhelm devices with a low
-> available processing power. In my case, a modem sending a sustained 2 MB/s
-> on a debug port (exported as a CDC-ACM port) was enough to trigger the
-> issue. The code handling the CDC-ACM class and the generic USB serial port
-> is very similar when it comes to URB handling, so all drivers that rely on
-> that code have the same issue.
-> 
-> But in general, it seems to me that there is no code in the kernel that
-> checks the return value of tty_insert_flip_string(). This means that we
-> are working with the assumption that the kernel will consume the data
-> faster than the source can send it, or that the upper layer will be
-> able or willing to throttle it fast enough to avoid losing data.
-
-Yes. And if the assumption is false, you need to go for the tty layer.
-I am sorry, but NACK.
-
-	Regards
-		Oliver
+diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
+index 308977807994..127017cc41d9 100644
+--- a/drivers/tty/serial/8250/8250_men_mcb.c
++++ b/drivers/tty/serial/8250/8250_men_mcb.c
+@@ -1,12 +1,19 @@
+ #include <linux/device.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/io.h>
+ #include <linux/mcb.h>
+ #include <linux/serial.h>
+ #include <linux/serial_core.h>
+ #include <linux/serial_8250.h>
+ #include <uapi/linux/serial_core.h>
+ 
++#define MEN_UART_ID_Z025 0x19
++#define MEN_UART_ID_Z057 0x39
++#define MEN_UART_ID_Z125 0x7d
++
++#define MEN_UART_MEM_SIZE 0x10
++
+ struct serial_8250_men_mcb_data {
+ 	struct uart_8250_port uart;
+ 	int line;
+@@ -18,7 +25,7 @@ struct serial_8250_men_mcb_data {
+  * parameter in order to really set the correct baudrate, and
+  * do so if possible without user interaction
+  */
+-static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
++static u32 men_lookup_uartclk(struct mcb_device *mdev)
+ {
+ 	/* use default value if board is not available below */
+ 	u32 clkval = 1041666;
+@@ -28,10 +35,12 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
+ 		mdev->bus->name);
+ 	if  (strncmp(mdev->bus->name, "F075", 4) == 0)
+ 		clkval = 1041666;
+-	else if  (strncmp(mdev->bus->name, "F216", 4) == 0)
++	else if (strncmp(mdev->bus->name, "F216", 4) == 0)
+ 		clkval = 1843200;
+ 	else if (strncmp(mdev->bus->name, "G215", 4) == 0)
+ 		clkval = 1843200;
++	else if (strncmp(mdev->bus->name, "F210", 4) == 0)
++		clkval = 115200;
+ 	else
+ 		dev_info(&mdev->dev,
+ 			 "board not detected, using default uartclk\n");
+@@ -41,62 +50,108 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
+ 	return clkval;
+ }
+ 
++static unsigned int get_num_ports(struct mcb_device *mdev,
++				  void __iomem *membase)
++{
++	switch (mdev->id) {
++	case MEN_UART_ID_Z125:
++		return 1U;
++	case MEN_UART_ID_Z025:
++		return readb(membase) >> 4;
++	case MEN_UART_ID_Z057:
++		return 4U;
++	default:
++		dev_err(&mdev->dev, "no supported device!\n");
++		return -ENODEV;
++	}
++}
++
+ static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
+ 				     const struct mcb_device_id *id)
+ {
+ 	struct serial_8250_men_mcb_data *data;
+ 	struct resource *mem;
+-
+-	data = devm_kzalloc(&mdev->dev,
+-			    sizeof(struct serial_8250_men_mcb_data),
+-			    GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
+-
+-	mcb_set_drvdata(mdev, data);
+-	data->uart.port.dev = mdev->dma_dev;
+-	spin_lock_init(&data->uart.port.lock);
+-
+-	data->uart.port.type = PORT_16550;
+-	data->uart.port.flags = UPF_SKIP_TEST | UPF_SHARE_IRQ | UPF_FIXED_TYPE;
+-	data->uart.port.iotype = UPIO_MEM;
+-	data->uart.port.uartclk = men_z125_lookup_uartclk(mdev);
+-	data->uart.port.regshift = 0;
+-	data->uart.port.fifosize = 60;
++	unsigned int num_ports;
++	unsigned int i;
++	void __iomem *membase;
+ 
+ 	mem = mcb_get_resource(mdev, IORESOURCE_MEM);
+ 	if (mem == NULL)
+ 		return -ENXIO;
++	membase = devm_ioremap_resource(&mdev->dev, mem);
++	if (IS_ERR(membase))
++		return PTR_ERR_OR_ZERO(membase);
+ 
+-	data->uart.port.irq = mcb_get_irq(mdev);
++	num_ports = get_num_ports(mdev, membase);
+ 
+-	data->uart.port.membase = devm_ioremap_resource(&mdev->dev, mem);
+-	if (IS_ERR(data->uart.port.membase))
+-		return PTR_ERR_OR_ZERO(data->uart.port.membase);
++	dev_dbg(&mdev->dev, "found a 16z%03u with %u ports\n",
++		mdev->id, num_ports);
+ 
+-	data->uart.port.mapbase = (unsigned long) mem->start;
+-	data->uart.port.iobase = data->uart.port.mapbase;
++	if (num_ports == 0 || num_ports > 4) {
++		dev_err(&mdev->dev, "unexpected number of ports: %u\n",
++			num_ports);
++		return -ENODEV;
++	}
+ 
+-	/* ok, register the port */
+-	data->line = serial8250_register_8250_port(&data->uart);
+-	if (data->line < 0)
+-		return data->line;
++	data = devm_kcalloc(&mdev->dev, num_ports,
++			    sizeof(struct serial_8250_men_mcb_data),
++			    GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
+ 
+-	dev_info(&mdev->dev, "found 16Z125 UART: ttyS%d\n", data->line);
++	mcb_set_drvdata(mdev, data);
++
++	for (i = 0; i < num_ports; i++) {
++		data[i].uart.port.dev = mdev->dma_dev;
++		spin_lock_init(&data[i].uart.port.lock);
++
++		data[i].uart.port.type = PORT_16550;
++		data[i].uart.port.flags = UPF_SKIP_TEST | UPF_SHARE_IRQ
++					  | UPF_FIXED_TYPE;
++		data[i].uart.port.iotype = UPIO_MEM;
++		data[i].uart.port.uartclk = men_lookup_uartclk(mdev);
++		data[i].uart.port.regshift = 0;
++		data[i].uart.port.irq = mcb_get_irq(mdev);
++		data[i].uart.port.membase = membase;
++		data[i].uart.port.fifosize = 60;
++		data[i].uart.port.mapbase = (unsigned long) mem->start
++					    + i * MEN_UART_MEM_SIZE;
++		data[i].uart.port.iobase = data[i].uart.port.mapbase;
++
++		/* ok, register the port */
++		data[i].line = serial8250_register_8250_port(&data[i].uart);
++		if (data[i].line < 0) {
++			dev_err(&mdev->dev, "unable to register UART port\n");
++			return data[i].line;
++		}
++		dev_info(&mdev->dev, "found MCB UART: ttyS%d\n", data[i].line);
++	}
+ 
+ 	return 0;
+ }
+ 
+ static void serial_8250_men_mcb_remove(struct mcb_device *mdev)
+ {
++	unsigned int num_ports, i;
+ 	struct serial_8250_men_mcb_data *data = mcb_get_drvdata(mdev);
+ 
+-	if (data)
+-		serial8250_unregister_port(data->line);
++	if (!data)
++		return;
++
++	num_ports = get_num_ports(mdev, data[0].uart.port.membase);
++	if (num_ports < 0 || num_ports > 4) {
++		dev_err(&mdev->dev, "error retrieving number of ports!\n");
++		return;
++	}
++
++	for (i = 0; i < num_ports; i++)
++		serial8250_unregister_port(data[i].line);
+ }
+ 
+ static const struct mcb_device_id serial_8250_men_mcb_ids[] = {
+-	{ .device = 0x7d },
++	{ .device = MEN_UART_ID_Z025 },
++	{ .device = MEN_UART_ID_Z057 },
++	{ .device = MEN_UART_ID_Z125 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(mcb, serial_8250_men_mcb_ids);
+@@ -113,6 +168,8 @@ static struct mcb_driver mcb_driver = {
+ module_mcb_driver(mcb_driver);
+ 
+ MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("MEN 16z125 8250 UART driver");
++MODULE_DESCRIPTION("MEN 8250 UART driver");
+ MODULE_AUTHOR("Michael Moese <michael.moese@men.de");
+ MODULE_ALIAS("mcb:16z125");
++MODULE_ALIAS("mcb:16z025");
++MODULE_ALIAS("mcb:16z057");
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 16b1496e6105..f005eaf8bc57 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -157,11 +157,12 @@ config SERIAL_8250_CS
+ 	  If unsure, say N.
+ 
+ config SERIAL_8250_MEN_MCB
+-	tristate "MEN Z125 UART device support"
++	tristate "MEN MCB UART device support"
+ 	depends on MCB && SERIAL_8250
+ 	help
+ 	  This enables support for FPGA based UARTs found on many MEN
+-	  boards. This driver enables support for the Z125 UARTs.
++	  boards. This driver enables support for the 16z025, 16z057
++	  and 16z125 UARTs.
+ 
+ 	  To compile this driver as a module, chose M here: the
+ 	  module will be called 8250_men_mcb.
+-- 
+2.13.6
