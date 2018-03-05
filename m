@@ -1,202 +1,169 @@
-Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AG47ELtf0E5SYhtDQFcyLyWqO9p/+Fiqc0/wuxq9SKA0Jra7u4x3zd8fMgi4UNEACh8Xr+sefUxM
-ARC-Seal: i=1; a=rsa-sha256; t=1519986841; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yGwqy/NPXxXvHb5UuipEEj+C+hQOH0TBWbYu1WM5lxMv0MmT5yI+k/ay77+XCkauIl
-         sQPZhqmnUZBglAcGi4ptaqtSWUo+1QGFEjzhlb0lW5LDWFRe26oH69CHQA+6ZhZqQqNZ
-         iIgLtl2xidzeYs64wnb1ekIKQlQ1Q9/p6jWSH1Il8Or/pUvACYCU4TKy4SYilG77G7qm
-         73NNSMHo+m0Pz/g5E+Udve7hbNblZZ95RmihwSFw8ww8m3R71ZVD5CJYCTsH/ZmaWFae
-         kl2JDQaLbxVeIqIcdugSiXdIHakC7xcL30pO4c2l/wbVgp00hPcddc/1nAqh1uSr61NN
-         nnQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:arc-authentication-results;
-        bh=VlxWcFebJHTZwMma7s9T+HVgcXylfLaTmD8wUaJE8w8=;
-        b=OTB/t39pcFe03vR60bxfPRbWSFwtDX/RrCLD+yi4jo7mf8DTIQiHWVMxQq+tVS7E12
-         +s0PLLXYnxeef7NXrp9U/OCi2CDo75YwW79SbjT9P47hpLCUedH3YPbEJo0djTmTX94W
-         grS123jj+GAmsH7cGGAU4KyQeIiNcEVeyqga+q18qc65aGZEY4B40kolrxHayRIrsh8O
-         y5AALM0yg5JjI1dNo3rlprpLrniGP7zZzf7pCb9fOVk54xg5ou7wHvOOY3cscpB7XA1J
-         2hF4W5dOcpz9Tsp/tLqn7NcDYfQpFgDpec4TRy1oZ69VnpRo0RjvipSfKBdq8Vad5wz0
-         kkAg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=john.garry@huawei.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=john.garry@huawei.com
-Subject: Re: [PATCH v15 1/9] LIB: Introduce a generic PIO mapping method
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	<mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
-	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
-	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
-	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
-	<andy.shevchenko@gmail.com>, <robh@kernel.org>
-References: <1519663249-9850-1-git-send-email-john.garry@huawei.com>
- <1519663249-9850-2-git-send-email-john.garry@huawei.com>
- <1519931483.10722.342.camel@linux.intel.com>
-CC: <joe@perches.com>, <benh@kernel.crashing.org>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linuxarm@huawei.com>, <minyard@acm.org>,
-	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
-	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <bf00d184-137d-a2fa-b202-f18ce131fdd6@huawei.com>
-Date: Fri, 2 Mar 2018 10:33:26 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1704338-1520256981-2-10365877305088810903
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520256980; b=R+RkcUeK+PYVL64k1159CZaoFy1OHwcL/qNiDhmx0DibQvw
+    NsyiUDkQdYjR4hb673IUgTIEwxxKastlLQLEnCIf4YGDxvLI42JDYQIcdTfsvJrW
+    AksZOZKNvQhcEkW7W53HyXjC+pPMidU2LgKlypNSkya/rQpzD1jbwKCnltJfWVWv
+    XuDsXNilsAUA6kR+Wrnj1kTP4AwGBMYIR40HUoj5kewVfbr5nVd5PNrWHSKRDDAT
+    ejW1ebDcGDhce6uQM/a/xHjnhvLSmhDFHVM+zxFiNI3FNyvCxerw04El1CX3w6PT
+    btPfTInxWZ2IDEGRSbUz6oHJ9IdtKUHSlX2dWPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520256980; bh=A4QLZmgfeOc79wUJvMt2rnDV4oi5Hdf0STGLpjAzjLU=; b=W
+    NVJ5ol60bSZ7LeV3aJ0JdD+jvBNe3PbWrIr4G2O2APcDGHpwAxKh7Rq24gIC8kJV
+    0nZS6NOvA8252D79MX0EBI1YTU7e/vWOCaG/JgY6NT/iw/GxMrr6IN/lWNyWI+E9
+    6Ve9myAAf9OiwH66hRd2FVZetblIfXNSXkoLukA9+guSiZoOWvfan4m0ug7SVXAg
+    TQEb5S/P4GD0Knocj+Scmv6TomJXLP9RXenw0COcvj7cGC8Mif13OtO7MKywKZGI
+    /qlDQjlkqeGfXNONeEaY0PC23QPc2SCNi5PsHa0S77hsRjO3HRD+VxButjVpL3kZ
+    n4fIkWiHCzGOQVRdqRkeg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=iogearbox.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=iogearbox.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=iogearbox.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=iogearbox.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S964881AbeCENgS (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 08:36:18 -0500
+Received: from www62.your-server.de ([213.133.104.62]:40233 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964876AbeCENgR (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 5 Mar 2018 08:36:17 -0500
+Subject: Re: [PATCH bpf-next 0/5] bpf, tracing: introduce bpf raw tracepoints
+To: Alexei Starovoitov <ast@kernel.org>, davem@davemloft.net
+Cc: torvalds@linux-foundation.org, peterz@infradead.org,
+        mingo@kernel.org, rostedt@goodmis.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        linux-api@vger.kernel.org
+References: <20180301041957.399230-1-ast@kernel.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <9bb38939-c357-4db5-6cf4-7b42187f6c7c@iogearbox.net>
+Date: Mon, 5 Mar 2018 14:36:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <1519931483.10722.342.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20180301041957.399230-1-ast@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+X-Authenticated-Sender: daniel@iogearbox.net
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593479227626660665?=
-X-GMAIL-MSGID: =?utf-8?q?1593821722756638881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 01/03/2018 19:11, Andy Shevchenko wrote:
-> On Tue, 2018-02-27 at 00:40 +0800, John Garry wrote:
->> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
->>
->> In commit 41f8bba7f555 ("of/pci: Add pci_register_io_range() and
->> pci_pio_to_address()"), a new I/O space management was supported. With
->> that driver, the I/O ranges configured for PCI/PCIe hosts on some
->> architectures can be mapped to logical PIO, converted easily between
->> CPU address and the corresponding logicial PIO. Based on this, PCI
->> I/O devices can be accessed in a memory read/write way through the
->> unified in/out accessors.
->>
->> But on some archs/platforms, there are bus hosts which access I/O
->> peripherals with host-local I/O port addresses rather than memory
->> addresses after memory-mapped.
->>
->> To support those devices, a more generic I/O mapping method is
->> introduced
->> here. Through this patch, both the CPU addresses and the host-local
->> port
->> can be mapped into the logical PIO space with different logical/fake
->> PIOs.
->> After this, all the I/O accesses to either PCI MMIO devices or host-
->> local
->> I/O peripherals can be unified into the existing I/O accessors defined
->> in
->> asm-generic/io.h and be redirected to the right device-specific hooks
->> based on the input logical PIO.
->>
->
-> A bit more small comments.
->
->
+On 03/01/2018 05:19 AM, Alexei Starovoitov wrote:
+> This patch set is a different way to address the pressing need to access
+> task_struct pointers in sched tracepoints from bpf programs.
+> 
+> The first approach simply added these pointers to sched tracepoints:
+> https://lkml.org/lkml/2017/12/14/753
+> which Peter nacked.
+> Few options were discussed and eventually the discussion converged on
+> doing bpf specific tracepoint_probe_register() probe functions.
+> Details here:
+> https://lkml.org/lkml/2017/12/20/929
 
-Hi Andy,
+Ping, Peter/Steven. If you have a chance, please review the series.
 
->> +#ifndef __LINUX_LOGIC_PIO_H
->> +#define __LINUX_LOGIC_PIO_H
->> +
->
->> +#ifdef __KERNEL__
->
-> Hmm... How the header in include/linux/ can be non-kernel?
+> Patch 1 is kernel wide cleanup of pass-struct-by-value into
+> pass-struct-by-reference into tracepoints.
+> 
+> Patch 2 minor prep work to expose number of arguments passed
+> into tracepoints.
+> 
+> Patch 3 introduces BPF_RAW_TRACEPOINT api.
+> the auto-cleanup and multiple concurrent users are must have
+> features of tracing api. For bpf raw tracepoints it looks like:
+>   // load bpf prog with BPF_PROG_TYPE_RAW_TRACEPOINT type
+>   prog_fd = bpf_prog_load(...);
+> 
+>   // receive anon_inode fd for given bpf_raw_tracepoint
+>   raw_tp_fd = bpf_raw_tracepoint_open("xdp_exception");
+> 
+>   // attach bpf program to given tracepoint
+>   bpf_prog_attach(prog_fd, raw_tp_fd, BPF_RAW_TRACEPOINT);
+> 
+> Ctrl-C of tracing daemon or cmdline tool will automatically
+> detach bpf program, unload it and unregister tracepoint probe.
+> More details in patch 3.
+> 
+> Patch 4, 5 - user space lib and tests
+> 
+> samples/bpf/test_overhead performance on 1 cpu:
+> 
+> tracepoint    base  kprobe+bpf tracepoint+bpf raw_tracepoint+bpf
+> task_rename   1.1M   769K        947K            1.0M
+> urandom_read  789K   697K        750K            755K
+> 
+> Alexei Starovoitov (5):
+>   treewide: remove struct-pass-by-value from tracepoints arguments
+>   tracepoint: compute num_args at build time
+>   bpf: introduce BPF_RAW_TRACEPOINT
+>   libbpf: add bpf_raw_tracepoint_open helper
+>   samples/bpf: raw tracepoint test
+> 
+>  arch/x86/xen/mmu_pv.c                    |  16 +--
+>  drivers/gpu/drm/i915/i915_trace.h        |  13 +-
+>  drivers/infiniband/hw/hfi1/file_ops.c    |   2 +-
+>  drivers/infiniband/hw/hfi1/trace_ctxts.h |  12 +-
+>  drivers/s390/cio/ioasm.c                 |  18 +--
+>  drivers/s390/cio/trace.h                 |  50 ++++----
+>  fs/dax.c                                 |   2 +-
+>  include/linux/bpf_types.h                |   1 +
+>  include/linux/trace_events.h             |  57 +++++++++
+>  include/linux/tracepoint-defs.h          |   1 +
+>  include/linux/tracepoint.h               |  32 +++--
+>  include/trace/bpf_probe.h                |  87 +++++++++++++
+>  include/trace/define_trace.h             |  15 ++-
+>  include/trace/events/f2fs.h              |   2 +-
+>  include/trace/events/fs_dax.h            |   6 +-
+>  include/trace/events/rcu.h               |   4 +-
+>  include/trace/events/xen.h               |  32 ++---
+>  include/uapi/linux/bpf.h                 |  11 ++
+>  kernel/bpf/syscall.c                     | 108 ++++++++++++++++
+>  kernel/rcu/tree.c                        |  10 +-
+>  kernel/trace/bpf_trace.c                 | 211 +++++++++++++++++++++++++++++++
+>  kernel/tracepoint.c                      |  27 ++--
+>  net/wireless/trace.h                     |   2 +-
+>  samples/bpf/Makefile                     |   1 +
+>  samples/bpf/bpf_load.c                   |  13 ++
+>  samples/bpf/test_overhead_raw_tp_kern.c  |  17 +++
+>  samples/bpf/test_overhead_user.c         |  12 ++
+>  sound/firewire/amdtp-stream-trace.h      |   2 +-
+>  tools/include/uapi/linux/bpf.h           |  11 ++
+>  tools/lib/bpf/bpf.c                      |  10 ++
+>  tools/lib/bpf/bpf.h                      |   1 +
+>  31 files changed, 677 insertions(+), 109 deletions(-)
+>  create mode 100644 include/trace/bpf_probe.h
+>  create mode 100644 samples/bpf/test_overhead_raw_tp_kern.c
+> 
 
-I did doubt the legitimacy of this. I think it should be ok to remove.
-
->
->> +	list_for_each_entry_rcu(range, &io_range_list, list) {
->
->> +		if (range->flags == LOGIC_PIO_CPU_MMIO &&
->> +				new_range->flags ==
->> LOGIC_PIO_CPU_MMIO) {
->
-> It's rather fancy indentation.
-
-Right, I should align these.
-
->
->> +			if (start >= range->hw_start + range->size ||
->> +			    end < range->hw_start)
->
-> Misses {}
-
-Right, I will fix.
-
->
->> +				allocated_mmio_size += range->size;
->> +			else {
->> +				ret = -EFAULT;
->> +				goto end_register;
->> +			}
->
->> +		if (allocated_mmio_size + new_range->size - 1 >
->> +			MMIO_UPPER_LIMIT) {
->
-> Fancy indentation.
->
->> +			if (allocated_mmio_size + SZ_64K - 1 >
->> +			MMIO_UPPER_LIMIT) {
->
-> Ditto.
-
-Will fix both
-
->
->> +		if (allocated_iio_size + new_range->size - 1 >
->> +		    IO_SPACE_LIMIT) {
->
-> While this is nothing wrong, like above I would consider to check how
-> long it is and consider putting on one line.
-
-Fine. Some symbol names can be shortened to aid this.
-
->
->> +/**
->> + * logic_pio_to_hwaddr - translate logical PIO to HW address
->> + * @pio: logical PIO value
->> + *
->> + * Returns HW address if valid, -1 otherwise
->
-> It can't return -1 when the return type is unsigned.
->
->> + *
->> + * Translate the input logical pio to the corresponding hardware
->> address.
->> + * The input pio should be unique in the whole logical PIO space.
->> + */
->> +resource_size_t logic_pio_to_hwaddr(unsigned long pio)
->> +{
->> +	struct logic_pio_hwaddr *range;
->
->> +	resource_size_t hwaddr = (resource_size_t)-1;
->
-> Ditto.
-
-ok, I should have changed this to ~0 also.
-
->
->> +	return hwaddr;
->> +}
->
->> +	list_for_each_entry_rcu(range, &io_range_list, list) {
->> +		if (range->flags != LOGIC_PIO_CPU_MMIO)
->> +			continue;
->
->> +		if (addr >= range->hw_start &&
->> +		    addr < range->hw_start + range->size)
->
-> Perhaps you may copy'n'paste in_range() macro from fs/ext* files and use
-> in this module. At some point it would be good to make it generic.
-
-OK, I should be able to copy. It would not be good to include 
-fs/ufs/util.h, but a generic helper would be useful.
-
->
->> +			return addr - range->hw_start +
->> +				range->io_start;
->
->
->> +	}
->
->
-
-Thanks very much,
-John
