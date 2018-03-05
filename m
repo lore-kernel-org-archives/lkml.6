@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932423AbeCEOUK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:20:10 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58648 "EHLO mail.bootlin.com"
+        id S932374AbeCEOUH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:20:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58646 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932266AbeCEOUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932261AbeCEOUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Mar 2018 09:20:04 -0500
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: davem@davemloft.net
-Cc: Yan Markman <ymarkman@marvell.com>, netdev@vger.kernel.org,
+Cc: Stefan Chulski <stefanc@marvell.com>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
         maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
         mw@semihalf.com, Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH net-next v2 3/5] net: mvpp2: use a data size of 10kB for Tx FIFO on port 0
-Date: Mon,  5 Mar 2018 15:16:52 +0100
-Message-Id: <20180305141654.7789-4-antoine.tenart@bootlin.com>
+Subject: [PATCH net-next v2 2/5] net: mvpp2: update the BM buffer free/destroy logic
+Date: Mon,  5 Mar 2018 15:16:51 +0100
+Message-Id: <20180305141654.7789-3-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305141654.7789-1-antoine.tenart@bootlin.com>
 References: <20180305141654.7789-1-antoine.tenart@bootlin.com>
@@ -23,74 +23,113 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan Markman <ymarkman@marvell.com>
+From: Stefan Chulski <stefanc@marvell.com>
 
-This patch sets the Tx FIFO data size on port 0 to 10kB. This prepares
-the PPv2 driver for the Jumbo frame support addition as the hardware
-will need big enough Tx FIFO buffers when dealing with frames going
-through an interface with an MTU of 9000.
+The buffer free routine is updated to release only given a number of
+buffers, and the destroy routine now checks the actual number of buffers
+in the (BPPI and BPPE) HW counters before draining the pools. This
+change helps getting jumbo frames support.
 
-Signed-off-by: Yan Markman <ymarkman@marvell.com>
-[Antoine: commit message, small reworks.]
+Signed-off-by: Stefan Chulski <stefanc@marvell.com>
+[Antoine: cosmetic cleanup, commit message]
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 45 ++++++++++++++++++++++++++++++------
+ 1 file changed, 38 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index ea30112e9e5a..9c378f803649 100644
+index 3b4e7570fcca..ea30112e9e5a 100644
 --- a/drivers/net/ethernet/marvell/mvpp2.c
 +++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -44,6 +44,7 @@
- #define MVPP2_RX_ATTR_FIFO_SIZE_REG(port)	(0x20 + 4 * (port))
- #define MVPP2_RX_MIN_PKT_SIZE_REG		0x60
- #define MVPP2_RX_FIFO_INIT_REG			0x64
-+#define MVPP22_TX_FIFO_THRESH_REG(port)		(0x8840 + 4 * (port))
- #define MVPP22_TX_FIFO_SIZE_REG(port)		(0x8860 + 4 * (port))
+@@ -258,6 +258,7 @@
+ #define MVPP2_BM_BPPI_READ_PTR_REG(pool)	(0x6100 + ((pool) * 4))
+ #define MVPP2_BM_BPPI_PTRS_NUM_REG(pool)	(0x6140 + ((pool) * 4))
+ #define     MVPP2_BM_BPPI_PTR_NUM_MASK		0x7ff
++#define MVPP22_BM_POOL_PTRS_NUM_MASK		0xfff8
+ #define     MVPP2_BM_BPPI_PREFETCH_FULL_MASK	BIT(16)
+ #define MVPP2_BM_POOL_CTRL_REG(pool)		(0x6200 + ((pool) * 4))
+ #define     MVPP2_BM_START_MASK			BIT(0)
+@@ -4251,11 +4252,17 @@ static void mvpp2_bm_bufs_get_addrs(struct device *dev, struct mvpp2 *priv,
  
- /* RX DMA Top Registers */
-@@ -542,6 +543,11 @@
- /* TX FIFO constants */
- #define MVPP22_TX_FIFO_DATA_SIZE_10KB		0xa
- #define MVPP22_TX_FIFO_DATA_SIZE_3KB		0x3
-+#define MVPP2_TX_FIFO_THRESHOLD_MIN		256
-+#define MVPP2_TX_FIFO_THRESHOLD_10KB	\
-+	(MVPP22_TX_FIFO_DATA_SIZE_10KB * 1024 - MVPP2_TX_FIFO_THRESHOLD_MIN)
-+#define MVPP2_TX_FIFO_THRESHOLD_3KB	\
-+	(MVPP22_TX_FIFO_DATA_SIZE_3KB * 1024 - MVPP2_TX_FIFO_THRESHOLD_MIN)
- 
- /* RX buffer constants */
- #define MVPP2_SKB_SHINFO_SIZE \
-@@ -8456,14 +8462,25 @@ static void mvpp22_rx_fifo_init(struct mvpp2 *priv)
- 	mvpp2_write(priv, MVPP2_RX_FIFO_INIT_REG, 0x1);
- }
- 
--/* Initialize Tx FIFO's */
-+/* Initialize Tx FIFO's: the total FIFO size is 19kB on PPv2.2 and 10G
-+ * interfaces must have a Tx FIFO size of 10kB. As only port 0 can do 10G,
-+ * configure its Tx FIFO size to 10kB and the others ports Tx FIFO size to 3kB.
-+ */
- static void mvpp22_tx_fifo_init(struct mvpp2 *priv)
+ /* Free all buffers from the pool */
+ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
+-			       struct mvpp2_bm_pool *bm_pool)
++			       struct mvpp2_bm_pool *bm_pool, int buf_num)
  {
--	int port;
-+	int port, size, thrs;
+ 	int i;
  
--	for (port = 0; port < MVPP2_MAX_PORTS; port++)
--		mvpp2_write(priv, MVPP22_TX_FIFO_SIZE_REG(port),
--			    MVPP22_TX_FIFO_DATA_SIZE_3KB);
-+	for (port = 0; port < MVPP2_MAX_PORTS; port++) {
-+		if (port == 0) {
-+			size = MVPP22_TX_FIFO_DATA_SIZE_10KB;
-+			thrs = MVPP2_TX_FIFO_THRESHOLD_10KB;
-+		} else {
-+			size = MVPP22_TX_FIFO_DATA_SIZE_3KB;
-+			thrs = MVPP2_TX_FIFO_THRESHOLD_3KB;
-+		}
-+		mvpp2_write(priv, MVPP22_TX_FIFO_SIZE_REG(port), size);
-+		mvpp2_write(priv, MVPP22_TX_FIFO_THRESH_REG(port), thrs);
+-	for (i = 0; i < bm_pool->buf_num; i++) {
++	if (buf_num > bm_pool->buf_num) {
++		WARN(1, "Pool does not have so many bufs pool(%d) bufs(%d)\n",
++		     bm_pool->id, buf_num);
++		buf_num = bm_pool->buf_num;
 +	}
++
++	for (i = 0; i < buf_num; i++) {
+ 		dma_addr_t buf_dma_addr;
+ 		phys_addr_t buf_phys_addr;
+ 		void *data;
+@@ -4277,16 +4284,39 @@ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
+ 	bm_pool->buf_num -= i;
  }
  
- static void mvpp2_axi_init(struct mvpp2 *priv)
++/* Check number of buffers in BM pool */
++int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
++{
++	int buf_num = 0;
++
++	buf_num += mvpp2_read(priv, MVPP2_BM_POOL_PTRS_NUM_REG(bm_pool->id)) &
++				    MVPP22_BM_POOL_PTRS_NUM_MASK;
++	buf_num += mvpp2_read(priv, MVPP2_BM_BPPI_PTRS_NUM_REG(bm_pool->id)) &
++				    MVPP2_BM_BPPI_PTR_NUM_MASK;
++
++	/* HW has one buffer ready which is not reflected in the counters */
++	if (buf_num)
++		buf_num += 1;
++
++	return buf_num;
++}
++
+ /* Cleanup pool */
+ static int mvpp2_bm_pool_destroy(struct platform_device *pdev,
+ 				 struct mvpp2 *priv,
+ 				 struct mvpp2_bm_pool *bm_pool)
+ {
++	int buf_num;
+ 	u32 val;
+ 
+-	mvpp2_bm_bufs_free(&pdev->dev, priv, bm_pool);
+-	if (bm_pool->buf_num) {
+-		WARN(1, "cannot free all buffers in pool %d\n", bm_pool->id);
++	buf_num = mvpp2_check_hw_buf_num(priv, bm_pool);
++	mvpp2_bm_bufs_free(&pdev->dev, priv, bm_pool, buf_num);
++
++	/* Check buffer counters after free */
++	buf_num = mvpp2_check_hw_buf_num(priv, bm_pool);
++	if (buf_num) {
++		WARN(1, "cannot free all buffers in pool %d, buf_num left %d\n",
++		     bm_pool->id, bm_pool->buf_num);
+ 		return 0;
+ 	}
+ 
+@@ -4534,7 +4564,7 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, unsigned pool, int pkt_size)
+ 			pkts_num = mvpp2_pools[pool].buf_num;
+ 		else
+ 			mvpp2_bm_bufs_free(port->dev->dev.parent,
+-					   port->priv, new_pool);
++					   port->priv, new_pool, pkts_num);
+ 
+ 		new_pool->pkt_size = pkt_size;
+ 		new_pool->frag_size =
+@@ -4598,7 +4628,8 @@ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
+ 	int num, pkts_num = port_pool->buf_num;
+ 
+ 	/* Update BM pool with new buffer size */
+-	mvpp2_bm_bufs_free(dev->dev.parent, port->priv, port_pool);
++	mvpp2_bm_bufs_free(dev->dev.parent, port->priv, port_pool,
++			   port_pool->buf_num);
+ 	if (port_pool->buf_num) {
+ 		WARN(1, "cannot free all buffers in pool %d\n", port_pool->id);
+ 		return -EIO;
 -- 
 2.14.3
