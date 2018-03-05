@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932417AbeCEW16 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:27:58 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37490 "EHLO
+        id S1753611AbeCEW2N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:28:13 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37448 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753053AbeCEWYR (ORCPT
+        with ESMTP id S1753441AbeCEWYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:24:17 -0500
+        Mon, 5 Mar 2018 17:24:11 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -15,26 +15,28 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         dianders@chromium.org, linux-rockchip@lists.infradead.org,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 17/38] drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
-Date: Mon,  5 Mar 2018 23:23:09 +0100
-Message-Id: <20180305222324.5872-18-enric.balletbo@collabora.com>
+Subject: [PATCH v4 15/38] drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the panel
+Date: Mon,  5 Mar 2018 23:23:07 +0100
+Message-Id: <20180305222324.5872-16-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
 References: <20180305222324.5872-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+From: Lin Huang <hl@rock-chips.com>
 
-Enhanced mode is required by the eDP 1.2 specification, and not doing it
-early could result in a period of time where we have a link transmitting
-idle packets without it. Since there is no reason to disable it, we just
-enable it at the beginning of link training and then keep it on all the
-time.
+When panel is shut down, we should make sure edp can be disabled to avoid
+undefined behavior.
 
-Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
@@ -42,39 +44,48 @@ Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 0ff151f741a3..5489570ef010 100644
+index 92fb9a072cb6..9b7d530ad24c 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -281,6 +281,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	retval = drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, buf, 2);
- 	if (retval < 0)
- 		return retval;
-+	/* set enhanced mode if available */
-+	analogix_dp_set_enhanced_mode(dp);
+@@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
  
- 	/* Set TX pre-emphasis to minimum */
- 	for (lane = 0; lane < lane_count; lane++)
-@@ -593,8 +595,6 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		dev_dbg(dp->dev, "fast link training %s\n",
- 			dp->fast_train_enable ? "supported" : "unsupported");
+ 	pm_runtime_get_sync(dp->dev);
  
--		/* set enhanced mode if available */
--		analogix_dp_set_enhanced_mode(dp);
- 		dp->link_train.lt_state = FINISHED;
++	ret = clk_prepare_enable(dp->clock);
++	if (ret < 0) {
++		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
++		goto out_dp_clk_pre;
++	}
++
+ 	if (dp->plat_data->power_on)
+ 		dp->plat_data->power_on(dp->plat_data);
  
- 		return 0;
-@@ -940,8 +940,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 	}
+@@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 	phy_power_off(dp->phy);
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
++	clk_disable_unprepare(dp->clock);
++out_dp_clk_pre:
+ 	pm_runtime_put_sync(dp->dev);
  
- 	analogix_dp_enable_scramble(dp, 1);
--	analogix_dp_enable_rx_to_enhanced_mode(dp, 1);
--	analogix_dp_enable_enhanced_mode(dp, 1);
+ 	return ret;
+@@ -1234,10 +1242,13 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
  
- 	analogix_dp_init_video(dp);
- 	ret = analogix_dp_config_video(dp);
+ 	disable_irq(dp->irq);
+ 	phy_power_off(dp->phy);
++	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 
+ 	if (dp->plat_data->power_off)
+ 		dp->plat_data->power_off(dp->plat_data);
+ 
++	clk_disable_unprepare(dp->clock);
++
+ 	pm_runtime_put_sync(dp->dev);
+ 
+ 	ret = analogix_dp_prepare_panel(dp, false, true);
 -- 
 2.16.1
