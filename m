@@ -1,60 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753087AbeCEVad convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 16:30:33 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:53125 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932645AbeCEVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:30:28 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: kuninori.morimoto.gx@renesas.com, maxime.ripard@free-electrons.com,
-        wens@csie.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [BUG] Kernel crash on Allwinner H3 due to sound core changes
-Date: Mon, 05 Mar 2018 22:30:23 +0100
-Message-ID: <26212674.B0xcQEiVyd@jernej-laptop>
-In-Reply-To: <20180302124050.GF6255@sirena.org.uk>
-References: <2424862.oPtAVTfrB9@jernej-laptop> <63331816.68OamKINx1@jernej-laptop> <20180302124050.GF6255@sirena.org.uk>
+        id S932908AbeCEVjP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 16:39:15 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35242 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932427AbeCEVjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 16:39:13 -0500
+X-Google-Smtp-Source: AG47ELus07xhona/FBK21BgoSdAjKPBFtLHaUhZuTP346WS2O9EElggj6/vPRvJX4JahDbBXBWvc4g==
+Date: Mon, 5 Mar 2018 15:39:10 -0600
+From: Rob Herring <robh@kernel.org>
+To: frowand.list@gmail.com
+Cc: pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org
+Subject: Re: [PATCH v2 1/2] of: unittest: clean up changeset test
+Message-ID: <20180305213910.olvnsprxw4rpjkzv@rob-hp-laptop>
+References: <1519682483-19828-1-git-send-email-frowand.list@gmail.com>
+ <1519682483-19828-2-git-send-email-frowand.list@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519682483-19828-2-git-send-email-frowand.list@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Dne petek, 02. marec 2018 ob 13:40:50 CET je Mark Brown napisal(a):
-> On Thu, Mar 01, 2018 at 11:23:57PM +0100, Jernej Škrabec wrote:
-> > I removed parts of the code from the sun4i codec driver and interestingly
-> > it doesn't crash if I remove following lines:
-> > 
-> > ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
-> > if (ret) {
-> > 
-> > 	dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
-> > 	goto err_assert_reset;
-> > 
-> > }
-> > 
-> > Is it possible that NULL pointer causes troubles somewhere down the line?
+On Mon, Feb 26, 2018 at 02:01:22PM -0800, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> Shouldn't be, that's just the configuration which is optional and not
-> what we're crashing trying to register, we can mostly configure things
-> by querying the capabilities of the DMA controller via the dmaengine API
-> these days.  You're removing all the DMA support there so cutting out a
-> huge segment of the initialization of both this driver and the machine
-> driver.  Other sunxi devices seem to be starting happily in -next so
-> there's something system dependent here...
+> In preparation for fixing __of_node_dup(), clean up the unittest
+> function that calls it.
+> 
+> Devicetree nodes created from a flattened device tree have a name
+> property.  Follow this convention for nodes added by a changeset.
 
-I enabled memory debugging and it seems that there is an issue caused by 
-loading sun4i-codec driver and it is somehow connected to 
-snd_dmaengine_pcm_unregister().
+I'd like to get rid of that property as it should be redundant, but 
+that's somewhat orthogonal to this.
 
-Here is relevant dmesg: https://pastebin.com/raw/80K9GPnB
+It also shouldn't be up to the caller to have to do this either, but 
+that's already broken in the current API.
 
-Does this tell anything?
+So I've applied these.
 
-Best regards,
-Jernej
+> 
+> For node added by changeset, remove incorrect initialization of
+> child node pointer.
+> 
+> Add an additional node pointer 'changeset' to more naturally reflect
+> where in the tree the changeset is added.
+> 
+> Make changeset add property error messages unique.
+> 
+> Add whitespace to break apart logic blocks.
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
