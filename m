@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932912AbeCEHNB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:13:01 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37341 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932853AbeCEHM5 (ORCPT
+        id S933032AbeCEHTD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:19:03 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:32068 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932679AbeCEHTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:12:57 -0500
-X-Google-Smtp-Source: AG47ELtY0iiSbZHhQEm5qPMx3m1DoXYXwt8ulgNCs29/0bTh9cXSCzXPnLJMNZEftNJoT9bcLtnFbg==
-Date: Mon, 5 Mar 2018 08:12:54 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: kbuild test robot <fengguang.wu@intel.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, tipbuild@zytor.com
-Subject: Re: [tip:WIP.sched/core 19/22] kernel/sched/core.c:2836:18: error:
- passing argument 1 of 'mips_install_watch_registers' from incompatible
- pointer type
-Message-ID: <20180305071253.xgmpj6a5orleb6pa@gmail.com>
-References: <201803041803.gY4ddHfJ%fengguang.wu@intel.com>
- <b8be96d0-8a53-104e-c90d-72a3ea158f8d@infradead.org>
+        Mon, 5 Mar 2018 02:19:01 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="37471646"
+From: Cao jin <caoj.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
+Subject: [PATCH] x86/tools/relocs: comments cleanup
+Date: Mon, 5 Mar 2018 15:15:34 +0800
+Message-ID: <20180305071534.43448-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8be96d0-8a53-104e-c90d-72a3ea158f8d@infradead.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: DF65948AE762.A9E14
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+1. typo fix: there -> their
+2. remove superfluous "by"
 
-* Randy Dunlap <rdunlap@infradead.org> wrote:
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+ arch/x86/tools/relocs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> >    kernel//sched/core.c:2836:2: note: in expansion of macro 'switch_to'
-> >      switch_to(prev, next, prev);
-> >      ^~~~~~~~~
-> >    arch/mips/include/asm/watch.h:15:6: note: expected 'struct task_struct *' but argument is of type 'struct task_struct *'
-> >     void mips_install_watch_registers(struct task_struct *t);
-> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    cc1: some warnings being treated as errors
-> 
-> I don't have a tip git repo, but it looks like this would fix it (based on most
-> recent -next):
-> 
-> --- linux-next-20180302.orig/arch/mips/include/asm/watch.h
-> +++ linux-next-20180302/arch/mips/include/asm/watch.h
-> @@ -12,6 +12,8 @@
->  
->  #include <asm/mipsregs.h>
->  
-> +struct task_struct;
-> +
->  void mips_install_watch_registers(struct task_struct *t);
->  void mips_read_watch_registers(void);
->  void mips_clear_watch_registers(void);
-
-Yeah, so MIPS wasn't the only arch affected - so I fixed it by restoring the 
-original header order.
-
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index 5d73c443e778..fcf3fad01b08 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -37,7 +37,7 @@ static struct section *secs;
+ 
+ static const char * const sym_regex_kernel[S_NSYMTYPES] = {
+ /*
+- * Following symbols have been audited. There values are constant and do
++ * Following symbols have been audited. Their values are constant and do
+  * not change if bzImage is loaded at a different physical address than
+  * the address for which it has been compiled. Don't warn user about
+  * absolute relocations present w.r.t these symbols.
+@@ -690,7 +690,7 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+  *	to the start of the per_cpu area that does not change).
+  *
+  *	Relocations that apply to the per_cpu area need to have their
+- *	offset adjusted by by the value of __per_cpu_load to make them
++ *	offset adjusted by the value of __per_cpu_load to make them
+  *	point to the correct place in the loaded image (because the
+  *	virtual address of .data..percpu is 0).
+  *
+-- 
+2.14.3
