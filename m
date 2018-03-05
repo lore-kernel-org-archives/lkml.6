@@ -1,74 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933762AbeCEJjU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:39:20 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:49699 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933671AbeCEJjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:39:16 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w259dDmk021413
-X-Nifty-SrcIP: [209.85.213.45]
-X-Google-Smtp-Source: AG47ELvL44eI/J3waLXqrp+gtKiNPPaWr171+IbYYVcoQUhcABq0tKf7nuqx6cJGl9foRu382uugAO9h/woPNFoBVKU=
+        id S933785AbeCEJkG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:40:06 -0500
+Received: from www.zeus03.de ([194.117.254.33]:40380 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933767AbeCEJkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 04:40:02 -0500
+Date: Mon, 5 Mar 2018 10:39:59 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
+ cleanups
+Message-ID: <20180305093959.gaxl74rplmh5er7x@katana>
+References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
+ <20180304224248.mzhsvl4ccmtzg5am@ninjato>
+ <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
+ <20180305092259.bcpfbzvvoqxsfomf@katana>
+ <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwiHFjv7a=+RstT8up7aSctUW5=y0A3nz_FvG=5Jd1DHC07Tw@mail.gmail.com>
-References: <CA+55aFz_ww8ohU68Jz34pg_x7gpGpJ+FC-dmS_Rm_VvY01GGpg@mail.gmail.com>
- <20180228191805.20094-1-linux@rasmusvillemoes.dk> <20180228191805.20094-3-linux@rasmusvillemoes.dk>
- <CAK7LNAQ9WKj5Uz=A2QKctM9H8WFErfo_J_rGSn7B5jig+4gv_w@mail.gmail.com> <CAKwiHFjv7a=+RstT8up7aSctUW5=y0A3nz_FvG=5Jd1DHC07Tw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 5 Mar 2018 18:38:32 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASc1scA3PTGeaMxeRjzyUFZoFgudvBMDyrULOkrjUWGBQ@mail.gmail.com>
-Message-ID: <CAK7LNASc1scA3PTGeaMxeRjzyUFZoFgudvBMDyrULOkrjUWGBQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] fixdep: do not ignore kconfig.h
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Michal Marek <michal.lkml@markovi.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fftsvgsxzyx4czcr"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-05 17:15 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
-> On 5 March 2018 at 05:52, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->> 2018-03-01 4:17 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
->>> kconfig.h was excluded from consideration by fixdep by
->>> 6a5be57f0f00 (fixdep: fix extraneous dependencies) to avoid some false
->>> positive hits
-> [...]
->>> We've already had one case [2] where the lack of include/linux/kconfig.h in
->>> the .o.cmd file caused a missing rebuild,
-> [...]
->>> [2] https://lkml.org/lkml/2018/2/22/838
->>
->>
->> Sorry, I missed to include this series in the Kbuild fixes PR
->> I sent two days ago.
->>
->> I was not tracking the randomize-struct thread.
->> I read [2] and I noticed the background of this series just now.
->>
->> Hopefully, I will have another opportunity of PR
->> if this series is necessary for v4.16  (seems so)
->
-> I should probably have put 3/3 first, if that is 4.16 material, the
-> other two can obviously wait for 4.17. They don't really depend on
-> each other apart from overlapping context, and the above commit
-> message would need slight rewording if put before the others. I can do
-> that reordering and resend if you wish.
->
-> Rasmus
 
-1/3 is obviously safe, 2/3 too.
-I think the current series is OK for v4.16.
-I will queue it up to the fixes branch shortly.
-
-Thanks!
+--fftsvgsxzyx4czcr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
+> >> They are all present in my next branch. The fix that Wolfram sent on
+> >> top, is added immediately after the commit it fixes.
+> >
+> > Could we also squash it, then?
+> >
+>=20
+> If Wolfram is fine with squashing,
+> that would be cleaner.
+>=20
+> In that case, can you add Tested-by
+> to patch 12?
+
+Yup, sounds best to me.
 
 
--- 
-Best Regards
-Masahiro Yamada
+--fftsvgsxzyx4czcr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqdEG8ACgkQFA3kzBSg
+Kbbdrw/9FS5fg7H/KFEoJl7C1DXVOVzIORnhYtPHmGYptzEYy1ruDWBEKxP7EcdU
+qhVrpVpQlcbYpIEBYnMEXIUtKKeAyLHdu0vDpfxNCbatYLv53J/Q3Bgpx9bJ4Si2
+ZmBkBV8zlzZQcClbEuUJbjWj/1NdGe5IQRbhnoMiyaqItpP/4e+8HgAZJ9TZDjvK
++Butc3IKriFvGXUoTEaL0ItUCxLWV8l3O2seyKyQtVmbzTOb63FF6D6hXv79GjcH
+dfDNAM/r7zzw7cfpFi6/mOn1iQYyXCQhqhbJpmYKxpsx0e25TCfctAP0bi04dubO
+DnDPuAVPwJl9oVGsTWC0Z5MEYwDMfRR9fGYWB04Vw/fMIUa+3TnXeOoulde0jLpE
+P+9Lc/rOgBnRsKDx+BsYxZALvPzO2E6fNkVWe6/M3TTHyAHl3cOipbRzGENdFf9w
+mOjfpMtjYZTW5WimA92zjfhrMZ/+KYKJe8jNgZTrD3qMip1OqnETHz5r0inXu06n
+RPdhlJJYERapMb2Uf2wbUBoNapQgArvgBvpjM+usL6K2zKLNv2yp7o2lusWwzOOj
+tggXakq8E6mB6y1wrSzXOvGsOaBkMULg4401NlQcfiEVWIF826/KH9nkNkIBLobI
+KE92OgornpnD/xXYykDarpuHaJrbs07CpT0Qf4baNWp/bs74uow=
+=YD3V
+-----END PGP SIGNATURE-----
+
+--fftsvgsxzyx4czcr--
