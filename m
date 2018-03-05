@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753415AbeCEWYE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:24:04 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37362 "EHLO
+        id S1753461AbeCEWYM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:24:12 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37424 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753393AbeCEWYA (ORCPT
+        with ESMTP id S1753433AbeCEWYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:24:00 -0500
+        Mon, 5 Mar 2018 17:24:09 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -17,9 +17,9 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 11/38] drm/bridge: analogix_dp: Don't use fast link training when panel just powered up
-Date: Mon,  5 Mar 2018 23:23:03 +0100
-Message-Id: <20180305222324.5872-12-enric.balletbo@collabora.com>
+Subject: [PATCH v4 14/38] drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+Date: Mon,  5 Mar 2018 23:23:06 +0100
+Message-Id: <20180305222324.5872-15-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
 References: <20180305222324.5872-1-enric.balletbo@collabora.com>
@@ -32,10 +32,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Panel would reset its setting when it powers down. It would forget the last
-succeeded link training setting. So we can't use the last successful link
-training setting to do fast link training. Let's reset fast_train_enable in
-analogix_dp_bridge_disable();
+Following the correct power up sequence:
+dp_pd=ff => dp_pd=7f => wait 10us => dp_pd=00
 
 Cc: Stéphane Marchesin <marcheu@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
@@ -44,61 +42,52 @@ Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 9 +++++----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c | 10 ++++++++--
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h |  3 +++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index f9661b410cb9..ea7a80a989c6 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -579,14 +579,14 @@ static int analogix_dp_process_equalizer_training(struct analogix_dp_device *dp)
- 		if (retval != 1) {
- 			dev_err(dp->dev, "failed to read downspread %d\n",
- 				retval);
--			dp->fast_train_support = false;
-+			dp->fast_train_enable = false;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index b47c5af43560..bb72f8b0e603 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -321,10 +321,16 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
+ 		break;
+ 	case POWER_ALL:
+ 		if (enable) {
+-			reg = DP_PHY_PD | AUX_PD | CH3_PD | CH2_PD |
+-				CH1_PD | CH0_PD;
++			reg = DP_ALL_PD;
+ 			writel(reg, dp->reg_base + phy_pd_addr);
  		} else {
--			dp->fast_train_support =
-+			dp->fast_train_enable =
- 				(spread & DP_NO_AUX_HANDSHAKE_LINK_TRAINING) ?
- 					true : false;
++			reg = DP_ALL_PD;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
++			reg &= ~DP_INC_BG;
++			writel(reg, dp->reg_base + phy_pd_addr);
++			usleep_range(10, 15);
++
+ 			writel(0x00, dp->reg_base + phy_pd_addr);
  		}
- 		dev_dbg(dp->dev, "fast link training %s\n",
--			dp->fast_train_support ? "supported" : "unsupported");
-+			dp->fast_train_enable ? "supported" : "unsupported");
+ 		break;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+index 40200c652533..9602668669f4 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h
+@@ -342,12 +342,15 @@
+ #define DP_PLL_REF_BIT_1_2500V			(0x7 << 0)
  
- 		/* set enhanced mode if available */
- 		analogix_dp_set_enhanced_mode(dp);
-@@ -793,7 +793,7 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
+ /* ANALOGIX_DP_PHY_PD */
++#define DP_INC_BG				(0x1 << 7)
++#define DP_EXP_BG				(0x1 << 6)
+ #define DP_PHY_PD				(0x1 << 5)
+ #define AUX_PD					(0x1 << 4)
+ #define CH3_PD					(0x1 << 3)
+ #define CH2_PD					(0x1 << 2)
+ #define CH1_PD					(0x1 << 1)
+ #define CH0_PD					(0x1 << 0)
++#define DP_ALL_PD				(0xff)
  
- static int analogix_dp_train_link(struct analogix_dp_device *dp)
- {
--	if (dp->fast_train_support)
-+	if (dp->fast_train_enable)
- 		return analogix_dp_fast_link_train(dp);
- 
- 	return analogix_dp_full_link_train(dp, dp->video_info.max_lane_count,
-@@ -1197,6 +1197,7 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 		DRM_ERROR("failed to setup the panel ret = %d\n", ret);
- 
- 	dp->psr_enable = false;
-+	dp->fast_train_enable = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- }
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 6a96ef7e6934..403ff853464b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -173,7 +173,7 @@ struct analogix_dp_device {
- 	int			hpd_gpio;
- 	bool                    force_hpd;
- 	bool			psr_enable;
--	bool			fast_train_support;
-+	bool			fast_train_enable;
- 
- 	struct mutex		panel_lock;
- 	bool			panel_is_modeset;
+ /* ANALOGIX_DP_PHY_TEST */
+ #define MACRO_RST				(0x1 << 5)
 -- 
 2.16.1
