@@ -1,415 +1,278 @@
-Return-Path: <leechu729@gmail.com>
-X-Cyrus-Session-Id: sloti22d1t05-1837571-1520262977-2-2902176225750917171
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
-  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H3 -0.01,
-  RCVD_IN_MSPIKE_WL -0.01, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.85.220.193', Host='mail-qk0-f193.google.com', Country='US',
-  FromHeader='com', MailFrom='com'
-X-Spam-charsets: from='UTF-8', cc='UTF-8', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: leechu729@gmail.com
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520262975; b=KiQEZ0OeupKN5H9F5T8MzV8iKuKlfcqTIR3PFFB1u0VXhER
-    8jjMGbxgoMk+49Pext4/yZacy4NYiWzTjQ6baaNYWcbhuQTReVbDZ87vNhdk5JEM
-    TV++9EBaIVu7eoimh2pA+NTTcJkbnY4aUUuDljuBcvDkD6/oU7eVVvzmRykCC2a/
-    jNlT23d+vvbGrCg7X1efOBm6NS12rUi97BMfjqUKPAlWTXx4XpZrD4aJtU1zWWCN
-    P8YFXykc9Wp5pZo83/6718Xgv7fO5mjwN0UUVqrvN74eXHuHQ0FptgG/sW8FxgEm
-    WeQSV/M8A+zLeOcteS/HrxlPc4a62VNh0amiT7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type
-    :content-transfer-encoding; s=arctest; t=1520262975; bh=kJ7wyBNI
-    Mt+FYyYLNLM3p06YWNgwOB8rmwXLjmKllQ8=; b=u91tTbNeaLX+xUXVMS74WgVh
-    i4KNMtjM9yjeBtt4ORTZIIPSgYlLoqG1KkAcvQhu+6O/PPCj/ZWI+R+3B2aXvKMN
-    5KGnzo/3xwxGXwi0AQ5OR6Xx2bRPS+XMaoZmexsRClZX9YP95xcScO0c8fL6Y5kf
-    AfRM4PBrhJaI2TGRgXMeAg7ZjwTzKoIZ7PB6tai0AoK5OiGGyVXeGYVF71D9nQNd
-    4cvxIMkESJ95KnChXz8b79EiD6QoknfOA1w6s8K2lGViJpln74ueRqYsF8sqTcuz
-    JW/k8tcN8cJ7G+z4WCiAZvBu5LasXhU4EPXkaAccSaipg/l/V9h0ALsW81ZnLg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tWs/9Pm3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.220.193 (mail-qk0-f193.google.com);
-    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qk0-f193.google.com;
-    x-aligned-from=pass;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lIUoPL7U;
-    x-ptr=pass x-ptr-helo=mail-qk0-f193.google.com x-ptr-lookup=mail-qk0-f193.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tWs/9Pm3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.85.220.193 (mail-qk0-f193.google.com);
-    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-qk0-f193.google.com;
-    x-aligned-from=pass;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lIUoPL7U;
-    x-ptr=pass x-ptr-helo=mail-qk0-f193.google.com x-ptr-lookup=mail-qk0-f193.google.com;
-    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Google-Smtp-Source: AG47ELtYMWp0YTdJFUmeaJJmQULFZJlSqGVDkHcAJhRylz7BcItSkk9KOVh7ciYQC4o9oakwsuFoyE3QFx0tD7vjGo8=
-MIME-Version: 1.0
-In-Reply-To: <646aee73-935f-0cbc-5d61-8697f8bba4ac@roeck-us.net>
-References: <1520223402-19906-1-git-send-email-leechu729@gmail.com> <646aee73-935f-0cbc-5d61-8697f8bba4ac@roeck-us.net>
-From: =?UTF-8?B?5p2O5pu45biG?= <leechu729@gmail.com>
-Date: Mon, 5 Mar 2018 23:16:13 +0800
-Message-ID: <CAFaeLdT=_7-97ye75JEw-E3hnZqcQopU2HVeToVehcH-dZwH3w@mail.gmail.com>
-Subject: Re: [PATCH v6] staging: typec: handle vendor defined part and modify
- drp toggling flow
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: heikki.krogerus@linux.intel.com, Greg KH <greg@kroah.com>,
-	=?UTF-8?B?c2h1ZmFuX2xlZSjmnY7mm7jluIYp?= <shufan_lee@richtek.com>,
-	=?UTF-8?B?Y3lfaHVhbmco6buD5ZWf5Y6fKQ==?= <cy_huang@richtek.com>,
-	Jun Li <jun.li@nxp.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <jarkko.sakkinen@intel.com>
+X-Google-Smtp-Source: AG47ELtwQ1qaxhKAaErTmdlLRcLzrqpnvQfcbZBcctNf2biQ3hRU8CfkDj1QB0mWWRqA86RTlRyV
+ARC-Seal: i=1; a=rsa-sha256; t=1520260795; cv=none;
+        d=google.com; s=arc-20160816;
+        b=P0zRI6Go/LmmQBUNNUA/kbuUuRr8pTutggia0HPFCdZ+WYw4oyQQwY+GrcT8p+c5Vg
+         gcu6GxXJIge+a0LeaAoqbIwAUt0B+6xwyaWnTbYya+M742qybecTalnIc+0PkYWHdhdX
+         xkpSJWPTgvUlalw9+JgQLcEifQd6fuCV/QUttpcEVSuWdziKxNTjv4PbsPIPWrExim1j
+         GbDrDEHqq823E/vfJwU98inVC6bHqqjk7c8UWdyQw3kLIKDfrfX8+SsjUoc3f0g6Kygg
+         q1rXCydJuqKYk5SkOdjjZwpmG0aBb8qQQFeDJtYTsbbjoaA8jiow0jHnsZYD7F8JQ+KG
+         xuPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=z16D63x15RkWv4P2V8ijR+rWsg6t3rMrEd9iYg6IYYc=;
+        b=KtSwn22aW3e/YIocqol43nZpYb3/+0Lef/oGSBsSb02PVMjpEWkNo8cZFhah/6HTFb
+         7ftrUZnkjYymzM6tuxKf2hXw2UYVyq9OzheGkUGT5bGX2Y6g6X601TAOV6JyzEad+bcO
+         IQz5a2waj7DpnYJvdKpEszxSHlaFvzAduQ6OREjeKTenzJlRwbm0HDeqlDjNy/ojwX7r
+         vZ8lWOtPoudFMq6h962tNyeGMAGOgvqSohgN/jCkiO8ZYnRNXY1pXpduAGFkRrAFXHJi
+         yV+uwFfIwXJkg3b6m7d76uijvqRc2Zo11YDBthnuIwArPoKEN+a4Qng513YvrjyS9jfJ
+         xepQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="39325894"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 5/5] tpm: migrate tpm2_get_random() to use struct tpm_buf
+Date: Mon,  5 Mar 2018 16:39:03 +0200
+Message-Id: <20180305143904.7477-6-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+References: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594108984269814405?=
+X-GMAIL-MSGID: =?utf-8?q?1594108984269814405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+In order to make struct tpm_buf the first class object for constructing
+TPM commands, migrate tpm2_get_random() to use it. In addition, removed
+remaining references to struct tpm2_cmd. All of them use it to acquire
+the length of the response, which can be achieved by using
+tpm_buf_length().
 
-2018-03-05 22:49 GMT+08:00 Guenter Roeck <linux@roeck-us.net>:
-> On 03/04/2018 08:16 PM, ShuFan Lee wrote:
->>
->> From: ShuFan Lee <shufan_lee@richtek.com>
->>
->> Handle vendor defined behavior in tcpci_init, tcpci_set_vconn,
->> tcpci_start_drp_toggling
->> and export tcpci_irq. More operations can be extended in tcpci_data if
->> needed.
->> According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
->> TCPC shall not start DRP toggling until subsequently the TCPM
->> writes to the COMMAND register to start DRP toggling.
->> DRP toggling flow is chagned as following:
->
->
-> s/chagned/changed/
-Sorry for the type error, I'll correct it in v7.
->
->
->>    - Write DRP =3D 1, Rp level and RC.CCx to Rd/Rd or Rp/Rp
->>    - Set LOOK4CONNECTION command
->>
->> Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
->> ---
->>   drivers/staging/typec/tcpci.c | 134
->> ++++++++++++++++++++++++++++++++++--------
->>   drivers/staging/typec/tcpci.h |  15 +++++
->>   2 files changed, 123 insertions(+), 26 deletions(-)
->>
->>   patch changelogs between v1 & v2
->>   - Remove unnecessary i2c_client in the structure of tcpci
->>   - Rename structure of tcpci_vendor_data to tcpci_data
->>   - Not exporting tcpci read/write wrappers but register i2c regmap in
->> glue driver
->>   - Add set_vconn ops in tcpci_data
->>     (It is necessary for RT1711H to enable/disable idle mode before
->> disabling/enabling vconn)
->>   - Export tcpci_irq so that vendor can call it in their own IRQ handler
->>
->>   patch changelogs between v2 & v3
->>   - Change the return type of tcpci_irq from int to irqreturn_t
->>
->>   patch changelogs between v3 & v4
->>   - Directly return regmap_write at the end of drp_toggling function
->>   - Because tcpci_irq is called in _tcpci_irq, move _tcpci_irq to the
->> place after tcpci_irq
->>
->>   patch changelogs between v4 & v5
->>   - Add a space between my first & last name, from ShuFanLee to ShuFan
->> Lee.
->>
->>   patch changelogs between v5 & v6
->>   - Add start_drp_toggling in tcpci_data and call it at the beginning of
->> tcpci_start_drp_toggling
->>   - Modify the flow of tcpci_start_drp_toggling as following
->>      - Set Rp level, RC.CCx to Rd/Rd or Rp/Rp and DRP =3D 1
->>      - Set LOOK4CONNECTION command
->>
->> diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci=
-.c
->> index 9bd4412..9e600f7 100644
->> --- a/drivers/staging/typec/tcpci.c
->> +++ b/drivers/staging/typec/tcpci.c
->> @@ -21,7 +21,6 @@
->>     struct tcpci {
->>         struct device *dev;
->> -       struct i2c_client *client;
->>         struct tcpm_port *port;
->>   @@ -30,6 +29,12 @@ struct tcpci {
->>         bool controls_vbus;
->>         struct tcpc_dev tcpc;
->> +       struct tcpci_data *data;
->> +};
->> +
->> +struct tcpci_chip {
->> +       struct tcpci *tcpci;
->> +       struct tcpci_data data;
->>   };
->>     static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
->> @@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct
->> tcpc_dev *tcpc)
->>         return container_of(tcpc, struct tcpci, tcpc);
->>   }
->>   -static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
->> -                       u16 *val)
->> +static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val=
-)
->>   {
->>         return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
->>   }
->> @@ -98,9 +102,19 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum
->> typec_cc_status cc)
->>   static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
->>                                     enum typec_cc_status cc)
->>   {
->> +       int ret;
->>         struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);
->>         unsigned int reg =3D TCPC_ROLE_CTRL_DRP;
->>   +     if (tcpci->data) {
->> +               if (tcpci->data->start_drp_toggling) {
->
->
-> From the code flow it is guaranteed that ->data is set. It should therefo=
-re
-> be unnecessary to check for it (we don't check if ->reg is set either).
-Ok, I'll modify it in v7, thank you.
->
->
->> +                       ret =3D tcpci->data->start_drp_toggling(tcpci,
->> +                                                             tcpci->dat=
-a,
->> cc);
->> +                       if (ret < 0)
->> +                               return ret;
->> +               }
->> +       }
->> +
->>         switch (cc) {
->>         default:
->>         case TYPEC_CC_RP_DEF:
->> @@ -117,7 +131,17 @@ static int tcpci_start_drp_toggling(struct tcpc_dev
->> *tcpc,
->>                 break;
->>         }
->>   -     return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
->> +       if (cc =3D=3D TYPEC_CC_RD)
->> +               reg |=3D (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHI=
-FT)
->> |
->> +                          (TCPC_ROLE_CTRL_CC_RD <<
->> TCPC_ROLE_CTRL_CC2_SHIFT);
->> +       else
->> +               reg |=3D (TCPC_ROLE_CTRL_CC_RP << TCPC_ROLE_CTRL_CC1_SHI=
-FT)
->> |
->> +                          (TCPC_ROLE_CTRL_CC_RP <<
->> TCPC_ROLE_CTRL_CC2_SHIFT);
->> +       ret =3D regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
->> +       if (ret < 0)
->> +               return ret;
->> +       return regmap_write(tcpci->regmap, TCPC_COMMAND,
->> +                           TCPC_CMD_LOOK4CONNECTION);
->>   }
->>     static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool
->> sink)
->> @@ -178,6 +202,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc,
->> bool enable)
->>         struct tcpci *tcpci =3D tcpc_to_tcpci(tcpc);
->>         int ret;
->>   +     /* Handle vendor set vconn */
->> +       if (tcpci->data) {
->> +               if (tcpci->data->set_vconn) {
->> +                       ret =3D tcpci->data->set_vconn(tcpci, tcpci->dat=
-a,
->> +                                                    enable);
->> +                       if (ret < 0)
->> +                               return ret;
->> +               }
->> +       }
->> +
->>         ret =3D regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
->>                            enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
->>         if (ret < 0)
->> @@ -323,6 +357,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
->>         if (time_after(jiffies, timeout))
->>                 return -ETIMEDOUT;
->>   +     /* Handle vendor init */
->> +       if (tcpci->data) {
->> +               if (tcpci->data->init) {
->> +                       ret =3D tcpci->data->init(tcpci, tcpci->data);
->> +                       if (ret < 0)
->> +                               return ret;
->> +               }
->> +       }
->> +
->>         /* Clear all events */
->>         ret =3D tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
->>         if (ret < 0)
->> @@ -344,9 +387,8 @@ static int tcpci_init(struct tcpc_dev *tcpc)
->>         return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
->>   }
->>   -static irqreturn_t tcpci_irq(int irq, void *dev_id)
->> +irqreturn_t tcpci_irq(struct tcpci *tcpci)
->>   {
->> -       struct tcpci *tcpci =3D dev_id;
->>         u16 status;
->>         tcpci_read16(tcpci, TCPC_ALERT, &status);
->> @@ -412,6 +454,14 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
->>         return IRQ_HANDLED;
->>   }
->> +EXPORT_SYMBOL_GPL(tcpci_irq);
->> +
->> +static irqreturn_t _tcpci_irq(int irq, void *dev_id)
->> +{
->> +       struct tcpci *tcpci =3D dev_id;
->> +
->> +       return tcpci_irq(tcpci);
->> +}
->>     static const struct regmap_config tcpci_regmap_config =3D {
->>         .reg_bits =3D 8,
->> @@ -435,22 +485,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
->>         return 0;
->>   }
->>   -static int tcpci_probe(struct i2c_client *client,
->> -                      const struct i2c_device_id *i2c_id)
->> +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data
->> *data)
->>   {
->>         struct tcpci *tcpci;
->>         int err;
->>   -     tcpci =3D devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL)=
-;
->> +       tcpci =3D devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
->>         if (!tcpci)
->> -               return -ENOMEM;
->> +               return ERR_PTR(-ENOMEM);
->>   -     tcpci->client =3D client;
->> -       tcpci->dev =3D &client->dev;
->> -       i2c_set_clientdata(client, tcpci);
->> -       tcpci->regmap =3D devm_regmap_init_i2c(client,
->> &tcpci_regmap_config);
->> -       if (IS_ERR(tcpci->regmap))
->> -               return PTR_ERR(tcpci->regmap);
->> +       tcpci->dev =3D dev;
->> +       tcpci->data =3D data;
->> +       tcpci->regmap =3D data->regmap;
->>         tcpci->tcpc.init =3D tcpci_init;
->>         tcpci->tcpc.get_vbus =3D tcpci_get_vbus;
->> @@ -467,27 +513,63 @@ static int tcpci_probe(struct i2c_client *client,
->>         err =3D tcpci_parse_config(tcpci);
->>         if (err < 0)
->> -               return err;
->> +               return ERR_PTR(err);
->> +
->> +       tcpci->port =3D tcpm_register_port(tcpci->dev, &tcpci->tcpc);
->> +       if (PTR_ERR_OR_ZERO(tcpci->port))
->> +               return ERR_CAST(tcpci->port);
->>   -     /* Disable chip interrupts */
->> -       tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
->> +       return tcpci;
->> +}
->> +EXPORT_SYMBOL_GPL(tcpci_register_port);
->> +
->> +void tcpci_unregister_port(struct tcpci *tcpci)
->> +{
->> +       tcpm_unregister_port(tcpci->port);
->> +}
->> +EXPORT_SYMBOL_GPL(tcpci_unregister_port);
->>   -     err =3D devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
->> -                                       tcpci_irq,
->> +static int tcpci_probe(struct i2c_client *client,
->> +                      const struct i2c_device_id *i2c_id)
->> +{
->> +       struct tcpci_chip *chip;
->> +       int err;
->> +       u16 val =3D 0;
->> +
->> +       chip =3D devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
->> +       if (!chip)
->> +               return -ENOMEM;
->> +
->> +       chip->data.regmap =3D devm_regmap_init_i2c(client,
->> &tcpci_regmap_config);
->> +       if (IS_ERR(chip->data.regmap))
->> +               return PTR_ERR(chip->data.regmap);
->> +
->> +       /* Disable chip interrupts before requesting irq */
->> +       err =3D regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &va=
-l,
->> +                              sizeof(u16));
->> +       if (err < 0)
->> +               return err;
->> +
->> +       err =3D devm_request_threaded_irq(&client->dev, client->irq, NUL=
-L,
->> +                                       _tcpci_irq,
->>                                         IRQF_ONESHOT | IRQF_TRIGGER_LOW,
->> -                                       dev_name(tcpci->dev), tcpci);
->> +                                       dev_name(&client->dev), chip);
->>         if (err < 0)
->>                 return err;
->>   -     tcpci->port =3D tcpm_register_port(tcpci->dev, &tcpci->tcpc);
->> -       return PTR_ERR_OR_ZERO(tcpci->port);
->> +       chip->tcpci =3D tcpci_register_port(&client->dev, &chip->data);
->> +       if (PTR_ERR_OR_ZERO(chip->tcpci))
->> +               return PTR_ERR(chip->tcpci);
->> +
->> +       i2c_set_clientdata(client, chip);
->> +       return 0;
->>   }
->>     static int tcpci_remove(struct i2c_client *client)
->>   {
->> -       struct tcpci *tcpci =3D i2c_get_clientdata(client);
->> +       struct tcpci_chip *chip =3D i2c_get_clientdata(client);
->>   -     tcpm_unregister_port(tcpci->port);
->> +       tcpci_unregister_port(chip->tcpci);
->>         return 0;
->>   }
->> diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci=
-.h
->> index fdfb06c..a2c1754 100644
->> --- a/drivers/staging/typec/tcpci.h
->> +++ b/drivers/staging/typec/tcpci.h
->> @@ -59,6 +59,7 @@
->>   #define TCPC_POWER_CTRL_VCONN_ENABLE  BIT(0)
->>     #define TCPC_CC_STATUS                      0x1d
->> +#define TCPC_CC_STATUS_DRPRST          BIT(5)
->>   #define TCPC_CC_STATUS_TERM           BIT(4)
->>   #define TCPC_CC_STATUS_CC2_SHIFT      2
->>   #define TCPC_CC_STATUS_CC2_MASK               0x3
->> @@ -121,4 +122,18 @@
->>   #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG                0x76
->>   #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG                0x78
->>   +struct tcpci;
->> +struct tcpci_data {
->> +       struct regmap *regmap;
->> +       int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
->> +       int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
->> +                        bool enable);
->> +       int (*start_drp_toggling)(struct tcpci *tcpci, struct tcpci_data
->> *data,
->> +                                 enum typec_cc_status cc);
->> +};
->> +
->> +struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data
->> *data);
->> +void tcpci_unregister_port(struct tcpci *tcpci);
->> +irqreturn_t tcpci_irq(struct tcpci *tcpci);
->> +
->>   #endif /* __LINUX_USB_TCPCI_H */
->>
->
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm.h      | 19 ++++-----
+ drivers/char/tpm/tpm2-cmd.c | 93 +++++++++++++++++----------------------------
+ 2 files changed, 45 insertions(+), 67 deletions(-)
 
-
-
---=20
-Best Regards,
-=E6=9B=B8=E5=B8=86
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index cccd5994a0e1..29c0717437bc 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -412,23 +412,24 @@ struct tpm_buf {
+ 	u8 *data;
+ };
+ 
+-static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+ {
+ 	struct tpm_input_header *head;
++	head = (struct tpm_input_header *)buf->data;
++	head->tag = cpu_to_be16(tag);
++	head->length = cpu_to_be32(sizeof(*head));
++	head->ordinal = cpu_to_be32(ordinal);
++}
+ 
++static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
+ 	buf->data_page = alloc_page(GFP_HIGHUSER);
+ 	if (!buf->data_page)
+ 		return -ENOMEM;
+ 
+ 	buf->flags = 0;
+ 	buf->data = kmap(buf->data_page);
+-
+-	head = (struct tpm_input_header *) buf->data;
+-
+-	head->tag = cpu_to_be16(tag);
+-	head->length = cpu_to_be32(sizeof(*head));
+-	head->ordinal = cpu_to_be32(ordinal);
+-
++	tpm_buf_reset(buf, tag, ordinal);
+ 	return 0;
+ }
+ 
+@@ -557,7 +558,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ 		    struct tpm2_digest *digests);
+-int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max);
++int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+ int tpm2_seal_trusted(struct tpm_chip *chip,
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index e02f7d46e9ac..36a58af6f5c7 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -27,25 +27,6 @@ enum tpm2_session_attributes {
+ 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
+ };
+ 
+-struct tpm2_get_random_in {
+-	__be16	size;
+-} __packed;
+-
+-struct tpm2_get_random_out {
+-	__be16	size;
+-	u8	buffer[TPM_MAX_RNG_DATA];
+-} __packed;
+-
+-union tpm2_cmd_params {
+-	struct	tpm2_get_random_in	getrandom_in;
+-	struct	tpm2_get_random_out	getrandom_out;
+-};
+-
+-struct tpm2_cmd {
+-	tpm_cmd_header		header;
+-	union tpm2_cmd_params	params;
+-} __packed;
+-
+ struct tpm2_hash {
+ 	unsigned int crypto_id;
+ 	unsigned int tpm_id;
+@@ -298,66 +279,66 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ }
+ 
+ 
+-#define TPM2_GETRANDOM_IN_SIZE \
+-	(sizeof(struct tpm_input_header) + \
+-	 sizeof(struct tpm2_get_random_in))
+-
+-static const struct tpm_input_header tpm2_getrandom_header = {
+-	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
+-	.length = cpu_to_be32(TPM2_GETRANDOM_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_GET_RANDOM)
+-};
++struct tpm2_get_random_out {
++	__be16 size;
++	u8 buffer[TPM_MAX_RNG_DATA];
++} __packed;
+ 
+ /**
+  * tpm2_get_random() - get random bytes from the TPM RNG
+  *
+  * @chip: TPM chip to use
+- * @out: destination buffer for the random bytes
++ * @dest: destination buffer for the random bytes
+  * @max: the max number of bytes to write to @out
+  *
+  * Return:
+- *    Size of the output buffer, or -EIO on error.
++ * size of the output buffer when the operation is successful.
++ * A negative number for system errors (errno).
+  */
+-int tpm2_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ {
+-	struct tpm2_cmd cmd;
+-	u32 recd, rlength;
+-	u32 num_bytes;
++	struct tpm2_get_random_out *out;
++	struct tpm_buf buf;
++	u32 recd;
++	u32 num_bytes = max;
+ 	int err;
+ 	int total = 0;
+ 	int retries = 5;
+-	u8 *dest = out;
++	u8 *dest_ptr = dest;
+ 
+-	num_bytes = min_t(u32, max, sizeof(cmd.params.getrandom_out.buffer));
+-
+-	if (!out || !num_bytes ||
+-	    max > sizeof(cmd.params.getrandom_out.buffer))
++	if (!num_bytes || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+-	do {
+-		cmd.header.in = tpm2_getrandom_header;
+-		cmd.params.getrandom_in.size = cpu_to_be16(num_bytes);
++	err = tpm_buf_init(&buf, 0, 0);
++	if (err)
++		return err;
+ 
+-		err = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd),
++	do {
++		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
++		tpm_buf_append_u16(&buf, num_bytes);
++		err = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+ 				       offsetof(struct tpm2_get_random_out,
+ 						buffer),
+ 				       0, "attempting get random");
+ 		if (err)
+ 			break;
+ 
+-		recd = min_t(u32, be16_to_cpu(cmd.params.getrandom_out.size),
+-			     num_bytes);
+-		rlength = be32_to_cpu(cmd.header.out.length);
+-		if (rlength < offsetof(struct tpm2_get_random_out, buffer) +
+-			      recd)
+-			return -EFAULT;
+-		memcpy(dest, cmd.params.getrandom_out.buffer, recd);
++		out = (struct tpm2_get_random_out *)
++			&buf.data[TPM_HEADER_SIZE];
++		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
++		if (tpm_buf_length(&buf) <
++		    offsetof(struct tpm2_get_random_out, buffer) + recd) {
++			err = -EFAULT;
++			break;
++		}
++		memcpy(dest_ptr, out->buffer, recd);
+ 
+-		dest += recd;
++		dest_ptr += recd;
+ 		total += recd;
+ 		num_bytes -= recd;
+ 	} while (retries-- && total < max);
+ 
++	tpm_buf_destroy(&buf);
+ 	return total ? total : -EIO;
+ }
+ 
+@@ -432,7 +413,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ {
+ 	unsigned int blob_len;
+ 	struct tpm_buf buf;
+-	u32 hash, rlength;
++	u32 hash;
+ 	int i;
+ 	int rc;
+ 
+@@ -507,8 +488,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		rc = -E2BIG;
+ 		goto out;
+ 	}
+-	rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)->header.out.length);
+-	if (rlength < TPM_HEADER_SIZE + 4 + blob_len) {
++	if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
+ 		rc = -EFAULT;
+ 		goto out;
+ 	}
+@@ -618,7 +598,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 	u16 data_len;
+ 	u8 *data;
+ 	int rc;
+-	u32 rlength;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
+ 	if (rc)
+@@ -646,9 +625,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			goto out;
+ 		}
+ 
+-		rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)
+-					->header.out.length);
+-		if (rlength < TPM_HEADER_SIZE + 6 + data_len) {
++		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 6 + data_len) {
+ 			rc = -EFAULT;
+ 			goto out;
+ 		}
+-- 
+2.15.1
