@@ -1,83 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933101AbeCEHqR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:46:17 -0500
-Received: from regular1.263xmail.com ([211.150.99.140]:53606 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932892AbeCEHqO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:46:14 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <df881cdc635decbaa4f28c1762d9b3a8>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Romain Perier <romain.perier@collabora.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        dri-devel@lists.freedesktop.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>, Hans Verkuil <hverkuil@xs4all.nl>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: [PATCH] drm/bridge/synopsys: dw-hdmi: Fix memleak in __dw_hdmi_remove
-Date: Mon,  5 Mar 2018 15:45:55 +0800
-Message-Id: <20180305074555.23368-1-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
+        id S1752587AbeCEHvy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:51:54 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47518 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752527AbeCEHvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 02:51:51 -0500
+Date: Mon, 5 Mar 2018 08:51:48 +0100
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        quentin.schulz@bootlin.com
+Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
+Message-ID: <20180305085148.1de2a99c@dell-desktop.home>
+In-Reply-To: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
+References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
+        <20180223133742.26044-11-mylene.josserand@bootlin.com>
+        <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
+        <20180226101252.ozdsxjvawgkemz2c@flea.lan>
+        <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The platform_device_register_full() will allocate dma_mask for
-hdmi->audio, so we should free before platform_device_unregister().
+Hello,
 
-Reported by kmemleak:
-unreferenced object 0xffffffc0ef70ff00 (size 128):
-  comm "kworker/4:1", pid 123, jiffies 4294670080 (age 189.604s)
-  hex dump (first 32 bytes):
-    ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<0000000021946f44>] kmemleak_alloc+0x58/0x8c
-    [<000000009c43890d>] kmem_cache_alloc_memcg_trace+0x18c/0x25c
-    [<000000000e17cd06>] platform_device_register_full+0x64/0x108
-    [<00000000418a0882>] __dw_hdmi_probe+0xb9c/0xcc0
-    [<00000000e0b720fd>] dw_hdmi_bind+0x30/0x88
-    [<000000009af347f6>] dw_hdmi_rockchip_bind+0x260/0x2e8
+On Mon, 26 Feb 2018 18:25:10 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+> On Mon, Feb 26, 2018 at 6:12 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Sat, Feb 24, 2018 at 12:17:13AM +0800, Chen-Yu Tsai wrote:  
+> >> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
+> >> <mylene.josserand@bootlin.com> wrote:  
+> >> > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
+> >> > It should be done by the bootloader but it is currently not the case,
+> >> > even for boot CPU because this SoC is booting in secure mode.
+> >> > It leads to an random offset value meaning that each CPU will have a
+> >> > different time, which isn't working very well.
+> >> >
+> >> > Add assembly code used for boot CPU and secondary CPU cores to make
+> >> > sure that the CNTVOFF register is initialized.
+> >> >
+> >> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> >> > ---
+> >> >  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
+> >> >  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
+> >> >  2 files changed, 25 insertions(+)
+> >> >
+> >> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> >> > index d5c97e945e69..605896251927 100644
+> >> > --- a/arch/arm/mach-sunxi/headsmp.S
+> >> > +++ b/arch/arm/mach-sunxi/headsmp.S
+> >> > @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
+> >> >         first: .word sunxi_mc_smp_first_comer - .
+> >> >  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> >> >
+> >> > +ENTRY(sunxi_init_cntvoff)
+> >> > +       /*
+> >> > +        * CNTVOFF has to be initialized either from non-secure Hypervisor
+> >> > +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
+> >> > +        * then it should be handled by the secure code
+> >> > +        */
+> >> > +       cps     #MON_MODE
+> >> > +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
+> >> > +       orr     r0, r1, #1
+> >> > +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
+> >> > +       instr_sync
+> >> > +       mov     r0, #0
+> >> > +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
+> >> > +       instr_sync
+> >> > +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
+> >> > +       instr_sync
+> >> > +       cps     #SVC_MODE
+> >> > +       ret     lr
+> >> > +ENDPROC(sunxi_init_cntvoff)  
+> >>
+> >> There is no need to move all the assembly into a separate file, just
+> >> to add this function. Everything can be inlined as a naked function.
+> >> The "instr_sync" macro can be replaced with "isb", which is what it
+> >> expands to anyway.
+> >>
+> >> I really want to keep everything self-contained without global symbols,
+> >> and in C files if possible.  
+> >
+> > What is the rationale for keeping it in C files (beside the global
+> > symbols)? Because the syntax is quite ugly, and it's much easier to
+> > read, review and amend using a separate file.  
+> 
+> Global symbols and keeping everything in one place I guess.
+> This symbol would be used in a few places, so I suppose having it
+> in a separate assembly file would be OK.
 
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Okay so I will keep it in a separate file.
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index f9802399cc0d..d9afdc59d4f4 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2567,8 +2567,10 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 
- static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
- {
--	if (hdmi->audio && !IS_ERR(hdmi->audio))
-+	if (hdmi->audio && !IS_ERR(hdmi->audio)) {
-+		kfree(hdmi->audio->dev.dma_mask);
- 		platform_device_unregister(hdmi->audio);
-+	}
- 	if (!IS_ERR(hdmi->cec))
- 		platform_device_unregister(hdmi->cec);
- 
+> 
+> >> >  #ifdef CONFIG_SMP
+> >> >  ENTRY(sunxi_boot)
+> >> >         bl      sunxi_mc_smp_cluster_cache_enable
+> >> > +       bl      sunxi_init_cntvoff
+> >> >         b       secondary_startup
+> >> >  ENDPROC(sunxi_boot)
+> >> >
+> >> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> >> > index 5e9602ce1573..4bb041492b54 100644
+> >> > --- a/arch/arm/mach-sunxi/sunxi.c
+> >> > +++ b/arch/arm/mach-sunxi/sunxi.c
+> >> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
+> >> >  };
+> >> >
+> >> >  extern void __init sun6i_reset_init(void);
+> >> > +extern void sunxi_init_cntvoff(void);
+> >> > +
+> >> >  static void __init sun6i_timer_init(void)
+> >> >  {
+> >> > +       sunxi_init_cntvoff();  
+> >>
+> >> You should check the enable-method to see if PSCI is set or not,
+> >> as an indicator whether the kernel is booted secure or non-secure.  
+> >
+> > It's an indicator, but it's not really a perfect one. You could very
+> > well have your kernel booted in non-secure, without PSCI. Or even with
+> > PSCI, but without the SMP ops.
+> >
+> > We have a quite big number of these cases already, where, depending on
+> > the configuration, we might not have access to the device we write to,
+> > the number of hacks to just enable that device for non-secure is a
+> > good example of that.  
+> 
+> I wouldn't consider them hacks though. The hardware gives the option
+> to have control of many devices delegated solely to secure-only, or
+> secure/non-secure. Our present model is to support everything we can
+> in Linux directly, instead of through some firmware interface to a
+> non-existent firmware.
+
+I am not sure to understand what is the conclusion about it.
+Should I use "psci"/enable-method or should I use another mechanism to
+detect we are in secure/non-secure (if it exists)?
+
+Otherwise, for the moment, I can use machine-compatible on sun8i-a83t
+and we will see later how we can handle it in a better way.
+
+Thank you in advance,
+
+Best regards,
+
+Mylène
+
 -- 
-2.11.0
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+
+> 
+> ChenYu
+> 
+> >> AFAIK trying to set CNTVOFF under non-secure would be very bad.  
+> >
+> > Just like any other access we do :/
+> >
+> > Maxime
+> >
+> > --
+> > Maxime Ripard, Bootlin (formerly Free Electrons)
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com  
