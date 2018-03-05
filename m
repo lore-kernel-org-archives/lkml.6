@@ -1,73 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932470AbeCEXPB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 18:15:01 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39541 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752936AbeCEXO7 (ORCPT
+        id S932741AbeCEXQF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 18:16:05 -0500
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:33161 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752936AbeCEXQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 18:14:59 -0500
-X-Google-Smtp-Source: AG47ELu8d6xIG2feXoCkCQ0UuJcTltiRCjx0UK5Pyfu26iZ+IhW7swRkSVhmXzVsEjPesM8wjZwWKQ==
-Date: Mon, 5 Mar 2018 15:14:55 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: Re: [PATCH v4 2/2] dt-bindings: introduce Command DB for QCOM SoCs
-Message-ID: <20180305231455.GJ18510@minitux>
-References: <20180226175802.20052-1-ilina@codeaurora.org>
- <20180226175802.20052-3-ilina@codeaurora.org>
+        Mon, 5 Mar 2018 18:16:03 -0500
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Tue, 6 Mar 2018 08:16:00 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: "Du, Changbin" <changbin.du@intel.com>, acme@kernel.org,
+        peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180305231600.GB8824@sejong>
+References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
+ <20180302105254.234axj7b3nixakav@intel.com>
+ <20180302113845.GC16348@krava>
+ <20180302144732.GA2471@danjae.aot.lge.com>
+ <20180305071136.qs3lsoh432mzbizw@intel.com>
+ <20180305223754.GB7403@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180226175802.20052-3-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180305223754.GB7403@krava>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 26 Feb 09:58 PST 2018, Lina Iyer wrote:
+Hi,
 
-> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+On Mon, Mar 05, 2018 at 11:37:54PM +0100, Jiri Olsa wrote:
+> On Mon, Mar 05, 2018 at 03:11:36PM +0800, Du, Changbin wrote:
 > 
-> Command DB provides information on shared resources like clocks,
-> regulators etc., probed at boot by the remote subsytem and made
-> available in shared memory.
+> SNIP
 > 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
+> > > > on the other hand it's simple enough and looks
+> > > > like generic solution would be more tricky
+> > > 
+> > > What about adding perf_sched__process_comm() to set it in the
+> > > thread::priv?
+> > >
+> > I can be done, then thread->comm_changed moves to thread_runtime->comm_changed.
+> > Draft code as below. It is also a little tricky.
+> > 
+> > +int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
+> > +                            union perf_event *event,
+> > +                            struct perf_sample *sample,
+> > +                            struct machine *machine)
+> > +{
+> > +       struct thread *thread;
+> > +       struct thread_runtime *r;
+> > +
+> > +       perf_event__process_comm(tool, event, sample, machine);
+> > +
+> > +       thread = machine__findnew_thread(machine, pid, tid);
 > 
-> Changes in v4:
-> 	- Fix unwanted capitalization
-> 	- Add reg property
-> ---
->  .../devicetree/bindings/arm/msm/cmd-db.txt         | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/msm/cmd-db.txt b/Documentation/devicetree/bindings/arm/msm/cmd-db.txt
-[..]
-> +	reserved-memory {
-> +		[...]
-> +		qcom,cmd-db@c3f000c {
-> +			reg = <0x0 0xc3f000c 0x0 0x8>,
-> +			      <0x0 0x85fe0000 0x0 0x20000>;
+> should you use machine__find_thread in here?
 
-I'm still concerned about the use of the redirection mapping here,
-the relocation at 0xc3f000c is used a convenience thing so that the
-command db can be relocated, but because of how Linux will consume any
-non-reserved memory the dts would still need to be manually updated.
+Yep, perf_event__process_comm() already created a new thread if needed.
+And the return value of it should be checked.
 
-As such I think you should just describe only the 0x85fe0000 + 0x20000
-region here and to support the dynamic aspect of this from a system
-point of view you can have the boot loader read the information at
-0xc3f000c and adjust the reserved memory. (Or just keep the step of
-manually update the dts without caring about the indirection)
 
-Regards,
-Bjorn
+> 
+> > +       if (thread) {
+> > +               r = thread__priv(thread);
+> > +               if (r)
+> > +                       r->comm_changed = true;
+> > +               thread__put(thread);
+> > +       }
+
+Missing return.
+
+> > +}
+> > +
+> >  static int perf_sched__read_events(struct perf_sched *sched)
+> >  {
+> >         const struct perf_evsel_str_handler handlers[] = {
+> > @@ -3291,7 +3311,7 @@ int cmd_sched(int argc, const char **argv)
+> >         struct perf_sched sched = {
+> >                 .tool = {
+> >                         .sample          = perf_sched__process_tracepoint_sample,
+> > -                       .comm            = perf_event__process_comm,
+> > +                       .comm            = perf_sched__process_comm,
+> > 
+> > 
+> > But I'd keep 'comm_changed' where 'shortname' is defined. I think they should appears
+> > togother. And 'shortname' is only used by sched command, too.
+> 
+> they can both go to struct thread_runtime then
+
+Agreed.
+
+
+> 
+> > 
+> > So I still prefer my privous simpler change. Thanks!
+> 
+> I was wrong thinking that the amount of code
+> making it sched specific would be biger
+> 
+> we're trying to keep the core structs generic,
+> so this one fits better 
+
+Right.
+
+Thanks,
+Namhyung
