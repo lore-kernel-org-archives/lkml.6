@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeCEWXj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:23:39 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37154 "EHLO
+        id S1753322AbeCEWXr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:23:47 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37220 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753027AbeCEWXg (ORCPT
+        with ESMTP id S1753281AbeCEWXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:23:36 -0500
+        Mon, 5 Mar 2018 17:23:43 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -17,9 +17,9 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 01/38] drm/bridge: analogix_dp: set psr activate/deactivate when enable/disable bridge
-Date: Mon,  5 Mar 2018 23:22:53 +0100
-Message-Id: <20180305222324.5872-2-enric.balletbo@collabora.com>
+Subject: [PATCH v4 04/38] drm/rockchip: Remove analogix psr worker
+Date: Mon,  5 Mar 2018 23:22:56 +0100
+Message-Id: <20180305222324.5872-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
 References: <20180305222324.5872-1-enric.balletbo@collabora.com>
@@ -30,151 +30,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zain wang <wzz@rock-chips.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-There's a race between when bridge_disable and when vop_crtc_disable
-are called. If the flush timer triggers a new psr work between these,
-we will operate eDP without power shutdowned by bridge_disable. In this
-case, moving activate/deactivate to enable/disable bridge to avoid it.
+Now that the spinlocks and timers are gone, we can remove the psr
+worker located in rockchip's analogix driver and do the enable/disable
+directly. This should simplify the code and remove races on disable.
 
+Cc: 征增 王 <wzz@rock-chips.com>
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: zain wang <wzz@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c |  7 +++++-
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c     | 30 ++++++++++++++++++++-----
- drivers/gpu/drm/rockchip/rockchip_drm_psr.h     |  4 ++--
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |  4 ----
- 4 files changed, 32 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 31 ++-----------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index eb88c52336a7..7d76ff47028d 100644
+index 7d76ff47028d..36334839a3f8 100644
 --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
 +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -150,12 +150,17 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
- 		return ret;
+@@ -71,10 +71,6 @@ struct rockchip_dp_device {
+ 	struct regmap            *grf;
+ 	struct reset_control     *rst;
+ 
+-	struct work_struct	 psr_work;
+-	struct mutex             psr_lock;
+-	unsigned int             psr_state;
+-
+ 	const struct rockchip_dp_chip_data *data;
+ 
+ 	struct analogix_dp_device *adp;
+@@ -84,28 +80,13 @@ struct rockchip_dp_device {
+ static void analogix_dp_psr_set(struct drm_encoder *encoder, bool enabled)
+ {
+ 	struct rockchip_dp_device *dp = to_dp(encoder);
++	int ret;
+ 
+ 	if (!analogix_dp_psr_supported(dp->adp))
+ 		return;
+ 
+ 	DRM_DEV_DEBUG(dp->dev, "%s PSR...\n", enabled ? "Entry" : "Exit");
+ 
+-	mutex_lock(&dp->psr_lock);
+-	if (enabled)
+-		dp->psr_state = EDP_VSC_PSR_STATE_ACTIVE;
+-	else
+-		dp->psr_state = ~EDP_VSC_PSR_STATE_ACTIVE;
+-
+-	schedule_work(&dp->psr_work);
+-	mutex_unlock(&dp->psr_lock);
+-}
+-
+-static void analogix_dp_psr_work(struct work_struct *work)
+-{
+-	struct rockchip_dp_device *dp =
+-				container_of(work, typeof(*dp), psr_work);
+-	int ret;
+-
+ 	ret = rockchip_drm_wait_vact_end(dp->encoder.crtc,
+ 					 PSR_WAIT_LINE_FLAG_TIMEOUT_MS);
+ 	if (ret) {
+@@ -113,12 +94,10 @@ static void analogix_dp_psr_work(struct work_struct *work)
+ 		return;
  	}
  
--	return 0;
-+	return rockchip_drm_psr_activate(&dp->encoder);
+-	mutex_lock(&dp->psr_lock);
+-	if (dp->psr_state == EDP_VSC_PSR_STATE_ACTIVE)
++	if (enabled)
+ 		analogix_dp_enable_psr(dp->adp);
+ 	else
+ 		analogix_dp_disable_psr(dp->adp);
+-	mutex_unlock(&dp->psr_lock);
  }
  
- static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
- {
+ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+@@ -135,8 +114,6 @@ static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
  	struct rockchip_dp_device *dp = to_dp(plat_data);
-+	int ret;
-+
-+	ret = rockchip_drm_psr_deactivate(&dp->encoder);
-+	if (ret != 0)
-+		return ret;
+ 	int ret;
  
- 	clk_disable_unprepare(dp->pclk);
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index 3acfd576b7df..b3fb99c5b1fd 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -57,6 +57,24 @@ static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
- 	return psr;
- }
- 
-+static struct psr_drv *find_psr_by_encoder(struct drm_encoder *encoder)
-+{
-+	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
-+	struct psr_drv *psr;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
-+	list_for_each_entry(psr, &drm_drv->psr_list, list) {
-+		if (psr->encoder == encoder)
-+			goto out;
-+	}
-+	psr = ERR_PTR(-ENODEV);
-+
-+out:
-+	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
-+	return psr;
-+}
-+
- static void psr_set_state_locked(struct psr_drv *psr, enum psr_state state)
- {
- 	/*
-@@ -115,14 +133,14 @@ static void psr_flush_handler(struct timer_list *t)
- 
- /**
-  * rockchip_drm_psr_activate - activate PSR on the given pipe
-- * @crtc: CRTC to obtain the PSR encoder
-+ * @encoder: encoder to obtain the PSR encoder
-  *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_activate(struct drm_crtc *crtc)
-+int rockchip_drm_psr_activate(struct drm_encoder *encoder)
- {
--	struct psr_drv *psr = find_psr_by_crtc(crtc);
-+	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 	unsigned long flags;
- 
- 	if (IS_ERR(psr))
-@@ -138,14 +156,14 @@ EXPORT_SYMBOL(rockchip_drm_psr_activate);
- 
- /**
-  * rockchip_drm_psr_deactivate - deactivate PSR on the given pipe
-- * @crtc: CRTC to obtain the PSR encoder
-+ * @encoder: encoder to obtain the PSR encoder
-  *
-  * Returns:
-  * Zero on success, negative errno on failure.
-  */
--int rockchip_drm_psr_deactivate(struct drm_crtc *crtc)
-+int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
- {
--	struct psr_drv *psr = find_psr_by_crtc(crtc);
-+	struct psr_drv *psr = find_psr_by_encoder(encoder);
- 	unsigned long flags;
- 
- 	if (IS_ERR(psr))
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-index b420cf1bf902..b1ea0155e57c 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
-@@ -18,8 +18,8 @@
- void rockchip_drm_psr_flush_all(struct drm_device *dev);
- int rockchip_drm_psr_flush(struct drm_crtc *crtc);
- 
--int rockchip_drm_psr_activate(struct drm_crtc *crtc);
--int rockchip_drm_psr_deactivate(struct drm_crtc *crtc);
-+int rockchip_drm_psr_activate(struct drm_encoder *encoder);
-+int rockchip_drm_psr_deactivate(struct drm_encoder *encoder);
- 
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 			void (*psr_set)(struct drm_encoder *, bool enable));
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 9f72762532bf..63fbe789a5dd 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -569,8 +569,6 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
- 
- 	WARN_ON(vop->event);
- 
--	rockchip_drm_psr_deactivate(&vop->crtc);
+-	cancel_work_sync(&dp->psr_work);
 -
- 	drm_crtc_vblank_off(crtc);
+ 	ret = clk_prepare_enable(dp->pclk);
+ 	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "failed to enable pclk %d\n", ret);
+@@ -355,10 +332,6 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+ 	dp->plat_data.power_off = rockchip_dp_powerdown;
+ 	dp->plat_data.get_modes = rockchip_dp_get_modes;
  
- 	/*
-@@ -942,8 +940,6 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
- 	clk_set_rate(vop->dclk, adjusted_mode->clock * 1000);
- 
- 	VOP_REG_SET(vop, common, standby, 0);
+-	mutex_init(&dp->psr_lock);
+-	dp->psr_state = ~EDP_VSC_PSR_STATE_ACTIVE;
+-	INIT_WORK(&dp->psr_work, analogix_dp_psr_work);
 -
--	rockchip_drm_psr_activate(&vop->crtc);
- }
- 
- static bool vop_fs_irq_is_pending(struct vop *vop)
+ 	ret = rockchip_drm_psr_register(&dp->encoder, analogix_dp_psr_set);
+ 	if (ret < 0)
+ 		goto err_cleanup_encoder;
 -- 
 2.16.1
