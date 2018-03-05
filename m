@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvbvOjSSWIIHvYaFuZWNB3wwi2nMDUZtKLbzhFBzTzw8B8MKahZIp51DPDj8Jbg7n23zWLw
-ARC-Seal: i=1; a=rsa-sha256; t=1520245585; cv=none;
+X-Google-Smtp-Source: AG47ELv5m2V2NqOdx2QVkUMdqh9aaLyIRGd8bTj6qqk3iGFNYNojUWP1TmNDZiOVa2SndT3DlVNG
+ARC-Seal: i=1; a=rsa-sha256; t=1520245582; cv=none;
         d=google.com; s=arc-20160816;
-        b=abyYwEwEVQTarCl8eBrCvbdFE1yqr9tmBdDYgzLFtGzSraAKt+R3N6MHS5Kvk4MxOh
-         Hiu1GXgS8QmsfOE1JsaLWisf2Iqq2fg1KE0QqUZKrlSdZw27s+8NfTawVLD/r0frtxns
-         KvatV2+TZe190Ukuzv7JRIPSHSvkRjQ1mTk48L3YpbNagv3mnvg+Su7qpwD2YLCAzWUN
-         7P8kur+vJmMQVgFL3s7z5s4x0w06suYicda5dtdiXaa1YgJJDsO15/oB451b46khsPCp
-         QKamKabZMpvkmYC1b+KBHF4j3n08e1c+JKd+t/mQT3ngzd1MNW7+nlQ98F+ChCc5hMbw
-         BRGg==
+        b=dH64Ac7W2+Ydnbw0+ZSEeq7GI+5IioQ78bQV86/tBWQuLqQZSR307A5/lYA592xQxx
+         d45n6hRK0MTWciGAinHwIaYZ2YaQ45vVdvnAc6cgPNuPKJLF4vNTOMJfxbKGR7r9Of9V
+         WsrHv77VKr3She6yqMlzwp7FomTy0tW852F7HZR8WqcOug8YbykWNxJUym+3qSXCYo+x
+         7aR6+CTs7ilau9rNrAADtUVXRjplcwIhd9isOW+yzjnn8wL4VHF+sEBq9OeZcV8S3l5Y
+         nnoQ7Zl/MVYQKNzpYeiVcuiE9Wo24aVjmO3EdPSaPsa2rCMa/nJ9tvaobtDsEdIJ+fI1
+         zllg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=igYQ/x+Bee3t5LU4V9asteXT8ZgIi1BJyc7+25PZsZk=;
-        b=bNTumWRBKj6ApS98RP3e9ywjvQwtpaxH+HjUv+TAgdVtfz3luU8a62yQVeiRiH1eNE
-         yRt0D0gOPUCehVx8c6Omc+gU3LkniPV7csrNHFO/XuaJvHHh96mp3c81l/9SSkHaSEbk
-         o9CT9mp3W8euK1f+hJFRIgd8OAikBMsBsyMggj87Y+x2SBC/KHpIX27DuJSnHJOpQQvC
-         FER1dzGm1HBE/QfdDncvFkGXzxVnWAe/7bo2tL6xnJdL6vcbnPtzZ85dDZls1oc4dW2O
-         kXEcpi2mgjtBSe8oPWrVwZkowo4ArTBI99Lyp3jGmuaKiGjQVFkrx0IJUmj7A/hvJFmY
-         pKow==
+        bh=RGA25vQ8gBPaSKGy/lT4lV6mDQVKRyvseZa9z9ApG6o=;
+        b=GURhZSw998sq/lK4WWE46+2Sd5NNcRgU0o04Qz8ZGzQ5N4EtkrpLpkjtywcX9td1Kl
+         +2RvMUUaBBUcL+qNcremxA+jRcS1CZjHOIyHLU0W2zxtSmyW6RlpPY+j4ihqdeW7QhyJ
+         DjkPUugOwwjO0oKW9SvIeFSjxy4IlrGeWmoYkjrYohlFG2N4WWHXYqcVugY1c+xqF3SG
+         e1uMj977zrEO3LHx6ZsFbtuE+0ZxNBj++jd5iGLR+dmg5TfyP9UNc+g92V0dzUahOxdg
+         izoCZIsAH6hyxK6PdlDcTrB3wBREV34xh9+Azkbz4R8sHV3xgRcLUQupXS9QQVqGPcjA
+         djfg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=WOD7gNaz;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GwadVX5x;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=WOD7gNaz;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GwadVX5x;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,157 +57,75 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 31/34] x86/ldt: Split out sanity check in map_ldt_struct()
-Date: Mon,  5 Mar 2018 11:26:00 +0100
-Message-Id: <1520245563-8444-32-git-send-email-joro@8bytes.org>
+Subject: [PATCH 30/34] x86/ldt: Define LDT_END_ADDR
+Date: Mon,  5 Mar 2018 11:25:59 +0100
+Message-Id: <1520245563-8444-31-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093035462900422?=
-X-GMAIL-MSGID: =?utf-8?q?1594093035462900422?=
+X-GMAIL-THRID: =?utf-8?q?1594093031242513504?=
+X-GMAIL-MSGID: =?utf-8?q?1594093031242513504?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This splits out the mapping sanity check and the actual
-mapping of the LDT to user-space from the map_ldt_struct()
-function in a way so that it is re-usable for PAE paging.
+It marks the end of the address-space range reserved for the
+LDT. The LDT-code will use it when unmapping the LDT for
+user-space.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/ldt.c | 82 ++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 58 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/pgtable_32_types.h | 2 ++
+ arch/x86/include/asm/pgtable_64_types.h | 2 ++
+ arch/x86/kernel/ldt.c                   | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index eb2e97a..02bd445 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -51,6 +51,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ #define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+ 
++#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
++
+ #define PKMAP_BASE		\
+ 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
+ 
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index e57003a..15188baa 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -90,12 +90,14 @@ typedef struct { pteval_t pte; } pte_t;
+ # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-112, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #else
+ # define VMALLOC_SIZE_TB	_AC(32, UL)
+ # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
+ # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
+ # define LDT_PGD_ENTRY		_AC(-3, UL)
+ # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ #endif
+ 
+ #ifdef CONFIG_RANDOMIZE_MEMORY
 diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index f3c2fbf..8ab7df9 100644
+index 26d713e..f3c2fbf 100644
 --- a/arch/x86/kernel/ldt.c
 +++ b/arch/x86/kernel/ldt.c
-@@ -100,6 +100,49 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- 	return new_ldt;
- }
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+
-+static void do_sanity_check(struct mm_struct *mm,
-+			    bool had_kernel_mapping,
-+			    bool had_user_mapping)
-+{
-+	if (mm->context.ldt) {
-+		/*
-+		 * We already had an LDT.  The top-level entry should already
-+		 * have been allocated and synchronized with the usermode
-+		 * tables.
-+		 */
-+		WARN_ON(!had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(!had_user_mapping);
-+	} else {
-+		/*
-+		 * This is the first time we're mapping an LDT for this process.
-+		 * Sync the pgd to the usermode tables.
-+		 */
-+		WARN_ON(had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(had_user_mapping);
-+	}
-+}
-+
-+static void map_ldt_struct_to_user(struct mm_struct *mm)
-+{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+
-+	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
-+		set_pgd(kernel_to_user_pgdp(pgd), *pgd);
-+}
-+
-+static void sanity_check_ldt_mapping(struct mm_struct *mm)
-+{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+	bool had_kernel = (pgd->pgd != 0);
-+	bool had_user   = (kernel_to_user_pgdp(pgd)->pgd != 0);
-+
-+	do_sanity_check(mm, had_kernel, had_user);
-+}
-+
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
-@@ -115,9 +158,8 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- {
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--	bool is_vmalloc, had_top_level_entry;
- 	unsigned long va;
-+	bool is_vmalloc;
- 	spinlock_t *ptl;
- 	pgd_t *pgd;
- 	int i;
-@@ -131,13 +173,15 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	 */
- 	WARN_ON(ldt->slot != -1);
- 
-+	/* Check if the current mappings are sane */
-+	sanity_check_ldt_mapping(mm);
-+
- 	/*
- 	 * Did we already have the top level entry allocated?  We can't
- 	 * use pgd_none() for this because it doens't do anything on
- 	 * 4-level page table kernels.
- 	 */
- 	pgd = pgd_offset(mm, LDT_BASE_ADDR);
--	had_top_level_entry = (pgd->pgd != 0);
- 
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
-@@ -168,35 +212,25 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 		pte_unmap_unlock(ptep, ptl);
- 	}
- 
--	if (mm->context.ldt) {
--		/*
--		 * We already had an LDT.  The top-level entry should already
--		 * have been allocated and synchronized with the usermode
--		 * tables.
--		 */
--		WARN_ON(!had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI))
--			WARN_ON(!kernel_to_user_pgdp(pgd)->pgd);
--	} else {
--		/*
--		 * This is the first time we're mapping an LDT for this process.
--		 * Sync the pgd to the usermode tables.
--		 */
--		WARN_ON(had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI)) {
--			WARN_ON(kernel_to_user_pgdp(pgd)->pgd);
--			set_pgd(kernel_to_user_pgdp(pgd), *pgd);
--		}
--	}
-+	/* Propagate LDT mapping to the user page-table */
-+	map_ldt_struct_to_user(mm);
- 
- 	va = (unsigned long)ldt_slot_va(slot);
- 	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
- 
- 	ldt->slot = slot;
--#endif
- 	return 0;
- }
- 
-+#else /* !CONFIG_PAGE_TABLE_ISOLATION */
-+
-+static int
-+map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
- static void free_ldt_pgtables(struct mm_struct *mm)
- {
+@@ -202,7 +202,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
  #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	struct mmu_gather tlb;
+ 	unsigned long start = LDT_BASE_ADDR;
+-	unsigned long end = start + (1UL << PGDIR_SHIFT);
++	unsigned long end = LDT_END_ADDR;
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
