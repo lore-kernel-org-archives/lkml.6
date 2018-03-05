@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934552AbeCEKoT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:44:19 -0500
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:7526 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934392AbeCEKoE (ORCPT
+        id S934523AbeCEKoK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:44:10 -0500
+Received: from enterprise03.smtp.diehl.com ([193.201.238.214]:12876 "EHLO
+        enterprise03.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934396AbeCEKn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:44:04 -0500
+        Mon, 5 Mar 2018 05:43:59 -0500
 X-$ESA-Groupmapping: true
 X-IronPort-AV: E=Sophos;i="5.47,426,1515452400";
-   d="scan'208";a="29824913"
+   d="scan'208";a="8949810"
 From: Denis OSTERLAND <denis.osterland@diehl.com>
 To: "a.zummo@towertech.it" <a.zummo@towertech.it>,
         "alexandre.belloni@free-electrons.com"
@@ -22,32 +22,29 @@ CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Denis OSTERLAND <denis.osterland@diehl.com>
-Subject: [PATCH v3 4/4] rtc: isl1208: Add "evdet" interrupt source for
- isl1219.
-Thread-Topic: [PATCH v3 4/4] rtc: isl1208: Add "evdet" interrupt source for
- isl1219.
-Thread-Index: AQHTtG7alK4E3pvwxUuvtLwEu1aLQA==
-Date: Mon, 5 Mar 2018 10:43:52 +0000
-Message-ID: <1520246373-19023-5-git-send-email-Denis.Osterland@diehl.com>
-References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
-In-Reply-To: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
+Subject: [PATCH v3 0/4] rtc: isl1208: fixes, documentation and isl1219 support
+Thread-Topic: [PATCH v3 0/4] rtc: isl1208: fixes, documentation and isl1219
+ support
+Thread-Index: AQHTtG7azXGBr63y1km9g73yCx2FBg==
+Date: Mon, 5 Mar 2018 10:43:53 +0000
+Message-ID: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
 Accept-Language: de-DE, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.153.3.249]
 MIME-Version: 1.0
-X-GBS-PROC: byQFdw3ukCM+zy1/poiPc4Q+xc9r/a6t2HuWj6Nw2bXcmazuc7spiDLdOZo4ghGb
+X-GBS-PROC: PkB65aL1SqtESF35r/jQn2XsXiXEcXQNGzH8Czhnv4bdiLvJNUCbRuAMVA0dhgVl
 X-MIMETrack: Itemize by SMTP Server on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 11:44:01,
+ 09, 2018) at 05.03.2018 11:43:53,
         Serialize by ntm_grab.EXE on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 11:44:01,
-        Serialize complete at 05.03.2018 11:44:01,
+ 09, 2018) at 05.03.2018 11:43:53,
+        Serialize complete at 05.03.2018 11:43:53,
         Itemize by ntm_grab.EXE on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 11:44:01,
+ 09, 2018) at 05.03.2018 11:43:54,
         Serialize by Router on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 11:44:02,
-        Serialize complete at 05.03.2018 11:44:02
+ 09, 2018) at 05.03.2018 11:43:54,
+        Serialize complete at 05.03.2018 11:43:54
 X-TNEFEvaluated: 1
 Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="utf-8"
@@ -56,109 +53,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Osterland <Denis.Osterland@diehl.com>
+changes since v2:
+Fix rebase issue in 2/4 and 3/4, where 2/4 uses a data type declared 3/4.
 
-Add support for "evdet" named interrupt source.
+changes since v1:
+Represent isl1219 tamper detection as RTC timestamp event,
+instead of hwmon intrusion sensor.
+Switch to rtc_register_device, to fix possible race conditions in probe.
+Add documentation of the two possible interrupt sources for isl1219.
+Support "evdet" named interrupt souce.
 
-The check if i2c client irq matches evdet irq is needed
-for the case that there is only one interrupt named "evdet".
-In this case i2c client code handles this like an unnamed
-interrupt souce and assigns the value.
+Michael Grzeschik (2):
+  rtc: isl1208: enable interrupt after context preparation
+  rtc: isl1208: add support for isl1219 with tamper detection
 
-Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
-Reviewed-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
----
- drivers/rtc/rtc-isl1208.c | 47 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 16 deletions(-)
+Denis Osterland (2):
+  rtc: isl1208: switch to rtc_register_device
+  rtc: isl1208: Add "evdet" interrupt source for isl1219.
 
-diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index 164371b..f2f148b 100644
---- a/drivers/rtc/rtc-isl1208.c
-+++ b/drivers/rtc/rtc-isl1208.c
-@@ -14,6 +14,7 @@
- #include <linux/i2c.h>
- #include <linux/bcd.h>
- #include <linux/rtc.h>
-+#include <linux/of_irq.h>
- 
- /* Register map */
- /* rtc section */
-@@ -79,6 +80,7 @@ enum {
- struct isl1208 {
- 	struct rtc_device *rtc;
- 	const struct attribute_group *sysfs_files;
-+	int evdet_irq;
- };
- 
- /* block read */
-@@ -730,6 +732,24 @@ static const struct attribute_group isl1219_rtc_sysfs_files = {
- 	.attrs	= isl1219_rtc_attrs,
- };
- 
-+static int isl1208_setup_irq(struct i2c_client *client, int irq)
-+{
-+	int rc = devm_request_threaded_irq(&client->dev, irq, NULL,
-+					isl1208_rtc_interrupt,
-+					IRQF_SHARED | IRQF_ONESHOT,
-+					isl1208_driver.driver.name,
-+					client);
-+	if (!rc) {
-+		device_init_wakeup(&client->dev, 1);
-+		enable_irq_wake(irq);
-+	} else {
-+		dev_err(&client->dev,
-+			"Unable to request irq %d, no alarm support\n",
-+			irq);
-+	}
-+	return rc;
-+}
-+
- static int
- isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- {
-@@ -772,6 +792,8 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 			return rc;
- 		}
- 		isl1208->sysfs_files = &isl1219_rtc_sysfs_files;
-+		isl1208->evdet_irq = of_irq_get_byname(client->dev.of_node,
-+								"evdet");
- 	} else {
- 		isl1208->sysfs_files = &isl1208_rtc_sysfs_files;
- 	}
-@@ -780,22 +802,15 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	if (rc)
- 		return rc;
- 
--	if (client->irq > 0) {
--		rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
--					       isl1208_rtc_interrupt,
--					       IRQF_SHARED | IRQF_ONESHOT,
--					       isl1208_driver.driver.name,
--					       client);
--		if (!rc) {
--			device_init_wakeup(&client->dev, 1);
--			enable_irq_wake(client->irq);
--		} else {
--			dev_err(&client->dev,
--				"Unable to request irq %d, no alarm support\n",
--				client->irq);
--			client->irq = 0;
--		}
--	}
-+	if (client->irq > 0)
-+		rc = isl1208_setup_irq(client, client->irq);
-+	if (rc)
-+		return rc;
-+
-+	if (isl1208->evdet_irq > 0 && isl1208->evdet_irq != client->irq)
-+		rc = isl1208_setup_irq(client, isl1208->evdet_irq);
-+	if (rc)
-+		return rc;
- 
- 	return rtc_register_device(isl1208->rtc);
- }
--- 
-2.7.4
+ .../devicetree/bindings/rtc/isil,isl1219.txt       |  28 +++
+ drivers/rtc/rtc-isl1208.c                          | 209 +++++++++++++++++----
+ 2 files changed, 203 insertions(+), 34 deletions(-)
+
+Message-Id: 1519821214-22379-1-git-send-email-Denis.Osterland@diehl.com
+Message-Id: 20180123121801.4214-1-m.grzeschik@pengutronix.de
 
 
 Diehl AKO Stiftung & Co. KG, Pfannerstraße 75-83, 88239 Wangen im Allgäu
