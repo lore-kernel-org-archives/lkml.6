@@ -1,107 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932470AbeCEWjI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:39:08 -0500
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44520 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932084AbeCEWjH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:39:07 -0500
-X-Google-Smtp-Source: AG47ELuDPmjKBJtGkLOsyvgC5CG1HDxN9+eT3wRfhOBN2l+QbmyhiJetc2cqGbxZ8ZR19ZO6yNNAvw==
-Date: Mon, 5 Mar 2018 16:39:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jolly Shah <jolly.shah@xilinx.com>
-Cc: matthias.bgg@gmail.com, andy.gross@linaro.org, shawnguo@kernel.org,
-        geert+renesas@glider.be, bjorn.andersson@linaro.org,
-        sean.wang@mediatek.com, m.szyprowski@samsung.com,
-        michal.simek@xilinx.com, mark.rutland@arm.com, rajanv@xilinx.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH 1/2] dt-bindings: power: Add ZynqMP power domain bindings
-Message-ID: <20180305223905.65nnunv63fyg7bye@rob-hp-laptop>
-References: <1519775750-21297-1-git-send-email-jollys@xilinx.com>
- <1519775750-21297-2-git-send-email-jollys@xilinx.com>
+        id S932637AbeCEWjb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:39:31 -0500
+Received: from vern.gendns.com ([206.190.152.46]:42540 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932069AbeCEWj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 17:39:28 -0500
+Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_request_gpio() when
+ bits_per_mux != 0
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <1519077427-30165-1-git-send-email-david@lechnology.com>
+ <CAHp75VeR2LG-qAzQs2048K3pyfRkz7OKioHDNyU8bVAPsgy8ew@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <6f8d2656-476c-81b6-6109-b26b98f15d31@lechnology.com>
+Date: Mon, 5 Mar 2018 16:39:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519775750-21297-2-git-send-email-jollys@xilinx.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAHp75VeR2LG-qAzQs2048K3pyfRkz7OKioHDNyU8bVAPsgy8ew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 03:55:49PM -0800, Jolly Shah wrote:
-> Add documentation to describe ZynqMP power domain bindings.
+On 02/20/2018 06:56 AM, Andy Shevchenko wrote:
+> On Mon, Feb 19, 2018 at 11:57 PM, David Lechner <david@lechnology.com> wrote:
+>> This fixes pcs_request_gpio() in the pinctrl-single driver when
+>> bits_per_mux != 0. It appears this was overlooked when the multiple
+>> pins per register feature was added.
+>>
+>> Fixes: 4e7e8017a80e ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> v2 changes:
+>> - don't wrap Fixes: line in commit message since it is a special machine-
+>>    readable line.
+>>
+>> There was some discussion in v1 about using DIV_ROUND_UP(), etc. macros, but
+>> the consensus was to leave it as-is since it matches existing code and that
+>> macros can be introduced in another patch.
+>>
+>>   drivers/pinctrl/pinctrl-single.c | 22 +++++++++++++++++++---
+>>   1 file changed, 19 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+>> index cec7537..a7c5eb3 100644
+>> --- a/drivers/pinctrl/pinctrl-single.c
+>> +++ b/drivers/pinctrl/pinctrl-single.c
+>> @@ -391,9 +391,25 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>>                          || pin < frange->offset)
+>>                          continue;
 > 
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> ---
->  .../devicetree/bindings/power/zynqmp-genpd.txt     | 46 ++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/zynqmp-genpd.txt
+>>                  mux_bytes = pcs->width / BITS_PER_BYTE;
+>> -               data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+>> -               data |= frange->gpiofunc;
+>> -               pcs->write(data, pcs->base + pin * mux_bytes);
+>> +
+>> +               if (pcs->bits_per_mux) {
+>> +                       int byte_num, offset, pin_shift;
+>> +
+>> +                       byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+>> +                       offset = (byte_num / mux_bytes) * mux_bytes;
+>> +                       pin_shift = pin % (pcs->width / pcs->bits_per_pin) *
+>> +                                   pcs->bits_per_pin;
+>> +
+>> +                       data = pcs->read(pcs->base + offset);
+>> +                       data &= ~(pcs->fmask << pin_shift);
+>> +                       data |= frange->gpiofunc << pin_shift;
+>> +                       pcs->write(data, pcs->base + offset);
+>> +               } else {
 > 
-> diff --git a/Documentation/devicetree/bindings/power/zynqmp-genpd.txt b/Documentation/devicetree/bindings/power/zynqmp-genpd.txt
-> new file mode 100644
-> index 0000000..25f9711
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/zynqmp-genpd.txt
-> @@ -0,0 +1,46 @@
-> +Device Tree bindings for Xilinx Zynq MPSoC PM domains
-> +
-> +The binding for zynqmp-genpd follow the common generic PM domain binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/power/power_domain.txt
-> +
-> +== Zynq MPSoC Generic PM Domain Node ==
-> +
-> +Required properties:
-> + - compatible: Must be: "xlnx,zynqmp-genpd"
-
-genpd is a Linux term. The DT should contain a power controller that 
-controls physical power islands on a chip.
-
-> +
-> +This node contains a number of subnodes, each representing a single PM domain
-> +that PM domain consumer devices reference.
-> +
-> +== PM Domain Nodes ==
-> +
-> +Required properties:
-> + - #power-domain-cells: Number of cells in a PM domain specifier. Must be 0.
-> + - pd-id: List of domain identifiers of as defined by platform firmware. These
-> +	  identifiers are passed to the PM firmware.
-> +
-> +Example:
-> +	zynqmp-genpd {
-> +		compatible = "xlnx,zynqmp-genpd";
-
-What's the control interface for controlling the domains?
-> +
-> +		pd_usb0: pd-usb0 {
-> +			pd-id = <22>;
-> +			#power-domain-cells = <0>;
-
-There's no need for all these sub nodes. Make #power-domain-cells 1 and 
-put the id in the cell value.
-
-> +		};
-> +
-> +		pd_sata: pd-sata {
-> +			pd-id = <28>;
-> +			#power-domain-cells = <0>;
-> +		};
-> +
-> +		pd_gpu: pd-gpu {
-> +			pd-id = <58 20 21>;
-> +			#power-domain-cells = <0x0>;
-> +		};
-> +	};
-> +
-> +	sata0: ahci@SATA_AHCI_HBA {
-> +		...
-> +		power-domains = <&pd_sata>;
-> +		...
-> +	};
-> -- 
-> 2.7.4
+>> +                       data = pcs->read(pcs->base + pin * mux_bytes);
+>> +                       data &= ~pcs->fmask;
+>> +                       data |= frange->gpiofunc;
+>> +                       pcs->write(data, pcs->base + pin * mux_bytes);
 > 
+> Just an idea, you may leave this almost untouched and do calculate
+> pin_shift and offset in condition, like
+> 
+> if (...) {
+>   pin_shift = ...
+>   offset = ...
+> } else {
+>   pin_shift = 0;
+>   offset = pin * mux_bytes;
+> }
+> 
+>                         data = pcs->read(pcs->base + offset);
+>                         data &= ~(pcs->fmask << pin_shift);
+>                         data |= frange->gpiofunc << pin_shift;
+>                         pcs->write(data, pcs->base + offset);
+> 
+> It's also possible to split to two changes, where first introduces
+> that variables and their default values (see 'else' branch) and second
+> one introduces an if branch override.
+> 
+>> +               }
+>>                  break;
+> 
+
+Yes, there are many ways this could be done. However, I would like
+to just leave it as it is since it matches the patterns used
+elsewhere in this file.
