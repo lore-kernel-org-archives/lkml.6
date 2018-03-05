@@ -1,66 +1,66 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-819802-1520233376-2-7670181099472185110
+X-Cyrus-Session-Id: sloti22d1t05-819802-1520233375-2-10529895418113256111
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES enroda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='hr', MailFrom='org'
 X-Spam-charsets: cc='UTF-8', plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520233374; b=G4Mcczverm/ltZj+dAvW1l1sOy6xjN7zoKvfwBPr0Z09ugv
-    fPnvsvSPTaFKh6gLbyVAqVVFw9+R3AAVVuFSeXfIvgOTpiWaEZmRhOksJT5zJ1Dk
-    puuuRtTm2S+X40ejBlQ9/ayL4rlUMBlsOB6wt725NBIAVSxLN4k2ywGZAPSvwBIM
-    92L4+UVBS2vTt182XrVvggmzQBrAfHylMWExdtfjwXALw0TMhglLU9WXrnsp/4m9
-    eKLzJ4nQs5HBjpT+YirI37uwXUFzWztyXQxmJ21kwe02D7d2njsIGiTXziARpx3w
-    MQWpaFnF1iIQZnY/2bs8IMMsLkqBdQ8fO1JkxRA==
+    t=1520233373; b=RkH6VRDMI2ykfESp2HCiVXmexDFfshTU/kzXhLbgtgq/IFt
+    3P0MVyXQRlsbjqDAF4p2DFcTz1ubfPYimsQubwonvywtBvJk92ArU+knHW/1MBUu
+    ZJH/Y7call32eS65nh8or6ZLyg7bmkG53ALNmH9c2ndRj5SlgKOZXsaqvG64SxlZ
+    bsdkf8i9atODkE1hrhVUJzBcHA/vD438jtxbiClOoawuc+4D6iEaRJgQE4+PvhMe
+    mho6kmnFvFBo2zMB5n4xa2aNhkGAF1+ujZm4UDJhVThbb2BEz1O7AOKWq4w6YESx
+    6ZDFmDc35cPpyR6LEzm//nniyBo1ge89eCHOtTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:date:message-id:in-reply-to
     :references:subject:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520233374; bh=U
-    anCs2sokfvfKWqVMMzjUbeOVBv6s+1qsT6x8C77WfM=; b=LQUmnVQLekVaziwce
-    MTydrdpbFEQK9iac75CtR6tJy1CVRvB/KAZym9nRJLejctE4kPuSyeNaqdcdYVE1
-    rYjuFqMfo4/YYDaBzi9VI+82GHJalB7olmhy563O2KOJaxKRzycW0gfs2hwfA6AA
-    rSYyRY225MtUMeW5z3rKBA5TNNP0qfOWl6UxsFVADetXeWMJrJSvDfqrv3ke7wM2
-    o53tLKJcneQuDrRVvE2tSryA4+x6qHg8w7ZgDL0gysedOPUkCyP1/KHKCY3H2qqN
-    v3VGHgvWmyQyr9ISBtjhP1Ft1VoG1kP2F3n3kZT5wnntpX9pvKi3Zsami1TflznP
-    E8AwQ==
+    :content-transfer-encoding:sender; s=arctest; t=1520233373; bh=2
+    XbfjnN331D/AMhGhP0PBqiQ32vbCv55LRg7yoBiV1E=; b=oq/dVJJ/5vTh3gWF4
+    +jHtLLxZwQx7N0SlUQEJHQcT01LbJfZmc9XdCXhNd752E+vRirFR4sukyxsnK/9e
+    B8iDbzA9uV4qGx5XH9acfd74cYAkcCAhhFq/iPiY09kYLvibL70wVxSk+wkzk783
+    Msclb6H3KTR6FoHsxE7P/YrO8M9AcJiwXgLH26reFFaAHD7KMpkzsJpiHOfNau1w
+    4BHVd2ju437kX+u9wEJ8mJOobB65IwPumX8ATE6FusCR3Fi0kvAjBQPy632itxig
+    9TLqvM+B0URy2HGmvwo0uaVy8KM35iBq9VsNS/x2C5L4wjxgdmhc7wSRH+INSAqX
+    y3lxw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon,  5 Mar 2018 08:02:17 +0100
-Message-Id: <20180305070219.7131-4-Valentin.Vidic@CARNet.hr>
+Date: Mon,  5 Mar 2018 08:02:16 +0100
+Message-Id: <20180305070219.7131-3-Valentin.Vidic@CARNet.hr>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305070219.7131-1-Valentin.Vidic@CARNet.hr>
 References: <20180305070219.7131-1-Valentin.Vidic@CARNet.hr>
 X-SA-Exim-Connect-IP: 161.53.12.131
-Subject: [PATCH 4/6] staging: pi433: fix CamelCase for address_filtering enum
+Subject: [PATCH 3/6] staging: pi433: fix CamelCase for afterSyncInterrupt
 X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -88,110 +88,56 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixes checkpatch warnings:
+Fixes checkpatch warning:
 
-  CHECK: Avoid CamelCase: <filteringOff>
-  CHECK: Avoid CamelCase: <nodeAddress>
-  CHECK: Avoid CamelCase: <nodeOrBroadcastAddress>
+  CHECK: Avoid CamelCase: <afterSyncInterrupt>
 
 Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 ---
- drivers/staging/pi433/Documentation/pi433.txt | 12 ++++++------
- drivers/staging/pi433/pi433_if.c              |  6 +++---
- drivers/staging/pi433/rf69.c                  |  6 +++---
- drivers/staging/pi433/rf69_enum.h             |  6 +++---
- 4 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/staging/pi433/pi433_if.c  | 2 +-
+ drivers/staging/pi433/rf69.c      | 2 +-
+ drivers/staging/pi433/rf69_enum.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/pi433/Documentation/pi433.txt b/drivers/staging/pi433/Documentation/pi433.txt
-index 3313dff3c37e..2e8835bf2c9a 100644
---- a/drivers/staging/pi433/Documentation/pi433.txt
-+++ b/drivers/staging/pi433/Documentation/pi433.txt
-@@ -232,12 +232,12 @@ rf params:
- 			     amount of bytes that were requested by the read request.
- 		Attention: should be used in combination with sync, only
- 	enable_address_filtering;
--		filteringOff		- no address filtering will take place
--		nodeAddress		- all telegrams, not matching the node
--					  address will be internally discarded
--		nodeOrBroadcastAddress	- all telegrams, neither matching the
--					  node, nor the broadcast address will
--					  be internally discarded
-+		filtering_off		  - no address filtering will take place
-+		node_address		  - all telegrams, not matching the node
-+					    address will be internally discarded
-+		node_or_broadcast_address - all telegrams, neither matching the
-+					    node, nor the broadcast address will
-+					    be internally discarded
- 		Attention: Sync option must be enabled in order to use this feature
- 	enable_crc
- 		optionOn	- a crc will be calculated over the payload of
 diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 730200597218..88da91d31e61 100644
+index 57db806ff5af..730200597218 100644
 --- a/drivers/staging/pi433/pi433_if.c
 +++ b/drivers/staging/pi433/pi433_if.c
-@@ -257,7 +257,7 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
- 		payload_length = rx_cfg->fixed_message_length;
- 		if (rx_cfg->enable_length_byte  == OPTION_ON)
- 			payload_length++;
--		if (rx_cfg->enable_address_filtering != filteringOff)
-+		if (rx_cfg->enable_address_filtering != filtering_off)
- 			payload_length++;
- 		ret = rf69_set_payload_length(dev->spi, payload_length);
- 		if (ret < 0)
-@@ -274,7 +274,7 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
+@@ -209,7 +209,7 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
+ 			return ret;
+ 
+ 		ret = rf69_set_fifo_fill_condition(dev->spi,
+-						   afterSyncInterrupt);
++						   after_sync_interrupt);
  		if (ret < 0)
  			return ret;
- 	}
--	if (rx_cfg->enable_address_filtering != filteringOff) {
-+	if (rx_cfg->enable_address_filtering != filtering_off) {
- 		ret = rf69_set_node_address(dev->spi, rx_cfg->node_address);
- 		if (ret < 0)
- 			return ret;
-@@ -502,7 +502,7 @@ pi433_receive(void *data)
- 	}
- 
- 	/* address byte enabled? */
--	if (dev->rx_cfg.enable_address_filtering != filteringOff) {
-+	if (dev->rx_cfg.enable_address_filtering != filtering_off) {
- 		u8 dummy;
- 
- 		bytes_total--;
+ 	} else {
 diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index a73a3d2c0685..f419a3d4485b 100644
+index fc4919711477..a73a3d2c0685 100644
 --- a/drivers/staging/pi433/rf69.c
 +++ b/drivers/staging/pi433/rf69.c
-@@ -687,11 +687,11 @@ int rf69_disable_crc(struct spi_device *spi)
- int rf69_set_address_filtering(struct spi_device *spi, enum address_filtering address_filtering)
- {
- 	switch (address_filtering) {
--	case filteringOff:
-+	case filtering_off:
- 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_OFF);
--	case nodeAddress:
-+	case node_address:
- 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_NODE);
--	case nodeOrBroadcastAddress:
-+	case node_or_broadcast_address:
- 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST);
+@@ -625,7 +625,7 @@ int rf69_set_fifo_fill_condition(struct spi_device *spi, enum fifo_fill_conditio
+ 	switch (fifo_fill_condition) {
+ 	case always:
+ 		return rf69_set_bit(spi, REG_SYNC_CONFIG, MASK_SYNC_CONFIG_FIFO_FILL_CONDITION);
+-	case afterSyncInterrupt:
++	case after_sync_interrupt:
+ 		return rf69_clear_bit(spi, REG_SYNC_CONFIG, MASK_SYNC_CONFIG_FIFO_FILL_CONDITION);
  	default:
  		dev_dbg(&spi->dev, "set: illegal input param");
 diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
-index d82d2be88cbd..43990e74db85 100644
+index 81287ce6be35..d82d2be88cbd 100644
 --- a/drivers/staging/pi433/rf69_enum.h
 +++ b/drivers/staging/pi433/rf69_enum.h
-@@ -129,9 +129,9 @@ enum tx_start_condition {
+@@ -114,7 +114,7 @@ enum flag {
  };
  
- enum address_filtering {
--	filteringOff,
--	nodeAddress,
--	nodeOrBroadcastAddress
-+	filtering_off,
-+	node_address,
-+	node_or_broadcast_address
+ enum fifo_fill_condition {
+-	afterSyncInterrupt,
++	after_sync_interrupt,
+ 	always
  };
  
- enum dagc {
 -- 
 2.16.1
 
