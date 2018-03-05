@@ -1,116 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932182AbeCET5h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:57:37 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50538 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751779AbeCET5f (ORCPT
+        id S932251AbeCET7J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:59:09 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34973 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751779AbeCET7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:57:35 -0500
-X-Google-Smtp-Source: AG47ELsdJlDWx/98IaoQP3ucsciGOtfxwv1XSkFUs8O0yx2/pSv9Qc9zZHCdkaboMJ+COGRnc48kYA==
-Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the
- CMB
-To: Keith Busch <keith.busch@intel.com>, Oliver <oohall@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-8-logang@deltatee.com>
- <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
- <20180305160004.GA30975@localhost.localdomain>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <36c78987-006a-a97f-1d18-b0a08cbea9d4@grimberg.me>
-Date: Mon, 5 Mar 2018 21:57:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 5 Mar 2018 14:59:07 -0500
+X-Google-Smtp-Source: AG47ELt9PndWTf2owNBC28bZ7OlLlhEFg7eLMaGQ09unUeqNndHObqAAFfffY59fAWmY0mij8GZPxg==
+Date: Mon, 5 Mar 2018 14:59:05 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Howard McLauchlan <hmclauchlan@fb.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, kernel-team@fb.com,
+        Yonghong Song <yhs@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Omar Sandoval <osandov@osandov.com>
+Subject: Re: [PATCH] uprobe: add support for overlayfs
+Message-ID: <20180305195904.sliaqqv4dzuebque@destiny>
+References: <20180228004014.445-1-hmclauchlan@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20180305160004.GA30975@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180228004014.445-1-hmclauchlan@fb.com>
+User-Agent: NeoMutt/20170714 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->>> -       if (nvmeq->sq_cmds_io)
->>> -               memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
->>> -       else
->>> -               memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
->>> +       memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
->>
->> Hmm, how safe is replacing memcpy_toio() with regular memcpy()? On PPC
->> the _toio() variant enforces alignment, does the copy with 4 byte
->> stores, and has a full barrier after the copy. In comparison our
->> regular memcpy() does none of those things and may use unaligned and
->> vector load/stores. For normal (cacheable) memory that is perfectly
->> fine, but they can cause alignment faults when targeted at MMIO
->> (cache-inhibited) memory.
->>
->> I think in this particular case it might be ok since we know SEQs are
->> aligned to 64 byte boundaries and the copy is too small to use our
->> vectorised memcpy(). I'll assume we don't need explicit ordering
->> between writes of SEQs since the existing code doesn't seem to care
->> unless the doorbell is being rung, so you're probably fine there too.
->> That said, I still think this is a little bit sketchy and at the very
->> least you should add a comment explaining what's going on when the CMB
->> is being used. If someone more familiar with the NVMe driver could
->> chime in I would appreciate it.
+On Tue, Feb 27, 2018 at 04:40:14PM -0800, Howard McLauchlan wrote:
+> uprobes cannot successfully attach to binaries located in a directory
+> mounted with overlayfs.
 > 
-> I may not be understanding the concern, but I'll give it a shot.
+> To verify, create directories for mounting overlayfs
+> (upper,lower,work,merge), move some binary into merge/ and use readelf
+> to obtain some known instruction of the binary. I used /bin/true and the
+> entry instruction(0x13b0):
 > 
-> You're right, the start of any SQE is always 64-byte aligned, so that
-> should satisfy alignment requirements.
+> 	$ mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merge
+> 	$ cd /sys/kernel/debug/tracing
+> 	$ echo 'p:true_entry PATH_TO_MERGE/merge/true:0x13b0' > uprobe_events
+> 	$ echo 1 > events/uprobes/true_entry/enable
 > 
-> The order when writing multiple/successive SQEs in a submission queue
-> does matter, and this is currently serialized through the q_lock.
+> This returns 'bash: echo: write error: Input/output error' and dmesg
+> tells us 'event trace: Could not enable event true_entry'
 > 
-> The order in which the bytes of a single SQE is written doesn't really
-> matter as long as the entire SQE is written into the CMB prior to writing
-> that SQ's doorbell register.
+> This change makes create_trace_uprobe() look for the real inode of a
+> dentry. In the case of normal filesystems, this simplifies to just
+> returning the inode. In the case of overlayfs(and similar fs) we will
+> obtain the underlying dentry and corresponding inode, upon which uprobes
+> can successfully register.
 > 
-> The doorbell register is written immediately after copying a command
-> entry into the submission queue (ignore "shadow buffer" features),
-> so the doorbells written to commands submitted is 1:1.
+> Running the example above with the patch applied, we can see that the
+> uprobe is enabled and will output to trace as expected.
 > 
-> If a CMB SQE and DB order is not enforced with the memcpy, then we do
-> need a barrier after the SQE's memcpy and before the doorbell's writel.
+> Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
 
-Keith, while we're on this, regardless of cmb, is SQE memcopy and DB 
-update ordering always guaranteed?
+Reviewed-by: Josef Bacik <jbacik@fb.com>
 
-If you look at mlx4 (rdma device driver) that works exactly the same as
-nvme you will find:
---
-                 qp->sq.head += nreq;
+Thanks,
 
-                 /*
-                  * Make sure that descriptors are written before
-                  * doorbell record.
-                  */
-                 wmb();
-
-                 writel(qp->doorbell_qpn,
-                        to_mdev(ibqp->device)->uar_map + 
-MLX4_SEND_DOORBELL);
-
-                 /*
-                  * Make sure doorbells don't leak out of SQ spinlock
-                  * and reach the HCA out of order.
-                  */
-                 mmiowb();
---
-
-That seems to explicitly make sure to place a barrier before updating
-the doorbell. So as I see it, either ordering is guaranteed and the
-above code is redundant, or nvme needs to do the same.
-
-Thoughts?
+Josef
