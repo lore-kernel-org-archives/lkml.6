@@ -1,60 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934405AbeCEKnq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:43:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933054AbeCEKnn (ORCPT
+        id S934196AbeCEKoN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:44:13 -0500
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:54964 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934398AbeCEKoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:43:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B0F9601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v5 4/4] arm64: dts: sdm845: Add serial console support
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: andy.gross@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, sboyd@codeaurora.org,
-        evgreen@chromium.org, dianders@chromium.org, marc.zyngier@arm.com,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-References: <20180222061208.2031-1-rnayak@codeaurora.org>
- <20180222061208.2031-5-rnayak@codeaurora.org>
- <20180304195930.GQ93895@bjorns-mbp-2.lan>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <9d24e89f-38be-59e4-6f76-c273dd4d4e79@codeaurora.org>
-Date: Mon, 5 Mar 2018 16:13:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 5 Mar 2018 05:44:04 -0500
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.47,426,1515452400";
+   d="scan'";a="46166328"
+From: Denis OSTERLAND <denis.osterland@diehl.com>
+To: "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@free-electrons.com"
+        <alexandre.belloni@free-electrons.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mgr@pengutronix.de" <mgr@pengutronix.de>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "jdelvare@suse.com" <jdelvare@suse.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Denis OSTERLAND <denis.osterland@diehl.com>
+Subject: [PATCH v3 1/4] rtc: isl1208: enable interrupt after context
+ preparation
+Thread-Topic: [PATCH v3 1/4] rtc: isl1208: enable interrupt after context
+ preparation
+Thread-Index: AQHTtG7affRVgsG8kEWakaUB8ZWDxA==
+Date: Mon, 5 Mar 2018 10:43:53 +0000
+Message-ID: <1520246373-19023-2-git-send-email-Denis.Osterland@diehl.com>
+References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
+In-Reply-To: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.153.3.249]
 MIME-Version: 1.0
-In-Reply-To: <20180304195930.GQ93895@bjorns-mbp-2.lan>
-Content-Type: text/plain; charset=utf-8
+X-GBS-PROC: byQFdw3ukCM+zy1/poiPc4Q+xc9r/a6t2HuWj6Nw2bVXA0Qmq+ld6g3d3JjcGGr5
+X-MIMETrack: Itemize by SMTP Server on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 05.03.2018 11:44:00,
+        Serialize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 05.03.2018 11:44:01,
+        Serialize complete at 05.03.2018 11:44:01,
+        Itemize by ntm_grab.EXE on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 05.03.2018 11:44:01,
+        Serialize by Router on DIGNS29/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
+ 09, 2018) at 05.03.2018 11:44:01
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
+The interrupt handler got enabled very early. If the interrupt cause is
+triggering immediately before the context is fully prepared. This can
+lead to undefined behaviour. Therefor we move the interrupt enable code
+to the end of the probe function.
 
-On 03/05/2018 01:29 AM, Bjorn Andersson wrote:
-> On Wed 21 Feb 22:12 PST 2018, Rajendra Nayak wrote:
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> [..]
->> +			qup_uart2: serial@a84000 {
->> +				compatible = "qcom,geni-debug-uart";
->> +				reg = <0xa84000 0x4000>;
->> +				reg-names = "se-phys";
->> +				clock-names = "se-clk";
-> 
-> This was changed to "se" in v3 of the GENI patchset, with that this
-> boots nicely again.
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
+---
+ drivers/rtc/rtc-isl1208.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-Thanks Bjorn for testing.
-
-Karthik, it would be good if you could include just this patch from this series as part
-of your GENI series for the next (and subsequent) repost, with updates as needed based on
-binding changes?
-
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index c8b4953..a13a4ba 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -635,23 +635,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (isl1208_i2c_validate_client(client) < 0)
+ 		return -ENODEV;
+ 
+-	if (client->irq > 0) {
+-		rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+-					       isl1208_rtc_interrupt,
+-					       IRQF_SHARED | IRQF_ONESHOT,
+-					       isl1208_driver.driver.name,
+-					       client);
+-		if (!rc) {
+-			device_init_wakeup(&client->dev, 1);
+-			enable_irq_wake(client->irq);
+-		} else {
+-			dev_err(&client->dev,
+-				"Unable to request irq %d, no alarm support\n",
+-				client->irq);
+-			client->irq = 0;
+-		}
+-	}
+-
+ 	rtc = devm_rtc_device_register(&client->dev, isl1208_driver.driver.name,
+ 				  &isl1208_rtc_ops,
+ 				  THIS_MODULE);
+@@ -674,6 +657,23 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	if (rc)
+ 		return rc;
+ 
++	if (client->irq > 0) {
++		rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					       isl1208_rtc_interrupt,
++					       IRQF_SHARED | IRQF_ONESHOT,
++					       isl1208_driver.driver.name,
++					       client);
++		if (!rc) {
++			device_init_wakeup(&client->dev, 1);
++			enable_irq_wake(client->irq);
++		} else {
++			dev_err(&client->dev,
++				"Unable to request irq %d, no alarm support\n",
++				client->irq);
++			client->irq = 0;
++		}
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+2.7.4
+
+
+Diehl AKO Stiftung & Co. KG, Pfannerstraße 75-83, 88239 Wangen im Allgäu
+Bereichsvorstand: Dr.-Ing. Michael Siedentop (Sprecher), Josef Fellner (Mitglied)
+Sitz der Gesellschaft: Wangen i.A. – Registergericht: Amtsgericht Ulm HRA 620609 – Persönlich haftende Gesellschafterin: Diehl Verwaltungs-Stiftung – Sitz: Nürnberg – Registergericht: Amtsgericht Nürnberg HRA 11756 –
+Vorstand: Dr.-Ing. E.h. Thomas Diehl (†) (Vorsitzender), Herr Dipl.-Wirtsch.-Ing. Wolfgang Weggen (stellvertretender Vorsitzender), Dipl.-Kfm. Claus Günther, Dipl.-Kfm. Frank Gutzeit, Dr.-Ing. Heinrich Schunk, Dr.-Ing. Michael Siedentop , Dipl.-Kfm. Dr.-Ing. Martin Sommer, Dipl.-Ing. (FH) Rainer von Borstel, Vorsitzender des Aufsichtsrates: Dr. Klaus Maier
+___________________________________________________________________________________________________
+Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
+Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht. Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
+The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited.
