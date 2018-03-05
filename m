@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753352AbeCEWXw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:23:52 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37248 "EHLO
+        id S1753370AbeCEWX4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:23:56 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37308 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753281AbeCEWXt (ORCPT
+        with ESMTP id S1753281AbeCEWXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:23:49 -0500
+        Mon, 5 Mar 2018 17:23:53 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -15,132 +15,104 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         dianders@chromium.org, linux-rockchip@lists.infradead.org,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
+        Sonny Rao <sonnyrao@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 06/38] drm/rockchip: add mutex vop lock
-Date: Mon,  5 Mar 2018 23:22:58 +0100
-Message-Id: <20180305222324.5872-7-enric.balletbo@collabora.com>
+Subject: [PATCH v4 08/38] drm/rockchip: Only wait for panel ACK on PSR entry
+Date: Mon,  5 Mar 2018 23:23:00 +0100
+Message-Id: <20180305222324.5872-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
 References: <20180305222324.5872-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: zain wang <wzz@rock-chips.com>
 
-Add a lock to vop to avoid disabling the crtc while waiting for a line
-flag while enabling psr. If we disable in the middle of waiting for the
-line flag, we'll end up timing out or worse.
+We currently wait for the panel to mirror our intended PSR state
+before continuing on both PSR enter and PSR exit. This is really
+only important to do when we're entering PSR, since we want to
+be sure the last frame we pushed is being served from the panel's
+internal fb before shutting down the soc blocks (vop/analogix).
 
+This patch changes the behavior such that we only wait for the
+panel to complete the PSR transition when we're entering PSR, and
+to skip verification when we're exiting.
+
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Cc: Sonny Rao <sonnyrao@chromium.org>
 Signed-off-by: zain wang <wzz@rock-chips.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 30 +++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 5 ++++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 63fbe789a5dd..184f980679af 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -117,6 +117,8 @@ struct vop {
- 	spinlock_t reg_lock;
- 	/* lock vop irq reg */
- 	spinlock_t irq_lock;
-+	/* protects crtc enable/disable */
-+	struct mutex vop_lock;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 806c3878b3d6..5a2e35dc41e3 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -125,7 +125,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
+ 	psr_vsc.DB0 = 0;
+ 	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
  
- 	unsigned int irq;
+-	return analogix_dp_send_psr_spd(dp, &psr_vsc);
++	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
  
-@@ -569,6 +571,7 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
+@@ -151,7 +151,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+ 	if (ret != 1)
+ 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
  
- 	WARN_ON(vop->event);
+-	return analogix_dp_send_psr_spd(dp, &psr_vsc);
++	return analogix_dp_send_psr_spd(dp, &psr_vsc, false);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
  
-+	mutex_lock(&vop->vop_lock);
- 	drm_crtc_vblank_off(crtc);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index 920607d7eb3e..6a96ef7e6934 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -253,7 +253,7 @@ void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
+ void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
+ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
+ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+-			     struct edp_vsc_psr *vsc);
++			     struct edp_vsc_psr *vsc, bool blocking);
+ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+ 			     struct drm_dp_aux_msg *msg);
  
- 	/*
-@@ -604,6 +607,7 @@ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
- 	clk_disable(vop->aclk);
- 	clk_disable(vop->hclk);
- 	pm_runtime_put(vop->dev);
-+	mutex_unlock(&vop->vop_lock);
- 
- 	if (crtc->state->event && !crtc->state->active) {
- 		spin_lock_irq(&crtc->dev->event_lock);
-@@ -873,10 +877,13 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
- 	uint32_t pin_pol, val;
- 	int ret;
- 
-+	mutex_lock(&vop->vop_lock);
-+
- 	WARN_ON(vop->event);
- 
- 	ret = vop_enable(crtc);
- 	if (ret) {
-+		mutex_unlock(&vop->vop_lock);
- 		DRM_DEV_ERROR(vop->dev, "Failed to enable vop (%d)\n", ret);
- 		return;
- 	}
-@@ -940,6 +947,7 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
- 	clk_set_rate(vop->dclk, adjusted_mode->clock * 1000);
- 
- 	VOP_REG_SET(vop, common, standby, 0);
-+	mutex_unlock(&vop->vop_lock);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 005a3f7005d2..9df2f3ef000c 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -1007,7 +1007,7 @@ static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
  }
  
- static bool vop_fs_irq_is_pending(struct vop *vop)
-@@ -1478,15 +1486,21 @@ int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout)
+ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+-			     struct edp_vsc_psr *vsc)
++			     struct edp_vsc_psr *vsc, bool blocking)
  {
- 	struct vop *vop = to_vop(crtc);
- 	unsigned long jiffies_left;
-+	int ret = 0;
+ 	unsigned int val;
+ 	int ret;
+@@ -1053,6 +1053,9 @@ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+ 	val |= IF_EN;
+ 	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
  
- 	if (!crtc || !vop->is_enabled)
- 		return -ENODEV;
- 
--	if (mstimeout <= 0)
--		return -EINVAL;
-+	mutex_lock(&vop->vop_lock);
-+	if (mstimeout <= 0) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
--	if (vop_line_flag_irq_is_enabled(vop))
--		return -EBUSY;
-+	if (vop_line_flag_irq_is_enabled(vop)) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
- 	reinit_completion(&vop->line_flag_completion);
- 	vop_line_flag_irq_enable(vop);
-@@ -1497,10 +1511,13 @@ int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout)
- 
- 	if (jiffies_left == 0) {
- 		DRM_DEV_ERROR(vop->dev, "Timeout waiting for IRQ\n");
--		return -ETIMEDOUT;
-+		ret = -ETIMEDOUT;
-+		goto out;
- 	}
- 
--	return 0;
-+out:
-+	mutex_unlock(&vop->vop_lock);
-+	return ret;
- }
- EXPORT_SYMBOL(rockchip_drm_wait_vact_end);
- 
-@@ -1550,6 +1567,7 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 
- 	spin_lock_init(&vop->reg_lock);
- 	spin_lock_init(&vop->irq_lock);
-+	mutex_init(&vop->vop_lock);
- 
- 	ret = devm_request_irq(dev, vop->irq, vop_isr,
- 			       IRQF_SHARED, dev_name(dev), vop);
++	if (!blocking)
++		return 0;
++
+ 	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
+ 		psr_status >= 0 &&
+ 		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
 -- 
 2.16.1
