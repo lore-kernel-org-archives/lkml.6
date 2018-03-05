@@ -1,71 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932891AbeCEFwa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 00:52:30 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47692 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932662AbeCEFw3 (ORCPT
+        id S932873AbeCEGNz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 01:13:55 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38871 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932522AbeCEGNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 00:52:29 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 66E4A6022C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
+        Mon, 5 Mar 2018 01:13:52 -0500
+X-Google-Smtp-Source: AG47ELtnNC6bFAOjixGeqWPJRLtEbedh+fOqH+UahvjT2TBswHAsGrg30jhCKQ3IPPYXvMRuzEaorQ==
+Date: Mon, 5 Mar 2018 11:43:49 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Claudio Scordino <claudio@evidence.eu.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RESEND][PATCH] bug: Exclude non-BUG/WARN exceptions from report_bug()
-References: <20180301225934.GA34350@beast>
-        <CA+55aFzG6od5cy_mmepygSb_9m3Em336T00LoOK-MVkVPsJ-hg@mail.gmail.com>
-        <CAGXu5jKCsWvRRZRhdcFdDTipjWZcL_UO6jekH2R-_C3f8Mi1-A@mail.gmail.com>
-        <CA+55aFwPZdYGQaEww_wPM_AibQ7tpNSXXAQpKkbgBQRrYN2WZA@mail.gmail.com>
-Date: Mon, 05 Mar 2018 07:52:23 +0200
-In-Reply-To: <CA+55aFwPZdYGQaEww_wPM_AibQ7tpNSXXAQpKkbgBQRrYN2WZA@mail.gmail.com>
-        (Linus Torvalds's message of "Fri, 2 Mar 2018 13:23:27 -0800")
-Message-ID: <87a7vn9ii0.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Subject: Re: [PATCH v2] cpufreq: schedutil: rate limits for SCHED_DEADLINE
+Message-ID: <20180305061349.GF23018@vireshk-i7>
+References: <1519815970-5686-1-git-send-email-claudio@evidence.eu.com>
+ <CAJZ5v0g5SS7A6xNQo=GNaMudRgFC8BL9wP1C4Nh8T-+NygYS+A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0g5SS7A6xNQo=GNaMudRgFC8BL9wP1C4Nh8T-+NygYS+A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On 28-02-18, 12:22, Rafael J. Wysocki wrote:
+> On Wed, Feb 28, 2018 at 12:06 PM, Claudio Scordino
+> <claudio@evidence.eu.com> wrote:
+> > When the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> > we should not wait for the rate limit, otherwise we may miss some
+> > deadline.
+> >
+> > Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
+> > shown reductions of even 10% of deadline misses with a negligible
+> > increase of energy consumption (measured through Baylibre Cape).
+> >
+> > Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+> > CC: Ingo Molnar <mingo@redhat.com>
+> > CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> > CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > CC: Morten Rasmussen <morten.rasmussen@arm.com>
+> > CC: Juri Lelli <juri.lelli@redhat.com>
+> > CC: Viresh Kumar <viresh.kumar@linaro.org>
+> > CC: Vincent Guittot <vincent.guittot@linaro.org>
+> > CC: Todd Kjos <tkjos@android.com>
+> > CC: Joel Fernandes <joelaf@google.com>
+> > CC: linux-pm@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
+> > ---
+> > Changes from v1:
+> >  - Logic moved from sugov_should_update_freq() to
+> >    sugov_update_single()/_shared() to not duplicate data structures
+> >  - Rate limit not ignored in case of "fast switch"
+> 
+> I'm not sure about this last bit.
+> 
+> IMO you can set sg_policy->need_freq_update even in the "fast switch"
+> case to start with and special case it in the future if that turns out
+> to be problematic.  That is, unless you have data indicating that it
+> already is problematic, of course. :-)
+> 
+> > ---
+> >  kernel/sched/cpufreq_schedutil.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index 7936f54..ca6ce72 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -273,6 +273,14 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+> >         sugov_set_iowait_boost(sg_cpu, time);
+> >         sg_cpu->last_update = time;
+> >
+> > +       /*
+> > +        * Make sugov_should_update_freq() ignore the rate limit when DL
+> > +        * has increased the utilization.
+> > +        */
+> > +       if ((cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl) &&
+> > +                       !(sg_policy->policy->fast_switch_enabled))
+> > +               sg_policy->need_freq_update = true;
+> > +
 
-> On Fri, Mar 2, 2018 at 12:22 PM, Kees Cook <keescook@chromium.org> wrote:
->>
->> My question would be, will the existing automated systems that parse
->> the "PATCH" subject deal with a non-whitespaced suffix like this?
->
-> Hmm. Maybe just space them out. That's what networking already does,
-> ie you'll see things like
->
->     [PATCH net-next v3 0/5] patch description here
->
->     [PATCH net] some-patch-description
->
-> in subject lines. Maybe we can just encourage that format in general.
->
-> And yes, I agree, for when the targets are obvious, this clearly isn't
-> needed. And often they are.
->
-> So this would still likely be the exception rather than the rule, but
-> it would be a lot more obvious than hiding a one-liner commentary deep
-> in the middle of the email.
-
-At least for me (as the wireless-drivers maintainer) this would be a
-major improvement as it's not always clear to which to tree a patch
-should be applied and it would save unnecessary ping pong when I need to
-ask which tree is the patch going to. I think few times I have even
-accidentally applied a patch which Dave has already applied to the net tree
-because of the target tree was not clearly marked.
-
-So at least I would very much welcome having this documented somewhere
-in Documentation so that I can start convincing people to use it more :)
+And a new routine for this block would be good as well.
 
 -- 
-Kalle Valo
+viresh
