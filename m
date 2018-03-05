@@ -1,65 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932406AbeCEWpr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:45:47 -0500
-Received: from gateway20.websitewelcome.com ([192.185.67.41]:46631 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752508AbeCEWpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:45:46 -0500
-Date: Mon, 5 Mar 2018 15:56:14 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] tipc: bcast: use true and false for boolean values
-Message-ID: <20180305215614.GA15175@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.245.224
-X-Source-L: No
-X-Exim-ID: 1esy5e-0022RZ-Up
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-245-224.static.axtel.net (embeddedor) [187.162.245.224]:41286
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 23
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S932616AbeCEWzV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:55:21 -0500
+Received: from mx.exactcode.de ([144.76.154.42]:47396 "EHLO mx.exactcode.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752508AbeCEWzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 17:55:20 -0500
+From: =?iso-8859-1?Q?Ren=E9_Rebe?= <rene@exactcode.de>
+Content-Type: text/plain; charset=iso-8859-1
+Subject: [PATCH] k10temp support for AMD Ryzen w/ Vega gfx
+Date: Mon, 5 Mar 2018 23:38:24 +0100
+Message-Id: <1769691A-DD1D-4641-B7BA-62C1BA571EBF@exactcode.de>
+Cc: Clemens Ladisch <clemens@ladisch.de>, linux-kernel@vger.kernel.org
+To: linux-hwmon@vger.kernel.org
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+X-Mailer: Apple Mail (2.1878.6)
+X-Spam-Score: -4.1 (----)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w25MtPq8008971
 
-Assign true or false to boolean variables instead of an integer value.
+Hi,
 
-This issue was detected with the help of Coccinelle.
+This enables k10temp for the new AMD Ryzen APUs w/ Vega Mobile Gfx.
+Tested on Ryzen 5 2500U, the temperature looked plausible.
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- net/tipc/bcast.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Signed-off-by: René Rebe <rene@exactcode.de>
 
-diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
-index 37892b3..f371117 100644
---- a/net/tipc/bcast.c
-+++ b/net/tipc/bcast.c
-@@ -574,5 +574,5 @@ void tipc_nlist_purge(struct tipc_nlist *nl)
- {
- 	tipc_dest_list_purge(&nl->list);
- 	nl->remote = 0;
--	nl->local = 0;
-+	nl->local = false;
- }
+PS: 1st RFC - might get white-space damaged, will resend when ACKed.
+Sorry my Xemacs/Mew broke.
+
+--- linux-4.15/drivers/hwmon/k10temp.c.vanilla	2018-03-05 22:22:30.974331180 +0000
++++ linux-4.15/drivers/hwmon/k10temp.c	2018-03-05 22:24:17.186327291 +0000
+@@ -40,6 +40,10 @@
+ #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+ #endif
+ 
++#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
++#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
++#endif
++
+ /* CPUID function 0x80000001, ebx */
+ #define CPUID_PKGTYPE_MASK	0xf0000000
+ #define CPUID_PKGTYPE_F		0x00000000
+@@ -89,6 +93,8 @@
+ 	{ 0x17, "AMD Ryzen Threadripper 1950", 10000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1920", 10000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1910", 10000 },
++	{ 0x17, "AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx", 20000 },
++	{ 0x17, "AMD Ryzen 7 2700U with Radeon Vega Mobile Gfx", 20000 },
+ };
+ 
+ static void read_tempreg_pci(struct pci_dev *pdev, u32 *regval)
+@@ -289,6 +2944,7 @@
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+ 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+
 -- 
-2.7.4
+ ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
+ http://exactcode.com | http://exactscan.com | http://ocrkit.com | http://t2-project.org | http://rene.rebe.de
