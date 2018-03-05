@@ -1,70 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932251AbeCEOuf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:50:35 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6140 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752465AbeCEOuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:50:00 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH v3 5/8] scsi: hisi_sas: increase timer expire of internal abort task
-Date: Mon, 5 Mar 2018 22:48:47 +0800
-Message-ID: <1520261330-204596-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520261330-204596-1-git-send-email-john.garry@huawei.com>
-References: <1520261330-204596-1-git-send-email-john.garry@huawei.com>
+        id S932430AbeCEOuq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:50:46 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:56824 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbeCEOun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:50:43 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w25EoZuF001178
+X-Nifty-SrcIP: [209.85.217.172]
+X-Google-Smtp-Source: AG47ELubSqvh01ebr+z3NqHhY441tUEXaEGydr/FyLWUvFZ1TvhGMopeZwvjEnjzUKm4ET84Qn0R7bGnp1hmrwyyJaQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180228191805.20094-3-linux@rasmusvillemoes.dk>
+References: <CA+55aFz_ww8ohU68Jz34pg_x7gpGpJ+FC-dmS_Rm_VvY01GGpg@mail.gmail.com>
+ <20180228191805.20094-1-linux@rasmusvillemoes.dk> <20180228191805.20094-3-linux@rasmusvillemoes.dk>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Mar 2018 23:49:54 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASNtKdRqOkBb6E3_EiVp2kEvWTqDOAN3VXMWWTiTF_rOA@mail.gmail.com>
+Message-ID: <CAK7LNASNtKdRqOkBb6E3_EiVp2kEvWTqDOAN3VXMWWTiTF_rOA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] fixdep: do not ignore kconfig.h
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+2018-03-01 4:17 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+> kconfig.h was excluded from consideration by fixdep by
+> 6a5be57f0f00 (fixdep: fix extraneous dependencies) to avoid some false
+> positive hits
+>
+> (1) include/config/.h
+> (2) include/config/h.h
+> (3) include/config/foo.h
+>
+> (1) occurred because kconfig.h contains the string CONFIG_ in a
+> comment. However, since dee81e988674 (fixdep: faster CONFIG_ search), we
+> have a check that the part after CONFIG_ is non-empty, so this does not
+> happen anymore (and CONFIG_ appears by itself elsewhere, so that check
+> is worthwhile).
+>
+> (2) comes from the include guard, __LINUX_KCONFIG_H. But with the
+> previous patch, we no longer match that either.
+>
+> That leaves (3), which amounts to one [1] false dependency (aka stat() call
+> done by make), which I think we can live with:
+>
+> We've already had one case [2] where the lack of include/linux/kconfig.h in
+> the .o.cmd file caused a missing rebuild, and while I originally thought
+> we should just put kconfig.h in the dependency list without parsing it
+> for the CONFIG_ pattern, we actually do have some real CONFIG_ symbols
+> mentioned in it, and one can imagine some translation unit that just
+> does '#ifdef __BIG_ENDIAN' but doesn't through some other header
+> actually depend on CONFIG_CPU_BIG_ENDIAN - so changing the target
+> endianness could end up rebuilding the world, minus that small
+> TU. Quoting Linus,
+>
+>   ... when missing dependencies cause a missed re-compile, the resulting
+>   bugs can be _really_ subtle.
+>
+> [1] well, two, we now also have CONFIG_BOOGER/booger.h - we could change
+> that to FOO if we care
+>
+> [2] https://lkml.org/lkml/2018/2/22/838
+>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+>  scripts/basic/fixdep.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+> index 1b21870d6e7f..449b68c4c90c 100644
+> --- a/scripts/basic/fixdep.c
+> +++ b/scripts/basic/fixdep.c
+> @@ -283,7 +283,6 @@ static int is_ignored_file(const char *s, int len)
+>  {
+>         return str_ends_with(s, len, "include/generated/autoconf.h") ||
+>                str_ends_with(s, len, "include/generated/autoksyms.h") ||
+> -              str_ends_with(s, len, "include/linux/kconfig.h") ||
+>                str_ends_with(s, len, ".ver");
+>  }
+>
+> --
+> 2.15.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-The current 110ms expiry time is not long enough for the internal
-abort task.
 
-The reason is that the internal abort task could be blocked in HW
-if the HW is retrying to set up link. The internal abort task will
-be executed only when the retry process finished.
+The series, applied to linux-kbuild/fixes.  Thanks!
 
-The maximum time is 5s for the retry of setting up link. So, the timer
-expire should be more than 5s. This patch increases it from 110ms to 6s.
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 9d16372..9ff8790 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -871,6 +871,7 @@ static void hisi_sas_tmf_timedout(struct timer_list *t)
- 
- #define TASK_TIMEOUT 20
- #define TASK_RETRY 3
-+#define INTERNAL_ABORT_TIMEOUT 6
- static int hisi_sas_exec_internal_tmf_task(struct domain_device *device,
- 					   void *parameter, u32 para_len,
- 					   struct hisi_sas_tmf_task *tmf)
-@@ -1574,7 +1575,7 @@ static int hisi_sas_query_task(struct sas_task *task)
- 	task->task_proto = device->tproto;
- 	task->task_done = hisi_sas_task_done;
- 	task->slow_task->timer.function = hisi_sas_tmf_timedout;
--	task->slow_task->timer.expires = jiffies + msecs_to_jiffies(110);
-+	task->slow_task->timer.expires = jiffies + INTERNAL_ABORT_TIMEOUT*HZ;
- 	add_timer(&task->slow_task->timer);
- 
- 	res = hisi_sas_internal_abort_task_exec(hisi_hba, sas_dev->device_id,
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
