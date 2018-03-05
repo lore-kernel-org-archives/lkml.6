@@ -1,60 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933032AbeCEHTD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:19:03 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:32068 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932679AbeCEHTB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:19:01 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="37471646"
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>
-Subject: [PATCH] x86/tools/relocs: comments cleanup
-Date: Mon, 5 Mar 2018 15:15:34 +0800
-Message-ID: <20180305071534.43448-1-caoj.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.14.3
+        id S933066AbeCEHUj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:20:39 -0500
+Received: from mga06.intel.com ([134.134.136.31]:57769 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932679AbeCEHUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 02:20:37 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
+   d="scan'208";a="22030670"
+Date: Mon, 5 Mar 2018 15:11:36 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, "Du, Changbin" <changbin.du@intel.com>,
+        acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180305071136.qs3lsoh432mzbizw@intel.com>
+References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
+ <20180302105254.234axj7b3nixakav@intel.com>
+ <20180302113845.GC16348@krava>
+ <20180302144732.GA2471@danjae.aot.lge.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: DF65948AE762.A9E14
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180302144732.GA2471@danjae.aot.lge.com>
+User-Agent: NeoMutt/20171027-42-ad8712
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. typo fix: there -> their
-2. remove superfluous "by"
+Hi,
+On Fri, Mar 02, 2018 at 11:47:32PM +0900, Namhyung Kim wrote:
+> Hi,
+> 
+> On Fri, Mar 02, 2018 at 12:38:45PM +0100, Jiri Olsa wrote:
+> > On Fri, Mar 02, 2018 at 06:52:54PM +0800, Du, Changbin wrote:
+> > > Hello, any comment?
+> > 
+> > sry, overlooked this one
+> > 
+> > SNIP
+> > 
+> > > > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+> > > > index 68b65b1..c660fe6 100644
+> > > > --- a/tools/perf/util/thread.c
+> > > > +++ b/tools/perf/util/thread.c
+> > > > @@ -212,6 +212,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
+> > > >  			unwind__flush_access(thread);
+> > > >  	}
+> > > >  
+> > > > +	thread->comm_changed = true;
+> > > >  	thread->comm_set = true;
+> > > >  
+> > > >  	return 0;
+> > > > diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+> > > > index 40cfa36..b9a328b 100644
+> > > > --- a/tools/perf/util/thread.h
+> > > > +++ b/tools/perf/util/thread.h
+> > > > @@ -27,6 +27,7 @@ struct thread {
+> > > >  	int			cpu;
+> > > >  	refcount_t		refcnt;
+> > > >  	char			shortname[3];
+> > > > +	bool			comm_changed;
+> > 
+> > I don't like that it's in struct thread and set by generic function,
+> > and just one command (sched) checks/sets it back.. I'd rather see it
+> > in thread::priv area..
+> 
+> 100% agreed.
+> 
+> 
+> > on the other hand it's simple enough and looks
+> > like generic solution would be more tricky
+> 
+> What about adding perf_sched__process_comm() to set it in the
+> thread::priv?
+>
+I can be done, then thread->comm_changed moves to thread_runtime->comm_changed.
+Draft code as below. It is also a little tricky.
 
-Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
----
- arch/x86/tools/relocs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
++int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
++                            union perf_event *event,
++                            struct perf_sample *sample,
++                            struct machine *machine)
++{
++       struct thread *thread;
++       struct thread_runtime *r;
++
++       perf_event__process_comm(tool, event, sample, machine);
++
++       thread = machine__findnew_thread(machine, pid, tid);
++       if (thread) {
++               r = thread__priv(thread);
++               if (r)
++                       r->comm_changed = true;
++               thread__put(thread);
++       }
++}
++
+ static int perf_sched__read_events(struct perf_sched *sched)
+ {
+        const struct perf_evsel_str_handler handlers[] = {
+@@ -3291,7 +3311,7 @@ int cmd_sched(int argc, const char **argv)
+        struct perf_sched sched = {
+                .tool = {
+                        .sample          = perf_sched__process_tracepoint_sample,
+-                       .comm            = perf_event__process_comm,
++                       .comm            = perf_sched__process_comm,
 
-diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index 5d73c443e778..fcf3fad01b08 100644
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -37,7 +37,7 @@ static struct section *secs;
- 
- static const char * const sym_regex_kernel[S_NSYMTYPES] = {
- /*
-- * Following symbols have been audited. There values are constant and do
-+ * Following symbols have been audited. Their values are constant and do
-  * not change if bzImage is loaded at a different physical address than
-  * the address for which it has been compiled. Don't warn user about
-  * absolute relocations present w.r.t these symbols.
-@@ -690,7 +690,7 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
-  *	to the start of the per_cpu area that does not change).
-  *
-  *	Relocations that apply to the per_cpu area need to have their
-- *	offset adjusted by by the value of __per_cpu_load to make them
-+ *	offset adjusted by the value of __per_cpu_load to make them
-  *	point to the correct place in the loaded image (because the
-  *	virtual address of .data..percpu is 0).
-  *
+
+But I'd keep 'comm_changed' where 'shortname' is defined. I think they should appears
+togother. And 'shortname' is only used by sched command, too.
+
+So I still prefer my privous simpler change. Thanks!
+
+> Thanks,
+> Namhyung
+
 -- 
-2.14.3
+Thanks,
+Changbin Du
