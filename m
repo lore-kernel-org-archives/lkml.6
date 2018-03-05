@@ -1,51 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752543AbeCERzg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:55:36 -0500
-Received: from mga18.intel.com ([134.134.136.126]:24263 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751462AbeCERzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:55:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="39372858"
-From: Andi Kleen <ak@linux.intel.com>
-To: Agustin Vega-Frias <agustinv@codeaurora.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
-Subject: Re: [RFC V2 1/3] perf, tools: Support wildcards on pmu name in dynamic pmu events
-References: <1520034092-35275-1-git-send-email-agustinv@codeaurora.org>
-        <1520034092-35275-2-git-send-email-agustinv@codeaurora.org>
-        <20180303143436.GA14563@krava>
-        <20180304171245.GB25017@tassilo.jf.intel.com>
-        <20180304181010.GA7030@krava>
-        <1ddac3f4900267b0c9a69ef4c598be51@codeaurora.org>
-Date: Mon, 05 Mar 2018 09:55:19 -0800
-In-Reply-To: <1ddac3f4900267b0c9a69ef4c598be51@codeaurora.org> (Agustin
-        Vega-Frias's message of "Mon, 05 Mar 2018 10:08:18 -0500")
-Message-ID: <87efky76go.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752162AbeCER6g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:58:36 -0500
+Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:54798 "EHLO
+        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751462AbeCER6f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 12:58:35 -0500
+Subject: Linux 4.16: Reported regressions as of Monday, 2018-03-05 (Was: Linux
+ 4.16-rc4)
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CA+55aFxXg8hi+T_DNCG_OrAotqSheyREw-Njf9XgUD1vXqAyHQ@mail.gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Message-ID: <dac7ba7c-f287-be1f-eaa4-8f2dda69f920@leemhuis.info>
+Date: Mon, 5 Mar 2018 18:58:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CA+55aFxXg8hi+T_DNCG_OrAotqSheyREw-Njf9XgUD1vXqAyHQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1520272715;4087d534;
+X-HE-SMSGID: 1esuNb-0001t5-Hs
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Agustin Vega-Frias <agustinv@codeaurora.org> writes:
->
-> An option to keep backward compatibility and consistency would be
-> to wrap the pattern/string passed in *'s, that way we can just use
-> fnmatch and have all the examples Jiri brought up work the same.
-> With that in place we can actually also drop the explicit ignoring
-> of the uncore_ prefix since the globbing would take care of that.
+On 05.03.2018 00:15, Linus Torvalds wrote:
+> Hmm. A reasonably calm week - the biggest change is to the 'kvm-stat'
+> tool, not any actual kernel files.
 
-Prepending with * would seem dangerous, could result in false
-matches. But adding it at the end should be ok.
+Hi! Find below my third regression report for Linux 4.16. It lists 7
+regressions I'm currently aware of. 3 were fixed since last weeks report.
 
--Andi
+To anyone reading this: Are you aware of any other regressions that got
+introduced this development cycle? Then please let me know by mail (a
+simple bounce or forward to the email address is enough!).
+
+For details see http://bit.ly/lnxregtrackid And please tell me if there
+is anything in the report that shouldn't be there.
+
+Ciao, Thorsten
+
+== Current regressions ==
+
+Dell R640 does not boot due to SCSI/SATA failure
+Status: Reporter looked into this and indicated the change might have
+triggered a firmware bug on his machine
+Reported: 2018-02-22 Last known developer activity:
+https://marc.info/?l=linux-kernel&m=152026091325037
+https://marc.info/?l=linux-kernel&m=151931128006031
+Cause: 84676c1f21e8
+Linux-Regression-ID: 15a115
+
+[mm, mlock, vmscan]  9c4e6b1a70:  stress-ng.hdd.ops_per_sec -7.9% regression
+Status: WIP; side note: lkp-robot warned about something else triggered
+by the same commit:
+https://lkml.kernel.org/r/20180302093940.GE25699@yexl-desktop is related
+Note: performance regression found by lkp-robot
+Reported: 2018-02-25
+https://marc.info/?l=linux-kernel&m=151956997301994
+Cause: 9c4e6b1a7027f102990c0395296015a812525f4d
+
+aim7.jobs-per-min -18.0% regression
+Status: some discussion last week, but no real solution yet
+Note: performance regression found by lkp-robot
+Reported: 2018-02-25
+https://marc.info/?l=linux-kernel&m=151957120702272&w=2
+Cause: c0cef30e4ff0dc025f4a1660b8f0ba43ed58426e
+
+Interrupt storm after suspend causes one busy kworker
+Status: stalled?
+Reported: 2018-02-25
+https://bugzilla.kernel.org/show_bug.cgi?id=198929
+Linux-Regression-ID: 41c451
+
+hci_bcm: Streamline runtime PM code change for 4.16 kernel breaks
+bluetooth on ASUS T100TA
+Status: poked reporters for a update if they reported it to the relevant
+developers
+Reported: 2018-03-01
+https://bugzilla.kernel.org/show_bug.cgi?id=198953
+Cause: 43fff768346810042836df325d736bd2c2a634a7
+
+
+== Regressions with fixes heading mainline ==
+
+selftests: memory-hotplug: fix emit_tests regression
+https://marc.info/?l=linux-kernel&m=151993543423651
+
+
+== Going to get removed from the report ==
+
+Debian kernel package tool make-kpkg stalls indefinitely during kernel
+build due to commit "kconfig: remove check_stdin()"
+Status: stalled after some discussions; seems nobody really cares that much
+Note: From the discussion: "Shouldn't be a problem to back this one out
+either if it turns out to cause massive amounts of pain in practice I
+guess, even if it's the Debian tools doing something weird."
+Reported: 2018-02-12
+https://marc.info/?l=linux-kernel&m=151846414807219
+Cause: d2a04648a5dbc3d1d043b35257364f0197d4d868
+Linux-Regression-ID: 2fd778
+
+
+== Fixed since last report ==
+
+Dell XPS 13 9360 keyboard no longer works
+Status: https://git.kernel.org/torvalds/c/de9647efeaa9
+Reported: 2018-02-22
+https://marc.info/?l=linux-kernel&m=151927645427980
+Cause: 30323fb6d552c41997baca5292bf7001366cab57
+
+on Nokia N900:/dev/input/event6 aka AV Jack support disappeared
+Status: https://git.kernel.org/torvalds/c/6662ae6af82d
+https://git.kernel.org/torvalds/c/ce27fb2c56db
+Reported: 2018-02-24
+https://marc.info/?l=linux-omap&m=151950886524308&w=2
+Cause: 14e3e295b2b9
+Linux-Regression-ID: 4b650f
+
+SD card reader stopped working
+Status: Fixed in 4.16.0-rc3 according to reporter
+Reported: 2018-02-24
+https://bugzilla.kernel.org/show_bug.cgi?id=198917
+Linux-Regression-ID: 9adeaf
