@@ -1,223 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932555AbeCEOVt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:21:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58661 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932304AbeCEOUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:20:05 -0500
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: davem@davemloft.net
-Cc: Stefan Chulski <stefanc@marvell.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com, Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH net-next v2 5/5] net: mvpp2: jumbo frames support
-Date: Mon,  5 Mar 2018 15:16:54 +0100
-Message-Id: <20180305141654.7789-6-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180305141654.7789-1-antoine.tenart@bootlin.com>
-References: <20180305141654.7789-1-antoine.tenart@bootlin.com>
+        id S1752027AbeCEOY2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:24:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58274 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751294AbeCEOY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:24:26 -0500
+Subject: Re: [PATCH] audit: add containerid support for IMA-audit
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 05 Mar 2018 09:24:14 -0500
+In-Reply-To: <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+References: <1520257393.10396.291.camel@linux.vnet.ibm.com>
+         <20180305135008.po6lheqnmkqqo6q4@madcap2.tricolour.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18030514-0012-0000-0000-000005B8EFCE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030514-0013-0000-0000-00001935024E
+Message-Id: <1520259854.10396.313.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803050171
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Chulski <stefanc@marvell.com>
+On Mon, 2018-03-05 at 08:50 -0500, Richard Guy Briggs wrote:
+> On 2018-03-05 08:43, Mimi Zohar wrote:
+> > Hi Richard,
+> > 
+> > This patch has been compiled, but not runtime tested.
+> 
+> Ok, great, thank you.  I assume you are offering this patch to be
+> included in this patchset?
 
-This patch adds the support for jumbo frames in the Marvell PPv2 driver.
-A third buffer pool is added with 10KB buffers, which is used if the MTU
-is higher than 1518B for packets larger than 1518B. Please note only the
-port 0 supports hardware checksum offload due to the Tx FIFO size
-limitation.
+Yes, thank you.
 
-Signed-off-by: Stefan Chulski <stefanc@marvell.com>
-[Antoine: cosmetic cleanup, commit message]
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/ethernet/marvell/mvpp2.c | 98 +++++++++++++++++++++++++++---------
- 1 file changed, 75 insertions(+), 23 deletions(-)
+> I'll have a look to see where it fits in the
+> IMA record.  It might be better if it were an AUDIT_CONTAINER_INFO
+> auxiliary record, but I'll have a look at the circumstances of the
+> event.  Can you suggest a procedure to test it?
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 78dc07c826c5..10b722197aed 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -815,6 +815,7 @@ enum mvpp2_prs_l3_cast {
- #define MVPP22_RSS_TABLE_ENTRIES	32
- 
- /* BM constants */
-+#define MVPP2_BM_JUMBO_BUF_NUM		512
- #define MVPP2_BM_LONG_BUF_NUM		1024
- #define MVPP2_BM_SHORT_BUF_NUM		2048
- #define MVPP2_BM_POOL_SIZE_MAX		(16*1024 - MVPP2_BM_POOL_PTR_ALIGN/4)
-@@ -826,12 +827,14 @@ enum mvpp2_prs_l3_cast {
- 
- #define MVPP2_BM_SHORT_FRAME_SIZE		512
- #define MVPP2_BM_LONG_FRAME_SIZE		2048
-+#define MVPP2_BM_JUMBO_FRAME_SIZE		10240
- /* BM short pool packet size
-  * These value assure that for SWF the total number
-  * of bytes allocated for each buffer will be 512
-  */
- #define MVPP2_BM_SHORT_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_SHORT_FRAME_SIZE)
- #define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
-+#define MVPP2_BM_JUMBO_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_JUMBO_FRAME_SIZE)
- 
- #define MVPP21_ADDR_SPACE_SZ		0
- #define MVPP22_ADDR_SPACE_SZ		SZ_64K
-@@ -842,6 +845,7 @@ enum mvpp2_prs_l3_cast {
- enum mvpp2_bm_pool_log_num {
- 	MVPP2_BM_SHORT,
- 	MVPP2_BM_LONG,
-+	MVPP2_BM_JUMBO,
- 	MVPP2_BM_POOLS_NUM
- };
- 
-@@ -4393,6 +4397,10 @@ static void mvpp2_setup_bm_pool(void)
- 	/* Long pool */
- 	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
- 	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
-+
-+	/* Jumbo pool */
-+	mvpp2_pools[MVPP2_BM_JUMBO].buf_num  = MVPP2_BM_JUMBO_BUF_NUM;
-+	mvpp2_pools[MVPP2_BM_JUMBO].pkt_size = MVPP2_BM_JUMBO_PKT_SIZE;
- }
- 
- /* Attach long pool to rxq */
-@@ -4596,15 +4604,28 @@ mvpp2_bm_pool_use(struct mvpp2_port *port, unsigned pool, int pkt_size)
- static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
- {
- 	int rxq;
-+	enum mvpp2_bm_pool_log_num long_log_pool, short_log_pool;
-+
-+	/* If port pkt_size is higher than 1518B:
-+	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Long pool
-+	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
-+	 */
-+	if (port->pkt_size > MVPP2_BM_LONG_PKT_SIZE) {
-+		long_log_pool = MVPP2_BM_JUMBO;
-+		short_log_pool = MVPP2_BM_LONG;
-+	} else {
-+		long_log_pool = MVPP2_BM_LONG;
-+		short_log_pool = MVPP2_BM_SHORT;
-+	}
- 
- 	if (!port->pool_long) {
- 		port->pool_long =
--			mvpp2_bm_pool_use(port, MVPP2_BM_LONG,
--					  mvpp2_pools[MVPP2_BM_LONG].pkt_size);
-+			mvpp2_bm_pool_use(port, long_log_pool,
-+					  mvpp2_pools[long_log_pool].pkt_size);
- 		if (!port->pool_long)
- 			return -ENOMEM;
- 
--		port->pool_long->port_map |= (1 << port->id);
-+		port->pool_long->port_map |= BIT(port->id);
- 
- 		for (rxq = 0; rxq < port->nrxqs; rxq++)
- 			mvpp2_rxq_long_pool_set(port, rxq, port->pool_long->id);
-@@ -4612,12 +4633,12 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
- 
- 	if (!port->pool_short) {
- 		port->pool_short =
--			mvpp2_bm_pool_use(port, MVPP2_BM_SHORT,
--					  mvpp2_pools[MVPP2_BM_SHORT].pkt_size);
-+			mvpp2_bm_pool_use(port, short_log_pool,
-+					  mvpp2_pools[long_log_pool].pkt_size);
- 		if (!port->pool_short)
- 			return -ENOMEM;
- 
--		port->pool_short->port_map |= (1 << port->id);
-+		port->pool_short->port_map |= BIT(port->id);
- 
- 		for (rxq = 0; rxq < port->nrxqs; rxq++)
- 			mvpp2_rxq_short_pool_set(port, rxq,
-@@ -4630,24 +4651,49 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
- static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
- {
- 	struct mvpp2_port *port = netdev_priv(dev);
--	struct mvpp2_bm_pool *port_pool = port->pool_long;
--	int num, pkts_num = port_pool->buf_num;
-+	enum mvpp2_bm_pool_log_num new_long_pool;
-+	int pkt_size = MVPP2_RX_PKT_SIZE(mtu);
- 
--	/* Update BM pool with new buffer size */
--	mvpp2_bm_bufs_free(dev->dev.parent, port->priv, port_pool,
--			   port_pool->buf_num);
--	if (port_pool->buf_num) {
--		WARN(1, "cannot free all buffers in pool %d\n", port_pool->id);
--		return -EIO;
-+	/* If port MTU is higher than 1518B:
-+	 * HW Long pool - SW Jumbo pool, HW Short pool - SW Long pool
-+	 * else: HW Long pool - SW Long pool, HW Short pool - SW Short pool
-+	 */
-+	if (pkt_size > MVPP2_BM_LONG_PKT_SIZE)
-+		new_long_pool = MVPP2_BM_JUMBO;
-+	else
-+		new_long_pool = MVPP2_BM_LONG;
-+
-+	if (new_long_pool != port->pool_long->id) {
-+		/* Remove port from old short & long pool */
-+		port->pool_long = mvpp2_bm_pool_use(port, port->pool_long->id,
-+						    port->pool_long->pkt_size);
-+		port->pool_long->port_map &= ~BIT(port->id);
-+		port->pool_long = NULL;
-+
-+		port->pool_short = mvpp2_bm_pool_use(port, port->pool_short->id,
-+						     port->pool_short->pkt_size);
-+		port->pool_short->port_map &= ~BIT(port->id);
-+		port->pool_short = NULL;
-+
-+		port->pkt_size =  pkt_size;
-+
-+		/* Add port to new short & long pool */
-+		mvpp2_swf_bm_pool_init(port);
-+
-+		/* Update L4 checksum when jumbo enable/disable on port */
-+		if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
-+			dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
-+			dev->hw_features &= ~(NETIF_F_IP_CSUM |
-+					      NETIF_F_IPV6_CSUM);
-+		} else {
-+			dev->features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-+			dev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-+		}
- 	}
- 
--	num = mvpp2_bm_bufs_add(port, port_pool, pkts_num);
--	if (num != pkts_num) {
--		WARN(1, "pool %d: %d of %d allocated\n",
--		     port_pool->id, num, pkts_num);
--		return -EIO;
--	}
- 	dev->mtu = mtu;
-+	dev->wanted_features = dev->features;
-+
- 	netdev_update_features(dev);
- 	return 0;
- }
-@@ -8326,13 +8372,19 @@ static int mvpp2_port_probe(struct platform_device *pdev,
- 	dev->features = features | NETIF_F_RXCSUM;
- 	dev->hw_features |= features | NETIF_F_RXCSUM | NETIF_F_GRO |
- 			    NETIF_F_HW_VLAN_CTAG_FILTER;
-+
-+	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
-+		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
-+		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
-+	}
-+
- 	dev->vlan_features |= features;
- 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
- 
--	/* MTU range: 68 - 9676 */
-+	/* MTU range: 68 - 9704 */
- 	dev->min_mtu = ETH_MIN_MTU;
--	/* 9676 == 9700 - 20 and rounding to 8 */
--	dev->max_mtu = 9676;
-+	/* 9704 == 9728 - 20 and rounding to 8 */
-+	dev->max_mtu = MVPP2_BM_JUMBO_PKT_SIZE;
- 
- 	err = register_netdev(dev);
- 	if (err < 0) {
--- 
-2.14.3
+Like IMA-measurement and IMA-appraisal, IMA-audit is enabled based on
+policy. The example IMA policy, below, includes IMA-audit messages for
+files executed. 'cat' the policy to /sys/kernel/security/ima/policy.
+
+/etc/ima/ima-policy:
+audit func=BPRM_CHECK
+
+There's a FireEye blog titled "Extending Linux Executable Logging With
+The Integrity Measurement Architecture"* that explains how to augment
+their existing system security analytics with file hashes.
+
+* https://www.fireeye.com/blog/threat-research/2016/11/extending_linux
+_exec.html
+
+
+Mimi
+
+> 
+> > ---
+> > 
+> > If the containerid is defined, include it in the IMA-audit record.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> > ---
+> >  security/integrity/ima/ima_api.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> > index 33b4458cdbef..41d29a06f28f 100644
+> > --- a/security/integrity/ima/ima_api.c
+> > +++ b/security/integrity/ima/ima_api.c
+> > @@ -335,6 +335,9 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+> >  	audit_log_untrustedstring(ab, algo_hash);
+> >  
+> >  	audit_log_task_info(ab, current);
+> > +	if (audit_containerid_set(current))
+> > +		audit_log_format(ab, " contid=%llu",
+> > +				 audit_get_containerid(current));
+> >  	audit_log_end(ab);
+> >  
+> >  	iint->flags |= IMA_AUDITED;
+> > -- 
+> > 2.7.5
+> > 
+> 
+> - RGB
+> 
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+> 
