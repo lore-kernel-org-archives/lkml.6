@@ -1,143 +1,96 @@
-Return-Path: <jarkko.sakkinen@linux.intel.com>
-X-Google-Smtp-Source: AG47ELuYeJpYRsrF4ffABxCugXf1YNx2RbuXpOWskQJtxXeZWfMbyGP4cbIkBTrsCKVnGTxhHH7f
-ARC-Seal: i=1; a=rsa-sha256; t=1519899119; cv=none;
+Return-Path: <jinb.park7@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520248711; cv=none;
         d=google.com; s=arc-20160816;
-        b=XMJUt6D5b+WMlApGryQNi84Q26x8LRnjb6tznOd71xRwTptHPVvMx0pRXkrsWAHFoU
-         g3Vf6+b3TS4iATFfvjCBA15c76m3Mab7YmnJ+bz35KtrSi4QfiyuJL+6LVFH7RmPmL/3
-         l9CoATOVPH0/is6nvmT/aGTy3wYbjHaGhT17RlgSyh1FOcFOMTkfMQzjDpvw30FOwFGW
-         AwOsPP9iqDQGL2a4yjpl46fwBDlFqTGkiYLyCZhHY6W8noJ7wybvB7VEjSmhZFrYlEQp
-         xddwwA1CWMlrO77zXlLgrT+Hs1D1EWQqB6hxuDRnPrETpaWX7eaxoH+OhPSqWkxz129V
-         KDHQ==
+        b=ABB33fQAST6UWXji2Y/vqbewBCtoAfA2oU2zRqcLjlEDHMshnbrY3LtAHrYHiAdlAe
+         XkCG6CqbY23PtLSXtckkURMWUuw9smaK0FdTyDaZ+UIudtb0MO4P0sN2m4NgPCSPodTr
+         OQFYs1mJ+Ylq7nc1SKP9nKsBcQnVf1fc8gVrCLAg6ln5LkN6fYJ7qRu+FWuOTIFpiW23
+         zWEv47FYmyffS19fzCrZ30Z4ZgP7EpSCoXpGmFdcxG/GvAYE2uCfpIGbuiWJrHgaXW92
+         CIEB01sgBJ2DviNfnXWL528BSV1K58P5gJ71O7v6bggWr4dRt1ROSwjq5FP8ESgI8w/A
+         wZSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:organization:in-reply-to:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=wT8wXIyHvG5LVtFmM8FkB0OlJ+TgdsLkDkNfMUB8IfE=;
-        b=yyyZvPCF30cL9gKEy9zi/hkCKzaKDKpWPeVOmqoSbM/EbGxQOGiLWqTESa3cdpm0D5
-         IUy583CX6vhMSSv9nFuddPr/x1iZRZB6J7aZo5JqQjCJZiVDIs5UlTbLv59BXJonnsGZ
-         G7RGztWZU+Nz5bCFzwTYu7pHhmZfbbfJvNEP7nPsVFZumEfHSPjvr0RPRgY4RkOoazmM
-         MNM2fPWSwNTz3vSsLzKwzNFQNTZAiOx5VGjTTVJCsGp2/cLAOWN4rqMADI/fuTuC05kh
-         CZJyHCFlRR7bgAXHTI0s5xohSw3zmOklkaRROe9MxprEHS/wFjEaFsCy3wd48+Iin5hv
-         fkDQ==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=VS5Cvod2yup69YZ8TkrWuwx4G0+ROdocQ7MzaK//5/M=;
+        b=OUBSltRqnWZVbimpazNYIdMBGcM2wgxJvgJ5JhWvwV9DHunsCjgM5Wxa5XhJVgLR09
+         G8j7Y5SxsGzzIuYRcnTWUcAf5VBbVFBOIW9w/KhVqi8kMe9BsY3Xixa7Z3qOZilJYIds
+         JE12iPNHGY7rxazh5kJ926deSzuAwfBzjw9/L87Ohw+bwbhD5UPm+fj7rzX27KY+p38W
+         olP616uGvGs8hlD8q4d8EpTeC32D5vbBHjUKjcRUvTJCnk6b5cAt4qZhpiPGH1NwmykG
+         ezXkodOWgvKxJ+EGwJqIh/7lYc26rqo3MRT5QJd45ObAr5zGdfnhESRHFCAmonnS+VA/
+         jk1w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Mqnedi5d;
+       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jarkko.sakkinen@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=jarkko.sakkinen@linux.intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,408,1515484800";
-   d="scan'208";a="22029564"
-Date: Thu, 1 Mar 2018 12:11:53 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-Message-ID: <20180301101153.GA32447@linux.intel.com>
-References: <20180228195819.22231-1-jarkko.sakkinen@linux.intel.com>
- <20180228195819.22231-3-jarkko.sakkinen@linux.intel.com>
- <20180228202540.GA19007@ziepe.ca>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Mqnedi5d;
+       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELuyQJykPPp4OHWuZbYYO3hWXSmg4n1lenpFYYjGGa4cwOPMCxiUibVctIkA2rXzoc09FgJlbw==
+Date: Mon, 5 Mar 2018 20:18:24 +0900
+From: Jinbum Park <jinb.park7@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org, tglx@linutronix.de,
+	kstewart@linuxfoundation.org, luto@amacapital.net,
+	dsafonov@virtuozzo.com, keescook@chromium.org, will.deacon@arm.com,
+	mark.rutland@arm.com, danielmicay@gmail.com, arnd@arndb.de,
+	catalin.marinas@arm.com
+Subject: [PATCH v2 2/2] arm: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE
+Message-ID: <20180305111824.GA4216@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180228202540.GA19007@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593676060311547889?=
-X-GMAIL-MSGID: =?utf-8?q?1593729739553671966?=
+X-GMAIL-THRID: =?utf-8?q?1594096312948784945?=
+X-GMAIL-MSGID: =?utf-8?q?1594096312948784945?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Feb 28, 2018 at 01:25:40PM -0700, Jason Gunthorpe wrote:
-> On Wed, Feb 28, 2018 at 09:58:15PM +0200, Jarkko Sakkinen wrote:
-> > In order to make struct tpm_buf the first class object for constructing TPM
-> > commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-> > entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-> > prints an error message.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >  drivers/char/tpm/tpm2-cmd.c | 41 +++++++++++++----------------------------
-> >  1 file changed, 13 insertions(+), 28 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 6eeff3a60003..5f92141b1e16 100644
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -27,10 +27,6 @@ enum tpm2_session_attributes {
-> >  	TPM2_SA_CONTINUE_SESSION	= BIT(0),
-> >  };
-> >  
-> > -struct tpm2_startup_in {
-> > -	__be16	startup_type;
-> > -} __packed;
-> > -
-> >  struct tpm2_get_tpm_pt_in {
-> >  	__be32	cap_id;
-> >  	__be32	property_id;
-> > @@ -55,7 +51,6 @@ struct tpm2_get_random_out {
-> >  } __packed;
-> >  
-> >  union tpm2_cmd_params {
-> > -	struct	tpm2_startup_in		startup_in;
-> >  	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
-> >  	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
-> >  	struct	tpm2_get_random_in	getrandom_in;
-> > @@ -760,40 +755,30 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
-> >  }
-> >  EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
-> >  
-> > -#define TPM2_SHUTDOWN_IN_SIZE \
-> > -	(sizeof(struct tpm_input_header) + \
-> > -	 sizeof(struct tpm2_startup_in))
-> > -
-> > -static const struct tpm_input_header tpm2_shutdown_header = {
-> > -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
-> > -	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
-> > -	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
-> > -};
-> > -
-> >  /**
-> >   * tpm2_shutdown() - send shutdown command to the TPM chip
-> >   *
-> > + * In places where shutdown command is sent there's no much we can do except
-> > + * print the error code on a system failure.
-> > + *
-> >   * @chip:		TPM chip to use.
-> >   * @shutdown_type:	shutdown type. The value is either
-> >   *			TPM_SU_CLEAR or TPM_SU_STATE.
-> >   */
-> >  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
-> >  {
-> > -	struct tpm2_cmd cmd;
-> > +	struct tpm_buf buf;
-> >  	int rc;
-> >  
-> > -	cmd.header.in = tpm2_shutdown_header;
-> > -	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
-> > -
-> > -	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
-> > -			      "stopping the TPM");
-> > -
-> > -	/* In places where shutdown command is sent there's no much we can do
-> > -	 * except print the error code on a system failure.
-> > -	 */
-> > -	if (rc < 0 && rc != -EPIPE)
-> > -		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
-> > -			 rc);
-> > +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-> > +	if (rc) {
-> > +		dev_err(&chip->dev, "%s: out of memory", __func__);
-> 
-> Don't print for out of memory. The kernel already makes lots of
-> prints for you. Same comment everywhere.
-> 
-> Jason
+CONFIG_FORTIFY_SOURCE detects various overflows at compile-time.
+(6974f0c4555e ("include/linux/string.h:
+add the option of fortified string.h functions)
 
-I'll remove that. Thanks!
+ARCH_HAS_FORTIFY_SOURCE means that the architecture can be built and
+run with CONFIG_FORTIFY_SOURCE.
 
-/Jarkko
+Since ARM can be built and run with that flag like other architectures,
+select ARCH_HAS_FORTIFY_SOURCE as default.
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+---
+v2: Add fortify_panic() in arch/arm/boot/compressed/misc.c,
+    Because there will be a build error if without that function.
+---
+ arch/arm/Kconfig                | 1 +
+ arch/arm/boot/compressed/misc.c | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 7e3d535..3765336 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -7,6 +7,7 @@ config ARM
+ 	select ARCH_HAS_DEBUG_VIRTUAL if MMU
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ 	select ARCH_HAS_ELF_RANDOMIZE
++	select ARCH_HAS_FORTIFY_SOURCE
+ 	select ARCH_HAS_SET_MEMORY
+ 	select ARCH_HAS_PHYS_TO_DMA
+ 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
+index 16a8a80..4a247ac 100644
+--- a/arch/arm/boot/compressed/misc.c
++++ b/arch/arm/boot/compressed/misc.c
+@@ -167,3 +167,8 @@ void __stack_chk_fail(void)
+ 	else
+ 		putstr(" done, booting the kernel.\n");
+ }
++
++void fortify_panic(const char *name)
++{
++	error("detected buffer overflow");
++}
+-- 
+1.9.1
