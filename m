@@ -1,55 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933319AbeCEJ1W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:27:22 -0500
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:45688 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933089AbeCEJ1U (ORCPT
+        id S933419AbeCEJ2s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:28:48 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:47306 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932935AbeCEJ2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:27:20 -0500
-X-Google-Smtp-Source: AG47ELsg9sp5vvC/j2RunkHox2W3bLii7B9BfIriWlNd5rym+//v1xFkScWHSaGyEZn39/JbVUuDVA==
-Date: Mon, 5 Mar 2018 18:27:15 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: yangwen <wen.yang99@zte.com.cn>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        sergey.senozhatsky@gmail.com, bugzilla-daemon@bugzilla.kernel.org
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180305092715.GA784@jagdpanzerIV>
-References: <bug-199003-14532@https.bugzilla.kernel.org/>
- <bug-199003-14532-lzL5ySZS5x@https.bugzilla.kernel.org/>
+        Mon, 5 Mar 2018 04:28:45 -0500
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
+        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
+Subject: [PATCH v3] mmc: Export host capabilities to debugfs.
+Date: Mon, 5 Mar 2018 14:58:40 +0530
+Message-ID: <1520242120-2924-1-git-send-email-harish_kandiga@mentor.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bug-199003-14532-lzL5ySZS5x@https.bugzilla.kernel.org/>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Abbas Raza <Abbas_Raza@mentor.com>
 
-Let's switch to email.
+This patch exports the host capabilities to debugfs
 
-Cc-ing Petr and Steven
+Signed-off-by: Abbas Raza <Abbas_Raza@mentor.com>
+Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+---
 
+Changes in v3:
+- Removed typecasting of &host->caps to (u32 *)
 
-On (03/05/18 07:50), bugzilla-daemon@bugzilla.kernel.org wrote:
-> 
-> https://bugzilla.kernel.org/show_bug.cgi?id=199003
-> 
-> yangwen (wen.yang99@zte.com.cn) changed:
-> 
->            What    |Removed                     |Added
-> ----------------------------------------------------------------------------
->                  CC|                            |sergey.senozhatsky@gmail.com
+Changes in v2:
+- Changed Author
 
-Thanks, will take a look.
+ drivers/mmc/core/debugfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-In the meantime, could you check this message:
-  https://marc.info/?l=linux-kernel&m=152016852803716
+diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+index c51e0c0..570c9e4 100644
+--- a/drivers/mmc/core/debugfs.c
++++ b/drivers/mmc/core/debugfs.c
+@@ -289,6 +289,9 @@ void mmc_add_card_debugfs(struct mmc_card *card)
 
-It lists several commit IDs that you might backport and try out.
-Thanks in advance!
+ 	card->debugfs_root = root;
 
-	-ss
++	if (!debugfs_create_x32("host_caps", S_IRUSR, root, &host->caps))
++		goto err;
++
+ 	if (!debugfs_create_x32("state", S_IRUSR, root, &card->state))
+ 		goto err;
+
+--
+1.9.1
