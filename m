@@ -1,63 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752489AbeCEQsR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:48:17 -0500
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:46639 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeCEQsQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:48:16 -0500
-X-Google-Smtp-Source: AG47ELvb6t8Sl9qrQsKEHLTN1czZ3LH0NHHYN8l5TAlOjFVkQANqxgWh+D0DBSujfWHJJRycR9I1vzbvNeqMlI32MFQ=
+        id S1752576AbeCEQte (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:49:34 -0500
+Received: from verein.lst.de ([213.95.11.211]:48414 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751462AbeCEQta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:49:30 -0500
+Date: Mon, 5 Mar 2018 17:49:28 +0100
+From: Torsten Duwe <duwe@lst.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Jiri Kosina <jkosina@suse.cz>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: [PATCH v2] On ppc64le we HAVE_RELIABLE_STACKTRACE
+Message-ID: <20180305164928.GA17953@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <86o9k63f7a.wl-marc.zyngier@arm.com>
-References: <20180215175803.6870-1-marc.zyngier@arm.com> <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
- <86o9k63f7a.wl-marc.zyngier@arm.com>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Mon, 5 Mar 2018 16:47:55 +0000
-Message-ID: <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
-Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Auger Eric <eric.auger@redhat.com>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 March 2018 at 11:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On Fri, 02 Mar 2018 10:44:48 +0000,
-> Auger Eric wrote:
->> I understand the get/set is called as part of the migration process.
->> So my understanding is the benefit of this series is migration fails in
->> those cases:
->>
->> >=0.2 source -> 0.1 destination
->> 0.1 source -> >=0.2 destination
->
-> It also fails in the case where you migrate a 1.0 guest to something
-> that cannot support it.
+The "Power Architecture 64-Bit ELF V2 ABI" says in section 2.3.2.3:
 
-I think it would be useful if we could write out the various
-combinations of source, destination and what we expect/want to
-have happen. My gut feeling here is that we're sacrificing
-exact migration compatibility in favour of having the guest
-automatically get the variant-2 mitigations, but it's not clear
-to me exactly which migration combinations that's intended to
-happen for. Marc?
+[...] There are several rules that must be adhered to in order to ensure
+reliable and consistent call chain backtracing:
 
-If this wasn't a mitigation issue the desired behaviour would be
-straightforward:
- * kernel should default to 0.2 on the basis that
-   that's what it did before
- * new QEMU version should enable 1.0 by default for virt-2.12
-   and 0.2 for virt-2.11 and earlier
- * PSCI version info shouldn't appear in migration stream unless
-   it's something other than 0.2
-But that would leave some setups (which?) unnecessarily without the
-mitigation, so we're not doing that. The question is, exactly
-what *are* we aiming for?
+* Before a function calls any other function, it shall establish its
+  own stack frame, whose size shall be a multiple of 16 bytes.
 
-thanks
--- PMM
+ – In instances where a function’s prologue creates a stack frame, the
+   back-chain word of the stack frame shall be updated atomically with
+   the value of the stack pointer (r1) when a back chain is implemented.
+   (This must be supported as default by all ELF V2 ABI-compliant
+   environments.)
+[...]
+ – The function shall save the link register that contains its return
+   address in the LR save doubleword of its caller’s stack frame before
+   calling another function.
+
+To me this sounds like the equivalent of HAVE_RELIABLE_STACKTRACE.
+This patch may be unneccessarily limited to ppc64le, but OTOH the only
+user of this flag so far is livepatching, which is only implemented on
+PPCs with 64-LE, a.k.a. ELF ABI v2.
+
+This change also implements save_stack_trace_tsk_reliable() for ppc64
+that checks for the above conditions, where possible.
+
+Signed-off-by:   Torsten Duwe <duwe@suse.de>
+
+---
+v2:
+ * implemented save_stack_trace_tsk_reliable(), with a bunch of sanity
+   checks. The test for a kernel code pointer is much nicer now, and
+   the exit condition is exact (when compared to last week's follow-up)
+
+---
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 73ce5dd07642..9f49913e19e3 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -220,6 +220,7 @@ config PPC
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_RCU_TABLE_FREE		if SMP
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_RELIABLE_STACKTRACE		if PPC64 && CPU_LITTLE_ENDIAN
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING
+ 	select HAVE_IRQ_TIME_ACCOUNTING
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index d534ed901538..e14c2dfd5311 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -11,8 +11,11 @@
+  */
+ 
+ #include <linux/export.h>
++#include <linux/kallsyms.h>
++#include <linux/module.h>
+ #include <linux/sched.h>
+ #include <linux/sched/debug.h>
++#include <linux/sched/task_stack.h>
+ #include <linux/stacktrace.h>
+ #include <asm/ptrace.h>
+ #include <asm/processor.h>
+@@ -76,3 +79,77 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ 	save_context_stack(trace, regs->gpr[1], current, 0);
+ }
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
++
++#ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
++int
++save_stack_trace_tsk_reliable(struct task_struct *tsk,
++				struct stack_trace *trace)
++{
++	unsigned long sp;
++	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
++
++	/* The last frame (unwinding first) may not yet have saved
++	 * its LR onto the stack.
++	 */
++	int firstframe = 1;
++
++	if (tsk == current)
++		sp = current_stack_pointer();
++	else
++		sp = tsk->thread.ksp;
++
++	if (sp < stack_page + sizeof(struct thread_struct)
++	    || sp > stack_page + THREAD_SIZE - STACK_FRAME_OVERHEAD)
++		return 1;
++
++	for (;;) {
++		unsigned long *stack = (unsigned long *) sp;
++		unsigned long newsp, ip;
++
++		/* sanity check: ABI requires SP to be aligned 16 bytes. */
++		if (sp & 0xF)
++			return 1;
++
++		newsp = stack[0];
++		/* Stack grows downwards; unwinder may only go up. */
++		if (newsp <= sp)
++			return 1;
++
++		if (newsp >= stack_page + THREAD_SIZE)
++			return 1; /* invalid backlink, too far up. */
++
++		/* Examine the saved LR: it must point into kernel code. */
++		ip = stack[STACK_FRAME_LR_SAVE];
++		if (!firstframe) {
++			if (!func_ptr_is_kernel_text((void *)ip)) {
++#ifdef CONFIG_MODULES
++				struct module *mod = __module_text_address(ip);
++
++				if (!mod)
++#endif
++					return 1;
++			}
++		}
++		firstframe = 0;
++
++		if (!trace->skip)
++			trace->entries[trace->nr_entries++] = ip;
++		else
++			trace->skip--;
++
++		/* SP value loaded on kernel entry, see "PACAKSAVE(r13)" in
++		 * _switch() and system_call_common()
++		 */
++		if (newsp == stack_page + THREAD_SIZE - /* SWITCH_FRAME_SIZE */
++		    (STACK_FRAME_OVERHEAD + sizeof(struct pt_regs)))
++			break;
++
++		if (trace->nr_entries >= trace->max_entries)
++			return -E2BIG;
++
++		sp = newsp;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
++#endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
