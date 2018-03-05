@@ -1,94 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeCERTY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:19:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41308 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751935AbeCERTW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:19:22 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D582C601A3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <73b16f5c-fe19-e652-dfd0-de7196d4cec0@codeaurora.org>
-Date: Mon, 5 Mar 2018 22:49:14 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752669AbeCERU0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:20:26 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:38768 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752110AbeCERUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 12:20:24 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Daniel Schultz <d.schultz@phytec.de>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, w.egorov@phytec.de
+Subject: Re: [PATCH] ARM: dts: rockchip: Add dp83867 CLK_OUT muxing
+Date: Mon, 05 Mar 2018 18:04:48 +0100
+Message-ID: <8543411.nbQLj7Vctj@diego>
+In-Reply-To: <cecf3c08-d43d-c340-c5ff-30e41e338469@phytec.de>
+References: <1520253911-46218-1-git-send-email-d.schultz@phytec.de> <3530074.WSbKf9j6h0@phil> <cecf3c08-d43d-c340-c5ff-30e41e338469@phytec.de>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+Hi Daniel,
+
+Am Montag, 5. März 2018, 16:57:13 CET schrieb Daniel Schultz:
+> On 03/05/2018 03:15 PM, Heiko Stuebner wrote:
+> > Am Montag, 5. März 2018, 13:45:11 CET schrieb Daniel Schultz:
+> >> The CLK_O_SEL default is synchronous to XI input clock, which is 25 MHz.
+> >> Set CLK_O_SEL to channel A transmit clock so we have 125 MHz on CLK_OUT.
+> >> 
+> >> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+> >> ---
+> >> 
+> >> The binding will be added with the next merge of net-next:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit
+> >> /?id=9708fb630d19ee51ae3aeb3a533e3010da0e8570
+> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/log/Docum
+> entation/devicetree/bindings/net/ti,dp83867.txt
+> 
+> If I search in the master branch, I get the patch. Did I searched wrong?
+
+no ... seems I was just blind :-)
+
+Heiko
 
 
-On 3/5/2018 6:55 PM, Tomasz Figa wrote:
-> Hi Vivek,
->
-> On Fri, Mar 2, 2018 at 7:10 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> This series provides the support for turning on the arm-smmu's
->> clocks/power domains using runtime pm. This is done using the
->> recently introduced device links patches, which lets the smmu's
->> runtime to follow the master's runtime pm, so the smmu remains
->> powered only when the masters use it.
->>
->> It also adds support for Qcom's arm-smmu-v2 variant that
->> has different clocks and power requirements.
->>
->> Took some reference from the exynos runtime patches [1].
->>
->> After another round of discussion [3], we now finally seem to be
->> in agreement to add a flag based on compatible, a flag that would
->> indicate if a particular implementation of arm-smmu supports
->> runtime pm or not.
->> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
->> calls in map/unmap callbacks so that the clients do not have to
->> worry about handling any of the arm-smmu's power.
->> The patch that exported couple of pm_runtime suppliers APIS, viz.
->> pm_runtime_get_suppliers(), and pm_runtime_put_suppliers() can be
->> dropped since we don't have a user now for these APIs.
->> Thanks Rafael for reviewing the changes, but looks like we don't
->> need to export those APIs for some more time. :)
->>
->> Previous version of this patch series is @ [5].
-> Thanks for addressing my comments. There is still a bit of space for
-> improving the granularity of power management, as far as I understood
-> how it works on SDM845 correctly, but as a first step, this should at
-> least let things work.
-
-Sure. I will be sending a patch, based on this series, to add 
-'qcom,smmu-500'
-that enables *rpm_suported* flag for us.
-We can try to take care of some of the things with that.
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-
-Thanks for the review.
-
-regards
-Vivek
->
-> Best regards,
-> Tomasz
+> > I did find the commit, but no related change of the dp83867 dt binding
+> > document [0], including a review by dt-maintainers.
+> > 
+> > While your property does not look overly complicated, the binding
+> > should be updated nontheless.
+> > 
+> > 
+> > Heiko
+> > 
+> > [0]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/log/Do
+> > cumentation/devicetree/bindings/net/ti,dp83867.txt?id=9708fb630d19ee51ae3a
+> > eb3a533e3010da0e8570> 
+> >>   arch/arm/boot/dts/rk3288-phycore-som.dtsi | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >> 
+> >> diff --git a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+> >> b/arch/arm/boot/dts/rk3288-phycore-som.dtsi index bdd80aa..e60535d
+> >> 100644
+> >> --- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+> >> +++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
+> >> @@ -141,6 +141,7 @@
+> >> 
+> >>   			ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+> >>   			ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+> >>   			enet-phy-lane-no-swap;
+> >> 
+> >> +			ti,clk-output-sel = <DP83867_CLK_O_SEL_CHN_A_TCLK>;
+> >> 
+> >>   		};
+> >>   	
+> >>   	};
+> >>   
+> >>   };
