@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-819802-1520233368-6-2642227634545359353
+X-Cyrus-Session-Id: sloti22d1t05-819802-1520233376-2-7670181099472185110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='hr', MailFrom='org'
 X-Spam-charsets: cc='UTF-8', plain='us-ascii'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520233367; b=A3z++FHAE9XkGrSipc3NwG/T/g+/cvWibgQANVe2GLVg5SL
-    Klw1Ptl5SclhaL2dw9a9XcBFRHJy3FYll9NzhHWhzkuYc4+6rk3mGJN0LaTWyAjb
-    r+cNEGr/oLjNAC0hxQNe50yhScQWx5JfJMXlVxiQyQTUgU3d+H3J36nghD9D4KdX
-    M177St2DTShkiSXeGKi2qeg4MPyD0FxyxmmVdZvhO7htQ9Y8Rur29UDqPbis4iQB
-    YJBfaZNt97ChCH+takg4Id98ZdLZtu0UMjE3+E6EJCnyzMynSFJOPmh3VP01j0Ky
-    aC0+6NYJmdZExQtQkbt+2nKB0yauSLI/4wPWOEg==
+    t=1520233374; b=G4Mcczverm/ltZj+dAvW1l1sOy6xjN7zoKvfwBPr0Z09ugv
+    fPnvsvSPTaFKh6gLbyVAqVVFw9+R3AAVVuFSeXfIvgOTpiWaEZmRhOksJT5zJ1Dk
+    puuuRtTm2S+X40ejBlQ9/ayL4rlUMBlsOB6wt725NBIAVSxLN4k2ywGZAPSvwBIM
+    92L4+UVBS2vTt182XrVvggmzQBrAfHylMWExdtfjwXALw0TMhglLU9WXrnsp/4m9
+    eKLzJ4nQs5HBjpT+YirI37uwXUFzWztyXQxmJ21kwe02D7d2njsIGiTXziARpx3w
+    MQWpaFnF1iIQZnY/2bs8IMMsLkqBdQ8fO1JkxRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:message-id:subject:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520233367; bh=n
-    27PpBaXtk9JHMKYXcw+QCrP96Qzy6SPZSaq1n6yBxc=; b=oSTMYRSmid5hRBgxd
-    i/mEzN4HCwwtLx5fednA26QRpeg6D2JbfGO2reEtVxDUWDa59js0LX4v5IQlcsWg
-    sTEKQrSslM53LkqUSKyEog47TFSLJ6BVYeg2v9WxK3YrFAGRwBdnqEz6uIS2k0+j
-    7lpOhmf5OXIRdM+uE7qMXJaGT6xRUxav5fsUIYumV+UCs9JlQs028wuAVwLs0ecs
-    uZBoZWAJMxrZapOuQ0MVvaOwNvgx6rgeTKgIdKShHLpb7jDF81kgBGmqdkuoFqKq
-    LpioN+Qus5pr7TkGVMFCYVTllvsTBs6E/2T0nytI8pHElpV78pqWDSTwIImEF9Rr
-    51Q6Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:date:message-id:in-reply-to
+    :references:subject:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520233374; bh=U
+    anCs2sokfvfKWqVMMzjUbeOVBv6s+1qsT6x8C77WfM=; b=LQUmnVQLekVaziwce
+    MTydrdpbFEQK9iac75CtR6tJy1CVRvB/KAZym9nRJLejctE4kPuSyeNaqdcdYVE1
+    rYjuFqMfo4/YYDaBzi9VI+82GHJalB7olmhy563O2KOJaxKRzycW0gfs2hwfA6AA
+    rSYyRY225MtUMeW5z3rKBA5TNNP0qfOWl6UxsFVADetXeWMJrJSvDfqrv3ke7wM2
+    o53tLKJcneQuDrRVvE2tSryA4+x6qHg8w7ZgDL0gysedOPUkCyP1/KHKCY3H2qqN
+    v3VGHgvWmyQyr9ISBtjhP1Ft1VoG1kP2F3n3kZT5wnntpX9pvKi3Zsami1TflznP
+    E8AwQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
@@ -54,11 +54,13 @@ Authentication-Results: mx4.messagingengine.com;
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon,  5 Mar 2018 08:02:14 +0100
-Message-Id: <20180305070219.7131-1-Valentin.Vidic@CARNet.hr>
+Date: Mon,  5 Mar 2018 08:02:17 +0100
+Message-Id: <20180305070219.7131-4-Valentin.Vidic@CARNet.hr>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180305070219.7131-1-Valentin.Vidic@CARNet.hr>
+References: <20180305070219.7131-1-Valentin.Vidic@CARNet.hr>
 X-SA-Exim-Connect-IP: 161.53.12.131
-Subject: [PATCH 1/6 v2] staging: pi433: fix CamelCase for packetFormat enum
+Subject: [PATCH 4/6] staging: pi433: fix CamelCase for address_filtering enum
 X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
@@ -88,103 +90,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Fixes checkpatch warnings:
 
-  CHECK: Avoid CamelCase: <packetFormat>
-  CHECK: Avoid CamelCase: <packetLengthFix>
-  CHECK: Avoid CamelCase: <packetLengthVar>
+  CHECK: Avoid CamelCase: <filteringOff>
+  CHECK: Avoid CamelCase: <nodeAddress>
+  CHECK: Avoid CamelCase: <nodeOrBroadcastAddress>
 
 Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
 ---
-v2: order patches so they apply correctly
+ drivers/staging/pi433/Documentation/pi433.txt | 12 ++++++------
+ drivers/staging/pi433/pi433_if.c              |  6 +++---
+ drivers/staging/pi433/rf69.c                  |  6 +++---
+ drivers/staging/pi433/rf69_enum.h             |  6 +++---
+ 4 files changed, 15 insertions(+), 15 deletions(-)
 
- drivers/staging/pi433/pi433_if.c  | 8 ++++----
- drivers/staging/pi433/rf69.c      | 8 ++++----
- drivers/staging/pi433/rf69.h      | 2 +-
- drivers/staging/pi433/rf69_enum.h | 6 +++---
- 4 files changed, 12 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/staging/pi433/Documentation/pi433.txt b/drivers/staging/pi433/Documentation/pi433.txt
+index 3313dff3c37e..2e8835bf2c9a 100644
+--- a/drivers/staging/pi433/Documentation/pi433.txt
++++ b/drivers/staging/pi433/Documentation/pi433.txt
+@@ -232,12 +232,12 @@ rf params:
+ 			     amount of bytes that were requested by the read request.
+ 		Attention: should be used in combination with sync, only
+ 	enable_address_filtering;
+-		filteringOff		- no address filtering will take place
+-		nodeAddress		- all telegrams, not matching the node
+-					  address will be internally discarded
+-		nodeOrBroadcastAddress	- all telegrams, neither matching the
+-					  node, nor the broadcast address will
+-					  be internally discarded
++		filtering_off		  - no address filtering will take place
++		node_address		  - all telegrams, not matching the node
++					    address will be internally discarded
++		node_or_broadcast_address - all telegrams, neither matching the
++					    node, nor the broadcast address will
++					    be internally discarded
+ 		Attention: Sync option must be enabled in order to use this feature
+ 	enable_crc
+ 		optionOn	- a crc will be calculated over the payload of
 diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index aad1debd34a2..b1cbec876857 100644
+index 730200597218..88da91d31e61 100644
 --- a/drivers/staging/pi433/pi433_if.c
 +++ b/drivers/staging/pi433/pi433_if.c
-@@ -222,11 +222,11 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
- 			return ret;
- 	}
- 	if (rx_cfg->enable_length_byte == OPTION_ON) {
--		ret = rf69_set_packet_format(dev->spi, packetLengthVar);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_var);
+@@ -257,7 +257,7 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
+ 		payload_length = rx_cfg->fixed_message_length;
+ 		if (rx_cfg->enable_length_byte  == OPTION_ON)
+ 			payload_length++;
+-		if (rx_cfg->enable_address_filtering != filteringOff)
++		if (rx_cfg->enable_address_filtering != filtering_off)
+ 			payload_length++;
+ 		ret = rf69_set_payload_length(dev->spi, payload_length);
+ 		if (ret < 0)
+@@ -274,7 +274,7 @@ rf69_set_rx_cfg(struct pi433_device *dev, struct pi433_rx_cfg *rx_cfg)
  		if (ret < 0)
  			return ret;
- 	} else {
--		ret = rf69_set_packet_format(dev->spi, packetLengthFix);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_fix);
+ 	}
+-	if (rx_cfg->enable_address_filtering != filteringOff) {
++	if (rx_cfg->enable_address_filtering != filtering_off) {
+ 		ret = rf69_set_node_address(dev->spi, rx_cfg->node_address);
  		if (ret < 0)
  			return ret;
- 	}
-@@ -337,11 +337,11 @@ rf69_set_tx_cfg(struct pi433_device *dev, struct pi433_tx_cfg *tx_cfg)
+@@ -502,7 +502,7 @@ pi433_receive(void *data)
  	}
  
- 	if (tx_cfg->enable_length_byte == OPTION_ON) {
--		ret = rf69_set_packet_format(dev->spi, packetLengthVar);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_var);
- 		if (ret < 0)
- 			return ret;
- 	} else {
--		ret = rf69_set_packet_format(dev->spi, packetLengthFix);
-+		ret = rf69_set_packet_format(dev->spi, packet_length_fix);
- 		if (ret < 0)
- 			return ret;
- 	}
+ 	/* address byte enabled? */
+-	if (dev->rx_cfg.enable_address_filtering != filteringOff) {
++	if (dev->rx_cfg.enable_address_filtering != filtering_off) {
+ 		u8 dummy;
+ 
+ 		bytes_total--;
 diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
-index b2cea5f52eea..54d8105b5812 100644
+index a73a3d2c0685..f419a3d4485b 100644
 --- a/drivers/staging/pi433/rf69.c
 +++ b/drivers/staging/pi433/rf69.c
-@@ -661,12 +661,12 @@ int rf69_set_sync_values(struct spi_device *spi, u8 sync_values[8])
- 	return retval;
- }
- 
--int rf69_set_packet_format(struct spi_device *spi, enum packetFormat packetFormat)
-+int rf69_set_packet_format(struct spi_device *spi, enum packet_format packet_format)
+@@ -687,11 +687,11 @@ int rf69_disable_crc(struct spi_device *spi)
+ int rf69_set_address_filtering(struct spi_device *spi, enum address_filtering address_filtering)
  {
--	switch (packetFormat) {
--	case packetLengthVar:
-+	switch (packet_format) {
-+	case packet_length_var:
- 		return rf69_set_bit(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
--	case packetLengthFix:
-+	case packet_length_fix:
- 		return rf69_clear_bit(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_PAKET_FORMAT_VARIABLE);
+ 	switch (address_filtering) {
+-	case filteringOff:
++	case filtering_off:
+ 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_OFF);
+-	case nodeAddress:
++	case node_address:
+ 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_NODE);
+-	case nodeOrBroadcastAddress:
++	case node_or_broadcast_address:
+ 		return rf69_read_mod_write(spi, REG_PACKETCONFIG1, MASK_PACKETCONFIG1_ADDRESSFILTERING, PACKETCONFIG1_ADDRESSFILTERING_NODEBROADCAST);
  	default:
  		dev_dbg(&spi->dev, "set: illegal input param");
-diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
-index cf89b556cb00..7b7932a553e8 100644
---- a/drivers/staging/pi433/rf69.h
-+++ b/drivers/staging/pi433/rf69.h
-@@ -50,7 +50,7 @@ int rf69_disable_sync(struct spi_device *spi);
- int rf69_set_fifo_fill_condition(struct spi_device *spi, enum fifo_fill_condition fifo_fill_condition);
- int rf69_set_sync_size(struct spi_device *spi, u8 sync_size);
- int rf69_set_sync_values(struct spi_device *spi, u8 sync_values[8]);
--int rf69_set_packet_format(struct spi_device *spi, enum packetFormat packetFormat);
-+int rf69_set_packet_format(struct spi_device *spi, enum packet_format packet_format);
- int rf69_enable_crc(struct spi_device *spi);
- int rf69_disable_crc(struct spi_device *spi);
- int rf69_set_address_filtering(struct spi_device *spi, enum address_filtering address_filtering);
 diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
-index cba3c5b3995c..682b667bf342 100644
+index d82d2be88cbd..43990e74db85 100644
 --- a/drivers/staging/pi433/rf69_enum.h
 +++ b/drivers/staging/pi433/rf69_enum.h
-@@ -118,9 +118,9 @@ enum fifo_fill_condition {
- 	always
+@@ -129,9 +129,9 @@ enum tx_start_condition {
  };
  
--enum packetFormat {
--	packetLengthFix,
--	packetLengthVar
-+enum packet_format {
-+	packet_length_fix,
-+	packet_length_var
+ enum address_filtering {
+-	filteringOff,
+-	nodeAddress,
+-	nodeOrBroadcastAddress
++	filtering_off,
++	node_address,
++	node_or_broadcast_address
  };
  
- enum tx_start_condition {
+ enum dagc {
 -- 
 2.16.1
 
