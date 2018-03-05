@@ -1,64 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933703AbeCEKZv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:25:51 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47197 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933575AbeCEKZe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:25:34 -0500
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v6 4/6] regulator: pfuze100: add fsl,pmic-stby-poweroff property
-Date: Mon,  5 Mar 2018 11:25:21 +0100
-Message-Id: <20180305102524.5905-5-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S934186AbeCEKaB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:30:01 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934137AbeCEK3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 05:29:51 -0500
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH] KVM: lapic: stop advertising DIRECTED_EOI when in-kernel IOAPIC is in use
+References: <20180209130133.28387-1-vkuznets@redhat.com>
+Date: Mon, 05 Mar 2018 11:29:46 +0100
+In-Reply-To: <20180209130133.28387-1-vkuznets@redhat.com> (Vitaly Kuznetsov's
+        message of "Fri, 9 Feb 2018 14:01:33 +0100")
+Message-ID: <87r2oyzug5.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the new optional "fsl,pmic-stby-poweroff" property.
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/regulator/pfuze100.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Devices which use level-triggered interrupts under Windows 2016 with
+> Hyper-V role enabled don't work: Windows disables EOI broadcast in SPIV
+> unconditionally. Our in-kernel IOAPIC implementation emulates an old IOAPIC
+> version which has no EOI register so EOI never happens.
+>
+> The issue was discovered and discussed a while ago:
+> https://www.spinics.net/lists/kvm/msg148098.html
+>
 
-diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-index c6dd3f5e485b..91fec1a0785d 100644
---- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-+++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-@@ -4,6 +4,13 @@ Required properties:
- - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000"
- - reg: I2C slave address
- 
-+Optional properties:
-+- fsl,pmic-stby-poweroff: if present, configure the PMIC to shutdown all
-+  power rails when PMIC_STBY_REQ line is asserted during the power off sequence.
-+  Use this option if the SoC should be powered off by external power
-+  management IC (PMIC) on PMIC_STBY_REQ signal.
-+  As opposite to PMIC_STBY_REQ boards can implement PMIC_ON_REQ signal.
-+
- Required child node:
- - regulators: This is the list of child nodes that specify the regulator
-   initialization data for defined regulators. Please refer to below doc
+Radim, Paolo,
+
+do we have a consensus here? (I wouldn't mind re-writing commit message
+in case you think we shouldn't blame Windows, I just want to have the
+annoying bug fixed :-)
+
 -- 
-2.16.1
+  Vitaly
