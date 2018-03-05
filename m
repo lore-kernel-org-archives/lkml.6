@@ -1,68 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeCEPwU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:52:20 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37752 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeCEPwT (ORCPT
+        id S1752401AbeCEPwa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:52:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39764 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751311AbeCEPwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:52:19 -0500
-Date: Mon, 5 Mar 2018 15:52:08 +0000
-From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] ASoC: dapm: add support to pinctrl dapm
-Message-ID: <20180305155208.GK8588@sirena.org.uk>
-References: <20180305123213.2045-1-srinivas.kandagatla@linaro.org>
+        Mon, 5 Mar 2018 10:52:22 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5EE0E6043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
+X-Google-Smtp-Source: AG47ELsjkHiV26/OOBPUfAzBfKBNcFTCREIkmtQAL+PrVRP26HHvQVdJLI6lcpOrZjlyukwmuI4ie97f3b/yrHsCoSQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2WS97oupGEGbYNpW"
-Content-Disposition: inline
-In-Reply-To: <20180305123213.2045-1-srinivas.kandagatla@linaro.org>
-X-Cookie: Do not write below this line.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
+Date: Mon, 5 Mar 2018 09:52:19 -0600
+X-Gmail-Original-Message-ID: <CAOZdJXV3QE2mKSf3GvTSdoVmfjJ1UEXPY8OJfW=-9E1dN1TeZA@mail.gmail.com>
+Message-ID: <CAOZdJXV3QE2mKSf3GvTSdoVmfjJ1UEXPY8OJfW=-9E1dN1TeZA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP hardening
+To: Shanker Donthineni <shankerd@codeaurora.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Thomas Speier <tspeier@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Sean Campbell <scampbel@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 2, 2018 at 3:50 PM, Shanker Donthineni
+<shankerd@codeaurora.org> wrote:
+> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> index bb26382..6ecc249 100644
+> --- a/arch/arm64/include/asm/cpucaps.h
+> +++ b/arch/arm64/include/asm/cpucaps.h
+> @@ -43,7 +43,7 @@
+>  #define ARM64_SVE                              22
+>  #define ARM64_UNMAP_KERNEL_AT_EL0              23
+>  #define ARM64_HARDEN_BRANCH_PREDICTOR          24
+> -#define ARM64_HARDEN_BP_POST_GUEST_EXIT                25
+> +/* #define ARM64_UNALLOCATED_ENTRY                     25 */
 
---2WS97oupGEGbYNpW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Mar 05, 2018 at 12:32:13PM +0000, srinivas.kandagatla@linaro.org wrote:
-
-> +int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
-> +		       struct snd_kcontrol *kcontrol, int event)
-> +{
-> +	struct snd_soc_dapm_pinctrl_priv *priv = w->priv;
-> +	struct pinctrl *p = w->pinctrl;
-> +	struct pinctrl_state *s;
-> +
-> +	if (!p || !priv)
-> +		return -EIO;
-> +
-> +	soc_dapm_async_complete(w->dapm);
-
-This doesn't look right - we're trying to synchronize with the DAPM
-async queue from something that should be run inside that very queue.
-What is this supposed to be doing?
-
---2WS97oupGEGbYNpW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqdZ6gACgkQJNaLcl1U
-h9Cf2Qf+LEcnkBxz5K9/VMMvmHzkz6BFHGu6MjMGN3KKJAiV/NN5mKOnL0jFqlci
-to7GQdx9HMXBCq6osQqHuDOYtY57kYWN0KpBG0i3dddvJLF4kGc+QZnzB7WpBfeu
-0Vb1T/nE9h6J7wSqfIdYqxUw/7cAdIqxL/qrV8PQWTgZFKAV/45VuQ/bEYVZsmFM
-uXqUuGwJm0OFkU66pkHVg4b1fPBIP3XfX9UohgO3Gejj8N7gBIBI4tPD3J42Eu49
-CEGHaf0888RmXYQprZZcUE8NOQH+zsbkU6TNhf0JFVVL1u9QF0ofR1mz6IaIZ/lL
-A9B8c0OT+3Z8CRMxSB0VFL5wnqKm6g==
-=hY2d
------END PGP SIGNATURE-----
-
---2WS97oupGEGbYNpW--
+Why not just delete the entry?  Is ARM64_NCAPS never supposed to get smaller?
