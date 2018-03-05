@@ -1,64 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752154AbeCEQ4Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:56:24 -0500
-Received: from mga18.intel.com ([134.134.136.126]:20684 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751679AbeCEQ4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:56:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="22131040"
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 0/5] Migrate all TPM 2.0 commands to use struct tpm_buf
-Date: Mon,  5 Mar 2018 18:56:09 +0200
-Message-Id: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752812AbeCEQ6I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:58:08 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56418 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751989AbeCEQ6F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:58:05 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F7226022C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
+ hardening
+To: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Speier <tspeier@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Christoffer Dall <christoffer.dall@linaro.org>
+References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+ <20180305155614.GG6618@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <05c25982-4939-593f-ad30-bf496e879885@codeaurora.org>
+Date: Mon, 5 Mar 2018 10:57:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180305155614.GG6618@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to make struct tpm_buf the first class object for constructing TPM
-commands, this patch set migrates all TPM 2.0 commands to use it. The next
-step after this is to migrate TPM 1.2 commands in a subsequent patch set.
-Finally, tpm_transmit_cmd() can take simply struct tpm_buf as its argument
-and this interface can be exported to be used by the kernel keyring.
+Hi Will,
 
-The ultimate goal of this work is to make constructing TPM commands inside
-the kernel simple and robust.
+On 03/05/2018 09:56 AM, Will Deacon wrote:
+> Hi Shanker,
+> 
+> On Fri, Mar 02, 2018 at 03:50:18PM -0600, Shanker Donthineni wrote:
+>> The function SMCCC_ARCH_WORKAROUND_1 was introduced as part of SMC
+>> V1.1 Calling Convention to mitigate CVE-2017-5715. This patch uses
+>> the standard call SMCCC_ARCH_WORKAROUND_1 for Falkor chips instead
+>> of Silicon provider service ID 0xC2001700.
+>>
+>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+>> ---
+>>  arch/arm64/include/asm/cpucaps.h |  2 +-
+>>  arch/arm64/include/asm/kvm_asm.h |  2 --
+>>  arch/arm64/kernel/bpi.S          |  8 ------
+>>  arch/arm64/kernel/cpu_errata.c   | 55 ++++++++++++++--------------------------
+>>  arch/arm64/kvm/hyp/entry.S       | 12 ---------
+>>  arch/arm64/kvm/hyp/switch.c      | 10 --------
+>>  6 files changed, 20 insertions(+), 69 deletions(-)
+> 
+> I'm happy to take this via arm64 if I get an ack from Marc/Christoffer.
+> 
+>> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+>> index bb26382..6ecc249 100644
+>> --- a/arch/arm64/include/asm/cpucaps.h
+>> +++ b/arch/arm64/include/asm/cpucaps.h
+>> @@ -43,7 +43,7 @@
+>>  #define ARM64_SVE				22
+>>  #define ARM64_UNMAP_KERNEL_AT_EL0		23
+>>  #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+>> -#define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+>> +/* #define ARM64_UNALLOCATED_ENTRY			25 */
+>>  #define ARM64_HAS_RAS_EXTN			26
+>>  
+>>  #define ARM64_NCAPS				27
+> 
+> These aren't ABI, so I think you can just drop
+> ARM64_HARDEN_BP_POST_GUEST_EXIT and repack the others accordingly.
+> 
+Sure, I'll remove it completely in v2 patch.
+ 
+>> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+>> index 24961b7..ab4d0a9 100644
+>> --- a/arch/arm64/include/asm/kvm_asm.h
+>> +++ b/arch/arm64/include/asm/kvm_asm.h
+>> @@ -68,8 +68,6 @@
+>>  
+>>  extern u32 __init_stage2_translation(void);
+>>  
+>> -extern void __qcom_hyp_sanitize_btac_predictors(void);
+>> -
+>>  #endif
+>>  
+>>  #endif /* __ARM_KVM_ASM_H__ */
+>> diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
+>> index e5de335..dc4eb15 100644
+>> --- a/arch/arm64/kernel/bpi.S
+>> +++ b/arch/arm64/kernel/bpi.S
+>> @@ -55,14 +55,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
+>>  	.endr
+>>  ENTRY(__bp_harden_hyp_vecs_end)
+>>  
+>> -ENTRY(__qcom_hyp_sanitize_link_stack_start)
+>> -	stp     x29, x30, [sp, #-16]!
+>> -	.rept	16
+>> -	bl	. + 4
+>> -	.endr
+>> -	ldp	x29, x30, [sp], #16
+>> -ENTRY(__qcom_hyp_sanitize_link_stack_end)
+>> -
+>>  .macro smccc_workaround_1 inst
+>>  	sub	sp, sp, #(8 * 4)
+>>  	stp	x2, x3, [sp, #(8 * 0)]
+>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+>> index 52f15cd..d779ffd4 100644
+>> --- a/arch/arm64/kernel/cpu_errata.c
+>> +++ b/arch/arm64/kernel/cpu_errata.c
+>> @@ -67,8 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
+>>  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
+>>  
+>>  #ifdef CONFIG_KVM
+>> -extern char __qcom_hyp_sanitize_link_stack_start[];
+>> -extern char __qcom_hyp_sanitize_link_stack_end[];
+>>  extern char __smccc_workaround_1_smc_start[];
+>>  extern char __smccc_workaround_1_smc_end[];
+>>  extern char __smccc_workaround_1_hvc_start[];
+>> @@ -115,8 +113,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+>>  	spin_unlock(&bp_lock);
+>>  }
+>>  #else
+>> -#define __qcom_hyp_sanitize_link_stack_start	NULL
+>> -#define __qcom_hyp_sanitize_link_stack_end	NULL
+>>  #define __smccc_workaround_1_smc_start		NULL
+>>  #define __smccc_workaround_1_smc_end		NULL
+>>  #define __smccc_workaround_1_hvc_start		NULL
+>> @@ -161,12 +157,25 @@ static void call_hvc_arch_workaround_1(void)
+>>  	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+>>  }
+>>  
+>> +static void qcom_link_stack_sanitization(void)
+>> +{
+>> +	u64 tmp;
+>> +
+>> +	asm volatile("mov	%0, x30		\n"
+>> +		     ".rept	16		\n"
+>> +		     "bl	. + 4		\n"
+>> +		     ".endr			\n"
+>> +		     "mov	x30, %0		\n"
+>> +		     : "=&r" (tmp));
+>> +}
+>> +
+>>  static int enable_smccc_arch_workaround_1(void *data)
+>>  {
+>>  	const struct arm64_cpu_capabilities *entry = data;
+>>  	bp_hardening_cb_t cb;
+>>  	void *smccc_start, *smccc_end;
+>>  	struct arm_smccc_res res;
+>> +	u32 midr = read_cpuid_id();
+>>  
+>>  	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+>>  		return 0;
+>> @@ -199,33 +208,15 @@ static int enable_smccc_arch_workaround_1(void *data)
+>>  		return 0;
+>>  	}
+>>  
+>> +	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
+>> +	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
+>> +		cb = qcom_link_stack_sanitization;
+> 
+> Is this just a performance thing? Do you actually see an advantage over
+> always making the firmware call? We've seen minimal impact in our testing.
+> 
 
-v3:
-* Fixed error handling in tpm2_get_random()
+Yes, we've couple of advantages using the standard SMCCC_ARCH_WOKAROUND_1 framework. 
+  - Improves the code readability.
+  - Avoid the unnecessary MIDR checks on each vCPU exit.
+  - Validates ID_AA64PFR0_CVS2 feature for Falkor chips.
+  - Avoids the 2nd link stack sanitization workaround in firmware.
 
-v2:
-* Fixed author information in the commit that fixes the self-test issue,
-  removed '\n' from the log message and added the missing tested-by.
-  (James: sincere apologies about this)
-* Removed the redundant "out of memory" log message from tpm2_shutdown().
-* tpm_buf_destroy() was called before using the response data in
-  tpm2_probe().
-* Added missing tpm_buf_destroy() to tpm2_get_random().
-
-James Bottomley (1):
-  tpm: fix intermittent failure with self tests
-
-Jarkko Sakkinen (4):
-  tpm: migrate tpm2_shutdown() to use struct tpm_buf
-  tpm: migrate tpm2_probe() to use struct tpm_buf
-  tpm: migrate tpm2_get_tpm_pt() to use struct tpm_buf
-  tpm: migrate tpm2_get_random() to use struct tpm_buf
-
- drivers/char/tpm/tpm-interface.c |  20 ++-
- drivers/char/tpm/tpm.h           |  20 +--
- drivers/char/tpm/tpm2-cmd.c      | 286 ++++++++++++++-------------------------
- 3 files changed, 132 insertions(+), 194 deletions(-)
+  
+> Will
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
 -- 
-2.15.1
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
