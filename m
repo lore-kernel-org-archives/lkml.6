@@ -1,23 +1,23 @@
 Return-Path: <anholt@anholt.net>
-X-Google-Smtp-Source: AG47ELugMdaWlJDJzowUOoDMBMUYv3vz0tC8Xj0+TVk+DRDA0Fw9Lj0FMOUFT6cjiL/qa4SPwTfz
-ARC-Seal: i=1; a=rsa-sha256; t=1520281694; cv=none;
+X-Google-Smtp-Source: AG47ELsiT+4T81JsawOeAXveFLmSX6di1DwSUUfx3/VYSmVwvsdZWFiqsPPaTC7aZsfJ0OEjRvM4
+ARC-Seal: i=1; a=rsa-sha256; t=1520281692; cv=none;
         d=google.com; s=arc-20160816;
-        b=ffGNmkarQtY4OF83DhOyPRUtBsuFEweN3NNhIsM5RZ5W0iQismTMOLBvZkX4zxE+3m
-         IVKD30iDzfIhFCKqYV7+Mr5UMygmaM12OcyITWls33xOAxCswQEfrPzDXss6kGx0LM8h
-         0pHpRKqbtziKEqitY07YmiDeT/hvisxTlHumX2VDAsTYr9dg98JDdVLoAzHl7g8DLkpf
-         xY0e5S808PhURXBRpPK4hjhkl785U0R9ZfXft5xaaafMzQs/wkRiSYLULV8obhp3Vp7d
-         pSM2Z02kdho3yYH75DCTyvbC0WeRk1Oi7nk9NZbpih7LzUpMxNBwYFNwOEeGty9KPtJR
-         EsHA==
+        b=cZT6Br5dhaKSLss3YfBRbBVwzNrFVRP/tEyfb8ZJ8LZUoSe0CvTUyWFLfcm3dRdmhV
+         4jD+39yPdv94/0pATVtzOerTkYqwL+6iGdWrnt5/ntCYClivtwVWw4k35UHHKR4HRjdm
+         P3zN6c4az4jXX3DvXiAnFoF+bYAmP9l1femVi658VRszXpxPC9I1H/UPF4DEU9/WH4Pt
+         Nh+76CaeQ47rPtVAJAVFZ4SeWvEROy8odRIQl4l+NaTD1+t+ug8iEs9ZZfut/Bh5vIS5
+         dAHwlWklNvfrNU6pN8Sh06rc2XgUAa+hQ5oz6+hKBScVPPhgGiGkmM59MUgoSjaMKAw8
+         vmaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=yLaHXlitgISKk110tyuY1am4/VcskbnQDVTrkk6uXXw=;
-        b=oemXpB1W6MgGf9TfyOAjX9fEmfc+FIz4U/OcHPEpJzf1wZA0yE3RZ/EBpfOZRy3q1R
-         PJgEC5LBRLswG5WhpF2g6q/RBDY3HinNTz1VTFdPL5Sz5omspO9dqJa/70PJEzxoH//8
-         oERyVKuidc93Cmk+Qxkp3c3mKMX1hAIvZ2UNRFxHiJ62bPN5HKTU2A60ddpx+PY8GIvs
-         99pDw6CT62F3Nz6S9pWVrFv0/MAQ/NR/gUg9kTwjr9KSIIRPCDthm++XxVxc7YFchJdV
-         +3U5qfsJGaR4BMQ28XbhIx6TC2W9ez0NuONsRELFEnLPVWPtKTbOqQLNumnnjELW1j9+
-         lX0Q==
+        bh=qLC5+mtpsE8WtQLo06npyBDERaEtE9FkiC+hdmDPP4w=;
+        b=d7fLzGOswo2MYmijF4uhDjnzVeeVl9TwHq3gNS4NArJFT6L9EAiSUn2ZIRVYgZtkaN
+         zli227H8pA732WldSQeildKhh+MIor6MhC2nBsmnvsnoChp/Gwyw2Toeeo2PRnt/kIf0
+         TrcsT5Lw0H7XA2NOF7zMscNFCO6Z324DJzpaMrkY9dqqY6j54n+nCuuB5iDYS3VKCzVC
+         9d3CX4VYtQyxIRsVwN1qaCG9K7buyXcTl0qC0OMz8O381Vz3byi7CZrRBGU5mIY1E4hO
+         KY26VpWp/Qr2cyagIsiG/QKBStfNBGYkrTQaMWVSdeLTnZIPfoA4ddVi7n0t/+RJ1sZN
+         5RMw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of anholt@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=anholt@anholt.net
 Authentication-Results: mx.google.com;
@@ -35,49 +35,38 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <stefan.wahren@i2se.com>,
 	bcm-kernel-feedback-list@broadcom.com,
 	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 5/5] staging: vc04_services: Mark the "DT bindings" job done.
-Date: Mon,  5 Mar 2018 12:28:06 -0800
-Message-Id: <20180305202806.21219-6-eric@anholt.net>
+Subject: [PATCH 1/5] staging: vc04_services: Remove dead FRAGMENTS_T
+Date: Mon,  5 Mar 2018 12:28:02 -0800
+Message-Id: <20180305202806.21219-2-eric@anholt.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180305202806.21219-1-eric@anholt.net>
 References: <20180305202806.21219-1-eric@anholt.net>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594130897655112970?=
-X-GMAIL-MSGID: =?utf-8?q?1594130897655112970?=
+X-GMAIL-THRID: =?utf-8?q?1594130895367523113?=
+X-GMAIL-MSGID: =?utf-8?q?1594130895367523113?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now we just need to get the other drivers merged and finish the style
-cleanups/garbage collecting so we can get out of staging.
+It's not used in-tree, or in the downstream tree.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/staging/vc04_services/interface/vchi/TODO | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchi/TODO b/drivers/staging/vc04_services/interface/vchi/TODO
-index df93154b1aa6..46b20a1961a2 100644
---- a/drivers/staging/vc04_services/interface/vchi/TODO
-+++ b/drivers/staging/vc04_services/interface/vchi/TODO
-@@ -1,9 +1,4 @@
--1) Write a DT binding doc and get the corresponding DT node merged to
--   bcm2835.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
+index 926c247fd9d3..a6c5f7cc78f0 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
+@@ -49,9 +49,4 @@ typedef struct pagelist_struct {
+ 			 */
+ } PAGELIST_T;
+ 
+-typedef struct fragments_struct {
+-	char headbuf[CACHE_LINE_SIZE];
+-	char tailbuf[CACHE_LINE_SIZE];
+-} FRAGMENTS_T;
 -
--This will let the driver probe when enabled.
--
--2) Import drivers using VCHI.
-+1) Import drivers using VCHI.
- 
- VCHI is just a tool to let drivers talk to the firmware.  Here are
- some of the ones we want:
-@@ -26,7 +21,7 @@ some of the ones we want:
-   to manage these buffers as dmabufs so that we can zero-copy import
-   camera images into vc4 for rendering/display.
- 
--3) Garbage-collect unused code
-+2) Garbage-collect unused code
- 
- One of the reasons this driver wasn't upstreamed previously was that
- there's a lot code that got built that's probably unnecessary these
+ #endif /* VCHIQ_PAGELIST_H */
 -- 
 2.16.2
