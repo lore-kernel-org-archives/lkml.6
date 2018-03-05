@@ -1,131 +1,113 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvSyVtGIQfCIIfPTXHlc9iEZzgHO+61soHft1ebiElti6FYAA2jCYy8TI/Ur1CQ8Y7FBSLn
-ARC-Seal: i=1; a=rsa-sha256; t=1520269877; cv=none;
-        d=google.com; s=arc-20160816;
-        b=afzBAWKkm+n07VV7k4Rn0MuL8PIV292hJI5kq31lUMyI8EiYHFy6ET7DYGDycuj/If
-         1YTc+YvON/NqW3sgINJvgmZt6gbXrRu4Ry8NG8D9SFfRd9XSrkGtkPPDw3k5FAXH6eNG
-         mLbGQ3Sdcfiq8DDZ2sKYaEMcI5zcF2tcIctG2f+IHRSCmT1/Xg8VwoHNeKJKplZO5kOM
-         YFXuVq9Fa8pHV0Uq5XL0Fyk7V/khCkkpXjZkQ0LGeHxiyWTV6KKQteC5tqfiTJJ20ZgT
-         AjWCFbOPDSAeUxBChYTm9QynMhwMmkPRANnre6t7p8dv2IVW8P74tiIZDyfEb2xqPDaT
-         9L3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-language:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:arc-authentication-results;
-        bh=dUxFEF+Rgcq4ipr6oTTjgPkrpQYwvQ2ldBcER5KOSQg=;
-        b=RYfTEm3n84x9It55A9hjEn9C+85h1IpvtmRK5GQ8j8g/Q7SVhbjBY25NXhRyCf+0tO
-         vLjCK1dk6n/9SqmVxIsNJWuughx2FclJB9o2ytNZkDbB8yv7ACdzR7wuwkFUV5CQ+nz6
-         LKYxQPaYrjNBs4aR/M3HqZi3llj9KfTf7fYeJoxxIXstIb7AEQ6rFTQmhLG62PpMF61S
-         8y1qIOk+rj1qy83RksZ9//ETNZBDqDhpNhVWOqwCX1Zd3IURoL8mYpg2thrGX7+AYgoP
-         8np9XFIZHUngnF9EM6XCFnTESKc3MKBflBm1yxnotq4KybL6KMT4hNjnW/P3rA0ipkCW
-         rskw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1903134-1520262153-2-3313366479979808341
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520262153; b=wJex6JKaDAF4Eq3X72oNmngkGlYtp0KPJaamK0eJ8Ftqgba
+    t+9+BKpfedy1WxXPS3GkMByExT1zjXDjBkYzAy3l2izMgtu0UYcTJVWYjU3YAwhw
+    vgvr+wBrN1lm+zsqkhBf7s+5zpKcfkOMyAESEEWhigTMfoaUtXM1jpV+dSWpK6Cx
+    0hMq+nXv6sMIzZTTjvtayEo1Qh4ZQvVdQEIDuq10T3kK75tGY1xSbzvzExD4HuNt
+    0ExjFw8ilqWrezOS2QJ0UWzSjMWneXYM9oh3HPLpbIF35UAZr+aVrVsX4RIc3C/z
+    pnjMagerdH0crWwEoNX+c69bbr/GuhHFee1Tm5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1520262153; bh=fTvCnRUBge5cT8vGdfxtTUGJL5RjMpAiKhyZ4vUf/Qs=; b=P
+    5SwTjOPCLPOvbbOsPUJ07j2S5YmH/TlR9Lk5ZkrUzV5zTDTvl7f7aGtcFfGcanBg
+    6WBqRVEddYODANgMG/eHt0ljF8swfjHGaP3zLkLITXJQSBe2Glm1CByNT0fRpoI1
+    QbRWXRgKW7aLORhT6Ywzf8oTd9xhiKx6ugYOXC5dSQA9lJmu8yQo8LWAFPW+CXAy
+    c5HpZDKB25ydfXjXhD5v1GWU4AtrFtHogEyTHvIYKv7Wy9ALeqQenmVr3Lgf2A9Z
+    E339CGhkDdDGD9t3vJclj4bLotJwqZtGmS+NVYQzmSq/ybrn+4hU8nkd+FWT8yFL
+    Wwnd+9CAt65Oy5/BAcDtA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752154AbeCERLQ (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 5 Mar 2018 12:11:16 -0500
-Received: from osg.samsung.com ([64.30.133.232]:44637 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751275AbeCERLP (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:11:15 -0500
-To: torvalds@linux-foundation.org
-Cc: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [GIT PULL] kselftest fixes update for 4.16-5
-Message-ID: <9a30baa5-bcbb-8f47-d74d-034754fc5a98@osg.samsung.com>
-Date: Mon, 5 Mar 2018 10:11:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752162AbeCEPBi (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 10:01:38 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44267 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751893AbeCEPBh (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Mon, 5 Mar 2018 10:01:37 -0500
+From: <patrice.chotard@st.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
+        <linux-serial@vger.kernel.org>
+CC: <patrice.chotard@st.com>
+Subject: [PATCH 0/2] Fix STi aliases property name
+Date: Mon, 5 Mar 2018 16:00:23 +0100
+Message-ID: <1520262025-21088-1-git-send-email-patrice.chotard@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------7ADE07706429B842E07699DB"
-Content-Language: en-US
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG6NODE3.st.com
+ (10.75.127.18)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_06:,,
+ signatures=0
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594118507230178100?=
-X-GMAIL-MSGID: =?utf-8?q?1594118507230178100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------7ADE07706429B842E07699DB
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Patrice Chotard <patrice.chotard@st.com>
 
-Hi Linus,
+Since dtc v1.4.6-9-gaadd0b65c987, when compiling dtb with W=1 option,
+the following warnings are triggered :
+    
+arch/arm/boot/dts/stih418-b2199.dtb: Warning (alias_paths): /aliases: aliases property name must include only lowercase and '-'
+arch/arm/boot/dts/stih407-b2120.dtb: Warning (alias_paths): /aliases: aliases property name must include only lowercase and '-'
+arch/arm/boot/dts/stih410-b2260.dtb: Warning (alias_paths): /aliases: aliases property name must include only lowercase and '-'
+arch/arm/boot/dts/stih410-b2120.dtb: Warning (alias_paths): /aliases: aliases property name must include only lowercase and '-'
 
-Please pull the following Kselftest update for 4.16-rc5.
+_ Patch 1, convert the aliases property name in lowercase in 
+  all STi board dts files.
 
-This kselftest fixes update has a fix for regression in memory-hotplug
-install script that prevents the test from running on the target.
-
-Diff for the update is attached.
-
-thanks,
--- Shuah
-
------------------------------------------------------------------------------------
-
-The following changes since commit f6869826de700bce59e2cef14974f99836e34e4f:
-
-  selftests: vm: update .gitignore with new test (2018-02-26 16:09:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-4.16-rc5
-
-for you to fetch changes up to ba004a2955f759946d8c98ca1a9c8d09818b1223:
-
-  selftests: memory-hotplug: fix emit_tests regression (2018-03-02 10:12:59 -0700)
-
-----------------------------------------------------------------
-linux-kselftest-4.16-rc5
-
-This kselftest fixes update has a fix for regression in memory-hotplug
-install script that prevents the test from running on the target.
-
-----------------------------------------------------------------
-Shuah Khan (1):
-      selftests: memory-hotplug: fix emit_tests regression
-
- tools/testing/selftests/memory-hotplug/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+_ Patch 2, rework the tty driver st-asc accordingly, as aliases id is retrieved 
+  using of_alias_get_id() with a defined string with is not lowercase only.
 
 
------------------------------------------------------------------------------------
+Patrice Chotard (2):
+  ARM: dts: STi: Fix aliases property name for STi boards
+  tty: st-asc: Convert tty alias in lowercase
 
---------------7ADE07706429B842E07699DB
-Content-Type: text/x-patch;
- name="linux-kselftest-4.16-rc5.diff"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="linux-kselftest-4.16-rc5.diff"
+ arch/arm/boot/dts/stih407-b2120.dts | 4 ++--
+ arch/arm/boot/dts/stih410-b2120.dts | 4 ++--
+ arch/arm/boot/dts/stih410-b2260.dts | 4 ++--
+ arch/arm/boot/dts/stih418-b2199.dts | 4 ++--
+ drivers/tty/serial/st-asc.c         | 2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/memory-hotplug/Makefile b/tools/test=
-ing/selftests/memory-hotplug/Makefile
-index 183b46883875..686da510f989 100644
---- a/tools/testing/selftests/memory-hotplug/Makefile
-+++ b/tools/testing/selftests/memory-hotplug/Makefile
-@@ -5,7 +5,8 @@ include ../lib.mk
-=20
- TEST_PROGS :=3D mem-on-off-test.sh
- override RUN_TESTS :=3D @./mem-on-off-test.sh -r 2 && echo "selftests: m=
-emory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
--override EMIT_TESTS :=3D echo "$(RUN_TESTS)"
-+
-+override EMIT_TESTS :=3D echo "$(subst @,,$(RUN_TESTS))"
-=20
- run_full_test:
- 	@/bin/bash ./mem-on-off-test.sh && echo "memory-hotplug selftests: [PAS=
-S]" || echo "memory-hotplug selftests: [FAIL]"
+-- 
+1.9.1
 
---------------7ADE07706429B842E07699DB--
