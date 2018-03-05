@@ -1,162 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932506AbeCEBXn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 20:23:43 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:38483 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932083AbeCEBXi (ORCPT
+        id S932512AbeCEBde (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 20:33:34 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38017 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932083AbeCEBda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 20:23:38 -0500
-X-UUID: 2221437ab41d426987a9395cd80b8f0d-20180305
-Message-ID: <1520212988.23198.22.camel@mhfsdcap03>
-Subject: Re: [PATCH v2 4/4] pintcrl: support bias-disable of generic and
- special pins simultaneously
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-To: Sean Wang <sean.wang@mediatek.com>
-CC: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <biao.huang@mediatek.com>, <erin.lo@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <hongzhou.yang@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-Date: Mon, 5 Mar 2018 09:23:08 +0800
-In-Reply-To: <1519890183.8089.114.camel@mtkswgap22>
-References: <1519634042-12063-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1519634042-12063-5-git-send-email-zhiyong.tao@mediatek.com>
-         <1519803217.8089.31.camel@mtkswgap22> <1519804157.23198.9.camel@mhfsdcap03>
-         <1519876072.23198.17.camel@mhfsdcap03>
-         <1519890183.8089.114.camel@mtkswgap22>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Sun, 4 Mar 2018 20:33:30 -0500
+X-Google-Smtp-Source: AG47ELtIUeAqNZ4IeYRbwX256v0mD9wkWNY2XiA/S15nJroBBiZv5VQJbbreOot9jX3e346ZVwMz5E8CVJe55sCxflI=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180228234006.21093-8-logang@deltatee.com>
+References: <20180228234006.21093-1-logang@deltatee.com> <20180228234006.21093-8-logang@deltatee.com>
+From: Oliver <oohall@gmail.com>
+Date: Mon, 5 Mar 2018 12:33:29 +1100
+Message-ID: <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Keith Busch <keith.busch@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-01 at 15:43 +0800, Sean Wang wrote:
-> On Thu, 2018-03-01 at 11:47 +0800, Zhiyong Tao wrote:
-> > On Wed, 2018-02-28 at 15:49 +0800, Zhiyong Tao wrote:
-> > > On Wed, 2018-02-28 at 15:33 +0800, Sean Wang wrote:
-> > > > On Mon, 2018-02-26 at 16:34 +0800, Zhiyong Tao wrote:
-> > > > > For generic pins, parameter "arg" is 0 or 1.
-> > > > > For special pins, bias-disable is set by R0R1,
-> > > > > so we need transmited "00" to set bias-disable
-> > > > > When we set "bias-disable" as high-z property,
-> > > > > the parameter should be "MTK_PUPD_SET_R1R0_00".
-> > > > > 
-> > > > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > > > ---
-> > > > >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 13 +++++++++++--
-> > > > >  1 file changed, 11 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > > index 3cf384f..e88ba04 100644
-> > > > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > > > > @@ -301,8 +301,17 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
-> > > > >  	 * resistor bit, so we need this special handle.
-> > > > >  	 */
-> > > > >  	if (pctl->devdata->spec_pull_set) {
-> > > > > -		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > > > > -			pin, pctl->devdata->port_align, isup, arg);
-> > > > > +		if (enable) {
-> > > > > +			ret = pctl->devdata->spec_pull_set(
-> > > > > +				mtk_get_regmap(pctl, pin), pin,
-> > > > > +				pctl->devdata->port_align, isup,
-> > > > > +				arg);
-> > > > > +		} else {
-> > > > > +			ret = pctl->devdata->spec_pull_set(
-> > > > > +				mtk_get_regmap(pctl, pin), pin,
-> > > > > +				pctl->devdata->port_align, isup,
-> > > > > +				MTK_PUPD_SET_R1R0_00);
-> > > > > +		}
-> > > > 
-> > > > 
-> > > > it looks like you can use as following snippet with reusing original
-> > > > logic and less effort on maintaining these common code (?)
-> > > ==> Thanks for your suggestion very much. It seems better.
-> > > I will change it in v3.
-> > 
-> > ==>
-> >  Hi sean,
-> > 
-> > we try it in our site. we can't change like this.
-> > Because we will check "arg" after setting "arg = MTK_PUPD_SET_R1R0_00;".
-> > following snippet which check "arg" value is o or 1. If it not, which
-> > will print error. so we can't change like this.
-> > /* For generic pull config, default arg value should be 0 or 1. */
-> > if (arg != 0 && arg != 1) {
-> > 	dev_err(pctl->dev, "invalid pull-up argument %d on pin %d .\n", arg,
-> > pin);
-> > 	return -EINVAL;
-> > }
-> > 
-> > Thanks.
-> 
-> why not rewrite it with
+On Thu, Mar 1, 2018 at 10:40 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> Register the CMB buffer as p2pmem and use the appropriate allocation
+> functions to create and destroy the IO SQ.
+>
+> If the CMB supports WDS and RDS, publish it for use as p2p memory
+> by other devices.
+>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/nvme/host/pci.c | 75 +++++++++++++++++++++++++++----------------------
+>  1 file changed, 41 insertions(+), 34 deletions(-)
+>
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 73036d2fbbd5..56ca79be8476 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/types.h>
+>  #include <linux/io-64-nonatomic-lo-hi.h>
+>  #include <linux/sed-opal.h>
+> +#include <linux/pci-p2pdma.h>
+>
+>  #include "nvme.h"
+>
+> @@ -91,9 +92,8 @@ struct nvme_dev {
+>         struct work_struct remove_work;
+>         struct mutex shutdown_lock;
+>         bool subsystem;
+> -       void __iomem *cmb;
+> -       pci_bus_addr_t cmb_bus_addr;
+>         u64 cmb_size;
+> +       bool cmb_use_sqes;
+>         u32 cmbsz;
+>         u32 cmbloc;
+>         struct nvme_ctrl ctrl;
+> @@ -148,7 +148,7 @@ struct nvme_queue {
+>         struct nvme_dev *dev;
+>         spinlock_t q_lock;
+>         struct nvme_command *sq_cmds;
+> -       struct nvme_command __iomem *sq_cmds_io;
+> +       bool sq_cmds_is_io;
+>         volatile struct nvme_completion *cqes;
+>         struct blk_mq_tags **tags;
+>         dma_addr_t sq_dma_addr;
+> @@ -429,10 +429,7 @@ static void __nvme_submit_cmd(struct nvme_queue *nvmeq,
+>  {
+>         u16 tail = nvmeq->sq_tail;
 
-==> Hi sean,
-Thanks for your comments, we will try to do it. If it is ok, we will
-modify it in v3.
-> 
-> @@ -301,8 +301,10 @@ static int mtk_pconf_set_pull_select(struct
-> mtk_pinctrl *pctl,
->          * resistor bit, so we need this special handle.
->          */
->         if (pctl->devdata->spec_pull_set) {
-> +               unsigned int r1r0 = enable ? arg : MTK_PUPD_SET_R1R0_00;
+> -       if (nvmeq->sq_cmds_io)
+> -               memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
+> -       else
+> -               memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+> +       memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
+
+Hmm, how safe is replacing memcpy_toio() with regular memcpy()? On PPC
+the _toio() variant enforces alignment, does the copy with 4 byte
+stores, and has a full barrier after the copy. In comparison our
+regular memcpy() does none of those things and may use unaligned and
+vector load/stores. For normal (cacheable) memory that is perfectly
+fine, but they can cause alignment faults when targeted at MMIO
+(cache-inhibited) memory.
+
+I think in this particular case it might be ok since we know SEQs are
+aligned to 64 byte boundaries and the copy is too small to use our
+vectorised memcpy(). I'll assume we don't need explicit ordering
+between writes of SEQs since the existing code doesn't seem to care
+unless the doorbell is being rung, so you're probably fine there too.
+That said, I still think this is a little bit sketchy and at the very
+least you should add a comment explaining what's going on when the CMB
+is being used. If someone more familiar with the NVMe driver could
+chime in I would appreciate it.
+
+>         if (++tail == nvmeq->q_depth)
+>                 tail = 0;
+> @@ -1286,9 +1283,18 @@ static void nvme_free_queue(struct nvme_queue *nvmeq)
+>  {
+>         dma_free_coherent(nvmeq->q_dmadev, CQ_SIZE(nvmeq->q_depth),
+>                                 (void *)nvmeq->cqes, nvmeq->cq_dma_addr);
+> -       if (nvmeq->sq_cmds)
+> -               dma_free_coherent(nvmeq->q_dmadev, SQ_SIZE(nvmeq->q_depth),
+> -                                       nvmeq->sq_cmds, nvmeq->sq_dma_addr);
 > +
->                 ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl,
-> pin),
-> -                       pin, pctl->devdata->port_align, isup, arg);
-> +                       pin, pctl->devdata->port_align, isup, r1r0);
->                 if (!ret)
->                         return 0;
+> +       if (nvmeq->sq_cmds) {
+> +               if (nvmeq->sq_cmds_is_io)
+> +                       pci_free_p2pmem(to_pci_dev(nvmeq->q_dmadev),
+> +                                       nvmeq->sq_cmds,
+> +                                       SQ_SIZE(nvmeq->q_depth));
+> +               else
+> +                       dma_free_coherent(nvmeq->q_dmadev,
+> +                                         SQ_SIZE(nvmeq->q_depth),
+> +                                         nvmeq->sq_cmds,
+> +                                         nvmeq->sq_dma_addr);
+> +       }
+>  }
+>
+>  static void nvme_free_queues(struct nvme_dev *dev, int lowest)
+> @@ -1368,12 +1374,21 @@ static int nvme_cmb_qdepth(struct nvme_dev *dev, int nr_io_queues,
+>  static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+>                                 int qid, int depth)
+>  {
+> -       /* CMB SQEs will be mapped before creation */
+> -       if (qid && dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS))
+> -               return 0;
+> +       struct pci_dev *pdev = to_pci_dev(dev->dev);
+> +
+> +       if (qid && dev->cmb_use_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+> +               nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(depth));
+> +               nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
+> +                                               nvmeq->sq_cmds);
+> +               nvmeq->sq_cmds_is_io = true;
+> +       }
+> +
+> +       if (!nvmeq->sq_cmds) {
+> +               nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
+> +                                       &nvmeq->sq_dma_addr, GFP_KERNEL);
+> +               nvmeq->sq_cmds_is_io = false;
+> +       }
+>
+> -       nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
+> -                                           &nvmeq->sq_dma_addr, GFP_KERNEL);
+>         if (!nvmeq->sq_cmds)
+>                 return -ENOMEM;
+>         return 0;
+> @@ -1449,13 +1464,6 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+>         struct nvme_dev *dev = nvmeq->dev;
+>         int result;
+>
+> -       if (dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+> -               unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
+> -                                                     dev->ctrl.page_size);
+> -               nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
+> -               nvmeq->sq_cmds_io = dev->cmb + offset;
+> -       }
+> -
+>         nvmeq->cq_vector = qid - 1;
+>         result = adapter_alloc_cq(dev, qid, nvmeq);
+>         if (result < 0)
+> @@ -1685,9 +1693,6 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+>                 return;
+>         dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
+>
+> -       if (!use_cmb_sqes)
+> -               return;
+> -
+>         size = nvme_cmb_size_unit(dev) * nvme_cmb_size(dev);
+>         offset = nvme_cmb_size_unit(dev) * NVME_CMB_OFST(dev->cmbloc);
+>         bar = NVME_CMB_BIR(dev->cmbloc);
+> @@ -1704,11 +1709,15 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+>         if (size > bar_size - offset)
+>                 size = bar_size - offset;
+>
+> -       dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
+> -       if (!dev->cmb)
+> +       if (pci_p2pdma_add_resource(pdev, bar, size, offset))
+>                 return;
+> -       dev->cmb_bus_addr = pci_bus_address(pdev, bar) + offset;
+> +
+>         dev->cmb_size = size;
+> +       dev->cmb_use_sqes = use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS);
+> +
+> +       if ((dev->cmbsz & (NVME_CMBSZ_WDS | NVME_CMBSZ_RDS)) ==
+> +                       (NVME_CMBSZ_WDS | NVME_CMBSZ_RDS))
+> +               pci_p2pmem_publish(pdev, true);
+>
+>         if (sysfs_add_file_to_group(&dev->ctrl.device->kobj,
+>                                     &dev_attr_cmb.attr, NULL))
+> @@ -1718,12 +1727,10 @@ static void nvme_map_cmb(struct nvme_dev *dev)
+>
+>  static inline void nvme_release_cmb(struct nvme_dev *dev)
+>  {
+> -       if (dev->cmb) {
+> -               iounmap(dev->cmb);
+> -               dev->cmb = NULL;
+> +       if (dev->cmb_size) {
+>                 sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
+>                                              &dev_attr_cmb.attr, NULL);
+> -               dev->cmbsz = 0;
+> +               dev->cmb_size = 0;
 >         }
-> 
-> and also I appeared to find another bug in the original code when I had
-> a close look at the code path, but it's not related to the patch: 
-> 
-> a special pin would still go through the code path to handle
-> generic pin when the special pin uses an invalid argument.
-> 
-> It looks like err-code from pctl->devdata->spec_pull_set cannot be
-> used directly to judge its pin type. It's also possible to use it as an
-> indication of the real failure during special pin is being set up.
-> 
-==>Hi sean,
-
-The function seems ok. it is not related to the patch. We will think
-about your comment. If there is better idea to modify the code flow. We
-will change it in another patch.
-
-Thanks.
-> > > > 
-> > > > 
-> > > > if (pctl->devdata->spec_pull_set) {
-> > > > 	+ if (!enable)
-> > > > 	+ 	arg = MTK_PUPD_SET_R1R0_00;
-> > > > 
-> > > > 	ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> > > > 		pin, pctl->devdata->port_align, isup, arg);
-> > > > 
-> > > > 
-> > > > Also, it's better to add more comments to such kind of special path for
-> > > > allowing future SoCs to follow and extend more easily.
-> > > 
-> > > ==> Thanks for your suggestion very much. I will add more comments here.
-> > > > 
-> > > > >  		if (!ret)
-> > > > >  			return 0;
-> > > > >  	}
-> > > > 
-> > > > 
-> > > 
-> > 
-> > 
-> 
-> 
+>  }
+>
+> @@ -1918,13 +1925,13 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+>         if (nr_io_queues == 0)
+>                 return 0;
+>
+> -       if (dev->cmb && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+> +       if (dev->cmb_use_sqes) {
+>                 result = nvme_cmb_qdepth(dev, nr_io_queues,
+>                                 sizeof(struct nvme_command));
+>                 if (result > 0)
+>                         dev->q_depth = result;
+>                 else
+> -                       nvme_release_cmb(dev);
+> +                       dev->cmb_use_sqes = false;
+>         }
+>
+>         do {
+> --
+> 2.11.0
+>
+> _______________________________________________
+> Linux-nvdimm mailing list
+> Linux-nvdimm@lists.01.org
+> https://lists.01.org/mailman/listinfo/linux-nvdimm
