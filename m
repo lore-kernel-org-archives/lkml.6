@@ -1,69 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeCESKQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 13:10:16 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:34398 "EHLO ale.deltatee.com"
+        id S1752853AbeCESKk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 13:10:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:43649 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752096AbeCESKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:10:13 -0500
-To: Sinan Kaya <okaya@codeaurora.org>, Keith Busch <keith.busch@intel.com>,
-        Oliver <oohall@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-8-logang@deltatee.com>
- <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
- <20180305160004.GA30975@localhost.localdomain>
- <3f56c76d-6a5c-7c2f-5442-c9209749b598@deltatee.com>
- <f4f69d48-97b2-ebeb-6c97-83878ea4c419@codeaurora.org>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <645c0d69-8942-5eb5-99ae-04ae385a32fa@deltatee.com>
-Date: Mon, 5 Mar 2018 11:09:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751874AbeCESKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 13:10:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="25358030"
+Date: Mon, 5 Mar 2018 20:10:34 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] tpm: fix buffer type in tpm_transimt/_cmd
+Message-ID: <20180305181034.GD6220@linux.intel.com>
+References: <20180305124826.5160-1-tomas.winkler@intel.com>
+ <20180305124826.5160-2-tomas.winkler@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f4f69d48-97b2-ebeb-6c97-83878ea4c419@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, alex.williamson@redhat.com, benh@kernel.crashing.org, axboe@kernel.dk, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, oohall@gmail.com, keith.busch@intel.com, okaya@codeaurora.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the
- CMB
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180305124826.5160-2-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/03/18 11:02 AM, Sinan Kaya wrote:
-> writel has a barrier inside on ARM64.
+On Mon, Mar 05, 2018 at 02:48:26PM +0200, Tomas Winkler wrote:
+> 1. The buffer cannot be const as it is used both for send and receive.
+> 2. Drop useless casting to u8 *, as this is already a
+> type of 'buf' parameter, it has just masked the 'const' issue.
 > 
-> https://elixir.bootlin.com/linux/latest/source/arch/arm64/include/asm/io.h#L143
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 8 ++++----
+>  drivers/char/tpm/tpm.h           | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index cafec634181a..4afd95c83612 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -475,7 +475,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	if (rc)
+>  		goto out;
+>  
+> -	rc = chip->ops->send(chip, (u8 *) buf, count);
+> +	rc = chip->ops->send(chip, buf, count);
+>  	if (rc < 0) {
+>  		if (rc != -EPIPE)
+>  			dev_err(&chip->dev,
+> @@ -512,7 +512,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	goto out;
+>  
+>  out_recv:
+> -	len = chip->ops->recv(chip, (u8 *) buf, bufsiz);
+> +	len = chip->ops->recv(chip, buf, bufsiz);
+>  	if (len < 0) {
+>  		rc = len;
+>  		dev_err(&chip->dev,
+> @@ -567,7 +567,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   *     A positive number for a TPM error.
+>   */
+>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> -			 const void *buf, size_t bufsiz,
+> +			 void *buf, size_t bufsiz,
+>  			 size_t min_rsp_body_length, unsigned int flags,
+>  			 const char *desc)
+>  {
+> @@ -575,7 +575,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>  	int err;
+>  	ssize_t len;
+>  
+> -	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
+> +	len = tpm_transmit(chip, space, buf, bufsiz, flags);
+>  	if (len <  0)
+>  		return len;
+>  
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index b82b924d763c..50dcbf3b60aa 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -520,7 +520,7 @@ enum tpm_transmit_flags {
+>  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  		     u8 *buf, size_t bufsiz, unsigned int flags);
+>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+> -			 const void *buf, size_t bufsiz,
+> +			 void *buf, size_t bufsiz,
+>  			 size_t min_rsp_body_length, unsigned int flags,
+>  			 const char *desc);
+>  int tpm_startup(struct tpm_chip *chip);
+> -- 
+> 2.14.3
+> 
 
-Yes, and no barrier inside memcpy_toio as it uses __raw_writes. This 
-should be sufficient as we are only accessing addresses that look like 
-memory and have no side effects (those enabling doorbell accesses may 
-need to worry about this though). Typically, what could happen, in this 
-case, is the CPU would issue writes to the BAR normally and the next 
-time it programmed the DMA engine it would flush everything via the 
-flush in writel.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> Why do you need another barrier?
-
-We don't.
-
-Thanks,
-
-Logan
+/Jarkko
