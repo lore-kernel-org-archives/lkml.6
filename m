@@ -1,73 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932784AbeCEXQ4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 18:16:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42672 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932106AbeCEXQy (ORCPT
+        id S932661AbeCEXTj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 18:19:39 -0500
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33021 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932218AbeCEXTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 18:16:54 -0500
-Date: Mon, 5 Mar 2018 15:16:50 -0800
-From: Darren Hart <dvhart@infradead.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Jonathan Woithe <jwoithe@just42.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/7] platform/x86: fujitsu-laptop: Define constants for
- FUNC operations
-Message-ID: <20180305231650.GA25693@fury>
-References: <20180227211539.5708-1-kernel@kempniu.pl>
- <20180227211539.5708-2-kernel@kempniu.pl>
- <CAHp75VdDQ1xAYcXEN04kSug2sgi-G8+7PBEOC8MJSBw7gSCyRQ@mail.gmail.com>
- <20180304050813.GA3129@marvin.atrad.com.au>
- <20180304194426.GA1428@kmp-mobile.hq.kempniu.pl>
+        Mon, 5 Mar 2018 18:19:38 -0500
+X-Google-Smtp-Source: AG47ELtgUzsSrP1nYgOt+e7pJxolASku5NtEL269AtVTJWifYgO0ki22fQcGJklpZxLP3Dv5+LH+5w==
+Date: Mon, 5 Mar 2018 15:19:36 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Move declaration of of_irq_parse_and_map_pci under
+ OF_IRQ
+Message-ID: <20180305231936.GA14751@roeck-us.net>
+References: <1519687145-9430-1-git-send-email-linux@roeck-us.net>
+ <20180305215737.oxelfzdgsro6poee@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180304194426.GA1428@kmp-mobile.hq.kempniu.pl>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180305215737.oxelfzdgsro6poee@rob-hp-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 04, 2018 at 08:44:26PM +0100, Michał Kępień wrote:
-> > On Wed, Feb 28, 2018 at 06:08:52PM +0200, Andy Shevchenko wrote:
-> > > On Tue, Feb 27, 2018 at 11:15 PM, Micha?? K??pie?? <kernel@kempniu.pl> wrote:
-> > > > Various functions exposed by the firmware through the FUNC interface
-> > > > tend to use a consistent set of integers for denoting the type of
-> > > > operation to be performed for a specified feature.  Use named constants
-> > > > instead of integers in each call_fext_func() invocation in order to more
-> > > > clearly convey the intent of each call.
-> > > >
-> > > > Note that FUNC_FLAGS is a bit peculiar:
-> > > 
-> > > > +/* FUNC interface - operations */
-> > > > +#define OP_GET                         BIT(1)
-> > > > +#define OP_GET_CAPS                    0
-> > > > +#define OP_GET_EVENTS                  BIT(0)
-> > > > +#define OP_GET_EXT                     BIT(2)
-> > > > +#define OP_SET                         BIT(0)
-> > > > +#define OP_SET_EXT                     (BIT(2) | BIT(0))
-> > > 
-> > > Hmm... this looks unordered a bit.
+On Mon, Mar 05, 2018 at 03:57:37PM -0600, Rob Herring wrote:
+> On Mon, Feb 26, 2018 at 03:19:05PM -0800, Guenter Roeck wrote:
+> > Since commit 4670d610d5923 ("PCI: Move OF-related PCI functions into
+> > PCI core"), sparc:allmodconfig fails to build with the following error.
 > > 
-> > It seems to be ordered alphabetically on the identifier.  Andy, is it
-> > preferred to order defines like this based on resolved numeric order?
->  
-> Just to expand on what Jonathan wrote above: if you take a peek at the
-> end result of the patch series, you will notice a pattern: constants in
-> each section are ordered alphabetically by their name.  I wanted all
-> sections to be consistently ordered.  If you would rather have me order
-> things by the bit index, sure, no problem, just please note that the
-> order above is not accidental.
+> > pcie-cadence-host.c:(.text+0x4c4):
+> > 	undefined reference to `of_irq_parse_and_map_pci'
+> > pcie-cadence-host.c:(.text+0x4c8):
+> > 	undefined reference to `of_irq_parse_and_map_pci'
+> > 
+> > of_irq_parse_and_map_pci is now only available if OF_IRQ is enabled.
+> > Make its declaration and its dummy function dependent on OF_IRQ
+> > to solve the problem.
+> > 
+> > Fixes: 4670d610d5923 ("PCI: Move OF-related PCI functions into PCI core")
+> > Cc: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> >  include/linux/of_pci.h | 17 ++++++++++-------
+> >  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> Bjorn should take this. Can you resend to linux-pci so it is in his 
+> queue.
+> 
+MAINTAINERS lists you as maintainer and devicetree@vger.kernel.org as
+mailing list. But, sure, no problem.
 
-Hrm. In my experience it is more typical to order by value (bit), that's a
-little less obvious when using the BIT()|BIT() macros though. So long as it's
-consistent, I think that's what matters most.
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+Guenter
