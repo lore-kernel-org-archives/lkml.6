@@ -1,48 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeCERxu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:53:50 -0500
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36839 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeCERxs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:53:48 -0500
-X-Google-Smtp-Source: AG47ELtqcNc7LUfCO7+/l36MhGjzR4GBYBaEDVudzoOBSmSzvuOWGHG+UhhzpMNdAzvkikEvT40EGMBHFjXUnvYZ0Z4=
+        id S1752543AbeCERzg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:55:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:24263 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751462AbeCERzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 12:55:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="39372858"
+From: Andi Kleen <ak@linux.intel.com>
+To: Agustin Vega-Frias <agustinv@codeaurora.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
+Subject: Re: [RFC V2 1/3] perf, tools: Support wildcards on pmu name in dynamic pmu events
+References: <1520034092-35275-1-git-send-email-agustinv@codeaurora.org>
+        <1520034092-35275-2-git-send-email-agustinv@codeaurora.org>
+        <20180303143436.GA14563@krava>
+        <20180304171245.GB25017@tassilo.jf.intel.com>
+        <20180304181010.GA7030@krava>
+        <1ddac3f4900267b0c9a69ef4c598be51@codeaurora.org>
+Date: Mon, 05 Mar 2018 09:55:19 -0800
+In-Reply-To: <1ddac3f4900267b0c9a69ef4c598be51@codeaurora.org> (Agustin
+        Vega-Frias's message of "Mon, 05 Mar 2018 10:08:18 -0500")
+Message-ID: <87efky76go.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180305174920.GA19268@linux.intel.com>
-References: <20180302122049.13900-1-jthumshirn@suse.de> <20180305174920.GA19268@linux.intel.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 5 Mar 2018 09:53:47 -0800
-Message-ID: <CAPcyv4juD2m-4e7=uCy7P-retsTpWXJzVmO9fFcVbMcN_E=BXA@mail.gmail.com>
-Subject: Re: [PATCH] acpi, nfit: remove redundant __func__ in dev_dbg
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 5, 2018 at 9:49 AM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> On Fri, Mar 02, 2018 at 01:20:49PM +0100, Johannes Thumshirn wrote:
->> Dynamic debug can be instructed to add the function name to the debug
->> output using the +f switch, so there is no need for the nfit module to
->> do it again. If a user decides to add the +f switch for nfit's dynamic
->> debug this results in double prints of the function name like the
->> following:
->>
->> [ 2391.935383] acpi_nfit_ctl: nfit ACPI0012:00: acpi_nfit_ctl:nmem8 cmd: 10: func: 1 input length: 0
->>
->> Thus remove the stray __func__ printing.
->>
->> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Agustin Vega-Frias <agustinv@codeaurora.org> writes:
 >
-> This makes sense to me, but I guess we'll see what Dan thinks.  If we decide
-> to go this route we may also want to do the same to all the instances of this
-> pattern in the libnvdimm debug output.
+> An option to keep backward compatibility and consistency would be
+> to wrap the pattern/string passed in *'s, that way we can just use
+> fnmatch and have all the examples Jiri brought up work the same.
+> With that in place we can actually also drop the explicit ignoring
+> of the uncore_ prefix since the globbing would take care of that.
 
-Is there a way to turn on this '+f' flag from the kernel boot command
-line? My primary debug scenario is specifying "libnvdimm.dyndbg
-nfit.dyndbg" on the command line.
+Prepending with * would seem dangerous, could result in false
+matches. But adding it at the end should be ok.
+
+-Andi
