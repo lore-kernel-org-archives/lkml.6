@@ -1,22 +1,22 @@
 Return-Path: <mmoese@suse.de>
-X-Google-Smtp-Source: AG47ELtKYIreb7fPblcOtEy6wliNOCqVLsoPFtd/kUTX71Fbj96pOklKExcBce8by4DxW1XLBVOF
-ARC-Seal: i=1; a=rsa-sha256; t=1520263463; cv=none;
+X-Google-Smtp-Source: AG47ELvaGL8e50TR+EWp5Araoj9UzBZHEyk8YMKEzmEKfIFGMykGOWBloLOxGDVToWCY0wdb/nU/
+ARC-Seal: i=1; a=rsa-sha256; t=1520238160; cv=none;
         d=google.com; s=arc-20160816;
-        b=ELkBXUWaVJok5hVeoBhDbfszzWF/dGvB0gKaxUCF5sZxm4urrQKY/MtyC98VRK/h2G
-         /xqC9fHZAL0nY+5Ty0FE3m6PY7kKTUh/lNj+oIi5Cdv4qMrbVXwJzQ8ePBSYcKbyh8ON
-         0PSp7k49nVjsR9pVy2k4tioudzoUKpmyxZecGd3I/ZckNidIiVi3gx/v5jhmQ3qc0lkJ
-         2u4UIjJjlIdteKZUtEgPsng//pyXBhy6Im/g9rq18vzqrObXmjrb0+/UhqeAibT2LRyu
-         Fn5ZcmegQvAGiN+X9p/JWjrdssQ9El71JQiA1A16yJ0OTLsuqgoM0CawU14Q6EXAtC9C
-         YBOg==
+        b=qvKLliZ4e2JATRJDVqj0Ykj4jQPC6giUi47XqaWhFRB6PGihpJ9uGgTFyFRcugiS62
+         bm9spID5JsdlCpmtr1YPgVeDhIYo9Ov3pElI9RjscH3i/7OYlrfQVfZxOeXBlNyPECPQ
+         /sXbXJkmUlOdhAY+oEH0QGkg+kFqKEZeoRknkfa3SnzfqbsNwpg4W5vVCmBYvKnRByiw
+         WOQ+nd5yBucbDnAkQqkvU3tOex36RphBw6Jjuzd4MrJmf754VYZQj/Z86gmTGYrkG5F/
+         /WYCrRn47lzf9JeNNeWg4N9EpAvCLtRSOp5nz9BgtUkhNXEi1ZAQ3QI6epJmcdcawvcF
+         FCOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=1jAz0XCn2aP4nzsh8KpSU8N/XRltw9EUxn2xIYgEGUA=;
-        b=EpSlztrTLOuOGT/qZN1MgDITlM2MssiJlAbqveOKTIXV3NiiMVe3Oh433/4fo8Damo
-         26pkHVy5KmJpzAVSBtuf5PE6kPviqb5FqIadatv9y7vS8JtYn/KVQKhTGg+TadwU0Zn0
-         wvxbAddZ9xx4KEQUkJTQvQGYDR2e7uk5wDUTkPz/OhLX9JXxM6T3s8OJxS82jr2gDVYJ
-         AEQ+hWg9lnbzlaUa1EdRBs8IXMcsJFYzECmBnhf0D9hW0MLgrkpL7LR0xJQU2tvb/7sn
-         gsYP097YunPvmTrHZoVZdB257rLNsU7WAZdgGwKHsQkXbrNTZZf8ShXbIy49oi0+wC0L
-         P+mg==
+        bh=hk+5roH9MWnMoES2yFRHte3TazN63ZIKYKE/k5ymOXc=;
+        b=BVRqDpSwSFASRurgC/vZUFJFByogAO8sq2kL56XOSYquu5unqPX36YjT9+6uUaDKiG
+         h65fTaPHI7IkZYyeyseyPiJqs19cMuONS9oIjvVghQ67SsVBatyvjYtdufBnx0AiKZJ4
+         2wTVu8LL5xc7ZxcbYuQ72vHjEQHgFksbAqlKToyqoWi3ok9mkyPjhr8eg2FsQUbMJm4n
+         +WWILpBkPwdFoFBfbx1a6wxs0xEGNGvvICJ6adKZFz1OSIO3mrutt3902roC8cwFuala
+         dbKIutUGvY/RAke3ELY3zciRJ4WvPV7n6Qt92LcPdGqW+p/BEtgI0hvOygo6+C4ljCGD
+         ah4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
 Authentication-Results: mx.google.com;
@@ -30,12 +30,12 @@ Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
 	Ben Turner <ben.turner@21net.com>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
 Subject: [PATCH v3] 8250-men-mcb: add support for 16z025 and 16z057
-Date: Mon,  5 Mar 2018 16:24:21 +0100
-Message-Id: <20180305152421.29808-1-mmoese@suse.de>
+Date: Mon,  5 Mar 2018 09:22:35 +0100
+Message-Id: <20180305082235.12777-1-mmoese@suse.de>
 X-Mailer: git-send-email 2.13.6
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594085248786012954?=
-X-GMAIL-MSGID: =?utf-8?q?1594111781900364793?=
+X-GMAIL-MSGID: =?utf-8?q?1594085248786012954?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,8 +50,6 @@ Reported-by: Ben Turner <ben.turner@21net.com>
 Tested-by: Ben Turner <ben.turner@21net.com>
 
 ---
-Sorry for the resend, I messed up the previoius patch..
-
 Changes to v2:
 Added include of linux/io.h due to finding of kbuild robot.
 
@@ -60,22 +58,15 @@ Deduplicated the two switch() blocks into a function returning
 the number of ports.
 Minor style corrections.
 ---
- drivers/tty/serial/8250/8250_men_mcb.c | 125 ++++++++++++++++++++++++---------
+ drivers/tty/serial/8250/8250_men_mcb.c | 124 ++++++++++++++++++++++++---------
  drivers/tty/serial/8250/Kconfig        |   5 +-
- 2 files changed, 94 insertions(+), 36 deletions(-)
+ 2 files changed, 93 insertions(+), 36 deletions(-)
 
 diff --git a/drivers/tty/serial/8250/8250_men_mcb.c b/drivers/tty/serial/8250/8250_men_mcb.c
-index 308977807994..127017cc41d9 100644
+index 308977807994..98b6b919bca6 100644
 --- a/drivers/tty/serial/8250/8250_men_mcb.c
 +++ b/drivers/tty/serial/8250/8250_men_mcb.c
-@@ -1,12 +1,19 @@
- #include <linux/device.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/io.h>
- #include <linux/mcb.h>
- #include <linux/serial.h>
- #include <linux/serial_core.h>
+@@ -7,6 +7,12 @@
  #include <linux/serial_8250.h>
  #include <uapi/linux/serial_core.h>
  
@@ -88,7 +79,7 @@ index 308977807994..127017cc41d9 100644
  struct serial_8250_men_mcb_data {
  	struct uart_8250_port uart;
  	int line;
-@@ -18,7 +25,7 @@ struct serial_8250_men_mcb_data {
+@@ -18,7 +24,7 @@ struct serial_8250_men_mcb_data {
   * parameter in order to really set the correct baudrate, and
   * do so if possible without user interaction
   */
@@ -97,7 +88,7 @@ index 308977807994..127017cc41d9 100644
  {
  	/* use default value if board is not available below */
  	u32 clkval = 1041666;
-@@ -28,10 +35,12 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
+@@ -28,10 +34,12 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
  		mdev->bus->name);
  	if  (strncmp(mdev->bus->name, "F075", 4) == 0)
  		clkval = 1041666;
@@ -111,7 +102,7 @@ index 308977807994..127017cc41d9 100644
  	else
  		dev_info(&mdev->dev,
  			 "board not detected, using default uartclk\n");
-@@ -41,62 +50,108 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
+@@ -41,62 +49,108 @@ static u32 men_z125_lookup_uartclk(struct mcb_device *mdev)
  	return clkval;
  }
  
@@ -251,7 +242,7 @@ index 308977807994..127017cc41d9 100644
  	{ }
  };
  MODULE_DEVICE_TABLE(mcb, serial_8250_men_mcb_ids);
-@@ -113,6 +168,8 @@ static struct mcb_driver mcb_driver = {
+@@ -113,6 +167,8 @@ static struct mcb_driver mcb_driver = {
  module_mcb_driver(mcb_driver);
  
  MODULE_LICENSE("GPL v2");
