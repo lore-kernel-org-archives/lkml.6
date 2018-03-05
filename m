@@ -1,74 +1,352 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932430AbeCEOks (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:40:48 -0500
-Received: from smtp-out4.electric.net ([192.162.216.183]:54935 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932129AbeCEOko (ORCPT
+        id S1752164AbeCEOli (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:41:38 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:41333 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752264AbeCEO3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:40:44 -0500
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Thorsten Leemhuis'" <regressions@leemhuis.info>,
-        "dedekind1@gmail.com" <dedekind1@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Stefan Haberland <sth@linux.vnet.ibm.com>,
-        "Jens Axboe" <axboe@kernel.dk>,
-        "Herring, Jan-kristian Augustin"
-        <jan-kristian.augustin.herring@intel.com>
-Subject: RE: regression: SCSI/SATA failure
-Thread-Topic: regression: SCSI/SATA failure
-Thread-Index: AQHTtIzer0h5KJaBnkyettjEnZZXWqPBtVZA
-Date: Mon, 5 Mar 2018 14:41:24 +0000
-Message-ID: <3ccf46026ca74faea98d4a9cdce221f9@AcuMS.aculab.com>
-References: <1519311270.2535.53.camel@intel.com>
- <1519311443.2535.55.camel@gmail.com>
- <c405f270-1bea-d34e-259e-fd9f372a495c@leemhuis.info>
-In-Reply-To: <c405f270-1bea-d34e-259e-fd9f372a495c@leemhuis.info>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        Mon, 5 Mar 2018 09:29:55 -0500
+X-Google-Smtp-Source: AG47ELv0g5fLjxA9V7/xZRlphp+lTPBwXxXaKastTbCSnoVC4uEl8B6qLHnfAY/pOj9QrN5IRSL5ig==
+Subject: Re: [PATCH v2 2/2] watchdog: Add Nuvoton NPCM watchdog driver
+To: Joel Stanley <joel@jms.id.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+References: <20180305114541.9917-1-joel@jms.id.au>
+ <20180305114541.9917-3-joel@jms.id.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <3b5b9ee6-10a5-adf5-6cff-2e0efde215b3@roeck-us.net>
+Date: Mon, 5 Mar 2018 06:29:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <20180305114541.9917-3-joel@jms.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w25EetBm016650
 
-From: Thorsten Leemhuis
-> Hi! On 22.02.2018 15:57, Artem Bityutskiy wrote:
-> > On Thu, 2018-02-22 at 16:54 +0200, Artem Bityutskiy wrote:
-> >> one of our test box Skylake servers does not boot with v4.16-rcX.
-> >> Bisection lead us to this commit:
-> >> 84676c1f21e8 genirq/affinity: assign vectors to all possible CPUs
-> >> Reverting this single commit fixes the problem.
+Hi Joel,
+
+On 03/05/2018 03:45 AM, Joel Stanley wrote:
+> The Nuvoton NPCM750 has a watchdog implemented as a single register
+> inside the timer peripheral.
 > 
-> Artem, is this issue still happening? I still have it in my list of
-> regressions. Side note: I accidentally noticed people continue working
-> in the area that 84676c1f21e8 touched;  see
-> https://marc.info/?l=linux-block&m=152021971313902&w=2 ("[PATCH V2 5/5]
-> genirq/affinity: irq vector spread among online CPUs as far as
-> possible"). I wonder if that might be related in any way. Ciao, Thorsten
+> This driver exposes that watchdog as a standard watchdog device with
+> coarse timeout intervals, limited by the combination of prescaler and
+> counter that is provided by the hardware. The calculation is taken from
+> the Nuvoton vendor tree.
+> 
+> There is a pre-timeout IRQ that is wired up. This timeout always occurs
+> 1024 clocks before the timeout.
+> 
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+> v2:
+>   - Make MODULE_LICENCE gpl v2 to match SPDX
+>   - Remove unused struct device pointer
+>   - Remove unused setting of drvdata
+>   - Add linux/bitops.h
+>   - Sort includes
+>   - Remove unused fiq include
+>   - Update timeout with achieved value
+> ---
+>   drivers/watchdog/Kconfig    |  11 +++
+>   drivers/watchdog/Makefile   |   1 +
+>   drivers/watchdog/npcm_wdt.c | 230 ++++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 242 insertions(+)
+>   create mode 100644 drivers/watchdog/npcm_wdt.c
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index aff773bcebdb..0c1cc68894e6 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -513,6 +513,17 @@ config COH901327_WATCHDOG
+>   	  This watchdog is used to reset the system and thus cannot be
+>   	  compiled as a module.
+>   
+> +config NPCM7XX_WATCHDOG
+> +	bool "NPCM750 watchdog"
+> +	depends on ARCH_NPCM || COMPILE_TEST
+> +	default y if ARCH_NPCM750
+> +	select WATCHDOG_CORE
+> +	help
+> +	  Say Y here to include Watchdog timer support for the
+> +	  watchdog embedded into the NPCM7xx.
+> +	  This watchdog is used to reset the system and thus cannot be
+> +	  compiled as a module.
+> +
+>   config TWL4030_WATCHDOG
+>   	tristate "TWL4030 Watchdog"
+>   	depends on TWL4030_CORE
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index 0474d38aa854..97a5afb5cad2 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -61,6 +61,7 @@ obj-$(CONFIG_ORION_WATCHDOG) += orion_wdt.o
+>   obj-$(CONFIG_SUNXI_WATCHDOG) += sunxi_wdt.o
+>   obj-$(CONFIG_RN5T618_WATCHDOG) += rn5t618_wdt.o
+>   obj-$(CONFIG_COH901327_WATCHDOG) += coh901327_wdt.o
+> +obj-$(CONFIG_NPCM7XX_WATCHDOG) += npcm_wdt.o
+>   obj-$(CONFIG_STMP3XXX_RTC_WATCHDOG) += stmp3xxx_rtc_wdt.o
+>   obj-$(CONFIG_NUC900_WATCHDOG) += nuc900_wdt.o
+>   obj-$(CONFIG_TS4800_WATCHDOG) += ts4800_wdt.o
+> diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
+> new file mode 100644
+> index 000000000000..2cfc58714d8d
+> --- /dev/null
+> +++ b/drivers/watchdog/npcm_wdt.c
+> @@ -0,0 +1,230 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018 Nuvoton Technology corporation.
+> +// Copyright (c) 2018 IBM Corp.
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/delay.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/watchdog.h>
+> +
+> +#define NPCM_WTCR	0x1C
+> +
+> +#define NPCM_WTCLK	(BIT(10) | BIT(11))	/* Clock divider */
+> +#define NPCM_WTE	BIT(7)			/* Enable */
+> +#define NPCM_WTIE	BIT(6)			/* Enable irq */
+> +#define NPCM_WTIS	(BIT(4) | BIT(5))	/* Interval selection */
+> +#define NPCM_WTIF	BIT(3)			/* Interrupt flag*/
+> +#define NPCM_WTRF	BIT(2)			/* Reset flag */
+> +#define NPCM_WTRE	BIT(1)			/* Reset enable */
+> +#define NPCM_WTR	BIT(0)			/* Reset counter */
+> +
+> +/*
+> + * Watchdog timeouts
+> + *
+> + * 170     msec:    WTCLK=01 WTIS=00     VAL= 0x400
+> + * 670     msec:    WTCLK=01 WTIS=01     VAL= 0x410
+> + * 1360    msec:    WTCLK=10 WTIS=00     VAL= 0x800
+> + * 2700    msec:    WTCLK=01 WTIS=10     VAL= 0x420
+> + * 5360    msec:    WTCLK=10 WTIS=01     VAL= 0x810
+> + * 10700   msec:    WTCLK=01 WTIS=11     VAL= 0x430
+> + * 21600   msec:    WTCLK=10 WTIS=10     VAL= 0x820
+> + * 43000   msec:    WTCLK=11 WTIS=00     VAL= 0xC00
+> + * 85600   msec:    WTCLK=10 WTIS=11     VAL= 0x830
+> + * 172000  msec:    WTCLK=11 WTIS=01     VAL= 0xC10
+> + * 687000  msec:    WTCLK=11 WTIS=10     VAL= 0xC20
+> + * 2750000 msec:    WTCLK=11 WTIS=11     VAL= 0xC30
+> + */
+> +
+> +struct npcm_wdt {
+> +	struct watchdog_device  wdd;
+> +	void __iomem		*reg;
+> +};
+> +
+> +static inline struct npcm_wdt *to_npcm_wdt(struct watchdog_device *wdd)
+> +{
+> +	return container_of(wdd, struct npcm_wdt, wdd);
+> +}
+> +
+> +static int npcm_wdt_ping(struct watchdog_device *wdd)
+> +{
+> +	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+> +	u32 val;
+> +
+> +	val = readl(wdt->reg);
+> +	writel(val | NPCM_WTR, wdt->reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int npcm_wdt_start(struct watchdog_device *wdd)
+> +{
+> +	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+> +	u32 val;
+> +
+> +	val = NPCM_WTRE | NPCM_WTE | NPCM_WTR | NPCM_WTIE;
+> +
+> +	if (wdd->timeout < 2) {
+> +		val |= 0x800;
+> +		wdd->timeout = 1;
+> +	} else if (wdd->timeout < 3) {
+> +		val |= 0x420;
+> +		wdd->timeout = 2;
+> +	} else if (wdd->timeout < 6) {
+> +		val |= 0x810;
+> +		wdd->timeout = 5;
+> +	} else if (wdd->timeout < 11) {
+> +		val |= 0x430;
+> +		wdd->timeout = 10;
+> +	} else if (wdd->timeout < 22) {
+> +		val |= 0x820;
+> +		wdd->timeout = 21;
+> +	} else if (wdd->timeout < 44) {
+> +		val |= 0xC00;
+> +		wdd->timeout = 43;
+> +	} else if (wdd->timeout < 87) {
+> +		val |= 0x830;
+> +		wdd->timeout = 86;
+> +	} else if (wdd->timeout < 173) {
+> +		val |= 0xC10;
+> +		wdd->timeout = 172;
+> +	} else if (wdd->timeout < 688) {
+> +		val |= 0xC20;
+> +		wdd->timeout = 687;
+> +	} else {
+> +		val |= 0xC30;
+> +		wdd->timeout = 2750;
+> +	}
+> +
+> +	writel(val, wdt->reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int npcm_wdt_stop(struct watchdog_device *wdd)
+> +{
+> +	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+> +
+> +	writel(0, wdt->reg);
+> +
+> +	return 0;
+> +}
+> +
+> +
+> +static int npcm_wdt_set_timeout(struct watchdog_device *wdd,
+> +				unsigned int timeout)
+> +{
+> +	/* timeout is updated with the achieved value in npcm_wdt_start */
 
-Hmmm.... I can think of some workloads where you really don't want some
-cpu taking any interrupts at all (well as few as possible).
-Think of workloads where process affinities are used to ensure that only
-a few specific processes run on certain cpus.
-The last thing you want then is interrupt load sharing and/or per cpu
-ethernet rings.
+Yes, but only if the watchdog is running. If it is not running, userspace
+would end up being confused. While it is extra effort, you'll have to set
+->timeout to the correct value here, not in the start function.
 
-	David
+> +	wdd->timeout = timeout;
+> +	if (watchdog_active(wdd))
+> +		npcm_wdt_start(wdd);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t npcm_wdt_interrupt(int irq, void *data)
+> +{
+> +	struct npcm_wdt *wdt = data;
+> +
+> +	watchdog_notify_pretimeout(&wdt->wdd);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int npcm_wdt_restart(struct watchdog_device *wdd,
+> +			    unsigned long action, void *data)
+> +{
+> +	struct npcm_wdt *wdt = to_npcm_wdt(wdd);
+> +
+> +	writel(NPCM_WTR | NPCM_WTRE | NPCM_WTE, wdt->reg);
+> +	udelay(1000);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct watchdog_info npcm_wdt_info = {
+> +	.identity	= KBUILD_MODNAME,
+> +	.options	= WDIOF_SETTIMEOUT
+> +			| WDIOF_KEEPALIVEPING
+> +			| WDIOF_MAGICCLOSE,
+> +};
+> +
+> +static const struct watchdog_ops npcm_wdt_ops = {
+> +	.owner = THIS_MODULE,
+> +	.start = npcm_wdt_start,
+> +	.stop = npcm_wdt_stop,
+> +	.ping = npcm_wdt_ping,
+> +	.set_timeout = npcm_wdt_set_timeout,
+> +	.restart = npcm_wdt_restart,
+> +};
+> +
+> +static int npcm_wdt_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct npcm_wdt *wdt;
+> +	struct resource *res;
+> +	int irq;
+> +	int ret;
+> +
+> +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+> +	if (!wdt)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	wdt->reg = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(wdt->reg))
+> +		return PTR_ERR(wdt->reg);
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (!irq)
+> +		return -EINVAL;
+> +
+> +	wdt->wdd.info = &npcm_wdt_info;
+> +	wdt->wdd.ops = &npcm_wdt_ops;
+> +	wdt->wdd.min_timeout = 1;
+> +	wdt->wdd.max_timeout = 2750;
+> +	wdt->wdd.parent = dev;
+> +
+> +	wdt->wdd.timeout = 86;
+> +	watchdog_init_timeout(&wdt->wdd, 0, dev);
+> +
+
+One thought ...
+
+The rest of the code suggests that it is possible to detect if the watchdog
+is already running, and its selected timeout. While not mandatory, it might
+make sense to detect that situation, tell the watchdog core, and keep it running.
+
+Otherwise, it might make sense to call the stop function before registering
+the watchdog to ensure that it isn't running.
+
+> +	ret = devm_request_irq(dev, irq, npcm_wdt_interrupt, 0,
+> +			"watchdog", wdt);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_watchdog_register_device(dev, &wdt->wdd);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register watchdog\n");
+> +		return ret;
+> +	}
+> +
+> +	dev_info(dev, "NPCM watchdog driver enabled\n");
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id npcm_wdt_match[] = {
+> +	{.compatible = "nuvoton,npcm750-wdt"},
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, npcm_wdt_match);
+> +#endif
+> +
+> +static struct platform_driver npcm_wdt_driver = {
+> +	.probe		= npcm_wdt_probe,
+> +	.driver		= {
+> +		.name	= "npcm-wdt",
+> +		.of_match_table = of_match_ptr(npcm_wdt_match),
+> +	},
+> +};
+> +module_platform_driver(npcm_wdt_driver);
+> +
+> +MODULE_AUTHOR("Joel Stanley");
+> +MODULE_DESCRIPTION("Watchdog driver for NPCM");
+> +MODULE_LICENSE("GPL v2");
+> 
