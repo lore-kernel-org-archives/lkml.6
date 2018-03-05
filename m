@@ -1,101 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752828AbeCESxI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 13:53:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:57656 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeCESxG (ORCPT
+        id S1752726AbeCES5Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 13:57:16 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:54867 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752586AbeCES5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:53:06 -0500
-Date: Mon, 5 Mar 2018 10:52:59 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Vratislav Bendel <vbendel@redhat.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        linux-kernel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
-Message-ID: <20180305185259.GC18989@magnolia>
-References: <20180228154951.31714-1-vbendel@redhat.com>
- <20180301224800.GI12763@magnolia>
- <20180302163603.GQ19312@magnolia>
- <CAHrQN1w2DxYD_ZscBhsuGq2b6CKn41AnVCaH6_hSQ2tN8DkA1Q@mail.gmail.com>
+        Mon, 5 Mar 2018 13:57:14 -0500
+X-Google-Smtp-Source: AG47ELsR5dsfQI9KQsu+Ysdar0AVZckpZPqW0idIE8tT07/D5qSc/d1pRP4jh4VzZQ10ySQxVnrxmQ==
+Subject: Re: "x86/boot/compressed/64: Prepare trampoline memory" breaks boot
+ on Zotac CI-321
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dexuan-Linux Cui <dexuan.linux@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>
+References: <12357ee3-0276-906a-0e7c-2c3055675af3@gmail.com>
+ <CAA42JLZRxCGSsW5FKpH3AjZGbaUyrcRPdVBtMQcc4ZcxKNuDQw@mail.gmail.com>
+ <8c6c0f9d-0f47-2fc9-5cb5-6335ef1152cd@gmail.com>
+ <20180303100257.hzrqtshcnhzy5spl@gmail.com>
+ <f399b62f-984e-c693-81f0-9abe3c49d8f1@gmail.com>
+ <20180305081906.t33mocscprsrlvzp@node.shutemov.name>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <a2898317-18d0-d542-a767-ee9cf256ced9@gmail.com>
+Date: Mon, 5 Mar 2018 19:57:06 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHrQN1w2DxYD_ZscBhsuGq2b6CKn41AnVCaH6_hSQ2tN8DkA1Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803050217
+In-Reply-To: <20180305081906.t33mocscprsrlvzp@node.shutemov.name>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 11:19:46AM +0100, Vratislav Bendel wrote:
-> (In response to Luis' comment:)
-> > Can you add a respective Fixes: tag?
+Am 05.03.2018 um 09:19 schrieb Kirill A. Shutemov:
+> On Sat, Mar 03, 2018 at 12:46:28PM +0100, Heiner Kallweit wrote:
+>> Am 03.03.2018 um 11:02 schrieb Ingo Molnar:
+>>>
+>>> * Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>
+>>>> Am 03.03.2018 um 00:50 schrieb Dexuan-Linux Cui:
+>>>>> On Fri, Mar 2, 2018 at 12:57 PM, Heiner Kallweit <hkallweit1@gmail.com <mailto:hkallweit1@gmail.com>> wrote:
+>>>>>
+>>>>>     Recently my Mini PC Zotac CI-321 started to reboot immediately before
+>>>>>     anything was written to the console.
+>>>>>
+>>>>>     Bisecting lead to b91993a87aff "x86/boot/compressed/64: Prepare
+>>>>>     trampoline memory" being the change breaking boot.
+>>>>>
+>>>>>     If you need any more information, please let me know.
+>>>>>
+>>>>>     Rgds, Heiner
+>>>>>
+>>>>>
+>>>>> This may fix the issue: https://lkml.org/lkml/2018/2/13/668
+>>>>>
+>>>>> Kirill posted a v2 patchset 3 days ago and I suppose the patchset should include the fix.
+>>>>>
+>>>> Thanks for the link. I bisected based on the latest next kernel including
+>>>> v2 of the patchset (IOW - the potential fix is included already).
+>>>
+>>> Are you sure? b91993a87aff is the old patch-set - which I just removed from -next 
+>>> and which should thus be gone in the Monday iteration of -next.
+>>>
+>>> I have not merged v2 in -tip yet, did it get applied via some other tree?
+>>>
+>>> Thanks,
+>>>
+>>> 	Ingo
+>>>
+>> I wanted to apply the fix mentioned in the link but found that the statement was movq already.
+>> Therefore my (most likely false) understanding that it's v2.
+>> I'll re-test once v2 is out and let you know.
 > 
-> It was apparently present since LRU was added to xfs buffer cache via:
-> commit 430cbeb86fdcbbdabea7d4aa65307de8de425350
-> [xfs: add a lru to the XFS buffer cache]
+> movq fix is unrelated to the problem.
 > 
-> But I wouldn't say this patch "fixes" that commit.
-> What do you think? Should a fixes tag be added in this case?
+> Please check if current linux-next plus this patchset causes a problem for
+> you:
 > 
+> http://lkml.kernel.org/r/20180227154217.69347-1-kirill.shutemov@linux.intel.com
 > 
-> > Also what effects are observed by
-> > the user when this happens on the kernel log?
-> 
-> I haven't spotted any differences visible to user, nor in the kernel log.
-> 
-> (In response to Brian's comment:)
-> >> However, as per documentation, atomic_add_unless() returns _zero_
-> >> if the atomic value was originally equal to the specified *unsless* value.
-> >>
-> > Nit:                                                         unless
-> 
-> Thanks very much for feedback. Since it's my very first upstream
-> commit-proposal,
-> I expected that some polish would be needed.
-> 
-> 
-> > It might be worth pointing out in the commit log that currently isolated
-> > buffers end up right back on the LRU once they are released, because
-> > ->b_lru_ref remains elevated. Therefore, this patch essentially fixes
-> > that circuitous route by leaving them on the LRU as originally intended.
-> > Otherwise this looks Ok to me:
-> 
-> So the final commit message could be:
-> ~~~
-> Currently the xfs_buftarg_isolate() is causing an xfs_buffer
 
-"Due to an inverted logic mistake in xfs_buftarg_isolate()..."?
+linux-next from today boots fine with the patchset applied.
 
-> with zero b_lru_ref, to take another trip around LRU, while
-
-                   ^^^^ no need for this comma
-
-> isolating buffers with non-zero b_lru_ref.
-> 
-> Additionally those isolated buffers end up right back on the LRU
-> once they are released, because ->b_lru_ref remains elevated.
-> 
-> Fix that circuitous route by leaving them on the LRU
-> as originally intended.
-
-Otherwise this seems fine to me; can you please resend the patch w/
-updated change log and reviewed-by tags?
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> 
-> >> Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
-> > Reviewed-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rgds, Heiner
