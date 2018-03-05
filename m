@@ -1,25 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933285AbeCEIp6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 03:45:58 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38912 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933168AbeCEIp4 (ORCPT
+        id S933366AbeCEIqG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 03:46:06 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34556 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933168AbeCEIqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:45:56 -0500
-X-Google-Smtp-Source: AG47ELuScMUyAyJ6wRfPMHmwMSuybOgO4yGBTmKgFxE7TqSL5QIm4bGWe7CXmn/iAHyU3EW0vU6TFkedLpoEbPGDbMw=
+        Mon, 5 Mar 2018 03:46:00 -0500
+X-Google-Smtp-Source: AG47ELvX0XXS+9kPhIu0vVClHe5JoavGeU1HkfUTiK0Zux1gCqK+C+1Kzf/45WoquouRguZyIAUS+JxnWpCSl1YbTM8=
 MIME-Version: 1.0
-In-Reply-To: <6cb1d6d4ee40a61f7b33aed1711753342590d0dd.1520232933.git.sean.wang@mediatek.com>
+In-Reply-To: <83a3ee9471cc7312b9cc43bcf692939e90af34ba.1520232933.git.sean.wang@mediatek.com>
 References: <6cb1d6d4ee40a61f7b33aed1711753342590d0dd.1520232933.git.sean.wang@mediatek.com>
+ <83a3ee9471cc7312b9cc43bcf692939e90af34ba.1520232933.git.sean.wang@mediatek.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 5 Mar 2018 09:45:55 +0100
-Message-ID: <CAPDyKFqvhrsNqqqo0R=6mpfR-mBM8uNeJTdXj+FuuU7TUmn=Sg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: dt-bindings: add support for MT7622 SoC
+Date: Mon, 5 Mar 2018 09:45:59 +0100
+Message-ID: <CAPDyKFq6kPXsxHMCkCfvmm1t1ccs-ZgFY=z6YhuKdza5+WuLLw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: mediatek: add support for MT7622 SoC
 To: sean.wang@mediatek.com
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chaotian Jing <chaotian.jing@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,9 +30,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 5 March 2018 at 08:03,  <sean.wang@mediatek.com> wrote:
 > From: Sean Wang <sean.wang@mediatek.com>
 >
-> Add the devicetree binding for MT7622 SoC
+> Just applying the existing logic and adding its own characteristics into
+> the space pointed by an extra entry of struct of_device_id to have support
+> of MT7622 SoC.
 >
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
 > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Tested-by: Jumin Li <jumin.li@mediatek.com>
 
 Thanks, applied for next!
 
@@ -38,21 +44,37 @@ Kind regards
 Uffe
 
 > ---
->  Documentation/devicetree/bindings/mmc/mtk-sd.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/mmc/host/mtk-sd.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> index 9b80176..f33467a 100644
-> --- a/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> @@ -12,6 +12,7 @@ Required properties:
->         "mediatek,mt8173-mmc": for mmc host ip compatible with mt8173
->         "mediatek,mt2701-mmc": for mmc host ip compatible with mt2701
->         "mediatek,mt2712-mmc": for mmc host ip compatible with mt2712
-> +       "mediatek,mt7622-mmc": for MT7622 SoC
->         "mediatek,mt7623-mmc", "mediatek,mt2701-mmc": for MT7623 SoC
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index 6457a7d..cb274e8 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -438,11 +438,23 @@ static const struct mtk_mmc_compatible mt2712_compat = {
+>         .enhance_rx = true,
+>  };
 >
->  - reg: physical base address of the controller and length
+> +static const struct mtk_mmc_compatible mt7622_compat = {
+> +       .clk_div_bits = 12,
+> +       .hs400_tune = false,
+> +       .pad_tune_reg = MSDC_PAD_TUNE0,
+> +       .async_fifo = true,
+> +       .data_tune = true,
+> +       .busy_check = true,
+> +       .stop_clk_fix = true,
+> +       .enhance_rx = true,
+> +};
+> +
+>  static const struct of_device_id msdc_of_ids[] = {
+>         { .compatible = "mediatek,mt8135-mmc", .data = &mt8135_compat},
+>         { .compatible = "mediatek,mt8173-mmc", .data = &mt8173_compat},
+>         { .compatible = "mediatek,mt2701-mmc", .data = &mt2701_compat},
+>         { .compatible = "mediatek,mt2712-mmc", .data = &mt2712_compat},
+> +       { .compatible = "mediatek,mt7622-mmc", .data = &mt7622_compat},
+>         {}
+>  };
+>  MODULE_DEVICE_TABLE(of, msdc_of_ids);
 > --
 > 2.7.4
 >
