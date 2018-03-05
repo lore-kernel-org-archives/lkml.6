@@ -1,23 +1,23 @@
 Return-Path: <anholt@anholt.net>
-X-Google-Smtp-Source: AG47ELsiT+4T81JsawOeAXveFLmSX6di1DwSUUfx3/VYSmVwvsdZWFiqsPPaTC7aZsfJ0OEjRvM4
-ARC-Seal: i=1; a=rsa-sha256; t=1520281692; cv=none;
+X-Google-Smtp-Source: AG47ELuN+otfy6HTZ4RgoVEIxWnzRyx0w4Di/8XPTiw+bZ9dDDm27/vzJmGlut7eI0+XHraApbYd
+ARC-Seal: i=1; a=rsa-sha256; t=1520281691; cv=none;
         d=google.com; s=arc-20160816;
-        b=cZT6Br5dhaKSLss3YfBRbBVwzNrFVRP/tEyfb8ZJ8LZUoSe0CvTUyWFLfcm3dRdmhV
-         4jD+39yPdv94/0pATVtzOerTkYqwL+6iGdWrnt5/ntCYClivtwVWw4k35UHHKR4HRjdm
-         P3zN6c4az4jXX3DvXiAnFoF+bYAmP9l1femVi658VRszXpxPC9I1H/UPF4DEU9/WH4Pt
-         Nh+76CaeQ47rPtVAJAVFZ4SeWvEROy8odRIQl4l+NaTD1+t+ug8iEs9ZZfut/Bh5vIS5
-         dAHwlWklNvfrNU6pN8Sh06rc2XgUAa+hQ5oz6+hKBScVPPhgGiGkmM59MUgoSjaMKAw8
-         vmaQ==
+        b=Kif17ImILcyZZoWGHjEJQquQevRUJlCH3fvqMb5LIT1ud8iRSZlgofoGdwA02ax8J6
+         KYecUr0Ep6pub5TyNo61Hz/2w6647NLcOcukT8g66ycVLDHHKQzo1/2LuI8NX+CEjLdq
+         HkrOOXPxpjsBCvLidenmHatqh+7lW9zcNHBA5Qeh8xp7eI16hDqgLatD6APVBqJv8Ukx
+         Pw5daH3lAL6DmJJC2zxRJbBVWkpJZTJeT7VgyXXRyPdL4VVdrTTPxTZUTp9ViPXpv0KB
+         2I6S3eD2INM+rAYb1yjXIVFBpERDuCEz39rE6xPyMgAWNvYIvIJQ6HcvcS57yhoxWRDO
+         FCBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=qLC5+mtpsE8WtQLo06npyBDERaEtE9FkiC+hdmDPP4w=;
-        b=d7fLzGOswo2MYmijF4uhDjnzVeeVl9TwHq3gNS4NArJFT6L9EAiSUn2ZIRVYgZtkaN
-         zli227H8pA732WldSQeildKhh+MIor6MhC2nBsmnvsnoChp/Gwyw2Toeeo2PRnt/kIf0
-         TrcsT5Lw0H7XA2NOF7zMscNFCO6Z324DJzpaMrkY9dqqY6j54n+nCuuB5iDYS3VKCzVC
-         9d3CX4VYtQyxIRsVwN1qaCG9K7buyXcTl0qC0OMz8O381Vz3byi7CZrRBGU5mIY1E4hO
-         KY26VpWp/Qr2cyagIsiG/QKBStfNBGYkrTQaMWVSdeLTnZIPfoA4ddVi7n0t/+RJ1sZN
-         5RMw==
+        bh=vyNNJhZRjullx5ep4cF9f5D6/F5kGWtLh7YimvOTeFc=;
+        b=LOjQrbEA+4nwPTDRiYDnOiY6OTm3GH0B8e3TvwK0se/Lvogyg3vwHdJXpXHHdg6fwP
+         jiVST91FLM5UjUi9LjwuOxCx9e5U0LbrfHv6CLTdd8516iM6lm+MU2Jw7FQskALQ2P1B
+         1I8suLBTJ8SSg0ZsSDftVVtzg75oR+T1aOGKnEYAkr3Kmdl9UGp6EKIp0vEWyXrbWjnu
+         mIWrV30Gbs25wFajbHnF9oNJsnZsa36vh06ilr3vpVeP5B40QwoMvEasVsTnZpQrxGqz
+         k6wRpgokewgl3dokONspS9lEmex3USkYOOfNnP5NyLYtGyu7OzTLrRqHdEr5h3UZ8zDQ
+         OX/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of anholt@anholt.net designates 50.246.234.109 as permitted sender) smtp.mailfrom=anholt@anholt.net
 Authentication-Results: mx.google.com;
@@ -35,38 +35,44 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <stefan.wahren@i2se.com>,
 	bcm-kernel-feedback-list@broadcom.com,
 	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/5] staging: vc04_services: Remove dead FRAGMENTS_T
-Date: Mon,  5 Mar 2018 12:28:02 -0800
-Message-Id: <20180305202806.21219-2-eric@anholt.net>
+Subject: [PATCH 4/5] ARM: dts: bcm2835: Add VCHI node to the Raspberry Pi boards.
+Date: Mon,  5 Mar 2018 12:28:05 -0800
+Message-Id: <20180305202806.21219-5-eric@anholt.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180305202806.21219-1-eric@anholt.net>
 References: <20180305202806.21219-1-eric@anholt.net>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594130895367523113?=
-X-GMAIL-MSGID: =?utf-8?q?1594130895367523113?=
+X-GMAIL-THRID: =?utf-8?q?1594130894529119956?=
+X-GMAIL-MSGID: =?utf-8?q?1594130894529119956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It's not used in-tree, or in the downstream tree.
+The VCHI firmware communication channel operates in parallel with our
+other mailbox-based channel.  This is the communication channel that
+exposes the firmware's media decode/encode and ISP interfaces.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/boot/dts/bcm2835-rpi.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
-index 926c247fd9d3..a6c5f7cc78f0 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
-@@ -49,9 +49,4 @@ typedef struct pagelist_struct {
- 			 */
- } PAGELIST_T;
+diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+index e36c392a2b8f..c128bc6a1435 100644
+--- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
++++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
+@@ -27,6 +27,13 @@
+ 			firmware = <&firmware>;
+ 			#power-domain-cells = <1>;
+ 		};
++
++		vchi@7e00b840 {
++			compatible = "brcm,bcm2835-vchiq";
++			reg = <0x7e00b840 0xf>;
++			interrupts = <0 2>;
++			firmware = <&firmware>;
++		};
+ 	};
+ };
  
--typedef struct fragments_struct {
--	char headbuf[CACHE_LINE_SIZE];
--	char tailbuf[CACHE_LINE_SIZE];
--} FRAGMENTS_T;
--
- #endif /* VCHIQ_PAGELIST_H */
 -- 
 2.16.2
