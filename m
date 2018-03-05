@@ -1,79 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932436AbeCECOY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 21:14:24 -0500
-Received: from mail-pl0-f51.google.com ([209.85.160.51]:46955 "EHLO
-        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752225AbeCECOV (ORCPT
+        id S932505AbeCECQB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 21:16:01 -0500
+Received: from out3140-226.mail.aliyun.com ([42.120.140.226]:15691 "EHLO
+        out3140-226.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752017AbeCECQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 21:14:21 -0500
-X-Google-Smtp-Source: AG47ELs40h7/nCy+6VFBdTZTPK2ZgNSUFIIdNB+OvWprbmIyFRQfgDwl4u9HwB6gMHkYCY8SwN0yBA==
-Date: Mon, 5 Mar 2018 11:14:16 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
-        linux-kernel-owner <linux-kernel-owner@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
-        caijingxian <caijingxian@linux.alibaba.com>,
-        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>
-Subject: Re: Would you help to tell why async printk solution was not taken
- to upstream kernel ?
-Message-ID: <20180305021416.GA6202@jagdpanzerIV>
-References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>
- <20180304130151.GA483@tigerII.localdomain>
- <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
- <20180304104324.6bbbaa53@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180304104324.6bbbaa53@gandalf.local.home>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Sun, 4 Mar 2018 21:16:00 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2839575|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01542;MF=zhenwei.pi@youruncloud.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.BB4XszM_1520216155;
+From: "zhenwei.pi" <zhenwei.pi@youruncloud.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: hpa@zytor.com, mingo@redhat.com, tglx@linutronix.de,
+        "zhenwei.pi" <zhenwei.pi@youruncloud.com>
+Subject: [PATCH] x86/kconfig: Remove residual "no-hlt" boot parameter reference
+Date: Mon,  5 Mar 2018 10:15:54 +0800
+Message-Id: <1520216154-13737-1-git-send-email-zhenwei.pi@youruncloud.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/04/18 10:43), Steven Rostedt wrote:
-> On Sun, 04 Mar 2018 23:08:23 +0800
-> "Qixuan.Wu" <qixuan.wu@linux.alibaba.com> wrote:
-> 
-> > Suppose there is one scenario that the system has 100 CPU(0~99). While CPU 0 is 
-> > calling slow console, CPU 1~99 are calling printk at the same time. And suppose 
-> > CPU 1 will be waiter, as per the patch, 2~99 will return directly. After CPU 0 finish 
-> > it's log to console, it will return when it finds CPU 1 are waiting. Then CPU 1 need 
-> > flush all logs of CPU(1~99) to the console, which may cause  softlockup or rcu 
-> > stall. Above scenario is very unusual and it's very unlikely to happen. 
-> 
-> Yes, people keep bringing up this scenario.
+The "no-hlt" boot parameter has been removed ~5 years ago :
+	The commit 27be457000211a6903968dfce06d5f73f051a217
+	("x86 idle: remove 32-bit-only "no-hlt" parameter, hlt_works_ok flag")
 
-Yeah.
+Remove a stale reference from the documentation as well.
 
-> It would require a single burst of printks to all CPUs.
+Signed-off-by: zhenwei.pi <zhenwei.pi@youruncloud.com>
+---
+ arch/x86/Kconfig | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-That's one possibility. The other one is - console_sem locked by a
-preemptible context which gets scheduled out.
-
-> And then no more printks after that. The last one will end up printing
-> the entire buffer out the slow console. The thing is, this is a bounded
-> time, and no printk will print more than one full buffer worth.
-
-It can print more than "one full buffer worth". In theory and on practice.
-
-> If this is a worry, then set the timeouts for the lockup detection to
-> be longer than the time it takes to print one full buffer with the
-> slowest console.
-
-I see your point.
-But I still think that it makes sense to change that "print it all" approach.
-With more clear/explicit watchdog-dependent limits - we do direct printk for
-1/2 (or 2/3) of a current watchdog threshold value and offload if there is
-more stuff in the logbuf. Implicit "logbuf size * console throughput" is
-harder to understand. Disabling watchdog because of printk is a bit too much
-of a compromise, probably.
-
-IOW, is logbuf worth of messages so critically important after all that we
-are ready to jeopardize the system stability?
-
-	-ss
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index eb7f43f..bdb17b7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2494,19 +2494,18 @@ menuconfig APM
+ 
+ 	  1) make sure that you have enough swap space and that it is
+ 	  enabled.
+-	  2) pass the "no-hlt" option to the kernel
+-	  3) switch on floating point emulation in the kernel and pass
++	  2) switch on floating point emulation in the kernel and pass
+ 	  the "no387" option to the kernel
+-	  4) pass the "floppy=nodma" option to the kernel
+-	  5) pass the "mem=4M" option to the kernel (thereby disabling
++	  3) pass the "floppy=nodma" option to the kernel
++	  4) pass the "mem=4M" option to the kernel (thereby disabling
+ 	  all but the first 4 MB of RAM)
+-	  6) make sure that the CPU is not over clocked.
+-	  7) read the sig11 FAQ at <http://www.bitwizard.nl/sig11/>
+-	  8) disable the cache from your BIOS settings
+-	  9) install a fan for the video card or exchange video RAM
+-	  10) install a better fan for the CPU
+-	  11) exchange RAM chips
+-	  12) exchange the motherboard.
++	  5) make sure that the CPU is not over clocked.
++	  6) read the sig11 FAQ at <http://www.bitwizard.nl/sig11/>
++	  7) disable the cache from your BIOS settings
++	  8) install a fan for the video card or exchange video RAM
++	  9) install a better fan for the CPU
++	  10) exchange RAM chips
++	  11) exchange the motherboard.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called apm.
+-- 
+2.7.4
