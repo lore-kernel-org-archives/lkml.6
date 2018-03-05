@@ -1,137 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeCEPSH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:18:07 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42304 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751723AbeCEPSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:18:05 -0500
-Message-ID: <1520263080.5898.7.camel@redhat.com>
-Subject: Re: BUG: unable to handle kernel paging request in
- compat_copy_entries
-From: Paolo Abeni <pabeni@redhat.com>
-To: syzbot <syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com>,
-        bridge@lists.linux-foundation.org, coreteam@netfilter.org,
-        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
-Date: Mon, 05 Mar 2018 16:18:00 +0100
-In-Reply-To: <001a113f1b64a3c4ab0566a60182@google.com>
-References: <001a113f1b64a3c4ab0566a60182@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752162AbeCEPVH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:21:07 -0500
+Received: from mga05.intel.com ([192.55.52.43]:27876 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751144AbeCEPVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 10:21:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="31498688"
+Date: Mon, 5 Mar 2018 23:20:14 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Florent Flament <contact@florentflament.com>
+Cc: kbuild-all@01.org, andy.shevchenko@gmail.com, jikos@kernel.org,
+        benjamin.tissoires@redhat.com, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org,
+        Florent Flament <contact@florentflament.com>
+Subject: Re: [PATCH v2 1/1] HID: Logitech K290: Add driver for the Logitech
+ K290 USB keyboard
+Message-ID: <201803052207.4oLBFRZp%fengguang.wu@intel.com>
+References: <20180304221425.28611-2-contact@florentflament.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180304221425.28611-2-contact@florentflament.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-05 at 00:21 -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 5fbdefcf685defd8bc5a8f37b17538d25c58d77a (Fri Mar 2 21:05:20 2018 +0000)
-> Merge branch 'parisc-4.16-1' of  
-> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
-> 
-> So far this crash happened 5 times on upstream.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> user-space arch: i386
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for  
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1520098078.492:8): avc:  denied  { map } for   
-> pid=4239 comm="syz-execprog" path="/root/syzkaller-shm255959590" dev="sda1"  
-> ino=16482 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-> tcontext=unconfined_u:object_r:file_t:s0 tclass=file permissive=1
-> IPVS: ftp: loaded support on port[0] = 21
-> BUG: unable to handle kernel paging request at ffffc90001819e4f
-> IP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
-> IP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
-> IP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160
-> PGD 1dad2f067 P4D 1dad2f067 PUD 1dad30067 PMD 1b2408067 PTE 0
-> Oops: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->     (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 4249 Comm: syz-executor0 Not tainted 4.16.0-rc3+ #248
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> RIP: 0010:ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
-> RIP: 0010:size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
-> RIP: 0010:compat_copy_entries+0x49f/0x1050  
-> net/bridge/netfilter/ebtables.c:2160
-> RSP: 0018:ffff8801b34bf7e8 EFLAGS: 00010246
-> RAX: 000000000000000a RBX: ffff8801b34bf9d4 RCX: ffffc90001819e4f
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801b34bf9d8
-> RBP: ffff8801b34bf968 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffffff88613340 R11: 0000000000000001 R12: 000000000000ee5f
-> R13: dffffc0000000000 R14: ffff8801b34bf9c8 R15: ffffc90001819e2f
-> FS:  0000000000000000(0000) GS:ffff8801db300000(0063) knlGS:00000000085b9900
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: ffffc90001819e4f CR3: 00000001b2bd7003 CR4: 00000000001606e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   compat_do_replace+0x398/0x7c0 net/bridge/netfilter/ebtables.c:2249
->   compat_do_ebt_set_ctl+0x22a/0x2d0 net/bridge/netfilter/ebtables.c:2330
->   compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
->   compat_nf_setsockopt+0x88/0x130 net/netfilter/nf_sockopt.c:156
->   compat_ip_setsockopt+0x8b/0xd0 net/ipv4/ip_sockglue.c:1285
->   inet_csk_compat_setsockopt+0x95/0x120 net/ipv4/inet_connection_sock.c:1041
->   compat_tcp_setsockopt+0x3d/0x70 net/ipv4/tcp.c:2916
->   compat_sock_common_setsockopt+0xb2/0x140 net/core/sock.c:2986
->   C_SYSC_setsockopt net/compat.c:403 [inline]
->   compat_SyS_setsockopt+0x17c/0x410 net/compat.c:386
->   do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
->   do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
->   entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> RIP: 0023:0xf7fbbc99
-> RSP: 002b:00000000ffd5ab8c EFLAGS: 00000286 ORIG_RAX: 000000000000016e
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
-> RDX: 0000000000000080 RSI: 0000000020000280 RDI: 0000000000000208
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> Code: 8d 4f 20 48 89 c8 48 89 8d c8 fe ff ff 48 c1 e8 03 42 0f b6 14 28 48  
-> 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 b2 0a 00 00 <45> 8b 67 20  
-> 44 39 a5 04 ff ff ff 0f 82 bd 08 00 00 e8 cb 52 56
-> RIP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline] RSP:  
-> ffff8801b34bf7e8
-> RIP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline] RSP:  
-> ffff8801b34bf7e8
-> RIP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160  
-> RSP: ffff8801b34bf7e8
-> CR2: ffffc90001819e4f
-> ---[ end trace cf111332eb971f16 ]---
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is  
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug  
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+Hi Florent,
 
-#syz fix: netfilter: ebtables: add CONFIG_COMPAT support
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on v4.16-rc4 next-20180305]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Florent-Flament/Logitech-K290-Add-driver-for-the-Logitech-K290-USB-keyboard/20180305-153311
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/hid/hid-logitech-k290.c:54:46: sparse: Using plain integer as NULL pointer
+
+vim +54 drivers/hid/hid-logitech-k290.c
+
+    45	
+    46	static void k290_set_function(struct usb_device *dev, uint16_t function_mode)
+    47	{
+    48		int ret;
+    49	
+    50		ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+    51				      K290_SET_FUNCTION_CMD,
+    52				      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+    53				      K290_SET_FUNCTION_VAL,
+  > 54				      function_mode, 0, 0, USB_CTRL_SET_TIMEOUT);
+    55	
+    56		if (ret < 0)
+    57			dev_err(&dev->dev,
+    58				"Failed to setup K290 function key, error %d\n", ret);
+    59	}
+    60	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
