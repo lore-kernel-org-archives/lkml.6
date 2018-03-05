@@ -1,156 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752566AbeCEOwb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:52:31 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6143 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752440AbeCEOtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:49:51 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH v3 3/8] scsi: hisi_sas: fix the issue of link rate inconsistency
-Date: Mon, 5 Mar 2018 22:48:45 +0800
-Message-ID: <1520261330-204596-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520261330-204596-1-git-send-email-john.garry@huawei.com>
-References: <1520261330-204596-1-git-send-email-john.garry@huawei.com>
+        id S1752349AbeCEOxK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:53:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58030 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751830AbeCEOxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:53:08 -0500
+Date: Mon, 5 Mar 2018 15:53:06 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
+Message-ID: <20180305145306.5i643d2oqupc4rba@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+ <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+ <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+ <1519752950.10722.231.camel@linux.intel.com>
+ <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+ <1519814544.10722.266.camel@linux.intel.com>
+ <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
+ <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+ <1520000254.10722.389.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520000254.10722.389.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+On Fri 2018-03-02 16:17:34, Andy Shevchenko wrote:
+> On Fri, 2018-03-02 at 13:53 +0100, Petr Mladek wrote:
+> > %p has many modifiers where the pointer is dereferenced. An invalid
+> > pointer might cause kernel to crash silently.
+> > 
+> > Note that printk() formats the string under logbuf_lock. Any recursive
+> > printks are redirected to the printk_safe implementation and the
+> > messages
+> > are stored into per-CPU buffers. These buffers might be eventually
+> > flushed
+> > in printk_safe_flush_on_panic() but it is not guaranteed.
+> > 
+> > In general, we should do our best to get useful message from printk().
+> > All pointers to the first memory page must be invalid. Let's prevent
+> > the dereference and print "(null)" in this case. This is already done
+> > in many other situations, including "%s" format handling and many
+> > page fault handlers.
+> > 
+> 
+> 
+> With such explanation it makes at least clear for the reader why it's
+> done.
+> 
+> Thanks!
+> 
+> Would you be okay if I take this one as a first in my series and
+> resubmit the series based on it?
 
-In sysfs, there are two files about minimum linkrate, and also
-two files for maximum linkrate. Take maximum linkrate example,
-maximum_linkrate_hw is read-only and indicated by the register
-HARD_PHY_LINKRATE, and maximum_linkrate is read-write and
-corresponding to the register PROG_PHY_LINK_RATE.
+Makes sense. Feel free to go on.
 
-But in the function phy_up_v*_hw(), we get *_linkrate value from
-HARD_PHY_LINKRATE. It is not right. This patch is to fix this issue.
-
-Unreferenced PHY-interrupt enum is also removed for v3 hw.
-
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c  |  2 ++
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |  1 -
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |  8 +-------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 13 +------------
- 4 files changed, 4 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 2d4dbed..9d16372 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -683,6 +683,8 @@ static void hisi_sas_phy_init(struct hisi_hba *hisi_hba, int phy_no)
- 
- 	phy->hisi_hba = hisi_hba;
- 	phy->port = NULL;
-+	phy->minimum_linkrate = SAS_LINK_RATE_1_5_GBPS;
-+	phy->maximum_linkrate = hisi_hba->hw->phy_get_max_linkrate();
- 	sas_phy->enabled = (phy_no < hisi_hba->n_phy) ? 1 : 0;
- 	sas_phy->class = SAS;
- 	sas_phy->iproto = SAS_PROTOCOL_ALL;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 679e76f..38bbda9 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -873,7 +873,6 @@ static void phy_set_linkrate_v1_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 42b3fd6..67be346 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -1603,7 +1603,6 @@ static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
-@@ -2684,7 +2683,7 @@ static int prep_abort_v2_hw(struct hisi_hba *hisi_hba,
- static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
- {
- 	int i, res = IRQ_HANDLED;
--	u32 port_id, link_rate, hard_phy_linkrate;
-+	u32 port_id, link_rate;
- 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
- 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
- 	struct device *dev = hisi_hba->dev;
-@@ -2723,11 +2722,6 @@ static int phy_up_v2_hw(int phy_no, struct hisi_hba *hisi_hba)
- 	}
- 
- 	sas_phy->linkrate = link_rate;
--	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
--						HARD_PHY_LINKRATE);
--	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
--	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
--
- 	sas_phy->oob_mode = SAS_OOB_MODE;
- 	memcpy(sas_phy->attached_sas_addr, &id->sas_addr, SAS_ADDR_SIZE);
- 	dev_info(dev, "phyup: phy%d link_rate=%d\n", phy_no, link_rate);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a1f1868..1ee95ab 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -340,12 +340,6 @@ struct hisi_sas_err_record_v3 {
- #define HISI_SAS_COMMAND_ENTRIES_V3_HW 4096
- #define HISI_SAS_MSI_COUNT_V3_HW 32
- 
--enum {
--	HISI_SAS_PHY_PHY_UPDOWN,
--	HISI_SAS_PHY_CHNL_INT,
--	HISI_SAS_PHY_INT_NR
--};
--
- #define DIR_NO_DATA 0
- #define DIR_TO_INI 1
- #define DIR_TO_DEVICE 2
-@@ -1121,7 +1115,7 @@ static int prep_abort_v3_hw(struct hisi_hba *hisi_hba,
- static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- {
- 	int i, res = 0;
--	u32 context, port_id, link_rate, hard_phy_linkrate;
-+	u32 context, port_id, link_rate;
- 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
- 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
- 	struct device *dev = hisi_hba->dev;
-@@ -1139,10 +1133,6 @@ static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
- 		goto end;
- 	}
- 	sas_phy->linkrate = link_rate;
--	hard_phy_linkrate = hisi_sas_phy_read32(hisi_hba, phy_no,
--						HARD_PHY_LINKRATE);
--	phy->maximum_linkrate = hard_phy_linkrate & 0xf;
--	phy->minimum_linkrate = (hard_phy_linkrate >> 4) & 0xf;
- 	phy->phy_type &= ~(PORT_TYPE_SAS | PORT_TYPE_SATA);
- 
- 	/* Check for SATA dev */
-@@ -1864,7 +1854,6 @@ static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
- 	sas_phy->phy->maximum_linkrate = max;
- 	sas_phy->phy->minimum_linkrate = min;
- 
--	min -= SAS_LINK_RATE_1_5_GBPS;
- 	max -= SAS_LINK_RATE_1_5_GBPS;
- 
- 	for (i = 0; i <= max; i++)
--- 
-1.9.1
+Best Regards,
+Petr
