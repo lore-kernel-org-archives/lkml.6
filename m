@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932509AbeCETNh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:13:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47640 "EHLO mga17.intel.com"
+        id S1752894AbeCETUN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:20:13 -0500
+Received: from mga17.intel.com ([192.55.52.151]:48090 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753054AbeCETMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:12:30 -0500
+        id S1751311AbeCETUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 14:20:11 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="23109080"
-From: kan.liang@linux.intel.com
-To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 3/7] perf mmap: Using the stored data in perf_mmap__read_event
-Date: Mon,  5 Mar 2018 14:10:55 -0500
-Message-Id: <1520277059-32749-3-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.4.11
-In-Reply-To: <1520277059-32749-1-git-send-email-kan.liang@linux.intel.com>
-References: <1520277059-32749-1-git-send-email-kan.liang@linux.intel.com>
+   d="scan'208";a="32578295"
+Subject: Re: [PATCH v12 02/11] mm, swap: Add infrastructure for saving page
+ metadata on swap
+To: Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
+        davem@davemloft.net, arnd@arndb.de
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+ <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
+Cc: kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        ross.zwisler@linux.intel.com, dave.jiang@intel.com,
+        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
+        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
+        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, sparclinux@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <0d77dc3c-1454-a689-a0fb-f07e8973c29e@linux.intel.com>
+Date: Mon, 5 Mar 2018 11:20:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On 02/21/2018 09:15 AM, Khalid Aziz wrote:
+> If a processor supports special metadata for a page, for example ADI
+> version tags on SPARC M7, this metadata must be saved when the page is
+> swapped out. The same metadata must be restored when the page is swapped
+> back in. This patch adds two new architecture specific functions -
+> arch_do_swap_page() to be called when a page is swapped in, and
+> arch_unmap_one() to be called when a page is being unmapped for swap
+> out. These architecture hooks allow page metadata to be saved if the
+> architecture supports it.
 
-Using the 'start', 'end' and 'overwrite' which are stored in
-struct perf_mmap to replace the parameters of perf_mmap__read_event().
-The parameters will be discarded later.
+I still think silently squishing cacheline-level hardware data into
+page-level software data structures is dangerous.
 
-No functional change.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/util/mmap.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 4cb3614..da9e68b 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -76,8 +76,8 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
-  * perf_mmap__read_done()
-  */
- union perf_event *perf_mmap__read_event(struct perf_mmap *map,
--					bool overwrite,
--					u64 *startp, u64 end)
-+					bool overwrite __maybe_unused,
-+					u64 *startp, u64 end __maybe_unused)
- {
- 	union perf_event *event;
- 
-@@ -91,13 +91,14 @@ union perf_event *perf_mmap__read_event(struct perf_mmap *map,
- 		return NULL;
- 
- 	/* non-overwirte doesn't pause the ringbuffer */
--	if (!overwrite)
--		end = perf_mmap__read_head(map);
-+	if (!map->overwrite)
-+		map->end = perf_mmap__read_head(map);
- 
--	event = perf_mmap__read(map, startp, end);
-+	event = perf_mmap__read(map, &map->start, map->end);
-+	*startp = map->start;
- 
--	if (!overwrite)
--		map->prev = *startp;
-+	if (!map->overwrite)
-+		map->prev = map->start;
- 
- 	return event;
- }
--- 
-2.4.11
+But, you seem rather determined to do it this way.  I don't think this
+will _hurt_ anyone else, though other than needlessly cluttering up the
+code.
