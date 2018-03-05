@@ -1,30 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752526AbeCERST (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:18:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40770 "EHLO
+        id S932197AbeCERSa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:18:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41172 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeCERSQ (ORCPT
+        with ESMTP id S932106AbeCERS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:18:16 -0500
+        Mon, 5 Mar 2018 12:18:29 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Fix build errors" to the regulator tree
-In-Reply-To: 
-Message-Id: <E1estkZ-0007wV-Bw@debutante>
-Date: Mon, 05 Mar 2018 17:18:11 +0000
+To: Abhijeet Kumar <abhijeet.kumar@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>, Jeeja KP <jeeja.kp@intel.com>,
+        Dharageswari R <dharageswari.r@intel.com>,
+        G Kranthi <gudishax.kranthikumar@intel.com>,
+        Pradeep Tewani <pradeep.d.tewani@intel.com>,
+        Ramesh Babu <ramesh.babu@intel.com>,
+        Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        abhijeet.kumar@intel.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: Skylake: Fix typo" to the asoc tree
+In-Reply-To: <1520106400-22664-1-git-send-email-abhijeet.kumar@intel.com>
+Message-Id: <E1estkQ-0007tK-Ej@debutante>
+Date: Mon, 05 Mar 2018 17:18:02 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Fix build errors
+   ASoC: Intel: Skylake: Fix typo
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -45,105 +57,31 @@ to this mail.
 Thanks,
 Mark
 
->From 7c078de5edf1b46236a52cf49614eef2dcb7ecae Mon Sep 17 00:00:00 2001
-From: Maciej Purski <m.purski@samsung.com>
-Date: Mon, 5 Mar 2018 14:03:59 +0100
-Subject: [PATCH] regulator: core: Fix build errors
+>From 12af5004145a3fa53246cca4cbb2c57d18dde202 Mon Sep 17 00:00:00 2001
+From: Abhijeet Kumar <abhijeet.kumar@intel.com>
+Date: Sun, 4 Mar 2018 01:16:39 +0530
+Subject: [PATCH] ASoC: Intel: Skylake: Fix typo
 
-Build errors detected by kbuild test robot occur on non-of
-architectures.
+Spelling mistake in state. So fixing it.
 
-This patch fixes this behavior as well as using plain integer instead
-of NULL in of_count_phandle_with_args().
-
-Fixes: 0c55103 ("regulator: core: Parse coupled regulators properties")
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: Abhijeet Kumar <abhijeet.kumar@intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/internal.h     | 34 ++++++++++++++++++++++++++--------
- drivers/regulator/of_regulator.c |  5 +++--
- 2 files changed, 29 insertions(+), 10 deletions(-)
+ sound/soc/intel/skylake/skl-messages.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
-index f253a47b9a99..485db15bee99 100644
---- a/drivers/regulator/internal.h
-+++ b/drivers/regulator/internal.h
-@@ -63,6 +63,14 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
- 			         const struct regulator_desc *desc,
- 				 struct regulator_config *config,
- 				 struct device_node **node);
-+
-+struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
-+						 int index);
-+
-+int of_get_n_coupled(struct regulator_dev *rdev);
-+
-+bool of_check_coupling_data(struct regulator_dev *rdev);
-+
- #else
- static inline struct regulator_init_data *
- regulator_of_get_init_data(struct device *dev,
-@@ -72,8 +80,25 @@ regulator_of_get_init_data(struct device *dev,
+diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
+index 60d76adade43..f161907859f3 100644
+--- a/sound/soc/intel/skylake/skl-messages.c
++++ b/sound/soc/intel/skylake/skl-messages.c
+@@ -1210,7 +1210,7 @@ int skl_bind_modules(struct skl_sst *ctx,
+ static int skl_set_pipe_state(struct skl_sst *ctx, struct skl_pipe *pipe,
+ 	enum skl_ipc_pipeline_state state)
  {
- 	return NULL;
+-	dev_dbg(ctx->dev, "%s: pipe_satate = %d\n", __func__, state);
++	dev_dbg(ctx->dev, "%s: pipe_state = %d\n", __func__, state);
+ 
+ 	return skl_ipc_set_pipeline_state(&ctx->ipc, pipe->ppl_id, state);
  }
--#endif
- 
-+static inline struct regulator_dev *
-+of_parse_coupled_regulator(struct regulator_dev *rdev,
-+			   int index)
-+{
-+	return NULL;
-+}
-+
-+static inline int of_get_n_coupled(struct regulator_dev *rdev)
-+{
-+	return 0;
-+}
-+
-+static inline bool of_check_coupling_data(struct regulator_dev *rdev)
-+{
-+	return false;
-+}
-+
-+#endif
- enum regulator_get_type {
- 	NORMAL_GET,
- 	EXCLUSIVE_GET,
-@@ -83,11 +108,4 @@ enum regulator_get_type {
- 
- struct regulator *_regulator_get(struct device *dev, const char *id,
- 				 enum regulator_get_type get_type);
--
--struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
--						 int index);
--
--int of_get_n_coupled(struct regulator_dev *rdev);
--
--bool of_check_coupling_data(struct regulator_dev *rdev);
- #endif
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index a2eb9046adf8..98ee098e8c35 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -434,7 +434,8 @@ static bool of_coupling_find_node(struct device_node *src,
- 	bool found = false;
- 
- 	n_phandles = of_count_phandle_with_args(src,
--						"regulator-coupled-with", 0);
-+						"regulator-coupled-with",
-+						NULL);
- 
- 	for (i = 0; i < n_phandles; i++) {
- 		struct device_node *tmp = of_parse_phandle(src,
-@@ -495,7 +496,7 @@ bool of_check_coupling_data(struct regulator_dev *rdev)
- 
- 		c_n_phandles = of_count_phandle_with_args(c_node,
- 							  "regulator-coupled-with",
--							  0);
-+							  NULL);
- 
- 		if (c_n_phandles != n_phandles) {
- 			dev_err(&rdev->dev, "number of couped reg phandles mismatch\n");
 -- 
 2.16.2
