@@ -1,99 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753077AbeCEWhm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752508AbeCEWhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:37:41 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0E920685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Mon, 5 Mar 2018 22:37:36 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Vasyl Gomonovych <gomonovych@gmail.com>
-Cc: ralf@linux-mips.org, paul.gortmaker@windriver.com,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: TXx9: Add missing iounmap
-Message-ID: <20180305221833.GJ4197@saruman>
-References: <1511473795-20137-1-git-send-email-gomonovych@gmail.com>
+        id S1753190AbeCEWiA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:38:00 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54338 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753088AbeCEWh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 17:37:59 -0500
+Date: Mon, 5 Mar 2018 23:37:54 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, acme@kernel.org,
+        peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180305223754.GB7403@krava>
+References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
+ <20180302105254.234axj7b3nixakav@intel.com>
+ <20180302113845.GC16348@krava>
+ <20180302144732.GA2471@danjae.aot.lge.com>
+ <20180305071136.qs3lsoh432mzbizw@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="M9kwpIYUMbI/2cCx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1511473795-20137-1-git-send-email-gomonovych@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180305071136.qs3lsoh432mzbizw@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 05, 2018 at 03:11:36PM +0800, Du, Changbin wrote:
 
---M9kwpIYUMbI/2cCx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SNIP
 
-On Thu, Nov 23, 2017 at 10:49:55PM +0100, Vasyl Gomonovych wrote:
-> Add the missing iounmap() before put_device and
-> return from txx9_sramc_init().
->=20
-> Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
-> ---
->  arch/mips/txx9/generic/setup.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setu=
-p.c
-> index 1791a44ee570..6ef5edb85d68 100644
-> --- a/arch/mips/txx9/generic/setup.c
-> +++ b/arch/mips/txx9/generic/setup.c
-> @@ -965,6 +965,8 @@ void __init txx9_sramc_init(struct resource *r)
->  	}
->  	return;
->  exit_put:
-> +	if (dev->base)
-> +		iounmap(dev->base);
+> > > on the other hand it's simple enough and looks
+> > > like generic solution would be more tricky
+> > 
+> > What about adding perf_sched__process_comm() to set it in the
+> > thread::priv?
+> >
+> I can be done, then thread->comm_changed moves to thread_runtime->comm_changed.
+> Draft code as below. It is also a little tricky.
+> 
+> +int perf_sched__process_comm(struct perf_tool *tool __maybe_unused,
+> +                            union perf_event *event,
+> +                            struct perf_sample *sample,
+> +                            struct machine *machine)
+> +{
+> +       struct thread *thread;
+> +       struct thread_runtime *r;
+> +
+> +       perf_event__process_comm(tool, event, sample, machine);
+> +
+> +       thread = machine__findnew_thread(machine, pid, tid);
 
-I think if dev->base was NULL then a different error path would have
-been taken already.
+should you use machine__find_thread in here?
 
-More concerning to be honest though is the sysfs_create_bin_file() error
-handling just above here, which seems to iounmap() and kfree() *after*
-device_unregister(). txx9_device_release() already kfrees it.
+> +       if (thread) {
+> +               r = thread__priv(thread);
+> +               if (r)
+> +                       r->comm_changed = true;
+> +               thread__put(thread);
+> +       }
+> +}
+> +
+>  static int perf_sched__read_events(struct perf_sched *sched)
+>  {
+>         const struct perf_evsel_str_handler handlers[] = {
+> @@ -3291,7 +3311,7 @@ int cmd_sched(int argc, const char **argv)
+>         struct perf_sched sched = {
+>                 .tool = {
+>                         .sample          = perf_sched__process_tracepoint_sample,
+> -                       .comm            = perf_event__process_comm,
+> +                       .comm            = perf_sched__process_comm,
+> 
+> 
+> But I'd keep 'comm_changed' where 'shortname' is defined. I think they should appears
+> togother. And 'shortname' is only used by sched command, too.
 
-The iounmap() call should prresumably move before the kfree() in
-txx9_device_release(), and the kfree() after device_unregister() should
-be removed?
+they can both go to struct thread_runtime then
 
-Cheers
-James
+> 
+> So I still prefer my privous simpler change. Thanks!
 
->  	put_device(&dev->dev);
->  	return;
->  }
-> --=20
-> 1.9.1
->=20
+I was wrong thinking that the amount of code
+making it sched specific would be biger
 
---M9kwpIYUMbI/2cCx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+we're trying to keep the core structs generic,
+so this one fits better 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqdxq4ACgkQbAtpk944
-dnqrgA//c5yKC1sXPNhPfR2Am6vC3Lh/V2KaV8LEgTZlYNMCVUOeTJYtbV7yVlVY
-oY4PsX3lXgzWDHUg+zOr6YNHb4bOOhQ/Fo5Tbep0aybviosbEyx4kgBGIAWnPxuj
-1UDNWNcMFYLtCWsIrbziXCKXeOgjJ4zCxb3d3c7a7YXs1HIfRkH2TZV8E6AjnVkI
-x0bV/3pF6G+jjtGMn1b5UOgXQLn6/rzYSWDBnXan4xZUpLEXHN9PF/C6zU6ibOFz
-egdEigrt1seXx6meLlDpeph0vLhVhNsBekON7FskLq6+8vPxfZlCIkl5y2aSBWnS
-zI8Y5Lx0Z0Mx7yg8o4HRWQZVYKjfzjw11Ax0OjGqPGaHsDckDUUVFcycj5naUipu
-j2laZjTljAULGZ2pFOEKG4dyGfCIpPZV6wUNZSnZ7rC1J2/eTEMu8dRshGHYtXY6
-Gj7JuWu61LrQjeDTqjuCVU3ckqqpFUL66qd1I3usqlZJ5m6EjA0r99Wx34rLt+OX
-Kskf4FNhMtDqneb39s6g/pBA8WCTXb/pAg1/C0uEKjzyBfXfxgt2JrAPgFtqehuc
-OnlhSkw3PKqauN4FpmOBfHlRBn43ysqiceupNcCAIx0/7e8lAFr0z7eFDSc8PWxz
-qixmiwfsXsMuG8xL+AUwqPahT+zxm2V9p8v+1LJ95W+3yeIaoek=
-=Z91+
------END PGP SIGNATURE-----
-
---M9kwpIYUMbI/2cCx--
+thanks,
+jirka
