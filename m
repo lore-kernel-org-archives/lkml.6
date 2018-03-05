@@ -1,637 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeCEJTx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:19:53 -0500
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33824 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbeCEJTu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:19:50 -0500
-X-Google-Smtp-Source: AG47ELsHTLjc5148A7gpwStADk36Q9bCh8iDEZFQcJLBAbTuPY4olggX26uHF1Tbq4oI5IK575gQUg==
-Subject: Re: [PATCH 6/9] drm/xen-front: Introduce DRM/KMS virtual display
- driver
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
- <1519200222-20623-7-git-send-email-andr2000@gmail.com>
- <20180305091335.GH22212@phenom.ffwll.local>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <680aadca-7cad-0110-df98-46df3c1c9c69@gmail.com>
-Date: Mon, 5 Mar 2018 11:19:44 +0200
+        id S932983AbeCEJUH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:20:07 -0500
+Received: from mail-he1eur01on0116.outbound.protection.outlook.com ([104.47.0.116]:44096
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932672AbeCEJUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 04:20:00 -0500
+Authentication-Results: spf=pass (sender IP is 131.228.2.241)
+ smtp.mailfrom=nokia.com; redhat.com; dkim=none (message not signed)
+ header.d=none;redhat.com; dmarc=pass action=none header.from=nokia.com;
+X-HPESVCS-Source-Ip: 10.151.73.41
+Subject: Re: [PATCH v2 2/2] ARM: ftrace: Add MODULE_PLTS support
+To: Steven Rostedt <rostedt@goodmis.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>, Ingo Molnar <mingo@redhat.com>
+References: <20180301164343.5794-1-alexander.sverdlin@nokia.com>
+ <20180301164343.5794-3-alexander.sverdlin@nokia.com>
+ <20180302120026.52f34ad2@vmware.local.home>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Message-ID: <8aa72633-5323-7f85-d326-6b7231b12aeb@nokia.com>
+Date: Mon, 5 Mar 2018 10:18:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180305091335.GH22212@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180302120026.52f34ad2@vmware.local.home>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:131.228.2.241;IPV:CAL;SCL:-1;CTRY:FI;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(39380400002)(376002)(2980300002)(438002)(51914003)(199004)(189003)(65806001)(65956001)(2906002)(47776003)(356003)(53546011)(36756003)(8936002)(186003)(97736004)(230700001)(478600001)(86362001)(31696002)(26826003)(305945005)(336012)(22756006)(54906003)(229853002)(106002)(4326008)(64126003)(68736007)(31686004)(2486003)(23676004)(6916009)(2950100002)(6246003)(81156014)(81166006)(26005)(8676002)(77096007)(76176011)(316002)(53936002)(5660300001)(58126008)(65826007)(106466001)(50466002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR07MB0892;H:mailrelay.int.nokia.com;FPR:;SPF:Pass;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;VE1EUR03FT058;1:rk3GUvIuxBI5X3FBSCFWrypGWrPpEUBca+/m7Wtby3hwViBb9feSYog3ljSfkvckWgM1U8KGsY40hpqBMxYplE4Phbpx4m57JWERqV832vTBEqFSgQf2sLHYN6D5Njva
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 38afde66-03d0-4077-147a-08d5827a4303
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603307);SRVR:HE1PR07MB0892;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR07MB0892;3:zJE0JiPHkgoWlFhan+bNBwCOVq010kJuXAb5v3OL2Ge7+D09uAL1gajoNrE7KWdw9os7GcyFuLBJzEz+eY0CdbXFmaC+QRxJYQLg/mDOXJDFvQAwCImImejkpCLVAzAcudE6GYC6oGsw2EmLlsYk0YARIqHTqecB1GW2W1anOp6VNVtsoQSnIBlGUsNJ9DBgZomtMPpd9SOaJVPg73zIIGFuwMdAOQpo/eEU2aJylBKkI0iqayO3I58lMaIeiTAAtZmMt9GNrQqSauhUj5+IH5iIuF+RbiZEph6UDG0PDo1Td4bjOX3UU3HjTwoYY18WeauLoSp4an/tysIqkAMgh8hOVUJXvqJ0EC0iw1CG4Cc=;25:fMZ5xroFRaDKA7OKTKLKLwfwu9ea3Wwb5wiLJhy5MCjXUptSA8bcMw9wVTXKIPnPAY780ea/HBuq1OLz0utamjsfbXiW00VZnn+BVpQd9gvYgNwjGingoZ9GrFdXGmmMGdS7TmrlJl450SOVPICGm2AsbIC3ulXSPsKyE0tBV0s0kO4sn9FJ1Js+L32Rtx1v5bdiw96oZEv0uVupngCpzSyNZVI8x0eqCM+2HS0nh6Y9xpwxcgKCB1FTVcuo5t4pZqkir/R54Qftn0lTr8S/lHP2vmwcV0Ah48Fvps7oT8HZ0tPqr9mxkn/TNRbs0sN2Y9hTyBuj6BlLm9C+e0+FZA==
+X-MS-TrafficTypeDiagnostic: HE1PR07MB0892:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR07MB0892;31:Y+0x4yPUZqd3CtIEkaCgdVDpN1nU9J1lhWRoo11v7SrX/bIISBXtayLs+W7QWgoIgUIUZDS+maNGijunTGRq+d58Q+6+WKW4Rb2wEODiXgq/hBCvZfmvZHkuVxR5ftgGy/KeSS3VBO4vd0GTIJgl8Ea5uRx2P19oJMPPFCVVPpBSxtHbYfchSDIbkN0FHbeNITzyIpfPYctmrcgMeK1kzInCIfrWgmRaRsaI/k8UmdM=;20:FpcpjGKgd3DK/M7xHH/qOLEZPTHALr6nEgCG4B8I8H9Gjb5jR5ucMG9IxXfSL5resZn8AWHFx2CLRoObTjGXmx5ib67Av75NE5gECUjTV7SaqGw8VgE9Pjs0bv7IOmbiX8LwbLOFK9AFyzP/K8RRg2FXiBuncBBVWUTGht3w4Mzd8FYwKNOLu3SVttxBAl8wKtjPNLKOh8tTCUefh6UVVzcOre0l9e1HzJ35FGZwL58QrmrI8mrnEyeMX5kukQ49d3s7MTqNQGXX5r5FlZgUKE/EZwwNR43mgB5jGZlkGFM1NQ+JK/S7jsQei0ffKomIcLfmCm4Btu2G9ASJEoozcVSVn43B44Wgobo/KmBARXB1fkPOaM0GsXcgj/AXPE3QDNNWoolkm86Pv4ayxIl43jkTEIyLOTxpkL4euh2o1t3hM4k01lXxzR7xqKkR635u7d6o+YEWhZL3EZCV1WqREhcqhhXKGReH9CSaXmyxQaFBwo4fdJ8k3lf3lChX47RZunVfQNjv90Pn27TlYVAvFU7vWSNjH3z8eBRFWfcjnCIEW+XvaBqH/coGznM29RlHWazgeUinr2Xy8Y1+6BMCGzxGs451p94EtGL6m7wJQvQ=
+X-Microsoft-Antispam-PRVS: <HE1PR07MB08922E0A41A3CD576F213E3088DA0@HE1PR07MB0892.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3231220)(11241501184)(806099)(944501244)(52105095)(3002001)(6055026)(6041288)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:HE1PR07MB0892;BCL:0;PCL:0;RULEID:;SRVR:HE1PR07MB0892;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR07MB0892;4:/oGU/13CUOZyea4ek4qQ5tdsY24XnPN5RaFWWcxOXIsAnmBZj6ldLi8atlcGSnoAl0tHme+1L01CYjvzWiQx6+sNlbknum/8mQiHEEkJ9Podfi/Wvs2fsxwECYLmf102Ttxm/fco1rawQ3iz6+RyMKqibdiTXnSxlCDP1Nx71xBCJJq/c7+WnJYa9+65sQNE9MRltnt+x4U3YRUfbot+xcYbKuMMeBkBldMuIe/mKMeC2GEdXjq9BIfYH3S6m+MNp5aVr9FL7cpb2zbz1VCNgA==
+X-Forefront-PRVS: 06022AA85F
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA3TUIwODkyOzIzOmZoNUdyUnY2TTQ3YzVNcVphNU5TdWI1OWdX?=
+ =?utf-8?B?V0hPelJiVHd4YmQwdlNROExYbmJSQ1B6dzU3bjMxam9wekdka1FvbzVvTERE?=
+ =?utf-8?B?WHZvVGkxeU9vc001VHZpdUFXRjR5Y2ZDVG9WQlNRckZYUnd2NHRHZG5XbUZY?=
+ =?utf-8?B?K3V6VVpiM1ZEUXBSV0dIeHltY3VJdVBhd3ZLSlFQOEdMaGZzck9iYnlBMjMx?=
+ =?utf-8?B?NnRtRFowREpyVVcxOThobWd6Y0hTaXkvWEdoSUdNcVlXT2F0eVVrUmpHUGtD?=
+ =?utf-8?B?YWlMY0wxTGx0ZWlFNVl2eEUzVHJLci9ZaXFSeGtJakVvS0hUMW1jelZRV0lm?=
+ =?utf-8?B?MjUrUlJ6VTloOUlGMHpBWVQra0JqK1A0NkN6UXorWE5MOWVCcHNtZDc2NGtS?=
+ =?utf-8?B?TTh5aDhCUFRScHpjSFZmV2hoWlZzK29qQ0Zacm5yOU1aMzNNUXlrMDgyWjU0?=
+ =?utf-8?B?MEVTNjlCeVMvNlp5SU9aTzZiR3I5TmtQVDRkSDhvQmJKeHYrN2MvUGxHSm5X?=
+ =?utf-8?B?bUQ1MHhKbzFnQ0JDbXk2V3BnWWhkejhCd1ZRSmlsV1c3SkF1SSs1TmJHY2l0?=
+ =?utf-8?B?WVYzLzJyNGNqc1U0a29PZFZGdk1kZFUvVGJ5ZTNuRGVRaUlBWDVDMkN6a3lt?=
+ =?utf-8?B?RTE2TXN5WEo1OS95cVpUcnVYMlNyRExQd1FsMzNkeTZNSWZTRFpad3FtODZ4?=
+ =?utf-8?B?UlAxb0d4cFdRT0RDeVllMTkzeDNKclQxeTJNMzUyUGVqc3JtU0lTelk1N0NO?=
+ =?utf-8?B?NU5BTWs4R214c2MrNkluTFZVSkorM1FlRDgzendDSEhmZGUxQklxbmp5Q2hN?=
+ =?utf-8?B?SlpnTmlCc2xMcmpwSTZnTy9KWWlOY3JlK3duRmhSSHFSdWY2L0J1ZjVBR1A3?=
+ =?utf-8?B?UFZ1eWkyQm5iS1JibzBWRmZic3V5aVFHSXF5bHNiNmJSZGsxY29kRElGNTRL?=
+ =?utf-8?B?MjRtU2dydE1uZkF5SHJMbFFQbFc0RXpXdTJpR2FGcWxpMXhKWjlRdndlell6?=
+ =?utf-8?B?V2cxQWc4UlZaSzl6VW5HaUdaUS9aQ3VIWXFvbEFrampHVGl2NDVEaGZadWl0?=
+ =?utf-8?B?U0tJQ0Nqc2pvUGhGeVJhSUMxbWdWdk5WYUJTMUNLd1ZDUTR4bnZwMzh1Qjll?=
+ =?utf-8?B?UTVsa2p0N2hoZWZ3ci8weWJEVjV2eXVLNFVtTXF5d0dDVDRqalBNNnVOdnBv?=
+ =?utf-8?B?Q1Q0RmduOGkySjNhNWtSaEZuMzJxeFlNVnBMb2cyMUpKd3BRaGlnUkcyMUF4?=
+ =?utf-8?B?S3ljdlgzWHljNFdVNW1GeXNHd2NVZkw1K1lUY0lEVnRqOEdMNXFtTUk2ZG9h?=
+ =?utf-8?B?bTRBdStsYjlQTFpSN2hrMWhheXB1Z2VuUWdGMElNelB3dzNuOXBUbHRLNFZo?=
+ =?utf-8?B?d3pxWjl6N1RNcllXakVTUDlaMk45TlZJR055NmM4QytTald4dDBYbjY1M3Bk?=
+ =?utf-8?B?WTFKYXdrdGt1TERPYkdPRDVKZnp4NlJjZW02ZWJybUFTbTdzU2pyeStrQ2dR?=
+ =?utf-8?B?RkZmei80cWRyTmVtVnlVRlA5RnJPQmdtMldmdmtSNyszQWllcnp2RnhvdG5I?=
+ =?utf-8?B?dGZ3aXpYNXRjaEV2YXAwOEZYUmJqeE0yNU1rSG1wSzlpNnI0UldaTkdSMlJp?=
+ =?utf-8?B?Myt2V1UyZFVTQlNPVXBUQzJyVi9PajQyVDc2MVBpVGpUUk1HMzk2eFp3PT0=?=
+X-Microsoft-Antispam-Message-Info: mMASmsDM4l8fa8wflUmEFLrUMaulvOemZwIE3ZXTaUrPIJdeoP+LpXIdPFvuLty/ORPaI3JJy2Odv1iKUSX67Dw4dhYcEbviMrS00O/VWB+c0zsymkvnX6rVbZwz02Cq72uYmH2o6dne2QwwpO8UdxLHgOEXOf3YvzWbc/S6MG30uoYmnLYXDckyhpshkNHz4HnkxosVIUtptq/1m55u6Oq1xnxSuSTXDhrBRLWazOelcAUCDNWniVNqG+m9ISgphcFjblWjp2W2O0LqtDaJM2dFawW39b6aMkcz9gQn2zXAEOBox/gjbIxoA3EojhM0IOAB0QMu2D23LuJNXzfYA4JPAMGZqHVQDSM8Xu/nQgW6HRBdjddaQq64LrvNpmdk
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR07MB0892;6:29tS+ltN01Ktn2rLAyW4DcKiQ6jlgLyJDaqlvtog23oZxy8rPaC8VHCIWEnKTHz20j7Da9EoU+x0OguzEyb7gkNpZcWob7VVzwYnNbAgrHVwZxGvlZapxRFogmZ9mOMiVZtodKctDe6dB3tRViNMwjgIEczWl53HxwwIaJRXDrtlH0iEeqahTOvnULOp2K0zbk/F5gSf3IZO/990YxUzf8MzAELJ/1X/VEHWr8HxqZLgWL0/eTAocLTfIlmrljobjAibOSBHqt/gNWgBgvimt4fMrWqQ468DS8N5KHAFC5EDcpxfSGbJpEA0g3aFwG44KYr5KzzUFBivASE6r8oE3AHwGmEg3g35LeczaHCdro5HIUrV+uo1SWBNBXUuuYUJU5VLOxy+nMfE+RYEWGFL+w==;5:E6n+arKHBdmgS4WzZ1UtDyhpCL9FHQFZSYM//n2DivshGVeM/haa9pdaQoLL2D5IUKq/VxRKSOKFj/OrEdV5SNa9+5at5Y218m5IKq/04Xf7oARkUT3494y4UB3yRlJo+Hp533L/4ScMSdQTf7q/vaNWueW4+c6oF3uxReIdcvU=;24:F43PfmIw/XLM4p1QIsFA5qdsyBNco1Ezg+IMAK62uWD0DmNA9GmeQmRsNFbmkURZPvmBeUpqICvlAiufQ9mU2QPKI6FM5YWQDtxaqJ9EaOI=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR07MB0892;7:YMsqQGx2PiJXQGz1h092bzcz5COxgUh2df4UCkKvQx6kA8E+FjpeOUgAcGLxoAcDLP/d+Wtv4PS0tBqavOjXxpO+StygU9Sf46Vu36m0EuZDEfKRSWE3fuqJUvHQCE+2UREKWKDsUA2b67qLHeFewUWAlV++i/eOQ2rCXq8cEdq9H4tibv5wAsxQkhWHOz249UX4CSpRUo1jRUWXiExuEaaWay7BRbjBbXSDn4EMxmpndQJsmxiStK3SYeTT1a/0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2018 09:19:54.5314
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38afde66-03d0-4077-147a-08d5827a4303
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5d471751-9675-428d-917b-70f44f9630b0;Ip=[131.228.2.241];Helo=[mailrelay.int.nokia.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR07MB0892
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 11:13 AM, Daniel Vetter wrote:
-> On Wed, Feb 21, 2018 at 10:03:39AM +0200, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Implement essential initialization of the display driver:
->>    - introduce required data structures
->>    - handle DRM/KMS driver registration
->>    - perform basic DRM driver initialization
->>    - register driver on backend connection
->>    - remove driver on backend disconnect
->>    - introduce essential callbacks required by DRM/KMS core
->>    - introduce essential callbacks required for frontend operations
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   drivers/gpu/drm/xen/Makefile            |   1 +
->>   drivers/gpu/drm/xen/xen_drm_front.c     | 169 ++++++++++++++++++++++++-
->>   drivers/gpu/drm/xen/xen_drm_front.h     |  24 ++++
->>   drivers/gpu/drm/xen/xen_drm_front_drv.c | 211 ++++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/xen/xen_drm_front_drv.h |  60 +++++++++
->>   5 files changed, 462 insertions(+), 3 deletions(-)
->>   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.c
->>   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_drv.h
->>
->> diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
->> index f1823cb596c5..d3068202590f 100644
->> --- a/drivers/gpu/drm/xen/Makefile
->> +++ b/drivers/gpu/drm/xen/Makefile
->> @@ -1,6 +1,7 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   
->>   drm_xen_front-objs := xen_drm_front.o \
->> +		      xen_drm_front_drv.o \
->>   		      xen_drm_front_evtchnl.o \
->>   		      xen_drm_front_shbuf.o \
->>   		      xen_drm_front_cfg.o
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
->> index 0d94ff272da3..8de88e359d5e 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
->> @@ -18,6 +18,8 @@
->>   
->>   #include <drm/drmP.h>
->>   
->> +#include <linux/of_device.h>
->> +
->>   #include <xen/platform_pci.h>
->>   #include <xen/xen.h>
->>   #include <xen/xenbus.h>
->> @@ -25,15 +27,161 @@
->>   #include <xen/interface/io/displif.h>
->>   
->>   #include "xen_drm_front.h"
->> +#include "xen_drm_front_drv.h"
->>   #include "xen_drm_front_evtchnl.h"
->>   #include "xen_drm_front_shbuf.h"
->>   
->> +static int be_mode_set(struct xen_drm_front_drm_pipeline *pipeline, uint32_t x,
->> +		uint32_t y, uint32_t width, uint32_t height, uint32_t bpp,
->> +		uint64_t fb_cookie)
->> +
->> +{
->> +	return 0;
->> +}
->> +
->> +static int be_dbuf_create_int(struct xen_drm_front_info *front_info,
->> +		uint64_t dbuf_cookie, uint32_t width, uint32_t height,
->> +		uint32_t bpp, uint64_t size, struct page **pages,
->> +		struct sg_table *sgt)
->> +{
->> +	return 0;
->> +}
->> +
->> +static int be_dbuf_create_from_sgt(struct xen_drm_front_info *front_info,
->> +		uint64_t dbuf_cookie, uint32_t width, uint32_t height,
->> +		uint32_t bpp, uint64_t size, struct sg_table *sgt)
->> +{
->> +	return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
->> +			bpp, size, NULL, sgt);
->> +}
->> +
->> +static int be_dbuf_create_from_pages(struct xen_drm_front_info *front_info,
->> +		uint64_t dbuf_cookie, uint32_t width, uint32_t height,
->> +		uint32_t bpp, uint64_t size, struct page **pages)
->> +{
->> +	return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
->> +			bpp, size, pages, NULL);
->> +}
->> +
->> +static int be_dbuf_destroy(struct xen_drm_front_info *front_info,
->> +		uint64_t dbuf_cookie)
->> +{
->> +	return 0;
->> +}
->> +
->> +static int be_fb_attach(struct xen_drm_front_info *front_info,
->> +		uint64_t dbuf_cookie, uint64_t fb_cookie, uint32_t width,
->> +		uint32_t height, uint32_t pixel_format)
->> +{
->> +	return 0;
->> +}
->> +
->> +static int be_fb_detach(struct xen_drm_front_info *front_info,
->> +		uint64_t fb_cookie)
->> +{
->> +	return 0;
->> +}
->> +
->> +static int be_page_flip(struct xen_drm_front_info *front_info, int conn_idx,
->> +		uint64_t fb_cookie)
->> +{
->> +	return 0;
->> +}
->> +
->> +static void xen_drm_drv_unload(struct xen_drm_front_info *front_info)
->> +{
->> +	if (front_info->xb_dev->state != XenbusStateReconfiguring)
->> +		return;
->> +
->> +	DRM_DEBUG("Can try removing driver now\n");
->> +	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
->> +}
->> +
->>   static struct xen_drm_front_ops front_ops = {
->> -	/* placeholder for now */
->> +	.mode_set = be_mode_set,
->> +	.dbuf_create_from_pages = be_dbuf_create_from_pages,
->> +	.dbuf_create_from_sgt = be_dbuf_create_from_sgt,
->> +	.dbuf_destroy = be_dbuf_destroy,
->> +	.fb_attach = be_fb_attach,
->> +	.fb_detach = be_fb_detach,
->> +	.page_flip = be_page_flip,
->> +	.drm_last_close = xen_drm_drv_unload,
->> +};
-> This looks like a midlayer/DRM-abstraction in your driver. Please remove,
-> and instead directly hook your xen-front code into the relevant drm
-> callbacks.
-ok, will do
->
-> In general also pls make sure you don't implement dummy callbacks that do
-> nothing, we've tried really hard to make them all optional in the drm
-> infrastructure.
-sure
-> -Daniel
->
->> +
->> +static int xen_drm_drv_probe(struct platform_device *pdev)
->> +{
->> +	/*
->> +	 * The device is not spawn from a device tree, so arch_setup_dma_ops
->> +	 * is not called, thus leaving the device with dummy DMA ops.
->> +	 * This makes the device return error on PRIME buffer import, which
->> +	 * is not correct: to fix this call of_dma_configure() with a NULL
->> +	 * node to set default DMA ops.
->> +	 */
->> +	of_dma_configure(&pdev->dev, NULL);
->> +	return xen_drm_front_drv_probe(pdev, &front_ops);
->> +}
->> +
->> +static int xen_drm_drv_remove(struct platform_device *pdev)
->> +{
->> +	return xen_drm_front_drv_remove(pdev);
->> +}
->> +
->> +struct platform_device_info xen_drm_front_platform_info = {
->> +	.name = XENDISPL_DRIVER_NAME,
->> +	.id = 0,
->> +	.num_res = 0,
->> +	.dma_mask = DMA_BIT_MASK(32),
->>   };
->>   
->> +static struct platform_driver xen_drm_front_front_info = {
->> +	.probe		= xen_drm_drv_probe,
->> +	.remove		= xen_drm_drv_remove,
->> +	.driver		= {
->> +		.name	= XENDISPL_DRIVER_NAME,
->> +	},
->> +};
->> +
->> +static void xen_drm_drv_deinit(struct xen_drm_front_info *front_info)
->> +{
->> +	if (!front_info->drm_pdrv_registered)
->> +		return;
->> +
->> +	if (front_info->drm_pdev)
->> +		platform_device_unregister(front_info->drm_pdev);
->> +
->> +	platform_driver_unregister(&xen_drm_front_front_info);
->> +	front_info->drm_pdrv_registered = false;
->> +	front_info->drm_pdev = NULL;
->> +}
->> +
->> +static int xen_drm_drv_init(struct xen_drm_front_info *front_info)
->> +{
->> +	int ret;
->> +
->> +	ret = platform_driver_register(&xen_drm_front_front_info);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	front_info->drm_pdrv_registered = true;
->> +	/* pass card configuration via platform data */
->> +	xen_drm_front_platform_info.data = &front_info->cfg;
->> +	xen_drm_front_platform_info.size_data = sizeof(front_info->cfg);
->> +
->> +	front_info->drm_pdev = platform_device_register_full(
->> +			&xen_drm_front_platform_info);
->> +	if (IS_ERR_OR_NULL(front_info->drm_pdev)) {
->> +		DRM_ERROR("Failed to register " XENDISPL_DRIVER_NAME " PV DRM driver\n");
->> +		front_info->drm_pdev = NULL;
->> +		xen_drm_drv_deinit(front_info);
->> +		return -ENODEV;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   static void xen_drv_remove_internal(struct xen_drm_front_info *front_info)
->>   {
->> +	xen_drm_drv_deinit(front_info);
->>   	xen_drm_front_evtchnl_free_all(front_info);
->>   }
->>   
->> @@ -59,13 +207,27 @@ static int backend_on_initwait(struct xen_drm_front_info *front_info)
->>   static int backend_on_connected(struct xen_drm_front_info *front_info)
->>   {
->>   	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_CONNECTED);
->> -	return 0;
->> +	return xen_drm_drv_init(front_info);
->>   }
->>   
->>   static void backend_on_disconnected(struct xen_drm_front_info *front_info)
->>   {
->> +	bool removed = true;
->> +
->> +	if (front_info->drm_pdev) {
->> +		if (xen_drm_front_drv_is_used(front_info->drm_pdev)) {
->> +			DRM_WARN("DRM driver still in use, deferring removal\n");
->> +			removed = false;
->> +		} else
->> +			xen_drv_remove_internal(front_info);
->> +	}
->> +
->>   	xen_drm_front_evtchnl_set_state(front_info, EVTCHNL_STATE_DISCONNECTED);
->> -	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
->> +
->> +	if (removed)
->> +		xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
->> +	else
->> +		xenbus_switch_state(front_info->xb_dev, XenbusStateReconfiguring);
->>   }
->>   
->>   static void backend_on_changed(struct xenbus_device *xb_dev,
->> @@ -148,6 +310,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
->>   
->>   	front_info->xb_dev = xb_dev;
->>   	spin_lock_init(&front_info->io_lock);
->> +	front_info->drm_pdrv_registered = false;
->>   	dev_set_drvdata(&xb_dev->dev, front_info);
->>   	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
->>   }
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
->> index 13f22736ae02..9ed5bfb248d0 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front.h
->> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
->> @@ -19,6 +19,8 @@
->>   #ifndef __XEN_DRM_FRONT_H_
->>   #define __XEN_DRM_FRONT_H_
->>   
->> +#include <linux/scatterlist.h>
->> +
->>   #include "xen_drm_front_cfg.h"
->>   
->>   #ifndef GRANT_INVALID_REF
->> @@ -30,16 +32,38 @@
->>   #define GRANT_INVALID_REF	0
->>   #endif
->>   
->> +struct xen_drm_front_drm_pipeline;
->> +
->>   struct xen_drm_front_ops {
->> +	int (*mode_set)(struct xen_drm_front_drm_pipeline *pipeline,
->> +			uint32_t x, uint32_t y, uint32_t width, uint32_t height,
->> +			uint32_t bpp, uint64_t fb_cookie);
->> +	int (*dbuf_create_from_pages)(struct xen_drm_front_info *front_info,
->> +			uint64_t dbuf_cookie, uint32_t width, uint32_t height,
->> +			uint32_t bpp, uint64_t size, struct page **pages);
->> +	int (*dbuf_create_from_sgt)(struct xen_drm_front_info *front_info,
->> +			uint64_t dbuf_cookie, uint32_t width, uint32_t height,
->> +			uint32_t bpp, uint64_t size, struct sg_table *sgt);
->> +	int (*dbuf_destroy)(struct xen_drm_front_info *front_info,
->> +			uint64_t dbuf_cookie);
->> +	int (*fb_attach)(struct xen_drm_front_info *front_info,
->> +			uint64_t dbuf_cookie, uint64_t fb_cookie,
->> +			uint32_t width, uint32_t height, uint32_t pixel_format);
->> +	int (*fb_detach)(struct xen_drm_front_info *front_info,
->> +			uint64_t fb_cookie);
->> +	int (*page_flip)(struct xen_drm_front_info *front_info,
->> +			int conn_idx, uint64_t fb_cookie);
->>   	/* CAUTION! this is called with a spin_lock held! */
->>   	void (*on_frame_done)(struct platform_device *pdev,
->>   			int conn_idx, uint64_t fb_cookie);
->> +	void (*drm_last_close)(struct xen_drm_front_info *front_info);
->>   };
->>   
->>   struct xen_drm_front_info {
->>   	struct xenbus_device *xb_dev;
->>   	/* to protect data between backend IO code and interrupt handler */
->>   	spinlock_t io_lock;
->> +	bool drm_pdrv_registered;
->>   	/* virtual DRM platform device */
->>   	struct platform_device *drm_pdev;
->>   
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.c b/drivers/gpu/drm/xen/xen_drm_front_drv.c
->> new file mode 100644
->> index 000000000000..b3764d5ed0f6
->> --- /dev/null
->> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.c
->> @@ -0,0 +1,211 @@
->> +/*
->> + *  Xen para-virtual DRM device
->> + *
->> + *   This program is free software; you can redistribute it and/or modify
->> + *   it under the terms of the GNU General Public License as published by
->> + *   the Free Software Foundation; either version 2 of the License, or
->> + *   (at your option) any later version.
->> + *
->> + *   This program is distributed in the hope that it will be useful,
->> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *   GNU General Public License for more details.
->> + *
->> + * Copyright (C) 2016-2018 EPAM Systems Inc.
->> + *
->> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> + */
->> +
->> +#include <drm/drmP.h>
->> +#include <drm/drm_gem.h>
->> +#include <drm/drm_atomic_helper.h>
->> +
->> +#include "xen_drm_front.h"
->> +#include "xen_drm_front_cfg.h"
->> +#include "xen_drm_front_drv.h"
->> +
->> +static int dumb_create(struct drm_file *filp,
->> +		struct drm_device *dev, struct drm_mode_create_dumb *args)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +static void free_object(struct drm_gem_object *obj)
->> +{
->> +	struct xen_drm_front_drm_info *drm_info = obj->dev->dev_private;
->> +
->> +	drm_info->front_ops->dbuf_destroy(drm_info->front_info,
->> +			xen_drm_front_dbuf_to_cookie(obj));
->> +}
->> +
->> +static void on_frame_done(struct platform_device *pdev,
->> +		int conn_idx, uint64_t fb_cookie)
->> +{
->> +}
->> +
->> +static void lastclose(struct drm_device *dev)
->> +{
->> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
->> +
->> +	drm_info->front_ops->drm_last_close(drm_info->front_info);
->> +}
->> +
->> +static int gem_mmap(struct file *filp, struct vm_area_struct *vma)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +static struct sg_table *prime_get_sg_table(struct drm_gem_object *obj)
->> +{
->> +	return NULL;
->> +}
->> +
->> +static struct drm_gem_object *prime_import_sg_table(struct drm_device *dev,
->> +		struct dma_buf_attachment *attach, struct sg_table *sgt)
->> +{
->> +	return NULL;
->> +}
->> +
->> +static void *prime_vmap(struct drm_gem_object *obj)
->> +{
->> +	return NULL;
->> +}
->> +
->> +static void prime_vunmap(struct drm_gem_object *obj, void *vaddr)
->> +{
->> +}
->> +
->> +static int prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
->> +{
->> +	return -EINVAL;
->> +}
->> +
->> +static const struct file_operations xendrm_fops = {
->> +	.owner          = THIS_MODULE,
->> +	.open           = drm_open,
->> +	.release        = drm_release,
->> +	.unlocked_ioctl = drm_ioctl,
->> +#ifdef CONFIG_COMPAT
->> +	.compat_ioctl   = drm_compat_ioctl,
->> +#endif
->> +	.poll           = drm_poll,
->> +	.read           = drm_read,
->> +	.llseek         = no_llseek,
->> +	.mmap           = gem_mmap,
->> +};
->> +
->> +static const struct vm_operations_struct xen_drm_vm_ops = {
->> +	.open           = drm_gem_vm_open,
->> +	.close          = drm_gem_vm_close,
->> +};
->> +
->> +struct drm_driver xen_drm_driver = {
->> +	.driver_features           = DRIVER_GEM | DRIVER_MODESET |
->> +				     DRIVER_PRIME | DRIVER_ATOMIC,
->> +	.lastclose                 = lastclose,
->> +	.gem_free_object_unlocked  = free_object,
->> +	.gem_vm_ops                = &xen_drm_vm_ops,
->> +	.prime_handle_to_fd        = drm_gem_prime_handle_to_fd,
->> +	.prime_fd_to_handle        = drm_gem_prime_fd_to_handle,
->> +	.gem_prime_import          = drm_gem_prime_import,
->> +	.gem_prime_export          = drm_gem_prime_export,
->> +	.gem_prime_get_sg_table    = prime_get_sg_table,
->> +	.gem_prime_import_sg_table = prime_import_sg_table,
->> +	.gem_prime_vmap            = prime_vmap,
->> +	.gem_prime_vunmap          = prime_vunmap,
->> +	.gem_prime_mmap            = prime_mmap,
->> +	.dumb_create               = dumb_create,
->> +	.fops                      = &xendrm_fops,
->> +	.name                      = "xendrm-du",
->> +	.desc                      = "Xen PV DRM Display Unit",
->> +	.date                      = "20161109",
->> +	.major                     = 1,
->> +	.minor                     = 0,
->> +};
->> +
->> +int xen_drm_front_drv_probe(struct platform_device *pdev,
->> +		struct xen_drm_front_ops *front_ops)
->> +{
->> +	struct xen_drm_front_cfg *cfg = dev_get_platdata(&pdev->dev);
->> +	struct xen_drm_front_drm_info *drm_info;
->> +	struct drm_device *dev;
->> +	int ret;
->> +
->> +	DRM_INFO("Creating %s\n", xen_drm_driver.desc);
->> +
->> +	drm_info = devm_kzalloc(&pdev->dev, sizeof(*drm_info), GFP_KERNEL);
->> +	if (!drm_info)
->> +		return -ENOMEM;
->> +
->> +	drm_info->front_ops = front_ops;
->> +	drm_info->front_ops->on_frame_done = on_frame_done;
->> +	drm_info->front_info = cfg->front_info;
->> +
->> +	dev = drm_dev_alloc(&xen_drm_driver, &pdev->dev);
->> +	if (!dev)
->> +		return -ENOMEM;
->> +
->> +	drm_info->drm_dev = dev;
->> +
->> +	drm_info->cfg = cfg;
->> +	dev->dev_private = drm_info;
->> +	platform_set_drvdata(pdev, drm_info);
->> +
->> +	ret = drm_vblank_init(dev, cfg->num_connectors);
->> +	if (ret) {
->> +		DRM_ERROR("Failed to initialize vblank, ret %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	dev->irq_enabled = 1;
->> +
->> +	ret = drm_dev_register(dev, 0);
->> +	if (ret)
->> +		goto fail_register;
->> +
->> +	DRM_INFO("Initialized %s %d.%d.%d %s on minor %d\n",
->> +			xen_drm_driver.name, xen_drm_driver.major,
->> +			xen_drm_driver.minor, xen_drm_driver.patchlevel,
->> +			xen_drm_driver.date, dev->primary->index);
->> +
->> +	return 0;
->> +
->> +fail_register:
->> +	drm_dev_unregister(dev);
->> +	drm_mode_config_cleanup(dev);
->> +	return ret;
->> +}
->> +
->> +int xen_drm_front_drv_remove(struct platform_device *pdev)
->> +{
->> +	struct xen_drm_front_drm_info *drm_info = platform_get_drvdata(pdev);
->> +	struct drm_device *dev = drm_info->drm_dev;
->> +
->> +	if (dev) {
->> +		drm_dev_unregister(dev);
->> +		drm_atomic_helper_shutdown(dev);
->> +		drm_mode_config_cleanup(dev);
->> +		drm_dev_unref(dev);
->> +	}
->> +	return 0;
->> +}
->> +
->> +bool xen_drm_front_drv_is_used(struct platform_device *pdev)
->> +{
->> +	struct xen_drm_front_drm_info *drm_info = platform_get_drvdata(pdev);
->> +	struct drm_device *dev;
->> +
->> +	if (!drm_info)
->> +		return false;
->> +
->> +	dev = drm_info->drm_dev;
->> +	if (!dev)
->> +		return false;
->> +
->> +	/*
->> +	 * FIXME: the code below must be protected by drm_global_mutex,
->> +	 * but it is not accessible to us. Anyways there is a race condition,
->> +	 * but we will re-try.
->> +	 */
->> +	return dev->open_count != 0;
->> +}
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.h b/drivers/gpu/drm/xen/xen_drm_front_drv.h
->> new file mode 100644
->> index 000000000000..aaa476535c13
->> --- /dev/null
->> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.h
->> @@ -0,0 +1,60 @@
->> +/*
->> + *  Xen para-virtual DRM device
->> + *
->> + *   This program is free software; you can redistribute it and/or modify
->> + *   it under the terms of the GNU General Public License as published by
->> + *   the Free Software Foundation; either version 2 of the License, or
->> + *   (at your option) any later version.
->> + *
->> + *   This program is distributed in the hope that it will be useful,
->> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *   GNU General Public License for more details.
->> + *
->> + * Copyright (C) 2016-2018 EPAM Systems Inc.
->> + *
->> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> + */
->> +
->> +#ifndef __XEN_DRM_FRONT_DRV_H_
->> +#define __XEN_DRM_FRONT_DRV_H_
->> +
->> +#include <drm/drmP.h>
->> +
->> +#include "xen_drm_front.h"
->> +#include "xen_drm_front_cfg.h"
->> +
->> +struct xen_drm_front_drm_pipeline {
->> +	struct xen_drm_front_drm_info *drm_info;
->> +
->> +	int index;
->> +};
->> +
->> +struct xen_drm_front_drm_info {
->> +	struct xen_drm_front_info *front_info;
->> +	struct xen_drm_front_ops *front_ops;
->> +	struct drm_device *drm_dev;
->> +	struct xen_drm_front_cfg *cfg;
->> +};
->> +
->> +static inline uint64_t xen_drm_front_fb_to_cookie(
->> +		struct drm_framebuffer *fb)
->> +{
->> +	return (uint64_t)fb;
->> +}
->> +
->> +static inline uint64_t xen_drm_front_dbuf_to_cookie(
->> +		struct drm_gem_object *gem_obj)
->> +{
->> +	return (uint64_t)gem_obj;
->> +}
->> +
->> +int xen_drm_front_drv_probe(struct platform_device *pdev,
->> +		struct xen_drm_front_ops *front_ops);
->> +
->> +int xen_drm_front_drv_remove(struct platform_device *pdev);
->> +
->> +bool xen_drm_front_drv_is_used(struct platform_device *pdev);
->> +
->> +#endif /* __XEN_DRM_FRONT_DRV_H_ */
->> +
->> -- 
->> 2.7.4
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Hello Steven!
+
+On 02/03/18 18:00, Steven Rostedt wrote:
+>> diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
+>> index 9e842ff..3e663f9 100644
+>> --- a/arch/arm/include/asm/ftrace.h
+>> +++ b/arch/arm/include/asm/ftrace.h
+>> @@ -19,6 +19,7 @@ struct dyn_arch_ftrace {
+>>  #ifdef CONFIG_OLD_MCOUNT
+>>  	bool	old_mcount;
+>>  #endif
+> I think you want to add:
+> 
+> #ifdef CONFIG_ARM_MODULE_PLTS
+>> +	struct module *mod;
+> #endif
+> 
+> This will add more memory overhead, and we don't want to add that if it
+> is not needed.
+
+Will include it into the next version.
+Thanks for the review!
+
+-- 
+Best regards,
+Alexander Sverdlin.
