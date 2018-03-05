@@ -1,82 +1,120 @@
-Return-Path: <kernel-hardening-return-12110-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELu2ch/nR4E2EIT+172iHdIBZt9ltCWSe/bjTAJP+J7/DYuHEMJqQ6S9thOrRS09Y1PFmJJg
-ARC-Seal: i=1; a=rsa-sha256; t=1520277550; cv=none;
+Return-Path: <kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELuEd5VH1K83tXfgRVfdYokkSSQWZd5BYyaIDEFmnqorXXBsEfXFAJJaoVIoy0e/OtZFPBCx
+ARC-Seal: i=1; a=rsa-sha256; t=1520277359; cv=none;
         d=google.com; s=arc-20160816;
-        b=SzKmQWVSMhGMAUTFVN85W/Xh5RDHiTgeylUmB1Um16I1KDdKOX+h68GNwT6Sg5D82X
-         6pkuYqvVRiC2a9MN0ViCCk9xJ4wDN9Uoqe4QNICB6Mq0lhObgPJSngK2HtuH3YNnCodG
-         v1inn6Rmh2kt113vnLZgA/eLZnA7tB8gRQyrOkc4LosFFHwK2W9Kq+YntssDftwKvBsI
-         e/aOrwwn6KFwCf627cIkxNh8hQ+G4xbTzAStzCOpSY5Ru1HjtnUvzvCzFFfEdQWPFNDm
-         tOVO7NsYYrFCWzJozjyB/RP593mwwgkH4wT03rm9bBmYKYSUd8ZDUP5l7npXFPI/GSkC
-         NhBQ==
+        b=kDdIUJXr58ul7Y1qH/3phoKebEbOTzZG36GqqcSDUIWTKYqlafgqhZo87fWesehu+h
+         I4tX33bXIbLb7kHLnZbBuxEd8IAtXTF08RMIIyCeaDy8iuL8H5PhD07dUKxhkp2rNBFo
+         pmelEyV81FxSGWuTEqLbkmaOHN1174TP1s+eqOBrfVp4hoKjOrBI/kSjfKtB3L8a/kRV
+         ccbrTt6Za6OK1bvG+5NgBXv5iAy2N5ufDnkLLUdAPe/jGextznWUMPugrzsJY6gVIhAW
+         Q9ONMXprwTFkEUGzUZhL6FNd/2tm2QymdHKBUFUcP1tD5hscVW5nc2q9cvt3OkC3ZrEm
+         icTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
          :list-subscribe:list-unsubscribe:list-help:list-post:precedence
          :mailing-list:arc-authentication-results;
-        bh=g0mOUb/1TkeDlODQ3BwQSnWpEczEmXsSeF4xZG85ztU=;
-        b=U2ecBPhSQLKtjSX2dnXvQmE2NRyagkVd1Itox9kq8b8eN9KkiViHMf8ga64hos3xok
-         FMJiWWLvG7NnX2ig0JVlkK4twq8rwE9N40KKLFRPBKPbE5DpY5oj4jDEQSTFR0ZdSJ9+
-         SsRVo8h1V4gbH0xWQZ7ToqbCzOcjj/a0vVcAoUBcMQTtEmJeYm2tutNC5QsxMiawY3lB
-         rJ//c90gzgkqkiloje0sspROWPCxbf8fVWcxqSP4O8ymDQ6lSqMFMMro8V0qD83An49n
-         JUeA21o6N/QX24ySiB1fTJH+1+1JKxPdIeMBNlXv3F7Ld1Sx4swIDbfRcgXEYEZ0pl/P
-         5B7g==
+        bh=f7IgiULnIYeZ6kEsjRk+2hgR8EmZep/65W9g0gbSj4w=;
+        b=SsjgdebBR6+/c4MC2fb1wzj5iWrLjg4H1QQI6UsK3wzgzlkh/OFYfr7IWgRRhWAAYq
+         AHwfKm11cXvJypDZKoSClHI3Pp5rWKCNriNscMcNgandOBWjc8T5Am53Bvh+/Sw3VdCB
+         dfQi44UVGWBQ87NqwcoiqZ6yF40ZJVKCJ9m+yqm6V4bBDOXBcNd0u1ME7n+fsT8IEmUu
+         QaEiSISQRVsPpMTGLnoBlP03H2vLyhzWt7aNW86cEIGNiMjnpBzRY/DBkBCykAZQWZxe
+         gWdPVFhQY3x5y/24Wyvog//ijMceFGJw5YUlIDEX0d/nUNcGbphIdy379Ew/qNhVNXlZ
+         SbFA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eCwMUBtX;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=eqR1clod;
-       spf=pass (google.com: domain of kernel-hardening-return-12110-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12110-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=HHUkD6/U;
+       dkim=pass header.i=@chromium.org header.s=google header.b=d1OMBbQg;
+       spf=pass (google.com: domain of kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eCwMUBtX;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=eqR1clod;
-       spf=pass (google.com: domain of kernel-hardening-return-12110-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12110-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=HHUkD6/U;
+       dkim=pass header.i=@chromium.org header.s=google header.b=d1OMBbQg;
+       spf=pass (google.com: domain of kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 MIME-Version: 1.0
-Sender: linus971@gmail.com
+Sender: keescook@google.com
 In-Reply-To: <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
 References: <CAGXu5jLc_A1w4FM8FvQHGSPjLfOu80L_vbt_FkcE6+Bh_XMjxw@mail.gmail.com>
  <6be06ce5-87e6-0d9d-55b9-6c70c3578ecf@maciej.szmigiero.name>
  <CA+55aFz-AD8rWb66rjN-YhAtPXukMiGSFfW3nBMCp8k1RYUvOQ@mail.gmail.com> <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Mar 2018 11:18:50 -0800
-X-Google-Sender-Auth: LtYe3bJUESP8QRIMRhRctN1_jy0
-Message-ID: <CA+55aFyf9NkW26BNyEnvUT60u2oXezRiXMexdHy8yx1AD9aUYw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 5 Mar 2018 11:15:35 -0800
+X-Google-Sender-Auth: 95GxM90fk6sDNH7e8HQPESv9RTY
+Message-ID: <CAGXu5jJo+c4d+=57rFiHaFrOHxDHVSZzMhWSMqNQe+tcw0-4zQ@mail.gmail.com>
 Subject: Re: RANDSTRUCT structs need linux/compiler_types.h (Was: [nfsd4]
  potentially hardware breaking regression in 4.14-rc and 4.13.11)
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Kees Cook <keescook@chromium.org>,
-	Patrick McLean <chutzpah@gentoo.org>, Emese Revfy <re.emese@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Bruce Fields <bfields@redhat.com>,
-	"Darrick J. Wong" <darrick.wong@oracle.com>,
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Patrick McLean <chutzpah@gentoo.org>,
+	Emese Revfy <re.emese@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Bruce Fields <bfields@redhat.com>, "Darrick J. Wong" <darrick.wong@oracle.com>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Thorsten Leemhuis <regressions@leemhuis.info>,
 	"kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593052828374787895?=
-X-GMAIL-MSGID: =?utf-8?q?1594126552978221675?=
+X-GMAIL-MSGID: =?utf-8?q?1594126352313945662?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 On Mon, Mar 5, 2018 at 1:27 AM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
+> Sorry for chiming in late.
+>
+> I noticed this thread today,
+> honestly, the commit made me upset.
+>
 >
 > Can I suggest another way to make it less fragile?
 > __attribute((...)) can be placed after 'struct'.
+>
+>
+> So, we can write:
+>
+>
+> struct __randomize_layout path {
+>         struct vfsmount *mnt;
+>         struct dentry *dentry;
+> };
+>
+>
+>   instead of
+>
+>
+> struct path {
+>         struct vfsmount *mnt;
+>         struct dentry *dentry;
+> } __randomize_layout;
 
-That avoids the actual bug, but it wouldn't have helped _find_ the
-problem in the first place.
+Ugh. I had tried this after the struct _name_, not after "struct"
+itself. This does fix it, though it remains fragile, as you mention.
 
-If somebody ever does the same thing, they'd hit the same issue. And
-it's not just __randomize_struct, it's any of our other type markers.
+> If we force the former notation,
+> the undefined __randomize_layout results in a build error
+> instead of silent broken code generation.
+>
+>
+> It is true somebody can still place
+> __randomize_layout after the closing brace,
+> but can we check this by coccicheck or checkpatch.pl?
+> (we can describe it in coding style documentation, of course)
+>
+>
+> IMHO, we should not (ab)use include/linux/kconfig.h
+> to bring in misc things.
 
-We can say "don't do that", but if there is no automated checking,
-it's still ripe to cause problems just because somebody didn't notice.
+I'm happy to send a patch that reverts the other changes and relocates
+all the markings...
 
-So I'd rather have something that causes a build failure when
-something goes wrong, rather than silently accepting syntax that
-wasn't intended.
+Linus, how would you like this to go?
 
-                   Linus
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
