@@ -1,180 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeCEHvy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:51:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47518 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752527AbeCEHvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:51:51 -0500
-Date: Mon, 5 Mar 2018 08:51:48 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-Message-ID: <20180305085148.1de2a99c@dell-desktop.home>
-In-Reply-To: <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
-        <20180223133742.26044-11-mylene.josserand@bootlin.com>
-        <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
-        <20180226101252.ozdsxjvawgkemz2c@flea.lan>
-        <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933362AbeCEHwM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:52:12 -0500
+Received: from lucky1.263xmail.com ([211.157.147.135]:37600 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752527AbeCEHwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 02:52:08 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: vladimir_zapolskiy@mentor.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <c025c1d284022f78d87464aa39db4e3a>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vladimir_Zapolskiy@mentor.com
+Subject: Re: [PATCH v2] mmc: Export host capabilities to debugfs.
+To: Harish Jenny K N <harish_kandiga@mentor.com>, ulf.hansson@linaro.org,
+        linus.walleij@linaro.org, adrian.hunter@intel.com, avri.altman@wdc.com,
+        andriy.shevchenko@linux.intel.com
+References: <1520223870-3471-1-git-send-email-harish_kandiga@mentor.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <40000048-4f64-792d-ba38-25a15be8569a@rock-chips.com>
+Date: Mon, 5 Mar 2018 15:51:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1520223870-3471-1-git-send-email-harish_kandiga@mentor.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Mon, 26 Feb 2018 18:25:10 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
-
-> On Mon, Feb 26, 2018 at 6:12 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Sat, Feb 24, 2018 at 12:17:13AM +0800, Chen-Yu Tsai wrote:  
-> >> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
-> >> <mylene.josserand@bootlin.com> wrote:  
-> >> > On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
-> >> > It should be done by the bootloader but it is currently not the case,
-> >> > even for boot CPU because this SoC is booting in secure mode.
-> >> > It leads to an random offset value meaning that each CPU will have a
-> >> > different time, which isn't working very well.
-> >> >
-> >> > Add assembly code used for boot CPU and secondary CPU cores to make
-> >> > sure that the CNTVOFF register is initialized.
-> >> >
-> >> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> >> > ---
-> >> >  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
-> >> >  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
-> >> >  2 files changed, 25 insertions(+)
-> >> >
-> >> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> >> > index d5c97e945e69..605896251927 100644
-> >> > --- a/arch/arm/mach-sunxi/headsmp.S
-> >> > +++ b/arch/arm/mach-sunxi/headsmp.S
-> >> > @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
-> >> >         first: .word sunxi_mc_smp_first_comer - .
-> >> >  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> >> >
-> >> > +ENTRY(sunxi_init_cntvoff)
-> >> > +       /*
-> >> > +        * CNTVOFF has to be initialized either from non-secure Hypervisor
-> >> > +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
-> >> > +        * then it should be handled by the secure code
-> >> > +        */
-> >> > +       cps     #MON_MODE
-> >> > +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
-> >> > +       orr     r0, r1, #1
-> >> > +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
-> >> > +       instr_sync
-> >> > +       mov     r0, #0
-> >> > +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
-> >> > +       instr_sync
-> >> > +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
-> >> > +       instr_sync
-> >> > +       cps     #SVC_MODE
-> >> > +       ret     lr
-> >> > +ENDPROC(sunxi_init_cntvoff)  
-> >>
-> >> There is no need to move all the assembly into a separate file, just
-> >> to add this function. Everything can be inlined as a naked function.
-> >> The "instr_sync" macro can be replaced with "isb", which is what it
-> >> expands to anyway.
-> >>
-> >> I really want to keep everything self-contained without global symbols,
-> >> and in C files if possible.  
-> >
-> > What is the rationale for keeping it in C files (beside the global
-> > symbols)? Because the syntax is quite ugly, and it's much easier to
-> > read, review and amend using a separate file.  
+On 2018/3/5 12:24, Harish Jenny K N wrote:
+> From: Abbas Raza <Abbas_Raza@mentor.com>
 > 
-> Global symbols and keeping everything in one place I guess.
-> This symbol would be used in a few places, so I suppose having it
-> in a separate assembly file would be OK.
-
-Okay so I will keep it in a separate file.
-
+> This patch exports the host capabilities to debugfs
 > 
-> >> >  #ifdef CONFIG_SMP
-> >> >  ENTRY(sunxi_boot)
-> >> >         bl      sunxi_mc_smp_cluster_cache_enable
-> >> > +       bl      sunxi_init_cntvoff
-> >> >         b       secondary_startup
-> >> >  ENDPROC(sunxi_boot)
-> >> >
-> >> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> >> > index 5e9602ce1573..4bb041492b54 100644
-> >> > --- a/arch/arm/mach-sunxi/sunxi.c
-> >> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> >> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
-> >> >  };
-> >> >
-> >> >  extern void __init sun6i_reset_init(void);
-> >> > +extern void sunxi_init_cntvoff(void);
-> >> > +
-> >> >  static void __init sun6i_timer_init(void)
-> >> >  {
-> >> > +       sunxi_init_cntvoff();  
-> >>
-> >> You should check the enable-method to see if PSCI is set or not,
-> >> as an indicator whether the kernel is booted secure or non-secure.  
-> >
-> > It's an indicator, but it's not really a perfect one. You could very
-> > well have your kernel booted in non-secure, without PSCI. Or even with
-> > PSCI, but without the SMP ops.
-> >
-> > We have a quite big number of these cases already, where, depending on
-> > the configuration, we might not have access to the device we write to,
-> > the number of hacks to just enable that device for non-secure is a
-> > good example of that.  
+> Signed-off-by: Abbas Raza <Abbas_Raza@mentor.com>
+> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+> ---
 > 
-> I wouldn't consider them hacks though. The hardware gives the option
-> to have control of many devices delegated solely to secure-only, or
-> secure/non-secure. Our present model is to support everything we can
-> in Linux directly, instead of through some firmware interface to a
-> non-existent firmware.
-
-I am not sure to understand what is the conclusion about it.
-Should I use "psci"/enable-method or should I use another mechanism to
-detect we are in secure/non-secure (if it exists)?
-
-Otherwise, for the moment, I can use machine-compatible on sun8i-a83t
-and we will see later how we can handle it in a better way.
-
-Thank you in advance,
-
-Best regards,
-
-Mylène
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
-
+> Changes in v2:
+> - Changed Author
 > 
-> ChenYu
+>   drivers/mmc/core/debugfs.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> >> AFAIK trying to set CNTVOFF under non-secure would be very bad.  
-> >
-> > Just like any other access we do :/
-> >
-> > Maxime
-> >
-> > --
-> > Maxime Ripard, Bootlin (formerly Free Electrons)
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com  
+> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+> index c51e0c0..fa2df7f 100644
+> --- a/drivers/mmc/core/debugfs.c
+> +++ b/drivers/mmc/core/debugfs.c
+> @@ -289,6 +289,9 @@ void mmc_add_card_debugfs(struct mmc_card *card)
+>   
+>   	card->debugfs_root = root;
+>   
+> +	if (!debugfs_create_x32("host_caps", S_IRUSR, root, (u32 *)&host->caps))
+
+Perhaps you don't need cast, and '&host->caps' should be fine?
+And you don't need to export host->caps2?
+
+> +		goto err;
+> +
+>   	if (!debugfs_create_x32("state", S_IRUSR, root, &card->state))
+>   		goto err;
+>   
+> 
