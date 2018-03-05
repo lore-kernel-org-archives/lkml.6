@@ -1,74 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933160AbeCEKTu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:19:50 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33954 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933004AbeCEKTr (ORCPT
+        id S933432AbeCEKWp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:22:45 -0500
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:36057 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933054AbeCEKWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:19:47 -0500
-X-Google-Smtp-Source: AG47ELsr8DInACCfg+TMkfptyPFBv099Z87hhIvtceHH0FaVLzZWQnmJEqidWO0z+tXgYX3ZQNTV25be5i7MApi40aU=
+        Mon, 5 Mar 2018 05:22:41 -0500
+X-Google-Smtp-Source: AG47ELsRGLaDBUm5NolbDbK78TPi76D6O2ntMfF7+Rraae8cGxdxbWoQbMQj+j1JiQm4vKMcAmey77ZNUES8pvgUpkM=
 MIME-Version: 1.0
-In-Reply-To: <20180302163603.GQ19312@magnolia>
-References: <20180228154951.31714-1-vbendel@redhat.com> <20180301224800.GI12763@magnolia>
- <20180302163603.GQ19312@magnolia>
-From: Vratislav Bendel <vbendel@redhat.com>
-Date: Mon, 5 Mar 2018 11:19:46 +0100
-Message-ID: <CAHrQN1w2DxYD_ZscBhsuGq2b6CKn41AnVCaH6_hSQ2tN8DkA1Q@mail.gmail.com>
-Subject: Re: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        linux-kernel@vger.kernel.org, djwong@kernel.org
+In-Reply-To: <20180302035102.10084-4-jeffy.chen@rock-chips.com>
+References: <20180302035102.10084-1-jeffy.chen@rock-chips.com> <20180302035102.10084-4-jeffy.chen@rock-chips.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 5 Mar 2018 11:22:39 +0100
+Message-ID: <CAFqH_50YFm7EYEtt=9AoCUwvVU+Vuw51PYx=hF_u=KBgKmPTDg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: Avoid wakeup when inserting
+ the pen
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@google.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Dmitry Torokhov <dtor@google.com>, Doug Anderson <dianders@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Yao <markyao0591@gmail.com>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(In response to Luis' comment:)
-> Can you add a respective Fixes: tag?
+Hi Jeffy,
 
-It was apparently present since LRU was added to xfs buffer cache via:
-commit 430cbeb86fdcbbdabea7d4aa65307de8de425350
-[xfs: add a lru to the XFS buffer cache]
+Thanks for the patch.
 
-But I wouldn't say this patch "fixes" that commit.
-What do you think? Should a fixes tag be added in this case?
-
-
-> Also what effects are observed by
-> the user when this happens on the kernel log?
-
-I haven't spotted any differences visible to user, nor in the kernel log.
-
-(In response to Brian's comment:)
->> However, as per documentation, atomic_add_unless() returns _zero_
->> if the atomic value was originally equal to the specified *unsless* value.
->>
-> Nit:                                                         unless
-
-Thanks very much for feedback. Since it's my very first upstream
-commit-proposal,
-I expected that some polish would be needed.
-
-
-> It might be worth pointing out in the commit log that currently isolated
-> buffers end up right back on the LRU once they are released, because
-> ->b_lru_ref remains elevated. Therefore, this patch essentially fixes
-> that circuitous route by leaving them on the LRU as originally intended.
-> Otherwise this looks Ok to me:
-
-So the final commit message could be:
-~~~
-Currently the xfs_buftarg_isolate() is causing an xfs_buffer
-with zero b_lru_ref, to take another trip around LRU, while
-isolating buffers with non-zero b_lru_ref.
-
-Additionally those isolated buffers end up right back on the LRU
-once they are released, because ->b_lru_ref remains elevated.
-
-Fix that circuitous route by leaving them on the LRU
-as originally intended.
-
->> Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
+2018-03-02 4:51 GMT+01:00 Jeffy Chen <jeffy.chen@rock-chips.com>:
+> Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
+> inserting the pen.
+>
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 > ---
+>
+> Changes in v3: None
+> Changes in v2:
+> Specify wakeup event action instead of irq trigger type as Brian
+> suggested.
+>
+>  arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+> index 191a6bcb1704..ef2de0057c5c 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+> @@ -134,6 +134,8 @@
+>                 gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+>                 linux,code = <SW_PEN_INSERTED>;
+>                 linux,input-type = <EV_SW>;
+> +               /* Wakeup only when ejecting */
+> +               wakeup-event-action = <EV_ACT_DEASSERTED>;
+>                 wakeup-source;
+>         };
+>  };
+> --
+> 2.11.0
+>
+>
+
+Works as expected on my Kevin
+
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
