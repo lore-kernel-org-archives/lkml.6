@@ -1,67 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932353AbeCEUip (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:38:45 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:52966 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751275AbeCEUin (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:38:43 -0500
-Subject: Re: [PATCH v12 08/11] mm: Clear arch specific VM flags on protection
- change
-To: Dave Hansen <dave.hansen@linux.intel.com>, akpm@linux-foundation.org,
-        davem@davemloft.net
-Cc: mhocko@suse.com, jack@suse.cz, kirill.shutemov@linux.intel.com,
-        ross.zwisler@linux.intel.com, willy@infradead.org, hughd@google.com,
-        n-horiguchi@ah.jp.nec.com, mgorman@suse.de, jglisse@redhat.com,
-        dave.jiang@intel.com, dan.j.williams@intel.com,
-        anthony.yznaga@oracle.com, nadav.amit@gmail.com, zi.yan@cs.rutgers.edu,
-        aarcange@redhat.com, khandual@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, henry.willard@oracle.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
- <f0bfc4b7ce6c8563bf0d5ef74af20b5d1edea66f.1519227112.git.khalid.aziz@oracle.com>
- <df5344a2-f28d-7828-b76b-107dc24be2dd@linux.intel.com>
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <fd08210e-a6af-c3f5-3807-9ffe9dad66b0@oracle.com>
-Date: Mon, 5 Mar 2018 13:38:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S932112AbeCEUmO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:42:14 -0500
+Received: from mga12.intel.com ([192.55.52.136]:24160 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751779AbeCEUmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:42:12 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
+   d="scan'208";a="205690771"
+Date: Mon, 5 Mar 2018 13:42:12 -0700
+From: Keith Busch <keith.busch@intel.com>
+To: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Oliver <oohall@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage
+ the CMB
+Message-ID: <20180305204212.GD30975@localhost.localdomain>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-8-logang@deltatee.com>
+ <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
+ <20180305160004.GA30975@localhost.localdomain>
+ <36c78987-006a-a97f-1d18-b0a08cbea9d4@grimberg.me>
+ <20180305201053.GK11337@mellanox.com>
 MIME-Version: 1.0
-In-Reply-To: <df5344a2-f28d-7828-b76b-107dc24be2dd@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=626
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803050236
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180305201053.GK11337@mellanox.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 12:23 PM, Dave Hansen wrote:
-> On 02/21/2018 09:15 AM, Khalid Aziz wrote:
->> +/* Arch-specific flags to clear when updating VM flags on protection change */
->> +#ifndef VM_ARCH_CLEAR
->> +# define VM_ARCH_CLEAR	VM_NONE
->> +#endif
->> +#define VM_FLAGS_CLEAR	(ARCH_VM_PKEY_FLAGS | VM_ARCH_CLEAR)
-> 
-> Shouldn't this be defining
-> 
-> # define VM_ARCH_CLEAR	ARCH_VM_PKEY_FLAGS
-> 
-> on x86?
+On Mon, Mar 05, 2018 at 01:10:53PM -0700, Jason Gunthorpe wrote:
+> So when reading the above mlx code, we see the first wmb() being used
+> to ensure that CPU stores to cachable memory are visible to the DMA
+> triggered by the doorbell ring.
 
-ARCH_VM_PKEY_FLAGS is used by x86 as well as powerpc. On those two 
-architectures VM_FLAGS_CLEAR will end up being ARCH_VM_PKEY_FLAGS and 
-thus current behavior will be retained. Defining VM_ARCH_CLEAR to be 
-ARCH_VM_PKEY_FLAGS on x86 will just result in VM_FLAGS_CLEAR to be 
-(ARCH_VM_PKEY_FLAGS | ARCH_VM_PKEY_FLAGS) which is superfluous.
+IIUC, we don't need a similar barrier for NVMe to ensure memory is
+visibile to DMA since the SQE memory is allocated DMA coherent when the
+SQ is not within a CMB.
+ 
+> The mmiowb() is used to ensure that DB writes are not combined and not
+> issued in any order other than implied by the lock that encloses the
+> whole thing. This is needed because uar_map is WC memory.
+> 
+> We don't have ordering with respect to two writel's here, so if ARM
+> performance was a concern the writel could be switched to
+> writel_relaxed().
+> 
+> Presumably nvme has similar requirments, although I guess the DB
+> register is mapped UC not WC?
 
---
-Khalid
+Yep, the NVMe DB register is required by the spec to be mapped UC.
