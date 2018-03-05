@@ -1,93 +1,141 @@
-Return-Path: <logang@deltatee.com>
-X-Google-Smtp-Source: AG47ELs/rlipHquI/wQD9Yd/lG5mFjjLmvCXmQXf3BD/669eeypjheYBIfokPt3kB8zcrtdHPk6p
-ARC-Seal: i=1; a=rsa-sha256; t=1520355844; cv=none;
+Return-Path: <gunthorp@deltatee.com>
+X-Google-Smtp-Source: AG47ELsULuzBnu49lGUSEWOnOEVvNVQ2KAAwlovAIMLIJEIqW76ZzgSEZYOIqkVUxNv6Y6vYh16c
+ARC-Seal: i=1; a=rsa-sha256; t=1520276930; cv=none;
         d=google.com; s=arc-20160816;
-        b=KZi4f2On81IY7nHhHnWIUteOhNbwJSwRwdbiOwtz826WDR6KcVliE4q5AT3MTyuCfJ
-         LQUU6T0ZgJfgyu773ZXY6tjrHlsqNpaQBdr0gU14yjNqei/+2TeSv++nFayogb2XHwxQ
-         +FyiEd27IMAeIqpglHOcUmcrdOQmvn6AQKLNpJHDFpJZO0SbY0+DuSoV4yycnK6h9zVp
-         /Av9NwQxxRuA8CXhju/sCpWhJYPiyPVyajBu/1PKrhmyZPmxt3jAgI9kUiJ1LHNxy6eF
-         MQ7erOdRskzMKv++4B5vw6W879vowBQHU9TacqQiVmYgsB3GiG1yrhuM+XL4Chlv2HI8
-         4Ylw==
+        b=QCFdOckruVBKg1rAiOW4s3xm6bK1T/vyJnu6Hya5qOmstfX+JEOkPUjYWXgF85aqD5
+         CDw9P8nZ0e+AEwpgBa6ZcZk4ictNhutVJk7PsOzGAyy6X+PJJklVzlaRbqgg20AlvmCL
+         tuX4Qr8aSyv5xe7CvFAetPJFonU+Ts6G5P0nsimTMWQWq7leShZfbwQIjmyqoVPldNmy
+         vUT3h5NFkMQ5aQ0zYs30Q1Lj8HefuA+5dZ52/LtPgeodRxvJKrxmg9Pwu4NaQKa4lF8E
+         BxZH3zFI3SLB8HCqxIr/AemA1QaTt6AWyYrGjbntwFyxvQfLG84yYHv2HbZUGNukZJV1
+         8RuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:message-id:from:references:cc:to
-         :arc-authentication-results;
-        bh=vEJNQPED50tr2hE7qJPtY3+p02dqbILIC/Lo43BU7WY=;
-        b=alocyk7IwBaH3p8XpH7/sSolJqWT3eUfoTgd+ZVTFg/Ep8j1iRpDaEPuF3PLVi+B2x
-         ig3OPg5VrRsV/vzKk36MHN0y7RiSIJb+TtXcgXiNaIgsjh7VfGSWhP6s5IsatWBf3HSI
-         mhMtR61k60MIcLy7+bOfbiH1WnJg/5ZVVbXrzwgSACmW41oGZQs2r9os7AGb0FYgjgO7
-         FlEGSFtNY8qNa1XFCf4c2/blrvvduiLuihP1fEftyGtl75pZfv1u6z/ewwsCup7O5nCC
-         ob7RxxOsbs49kXDSrKvwHkUQLNvOeYhy6HbWcqoeF2aLOmTcbDI3D3hOS1s44BhbWXw1
-         lTgw==
+        h=subject:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:cc:to:from:arc-authentication-results;
+        bh=y3nNr8+Ff5Zmi5xNsFmJH2b8NBDS/5siTDxfVzg5EjM=;
+        b=ifNJ2dobtyvHs4/dG4iuM15shKk9TlyXGIbkGvd9kxewpiWy352w18fqeF1/t6ZXJ+
+         EXx4cgFotoS10uqCv3G/nEUQCTus+xEiien/jE0qZeCJrQpM50WTdrilHF/f4GjLqgLl
+         LIu4y1ohSYlBEVR277QPMNHR2m2jzBZZBSuJE7yisYPkc4D41CgJFpjeBbPRDjQor00i
+         Fg7/o1eMDh/wowkUmMwbKolFV0nOTxNTkz43bpSZuiKBGRhJva0+hh/sQz9j0HEQlAdz
+         ycKK+CqMCOk4YHcMd1kN+rAcjGK0pXImDA3iISIlGQO0pqB39yFzmRaeb8n5vQhFDIre
+         byFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-ntb@googlegroups.com,
- linux-crypto <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
- Jon Mason <jdmason@kudzu.us>
-References: <20180305190824.847-1-logang@deltatee.com>
- <20180305190824.847-8-logang@deltatee.com>
- <CAHp75Vc41MwtDr24-z3po2nx3Hr7_=tFUD0odcrbnVTP4SnJ1g@mail.gmail.com>
- <20180306114632.GB16784@kroah.com>
- <CAHp75Vf6sYss8q5FjgLYaQXYN761M4awmLVjZ48Cdd8+NrrhxQ@mail.gmail.com>
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <18e6f79d-04db-463a-8916-09d7d859d273@deltatee.com>
-Date: Tue, 6 Mar 2018 10:03:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-ntb@googlegroups.com,
+	linux-crypto@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Dan Douglass <dan.douglass@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Date: Mon,  5 Mar 2018 12:08:23 -0700
+Message-Id: <20180305190824.847-7-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180305190824.847-1-logang@deltatee.com>
+References: <20180305190824.847-1-logang@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf6sYss8q5FjgLYaQXYN761M4awmLVjZ48Cdd8+NrrhxQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: jdmason@kudzu.us, horia.geanta@nxp.com, arnd@arndb.de, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v11 7/7] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines
- to use the common header
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, logang@deltatee.com, horia.geanta@nxp.com, dan.douglass@nxp.com, herbert@gondor.apana.org.au, davem@davemloft.net
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v11 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594125898084128153?=
-X-GMAIL-MSGID: =?utf-8?q?1594208650446609134?=
+X-GMAIL-THRID: =?utf-8?q?1594125902706060258?=
+X-GMAIL-MSGID: =?utf-8?q?1594125902706060258?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Clean up the extra ifdefs which defined the wr_reg64 and rd_reg64
+functions in non-64bit cases in favour of the new common
+io-64-nonatomic-lo-hi header.
 
+To be consistent with CAAM engine HW spec: in case of 64-bit registers,
+irrespective of device endianness, the lower address should be read from
+/ written to first, followed by the upper address. Indeed the I/O
+accessors in CAAM driver currently don't follow the spec, however this
+is a good opportunity to fix the code.
 
-On 06/03/18 04:57 AM, Andy Shevchenko wrote:
-> On Tue, Mar 6, 2018 at 1:46 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->> On Tue, Mar 06, 2018 at 12:48:29PM +0200, Andy Shevchenko wrote:
->>> On Mon, Mar 5, 2018 at 9:08 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->>>> Clean up the ifdefs which conditionally defined the io{read|write}64
->>>> functions in favour of the new common io-64-nonatomic-lo-hi header.
->>>
->>>>   #include <linux/kthread.h>
->>>>   #include <linux/interrupt.h>
->>>>   #include <linux/ntb.h>
->>>> +#include <linux/io-64-nonatomic-lo-hi.h>
->>>
->>> A nit, can we preserve alphabetical ordering?
->>
->> Ugh, why, it doesn't matter at all :)
-> 
-> I'm fine with either way, but ordering is a good thing to have in long
-> term prospective.
-> Easy to find what headers are in there, easy to understand if you need
-> another one or not, easy to maintain the list w/o duplications.
-> 
-> I saw already few examples where long list of headers contained
-> duplications b/c it was in messy order.
-> 
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Horia Geantă <horia.geanta@nxp.com>
+Cc: Dan Douglass <dan.douglass@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+---
+ drivers/crypto/caam/regs.h | 30 +++---------------------------
+ 1 file changed, 3 insertions(+), 27 deletions(-)
 
-I agree with Greg here. This is a bit silly. The list isn't even 
-alphabetical to begin with so it can't be preserved. However, if I do a 
-v12 I'll make it alphabetical.
-
-Logan
+diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
+index fee363865d88..f887b371040f 100644
+--- a/drivers/crypto/caam/regs.h
++++ b/drivers/crypto/caam/regs.h
+@@ -10,7 +10,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/bitops.h>
+-#include <linux/io.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
+ 
+ /*
+  * Architecture-specific register access methods
+@@ -136,10 +136,9 @@ static inline void clrsetbits_32(void __iomem *reg, u32 clear, u32 set)
+  *    base + 0x0000 : least-significant 32 bits
+  *    base + 0x0004 : most-significant 32 bits
+  */
+-#ifdef CONFIG_64BIT
+ static inline void wr_reg64(void __iomem *reg, u64 data)
+ {
+-	if (caam_little_end)
++	if (!caam_imx && caam_little_end)
+ 		iowrite64(data, reg);
+ 	else
+ 		iowrite64be(data, reg);
+@@ -147,35 +146,12 @@ static inline void wr_reg64(void __iomem *reg, u64 data)
+ 
+ static inline u64 rd_reg64(void __iomem *reg)
+ {
+-	if (caam_little_end)
++	if (!caam_imx && caam_little_end)
+ 		return ioread64(reg);
+ 	else
+ 		return ioread64be(reg);
+ }
+ 
+-#else /* CONFIG_64BIT */
+-static inline void wr_reg64(void __iomem *reg, u64 data)
+-{
+-	if (!caam_imx && caam_little_end) {
+-		wr_reg32((u32 __iomem *)(reg) + 1, data >> 32);
+-		wr_reg32((u32 __iomem *)(reg), data);
+-	} else {
+-		wr_reg32((u32 __iomem *)(reg), data >> 32);
+-		wr_reg32((u32 __iomem *)(reg) + 1, data);
+-	}
+-}
+-
+-static inline u64 rd_reg64(void __iomem *reg)
+-{
+-	if (!caam_imx && caam_little_end)
+-		return ((u64)rd_reg32((u32 __iomem *)(reg) + 1) << 32 |
+-			(u64)rd_reg32((u32 __iomem *)(reg)));
+-
+-	return ((u64)rd_reg32((u32 __iomem *)(reg)) << 32 |
+-		(u64)rd_reg32((u32 __iomem *)(reg) + 1));
+-}
+-#endif /* CONFIG_64BIT  */
+-
+ static inline u64 cpu_to_caam_dma64(dma_addr_t value)
+ {
+ 	if (caam_imx)
+-- 
+2.11.0
