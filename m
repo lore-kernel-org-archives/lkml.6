@@ -1,51 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeCEEIE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 23:08:04 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:57412 "EHLO
+        id S932575AbeCEEYh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 23:24:37 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:58293 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932455AbeCEEIC (ORCPT
+        with ESMTP id S1751989AbeCEEYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 23:08:02 -0500
-Subject: Re: [PATCH] mmc: Export host capabilities to debugfs.
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        Sun, 4 Mar 2018 23:24:36 -0500
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
         <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
         <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1519910255-6296-1-git-send-email-harish_kandiga@mentor.com>
- <ba1aa77a-88ea-faba-8dec-33373b65664c@mentor.com>
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-Message-ID: <a5c9d802-47b0-b020-b93a-7747b469d594@mentor.com>
-Date: Mon, 5 Mar 2018 09:37:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
+Subject: [PATCH v2] mmc: Export host capabilities to debugfs.
+Date: Mon, 5 Mar 2018 09:54:30 +0530
+Message-ID: <1520223870-3471-1-git-send-email-harish_kandiga@mentor.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <ba1aa77a-88ea-faba-8dec-33373b65664c@mentor.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Abbas Raza <Abbas_Raza@mentor.com>
 
+This patch exports the host capabilities to debugfs
 
-On Saturday 03 March 2018 10:02 PM, Vladimir Zapolskiy wrote:
-> Hi Harish,
->
-> On 03/01/2018 03:17 PM, Harish Jenny K N wrote:
->> This patch exports the host capabilities to debugfs
->>
->> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
->> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
->> ---
-> would you mind to restore the authorship to Abbas Raza and send v2?
-Sure. Abbas had left Mentor and this was being done as part of new project.
-Still, I will resend the patch by changing the Author.
+Signed-off-by: Abbas Raza <Abbas_Raza@mentor.com>
+Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+---
 
-Thanks,
-Harish
+Changes in v2:
+- Changed Author
+
+ drivers/mmc/core/debugfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+index c51e0c0..fa2df7f 100644
+--- a/drivers/mmc/core/debugfs.c
++++ b/drivers/mmc/core/debugfs.c
+@@ -289,6 +289,9 @@ void mmc_add_card_debugfs(struct mmc_card *card)
+ 
+ 	card->debugfs_root = root;
+ 
++	if (!debugfs_create_x32("host_caps", S_IRUSR, root, (u32 *)&host->caps))
++		goto err;
++
+ 	if (!debugfs_create_x32("state", S_IRUSR, root, &card->state))
+ 		goto err;
+ 
+-- 
+1.9.1
