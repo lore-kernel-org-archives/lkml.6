@@ -1,179 +1,201 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-257181-1520339151-2-6138263397229428115
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520339150; b=N8HIYfawyhl7peYgeWU5/zcCSQ9uI9eEhAehOA4lhD0x25x
-    EffO6w/Y6UIBOAU88gJa/RgcOwRW9kjkqLrO/B+C3kJKFhs3UAGjLGObmD/mfE7N
-    szJ3ZizzFMk/6Y6mtpbI325gm93VHV+VuB5Eo8s9B4aRvpw++0Nm7yifWad5P6Fb
-    CLVcXzu6ss/viN1TWAU5oMZ/1QY147o3V/HHw3aMbwFWg6Vyo0RRgeIGTqM6N5st
-    9i8kJQlcVVsgoUothiXqPsRYeGa12BWlHh6NTGH53SKT/jI0Vzgm0DYf13DSIbur
-    +Kbw6MaqUJNdSs+HdRyvdJHlIrTowLk7PlrP77g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520339150; bh=N
-    6YBYffQWcqAJ122QjDLHz4HK5SMBmk6QqI0tnq+FaE=; b=ektkJN/Ha3fVpBMh2
-    ImRqCdRitSlfOOP4QqkfojdFSuXyC30PaZgN5AVtA9yWdVo2M8C93qrglaw/uQIc
-    EkWjzdVJ0Mpl4D9IdIDJx0UDk9mm8Aw0DEpEFlRWok7BCw4LE50ZZ2DJZk9UEo1w
-    Gsxqd72pONQxUOnS4Q4+xJz3CH3D30WKvPudU2rcx6gXhV1OV6jtjsYD6rHDkTnb
-    D1lvBnWyfyJkKqT7BbRZ5vnY0+XD5ByHgY9IcXxblbgUcn1S8RpJvMbtduL9kShJ
-    Q2AjKcAjz0NaB898bY5S3fu+GdUbiaiqSckXdfDecWa/K0NllAkAa754f83n675w
-    3f+6Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CtXpoetf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pAGuBrUr;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CtXpoetf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pAGuBrUr;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELseKSLDiw74ZDthdeDj7rLnP4zzFtOxyV2gCg5aQmWak/2ZXH+4x+h9EhWzdPeSBcu6SC7h5Q==
-Date: Tue, 6 Mar 2018 09:25:37 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 1/3] staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF by
- IIO_DEVICE_ATTR
-Message-ID: <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520338980.git.rodrigosiqueiramelo@gmail.com>
-References: <cover.1520338980.git.rodrigosiqueiramelo@gmail.com>
+Date: Mon, 5 Mar 2018 13:49:43 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.4.120
+Message-ID: <20180305124943.GA17081@kroah.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
 Content-Disposition: inline
-In-Reply-To: <cover.1520338980.git.rodrigosiqueiramelo@gmail.com>
-User-Agent: NeoMutt/20171215
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
- daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-X-getmail-retrieved-from-mailbox: INBOX
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The macro IIO_DEV_ATTR_CH_OFF is a wrapper for IIO_DEVICE_ATTR, with a
-tiny change in the name definition. This extra macro does not improve
-the readability and also creates some checkpatch errors.
 
-This patch fixes the checkpatch.pl errors:
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-staging/iio/meter/ade7753.c:391: ERROR: Use 4 digit octal (0777) not
-decimal permissions
-staging/iio/meter/ade7753.c:395: ERROR: Use 4 digit octal (0777) not
-decimal permissions
-staging/iio/meter/ade7759.c:331: ERROR: Use 4 digit octal (0777) not
-decimal permissions
-staging/iio/meter/ade7759.c:335: ERROR: Use 4 digit octal (0777) not
-decimal permissions
+I'm announcing the release of the 4.4.120 kernel.
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/staging/iio/meter/ade7753.c | 18 ++++++++++--------
- drivers/staging/iio/meter/ade7759.c | 18 ++++++++++--------
- 2 files changed, 20 insertions(+), 16 deletions(-)
+All users of the 4.4 kernel series must upgrade.
 
-diff --git a/drivers/staging/iio/meter/ade7753.c b/drivers/staging/iio/meter/ade7753.c
-index c44eb577dc35..275e8dfff836 100644
---- a/drivers/staging/iio/meter/ade7753.c
-+++ b/drivers/staging/iio/meter/ade7753.c
-@@ -388,14 +388,16 @@ static IIO_DEV_ATTR_VPERIOD(0444,
- 		ade7753_read_16bit,
- 		NULL,
- 		ADE7753_PERIOD);
--static IIO_DEV_ATTR_CH_OFF(1, 0644,
--		ade7753_read_8bit,
--		ade7753_write_8bit,
--		ADE7753_CH1OS);
--static IIO_DEV_ATTR_CH_OFF(2, 0644,
--		ade7753_read_8bit,
--		ade7753_write_8bit,
--		ADE7753_CH2OS);
-+
-+static IIO_DEVICE_ATTR(choff_1, 0644,
-+			ade7753_read_8bit,
-+			ade7753_write_8bit,
-+			ADE7753_CH1OS);
-+
-+static IIO_DEVICE_ATTR(choff_2, 0644,
-+			ade7753_read_8bit,
-+			ade7753_write_8bit,
-+			ADE7753_CH2OS);
- 
- static int ade7753_set_irq(struct device *dev, bool enable)
- {
-diff --git a/drivers/staging/iio/meter/ade7759.c b/drivers/staging/iio/meter/ade7759.c
-index 1decb2b8afab..c078b770fa53 100644
---- a/drivers/staging/iio/meter/ade7759.c
-+++ b/drivers/staging/iio/meter/ade7759.c
-@@ -328,14 +328,16 @@ static IIO_DEV_ATTR_ACTIVE_POWER_GAIN(0644,
- 		ade7759_read_16bit,
- 		ade7759_write_16bit,
- 		ADE7759_APGAIN);
--static IIO_DEV_ATTR_CH_OFF(1, 0644,
--		ade7759_read_8bit,
--		ade7759_write_8bit,
--		ADE7759_CH1OS);
--static IIO_DEV_ATTR_CH_OFF(2, 0644,
--		ade7759_read_8bit,
--		ade7759_write_8bit,
--		ADE7759_CH2OS);
-+
-+static IIO_DEVICE_ATTR(choff_1, 0644,
-+			ade7759_read_8bit,
-+			ade7759_write_8bit,
-+			ADE7759_CH1OS);
-+
-+static IIO_DEVICE_ATTR(choff_2, 0644,
-+			ade7759_read_8bit,
-+			ade7759_write_8bit,
-+			ADE7759_CH2OS);
- 
- static int ade7759_set_irq(struct device *dev, bool enable)
- {
--- 
-2.16.2
+The updated 4.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.4.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                         |    2=20
+ arch/arm/boot/dts/ls1021a-qds.dts                |    2=20
+ arch/arm/boot/dts/ls1021a-twr.dts                |    2=20
+ arch/arm/lib/csumpartialcopyuser.S               |    4 +
+ arch/mips/lib/Makefile                           |    3 -
+ arch/mips/lib/libgcc.h                           |   17 +++++++
+ arch/mips/lib/multi3.c                           |   54 ++++++++++++++++++=
++++++
+ arch/sh/boards/mach-se/770x/setup.c              |   10 +++-
+ drivers/gpu/drm/nouveau/nvkm/subdev/pci/base.c   |    7 ++
+ drivers/gpu/drm/ttm/ttm_page_alloc.c             |    2=20
+ drivers/infiniband/hw/mlx4/mr.c                  |    2=20
+ drivers/infiniband/ulp/ipoib/ipoib_main.c        |   25 +++++++---
+ drivers/infiniband/ulp/ipoib/ipoib_multicast.c   |    5 +-
+ drivers/leds/led-core.c                          |    2=20
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c           |    6 +-
+ drivers/net/can/flexcan.c                        |    2=20
+ drivers/net/ethernet/arc/emac_main.c             |   53 +++++++++++++-----=
+----
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    4 -
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   14 +++++
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c  |    2=20
+ drivers/net/ethernet/broadcom/tg3.c              |   13 +++++
+ drivers/net/ethernet/broadcom/tg3.h              |    4 +
+ drivers/net/ethernet/freescale/gianfar_ptp.c     |    3 -
+ drivers/net/ethernet/intel/e1000/e1000.h         |    3 -
+ drivers/net/ethernet/intel/e1000/e1000_main.c    |   27 +++++++++--
+ drivers/net/phy/mdio-sun4i.c                     |    6 +-
+ drivers/net/xen-netfront.c                       |    1=20
+ drivers/s390/block/dasd_3990_erp.c               |   10 ++++
+ drivers/scsi/storvsc_drv.c                       |    3 -
+ drivers/spi/spi-atmel.c                          |    2=20
+ drivers/xen/gntdev.c                             |    8 +--
+ fs/f2fs/extent_cache.c                           |   10 +++-
+ fs/super.c                                       |    6 ++
+ fs/xfs/xfs_qm.c                                  |   46 ++++++++++++-------
+ kernel/time/hrtimer.c                            |    7 ++
+ lib/mpi/longlong.h                               |   18 +++++++
+ net/ipv6/route.c                                 |    1=20
+ net/mac80211/rx.c                                |    2=20
+ net/sctp/socket.c                                |   16 ++++--
+ 39 files changed, 315 insertions(+), 89 deletions(-)
+
+Al Viro (1):
+      sget(): handle failures of register_shrinker()
+
+Alexander Kochetkov (1):
+      net: arc_emac: fix arc_emac_rx() error paths
+
+Aliaksei Karaliou (2):
+      xfs: quota: fix missed destroy of qi_tree_lock
+      xfs: quota: check result of register_shrinker()
+
+Anna-Maria Gleixner (1):
+      hrtimer: Ensure POSIX compliance (relative CLOCK_REALTIME hrtimers)
+
+Arnd Bergmann (1):
+      ARM: dts: ls1021a: fix incorrect clock references
+
+Brendan McGrath (1):
+      ipv6: icmp6: Allow icmp messages to be looped back
+
+Cathy Avery (1):
+      scsi: storvsc: Fix scsi_cmd error assignments in storvsc_handle_error
+
+Christophe JAILLET (1):
+      mdio-sun4i: Fix a memory leak
+
+Chunyan Zhang (1):
+      ARM: 8731/1: Fix csum_partial_copy_from_user() stack mismatch
+
+Eduardo Otubo (1):
+      xen-netfront: enable device after manual module load
+
+Erez Shitrit (1):
+      IB/ipoib: Fix race condition in neigh creation
+
+Greg Kroah-Hartman (1):
+      Linux 4.4.120
+
+Guilherme G. Piccoli (1):
+      bnx2x: Improve reliability in case of nested PCI errors
+
+James Hogan (2):
+      lib/mpi: Fix umul_ppmm() for MIPS64r6
+      MIPS: Implement __multi3 for GCC7 MIPS64r6 builds
+
+Johannes Berg (1):
+      mac80211: mesh: drop frames appearing to be from us
+
+Karol Herbst (1):
+      drm/nouveau/pci: do a msi rearm on init
+
+Leon Romanovsky (1):
+      IB/mlx4: Fix mlx4_ib_alloc_mr error flow
+
+Luu An Phu (1):
+      can: flex_can: Correct the checking for frame length in flexcan_start=
+_xmit()
+
+Marcelo Ricardo Leitner (1):
+      sctp: make use of pre-calculated len
+
+Matthieu CASTET (1):
+      led: core: Fix brightness setting when setting delay_off=3D0
+
+Radu Pirea (1):
+      spi: atmel: fixed spin_lock usage inside atmel_spi_remove
+
+Ross Lagerwall (2):
+      xen/gntdev: Fix off-by-one error when unmapping with holes
+      xen/gntdev: Fix partial gntdev_mmap() cleanup
+
+Sascha Hauer (1):
+      mtd: nand: gpmi: Fix failure when a erased page has a bitflip at BBM
+
+Sergei Shtylyov (1):
+      SolutionEngine771x: fix Ether platform data
+
+Siva Reddy Kallam (2):
+      tg3: Add workaround to restrict 5762 MRRS to 2048
+      tg3: Enable PHY reset in MTU change path for 5720
+
+Stefan Haberland (1):
+      s390/dasd: fix wrongly assigned configuration data
+
+Tushar Dave (1):
+      e1000: fix disabling already-disabled warning
+
+Venkat Duvvuru (1):
+      bnxt_en: Fix the 'Invalid VF' id check in bnxt_vf_ndo_prep routine.
+
+Xiongwei Song (1):
+      drm/ttm: check the return value of kzalloc
+
+Yangbo Lu (1):
+      net: gianfar_ptp: move set_fipers() to spinlock protecting area
+
+Yunlei He (1):
+      f2fs: fix a bug caused by NULL extent tree
+
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlqdPOYACgkQONu9yGCS
+aT7G3A//ayKTWic+9BYP4xygKPcqN8djaaNsGA7CwM5eZCVsbjLEk4jwaX9ZQVa2
+YCIQXrUS5HnQZA5FjuuYHyZnqo/KiXupnYHiopdtqHiJURLNINq4YlHFBLUHBRNJ
+a1wKK2oQ2+c/Au+aZ+ijJ+/lN5GSWi2/VE4rN2ISeuddZbg8CwJhMWmvYHOmehmi
+XkgXqeHm+bgRuDHRq6rv7QazhTXMAFzNM6sm1WNBg/pVW9h0C9nVk6xDHtqRzzNG
+mx94/6t+IZqNySbN7prPD0eUJPSIV/HdGwFhPHnIoXVZMb9TGIvvFbnF0ubnbYoQ
+vdEPSGQRF5McJ7gEZkQxyRYYTyaql7R2+DKKoLq/PiLx85Md7Z9lvQrZHn+CXbGT
+ErJgO03l+WLEdfjJHRTk8Z2Q1rePGRzeo+BePtOeHPfLmVeMi7sSjDE+e11YTNck
+nwqLXugbykO66V+ZA1Dt5JIxOnpTWFeVdyFQhFdYBthkvrA5GOpHQJugDlZlYxk0
+2do7WjCUknMDCkU+WzlcOAr/usvXCcCr5XLSSNR9CQpdcU13nZgTPNG5UOUXpZBK
+8237agYv6U/gHuoXqU4DCHVAE29e+iWtONkTo5D/Q63hU1CbQ7eImHtD9b583Vy7
+XpJCkaYyx33/NgPjWhugqKQd8uuoxlYDKUMU9TXlpiTsg0212vI=
+=7I+2
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
