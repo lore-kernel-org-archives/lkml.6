@@ -1,124 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935120AbeCENZs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 08:25:48 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34079 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932084AbeCENZo (ORCPT
+        id S935140AbeCEN0K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 08:26:10 -0500
+Received: from mail-vk0-f43.google.com ([209.85.213.43]:35125 "EHLO
+        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935124AbeCEN0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:25:44 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180305132542euoutp0105d3fabb9ef81ec240158486190e9c04~ZCRbKumWG2532025320euoutp018
-X-AuditID: cbfec7f2-5ffe19c000011644-4d-5a9d454fc026
-Subject: Re: [PATCH] drm/bridge/synopsys: dsi: readl_poll_timeout return
- value clean up
-To: Philippe CORNU <philippe.cornu@st.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>, Heiko Stubner <heiko@sntech.de>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>
-Cc: Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <8b47bb1d-ff1d-b85a-18ca-b53b70c1a32d@samsung.com>
-Date: Mon, 5 Mar 2018 14:25:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
+        Mon, 5 Mar 2018 08:26:07 -0500
+X-Google-Smtp-Source: AG47ELsPcUYlepnQqEJh4PD8l4EAIYU7jbcM5SKqJVACjh/nJWZIq9+upbJGB2RxMebH1yccwCZT9A==
 MIME-Version: 1.0
-In-Reply-To: <587f8a32-b9b3-0e81-d91d-69ea256bdc29@st.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHefZefDfaeJzGTipF60IJZULQi5ZEJb4fiqIv6Qht5puGbsrW
-        TJPMLHNaXirKnFs1VJRIJe9ZUi3KSruXZRc3TMuSMbrMiry07U3y2++c53/+5/zhYQj5TyqI
-        2avdx+u06jQlLSHb7/5+vGJrtEW16u5ZGVvy6L6IvTLci9h8o5Ni820PaPbbYBnNNn91UewL
-        t4tmp4fGKNZy6iBbdLLGj23+0E+xz7vMHpljmmAdR0cptu/lTZItLCqg12OuKu8pyT0vLRFx
-        V03v/bgqYyXFveu/TnMd4w6Ksx/vEXEtNYe4SdMNkuvoP09wI7+6Ce578/xtc1SStUl82t5M
-        XhcWtUuS4njkojMaJFnj9VZRHiplipGYAbwahpzVZDGSMHJcj8B1rYEQih8IxloLKK9Kjr8j
-        aLFGzEz0dR5GgqgOwY3ymn+FE8Fly0fCqwrAcXByosvnG4gtFNiOuny+BM5DcKTjnM+Xxsth
-        smWA9rIUR0HJ5DjyMokXQ1Nxt4/n4liwnhlBgsYf7lcOe1wZRowj4FUd720TeAF0OM2EwAp4
-        M3xB5N0FuJYBd/uAZ9bPU2wCc5yQIAC+9LT6CRwCvadPkALnwMBoPimMGhHY/xTSwkMk3O55
-        SnnXEp6Tm7rChPY6uPe2wHcNYBm8dvoLF8jgVHsFIbSlYDwmF9QLwf6wjRBYAbVP3HQ5WmSa
-        Fcs0K4tpVhbT/70XEXkJKXiDXpPM68O1/P6VerVGb9Amr9ydrmlGnu/YO9XzrRO5nyXaEGaQ
-        co60U2tWySl1pj5bY0PAEMpAadA8i0ouTVJnH+B16Qk6Qxqvt6FghlQqpPHLclVynKzex6fy
-        fAavm3kVMeKgPJTZvzF7Ije1Ozrkjswan3FP1hrcZt4aGCPOgomDCxN2hlMhb4siqnKrnpTv
-        CIl1a6I/x2RN9To25By/vqf6a66jXZtoaVzDjU4PRiq2GNe8Dm382M1uN6Z8mjJsTqMrlgbc
-        shaWrUrahqPF9rBgWEIe/mmoSB20fh6LmlpcGWpXkvoUdXgoodOr/wLEZ0xhigMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleLIzCtJLcpLzFFi42I5/e/4XV1P17lRBiceyFv0njvJZLHxyWlG
-        i6aOt6wWTYdOsVl8utfPZrHp43tWiytf37NZ/H/0mtVi7qRai86JS9gtNj2+xmpxedccoLIH
-        /5ktHrS8YLU4c/UAi0V7Zyubg4DH7IaLLB6X+3qZPHbOusvuMbtjJqvHnWt72Dy2f3vA6nG/
-        +ziTx+Yl9R5/Z+1n8dh+bR6zx9Mfe5k9Pm+SC+CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAz
-        MrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mt4cO49W8FaropvKxYyNTD2cXQxcnJICJhInNnR
-        yAhiCwksZZRY/C4FIi4usXv+W2YIW1jiz7UuNoia14wS/ZNdQGxhgUiJWW2HWLoYuThEBOaz
-        StxZO50dxGEWaGKU+PXwMTOIIySwmEni4bZN7CAtbAKaEn833wQbxStgJ9H79xvYahYBFYn1
-        XXvBbFGBCInOlfNZIGoEJU7OfAJkc3BwClhJXF+eChJmFlCX+DPvEjOELS+x/e0cKFtc4taT
-        +UwTGIVmIemehaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAhMCNuO/dyy
-        g7HrXfAhRgEORiUeXoHCOVFCrIllxZW5hxglOJiVRHilJOdGCfGmJFZWpRblxxeV5qQWH2I0
-        BfptIrOUaHI+MFnllcQbmhqaW1gamhubG5tZKInznjeojBISSE8sSc1OTS1ILYLpY+LglGpg
-        rDlxyu5Xbo70GrclItM35X1a37lTeULxOtbAX5fs/mwpzX9dt1f8WeHVoJzTZR8+nja/c6vW
-        l+lhxJqKaacv6V6d5Vn9aO/lhixmprtnmZW/TXXV3cufVhx95pZQ9mKf+NIbKbZ3Ocx/Zrcd
-        cP52dm+p6s4VvnpMXOkzRHmS/hnmLNpSpix9QImlOCPRUIu5qDgRANk17CseAwAA
-X-CMS-MailID: 20180305132533eucas1p1aefe38e25fb8c70ef884e90343a410c8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180305132533eucas1p1aefe38e25fb8c70ef884e90343a410c8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180301090106epcas2p3c47f4436b0c8a31ce71cfd3909dc77ae
-X-RootMTR: 20180301090106epcas2p3c47f4436b0c8a31ce71cfd3909dc77ae
-References: <20180204213624.18288-1-philippe.cornu@st.com>
-        <CGME20180301090106epcas2p3c47f4436b0c8a31ce71cfd3909dc77ae@epcas2p3.samsung.com>
-        <172e7f68-8f4b-7e5f-3e9f-7aaf10a51dc9@st.com>
-        <290c749a-70bf-2b74-1fb9-2de26708d001@samsung.com>
-        <587f8a32-b9b3-0e81-d91d-69ea256bdc29@st.com>
+In-Reply-To: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Mon, 5 Mar 2018 22:25:42 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
+Message-ID: <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
+Subject: Re: [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.03.2018 14:15, Philippe CORNU wrote:
-> Hi Andrzej,
->
->
-> On 03/02/2018 11:21 AM, Andrzej Hajda wrote:
->> On 01.03.2018 10:00, Philippe CORNU wrote:
->>> Hi Archit, Andrzej & Laurent,
->>>
->>> May I ask you please your feedback on this small patch?
->>> Many thanks,
->>>
->>> Philippe :-)
->>>
->>> On 02/04/2018 10:36 PM, Philippe Cornu wrote:
->>>> The readl_poll_timeout() return value is 0 in case of success
->>>> so it is better to detect errors without taking care of the
->>>> return value sign.
->>>>
->>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->> The patch is of course correct. However I am not sure if necessary. For
->> sure functionally it does not change anything.
->> AFAIK kernel CodingStyle says nothing about it, so I suppose it is
->> matter of personal taste.
-> I sent this tiny patch in order to homogenize the dw mipi driver because 
-> there were both cases "if (ret)" & "if (ret < 0)" in the source code.
->
-> I did not really find a preferred way in the kernel source code so I 
-> selected what sounds the best to me ie "if (ret)" but it is not a 
-> problem to make another patch for "if (ret < 0)" everywhere :-)
->
-> In any case, the most important from my pov is to have a homogeneous 
-> source code :-)
+Hi Vivek,
 
-OK
+On Fri, Mar 2, 2018 at 7:10 PM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> This series provides the support for turning on the arm-smmu's
+> clocks/power domains using runtime pm. This is done using the
+> recently introduced device links patches, which lets the smmu's
+> runtime to follow the master's runtime pm, so the smmu remains
+> powered only when the masters use it.
+>
+> It also adds support for Qcom's arm-smmu-v2 variant that
+> has different clocks and power requirements.
+>
+> Took some reference from the exynos runtime patches [1].
+>
+> After another round of discussion [3], we now finally seem to be
+> in agreement to add a flag based on compatible, a flag that would
+> indicate if a particular implementation of arm-smmu supports
+> runtime pm or not.
+> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
+> calls in map/unmap callbacks so that the clients do not have to
+> worry about handling any of the arm-smmu's power.
+> The patch that exported couple of pm_runtime suppliers APIS, viz.
+> pm_runtime_get_suppliers(), and pm_runtime_put_suppliers() can be
+> dropped since we don't have a user now for these APIs.
+> Thanks Rafael for reviewing the changes, but looks like we don't
+> need to export those APIs for some more time. :)
+>
+> Previous version of this patch series is @ [5].
 
-Queued to drm-misc-next.
+Thanks for addressing my comments. There is still a bit of space for
+improving the granularity of power management, as far as I understood
+how it works on SDM845 correctly, but as a first step, this should at
+least let things work.
 
-Regards
-Andrzej
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+
+Best regards,
+Tomasz
