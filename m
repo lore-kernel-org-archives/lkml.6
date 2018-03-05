@@ -1,54 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932636AbeCECn6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 21:43:58 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42546 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932346AbeCECnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 21:43:55 -0500
-Subject: Re: [PATCH net V2] virtio-net: re enable XDP_REDIRECT for mergeable
- buffer
-To: David Miller <davem@davemloft.net>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brouer@redhat.com, john.fastabend@gmail.com
-References: <1519982954-14360-1-git-send-email-jasowang@redhat.com>
- <20180304.183811.344767417258525977.davem@davemloft.net>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <986bd816-2452-9eca-ec8a-ce267ef49a2d@redhat.com>
-Date: Mon, 5 Mar 2018 10:43:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180304.183811.344767417258525977.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S932614AbeCECuI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 21:50:08 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.110]:15393 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932442AbeCECuF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 21:50:05 -0500
+From: Matheus Castello <matheus@castello.eng.br>
+To: stefan.wahren@i2se.com, linus.walleij@linaro.org
+Cc: eric@anholt.net, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v2 3/3] pinctrl: bcm2835: Add support for output-low output-high properties
+Date: Sun,  4 Mar 2018 22:29:20 -0400
+Message-Id: <1520216960-19880-4-git-send-email-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+References: <431699005.307231.1520086916739@email.1und1.de>
+ <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.21.134
+X-Source-L: No
+X-Exim-ID: 1esfsl-002WAq-Mv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [191.189.21.134]:25193
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 35
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Properties to set initial value of pin output buffer.
+This can be useful for configure hardware in overlay files, and in early boot
+for checking it states in QA sanity tests.
 
+Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-On 2018年03月05日 07:38, David Miller wrote:
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Fri,  2 Mar 2018 17:29:14 +0800
->
->> XDP_REDIRECT support for mergeable buffer was removed since commit
->> 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in receive_mergeable()
->> case"). This is because we don't reserve enough tailroom for struct
->> skb_shared_info which breaks XDP assumption. So this patch fixes this
->> by reserving enough tailroom and using fixed size of rx buffer.
->>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->> Changes from V1:
->> - do not add duplicated tracepoint when redirection fails
-> Applied to net-next, thanks Jason.
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 755ea90..a7a8199 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -969,6 +969,11 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+ 			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_UP);
+ 			break;
 
-Hi David,
++		/* Set output-high or output-low */
++		case PIN_CONFIG_OUTPUT:
++			bcm2835_gpio_set_bit(pc, arg ? GPSET0 : GPCLR0, pin);
++			break;
++
+ 		default:
+ 			return -EINVAL;
 
-Consider the change is not large, any chance to make it for -net to keep 
-XDP redirection work?
-
-Thanks
+--
+2.7.4
