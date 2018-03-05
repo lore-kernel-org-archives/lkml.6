@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvJ1IjOx6Zn8VNya7ArcKM3noxNPZQ0XHMT+z8zNmSqqr17jAgFSGSDpe9mxVU38KlbaHUX
-ARC-Seal: i=1; a=rsa-sha256; t=1520245577; cv=none;
+X-Google-Smtp-Source: AG47ELtXn3cJXCGXRPOGg2xpIKBKMdzqlQSz138MQ2Qh9VoD9RFrcMwAf3u2G9dEdqNDiSsDuCAX
+ARC-Seal: i=1; a=rsa-sha256; t=1520245576; cv=none;
         d=google.com; s=arc-20160816;
-        b=PCJppjXi4cRXMAo4LBVPIk/OQfSBx/KRGoUHhoC/xttS4gD2ZG7w40VOon8coHjslA
-         IKXvj4gdFqC7hb7Zm5J3M7u7MT4g02DZyUFdZKqHG4Qg196rIQnnzYgFQuXGmkt5XgrZ
-         kAjoSAv08mDasVnv4EZlMpqD09015RacHKZ5hr4DXns6vQseBqlbYVx6MHlRYKo/4K7J
-         jGiyJo3lQ7+cY8QY11x/31Wk+itLtmHX7hHiHqVCRpNmxw7BoSgUT4TNhf3ww5FCSXTQ
-         /2sZ9nkCC0jZ6R3DwScnkraOdGfQITpjMkhG1qK5RJx0h49r65Fo+/FFJqGnolGbtxKR
-         h0VA==
+        b=Q6esvyV331KWEGQAEyHf2wqj0y4bJesO+CvK7m095VU7FSjYBndMToHQeEYHqQB8Jc
+         kK7pao+algIi0QcEGEToCFftXVBHgUCYHv3kNLkr+y7bN3vKrYOPwpeIkDFsJl3UYUef
+         B6qtRWcvAFy8ymvBUDGQZl+7Otn5/e6++SvPN/5fCzPvTyu6lsOSB4H7s1dRMuwi+XOr
+         T3KbGsoBOU6VxSpg07l63xZ71nyF6No9hm04xBYsv9ixgSVkXWRPf13Y/VQFMjeNXECe
+         m/QTT7KBMpME1srRITGYLxiTu3ZRNCzK1v4gp64Sxy/e4JULKYdPNgjCTe171xCCUhrx
+         IV4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=lpPQrt5+tZXz1YmvWa9Hmx/PyB1QmLr8DFZyTmukmAg=;
-        b=nM9iiC/X9ej4B+aK4ZtREoUb5zb/lKvdzIK4fDXWkakQiN4SjeCB92o6zLp4l9G21x
-         lmWFglPAkBV8XpUsefiODuCfjZf/QD4OLsc455BeonuItg0Xndbrq7HZITNLhDBSPAdJ
-         SNxiYaaW0WTJBWXG5Yf8703py6EPVgxRAcmdjPPsV1xpYdoSbu1pobe6k0SQqm2MMYK7
-         q//xp+Bj2GtxFc1bwN2vFSxaYti7aVanlZAf6X5wuTPO0Ysdamylj4Eiv8T3a4bzVU/J
-         WCAA+1Z+dS2M1mjRjn4CUUihYTtzJRie2bXUMCrehSc+yyxFCf299dLGXwhPJylQbTe4
-         /xnw==
+        bh=wbV5tAu0wTyAC9OBsjsZxEDpC5ifUQw0rFsnbh3Eu9o=;
+        b=SiqUgFn3UZ16qUo61rDfUoAs2G+w+VIIO5ERllJhA1dzRsjIcWukL5mvQmhcimadnq
+         hCpNpqyYVqN3s10a9zVdFjiAL0cB91YcoQKJAGY/rQRwU+jJaPhyo3trk3zn8HTtWadh
+         sigi6rWz8Z81lyxGtUZPL5PoJe5chZmtrJC8RcP5SVOE1n0ssmu0lAM7UAzv7ZmHFjej
+         xyy397d5i+QhF+5vFHGdrVeaHkw7E7Mql9iAQ6uXyuQULHLHiaHDZ7abgdQyofFhYEny
+         318PeMNOCqCCQDZtGI9hXonhyFf1e3cnX70Y7Ivvtp4qVHYb0nhQjQG5XWXpu37uNggM
+         R1UQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=nkWnUxCm;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qVf7Rtk4;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=nkWnUxCm;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=qVf7Rtk4;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,147 +57,197 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 18/34] x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
-Date: Mon,  5 Mar 2018 11:25:47 +0100
-Message-Id: <1520245563-8444-19-git-send-email-joro@8bytes.org>
+Subject: [PATCH 14/34] x86/entry/32: Add PTI cr3 switch to non-NMI entry/exit points
+Date: Mon,  5 Mar 2018 11:25:43 +0100
+Message-Id: <1520245563-8444-15-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093026958344355?=
-X-GMAIL-MSGID: =?utf-8?q?1594093026958344355?=
+X-GMAIL-THRID: =?utf-8?q?1594093025228329287?=
+X-GMAIL-MSGID: =?utf-8?q?1594093025228329287?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Make them available on 32 bit and clone_pgd_range() happy.
+Add unconditional cr3 switches between user and kernel cr3
+to all non-NMI entry and exit points.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
- 2 files changed, 49 insertions(+), 49 deletions(-)
+ arch/x86/entry/entry_32.S | 91 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 88 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e42b894..0a9f746 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1109,6 +1109,55 @@ static inline int pud_write(pud_t pud)
- 	return pud_flags(pud) & _PAGE_RW;
- }
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 35379e5..8f78abc 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -328,6 +328,30 @@
+ #endif /* CONFIG_X86_ESPFIX32 */
+ .endm
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+/*
-+ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-+ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-+ * the user one is in the last 4k.  To switch between them, you
-+ * just need to flip the 12th bit in their addresses.
-+ */
-+#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
++/* Unconditionally switch to user cr3 */
++.macro SWITCH_TO_USER_CR3 scratch_reg:req
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
 +
-+/*
-+ * This generates better code than the inline assembly in
-+ * __set_bit().
-+ */
-+static inline void *ptr_set_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
++	movl	%cr3, \scratch_reg
++	orl	$PTI_SWITCH_MASK, \scratch_reg
++	movl	\scratch_reg, %cr3
++.Lend_\@:
++.endm
 +
-+	__ptr |= BIT(bit);
-+	return (void *)__ptr;
-+}
-+static inline void *ptr_clear_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
++/* Unconditionally switch to kernel cr3 */
++.macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
++	movl	%cr3, \scratch_reg
++	/* Test if we are already on kernel CR3 */
++	testl	$PTI_SWITCH_MASK, \scratch_reg
++	jz	.Lend_\@
++	andl	$(~PTI_SWITCH_MASK), \scratch_reg
++	movl	\scratch_reg, %cr3
++	/* Return original CR3 in \scratch_reg */
++	orl	$PTI_SWITCH_MASK, \scratch_reg
++.Lend_\@:
++.endm
 +
-+	__ptr &= ~BIT(bit);
-+	return (void *)__ptr;
-+}
-+
-+static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
+ 
  /*
-  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
+  * Called with pt_regs fully populated and kernel segments loaded,
+@@ -341,11 +365,19 @@
+  */
+ 
+ #define CS_FROM_ENTRY_STACK	(1 << 31)
++#define CS_FROM_USER_CR3	(1 << 30)
+ 
+ .macro SWITCH_TO_KERNEL_STACK
+ 
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+ 
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
++
++	/*
++	 * %eax now contains the entry cr3 and we carry it forward in
++	 * that register for the time this macro runs
++	 */
++
+ 	/* Are we on the entry stack? Bail out if not! */
+ 	movl	PER_CPU_VAR(cpu_entry_area), %edi
+ 	addl	$CPU_ENTRY_AREA_entry_stack, %edi
+@@ -408,7 +440,8 @@
+ 	 * but switch back to the entry-stack again when we approach
+ 	 * iret and return to the interrupted code-path. This usually
+ 	 * happens when we hit an exception while restoring user-space
+-	 * segment registers on the way back to user-space.
++	 * segment registers on the way back to user-space or when the
++	 * sysenter handler runs with eflags.tf set.
+ 	 *
+ 	 * When we switch to the task-stack here, we can't trust the
+ 	 * contents of the entry-stack anymore, as the exception handler
+@@ -425,6 +458,7 @@
+ 	 *
+ 	 * %esi: Entry-Stack pointer (same as %esp)
+ 	 * %edi: Top of the task stack
++	 * %eax: CR3 on kernel entry
+ 	 */
+ 
+ 	/* Calculate number of bytes on the entry stack in %ecx */
+@@ -441,6 +475,14 @@
+ 	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
+ 
+ 	/*
++	 * Test the cr3 used to enter the kernel and add a marker
++	 * so that we can switch back to it before iret.
++	 */
++	testl	$PTI_SWITCH_MASK, %eax
++	jz	.Lcopy_pt_regs_\@
++	orl	$CS_FROM_USER_CR3, PT_CS(%esp)
++
++	/*
+ 	 * %esi and %edi are unchanged, %ecx contains the number of
+ 	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
+ 	 * the stack-frame on task-stack and copy everything over
+@@ -506,7 +548,7 @@
+ 
+ /*
+  * This macro handles the case when we return to kernel-mode on the iret
+- * path and have to switch back to the entry stack.
++ * path and have to switch back to the entry stack and/or user-cr3
   *
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index b68bda5..5e68083 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -131,55 +131,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- #endif
- }
+  * See the comments below the .Lentry_from_kernel_\@ label in the
+  * SWITCH_TO_KERNEL_STACK macro for more details.
+@@ -552,6 +594,18 @@
+ 	/* Safe to switch to entry-stack now */
+ 	movl	%ebx, %esp
  
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--/*
-- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-- * the user one is in the last 4k.  To switch between them, you
-- * just need to flip the 12th bit in their addresses.
-- */
--#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
--
--/*
-- * This generates better code than the inline assembly in
-- * __set_bit().
-- */
--static inline void *ptr_set_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr |= BIT(bit);
--	return (void *)__ptr;
--}
--static inline void *ptr_clear_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr &= ~BIT(bit);
--	return (void *)__ptr;
--}
--
--static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
--{
--	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
--{
--	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
--{
--	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
--{
--	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--#endif /* CONFIG_PAGE_TABLE_ISOLATION */
--
++	/*
++	 * We came from entry-stack and need to check if we also need to
++	 * switch back to user cr3.
++	 */
++	testl	$CS_FROM_USER_CR3, PT_CS(%esp)
++	jz	.Lend_\@
++
++	/* Clear marker from stack-frame */
++	andl	$(~CS_FROM_USER_CR3), PT_CS(%esp)
++
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
+ .Lend_\@:
+ .endm
  /*
-  * Page table pages are page-aligned.  The lower half of the top
-  * level is used for userspace and the top half for the kernel.
+@@ -746,6 +800,18 @@ ENTRY(xen_sysenter_target)
+  * 0(%ebp) arg6
+  */
+ ENTRY(entry_SYSENTER_32)
++	/*
++	 * On entry-stack with all userspace-regs live - save and
++	 * restore eflags and %eax to use it as scratch-reg for the cr3
++	 * switch.
++	 */
++	pushfl
++	pushl	%eax
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
++	popl	%eax
++	popfl
++
++	/* Stack empty again, switch to task stack */
+ 	movl	TSS_entry_stack(%esp), %esp
+ 
+ .Lsysenter_past_esp:
+@@ -826,6 +892,9 @@ ENTRY(entry_SYSENTER_32)
+ 	/* Switch to entry stack */
+ 	movl	%eax, %esp
+ 
++	/* Now ready to switch the cr3 */
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
+ 	/*
+ 	 * Restore all flags except IF. (We restore IF separately because
+ 	 * STI gives a one-instruction window in which we won't be interrupted,
+@@ -906,7 +975,23 @@ restore_all:
+ .Lrestore_all_notrace:
+ 	CHECK_AND_APPLY_ESPFIX
+ .Lrestore_nocheck:
+-	RESTORE_REGS 4				# skip orig_eax/error_code
++	/*
++	 * First restore user segments. This can cause exceptions, so we
++	 * run it with kernel cr3.
++	 */
++	RESTORE_SEGMENTS
++
++	/*
++	 * Segments are restored - no more exceptions from here on except on
++	 * iret, but that handled safely.
++	 */
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
++	/* Restore rest */
++	RESTORE_INT_REGS
++
++	/* Unwind stack to the iret frame */
++	RESTORE_SKIP_SEGMENTS 4			# skip orig_eax/error_code
+ .Lirq_return:
+ 	INTERRUPT_RETURN
+ 
 -- 
 2.7.4
