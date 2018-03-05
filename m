@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932712AbeCEXgv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 18:36:51 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.130]:47585 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932470AbeCEXgt (ORCPT
+        id S932773AbeCEXk5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 18:40:57 -0500
+Received: from 5.mo1.mail-out.ovh.net ([178.33.45.107]:57871 "EHLO
+        5.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932581AbeCEXk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 18:36:49 -0500
-Date: Mon, 5 Mar 2018 17:36:47 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] RDMA/bnxt_re/qplib_sp: Use true and false for boolean values
-Message-ID: <20180305233647.GA30787@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1eszex-003Vtb-Sn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:46046
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 5 Mar 2018 18:40:56 -0500
+Message-ID: <1520292305.14077.11.camel@florentflament.com>
+Subject: Re: [PATCH v2 1/1] HID: Logitech K290: Add driver for the Logitech
+ K290 USB keyboard
+From: Florent Flament <contact@florentflament.com>
+To: Nestor Lopez Casado <nlopezcasad@logitech.com>
+Cc: andy.shevchenko@gmail.com, jikos@kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Date: Tue, 06 Mar 2018 00:25:05 +0100
+In-Reply-To: <CAE7qMrpF4dGCUrtnXbxb4MLFPZ0Wf13mrQEPypwPbEHaB9e44A@mail.gmail.com>
+References: <20180304170004.26553-1-contact@florentflament.com>
+         <20180304221425.28611-1-contact@florentflament.com>
+         <20180304221425.28611-2-contact@florentflament.com>
+         <CAE7qMrpF4dGCUrtnXbxb4MLFPZ0Wf13mrQEPypwPbEHaB9e44A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 15120835749780486896
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtfedrjeekgdduudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign true or false to boolean variables instead of an integer value.
+On Mon, 2018-03-05 at 10:31 +0100, Nestor Lopez Casado wrote:
+> Hello Florent,
 
-This issue was detected with the help of Coccinelle.
+Hi Nestor,
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/infiniband/hw/bnxt_re/qplib_sp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> In my view, this driver may not be a good idea. The default behaviour
+> of K290 is 'send multimedia keycodes' with the user given the choice
+> to change that behaviour via vendor commands. Putting a driver that
+> will unconditionally change that behaviour without the user's consent
+> might bother other users that prefer the multimedia keycodes by
+> default.
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-index ee98e5e..2f3f32ea 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
-@@ -154,7 +154,7 @@ int bnxt_qplib_get_dev_attr(struct bnxt_qplib_rcfw *rcfw,
- 		attr->tqm_alloc_reqs[i * 4 + 3] = *(++tqm_alloc);
- 	}
- 
--	attr->is_atomic = 0;
-+	attr->is_atomic = false;
- bail:
- 	bnxt_qplib_rcfw_free_sbuf(rcfw, sbuf);
- 	return rc;
--- 
-2.7.4
+Actually, the default behavior of the proposed driver is currently to
+let the K290 send multimedia keycodes by default (as if using the
+generic HID driver). And this behavior can be changed by using the
+fn_mode parameter. We may also add a third behavior consisting in not
+doing anything, and letting a user space application managing the
+keyboard, which could possibly be the default behavior.
+
+> Besides, I'd argue that instead of a kernel module this would be best
+> achieved from a user space application. Something in the lines of
+> Solaar (github pwr/solaar) or libratbag (there's an issue open to
+> support keyboards) or even a specific application built for the
+> purpose. Anyways, please collect the input from Benjamin and Jiri as
+> they as they best placed to advise than myself.
+
+Indeed, this driver is based on a working user space application
+available there https://github.com/milgner/k290-fnkeyctl . However, I
+feel a bit awkward to have to install a dedicated package, or compile &
+install an application to have proper support of a keyboard. I feel
+like it would be more beautiful to have it supported directly by a
+module, like most devices.
+
+Regards,
+Florent
