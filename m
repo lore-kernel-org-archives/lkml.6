@@ -1,49 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933835AbeCEJxr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:53:47 -0500
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:38960 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933071AbeCEJxm (ORCPT
+        id S933866AbeCEJx5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:53:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933839AbeCEJxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:53:42 -0500
-X-Google-Smtp-Source: AG47ELvZlKWkoLBVwp8EfYHyGfGZXnkbROn/TjtBc1h7yB8EfNPugq61KxoctjcYFRis3YxE7Ei9vs1Ll2E4DcCyays=
-MIME-Version: 1.0
-In-Reply-To: <20180302215919.27207-1-ebiederm@xmission.com>
-References: <87r2p287i8.fsf_-_@xmission.com> <20180302215919.27207-1-ebiederm@xmission.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Mon, 5 Mar 2018 10:53:41 +0100
-Message-ID: <CAOssrKf0cuxx1YLiwFJHSnzMOOoejjWWibs98Mb5KSXVSSXfOg@mail.gmail.com>
-Subject: Re: [PATCH v8 1/6] fs/posix_acl: Update the comments and support
- lightweight cache skipping
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 5 Mar 2018 04:53:54 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D4A616043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From: sibis <sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, jassisinghbrar@gmail.com,
+        p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 0/6] Add support for remoteproc modem-pil on SDM845 SoCs
+Date: Mon,  5 Mar 2018 15:23:27 +0530
+Message-Id: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 2, 2018 at 10:59 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> The code has been missing a way for a ->get_acl method to not cache
-> a return value without risking invalidating a cached value
-> that was set while get_acl() was returning.
->
-> Add that support by implementing to_uncachable_acl, to_cachable_acl,
-> is_uncacheable_acl, and dealing with uncachable acls in get_acl().
+This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
+SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
+to provide for mss reset line. The third patch adds the APCS offset for
+SDM845. The last couple of patches add the resets sequence for Q6 on
+SDM845 and adds helper functions for arbitrary reset assert/deassert
+sequences
 
-I don't like the pointer magic here.  Can't the uncachable bit just be
-added to struct posix_acl?
+V2:
+   Addressed reset-qcom-aoss review suggestions and reworked
+   re-ordering of the active clk and reset sequence in
+   qcom_q6v5_pil
 
- AFAICS that can be done even without increasing the size of that
-struct (e.g. by unioning it with the rcu_head).
+sibis (6):
+  reset: qcom: AOSS (Always on subsystem) reset controller
+  dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
+  mailbox: Add support for Qualcomm SDM845 SoCs
+  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+  remoteproc: qcom: Add support for mss remoteproc on SDM845
+  remoteproc: qcom: Always assert and deassert reset signals in SDM845
 
-Thanks,
-Miklos
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   3 +-
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   5 +-
+ .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 163 ++++++++++++++++++++-
+ drivers/reset/Kconfig                              |  10 ++
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-qcom-aoss.c                    | 151 +++++++++++++++++++
+ include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
+ 9 files changed, 396 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+ create mode 100644 drivers/reset/reset-qcom-aoss.c
+ create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
