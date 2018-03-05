@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELtyHerQt9+JKFEUJGjtx2HrcW3z+HxY1CByTlbOAQU+cEG7yWJozX018JPa82F2rBbkxk69
-ARC-Seal: i=1; a=rsa-sha256; t=1520245573; cv=none;
+X-Google-Smtp-Source: AG47ELt3WZlAugiU4Wt1up2+lF4KxMGR7daDgSkbux4vN5WLrKfhYXxYwsm8OHgPx2k/JeAhyhz5
+ARC-Seal: i=1; a=rsa-sha256; t=1520245585; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hj8m6EkbDtSmDe8bWiAACxGx7iVt2wEQwckc1HoC/CspI0VcKLGn+m7IFkMKM1iiAV
-         xcS8uZHw3Et7tAd3M+b/dARbtGJObDvEOmepslczEFrSVLy7O+4pImDUPxmQ1FzUC5NF
-         kWeI4p72US+ASeXH2Ux1q5rryLvyawe3pD/e39VyYlNn02bS788v33rnr+G13HIw6aGX
-         nqCqweYdbUKarP+jzkCL6AAB5Lh5ZAgRxhbVJCTHJXdE4hOYdClLxONDyxv+MORfvLdE
-         SfPsgQCmgLvGbvrBrGFptROqJ6PbpKeUSU8X3eRPAbmEM/cfE6VErB5ZxYNsir+8MvOf
-         TrbA==
+        b=N0fxA0ArY2xCC7PXFJJ5+oz8cz+R5d5utKkpSlatQIEPqO178o/IjDy94YMvsACTW4
+         +IJ4+7UBVOstzuKhp3Xg0cReoZMXnVcOCdW47WINBL+pFZ71NTdFA4NH8aFmmbSGu1Ue
+         NU+9zUvv51YPscA9xKz73qoew7wmiuM2AsiKtUMXmUDY27ierYuUvjEQ4PgQRhCoFRqP
+         qOiGw3njqw911zHtVHUnOBdPy63jyqwTZw0piqS1BGf+fKUbCnAfb43kYN3QPGn2OW2l
+         0NcEXiL3cwGARx4bICpoFv/psU14AP5poxemYHFhash/Mj4R7ROGBIakJyzgU98CPQQI
+         Pa+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=bee9tXo+hRrFajk/kdCRhIPd4RZwBk3eFmYPaaGYwNU=;
-        b=EJwNvxS+hxfXkRS9zEOibMXsuIiYWjP5NKfrY1aguQzoJYHuRJbzfHjdtGpNnlIyi7
-         Md8RZt0tRJg+yaRtMysLtC/0yJsBiK3GDXh0VYxfU1SYTDMdq/4zu3hLhFPhI2hQHtcX
-         iinrUmeOrnbzTGOc41HsM2XvrS863gBe+Isw79USthZiTByaz+wBc1npMDyZMWegvXPD
-         Ro9d3/eNIyb2vi3qS7GMpgQtgBHNoH2bnXCHeywv8FFxN5CxfcdbsR+LTS6+MyyJL719
-         jcOjXhhdAUrtzvw1zBaHviQB5PaJLDfHzARrDJDp2g0cCz68m1E6Gbb81irKcBH/+lj4
-         86gg==
+        bh=kOeFMKXkH7neppHZYCDuThqU38nRGeLHl0Mw/ynSVtA=;
+        b=fad0np2RNHH6tlN5tNvQ3Vrw2K56REVFkzoOG1gPKDsSr9GR+sdNm6hkAK+MBG68wk
+         ajyyS2gSCabeZ/4/t7ftzLv8ckXMut8/KTvC+rqQ/53CDI3W1tRYejm/uFyL/qY+VnGT
+         0Ce6ndGqYJxEWxpXpX/NFhls/acI6Q8jK6uzQIir2u3z9l0YLsqGdI/oqGtVfBp7cDXz
+         yd5m7JL8MI5cazySbSC7wa6pgCW0BagENXVDMB8kEt93I02Ycn96zJzBBMGLOP6e5EBD
+         +jfbQ7LADJjHhuPkGzC2NvAn+KCRfo2qWOSixOoHzRN+IrG3RtkYApC3BnO43fkbCbMn
+         En6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=jS5r6B1+;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=WY4wf+zB;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=jS5r6B1+;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=WY4wf+zB;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,80 +57,223 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 12/34] x86/entry/32: Simplify debug entry point
-Date: Mon,  5 Mar 2018 11:25:41 +0100
-Message-Id: <1520245563-8444-13-git-send-email-joro@8bytes.org>
+Subject: [PATCH 28/34] x86/pgtable/pae: Use separate kernel PMDs for user page-table
+Date: Mon,  5 Mar 2018 11:25:57 +0100
+Message-Id: <1520245563-8444-29-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093022548148093?=
-X-GMAIL-MSGID: =?utf-8?q?1594093022548148093?=
+X-GMAIL-THRID: =?utf-8?q?1594093034769764493?=
+X-GMAIL-MSGID: =?utf-8?q?1594093034769764493?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The common exception entry code now handles the
-entry-from-sysenter stack situation and makes sure to leave
-with the same stack as it entered the kernel.
-
-So there is no need anymore for the special handling in the
-debug entry code.
+We need separate kernel PMDs in the user page-table when PTI
+is enabled to map the per-process LDT for user-space.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 35 +++--------------------------------
- 1 file changed, 3 insertions(+), 32 deletions(-)
+ arch/x86/mm/pgtable.c | 100 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 81 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 3a84945..b1a5f34ee 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1215,41 +1215,12 @@ END(common_exception)
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index a81d42e..d95bc7b 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -177,6 +177,14 @@ static void pgd_dtor(pgd_t *pgd)
+  */
+ #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
  
- ENTRY(debug)
- 	/*
--	 * #DB can happen at the first instruction of
--	 * entry_SYSENTER_32 or in Xen's SYSENTER prologue.  If this
--	 * happens, then we will be running on a very small stack.  We
--	 * need to detect this condition and switch to the thread
--	 * stack before calling any C code at all.
--	 *
--	 * If you edit this code, keep in mind that NMIs can happen in here.
-+	 * Entry from sysenter is now handled in common_exception
- 	 */
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
--
--	SAVE_ALL
--	ENCODE_FRAME_POINTER
--	xorl	%edx, %edx			# error code 0
--	movl	%esp, %eax			# pt_regs pointer
--
--	/* Are we currently on the SYSENTER stack? */
--	movl	PER_CPU_VAR(cpu_entry_area), %ecx
--	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
--	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
--	cmpl	$SIZEOF_entry_stack, %ecx
--	jb	.Ldebug_from_sysenter_stack
--
--	TRACE_IRQS_OFF
--	call	do_debug
--	jmp	ret_from_exception
--
--.Ldebug_from_sysenter_stack:
--	/* We're on the SYSENTER stack.  Switch off. */
--	movl	%esp, %ebx
--	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
--	TRACE_IRQS_OFF
--	call	do_debug
--	movl	%ebx, %esp
--	jmp	ret_from_exception
-+	pushl	$do_debug
-+	jmp	common_exception
- END(debug)
++/*
++ * We allocate separate PMDs for the kernel part of the user page-table
++ * when PTI is enabled. We need them to map the per-process LDT into the
++ * user-space page-table.
++ */
++#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
++					KERNEL_PGD_PTRS : 0)
++
+ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
+ {
+ 	paravirt_alloc_pmd(mm, __pa(pmd) >> PAGE_SHIFT);
+@@ -197,14 +205,14 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
  
+ /* No need to prepopulate any pagetable entries in non-PAE modes. */
+ #define PREALLOCATED_PMDS	0
+-
++#define PREALLOCATED_USER_PMDS	 0
+ #endif	/* CONFIG_X86_PAE */
+ 
+-static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
++static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+ {
+ 	int i;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++)
++	for(i = 0; i < count; i++)
+ 		if (pmds[i]) {
+ 			pgtable_pmd_page_dtor(virt_to_page(pmds[i]));
+ 			free_page((unsigned long)pmds[i]);
+@@ -212,7 +220,7 @@ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 		}
+ }
+ 
+-static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
++static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+ {
+ 	int i;
+ 	bool failed = false;
+@@ -221,7 +229,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 	if (mm == &init_mm)
+ 		gfp &= ~__GFP_ACCOUNT;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++) {
++	for(i = 0; i < count; i++) {
+ 		pmd_t *pmd = (pmd_t *)__get_free_page(gfp);
+ 		if (!pmd)
+ 			failed = true;
+@@ -236,7 +244,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+ 	}
+ 
+ 	if (failed) {
+-		free_pmds(mm, pmds);
++		free_pmds(mm, pmds, count);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -249,23 +257,38 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
+  * preallocate which never got a corresponding vma will need to be
+  * freed manually.
+  */
++static void mop_up_one_pmd(struct mm_struct *mm, pgd_t *pgdp)
++{
++	pgd_t pgd = *pgdp;
++
++	if (pgd_val(pgd) != 0) {
++		pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
++
++		*pgdp = native_make_pgd(0);
++
++		paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
++		pmd_free(mm, pmd);
++		mm_dec_nr_pmds(mm);
++	}
++}
++
+ static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
+ {
+ 	int i;
+ 
+-	for(i = 0; i < PREALLOCATED_PMDS; i++) {
+-		pgd_t pgd = pgdp[i];
++	for(i = 0; i < PREALLOCATED_PMDS; i++)
++		mop_up_one_pmd(mm, &pgdp[i]);
+ 
+-		if (pgd_val(pgd) != 0) {
+-			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 
+-			pgdp[i] = native_make_pgd(0);
++	if (!static_cpu_has(X86_FEATURE_PTI))
++		return;
+ 
+-			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
+-			pmd_free(mm, pmd);
+-			mm_dec_nr_pmds(mm);
+-		}
+-	}
++	pgdp = kernel_to_user_pgdp(pgdp);
++
++	for (i = 0; i < PREALLOCATED_USER_PMDS; i++)
++		mop_up_one_pmd(mm, &pgdp[i + KERNEL_PGD_BOUNDARY]);
++#endif
+ }
+ 
+ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
+@@ -291,6 +314,38 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
+ 	}
+ }
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
++				     pgd_t *k_pgd, pmd_t *pmds[])
++{
++	pgd_t *s_pgd = kernel_to_user_pgdp(swapper_pg_dir);
++	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
++	p4d_t *u_p4d;
++	pud_t *u_pud;
++	int i;
++
++	u_p4d = p4d_offset(u_pgd, 0);
++	u_pud = pud_offset(u_p4d, 0);
++
++	s_pgd += KERNEL_PGD_BOUNDARY;
++	u_pud += KERNEL_PGD_BOUNDARY;
++
++	for (i = 0; i < PREALLOCATED_USER_PMDS; i++, u_pud++, s_pgd++) {
++		pmd_t *pmd = pmds[i];
++
++		memcpy(pmd, (pmd_t *)pgd_page_vaddr(*s_pgd),
++		       sizeof(pmd_t) * PTRS_PER_PMD);
++
++		pud_populate(mm, u_pud, pmd);
++	}
++
++}
++#else
++static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
++				     pgd_t *k_pgd, pmd_t *pmds[])
++{
++}
++#endif
  /*
+  * Xen paravirt assumes pgd table should be in one page. 64 bit kernel also
+  * assumes that pgd should be in one page.
+@@ -371,6 +426,7 @@ static inline void _pgd_free(pgd_t *pgd)
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+ 	pgd_t *pgd;
++	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
+ 	pmd_t *pmds[PREALLOCATED_PMDS];
+ 
+ 	pgd = _pgd_alloc();
+@@ -380,12 +436,15 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ 	mm->pgd = pgd;
+ 
+-	if (preallocate_pmds(mm, pmds) != 0)
++	if (preallocate_pmds(mm, pmds, PREALLOCATED_PMDS) != 0)
+ 		goto out_free_pgd;
+ 
+-	if (paravirt_pgd_alloc(mm) != 0)
++	if (preallocate_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS) != 0)
+ 		goto out_free_pmds;
+ 
++	if (paravirt_pgd_alloc(mm) != 0)
++		goto out_free_user_pmds;
++
+ 	/*
+ 	 * Make sure that pre-populating the pmds is atomic with
+ 	 * respect to anything walking the pgd_list, so that they
+@@ -395,13 +454,16 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+ 
+ 	pgd_ctor(mm, pgd);
+ 	pgd_prepopulate_pmd(mm, pgd, pmds);
++	pgd_prepopulate_user_pmd(mm, pgd, u_pmds);
+ 
+ 	spin_unlock(&pgd_lock);
+ 
+ 	return pgd;
+ 
++out_free_user_pmds:
++	free_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS);
+ out_free_pmds:
+-	free_pmds(mm, pmds);
++	free_pmds(mm, pmds, PREALLOCATED_PMDS);
+ out_free_pgd:
+ 	_pgd_free(pgd);
+ out:
 -- 
 2.7.4
