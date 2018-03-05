@@ -1,30 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932979AbeCEImC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 03:42:02 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17243 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932864AbeCEImB (ORCPT
+        id S933043AbeCEInU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 03:43:20 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53101 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932681AbeCEInQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:42:01 -0500
-Subject: Re: [PATCH] ARM: mach-stm32: restore reboot capabilities
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        <linux@armlinux.org.uk>, <mcoquelin.stm32@gmail.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-References: <20180227143607.5583-1-benjamin.gaignard@st.com>
+        Mon, 5 Mar 2018 03:43:16 -0500
+Subject: Re: [PATCH] ARM: dts: stm32: add SPI support on STM32H743 SoC
+To: Amelie Delaunay <amelie.delaunay@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1519814190-3208-1-git-send-email-amelie.delaunay@st.com>
 From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <e98c78a4-e5d3-1b90-7ca5-7ab191dc8b43@st.com>
-Date: Mon, 5 Mar 2018 09:41:28 +0100
+Message-ID: <f14b8e89-6487-1a1c-7f66-a0dcd3cd705b@st.com>
+Date: Mon, 5 Mar 2018 09:42:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180227143607.5583-1-benjamin.gaignard@st.com>
+In-Reply-To: <1519814190-3208-1-git-send-email-amelie.delaunay@st.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
  (10.75.127.8)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_03:,,
  signatures=0
@@ -32,48 +34,106 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin
+Hi Amélie
 
-On 02/27/2018 03:36 PM, Benjamin Gaignard wrote:
-> To be able to reboot the platform we need to use armv7m_restart for STM32
-> SoCs using ARMv7 cores.
+On 02/28/2018 11:36 AM, Amelie Delaunay wrote:
+> This patch adds all SPI instances of the STM32H743 SoC.
 > 
-> Fixes: e0644101bd2f ("ARM: mach-stm32: prepare stm32 family to welcome armv7 architecture)
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 > ---
-> NOTE: This patch should be applied only on
-> git://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
-> until this patch: https://lkml.org/lkml/2018/2/26/386
-> find it way to mainline KBuild will complain about it.
-> 
->   arch/arm/mach-stm32/board-dt.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/mach-stm32/board-dt.c b/arch/arm/mach-stm32/board-dt.c
-> index 06911ad60cea..011d57b488c2 100644
-> --- a/arch/arm/mach-stm32/board-dt.c
-> +++ b/arch/arm/mach-stm32/board-dt.c
-> @@ -7,6 +7,9 @@
->   
->   #include <linux/kernel.h>
->   #include <asm/mach/arch.h>
-> +#ifdef CONFIG_ARM_SINGLE_ARMV7M
-> +#include <asm/v7m.h>
-> +#endif
->   
->   static const char *const stm32_compat[] __initconst = {
->   	"st,stm32f429",
-> @@ -20,4 +23,7 @@ static const char *const stm32_compat[] __initconst = {
->   
->   DT_MACHINE_START(STM32DT, "STM32 (Device Tree Support)")
->   	.dt_compat = stm32_compat,
-> +#ifdef CONFIG_ARM_SINGLE_ARMV7M
-> +	.restart = armv7m_restart,
-> +#endif
->   MACHINE_END
 
 Applied on stm32-next.
 
 Thanks.
 Alex
+
+>   arch/arm/boot/dts/stm32h743.dtsi | 61 ++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 61 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+> index 3a28cd2..2bb103e 100644
+> --- a/arch/arm/boot/dts/stm32h743.dtsi
+> +++ b/arch/arm/boot/dts/stm32h743.dtsi
+> @@ -101,6 +101,27 @@
+>   			};
+>   		};
+>   
+> +		spi2: spi@40003800 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x40003800 0x400>;
+> +			interrupts = <36>;
+> +			clocks = <&rcc SPI2_CK>;
+> +			status = "disabled";
+> +
+> +		};
+> +
+> +		spi3: spi@40003c00 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x40003c00 0x400>;
+> +			interrupts = <51>;
+> +			clocks = <&rcc SPI3_CK>;
+> +			status = "disabled";
+> +		};
+> +
+>   		usart2: serial@40004400 {
+>   			compatible = "st,stm32f7-uart";
+>   			reg = <0x40004400 0x400>;
+> @@ -141,6 +162,36 @@
+>   			clocks = <&rcc USART1_CK>;
+>   		};
+>   
+> +		spi1: spi@40013000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x40013000 0x400>;
+> +			interrupts = <35>;
+> +			clocks = <&rcc SPI1_CK>;
+> +			status = "disabled";
+> +		};
+> +
+> +		spi4: spi@40013400 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x40013400 0x400>;
+> +			interrupts = <84>;
+> +			clocks = <&rcc SPI4_CK>;
+> +			status = "disabled";
+> +		};
+> +
+> +		spi5: spi@40015000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x40015000 0x400>;
+> +			interrupts = <85>;
+> +			clocks = <&rcc SPI5_CK>;
+> +			status = "disabled";
+> +		};
+> +
+>   		dma1: dma@40020000 {
+>   			compatible = "st,stm32-dma";
+>   			reg = <0x40020000 0x400>;
+> @@ -262,6 +313,16 @@
+>   			reg = <0x58000400 0x400>;
+>   		};
+>   
+> +		spi6: spi@58001400 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32h7-spi";
+> +			reg = <0x58001400 0x400>;
+> +			interrupts = <86>;
+> +			clocks = <&rcc SPI6_CK>;
+> +			status = "disabled";
+> +		};
+> +
+>   		lptimer2: timer@58002400 {
+>   			#address-cells = <1>;
+>   			#size-cells = <0>;
+> 
