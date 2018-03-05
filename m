@@ -1,114 +1,81 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1837571-1520262100-2-9989105655074001829
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520262099; b=YkR+9zfFJLCmTcsiRVTZ0Aw6g1pyOGHjSqcI0u+EdAzRE0q
-    2T2oE3MzdFU5La8/aLjcDbQymSM+UkxhMeG43tIqzdfhKIUXB5kfwj9y/h/E/wMv
-    E76JgFRuh2QBieZOgJUBycX77aSGxarYVWf9j9fHvatbs9k82/c9QaoJo6uThp4U
-    bvGewuCy7Jma9oD+AUS2zowwNPPGKYNLqI06W31Xa/WneJDBYw/F1HMqGNi7izIV
-    cVlZCmBwkDHdF7EjgyH9j47Xj3dvwXCQhHs7ffQGCc5J/mTjbSQcd+C7r5MQMhMs
-    GUR4I6+1IjGKVbF6Go5KMG2uDTlREU1yDXK8GRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520262099; bh=uFu2qSZwZ6HEXOvsX/XuhBUerl
-    fl7AdQBGtlYwrAkBM=; b=tZh1+f7CXufBjO5yyIS8f8JafgXM/gHOgPs6PiVGJP
-    SfNT5dXv43G959uQw3Z79mFpGRTpVd09C9mWYWWWQ18CXV0bKk62o7bILBsfjiIn
-    13OMKi20c4G+HZLrvErQonOdRReLrzwAx5Kal2UYuO/zdlChDP+JWqb2WWl9pOYb
-    ZsQ/DKTX+bAGcjtVZk8QGZcFem2KxLHgn1Iiv4kJ1W5KHHcrrEfDkXG/TDpbmxog
-    r/cYKQBaHTgOOyZAzRboV0Biao5mST5xBBo8ho9UGJb01RoaV3husL1x6z8f8Q4X
-    DFwtoaD7stGbbio/s3umO8TtH1Ce9AdH5N7sLtodr6Gw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752144AbeCEPBh (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 10:01:37 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44266 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751880AbeCEPBg (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:01:36 -0500
-From: <patrice.chotard@st.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <linux-serial@vger.kernel.org>
-CC: <patrice.chotard@st.com>
-Subject: [PATCH 2/2] tty: st-asc: Convert tty alias in lowercase
-Date: Mon, 5 Mar 2018 16:00:25 +0100
-Message-ID: <1520262025-21088-3-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520262025-21088-1-git-send-email-patrice.chotard@st.com>
-References: <1520262025-21088-1-git-send-email-patrice.chotard@st.com>
+Return-Path: <elfring@users.sourceforge.net>
+X-Google-Smtp-Source: AG47ELvzxpGUo7tvZ5AqJUR6mFBGMGDqAnVQihjdtkZDjTBOLBS1+iZpcaKD0bL7jlPBW1QuXE2O
+ARC-Seal: i=1; a=rsa-sha256; t=1520266769; cv=none;
+        d=google.com; s=arc-20160816;
+        b=HVf9BXT5u/ND5hBuWCg/YmiHtvVhumH+8rsnfS8cOb4g+L7pUzg19kMehj9zDyN+5W
+         8qErhlL3Fe8k54zmKVTUieTkHN+FY0kIWI/d0KagX7RLoLOpOhXLNuMGP9vBpClDc28A
+         bOXzIY7u+Kt4xz1Ac87ilNHeBgWisTXEzgus7YgDLijnZkJmy1TM2GRR+obQb2ralPm6
+         tdlD41FkM/GGa2/GVm0gT14u9NhTDz80zgF5D48p3wohvEEjXwSg6W07QNK4DvsuskPp
+         A1j1jv+4gMXHB8MXrpI1mgjP70uwWTWRaWTScFzdBs1Ylu2+1c0sZ+SLDRq1rwasi+NW
+         yALA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:mime-version:user-agent
+         :date:message-id:subject:from:cc:to:arc-authentication-results;
+        bh=sX0Vxz1FDbN/B8PDRAzr2kHn5gDmzotRefHPSNDiBYA=;
+        b=wa3RSb63TGjb1207+QDcg1tXjvaxG+vBFBieoCvOWUz6WcGOBKnygQvV5Agg9z/5wr
+         KFoavV47BJh+AZgoGBJJtLksQsfqT6665Ry/37kIEtSsDJsSNHpWnfNLzpg3uIBkWUiu
+         F46TifbKRxnlZJgypLrRoeZ1rjzvy2lNgYrnM0jG+yyGmmrbmZF5AAETRlelNBxf9mOS
+         KKCL2i1e5rFih7+DnZISxS9qh0DIHhPje7/V+Wdcg2UfDJneKi0CTnSPY4A5v9PqyGCK
+         5uFm8fvh+ZQwskfBya+26afATWG/+VLs4seVRdpivjjGArG6xwBjGTO5JPLGD3lgZvKk
+         OxKg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 217.72.192.78 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of elfring@users.sourceforge.net designates 217.72.192.78 as permitted sender) smtp.mailfrom=elfring@users.sourceforge.net;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=sourceforge.net
+To: kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ George Zhang <georgezhang@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy King <acking@vmware.com>,
+ Dmitry Torokhov <dtor@vmware.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/2] VMCI: Adjustments for three function implementations
+Message-ID: <66411a1a-fd12-dc31-fc2e-800ff6cea1ed@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 17:19:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_06:,,
- signatures=0
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:VSv8qMdeS6LahgsiE/NfwtlYIr7vqHRkIVc58fbbj7G8wHuFJZh
+ KY3UC1zhNSl5UAO1mHS0r7Qf9SsKo8NgP3JNQgpGNp16wYl4FAF0HjTOx+IAL85r9FcDQJS
+ azo+/mv5TzlzVDlPjJl4hgHD07tUDxrEjbC9+AYtczT13ywd/pZWhrUp2MGtbHSkC858ufA
+ wTfTDZ4mircIeXGT3OBnA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HDNTndxFNjA=:Z1ABxASDyIXUdeYVQfg/y9
+ u+NmR8AtLiLeto4MN84nFlhJbRoumC2m9MnSmw6LoeqWBilkL4Z8U/Mf0QhbNWscJAUFgdBXz
+ qrZkpsqMKNLVYdc6icaTjjgJy5Ce7cgizrVeFahGkX71xAeAripuOP+yWBp4dXsx5gm+FfQQ/
+ dbkGhnmm5C56AVMfxaDUx8Rke0C84XWsYRePS19kEl0XTZWBWZvS+2Vdh+oepvNHulEP4mKoi
+ 4PywrHC86UaPcDXY5yICFAL/MqyWT0QRt3zgkIZrcMP8pYBW/E2/t3/c+Cg+WjB44Cu7R39or
+ MBbLuhiSw3PgJlCULoOcJvgl83nfIveehg7AMraKk9E4gRZNQyjBgBeQA6oguA5QmZpMOrwfZ
+ fDvo2FGdEsqWyqDVt/1xJbQuGigOFfWMIardafTa1FoyZJIXg/Y84DRcJWMYWWu3vGNU37oz7
+ yGpxcKzIAt7aDmg/MHok+Keb6UkShAfEQIyoyw6GEdXQZWj5iT44tKnTB1hk2eKavhYHtDGHR
+ /LqjYqTFvkYXGfzQt8vuLn9v89Y0D7zyy5lYfiOFb3eDmV8exX+ihEmQSuO14m40NnpAKFIDs
+ dYlzj/y56EaninGAR5OZa9Vg+5SpVbISrzlMikFr1b+H1k7xUdKI7yjuuUwdHRjvFt5pi0FXY
+ koSQWt/GFsKaZUdD4viJW2o2e0nRgB/Xn07JdWtq2F6/RzyEL0ssFskJ4MPko2HU1YSpRuFHi
+ TvgnKpcXN2r/OYWbeitj2UBD1/tnMD2JQsv84bf5g2fo2+ut1q/0HyZzZOyROjZ53Bbxzge6W
+ FZX5+BNIjNR1afK+qNXqSWZ41c2W1uV+M8HYYLzh0rnl4tVUmc=
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594115248801460604?=
+X-GMAIL-MSGID: =?utf-8?q?1594115248801460604?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 17:12:34 +0100
 
-Since dtc v1.4.6-9-gaadd0b65c987, aliases property name
-must include only lowercase and '-'.
+Two update suggestions were taken into account
+from static source code analysis.
 
-After having converted all STi boards serial aliases in lowercase,
-st-asc driver need to be updated accordingly as tty aliases id is
-retrieved using of_alias_get_id(np, ASC_SERIAL_NAME);
+Markus Elfring (2):
+  Use memdup_user() rather than duplicating its implementation
+  Improve a size determination in two functions
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
- drivers/tty/serial/st-asc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/vmw_vmci/vmci_context.c |  2 +-
+ drivers/misc/vmw_vmci/vmci_host.c    | 21 +++++----------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
-index c763253514e9..8d2167759258 100644
---- a/drivers/tty/serial/st-asc.c
-+++ b/drivers/tty/serial/st-asc.c
-@@ -29,7 +29,7 @@
- #include <linux/gpio/consumer.h>
- 
- #define DRIVER_NAME "st-asc"
--#define ASC_SERIAL_NAME "ttyAS"
-+#define ASC_SERIAL_NAME "ttyas"
- #define ASC_FIFO_SIZE 16
- #define ASC_MAX_PORTS 8
- 
 -- 
-1.9.1
-
+2.16.2
