@@ -1,36 +1,36 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2602457-1520927192-2-13892285682052469438
+X-Cyrus-Session-Id: sloti22d1t05-2624115-1520285940-2-8071869412736533469
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
   MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520927191; b=BkSArnsUgUHD8/vBvwB3wCkhcFOXZRzRzh0FGer0ZAOCUCu
-    HntNflB1eJO5l7/ba2h8h3m7KBNfAGxE3WoHdyJKomQG0PGs+C3X36C3Bn7jHPf5
-    KU4dvd7Jt3b7pttCAH8mKNdqnqeO4JEYg7DDUXkHe0ZzKyf6NANdwfqfaYZyLYBQ
-    CTuZDypKlACIwKWfWlaD4v77JtJcqgy9EdVADlA7ekQrCFoFdvxfq/rc9aEvkTNT
-    Xz2fEMNHeFI+vQVrxjGebZGYdyzw24C71ie+xy4R1nydYYmn936w6HUoSFy/2JqF
-    Xdd1u1W5G0dvhR3y7fFMoc7z1cmEyVtkRI7LQFg==
+    t=1520285938; b=s7A63XgBK4LcTBpECapX7kWPWDH8yJhJxQ6wN5AnaEy4ChR
+    ryJvJ16pA3Jbd+AeLLdmFnNpn9u6+4ndUdTDqAQx9pUlduhc6auuPvt0/ieuG/Cu
+    boF+cAaWu1eQAt3NqbK97u9Y7ss4K/hVUzlIy5vSADnMFdIwb/OKWFldHyVP1eJH
+    mu3YpVbYb3bSseqJ0Fc+uJv3ZVcX56DcD8k645SgNmVwWTbeUfKCINYYmSjgO4ml
+    FHfO2+HjNwKS/ccMyq/lr4aRW3g3jEZeuKET7Wwi7MJj7nH7oi+Ng40PFqvxDdZX
+    2ktOUNGPpzabFwxLREjHfehHzJBd/FvzzELG4Kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520927191; bh=9sI3MDZ8AbwPa425SWLt0BGDpv
-    NFHuBc0peWpkT9MiA=; b=Ve29SyX+bhWhAErFDRpQbzLt8ZMGMaeGRIu7fzdi5u
-    d7cStk1e2in8L5jtTdGbgKLJGMF7XymQyyT32IZWXymWcGyPgJSmbAuV45EjCB1W
-    HyFPy8qiexOoACtf8d9XdTsy1pXVIs3m5pFkyPCtF0BY0dj4XikLKhOWjycF1itb
-    WH1G6S3y7sV5Udv3I132gprIDBLHi5e/sXlCzx7fXe8gS2Dp5OCQAy8zA53v7O99
-    oWcSEtcs8zvdkBaZ2a8Q3ReqRalq9zMUJSk/3ChZWBn8Q7VjGhMshYgBI3dm3pHY
-    o58CRaD8aXSZTEwi5oFlH43GEd8V10zCboRO750z1I1w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520285938;
+    bh=dOaFgALFfpbuDF/36ScnX0AJ6vJsrhqE0DkrTa7kdfI=; b=RMCrFp/dI2zw
+    FI5LAA7wqtT27OKDvB2Jylnhk7yJ5Oq0l0UpVB3jghEkvVlIy6AfUfUlErRj4ZbS
+    H/lV6MWg51szFGimVo+sFCjBiddMKlG2VPmX+bhpLxBMnAMGUfC6bEZW/bIf+72n
+    Rn3iLbYd0KPDc5pFaN7kMMEFBoZhYo9rUTb4kBP3JsVdSXtdU9zW5VBdLeKqeVR/
+    LLOERTkJLDAemIMewyJ/Ey7YeadETR1Yp0I27guGFdYdcuckOlC190hqNFjHozrd
+    MhjTpSYnbWVHsnnTJsG5Xd/3jUIeRgMfwY/8bX3q8dIQSr9wXFbwo1PtUITNlYnW
+    +6Mh0NShGg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=PaeE5P/4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,9 +38,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=PaeE5P/4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,96 +49,199 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751723AbeCMHq2 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 03:46:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:56481 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751615AbeCMHq2 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 13 Mar 2018 03:46:28 -0400
-Date: Tue, 13 Mar 2018 08:46:26 +0100
+        id S1752861AbeCEViP (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 16:38:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60658 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753212AbeCEV1w (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 5 Mar 2018 16:27:52 -0500
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: aio poll, io_pgetevents and a new in-kernel poll API V5
-Message-ID: <20180313074626.GA32614@lst.de>
-References: <20180305212743.16664-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: [PATCH 14/36] aio: implement IOCB_CMD_POLL
+Date: Mon,  5 Mar 2018 13:27:21 -0800
+Message-Id: <20180305212743.16664-15-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180305212743.16664-1-hch@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20180305212743.16664-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-ping?
+Simple one-shot poll through the io_submit() interface.  To poll for
+a file descriptor the application should submit an iocb of type
+IOCB_CMD_POLL.  It will poll the fd for the events specified in the
+the first 32 bits of the aio_buf field of the iocb.
 
-On Mon, Mar 05, 2018 at 01:27:07PM -0800, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this series adds support for the IOCB_CMD_POLL operation to poll for the
-> readyness of file descriptors using the aio subsystem.  The API is based
-> on patches that existed in RHAS2.1 and RHEL3, which means it already is
-> supported by libaio.  To implement the poll support efficiently new
-> methods to poll are introduced in struct file_operations:  get_poll_head
-> and poll_mask.  The first one returns a wait_queue_head to wait on
-> (lifetime is bound by the file), and the second does a non-blocking
-> check for the POLL* events.  This allows aio poll to work without
-> any additional context switches, unlike epoll.
-> 
-> To make the interface fully useful a new io_pgetevents system call is
-> added, which atomically saves and restores the signal mask over the
-> io_pgetevents system call.  It it the logical equivalent to pselect and
-> ppoll for io_pgetevents.
-> 
-> The corresponding libaio changes for io_pgetevents support and
-> documentation, as well as a test case will be posted in a separate
-> series.
-> 
-> The changes were sponsored by Scylladb, and improve performance
-> of the seastar framework up to 10%, while also removing the need
-> for a privileged SCHED_FIFO epoll listener thread.
-> 
->     git://git.infradead.org/users/hch/vfs.git aio-poll.5
-> 
-> Gitweb:
-> 
->     http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-poll.5
-> 
-> Libaio changes:
-> 
->     https://pagure.io/libaio.git io-poll
-> 
-> Seastar changes (not updated for the new io_pgetevens ABI yet):
-> 
->     https://github.com/avikivity/seastar/commits/aio
-> 
-> Changes since V4:
->  - rebased ontop of Linux 4.16-rc4
-> 
-> Changes since V3:
->  - remove the pre-sleep ->poll_mask call in vfs_poll,
->    allow ->get_poll_head to return POLL* values.
-> 
-> Changes since V2:
->  - removed a double initialization
->  - new vfs_get_poll_head helper
->  - document that ->get_poll_head can return NULL
->  - call ->poll_mask before sleeping
->  - various ACKs
->  - add conversion of random to ->poll_mask
->  - add conversion of af_alg to ->poll_mask
->  - lacking ->poll_mask support now returns -EINVAL for IOCB_CMD_POLL
->  - reshuffled the series so that prep patches and everything not
->    requiring the new in-kernel poll API is in the beginning
-> 
-> Changes since V1:
->  - handle the NULL ->poll case in vfs_poll
->  - dropped the file argument to the ->poll_mask socket operation
->  - replace the ->pre_poll socket operation with ->get_poll_head as
->    in the file operations
----end quoted text---
+Unlike poll or epoll without EPOLLONESHOT this interface always works
+in one shot mode, that is once the iocb is completed, it will have to be
+resubmitted.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/aio.c                     | 102 +++++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/aio_abi.h |   6 +--
+ 2 files changed, 104 insertions(+), 4 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index da87cbf7c67a..0bafc4975d51 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -5,6 +5,7 @@
+  *	Implements an efficient asynchronous io interface.
+  *
+  *	Copyright 2000, 2001, 2002 Red Hat, Inc.  All Rights Reserved.
++ *	Copyright 2018 Christoph Hellwig.
+  *
+  *	See ../COPYING for licensing terms.
+  */
+@@ -156,9 +157,17 @@ struct kioctx {
+ 	unsigned		id;
+ };
+ 
++struct poll_iocb {
++	struct file		*file;
++	__poll_t		events;
++	struct wait_queue_head	*head;
++	struct wait_queue_entry	wait;
++};
++
+ struct aio_kiocb {
+ 	union {
+ 		struct kiocb		rw;
++		struct poll_iocb	poll;
+ 	};
+ 
+ 	struct kioctx		*ki_ctx;
+@@ -1565,6 +1574,96 @@ static ssize_t aio_write(struct kiocb *req, struct iocb *iocb, bool vectored,
+ 	return ret;
+ }
+ 
++static void __aio_complete_poll(struct poll_iocb *req, __poll_t mask)
++{
++	fput(req->file);
++	aio_complete(container_of(req, struct aio_kiocb, poll),
++			mangle_poll(mask), 0);
++}
++
++static void aio_complete_poll(struct poll_iocb *req, __poll_t mask)
++{
++	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
++
++	if (!(iocb->flags & AIO_IOCB_CANCELLED))
++		__aio_complete_poll(req, mask);
++}
++
++static int aio_poll_cancel(struct kiocb *rw)
++{
++	struct aio_kiocb *iocb = container_of(rw, struct aio_kiocb, rw);
++
++	remove_wait_queue(iocb->poll.head, &iocb->poll.wait);
++	__aio_complete_poll(&iocb->poll, 0); /* no events to report */
++	return 0;
++}
++
++static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
++		void *key)
++{
++	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
++	struct file *file = req->file;
++	__poll_t mask = key_to_poll(key);
++
++	assert_spin_locked(&req->head->lock);
++
++	/* for instances that support it check for an event match first: */
++	if (mask && !(mask & req->events))
++		return 0;
++
++	mask = vfs_poll_mask(file, req->events);
++	if (!mask)
++		return 0;
++
++	__remove_wait_queue(req->head, &req->wait);
++	aio_complete_poll(req, mask);
++	return 1;
++}
++
++static ssize_t aio_poll(struct aio_kiocb *aiocb, struct iocb *iocb)
++{
++	struct poll_iocb *req = &aiocb->poll;
++	unsigned long flags;
++	__poll_t mask;
++
++	/* reject any unknown events outside the normal event mask. */
++	if ((u16)iocb->aio_buf != iocb->aio_buf)
++		return -EINVAL;
++	/* reject fields that are not defined for poll */
++	if (iocb->aio_offset || iocb->aio_nbytes || iocb->aio_rw_flags)
++		return -EINVAL;
++
++	req->events = demangle_poll(iocb->aio_buf) | POLLERR | POLLHUP;
++	req->file = fget(iocb->aio_fildes);
++	if (unlikely(!req->file))
++		return -EBADF;
++
++	req->head = vfs_get_poll_head(req->file, req->events);
++	if (!req->head) {
++		fput(req->file);
++		return -EINVAL; /* same as no support for IOCB_CMD_POLL */
++	}
++	if (IS_ERR(req->head)) {
++		mask = PTR_TO_POLL(req->head);
++		goto done;
++	}
++
++	init_waitqueue_func_entry(&req->wait, aio_poll_wake);
++
++	spin_lock_irqsave(&req->head->lock, flags);
++	mask = vfs_poll_mask(req->file, req->events);
++	if (!mask) {
++		__kiocb_set_cancel_fn(aiocb, aio_poll_cancel,
++				AIO_IOCB_DELAYED_CANCEL);
++		__add_wait_queue(req->head, &req->wait);
++	}
++	spin_unlock_irqrestore(&req->head->lock, flags);
++done:
++	if (mask)
++		aio_complete_poll(req, mask);
++	return -EIOCBQUEUED;
++}
++
+ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 			 struct iocb *iocb, bool compat)
+ {
+@@ -1628,6 +1727,9 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 	case IOCB_CMD_PWRITEV:
+ 		ret = aio_write(&req->rw, iocb, true, compat);
+ 		break;
++	case IOCB_CMD_POLL:
++		ret = aio_poll(req, iocb);
++		break;
+ 	default:
+ 		pr_debug("invalid aio operation %d\n", iocb->aio_lio_opcode);
+ 		ret = -EINVAL;
+diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
+index 2c0a3415beee..ed0185945bb2 100644
+--- a/include/uapi/linux/aio_abi.h
++++ b/include/uapi/linux/aio_abi.h
+@@ -39,10 +39,8 @@ enum {
+ 	IOCB_CMD_PWRITE = 1,
+ 	IOCB_CMD_FSYNC = 2,
+ 	IOCB_CMD_FDSYNC = 3,
+-	/* These two are experimental.
+-	 * IOCB_CMD_PREADX = 4,
+-	 * IOCB_CMD_POLL = 5,
+-	 */
++	/* 4 was the experimental IOCB_CMD_PREADX */
++	IOCB_CMD_POLL = 5,
+ 	IOCB_CMD_NOOP = 6,
+ 	IOCB_CMD_PREADV = 7,
+ 	IOCB_CMD_PWRITEV = 8,
+-- 
+2.14.2
+
