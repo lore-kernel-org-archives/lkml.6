@@ -1,105 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752321AbeCEPzc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:55:32 -0500
-Received: from mail.phytec.eu ([217.6.246.34]:38133 "EHLO root.phytec.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbeCEPz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:55:29 -0500
-Subject: Re: [PATCH] ARM: dts: rockchip: Add dp83867 CLK_OUT muxing
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, w.egorov@phytec.de
-References: <1520253911-46218-1-git-send-email-d.schultz@phytec.de>
- <3530074.WSbKf9j6h0@phil>
-From: Daniel Schultz <d.schultz@phytec.de>
-Message-ID: <cecf3c08-d43d-c340-c5ff-30e41e338469@phytec.de>
-Date: Mon, 5 Mar 2018 16:57:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752586AbeCEP4D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:56:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52554 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751679AbeCEP4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 10:56:02 -0500
+Date: Mon, 5 Mar 2018 15:55:57 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Shanker Donthineni <shankerd@codeaurora.org>,
+        Thomas Speier <tspeier@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
+ hardening
+Message-ID: <20180305155557.2iidi6346zcwz6r2@lakrids.cambridge.arm.com>
+References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+ <CAOZdJXV3QE2mKSf3GvTSdoVmfjJ1UEXPY8OJfW=-9E1dN1TeZA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3530074.WSbKf9j6h0@phil>
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 05.03.2018 16:55:27,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 05.03.2018 16:55:27
-X-TNEFEvaluated: 1
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOZdJXV3QE2mKSf3GvTSdoVmfjJ1UEXPY8OJfW=-9E1dN1TeZA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Mar 05, 2018 at 09:52:19AM -0600, Timur Tabi wrote:
+> On Fri, Mar 2, 2018 at 3:50 PM, Shanker Donthineni
+> <shankerd@codeaurora.org> wrote:
+> > diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> > index bb26382..6ecc249 100644
+> > --- a/arch/arm64/include/asm/cpucaps.h
+> > +++ b/arch/arm64/include/asm/cpucaps.h
+> > @@ -43,7 +43,7 @@
+> >  #define ARM64_SVE                              22
+> >  #define ARM64_UNMAP_KERNEL_AT_EL0              23
+> >  #define ARM64_HARDEN_BRANCH_PREDICTOR          24
+> > -#define ARM64_HARDEN_BP_POST_GUEST_EXIT                25
+> > +/* #define ARM64_UNALLOCATED_ENTRY                     25 */
+> 
+> Why not just delete the entry?  
 
+Deleting the entry, and renumbering subsequent entries is the right
+thing to do.
 
-On 03/05/2018 03:15 PM, Heiko Stuebner wrote:
-> Hi Daniel,
->
-> Am Montag, 5. März 2018, 13:45:11 CET schrieb Daniel Schultz:
->> The CLK_O_SEL default is synchronous to XI input clock, which is 25 MHz.
->> Set CLK_O_SEL to channel A transmit clock so we have 125 MHz on CLK_OUT.
->>
->> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
->> ---
->>
->> The binding will be added with the next merge of net-next:
->> https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/commit/?id=9708fb630d19ee51ae3aeb3a533e3010da0e8570
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/log/Documentation/devicetree/bindings/net/ti,dp83867.txt
+> Is ARM64_NCAPS never supposed to get smaller?
 
-If I search in the master branch, I get the patch. Did I searched wrong?
+It's internal to the kernel, and it makes sense to keep it as small as
+possible. There are datastructures allocated for each entry, like the
+static key array.
 
-Daniel
-> I did find the commit, but no related change of the dp83867 dt binding
-> document [0], including a review by dt-maintainers.
->
-> While your property does not look overly complicated, the binding
-> should be updated nontheless.
->
->
-> Heiko
->
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/log/Documentation/devicetree/bindings/net/ti,dp83867.txt?id=9708fb630d19ee51ae3aeb3a533e3010da0e8570
->
->>   arch/arm/boot/dts/rk3288-phycore-som.dtsi | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/boot/dts/rk3288-phycore-som.dtsi b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
->> index bdd80aa..e60535d 100644
->> --- a/arch/arm/boot/dts/rk3288-phycore-som.dtsi
->> +++ b/arch/arm/boot/dts/rk3288-phycore-som.dtsi
->> @@ -141,6 +141,7 @@
->>   			ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
->>   			ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
->>   			enet-phy-lane-no-swap;
->> +			ti,clk-output-sel = <DP83867_CLK_O_SEL_CHN_A_TCLK>;
->>   		};
->>   	};
->>   };
->>
->
-
--- 
-Mit freundlichen Grüßen,
-With best regards,
-   Daniel Schultz
-
-- Entwicklung -
-Tel.: 	+49 6131 92 21 457
-d.schultz@phytec.de
-www.phytec.de
-
-Sie finden uns auch auf: Facebook, LinkedIn, Xing, YouTube
-
-PHYTEC Messtechnik GmbH | Robert-Koch-Str. 39 | 55129 Mainz, Germany
-Geschäftsführer: Dipl.-Ing. Michael Mitezki, Dipl.-Ing. Bodo Huber |
-Handelsregister Mainz HRB 4656 | Finanzamt Mainz-Mitte | St.Nr. 266500608,
-DE 149059855
-This E-Mail may contain confidential or privileged information. If you are
-not the intended recipient (or have received this E-Mail in error) please
-notify the sender immediately and destroy this E-Mail. Any unauthorized
-copying, disclosure or distribution of the material in this E-Mail is
-strictly forbidden.
+Thanks,
+Mark.
