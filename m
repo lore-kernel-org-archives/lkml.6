@@ -1,148 +1,82 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4155223-1520454740-2-4505914583652195281
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520454739; b=tCZPZaQ1WRCPS8XtNAQtxYyMuPW2hNwKI5+y5O8agVXgE89
-    60sgsv+qndir9k4K46bs+MqGlwTgXVY1zBwx3/gJbkZvn0zVUgcZlUdpiwbUvffM
-    u1KpR64/m6L73wEFK1nGJIjQaY2FDFT+SG8P7fpJItmq7PzoeX2Mf9aDnjWcLPw+
-    /dXPar2wslMe8hnEOc1ydwPAlBDeG7OqLXhuwOjGfmf86IrDyAsP935wa1xiUybI
-    PYPhqP2EklIV3qk3tdMKCvfRpEIngJr04PJ35mZYROlteqoNwimrH/KU1M0ppH9i
-    /Kxne4iyz9Uq5Og1n2TmKkVW1adQTO/P9EcnUhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520454739; bh=B
-    5n3dGDFxIGJKh0o8lscQ4EkpIiQJD9pIhZArDD4mXw=; b=GAbPzcWkH8D5JZaAb
-    BxHE4hgfTkHQMQhysKX3P3fpAe1MkHaQGi/OzjsmZfey0mgqPlPOf+5JmXKDj8GV
-    kp3M1zZjeXEg2wADDmPcPvUud75p2jcAiOEARghqFafCtw6fczKJwHHsCqNnzqLC
-    IaflJamCcCKt0mh1ChiqvFLQ6UAFupIMvtqE00hi5KJvTbL+Vul7ALQ/uI6kTQ6+
-    TRRYJn7fbYtNwWLe++hbf1LN+2zsgHbofdnKxwHpg/pwmV5JeRq/X7ng/7qdsTQF
-    TO2H0ZoFBVDI7brYKqbGDr5VxEbv2Caa2hN48flriI3LpJU/bR+v5Os4VvNJbokx
-    +5nhw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D429921770
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Wed, 7 Mar 2018 20:32:06 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Subject: Re: [PATCH 02/11] Staging: iio: accel: Add a blank space before
- returns
-Message-ID: <20180307203206.1ba1ecf8@archlinux>
-In-Reply-To: <1520236170-14668-3-git-send-email-himanshujha199640@gmail.com>
+Return-Path: <himanshujha199640@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520236194; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CqgR+3q1elZeRzH5PZBHLUMyb6TYnwWgP1O584bB38YBjVugu0RFaOcLKLp9MEx2nb
+         3HwKN8Fg3th6smzXkhH5Rd8MXgBmF0Thenmluak9pmZguUO501h1QGta7iP3Lct5Ud5E
+         Xr9VzfA8WgFltNEXUWihFnCyAilSAnEX1/Io4lEM6VyyU70CgdGGpBOAuPRsPFXoen86
+         OJ8YhG2IHMuk9d8CtJ7CJLRfpepw9nGB5/98HrrEt5/Oj0ab4mVIujJQWaGfZPk1nW/c
+         PQpzRDVvTkA/UOusXyuertTvwMX0YLkmq2Jtl+xSWeDctmI2hSKXJP9VFPXLtntKs66G
+         8MrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=pMKwFXZ1cGq0S9zVmk8HEuQGY1rcGisKP1RD5NTvrY0=;
+        b=ERVNhCjMUccM4ky4OePDjv4BtEDAT2s/Br5BQb4tjMsu7250WpcbLOV33FS2teQosp
+         IGebzP8LsOQIZ1YN/6sOGkH58jqFCXOvsLGJjJhnP1OGasUSex4TdZQMlwiQah71Z3yP
+         OB40sHjLRMZun5iWAQfU3zOyItBdKqgye4lkfAl/oCCG3GLa3pFM3WkvwBZfgPZ0iDLO
+         2dgE/JjeHAgjjajnR0oC2qQkZzWq2INfTsm/SHOG51cKoKz0KZgGyRT/YGrjFA8V+RJq
+         vKvurHnh/5cR6Uk38yBDPlq9A0E4zrCrCblFWwR2wQ7tF1FjApBloVpflawLsWzGcbPQ
+         A2wQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nVG0BWns;
+       spf=pass (google.com: domain of himanshujha199640@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=himanshujha199640@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nVG0BWns;
+       spf=pass (google.com: domain of himanshujha199640@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=himanshujha199640@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELs8oJaO+qWFFKblReQP9oEdy+TNOF/hBDSlK3PCKZFT+0gcZhiJF4wk6F3eANcwpROckuNO+g==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	knaack.h@gmx.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	linux-iio@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	daniel.baluta@gmail.com,
+	Himanshu Jha <himanshujha199640@gmail.com>
+Subject: [PATCH 01/11] Staging: iio: accel: Prefer alphabetical sequence of header files
+Date: Mon,  5 Mar 2018 13:19:20 +0530
+Message-Id: <1520236170-14668-2-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520236170-14668-1-git-send-email-himanshujha199640@gmail.com>
 References: <1520236170-14668-1-git-send-email-himanshujha199640@gmail.com>
- <1520236170-14668-3-git-send-email-himanshujha199640@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
- Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, pmeerw@pmeerw.net,
- knaack.h@gmx.de
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594083187913405658?=
+X-GMAIL-MSGID: =?utf-8?q?1594083187913405658?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon,  5 Mar 2018 13:19:21 +0530
-Himanshu Jha <himanshujha199640@gmail.com> wrote:
+Arrange header files in alphabetical sequence to improve readability.
 
-> Adding a blank space before/after some returns improves readability.
-> 
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-Applied - patch title adjusted.
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+---
+ drivers/staging/iio/accel/adis16201.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-
-Jonathan
-> ---
->  drivers/staging/iio/accel/adis16201.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
-> index 0f6a204..0fae8aa 100644
-> --- a/drivers/staging/iio/accel/adis16201.c
-> +++ b/drivers/staging/iio/accel/adis16201.c
-> @@ -232,6 +232,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
->  		*val = val16;
->  		return IIO_VAL_INT;
->  	}
-> +
->  	return -EINVAL;
->  }
->  
-> @@ -262,6 +263,7 @@ static int adis16201_write_raw(struct iio_dev *indio_dev,
->  		addr = adis16201_addresses[chan->scan_index];
->  		return adis_write_reg_16(st, addr, val16);
->  	}
-> +
->  	return -EINVAL;
->  }
->  
-> @@ -336,6 +338,7 @@ static int adis16201_probe(struct spi_device *spi)
->  	ret = adis_init(st, indio_dev, spi, &adis16201_data);
->  	if (ret)
->  		return ret;
-> +
->  	ret = adis_setup_buffer_and_trigger(st, indio_dev, NULL);
->  	if (ret)
->  		return ret;
-> @@ -348,6 +351,7 @@ static int adis16201_probe(struct spi_device *spi)
->  	ret = iio_device_register(indio_dev);
->  	if (ret < 0)
->  		goto error_cleanup_buffer_trigger;
-> +
->  	return 0;
->  
->  error_cleanup_buffer_trigger:
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+index 2ebd275..0f6a204 100644
+--- a/drivers/staging/iio/accel/adis16201.c
++++ b/drivers/staging/iio/accel/adis16201.c
+@@ -7,13 +7,13 @@
+  */
+ 
+ #include <linux/delay.h>
+-#include <linux/mutex.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
+-#include <linux/spi/spi.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/slab.h>
++#include <linux/spi/spi.h>
+ #include <linux/sysfs.h>
+-#include <linux/module.h>
+ 
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+-- 
+2.7.4
