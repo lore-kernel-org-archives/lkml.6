@@ -1,41 +1,43 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELv0wI27dXRVqWXX5p+2arBI9vYsIGugSyBOs48UlBRXti1c/amK3OxJ0THImF+wzxmIMRN3
-ARC-Seal: i=1; a=rsa-sha256; t=1519972354; cv=none;
+X-Google-Smtp-Source: AG47ELs0WFcAFVoROGmF1lIhPWSY/BnGI2lWFCiBjbez3c//OvevaAB4C8/5wvtR+Nj3kjKk0EWO
+ARC-Seal: i=1; a=rsa-sha256; t=1520216899; cv=none;
         d=google.com; s=arc-20160816;
-        b=zHWZ/o5JIAvHyyMjxDb6magEgBYUQ9zw4C57niUV5Z7Qa2MnCB5hQoz9C/z5KRP4gx
-         64rk4z8twldx9uildSb6rGBySV7jX+UXVHJ9QW63KBcuAKmEelnz81bzFHhXS5JAcJSF
-         3HtOfApcDNPa/KO7JLGuEcglXFx/OSkpFPhEyq+2U//+993VOZOztGA92L2OqZAgtAtL
-         1L/Pp1fO1Bkf7tFUl3Q9/5LMHQSUm8luc06pPSHqLbw4YoZXjw+1Qtq+p7xPMLzIKqTn
-         B+MuAtZdvffxGdFPiU5/NbsamF63D9Nfvi4p1+IEyYTthP45k/gHFGUcxVrnwVkHFU6x
-         ETdw==
+        b=NWghUvJtc8IYIYDK+lvYZWyJooJyNKgPMts02MfXexoIfVkw2mi2WrceAQXuqjkPUN
+         G7bTH5uJJHqOY10hq4Dnu2NGlrt/xhX8N7xzzjrvscg4NPfr+AWrE6WFQzYyraKj8CgS
+         PVGaMwQXJdHsUV1F8PLMNLVzozuycZsXW9OjIXqpU4++Apj0aejIg8xhKAQY+aoF5vKc
+         Eh6I17Wp6V8SeznWeY33Fu8vxIVtmIWIa7EjT0B+N94SW5zSluFnzE1aWRaGmOkqAh/3
+         TPEIhCvYP2xjIZh0U9bBi0nCun4xKZHMabMSIqFUnLvTClx0TCicWL0ya8X1AZTm0VBL
+         EqUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:message-id:subject:cc:to:from:date
-         :dmarc-filter:arc-authentication-results;
-        bh=fBm1CmOpazP16XD7e8Um55KZ1ya7p3GK4W5ioyMrRgY=;
-        b=UVizSM8FclX0D9em34UX17aQSM0IiN/OQtFoopGXZhSXctYUZacjr71ugIpL2GfD4p
-         tmIyVpvKe01RB+B8vResVJSx08Z96i8erSaFg3/CFkNH6EjwjDNx0IWn1IhjLJrZcucY
-         kqISAE5tmif+PTArzmm/aq3zpeYMMNh+EO8EHSxWsLhBYZVhR0WoKUtoiBCF/4CVzxgF
-         ehArwSZ6jdpBEF0Vspeuu7LGzrjmzeREJLK11dsb9fP8wtZ+ckvPzMgM/PQKGJCeFVys
-         x90zMh3MM25rn+q69LXAcFUJyO0jsDDog6RS4kd1lmczHSw6vrFbEchRT2WejJwz+qyF
-         VkLg==
+        h=list-id:precedence:sender:user-agent:in-reply-to
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=+0a+cktZsXSILbQFZ8u15I54FLrfyodPpskAOI9w9QU=;
+        b=IarBWY/siK9/oC1jRiqHg13I5LSxrSw/baTA914TPGsaR2gUtobYqHpBCzdk86FcCR
+         Db72WehS5SAPQ9oGNAc0nh+JfW/AaqDEjf9k1+3PAyEsV622LlKqlqh/SIJyZUkL2wTL
+         Nh+PL0JN5xG0t0G/KxaZjhwfkHQQQrBJcZNZIOb6aB8ReN2VsYfBkw/zR0tqNk52PRDW
+         ZqkzejOu8xqrIuZd/todfID3w4N5BE8a2qU9ydMYlkHgqw5w6shwsx7qONBq/9bP02ZP
+         zkQdXwrwt/fc8Im0LLWDXfmpoGtXeY0adrvg42OoLsdaT6l2pyUwKKcxoORqMCpfwNPX
+         zKQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1164477AbeCBGce (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 2 Mar 2018 01:32:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164291AbeCBGcd (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 2 Mar 2018 01:32:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B472133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Fri, 2 Mar 2018 15:32:29 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
+        id S932119AbeCEC2S (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sun, 4 Mar 2018 21:28:18 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:37295 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752225AbeCEC2R (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Sun, 4 Mar 2018 21:28:17 -0500
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Mon, 5 Mar 2018 11:28:14 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
@@ -44,145 +46,63 @@ Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
         shuah@kernel.org, kernel-team@lge.com
 Subject: Re: [PATCH v4 01/19] [BUGFIX] tracing: probeevent: Fix to support
  minus offset from symbol
-Message-Id: <20180302153229.dbc4dc9be90a0132b7010010@kernel.org>
-In-Reply-To: <20180302044951.GA31540@sejong>
+Message-ID: <20180305022814.GA8824@sejong>
 References: <151978796240.2577.6531711990653677529.stgit@devbox>
-        <151978799370.2577.9456049827647614166.stgit@devbox>
-        <20180302044951.GA31540@sejong>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+ <151978799370.2577.9456049827647614166.stgit@devbox>
+ <20180302044951.GA31540@sejong>
+ <20180302153229.dbc4dc9be90a0132b7010010@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180302153229.dbc4dc9be90a0132b7010010@kernel.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593613247827918493?=
-X-GMAIL-MSGID: =?utf-8?q?1593806532092758181?=
+X-GMAIL-MSGID: =?utf-8?q?1594062955587870599?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2 Mar 2018 13:49:51 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
+Hi Masami,
 
-> Hi Masami,
+On Fri, Mar 02, 2018 at 03:32:29PM +0900, Masami Hiramatsu wrote:
+> On Fri, 2 Mar 2018 13:49:51 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
 > 
-> On Wed, Feb 28, 2018 at 12:19:53PM +0900, Masami Hiramatsu wrote:
-> > In Documentation/trace/kprobetrace.txt, it says
+> > Hi Masami,
 > > 
-> >  @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+> > On Wed, Feb 28, 2018 at 12:19:53PM +0900, Masami Hiramatsu wrote:
+> > > In Documentation/trace/kprobetrace.txt, it says
+> > > 
+> > >  @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+> > > 
+> > > However, the parser doesn't parse minus offset correctly, since
+> > > commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
+> > > unsigned") drops minus ("-") offset support for kprobe probe
+> > > address usage.
+> > > 
+> > > This fixes the traceprobe_split_symbol_offset() to parse minus
+> > > offset again with checking the offset range, and add a minus
+> > > offset check in kprobe probe address usage.
 > > 
-> > However, the parser doesn't parse minus offset correctly, since
-> > commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-> > unsigned") drops minus ("-") offset support for kprobe probe
-> > address usage.
-> > 
-> > This fixes the traceprobe_split_symbol_offset() to parse minus
-> > offset again with checking the offset range, and add a minus
-> > offset check in kprobe probe address usage.
+> > It now parses a minus offset but doesn't allow it, right?
 > 
-> It now parses a minus offset but doesn't allow it, right?
+> No, split_symbol_offset() is used for 2 cases
+>  - kprobe-event probe point
+>  - kporbe-event symbol-based argument
+> 
+> Former one doesn't accept a minus offset, but latter accepts it.
 
-No, split_symbol_offset() is used for 2 cases
- - kprobe-event probe point
- - kporbe-event symbol-based argument
+Ah, ok then.
 
-Former one doesn't accept a minus offset, but latter accepts it.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-(Frankly to say, I guess no one care about supporting minus offset :P)
+
+> 
+> (Frankly to say, I guess no one care about supporting minus offset :P)
+
+:)
 
 Thanks,
-
-> Then I still think it's better to fix the documentation.
-> 
-> 
-> > 
-> > Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  Changes in v3:
-> >   - Use kstrtol instead of kstrtoul. (Thanks Namhyung!)
-> >  Changes in v4:
-> >   - Fix to decode sign. (Thanks Namhyung!)
-> >   - Fix to check UINT_MAX for kprobe offset.
-> > ---
-> >  kernel/trace/trace_kprobe.c |    4 ++--
-> >  kernel/trace/trace_probe.c  |    8 +++-----
-> >  kernel/trace/trace_probe.h  |    2 +-
-> >  3 files changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> > index 5ce9b8cf7be3..1cd3fb4d70f8 100644
-> > --- a/kernel/trace/trace_kprobe.c
-> > +++ b/kernel/trace/trace_kprobe.c
-> > @@ -667,7 +667,7 @@ static int create_trace_kprobe(int argc, char **argv)
-> >  	char *symbol = NULL, *event = NULL, *group = NULL;
-> >  	int maxactive = 0;
-> >  	char *arg;
-> > -	unsigned long offset = 0;
-> > +	long offset = 0;
-> >  	void *addr = NULL;
-> >  	char buf[MAX_EVENT_NAME_LEN];
-> >  
-> > @@ -755,7 +755,7 @@ static int create_trace_kprobe(int argc, char **argv)
-> >  		symbol = argv[1];
-> >  		/* TODO: support .init module functions */
-> >  		ret = traceprobe_split_symbol_offset(symbol, &offset);
-> > -		if (ret) {
-> > +		if (ret || offset < 0 || offset > UINT_MAX) {
-> >  			pr_info("Failed to parse either an address or a symbol.\n");
-> >  			return ret;
-> 
-> Wouldn't it be confusing if it returns 0 for an invalid input?
-> 
-> Thanks,
-> Namhyung
-> 
-> 
-> >  		}
-> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-> > index d59357308677..daf54bda4dc8 100644
-> > --- a/kernel/trace/trace_probe.c
-> > +++ b/kernel/trace/trace_probe.c
-> > @@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_function(const struct fetch_type *type,
-> >  }
-> >  
-> >  /* Split symbol and offset. */
-> > -int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-> > +int traceprobe_split_symbol_offset(char *symbol, long *offset)
-> >  {
-> >  	char *tmp;
-> >  	int ret;
-> > @@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-> >  	if (!offset)
-> >  		return -EINVAL;
-> >  
-> > -	tmp = strchr(symbol, '+');
-> > +	tmp = strpbrk(symbol, "+-");
-> >  	if (tmp) {
-> > -		/* skip sign because kstrtoul doesn't accept '+' */
-> > -		ret = kstrtoul(tmp + 1, 0, offset);
-> > +		ret = kstrtol(tmp, 0, offset);
-> >  		if (ret)
-> >  			return ret;
-> > -
-> >  		*tmp = '\0';
-> >  	} else
-> >  		*offset = 0;
-> > diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-> > index 0745f895f780..75daff22ccea 100644
-> > --- a/kernel/trace/trace_probe.h
-> > +++ b/kernel/trace/trace_probe.h
-> > @@ -365,7 +365,7 @@ extern int traceprobe_conflict_field_name(const char *name,
-> >  extern void traceprobe_update_arg(struct probe_arg *arg);
-> >  extern void traceprobe_free_probe_arg(struct probe_arg *arg);
-> >  
-> > -extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-> > +extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
-> >  
-> >  /* Sum up total data length for dynamic arraies (strings) */
-> >  static nokprobe_inline int
-> > 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Namhyung
