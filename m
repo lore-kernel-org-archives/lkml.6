@@ -1,226 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933957AbeCEMeW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:34:22 -0500
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34574 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932864AbeCEMeU (ORCPT
+        id S934735AbeCEMey (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:34:54 -0500
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:36100 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932864AbeCEMev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:34:20 -0500
-X-Google-Smtp-Source: AG47ELsiROYT8FuhgHyH790JIVqPy4O6Bt3nL3ECfUaT8fHHAFMVlliDJaQNsfAE8V9/XBubotwipg==
-From: srinivas.kandagatla@linaro.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH] ASoC: dapm: add support to pinctrl dapm
-Date: Mon,  5 Mar 2018 12:32:13 +0000
-Message-Id: <20180305123213.2045-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.15.1
+        Mon, 5 Mar 2018 07:34:51 -0500
+X-Google-Smtp-Source: AG47ELu+4i8Sqcc26+tNWQF02bacO2mHI7L+EKpG9Cj5AqTQtGngZbIN6sF8xmjQ1j1CFSTJXTz5iOYsv2DLRLQop3M=
+MIME-Version: 1.0
+In-Reply-To: <1519980169-8491-1-git-send-email-m.purski@samsung.com>
+References: <CGME20180302085118eucas1p15a6a5ec5f7f47a6f67a45c5e9495b120@eucas1p1.samsung.com>
+ <1519980169-8491-1-git-send-email-m.purski@samsung.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 5 Mar 2018 09:34:50 -0300
+Message-ID: <CAOMZO5C3YPKvZN+aORA+Jga-P=XgfG2xw7u6Ose5p6Twet2KLw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] Add coupled regulators mechanism
+To: Maciej Purski <m.purski@samsung.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hi Maciej,
 
-Purpose of having pinctrl dapm is to dynamically put the pins in
-low power state when they are not actively used by the audio and
-saving power.
+On Fri, Mar 2, 2018 at 5:42 AM, Maciej Purski <m.purski@samsung.com> wrote:
+> Hi all,
+>
+> this patchset adds a new mechanism to the framework - regulators' coupling.
+>
+> On Odroid XU3/4 and other Exynos5422 based boards there is a case, that
+> different devices on the board are supplied by different regulators
+> with non-fixed voltages. If one of these devices temporarily requires
+> higher voltage, there might occur a situation that the spread between
+> devices' voltages is so high, that there is a risk of changing
+> 'high' and 'low' states on the interconnection between devices powered
+> by those regulators.
+>
+> Algorithmicaly the problem was solved by:
+> Inderpal Singh <inderpal.s@samsung.com>
+> Doug Anderson <dianders@chromium.org>
+>
+> The discussion on that subject can be found here:
+> https://lkml.org/lkml/2014/4/29/28
+>
+> Therefore this patchset is an attempt to apply the idea to regulators core
+> as concluded in the discussion by Mark Brown and Doug Anderson.
+>
+> This feature is required to enable support for generic CPUfreq
+> and devfreq drivers for the mentioned boards.
+>
+> Note on the locking model:
+> When balancing voltage of a group of coupled regulators, we lock all
+> of them for the whole operation. When voltage of an individual regulator
+> is about to change, its suppliers are additionally locked.
+>
+> The current assumption is that an uncoupled regulator is a special case
+> of a coupled one, so they should share a common voltage setting path.
 
-Without this each driver has to set the pinctrl states, either
-during probe or dynamically depending on the callbacks received
-from ASoC core.
+This series breaks has reached linux-next 20180305 and it breaks
+booting on imx6:
 
-This patch adds a single macro SND_SOC_DAPM_PINCTRL which takes, 
-widget, active and sleep state names, and the dapm would use active
-and sleep state pinctrl names to put the pins in active and sleep
-state respectively.
+[    0.269646] imx-pgc-pd imx-pgc-power-domain.0: Linked as a consumer
+to 20dc000.gpc
+[    0.270348]
+[    0.270363] ============================================
+[    0.270373] WARNING: possible recursive locking detected
+[    0.270385] 4.16.0-rc3-next-20180305 #156 Not tainted
+[    0.270397] --------------------------------------------
+[    0.270408] swapper/0/1 is trying to acquire lock:
+[    0.270419]  (&rdev->mutex){+.+.}, at: [<c04d80c4>]
+regulator_lock_supply+0x24/0x44
+[    0.270460]
+[    0.270460] but task is already holding lock:
+[    0.270471]  (&rdev->mutex){+.+.}, at: [<c04dc6e4>]
+regulator_enable+0x78/0x298
+[    0.270502]
+[    0.270502] other info that might help us debug this:
+[    0.270513]  Possible unsafe locking scenario:
+[    0.270513]
+[    0.270523]        CPU0
+[    0.270532]        ----
+[    0.270540]   lock(&rdev->mutex);
+[    0.270555]   lock(&rdev->mutex);
+[    0.270572]
+[    0.270572]  *** DEADLOCK ***
+[    0.270572]
+[    0.270585]  May be due to missing lock nesting notation
+[    0.270585]
+[    0.270598] 3 locks held by swapper/0/1:
+[    0.270606]  #0:  (&dev->mutex){....}, at: [<c057f368>]
+__driver_attach+0x58/0xcc
+[    0.270642]  #1:  (&dev->mutex){....}, at: [<c057f378>]
+__driver_attach+0x68/0xcc
+[    0.270672]  #2:  (&rdev->mutex){+.+.}, at: [<c04dc6e4>]
+regulator_enable+0x78/0x298
+[    0.270701]
+[    0.270701] stack backtrace:
+[    0.270719] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+4.16.0-rc3-next-20180305 #156
+[    0.270731] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[    0.270741] Backtrace:
+[    0.270767] [<c010d154>] (dump_backtrace) from [<c010d414>]
+(show_stack+0x18/0x1c)
+[    0.270783]  r7:00000000 r6:60000093 r5:00000000 r4:c1078360
+[    0.270805] [<c010d3fc>] (show_stack) from [<c0a4724c>]
+(dump_stack+0xb4/0xe8)
+[    0.270830] [<c0a47198>] (dump_stack) from [<c0174f4c>]
+(__lock_acquire+0x13a4/0x199c)
+[    0.270848]  r9:c17d75fc r8:c11ae35c r7:c17c73b0 r6:ec060000
+r5:ec060570 r4:c11ae35c
+[    0.270867] [<c0173ba8>] (__lock_acquire) from [<c0175d68>]
+(lock_acquire+0x70/0x90)
+[    0.270883]  r10:00000000 r9:ec195800 r8:00000001 r7:00000001
+r6:60000013 r5:00000000
+[    0.270893]  r4:ffffe000
+[    0.270914] [<c0175cf8>] (lock_acquire) from [<c0a60760>]
+(__mutex_lock+0x64/0x978)
+[    0.270929]  r8:00000001 r7:00000001 r6:00000000 r5:00000000 r4:ec00b89c
+[    0.270947] [<c0a606fc>] (__mutex_lock) from [<c0a61098>]
+(mutex_lock_nested+0x24/0x2c)
+[    0.270963]  r10:00000000 r9:ec195800 r8:00000001 r7:00000001
+r6:ec195800 r5:00000000
+[    0.270975]  r4:ec00b800
+[    0.270992] [<c0a61074>] (mutex_lock_nested) from [<c04d80c4>]
+(regulator_lock_supply+0x24/0x44)
+[    0.271013] [<c04d80a0>] (regulator_lock_supply) from [<c04da9b0>]
+(regulator_balance_voltage+0x298/0x584)
+[    0.271024]  r5:000b1008 r4:ec195800
+[    0.271042] [<c04da718>] (regulator_balance_voltage) from
+[<c04dc748>] (regulator_enable+0xdc/0x298)
+[    0.271059]  r10:00000000 r9:00000000 r8:00000001 r7:00000001
+r6:ec195800 r5:ec195824
+[    0.271069]  r4:00000001
+[    0.271086] [<c04dc66c>] (regulator_enable) from [<c04d6dd8>]
+(imx6_pm_domain_power_on+0x30/0x1b4)
+[    0.271102]  r9:00000000 r8:c102d114 r7:c1008908 r6:c102d114
+r5:ec3d7a00 r4:ec3d7a00
+[    0.271119] [<c04d6da8>] (imx6_pm_domain_power_on) from
+[<c04d6d18>] (imx_pgc_power_domain_probe+0x64/0xf4)
+[    0.271135]  r8:c102d114 r7:ec49c810 r6:c102d114 r5:ec49c800 r4:ec3d7a00
+[    0.271153] [<c04d6cb4>] (imx_pgc_power_domain_probe) from
+[<c0580ef0>] (platform_drv_probe+0x54/0xb8)
+[    0.271168]  r7:fffffdfb r6:c102d114 r5:ec49c810 r4:ec49c810
+[    0.271189] [<c0580e9c>] (platform_drv_probe) from [<c057f288>]
+(driver_probe_device+0x2b0/0x338)
+[    0.271204]  r7:c17e234c r6:00000000 r5:c17e2348 r4:ec49c810
+[    0.271222] [<c057efd8>] (driver_probe_device) from [<c057f3d8>]
+(__driver_attach+0xc8/0xcc)
+[    0.271237]  r10:c0f00630 r9:00000000 r8:c1008908 r7:c1008908
+r6:ec49c844 r5:c102d114
+[    0.271248]  r4:ec49c810 r3:00000000
+[    0.271267] [<c057f310>] (__driver_attach) from [<c057d348>]
+(bus_for_each_dev+0x6c/0xbc)
+[    0.271280]  r7:c1008908 r6:c057f310 r5:c102d114 r4:00000000
+[    0.271298] [<c057d2dc>] (bus_for_each_dev) from [<c057eb64>]
+(driver_attach+0x20/0x28)
+[    0.271314]  r7:00000000 r6:c103b0a8 r5:ec479b00 r4:c102d114
+[    0.271332] [<c057eb44>] (driver_attach) from [<c057e588>]
+(bus_add_driver+0x18c/0x214)
+[    0.271351] [<c057e3fc>] (bus_add_driver) from [<c057fdbc>]
+(driver_register+0x80/0x100)
+[    0.271366]  r7:c0e125e4 r6:c0f63850 r5:c0f41c18 r4:c102d114
+[    0.271383] [<c057fd3c>] (driver_register) from [<c0580e44>]
+(__platform_driver_register+0x38/0x4c)
+[    0.271396]  r5:c0f41c18 r4:ffffe000
+[    0.271418] [<c0580e0c>] (__platform_driver_register) from
+[<c0f41c30>] (imx_pgc_power_domain_driver_init+0x18/0x20)
+[    0.271438] [<c0f41c18>] (imx_pgc_power_domain_driver_init) from
+[<c0102764>] (do_one_initcall+0x50/0x1a0)
+[    0.271464] [<c0102714>] (do_one_initcall) from [<c0f00f04>]
+(kernel_init_freeable+0x118/0x1d0)
+[    0.271481]  r9:c0f63858 r8:000000f2 r7:c0e125e4 r6:c0f63850
+r5:c1079f80 r4:c0f77ab4
+[    0.271508] [<c0f00dec>] (kernel_init_freeable) from [<c0a5c6f0>]
+(kernel_init+0x10/0x118)
+[    0.271524]  r10:00000000 r9:00000000 r8:00000000 r7:00000000
+r6:00000000 r5:c0a5c6e0
+[    0.271533]  r4:00000000
+[    0.271552] [<c0a5c6e0>] (kernel_init) from [<c01010b4>]
+(ret_from_fork+0x14/0x20)
+[    0.271564] Exception stack(0xec069fb0 to 0xec069ff8)
+[    0.271579] 9fa0:                                     00000000
+00000000 00000000 00000000
+[    0.271594] 9fc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    0.271609] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.271621]  r5:c0a5c6e0 r4:00000000
+[    0.271723] imx-pgc-pd imx-pgc-power-domain.1: Linked as a consumer
+to 20dc000.gpc
+[    0.273566] 2020000.serial: ttymxc0 at MMIO 0x2020000 (irq = 26,
+base_baud = 5000000) is a IMX
+[    1.660948] console [ttymxc0] enabled
+[    1.666242] 21ec000.serial: ttymxc2 at MMIO 0x21ec000 (irq = 65,
+base_baud = 5000000) is a IMX
+[    1.683484] etnaviv etnaviv: bound 130000.gpu (ops gpu_ops)
+[    1.689464] etnaviv etnaviv: bound 134000.gpu (ops gpu_ops)
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
-
-Hi All, 
-
-Purpose of this patch is to discuss the idea of having pinctrl part of dapm.
-
-As an example on Qualcomm SoCs there are multiple I2S Interfaces, each of
-these interfaces have there own pinctrls setting, It does not make sense
-for the machine/platform/componet driver to put them in default/active
-state durning probe/init as it would waste power. If we make these pinctrl
-part of the dapm sequence, these would only become active when the
-stream is active which would save power.
-
-This patch adds a single macro SND_SOC_DAPM_PINCTRL which takes, 
-widget, active and sleep state names, and the dapm would use active
-and sleep state pinctrl names to put the pins in active and sleep state
-respectively.
-
-Thanks,
-Srini
-
- include/sound/soc-dapm.h | 16 ++++++++++++++++
- sound/soc/soc-dapm.c     | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
-
-diff --git a/include/sound/soc-dapm.h b/include/sound/soc-dapm.h
-index 344b96c206a3..a6ce2de4e20a 100644
---- a/include/sound/soc-dapm.h
-+++ b/include/sound/soc-dapm.h
-@@ -269,6 +269,13 @@ struct device;
- 	.reg = SND_SOC_NOPM, .shift = wdelay, .event = dapm_regulator_event, \
- 	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD, \
- 	.on_val = wflags}
-+#define SND_SOC_DAPM_PINCTRL(wname, active, sleep) \
-+{	.id = snd_soc_dapm_pinctrl, .name = wname, \
-+	.priv = (&(struct snd_soc_dapm_pinctrl_priv) \
-+		{ .active_state = active, .sleep_state = sleep,}), \
-+	.reg = SND_SOC_NOPM, .event = dapm_pinctrl_event, \
-+	.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD }
-+
- 
- 
- /* dapm kcontrol types */
-@@ -374,6 +381,8 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
- 			 struct snd_kcontrol *kcontrol, int event);
- int dapm_clock_event(struct snd_soc_dapm_widget *w,
- 			 struct snd_kcontrol *kcontrol, int event);
-+int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
-+			 struct snd_kcontrol *kcontrol, int event);
- 
- /* dapm controls */
- int snd_soc_dapm_put_volsw(struct snd_kcontrol *kcontrol,
-@@ -500,6 +509,7 @@ enum snd_soc_dapm_type {
- 	snd_soc_dapm_pre,			/* machine specific pre widget - exec first */
- 	snd_soc_dapm_post,			/* machine specific post widget - exec last */
- 	snd_soc_dapm_supply,		/* power/clock supply */
-+	snd_soc_dapm_pinctrl,		/* pinctrl */
- 	snd_soc_dapm_regulator_supply,	/* external regulator */
- 	snd_soc_dapm_clock_supply,	/* external clock */
- 	snd_soc_dapm_aif_in,		/* audio interface input */
-@@ -581,6 +591,7 @@ struct snd_soc_dapm_widget {
- 
- 	void *priv;				/* widget specific data */
- 	struct regulator *regulator;		/* attached regulator */
-+	struct pinctrl *pinctrl;		/* attached pinctrl */
- 	const struct snd_soc_pcm_stream *params; /* params for dai links */
- 	unsigned int num_params; /* number of params for dai links */
- 	unsigned int params_select; /* currently selected param for dai link */
-@@ -683,6 +694,11 @@ struct snd_soc_dapm_stats {
- 	int neighbour_checks;
- };
- 
-+struct snd_soc_dapm_pinctrl_priv {
-+	const char *active_state;
-+	const char *sleep_state;
-+};
-+
- /**
-  * snd_soc_dapm_init_bias_level() - Initialize DAPM bias level
-  * @dapm: The DAPM context to initialize
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 40085a4c8f92..babff1cd2849 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -35,6 +35,7 @@
- #include <linux/debugfs.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/clk.h>
- #include <linux/slab.h>
- #include <sound/core.h>
-@@ -72,6 +73,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
- static int dapm_up_seq[] = {
- 	[snd_soc_dapm_pre] = 0,
- 	[snd_soc_dapm_regulator_supply] = 1,
-+	[snd_soc_dapm_pinctrl] = 1,
- 	[snd_soc_dapm_clock_supply] = 1,
- 	[snd_soc_dapm_supply] = 2,
- 	[snd_soc_dapm_micbias] = 3,
-@@ -119,6 +121,7 @@ static int dapm_down_seq[] = {
- 	[snd_soc_dapm_dai_link] = 11,
- 	[snd_soc_dapm_supply] = 12,
- 	[snd_soc_dapm_clock_supply] = 13,
-+	[snd_soc_dapm_pinctrl] = 13,
- 	[snd_soc_dapm_regulator_supply] = 13,
- 	[snd_soc_dapm_post] = 14,
- };
-@@ -1287,6 +1290,33 @@ int dapm_regulator_event(struct snd_soc_dapm_widget *w,
- }
- EXPORT_SYMBOL_GPL(dapm_regulator_event);
- 
-+/*
-+ * Handler for pinctrl widget.
-+ */
-+int dapm_pinctrl_event(struct snd_soc_dapm_widget *w,
-+		       struct snd_kcontrol *kcontrol, int event)
-+{
-+	struct snd_soc_dapm_pinctrl_priv *priv = w->priv;
-+	struct pinctrl *p = w->pinctrl;
-+	struct pinctrl_state *s;
-+
-+	if (!p || !priv)
-+		return -EIO;
-+
-+	soc_dapm_async_complete(w->dapm);
-+
-+	if (SND_SOC_DAPM_EVENT_ON(event))
-+		s = pinctrl_lookup_state(p, priv->active_state);
-+	else
-+		s = pinctrl_lookup_state(p, priv->sleep_state);
-+
-+	if (IS_ERR(s))
-+		return PTR_ERR(s);
-+
-+	return pinctrl_select_state(p, s);
-+}
-+EXPORT_SYMBOL_GPL(dapm_pinctrl_event);
-+
- /*
-  * Handler for clock supply widget.
-  */
-@@ -1900,6 +1930,7 @@ static int dapm_power_widgets(struct snd_soc_card *card, int event)
- 				break;
- 			case snd_soc_dapm_supply:
- 			case snd_soc_dapm_regulator_supply:
-+			case snd_soc_dapm_pinctrl:
- 			case snd_soc_dapm_clock_supply:
- 			case snd_soc_dapm_micbias:
- 				if (d->target_bias_level < SND_SOC_BIAS_STANDBY)
-@@ -2313,6 +2344,7 @@ static ssize_t dapm_widget_show_component(struct snd_soc_component *cmpnt,
- 		case snd_soc_dapm_mixer_named_ctl:
- 		case snd_soc_dapm_supply:
- 		case snd_soc_dapm_regulator_supply:
-+		case snd_soc_dapm_pinctrl:
- 		case snd_soc_dapm_clock_supply:
- 			if (w->name)
- 				count += sprintf(buf + count, "%s: %s\n",
-@@ -3462,6 +3494,17 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
- 					 w->name, ret);
- 		}
- 		break;
-+	case snd_soc_dapm_pinctrl:
-+		w->pinctrl = devm_pinctrl_get(dapm->dev);
-+		if (IS_ERR_OR_NULL(w->pinctrl)) {
-+			ret = PTR_ERR(w->pinctrl);
-+			if (ret == -EPROBE_DEFER)
-+				return ERR_PTR(ret);
-+			dev_err(dapm->dev, "ASoC: Failed to request %s: %d\n",
-+				w->name, ret);
-+			return NULL;
-+		}
-+		break;
- 	case snd_soc_dapm_clock_supply:
- #ifdef CONFIG_CLKDEV_LOOKUP
- 		w->clk = devm_clk_get(dapm->dev, w->name);
-@@ -3541,6 +3584,7 @@ snd_soc_dapm_new_control_unlocked(struct snd_soc_dapm_context *dapm,
- 		break;
- 	case snd_soc_dapm_supply:
- 	case snd_soc_dapm_regulator_supply:
-+	case snd_soc_dapm_pinctrl:
- 	case snd_soc_dapm_clock_supply:
- 	case snd_soc_dapm_kcontrol:
- 		w->is_supply = 1;
--- 
-2.15.1
+If I revert this series I am able to boot again.
