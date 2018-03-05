@@ -1,80 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeCEP4x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:56:53 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:32887 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752076AbeCEP4t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:56:49 -0500
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>
-CC: "vinod.koul@intel.com" <vinod.koul@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "wan.ahmad.zainie.wan.mohamad@intel.com"
-        <wan.ahmad.zainie.wan.mohamad@intel.com>
-Subject: Re: [PATCH v2 1/2] dmaengine: Introduce DW AXI DMAC driver
-Thread-Topic: [PATCH v2 1/2] dmaengine: Introduce DW AXI DMAC driver
-Thread-Index: AQHTrxIKKwJ+pE4H3kOhh2UUT+cHx6O20tCAgArzXAA=
-Date: Mon, 5 Mar 2018 15:56:37 +0000
-Message-ID: <1520265396.3152.27.camel@synopsys.com>
-References: <20180226145628.11892-1-Eugeniy.Paltsev@synopsys.com>
-         <20180226145628.11892-2-Eugeniy.Paltsev@synopsys.com>
-         <CAHp75Vc6KtppecYJBtuXTGCzXySOUZiYqxBfb6w69f1j3J0jDQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vc6KtppecYJBtuXTGCzXySOUZiYqxBfb6w69f1j3J0jDQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.67]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FDE8ACC55BBB764A9982F947CC578253@internal.synopsys.com>
+        id S1752741AbeCEP5T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:57:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34596 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751490AbeCEP5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 10:57:17 -0500
+Date: Mon, 5 Mar 2018 16:57:15 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: =?iso-8859-1?Q?Myl=E8ne?= Josserand
+        <mylene.josserand@bootlin.com>,
+        lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, michael@amarulasolutions.com
+Subject: Re: [PATCH v2 1/2] ASoC: codecs: Add support for PCM1789
+Message-ID: <20180305155715.GJ3035@piout.net>
+References: <20180305124817.7421-1-mylene.josserand@bootlin.com>
+ <20180305124817.7421-2-mylene.josserand@bootlin.com>
+ <20180305154910.GJ8588@sirena.org.uk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180305154910.GJ8588@sirena.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w25FuupM031263
 
-On Mon, 2018-02-26 at 18:42 +0200, Andy Shevchenko wrote:
-> On Mon, Feb 26, 2018 at 4:56 PM, Eugeniy Paltsev
-> <Eugeniy.Paltsev@synopsys.com> wrote:
+On 05/03/2018 at 15:49:10 +0000, Mark Brown wrote:
+> On Mon, Mar 05, 2018 at 01:48:16PM +0100, Mylène Josserand wrote:
 > 
-> > +       chip->core_clk = devm_clk_get(chip->dev, "core-clk");
+> > --- /dev/null
+> > +++ b/sound/soc/codecs/pcm1789-i2c.c
+> > @@ -0,0 +1,76 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * PCM1789 ASoC I2C driver
+> > + *
+> > + * Copyright (c) Bootlin 2018
+> > + *
+> > + * Mylène Josserand <mylene.josserand@bootlin.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License
 > 
-> Does the name come from datasheet?
+> Please don't mix C and C++ style comments in a single comment like this
+> - it looks unintentional.  Just use the same style for the whole thing.
+> You also don't need to include all the boilerplate with the SPDX header.
 > 
-> > +       chip->cfgr_clk = devm_clk_get(chip->dev, "cfgr-clk");
-> 
-> Ditto?
 
-Yes, these names came from datasheet.
+I think Linus made it clear that he wants the SPDX header to be a
+C++ comment, the documentation has:
 
-> > +       }
-> > +       /* Enable clk before accessing to registers */
-> > +       clk_prepare_enable(chip->cfgr_clk);
-> > +       clk_prepare_enable(chip->core_clk);
-> 
-> Each of them may fail. Is it okay?
+"
+2. Style:
 
-As it is driver remove callback I guess it is okay.
+   The SPDX license identifier is added in form of a comment.  The comment
+   style depends on the file type::
 
-> > +static const struct dev_pm_ops dw_axi_dma_pm_ops = {
-> > +       SET_RUNTIME_PM_OPS(axi_dma_runtime_suspend, axi_dma_runtime_resume, NULL)
-> > +};
-> 
-> No system suspend?
+      C source: // SPDX-License-Identifier: <SPDX License Expression>
+"
 
-Are you talking about SET_SYSTEM_SLEEP_PM_OPS?
-I don't implement these OPS as we don't have any platform which has DW AXI DMAC
-and supports sleeping - so I can't test them.
+I agree the boilerplate should be removed.
+
 
 -- 
- Eugeniy Paltsev
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
