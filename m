@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753705AbeCEW2U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:28:20 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37876 "EHLO
+        id S1753763AbeCEW21 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:28:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37928 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753053AbeCEW2N (ORCPT
+        with ESMTP id S1753691AbeCEW2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:28:13 -0500
+        Mon, 5 Mar 2018 17:28:20 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -16,75 +16,95 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         dianders@chromium.org, linux-rockchip@lists.infradead.org,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 33/38] drm/rockchip: Cancel PSR enable work before changing the state
-Date: Mon,  5 Mar 2018 23:27:57 +0100
-Message-Id: <20180305222802.6659-1-enric.balletbo@collabora.com>
+Subject: [PATCH v4 36/38] drm/rockchip: Disable PSR from reboot notifier
+Date: Mon,  5 Mar 2018 23:28:00 +0100
+Message-Id: <20180305222802.6659-4-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180305222802.6659-1-enric.balletbo@collabora.com>
+References: <20180305222802.6659-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomasz Figa <tfiga@chromium.org>
 
-If we change the state first and reschedule later, we might have the
-work executed according to previous scheduled time and end up with PSR
-re-enabled instantly. Let's cancel the work before changing the state.
-
-While at it, consolidate psr_disable_handler() to just call
-rockchip_drm_do_flush(), as they are both supposed to do the same.
+It looks like the driver subsystem detaches devices from power domains
+at shutdown without consent of the drivers. This means that we might have
+our power domain turned off behind our back and the only way to avoid
+problems is to stop doing any hardware programming at some point before
+the power is cut. A reboot notifier, despite being a misnomer and
+handling shutdowns as well, is a good place to do it.
 
 Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-index a107845ba97c..c8655e625ba2 100644
+index e7e16d92d5a1..1bf5cba9a64d 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -138,18 +138,6 @@ static void psr_flush_handler(struct work_struct *work)
- 	mutex_unlock(&psr->lock);
- }
+@@ -13,6 +13,7 @@
+  */
  
--static void psr_disable_handler(struct work_struct *work)
--{
--	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
--
--	/* If the state has changed since we initiated the flush, do nothing */
--	mutex_lock(&psr->lock);
--	if (psr->state == PSR_ENABLE)
--		psr_set_state_locked(psr, PSR_FLUSH);
--	mutex_unlock(&psr->lock);
--	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
--}
--
- /**
-  * rockchip_drm_psr_activate - activate PSR on the given pipe
-  * @encoder: encoder to obtain the PSR encoder
-@@ -198,6 +186,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
+ #include <linux/input.h>
++#include <linux/reboot.h>
  
- static void rockchip_drm_do_flush(struct psr_drv *psr)
- {
-+	cancel_delayed_work_sync(&psr->flush_work);
- 	psr_set_state(psr, PSR_FLUSH);
- 	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
- }
-@@ -244,6 +233,13 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
- }
- EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+@@ -33,6 +34,7 @@ struct psr_drv {
+ 	struct delayed_work	flush_work;
+ 	struct work_struct	disable_work;
  
-+static void psr_disable_handler(struct work_struct *work)
++	struct notifier_block	reboot_nb;
+ 	struct input_handler    input_handler;
+ 
+ 	int (*set)(struct drm_encoder *encoder, bool enable);
+@@ -309,6 +311,24 @@ static const struct input_device_id psr_ids[] = {
+ 	{ },
+ };
+ 
++static int rockchip_drm_psr_reboot_notifier(struct notifier_block *nb,
++					    unsigned long action, void *data)
 +{
-+	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
++	struct psr_drv *psr = container_of(nb, struct psr_drv, reboot_nb);
 +
-+	rockchip_drm_do_flush(psr);
++	/*
++	 * It looks like the driver subsystem detaches devices from power
++	 * domains at shutdown without consent of the drivers. This means
++	 * that we might have our power domain turned off behind our back
++	 * and the only way to avoid problems is to stop doing any hardware
++	 * programming after this point, which is achieved by the unbalanced
++	 * call below.
++	 */
++	rockchip_drm_psr_inhibit_get(psr->encoder);
++
++	return 0;
 +}
 +
- static void psr_input_event(struct input_handle *handle,
- 			    unsigned int type, unsigned int code,
- 			    int value)
+ /**
+  * rockchip_drm_psr_register - register encoder to psr driver
+  * @encoder: encoder that obtain the PSR function
+@@ -361,6 +381,9 @@ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+ 	if (error)
+ 		goto err1;
+ 
++	psr->reboot_nb.notifier_call = rockchip_drm_psr_reboot_notifier;
++	register_reboot_notifier(&psr->reboot_nb);
++
+ 	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_add_tail(&psr->list, &drm_drv->psr_list);
+ 	mutex_unlock(&drm_drv->psr_list_lock);
+@@ -403,6 +426,7 @@ void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
+ 			WARN_ON(psr->inhibit_count != 1);
+ 
+ 			list_del(&psr->list);
++			unregister_reboot_notifier(&psr->reboot_nb);
+ 			input_unregister_handler(&psr->input_handler);
+ 			kfree(psr->input_handler.name);
+ 			kfree(psr);
 -- 
 2.16.1
