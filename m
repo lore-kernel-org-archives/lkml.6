@@ -1,63 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964819AbeCEMyp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:54:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38536 "EHLO mx2.suse.de"
+        id S934974AbeCEM4R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:56:17 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56450 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934693AbeCEMym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:54:42 -0500
-Date: Mon, 5 Mar 2018 13:54:38 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-cc: Petr Mladek <pmladek@suse.com>, Jason Baron <jbaron@akamai.com>,
-        Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/8] livepatch: Atomic replace feature
-In-Reply-To: <5c956014-b717-aed8-de1b-58967ef835c6@virtuozzo.com>
-Message-ID: <alpine.LSU.2.21.1803051352300.26605@pobox.suse.cz>
-References: <20180221132914.4809-1-pmladek@suse.com> <5c956014-b717-aed8-de1b-58967ef835c6@virtuozzo.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S933973AbeCEM4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 07:56:16 -0500
+Date: Mon, 5 Mar 2018 13:56:04 +0100
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        Stefan Chulski <stefanc@marvell.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for
+ all ports
+Message-ID: <20180305125604.GJ1156@kwain>
+References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
+ <20180302154044.25204-2-antoine.tenart@bootlin.com>
+ <20180302170159.258bcdbc@windsurf.lan>
+ <20180305104813.GI1156@kwain>
+ <20180305134148.3bbba514@windsurf.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180305134148.3bbba514@windsurf.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 5 Mar 2018, Evgenii Shatokhin wrote:
+Hi Thomas,
 
-> Hi,
-
-Hi,
- 
-> > The atomic replace allows to create cumulative patches. They
-> > are useful when you maintain many livepatches and want to remove
-> > one that is lower on the stack. In addition it is very useful when
-> > more patches touch the same function and there are dependencies
-> > between them.
+On Mon, Mar 05, 2018 at 01:41:48PM +0100, Thomas Petazzoni wrote:
+> On Mon, 5 Mar 2018 11:48:13 +0100, Antoine Tenart wrote:
 > 
-> I have experimented with this updated patchset a bit.
-> It looks like replace operation fails if there is a loaded but disabled patch.
+> > > > +static void mvpp2_setup_bm_pool(void)
+> > > > +{
+> > > > +	/* Short pool */
+> > > > +	mvpp2_pools[MVPP2_BM_SHORT].buf_num  = MVPP2_BM_SHORT_BUF_NUM;
+> > > > +	mvpp2_pools[MVPP2_BM_SHORT].pkt_size = MVPP2_BM_SHORT_PKT_SIZE;
+> > > > +
+> > > > +	/* Long pool */
+> > > > +	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
+> > > > +	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
+> > > > +}  
+> > > 
+> > >  ?  
+> > 
+> > I wanted to do this, but it's no possible as MVPP2_BM_SHORT_PKT_SIZE and
+> > MVPP2_BM_LONG_PKT_SIZE use a core definition which expands at some point
+> > to __max(...) which has to be called from within a function.
 > 
-> Suppose there are 2 binary patches changing the same kernel functions. Load
-> patch1, then disable it (echo 0 > /sys/kernel/livepatch/patch1/enabled), then
-> try load patch2 with atomic replace. I get "Device or resource busy" error at
-> this point.
+> Hum, weird:
 > 
-> It seems, __klp_enable_patch() returns -EBUSY for some reason. I haven't dug
-> deeper into that code yet.
+> #define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
+> #define MVPP2_BM_LONG_FRAME_SIZE		2048
+> 
+> #define MVPP2_RX_MAX_PKT_SIZE(total_size) \
+>         ((total_size) - NET_SKB_PAD - MVPP2_SKB_SHINFO_SIZE)
+> 
+> #define MVPP2_SKB_SHINFO_SIZE \
+>         SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
+> 
+> #define SKB_DATA_ALIGN(X)        ALIGN(X, SMP_CACHE_BYTES)
+> 
+> I don't really see a __max(...) call.
 
-Yes, it is "enforce stacking" check in __klp_enable_patch():
+NET_SKB_PAD expends to __max(...).
 
-        /* enforce stacking: only the first disabled patch can be enabled */
-        if (patch->list.prev != &klp_patches &&
-            !list_prev_entry(patch, list)->enabled)
-                return -EBUSY;
+> And if this value really expands depending on other values, then it
+> isn't really a constant, and should be considered as a constant, no?
 
-So not connected to this patch set. We've had the behaviour for quite some 
-time.
+Well, the padding isn't truly a constant for some reasons, you can see
+an explanation here:
+https://elixir.bootlin.com/linux/latest/source/include/linux/skbuff.h#L2446
 
-Miroslav
- 
-> A workaround is simple: just unload all disabled patches before trying to load
-> patch2 with replace. Still, the behavior is quite strange.
+But this value can only change at compile time, so it really depends on
+what is the definition of a constant is :)
+
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
