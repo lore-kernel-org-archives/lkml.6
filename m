@@ -1,137 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeCEPLD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:11:03 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:46110 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751311AbeCEPLB (ORCPT
+        id S932080AbeCEPQj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:16:39 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42060 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751311AbeCEPQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:11:01 -0500
-X-UUID: 9722df065da149b583f6d5d4fee38c29-20180305
-Message-ID: <1520262650.8089.233.camel@mtkswgap22>
-Subject: Re: [PATCH v1 18/19] arm: dts: mt7623: add MT7623A reference boards
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Date: Mon, 5 Mar 2018 23:10:50 +0800
-In-Reply-To: <CAL_JsqKLYVN8G28GNYVQc=Kduij+0b82ydKG1D=7hh8sPE4GYA@mail.gmail.com>
-References: <cover.1519378871.git.sean.wang@mediatek.com>
-         <ddffdff293734954ba368be8a54edd3c84a4f4e6.1519378872.git.sean.wang@mediatek.com>
-         <20180302154547.xq5nkmkdk3oenbta@rob-hp-laptop>
-         <1520043343.8089.216.camel@mtkswgap22>
-         <CAL_JsqKLYVN8G28GNYVQc=Kduij+0b82ydKG1D=7hh8sPE4GYA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Mar 2018 10:16:38 -0500
+X-Google-Smtp-Source: AG47ELvKqiTppalKAYVFtSJEe+CmTRHeppor0vy4U/G2wXudV7vkm3RfYCnvz5YIP1dES1GvKZHhniCrD5At0LjJop8=
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+ <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+ <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz> <1519752950.10722.231.camel@linux.intel.com>
+ <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz> <1519814544.10722.266.camel@linux.intel.com>
+ <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz> <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date: Mon, 5 Mar 2018 16:16:37 +0100
+Message-ID: <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
+Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-05 at 08:10 -0600, Rob Herring wrote:
-> On Fri, Mar 2, 2018 at 8:15 PM, Sean Wang <sean.wang@mediatek.com> wrote:
-> > On Fri, 2018-03-02 at 09:45 -0600, Rob Herring wrote:
-> >> On Fri, Feb 23, 2018 at 06:16:38PM +0800, sean.wang@mediatek.com wrote:
-> >> > From: Sean Wang <sean.wang@mediatek.com>
-> >> >
-> >> > Add mt7623a-rfb.dtsi where most nodes can be inherited from
-> >> > mt7623n-rfb.dtsi and keep these distinctions from MT7623A boards in
-> >> > mt7623a-rfb.dtsi for most definition can be reused among MT7623A board
-> >> > variants.
-> >> >
-> >> > MT7623A has its specific definition of power domain and thus we need
-> >> > to change related devices such as audio, ethernet, crypto, high-speed
-> >> > DMA, NAND, and USB controller to the power domain they specifically
-> >> > belong to. In addition, MT7530 exists as built-in module inside MT7623A
-> >> > SoC and I2C2 and UART[0-1] get being removed and UART2 have distinct pin
-> >> > usage. Those all differences can be totally seen in mt7623a-rfb.dtsi.
-> >> >
-> >> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >> > ---
-> >> >  arch/arm/boot/dts/Makefile             |  2 +
-> >> >  arch/arm/boot/dts/mt7623a-rfb-emmc.dts | 22 +++++++++
-> >> >  arch/arm/boot/dts/mt7623a-rfb-nand.dts | 26 +++++++++++
-> >> >  arch/arm/boot/dts/mt7623a-rfb.dtsi     | 84 ++++++++++++++++++++++++++++++++++
-> >> >  arch/arm/boot/dts/mt7623n-rfb.dtsi     | 15 ++++++
-> >> >  5 files changed, 149 insertions(+)
-> >> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-emmc.dts
-> >> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb-nand.dts
-> >> >  create mode 100644 arch/arm/boot/dts/mt7623a-rfb.dtsi
-> >> >
-> >> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> >> > index 5af6fce..818817c 100644
-> >> > --- a/arch/arm/boot/dts/Makefile
-> >> > +++ b/arch/arm/boot/dts/Makefile
-> >> > @@ -1122,6 +1122,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
-> >> >     mt6580-evbp1.dtb \
-> >> >     mt6589-aquaris5.dtb \
-> >> >     mt6592-evb.dtb \
-> >> > +   mt7623a-rfb-emmc.dtb \
-> >> > +   mt7623a-rfb-nand.dtb \
-> >> >     mt7623n-rfb-emmc.dtb \
-> >> >     mt7623n-rfb-nand.dtb \
-> >> >     mt7623n-bananapi-bpi-r2.dtb \
-> >> > diff --git a/arch/arm/boot/dts/mt7623a-rfb-emmc.dts b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
-> >> > new file mode 100644
-> >> > index 0000000..ef6398e
-> >> > --- /dev/null
-> >> > +++ b/arch/arm/boot/dts/mt7623a-rfb-emmc.dts
-> >> > @@ -0,0 +1,22 @@
-> >> > +// SPDX-License-Identifier: GPL-2.0
-> >> > +/*
-> >> > + * Copyright (c) 2017-2018 MediaTek Inc.
-> >> > + * Author: Sean Wang <sean.wang@mediatek.com>
-> >> > + *
-> >> > + */
-> >> > +
-> >> > +/dts-v1/;
-> >> > +#include "mt7623a-rfb.dtsi"
-> >> > +
-> >> > +/ {
-> >> > +   model = "MediaTek MT7623A with eMMC reference board";
-> >> > +   compatible = "mediatek,mt7623a-rfb-emmc", "mediatek,mt7623";
-> >> > +
-> >> > +   chosen {
-> >> > +           bootargs = "console=ttyS0,115200n8 earlyprintk";
-> >>
-> >> Use stdout-path instead. earlyprintk option only works for a kernel
-> >> built with a debug uart at a fixed address, so drop it.
-> >>
-> >
-> > thanks, I will try and have stdout-path instead.
-> >
-> > But for earlyprintk, our kernel can support and be built with a debug
-> > uart at a fixed address and it is greatly useful to know what's going
-> > on when a system hang happens on certain device's initialization prior
-> > to uart initialization such as PCI device.
-> 
-> These days, you only need earlyprintk for *really* early console like
-> in the assembly boot entry code and before the DT is unflattened. For
-> anything else, use earlycon instead because earlycon is a runtime
-> option.
-> 
-> > Thus, I consider to keep it there in special on such kinds of
-> > development boards for debugging purpose.
-> 
-> Then add this option when you are doing debug. But for what's
-> "shipped" in mainline, you should not have this enabled.
-> 
-> Rob
+On 2 March 2018 at 13:53, Petr Mladek <pmladek@suse.com> wrote:
+> %p has many modifiers where the pointer is dereferenced. An invalid
+> pointer might cause kernel to crash silently.
+>
+> Note that printk() formats the string under logbuf_lock. Any recursive
+> printks are redirected to the printk_safe implementation and the messages
+> are stored into per-CPU buffers. These buffers might be eventually flushed
+> in printk_safe_flush_on_panic() but it is not guaranteed.
 
-Okay, for these reasons, I will remove earlyprintk usage here
-and try to use earlycon instead in the future.
+Yeah, it's annoying that we can't reliably WARN for bogus vsprintf() uses.
 
-Really thanks for your detailed explanation!
+> In general, we should do our best to get useful message from printk().
+> All pointers to the first memory page must be invalid. Let's prevent
+> the dereference and print "(null)" in this case. This is already done
+> in many other situations, including "%s" format handling and many
+> page fault handlers.
+>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  lib/vsprintf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index d7a708f82559..5c2d1f44218a 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  {
+>         const int default_width = 2 * sizeof(void *);
+>
+> -       if (!ptr && *fmt != 'K' && *fmt != 'x') {
+> +       if ((unsigned long)ptr < PAGE_SIZE && *fmt != 'K' && *fmt != 'x') {
 
-	Sean
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+ISTM that accidentally passing an ERR_PTR would be just as likely as
+passing a NULL pointer (or some small offset from one), so if we do
+this, shouldn't the test also cover IS_ERR values?
+
+Rasmus
