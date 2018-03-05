@@ -1,141 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeCESDE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 13:03:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751935AbeCESDC (ORCPT
+        id S1752832AbeCESDX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 13:03:23 -0500
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:58726 "EHLO
+        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751935AbeCESDV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:03:02 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E763601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the
- CMB
-To: Logan Gunthorpe <logang@deltatee.com>,
-        Keith Busch <keith.busch@intel.com>, Oliver <oohall@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180228234006.21093-1-logang@deltatee.com>
- <20180228234006.21093-8-logang@deltatee.com>
- <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
- <20180305160004.GA30975@localhost.localdomain>
- <3f56c76d-6a5c-7c2f-5442-c9209749b598@deltatee.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <f4f69d48-97b2-ebeb-6c97-83878ea4c419@codeaurora.org>
-Date: Mon, 5 Mar 2018 13:02:57 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <3f56c76d-6a5c-7c2f-5442-c9209749b598@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 5 Mar 2018 13:03:21 -0500
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+To: Brian Starkey <brian.starkey@arm.com>
+Cc: Mali DP Maintainers <malidp@foss.arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        DRI devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
+Subject: [PATCH v3] drm/mali-dp: Fix malidp_atomic_commit_hw_done() for event sending.
+Date: Mon,  5 Mar 2018 18:03:16 +0000
+Message-Id: <20180305180316.12654-1-Liviu.Dudau@arm.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180301174913.10875-1-Liviu.Dudau@arm.com>
+References: <20180301174913.10875-1-Liviu.Dudau@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/5/2018 12:10 PM, Logan Gunthorpe wrote:
-> 
-> 
-> On 05/03/18 09:00 AM, Keith Busch wrote:
->> On Mon, Mar 05, 2018 at 12:33:29PM +1100, Oliver wrote:
->>> On Thu, Mar 1, 2018 at 10:40 AM, Logan Gunthorpe <logang@deltatee.com> wrote:
->>>> @@ -429,10 +429,7 @@ static void __nvme_submit_cmd(struct nvme_queue *nvmeq,
->>>>   {
->>>>          u16 tail = nvmeq->sq_tail;
->>>
->>>> -       if (nvmeq->sq_cmds_io)
->>>> -               memcpy_toio(&nvmeq->sq_cmds_io[tail], cmd, sizeof(*cmd));
->>>> -       else
->>>> -               memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
->>>> +       memcpy(&nvmeq->sq_cmds[tail], cmd, sizeof(*cmd));
->>>
->>> Hmm, how safe is replacing memcpy_toio() with regular memcpy()? On PPC
->>> the _toio() variant enforces alignment, does the copy with 4 byte
->>> stores, and has a full barrier after the copy. In comparison our
->>> regular memcpy() does none of those things and may use unaligned and
->>> vector load/stores. For normal (cacheable) memory that is perfectly
->>> fine, but they can cause alignment faults when targeted at MMIO
->>> (cache-inhibited) memory.
->>>
->>> I think in this particular case it might be ok since we know SEQs are
->>> aligned to 64 byte boundaries and the copy is too small to use our
->>> vectorised memcpy(). I'll assume we don't need explicit ordering
->>> between writes of SEQs since the existing code doesn't seem to care
->>> unless the doorbell is being rung, so you're probably fine there too.
->>> That said, I still think this is a little bit sketchy and at the very
->>> least you should add a comment explaining what's going on when the CMB
->>> is being used. If someone more familiar with the NVMe driver could
->>> chime in I would appreciate it.
->>
->> I may not be understanding the concern, but I'll give it a shot.
->>
->> You're right, the start of any SQE is always 64-byte aligned, so that
->> should satisfy alignment requirements.
->>
->> The order when writing multiple/successive SQEs in a submission queue
->> does matter, and this is currently serialized through the q_lock.
->>
->> The order in which the bytes of a single SQE is written doesn't really
->> matter as long as the entire SQE is written into the CMB prior to writing
->> that SQ's doorbell register.
->>
->> The doorbell register is written immediately after copying a command
->> entry into the submission queue (ignore "shadow buffer" features),
->> so the doorbells written to commands submitted is 1:1.
->>
->> If a CMB SQE and DB order is not enforced with the memcpy, then we do
->> need a barrier after the SQE's memcpy and before the doorbell's writel.
-> 
-> 
-> Thanks for the information Keith.
-> 
-> Adding to this: regular memcpy generally also enforces alignment as unaligned access to regular memory is typically bad in some way on most arches. The generic memcpy_toio also does not have any barrier as it is just a call to memcpy. Arm64 also does not appear to have a barrier in its implementation and in the short survey I did I could not find any implementation with a barrier. I also did not find a ppc implementation in the tree but it would be weird for it to add a barrier when other arches do not appear to need it.
-> 
-> We've been operating on the assumption that memory mapped by devm_memremap_pages() can be treated as regular memory. This is emphasized by the fact that it does not return an __iomem pointer. If this assumption does not hold for an arch then we cannot support P2P DMA without an overhaul of many kernel interfaces or creating other backend interfaces into the drivers which take different data types (ie. we'd have to bypass the entire block layer when trying to write data in p2pmem to an nvme device. This is very undesirable.
-> 
+Mali DP hardware has a 'go' bit (config_valid) for making the new scene
+parameters active at the next page flip. The problem with the current
+code is that the driver first sets this bit and then proceeds to wait
+for confirmation from the hardware that the configuration has been
+updated before arming the vblank event. As config_valid is actually
+asserted by the hardware after the vblank event, during the prefetch
+phase, when we get to arming the vblank event we are going to send it
+at the next vblank, in effect halving the vblank rate from the userspace
+perspective.
 
-writel has a barrier inside on ARM64.
+Fix it by sending the userspace event from the IRQ handler, when we
+handle the config_valid interrupt, which syncs with the time when the
+hardware is active with the new parameters.
 
-https://elixir.bootlin.com/linux/latest/source/arch/arm64/include/asm/io.h#L143
+v2: Brian reminded me that interrupts won't fire when CRTC is off,
+so we need to do the sending ourselves.
 
-Why do you need another barrier?
+v3: crtc->enabled is the wrong flag to use here, as when we get an
+atomic commit that turns off the CRTC it will still be enabled until
+after the commit is done. Use the crtc->state->active for test.
 
+Reported-by: Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/gpu/drm/arm/malidp_drv.c | 32 +++++++++++++++++---------------
+ drivers/gpu/drm/arm/malidp_drv.h |  1 +
+ drivers/gpu/drm/arm/malidp_hw.c  | 12 +++++++++---
+ 3 files changed, 27 insertions(+), 18 deletions(-)
 
-ACCESSING DEVICES
------------------
-
-Many devices can be memory mapped, and so appear to the CPU as if they're just
-a set of memory locations.  To control such a device, the driver usually has to
-make the right memory accesses in exactly the right order.
-
-However, having a clever CPU or a clever compiler creates a potential problem
-in that the carefully sequenced accesses in the driver code won't reach the
-device in the requisite order if the CPU or the compiler thinks it is more
-efficient to reorder, combine or merge accesses - something that would cause
-the device to malfunction.
-
-Inside of the Linux kernel, I/O should be done through the appropriate accessor
-routines - such as inb() or writel() - which know how to make such accesses
-appropriately sequential. 
-
-
-> Logan
-> 
-> 
-> 
-
-
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index d88a3b9d59cc..3c628e43bf25 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -185,25 +185,29 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
+ 
+ static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
+ {
+-	struct drm_pending_vblank_event *event;
+ 	struct drm_device *drm = state->dev;
+ 	struct malidp_drm *malidp = drm->dev_private;
+ 
+-	if (malidp->crtc.enabled) {
+-		/* only set config_valid if the CRTC is enabled */
+-		if (malidp_set_and_wait_config_valid(drm))
+-			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
+-	}
++	malidp->event = malidp->crtc.state->event;
++	malidp->crtc.state->event = NULL;
+ 
+-	event = malidp->crtc.state->event;
+-	if (event) {
+-		malidp->crtc.state->event = NULL;
++	if (malidp->crtc.state->active) {
++		/*
++		 * if we have an event to deliver to userspace, make sure
++		 * the vblank is enabled as we are sending it from the IRQ
++		 * handler.
++		 */
++		if (malidp->event)
++			drm_crtc_vblank_get(&malidp->crtc);
+ 
++		/* only set config_valid if the CRTC is enabled */
++		if (malidp_set_and_wait_config_valid(drm) < 0)
++			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
++	} else if (malidp->event) {
++		/* CRTC inactive means vblank IRQ is disabled, send event directly */
+ 		spin_lock_irq(&drm->event_lock);
+-		if (drm_crtc_vblank_get(&malidp->crtc) == 0)
+-			drm_crtc_arm_vblank_event(&malidp->crtc, event);
+-		else
+-			drm_crtc_send_vblank_event(&malidp->crtc, event);
++		drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
++		malidp->event = NULL;
+ 		spin_unlock_irq(&drm->event_lock);
+ 	}
+ 	drm_atomic_helper_commit_hw_done(state);
+@@ -232,8 +236,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 
+ 	malidp_atomic_commit_hw_done(state);
+ 
+-	drm_atomic_helper_wait_for_vblanks(drm, state);
+-
+ 	pm_runtime_put(drm->dev);
+ 
+ 	drm_atomic_helper_cleanup_planes(drm, state);
+diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
+index e0d12c9fc6b8..c2375bb49619 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.h
++++ b/drivers/gpu/drm/arm/malidp_drv.h
+@@ -22,6 +22,7 @@ struct malidp_drm {
+ 	struct malidp_hw_device *dev;
+ 	struct drm_crtc crtc;
+ 	wait_queue_head_t wq;
++	struct drm_pending_vblank_event *event;
+ 	atomic_t config_valid;
+ 	u32 core_id;
+ };
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index 2bfb542135ac..8abd335ec313 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -782,9 +782,15 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
+ 	/* first handle the config valid IRQ */
+ 	dc_status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
+ 	if (dc_status & hw->map.dc_irq_map.vsync_irq) {
+-		/* we have a page flip event */
+-		atomic_set(&malidp->config_valid, 1);
+ 		malidp_hw_clear_irq(hwdev, MALIDP_DC_BLOCK, dc_status);
++		/* do we have a page flip event? */
++		if (malidp->event != NULL) {
++			spin_lock(&drm->event_lock);
++			drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
++			malidp->event = NULL;
++			spin_unlock(&drm->event_lock);
++		}
++		atomic_set(&malidp->config_valid, 1);
+ 		ret = IRQ_WAKE_THREAD;
+ 	}
+ 
+@@ -794,7 +800,7 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
+ 
+ 	mask = malidp_hw_read(hwdev, MALIDP_REG_MASKIRQ);
+ 	status &= mask;
+-	if (status & de->vsync_irq)
++	if ((status & de->vsync_irq) && malidp->crtc.enabled)
+ 		drm_crtc_handle_vblank(&malidp->crtc);
+ 
+ 	malidp_hw_clear_irq(hwdev, MALIDP_DE_BLOCK, status);
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.16.2
