@@ -1,103 +1,111 @@
-Return-Path: <brgerst@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520281921; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AG47ELskv96aLu1rKVuoTVe8xB38rK8d91Xf7DsxNvCdlf15baYrqgFBwrodN5MyOaN9KkT1cDk3
+ARC-Seal: i=1; a=rsa-sha256; t=1520245584; cv=none;
         d=google.com; s=arc-20160816;
-        b=pwmvSGAmvDHN870+6PMkGVyIFe1ZeUizAi1NpKrcwiVktdeaBdIJoita4RhCKmsDTq
-         jUmBhMHYEpkfvYOskvv6DuLejPTf4zIa7p7YDpkOM7PiBFYcsM7A7XpMpNsX1YiDmrX1
-         9n26KxSYqAS/z+R6W2hxslYwW1f/G2725Uw6yQ2NatPv/Wh19Jk2BdfEOvk9NOYeGMKM
-         Sb0S19Efoosutyjy1WbTUFgEWlLaVt0C80P3NnvnGtiAAGbhdGjhoi1JI7Xvb/Z1oIy7
-         eBM53y4Fl/p6pg1ywRgyTQrjECS7g+KWaXV68Pva4c3njd/xBKZyMJk7dox/Ti+0K8kl
-         1jJA==
+        b=wm3thkx6zF1xwqkiwTsb1NwB7Tjg50KuTcOc1ApVaVPJdqA2SwlC6tsf0nWh4/MGIV
+         I4kNBgLjdw4HmxC6JbEfaLPqgYuTJIFVMGkO5XzweTtBWCLSZOeO3AHhvTwpd+0q8Yf8
+         G0upe7AAEwUiu3x5+nCTJb/pQImwj6LkOGcVaqFiq3uRWkYGiju6AKUpit0ZtBYKUPSH
+         ggs4cW5UlNGYVhlA/6F2R/yxUsoTpqxn5gpDlat73lB2DcfzTAtnMBSoGFbEXR9iV45I
+         LeSGeaB5kP6tqUWbVo+NOc8uqvGpw13RIEX3L8pa3jEdrHFyRoR8ccucihWII3flDl9U
+         wKWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=GCFX45c8zG1KkZpnQTpg2sNnK3mgriY+rxRHJ3D/eYI=;
-        b=HaTLaU1Q1BHvOssOe4LsWov+S3dDyDpNYeMrHrfwEXDWfImReV/rh1zPKZiVHoMsuT
-         5UQNTn9MnafPWrgHWKRLB5NOkx+gB4dJGzR8Ll06lz6IKVnksSlVkX1QOmJ6ufSABvYf
-         KyziGLvV2vVflw6AMI2+byK9/sR4al8/L38qZF7ISVo42+CB+q56FQKOpIhEO3kfQ52U
-         5W0hYSPfFibKT/hfB6Y8RjvyUb5B59uzCtbeksuPOEDw+VQ6RDWvVxh5tNKkFu5POS9o
-         Y+jbaVsHvIdi81/jkY+2791KMk3XWFBLmXsPjT9pZWlb5Rpzky5WykC0XLfBQDcQsEEs
-         xSgA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Bb0yXFnnfWeJuIId9R35QPqjkYX4kDq1nzrBg7fvyCM=;
+        b=PFUM9vnyiOpbSh71yMCZAsTwWIuDN2sG4pXxGdNnOlWF+gr+x00AfHbmCTIC2HV2vC
+         kKlalBzJXnZF++wBcMFtnNwpfkTv1xUpXHpMhWFJ+SGKVwa7cJqx/HrHydi14tcMX2aG
+         T2doXW9lw0jPTKSCmYPHHAxJfrPuqFKlvusZzRSAZtXbSblnb/Fn+kl3gx3N3QUlecO0
+         IU61PVEXGwTmjzli76KXO41KffRFuzFxRkUjaopGmvXQExn08bIApi+QYqb56ZDi3a6S
+         X/Oi6cSldCUPXNIgIx/LVFxnML3fX+ljCSuHPpIxIDIxM0fz2FgmbPXu1R0iHL9PUu0P
+         AxUw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ShlmOkuQ;
-       spf=pass (google.com: domain of brgerst@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=brgerst@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hsmbDYuS;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ShlmOkuQ;
-       spf=pass (google.com: domain of brgerst@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=brgerst@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELs7IstZiFLVmJihoxRa4RkpreKJryOmYD6cHPgKHVVR5wnXS64VdIDoc3SBycYDbu/mejsFg0Unlusnnzq33KI=
-MIME-Version: 1.0
-In-Reply-To: <20180305182524.GT16484@8bytes.org>
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=hsmbDYuS;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 34/34] x86/mm/pti: Add Warning when booting on a PCIE capable CPU
+Date: Mon,  5 Mar 2018 11:26:03 +0100
+Message-Id: <1520245563-8444-35-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
- <1520245563-8444-12-git-send-email-joro@8bytes.org> <CAMzpN2h3xkhw_A4VeeA47=oykKgxXeumHM-q0QpaA8+fwFVRjw@mail.gmail.com>
- <20180305182524.GT16484@8bytes.org>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Mon, 5 Mar 2018 15:32:01 -0500
-Message-ID: <CAMzpN2hHSpcxz+dTpHhZuXh7QuvOai9_Yc6W3dG6br4oCV56EQ@mail.gmail.com>
-Subject: Re: [PATCH 11/34] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, "the arch/x86 maintainers" <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-	Jiri Kosina <jkosina@suse.cz>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	David Laight <David.Laight@aculab.com>, Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>, Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
-	Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>, Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093022557312692?=
-X-GMAIL-MSGID: =?utf-8?q?1594131136241593208?=
+X-GMAIL-THRID: =?utf-8?q?1594093033976694451?=
+X-GMAIL-MSGID: =?utf-8?q?1594093033976694451?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 1:25 PM, Joerg Roedel <joro@8bytes.org> wrote:
-> Hi Brian,
->
-> thanks for your review and helpful input.
->
-> On Mon, Mar 05, 2018 at 11:41:01AM -0500, Brian Gerst wrote:
->> On Mon, Mar 5, 2018 at 5:25 AM, Joerg Roedel <joro@8bytes.org> wrote:
->> > +.Lentry_from_kernel_\@:
->> > +
->> > +       /*
->> > +        * This handles the case when we enter the kernel from
->> > +        * kernel-mode and %esp points to the entry-stack. When this
->> > +        * happens we need to switch to the task-stack to run C code,
->> > +        * but switch back to the entry-stack again when we approach
->> > +        * iret and return to the interrupted code-path. This usually
->> > +        * happens when we hit an exception while restoring user-space
->> > +        * segment registers on the way back to user-space.
->> > +        *
->> > +        * When we switch to the task-stack here, we can't trust the
->> > +        * contents of the entry-stack anymore, as the exception handler
->> > +        * might be scheduled out or moved to another CPU. Therefore we
->> > +        * copy the complete entry-stack to the task-stack and set a
->> > +        * marker in the iret-frame (bit 31 of the CS dword) to detect
->> > +        * what we've done on the iret path.
->>
->> We don't need to worry about preemption changing the entry stack.  The
->> faults that IRET or segment loads can generate just run the exception
->> fixup handler and return.  Interrupts were disabled when the fault
->> occurred, so the kernel cannot be preempted.  The other case to watch
->> is #DB on SYSENTER, but that simply returns and doesn't sleep either.
->>
->> We can keep the same process as the existing debug/NMI handlers -
->> leave the current exception pt_regs on the entry stack and just switch
->> to the task stack for the call to the handler.  Then switch back to
->> the entry stack and continue.  No copying needed.
->
-> Okay, I'll look into that. Will it even be true for fully preemptible
-> and RT kernels that there can't be any preemption of these handlers?
+From: Joerg Roedel <jroedel@suse.de>
 
-See resume_kernel in the 32-bit entry for how preemption is handled on
-return to kernel mode.  Looking at the RT patches, they still respect
-disabling interrupts also disabling preemption.
+Warn the user in case the performance can be significantly
+improved by switching to a 64-bit kernel.
 
---
-Brian Gerst
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/mm/pti.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 3ffd923..8f5aa0d 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -385,6 +385,22 @@ void __init pti_init(void)
+ 
+ 	pr_info("enabled\n");
+ 
++#ifdef CONFIG_X86_32
++	if (boot_cpu_has(X86_FEATURE_PCID)) {
++		/* Use printk to work around pr_fmt() */
++		printk(KERN_WARNING "\n");
++		printk(KERN_WARNING "************************************************************\n");
++		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
++		printk(KERN_WARNING "**                                                        **\n");
++		printk(KERN_WARNING "** You are using 32-bit PTI on a 64-bit PCID-capable CPU. **\n");
++		printk(KERN_WARNING "** Your performance will increase dramatically if you     **\n");
++		printk(KERN_WARNING "** switch to a 64-bit kernel!                             **\n");
++		printk(KERN_WARNING "**                                                        **\n");
++		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
++		printk(KERN_WARNING "************************************************************\n");
++	}
++#endif
++
+ 	pti_clone_user_shared();
+ 	pti_clone_entry_text();
+ 	pti_setup_espfix64();
+-- 
+2.7.4
