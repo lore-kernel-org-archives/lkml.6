@@ -1,81 +1,741 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933202AbeCEJXH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:23:07 -0500
-Received: from www.zeus03.de ([194.117.254.33]:36058 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933011AbeCEJXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:23:03 -0500
-Date: Mon, 5 Mar 2018 10:22:59 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and
- cleanups
-Message-ID: <20180305092259.bcpfbzvvoqxsfomf@katana>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <20180304224248.mzhsvl4ccmtzg5am@ninjato>
- <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
+        id S1752665AbeCEJYD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:24:03 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51613 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752482AbeCEJX5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 04:23:57 -0500
+X-Google-Smtp-Source: AG47ELu/EhLxzjKAXAPbbvFbNRaw73KP083geVtaOinhtseqoJ1lbZFj6UNJTUPHYGCoKtlVX2UIlQ==
+Date: Mon, 5 Mar 2018 10:23:53 +0100
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH 7/9] drm/xen-front: Implement KMS/connector handling
+Message-ID: <20180305092353.GI22212@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-8-git-send-email-andr2000@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="otjtt6lvg234ipuq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1519200222-20623-8-git-send-email-andr2000@gmail.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 21, 2018 at 10:03:40AM +0200, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> 
+> Implement kernel modesetiing/connector handling using
+> DRM simple KMS helper pipeline:
+> 
+> - implement KMS part of the driver with the help of DRM
+>   simple pipepline helper which is possible due to the fact
+>   that the para-virtualized driver only supports a single
+>   (primary) plane:
+>   - initialize connectors according to XenStore configuration
+>   - handle frame done events from the backend
+>   - generate vblank events
+>   - create and destroy frame buffers and propagate those
+>     to the backend
+>   - propagate set/reset mode configuration to the backend on display
+>     enable/disable callbacks
+>   - send page flip request to the backend and implement logic for
+>     reporting backend IO errors on prepare fb callback
+> 
+> - implement virtual connector handling:
+>   - support only pixel formats suitable for single plane modes
+>   - make sure the connector is always connected
+>   - support a single video mode as per para-virtualized driver
+>     configuration
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
---otjtt6lvg234ipuq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think once you've removed the midlayer in the previous patch it would
+makes sense to merge the 2 patches into 1.
 
+Bunch more comments below.
+-Daniel
 
-> I have added Wolframs tags to the already applied patches and applied
-> that last two, 15 and 16.
+> ---
+>  drivers/gpu/drm/xen/Makefile             |   2 +
+>  drivers/gpu/drm/xen/xen_drm_front_conn.c | 125 +++++++++++++
+>  drivers/gpu/drm/xen/xen_drm_front_conn.h |  35 ++++
+>  drivers/gpu/drm/xen/xen_drm_front_drv.c  |  15 ++
+>  drivers/gpu/drm/xen/xen_drm_front_drv.h  |  12 ++
+>  drivers/gpu/drm/xen/xen_drm_front_kms.c  | 299 +++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/xen/xen_drm_front_kms.h  |  30 ++++
+>  7 files changed, 518 insertions(+)
+>  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
+>  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
+>  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
+>  create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+> 
+> diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+> index d3068202590f..4fcb0da1a9c5 100644
+> --- a/drivers/gpu/drm/xen/Makefile
+> +++ b/drivers/gpu/drm/xen/Makefile
+> @@ -2,6 +2,8 @@
+>  
+>  drm_xen_front-objs := xen_drm_front.o \
+>  		      xen_drm_front_drv.o \
+> +		      xen_drm_front_kms.o \
+> +		      xen_drm_front_conn.o \
+>  		      xen_drm_front_evtchnl.o \
+>  		      xen_drm_front_shbuf.o \
+>  		      xen_drm_front_cfg.o
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_conn.c b/drivers/gpu/drm/xen/xen_drm_front_conn.c
+> new file mode 100644
+> index 000000000000..d9986a2e1a3b
+> --- /dev/null
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_conn.c
+> @@ -0,0 +1,125 @@
+> +/*
+> + *  Xen para-virtual DRM device
+> + *
+> + *   This program is free software; you can redistribute it and/or modify
+> + *   it under the terms of the GNU General Public License as published by
+> + *   the Free Software Foundation; either version 2 of the License, or
+> + *   (at your option) any later version.
+> + *
+> + *   This program is distributed in the hope that it will be useful,
+> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *   GNU General Public License for more details.
+> + *
+> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+> + *
+> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> + */
+> +
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_crtc_helper.h>
+> +
+> +#include <video/videomode.h>
+> +
+> +#include "xen_drm_front_conn.h"
+> +#include "xen_drm_front_drv.h"
+> +
+> +static struct xen_drm_front_drm_pipeline *
+> +to_xen_drm_pipeline(struct drm_connector *connector)
+> +{
+> +	return container_of(connector, struct xen_drm_front_drm_pipeline, conn);
+> +}
+> +
+> +static const uint32_t plane_formats[] = {
+> +	DRM_FORMAT_RGB565,
+> +	DRM_FORMAT_RGB888,
+> +	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +	DRM_FORMAT_XRGB4444,
+> +	DRM_FORMAT_ARGB4444,
+> +	DRM_FORMAT_XRGB1555,
+> +	DRM_FORMAT_ARGB1555,
+> +};
+> +
+> +const uint32_t *xen_drm_front_conn_get_formats(int *format_count)
+> +{
+> +	*format_count = ARRAY_SIZE(plane_formats);
+> +	return plane_formats;
+> +}
+> +
+> +static enum drm_connector_status connector_detect(
+> +		struct drm_connector *connector, bool force)
+> +{
+> +	if (drm_dev_is_unplugged(connector->dev))
+> +		return connector_status_disconnected;
+> +
+> +	return connector_status_connected;
+> +}
+> +
+> +#define XEN_DRM_NUM_VIDEO_MODES		1
+> +#define XEN_DRM_CRTC_VREFRESH_HZ	60
+> +
+> +static int connector_get_modes(struct drm_connector *connector)
+> +{
+> +	struct xen_drm_front_drm_pipeline *pipeline =
+> +		to_xen_drm_pipeline(connector);
+> +	struct drm_display_mode *mode;
+> +	struct videomode videomode;
+> +	int width, height;
+> +
+> +	mode = drm_mode_create(connector->dev);
+> +	if (!mode)
+> +		return 0;
+> +
+> +	memset(&videomode, 0, sizeof(videomode));
+> +	videomode.hactive = pipeline->width;
+> +	videomode.vactive = pipeline->height;
+> +	width = videomode.hactive + videomode.hfront_porch +
+> +		videomode.hback_porch + videomode.hsync_len;
+> +	height = videomode.vactive + videomode.vfront_porch +
+> +		videomode.vback_porch + videomode.vsync_len;
+> +	videomode.pixelclock = width * height * XEN_DRM_CRTC_VREFRESH_HZ;
+> +	mode->type = DRM_MODE_TYPE_PREFERRED | DRM_MODE_TYPE_DRIVER;
+> +
+> +	drm_display_mode_from_videomode(&videomode, mode);
+> +	drm_mode_probed_add(connector, mode);
+> +	return XEN_DRM_NUM_VIDEO_MODES;
+> +}
+> +
+> +static int connector_mode_valid(struct drm_connector *connector,
+> +		struct drm_display_mode *mode)
+> +{
+> +	struct xen_drm_front_drm_pipeline *pipeline =
+> +			to_xen_drm_pipeline(connector);
+> +
+> +	if (mode->hdisplay != pipeline->width)
+> +		return MODE_ERROR;
+> +
+> +	if (mode->vdisplay != pipeline->height)
+> +		return MODE_ERROR;
+> +
+> +	return MODE_OK;
+> +}
+> +
+> +static const struct drm_connector_helper_funcs connector_helper_funcs = {
+> +	.get_modes = connector_get_modes,
+> +	.mode_valid = connector_mode_valid,
+> +};
+> +
+> +static const struct drm_connector_funcs connector_funcs = {
+> +	.detect = connector_detect,
+> +	.fill_modes = drm_helper_probe_single_connector_modes,
+> +	.destroy = drm_connector_cleanup,
+> +	.reset = drm_atomic_helper_connector_reset,
+> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> +};
+> +
+> +int xen_drm_front_conn_init(struct xen_drm_front_drm_info *drm_info,
+> +		struct drm_connector *connector)
+> +{
+> +	drm_connector_helper_add(connector, &connector_helper_funcs);
+> +
+> +	return drm_connector_init(drm_info->drm_dev, connector,
+> +		&connector_funcs, DRM_MODE_CONNECTOR_VIRTUAL);
+> +}
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_conn.h b/drivers/gpu/drm/xen/xen_drm_front_conn.h
+> new file mode 100644
+> index 000000000000..708e80d45985
+> --- /dev/null
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_conn.h
+> @@ -0,0 +1,35 @@
+> +/*
+> + *  Xen para-virtual DRM device
+> + *
+> + *   This program is free software; you can redistribute it and/or modify
+> + *   it under the terms of the GNU General Public License as published by
+> + *   the Free Software Foundation; either version 2 of the License, or
+> + *   (at your option) any later version.
+> + *
+> + *   This program is distributed in the hope that it will be useful,
+> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *   GNU General Public License for more details.
+> + *
+> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+> + *
+> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> + */
+> +
+> +#ifndef __XEN_DRM_FRONT_CONN_H_
+> +#define __XEN_DRM_FRONT_CONN_H_
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_encoder.h>
+> +
+> +#include <linux/wait.h>
+> +
+> +struct xen_drm_front_drm_info;
+> +
+> +const uint32_t *xen_drm_front_conn_get_formats(int *format_count);
+> +
+> +int xen_drm_front_conn_init(struct xen_drm_front_drm_info *drm_info,
+> +		struct drm_connector *connector);
+> +
+> +#endif /* __XEN_DRM_FRONT_CONN_H_ */
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.c b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+> index b3764d5ed0f6..e8862d26ba27 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.c
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+> @@ -23,6 +23,7 @@
+>  #include "xen_drm_front.h"
+>  #include "xen_drm_front_cfg.h"
+>  #include "xen_drm_front_drv.h"
+> +#include "xen_drm_front_kms.h"
+>  
+>  static int dumb_create(struct drm_file *filp,
+>  		struct drm_device *dev, struct drm_mode_create_dumb *args)
+> @@ -41,6 +42,13 @@ static void free_object(struct drm_gem_object *obj)
+>  static void on_frame_done(struct platform_device *pdev,
+>  		int conn_idx, uint64_t fb_cookie)
+>  {
+> +	struct xen_drm_front_drm_info *drm_info = platform_get_drvdata(pdev);
+> +
+> +	if (unlikely(conn_idx >= drm_info->cfg->num_connectors))
+> +		return;
+> +
+> +	xen_drm_front_kms_on_frame_done(&drm_info->pipeline[conn_idx],
+> +			fb_cookie);
+>  }
+>  
+>  static void lastclose(struct drm_device *dev)
+> @@ -157,6 +165,12 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
+>  		return ret;
+>  	}
+>  
+> +	ret = xen_drm_front_kms_init(drm_info);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to initialize DRM/KMS, ret %d\n", ret);
+> +		goto fail_modeset;
+> +	}
+> +
+>  	dev->irq_enabled = 1;
+>  
+>  	ret = drm_dev_register(dev, 0);
+> @@ -172,6 +186,7 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
+>  
+>  fail_register:
+>  	drm_dev_unregister(dev);
+> +fail_modeset:
+>  	drm_mode_config_cleanup(dev);
+>  	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.h b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+> index aaa476535c13..563318b19f34 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.h
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+> @@ -20,14 +20,24 @@
+>  #define __XEN_DRM_FRONT_DRV_H_
+>  
+>  #include <drm/drmP.h>
+> +#include <drm/drm_simple_kms_helper.h>
+>  
+>  #include "xen_drm_front.h"
+>  #include "xen_drm_front_cfg.h"
+> +#include "xen_drm_front_conn.h"
+>  
+>  struct xen_drm_front_drm_pipeline {
+>  	struct xen_drm_front_drm_info *drm_info;
+>  
+>  	int index;
+> +
+> +	struct drm_simple_display_pipe pipe;
+> +
+> +	struct drm_connector conn;
+> +	/* these are only for connector mode checking */
+> +	int width, height;
+> +	/* last backend error seen on page flip */
+> +	int pgflip_last_error;
+>  };
+>  
+>  struct xen_drm_front_drm_info {
+> @@ -35,6 +45,8 @@ struct xen_drm_front_drm_info {
+>  	struct xen_drm_front_ops *front_ops;
+>  	struct drm_device *drm_dev;
+>  	struct xen_drm_front_cfg *cfg;
+> +
+> +	struct xen_drm_front_drm_pipeline pipeline[XEN_DRM_FRONT_MAX_CRTCS];
+>  };
+>  
+>  static inline uint64_t xen_drm_front_fb_to_cookie(
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+> new file mode 100644
+> index 000000000000..ad94c28835cd
+> --- /dev/null
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+> @@ -0,0 +1,299 @@
+> +/*
+> + *  Xen para-virtual DRM device
+> + *
+> + *   This program is free software; you can redistribute it and/or modify
+> + *   it under the terms of the GNU General Public License as published by
+> + *   the Free Software Foundation; either version 2 of the License, or
+> + *   (at your option) any later version.
+> + *
+> + *   This program is distributed in the hope that it will be useful,
+> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *   GNU General Public License for more details.
+> + *
+> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+> + *
+> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> + */
+> +
+> +#include "xen_drm_front_kms.h"
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_atomic.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_gem.h>
+> +#include <drm/drm_gem_framebuffer_helper.h>
+> +
+> +#include "xen_drm_front.h"
+> +#include "xen_drm_front_conn.h"
+> +#include "xen_drm_front_drv.h"
+> +
+> +static struct xen_drm_front_drm_pipeline *
+> +to_xen_drm_pipeline(struct drm_simple_display_pipe *pipe)
+> +{
+> +	return container_of(pipe, struct xen_drm_front_drm_pipeline, pipe);
+> +}
+> +
+> +static void fb_destroy(struct drm_framebuffer *fb)
+> +{
+> +	struct xen_drm_front_drm_info *drm_info = fb->dev->dev_private;
+> +
+> +	drm_info->front_ops->fb_detach(drm_info->front_info,
+> +			xen_drm_front_fb_to_cookie(fb));
+> +	drm_gem_fb_destroy(fb);
+> +}
+> +
+> +static struct drm_framebuffer_funcs fb_funcs = {
+> +	.destroy = fb_destroy,
+> +};
+> +
+> +static struct drm_framebuffer *fb_create(struct drm_device *dev,
+> +		struct drm_file *filp, const struct drm_mode_fb_cmd2 *mode_cmd)
+> +{
+> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+> +	static struct drm_framebuffer *fb;
+> +	struct drm_gem_object *gem_obj;
+> +	int ret;
+> +
+> +	fb = drm_gem_fb_create_with_funcs(dev, filp, mode_cmd, &fb_funcs);
+> +	if (IS_ERR_OR_NULL(fb))
+> +		return fb;
+> +
+> +	gem_obj = drm_gem_object_lookup(filp, mode_cmd->handles[0]);
+> +	if (!gem_obj) {
+> +		DRM_ERROR("Failed to lookup GEM object\n");
+> +		ret = -ENOENT;
+> +		goto fail;
+> +	}
+> +
+> +	drm_gem_object_unreference_unlocked(gem_obj);
+> +
+> +	ret = drm_info->front_ops->fb_attach(
+> +			drm_info->front_info,
+> +			xen_drm_front_dbuf_to_cookie(gem_obj),
+> +			xen_drm_front_fb_to_cookie(fb),
+> +			fb->width, fb->height, fb->format->format);
+> +	if (ret < 0) {
+> +		DRM_ERROR("Back failed to attach FB %p: %d\n", fb, ret);
+> +		goto fail;
+> +	}
+> +
+> +	return fb;
+> +
+> +fail:
+> +	drm_gem_fb_destroy(fb);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static const struct drm_mode_config_funcs mode_config_funcs = {
+> +	.fb_create = fb_create,
+> +	.atomic_check = drm_atomic_helper_check,
+> +	.atomic_commit = drm_atomic_helper_commit,
+> +};
+> +
+> +static int display_set_config(struct drm_simple_display_pipe *pipe,
+> +	struct drm_framebuffer *fb)
+> +{
+> +	struct xen_drm_front_drm_pipeline *pipeline =
+> +			to_xen_drm_pipeline(pipe);
+> +	struct drm_crtc *crtc = &pipe->crtc;
+> +	struct xen_drm_front_drm_info *drm_info = pipeline->drm_info;
+> +	int ret;
+> +
+> +	if (fb)
+> +		ret = drm_info->front_ops->mode_set(pipeline,
+> +				crtc->x, crtc->y,
+> +				fb->width, fb->height, fb->format->cpp[0] * 8,
+> +				xen_drm_front_fb_to_cookie(fb));
+> +	else
+> +		ret = drm_info->front_ops->mode_set(pipeline,
+> +				0, 0, 0, 0, 0,
+> +				xen_drm_front_fb_to_cookie(NULL));
 
-Thanks. Please note that patch 14 misses my Rev tag. (I gave it
-yesterday but the patch was accidently applied before. One round too
-early, so to say).
+This is a bit much layering, the if (fb) case corresponds to the
+display_enable/disable hooks, pls fold that in instead of the indirection.
+simple helpers guarantee that when the display is on, then you have an fb.
 
-> They are all present in my next branch. The fix that Wolfram sent on
-> top, is added immediately after the commit it fixes.
+Maybe we need to fix the docs, pls check and if that's not clear, submit a
+kernel-doc patch for the simple pipe helpers.
 
-Could we also squash it, then?
+> +
+> +	if (ret)
+> +		DRM_ERROR("Failed to set mode to back: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static void display_enable(struct drm_simple_display_pipe *pipe,
+> +		struct drm_crtc_state *crtc_state)
+> +{
+> +	struct drm_crtc *crtc = &pipe->crtc;
+> +	struct drm_framebuffer *fb = pipe->plane.state->fb;
+> +
+> +	if (display_set_config(pipe, fb) == 0)
+> +		drm_crtc_vblank_on(crtc);
 
+I get the impression your driver doesn't support vblanks (the page flip
+code at least looks like it's only generating a single event), you also
+don't have a enable/disable_vblank implementation. If there's no vblank
+handling then this shouldn't be needed.
 
---otjtt6lvg234ipuq
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	else
+> +		DRM_ERROR("Failed to enable display\n");
+> +}
+> +
+> +static void display_disable(struct drm_simple_display_pipe *pipe)
+> +{
+> +	struct drm_crtc *crtc = &pipe->crtc;
+> +
+> +	display_set_config(pipe, NULL);
+> +	drm_crtc_vblank_off(crtc);
+> +	/* final check for stalled events */
+> +	if (crtc->state->event && !crtc->state->active) {
+> +		unsigned long flags;
+> +
+> +		spin_lock_irqsave(&crtc->dev->event_lock, flags);
+> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+> +		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+> +		crtc->state->event = NULL;
+> +	}
+> +}
+> +
+> +void xen_drm_front_kms_on_frame_done(
+> +		struct xen_drm_front_drm_pipeline *pipeline,
+> +		uint64_t fb_cookie)
+> +{
+> +	drm_crtc_handle_vblank(&pipeline->pipe.crtc);
 
------BEGIN PGP SIGNATURE-----
+Hm, again this doesn't look like real vblank, but only a page-flip done
+event. If that's correct then please don't use the vblank machinery, but
+just store the event internally (protected with your own private spinlock)
+and send it out using drm_crtc_send_vblank_event directly. No calls to
+arm_vblank_event or any of the other vblank infrastructure should be
+needed.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqdDGsACgkQFA3kzBSg
-KbY17A/+IDT0E3zqsrKQG3Gv9dXc2OBuEEOpjyQGn2WLSiFUW/YNY+HfZO9af/MF
-YRqPBeqWVdUYsB4S4d++HqHYipQYF2Mngi5o7oC1qRoVauoWwJuc4pSY7yujQ7Ux
-c3aEt+HEWcU1gR/3vsnAwGMjoWNyRtONl6W2NRUwM6sj+dLjHubSDVuE8hJ6/MUD
-jmmuhLFC6NkXhhbz2lN3i2QVlI1B9LX5Hj7vWTm7D4afWykuxLI/+tY5ycGuC0in
-S33YCD7iHdWw1C5A6TlVwSlmAsVOCPtL87FQABOlhkeaJcJWTlhncgkTstqoYDyd
-c5thdAH2vtMIuhmb6+RK4G8yQdKK7HGzUl7Of6/y8wIn4eKKoyJ3b4WDMKewy6EL
-96DJlj2eaCCK+EV64o0Eq+MC50OSkL5OSuWhEUSX7oaB6twVF7Mmjo8hxYYvRLqM
-rGOcaGua4Zzj2iS1Cx5GB7o4cAq/2btqeR9V1KZsQzsyHXC9g25LEQnnvmt/n3cM
-E7BK+9RnEc2JcvrVFXzevNhWgGNTzHttmXyzHl4s783o79f5liLAK2NG+mM1hwTR
-sPIUI8TwEqVg3lJxIoRUWPWKka7sqlDZ5C79gNZbc0QwC9FKHvGFyRQqWq/xXs0K
-ela9XXc607vVX9VismHS3GKF0koS8LmZLhXYSv3eZm+2l9dlGVk=
-=DgLh
------END PGP SIGNATURE-----
+Also please remove the drm_vblank_init() call, since your hw doesn't
+really have vblanks. And exposing vblanks to userspace without
+implementing them is confusing.
 
---otjtt6lvg234ipuq--
+> +}
+> +
+> +static void display_send_page_flip(struct drm_simple_display_pipe *pipe,
+> +		struct drm_plane_state *old_plane_state)
+> +{
+> +	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(
+> +			old_plane_state->state, &pipe->plane);
+> +
+> +	/*
+> +	 * If old_plane_state->fb is NULL and plane_state->fb is not,
+> +	 * then this is an atomic commit which will enable display.
+> +	 * If old_plane_state->fb is not NULL and plane_state->fb is,
+> +	 * then this is an atomic commit which will disable display.
+> +	 * Ignore these and do not send page flip as this framebuffer will be
+> +	 * sent to the backend as a part of display_set_config call.
+> +	 */
+> +	if (old_plane_state->fb && plane_state->fb) {
+> +		struct xen_drm_front_drm_pipeline *pipeline =
+> +				to_xen_drm_pipeline(pipe);
+> +		struct xen_drm_front_drm_info *drm_info = pipeline->drm_info;
+> +		int ret;
+> +
+> +		ret = drm_info->front_ops->page_flip(drm_info->front_info,
+> +				pipeline->index,
+> +				xen_drm_front_fb_to_cookie(plane_state->fb));
+> +		pipeline->pgflip_last_error = ret;
+> +		if (ret) {
+> +			DRM_ERROR("Failed to send page flip request to backend: %d\n", ret);
+> +			/*
+> +			 * As we are at commit stage the DRM core will anyways
+> +			 * wait for the vblank and knows nothing about our
+> +			 * failure. The best we can do is to handle
+> +			 * vblank now, so there is no vblank/flip_done
+> +			 * time outs
+> +			 */
+> +			drm_crtc_handle_vblank(&pipeline->pipe.crtc);
+> +		}
+> +	}
+> +}
+> +
+> +static int display_prepare_fb(struct drm_simple_display_pipe *pipe,
+> +		struct drm_plane_state *plane_state)
+> +{
+> +	struct xen_drm_front_drm_pipeline *pipeline =
+> +			to_xen_drm_pipeline(pipe);
+> +
+> +	if (pipeline->pgflip_last_error) {
+> +		int ret;
+> +
+> +		/* if previous page flip didn't succeed then report the error */
+> +		ret = pipeline->pgflip_last_error;
+> +		/* and let us try to page flip next time */
+> +		pipeline->pgflip_last_error = 0;
+> +		return ret;
+> +	}
+
+Nope, this isn't how the uapi works. If your flips fail then we might need
+to add some error status thing to the drm events, but you can't make the
+next flip fail.
+-Daniel
+
+> +	return drm_gem_fb_prepare_fb(&pipe->plane, plane_state);
+> +}
+> +
+> +static void display_update(struct drm_simple_display_pipe *pipe,
+> +		struct drm_plane_state *old_plane_state)
+> +{
+> +	struct drm_crtc *crtc = &pipe->crtc;
+> +	struct drm_pending_vblank_event *event;
+> +
+> +	event = crtc->state->event;
+> +	if (event) {
+> +		struct drm_device *dev = crtc->dev;
+> +		unsigned long flags;
+> +
+> +		crtc->state->event = NULL;
+> +
+> +		spin_lock_irqsave(&dev->event_lock, flags);
+> +		if (drm_crtc_vblank_get(crtc) == 0)
+> +			drm_crtc_arm_vblank_event(crtc, event);
+> +		else
+> +			drm_crtc_send_vblank_event(crtc, event);
+> +		spin_unlock_irqrestore(&dev->event_lock, flags);
+> +	}
+> +	/*
+> +	 * Send page flip request to the backend *after* we have event armed/
+> +	 * sent above, so on page flip done event from the backend we can
+> +	 * deliver it while handling vblank.
+> +	 */
+> +	display_send_page_flip(pipe, old_plane_state);
+> +}
+> +
+> +static const struct drm_simple_display_pipe_funcs display_funcs = {
+> +	.enable = display_enable,
+> +	.disable = display_disable,
+> +	.prepare_fb = display_prepare_fb,
+> +	.update = display_update,
+> +};
+> +
+> +static int display_pipe_init(struct xen_drm_front_drm_info *drm_info,
+> +		int index, struct xen_drm_front_cfg_connector *cfg,
+> +		struct xen_drm_front_drm_pipeline *pipeline)
+> +{
+> +	struct drm_device *dev = drm_info->drm_dev;
+> +	const uint32_t *formats;
+> +	int format_count;
+> +	int ret;
+> +
+> +	pipeline->drm_info = drm_info;
+> +	pipeline->index = index;
+> +	pipeline->height = cfg->height;
+> +	pipeline->width = cfg->width;
+> +
+> +	ret = xen_drm_front_conn_init(drm_info, &pipeline->conn);
+> +	if (ret)
+> +		return ret;
+> +
+> +	formats = xen_drm_front_conn_get_formats(&format_count);
+> +
+> +	return drm_simple_display_pipe_init(dev, &pipeline->pipe,
+> +			&display_funcs, formats, format_count,
+> +			NULL, &pipeline->conn);
+> +}
+> +
+> +int xen_drm_front_kms_init(struct xen_drm_front_drm_info *drm_info)
+> +{
+> +	struct drm_device *dev = drm_info->drm_dev;
+> +	int i, ret;
+> +
+> +	drm_mode_config_init(dev);
+> +
+> +	dev->mode_config.min_width = 0;
+> +	dev->mode_config.min_height = 0;
+> +	dev->mode_config.max_width = 4095;
+> +	dev->mode_config.max_height = 2047;
+> +	dev->mode_config.funcs = &mode_config_funcs;
+> +
+> +	for (i = 0; i < drm_info->cfg->num_connectors; i++) {
+> +		struct xen_drm_front_cfg_connector *cfg =
+> +				&drm_info->cfg->connectors[i];
+> +		struct xen_drm_front_drm_pipeline *pipeline =
+> +				&drm_info->pipeline[i];
+> +
+> +		ret = display_pipe_init(drm_info, i, cfg, pipeline);
+> +		if (ret) {
+> +			drm_mode_config_cleanup(dev);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	drm_mode_config_reset(dev);
+> +	return 0;
+> +}
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.h b/drivers/gpu/drm/xen/xen_drm_front_kms.h
+> new file mode 100644
+> index 000000000000..65a50033bb9b
+> --- /dev/null
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.h
+> @@ -0,0 +1,30 @@
+> +/*
+> + *  Xen para-virtual DRM device
+> + *
+> + *   This program is free software; you can redistribute it and/or modify
+> + *   it under the terms of the GNU General Public License as published by
+> + *   the Free Software Foundation; either version 2 of the License, or
+> + *   (at your option) any later version.
+> + *
+> + *   This program is distributed in the hope that it will be useful,
+> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *   GNU General Public License for more details.
+> + *
+> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+> + *
+> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> + */
+> +
+> +#ifndef __XEN_DRM_FRONT_KMS_H_
+> +#define __XEN_DRM_FRONT_KMS_H_
+> +
+> +#include "xen_drm_front_drv.h"
+> +
+> +int xen_drm_front_kms_init(struct xen_drm_front_drm_info *drm_info);
+> +
+> +void xen_drm_front_kms_on_frame_done(
+> +		struct xen_drm_front_drm_pipeline *pipeline,
+> +		uint64_t fb_cookie);
+> +
+> +#endif /* __XEN_DRM_FRONT_KMS_H_ */
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
