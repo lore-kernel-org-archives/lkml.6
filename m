@@ -1,11 +1,11 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-703119-1520227128-2-15629510515316463400
+X-Cyrus-Session-Id: sloti22d1t05-568472-1520227140-2-606690386258953409
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -13,43 +13,43 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520227127; b=Fm7DHDd8bY8BB7xfKVc20jIagd4pcvxfiMqmGDtjA8v2/qc
-    u5ErsqPEkAZlGd/SioYjw948yafGSwOEMU9hNpNQVgfKTJfAvnCbukRqTTrov9vE
-    aB5WbMp9NQANiM1faMsLRfZZSkRAhhxAUnvHDHDxwkagTOU6VFNgKNAXV11wuhsx
-    JpODq3og/bLE9D57ijdYi3HntlGaQUF6GqJ8ftvy6v/v3pMHiq1kYgfbq96vhzYD
-    VmxeCDWGxJSssRtbIiApQ+4nWbeflzjW1CQMe77lBoJr3h/SoMVcT68fHHwlkAyC
-    cv8qW6RhjxxCdH4vBohzLwVkUewE5Joiaw5dKLg==
+    t=1520227139; b=gBsW6Y49reoGFe6S5z7ipII0aubaoPAAERCoTbJY8g5rEwJ
+    7xWjl++M55SsLcq5OliOkIrrRU3O30GrpzgtFQkibwtT0/spYAWiuh96RARmXxFv
+    nb+ukG0Uwk/kyzjH87bHaRvDaq1sLrbwxHoIaWaBG3WwTnJbMNXSSq3GeL9/NAz5
+    UhLbroe8mVQkRnsSx9tlmUXWoZwpJq0aQEkU3zvlbtPPu2WyTRpNzY9/crLZHELz
+    55oOsBNJokIkzT+Rp/sPWn3/z0D3myyFWlu+sh2G4GrM9sm07AxtDT3GoPkMpbB3
+    QT2UnJUb9QaSbJLSCdIYcCZg/iuVWojrFRnC+Pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:reply-to:cc:mime-version
     :content-type:content-transfer-encoding:sender; s=arctest; t=
-    1520227127; bh=imFWyhAln+ti0S0va9OH8uJp5NBKFngIxq/bjw3OH9w=; b=W
-    eoFYtZHT1zy2nW7l1hgdmDhO/hhgO8NLQHGdt8Oayx1Hj0+WCgCoCUCIvFnGIoio
-    FMBpyLROueCIRomIyd4rSCqJt6VaXXIbQM2CFsXP8CEqGyF7iHL89eLuZ72S/5Z+
-    xULtun1pHdCfEUKbZv6lJtA3WI9zw8UaEhdqgQu6JnSUz6iaYG8jzq5YlxuWj41r
-    fmT0kjO84EBx0NACmsXc9C/4HF40Ep0fzg2mQ8EoVZNXZZh00sM64qKGzULaBjAH
-    RkgEjqlC22VF5IK+UavSmizykbV7HCvst6FTCoM/mHPURd6rFpzRext/tlvYqLXc
-    Wjbe/nB/YOnrAHBlrec5Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    1520227139; bh=cIVu7SPpjZ/9Nyq0080EWVRbmO+T4SinlIBL2Zq2Z6c=; b=u
+    7/7jncZv2smQPkvs6Zf4u2+T+SJ8XR/oOnZQSU89MIGDhYvRQeZbkRVZlGG9GoeF
+    wVvHx4agTvLGHW0lut1WMzNsglYL5pZptaIrgyIYdztFGcJmP3Ni1NKXW5lvcTtz
+    rwyGUsOkZF1gHvf/jjdz6G/EXhA4ZzoTcOQrZcM6Pr6XzEPMjbWf/OprFARlB/mx
+    liaWIJ2bTSbBN7ZYEz8DWDNgOPjqp9TbBd5RzGHHpe6XjC2ijeQJKXkvvwEQ5e7e
+    mgaa7bwdMMPMPnifmKN/ca4PVn4thNImA8Q46df+DCyQqmWHGZpszwqe8wUsXD+d
+    AggC5WdKzXB52jrygSpdg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=exchange.microsoft.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=exchange.microsoft.com header.result=pass header_org.domain=microsoft.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=exchange.microsoft.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=exchange.microsoft.com header.result=pass header_org.domain=microsoft.com header_org.result=pass header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
@@ -59,18 +59,20 @@ To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
  devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
  vkuznets@redhat.com, jasowang@redhat.com, leann.ogasawara@canonical.com,
  marcelo.cerri@canonical.com, sthemmin@microsoft.com
-Subject: [PATCH V2 01/12] tools/hv: Fix IP reporting by KVP daemon with SRIOV
-Date: Sun,  4 Mar 2018 22:17:11 -0700
-Message-Id: <20180305051722.19157-1-kys@exchange.microsoft.com>
+Subject: [PATCH V2 06/12] vmbus/ring_buffer: remove some redundant helper
+ function.
+Date: Sun,  4 Mar 2018 22:17:16 -0700
+Message-Id: <20180305051722.19157-6-kys@exchange.microsoft.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180305051539.19079-1-kys@exchange.microsoft.com>
+In-Reply-To: <20180305051722.19157-1-kys@exchange.microsoft.com>
 References: <20180305051539.19079-1-kys@exchange.microsoft.com>
-X-CMAE-Envelope: MS4wfDch5AamIWLDIzqOgePNspxa5B1ze5PJbibwdrjSc3LyMWF2ZybMGi3dCzZ7J9zAtyWmyyIv1rKPJeoCszvBXIOdDLmw2oDbzJk/pVfza0ouxX4xKr/X
- X3knNurBSkIIxrmCdv3vUaGKcyJRdmxV0CoHNTxov+rAIi8S4a5NsDlp+adK1dUvCK5R4cB7H9FnGHPPgA0e9wGwdwY/4XxrCcqMf6oKOO7SKrQoBfivCC0K
- rBDWgt5Wvz1nuJ6O7GCrYsyuj9kQVebkCiB5lGYel/vvh3tJto6qJc5nLY/7Ymqf+lakPhrC+p74znwa8uRJywQkj88+v4tp4Bmc8l98dqADmZ+dFJ5jQJuq
- MEbb6Qxh7qC1uwkNnL37RhRHeAFuwFz3Mhvt1Gg1TNdaNyE9/kiTDv8nNe3iP6aWIcsL6Iqvb8bkfQX+QnQ54Wb8sk9fwnubFT6jrGNBoi1hf5Y8gZNx5MxX
- H7t8/gExlXC/VzwXFqg9uAY1jduLDde6B1sjmECskw+eMkWp0NXM8cFYsfEsZ+VsF2i7XeORTI7zhsbpprUsEcOwRxJn4gr0ZFUXV/we4/61fUSZ3Cw17tvX
- GT9LcHNqFGET7gvdat42EYJz
+ <20180305051722.19157-1-kys@exchange.microsoft.com>
+X-CMAE-Envelope: MS4wfO3FmTSGDr+t1J2VpC6dCIL02eaZf0GUknKOk79IuzofJAxlSZ8x1gdyY9DxeXTIbeFY9CYZSt2hYaNqcAm2MYNYiaW1RdDgOZLqbXf9llZEKVRJAe6W
+ +BCV7ExcHDOTn/qi6fLa60yqntcP4MwXB4Ao6GAgzylHDf3ZMXyZQMQGCGIcEh8NcJKBSA7xq0Ho7xQmYfv3m18NIhGiQ9DubiES9N24jlrP/qTY9ZRNg3qJ
+ 19cYOExk8FQ4cRSDod7rPAeQA4f58slxNRLItDCHOdYvi7i2v5C0Yl7zPwQ+U4nG5uISLLuHYihs1VNS735s3MRRNRQhyLtJ1o2ZQdKlJY8Jf1whpPC996S+
+ vFX7dmdDj7bApjHu7yv5gCuVBXs6Y0ZspUwBNQdCpXhhZn6DYpk8NHFw6Ox+sU/hm19RBh7I1wv2lgTw8vAjwgzF7GERvg7oc790qSuipli3r3fIkBesDDOK
+ GLSFL16hPgRJha9C6ubw6EXSEDwns9g4+C0WNaiZ1/fknVHxG+R4w3bLC5mbhsdlNX9CU04HO4RObKCjZ31K6LeGdA64GpUe+1M9XGYkjaOyISR1GO8EGdJ2
+ /9Zilfj3F05rM8dPKNTgW9+IX3nWtTfPxH6KjHWx0rk8O3BbZu1BLG4MG8cZKSRuLmY=
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -82,7 +84,8 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Reply-To: kys@microsoft.com
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Tianyu Lan <Tianyu.Lan@microsoft.com>,
+ "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -92,192 +95,105 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>
 
-On Hyper-V the VF NIC has the same MAC as the related synthetic NIC.
-VF NIC can work under the synthetic NIC transparently, without its
-own IP address. The existing KVP daemon only gets IP from the first
-NIC matching a MAC address, and may not be able to find the IP in
-this case.
+Some hv_get/set** helper functions in ring_buffer code are
+only called once or not used. This patch is to clear up these codes.
 
-This patch fixes the problem by searching the NIC matching the MAC,
-and having an IP address. So, the IP address will be found and
-reported to the host successfully.
-
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- tools/hv/hv_kvp_daemon.c | 138 ++++++++++++++++++++++-------------------------
- 1 file changed, 65 insertions(+), 73 deletions(-)
+ drivers/hv/ring_buffer.c | 49 ++++--------------------------------------------
+ 1 file changed, 4 insertions(+), 45 deletions(-)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 4c99c57736ce..dbf6e8bd98ba 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -634,64 +634,6 @@ static char *kvp_if_name_to_mac(char *if_name)
- 	return mac_addr;
+diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+index 50e071444a5c..1aa17795727b 100644
+--- a/drivers/hv/ring_buffer.c
++++ b/drivers/hv/ring_buffer.c
+@@ -78,46 +78,6 @@ static void hv_signal_on_write(u32 old_write, struct vmbus_channel *channel)
+ 		vmbus_setevent(channel);
  }
  
--
--/*
-- * Retrieve the interface name given tha MAC address.
-- */
--
--static char *kvp_mac_to_if_name(char *mac)
+-/* Get the next write location for the specified ring buffer. */
+-static inline u32
+-hv_get_next_write_location(struct hv_ring_buffer_info *ring_info)
 -{
--	DIR *dir;
--	struct dirent *entry;
--	FILE    *file;
--	char    *p, *x;
--	char    *if_name = NULL;
--	char    buf[256];
--	char dev_id[PATH_MAX];
--	unsigned int i;
+-	u32 next = ring_info->ring_buffer->write_index;
 -
--	dir = opendir(KVP_NET_DIR);
--	if (dir == NULL)
--		return NULL;
--
--	while ((entry = readdir(dir)) != NULL) {
--		/*
--		 * Set the state for the next pass.
--		 */
--		snprintf(dev_id, sizeof(dev_id), "%s%s/address", KVP_NET_DIR,
--			 entry->d_name);
--
--		file = fopen(dev_id, "r");
--		if (file == NULL)
--			continue;
--
--		p = fgets(buf, sizeof(buf), file);
--		if (p) {
--			x = strchr(p, '\n');
--			if (x)
--				*x = '\0';
--
--			for (i = 0; i < strlen(p); i++)
--				p[i] = toupper(p[i]);
--
--			if (!strcmp(p, mac)) {
--				/*
--				 * Found the MAC match; return the interface
--				 * name. The caller will free the memory.
--				 */
--				if_name = strdup(entry->d_name);
--				fclose(file);
--				break;
--			}
--		}
--		fclose(file);
--	}
--
--	closedir(dir);
--	return if_name;
+-	return next;
 -}
 -
+-/* Set the next write location for the specified ring buffer. */
+-static inline void
+-hv_set_next_write_location(struct hv_ring_buffer_info *ring_info,
+-		     u32 next_write_location)
+-{
+-	ring_info->ring_buffer->write_index = next_write_location;
+-}
 -
- static void kvp_process_ipconfig_file(char *cmd,
- 					char *config_buf, unsigned int len,
- 					int element_size, int offset)
-@@ -997,6 +939,70 @@ kvp_get_ip_info(int family, char *if_name, int op,
- 	return error;
- }
- 
-+/*
-+ * Retrieve the IP given the MAC address.
-+ */
-+static int kvp_mac_to_ip(struct hv_kvp_ipaddr_value *kvp_ip_val)
-+{
-+	char *mac = (char *)kvp_ip_val->adapter_id;
-+	DIR *dir;
-+	struct dirent *entry;
-+	FILE    *file;
-+	char    *p, *x;
-+	char    *if_name = NULL;
-+	char    buf[256];
-+	char dev_id[PATH_MAX];
-+	unsigned int i;
-+	int error = HV_E_FAIL;
-+
-+	dir = opendir(KVP_NET_DIR);
-+	if (dir == NULL)
-+		return HV_E_FAIL;
-+
-+	while ((entry = readdir(dir)) != NULL) {
-+		/*
-+		 * Set the state for the next pass.
-+		 */
-+		snprintf(dev_id, sizeof(dev_id), "%s%s/address", KVP_NET_DIR,
-+			 entry->d_name);
-+
-+		file = fopen(dev_id, "r");
-+		if (file == NULL)
-+			continue;
-+
-+		p = fgets(buf, sizeof(buf), file);
-+		fclose(file);
-+		if (!p)
-+			continue;
-+
-+		x = strchr(p, '\n');
-+		if (x)
-+			*x = '\0';
-+
-+		for (i = 0; i < strlen(p); i++)
-+			p[i] = toupper(p[i]);
-+
-+		if (strcmp(p, mac))
-+			continue;
-+
-+		/*
-+		 * Found the MAC match.
-+		 * A NIC (e.g. VF) matching the MAC, but without IP, is skipped.
-+		 */
-+		if_name = entry->d_name;
-+		if (!if_name)
-+			continue;
-+
-+		error = kvp_get_ip_info(0, if_name, KVP_OP_GET_IP_INFO,
-+					kvp_ip_val, MAX_IP_ADDR_SIZE * 2);
-+
-+		if (!error && strlen((char *)kvp_ip_val->ip_addr))
-+			break;
-+	}
-+
-+	closedir(dir);
-+	return error;
-+}
- 
- static int expand_ipv6(char *addr, int type)
+-/* Set the next read location for the specified ring buffer. */
+-static inline void
+-hv_set_next_read_location(struct hv_ring_buffer_info *ring_info,
+-		    u32 next_read_location)
+-{
+-	ring_info->ring_buffer->read_index = next_read_location;
+-	ring_info->priv_read_index = next_read_location;
+-}
+-
+-/* Get the size of the ring buffer. */
+-static inline u32
+-hv_get_ring_buffersize(const struct hv_ring_buffer_info *ring_info)
+-{
+-	return ring_info->ring_datasize;
+-}
+-
+-/* Get the read and write indices as u64 of the specified ring buffer. */
+-static inline u64
+-hv_get_ring_bufferindices(struct hv_ring_buffer_info *ring_info)
+-{
+-	return (u64)ring_info->ring_buffer->write_index << 32;
+-}
+-
+ /*
+  * Helper routine to copy from source to ring buffer.
+  * Assume there is enough room. Handles wrap-around in dest case only!!
+@@ -129,7 +89,7 @@ static u32 hv_copyto_ringbuffer(
+ 	u32				srclen)
  {
-@@ -1472,26 +1478,12 @@ int main(int argc, char *argv[])
- 		switch (op) {
- 		case KVP_OP_GET_IP_INFO:
- 			kvp_ip_val = &hv_msg->body.kvp_ip_val;
--			if_name =
--			kvp_mac_to_if_name((char *)kvp_ip_val->adapter_id);
+ 	void *ring_buffer = hv_get_ring_buffer(ring_info);
+-	u32 ring_buffer_size = hv_get_ring_buffersize(ring_info);
++	u32 ring_buffer_size = ring_info->ring_datasize;
  
--			if (if_name == NULL) {
--				/*
--				 * We could not map the mac address to an
--				 * interface name; return error.
--				 */
--				hv_msg->error = HV_E_FAIL;
--				break;
--			}
--			error = kvp_get_ip_info(
--						0, if_name, KVP_OP_GET_IP_INFO,
--						kvp_ip_val,
--						(MAX_IP_ADDR_SIZE * 2));
-+			error =  kvp_mac_to_ip(kvp_ip_val);
+ 	memcpy(ring_buffer + start_write_offset, src, srclen);
  
- 			if (error)
- 				hv_msg->error = error;
+@@ -275,8 +235,7 @@ int hv_ringbuffer_write(struct vmbus_channel *channel,
+ 	}
  
--			free(if_name);
- 			break;
+ 	/* Write to the ring buffer */
+-	next_write_location = hv_get_next_write_location(outring_info);
+-
++	next_write_location = outring_info->ring_buffer->write_index;
+ 	old_write = next_write_location;
  
- 		case KVP_OP_SET_IP_INFO:
+ 	for (i = 0; i < kv_count; i++) {
+@@ -287,7 +246,7 @@ int hv_ringbuffer_write(struct vmbus_channel *channel,
+ 	}
+ 
+ 	/* Set previous packet start */
+-	prev_indices = hv_get_ring_bufferindices(outring_info);
++	prev_indices = (u64)outring_info->ring_buffer->write_index << 32;
+ 
+ 	next_write_location = hv_copyto_ringbuffer(outring_info,
+ 					     next_write_location,
+@@ -298,7 +257,7 @@ int hv_ringbuffer_write(struct vmbus_channel *channel,
+ 	virt_mb();
+ 
+ 	/* Now, update the write location */
+-	hv_set_next_write_location(outring_info, next_write_location);
++	outring_info->ring_buffer->write_index = next_write_location;
+ 
+ 
+ 	spin_unlock_irqrestore(&outring_info->ring_lock, flags);
 -- 
 2.15.1
 
