@@ -1,90 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932147AbeCETEm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:04:42 -0500
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35309 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeCETEk (ORCPT
+        id S932251AbeCETFv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:05:51 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42119 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCETFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:04:40 -0500
-X-Google-Smtp-Source: AG47ELuj3Ibf70+EaqVaoPO6WSdt8TaRbY7/YvCwBv/zEpxdXeyZbYOqZf90mnyfCGB8FQ++LOCdjQ==
-From: Amit Kucheria <amit.kucheria@linaro.org>
-To: devicetree@vger.kernel.org
-Cc: Ram Chandrasekar <rkumbako@codeaurora.org>, ilina@codeaurora.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: of: Allow selection of thermal governor in DT
-Date: Tue,  6 Mar 2018 00:06:45 +0530
-Message-Id: <3b80853abb45a9e067cf7a16754b07bb67712457.1520274879.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1520274879.git.amit.kucheria@linaro.org>
-References: <cover.1520274879.git.amit.kucheria@linaro.org>
+        Mon, 5 Mar 2018 14:05:49 -0500
+X-Google-Smtp-Source: AG47ELvQAaCoEOKU9pLFq5ty8Sa/DXB2jjQ+P38/TNyDS1ybloWYtgXmtwTonrqLDAlS3+LxA6BPIw==
+Date: Mon, 5 Mar 2018 20:05:40 +0100
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
+Cc: Daniel Lustig <dlustig@nvidia.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] riscv/atomic: Strengthen implementations with
+ fences
+Message-ID: <20180305190540.GA4531@andrea>
+References: <1520274276-21871-1-git-send-email-parri.andrea@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520274276-21871-1-git-send-email-parri.andrea@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ram Chandrasekar <rkumbako@codeaurora.org>
+On Mon, Mar 05, 2018 at 07:24:36PM +0100, Andrea Parri wrote:
+> Atomics present the same issue with locking: release and acquire
+> variants need to be strengthened to meet the constraints defined
+> by the Linux-kernel memory consistency model [1].
+> 
+> Atomics present a further issue: implementations of atomics such
+> as atomic_cmpxchg() and atomic_add_unless() rely on LR/SC pairs,
+> which do not give full-ordering with .aqrl; for example, current
+> implementations allow the "lr-sc-aqrl-pair-vs-full-barrier" test
+> below to end up with the state indicated in the "exists" clause.
+> 
+> In order to "synchronize" LKMM and RISC-V's implementation, this
+> commit strengthens the implementations of the atomics operations
+> by replacing .rl and .aq with the use of ("lightweigth") fences,
+> and by replacing .aqrl LR/SC pairs in sequences such as:
+> 
+>   0:      lr.w.aqrl  %0, %addr
+>           bne        %0, %old, 1f
+>           ...
+>           sc.w.aqrl  %1, %new, %addr
+>           bnez       %1, 0b
+>   1:
+> 
+> with sequences of the form:
+> 
+>   0:      lr.w       %0, %addr
+>           bne        %0, %old, 1f
+>           ...
+>           sc.w.rl    %1, %new, %addr   /* SC-release   */
+>           bnez       %1, 0b
+>           fence      rw, rw            /* "full" fence */
+>   1:
+> 
+> following Daniel's suggestion.
+> 
+> These modifications were validated with simulation of the RISC-V
+> memory consistency model.
+> 
+> C lr-sc-aqrl-pair-vs-full-barrier
+> 
+> {}
+> 
+> P0(int *x, int *y, atomic_t *u)
+> {
+> 	int r0;
+> 	int r1;
+> 
+> 	WRITE_ONCE(*x, 1);
+> 	r0 = atomic_cmpxchg(u, 0, 1);
+> 	r1 = READ_ONCE(*y);
+> }
+> 
+> P1(int *x, int *y, atomic_t *v)
+> {
+> 	int r0;
+> 	int r1;
+> 
+> 	WRITE_ONCE(*y, 1);
+> 	r0 = atomic_cmpxchg(v, 0, 1);
+> 	r1 = READ_ONCE(*x);
+> }
+> 
+> exists (u=1 /\ v=1 /\ 0:r1=0 /\ 1:r1=0)
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151930201102853&w=2
+>     https://groups.google.com/a/groups.riscv.org/forum/#!topic/isa-dev/hKywNHBkAXM
+>     https://marc.info/?l=linux-kernel&m=151633436614259&w=2
+> 
+> Suggested-by: Daniel Lustig <dlustig@nvidia.com>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Albert Ou <albert@sifive.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-There is currently no way for the governor to be selected for each thermal
-zone in devicetree. This results in the default governor being used for all
-thermal zones even though no such restriction exists in the core code.
+[...]
 
-Add support for specifying the thermal governor to be used for a thermal
-zone in the devicetree. The devicetree config should specify the governor
-name as a string that matches any available governors. If not specified, we
-maintain the current behaviour of using the default governor.
+> +static __always_inline							\
+> +c_t atomic##prefix##_xchg_release(atomic##prefix##_t *v, c_t n)		\
+> +{									\
+> +	return __xchg_acquire(&(v->counter), n, size);			\
+> +}									\
 
-Signed-off-by: Ram Chandrasekar <rkumbako@codeaurora.org>
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- Documentation/devicetree/bindings/thermal/thermal.txt | 8 ++++++++
- drivers/thermal/of-thermal.c                          | 6 ++++++
- 2 files changed, 14 insertions(+)
+[...]
 
-diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
-index 1719d47..fced9d3 100644
---- a/Documentation/devicetree/bindings/thermal/thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/thermal.txt
-@@ -168,6 +168,14 @@ Optional property:
- 			by means of sensor ID. Additional coefficients are
- 			interpreted as constant offset.
- 
-+- thermal-governor:     Thermal governor to be used for this thermal zone.
-+			Expected values are:
-+			"step_wise": Use step wise governor.
-+			"fair_share": Use fair share governor.
-+			"user_space": Use user space governor.
-+			"power_allocator": Use power allocator governor.
-+  Type: string
-+
- - sustainable-power:	An estimate of the sustainable power (in mW) that the
-   Type: unsigned	thermal zone can dissipate at the desired
-   Size: one cell	control temperature.  For reference, the
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index e09f035..a884b01 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -974,6 +974,7 @@ int __init of_parse_thermal_zones(void)
- 		struct thermal_zone_params *tzp;
- 		int i, mask = 0;
- 		u32 prop;
-+		const char *governor_name;
- 
- 		tz = thermal_of_build_thermal_zone(child);
- 		if (IS_ERR(tz)) {
-@@ -996,6 +997,11 @@ int __init of_parse_thermal_zones(void)
- 		/* No hwmon because there might be hwmon drivers registering */
- 		tzp->no_hwmon = true;
- 
-+		if (!of_property_read_string(child, "thermal-governor",
-+						&governor_name))
-+			strlcpy(tzp->governor_name, governor_name,
-+					THERMAL_NAME_LENGTH);
-+
- 		if (!of_property_read_u32(child, "sustainable-power", &prop))
- 			tzp->sustainable_power = prop;
- 
--- 
-2.7.4
+> +static __always_inline							\
+> +c_t atomic##prefix##_cmpxchg_release(atomic##prefix##_t *v,		\
+> +				     c_t o, c_t n)			\
+> +{									\
+> +	return __cmpxchg_acquire(&(v->counter), o, n, size);		\
+> +}									\
+
+These better be _release in v2 ...
+
+  Andrea
