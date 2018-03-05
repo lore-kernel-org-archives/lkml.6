@@ -1,55 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeCEV5n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 16:57:43 -0500
-Received: from mail-ot0-f171.google.com ([74.125.82.171]:46457 "EHLO
-        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbeCEV5k (ORCPT
+        id S1753187AbeCEWCE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:02:04 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34822 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753035AbeCEWCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:57:40 -0500
-X-Google-Smtp-Source: AG47ELuRFCnQaDn9rIgiDKeIcuwe1agwgJdVp3lIpcX89MgCqLVryta8FpXfps1mTPaZdyeD7T5Kyg==
-Date: Mon, 5 Mar 2018 15:57:37 -0600
+        Mon, 5 Mar 2018 17:02:02 -0500
+X-Google-Smtp-Source: AG47ELsrOF6OD3oTxtBA6iO0GAtmirUg4Meel1fuxBR97Thed9vc04wNwRG3KYtCTVqSH49+sqv7XA==
+Date: Mon, 5 Mar 2018 16:02:00 -0600
 From: Rob Herring <robh@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Move declaration of of_irq_parse_and_map_pci under
- OF_IRQ
-Message-ID: <20180305215737.oxelfzdgsro6poee@rob-hp-laptop>
-References: <1519687145-9430-1-git-send-email-linux@roeck-us.net>
+To: Can Guo <cang@codeaurora.org>
+Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Gilad Broner <gbroner@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        Maya Erez <merez@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] scsi: ufs-qcom: add number of lanes for Tx and Rx
+ links
+Message-ID: <20180305220200.rah223rn4ndq7hd4@rob-hp-laptop>
+References: <20180227055500.10416-1-cang@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519687145-9430-1-git-send-email-linux@roeck-us.net>
+In-Reply-To: <20180227055500.10416-1-cang@codeaurora.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 03:19:05PM -0800, Guenter Roeck wrote:
-> Since commit 4670d610d5923 ("PCI: Move OF-related PCI functions into
-> PCI core"), sparc:allmodconfig fails to build with the following error.
+On Tue, Feb 27, 2018 at 01:46:17PM +0800, Can Guo wrote:
+> From: Gilad Broner <gbroner@codeaurora.org>
 > 
-> pcie-cadence-host.c:(.text+0x4c4):
-> 	undefined reference to `of_irq_parse_and_map_pci'
-> pcie-cadence-host.c:(.text+0x4c8):
-> 	undefined reference to `of_irq_parse_and_map_pci'
+> Different platforms may have different number of lanes for the UFS Tx/Rx
+> links. Add parameter to device tree specifying how many lanes should be
+> configured for the UFS Tx/Rx links. And don't print err message for clocks
+> that are optional, this leads to unnecessary confusion about failure.
 > 
-> of_irq_parse_and_map_pci is now only available if OF_IRQ is enabled.
-> Make its declaration and its dummy function dependent on OF_IRQ
-> to solve the problem.
-> 
-> Fixes: 4670d610d5923 ("PCI: Move OF-related PCI functions into PCI core")
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
 > ---
->  include/linux/of_pci.h | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> Changes since v1:
+> 	- Change commit subject for better description.
+> 	- Incorporated Rob's review comments to use lanes-tx and lanes-rx
+> 	  to handle asymmetric Tx/Rx links.
+> 
+>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  4 ++
 
-Bjorn should take this. Can you resend to linux-pci so it is in his 
-queue.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-Rob
+>  drivers/scsi/ufs/ufs-qcom.c                        | 65 +++++++++++++---------
+>  drivers/scsi/ufs/ufshcd.c                          | 29 ++++++++++
+>  drivers/scsi/ufs/ufshcd.h                          |  5 ++
+>  4 files changed, 78 insertions(+), 25 deletions(-)
