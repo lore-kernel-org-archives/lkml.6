@@ -1,52 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934312AbeCEMjE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:39:04 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36291 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933263AbeCEMjA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:39:00 -0500
-From: Colin King <colin.king@canonical.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] regulator: core: use NULL rather than 0 for cells_name argument
-Date: Mon,  5 Mar 2018 13:38:53 +0100
-Message-Id: <20180305123853.25750-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S934585AbeCEMmD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:42:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55840 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933014AbeCEMmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 07:42:01 -0500
+Date: Mon, 5 Mar 2018 13:41:48 +0100
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: davem@davemloft.net, Stefan Chulski <stefanc@marvell.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for
+ all ports
+Message-ID: <20180305134148.3bbba514@windsurf.home>
+In-Reply-To: <20180305104813.GI1156@kwain>
+References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
+        <20180302154044.25204-2-antoine.tenart@bootlin.com>
+        <20180302170159.258bcdbc@windsurf.lan>
+        <20180305104813.GI1156@kwain>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-The 3rd paramater is a pointer type and should be NULL rather than a
-zero, clean up spare warning:
+On Mon, 5 Mar 2018 11:48:13 +0100, Antoine Tenart wrote:
 
-drivers/regulator/of_regulator.c:424:75: warning: Using plain integer
-as NULL pointer
+> > > +static void mvpp2_setup_bm_pool(void)
+> > > +{
+> > > +	/* Short pool */
+> > > +	mvpp2_pools[MVPP2_BM_SHORT].buf_num  = MVPP2_BM_SHORT_BUF_NUM;
+> > > +	mvpp2_pools[MVPP2_BM_SHORT].pkt_size = MVPP2_BM_SHORT_PKT_SIZE;
+> > > +
+> > > +	/* Long pool */
+> > > +	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
+> > > +	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
+> > > +}  
+> > 
+> >  ?  
+> 
+> I wanted to do this, but it's no possible as MVPP2_BM_SHORT_PKT_SIZE and
+> MVPP2_BM_LONG_PKT_SIZE use a core definition which expands at some point
+> to __max(...) which has to be called from within a function.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/of_regulator.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hum, weird:
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index cf3210c3fae6..4dfa2aca7c73 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -421,7 +421,8 @@ int of_get_n_coupled(struct regulator_dev *rdev)
- 	int n_phandles;
- 
- 	n_phandles = of_count_phandle_with_args(node,
--						"regulator-coupled-with", 0);
-+						"regulator-coupled-with",
-+						NULL);
- 
- 	return (n_phandles > 0) ? n_phandles : 0;
- }
+#define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
+#define MVPP2_BM_LONG_FRAME_SIZE		2048
+
+#define MVPP2_RX_MAX_PKT_SIZE(total_size) \
+        ((total_size) - NET_SKB_PAD - MVPP2_SKB_SHINFO_SIZE)
+
+#define MVPP2_SKB_SHINFO_SIZE \
+        SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
+
+#define SKB_DATA_ALIGN(X)        ALIGN(X, SMP_CACHE_BYTES)
+
+I don't really see a __max(...) call.
+
+And if this value really expands depending on other values, then it
+isn't really a constant, and should be considered as a constant, no?
+
+Thomas
 -- 
-2.15.1
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
