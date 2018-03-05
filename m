@@ -1,84 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeCEOlu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:41:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:42835 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752455AbeCEOlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:41:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="22161652"
-Message-ID: <1520260903.2637.34.camel@gmail.com>
-Subject: Re: regression: SCSI/SATA failure
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Reply-To: dedekind1@gmail.com
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Herring, Jan-kristian Augustin"
-        <jan-kristian.augustin.herring@intel.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Date: Mon, 05 Mar 2018 16:41:43 +0200
-In-Reply-To: <1519311270.2535.53.camel@intel.com>
-References: <1519311270.2535.53.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932201AbeCEOmJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:42:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751818AbeCEOmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:42:06 -0500
+Date: Mon, 5 Mar 2018 08:42:03 -0600
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>, Petr Mladek <pmladek@suse.com>,
+        Jiri Kosina <jikos@kernel.org>, Jason Baron <jbaron@akamai.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] livepatch: Correctly handle atomic replace for
+ not yet loaded modules
+Message-ID: <20180305144203.2u3i2jzznsb7swsn@treble>
+References: <20180221132914.4809-1-pmladek@suse.com>
+ <20180221132914.4809-8-pmladek@suse.com>
+ <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
+ <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
+ <7f920ec3-dfe0-6a4d-dd25-5d5c4fa75714@redhat.com>
+ <alpine.LSU.2.21.1803051050330.26605@pobox.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1803051050330.26605@pobox.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux-Regression-ID: lr#15a115
-
-On Thu, 2018-02-22 at 16:54 +0200, Artem Bityutskiy wrote:
-> Hi Christoph,
+On Mon, Mar 05, 2018 at 10:54:16AM +0100, Miroslav Benes wrote:
+> > I think this problem is contained to only replacement patches that need
+> > the nop-revert feature... if the replacement patch provides a new
+> > function definition, then it shouldn't be affected.
+> > 
+> > Man, we need a regression test suite for all these cases :)
 > 
-> one of our test box Skylake servers does not boot with v4.16-rcX.
-> Bisection lead us to this commit:
-> 
-> 84676c1f21e8 genirq/affinity: assign vectors to all possible CPUs
-> 
-> Reverting this single commit fixes the problem.
-> 
-> The server is a Dell R640 machine with the latest Dell BIOS. It has a
-> single SATA SSD and we do not use raid, even though the system does
-> have a megaraid controller.
+> Any volunteer?
 
-Correction: we have Raid0 with this single disk.
+I'd strongly prefer that we get such selftests in place before merging
+any more major features...
 
-> Are you aware of this issue? Below is the failure message and the
-> full
-> dmesg with some debugging boot parameters is here:
-> 
-> https://pastebin.com/raw/tTYrTAEQ
-
-FYI, the regression still exists and reverting this single patch fixes
-it. But today Dell server
-
-I did not have time to really debug this, but I think people who are
-working with this should quickly see what is going on.
-
-I think the platform reports way too large possible CPU count. Indeed,
-in dmesg I see this:
-
-[    0.000000] smpboot: Allowing 328 CPUs, 224 hotplug CPUs
-
-224 is way too large for this system. It only has 2 sockets, it but the
-number looks like if the system had 4 sockets.
-
-The commit changes IRQ affinity logic from being per-present CPU to
-being per-possible CPU:
-
--       for_each_present_cpu(cpu)
-+       for_each_possible_cpu(cpu)
-
-And it looks like this has an unexpected side-effect on this Dell
-platform.
-
-Artem.
+-- 
+Josh
