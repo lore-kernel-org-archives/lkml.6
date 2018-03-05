@@ -1,162 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeCEOjI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:39:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52626 "EHLO mail.kernel.org"
+        id S1752603AbeCEOjV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:39:21 -0500
+Received: from mga01.intel.com ([192.55.52.88]:42732 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752270AbeCEO34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:29:56 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE7821772
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Kan Liang <kan.liang@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/28] perf stat: Ignore error thread when enabling system-wide --per-thread
-Date: Mon,  5 Mar 2018 11:29:09 -0300
-Message-Id: <20180305142932.16921-6-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180305142932.16921-1-acme@kernel.org>
-References: <20180305142932.16921-1-acme@kernel.org>
+        id S932093AbeCEOjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:39:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="36051282"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 0/5] Migrate all TPM 2.0 commands to use struct tpm_buf
+Date: Mon,  5 Mar 2018 16:38:58 +0200
+Message-Id: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jin Yao <yao.jin@linux.intel.com>
+v2:
+* Fixed author information in the commit that fixes the self-test issue,
+  removed '\n' from the log message and added the missing tested-by.
+  (James: sincere apologies about this)
+* Removed the redundant "out of memory" log message from tpm2_shutdown().
+* tpm_buf_destroy() was called before using the response data in
+  tpm2_probe().
+* Added missing tpm_buf_destroy() to tpm2_get_random().
 
-If we execute 'perf stat --per-thread' with non-root account (even set
-kernel.perf_event_paranoid = -1 yet), it reports the error:
+James Bottomley (1):
+  tpm: fix intermittent failure with self tests
 
-  jinyao@skl:~$ perf stat --per-thread
-  Error:
-  You may not have permission to collect system-wide stats.
+Jarkko Sakkinen (4):
+  tpm: migrate tpm2_shutdown() to use struct tpm_buf
+  tpm: migrate tpm2_probe() to use struct tpm_buf
+  tpm: migrate tpm2_get_tpm_pt() to use struct tpm_buf
+  tpm: migrate tpm2_get_random() to use struct tpm_buf
 
-  Consider tweaking /proc/sys/kernel/perf_event_paranoid,
-  which controls use of the performance events system by
-  unprivileged users (without CAP_SYS_ADMIN).
+ drivers/char/tpm/tpm-interface.c |  20 ++-
+ drivers/char/tpm/tpm.h           |  20 +--
+ drivers/char/tpm/tpm2-cmd.c      | 281 ++++++++++++++-------------------------
+ 3 files changed, 128 insertions(+), 193 deletions(-)
 
-  The current value is 2:
-
-    -1: Allow use of (almost) all events by all users
-        Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
-  >= 0: Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN
-        Disallow raw tracepoint access by users without CAP_SYS_ADMIN
-  >= 1: Disallow CPU event access by users without CAP_SYS_ADMIN
-  >= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN
-
-  To make this setting permanent, edit /etc/sysctl.conf too, e.g.:
-
-          kernel.perf_event_paranoid = -1
-
-Perhaps the ptrace rule doesn't allow to trace some processes. But anyway
-the global --per-thread mode had better ignore such errors and continue
-working on other threads.
-
-This patch will record the index of error thread in perf_evsel__open()
-and remove this thread before retrying.
-
-For example (run with non-root, kernel.perf_event_paranoid isn't set):
-
-  jinyao@skl:~$ perf stat --per-thread
-  ^C
-   Performance counter stats for 'system wide':
-
-         vmstat-3458    6.171984   cpu-clock:u (msec) #  0.000 CPUs utilized
-           perf-3670    0.515599   cpu-clock:u (msec) #  0.000 CPUs utilized
-         vmstat-3458   1,163,643   cycles:u           #  0.189 GHz
-           perf-3670      40,881   cycles:u           #  0.079 GHz
-         vmstat-3458   1,410,238   instructions:u     #  1.21  insn per cycle
-           perf-3670       3,536   instructions:u     #  0.09  insn per cycle
-         vmstat-3458     288,937   branches:u         # 46.814 M/sec
-           perf-3670         936   branches:u         #  1.815 M/sec
-         vmstat-3458      15,195   branch-misses:u    #  5.26% of all branches
-           perf-3670          76   branch-misses:u    #  8.12% of all branches
-
-        12.651675247 seconds time elapsed
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1516117388-10120-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-stat.c    | 14 +++++++++++++-
- tools/perf/util/evsel.c      |  3 +++
- tools/perf/util/thread_map.c |  1 +
- tools/perf/util/thread_map.h |  1 +
- 4 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index fadcff52cd09..6214d2b220b2 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -637,7 +637,19 @@ static int __run_perf_stat(int argc, const char **argv)
-                                 if (verbose > 0)
-                                         ui__warning("%s\n", msg);
-                                 goto try_again;
--                        }
-+			} else if (target__has_per_thread(&target) &&
-+				   evsel_list->threads &&
-+				   evsel_list->threads->err_thread != -1) {
-+				/*
-+				 * For global --per-thread case, skip current
-+				 * error thread.
-+				 */
-+				if (!thread_map__remove(evsel_list->threads,
-+							evsel_list->threads->err_thread)) {
-+					evsel_list->threads->err_thread = -1;
-+					goto try_again;
-+				}
-+			}
- 
- 			perf_evsel__open_strerror(counter, &target,
- 						  errno, msg, sizeof(msg));
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ef351688b797..b56e1c2ddaee 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1915,6 +1915,9 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
- 		goto fallback_missing_features;
- 	}
- out_close:
-+	if (err)
-+		threads->err_thread = thread;
-+
- 	do {
- 		while (--thread >= 0) {
- 			close(FD(evsel, cpu, thread));
-diff --git a/tools/perf/util/thread_map.c b/tools/perf/util/thread_map.c
-index 729dad8f412d..5d467d8ae9ab 100644
---- a/tools/perf/util/thread_map.c
-+++ b/tools/perf/util/thread_map.c
-@@ -32,6 +32,7 @@ static void thread_map__reset(struct thread_map *map, int start, int nr)
- 	size_t size = (nr - start) * sizeof(map->map[0]);
- 
- 	memset(&map->map[start], 0, size);
-+	map->err_thread = -1;
- }
- 
- static struct thread_map *thread_map__realloc(struct thread_map *map, int nr)
-diff --git a/tools/perf/util/thread_map.h b/tools/perf/util/thread_map.h
-index 5ec91cfd1869..2f689c90a8c6 100644
---- a/tools/perf/util/thread_map.h
-+++ b/tools/perf/util/thread_map.h
-@@ -14,6 +14,7 @@ struct thread_map_data {
- struct thread_map {
- 	refcount_t refcnt;
- 	int nr;
-+	int err_thread;
- 	struct thread_map_data map[];
- };
- 
 -- 
-2.14.3
+2.15.1
