@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934009AbeCEMGs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:06:48 -0500
-Received: from mail-it0-f43.google.com ([209.85.214.43]:50713 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932817AbeCEMGp (ORCPT
+        id S934496AbeCEMHL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:07:11 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:45764 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932817AbeCEMHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:06:45 -0500
-X-Google-Smtp-Source: AG47ELubFUfyc/dRmCYC1ETf/gFlbRz6uklA2sCpVM7N0lxf5KGwl4ESZ8OcD2px1h6B8/Kvd/s+mVQBUAQ1p8aI8NY=
+        Mon, 5 Mar 2018 07:07:08 -0500
+X-Google-Smtp-Source: AG47ELtjvvT/9OqpDzMWxrd/F0r9rsoTpU8KPZBuz2Tit7UiNb4iBJ/0Ktb7iifmGbeKH7NBRc5S9Zg/v9DvYFLGIJU=
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
-References: <1516206496-16612-1-git-send-email-yamada.masahiro@socionext.com>
- <20180304224248.mzhsvl4ccmtzg5am@ninjato> <CAPDyKFq_1mR=b3iu6o4ZJQeAjRnWf_tzb=__7SxvZYqDNCo2bg@mail.gmail.com>
- <20180305092259.bcpfbzvvoqxsfomf@katana> <CAK7LNATrq11iaa=uTuJx8Z9XMDg9CA8Nf0jdU3GkLKFH5fH9Gg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 5 Mar 2018 13:06:44 +0100
-Message-ID: <CAPDyKFr0=oR2s-SiejG580iy71dUh-K64Ya=trEjZE4zmc5Xfg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/16] mmc: tmio: another batch of TMIO MMC fixes and cleanups
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Rich Felker <dalias@libc.org>, Mark Rutland <mark.rutland@arm.com>
+In-Reply-To: <CAJZ5v0hmmVTSnC52EgXxbHh6akCDeBw64w30F8npdpvyabNucw@mail.gmail.com>
+References: <1657351.s4RTvEoqBQ@aspire.rjw.lan> <2048240.1dZKXsSxFh@aspire.rjw.lan>
+ <20180305114542.GP25201@hirez.programming.kicks-ass.net> <CAJZ5v0hmmVTSnC52EgXxbHh6akCDeBw64w30F8npdpvyabNucw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 5 Mar 2018 13:07:07 +0100
+X-Google-Sender-Auth: F2iS5_97XUYr9q6Ej9LjLvFvWJ4
+Message-ID: <CAJZ5v0jxmVAvGuW=2uWuWHaUhdt1E6GXXy3DpkNOwhKWLfAqWA@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH 6/7] sched: idle: Predict idle duration before
+ stopping the tick
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 March 2018 at 10:34, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-> Hi Ulf, Wolfram,
+On Mon, Mar 5, 2018 at 12:50 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Mon, Mar 5, 2018 at 12:45 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>> On Sun, Mar 04, 2018 at 11:28:56PM +0100, Rafael J. Wysocki wrote:
+>>> Index: linux-pm/kernel/sched/idle.c
+>>> ===================================================================
+>>> --- linux-pm.orig/kernel/sched/idle.c
+>>> +++ linux-pm/kernel/sched/idle.c
+>>> @@ -188,13 +188,14 @@ static void cpuidle_idle_call(void)
+>>>       } else {
+>>>               unsigned int duration_us;
+>>>
+>>> -             tick_nohz_idle_go_idle(true);
+>>> -             rcu_idle_enter();
+>>> -
+>>>               /*
+>>>                * Ask the cpuidle framework to choose a convenient idle state.
+>>>                */
+>>>               next_state = cpuidle_select(drv, dev, &duration_us);
+>>> +
+>>> +             tick_nohz_idle_go_idle(duration_us > USEC_PER_SEC / HZ);
+>>> +             rcu_idle_enter();
+>>> +
+>>>               entered_state = call_cpuidle(drv, dev, next_state);
+>>>               /*
+>>>                * Give the governor an opportunity to reflect on the outcome
+>>
+>> So I think this is entirely wrong, I would much rather see something
+>> like:
+>>
+>>         tick_nohz_idle_go_idle(next_state->nohz);
+>>
+>> Where the selected state itself has the nohz property or not.
 >
-> 2018-03-05 18:22 GMT+09:00 Wolfram Sang <wsa@the-dreams.de>:
->>
->>> I have added Wolframs tags to the already applied patches and applied
->>> that last two, 15 and 16.
->>
->> Thanks. Please note that patch 14 misses my Rev tag. (I gave it
->> yesterday but the patch was accidently applied before. One round too
->> early, so to say).
-
-Added rev. tag.
-
->>
->>> They are all present in my next branch. The fix that Wolfram sent on
->>> top, is added immediately after the commit it fixes.
->>
->> Could we also squash it, then?
->>
+> Can you elaborate here, I'm not following?
 >
-> If Wolfram is fine with squashing,
-> that would be cleaner.
->
+>> We can always insert an extra state at whatever the right boundary point
+>> is for nohz if it doesn't line up with an existing point.
 
-Done.
+OK, I guess I know what you mean: to add a state flag meaning "stop
+the tick if this state is selected".
 
-> In that case, can you add Tested-by
-> to patch 12?
-
-Done.
-
-Kind regards
-Uffe
+That could work, but I see problems, like having to go through all of
+the already defined states and deciding what to do with them.
