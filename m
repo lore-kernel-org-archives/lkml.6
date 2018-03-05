@@ -1,99 +1,112 @@
-Return-Path: <boris.brezillon@bootlin.com>
-X-Google-Smtp-Source: AG47ELv5vhbhoYmyvfuNFEY0iqy48sqtrqbyJFeTCGjehcQ5k52AFyzrdbtNWCL4+cHIxe6jIghf
-ARC-Seal: i=1; a=rsa-sha256; t=1520406900; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WsOhpt+8apwFIj8PbDzHISOSRy4vxkqSa0aLITi7KTXqTHE3OhCurr9Ff1NvuiMcba
-         UrgAfr6d5+FBSBUxnjpV0ROJhb80GYcZ+yYJ+TzY4krlSIKOhi0QIvX7jxkxHcs9gHD/
-         xQU5/jjB1FvZ+vUM3zFUifnOcLnPtTH3qc8Ho22qeVnzVKKOF1+sLQa19YQJIwXOJAAi
-         7IPtZiVOkpd0nfHxTpdNLiLNMe57Nmoe2gaGxLbtH4/rLO7vieU+8C5UAUPeIQtCX1PA
-         19AWfMY37S9gvuJgdOWpwWqJmuF7tqySVEuzi5amMpWmkedp//MRUiOMx+2lmXVjes7H
-         PTPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=RNpMAXxeCw6kDw//SPFGI6lwHyLXR6vEhy/l/xLP71s=;
-        b=xoqM/cyraeQ1MUrKzEWNsBUmG/i4SKIKfLImt8DRfThAuzxXIKHiWp/Aj1xDTF3UOO
-         1DSnU41Fw/0qTOdaVR4JfjzfzvoFgmPTb36ZHfGA+Vk2dpPChik5+vlIuGVw8oi0qlQu
-         G1Po/IJYE0RJZd553lLmI6RkYBFOoeG38LgjZxZYWisTk2oC+rkT2NZu0dWmIm6zhqoI
-         Rmq1n6IiAXLu9wGr6y6NRJkobLftXPDhJkJpL5i9ScqQFLGOI3Vss9AXtKwZ0SRmGLDT
-         cPhcSHR7XBIs8roo5p6lVsxkaL+fxNujqBBFDHqbhFThu6EdDtxmO6OTAgiSURbDFGvD
-         XhnA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
-Date: Wed, 7 Mar 2018 08:14:58 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Richard Weinberger <richard@nod.at>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4.4 054/108] mtd: cfi: convert inline functions to
- macros
-Message-ID: <20180307081458.4f311a45@bbrezillon>
-In-Reply-To: <1520216572.2786.64.camel@codethink.co.uk>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4092842-1520210289-2-10086465211480053941
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520210289; b=KpYD3tTQEefPP1a2LjTjpxv/xZQcp1/YjWAKVZLxKFOzFDz
+    Xve2rHwPPsh5OvgS/AUoAglDF1ySrhIQxH43eefFvdsFdrEHqehZ++xznFpcXvQC
+    w9lYV50MlL+Lz7BbRmluGYz9yclFSiKXDCZq3MswLvffFW+LJUYat7tlyIxEoiGx
+    mPaz8a1PWNDSjI9/NBNn6/+2025ZTgvJEtB1wGXGFGMvMsl2A9ilfbzth18/wPAU
+    A2rrxDHsCHfZ1W0pubj0O7IwtmUFp2h0cngg0ubrzlMlQrTkw7WHYAQ6/WghKWuk
+    acih4vhihsluRgxz3SlbtJ/hH6Nk7mjzWyUr27w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520210289; bh=1vTE5AxBg6H9zU37nWhg0bzNA4PzCG8X4kQIaalJ/f4=; b=G
+    P5Db9gVyAYc4rHq+qX/cJno4eY7mN9kYDoYxwMHLg/+oz3qwxdvnFVnAZZ3RFpaw
+    jx9Q6InKF3RhgC/aa2sIjSn9G2osLFESF4VxArgi/TY1SrLOGKtMDfy8Anoy7RVC
+    BjgQ3oI7MwmaaaEMuQms+s4DdIxxymBeqCSIcOWac/ueRamdr3IRQ4ZLPbKS2H+C
+    rdcV+fP5iXdP7d0w5IV/pHySZh3JDG6B3yKSMenAX350evWqZhZR0K9QElZFBOXV
+    8yUWu8vAMWTMaTapjamv2qhoy0rK/F8lqq3hb0z86nQXyYw9lqP5ibUre/06W/sb
+    KgV8AP8GBFS03/G1kHugA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932403AbeCEAiD (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 4 Mar 2018 19:38:03 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:49945 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932345AbeCEAiD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 4 Mar 2018 19:38:03 -0500
+Message-ID: <1520210279.2786.53.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 035/108] dont put symlink bodies in pagecache into
+ highmem
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jin Qian <jinqian@google.com>, Jin Qian <jinqian@android.com>
+Date: Mon, 05 Mar 2018 00:37:59 +0000
+In-Reply-To: <20180215151227.323543261@linuxfoundation.org>
 References: <20180215151222.267507937@linuxfoundation.org>
-	<20180215151229.973271532@linuxfoundation.org>
-	<1520216572.2786.64.camel@codethink.co.uk>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+         <20180215151227.323543261@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1592481046728605284?=
-X-GMAIL-MSGID: =?utf-8?q?1594262186694844716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 05 Mar 2018 02:22:52 +0000
-Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
+On Thu, 2018-02-15 at 16:16 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> 
+> commit 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream.
+> 
+> kmap() in page_follow_link_light() needed to go - allowing to hold
+> an arbitrary number of kmaps for long is a great way to deadlocking
+> the system.
+> 
+> new helper (inode_nohighmem(inode)) needs to be used for pagecache
+> symlinks inodes; done for all in-tree cases.  page_follow_link_light()
+> instrumented to yell about anything missed.
 
-> On Thu, 2018-02-15 at 16:16 +0100, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.=C2=A0=C2=A0If anyone has any objections, pleas=
-e let me know.
-> >=20
-> > ------------------
-> >=20
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >=20
-> > commit 9e343e87d2c4c707ef8fae2844864d4dde3a2d13 upstream. =20
-> [...]
-> > -static inline int map_word_andequal(struct map_info *map, map_word val=
-1, map_word val2, map_word val3)
-> > -{
-> > -	int i;
-> > -
-> > -	for (i =3D 0; i < map_words(map); i++) {
-> > -		if ((val1.x[i] & val2.x[i]) !=3D val3.x[i])
-> > -			return 0;
-> > -	}
-> > -
-> > -	return 1;
-> > -} =20
-> [...]
-> > +#define map_word_andequal(map, val1, val2, val3)			\
-> > +({									\
-> > +	int i, ret =3D 1;							\
-> > +	for (i =3D 0; i < map_words(map); i++) {				\
-> > +		if (((val1).x[i] & (val2).x[i]) !=3D (val2).x[i]) {	\ =20
-> [...]
->=20
-> The right-hand side of this comparison is now using val2 instead of
-> val3.  (This bug seems to be unfixed upstream.)
+Except that this backport only updates ext4 and f2fs (and doesn't add
+the warning).  I suppose that's all matters for Android, but it would
+be nice to get a more complete backport into 4.4-stable...
 
-Indeed. This being said, it's not buggy since all users of
-map_word_andequal() pass the same value to val2 and val3.
+Ben.
 
-Maybe we should just patch the macro and all call-sites to remove val3.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Jin Qian <jinqian@google.com>
+> Signed-off-by: Jin Qian <jinqian@android.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[...]
 
->=20
-> Ben.
->=20
-
-
-
---=20
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
