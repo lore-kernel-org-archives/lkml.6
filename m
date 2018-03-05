@@ -1,46 +1,45 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520280379; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520280912; cv=none;
         d=google.com; s=arc-20160816;
-        b=V7d5rLuT3GfXtl5WB8EolH4YNJkygAhyaPi2Zn++75h3GNk1kG+bk8eGEqZntCHqhq
-         RapwkX6osH7AZ+/ebkqhgjAKxLM+uzz5eoLJ4pxwSD8KOWHkzMjLZXVTyu+H4KNIpoU+
-         hFu8b5cOQFQ384vktseFLqELWvvYZGYGCiZltKhC38DdUdaqt4M3x8tImkPtZ5qhfo6l
-         yRf5fhX0n2BalR6zVUpJ8D+fI0L5GuxpL2gtNN2+3jrOWDOk9OusSeuKaT0TMXq0qwW7
-         7ewEGXCT2jSgTGl9FFwVxa1WRY/gtLW3Oa7KxV2OGCcFrO0rfXh64tl+0c2U6OX32jCJ
-         YwAQ==
+        b=WhkCYhBVStc/UOGszypDjHAXfWFg3CTGR+OkCPp78hfyxUKZDC8gWH4ZHBCbAvq0I0
+         TgaD4e6EBNfVi43HdDPolVRQvvlD0mDZVAslHre8Z5H0uzB+etQrs5mzXDwe29N60EGi
+         zXtVj0HNxE86dkUneeJgrSdMQzFvWh894QBWOHiwLFo5A5Muz2xoW2QajTzaOP62UId2
+         CgiAFphzviV6F08DWqUkhLP9SKVT3B8yCu+ebwKRJkXVxgX19sKEeBVeqgNDlUhz+Km6
+         65ecreTrOzPJ1+EDGQX/l/ltap4R4oSbpylMtmA2xTHBV4tLmJqqnzVfVOYtfvZy6UwK
+         Oaow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=IfC5RmKdfnRCmEj6ZH2tME5LHqbLLun0wK7ADeaXpEA=;
-        b=WPiYk6eYlT0xdJFQBJnTk8m75Z/kzMZgoEf5DdptKxmGyMYtoF7DGgJ1WSB5bgkTLy
-         X4nHeO+gMm/xD+aZUPhtcHk+DT7HjtrOJg97Iga/7aaeNou5/O4zJvysQSaeGEWfpUiU
-         c2dR+k96MeRHJxF4uRoafrDKRtyAMjiqv+b2vafCJJP6aTSkIr1BvnenoBotZtkkDX7u
-         pCft5Ue8DtwLhlg7joL6OWxFXC9YqVb7mmsCLLi3ZOHaGQAKLfJF5a331/U7/qR9kXwb
-         BoAcekM2fD5ezXA3p3GFaQC+a3TFJ7yVtP1UIldDwHULBvLG7RatOblQvxw/vJFSa1kH
-         nuOQ==
+        bh=Wc1jPfby70Fqn0+j3ceqF9a49SCFg3tHX2IbKKfRbKI=;
+        b=CmbzA5F1sI4zna+zmcK/h8CTTqh0zcbA2NrkIoNe3OOpEetlCQ+uDeDuHwJsthg6Sm
+         21i11G3lKCyGSl36gcahEcYOSetiuqlCwDy9StBTHK9RnJYuuoMQuxdUG9nMDLdqzCQW
+         oGe35mjEHVFtKKmecrxRMW0f9Nj8TBUg2X8zd/aG/0Y3fWrIVOC8AUA3xyd9kKKI+DcT
+         aKddN6Jr+Y0m9OiIewDSam+cuzT/EBBxr06cbx6u1G8NTOTi6khKUMwZPYW3DuIKa+hT
+         E+guoUtySePhUBjegUfLKhvrZ4MuW2vjLw6g5c43Z++Ahs6STlGjbl7ZYcFWtB4rBDct
+         dtvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=NaTQqDBq;
-       dkim=pass header.i=@chromium.org header.s=google header.b=YHef/kLo;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=e7pRKw4x;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=fX11RXtR;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=NaTQqDBq;
-       dkim=pass header.i=@chromium.org header.s=google header.b=YHef/kLo;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AG47ELsEvcv6+Wz2397V1iRYoEWZqD3AT7nWLEtQoNdkvjG84jfj7XA+3fXt/zipCTiOhotensPNQQHAgSg63HRvHAQ=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=e7pRKw4x;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=fX11RXtR;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELuV5Diaz4qKJ2v4a4UGXQPvfR5ACaeHd0TaXxwajsZvAvE4xe4z7/k1Agv1jpx6TVbO8kLNE2gkC6IobRfK6nY=
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 5 Mar 2018 12:06:18 -0800
-X-Google-Sender-Auth: soj2jBWLrcIHiCdmkAh7ce7afps
-Message-ID: <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
+ <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Mar 2018 12:15:11 -0800
+X-Google-Sender-Auth: 2jvvQ3QMRExl8dtDrBW9kARJOwU
+Message-ID: <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Alexander Popov <alex.popov@linux.com>,
+To: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
 	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
@@ -65,32 +64,27 @@ Cc: Alexander Popov <alex.popov@linux.com>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594129519241977143?=
+X-GMAIL-MSGID: =?utf-8?q?1594130078382182751?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 11:40 AM, Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
-> On 03/03/2018 12:00 PM, Alexander Popov wrote:
->> @@ -128,6 +134,7 @@ static long syscall_trace_enter(struct pt_regs *regs)
->>
->>       do_audit_syscall_entry(regs, arch);
->>
->> +     erase_kstack();
->>       return ret ?: regs->orig_ax;
->>  }
->
-> This seems like an odd place to be clearing the stack.  Why was it done her?
+This is the first I see of any of this, it was apparently not actually
+posted to lkml or anything like that.
 
-Perhaps the commit log could be improved, but the idea is that the
-audit work (ptrace, seccomp, etc), is happening before the syscall
-code starts running, and it has therefore written to the stack (that
-used to be cleared on last exit). This retains the clear stack state
-even in the face of ptrace-ish work happening before the syscall
-proper starts.
+Honestly, what I see just makes me go "this is security-masturbation".
 
--Kees
+It doesn't actually seem to help *find* bugs at all. As such, it's
+another "paper over and forget" thing that just adds fairly high
+overhead when it's enabled.
 
--- 
-Kees Cook
-Pixel Security
+I'm NAK'ing it sight-unseen (see above) just because I'm tired of
+these kinds of pointless things that don't actually strive to improve
+on the kernel, just add more and more overhead for nebulous "things
+may happen", and that just make the code uglier.
+
+Why wasn't it even posted to lkml?
+
+And why isn't the focus of security people on tools to _analyse_ and
+find problems?
+
+                  Linus
