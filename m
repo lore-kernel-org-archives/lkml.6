@@ -1,191 +1,395 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934164AbeCELhj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 06:37:39 -0500
-Received: from mail-by2nam01on0076.outbound.protection.outlook.com ([104.47.34.76]:20641
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933053AbeCELhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 06:37:34 -0500
-From: "Liu, Monk" <Monk.Liu@amd.com>
-To: "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot
- available
-Thread-Topic: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot
- available
-Thread-Index: AQHTsGFsSC26PGMebEmm/OMzPYEJ7qO5evoAgAfSfxCAADo4gIAAACZggAABk4CAAAHNYA==
-Date: Mon, 5 Mar 2018 11:37:31 +0000
-Message-ID: <BLUPR12MB04495463743D454E9384C2B684DA0@BLUPR12MB0449.namprd12.prod.outlook.com>
-References: <1519800242-2442-1-git-send-email-Monk.Liu@amd.com>
- <fa9f8ade-000f-a9b5-0bc9-0dd3f10d9722@gmail.com>
- <BLUPR12MB04494D7F15FC7D557D58488484DA0@BLUPR12MB0449.namprd12.prod.outlook.com>
- <f40975c4-c5df-c06c-9a6a-a96705232461@gmail.com>
- <BLUPR12MB04491D607CA17302B4E5524584DA0@BLUPR12MB0449.namprd12.prod.outlook.com>
- <210b7a03-f309-8ab6-0f23-17377660e664@amd.com>
-In-Reply-To: <210b7a03-f309-8ab6-0f23-17377660e664@amd.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Monk.Liu@amd.com;
-x-originating-ip: [116.228.147.241]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BLUPR12MB0498;7:7WM0poLHEA7n2O9lWajjaRubSv0VGdkFHcncUKSLReC+mKnvS32fbwymcgiAHRekCbQXKk7cQK6HIeccj+wss7VR7iicaYkHU3BcJAKNm70XLJThT7UNXFDgIne22YtdNG/gQ3hFZ/OFdxMvsqvsDCiwfMj7f/lywbVs1Y1NdIECzoiAbdOVx5lwnfHDn02T0clMCvcwEoGf0IAGH7nOv5GZUCaJB9t11rDK5ATTVllbHa163Fb6J1pYotkI8WBJ;20:m56dwwlDHVCRqaFeuWg9KC1mTIxEucZsb4fD7gdzTktpmHuEFispb5NvhQb1dvckZ89bu8Vffu1oeey9HzuDHLgmvwJVSQYK6Il0oX0H32TmqtNL4zLLGb14A90tpZkpkN1nemf5hUguugwEcn3nl8j71rdXqV41VkAsHCANwbG1DTovnq2Q8OupRIehftk8DVx4bUqsjq8tXq4sEUi9UHyVNm4rJ3gTKUJhbR9oOpflEtIFSiG2vLK5Te4fQZS6
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(979002)(39860400002)(39380400002)(396003)(366004)(376002)(346002)(189003)(199004)(13464003)(105586002)(59450400001)(3846002)(26005)(6116002)(66066001)(7736002)(8676002)(966005)(93886005)(2906002)(81166006)(3280700002)(102836004)(81156014)(305945005)(6506007)(53546011)(72206003)(74316002)(3660700001)(2900100001)(478600001)(8936002)(25786009)(6436002)(106356001)(5250100002)(99286004)(68736007)(229853002)(2501003)(316002)(110136005)(53936002)(14454004)(33656002)(55016002)(6306002)(9686003)(6246003)(86362001)(76176011)(97736004)(2201001)(7696005)(5660300001)(2950100002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0498;H:BLUPR12MB0449.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b0498c20-f1e8-44e8-705f-08d5828d7b8f
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BLUPR12MB0498;
-x-ms-traffictypediagnostic: BLUPR12MB0498:
-x-microsoft-antispam-prvs: <BLUPR12MB04988112BAAE9983115621F384DA0@BLUPR12MB0498.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(767451399110)(217544274631240)(17755550239193);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231220)(944501244)(52105095)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:BLUPR12MB0498;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0498;
-x-forefront-prvs: 06022AA85F
-x-microsoft-antispam-message-info: CftbsHtWKvhD09ChTaO68eW56BLHZUaZBFiF0IS3TY+01pl/ntQDd56QewaBDEIguw+Fbid2pNaZKlO1l8hG2PzmKwWV/mAoTbnhBDI9nShgSCRAz1qMMbZoxG4xmf15U2boYg0gia8Vb1cHtbMNiVRDGsNjVacNCY0K0zi8uGaxFmQdpOAxWDKB7NUWTInWKku8/Ts05wxoMquWYfUd7HgCofEf80jc25PDpih9pS0P/PmRCw9Hju/3TLzR9FgOCOFE3JYvRnL2VZP+YlPE5HBMcVK/h5VrUkhJlThqnDDMRNfMa+UuUglG5QbAiRJXw0DvRKB+MEkNQ/Yz/CQu+A==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0498c20-f1e8-44e8-705f-08d5828d7b8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2018 11:37:31.5749
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0498
+        id S934125AbeCELiX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 06:38:23 -0500
+Received: from mga09.intel.com ([134.134.136.24]:5525 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933053AbeCELiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 06:38:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
+   d="scan'208";a="23000742"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v7] tpm: cmd_ready command can be issued only after granting locality
+Date: Mon,  5 Mar 2018 13:34:49 +0200
+Message-Id: <20180305113449.8876-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w25Bblnh020115
 
-But the thing confuse me is according to the design, if driver keep calling reserve_shared() prior to add_fence(), and with lock held of cause, 
-That BUG() shouldn't hit, so there are two things in face looks weired to me:
-1) by design in reserve_shared(), obj->staged should be already NULL, so why we kfree on it
-2) in fact, amdgpu can hit the case that obj->staged is not NULL in reserved_shared(), don't know how it lead here 
+The correct sequence is to first request locality and only after
+that perform cmd_ready handshake, otherwise the hardware will drop
+the subsequent message as from the device point of view the cmd_ready
+handshake wasn't performed. Symmetrically locality has to be relinquished
+only after going idle handshake has completed, this requires that
+go_idle has to poll for the completion and as well locality
+relinquish has to poll for completion so it is not overridden
+in back to back commands flow.
 
+Two wrapper functions are added (request_locality relinquish_locality)
+to simplify the error handling.
 
-Any thought ?
+The issue is only visible on devices that support multiple localities.
 
-/Monk
+Fixes: 877c57d0d0ca ("tpm_crb: request and relinquish locality 0")
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+V2: 1. Poll for locality relinquish completion.
+V3: 1. Print error message upon locality relinquish failure
+    2. Don't override rc code on error path with locality relinquish
+       return value.
+V4: 1. Don't capture locality relinquish error code in rc, just print
+       the error message.
+V5: 1. Fix a coding style issue.
+    2. Add Fixes: reference.
+V6: 1. Add locality wrappers.
+V7: 1. Add tpm_ prefix to locality wrappers.
 
------Original Message-----
-From: Koenig, Christian 
-Sent: 2018年3月5日 19:29
-To: Liu, Monk <Monk.Liu@amd.com>; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot available
+ drivers/char/tpm/tpm-interface.c |  54 +++++++++++++++-----
+ drivers/char/tpm/tpm_crb.c       | 108 +++++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm_tis_core.c  |   4 +-
+ include/linux/tpm.h              |   2 +-
+ 4 files changed, 120 insertions(+), 48 deletions(-)
 
-Am 05.03.2018 um 12:25 schrieb Liu, Monk:
-> And by the way, I add "if (staged!=NULL) BUG();" prior to 
-> "kfree(obj->staged)" in reserve_shared() routine, and this BUG() is actually hit, The stack dump shows it is hit during the vm_bo_update() in gem_va_update()...
-
-That is expected. The staged handling just makes sure that there is room available, it doesn't guarantee that it is actually used.
-
-E.g. we can end up reserving a fence slot, but then find that we actually don't need it.
-
-Christian.
-
->
-> Besides, the whole reservation logic still looks a little weired to me ... especially this staged part ...
->
-> Thanks
->
-> /Monk
->
-> -----Original Message-----
-> From: Christian König [mailto:ckoenig.leichtzumerken@gmail.com]
-> Sent: 2018年3月5日 19:22
-> To: Liu, Monk <Monk.Liu@amd.com>; Koenig, Christian 
-> <Christian.Koenig@amd.com>; dri-devel@lists.freedesktop.org; 
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] dma-buf/reservation: shouldn't kfree staged when 
-> slot available
->
-> Am 05.03.2018 um 08:55 schrieb Liu, Monk:
->> Hi Christian
->>
->> You are right on that part of obj-staged is set to NULL in add_fence, 
->> So my following question will be why we kfree(obj->staged) in reserve_shared() if staged is always NULL in that point ?
-> Good question, I haven't wrote code that so I can't fully answer.
->
-> Maybe Chris or Maarten know more about that.
->
-> Christian.
->
->> Thanks
->> /Monk
->>
->> -----Original Message-----
->> From: Christian König [mailto:ckoenig.leichtzumerken@gmail.com]
->> Sent: 2018年2月28日 16:27
->> To: Liu, Monk <Monk.Liu@amd.com>; dri-devel@lists.freedesktop.org; 
->> linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] dma-buf/reservation: shouldn't kfree staged when 
->> slot available
->>
->> Am 28.02.2018 um 07:44 schrieb Monk Liu:
->>> under below scenario the obj->fence would refer to a wild pointer:
->>>
->>> 1,call reservation_object_reserved_shared
->>> 2,call reservation_object_add_shared_fence
->>> 3,call reservation_object_reserved_shared
->>> 4,call reservation_object_add_shared_fence
->>>
->>> in step 1, staged is allocated,
->>>
->>> in step 2, code path will go reservation_object_add_shared_replace()
->>> and obj->fence would be assigned as staged (through 
->>> RCU_INIT_POINTER)
->>>
->>> in step 3, obj->staged will be freed(by simple kfree), which make
->>> obj->fence point to a wild pointer...
->> Well that explanation is still nonsense. See
->> reservation_object_add_shared_fence:
->>>           obj->staged = NULL;
->> Among the first things reservation_object_add_shared_fence() does is 
->> it sets obj->staged to NULL.
->>
->> So step 3 will not free anything and we never have a wild pointer.
->>
->> Regards,
->> Christian.
->>
->>> in step 4, code path will go reservation_object_add_shared_inplace()
->>> and inside it the @fobj (which equals to @obj->staged, set by above
->>> steps) is already a wild pointer
->>>
->>> should remov the kfree on staged in
->>> reservation_object_reserve_shared()
->>>
->>> Change-Id: If7c01f1b4be3d3d8a81efa90216841f79ab1fc1c
->>> Signed-off-by: Monk Liu <Monk.Liu@amd.com>
->>> ---
->>>     drivers/dma-buf/reservation.c | 7 ++-----
->>>     1 file changed, 2 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/dma-buf/reservation.c 
->>> b/drivers/dma-buf/reservation.c index 375de41..b473ccc 100644
->>> --- a/drivers/dma-buf/reservation.c
->>> +++ b/drivers/dma-buf/reservation.c
->>> @@ -74,12 +74,9 @@ int reservation_object_reserve_shared(struct reservation_object *obj)
->>>     	old = reservation_object_get_list(obj);
->>>     
->>>     	if (old && old->shared_max) {
->>> -		if (old->shared_count < old->shared_max) {
->>> -			/* perform an in-place update */
->>> -			kfree(obj->staged);
->>> -			obj->staged = NULL;
->>> +		if (old->shared_count < old->shared_max)
->>>     			return 0;
->>> -		} else
->>> +		else
->>>     			max = old->shared_max * 2;
->>>     	} else
->>>     		max = 4;
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..d27a7fb7b830 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -369,6 +369,36 @@ static int tpm_validate_command(struct tpm_chip *chip,
+ 	return -EINVAL;
+ }
+ 
++static int tpm_request_locality(struct tpm_chip *chip)
++{
++	int rc;
++
++	if (!chip->ops->request_locality)
++		return 0;
++
++	rc = chip->ops->request_locality(chip, 0);
++	if (rc < 0)
++		return rc;
++
++	chip->locality = rc;
++
++	return 0;
++}
++
++static void tpm_relinquish_locality(struct tpm_chip *chip)
++{
++	int rc;
++
++	if (!chip->ops->relinquish_locality)
++		return;
++
++	rc = chip->ops->relinquish_locality(chip, chip->locality);
++	if (rc)
++		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
++
++	chip->locality = -1;
++}
++
+ /**
+  * tmp_transmit - Internal kernel interface to transmit TPM commands.
+  *
+@@ -422,8 +452,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_lock(&chip->tpm_mutex);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_get_sync(chip->dev.parent);
+ 
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+@@ -431,14 +459,15 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	/* Store the decision as chip->locality will be changed. */
+ 	need_locality = chip->locality == -1;
+ 
+-	if (!(flags & TPM_TRANSMIT_RAW) &&
+-	    need_locality && chip->ops->request_locality)  {
+-		rc = chip->ops->request_locality(chip, 0);
++	if (!(flags & TPM_TRANSMIT_RAW) && need_locality) {
++		rc = tpm_request_locality(chip);
+ 		if (rc < 0)
+ 			goto out_no_locality;
+-		chip->locality = rc;
+ 	}
+ 
++	if (chip->dev.parent)
++		pm_runtime_get_sync(chip->dev.parent);
++
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+ 		goto out;
+@@ -499,17 +528,16 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+ 
+ out:
+-	if (need_locality && chip->ops->relinquish_locality) {
+-		chip->ops->relinquish_locality(chip, chip->locality);
+-		chip->locality = -1;
+-	}
++	if (chip->dev.parent)
++		pm_runtime_put_sync(chip->dev.parent);
++
++	if (need_locality)
++		tpm_relinquish_locality(chip);
++
+ out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	if (chip->dev.parent)
+-		pm_runtime_put_sync(chip->dev.parent);
+-
+ 	if (!(flags & TPM_TRANSMIT_UNLOCKED))
+ 		mutex_unlock(&chip->tpm_mutex);
+ 	return rc ? rc : len;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 7b3c2a8aa9de..497edd9848cd 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -112,6 +112,25 @@ struct tpm2_crb_smc {
+ 	u32 smc_func_id;
+ };
+ 
++static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
++				unsigned long timeout)
++{
++	ktime_t start;
++	ktime_t stop;
++
++	start = ktime_get();
++	stop = ktime_add(start, ms_to_ktime(timeout));
++
++	do {
++		if ((ioread32(reg) & mask) == value)
++			return true;
++
++		usleep_range(50, 100);
++	} while (ktime_before(ktime_get(), stop));
++
++	return ((ioread32(reg) & mask) == value);
++}
++
+ /**
+  * crb_go_idle - request tpm crb device to go the idle state
+  *
+@@ -128,7 +147,7 @@ struct tpm2_crb_smc {
+  *
+  * Return: 0 always
+  */
+-static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -136,30 +155,17 @@ static int __maybe_unused crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+-	/* we don't really care when this settles */
+ 
++	if (!crb_wait_for_reg_32(&priv->regs_t->ctrl_req,
++				 CRB_CTRL_REQ_GO_IDLE/* mask */,
++				 0, /* value */
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "goIdle timed out\n");
++		return -ETIME;
++	}
+ 	return 0;
+ }
+ 
+-static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+-				unsigned long timeout)
+-{
+-	ktime_t start;
+-	ktime_t stop;
+-
+-	start = ktime_get();
+-	stop = ktime_add(start, ms_to_ktime(timeout));
+-
+-	do {
+-		if ((ioread32(reg) & mask) == value)
+-			return true;
+-
+-		usleep_range(50, 100);
+-	} while (ktime_before(ktime_get(), stop));
+-
+-	return false;
+-}
+-
+ /**
+  * crb_cmd_ready - request tpm crb device to enter ready state
+  *
+@@ -175,8 +181,7 @@ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __maybe_unused crb_cmd_ready(struct device *dev,
+-					struct crb_priv *priv)
++static int crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+ 	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+@@ -195,11 +200,11 @@ static int __maybe_unused crb_cmd_ready(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int crb_request_locality(struct tpm_chip *chip, int loc)
++static int __crb_request_locality(struct device *dev,
++				  struct crb_priv *priv, int loc)
+ {
+-	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	u32 value = CRB_LOC_STATE_LOC_ASSIGNED |
+-		CRB_LOC_STATE_TPM_REG_VALID_STS;
++		    CRB_LOC_STATE_TPM_REG_VALID_STS;
+ 
+ 	if (!priv->regs_h)
+ 		return 0;
+@@ -207,21 +212,45 @@ static int crb_request_locality(struct tpm_chip *chip, int loc)
+ 	iowrite32(CRB_LOC_CTRL_REQUEST_ACCESS, &priv->regs_h->loc_ctrl);
+ 	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, value, value,
+ 				 TPM2_TIMEOUT_C)) {
+-		dev_warn(&chip->dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
+ 		return -ETIME;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void crb_relinquish_locality(struct tpm_chip *chip, int loc)
++static int crb_request_locality(struct tpm_chip *chip, int loc)
+ {
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 
++	return __crb_request_locality(&chip->dev, priv, loc);
++}
++
++static int __crb_relinquish_locality(struct device *dev,
++				     struct crb_priv *priv, int loc)
++{
++	u32 mask = CRB_LOC_STATE_LOC_ASSIGNED |
++		   CRB_LOC_STATE_TPM_REG_VALID_STS;
++	u32 value = CRB_LOC_STATE_TPM_REG_VALID_STS;
++
+ 	if (!priv->regs_h)
+-		return;
++		return 0;
+ 
+ 	iowrite32(CRB_LOC_CTRL_RELINQUISH, &priv->regs_h->loc_ctrl);
++	if (!crb_wait_for_reg_32(&priv->regs_h->loc_state, mask, value,
++				 TPM2_TIMEOUT_C)) {
++		dev_warn(dev, "TPM_LOC_STATE_x.requestAccess timed out\n");
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++static int crb_relinquish_locality(struct tpm_chip *chip, int loc)
++{
++	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
++
++	return __crb_relinquish_locality(&chip->dev, priv, loc);
+ }
+ 
+ static u8 crb_status(struct tpm_chip *chip)
+@@ -475,6 +504,10 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 			dev_warn(dev, FW_BUG "Bad ACPI memory layout");
+ 	}
+ 
++	ret = __crb_request_locality(dev, priv, 0);
++	if (ret)
++		return ret;
++
+ 	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+ 				   sizeof(struct crb_regs_tail));
+ 	if (IS_ERR(priv->regs_t))
+@@ -531,6 +564,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 
+ 	crb_go_idle(dev, priv);
+ 
++	__crb_relinquish_locality(dev, priv, 0);
++
+ 	return ret;
+ }
+ 
+@@ -588,10 +623,14 @@ static int crb_acpi_add(struct acpi_device *device)
+ 	chip->acpi_dev_handle = device->handle;
+ 	chip->flags = TPM_CHIP_FLAG_TPM2;
+ 
+-	rc  = crb_cmd_ready(dev, priv);
++	rc = __crb_request_locality(dev, priv, 0);
+ 	if (rc)
+ 		return rc;
+ 
++	rc  = crb_cmd_ready(dev, priv);
++	if (rc)
++		goto out;
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+@@ -601,12 +640,15 @@ static int crb_acpi_add(struct acpi_device *device)
+ 		crb_go_idle(dev, priv);
+ 		pm_runtime_put_noidle(dev);
+ 		pm_runtime_disable(dev);
+-		return rc;
++		goto out;
+ 	}
+ 
+-	pm_runtime_put(dev);
++	pm_runtime_put_sync(dev);
+ 
+-	return 0;
++out:
++	__crb_relinquish_locality(dev, priv, 0);
++
++	return rc;
+ }
+ 
+ static int crb_acpi_remove(struct acpi_device *device)
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index da074e3db19b..5a1f47b43947 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -143,11 +143,13 @@ static bool check_locality(struct tpm_chip *chip, int l)
+ 	return false;
+ }
+ 
+-static void release_locality(struct tpm_chip *chip, int l)
++static int release_locality(struct tpm_chip *chip, int l)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 
+ 	tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
++
++	return 0;
+ }
+ 
+ static int request_locality(struct tpm_chip *chip, int l)
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index bcdd3790e94d..06639fb6ab85 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -44,7 +44,7 @@ struct tpm_class_ops {
+ 	bool (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
+ 	int (*request_locality)(struct tpm_chip *chip, int loc);
+-	void (*relinquish_locality)(struct tpm_chip *chip, int loc);
++	int (*relinquish_locality)(struct tpm_chip *chip, int loc);
+ 	void (*clk_enable)(struct tpm_chip *chip, bool value);
+ };
+ 
+-- 
+2.14.3
