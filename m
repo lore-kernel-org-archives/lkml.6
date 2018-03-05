@@ -1,77 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934585AbeCEMmD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:42:03 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55840 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933014AbeCEMmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:42:01 -0500
-Date: Mon, 5 Mar 2018 13:41:48 +0100
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, Stefan Chulski <stefanc@marvell.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 1/5] net: mvpp2: use the same buffer pool for
- all ports
-Message-ID: <20180305134148.3bbba514@windsurf.home>
-In-Reply-To: <20180305104813.GI1156@kwain>
-References: <20180302154044.25204-1-antoine.tenart@bootlin.com>
-        <20180302154044.25204-2-antoine.tenart@bootlin.com>
-        <20180302170159.258bcdbc@windsurf.lan>
-        <20180305104813.GI1156@kwain>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S934691AbeCEMm3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:42:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58306 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933014AbeCEMm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 07:42:28 -0500
+Date: Mon, 5 Mar 2018 13:42:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH 6/7] sched: idle: Predict idle duration before
+ stopping the tick
+Message-ID: <20180305124217.GZ25181@hirez.programming.kicks-ass.net>
+References: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
+ <2048240.1dZKXsSxFh@aspire.rjw.lan>
+ <20180305114542.GP25201@hirez.programming.kicks-ass.net>
+ <CAJZ5v0hmmVTSnC52EgXxbHh6akCDeBw64w30F8npdpvyabNucw@mail.gmail.com>
+ <CAJZ5v0jxmVAvGuW=2uWuWHaUhdt1E6GXXy3DpkNOwhKWLfAqWA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jxmVAvGuW=2uWuWHaUhdt1E6GXXy3DpkNOwhKWLfAqWA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Mar 05, 2018 at 01:07:07PM +0100, Rafael J. Wysocki wrote:
+> On Mon, Mar 5, 2018 at 12:50 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Mon, Mar 5, 2018 at 12:45 PM, Peter Zijlstra <peterz@infradead.org> wrote:
 
-On Mon, 5 Mar 2018 11:48:13 +0100, Antoine Tenart wrote:
-
-> > > +static void mvpp2_setup_bm_pool(void)
-> > > +{
-> > > +	/* Short pool */
-> > > +	mvpp2_pools[MVPP2_BM_SHORT].buf_num  = MVPP2_BM_SHORT_BUF_NUM;
-> > > +	mvpp2_pools[MVPP2_BM_SHORT].pkt_size = MVPP2_BM_SHORT_PKT_SIZE;
-> > > +
-> > > +	/* Long pool */
-> > > +	mvpp2_pools[MVPP2_BM_LONG].buf_num  = MVPP2_BM_LONG_BUF_NUM;
-> > > +	mvpp2_pools[MVPP2_BM_LONG].pkt_size = MVPP2_BM_LONG_PKT_SIZE;
-> > > +}  
-> > 
-> >  ?  
+> >> So I think this is entirely wrong, I would much rather see something
+> >> like:
+> >>
+> >>         tick_nohz_idle_go_idle(next_state->nohz);
+> >>
+> >> Where the selected state itself has the nohz property or not.
+> >
+> > Can you elaborate here, I'm not following?
+> >
+> >> We can always insert an extra state at whatever the right boundary point
+> >> is for nohz if it doesn't line up with an existing point.
 > 
-> I wanted to do this, but it's no possible as MVPP2_BM_SHORT_PKT_SIZE and
-> MVPP2_BM_LONG_PKT_SIZE use a core definition which expands at some point
-> to __max(...) which has to be called from within a function.
+> OK, I guess I know what you mean: to add a state flag meaning "stop
+> the tick if this state is selected".
 
-Hum, weird:
+Yes, that.
 
-#define MVPP2_BM_LONG_PKT_SIZE	MVPP2_RX_MAX_PKT_SIZE(MVPP2_BM_LONG_FRAME_SIZE)
-#define MVPP2_BM_LONG_FRAME_SIZE		2048
+> That could work, but I see problems, like having to go through all of
+> the already defined states and deciding what to do with them.
 
-#define MVPP2_RX_MAX_PKT_SIZE(total_size) \
-        ((total_size) - NET_SKB_PAD - MVPP2_SKB_SHINFO_SIZE)
-
-#define MVPP2_SKB_SHINFO_SIZE \
-        SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
-
-#define SKB_DATA_ALIGN(X)        ALIGN(X, SMP_CACHE_BYTES)
-
-I don't really see a __max(...) call.
-
-And if this value really expands depending on other values, then it
-isn't really a constant, and should be considered as a constant, no?
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Shouldn't be too hard, upon registering a cpuidle driver to the cpuidle
+core, the core could go through the provided states and flag all those <
+TICK_USEC as not stopping, all those > TICK_USEC as stopping and
+splitting the state we'd select for TICK_NSEC sleeps, stopping it for <
+and disabling it for >.
