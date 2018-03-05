@@ -1,115 +1,379 @@
-Return-Path: <mmoese@suse.de>
-X-Google-Smtp-Source: AG47ELvWaMetjJauIoy5nrjvfCna2tm/bBEazzzlHNc89vO18XG+PU2tg6dI97V0C1+DzkNqtV8D
-ARC-Seal: i=1; a=rsa-sha256; t=1520263332; cv=none;
-        d=google.com; s=arc-20160816;
-        b=E2qAmCnxyEuR3uMXxjGoi0C1MdRLezkg+CM7uhZjYK6+CC/Gb8gCtjm/s3SAxe0Wcv
-         Tnm8zeCXkRTNHR6kKIA7k7sSK7hWdL4WSkkXza+KN5/Yy+5O8G8jPokX0NGIXdnt2dkm
-         LKA2FO6aPBnuwwkZjCRORSewaGkEh+UCXucNXWToWOhhDTOA9G6IT/B3nIrLk02o8xds
-         cSyMYi3fcl0IUPJsiv8P2FFtezmRceW6fNumoeCFQG85Xumrfi0VPW2tYlk/BJxC5z64
-         jl0e9D52KReHv+q+e0sLJcAawrsD2JvGdCWzLoNKYNWYAI8EOaaxtvyD3F+gVJSf431M
-         Dd4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=dM8JcY6HXfiarys8P+QWKFdKyPEPKZk0qm/RMUnuYBs=;
-        b=w6mJWvj9UZuLjiVnOgqr/xxf+fMZ7OM1/vKNiM0ujs9o0mGd/2rdWU4WcEoF1z3CfA
-         JxYnpubsRkM9ZYaCXWkjKXrC4eRrKKPeaa1mR6+LNjSISyIjgccGFWF7o1ZhIx9+IYE3
-         9QlOq/IZhV41/DgG2I+3bldg1BFfhWK4RGaijcRchl4sEULM3xw61NRyyKAz1WX21J94
-         o77yCyFN5FZFm3cxURADA/4Yh0mUGyk3va9t6EMCaagqxDBdTAfrz97jYGu2/GmwdfFp
-         KtD5IFggf3yKXvOqJVkYLjFJ1F0O2s5ocn5hdudmiGjZjsBsf2An6LNw2qPCt8fy12/I
-         MVvA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mmoese@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=mmoese@suse.de
-Date: Mon, 5 Mar 2018 16:22:11 +0100
-From: Michael Moese <mmoese@suse.de>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Andreas Geissler <andreas.geissler@men.de>,
-	Ben Turner <ben.turner@21net.com>
-Subject: Re: [PATCH v3] 8250-men-mcb: add support for 16z025 and 16z057
-Message-ID: <20180305152211.x423tgtwfanuwvwo@linux.suse.de>
-References: <20180305082235.12777-1-mmoese@suse.de>
- <CAHp75VfVm5B7NawwYdzNFkCgJG+2Ht8pkAL0Drr08GJ+p2ZVow@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VfVm5B7NawwYdzNFkCgJG+2Ht8pkAL0Drr08GJ+p2ZVow@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Return-Path: <leechu729@gmail.com>
+X-Cyrus-Session-Id: sloti22d1t05-523714-1520223430-2-574451422209128668
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_ENVFROM_END_DIGIT 0.25, FREEMAIL_FROM 0.001,
+  RCVD_IN_DNSWL_NONE -0.0001, RCVD_IN_MSPIKE_H2 -0.001, SPF_PASS -0.001,
+  LANGUAGES roenca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.85.192.195', Host='mail-pf0-f195.google.com', Country='US',
+  FromHeader='com', MailFrom='com'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: leechu729@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520223429; b=f2T13g5fr7HlCE8wpLepw6XHuuQFKbfDY6/LjHThgsK8EYZ
+    Qk/YVQuBEJufYteed018ODaVOwa5vEr25/u7RlzO2QshDlMJgn7h2bnimB2YTF1l
+    ixshWVtdf3msTRf1q/X6V1EmWneZzaacmnOE9JKsc/u+fUyGxc2IJHDgW3vXu1DC
+    beM9LH5Yc6VKxY6hqqFwBuJN0yB2hooeO+Us4uMzwrPu2hfEFnneb1pyUuVALwJO
+    AJcEWVTpmQHU716B8sFQKjtW9etwlDOGgBCeAu5bXMZHgnAcSpXoi/bBnXX1ykaA
+    VQnnq8UiTv9TFWcC8DZiIpwbTbRZPVa++Gns9og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id; s=
+    arctest; t=1520223429; bh=hkh8FqAREyQqg6awUsvl88LI8rM2ST8kZE+417
+    gC2Gg=; b=wykrfExsfKhhcKyC6DBDktJ2iyxw+BZaiDsGjK5Fpe9nbaq/hbgAxE
+    iv1e4bhkeajVbgoCTugSFnZqd4p6DFL2fdAUUvhx+Qqpi600a57nWGj0AA2BZT6x
+    DOpy9JQCAH8/U03eLPeRgyiSESgYuO6GMFlbWCJB/eGvWcNE6lk4m9Rtt57+Au3Q
+    V7BddhowJUnbWOe8eMMoCrjNbedqqfWnE5LRTMMIi1Wmu0Ji6mg3NW/HrfbV7Kbw
+    y7wM0Qfqqymj3sFc+DWk2JBYrFpKMd7hpTE6UtoO60wYYAK1ZxFZM4nj+HS1xAdI
+    DOQPEql2MvgL9eIdXNgwPNk6YMC+Q/4A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bpH/WDeA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.192.195 (mail-pf0-f195.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pf0-f195.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=d1YGxMcE;
+    x-ptr=pass x-ptr-helo=mail-pf0-f195.google.com x-ptr-lookup=mail-pf0-f195.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bpH/WDeA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.85.192.195 (mail-pf0-f195.google.com);
+    spf=pass smtp.mailfrom=leechu729@gmail.com smtp.helo=mail-pf0-f195.google.com;
+    x-aligned-from=pass;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=d1YGxMcE;
+    x-ptr=pass x-ptr-helo=mail-pf0-f195.google.com x-ptr-lookup=mail-pf0-f195.google.com;
+    x-return-mx=pass smtp.domain=gmail.com smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Google-Smtp-Source: AG47ELuLxvlk+biHMJCuJT73zAratn1plvWYxS9piTuLu9LGOMykzlCtRUIAHd3m+91UHz9NFftEPQ==
+From: ShuFan Lee <leechu729@gmail.com>
+To: heikki.krogerus@linux.intel.com,
+	linux@roeck-us.net,
+	greg@kroah.com
+Cc: shufan_lee@richtek.com,
+	cy_huang@richtek.com,
+	jun.li@nxp.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v6] staging: typec: handle vendor defined part and modify drp toggling flow
+Date: Mon,  5 Mar 2018 12:16:42 +0800
+Message-Id: <1520223402-19906-1-git-send-email-leechu729@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594085248786012954?=
-X-GMAIL-MSGID: =?utf-8?q?1594111644004604325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, sorry.. my bad. Not my day today. I forgot to commit :/
+From: ShuFan Lee <shufan_lee@richtek.com>
 
-I'll resend.
+Handle vendor defined behavior in tcpci_init, tcpci_set_vconn, tcpci_start_drp_toggling
+and export tcpci_irq. More operations can be extended in tcpci_data if needed.
+According to TCPCI specification, 4.4.5.2 ROLE_CONTROL,
+TCPC shall not start DRP toggling until subsequently the TCPM
+writes to the COMMAND register to start DRP toggling.
+DRP toggling flow is chagned as following:
+  - Write DRP = 1, Rp level and RC.CCx to Rd/Rd or Rp/Rp
+  - Set LOOK4CONNECTION command
 
-On Mon, Mar 05, 2018 at 05:17:04PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 5, 2018 at 10:22 AM, Michael Moese <mmoese@suse.de> wrote:
-> > Add support for two MEN UARTs (16z025 and 16z057) to the
-> > 8250_men_mcb driver.
-> > The 16z025 consists of up to four ports, the 16z057 has
-> > exactly four ports. Apart from that, all of them share the
-> > Port settings.
-> 
-> > Changes to v2:
-> > Added include of linux/io.h due to finding of kbuild robot.
-> 
-> Hmm... Is it there?
-> 
-> >  static int serial_8250_men_mcb_probe(struct mcb_device *mdev,
-> >                                      const struct mcb_device_id *id)
-> >  {
-> 
-> >         mem = mcb_get_resource(mdev, IORESOURCE_MEM);
-> 
-> >         if (mem == NULL)
-> >                 return -ENXIO;
-> 
-> Redundant.
-> 
-> > +       membase = devm_ioremap_resource(&mdev->dev, mem);
-> > +       if (IS_ERR(membase))
-> > +               return PTR_ERR_OR_ZERO(membase);
-> 
-> > +       for (i = 0; i < num_ports; i++) {
-> 
-> > +               /* ok, register the port */
-> > +               data[i].line = serial8250_register_8250_port(&data[i].uart);
-> > +               if (data[i].line < 0) {
-> > +                       dev_err(&mdev->dev, "unable to register UART port\n");
-> > +                       return data[i].line;
-> > +               }
-> > +               dev_info(&mdev->dev, "found MCB UART: ttyS%d\n", data[i].line);
-> 
-> Consider to use  struct uart_port::name instead.
-> 
-> > +       }
-> >
-> >         return 0;
-> >  }
-> >
-> >  static void serial_8250_men_mcb_remove(struct mcb_device *mdev)
-> >  {
-> 
-> > +       if (!data)
-> > +               return;
-> 
-> When it's possible?
-> 
-> >  }
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+Signed-off-by: ShuFan Lee <shufan_lee@richtek.com>
+---
+ drivers/staging/typec/tcpci.c | 134 ++++++++++++++++++++++++++++++++++--------
+ drivers/staging/typec/tcpci.h |  15 +++++
+ 2 files changed, 123 insertions(+), 26 deletions(-)
 
+ patch changelogs between v1 & v2
+ - Remove unnecessary i2c_client in the structure of tcpci
+ - Rename structure of tcpci_vendor_data to tcpci_data
+ - Not exporting tcpci read/write wrappers but register i2c regmap in glue driver
+ - Add set_vconn ops in tcpci_data
+   (It is necessary for RT1711H to enable/disable idle mode before disabling/enabling vconn)
+ - Export tcpci_irq so that vendor can call it in their own IRQ handler
 
+ patch changelogs between v2 & v3
+ - Change the return type of tcpci_irq from int to irqreturn_t
+
+ patch changelogs between v3 & v4
+ - Directly return regmap_write at the end of drp_toggling function
+ - Because tcpci_irq is called in _tcpci_irq, move _tcpci_irq to the place after tcpci_irq
+
+ patch changelogs between v4 & v5
+ - Add a space between my first & last name, from ShuFanLee to ShuFan Lee.
+
+ patch changelogs between v5 & v6
+ - Add start_drp_toggling in tcpci_data and call it at the beginning of tcpci_start_drp_toggling
+ - Modify the flow of tcpci_start_drp_toggling as following
+    - Set Rp level, RC.CCx to Rd/Rd or Rp/Rp and DRP = 1
+    - Set LOOK4CONNECTION command
+
+diff --git a/drivers/staging/typec/tcpci.c b/drivers/staging/typec/tcpci.c
+index 9bd4412..9e600f7 100644
+--- a/drivers/staging/typec/tcpci.c
++++ b/drivers/staging/typec/tcpci.c
+@@ -21,7 +21,6 @@
+ 
+ struct tcpci {
+ 	struct device *dev;
+-	struct i2c_client *client;
+ 
+ 	struct tcpm_port *port;
+ 
+@@ -30,6 +29,12 @@ struct tcpci {
+ 	bool controls_vbus;
+ 
+ 	struct tcpc_dev tcpc;
++	struct tcpci_data *data;
++};
++
++struct tcpci_chip {
++	struct tcpci *tcpci;
++	struct tcpci_data data;
+ };
+ 
+ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+@@ -37,8 +42,7 @@ static inline struct tcpci *tcpc_to_tcpci(struct tcpc_dev *tcpc)
+ 	return container_of(tcpc, struct tcpci, tcpc);
+ }
+ 
+-static int tcpci_read16(struct tcpci *tcpci, unsigned int reg,
+-			u16 *val)
++static int tcpci_read16(struct tcpci *tcpci, unsigned int reg, u16 *val)
+ {
+ 	return regmap_raw_read(tcpci->regmap, reg, val, sizeof(u16));
+ }
+@@ -98,9 +102,19 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
+ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 				    enum typec_cc_status cc)
+ {
++	int ret;
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+ 	unsigned int reg = TCPC_ROLE_CTRL_DRP;
+ 
++	if (tcpci->data) {
++		if (tcpci->data->start_drp_toggling) {
++			ret = tcpci->data->start_drp_toggling(tcpci,
++							      tcpci->data, cc);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	switch (cc) {
+ 	default:
+ 	case TYPEC_CC_RP_DEF:
+@@ -117,7 +131,17 @@ static int tcpci_start_drp_toggling(struct tcpc_dev *tcpc,
+ 		break;
+ 	}
+ 
+-	return regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (cc == TYPEC_CC_RD)
++		reg |= (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RD << TCPC_ROLE_CTRL_CC2_SHIFT);
++	else
++		reg |= (TCPC_ROLE_CTRL_CC_RP << TCPC_ROLE_CTRL_CC1_SHIFT) |
++			   (TCPC_ROLE_CTRL_CC_RP << TCPC_ROLE_CTRL_CC2_SHIFT);
++	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
++	if (ret < 0)
++		return ret;
++	return regmap_write(tcpci->regmap, TCPC_COMMAND,
++			    TCPC_CMD_LOOK4CONNECTION);
+ }
+ 
+ static enum typec_cc_status tcpci_to_typec_cc(unsigned int cc, bool sink)
+@@ -178,6 +202,16 @@ static int tcpci_set_vconn(struct tcpc_dev *tcpc, bool enable)
+ 	struct tcpci *tcpci = tcpc_to_tcpci(tcpc);
+ 	int ret;
+ 
++	/* Handle vendor set vconn */
++	if (tcpci->data) {
++		if (tcpci->data->set_vconn) {
++			ret = tcpci->data->set_vconn(tcpci, tcpci->data,
++						     enable);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	ret = regmap_write(tcpci->regmap, TCPC_POWER_CTRL,
+ 			   enable ? TCPC_POWER_CTRL_VCONN_ENABLE : 0);
+ 	if (ret < 0)
+@@ -323,6 +357,15 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	if (time_after(jiffies, timeout))
+ 		return -ETIMEDOUT;
+ 
++	/* Handle vendor init */
++	if (tcpci->data) {
++		if (tcpci->data->init) {
++			ret = tcpci->data->init(tcpci, tcpci->data);
++			if (ret < 0)
++				return ret;
++		}
++	}
++
+ 	/* Clear all events */
+ 	ret = tcpci_write16(tcpci, TCPC_ALERT, 0xffff);
+ 	if (ret < 0)
+@@ -344,9 +387,8 @@ static int tcpci_init(struct tcpc_dev *tcpc)
+ 	return tcpci_write16(tcpci, TCPC_ALERT_MASK, reg);
+ }
+ 
+-static irqreturn_t tcpci_irq(int irq, void *dev_id)
++irqreturn_t tcpci_irq(struct tcpci *tcpci)
+ {
+-	struct tcpci *tcpci = dev_id;
+ 	u16 status;
+ 
+ 	tcpci_read16(tcpci, TCPC_ALERT, &status);
+@@ -412,6 +454,14 @@ static irqreturn_t tcpci_irq(int irq, void *dev_id)
+ 
+ 	return IRQ_HANDLED;
+ }
++EXPORT_SYMBOL_GPL(tcpci_irq);
++
++static irqreturn_t _tcpci_irq(int irq, void *dev_id)
++{
++	struct tcpci *tcpci = dev_id;
++
++	return tcpci_irq(tcpci);
++}
+ 
+ static const struct regmap_config tcpci_regmap_config = {
+ 	.reg_bits = 8,
+@@ -435,22 +485,18 @@ static int tcpci_parse_config(struct tcpci *tcpci)
+ 	return 0;
+ }
+ 
+-static int tcpci_probe(struct i2c_client *client,
+-		       const struct i2c_device_id *i2c_id)
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data)
+ {
+ 	struct tcpci *tcpci;
+ 	int err;
+ 
+-	tcpci = devm_kzalloc(&client->dev, sizeof(*tcpci), GFP_KERNEL);
++	tcpci = devm_kzalloc(dev, sizeof(*tcpci), GFP_KERNEL);
+ 	if (!tcpci)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+-	tcpci->client = client;
+-	tcpci->dev = &client->dev;
+-	i2c_set_clientdata(client, tcpci);
+-	tcpci->regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
+-	if (IS_ERR(tcpci->regmap))
+-		return PTR_ERR(tcpci->regmap);
++	tcpci->dev = dev;
++	tcpci->data = data;
++	tcpci->regmap = data->regmap;
+ 
+ 	tcpci->tcpc.init = tcpci_init;
+ 	tcpci->tcpc.get_vbus = tcpci_get_vbus;
+@@ -467,27 +513,63 @@ static int tcpci_probe(struct i2c_client *client,
+ 
+ 	err = tcpci_parse_config(tcpci);
+ 	if (err < 0)
+-		return err;
++		return ERR_PTR(err);
++
++	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
++	if (PTR_ERR_OR_ZERO(tcpci->port))
++		return ERR_CAST(tcpci->port);
+ 
+-	/* Disable chip interrupts */
+-	tcpci_write16(tcpci, TCPC_ALERT_MASK, 0);
++	return tcpci;
++}
++EXPORT_SYMBOL_GPL(tcpci_register_port);
++
++void tcpci_unregister_port(struct tcpci *tcpci)
++{
++	tcpm_unregister_port(tcpci->port);
++}
++EXPORT_SYMBOL_GPL(tcpci_unregister_port);
+ 
+-	err = devm_request_threaded_irq(tcpci->dev, client->irq, NULL,
+-					tcpci_irq,
++static int tcpci_probe(struct i2c_client *client,
++		       const struct i2c_device_id *i2c_id)
++{
++	struct tcpci_chip *chip;
++	int err;
++	u16 val = 0;
++
++	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->data.regmap = devm_regmap_init_i2c(client, &tcpci_regmap_config);
++	if (IS_ERR(chip->data.regmap))
++		return PTR_ERR(chip->data.regmap);
++
++	/* Disable chip interrupts before requesting irq */
++	err = regmap_raw_write(chip->data.regmap, TCPC_ALERT_MASK, &val,
++			       sizeof(u16));
++	if (err < 0)
++		return err;
++
++	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
++					_tcpci_irq,
+ 					IRQF_ONESHOT | IRQF_TRIGGER_LOW,
+-					dev_name(tcpci->dev), tcpci);
++					dev_name(&client->dev), chip);
+ 	if (err < 0)
+ 		return err;
+ 
+-	tcpci->port = tcpm_register_port(tcpci->dev, &tcpci->tcpc);
+-	return PTR_ERR_OR_ZERO(tcpci->port);
++	chip->tcpci = tcpci_register_port(&client->dev, &chip->data);
++	if (PTR_ERR_OR_ZERO(chip->tcpci))
++		return PTR_ERR(chip->tcpci);
++
++	i2c_set_clientdata(client, chip);
++	return 0;
+ }
+ 
+ static int tcpci_remove(struct i2c_client *client)
+ {
+-	struct tcpci *tcpci = i2c_get_clientdata(client);
++	struct tcpci_chip *chip = i2c_get_clientdata(client);
+ 
+-	tcpm_unregister_port(tcpci->port);
++	tcpci_unregister_port(chip->tcpci);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/typec/tcpci.h b/drivers/staging/typec/tcpci.h
+index fdfb06c..a2c1754 100644
+--- a/drivers/staging/typec/tcpci.h
++++ b/drivers/staging/typec/tcpci.h
+@@ -59,6 +59,7 @@
+ #define TCPC_POWER_CTRL_VCONN_ENABLE	BIT(0)
+ 
+ #define TCPC_CC_STATUS			0x1d
++#define TCPC_CC_STATUS_DRPRST		BIT(5)
+ #define TCPC_CC_STATUS_TERM		BIT(4)
+ #define TCPC_CC_STATUS_CC2_SHIFT	2
+ #define TCPC_CC_STATUS_CC2_MASK		0x3
+@@ -121,4 +122,18 @@
+ #define TCPC_VBUS_VOLTAGE_ALARM_HI_CFG		0x76
+ #define TCPC_VBUS_VOLTAGE_ALARM_LO_CFG		0x78
+ 
++struct tcpci;
++struct tcpci_data {
++	struct regmap *regmap;
++	int (*init)(struct tcpci *tcpci, struct tcpci_data *data);
++	int (*set_vconn)(struct tcpci *tcpci, struct tcpci_data *data,
++			 bool enable);
++	int (*start_drp_toggling)(struct tcpci *tcpci, struct tcpci_data *data,
++				  enum typec_cc_status cc);
++};
++
++struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
++void tcpci_unregister_port(struct tcpci *tcpci);
++irqreturn_t tcpci_irq(struct tcpci *tcpci);
++
+ #endif /* __LINUX_USB_TCPCI_H */
 -- 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+1.9.1
