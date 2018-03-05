@@ -1,247 +1,170 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AG47ELt7J7ze0i3vO8qniXgNYiqOrgt3RJmLZoUWOGX7Rha9RYBCMhaMErsQOtB3W4O3oRiA4WGy
-ARC-Seal: i=1; a=rsa-sha256; t=1520455495; cv=none;
-        d=google.com; s=arc-20160816;
-        b=HPf7lcuy7SrO+5OlSzZ0bArUA7gCSqq13jnTlHiRFbayHGJepPEe9cfA8vo0pUuOLH
-         9JJar0LULPerWT/cXh8V1DPZvz1z4p/CI8/yNVgzO94kCi51P8xVjgf8Ags8StGUPgmT
-         EWtxm1w8/buxPZOPvijI9kvxNKktxNaJTVd2dUeFnrniENjlv+ByHbrVyEnA+KmhU2Y2
-         XZCvhjHISZv8Xf0Rm2pVkymIwA6++lqXjz3+8PanbXskd/eP/VE2K20fS1bXevPSzL6v
-         tmTi9pyoqd2FQjfMFq0+BHDjE/ZCJw+hYSFI6Q0QFLyoyHwhSZnGD0bfOCKTAWyOK7tF
-         Xj2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=CwY6JRt5QNS2VMuLIT/7MXEPo2AM3/qmbA3reUizj7w=;
-        b=VFFGd80uPw4N7f7DHhKazFs4lWh1NeN5JGT9HTi80p6AiW0CI9+cUO0isMe54TrkfU
-         vAjN6tH1E5eeSUuNEFaX9fhLQ45Q3koUPrWrz5ebAI4srlQ+ZgOQt/w3VvI2f226TNPz
-         Gm4b2Yd2qzUuCCWjyypaBprvyLzlEW/3vbqUIqTv/MdQLiNb378rWMBVuJQxcxIOUivW
-         T4eKd3xrIt3c3unTRFrqbKeSRd1zkTj0F4xB+fYGXbimrT+5Dm9XliqpXuMZsK5j6rGb
-         0/Rg90cG5EytYUwBD7gH55jXPoUwRpAMvLU/P5DaoaezzeSuZdd4ZsLBBjUk5LRptbRQ
-         fuJA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5752133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Wed, 7 Mar 2018 20:44:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Himanshu Jha <himanshujha199640@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
- pmeerw@pmeerw.net, gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
- devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- daniel.baluta@gmail.com
-Subject: Re: [PATCH 05/11] Staging: iio: accel: Add _REG suffix to registers
-Message-ID: <20180307204450.2cc869e6@archlinux>
-In-Reply-To: <1520236170-14668-6-git-send-email-himanshujha199640@gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1088053-1520236215-3-6588656335065986285
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  RCVD_IN_SORBS_WEB 1.5, SPF_PASS -0.001, LANGUAGES roenca,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520236215; b=ovwTb+dJWEVk6/YkBCk+eqZ3C1v4zr4+MygV0JAPAeppdHb
+    H52YkdG7lxywMbbx8EDC9ipUMNaWf9rNf0p0uxedJXFX9/F3Y/qs4ko0RPT7/KhG
+    ZdUgTHmGEfakrXkj0nBasp+I+8VqiVCprCb4DIcaoa9swhOHX4qGH17JWppurLcG
+    ANy+/1YC63ZZYsf1Uz/YcM2iHC0joqnnrHsURiDTQZujEzgHjo0u/khCxbJ8fBUz
+    6F9RIgsy/rpbc5MIqmsEkE35L7izV6S/DYh25wNMlaGtu7SLB+suasPVd/oaD3zG
+    l4Nqc2Pu2yXIIJVdj2aQ7qt+g62fLmbJDbrSiGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520236215; bh=J
+    5TxvmV2uEbn1nL/6w5eo+9ZpxFVprHdmOfemSxrhMs=; b=i81fqTQPyArTYD9QE
+    VruUAifAzXeQ9fIOWIohSo2DnN+m1C4eJ4xw7WVjL0MgEgFXRlXD9EGRDNKUiaO0
+    6Sf662keNIyHqHX+7t4fC0oXbsQbevyTAtjtKyEGakVRnwg1ZH/qbjvBTgBOSZCp
+    zFcby+7ymfp8y2gS/87nqd+o1kSl2wLer/c92sXWF7xdLwkS/v9DXK0RLtNTFcb1
+    q+wgeWvd4zmZA6daT7kbGgg9pFkLw9fFJzr7kGP0qzRt547wV5wcFOg4a9wpZLqo
+    SnkR3qP74zvLwfwVlS2irBVsm93figr2EIETUiVX64YziQSu9wQPWkNow6GuUqaM
+    /MSkw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tii2PzKn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KExR/a+t;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tii2PzKn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KExR/a+t;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELuk0saIawEKeiPLx4ML91whBkBoDjLXFCVG6+LMnYFf3dLmmWgurtNVnu4HB7cthD9s7U3Jxg==
+From: Himanshu Jha <himanshujha199640@gmail.com>
+To: jic23@kernel.org
+Subject: [PATCH 04/11] Staging: iio: accel: Rename few macro definitions
+Date: Mon,  5 Mar 2018 13:19:23 +0530
+Message-Id: <1520236170-14668-5-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520236170-14668-1-git-send-email-himanshujha199640@gmail.com>
 References: <1520236170-14668-1-git-send-email-himanshujha199640@gmail.com>
-	<1520236170-14668-6-git-send-email-himanshujha199640@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ Himanshu Jha <himanshujha199640@gmail.com>, pmeerw@pmeerw.net, knaack.h@gmx.de
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594083207295076170?=
-X-GMAIL-MSGID: =?utf-8?q?1594313141698688024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon,  5 Mar 2018 13:19:24 +0530
-Himanshu Jha <himanshujha199640@gmail.com> wrote:
+Rename few macros with appropriate names specifying their usage/function.
 
-> Addition of _REG suffix to the register definitions allows a distinction
-> between registers and register fields. The various registers and its field
-> bits are grouped together to improve readability and easy indentification.
-> 
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-This one looks good. I will pick it up once you've tweaked the
-predecessor patches.
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
+---
+ drivers/staging/iio/accel/adis16201.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-Thanks,
+diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
+index 59c1166..445cb56 100644
+--- a/drivers/staging/iio/accel/adis16201.c
++++ b/drivers/staging/iio/accel/adis16201.c
+@@ -20,9 +20,8 @@
+ #include <linux/iio/buffer.h>
+ #include <linux/iio/imu/adis.h>
+ 
+-#define ADIS16201_STARTUP_DELAY		220
+-
+-#define ADIS16201_FLASH_CNT      0x00
++#define ADIS16201_STARTUP_DELAY_MS	220
++#define ADIS16201_FLASH_CNT		0x00
+ 
+ /* Data Output Register Information */
+ #define ADIS16201_SUPPLY_OUT     0x02
+@@ -69,7 +68,7 @@
+ 
+ #define ADIS16201_MSC_CTRL_DATA_RDY_EN	        BIT(2)
+ 
+-#define ADIS16201_MSC_CTRL_ACTIVE_HIGH	        BIT(1)
++#define ADIS16201_MSC_CTRL_ACTIVE_DATA_RDY_HIGH	        BIT(1)
+ 
+ #define ADIS16201_MSC_CTRL_DATA_RDY_DIO1	BIT(0)
+ 
+@@ -80,14 +79,14 @@
+ 
+ #define ADIS16201_DIAG_STAT_SPI_FAIL_BIT   3
+ 
+-#define ADIS16201_DIAG_STAT_FLASH_UPT_BIT  2
++#define ADIS16201_DIAG_STAT_FLASH_UPT_FAIL_BIT  2
+ 
+ #define ADIS16201_DIAG_STAT_POWER_HIGH_BIT 1
+ 
+ #define ADIS16201_DIAG_STAT_POWER_LOW_BIT  0
+ 
+ #define ADIS16201_GLOB_CMD_SW_RESET	BIT(7)
+-#define ADIS16201_GLOB_CMD_FACTORY_CAL	BIT(1)
++#define ADIS16201_GLOB_CMD_FACTORY	BIT(1)
+ 
+ #define ADIS16201_ERROR_ACTIVE          BIT(14)
+ 
+@@ -231,7 +230,7 @@ static const struct iio_info adis16201_info = {
+ 
+ static const char * const adis16201_status_error_msgs[] = {
+ 	[ADIS16201_DIAG_STAT_SPI_FAIL_BIT] = "SPI failure",
+-	[ADIS16201_DIAG_STAT_FLASH_UPT_BIT] = "Flash update failed",
++	[ADIS16201_DIAG_STAT_FLASH_UPT_FAIL_BIT] = "Flash update failed",
+ 	[ADIS16201_DIAG_STAT_POWER_HIGH_BIT] = "Power supply above 3.625V",
+ 	[ADIS16201_DIAG_STAT_POWER_LOW_BIT] = "Power supply below 3.15V",
+ };
+@@ -244,11 +243,11 @@ static const struct adis_data adis16201_data = {
+ 
+ 	.self_test_mask = ADIS16201_MSC_CTRL_SELF_TEST_EN,
+ 	.self_test_no_autoclear = true,
+-	.startup_delay = ADIS16201_STARTUP_DELAY,
++	.startup_delay = ADIS16201_STARTUP_DELAY_MS,
+ 
+ 	.status_error_msgs = adis16201_status_error_msgs,
+ 	.status_error_mask = BIT(ADIS16201_DIAG_STAT_SPI_FAIL_BIT) |
+-		BIT(ADIS16201_DIAG_STAT_FLASH_UPT_BIT) |
++		BIT(ADIS16201_DIAG_STAT_FLASH_UPT_FAIL_BIT) |
+ 		BIT(ADIS16201_DIAG_STAT_POWER_HIGH_BIT) |
+ 		BIT(ADIS16201_DIAG_STAT_POWER_LOW_BIT),
+ };
+-- 
+2.7.4
 
-Jonathan
-> ---
->  drivers/staging/iio/accel/adis16201.c | 133 ++++++++++++++++------------------
->  1 file changed, 61 insertions(+), 72 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
-> index 445cb56..476b1c3 100644
-> --- a/drivers/staging/iio/accel/adis16201.c
-> +++ b/drivers/staging/iio/accel/adis16201.c
-> @@ -20,75 +20,64 @@
->  #include <linux/iio/buffer.h>
->  #include <linux/iio/imu/adis.h>
->  
-> -#define ADIS16201_STARTUP_DELAY_MS	220
-> -#define ADIS16201_FLASH_CNT		0x00
-> +#define ADIS16201_STARTUP_DELAY_MS				220
-> +#define ADIS16201_FLASH_CNT					0x00
->  
->  /* Data Output Register Information */
-> -#define ADIS16201_SUPPLY_OUT     0x02
-> -#define ADIS16201_XACCL_OUT      0x04
-> -#define ADIS16201_YACCL_OUT      0x06
-> -#define ADIS16201_AUX_ADC        0x08
-> -#define ADIS16201_TEMP_OUT       0x0A
-> -#define ADIS16201_XINCL_OUT      0x0C
-> -#define ADIS16201_YINCL_OUT      0x0E
-> +#define ADIS16201_SUPPLY_OUT_REG				0x02
-> +#define ADIS16201_XACCL_OUT_REG					0x04
-> +#define ADIS16201_YACCL_OUT_REG					0x06
-> +#define ADIS16201_AUX_ADC_REG					0x08
-> +#define ADIS16201_TEMP_OUT_REG					0x0A
-> +#define ADIS16201_XINCL_OUT_REG					0x0C
-> +#define ADIS16201_YINCL_OUT_REG					0x0E
->  
->  /* Calibration Register Definition */
-> -#define ADIS16201_XACCL_OFFS     0x10
-> -#define ADIS16201_YACCL_OFFS     0x12
-> -#define ADIS16201_XACCL_SCALE    0x14
-> -#define ADIS16201_YACCL_SCALE    0x16
-> -#define ADIS16201_XINCL_OFFS     0x18
-> -#define ADIS16201_YINCL_OFFS     0x1A
-> -#define ADIS16201_XINCL_SCALE    0x1C
-> -#define ADIS16201_YINCL_SCALE    0x1E
-> +#define ADIS16201_XACCL_OFFS_REG				0x10
-> +#define ADIS16201_YACCL_OFFS_REG				0x12
-> +#define ADIS16201_XACCL_SCALE_REG				0x14
-> +#define ADIS16201_YACCL_SCALE_REG				0x16
-> +#define ADIS16201_XINCL_OFFS_REG				0x18
-> +#define ADIS16201_YINCL_OFFS_REG				0x1A
-> +#define ADIS16201_XINCL_SCALE_REG				0x1C
-> +#define ADIS16201_YINCL_SCALE_REG				0x1E
->  
->  /* Alarm Register Definition */
-> -#define ADIS16201_ALM_MAG1       0x20
-> -#define ADIS16201_ALM_MAG2       0x22
-> -#define ADIS16201_ALM_SMPL1      0x24
-> -#define ADIS16201_ALM_SMPL2      0x26
-> -#define ADIS16201_ALM_CTRL       0x28
-> -
-> -#define ADIS16201_AUX_DAC        0x30
-> -#define ADIS16201_GPIO_CTRL      0x32
-> -#define ADIS16201_MSC_CTRL       0x34
-> -
-> -#define ADIS16201_SMPL_PRD       0x36
-> -#define ADIS16201_AVG_CNT        0x38
-> -#define ADIS16201_SLP_CNT        0x3A
-> +#define ADIS16201_ALM_MAG1_REG					0x20
-> +#define ADIS16201_ALM_MAG2_REG					0x22
-> +#define ADIS16201_ALM_SMPL1_REG					0x24
-> +#define ADIS16201_ALM_SMPL2_REG					0x26
-> +#define ADIS16201_ALM_CTRL_REG					0x28
-> +
-> +#define ADIS16201_AUX_DAC_REG					0x30
-> +#define ADIS16201_GPIO_CTRL_REG					0x32
-> +#define ADIS16201_MSC_CTRL_REG					0x34
-> +#define ADIS16201_SMPL_PRD_REG					0x36
-> +#define ADIS16201_AVG_CNT_REG					0x38
-> +#define ADIS16201_SLP_CNT_REG					0x3A
-> +
-> +/* Miscellaneous Control Register Definition */
-> +#define ADIS16201_MSC_CTRL_REG					0x34
-> +#define  ADIS16201_MSC_CTRL_SELF_TEST_EN			BIT(8)
-> +#define  ADIS16201_MSC_CTRL_DATA_RDY_EN				BIT(2)
-> +#define  ADIS16201_MSC_CTRL_ACTIVE_DATA_RDY_HIGH		BIT(1)
-> +#define  ADIS16201_MSC_CTRL_DATA_RDY_DIO1			BIT(0)
->  
->  /* Diagnostics, system status register */
-> -#define ADIS16201_DIAG_STAT      0x3C
-> +#define ADIS16201_DIAG_STAT_REG					0x3C
-> +#define  ADIS16201_DIAG_STAT_ALARM2				BIT(9)
-> +#define  ADIS16201_DIAG_STAT_ALARM1				BIT(8)
-> +#define  ADIS16201_DIAG_STAT_SPI_FAIL_BIT			3
-> +#define  ADIS16201_DIAG_STAT_FLASH_UPT_FAIL_BIT			2
-> +#define  ADIS16201_DIAG_STAT_POWER_HIGH_BIT			1
-> +#define  ADIS16201_DIAG_STAT_POWER_LOW_BIT			0
->  
->  /* Operation, system command register */
-> -#define ADIS16201_GLOB_CMD       0x3E
-> -
-> -
-> -#define ADIS16201_MSC_CTRL_SELF_TEST_EN	        BIT(8)
-> -
-> -#define ADIS16201_MSC_CTRL_DATA_RDY_EN	        BIT(2)
-> -
-> -#define ADIS16201_MSC_CTRL_ACTIVE_DATA_RDY_HIGH	        BIT(1)
-> -
-> -#define ADIS16201_MSC_CTRL_DATA_RDY_DIO1	BIT(0)
-> -
-> -
-> -#define ADIS16201_DIAG_STAT_ALARM2        BIT(9)
-> -
-> -#define ADIS16201_DIAG_STAT_ALARM1        BIT(8)
-> -
-> -#define ADIS16201_DIAG_STAT_SPI_FAIL_BIT   3
-> -
-> -#define ADIS16201_DIAG_STAT_FLASH_UPT_FAIL_BIT  2
-> -
-> -#define ADIS16201_DIAG_STAT_POWER_HIGH_BIT 1
-> -
-> -#define ADIS16201_DIAG_STAT_POWER_LOW_BIT  0
-> -
-> -#define ADIS16201_GLOB_CMD_SW_RESET	BIT(7)
-> -#define ADIS16201_GLOB_CMD_FACTORY	BIT(1)
-> +#define ADIS16201_GLOB_CMD_REG					0x3E
-> +#define  ADIS16201_GLOB_CMD_SW_RESET				BIT(7)
-> +#define  ADIS16201_GLOB_CMD_FACTORY				BIT(1)
->  
-> -#define ADIS16201_ERROR_ACTIVE          BIT(14)
-> +#define ADIS16201_ERROR_ACTIVE					BIT(14)
->  
->  enum adis16201_scan {
->  	ADIS16201_SCAN_ACC_X,
-> @@ -101,10 +90,10 @@ enum adis16201_scan {
->  };
->  
->  static const u8 adis16201_addresses[] = {
-> -	[ADIS16201_SCAN_ACC_X] = ADIS16201_XACCL_OFFS,
-> -	[ADIS16201_SCAN_ACC_Y] = ADIS16201_YACCL_OFFS,
-> -	[ADIS16201_SCAN_INCLI_X] = ADIS16201_XINCL_OFFS,
-> -	[ADIS16201_SCAN_INCLI_Y] = ADIS16201_YINCL_OFFS,
-> +	[ADIS16201_SCAN_ACC_X] = ADIS16201_XACCL_OFFS_REG,
-> +	[ADIS16201_SCAN_ACC_Y] = ADIS16201_YACCL_OFFS_REG,
-> +	[ADIS16201_SCAN_INCLI_X] = ADIS16201_XINCL_OFFS_REG,
-> +	[ADIS16201_SCAN_INCLI_Y] = ADIS16201_YINCL_OFFS_REG,
->  };
->  
->  static int adis16201_read_raw(struct iio_dev *indio_dev,
-> @@ -208,16 +197,16 @@ static int adis16201_write_raw(struct iio_dev *indio_dev,
->  }
->  
->  static const struct iio_chan_spec adis16201_channels[] = {
-> -	ADIS_SUPPLY_CHAN(ADIS16201_SUPPLY_OUT, ADIS16201_SCAN_SUPPLY, 0, 12),
-> -	ADIS_TEMP_CHAN(ADIS16201_TEMP_OUT, ADIS16201_SCAN_TEMP, 0, 12),
-> -	ADIS_ACCEL_CHAN(X, ADIS16201_XACCL_OUT, ADIS16201_SCAN_ACC_X,
-> +	ADIS_SUPPLY_CHAN(ADIS16201_SUPPLY_OUT_REG, ADIS16201_SCAN_SUPPLY, 0, 12),
-> +	ADIS_TEMP_CHAN(ADIS16201_TEMP_OUT_REG, ADIS16201_SCAN_TEMP, 0, 12),
-> +	ADIS_ACCEL_CHAN(X, ADIS16201_XACCL_OUT_REG, ADIS16201_SCAN_ACC_X,
->  			BIT(IIO_CHAN_INFO_CALIBBIAS), 0, 14),
-> -	ADIS_ACCEL_CHAN(Y, ADIS16201_YACCL_OUT, ADIS16201_SCAN_ACC_Y,
-> +	ADIS_ACCEL_CHAN(Y, ADIS16201_YACCL_OUT_REG, ADIS16201_SCAN_ACC_Y,
->  			BIT(IIO_CHAN_INFO_CALIBBIAS), 0, 14),
-> -	ADIS_AUX_ADC_CHAN(ADIS16201_AUX_ADC, ADIS16201_SCAN_AUX_ADC, 0, 12),
-> -	ADIS_INCLI_CHAN(X, ADIS16201_XINCL_OUT, ADIS16201_SCAN_INCLI_X,
-> +	ADIS_AUX_ADC_CHAN(ADIS16201_AUX_ADC_REG, ADIS16201_SCAN_AUX_ADC, 0, 12),
-> +	ADIS_INCLI_CHAN(X, ADIS16201_XINCL_OUT_REG, ADIS16201_SCAN_INCLI_X,
->  			BIT(IIO_CHAN_INFO_CALIBBIAS), 0, 14),
-> -	ADIS_INCLI_CHAN(X, ADIS16201_YINCL_OUT, ADIS16201_SCAN_INCLI_Y,
-> +	ADIS_INCLI_CHAN(X, ADIS16201_YINCL_OUT_REG, ADIS16201_SCAN_INCLI_Y,
->  			BIT(IIO_CHAN_INFO_CALIBBIAS), 0, 14),
->  	IIO_CHAN_SOFT_TIMESTAMP(7)
->  };
-> @@ -237,9 +226,9 @@ static const char * const adis16201_status_error_msgs[] = {
->  
->  static const struct adis_data adis16201_data = {
->  	.read_delay = 20,
-> -	.msc_ctrl_reg = ADIS16201_MSC_CTRL,
-> -	.glob_cmd_reg = ADIS16201_GLOB_CMD,
-> -	.diag_stat_reg = ADIS16201_DIAG_STAT,
-> +	.msc_ctrl_reg = ADIS16201_MSC_CTRL_REG,
-> +	.glob_cmd_reg = ADIS16201_GLOB_CMD_REG,
-> +	.diag_stat_reg = ADIS16201_DIAG_STAT_REG,
->  
->  	.self_test_mask = ADIS16201_MSC_CTRL_SELF_TEST_EN,
->  	.self_test_no_autoclear = true,
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
