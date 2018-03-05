@@ -1,139 +1,103 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-110966-1520853188-2-15930218611716505826
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520853188; b=NrMEXR8otTUNrbOxRQHbpX0EEmc8l4iqKCX65uYvsg09sF4
-    AGEQ/zeyEmar9BsxwLS0x6qNB2U0YSnHvc2JkkNzWnCREmSFi6pmUSN6CgyDHiOy
-    4TgV0+aVBqsnkqh3ME0YzmPZhDrWZ0TBmBsnWtTCzVRYMiuQQmA1PCjMci+IsecI
-    le8rIDHbhxvxMwX80dpxAAM68F7+Ux4ZlqgI8wXlbepw9lJQMfumek3OTIQPrQ2q
-    I7xj4Z4XUUTEhBvjiejBiJqaT4Q7Mv3CfOwtdTJLHpzHjKRfltqL0xIG5Z/ico66
-    s9YpBsvd9eA4Gvl+eqIIvPy1xEjpDimJ4WUAnuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520853188; bh=2mYO1sPa6J0q0ZJsHnfNmWZJP9
-    xc2VDNgLgPazrhWyg=; b=Fw8yr8nfRTvvgghMzUy8iTfA7xnZG1P74PYmLTnaZ9
-    9euyTVcp5MpCwrHkEFC/bE4Z0yir+BEh/RyEqJJFUk5g8+pOnKy3h4asKh1bWsHW
-    3B/t7VY1PVs+Fpyxfp1s1th2ZKCxyAGBdONmz1X2ebfUoIoTVHrm9BjSCJQWCrCA
-    nge3TecsjxTG5ysHHIzBEku91FmcVlu+Hyfz/yp8dU6UdkB2nveN+a4SmJ+K/RbA
-    ItUE+TGUSkqjUpH0llyY0z1gmI4NjPHzzdeg+9U7p0r3TyO8aKYd2YxOIy/pSDH1
-    trZC035slZDxhKLMCgC+nbV7s+gjhVKhK11HaDI5NPdQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751104AbeCLLNG (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 12 Mar 2018 07:13:06 -0400
-Received: from mga06.intel.com ([134.134.136.31]:18505 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750967AbeCLLNE (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 12 Mar 2018 07:13:04 -0400
-X-Amp-Result: UNSCANNABLE
+Return-Path: <jarkko.sakkinen@intel.com>
+X-Google-Smtp-Source: AG47ELuapCZ7qE2CLyJ3XZUAZpa7FiSq3aJneYpLiixPNnC5DuD9az5eIxFgH8G2vhQEVKce1p1Y
+ARC-Seal: i=1; a=rsa-sha256; t=1520268997; cv=none;
+        d=google.com; s=arc-20160816;
+        b=h0FJ0RfIGAD7/9/D9gVctbiQE5QRWzksporAyEKhFGpET4brQq0T+lWheRp0mOFxxU
+         eAqage2TfeJluH725r+ofkNJZipNpzdxmSCgfZkALcz3WJq+GcrOk881rUoioDJm6nbg
+         1JOgQwkBcjDrF3poaxNoqY/Flz7mdq9G5w1Ruv1TiiEImEYMBL1TWDGZoYhWp9va2UQt
+         lUGNVC8qMGsQPCI1i7eY/3UBpwcj3PpL5rDeLVN/ijG6LSQ5w7SUGA4gUHtjbuEhd6rD
+         PyQaRqEAXDLZWoY0wTRc8fqLXSAeyQ6L/N1q40Rd7E1qkKstiFRnl3D/teUjWQv643Sr
+         IoqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=+fB81EE9JxImM6dOXbEdZ2bOrn5Uo7mX3koYNB/YhOU=;
+        b=KfaiVHYZn4sXuPFMujX3j/w4NvyUW5kvRAJA+ZvcXwObzwgSUfKLQHGTaHZ+Mzh0KZ
+         RoofZEY3HQ3VqlMNRdJDbzUgSZzdI1xmkq+tl5bJtGKf2v02GQlW5CVbP6FAtxvK3yw6
+         4uhbugvHyP6IevA+/+dEGq6icze9gH3ga5fQPlQQAS2A7n0se4HcQPv33Kgq3viNcyzY
+         zZLZJx+eyrUCFqmZ3XHcDLGi4z/n4U6l5SjguMtu2+Tscdwy6O5VRKDx8g21Tm9Lpkzk
+         N4jVywm40ZTrNJ90viHkB1W6lo8CGkefB4PmwRYNlGvnHO5vY2aS6lsVRkmnSGw2zet7
+         DqJg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 134.134.136.24 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 134.134.136.24 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,460,1515484800";
-   d="scan'208";a="37423648"
-Date: Mon, 12 Mar 2018 13:13:00 +0200
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="35627937"
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: linux-integrity@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        stable@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] tpm: fix intermittent failure with self tests
-Message-ID: <20180312111300.GB7448@linux.intel.com>
+To: linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 3/5] tpm: migrate tpm2_probe() to use struct tpm_buf
+Date: Mon,  5 Mar 2018 18:56:12 +0200
+Message-Id: <20180305165614.5469-4-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
 References: <20180305165614.5469-1-jarkko.sakkinen@linux.intel.com>
- <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180305165614.5469-2-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593676067717266056?=
+X-GMAIL-MSGID: =?utf-8?q?1594117584823197042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 06:56:10PM +0200, Jarkko Sakkinen wrote:
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> 
-> My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
-> (necessitating a reboot). The problem seems to be that the TPM gets into a
-> state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
-> all tests have run to completion), but instead returns TPM_RC_TESTING
-> (meaning some tests are still running in the background).  There are
-> various theories that resending the self-test command actually causes the
-> tests to restart and thus triggers more TPM_RC_TESTING returns until the
-> timeout is exceeded.
-> 
-> There are several issues here: firstly being we shouldn't slow down the
-> boot sequence waiting for the self test to complete once the TPM
-> backgrounds them.  It will actually make available all functions that have
-> passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
-> command.  So the fix is to kick off self tests once and if they return
-> TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
-> order to prevent other tpm users from seeing any TPM_RC_TESTING returns
-> (which it might if they send a command that needs a TPM subsystem which is
-> still under test), we loop in tpm_transmit_cmd until either a timeout or we
-> don't get a TPM_RC_TESTING return.
-> 
-> Finally, there have been observations of strange returns from a partial
-> test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
-> any unexpected return from a partial self test as an indication we need to
-> run a full self test.
-> 
-> [jarkko.sakkinen@linux.intel.com: cleaned up James' original commit and
->  added a proper Fixes line]
-> 
-> Fixes: 2482b1bba5122 ("tpm: Trigger only missing TPM 2.0 self tests")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+In order to make struct tpm_buf the first class object for constructing TPM
+commands, migrate tpm2_probe() to use it.
 
-Already applied to my master (bleeding edge) branch in order to
-facilitate testing/review:
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-git://git.infradead.org/users/jjs/linux-tpmdd.git
-
-I also rewrote the description of the updatesthat I did to this commit
-to be more precise (see the commit msg in my GIT tree). If it turns out
-that some klog would make a huge difference I'm willing to consider that
-later but lets go with this for now.
-
-I'll also send an updated tpm_buf patch set with this one dropped soon.
-
-/Jarkko
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index abe6ef4a7a0b..890d83c5c78b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -851,22 +851,25 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+  */
+ int tpm2_probe(struct tpm_chip *chip)
+ {
+-	struct tpm2_cmd cmd;
++	struct tpm_output_header *out;
++	struct tpm_buf buf;
+ 	int rc;
+ 
+-	cmd.header.in = tpm2_get_tpm_pt_header;
+-	cmd.params.get_tpm_pt_in.cap_id = cpu_to_be32(TPM2_CAP_TPM_PROPERTIES);
+-	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(0x100);
+-	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
+-
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0, NULL);
+-	if (rc <  0)
++	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
++	if (rc)
+ 		return rc;
+-
+-	if (be16_to_cpu(cmd.header.out.tag) == TPM2_ST_NO_SESSIONS)
++	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
++	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
++	tpm_buf_append_u32(&buf, 1);
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0, NULL);
++	if (rc <  0)
++		goto out;
++	out = (struct tpm_output_header *)buf.data;
++	if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+ 		chip->flags |= TPM_CHIP_FLAG_TPM2;
+-
+-	return 0;
++out:
++	tpm_buf_destroy(&buf);
++	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm2_probe);
+ 
+-- 
+2.15.1
