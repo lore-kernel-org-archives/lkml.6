@@ -1,43 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753127AbeCEVIn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 16:08:43 -0500
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:36506 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752861AbeCEVIl (ORCPT
+        id S1753107AbeCEVKh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 16:10:37 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35161 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752480AbeCEVKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:08:41 -0500
-X-Google-Smtp-Source: AG47ELvgpLWoiY2nQOXPbaWNzrjRBvs/KFfZDonjKtkDPfNuDCwD8ilTBZajM6Zpeitp4aLXmVh2Tw==
-Date: Mon, 5 Mar 2018 15:08:39 -0600
+        Mon, 5 Mar 2018 16:10:35 -0500
+X-Google-Smtp-Source: AG47ELtsCdO3AK6CKVVbSJ8SYpjKyDW453lRjvPQbWzH5fgBTAtQeIe0t3LHnNcez3M+t7ioG590Qg==
+Date: Mon, 5 Mar 2018 15:10:33 -0600
 From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document R-Car M3-N
- support
-Message-ID: <20180305210839.25q72wkoubsuceg7@rob-hp-laptop>
-References: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: Re: [PATCH v4 2/2] dt-bindings: introduce Command DB for QCOM SoCs
+Message-ID: <20180305211033.ejubka6265hmvtze@rob-hp-laptop>
+References: <20180226175802.20052-1-ilina@codeaurora.org>
+ <20180226175802.20052-3-ilina@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1519658712-22910-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20180226175802.20052-3-ilina@codeaurora.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 04:25:12PM +0100, Geert Uytterhoeven wrote:
-> Document support for the Interrupt Controller for Externel Devices
-> (INTC-EX) in the Renesas M3-N (r8a77965) SoC.
+On Mon, Feb 26, 2018 at 10:58:02AM -0700, Lina Iyer wrote:
+> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
 > 
-> No driver update is needed.
+> Command DB provides information on shared resources like clocks,
+> regulators etc., probed at boot by the remote subsytem and made
+> available in shared memory.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> Changes in v4:
+> 	- Fix unwanted capitalization
+> 	- Add reg property
+> ---
+>  .../devicetree/bindings/arm/msm/cmd-db.txt         | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/cmd-db.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
