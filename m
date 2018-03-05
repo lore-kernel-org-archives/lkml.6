@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932470AbeCERtk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:49:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60302 "EHLO
+        id S932430AbeCERtj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:49:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60296 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752598AbeCERrO (ORCPT
+        with ESMTP id S1752623AbeCERrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Mar 2018 12:47:14 -0500
 From: Christoph Hellwig <hch@lst.de>
@@ -15,9 +15,9 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/13] x86: remove X86_PPRO_FENCE
-Date: Mon,  5 Mar 2018 09:46:43 -0800
-Message-Id: <20180305174655.9878-2-hch@lst.de>
+Subject: [PATCH 03/13] x86: use dma-direct
+Date: Mon,  5 Mar 2018 09:46:45 -0800
+Message-Id: <20180305174655.9878-4-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180305174655.9878-1-hch@lst.de>
 References: <20180305174655.9878-1-hch@lst.de>
@@ -26,204 +26,329 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were only a few Pentium Pro multiprocessors systems where this
-errata applied. They are more than 20 years old now, and we've slowly
-dropped places where put the workarounds in and discouraged anyone
-from enabling the workaround.
+The generic dma-direct implementation is now functionally equivalent to
+the x86 nommu dma_map implementation, so switch over to using it.
 
-Get rid of it for good.
+Note that the various iommu drivers are switched from x86_dma_supported
+to dma_direct_supported to provide identical functionality, although the
+checks looks fairly questionable for at least some of them.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/Kconfig.cpu                        | 13 -------------
- arch/x86/entry/vdso/vdso32/vclock_gettime.c |  2 --
- arch/x86/include/asm/barrier.h              | 30 -----------------------------
- arch/x86/include/asm/io.h                   | 15 ---------------
- arch/x86/kernel/pci-nommu.c                 | 19 ------------------
- arch/x86/um/asm/barrier.h                   |  4 ----
- 6 files changed, 83 deletions(-)
+ arch/x86/Kconfig                   |  1 +
+ arch/x86/include/asm/dma-mapping.h |  8 -----
+ arch/x86/include/asm/iommu.h       |  3 --
+ arch/x86/kernel/Makefile           |  2 +-
+ arch/x86/kernel/amd_gart_64.c      |  7 ++--
+ arch/x86/kernel/pci-calgary_64.c   |  3 +-
+ arch/x86/kernel/pci-dma.c          | 66 +-------------------------------------
+ arch/x86/kernel/pci-swiotlb.c      |  5 ++-
+ arch/x86/pci/sta2x11-fixup.c       |  2 +-
+ drivers/iommu/amd_iommu.c          |  7 ++--
+ drivers/iommu/intel-iommu.c        |  3 +-
+ 11 files changed, 17 insertions(+), 90 deletions(-)
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 8b8d2297d486..638411f22267 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -315,19 +315,6 @@ config X86_L1_CACHE_SHIFT
- 	default "4" if MELAN || M486 || MGEODEGX1
- 	default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_LX
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c1236b187824..7272bb3768d7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -83,6 +83,7 @@ config X86
+ 	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
+ 	select CLOCKSOURCE_WATCHDOG
+ 	select DCACHE_WORD_ACCESS
++	select DMA_DIRECT_OPS
+ 	select EDAC_ATOMIC_SCRUB
+ 	select EDAC_SUPPORT
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
+index 545bf3721bc0..df9816b385eb 100644
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@ -36,14 +36,6 @@ int arch_dma_supported(struct device *dev, u64 mask);
+ bool arch_dma_alloc_attrs(struct device **dev, gfp_t *gfp);
+ #define arch_dma_alloc_attrs arch_dma_alloc_attrs
  
--config X86_PPRO_FENCE
--	bool "PentiumPro memory ordering errata workaround"
--	depends on M686 || M586MMX || M586TSC || M586 || M486 || MGEODEGX1
--	---help---
--	  Old PentiumPro multiprocessor systems had errata that could cause
--	  memory operations to violate the x86 ordering standard in rare cases.
--	  Enabling this option will attempt to work around some (but not all)
--	  occurrences of this problem, at the cost of much heavier spinlock and
--	  memory barrier operations.
+-extern void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+-					dma_addr_t *dma_addr, gfp_t flag,
+-					unsigned long attrs);
 -
--	  If unsure, say n here. Even distro kernels should think twice before
--	  enabling this: there are few systems, and an unlikely bug.
+-extern void dma_generic_free_coherent(struct device *dev, size_t size,
+-				      void *vaddr, dma_addr_t dma_addr,
+-				      unsigned long attrs);
 -
- config X86_F00F_BUG
- 	def_bool y
- 	depends on M586MMX || M586TSC || M586 || M486
-diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-index 7780bbfb06ef..9242b28418d5 100644
---- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
-@@ -5,8 +5,6 @@
- #undef CONFIG_OPTIMIZE_INLINING
- #endif
- 
--#undef CONFIG_X86_PPRO_FENCE
--
- #ifdef CONFIG_X86_64
- 
- /*
-diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-index e1259f043ae9..042b5e892ed1 100644
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -52,11 +52,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
- 					   "lfence", X86_FEATURE_LFENCE_RDTSC)
- 
--#ifdef CONFIG_X86_PPRO_FENCE
--#define dma_rmb()	rmb()
--#else
- #define dma_rmb()	barrier()
--#endif
- #define dma_wmb()	barrier()
- 
- #ifdef CONFIG_X86_32
-@@ -68,30 +64,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
- #define __smp_wmb()	barrier()
- #define __smp_store_mb(var, value) do { (void)xchg(&var, value); } while (0)
- 
--#if defined(CONFIG_X86_PPRO_FENCE)
--
--/*
-- * For this option x86 doesn't have a strong TSO memory
-- * model and we should fall back to full barriers.
-- */
--
--#define __smp_store_release(p, v)					\
--do {									\
--	compiletime_assert_atomic_type(*p);				\
--	__smp_mb();							\
--	WRITE_ONCE(*p, v);						\
--} while (0)
--
--#define __smp_load_acquire(p)						\
--({									\
--	typeof(*p) ___p1 = READ_ONCE(*p);				\
--	compiletime_assert_atomic_type(*p);				\
--	__smp_mb();							\
--	___p1;								\
--})
--
--#else /* regular x86 TSO memory ordering */
--
- #define __smp_store_release(p, v)					\
- do {									\
- 	compiletime_assert_atomic_type(*p);				\
-@@ -107,8 +79,6 @@ do {									\
- 	___p1;								\
- })
- 
--#endif
--
- /* Atomic operations are already serializing on x86 */
- #define __smp_mb__before_atomic()	barrier()
- #define __smp_mb__after_atomic()	barrier()
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 95e948627fd0..f6e5b9375d8c 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -232,21 +232,6 @@ extern void set_iounmap_nonlazy(void);
-  */
- #define __ISA_IO_base ((char __iomem *)(PAGE_OFFSET))
- 
--/*
-- *	Cache management
-- *
-- *	This needed for two cases
-- *	1. Out of order aware processors
-- *	2. Accidentally out of order processors (PPro errata #51)
-- */
--
--static inline void flush_write_buffers(void)
--{
--#if defined(CONFIG_X86_PPRO_FENCE)
--	asm volatile("lock; addl $0,0(%%esp)": : :"memory");
--#endif
--}
--
- #endif /* __KERNEL__ */
- 
- extern void native_io_delay(void);
-diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
-index 618285e475c6..ac7ea3a8242f 100644
---- a/arch/x86/kernel/pci-nommu.c
-+++ b/arch/x86/kernel/pci-nommu.c
-@@ -37,7 +37,6 @@ static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
- 	WARN_ON(size == 0);
- 	if (!check_addr("map_single", dev, bus, size))
- 		return NOMMU_MAPPING_ERROR;
--	flush_write_buffers();
- 	return bus;
- }
- 
-@@ -72,25 +71,9 @@ static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
- 			return 0;
- 		s->dma_length = s->length;
- 	}
--	flush_write_buffers();
- 	return nents;
- }
- 
--static void nommu_sync_single_for_device(struct device *dev,
--			dma_addr_t addr, size_t size,
--			enum dma_data_direction dir)
--{
--	flush_write_buffers();
--}
--
--
--static void nommu_sync_sg_for_device(struct device *dev,
--			struct scatterlist *sg, int nelems,
--			enum dma_data_direction dir)
--{
--	flush_write_buffers();
--}
--
- static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ static inline gfp_t dma_alloc_coherent_gfp_flags(struct device *dev, gfp_t gfp)
  {
- 	return dma_addr == NOMMU_MAPPING_ERROR;
-@@ -101,8 +84,6 @@ const struct dma_map_ops nommu_dma_ops = {
- 	.free			= dma_generic_free_coherent,
- 	.map_sg			= nommu_map_sg,
- 	.map_page		= nommu_map_page,
--	.sync_single_for_device = nommu_sync_single_for_device,
--	.sync_sg_for_device	= nommu_sync_sg_for_device,
- 	.is_phys		= 1,
- 	.mapping_error		= nommu_mapping_error,
- 	.dma_supported		= x86_dma_supported,
-diff --git a/arch/x86/um/asm/barrier.h b/arch/x86/um/asm/barrier.h
-index b7d73400ea29..f31e5d903161 100644
---- a/arch/x86/um/asm/barrier.h
-+++ b/arch/x86/um/asm/barrier.h
-@@ -30,11 +30,7 @@
+ 	if (dev->coherent_dma_mask <= DMA_BIT_MASK(24))
+diff --git a/arch/x86/include/asm/iommu.h b/arch/x86/include/asm/iommu.h
+index 1e5d5d92eb40..baedab8ac538 100644
+--- a/arch/x86/include/asm/iommu.h
++++ b/arch/x86/include/asm/iommu.h
+@@ -2,13 +2,10 @@
+ #ifndef _ASM_X86_IOMMU_H
+ #define _ASM_X86_IOMMU_H
  
- #endif /* CONFIG_X86_32 */
+-extern const struct dma_map_ops nommu_dma_ops;
+ extern int force_iommu, no_iommu;
+ extern int iommu_detected;
+ extern int iommu_pass_through;
  
--#ifdef CONFIG_X86_PPRO_FENCE
--#define dma_rmb()	rmb()
--#else /* CONFIG_X86_PPRO_FENCE */
- #define dma_rmb()	barrier()
--#endif /* CONFIG_X86_PPRO_FENCE */
- #define dma_wmb()	barrier()
+-int x86_dma_supported(struct device *dev, u64 mask);
+-
+ /* 10 seconds */
+ #define DMAR_OPERATION_TIMEOUT ((cycles_t) tsc_khz*10*1000)
  
- #include <asm-generic/barrier.h>
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 29786c87e864..2e8c8a09ecab 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -57,7 +57,7 @@ obj-$(CONFIG_X86_ESPFIX64)	+= espfix_64.o
+ obj-$(CONFIG_SYSFS)	+= ksysfs.o
+ obj-y			+= bootflag.o e820.o
+ obj-y			+= pci-dma.o quirks.o topology.o kdebugfs.o
+-obj-y			+= alternative.o i8253.o pci-nommu.o hw_breakpoint.o
++obj-y			+= alternative.o i8253.o hw_breakpoint.o
+ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
+diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+index ecd486cb06ab..52e3abcf3e70 100644
+--- a/arch/x86/kernel/amd_gart_64.c
++++ b/arch/x86/kernel/amd_gart_64.c
+@@ -501,8 +501,7 @@ gart_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_addr,
+ 		}
+ 		__free_pages(page, get_order(size));
+ 	} else
+-		return dma_generic_alloc_coherent(dev, size, dma_addr, flag,
+-						  attrs);
++		return dma_direct_alloc(dev, size, dma_addr, flag, attrs);
+ 
+ 	return NULL;
+ }
+@@ -513,7 +512,7 @@ gart_free_coherent(struct device *dev, size_t size, void *vaddr,
+ 		   dma_addr_t dma_addr, unsigned long attrs)
+ {
+ 	gart_unmap_page(dev, dma_addr, size, DMA_BIDIRECTIONAL, 0);
+-	dma_generic_free_coherent(dev, size, vaddr, dma_addr, attrs);
++	dma_direct_free(dev, size, vaddr, dma_addr, attrs);
+ }
+ 
+ static int gart_mapping_error(struct device *dev, dma_addr_t dma_addr)
+@@ -705,7 +704,7 @@ static const struct dma_map_ops gart_dma_ops = {
+ 	.alloc				= gart_alloc_coherent,
+ 	.free				= gart_free_coherent,
+ 	.mapping_error			= gart_mapping_error,
+-	.dma_supported			= x86_dma_supported,
++	.dma_supported			= dma_direct_supported,
+ };
+ 
+ static void gart_iommu_shutdown(void)
+diff --git a/arch/x86/kernel/pci-calgary_64.c b/arch/x86/kernel/pci-calgary_64.c
+index 35c461f21815..5647853053bd 100644
+--- a/arch/x86/kernel/pci-calgary_64.c
++++ b/arch/x86/kernel/pci-calgary_64.c
+@@ -33,6 +33,7 @@
+ #include <linux/string.h>
+ #include <linux/crash_dump.h>
+ #include <linux/dma-mapping.h>
++#include <linux/dma-direct.h>
+ #include <linux/bitmap.h>
+ #include <linux/pci_ids.h>
+ #include <linux/pci.h>
+@@ -493,7 +494,7 @@ static const struct dma_map_ops calgary_dma_ops = {
+ 	.map_page = calgary_map_page,
+ 	.unmap_page = calgary_unmap_page,
+ 	.mapping_error = calgary_mapping_error,
+-	.dma_supported = x86_dma_supported,
++	.dma_supported = dma_direct_supported,
+ };
+ 
+ static inline void __iomem * busno_to_bbar(unsigned char num)
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index b59820872ec7..db0b88ea8d1b 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -18,7 +18,7 @@
+ 
+ static int forbid_dac __read_mostly;
+ 
+-const struct dma_map_ops *dma_ops = &nommu_dma_ops;
++const struct dma_map_ops *dma_ops = &dma_direct_ops;
+ EXPORT_SYMBOL(dma_ops);
+ 
+ static int iommu_sac_force __read_mostly;
+@@ -76,60 +76,6 @@ void __init pci_iommu_alloc(void)
+ 		}
+ 	}
+ }
+-void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+-				 dma_addr_t *dma_addr, gfp_t flag,
+-				 unsigned long attrs)
+-{
+-	struct page *page;
+-	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	dma_addr_t addr;
+-
+-again:
+-	page = NULL;
+-	/* CMA can be used only in the context which permits sleeping */
+-	if (gfpflags_allow_blocking(flag)) {
+-		page = dma_alloc_from_contiguous(dev, count, get_order(size),
+-						 flag);
+-		if (page) {
+-			addr = phys_to_dma(dev, page_to_phys(page));
+-			if (addr + size > dev->coherent_dma_mask) {
+-				dma_release_from_contiguous(dev, page, count);
+-				page = NULL;
+-			}
+-		}
+-	}
+-	/* fallback */
+-	if (!page)
+-		page = alloc_pages_node(dev_to_node(dev), flag, get_order(size));
+-	if (!page)
+-		return NULL;
+-
+-	addr = phys_to_dma(dev, page_to_phys(page));
+-	if (addr + size > dev->coherent_dma_mask) {
+-		__free_pages(page, get_order(size));
+-
+-		if (dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
+-		    !(flag & GFP_DMA)) {
+-			flag = (flag & ~GFP_DMA32) | GFP_DMA;
+-			goto again;
+-		}
+-
+-		return NULL;
+-	}
+-	memset(page_address(page), 0, size);
+-	*dma_addr = addr;
+-	return page_address(page);
+-}
+-
+-void dma_generic_free_coherent(struct device *dev, size_t size, void *vaddr,
+-			       dma_addr_t dma_addr, unsigned long attrs)
+-{
+-	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	struct page *page = virt_to_page(vaddr);
+-
+-	if (!dma_release_from_contiguous(dev, page, count))
+-		free_pages((unsigned long)vaddr, get_order(size));
+-}
+ 
+ bool arch_dma_alloc_attrs(struct device **dev, gfp_t *gfp)
+ {
+@@ -243,16 +189,6 @@ int arch_dma_supported(struct device *dev, u64 mask)
+ }
+ EXPORT_SYMBOL(arch_dma_supported);
+ 
+-int x86_dma_supported(struct device *dev, u64 mask)
+-{
+-	/* Copied from i386. Doesn't make much sense, because it will
+-	   only work for pci_alloc_coherent.
+-	   The caller just has to use GFP_DMA in this case. */
+-	if (mask < DMA_BIT_MASK(24))
+-		return 0;
+-	return 1;
+-}
+-
+ static int __init pci_iommu_init(void)
+ {
+ 	struct iommu_table_entry *p;
+diff --git a/arch/x86/kernel/pci-swiotlb.c b/arch/x86/kernel/pci-swiotlb.c
+index 0ee0f8f34251..bcb6a9bf64ad 100644
+--- a/arch/x86/kernel/pci-swiotlb.c
++++ b/arch/x86/kernel/pci-swiotlb.c
+@@ -30,8 +30,7 @@ void *x86_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+ 	 */
+ 	flags |= __GFP_NOWARN;
+ 
+-	vaddr = dma_generic_alloc_coherent(hwdev, size, dma_handle, flags,
+-					   attrs);
++	vaddr = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+ 	if (vaddr)
+ 		return vaddr;
+ 
+@@ -45,7 +44,7 @@ void x86_swiotlb_free_coherent(struct device *dev, size_t size,
+ 	if (is_swiotlb_buffer(dma_to_phys(dev, dma_addr)))
+ 		swiotlb_free_coherent(dev, size, vaddr, dma_addr);
+ 	else
+-		dma_generic_free_coherent(dev, size, vaddr, dma_addr, attrs);
++		dma_direct_free(dev, size, vaddr, dma_addr, attrs);
+ }
+ 
+ static const struct dma_map_ops x86_swiotlb_dma_ops = {
+diff --git a/arch/x86/pci/sta2x11-fixup.c b/arch/x86/pci/sta2x11-fixup.c
+index 75577c1490c4..6c712fe11bdc 100644
+--- a/arch/x86/pci/sta2x11-fixup.c
++++ b/arch/x86/pci/sta2x11-fixup.c
+@@ -193,7 +193,7 @@ static const struct dma_map_ops sta2x11_dma_ops = {
+ 	.sync_sg_for_cpu = swiotlb_sync_sg_for_cpu,
+ 	.sync_sg_for_device = swiotlb_sync_sg_for_device,
+ 	.mapping_error = swiotlb_dma_mapping_error,
+-	.dma_supported = x86_dma_supported,
++	.dma_supported = dma_direct_supported,
+ };
+ 
+ /* At setup time, we use our own ops if the device is a ConneXt one */
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 74788fdeb773..0bf19423b588 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -28,6 +28,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/scatterlist.h>
+ #include <linux/dma-mapping.h>
++#include <linux/dma-direct.h>
+ #include <linux/iommu-helper.h>
+ #include <linux/iommu.h>
+ #include <linux/delay.h>
+@@ -2193,7 +2194,7 @@ static int amd_iommu_add_device(struct device *dev)
+ 				dev_name(dev));
+ 
+ 		iommu_ignore_device(dev);
+-		dev->dma_ops = &nommu_dma_ops;
++		dev->dma_ops = &dma_direct_ops;
+ 		goto out;
+ 	}
+ 	init_iommu_group(dev);
+@@ -2680,7 +2681,7 @@ static void free_coherent(struct device *dev, size_t size,
+  */
+ static int amd_iommu_dma_supported(struct device *dev, u64 mask)
+ {
+-	if (!x86_dma_supported(dev, mask))
++	if (!dma_direct_supported(dev, mask))
+ 		return 0;
+ 	return check_device(dev);
+ }
+@@ -2794,7 +2795,7 @@ int __init amd_iommu_init_dma_ops(void)
+ 	 * continue to be SWIOTLB.
+ 	 */
+ 	if (!swiotlb)
+-		dma_ops = &nommu_dma_ops;
++		dma_ops = &dma_direct_ops;
+ 
+ 	if (amd_iommu_unmap_flush)
+ 		pr_info("AMD-Vi: IO/TLB flush on unmap enabled\n");
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 582fd01cb7d1..fd899b2a12bb 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -45,6 +45,7 @@
+ #include <linux/pci-ats.h>
+ #include <linux/memblock.h>
+ #include <linux/dma-contiguous.h>
++#include <linux/dma-direct.h>
+ #include <linux/crash_dump.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/cacheflush.h>
+@@ -3871,7 +3872,7 @@ const struct dma_map_ops intel_dma_ops = {
+ 	.unmap_page = intel_unmap_page,
+ 	.mapping_error = intel_mapping_error,
+ #ifdef CONFIG_X86
+-	.dma_supported = x86_dma_supported,
++	.dma_supported = dma_direct_supported,
+ #endif
+ };
+ 
 -- 
 2.14.2
