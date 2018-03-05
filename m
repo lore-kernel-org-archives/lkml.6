@@ -1,79 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752977AbeCEUhN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:37:13 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752507AbeCEUhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:37:11 -0500
-Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
-To: Peter Maydell <peter.maydell@linaro.org>
-References: <20180215175803.6870-1-marc.zyngier@arm.com>
- <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
- <86o9k63f7a.wl-marc.zyngier@arm.com>
- <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
- <CAFEAcA9=YpNngKqeOXiO7QDvL=1ZaQEW8fh3XHjwD+i8qQm9wg@mail.gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <a1579f14-a5fe-11bc-a831-f729cead25ba@redhat.com>
-Date: Mon, 5 Mar 2018 21:37:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S932353AbeCEUip (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:38:45 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:52966 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeCEUin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:38:43 -0500
+Subject: Re: [PATCH v12 08/11] mm: Clear arch specific VM flags on protection
+ change
+To: Dave Hansen <dave.hansen@linux.intel.com>, akpm@linux-foundation.org,
+        davem@davemloft.net
+Cc: mhocko@suse.com, jack@suse.cz, kirill.shutemov@linux.intel.com,
+        ross.zwisler@linux.intel.com, willy@infradead.org, hughd@google.com,
+        n-horiguchi@ah.jp.nec.com, mgorman@suse.de, jglisse@redhat.com,
+        dave.jiang@intel.com, dan.j.williams@intel.com,
+        anthony.yznaga@oracle.com, nadav.amit@gmail.com, zi.yan@cs.rutgers.edu,
+        aarcange@redhat.com, khandual@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, henry.willard@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+ <f0bfc4b7ce6c8563bf0d5ef74af20b5d1edea66f.1519227112.git.khalid.aziz@oracle.com>
+ <df5344a2-f28d-7828-b76b-107dc24be2dd@linux.intel.com>
+From: Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <fd08210e-a6af-c3f5-3807-9ffe9dad66b0@oracle.com>
+Date: Mon, 5 Mar 2018 13:38:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAFEAcA9=YpNngKqeOXiO7QDvL=1ZaQEW8fh3XHjwD+i8qQm9wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <df5344a2-f28d-7828-b76b-107dc24be2dd@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=626
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803050236
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 05/03/18 17:31, Peter Maydell wrote:
-> On 2 March 2018 at 12:26, Auger Eric <eric.auger@redhat.com> wrote:
->> Hi Marc,
->> On 02/03/18 12:11, Marc Zyngier wrote:
->>> On Fri, 02 Mar 2018 10:44:48 +0000,
->>> Auger Eric wrote:
->>>> I understand the get/set is called as part of the migration process.
->>>> So my understanding is the benefit of this series is migration fails in
->>>> those cases:
->>>>
->>>>> =0.2 source -> 0.1 destination
->>>> 0.1 source -> >=0.2 destination
->>>
->>> It also fails in the case where you migrate a 1.0 guest to something
->>> that cannot support it.
->>
->> That's because on the destination, the number of regs is less than on
->> source, right?
+On 03/05/2018 12:23 PM, Dave Hansen wrote:
+> On 02/21/2018 09:15 AM, Khalid Aziz wrote:
+>> +/* Arch-specific flags to clear when updating VM flags on protection change */
+>> +#ifndef VM_ARCH_CLEAR
+>> +# define VM_ARCH_CLEAR	VM_NONE
+>> +#endif
+>> +#define VM_FLAGS_CLEAR	(ARCH_VM_PKEY_FLAGS | VM_ARCH_CLEAR)
 > 
-> I think it fails because the KVM_REG_ARM_PSCI_VERSION register will be
-> in the migration state but not in the destination's list of registers:
-> the code in QEMU's target/arm/machine.c:cpu_post_load() function that
-> checks "register in their list but not ours: fail migration" will
-> catch this.
-
-Thank you for the pointer. Yes at the time I reviewed the patch and just
-focusing on the kernel code, this was not immediate to me.
-
+> Shouldn't this be defining
 > 
-> That also means that we will fail migration from a new kernel where
-> we've specifically asked for PSCI 0.2 to an old PSCI-0.2-only kernel
-> (because the KVM_REG_ARM_PSCI_VERSION reg will appear in the migration
-> stream even if its value is the one value that matches the old kernel
-> behaviour). I don't know if we care about that.
-
-Do you know when are we likely to force PSCI 0.2 on a new kernel? At
-which layer is the decision supposed to be made and on which criteria?
-
-Thanks
-
-Eric
+> # define VM_ARCH_CLEAR	ARCH_VM_PKEY_FLAGS
 > 
-> thanks
-> -- PMM
-> 
+> on x86?
+
+ARCH_VM_PKEY_FLAGS is used by x86 as well as powerpc. On those two 
+architectures VM_FLAGS_CLEAR will end up being ARCH_VM_PKEY_FLAGS and 
+thus current behavior will be retained. Defining VM_ARCH_CLEAR to be 
+ARCH_VM_PKEY_FLAGS on x86 will just result in VM_FLAGS_CLEAR to be 
+(ARCH_VM_PKEY_FLAGS | ARCH_VM_PKEY_FLAGS) which is superfluous.
+
+--
+Khalid
