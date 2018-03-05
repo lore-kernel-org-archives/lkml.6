@@ -1,355 +1,320 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753144AbeCEUY2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:24:28 -0500
-Received: from mga11.intel.com ([192.55.52.93]:19709 "EHLO mga11.intel.com"
+        id S1753157AbeCEUYg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:24:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53718 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753033AbeCEUX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:23:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="209015249"
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 5/6] tmp: factor out tpm_get_timeouts
-Date: Mon,  5 Mar 2018 22:20:16 +0200
-Message-Id: <20180305202017.24008-6-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180305202017.24008-1-tomas.winkler@intel.com>
-References: <20180305202017.24008-1-tomas.winkler@intel.com>
+        id S1752040AbeCEUYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:24:33 -0500
+Date: Mon, 5 Mar 2018 21:24:29 +0100
+From: Jan Kara <jack@suse.cz>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] fs: fsnotify: account fsnotify metadata to kmemcg
+Message-ID: <20180305202429.mzftlwssyaibiptk@quack2.suse.cz>
+References: <20180305182951.34462-1-shakeelb@google.com>
+ <20180305182951.34462-3-shakeelb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180305182951.34462-3-shakeelb@google.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out tpm_get_timeouts into tpm2_get_timeouts
-and tpm1_get_timeouts.
+On Mon 05-03-18 10:29:51, Shakeel Butt wrote:
+> A lot of memory can be consumed by the events generated for the huge or
+> unlimited queues if there is either no or slow listener. This can cause
+> system level memory pressure or OOMs. So, it's better to account the
+> fsnotify kmem caches to the memcg of the listener.
+> 
+> There are seven fsnotify kmem caches and among them allocations from
+> dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
+> inotify_inode_mark_cachep happens in the context of syscall from the
+> listener. So, SLAB_ACCOUNT is enough for these caches.
+> 
+> The objects from fsnotify_mark_connector_cachep are not accounted as
+> they are small compared to the notification mark or events and it is
+> unclear whom to account connector to since it is shared by all events
+> attached to the inode.
+> 
+> The allocations from the event caches happen in the context of the event
+> producer. For such caches we will need to remote charge the allocations
+> to the listener's memcg. Thus we save the memcg reference in the
+> fsnotify_group structure of the listener.
+> 
+> This patch has also moved the members of fsnotify_group to keep the
+> size same, at least for 64 bit build, even with additional member by
+> filling the holes.
+> 
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm-interface.c | 127 ++-------------------------------------
- drivers/char/tpm/tpm.h           |   5 +-
- drivers/char/tpm/tpm1-cmd.c      | 107 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c      |  22 +++++++
- 4 files changed, 137 insertions(+), 124 deletions(-)
+The patch looks OK to me from fsnotify POV. So feel free to add:
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 40d1770f6b38..7f6968b750c8 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -402,132 +402,13 @@ EXPORT_SYMBOL_GPL(tpm_getcap);
- 
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
--	cap_t cap;
--	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
--	ssize_t rc;
--
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
- 		return 0;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		/* Fixed timeouts for TPM2 */
--		chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
--		chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
--		chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
--		chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
--		chip->duration[TPM_SHORT] =
--		    msecs_to_jiffies(TPM2_DURATION_SHORT);
--		chip->duration[TPM_MEDIUM] =
--		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
--		chip->duration[TPM_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG);
--		chip->duration[TPM_LONG_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
--
--		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--		return 0;
--	}
--
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
--			sizeof(cap.timeout));
--	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
--			return rc;
--
--		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
--				"attempting to determine the timeouts",
--				sizeof(cap.timeout));
--	}
--
--	if (rc) {
--		dev_err(&chip->dev,
--			"A TPM error (%zd) occurred attempting to determine the timeouts\n",
--			rc);
--		return rc;
--	}
--
--	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
--	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
--	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
--	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
--	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
--	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
--	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
--	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
--	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
--
--	/*
--	 * Provide ability for vendor overrides of timeout values in case
--	 * of misreporting.
--	 */
--	if (chip->ops->update_timeouts != NULL)
--		chip->timeout_adjusted =
--			chip->ops->update_timeouts(chip, timeout_eff);
--
--	if (!chip->timeout_adjusted) {
--		/* Restore default if chip reported 0 */
--		int i;
--
--		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
--			if (timeout_eff[i])
--				continue;
--
--			timeout_eff[i] = timeout_old[i];
--			chip->timeout_adjusted = true;
--		}
--
--		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
--			/* timeouts in msec rather usec */
--			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
--				timeout_eff[i] *= 1000;
--			chip->timeout_adjusted = true;
--		}
--	}
--
--	/* Report adjusted timeouts */
--	if (chip->timeout_adjusted) {
--		dev_info(&chip->dev,
--			 HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
--			 timeout_chip[0], timeout_eff[0],
--			 timeout_chip[1], timeout_eff[1],
--			 timeout_chip[2], timeout_eff[2],
--			 timeout_chip[3], timeout_eff[3]);
--	}
--
--	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
--	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
--	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
--	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
--
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
--			"attempting to determine the durations",
--			sizeof(cap.duration));
--	if (rc)
--		return rc;
--
--	chip->duration[TPM_SHORT] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
--	chip->duration[TPM_MEDIUM] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
--	chip->duration[TPM_LONG] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
--	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
--
--	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
--	 * value wrong and apparently reports msecs rather than usecs. So we
--	 * fix up the resulting too-small TPM_SHORT value to make things work.
--	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
--	 */
--	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
--		chip->duration[TPM_SHORT] = HZ;
--		chip->duration[TPM_MEDIUM] *= 1000;
--		chip->duration[TPM_LONG] *= 1000;
--		chip->duration_adjusted = true;
--		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
--	}
--
--	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--	return 0;
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		return tpm2_get_timeouts(chip);
-+	else
-+		return tpm1_get_timeouts(chip);
- }
- EXPORT_SYMBOL_GPL(tpm_get_timeouts);
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 826f4eef310c..48706f091856 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -530,8 +530,10 @@ int tpm_startup(struct tpm_chip *chip);
- ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		   const char *desc, size_t min_cap_length);
- int tpm_get_timeouts(struct tpm_chip *);
--int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm_do_selftest(struct tpm_chip *chip);
-+
-+int tpm1_auto_startup(struct tpm_chip *chip);
-+int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
-@@ -570,6 +572,7 @@ static inline u32 tpm2_rc_value(u32 rc)
- 	return (rc & BIT(7)) ? rc & 0xff : rc;
- }
- 
-+int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 70adcea681cd..e48be0c09131 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -307,3 +307,110 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
- 
-+int tpm1_get_timeouts(struct tpm_chip *chip)
-+{
-+	cap_t cap;
-+	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-+	ssize_t rc;
-+
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-+			sizeof(cap.timeout));
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		if (tpm_startup(chip))
-+			return rc;
-+
-+		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-+				"attempting to determine the timeouts",
-+				sizeof(cap.timeout));
-+	}
-+
-+	if (rc) {
-+		dev_err(&chip->dev,
-+			"A TPM error (%zd) occurred attempting to determine the timeouts\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
-+	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
-+	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
-+	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
-+	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
-+	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
-+	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
-+	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
-+	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
-+
-+	/*
-+	 * Provide ability for vendor overrides of timeout values in case
-+	 * of misreporting.
-+	 */
-+	if (chip->ops->update_timeouts)
-+		chip->timeout_adjusted =
-+			chip->ops->update_timeouts(chip, timeout_eff);
-+
-+	if (!chip->timeout_adjusted) {
-+		/* Restore default if chip reported 0 */
-+		int i;
-+
-+		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
-+			if (timeout_eff[i])
-+				continue;
-+
-+			timeout_eff[i] = timeout_old[i];
-+			chip->timeout_adjusted = true;
-+		}
-+
-+		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
-+			/* timeouts in msec rather usec */
-+			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
-+				timeout_eff[i] *= 1000;
-+			chip->timeout_adjusted = true;
-+		}
-+	}
-+
-+	/* Report adjusted timeouts */
-+	if (chip->timeout_adjusted) {
-+		dev_info(&chip->dev,
-+			 HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
-+			 timeout_chip[0], timeout_eff[0],
-+			 timeout_chip[1], timeout_eff[1],
-+			 timeout_chip[2], timeout_eff[2],
-+			 timeout_chip[3], timeout_eff[3]);
-+	}
-+
-+	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
-+	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
-+	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
-+	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
-+
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
-+			"attempting to determine the durations",
-+			sizeof(cap.duration));
-+	if (rc)
-+		return rc;
-+
-+	chip->duration[TPM_SHORT] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
-+	chip->duration[TPM_MEDIUM] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
-+	chip->duration[TPM_LONG] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
-+	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
-+
-+	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
-+	 * value wrong and apparently reports msecs rather than usecs. So we
-+	 * fix up the resulting too-small TPM_SHORT value to make things work.
-+	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
-+	 */
-+	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
-+		chip->duration[TPM_SHORT] = HZ;
-+		chip->duration[TPM_MEDIUM] *= 1000;
-+		chip->duration[TPM_LONG] *= 1000;
-+		chip->duration_adjusted = true;
-+		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
-+	}
-+
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+	return 0;
-+}
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index aedebd9ca982..8114fd59e2c5 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -748,6 +748,28 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- 			 rc);
- }
- 
-+int tpm2_get_timeouts(struct tpm_chip *chip)
-+{
-+	/* Fixed timeouts for TPM2 */
-+	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-+	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
-+	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
-+	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-+
-+	/* PTP spec timeouts */
-+	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
-+	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-+	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
-+
-+	/* Key creation commands long timeouts */
-+	chip->duration[TPM_LONG_LONG] =
-+		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-+
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+
-+	return 0;
-+}
-+
- /*
-  * tpm2_calc_ordinal_duration() - maximum duration for a command
-  *
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> Changelog since v3:
+> - Rebased over Jan's patches.
+> - Some cleanup based on Amir's comments.
+> 
+> Changelog since v2:
+> - None
+> 
+> Changelog since v1:
+> - no more charging fsnotify_mark_connector objects
+> - Fixed the build for SLOB
+> 
+>  fs/notify/dnotify/dnotify.c          |  5 +++--
+>  fs/notify/fanotify/fanotify.c        |  6 ++++--
+>  fs/notify/fanotify/fanotify_user.c   |  5 ++++-
+>  fs/notify/group.c                    |  4 ++++
+>  fs/notify/inotify/inotify_fsnotify.c |  2 +-
+>  fs/notify/inotify/inotify_user.c     |  5 ++++-
+>  include/linux/fsnotify_backend.h     | 12 ++++++++----
+>  include/linux/memcontrol.h           |  7 +++++++
+>  mm/memcontrol.c                      |  2 +-
+>  9 files changed, 36 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index 63a1ca4b9dee..eb5c41284649 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -384,8 +384,9 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
+>  
+>  static int __init dnotify_init(void)
+>  {
+> -	dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
+> -	dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
+> +	dnotify_struct_cache = KMEM_CACHE(dnotify_struct,
+> +					  SLAB_PANIC|SLAB_ACCOUNT);
+> +	dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC|SLAB_ACCOUNT);
+>  
+>  	dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
+>  	if (IS_ERR(dnotify_group))
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index d51e1bb781cf..cb6670bed289 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -157,14 +157,16 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+>  	if (fanotify_is_perm_event(mask)) {
+>  		struct fanotify_perm_event_info *pevent;
+>  
+> -		pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
+> +		pevent = kmem_cache_alloc_memcg(fanotify_perm_event_cachep, gfp,
+> +						group->memcg);
+>  		if (!pevent)
+>  			return NULL;
+>  		event = &pevent->fae;
+>  		pevent->response = 0;
+>  		goto init;
+>  	}
+> -	event = kmem_cache_alloc(fanotify_event_cachep, gfp);
+> +	event = kmem_cache_alloc_memcg(fanotify_event_cachep, gfp,
+> +				       group->memcg);
+>  	if (!event)
+>  		return NULL;
+>  init: __maybe_unused
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 72e367822efb..6015bbaaa319 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/compat.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/memcontrol.h>
+>  
+>  #include <asm/ioctls.h>
+>  
+> @@ -756,6 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  
+>  	group->fanotify_data.user = user;
+>  	atomic_inc(&user->fanotify_listeners);
+> +	group->memcg = get_mem_cgroup_from_mm(current->mm);
+>  
+>  	oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
+>  	if (unlikely(!oevent)) {
+> @@ -951,7 +953,8 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+>   */
+>  static int __init fanotify_user_setup(void)
+>  {
+> -	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
+> +	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+> +					 SLAB_PANIC|SLAB_ACCOUNT);
+>  	fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
+>  	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+>  		fanotify_perm_event_cachep =
+> diff --git a/fs/notify/group.c b/fs/notify/group.c
+> index b7a4b6a69efa..df14a66ce067 100644
+> --- a/fs/notify/group.c
+> +++ b/fs/notify/group.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/srcu.h>
+>  #include <linux/rculist.h>
+>  #include <linux/wait.h>
+> +#include <linux/memcontrol.h>
+>  
+>  #include <linux/fsnotify_backend.h>
+>  #include "fsnotify.h"
+> @@ -36,6 +37,9 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
+>  	if (group->ops->free_group_priv)
+>  		group->ops->free_group_priv(group);
+>  
+> +	if (group->memcg)
+> +		css_put(&group->memcg->css);
+> +
+>  	kfree(group);
+>  }
+>  
+> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+> index 40dedb37a1f3..b184bff93d02 100644
+> --- a/fs/notify/inotify/inotify_fsnotify.c
+> +++ b/fs/notify/inotify/inotify_fsnotify.c
+> @@ -98,7 +98,7 @@ int inotify_handle_event(struct fsnotify_group *group,
+>  	i_mark = container_of(inode_mark, struct inotify_inode_mark,
+>  			      fsn_mark);
+>  
+> -	event = kmalloc(alloc_len, GFP_KERNEL);
+> +	event = kmalloc_memcg(alloc_len, GFP_KERNEL, group->memcg);
+>  	if (unlikely(!event)) {
+>  		/*
+>  		 * Treat lost event due to ENOMEM the same way as queue
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 8f17719842ec..d9e4b243c973 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -38,6 +38,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/poll.h>
+>  #include <linux/wait.h>
+> +#include <linux/memcontrol.h>
+>  
+>  #include "inotify.h"
+>  #include "../fdinfo.h"
+> @@ -632,6 +633,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+>  	oevent->name_len = 0;
+>  
+>  	group->max_events = max_events;
+> +	group->memcg = get_mem_cgroup_from_mm(current->mm);
+>  
+>  	spin_lock_init(&group->inotify_data.idr_lock);
+>  	idr_init(&group->inotify_data.idr);
+> @@ -799,7 +801,8 @@ static int __init inotify_user_setup(void)
+>  
+>  	BUG_ON(hweight32(ALL_INOTIFY_BITS) != 21);
+>  
+> -	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark, SLAB_PANIC);
+> +	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark,
+> +					       SLAB_PANIC|SLAB_ACCOUNT);
+>  
+>  	inotify_max_queued_events = 16384;
+>  	init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 9f1edb92c97e..81bd86dfa2cd 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -84,6 +84,8 @@ struct fsnotify_event_private_data;
+>  struct fsnotify_fname;
+>  struct fsnotify_iter_info;
+>  
+> +struct mem_cgroup;
+> +
+>  /*
+>   * Each group much define these ops.  The fsnotify infrastructure will call
+>   * these operations for each relevant group.
+> @@ -129,6 +131,8 @@ struct fsnotify_event {
+>   * everything will be cleaned up.
+>   */
+>  struct fsnotify_group {
+> +	const struct fsnotify_ops *ops;	/* how this group handles things */
+> +
+>  	/*
+>  	 * How the refcnt is used is up to each group.  When the refcnt hits 0
+>  	 * fsnotify will clean up all of the resources associated with this group.
+> @@ -139,8 +143,6 @@ struct fsnotify_group {
+>  	 */
+>  	refcount_t refcnt;		/* things with interest in this group */
+>  
+> -	const struct fsnotify_ops *ops;	/* how this group handles things */
+> -
+>  	/* needed to send notification to userspace */
+>  	spinlock_t notification_lock;		/* protect the notification_list */
+>  	struct list_head notification_list;	/* list of event_holder this group needs to send to userspace */
+> @@ -162,6 +164,8 @@ struct fsnotify_group {
+>  	atomic_t num_marks;		/* 1 for each mark and 1 for not being
+>  					 * past the point of no return when freeing
+>  					 * a group */
+> +	atomic_t user_waits;		/* Number of tasks waiting for user
+> +					 * response */
+>  	struct list_head marks_list;	/* all inode marks for this group */
+>  
+>  	struct fasync_struct *fsn_fa;    /* async notification */
+> @@ -169,8 +173,8 @@ struct fsnotify_group {
+>  	struct fsnotify_event *overflow_event;	/* Event we queue when the
+>  						 * notification list is too
+>  						 * full */
+> -	atomic_t user_waits;		/* Number of tasks waiting for user
+> -					 * response */
+> +
+> +	struct mem_cgroup *memcg;	/* memcg to charge allocations */
+>  
+>  	/* groups can define private fields here or use the void *private */
+>  	union {
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index c79cdf9f8138..4525b4404a9e 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -352,6 +352,8 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+>  	return css ? container_of(css, struct mem_cgroup, css) : NULL;
+>  }
+>  
+> +struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm);
+> +
+>  static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+>  {
+>  	css_put(&memcg->css);
+> @@ -809,6 +811,11 @@ static inline bool task_in_mem_cgroup(struct task_struct *task,
+>  	return true;
+>  }
+>  
+> +static inline struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+> +{
+> +	return NULL;
+> +}
+> +
+>  static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+>  {
+>  }
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 5a2acfbc4962..3801ac1fcfbc 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -678,7 +678,7 @@ struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p)
+>  }
+>  EXPORT_SYMBOL(mem_cgroup_from_task);
+>  
+> -static struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+> +struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+>  {
+>  	struct mem_cgroup *memcg = NULL;
+>  
+> -- 
+> 2.16.2.395.g2e18187dfd-goog
+> 
 -- 
-2.14.3
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
