@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELt8FEmZMewktxwlhnXk/osCYoiIKTFiRO6I8cWrT8uLP/1a2cVRykIJHex3lfGKJ3iO3za5
-ARC-Seal: i=1; a=rsa-sha256; t=1520245572; cv=none;
+X-Google-Smtp-Source: AG47ELuppZmQCPBY5zdkCcHiu9TNHXDouuckEdRf46X8kHr6nLe+N+89vK+1bDxWdmx82dwLbcb5
+ARC-Seal: i=1; a=rsa-sha256; t=1520245571; cv=none;
         d=google.com; s=arc-20160816;
-        b=jpO4e4XjFsKKeVMmTd4Fz4B0IZIL7Bvtmn2FwcEpGFMa1GhSKwYGhvJBtNEYzB4D3D
-         k7DH0P/sp4Vpziau7owGWC53NV5HOJeanUVwkKvamt+LMpiN6m3Lt98q/k78KYABO8B/
-         GuqfGyPmMVIRzLFXWXZheALuekzcCHnKBZbBXr5cx+w/VlwG5oUCEZNutrSWqIKGhaB2
-         eu6BQusjeNgcaLm1xgnNXquKridbrEXlJ7pEKLKqUqQJP/EByiqsK7cIfXtDsj7LWfK6
-         490v5ea/Hs5OJgXPk6BVSQZx+sDlqQpVEZCeEJHuEodcz+/6teNbpoGcRSaSHuGSdNgz
-         TvBw==
+        b=KnyhLeHtRYaNrre4VDF6OOZl3SRBKkiVZqsx4iVwfnV6CpIFs243DVQUjQxfnsOipp
+         N+uNFnf7Li08lA/jki1JAPJ2B8PEdMxw5H8yavaD09hOIarXZYlzoVzBjnLBmgEBlqif
+         wnzAAVUKUMW7wXLLx/ncfTm2IbHEh/QznKtV3wRocrTXmQYpXssOG+Zcr3VnGJmFZ923
+         25vdX89mtAuo9RGouzLOBoTFO4fsXy2qV4ArXCeOXmSkex88RVGfE06qxcB95MiT6fFd
+         cluaALj4ukH/pQ3WK1HQrzxy/J+yj7IJWHcTjik3i5oMesuwdO9XpLvFFXVMw/nicuyV
+         rNgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=bAn2hiKI0xrkWpfCWI3b0fK35cbVbNjmlGYZazgDka0=;
-        b=SDAZRJulW5wA7SwZC47HJC0U1RNaK2ST044SeowyxS7yIodqbqhSiB19pa+T2PsINd
-         0GUP2V/n9paUje2T0p3RgawNXi+TvB+5QrtP4x/dLVLEqCxaCPz5NLjfVPgBcI0oIglR
-         lzbbkd/tul6GwVe0TGHs3GfK4lIsyxptMwFdM499aDkxHQReb0yuLjzqcZotp+ttgxJZ
-         PXR63HbdnNuRnteBVVlOMrvUw3zc6iSnaWaInjBskYXbaCm/XGVH5Sf/5OF9nvCvFjCZ
-         BhYOLDNTK7nmBMBIzqrjgFiJT8Rjz3uHIDqG9nmnPQ3aaRFBRxqXh56fpcNsAXNSjfK/
-         BxYA==
+        bh=qxWeLBWPXfhZcdORXt/N8vBDLLsrpvteBpcTwZSO2Cc=;
+        b=wUzWbe27XA+hFVmr8lYp7By5vPGn1SWsIncIyLmjcPxX4GPEM6TxOWr/i/VRHDUtzI
+         OscSoQIMClzGXvMivO6yO5GK6DCxuyowUPG2gagF4I1nmyngcorr880DPIQnJs0lhsTf
+         2bqjaONQPxoYI7ulJ523NvTR4/PmqmdzQjRMUIFwMndw6jACnjn6Qk0pVtsb3Q2sEMNo
+         IvZyEYJexSlAeV5eEECshzXe81BIPaP7e/Bk78Fy+ZeaKe7bJO5F8pcsT5ptAd2y+2BW
+         PEizBEYH2i1WNG4h1RyedQvCu0MWZywWDLh/5mMaoTTU+TTtLGLiXTBoRWlYreKiOIIf
+         oGDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KqZO2Y18;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dh4LVBXL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KqZO2Y18;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dh4LVBXL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,148 +57,54 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 09/34] x86/entry/32: Leave the kernel via trampoline stack
-Date: Mon,  5 Mar 2018 11:25:38 +0100
-Message-Id: <1520245563-8444-10-git-send-email-joro@8bytes.org>
+Subject: [PATCH 05/34] x86/entry/32: Unshare NMI return path
+Date: Mon,  5 Mar 2018 11:25:34 +0100
+Message-Id: <1520245563-8444-6-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093021559411814?=
-X-GMAIL-MSGID: =?utf-8?q?1594093021559411814?=
+X-GMAIL-THRID: =?utf-8?q?1594093020612909997?=
+X-GMAIL-MSGID: =?utf-8?q?1594093020612909997?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Switch back to the trampoline stack before returning to
-userspace.
+NMI will no longer use most of the shared return path,
+because NMI needs special handling when the CR3 switches for
+PTI are added. This patch prepares for that.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 79 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 77 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 1737da2..1b5656d 100644
+index 0289bde..00ae759 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -339,6 +339,60 @@
- .endm
+@@ -1007,7 +1007,7 @@ ENTRY(nmi)
  
- /*
-+ * Switch back from the kernel stack to the entry stack.
-+ *
-+ * The %esp register must point to pt_regs on the task stack. It will
-+ * first calculate the size of the stack-frame to copy, depending on
-+ * whether we return to VM86 mode or not. With that it uses 'rep movsl'
-+ * to copy the contents of the stack over to the entry stack.
-+ *
-+ * We must be very careful here, as we can't trust the contents of the
-+ * task-stack once we switched to the entry-stack. When an NMI happens
-+ * while on the entry-stack, the NMI handler will switch back to the top
-+ * of the task stack, overwriting our stack-frame we are about to copy.
-+ * Therefore we switch the stack only after everything is copied over.
-+ */
-+.macro SWITCH_TO_ENTRY_STACK
-+
-+	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-+
-+	/* Bytes to copy */
-+	movl	$PTREGS_SIZE, %ecx
-+
-+#ifdef CONFIG_VM86
-+	testl	$(X86_EFLAGS_VM), PT_EFLAGS(%esp)
-+	jz	.Lcopy_pt_regs_\@
-+
-+	/* Additional 4 registers to copy when returning to VM86 mode */
-+	addl    $(4 * 4), %ecx
-+
-+.Lcopy_pt_regs_\@:
-+#endif
-+
-+	/* Initialize source and destination for movsb */
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+	subl	%ecx, %edi
-+	movl	%esp, %esi
-+
-+	/* Save future stack pointer in %ebx */
-+	movl	%edi, %ebx
-+
-+	/* Copy over the stack-frame */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/*
-+	 * Switch to entry-stack - needs to happen after everything is
-+	 * copied because the NMI handler will overwrite the task-stack
-+	 * when on entry-stack
-+	 */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
-+.endm
-+
-+/*
-  * %eax: prev task
-  * %edx: next task
-  */
-@@ -579,25 +633,45 @@ ENTRY(entry_SYSENTER_32)
+ 	/* Not on SYSENTER stack. */
+ 	call	do_nmi
+-	jmp	.Lrestore_all_notrace
++	jmp	.Lnmi_return
  
- /* Opportunistic SYSEXIT */
- 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
-+
-+	/*
-+	 * Setup entry stack - we keep the pointer in %eax and do the
-+	 * switch after almost all user-state is restored.
-+	 */
-+
-+	/* Load entry stack pointer and allocate frame for eflags/eax */ 
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %eax
-+	subl	$(2*4), %eax
-+
-+	/* Copy eflags and eax to entry stack */
-+	movl	PT_EFLAGS(%esp), %edi
-+	movl	PT_EAX(%esp), %esi
-+	movl	%edi, (%eax)
-+	movl	%esi, 4(%eax)
-+
-+	/* Restore user registers and segments */
- 	movl	PT_EIP(%esp), %edx	/* pt_regs->ip */
- 	movl	PT_OLDESP(%esp), %ecx	/* pt_regs->sp */
- 1:	mov	PT_FS(%esp), %fs
- 	PTGS_TO_GS
-+
- 	popl	%ebx			/* pt_regs->bx */
- 	addl	$2*4, %esp		/* skip pt_regs->cx and pt_regs->dx */
- 	popl	%esi			/* pt_regs->si */
- 	popl	%edi			/* pt_regs->di */
- 	popl	%ebp			/* pt_regs->bp */
--	popl	%eax			/* pt_regs->ax */
-+
-+	/* Switch to entry stack */
-+	movl	%eax, %esp
- 
+ .Lnmi_from_sysenter_stack:
  	/*
- 	 * Restore all flags except IF. (We restore IF separately because
- 	 * STI gives a one-instruction window in which we won't be interrupted,
- 	 * whereas POPF does not.)
- 	 */
--	addl	$PT_EFLAGS-PT_DS, %esp	/* point esp at pt_regs->flags */
- 	btr	$X86_EFLAGS_IF_BIT, (%esp)
- 	popfl
-+	popl	%eax
+@@ -1018,7 +1018,11 @@ ENTRY(nmi)
+ 	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
+ 	call	do_nmi
+ 	movl	%ebx, %esp
+-	jmp	.Lrestore_all_notrace
++
++.Lnmi_return:
++	CHECK_AND_APPLY_ESPFIX
++	RESTORE_REGS 4
++	jmp	.Lirq_return
  
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
-@@ -666,6 +740,7 @@ ENTRY(entry_INT80_32)
- 
- restore_all:
- 	TRACE_IRQS_IRET
-+	SWITCH_TO_ENTRY_STACK
- .Lrestore_all_notrace:
- 	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
+ #ifdef CONFIG_X86_ESPFIX32
+ .Lnmi_espfix_stack:
 -- 
 2.7.4
