@@ -1,73 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932989AbeCEKEJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:04:09 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751824AbeCEKEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:04:07 -0500
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH RFC 3/3] x86/kvm/vmx: avoid expensive rdmsr for MSR_GS_BASE
-References: <20180302105503.24428-1-vkuznets@redhat.com>
-        <20180302105503.24428-4-vkuznets@redhat.com>
-        <CALCETrVhRP5W8jS0a+_Kq8BqJatszz0vu6keB=M7kr5c=KLi4g@mail.gmail.com>
-Date: Mon, 05 Mar 2018 11:04:04 +0100
-In-Reply-To: <CALCETrVhRP5W8jS0a+_Kq8BqJatszz0vu6keB=M7kr5c=KLi4g@mail.gmail.com>
-        (Andy Lutomirski's message of "Fri, 2 Mar 2018 20:20:54 +0000")
-Message-ID: <87zi3mzvmz.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S933295AbeCEKFX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:05:23 -0500
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:43279 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933072AbeCEKFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 05:05:18 -0500
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Sven Joachim <svenjoac@gmx.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Linux 4.16-rc4
+Date: Mon, 05 Mar 2018 11:05:16 +0100
+Message-ID: <5552043.iprGPZeTD1@merkaba>
+In-Reply-To: <878tb7eyf8.fsf@turtle.gmx.de>
+References: <CA+55aFxXg8hi+T_DNCG_OrAotqSheyREw-Njf9XgUD1vXqAyHQ@mail.gmail.com> <878tb7eyf8.fsf@turtle.gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> writes:
+Hi Sven.
 
-> On Fri, Mar 2, 2018 at 10:55 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->> vmx_save_host_state() is only called from kvm_arch_vcpu_ioctl_run() so
->> the context is pretty well defined and as we're past 'swapgs' MSR_GS_BASE
->> should contain kernel's GS base which we point to irq_stack_union.
->>
->> irq_stack_union needs to be exported as KVM can be a module.
->>
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/kernel/cpu/common.c | 1 +
->>  arch/x86/kvm/vmx.c           | 3 ++-
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
->> index 348cf4821240..057393711093 100644
->> --- a/arch/x86/kernel/cpu/common.c
->> +++ b/arch/x86/kernel/cpu/common.c
->> @@ -1398,6 +1398,7 @@ __setup("clearcpuid=", setup_clearcpuid);
->>  #ifdef CONFIG_X86_64
->>  DEFINE_PER_CPU_FIRST(union irq_stack_union,
->>                      irq_stack_union) __aligned(PAGE_SIZE) __visible;
->> +EXPORT_PER_CPU_SYMBOL(irq_stack_union);
->
-> GPL.
->
-> Also, can you add a static inline unsigned long
-> this_cpu_kernelmode_gs_base() that returns the actual value and then
-> use it here and in arch/x86/cpu/common.c?  I really don't like the way
-> that KVM code hardcodes all kinds of assumptions about how the rest of
-> the x86 code works rather than improving the x86 code to have the
-> right hooks for KVM's use.
+Sven Joachim - 05.03.18, 09:09:
+> On 2018-03-04 15:15 -0800, Linus Torvalds wrote:
+> > Hmm. A reasonably calm week - the biggest change is to the 'kvm-stat'
+> > tool, not any actual kernel files.
+> > 
+> > But there's small changes all over, with architecture updates (x86,
+> > s390, arm, parisc) and drivers (media, md, gpu, sound) being the bulk
+> > of it.  But there's some filesystem fixes (mostly btrfs),
+> > documentation updates etc too.
+> > 
+> > Go test,
+> 
+> Huh, this version does not build for me:
+> 
+> ,----
+> 
+> |   CALL    scripts/checksyscalls.sh
+> |   DESCEND  objtool
+> |   CC       /usr/local/src/linux/tools/objtool/check.o
+> | 
+> | In file included from check.c:26:0:
+> | check.c: In function 'read_retpoline_hints':
+> | warn.h:57:3: error: format '%ld' expects argument of type 'long int', but
+> | argument 5 has type 'unsigned int' [-Werror=format=]| 
+> |    "%s: warning: objtool: " format "\n", \
+> |    ^
+> | 
+> | check.c:1135:3: note: in expansion of macro 'WARN'
+> | 
+> |    WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned
+> |    long)); ^~~~
+> | 
+> | check.c:1135:44: note: format string is defined here
+> | 
+> |    WARN("retpoline_safe size mismatch: %d %ld", sec->len, sizeof(unsigned
+> |    long));|    
+> |                                           ~~^
+> |                                           %d
+> | 
+> | cc1: all warnings being treated as errors
+> | mv: cannot stat '/usr/local/src/linux/tools/objtool/.check.o.tmp': No such
+> | file or directory /usr/local/src/linux/tools/build/Makefile.build:96:
+> | recipe for target '/usr/local/src/linux/tools/objtool/check.o' failed
+> | make[3]: *** [/usr/local/src/linux/tools/objtool/check.o] Error 1
+> 
+> `----
+> 
+> This might be because I still use a 32-bit userland with a 64-bit
+> kernel.
 
-Sure, will do.
+Building just fine here with a 64-bit userland on Debian Sid and also working 
+just fine, so far:
 
-Doing plain rdmsr() in KVM is definitely cleaner and less fragile but
-assuming 240 cpu cycles I'm cutting with this series justify the
-increased complexity suggestions to avoid hardcoding x86 internals and
-make clean API are more than welcome. Thank you!
+% cat /proc/version
+Linux version 4.16.0-rc4-tp520-btrfstrim+ (martin@merkaba) (gcc version 7.3.0 
+(Debian 7.3.0-5)) #42 SMP PREEMPT Mon Mar 5 10:22:42 CET 2018
 
+Of course a build failure may be triggered by different configuration or any 
+number of other reasons than using 32-bit userland.
+
+Retpoline protection is active here:
+
+% grep . /sys/devices/system/cpu/vulnerabilities/*
+/sys/devices/system/cpu/vulnerabilities/meltdown:Mitigation: PTI
+/sys/devices/system/cpu/vulnerabilities/spectre_v1:Mitigation: __user pointer 
+sanitization
+/sys/devices/system/cpu/vulnerabilities/spectre_v2:Mitigation: Full generic 
+retpoline
+
+Thanks,
 -- 
-  Vitaly
+Martin
