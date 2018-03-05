@@ -1,194 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeCEQ6I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:58:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56418 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751989AbeCEQ6F (ORCPT
+        id S932128AbeCERBo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:01:44 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:23495 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751852AbeCERBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:58:05 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F7226022C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-Reply-To: shankerd@codeaurora.org
-Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
- hardening
-To: Will Deacon <will.deacon@arm.com>
-Cc: Thomas Speier <tspeier@codeaurora.org>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Sean Campbell <scampbel@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        Christoffer Dall <christoffer.dall@linaro.org>
-References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
- <20180305155614.GG6618@arm.com>
-From: Shanker Donthineni <shankerd@codeaurora.org>
-Message-ID: <05c25982-4939-593f-ad30-bf496e879885@codeaurora.org>
-Date: Mon, 5 Mar 2018 10:57:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180305155614.GG6618@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Mar 2018 12:01:41 -0500
+X-IronPort-AV: E=Sophos;i="5.47,427,1515456000";
+   d="scan'208";a="334437406"
+From: Filippo Sironi <sironi@amazon.de>
+To: alex.williamson@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Filippo Sironi <sironi@amazon.de>
+Subject: [PATCH] vfio/type1: Search for a fitting iommu_domain before attaching the iommu_group
+Date: Mon,  5 Mar 2018 18:01:11 +0100
+Message-Id: <1520269271-12662-1-git-send-email-sironi@amazon.de>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+... to avoid an unnecessary attach/detach of the iommu_group to the
+newly created iommu_domain.  This also saves us a context-cache and an
+IOTLB flush.
 
-On 03/05/2018 09:56 AM, Will Deacon wrote:
-> Hi Shanker,
-> 
-> On Fri, Mar 02, 2018 at 03:50:18PM -0600, Shanker Donthineni wrote:
->> The function SMCCC_ARCH_WORKAROUND_1 was introduced as part of SMC
->> V1.1 Calling Convention to mitigate CVE-2017-5715. This patch uses
->> the standard call SMCCC_ARCH_WORKAROUND_1 for Falkor chips instead
->> of Silicon provider service ID 0xC2001700.
->>
->> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
->> ---
->>  arch/arm64/include/asm/cpucaps.h |  2 +-
->>  arch/arm64/include/asm/kvm_asm.h |  2 --
->>  arch/arm64/kernel/bpi.S          |  8 ------
->>  arch/arm64/kernel/cpu_errata.c   | 55 ++++++++++++++--------------------------
->>  arch/arm64/kvm/hyp/entry.S       | 12 ---------
->>  arch/arm64/kvm/hyp/switch.c      | 10 --------
->>  6 files changed, 20 insertions(+), 69 deletions(-)
-> 
-> I'm happy to take this via arm64 if I get an ack from Marc/Christoffer.
-> 
->> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
->> index bb26382..6ecc249 100644
->> --- a/arch/arm64/include/asm/cpucaps.h
->> +++ b/arch/arm64/include/asm/cpucaps.h
->> @@ -43,7 +43,7 @@
->>  #define ARM64_SVE				22
->>  #define ARM64_UNMAP_KERNEL_AT_EL0		23
->>  #define ARM64_HARDEN_BRANCH_PREDICTOR		24
->> -#define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
->> +/* #define ARM64_UNALLOCATED_ENTRY			25 */
->>  #define ARM64_HAS_RAS_EXTN			26
->>  
->>  #define ARM64_NCAPS				27
-> 
-> These aren't ABI, so I think you can just drop
-> ARM64_HARDEN_BP_POST_GUEST_EXIT and repack the others accordingly.
-> 
-Sure, I'll remove it completely in v2 patch.
+This is possible because allocating an iommu_domain for the iommu_group
+we're attaching is enough to understand whether a fitting iommu_domain
+already exists.
+
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/vfio/vfio_iommu_type1.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 45657e2b1ff7..88359b4993f3 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1279,15 +1279,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 			goto out_domain;
+ 	}
  
->> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
->> index 24961b7..ab4d0a9 100644
->> --- a/arch/arm64/include/asm/kvm_asm.h
->> +++ b/arch/arm64/include/asm/kvm_asm.h
->> @@ -68,8 +68,6 @@
->>  
->>  extern u32 __init_stage2_translation(void);
->>  
->> -extern void __qcom_hyp_sanitize_btac_predictors(void);
->> -
->>  #endif
->>  
->>  #endif /* __ARM_KVM_ASM_H__ */
->> diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
->> index e5de335..dc4eb15 100644
->> --- a/arch/arm64/kernel/bpi.S
->> +++ b/arch/arm64/kernel/bpi.S
->> @@ -55,14 +55,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
->>  	.endr
->>  ENTRY(__bp_harden_hyp_vecs_end)
->>  
->> -ENTRY(__qcom_hyp_sanitize_link_stack_start)
->> -	stp     x29, x30, [sp, #-16]!
->> -	.rept	16
->> -	bl	. + 4
->> -	.endr
->> -	ldp	x29, x30, [sp], #16
->> -ENTRY(__qcom_hyp_sanitize_link_stack_end)
->> -
->>  .macro smccc_workaround_1 inst
->>  	sub	sp, sp, #(8 * 4)
->>  	stp	x2, x3, [sp, #(8 * 0)]
->> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
->> index 52f15cd..d779ffd4 100644
->> --- a/arch/arm64/kernel/cpu_errata.c
->> +++ b/arch/arm64/kernel/cpu_errata.c
->> @@ -67,8 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
->>  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
->>  
->>  #ifdef CONFIG_KVM
->> -extern char __qcom_hyp_sanitize_link_stack_start[];
->> -extern char __qcom_hyp_sanitize_link_stack_end[];
->>  extern char __smccc_workaround_1_smc_start[];
->>  extern char __smccc_workaround_1_smc_end[];
->>  extern char __smccc_workaround_1_hvc_start[];
->> @@ -115,8 +113,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
->>  	spin_unlock(&bp_lock);
->>  }
->>  #else
->> -#define __qcom_hyp_sanitize_link_stack_start	NULL
->> -#define __qcom_hyp_sanitize_link_stack_end	NULL
->>  #define __smccc_workaround_1_smc_start		NULL
->>  #define __smccc_workaround_1_smc_end		NULL
->>  #define __smccc_workaround_1_hvc_start		NULL
->> @@ -161,12 +157,25 @@ static void call_hvc_arch_workaround_1(void)
->>  	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
->>  }
->>  
->> +static void qcom_link_stack_sanitization(void)
->> +{
->> +	u64 tmp;
->> +
->> +	asm volatile("mov	%0, x30		\n"
->> +		     ".rept	16		\n"
->> +		     "bl	. + 4		\n"
->> +		     ".endr			\n"
->> +		     "mov	x30, %0		\n"
->> +		     : "=&r" (tmp));
->> +}
->> +
->>  static int enable_smccc_arch_workaround_1(void *data)
->>  {
->>  	const struct arm64_cpu_capabilities *entry = data;
->>  	bp_hardening_cb_t cb;
->>  	void *smccc_start, *smccc_end;
->>  	struct arm_smccc_res res;
->> +	u32 midr = read_cpuid_id();
->>  
->>  	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
->>  		return 0;
->> @@ -199,33 +208,15 @@ static int enable_smccc_arch_workaround_1(void *data)
->>  		return 0;
->>  	}
->>  
->> +	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
->> +	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
->> +		cb = qcom_link_stack_sanitization;
-> 
-> Is this just a performance thing? Do you actually see an advantage over
-> always making the firmware call? We've seen minimal impact in our testing.
-> 
-
-Yes, we've couple of advantages using the standard SMCCC_ARCH_WOKAROUND_1 framework. 
-  - Improves the code readability.
-  - Avoid the unnecessary MIDR checks on each vCPU exit.
-  - Validates ID_AA64PFR0_CVS2 feature for Falkor chips.
-  - Avoids the 2nd link stack sanitization workaround in firmware.
-
-  
-> Will
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
+-	ret = iommu_attach_group(domain->domain, iommu_group);
+-	if (ret)
+-		goto out_domain;
+-
+ 	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
+ 
+-	INIT_LIST_HEAD(&domain->group_list);
+-	list_add(&group->next, &domain->group_list);
+-
+ 	msi_remap = irq_domain_check_msi_remap() ||
+ 		    iommu_capable(bus, IOMMU_CAP_INTR_REMAP);
+ 
+@@ -1295,7 +1288,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 		pr_warn("%s: No interrupt remapping support.  Use the module param \"allow_unsafe_interrupts\" to enable VFIO IOMMU support on this platform\n",
+ 		       __func__);
+ 		ret = -EPERM;
+-		goto out_detach;
++		goto out_domain;
+ 	}
+ 
+ 	if (iommu_capable(bus, IOMMU_CAP_CACHE_COHERENCY))
+@@ -1311,21 +1304,24 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	list_for_each_entry(d, &iommu->domain_list, next) {
+ 		if (d->domain->ops == domain->domain->ops &&
+ 		    d->prot == domain->prot) {
+-			iommu_detach_group(domain->domain, iommu_group);
+-			if (!iommu_attach_group(d->domain, iommu_group)) {
+-				list_add(&group->next, &d->group_list);
+-				iommu_domain_free(domain->domain);
+-				kfree(domain);
+-				mutex_unlock(&iommu->lock);
+-				return 0;
+-			}
+-
+-			ret = iommu_attach_group(domain->domain, iommu_group);
++			ret = iommu_attach_group(d->domain, iommu_group);
+ 			if (ret)
+ 				goto out_domain;
++			list_add(&group->next, &d->group_list);
++			iommu_domain_free(domain->domain);
++			kfree(domain);
++			mutex_unlock(&iommu->lock);
++			return 0;
+ 		}
+ 	}
+ 
++	ret = iommu_attach_group(domain->domain, iommu_group);
++	if (ret)
++		goto out_domain;
++
++	INIT_LIST_HEAD(&domain->group_list);
++	list_add(&group->next, &domain->group_list);
++
+ 	vfio_test_domain_fgsp(domain);
+ 
+ 	/* replay mappings on new domains */
 -- 
-Shanker Donthineni
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
