@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeCEOfY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:35:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53028 "EHLO mail.kernel.org"
+        id S1752801AbeCEOfV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752617AbeCEOaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:30:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D1621796
+        id S1752607AbeCEOas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:30:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F099D21777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 13/28] perf annotate: Find 'call' instruction target symbol at parsing time
-Date: Mon,  5 Mar 2018 11:29:17 -0300
-Message-Id: <20180305142932.16921-14-acme@kernel.org>
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 14/28] perf record: Fix crash in pipe mode
+Date: Mon,  5 Mar 2018 11:29:18 -0300
+Message-Id: <20180305142932.16921-15-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305142932.16921-1-acme@kernel.org>
 References: <20180305142932.16921-1-acme@kernel.org>
@@ -26,158 +27,119 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-So that we do it just once, not everytime we press enter or -> on a
-'call' instruction line.
+Currently we can crash perf record when running in pipe mode, like:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+  $ perf record ls | perf report
+  # To display the perf.data header info, please use --header/--header-only options.
+  #
+  perf: Segmentation fault
+  Error:
+  The - file has no samples!
+
+The callstack of the crash is:
+
+    0x0000000000515242 in perf_event__synthesize_event_update_name
+  3513            ev = event_update_event__new(len + 1, PERF_EVENT_UPDATE__NAME, evsel->id[0]);
+  (gdb) bt
+  #0  0x0000000000515242 in perf_event__synthesize_event_update_name
+  #1  0x00000000005158a4 in perf_event__synthesize_extra_attr
+  #2  0x0000000000443347 in record__synthesize
+  #3  0x00000000004438e3 in __cmd_record
+  #4  0x000000000044514e in cmd_record
+  #5  0x00000000004cbc95 in run_builtin
+  #6  0x00000000004cbf02 in handle_internal_command
+  #7  0x00000000004cc054 in run_argv
+  #8  0x00000000004cc422 in main
+
+The reason of the crash is that the evsel does not have ids array
+allocated and the pipe's synthesize code tries to access it.
+
+We don't force evsel ids allocation when we have single event, because
+it's not needed. However we need it when we are in pipe mode even for
+single event as a key for evsel update event.
+
+Fixing this by forcing evsel ids allocation event for single event, when
+we are in pipe mode.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-uysyojl1e6nm94amzzzs08tf@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180302161354.30192-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 17 +++++------------
- tools/perf/util/annotate.c        | 38 +++++++++++++++++++++-----------------
- tools/perf/util/annotate.h        |  1 +
- 3 files changed, 27 insertions(+), 29 deletions(-)
+ tools/perf/builtin-record.c | 9 +++++++++
+ tools/perf/perf.h           | 1 +
+ tools/perf/util/record.c    | 8 ++++++--
+ 3 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 6ff6839558b0..618edf96353c 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -568,35 +568,28 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
- 	struct map_symbol *ms = browser->b.priv;
- 	struct disasm_line *dl = disasm_line(browser->selection);
- 	struct annotation *notes;
--	struct addr_map_symbol target = {
--		.map = ms->map,
--		.addr = map__objdump_2mem(ms->map, dl->ops.target.addr),
--	};
- 	char title[SYM_TITLE_MAX_SIZE];
- 
- 	if (!ins__is_call(&dl->ins))
- 		return false;
- 
--	if (map_groups__find_ams(&target) ||
--	    map__rip_2objdump(target.map, target.map->map_ip(target.map,
--							     target.addr)) !=
--	    dl->ops.target.addr) {
-+	if (!dl->ops.target.sym) {
- 		ui_helpline__puts("The called function was not found.");
- 		return true;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 62387942a1d5..12230ddb6506 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -882,6 +882,15 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		}
  	}
  
--	notes = symbol__annotation(target.sym);
-+	notes = symbol__annotation(dl->ops.target.sym);
- 	pthread_mutex_lock(&notes->lock);
- 
--	if (notes->src == NULL && symbol__alloc_hist(target.sym) < 0) {
-+	if (notes->src == NULL && symbol__alloc_hist(dl->ops.target.sym) < 0) {
- 		pthread_mutex_unlock(&notes->lock);
- 		ui__warning("Not enough memory for annotating '%s' symbol!\n",
--			    target.sym->name);
-+			    dl->ops.target.sym->name);
- 		return true;
- 	}
- 
- 	pthread_mutex_unlock(&notes->lock);
--	symbol__tui_annotate(target.sym, target.map, evsel, hbt);
-+	symbol__tui_annotate(dl->ops.target.sym, ms->map, evsel, hbt);
- 	sym_title(ms->sym, ms->map, title, sizeof(title));
- 	ui_browser__show_title(&browser->b, title);
- 	return true;
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 28b233c3dcbe..49ff825f745c 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -187,6 +187,9 @@ bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2)
- static int call__parse(struct arch *arch, struct ins_operands *ops, struct map *map)
- {
- 	char *endptr, *tok, *name;
-+	struct addr_map_symbol target = {
-+		.map = map,
-+	};
- 
- 	ops->target.addr = strtoull(ops->raw, &endptr, 16);
- 
-@@ -208,28 +211,29 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map *
- 	ops->target.name = strdup(name);
- 	*tok = '>';
- 
--	return ops->target.name == NULL ? -1 : 0;
-+	if (ops->target.name == NULL)
-+		return -1;
-+find_target:
-+	target.addr = map__objdump_2mem(map, ops->target.addr);
- 
--indirect_call:
--	tok = strchr(endptr, '*');
--	if (tok == NULL) {
--		struct symbol *sym = map__find_symbol(map, map->map_ip(map, ops->target.addr));
--		if (sym != NULL)
--			ops->target.name = strdup(sym->name);
--		else
--			ops->target.addr = 0;
--		return 0;
--	}
-+	if (map_groups__find_ams(&target) == 0 &&
-+	    map__rip_2objdump(target.map, map->map_ip(target.map, target.addr)) == ops->target.addr)
-+		ops->target.sym = target.sym;
- 
--	ops->target.addr = strtoull(tok + 1, NULL, 16);
- 	return 0;
++	/*
++	 * If we have just single event and are sending data
++	 * through pipe, we need to force the ids allocation,
++	 * because we synthesize event name through the pipe
++	 * and need the id for that.
++	 */
++	if (data->is_pipe && rec->evlist->nr_entries == 1)
++		rec->opts.sample_id = true;
 +
-+indirect_call:
-+	tok = strchr(endptr, '*');
-+	if (tok != NULL)
-+		ops->target.addr = strtoull(tok + 1, NULL, 16);
-+	goto find_target;
- }
+ 	if (record__open(rec) != 0) {
+ 		err = -1;
+ 		goto out_child;
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 007e0dfd5ce3..8fec1abd0f1f 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -62,6 +62,7 @@ struct record_opts {
+ 	bool	     overwrite;
+ 	bool	     ignore_missing_thread;
+ 	bool	     strict_freq;
++	bool	     sample_id;
+ 	unsigned int freq;
+ 	unsigned int mmap_pages;
+ 	unsigned int auxtrace_mmap_pages;
+diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
+index 4f1a82e76d39..9cfc7bf16531 100644
+--- a/tools/perf/util/record.c
++++ b/tools/perf/util/record.c
+@@ -138,6 +138,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
+ 	struct perf_evsel *evsel;
+ 	bool use_sample_identifier = false;
+ 	bool use_comm_exec;
++	bool sample_id = opts->sample_id;
  
- static int call__scnprintf(struct ins *ins, char *bf, size_t size,
- 			   struct ins_operands *ops)
- {
--	if (ops->target.name)
--		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.name);
-+	if (ops->target.sym)
-+		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.sym->name);
+ 	/*
+ 	 * Set the evsel leader links before we configure attributes,
+@@ -164,8 +165,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
+ 		 * match the id.
+ 		 */
+ 		use_sample_identifier = perf_can_sample_identifier();
+-		evlist__for_each_entry(evlist, evsel)
+-			perf_evsel__set_sample_id(evsel, use_sample_identifier);
++		sample_id = true;
+ 	} else if (evlist->nr_entries > 1) {
+ 		struct perf_evsel *first = perf_evlist__first(evlist);
  
- 	if (ops->target.addr == 0)
- 		return ins__raw_scnprintf(ins, bf, size, ops);
-@@ -1283,8 +1287,8 @@ static int symbol__parse_objdump_line(struct symbol *sym, FILE *file,
- 		dl->ops.target.offset_avail = true;
+@@ -175,6 +175,10 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
+ 			use_sample_identifier = perf_can_sample_identifier();
+ 			break;
+ 		}
++		sample_id = true;
++	}
++
++	if (sample_id) {
+ 		evlist__for_each_entry(evlist, evsel)
+ 			perf_evsel__set_sample_id(evsel, use_sample_identifier);
  	}
- 
--	/* kcore has no symbols, so add the call target name */
--	if (dl->ins.ops && ins__is_call(&dl->ins) && !dl->ops.target.name) {
-+	/* kcore has no symbols, so add the call target symbol */
-+	if (dl->ins.ops && ins__is_call(&dl->ins) && !dl->ops.target.sym) {
- 		struct addr_map_symbol target = {
- 			.map = map,
- 			.addr = dl->ops.target.addr,
-@@ -1292,7 +1296,7 @@ static int symbol__parse_objdump_line(struct symbol *sym, FILE *file,
- 
- 		if (!map_groups__find_ams(&target) &&
- 		    target.sym->start == target.al_addr)
--			dl->ops.target.name = strdup(target.sym->name);
-+			dl->ops.target.sym = target.sym;
- 	}
- 
- 	annotation_line__add(&dl->al, &notes->src->source);
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index ce427445671f..7e914e834101 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -24,6 +24,7 @@ struct ins_operands {
- 	struct {
- 		char	*raw;
- 		char	*name;
-+		struct symbol *sym;
- 		u64	addr;
- 		s64	offset;
- 		bool	offset_avail;
 -- 
 2.14.3
