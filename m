@@ -1,384 +1,199 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2684081-1520286666-2-14611789656074610490
+X-Cyrus-Session-Id: sloti22d1t05-2684081-1520286271-2-2629385844059669179
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
 X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520286666; b=BJarlXFEFGWkzmskREO6fGp/ystU9yysIk7IMQ1cyIhEdCH
-    8od4rvD/DvFmfVLByRB+qvR8TVz3+aWsFZZiTOMGedV9tLBkFgYEoB3K8oSUCBMM
-    VfNnrPxqd7WqmA+t5ubNYGu5b83eOl/wDYKWMuPTSMkv68hzz2QbH730uDCUAVS2
-    NXPyWnIq/Q+jxfU5Zad/klTAdDpwlieVfkmupUX6rEMI5N0vTcFzPSI08j3nbFdV
-    jEDOAD3ry6ZHolCNbNMofshpUKbWZISAfsnePVfPf8t5ZrM30KmD89PBmG1cabTF
-    1VkKWMlTSYaz701XE/tOBknZdj5vCpedwt3SVlQ==
+    t=1520286270; b=CKPDZL8V7wlj+aNzahEpiqfdvtbiU1MwsDMaC87qdD6psxY
+    TW6GwPoFf2I2Gkg9QpEJaxFCs4hitSk3IpcEQwLUGNM9Zuka4da8FA5u50bfyqma
+    u8PXj8w6VoVtjxNEYSb8+F6AcdPZ4K4FZQ8dLS3i0S1aAzmKiv+zmewHtEIJKBna
+    xKuD6jSvShLOo3vADuj/1sOE06PQLmlBIUJdWsy2s3dFbFlZiNzXJLJLQzJj5/jS
+    sEsG7cvFfys8khi5wjfBqcV/JXSZaGoUCo49sd4p+tgATIVsa6EWdEdbr74g49Xk
+    WNJE8rEj7Oxv3WmxMOO+p0p1vWh1/hMoEAr6Mhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520286666; bh=nUFfC6lrawSJ1pcCx7nSVUftcP
-    9oz1kN7wQLPwOOXWQ=; b=vfhYs8xaL65nDCY73h+36PMfppt0sYhj4jyPuCUISQ
-    2XY/pqfAQKn++UdzQNjts7A3cnNqMmjLd2XorPhPEgGuagl2iVsb1Bpdaautdkit
-    pMTABPMRIkmwPAxHE7S5f2ulQbFv8BTj+RkRSurxbhuj0Nj7HUnWxt+fVYDg3tYP
-    U7y3cIsTtF45aSAJyDFgRUC4oODZKloez2xNhgur74puUOY+RpSnvaQY25pBztoo
-    oZSa+jjZZqQCgRi0jMXf9OhV2rev9YyZhcvz4IfECRTUB0YqDXzUb0J1kcvj2Oc/
-    +rTEvOscytAN7vpBfyGydu6B1ZmO5+rya7MJXGSgzjmg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520286270;
+    bh=Kg+Hy36NtWjy1Av6TXTZg3S8v3wKqgMPuAYVu1ScJs4=; b=SqJhD7YANgOX
+    6NPXch1lcSo2Iv3QMHXQstIqQK/lP6Zedsgw0uR8ue/p0ezPx4w87d+yUDj7TZbJ
+    VLhgD71ROa0ER/X2RVmNtaoMJgrBEuGzPA4xFI5CiE/CvghyoqPxisze4a3elKIN
+    4kHgk+fWCz93OM7JT0kZpOz0hsBIvcrAbkZA+9tlF7USwvHNPYVklnhwSk8LoAdu
+    odaElqNZySOOw5rtkTQAP8wROLr11EmtLHsKrB/Fd3dt7erSx1ig+W9opgipQHBb
+    9pM71V+iv+prnQ0VgYNkLOsh6B8RyvJs1GdFdyjw1FGiCkOwzcqzFWzfKtgjxNkC
+    y/MiyWpNIA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SmykMrgV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SmykMrgV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932571AbeCEVvD (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 16:51:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60358 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751275AbeCEVvC (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:51:02 -0500
-From: Jeff Moyer <jmoyer@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: viro@zeniv.linux.org.uk, Avi Kivity <avi@scylladb.com>,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/36] aio: implement io_pgetevents
+        id S932862AbeCEVnn (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 16:43:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60594 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932084AbeCEV1t (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 5 Mar 2018 16:27:49 -0500
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 07/36] aio: add delayed cancel support
+Date: Mon,  5 Mar 2018 13:27:14 -0800
+Message-Id: <20180305212743.16664-8-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+In-Reply-To: <20180305212743.16664-1-hch@lst.de>
 References: <20180305212743.16664-1-hch@lst.de>
-        <20180305212743.16664-9-hch@lst.de>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date: Mon, 05 Mar 2018 16:51:00 -0500
-In-Reply-To: <20180305212743.16664-9-hch@lst.de> (Christoph Hellwig's message
-        of "Mon, 5 Mar 2018 13:27:15 -0800")
-Message-ID: <x49fu5e9oor.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Christoph Hellwig <hch@lst.de> writes:
+The upcoming aio poll support would like to be able to complete the
+iocb inline from the cancellation context, but that would cause
+a lock order reversal.  Add support for optionally moving the cancelation
+outside the context lock to avoid this reversal.
 
-> This is the io_getevents equivalent of ppoll/pselect and allows to
-> properly mix signals and aio completions (especially with IOCB_CMD_POLL)
-> and atomically executes the following sequence:
->
-> 	sigset_t origmask;
->
-> 	pthread_sigmask(SIG_SETMASK, &sigmask, &origmask);
-> 	ret = io_getevents(ctx, min_nr, nr, events, timeout);
-> 	pthread_sigmask(SIG_SETMASK, &origmask, NULL);
->
-> Note that unlike many other signal related calls we do not pass a sigmask
-> size, as that would get us to 7 arguments, which aren't easily supported
-> by the syscall infrastructure.  It seems a lot less painful to just add a
-> new syscall variant in the unlikely case we're going to increase the
-> sigset size.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-I acked this in the last set, so...
-
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Jeff Moyer <jmoyer@redhat.com>
+---
+ fs/aio.c | 49 ++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
-> ---
->  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
->  fs/aio.c                               | 114 ++++++++++++++++++++++++++++++---
->  include/linux/compat.h                 |   7 ++
->  include/linux/syscalls.h               |   6 ++
->  include/uapi/asm-generic/unistd.h      |   4 +-
->  include/uapi/linux/aio_abi.h           |   6 ++
->  kernel/sys_ni.c                        |   2 +
->  8 files changed, 130 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 448ac2161112..5997c3e9ac3e 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -391,3 +391,4 @@
->  382	i386	pkey_free		sys_pkey_free
->  383	i386	statx			sys_statx
->  384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
-> +385	i386	io_pgetevents		sys_io_pgetevents		compat_sys_io_pgetevents
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index 5aef183e2f85..e995cd2b4e65 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -339,6 +339,7 @@
->  330	common	pkey_alloc		sys_pkey_alloc
->  331	common	pkey_free		sys_pkey_free
->  332	common	statx			sys_statx
-> +333	common	io_pgetevents		sys_io_pgetevents
->  
->  #
->  # x32-specific system call numbers start at 512 to avoid cache impact
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 9d7d6e4cde87..da87cbf7c67a 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1291,10 +1291,6 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
->  		wait_event_interruptible_hrtimeout(ctx->wait,
->  				aio_read_events(ctx, min_nr, nr, event, &ret),
->  				until);
-> -
-> -	if (!ret && signal_pending(current))
-> -		ret = -EINTR;
-> -
->  	return ret;
->  }
->  
-> @@ -1874,13 +1870,60 @@ SYSCALL_DEFINE5(io_getevents, aio_context_t, ctx_id,
->  		struct timespec __user *, timeout)
->  {
->  	struct timespec64	ts;
-> +	int			ret;
-> +
-> +	if (timeout && unlikely(get_timespec64(&ts, timeout)))
-> +		return -EFAULT;
-> +
-> +	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> +	if (!ret && signal_pending(current))
-> +		ret = -EINTR;
-> +	return ret;
-> +}
-> +
-> +SYSCALL_DEFINE6(io_pgetevents,
-> +		aio_context_t, ctx_id,
-> +		long, min_nr,
-> +		long, nr,
-> +		struct io_event __user *, events,
-> +		struct timespec __user *, timeout,
-> +		const struct __aio_sigset __user *, usig)
-> +{
-> +	struct __aio_sigset	ksig = { NULL, };
-> +	sigset_t		ksigmask, sigsaved;
-> +	struct timespec64	ts;
-> +	int ret;
-> +
-> +	if (timeout && unlikely(get_timespec64(&ts, timeout)))
-> +		return -EFAULT;
->  
-> -	if (timeout) {
-> -		if (unlikely(get_timespec64(&ts, timeout)))
-> +	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
-> +		return -EFAULT;
-> +
-> +	if (ksig.sigmask) {
-> +		if (ksig.sigsetsize != sizeof(sigset_t))
-> +			return -EINVAL;
-> +		if (copy_from_user(&ksigmask, ksig.sigmask, sizeof(ksigmask)))
->  			return -EFAULT;
-> +		sigdelsetmask(&ksigmask, sigmask(SIGKILL) | sigmask(SIGSTOP));
-> +		sigprocmask(SIG_SETMASK, &ksigmask, &sigsaved);
-> +	}
-> +
-> +	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> +	if (signal_pending(current)) {
-> +		if (ksig.sigmask) {
-> +			current->saved_sigmask = sigsaved;
-> +			set_restore_sigmask();
-> +		}
-> +
-> +		if (!ret)
-> +			ret = -ERESTARTNOHAND;
-> +	} else {
-> +		if (ksig.sigmask)
-> +			sigprocmask(SIG_SETMASK, &sigsaved, NULL);
->  	}
->  
-> -	return do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> +	return ret;
->  }
->  
->  #ifdef CONFIG_COMPAT
-> @@ -1891,13 +1934,64 @@ COMPAT_SYSCALL_DEFINE5(io_getevents, compat_aio_context_t, ctx_id,
->  		       struct compat_timespec __user *, timeout)
->  {
->  	struct timespec64 t;
-> +	int ret;
-> +
-> +	if (timeout && compat_get_timespec64(&t, timeout))
-> +		return -EFAULT;
-> +
-> +	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
-> +	if (!ret && signal_pending(current))
-> +		ret = -EINTR;
-> +	return ret;
-> +}
-> +
-> +
-> +struct __compat_aio_sigset {
-> +	compat_sigset_t __user	*sigmask;
-> +	compat_size_t		sigsetsize;
-> +};
-> +
-> +COMPAT_SYSCALL_DEFINE6(io_pgetevents,
-> +		compat_aio_context_t, ctx_id,
-> +		compat_long_t, min_nr,
-> +		compat_long_t, nr,
-> +		struct io_event __user *, events,
-> +		struct compat_timespec __user *, timeout,
-> +		const struct __compat_aio_sigset __user *, usig)
-> +{
-> +	struct __compat_aio_sigset ksig = { NULL, };
-> +	sigset_t ksigmask, sigsaved;
-> +	struct timespec64 t;
-> +	int ret;
-> +
-> +	if (timeout && compat_get_timespec64(&t, timeout))
-> +		return -EFAULT;
->  
-> -	if (timeout) {
-> -		if (compat_get_timespec64(&t, timeout))
-> +	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
-> +		return -EFAULT;
-> +
-> +	if (ksig.sigmask) {
-> +		if (ksig.sigsetsize != sizeof(compat_sigset_t))
-> +			return -EINVAL;
-> +		if (get_compat_sigset(&ksigmask, ksig.sigmask))
->  			return -EFAULT;
-> +		sigdelsetmask(&ksigmask, sigmask(SIGKILL) | sigmask(SIGSTOP));
-> +		sigprocmask(SIG_SETMASK, &ksigmask, &sigsaved);
-> +	}
->  
-> +	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
-> +	if (signal_pending(current)) {
-> +		if (ksig.sigmask) {
-> +			current->saved_sigmask = sigsaved;
-> +			set_restore_sigmask();
-> +		}
-> +		if (!ret)
-> +			ret = -ERESTARTNOHAND;
-> +	} else {
-> +		if (ksig.sigmask)
-> +			sigprocmask(SIG_SETMASK, &sigsaved, NULL);
->  	}
->  
-> -	return do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
-> +	return ret;
->  }
->  #endif
-> diff --git a/include/linux/compat.h b/include/linux/compat.h
-> index 8a9643857c4a..bfb8a94fbabd 100644
-> --- a/include/linux/compat.h
-> +++ b/include/linux/compat.h
-> @@ -303,6 +303,7 @@ extern int put_compat_rusage(const struct rusage *,
->  			     struct compat_rusage __user *);
->  
->  struct compat_siginfo;
-> +struct __compat_aio_sigset;
->  
->  extern asmlinkage long compat_sys_waitid(int, compat_pid_t,
->  		struct compat_siginfo __user *, int,
-> @@ -634,6 +635,12 @@ asmlinkage long compat_sys_io_getevents(compat_aio_context_t ctx_id,
->  					compat_long_t nr,
->  					struct io_event __user *events,
->  					struct compat_timespec __user *timeout);
-> +asmlinkage long compat_sys_io_pgetevents(compat_aio_context_t ctx_id,
-> +					compat_long_t min_nr,
-> +					compat_long_t nr,
-> +					struct io_event __user *events,
-> +					struct compat_timespec __user *timeout,
-> +					const struct __compat_aio_sigset __user *usig);
->  asmlinkage long compat_sys_io_submit(compat_aio_context_t ctx_id, int nr,
->  				     u32 __user *iocb);
->  asmlinkage long compat_sys_mount(const char __user *dev_name,
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index a78186d826d7..8515ec53c81b 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -539,6 +539,12 @@ asmlinkage long sys_io_getevents(aio_context_t ctx_id,
->  				long nr,
->  				struct io_event __user *events,
->  				struct timespec __user *timeout);
-> +asmlinkage long sys_io_pgetevents(aio_context_t ctx_id,
-> +				long min_nr,
-> +				long nr,
-> +				struct io_event __user *events,
-> +				struct timespec __user *timeout,
-> +				const struct __aio_sigset *sig);
->  asmlinkage long sys_io_submit(aio_context_t, long,
->  				struct iocb __user * __user *);
->  asmlinkage long sys_io_cancel(aio_context_t ctx_id, struct iocb __user *iocb,
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 8b87de067bc7..ce2ebbeece10 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -732,9 +732,11 @@ __SYSCALL(__NR_pkey_alloc,    sys_pkey_alloc)
->  __SYSCALL(__NR_pkey_free,     sys_pkey_free)
->  #define __NR_statx 291
->  __SYSCALL(__NR_statx,     sys_statx)
-> +#define __NR_io_pgetevents 292
-> +__SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
->  
->  #undef __NR_syscalls
-> -#define __NR_syscalls 292
-> +#define __NR_syscalls 293
->  
->  /*
->   * All syscalls below here should go away really,
-> diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
-> index a04adbc70ddf..2c0a3415beee 100644
-> --- a/include/uapi/linux/aio_abi.h
-> +++ b/include/uapi/linux/aio_abi.h
-> @@ -29,6 +29,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/fs.h>
-> +#include <linux/signal.h>
->  #include <asm/byteorder.h>
->  
->  typedef __kernel_ulong_t aio_context_t;
-> @@ -108,5 +109,10 @@ struct iocb {
->  #undef IFBIG
->  #undef IFLITTLE
->  
-> +struct __aio_sigset {
-> +	sigset_t __user	*sigmask;
-> +	size_t		sigsetsize;
-> +};
-> +
->  #endif /* __LINUX__AIO_ABI_H */
->  
-> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> index b5189762d275..8f7705559b38 100644
-> --- a/kernel/sys_ni.c
-> +++ b/kernel/sys_ni.c
-> @@ -151,9 +151,11 @@ cond_syscall(sys_io_destroy);
->  cond_syscall(sys_io_submit);
->  cond_syscall(sys_io_cancel);
->  cond_syscall(sys_io_getevents);
-> +cond_syscall(sys_io_pgetevents);
->  cond_syscall(compat_sys_io_setup);
->  cond_syscall(compat_sys_io_submit);
->  cond_syscall(compat_sys_io_getevents);
-> +cond_syscall(compat_sys_io_pgetevents);
->  cond_syscall(sys_sysfs);
->  cond_syscall(sys_syslog);
->  cond_syscall(sys_process_vm_readv);
+diff --git a/fs/aio.c b/fs/aio.c
+index 0b6394b4e528..9d7d6e4cde87 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -170,6 +170,10 @@ struct aio_kiocb {
+ 	struct list_head	ki_list;	/* the aio core uses this
+ 						 * for cancellation */
+ 
++	unsigned int		flags;		/* protected by ctx->ctx_lock */
++#define AIO_IOCB_DELAYED_CANCEL	(1 << 0)
++#define AIO_IOCB_CANCELLED	(1 << 1)
++
+ 	/*
+ 	 * If the aio_resfd field of the userspace iocb is not zero,
+ 	 * this is the underlying eventfd context to deliver events to.
+@@ -536,9 +540,9 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ #define AIO_EVENTS_FIRST_PAGE	((PAGE_SIZE - sizeof(struct aio_ring)) / sizeof(struct io_event))
+ #define AIO_EVENTS_OFFSET	(AIO_EVENTS_PER_PAGE - AIO_EVENTS_FIRST_PAGE)
+ 
+-void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
++static void __kiocb_set_cancel_fn(struct aio_kiocb *req,
++		kiocb_cancel_fn *cancel, unsigned int iocb_flags)
+ {
+-	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
+ 	struct kioctx *ctx = req->ki_ctx;
+ 	unsigned long flags;
+ 
+@@ -548,8 +552,15 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+ 	spin_lock_irqsave(&ctx->ctx_lock, flags);
+ 	list_add_tail(&req->ki_list, &ctx->active_reqs);
+ 	req->ki_cancel = cancel;
++	req->flags |= iocb_flags;
+ 	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+ }
++
++void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
++{
++	return __kiocb_set_cancel_fn(container_of(iocb, struct aio_kiocb, rw),
++			cancel, 0);
++}
+ EXPORT_SYMBOL(kiocb_set_cancel_fn);
+ 
+ /*
+@@ -603,17 +614,27 @@ static void free_ioctx_users(struct percpu_ref *ref)
+ {
+ 	struct kioctx *ctx = container_of(ref, struct kioctx, users);
+ 	struct aio_kiocb *req;
++	LIST_HEAD(list);
+ 
+ 	spin_lock_irq(&ctx->ctx_lock);
+-
+ 	while (!list_empty(&ctx->active_reqs)) {
+ 		req = list_first_entry(&ctx->active_reqs,
+ 				       struct aio_kiocb, ki_list);
+-		kiocb_cancel(req);
+-	}
+ 
++		if (req->flags & AIO_IOCB_DELAYED_CANCEL) {
++			req->flags |= AIO_IOCB_CANCELLED;
++			list_move_tail(&req->ki_list, &list);
++		} else {
++			kiocb_cancel(req);
++		}
++	}
+ 	spin_unlock_irq(&ctx->ctx_lock);
+ 
++	while (!list_empty(&list)) {
++		req = list_first_entry(&list, struct aio_kiocb, ki_list);
++		kiocb_cancel(req);
++	}
++
+ 	percpu_ref_kill(&ctx->reqs);
+ 	percpu_ref_put(&ctx->reqs);
+ }
+@@ -1785,15 +1806,22 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 	if (unlikely(!ctx))
+ 		return -EINVAL;
+ 
+-	spin_lock_irq(&ctx->ctx_lock);
++	ret = -EINVAL;
+ 
++	spin_lock_irq(&ctx->ctx_lock);
+ 	kiocb = lookup_kiocb(ctx, iocb, key);
++	if (kiocb) {
++		if (kiocb->flags & AIO_IOCB_DELAYED_CANCEL) {
++			kiocb->flags |= AIO_IOCB_CANCELLED;
++		} else {
++			ret = kiocb_cancel(kiocb);
++			kiocb = NULL;
++		}
++	}
++	spin_unlock_irq(&ctx->ctx_lock);
++
+ 	if (kiocb)
+ 		ret = kiocb_cancel(kiocb);
+-	else
+-		ret = -EINVAL;
+-
+-	spin_unlock_irq(&ctx->ctx_lock);
+ 
+ 	if (!ret) {
+ 		/*
+@@ -1805,7 +1833,6 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
+ 	}
+ 
+ 	percpu_ref_put(&ctx->users);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.14.2
+
