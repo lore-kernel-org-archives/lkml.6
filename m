@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932812AbeCEX3n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 18:29:43 -0500
+        id S932720AbeCEX3l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 18:29:41 -0500
 Received: from mga02.intel.com ([134.134.136.20]:47760 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932395AbeCEX3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932393AbeCEX3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 5 Mar 2018 18:29:39 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,429,1515484800";
-   d="scan'208";a="25443526"
+   d="scan'208";a="25443519"
 From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>, Lee@vger.kernel.org,
@@ -25,30 +25,84 @@ Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>, Lee@vger.kernel.org,
         Peter Zijlstra <peter.zijlstra@intel.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH V2 1/3] x86/efi: Call efi_delete_dummy_variable() during efi subsystem initialization
-Date: Mon,  5 Mar 2018 15:23:08 -0800
-Message-Id: <1520292190-5027-2-git-send-email-sai.praneeth.prakhya@intel.com>
+Subject: [PATCH V2 0/3] Use efi_rts_workqueue to invoke EFI Runtime Services
+Date: Mon,  5 Mar 2018 15:23:07 -0800
+Message-Id: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-Invoking efi_runtime_services() through efi_workqueue means all accesses
-to efi_runtime_services() should be done after efi_rts_wq has been
-created. efi_delete_dummy_variable() calls set_variable(), hence
-efi_delete_dummy_variable() should be called after efi_rts_wq has been
-created.
+This patch set is an outcome of the discussion at
+https://lkml.org/lkml/2017/8/21/607
 
-efi_delete_dummy_variable() is called from efi_enter_virtual_mode()
-which is early in the boot phase (efi_rts_wq isn't created yet), so call
-efi_delete_dummy_variable() later in the boot phase i.e. while
-initializing efi subsystem. In the next patch, this is the place where
-we create efi_rts_wq and all the efi_runtime_services() will be called
-using efi_rts_wq.
+Presently, efi_runtime_services() are executed by firmware in process
+context. To execute efi_runtime_service(), kernel switches the page
+directory from swapper_pgd to efi_pgd. However, efi_pgd doesn't have any
+user space mappings. A potential issue could be, for instance, an NMI
+interrupt (like perf) trying to profile some user data while in efi_pgd.
+
+A solution for this issue could be to use kthread to run
+efi_runtime_service(). When a user/kernel thread requests to execute
+efi_runtime_service(), kernel off-loads this work to kthread which in
+turn uses efi_pgd. Anything that tries to touch user space addresses
+while in kthread is terminally broken. This patch set adds support to
+the efi subsystem to handle all calls to efi_runtime_services() using a
+work queue (which in turn uses kthread).
+
+Implementation summary:
+-----------------------
+1. When a user/kernel thread requests to execute efi_runtime_service(),
+enqueue work to a work queue, efi_rts_workqueue.
+2. The caller thread waits until the work is finished because it's
+dependent on the return status of efi_runtime_service() and, in specific
+cases, the arguments populated by efi_runtime_service(). Some
+efi_runtime_services() takes a pointer to buffer as an argument and
+fills up the buffer with requested data. For instance, efi_get_variable()
+and efi_get_next_variable(). Hence, the caller process cannot just post
+the work and get going, it has to wait for results from firmware.
+
+Caveat: efi_rts_workqueue to run efi_runtime_services() shouldn't be used
+while in atomic, because caller thread might sleep. Presently, pstore
+code doesn't use efi_rts_workqueue.
+
+Tested using LUV (Linux UEFI Validation) for x86_64 and x86_32. Builds
+fine for arm and arm64. Will appreciate the effort if someone could test
+the patches on real ARM/ARM64 machines.
+LUV: https://01.org/linux-uefi-validation
+
+Thanks to Ricardo and Dan for initial reviews and suggestions. Please
+feel free to pour in your comments and concerns.
+Note: Patches are based on Linus's kernel v4.16-rc4
+
+Changes from V1 to V2:
+----------------------
+1. Remove unnecessary include of asm/efi.h file - Fixes build error on
+ia64, reported by 0-day
+2. Use enum to identify efi_runtime_services()
+3. Use alloc_ordered_workqueue() to create efi_rts_wq as
+create_workqueue() is scheduled for depreciation.
+4. Make efi_call_rts() static, as it has no callers outside
+runtime-wrappers.c
+5. Use BUG(), when we are unable to queue work or unable to identify
+requested efi_runtime_service() - Because these two situations should
+*never* happen.
+
+Sai Praneeth (3):
+  x86/efi: Call efi_delete_dummy_variable() during efi subsystem    
+    initialization
+  efi: Introduce efi_rts_workqueue and some infrastructure to invoke all
+        efi_runtime_services()
+  efi: Use efi_rts_workqueue to invoke EFI Runtime Services
+
+ arch/x86/include/asm/efi.h              |   1 -
+ arch/x86/platform/efi/efi.c             |   6 -
+ drivers/firmware/efi/efi.c              |  21 +++
+ drivers/firmware/efi/runtime-wrappers.c | 229 +++++++++++++++++++++++++++++---
+ include/linux/efi.h                     |  23 ++++
+ 5 files changed, 253 insertions(+), 27 deletions(-)
 
 Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Suggested-by: Andy Lutomirski <luto@kernel.org>
@@ -65,86 +119,6 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Peter Zijlstra <peter.zijlstra@intel.com>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/include/asm/efi.h  | 1 -
- arch/x86/platform/efi/efi.c | 6 ------
- drivers/firmware/efi/efi.c  | 6 ++++++
- include/linux/efi.h         | 3 +++
- 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index a399c1ebf6f0..43009e3f821b 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -143,7 +143,6 @@ extern void __init efi_runtime_update_mappings(void);
- extern void __init efi_dump_pagetable(void);
- extern void __init efi_apply_memmap_quirks(void);
- extern int __init efi_reuse_config(u64 tables, int nr_tables);
--extern void efi_delete_dummy_variable(void);
- 
- struct efi_setup_data {
- 	u64 fw_vendor;
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index 9061babfbc83..a3169d14583f 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
- 
- 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
- 		runtime_code_page_mkexec();
--
--	/* clean DUMMY object */
--	efi_delete_dummy_variable();
- #endif
- }
- 
-@@ -1015,9 +1012,6 @@ static void __init __efi_enter_virtual_mode(void)
- 	 * necessary relocation fixups for the new virtual addresses.
- 	 */
- 	efi_runtime_update_mappings();
--
--	/* clean DUMMY object */
--	efi_delete_dummy_variable();
- }
- 
- void __init efi_enter_virtual_mode(void)
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index cd42f66a7c85..838b8efe639c 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -328,6 +328,12 @@ static int __init efisubsys_init(void)
- 	if (!efi_enabled(EFI_BOOT))
- 		return 0;
- 
-+	/*
-+	 * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
-+	 * it should be invoked only after efi_rts_workqueue is ready.
-+	 */
-+	efi_delete_dummy_variable();
-+
- 	/* We register the efi directory at /sys/firmware/efi */
- 	efi_kobj = kobject_create_and_add("efi", firmware_kobj);
- 	if (!efi_kobj) {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index f5083aa72eae..c4efb3ef0dfa 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -992,6 +992,7 @@ extern efi_status_t efi_query_variable_store(u32 attributes,
- 					     unsigned long size,
- 					     bool nonblocking);
- extern void efi_find_mirror(void);
-+extern void efi_delete_dummy_variable(void);
- #else
- static inline void efi_late_init(void) {}
- static inline void efi_free_boot_services(void) {}
-@@ -1002,6 +1003,8 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
- {
- 	return EFI_SUCCESS;
- }
-+
-+static inline void efi_delete_dummy_variable(void) {}
- #endif
- extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
- 
 -- 
 2.7.4
