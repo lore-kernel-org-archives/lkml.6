@@ -1,120 +1,87 @@
-Return-Path: <kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuEd5VH1K83tXfgRVfdYokkSSQWZd5BYyaIDEFmnqorXXBsEfXFAJJaoVIoy0e/OtZFPBCx
-ARC-Seal: i=1; a=rsa-sha256; t=1520277359; cv=none;
+Return-Path: <b-liu@ti.com>
+X-Google-Smtp-Source: AG47ELsMCQ8YpVyskdwtUQRN6vv6v9E9utKjAHftyi6liKJEVaQOOizYoohgRWH/t7Oa7/FCaclT
+ARC-Seal: i=1; a=rsa-sha256; t=1520271487; cv=none;
         d=google.com; s=arc-20160816;
-        b=kDdIUJXr58ul7Y1qH/3phoKebEbOTzZG36GqqcSDUIWTKYqlafgqhZo87fWesehu+h
-         I4tX33bXIbLb7kHLnZbBuxEd8IAtXTF08RMIIyCeaDy8iuL8H5PhD07dUKxhkp2rNBFo
-         pmelEyV81FxSGWuTEqLbkmaOHN1174TP1s+eqOBrfVp4hoKjOrBI/kSjfKtB3L8a/kRV
-         ccbrTt6Za6OK1bvG+5NgBXv5iAy2N5ufDnkLLUdAPe/jGextznWUMPugrzsJY6gVIhAW
-         Q9ONMXprwTFkEUGzUZhL6FNd/2tm2QymdHKBUFUcP1tD5hscVW5nc2q9cvt3OkC3ZrEm
-         icTQ==
+        b=WcqVAHA++F93xCNGWsbeb7X6s6/kEPZkaduTkXCJgXV5LSYbGf74DfdEkg4f4+aOef
+         NZkVEh0iK6moIPObGHgcDBXtIOEq2U/dXaqNIbSa2Fr/zhYKEhPTp+GGdH6WCM1hmxEO
+         WndVqU1xAEgpBN9NfnHGife/ooiAeX5WqTWGXe5CEapcuJSJih52zvFfPOiswP6UX9KP
+         m9iqhacQDPwG0C0PsPjmmHAmXe07wp2wIedkrUOJy4/ek0h7SNsXg8WUYh3fuxWaUp5i
+         cAeEuE7DmCbOUV3q8+AxtR1bZ2J71Umg1hk9L7cXGYVmI03C8yyt67F1BxJ/CeJOcEdY
+         5maA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=f7IgiULnIYeZ6kEsjRk+2hgR8EmZep/65W9g0gbSj4w=;
-        b=SsjgdebBR6+/c4MC2fb1wzj5iWrLjg4H1QQI6UsK3wzgzlkh/OFYfr7IWgRRhWAAYq
-         AHwfKm11cXvJypDZKoSClHI3Pp5rWKCNriNscMcNgandOBWjc8T5Am53Bvh+/Sw3VdCB
-         dfQi44UVGWBQ87NqwcoiqZ6yF40ZJVKCJ9m+yqm6V4bBDOXBcNd0u1ME7n+fsT8IEmUu
-         QaEiSISQRVsPpMTGLnoBlP03H2vLyhzWt7aNW86cEIGNiMjnpBzRY/DBkBCykAZQWZxe
-         gWdPVFhQY3x5y/24Wyvog//ijMceFGJw5YUlIDEX0d/nUNcGbphIdy379Ew/qNhVNXlZ
-         SbFA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=uUabfIFfkH4wnwH7YyZKZfisqm8gtOK2yBLqVaQT4P4=;
+        b=NtPTdntw/lKz8DC/1b53UrGVylq5U12G8E6HEPDDS0gJFbOSY+DxASgjAnV8SXv/rY
+         rfqrUHuO14OXZ3P/7xaIlB9mlSwjWv5ILZtcU3Vw6QyVjUGY5fFI1Nyu+P6xNZFHXzlx
+         tovQ7z40MWmSX0j6VuIoWRkAB5bat0197DpSH8IalbW80O2VRvrZTaPAMoSrIj5TBMS5
+         m5BiZzo8kEi/X0PN/4+83iqIVO7Ea3JEQu0wPsl11qi6GILoIELjNGHSv7hfXbG2JDKv
+         1uji52+rzOTwyNDKxhj6v2kJSyBNX4qnWyHAJ17WXy4URpOAMy2NzedLSI/uGXnqlB9X
+         p0UQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=HHUkD6/U;
-       dkim=pass header.i=@chromium.org header.s=google header.b=d1OMBbQg;
-       spf=pass (google.com: domain of kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=qCNDnEzI;
+       spf=pass (google.com: domain of b-liu@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=b-liu@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=HHUkD6/U;
-       dkim=pass header.i=@chromium.org header.s=google header.b=d1OMBbQg;
-       spf=pass (google.com: domain of kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12109-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=qCNDnEzI;
+       spf=pass (google.com: domain of b-liu@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=b-liu@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+Date: Mon, 5 Mar 2018 11:38:02 -0600
+From: Bin Liu <b-liu@ti.com>
+To: Tony Lindgren <tony@atomide.com>
+CC: Merlijn Wajer <merlijn@wizzup.org>, <linux-omap@vger.kernel.org>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] usb: musb: call pm_runtime_{get,put}_sync before
+ reading vbus registers
+Message-ID: <20180305173802.GB14921@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>, Tony Lindgren <tony@atomide.com>,
+	Merlijn Wajer <merlijn@wizzup.org>, linux-omap@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180227222740.2150-1-merlijn@wizzup.org>
+ <20180227222740.2150-2-merlijn@wizzup.org>
+ <20180228215943.GI5448@atomide.com>
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
-References: <CAGXu5jLc_A1w4FM8FvQHGSPjLfOu80L_vbt_FkcE6+Bh_XMjxw@mail.gmail.com>
- <6be06ce5-87e6-0d9d-55b9-6c70c3578ecf@maciej.szmigiero.name>
- <CA+55aFz-AD8rWb66rjN-YhAtPXukMiGSFfW3nBMCp8k1RYUvOQ@mail.gmail.com> <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 5 Mar 2018 11:15:35 -0800
-X-Google-Sender-Auth: 95GxM90fk6sDNH7e8HQPESv9RTY
-Message-ID: <CAGXu5jJo+c4d+=57rFiHaFrOHxDHVSZzMhWSMqNQe+tcw0-4zQ@mail.gmail.com>
-Subject: Re: RANDSTRUCT structs need linux/compiler_types.h (Was: [nfsd4]
- potentially hardware breaking regression in 4.14-rc and 4.13.11)
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>, Patrick McLean <chutzpah@gentoo.org>,
-	Emese Revfy <re.emese@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Bruce Fields <bfields@redhat.com>, "Darrick J. Wong" <darrick.wong@oracle.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Thorsten Leemhuis <regressions@leemhuis.info>,
-	"kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180228215943.GI5448@atomide.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593052828374787895?=
-X-GMAIL-MSGID: =?utf-8?q?1594126352313945662?=
+X-GMAIL-THRID: =?utf-8?q?1593594893909061681?=
+X-GMAIL-MSGID: =?utf-8?q?1594120195048172768?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 1:27 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Sorry for chiming in late.
->
-> I noticed this thread today,
-> honestly, the commit made me upset.
->
->
-> Can I suggest another way to make it less fragile?
-> __attribute((...)) can be placed after 'struct'.
->
->
-> So, we can write:
->
->
-> struct __randomize_layout path {
->         struct vfsmount *mnt;
->         struct dentry *dentry;
-> };
->
->
->   instead of
->
->
-> struct path {
->         struct vfsmount *mnt;
->         struct dentry *dentry;
-> } __randomize_layout;
+On Wed, Feb 28, 2018 at 01:59:43PM -0800, Tony Lindgren wrote:
+> * Merlijn Wajer <merlijn@wizzup.org> [180227 22:29]:
+> > Without pm_runtime_{get,put}_sync calls in place, reading
+> > vbus status via /sys causes the following error:
+> > 
+> > Unhandled fault: external abort on non-linefetch (0x1028) at 0xfa0ab060
+> > pgd = b333e822
+> > [fa0ab060] *pgd=48011452(bad)
+> > 
+> > [<c05261b0>] (musb_default_readb) from [<c0525bd0>] (musb_vbus_show+0x58/0xe4)
+> > [<c0525bd0>] (musb_vbus_show) from [<c04c0148>] (dev_attr_show+0x20/0x44)
+> > [<c04c0148>] (dev_attr_show) from [<c0259f74>] (sysfs_kf_seq_show+0x80/0xdc)
+> > [<c0259f74>] (sysfs_kf_seq_show) from [<c0210bac>] (seq_read+0x250/0x448)
+> > [<c0210bac>] (seq_read) from [<c01edb40>] (__vfs_read+0x1c/0x118)
+> > [<c01edb40>] (__vfs_read) from [<c01edccc>] (vfs_read+0x90/0x144)
+> > [<c01edccc>] (vfs_read) from [<c01ee1d0>] (SyS_read+0x3c/0x74)
+> > [<c01ee1d0>] (SyS_read) from [<c0106fe0>] (ret_fast_syscall+0x0/0x54)
+> > 
+> > Solution was suggested by Tony Lindgren <tony@atomide.com>.
+> > 
+> > Signed-off-by: Merlijn Wajer <merlijn@wizzup.org>
+> 
+> Thanks for fixing this. Assuming it passes Bin's tests:
+> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-Ugh. I had tried this after the struct _name_, not after "struct"
-itself. This does fix it, though it remains fragile, as you mention.
+Applied and sent out. Thanks.
 
-> If we force the former notation,
-> the undefined __randomize_layout results in a build error
-> instead of silent broken code generation.
->
->
-> It is true somebody can still place
-> __randomize_layout after the closing brace,
-> but can we check this by coccicheck or checkpatch.pl?
-> (we can describe it in coding style documentation, of course)
->
->
-> IMHO, we should not (ab)use include/linux/kconfig.h
-> to bring in misc things.
-
-I'm happy to send a patch that reverts the other changes and relocates
-all the markings...
-
-Linus, how would you like this to go?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+-Bin.
