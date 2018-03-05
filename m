@@ -1,77 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934554AbeCEMNq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:13:46 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55605 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933518AbeCEMNn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:13:43 -0500
-X-Google-Smtp-Source: AG47ELuOQ++onHGDMVYhILj+YhZL99YYom6sRHc9/pJYSNGKew2NsTnblk5Kmq4BC3jPb4ER/0K1vnfN6l0G1Gz5F8k=
+        id S934565AbeCEMOv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:14:51 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58094 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932817AbeCEMOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 07:14:50 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
+   d="scan'208";a="25268665"
+Date: Mon, 5 Mar 2018 14:14:45 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Sahil Rihan <srihan@fb.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@fb.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Subject: Re: [Regression] TPM char device not created if TPM 1.2 is disabled,
+ but visible
+Message-ID: <20180305121445.GA3138@linux.intel.com>
+References: <875E6A7D-483D-4A8F-9382-6B3970598866@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <1520242120-2924-1-git-send-email-harish_kandiga@mentor.com>
-References: <1520242120-2924-1-git-send-email-harish_kandiga@mentor.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 5 Mar 2018 13:13:41 +0100
-Message-ID: <CAPDyKFqL0tE3fdODbpo5Ci1_e=RbOfxZkTXKQ4XWo4FKHzwMiw@mail.gmail.com>
-Subject: Re: [PATCH v3] mmc: Export host capabilities to debugfs.
-To: Harish Jenny K N <harish_kandiga@mentor.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875E6A7D-483D-4A8F-9382-6B3970598866@fb.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 March 2018 at 10:28, Harish Jenny K N <harish_kandiga@mentor.com> wrote:
-> From: Abbas Raza <Abbas_Raza@mentor.com>
->
-> This patch exports the host capabilities to debugfs
->
-> Signed-off-by: Abbas Raza <Abbas_Raza@mentor.com>
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
-> ---
->
-> Changes in v3:
-> - Removed typecasting of &host->caps to (u32 *)
->
-> Changes in v2:
-> - Changed Author
->
->  drivers/mmc/core/debugfs.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-> index c51e0c0..570c9e4 100644
-> --- a/drivers/mmc/core/debugfs.c
-> +++ b/drivers/mmc/core/debugfs.c
-> @@ -289,6 +289,9 @@ void mmc_add_card_debugfs(struct mmc_card *card)
->
->         card->debugfs_root = root;
->
-> +       if (!debugfs_create_x32("host_caps", S_IRUSR, root, &host->caps))
-> +               goto err;
-> +
+On Sat, Mar 03, 2018 at 09:27:36PM +0000, Sahil Rihan wrote:
+> (Please CC me on replies - I'm not subscribed to LMKL)
+> 
+> Prior to  0cf577a03f21 if a TPM 1.2 device was disabled, but visible (sysfs node "enabled" returns 0), creation of the TPM char device was only skipped if  tpm_bios_log_setup returned -ENODEV. 
+> 
+> On some systems like HP DL380 G9, if the TPM is disabled but visible, the TCPA log is empty, which means tpm_read_log_acpi returns -EIO.  Starting with 0cf577a03f21, -EIO triggers an early return from tpm_chip_register which means the char device is not created.
+> 
+> Log snippet:
+> [    4.320387] tpm_tis 00:00: 1.2 TPM (device-id 0xB, rev-id 16)
+> [    4.455389] tpm tpm0: A TPM error (7) occurred attempting to read a pcr value
+> [    4.457762] tpm tpm0: TPM is disabled/deactivated (0x7)
+> [    4.459461] tpm tpm0: tpm_read_log_acpi: TCPA log area empty    <----------------------
+> [    4.461312] tpm_tis: probe of 00:00 failed with error -5
+> 
+> Thanks,
+> Sahil
 
-This isn't the correct place to created the node(s). Please move this
-to mmc_add_host_debugfs().
+Thanks for the bug report, I appreciate it!
 
-Moreover, I suggest you export both caps and caps2 in the same change,
-there is no need to have two changes for that - and finally name the
-nodes to "caps" and "caps2".
+Personally I think we should keep the warning if the log area is empt
+but tpm_read_log_acpi() should return -ENODEV in this case.
 
->         if (!debugfs_create_x32("state", S_IRUSR, root, &card->state))
->                 goto err;
->
-> --
-> 1.9.1
->
-
-Kind regards
-Uffe
+/Jarkko
