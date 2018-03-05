@@ -1,102 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753229AbeCEVVo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 16:21:44 -0500
-Received: from mga07.intel.com ([134.134.136.100]:25212 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753200AbeCEVVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:21:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="34824974"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/6] tpm: sort objects in the Makefile
-Thread-Topic: [PATCH 1/6] tpm: sort objects in the Makefile
-Thread-Index: AQHTtL/mlVjzMedYs0WW/43w+BjdGqPCAjMAgAAh0RA=
-Date: Mon, 5 Mar 2018 21:21:37 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E7F3@hasmsx108.ger.corp.intel.com>
-References: <20180305202017.24008-1-tomas.winkler@intel.com>
- <20180305202017.24008-2-tomas.winkler@intel.com>
- <20180305211206.GB9335@ziepe.ca>
-In-Reply-To: <20180305211206.GB9335@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjQwNGVlZmMtYzE1OC00MjhiLTg1MmQtYjlhNjgyYjE3ZTViIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI2Rys4Z1IrakY0VDlFTkk3cENxZEc2OTdjbDNNWDl0MjNmSStLTlFKM1hWS2s3M3BlK1JOdUxFUHRYZEFlb3FKIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.226]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753087AbeCEVad convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 16:30:33 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:53125 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932645AbeCEVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 16:30:28 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: kuninori.morimoto.gx@renesas.com, maxime.ripard@free-electrons.com,
+        wens@csie.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [BUG] Kernel crash on Allwinner H3 due to sound core changes
+Date: Mon, 05 Mar 2018 22:30:23 +0100
+Message-ID: <26212674.B0xcQEiVyd@jernej-laptop>
+In-Reply-To: <20180302124050.GF6255@sirena.org.uk>
+References: <2424862.oPtAVTfrB9@jernej-laptop> <63331816.68OamKINx1@jernej-laptop> <20180302124050.GF6255@sirena.org.uk>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Mon, Mar 05, 2018 at 10:20:12PM +0200, Tomas Winkler wrote:
-> > Make the tpm Makefile a bit more in order by putting objects in one
-> > column and group together tpm2 modules
-> >
-> > Prefer tpm-objs += instead of tpm-y += notation.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > drivers/char/tpm/Makefile | 14 +++++++++++---
-> >  1 file changed, 11 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> > index acd758381c58..2fc0e9a73cd6 100644
-> > +++ b/drivers/char/tpm/Makefile
-> > @@ -3,9 +3,17 @@
-> >  # Makefile for the kernel tpm device drivers.
-> >  #
-> >  obj-$(CONFIG_TCG_TPM) += tpm.o
-> > -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
-> > -	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o
-> \
-> > -         tpm2-space.o
-> > +tpm-objs := tpm-interface.o
-> > +tpm-objs += tpm-dev.o
-> > +tpm-objs += tpm-chip.o
-> > +tpm-objs += tpm-dev-common.o
-> > +tpm-objs += tpmrm-dev.o
-> > +tpm-objs += tpm-sysfs.o
-> > +tpm-objs += tpm1_eventlog.o
-> > +tpm-objs += tpm2-cmd.o
-> > +tpm-objs += tpm2-space.o
-> > +tpm-objs += tpm2_eventlog.o
+Hi,
+
+Dne petek, 02. marec 2018 ob 13:40:50 CET je Mark Brown napisal(a):
+> On Thu, Mar 01, 2018 at 11:23:57PM +0100, Jernej Škrabec wrote:
+> > I removed parts of the code from the sun4i codec driver and interestingly
+> > it doesn't crash if I remove following lines:
+> > 
+> > ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
+> > if (ret) {
+> > 
+> > 	dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
+> > 	goto err_assert_reset;
+> > 
+> > }
+> > 
+> > Is it possible that NULL pointer causes troubles somewhere down the line?
 > 
-> If you are going to do this then sort the list please
+> Shouldn't be, that's just the configuration which is optional and not
+> what we're crashing trying to register, we can mostly configure things
+> by querying the capabilities of the DMA controller via the dmaengine API
+> these days.  You're removing all the DMA support there so cutting out a
+> huge segment of the initialization of both this driver and the machine
+> driver.  Other sunxi devices seem to be starting happily in -next so
+> there's something system dependent here...
 
-I've sorted in that way that in the future will probably will compile tpm1- out, you probably mean to alphabetically. 
-> 
-> Seems weird to me though, there are not that many examples of this pattern
-> in the kernel.
+I enabled memory debugging and it seems that there is an issue caused by 
+loading sun4i-codec driver and it is somehow connected to 
+snd_dmaengine_pcm_unregister().
 
-#find -name Makefile  | xargs grep -e 'objs +=' | awk -F: '{print $1}' | uniq  | wc -l
-74
+Here is relevant dmesg: https://pastebin.com/raw/80K9GPnB
 
-Just a personal taste maybe. 
+Does this tell anything?
 
-> What is wrong with:
-> 
-> tpm-objs := \
-> 	 tpm-interface.o \
-> 	 tpm-dev.o \
-> 	 [..]
-> 
-For me it's less error prone without backslashes, but at the end it's just the same again just a personal test.
-
-Thanks
-Tomas
+Best regards,
+Jernej
