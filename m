@@ -1,133 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932188AbeCEQUK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:20:10 -0500
-Received: from mga09.intel.com ([134.134.136.24]:18219 "EHLO mga09.intel.com"
+        id S1752473AbeCEQXh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:23:37 -0500
+Received: from vern.gendns.com ([206.190.152.46]:59710 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751779AbeCEQUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:20:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="205630938"
-Subject: Re: [PATCH v1 0/3] perf: expose thread context switch out event type
- to user space
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dmitri Prokhorov <Dmitry.Prohorov@intel.com>
-References: <6db586f3-36da-285c-b008-f2722419fbf8@linux.intel.com>
- <20180305150610.GB22849@kernel.org>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <b0bb68a8-383e-47e9-b159-3fb5e0ec9bcd@linux.intel.com>
-Date: Mon, 5 Mar 2018 19:20:00 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751590AbeCEQXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:23:35 -0500
+Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <1519071723-31790-11-git-send-email-david@lechnology.com>
+ <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+ <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
+ <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
+ <6bbe9bf3-24c1-acd9-200d-513520d34558@lechnology.com>
+ <CAMRc=Mdhi=byn4gPY6tVxgGjn9cgvc3smUkjV=Ku9i3euaZZtQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <d1b91c10-fe11-452e-2c68-86e95fb58266@lechnology.com>
+Date: Mon, 5 Mar 2018 10:23:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180305150610.GB22849@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMRc=Mdhi=byn4gPY6tVxgGjn9cgvc3smUkjV=Ku9i3euaZZtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
-
-On 05.03.2018 18:06, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Mar 05, 2018 at 02:35:02PM +0300, Alexey Budankov escreveu:
+On 03/05/2018 07:02 AM, Bartosz Golaszewski wrote:
+> 2018-03-01 17:44 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 03/01/2018 02:36 AM, Bartosz Golaszewski wrote:
+>>>
+>>> 2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>
+>>>> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> I think I found the reason for the strange crashes we were
+>>>>> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
+>>>>> me in the right direction.
+>>>>>
+>>>>> The mdio driver fails to probe with v7 due to the supplied clock rate
+>>>>> being wrong. Before failing we register the emac clock with
+>>>>> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
+>>>>> reference count of the clock, but we never actually increased it in
+>>>>> the first place in the line above. The core clock code then destroys
+>>>>> the associated clk_core structure. When the next user comes around (in
+>>>>> our case the clk debug functions) the system crashes.
+>>>>>
+>>>>> I believe there to be two issues: one is with v7 - we need to increase
+>>>>> the clock reference count in davinci_psc_genpd_attach_dev().
+>>>>>
+>>>>> Second is the error path in the clock framework - we should remove the
+>>>>> destroyed clk_core from the debug list, which is not being done now.
+>>>>>
+>>>>> Why we even need to track the refcount of clk_core is a mistery for me
+>>>>> though. Stephen, Mike?
+>>>>>
+>>>>> Best regards,
+>>>>> Bartosz Golaszewski
+>>>>
+>>>>
+>>>>
+>>>> Great find. I figured it had to be something like this, but I wasn't
+>>>> able to reproduce the problem yet.
+>>>>
+>>>> I suppose it is time to spin up a v8 with some fixes.
+>>>
+>>>
+>>> I still don't know why the mdio clock rate is much lower than in
+>>> mainline though. Any ideas?
+>>>
+>>> Thanks,
+>>> Bart
+>>>
 >>
->> Here is a series of small patches that implement exposing type of 
->> context-switch-out event as a part of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+>> Now that you have fixed the crash, can you answer the questions I have
+>> asked earlier?
 >>
->> Introduced types of context-switch-out events assumed to be:
->> a) preempt: task->state == TASK_RUNNING
->> 	misc &= PERF_RECORD_MISC_SWITCH_OUT
->> 	
->> b) yield: !preempt - using new bit PERF_RECORD_MISC_SWITCH_OUT_YIELD:
->  	misc &= PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+>>> Can you post the output of this command so that I can see how your
 >>
->> Perf tool report and script commands output has been extended to decode 
->> new yield bit and the updated output looks like in the examples below.
+>> clocks are setup:
+>>
+>> cat /sys/kernel/debug/clk/clk_summary
+>>
+>>> Using your workaround, can you run:
+>>
+>>
+>> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+>>
+>> If you see:
+>>    1e27000.clock-controller: emac  off-0
+>>
+>> then genpd is not working like it is supposed to. You should see something
+>> like this for device that are working:
+>>            1e27000.clock-controller: uart2  on
+>>      /devices/platform/soc@1c00000/1d0d000.serial        active
 > 
-> I'm just waiting for the current reviewers to be satisfied with this,
-> but I think this is a great addition and 'perf trace' is another tool
-> that should jump into this, showing forced context switches together
-> with syscalls.
-
-It's great to know there is a value in that change for other Perf tools.
-
-Extending perf trace (strace inspired) tool in that respect might makes 
-sense. I anticipate possible tracing overhead needs to be expected and 
-probably handled somehow.
-
-But, anyway, yep, per-thread syscall traces enriched with typed context 
-switch boundaries may be the great extension, in comparison to the 
-original strace tool.
-
-IMHO, some simple summary metrics like amount of preempt or yield 
-context switches (per-thread or per-process) could bring even more 
-value into perf trace tool functionality.
-
-BR,
-Alexey
-
+> Hi David, Sekhar,
 > 
-> - Arnaldo
->  
->> The documentation has been updated to mention yield switch out events and its 
->> decoding symbols in perf script output.
->>
->> The changes have been manually tested on Fedora 27 with the patched kernel:
->> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
->>
->> perf report -D -i system-wide.perf: 
->>
->> 0x1b9c50 [0x30]: event: 15
->> .
->> . ... raw event: size 48 bytes
->> .  0000:  0f 00 00 00 00 20 30 00 01 1e 00 00 01 1e 00 00  ..... 0.........
->> .  0010:  00 00 00 00 00 00 00 00 85 ae d4 e3 3e 0e 00 00  ............>...
->> .  0020:  54 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  T...............
->>
->> 5 15663273127557 0x1b9c50 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:  7681/7681 
->>
->> 0x2646c0 [0x30]: event: 15
->> .
->> . ... raw event: size 48 bytes
->> .  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
->> .  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
->> .  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
->>
->> 7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
->>
->> perf script --show-switch-events -F +misc -I -i system-wide.perf:
->>
->> amplxe-perf  7681 [005] S     15663.273151: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:    39/39   
->> migration/5    39 [005]       15663.273152: PERF_RECORD_SWITCH_CPU_WIDE IN   prev pid/tid:  7681/7681 
->> amplxe-perf  7680 [007] K     15663.273153:          1                                                                                                                                       context-switch: 
->>                   aaa488 schedule ([kernel.kallsyms])
->>                   1a9f50 __poll_nocancel (inlined)
->>
->> amplxe-perf  7680 [007] Sy    15663.273156: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
->> migration/5    39 [005] K     15663.273157:
->>
->> ---
->>  Alexey Budankov (3):
->> 	perf/core: store context switch out type into Perf trace
->> 	perf report: extend raw dump (-D) out with switch out event type
->> 	perf script: extend misc field decoding with switch out event type
->>   
->>  include/uapi/linux/perf_event.h          |  5 +++++
->>  kernel/events/core.c                     |  4 +++-
->>  tools/include/uapi/linux/perf_event.h    |  5 +++++
->>  tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
->>  tools/perf/builtin-script.c              |  5 ++++-
->>  tools/perf/util/event.c                  |  4 +++-
->>  6 files changed, 29 insertions(+), 11 deletions(-)
+> I tried booting the board today over tftp but didn't succeed. I then
+> switched to a normal boot from SD card and the boot process froze at
+> the same moment (right after the DHCP config, or after rtc config if I
+> disabled DHCP in bootargs). I then realized that the emac clock can't
+> be the culprit. After some digging I found out that the late_initcall
+> to clk_disable_unused() disables sysclk6 - the parent of the arm
+> clock, which of course freezes the device.
 > 
+> If I remove the call to clk_disable_unused(), I can boot just fine.
+> 
+> The following other clocks are disabled before pll0_sysclk6:
+> pll1_sysclk3
+> pll0_obsclk
+> pll0_sysclk7
+> 
+> davinci_lpsc_clk_enable() is never called for these clocks - in fact
+> it's not called for any parent that's not explicitly defined in
+> psc-da850.c - I believe this may be one of the reasons. I will get
+> back to debugging it tomorrow.
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
+
+Thanks for continuing to dig into this. I think I know what needs to
+be done now. I think I don't have the dependencies quite right where
+the PSC clocks are being registered before the PLL clocks, in which
+case they aren't getting the correct parent clock.
