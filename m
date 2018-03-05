@@ -1,155 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeCESDX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 13:03:23 -0500
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:58726 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751935AbeCESDV (ORCPT
+        id S1752857AbeCESDm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 13:03:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49154 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751935AbeCESDl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 13:03:21 -0500
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-To: Brian Starkey <brian.starkey@arm.com>
-Cc: Mali DP Maintainers <malidp@foss.arm.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        DRI devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v3] drm/mali-dp: Fix malidp_atomic_commit_hw_done() for event sending.
-Date: Mon,  5 Mar 2018 18:03:16 +0000
-Message-Id: <20180305180316.12654-1-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180301174913.10875-1-Liviu.Dudau@arm.com>
-References: <20180301174913.10875-1-Liviu.Dudau@arm.com>
+        Mon, 5 Mar 2018 13:03:41 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5C0D601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH] arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP
+ hardening
+To: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Speier <tspeier@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Sean Campbell <scampbel@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        Christoffer Dall <christoffer.dall@linaro.org>
+References: <1520027418-10646-1-git-send-email-shankerd@codeaurora.org>
+ <20180305155614.GG6618@arm.com>
+ <05c25982-4939-593f-ad30-bf496e879885@codeaurora.org>
+ <20180305171529.GA12869@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <770bb422-7a53-06b9-a136-4e38a0a4bed2@codeaurora.org>
+Date: Mon, 5 Mar 2018 12:03:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180305171529.GA12869@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mali DP hardware has a 'go' bit (config_valid) for making the new scene
-parameters active at the next page flip. The problem with the current
-code is that the driver first sets this bit and then proceeds to wait
-for confirmation from the hardware that the configuration has been
-updated before arming the vblank event. As config_valid is actually
-asserted by the hardware after the vblank event, during the prefetch
-phase, when we get to arming the vblank event we are going to send it
-at the next vblank, in effect halving the vblank rate from the userspace
-perspective.
+Hi Will,
 
-Fix it by sending the userspace event from the IRQ handler, when we
-handle the config_valid interrupt, which syncs with the time when the
-hardware is active with the new parameters.
+On 03/05/2018 11:15 AM, Will Deacon wrote:
+> On Mon, Mar 05, 2018 at 10:57:58AM -0600, Shanker Donthineni wrote:
+>> Hi Will,
+>>
+>> On 03/05/2018 09:56 AM, Will Deacon wrote:
+>>> Hi Shanker,
+>>>
+>>> On Fri, Mar 02, 2018 at 03:50:18PM -0600, Shanker Donthineni wrote:
+>>>> The function SMCCC_ARCH_WORKAROUND_1 was introduced as part of SMC
+>>>> V1.1 Calling Convention to mitigate CVE-2017-5715. This patch uses
+>>>> the standard call SMCCC_ARCH_WORKAROUND_1 for Falkor chips instead
+>>>> of Silicon provider service ID 0xC2001700.
+>>>>
+>>>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+>>>> ---
+>>>>  arch/arm64/include/asm/cpucaps.h |  2 +-
+>>>>  arch/arm64/include/asm/kvm_asm.h |  2 --
+>>>>  arch/arm64/kernel/bpi.S          |  8 ------
+>>>>  arch/arm64/kernel/cpu_errata.c   | 55 ++++++++++++++--------------------------
+>>>>  arch/arm64/kvm/hyp/entry.S       | 12 ---------
+>>>>  arch/arm64/kvm/hyp/switch.c      | 10 --------
+>>>>  6 files changed, 20 insertions(+), 69 deletions(-)
+>>>
+>>> I'm happy to take this via arm64 if I get an ack from Marc/Christoffer.
+>>>
+>>>> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+>>>> index bb26382..6ecc249 100644
+>>>> --- a/arch/arm64/include/asm/cpucaps.h
+>>>> +++ b/arch/arm64/include/asm/cpucaps.h
+>>>> @@ -43,7 +43,7 @@
+>>>>  #define ARM64_SVE				22
+>>>>  #define ARM64_UNMAP_KERNEL_AT_EL0		23
+>>>>  #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+>>>> -#define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+>>>> +/* #define ARM64_UNALLOCATED_ENTRY			25 */
+>>>>  #define ARM64_HAS_RAS_EXTN			26
+>>>>  
+>>>>  #define ARM64_NCAPS				27
+>>>
+>>> These aren't ABI, so I think you can just drop
+>>> ARM64_HARDEN_BP_POST_GUEST_EXIT and repack the others accordingly.
+>>>
+>> Sure, I'll remove it completely in v2 patch.
+>>  
+>>>> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+>>>> index 24961b7..ab4d0a9 100644
+>>>> --- a/arch/arm64/include/asm/kvm_asm.h
+>>>> +++ b/arch/arm64/include/asm/kvm_asm.h
+>>>> @@ -68,8 +68,6 @@
+>>>>  
+>>>>  extern u32 __init_stage2_translation(void);
+>>>>  
+>>>> -extern void __qcom_hyp_sanitize_btac_predictors(void);
+>>>> -
+>>>>  #endif
+>>>>  
+>>>>  #endif /* __ARM_KVM_ASM_H__ */
+>>>> diff --git a/arch/arm64/kernel/bpi.S b/arch/arm64/kernel/bpi.S
+>>>> index e5de335..dc4eb15 100644
+>>>> --- a/arch/arm64/kernel/bpi.S
+>>>> +++ b/arch/arm64/kernel/bpi.S
+>>>> @@ -55,14 +55,6 @@ ENTRY(__bp_harden_hyp_vecs_start)
+>>>>  	.endr
+>>>>  ENTRY(__bp_harden_hyp_vecs_end)
+>>>>  
+>>>> -ENTRY(__qcom_hyp_sanitize_link_stack_start)
+>>>> -	stp     x29, x30, [sp, #-16]!
+>>>> -	.rept	16
+>>>> -	bl	. + 4
+>>>> -	.endr
+>>>> -	ldp	x29, x30, [sp], #16
+>>>> -ENTRY(__qcom_hyp_sanitize_link_stack_end)
+>>>> -
+>>>>  .macro smccc_workaround_1 inst
+>>>>  	sub	sp, sp, #(8 * 4)
+>>>>  	stp	x2, x3, [sp, #(8 * 0)]
+>>>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+>>>> index 52f15cd..d779ffd4 100644
+>>>> --- a/arch/arm64/kernel/cpu_errata.c
+>>>> +++ b/arch/arm64/kernel/cpu_errata.c
+>>>> @@ -67,8 +67,6 @@ static int cpu_enable_trap_ctr_access(void *__unused)
+>>>>  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data, bp_hardening_data);
+>>>>  
+>>>>  #ifdef CONFIG_KVM
+>>>> -extern char __qcom_hyp_sanitize_link_stack_start[];
+>>>> -extern char __qcom_hyp_sanitize_link_stack_end[];
+>>>>  extern char __smccc_workaround_1_smc_start[];
+>>>>  extern char __smccc_workaround_1_smc_end[];
+>>>>  extern char __smccc_workaround_1_hvc_start[];
+>>>> @@ -115,8 +113,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+>>>>  	spin_unlock(&bp_lock);
+>>>>  }
+>>>>  #else
+>>>> -#define __qcom_hyp_sanitize_link_stack_start	NULL
+>>>> -#define __qcom_hyp_sanitize_link_stack_end	NULL
+>>>>  #define __smccc_workaround_1_smc_start		NULL
+>>>>  #define __smccc_workaround_1_smc_end		NULL
+>>>>  #define __smccc_workaround_1_hvc_start		NULL
+>>>> @@ -161,12 +157,25 @@ static void call_hvc_arch_workaround_1(void)
+>>>>  	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+>>>>  }
+>>>>  
+>>>> +static void qcom_link_stack_sanitization(void)
+>>>> +{
+>>>> +	u64 tmp;
+>>>> +
+>>>> +	asm volatile("mov	%0, x30		\n"
+>>>> +		     ".rept	16		\n"
+>>>> +		     "bl	. + 4		\n"
+>>>> +		     ".endr			\n"
+>>>> +		     "mov	x30, %0		\n"
+>>>> +		     : "=&r" (tmp));
+>>>> +}
+>>>> +
+>>>>  static int enable_smccc_arch_workaround_1(void *data)
+>>>>  {
+>>>>  	const struct arm64_cpu_capabilities *entry = data;
+>>>>  	bp_hardening_cb_t cb;
+>>>>  	void *smccc_start, *smccc_end;
+>>>>  	struct arm_smccc_res res;
+>>>> +	u32 midr = read_cpuid_id();
+>>>>  
+>>>>  	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+>>>>  		return 0;
+>>>> @@ -199,33 +208,15 @@ static int enable_smccc_arch_workaround_1(void *data)
+>>>>  		return 0;
+>>>>  	}
+>>>>  
+>>>> +	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
+>>>> +	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
+>>>> +		cb = qcom_link_stack_sanitization;
+>>>
+>>> Is this just a performance thing? Do you actually see an advantage over
+>>> always making the firmware call? We've seen minimal impact in our testing.
+>>>
+>>
+>> Yes, we've couple of advantages using the standard SMCCC_ARCH_WOKAROUND_1 framework. 
+>>   - Improves the code readability.
+>>   - Avoid the unnecessary MIDR checks on each vCPU exit.
+>>   - Validates ID_AA64PFR0_CVS2 feature for Falkor chips.
+>>   - Avoids the 2nd link stack sanitization workaround in firmware.
+> 
+> What I mean is, can we drop qcom_link_stack_sanitization altogether and
+> use the SMCCC interface for everything?
+> 
 
-v2: Brian reminded me that interrupts won't fire when CRTC is off,
-so we need to do the sending ourselves.
+No, We would like to keep it qcom_link_stack_sanitization for host kernel
+since it takes a few CPU cycles instead of heavyweight SMCCC call.
 
-v3: crtc->enabled is the wrong flag to use here, as when we get an
-atomic commit that turns off the CRTC it will still be enabled until
-after the commit is done. Use the crtc->state->active for test.
+I posted v2 patch https://patchwork.kernel.org/patch/10259357/ to address
+cpucaps.h cleanup review comments.   
 
-Reported-by: Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/arm/malidp_drv.c | 32 +++++++++++++++++---------------
- drivers/gpu/drm/arm/malidp_drv.h |  1 +
- drivers/gpu/drm/arm/malidp_hw.c  | 12 +++++++++---
- 3 files changed, 27 insertions(+), 18 deletions(-)
+> Will
+> 
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index d88a3b9d59cc..3c628e43bf25 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -185,25 +185,29 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
- 
- static void malidp_atomic_commit_hw_done(struct drm_atomic_state *state)
- {
--	struct drm_pending_vblank_event *event;
- 	struct drm_device *drm = state->dev;
- 	struct malidp_drm *malidp = drm->dev_private;
- 
--	if (malidp->crtc.enabled) {
--		/* only set config_valid if the CRTC is enabled */
--		if (malidp_set_and_wait_config_valid(drm))
--			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
--	}
-+	malidp->event = malidp->crtc.state->event;
-+	malidp->crtc.state->event = NULL;
- 
--	event = malidp->crtc.state->event;
--	if (event) {
--		malidp->crtc.state->event = NULL;
-+	if (malidp->crtc.state->active) {
-+		/*
-+		 * if we have an event to deliver to userspace, make sure
-+		 * the vblank is enabled as we are sending it from the IRQ
-+		 * handler.
-+		 */
-+		if (malidp->event)
-+			drm_crtc_vblank_get(&malidp->crtc);
- 
-+		/* only set config_valid if the CRTC is enabled */
-+		if (malidp_set_and_wait_config_valid(drm) < 0)
-+			DRM_DEBUG_DRIVER("timed out waiting for updated configuration\n");
-+	} else if (malidp->event) {
-+		/* CRTC inactive means vblank IRQ is disabled, send event directly */
- 		spin_lock_irq(&drm->event_lock);
--		if (drm_crtc_vblank_get(&malidp->crtc) == 0)
--			drm_crtc_arm_vblank_event(&malidp->crtc, event);
--		else
--			drm_crtc_send_vblank_event(&malidp->crtc, event);
-+		drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
-+		malidp->event = NULL;
- 		spin_unlock_irq(&drm->event_lock);
- 	}
- 	drm_atomic_helper_commit_hw_done(state);
-@@ -232,8 +236,6 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- 
- 	malidp_atomic_commit_hw_done(state);
- 
--	drm_atomic_helper_wait_for_vblanks(drm, state);
--
- 	pm_runtime_put(drm->dev);
- 
- 	drm_atomic_helper_cleanup_planes(drm, state);
-diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
-index e0d12c9fc6b8..c2375bb49619 100644
---- a/drivers/gpu/drm/arm/malidp_drv.h
-+++ b/drivers/gpu/drm/arm/malidp_drv.h
-@@ -22,6 +22,7 @@ struct malidp_drm {
- 	struct malidp_hw_device *dev;
- 	struct drm_crtc crtc;
- 	wait_queue_head_t wq;
-+	struct drm_pending_vblank_event *event;
- 	atomic_t config_valid;
- 	u32 core_id;
- };
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 2bfb542135ac..8abd335ec313 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -782,9 +782,15 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
- 	/* first handle the config valid IRQ */
- 	dc_status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
- 	if (dc_status & hw->map.dc_irq_map.vsync_irq) {
--		/* we have a page flip event */
--		atomic_set(&malidp->config_valid, 1);
- 		malidp_hw_clear_irq(hwdev, MALIDP_DC_BLOCK, dc_status);
-+		/* do we have a page flip event? */
-+		if (malidp->event != NULL) {
-+			spin_lock(&drm->event_lock);
-+			drm_crtc_send_vblank_event(&malidp->crtc, malidp->event);
-+			malidp->event = NULL;
-+			spin_unlock(&drm->event_lock);
-+		}
-+		atomic_set(&malidp->config_valid, 1);
- 		ret = IRQ_WAKE_THREAD;
- 	}
- 
-@@ -794,7 +800,7 @@ static irqreturn_t malidp_de_irq(int irq, void *arg)
- 
- 	mask = malidp_hw_read(hwdev, MALIDP_REG_MASKIRQ);
- 	status &= mask;
--	if (status & de->vsync_irq)
-+	if ((status & de->vsync_irq) && malidp->crtc.enabled)
- 		drm_crtc_handle_vblank(&malidp->crtc);
- 
- 	malidp_hw_clear_irq(hwdev, MALIDP_DE_BLOCK, status);
 -- 
-2.16.2
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
