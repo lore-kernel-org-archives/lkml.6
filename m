@@ -1,44 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeCETMR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:12:17 -0500
-Received: from mga04.intel.com ([192.55.52.120]:55002 "EHLO mga04.intel.com"
+        id S1753041AbeCETM0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:12:26 -0500
+Received: from mga09.intel.com ([134.134.136.24]:29166 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751311AbeCETMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:12:16 -0500
+        id S1752972AbeCETMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 14:12:22 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="32576437"
-Subject: Re: [RFC, PATCH 13/22] mm, rmap: Free encrypted pages once mapcount
- drops to zero
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
-Cc: Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <eb2cc1cf-1be1-4535-f71b-fa33272a6f71@intel.com>
-Date: Mon, 5 Mar 2018 11:12:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="23109053"
+From: kan.liang@linux.intel.com
+To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 1/7] perf mmap: Store mmap scope and type in struct perf_mmap
+Date: Mon,  5 Mar 2018 14:10:53 -0500
+Message-Id: <1520277059-32749-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
->  extern void prep_encrypt_page(struct page *page, gfp_t gfp, unsigned int order);
-> +extern void free_encrypt_page(struct page *page, int keyid, unsigned int order);
+From: Kan Liang <kan.liang@linux.intel.com>
 
-The grammar here is weird, I think.
+There are too many boilerplates for the perf_mmap__read*() interfaces.
 
-Why not free_encrypted_page()?
+Some of the data (e.g. 'start', 'end', 'overwrite') should be stored in
+struct perf_mmap at initialization. They will be used later.
+
+No functional change.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ tools/perf/util/mmap.c | 11 ++++++++---
+ tools/perf/util/mmap.h |  3 +++
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 4f27c46..642b479 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -250,11 +250,14 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 
+ 	*startp = overwrite ? head : old;
+ 	*endp = overwrite ? old : head;
++	md->overwrite = overwrite;
++	md->start = overwrite ? head : old;
++	md->end = overwrite ? old : head;
+ 
+-	if (*startp == *endp)
++	if (md->start == md->end)
+ 		return -EAGAIN;
+ 
+-	size = *endp - *startp;
++	size = md->end - md->start;
+ 	if (size > (unsigned long)(md->mask) + 1) {
+ 		if (!overwrite) {
+ 			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
+@@ -268,8 +271,10 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
+ 		 * Backward ring buffer is full. We still have a chance to read
+ 		 * most of data from it.
+ 		 */
+-		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
++		if (overwrite_rb_find_range(data, md->mask, head, &md->start, &md->end))
+ 			return -EINVAL;
++		*startp = md->start;
++		*endp = md->end;
+ 	}
+ 
+ 	return 0;
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index ec7d3a24..9359e93 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -20,6 +20,9 @@ struct perf_mmap {
+ 	int		 fd;
+ 	refcount_t	 refcnt;
+ 	u64		 prev;
++	u64		 start;
++	u64		 end;
++	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
+ };
+-- 
+2.4.11
