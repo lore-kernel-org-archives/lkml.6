@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELuCRw71HEHyBHmZ1nLtr5I0eVE6/HWdVIOYphZ/vBe1RcqE3xKWoO+jbTTQyndyTWFVp/fd
-ARC-Seal: i=1; a=rsa-sha256; t=1520245583; cv=none;
+X-Google-Smtp-Source: AG47ELv9A6Ca7E7ohv/zTHG34539eDkuOnZhm1jluOl3LNu/69uGhE9zto8wjkd0PQfntGT1I5AZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520245579; cv=none;
         d=google.com; s=arc-20160816;
-        b=HHma8A3J1i4FuQ5IaG4/j8qLWB7gRkYq959odS3H3FlAi6OYq7apBjhWLBAHufjbOC
-         65Nzq1pWMbCgjv4CJ3jkf356bqicS5s4TI5Y1DISo/Ad4fTnLE36kEXwcIBnz3znBqMl
-         01ZQvuqyobCJUVzQWcSGk8jSYnwNETl7MBj/kMtScqKFkqacDzNDCF9OiPducr8jzaCV
-         BQY/M55FbizyeDekp2f18oiOb12rIbYr5R1eoZpJ+Z9S6kIeHgFwtd/TcX3KfQWVZBeq
-         E/K4I2IYk8jordiGEWaTgX6LfVZSKVYct1wRmheTJKKt2xzCyyMjqTGo12ZQUT3uHbNq
-         /DFQ==
+        b=noOBVMluvxTbEGrb9us4dfcNWXOcd1u5/vPRY412AiBZ19T3hy8EC1fesGakdThib5
+         3UHXTdGOUXHlopsCXFJ2aOsb0VmUmnt8Dsl4w/E+4eUctuzAYBkJ+PIIdCRM4mOSJoVK
+         6IAr6qcFxfceP+6LPcj+pVy9DZ5Bqs8RWtyTaOIxxrtd8eJemR3YofPY2BM3GKd1SUU9
+         wuIv6xhMDsEHw6xRISVG/9GEoOXN9mAP8QAkH6QtiSVwcKLD9I1RlzjQq3rbSRXI1x4M
+         cgJbk1bLR5AzBQvMEKWraoRCSpr0kixF0QPjs+Xwh1j4Xtaq9sP1jNhU5XhZXLYY2226
+         sPKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=6pKXJr3dQB+EZKAI6Uh1IKsDamXmlHYF3SRvL1fh3Yw=;
-        b=VCSyDJ6o//V5UA2socEbBlfgY2mBynjqZB/OUKuB5ePanUXcdD/HH/y3JoJAQbCKEh
-         eTuvfThZqBy04FL5lmzH2zDx8ECVitxIKnPcJvkIkayLpT/Z1t6DsFSkI4Ecpq+FkhuQ
-         TbWrhdalV7Lv3U5yFhaH6AQnvvHIVbysM9HguHG86xM7qbWjdvDV5HS4vB/5GhUFY6B9
-         aRZ9/rs3ornQtn9iGtUJjqKPrhGREKLQ6KGg0YZNRGN0xeJmPeCxFVB7KXxDSNw+VXvb
-         lnc5WWp/etL5xux7uq/BV8K+Ut9glrDWvDcd+yJqJIjS3dqQscn72VKLFpf8HAzvCfVl
-         qaAg==
+        bh=sBmnEAPtOXXVsp27L6zoCbiR5jvnoXrdbebyRH4BDuY=;
+        b=NSrohI9dG/9zfSgj2cdrIG3Hn4QehKbqVNjEQk6oPaE401xicyWl3ifBufR0webSPp
+         4cNtMJr8KsYmnwrWe47uX60eP322Hv6YpDtIBghh/lzt5bA66pF+Q/YbW8KI8/pO8al6
+         uAn/bbp0O6wuN4zeDl6sRS/MudN3JTTbgIsbnaI+YeP2EVzuSMQYUDuhKy5y+aS9z9iL
+         DAPajGbH8hFvp+iRP6lDToV6OdIFtUUNbZH5kG1yUbYJLNpkg83xkSMpkjuNLfFhBQac
+         etdSkXsfzOipnW8m15SCk85sbxi99arGFO2tfzk6boX7GUXZ0jZGVQK8RB9fldI0IP75
+         ARSg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=kMq5PFi0;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=EWx0NU/3;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=kMq5PFi0;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=EWx0NU/3;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,39 +57,52 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 33/34] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-Date: Mon,  5 Mar 2018 11:26:02 +0100
-Message-Id: <1520245563-8444-34-git-send-email-joro@8bytes.org>
+Subject: [PATCH 25/34] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
+Date: Mon,  5 Mar 2018 11:25:54 +0100
+Message-Id: <1520245563-8444-26-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093033146659785?=
-X-GMAIL-MSGID: =?utf-8?q?1594093033146659785?=
+X-GMAIL-THRID: =?utf-8?q?1594093028891542358?=
+X-GMAIL-MSGID: =?utf-8?q?1594093028891542358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allow PTI to be compiled on x86_32.
+Move it out of the X86_64 specific processor defines so
+that its visible for 32bit too.
 
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- security/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/processor-flags.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index b0cb9a5..93d85fd 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -57,7 +57,7 @@ config SECURITY_NETWORK
- config PAGE_TABLE_ISOLATION
- 	bool "Remove the kernel mapping in user mode"
- 	default y
--	depends on X86_64 && !UML
-+	depends on X86 && !UML
- 	help
- 	  This feature reduces the number of hardware side channels by
- 	  ensuring that the majority of kernel addresses are not mapped
+diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
+index 625a52a..02c2cbd 100644
+--- a/arch/x86/include/asm/processor-flags.h
++++ b/arch/x86/include/asm/processor-flags.h
+@@ -39,10 +39,6 @@
+ #define CR3_PCID_MASK	0xFFFull
+ #define CR3_NOFLUSH	BIT_ULL(63)
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-# define X86_CR3_PTI_PCID_USER_BIT	11
+-#endif
+-
+ #else
+ /*
+  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
+@@ -53,4 +49,8 @@
+ #define CR3_NOFLUSH	0
+ #endif
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++# define X86_CR3_PTI_PCID_USER_BIT	11
++#endif
++
+ #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
 -- 
 2.7.4
