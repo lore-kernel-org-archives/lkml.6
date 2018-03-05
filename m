@@ -1,243 +1,420 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932977AbeCEGph (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 01:45:37 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40640 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932959AbeCEGpf (ORCPT
+        id S932990AbeCEGrg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 01:47:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34240 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932751AbeCEGre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 01:45:35 -0500
-X-Google-Smtp-Source: AG47ELv7XtpOpFUhnnv4HNSicMansbiOkUXH5mBzhaS2cd+FODMSw9SGm+cFxDcuY3I+mRA4HBlokxFkt3IGqCJ6jpU=
-From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-References: <20180301130729.3278022-1-arnd@arndb.de>
-In-Reply-To: <20180301130729.3278022-1-arnd@arndb.de>
+        Mon, 5 Mar 2018 01:47:34 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72F036043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH 1/6] reset: qcom: AOSS (Always on subsystem) reset
+ controller
+To: Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+References: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+ <1519982619-28336-2-git-send-email-sibis@codeaurora.org>
+ <1519986620.16239.3.camel@pengutronix.de>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <d1502495-3a7a-79a1-093a-3b6dc81d9a32@codeaurora.org>
+Date: Mon, 5 Mar 2018 12:17:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQMtp/Bh4yYS/yIQvEtH+n2ZC8G49KENSwDw
-Date: Mon, 5 Mar 2018 12:15:32 +0530
-Message-ID: <b167c3fe8fe7736d39a1843439ecb2ce@mail.gmail.com>
-Subject: RE: [PATCH] scsi: mpt3sas: clarify mmio pointer types
-To: Arnd Bergmann <arnd@arndb.de>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        Chaitra Basappa <chaitra.basappa@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Hannes Reinecke <hare@suse.de>,
-        PDL-MPT-FUSIONLINUX <mpt-fusionlinux.pdl@broadcom.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1519986620.16239.3.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------Original Message-----
-From: Arnd Bergmann [mailto:arnd@arndb.de]
-Sent: Thursday, March 1, 2018 6:37 PM
-To: Suganath Prabu S; Sathya Prakash; Chaitra P B; James E.J. Bottomley;
-Martin K. Petersen
-Cc: Arnd Bergmann; Hannes Reinecke; Sreekanth Reddy;
-MPT-FusionLinux.pdl@broadcom.com; linux-scsi@vger.kernel.org;
-linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: clarify mmio pointer types
+Hi Philipp,
 
-The newly added code mixes up phys_addr_t/resource_size_t with dma_addr_t
-and void pointers, as seen from these compiler warning:
+Thanks for the review. I will post out the v2 of the patch series.
 
-drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_base_get_chain_phys':
-drivers/scsi/mpt3sas/mpt3sas_base.c:235:21: error: cast to pointer from
-integer of different size [-Werror=int-to-pointer-cast]
-  base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
-                     ^
-drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_clone_sg_entries':
-drivers/scsi/mpt3sas/mpt3sas_base.c:427:20: error: cast from pointer to
-integer of different size [-Werror=pointer-to-int-cast]
-    sgel->Address = (dma_addr_t)dst_addr_phys;
-                    ^
-drivers/scsi/mpt3sas/mpt3sas_base.c:438:7: error: cast from pointer to
-integer of different size [-Werror=pointer-to-int-cast]
-       (dma_addr_t)buff_ptr_phys;
-       ^
-drivers/scsi/mpt3sas/mpt3sas_base.c:444:10: error: cast from pointer to
-integer of different size [-Werror=pointer-to-int-cast]
-          (dma_addr_t)buff_ptr_phys;
+On 03/02/2018 04:00 PM, Philipp Zabel wrote:
+> Hi sibis,
+> 
+> thank you for the patch. I have a few questions and comments below.
+> 
+> On Fri, 2018-03-02 at 14:53 +0530, sibis wrote:
+>> Add reset controller driver for Qualcomm SDM845 SoC to
+>> control reset signals provided by AOSS for Modem, Venus
+>> ADSP, GPU, Camera, Wireless, Display subsystem
+>>
+>> Signed-off-by: sibis <sibis@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
+>>   drivers/reset/Kconfig                              |  10 ++
+>>   drivers/reset/Makefile                             |   1 +
+>>   drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
+>>   include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
+>>   5 files changed, 243 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>>   create mode 100644 drivers/reset/reset-qcom-aoss.c
+>>   create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> new file mode 100644
+>> index 0000000..5318e14
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> @@ -0,0 +1,54 @@
+>> +Qualcomm AOSS Reset Controller
+>> +======================================
+>> +
+>> +This binding describes a reset-controller found on AOSS (Always on SubSysem)
+>> +for Qualcomm SDM845 SoCs.
+>> +
+>> +Required properties:
+>> +- compatible:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: must be:
+>> +		    "qcom,aoss-reset-sdm845", "syscon"
+>> +
+>> +- reg:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: must specify the base address and size of the
+>> +		    syscon device.
+>> +
+>> +
+>> +- #reset-cells:
+>> +	Usage: required
+>> +	Value type: <uint>
+>> +	Definition: must be 1; cell entry represents the reset index.
+>> +
+>> +example:
+>> +
+>> +aoss_reset: qcom,reset-controller@b2e0100 {
+>> +	compatible = "qcom,aoss-reset-sdm845", "syscon";
+>> +	reg = <0xc2b0000 0x20004>;
+>> +	#reset-cells = <1>;
+>> +};
+>> +
+>> +
+>> +Specifying reset lines connected to IP modules
+>> +==============================================
+>> +
+>> +Device nodes that need access to reset lines should
+>> +specify them as a reset phandle in their corresponding node as
+>> +specified in reset.txt.
+>> +
+>> +Example:
+>> +
+>> +	modem-pil@4080000 {
+>> +		...
+>> +
+>> +		resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
+>> +		reset-names = "mss_restart";
+>> +
+>> +		...
+>> +        };
+>> +
+>> +For list of all valid reset indicies see
+>> +<dt-bindings/reset/qcom,aoss-sdm845.h>
+>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> index 7fc7769..4b1da86 100644
+>> --- a/drivers/reset/Kconfig
+>> +++ b/drivers/reset/Kconfig
+>> @@ -81,6 +81,16 @@ config RESET_PISTACHIO
+>>   	help
+>>   	  This enables the reset driver for ImgTec Pistachio SoCs.
+>>   
+>> +config RESET_QCOM_AOSS
+>> +	bool "Qcom AOSS Reset Driver"
+>> +	depends on ARCH_QCOM || COMPILE_TEST
+> 
+> Do all ARCH_QCOM have AOSS? If so, should this be enabled by default?
+> 
 
-Both dma_addr_t and phys_addr_t may be wider than a pointer, so we must
-avoid the conversion to pointer types. This also helps readability.
+AOSS reset is currently supported on SDM845 SoCs and not on any of other 
+the previously upstreamed Qualcomm SoCs. I will change description to 
+convey the same. I needs to explicitly enabled for SDM845 SoCs.
 
-A second problem is treating MMIO addresses from a 'struct resource'
-as addresses that can be used for DMA on that device. In almost all cases,
-those are the same, but on some of the more obscure architectures, PCI
-memory address 0 is mapped into the CPU address space at a nonzero offset.
-I don't have a good fix for that, so I'm adding a comment here, plus a
-WARN_ON() that triggers whenever the phys_addr_t number is outside of the
-low 32-bit address space and causes a straight overflow when assigned to
-the 32-bit sgel->Address.
+>> +	select MFD_SYSCON
+>> +	help
+>> +	  This enables the AOSS (Always On SubSystem) reset driver
+>> +	  for Qcom SoCs. Say Y if you want to control reset signals
+> 
+> Is Qcom and Qualcomm interchangeable?
+> 
 
-Fixes: 182ac784b41f ("scsi: mpt3sas: Introduce Base function for
-cloning.")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 42
-++++++++++++++++++++-----------------
- drivers/scsi/mpt3sas/mpt3sas_base.h |  2 +-
- 2 files changed, 24 insertions(+), 20 deletions(-)
+Though it is used interchangeably, it will make more sense if I
+change it to Qualcomm here.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c
-b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 9f2434e59b40..61f93a134956 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -225,14 +225,14 @@ _base_get_chain(struct MPT3SAS_ADAPTER *ioc, u16
-smid,
-  *
-  * @Return - Physical chain address.
-  */
--static inline void *
-+static inline phys_addr_t
- _base_get_chain_phys(struct MPT3SAS_ADAPTER *ioc, u16 smid,
- 		u8 sge_chain_count)
- {
--	void *base_chain_phys, *chain_phys;
-+	phys_addr_t base_chain_phys, chain_phys;
- 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
+>> +	  provided by AOSS for Modem, Venus, ADSP, GPU, Camera,
+>> +	  Wireless, Display subsystem. Otherwise, say N.
+>> +
+>>   config RESET_SIMPLE
+>>   	bool "Simple Reset Controller Driver" if COMPILE_TEST
+>>   	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX
+>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+>> index 132c24f..c30044a 100644
+>> --- a/drivers/reset/Makefile
+>> +++ b/drivers/reset/Makefile
+>> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+>>   obj-$(CONFIG_RESET_MESON) += reset-meson.o
+>>   obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
+>>   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>> +obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>>   obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>>   obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>>   obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>> diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
+>> new file mode 100644
+>> index 0000000..eb8c69b
+>> --- /dev/null
+>> +++ b/drivers/reset/reset-qcom-aoss.c
+>> @@ -0,0 +1,161 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/of_device.h>
+>> +#include <dt-bindings/reset/qcom,aoss-sdm845.h>
+>> +
+>> +struct qcom_aoss_reset_map {
+>> +	unsigned int reg;
+>> +	u8 bit;
+>> +};
+>> +
+>> +struct qcom_aoss_desc {
+>> +	const struct regmap_config *config;
+>> +	const struct qcom_aoss_reset_map *resets;
+>> +	int delay;
+>> +	size_t num_resets;
+>> +};
+>> +
+>> +struct qcom_aoss_reset_data {
+>> +	struct reset_controller_dev rcdev;
+>> +	struct regmap *regmap;
+>> +	const struct qcom_aoss_desc *desc;
+>> +};
+>> +
+>> +static const struct regmap_config aoss_sdm845_regmap_config = {
+>> +	.name		= "aoss-reset",
+>> +	.reg_bits	= 32,
+>> +	.reg_stride	= 4,
+>> +	.val_bits	= 32,
+>> +	.max_register	= 0x20000,
+>> +	.fast_io	= true,
+>> +};
+>> +
+>> +static const struct qcom_aoss_reset_map aoss_sdm845_resets[] = {
+>> +	[AOSS_CC_MSS_RESTART] = { 0x0, 0 },
+>> +	[AOSS_CC_CAMSS_RESTART] = { 0x1000, 0 },
+>> +	[AOSS_CC_VENUS_RESTART] = { 0x2000, 0 },
+>> +	[AOSS_CC_GPU_RESTART] = { 0x3000, 0 },
+>> +	[AOSS_CC_DISPSS_RESTART] = { 0x4000, 0 },
+>> +	[AOSS_CC_WCSS_RESTART] = { 0x10000, 0 },
+>> +	[AOSS_CC_LPASS_RESTART] = { 0x20000, 0 },
+>> +};
+>> +
+>> +static const struct qcom_aoss_desc aoss_sdm845_desc = {
+>> +	.config = &aoss_sdm845_regmap_config,
+>> +	.resets = aoss_sdm845_resets,
+>> +	/* Wait 6 32kHz sleep cycles for reset */
+>> +	.delay = 200,
+>> +	.num_resets = ARRAY_SIZE(aoss_sdm845_resets),
+>> +};
+>> +
+>> +static struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
+>> +				struct reset_controller_dev *rcdev)
+>> +{
+>> +	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
+>> +}
+>> +
+>> +static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
+>> +					unsigned long idx)
+>> +{
+>> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
+>> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
+>> +
+>> +	if (idx >= rcdev->nr_resets)
+>> +		return -EINVAL;
+> 
+> This check is not necessary. For all drivers that don't set of_xlate,
+> the default of_reset_simple_xlate already makes sure no reset_control
+> is ever returned with rstc->id >= rcdev->nr_resets.
+>
 
--	base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET
-+
-+	base_chain_phys  = ioc->chip_phys + MPI_FRAME_START_OFFSET +
- 		(cmd_credit * ioc->request_sz) +
- 		REPLY_FREE_POOL_SIZE;
- 	chain_phys = base_chain_phys + (smid * ioc->facts.MaxChainDepth *
-@@ -272,11 +272,11 @@ _base_get_buffer_bar0(struct MPT3SAS_ADAPTER *ioc,
-u16 smid)
-  *
-  * @Returns - Pointer to buffer location in BAR0.
-  */
--static void *
-+static phys_addr_t
- _base_get_buffer_phys_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)  {
- 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
--	void *chain_end_phys = _base_get_chain_phys(ioc,
-+	phys_addr_t chain_end_phys = _base_get_chain_phys(ioc,
- 			cmd_credit + 1,
- 			ioc->facts.MaxChainDepth);
- 	return chain_end_phys + (smid * 64 * 1024); @@ -330,11 +330,12 @@
-static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 	bool is_write = 0;
- 	u16 i = 0;
- 	void __iomem *buffer_iomem;
--	void  *buffer_iomem_phys;
-+	phys_addr_t buffer_iomem_phys;
- 	void __iomem *buff_ptr;
--	void *buff_ptr_phys;
-+	phys_addr_t buff_ptr_phys;
- 	void __iomem *dst_chain_addr[MCPU_MAX_CHAINS_PER_IO];
--	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO], *dst_addr_phys;
-+	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO];
-+	phys_addr_t dst_addr_phys;
- 	MPI2RequestHeader_t *request_hdr;
- 	struct scsi_cmnd *scmd;
- 	struct scatterlist *sg_scmd = NULL;
-@@ -391,6 +392,7 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER
-*ioc,
+Will remove it
 
- 	buff_ptr = buffer_iomem;
- 	buff_ptr_phys = buffer_iomem_phys;
-+	WARN_ON(buff_ptr_phys > U32_MAX);
+>> +	return regmap_update_bits(data->regmap, map->reg,
+>> +					BIT(map->bit), BIT(map->bit));
+>> +}
+>> +
+>> +static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
+>> +					unsigned long idx)
+>> +{
+>> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
+>> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
+>> +
+>> +	if (idx >= rcdev->nr_resets)
+>> +		return -EINVAL;
+> 
+> Same here.
+> 
 
- 	if (sgel->FlagsLength &
- 			(MPI2_SGE_FLAGS_HOST_TO_IOC <<
-MPI2_SGE_FLAGS_SHIFT)) @@ -421,10 +423,10 @@ static void
-_clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
- 					smid, sge_chain_count);
- 			src_chain_addr[sge_chain_count] =
- 						(void *) sgel_next;
--			dst_addr_phys =
--				_base_get_chain_phys(ioc,
-+			dst_addr_phys = _base_get_chain_phys(ioc,
- 						smid, sge_chain_count);
--			sgel->Address = (dma_addr_t)dst_addr_phys;
-+			WARN_ON(dst_addr_phys > U32_MAX);
-+			sgel->Address = (u32)dst_addr_phys;
- 			sgel = sgel_next;
- 			sge_chain_count++;
- 			break;
-@@ -434,14 +436,16 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER
-*ioc,
- 					_base_clone_to_sys_mem(buff_ptr,
- 					    sg_virt(sg_scmd),
- 					    (sgel->FlagsLength &
-0x00ffffff));
--					sgel->Address =
--						(dma_addr_t)buff_ptr_phys;
-+					/*
-+					 * FIXME: this relies on a a zero
-+					 * PCI mem_offset.
-+					 */
-+					sgel->Address =
-(u32)buff_ptr_phys;
- 				} else {
- 					_base_clone_to_sys_mem(buff_ptr,
- 					    ioc->config_vaddr,
- 					    (sgel->FlagsLength &
-0x00ffffff));
--					sgel->Address =
--					    (dma_addr_t)buff_ptr_phys;
-+					sgel->Address =
-(u32)buff_ptr_phys;
- 				}
- 			}
- 			buff_ptr += (sgel->FlagsLength & 0x00ffffff); @@
--2941,7 +2945,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
- 	u32 pio_sz;
- 	int i, r = 0;
- 	u64 pio_chip = 0;
--	u64 chip_phys = 0;
-+	phys_addr_t chip_phys = 0;
- 	struct adapter_reply_queue *reply_q;
+ditto
 
- 	dinitprintk(ioc, pr_info(MPT3SAS_FMT "%s\n", @@ -2989,7 +2993,7 @@
-mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
- 			if (memap_sz)
- 				continue;
- 			ioc->chip_phys = pci_resource_start(pdev, i);
--			chip_phys = (u64)ioc->chip_phys;
-+			chip_phys = ioc->chip_phys;
- 			memap_sz = pci_resource_len(pdev, i);
- 			ioc->chip = ioremap(ioc->chip_phys, memap_sz);
- 		}
-@@ -3064,8 +3068,8 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER
-*ioc)
- 		    "IO-APIC enabled"),
- 		    pci_irq_vector(ioc->pdev, reply_q->msix_index));
+>> +	return regmap_update_bits(data->regmap, map->reg, BIT(map->bit), 0);
+>> +}
+>> +
+>> +static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
+>> +					unsigned long idx)
+>> +{
+>> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
+>> +	int ret;
+>> +
+>> +	ret = rcdev->ops->assert(rcdev, idx);
+> 
+> Don't use the ops function pointers here, just call
+> qcom_aoss_control_assert directly.
 
--	pr_info(MPT3SAS_FMT "iomem(0x%016llx), mapped(0x%p), size(%d)\n",
--	    ioc->name, (unsigned long long)chip_phys, ioc->chip,
-memap_sz);
-+	pr_info(MPT3SAS_FMT "iomem(%pap), mapped(0x%p), size(%d)\n",
-+	    ioc->name, &chip_phys, ioc->chip, memap_sz);
- 	pr_info(MPT3SAS_FMT "ioport(0x%016llx), size(%d)\n",
- 	    ioc->name, (unsigned long long)pio_chip, pio_sz);
+sure will repace it.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h
-b/drivers/scsi/mpt3sas/mpt3sas_base.h
-index df8233c1e1c1..ae36d8fb2f2b 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.h
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
-@@ -1103,7 +1103,7 @@ struct MPT3SAS_ADAPTER {
- 	char		tmp_string[MPT_STRING_LENGTH];
- 	struct pci_dev	*pdev;
- 	Mpi2SystemInterfaceRegs_t __iomem *chip;
--	resource_size_t	chip_phys;
-+	phys_addr_t	chip_phys;
- 	int		logging_level;
- 	int		fwfault_debug;
- 	u8		ir_firmware;
---
-2.9.0
+> 
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	udelay(data->desc->delay);
+>> +
+>> +	ret = rcdev->ops->deassert(rcdev, idx);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+> 
+> This can be simplified to just
+> 
+> 	return qcom_aoss_control_deassert(rcdev, idx);
+> 
 
-Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
+ditto
 
-Thanks,
-Sreekanth
+>> +}
+>> +
+>> +static const struct reset_control_ops qcom_aoss_reset_ops = {
+>> +	.reset = qcom_aoss_control_reset,
+>> +	.assert = qcom_aoss_control_assert,
+>> +	.deassert = qcom_aoss_control_deassert,
+>> +};
+>> +
+>> +static int qcom_aoss_reset_probe(struct platform_device *pdev)
+>> +{
+>> +	struct qcom_aoss_reset_data *data;
+>> +	struct device *dev = &pdev->dev;
+>> +	const struct qcom_aoss_desc *desc;
+>> +
+>> +	desc = of_device_get_match_data(&pdev->dev);
+> 
+> You could use dev here instead of pdev->dev.
+>
+
+Yeah I will replace all instances of pdev->dev with dev
+
+>> +	if (!desc)
+>> +		return -EINVAL;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	data->desc = desc;
+>> +	data->regmap = syscon_node_to_regmap(dev->of_node);
+>> +	if (IS_ERR(data->regmap)) {
+>> +		dev_err(dev, "Unable to get aoss-reset regmap");
+>> +		return PTR_ERR(data->regmap);
+>> +	}
+>> +	regmap_attach_dev(dev, data->regmap, desc->config);
+>> +
+>> +	data->rcdev.owner = THIS_MODULE;
+>> +	data->rcdev.ops = &qcom_aoss_reset_ops;
+>> +	data->rcdev.nr_resets = desc->num_resets;
+>> +	data->rcdev.of_node = pdev->dev.of_node;
+> 
+> And here.
+> 
+>> +	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
+> 
+> And here.
+> 
+>> +}
+>> +
+>> +static const struct of_device_id qcom_aoss_reset_of_match[] = {
+>> +	{ .compatible = "qcom,aoss-reset-sdm845", .data = &aoss_sdm845_desc},
+> 
+> Consider adding a space between &aoss_sdm845_desc and } ...
+> 
+
+sure will do
+
+>> +	{}
+>> +};
+>> +
+>> +static struct platform_driver qcom_aoss_reset_driver = {
+>> +	.probe = qcom_aoss_reset_probe,
+>> +	.driver  = {
+>> +		.name  = "qcom_aoss_reset",
+> 
+> ... and removing the superfluous space here.
+
+Will remove the superfluous spacing
+
+> 
+>> +		.of_match_table = qcom_aoss_reset_of_match,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(qcom_aoss_reset_driver);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/include/dt-bindings/reset/qcom,aoss-sdm845.h b/include/dt-bindings/reset/qcom,aoss-sdm845.h
+>> new file mode 100644
+>> index 0000000..e9b38fc
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/qcom,aoss-sdm845.h
+>> @@ -0,0 +1,17 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
+>> +#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
+>> +
+>> +#define AOSS_CC_MSS_RESTART	0
+>> +#define AOSS_CC_CAMSS_RESTART	1
+>> +#define AOSS_CC_VENUS_RESTART	2
+>> +#define AOSS_CC_GPU_RESTART	3
+>> +#define AOSS_CC_DISPSS_RESTART	4
+>> +#define AOSS_CC_WCSS_RESTART	5
+>> +#define AOSS_CC_LPASS_RESTART	6
+>> +
+>> +#endif
+> 
+> regards
+> Philipp
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
