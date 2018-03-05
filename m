@@ -1,68 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933552AbeCEI7v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 03:59:51 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:59181 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933424AbeCEI7t (ORCPT
+        id S933415AbeCEJGr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:06:47 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35476 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932868AbeCEJGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:59:49 -0500
-Subject: Re: [PATCH 2/4] crypto: omap-sham - Fix misleading indentation
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>
-References: <1519937413-24468-1-git-send-email-krzk@kernel.org>
- <1519937413-24468-2-git-send-email-krzk@kernel.org>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <fe1ae684-9f16-e31e-c88e-3e9df083e012@ti.com>
-Date: Mon, 5 Mar 2018 10:59:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1519937413-24468-2-git-send-email-krzk@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 5 Mar 2018 04:06:43 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA92C600E6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=maggarwa@codeaurora.org
+From: Mohit Aggarwal <maggarwa@codeaurora.org>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: Mohit Aggarwal <maggarwa@codeaurora.org>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] rtc-pm8xxx: Fix issue in RTC write path
+Date: Mon,  5 Mar 2018 14:35:58 +0530
+Message-Id: <1520240758-9837-1-git-send-email-maggarwa@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/03/18 22:50, Krzysztof Kozlowski wrote:
-> Commit 8043bb1ae03c ("crypto: omap-sham - convert driver logic to use
-> sgs for data xmit") removed the if() clause leaving the statement as is.
-> The intention was in that case to finish the request always so the goto
-> instruction seems sensible.
-> 
-> Remove the indentation to fix Smatch warning:
->      drivers/crypto/omap-sham.c:1761 omap_sham_done_task() warn: inconsistent indenting
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+In order to set time in rtc, need to disable
+rtc hw before writing into rtc registers.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
+Also fixes disabling of alarm while setting
+rtc time.
 
-> ---
->   drivers/crypto/omap-sham.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-> index 7650b1b449bb..6cb6ab6f52c0 100644
-> --- a/drivers/crypto/omap-sham.c
-> +++ b/drivers/crypto/omap-sham.c
-> @@ -1758,7 +1758,7 @@ static void omap_sham_done_task(unsigned long data)
->   		if (test_and_clear_bit(FLAGS_OUTPUT_READY, &dd->flags)) {
->   			/* hash or semi-hash ready */
->   			clear_bit(FLAGS_DMA_READY, &dd->flags);
-> -				goto finish;
-> +			goto finish;
->   		}
->   	}
->   
-> 
+Signed-off-by: Mohit Aggarwal <maggarwa@codeaurora.org>
+---
+ drivers/rtc/rtc-pm8xxx.c | 49 +++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+index 8e01287..29358a0 100644
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -74,16 +74,18 @@ struct pm8xxx_rtc {
+ /*
+  * Steps to write the RTC registers.
+  * 1. Disable alarm if enabled.
+- * 2. Write 0x00 to LSB.
+- * 3. Write Byte[1], Byte[2], Byte[3] then Byte[0].
+- * 4. Enable alarm if disabled in step 1.
++ * 2. Disable rtc if enabled.
++ * 3. Write 0x00 to LSB.
++ * 4. Write Byte[1], Byte[2], Byte[3] then Byte[0].
++ * 5. Enable rtc if disabled in step 2.
++ * 6. Enable alarm if disabled in step 1.
+  */
+ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	int rc, i;
+ 	unsigned long secs, irq_flags;
+-	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0;
+-	unsigned int ctrl_reg;
++	u8 value[NUM_8_BIT_RTC_REGS], alarm_enabled = 0, rtc_disabled = 0;
++	unsigned int ctrl_reg, rtc_ctrl_reg;
+ 	struct pm8xxx_rtc *rtc_dd = dev_get_drvdata(dev);
+ 	const struct pm8xxx_rtc_regs *regs = rtc_dd->regs;
+ 
+@@ -92,23 +94,38 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	rtc_tm_to_time(tm, &secs);
+ 
++	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
++
+ 	for (i = 0; i < NUM_8_BIT_RTC_REGS; i++) {
+ 		value[i] = secs & 0xFF;
+ 		secs >>= 8;
+ 	}
+ 
+-	dev_dbg(dev, "Seconds value to be written to RTC = %lu\n", secs);
+-
+ 	spin_lock_irqsave(&rtc_dd->ctrl_reg_lock, irq_flags);
+ 
+-	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &ctrl_reg);
++	rc = regmap_read(rtc_dd->regmap, regs->alarm_ctrl, &ctrl_reg);
+ 	if (rc)
+ 		goto rtc_rw_fail;
+ 
+ 	if (ctrl_reg & regs->alarm_en) {
+ 		alarm_enabled = 1;
+ 		ctrl_reg &= ~regs->alarm_en;
+-		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
++		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
++		if (rc) {
++			dev_err(dev, "Write to RTC Alarm control register failed\n");
++			goto rtc_rw_fail;
++		}
++	}
++
++	/* Disable RTC H/w before writing on RTC register */
++	rc = regmap_read(rtc_dd->regmap, regs->ctrl, &rtc_ctrl_reg);
++	if (rc)
++		goto rtc_rw_fail;
++
++	if (rtc_ctrl_reg & PM8xxx_RTC_ENABLE) {
++		rtc_disabled = 1;
++		rtc_ctrl_reg &= ~PM8xxx_RTC_ENABLE;
++		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
+ 		if (rc) {
+ 			dev_err(dev, "Write to RTC control register failed\n");
+ 			goto rtc_rw_fail;
+@@ -137,11 +154,21 @@ static int pm8xxx_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		goto rtc_rw_fail;
+ 	}
+ 
++	/* Enable RTC H/w after writing on RTC register */
++	if (rtc_disabled) {
++		rtc_ctrl_reg |= PM8xxx_RTC_ENABLE;
++		rc = regmap_write(rtc_dd->regmap, regs->ctrl, rtc_ctrl_reg);
++		if (rc) {
++			dev_err(dev, "Write to RTC control register failed\n");
++			goto rtc_rw_fail;
++		}
++	}
++
+ 	if (alarm_enabled) {
+ 		ctrl_reg |= regs->alarm_en;
+-		rc = regmap_write(rtc_dd->regmap, regs->ctrl, ctrl_reg);
++		rc = regmap_write(rtc_dd->regmap, regs->alarm_ctrl, ctrl_reg);
+ 		if (rc) {
+-			dev_err(dev, "Write to RTC control register failed\n");
++			dev_err(dev, "Write to RTC Alarm control register failed\n");
+ 			goto rtc_rw_fail;
+ 		}
+ 	}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
