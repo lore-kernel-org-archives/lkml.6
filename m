@@ -1,108 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964823AbeCEM4v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 07:56:51 -0500
-Received: from mga09.intel.com ([134.134.136.24]:8279 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934140AbeCEM4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 07:56:48 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
-   d="scan'208";a="22140318"
-Date: Mon, 5 Mar 2018 14:56:42 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Message-ID: <20180305125642.GA3425@linux.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
+        id S964850AbeCEM5G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 07:57:06 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34835 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934140AbeCEM47 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 07:56:59 -0500
+X-Google-Smtp-Source: AG47ELvJgQ0DRBN/3GyZR2Hoxi8DgYDnNgEB74WTXpVyyqbA73cuVIbsgONOM3H9r0uZtWPg57cnFu1NGVZfuyS6Mpw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180304121205.16934-1-tomas.winkler@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180305123552.GY25181@hirez.programming.kicks-ass.net>
+References: <1657351.s4RTvEoqBQ@aspire.rjw.lan> <2048240.1dZKXsSxFh@aspire.rjw.lan>
+ <20180305123552.GY25181@hirez.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 5 Mar 2018 13:56:57 +0100
+X-Google-Sender-Auth: Un8zncd6jbK-cKsmI15b0s-Bcuc
+Message-ID: <CAJZ5v0gwXhV6Z6TmBdBGafsppDLrnrWNcZuSr5C93MG=Gw=9Eg@mail.gmail.com>
+Subject: Re: [RFC/RFT][PATCH 6/7] sched: idle: Predict idle duration before
+ stopping the tick
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 04, 2018 at 02:12:03PM +0200, Tomas Winkler wrote:
-> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
-> of crypto keys which can be a computationally intensive task.
-> The timeout is set to 3min.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+On Mon, Mar 5, 2018 at 1:35 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Sun, Mar 04, 2018 at 11:28:56PM +0100, Rafael J. Wysocki wrote:
+>> Index: linux-pm/kernel/sched/idle.c
+>> ===================================================================
+>> --- linux-pm.orig/kernel/sched/idle.c
+>> +++ linux-pm/kernel/sched/idle.c
+>> @@ -188,13 +188,14 @@ static void cpuidle_idle_call(void)
+>>       } else {
+>>               unsigned int duration_us;
+>>
+>> -             tick_nohz_idle_go_idle(true);
+>> -             rcu_idle_enter();
+>> -
+>>               /*
+>>                * Ask the cpuidle framework to choose a convenient idle state.
+>>                */
+>>               next_state = cpuidle_select(drv, dev, &duration_us);
+>> +
+>> +             tick_nohz_idle_go_idle(duration_us > USEC_PER_SEC / HZ);
+>
+> (FWIW we have TICK_USEC for this)
+>
+>> +             rcu_idle_enter();
+>> +
+>>               entered_state = call_cpuidle(drv, dev, next_state);
+>>               /*
+>>                * Give the governor an opportunity to reflect on the outcome
+>
+> Also, I think that at this point you've introduced a problem; by not
+> disabling the tick unconditionally, we'll have extra wakeups due to the
+> (now still running) tick, which will bias the estimation, as per
+> reflect(), downwards.
 
-Where is the cover letter? Please send separate patches if they are
-unrelated *or* add a cover letter that describes what they do as a
-whole.
+Correct, but IMO that is better than what we have now.
 
-I will not review the next version if it does not have cover letter
-describing the high level change and containing the change log.
+Also that's in theory, but in practice it may not affect the
+distribution of time between different idle states that much.
 
-> ---
->  drivers/char/tpm/tpm-interface.c |  4 ++++
->  drivers/char/tpm/tpm.h           | 27 ++++++++++++++++-----------
->  drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
->  3 files changed, 25 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 85bdfa8c3348..c0aa9d11ec7a 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -699,6 +699,10 @@ int tpm_get_timeouts(struct tpm_chip *chip)
->  		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
->  		chip->duration[TPM_LONG] =
->  		    msecs_to_jiffies(TPM2_DURATION_LONG);
-> +		chip->duration[TPM_LONG_LONG] =
-> +		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-> +		chip->duration[TPM_UNDEFINED] =
-> +		    msecs_to_jiffies(TPM2_DURATION_DEFAULT);
->  
->  		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
->  		return 0;
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f895fba4e20d..192ba68b39c2 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -67,7 +67,9 @@ enum tpm_duration {
->  	TPM_SHORT = 0,
->  	TPM_MEDIUM = 1,
->  	TPM_LONG = 2,
-> -	TPM_UNDEFINED,
-> +	TPM_LONG_LONG = 3,
-> +	TPM_UNDEFINED = 4,
-> +	TPM_DURATION_MAX,
+> We should effectively discard tick wakeups when we could have entered
+> nohz but didn't, accumulating the idle period in reflect and only commit
+> once we get a !tick wakeup.
+>
+> Of course, for that to work we need to somehow divine what woke us,
+> which is going to be tricky.
 
-This is starting to rotten to become unmaintainable.
-
-Here is what I suggest to move forward:
-
-* Have essentially two duration types:
-  1. Default
-  2. Long
-  'default' is the old long duration i.e. two seconds. 'long' is a
-
-We should probably have two durations:
-
-enum tpm_duration {
-	TPM_DURATION_DEFAULT = 2000,
-	TPM_DURATION_LONG = 300000,
-};
-
-These would be both for TPM 1.2 and TPM 2.0. Instead of having
-table for every ordinal there should be a small tables describing
-commands that require long timeout.
-
-> -		duration = 2 * 60 * HZ;
-> +		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-
-NAK for this change.
-
-/Jarkko
+So I will only worry about this when I see numbers that will convince
+me to do so. :-)
