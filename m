@@ -1,127 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeCEJbj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:31:39 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:60538 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933494AbeCEJbe (ORCPT
+        id S933618AbeCEJcW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:32:22 -0500
+Received: from mail-yw0-f180.google.com ([209.85.161.180]:39655 "EHLO
+        mail-yw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933494AbeCEJcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:31:34 -0500
-Subject: Re: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-10-kishon@ti.com>
- <cda22332-ed17-9309-4989-19765744879b@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a7ba98cd-7a3c-00f9-bfaa-a982126c9185@ti.com>
-Date: Mon, 5 Mar 2018 15:00:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
+        Mon, 5 Mar 2018 04:32:18 -0500
+X-Google-Smtp-Source: AG47ELvl+sH/nJpAGxY4Dc0zO8E7J6I3wOJMZfo7IJ/TugwGNrojBugzk5i0HHPiJyP7+MIQnjb2kJa1tBgR7tHYhA8=
 MIME-Version: 1.0
-In-Reply-To: <cda22332-ed17-9309-4989-19765744879b@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180304221425.28611-2-contact@florentflament.com>
+References: <20180304170004.26553-1-contact@florentflament.com>
+ <20180304221425.28611-1-contact@florentflament.com> <20180304221425.28611-2-contact@florentflament.com>
+From: Nestor Lopez Casado <nlopezcasad@logitech.com>
+Date: Mon, 5 Mar 2018 10:31:47 +0100
+Message-ID: <CAE7qMrpF4dGCUrtnXbxb4MLFPZ0Wf13mrQEPypwPbEHaB9e44A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] HID: Logitech K290: Add driver for the Logitech
+ K290 USB keyboard
+To: Florent Flament <contact@florentflament.com>
+Cc: andy.shevchenko@gmail.com, jikos@kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+Hello Florent,
 
-On Monday 19 February 2018 02:21 PM, Adrian Hunter wrote:
-> On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
->> Add quirk to disable HW timeout if the requested timeout is more than
->> the maximum obtainable timeout.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  drivers/mmc/host/sdhci.c | 12 ++++++++++++
->>  drivers/mmc/host/sdhci.h |  7 +++++++
->>  2 files changed, 19 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 070aff9c108f..1aa74b4682f3 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>  		DBG("Too large timeout 0x%x requested for CMD%d!\n",
->>  		    count, cmd->opcode);
->>  		count = 0xE;
->> +		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
->> +			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
->> +			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->> +			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->> +			host->hw_timeout_disabled = true;
->> +		}
-> 
-> sdhci_calc_timeout() is really for calculations so please do this in
-> sdhci_set_timeout() instead (i.e. change sdhci_calc_timeout() to return
-> whether the timeout is too big).  Note that you need to cater for the "/*
-> Unspecified timeout, assume max */" case and the
-> SDHCI_QUIRK_BROKEN_TIMEOUT_VAL case.
-> 
-> Also if SDHCI_INT_DATA_TIMEOUT is not being disabled, check here to
-> re-enable it and leave sdhci_request_done() alone. i.e.
-> 
-> 	else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
-> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-> 		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> 		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> 	}
-> 
-> Maybe make a separate subroutine for the update:
-> 
-> void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
-> {
-> 	if (enable)
-> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-> 	else
-> 		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
-> 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> }
-> 
-> 
->>  	}
->>  
->>  	return count;
->> @@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
->>  	}
->>  
->>  	sdhci_del_timer(host, mrq);
->> +	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
->> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->> +		host->hw_timeout_disabled = false;
->> +	}
->>  
->>  	/*
->>  	 * Always unmap the data buffers if they were mapped by
->> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->> index afab26fd70e6..3a967a56fcc3 100644
->> --- a/drivers/mmc/host/sdhci.h
->> +++ b/drivers/mmc/host/sdhci.h
->> @@ -437,6 +437,11 @@ struct sdhci_host {
->>  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
->>  /* Controller has CRC in 136 bit Command Response */
->>  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
->> +/*
->> + * Disable HW timeout if the requested timeout is more than the maximum
->> + * obtainable timeout
->> + */
->> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+In my view, this driver may not be a good idea. The default behaviour
+of K290 is 'send multimedia keycodes' with the user given the choice
+to change that behaviour via vendor commands. Putting a driver that
+will unconditionally change that behaviour without the user's consent
+might bother other users that prefer the multimedia keycodes by
+default.
 
-Are you okay with the definition of this quirk? i.e this quirk is applied only
-when the requested timeout is "more" than the maximum obtainable timeout.
+Besides, I'd argue that instead of a kernel module this would be best
+achieved from a user space application. Something in the lines of
+Solaar (github pwr/solaar) or libratbag (there's an issue open to
+support keyboards) or even a specific application built for the
+purpose. Anyways, please collect the input from Benjamin and Jiri as
+they as they best placed to advise than myself.
 
-By this way platforms can continue to use hardware timeout for smaller timeout
-value.
+Cheers,
+-nestor
 
-Thanks
-Kishon
+On Sun, Mar 4, 2018 at 11:14 PM, Florent Flament
+<contact@florentflament.com> wrote:
+> With the generic HID driver, K290 keyboards' F1 to F12 keys send
+> multimedia events by default, and standard keycodes when the function
+> key is pressed. This driver allows to configure K290 keyboards, so
+> that F1 to F12 have a standard behavior and send multimedia events
+> when the function key is pressed. The keyboard mode is set through the
+> fn_mode module parameter: when set to 1 (default setting) the keyboard
+> behaves as with the generic HID driver, when set to 0 the keyboard is
+> configured to work as standard keyboards.
+>
+> Signed-off-by: Florent Flament <contact@florentflament.com>
+> ---
+>  drivers/hid/Kconfig             |  18 ++++++++
+>  drivers/hid/Makefile            |   1 +
+>  drivers/hid/hid-ids.h           |   1 +
+>  drivers/hid/hid-logitech-k290.c | 100 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 120 insertions(+)
+>  create mode 100644 drivers/hid/hid-logitech-k290.c
+>
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index 19c499f5623d..6686da8daac6 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -488,6 +488,24 @@ config HID_LOGITECH_HIDPP
+>         T651, TK820), some mice (Zone Touch mouse), or even keyboards (Solar
+>         Keyboard).
+>
+> +config HID_LOGITECH_K290
+> +       tristate "Logitech K290 Keyboard support"
+> +       depends on USB_HID
+> +       ---help---
+> +       This enhances support of Logitech K290 keyboards.
+> +
+> +       With the generic HID driver, K290 keyboards' F1 to F12 keys
+> +       send multimedia events by default, and standard keycodes when
+> +       the function key is pressed. This driver allows to configure
+> +       K290 keyboards, so that F1 to F12 have a standard behavior and
+> +       send multimedia events when the function key is pressed. The
+> +       keyboard mode is set through the fn_mode module parameter:
+> +       when set to 1 (default setting) the keyboard behaves as with
+> +       the generic HID driver, when set to 0 the keyboard is
+> +       configured to work as standard keyboards.
+> +
+> +       Say Y if you have a Logitech K290 keyboard.
+> +
+>  config LOGITECH_FF
+>         bool "Logitech force feedback support"
+>         depends on HID_LOGITECH
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index eb13b9e92d85..78079d3a5d58 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -61,6 +61,7 @@ obj-$(CONFIG_HID_LENOVO)      += hid-lenovo.o
+>  obj-$(CONFIG_HID_LOGITECH)     += hid-logitech.o
+>  obj-$(CONFIG_HID_LOGITECH_DJ)  += hid-logitech-dj.o
+>  obj-$(CONFIG_HID_LOGITECH_HIDPP)       += hid-logitech-hidpp.o
+> +obj-$(CONFIG_HID_LOGITECH_K290)        += hid-logitech-k290.o
+>  obj-$(CONFIG_HID_MAGICMOUSE)   += hid-magicmouse.o
+>  obj-$(CONFIG_HID_MAYFLASH)     += hid-mf.o
+>  obj-$(CONFIG_HID_MICROSOFT)    += hid-microsoft.o
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 9454ac134ce2..68caba7e666c 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -693,6 +693,7 @@
+>  #define USB_DEVICE_ID_LOGITECH_HARMONY_LAST 0xc14f
+>  #define USB_DEVICE_ID_LOGITECH_HARMONY_PS3 0x0306
+>  #define USB_DEVICE_ID_LOGITECH_KEYBOARD_G710_PLUS 0xc24d
+> +#define USB_DEVICE_ID_LOGITECH_KEYBOARD_K290   0xc31f
+>  #define USB_DEVICE_ID_LOGITECH_MOUSE_C01A      0xc01a
+>  #define USB_DEVICE_ID_LOGITECH_MOUSE_C05A      0xc05a
+>  #define USB_DEVICE_ID_LOGITECH_MOUSE_C06A      0xc06a
+> diff --git a/drivers/hid/hid-logitech-k290.c b/drivers/hid/hid-logitech-k290.c
+> new file mode 100644
+> index 000000000000..36fdb5838842
+> --- /dev/null
+> +++ b/drivers/hid/hid-logitech-k290.c
+> @@ -0,0 +1,100 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * HID driver for Logitech K290 keyboard
+> + *
+> + * Copyright (c) 2018 Florent Flament
+> + *
+> + * This drivers allows to configure the K290 keyboard's function key
+> + * behaviour (whether function mode is activated or not by default).
+> + *
+> + * Logitech custom commands taken from Marcus Ilgner k290-fnkeyctl
+> + * (https://github.com/milgner/k290-fnkeyctl):
+> + * K290_SET_FUNCTION_CMD
+> + * K290_SET_FUNCTION_VAL
+> + * K290_SET_FUNCTION_OFF
+> + * K290_SET_FUNCTION_ON
+> + *
+> + * Based on hid-accutouch.c and hid-elo.c
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/hid.h>
+> +#include <linux/module.h>
+> +#include <linux/stat.h>
+> +#include <linux/types.h>
+> +#include <linux/usb.h>
+> +
+> +#include "hid-ids.h"
+> +#include "usbhid/usbhid.h"
+> +
+> +// Logitech K290 custom USB command and value to setup function key
+> +#define K290_SET_FUNCTION_CMD 0x02
+> +#define K290_SET_FUNCTION_VAL 0x001a
+> +
+> +// Have function mode turned off (as with standard keyboards)
+> +#define K290_SET_FUNCTION_OFF 0x0001
+> +// Have function mode turned on (default k290 behavior)
+> +#define K290_SET_FUNCTION_ON  0x0000
+> +
+> +// Function key default mode is set at module load time for every K290
+> +// keyboards plugged on the machine. By default fn_mode = 1, i.e
+> +// sending K290_SET_FUNCTION_ON (default K290 behavior).
+> +static bool fn_mode = 1;
+> +module_param(fn_mode, bool, 0444);
+> +MODULE_PARM_DESC(fn_mode, "Logitech K290 function key mode (default = 1)");
+> +
+> +static void k290_set_function(struct usb_device *dev, uint16_t function_mode)
+> +{
+> +       int ret;
+> +
+> +       ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
+> +                             K290_SET_FUNCTION_CMD,
+> +                             USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+> +                             K290_SET_FUNCTION_VAL,
+> +                             function_mode, 0, 0, USB_CTRL_SET_TIMEOUT);
+> +
+> +       if (ret < 0)
+> +               dev_err(&dev->dev,
+> +                       "Failed to setup K290 function key, error %d\n", ret);
+> +}
+> +
+> +static int k290_set_function_hid_device(struct hid_device *hid)
+> +{
+> +       struct usb_device *usb_dev = hid_to_usb_dev(hid);
+> +
+> +       k290_set_function(usb_dev,
+> +                       fn_mode ? K290_SET_FUNCTION_ON : K290_SET_FUNCTION_OFF);
+> +       return 0;
+> +}
+> +
+> +static int k290_input_configured(struct hid_device *hid,
+> +                                struct hid_input *hidinput)
+> +{
+> +       return k290_set_function_hid_device(hid);
+> +}
+> +
+> +static int k290_resume(struct hid_device *hid)
+> +{
+> +       return k290_set_function_hid_device(hid);
+> +}
+> +
+> +static const struct hid_device_id k290_devices[] = {
+> +       { HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+> +                        USB_DEVICE_ID_LOGITECH_KEYBOARD_K290) },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(hid, k290_devices);
+> +
+> +static struct hid_driver k290_driver = {
+> +       .name = "hid-logitech-k290",
+> +       .id_table = k290_devices,
+> +       .input_configured = k290_input_configured,
+> +       .resume = k290_resume,
+> +       .reset_resume = k290_resume,
+> +};
+> +
+> +module_hid_driver(k290_driver);
+> +
+> +MODULE_AUTHOR("Florent Flament <contact@florentflament.com>");
+> +MODULE_DESCRIPTION("Logitech K290 keyboard driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.14.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
