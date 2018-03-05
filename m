@@ -1,99 +1,243 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932873AbeCEGNz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 01:13:55 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38871 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932522AbeCEGNw (ORCPT
+        id S932977AbeCEGph (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 01:45:37 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40640 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932959AbeCEGpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 01:13:52 -0500
-X-Google-Smtp-Source: AG47ELtnNC6bFAOjixGeqWPJRLtEbedh+fOqH+UahvjT2TBswHAsGrg30jhCKQ3IPPYXvMRuzEaorQ==
-Date: Mon, 5 Mar 2018 11:43:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Claudio Scordino <claudio@evidence.eu.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Todd Kjos <tkjos@android.com>, Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cpufreq: schedutil: rate limits for SCHED_DEADLINE
-Message-ID: <20180305061349.GF23018@vireshk-i7>
-References: <1519815970-5686-1-git-send-email-claudio@evidence.eu.com>
- <CAJZ5v0g5SS7A6xNQo=GNaMudRgFC8BL9wP1C4Nh8T-+NygYS+A@mail.gmail.com>
+        Mon, 5 Mar 2018 01:45:35 -0500
+X-Google-Smtp-Source: AG47ELv7XtpOpFUhnnv4HNSicMansbiOkUXH5mBzhaS2cd+FODMSw9SGm+cFxDcuY3I+mRA4HBlokxFkt3IGqCJ6jpU=
+From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+References: <20180301130729.3278022-1-arnd@arndb.de>
+In-Reply-To: <20180301130729.3278022-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0g5SS7A6xNQo=GNaMudRgFC8BL9wP1C4Nh8T-+NygYS+A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQMtp/Bh4yYS/yIQvEtH+n2ZC8G49KENSwDw
+Date: Mon, 5 Mar 2018 12:15:32 +0530
+Message-ID: <b167c3fe8fe7736d39a1843439ecb2ce@mail.gmail.com>
+Subject: RE: [PATCH] scsi: mpt3sas: clarify mmio pointer types
+To: Arnd Bergmann <arnd@arndb.de>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+        Chaitra Basappa <chaitra.basappa@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Hannes Reinecke <hare@suse.de>,
+        PDL-MPT-FUSIONLINUX <mpt-fusionlinux.pdl@broadcom.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-02-18, 12:22, Rafael J. Wysocki wrote:
-> On Wed, Feb 28, 2018 at 12:06 PM, Claudio Scordino
-> <claudio@evidence.eu.com> wrote:
-> > When the SCHED_DEADLINE scheduling class increases the CPU utilization,
-> > we should not wait for the rate limit, otherwise we may miss some
-> > deadline.
-> >
-> > Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
-> > shown reductions of even 10% of deadline misses with a negligible
-> > increase of energy consumption (measured through Baylibre Cape).
-> >
-> > Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-> > CC: Ingo Molnar <mingo@redhat.com>
-> > CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> > CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > CC: Morten Rasmussen <morten.rasmussen@arm.com>
-> > CC: Juri Lelli <juri.lelli@redhat.com>
-> > CC: Viresh Kumar <viresh.kumar@linaro.org>
-> > CC: Vincent Guittot <vincent.guittot@linaro.org>
-> > CC: Todd Kjos <tkjos@android.com>
-> > CC: Joel Fernandes <joelaf@google.com>
-> > CC: linux-pm@vger.kernel.org
-> > CC: linux-kernel@vger.kernel.org
-> > ---
-> > Changes from v1:
-> >  - Logic moved from sugov_should_update_freq() to
-> >    sugov_update_single()/_shared() to not duplicate data structures
-> >  - Rate limit not ignored in case of "fast switch"
-> 
-> I'm not sure about this last bit.
-> 
-> IMO you can set sg_policy->need_freq_update even in the "fast switch"
-> case to start with and special case it in the future if that turns out
-> to be problematic.  That is, unless you have data indicating that it
-> already is problematic, of course. :-)
-> 
-> > ---
-> >  kernel/sched/cpufreq_schedutil.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index 7936f54..ca6ce72 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -273,6 +273,14 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
-> >         sugov_set_iowait_boost(sg_cpu, time);
-> >         sg_cpu->last_update = time;
-> >
-> > +       /*
-> > +        * Make sugov_should_update_freq() ignore the rate limit when DL
-> > +        * has increased the utilization.
-> > +        */
-> > +       if ((cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl) &&
-> > +                       !(sg_policy->policy->fast_switch_enabled))
-> > +               sg_policy->need_freq_update = true;
-> > +
+-----Original Message-----
+From: Arnd Bergmann [mailto:arnd@arndb.de]
+Sent: Thursday, March 1, 2018 6:37 PM
+To: Suganath Prabu S; Sathya Prakash; Chaitra P B; James E.J. Bottomley;
+Martin K. Petersen
+Cc: Arnd Bergmann; Hannes Reinecke; Sreekanth Reddy;
+MPT-FusionLinux.pdl@broadcom.com; linux-scsi@vger.kernel.org;
+linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: mpt3sas: clarify mmio pointer types
 
-And a new routine for this block would be good as well.
+The newly added code mixes up phys_addr_t/resource_size_t with dma_addr_t
+and void pointers, as seen from these compiler warning:
 
--- 
-viresh
+drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_base_get_chain_phys':
+drivers/scsi/mpt3sas/mpt3sas_base.c:235:21: error: cast to pointer from
+integer of different size [-Werror=int-to-pointer-cast]
+  base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET +
+                     ^
+drivers/scsi/mpt3sas/mpt3sas_base.c: In function '_clone_sg_entries':
+drivers/scsi/mpt3sas/mpt3sas_base.c:427:20: error: cast from pointer to
+integer of different size [-Werror=pointer-to-int-cast]
+    sgel->Address = (dma_addr_t)dst_addr_phys;
+                    ^
+drivers/scsi/mpt3sas/mpt3sas_base.c:438:7: error: cast from pointer to
+integer of different size [-Werror=pointer-to-int-cast]
+       (dma_addr_t)buff_ptr_phys;
+       ^
+drivers/scsi/mpt3sas/mpt3sas_base.c:444:10: error: cast from pointer to
+integer of different size [-Werror=pointer-to-int-cast]
+          (dma_addr_t)buff_ptr_phys;
+
+Both dma_addr_t and phys_addr_t may be wider than a pointer, so we must
+avoid the conversion to pointer types. This also helps readability.
+
+A second problem is treating MMIO addresses from a 'struct resource'
+as addresses that can be used for DMA on that device. In almost all cases,
+those are the same, but on some of the more obscure architectures, PCI
+memory address 0 is mapped into the CPU address space at a nonzero offset.
+I don't have a good fix for that, so I'm adding a comment here, plus a
+WARN_ON() that triggers whenever the phys_addr_t number is outside of the
+low 32-bit address space and causes a straight overflow when assigned to
+the 32-bit sgel->Address.
+
+Fixes: 182ac784b41f ("scsi: mpt3sas: Introduce Base function for
+cloning.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 42
+++++++++++++++++++++-----------------
+ drivers/scsi/mpt3sas/mpt3sas_base.h |  2 +-
+ 2 files changed, 24 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c
+b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 9f2434e59b40..61f93a134956 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -225,14 +225,14 @@ _base_get_chain(struct MPT3SAS_ADAPTER *ioc, u16
+smid,
+  *
+  * @Return - Physical chain address.
+  */
+-static inline void *
++static inline phys_addr_t
+ _base_get_chain_phys(struct MPT3SAS_ADAPTER *ioc, u16 smid,
+ 		u8 sge_chain_count)
+ {
+-	void *base_chain_phys, *chain_phys;
++	phys_addr_t base_chain_phys, chain_phys;
+ 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
+
+-	base_chain_phys  = (void *)ioc->chip_phys + MPI_FRAME_START_OFFSET
++
++	base_chain_phys  = ioc->chip_phys + MPI_FRAME_START_OFFSET +
+ 		(cmd_credit * ioc->request_sz) +
+ 		REPLY_FREE_POOL_SIZE;
+ 	chain_phys = base_chain_phys + (smid * ioc->facts.MaxChainDepth *
+@@ -272,11 +272,11 @@ _base_get_buffer_bar0(struct MPT3SAS_ADAPTER *ioc,
+u16 smid)
+  *
+  * @Returns - Pointer to buffer location in BAR0.
+  */
+-static void *
++static phys_addr_t
+ _base_get_buffer_phys_bar0(struct MPT3SAS_ADAPTER *ioc, u16 smid)  {
+ 	u16 cmd_credit = ioc->facts.RequestCredit + 1;
+-	void *chain_end_phys = _base_get_chain_phys(ioc,
++	phys_addr_t chain_end_phys = _base_get_chain_phys(ioc,
+ 			cmd_credit + 1,
+ 			ioc->facts.MaxChainDepth);
+ 	return chain_end_phys + (smid * 64 * 1024); @@ -330,11 +330,12 @@
+static void _clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 	bool is_write = 0;
+ 	u16 i = 0;
+ 	void __iomem *buffer_iomem;
+-	void  *buffer_iomem_phys;
++	phys_addr_t buffer_iomem_phys;
+ 	void __iomem *buff_ptr;
+-	void *buff_ptr_phys;
++	phys_addr_t buff_ptr_phys;
+ 	void __iomem *dst_chain_addr[MCPU_MAX_CHAINS_PER_IO];
+-	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO], *dst_addr_phys;
++	void *src_chain_addr[MCPU_MAX_CHAINS_PER_IO];
++	phys_addr_t dst_addr_phys;
+ 	MPI2RequestHeader_t *request_hdr;
+ 	struct scsi_cmnd *scmd;
+ 	struct scatterlist *sg_scmd = NULL;
+@@ -391,6 +392,7 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER
+*ioc,
+
+ 	buff_ptr = buffer_iomem;
+ 	buff_ptr_phys = buffer_iomem_phys;
++	WARN_ON(buff_ptr_phys > U32_MAX);
+
+ 	if (sgel->FlagsLength &
+ 			(MPI2_SGE_FLAGS_HOST_TO_IOC <<
+MPI2_SGE_FLAGS_SHIFT)) @@ -421,10 +423,10 @@ static void
+_clone_sg_entries(struct MPT3SAS_ADAPTER *ioc,
+ 					smid, sge_chain_count);
+ 			src_chain_addr[sge_chain_count] =
+ 						(void *) sgel_next;
+-			dst_addr_phys =
+-				_base_get_chain_phys(ioc,
++			dst_addr_phys = _base_get_chain_phys(ioc,
+ 						smid, sge_chain_count);
+-			sgel->Address = (dma_addr_t)dst_addr_phys;
++			WARN_ON(dst_addr_phys > U32_MAX);
++			sgel->Address = (u32)dst_addr_phys;
+ 			sgel = sgel_next;
+ 			sge_chain_count++;
+ 			break;
+@@ -434,14 +436,16 @@ static void _clone_sg_entries(struct MPT3SAS_ADAPTER
+*ioc,
+ 					_base_clone_to_sys_mem(buff_ptr,
+ 					    sg_virt(sg_scmd),
+ 					    (sgel->FlagsLength &
+0x00ffffff));
+-					sgel->Address =
+-						(dma_addr_t)buff_ptr_phys;
++					/*
++					 * FIXME: this relies on a a zero
++					 * PCI mem_offset.
++					 */
++					sgel->Address =
+(u32)buff_ptr_phys;
+ 				} else {
+ 					_base_clone_to_sys_mem(buff_ptr,
+ 					    ioc->config_vaddr,
+ 					    (sgel->FlagsLength &
+0x00ffffff));
+-					sgel->Address =
+-					    (dma_addr_t)buff_ptr_phys;
++					sgel->Address =
+(u32)buff_ptr_phys;
+ 				}
+ 			}
+ 			buff_ptr += (sgel->FlagsLength & 0x00ffffff); @@
+-2941,7 +2945,7 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
+ 	u32 pio_sz;
+ 	int i, r = 0;
+ 	u64 pio_chip = 0;
+-	u64 chip_phys = 0;
++	phys_addr_t chip_phys = 0;
+ 	struct adapter_reply_queue *reply_q;
+
+ 	dinitprintk(ioc, pr_info(MPT3SAS_FMT "%s\n", @@ -2989,7 +2993,7 @@
+mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER *ioc)
+ 			if (memap_sz)
+ 				continue;
+ 			ioc->chip_phys = pci_resource_start(pdev, i);
+-			chip_phys = (u64)ioc->chip_phys;
++			chip_phys = ioc->chip_phys;
+ 			memap_sz = pci_resource_len(pdev, i);
+ 			ioc->chip = ioremap(ioc->chip_phys, memap_sz);
+ 		}
+@@ -3064,8 +3068,8 @@ mpt3sas_base_map_resources(struct MPT3SAS_ADAPTER
+*ioc)
+ 		    "IO-APIC enabled"),
+ 		    pci_irq_vector(ioc->pdev, reply_q->msix_index));
+
+-	pr_info(MPT3SAS_FMT "iomem(0x%016llx), mapped(0x%p), size(%d)\n",
+-	    ioc->name, (unsigned long long)chip_phys, ioc->chip,
+memap_sz);
++	pr_info(MPT3SAS_FMT "iomem(%pap), mapped(0x%p), size(%d)\n",
++	    ioc->name, &chip_phys, ioc->chip, memap_sz);
+ 	pr_info(MPT3SAS_FMT "ioport(0x%016llx), size(%d)\n",
+ 	    ioc->name, (unsigned long long)pio_chip, pio_sz);
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h
+b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index df8233c1e1c1..ae36d8fb2f2b 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -1103,7 +1103,7 @@ struct MPT3SAS_ADAPTER {
+ 	char		tmp_string[MPT_STRING_LENGTH];
+ 	struct pci_dev	*pdev;
+ 	Mpi2SystemInterfaceRegs_t __iomem *chip;
+-	resource_size_t	chip_phys;
++	phys_addr_t	chip_phys;
+ 	int		logging_level;
+ 	int		fwfault_debug;
+ 	u8		ir_firmware;
+--
+2.9.0
+
+Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
+
+Thanks,
+Sreekanth
