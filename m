@@ -1,114 +1,170 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-540544-1520347034-2-11967870269569037521
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520347033; b=k82qloC3zeqAK+AuPxfZQz+Lb+W7qqMoY1muQ9liMJUk5RB
-    bqHNTlMCW+n4cjv6WBeqUfsXSWy+JN/QZLe5inWWZkdSYKCQWEct39wf9jgZuAW6
-    uFLkPkLurRerknsemn+Q/rmc9159kEg2B2R3rhruN8+5UizM77GfDMPHjn3sg6Sj
-    VX/gMotN34Ur/Jt9NCpgK8k+8etInFAqKroC3+q1azVbuVgnzgFtHD5gJUn95YJ4
-    xl1F9P1NWXI/IIqT1RGKnvzywUcadQHqtsBBa8Yge5sKPbbGBvVxO2IPxuhZ4JXM
-    i6IrsicK+7nUPEFnLCa+jfqwYgaGifDQ8IqDjmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1520347033; bh=023zm5iX1JrmERNS3rzdroJup6
-    dwDkQ9snGluYx6HJ4=; b=ITM7x6okztIyHfo4GAzEfJJfW90gsJV8MZBTLghWmt
-    FQil7kvrFaB1fxIm5js/ma0c1GywXaIxeo6GL1aXSGxt0yZJQHNvho/wcZo2wzU3
-    PgZJcpFiIKWC+pHDsesbVdet351nrSRXuxkpMwanww35R/5NKtSKpp9T8fpR5G42
-    aHslj4BPhJN8i1YCZej5hZWkE2o+t31Tf8WbJalTpGZ3IcE4VwhjTiVt7TXWfTTl
-    bn3KB/WCWXjo+An2ekLN7ks0ojl+5A483ftbvKfKi69qCTkjzvDeEWQA25rwhkbL
-    HQoSsmHhKS0XyjCFFHw9QSGVlkrgvgxbWj2m1jwT2nxQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=egoBdYmH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=egoBdYmH x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753308AbeCFOhD (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Mar 2018 09:37:03 -0500
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:59986 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeCFOhB (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 6 Mar 2018 09:37:01 -0500
-Date: Tue, 6 Mar 2018 08:36:59 -0600
-From: Bin Liu <b-liu@ti.com>
-To: Merlijn Wajer <merlijn@wizzup.org>
-CC: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        <linux-omap@vger.kernel.org>
-Subject: Re: usb: musb: "(null)" in sysfs mode file after disabling a gadget
- (and at other times, system hangs)
-Message-ID: <20180306143659.GG14921@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        linux-omap@vger.kernel.org
-References: <f7a8cfac-e70b-046a-b465-7b37630d5d86@wizzup.org>
- <20180302152712.GA22262@uda0271908>
- <d2ade131-d6d1-72f9-f2df-78e2bef82ca3@wizzup.org>
- <20180302165439.62xw4slhhupy4vy5@pali>
- <20180305192844.GE14921@uda0271908>
- <54fc4244-2584-f63d-23be-9e0413bcbee4@wizzup.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <54fc4244-2584-f63d-23be-9e0413bcbee4@wizzup.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AG47ELtRKf/MNufZGMh2xJFIDo6AK+YhkSnbohEBfEtwmJ+do8k4N4ZmjheiFxzd53VZZGXvf4UR
+ARC-Seal: i=1; a=rsa-sha256; t=1520245570; cv=none;
+        d=google.com; s=arc-20160816;
+        b=tJdJslSrHPmbPVFL8fz9UsiqhzQKuJj+jaWNghkVuom7bCL5uQoGUHRzUC37kAXynC
+         OIHTgf532c2xbY3x+5XNZXRQ6mmjsiM+2bafr4JjLSPgdtlVE8Q/5gG6fRo3Lj+pamUX
+         YKq5bRFURhyLoOfct7Ymr5RLz/Gq8qi/MFojJe94i8aYnMvEdqBUleE5XCFb9ZtSGrER
+         ZmDSxfEi+coHBTyAexhBOPBYzUByFSRd2uhKp9/51D3dHGhIwQ/DGkfSO1sYtZA7OWrE
+         sfLcPug7m7RZsJlsDcEmg9KdolYuEVOu33MNrQzuh1VRfVfwfzaA0v7sjpl4O5uuQ619
+         sN3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=hoLXwpH6HeYT4QiejW444GuAIUvUoqegLhUT/HT6Mi4=;
+        b=HcSnlti88p+j5xjkGQR4zVvGjGp/dbwthKN3eakXL8VRiPP5Byp7824L0t90oeBANv
+         qpsrkK5kb0TDumT1EwBvzXB/aWCtzsVuY4pKU8pcJFE3blmB+qzKaOEj8iw2LKDmmz1g
+         v0c8CPkHCUzYJ4e/zZqgTqUn8+vmFSqklkSN2zp2L8/uN/FRTAIO5K5qZ4keeRaOaLTt
+         CcdHXhEMz8LpxpnD/udhXjFy06oauF9PfkmTJahMPRbCIa3kxJ1Hv0gnejk4ZuQ6UHb/
+         GitHHIeKmw211ZfefSRmPCnV2Mo1HvVfW48awtyyLz9+nLLoYvqjnIwfqsQXkimBVkOh
+         W43g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=g2srU4uS;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Authentication-Results: mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=g2srU4uS;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 00/34 v3] PTI support for x32
+Date: Mon,  5 Mar 2018 11:25:29 +0100
+Message-Id: <1520245563-8444-1-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594093018072269426?=
+X-GMAIL-MSGID: =?utf-8?q?1594093018072269426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 08:44:40PM +0100, Merlijn Wajer wrote:
-> Hi Bin,
-> 
-> On 05/03/18 20:28, Bin Liu wrote:
-> 
-> > The musb udc driver sets the state to b_idle without checking a
-> > gadget driver, this should be cleaned up. I have add this in my backlog.
-> > But if this issue doesn't bother you much right now, I will make the
-> > action low priority and address it later whenever I got time. (likely
-> > not very soon, I have a hand full of musb driver bugs to fix...)
-> 
-> I can try to fix it this (or next) week. Do you have a pointer for me?
+Hi,
 
-Quickly looking at the code, musb->xceiv->otg->state is set to OTG_STATE_B_IDLE
-in musb_init_controller(), musb_gadget_setup(), musb_gadget_start(), and
-musb_g_disconnect(). I am not sure if there is redundancy, and gadget
-driver should be checked in some of them.
+here is an updated version of my PTI patches for x86-32. I
+worked in the review comments and fixed a few bugs that were
+found during review of v2.
 
-Regards,
--Bin.
+In particular, the changes to v2 are:
+
+	* Switched from movsb to movsl for stack copy
+	* Simplified sysexit path to not do a full pt_regs
+	  copy, copies now only 2 dwords to entry stack
+	* Renamed pti_set_user_pgd() to pti_set_user_pgtbl()
+	* Added a warning in case someone boots a 32 bit
+	  kernel on a PCIE capable machine
+	* Added switch to user-cr3 to the paranoid exit path
+	  in case we entered the kernel from kernel-mode
+	  with user-cr3
+	* Simplified the debug handler now that all its
+	  special cases are handled in the stack/cr3-switch
+	  code
+	* Fixed PGD_PAE_PHYS_MASK for XEN-PV
+	
+Here is a link to my post of the v2 patches:
+
+	https://marc.info/?l=linux-kernel&m=151816914932088&w=2
+
+And I also pushed these out to:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git pti-x32-v3
+
+For easier testing. Please review.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (34):
+  x86/asm-offsets: Move TSS_sp0 and TSS_sp1 to asm-offsets.c
+  x86/entry/32: Rename TSS_sysenter_sp0 to TSS_entry_stack
+  x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
+  x86/entry/32: Put ESPFIX code into a macro
+  x86/entry/32: Unshare NMI return path
+  x86/entry/32: Split off return-to-kernel path
+  x86/entry/32: Restore segments before int registers
+  x86/entry/32: Enter the kernel via trampoline stack
+  x86/entry/32: Leave the kernel via trampoline stack
+  x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
+  x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+  x86/entry/32: Simplify debug entry point
+  x86/entry/32: Add PTI cr3 switches to NMI handler code
+  x86/entry/32: Add PTI cr3 switch to non-NMI entry/exit points
+  x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
+  x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
+  x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
+  x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
+  x86/pgtable: Move pti_set_user_pgtbl() to pgtable.h
+  x86/pgtable: Move two more functions from pgtable_64.h to pgtable.h
+  x86/mm/pae: Populate valid user PGD entries
+  x86/mm/pae: Populate the user page-table with user pgd's
+  x86/mm/legacy: Populate the user page-table with user pgd's
+  x86/mm/pti: Add an overflow check to pti_clone_pmds()
+  x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
+  x86/mm/pti: Clone CPU_ENTRY_AREA on PMD level on x86_32
+  x86/mm/dump_pagetables: Define INIT_PGD
+  x86/pgtable/pae: Use separate kernel PMDs for user page-table
+  x86/ldt: Reserve address-space range on 32 bit for the LDT
+  x86/ldt: Define LDT_END_ADDR
+  x86/ldt: Split out sanity check in map_ldt_struct()
+  x86/ldt: Enable LDT user-mapping for PAE
+  x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
+  x86/mm/pti: Add Warning when booting on a PCIE capable CPU
+
+ arch/x86/entry/entry_32.S                   | 668 ++++++++++++++++++++++------
+ arch/x86/include/asm/mmu_context.h          |   4 -
+ arch/x86/include/asm/pgtable-2level.h       |   9 +
+ arch/x86/include/asm/pgtable-2level_types.h |   3 +
+ arch/x86/include/asm/pgtable-3level.h       |   7 +
+ arch/x86/include/asm/pgtable-3level_types.h |   6 +-
+ arch/x86/include/asm/pgtable.h              |  88 ++++
+ arch/x86/include/asm/pgtable_32_types.h     |   9 +-
+ arch/x86/include/asm/pgtable_64.h           |  89 +---
+ arch/x86/include/asm/pgtable_64_types.h     |   4 +
+ arch/x86/include/asm/pgtable_types.h        |  28 +-
+ arch/x86/include/asm/processor-flags.h      |   8 +-
+ arch/x86/include/asm/switch_to.h            |   6 +-
+ arch/x86/kernel/asm-offsets.c               |   5 +
+ arch/x86/kernel/asm-offsets_32.c            |   2 +-
+ arch/x86/kernel/asm-offsets_64.c            |   2 -
+ arch/x86/kernel/cpu/common.c                |   5 +-
+ arch/x86/kernel/head_32.S                   |  20 +-
+ arch/x86/kernel/ldt.c                       | 137 ++++--
+ arch/x86/kernel/process.c                   |   2 -
+ arch/x86/kernel/process_32.c                |  10 +-
+ arch/x86/mm/dump_pagetables.c               |  21 +-
+ arch/x86/mm/pgtable.c                       | 105 ++++-
+ arch/x86/mm/pti.c                           |  42 +-
+ security/Kconfig                            |   2 +-
+ 25 files changed, 963 insertions(+), 319 deletions(-)
+
+-- 
+2.7.4
