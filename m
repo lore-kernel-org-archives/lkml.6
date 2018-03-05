@@ -1,105 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752940AbeCEUVA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:21:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
+        id S1752910AbeCEUXt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:23:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:19709 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752719AbeCEUU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:20:59 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3E7206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 5 Mar 2018 17:20:54 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        namhyung@kernel.org, wangnan0@huawei.com, ak@linux.intel.com
-Subject: Re: [PATCH 1/7] perf mmap: Store mmap scope and type in struct
- perf_mmap
-Message-ID: <20180305202054.GA10176@kernel.org>
-References: <1520277059-32749-1-git-send-email-kan.liang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520277059-32749-1-git-send-email-kan.liang@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751764AbeCEUXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:23:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
+   d="scan'208";a="209015196"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 0/6] tpm: timeouts revamp
+Date: Mon,  5 Mar 2018 22:20:11 +0200
+Message-Id: <20180305202017.24008-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 05, 2018 at 02:10:53PM -0500, kan.liang@linux.intel.com escreveu:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> There are too many boilerplates for the perf_mmap__read*() interfaces.
-> 
-> Some of the data (e.g. 'start', 'end', 'overwrite') should be stored in
-> struct perf_mmap at initialization. They will be used later.
-> 
-> No functional change.
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  tools/perf/util/mmap.c | 11 ++++++++---
->  tools/perf/util/mmap.h |  3 +++
->  2 files changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-> index 4f27c46..642b479 100644
-> --- a/tools/perf/util/mmap.c
-> +++ b/tools/perf/util/mmap.c
-> @@ -250,11 +250,14 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
->  
->  	*startp = overwrite ? head : old;
->  	*endp = overwrite ? old : head;
+This series cleans up tpm timeouts setting and handling.
 
-Why did you keep the above and haven't removed the startp/endp args? to
-ease the conversion somehow? I'll look at the other patches, but I think
-we should change the function signature here and in the callers all at
-once.
+First motivation was to fix failures coming from too short timeouts
+for commands that creates keys.
+Key generation may take significant time depending on the underlying
+hardware. Rather than increasing default timeout a new constant is
+added, to not stall too long on regular commands failures.
 
-Sometimes this is ok, and probably this is one case.
+Second is to define timeouts for new tpm2 commands
+defined in TCG 1.36 spec.
 
-- Arnaldo
+Last, is to factor out tpm1.2 commands out of tpm-interface.c
 
-> +	md->overwrite = overwrite;
-> +	md->start = overwrite ? head : old;
-> +	md->end = overwrite ? old : head;
->  
-> -	if (*startp == *endp)
-> +	if (md->start == md->end)
->  		return -EAGAIN;
->  
-> -	size = *endp - *startp;
-> +	size = md->end - md->start;
->  	if (size > (unsigned long)(md->mask) + 1) {
->  		if (!overwrite) {
->  			WARN_ONCE(1, "failed to keep up with mmap data. (warn only once)\n");
-> @@ -268,8 +271,10 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
->  		 * Backward ring buffer is full. We still have a chance to read
->  		 * most of data from it.
->  		 */
-> -		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
-> +		if (overwrite_rb_find_range(data, md->mask, head, &md->start, &md->end))
->  			return -EINVAL;
-> +		*startp = md->start;
-> +		*endp = md->end;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-> index ec7d3a24..9359e93 100644
-> --- a/tools/perf/util/mmap.h
-> +++ b/tools/perf/util/mmap.h
-> @@ -20,6 +20,9 @@ struct perf_mmap {
->  	int		 fd;
->  	refcount_t	 refcnt;
->  	u64		 prev;
-> +	u64		 start;
-> +	u64		 end;
-> +	bool		 overwrite;
->  	struct auxtrace_mmap auxtrace_mmap;
->  	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
->  };
-> -- 
-> 2.4.11
+Tomas Winkler (6):
+  tpm: sort objects in the Makefile
+  tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
+  tpm2: add longer timeouts for creation commands.
+  tpm2: add new tpm2 commands according to TCG 1.36
+  tmp: factor out tpm_get_timeouts
+  tpm: tpm-interface: drop unused tpm_input_header headers.
+
+ drivers/char/tpm/Makefile            |  15 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 424 +----------------------------------
+ drivers/char/tpm/tpm.h               |  74 +++---
+ drivers/char/tpm/tpm1-cmd.c          | 416 ++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 220 ++++++++----------
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
+ drivers/char/tpm/tpm_tis_core.c      |   2 +-
+ drivers/char/tpm/xen-tpmfront.c      |   2 +-
+ 9 files changed, 582 insertions(+), 583 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
+
+-- 
+2.14.3
