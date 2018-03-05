@@ -1,70 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932080AbeCEPQj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 10:16:39 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42060 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeCEPQi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 10:16:38 -0500
-X-Google-Smtp-Source: AG47ELvKqiTppalKAYVFtSJEe+CmTRHeppor0vy4U/G2wXudV7vkm3RfYCnvz5YIP1dES1GvKZHhniCrD5At0LjJop8=
-MIME-Version: 1.0
-In-Reply-To: <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
- <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
- <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz> <1519752950.10722.231.camel@linux.intel.com>
- <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz> <1519814544.10722.266.camel@linux.intel.com>
- <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz> <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date: Mon, 5 Mar 2018 16:16:37 +0100
-Message-ID: <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
-Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>
+        id S1752274AbeCEPSH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 10:18:07 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42304 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751723AbeCEPSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 10:18:05 -0500
+Message-ID: <1520263080.5898.7.camel@redhat.com>
+Subject: Re: BUG: unable to handle kernel paging request in
+ compat_copy_entries
+From: Paolo Abeni <pabeni@redhat.com>
+To: syzbot <syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com>,
+        bridge@lists.linux-foundation.org, coreteam@netfilter.org,
+        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
+Date: Mon, 05 Mar 2018 16:18:00 +0100
+In-Reply-To: <001a113f1b64a3c4ab0566a60182@google.com>
+References: <001a113f1b64a3c4ab0566a60182@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 March 2018 at 13:53, Petr Mladek <pmladek@suse.com> wrote:
-> %p has many modifiers where the pointer is dereferenced. An invalid
-> pointer might cause kernel to crash silently.
->
-> Note that printk() formats the string under logbuf_lock. Any recursive
-> printks are redirected to the printk_safe implementation and the messages
-> are stored into per-CPU buffers. These buffers might be eventually flushed
-> in printk_safe_flush_on_panic() but it is not guaranteed.
-
-Yeah, it's annoying that we can't reliably WARN for bogus vsprintf() uses.
-
-> In general, we should do our best to get useful message from printk().
-> All pointers to the first memory page must be invalid. Let's prevent
-> the dereference and print "(null)" in this case. This is already done
-> in many other situations, including "%s" format handling and many
-> page fault handlers.
->
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+On Mon, 2018-03-05 at 00:21 -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on upstream commit
+> 5fbdefcf685defd8bc5a8f37b17538d25c58d77a (Fri Mar 2 21:05:20 2018 +0000)
+> Merge branch 'parisc-4.16-1' of  
+> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+> 
+> So far this crash happened 5 times on upstream.
+> syzkaller reproducer is attached.
+> Raw console output is attached.
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached.
+> user-space arch: i386
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+5705ba91388d7bc30828@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for  
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> audit: type=1400 audit(1520098078.492:8): avc:  denied  { map } for   
+> pid=4239 comm="syz-execprog" path="/root/syzkaller-shm255959590" dev="sda1"  
+> ino=16482 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+> tcontext=unconfined_u:object_r:file_t:s0 tclass=file permissive=1
+> IPVS: ftp: loaded support on port[0] = 21
+> BUG: unable to handle kernel paging request at ffffc90001819e4f
+> IP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
+> IP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
+> IP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160
+> PGD 1dad2f067 P4D 1dad2f067 PUD 1dad30067 PMD 1b2408067 PTE 0
+> Oops: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 4249 Comm: syz-executor0 Not tainted 4.16.0-rc3+ #248
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> RIP: 0010:ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline]
+> RIP: 0010:size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline]
+> RIP: 0010:compat_copy_entries+0x49f/0x1050  
+> net/bridge/netfilter/ebtables.c:2160
+> RSP: 0018:ffff8801b34bf7e8 EFLAGS: 00010246
+> RAX: 000000000000000a RBX: ffff8801b34bf9d4 RCX: ffffc90001819e4f
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801b34bf9d8
+> RBP: ffff8801b34bf968 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffffffff88613340 R11: 0000000000000001 R12: 000000000000ee5f
+> R13: dffffc0000000000 R14: ffff8801b34bf9c8 R15: ffffc90001819e2f
+> FS:  0000000000000000(0000) GS:ffff8801db300000(0063) knlGS:00000000085b9900
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: ffffc90001819e4f CR3: 00000001b2bd7003 CR4: 00000000001606e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   compat_do_replace+0x398/0x7c0 net/bridge/netfilter/ebtables.c:2249
+>   compat_do_ebt_set_ctl+0x22a/0x2d0 net/bridge/netfilter/ebtables.c:2330
+>   compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
+>   compat_nf_setsockopt+0x88/0x130 net/netfilter/nf_sockopt.c:156
+>   compat_ip_setsockopt+0x8b/0xd0 net/ipv4/ip_sockglue.c:1285
+>   inet_csk_compat_setsockopt+0x95/0x120 net/ipv4/inet_connection_sock.c:1041
+>   compat_tcp_setsockopt+0x3d/0x70 net/ipv4/tcp.c:2916
+>   compat_sock_common_setsockopt+0xb2/0x140 net/core/sock.c:2986
+>   C_SYSC_setsockopt net/compat.c:403 [inline]
+>   compat_SyS_setsockopt+0x17c/0x410 net/compat.c:386
+>   do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+>   do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+>   entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+> RIP: 0023:0xf7fbbc99
+> RSP: 002b:00000000ffd5ab8c EFLAGS: 00000286 ORIG_RAX: 000000000000016e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
+> RDX: 0000000000000080 RSI: 0000000020000280 RDI: 0000000000000208
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> Code: 8d 4f 20 48 89 c8 48 89 8d c8 fe ff ff 48 c1 e8 03 42 0f b6 14 28 48  
+> 89 c8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 b2 0a 00 00 <45> 8b 67 20  
+> 44 39 a5 04 ff ff ff 0f 82 bd 08 00 00 e8 cb 52 56
+> RIP: ebt_size_mwt net/bridge/netfilter/ebtables.c:2037 [inline] RSP:  
+> ffff8801b34bf7e8
+> RIP: size_entry_mwt net/bridge/netfilter/ebtables.c:2122 [inline] RSP:  
+> ffff8801b34bf7e8
+> RIP: compat_copy_entries+0x49f/0x1050 net/bridge/netfilter/ebtables.c:2160  
+> RSP: ffff8801b34bf7e8
+> CR2: ffffc90001819e4f
+> ---[ end trace cf111332eb971f16 ]---
+> 
+> 
 > ---
->  lib/vsprintf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index d7a708f82559..5c2d1f44218a 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1849,7 +1849,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->  {
->         const int default_width = 2 * sizeof(void *);
->
-> -       if (!ptr && *fmt != 'K' && *fmt != 'x') {
-> +       if ((unsigned long)ptr < PAGE_SIZE && *fmt != 'K' && *fmt != 'x') {
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is  
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug  
+> report.
+> Note: all commands must start from beginning of the line in the email body.
 
-ISTM that accidentally passing an ERR_PTR would be just as likely as
-passing a NULL pointer (or some small offset from one), so if we do
-this, shouldn't the test also cover IS_ERR values?
-
-Rasmus
+#syz fix: netfilter: ebtables: add CONFIG_COMPAT support
