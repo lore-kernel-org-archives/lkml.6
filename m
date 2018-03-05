@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753294AbeCEWXn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:23:43 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37198 "EHLO
+        id S932896AbeCEWc0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:32:26 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37164 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753027AbeCEWXl (ORCPT
+        with ESMTP id S1753221AbeCEWXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:23:41 -0500
+        Mon, 5 Mar 2018 17:23:38 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -15,12 +15,12 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         dianders@chromium.org, linux-rockchip@lists.infradead.org,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
-        Yakir Yang <ykk@rock-chips.com>,
+        Caesar Wang <wxt@rock-chips.com>,
         =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 03/38] drm/bridge: analogix_dp: detect Sink PSR state after configuring the PSR
-Date: Mon,  5 Mar 2018 23:22:55 +0100
-Message-Id: <20180305222324.5872-4-enric.balletbo@collabora.com>
+Subject: [PATCH v4 02/38] drm/rockchip: Don't use atomic constructs for psr
+Date: Mon,  5 Mar 2018 23:22:54 +0100
+Message-Id: <20180305222324.5872-3-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
 References: <20180305222324.5872-1-enric.balletbo@collabora.com>
@@ -31,137 +31,261 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yakir Yang <ykk@rock-chips.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-Make sure the request PSR state takes effect in analogix_dp_send_psr_spd()
-function, or print the sink PSR error state if we failed to apply the
-requested PSR setting.
+Instead of using timer and spinlocks, use delayed_work and
+mutexes for rockchip psr. This allows us to make blocking
+calls when enabling/disabling psr (which is sort of important
+given we're talking over dpcd to the display).
 
+Cc: Caesar Wang <wxt@rock-chips.com>
 Cc: 征增 王 <wzz@rock-chips.com>
 Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-[seanpaul changed timeout loop to a readx poll]
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  6 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  6 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 35 +++++++++++++++++++---
- 3 files changed, 37 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 68 ++++++++++++-----------------
+ 3 files changed, 31 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index a693ab3078f0..e738aa6de1af 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -122,8 +122,7 @@ int analogix_dp_enable_psr(struct analogix_dp_device *dp)
- 	psr_vsc.DB0 = 0;
- 	psr_vsc.DB1 = EDP_VSC_PSR_STATE_ACTIVE | EDP_VSC_PSR_CRC_VALUES_VALID;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index 1920334dbdaa..f814d37b1db2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -134,7 +134,7 @@ static int rockchip_drm_bind(struct device *dev)
+ 	drm_dev->dev_private = private;
  
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_enable_psr);
+ 	INIT_LIST_HEAD(&private->psr_list);
+-	spin_lock_init(&private->psr_list_lock);
++	mutex_init(&private->psr_list_lock);
  
-@@ -149,8 +148,7 @@ int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	if (ret != 1)
- 		dev_err(dp->dev, "Failed to set DP Power0 %d\n", ret);
+ 	ret = rockchip_drm_init_iommu(drm_dev);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+index 498dfbc52cec..9c064a40458b 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+@@ -55,7 +55,7 @@ struct rockchip_drm_private {
+ 	struct mutex mm_lock;
+ 	struct drm_mm mm;
+ 	struct list_head psr_list;
+-	spinlock_t psr_list_lock;
++	struct mutex psr_list_lock;
+ };
  
--	analogix_dp_send_psr_spd(dp, &psr_vsc);
--	return 0;
-+	return analogix_dp_send_psr_spd(dp, &psr_vsc);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_disable_psr);
+ int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index b3fb99c5b1fd..b339ca943139 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -18,7 +18,7 @@
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_psr.h"
  
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 5c6a28806129..b039b28d8fcc 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -20,6 +20,8 @@
- #define MAX_CR_LOOP 5
- #define MAX_EQ_LOOP 5
+-#define PSR_FLUSH_TIMEOUT	msecs_to_jiffies(100)
++#define PSR_FLUSH_TIMEOUT_MS	100
  
-+#define DP_TIMEOUT_PSR_LOOP_MS			300
-+
- /* DP_MAX_LANE_COUNT */
- #define DPCD_ENHANCED_FRAME_CAP(x)		(((x) >> 7) & 0x1)
- #define DPCD_MAX_LANE_COUNT(x)			((x) & 0x1f)
-@@ -247,8 +249,8 @@ void analogix_dp_config_video_slave_mode(struct analogix_dp_device *dp);
- void analogix_dp_enable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_disable_scrambling(struct analogix_dp_device *dp);
- void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp);
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc);
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc);
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
- 			     struct drm_dp_aux_msg *msg);
+ enum psr_state {
+ 	PSR_FLUSH,
+@@ -30,11 +30,11 @@ struct psr_drv {
+ 	struct list_head	list;
+ 	struct drm_encoder	*encoder;
  
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 303083ad28e3..005a3f7005d2 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -10,10 +10,11 @@
-  * option) any later version.
-  */
+-	spinlock_t		lock;
++	struct mutex		lock;
+ 	bool			active;
+ 	enum psr_state		state;
  
--#include <linux/device.h>
--#include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
- #include <linux/gpio.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
+-	struct timer_list	flush_timer;
++	struct delayed_work	flush_work;
  
- #include <drm/bridge/analogix_dp.h>
- 
-@@ -992,10 +993,25 @@ void analogix_dp_enable_psr_crc(struct analogix_dp_device *dp)
- 	writel(PSR_VID_CRC_ENABLE, dp->reg_base + ANALOGIX_DP_CRC_CON);
- }
- 
--void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
--			      struct edp_vsc_psr *vsc)
-+static ssize_t analogix_dp_get_psr_status(struct analogix_dp_device *dp)
-+{
-+	ssize_t val;
-+	u8 status;
-+
-+	val = drm_dp_dpcd_readb(&dp->aux, DP_PSR_STATUS, &status);
-+	if (val < 0) {
-+		dev_err(dp->dev, "PSR_STATUS read failed ret=%zd", val);
-+		return val;
-+	}
-+	return status;
-+}
-+
-+int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
-+			     struct edp_vsc_psr *vsc)
+ 	void (*set)(struct drm_encoder *encoder, bool enable);
+ };
+@@ -43,9 +43,8 @@ static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
  {
- 	unsigned int val;
-+	int ret;
-+	ssize_t psr_status;
+ 	struct rockchip_drm_private *drm_drv = crtc->dev->dev_private;
+ 	struct psr_drv *psr;
+-	unsigned long flags;
  
- 	/* don't send info frame */
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-@@ -1036,6 +1052,17 @@ void analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
- 	val = readl(dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
- 	val |= IF_EN;
- 	writel(val, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
-+
-+	ret = readx_poll_timeout(analogix_dp_get_psr_status, dp, psr_status,
-+		psr_status >= 0 &&
-+		((vsc->DB1 && psr_status == DP_PSR_SINK_ACTIVE_RFB) ||
-+		(!vsc->DB1 && psr_status == DP_PSR_SINK_INACTIVE)), 1500,
-+		DP_TIMEOUT_PSR_LOOP_MS * 1000);
-+	if (ret) {
-+		dev_warn(dp->dev, "Failed to apply PSR %d\n", ret);
-+		return ret;
-+	}
-+	return 0;
+-	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
++	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_for_each_entry(psr, &drm_drv->psr_list, list) {
+ 		if (psr->encoder->crtc == crtc)
+ 			goto out;
+@@ -53,7 +52,7 @@ static struct psr_drv *find_psr_by_crtc(struct drm_crtc *crtc)
+ 	psr = ERR_PTR(-ENODEV);
+ 
+ out:
+-	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
++	mutex_unlock(&drm_drv->psr_list_lock);
+ 	return psr;
  }
  
- ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+@@ -61,9 +60,8 @@ static struct psr_drv *find_psr_by_encoder(struct drm_encoder *encoder)
+ {
+ 	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
+ 	struct psr_drv *psr;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
++	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_for_each_entry(psr, &drm_drv->psr_list, list) {
+ 		if (psr->encoder == encoder)
+ 			goto out;
+@@ -71,7 +69,7 @@ static struct psr_drv *find_psr_by_encoder(struct drm_encoder *encoder)
+ 	psr = ERR_PTR(-ENODEV);
+ 
+ out:
+-	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
++	mutex_unlock(&drm_drv->psr_list_lock);
+ 	return psr;
+ }
+ 
+@@ -112,23 +110,21 @@ static void psr_set_state_locked(struct psr_drv *psr, enum psr_state state)
+ 
+ static void psr_set_state(struct psr_drv *psr, enum psr_state state)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&psr->lock, flags);
++	mutex_lock(&psr->lock);
+ 	psr_set_state_locked(psr, state);
+-	spin_unlock_irqrestore(&psr->lock, flags);
++	mutex_unlock(&psr->lock);
+ }
+ 
+-static void psr_flush_handler(struct timer_list *t)
++static void psr_flush_handler(struct work_struct *work)
+ {
+-	struct psr_drv *psr = from_timer(psr, t, flush_timer);
+-	unsigned long flags;
++	struct psr_drv *psr = container_of(to_delayed_work(work),
++					   struct psr_drv, flush_work);
+ 
+ 	/* If the state has changed since we initiated the flush, do nothing */
+-	spin_lock_irqsave(&psr->lock, flags);
++	mutex_lock(&psr->lock);
+ 	if (psr->state == PSR_FLUSH)
+ 		psr_set_state_locked(psr, PSR_ENABLE);
+-	spin_unlock_irqrestore(&psr->lock, flags);
++	mutex_unlock(&psr->lock);
+ }
+ 
+ /**
+@@ -141,14 +137,13 @@ static void psr_flush_handler(struct timer_list *t)
+ int rockchip_drm_psr_activate(struct drm_encoder *encoder)
+ {
+ 	struct psr_drv *psr = find_psr_by_encoder(encoder);
+-	unsigned long flags;
+ 
+ 	if (IS_ERR(psr))
+ 		return PTR_ERR(psr);
+ 
+-	spin_lock_irqsave(&psr->lock, flags);
++	mutex_lock(&psr->lock);
+ 	psr->active = true;
+-	spin_unlock_irqrestore(&psr->lock, flags);
++	mutex_unlock(&psr->lock);
+ 
+ 	return 0;
+ }
+@@ -164,15 +159,14 @@ EXPORT_SYMBOL(rockchip_drm_psr_activate);
+ int rockchip_drm_psr_deactivate(struct drm_encoder *encoder)
+ {
+ 	struct psr_drv *psr = find_psr_by_encoder(encoder);
+-	unsigned long flags;
+ 
+ 	if (IS_ERR(psr))
+ 		return PTR_ERR(psr);
+ 
+-	spin_lock_irqsave(&psr->lock, flags);
++	mutex_lock(&psr->lock);
+ 	psr->active = false;
+-	spin_unlock_irqrestore(&psr->lock, flags);
+-	del_timer_sync(&psr->flush_timer);
++	mutex_unlock(&psr->lock);
++	cancel_delayed_work_sync(&psr->flush_work);
+ 
+ 	return 0;
+ }
+@@ -180,9 +174,8 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
+ 
+ static void rockchip_drm_do_flush(struct psr_drv *psr)
+ {
+-	mod_timer(&psr->flush_timer,
+-		  round_jiffies_up(jiffies + PSR_FLUSH_TIMEOUT));
+ 	psr_set_state(psr, PSR_FLUSH);
++	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+ }
+ 
+ /**
+@@ -219,12 +212,11 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
+ {
+ 	struct rockchip_drm_private *drm_drv = dev->dev_private;
+ 	struct psr_drv *psr;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
++	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_for_each_entry(psr, &drm_drv->psr_list, list)
+ 		rockchip_drm_do_flush(psr);
+-	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
++	mutex_unlock(&drm_drv->psr_list_lock);
+ }
+ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ 
+@@ -241,7 +233,6 @@ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+ {
+ 	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
+ 	struct psr_drv *psr;
+-	unsigned long flags;
+ 
+ 	if (!encoder || !psr_set)
+ 		return -EINVAL;
+@@ -250,17 +241,17 @@ int rockchip_drm_psr_register(struct drm_encoder *encoder,
+ 	if (!psr)
+ 		return -ENOMEM;
+ 
+-	timer_setup(&psr->flush_timer, psr_flush_handler, 0);
+-	spin_lock_init(&psr->lock);
++	INIT_DELAYED_WORK(&psr->flush_work, psr_flush_handler);
++	mutex_init(&psr->lock);
+ 
+ 	psr->active = true;
+ 	psr->state = PSR_DISABLE;
+ 	psr->encoder = encoder;
+ 	psr->set = psr_set;
+ 
+-	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
++	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_add_tail(&psr->list, &drm_drv->psr_list);
+-	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
++	mutex_unlock(&drm_drv->psr_list_lock);
+ 
+ 	return 0;
+ }
+@@ -278,16 +269,15 @@ void rockchip_drm_psr_unregister(struct drm_encoder *encoder)
+ {
+ 	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
+ 	struct psr_drv *psr, *n;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&drm_drv->psr_list_lock, flags);
++	mutex_lock(&drm_drv->psr_list_lock);
+ 	list_for_each_entry_safe(psr, n, &drm_drv->psr_list, list) {
+ 		if (psr->encoder == encoder) {
+-			del_timer(&psr->flush_timer);
++			cancel_delayed_work_sync(&psr->flush_work);
+ 			list_del(&psr->list);
+ 			kfree(psr);
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&drm_drv->psr_list_lock, flags);
++	mutex_unlock(&drm_drv->psr_list_lock);
+ }
+ EXPORT_SYMBOL(rockchip_drm_psr_unregister);
 -- 
 2.16.1
