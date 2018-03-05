@@ -1,93 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753268AbeCEWFj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:05:39 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.190]:39163 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753067AbeCEWFi (ORCPT
+        id S1753312AbeCEWGO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:06:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54742 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753144AbeCEWGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:05:38 -0500
-Date: Mon, 5 Mar 2018 16:05:37 -0600
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] caif_dev: use true and false for boolean values
-Message-ID: <20180305220537.GA15924@embeddedor.com>
+        Mon, 5 Mar 2018 17:06:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 481FC601A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5A9DBF52.5060409@codeaurora.org>
+Date: Mon, 05 Mar 2018 14:06:10 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.245.224
-X-Source-L: No
-X-Exim-ID: 1esyEj-002CHP-6k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-245-224.static.axtel.net (embeddedor) [187.162.245.224]:41312
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+To: Mark Rutland <mark.rutland@arm.com>
+CC: suzuki.poulose@arm.com, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        avilaj@codeaurora.org, rananta@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf/core: Add support for PMUs that can be read from
+ more than 1 CPU
+References: <1520039693-30914-1-git-send-email-skannan@codeaurora.org> <20180305121702.l64rzrckog6d7jop@lakrids.cambridge.arm.com>
+In-Reply-To: <20180305121702.l64rzrckog6d7jop@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign true or false to boolean variables instead of an integer value.
+On 03/05/2018 04:17 AM, Mark Rutland wrote:
+> On Fri, Mar 02, 2018 at 05:14:53PM -0800, Saravana Kannan wrote:
+>> Some PMUs events can be read from more than the one CPU. So allow the
+>> PMU driver to mark events as such. For these events, we don't need to
+>> reject reads or make smp calls to the event's CPU (and cause
+>> unnecessary overhead and wake ups).
+>>
+>> When a PMU driver marks an event as such, care must be taken by the
+>> driver to make sure they can handle the event being read/updated from
+>> more than 1 CPU at the same time (Eg: due to an IRQ indicating event
+>> counter overflow and another thread trying to read the latest values).
+>>
+>> Good examples of such events would be events from caches shared across
+>> CPUs.
+>>
+>> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+>> ---
+>> Changes since v1:
+>> - Use cpumasks instead of capability flag as that's more flexible.
+>>
+>>   include/linux/perf_event.h |  1 +
+>>   kernel/events/core.c       | 14 +++++++++-----
+>>   2 files changed, 10 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 7546822..4cec431 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -629,6 +629,7 @@ struct perf_event {
+>>
+>>   	int				oncpu;
+>>   	int				cpu;
+>> +	cpumask_t			readable_on_cpus;
+>
+> For most PMUs, this will be emptry, and it's potentially *very* large
+> (e.g. on systems where NR_CPUS is 4096). Please use a poitner to a mask,
+> as I suggested in [1], e.g.
+>
+> 	cpumask_t			*read_mask;
+>
+> That way, PMUs which already maintain an affinity mask can share that
+> between all of their events.
+>
+> PMUs with PERF_EV_CAP_READ_ACTIVE_PKG can be updated to flip that mask
+> in pmu::add() and pmu::del(). I assume there are existing sibling masks
+> we can use. That means we can remove PERF_EV_CAP_READ_ACTIVE_PKG
+> entriely...
 
-This issue was detected with the help of Coccinelle.
+I think that should be a separate patch if it's necessary.
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- net/caif/caif_dev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>
+>>   	struct list_head		owner_entry;
+>>   	struct task_struct		*owner;
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 5d3df58..1a8fbfa 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -3483,10 +3483,12 @@ struct perf_read_data {
+>>   static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+>>   {
+>>   	u16 local_pkg, event_pkg;
+>> +	int local_cpu = smp_processor_id();
+>>
+>> -	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+>> -		int local_cpu = smp_processor_id();
+>> +	if (cpumask_test_cpu(local_cpu, &event->readable_on_cpus))
+>> +		return local_cpu;
+>>
+>> +	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+>>   		event_pkg = topology_physical_package_id(event_cpu);
+>>   		local_pkg = topology_physical_package_id(local_cpu);
+>
+> ... and this would simplify down to:
+>
+> static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+> {
+> 	int local_cpu = smp_processor_id();
+>
+> 	if (event->read_mask && cpumask_test_cpu(local_cpu, event->read_mask)
+> 		return local_cpu;
+>
+> 	return event_cpu;
+> }
+>
+>> @@ -3575,7 +3577,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>>   {
+>>   	unsigned long flags;
+>>   	int ret = 0;
+>> -
+>> +	int local_cpu = smp_processor_id();
+>> +	bool readable = cpumask_test_cpu(local_cpu, &event->readable_on_cpus);
+>>   	/*
+>>   	 * Disabling interrupts avoids all counter scheduling (context
+>>   	 * switches, timer based rotation and IPIs).
+>> @@ -3600,7 +3603,8 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>>
+>>   	/* If this is a per-CPU event, it must be for this CPU */
+>>   	if (!(event->attach_state & PERF_ATTACH_TASK) &&
+>> -	    event->cpu != smp_processor_id()) {
+>> +	    event->cpu != local_cpu &&
+>> +	    !readable) {
+>>   		ret = -EINVAL;
+>>   		goto out;
+>>   	}
+>> @@ -3610,7 +3614,7 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
+>>   	 * or local to this CPU. Furthermore it means its ACTIVE (otherwise
+>>   	 * oncpu == -1).
+>>   	 */
+>> -	if (event->oncpu == smp_processor_id())
+>> +	if (event->oncpu == smp_processor_id() || readable)
+>>   		event->pmu->read(event);
+>
+> Please explain why you need to change perf_event_read_local().
+>
+> Is there a case where you have numbers to show that
+> perf_event_read_local() is a bottleneck? If so, please elaborate.
+>
+> As-is, this doesn't seem right.
 
-diff --git a/net/caif/caif_dev.c b/net/caif/caif_dev.c
-index e0adcd1..f2848d6 100644
---- a/net/caif/caif_dev.c
-+++ b/net/caif/caif_dev.c
-@@ -139,7 +139,7 @@ static void caif_flow_cb(struct sk_buff *skb)
- 
- 	spin_lock_bh(&caifd->flow_lock);
- 	send_xoff = caifd->xoff;
--	caifd->xoff = 0;
-+	caifd->xoff = false;
- 	dtor = caifd->xoff_skb_dtor;
- 
- 	if (WARN_ON(caifd->xoff_skb != skb))
-@@ -213,7 +213,7 @@ static int transmit(struct cflayer *layer, struct cfpkt *pkt)
- 	pr_debug("queue has stopped(%d) or is full (%d > %d)\n",
- 			netif_queue_stopped(caifd->netdev),
- 			qlen, high);
--	caifd->xoff = 1;
-+	caifd->xoff = true;
- 	caifd->xoff_skb = skb;
- 	caifd->xoff_skb_dtor = skb->destructor;
- 	skb->destructor = caif_flow_cb;
-@@ -400,7 +400,7 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
- 			break;
- 		}
- 
--		caifd->xoff = 0;
-+		caifd->xoff = false;
- 		cfcnfg_set_phy_state(cfg, &caifd->layer, true);
- 		rcu_read_unlock();
- 
-@@ -435,7 +435,7 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
- 		if (caifd->xoff_skb_dtor != NULL && caifd->xoff_skb != NULL)
- 			caifd->xoff_skb->destructor = caifd->xoff_skb_dtor;
- 
--		caifd->xoff = 0;
-+		caifd->xoff = false;
- 		caifd->xoff_skb_dtor = NULL;
- 		caifd->xoff_skb = NULL;
- 
+The only reason perf_event_read_local seems to exist in the first place 
+is because we need an API that doesn't sleep or send IPIs to other CPUs. 
+If an event is readable on the current CPU, there's no reason to sleep 
+or send an IPI to another CPU. So, why disallow a read that'll work? 
+Hence the change.
+
+Thanks,
+Saravana
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
