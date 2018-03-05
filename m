@@ -1,125 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933511AbeCEIbS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 03:31:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48067 "EHLO mail.bootlin.com"
+        id S932868AbeCEIbu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 03:31:50 -0500
+Received: from mout.web.de ([212.227.17.12]:46725 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932600AbeCEIbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:31:17 -0500
-Date: Mon, 5 Mar 2018 09:31:14 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-Message-ID: <20180305083114.dwqfdqlziwptfnxq@flea.lan>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
- <20180223133742.26044-11-mylene.josserand@bootlin.com>
- <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
- <20180226101252.ozdsxjvawgkemz2c@flea.lan>
- <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
- <20180305085148.1de2a99c@dell-desktop.home>
+        id S933522AbeCEIbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 03:31:47 -0500
+Subject: [PATCH 1/4] scsi: hpsa: Use memdup_user() rather than duplicating its
+ implementation
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+To: linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com,
+        Don Brace <don.brace@microsemi.com>,
+        "James E. J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
+Message-ID: <1feebb55-05f4-a4f7-b478-efa57639c431@users.sourceforge.net>
+Date: Mon, 5 Mar 2018 09:31:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="grzg6bvngnjss7hr"
-Content-Disposition: inline
-In-Reply-To: <20180305085148.1de2a99c@dell-desktop.home>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <f013341a-e3b2-69a7-4918-8bb3d109f0cc@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K0:LOZ12GGSBSDrYoLCHqIjjxItrGVqZVzFYQrZcVMjl8Ae85sG1YH
+ +n9KShhXcR1mWcaz6PQ9y53cq3MIeTbLDEC0KtKrTVhETtsB7ImJ76nNhyHqFxbOpxvjCU2
+ UME6NcgswvHkpWnENcSsnLBsjCcHXpqC81bFieQ9ZQN5jmc0Qq1oWBbkaeN6k9T0KfLtVbo
+ WP7SgjTrKQpoeoSTCaPyg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:aG67iMDnZTc=:nLo1depIsu1xYZtViIQNu9
+ v3sC4RBUyVyfsX43T+UfyG5B6OPKaASafyIniX6Df81HuB0oLeb3Zgal3mnC8e7NWpHJCHG28
+ zzDG1As1tMG/1KnWdEXVgjaf4AkGMJ5y1EUOXDMaKXk7wmBRSA0qqjFiW2vZ5CPAJEGUaszlo
+ uFIVRZ0qTNQR7At5sM0AtvzcX5bwybIZr80NtlZV3zKJWFcC8Y0PLPQwRd/9GrbZEFHdUcEB+
+ th8EMumYEZp9/QdrAw3C+8y7gULEakOMR7RwPxVfbt+6MLX570JJSUt+qsvOnkgbztao2lMKt
+ pUgs2yktDmVnyqZHltWWeqsOyD6pBzP4PuT6UvRaKEYYDLfUXBuaUF3z7fz+GE5u6wRNHFxqb
+ ZBislOmo5LVGvUkmFSv/R6e/f96v9UBVwJtGJh9fi1XMOCbcD9LzJ5RIrZ1tAMi7Mub+T0O5w
+ I3wjL5At7m0AOGBl99Ct4wG0MaV1ILrsuEwgnLn7bs1UDov6rhY8sXz6ub9/gm3HfV704+NSJ
+ tASkOh5a745igD78bVfZhLgW5zcNY2BwuvoNiLIka1MKtImHY8FNWItKB8VKN91KIW/Cg2b6I
+ Z8uchyQwP0QIc+kufN/xa+m+3Vnylfe+HUZfx5Sy8pZEVfFX/tKCp9yZPM3Eq/k5QwX3H6pv1
+ KqweyXWFVOWzqE/uVrZZJ4kCoB9OWczDXKxV7YWRGQbjaTWOtj+vUpb46P9Yn4i1rgnXBrx2I
+ 6EbYl4C5r0um+BlYdJA7otKWvipM52/BmjDaF4SwXcur2AcVsYmFz7BdvhxXp8Cw6PMXEsWAQ
+ L392x3pEXKd17XKADWiPcRAHKsn+DSv+1jQXSVnQUtnU19mLsw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Mar 2018 21:19:52 +0100
 
---grzg6bvngnjss7hr
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Reuse existing functionality from memdup_user() instead of keeping
+  duplicate source code.
 
-On Mon, Mar 05, 2018 at 08:51:48AM +0100, Myl=E8ne Josserand wrote:
-> > >> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sun=
-xi.c
-> > >> > index 5e9602ce1573..4bb041492b54 100644
-> > >> > --- a/arch/arm/mach-sunxi/sunxi.c
-> > >> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > >> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat=
-[] =3D {
-> > >> >  };
-> > >> >
-> > >> >  extern void __init sun6i_reset_init(void);
-> > >> > +extern void sunxi_init_cntvoff(void);
-> > >> > +
-> > >> >  static void __init sun6i_timer_init(void)
-> > >> >  {
-> > >> > +       sunxi_init_cntvoff(); =20
-> > >>
-> > >> You should check the enable-method to see if PSCI is set or not,
-> > >> as an indicator whether the kernel is booted secure or non-secure. =
-=20
-> > >
-> > > It's an indicator, but it's not really a perfect one. You could very
-> > > well have your kernel booted in non-secure, without PSCI. Or even with
-> > > PSCI, but without the SMP ops.
-> > >
-> > > We have a quite big number of these cases already, where, depending on
-> > > the configuration, we might not have access to the device we write to,
-> > > the number of hacks to just enable that device for non-secure is a
-> > > good example of that. =20
-> >=20
-> > I wouldn't consider them hacks though. The hardware gives the option
-> > to have control of many devices delegated solely to secure-only, or
-> > secure/non-secure. Our present model is to support everything we can
-> > in Linux directly, instead of through some firmware interface to a
-> > non-existent firmware.
->=20
-> I am not sure to understand what is the conclusion about it.
-> Should I use "psci"/enable-method or should I use another mechanism to
-> detect we are in secure/non-secure (if it exists)?
->=20
-> Otherwise, for the moment, I can use machine-compatible on sun8i-a83t
-> and we will see later how we can handle it in a better way.
+  This issue was detected by using the Coccinelle software.
 
-Can't we have another approach here?
+* Return directly after this function call failed at the beginning.
 
-If we use an enable-method (and we should), instead of having it tied
-to the machine compatible, the SMP setup code will run only if our
-enable-method is the one we set up. If PSCI is in use, the
-enable-method is not going to be the one defined here, and the code
-will not run.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/hpsa.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-So why not just move that call to the SMP ops setup function, just
-like renesas does?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---grzg6bvngnjss7hr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqdAFEACgkQ0rTAlCFN
-r3RdQA/9HU5Ba4g4v3e6RNYQp8EwnNGgQGQ0kGSYKJA41r5llcY7d7Cr3dvU9B59
-YV0DDswSVkpBFefkmO+KIYMmbphnue+vtPGOt5wU+zu3iDQFEc4O/4Bwb7Hs9SQz
-qHtGCV4ytDrBqrIZDAL3op6F5mOGbDr445NP4bnjZ9TWOIxpL0l37n9cYy1BW25/
-ofFTHCUFeRC9m+dwp2zemt+Fe1XS0FX+YRNkPnfPsuZBlpwPrtz+oqgSk2d7qL70
-g8T5xTHWJPj83dD63Hvz5hUsNvnPe7fcy5iFVKhj5b/QNNOLVsIyz6cBih09ZdyK
-oOFPW4ym257f3bVFrd6XVRhtVKo78I4tJiuonep/sPqqtcJAKWcsFi6woQWMqve0
-edoEiOtCgbpL+SNKTuszw/KTvddw1/BGX6yW/ieCjkeldO/O7t/M4A1g0KaGeeVs
-OFweH3t76Hm6eCqxm1NsI7EyzLhUOvnA3m1h2azc1ndSnlR8vXvIWF3nA3tGKSbb
-DaDmJXpvBdgJLggQazA3eLYr3kSYdU+Lt4Ire328rXmz5OrIgkQgCXEqY0w6KB1s
-YoKPFLlZe2AfQisqOefJGgkhXChCef+NuGpfg/6bYMm1it7kgeHo55Z7fTcliFNB
-GAwZMTjO4JpYDUBVd4G2jNAzDYNNpNB/2ViOcbgICu8WhL9zR20=
-=ssrt
------END PGP SIGNATURE-----
-
---grzg6bvngnjss7hr--
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 5293e6827ce5..b35248becef9 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -6390,15 +6390,10 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h, void __user *argp)
+ 		return -EINVAL;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
+-	ioc = kmalloc(sizeof(*ioc), GFP_KERNEL);
+-	if (!ioc) {
+-		status = -ENOMEM;
+-		goto cleanup1;
+-	}
+-	if (copy_from_user(ioc, argp, sizeof(*ioc))) {
+-		status = -EFAULT;
+-		goto cleanup1;
+-	}
++	ioc = memdup_user(argp, sizeof(*ioc));
++	if (IS_ERR(ioc))
++		return PTR_ERR(ioc);
++
+ 	if ((ioc->buf_size < 1) &&
+ 	    (ioc->Request.Type.Direction != XFER_NONE)) {
+ 		status = -EINVAL;
+-- 
+2.16.2
