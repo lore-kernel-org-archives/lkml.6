@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELuppZmQCPBY5zdkCcHiu9TNHXDouuckEdRf46X8kHr6nLe+N+89vK+1bDxWdmx82dwLbcb5
-ARC-Seal: i=1; a=rsa-sha256; t=1520245571; cv=none;
+X-Google-Smtp-Source: AG47ELsdSToNTXxASODtc7hglh3AdrPxR+8DOZwx9XQNCTY9UsGBrtA3lmHGsAWTCiZNH3Vjqkzm
+ARC-Seal: i=1; a=rsa-sha256; t=1520245570; cv=none;
         d=google.com; s=arc-20160816;
-        b=KnyhLeHtRYaNrre4VDF6OOZl3SRBKkiVZqsx4iVwfnV6CpIFs243DVQUjQxfnsOipp
-         N+uNFnf7Li08lA/jki1JAPJ2B8PEdMxw5H8yavaD09hOIarXZYlzoVzBjnLBmgEBlqif
-         wnzAAVUKUMW7wXLLx/ncfTm2IbHEh/QznKtV3wRocrTXmQYpXssOG+Zcr3VnGJmFZ923
-         25vdX89mtAuo9RGouzLOBoTFO4fsXy2qV4ArXCeOXmSkex88RVGfE06qxcB95MiT6fFd
-         cluaALj4ukH/pQ3WK1HQrzxy/J+yj7IJWHcTjik3i5oMesuwdO9XpLvFFXVMw/nicuyV
-         rNgw==
+        b=H+1jkkfHU5EihlaoLZUkOKQbAVKjBBXAd4Q3thFjooVbpGN1AXCILoT7RG2Qwugwra
+         OGMz9j3/Pag/wk6Np1MgJ8lDg/+fPAExtrL9O6fI3F1KLFP08Cfcr/jwYGUrbdCABdbn
+         4kvQ2dmBygxh2mPOej1mqWYsC9Fd12jeVqjYajcBVchqcZUts45VgS1UTffjm6io6cO+
+         y4r2Exwd3cZddQL/zHUQ+bvRwFU/CE0rEdWwaVfFwF5VBXUIhzt0vI59xJJJNU2nTV0j
+         QS/OlWtraDaYuHEizr+2MiQTCX4sNUMziBfL+/x8LD6DkoonrHDuV4s7ANqE5misS9uC
+         XQwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=qxWeLBWPXfhZcdORXt/N8vBDLLsrpvteBpcTwZSO2Cc=;
-        b=wUzWbe27XA+hFVmr8lYp7By5vPGn1SWsIncIyLmjcPxX4GPEM6TxOWr/i/VRHDUtzI
-         OscSoQIMClzGXvMivO6yO5GK6DCxuyowUPG2gagF4I1nmyngcorr880DPIQnJs0lhsTf
-         2bqjaONQPxoYI7ulJ523NvTR4/PmqmdzQjRMUIFwMndw6jACnjn6Qk0pVtsb3Q2sEMNo
-         IvZyEYJexSlAeV5eEECshzXe81BIPaP7e/Bk78Fy+ZeaKe7bJO5F8pcsT5ptAd2y+2BW
-         PEizBEYH2i1WNG4h1RyedQvCu0MWZywWDLh/5mMaoTTU+TTtLGLiXTBoRWlYreKiOIIf
-         oGDA==
+        bh=NTVb4LONHnLz6w99SoQtjWWuv+4gRfgau5jr8PemZlw=;
+        b=Dx21zZJWsWkF8FsAgEAcgh/12E7XLkJuJT2AlhvuUZCkveavaOE1FpqG6EJzCbiVoH
+         jMbH5GyV0wzh1NNxI0iOiXZy2Dx3ki3wc+RevKC9Gqec2FwE26R4t3BFIco0QRJF9lyY
+         W1bhQobhETMvX+coRvnm+raAXgz2pHFoVpvmpxsDZ5qg4TOLThhqNVdlBxGHIC24d6a6
+         sJcJypsad425OGS2hJPMAbDLuf3MoiMqoq7cGA0ReB8bwBzA4GlvvbdOsMmzC8lIst0J
+         IL4iE/VhDX0GwQetR8nCvAoTHAq+mSP7Oq2MtURbtGFmWQiq4deo+R8sYLwpG5nAa6Dk
+         SchQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dh4LVBXL;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mWC+RCI+;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=dh4LVBXL;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mWC+RCI+;
        spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,54 +57,59 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 05/34] x86/entry/32: Unshare NMI return path
-Date: Mon,  5 Mar 2018 11:25:34 +0100
-Message-Id: <1520245563-8444-6-git-send-email-joro@8bytes.org>
+Subject: [PATCH 03/34] x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
+Date: Mon,  5 Mar 2018 11:25:32 +0100
+Message-Id: <1520245563-8444-4-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093020612909997?=
-X-GMAIL-MSGID: =?utf-8?q?1594093020612909997?=
+X-GMAIL-THRID: =?utf-8?q?1594093019795549964?=
+X-GMAIL-MSGID: =?utf-8?q?1594093019795549964?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-NMI will no longer use most of the shared return path,
-because NMI needs special handling when the CR3 switches for
-PTI are added. This patch prepares for that.
+We want x86_tss.sp0 point to the entry stack later to use
+it as a trampoline stack for other kernel entry points
+besides SYSENTER.
+
+So store the task stack pointer in x86_tss.sp1, which is
+otherwise unused by the hardware, as Linux doesn't make use
+of Ring 1.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kernel/asm-offsets_32.c | 2 +-
+ arch/x86/kernel/process_32.c     | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 0289bde..00ae759 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1007,7 +1007,7 @@ ENTRY(nmi)
+diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
+index f452bfd..b97e48c 100644
+--- a/arch/x86/kernel/asm-offsets_32.c
++++ b/arch/x86/kernel/asm-offsets_32.c
+@@ -47,7 +47,7 @@ void foo(void)
+ 	BLANK();
  
- 	/* Not on SYSENTER stack. */
- 	call	do_nmi
--	jmp	.Lrestore_all_notrace
-+	jmp	.Lnmi_return
+ 	/* Offset from the sysenter stack to tss.sp0 */
+-	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
++	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
+ 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
  
- .Lnmi_from_sysenter_stack:
+ #ifdef CONFIG_CC_STACKPROTECTOR
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 5224c60..097d36a 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -292,6 +292,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	this_cpu_write(cpu_current_top_of_stack,
+ 		       (unsigned long)task_stack_page(next_p) +
+ 		       THREAD_SIZE);
++	/* SYSENTER reads the task-stack from tss.sp1 */
++	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
+ 
  	/*
-@@ -1018,7 +1018,11 @@ ENTRY(nmi)
- 	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
- 	call	do_nmi
- 	movl	%ebx, %esp
--	jmp	.Lrestore_all_notrace
-+
-+.Lnmi_return:
-+	CHECK_AND_APPLY_ESPFIX
-+	RESTORE_REGS 4
-+	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
- .Lnmi_espfix_stack:
+ 	 * Restore %gs if needed (which is common)
 -- 
 2.7.4
