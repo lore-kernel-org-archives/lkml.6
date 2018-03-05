@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752882AbeCEObv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:31:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53470 "EHLO mail.kernel.org"
+        id S1752814AbeCEObQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:31:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752844AbeCEObY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:31:24 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F74521486
+        id S1751977AbeCEObL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:31:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45430206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -16,9 +16,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/28] perf mmap: Discard legacy interfaces for mmap read forward
-Date: Mon,  5 Mar 2018 11:29:32 -0300
-Message-Id: <20180305142932.16921-29-acme@kernel.org>
+Subject: [PATCH 23/28] perf test: Switch to new perf_mmap__read_event() interface for perf-record
+Date: Mon,  5 Mar 2018 11:29:27 -0300
+Message-Id: <20180305142932.16921-24-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305142932.16921-1-acme@kernel.org>
 References: <20180305142932.16921-1-acme@kernel.org>
@@ -28,120 +28,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Discards legacy interfaces perf_evlist__mmap_read_forward(),
-perf_evlist__mmap_read() and perf_evlist__mmap_consume().
+The perf test 'perf-record' still use the legacy interface.
 
-No tools use them.
+No functional change.
+
+Committer notes:
+
+Testing it:
+
+  # perf test PERF_RECORD
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+  #
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1519945751-37786-14-git-send-email-kan.liang@linux.intel.com
+Link: http://lkml.kernel.org/r/1519945751-37786-9-git-send-email-kan.liang@linux.intel.com
+[ Changed bool parameters from 0 to 'false', as per Jiri comment ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c | 25 +------------------------
- tools/perf/util/evlist.h |  4 ----
- tools/perf/util/mmap.c   | 21 +--------------------
- 3 files changed, 2 insertions(+), 48 deletions(-)
+ tools/perf/tests/perf-record.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 7b7d535396f7..41a4666f1519 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -702,29 +702,6 @@ static int perf_evlist__resume(struct perf_evlist *evlist)
- 	return perf_evlist__set_paused(evlist, false);
- }
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 0afafab85238..31f3f70adca6 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -164,8 +164,14 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
  
--union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist, int idx)
--{
--	struct perf_mmap *md = &evlist->mmap[idx];
--
--	/*
--	 * Check messup is required for forward overwritable ring buffer:
--	 * memory pointed by md->prev can be overwritten in this case.
--	 * No need for read-write ring buffer: kernel stop outputting when
--	 * it hit md->prev (perf_mmap__consume()).
--	 */
--	return perf_mmap__read_forward(md);
--}
--
--union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx)
--{
--	return perf_evlist__mmap_read_forward(evlist, idx);
--}
--
--void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx)
--{
--	perf_mmap__consume(&evlist->mmap[idx], false);
--}
--
- static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
- {
- 	int i;
-@@ -761,7 +738,7 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
- 		map[i].fd = -1;
+ 		for (i = 0; i < evlist->nr_mmaps; i++) {
+ 			union perf_event *event;
++			struct perf_mmap *md;
++			u64 end, start;
+ 
+-			while ((event = perf_evlist__mmap_read(evlist, i)) != NULL) {
++			md = &evlist->mmap[i];
++			if (perf_mmap__read_init(md, false, &start, &end) < 0)
++				continue;
++
++			while ((event = perf_mmap__read_event(md, false, &start, end)) != NULL) {
+ 				const u32 type = event->header.type;
+ 				const char *name = perf_event__name(type);
+ 
+@@ -266,8 +272,9 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 					++errs;
+ 				}
+ 
+-				perf_evlist__mmap_consume(evlist, i);
++				perf_mmap__consume(md, false);
+ 			}
++			perf_mmap__read_done(md);
+ 		}
+ 
  		/*
- 		 * When the perf_mmap() call is made we grab one refcount, plus
--		 * one extra to let perf_evlist__mmap_consume() get the last
-+		 * one extra to let perf_mmap__consume() get the last
- 		 * events after all real references (perf_mmap__get()) are
- 		 * dropped.
- 		 *
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 336b838e6957..6c41b2f78713 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -129,10 +129,6 @@ struct perf_sample_id *perf_evlist__id2sid(struct perf_evlist *evlist, u64 id);
- 
- void perf_evlist__toggle_bkw_mmap(struct perf_evlist *evlist, enum bkw_mmap_state state);
- 
--union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx);
--
--union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist,
--						 int idx);
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx);
- 
- int perf_evlist__open(struct perf_evlist *evlist);
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 91531a7c8fbf..4f27c464ce0b 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -63,25 +63,6 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
- 	return event;
- }
- 
--/*
-- * legacy interface for mmap read.
-- * Don't use it. Use perf_mmap__read_event().
-- */
--union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
--{
--	u64 head;
--
--	/*
--	 * Check if event was unmapped due to a POLLHUP/POLLERR.
--	 */
--	if (!refcount_read(&map->refcnt))
--		return NULL;
--
--	head = perf_mmap__read_head(map);
--
--	return perf_mmap__read(map, &map->prev, head);
--}
--
- /*
-  * Read event from ring buffer one by one.
-  * Return one event for each call.
-@@ -191,7 +172,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
- int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
- {
- 	/*
--	 * The last one will be done at perf_evlist__mmap_consume(), so that we
-+	 * The last one will be done at perf_mmap__consume(), so that we
- 	 * make sure we don't prevent tools from consuming every last event in
- 	 * the ring buffer.
- 	 *
 -- 
 2.14.3
