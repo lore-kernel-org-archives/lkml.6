@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeCERrY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:47:24 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60414 "EHLO
+        id S1752832AbeCERrh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:47:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60798 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbeCERrQ (ORCPT
+        with ESMTP id S1751723AbeCERrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:47:16 -0500
+        Mon, 5 Mar 2018 12:47:22 -0500
 From: Christoph Hellwig <hch@lst.de>
 To: x86@kernel.org
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -15,9 +15,9 @@ Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Muli Ben-Yehuda <mulix@mulix.org>, Jon Mason <jdmason@kudzu.us>,
         Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 08/13] iommu/intel-iommu: cleanup intel_{alloc,free}_coherent
-Date: Mon,  5 Mar 2018 09:46:50 -0800
-Message-Id: <20180305174655.9878-9-hch@lst.de>
+Subject: [PATCH 13/13] swiotlb: remove swiotlb_{alloc,free}_coherent
+Date: Mon,  5 Mar 2018 09:46:55 -0800
+Message-Id: <20180305174655.9878-14-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180305174655.9878-1-hch@lst.de>
 References: <20180305174655.9878-1-hch@lst.de>
@@ -26,114 +26,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the dma_direct_* helpers and cleanup the code flow.
+Unused now that everyone uses swiotlb_{alloc,free}.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/iommu/Kconfig       |  1 +
- drivers/iommu/intel-iommu.c | 62 ++++++++++++---------------------------------
- 2 files changed, 17 insertions(+), 46 deletions(-)
+ include/linux/swiotlb.h |  8 --------
+ lib/swiotlb.c           | 38 --------------------------------------
+ 2 files changed, 46 deletions(-)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index dc7c1914645d..df171cb85822 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -143,6 +143,7 @@ config DMAR_TABLE
- config INTEL_IOMMU
- 	bool "Support for Intel IOMMU using DMA Remapping Devices"
- 	depends on PCI_MSI && ACPI && (X86 || IA64_GENERIC)
-+	select DMA_DIRECT_OPS
- 	select IOMMU_API
- 	select IOMMU_IOVA
- 	select DMAR_TABLE
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index fd899b2a12bb..24d1b1b42013 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -31,6 +31,7 @@
- #include <linux/pci.h>
- #include <linux/dmar.h>
- #include <linux/dma-mapping.h>
-+#include <linux/dma-direct.h>
- #include <linux/mempool.h>
- #include <linux/memory.h>
- #include <linux/cpu.h>
-@@ -3708,61 +3709,30 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
- 				  dma_addr_t *dma_handle, gfp_t flags,
- 				  unsigned long attrs)
- {
--	struct page *page = NULL;
--	int order;
--
--	size = PAGE_ALIGN(size);
--	order = get_order(size);
--
--	if (!iommu_no_mapping(dev))
--		flags &= ~(GFP_DMA | GFP_DMA32);
--	else if (dev->coherent_dma_mask < dma_get_required_mask(dev)) {
--		if (dev->coherent_dma_mask < DMA_BIT_MASK(32))
--			flags |= GFP_DMA;
--		else
--			flags |= GFP_DMA32;
--	}
-+	void *vaddr;
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 5b1f2a00491c..965be92c33b5 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -72,14 +72,6 @@ void *swiotlb_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
+ void swiotlb_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_addr, unsigned long attrs);
  
--	if (gfpflags_allow_blocking(flags)) {
--		unsigned int count = size >> PAGE_SHIFT;
-+	vaddr = dma_direct_alloc(dev, size, dma_handle, flags, attrs);
-+	if (iommu_no_mapping(dev) || !vaddr)
-+		return vaddr;
- 
--		page = dma_alloc_from_contiguous(dev, count, order, flags);
--		if (page && iommu_no_mapping(dev) &&
--		    page_to_phys(page) + size > dev->coherent_dma_mask) {
--			dma_release_from_contiguous(dev, page, count);
--			page = NULL;
--		}
--	}
+-extern void
+-*swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-			dma_addr_t *dma_handle, gfp_t flags);
 -
--	if (!page)
--		page = alloc_pages(flags, order);
--	if (!page)
--		return NULL;
--	memset(page_address(page), 0, size);
+-extern void
+-swiotlb_free_coherent(struct device *hwdev, size_t size,
+-		      void *vaddr, dma_addr_t dma_handle);
 -
--	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
--					 DMA_BIDIRECTIONAL,
--					 dev->coherent_dma_mask);
--	if (*dma_handle)
--		return page_address(page);
--	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, order);
-+	*dma_handle = __intel_map_single(dev, virt_to_phys(vaddr),
-+			PAGE_ALIGN(size), DMA_BIDIRECTIONAL,
-+			dev->coherent_dma_mask);
-+	if (!*dma_handle)
-+		goto out_free_pages;
-+	return vaddr;
+ extern dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 				   unsigned long offset, size_t size,
+ 				   enum dma_data_direction dir,
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 8b06b4485e65..15954b86f09e 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -157,13 +157,6 @@ unsigned long swiotlb_size_or_default(void)
+ 	return size ? size : (IO_TLB_DEFAULT_SIZE);
+ }
  
-+out_free_pages:
-+	dma_direct_free(dev, size, vaddr, *dma_handle, attrs);
+-/* Note that this doesn't work with highmem page */
+-static dma_addr_t swiotlb_virt_to_bus(struct device *hwdev,
+-				      volatile void *address)
+-{
+-	return phys_to_dma(hwdev, virt_to_phys(address));
+-}
+-
+ static bool no_iotlb_memory;
+ 
+ void swiotlb_print_info(void)
+@@ -752,28 +745,6 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
  	return NULL;
  }
  
- static void intel_free_coherent(struct device *dev, size_t size, void *vaddr,
- 				dma_addr_t dma_handle, unsigned long attrs)
+-void *
+-swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-		       dma_addr_t *dma_handle, gfp_t flags)
+-{
+-	int order = get_order(size);
+-	unsigned long attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
+-	void *ret;
+-
+-	ret = (void *)__get_free_pages(flags, order);
+-	if (ret) {
+-		*dma_handle = swiotlb_virt_to_bus(hwdev, ret);
+-		if (dma_coherent_ok(hwdev, *dma_handle, size)) {
+-			memset(ret, 0, size);
+-			return ret;
+-		}
+-		free_pages((unsigned long)ret, order);
+-	}
+-
+-	return swiotlb_alloc_buffer(hwdev, size, dma_handle, attrs);
+-}
+-EXPORT_SYMBOL(swiotlb_alloc_coherent);
+-
+ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 		dma_addr_t dma_addr)
  {
--	int order;
--	struct page *page = virt_to_page(vaddr);
--
--	size = PAGE_ALIGN(size);
--	order = get_order(size);
--
--	intel_unmap(dev, dma_handle, size);
--	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, order);
-+	if (!iommu_no_mapping(dev))
-+		intel_unmap(dev, dma_handle, PAGE_ALIGN(size));
-+	dma_direct_free(dev, size, vaddr, dma_handle, attrs);
+@@ -793,15 +764,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 	return true;
  }
  
- static void intel_unmap_sg(struct device *dev, struct scatterlist *sglist,
+-void
+-swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+-		      dma_addr_t dev_addr)
+-{
+-	if (!swiotlb_free_buffer(hwdev, size, dev_addr))
+-		free_pages((unsigned long)vaddr, get_order(size));
+-}
+-EXPORT_SYMBOL(swiotlb_free_coherent);
+-
+ static void
+ swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+ 	     int do_panic)
 -- 
 2.14.2
