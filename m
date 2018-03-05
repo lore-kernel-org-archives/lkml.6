@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeCEUX7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:23:59 -0500
+        id S1753200AbeCEUZb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:25:31 -0500
 Received: from mga11.intel.com ([192.55.52.93]:19709 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752997AbeCEUXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:23:54 -0500
+        id S1752920AbeCEUXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:23:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="209015229"
+   d="scan'208";a="209015210"
 From: Tomas Winkler <tomas.winkler@intel.com>
 To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 3/6] tpm2: add longer timeouts for creation commands.
-Date: Mon,  5 Mar 2018 22:20:14 +0200
-Message-Id: <20180305202017.24008-4-tomas.winkler@intel.com>
+Subject: [PATCH 2/6] tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
+Date: Mon,  5 Mar 2018 22:20:13 +0200
+Message-Id: <20180305202017.24008-3-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305202017.24008-1-tomas.winkler@intel.com>
 References: <20180305202017.24008-1-tomas.winkler@intel.com>
@@ -27,138 +27,746 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
-of crypto keys which can be a computationally intensive task.
-The timeout is set to 3min.
+Factor out tpm1.2 commands calculation into tpm1-cmd.c file.
+and change the prefix from tpm_ to tpm1_.
+No functional change is done here.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- drivers/char/tpm/tpm-interface.c |  3 +++
- drivers/char/tpm/tpm.h           | 28 ++++++++++++++++++----------
- drivers/char/tpm/tpm2-cmd.c      |  8 +++++---
- 3 files changed, 26 insertions(+), 13 deletions(-)
+ drivers/char/tpm/Makefile            |   1 +
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 284 +-------------------------------
+ drivers/char/tpm/tpm.h               |   2 +-
+ drivers/char/tpm/tpm1-cmd.c          | 309 +++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
+ drivers/char/tpm/tpm_tis_core.c      |   2 +-
+ drivers/char/tpm/xen-tpmfront.c      |   2 +-
+ 8 files changed, 321 insertions(+), 291 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
 
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index 2fc0e9a73cd6..65d2ccb64427 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -9,6 +9,7 @@ tpm-objs += tpm-chip.o
+ tpm-objs += tpm-dev-common.o
+ tpm-objs += tpmrm-dev.o
+ tpm-objs += tpm-sysfs.o
++tpm-objs += tpm1-cmd.o
+ tpm-objs += tpm1_eventlog.o
+ tpm-objs += tpm2-cmd.o
+ tpm-objs += tpm2-space.o
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index f95b9c75175b..ad03c99899fa 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -432,7 +432,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 
+ 		ret = wait_for_stat(chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+-				tpm_calc_ordinal_duration(chip, ordinal),
++				tpm1_calc_ordinal_duration(chip, ordinal),
+ 				&tpm_dev->read_queue, false);
+ 		if (ret < 0)
+ 			goto out_err;
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 402e54252b22..40d1770f6b38 100644
+index ddf7d937c77c..402e54252b22 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -421,6 +421,8 @@ int tpm_get_timeouts(struct tpm_chip *chip)
- 		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
- 		chip->duration[TPM_LONG] =
- 		    msecs_to_jiffies(TPM2_DURATION_LONG);
-+		chip->duration[TPM_LONG_LONG] =
-+		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+@@ -33,7 +33,6 @@
  
- 		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 		return 0;
-@@ -509,6 +511,7 @@ int tpm_get_timeouts(struct tpm_chip *chip)
- 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
- 	chip->duration[TPM_LONG] =
- 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
-+	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
+ #include "tpm.h"
  
- 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
- 	 * value wrong and apparently reports msecs rather than usecs. So we
+-#define TPM_MAX_ORDINAL 243
+ #define TSC_MAX_ORDINAL 12
+ #define TPM_PROTECTED_COMMAND 0x00
+ #define TPM_CONNECTION_COMMAND 0x40
+@@ -48,285 +47,6 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+ MODULE_PARM_DESC(suspend_pcr,
+ 		 "PCR to use for dummy writes to facilitate flush on suspend.");
+ 
+-/*
+- * Array with one entry per ordinal defining the maximum amount
+- * of time the chip could take to return the result.  The ordinal
+- * designation of short, medium or long is defined in a table in
+- * TCG Specification TPM Main Part 2 TPM Structures Section 17. The
+- * values of the SHORT, MEDIUM, and LONG durations are retrieved
+- * from the chip during initialization with a call to tpm_get_timeouts.
+- */
+-static const u8 tpm_ordinal_duration[TPM_MAX_ORDINAL] = {
+-	TPM_UNDEFINED,		/* 0 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 5 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 10 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_LONG,
+-	TPM_MEDIUM,		/* 15 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_SHORT,		/* 20 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,		/* 25 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 30 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 35 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 40 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 45 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_LONG,
+-	TPM_MEDIUM,		/* 50 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 55 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 60 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 65 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 70 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 75 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 80 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
+-	TPM_LONG,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 85 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 90 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 95 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 100 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 105 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 110 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 115 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 120 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 125 */
+-	TPM_SHORT,
+-	TPM_LONG,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 130 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,		/* 135 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 140 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 145 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 150 */
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 155 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 160 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 165 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_LONG,		/* 170 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 175 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,		/* 180 */
+-	TPM_SHORT,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,		/* 185 */
+-	TPM_SHORT,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 190 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 195 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 200 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 205 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_MEDIUM,		/* 210 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,		/* 215 */
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,
+-	TPM_SHORT,		/* 220 */
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_SHORT,
+-	TPM_UNDEFINED,		/* 225 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 230 */
+-	TPM_LONG,
+-	TPM_MEDIUM,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,		/* 235 */
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_UNDEFINED,
+-	TPM_SHORT,		/* 240 */
+-	TPM_UNDEFINED,
+-	TPM_MEDIUM,
+-};
+-
+-/*
+- * Returns max number of jiffies to wait
+- */
+-unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
+-					   u32 ordinal)
+-{
+-	int duration_idx = TPM_UNDEFINED;
+-	int duration = 0;
+-
+-	/*
+-	 * We only have a duration table for protected commands, where the upper
+-	 * 16 bits are 0. For the few other ordinals the fallback will be used.
+-	 */
+-	if (ordinal < TPM_MAX_ORDINAL)
+-		duration_idx = tpm_ordinal_duration[ordinal];
+-
+-	if (duration_idx != TPM_UNDEFINED)
+-		duration = chip->duration[duration_idx];
+-	if (duration <= 0)
+-		return 2 * 60 * HZ;
+-	else
+-		return duration;
+-}
+-EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+-
+ static int tpm_validate_command(struct tpm_chip *chip,
+ 				 struct tpm_space *space,
+ 				 const u8 *cmd,
+@@ -489,7 +209,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		stop = jiffies + tpm2_calc_ordinal_duration(chip, ordinal);
+ 	else
+-		stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
++		stop = jiffies + tpm1_calc_ordinal_duration(chip, ordinal);
+ 	do {
+ 		u8 status = chip->ops->status(chip);
+ 		if ((status & chip->ops->req_complete_mask) ==
+@@ -999,7 +719,7 @@ int tpm_do_selftest(struct tpm_chip *chip)
+ 	unsigned long duration;
+ 	u8 dummy[TPM_DIGEST_SIZE];
+ 
+-	duration = tpm_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
++	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
+ 
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 38197a30ad7b..30610d97d30c 100644
+index b0ee61e5d414..38197a30ad7b 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -67,7 +67,9 @@ enum tpm_duration {
- 	TPM_SHORT = 0,
- 	TPM_MEDIUM = 1,
- 	TPM_LONG = 2,
-+	TPM_LONG_LONG = 3,
- 	TPM_UNDEFINED,
-+	TPM_DURATION_MAX = TPM_UNDEFINED,
- };
+@@ -515,7 +515,7 @@ ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm_do_selftest(struct tpm_chip *chip);
+-unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
++unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
  
- #define TPM_WARN_RETRY          0x800
-@@ -79,15 +81,20 @@ enum tpm_duration {
- #define TPM_HEADER_SIZE		10
- 
- enum tpm2_const {
--	TPM2_PLATFORM_PCR	= 24,
--	TPM2_PCR_SELECT_MIN	= ((TPM2_PLATFORM_PCR + 7) / 8),
--	TPM2_TIMEOUT_A		= 750,
--	TPM2_TIMEOUT_B		= 2000,
--	TPM2_TIMEOUT_C		= 200,
--	TPM2_TIMEOUT_D		= 30,
--	TPM2_DURATION_SHORT	= 20,
--	TPM2_DURATION_MEDIUM	= 750,
--	TPM2_DURATION_LONG	= 2000,
-+	TPM2_PLATFORM_PCR       =     24,
-+	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+new file mode 100644
+index 000000000000..70adcea681cd
+--- /dev/null
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -0,0 +1,309 @@
++/*
++ * Copyright (C) 2004 IBM Corporation
++ * Copyright (C) 2014 Intel Corporation
++ *
++ * Authors:
++ * Leendert van Doorn <leendert@watson.ibm.com>
++ * Dave Safford <safford@watson.ibm.com>
++ * Reiner Sailer <sailer@watson.ibm.com>
++ * Kylene Hall <kjhall@us.ibm.com>
++ *
++ * Device driver for TCG/TCPA TPM (trusted platform module).
++ * Specifications at www.trustedcomputinggroup.org
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation, version 2 of the
++ * License.
++ *
++ */
++
++#include <linux/poll.h>
++#include <linux/slab.h>
++#include <linux/mutex.h>
++#include <linux/spinlock.h>
++#include <linux/freezer.h>
++#include <linux/tpm_eventlog.h>
++
++#include "tpm.h"
++
++#define TPM_MAX_ORDINAL 243
++
++/*
++ * Array with one entry per ordinal defining the maximum amount
++ * of time the chip could take to return the result.  The ordinal
++ * designation of short, medium or long is defined in a table in
++ * TCG Specification TPM Main Part 2 TPM Structures Section 17. The
++ * values of the SHORT, MEDIUM, and LONG durations are retrieved
++ * from the chip during initialization with a call to tpm_get_timeouts.
++ */
++static const u8 tpm1_ordinal_duration[TPM_MAX_ORDINAL] = {
++	TPM_UNDEFINED,		/* 0 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 5 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 10 */
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_LONG,
++	TPM_LONG,
++	TPM_MEDIUM,		/* 15 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_LONG,
++	TPM_SHORT,		/* 20 */
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_SHORT,		/* 25 */
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_MEDIUM,		/* 30 */
++	TPM_LONG,
++	TPM_MEDIUM,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,		/* 35 */
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_MEDIUM,		/* 40 */
++	TPM_LONG,
++	TPM_MEDIUM,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,		/* 45 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_LONG,
++	TPM_MEDIUM,		/* 50 */
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 55 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_MEDIUM,		/* 60 */
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_MEDIUM,		/* 65 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 70 */
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 75 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_LONG,		/* 80 */
++	TPM_UNDEFINED,
++	TPM_MEDIUM,
++	TPM_LONG,
++	TPM_SHORT,
++	TPM_UNDEFINED,		/* 85 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 90 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,		/* 95 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_MEDIUM,		/* 100 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 105 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 110 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,		/* 115 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_LONG,		/* 120 */
++	TPM_LONG,
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_SHORT,
++	TPM_SHORT,		/* 125 */
++	TPM_SHORT,
++	TPM_LONG,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,		/* 130 */
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_UNDEFINED,		/* 135 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 140 */
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 145 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 150 */
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,		/* 155 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 160 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 165 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_LONG,		/* 170 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 175 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_MEDIUM,		/* 180 */
++	TPM_SHORT,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_MEDIUM,		/* 185 */
++	TPM_SHORT,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 190 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 195 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 200 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,
++	TPM_SHORT,		/* 205 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_MEDIUM,		/* 210 */
++	TPM_UNDEFINED,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_MEDIUM,
++	TPM_UNDEFINED,		/* 215 */
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,
++	TPM_SHORT,		/* 220 */
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_SHORT,
++	TPM_UNDEFINED,		/* 225 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 230 */
++	TPM_LONG,
++	TPM_MEDIUM,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,		/* 235 */
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_UNDEFINED,
++	TPM_SHORT,		/* 240 */
++	TPM_UNDEFINED,
++	TPM_MEDIUM,
 +};
 +
-+enum tpm2_timeouts {
-+	TPM2_TIMEOUT_A          =    750,
-+	TPM2_TIMEOUT_B          =   2000,
-+	TPM2_TIMEOUT_C          =    200,
-+	TPM2_TIMEOUT_D          =     30,
-+	TPM2_DURATION_SHORT     =     20,
-+	TPM2_DURATION_MEDIUM    =    750,
-+	TPM2_DURATION_LONG      =   2000,
-+	TPM2_DURATION_LONG_LONG = 300000,
-+	TPM2_DURATION_DEFAULT   = 120000,
- };
++/*
++ * Returns max number of jiffies to wait
++ */
++unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
++{
++	int duration_idx = TPM_UNDEFINED;
++	int duration = 0;
++
++	/*
++	 * We only have a duration table for protected commands, where the upper
++	 * 16 bits are 0. For the few other ordinals the fallback will be used.
++	 */
++	if (ordinal < TPM_MAX_ORDINAL)
++		duration_idx = tpm1_ordinal_duration[ordinal];
++
++	if (duration_idx != TPM_UNDEFINED)
++		duration = chip->duration[duration_idx];
++	if (duration <= 0)
++		return 2 * 60 * HZ;
++	else
++		return duration;
++}
++EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
++
+diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+index caa86b19c76d..5d20e98b844f 100644
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -370,6 +370,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	u32 ordinal;
+ 	size_t count = 0;
++	unsigned long duration;
+ 	int burst_count, bytes2write, retries, rc = -EIO;
  
- enum tpm2_structures {
-@@ -123,6 +130,7 @@ enum tpm2_algorithms {
+ 	for (retries = 0; retries < TPM_RETRY; retries++) {
+@@ -455,12 +456,11 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 		return rc;
+ 	}
+ 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+-	rc = i2c_nuvoton_wait_for_data_avail(chip,
+-					     tpm_calc_ordinal_duration(chip,
+-								       ordinal),
+-					     &priv->read_queue);
++	duration = tpm1_calc_ordinal_duration(chip, ordinal);
++	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
+ 	if (rc) {
+-		dev_err(dev, "%s() timeout command duration\n", __func__);
++		dev_err(dev, "%s() timeout command duration %ld\n",
++			__func__, duration);
+ 		i2c_nuvoton_ready(chip);
+ 		return rc;
+ 	}
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 5a1f47b43947..222e45a5a762 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -436,7 +436,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 			dur = tpm2_calc_ordinal_duration(chip, ordinal);
+ 		else
+-			dur = tpm_calc_ordinal_duration(chip, ordinal);
++			dur = tpm1_calc_ordinal_duration(chip, ordinal);
  
- enum tpm2_command_codes {
- 	TPM2_CC_FIRST		= 0x011F,
-+	TPM2_CC_CREATE_PRIMARY  = 0x0131,
- 	TPM2_CC_SELF_TEST	= 0x0143,
- 	TPM2_CC_STARTUP		= 0x0144,
- 	TPM2_CC_SHUTDOWN	= 0x0145,
-@@ -227,7 +235,7 @@ struct tpm_chip {
- 	unsigned long timeout_c; /* jiffies */
- 	unsigned long timeout_d; /* jiffies */
- 	bool timeout_adjusted;
--	unsigned long duration[3]; /* jiffies */
-+	unsigned long duration[TPM_DURATION_MAX]; /* jiffies */
- 	bool duration_adjusted;
+ 		if (wait_for_tpm_stat
+ 		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index 911475d36800..c7ded298617d 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -164,7 +164,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	notify_remote_via_evtchn(priv->evtchn);
  
- 	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index a700f8f9ead7..c1ddbbba406e 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -90,6 +90,8 @@ static struct tpm2_hash tpm2_hash_map[] = {
-  * of time the chip could take to return the result. The values
-  * of the SHORT, MEDIUM, and LONG durations are taken from the
-  * PC Client Profile (PTP) specification.
-+ * LONG_LONG is for commands that generates keys which empirically
-+ * takes longer time on some systems.
-  */
- static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
- 	TPM_UNDEFINED,		/* 11F */
-@@ -110,7 +112,7 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
- 	TPM_UNDEFINED,		/* 12e */
- 	TPM_UNDEFINED,		/* 12f */
- 	TPM_UNDEFINED,		/* 130 */
--	TPM_UNDEFINED,		/* 131 */
-+	TPM_LONG_LONG,		/* 131 */
- 	TPM_UNDEFINED,		/* 132 */
- 	TPM_UNDEFINED,		/* 133 */
- 	TPM_UNDEFINED,		/* 134 */
-@@ -144,7 +146,7 @@ static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
- 	TPM_UNDEFINED,		/* 150 */
- 	TPM_UNDEFINED,		/* 151 */
- 	TPM_UNDEFINED,		/* 152 */
--	TPM_UNDEFINED,		/* 153 */
-+	TPM_LONG_LONG,		/* 153 */
- 	TPM_UNDEFINED,		/* 154 */
- 	TPM_UNDEFINED,		/* 155 */
- 	TPM_UNDEFINED,		/* 156 */
-@@ -821,7 +823,7 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 		duration = chip->duration[index];
+ 	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
+-	duration = tpm_calc_ordinal_duration(chip, ordinal);
++	duration = tpm1_calc_ordinal_duration(chip, ordinal);
  
- 	if (duration <= 0)
--		duration = 2 * 60 * HZ;
-+		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
- 
- 	return duration;
- }
+ 	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
+ 			&priv->read_queue, true) < 0) {
 -- 
 2.14.3
