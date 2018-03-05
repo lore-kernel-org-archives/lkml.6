@@ -1,59 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752480AbeCETD6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:03:58 -0500
-Received: from mga14.intel.com ([192.55.52.115]:16961 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751838AbeCETD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:03:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="32574101"
-Subject: Re: [RFC, PATCH 18/22] x86/mm: Handle allocation of encrypted pages
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-19-kirill.shutemov@linux.intel.com>
-Cc: Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <e2fed2a7-88db-96f0-56f5-b20b624eb665@intel.com>
-Date: Mon, 5 Mar 2018 11:03:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180305162610.37510-19-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932147AbeCETEm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:04:42 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35309 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeCETEk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 14:04:40 -0500
+X-Google-Smtp-Source: AG47ELuj3Ibf70+EaqVaoPO6WSdt8TaRbY7/YvCwBv/zEpxdXeyZbYOqZf90mnyfCGB8FQ++LOCdjQ==
+From: Amit Kucheria <amit.kucheria@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Ram Chandrasekar <rkumbako@codeaurora.org>, ilina@codeaurora.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] thermal: of: Allow selection of thermal governor in DT
+Date: Tue,  6 Mar 2018 00:06:45 +0530
+Message-Id: <3b80853abb45a9e067cf7a16754b07bb67712457.1520274879.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1520274879.git.amit.kucheria@linaro.org>
+References: <cover.1520274879.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
-> -#define __alloc_zeroed_user_highpage(movableflags, vma, vaddr) \
-> -	alloc_page_vma(GFP_HIGHUSER | __GFP_ZERO | movableflags, vma, vaddr)
->  #define __HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE
-> +#define __alloc_zeroed_user_highpage(movableflags, vma, vaddr)			\
-> +({										\
-> +	struct page *page;							\
-> +	gfp_t gfp = movableflags | GFP_HIGHUSER;				\
-> +	if (vma_is_encrypted(vma))						\
-> +		page = __alloc_zeroed_encrypted_user_highpage(gfp, vma, vaddr);	\
-> +	else									\
-> +		page = alloc_page_vma(gfp | __GFP_ZERO, vma, vaddr);		\
-> +	page;									\
-> +})
+From: Ram Chandrasekar <rkumbako@codeaurora.org>
 
-This is pretty darn ugly and also adds a big old branch into the hottest
-path in the page allocator.
+There is currently no way for the governor to be selected for each thermal
+zone in devicetree. This results in the default governor being used for all
+thermal zones even though no such restriction exists in the core code.
 
-It's also really odd that you strip __GFP_ZERO and then go ahead and
-zero the encrypted page unconditionally.  It really makes me wonder if
-this is the right spot to be doing this.
+Add support for specifying the thermal governor to be used for a thermal
+zone in the devicetree. The devicetree config should specify the governor
+name as a string that matches any available governors. If not specified, we
+maintain the current behaviour of using the default governor.
 
-Can we not, for instance do it inside alloc_page_vma()?
+Signed-off-by: Ram Chandrasekar <rkumbako@codeaurora.org>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ Documentation/devicetree/bindings/thermal/thermal.txt | 8 ++++++++
+ drivers/thermal/of-thermal.c                          | 6 ++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
+index 1719d47..fced9d3 100644
+--- a/Documentation/devicetree/bindings/thermal/thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/thermal.txt
+@@ -168,6 +168,14 @@ Optional property:
+ 			by means of sensor ID. Additional coefficients are
+ 			interpreted as constant offset.
+ 
++- thermal-governor:     Thermal governor to be used for this thermal zone.
++			Expected values are:
++			"step_wise": Use step wise governor.
++			"fair_share": Use fair share governor.
++			"user_space": Use user space governor.
++			"power_allocator": Use power allocator governor.
++  Type: string
++
+ - sustainable-power:	An estimate of the sustainable power (in mW) that the
+   Type: unsigned	thermal zone can dissipate at the desired
+   Size: one cell	control temperature.  For reference, the
+diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+index e09f035..a884b01 100644
+--- a/drivers/thermal/of-thermal.c
++++ b/drivers/thermal/of-thermal.c
+@@ -974,6 +974,7 @@ int __init of_parse_thermal_zones(void)
+ 		struct thermal_zone_params *tzp;
+ 		int i, mask = 0;
+ 		u32 prop;
++		const char *governor_name;
+ 
+ 		tz = thermal_of_build_thermal_zone(child);
+ 		if (IS_ERR(tz)) {
+@@ -996,6 +997,11 @@ int __init of_parse_thermal_zones(void)
+ 		/* No hwmon because there might be hwmon drivers registering */
+ 		tzp->no_hwmon = true;
+ 
++		if (!of_property_read_string(child, "thermal-governor",
++						&governor_name))
++			strlcpy(tzp->governor_name, governor_name,
++					THERMAL_NAME_LENGTH);
++
+ 		if (!of_property_read_u32(child, "sustainable-power", &prop))
+ 			tzp->sustainable_power = prop;
+ 
+-- 
+2.7.4
