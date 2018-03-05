@@ -1,42 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932197AbeCERSa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:18:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41172 "EHLO
+        id S932093AbeCERSR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:18:17 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40740 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932106AbeCERS3 (ORCPT
+        with ESMTP id S1751679AbeCERSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:18:29 -0500
+        Mon, 5 Mar 2018 12:18:15 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Abhijeet Kumar <abhijeet.kumar@intel.com>
+To: Colin Ian King <colin.king@canonical.com>
 Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>, Jeeja KP <jeeja.kp@intel.com>,
-        Dharageswari R <dharageswari.r@intel.com>,
-        G Kranthi <gudishax.kranthikumar@intel.com>,
-        Pradeep Tewani <pradeep.d.tewani@intel.com>,
-        Ramesh Babu <ramesh.babu@intel.com>,
-        Jaikrishna Nemallapudi <jaikrishnax.nemallapudi@intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        abhijeet.kumar@intel.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: Skylake: Fix typo" to the asoc tree
-In-Reply-To: <1520106400-22664-1-git-send-email-abhijeet.kumar@intel.com>
-Message-Id: <E1estkQ-0007tK-Ej@debutante>
-Date: Mon, 05 Mar 2018 17:18:02 +0000
+        Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: use NULL rather than 0 for cells_name argument" to the regulator tree
+In-Reply-To: <20180305123853.25750-1-colin.king@canonical.com>
+Message-Id: <E1estkb-0007xM-UZ@debutante>
+Date: Mon, 05 Mar 2018 17:18:13 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: Skylake: Fix typo
+   regulator: core: use NULL rather than 0 for cells_name argument
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -57,31 +47,37 @@ to this mail.
 Thanks,
 Mark
 
->From 12af5004145a3fa53246cca4cbb2c57d18dde202 Mon Sep 17 00:00:00 2001
-From: Abhijeet Kumar <abhijeet.kumar@intel.com>
-Date: Sun, 4 Mar 2018 01:16:39 +0530
-Subject: [PATCH] ASoC: Intel: Skylake: Fix typo
+>From 3b81f5d3442e04e13726f27728592af829df3dcf Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Mon, 5 Mar 2018 13:38:53 +0100
+Subject: [PATCH] regulator: core: use NULL rather than 0 for cells_name
+ argument
 
-Spelling mistake in state. So fixing it.
+The 3rd paramater is a pointer type and should be NULL rather than a
+zero, clean up spare warning:
 
-Signed-off-by: Abhijeet Kumar <abhijeet.kumar@intel.com>
+drivers/regulator/of_regulator.c:424:75: warning: Using plain integer
+as NULL pointer
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/skylake/skl-messages.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/of_regulator.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
-index 60d76adade43..f161907859f3 100644
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -1210,7 +1210,7 @@ int skl_bind_modules(struct skl_sst *ctx,
- static int skl_set_pipe_state(struct skl_sst *ctx, struct skl_pipe *pipe,
- 	enum skl_ipc_pipeline_state state)
- {
--	dev_dbg(ctx->dev, "%s: pipe_satate = %d\n", __func__, state);
-+	dev_dbg(ctx->dev, "%s: pipe_state = %d\n", __func__, state);
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 7df3a46908f1..a2eb9046adf8 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -420,7 +420,8 @@ int of_get_n_coupled(struct regulator_dev *rdev)
+ 	int n_phandles;
  
- 	return skl_ipc_set_pipeline_state(&ctx->ipc, pipe->ppl_id, state);
+ 	n_phandles = of_count_phandle_with_args(node,
+-						"regulator-coupled-with", 0);
++						"regulator-coupled-with",
++						NULL);
+ 
+ 	return (n_phandles > 0) ? n_phandles : 0;
  }
 -- 
 2.16.2
