@@ -1,79 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753106AbeCEVT0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 16:19:26 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60958 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeCEVTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 16:19:24 -0500
-Subject: Re: [PATCH v12 02/11] mm, swap: Add infrastructure for saving page
- metadata on swap
-To: Dave Hansen <dave.hansen@linux.intel.com>, akpm@linux-foundation.org,
-        davem@davemloft.net, arnd@arndb.de
-Cc: kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        ross.zwisler@linux.intel.com, dave.jiang@intel.com,
-        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
-        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
-        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, sparclinux@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
- <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
- <0d77dc3c-1454-a689-a0fb-f07e8973c29e@linux.intel.com>
- <4a766f6d-ba96-7963-b367-7214eab7e307@oracle.com>
- <d807ba68-decd-e195-f607-ef6962e40c96@linux.intel.com>
- <66c8ab93-f491-ad2e-5313-d03e23f73006@oracle.com>
- <0709b55b-3b77-ba43-efbc-6f767714a0b7@linux.intel.com>
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <b55a493a-3401-b493-d9fe-b873878e02e0@oracle.com>
-Date: Mon, 5 Mar 2018 14:14:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <0709b55b-3b77-ba43-efbc-6f767714a0b7@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1753229AbeCEVVo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 16:21:44 -0500
+Received: from mga07.intel.com ([134.134.136.100]:25212 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753200AbeCEVVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 16:21:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
+   d="scan'208";a="34824974"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/6] tpm: sort objects in the Makefile
+Thread-Topic: [PATCH 1/6] tpm: sort objects in the Makefile
+Thread-Index: AQHTtL/mlVjzMedYs0WW/43w+BjdGqPCAjMAgAAh0RA=
+Date: Mon, 5 Mar 2018 21:21:37 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422E7F3@hasmsx108.ger.corp.intel.com>
+References: <20180305202017.24008-1-tomas.winkler@intel.com>
+ <20180305202017.24008-2-tomas.winkler@intel.com>
+ <20180305211206.GB9335@ziepe.ca>
+In-Reply-To: <20180305211206.GB9335@ziepe.ca>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803050243
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjQwNGVlZmMtYzE1OC00MjhiLTg1MmQtYjlhNjgyYjE3ZTViIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI2Rys4Z1IrakY0VDlFTkk3cENxZEc2OTdjbDNNWDl0MjNmSStLTlFKM1hWS2s3M3BlK1JOdUxFUHRYZEFlb3FKIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.226]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 02:04 PM, Dave Hansen wrote:
-> On 03/05/2018 12:28 PM, Khalid Aziz wrote:
->>> Do you have a way to tell that data is not being thrown away?  Like if
->>> the ADI metadata is different for two different cachelines within a
->>> single page?
->>
->> Yes, since access to tagged data is made using pointers with ADI tag
->> embedded in the top bits, any mismatch between what app thinks the ADI
->> tags should be and what is stored in the RAM for corresponding page will
->> result in exception. If ADI data gets thrown away, we will get an ADI
->> tag mismatch exception. If ADI tags for two different ADI blocks on a
->> page are different when app expected them to be the same, we will see an
->> exception on access to the block with wrong ADI data.
+> On Mon, Mar 05, 2018 at 10:20:12PM +0200, Tomas Winkler wrote:
+> > Make the tpm Makefile a bit more in order by putting objects in one
+> > column and group together tpm2 modules
+> >
+> > Prefer tpm-objs += instead of tpm-y += notation.
+> >
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > drivers/char/tpm/Makefile | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> > index acd758381c58..2fc0e9a73cd6 100644
+> > +++ b/drivers/char/tpm/Makefile
+> > @@ -3,9 +3,17 @@
+> >  # Makefile for the kernel tpm device drivers.
+> >  #
+> >  obj-$(CONFIG_TCG_TPM) += tpm.o
+> > -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> > -	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o
+> \
+> > -         tpm2-space.o
+> > +tpm-objs := tpm-interface.o
+> > +tpm-objs += tpm-dev.o
+> > +tpm-objs += tpm-chip.o
+> > +tpm-objs += tpm-dev-common.o
+> > +tpm-objs += tpmrm-dev.o
+> > +tpm-objs += tpm-sysfs.o
+> > +tpm-objs += tpm1_eventlog.o
+> > +tpm-objs += tpm2-cmd.o
+> > +tpm-objs += tpm2-space.o
+> > +tpm-objs += tpm2_eventlog.o
 > 
-> So, when an app has two different ADI tags on two parts of a page, the
-> page gets swapped, and the ADI block size is under PAGE_SIZE, the app
-> will get an ADI exception after swap-in through no fault of its own?
+> If you are going to do this then sort the list please
+
+I've sorted in that way that in the future will probably will compile tpm1- out, you probably mean to alphabetically. 
 > 
+> Seems weird to me though, there are not that many examples of this pattern
+> in the kernel.
 
-Only if the kernel fails to re-establish ADI tags on the swapped in page 
-which is why I added infrastructure to save the ADI tags for a page 
-before it is swapped out and then re-establish those tags when the page 
-is swapped back in. Kernel needs to save as many as ADI TAGS as may 
-exist on each page, not just one tag per page. On sparc M7 8K pages, 
-there are 128 ADI tags for the page, so kernel will store and restore 
-128 ADI tags for each page on swap-out and swap-in. If kernel restores 
-only one ADI tag for the page on swap in, app will get an exception and 
-it will be kernel's fault.
+#find -name Makefile  | xargs grep -e 'objs +=' | awk -F: '{print $1}' | uniq  | wc -l
+74
 
---
-Khalid
+Just a personal taste maybe. 
+
+> What is wrong with:
+> 
+> tpm-objs := \
+> 	 tpm-interface.o \
+> 	 tpm-dev.o \
+> 	 [..]
+> 
+For me it's less error prone without backslashes, but at the end it's just the same again just a personal test.
+
+Thanks
+Tomas
