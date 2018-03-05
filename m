@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELvQEBckBqjAQU84ncqa7lEtA0BV5BX9K2B1R9gdMOOjMaEYGKHQCkGdPfG8MMj7OWLj/x6O
-ARC-Seal: i=1; a=rsa-sha256; t=1520245574; cv=none;
+X-Google-Smtp-Source: AG47ELt8FEmZMewktxwlhnXk/osCYoiIKTFiRO6I8cWrT8uLP/1a2cVRykIJHex3lfGKJ3iO3za5
+ARC-Seal: i=1; a=rsa-sha256; t=1520245572; cv=none;
         d=google.com; s=arc-20160816;
-        b=KmUMn4KIkBQZNfxzbESMBaPjNMwC2n69F9bQI1VoE16kkFFzj8o2YEzvBiu1/ayjsc
-         MjhJTrK9W7o0T8Z0ks/mDj6hKeZSQepmu2hIQzDx6/T3zrrBL+WA0feDt1iDc2FsA2en
-         ryvJs0kNJBUpbZ1ZWeUNSZKsNeYFEIC1uaD+gs5kEJv56++NRhhFGtETT5YCIcqh1n8D
-         nw32kcpr0gCIPct1tLAw78pMKFj20BHGW1afz/otWHbUfmmXyHLlCRUXtWRvz1rYVDJN
-         LJWQHxJ4ufMGwKH8JMSLPo1vuFKjSjQ47RDWp63sqZTvaDg1BoevK3y+B1vQ9Mmqv325
-         Kmlw==
+        b=jpO4e4XjFsKKeVMmTd4Fz4B0IZIL7Bvtmn2FwcEpGFMa1GhSKwYGhvJBtNEYzB4D3D
+         k7DH0P/sp4Vpziau7owGWC53NV5HOJeanUVwkKvamt+LMpiN6m3Lt98q/k78KYABO8B/
+         GuqfGyPmMVIRzLFXWXZheALuekzcCHnKBZbBXr5cx+w/VlwG5oUCEZNutrSWqIKGhaB2
+         eu6BQusjeNgcaLm1xgnNXquKridbrEXlJ7pEKLKqUqQJP/EByiqsK7cIfXtDsj7LWfK6
+         490v5ea/Hs5OJgXPk6BVSQZx+sDlqQpVEZCeEJHuEodcz+/6teNbpoGcRSaSHuGSdNgz
+         TvBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=bZlTBQ7TnMdlJzLKKteDNuKBqKGpitP//pbiUgQVl0s=;
-        b=mdm93A55AsKosD0iAr1nRURCQFVoD34uP9hO7Su2puQraK4/SomO2D9IL9fX1dIsuu
-         fLeoIhdkcQOVH6MlhOixrNEN5A89ZL4Ivlt22ytDMLQCo6PPBWqxk90A+/6JHTsFl+vE
-         iEz8VV2VP0MHK7ZLAQmaB9yBe2/7n7Dkq9NpZXBkqWKvQ528YSigjmPhu4z1QYK98q3s
-         SZRpW7AgvxnJn/Q7rXQBmxe3rGGchandkCyBr1++ZQWQIRNpDufLJdM2TEYHYoow8lBw
-         vn/CTx9n/ZXt4CBIKb32zTBb2C2ejHn+CNEVj3H5OT/OBn1M6eOyDgxahtnSxnBBZZnA
-         3vVA==
+        bh=bAn2hiKI0xrkWpfCWI3b0fK35cbVbNjmlGYZazgDka0=;
+        b=SDAZRJulW5wA7SwZC47HJC0U1RNaK2ST044SeowyxS7yIodqbqhSiB19pa+T2PsINd
+         0GUP2V/n9paUje2T0p3RgawNXi+TvB+5QrtP4x/dLVLEqCxaCPz5NLjfVPgBcI0oIglR
+         lzbbkd/tul6GwVe0TGHs3GfK4lIsyxptMwFdM499aDkxHQReb0yuLjzqcZotp+ttgxJZ
+         PXR63HbdnNuRnteBVVlOMrvUw3zc6iSnaWaInjBskYXbaCm/XGVH5Sf/5OF9nvCvFjCZ
+         BhYOLDNTK7nmBMBIzqrjgFiJT8Rjz3uHIDqG9nmnPQ3aaRFBRxqXh56fpcNsAXNSjfK/
+         BxYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ENYlYPHv;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KqZO2Y18;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=ENYlYPHv;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=KqZO2Y18;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,91 +57,148 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 15/34] x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
-Date: Mon,  5 Mar 2018 11:25:44 +0100
-Message-Id: <1520245563-8444-16-git-send-email-joro@8bytes.org>
+Subject: [PATCH 09/34] x86/entry/32: Leave the kernel via trampoline stack
+Date: Mon,  5 Mar 2018 11:25:38 +0100
+Message-Id: <1520245563-8444-10-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093023935493934?=
-X-GMAIL-MSGID: =?utf-8?q?1594093023935493934?=
+X-GMAIL-THRID: =?utf-8?q?1594093021559411814?=
+X-GMAIL-MSGID: =?utf-8?q?1594093021559411814?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-With the way page-table folding is implemented on 32 bit, we
-are not only setting PGDs with this functions, but also PUDs
-and even PMDs. Give the function a more generic name to
-reflect that.
+Switch back to the trampoline stack before returning to
+userspace.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_64.h | 12 ++++++------
- arch/x86/mm/pti.c                 |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/entry/entry_32.S | 79 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 77 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 81462e9..b68bda5 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -195,21 +195,21 @@ static inline bool pgdp_maps_userspace(void *__ptr)
- }
- 
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
--pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd);
-+pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 1737da2..1b5656d 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -339,6 +339,60 @@
+ .endm
  
  /*
-  * Take a PGD location (pgdp) and a pgd value that needs to be set there.
-  * Populates the user and returns the resulting PGD that must be set in
-  * the kernel copy of the page tables.
++ * Switch back from the kernel stack to the entry stack.
++ *
++ * The %esp register must point to pt_regs on the task stack. It will
++ * first calculate the size of the stack-frame to copy, depending on
++ * whether we return to VM86 mode or not. With that it uses 'rep movsl'
++ * to copy the contents of the stack over to the entry stack.
++ *
++ * We must be very careful here, as we can't trust the contents of the
++ * task-stack once we switched to the entry-stack. When an NMI happens
++ * while on the entry-stack, the NMI handler will switch back to the top
++ * of the task stack, overwriting our stack-frame we are about to copy.
++ * Therefore we switch the stack only after everything is copied over.
++ */
++.macro SWITCH_TO_ENTRY_STACK
++
++	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
++
++	/* Bytes to copy */
++	movl	$PTREGS_SIZE, %ecx
++
++#ifdef CONFIG_VM86
++	testl	$(X86_EFLAGS_VM), PT_EFLAGS(%esp)
++	jz	.Lcopy_pt_regs_\@
++
++	/* Additional 4 registers to copy when returning to VM86 mode */
++	addl    $(4 * 4), %ecx
++
++.Lcopy_pt_regs_\@:
++#endif
++
++	/* Initialize source and destination for movsb */
++	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
++	subl	%ecx, %edi
++	movl	%esp, %esi
++
++	/* Save future stack pointer in %ebx */
++	movl	%edi, %ebx
++
++	/* Copy over the stack-frame */
++	shrl	$2, %ecx
++	cld
++	rep movsl
++
++	/*
++	 * Switch to entry-stack - needs to happen after everything is
++	 * copied because the NMI handler will overwrite the task-stack
++	 * when on entry-stack
++	 */
++	movl	%ebx, %esp
++
++.Lend_\@:
++.endm
++
++/*
+  * %eax: prev task
+  * %edx: next task
   */
--static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return pgd;
--	return __pti_set_user_pgd(pgdp, pgd);
-+	return __pti_set_user_pgtbl(pgdp, pgd);
- }
- #else
--static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
- 	return pgd;
- }
-@@ -218,7 +218,7 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
- static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- {
- #if defined(CONFIG_PAGE_TABLE_ISOLATION) && !defined(CONFIG_X86_5LEVEL)
--	p4dp->pgd = pti_set_user_pgd(&p4dp->pgd, p4d.pgd);
-+	p4dp->pgd = pti_set_user_pgtbl(&p4dp->pgd, p4d.pgd);
- #else
- 	*p4dp = p4d;
- #endif
-@@ -236,7 +236,7 @@ static inline void native_p4d_clear(p4d_t *p4d)
- static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
--	*pgdp = pti_set_user_pgd(pgdp, pgd);
-+	*pgdp = pti_set_user_pgtbl(pgdp, pgd);
- #else
- 	*pgdp = pgd;
- #endif
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index ce38f16..8f53d21 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -102,7 +102,7 @@ void __init pti_check_boottime_disable(void)
- 	setup_force_cpu_cap(X86_FEATURE_PTI);
- }
+@@ -579,25 +633,45 @@ ENTRY(entry_SYSENTER_32)
  
--pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
+ /* Opportunistic SYSEXIT */
+ 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
++
++	/*
++	 * Setup entry stack - we keep the pointer in %eax and do the
++	 * switch after almost all user-state is restored.
++	 */
++
++	/* Load entry stack pointer and allocate frame for eflags/eax */ 
++	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %eax
++	subl	$(2*4), %eax
++
++	/* Copy eflags and eax to entry stack */
++	movl	PT_EFLAGS(%esp), %edi
++	movl	PT_EAX(%esp), %esi
++	movl	%edi, (%eax)
++	movl	%esi, 4(%eax)
++
++	/* Restore user registers and segments */
+ 	movl	PT_EIP(%esp), %edx	/* pt_regs->ip */
+ 	movl	PT_OLDESP(%esp), %ecx	/* pt_regs->sp */
+ 1:	mov	PT_FS(%esp), %fs
+ 	PTGS_TO_GS
++
+ 	popl	%ebx			/* pt_regs->bx */
+ 	addl	$2*4, %esp		/* skip pt_regs->cx and pt_regs->dx */
+ 	popl	%esi			/* pt_regs->si */
+ 	popl	%edi			/* pt_regs->di */
+ 	popl	%ebp			/* pt_regs->bp */
+-	popl	%eax			/* pt_regs->ax */
++
++	/* Switch to entry stack */
++	movl	%eax, %esp
+ 
  	/*
- 	 * Changes to the high (kernel) portion of the kernelmode page
+ 	 * Restore all flags except IF. (We restore IF separately because
+ 	 * STI gives a one-instruction window in which we won't be interrupted,
+ 	 * whereas POPF does not.)
+ 	 */
+-	addl	$PT_EFLAGS-PT_DS, %esp	/* point esp at pt_regs->flags */
+ 	btr	$X86_EFLAGS_IF_BIT, (%esp)
+ 	popfl
++	popl	%eax
+ 
+ 	/*
+ 	 * Return back to the vDSO, which will pop ecx and edx.
+@@ -666,6 +740,7 @@ ENTRY(entry_INT80_32)
+ 
+ restore_all:
+ 	TRACE_IRQS_IRET
++	SWITCH_TO_ENTRY_STACK
+ .Lrestore_all_notrace:
+ 	CHECK_AND_APPLY_ESPFIX
+ .Lrestore_nocheck:
 -- 
 2.7.4
