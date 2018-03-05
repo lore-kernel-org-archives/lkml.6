@@ -1,40 +1,37 @@
-Return-Path: <dave.hansen@linux.intel.com>
-X-Google-Smtp-Source: AG47ELvw0ykfkzY2awu5VwRAIMvC2I9z2HMFsCxH15seh8xvK5G2Vc+fRUsAp15J3MVzJhcZ3FaF
-ARC-Seal: i=1; a=rsa-sha256; t=1520268105; cv=none;
+Return-Path: <labbott@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520279004; cv=none;
         d=google.com; s=arc-20160816;
-        b=yR0gDEQ2zKM0UNzrUSIG4wZagHULobhiwQEGbnr9BhXEE073YdHSPtvz7mNZDg9RAq
-         NGKvpayl7Fj9D7XHdy4EeF27jk1cHDyiVPbtNhF1XkV4zpXLuR5jjyAEJO2Y8evBlh88
-         CfkoW8EeD61RxnzZDl5Tk0xIIZM8lqfVmncz7m+fTWUh6m+MAYjNQygAheI1a9KXaERu
-         V9pvjjNdc9s9q4hv9igbm8JXv0b5TSAu2FRXqKI+MCn9b98O3ea9Gb0dHcAn3WRYPzqE
-         OMBQ5TaeEOCBWpnNEavpuZzoHaqKH3bUd6p06iK2jnAAYtJvE5JIe37868ReYLrJZIO7
-         dLDg==
+        b=oPvX2aHDcoVR/bfLT1cRlOhVVKr9d6SxOfro9+PlQdnVUxkP6oy4pnP2iMY0d+hGmv
+         wUlUBnSCo+uwwoD3MloeTFc62W9vaFG28+NFvUk0iKI/u1hJnkY5yNN6Is3ZLLqnzYwT
+         x19je9EO9ECC4fqYZxIkBBakpaVnKcPTwRGYGy3XdTSueel6m+MJ4ciefzidls7zySiO
+         fusmVMMOKGtPQPr0PjqZgzHHqRMKg5UhO8fEyAgU2zLqigKX1ZxOmvZGzmg3ckFZUC9y
+         37ZUIHU75TzwltU1F1yAve7vedHxuJsbgaimzuLTS/om1KXDnufY6aWhyIXxTwDaieNv
+         DCpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:to:subject
          :arc-authentication-results;
-        bh=FNHerrBGcTPmQLIAZpZAwVRf4vaMtjJKJ5wIMZNuzKo=;
-        b=H5tz9mxYbetyVXc59zwE4J3+24s3q4kfPUeNlsPbtGj3/Gf4wQF01d+BZxibesCn8M
-         nnJgPauFHhZYovHVwtR7l9zQyLcxjNwjvwSPx/+IOPouK0Bn3FwV3t52VU7GTYZ98UUa
-         rGjHlBuiV7ARi6KVYdy3o4PCpY2ZG/WGcsFLSNn3atrSSBpF5QFt9L1AxCODt1S0yjqA
-         00gtBfdiyaMCJjnMHYY78bQjmpdn8TZg4P/6FwHAKFyvB6kylM5Hc2CRShWFIKm0HwAa
-         9VcUMF8DEaBeeDd5A9liE7kKuPQvxCdlYYmQabZq1R/MIfJykU5ke9yGOiTEw2sAnDB5
-         4YbA==
+        bh=04Ctnp8qnSc/wv8kTmGOaNYMW19rQ1oTNrUMpr/WQMo=;
+        b=cP8nnLRtaZkgolGSXizJG0PbI3zHLmnOUC+zY7czU8bWv/HznxDmutmp32wO/KKZXi
+         2ESmWvgIEv5NIA1MHgA9a1hOezRyJM6Eo0K0i87YczyIdN0PFfHZ/yYtPNk4/zUrxl7G
+         uouKmBni9P2Y3OX7x5RXzm4RX6qAdBmkTf+H7+L2atrXbkEsCW8fJ7WU0qJ6Xsy1cQfl
+         UFuS0+j+IPiHjvfAKs5yiIkfhOWV0KBeqEZTLxizUx8EoUzVj5J/aJq1wEjqyVpQBb4F
+         MUTrRqhhMg+vhWY93nHL8XXXK5VAJYbTo/2oZwpR78Muqyb+CFP7mq1F+d8oPx9GpcCm
+         1VBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="23069651"
+       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+X-Google-Smtp-Source: AG47ELtNiDIKupXPmpXnsWg9zljzk+I8pbJwEb0QQV1x/P6oN3xxRWCCCJbit6RAco5ou0Qu7qgxow==
 Subject: Re: [PATCH RFC v9 2/7] x86/entry: Add STACKLEAK erasing the kernel
  stack at the end of syscalls
-To: Alexander Popov <alex.popov@linux.com>,
- kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
- PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
- Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+ Alexander Popov <alex.popov@linux.com>, kernel-hardening@lists.openwall.com,
+ Kees Cook <keescook@chromium.org>, PaX Team <pageexec@freemail.hu>,
+ Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
  Mark Rutland <mark.rutland@arm.com>,
  Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
  Richard Sandiford <richard.sandiford@arm.com>,
@@ -62,30 +59,40 @@ To: Alexander Popov <alex.popov@linux.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-3-git-send-email-alex.popov@linux.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <d968e58a-3abd-8e3c-cee3-00c19c1b6430@linux.intel.com>
-Date: Mon, 5 Mar 2018 08:41:43 -0800
+ <d968e58a-3abd-8e3c-cee3-00c19c1b6430@linux.intel.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <94f268b2-31a4-620a-86ed-325d5bb33c57@redhat.com>
+Date: Mon, 5 Mar 2018 11:43:19 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <1520107232-14111-3-git-send-email-alex.popov@linux.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d968e58a-3abd-8e3c-cee3-00c19c1b6430@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947982901315923?=
-X-GMAIL-MSGID: =?utf-8?q?1594116648899717873?=
+X-GMAIL-MSGID: =?utf-8?q?1594128077298743305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/03/2018 12:00 PM, Alexander Popov wrote:
->  Documentation/x86/x86_64/mm.txt  |   2 +
->  arch/Kconfig                     |  27 ++++++++++
->  arch/x86/Kconfig                 |   1 +
->  arch/x86/entry/entry_32.S        |  88 +++++++++++++++++++++++++++++++
->  arch/x86/entry/entry_64.S        | 108 +++++++++++++++++++++++++++++++++++++++
->  arch/x86/entry/entry_64_compat.S |  11 ++++
+On 03/05/2018 08:41 AM, Dave Hansen wrote:
+> On 03/03/2018 12:00 PM, Alexander Popov wrote:
+>>   Documentation/x86/x86_64/mm.txt  |   2 +
+>>   arch/Kconfig                     |  27 ++++++++++
+>>   arch/x86/Kconfig                 |   1 +
+>>   arch/x86/entry/entry_32.S        |  88 +++++++++++++++++++++++++++++++
+>>   arch/x86/entry/entry_64.S        | 108 +++++++++++++++++++++++++++++++++++++++
+>>   arch/x86/entry/entry_64_compat.S |  11 ++++
+> 
+> This is a *lot* of assembly.  I wonder if you tried at all to get more
+> of this into C or whether you just inherited the assembly from the
+> original code?
+> 
 
-This is a *lot* of assembly.  I wonder if you tried at all to get more
-of this into C or whether you just inherited the assembly from the
-original code?
+This came up previously http://www.openwall.com/lists/kernel-hardening/2017/10/23/5
+there were concerns about trusting C to do the right thing as well as
+speed.
+
+Thanks,
+Laura
