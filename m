@@ -1,80 +1,89 @@
 Return-Path: <dave.hansen@linux.intel.com>
-X-Google-Smtp-Source: AG47ELvvMa6np3yLb3Uw8+noh+FonWAukfy+kfU9JUsrfFAL5G2B56dJkYozPerUMZOQLRCWlto7
-ARC-Seal: i=1; a=rsa-sha256; t=1520283414; cv=none;
+X-Google-Smtp-Source: AG47ELsetnq+HDh1CEDYoarsz+4DVN+2slNv3gfYUfTsgV73GGQCb1uupHIOT0+qzlxWRIVQEuya
+ARC-Seal: i=1; a=rsa-sha256; t=1520277729; cv=none;
         d=google.com; s=arc-20160816;
-        b=EvH7ygsdz1AiazqIrO881zsprTOfooJKP0p5O0VxvIdArjGiSHaOawEcQqRnucirHK
-         ukuoTF4pdv4LNktd0zwd3+SfBeHFuavw9ghnbkJCXc+IqHx8S+KNVNowXnInPVaFgGKS
-         M91S4T/Y12GCMdb7FjH+qt7EE/nRuEMXxoRFyY/FpooMGsexdZgXcgDI5rAnTqcwfE83
-         WtgSglhQ62rJnyryT/GtnRCbK3yh4PqWpwuhTAYoi/k22OMTwtfjDl5LgfET9BVPXUgQ
-         5yBjFpmYorvdbGTAx6D2jorfWiFWILa+NjjspvLrmpA3/m001TrnkSx11DE/EaD1ipZd
-         easw==
+        b=usNjIs1q8EMItpB28+F4q3C1MEAQvt6LmYAkjQR0URbB1rpmoka2Oas/U6w7b9tyGv
+         KIgLP0W+HC0iHIZ5jzzDcUH7NyXCwlFZqJvD9rTPgloFjHC75HSKSnjHM9SArwdUH5UN
+         LqxGMgGgrNOZb/tpBjvru60r8KLzzxe5DXqnQrvdS4+0h17Y9gOzWz9Rrg7RU3EyzKjG
+         34Femf8uQCBJDxCll5sW21rP/KhU3IpYp/ixvjmMwbyUkVeAr3pvfAOlfvtYjjOM+XZk
+         FJ0LNUGQvN85CiHRfx2Jbg+FDw5WYTD6S6AyIdhKJE8Uu8K3X7MAHLMIrVd+AbHNAeON
+         wnhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:from:cc:references:to:subject
          :arc-authentication-results;
-        bh=Rx5Dd/mRD4YImc8A5I1rSbQRp+0IPZWvLZypDdId/TM=;
-        b=hyAz1aIN3KondGwvoSxBFeaHdCHpbeXxv3NtlN6BepDiLtdq6nswR1cKbdm0Qp6kJg
-         N7V6piLWFjyLqufMtlkonWDKvT5D3pnrb3KfFAruqvKb4Xmu4BNLrRpM7/Me3ErQ7Jcb
-         LGkZ1AywgO16SfSWK6ptJ3Gi89M5ezgttdMdAo1X/ZfE3N6DoFj7YGcWhOSn75mBq0V2
-         C6ZQDIjqOkurTSJvntWcHnI3y5v0qLplBPytClTxxUG/4Vqs013hiWN9Oa6iHiY4iq5Q
-         Ctjyq+FTveBVh+YOQR6vNnzgIdFoHsaQK42/6QAe2xMa+UMxxrFeatFkHz66mxxobMta
-         U49w==
+        bh=rlbAEy3VP9ofThDDJvc8JtM8b18KMU6cswDL6c74Lr0=;
+        b=e+VgmzVtDJ7yWJ9LXlagn3MzjJKaoSTv57KosQ+bDDVdXZEkFobpnDwCvCZgls/2+S
+         4OJ03pbE+v1Qde44aPgqm+Q7qFgMFh0lKjF3PseMYy3tAcJUNxJYDq+p8g1I25MGZJ7h
+         tioHgO5At0lHO7NBRPPlv2VQ3YetaUbU2ZV/MF7d+Ipy3SRLu1mxB8zp0g+N8xP/ggT8
+         h3tNrDimWzW4QEBFHf6Z+V46Dvt1/zex9iaReosZy4iioJGXPytHFrrPs4Qq7LS2Q6XJ
+         kB5jB5K+xQeTliwwvYHYUtIYBJo39FdwpWdDryShz0O4bmMUVFogFACXefaGKbH2W9bM
+         UB6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.43 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="32596995"
-Subject: Re: [PATCH v12 09/11] mm: Allow arch code to override copy_highpage()
-To: Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
- davem@davemloft.net
+   d="scan'208";a="32578687"
+Subject: Re: [PATCH v12 10/11] sparc64: Add support for ADI (Application Data
+ Integrity)
+To: Khalid Aziz <khalid.aziz@oracle.com>, davem@davemloft.net,
+ akpm@linux-foundation.org
 References: <cover.1519227112.git.khalid.aziz@oracle.com>
- <ecbafa2bfcc05f22183be2e7784ed11943b1d5b2.1519227112.git.khalid.aziz@oracle.com>
- <68ee1cbc-8e21-e693-7878-777e0d5b0f0c@linux.intel.com>
- <8b441f99-ee41-e113-f52d-dbe0573bf267@oracle.com>
-Cc: kstewart@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
- anthony.yznaga@oracle.com, gregkh@linuxfoundation.org,
+ <d8602e35e65c8bf6df1a85166bf181536a6f3664.1519227112.git.khalid.aziz@oracle.com>
+Cc: corbet@lwn.net, bob.picco@oracle.com, steven.sistare@oracle.com,
+ pasha.tatashin@oracle.com, mike.kravetz@oracle.com, rob.gardner@oracle.com,
+ mingo@kernel.org, nitin.m.gupta@oracle.com, anthony.yznaga@oracle.com,
+ kirill.shutemov@linux.intel.com, tom.hromatka@oracle.com,
+ allen.pais@oracle.com, tklauser@distanz.ch, shannon.nelson@oracle.com,
+ vijay.ac.kumar@oracle.com, mhocko@suse.com, jack@suse.cz,
+ punit.agrawal@arm.com, hughd@google.com, thomas.tai@oracle.com,
+ ross.zwisler@linux.intel.com, dave.jiang@intel.com, willy@infradead.org,
+ minchan@kernel.org, imbrenda@linux.vnet.ibm.com, aarcange@redhat.com,
+ kstewart@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
+ gregkh@linuxfoundation.org, nagarathnam.muthusamy@oracle.com,
+ linux@roeck-us.net, jane.chu@oracle.com, dan.j.williams@intel.com,
+ jglisse@redhat.com, ktkhai@virtuozzo.com, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <2a558ec8-c46c-299e-2f14-bb33058cbd90@linux.intel.com>
-Date: Mon, 5 Mar 2018 12:56:52 -0800
+Message-ID: <a59ece97-ba1f-dfb1-bfc8-b44ffd8edbca@linux.intel.com>
+Date: Mon, 5 Mar 2018 11:22:08 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <8b441f99-ee41-e113-f52d-dbe0573bf267@oracle.com>
+In-Reply-To: <d8602e35e65c8bf6df1a85166bf181536a6f3664.1519227112.git.khalid.aziz@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593031715838543761?=
-X-GMAIL-MSGID: =?utf-8?q?1594132701327827658?=
+X-GMAIL-THRID: =?utf-8?q?1593031948178483523?=
+X-GMAIL-MSGID: =?utf-8?q?1594126741125969716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/05/2018 12:42 PM, Khalid Aziz wrote:
-> On 03/05/2018 12:24 PM, Dave Hansen wrote:
->> On 02/21/2018 09:15 AM, Khalid Aziz wrote:
->>> +#ifndef __HAVE_ARCH_COPY_HIGHPAGE
->>> +
->>>   static inline void copy_highpage(struct page *to, struct page *from)
->>>   {
->>>       char *vfrom, *vto;
->>> @@ -248,4 +250,6 @@ static inline void copy_highpage(struct page *to,
->>> struct page *from)
->>>       kunmap_atomic(vfrom);
->>>   }
->>>   +#endif
->>
->> I think we prefer that these are CONFIG_* options.
-> 
-> I added this mechanism to be same as what we have for copy_user_highpage():
-> 
-> ---------------
-> #ifndef __HAVE_ARCH_COPY_USER_HIGHPAGE
+On 02/21/2018 09:15 AM, Khalid Aziz wrote:
+> +#define arch_validate_prot(prot, addr) sparc_validate_prot(prot, addr)
+> +static inline int sparc_validate_prot(unsigned long prot, unsigned long addr)
+> +{
+> +	if (prot & ~(PROT_READ | PROT_WRITE | PROT_EXEC | PROT_SEM | PROT_ADI))
+> +		return 0;
+> +	if (prot & PROT_ADI) {
+> +		if (!adi_capable())
+> +			return 0;
+> +
+> +		if (addr) {
+> +			struct vm_area_struct *vma;
+> +
+> +			vma = find_vma(current->mm, addr);
+> +			if (vma) {
+> +				/* ADI can not be enabled on PFN
+> +				 * mapped pages
+> +				 */
+> +				if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
+> +					return 0;
 
-I think that's the old way that we generally don't want to add new
-instances of.
+You don't hold mmap_sem here.  How can this work?
