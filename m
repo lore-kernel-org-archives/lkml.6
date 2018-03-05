@@ -1,96 +1,185 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2389728-1520277805-2-15742359241779671506
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520277805; b=ZcRiA+D2Dxxmv9gy+vqV2+JDZSqWYJygesX0N27lL0JuU6H
-    kuC9qRvSVh+q4SubjaSFkOhha9sz1FtJr9WX7c2QpPjET0CsLpR0IIuJB3TMOW8p
-    3HQ04Vwz6UBG660Vpg7GUEJQ8XO1cOAtR0OrHfGv3JNVyNQ9qUfxzgJXirNBl/bu
-    Oa/o5QQ1VDP4Zhiyc+TT/vOEwK84thvv7NUb+ydNMvIcg7ypH0yqJd4x+o/+2/g5
-    ToXqqsuqfvMVzDXprjWYnf+LLW8OzaVcTncXzXUBAF2JDKjwwsD9qCTIgPhsU6us
-    ZR0Qcv2NV5W3EO23wvoqmO6Nlq6mEZNpBU+Y4zQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520277805; bh=d
-    xcpjU+MBI+Hs2y3C2Q7ClMN0dqMgwAn8tPDSitcHIQ=; b=I22KWp/sO2fExviK4
-    eRrNEUQBpFERDZu4NNk2Ne31Dw5bpVLKG7wVkjBn86n24QQ4y9lNFmNaUga9hntd
-    nfoCOST4O6MdsOut4Rq+f2bOKNwCCHRwFm6IcPzm6zjOYkoLJUc6r8Jrk6XjdC4J
-    oOf20wxufWeUYSgEsei0mOJau16CjJu9AnYQQcvwTRQoFgslM+hdEg3RyVrtNk8H
-    XTOmG8u4N4Ka0X1omzJYHRKiYUcHemSBxj9PbKFujHBvsy5Z7ZFq+h7TKV6hRpd2
-    jw2rjbx4FZJUTecZydNyOh9wMaC+0tzJe4DRUDBEhbkC53GFL3ZW9G/1i85vM6g5
-    9egdg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vl8XlyVM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p/okB+1w;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vl8XlyVM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=p/okB+1w;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELtWeHSLd2LMhNo9UpS6hIdYSFAi9M0eTjP6w3BLHfH09O44l0Tk7FjGq5BL7DhVBiJWBWeADg==
-Message-ID: <1520277796.109662.10.camel@gmail.com>
-Subject: Re: [PATCH] Fix partial warnings of checkpatch.pl for ipx_route.c
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Horatiu Vultur <hvultur@gmail.com>, netdev@vger.kernel.org,
- devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date: Mon, 05 Mar 2018 11:23:16 -0800
-In-Reply-To: <1520277563-3825-1-git-send-email-hvultur@gmail.com>
-References: <1520277563-3825-1-git-send-email-hvultur@gmail.com>
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <kernel-hardening-return-12099-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELvf6qwV4OzW9AV5TwnEc6d+qrh2pfJUcqZtAf9SWFWs45rC7YCEUlhYZxMHrVifNJB5E5le
+ARC-Seal: i=1; a=rsa-sha256; t=1520242136; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NM+xSqBOaVAs+QCVQhbiUPEKODFhUjhlsdHLVKJlZfvVe2cP089oX9fVg8SuuXQjcs
+         TFkn68UnEp/3wLZV0q6XXCAGHQ66t5glASVsXhZWorKjLYLzi5RvFYZYN1aAq+udC/4B
+         mVOXe9yAXT0YIYbZf7+5C526rORoNsdlDALoZWcfZ9huP3F+7Pq/fGkBFyHZsSSRLvM3
+         s2JFst7kLGinVPsT7QcmPRh4t6vm0fZ4zXwSm5ECuhOOH2avF9DJ53aTfFA2gMYt7luz
+         rbJOXZdgarGfTrTRCL8N4tTL8qlDGKf60e3vXr/MR5jyQBM5rn4QaJ9LhHhTaR5C5Q93
+         Htyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :references:in-reply-to:mime-version:dkim-signature:dkim-filter
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=svNnamZ4e7++WbRMEbLIhS9XGzMU9g5NerVRXAksQ5I=;
+        b=UjlZ4Qv1hgrG2Z6EFOL0i1/eBKg1Lfp0wtBHu725eTWF3SLpp06Liy/t8/nkZOfLM8
+         f+Z1M+TcuptoVqMzC3a9m+nyO3srgaoFdYx1qoC2VomOsZy3Eb6PY4Loy9e+8VuXSjgt
+         YFfX9fWD7Ls8bD2e36Vc9AcifAEXs/F2rdQB4vo7X5Nj8fGwXB0frk5MT253ySNgAbFG
+         /sMHpym5/TZZ8gIMl00kegERNKZNsIfLMFhJl6TY9urnyeBeY+mntg4uSsP9hayxEUBE
+         7B+glxJknSLk/q9oE9KIQX2U6L4mfsWGqhxE7yrE/VLhJzNJXsvyC203VrFEsOrUiOAE
+         POzg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=11o4V7ES;
+       spf=pass (google.com: domain of kernel-hardening-return-12099-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12099-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=11o4V7ES;
+       spf=pass (google.com: domain of kernel-hardening-return-12099-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12099-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w259SQLj014789
+X-Nifty-SrcIP: [209.85.213.49]
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFz-AD8rWb66rjN-YhAtPXukMiGSFfW3nBMCp8k1RYUvOQ@mail.gmail.com>
+References: <CAGXu5jLc_A1w4FM8FvQHGSPjLfOu80L_vbt_FkcE6+Bh_XMjxw@mail.gmail.com>
+ <6be06ce5-87e6-0d9d-55b9-6c70c3578ecf@maciej.szmigiero.name> <CA+55aFz-AD8rWb66rjN-YhAtPXukMiGSFfW3nBMCp8k1RYUvOQ@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Mar 2018 18:27:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
+Message-ID: <CAK7LNASKHOb5GNPu9XHWxyq-iucxTRkw99_7wL4zgm5HNc6_SA@mail.gmail.com>
+Subject: Re: RANDSTRUCT structs need linux/compiler_types.h (Was: [nfsd4]
+ potentially hardware breaking regression in 4.14-rc and 4.13.11)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Kees Cook <keescook@chromium.org>,
+        Patrick McLean <chutzpah@gentoo.org>, Emese Revfy <re.emese@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Bruce Fields <bfields@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1593052828374787895?=
+X-GMAIL-MSGID: =?utf-8?q?1594089419138074718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gTW9uLCAyMDE4LTAzLTA1IGF0IDIwOjE5ICswMTAwLCBIb3JhdGl1IFZ1bHR1ciB3cm90ZToK
-PiBGaXggcGFydGlhbCB3YXJuaW5ncyBvZiBjaGVja3BhdGNoLnBsIGZvciBpcHhfcm91dGUuYwo+
-IAo+IFNpZ25lZC1vZmYtYnk6IEhvcmF0aXUgVnVsdHVyIDxodnVsdHVyQGdtYWlsLmNvbT4KPiAt
-LS0KPiDCoGRyaXZlcnMvc3RhZ2luZy9pcHgvaXB4X3JvdXRlLmMgfCA3ICsrKystLS0KPiDCoDEg
-ZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4gCgpQbGVhc2Ug
-dGFrZSBhIGxvb2sgYXQgZHJpdmVycy9zdGFnaW5nL2lweC9UT0RPCgoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFpbGluZyBsaXN0CmRldmVs
-QGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5saW51eGRyaXZlcnByb2pl
-Y3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
+Hi Linus,
+
+2018-02-22 7:47 GMT+09:00 Linus Torvalds <torvalds@linux-foundation.org>:
+> On Wed, Feb 21, 2018 at 2:19 PM, Maciej S. Szmigiero
+> <mail@maciej.szmigiero.name> wrote:
+>>
+>> One can see that offsets used to access various members of struct path a=
+re
+>> different, and also that the original file from step 3 contains an objec=
+t
+>> named "__randomize_layout".
+>
+> Whee.
+>
+> Thanks for root-causing this issue, and this syntax of ours is clearly
+> *much* too fragile.
+>
+> We actually have similar issues with some of our other attributes,
+> where out nice "helpful" attribute shorthand can end up being just
+> silently interpreted as a variable name if they aren't defined in
+> time.
+>
+> For most of our other attributes, it just doesn't matter all that much
+> if some user doesn't happen to see the attribute. For
+> __randomize_layout, it's obviously very fatal, and silently just
+> generates crazy code.
+>
+> I'm not entirely sure what the right solution is, because it's
+> obviously much too easy to miss some #include by mistake. It's easy to
+> say "you should always include the proper header", but if a failure to
+> do so doesn't end up with any warnings or errors, but just silent bad
+> code generation, it's much too fragile.
+>
+> I wonder if we could change the syntax of that "__randomize_layout"
+> thing. Some of our related helper macros (ie
+> randomized_struct_fields_start/end) don't have the same problem,
+> because if you don't have the define for them, the compiler will
+> complain about bad syntax.
+>
+> And other attribute specifiers we encourage people to put in other
+> parts of the type, like __user etc, so they don't have that same
+> parsing issue.
+>
+> I guess one _extreme_ fix for this would be to put
+>
+>     extern struct nostruct __randomize_layout;
+>
+> in our include/linux/kconfig.h, which I think we end up always
+> including first thanks to having it on the command line.
+>
+> Because if you do that, you actually get an error:
+>
+>     CC [M]  fs/nfsd/nfs4xdr.o
+>   In file included from ./include/linux/fs_struct.h:5:0,
+>                    from fs/nfsd/nfs4xdr.c:36:
+>   ./include/linux/path.h:11:3: error: conflicting types for =E2=80=98__ra=
+ndomize_layout=E2=80=99
+>    } __randomize_layout;
+>      ^~~~~~~~~~~~~~~~~~
+>   In file included from <command-line>:0:0:
+>   ././include/linux/kconfig.h:8:28: note: previous declaration of
+> =E2=80=98__randomize_layout=E2=80=99 was here
+>        extern struct nostruct __randomize_layout;
+>                               ^~~~~~~~~~~~~~~~~~
+>   make[1]: *** [scripts/Makefile.build:317: fs/nfsd/nfs4xdr.o] Error 1
+>
+> and we would have figured this out immediately.
+>
+> Broken example patch appended, in case somebody wants to play with
+> something like this or comes up with a better model entirely..
+>
+>                Linus
+>
+
+
+Sorry for chiming in late.
+
+I noticed this thread today,
+honestly, the commit made me upset.
+
+
+Can I suggest another way to make it less fragile?
+__attribute((...)) can be placed after 'struct'.
+
+
+So, we can write:
+
+
+struct __randomize_layout path {
+        struct vfsmount *mnt;
+        struct dentry *dentry;
+};
+
+
+  instead of
+
+
+struct path {
+        struct vfsmount *mnt;
+        struct dentry *dentry;
+} __randomize_layout;
+
+
+
+If we force the former notation,
+the undefined __randomize_layout results in a build error
+instead of silent broken code generation.
+
+
+It is true somebody can still place
+__randomize_layout after the closing brace,
+but can we check this by coccicheck or checkpatch.pl?
+(we can describe it in coding style documentation, of course)
+
+
+IMHO, we should not (ab)use include/linux/kconfig.h
+to bring in misc things.
+
+
+--=20
+Best Regards
+Masahiro Yamada
