@@ -1,417 +1,365 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932775AbeCEC6N (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 21:58:13 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45218 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932724AbeCEC5s (ORCPT
+        id S932781AbeCEC7Y (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 21:59:24 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44121 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeCEC7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 21:57:48 -0500
-X-Google-Smtp-Source: AG47ELu7nLB3U4BS1eOw3CndkHqJJCVpyq2fV0Z1A7V6oqCKs4khufMzcZP3ETdXa6lG5g2fg7CVJw==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org,
-        andy.shevchenko@gmail.com
-Subject: [PATCH v3 3/3] gpio: Add Spreadtrum PMIC EIC driver support
-Date: Mon,  5 Mar 2018 10:56:52 +0800
-Message-Id: <c84c05b6619a17848a11335f881f42153a4e51c0.1520218279.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-References: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-In-Reply-To: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
-References: <787c9f115db06390549bfee366b7f70faf312286.1520218279.git.baolin.wang@linaro.org>
+        Sun, 4 Mar 2018 21:59:23 -0500
+X-Google-Smtp-Source: AG47ELuYsV1jlpspEdZ7GgEnXKccbJBD3yKYAe+uYA2hcowtc7yZbE8UqOtORRrGiyyyOxGyuohTYopVUByIsBcHs1E=
+MIME-Version: 1.0
+From: Jason Vas Dias <jason.vas.dias@gmail.com>
+Date: Mon, 5 Mar 2018 02:59:21 +0000
+Message-ID: <CALyZvKx=kOaUqTWFK5gZXNTcY9+jCaKRqaH6VAJAOXmp-JJ2Bg@mail.gmail.com>
+Subject: [PATCH v4.15.7 1/1] on Intel, VDSO should handle CLOCK_MONOTONIC_RAW
+ and export 'tsc_calibration' pointer
+To: x86@kernel.org, linux-kernel@vger.kernel.org, andi@firstfloor.org,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Spreadtrum PMIC EIC controller contains only one bank of debounce EIC,
-and this bank contains 16 EICs. Each EIC can only be used as input mode,
-as well as supporting the debounce and the capability to trigger interrupts
-when detecting input signals.
+On Intel / AMD platforms, when the clock source is TSC,
+this makes the VDSO support
+    clock_gettime(CLOCK_MONOTONIC_RAW, &timespec)
+calls by issuing a 'rdtscp' instruction and doing performing
+conversion of the value according to kernel TSC calibration
+'mult' and 'shift' values in the vsyscall_gtod_data structure :
+  ...
+    tsc  = rdtscp();
+    tsc   *= gtod->mult;
+    tsc >>=gtod->shift;
+    ts->tv_sec = __iter_div_u64_rem( tsc, 1000000000UL, &tsc->tv_nsec );
+  ...
+ instead of calling vdso_fallback_gtod()  for CLOCK_MONOTONIC_RAW
+ clockid_t values.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v2:
- - Fix coding style issue.
- - Fix possible overflow.
- - Use for_each_set_bit().
+It also provides a new function in the VDSO :
 
-Changes since v1:
- - New patch.
----
- drivers/gpio/Kconfig              |    8 +
- drivers/gpio/Makefile             |    1 +
- drivers/gpio/gpio-pmic-eic-sprd.c |  330 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 339 insertions(+)
- create mode 100644 drivers/gpio/gpio-pmic-eic-sprd.c
+struct linux_timestamp_conversion
+{ u32  mult;
+  u32  shift;
+};
+extern
+  const struct linux_timestamp_conversion *
+  __vdso_linux_tsc_calibration(void);
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c937407..f642314 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -380,6 +380,14 @@ config GPIO_PL061
- 	help
- 	  Say yes here to support the PrimeCell PL061 GPIO device
- 
-+config GPIO_PMIC_EIC_SPRD
-+	tristate "Spreadtrum PMIC EIC support"
-+	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-+	depends on OF_GPIO
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to support Spreadtrum PMIC EIC device.
-+
- config GPIO_PXA
- 	bool "PXA GPIO support"
- 	depends on ARCH_PXA || ARCH_MMP
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 66eaa9e..50ba64b 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_GPIO_PCI_IDIO_16)	+= gpio-pci-idio-16.o
- obj-$(CONFIG_GPIO_PCIE_IDIO_24)	+= gpio-pcie-idio-24.o
- obj-$(CONFIG_GPIO_PISOSR)	+= gpio-pisosr.o
- obj-$(CONFIG_GPIO_PL061)	+= gpio-pl061.o
-+obj-$(CONFIG_GPIO_PMIC_EIC_SPRD)	+= gpio-pmic-eic-sprd.o
- obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-new file mode 100644
-index 0000000..66d68d9
---- /dev/null
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -0,0 +1,330 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Spreadtrum Communications Inc.
-+ * Copyright (C) 2018 Linaro Ltd.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* EIC registers definition */
-+#define SPRD_PMIC_EIC_DATA		0x0
-+#define SPRD_PMIC_EIC_DMSK		0x4
-+#define SPRD_PMIC_EIC_IEV		0x14
-+#define SPRD_PMIC_EIC_IE		0x18
-+#define SPRD_PMIC_EIC_RIS		0x1c
-+#define SPRD_PMIC_EIC_MIS		0x20
-+#define SPRD_PMIC_EIC_IC		0x24
-+#define SPRD_PMIC_EIC_TRIG		0x28
-+#define SPRD_PMIC_EIC_CTRL0		0x40
-+
-+/*
-+ * The PMIC EIC controller only has one bank, and each bank now can contain
-+ * 16 EICs.
-+ */
-+#define SPRD_PMIC_EIC_PER_BANK_NR	16
-+#define SPRD_PMIC_EIC_NR		SPRD_PMIC_EIC_PER_BANK_NR
-+#define SPRD_PMIC_EIC_DATA_MASK		GENMASK(15, 0)
-+#define SPRD_PMIC_EIC_BIT(x)		((x) & (SPRD_PMIC_EIC_PER_BANK_NR - 1))
-+#define SPRD_PMIC_EIC_DBNC_MASK		GENMASK(11, 0)
-+
-+/*
-+ * These registers are modified under the irq bus lock and cached to avoid
-+ * unnecessary writes in bus_sync_unlock.
-+ */
-+enum {
-+	REG_IEV,
-+	REG_IE,
-+	REG_TRIG,
-+	CACHE_NR_REGS
-+};
-+
-+/**
-+ * struct sprd_pmic_eic - PMIC EIC controller
-+ * @chip: the gpio_chip structure.
-+ * @intc: the irq_chip structure.
-+ * @regmap: the regmap from the parent device.
-+ * @offset: the EIC controller's offset address of the PMIC.
-+ * @reg: the array to cache the EIC registers.
-+ * @buslock: for bus lock/sync and unlock.
-+ * @irq: the interrupt number of the PMIC EIC conteroller.
-+ */
-+struct sprd_pmic_eic {
-+	struct gpio_chip chip;
-+	struct irq_chip intc;
-+	struct regmap *map;
-+	u32 offset;
-+	u8 reg[CACHE_NR_REGS];
-+	struct mutex buslock;
-+	int irq;
-+};
-+
-+static void sprd_pmic_eic_update(struct gpio_chip *chip, unsigned int offset,
-+				 u16 reg, unsigned int val)
+which can be used by user-space rdtsc / rdtscp issuers
+by using code such as in
+   tools/testing/selftests/vDSO/parse_vdso.c
+to call vdso_sym("LINUX_2.6", "__vdso_linux_tsc_calibration"),
+which returns a pointer to the function in the VDSO, which
+returns the address of the 'mult' field in the vsyscall_gtod_data.
+
+Thus user-space programs can use rdtscp and interpret its return values
+in exactly the same way the kernel would, but without entering the kernel.
+
+ As pointed out in Bug # 198961 :
+   https://bugzilla.kernel.org/show_bug.cgi?id=198961
+ which contains extra test programs and the full story behind this change,
+ using CLOCK_MONOTONIC_RAW without the patch results in
+ a minimum measurable time (latency) of @ 300 - 700ns because of
+ the syscall used by vdso_fallback_gtod() .
+
+With the patch, the latency falls to @ 100ns .
+
+The latency would be @ 16 - 32 ns  if the do_monotonic_raw()
+handler could record its previous TSC value and seconds return value
+somewhere, but since the VDSO has no data region or writable page,
+of course it cannot . Hence, to enable effective use of TSC by user
+space programs, Linux must provide a way for them to discover the
+calibration mult and shift values the kernel uses for the clock source ;
+only by doing so can user-space get values that are comparable to
+kernel generated values.
+
+And I'd really like to know: why does the gtod->mult value change ?
+After TSC calibration, it and the shift are calculated to render the
+best approximation of a nanoseconds value from the TSC value.
+
+The TSC is MEANT to be monotonic and to continue in sleep states
+on modern Intel CPUs . So why does the gtod->mult change ?
+
+But the mult value does change.  Currently there is no way for
+user-space programs
+to discover that such a change has occurred, or when . With this very
+tiny simple
+patch, they could know instantly when such changes occur, and could implement
+TSC readers that perform the full conversion with latencies of 15-30ns
+(on my CPU).
+
+Here is the patch:
+
+BEGIN PATCH :
+
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c
+b/arch/x86/entry/vdso/vclock_gettime.c
+index f19856d..63f5f18 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -246,6 +246,28 @@ notrace static int __always_inline
+do_monotonic(struct timespec *ts)
+ 	return mode;
+ }
+
++notrace static int __always_inline do_monotonic_raw( struct timespec *ts)
 +{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 shift = SPRD_PMIC_EIC_BIT(offset);
-+
-+	regmap_update_bits(pmic_eic->map, pmic_eic->offset + reg,
-+			   BIT(shift), val << shift);
++        volatile u32 tsc_lo=0, tsc_hi=0, tsc_cpu=0; // so same instrs
+generated for 64-bit as for 32-bit builds
++        u64 ns;
++        register u64 tsc=0;
++        if (gtod->vclock_mode == VCLOCK_TSC)
++        { asm volatile
++            ( "rdtscp"
++            : "=a" (tsc_lo)
++            , "=d" (tsc_hi)
++            , "=c" (tsc_cpu)
++            ); // : eax, edx, ecx used - NOT rax, rdx, rcx
++	  tsc     = ((((u64)tsc_hi) & 0xffffffffUL) << 32) | (((u64)tsc_lo)
+& 0xffffffffUL);
++	  tsc    *= gtod->mult;
++	  tsc   >>= gtod->shift;
++	  ts->tv_sec  = __iter_div_u64_rem(tsc, NSEC_PER_SEC, &ns);
++	  ts->tv_nsec = ns;
++	  return VCLOCK_TSC;
++        }
++        return VCLOCK_NONE;
 +}
 +
-+static int sprd_pmic_eic_read(struct gpio_chip *chip, unsigned int offset,
-+			      u16 reg)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 value;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	return !!(value & BIT(SPRD_PMIC_EIC_BIT(offset)));
-+}
-+
-+static int sprd_pmic_eic_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 1);
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_free(struct gpio_chip *chip, unsigned int offset)
-+{
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_DMSK, 0);
-+}
-+
-+static int sprd_pmic_eic_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	return sprd_pmic_eic_read(chip, offset, SPRD_PMIC_EIC_DATA);
-+}
-+
-+static int sprd_pmic_eic_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+	return 0;
-+}
-+
-+static void sprd_pmic_eic_set(struct gpio_chip *chip, unsigned int offset,
-+			      int value)
-+{
-+	/* EICs are always input, nothing need to do here. */
-+}
-+
-+static int sprd_pmic_eic_set_debounce(struct gpio_chip *chip,
-+				      unsigned int offset,
-+				      unsigned int debounce)
-+{
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 reg, value;
-+	int ret;
-+
-+	reg = SPRD_PMIC_EIC_CTRL0 + SPRD_PMIC_EIC_BIT(offset) * 0x4;
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + reg, &value);
-+	if (ret)
-+		return ret;
-+
-+	value &= ~SPRD_PMIC_EIC_DBNC_MASK;
-+	value |= (debounce / 1000) & SPRD_PMIC_EIC_DBNC_MASK;
-+	return regmap_write(pmic_eic->map, pmic_eic->offset + reg, value);
-+}
-+
-+static int sprd_pmic_eic_set_config(struct gpio_chip *chip, unsigned int offset,
-+				    unsigned long config)
-+{
-+	unsigned long param = pinconf_to_config_param(config);
-+	u32 arg = pinconf_to_config_argument(config);
-+
-+	if (param == PIN_CONFIG_INPUT_DEBOUNCE)
-+		return sprd_pmic_eic_set_debounce(chip, offset, arg);
-+
-+	return -ENOTSUPP;
-+}
-+
-+static void sprd_pmic_eic_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 0;
-+	pmic_eic->reg[REG_TRIG] = 0;
-+}
-+
-+static void sprd_pmic_eic_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	pmic_eic->reg[REG_IE] = 1;
-+	pmic_eic->reg[REG_TRIG] = 1;
-+}
-+
-+static int sprd_pmic_eic_irq_set_type(struct irq_data *data,
-+				      unsigned int flow_type)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	switch (flow_type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		pmic_eic->reg[REG_IEV] = 1;
+ notrace static void do_realtime_coarse(struct timespec *ts)
+ {
+ 	unsigned long seq;
+@@ -277,6 +299,10 @@ notrace int __vdso_clock_gettime(clockid_t clock,
+struct timespec *ts)
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
+ 		break;
++	case CLOCK_MONOTONIC_RAW:
++		if (do_monotonic_raw(ts) == VCLOCK_NONE)
++			goto fallback;
 +		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		pmic_eic->reg[REG_IEV] = 0;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+@@ -326,3 +352,25 @@ notrace time_t __vdso_time(time_t *t)
+ }
+ time_t time(time_t *t)
+ 	__attribute__((weak, alias("__vdso_time")));
 +
-+	return 0;
-+}
 +
-+static void sprd_pmic_eic_bus_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+
-+	mutex_lock(&pmic_eic->buslock);
-+}
-+
-+static void sprd_pmic_eic_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct sprd_pmic_eic *pmic_eic = gpiochip_get_data(chip);
-+	u32 offset = irqd_to_hwirq(data);
-+
-+	/* Set irq type */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IEV,
-+			     pmic_eic->reg[REG_IEV]);
-+	/* Set irq unmask */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_IE,
-+			     pmic_eic->reg[REG_IE]);
-+	/* Generate trigger start pulse for debounce EIC */
-+	sprd_pmic_eic_update(chip, offset, SPRD_PMIC_EIC_TRIG,
-+			     pmic_eic->reg[REG_TRIG]);
-+
-+	mutex_unlock(&pmic_eic->buslock);
-+}
-+
-+static irqreturn_t sprd_pmic_eic_irq_handler(int irq, void *data)
-+{
-+	struct sprd_pmic_eic *pmic_eic = data;
-+	struct gpio_chip *chip = &pmic_eic->chip;
-+	unsigned long status;
-+	u32 n, girq, val;
-+	int ret;
-+
-+	ret = regmap_read(pmic_eic->map, pmic_eic->offset + SPRD_PMIC_EIC_MIS,
-+			  &val);
-+	if (ret)
-+		return IRQ_RETVAL(ret);
-+
-+	status = val & SPRD_PMIC_EIC_DATA_MASK;
-+
-+	for_each_set_bit(n, &status, chip->ngpio) {
-+		/* Clear the interrupt */
-+		sprd_pmic_eic_update(chip, n, SPRD_PMIC_EIC_IC, 1);
-+
-+		girq = irq_find_mapping(chip->irq.domain, n);
-+		handle_nested_irq(girq);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int sprd_pmic_eic_probe(struct platform_device *pdev)
-+{
-+	struct gpio_irq_chip *irq;
-+	struct sprd_pmic_eic *pmic_eic;
-+	int ret;
-+
-+	pmic_eic = devm_kzalloc(&pdev->dev, sizeof(*pmic_eic), GFP_KERNEL);
-+	if (!pmic_eic)
-+		return -ENOMEM;
-+
-+	mutex_init(&pmic_eic->buslock);
-+
-+	pmic_eic->irq = platform_get_irq(pdev, 0);
-+	if (pmic_eic->irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC interrupt.\n");
-+		return pmic_eic->irq;
-+	}
-+
-+	pmic_eic->map = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!pmic_eic->map)
-+		return -ENODEV;
-+
-+	ret = of_property_read_u32(pdev->dev.of_node, "reg", &pmic_eic->offset);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get PMIC EIC base address.\n");
-+		return ret;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, pmic_eic->irq, NULL,
-+					sprd_pmic_eic_irq_handler,
-+					IRQF_TRIGGER_LOW |
-+					IRQF_ONESHOT | IRQF_NO_SUSPEND,
-+					dev_name(&pdev->dev), pmic_eic);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to request PMIC EIC IRQ.\n");
-+		return ret;
-+	}
-+
-+	pmic_eic->chip.label = dev_name(&pdev->dev);
-+	pmic_eic->chip.ngpio = SPRD_PMIC_EIC_NR;
-+	pmic_eic->chip.base = -1;
-+	pmic_eic->chip.parent = &pdev->dev;
-+	pmic_eic->chip.of_node = pdev->dev.of_node;
-+	pmic_eic->chip.direction_input = sprd_pmic_eic_direction_input;
-+	pmic_eic->chip.request = sprd_pmic_eic_request;
-+	pmic_eic->chip.free = sprd_pmic_eic_free;
-+	pmic_eic->chip.set_config = sprd_pmic_eic_set_config;
-+	pmic_eic->chip.set = sprd_pmic_eic_set;
-+	pmic_eic->chip.get = sprd_pmic_eic_get;
-+
-+	pmic_eic->intc.name = dev_name(&pdev->dev);
-+	pmic_eic->intc.irq_mask = sprd_pmic_eic_irq_mask;
-+	pmic_eic->intc.irq_unmask = sprd_pmic_eic_irq_unmask;
-+	pmic_eic->intc.irq_set_type = sprd_pmic_eic_irq_set_type;
-+	pmic_eic->intc.irq_bus_lock = sprd_pmic_eic_bus_lock;
-+	pmic_eic->intc.irq_bus_sync_unlock = sprd_pmic_eic_bus_sync_unlock;
-+	pmic_eic->intc.flags = IRQCHIP_SKIP_SET_WAKE;
-+
-+	irq = &pmic_eic->chip.irq;
-+	irq->chip = &pmic_eic->intc;
-+	irq->threaded = true;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &pmic_eic->chip, pmic_eic);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip %d.\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, pmic_eic);
-+	return 0;
-+}
-+
-+static const struct of_device_id sprd_pmic_eic_of_match[] = {
-+	{ .compatible = "sprd,sc27xx-eic", },
-+	{ /* end of list */ }
-+};
-+MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
-+
-+static struct platform_driver sprd_pmic_eic_driver = {
-+	.probe = sprd_pmic_eic_probe,
-+	.driver = {
-+		.name = "sprd-pmic-eic",
-+		.of_match_table	= sprd_pmic_eic_of_match,
-+	},
++struct linux_timestamp_conversion
++{ u32  mult;
++  u32  shift;
 +};
 +
-+module_platform_driver(sprd_pmic_eic_driver);
++extern
++  const struct linux_timestamp_conversion *
++  __vdso_linux_tsc_calibration(void);
 +
-+MODULE_DESCRIPTION("Spreadtrum PMIC EIC driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
++notrace
++  const struct linux_timestamp_conversion *
++  __vdso_linux_tsc_calibration(void)
++{ if( gtod->vclock_mode == VCLOCK_TSC )
++    return ((struct linux_timestamp_conversion*) &gtod->mult);
++  return 0UL;
++}
++
++const struct linux_timestamp_conversion *
++  linux_tsc_calibration(void) __attribute((weak,
+alias("__vdso_linux_tsc_calibration")));
++
+diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
+index d3a2dce..41a2ca5 100644
+--- a/arch/x86/entry/vdso/vdso.lds.S
++++ b/arch/x86/entry/vdso/vdso.lds.S
+@@ -24,7 +24,9 @@ VERSION {
+ 		getcpu;
+ 		__vdso_getcpu;
+ 		time;
+-		__vdso_time;
++	        __vdso_time;
++                linux_tsc_calibration;
++		__vdso_linux_tsc_calibration;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
+b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
+index 422764a..d53bd73 100644
+--- a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
++++ b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
+@@ -25,7 +25,8 @@ VERSION
+ 	global:
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
+-		__vdso_time;
++	        __vdso_time;
++                __vdso_linux_tsc_calibration;
+ 	};
+
+ 	LINUX_2.5 {
+diff --git a/arch/x86/entry/vdso/vdsox32.lds.S
+b/arch/x86/entry/vdso/vdsox32.lds.S
+index 05cd1c5..fb13b16 100644
+--- a/arch/x86/entry/vdso/vdsox32.lds.S
++++ b/arch/x86/entry/vdso/vdsox32.lds.S
+@@ -20,7 +20,8 @@ VERSION {
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
+ 		__vdso_getcpu;
+-		__vdso_time;
++	        __vdso_time;
++                __vdso_linux_tsc_calibration;
+ 	local: *;
+ 	};
+ }
+
+
+: END PATCH
+
+This patch is Attachment #274527 to Bug #198961 :
+https://bugzilla.kernel.org/attachment.cgi?id=274527&action=diff
+
+and here is an example of its usage, which must be linked with
+object compiled from  tools/testing/selftests/vDSO/parse_vdso.c :
+
+BEGIN EXAMPLE
+
+#include <time.h>
+#include <sys/auxv.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+
+#include ".../path_to_kernel/tools/testing/selftests/vDSO/parse_vdso.c"
+
+typedef
+struct lnx_tsc_calibration_s
+{ unsigned int mult, shift;
+} LnxTSCCalibration_t;
+
+void clock_get_time_raw( struct timespec *ts , const
+LnxTSCCalibration_t * tsc_cal, unsigned long *last_tsc, unsigned long
+*last_sec)
+{ volatile unsigned int  tsc_lo=0, tsc_hi=0, tsc_cpu=0; // so same
+instrs generated for 64-bit as for 32-bit builds
+  register unsigned long tsc=0;
+  asm volatile
+  ( "rdtscp"
+  : "=a" (tsc_lo)
+  , "=d" (tsc_hi)
+  , "=c" (tsc_cpu)
+  ); // : eax, edx, ecx used - NOT rax, rdx, rcx
+  tsc     = ((((unsigned long)tsc_hi) & 0xffffffffUL) << 32) |
+(((unsigned long)tsc_lo) & 0xffffffffUL);
+  tsc    *= tsc_cal->mult;
+  tsc   >>= tsc_cal->shift;
+  if ( last_tsc && *last_tsc && last_sec )
+  { register unsigned long tsc_diff = tsc - *last_tsc;
+    if ( tsc_diff > 999999999UL )
+    { ts->tv_sec  = tsc / 1000000000;
+      ts->tv_nsec = tsc % 1000000000;
+    }else
+    { ts->tv_sec = *last_sec;
+      ts->tv_nsec = tsc_diff;
+    }
+    *last_tsc = tsc;
+    *last_sec = ts->tv_sec;
+  }else
+  { ts->tv_sec  = tsc / 1000000000;
+    ts->tv_nsec = tsc % 1000000000;
+  }
+}
+
+#ifndef N_SAMPLES
+#define N_SAMPLES 100
+#endif
+
+int main( int argc, const char *const* argv , const char **const envp )
+{
+  register unsigned long sysinfo_ehdr = getauxval( AT_SYSINFO_EHDR );
+  if( 0 == sysinfo_ehdr )
+  { fprintf(stderr,"getauxval failed: %d : '%s'.\n", errno, strerror(errno));
+    return 1;
+  }
+  vdso_init_from_sysinfo_ehdr( sysinfo_ehdr );
+  if ( ! vdso_info.valid )
+  { fprintf(stderr,"vdso_init_from_sysinfo_ehdr failed\n");
+    return 1;
+  }
+  const struct lnx_tsc_calibration_s*
+    (*linux_tsc_cal)(void) = vdso_sym("LINUX_2.6",
+"__vdso_linux_tsc_calibration");
+  if( linux_tsc_cal == 0UL )
+  { fprintf(stderr,"vdso_sym failed\n");
+    return 1;
+  }
+  const struct lnx_tsc_calibration_s *clock_source = (*linux_tsc_cal)();
+  fprintf(stderr,"Got TSC calibration @ %p: mult: %u shift: %u\n",
+          (void*)clock_source, clock_source->mult, clock_source->shift
+         );
+#define TS2NS(_TS_) ((((unsigned long
+long)(_TS_).tv_sec)*1000000000ULL) + (((unsigned long
+long)((_TS_).tv_nsec))))
+  struct timespec t_s;
+  unsigned long last_tsc=0, last_seconds=0;
+  clock_get_time_raw( &t_s, clock_source, &last_tsc, &last_seconds );
+  unsigned long long
+    sample [ N_SAMPLES ]
+  , t1, t2
+  , t_start = TS2NS(t_s);
+  unsigned int s=0;
+  do
+  { clock_get_time_raw( &t_s, clock_source, &last_tsc, &last_seconds);
+    t1 = TS2NS(t_s);
+    clock_get_time_raw( &t_s, clock_source, &last_tsc, &last_seconds);
+    t2 = TS2NS(t_s);
+    sample [ s ] = t2 - t1;
+  }while(++s < N_SAMPLES);
+  unsigned long long sum = 0;
+  for(s = 0; s < N_SAMPLES; s+=1)
+    sum += sample[s];
+  fprintf(stderr,"sum: %llu\n",sum);
+  unsigned long long avg_ns = sum / N_SAMPLES;
+  t1=(t2 - t_start);
+  fprintf(stderr,
+	  "Total time: %1.1llu.%9.9lluS - Average Latency: %1.1llu.%9.9lluS\n",
+          t1/1000000000,       t1-((t1/1000000000)*1000000000),
+          avg_ns/1000000000,   avg_ns-((avg_ns/1000000000)*1000000000)
+	  );	
+  return 0;
+}
+
+: END EXAMPLE
+
+EXAMPLE Usage :
+$ gcc -std=gnu11 -o t_vdso_tsc t_vdso_tsc.c
+$ ./t_vdso_tsc
+Got TSC calibration @ 0x7ffdb9be5098: mult: 5798705 shift: 24
+sum: 2222
+Total time: 0.000004859S - Average Latency: 0.000000022S
+
+Latencies are typically @ 15 - 30 ns .
+
+That multiplication and shift really doesn't leave very many
+significant seconds bits!
+
+Please, can the VDSO include some similar functionality to NOT always
+enter the kernel for CLOCK_MONOTONIC_RAW , and to export a pointer to
+the LIVE (kernel updated) gtod->mult and gtod->shift values somehow .
+
+The documentation states for CLOCK_MONOTONIC_RAW that it is the
+same as CLOCK_MONOTONIC except it is NOT subject to NTP adjustments .
+This is very far from the case currently, without a patch like the one above.
+
+And the kernel should not restrict user-space programs to only being able
+to either measure an NTP adjusted time value, or a time value
+difference of greater
+than 1000ns with any accuracy, on a modern Intel CPU whose TSC ticks 2.8 times
+per nanosecond (picosecond resolution is theoretically possible).
+
+Please, include something like the above patch in future Linux versions.
+
+Thanks & Best Regards,
+Jason Vas Dias <jason.vas.dias@gmail.com>
