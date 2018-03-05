@@ -1,248 +1,191 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1431414-1520249201-2-9349719961617578991
+X-Cyrus-Session-Id: sloti22d1t05-1431414-1520247820-2-14208721909934535421
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Attached: signature.asc
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520249200; b=FhC/5vbtq/g1f6Tp6L+PmjwIOY5k3eu7R9MV97OWEt12Ayj
-    d4kqlq0ItAlLEmq/eatL6Rt6P/XqPfeolgC9IHl1tIhTVBUbc6qIuLxv+sgmD9Bt
-    MU5UcY6oPCugNwyalQzgtF8L5A1eXkemEDeryU+AoF4SbRR8WUZ3DoeP195EyGN6
-    ew1WmZSHkJelW2uJjX/RKjsuCkFAmrEga8p/MuekfhAVkVFl30n3dWFPROcyOldW
-    qIhuBFxUioEyAQSQorHjVCyioTlvK8sTPFpIgwTa2tp9r5zverTnTfrl/X+wkPpf
-    z/D8bbZQ1JNtPKxquI/8I6FKTTVpo+X3QzDmErw==
+    t=1520247820; b=OZtr9txPVlyv6NUpaNrFO7X6BnDybO8UwfdBrqnlc0xM+zF
+    Versm9WCAp5F8nGQD65w4aU6Goe4J8T5ZjJZ148akKajhBF78aUnkoVpvv93gVUO
+    pcktZQCoLV5WESEoxHId/4A6mRNUQOtkpIEeeTWd/awZielpitlJimX6Vh1r83bR
+    nORDAEDBM/Hv8BCY5ur3x7rL2chDn8YhuFgr6ceR8+vkdP3FZFSY264etj6umcrb
+    IrX1kzH2TiTcbKup4vI6C4UCYxxXhI/IQI+/BwykcWTs3WT5Yy35cTonhiVCYjMb
+    PNt8igHmE8nKxL2IqXKO4Sk16Q5FiSUcybLVIDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
-    :date:message-id:mime-version:content-type:sender:list-id; s=
-    arctest; t=1520249200; bh=QaZfKGufEWpEHI72PeholPABbypdM44Cp08TQ3
-    zmqAo=; b=IMYDZoN0Wh8R1twWI2OHKukCzjt+rv6KR9ebjc/+XrE6B3Os3W3khy
-    dovSl9XNVvXdPQFzQSF+Z7tktpMzpNYrRNXXkd+yUgILpA1n4BPKsXq+IEoTS9sW
-    O1C8BT9IhLWVI9LO3hk8KYopectStksiGEsxDPJ5vSz7pl3/nqZtEjxX7ZKtSfGt
-    CIn3JHtNJLrnaXNr1IrkVYAoGauIw+WjJPFjxfRE7QjCBNgTvlxeddqojomg9G9d
-    xw31nrdtrcTaTbZLjYJnzPjnn8tpQjefkPCqpKJhEfFXJ7oQNY0j1xQfkTiAFioL
-    BwnxxdK+bEYoZyGCHveJBbjf9HPRG2VA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1520247820; bh=Luvjj/toR2Zy7/Nhm+b0pNneomXeCr23WXMHs3bPJkQ=; b=Y
+    gmN4AB3hpHWh7bAMN7n5CttMtFq8wZ4PXEs1+YGtntbP7Oo3Hu+ykuU7bmsOO3Xk
+    HSSvBEbZD1ZK/UEyv3VL4P0bhe2eQR+x3AoQGLBnx7jRZbDelPFnRgZWOeqSZLsy
+    wHSb+s4IIxPxbAV2lis0X5t2LKVtL8U7U1qzyyKJEOldkOyoxUCHMhOLLA5N0pIp
+    hUABYsKubBHJ5J7lvPmXB6MFLi4AbAE3cCErpslMDMzRAJ9vIDmQ4hc0Lf+sOfCo
+    47mVXSpYeqvTnRCnp8rHINnVpqEpxu5aFsKFSuXe61RWxiQjaa6sfPCSGSwf9EGX
+    g27yErbCNvle/k7BB5RAA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=ZfGzKtEq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=ti.com header.i=@ti.com header.b=ZfGzKtEq x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ti-com-17Q1;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=ti.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    x-aligned-from=fail;
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ti.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932864AbeCEL0f (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 06:26:35 -0500
-Received: from mga06.intel.com ([134.134.136.31]:2481 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932797AbeCEL0e (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Mon, 5 Mar 2018 06:26:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
-   d="asc'?scan'208";a="34694707"
-From: Felipe Balbi <balbi@kernel.org>
-To: Roger Quadros <rogerq@ti.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        John Youn <John.Youn@synopsys.com>
-Cc: USB <linux-usb@vger.kernel.org>,
+        id S1752623AbeCELDf (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 06:03:35 -0500
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:55971 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeCELDe (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 5 Mar 2018 06:03:34 -0500
+Subject: Re: [PATCH] usb: dwc3: Prevent indefinite sleep in _dwc3_set_mode
+ during suspend/resume
+To: Baolin Wang <baolin.wang@linaro.org>
+CC: Felipe Balbi <balbi@kernel.org>, USB <linux-usb@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: dwc3: Prevent indefinite sleep in _dwc3_set_mode during suspend/resume
-In-Reply-To: <8ec0485e-89af-568b-e34a-b0cd490817d0@ti.com>
-References: <1519730526-22274-1-git-send-email-rogerq@ti.com> <87sh9l5z4l.fsf@linux.intel.com> <94cd6377-1327-2309-8d69-6ab0de2bdfd4@ti.com> <87po4i3o1v.fsf@linux.intel.com> <a907787a-dea2-5f15-3d25-693680a42b71@ti.com> <CAMz4kuKOnAPckX1=nqVPyF7O5u-0YrekTfMddYwe0WC2-0AFDw@mail.gmail.com> <87k1uq3ho6.fsf@linux.intel.com> <8ec0485e-89af-568b-e34a-b0cd490817d0@ti.com>
-Date: Mon, 05 Mar 2018 13:25:36 +0200
-Message-ID: <87k1uqwyq7.fsf@linux.intel.com>
+References: <1519730526-22274-1-git-send-email-rogerq@ti.com>
+ <87sh9l5z4l.fsf@linux.intel.com>
+ <94cd6377-1327-2309-8d69-6ab0de2bdfd4@ti.com>
+ <87po4i3o1v.fsf@linux.intel.com>
+ <a907787a-dea2-5f15-3d25-693680a42b71@ti.com>
+ <CAMz4kuKOnAPckX1=nqVPyF7O5u-0YrekTfMddYwe0WC2-0AFDw@mail.gmail.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <6e3a58fb-f1d8-610f-d39c-7d1259833911@ti.com>
+Date: Mon, 5 Mar 2018 13:03:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <CAMz4kuKOnAPckX1=nqVPyF7O5u-0YrekTfMddYwe0WC2-0AFDw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Hi,
-
-Roger Quadros <rogerq@ti.com> writes:
-> On 05/03/18 13:06, Felipe Balbi wrote:
->>=20
->> Hi,
->>=20
->> Baolin Wang <baolin.wang@linaro.org> writes:
->>>>> Roger Quadros <rogerq@ti.com> writes:
->>>>>>> Roger Quadros <rogerq@ti.com> writes:
->>>>>>>> In the following test we get stuck by sleeping forever in _dwc3_se=
-t_mode()
->>>>>>>> after which dual-role switching doesn't work.
->>>>>>>>
->>>>>>>> On dra7-evm's dual-role port,
->>>>>>>> - Load g_zero gadget driver and enumerate to host
->>>>>>>> - suspend to mem
->>>>>>>> - disconnect USB cable to host and connect otg cable with Pen driv=
-e in it.
->>>>>>>> - resume system
->>>>>>>> - we sleep indefinitely in _dwc3_set_mode due to.
->>>>>>>>   dwc3_gadget_exit()->usb_del_gadget_udc()->udc_stop()->
->>>>>>>>    dwc3_gadget_stop()->wait_event_lock_irq()
->>>>>>>>
->>>>>>>> Let's clear the DWC3_EP_END_TRANSFER_PENDING flag on all endpoints
->>>>>>>> so we don't wait in dwc3_gadget_stop().
->>>>>>>>
->>>>>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>>>>>>> ---
->>>>>>>>  drivers/usb/dwc3/gadget.c | 14 ++++++++++++++
->>>>>>>>  1 file changed, 14 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->>>>>>>> index 2bda4eb..0a360da 100644
->>>>>>>> --- a/drivers/usb/dwc3/gadget.c
->>>>>>>> +++ b/drivers/usb/dwc3/gadget.c
->>>>>>>> @@ -3273,6 +3273,20 @@ int dwc3_gadget_init(struct dwc3 *dwc)
->>>>>>>>
->>>>>>>>  void dwc3_gadget_exit(struct dwc3 *dwc)
->>>>>>>>  {
->>>>>>>> +  int epnum;
->>>>>>>> +  unsigned long flags;
->>>>>>>> +
->>>>>>>> +  spin_lock_irqsave(&dwc->lock, flags);
->>>>>>>> +  for (epnum =3D 2; epnum < DWC3_ENDPOINTS_NUM; epnum++) {
->>>>>>>> +          struct dwc3_ep  *dep =3D dwc->eps[epnum];
->>>>>>>> +
->>>>>>>> +          if (!dep)
->>>>>>>> +                  continue;
->>>>>>>> +
->>>>>>>> +          dep->flags &=3D ~DWC3_EP_END_TRANSFER_PENDING;
->>>>>>>> +  }
->>>>>>>> +  spin_unlock_irqrestore(&dwc->lock, flags);
->>>>>>>> +
->>>>>>>>    usb_del_gadget_udc(&dwc->gadget);
->>>>>>>>    dwc3_gadget_free_endpoints(dwc);
->>>>>>>
->>>>>>> free endpoints is a better place for this. It's already going to fr=
-ee
->>>>>>> the memory anyway. Might as well clear all flags to 0 there.
->>>>>>>
->>>>>>
->>>>>> But it won't solve the deadlock issue. Since dwc3_gadget_free_endpoi=
-nts()
->>>>>> is called after usb_del_gadget_udc() and the deadlock happens when
->>>>>>
->>>>>> usb_del_gadget_udc()->udc_stop()->dwc3_gadget_stop()->wait_event_loc=
-k_irq()
->>>>>>
->>>>>> and DWC3_EP_END_TRANSFER_PENDING flag is set.
->>>>>
->>>>> indeed. Iterating twice over the entire endpoint list seems
->>>>> wasteful. Perhaps we just shouldn't wait when removing the UDC since
->>>>> that's essentially what this patch will do, right? If you clear the f=
-lag
->>>>> before calling ->udc_stop(), this means the loop in dwc3_gadget_stop()
->>>>> will do nothing. Might as well remove it.
->>>>>
->>>>
->>>> This means that we will never wait for DWC3_EP_END_TRANSFER_PENDING to=
- clear
->>>> in dwc3_gadget_stop() like we used to. This is perfectly fine, right?
->>>>
->>>> It makes sense to me as dwc3_gadget_stop() calls __dwc3_gadget_stop() =
-which
->>>> masks all interrupts and nobody will ever clear that flag if it was se=
-t.
+On 05/03/18 12:41, Baolin Wang wrote:
+> Hi Roger,
+> 
+> On 5 March 2018 at 17:45, Roger Quadros <rogerq@ti.com> wrote:
+>> Felipe,
+>>
+>> On 05/03/18 10:49, Felipe Balbi wrote:
 >>>
->>> I don't think so. It can not mask the endpoint events, please check
->>> the events which will be masked in DEVTEN register. The reason why we
->>> should wait for DWC3_EP_END_TRANSFER_PENDING to clear is that,
->>> sometimes the DWC3_DEPEVT_EPCMDCMPLT event will be triggered later
->>> than 100us, but now we may have freed the gadget irq which will cause
->>> crash.
->>=20
->> We could mask command complete events as soon as ->udc_stop() is called,
->> right? Hmm, actually, __dwc3_gadget_stop() already clears DEVTEN
->> completely.
->
-> But which bit in DEVTEN says Endpoint events are disabled?
->
->>=20
->> /me goes check databook
->>=20
->> At least on revision 2.60a of the databook, bit 10 is reserved. I wonder
->> if that's the start of all the problems. Anybody has access to older and
->> newer databook revisions so we can cross-check?
->>=20
->
-> I can access v2.40 and v3.10 books.
->
-> bit 10 is reserved on both
->
-> Differences in v2.4 vs v3.10 are:
->
-> bit 8	reserved	vs	L1SUSPEN
-> bit 13	reserved	vs	StopOnDisconnectEn
-> bit 14	reserved	vs	L1WKUPEVTEN
+>>> Hi,
+>>>
+>>> Roger Quadros <rogerq@ti.com> writes:
+>>>>> Roger Quadros <rogerq@ti.com> writes:
+>>>>>> In the following test we get stuck by sleeping forever in _dwc3_set_mode()
+>>>>>> after which dual-role switching doesn't work.
+>>>>>>
+>>>>>> On dra7-evm's dual-role port,
+>>>>>> - Load g_zero gadget driver and enumerate to host
+>>>>>> - suspend to mem
+>>>>>> - disconnect USB cable to host and connect otg cable with Pen drive in it.
+>>>>>> - resume system
+>>>>>> - we sleep indefinitely in _dwc3_set_mode due to.
+>>>>>>   dwc3_gadget_exit()->usb_del_gadget_udc()->udc_stop()->
+>>>>>>    dwc3_gadget_stop()->wait_event_lock_irq()
+>>>>>>
+>>>>>> Let's clear the DWC3_EP_END_TRANSFER_PENDING flag on all endpoints
+>>>>>> so we don't wait in dwc3_gadget_stop().
+>>>>>>
+>>>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>>>> ---
+>>>>>>  drivers/usb/dwc3/gadget.c | 14 ++++++++++++++
+>>>>>>  1 file changed, 14 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>>>>>> index 2bda4eb..0a360da 100644
+>>>>>> --- a/drivers/usb/dwc3/gadget.c
+>>>>>> +++ b/drivers/usb/dwc3/gadget.c
+>>>>>> @@ -3273,6 +3273,20 @@ int dwc3_gadget_init(struct dwc3 *dwc)
+>>>>>>
+>>>>>>  void dwc3_gadget_exit(struct dwc3 *dwc)
+>>>>>>  {
+>>>>>> +  int epnum;
+>>>>>> +  unsigned long flags;
+>>>>>> +
+>>>>>> +  spin_lock_irqsave(&dwc->lock, flags);
+>>>>>> +  for (epnum = 2; epnum < DWC3_ENDPOINTS_NUM; epnum++) {
+>>>>>> +          struct dwc3_ep  *dep = dwc->eps[epnum];
+>>>>>> +
+>>>>>> +          if (!dep)
+>>>>>> +                  continue;
+>>>>>> +
+>>>>>> +          dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
+>>>>>> +  }
+>>>>>> +  spin_unlock_irqrestore(&dwc->lock, flags);
+>>>>>> +
+>>>>>>    usb_del_gadget_udc(&dwc->gadget);
+>>>>>>    dwc3_gadget_free_endpoints(dwc);
+>>>>>
+>>>>> free endpoints is a better place for this. It's already going to free
+>>>>> the memory anyway. Might as well clear all flags to 0 there.
+>>>>>
+>>>>
+>>>> But it won't solve the deadlock issue. Since dwc3_gadget_free_endpoints()
+>>>> is called after usb_del_gadget_udc() and the deadlock happens when
+>>>>
+>>>> usb_del_gadget_udc()->udc_stop()->dwc3_gadget_stop()->wait_event_lock_irq()
+>>>>
+>>>> and DWC3_EP_END_TRANSFER_PENDING flag is set.
+>>>
+>>> indeed. Iterating twice over the entire endpoint list seems
+>>> wasteful. Perhaps we just shouldn't wait when removing the UDC since
+>>> that's essentially what this patch will do, right? If you clear the flag
+>>> before calling ->udc_stop(), this means the loop in dwc3_gadget_stop()
+>>> will do nothing. Might as well remove it.
+>>>
+>>
+>> This means that we will never wait for DWC3_EP_END_TRANSFER_PENDING to clear
+>> in dwc3_gadget_stop() like we used to. This is perfectly fine, right?
+>>
+>> It makes sense to me as dwc3_gadget_stop() calls __dwc3_gadget_stop() which
+>> masks all interrupts and nobody will ever clear that flag if it was set.
+> 
+> I don't think so. It can not mask the endpoint events, please check
+> the events which will be masked in DEVTEN register. The reason why we
 
-odd, at some point we lost command complete interrupt :-(
+Correct, endpoint events are not managed by DEVTEN.
 
-That line exists since first commit (see below), so that would mean it
-existed in 1.73a (the revision the original was written against), but
-vanished on 2.40a. Perhaps 2.00a still had it.
+> should wait for DWC3_EP_END_TRANSFER_PENDING to clear is that,
+> sometimes the DWC3_DEPEVT_EPCMDCMPLT event will be triggered later
+> than 100us, but now we may have freed the gadget irq which will cause
+> crash.
+> 
 
-Hey John, do you know, off the top of your head, when we lost DEVTEN[10]
-as mask/unmask bit for EP Command Completion IRQs?
+OK. So what is the right approach here?
+In the test case I mentioned in the commit log the endpoint interrupt never
+happens and it waits forever in dwc3_gadget_stop().
 
+Since we know we're winding up, can we explicitly disable the endpoint events
+here?
 
-commit 72246da40f3719af3bfd104a2365b32537c27d83
-Author: Felipe Balbi <balbi@ti.com>
-Date:   Fri Aug 19 18:10:58 2011 +0300
+-- 
+cheers,
+-roger
 
-    usb: Introduce DesignWare USB3 DRD Driver
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqdKTAACgkQzL64meEa
-mQYJhhAAiQsN3snKihl8xB8ZMi7OGxwt0PTz/r8xSsjabyxl4HBw1++Z4Wd4VLIz
-FWGMpx8KLqljmCybFOWQ9jq7P3hMH1mzAvio6n378oR5vHKv00FOe/ftFwNQRIrv
-mAJ0BevKg/Afz60atVbu76fQyY55/iHTLY2Edq1ZUUQt9AZq60P4ZF3XBI/dmYJ6
-oS5C3GVuVOh8L4H7WW7Ssl5zjuWV19L9jz8+gZ4S0kbwwb8GEyxYgfg20tuTwULZ
-sLWU3IukER+15y/iJt95evVMo87ibr9hPGIjDPG+EzmezLZ+gqyn6O7v64H2Wipw
-1OQ5j05Zms4Bt/vVDYoHUduD20MOeNLOLeujnaQSFTguAym79ZZB92c75gRSH94h
-HrrNIAwBEuc9XjcNGeZh7YLCeyIji78pHE+mQXEEHdSt0gKnUHLrXqo7hGdCE2me
-IuN2kP7QOnyYGUcRQnvhOMwdKtQiHt8SXKSgFRGSZWcpl7KeymH+R7JtF8P8fozM
-dZDPoLTAUjU1x/wfaCEavRcPSXSWp4jfPBf3azzlr7eFoN8oyaZNhrV3Ta/m/mVX
-nB72kFDfplLzMOcmoMbq6LZml/5wzy8BrAc6Qiv+5IJtuxCo254JpcaAWP5Y+uLj
-GUTuv/AJh9etfkY9q5mehiiXoDDAsijUrTP0W8E8+xH3J5aN7nc=
-=gb26
------END PGP SIGNATURE-----
---=-=-=--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
