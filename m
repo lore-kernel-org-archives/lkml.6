@@ -1,54 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932314AbeCETXg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:23:36 -0500
-Received: from mga07.intel.com ([134.134.136.100]:19216 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932147AbeCETX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:23:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,428,1515484800";
-   d="scan'208";a="32578971"
-Subject: Re: [PATCH v12 08/11] mm: Clear arch specific VM flags on protection
- change
-To: Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
-        davem@davemloft.net
-References: <cover.1519227112.git.khalid.aziz@oracle.com>
- <f0bfc4b7ce6c8563bf0d5ef74af20b5d1edea66f.1519227112.git.khalid.aziz@oracle.com>
-Cc: mhocko@suse.com, jack@suse.cz, kirill.shutemov@linux.intel.com,
-        ross.zwisler@linux.intel.com, willy@infradead.org, hughd@google.com,
-        n-horiguchi@ah.jp.nec.com, mgorman@suse.de, jglisse@redhat.com,
-        dave.jiang@intel.com, dan.j.williams@intel.com,
-        anthony.yznaga@oracle.com, nadav.amit@gmail.com, zi.yan@cs.rutgers.edu,
-        aarcange@redhat.com, khandual@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, henry.willard@oracle.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <df5344a2-f28d-7828-b76b-107dc24be2dd@linux.intel.com>
-Date: Mon, 5 Mar 2018 11:23:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <f0bfc4b7ce6c8563bf0d5ef74af20b5d1edea66f.1519227112.git.khalid.aziz@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932458AbeCETYZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:24:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54770 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932370AbeCETYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 14:24:23 -0500
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, david@lechnology.com,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regmap: debugfs: Disambiguate dummy debugfs file name" to the regmap tree
+In-Reply-To: <1520275929-2708-1-git-send-email-festevam@gmail.com>
+Message-Id: <E1esvic-0004Ce-7u@debutante>
+Date: Mon, 05 Mar 2018 19:24:18 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2018 09:15 AM, Khalid Aziz wrote:
-> +/* Arch-specific flags to clear when updating VM flags on protection change */
-> +#ifndef VM_ARCH_CLEAR
-> +# define VM_ARCH_CLEAR	VM_NONE
-> +#endif
-> +#define VM_FLAGS_CLEAR	(ARCH_VM_PKEY_FLAGS | VM_ARCH_CLEAR)
+The patch
 
-Shouldn't this be defining
+   regmap: debugfs: Disambiguate dummy debugfs file name
 
-# define VM_ARCH_CLEAR	ARCH_VM_PKEY_FLAGS
+has been applied to the regmap tree at
 
-on x86?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From a430ab205d29e7d1537b220fcf989b8080d8267f Mon Sep 17 00:00:00 2001
+From: Fabio Estevam <fabio.estevam@nxp.com>
+Date: Mon, 5 Mar 2018 15:52:09 -0300
+Subject: [PATCH] regmap: debugfs: Disambiguate dummy debugfs file name
+
+Since commit 9b947a13e7f6 ("regmap: use debugfs even when no device")
+allows the usage of regmap debugfs even when there is no device
+associated, which causes several warnings like this:
+
+(NULL device *): Failed to create debugfs directory
+
+This happens when the debugfs file name is 'dummy'.
+
+The first dummy debugfs creation works fine, but subsequent creations
+fail as they have all the same name.
+
+Disambiguate the 'dummy' debugfs file name by adding a suffix entry,
+so that the names become dummy0, dummy1, dummy2, etc.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap-debugfs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 7eb512ba2828..e3e7b91cc421 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -25,6 +25,7 @@ struct regmap_debugfs_node {
+ 	struct list_head link;
+ };
+ 
++static unsigned int dummy_index;
+ static struct dentry *regmap_debugfs_root;
+ static LIST_HEAD(regmap_debugfs_early_list);
+ static DEFINE_MUTEX(regmap_debugfs_early_lock);
+@@ -573,6 +574,11 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+ 		name = devname;
+ 	}
+ 
++	if (!strcmp(name, "dummy")) {
++		name = kasprintf(GFP_KERNEL, "dummy%d", dummy_index);
++		dummy_index++;
++	}
++
+ 	map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
+ 	if (!map->debugfs) {
+ 		dev_warn(map->dev, "Failed to create debugfs directory\n");
+-- 
+2.16.2
