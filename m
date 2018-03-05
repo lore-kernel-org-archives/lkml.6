@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2624115-1520285751-2-14318892786780612350
+X-Cyrus-Session-Id: sloti22d1t05-2684081-1520285747-2-5840423693526046628
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520285750; b=CdvkSvd6DgJGy6nRTjlK1hqczCv5+fmBI9OG3T0J2PTRk3z
-    nirZsy1sA9Ws2ZziPoETQYmQ+V1ND6z/hLtTdmjrnoHR2tkkSoYGbAFv8/nDhxdg
-    UH8YPbbgpoHwezymWBZYDdHFZ3buj736z8BP+bKZvpkNZYCek4ja00AaKl0gPb7b
-    SK+uUympCpKuudS2tkVMHBU38oro7Du3FaZS8ntc7xSbVIDM3fqhk+tNb7IP7WJS
-    ED2RRbEGUSR6xHW/v3/g7n95kK5IMe2k47AregeYG2Z69gfMm+cj4XpY9foEiJ5I
-    1/anrmoMl6K7i1QHuRMNW6+xIkFUGZDT1/woZ/w==
+    t=1520285747; b=PV5fCFB/JNYUpuXPh2pMwXPb6mkmbCa7qq7jqLtw99WG00c
+    8dYx3OsqcfdR++RmUhbqvuzJ2zensPk9AkrX4+CdmPb0OfbL5xiPKBwSrtBsWCG7
+    7atXIuw5wMpGfXeIfhcL61+81pCp2lsGLPLYiOkDbE9KnvWhGYXJlyEa7DVSNw0i
+    ww6djy2CEbPFiZhgtMRnF7Vbv19gEpLcgTI9tNuFMvwJ6A6hHMUwpJt/Yh+bLd/G
+    Es2cjtaMKPWK2at6cer+C4YNZtPr3rTTCTNp3qSa3BCRjZ4+GgF6oN3tUheektLO
+    POFqj/pR2GHkbJlcrDNLbe4vHhbY4AulpHVIYaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1520285750;
-    bh=4gFqKL2qiJhYoP/54OiKuSDyqzNaN2ijpEm2ie6+JVs=; b=vwZi49E/Eeas
-    qiIiFws5I1bACzz5ob8wINiJONLuMZ3IfICDZSLhTQAV/oBjTzAItKo9RVHxd5uc
-    TCHH9TP5FU9u68SSaeO37hducGHxVKDnzRI18b7RrQKrOTDNIipJ9/0YlEKz1Bzz
-    mudfsDXf0VG5NNqQn7b+ibV3+iC3xZ/VOgIt8kjlY6Lx1QpL52HTdkcWJ1w+hgXl
-    K2p61NkY7pIWU0iem04OHXdZi6Th6NBBw9Y3lReYEUFnMMzjBwBHYmx2EM3sIHt3
-    IuW3lsosz0KnqlJVGx4+37s0Em3kyuE6BT2DMcCpID14DPvSyHyWiD7NQs2wKTOI
-    S8AgNT+6GA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=j8Vd/HqZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520285747;
+    bh=XkVijAcT9KLTgZpk+g99zLyRrFz8FiwTMHnQPVpf5Wk=; b=Rj1RDFnumR1Q
+    YO285mM9oW0fB/O3ll+E6Hu5O753NBBJ2vtbQAYRlXPKi2mj0LEEQiBiUvKdNuez
+    qW40ekoK8XogXQeGn2/V6T3XMPzk7wNzp4krouwKSJcI2BA5M2TGtbe+pPcxV+TZ
+    B1ZpRfsqK2dHm8ifCuEHqSR3i0q9ltWQz6HN+AW0NYpEQ/YPAgc02xIae7yJ9ylO
+    hm1oswhwJ0kipzpHZVKy9yNgQzhsu5FA+VJn+LvQVGD0FTbI7ykMFdeThdB370sC
+    gWb63cQ/IBm9iKwpS324mtCeXS7hp1ctaBRro4Re464RRNJ0vJzaQxcgxiIyK3eO
+    ulk6DqHYIw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=eFAeLJFI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,9 +38,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-category=clean score=0 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=j8Vd/HqZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=eFAeLJFI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeCEVfp (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 16:35:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60706 "EHLO
+        id S932427AbeCEVfW (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 16:35:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60724 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932485AbeCEV1y (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 5 Mar 2018 16:27:54 -0500
+        with ESMTP id S932487AbeCEV1z (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 5 Mar 2018 16:27:55 -0500
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/36] net: convert datagram_poll users tp ->poll_mask
-Date: Mon,  5 Mar 2018 13:27:27 -0800
-Message-Id: <20180305212743.16664-21-hch@lst.de>
+Subject: [PATCH 21/36] net/dccp: convert to ->poll_mask
+Date: Mon,  5 Mar 2018 13:27:28 -0800
+Message-Id: <20180305212743.16664-22-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180305212743.16664-1-hch@lst.de>
 References: <20180305212743.16664-1-hch@lst.de>
@@ -75,620 +75,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/isdn/mISDN/socket.c        |  2 +-
- drivers/net/ppp/pppoe.c            |  2 +-
- drivers/staging/ipx/af_ipx.c       |  2 +-
- drivers/staging/irda/net/af_irda.c |  6 +++---
- include/linux/skbuff.h             |  3 +--
- include/net/udp.h                  |  2 +-
- net/appletalk/ddp.c                |  2 +-
- net/ax25/af_ax25.c                 |  2 +-
- net/bluetooth/hci_sock.c           |  2 +-
- net/can/bcm.c                      |  2 +-
- net/can/raw.c                      |  2 +-
- net/core/datagram.c                | 13 ++++---------
- net/decnet/af_decnet.c             |  6 +++---
- net/ieee802154/socket.c            |  4 ++--
- net/ipv4/af_inet.c                 |  6 +++---
- net/ipv4/udp.c                     | 10 +++++-----
- net/ipv6/af_inet6.c                |  2 +-
- net/ipv6/raw.c                     |  4 ++--
- net/kcm/kcmsock.c                  |  4 ++--
- net/key/af_key.c                   |  2 +-
- net/l2tp/l2tp_ip.c                 |  2 +-
- net/l2tp/l2tp_ip6.c                |  2 +-
- net/l2tp/l2tp_ppp.c                |  2 +-
- net/llc/af_llc.c                   |  2 +-
- net/netlink/af_netlink.c           |  2 +-
- net/netrom/af_netrom.c             |  2 +-
- net/nfc/rawsock.c                  |  4 ++--
- net/packet/af_packet.c             |  9 ++++-----
- net/phonet/socket.c                |  2 +-
- net/qrtr/qrtr.c                    |  2 +-
- net/rose/af_rose.c                 |  2 +-
- net/x25/af_x25.c                   |  2 +-
- 32 files changed, 52 insertions(+), 59 deletions(-)
+ net/dccp/dccp.h  |  3 +--
+ net/dccp/ipv4.c  |  2 +-
+ net/dccp/ipv6.c  |  2 +-
+ net/dccp/proto.c | 13 ++-----------
+ 4 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index c84270e16bdd..61d6e4c9e7d1 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -589,7 +589,7 @@ static const struct proto_ops data_sock_ops = {
- 	.getname	= data_sock_getname,
- 	.sendmsg	= mISDN_sock_sendmsg,
- 	.recvmsg	= mISDN_sock_recvmsg,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
- 	.setsockopt	= data_sock_setsockopt,
-diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-index 5aa59f41bf8c..8c311e626884 100644
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -1120,7 +1120,7 @@ static const struct proto_ops pppoe_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= sock_no_accept,
- 	.getname	= pppoe_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
- 	.setsockopt	= sock_no_setsockopt,
-diff --git a/drivers/staging/ipx/af_ipx.c b/drivers/staging/ipx/af_ipx.c
-index d21a9d128d3e..3373f7f67d35 100644
---- a/drivers/staging/ipx/af_ipx.c
-+++ b/drivers/staging/ipx/af_ipx.c
-@@ -1967,7 +1967,7 @@ static const struct proto_ops ipx_dgram_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= sock_no_accept,
- 	.getname	= ipx_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.ioctl		= ipx_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= ipx_compat_ioctl,
-diff --git a/drivers/staging/irda/net/af_irda.c b/drivers/staging/irda/net/af_irda.c
-index 2f1e9ab3d6d0..77659b1c40ba 100644
---- a/drivers/staging/irda/net/af_irda.c
-+++ b/drivers/staging/irda/net/af_irda.c
-@@ -2600,7 +2600,7 @@ static const struct proto_ops irda_seqpacket_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	irda_accept,
- 	.getname =	irda_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	irda_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl =	irda_compat_ioctl,
-@@ -2624,7 +2624,7 @@ static const struct proto_ops irda_dgram_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	irda_accept,
- 	.getname =	irda_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	irda_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl =	irda_compat_ioctl,
-@@ -2649,7 +2649,7 @@ static const struct proto_ops irda_ultra_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	irda_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	irda_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl =	irda_compat_ioctl,
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index c1e66bdcf583..455f4660c2a2 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3246,8 +3246,7 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned flags,
- 				    int *peeked, int *off, int *err);
- struct sk_buff *skb_recv_datagram(struct sock *sk, unsigned flags, int noblock,
- 				  int *err);
--__poll_t datagram_poll(struct file *file, struct socket *sock,
--			   struct poll_table_struct *wait);
-+__poll_t datagram_poll_mask(struct socket *sock, __poll_t events);
- int skb_copy_datagram_iter(const struct sk_buff *from, int offset,
- 			   struct iov_iter *to, int size);
- static inline int skb_copy_datagram_msg(const struct sk_buff *from, int offset,
-diff --git a/include/net/udp.h b/include/net/udp.h
-index 850a8e581cce..03e8907ae57c 100644
---- a/include/net/udp.h
-+++ b/include/net/udp.h
-@@ -275,7 +275,7 @@ int udp_ioctl(struct sock *sk, int cmd, unsigned long arg);
- int udp_init_sock(struct sock *sk);
- int __udp_disconnect(struct sock *sk, int flags);
- int udp_disconnect(struct sock *sk, int flags);
--__poll_t udp_poll(struct file *file, struct socket *sock, poll_table *wait);
-+__poll_t udp_poll_mask(struct socket *sock, __poll_t events);
- struct sk_buff *skb_udp_tunnel_segment(struct sk_buff *skb,
- 				       netdev_features_t features,
- 				       bool is_ipv6);
-diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
-index 03a9fc0771c0..3ea5631fee29 100644
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1870,7 +1870,7 @@ static const struct proto_ops atalk_dgram_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= sock_no_accept,
- 	.getname	= atalk_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.ioctl		= atalk_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= atalk_compat_ioctl,
-diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-index 47fdd399626b..3282dbe7d9eb 100644
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -1954,7 +1954,7 @@ static const struct proto_ops ax25_proto_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= ax25_accept,
- 	.getname	= ax25_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.ioctl		= ax25_ioctl,
- 	.listen		= ax25_listen,
- 	.shutdown	= ax25_shutdown,
-diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
-index 923e9a271872..46a547e4a0c8 100644
---- a/net/bluetooth/hci_sock.c
-+++ b/net/bluetooth/hci_sock.c
-@@ -1975,7 +1975,7 @@ static const struct proto_ops hci_sock_ops = {
- 	.sendmsg	= hci_sock_sendmsg,
- 	.recvmsg	= hci_sock_recvmsg,
- 	.ioctl		= hci_sock_ioctl,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
- 	.setsockopt	= hci_sock_setsockopt,
-diff --git a/net/can/bcm.c b/net/can/bcm.c
-index ac5e5e34fee3..30c51e0ce294 100644
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -1669,7 +1669,7 @@ static const struct proto_ops bcm_ops = {
- 	.socketpair    = sock_no_socketpair,
- 	.accept        = sock_no_accept,
- 	.getname       = sock_no_getname,
--	.poll          = datagram_poll,
-+	.poll_mask     = datagram_poll_mask,
- 	.ioctl         = can_ioctl,	/* use can_ioctl() from af_can.c */
- 	.listen        = sock_no_listen,
- 	.shutdown      = sock_no_shutdown,
-diff --git a/net/can/raw.c b/net/can/raw.c
-index f2ecc43376a1..d65678554979 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -845,7 +845,7 @@ static const struct proto_ops raw_ops = {
- 	.socketpair    = sock_no_socketpair,
- 	.accept        = sock_no_accept,
- 	.getname       = raw_getname,
--	.poll          = datagram_poll,
-+	.poll_mask     = datagram_poll_mask,
- 	.ioctl         = can_ioctl,	/* use can_ioctl() from af_can.c */
- 	.listen        = sock_no_listen,
- 	.shutdown      = sock_no_shutdown,
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 9938952c5c78..f19bf3dc2bd6 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -819,9 +819,8 @@ EXPORT_SYMBOL(skb_copy_and_csum_datagram_msg);
+diff --git a/net/dccp/dccp.h b/net/dccp/dccp.h
+index f91e3816806b..0ea2ee56ac1b 100644
+--- a/net/dccp/dccp.h
++++ b/net/dccp/dccp.h
+@@ -316,8 +316,7 @@ int dccp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
+ 		 int flags, int *addr_len);
+ void dccp_shutdown(struct sock *sk, int how);
+ int inet_dccp_listen(struct socket *sock, int backlog);
+-__poll_t dccp_poll(struct file *file, struct socket *sock,
+-		       poll_table *wait);
++__poll_t dccp_poll_mask(struct socket *sock, __poll_t events);
+ int dccp_v4_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len);
+ void dccp_req_err(struct sock *sk, u64 seq);
  
- /**
-  * 	datagram_poll - generic datagram poll
-- *	@file: file struct
-  *	@sock: socket
-- *	@wait: poll table
-+ *	@events to wait for
-  *
-  *	Datagram poll: Again totally generic. This also handles
-  *	sequenced packet sockets providing the socket receive queue
-@@ -831,14 +830,10 @@ EXPORT_SYMBOL(skb_copy_and_csum_datagram_msg);
-  *	and you use a different write policy from sock_writeable()
-  *	then please supply your own write_space callback.
-  */
--__poll_t datagram_poll(struct file *file, struct socket *sock,
--			   poll_table *wait)
-+__poll_t datagram_poll_mask(struct socket *sock, __poll_t events)
- {
- 	struct sock *sk = sock->sk;
--	__poll_t mask;
--
--	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
-+	__poll_t mask = 0;
- 
- 	/* exceptional events? */
- 	if (sk->sk_err || !skb_queue_empty(&sk->sk_error_queue))
-@@ -871,4 +866,4 @@ __poll_t datagram_poll(struct file *file, struct socket *sock,
- 
- 	return mask;
- }
--EXPORT_SYMBOL(datagram_poll);
-+EXPORT_SYMBOL(datagram_poll_mask);
-diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
-index 791aff68af88..7793b3829906 100644
---- a/net/decnet/af_decnet.c
-+++ b/net/decnet/af_decnet.c
-@@ -1209,11 +1209,11 @@ static int dn_getname(struct socket *sock, struct sockaddr *uaddr,int *uaddr_len
- }
- 
- 
--static __poll_t dn_poll(struct file *file, struct socket *sock, poll_table  *wait)
-+static __poll_t dn_poll_mask(struct socket *sock, __poll_t events)
- {
- 	struct sock *sk = sock->sk;
- 	struct dn_scp *scp = DN_SK(sk);
--	__poll_t mask = datagram_poll(file, sock, wait);
-+	__poll_t mask = datagram_poll_mask(sock, events);
- 
- 	if (!skb_queue_empty(&scp->other_receive_queue))
- 		mask |= EPOLLRDBAND;
-@@ -2346,7 +2346,7 @@ static const struct proto_ops dn_proto_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	dn_accept,
- 	.getname =	dn_getname,
--	.poll =		dn_poll,
-+	.poll_mask =	dn_poll_mask,
- 	.ioctl =	dn_ioctl,
- 	.listen =	dn_listen,
- 	.shutdown =	dn_shutdown,
-diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
-index a60658c85a9a..a0768d2759b8 100644
---- a/net/ieee802154/socket.c
-+++ b/net/ieee802154/socket.c
-@@ -423,7 +423,7 @@ static const struct proto_ops ieee802154_raw_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
- 	.getname	   = sock_no_getname,
--	.poll		   = datagram_poll,
-+	.poll_mask	   = datagram_poll_mask,
- 	.ioctl		   = ieee802154_sock_ioctl,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = sock_no_shutdown,
-@@ -969,7 +969,7 @@ static const struct proto_ops ieee802154_dgram_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
- 	.getname	   = sock_no_getname,
--	.poll		   = datagram_poll,
-+	.poll_mask	   = datagram_poll_mask,
- 	.ioctl		   = ieee802154_sock_ioctl,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = sock_no_shutdown,
-diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-index ec32cc263b18..4a2bfae06b28 100644
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -985,7 +985,7 @@ const struct proto_ops inet_dgram_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
+diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+index e65fcb45c3f6..e8476f319efd 100644
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -983,7 +983,7 @@ static const struct proto_ops inet_dccp_ops = {
+ 	.accept		   = inet_accept,
  	.getname	   = inet_getname,
--	.poll		   = udp_poll,
-+	.poll_mask	   = udp_poll_mask,
+ 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
+-	.poll		   = dccp_poll,
++	.poll_mask	   = dccp_poll_mask,
  	.ioctl		   = inet_ioctl,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-@@ -1006,7 +1006,7 @@ EXPORT_SYMBOL(inet_dgram_ops);
- 
- /*
-  * For SOCK_RAW sockets; should be the same as inet_dgram_ops but without
-- * udp_poll
-+ * udp_poll_mask
-  */
- static const struct proto_ops inet_sockraw_ops = {
- 	.family		   = PF_INET,
-@@ -1017,7 +1017,7 @@ static const struct proto_ops inet_sockraw_ops = {
+ 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
+ 	.listen		   = inet_dccp_listen,
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 5df7857fc0f3..f0aac8e4b888 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -1069,7 +1069,7 @@ static const struct proto_ops inet6_dccp_ops = {
  	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
- 	.getname	   = inet_getname,
--	.poll		   = datagram_poll,
-+	.poll_mask	   = datagram_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index e5ef7c38c934..56427047f7e1 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -2491,7 +2491,7 @@ int compat_udp_getsockopt(struct sock *sk, int level, int optname,
-  * 	udp_poll - wait for a UDP event.
-  *	@file - file struct
-  *	@sock - socket
-- *	@wait - poll table
-+ *	@events - events to wait for
-  *
-  *	This is same as datagram poll, except for the special case of
-  *	blocking sockets. If application is using a blocking fd
-@@ -2500,23 +2500,23 @@ int compat_udp_getsockopt(struct sock *sk, int level, int optname,
-  *	but then block when reading it. Add special case code
-  *	to work around these arguably broken applications.
-  */
--__poll_t udp_poll(struct file *file, struct socket *sock, poll_table *wait)
-+__poll_t udp_poll_mask(struct socket *sock, __poll_t events)
- {
--	__poll_t mask = datagram_poll(file, sock, wait);
-+	__poll_t mask = datagram_poll_mask(sock, events);
- 	struct sock *sk = sock->sk;
- 
- 	if (!skb_queue_empty(&udp_sk(sk)->reader_queue))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
- 	/* Check for false positives due to checksum errors */
--	if ((mask & EPOLLRDNORM) && !(file->f_flags & O_NONBLOCK) &&
-+	if ((mask & EPOLLRDNORM) && !(sock->file->f_flags & O_NONBLOCK) &&
- 	    !(sk->sk_shutdown & RCV_SHUTDOWN) && first_packet_length(sk) == -1)
- 		mask &= ~(EPOLLIN | EPOLLRDNORM);
- 
- 	return mask;
- 
- }
--EXPORT_SYMBOL(udp_poll);
-+EXPORT_SYMBOL(udp_poll_mask);
- 
- int udp_abort(struct sock *sk, int err)
- {
-diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
-index c470549d6ef9..82c192b92358 100644
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -578,7 +578,7 @@ const struct proto_ops inet6_dgram_ops = {
- 	.socketpair	   = sock_no_socketpair,	/* a do nothing	*/
- 	.accept		   = sock_no_accept,		/* a do nothing	*/
+ 	.accept		   = inet_accept,
  	.getname	   = inet6_getname,
--	.poll		   = udp_poll,			/* ok		*/
-+	.poll_mask	   = udp_poll_mask,		/* ok		*/
- 	.ioctl		   = inet6_ioctl,		/* must change  */
- 	.listen		   = sock_no_listen,		/* ok		*/
- 	.shutdown	   = inet_shutdown,		/* ok		*/
-diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
-index 4c25339b1984..fdd9916f1475 100644
---- a/net/ipv6/raw.c
-+++ b/net/ipv6/raw.c
-@@ -1345,7 +1345,7 @@ void raw6_proc_exit(void)
- }
- #endif	/* CONFIG_PROC_FS */
- 
--/* Same as inet6_dgram_ops, sans udp_poll.  */
-+/* Same as inet6_dgram_ops, sans udp_poll_mask.  */
- const struct proto_ops inet6_sockraw_ops = {
- 	.family		   = PF_INET6,
- 	.owner		   = THIS_MODULE,
-@@ -1355,7 +1355,7 @@ const struct proto_ops inet6_sockraw_ops = {
- 	.socketpair	   = sock_no_socketpair,	/* a do nothing	*/
- 	.accept		   = sock_no_accept,		/* a do nothing	*/
- 	.getname	   = inet6_getname,
--	.poll		   = datagram_poll,		/* ok		*/
-+	.poll_mask	   = datagram_poll_mask,	/* ok		*/
- 	.ioctl		   = inet6_ioctl,		/* must change  */
- 	.listen		   = sock_no_listen,		/* ok		*/
- 	.shutdown	   = inet_shutdown,		/* ok		*/
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index f297d53a11aa..305c8c38c5d9 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1889,7 +1889,7 @@ static const struct proto_ops kcm_dgram_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	sock_no_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	kcm_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	sock_no_shutdown,
-@@ -1910,7 +1910,7 @@ static const struct proto_ops kcm_seqpacket_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	sock_no_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	kcm_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	sock_no_shutdown,
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 7e2e7188e7f4..7654607e728b 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3726,7 +3726,7 @@ static const struct proto_ops pfkey_ops = {
- 
- 	/* Now the operations that really occur. */
- 	.release	=	pfkey_release,
--	.poll		=	datagram_poll,
-+	.poll_mask	=	datagram_poll_mask,
- 	.sendmsg	=	pfkey_sendmsg,
- 	.recvmsg	=	pfkey_recvmsg,
- };
-diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
-index ff61124fdf59..aa3fced17a75 100644
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -618,7 +618,7 @@ static const struct proto_ops l2tp_ip_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
- 	.getname	   = l2tp_ip_getname,
--	.poll		   = datagram_poll,
-+	.poll_mask	   = datagram_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	.listen		   = sock_no_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
-index 192344688c06..8ca5486ce952 100644
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -757,7 +757,7 @@ static const struct proto_ops l2tp_ip6_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = sock_no_accept,
- 	.getname	   = l2tp_ip6_getname,
--	.poll		   = datagram_poll,
-+	.poll_mask	   = datagram_poll_mask,
+-	.poll		   = dccp_poll,
++	.poll_mask	   = dccp_poll_mask,
  	.ioctl		   = inet6_ioctl,
- 	.listen		   = sock_no_listen,
+ 	.listen		   = inet_dccp_listen,
  	.shutdown	   = inet_shutdown,
-diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-index 59f246d7b290..d6918a56af5e 100644
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -1786,7 +1786,7 @@ static const struct proto_ops pppol2tp_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= sock_no_accept,
- 	.getname	= pppol2tp_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
- 	.setsockopt	= pppol2tp_setsockopt,
-diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
-index c38d16f22d2a..67e5db6157ef 100644
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -1180,7 +1180,7 @@ static const struct proto_ops llc_ui_ops = {
- 	.socketpair  = sock_no_socketpair,
- 	.accept      = llc_ui_accept,
- 	.getname     = llc_ui_getname,
--	.poll	     = datagram_poll,
-+	.poll_mask   = datagram_poll_mask,
- 	.ioctl       = llc_ui_ioctl,
- 	.listen      = llc_ui_listen,
- 	.shutdown    = llc_ui_shutdown,
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 07e8478068f0..9e4ff69deddb 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2669,7 +2669,7 @@ static const struct proto_ops netlink_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	netlink_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	netlink_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	sock_no_shutdown,
-diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
-index 9ba30c63be3d..22636fca311e 100644
---- a/net/netrom/af_netrom.c
-+++ b/net/netrom/af_netrom.c
-@@ -1366,7 +1366,7 @@ static const struct proto_ops nr_proto_ops = {
- 	.socketpair	=	sock_no_socketpair,
- 	.accept		=	nr_accept,
- 	.getname	=	nr_getname,
--	.poll		=	datagram_poll,
-+	.poll_mask	=	datagram_poll_mask,
- 	.ioctl		=	nr_ioctl,
- 	.listen		=	nr_listen,
- 	.shutdown	=	sock_no_shutdown,
-diff --git a/net/nfc/rawsock.c b/net/nfc/rawsock.c
-index e2188deb08dc..60c322531c49 100644
---- a/net/nfc/rawsock.c
-+++ b/net/nfc/rawsock.c
-@@ -284,7 +284,7 @@ static const struct proto_ops rawsock_ops = {
- 	.socketpair     = sock_no_socketpair,
- 	.accept         = sock_no_accept,
- 	.getname        = sock_no_getname,
--	.poll           = datagram_poll,
-+	.poll_mask      = datagram_poll_mask,
- 	.ioctl          = sock_no_ioctl,
- 	.listen         = sock_no_listen,
- 	.shutdown       = sock_no_shutdown,
-@@ -304,7 +304,7 @@ static const struct proto_ops rawsock_raw_ops = {
- 	.socketpair     = sock_no_socketpair,
- 	.accept         = sock_no_accept,
- 	.getname        = sock_no_getname,
--	.poll           = datagram_poll,
-+	.poll_mask      = datagram_poll_mask,
- 	.ioctl          = sock_no_ioctl,
- 	.listen         = sock_no_listen,
- 	.shutdown       = sock_no_shutdown,
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index e0f3f4aeeb4f..f50ec1244281 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4074,12 +4074,11 @@ static int packet_ioctl(struct socket *sock, unsigned int cmd,
- 	return 0;
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index 15bdc002d90c..26816032a7c2 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -314,20 +314,11 @@ int dccp_disconnect(struct sock *sk, int flags)
+ 
+ EXPORT_SYMBOL_GPL(dccp_disconnect);
+ 
+-/*
+- *	Wait for a DCCP event.
+- *
+- *	Note that we don't need to lock the socket, as the upper poll layers
+- *	take care of normal races (between the test and the event) and we don't
+- *	go look at any of the socket buffers directly.
+- */
+-__poll_t dccp_poll(struct file *file, struct socket *sock,
+-		       poll_table *wait)
++__poll_t dccp_poll_mask(struct socket *sock, __poll_t events)
+ {
+ 	__poll_t mask;
+ 	struct sock *sk = sock->sk;
+ 
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+ 	if (sk->sk_state == DCCP_LISTEN)
+ 		return inet_csk_listen_poll(sk);
+ 
+@@ -369,7 +360,7 @@ __poll_t dccp_poll(struct file *file, struct socket *sock,
+ 	return mask;
  }
  
--static __poll_t packet_poll(struct file *file, struct socket *sock,
--				poll_table *wait)
-+static __poll_t packet_poll_mask(struct socket *sock, __poll_t events)
- {
- 	struct sock *sk = sock->sk;
- 	struct packet_sock *po = pkt_sk(sk);
--	__poll_t mask = datagram_poll(file, sock, wait);
-+	__poll_t mask = datagram_poll_mask(sock, events);
+-EXPORT_SYMBOL_GPL(dccp_poll);
++EXPORT_SYMBOL_GPL(dccp_poll_mask);
  
- 	spin_lock_bh(&sk->sk_receive_queue.lock);
- 	if (po->rx_ring.pg_vec) {
-@@ -4424,7 +4423,7 @@ static const struct proto_ops packet_ops_spkt = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	packet_getname_spkt,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	packet_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	sock_no_shutdown,
-@@ -4445,7 +4444,7 @@ static const struct proto_ops packet_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	packet_getname,
--	.poll =		packet_poll,
-+	.poll_mask =	packet_poll_mask,
- 	.ioctl =	packet_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	sock_no_shutdown,
-diff --git a/net/phonet/socket.c b/net/phonet/socket.c
-index fffcd69f63ff..28d981512f5f 100644
---- a/net/phonet/socket.c
-+++ b/net/phonet/socket.c
-@@ -449,7 +449,7 @@ const struct proto_ops phonet_dgram_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= sock_no_accept,
- 	.getname	= pn_socket_getname,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.ioctl		= pn_socket_ioctl,
- 	.listen		= sock_no_listen,
- 	.shutdown	= sock_no_shutdown,
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 5fb3929e3d7d..7f273529a0b1 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -1024,7 +1024,7 @@ static const struct proto_ops qrtr_proto_ops = {
- 	.recvmsg	= qrtr_recvmsg,
- 	.getname	= qrtr_getname,
- 	.ioctl		= qrtr_ioctl,
--	.poll		= datagram_poll,
-+	.poll_mask	= datagram_poll_mask,
- 	.shutdown	= sock_no_shutdown,
- 	.setsockopt	= sock_no_setsockopt,
- 	.getsockopt	= sock_no_getsockopt,
-diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-index 083bd251406f..f80a5c0804f1 100644
---- a/net/rose/af_rose.c
-+++ b/net/rose/af_rose.c
-@@ -1483,7 +1483,7 @@ static const struct proto_ops rose_proto_ops = {
- 	.socketpair	=	sock_no_socketpair,
- 	.accept		=	rose_accept,
- 	.getname	=	rose_getname,
--	.poll		=	datagram_poll,
-+	.poll_mask	=	datagram_poll_mask,
- 	.ioctl		=	rose_ioctl,
- 	.listen		=	rose_listen,
- 	.shutdown	=	sock_no_shutdown,
-diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
-index 562cc11131f6..b94b8f3339f3 100644
---- a/net/x25/af_x25.c
-+++ b/net/x25/af_x25.c
-@@ -1750,7 +1750,7 @@ static const struct proto_ops x25_proto_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	x25_accept,
- 	.getname =	x25_getname,
--	.poll =		datagram_poll,
-+	.poll_mask =	datagram_poll_mask,
- 	.ioctl =	x25_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = compat_x25_ioctl,
+ int dccp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
 -- 
 2.14.2
 
