@@ -1,740 +1,937 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933608AbeCENpj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 08:45:39 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54072 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933237AbeCENpf (ORCPT
+        id S933780AbeCENqN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 08:46:13 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41298 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933237AbeCENqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:45:35 -0500
-X-Google-Smtp-Source: AG47ELvlFCcp215taJWbTv1Xl6jdh6mEb8gd0IADRk+kphFsTjFQ84M7GpC3bw0iWcrk4LsLQpXuRw==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <12DCD7A9-01CB-4CCE-8F6A-6B892056F5F0@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_1969DF07-46FB-44BF-8209-4E04B8EA0E5C";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] lightnvm: pblk: refactor init/exit sequences
-Date: Mon, 5 Mar 2018 14:45:29 +0100
-In-Reply-To: <64fdacf9-fc89-48fb-4a8d-a8dada708329@lightnvm.io>
-Cc: linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1519919998-20829-1-git-send-email-javier@cnexlabs.com>
- <1519919998-20829-2-git-send-email-javier@cnexlabs.com>
- <8586a9e4-c76f-e38a-edcf-201cc7e2ddfb@lightnvm.io>
- <ED151D27-0D29-451F-9E9D-155E6C8C6224@javigon.com>
- <64fdacf9-fc89-48fb-4a8d-a8dada708329@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Mon, 5 Mar 2018 08:46:12 -0500
+X-Google-Smtp-Source: AG47ELsYkbibGRUv86n1qBG43n/snsPcAGMLgwk+4ZNygBbCLfQBH43EBABXyot3D+zej83GphGjrw==
+Subject: Re: [PATCH 8/9] drm/xen-front: Implement GEM operations
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <1519200222-20623-1-git-send-email-andr2000@gmail.com>
+ <1519200222-20623-9-git-send-email-andr2000@gmail.com>
+ <20180305093225.GK22212@phenom.ffwll.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <f0da23ae-e268-ca0c-fdcf-09244a3b598c@gmail.com>
+Date: Mon, 5 Mar 2018 15:46:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180305093225.GK22212@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/05/2018 11:32 AM, Daniel Vetter wrote:
+> On Wed, Feb 21, 2018 at 10:03:41AM +0200, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> Implement GEM handling depending on driver mode of operation:
+>> depending on the requirements for the para-virtualized environment, namely
+>> requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+>> host and guest environments, number of operating modes of para-virtualized
+>> display driver are supported:
+>>   - display buffers can be allocated by either frontend driver or backend
+>>   - display buffers can be allocated to be contiguous in memory or not
+>>
+>> Note! Frontend driver itself has no dependency on contiguous memory for
+>> its operation.
+>>
+>> 1. Buffers allocated by the frontend driver.
+>>
+>> The below modes of operation are configured at compile-time via
+>> frontend driver's kernel configuration.
+>>
+>> 1.1. Front driver configured to use GEM CMA helpers
+>>       This use-case is useful when used with accompanying DRM/vGPU driver in
+>>       guest domain which was designed to only work with contiguous buffers,
+>>       e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+>>       contiguous PRIME buffers, thus requiring frontend driver to provide
+>>       such. In order to implement this mode of operation para-virtualized
+>>       frontend driver can be configured to use GEM CMA helpers.
+>>
+>> 1.2. Front driver doesn't use GEM CMA
+>>       If accompanying drivers can cope with non-contiguous memory then, to
+>>       lower pressure on CMA subsystem of the kernel, driver can allocate
+>>       buffers from system memory.
+>>
+>> Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+>> may require IOMMU support on the platform, so accompanying DRM/vGPU
+>> hardware can still reach display buffer memory while importing PRIME
+>> buffers from the frontend driver.
+>>
+>> 2. Buffers allocated by the backend
+>>
+>> This mode of operation is run-time configured via guest domain configuration
+>> through XenStore entries.
+>>
+>> For systems which do not provide IOMMU support, but having specific
+>> requirements for display buffers it is possible to allocate such buffers
+>> at backend side and share those with the frontend.
+>> For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+>> physically contiguous memory, this allows implementing zero-copying
+>> use-cases.
+>>
+>> Note! Configuration options 1.1 (contiguous display buffers) and 2 (backend
+>> allocated buffers) are not supported at the same time.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Some suggestions below for some larger cleanup work.
+> -Daniel
+>
+>> ---
+>>   drivers/gpu/drm/xen/Kconfig                 |  13 +
+>>   drivers/gpu/drm/xen/Makefile                |   6 +
+>>   drivers/gpu/drm/xen/xen_drm_front.h         |  74 ++++++
+>>   drivers/gpu/drm/xen/xen_drm_front_drv.c     |  80 ++++++-
+>>   drivers/gpu/drm/xen/xen_drm_front_drv.h     |   1 +
+>>   drivers/gpu/drm/xen/xen_drm_front_gem.c     | 360 ++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/xen/xen_drm_front_gem.h     |  46 ++++
+>>   drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  93 +++++++
+>>   8 files changed, 667 insertions(+), 6 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+>>   create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>>
+>> diff --git a/drivers/gpu/drm/xen/Kconfig b/drivers/gpu/drm/xen/Kconfig
+>> index 4cca160782ab..4f4abc91f3b6 100644
+>> --- a/drivers/gpu/drm/xen/Kconfig
+>> +++ b/drivers/gpu/drm/xen/Kconfig
+>> @@ -15,3 +15,16 @@ config DRM_XEN_FRONTEND
+>>   	help
+>>   	  Choose this option if you want to enable a para-virtualized
+>>   	  frontend DRM/KMS driver for Xen guest OSes.
+>> +
+>> +config DRM_XEN_FRONTEND_CMA
+>> +	bool "Use DRM CMA to allocate dumb buffers"
+>> +	depends on DRM_XEN_FRONTEND
+>> +	select DRM_KMS_CMA_HELPER
+>> +	select DRM_GEM_CMA_HELPER
+>> +	help
+>> +	  Use DRM CMA helpers to allocate display buffers.
+>> +	  This is useful for the use-cases when guest driver needs to
+>> +	  share or export buffers to other drivers which only expect
+>> +	  contiguous buffers.
+>> +	  Note: in this mode driver cannot use buffers allocated
+>> +	  by the backend.
+>> diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
+>> index 4fcb0da1a9c5..12376ec78fbc 100644
+>> --- a/drivers/gpu/drm/xen/Makefile
+>> +++ b/drivers/gpu/drm/xen/Makefile
+>> @@ -8,4 +8,10 @@ drm_xen_front-objs := xen_drm_front.o \
+>>   		      xen_drm_front_shbuf.o \
+>>   		      xen_drm_front_cfg.o
+>>   
+>> +ifeq ($(CONFIG_DRM_XEN_FRONTEND_CMA),y)
+>> +	drm_xen_front-objs += xen_drm_front_gem_cma.o
+>> +else
+>> +	drm_xen_front-objs += xen_drm_front_gem.o
+>> +endif
+>> +
+>>   obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h b/drivers/gpu/drm/xen/xen_drm_front.h
+>> index 9ed5bfb248d0..c6f52c892434 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front.h
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
+>> @@ -34,6 +34,80 @@
+>>   
+>>   struct xen_drm_front_drm_pipeline;
+>>   
+>> +/*
+>> + *******************************************************************************
+>> + * Para-virtualized DRM/KMS frontend driver
+>> + *******************************************************************************
+>> + * This frontend driver implements Xen para-virtualized display
+>> + * according to the display protocol described at
+>> + * include/xen/interface/io/displif.h
+>> + *
+>> + *******************************************************************************
+>> + * Driver modes of operation in terms of display buffers used
+>> + *******************************************************************************
+>> + * Depending on the requirements for the para-virtualized environment, namely
+>> + * requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+>> + * host and guest environments, number of operating modes of para-virtualized
+>> + * display driver are supported:
+>> + *  - display buffers can be allocated by either frontend driver or backend
+>> + *  - display buffers can be allocated to be contiguous in memory or not
+>> + *
+>> + * Note! Frontend driver itself has no dependency on contiguous memory for
+>> + *       its operation.
+>> + *
+>> + *******************************************************************************
+>> + * 1. Buffers allocated by the frontend driver.
+>> + *******************************************************************************
+>> + *
+>> + * The below modes of operation are configured at compile-time via
+>> + * frontend driver's kernel configuration.
+>> + *
+>> + * 1.1. Front driver configured to use GEM CMA helpers
+>> + *      This use-case is useful when used with accompanying DRM/vGPU driver in
+>> + *      guest domain which was designed to only work with contiguous buffers,
+>> + *      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+>> + *      contiguous PRIME buffers, thus requiring frontend driver to provide
+>> + *      such. In order to implement this mode of operation para-virtualized
+>> + *      frontend driver can be configured to use GEM CMA helpers.
+>> + *
+>> + * 1.2. Front driver doesn't use GEM CMA
+>> + *      If accompanying drivers can cope with non-contiguous memory then, to
+>> + *      lower pressure on CMA subsystem of the kernel, driver can allocate
+>> + *      buffers from system memory.
+>> + *
+>> + * Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+>> + *   may require IOMMU support on the platform, so accompanying DRM/vGPU
+>> + *   hardware can still reach display buffer memory while importing PRIME
+>> + *   buffers from the frontend driver.
+>> + *
+>> + *******************************************************************************
+>> + * 2. Buffers allocated by the backend
+>> + *******************************************************************************
+>> + *
+>> + * This mode of operation is run-time configured via guest domain configuration
+>> + * through XenStore entries.
+>> + *
+>> + * For systems which do not provide IOMMU support, but having specific
+>> + * requirements for display buffers it is possible to allocate such buffers
+>> + * at backend side and share those with the frontend.
+>> + * For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+>> + * physically contiguous memory, this allows implementing zero-copying
+>> + * use-cases.
+>> + *
+>> + *******************************************************************************
+>> + * Driver limitations
+>> + *******************************************************************************
+>> + * 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
+>> + *    allocated buffers) are not supported at the same time.
+>> + *
+>> + * 2. Only primary plane without additional properties is supported.
+>> + *
+>> + * 3. Only one video mode supported which is configured via XenStore.
+>> + *
+>> + * 4. All CRTCs operate at fixed frequency of 60Hz.
+>> + *
+>> + ******************************************************************************/
+> Since you've typed this all up, pls convert it to kernel-doc and pull it
+> into a xen-front.rst driver section in Documentation/gpu/ There's a few
+> examples for i915 and vc4 already.
+Do you mean to move or to keep in the driver and add in the
+Documentation? I would prefer to move to have the description
+at single place.
+>
+>> +
+>>   struct xen_drm_front_ops {
+>>   	int (*mode_set)(struct xen_drm_front_drm_pipeline *pipeline,
+>>   			uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.c b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+>> index e8862d26ba27..35e7e9cda9d1 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.c
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.c
+>> @@ -23,12 +23,58 @@
+>>   #include "xen_drm_front.h"
+>>   #include "xen_drm_front_cfg.h"
+>>   #include "xen_drm_front_drv.h"
+>> +#include "xen_drm_front_gem.h"
+>>   #include "xen_drm_front_kms.h"
+>>   
+>>   static int dumb_create(struct drm_file *filp,
+>>   		struct drm_device *dev, struct drm_mode_create_dumb *args)
+>>   {
+>> -	return -EINVAL;
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +	struct drm_gem_object *obj;
+>> +	int ret;
+>> +
+>> +	ret = drm_info->gem_ops->dumb_create(filp, dev, args);
+>> +	if (ret)
+>> +		goto fail;
+>> +
+>> +	obj = drm_gem_object_lookup(filp, args->handle);
+>> +	if (!obj) {
+>> +		ret = -ENOENT;
+>> +		goto fail_destroy;
+>> +	}
+>> +
+>> +	drm_gem_object_unreference_unlocked(obj);
+>> +
+>> +	/*
+>> +	 * In case of CONFIG_DRM_XEN_FRONTEND_CMA gem_obj is constructed
+>> +	 * via DRM CMA helpers and doesn't have ->pages allocated
+>> +	 * (xendrm_gem_get_pages will return NULL), but instead can provide
+>> +	 * sg table
+>> +	 */
+> My recommendation is to use an sg table for everything if you deal with
+> mixed objects (CMA, special blocks 1:1 mapped from host, normal pages).
+> That avoids the constant get_pages vs. get_sgt differences. For examples
+> see how e.g. i915 handles the various gem object backends.
+Indeed, I tried to do that this way before, e.g. have all sgt based.
+But at the end of the day Xen shared buffer code in the driver works
+with pages (Xen API is page based there), so sgt then will anyway need
+to be converted into page array.
+For that reason I prefer to work with pages from the beginning, not sgt.
+As to constant get_pages etc. - this is the only expected place in the
+driver for that, so the _from_sgt/_from_pages API is only used here.
 
---Apple-Mail=_1969DF07-46FB-44BF-8209-4E04B8EA0E5C
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-> On 5 Mar 2018, at 14.38, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 03/01/2018 08:29 PM, Javier Gonz=C3=A1lez wrote:
->>> On 1 Mar 2018, at 19.49, Matias Bj=C3=B8rling <mb@lightnvm.io> =
-wrote:
->>>=20
->>> On 03/01/2018 04:59 PM, Javier Gonz=C3=A1lez wrote:
->>>> Refactor init and exit sequences to eliminate dependencies among =
-init
->>>> modules and improve readability.
->>>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->>>> ---
->>>>  drivers/lightnvm/pblk-init.c | 415 =
-+++++++++++++++++++++----------------------
->>>>  1 file changed, 206 insertions(+), 209 deletions(-)
->>>> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->>>> index 25fc70ca07f7..87c390667dd6 100644
->>>> --- a/drivers/lightnvm/pblk-init.c
->>>> +++ b/drivers/lightnvm/pblk-init.c
->>>> @@ -103,7 +103,40 @@ static void pblk_l2p_free(struct pblk *pblk)
->>>>  	vfree(pblk->trans_map);
->>>>  }
->>>>  -static int pblk_l2p_init(struct pblk *pblk)
->>>> +static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
->>>> +{
->>>> +	struct pblk_line *line =3D NULL;
->>>> +
->>>> +	if (factory_init) {
->>>> +		pblk_setup_uuid(pblk);
->>>> +	} else {
->>>> +		line =3D pblk_recov_l2p(pblk);
->>>> +		if (IS_ERR(line)) {
->>>> +			pr_err("pblk: could not recover l2p table\n");
->>>> +			return -EFAULT;
->>>> +		}
->>>> +	}
->>>> +
->>>> +#ifdef CONFIG_NVM_DEBUG
->>>> +	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->>>> +#endif
->>>> +
->>>> +	/* Free full lines directly as GC has not been started yet */
->>>> +	pblk_gc_free_full_lines(pblk);
->>>> +
->>>> +	if (!line) {
->>>> +		/* Configure next line for user data */
->>>> +		line =3D pblk_line_get_first_data(pblk);
->>>> +		if (!line) {
->>>> +			pr_err("pblk: line list corrupted\n");
->>>> +			return -EFAULT;
->>>> +		}
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int pblk_l2p_init(struct pblk *pblk, bool factory_init)
->>>>  {
->>>>  	sector_t i;
->>>>  	struct ppa_addr ppa;
->>>> @@ -119,7 +152,7 @@ static int pblk_l2p_init(struct pblk *pblk)
->>>>  	for (i =3D 0; i < pblk->rl.nr_secs; i++)
->>>>  		pblk_trans_map_set(pblk, i, ppa);
->>>>  -	return 0;
->>>> +	return pblk_l2p_recover(pblk, factory_init);
->>>>  }
->>>>    static void pblk_rwb_free(struct pblk *pblk)
->>>> @@ -159,7 +192,13 @@ static int pblk_set_ppaf(struct pblk *pblk)
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>>  	struct nvm_addr_format ppaf =3D geo->ppaf;
->>>> -	int power_len;
->>>> +	int mod, power_len;
->>>> +
->>>> +	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
->>>> +	if (mod) {
->>>> +		pr_err("pblk: bad configuration of sectors/pages\n");
->>>> +		return -EINVAL;
->>>> +	}
->>>>    	/* Re-calculate channel and lun format to adapt to =
-configuration */
->>>>  	power_len =3D get_count_order(geo->nr_chnls);
->>>> @@ -252,12 +291,39 @@ static int pblk_core_init(struct pblk *pblk)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>> +	int max_write_ppas;
->>>> +
->>>> +	atomic64_set(&pblk->user_wa, 0);
->>>> +	atomic64_set(&pblk->pad_wa, 0);
->>>> +	atomic64_set(&pblk->gc_wa, 0);
->>>> +	pblk->user_rst_wa =3D 0;
->>>> +	pblk->pad_rst_wa =3D 0;
->>>> +	pblk->gc_rst_wa =3D 0;
->>>> +
->>>> +	atomic64_set(&pblk->nr_flush, 0);
->>>> +	pblk->nr_flush_rst =3D 0;
->>>>    	pblk->pgs_in_buffer =3D NVM_MEM_PAGE_WRITE * =
-geo->sec_per_pg *
->>>>  						geo->nr_planes * =
-geo->all_luns;
->>>>  +	pblk->min_write_pgs =3D geo->sec_per_pl * (geo->sec_size / =
-PAGE_SIZE);
->>>> +	max_write_ppas =3D pblk->min_write_pgs * geo->all_luns;
->>>> +	pblk->max_write_pgs =3D min_t(int, max_write_ppas, =
-NVM_MAX_VLBA);
->>>> +	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
->>>> +
->>>> +	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
->>>> +		pr_err("pblk: vector list too big(%u > %u)\n",
->>>> +				pblk->max_write_pgs, =
-PBLK_MAX_REQ_ADDRS);
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	pblk->pad_dist =3D kzalloc((pblk->min_write_pgs - 1) * =
-sizeof(atomic64_t),
->>>> +								=
-GFP_KERNEL);
->>>> +	if (!pblk->pad_dist)
->>>> +		return -ENOMEM;
->>>> +
->>>>  	if (pblk_init_global_caches(pblk))
->>>> -		return -ENOMEM;
->>>> +		goto fail_free_pad_dist;
->>>>    	/* Internal bios can be at most the sectors signaled by =
-the device. */
->>>>  	pblk->page_bio_pool =3D mempool_create_page_pool(NVM_MAX_VLBA, =
-0);
->>>> @@ -307,10 +373,8 @@ static int pblk_core_init(struct pblk *pblk)
->>>>  	if (pblk_set_ppaf(pblk))
->>>>  		goto free_r_end_wq;
->>>>  -	if (pblk_rwb_init(pblk))
->>>> -		goto free_r_end_wq;
->>>> -
->>>>  	INIT_LIST_HEAD(&pblk->compl_list);
->>>> +
->>>>  	return 0;
->>>>    free_r_end_wq:
->>>> @@ -333,6 +397,8 @@ static int pblk_core_init(struct pblk *pblk)
->>>>  	mempool_destroy(pblk->page_bio_pool);
->>>>  free_global_caches:
->>>>  	pblk_free_global_caches(pblk);
->>>> +fail_free_pad_dist:
->>>> +	kfree(pblk->pad_dist);
->>>>  	return -ENOMEM;
->>>>  }
->>>>  @@ -354,14 +420,8 @@ static void pblk_core_free(struct pblk *pblk)
->>>>  	mempool_destroy(pblk->e_rq_pool);
->>>>  	mempool_destroy(pblk->w_rq_pool);
->>>>  -	pblk_rwb_free(pblk);
->>>> -
->>>>  	pblk_free_global_caches(pblk);
->>>> -}
->>>> -
->>>> -static void pblk_luns_free(struct pblk *pblk)
->>>> -{
->>>> -	kfree(pblk->luns);
->>>> +	kfree(pblk->pad_dist);
->>>>  }
->>>>    static void pblk_line_mg_free(struct pblk *pblk)
->>>> @@ -378,8 +438,6 @@ static void pblk_line_mg_free(struct pblk =
-*pblk)
->>>>  		pblk_mfree(l_mg->eline_meta[i]->buf, =
-l_mg->emeta_alloc_type);
->>>>  		kfree(l_mg->eline_meta[i]);
->>>>  	}
->>>> -
->>>> -	kfree(pblk->lines);
->>>>  }
->>>>    static void pblk_line_meta_free(struct pblk_line *line)
->>>> @@ -402,6 +460,11 @@ static void pblk_lines_free(struct pblk *pblk)
->>>>  		pblk_line_meta_free(line);
->>>>  	}
->>>>  	spin_unlock(&l_mg->free_lock);
->>>> +
->>>> +	pblk_line_mg_free(pblk);
->>>> +
->>>> +	kfree(pblk->luns);
->>>> +	kfree(pblk->lines);
->>>>  }
->>>>    static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct =
-pblk_lun *rlun,
->>>> @@ -476,7 +539,7 @@ static int pblk_bb_line(struct pblk *pblk, =
-struct pblk_line *line,
->>>>  	return bb_cnt;
->>>>  }
->>>>  -static int pblk_luns_init(struct pblk *pblk, struct ppa_addr =
-*luns)
->>>> +static int pblk_luns_init(struct pblk *pblk)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>> @@ -501,7 +564,7 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>>>  		int lunid =3D lun_raw + ch * geo->nr_luns;
->>>>    		rlun =3D &pblk->luns[i];
->>>> -		rlun->bppa =3D luns[lunid];
->>>> +		rlun->bppa =3D dev->luns[lunid];
->>>>    		sema_init(&rlun->wr_sem, 1);
->>>>  	}
->>>> @@ -509,38 +572,6 @@ static int pblk_luns_init(struct pblk *pblk, =
-struct ppa_addr *luns)
->>>>  	return 0;
->>>>  }
->>>>  -static int pblk_lines_configure(struct pblk *pblk, int flags)
->>>> -{
->>>> -	struct pblk_line *line =3D NULL;
->>>> -	int ret =3D 0;
->>>> -
->>>> -	if (!(flags & NVM_TARGET_FACTORY)) {
->>>> -		line =3D pblk_recov_l2p(pblk);
->>>> -		if (IS_ERR(line)) {
->>>> -			pr_err("pblk: could not recover l2p table\n");
->>>> -			ret =3D -EFAULT;
->>>> -		}
->>>> -	}
->>>> -
->>>> -#ifdef CONFIG_NVM_DEBUG
->>>> -	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->>>> -#endif
->>>> -
->>>> -	/* Free full lines directly as GC has not been started yet */
->>>> -	pblk_gc_free_full_lines(pblk);
->>>> -
->>>> -	if (!line) {
->>>> -		/* Configure next line for user data */
->>>> -		line =3D pblk_line_get_first_data(pblk);
->>>> -		if (!line) {
->>>> -			pr_err("pblk: line list corrupted\n");
->>>> -			ret =3D -EFAULT;
->>>> -		}
->>>> -	}
->>>> -
->>>> -	return ret;
->>>> -}
->>>> -
->>>>  /* See comment over struct line_emeta definition */
->>>>  static unsigned int calc_emeta_len(struct pblk *pblk)
->>>>  {
->>>> @@ -606,11 +637,70 @@ static void pblk_set_provision(struct pblk =
-*pblk, long nr_free_blks)
->>>>  	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
->>>>  }
->>>>  -static int pblk_lines_alloc_metadata(struct pblk *pblk)
->>>> +static int pblk_setup_line_meta(struct pblk *pblk, struct =
-pblk_line *line,
->>>> +				void *chunk_log, long *nr_bad_blks)
->>>>  {
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +
->>>> +	line->blk_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->>>> +	if (!line->blk_bitmap)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	line->erase_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->>>> +	if (!line->erase_bitmap) {
->>>> +		kfree(line->blk_bitmap);
->>>> +		return -ENOMEM;
->>>> +	}
->>>> +
->>>> +	*nr_bad_blks =3D pblk_bb_line(pblk, line, chunk_log, =
-lm->blk_per_line);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int pblk_line_mg_init(struct pblk *pblk)
->>>> +{
->>>> +	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>> +	struct nvm_geo *geo =3D &dev->geo;
->>>>  	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> -	int i;
->>>> +	int i, bb_distance;
->>>> +
->>>> +	l_mg->nr_lines =3D geo->nr_chks;
->>>> +	l_mg->log_line =3D l_mg->data_line =3D NULL;
->>>> +	l_mg->l_seq_nr =3D l_mg->d_seq_nr =3D 0;
->>>> +	l_mg->nr_free_lines =3D 0;
->>>> +	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
->>>> +
->>>> +	INIT_LIST_HEAD(&l_mg->free_list);
->>>> +	INIT_LIST_HEAD(&l_mg->corrupt_list);
->>>> +	INIT_LIST_HEAD(&l_mg->bad_list);
->>>> +	INIT_LIST_HEAD(&l_mg->gc_full_list);
->>>> +	INIT_LIST_HEAD(&l_mg->gc_high_list);
->>>> +	INIT_LIST_HEAD(&l_mg->gc_mid_list);
->>>> +	INIT_LIST_HEAD(&l_mg->gc_low_list);
->>>> +	INIT_LIST_HEAD(&l_mg->gc_empty_list);
->>>> +
->>>> +	INIT_LIST_HEAD(&l_mg->emeta_list);
->>>> +
->>>> +	l_mg->gc_lists[0] =3D &l_mg->gc_high_list;
->>>> +	l_mg->gc_lists[1] =3D &l_mg->gc_mid_list;
->>>> +	l_mg->gc_lists[2] =3D &l_mg->gc_low_list;
->>>> +
->>>> +	spin_lock_init(&l_mg->free_lock);
->>>> +	spin_lock_init(&l_mg->close_lock);
->>>> +	spin_lock_init(&l_mg->gc_lock);
->>>> +
->>>> +	l_mg->vsc_list =3D kcalloc(l_mg->nr_lines, sizeof(__le32), =
-GFP_KERNEL);
->>>> +	if (!l_mg->vsc_list)
->>>> +		goto fail;
->>>> +
->>>> +	l_mg->bb_template =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->>>> +	if (!l_mg->bb_template)
->>>> +		goto fail_free_vsc_list;
->>>> +
->>>> +	l_mg->bb_aux =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->>>> +	if (!l_mg->bb_aux)
->>>> +		goto fail_free_bb_template;
->>>>    	/* smeta is always small enough to fit on a kmalloc =
-memory allocation,
->>>>  	 * emeta depends on the number of LUNs allocated to the pblk =
-instance
->>>> @@ -656,13 +746,13 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>>>  		}
->>>>  	}
->>>>  -	l_mg->vsc_list =3D kcalloc(l_mg->nr_lines, sizeof(__le32), =
-GFP_KERNEL);
->>>> -	if (!l_mg->vsc_list)
->>>> -		goto fail_free_emeta;
->>>> -
->>>>  	for (i =3D 0; i < l_mg->nr_lines; i++)
->>>>  		l_mg->vsc_list[i] =3D cpu_to_le32(EMPTY_ENTRY);
->>>>  +	bb_distance =3D (geo->all_luns) * geo->ws_opt;
->>>> +	for (i =3D 0; i < lm->sec_per_line; i +=3D bb_distance)
->>>> +		bitmap_set(l_mg->bb_template, i, geo->ws_opt);
->>>> +
->>>>  	return 0;
->>>>    fail_free_emeta:
->>>> @@ -673,69 +763,25 @@ static int pblk_lines_alloc_metadata(struct =
-pblk *pblk)
->>>>  			kfree(l_mg->eline_meta[i]->buf);
->>>>  		kfree(l_mg->eline_meta[i]);
->>>>  	}
->>>> -
->>>>  fail_free_smeta:
->>>>  	for (i =3D 0; i < PBLK_DATA_LINES; i++)
->>>>  		kfree(l_mg->sline_meta[i]);
->>>> -
->>>> +	kfree(l_mg->bb_aux);
->>>> +fail_free_bb_template:
->>>> +	kfree(l_mg->bb_template);
->>>> +fail_free_vsc_list:
->>>> +	kfree(l_mg->vsc_list);
->>>> +fail:
->>>>  	return -ENOMEM;
->>>>  }
->>>>  -static int pblk_setup_line_meta(struct pblk *pblk, struct =
-pblk_line *line,
->>>> -				void *chunk_log, long *nr_bad_blks)
->>>> -{
->>>> -	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> -
->>>> -	line->blk_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->>>> -	if (!line->blk_bitmap)
->>>> -		return -ENOMEM;
->>>> -
->>>> -	line->erase_bitmap =3D kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
->>>> -	if (!line->erase_bitmap) {
->>>> -		kfree(line->blk_bitmap);
->>>> -		return -ENOMEM;
->>>> -	}
->>>> -
->>>> -	*nr_bad_blks =3D pblk_bb_line(pblk, line, chunk_log, =
-lm->blk_per_line);
->>>> -
->>>> -	return 0;
->>>> -}
->>>> -
->>>> -static int pblk_lines_init(struct pblk *pblk)
->>>> +static int pblk_line_meta_init(struct pblk *pblk)
->>>>  {
->>>>  	struct nvm_tgt_dev *dev =3D pblk->dev;
->>>>  	struct nvm_geo *geo =3D &dev->geo;
->>>> -	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> -	struct pblk_line *line;
->>>> -	void *chunk_log;
->>>>  	unsigned int smeta_len, emeta_len;
->>>> -	long nr_bad_blks =3D 0, nr_free_blks =3D 0;
->>>> -	int bb_distance, max_write_ppas, mod;
->>>> -	int i, ret;
->>>> -
->>>> -	pblk->min_write_pgs =3D geo->sec_per_pl * (geo->sec_size / =
-PAGE_SIZE);
->>>> -	max_write_ppas =3D pblk->min_write_pgs * geo->all_luns;
->>>> -	pblk->max_write_pgs =3D min_t(int, max_write_ppas, =
-NVM_MAX_VLBA);
->>>> -	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
->>>> -
->>>> -	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
->>>> -		pr_err("pblk: vector list too big(%u > %u)\n",
->>>> -				pblk->max_write_pgs, =
-PBLK_MAX_REQ_ADDRS);
->>>> -		return -EINVAL;
->>>> -	}
->>>> -
->>>> -	div_u64_rem(geo->sec_per_chk, pblk->min_write_pgs, &mod);
->>>> -	if (mod) {
->>>> -		pr_err("pblk: bad configuration of sectors/pages\n");
->>>> -		return -EINVAL;
->>>> -	}
->>>> -
->>>> -	l_mg->nr_lines =3D geo->nr_chks;
->>>> -	l_mg->log_line =3D l_mg->data_line =3D NULL;
->>>> -	l_mg->l_seq_nr =3D l_mg->d_seq_nr =3D 0;
->>>> -	l_mg->nr_free_lines =3D 0;
->>>> -	bitmap_zero(&l_mg->meta_bitmap, PBLK_DATA_LINES);
->>>> +	int i;
->>>>    	lm->sec_per_line =3D geo->sec_per_chk * geo->all_luns;
->>>>  	lm->blk_per_line =3D geo->all_luns;
->>>> @@ -787,58 +833,43 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>  		return -EINVAL;
->>>>  	}
->>>>  -	ret =3D pblk_lines_alloc_metadata(pblk);
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int pblk_lines_init(struct pblk *pblk)
->>>> +{
->>>> +	struct pblk_line_mgmt *l_mg =3D &pblk->l_mg;
->>>> +	struct pblk_line_meta *lm =3D &pblk->lm;
->>>> +	struct pblk_line *line;
->>>> +	void *chunk_log;
->>>> +	long nr_bad_blks =3D 0, nr_free_blks =3D 0;
->>>> +	int i, ret;
->>>> +
->>>> +	ret =3D pblk_line_meta_init(pblk);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>> +	ret =3D pblk_line_mg_init(pblk);
->>>>  	if (ret)
->>>>  		return ret;
->>>>  -	l_mg->bb_template =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->>>> -	if (!l_mg->bb_template) {
->>>> -		ret =3D -ENOMEM;
->>>> +	ret =3D pblk_luns_init(pblk);
->>>> +	if (ret)
->>>>  		goto fail_free_meta;
->>>> -	}
->>>> -
->>>> -	l_mg->bb_aux =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->>>> -	if (!l_mg->bb_aux) {
->>>> -		ret =3D -ENOMEM;
->>>> -		goto fail_free_bb_template;
->>>> -	}
->>>> -
->>>> -	bb_distance =3D (geo->all_luns) * geo->sec_per_pl;
->>>> -	for (i =3D 0; i < lm->sec_per_line; i +=3D bb_distance)
->>>> -		bitmap_set(l_mg->bb_template, i, geo->sec_per_pl);
->>>> -
->>>> -	INIT_LIST_HEAD(&l_mg->free_list);
->>>> -	INIT_LIST_HEAD(&l_mg->corrupt_list);
->>>> -	INIT_LIST_HEAD(&l_mg->bad_list);
->>>> -	INIT_LIST_HEAD(&l_mg->gc_full_list);
->>>> -	INIT_LIST_HEAD(&l_mg->gc_high_list);
->>>> -	INIT_LIST_HEAD(&l_mg->gc_mid_list);
->>>> -	INIT_LIST_HEAD(&l_mg->gc_low_list);
->>>> -	INIT_LIST_HEAD(&l_mg->gc_empty_list);
->>>> -
->>>> -	INIT_LIST_HEAD(&l_mg->emeta_list);
->>>> -
->>>> -	l_mg->gc_lists[0] =3D &l_mg->gc_high_list;
->>>> -	l_mg->gc_lists[1] =3D &l_mg->gc_mid_list;
->>>> -	l_mg->gc_lists[2] =3D &l_mg->gc_low_list;
->>>> -
->>>> -	spin_lock_init(&l_mg->free_lock);
->>>> -	spin_lock_init(&l_mg->close_lock);
->>>> -	spin_lock_init(&l_mg->gc_lock);
->>>> -
->>>> -	pblk->lines =3D kcalloc(l_mg->nr_lines, sizeof(struct =
-pblk_line),
->>>> -								=
-GFP_KERNEL);
->>>> -	if (!pblk->lines) {
->>>> -		ret =3D -ENOMEM;
->>>> -		goto fail_free_bb_aux;
->>>> -	}
->>>>    	chunk_log =3D pblk_bb_get_log(pblk);
->>>>  	if (IS_ERR(chunk_log)) {
->>>>  		pr_err("pblk: could not get bad block log (%lu)\n",
->>>>  							=
-PTR_ERR(chunk_log));
->>>>  		ret =3D PTR_ERR(chunk_log);
->>>> -		goto fail_free_lines;
->>>> +		goto fail_free_luns;
->>>> +	}
->>>> +
->>>> +	pblk->lines =3D kcalloc(l_mg->nr_lines, sizeof(struct =
-pblk_line),
->>>> +								=
-GFP_KERNEL);
->>>> +	if (!pblk->lines) {
->>>> +		ret =3D -ENOMEM;
->>>> +		goto fail_free_chunk_log;
->>>>  	}
->>>>    	for (i =3D 0; i < l_mg->nr_lines; i++) {
->>>> @@ -856,7 +887,7 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>    		ret =3D pblk_setup_line_meta(pblk, line, =
-chunk_log, &nr_bad_blks);
->>>>  		if (ret)
->>>> -			goto fail_free_chunk_log;
->>>> +			goto fail_free_lines;
->>>>    		chk_in_line =3D lm->blk_per_line - nr_bad_blks;
->>>>  		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
->>>> @@ -878,16 +909,14 @@ static int pblk_lines_init(struct pblk *pblk)
->>>>  	kfree(chunk_log);
->>>>  	return 0;
->>>>  -fail_free_chunk_log:
->>>> -	kfree(chunk_log);
->>>> +fail_free_lines:
->>>>  	while (--i >=3D 0)
->>>>  		pblk_line_meta_free(&pblk->lines[i]);
->>>> -fail_free_lines:
->>>>  	kfree(pblk->lines);
->>>> -fail_free_bb_aux:
->>>> -	kfree(l_mg->bb_aux);
->>>> -fail_free_bb_template:
->>>> -	kfree(l_mg->bb_template);
->>>> +fail_free_chunk_log:
->>>> +	kfree(chunk_log);
->>>> +fail_free_luns:
->>>> +	kfree(pblk->luns);
->>>>  fail_free_meta:
->>>>  	pblk_line_mg_free(pblk);
->>>>  @@ -930,12 +959,10 @@ static void pblk_writer_stop(struct pblk =
-*pblk)
->>>>    static void pblk_free(struct pblk *pblk)
->>>>  {
->>>> -	pblk_luns_free(pblk);
->>>>  	pblk_lines_free(pblk);
->>>> -	kfree(pblk->pad_dist);
->>>> -	pblk_line_mg_free(pblk);
->>>> -	pblk_core_free(pblk);
->>>>  	pblk_l2p_free(pblk);
->>>> +	pblk_rwb_free(pblk);
->>>> +	pblk_core_free(pblk);
->>>>    	kfree(pblk);
->>>>  }
->>>> @@ -1000,19 +1027,6 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>>>  	spin_lock_init(&pblk->trans_lock);
->>>>  	spin_lock_init(&pblk->lock);
->>>>  -	if (flags & NVM_TARGET_FACTORY)
->>>> -		pblk_setup_uuid(pblk);
->>>> -
->>>> -	atomic64_set(&pblk->user_wa, 0);
->>>> -	atomic64_set(&pblk->pad_wa, 0);
->>>> -	atomic64_set(&pblk->gc_wa, 0);
->>>> -	pblk->user_rst_wa =3D 0;
->>>> -	pblk->pad_rst_wa =3D 0;
->>>> -	pblk->gc_rst_wa =3D 0;
->>>> -
->>>> -	atomic64_set(&pblk->nr_flush, 0);
->>>> -	pblk->nr_flush_rst =3D 0;
->>>> -
->>>>  #ifdef CONFIG_NVM_DEBUG
->>>>  	atomic_long_set(&pblk->inflight_writes, 0);
->>>>  	atomic_long_set(&pblk->padded_writes, 0);
->>>> @@ -1036,48 +1050,35 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>>>  	atomic_long_set(&pblk->write_failed, 0);
->>>>  	atomic_long_set(&pblk->erase_failed, 0);
->>>>  -	ret =3D pblk_luns_init(pblk, dev->luns);
->>>> -	if (ret) {
->>>> -		pr_err("pblk: could not initialize luns\n");
->>>> -		goto fail;
->>>> -	}
->>>> -
->>>> -	ret =3D pblk_lines_init(pblk);
->>>> -	if (ret) {
->>>> -		pr_err("pblk: could not initialize lines\n");
->>>> -		goto fail_free_luns;
->>>> -	}
->>>> -
->>>> -	pblk->pad_dist =3D kzalloc((pblk->min_write_pgs - 1) * =
-sizeof(atomic64_t),
->>>> -				 GFP_KERNEL);
->>>> -	if (!pblk->pad_dist) {
->>>> -		ret =3D -ENOMEM;
->>>> -		goto fail_free_line_meta;
->>>> -	}
->>>> -
->>>>  	ret =3D pblk_core_init(pblk);
->>>>  	if (ret) {
->>>>  		pr_err("pblk: could not initialize core\n");
->>>> -		goto fail_free_pad_dist;
->>>> +		goto fail;
->>>>  	}
->>>>  -	ret =3D pblk_l2p_init(pblk);
->>>> +	ret =3D pblk_lines_init(pblk);
->>>>  	if (ret) {
->>>> -		pr_err("pblk: could not initialize maps\n");
->>>> +		pr_err("pblk: could not initialize lines\n");
->>>>  		goto fail_free_core;
->>>>  	}
->>>>  -	ret =3D pblk_lines_configure(pblk, flags);
->>>> +	ret =3D pblk_rwb_init(pblk);
->>>>  	if (ret) {
->>>> -		pr_err("pblk: could not configure lines\n");
->>>> -		goto fail_free_l2p;
->>>> +		pr_err("pblk: could not initialize write buffer\n");
->>>> +		goto fail_free_lines;
->>>> +	}
->>>> +
->>>> +	ret =3D pblk_l2p_init(pblk, flags & NVM_TARGET_FACTORY);
->>>> +	if (ret) {
->>>> +		pr_err("pblk: could not initialize maps\n");
->>>> +		goto fail_free_rwb;
->>>>  	}
->>>>    	ret =3D pblk_writer_init(pblk);
->>>>  	if (ret) {
->>>>  		if (ret !=3D -EINTR)
->>>>  			pr_err("pblk: could not initialize write =
-thread\n");
->>>> -		goto fail_free_lines;
->>>> +		goto fail_free_l2p;
->>>>  	}
->>>>    	ret =3D pblk_gc_init(pblk);
->>>> @@ -1112,18 +1113,14 @@ static void *pblk_init(struct nvm_tgt_dev =
-*dev, struct gendisk *tdisk,
->>>>    fail_stop_writer:
->>>>  	pblk_writer_stop(pblk);
->>>> -fail_free_lines:
->>>> -	pblk_lines_free(pblk);
->>>>  fail_free_l2p:
->>>>  	pblk_l2p_free(pblk);
->>>> +fail_free_rwb:
->>>> +	pblk_rwb_free(pblk);
->>>> +fail_free_lines:
->>>> +	pblk_lines_free(pblk);
->>>>  fail_free_core:
->>>>  	pblk_core_free(pblk);
->>>> -fail_free_pad_dist:
->>>> -	kfree(pblk->pad_dist);
->>>> -fail_free_line_meta:
->>>> -	pblk_line_mg_free(pblk);
->>>> -fail_free_luns:
->>>> -	pblk_luns_free(pblk);
->>>>  fail:
->>>>  	kfree(pblk);
->>>>  	return ERR_PTR(ret);
->>>=20
->>> Thanks. I'm not able to squash it without conflict. Is it based on =
-for-4.17/core?
->> Yes, it's based on for-4.17/core, but I can see a small conflict due =
-to
->> the patches applied in the middle of these two. How do you want to do
->> it? We can keep them separately, or do a rebase on the current =
-patches.
->=20
-> This is all a bit of a mess- Can you send a fix I can apply that fixes
-> up the 0-day, and then this larger patch can be applied afterwards?
-> (e.g., before at after your other patches)
-
-Not really. The problem is that the original refactoring for the bad
-block table was a bandage on the init/exit sequence problem. The
-init/ext patch is the one that does it properly.
-
-What we can do, since this is only in your tree, is rebase and pull the
-bad block patch up and then merge with init/exit. This way we fix the
-original problem and the introduced double free is non-existing.
-
-I can do the rebasing this evening and put it in a different branch you
-can review.
-
-Javier
-
---Apple-Mail=_1969DF07-46FB-44BF-8209-4E04B8EA0E5C
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlqdSfkACgkQPEYBfS0l
-eOB9XQ/8CIDZDj0VTwyIodCiu7dczmV8vB01JesDUNrWE1XiTuhTdQvEaN6kAmrL
-6WPtCxYRZP2EfEv/TsMfNrGvOTwk/FSna9g+xNSlsNZ/MdS94CIjo8mK79n3Vatq
-fz6vqd8e0vhghoMgqBLNAQdBYNLQaIYWNbawZlbHXB45eAvLTp64iqRwUL1bFXJ1
-1rUNSxsOHjRGfIIZxsvLHn9vl4SZzf7VSbEni9Zb8splNrFrtAG1Em+iQWMcahoe
-QNUgL9jMGUejqAN1sAsB4oXzhJPMdUv8q4WIiqjS4uqCvU8sisOCteAA/bpMu6Yx
-Wx9Ac/153Zw72rv+vGbZWmWEtO+NlnSyl24zVU0IlEh7bdDH2+ir/kfZpxRaUti4
-Ot9uq1BuE0Wx5Qnt3uEyCtMFGiFRmMNpVBneSEDHVop6xslFtH527jeihDw6HoI9
-DsMni/ny2gYXgwnRoYU0BIt7ctP2GixTJADHPW/LksLWssFZKl65B/QfQXg7eOFu
-V2YRPPFuvL9IJGJXr4+F6ENVvugq4JxDE2yFot1jmTYxLy5i8X8Zc9f8hcd6NKhb
-QzkBAQAT3ISrC9Be+W0/pin7Ed3EmMTg6zFPRpgtOmgwt8AjfIySA7CrrZhO03sE
-poU3cKbFBKfMsZ1Tevp2/MBXHCVgwWd1KnO4tBzWLjZ2H85Eq2w=
-=gikR
------END PGP SIGNATURE-----
-
---Apple-Mail=_1969DF07-46FB-44BF-8209-4E04B8EA0E5C--
+>
+>> +	if (drm_info->gem_ops->get_pages(obj))
+>> +		ret = drm_info->front_ops->dbuf_create_from_pages(
+>> +				drm_info->front_info,
+>> +				xen_drm_front_dbuf_to_cookie(obj),
+>> +				args->width, args->height, args->bpp,
+>> +				args->size,
+>> +				drm_info->gem_ops->get_pages(obj));
+>> +	else
+>> +		ret = drm_info->front_ops->dbuf_create_from_sgt(
+>> +				drm_info->front_info,
+>> +				xen_drm_front_dbuf_to_cookie(obj),
+>> +				args->width, args->height, args->bpp,
+>> +				args->size,
+>> +				drm_info->gem_ops->prime_get_sg_table(obj));
+>> +	if (ret)
+>> +		goto fail_destroy;
+>> +
+>> +	return 0;
+>> +
+>> +fail_destroy:
+>> +	drm_gem_dumb_destroy(filp, dev, args->handle);
+>> +fail:
+>> +	DRM_ERROR("Failed to create dumb buffer: %d\n", ret);
+>> +	return ret;
+>>   }
+>>   
+>>   static void free_object(struct drm_gem_object *obj)
+>> @@ -37,6 +83,7 @@ static void free_object(struct drm_gem_object *obj)
+>>   
+>>   	drm_info->front_ops->dbuf_destroy(drm_info->front_info,
+>>   			xen_drm_front_dbuf_to_cookie(obj));
+>> +	drm_info->gem_ops->free_object_unlocked(obj);
+>>   }
+>>   
+>>   static void on_frame_done(struct platform_device *pdev,
+>> @@ -60,32 +107,52 @@ static void lastclose(struct drm_device *dev)
+>>   
+>>   static int gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>>   {
+>> -	return -EINVAL;
+>> +	struct drm_file *file_priv = filp->private_data;
+>> +	struct drm_device *dev = file_priv->minor->dev;
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +
+>> +	return drm_info->gem_ops->mmap(filp, vma);
+> Uh, so 1 midlayer for the kms stuff and another midlayer for the gem
+> stuff. That's way too much indirection.
+If by KMS you mean front_ops then -1: I will remove front_ops.
+As to gem_ops, please see below
+>>   }
+>>   
+>>   static struct sg_table *prime_get_sg_table(struct drm_gem_object *obj)
+>>   {
+>> -	return NULL;
+>> +	struct xen_drm_front_drm_info *drm_info;
+>> +
+>> +	drm_info = obj->dev->dev_private;
+>> +	return drm_info->gem_ops->prime_get_sg_table(obj);
+>>   }
+>>   
+>>   static struct drm_gem_object *prime_import_sg_table(struct drm_device *dev,
+>>   		struct dma_buf_attachment *attach, struct sg_table *sgt)
+>>   {
+>> -	return NULL;
+>> +	struct xen_drm_front_drm_info *drm_info;
+>> +
+>> +	drm_info = dev->dev_private;
+>> +	return drm_info->gem_ops->prime_import_sg_table(dev, attach, sgt);
+>>   }
+>>   
+>>   static void *prime_vmap(struct drm_gem_object *obj)
+>>   {
+>> -	return NULL;
+>> +	struct xen_drm_front_drm_info *drm_info;
+>> +
+>> +	drm_info = obj->dev->dev_private;
+>> +	return drm_info->gem_ops->prime_vmap(obj);
+>>   }
+>>   
+>>   static void prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+>>   {
+>> +	struct xen_drm_front_drm_info *drm_info;
+>> +
+>> +	drm_info = obj->dev->dev_private;
+>> +	drm_info->gem_ops->prime_vunmap(obj, vaddr);
+>>   }
+>>   
+>>   static int prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>>   {
+>> -	return -EINVAL;
+>> +	struct xen_drm_front_drm_info *drm_info;
+>> +
+>> +	drm_info = obj->dev->dev_private;
+>> +	return drm_info->gem_ops->prime_mmap(obj, vma);
+>>   }
+>>   
+>>   static const struct file_operations xendrm_fops = {
+>> @@ -147,6 +214,7 @@ int xen_drm_front_drv_probe(struct platform_device *pdev,
+>>   
+>>   	drm_info->front_ops = front_ops;
+>>   	drm_info->front_ops->on_frame_done = on_frame_done;
+>> +	drm_info->gem_ops = xen_drm_front_gem_get_ops();
+>>   	drm_info->front_info = cfg->front_info;
+>>   
+>>   	dev = drm_dev_alloc(&xen_drm_driver, &pdev->dev);
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_drv.h b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+>> index 563318b19f34..34228eb86255 100644
+>> --- a/drivers/gpu/drm/xen/xen_drm_front_drv.h
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_drv.h
+>> @@ -43,6 +43,7 @@ struct xen_drm_front_drm_pipeline {
+>>   struct xen_drm_front_drm_info {
+>>   	struct xen_drm_front_info *front_info;
+>>   	struct xen_drm_front_ops *front_ops;
+>> +	const struct xen_drm_front_gem_ops *gem_ops;
+>>   	struct drm_device *drm_dev;
+>>   	struct xen_drm_front_cfg *cfg;
+>>   
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>> new file mode 100644
+>> index 000000000000..367e08f6a9ef
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>> @@ -0,0 +1,360 @@
+>> +/*
+>> + *  Xen para-virtual DRM device
+>> + *
+>> + *   This program is free software; you can redistribute it and/or modify
+>> + *   it under the terms of the GNU General Public License as published by
+>> + *   the Free Software Foundation; either version 2 of the License, or
+>> + *   (at your option) any later version.
+>> + *
+>> + *   This program is distributed in the hope that it will be useful,
+>> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + *   GNU General Public License for more details.
+>> + *
+>> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+>> + *
+>> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> + */
+>> +
+>> +#include "xen_drm_front_gem.h"
+>> +
+>> +#include <drm/drmP.h>
+>> +#include <drm/drm_crtc_helper.h>
+>> +#include <drm/drm_fb_helper.h>
+>> +#include <drm/drm_gem.h>
+>> +
+>> +#include <linux/dma-buf.h>
+>> +#include <linux/scatterlist.h>
+>> +#include <linux/shmem_fs.h>
+>> +
+>> +#include <xen/balloon.h>
+>> +
+>> +#include "xen_drm_front.h"
+>> +#include "xen_drm_front_drv.h"
+>> +#include "xen_drm_front_shbuf.h"
+>> +
+>> +struct xen_gem_object {
+>> +	struct drm_gem_object base;
+>> +
+>> +	size_t num_pages;
+>> +	struct page **pages;
+>> +
+>> +	/* set for buffers allocated by the backend */
+>> +	bool be_alloc;
+>> +
+>> +	/* this is for imported PRIME buffer */
+>> +	struct sg_table *sgt_imported;
+>> +};
+>> +
+>> +static inline struct xen_gem_object *to_xen_gem_obj(
+>> +		struct drm_gem_object *gem_obj)
+>> +{
+>> +	return container_of(gem_obj, struct xen_gem_object, base);
+>> +}
+>> +
+>> +static int gem_alloc_pages_array(struct xen_gem_object *xen_obj,
+>> +		size_t buf_size)
+>> +{
+>> +	xen_obj->num_pages = DIV_ROUND_UP(buf_size, PAGE_SIZE);
+>> +	xen_obj->pages = kvmalloc_array(xen_obj->num_pages,
+>> +			sizeof(struct page *), GFP_KERNEL);
+>> +	return xen_obj->pages == NULL ? -ENOMEM : 0;
+>> +}
+>> +
+>> +static void gem_free_pages_array(struct xen_gem_object *xen_obj)
+>> +{
+>> +	kvfree(xen_obj->pages);
+>> +	xen_obj->pages = NULL;
+>> +}
+>> +
+>> +static struct xen_gem_object *gem_create_obj(struct drm_device *dev,
+>> +	size_t size)
+>> +{
+>> +	struct xen_gem_object *xen_obj;
+>> +	int ret;
+>> +
+>> +	xen_obj = kzalloc(sizeof(*xen_obj), GFP_KERNEL);
+>> +	if (!xen_obj)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	ret = drm_gem_object_init(dev, &xen_obj->base, size);
+>> +	if (ret < 0) {
+>> +		kfree(xen_obj);
+>> +		return ERR_PTR(ret);
+>> +	}
+>> +
+>> +	return xen_obj;
+>> +}
+>> +
+>> +static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
+>> +{
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +	struct xen_gem_object *xen_obj;
+>> +	int ret;
+>> +
+>> +	size = round_up(size, PAGE_SIZE);
+>> +	xen_obj = gem_create_obj(dev, size);
+>> +	if (IS_ERR_OR_NULL(xen_obj))
+>> +		return xen_obj;
+>> +
+>> +	if (drm_info->cfg->be_alloc) {
+>> +		/*
+>> +		 * backend will allocate space for this buffer, so
+>> +		 * only allocate array of pointers to pages
+>> +		 */
+>> +		xen_obj->be_alloc = true;
+>> +		ret = gem_alloc_pages_array(xen_obj, size);
+>> +		if (ret < 0) {
+>> +			gem_free_pages_array(xen_obj);
+>> +			goto fail;
+>> +		}
+>> +
+>> +		ret = alloc_xenballooned_pages(xen_obj->num_pages,
+>> +				xen_obj->pages);
+>> +		if (ret < 0) {
+>> +			DRM_ERROR("Cannot allocate %zu ballooned pages: %d\n",
+>> +					xen_obj->num_pages, ret);
+>> +			goto fail;
+>> +		}
+>> +
+>> +		return xen_obj;
+>> +	}
+>> +	/*
+>> +	 * need to allocate backing pages now, so we can share those
+>> +	 * with the backend
+>> +	 */
+>> +	xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
+>> +	xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
+>> +	if (IS_ERR_OR_NULL(xen_obj->pages)) {
+>> +		ret = PTR_ERR(xen_obj->pages);
+>> +		xen_obj->pages = NULL;
+>> +		goto fail;
+>> +	}
+>> +
+>> +	return xen_obj;
+>> +
+>> +fail:
+>> +	DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> +static struct xen_gem_object *gem_create_with_handle(struct drm_file *filp,
+>> +		struct drm_device *dev, size_t size, uint32_t *handle)
+>> +{
+>> +	struct xen_gem_object *xen_obj;
+>> +	struct drm_gem_object *gem_obj;
+>> +	int ret;
+>> +
+>> +	xen_obj = gem_create(dev, size);
+>> +	if (IS_ERR_OR_NULL(xen_obj))
+>> +		return xen_obj;
+>> +
+>> +	gem_obj = &xen_obj->base;
+>> +	ret = drm_gem_handle_create(filp, gem_obj, handle);
+>> +	/* handle holds the reference */
+>> +	drm_gem_object_unreference_unlocked(gem_obj);
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	return xen_obj;
+>> +}
+>> +
+>> +static int gem_dumb_create(struct drm_file *filp, struct drm_device *dev,
+>> +		struct drm_mode_create_dumb *args)
+>> +{
+>> +	struct xen_gem_object *xen_obj;
+>> +
+>> +	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+>> +	args->size = args->pitch * args->height;
+>> +
+>> +	xen_obj = gem_create_with_handle(filp, dev, args->size, &args->handle);
+>> +	if (IS_ERR_OR_NULL(xen_obj))
+>> +		return xen_obj == NULL ? -ENOMEM : PTR_ERR(xen_obj);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void gem_free_object(struct drm_gem_object *gem_obj)
+>> +{
+>> +	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>> +
+>> +	if (xen_obj->base.import_attach) {
+>> +		drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt_imported);
+>> +		gem_free_pages_array(xen_obj);
+>> +	} else {
+>> +		if (xen_obj->pages) {
+>> +			if (xen_obj->be_alloc) {
+>> +				free_xenballooned_pages(xen_obj->num_pages,
+>> +						xen_obj->pages);
+>> +				gem_free_pages_array(xen_obj);
+>> +			} else
+>> +				drm_gem_put_pages(&xen_obj->base,
+>> +						xen_obj->pages, true, false);
+>> +		}
+>> +	}
+>> +	drm_gem_object_release(gem_obj);
+>> +	kfree(xen_obj);
+>> +}
+>> +
+>> +static struct page **gem_get_pages(struct drm_gem_object *gem_obj)
+>> +{
+>> +	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>> +
+>> +	return xen_obj->pages;
+>> +}
+>> +
+>> +static struct sg_table *gem_get_sg_table(struct drm_gem_object *gem_obj)
+>> +{
+>> +	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>> +
+>> +	if (!xen_obj->pages)
+>> +		return NULL;
+>> +
+>> +	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+>> +}
+>> +
+>> +static struct drm_gem_object *gem_import_sg_table(struct drm_device *dev,
+>> +		struct dma_buf_attachment *attach, struct sg_table *sgt)
+>> +{
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +	struct xen_gem_object *xen_obj;
+>> +	size_t size;
+>> +	int ret;
+>> +
+>> +	size = attach->dmabuf->size;
+>> +	xen_obj = gem_create_obj(dev, size);
+>> +	if (IS_ERR_OR_NULL(xen_obj))
+>> +		return ERR_CAST(xen_obj);
+>> +
+>> +	ret = gem_alloc_pages_array(xen_obj, size);
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	xen_obj->sgt_imported = sgt;
+>> +
+>> +	ret = drm_prime_sg_to_page_addr_arrays(sgt, xen_obj->pages,
+>> +			NULL, xen_obj->num_pages);
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	/*
+>> +	 * N.B. Although we have an API to create display buffer from sgt
+>> +	 * we use pages API, because we still need those for GEM handling,
+>> +	 * e.g. for mapping etc.
+>> +	 */
+>> +	ret = drm_info->front_ops->dbuf_create_from_pages(
+>> +			drm_info->front_info,
+>> +			xen_drm_front_dbuf_to_cookie(&xen_obj->base),
+>> +			0, 0, 0, size, xen_obj->pages);
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	DRM_DEBUG("Imported buffer of size %zu with nents %u\n",
+>> +		size, sgt->nents);
+>> +
+>> +	return &xen_obj->base;
+>> +}
+>> +
+>> +static int gem_mmap_obj(struct xen_gem_object *xen_obj,
+>> +		struct vm_area_struct *vma)
+>> +{
+>> +	unsigned long addr = vma->vm_start;
+>> +	int i;
+>> +
+>> +	/*
+>> +	 * clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
+>> +	 * vm_pgoff (used as a fake buffer offset by DRM) to 0 as we want to map
+>> +	 * the whole buffer.
+>> +	 */
+>> +	vma->vm_flags &= ~VM_PFNMAP;
+>> +	vma->vm_flags |= VM_MIXEDMAP;
+>> +	vma->vm_pgoff = 0;
+>> +	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+>> +
+>> +	/*
+>> +	 * vm_operations_struct.fault handler will be called if CPU access
+>> +	 * to VM is here. For GPUs this isn't the case, because CPU
+>> +	 * doesn't touch the memory. Insert pages now, so both CPU and GPU are
+>> +	 * happy.
+>> +	 * FIXME: as we insert all the pages now then no .fault handler must
+>> +	 * be called, so don't provide one
+>> +	 */
+>> +	for (i = 0; i < xen_obj->num_pages; i++) {
+>> +		int ret;
+>> +
+>> +		ret = vm_insert_page(vma, addr, xen_obj->pages[i]);
+>> +		if (ret < 0) {
+>> +			DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +
+>> +		addr += PAGE_SIZE;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>> +{
+>> +	struct xen_gem_object *xen_obj;
+>> +	struct drm_gem_object *gem_obj;
+>> +	int ret;
+>> +
+>> +	ret = drm_gem_mmap(filp, vma);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	gem_obj = vma->vm_private_data;
+>> +	xen_obj = to_xen_gem_obj(gem_obj);
+>> +	return gem_mmap_obj(xen_obj, vma);
+>> +}
+>> +
+>> +static void *gem_prime_vmap(struct drm_gem_object *gem_obj)
+>> +{
+>> +	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>> +
+>> +	if (!xen_obj->pages)
+>> +		return NULL;
+>> +
+>> +	return vmap(xen_obj->pages, xen_obj->num_pages,
+>> +			VM_MAP, pgprot_writecombine(PAGE_KERNEL));
+>> +}
+>> +
+>> +static void gem_prime_vunmap(struct drm_gem_object *gem_obj, void *vaddr)
+>> +{
+>> +	vunmap(vaddr);
+>> +}
+>> +
+>> +static int gem_prime_mmap(struct drm_gem_object *gem_obj,
+>> +	struct vm_area_struct *vma)
+>> +{
+>> +	struct xen_gem_object *xen_obj;
+>> +	int ret;
+>> +
+>> +	ret = drm_gem_mmap_obj(gem_obj, gem_obj->size, vma);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	xen_obj = to_xen_gem_obj(gem_obj);
+>> +	return gem_mmap_obj(xen_obj, vma);
+>> +}
+>> +
+>> +static const struct xen_drm_front_gem_ops xen_drm_gem_ops = {
+>> +	.free_object_unlocked  = gem_free_object,
+>> +	.prime_get_sg_table    = gem_get_sg_table,
+>> +	.prime_import_sg_table = gem_import_sg_table,
+>> +
+>> +	.prime_vmap            = gem_prime_vmap,
+>> +	.prime_vunmap          = gem_prime_vunmap,
+>> +	.prime_mmap            = gem_prime_mmap,
+>> +
+>> +	.dumb_create           = gem_dumb_create,
+>> +
+>> +	.mmap                  = gem_mmap,
+>> +
+>> +	.get_pages             = gem_get_pages,
+>> +};
+>> +
+>> +const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void)
+>> +{
+>> +	return &xen_drm_gem_ops;
+>> +}
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.h b/drivers/gpu/drm/xen/xen_drm_front_gem.h
+>> new file mode 100644
+>> index 000000000000..d1e1711cc3fc
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.h
+>> @@ -0,0 +1,46 @@
+>> +/*
+>> + *  Xen para-virtual DRM device
+>> + *
+>> + *   This program is free software; you can redistribute it and/or modify
+>> + *   it under the terms of the GNU General Public License as published by
+>> + *   the Free Software Foundation; either version 2 of the License, or
+>> + *   (at your option) any later version.
+>> + *
+>> + *   This program is distributed in the hope that it will be useful,
+>> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + *   GNU General Public License for more details.
+>> + *
+>> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+>> + *
+>> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> + */
+>> +
+>> +#ifndef __XEN_DRM_FRONT_GEM_H
+>> +#define __XEN_DRM_FRONT_GEM_H
+>> +
+>> +#include <drm/drmP.h>
+>> +
+>> +struct xen_drm_front_gem_ops {
+>> +	void (*free_object_unlocked)(struct drm_gem_object *obj);
+>> +
+>> +	struct sg_table *(*prime_get_sg_table)(struct drm_gem_object *obj);
+>> +	struct drm_gem_object *(*prime_import_sg_table)(struct drm_device *dev,
+>> +			struct dma_buf_attachment *attach,
+>> +			struct sg_table *sgt);
+>> +	void *(*prime_vmap)(struct drm_gem_object *obj);
+>> +	void (*prime_vunmap)(struct drm_gem_object *obj, void *vaddr);
+>> +	int (*prime_mmap)(struct drm_gem_object *obj,
+>> +			struct vm_area_struct *vma);
+>> +
+>> +	int (*dumb_create)(struct drm_file *file_priv, struct drm_device *dev,
+>> +			struct drm_mode_create_dumb *args);
+>> +
+>> +	int (*mmap)(struct file *filp, struct vm_area_struct *vma);
+>> +
+>> +	struct page **(*get_pages)(struct drm_gem_object *obj);
+>> +};
+>> +
+>> +const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void);
+>> +
+>> +#endif /* __XEN_DRM_FRONT_GEM_H */
+>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c b/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>> new file mode 100644
+>> index 000000000000..5ffcbfa652d5
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>> @@ -0,0 +1,93 @@
+>> +/*
+>> + *  Xen para-virtual DRM device
+>> + *
+>> + *   This program is free software; you can redistribute it and/or modify
+>> + *   it under the terms of the GNU General Public License as published by
+>> + *   the Free Software Foundation; either version 2 of the License, or
+>> + *   (at your option) any later version.
+>> + *
+>> + *   This program is distributed in the hope that it will be useful,
+>> + *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + *   GNU General Public License for more details.
+>> + *
+>> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+>> + *
+>> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> + */
+>> +
+>> +#include <drm/drmP.h>
+>> +#include <drm/drm_gem.h>
+>> +#include <drm/drm_fb_cma_helper.h>
+>> +#include <drm/drm_gem_cma_helper.h>
+>> +
+>> +#include "xen_drm_front.h"
+>> +#include "xen_drm_front_drv.h"
+>> +#include "xen_drm_front_gem.h"
+>> +
+>> +static struct drm_gem_object *gem_import_sg_table(struct drm_device *dev,
+>> +		struct dma_buf_attachment *attach, struct sg_table *sgt)
+>> +{
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +	struct drm_gem_object *gem_obj;
+>> +	struct drm_gem_cma_object *cma_obj;
+>> +	int ret;
+>> +
+>> +	gem_obj = drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
+>> +	if (IS_ERR_OR_NULL(gem_obj))
+>> +		return gem_obj;
+>> +
+>> +	cma_obj = to_drm_gem_cma_obj(gem_obj);
+>> +
+>> +	ret = drm_info->front_ops->dbuf_create_from_sgt(
+>> +			drm_info->front_info,
+>> +			xen_drm_front_dbuf_to_cookie(gem_obj),
+>> +			0, 0, 0, gem_obj->size,
+>> +			drm_gem_cma_prime_get_sg_table(gem_obj));
+>> +	if (ret < 0)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	DRM_DEBUG("Imported CMA buffer of size %zu\n", gem_obj->size);
+>> +
+>> +	return gem_obj;
+>> +}
+>> +
+>> +static int gem_dumb_create(struct drm_file *filp, struct drm_device *dev,
+>> +	struct drm_mode_create_dumb *args)
+>> +{
+>> +	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>> +
+>> +	if (drm_info->cfg->be_alloc) {
+>> +		/* This use-case is not yet supported and probably won't be */
+>> +		DRM_ERROR("Backend allocated buffers and CMA helpers are not supported at the same time\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return drm_gem_cma_dumb_create(filp, dev, args);
+>> +}
+>> +
+>> +static struct page **gem_get_pages(struct drm_gem_object *gem_obj)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>> +static const struct xen_drm_front_gem_ops xen_drm_front_gem_cma_ops = {
+>> +	.free_object_unlocked  = drm_gem_cma_free_object,
+>> +	.prime_get_sg_table    = drm_gem_cma_prime_get_sg_table,
+>> +	.prime_import_sg_table = gem_import_sg_table,
+>> +
+>> +	.prime_vmap            = drm_gem_cma_prime_vmap,
+>> +	.prime_vunmap          = drm_gem_cma_prime_vunmap,
+>> +	.prime_mmap            = drm_gem_cma_prime_mmap,
+>> +
+>> +	.dumb_create           = gem_dumb_create,
+>> +
+>> +	.mmap                  = drm_gem_cma_mmap,
+>> +
+>> +	.get_pages             = gem_get_pages,
+>> +};
+> Again quite a midlayer you have here. Please inline this to avoid
+> confusion for other people (since it looks like you only have 1
+> implementation).
+There are 2 implementations depending on driver compile time options:
+you can have the GEM operations implemented with DRM CMA helpers
+or driver's cooked GEMs. For this reason this midlayer exists, e.g.
+to eliminate the need for something like
+#ifdef DRM_XEN_FRONTEND_CMA
+drm_gem_cma_...()
+#else
+xen_drm_front_gem_...()
+#endif
+So, I would prefer to have ops rather then having ifdefs
+>
+>> +
+>> +const struct xen_drm_front_gem_ops *xen_drm_front_gem_get_ops(void)
+>> +{
+>> +	return &xen_drm_front_gem_cma_ops;
+>> +}
+>> -- 
+>> 2.7.4
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
