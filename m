@@ -1,106 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934104AbeCENvP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 08:51:15 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57707 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933502AbeCENvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 08:51:13 -0500
-Date: Mon, 5 Mar 2018 14:51:10 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        quentin.schulz@bootlin.com
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-Message-ID: <20180305145110.2f43802a@dell-desktop.home>
-In-Reply-To: <20180305083114.dwqfdqlziwptfnxq@flea.lan>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
-        <20180223133742.26044-11-mylene.josserand@bootlin.com>
-        <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
-        <20180226101252.ozdsxjvawgkemz2c@flea.lan>
-        <CAGb2v64SaBR-_nL9S20eXe57r_kJTiqSg-di=_mZrv3Yx2-2JA@mail.gmail.com>
-        <20180305085148.1de2a99c@dell-desktop.home>
-        <20180305083114.dwqfdqlziwptfnxq@flea.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S935325AbeCENxk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 08:53:40 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52304 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935294AbeCENxe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 08:53:34 -0500
+Date: Mon, 5 Mar 2018 14:53:22 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC/RFT][PATCH 4/7] cpuidle: menu: Split idle duration
+ prediction from state selection
+Message-ID: <20180305135322.GV25201@hirez.programming.kicks-ass.net>
+References: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
+ <2332986.m9oRvTSu8E@aspire.rjw.lan>
+ <20180305113803.GO25201@hirez.programming.kicks-ass.net>
+ <CAJZ5v0gdsSXOLL=nJW801L0LzE0CeyPCCrgq4_0tyi40wNLa+w@mail.gmail.com>
+ <20180305125012.GA25181@hirez.programming.kicks-ass.net>
+ <CAJZ5v0g5x9EWh0MH7wUh4sem9aYB-JuWb_Pn96qNwj=XefOcHg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0g5x9EWh0MH7wUh4sem9aYB-JuWb_Pn96qNwj=XefOcHg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Mar 05, 2018 at 02:05:10PM +0100, Rafael J. Wysocki wrote:
+> On Mon, Mar 5, 2018 at 1:50 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Mon, Mar 05, 2018 at 12:47:23PM +0100, Rafael J. Wysocki wrote:
 
-On Mon, 5 Mar 2018 09:31:14 +0100
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >> IOW, the target residency of the selected state doesn't tell you how
+> >> much time you should expect to be idle in general.
+> >
+> > Right, but I think that measure isn't of primary relevance. What we want
+> > to know is: 'should I stop the tick' and 'what C state do I go to'.
+> >
+> > In order to answer those questions we need durations as input, but I
+> > don't think we should preserve durations throughout. The scheme from the
+> > above link reduces to N states in order to deal with arbitrary
+> > distributions, only the actual states -- ie boundaries where our answers
+> > changes -- are relevant, anything inside those boundaries would lead to
+> > the exact same answer anyway.
+> 
+> I generally agree here, but I'm not convinced about flagging the
+> states, splitting them and so on.
 
-> On Mon, Mar 05, 2018 at 08:51:48AM +0100, Mylène Josserand wrote:
-> > > >> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > > >> > index 5e9602ce1573..4bb041492b54 100644
-> > > >> > --- a/arch/arm/mach-sunxi/sunxi.c
-> > > >> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > > >> > @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
-> > > >> >  };
-> > > >> >
-> > > >> >  extern void __init sun6i_reset_init(void);
-> > > >> > +extern void sunxi_init_cntvoff(void);
-> > > >> > +
-> > > >> >  static void __init sun6i_timer_init(void)
-> > > >> >  {
-> > > >> > +       sunxi_init_cntvoff();    
-> > > >>
-> > > >> You should check the enable-method to see if PSCI is set or not,
-> > > >> as an indicator whether the kernel is booted secure or non-secure.    
-> > > >
-> > > > It's an indicator, but it's not really a perfect one. You could very
-> > > > well have your kernel booted in non-secure, without PSCI. Or even with
-> > > > PSCI, but without the SMP ops.
-> > > >
-> > > > We have a quite big number of these cases already, where, depending on
-> > > > the configuration, we might not have access to the device we write to,
-> > > > the number of hacks to just enable that device for non-secure is a
-> > > > good example of that.    
-> > > 
-> > > I wouldn't consider them hacks though. The hardware gives the option
-> > > to have control of many devices delegated solely to secure-only, or
-> > > secure/non-secure. Our present model is to support everything we can
-> > > in Linux directly, instead of through some firmware interface to a
-> > > non-existent firmware.  
-> > 
-> > I am not sure to understand what is the conclusion about it.
-> > Should I use "psci"/enable-method or should I use another mechanism to
-> > detect we are in secure/non-secure (if it exists)?
-> > 
-> > Otherwise, for the moment, I can use machine-compatible on sun8i-a83t
-> > and we will see later how we can handle it in a better way.  
-> 
-> Can't we have another approach here?
-> 
-> If we use an enable-method (and we should), instead of having it tied
-> to the machine compatible, the SMP setup code will run only if our
-> enable-method is the one we set up. If PSCI is in use, the
-> enable-method is not going to be the one defined here, and the code
-> will not run.
-> 
-> So why not just move that call to the SMP ops setup function, just
-> like renesas does?
-> 
-> Maxime
-> 
+I think linking them like that makes sense, but I can see room for
+discussion...
 
-Okay, I will update my series and handle the differences using
-enable-method instead of machine-compatible.
+> Maybe just return a "nohz" indicator from cpuidle_select() in addition
+> to the state index and make the decision in the governor?
 
-Best regards,
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Much better option than returning a duration :-)
