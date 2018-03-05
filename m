@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933335AbeCEJ4S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:56:18 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56612 "EHLO mx1.redhat.com"
+        id S932989AbeCEKEJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 05:04:09 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55542 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932872AbeCEJ4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:56:15 -0500
+        id S1751824AbeCEKEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 05:04:07 -0500
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: Andy Lutomirski <luto@kernel.org>
 Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
@@ -13,14 +13,14 @@ Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
         Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH RFC 1/3] x86/kvm/vmx: read MSR_FS_BASE from current->thread
+Subject: Re: [PATCH RFC 3/3] x86/kvm/vmx: avoid expensive rdmsr for MSR_GS_BASE
 References: <20180302105503.24428-1-vkuznets@redhat.com>
-        <20180302105503.24428-2-vkuznets@redhat.com>
-        <CALCETrX0CB_+QvDH3B8fYdH+ekRRX-i=jZU7zQ8qYbGzDrM-uQ@mail.gmail.com>
-Date: Mon, 05 Mar 2018 10:56:11 +0100
-In-Reply-To: <CALCETrX0CB_+QvDH3B8fYdH+ekRRX-i=jZU7zQ8qYbGzDrM-uQ@mail.gmail.com>
-        (Andy Lutomirski's message of "Fri, 2 Mar 2018 20:18:18 +0000")
-Message-ID: <874llu26dg.fsf@vitty.brq.redhat.com>
+        <20180302105503.24428-4-vkuznets@redhat.com>
+        <CALCETrVhRP5W8jS0a+_Kq8BqJatszz0vu6keB=M7kr5c=KLi4g@mail.gmail.com>
+Date: Mon, 05 Mar 2018 11:04:04 +0100
+In-Reply-To: <CALCETrVhRP5W8jS0a+_Kq8BqJatszz0vu6keB=M7kr5c=KLi4g@mail.gmail.com>
+        (Andy Lutomirski's message of "Fri, 2 Mar 2018 20:20:54 +0000")
+Message-ID: <87zi3mzvmz.fsf@vitty.brq.redhat.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -32,25 +32,42 @@ Andy Lutomirski <luto@kernel.org> writes:
 
 > On Fri, Mar 2, 2018 at 10:55 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 >> vmx_save_host_state() is only called from kvm_arch_vcpu_ioctl_run() so
->> the context is pretty well defined
+>> the context is pretty well defined and as we're past 'swapgs' MSR_GS_BASE
+>> should contain kernel's GS base which we point to irq_stack_union.
 >>
+>> irq_stack_union needs to be exported as KVM can be a module.
+>>
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/kernel/cpu/common.c | 1 +
+>>  arch/x86/kvm/vmx.c           | 3 ++-
+>>  2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+>> index 348cf4821240..057393711093 100644
+>> --- a/arch/x86/kernel/cpu/common.c
+>> +++ b/arch/x86/kernel/cpu/common.c
+>> @@ -1398,6 +1398,7 @@ __setup("clearcpuid=", setup_clearcpuid);
+>>  #ifdef CONFIG_X86_64
+>>  DEFINE_PER_CPU_FIRST(union irq_stack_union,
+>>                      irq_stack_union) __aligned(PAGE_SIZE) __visible;
+>> +EXPORT_PER_CPU_SYMBOL(irq_stack_union);
 >
-> True.
+> GPL.
 >
->> and MSR_FS_BASE should always be
->> equal to current->thread.fsbase.
->
-> Not true.  current->thread.fsbase is almost entirely undefined in this
-> context.  What you *could* do is export save_fsgs() and call it first.
-> When FSGSBASE support lands (which will happen eventually!), the code
-> in your patch will be completely wrong.
->
-> Admittedly, your patch isn't 100% bogus, but the reason is subtle and
-> you need lots of comments there *and* in save_fsgs().
+> Also, can you add a static inline unsigned long
+> this_cpu_kernelmode_gs_base() that returns the actual value and then
+> use it here and in arch/x86/cpu/common.c?  I really don't like the way
+> that KVM code hardcodes all kinds of assumptions about how the rest of
+> the x86 code works rather than improving the x86 code to have the
+> right hooks for KVM's use.
 
-Thank you Andy,
+Sure, will do.
 
-I'll take a look.
+Doing plain rdmsr() in KVM is definitely cleaner and less fragile but
+assuming 240 cpu cycles I'm cutting with this series justify the
+increased complexity suggestions to avoid hardcoding x86 internals and
+make clean API are more than welcome. Thank you!
 
 -- 
   Vitaly
