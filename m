@@ -1,199 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932112AbeCEQTs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:19:48 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53076 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751779AbeCEQTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:19:36 -0500
-Date: Mon, 5 Mar 2018 16:19:28 +0000
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: kishon@ti.com, Bjorn Helgaas <bhelgaas@google.com>,
-        Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        John Keeping <john@metanate.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] PCI: endpoint: Handle 64-bit BARs properly
-Message-ID: <20180305161928.GA30407@e107981-ln.cambridge.arm.com>
-References: <20180227115908.14593-1-niklas.cassel@axis.com>
- <20180227115908.14593-2-niklas.cassel@axis.com>
- <20180228142148.GD21854@e107981-ln.cambridge.arm.com>
- <20180301144030.GA2348@axis.com>
+        id S932188AbeCEQUK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:20:10 -0500
+Received: from mga09.intel.com ([134.134.136.24]:18219 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751779AbeCEQUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:20:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
+   d="scan'208";a="205630938"
+Subject: Re: [PATCH v1 0/3] perf: expose thread context switch out event type
+ to user space
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitri Prokhorov <Dmitry.Prohorov@intel.com>
+References: <6db586f3-36da-285c-b008-f2722419fbf8@linux.intel.com>
+ <20180305150610.GB22849@kernel.org>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b0bb68a8-383e-47e9-b159-3fb5e0ec9bcd@linux.intel.com>
+Date: Mon, 5 Mar 2018 19:20:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301144030.GA2348@axis.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180305150610.GB22849@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 03:40:30PM +0100, Niklas Cassel wrote:
-> On Wed, Feb 28, 2018 at 02:21:48PM +0000, Lorenzo Pieralisi wrote:
-> > On Tue, Feb 27, 2018 at 12:59:05PM +0100, Niklas Cassel wrote:
-> > > A 64-bit BAR uses the succeeding BAR for the upper bits, therefore
-> > > we cannot call pci_epc_set_bar() on a BAR that follows a 64-bit BAR.
-> > > 
-> > > If pci_epc_set_bar() is called with flag PCI_BASE_ADDRESS_MEM_TYPE_64,
-> > 
-> > PCI_BASE_ADDRESS_MEM_TYPE_64 is detected through a sizeof(dma_addr_t).
-> > 
-> > I thought we decided to describe the BARs not as dma_addr_t + size but
-> > as resources, which would allow you to have flags describing their
-> > actual size.
-> > 
-> > Current code has a fixed BAR size defined by the dma_addr_t type size
-> > and I do not think that's what we really want.
-> 
-> You suggested to Kishon that the bar member array should be refactored
-> to be an array of struct resources:
-> 
-> https://marc.info/?l=linux-pci&m=151851776921594&w=2
-> 
-> That refactoring would be a good thing,
-> but can't it be done after the merge of this patch?
+Hi Arnaldo,
 
-This patch does not look right to me - a BAR size should not be
-determined by sizeof(dma_addr_t) and on top of that this code is not
-easy to comprehend.
+On 05.03.2018 18:06, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Mar 05, 2018 at 02:35:02PM +0300, Alexey Budankov escreveu:
+>>
+>> Here is a series of small patches that implement exposing type of 
+>> context-switch-out event as a part of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+>>
+>> Introduced types of context-switch-out events assumed to be:
+>> a) preempt: task->state == TASK_RUNNING
+>> 	misc &= PERF_RECORD_MISC_SWITCH_OUT
+>> 	
+>> b) yield: !preempt - using new bit PERF_RECORD_MISC_SWITCH_OUT_YIELD:
+>  	misc &= PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+>>
+>> Perf tool report and script commands output has been extended to decode 
+>> new yield bit and the updated output looks like in the examples below.
+> 
+> I'm just waiting for the current reviewers to be satisfied with this,
+> but I think this is a great addition and 'perf trace' is another tool
+> that should jump into this, showing forced context switches together
+> with syscalls.
 
-> I'm guessing that one of the reasons why you want this
-> refactoring is so that you can actually call pci_epc_set_bar()
-> on each array member, so that you don't need my patch:
-> > > +           if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-> > > +                   bar++;
-> 
-> However, if we want to omit this, I think that other changes would be needed.
-> 
-> Let's say that resource[x] is 64-bit, then resource[x+1] must not have
-> (IORESOURCE_MEM or IORESOURCE_IO) set.
-> 
-> It is important that BAR[x+1] == 0, for a 64-bit BAR.
-> 
-> So either pci_epc_set_bar() or epc->ops->set_bar()
-> must know to not touch its BAR (or BAR mask) register
-> if neither of those flags are set.
-> 
-> It's probably easier to change pci_epc_set_bar(), rather than
-> changing all epc->ops->set_bar() implementations,
-> here is e.g. part of set_bar() for DesignWare:
-> 
-> static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
->                               enum pci_barno bar,
->                               dma_addr_t bar_phys, size_t size, int flags)
-> {
->         int ret;
->         struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->         struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->         enum dw_pcie_as_type as_type;
->         u32 reg = PCI_BASE_ADDRESS_0 + (4 * bar);
-> 
->         if (!(flags & PCI_BASE_ADDRESS_SPACE))
->                 as_type = DW_PCIE_AS_MEM;
->         else
->                 as_type = DW_PCIE_AS_IO;
-> 
-> 
-> So I still see a point in having this patch, at least until
-> someone has refactored the code to use resource + modified pci_epc_set_bar().
+It's great to know there is a value in that change for other Perf tools.
 
-But the point is that, IIUC (because again - this code path is really
-confusing) it is up to the specific implementation to turn a struct
-pci_epf_bar into a *real* BAR and that's implementation specific
-(even though there must be a 1:1 relationship between
-struct pci_epf_bar.size and the actual BAR size in the device, ie
-if struct pci_epf_bar.size exceeds 32-bit space we need a 64-bit
-BAR to represent it).
+Extending perf trace (strace inspired) tool in that respect might makes 
+sense. I anticipate possible tracing overhead needs to be expected and 
+probably handled somehow.
 
-I assume the problem here is having a 1:1 index mapping between the
-struct pci_epf.bar[6] array and the BAR index programmed into the
-device. If that's the case - I see two options:
+But, anyway, yep, per-thread syscall traces enriched with typed context 
+switch boundaries may be the great extension, in comparison to the 
+original strace tool.
 
-- Use struct epf_bar.size to drive the reg increment (ie reg++ if
-  size > 4G)
-- Add a return value to struct pci_epc.ops.set_bar() that returns
-  whether a 64-bit BAR was set-up (which is the same __pci_read_base()
-  does in PCI core)
+IMHO, some simple summary metrics like amount of preempt or yield 
+context switches (per-thread or per-process) could bring even more 
+value into perf trace tool functionality.
 
-Please let me know if I have not got this right so that we can make
-progress.
+BR,
+Alexey
 
-Thanks,
-Lorenzo
-
-> > How is (in HW I mean) actually the BAR size configured in a given EPF ?
 > 
-> For the DesignWare PCIe controller (assuming it has been synthesized with
-> Programmable Masks), to configure a BAR, you set the usual prefetch+type bits
-> in the standard PCI BAR register, but then the controller also has, for each
-> bar, a special BAR mask register, which dw_pcie_ep_set_bar() sets to (size-1),
-> this defines which bits that will be writable by the RC (and the RC can figure
-> out the size of the BAR by writing all 1's as usual).
-> 
-> For a 64-bit Memory Space BAR of size 16 GiB (prefetchable), you would set:
-> BAR[x]        = 0000 0000 0000 0000 0000 0000 0000 1100
-> BAR[x+1]      = 0000 0000 0000 0000 0000 0000 0000 0000
-> 
-> BAR_MASK[x]   = 1111 1111 1111 1111 1111 1111 1111 1111
-> BAR_MASK[x+1] = 0000 0000 0000 0000 0000 0000 0000 0011
-> 
-> 
-> 
-> I guess that instead of patch 3/3 in this patch series,
-> we could do:
-> 
-> --- a/drivers/pci/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> @@ -136,8 +136,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
->                 return ret;
+> - Arnaldo
 >  
->         dw_pcie_dbi_ro_wr_en(pci);
-> -       dw_pcie_writel_dbi2(pci, reg, size - 1);
-> -       dw_pcie_writel_dbi(pci, reg, flags);
-> +       if (upper_32_bits(size)) {
-> +               dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> +               dw_pcie_writel_dbi(pci, reg, flags);
-> +               dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> +               dw_pcie_writel_dbi(pci, reg + 4, 0);
-> +       } else {
-> +               dw_pcie_writel_dbi2(pci, reg, size - 1);
-> +               dw_pcie_writel_dbi(pci, reg, flags);
-> +       }
->         dw_pcie_dbi_ro_wr_dis(pci);
->  
->         return 0;
+>> The documentation has been updated to mention yield switch out events and its 
+>> decoding symbols in perf script output.
+>>
+>> The changes have been manually tested on Fedora 27 with the patched kernel:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+>>
+>> perf report -D -i system-wide.perf: 
+>>
+>> 0x1b9c50 [0x30]: event: 15
+>> .
+>> . ... raw event: size 48 bytes
+>> .  0000:  0f 00 00 00 00 20 30 00 01 1e 00 00 01 1e 00 00  ..... 0.........
+>> .  0010:  00 00 00 00 00 00 00 00 85 ae d4 e3 3e 0e 00 00  ............>...
+>> .  0020:  54 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  T...............
+>>
+>> 5 15663273127557 0x1b9c50 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:  7681/7681 
+>>
+>> 0x2646c0 [0x30]: event: 15
+>> .
+>> . ... raw event: size 48 bytes
+>> .  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
+>> .  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
+>> .  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
+>>
+>> 7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
+>>
+>> perf script --show-switch-events -F +misc -I -i system-wide.perf:
+>>
+>> amplxe-perf  7681 [005] S     15663.273151: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:    39/39   
+>> migration/5    39 [005]       15663.273152: PERF_RECORD_SWITCH_CPU_WIDE IN   prev pid/tid:  7681/7681 
+>> amplxe-perf  7680 [007] K     15663.273153:          1                                                                                                                                       context-switch: 
+>>                   aaa488 schedule ([kernel.kallsyms])
+>>                   1a9f50 __poll_nocancel (inlined)
+>>
+>> amplxe-perf  7680 [007] Sy    15663.273156: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
+>> migration/5    39 [005] K     15663.273157:
+>>
+>> ---
+>>  Alexey Budankov (3):
+>> 	perf/core: store context switch out type into Perf trace
+>> 	perf report: extend raw dump (-D) out with switch out event type
+>> 	perf script: extend misc field decoding with switch out event type
+>>   
+>>  include/uapi/linux/perf_event.h          |  5 +++++
+>>  kernel/events/core.c                     |  4 +++-
+>>  tools/include/uapi/linux/perf_event.h    |  5 +++++
+>>  tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+>>  tools/perf/builtin-script.c              |  5 ++++-
+>>  tools/perf/util/event.c                  |  4 +++-
+>>  6 files changed, 29 insertions(+), 11 deletions(-)
 > 
-> However, since I don't have access to a 64-bit CPU with loads of RAM,
-> that has the DesignWare PCIe controller, that patch is completely untested.
-> But if everyone agrees, we could replace 3/3 of this series with that.
-> 
-> 
-> > 
-> > Thanks,
-> > Lorenzo
-> > 
-> > > it has to be up to the controller driver to write both BAR[x] and BAR[x+1]
-> > > (and BAR_mask[x] and BAR_mask[x+1]).
-> > > 
-> > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > > ---
-> > >  drivers/pci/endpoint/functions/pci-epf-test.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > index 64d8a17f8094..ecbf6a7750dc 100644
-> > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > > @@ -382,6 +382,8 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
-> > >  			if (bar == test_reg_bar)
-> > >  				return ret;
-> > >  		}
-> > > +		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-> > > +			bar++;
-> > >  	}
-> > >  
-> > >  	return 0;
-> > > -- 
-> > > 2.14.2
-> > > 
