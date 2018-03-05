@@ -1,23 +1,23 @@
 Return-Path: <jarkko.sakkinen@intel.com>
-X-Google-Smtp-Source: AG47ELuqnVGP82sI9yP8FeqORApHfgwyVb/zDC2gPxFUUGih3xdq7riG4yVlj2WtANzH+f3T3FnZ
-ARC-Seal: i=1; a=rsa-sha256; t=1520260767; cv=none;
+X-Google-Smtp-Source: AG47ELtEcak+DqyLCuIlHTEygoqFZ64hdgtQEnVSEMxTQzlNCJIn/BoPKbBW4KzVujTtjSOKLP4T
+ARC-Seal: i=1; a=rsa-sha256; t=1520260762; cv=none;
         d=google.com; s=arc-20160816;
-        b=kVA3Nhj+yqLxHE7oEn1rnAW+/gL7oWwJtnuvsXFj4D+qpm3hkcIg9ynp9elVN/QTPc
-         f57nFLrVz91tsSaxw6ztT0XUF8pXy2mn1Iiy1eMadTg6yWLGN2B0Q+Q6xOoQSamy9hBS
-         IEwrgQbV3Gm+x6bL0VKDhu1XZAxUa7LR896YSQ2svwqp/UxM75em94hjF8/Z2F5S9lCz
-         u9ioAnBA8dVmdEKW9DVe/hQHs+CWwYTaU7CNv7RpWEDAq/tKz8zOkcchPy0KdFuGzxeV
-         w+Ba2/XFy+kb6ObkEiQOHuFE/ZMCGTIwnozqT6dj8PFTpiSWtXD5lSkQKcr5/pyu5xhj
-         YVYQ==
+        b=sqXtFS9Er+goX6CEA4qlCtBXXbsM5aL8LCnI0nU9fgEuMBEu78u503smmEWPXhLlJz
+         cmg15dkH74aa/d0l7pt8rx/N601WAYYnRHPDvaJadBSqMEbi5VUcLajmYzn87AoplD8c
+         nlJBAhXVsdj9p+85NrSwe+EtNhKCJUqol74NG9SX4YmSITEjep4fdPtYfVJLnwzYHsTH
+         Hj1WNyp/ivl8xLsrmdj8TeTLh7MUr6siJQ66xfDsX0E1f4OHInHD5Wqqpd0FCenUBXm4
+         /5+vVDvRQYTRhR7HsQc1z6bsi6lgkVUi48L2k9Dy2G9evJXymO6+Xk+Z/2cmHqIKkvKe
+         PHOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=bHMPeEj0//l/ks4Dln0NUjIK9sgUzoTUIdLtOvl6KJk=;
-        b=VJWJYqqZ3ftTVUZr8oka++nt6JeUH2CkqQYcqn+pcBr2vMBIqh9x3+wUE1IucqZB5n
-         +98LFzQyJ58XR4rzu9Akt82eKEtufzvtESi2K4e1axZvhpZ6DkK4184v8W3C3tROuxCh
-         VUc6kB1OFccSIyHp2zYvwCLXvL05UmBIGP4x8RGg+lJ+Of1wsAn/oDmC1olhUeUdlY7T
-         gnJMlYBKTAXpJAcJkX/9tp22UZ4RKIQdgclOV+BjISa8vNtVaiFsJmDFr0DI1V3Z8EtZ
-         +yPxsphyG4cq8YkRXXkGCRlLrLCaf0FG6KbpX4U8CHg4ie7pI2bkxaxXDocBpzofI9IG
-         XbCw==
+        bh=3gTLm2ca4m1CcgikeDZsJ330ts2mmYBrOMhCFlNASQA=;
+        b=IuEqE5rbXrF93cgO18ZetXBk0CNbm8ExTjdMuCsLekN9QL0ahyNxl/4zFXH+OIibmp
+         y8H8NGMDgWCN3bAGEmJ1lq5mj+4O41qmASGdKxNdeEinA+tkwqYKTY2hFkLnRpxlQtdF
+         RGASP90qHya1zTShCyqNgenvr3AVIaC73o1sXY+D0NVKlcov7Dp3Bxtz1BXdyArp1aM6
+         trk9nOL1m0SclgSIZOZkyefCXNMUUbkiqBfpgPbLIeKaropGxIRaN5gka/pdiHmJ8LOc
+         voGt9WluBGIIiWCBw8OyRcYi0Ygtow4hYNoTYbPlx2O51r+nKBmz/5opy85vNIULJKfO
+         Z+9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jarkko.sakkinen@intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=jarkko.sakkinen@intel.com
 Authentication-Results: mx.google.com;
@@ -26,126 +26,225 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="39325812"
+   d="scan'208";a="39325779"
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: linux-integrity@vger.kernel.org
 Cc: linux-security-module@vger.kernel.org,
 	keyrings@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	stable@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>,
 	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/5] tpm: migrate tpm2_shutdown() to use struct tpm_buf
-Date: Mon,  5 Mar 2018 16:39:00 +0200
-Message-Id: <20180305143904.7477-3-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v2 1/5] tpm: fix intermittent failure with self tests
+Date: Mon,  5 Mar 2018 16:38:59 +0200
+Message-Id: <20180305143904.7477-2-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
 References: <20180305143904.7477-1-jarkko.sakkinen@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594108954042776434?=
-X-GMAIL-MSGID: =?utf-8?q?1594108954042776434?=
+X-GMAIL-THRID: =?utf-8?q?1594108949251413993?=
+X-GMAIL-MSGID: =?utf-8?q?1594108949251413993?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In order to make struct tpm_buf the first class object for constructing TPM
-commands, migrate tpm2_shutdown() to use it. In addition, removed the klog
-entry when tpm_transmit_cmd() fails because tpm_tansmit_cmd() already
-prints an error message.
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+My Nuvoton 6xx in a Dell XPS-13 has been intermittently failing to work
+(necessitating a reboot). The problem seems to be that the TPM gets into a
+state where the partial self-test doesn't return TPM_RC_SUCCESS (meaning
+all tests have run to completion), but instead returns TPM_RC_TESTING
+(meaning some tests are still running in the background).  There are
+various theories that resending the self-test command actually causes the
+tests to restart and thus triggers more TPM_RC_TESTING returns until the
+timeout is exceeded.
+
+There are several issues here: firstly being we shouldn't slow down the
+boot sequence waiting for the self test to complete once the TPM
+backgrounds them.  It will actually make available all functions that have
+passed and if it gets a failure return TPM_RC_FAILURE to every subsequent
+command.  So the fix is to kick off self tests once and if they return
+TPM_RC_TESTING log that as a backgrounded self test and continue on.  In
+order to prevent other tpm users from seeing any TPM_RC_TESTING returns
+(which it might if they send a command that needs a TPM subsystem which is
+still under test), we loop in tpm_transmit_cmd until either a timeout or we
+don't get a TPM_RC_TESTING return.
+
+Finally, there have been observations of strange returns from a partial
+test. One Nuvoton is occasionally returning TPM_RC_COMMAND_CODE, so treat
+any unexpected return from a partial self test as an indication we need to
+run a full self test.
+
+[jarkko.sakkinen@linux.intel.com: cleaned up James' original commit and
+ added a proper Fixes line]
+
+Fixes: 2482b1bba5122 ("tpm: Trigger only missing TPM 2.0 self tests")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkine@linux.intel.com>
 ---
- drivers/char/tpm/tpm2-cmd.c | 44 ++++++++++++--------------------------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 20 ++++++++++++---
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm2-cmd.c      | 54 ++++++++++++----------------------------
+ 3 files changed, 33 insertions(+), 42 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 9e80a953d693..1adb976a2e37 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -537,14 +537,26 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 const char *desc)
+ {
+ 	const struct tpm_output_header *header = buf;
++	unsigned int delay_msec = TPM2_DURATION_SHORT;
+ 	int err;
+ 	ssize_t len;
+ 
+-	len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
+-	if (len <  0)
+-		return len;
++	for (;;) {
++		len = tpm_transmit(chip, space, (u8 *)buf, bufsiz, flags);
++		if (len <  0)
++			return len;
++		err = be32_to_cpu(header->return_code);
++		if (err != TPM2_RC_TESTING)
++			break;
++
++		delay_msec *= 2;
++		if (delay_msec > TPM2_DURATION_LONG) {
++			dev_err(&chip->dev, "the self test is still running\n");
++			break;
++		}
++		tpm_msleep(delay_msec);
++	}
+ 
+-	err = be32_to_cpu(header->return_code);
+ 	if (err != 0 && desc)
+ 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
+ 			desc);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f895fba4e20d..cccd5994a0e1 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -104,6 +104,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+ 	TPM2_RC_HANDLE		= 0x008B,
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
++	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 89a5397b18d2..abe6ef4a7a0b 100644
+index a700f8f9ead7..89a5397b18d2 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -27,10 +27,6 @@ enum tpm2_session_attributes {
- 	TPM2_SA_CONTINUE_SESSION	= BIT(0),
- };
+@@ -31,10 +31,6 @@ struct tpm2_startup_in {
+ 	__be16	startup_type;
+ } __packed;
  
--struct tpm2_startup_in {
--	__be16	startup_type;
+-struct tpm2_self_test_in {
+-	u8	full_test;
 -} __packed;
 -
  struct tpm2_get_tpm_pt_in {
  	__be32	cap_id;
  	__be32	property_id;
-@@ -55,7 +51,6 @@ struct tpm2_get_random_out {
- } __packed;
+@@ -60,7 +56,6 @@ struct tpm2_get_random_out {
  
  union tpm2_cmd_params {
--	struct	tpm2_startup_in		startup_in;
+ 	struct	tpm2_startup_in		startup_in;
+-	struct	tpm2_self_test_in	selftest_in;
  	struct	tpm2_get_tpm_pt_in	get_tpm_pt_in;
  	struct	tpm2_get_tpm_pt_out	get_tpm_pt_out;
  	struct	tpm2_get_random_in	getrandom_in;
-@@ -410,11 +405,8 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 	int rc;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT);
--	if (rc) {
--		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
--			 handle);
-+	if (rc)
- 		return;
--	}
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
-@@ -760,40 +752,28 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+@@ -827,16 +822,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
  }
- EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+ EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
  
--#define TPM2_SHUTDOWN_IN_SIZE \
+-#define TPM2_SELF_TEST_IN_SIZE \
 -	(sizeof(struct tpm_input_header) + \
--	 sizeof(struct tpm2_startup_in))
+-	 sizeof(struct tpm2_self_test_in))
 -
--static const struct tpm_input_header tpm2_shutdown_header = {
+-static const struct tpm_input_header tpm2_selftest_header = {
 -	.tag = cpu_to_be16(TPM2_ST_NO_SESSIONS),
--	.length = cpu_to_be32(TPM2_SHUTDOWN_IN_SIZE),
--	.ordinal = cpu_to_be32(TPM2_CC_SHUTDOWN)
+-	.length = cpu_to_be32(TPM2_SELF_TEST_IN_SIZE),
+-	.ordinal = cpu_to_be32(TPM2_CC_SELF_TEST)
 -};
 -
  /**
-  * tpm2_shutdown() - send shutdown command to the TPM chip
+  * tpm2_do_selftest() - ensure that all self tests have passed
   *
-+ * In places where shutdown command is sent there's no much we can do except
-+ * print the error code on a system failure.
-+ *
-  * @chip:		TPM chip to use.
-  * @shutdown_type:	shutdown type. The value is either
-  *			TPM_SU_CLEAR or TPM_SU_STATE.
+@@ -852,27 +837,24 @@ static const struct tpm_input_header tpm2_selftest_header = {
   */
- void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+ static int tpm2_do_selftest(struct tpm_chip *chip)
  {
--	struct tpm2_cmd cmd;
 +	struct tpm_buf buf;
++	int full;
  	int rc;
+-	unsigned int delay_msec = 10;
+-	long duration;
+-	struct tpm2_cmd cmd;
  
--	cmd.header.in = tpm2_shutdown_header;
--	cmd.params.startup_in.startup_type = cpu_to_be16(shutdown_type);
+-	duration = jiffies_to_msecs(
+-		tpm2_calc_ordinal_duration(chip, TPM2_CC_SELF_TEST));
 -
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, sizeof(cmd), 0, 0,
--			      "stopping the TPM");
+-	while (1) {
+-		cmd.header.in = tpm2_selftest_header;
+-		cmd.params.selftest_in.full_test = 0;
 -
--	/* In places where shutdown command is sent there's no much we can do
--	 * except print the error code on a system failure.
--	 */
--	if (rc < 0 && rc != -EPIPE)
--		dev_warn(&chip->dev, "transmit returned %d while stopping the TPM",
--			 rc);
-+	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SHUTDOWN);
-+	if (rc)
-+		return;
-+	tpm_buf_append_u16(&buf, shutdown_type);
-+	tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-+			 "stopping the TPM");
-+	tpm_buf_destroy(&buf);
- }
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, TPM2_SELF_TEST_IN_SIZE,
+-				      0, 0, "continue selftest");
++	for (full = 0; full < 2; full++) {
++		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_SELF_TEST);
++		if (rc)
++			return rc;
  
- /*
+-		if (rc != TPM2_RC_TESTING || delay_msec >= duration)
+-			break;
++		tpm_buf_append_u8(&buf, full);
++		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
++				      "attempting the self test");
++		tpm_buf_destroy(&buf);
+ 
+-		/* wait longer than before */
+-		delay_msec *= 2;
+-		tpm_msleep(delay_msec);
++		if (rc == TPM2_RC_TESTING)
++			rc = TPM2_RC_SUCCESS;
++		if (rc == TPM2_RC_INITIALIZE || rc == TPM2_RC_SUCCESS)
++			return rc;
+ 	}
+ 
+ 	return rc;
+@@ -1058,10 +1040,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 
+ 	rc = tpm2_do_selftest(chip);
+-	if (rc != 0 && rc != TPM2_RC_INITIALIZE) {
+-		dev_err(&chip->dev, "TPM self test failed\n");
++	if (rc && rc != TPM2_RC_INITIALIZE)
+ 		goto out;
+-	}
+ 
+ 	if (rc == TPM2_RC_INITIALIZE) {
+ 		rc = tpm_startup(chip);
+@@ -1069,10 +1049,8 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 			goto out;
+ 
+ 		rc = tpm2_do_selftest(chip);
+-		if (rc) {
+-			dev_err(&chip->dev, "TPM self test failed\n");
++		if (rc)
+ 			goto out;
+-		}
+ 	}
+ 
+ 	rc = tpm2_get_pcr_allocation(chip);
 -- 
 2.15.1
