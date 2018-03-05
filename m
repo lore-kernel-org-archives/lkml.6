@@ -1,75 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932659AbeCEDOR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 22:14:17 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45696 "EHLO mx1.redhat.com"
+        id S932736AbeCEDO3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 22:14:29 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43272 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932164AbeCEDOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 22:14:14 -0500
+        id S932164AbeCEDOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 22:14:24 -0500
 From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
         Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 0/5] genirq/affinity: irq vector spread among online CPUs as far as possible
-Date: Mon,  5 Mar 2018 11:13:52 +0800
-Message-Id: <20180305031357.23950-1-ming.lei@redhat.com>
+Subject: [PATCH V2 1/5] genirq/affinity: rename *node_to_possible_cpumask as *node_to_cpumask
+Date: Mon,  5 Mar 2018 11:13:53 +0800
+Message-Id: <20180305031357.23950-2-ming.lei@redhat.com>
+In-Reply-To: <20180305031357.23950-1-ming.lei@redhat.com>
+References: <20180305031357.23950-1-ming.lei@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The following patches will introduce two stage irq spread for improving
+irq spread on all possible CPUs.
 
-This patchset tries to spread among online CPUs as far as possible, so
-that we can avoid to allocate too less irq vectors with online CPUs
-mapped.
+No funtional change.
 
-For example, in a 8cores system, 4 cpu cores(4~7) are offline/non present,
-on a device with 4 queues:
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ kernel/irq/affinity.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-1) before this patchset
-	irq 39, cpu list 0-2
-	irq 40, cpu list 3-4,6
-	irq 41, cpu list 5
-	irq 42, cpu list 7
-
-2) after this patchset
-	irq 39, cpu list 0,4
-	irq 40, cpu list 1,6
-	irq 41, cpu list 2,5
-	irq 42, cpu list 3,7
-
-Without this patchset, only two vectors(39, 40) can be active, but there
-can be 4 active irq vectors after applying this patchset.
-
-One disadvantage is that CPUs from different NUMA node can be mapped to
-one same irq vector. Given generally one CPU should be enough to handle
-one irq vector, it shouldn't be a big deal. Especailly more vectors have
-to be allocated, otherwise performance can be hurt in current
-assignment.
-
-V2:
-	- address coments from Christoph
-	- mark irq_build_affinity_masks as static
-	- move constification of get_nodes_in_cpumask's parameter into one
-	  prep patch
-	- add Reviewed-by tag
-
-Thanks
-Ming
-
-Ming Lei (5):
-  genirq/affinity: rename *node_to_possible_cpumask as *node_to_cpumask
-  genirq/affinity: mark 'node_to_cpumask' as const for
-    get_nodes_in_cpumask()
-  genirq/affinity: move actual irq vector spread into one helper
-  genirq/affinity: support to do irq vectors spread starting from any
-    vector
-  genirq/affinity: irq vector spread among online CPUs as far as
-    possible
-
- kernel/irq/affinity.c | 145 ++++++++++++++++++++++++++++++++------------------
- 1 file changed, 94 insertions(+), 51 deletions(-)
-
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index a37a3b4b6342..4b1c4763212d 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -39,7 +39,7 @@ static void irq_spread_init_one(struct cpumask *irqmsk, struct cpumask *nmsk,
+ 	}
+ }
+ 
+-static cpumask_var_t *alloc_node_to_possible_cpumask(void)
++static cpumask_var_t *alloc_node_to_cpumask(void)
+ {
+ 	cpumask_var_t *masks;
+ 	int node;
+@@ -62,7 +62,7 @@ static cpumask_var_t *alloc_node_to_possible_cpumask(void)
+ 	return NULL;
+ }
+ 
+-static void free_node_to_possible_cpumask(cpumask_var_t *masks)
++static void free_node_to_cpumask(cpumask_var_t *masks)
+ {
+ 	int node;
+ 
+@@ -71,7 +71,7 @@ static void free_node_to_possible_cpumask(cpumask_var_t *masks)
+ 	kfree(masks);
+ }
+ 
+-static void build_node_to_possible_cpumask(cpumask_var_t *masks)
++static void build_node_to_cpumask(cpumask_var_t *masks)
+ {
+ 	int cpu;
+ 
+@@ -79,14 +79,14 @@ static void build_node_to_possible_cpumask(cpumask_var_t *masks)
+ 		cpumask_set_cpu(cpu, masks[cpu_to_node(cpu)]);
+ }
+ 
+-static int get_nodes_in_cpumask(cpumask_var_t *node_to_possible_cpumask,
++static int get_nodes_in_cpumask(cpumask_var_t *node_to_cpumask,
+ 				const struct cpumask *mask, nodemask_t *nodemsk)
+ {
+ 	int n, nodes = 0;
+ 
+ 	/* Calculate the number of nodes in the supplied affinity mask */
+ 	for_each_node(n) {
+-		if (cpumask_intersects(mask, node_to_possible_cpumask[n])) {
++		if (cpumask_intersects(mask, node_to_cpumask[n])) {
+ 			node_set(n, *nodemsk);
+ 			nodes++;
+ 		}
+@@ -109,7 +109,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	int last_affv = affv + affd->pre_vectors;
+ 	nodemask_t nodemsk = NODE_MASK_NONE;
+ 	struct cpumask *masks;
+-	cpumask_var_t nmsk, *node_to_possible_cpumask;
++	cpumask_var_t nmsk, *node_to_cpumask;
+ 
+ 	/*
+ 	 * If there aren't any vectors left after applying the pre/post
+@@ -125,8 +125,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	if (!masks)
+ 		goto out;
+ 
+-	node_to_possible_cpumask = alloc_node_to_possible_cpumask();
+-	if (!node_to_possible_cpumask)
++	node_to_cpumask = alloc_node_to_cpumask();
++	if (!node_to_cpumask)
+ 		goto out;
+ 
+ 	/* Fill out vectors at the beginning that don't need affinity */
+@@ -135,8 +135,8 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 
+ 	/* Stabilize the cpumasks */
+ 	get_online_cpus();
+-	build_node_to_possible_cpumask(node_to_possible_cpumask);
+-	nodes = get_nodes_in_cpumask(node_to_possible_cpumask, cpu_possible_mask,
++	build_node_to_cpumask(node_to_cpumask);
++	nodes = get_nodes_in_cpumask(node_to_cpumask, cpu_possible_mask,
+ 				     &nodemsk);
+ 
+ 	/*
+@@ -146,7 +146,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	if (affv <= nodes) {
+ 		for_each_node_mask(n, nodemsk) {
+ 			cpumask_copy(masks + curvec,
+-				     node_to_possible_cpumask[n]);
++				     node_to_cpumask[n]);
+ 			if (++curvec == last_affv)
+ 				break;
+ 		}
+@@ -160,7 +160,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 		vecs_per_node = (affv - (curvec - affd->pre_vectors)) / nodes;
+ 
+ 		/* Get the cpus on this node which are in the mask */
+-		cpumask_and(nmsk, cpu_possible_mask, node_to_possible_cpumask[n]);
++		cpumask_and(nmsk, cpu_possible_mask, node_to_cpumask[n]);
+ 
+ 		/* Calculate the number of cpus per vector */
+ 		ncpus = cpumask_weight(nmsk);
+@@ -192,7 +192,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	/* Fill out vectors at the end that don't need affinity */
+ 	for (; curvec < nvecs; curvec++)
+ 		cpumask_copy(masks + curvec, irq_default_affinity);
+-	free_node_to_possible_cpumask(node_to_possible_cpumask);
++	free_node_to_cpumask(node_to_cpumask);
+ out:
+ 	free_cpumask_var(nmsk);
+ 	return masks;
 -- 
 2.9.5
