@@ -1,69 +1,69 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-819802-1520234502-2-4294748959914630269
+X-Cyrus-Session-Id: sloti22d1t05-523714-1520223495-5-13205818152192725232
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='fr', MailFrom='org'
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520234502; b=m9bWywDbqaSoK0Oa1Os2wPVdy4ummhxdVMruAuIlG0/uF38
-    d/A/Fy6jEwwpw5UuQzt4HhvHWNIc6ORpx83ihcbPsKpnI98xDyVv9qrce9PWzBHD
-    cqjD8ID+o19+mX7CeFYc87oZA9LYUj9OiL/2QDpw5+HH+KipbaavyITKsg0EjtYH
-    ZAFiXgn11EicCb8nXNS7QkGxX1i7ws/i4/DlxnrWNXxc+e+HoDhDfNSS5rdpTlgL
-    51Eh3uqZWUVCYLj3BKyN8iJKMYt6ZsHeSKkUwQoOjNRzAUDYnr5O7O8809Ynmt0m
-    mE/u/MrbOM9plxMXqsj7VCEn2EeMpqFe8u4yy+Q==
+    t=1520223494; b=OGcHYFpSC4F2b4spKJpt9KQqevgk7Hm4aSALawsf/KLGQ/q
+    RwwMUd8UOqQ9Iqw+flHsdB38P3BA2OiFEQGNnKRFBfzyodvycHc7x9RxlmpOzcfV
+    sB8hBCnTQGeNAjC0fYpE+iDO7tN6PEKKXlL8ktzAahGYLMKy92ljMNIXVOB0oiyl
+    XGg9OJXKPyFSamSeTlm5799upcwYN05KfeewSRJCy/XbTaKpQzdCp0KY7CwY+Pk5
+    pY1LQcJcrVR9wA0yMINrfGgjzA67mg+qF2bFggDmL4/CHZpClBz+JXQWG7yPq1rq
+    6EhQNeZkP+i9gx04T1SXRSpFi9O56v/lhC9Px+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520234502; bh=n
-    tHqcQFUkfOgjwUQY4Iptar4GLV7zFJQElXhM3htBNQ=; b=CPVQoGzLK30mUyKrw
-    eWrtog6K0sxESI8eWxnR+SWLMVhKLCu4DukEA307lIrGZZaIYzE+RI5ETRWBZ5CU
-    j5l2uld51i0RBdc4QMmW7KET7TXWaRyjfwR2CNS3ZAc+TLpJ/LueNKH9yyWZbjbV
-    QxJmNIueR9l6V1Qj/VvCiPC/ShEdIVWkmmCPU1Lzxf6qA6AGhPXr7AAoK95hNbpo
-    5aEal17c4MCp3QHNSubYtHgPG3RWrJVxLiib9ZWxUKx4vtPkA36g2c//+aAJIn08
-    KdivhEiTm3bL1/3gsieAhr79NFRSR8FOMbHdg1iL8X65izjoNIR2+37mXbgWnTwj
-    4rnIg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520223494; bh=/
+    ZERtZSsy/iXFNBCPHWE1pgp5ZeWMGVEbK5mqbt30Xo=; b=fAZWsNDKz4lMXHEWE
+    HukMizlXpuyTV1NCOs9NQG9F2uyCtrk7iTGHckmtuSDmiWqlZ6YmxAVgE6TLG3Zo
+    +uX8q0mXZ1F09NvkK9ohYva4Apj2MA8pZhwkrceF8J2uzo8JbULoeTGiesgl6PYA
+    dU4wegAuj/QnB6tA17gGFHEGQ0wby0X5oiD98lSoazjvq83TmT6dXtDmYdOY337J
+    c4X0n5G5/Bl4BzYiTLuyPXGqGPgDm+IS+72266oOVvDWws/Dh/kerIZy/0iDd+Go
+    IxggmB32s/l7l3zUFwCHUaWwUYi6LjswbfhP2fOZRzT2ns7pDYrXxygOamap8Sl2
+    mXguA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=dYsIY1t1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sdDce12e;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=dYsIY1t1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=-51 state=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sdDce12e;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.47,426,1515452400"; d="scan'208";a="256958399"
-Date: Mon, 5 Mar 2018 08:21:30 +0100 (CET)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Subject: Re: [Outreachy kernel] [PATCH v2] staging: comedi: Replace "dont"
- with "don't
-In-Reply-To: <20180305042808.GA24032@seema-Inspiron-15-3567>
-Message-ID: <alpine.DEB.2.20.1803050821190.2306@hadrien>
-References: <20180305042808.GA24032@seema-Inspiron-15-3567>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+X-Google-Smtp-Source: AG47ELs5bXGN9+perc30eDytUj+iiN2lnnpBWO4Jy0IRll6rlKQrGzGL02KVUqwfhOoj7tIjU99UFw==
+Date: Mon, 5 Mar 2018 09:47:40 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH v3] staging: ipx: Replace printk() with appropriate
+ net_*macro_ratelimited()
+Message-ID: <20180305041740.GA23378@seema-Inspiron-15-3567>
 MIME-Version: 1.0
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -74,9 +74,8 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, outreachy-kernel@googlegroups.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- abbotti@mev.co.uk
+Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -85,75 +84,40 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Replace printk having a log level with the appropriate
+net_*macro_ratelimited.
+It's better to use actual device name as a prefix in error messages.
 
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+changes in v2
+*In v1 printk was changed to pr_*macro(), which is used
+in kernel instead of calling printk() directly. And for drivers,
+dev_*macro() or net_*macro_ratelimited() should be used for calling
+printk() directly.
 
-On Mon, 5 Mar 2018, Arushi Singhal wrote:
+changes in v3
+*Indentation is not changed, as line is exceeding 80 characters limit.
 
-> Replace "dont" with "don't".
-> "Dont" is not same as "Do not" or "Don't".
->
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+ drivers/staging/ipx/af_ipx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+diff --git a/drivers/staging/ipx/af_ipx.c b/drivers/staging/ipx/af_ipx.c
+index d21a9d1..5ec6591 100644
+--- a/drivers/staging/ipx/af_ipx.c
++++ b/drivers/staging/ipx/af_ipx.c
+@@ -744,7 +744,7 @@ static void ipxitf_discover_netnum(struct ipx_interface *intrfc,
+ 			intrfc->if_netnum = cb->ipx_source_net;
+ 			ipxitf_add_local_route(intrfc);
+ 		} else {
+-			printk(KERN_WARNING "IPX: Network number collision "
++			net_warn_ratelimited("IPX: Network number collision "
+ 				"%lx\n        %s %s and %s %s\n",
+ 				(unsigned long) ntohl(cb->ipx_source_net),
+ 				ipx_device_name(i),
+-- 
+2.7.4
 
-> ---
-> changes in v2
-> *Commit log is rewrite in the imperative.
->
->  drivers/staging/comedi/drivers/cb_pcidas64.c | 2 +-
->  drivers/staging/comedi/drivers/das16.c       | 2 +-
->  drivers/staging/comedi/drivers/das16m1.c     | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/comedi/drivers/cb_pcidas64.c b/drivers/staging/comedi/drivers/cb_pcidas64.c
-> index c007500..ceef905 100644
-> --- a/drivers/staging/comedi/drivers/cb_pcidas64.c
-> +++ b/drivers/staging/comedi/drivers/cb_pcidas64.c
-> @@ -1700,7 +1700,7 @@ static void i2c_write(struct comedi_device *dev, unsigned int address,
->  	 * eeprom and i2c bus
->  	 */
->
-> -	/* make sure we dont send anything to eeprom */
-> +	/* make sure we don't send anything to eeprom */
->  	devpriv->plx_control_bits &= ~PLX_CNTRL_EECS;
->
->  	i2c_stop(dev);
-> diff --git a/drivers/staging/comedi/drivers/das16.c b/drivers/staging/comedi/drivers/das16.c
-> index 74ff204..81eb51b 100644
-> --- a/drivers/staging/comedi/drivers/das16.c
-> +++ b/drivers/staging/comedi/drivers/das16.c
-> @@ -619,7 +619,7 @@ static int das16_cmd_test(struct comedi_device *dev, struct comedi_subdevice *s,
->
->  	/* Step 2b : and mutually compatible */
->
-> -	/*  make sure scan_begin_src and convert_src dont conflict */
-> +	/*  make sure scan_begin_src and convert_src don't conflict */
->  	if (cmd->scan_begin_src == TRIG_FOLLOW && cmd->convert_src == TRIG_NOW)
->  		err |= -EINVAL;
->  	if (cmd->scan_begin_src != TRIG_FOLLOW && cmd->convert_src != TRIG_NOW)
-> diff --git a/drivers/staging/comedi/drivers/das16m1.c b/drivers/staging/comedi/drivers/das16m1.c
-> index 72f8ed2..4e36377 100644
-> --- a/drivers/staging/comedi/drivers/das16m1.c
-> +++ b/drivers/staging/comedi/drivers/das16m1.c
-> @@ -407,7 +407,7 @@ static void das16m1_handler(struct comedi_device *dev, unsigned int status)
->  		if (num_samples > cmd->stop_arg * cmd->chanlist_len)
->  			num_samples = cmd->stop_arg * cmd->chanlist_len;
->  	}
-> -	/*  make sure we dont try to get too many points if fifo has overrun */
-> +	/*  make sure we don't try to get too many points if fifo has overrun */
->  	if (num_samples > DAS16M1_AI_FIFO_SZ)
->  		num_samples = DAS16M1_AI_FIFO_SZ;
->  	insw(dev->iobase, devpriv->ai_buffer, num_samples);
-> --
-> 2.7.4
->
-> --
-> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> To post to this group, send email to outreachy-kernel@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180305042808.GA24032%40seema-Inspiron-15-3567.
-> For more options, visit https://groups.google.com/d/optout.
->
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
