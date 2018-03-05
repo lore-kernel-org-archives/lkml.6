@@ -1,83 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932093AbeCERSR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 12:18:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40740 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751679AbeCERSP (ORCPT
+        id S1752639AbeCERTY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 12:19:24 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41308 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751935AbeCERTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 12:18:15 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: use NULL rather than 0 for cells_name argument" to the regulator tree
-In-Reply-To: <20180305123853.25750-1-colin.king@canonical.com>
-Message-Id: <E1estkb-0007xM-UZ@debutante>
-Date: Mon, 05 Mar 2018 17:18:13 +0000
+        Mon, 5 Mar 2018 12:19:22 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D582C601A3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <73b16f5c-fe19-e652-dfd0-de7196d4cec0@codeaurora.org>
+Date: Mon, 5 Mar 2018 22:49:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAAFQd5AZoCgVts=DOET7js5VPi4ONM2m9R-WM6pWHud26XDVfA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Tomasz,
 
-   regulator: core: use NULL rather than 0 for cells_name argument
 
-has been applied to the regulator tree at
+On 3/5/2018 6:55 PM, Tomasz Figa wrote:
+> Hi Vivek,
+>
+> On Fri, Mar 2, 2018 at 7:10 PM, Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+>> This series provides the support for turning on the arm-smmu's
+>> clocks/power domains using runtime pm. This is done using the
+>> recently introduced device links patches, which lets the smmu's
+>> runtime to follow the master's runtime pm, so the smmu remains
+>> powered only when the masters use it.
+>>
+>> It also adds support for Qcom's arm-smmu-v2 variant that
+>> has different clocks and power requirements.
+>>
+>> Took some reference from the exynos runtime patches [1].
+>>
+>> After another round of discussion [3], we now finally seem to be
+>> in agreement to add a flag based on compatible, a flag that would
+>> indicate if a particular implementation of arm-smmu supports
+>> runtime pm or not.
+>> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
+>> calls in map/unmap callbacks so that the clients do not have to
+>> worry about handling any of the arm-smmu's power.
+>> The patch that exported couple of pm_runtime suppliers APIS, viz.
+>> pm_runtime_get_suppliers(), and pm_runtime_put_suppliers() can be
+>> dropped since we don't have a user now for these APIs.
+>> Thanks Rafael for reviewing the changes, but looks like we don't
+>> need to export those APIs for some more time. :)
+>>
+>> Previous version of this patch series is @ [5].
+> Thanks for addressing my comments. There is still a bit of space for
+> improving the granularity of power management, as far as I understood
+> how it works on SDM845 correctly, but as a first step, this should at
+> least let things work.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Sure. I will be sending a patch, based on this series, to add 
+'qcom,smmu-500'
+that enables *rpm_suported* flag for us.
+We can try to take care of some of the things with that.
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks for the review.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 3b81f5d3442e04e13726f27728592af829df3dcf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Mon, 5 Mar 2018 13:38:53 +0100
-Subject: [PATCH] regulator: core: use NULL rather than 0 for cells_name
- argument
-
-The 3rd paramater is a pointer type and should be NULL rather than a
-zero, clean up spare warning:
-
-drivers/regulator/of_regulator.c:424:75: warning: Using plain integer
-as NULL pointer
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/of_regulator.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 7df3a46908f1..a2eb9046adf8 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -420,7 +420,8 @@ int of_get_n_coupled(struct regulator_dev *rdev)
- 	int n_phandles;
- 
- 	n_phandles = of_count_phandle_with_args(node,
--						"regulator-coupled-with", 0);
-+						"regulator-coupled-with",
-+						NULL);
- 
- 	return (n_phandles > 0) ? n_phandles : 0;
- }
--- 
-2.16.2
+regards
+Vivek
+>
+> Best regards,
+> Tomasz
