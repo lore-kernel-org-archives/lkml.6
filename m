@@ -1,133 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933144AbeCEHXP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:23:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15836 "EHLO mga17.intel.com"
+        id S933168AbeCEH0B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:26:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47044 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932679AbeCEHXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:23:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
-   d="scan'208";a="22951446"
-Date: Mon, 5 Mar 2018 15:14:12 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: changbin.du@intel.com, jolsa@redhat.com, peterz@infradead.org,
-        mingo@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [RESEND PATCH] perf sched map: re-annotate shortname if thread
- comm changed
-Message-ID: <20180305071412.kem6yrxsg6nkskms@intel.com>
-References: <1519386040-25874-1-git-send-email-changbin.du@intel.com>
- <20180302144312.GC4086@kernel.org>
+        id S933146AbeCEH0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 02:26:00 -0500
+Date: Mon, 5 Mar 2018 08:25:58 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: move rgb mode_valid from connector to encoder
+Message-ID: <20180305072558.ujxojkrm5r5rican@flea.lan>
+References: <1520159870-41286-1-git-send-email-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a55r6y4227u2cxrb"
 Content-Disposition: inline
-In-Reply-To: <20180302144312.GC4086@kernel.org>
-User-Agent: NeoMutt/20171027-42-ad8712
+In-Reply-To: <1520159870-41286-1-git-send-email-giulio.benetti@micronovasrl.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 11:43:12AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Feb 23, 2018 at 07:40:40PM +0800, changbin.du@intel.com escreveu:
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > This is to show the real name of thread that created via fork-exec.
-> > See below example for shortname *A0*.
-> 
-> Can you ellaborate a bit more and perhaps provide before and after
-> outputs?
-> 
-> - Arnaldo
->
-Arnaldo, please see below diff stat.
-              *A0   80393.050639 secs A0 => perf:22368
-          *.   A0   80393.050748 secs .  => swapper:0
-           .  *.    80393.050887 secs
-      *B0  .   .    80393.052735 secs B0 => rcu_sched:8
-      *.   .   .    80393.052743 secs
-       .  *C0  .    80393.056264 secs C0 => kworker/2:1H:287
-       .  *A0  .    80393.056270 secs
-       .  *D0  .    80393.056769 secs D0 => ksoftirqd/2:22
--      .  *A0  .    80393.056804 secs
-+      .  *A0  .    80393.056804 secs A0 => pi:22368
-       .  *.   .    80393.056854 secs
+
+--a55r6y4227u2cxrb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-> > $ sudo ./perf sched map
-> >               *A0   80393.050639 secs A0 => perf:22368
-> >           *.   A0   80393.050748 secs .  => swapper:0
-> >            .  *.    80393.050887 secs
-> >       *B0  .   .    80393.052735 secs B0 => rcu_sched:8
-> >       *.   .   .    80393.052743 secs
-> >        .  *C0  .    80393.056264 secs C0 => kworker/2:1H:287
-> >        .  *A0  .    80393.056270 secs
-> >        .  *D0  .    80393.056769 secs D0 => ksoftirqd/2:22
-> >        .  *A0  .    80393.056804 secs A0 => pi:22368
-> >        .  *.   .    80393.056854 secs
-> >       *B0  .   .    80393.060727 secs
-> >       ...
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > ---
-> >  tools/perf/builtin-sched.c | 4 +++-
-> >  tools/perf/util/thread.c   | 1 +
-> >  tools/perf/util/thread.h   | 1 +
-> >  3 files changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> > index 83283fe..53bb8df 100644
-> > --- a/tools/perf/builtin-sched.c
-> > +++ b/tools/perf/builtin-sched.c
-> > @@ -1580,7 +1580,7 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
-> >  
-> >  	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
-> >  	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
-> > -	if (new_shortname || (verbose > 0 && sched_in->tid)) {
-> > +	if (new_shortname || sched_in->comm_changed || (verbose > 0 && sched_in->tid)) {
-> >  		const char *pid_color = color;
-> >  
-> >  		if (thread__has_color(sched_in))
-> > @@ -1588,6 +1588,8 @@ static int map_switch_event(struct perf_sched *sched, struct perf_evsel *evsel,
-> >  
-> >  		color_fprintf(stdout, pid_color, "%s => %s:%d",
-> >  		       sched_in->shortname, thread__comm_str(sched_in), sched_in->tid);
-> > +
-> > +		sched_in->comm_changed = false;
-> >  	}
-> >  
-> >  	if (sched->map.comp && new_cpu)
-> > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> > index 68b65b1..c660fe6 100644
-> > --- a/tools/perf/util/thread.c
-> > +++ b/tools/perf/util/thread.c
-> > @@ -212,6 +212,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
-> >  			unwind__flush_access(thread);
-> >  	}
-> >  
-> > +	thread->comm_changed = true;
-> >  	thread->comm_set = true;
-> >  
-> >  	return 0;
-> > diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> > index 40cfa36..b9a328b 100644
-> > --- a/tools/perf/util/thread.h
-> > +++ b/tools/perf/util/thread.h
-> > @@ -27,6 +27,7 @@ struct thread {
-> >  	int			cpu;
-> >  	refcount_t		refcnt;
-> >  	char			shortname[3];
-> > +	bool			comm_changed;
-> >  	bool			comm_set;
-> >  	int			comm_len;
-> >  	bool			dead; /* if set thread has exited */
-> > -- 
-> > 2.7.4
 
--- 
-Thanks,
-Changbin Du
+On Sun, Mar 04, 2018 at 11:37:50AM +0100, Giulio Benetti wrote:
+> mode_valid function must be connected to encoder, not connector.
+> Otherwise it doesn't get called by drm.
+
+That's not true, or rather, that's a big oversimplification. It
+doesn't get called by DRM if you have a bridge instead of a panel
+attached to the encoder.
+
+> Move mode_valid function pointer to encoder helper functions,
+> changing its prototype according to encoder helper function pointer.
+>=20
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c | 102 +++++++++++++++++++-------------=
+------
+>  1 file changed, 51 insertions(+), 51 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/su=
+n4i_rgb.c
+> index b8da5a5..6539dcc 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+> @@ -52,11 +52,59 @@ static int sun4i_rgb_get_modes(struct drm_connector *=
+connector)
+>  	return drm_panel_get_modes(tcon->panel);
+>  }
+> =20
+> -static int sun4i_rgb_mode_valid(struct drm_connector *connector,
+> -				struct drm_display_mode *mode)
+> +static struct drm_connector_helper_funcs sun4i_rgb_con_helper_funcs =3D {
+> +	.get_modes	=3D sun4i_rgb_get_modes,
+> +};
+> +
+> +static void
+> +sun4i_rgb_connector_destroy(struct drm_connector *connector)
+>  {
+>  	struct sun4i_rgb *rgb =3D drm_connector_to_sun4i_rgb(connector);
+>  	struct sun4i_tcon *tcon =3D rgb->tcon;
+> +
+> +	drm_panel_detach(tcon->panel);
+> +	drm_connector_cleanup(connector);
+> +}
+> +
+> +static const struct drm_connector_funcs sun4i_rgb_con_funcs =3D {
+> +	.fill_modes		=3D drm_helper_probe_single_connector_modes,
+> +	.destroy		=3D sun4i_rgb_connector_destroy,
+> +	.reset			=3D drm_atomic_helper_connector_reset,
+> +	.atomic_duplicate_state	=3D drm_atomic_helper_connector_duplicate_state,
+> +	.atomic_destroy_state	=3D drm_atomic_helper_connector_destroy_state,
+> +};
+> +
+> +static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
+> +{
+> +	struct sun4i_rgb *rgb =3D drm_encoder_to_sun4i_rgb(encoder);
+> +	struct sun4i_tcon *tcon =3D rgb->tcon;
+> +
+> +	DRM_DEBUG_DRIVER("Enabling RGB output\n");
+> +
+> +	if (!IS_ERR(tcon->panel)) {
+> +		drm_panel_prepare(tcon->panel);
+> +		drm_panel_enable(tcon->panel);
+> +	}
+> +}
+> +
+> +static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+> +{
+> +	struct sun4i_rgb *rgb =3D drm_encoder_to_sun4i_rgb(encoder);
+> +	struct sun4i_tcon *tcon =3D rgb->tcon;
+> +
+> +	DRM_DEBUG_DRIVER("Disabling RGB output\n");
+> +
+> +	if (!IS_ERR(tcon->panel)) {
+> +		drm_panel_disable(tcon->panel);
+> +		drm_panel_unprepare(tcon->panel);
+> +	}
+> +}
+> +
+> +static enum drm_mode_status sun4i_rgb_encoder_mode_valid(struct drm_enco=
+der *crtc,
+> +							 const struct drm_display_mode *mode)
+> +{
+> +	struct sun4i_rgb *rgb =3D drm_encoder_to_sun4i_rgb(crtc);
+> +	struct sun4i_tcon *tcon =3D rgb->tcon;
+>  	u32 hsync =3D mode->hsync_end - mode->hsync_start;
+>  	u32 vsync =3D mode->vsync_end - mode->vsync_start;
+>  	unsigned long rate =3D mode->clock * 1000;
+> @@ -106,58 +154,10 @@ static int sun4i_rgb_mode_valid(struct drm_connecto=
+r *connector,
+>  	return MODE_OK;
+>  }
+> =20
+> -static struct drm_connector_helper_funcs sun4i_rgb_con_helper_funcs =3D {
+> -	.get_modes	=3D sun4i_rgb_get_modes,
+> -	.mode_valid	=3D sun4i_rgb_mode_valid,
+> -};
+> -
+> -static void
+> -sun4i_rgb_connector_destroy(struct drm_connector *connector)
+> -{
+> -	struct sun4i_rgb *rgb =3D drm_connector_to_sun4i_rgb(connector);
+> -	struct sun4i_tcon *tcon =3D rgb->tcon;
+> -
+> -	drm_panel_detach(tcon->panel);
+> -	drm_connector_cleanup(connector);
+> -}
+> -
+> -static const struct drm_connector_funcs sun4i_rgb_con_funcs =3D {
+> -	.fill_modes		=3D drm_helper_probe_single_connector_modes,
+> -	.destroy		=3D sun4i_rgb_connector_destroy,
+> -	.reset			=3D drm_atomic_helper_connector_reset,
+> -	.atomic_duplicate_state	=3D drm_atomic_helper_connector_duplicate_state,
+> -	.atomic_destroy_state	=3D drm_atomic_helper_connector_destroy_state,
+> -};
+> -
+> -static void sun4i_rgb_encoder_enable(struct drm_encoder *encoder)
+> -{
+> -	struct sun4i_rgb *rgb =3D drm_encoder_to_sun4i_rgb(encoder);
+> -	struct sun4i_tcon *tcon =3D rgb->tcon;
+> -
+> -	DRM_DEBUG_DRIVER("Enabling RGB output\n");
+> -
+> -	if (!IS_ERR(tcon->panel)) {
+> -		drm_panel_prepare(tcon->panel);
+> -		drm_panel_enable(tcon->panel);
+> -	}
+> -}
+> -
+> -static void sun4i_rgb_encoder_disable(struct drm_encoder *encoder)
+> -{
+> -	struct sun4i_rgb *rgb =3D drm_encoder_to_sun4i_rgb(encoder);
+> -	struct sun4i_tcon *tcon =3D rgb->tcon;
+> -
+> -	DRM_DEBUG_DRIVER("Disabling RGB output\n");
+> -
+> -	if (!IS_ERR(tcon->panel)) {
+> -		drm_panel_disable(tcon->panel);
+> -		drm_panel_unprepare(tcon->panel);
+> -	}
+> -}
+> -
+>  static struct drm_encoder_helper_funcs sun4i_rgb_enc_helper_funcs =3D {
+>  	.disable	=3D sun4i_rgb_encoder_disable,
+>  	.enable		=3D sun4i_rgb_encoder_enable,
+> +	.mode_valid	=3D sun4i_rgb_encoder_mode_valid,
+
+The only thing you should be changing is that structure, the matching
+connector structure, and the function prototype. This patch is way
+bigger than it needs to be.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--a55r6y4227u2cxrb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqc8QUACgkQ0rTAlCFN
+r3RMYg//cpqPPwhysYwIHHHLbrCXj6ibSPyZ/u1CfQ2SpyI3oX3au6Iz+7q2L2aH
+uMPNEjSIfbUoaJYNdGm8g1uqdE+hBjonS+/gyjDVvpLBCfIPxKU4vn91vtY7hX7Y
+x+DOwQmXNipoI4k+lgcHBi/CZqFkk/rI9yyfwwt4qbAqe64VgGvpj076OEIgivSy
+/MPXZnxVrtUAv2d/yVjciX9q3+sCw8A1K7dnIpTSJSg+bMMttH6599qVjr+GrtWX
+LoEIKxTUvTyjHoxCr6mhSt+kYmyKennIDYBlBtkvltIDbrE2jT0MZ4OThmuM9TrZ
+mAFUu53AbQWYRpgWtAXeXcCN9mP7HyZtA4c3YqX3ZbdTv6E+fjzpLz79RkvUllmo
+9PObKHWqTTxzJQ75Nrf5INceSUSXds4M7SzF6bnNRtmvfmLV2MXDLN/NPl/B2L1X
++kmSbmzL8/Ccck/i6srjtiqM/ApIc/LPiaOQ24U2iX71LWyXDpA6tq3bOzgxDiwu
+/u+n7A2NfelfQAcMwa+nRYyc3eb7P6bIK0RyYcNuTbZKyTAZ8iEmhwVbR/D+itpc
+9KF3KWJHsEHx70ynTvxCDDx2xKWSs7NU9fCsOCNkaBUMz/i/qUATbD/W6tSDdLTj
+e0ZBVC5+IPmNeGvmDiqTZi3Gu0y40911PHngWpYo9QY5ZASs9OY=
+=64kH
+-----END PGP SIGNATURE-----
+
+--a55r6y4227u2cxrb--
