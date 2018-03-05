@@ -1,69 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeCEK7h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 05:59:37 -0500
-Received: from foss.arm.com ([217.140.101.70]:48126 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752423AbeCEK7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 05:59:34 -0500
-Date: Mon, 5 Mar 2018 10:59:26 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Saravana Kannan <skannan@codeaurora.org>
-Cc: robh@kernel.org, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>, peterz@infradead.org,
-        sudeep.holla@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        jonathan.cameron@huawei.com, frowand.list@gmail.com,
-        leo.yan@linaro.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-Message-ID: <20180305105925.4cjiqejfid7rswe6@lakrids.cambridge.arm.com>
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5A90B77E.8040105@codeaurora.org>
- <20180225143653.peb4quk3ha5h3t5x@salmiak>
- <5A972A7D.9020301@codeaurora.org>
- <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
- <5A986425.9080007@codeaurora.org>
- <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
- <5A99A3DC.9020400@codeaurora.org>
+        id S933116AbeCELAH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 06:00:07 -0500
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36448 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752423AbeCELAE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 06:00:04 -0500
+X-Google-Smtp-Source: AG47ELtzUNWoWnJV0oeZ2B80k7Kjm4uwMXgf9SvwjJ/Pur/Q0ZhwD3oLU1pI73JJNHeYxubEsMyE99eMKmSbLpAqYIw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5A99A3DC.9020400@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Originating-IP: [90.77.100.34]
+In-Reply-To: <CABxcv=nQpd-RPPzWbCpdWQjK7VzZyXtWSCTB3JHBA-uLygoC+A@mail.gmail.com>
+References: <20171203214050.11482-1-javierm@redhat.com> <CABxcv=nQpd-RPPzWbCpdWQjK7VzZyXtWSCTB3JHBA-uLygoC+A@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Date: Mon, 5 Mar 2018 12:00:03 +0100
+Message-ID: <CABxcv=myJZw1zVtbkSW-5xhxeK71YtV3jOvBdGgoB92m67R4bw@mail.gmail.com>
+Subject: Re: [PATCH] i2c: core: report OF style module alias for devices
+ registered via OF
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 11:19:56AM -0800, Saravana Kannan wrote:
-> On 03/02/2018 02:42 AM, Mark Rutland wrote:
-> > It's important to note that the DSU PMU's event_init() ensures events
-> > are affine to a single CPU, and the perf core code serializes operations
-> > on those events via the context lock.
-> 
-> Ah, I see that now. Thanks!
-> 
-> > Therefore, two CPUs *won't* try to access the registers simultaneously.
-> 
-> Right, and this driver seems to be going through a lot of work to make sure
-> all events are read in one CPU.
-> 
-> Do you even have an upstream target where there are multiple DSU's in a
-> system? 
+ Hello Wolfram,
 
-I have no idea, though I do beleive that it's possible for a system to
-have multiple DSUs.
+On Sun, Jan 7, 2018 at 2:17 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+>
+> On Sun, Dec 3, 2017 at 10:40 PM, Javier Martinez Canillas
+> <javierm@redhat.com> wrote:
+>> The buses should honor the firmware interface used to register the device,
+>> but the I2C core reports a MODALIAS of the form i2c:<device> even for I2C
+>> devices registered via OF.
+>>
+>> This means that user-space will never get an OF stype uevent MODALIAS even
+>> when the drivers modules contain aliases exported from both the I2C and OF
+>> device ID tables. For example, an Atmel maXTouch Touchscreen registered by
+>> a DT node with compatible "atmel,maxtouch" has the following module alias:
+>>
+>> $ cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
+>> i2c:maxtouch
+>>
+>> So udev won't be able to auto-load a module for an OF-only device driver.
+>> Many OF-only drivers duplicate the OF device ID table entries in an I2C ID
+>> table only has a workaround for how the I2C core reports the module alias.
+>>
+>> This patch changes the I2C core to report an OF related MODALIAS uevent if
+>> the device was registered via OF. So for the previous example, after this
+>> patch, the reported MODALIAS for the Atmel maXTouch will be the following:
+>>
+>> $ cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
+>> of:NtrackpadT<NULL>Catmel,maxtouch
+>>
+>> NOTE: This patch may break out-of-tree drivers that were relying on this
+>>       behavior, and only had an I2C device ID table even when the device
+>>       was registered via OF. There are no remaining drivers in mainline
+>>       that do this, but out-of-tree drivers have to be fixed and define
+>>       a proper OF device ID table to have module auto-loading working.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+>> ---
+>
+> Any comments on this patch?
+>
 
-> If not, we can simplify a ton of this code (no hotplug notifiers, no
-> migrating PMUs, no SMP calls, etc) by just adding a spinlock and letting any
-> CPU read these DSU counters.
+Is this patch under your radar? Should I keep pushing for it or just give up?
 
-Regardless of whether we allow arbitrary CPUs to read the counters,
-other logic still needs to be CPU affine, and we'll still need hotplug
-notifiers and event migration.
-
-I am not necessarily opposed to allowing read() calls from associated
-CPUs, but as before, I'll leave that to Suzuki.
-
-Thanks,
-Mark.
+Best regards,
+Javier
