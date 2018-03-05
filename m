@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753611AbeCEW2N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 17:28:13 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37448 "EHLO
+        id S1753705AbeCEW2U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 17:28:20 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37876 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753441AbeCEWYL (ORCPT
+        with ESMTP id S1753053AbeCEW2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 17:24:11 -0500
+        Mon, 5 Mar 2018 17:28:13 -0500
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
         hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
@@ -15,77 +15,76 @@ Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         dianders@chromium.org, linux-rockchip@lists.infradead.org,
         orjan.eide@arm.com, m.szyprowski@samsung.com,
-        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH v4 15/38] drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the panel
-Date: Mon,  5 Mar 2018 23:23:07 +0100
-Message-Id: <20180305222324.5872-16-enric.balletbo@collabora.com>
+Subject: [PATCH v4 33/38] drm/rockchip: Cancel PSR enable work before changing the state
+Date: Mon,  5 Mar 2018 23:27:57 +0100
+Message-Id: <20180305222802.6659-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180305222324.5872-1-enric.balletbo@collabora.com>
-References: <20180305222324.5872-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lin Huang <hl@rock-chips.com>
+From: Tomasz Figa <tfiga@chromium.org>
 
-When panel is shut down, we should make sure edp can be disabled to avoid
-undefined behavior.
+If we change the state first and reschedule later, we might have the
+work executed according to previous scheduled time and end up with PSR
+re-enabled instantly. Let's cancel the work before changing the state.
 
-Cc: Stéphane Marchesin <marcheu@chromium.org>
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Signed-off-by: zain wang <wzz@rock-chips.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+While at it, consolidate psr_disable_handler() to just call
+rockchip_drm_do_flush(), as they are both supposed to do the same.
+
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 92fb9a072cb6..9b7d530ad24c 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+index a107845ba97c..c8655e625ba2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+@@ -138,18 +138,6 @@ static void psr_flush_handler(struct work_struct *work)
+ 	mutex_unlock(&psr->lock);
+ }
  
- 	pm_runtime_get_sync(dp->dev);
+-static void psr_disable_handler(struct work_struct *work)
+-{
+-	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
+-
+-	/* If the state has changed since we initiated the flush, do nothing */
+-	mutex_lock(&psr->lock);
+-	if (psr->state == PSR_ENABLE)
+-		psr_set_state_locked(psr, PSR_FLUSH);
+-	mutex_unlock(&psr->lock);
+-	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+-}
+-
+ /**
+  * rockchip_drm_psr_activate - activate PSR on the given pipe
+  * @encoder: encoder to obtain the PSR encoder
+@@ -198,6 +186,7 @@ EXPORT_SYMBOL(rockchip_drm_psr_deactivate);
  
-+	ret = clk_prepare_enable(dp->clock);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
-+		goto out_dp_clk_pre;
-+	}
+ static void rockchip_drm_do_flush(struct psr_drv *psr)
+ {
++	cancel_delayed_work_sync(&psr->flush_work);
+ 	psr_set_state(psr, PSR_FLUSH);
+ 	mod_delayed_work(system_wq, &psr->flush_work, PSR_FLUSH_TIMEOUT_MS);
+ }
+@@ -244,6 +233,13 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev)
+ }
+ EXPORT_SYMBOL(rockchip_drm_psr_flush_all);
+ 
++static void psr_disable_handler(struct work_struct *work)
++{
++	struct psr_drv *psr = container_of(work, struct psr_drv, disable_work);
 +
- 	if (dp->plat_data->power_on)
- 		dp->plat_data->power_on(dp->plat_data);
- 
-@@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 	phy_power_off(dp->phy);
- 	if (dp->plat_data->power_off)
- 		dp->plat_data->power_off(dp->plat_data);
-+	clk_disable_unprepare(dp->clock);
-+out_dp_clk_pre:
- 	pm_runtime_put_sync(dp->dev);
- 
- 	return ret;
-@@ -1234,10 +1242,13 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 
- 	disable_irq(dp->irq);
- 	phy_power_off(dp->phy);
-+	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 
- 	if (dp->plat_data->power_off)
- 		dp->plat_data->power_off(dp->plat_data);
- 
-+	clk_disable_unprepare(dp->clock);
++	rockchip_drm_do_flush(psr);
++}
 +
- 	pm_runtime_put_sync(dp->dev);
- 
- 	ret = analogix_dp_prepare_panel(dp, false, true);
+ static void psr_input_event(struct input_handle *handle,
+ 			    unsigned int type, unsigned int code,
+ 			    int value)
 -- 
 2.16.1
