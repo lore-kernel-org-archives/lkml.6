@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752917AbeCETai (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 14:30:38 -0500
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34487 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCETag (ORCPT
+        id S1752999AbeCETam (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 14:30:42 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:41430 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbeCETaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 14:30:36 -0500
-X-Google-Smtp-Source: AG47ELtp0E6C3pzfEyzZWmra8oT0pigZeMsHOS9Q6YuFXQRQLbPjuFG3aQ7/Jh9OqmHzZFcuWWSHKziMT1C2sRAfeAQ=
+        Mon, 5 Mar 2018 14:30:39 -0500
+Subject: Re: [PATCH v12 02/11] mm, swap: Add infrastructure for saving page
+ metadata on swap
+To: Dave Hansen <dave.hansen@linux.intel.com>, akpm@linux-foundation.org,
+        davem@davemloft.net, arnd@arndb.de
+Cc: kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        ross.zwisler@linux.intel.com, dave.jiang@intel.com,
+        mgorman@techsingularity.net, willy@infradead.org, hughd@google.com,
+        minchan@kernel.org, hannes@cmpxchg.org, shli@fb.com, mingo@kernel.org,
+        jglisse@redhat.com, me@tobin.cc, anthony.yznaga@oracle.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, sparclinux@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>
+References: <cover.1519227112.git.khalid.aziz@oracle.com>
+ <f5316c71e645d99ffdd52963f1e9675de3fc6386.1519227112.git.khalid.aziz@oracle.com>
+ <0d77dc3c-1454-a689-a0fb-f07e8973c29e@linux.intel.com>
+From: Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <4a766f6d-ba96-7963-b367-7214eab7e307@oracle.com>
+Date: Mon, 5 Mar 2018 12:29:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5Cdg4Njd5kXT4tqnJngSPr9NNHdSpoqT3UfmHYYpvuj1g@mail.gmail.com>
-References: <CGME20180302085118eucas1p15a6a5ec5f7f47a6f67a45c5e9495b120@eucas1p1.samsung.com>
- <1519980169-8491-1-git-send-email-m.purski@samsung.com> <CAOMZO5C3YPKvZN+aORA+Jga-P=XgfG2xw7u6Ose5p6Twet2KLw@mail.gmail.com>
- <6fc780e4-3594-2ca5-dc4e-7e147dc4e40f@samsung.com> <CAOMZO5Cdg4Njd5kXT4tqnJngSPr9NNHdSpoqT3UfmHYYpvuj1g@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 5 Mar 2018 16:30:34 -0300
-Message-ID: <CAOMZO5BqoEDEzPvVjAbE-e8SS5qLFc8WHQted-3hwYYTvQgajQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] Add coupled regulators mechanism
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0d77dc3c-1454-a689-a0fb-f07e8973c29e@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803050224
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maciej,
+On 03/05/2018 12:20 PM, Dave Hansen wrote:
+> On 02/21/2018 09:15 AM, Khalid Aziz wrote:
+>> If a processor supports special metadata for a page, for example ADI
+>> version tags on SPARC M7, this metadata must be saved when the page is
+>> swapped out. The same metadata must be restored when the page is swapped
+>> back in. This patch adds two new architecture specific functions -
+>> arch_do_swap_page() to be called when a page is swapped in, and
+>> arch_unmap_one() to be called when a page is being unmapped for swap
+>> out. These architecture hooks allow page metadata to be saved if the
+>> architecture supports it.
+> 
+> I still think silently squishing cacheline-level hardware data into
+> page-level software data structures is dangerous.
+> 
+> But, you seem rather determined to do it this way.  I don't think this
+> will _hurt_ anyone else, though other than needlessly cluttering up the
+> code.
 
-On Mon, Mar 5, 2018 at 12:57 PM, Fabio Estevam <festevam@gmail.com> wrote:
+Hello Dave,
 
-> kernelci.org also shows other imx6 boards that cannot boot with
-> today's linux-next.
+Thanks for taking the time to look at this patch and providing feedback.
 
-Here are the completes logs in case they help:
+ADI data is per page data and is held in the spare bits in the RAM. It 
+is loaded into the cache when data is loaded from RAM and flushed out to 
+spare bits in the RAM when data is flushed from cache. Sparc allows one 
+tag for each ADI block size of data and ADI block size is same as 
+cacheline size. When a page is loaded into RAM from swap space, all of 
+the associated ADI data for the page must also be loaded into the RAM, 
+so it looks like page level data and storing it in page level software 
+data structure makes sense. I am open to other suggestions though.
 
-https://storage.kernelci.org/next/master/next-20180305/arm/imx_v6_v7_defconfig/lab-free-electrons/boot-imx6q-nitrogen6x.txt
-
-https://storage.kernelci.org/next/master/next-20180305/arm/imx_v6_v7_defconfig/lab-baylibre-seattle/boot-imx6dl-wandboard_solo.txt
+Thanks,
+Khalid
