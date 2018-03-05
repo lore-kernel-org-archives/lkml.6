@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932981AbeCEIQz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 03:16:55 -0500
-Received: from mga02.intel.com ([134.134.136.20]:41758 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751288AbeCEIQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 03:16:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
-   d="scan'208";a="39253552"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] x86/mm: Do not use paravirtualized calls in native_set_p4d()
-Date: Mon,  5 Mar 2018 11:16:41 +0300
-Message-Id: <20180305081641.4290-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <alpine.DEB.2.21.1803021309020.1803@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1803021309020.1803@nanos.tec.linutronix.de>
+        id S933127AbeCEISQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 03:18:16 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44994 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752300AbeCEISO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 03:18:14 -0500
+X-Google-Smtp-Source: AG47ELv/QVHtWDqRn7pgagu9gS6n+oVwa6sD25Bo3W+sTONrlAO6EdbkJhgvvO0lu7xt+xIQXvB1rHr446tS12nW4C0=
+MIME-Version: 1.0
+In-Reply-To: <1520227965-4471-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1520227965-4471-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1520227965-4471-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Mar 2018 09:18:12 +0100
+X-Google-Sender-Auth: cNa9GcdLzDgTZwCvE_o3so9tl98
+Message-ID: <CAMuHMdWS8WQJQ8+5vffpv3WtBoFKkd=h2ZBpFNcYVY5YQ-ZDGA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: rcar-gen3-phy-usb2: Add bindings for r8a77965
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In 4-level paging mode, native_set_p4d() updates entry in the top-level
-page table. With PTI, update to top-level kernel page table requires
-update to userspace copy of the table using pti_set_user_pgd().
+On Mon, Mar 5, 2018 at 6:32 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch adds support for r8a77965 (R-Car M3-N).
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-native_set_p4d() uses p4d_val() and pgd_val() to convert types between
-p4d_t and pgd_t.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-p4d_val() and pgd_val() are paravirtualized and we must not use them in
-native helpers. They cause boot failure in paravirtualized environments.
+Gr{oetje,eeting}s,
 
-Replace p4d_val() and pgd_val() with native_p4d_val() and
-native_pgd_val() in native_set_p4d().
+                        Geert
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Fixes: 91f606a8fa68 ("x86/mm: Replace compile-time checks for 5-level paging with runtime-time checks")
----
- arch/x86/include/asm/pgtable_64.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index af0cb0d2b7d2..877bc27718ae 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -225,9 +225,9 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- 		return;
- 	}
- 
--	pgd = native_make_pgd(p4d_val(p4d));
-+	pgd = native_make_pgd(native_p4d_val(p4d));
- 	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
--	*p4dp = native_make_p4d(pgd_val(pgd));
-+	*p4dp = native_make_p4d(native_pgd_val(pgd));
- }
- 
- static inline void native_p4d_clear(p4d_t *p4d)
--- 
-2.16.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
