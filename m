@@ -1,99 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeCEQak (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 11:30:40 -0500
-Received: from mga06.intel.com ([134.134.136.31]:14691 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752372AbeCEQ01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 11:26:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,427,1515484800";
-   d="scan'208";a="34759445"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [RFC, PATCH 05/22] x86/pconfig: Provide defines and helper to run MKTME_KEY_PROG leaf
-Date: Mon,  5 Mar 2018 19:25:53 +0300
-Message-Id: <20180305162610.37510-6-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+        id S1753013AbeCEQbw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 11:31:52 -0500
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36738 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeCEQbt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 11:31:49 -0500
+X-Google-Smtp-Source: AG47ELtbgua0AcM91EBoTy+IA4u7ZmbjDVTXKHwiLZbf9GMuPQvLCUG2gyvmi2PXfg+zLtD0T7KfRYzqpNQ3vsaRI9U=
+MIME-Version: 1.0
+In-Reply-To: <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
+References: <20180215175803.6870-1-marc.zyngier@arm.com> <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com> <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Mon, 5 Mar 2018 16:31:28 +0000
+Message-ID: <CAFEAcA9=YpNngKqeOXiO7QDvL=1ZaQEW8fh3XHjwD+i8qQm9wg@mail.gmail.com>
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MKTME_KEY_PROG allows to manipulate MKTME keys in the CPU.
+On 2 March 2018 at 12:26, Auger Eric <eric.auger@redhat.com> wrote:
+> Hi Marc,
+> On 02/03/18 12:11, Marc Zyngier wrote:
+>> On Fri, 02 Mar 2018 10:44:48 +0000,
+>> Auger Eric wrote:
+>>> I understand the get/set is called as part of the migration process.
+>>> So my understanding is the benefit of this series is migration fails in
+>>> those cases:
+>>>
+>>>> =0.2 source -> 0.1 destination
+>>> 0.1 source -> >=0.2 destination
+>>
+>> It also fails in the case where you migrate a 1.0 guest to something
+>> that cannot support it.
+>
+> That's because on the destination, the number of regs is less than on
+> source, right?
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/include/asm/intel_pconfig.h | 50 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+I think it fails because the KVM_REG_ARM_PSCI_VERSION register will be
+in the migration state but not in the destination's list of registers:
+the code in QEMU's target/arm/machine.c:cpu_post_load() function that
+checks "register in their list but not ours: fail migration" will
+catch this.
 
-diff --git a/arch/x86/include/asm/intel_pconfig.h b/arch/x86/include/asm/intel_pconfig.h
-index fb7a37c3798b..3cb002b1d0f9 100644
---- a/arch/x86/include/asm/intel_pconfig.h
-+++ b/arch/x86/include/asm/intel_pconfig.h
-@@ -12,4 +12,54 @@ enum pconfig_target {
- 
- int pconfig_target_supported(enum pconfig_target target);
- 
-+enum pconfig_leaf {
-+	MKTME_KEY_PROGRAM	= 0,
-+	PCONFIG_LEAF_INVALID,
-+};
-+
-+#define PCONFIG ".byte 0x0f, 0x01, 0xc5"
-+
-+/* Defines and structure for MKTME_KEY_PROGRAM of PCONFIG instruction */
-+
-+/* mktme_key_program::keyid_ctrl COMMAND, bits [7:0] */
-+#define MKTME_KEYID_SET_KEY_DIRECT	0
-+#define MKTME_KEYID_SET_KEY_RANDOM	1
-+#define MKTME_KEYID_CLEAR_KEY		2
-+#define MKTME_KEYID_NO_ENCRYPT		3
-+
-+/* mktme_key_program::keyid_ctrl ENC_ALG, bits [23:8] */
-+#define MKTME_AES_XTS_128	(1 << 8)
-+
-+/* Return codes from the PCONFIG MKTME_KEY_PROGRAM */
-+#define MKTME_PROG_SUCCESS	0
-+#define MKTME_INVALID_PROG_CMD	1
-+#define MKTME_ENTROPY_ERROR	2
-+#define MKTME_INVALID_KEYID	3
-+#define MKTME_INVALID_ENC_ALG	4
-+#define MKTME_DEVICE_BUSY	5
-+
-+/* Hardware requires the structure to be 256 byte alinged. Otherwise #GP(0). */
-+struct mktme_key_program {
-+	u16 keyid;
-+	u32 keyid_ctrl;
-+	u8 __rsvd[58];
-+	u8 key_field_1[64];
-+	u8 key_field_2[64];
-+} __packed __aligned(256);
-+
-+static inline int mktme_key_program(struct mktme_key_program *key_program)
-+{
-+	unsigned long rax = MKTME_KEY_PROGRAM;
-+
-+	if (!pconfig_target_supported(MKTME_TARGET))
-+		return -ENXIO;
-+
-+	asm volatile(PCONFIG
-+		: "=a" (rax), "=b" (key_program)
-+		: "0" (rax), "1" (key_program)
-+		: "memory", "cc");
-+
-+	return rax;
-+}
-+
- #endif	/* _ASM_X86_INTEL_PCONFIG_H */
--- 
-2.16.1
+That also means that we will fail migration from a new kernel where
+we've specifically asked for PSCI 0.2 to an old PSCI-0.2-only kernel
+(because the KVM_REG_ARM_PSCI_VERSION reg will appear in the migration
+stream even if its value is the one value that matches the old kernel
+behaviour). I don't know if we care about that.
+
+thanks
+-- PMM
