@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932624AbeCEU6v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 15:58:51 -0500
-Received: from mail-eopbgr20124.outbound.protection.outlook.com ([40.107.2.124]:49554
+        id S932649AbeCEU7D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 15:59:03 -0500
+Received: from mail-eopbgr20139.outbound.protection.outlook.com ([40.107.2.139]:59010
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932106AbeCEU6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 15:58:43 -0500
+        id S1751275AbeCEU6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 15:58:49 -0500
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -14,9 +14,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
         Adrian Fiergolski <adrian.fiergolski@cern.ch>,
         linux-i2c@vger.kernel.org
-Subject: [PATCH v2 1/2] i2c: add i2c_get_device_id() to get the standard i2c device id
-Date: Mon,  5 Mar 2018 21:58:21 +0100
-Message-Id: <20180305205822.951-2-peda@axentia.se>
+Subject: [PATCH v2 2/2] i2c: mux: pca954x: verify the device id of the pca984x chips
+Date: Mon,  5 Mar 2018 21:58:22 +0100
+Message-Id: <20180305205822.951-3-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180305205822.951-1-peda@axentia.se>
 References: <20180305205822.951-1-peda@axentia.se>
@@ -27,46 +27,45 @@ X-ClientProxiedBy: HE1PR07CA0026.eurprd07.prod.outlook.com
  (2603:10a6:7:66::12) To HE1PR0202MB2777.eurprd02.prod.outlook.com
  (2603:10a6:3:e8::19)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fccae403-1371-42bb-d218-08d582dbdf44
+X-MS-Office365-Filtering-Correlation-Id: c6ad6f43-e3d6-4e7c-56b2-08d582dbe335
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603307)(7153060)(7193020);SRVR:HE1PR0202MB2777;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;3:EtIcJMzfKBE0ixQI7P79CozLDhIYG7YvVROqBuhYvbte4zhaqIeO7Rdiy2mMwYxKBE/nstHNfgiRi2BLCbQJi3wiQ61AFkZxdRbNsuDVP9VVjFZgw4r3mC1jA4vC2M/c/TF+CBbbSwiRYjzjqICmcBhOvy0GBbQFoS8g+Iq+VvCAISK1zAFmn4fOHCl9YGacnJM8YdtLnbfLmO7KvHR/ATiwdyIIB9JUtcd2jgEWA7DwHkchvBEIY59Oz/nL4v9o;25:g1cuXbpGZsuaewplUr7pPWuANLrFEPOIQJRvxpfMFGizjPIYzm3tKpKCX68eReD9bLhxE634HnAnizTiAa1Ev5aR6K8St2hVhqwu59FjphPptM9v79L7BjPSDyw16y45edmsj0udBIOpeYMRJF6fuHx88piOzQMhS7f2AgyeRQd9IBO+GuBqWyadN8pZUxIsADz0bUR6W2f7fXB7Vzw6WtH+4F/XE3wHqV6XR8BLqTDm8xgt9au/VTzuoKqZStfhrGdALcynRP/uo6OW0nmXN7rD4HQDNozy+/krQHdA8o+aGjsxW7ljmoSrfxH7u5DWaNcOErC9uuE1h5CNF3jQXA==;31:z7UzpVXMsC2kpn6q+dmvQv9XS4Hte2nlArD6+D3V290J3YHB6zglHz5ZJNX7fsA/+WRo0f7SOaqfzwgw0AwJjeqcpx3DuTZPvHk5meTp+BhskonIO2xzFtUcDWN6vv6N21ALwK9miQlX4WaON77MZFkrJJRm9EaF0c/6fnM/GhFWq7Fclluyvsqc/DVnwdr7B8vTGft1y9GMVmKrtjRnaeWiODNT14ois+yTF/0ZaZ8=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;3:8uq7CNPFa+cUO5kwSk/jk50WtoV8fAQ2uwdlq02HoGMbDRvz8bsZTStBcKInCd4VEVkPc0fA4EI/7e8eUCfE3PpblTU4kwBQmJGoTNG8TI4QQZmbOKfnu+YYaGp9g4DwEet9UTyRTFlFXX2rSGO/J+n3sLmjhpp0tvqytLbfFDYNvwEheFKZJSIlE1jQGCD6prGbkp00lFcLq6oOx+4Wk9Aj3Df56a+Z3BUDtGOyhMAr6FI81O7sPC7jaDEqcxDz;25:a5K+G/M8codNEpsPa6vEbk2a27TJmJvcOx/qMXmecbcicbhiM4jZfKNVmN3Imnp3LKZXY116mZK4UvUpyU2zzFMGe/WkJ1tm1E+2k7KSCrdkEVfpm95bloxmMpz/mRxyxltWIktSQwFLdWA0FsOZUj02arGhEd3chNZakIyFc+fjq5xuvN0KW019pjVxPlRizXiMAOrHgKfRbqdE0vHoGil6XHV7QkBA8mSujiZB7VKBZlVRZKU/FV+dQ3qVBD+xlGNSNMdNEGxEY0ogniDri447jcmAUgvqQqkY/g7lacQ19J7x3DPnZNsqFlGbsor/KCqlYdjGOQKkxYqLuKRptg==;31:N4MQqlGoXBA8Ufk5RZnwD07nFa1UU/ErL3tBiZHyhEUQPOmjb13MyqSt/raExIpcPsRStOf+Ko34hQoYDL4m/HE9LplnhybTPIDk3J4uOgJeyuOfzOmXjIx8pUsZ2WDBr9g2Qgz+YDHbg/pTsaCFv9VzPfY7+tAV8EK2Zwp4a85lIX63kFNDhChnzDvOXgnxbpkEfsyyd/U3hV6iLIG0b5Cos69zpk1rmYbH8RIAkx8=
 X-MS-TrafficTypeDiagnostic: HE1PR0202MB2777:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;20:kqd58egRCNBTHwwqLn2DwketEwPhBMYe4VrNH/r9lc8h7LEvb2AgxpnJJNxQn1lXKtF28tnNNlXkM8jEi0XvNLhhVnjZHlXFmi7I77U6b0WW3h6W9orUSjag3asDXvE8excuSK6Qniua2VTSEegS+ml5TEcQ3Zzni1hzlMLoPMg=;4:IQeaYLax3uUBKewExBS3s/eDSE0dN+4DdoR1EOqEumE6+u9x55zLGXz668ZBX+NJ19i6XRh6HGVu1OAs7JILmVITVDfE1gTp3Kh6liZUjjTdV7ynp6hkvReKXw5gy7K3aEag+H8Wxd76zckEhgISV3UgBVth7ieALGkAYydVnQklnqQ+epXpg0FBmdz2fBv5nFq3HCUMeFfnxb7zI7V1ALOLkeLx1xjOVTL9Kfq51h4g0Vjtqbu4OaZJG6wLNMT1Ztdp/L6pHwH9kqP7zUDfxg==
-X-Microsoft-Antispam-PRVS: <HE1PR0202MB27778176F25D8450D7D95869BCDA0@HE1PR0202MB2777.eurprd02.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;20:PpVlq8EM7awnDQC3Go/NL1wSFQeASSQJ7nYX1bH5wYb3HzpmwSWrDenzb39LdYyI1AQHqaYw5INIeGupLm/J6mgrDK+yYYs0jffn9VFk4seGwgb/tI2O9/NpXvcAfIwppXALBk0Ro0D2EHXqweBm+Bbf6HS9kHgvr3byG3/Exf4=;4:LuRLLk68Kf27Q9wwXdzck9TpHORZ2ru3ti6ON5V12GMYsoBcIpx9l1sdjXGZ7QPnOD+GFo1ZRRXuJFdMewYelQN/ppkVcWV6PT7NMwvswKdSGxK2vBR8tAy1nkAbwioASfO/MDkD1cuUZ7En5RKfUtc2ikfu5h88jrFxFsLLqd4cBBh68pCn/oRzTyKUSST63MjqjXFBERbANwcBO9QFtTEzU9APIn5J1B4MyIhFY251uRjpLthcJfWIYUQesR/ZF6c9Tq+hZy+Q7V9Tgw87IQ==
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB27778707E6F0D21EA0549BFEBCDA0@HE1PR0202MB2777.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6041288)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:HE1PR0202MB2777;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2777;
 X-Forefront-PRVS: 06022AA85F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(39380400002)(376002)(346002)(366004)(396003)(199004)(189003)(59450400001)(2950100002)(106356001)(86362001)(66066001)(6506007)(316002)(47776003)(386003)(68736007)(478600001)(4326008)(5660300001)(8676002)(2351001)(7736002)(186003)(16526019)(305945005)(6666003)(25786009)(50226002)(26005)(6916009)(8936002)(2361001)(81156014)(97736004)(105586002)(6116002)(3846002)(74482002)(1076002)(5890100001)(2906002)(6486002)(36756003)(15760500003)(53936002)(48376002)(54906003)(76176011)(51416003)(6512007)(16586007)(81166006)(50466002)(52116002)(15583001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2777;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0202MB2777;23:vMn4v03duSEHf2xEXP9G7Glv7j8rpClBztR8M61?=
- =?us-ascii?Q?vxULvgMMfsmGo7e7FY4jyptN9fNupOo2vaQ7DbtHSJANQvGaHF38HMBqtSIg?=
- =?us-ascii?Q?QRW3LszdRmypxT2e7kCSm4/5lYGGASrpy0mC+R96z+i6xHC9QFyZi96wkbmG?=
- =?us-ascii?Q?klog5EZlIEycbaq24Ey+N3qgoK5XfCPD2MtxOOG87DcuLAqig/ddWj/rWUg6?=
- =?us-ascii?Q?Qh/7DGM8RO6hCuYVPqSZLf1hSOT96BN4PjeXqY0UhkHiDqG1dOn8jiXfFicq?=
- =?us-ascii?Q?+1eCOGACij+gJw3MdXF4CvayjgWL4YtC+vNHsX/NZO7QAy3ZIjZrAy3W3XXD?=
- =?us-ascii?Q?7JkCMPq1iqxH4PPNkgkoDMSM02pLToDgIIwKEXTSwgGl6qwOuvLVb5fWu7Zo?=
- =?us-ascii?Q?AlYIn9S0OFKyQBzrg2DGFfBmhwkdICVtf+KekCnzaA/5ZKSOoEvdGi09rYKs?=
- =?us-ascii?Q?/5uiUo6rP8TOantw75IMoYGIxinltAQaKebwKMon6sLxxBXMRq6he5Bthm50?=
- =?us-ascii?Q?g2+97tOIDxCY3FaFEHNozoWK26ayAtiF6k42defHQyPbakSD9qxpwkxJPeMw?=
- =?us-ascii?Q?wx98zwY8kAuNUYCDYOm9sFq9ZFJ1foj9sJHoLKj7PVIllVL12siyKIhUomTa?=
- =?us-ascii?Q?Xd0oU7BP7qZHXCJxE6LeylW/r4I5ZnOHpz6fEY3gUOyVK2Rb6cvFlv1doI79?=
- =?us-ascii?Q?QbOQTlurwp6yg9YHKQn+f7dj2Tikmo2RnppRU3H5ipJ+euOdQwxrMqVTMqNa?=
- =?us-ascii?Q?OQNJm96UmDXqSOl/b+6QlD+T3wS58g/RIAimSwwf6zyYhFbWA/xMbVLLEdya?=
- =?us-ascii?Q?OkzDQL6Iu1J/1JfhQtULmO3U1aSX5stjNDnCnFr5x0jiBwbpGCUyzsRym2YA?=
- =?us-ascii?Q?mOyWn+odI76kh3SxEs2nW1ypeSnblhczS0BK4X0bMrQUNBnN8lDM08yxT0QS?=
- =?us-ascii?Q?M6oiAMfP7iBbFAgtHum2QDfTo2DfLKe64S8RHtNRsuTU4GJkvfGeJBZHD+g4?=
- =?us-ascii?Q?qUFHvmXHbeacdEm6IcWAeYOTCwWEtsHlA8RHa8e0uCFSrWbgOBk4CATgO+Rz?=
- =?us-ascii?Q?3+2/psXH9IFk7ZVcBIngsOjx/52sw7aTSotyY7ulT2S4ZzdXU3izqT/efsQg?=
- =?us-ascii?Q?mN0YYNAc/+Fqr8/dssk7khjlCKvjvpp3b8m8ZxO6wbHOxOkO68ZdFHDb3P4J?=
- =?us-ascii?Q?ZYGaditT63C2fi6XLXpHAIlS0W1/LBErUu4acFeaaOALN98/ls/RVd7RIht5?=
- =?us-ascii?Q?9QB9V1gxeR6bU1VMtSmnGYCc9IE/LUALiv6hTJc1RYMRw+LTeDZQ3XyRXH2D?=
- =?us-ascii?Q?C7XwGo5VxPIXJWs3fQuVXqWU=3D?=
-X-Microsoft-Antispam-Message-Info: 9MWS6YbUIk0KnZwMAsVdwCR08L5EBWcCdEosjoDwNLYAq7WRJY9JcMLM7FViGf+VDha/TwAlbrR0rrx9pDaO17sM79UJRdadHd/05QX0Br5hhmJvJpxTzAarChXY89EwnR410Iy+6Nc6VizRdFeHw1lL11LMiu1uQaNiBGBtIma/YVGjyjil1oTbT/8+KVhi
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;6:ot5H8bGJpmWwlQLrokJPvKuC5YGHNYz+HWbHHgh+ca/89emU6jZqs++Ap64dt6YjznCVaNAAdGRodTFLxMjCdDHTvz0GMImvxG81PvG5wTQkGFdeUPov14e29kRBMjbnDsQ6ufUb7dteiwcHKNs/4h7Vg7flm+mzFGC+crp58qfFV7gzWpUaSCMDte0DWwGt61sbPkz3DFYlFnJu6cbRCDG0PKOPvztYAM/ag/k7TnFJJI67V9zJ0nZfLTKYaoqQNRVf/YQgpthC9coNVI8kcmMX7R5/i+gOCf1oMS7WfzkcURnUgNcF1zXYEuqrHqkofaKpH022/NqnFqLfRhibUj8JgE2jprH68xQT5BzuLVg=;5:NeFgr1dzm8bNyvgMN6EXDEdT+vwu8biaA6N5P44zbgeFSVlYcFoh+QWfx1jan2pyKdCLKF6l4C94JKdtjatvJSRt4qgjaYKZeV4zS86MW9AOLn6e6vz6oN4DDhgptZF46oN0FZeJICpMzORB8vc5JZD650NlCnMJ/k5q4WNuXgM=;24:1ejIC+uK0BAXunp2SJAP2PImi0FbE+GAB7uOV/aQdpkOwtLInAOJromMk8sHUayHOrlZBeI5xChb18zCE1ofyWoLz/nhEO72lM3/LoFBrAc=;7:GpTfxNFmCqi4LsSBkRxELX42HFN8Y+xyrZdJ2oejwTybZwtwwLIvQRCwev/hsc0nwX4oTrA6NQYWD5BFQ+2rxnYsnbo8QKHf/CBVBwzhWsgxmUeJqtJI1VCBJ0tlVR+hYd3gjDKxPQmz5TgPNUv9fPZ26E/O1RUBOUYrEiJyNDbAoXXjMPPiHZE3KbqSJXdbpxFZ/laNbLeCeU5UAQ1rg5+RTu4pfNnwHcXxfgBdqKqx8MzUDd2fB6TALFImkEsz
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(39380400002)(376002)(346002)(366004)(396003)(199004)(189003)(59450400001)(2950100002)(106356001)(86362001)(66066001)(6506007)(316002)(47776003)(386003)(68736007)(15650500001)(478600001)(4326008)(5660300001)(8676002)(2351001)(7736002)(186003)(16526019)(305945005)(6666003)(25786009)(50226002)(26005)(6916009)(8936002)(2361001)(81156014)(97736004)(105586002)(6116002)(3846002)(74482002)(1076002)(2906002)(6486002)(36756003)(53936002)(48376002)(54906003)(76176011)(51416003)(6512007)(16586007)(81166006)(50466002)(52116002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2777;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0202MB2777;23:N8W1KexuNyRVdSkkSOjc+xD8S66kj/FAgp21wOo?=
+ =?us-ascii?Q?jlcQG2E1DVC/KFrwst1jJgEm501pJ60+ulD/zBI5vzbxyUlN3M12Zm0AgDI/?=
+ =?us-ascii?Q?p8+mcv8HgjlCzyov3XrBc6V8ZxtB/lRbXmQbdAML5KFeoeoeRjGeEZAAqa0O?=
+ =?us-ascii?Q?uTo9pQ4J9lpc+ZqB4gwuA2PROw5tLItC1dAA0jM7wvPHNhLoXyPIjUypgcxb?=
+ =?us-ascii?Q?8Rt6DxHL0fymZmBpSneqrh1Dr2j8S2IxHjr56AKNQRNy5vNFEOPR0L+1SEmD?=
+ =?us-ascii?Q?7u3T+xCOWDbOcvjDD4SoG9Z6ULZRMbTSvBv+ocYsQI4dkct8L6bDaATviMZE?=
+ =?us-ascii?Q?s+TpCeuwn2K93X6kM8NdopGHc973cfH7if6tMAJzzKDw0LluxjnQtq6rVSRA?=
+ =?us-ascii?Q?dUyU8rLbsanohbbA23M+00H48Ou9GJHPmfyi07Q/wD9QYCAqdqgnYXNfS93/?=
+ =?us-ascii?Q?7zaU80dNnGllm4fuMCrA6xprl438Vhu1M9tB3DQ4yhXd4s2UuQciCy2CYi6t?=
+ =?us-ascii?Q?nTfs3Yh/vYnNCi+GhLfkTnjPjTsA+aYFKjC+eYJpxWPxTyFfSOxgI7pdzcBX?=
+ =?us-ascii?Q?zy0cQDRTDYVdyJVXNO/RY9UhydOuXPfQZ7vOc9acv62fx11Mhk1lL6saFEYo?=
+ =?us-ascii?Q?u2pS15vJc94p91Y+/KLzWlWcQwzt+xyjg+NuZJ7Wo7a1rg75RywYN51DX0NQ?=
+ =?us-ascii?Q?dYJJbZj+syWa7GnLS8yFMbFe5jjIoDRTqSqbGEWggDDOvpa0ffKhl1nFD8Tn?=
+ =?us-ascii?Q?jH+/OUuEOmQOuN7ptB2W3Y/NnjS9ZSphuPJVadWvhg/Nj57fWvyC2eFbE4Hz?=
+ =?us-ascii?Q?nXd6+IxMBg2506khpLR2Sxf8v3Yyd5ngMojKYRvfOxTMS/VzUeh7ZYzx5VFO?=
+ =?us-ascii?Q?R8Fi62XxMfdh4r7AVD7fHYLZC8m9jVhqauazdGDPXpVn6R7r1t1yreqIkP3R?=
+ =?us-ascii?Q?10HYPTXn4A2ntKNSHItBhMPKu0z2Uo0YqaUf2aRQPTIhKSpUNt7J6Uqd7zMu?=
+ =?us-ascii?Q?w1QPKIdPXU21e1VWq4wBzDsfktkLrUPprcWIm/Eh2959ahJ676QED10OEb/g?=
+ =?us-ascii?Q?gWpUM+u7a3QdaO+W8Jw+RigYB4Wq688dZTqXx95pJn1TSY+oo0EvikjXEmWT?=
+ =?us-ascii?Q?W/qown1QVSuu2T5c7wwKvCCqIoM80PQQuhyX57tQVK7CVmRd2mT5aLE4ohsJ?=
+ =?us-ascii?Q?E2VHWhv9GiFEpTvgLWn3uxOcgI/GxleX+B2vLzchRT/OHgETgk4LhQU2uzWF?=
+ =?us-ascii?Q?X76ep6tZQIbrrTXGG0PRSlcEghiRGkRqcqgqADmkO?=
+X-Microsoft-Antispam-Message-Info: MD3x58MNU+Kq91uOPWD9zsGfsnw81KlQzJ8ZrqQZGPJqMcJRt+6++e67MBBclouI55PgGScIByQL1J2pHzi54hLGKaaibseZEFRRzHbhiBKNOxhJ1l25bXPYj2JnKITb17OlTwFLfNsii6DdIYJbvaXqOU435wrMNZdLIR5dMg+bNjuMMLWQ9otVYX3C2C4B
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;6:Y2s656B0mLAGDox+V8T/hdVJzM/qCIV2s2sBSIMGRumrBjF05KevRevG6cNFx0zAgSSBMURr1oafFYIIWCfQG2r0dfcFMjmicwAUH37T4ywegtYzHQDMvt09jNVVHkFPOo0uQ6vi6eKHBeNVc8TAUHqsKLU5e/CEId1lhLt5w62foCIvjT69EUHzqcgsZaV3Vi+ftFBqmrVbbspXiIR4CY9QxtsaWqCin1mXn8REzgGVRYiOKEBv6CZ3oyuJLz3/+egFe7gjH9VcDY3n3GtLv9unJFPXSqGy/kdYTLrpENq8AU+le9S4l9SfY5TqYJ9b1F10Fg2SqBj0Lhce9l+jJH9ScmAN8c3liMRhha+Xkj8=;5:OZnLYP+C/Tce5gCLyv1Jb3iBHmoK8AkyWdk/Y+qLG9s/tEMvbNJQx1/jAhtL0ru++iy2PELLIZs5LMX//kL5jSZBanZ/VsxLda2oPWY9EltsbCoth2M4/H1UXIMqPqOVUebpeN+2Hs+OnPq3tLL50gO7bv+RJOd/VeqLofgfXlI=;24:IzuFeB+Ez3OSvOkMPS3y4WpBgGhuj1Ump3bC4Rb9q3qED0Jorum5kH6NIYMzL26rQhrcEmaObOG5mKsoADkg88WFqFGJ2eCvVPO4zKl0yPc=;7:PBlZqatxT9R8aKgsJZ5C+pMT/OelvyzArezg0IApWWeySvVo+QjtW3ORjr4Q1rQ27C8jdzYD585/+5xU8b0j6Z5LxSQf261dFnv3k+Lw/5Z8iCaoCGWnBM7Vmb9EvAT2nbvpCYRnWk76rF8OdlwMJCk5y9F742Mr4+YDvHk3y4XJscXTcdTZ3mRzdhq/BmQVrjxOR/I1q0LPWDAfu2OnSMJstXCEy//kmpH/yn7EjfPNTKmQMjUMzpqSSpFu16QY
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2018 20:58:39.6508 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fccae403-1371-42bb-d218-08d582dbdf44
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2018 20:58:46.2759 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6ad6f43-e3d6-4e7c-56b2-08d582dbe335
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2777
@@ -74,119 +73,155 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Can be used during probe to double check that the probed device is
-what is expected.
-
-Loosely based on code from Adrian Fiergolski <adrian.fiergolski@cern.ch>.
+Make sure to not disallow the chips on adapters that are not capable
+of reading the device id, but also make sure to check the device id
+before writing to the chip.
 
 Tested-by: Adrian Fiergolski <adrian.fiergolski@cern.ch>
-Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/i2c/i2c-core-base.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/i2c.h         | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+ drivers/i2c/muxes/i2c-mux-pca954x.c | 55 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 5a00bf443d06..aa03eeb43814 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -58,6 +58,8 @@
- #define I2C_ADDR_7BITS_MAX	0x77
- #define I2C_ADDR_7BITS_COUNT	(I2C_ADDR_7BITS_MAX + 1)
+diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
+index fbb84c7ef282..09bafd3e68fa 100644
+--- a/drivers/i2c/muxes/i2c-mux-pca954x.c
++++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
+@@ -77,6 +77,7 @@ struct chip_desc {
+ 		pca954x_ismux = 0,
+ 		pca954x_isswi
+ 	} muxtype;
++	struct i2c_device_identity id;
+ };
  
-+#define I2C_ADDR_DEVICE_ID	0x7c
-+
- /*
-  * core_lock protects i2c_adapter_idr, and guarantees that device detection,
-  * deletion of detected devices, and attach_adapter calls are serialized
-@@ -1968,6 +1970,37 @@ int i2c_transfer_buffer_flags(const struct i2c_client *client, char *buf,
- }
- EXPORT_SYMBOL(i2c_transfer_buffer_flags);
+ struct pca954x {
+@@ -97,59 +98,83 @@ static const struct chip_desc chips[] = {
+ 		.nchans = 2,
+ 		.enable = 0x4,
+ 		.muxtype = pca954x_ismux,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9542] = {
+ 		.nchans = 2,
+ 		.enable = 0x4,
+ 		.has_irq = 1,
+ 		.muxtype = pca954x_ismux,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9543] = {
+ 		.nchans = 2,
+ 		.has_irq = 1,
+ 		.muxtype = pca954x_isswi,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9544] = {
+ 		.nchans = 4,
+ 		.enable = 0x4,
+ 		.has_irq = 1,
+ 		.muxtype = pca954x_ismux,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9545] = {
+ 		.nchans = 4,
+ 		.has_irq = 1,
+ 		.muxtype = pca954x_isswi,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9546] = {
+ 		.nchans = 4,
+ 		.muxtype = pca954x_isswi,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9547] = {
+ 		.nchans = 8,
+ 		.enable = 0x8,
+ 		.muxtype = pca954x_ismux,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9548] = {
+ 		.nchans = 8,
+ 		.muxtype = pca954x_isswi,
++		.id = { .manufacturer_id = I2C_DEVICE_ID_NONE },
+ 	},
+ 	[pca_9846] = {
+ 		.nchans = 4,
+ 		.muxtype = pca954x_isswi,
++		.id = {
++			.manufacturer_id = I2C_DEVICE_ID_NXP_SEMICONDUCTORS,
++			.part_id = 0x10b,
++		},
+ 	},
+ 	[pca_9847] = {
+ 		.nchans = 8,
+ 		.enable = 0x8,
+ 		.muxtype = pca954x_ismux,
++		.id = {
++			.manufacturer_id = I2C_DEVICE_ID_NXP_SEMICONDUCTORS,
++			.part_id = 0x108,
++		},
+ 	},
+ 	[pca_9848] = {
+ 		.nchans = 8,
+ 		.muxtype = pca954x_isswi,
++		.id = {
++			.manufacturer_id = I2C_DEVICE_ID_NXP_SEMICONDUCTORS,
++			.part_id = 0x10a,
++		},
+ 	},
+ 	[pca_9849] = {
+ 		.nchans = 4,
+ 		.enable = 0x4,
+ 		.muxtype = pca954x_ismux,
++		.id = {
++			.manufacturer_id = I2C_DEVICE_ID_NXP_SEMICONDUCTORS,
++			.part_id = 0x109,
++		},
+ 	},
+ };
  
-+/**
-+ * i2c_get_device_id - get manufacturer, part id and die revision of a device
-+ * @client: The device to query
-+ * @id: The queried information
-+ *
-+ * Returns negative errno on error, zero on success.
-+ */
-+int i2c_get_device_id(const struct i2c_client *client,
-+		      struct i2c_device_identity *id)
-+{
-+	struct i2c_adapter *adap = client->adapter;
-+	union i2c_smbus_data raw_id;
-+	int ret;
-+
-+	if (!i2c_check_functionality(adap, I2C_FUNC_SMBUS_READ_I2C_BLOCK))
-+		return -EOPNOTSUPP;
-+
-+	raw_id.block[0] = 3;
-+	ret = i2c_smbus_xfer(adap, I2C_ADDR_DEVICE_ID, 0,
-+			     I2C_SMBUS_READ, client->addr << 1,
-+			     I2C_SMBUS_I2C_BLOCK_DATA, &raw_id);
-+	if (ret)
-+		return ret;
-+
-+	id->manufacturer_id = (raw_id.block[1] << 4) | (raw_id.block[2] >> 4);
-+	id->part_id = ((raw_id.block[2] & 0xf) << 5) | (raw_id.block[3] >> 3);
-+	id->die_revision = raw_id.block[3] & 0x7;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(i2c_get_device_id);
-+
- /* ----------------------------------------------------
-  * the i2c address scanning function
-  * Will not work for 10-bit addresses!
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 419a38e7c315..44ad14e016b5 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -47,6 +47,7 @@ struct i2c_algorithm;
- struct i2c_adapter;
- struct i2c_client;
- struct i2c_driver;
-+struct i2c_device_identity;
- union i2c_smbus_data;
- struct i2c_board_info;
- enum i2c_slave_event;
-@@ -186,8 +187,37 @@ extern s32 i2c_smbus_write_i2c_block_data(const struct i2c_client *client,
- extern s32
- i2c_smbus_read_i2c_block_data_or_emulated(const struct i2c_client *client,
- 					  u8 command, u8 length, u8 *values);
-+int i2c_get_device_id(const struct i2c_client *client,
-+		      struct i2c_device_identity *id);
- #endif /* I2C */
+@@ -369,6 +394,30 @@ static int pca954x_probe(struct i2c_client *client,
+ 	if (IS_ERR(gpio))
+ 		return PTR_ERR(gpio);
  
-+/**
-+ * struct i2c_device_identity - i2c client device identification
-+ * @manufacturer_id: 0 - 4095, database maintained by NXP
-+ * @part_id: 0 - 511, according to manufacturer
-+ * @die_revision: 0 - 7, according to manufacturer
-+ */
-+struct i2c_device_identity {
-+	u16 manufacturer_id;
-+#define I2C_DEVICE_ID_NXP_SEMICONDUCTORS                0
-+#define I2C_DEVICE_ID_NXP_SEMICONDUCTORS_1              1
-+#define I2C_DEVICE_ID_NXP_SEMICONDUCTORS_2              2
-+#define I2C_DEVICE_ID_NXP_SEMICONDUCTORS_3              3
-+#define I2C_DEVICE_ID_RAMTRON_INTERNATIONAL             4
-+#define I2C_DEVICE_ID_ANALOG_DEVICES                    5
-+#define I2C_DEVICE_ID_STMICROELECTRONICS                6
-+#define I2C_DEVICE_ID_ON_SEMICONDUCTOR                  7
-+#define I2C_DEVICE_ID_SPRINTEK_CORPORATION              8
-+#define I2C_DEVICE_ID_ESPROS_PHOTONICS_AG               9
-+#define I2C_DEVICE_ID_FUJITSU_SEMICONDUCTOR            10
-+#define I2C_DEVICE_ID_FLIR                             11
-+#define I2C_DEVICE_ID_O2MICRO                          12
-+#define I2C_DEVICE_ID_ATMEL                            13
-+#define I2C_DEVICE_ID_NONE                         0xffff
-+	u16 part_id;
-+	u8 die_revision;
-+};
++	match = of_match_device(of_match_ptr(pca954x_of_match), &client->dev);
++	if (match)
++		data->chip = of_device_get_match_data(&client->dev);
++	else
++		data->chip = &chips[id->driver_data];
 +
- enum i2c_alert_protocol {
- 	I2C_PROTOCOL_SMBUS_ALERT,
- 	I2C_PROTOCOL_SMBUS_HOST_NOTIFY,
++	if (data->chip->id.manufacturer_id != I2C_DEVICE_ID_NONE) {
++		struct i2c_device_identity id;
++
++		ret = i2c_get_device_id(client, &id);
++		if (ret && ret != -EOPNOTSUPP)
++			return ret;
++
++		if (!ret &&
++		    (id.manufacturer_id != data->chip->id.manufacturer_id ||
++		     id.part_id != data->chip->id.part_id)) {
++			dev_warn(&client->dev,
++				 "unexpected device id %03x-%03x-%x\n",
++				 id.manufacturer_id, id.part_id,
++				 id.die_revision);
++			return -ENODEV;
++		}
++	}
++
+ 	/* Write the mux register at addr to verify
+ 	 * that the mux is in fact present. This also
+ 	 * initializes the mux to disconnected state.
+@@ -378,12 +427,6 @@ static int pca954x_probe(struct i2c_client *client,
+ 		return -ENODEV;
+ 	}
+ 
+-	match = of_match_device(of_match_ptr(pca954x_of_match), &client->dev);
+-	if (match)
+-		data->chip = of_device_get_match_data(&client->dev);
+-	else
+-		data->chip = &chips[id->driver_data];
+-
+ 	data->last_chan = 0;		   /* force the first selection */
+ 
+ 	idle_disconnect_dt = of_node &&
 -- 
 2.11.0
