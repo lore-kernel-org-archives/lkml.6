@@ -1,29 +1,29 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELv5m2V2NqOdx2QVkUMdqh9aaLyIRGd8bTj6qqk3iGFNYNojUWP1TmNDZiOVa2SndT3DlVNG
-ARC-Seal: i=1; a=rsa-sha256; t=1520245582; cv=none;
+X-Google-Smtp-Source: AG47ELuppOwRR1Zv3tL8XKpDrtZJcxg+ZALjzuMmO9R15kW+UO4dzvO3eLnXEYm9jeaXaMPrFsLx
+ARC-Seal: i=1; a=rsa-sha256; t=1520245581; cv=none;
         d=google.com; s=arc-20160816;
-        b=dH64Ac7W2+Ydnbw0+ZSEeq7GI+5IioQ78bQV86/tBWQuLqQZSR307A5/lYA592xQxx
-         d45n6hRK0MTWciGAinHwIaYZ2YaQ45vVdvnAc6cgPNuPKJLF4vNTOMJfxbKGR7r9Of9V
-         WsrHv77VKr3She6yqMlzwp7FomTy0tW852F7HZR8WqcOug8YbykWNxJUym+3qSXCYo+x
-         7aR6+CTs7ilau9rNrAADtUVXRjplcwIhd9isOW+yzjnn8wL4VHF+sEBq9OeZcV8S3l5Y
-         nnoQ7Zl/MVYQKNzpYeiVcuiE9Wo24aVjmO3EdPSaPsa2rCMa/nJ9tvaobtDsEdIJ+fI1
-         zllg==
+        b=sfi1MmSn8DEVK8o6k2BTFV0De63st5jey4oK7CJ91HqLDZmTqs94aWP2hwRJuHKaR/
+         i/cOPC7NdCLmFTrQTG8w1RSlcD5GUWcjFCUSylv1EMScH7spBwsshQh5MP6v0AXlarj5
+         Dyicuk0n8OhMmeDelx33YBL1chorBsDHun+bi835QzoWQYB/fQTcgD/j8azQIHaYeKDk
+         KxdtqJikl1enfkZVkPF3Q0/tId4Z6K3XyFcxsYdBStAJoCr9zptNWfvV3wKjqkqVpY9n
+         7Lt0TaIiGugi4j4KDin72cIb7vwX3OmF5vhdLDTyQUbOweoKrIFL7fgy1APuqoM+HHew
+         XNgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=RGA25vQ8gBPaSKGy/lT4lV6mDQVKRyvseZa9z9ApG6o=;
-        b=GURhZSw998sq/lK4WWE46+2Sd5NNcRgU0o04Qz8ZGzQ5N4EtkrpLpkjtywcX9td1Kl
-         +2RvMUUaBBUcL+qNcremxA+jRcS1CZjHOIyHLU0W2zxtSmyW6RlpPY+j4ihqdeW7QhyJ
-         DjkPUugOwwjO0oKW9SvIeFSjxy4IlrGeWmoYkjrYohlFG2N4WWHXYqcVugY1c+xqF3SG
-         e1uMj977zrEO3LHx6ZsFbtuE+0ZxNBj++jd5iGLR+dmg5TfyP9UNc+g92V0dzUahOxdg
-         izoCZIsAH6hyxK6PdlDcTrB3wBREV34xh9+Azkbz4R8sHV3xgRcLUQupXS9QQVqGPcjA
-         djfg==
+        bh=TBtohe2X5SHsmPjdTDHZdNzRuX9gI4sKHKxpvfjShHc=;
+        b=OB4wIf53cXak33ZwVZmVXjLUzNBlbKPbFEsq1tlKs+VHwlD9pBCMKdoOXjzF3gAE7J
+         /UouCOPtKYOzFljorssSn9dKAq+n74avcXV4VxoJ9N6vujpZ43IRrboAzp94qEz8+EbP
+         g0FY5CGpJ0XSObPSasmILtNF7sV5ArdDxg3whP5G0eT3lbmPjUGnKjr3FzaXycXH+gih
+         s5GEg+0TCNzBTvqh6Qw1hN38H5FAzvUIEAuer2sVx2PQ7ISdp571vCDTXhZC9U9TeU7k
+         lPSeGvGag3jVLXpqYCl6OKgP/Df8JQedUcjv9b6KaFANPtsuKfmyIl6JeV0SgOu0hEWb
+         NqAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GwadVX5x;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Pa8xxOpK;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GwadVX5x;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Pa8xxOpK;
        spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
@@ -57,73 +57,70 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 30/34] x86/ldt: Define LDT_END_ADDR
-Date: Mon,  5 Mar 2018 11:25:59 +0100
-Message-Id: <1520245563-8444-31-git-send-email-joro@8bytes.org>
+Subject: [PATCH 27/34] x86/mm/dump_pagetables: Define INIT_PGD
+Date: Mon,  5 Mar 2018 11:25:56 +0100
+Message-Id: <1520245563-8444-28-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093031242513504?=
-X-GMAIL-MSGID: =?utf-8?q?1594093031242513504?=
+X-GMAIL-THRID: =?utf-8?q?1594093030904193949?=
+X-GMAIL-MSGID: =?utf-8?q?1594093030904193949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It marks the end of the address-space range reserved for the
-LDT. The LDT-code will use it when unmapping the LDT for
-user-space.
+Define INIT_PGD to point to the correct initial page-table
+for 32 and 64 bit and use it where needed. This fixes the
+build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 2 ++
- arch/x86/include/asm/pgtable_64_types.h | 2 ++
- arch/x86/kernel/ldt.c                   | 2 +-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/mm/dump_pagetables.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index eb2e97a..02bd445 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -51,6 +51,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- #define LDT_BASE_ADDR		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 2a4849e..2151ebb 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -105,6 +105,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
-+#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
++#define INIT_PGD	((pgd_t *) &init_top_pgt)
 +
- #define PKMAP_BASE		\
- 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
+ #else /* CONFIG_X86_64 */
  
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index e57003a..15188baa 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -90,12 +90,14 @@ typedef struct { pteval_t pte; } pte_t;
- # define __VMEMMAP_BASE		_AC(0xffd4000000000000, UL)
- # define LDT_PGD_ENTRY		_AC(-112, UL)
- # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-+#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
- #else
- # define VMALLOC_SIZE_TB	_AC(32, UL)
- # define __VMALLOC_BASE		_AC(0xffffc90000000000, UL)
- # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
- # define LDT_PGD_ENTRY		_AC(-3, UL)
- # define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-+#define  LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
- #endif
+ enum address_markers_idx {
+@@ -133,6 +135,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
- #ifdef CONFIG_RANDOMIZE_MEMORY
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 26d713e..f3c2fbf 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -202,7 +202,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
++#define INIT_PGD	(swapper_pg_dir)
++
+ #endif /* !CONFIG_X86_64 */
+ 
+ /* Multipliers for offsets within the PTEs */
+@@ -478,11 +482,7 @@ static inline bool is_hypervisor_range(int idx)
+ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
+ 				       bool checkwx, bool dmesg)
+ {
+-#ifdef CONFIG_X86_64
+-	pgd_t *start = (pgd_t *) &init_top_pgt;
+-#else
+-	pgd_t *start = swapper_pg_dir;
+-#endif
++	pgd_t *start = INIT_PGD;
+ 	pgprotval_t prot;
+ 	int i;
+ 	struct pg_state st = {};
+@@ -543,7 +543,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ static void ptdump_walk_user_pgd_level_checkwx(void)
+ {
  #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 	struct mmu_gather tlb;
- 	unsigned long start = LDT_BASE_ADDR;
--	unsigned long end = start + (1UL << PGDIR_SHIFT);
-+	unsigned long end = LDT_END_ADDR;
+-	pgd_t *pgd = (pgd_t *) &init_top_pgt;
++	pgd_t *pgd = INIT_PGD;
  
  	if (!static_cpu_has(X86_FEATURE_PTI))
  		return;
