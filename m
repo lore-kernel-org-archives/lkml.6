@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AG47ELtrDrTxftxkkH14QIYYPDZ4o7oOy+QcgztPBHOn/hAN9VJpf7P8pq+1xiO4Xf47cVo2Pxe3
-ARC-Seal: i=1; a=rsa-sha256; t=1520245575; cv=none;
+X-Google-Smtp-Source: AG47ELs7jau1v2h/MzDOmX/ls/1fUcBI/BSVVs6TMLJww+qkpWvO4Ko48bvxHq4TrqZEFtj3KhIu
+ARC-Seal: i=1; a=rsa-sha256; t=1520245573; cv=none;
         d=google.com; s=arc-20160816;
-        b=wssXHAQ9Z6Rtbaj7udG+2QMNKUQgOxqv23jhpLcUhqpmlbdKJ/GR2YCK15L1o6IGeH
-         fUqMUMONo7inzM6z7DDZI441jp81LeU5k9wMS5MvCQGpoooa7Q+TCZlsBhp/M17zBCUR
-         W6M5ZHTPGDIfLkLTSV5dg+BNpCGEEs09seZBPaINcchjL051Ud1WlMsVKZgHTxNBxurk
-         pzKYsIh9GkTpwc39c44AQmKcEDMcNdN6b3i/D/o9hMvUjB+4RbnnJziDC41QP7+UHamE
-         WxQFoVAbGQfRZ0ENHNNZtXdzALkfJq+ahIGL/e2AH3vOpzC/EGeTG4iIhuWEf4fg+QWI
-         KegQ==
+        b=P2IlxSlkyko4psz8anpOdpF0Eq86Rt9KshXlppvPy5Drrd3z5SDhC0eDztX8C0CenS
+         7Qb5dEpU/v2GgGmcetpA4TUaUalgobEzQ715EU5cVRIs93prrbN5Udl7fVFqPYXdNR6u
+         rjHomYy6HExkE3Iu/40YlocVAdj9dLLRjnd0bDlExLXg9EDRx3plyHIJNDozyuQLQ0U4
+         au+Z2oUgIr9ucmqSkPSD2PZ28rol6Sg5pmWwNXQmXMErYcoqnuki6e/c5cSKAwLy7jqc
+         EG/tEJqTilkON5J0A0+jTMRbxTppZTc2ASpfiu5940nry+PcNvWS2iaP3kbqK7nOK/as
+         3Otw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=JkRqSgi4/+KSltBc4UZcNnsJotRDCBQ6c9iKVNw312Y=;
-        b=m0Pnu2ie06Tkpk8NH6qTq2mrAkpotbsHx48Zh7+ZMVGjLPxhG47NFuowlL3PAV4Vrg
-         Vc/fLpTdi0SIg23hiMALZ3KCwaajPZFBtGUbuDXfaD3I8CTuhZQmd0FcwVbijnhreOjG
-         8GgEkSt6siIAmMtC0T3RfM/evvXtr2MKy3Dwr8x9EvarUmNIKKb29622GMS54PZvyY6E
-         TrRY5Km9+I3sKVXNafm7xlKx3PuqLl+9yAekI2fXAoavgZcJWfoyvFIayaoKF6kPpAJO
-         07BILfRlLoAZQNno9zOvOL9Y+i7dsNz/GKWSNvTxglneVF6vTCZQu65vVFkG1Q/GOcI+
-         k58A==
+        bh=RTCSI4LBCeZ83zvPmZKkwnhJMNZmduT3Jg6qpsJ2ftA=;
+        b=ZzNmucxjusTp/i0S9zAxy3tEFuA3ysE2q8RYpKo3bDYyCyGvf6/CYViZPT8aTEhCp4
+         r3nOx4qtuNpvXzCSGXrXbHbLKMwkhEOU1xaW9FJAhoZ9xRhJSRQJzHAkEY+uPeyNDW34
+         zIf1Iycy3Rq6884SbA2bVvSNak2I/uwl+IEcWxIsfd6bWnc6dxW+65Ojb0fzlLVd44VH
+         PtMvIi1xoDDa5zbg+k9tPeVrNDIAx4hV+k4hA9RxhVMEslltrso6s3dW+IurVxPFPJxT
+         lf496WBv7pV9T9uUKiQtGudEwhdH8IQkVPwRMs7TjC7shon05DnkAA5niugL1V/dnsIC
+         b9Xg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FaqYp7us;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=i/vNGdLL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=FaqYp7us;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=i/vNGdLL;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -57,108 +57,94 @@ Cc: x86@kernel.org,
 	Pavel Machek <pavel@ucw.cz>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 17/34] x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
-Date: Mon,  5 Mar 2018 11:25:46 +0100
-Message-Id: <1520245563-8444-18-git-send-email-joro@8bytes.org>
+Subject: [PATCH 10/34] x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
+Date: Mon,  5 Mar 2018 11:25:39 +0100
+Message-Id: <1520245563-8444-11-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594093024555359499?=
-X-GMAIL-MSGID: =?utf-8?q?1594093024555359499?=
+X-GMAIL-THRID: =?utf-8?q?1594093023121299654?=
+X-GMAIL-MSGID: =?utf-8?q?1594093023121299654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allocate a kernel and a user page-table root when PTI is
-enabled. Also allocate a full page per root for PAE because
-otherwise the bit to flip in cr3 to switch between them
-would be non-constant, which creates a lot of hassle.
-Keep that for a later optimization.
+These macros will be used in the NMI handler code and
+replace plain SAVE_ALL and RESTORE_REGS there. We will add
+the NMI-specific CR3-switch to these macros later.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
- arch/x86/mm/pgtable.c     |  5 +++--
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/x86/entry/entry_32.S | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index c290209..1f35d60 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -512,11 +512,18 @@ ENTRY(initial_code)
- ENTRY(setup_once_ref)
- 	.long setup_once
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 1b5656d..bb0bd896 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -167,6 +167,9 @@
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define	PGD_ALIGN	(2 * PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	1024
-+#else
-+#define	PGD_ALIGN	(PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	0
-+#endif
+ .endm
+ 
++.macro SAVE_ALL_NMI
++	SAVE_ALL
++.endm
  /*
-  * BSS section
-  */
- __PAGE_ALIGNED_BSS
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- #ifdef CONFIG_X86_PAE
- .globl initial_pg_pmd
- initial_pg_pmd:
-@@ -526,14 +533,17 @@ initial_pg_pmd:
- initial_page_table:
- 	.fill 1024,4,0
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+@@ -224,6 +227,18 @@
+ 	RESTORE_SKIP_SEGMENTS \pop
+ .endm
+ 
++.macro RESTORE_ALL_NMI pop=0
++	/*
++	 * Restore segments - might cause exceptions when loading
++	 * user-space segments
++	 */
++	RESTORE_SEGMENTS
++
++	/* Restore integer registers and unwind stack to iret frame */
++	RESTORE_INT_REGS
++	RESTORE_SKIP_SEGMENTS \pop
++.endm
++
+ .macro CHECK_AND_APPLY_ESPFIX
+ #ifdef CONFIG_X86_ESPFIX32
+ #define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
+@@ -1148,7 +1163,7 @@ ENTRY(nmi)
  #endif
-+	.align PGD_ALIGN
- initial_pg_fixmap:
- 	.fill 1024,4,0
--.globl empty_zero_page
--empty_zero_page:
--	.fill 4096,1,0
- .globl swapper_pg_dir
-+	.align PGD_ALIGN
- swapper_pg_dir:
- 	.fill 1024,4,0
-+	.fill PTI_USER_PGD_FILL,4,0
-+.globl empty_zero_page
-+empty_zero_page:
-+	.fill 4096,1,0
- EXPORT_SYMBOL(empty_zero_page)
  
- /*
-@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
- #ifdef CONFIG_X86_PAE
- __PAGE_ALIGNED_DATA
- 	/* Page-aligned for the benefit of paravirt? */
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- ENTRY(initial_page_table)
- 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
- # if KPMDS == 3
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 004abf9..a81d42e 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -338,7 +338,8 @@ static inline pgd_t *_pgd_alloc(void)
- 	 * We allocate one page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-+		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-+						 PGD_ALLOCATION_ORDER);
+ 	pushl	%eax				# pt_regs->orig_ax
+-	SAVE_ALL
++	SAVE_ALL_NMI
+ 	ENCODE_FRAME_POINTER
+ 	xorl	%edx, %edx			# zero error code
+ 	movl	%esp, %eax			# pt_regs pointer
+@@ -1176,7 +1191,7 @@ ENTRY(nmi)
  
- 	/*
- 	 * Now PAE kernel is not running as a Xen domain. We can allocate
-@@ -350,7 +351,7 @@ static inline pgd_t *_pgd_alloc(void)
- static inline void _pgd_free(pgd_t *pgd)
- {
- 	if (!SHARED_KERNEL_PMD)
--		free_page((unsigned long)pgd);
-+		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
- 	else
- 		kmem_cache_free(pgd_cache, pgd);
- }
+ .Lnmi_return:
+ 	CHECK_AND_APPLY_ESPFIX
+-	RESTORE_REGS 4
++	RESTORE_ALL_NMI pop=4
+ 	jmp	.Lirq_return
+ 
+ #ifdef CONFIG_X86_ESPFIX32
+@@ -1192,12 +1207,12 @@ ENTRY(nmi)
+ 	pushl	16(%esp)
+ 	.endr
+ 	pushl	%eax
+-	SAVE_ALL
++	SAVE_ALL_NMI
+ 	ENCODE_FRAME_POINTER
+ 	FIXUP_ESPFIX_STACK			# %eax == %esp
+ 	xorl	%edx, %edx			# zero error code
+ 	call	do_nmi
+-	RESTORE_REGS
++	RESTORE_ALL_NMI
+ 	lss	12+4(%esp), %esp		# back to espfix stack
+ 	jmp	.Lirq_return
+ #endif
 -- 
 2.7.4
