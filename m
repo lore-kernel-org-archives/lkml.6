@@ -1,181 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933211AbeCEHyd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 02:54:33 -0500
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:53206 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751498AbeCEHya (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 02:54:30 -0500
-X-$ESA-Groupmapping: true
-X-IronPort-AV: E=Sophos;i="5.47,426,1515452400";
-   d="scan'";a="29812873"
-From: Denis OSTERLAND <denis.osterland@diehl.com>
-To: "lkp@intel.com" <lkp@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mgr@pengutronix.de" <mgr@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "alexandre.belloni@free-electrons.com"
-        <alexandre.belloni@free-electrons.com>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 2/4] rtc: isl1208: switch to rtc_register_device
-Thread-Topic: [PATCH v2 2/4] rtc: isl1208: switch to rtc_register_device
-Thread-Index: AQHTsJIOgn23vj3MIkaJa9AMwKaiz6O9vqeAgAN6/YA=
-Date: Mon, 5 Mar 2018 07:44:21 +0000
-Message-ID: <1520235861.5012.2.camel@diehl.com>
-References: <1519821214-22379-3-git-send-email-Denis.Osterland@diehl.com>
-         <201803031057.mSGucTXN%fengguang.wu@intel.com>
-In-Reply-To: <201803031057.mSGucTXN%fengguang.wu@intel.com>
-Accept-Language: de-DE, en-US
+        id S933368AbeCEHzb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:55:31 -0500
+Received: from mail-bl2nam02on0056.outbound.protection.outlook.com ([104.47.38.56]:7616
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933184AbeCEHz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 02:55:27 -0500
+From: "Liu, Monk" <Monk.Liu@amd.com>
+To: "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot
+ available
+Thread-Topic: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot
+ available
+Thread-Index: AQHTsGFsSC26PGMebEmm/OMzPYEJ7qO5evoAgAfSfxA=
+Date: Mon, 5 Mar 2018 07:55:22 +0000
+Message-ID: <BLUPR12MB04494D7F15FC7D557D58488484DA0@BLUPR12MB0449.namprd12.prod.outlook.com>
+References: <1519800242-2442-1-git-send-email-Monk.Liu@amd.com>
+ <fa9f8ade-000f-a9b5-0bc9-0dd3f10d9722@gmail.com>
+In-Reply-To: <fa9f8ade-000f-a9b5-0bc9-0dd3f10d9722@gmail.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.153.3.249]
-MIME-Version: 1.0
-X-GBS-PROC: 415AWy8o668fDtCxszluzxx96n3SjvnVEtdxaXWlvV//0WrinnnpY5qmKSFSN+wT
-X-MIMETrack: Itemize by SMTP Server on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 08:44:21,
-        Serialize by ntm_grab.EXE on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 08:44:22,
-        Serialize complete at 05.03.2018 08:44:22,
-        Itemize by ntm_grab.EXE on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 08:44:22,
-        Serialize by Router on DIGNS28/SRV/DIEHL-HUB(Release 9.0.1FP10 HF66|February
- 09, 2018) at 05.03.2018 08:44:22
-X-TNEFEvaluated: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Monk.Liu@amd.com;
+x-originating-ip: [116.228.147.241]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BLUPR12MB0723;7:+D5J1AQ4wZTwluB1kdXggS9VFMuHns58RGX6o0KYuNm0cX21K0yD3glEppF1z49CuAhpIPbHXaNtiTg0w0GSVZ2VKiZZ5afEa/YnSTBUmxnlsy7Q4xb2ZrfX/ndecyC7EiKReVeoisQRfGa09lsCBZAJ/B1iKQg8ahudzW1PTa4XkZK2gvwb7jMnRIWCqaec8M5BkD0IQj1aWXQC+WcUxus3A+jg8IKQ4d/gs1/BEbAZKTqPUKjRj2hifhVBJXks;20:EULfu3t2xUiDlhrPxh+IDAd/wJDq0kgYmbfxs7N7X55wMeHQSbCYNILBg/ZpW6iffvLJpur/iQ4c/3E+jmZonksdEw4p7AFtYVR/TqMMrtSadZBJCmytwnu5uXFnBgQq0nhFfGqW9C8s43nOqrsgDOC68rQSmPtRQLJ2EmpGejWIT6fNid2XfnXQy9yxaYvX9zTkUoIxC4EfCpE0+/8Ga5HJzvQigXXzZtWUci/WIxH8NyBlNEzaf9dZgrkZA4cs
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(366004)(39380400002)(13464003)(199004)(189003)(68736007)(6506007)(26005)(8936002)(5250100002)(25786009)(6116002)(2201001)(3846002)(33656002)(86362001)(74316002)(14454004)(229853002)(59450400001)(81166006)(8676002)(81156014)(102836004)(316002)(478600001)(7736002)(305945005)(2501003)(6246003)(53546011)(72206003)(110136005)(3280700002)(53936002)(7696005)(76176011)(55016002)(2950100002)(6436002)(3660700001)(2906002)(99286004)(106356001)(9686003)(105586002)(5660300001)(66066001)(2900100001)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0723;H:BLUPR12MB0449.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8c1f1243-ab82-4c5e-8752-08d5826e72e4
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603307)(7153060)(7193020);SRVR:BLUPR12MB0723;
+x-ms-traffictypediagnostic: BLUPR12MB0723:
+x-microsoft-antispam-prvs: <BLUPR12MB07235A99545E3AEC598059E684DA0@BLUPR12MB0723.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(767451399110)(217544274631240)(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(8121501046)(5005006)(3231220)(944501244)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:BLUPR12MB0723;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0723;
+x-forefront-prvs: 06022AA85F
+x-microsoft-antispam-message-info: Bnpamznta2K/UZQCw4GD2wY+glynHnT6SGU0wOeCqPbc3CZl/FefX9PJo46IFe38hkK05SMaFVPg5MhHkD44E2YydLOmwmLJF/7K2e3JITVJ98ctLOi1LG/m8ussXOPLpAkQ+54VSsD/6kydbUs177YbQnvITBSMg076Pxct1zNLjyZ63/LVgwOUb+uA8xQv5atOWopFk8sOVrx0zPaciPaCiZExgTKr8S08CUHpY4Rv9H1giqu2OmibUVvXE2ZQ4RLEsx3iojuDy4nG0EbE6QHNQdLVoITtLwJXKne6uWwMqqp782T+2o4kAtr5KQNP1dWcCJKnZhR2mi3nWjBYzQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-ID: <C8F36F68720D564DBDDA93D629CEDE6D@diehl.internal>
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c1f1243-ab82-4c5e-8752-08d5826e72e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2018 07:55:22.6774
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0723
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w257sdpq010598
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w257tcg5010909
 
-Hi,
+Hi Christian
 
-an obvious mistake by me.
-isl1208 is introduced in patch 3/4.
-I will send v3.
-Sorry for that.
+You are right on that part of obj-staged is set to NULL in add_fence, 
+So my following question will be why we kfree(obj->staged) in reserve_shared() if staged is always NULL in that point ?
 
-Regards Denis
+Thanks 
+/Monk
 
-Am Samstag, den 03.03.2018, 10:35 +0800 schrieb kbuild test robot:
-> Hi Denis,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on abelloni/rtc-next]
-> [also build test ERROR on v4.16-rc3 next-20180302]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Denis-OSTERLAND/rtc-isl1208-fixes-documentation-and-isl1219-support/20180303-093405
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
-> config: x86_64-randconfig-x017-201808 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> Note: the linux-review/Denis-OSTERLAND/rtc-isl1208-fixes-documentation-and-isl1219-support/20180303-093405 HEAD 1d3cf882ecd061847968da1511ec956b9bf70d33 builds fine.
->       It only hurts bisectibility.
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    In file included from drivers/rtc/rtc-isl1208.c:16:0:
->    drivers/rtc/rtc-isl1208.c: In function 'isl1208_probe':
-> > 
-> > > 
-> > > drivers/rtc/rtc-isl1208.c:677:29: error: 'isl1208' undeclared (first use in this function)
->      return rtc_register_device(isl1208->rtc);
->                                 ^
->    include/linux/rtc.h:261:37: note: in definition of macro 'rtc_register_device'
->      __rtc_register_device(THIS_MODULE, device)
->                                         ^~~~~~
->    drivers/rtc/rtc-isl1208.c:677:29: note: each undeclared identifier is reported only once for each function it appears in
->      return rtc_register_device(isl1208->rtc);
->                                 ^
->    include/linux/rtc.h:261:37: note: in definition of macro 'rtc_register_device'
->      __rtc_register_device(THIS_MODULE, device)
->                                         ^~~~~~
-> > 
-> > > 
-> > > drivers/rtc/rtc-isl1208.c:678:1: warning: control reaches end of non-void function [-Wreturn-type]
->     }
->     ^
-> 
-> vim +/isl1208 +677 drivers/rtc/rtc-isl1208.c
-> 
->    625	
->    626	static int
->    627	isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
->    628	{
->    629		int rc = 0;
->    630		struct rtc_device *rtc;
->    631	
->    632		if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
->    633			return -ENODEV;
->    634	
->    635		if (isl1208_i2c_validate_client(client) < 0)
->    636			return -ENODEV;
->    637	
->    638		rtc = devm_rtc_allocate_device(&client->dev);
->    639		if (IS_ERR(rtc))
->    640			return PTR_ERR(rtc);
->    641	
->    642		rtc->ops = &isl1208_rtc_ops;
->    643	
->    644		i2c_set_clientdata(client, rtc);
->    645	
->    646		rc = isl1208_i2c_get_sr(client);
->    647		if (rc < 0) {
->    648			dev_err(&client->dev, "reading status failed\n");
->    649			return rc;
->    650		}
->    651	
->    652		if (rc & ISL1208_REG_SR_RTCF)
->    653			dev_warn(&client->dev, "rtc power failure detected, "
->    654				 "please set clock.\n");
->    655	
->    656		rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
->    657		if (rc)
->    658			return rc;
->    659	
->    660		if (client->irq > 0) {
->    661			rc = devm_request_threaded_irq(&client->dev, client->irq, NULL,
->    662						       isl1208_rtc_interrupt,
->    663						       IRQF_SHARED | IRQF_ONESHOT,
->    664						       isl1208_driver.driver.name,
->    665						       client);
->    666			if (!rc) {
->    667				device_init_wakeup(&client->dev, 1);
->    668				enable_irq_wake(client->irq);
->    669			} else {
->    670				dev_err(&client->dev,
->    671					"Unable to request irq %d, no alarm support\n",
->    672					client->irq);
->    673				client->irq = 0;
->    674			}
->    675		}
->    676	
->  > 677		return rtc_register_device(isl1208->rtc);
->  > 678	}
->    679	
-> 
+-----Original Message-----
+From: Christian König [mailto:ckoenig.leichtzumerken@gmail.com] 
+Sent: 2018年2月28日 16:27
+To: Liu, Monk <Monk.Liu@amd.com>; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-buf/reservation: shouldn't kfree staged when slot available
+
+Am 28.02.2018 um 07:44 schrieb Monk Liu:
+> under below scenario the obj->fence would refer to a wild pointer:
+>
+> 1,call reservation_object_reserved_shared
+> 2,call reservation_object_add_shared_fence
+> 3,call reservation_object_reserved_shared
+> 4,call reservation_object_add_shared_fence
+>
+> in step 1, staged is allocated,
+>
+> in step 2, code path will go reservation_object_add_shared_replace()
+> and obj->fence would be assigned as staged (through RCU_INIT_POINTER)
+>
+> in step 3, obj->staged will be freed(by simple kfree), which make 
+> obj->fence point to a wild pointer...
+
+
+Well that explanation is still nonsense. See
+reservation_object_add_shared_fence:
+>         obj->staged = NULL;
+
+Among the first things reservation_object_add_shared_fence() does is it 
+sets obj->staged to NULL.
+
+So step 3 will not free anything and we never have a wild pointer.
+
+Regards,
+Christian.
+
+>
+> in step 4, code path will go reservation_object_add_shared_inplace()
+> and inside it the @fobj (which equals to @obj->staged, set by above steps)
+> is already a wild pointer
+>
+> should remov the kfree on staged in reservation_object_reserve_shared()
+>
+> Change-Id: If7c01f1b4be3d3d8a81efa90216841f79ab1fc1c
+> Signed-off-by: Monk Liu <Monk.Liu@amd.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-Diehl AKO Stiftung & Co. KG, Pfannerstraße 75-83, 88239 Wangen im Allgäu
-Bereichsvorstand: Dr.-Ing. Michael Siedentop (Sprecher), Josef Fellner (Mitglied)
-Sitz der Gesellschaft: Wangen i.A. – Registergericht: Amtsgericht Ulm HRA 620609 – Persönlich haftende Gesellschafterin: Diehl Verwaltungs-Stiftung – Sitz: Nürnberg – Registergericht: Amtsgericht Nürnberg HRA 11756 –
-Vorstand: Dr.-Ing. E.h. Thomas Diehl (†) (Vorsitzender), Herr Dipl.-Wirtsch.-Ing. Wolfgang Weggen (stellvertretender Vorsitzender), Dipl.-Kfm. Claus Günther, Dipl.-Kfm. Frank Gutzeit, Dr.-Ing. Heinrich Schunk, Dr.-Ing. Michael Siedentop , Dipl.-Kfm. Dr.-Ing. Martin Sommer, Dipl.-Ing. (FH) Rainer von Borstel, Vorsitzender des Aufsichtsrates: Dr. Klaus Maier
-___________________________________________________________________________________________________
-Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
-Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht. Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
-The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited.
+>   drivers/dma-buf/reservation.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/dma-buf/reservation.c b/drivers/dma-buf/reservation.c
+> index 375de41..b473ccc 100644
+> --- a/drivers/dma-buf/reservation.c
+> +++ b/drivers/dma-buf/reservation.c
+> @@ -74,12 +74,9 @@ int reservation_object_reserve_shared(struct reservation_object *obj)
+>   	old = reservation_object_get_list(obj);
+>   
+>   	if (old && old->shared_max) {
+> -		if (old->shared_count < old->shared_max) {
+> -			/* perform an in-place update */
+> -			kfree(obj->staged);
+> -			obj->staged = NULL;
+> +		if (old->shared_count < old->shared_max)
+>   			return 0;
+> -		} else
+> +		else
+>   			max = old->shared_max * 2;
+>   	} else
+>   		max = 4;
