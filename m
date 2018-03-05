@@ -1,158 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeCEDPM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 4 Mar 2018 22:15:12 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43308 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932664AbeCEDPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 4 Mar 2018 22:15:10 -0500
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 5/5] genirq/affinity: irq vector spread among online CPUs as far as possible
-Date: Mon,  5 Mar 2018 11:13:57 +0800
-Message-Id: <20180305031357.23950-6-ming.lei@redhat.com>
-In-Reply-To: <20180305031357.23950-1-ming.lei@redhat.com>
-References: <20180305031357.23950-1-ming.lei@redhat.com>
+        id S1752352AbeCEDQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 4 Mar 2018 22:16:57 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:46940 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751989AbeCEDQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 4 Mar 2018 22:16:55 -0500
+Date: Sun, 04 Mar 2018 22:16:51 -0500 (EST)
+Message-Id: <20180304.221651.1758033941719841960.davem@davemloft.net>
+To: jasowang@redhat.com
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brouer@redhat.com, john.fastabend@gmail.com
+Subject: Re: [PATCH net V2] virtio-net: re enable XDP_REDIRECT for
+ mergeable buffer
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <986bd816-2452-9eca-ec8a-ce267ef49a2d@redhat.com>
+References: <1519982954-14360-1-git-send-email-jasowang@redhat.com>
+        <20180304.183811.344767417258525977.davem@davemloft.net>
+        <986bd816-2452-9eca-ec8a-ce267ef49a2d@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-may cause irq vector assigned to all offline CPUs, and this kind of
-assignment may cause much less irq vectors mapped to online CPUs, and
-performance may get hurt.
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 5 Mar 2018 10:43:41 +0800
 
-For example, in a 8 cores system, 0~3 online, 4~8 offline/not present,
-see 'lscpu':
+> 
+> 
+> On 2018年03月05日 07:38, David Miller wrote:
+>> From: Jason Wang <jasowang@redhat.com>
+>> Date: Fri,  2 Mar 2018 17:29:14 +0800
+>>
+>>> XDP_REDIRECT support for mergeable buffer was removed since commit
+>>> 7324f5399b06 ("virtio_net: disable XDP_REDIRECT in receive_mergeable()
+>>> case"). This is because we don't reserve enough tailroom for struct
+>>> skb_shared_info which breaks XDP assumption. So this patch fixes this
+>>> by reserving enough tailroom and using fixed size of rx buffer.
+>>>
+>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>>> ---
+>>> Changes from V1:
+>>> - do not add duplicated tracepoint when redirection fails
+>> Applied to net-next, thanks Jason.
+> 
+> Hi David,
+> 
+> Consider the change is not large, any chance to make it for -net to
+> keep XDP redirection work?
 
-	[ming@box]$lscpu
-	Architecture:          x86_64
-	CPU op-mode(s):        32-bit, 64-bit
-	Byte Order:            Little Endian
-	CPU(s):                4
-	On-line CPU(s) list:   0-3
-	Thread(s) per core:    1
-	Core(s) per socket:    2
-	Socket(s):             2
-	NUMA node(s):          2
-	...
-	NUMA node0 CPU(s):     0-3
-	NUMA node1 CPU(s):
-	...
-
-For example, one device has 4 queues:
-
-1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0
-	irq 40, cpu list 1
-	irq 41, cpu list 2
-	irq 42, cpu list 3
-
-2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-	irq 39, cpu list 0-2
-	irq 40, cpu list 3-4,6
-	irq 41, cpu list 5
-	irq 42, cpu list 7
-
-3) after applying this patch against V4.15+:
-	irq 39, cpu list 0,4
-	irq 40, cpu list 1,6
-	irq 41, cpu list 2,5
-	irq 42, cpu list 3,7
-
-This patch tries to do irq vector spread among online CPUs as far as
-possible by 2 stages spread.
-
-The above assignment 3) isn't the optimal result from NUMA view, but it
-returns more irq vectors with online CPU mapped, given in reality one CPU
-should be enough to handle one irq vector, so it is better to do this way.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Laurence Oberman <loberman@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- kernel/irq/affinity.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index a8c5d07890a6..aa2635416fc5 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -106,6 +106,9 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	nodemask_t nodemsk = NODE_MASK_NONE;
- 	int n, nodes, cpus_per_vec, extra_vecs, done = 0;
- 
-+	if (!cpumask_weight(cpu_mask))
-+		return 0;
-+
- 	nodes = get_nodes_in_cpumask(node_to_cpumask, cpu_mask, &nodemsk);
- 
- 	/*
-@@ -175,9 +178,9 @@ struct cpumask *
- irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- {
- 	int affv = nvecs - affd->pre_vectors - affd->post_vectors;
--	int curvec;
-+	int curvec, vecs_offline, vecs_online;
- 	struct cpumask *masks;
--	cpumask_var_t nmsk, *node_to_cpumask;
-+	cpumask_var_t nmsk, cpu_mask, *node_to_cpumask;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -193,9 +196,12 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	if (!masks)
- 		goto out;
- 
-+	if (!alloc_cpumask_var(&cpu_mask, GFP_KERNEL))
-+		goto out;
-+
- 	node_to_cpumask = alloc_node_to_cpumask();
- 	if (!node_to_cpumask)
--		goto out;
-+		goto out_free_cpu_mask;
- 
- 	/* Fill out vectors at the beginning that don't need affinity */
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
-@@ -204,15 +210,32 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	/* Stabilize the cpumasks */
- 	get_online_cpus();
- 	build_node_to_cpumask(node_to_cpumask);
--	curvec += irq_build_affinity_masks(affd, curvec, affv,
--					   node_to_cpumask,
--					   cpu_possible_mask, nmsk, masks);
-+	/* spread on online CPUs starting from the vector of affd->pre_vectors */
-+	vecs_online = irq_build_affinity_masks(affd, curvec, affv,
-+					       node_to_cpumask,
-+					       cpu_online_mask, nmsk, masks);
-+
-+	/* spread on offline CPUs starting from the next vector to be handled */
-+	if (vecs_online >= affv)
-+		curvec = affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + vecs_online;
-+	cpumask_andnot(cpu_mask, cpu_possible_mask, cpu_online_mask);
-+	vecs_offline = irq_build_affinity_masks(affd, curvec, affv,
-+						node_to_cpumask,
-+					        cpu_mask, nmsk, masks);
- 	put_online_cpus();
- 
- 	/* Fill out vectors at the end that don't need affinity */
-+	if (vecs_online + vecs_offline >= affv)
-+		curvec = affv + affd->pre_vectors;
-+	else
-+		curvec = affd->pre_vectors + vecs_online + vecs_offline;
- 	for (; curvec < nvecs; curvec++)
- 		cpumask_copy(masks + curvec, irq_default_affinity);
- 	free_node_to_cpumask(node_to_cpumask);
-+out_free_cpu_mask:
-+	free_cpumask_var(cpu_mask);
- out:
- 	free_cpumask_var(nmsk);
- 	return masks;
--- 
-2.9.5
+Ok, I'll apply this to 'net' too.
