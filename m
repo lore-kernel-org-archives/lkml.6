@@ -1,134 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933743AbeCEJiw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 04:38:52 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27101 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752556AbeCEJit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 04:38:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,426,1515484800";
-   d="scan'208";a="208868379"
-Subject: Re: [PATCH v2 09/16] mmc: sdhci: Add quirk to disable HW timeout
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180205125029.21570-1-kishon@ti.com>
- <20180205125029.21570-10-kishon@ti.com>
- <cda22332-ed17-9309-4989-19765744879b@intel.com>
- <a7ba98cd-7a3c-00f9-bfaa-a982126c9185@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <18a7cff5-5cc5-4eb1-17c8-033bd5ddf6c1@intel.com>
-Date: Mon, 5 Mar 2018 11:38:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933762AbeCEJjU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 04:39:20 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:49699 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933671AbeCEJjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 04:39:16 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w259dDmk021413
+X-Nifty-SrcIP: [209.85.213.45]
+X-Google-Smtp-Source: AG47ELvL44eI/J3waLXqrp+gtKiNPPaWr171+IbYYVcoQUhcABq0tKf7nuqx6cJGl9foRu382uugAO9h/woPNFoBVKU=
 MIME-Version: 1.0
-In-Reply-To: <a7ba98cd-7a3c-00f9-bfaa-a982126c9185@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKwiHFjv7a=+RstT8up7aSctUW5=y0A3nz_FvG=5Jd1DHC07Tw@mail.gmail.com>
+References: <CA+55aFz_ww8ohU68Jz34pg_x7gpGpJ+FC-dmS_Rm_VvY01GGpg@mail.gmail.com>
+ <20180228191805.20094-1-linux@rasmusvillemoes.dk> <20180228191805.20094-3-linux@rasmusvillemoes.dk>
+ <CAK7LNAQ9WKj5Uz=A2QKctM9H8WFErfo_J_rGSn7B5jig+4gv_w@mail.gmail.com> <CAKwiHFjv7a=+RstT8up7aSctUW5=y0A3nz_FvG=5Jd1DHC07Tw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 5 Mar 2018 18:38:32 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASc1scA3PTGeaMxeRjzyUFZoFgudvBMDyrULOkrjUWGBQ@mail.gmail.com>
+Message-ID: <CAK7LNASc1scA3PTGeaMxeRjzyUFZoFgudvBMDyrULOkrjUWGBQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] fixdep: do not ignore kconfig.h
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Michal Marek <michal.lkml@markovi.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/18 11:30, Kishon Vijay Abraham I wrote:
-> Hi Adrian,
-> 
-> On Monday 19 February 2018 02:21 PM, Adrian Hunter wrote:
->> On 05/02/18 14:50, Kishon Vijay Abraham I wrote:
->>> Add quirk to disable HW timeout if the requested timeout is more than
->>> the maximum obtainable timeout.
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  drivers/mmc/host/sdhci.c | 12 ++++++++++++
->>>  drivers/mmc/host/sdhci.h |  7 +++++++
->>>  2 files changed, 19 insertions(+)
->>>
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 070aff9c108f..1aa74b4682f3 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -735,6 +735,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>  		DBG("Too large timeout 0x%x requested for CMD%d!\n",
->>>  		    count, cmd->opcode);
->>>  		count = 0xE;
->>> +		if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
->>> +			host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
->>> +			sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>> +			sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>> +			host->hw_timeout_disabled = true;
->>> +		}
->>
->> sdhci_calc_timeout() is really for calculations so please do this in
->> sdhci_set_timeout() instead (i.e. change sdhci_calc_timeout() to return
->> whether the timeout is too big).  Note that you need to cater for the "/*
->> Unspecified timeout, assume max */" case and the
->> SDHCI_QUIRK_BROKEN_TIMEOUT_VAL case.
->>
->> Also if SDHCI_INT_DATA_TIMEOUT is not being disabled, check here to
->> re-enable it and leave sdhci_request_done() alone. i.e.
->>
->> 	else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
->> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->> 		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->> 		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->> 	}
->>
->> Maybe make a separate subroutine for the update:
->>
->> void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
->> {
->> 	if (enable)
->> 		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->> 	else
->> 		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
->> 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->> 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->> }
+2018-03-05 17:15 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+> On 5 March 2018 at 05:52, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>> 2018-03-01 4:17 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
+>>> kconfig.h was excluded from consideration by fixdep by
+>>> 6a5be57f0f00 (fixdep: fix extraneous dependencies) to avoid some false
+>>> positive hits
+> [...]
+>>> We've already had one case [2] where the lack of include/linux/kconfig.h in
+>>> the .o.cmd file caused a missing rebuild,
+> [...]
+>>> [2] https://lkml.org/lkml/2018/2/22/838
 >>
 >>
->>>  	}
->>>  
->>>  	return count;
->>> @@ -2349,6 +2355,12 @@ static bool sdhci_request_done(struct sdhci_host *host)
->>>  	}
->>>  
->>>  	sdhci_del_timer(host, mrq);
->>> +	if (sdhci_data_line_cmd(mrq->cmd) && host->hw_timeout_disabled) {
->>> +		host->ier |= SDHCI_INT_DATA_TIMEOUT;
->>> +		sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
->>> +		sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->>> +		host->hw_timeout_disabled = false;
->>> +	}
->>>  
->>>  	/*
->>>  	 * Always unmap the data buffers if they were mapped by
->>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>> index afab26fd70e6..3a967a56fcc3 100644
->>> --- a/drivers/mmc/host/sdhci.h
->>> +++ b/drivers/mmc/host/sdhci.h
->>> @@ -437,6 +437,11 @@ struct sdhci_host {
->>>  #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
->>>  /* Controller has CRC in 136 bit Command Response */
->>>  #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
->>> +/*
->>> + * Disable HW timeout if the requested timeout is more than the maximum
->>> + * obtainable timeout
->>> + */
->>> +#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
-> 
-> Are you okay with the definition of this quirk? i.e this quirk is applied only
-> when the requested timeout is "more" than the maximum obtainable timeout.
-> 
-> By this way platforms can continue to use hardware timeout for smaller timeout
-> value.
+>> Sorry, I missed to include this series in the Kbuild fixes PR
+>> I sent two days ago.
+>>
+>> I was not tracking the randomize-struct thread.
+>> I read [2] and I noticed the background of this series just now.
+>>
+>> Hopefully, I will have another opportunity of PR
+>> if this series is necessary for v4.16  (seems so)
+>
+> I should probably have put 3/3 first, if that is 4.16 material, the
+> other two can obviously wait for 4.17. They don't really depend on
+> each other apart from overlapping context, and the above commit
+> message would need slight rewording if put before the others. I can do
+> that reordering and resend if you wish.
+>
+> Rasmus
 
-It is fine to me.
+1/3 is obviously safe, 2/3 too.
+I think the current series is OK for v4.16.
+I will queue it up to the fixes branch shortly.
+
+Thanks!
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
