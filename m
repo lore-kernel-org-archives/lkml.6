@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeCEOfV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 09:35:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53044 "EHLO mail.kernel.org"
+        id S1752703AbeCEOgE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 09:36:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752607AbeCEOas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 09:30:48 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F099D21777
+        id S1752562AbeCEOal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 09:30:41 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC34D21777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 14/28] perf record: Fix crash in pipe mode
-Date: Mon,  5 Mar 2018 11:29:18 -0300
-Message-Id: <20180305142932.16921-15-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 11/28] perf top: Allow asking for the maximum allowed sample rate
+Date: Mon,  5 Mar 2018 11:29:15 -0300
+Message-Id: <20180305142932.16921-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180305142932.16921-1-acme@kernel.org>
 References: <20180305142932.16921-1-acme@kernel.org>
@@ -27,119 +26,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Currently we can crash perf record when running in pipe mode, like:
+Add the handy '-F max' shortcut, just introduced to 'perf record', to
+reading and using the kernel.perf_event_max_sample_rate value as the
+user supplied sampling frequency:
 
-  $ perf record ls | perf report
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  perf: Segmentation fault
-  Error:
-  The - file has no samples!
-
-The callstack of the crash is:
-
-    0x0000000000515242 in perf_event__synthesize_event_update_name
-  3513            ev = event_update_event__new(len + 1, PERF_EVENT_UPDATE__NAME, evsel->id[0]);
-  (gdb) bt
-  #0  0x0000000000515242 in perf_event__synthesize_event_update_name
-  #1  0x00000000005158a4 in perf_event__synthesize_extra_attr
-  #2  0x0000000000443347 in record__synthesize
-  #3  0x00000000004438e3 in __cmd_record
-  #4  0x000000000044514e in cmd_record
-  #5  0x00000000004cbc95 in run_builtin
-  #6  0x00000000004cbf02 in handle_internal_command
-  #7  0x00000000004cc054 in run_argv
-  #8  0x00000000004cc422 in main
-
-The reason of the crash is that the evsel does not have ids array
-allocated and the pipe's synthesize code tries to access it.
-
-We don't force evsel ids allocation when we have single event, because
-it's not needed. However we need it when we are in pipe mode even for
-single event as a key for evsel update event.
-
-Fixing this by forcing evsel ids allocation event for single event, when
-we are in pipe mode.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180302161354.30192-1-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-hz04f296zccknnb5at06a6q0@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 9 +++++++++
- tools/perf/perf.h           | 1 +
- tools/perf/util/record.c    | 8 ++++++--
- 3 files changed, 16 insertions(+), 2 deletions(-)
+ tools/perf/Documentation/perf-top.txt | 4 +++-
+ tools/perf/builtin-top.c              | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 62387942a1d5..12230ddb6506 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -882,6 +882,15 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		}
- 	}
+diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
+index 8a32cc77bead..a039407d63b8 100644
+--- a/tools/perf/Documentation/perf-top.txt
++++ b/tools/perf/Documentation/perf-top.txt
+@@ -55,7 +55,9 @@ Default is to monitor all CPUS.
  
-+	/*
-+	 * If we have just single event and are sending data
-+	 * through pipe, we need to force the ids allocation,
-+	 * because we synthesize event name through the pipe
-+	 * and need the id for that.
-+	 */
-+	if (data->is_pipe && rec->evlist->nr_entries == 1)
-+		rec->opts.sample_id = true;
-+
- 	if (record__open(rec) != 0) {
- 		err = -1;
- 		goto out_child;
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 007e0dfd5ce3..8fec1abd0f1f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -62,6 +62,7 @@ struct record_opts {
- 	bool	     overwrite;
- 	bool	     ignore_missing_thread;
- 	bool	     strict_freq;
-+	bool	     sample_id;
- 	unsigned int freq;
- 	unsigned int mmap_pages;
- 	unsigned int auxtrace_mmap_pages;
-diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
-index 4f1a82e76d39..9cfc7bf16531 100644
---- a/tools/perf/util/record.c
-+++ b/tools/perf/util/record.c
-@@ -138,6 +138,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 	struct perf_evsel *evsel;
- 	bool use_sample_identifier = false;
- 	bool use_comm_exec;
-+	bool sample_id = opts->sample_id;
+ -F <freq>::
+ --freq=<freq>::
+-	Profile at this frequency.
++	Profile at this frequency. Use 'max' to use the currently maximum
++	allowed frequency, i.e. the value in the kernel.perf_event_max_sample_rate
++	sysctl.
  
- 	/*
- 	 * Set the evsel leader links before we configure attributes,
-@@ -164,8 +165,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 		 * match the id.
- 		 */
- 		use_sample_identifier = perf_can_sample_identifier();
--		evlist__for_each_entry(evlist, evsel)
--			perf_evsel__set_sample_id(evsel, use_sample_identifier);
-+		sample_id = true;
- 	} else if (evlist->nr_entries > 1) {
- 		struct perf_evsel *first = perf_evlist__first(evlist);
- 
-@@ -175,6 +175,10 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 			use_sample_identifier = perf_can_sample_identifier();
- 			break;
- 		}
-+		sample_id = true;
-+	}
-+
-+	if (sample_id) {
- 		evlist__for_each_entry(evlist, evsel)
- 			perf_evsel__set_sample_id(evsel, use_sample_identifier);
- 	}
+ -i::
+ --inherit::
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 35ac016fcb98..bb4f9fafd11d 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1307,7 +1307,9 @@ int cmd_top(int argc, const char **argv)
+ 	OPT_STRING(0, "sym-annotate", &top.sym_filter, "symbol name",
+ 		    "symbol to annotate"),
+ 	OPT_BOOLEAN('z', "zero", &top.zero, "zero history across updates"),
+-	OPT_UINTEGER('F', "freq", &opts->user_freq, "profile at this frequency"),
++	OPT_CALLBACK('F', "freq", &top.record_opts, "freq or 'max'",
++		     "profile at this frequency",
++		      record__parse_freq),
+ 	OPT_INTEGER('E', "entries", &top.print_entries,
+ 		    "display this many functions"),
+ 	OPT_BOOLEAN('U', "hide_user_symbols", &top.hide_user_symbols,
 -- 
 2.14.3
