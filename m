@@ -1,58 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932723AbeCEG5I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 01:57:08 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60595 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932492AbeCEG5H (ORCPT
+        id S1752300AbeCEHB6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 02:01:58 -0500
+Received: from regular1.263xmail.com ([211.150.99.136]:37056 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751215AbeCEHB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 01:57:07 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R251e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=qixuan.wu@linux.alibaba.com;NM=1;PH=DW;RN=10;SR=0;TI=W4_5166270_DEFAULT_0AB10131_1520231819119_o7001c53a;
-Date: Mon, 05 Mar 2018 14:56:59 +0800
-From: "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>
-To: "Steven Rostedt" <rostedt@goodmis.org>
-Cc: "linux-kernel-owner" <linux-kernel-owner@vger.kernel.org>,
-        "Petr Mladek" <pmladek@suse.com>, "Jan Kara" <jack@suse.cz>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky.work@gmail.com>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
-        "caijingxian" <caijingxian@linux.alibaba.com>,
-        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>
-Reply-To: "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>
-Message-ID: <32058cbd-7d09-4316-afd9-c2f031a2a406.qixuan.wu@linux.alibaba.com>
-Subject: =?UTF-8?B?UmU6IFdvdWxkIHlvdSBoZWxwIHRvIHRlbGwgd2h5IGFzeW5jIHByaW50ayBzb2x1dGlvbiB3?=
-  =?UTF-8?B?YXMgbm90IHRha2VuIHRvIHVwc3RyZWFtIGtlcm5lbCA/?=
-X-Mailer: [Alimail-Mailagent revision 948139][W4_5166270][DEFAULT][Chrome]
+        Mon, 5 Mar 2018 02:01:56 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: laurent.pinchart@ideasonboard.com
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <6b57628ecb5fdce9a9495a477f8849f2>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5A9CEB44.40207@rock-chips.com>
+Date: Mon, 05 Mar 2018 15:01:24 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>  <20180304130151.GA483@tigerII.localdomain>      <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>,<20180304104324.6bbbaa53@gandalf.local.home>
-In-Reply-To: <20180304104324.6bbbaa53@gandalf.local.home>
-x-aliyun-mail-creator: W4_5166270_DEFAULT_M3LTW96aWxsYS81LjAgKE1hY2ludG9zaDsgSW50ZWwgTWFjIE9TIFggMTBfMTNfMCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzY0LjAuMzI4Mi4xNjcgU2FmYXJpLzUzNy4zNg==vN
-Content-Type: text/plain; charset="UTF-8"
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+CC: Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-rockchip@lists.infradead.org,
+        Archit Taneja <architt@codeaurora.org>, linux-kernel@vger.kernel.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, Jose Abreu <Jose.Abreu@synopsys.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        kernel@collabora.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v9 5/5] drm/bridge/synopsys: dw-hdmi: Add missing bridge
+ detach
+References: <20180302175757.28192-1-enric.balletbo@collabora.com> <20180302175757.28192-6-enric.balletbo@collabora.com> <2714218.VptbnhJPkd@avalon> <5A99EA37.6070006@rock-chips.com>
+In-Reply-To: <5A99EA37.6070006@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w256vLfO020444
 
-Hi Steve,  
+Hi Laurent,
 
-On Sun, 04 Mar 2018 23:43:23 +0800
-Steven Rostedt <rostedt@goodmis.org> wrote:
+sorry, you're right, this patch should not be needed.
 
-> Yes, people keep bringing up this scenario.
-> It would require a single burst of printks to all CPUs. And then no
-> more printks after that. The last one will end up printing the entire
-> buffer out the slow console. The thing is, this is a bounded time, and
-> no printk will print more than one full buffer worth.
+the connector should be cleanup by 
+drm_mode_config_cleanup->drm_connector_put.
 
-> If this is a worry, then set the timeouts for the lockup detection to
-> be longer than the time it takes to print one full buffer with the
-> slowest console.
+i did that in analogix_dp is to avoid a use-after-free issue not 
+kmemleak, because the connector was allocated/freed in analogix_dp's 
+bind/unbind.
 
-Thanks for your information and suggestion. We will think of backport 
-the code as per the workload, or recently, maybe we will think of disable 
-ttyS0 console just for the printk. 
+but i found a kmemleak issue(dma_mask not freed) in dw-hdmi when testing 
+that, will send patch soon.
 
-Thanks & Regards
-Qixuan
+On 03/03/2018 08:20 AM, JeffyChen wrote:
+> Hi Laurent,
+>
+> On 03/03/2018 05:49 AM, Laurent Pinchart wrote:
+>> Hi Enric,
+>>
+>> Thank you for the patch.
+>>
+>> On Friday, 2 March 2018 19:57:57 EET Enric Balletbo i Serra wrote:
+>>> From: Jeffy Chen <jeffy.chen@rock-chips.com>
+>>>
+>>> We inited connector in attach(), so need a detach() to cleanup.
+>>
+>> Do we ? The dw-hdmi driver already sets drm_connector_cleanup() as the
+>> connector .destroy() handler, and the .destroy() operation is called
+>> by the
+>> DRM core. None of the other bridge drivers call drm_connector_cleanup()
+>> directly.
+>
+> hmmm, checking the code, there are also lots of drivers do the
+> cleanup(drm_connector_cleanup or funcs->destroy):
+> drm# grep -r "connector.*funcs->destroy" .
+> ./rockchip/inno_hdmi.c: hdmi->connector.funcs->destroy(&hdmi->connector);
+> ./rockchip/cdn-dp-core.c:       connector->funcs->destroy(connector);
+> ./bridge/analogix/analogix_dp_core.c:
+> dp->connector.funcs->destroy(&dp->connector);
+> ./msm/hdmi/hdmi.c: hdmi->connector->funcs->destroy(hdmi->connector);
+> ./msm/dsi/dsi.c: msm_dsi->connector->funcs->destroy(msm_dsi->connector);
+> ./msm/edp/edp.c: edp->connector->funcs->destroy(edp->connector);
+> ./zte/zx_hdmi.c:        hdmi->connector.funcs->destroy(&hdmi->connector);
+> ./drm_connector.c:      connector->funcs->destroy(connector);
+> ./drm_connector.c:              connector->funcs->destroy(connector);
+> ./nouveau/dispnv04/disp.c: connector->funcs->destroy(connector);
+> ./nouveau/nv50_display.c: mstc->connector.funcs->destroy(&mstc->connector);
+> ./nouveau/nv50_display.c: connector->funcs->destroy(connector);
+>
+>
+>
+> when i debug analogix_dp bind/unbind, i found that we need to cleanup
+> the connector(reported by kmemleak). so i added it to
+> ./bridge/analogix/analogix_dp_core.c...after that i saw dw-hdmi missing
+> that too(by checking the code), so make this patch.
+>
+> but i didn't really tested it on devices using dw-hdmi, so i'm not very
+> sure the dw-hdmi(maybe also other bridges) is the same with analogix_dp.
+>
+> i can try to find a chromebook veyron to check it next week :)
+>
+> but even there's a leak, i'm still not very sure about:
+> should the caller of drm_connector_init cleanup it
+> or the caller of drm_bridge_attach should do it(for example
+> analogix_dp_bind/analogix_dp_unbind)
+> or should the DRM core take care of that?
+>
+>>
+>>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>>> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> ---
