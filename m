@@ -1,199 +1,147 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3278546-1521214025-2-930751666248180826
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1288896-1520245358-2-15727695072437291582
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521214024; b=mL51wJib9KWlMcuvpKyMVjJa9lTPwbTTKMQf5M141jtGURS
-    8OQ1+flcA15LmWQRdn+9vE2fXlwr00m4Bk+S/D3FxeDF8CsgZwB+ojPO4g9WvZma
-    IdgiCqmP9yO7PVcanyZoclH8CL3j+A45oYt9Vr95/s5Vx6P507/Kn+GJlS+5G/Mu
-    7o1muHNvEDwCt7k5+9CrOtO23aS7X1u3nwfQx7lGsHhWV87+U0tV++y8DZ9ILXMI
-    tSSPcLfCMU66RPaTFTCcgzXhm5JH8GZsjstF0ozZD3yKHT0aFoa7hwbTUY5ZxASz
-    ijTEqAr5fy1SB8QU2pGgtXEk7IJ6QgoIBr6d3Qw==
+    t=1520245357; b=q/sjBaTcVG2yBlq5cHpjD829iPwjnL378xTlpEFHRIRff+v
+    Gs6hKaGQpb0lCAz83WxqeHDsrgHqfg8ynDmMGU49fzn3Y4jxLm/iw1FRabrM/Nat
+    7NbTZ3UoqVI3OQ6omyDUpWYEXCvGjGIQXJHY1bb9xKw786+oeDgTblYCzBUJ73hw
+    U/wzoZBxM0RNDA72O5fo1s+3NS7bL73Q21lPsxtH97Wxuqy9fEHipoPWP4aZ8juy
+    9W7p7vD6S4/uEDyv4PKPEpeiW/BmFhnieV0/h/OO7FU+RJF60fLN+9jxapHBDsF3
+    a9LF2Dni+r31eo9sVu3DP0lLQ4GYgVnfT+tFeCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521214024; bh=nX5NhQODCY3hBv59Aa/41XMaTI
-    SZAVDwJBSQhHoEkC0=; b=v+KKLzKXArRaxtjrjfHysL9eqUc2llYyzW1o7Dz94h
-    xQZWSOYazHbj/2nlMvBRCq+gSB/vtWGQVyscpJTY2jDyDUv0yBeacJ2X6ubkKKGB
-    4uSU7cfp3IKNTOfjoa+Ey4w+7oeuQg5Co1mKRPUvKSVSO4YspXNLuiPkjr1uqJG+
-    aYQA/lT6kn4mgsRDMDLZQiQb/dO3hPZoqK5pB4zk65GSMnOX69iC3PHyDDLw1xNf
-    I/6FoO775JywrOpAxPxzGvpgf6rn+iyTFK/OfOSDqgw616GzijMWuqltRBPgrszz
-    THyLX24OZd/By1VBlTDExX5g1HbUfyYhn2PCldxtfApQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1520245357; bh=l+U8jtcusZezwOBgFnnCBiL9YhiIzi7sGxWfQ0
+    EDSTY=; b=v3Az1DRqhc3eAIwjOYStrj520/N4tpbXqL1gRIEiSQZzNDzY+B1UeC
+    mr3G7xU/0KBrY1OJSul3cxzKeUuMi/U+k+aiJcR5yi3LEflb71tVOZwVnMcRAISO
+    IIdJg9jNnpC2J5vfhHvcMGIY7nAw6ApyVmXvmHzOi/v+d9vIaQ/UbJSK+C+owunw
+    PAhqSCkv1SE89AXDKdoW99VauYddv4vj+mrNhgJqEw4EAjm2yDXG1AXYNkW6AHaF
+    mp14ZNobfmkQ1AdgT4TxtxpA5bvhCtDIiM7Cu0fyl/xfU+C8KkjevsFfVnOQYfDl
+    tiHbq6z4Fcwld7tQe093lflOzGdYzJ3g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=apm.com header.i=@apm.com header.b=qe8ARvvE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=apm;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=apm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CWQufLqL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=apm.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (body has been altered; 1024-bit rsa key sha256) header.d=apm.com header.i=@apm.com header.b=qe8ARvvE x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=apm;
+    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine) header.from=apm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CWQufLqL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=apm.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753983AbeCPP07 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 11:26:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34020 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754152AbeCPP05 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 11:26:57 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 04/63] scsi: qla2xxx: Fix NULL pointer crash due to active timer for ABTS
-Date: Fri, 16 Mar 2018 16:22:36 +0100
-Message-Id: <20180316152300.519998508@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180316152259.964532775@linuxfoundation.org>
-References: <20180316152259.964532775@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S933319AbeCEKWd (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 05:22:33 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35979 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933294AbeCEKWb (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 5 Mar 2018 05:22:31 -0500
+X-Google-Smtp-Source: AG47ELtUdF1PZmn3iytm3nOFgRzHY3qOQq8HqCgoy2MBvgIC+4PbWAmQumGhOt9l2bQ+VCg2aW7mLyc4f/wQhu0CHhU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <1517221474-19627-1-git-send-email-tqnguyen@apm.com>
+References: <1517221474-19627-1-git-send-email-tqnguyen@apm.com>
+From: "Thang Q. Nguyen" <tqnguyen@apm.com>
+Date: Mon, 5 Mar 2018 17:22:30 +0700
+Message-ID: <CAKrQpStN6+UEp_CHdg3nSu7bAGPZ7N7VO_v0Srhc_Pe1ZLmEZg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] usb: xhci: do not create and register shared_hcd
+ when USB3.0 is disabled
+To: Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Thang Nguyen <tqnguyen@apm.com>, Phong Vo <pvo@apm.com>,
+        Loc Ho <lho@apm.com>, Tung Nguyen <tunguyen@apm.com>,
+        patches <patches@apm.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: himanshu.madhani@cavium.com <himanshu.madhani@cavium.com>
-
-commit 1514839b366417934e2f1328edb50ed1e8a719f5 upstream.
-
-This patch fixes NULL pointer crash due to active timer running for abort
-IOCB.
-
->From crash dump analysis it was discoverd that get_next_timer_interrupt()
-encountered a corrupted entry on the timer list.
-
- #9 [ffff95e1f6f0fd40] page_fault at ffffffff914fe8f8
-    [exception RIP: get_next_timer_interrupt+440]
-    RIP: ffffffff90ea3088  RSP: ffff95e1f6f0fdf0  RFLAGS: 00010013
-    RAX: ffff95e1f6451028  RBX: 000218e2389e5f40  RCX: 00000001232ad600
-    RDX: 0000000000000001  RSI: ffff95e1f6f0fdf0  RDI: 0000000001232ad6
-    RBP: ffff95e1f6f0fe40   R8: ffff95e1f6451188   R9: 0000000000000001
-    R10: 0000000000000016  R11: 0000000000000016  R12: 00000001232ad5f6
-    R13: ffff95e1f6450000  R14: ffff95e1f6f0fdf8  R15: ffff95e1f6f0fe10
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-
-Looking at the assembly of get_next_timer_interrupt(), address came
-from %r8 (ffff95e1f6451188) which is pointing to list_head with single
-entry at ffff95e5ff621178.
-
- 0xffffffff90ea307a <get_next_timer_interrupt+426>:      mov    (%r8),%rdx
- 0xffffffff90ea307d <get_next_timer_interrupt+429>:      cmp    %r8,%rdx
- 0xffffffff90ea3080 <get_next_timer_interrupt+432>:      je     0xffffffff90ea30a7 <get_next_timer_interrupt+471>
- 0xffffffff90ea3082 <get_next_timer_interrupt+434>:      nopw   0x0(%rax,%rax,1)
- 0xffffffff90ea3088 <get_next_timer_interrupt+440>:      testb  $0x1,0x18(%rdx)
-
- crash> rd ffff95e1f6451188 10
- ffff95e1f6451188:  ffff95e5ff621178 ffff95e5ff621178   x.b.....x.b.....
- ffff95e1f6451198:  ffff95e1f6451198 ffff95e1f6451198   ..E.......E.....
- ffff95e1f64511a8:  ffff95e1f64511a8 ffff95e1f64511a8   ..E.......E.....
- ffff95e1f64511b8:  ffff95e77cf509a0 ffff95e77cf509a0   ...|.......|....
- ffff95e1f64511c8:  ffff95e1f64511c8 ffff95e1f64511c8   ..E.......E.....
-
- crash> rd ffff95e5ff621178 10
- ffff95e5ff621178:  0000000000000001 ffff95e15936aa00   ..........6Y....
- ffff95e5ff621188:  0000000000000000 00000000ffffffff   ................
- ffff95e5ff621198:  00000000000000a0 0000000000000010   ................
- ffff95e5ff6211a8:  ffff95e5ff621198 000000000000000c   ..b.............
- ffff95e5ff6211b8:  00000f5800000000 ffff95e751f8d720   ....X... ..Q....
-
- ffff95e5ff621178 belongs to freed mempool object at ffff95e5ff621080.
-
- CACHE            NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
- ffff95dc7fd74d00 mnt_cache                384      19785     24948    594    16k
-   SLAB              MEMORY            NODE  TOTAL  ALLOCATED  FREE
-   ffffdc5dabfd8800  ffff95e5ff620000     1     42         29    13
-   FREE / [ALLOCATED]
-    ffff95e5ff621080  (cpu 6 cache)
-
-Examining the contents of that memory reveals a pointer to a constant string
-in the driver, "abort\0", which is set by qla24xx_async_abort_cmd().
-
- crash> rd ffffffffc059277c 20
- ffffffffc059277c:  6e490074726f6261 0074707572726574   abort.Interrupt.
- ffffffffc059278c:  00676e696c6c6f50 6920726576697244   Polling.Driver i
- ffffffffc059279c:  646f6d207325206e 6974736554000a65   n %s mode..Testi
- ffffffffc05927ac:  636976656420676e 786c252074612065   ng device at %lx
- ffffffffc05927bc:  6b63656843000a2e 646f727020676e69   ...Checking prod
- ffffffffc05927cc:  6f20444920746375 0a2e706968632066   uct ID of chip..
- ffffffffc05927dc:  5120646e756f4600 204130303232414c   .Found QLA2200A
- ffffffffc05927ec:  43000a2e70696843 20676e696b636568   Chip...Checking
- ffffffffc05927fc:  65786f626c69616d 6c636e69000a2e73   mailboxes...incl
- ffffffffc059280c:  756e696c2f656475 616d2d616d642f78   ude/linux/dma-ma
-
- crash> struct -ox srb_iocb
- struct srb_iocb {
-           union {
-               struct {...} logio;
-               struct {...} els_logo;
-               struct {...} tmf;
-               struct {...} fxiocb;
-               struct {...} abt;
-               struct ct_arg ctarg;
-               struct {...} mbx;
-               struct {...} nack;
-    [0x0 ] } u;
-    [0xb8] struct timer_list timer;
-    [0x108] void (*timeout)(void *);
- }
- SIZE: 0x110
-
- crash> ! bc
- ibase=16
- obase=10
- B8+40
- F8
-
-The object is a srb_t, and at offset 0xf8 within that structure
-(i.e. ffff95e5ff621080 + f8 -> ffff95e5ff621178) is a struct timer_list.
-
-Cc: <stable@vger.kernel.org> #4.4+
-Fixes: 4440e46d5db7 ("[SCSI] qla2xxx: Add IOCB Abort command asynchronous handling.")
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/scsi/qla2xxx/qla_init.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -365,6 +365,7 @@ qla24xx_abort_sp_done(void *data, void *
- 	srb_t *sp = (srb_t *)ptr;
- 	struct srb_iocb *abt = &sp->u.iocb_cmd;
- 
-+	del_timer(&sp->u.iocb_cmd.timer);
- 	complete(&abt->u.abt.comp);
- }
- 
+On Mon, Jan 29, 2018 at 5:24 PM, Thang Q. Nguyen <tqnguyen@apm.com> wrote:
+> From: Tung Nguyen <tunguyen@apm.com>
+>
+> Currently, hcd->shared_hcd always creates and registers to the usb-core.
+> If, for some reasons, USB3 downstream port is disabled, no roothub port for
+> USB3.0 is found. This causes kernel to display an error:
+> hub 2-0:1.0: config failed, hub doesn't have any ports! (err -19)
+> This patch checks and registers shared_hcd if USB3.0 downstream
+> port is available.
+>
+> Signed-off-by: Tung Nguyen <tunguyen@apm.com>
+> ---
+>  drivers/usb/host/xhci-plat.c |  9 ++++++---
+>  drivers/usb/host/xhci.c      | 13 +++++++++++++
+>  2 files changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 6f03830..bdb3975 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -293,9 +293,12 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>         if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+>                 xhci->shared_hcd->can_do_streams = 1;
+>
+> -       ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
+> -       if (ret)
+> -               goto dealloc_usb2_hcd;
+> +       /* Just add the shared_hcd when USB3.0 downstream port is available */
+> +       if (xhci->num_usb3_ports > 0) {
+> +               ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
+> +               if (ret)
+> +                       goto dealloc_usb2_hcd;
+> +       }
+>
+>         device_enable_async_suspend(&pdev->dev);
+>         pm_runtime_put_noidle(&pdev->dev);
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 1eeb339..9d3b1ab 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -611,6 +611,19 @@ int xhci_run(struct usb_hcd *hcd)
+>                 if (ret)
+>                         xhci_free_command(xhci, command);
+>         }
+> +       /*
+> +        * In case that the USB3.0 downstream port is not available
+> +        * No one triggers to start the xHC which should be done
+> +        * before finishing xhci_run
+> +        */
+> +       if (xhci->num_usb3_ports == 0) {
+> +               if (xhci_start(xhci)) {
+> +                       xhci_halt(xhci);
+> +                       return -ENODEV;
+> +               }
+> +               xhci->cmd_ring_state = CMD_RING_STATE_RUNNING;
+> +       }
+> +
+>         xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+>                         "Finished xhci_run for USB2 roothub");
+>
+> --
+> 1.8.3.1
+>
+Hi,
+Do you have any comment on the patch?
