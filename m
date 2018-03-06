@@ -1,71 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeCFAAM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 19:00:12 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43332 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932243AbeCFAAL (ORCPT
+        id S932856AbeCFAFg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 19:05:36 -0500
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45875 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932395AbeCFAFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 19:00:11 -0500
-Date: Mon, 5 Mar 2018 16:00:09 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: frowand.list@gmail.com
-Cc: Rob Herring <robh+dt@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, cpandya@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] memblock: add memblock_free() alloc when
- CONFIG_HAVE_MEMBLOCK is not set
-Message-Id: <20180305160009.d24507e7b02ccb8be9dbc091@linux-foundation.org>
-In-Reply-To: <1520208889-3908-3-git-send-email-frowand.list@gmail.com>
-References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
-        <1520208889-3908-3-git-send-email-frowand.list@gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 5 Mar 2018 19:05:34 -0500
+X-Google-Smtp-Source: AG47ELtsY7xo/6HW7/C836WIlUd1a8gkJLA3s5kH60mj6L4GG54YkBV1HLaJR1hY91PVBTzYj+JisRXJ8Oe5B+pMlew=
+MIME-Version: 1.0
+In-Reply-To: <1520292190-5027-4-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com> <1520292190-5027-4-git-send-email-sai.praneeth.prakhya@intel.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 5 Mar 2018 16:05:33 -0800
+Message-ID: <CAPcyv4ihj+5z8GS13MsRDOKiwhBDqA=YW3MiTh+OXS4x3Kf38Q@mail.gmail.com>
+Subject: Re: [PATCH V2 3/3] efi: Use efi_rts_workqueue to invoke EFI Runtime Services
+To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  4 Mar 2018 16:14:48 -0800 frowand.list@gmail.com wrote:
-
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> When CONFIG_HAVE_MEMBLOCK is not set, an error version of
-> memblock_alloc() exists.  Add the matching memblock_free().
-> 
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
-> 
-> Andrew or Michal, can you please ack this patch to be accepted
-> by Rob?
-> 
-> 
-> With "of: add early boot allocation of
-> of_find_node_by_phandle() cache" applied, kbuild test robot reports
-> tilex architecture build error due to no prototype for memblock_free().
-> 
-> The version of the patch that kbuild test robot reported was
-> "[PATCH v4 2/2] of: add early boot allocation of
-> of_find_node_by_phandle() cache".  An updated version of that
-> patch is now patch 3/3 of this series.
-> 
-> ...
+On Mon, Mar 5, 2018 at 3:23 PM, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 >
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -432,6 +432,10 @@ static inline unsigned long memblock_reserved_memory_within(phys_addr_t start_ad
->  	return 0;
->  }
->  
-> +static inline int memblock_free(phys_addr_t base, phys_addr_t size)
-> +{
-> +	return 0;
-> +}
->  #endif /* CONFIG_HAVE_MEMBLOCK */
->  
->  #endif /* __KERNEL__ */
+> Presently, efi_runtime_services() are executed by firmware in process
+> context. To execute efi_runtime_service(), kernel switches the page
+> directory from swapper_pgd to efi_pgd. However, efi_pgd doesn't have any
+> user space mappings. A potential issue could be, for instance, an NMI
+> interrupt (like perf) trying to profile some user data while in efi_pgd.
+>
+> A solution for this issue could be to use kthread to run
+> efi_runtime_service(). When a user/kernel thread requests to execute
+> efi_runtime_service(), kernel off-loads this work to kthread which in
+> turn uses efi_pgd. Anything that tries to touch user space addresses
+> while in kthread is terminally broken. This patch adds support to efi
+> subsystem to handle all calls to efi_runtime_services() using a work
+> queue (which in turn uses kthread).
+>
+> Implementation summary:
+> -----------------------
+> 1. When user/kernel thread requests to execute efi_runtime_service(),
+> enqueue work to efi_rts_workqueue.
+> 2. Caller thread waits until the work is finished because it's dependent
+> on the return status of efi_runtime_service().
+>
+> Semantics to pack arguments in efi_runtime_work (has void pointers):
+> 1. If argument is a pointer (of any type), pass it as is.
+> 2. If argument is a value (of any type), address of the value is
+> passed.
+>
+> Introduce a handler function (called efi_call_rts()) that
+>         a. understands efi_runtime_work and
+>         b. invokes the appropriate efi_runtime_service() with the
+>         appropriate arguments
+>
+> Semantics followed by efi_call_rts() to understand efi_runtime_work:
+> 1. If argument was a pointer, recast it from void pointer to original
+> pointer type.
+> 2. If argument was a value, recast it from void pointer to original
+> pointer type and dereference it.
+>
+> pstore writes could potentially be invoked in interrupt context and it
+> uses set_variable<>() and query_variable_info<>() to store logs. If we
+> invoke efi_runtime_services() through efi_rts_wq while in atomic()
+> kernel issues a warning ("scheduling wile in atomic") and prints stack
+> trace. One way to overcome this is to not make the caller process wait
+> for the worker thread to finish. This approach breaks pstore i.e. the
+> log messages aren't written to efi variables. Hence, pstore calls
+> efi_runtime_services() without using efi_rts_wq or in other words
+> efi_rts_wq will be used unconditionally for all the
+> efi_runtime_services() except set_variable<>() and
+> query_variable_info<>()
 
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
+
+Is there a place in the system reboot path where we can try to flush
+these asynchronous pstore writes from interrupt context? It seems
+unfortunate that we need to have this wide exception for all
+set_variable() calls. Either that or switch to an explicit "emergency
+mode" where we stop caring about protecting the system from EFI
+runtime code because we're already crashing.
