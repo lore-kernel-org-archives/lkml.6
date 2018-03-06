@@ -1,92 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754019AbeCFU4H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 15:56:07 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32990 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753065AbeCFU4G (ORCPT
+        id S1754035AbeCFU71 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 15:59:27 -0500
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35705 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753871AbeCFU7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 15:56:06 -0500
-Date: Tue, 6 Mar 2018 12:56:04 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: might_sleep warning
-Message-Id: <20180306125604.c394a25a50cae0e36c546855@linux-foundation.org>
-In-Reply-To: <CAGM2rea1raxsXDkqZgmmdBiuywp1M3y1p++=J893VJDgGDWLnQ@mail.gmail.com>
-References: <20180306192022.28289-1-pasha.tatashin@oracle.com>
-        <20180306123655.957e5b6b20b200505544ea7a@linux-foundation.org>
-        <CAGM2rea1raxsXDkqZgmmdBiuywp1M3y1p++=J893VJDgGDWLnQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Mar 2018 15:59:25 -0500
+X-Google-Smtp-Source: AG47ELv6ijAD4+GdQJdCwtMRSiALne449HDPH4SuzVUsP4rnxtAgiQfcx4g+QjyttW6d/TmpRRGdbQ==
+Date: Tue, 6 Mar 2018 21:59:20 +0100
+From: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        Jonathan Woithe <jwoithe@just42.net>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] platform/x86: fujitsu-laptop: Define constants for
+ FUNC operations
+Message-ID: <20180306205920.GA786@kmp-mobile.hq.kempniu.pl>
+References: <20180227211539.5708-1-kernel@kempniu.pl>
+ <20180227211539.5708-2-kernel@kempniu.pl>
+ <CAHp75VdDQ1xAYcXEN04kSug2sgi-G8+7PBEOC8MJSBw7gSCyRQ@mail.gmail.com>
+ <20180304050813.GA3129@marvin.atrad.com.au>
+ <20180304194426.GA1428@kmp-mobile.hq.kempniu.pl>
+ <20180305231650.GA25693@fury>
+ <CAHp75VeB6PjacT4V_gsVOYCvJJK2fT3Oi6HONHdqJyCn+CeWNw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VeB6PjacT4V_gsVOYCvJJK2fT3Oi6HONHdqJyCn+CeWNw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 15:48:26 -0500 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+Andy,
 
-> On Tue, Mar 6, 2018 at 3:36 PM, Andrew Morton <akpm@linux-foundation.org>
-> wrote:
-> 
-> > On Tue,  6 Mar 2018 14:20:22 -0500 Pavel Tatashin <
-> > pasha.tatashin@oracle.com> wrote:
-> >
-> > >       spin_lock(&deferred_zone_grow_lock);
-> > > -     static_branch_disable(&deferred_pages);
-> > > +     deferred_zone_grow = false;
-> > >       spin_unlock(&deferred_zone_grow_lock);
-> > > +     static_branch_disable(&deferred_pages);
-> > >
-> > >       /* There will be num_node_state(N_MEMORY) threads */
-> > >       atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
-> >
-> > Kinda ugly, but I can see the logic behind the decisions.
-> >
-> > Can we instead turn deferred_zone_grow_lock into a mutex?
+> What I'm trying to tell is about consistency of style.
 
-(top-posting repaired.  Please don't top-post).
+I completely agree with all you wrote, those are all good suggestions.
+But you started your reasoning with:
 
-> [CCed everyone]
-> 
-> Hi Andrew,
-> 
-> I afraid we cannot change this spinlock to mutex
-> because deferred_grow_zone() might be called from an interrupt context if
-> interrupt thread needs to allocate memory.
-> 
+> So, imagine if we have two bitfields in some register, one with one
+> bit and the other with two.
 
-OK.  But if deferred_grow_zone() can be called from interrupt then
-page_alloc_init_late() should be using spin_lock_irq(), shouldn't it? 
-I'm surprised that lockdep didn't detect that.
+We are not looking at a hardware register here.  Rather, I am trying to
+bring at least _some_ order to an arbitrary set of values that the
+vendor assumed would be fun to scatter around a dozen of firmware
+functions.  Some hardware features are controlled by setting a specific
+bit in the value being passed to a function; in other cases entire
+integers are taken into account; in yet another case *two* bits in a
+value control state.  There is no reason or order to be found here.
 
+In the case of OP_* constants, perhaps the simplest thing to do would be
+to define them as integers, not bitfields.  But that still results in a
+mess:
 
---- a/mm/page_alloc.c~mm-initialize-pages-on-demand-during-boot-fix-4-fix
-+++ a/mm/page_alloc.c
-@@ -1689,9 +1689,9 @@ void __init page_alloc_init_late(void)
- 	 * context. Since, spin_lock() disables preemption, we must use an
- 	 * extra boolean deferred_zone_grow.
- 	 */
--	spin_lock(&deferred_zone_grow_lock);
-+	spin_lock_irq(&deferred_zone_grow_lock);
- 	deferred_zone_grow = false;
--	spin_unlock(&deferred_zone_grow_lock);
-+	spin_unlock_irq(&deferred_zone_grow_lock);
- 	static_branch_disable(&deferred_pages);
- 
- 	/* There will be num_node_state(N_MEMORY) threads */
-_
+#define OP_GET		0x2
+#define OP_GET_CAPS	0x0
+#define OP_GET_EVENTS	0x1
+#define OP_GET_EXT	0x4
+#define OP_SET		0x1
+#define OP_SET_EXT	0x5
+
+or:
+
+#define OP_GET_CAPS	0x0
+#define OP_GET_EVENTS	0x1
+#define OP_SET		0x1
+#define OP_GET		0x2
+#define OP_GET_EXT	0x4
+#define OP_SET_EXT	0x5
+
+Even worse, what am I supposed to do with crap like radio LED control,
+where 0x20 (bit 5) is passed in one argument to select the desired
+feature and 0x20 or 0 is passed as another argument to select the
+desired state of that feature?  How do I name and define constants that
+I can subsequently use in call_fext_func() invocations to spare the
+reader the need to learn the hard way that this:
+
+    return call_fext_func(device, FUNC_FLAGS, 0x5, RADIO_LED_ON, 0x0);
+
+is actually supposed to turn the radio LED *off*?
+
+This is the best I could come up with:
+
+#define FEAT_RADIO_LED		BIT(5)
+#define STATE_RADIO_LED_OFF	(0 << 0)
+#define STATE_RADIO_LED_ON	BIT(5)
+
+Yes, it is ugly.  But the resulting call is (IMHO) a lot more clear than
+the original one:
+
+    return fext_flags(device, OP_SET_EXT, FEAT_RADIO_LED, STATE_RADIO_LED_OFF);
+
+All of the above is why I was inclined to just use alphabetic ordering
+for all constants defined in fujitsu-laptop.  This approach brings at
+least _some_ consistency to this mess (which only the vendor is to blame
+for, of course).  If you would rather have me take a different approach,
+I am all ears.
+
+-- 
+Best regards,
+Michał Kępień
