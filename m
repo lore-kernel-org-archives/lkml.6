@@ -1,50 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeCFLsD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 06:48:03 -0500
-Received: from mga09.intel.com ([134.134.136.24]:12543 "EHLO mga09.intel.com"
+        id S1753497AbeCFLsP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 06:48:15 -0500
+Received: from foss.arm.com ([217.140.101.70]:37132 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750864AbeCFLsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:48:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="22923714"
-Date: Tue, 6 Mar 2018 17:21:54 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Qi Hou <qi.hou@windriver.com>
-Cc: dan.j.williams@intel.com, fmh6jj@gmail.com,
-        fmhess@users.sourceforge.net, jassisinghbrar@gmail.com,
-        rmk+kernel@arm.linux.org.uk, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: pl330: fix a race condition in case of
- threaded irqs
-Message-ID: <20180306115153.GS15443@localhost>
-References: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753332AbeCFLsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 06:48:02 -0500
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: meson-sm: rework meson_sm_init to use module_platform_driver_probe
+Date: Tue,  6 Mar 2018 11:47:49 +0000
+Message-Id: <1520336869-25224-1-git-send-email-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 09:13:37AM +0800, Qi Hou wrote:
-> When booting up with "threadirqs" in command line, all irq handlers of the DMA
-> controller pl330 will be threaded forcedly. These threads will race for the same
-> list, pl330->req_done.
-> 
-> Before the callback, the spinlock was released. And after it, the spinlock was
-> taken. This opened an race window where another threaded irq handler could steal
-> the spinlock and be permitted to delete entries of the list, pl330->req_done.
-> 
-> If the later deleted an entry that was still referred to by the former, there would
-> be a kernel panic when the former was scheduled and tried to get the next sibling
-> of the deleted entry.
+Commit 3aa0582fdb82 ("of: platform: populate /firmware/ node from
+of_platform_default_populate_init()") takes care of populating
+all the devices under the /firmware/ node in of_platform_default_populate_init()
 
-Applied, thanks
+This patch reworks meson_sm_init to use module_platform_driver_probe as
+the platform device is populated.
 
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/firmware/meson/meson_sm.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+index ff204421117b..0ec2ca87318c 100644
+--- a/drivers/firmware/meson/meson_sm.c
++++ b/drivers/firmware/meson/meson_sm.c
+@@ -17,8 +17,10 @@
+ #include <linux/arm-smccc.h>
+ #include <linux/bug.h>
+ #include <linux/io.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/platform_device.h>
+ #include <linux/printk.h>
+ #include <linux/types.h>
+ #include <linux/sizes.h>
+@@ -217,21 +219,11 @@ static const struct of_device_id meson_sm_ids[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-int __init meson_sm_init(void)
++static int __init meson_sm_probe(struct platform_device *pdev)
+ {
+ 	const struct meson_sm_chip *chip;
+-	const struct of_device_id *matched_np;
+-	struct device_node *np;
+ 
+-	np = of_find_matching_node_and_match(NULL, meson_sm_ids, &matched_np);
+-	if (!np)
+-		return -ENODEV;
+-
+-	chip = matched_np->data;
+-	if (!chip) {
+-		pr_err("unable to setup secure-monitor data\n");
+-		goto out;
+-	}
++	chip = of_match_device(meson_sm_ids, &pdev->dev)->data;
+ 
+ 	if (chip->cmd_shmem_in_base) {
+ 		fw.sm_shmem_in_base = meson_sm_map_shmem(chip->cmd_shmem_in_base,
+@@ -257,4 +249,11 @@ int __init meson_sm_init(void)
+ out:
+ 	return -EINVAL;
+ }
+-device_initcall(meson_sm_init);
++
++static struct platform_driver meson_sm_driver = {
++	.driver = {
++		.name = "meson-sm",
++		.of_match_table = of_match_ptr(meson_sm_ids),
++	},
++};
++module_platform_driver_probe(meson_sm_driver, meson_sm_probe);
 -- 
-~Vinod
+2.7.4
