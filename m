@@ -1,73 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753821AbeCFODE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:03:04 -0500
-Received: from mga17.intel.com ([192.55.52.151]:40535 "EHLO mga17.intel.com"
+        id S932543AbeCFOEx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:04:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753664AbeCFODD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:03:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="22195582"
-Date: Tue, 6 Mar 2018 16:02:56 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5 V2] tpm: timeouts revamp
-Message-ID: <20180306140256.GC5700@linux.intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
- <1520338622.3779.1.camel@linux.intel.com>
- <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
+        id S1753069AbeCFOEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:04:52 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8A520685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 6 Mar 2018 11:04:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH Resent] perf annotate: Fix s390 target function
+ disassembly
+Message-ID: <20180306140449.GD10176@kernel.org>
+References: <20180306123955.98802-1-tmricht@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180306123955.98802-1-tmricht@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 01:39:49PM +0100, Javier Martinez Canillas wrote:
-> On 03/06/2018 01:17 PM, Jarkko Sakkinen wrote:
-> > On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
-> >> This series cleans up tpm timeouts setting and handling.
-> >>
-> >> First motivation was to fix failures coming from too short timeouts
-> >> for commands that creates keys.
-> >> Key generation may take significant time depending on the underlying
-> >> hardware. Rather than increasing default timeout a new constant is
-> >> added, to not stall too long on regular commands failures.
-> >>
-> >> Second is to define timeouts for new tpm2 commands
-> >> defined in TCG 1.36 spec.
-> >
+Em Tue, Mar 06, 2018 at 01:39:55PM +0100, Thomas Richter escreveu:
+> Perf annotate displays function call assembler instructions
+> with a right arrow. Hitting enter on this line/instruction
+> causes the browser to disassemble this target function and
+> show it on the screen.  On s390 this results in an error
+> message 'The called function was not found.'
 > 
-> Probably a typo, since the latest TCG spec version is the 1.38 [0].
+> The function call assembly line parsing does not handle
+> the s390 bras and brasl instructions. Function call__parse
+> expects the target as first operand:
+> 	callq	e9140 <__fxstat>
+> S390 has a register number as first operand:
+> 	brasl	%r14,41d60 <abort>
+> Therefore the target addresses on s390 are always zero
+> which is an invalid address.
+> 
+> Fix this by skipping the first operand on s390.
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+> Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+> ---
+>  tools/perf/util/annotate.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 49ff825f745c..feb6006b676d 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -192,6 +192,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map *
+>  	};
 >  
-> > Where can we get that specification? I don't have that new
-> > version and couldn't find it from the public internet.
-> > 
-> > /Jarkko
-> > 
-> 
-> [0]: https://trustedcomputinggroup.org/tpm-library-specification/
+>  	ops->target.addr = strtoull(ops->raw, &endptr, 16);
+> +	if (!strcmp(arch->name, "s390")) {
+> +		/* s390 function call 1st operand is register */
+> +		tok = strchr(ops->raw, ',');
+> +		if (tok)
+> +			ops->target.addr = strtoull(tok + 1, &endptr, 16);
+> +		else
+> +			ops->target.addr = 0;
+> +	} else
+> +		ops->target.addr = strtoull(ops->raw, &endptr, 16);
 
-I already have that version of the specifications but I thought that we
-were speaking about PC Client Platform spefication, which is at version
-1.30. TCG spec is an ambiguous term so that is where the confusion
-started from.
+Do we have to do this here? Can't we have a s390_call__parse() and set
+that in the s/390 instructions?
 
-The only spec I've seen some timeouts is the PC Client Specification but
-I guess I've then missed the list in TPM 2.0 spefication. Where are they
-listed? I worked with Will Arthur durations based on PC Client Specification
-when TPM 2.0 support was first implemented.
+We should avoid arch specific stuff in the common code, and we could
+even have a call_reg__parse() perhaps? One that knows that the first
+operand is a reg and it should _always_ skip te first one, be it on
+s/390 or elsewhere?
 
-/Jarkko
+- Arnaldo
+  
+>  	name = strchr(endptr, '<');
+>  	if (name == NULL)
+> -- 
+> 2.14.3
