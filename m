@@ -1,66 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753802AbeCFO6L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:58:11 -0500
-Received: from mga02.intel.com ([134.134.136.20]:50405 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753762AbeCFO6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:58:10 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="35033900"
-Date: Tue, 6 Mar 2018 17:58:06 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC, PATCH 21/22] x86/mm: Introduce page_keyid() and
- page_encrypted()
-Message-ID: <20180306145806.ejg5kzaqqmncgqi7@black.fi.intel.com>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-22-kirill.shutemov@linux.intel.com>
- <61041640-435e-1a67-177f-a75791130514@intel.com>
- <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
- <91d27559-3f28-d53c-9fd9-d16e015a3f59@intel.com>
+        id S932624AbeCFO66 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:58:58 -0500
+Received: from regular1.263xmail.com ([211.150.99.134]:48726 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753075AbeCFO65 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:58:57 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: jeffy.chen@rock-chips.com
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <f0598ab598023d087e3acff141925178>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5A9EAC92.4050702@rock-chips.com>
+Date: Tue, 06 Mar 2018 22:58:26 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91d27559-3f28-d53c-9fd9-d16e015a3f59@intel.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+To: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
+CC: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 1/3] mfd: syscon: Set name of regmap_config
+References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 02:56:08PM +0000, Dave Hansen wrote:
-> On 03/06/2018 12:57 AM, Kirill A. Shutemov wrote:
-> > On Mon, Mar 05, 2018 at 09:08:53AM -0800, Dave Hansen wrote:
-> >> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
-> >>> +static inline bool page_encrypted(struct page *page)
-> >>> +{
-> >>> +	/* All pages with non-zero KeyID are encrypted */
-> >>> +	return page_keyid(page) != 0;
-> >>> +}
-> >>
-> >> Is this true?  I thought there was a KEYID_NO_ENCRYPT "Do not encrypt
-> >> memory when this KeyID is in use."  Is that really only limited to key 0.
-> > 
-> > Well, it depends on what we mean by "encrypted". For memory management
-> > pruposes we care if the page is encrypted with KeyID different from
-> > default one. All pages with non-default KeyID threated the same by memory
-> > management.
-> 
-> Doesn't it really mean "am I able to use the direct map to get this
-> page's contents?"
++CC Mark.
 
-Yes.
+even this is already fixed by a430ab205d29 ("regmap: debugfs: 
+Disambiguate dummy debugfs file name")
 
-Any proposal for better helper name?
+but maybe we can still have this for a better debugfs name?
 
--- 
- Kirill A. Shutemov
+On 03/06/2018 07:04 PM, Jeffy Chen wrote:
+> We are now allowing to register debugfs for syscon regmap, and not
+> having a valid name will end up using "dummy" to create debugfs dir.
+>
+> Fixes: 9b947a13e7f6 ("regmap: use debugfs even when no device")
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> ---
+>
+>   drivers/mfd/syscon.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index 7eaa40bc703f..250d22f40c84 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -109,6 +109,7 @@ static struct syscon *of_syscon_register(struct device_node *np)
+>   	syscon_config.reg_stride = reg_io_width;
+>   	syscon_config.val_bits = reg_io_width * 8;
+>   	syscon_config.max_register = resource_size(&res) - reg_io_width;
+> +	syscon_config.name = of_node_full_name(np);
+>
+>   	regmap = regmap_init_mmio(NULL, base, &syscon_config);
+>   	if (IS_ERR(regmap)) {
+>
