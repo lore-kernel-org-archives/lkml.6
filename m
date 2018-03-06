@@ -1,221 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932505AbeCFB42 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 20:56:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58107 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932406AbeCFB4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 20:56:25 -0500
-From: Benjamin Poirier <bpoirier@suse.com>
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: Alexander Duyck <alexander.duyck@gmail.com>,
-        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] e1000e: Fix link check race condition
-Date: Tue,  6 Mar 2018 10:55:53 +0900
-Message-Id: <20180306015553.10441-2-bpoirier@suse.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180306015553.10441-1-bpoirier@suse.com>
-References: <20180306015553.10441-1-bpoirier@suse.com>
+        id S1753206AbeCFCAc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 21:00:32 -0500
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:43152 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752691AbeCFCAb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 21:00:31 -0500
+X-Google-Smtp-Source: AG47ELudaUX4O448KEf2t67XbKi+t+5LeNcGhps/fbZLoMNA6IILGoD80DTfiYrImMD3mrXrPwHE0Q==
+Date: Tue, 6 Mar 2018 11:00:26 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
+        linux-kernel-owner <linux-kernel-owner@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>, Jan Kara <jack@suse.cz>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
+        caijingxian <caijingxian@linux.alibaba.com>,
+        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>
+Subject: Re: Would you help to tell why async printk solution was not taken
+ to upstream kernel ?
+Message-ID: <20180306020026.GB6713@jagdpanzerIV>
+References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>
+ <20180304130151.GA483@tigerII.localdomain>
+ <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
+ <20180304104324.6bbbaa53@gandalf.local.home>
+ <20180305021416.GA6202@jagdpanzerIV>
+ <20180305154524.2056b773@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180305154524.2056b773@gandalf.local.home>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alex reported the following race condition:
+On (03/05/18 15:45), Steven Rostedt wrote:
+> On Mon, 5 Mar 2018 11:14:16 +0900
+> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+> 
+> > It can print more than "one full buffer worth". In theory and on practice.
+> 
+> How so? As soon as another process adds to the buffer, it will take
+> over the printing.
 
-/* link goes up... interrupt... schedule watchdog */
-\ e1000_watchdog_task
-	\ e1000e_has_link
-		\ hw->mac.ops.check_for_link() === e1000e_check_for_copper_link
-			\ e1000e_phy_has_link_generic(..., &link)
-				link = true
+The very same CPU which holds the console_sem can add messages to the
+logbuf.
 
-					 /* link goes down... interrupt */
-					 \ e1000_msix_other
-						 hw->mac.get_link_status = true
+There are at least 3 cases I can easily think of.
 
-			/* link is up */
-			mac->get_link_status = false
 
-		link_active = true
-		/* link_active is true, wrongly, and stays so because
-		 * get_link_status is false */
+#1 preemption under console_sem
 
-Avoid this problem by making sure that we don't set get_link_status = false
-after having checked the link.
-
-It seems this problem has been present since the introduction of e1000e.
-
-Link: https://lkml.org/lkml/2018/1/29/338
-Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
----
- drivers/net/ethernet/intel/e1000e/ich8lan.c | 31 ++++++++++++++++-------------
- drivers/net/ethernet/intel/e1000e/mac.c     | 14 ++++++-------
- 2 files changed, 24 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-index d6d4ed7acf03..1dddfb7b2de6 100644
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1383,6 +1383,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 */
- 	if (!mac->get_link_status)
- 		return 0;
-+	mac->get_link_status = false;
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
-@@ -1390,12 +1391,12 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 */
- 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
- 	if (ret_val)
--		return ret_val;
-+		goto out;
- 
- 	if (hw->mac.type == e1000_pchlan) {
- 		ret_val = e1000_k1_gig_workaround_hv(hw, link);
- 		if (ret_val)
--			return ret_val;
-+			goto out;
- 	}
- 
- 	/* When connected at 10Mbps half-duplex, some parts are excessively
-@@ -1428,7 +1429,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 
- 		ret_val = hw->phy.ops.acquire(hw);
- 		if (ret_val)
--			return ret_val;
-+			goto out;
- 
- 		if (hw->mac.type == e1000_pch2lan)
- 			emi_addr = I82579_RX_CONFIG;
-@@ -1450,7 +1451,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 		hw->phy.ops.release(hw);
- 
- 		if (ret_val)
--			return ret_val;
-+			goto out;
- 
- 		if (hw->mac.type >= e1000_pch_spt) {
- 			u16 data;
-@@ -1459,14 +1460,14 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 			if (speed == SPEED_1000) {
- 				ret_val = hw->phy.ops.acquire(hw);
- 				if (ret_val)
--					return ret_val;
-+					goto out;
- 
- 				ret_val = e1e_rphy_locked(hw,
- 							  PHY_REG(776, 20),
- 							  &data);
- 				if (ret_val) {
- 					hw->phy.ops.release(hw);
--					return ret_val;
-+					goto out;
- 				}
- 
- 				ptr_gap = (data & (0x3FF << 2)) >> 2;
-@@ -1480,18 +1481,18 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 				}
- 				hw->phy.ops.release(hw);
- 				if (ret_val)
--					return ret_val;
-+					goto out;
- 			} else {
- 				ret_val = hw->phy.ops.acquire(hw);
- 				if (ret_val)
--					return ret_val;
-+					goto out;
- 
- 				ret_val = e1e_wphy_locked(hw,
- 							  PHY_REG(776, 20),
- 							  0xC023);
- 				hw->phy.ops.release(hw);
- 				if (ret_val)
--					return ret_val;
-+					goto out;
- 
- 			}
- 		}
-@@ -1518,7 +1519,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	    (hw->adapter->pdev->device == E1000_DEV_ID_PCH_I218_V3)) {
- 		ret_val = e1000_k1_workaround_lpt_lp(hw, link);
- 		if (ret_val)
--			return ret_val;
-+			goto out;
- 	}
- 	if (hw->mac.type >= e1000_pch_lpt) {
- 		/* Set platform power management values for
-@@ -1526,7 +1527,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 		 */
- 		ret_val = e1000_platform_pm_pch_lpt(hw, link);
- 		if (ret_val)
--			return ret_val;
-+			goto out;
- 	}
- 
- 	/* Clear link partner's EEE ability */
-@@ -1549,9 +1550,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	}
- 
- 	if (!link)
--		return 0;	/* No link detected */
--
--	mac->get_link_status = false;
-+		goto out;
- 
- 	switch (hw->mac.type) {
- 	case e1000_pch2lan:
-@@ -1617,6 +1616,10 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 		e_dbg("Error configuring flow control\n");
- 
- 	return ret_val;
-+
-+out:
-+	mac->get_link_status = true;
-+	return ret_val;
+console_lock()
+ for (;;) {
+  local_irq_save()
+  call_console_drivers()
+  local_irq_restore()
+  << preemption >>
+       printk // from another task, same CPU
  }
- 
- static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
-diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
-index b322011ec282..5bdc3a2d4fd7 100644
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -424,19 +424,15 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 */
- 	if (!mac->get_link_status)
- 		return 0;
-+	mac->get_link_status = false;
- 
- 	/* First we want to see if the MII Status Register reports
- 	 * link.  If so, then we want to get the current speed/duplex
- 	 * of the PHY.
- 	 */
- 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
--	if (ret_val)
--		return ret_val;
--
--	if (!link)
--		return 0;	/* No link detected */
--
--	mac->get_link_status = false;
-+	if (ret_val || !link)
-+		goto out;
- 
- 	/* Check if there was DownShift, must be checked
- 	 * immediately after link-up
-@@ -465,6 +461,10 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 		e_dbg("Error configuring flow control\n");
- 
- 	return ret_val;
-+
-+out:
-+	mac->get_link_status = true;
-+	return ret_val;
+
+
+#2 IRQ->printk under console_sem
+
+console_lock()
+ for (;;) {
+  local_irq_save()
+  call_console_drivers()
+  local_irq_restore()
+  << IRQ >>
+       printk
  }
- 
- /**
--- 
-2.16.2
+
+
+#3 This, eventually, becomes #2. But the root cause and, thus,
+probability are completely different. printks from console drivers
+(some console drivers are really complex, with dependencies on timers,
+networking, etc. etc.). We currently handle those via
+printk_safe -> IRQ work. But I think we kinda should stop doing so.
+
+console_lock()
+ for (;;) {
+  local_irq_save()
+  call_console_drivers()
+   printk()
+  local_irq_restore()
+ }
+
+	-ss
