@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933190AbeCFOr4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:47:56 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:49753 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933172AbeCFOo5 (ORCPT
+        id S1753845AbeCFOsV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:48:21 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:63098 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932228AbeCFOos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:44:57 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180306144455epoutp026142f0ba6f13d219a1b0dbf516093f31~ZW-3mBNek1273812738epoutp02b
-X-AuditID: b6c32a46-3c1ff70000001029-3a-5a9ea9662b89
+        Tue, 6 Mar 2018 09:44:48 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180306144446epoutp04bca6899306f8e591fc9526efcedc0560~ZW-vaVZRR1173811738epoutp04Z
+X-AuditID: b6c32a37-433ff70000001029-ca-5a9ea95d5deb
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -19,172 +19,115 @@ Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 06/12] thermal: exynos: remove parsing of
- samsung,tmu_reference_voltage property
-Date: Tue, 06 Mar 2018 15:43:49 +0100
-Message-id: <1520347435-22970-7-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 04/12] thermal: exynos: remove parsing of
+ samsung,tmu_noise_cancel_mode property
+Date: Tue, 06 Mar 2018 15:43:47 +0100
+Message-id: <1520347435-22970-5-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsWy7bCmqW7aynlRBj194hYbZ6xntZh/5ByQ
-        uHKN1aL/8Wtmi/PnN7BbbHoM5F7eNYfN4nPvEUaLGef3MVkcmrqX0WLp9YtMFq17j7BbPHnY
-        x+bA67Fm3hpGj8vXLjJ77Jx1l91j8Z6XTB6bVnWyeWxeUu/Rt2UVo8fnTXIBHFFcNimpOZll
-        qUX6dglcGXd7etgLPqtXdM2qamBcrdjFyMkhIWAi8fnaCdYuRi4OIYEdjBLrZmxih3C+M0pc
-        2buCEabqaP9lVhBbSGA3o8S9fh+Iol+MEhfmPGUCSbAJWElMbF8F1iAiUCIxbVUvI0gRs8BZ
-        Jokd29+xgCSEBZIk7j18A9TAwcEioCrRvMIIJMwr4CGxqPEP1DI5iZPHJoMt4xTwlDjRcY4N
-        ZI6EwAk2iSVbLjNDFLlItMzdzAJhC0u8Or6FHcKWlni2aiMjREMzo8S3HXugGiYwSuxZLwRh
-        W0scPn4RbAOzAJ9Ex+G/7CAHSQjwSnS0QZV4SHya8whqvqPEviW/oMEyh1Hi1ryJLBMYpRYw
-        MqxiFEstKM5NTy02KjDSK07MLS7NS9dLzs/dxAiOdi23HYxLzvkcYhTgYFTi4d3gMTdKiDWx
-        rLgy9xCjBAezkghvhP68KCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8rQEuUUIC6YklqdmpqQWp
-        RTBZJg5OqQZG/knvXthN6lH3iji/rdN1otn5l9dnL/ZgmX6w87JXo4Gsj6vss4OmEgXXJvut
-        DS98cUDl5h+/U54X+Y0OKds7Sx/5kBe2JFX7huqRIj8eJwFZlkdM+Xo3GfcIHm/wdvSqUc3m
-        muj6eLm9gdezNU+f8MqFlu+JfRcxb9YncwWNwpfW06N2Gn5WYinOSDTUYi4qTgQAjPPJCPIC
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsVy+t9jAd3UlfOiDI7etrDYOGM9q8X8I+eA
-        xJVrrBb9j18zW5w/v4HdYtNjIPfyrjlsFp97jzBazDi/j8ni0NS9jBZLr19ksmjde4Td4snD
-        PjYHXo8189Ywely+dpHZY+esu+wei/e8ZPLYtKqTzWPzknqPvi2rGD0+b5IL4IjisklJzcks
-        Sy3St0vgyrjb08Ne8Fm9omtWVQPjasUuRk4OCQETiaP9l1lBbCGBnYwSZ27JdTFyAdm/GCWW
-        fDjAApJgE7CSmNi+ihHEFhEokeic9poZxGYWOMskcfA/B4gtLJAkce/hG6YuRg4OFgFVieYV
-        RiBhXgEPiUWNfxghdslJnDw2GWwXp4CnxImOc2wQez0kFnf/ZpvAyLOAkWEVo2RqQXFuem6x
-        UYFRXmq5XnFibnFpXrpecn7uJkZgYG47rNW/g/HxkvhDjAIcjEo8vBs85kYJsSaWFVfmHmKU
-        4GBWEuGN0J8XJcSbklhZlVqUH19UmpNafIhRmoNFSZyXP/9YpJBAemJJanZqakFqEUyWiYNT
-        qoHRM1o7uFUx3nBZJ4e8SMnb7uTtAbXbjwms+5ZWsObdeW5hS7WbP9b7rN965Lh366QFqtPd
-        OswvqrA8+JC2oYvvw+/uhz229yVWnjzi8tRv7ZoVVzTE+tPYjXunri75Mp0pM/HYjpK6yV1W
-        XHsN5HKmPd+clbzOfunRb6/DF949u/FmzeKlzzvmK7EUZyQaajEXFScCADnBx7xIAgAA
-X-CMS-MailID: 20180306144453epcas2p2d440c954c21c800e21f121418d7e5ec8
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7bCmrm7synlRBm+2yFpsnLGe1WL+kXNA
+        4so1Vov+x6+ZLc6f38BusekxkHt51xw2i8+9RxgtZpzfx2RxaOpeRoul1y8yWbTuPcJu8eRh
+        H5sDr8eaeWsYPS5fu8jssXPWXXaPxXteMnlsWtXJ5rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
+        pRbp2yVwZcz+YFcwWbTi6cwrrA2M7wS7GDk5JARMJJp6pzF1MXJxCAnsYJTovNnEDOF8Z5SY
+        /OIfC0zVr42PWCESuxklulf0sUE4vxgl5vxbygpSxSZgJTGxfRUjiC0iUCIxbVUvI0gRs8BZ
+        Jokd29+BjRIWSJLoPt0JVsQioCqx/NlndhCbV8BD4u2Sa6wQ6+QkTh6bDGZzCnhKnOg4B7ZN
+        QuAIm8SZu+/ZIYpcJL5sPcoGYQtLvDq+BSjOAWRLS1w6agtR38wo8W3HHmaImgmMEnvWC0HY
+        1hKHj18EW8AswCfx7msPK0Qvr0RHG1SJh8T6dz+gxjtKdG3bxALx8RxGiRXdL1kmMEotYGRY
+        xSiWWlCcm55abFhgrFecmFtcmpeul5yfu4kRHO9a5jsYN5zzOcQowMGoxMO7wWNulBBrYllx
+        Ze4hRgkOZiUR3gj9eVFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeQMCXKKEBNITS1KzU1MLUotg
+        skwcnFINjOJ5QdFnG5R63vitmrVcpf9N+RVdr+IN+19NCE57oucxpXy7Lv+Mie0/59974/Xl
+        yoYd6ytZb7x0aiqLLTtZNSvgXOJLhhOPIx16Hgtpmk76uYZpzr1b59yXaKX8etBy1rAvcaNQ
+        mGbe3QVPN15OVzbxSvkf/+vzHvUM88tPtx7jZvs1b8tPVhclluKMREMt5qLiRACoUc9x8wIA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsVy+t9jAd3YlfOiDFq2s1psnLGe1WL+kXNA
+        4so1Vov+x6+ZLc6f38BusekxkHt51xw2i8+9RxgtZpzfx2RxaOpeRoul1y8yWbTuPcJu8eRh
+        H5sDr8eaeWsYPS5fu8jssXPWXXaPxXteMnlsWtXJ5rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
+        pRbp2yVwZcz+YFcwWbTi6cwrrA2M7wS7GDk5JARMJH5tfMTaxcjFISSwk1Fi38JeRgjnF6PE
+        p9db2UGq2ASsJCa2r2IEsUUESiQ6p71mBrGZBc4ySRz8zwFiCwskSXSf7gSrYRFQlVj+7DNY
+        L6+Ah8TbJddYIbbJSZw8NhnM5hTwlDjRcY4NxBYCqlnc/ZttAiPPAkaGVYySqQXFuem5xUYF
+        hnmp5XrFibnFpXnpesn5uZsYgcG57bBW3w7G+0viDzEKcDAq8fBu8JgbJcSaWFZcmXuIUYKD
+        WUmEN0J/XpQQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNITS1KzU1MLUotgskwcnFIN
+        jHavPh66zt/XEBegvPTfed4dJ31CZLbJvBDnzO4p3a1W/659VhOr7DbBHbzV4iXiz5NWXuYU
+        O7uOh+3kvjwW5l3GbM25u7P2zhYV3c7lev9cQ8aUjemqOtzls3sKgpp0799WlZZVrhRaZKPJ
+        rvpYeMnkK1eOK9yKX2x5xKvWJOByx3HxK3/alViKMxINtZiLihMByP0kGUoCAAA=
+X-CMS-MailID: 20180306144445epcas1p1b2dee15107098f5974e3c41403594ffc
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180306144453epcas2p2d440c954c21c800e21f121418d7e5ec8
-X-RootMTR: 20180306144453epcas2p2d440c954c21c800e21f121418d7e5ec8
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180306144445epcas1p1b2dee15107098f5974e3c41403594ffc
+X-RootMTR: 20180306144445epcas1p1b2dee15107098f5974e3c41403594ffc
 References: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180306144453epcas2p2d440c954c21c800e21f121418d7e5ec8@epcas2p2.samsung.com>
+        <CGME20180306144445epcas1p1b2dee15107098f5974e3c41403594ffc@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since pdata reference_voltage values are SoC (not platform) specific
-just move it from platform data to struct exynos_tmu_data instance.
-Then remove parsing of samsung,tmu_reference_voltage property.
+All SoCs use the same value (4) for the noise cancel mode so just
+make it explicit and remove parsing of samsung,tmu_noise_cancel_mode
+property.
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 18 +++++++++++++++---
- drivers/thermal/samsung/exynos_tmu.h |  4 ----
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 10 ++++------
+ drivers/thermal/samsung/exynos_tmu.h |  3 ---
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 02d34cf..12bbf79 100644
+index 5877dd4..adfd9ef 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -123,6 +123,8 @@
+@@ -168,6 +168,8 @@
+ #define EXYNOS_FIRST_POINT_TRIM			25
+ #define EXYNOS_SECOND_POINT_TRIM		85
  
- #define EXYNOS5433_PD_DET_EN			1
- 
-+#define EXYNOS5433_G3D_BASE			0x10070000
++#define EXYNOS_NOISE_CANCEL_MODE		4
 +
- /*exynos5440 specific registers*/
- #define EXYNOS5440_TMU_S0_7_TRIM		0x000
- #define EXYNOS5440_TMU_S0_7_CTRL		0x020
-@@ -190,6 +192,9 @@
-  * @max_efuse_value: maximum valid trimming data
-  * @temp_error1: fused value of the first point trim.
-  * @temp_error2: fused value of the second point trim.
-+ * @reference_voltage: reference voltage of amplifier
-+ *	in the positive-TC generator block
-+ *	0 < reference_voltage <= 31
-  * @regulator: pointer to the TMU regulator structure.
-  * @reg_conf: pointer to structure to register with core thermal.
-  * @ntrip: number of supported trip points.
-@@ -213,6 +218,7 @@ struct exynos_tmu_data {
- 	u32 min_efuse_value;
- 	u32 max_efuse_value;
- 	u16 temp_error1, temp_error2;
-+	u8 reference_voltage;
- 	struct regulator *regulator;
- 	struct thermal_zone_device *tzd;
- 	unsigned int ntrip;
-@@ -387,7 +393,7 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
- 		con |= (EXYNOS4412_MUX_ADDR_VALUE << EXYNOS4412_MUX_ADDR_SHIFT);
- 
- 	con &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
--	con |= pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
-+	con |= data->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
- 
+ #define MCELSIUS	1000
+ /**
+  * struct exynos_tmu_data : A structure to hold the private data of the TMU
+@@ -386,10 +388,8 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
  	con &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
  	con |= (pdata->gain << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-@@ -1154,8 +1160,6 @@ static int exynos_of_sensor_conf(struct device_node *np,
  
- 	ret = of_property_read_u32(np, "samsung,tmu_gain", &value);
+-	if (pdata->noise_cancel_mode) {
+-		con &= ~(EXYNOS_TMU_TRIP_MODE_MASK << EXYNOS_TMU_TRIP_MODE_SHIFT);
+-		con |= (pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT);
+-	}
++	con &= ~(EXYNOS_TMU_TRIP_MODE_MASK << EXYNOS_TMU_TRIP_MODE_SHIFT);
++	con |= (EXYNOS_NOISE_CANCEL_MODE << EXYNOS_TMU_TRIP_MODE_SHIFT);
+ 
+ 	return con;
+ }
+@@ -1153,8 +1153,6 @@ static int exynos_of_sensor_conf(struct device_node *np,
  	pdata->gain = (u8)value;
--	of_property_read_u32(np, "samsung,tmu_reference_voltage", &value);
--	pdata->reference_voltage = (u8)value;
+ 	of_property_read_u32(np, "samsung,tmu_reference_voltage", &value);
+ 	pdata->reference_voltage = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_noise_cancel_mode", &value);
+-	pdata->noise_cancel_mode = (u8)value;
  
- 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
- 
-@@ -1210,6 +1214,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_read = exynos4210_tmu_read;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->reference_voltage = 7;
- 		data->efuse_value = 55;
- 		data->min_efuse_value = 40;
- 		data->max_efuse_value = 100;
-@@ -1226,6 +1231,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->reference_voltage = 16;
- 		data->efuse_value = 55;
- 		if (data->soc != SOC_ARCH_EXYNOS5420 &&
- 		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
-@@ -1241,6 +1247,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 8;
-+		if (res.start == EXYNOS5433_G3D_BASE)
-+			data->reference_voltage = 23;
-+		else
-+			data->reference_voltage = 16;
- 		data->efuse_value = 75;
- 		data->min_efuse_value = 40;
- 		data->max_efuse_value = 150;
-@@ -1252,6 +1262,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos5440_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos5440_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->reference_voltage = 16;
- 		data->efuse_value = 0x5d2d;
- 		data->min_efuse_value = 16;
- 		data->max_efuse_value = 76;
-@@ -1263,6 +1274,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 8;
-+		data->reference_voltage = 17;
- 		data->efuse_value = 75;
- 		data->min_efuse_value = 15;
- 		data->max_efuse_value = 100;
+ 	of_property_read_u32(np, "samsung,tmu_efuse_value",
+ 			     &pdata->efuse_value);
 diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 4c49312..9f4318c 100644
+index a5d8c9c..b111a01 100644
 --- a/drivers/thermal/samsung/exynos_tmu.h
 +++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -42,16 +42,12 @@ enum soc_type {
-  * struct exynos_tmu_platform_data
-  * @gain: gain of amplifier in the positive-TC generator block
-  *	0 < gain <= 15
-- * @reference_voltage: reference voltage of amplifier
-- *	in the positive-TC generator block
-- *	0 < reference_voltage <= 31
-  * @cal_type: calibration type for temperature
-  *
-  * This structure is required for configuration of exynos_tmu driver.
-  */
+@@ -45,8 +45,6 @@ enum soc_type {
+  * @reference_voltage: reference voltage of amplifier
+  *	in the positive-TC generator block
+  *	0 < reference_voltage <= 31
+- * @noise_cancel_mode: noise cancellation mode
+- *	000, 100, 101, 110 and 111 can be different modes
+  * @efuse_value: platform defined fuse value
+  * @min_efuse_value: minimum valid trimming data
+  * @max_efuse_value: maximum valid trimming data
+@@ -57,7 +55,6 @@ enum soc_type {
  struct exynos_tmu_platform_data {
  	u8 gain;
--	u8 reference_voltage;
+ 	u8 reference_voltage;
+-	u8 noise_cancel_mode;
  
- 	u32 cal_type;
- };
+ 	u32 efuse_value;
+ 	u32 min_efuse_value;
 -- 
 1.9.1
