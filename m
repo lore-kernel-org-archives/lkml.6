@@ -1,60 +1,31 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3003213-1520295988-2-7320164239271248940
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520295987; b=C+e4arChMfb/PTXgkNgGEz9oAprB2h0ymJlDUral8O6GINV
-    lVxHRWrgySRxR6dWAznzVZJY4ACjjI1wruYehRpRwJ/N/Hs57dLpU85mYvre/o/3
-    srgpzEBitds0RYYhIHN1sD+Qv5+7wpMeB4AZY0/DrsF7dbeS/VM4rar3/wNNjBTm
-    kifLSnW/WP9Pplqkvfmghag6U9UdnHZty0uaOb2Efu3te7M6vq1iL9Bo4Wjtazep
-    Q6mgg5veAGA75BXm6RGqczFKfLjX+7DimOMuDu6CfAUeYAGtSqA7v9X8G4Ejuvwm
-    /2ERParbmxW8q8DWgAi0WB/zh1QJi9lJM74J+qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1520295987;
-    bh=bflzpeXFpNqWHPyV3zPVoIV2aLKx8l09W8kggEjg3tU=; b=iCja8wWOxsun
-    6fXNzz7WwLPt/ga82i+mgCzzfpr14kwJN6HL1tfK+wT7DGUiPr88rdGzVrj15Xkr
-    L0Jixuj79gUl1eomlIAOtOUoGNEO5LcLJhwYUkM4e7myns6X54jyohosr7Qw4Wnc
-    gC3MkH3GILLFrNzROreHmdcmtDmLu1umnnOx/a2uPHnHx8Fmrox66pmIjmlgAWyt
-    GvDF8R2i9cC1PuOEhJ1ql7T4UzQkS5NYgdDoAQIhpMTfBP2zHUA1ythI3j4F2ev4
-    nwOBPq2dqU25in9sT09F5+Qu5v8c1N1eocnYvFTYDZr24NYoZiK1nEk5836GEKlh
-    DohJHXdqSg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=idxSpNcV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=idxSpNcV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933127AbeCFA0X (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 19:26:23 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34868 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933101AbeCFA0V (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Mar 2018 19:26:21 -0500
+Return-Path: <pasha.tatashin@oracle.com>
+X-Google-Smtp-Source: AG47ELuqiUkV8qQzN9h2PeIXo1UsJpm4Z79/NMXCGpkQY7WzRMJ48ey9noI9MEzCT8yZ+KRs7fm+
+ARC-Seal: i=1; a=rsa-sha256; t=1520295987; cv=none;
+        d=google.com; s=arc-20160816;
+        b=CiR8humWX8ZrR5VSBs/ybTTkeMc5vVjjJ0BqcQ5quxAYvMGdUo5yJmJzwaHKrh0QIF
+         VbvLjCVVU64qxCf3wtnlJla7Hl4XGVGeNAMrIH2dKqN4One8ULP3MTk5AMWb3Vyker9+
+         UGiwq0dNgeL6vIm0AAWhL67Qm/i2pwUn0qGpCkIHTyXXkf8LtlFmbe6QN3faLIPeUHvI
+         CHUIXAo0tSK55gO3gp6u6/oTqV0x8i95XtZN0OYa2rZwP3WTmpjENw7UVDjeXXHrgFVZ
+         n5CDnbrhtJdEciUNDDZuMSyEN0jkeV3UBXrxA/u7Ud+5HTNaKrRZEfqTO5fYCW+OLW6V
+         Anyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=CoahtpSACNL1iQzZIsxk+OijmxP6/iYmC9GGbrKDcG4=;
+        b=qoP3FNcLrhWG1w5g63ZzqtUQu2s9UWF2iZZMnOLN1QmQcYYFOo3DhYn66KA7MV3H3G
+         3ORQ7ub/Xwx1qnhcjMyb0k5d5+dhHXwe9nREiUrQSYTpg0QPDLUZsoEY2l0zPOE+teiC
+         6wfK9TR2GylB27O2ZaMW909AGIoGMpQ71K+gfCBuUVRzvqsQ6vyM3OT9TfLcRlc3UkH/
+         eEs+yaz1joqSTfIP6VrB62o2gPkUy/WkVCRtjTuZLD3YZ33Fv27qFT7g6rqGaHEnqT9Z
+         CHcG23HNl0VxEjzQS/SU0V5hBiClbXNwQfvZSQ1VJ1Z2B5vAclmNvC0FvB1CoxHkCAfr
+         lzYw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=gc/YXOYL;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=gc/YXOYL;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux-kernel@vger.kernel.org, Alexander.Levin@microsoft.com,
@@ -62,64 +33,63 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 21/65] x86/mm/64: Fix reboot interaction with CR4.PCIDE
-Date: Mon,  5 Mar 2018 19:24:54 -0500
-Message-Id: <20180306002538.1761-22-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 30/65] kaiser: fix build and FIXME in alloc_ldt_struct()
+Date: Mon,  5 Mar 2018 19:25:03 -0500
+Message-Id: <20180306002538.1761-31-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=762
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594145885124288153?=
+X-GMAIL-MSGID: =?utf-8?q?1594145885124288153?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Hugh Dickins <hughd@google.com>
 
-commit 924c6b900cfdf376b07bccfd80e62b21914f8a5a upstream.
+Include linux/kaiser.h instead of asm/kaiser.h to build ldt.c without
+CONFIG_KAISER.  kaiser_add_mapping() does already return an error code,
+so fix the FIXME.
 
-Trying to reboot via real mode fails with PCID on: long mode cannot
-be exited while CR4.PCIDE is set.  (No, I have no idea why, but the
-SDM and actual CPUs are in agreement here.)  The result is a GPF and
-a hang instead of a reboot.
-
-I didn't catch this in testing because neither my computer nor my VM
-reboots this way.  I can trigger it with reboot=bios, though.
-
-Fixes: 660da7c9228f ("x86/mm: Enable CR4.PCIDE on supported systems")
-Reported-and-tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/f1e7d965998018450a7a70c2823873686a8b21c0.1507524746.git.luto@kernel.org
-Cc: Hugh Dickins <hughd@google.com>
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-(cherry picked from commit 6c4db09c291a19da66512f99c4bcb378a862f9e6)
+(cherry picked from commit 9b94cf97f42ca30fe9b5010900fa6e1d6855a9f6)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/kernel/reboot.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/ldt.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 0549ae3cb332..d9ea27ec9dbd 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -93,6 +93,10 @@ void __noreturn machine_real_restart(unsigned int type)
- 	load_cr3(initial_page_table);
- #else
- 	write_cr3(real_mode_header->trampoline_pgd);
-+
-+	/* Exiting long mode will fail if CR4.PCIDE is set. */
-+	if (static_cpu_has(X86_FEATURE_PCID))
-+		cr4_clear_bits(X86_CR4_PCIDE);
- #endif
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 9c6ebaf0a83b..c388247e0353 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -48,7 +48,7 @@ static struct ldt_struct *alloc_ldt_struct(int size)
+ {
+ 	struct ldt_struct *new_ldt;
+ 	int alloc_size;
+-	int ret = 0;
++	int ret;
  
- 	/* Jump to the identity-mapped low memory code */
+ 	if (size > LDT_ENTRIES)
+ 		return NULL;
+@@ -76,10 +76,8 @@ static struct ldt_struct *alloc_ldt_struct(int size)
+ 		return NULL;
+ 	}
+ 
+-	// FIXME: make kaiser_add_mapping() return an error code
+-	// when it fails
+-	kaiser_add_mapping((unsigned long)new_ldt->entries, alloc_size,
+-			   __PAGE_KERNEL);
++	ret = kaiser_add_mapping((unsigned long)new_ldt->entries, alloc_size,
++				 __PAGE_KERNEL);
+ 	if (ret) {
+ 		__free_ldt_struct(new_ldt);
+ 		return NULL;
 -- 
 2.16.2
