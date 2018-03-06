@@ -1,88 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932659AbeCFONZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:13:25 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39877 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753308AbeCFONX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:13:23 -0500
-Message-ID: <1520345600.4095.19.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/2] dt-bindings: input: Add binding for RAVE SP
- input driver
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Chris Healy <cphealy@gmail.com>
-Date: Tue, 06 Mar 2018 15:13:20 +0100
-In-Reply-To: <20180301165527.22274-2-andrew.smirnov@gmail.com>
-References: <20180301165527.22274-1-andrew.smirnov@gmail.com>
-         <20180301165527.22274-2-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1753525AbeCFOPp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:15:45 -0500
+Received: from bert.emutex.com ([91.103.1.109]:48165 "EHLO bert.emutex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750817AbeCFOPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:15:43 -0500
+From: Javier Arteaga <javier@emutex.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Javier Arteaga <javier@emutex.com>
+Subject: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction callback
+Date: Tue,  6 Mar 2018 13:42:13 +0000
+Message-Id: <20180306134213.16898-1-javier@emutex.com>
+X-Mailer: git-send-email 2.16.2
+X-Spam-Score: -1.0 (-)
+X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  Allows querying GPIO direction from the pad config register.
+    If the pad is not in GPIO mode, return an error. Signed-off-by: Javier Arteaga
+    <javier@emutex.com> --- This is needed by the drivers for the UP Squared
+   board, an APL-based platform. (For now, these drivers are out-of-tree.) [...]
+ Content analysis details:   (-1.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 01.03.2018, 08:55 -0800 schrieb Andrey Smirnov:
-> Add Device Tree bindings for RAVE SP input drvier - an MFD cell of
-> parent RAVE SP driver (documented in
-> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
-> 
-> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-input@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> > Cc: Guenter Roeck <linux@roeck-us.net>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Allows querying GPIO direction from the pad config register.
+If the pad is not in GPIO mode, return an error.
 
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Javier Arteaga <javier@emutex.com>
+---
+This is needed by the drivers for the UP Squared board, an APL-based
+platform. (For now, these drivers are out-of-tree.)
 
-> ---
->  .../bindings/input/zii,rave-sp-pwrbutton.txt       | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt b/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
-> new file mode 100644
-> index 000000000000..e14e12d27772
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.txt
-> @@ -0,0 +1,24 @@
-> +Zodiac Inflight Innovations RAVE Supervisory Processor Power Button Bindings
-> +
-> +RAVE SP input device is a "MFD cell" device corresponding to power
-> +button functionality of RAVE Supervisory Processor. It is expected
-> +that its Device Tree node is specified as a child of the node
-> +corresponding to the parent RAVE SP device (as documented in
-> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
-> +
-> +Required properties:
-> +
-> +- compatible: Should be "zii,rave-sp-pwrbutton"
-> +
-> +Example:
-> +
-> > +	rave-sp {
-> > +		compatible = "zii,rave-sp-rdu1";
-> > +		current-speed = <38400>;
-> +
-> > +		pwrbutton {
-> > +			compatible = "zii,rave-sp-pwrbutton";
-> > +			status = "okay";
-> > +		};
-> > +	}
-> +
+An earlier version of this patch was reviewed some time ago by Andy
+Shevchenko outside of the mailing lists:
+<https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
+
+ drivers/pinctrl/intel/pinctrl-intel.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 96e73e30204e..1e24a6b8a64e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -788,6 +788,24 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ }
+ 
++static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
++	void __iomem *reg;
++	u32 padcfg0;
++
++	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
++	if (!reg)
++		return -EINVAL;
++
++	padcfg0 = readl(reg);
++
++	if (padcfg0 & PADCFG0_PMODE_MASK)
++		return -EINVAL;
++
++	return !!(padcfg0 & PADCFG0_GPIOTXDIS);
++}
++
+ static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	return pinctrl_gpio_direction_input(chip->base + offset);
+@@ -804,6 +822,7 @@ static const struct gpio_chip intel_gpio_chip = {
+ 	.owner = THIS_MODULE,
+ 	.request = gpiochip_generic_request,
+ 	.free = gpiochip_generic_free,
++	.get_direction = intel_gpio_get_direction,
+ 	.direction_input = intel_gpio_direction_input,
+ 	.direction_output = intel_gpio_direction_output,
+ 	.get = intel_gpio_get,
+-- 
+2.16.2
