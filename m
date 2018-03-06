@@ -1,65 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeCFJkS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:40:18 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:64310 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750819AbeCFJkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:40:15 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w269eBra017331
-X-Nifty-SrcIP: [209.85.213.53]
-X-Google-Smtp-Source: AG47ELvEOXNnqi7fUuzweqXhmAQvW6iKZ8ib8iz7c8h6OoqVBIkjl3yBaokKO1reKoKhvfcQWbvI/wT44X4q2gTplIQ=
-MIME-Version: 1.0
-In-Reply-To: <1519886077-31914-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1519886077-31914-1-git-send-email-yamada.masahiro@socionext.com> <1519886077-31914-2-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 6 Mar 2018 18:39:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARM_1fXyh8hnnAw7DGC97LZ7-pcriqWC9gQ4uSnU==Vpg@mail.gmail.com>
-Message-ID: <CAK7LNARM_1fXyh8hnnAw7DGC97LZ7-pcriqWC9gQ4uSnU==Vpg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kconfig: rename silentoldconfig to syncconfig
-To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Marc Herbert <marc.herbert@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        intel-wired-lan@lists.osuosl.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1752866AbeCFJox (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:44:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35516 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750792AbeCFJov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:44:51 -0500
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] crypto: introduce SM4 symmetric cipher algorithm
+Date: Tue,  6 Mar 2018 09:44:41 +0000
+Message-Id: <1520329484-23317-1-git-send-email-gilad@benyossef.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-01 15:34 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> As commit cedd55d49dee ("kconfig: Remove silentoldconfig from help
-> and docs; fix kconfig/conf's help") mentioned, 'silentoldconfig' is a
-> historical misnomer.  That commit removed it from help and docs since
-> it is an internal interface.  If so, it should be allowed to rename
-> it to something more intuitive.  'syncconfig' is the one I came up
-> with because it updates the .config if necessary, then synchronize
-> include/generated/autoconf.h and include/config/* with it.
->
-> You should not manually invoke 'silentoldcofig'.  Display warning if
-> used in case existing scripts are doing wrong.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> Changes in v3:
->   - Fix Documentation/networking/i40e.txt
->   - Display warning if silentoldconfig is used
->
-> Changes in v2:
->   - newly added
->
+Introduce the SM4 cipher algorithms (OSCCA GB/T 32907-2016) and
+related tests.
 
-Both applied to linux-kbuild/kconfig.
+SM4 (GBT.32907-2016) is a cryptographic standard issued by the
+Organization of State Commercial Administration of China (OSCCA)
+as an authorized cryptographic algorithms for the use within China.
 
+SMS4 was originally created for use in protecting wireless
+networks, and is mandated in the Chinese National Standard for
+Wireless LAN WAPI (Wired Authentication and Privacy Infrastructure)
+(GB.15629.11-2003).
+
+Tested on arm 64 and 32 bit.
+
+Gilad Ben-Yossef (2):
+  crypto: introduce SM4 symmetric cipher algorithm
+  crypto: introduce SM4 testmgr tests
+
+ crypto/Kconfig       |  25 ++++++
+ crypto/Makefile      |   1 +
+ crypto/sm4_generic.c | 244 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ crypto/tcrypt.c      |   3 +
+ crypto/testmgr.c     |   9 ++
+ crypto/testmgr.h     | 131 +++++++++++++++++++++++++++
+ include/crypto/sm4.h |  28 ++++++
+ 7 files changed, 441 insertions(+)
+ create mode 100644 crypto/sm4_generic.c
+ create mode 100644 include/crypto/sm4.h
 
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
