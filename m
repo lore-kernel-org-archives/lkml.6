@@ -1,101 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753971AbeCFVRr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 16:17:47 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:39630 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753598AbeCFVRq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 16:17:46 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Sz.Z2.j_1520371058;
-Subject: Re: [RFC PATCH 0/4 v2] Define killable version for access_remote_vm()
- and use it in fs/proc
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mingo@kernel.org, adobriyan@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>
-References: <1519691151-101999-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180306124540.d8b5f6da97ab69a49566f950@linux-foundation.org>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <b576e32b-9c47-ee67-a576-b5a0c05c2864@linux.alibaba.com>
-Date: Tue, 6 Mar 2018 13:17:37 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S1754019AbeCFVUb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 16:20:31 -0500
+Received: from mout.gmx.net ([212.227.15.15]:38807 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753656AbeCFVU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 16:20:29 -0500
+Subject: Re: [PATCH] parisc: time: stop validating rtc_time in .read_time
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        linux-parisc@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180221214023.1045-1-alexandre.belloni@bootlin.com>
+From: Helge Deller <deller@gmx.de>
+Message-ID: <c80cb9e7-6a07-bc12-5758-d2b642a315dc@gmx.de>
+Date: Tue, 6 Mar 2018 22:20:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180306124540.d8b5f6da97ab69a49566f950@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180221214023.1045-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K0:vfLZkAkxbuUOMmmTzrPHiHEQMAAg978caa/IaqG4e9nZ9ovLFRc
+ 9jbBZ2b6CRT5GItoX9teh5tSB+HtrwzdsYiN/mYPsimozSxDpEsb6gbX6GNMVuy2XRDRaTB
+ LP99bABEHgrdIge1kYdiAw611tDtJmfqsjyDT11lDpnKYsgW2TOfV60Z9usfg1owS5YAK7R
+ 4SMctX+l+aXAoJEcXhMxQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:g3a2UlaiH8Y=:Q1u9Hsb9Z0pY6/ZtUYvOXV
+ cPbkb+lmk68anQrdPwctox6nQPSDyx/Mcp3ursoMb/WSUjWlYPjtkNCmRICtP0ImIeABO7UMC
+ Ne+aXBITNSD2+LwcPwKSq2rOd/26RiVfFzM122ai96TZ6vwC1T94/v0y3inTKYKRC+J5ipwhu
+ GSZ6Wdz1ep2kLhF3rDebIguQL9unKkwG7gtMt/qStdVeqzE+NwvARrxW2G2uUXKhApw0ZBfFA
+ pDtHnXliY2mBcp4+fkXoY0TjBmYWifJuphK7YmLGTfssrx6SRSogkU2RwQgb/H4v8NE3roOBP
+ fkvDm5hudaAJi3G8jLKqJSvzWaxL9ZaIPt+XKWeBxHyx5Gv1Leoxmm8Ay7v0S3JekIQx7uYx8
+ 9gfsg8sR9NpYJso09kkMTVbwRNrPdw/EFwXap7ErXbzl+eoZAL4bkdf9jMEGJ9bFxfdQxHrF6
+ VhVrrH7l1u9bFVSfi8pTRssOuDIq5/kiHaCcNlPwFs9ShG9U93GuT8CrRF8hu2iVzO0FlcXPH
+ BvWcwt+N0HZXHsUdbXXV1Of0k3v0phpP5cz75ODYucpq/PhoxQGk7bvGqFg/iaWNGYyX4YuV0
+ ICf17o/33eAfm/y+rzUj7C2tkMSbwHZU/+ee/5AR6hdeZVXMj1e8YbOBQayXpN0iJ07qV/4K9
+ gg9pGjorP/cCTkQed+Ue8WnOljG3KPsFyl9bKAxh0QaacDvHAf1EjRNybEyaTMRGiUOYI5l4s
+ 4ATXCNzL8Zggdc1br0T8yKW3zmWKp0qAYxqzcD51+Iw6TakOF6yTRjqBNPTJR3/ZfzEV4xoE3
+ u84pEMo8+iF/fLWwlf/NFZ9lFtuvx39id5ZqLNDWGZRcnSvehA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21.02.2018 22:40, Alexandre Belloni wrote:
+> The RTC core is always calling rtc_valid_tm after the read_time callback.
+> It is not necessary to call it just before returning from the callback.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+Acked-by: Helge Deller <deller@gmx.de>
+
+Thanks!
+Helge
 
 
-On 3/6/18 12:45 PM, Andrew Morton wrote:
-> On Tue, 27 Feb 2018 08:25:47 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->> Background:
->> When running vm-scalability with large memory (> 300GB), the below hung
->> task issue happens occasionally.
->>
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>
->> When manipulating a large mapping, the process may hold the mmap_sem for
->> long time, so reading /proc/<pid>/cmdline may be blocked in
->> uninterruptible state for long time.
->> We already have killable version APIs for semaphore, here use down_read_killable()
->> to improve the responsiveness.
->>
-> Maybe I'm missing something, but I don't see how this solves the
-> problem.  Yes, the read of /proc/pid/cmdline will be abandoned if
-> someone interrupts that process.  But if nobody does that, the read
-> will still just sit there for 2 minutes and the watchdog warning will
-> still come out?
-
-No, the warning will not come out since down_read_killable() puts the 
-task into TASK_KILLABLE state instead of TASK_UNINTERRUPTIBLE state. The 
-hung task check will skip TASK_KILLABLE tasks, please see the below code 
-in (kernel/hung_task.c):
-
-                 /* use "==" to skip the TASK_KILLABLE tasks waiting on 
-NFS */
-                 if (t->state == TASK_UNINTERRUPTIBLE)
-                         check_hung_task(t, timeout);
-
-It just mitigates the hung task warning, can't resolve the mmap_sem 
-scalability issue. Furthermore, waiting on pure uninterruptible state 
-for reading /proc sounds unnecessary. It doesn't wait for I/O completion.
-
->
-> Where the heck are we holding mmap_sem for so long?  Can that be fixed?
-
-The mmap_sem is held for unmapping a large map which has every single 
-page mapped. This is not a issue in real production code. Just found it 
-by running vm-scalability on a machine with ~600GB memory.
-
-AFAIK, I don't see any easy fix for the mmap_sem scalability issue. I 
-saw range locking patches (https://lwn.net/Articles/723648/) were 
-floating around. But, it may not help too much on the case that a large 
-map with every single page mapped.
-
-Thanks,
-Yang
+> ---
+>  arch/parisc/kernel/time.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/parisc/kernel/time.c b/arch/parisc/kernel/time.c
+> index 4b8fd6dc22da..f2890bd240f8 100644
+> --- a/arch/parisc/kernel/time.c
+> +++ b/arch/parisc/kernel/time.c
+> @@ -173,7 +173,7 @@ static int rtc_generic_get_time(struct device *dev, struct rtc_time *tm)
+>  
+>  	/* we treat tod_sec as unsigned, so this can work until year 2106 */
+>  	rtc_time64_to_tm(tod_data.tod_sec, tm);
+> -	return rtc_valid_tm(tm);
+> +	return 0;
+>  }
+>  
+>  static int rtc_generic_set_time(struct device *dev, struct rtc_time *tm)
+> 
