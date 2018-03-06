@@ -1,108 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933020AbeCFRrZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:47:25 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35362 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932660AbeCFRrY (ORCPT
+        id S1753971AbeCFRre (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:47:34 -0500
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:36561 "EHLO
+        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeCFRrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:47:24 -0500
-X-Google-Smtp-Source: AG47ELtJKCFGA7RY1sGFa4a3IJh/eapazX+72u4TgYsGMCsH0M75xNYHuBxXYmr0fetV6bSANLfV/CeJc7i1UTBgR/Q=
+        Tue, 6 Mar 2018 12:47:31 -0500
+X-Google-Smtp-Source: AG47ELs88lmkVabr4zoxG6w6czBwV3XAzj0TZXpS2w0K7gKmf159oAs0cOjVXkM5tQK2bBYtksAXMUPsV4azZqfnElM=
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+y4hze8CUDMJ_G6W+diBO88+WYu892SK9QAt36y8nbZYQ@mail.gmail.com>
-References: <083f58501e54731203801d899632d76175868e97.1519400992.git.andreyknvl@google.com>
- <26dd94c5-19ca-dca6-07b8-7103f53c0130@virtuozzo.com> <CAAeHK+y4hze8CUDMJ_G6W+diBO88+WYu892SK9QAt36y8nbZYQ@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Tue, 6 Mar 2018 18:47:22 +0100
-Message-ID: <CAAeHK+z+Q0qKdSt4R=Cd7XPS0njNM3c+66Q-JA97aZ5nEa6Kug@mail.gmail.com>
-Subject: Re: [PATCH] kasan, slub: fix handling of kasan_slab_free hook
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Kostya Serebryany <kcc@google.com>
+In-Reply-To: <20180306170011.GD25017@tassilo.jf.intel.com>
+References: <20180306064353.31930-1-xiyou.wangcong@gmail.com> <20180306170011.GD25017@tassilo.jf.intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Tue, 6 Mar 2018 09:47:09 -0800
+Message-ID: <CAM_iQpUfRMW4aGfaTdFqCRwuuLXFX69Aewg+k-aa6BMUKSrhTA@mail.gmail.com>
+Subject: Re: [PATCH] perf stat: fix cvs output format
+To: Andi Kleen <ak@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, Ilya Pronin <ipronin@twitter.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 6:42 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> On Fri, Mar 2, 2018 at 1:10 PM, Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->> On 02/23/2018 06:53 PM, Andrey Konovalov wrote:
->>> The kasan_slab_free hook's return value denotes whether the reuse of a
->>> slab object must be delayed (e.g. when the object is put into memory
->>> qurantine).
->>>
->>> The current way SLUB handles this hook is by ignoring its return value
->>> and hardcoding checks similar (but not exactly the same) to the ones
->>> performed in kasan_slab_free, which is prone to making mistakes.
->>>
+On Tue, Mar 6, 2018 at 9:00 AM, Andi Kleen <ak@linux.intel.com> wrote:
+> On Mon, Mar 05, 2018 at 10:43:53PM -0800, Cong Wang wrote:
+>> From: Ilya Pronin <ipronin@twitter.com>
 >>
->> What are those differences exactly? And what problems do they cause?
->> Answers to these questions should be in the changelog.
+>> When printing stats in CSV mode, perf stat appends extra CSV
+>> separators when counter is not supported:
+>>
+>> <not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
+>>
+>> which causes a failure of parsing fields. The numbers of separators
 >
->
-> The difference is that with the old code we end up proceeding with
-> invalidly freeing an object when an invalid-free (or double-free) is
-> detected. Will add this in v2.
->
->>
->>
->>> This patch changes the way SLUB handles this by:
->>> 1. taking into account the return value of kasan_slab_free for each of
->>>    the objects, that are being freed;
->>> 2. reconstructing the freelist of objects to exclude the ones, whose
->>>    reuse must be delayed.
->>>
->>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
->>> ---
->>
->>
->>
->>
->>>
->>> @@ -2965,14 +2974,13 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
->>>                                     void *head, void *tail, int cnt,
->>>                                     unsigned long addr)
->>>  {
->>> -     slab_free_freelist_hook(s, head, tail);
->>>       /*
->>> -      * slab_free_freelist_hook() could have put the items into quarantine.
->>> -      * If so, no need to free them.
->>> +      * With KASAN enabled slab_free_freelist_hook modifies the freelist
->>> +      * to remove objects, whose reuse must be delayed.
->>>        */
->>> -     if (s->flags & SLAB_KASAN && !(s->flags & SLAB_TYPESAFE_BY_RCU))
->>> -             return;
->>> -     do_slab_free(s, page, head, tail, cnt, addr);
->>> +     slab_free_freelist_hook(s, &head, &tail);
->>> +     if (head != NULL)
->>
->> That's an additional branch in non-debug fast-path. Find a way to avoid this.
->
-> Hm, there supposed to be a branch here. We either have objects that we
-> need to free, or we don't, and we need to do different things in those
-> cases. Previously this was done with a hardcoded "if (s->flags &
-> SLAB_KASAN && ..." statement, not it's a different "if (head !=
-> NULL)".
->
-> I could put this check under #ifdef CONFIG_KASAN if the performance is
-> critical here, but I'm not sure if that's the best solution. I could
-> also add an "unlikely()" there.
+> Causes failure in what?
 
-OK, I have a solution better for this, stay tuned for v2.
+Failed to know how many fields in that line, clearly there are less
+separators when it is supported.
+
 
 >
->>
->>
->>> +             do_slab_free(s, page, head, tail, cnt, addr);
->>>  }
->>>
->>>  #ifdef CONFIG_KASAN
->>>
+>> is fixed for each line, no matter supported or not supported.
+>
+> I don't think they're extra fields, there are cases where they can be filled out
+> for variance, metricvalue, unit. And other code in perf too uses empty
+> fields when something is not available.
+
+Are you saying there should be more fields when it is not supported?
+
+Here is the output from your own commit:
+
+      423470,,stalled-cycles-frontend,509102,100.00,65.69,frontend cycles idle
+      <not supported>,,stalled-cycles-backend,0,100.00,,,,
+
+so line 1 has 7 fields, line 2 has 9 fields, and this is expected?
