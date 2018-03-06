@@ -1,90 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753636AbeCFMAg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:00:36 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59863 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753520AbeCFMAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:00:35 -0500
-Date: Tue, 6 Mar 2018 13:00:23 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Paul Burton <paul.burton@mips.com>
-Subject: Re: [PATCH v4 5/6] MIPS: generic: Add support for Microsemi Ocelot
-Message-ID: <20180306120023.GS3035@piout.net>
-References: <20180302224811.26840-1-alexandre.belloni@bootlin.com>
- <20180302224811.26840-6-alexandre.belloni@bootlin.com>
- <20180303002528.GE4197@saruman>
+        id S1753530AbeCFMDD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:03:03 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38461 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeCFMDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:03:01 -0500
+X-Google-Smtp-Source: AG47ELvEj8hGIFsL2iMmSLfaxxECbHEE6EW/DgEqxXJN4Na48zTB4y1Zi9n1TfTtb9VlojlAy+tMPw==
+Date: Tue, 6 Mar 2018 09:02:57 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: Replace occurrences of magic number 0 by
+ IIO_CHAN_INFO_RAW
+Message-ID: <20180306120257.eo6kh3b65qmpotoe@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180303002528.GE4197@saruman>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/03/2018 at 00:25:29 +0000, James Hogan wrote:
-> Similarly if the platform is little endian only, you could also add:
-> # require CONFIG_CPU_LITTLE_ENDIAN=y
-> 
+Usually, functions responsible for reading raw data typically relies on
+values from iio_chan_info_enum to correctly identify the type of data to
+be read. There is a set of a device driver that uses the magic number 0
+instead of IIO_CHAN_INFO_RAW. This patch improves the readability by
+replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW in six
+devices driver in the IIO subsystem.
 
-It supports big endian.
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/accel/hid-sensor-accel-3d.c | 2 +-
+ drivers/iio/dac/ad5380.c                | 2 +-
+ drivers/iio/dac/ad5764.c                | 2 +-
+ drivers/iio/gyro/hid-sensor-gyro-3d.c   | 2 +-
+ drivers/iio/light/hid-sensor-als.c      | 2 +-
+ drivers/iio/light/lm3533-als.c          | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-> > +
-> > +CONFIG_LEGACY_BOARD_OCELOT=y
-> > +
-> > +CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER=y
-> 
-> Hmm, can this break any other generic platforms that already make the
-> DTB command line override the arcs_cmdline? Paul?
-> 
-> I.e. In arch_mem_init() the condition of copying arcs_cmdline to
-> boot_command_line would switch from !boot_command_line[0] to
-> arcs_cmdline[0]. I suppose arcs_cmdline[] may not have been written in
-> those cases. If its safe then it should probably be a standard thing
-> selected by MIPS_GENERIC instead of a board specific thing.
-> 
-
-Actually, this is not needed so I'm removing it.
-
-> > +CONFIG_MAGIC_SYSRQ=y
-> 
-> Perhaps its worth adding this to the base generic_defconfig if its
-> useful to have.
-> 
-
-Our test automation tool is using it to reboot the platform but I don't
-know if this is useful for anybody else.
-
-> > +static __init bool ocelot_detect(void)
-> > +{
-> > +	u32 rev;
-> > +
-> > +	rev = __raw_readl((void *)DEVCPU_GCB_CHIP_REGS_CHIP_ID);
-> 
-> Isn't that an address in the user segment, i.e. TLB mapped virtual
-> memory? Does the bootloader set up a wired mapping for it or something?
-> 
-> The address looks similar to UART_UART which is given to ioremap so must
-> be a physical address. Perhaps the mapping you're using is 1:1
-> virtual:physical address?
-> 
-> If its using a TLB mapping, then:
-> 1) That isn't safe this early to run on other platforms, as it'll give a
->    TLB refill exception. It should be quite possible to detect such a
->    mapping to make it safer though.
-> 2) If yamon initialises the TLB to a known state, then that may well be
->    a hacky but workable way to distinguish yamon (sead3) from redboot
->    (mscc) in future.
-> 
-
-Yes, this is an identity mapping that is installed by redboot because
-all the peripherals are in the user segment.
-
+diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+index c066a3bdbff7..41d97faf5013 100644
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -155,7 +155,7 @@ static int accel_3d_read_raw(struct iio_dev *indio_dev,
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&accel_state->common_attributes, true);
+ 		report_id = accel_state->accel[chan->scan_index].report_id;
+ 		address = accel_3d_addresses[chan->scan_index];
+diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
+index 845fd1c0fd9d..873c2bf637c0 100644
+--- a/drivers/iio/dac/ad5380.c
++++ b/drivers/iio/dac/ad5380.c
+@@ -158,7 +158,7 @@ static unsigned int ad5380_info_to_reg(struct iio_chan_spec const *chan,
+ 	long info)
+ {
+ 	switch (info) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		return AD5380_REG_DATA(chan->address);
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+ 		return AD5380_REG_OFFSET(chan->address);
+diff --git a/drivers/iio/dac/ad5764.c b/drivers/iio/dac/ad5764.c
+index 033f20eca616..9333177062c0 100644
+--- a/drivers/iio/dac/ad5764.c
++++ b/drivers/iio/dac/ad5764.c
+@@ -168,7 +168,7 @@ static int ad5764_read(struct iio_dev *indio_dev, unsigned int reg,
+ static int ad5764_chan_info_to_reg(struct iio_chan_spec const *chan, long info)
+ {
+ 	switch (info) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		return AD5764_REG_DATA(chan->address);
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+ 		return AD5764_REG_OFFSET(chan->address);
+diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+index f59995a90387..36941e69f959 100644
+--- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
++++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+@@ -115,7 +115,7 @@ static int gyro_3d_read_raw(struct iio_dev *indio_dev,
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&gyro_state->common_attributes, true);
+ 		report_id = gyro_state->gyro[chan->scan_index].report_id;
+ 		address = gyro_3d_addresses[chan->scan_index];
+diff --git a/drivers/iio/light/hid-sensor-als.c b/drivers/iio/light/hid-sensor-als.c
+index befd693a4a31..406caaee9a3c 100644
+--- a/drivers/iio/light/hid-sensor-als.c
++++ b/drivers/iio/light/hid-sensor-als.c
+@@ -97,7 +97,7 @@ static int als_read_raw(struct iio_dev *indio_dev,
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		switch (chan->scan_index) {
+ 		case  CHANNEL_SCAN_INDEX_INTENSITY:
+ 		case  CHANNEL_SCAN_INDEX_ILLUM:
+diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm3533-als.c
+index 36208a3652e9..ff5a3324b489 100644
+--- a/drivers/iio/light/lm3533-als.c
++++ b/drivers/iio/light/lm3533-als.c
+@@ -199,7 +199,7 @@ static int lm3533_als_read_raw(struct iio_dev *indio_dev,
+ 	int ret;
+ 
+ 	switch (mask) {
+-	case 0:
++	case IIO_CHAN_INFO_RAW:
+ 		switch (chan->type) {
+ 		case IIO_LIGHT:
+ 			ret = lm3533_als_get_adc(indio_dev, false, val);
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.16.2
