@@ -1,37 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1039940-1520361058-2-11470788191321376318
+X-Cyrus-Session-Id: sloti22d1t05-984164-1520360631-2-9480465583660499358
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520361058; b=suyzUgUsneRyDXPUbEh0yR8BaurAr+xg5++/N6CyviZb5Pp
-    mz3/Huledt/lhssmrj2k0qgJCdXbJtrt+FJ7a71hw2w/HDAlVLNXJFU61qrQisUa
-    yOjqvLhLJJgxGkgj/bGWfkanL8mowspWtXPtcOGQfDtv71U5MSmyPY5F9k9QOzg0
-    zOwwg/6iPGB1U1ljwnrS79/a/JiKOvqW01Da5EPteAsN5dVnVLG75GCz2BCuqiad
-    Eep9c7/EBzOWxTe9nw4tzqFkfmc5pGaXRCNwp+a2UhTc13YXfW0QxOu+M24wjBda
-    MR+bEp+xxBmWR1+aRQcJzzagtExynQFKPeVgKBA==
+    t=1520360630; b=R9zkDoC+QxyqB+ud1SBy7B0hvnAYLw+nJ8gqbx4KXndp/XR
+    g9kskcUGk3hiYgHFwy7YgLY6DOFXt+GY7j8bC+VKybzh7OEv6YlgSjdCk9EkwdIC
+    tFCD0IK+tBFfqKL3H9yBd1LS6VLpS4Y61Vb0YrkyRtEFK2N/sPqrfVZU9Yoz5itX
+    HlhpnHGRXccBWIG+Mhgbv5pQvKe1Wy3u7XiLU5COo68uSTEpdlJ87p34uDCbxrd1
+    CZ2krFr8bZ90T6lvLq/jLMrMpKYriuhyrSlBnMFGKzRY9HVYkkKz6txXCwWUl7DJ
+    YEyHEk6RaF4NXvYaFuq1oHk4ldOXAKWAVipnJsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=arctest; t=1520361058; bh=OIIhdv
-    FZ58I4M4I4QJOdo24vTGHjWp5owX1KCki5sI8=; b=KEHMwucKxYXrJ/HYg1kuOW
-    2P8QIvVVzzbNek/tZ6qhlqOidOp8+OSiL2SbCHOvSw6PKi/SaSycYiH0VIi3X0m4
-    EMXLArp4fSDukuiIB8s57PzOIhFtRkYg4QsQI+TtsUOS58hXbAHo7d6Gp265PMjm
-    6z0pJHhsib4dlEpouH2yHWY1XdTxQVj5Iu9PwVBZX0gViPoRbaf7IiBMJLVSxvO4
-    dwtCQht1Lq3K0IAxEhb5GwL4gZjD2OD+2pf233R6PUVoc5d4gurZlexLB0YasBRC
-    2Eo61BmBxv6Tnq7Pj8vblmSew40nMLxDLQnWaVe8b5JuTbRUjJjYZjeEZNrtyOCA
+    :mime-version:sender:list-id; s=arctest; t=1520360630; bh=+Hhm9N
+    3q2CK6Hm61XPJ+Ffw7pjJ9voBSDqTWohRxk+M=; b=l/bQvXYQH4ChJX+smYlgd6
+    Sl3PPDAX5K4MVdL5abcpWRR2gw3ZNOzYONPrrZdxc4s5pnbDzbyZtFhRhvjNNB+2
+    9hAnxW477o9SA0Pv+08DyAa2dXQ0DnZ+Q9ngUnzmm115YkTODuxOrL826bsN/wEX
+    fc+uwnA+VJkFy5JRmnue4/VGp+vYjW8lCwCw4tSfDkWzklLVYU1spbgYKQ87yVHY
+    vApiQM5Bmt3uXQBZkBoisUX481oiVTBz84rWsSqHOU+KcHYXkJCj3VKF18ULq6Kv
+    CB1QHELRNEwAUexWqvpmGU3yqBGj2W40XyJhlG3UN6+kWxkGAcr/sSOYBBfn7ISg
     ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y7x9UtLe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=We5s/Ae+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Y7x9UtLe x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=We5s/Ae+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,16 +50,15 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754028AbeCFSak (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Mar 2018 13:30:40 -0500
-Received: from mail-sn1nam01on0093.outbound.protection.outlook.com ([104.47.32.93]:49765
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1753831AbeCFSXc (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 13:23:32 -0500
+Received: from mail-sg2apc01on0120.outbound.protection.outlook.com ([104.47.125.120]:45036
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753901AbeCFSah (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 6 Mar 2018 13:30:37 -0500
-From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To: Dexuan Cui <decui@microsoft.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
+        id S1753837AbeCFSV6 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 6 Mar 2018 13:21:58 -0500
+From: Dexuan Cui <decui@microsoft.com>
+To: "bhelgaas@google.com" <bhelgaas@google.com>,
         "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         KY Srinivasan <kys@microsoft.com>,
         Stephen Hemminger <sthemmin@microsoft.com>,
@@ -72,102 +71,87 @@ CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
         Jack Morgenstein <jackm@mellanox.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v3 3/6] PCI: hv: serialize the present/eject work items
-Thread-Topic: [PATCH v3 3/6] PCI: hv: serialize the present/eject work items
-Thread-Index: AQHTtXgB6lWrZGCe00CPLCBSKQV72qPDhzOw
-Date: Tue, 6 Mar 2018 18:30:33 +0000
-Message-ID: <DM5PR2101MB1030ADC2C68C322A91706011DCD90@DM5PR2101MB1030.namprd21.prod.outlook.com>
+Subject: [PATCH v3 2/6] PCI: hv: hv_eject_device_work(): remove the bogus test
+Thread-Topic: [PATCH v3 2/6] PCI: hv: hv_eject_device_work(): remove the bogus
+ test
+Thread-Index: AQHTtXf+ZtRiOS3OX0GDg2oNP2dLfQ==
+Date: Tue, 6 Mar 2018 18:21:49 +0000
+Message-ID: <20180306182128.23281-3-decui@microsoft.com>
 References: <20180306182128.23281-1-decui@microsoft.com>
- <20180306182128.23281-4-decui@microsoft.com>
-In-Reply-To: <20180306182128.23281-4-decui@microsoft.com>
+In-Reply-To: <20180306182128.23281-1-decui@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-03-06T18:30:31.7253905Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1112;7:x9ZU5RLoarHVC9pBnl5KCZVRe0p8BhBMbPZKpD2Vmuy7wLiJ0G2VfKBDhkaDHEbHTulh6dcpu8zsz+APq13SoBarrus+LhxHxNvcbYbLyAmt65w+w6X4j2YUdCFFL6skqGPY6TVJ3DW2icVW70O1FG/8EeqhGtnfyDtDHXLqHxC0l0T8roIz5ykS5jTVtC39I+MGbPDBjytxI78uXpYTCpupzlbgNcxrVm7dTNOJyFnDRDD/rvxJx8qI/HWQQdcA;20:0L+7iimS05yoxyzqzWNoNXw8uYhr1v9pLE9huruGIlznEUaJMHxK2eMGdTfh+f/PJjt8emKuijRqeW5bBYntTTgYkvCl3+1xKwSzz1POe4WvX9I72C2PR31RwFHaySpIJ5qkoC5KosEbbll1uIxsM3o7To6FQ0SOrYqmp2XQxR8=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b6b225b5-4924-4df1-a5f8-08d5839058e3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7193020);SRVR:DM5PR2101MB1112;
-x-ms-traffictypediagnostic: DM5PR2101MB1112:
+x-mailer: git-send-email 2.15.1
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1112D1BBFF08C5B13E681109DCD90@DM5PR2101MB1112.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(211936372134217)(198206253151910);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(10201501046)(3002001)(6055026)(61426038)(61427038)(6041288)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1112;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1112;
+ smtp.mailfrom=decui@microsoft.com;
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;KL1P15301MB0021;7:5F5KyCw0LVnNMvnTDw4ii7VK3iFfa57r8dOe80azc9338BXTpqKehMrdTA55o22WcybMf1e4vSSSM7yZVUzUrcub+Kc1DV5f4PnNjJDWoltCMTKOSfrokErGENTDNIQWXDP+dh5Cx7EBEzh8xixW39sbwFQUtaUNLakwSAt9yGmp2jBPDWZErl6noYR3Y0AzBoMl1BHFEOMZPxcKo4qaCXP3ad5c71T7yYJOi68LdgG7YE9L51EzZUqFSF+606m/;20:WNhKS2JJ/41e8QbtH/SBQkmU0HUwXKXCSZDexqdM/276xZgGaHdq9C68sIo/v0ZjXmfkEUhVBapjzM+OO0LUxqfS43rXKWHeQzo+V0n6zC1ib8G/xM9xAVUKhU5UrVQy3aQlUjJMZP9dzdt3EEEx+H23QrCzcHFTlOBtkDVt6aI=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e527aa9d-4807-4675-480b-08d5838f20fd
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:KL1P15301MB0021;
+x-ms-traffictypediagnostic: KL1P15301MB0021:
+x-microsoft-antispam-prvs: <KL1P15301MB0021863AAB2BB601A9AA46D0BFD90@KL1P15301MB0021.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:KL1P15301MB0021;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0021;
 x-forefront-prvs: 06036BD506
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(366004)(39380400002)(346002)(13464003)(199004)(189003)(6506007)(110136005)(68736007)(305945005)(4326008)(105586002)(10090500001)(7736002)(2201001)(6436002)(316002)(97736004)(102836004)(72206003)(2900100001)(2501003)(86612001)(10290500003)(14454004)(478600001)(6116002)(86362001)(2950100002)(74316002)(229853002)(22452003)(81156014)(54906003)(76176011)(81166006)(2906002)(7416002)(9686003)(53936002)(99286004)(6246003)(3846002)(8936002)(66066001)(1511001)(5660300001)(7696005)(3280700002)(26005)(8990500004)(53546011)(3660700001)(8676002)(33656002)(55016002)(5250100002)(106356001)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1112;H:DM5PR2101MB1030.namprd21.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: lswv8XvGtCo3CtNWkNgRYW+71rsMAgvbZdu0gc0MU0YzaZ5sbFlPKE8LxEmllS8VToKryubuUH21tIzGv1uNYQqcJpanOS8Woc76COlPGOsYw/fvXeBv0ELa4C1Sdi1iwhLjMmXp+YHWYda+AIl530G6HLA6i3NP7vGeHngy/tOdAgih8xtvQiQzZTmKBlSQQBnOSCnyblqRHtUXnGW2gUR8mDYxWXl25tmbFkKIZLvGmJP0ynDWVvQKpmQ/ku3JlE6nMXxMxtPfRWQBRdG/Eae4McU1embKN5Njwbfy6LNZ6VRaKHyjFJeFW3C5rnmABo0zbP9L1YPIQCucuqUejA==
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(346002)(376002)(366004)(199004)(189003)(5660300001)(36756003)(22452003)(1511001)(10090500001)(2501003)(66066001)(316002)(7736002)(14454004)(10290500003)(2201001)(99286004)(305945005)(7416002)(478600001)(76176011)(25786009)(4326008)(86362001)(102836004)(106356001)(6506007)(105586002)(186003)(77096007)(26005)(3660700001)(110136005)(2900100001)(54906003)(68736007)(50226002)(97736004)(8676002)(81156014)(81166006)(8936002)(53936002)(3280700002)(6116002)(86612001)(6436002)(6512007)(2906002)(1076002)(6486002)(2950100002)(3846002)(22906009);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0021;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: uP+i4INQGxnqR55IglNFA0YyUS1YkUw+aUOVOVkqt45lkBbQ8gliln+Iyrf6vKOWk9125Z+Vxvm/rOtRjo05+94mV/pkUaG2++f8AyAI3vX1Z3rIw/tzB/x4yohwK1GzalkCSm7a2lVLmdQVyUZW/ASNuGr2u/32el5pL0UMcqrMsIgBb0B4PTqobXnMADyEZUL2BUw806UmFa4jtjUrBZvU/D5vNkNDdsZ9dIT2cMPr3AaURG6mJFk6k1rOhFXFVE+k1q2jOydzCy7vk0OLQ5JjD3qUPXaA+lw4Q4JF6csQsknlZaB/HHleYwbSibEy+g/88cClyoxosYo9W2/gEg==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6b225b5-4924-4df1-a5f8-08d5839058e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2018 18:30:33.1165
+X-MS-Exchange-CrossTenant-Network-Message-Id: e527aa9d-4807-4675-480b-08d5838f20fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2018 18:21:49.4981
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1112
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0021
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> -----Original Message-----
-> From: Dexuan Cui
-> Sent: Tuesday, March 6, 2018 10:22 AM
-> To: bhelgaas@google.com; linux-pci@vger.kernel.org; KY Srinivasan <kys@mi=
-crosoft.com>;
-> Stephen Hemminger <sthemmin@microsoft.com>; olaf@aepfle.de; apw@canonical=
-.com;
-> jasowang@redhat.com
-> Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.org;=
- Haiyang Zhang
-> <haiyangz@microsoft.com>; vkuznets@redhat.com; marcelo.cerri@canonical.co=
-m; Michael
-> Kelley (EOSG) <Michael.H.Kelley@microsoft.com>; Dexuan Cui <decui@microso=
-ft.com>; Jack
-> Morgenstein <jackm@mellanox.com>; stable@vger.kernel.org
-> Subject: [PATCH v3 3/6] PCI: hv: serialize the present/eject work items
->=20
-> When we hot-remove the device, we first receive a PCI_EJECT message and
-> then receive a PCI_BUS_RELATIONS message with bus_rel->device_count =3D=
-=3D 0.
->=20
-> The first message is offloaded to hv_eject_device_work(), and the second
-> is offloaded to pci_devices_present_work(). Both the paths can be running
-> list_del(&hpdev->list_entry), causing general protection fault, because
-> system_wq can run them concurrently.
->=20
-> The patch eliminates the race condition.
->=20
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> Tested-by: Adrian Suhov <v-adsuho@microsoft.com>
-> Tested-by: Chris Valean <v-chvale@microsoft.com>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Cc: Jack Morgenstein <jackm@mellanox.com>
-> Cc: stable@vger.kernel.org
-> Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> Cc: K. Y. Srinivasan <kys@microsoft.com>
-> ---
->  drivers/pci/host/pci-hyperv.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
->=20
+When we're in the function, hpdev->state must be hv_pcichild_ejecting:
+see hv_pci_eject_device().
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Jack Morgenstein <jackm@mellanox.com>
+Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>
+---
+ drivers/pci/host/pci-hyperv.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
+index 1233300f41c6..04edb24c92ee 100644
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1796,10 +1796,7 @@ static void hv_eject_device_work(struct work_struct =
+*work)
+=20
+ 	hpdev =3D container_of(work, struct hv_pci_dev, wrk);
+=20
+-	if (hpdev->state !=3D hv_pcichild_ejecting) {
+-		put_pcichild(hpdev, hv_pcidev_ref_pnp);
+-		return;
+-	}
++	WARN_ON(hpdev->state !=3D hv_pcichild_ejecting);
+=20
+ 	/*
+ 	 * Ejection can come before or after the PCI bus has been set up, so
+--=20
+2.7.4
