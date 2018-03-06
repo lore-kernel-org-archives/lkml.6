@@ -1,45 +1,48 @@
-Return-Path: <ard.biesheuvel@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520363261; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520363812; cv=none;
         d=google.com; s=arc-20160816;
-        b=mAezUwvJckgm8cAWU9MsvlVtb8hzObJMap3olPm9OdjdRppAld6LqsOMpd4E/kboJ/
-         b7CyykPs6xQvcgXKxEuj9KydsZiBD7LNpWvuOGFemfY+1dtK3otfLC8+dyhkgzetrekn
-         h/l5czjUUpgaL0c2ziNEudeMlg0H/AX+LnRtDfPpQp1tlfGe6kEHRqdPThaRfrNZoQj9
-         0izBaPx1nJSWYi0qs/t1vqzcyfgGXeCFDX/Ewtd+Gg8oWv079ZLHCQ1J+st4ik2qpP6z
-         7NUlC7p/5XlebkMOHUqUfnlHeOpIQzVxYFkDHGn6M4Z71JTh1h5Dby2izQaoZHSV4UEL
-         5a5g==
+        b=MUob/6LDsyDNOMC9l3UBV+5+BbzT/XKl50YhJhHq+mPjXwhlW3zie+9KhXUsFiJC09
+         jC9hUirUZzHAO0TCBU43j6Koxv0YW37+783PLYJucRChi2B/Yp/3kKxlJcHyme78hQUC
+         hbUAbIkLoGlYmH1n9fQl8MDt34ZfD+p4j0CH1S5jALlAQ6CDx1zj/zBgICqkaCfprqFL
+         0k6moAsGj0M7q22cZ8Yi5FwinRjZNiSsb1AucwsOU6I2glhkcq0VlvBKRxdB+sN5JvTW
+         rG3keUF5DNLSfR6flqaefmzzswf/AVvSNfrvhMbxKElBB77rhtNg9xxuep10hnEVQIMg
+         EbaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=b+cocFvYG+16FLXD1EzchZugSzHlURhE+W9d+hez1lA=;
-        b=WKZFTBOgZ9t987dfBBRJW6TB2YAz2tE6WPn+jafkRnVVdBBxBl9y80I042Tz5d2By2
-         2ZTaM/yfUZ2xgd5yDKVb2xMtQkkRi9xVShphQ8HbWfPusBlo1Py9qN5Z4gH0Q0xs6hul
-         kj65tpGc7ICA7LgfIZLvBqTDdLxYta7C0Gv9wYQffz0TcxrGJZ4Q1ddRl1bi+nuM1F2z
-         MVdZSgRfwpl+OFmbMSOSoklZcO7VVMBR6fHweHBfxhhP7fRvWXXQDjCO48hH6iwGxfJr
-         7Ev/zyxz5NA5lEaOk39F7M4Bkk6JNbWb745ZjO0wkcyUZh+Z3moEh3dgIiEuZAvoIbSN
-         8dkQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=7OX/whab0tznd91CH8HmlbegMWms0HPzOcHiqM9EF3w=;
+        b=V4lVHg50qxLVm5rYkn+7LwnJi5C69rbcRznnU07gflBhhOOTOmCIAEFimEI/8gXTOn
+         qzu/QFl5Pwtfiq9NfoOXvEXWQPOR6bWr2ChsuBxuVfiKw5N5XIqPxYCcoNdVx45WsXg7
+         ZiS415Zt+5RrL8YqcQEsD7DDW62MVkt1DgIzy/wbrY7flV7YQtD43vmzr9D8ym3f6F/W
+         Odl3L51w8tBiuiXuFo4NytAa7eWBRfClPVEQ+AXk5jRZbwqN3h3f026N5tdb2Z+dExvy
+         Sxw4B0nA54+LFdgLpOOXKhICudJMB9nyniUkTFl1pokACuG8mO/7BlWbMy5HHQZLFSZa
+         B+XQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=GArLQJ9j;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fJbi+VSS;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=fnvG2Ex+;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=GArLQJ9j;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtpBg3iRy6t446Lrvit3x350xJCicbJSRftbG0dhwFDWHC7A57LaP8b025Ls3WCWaOlhRFQaC70rOdCe8n9Bl4=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fJbi+VSS;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=fnvG2Ex+;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELsmqsB1REuPKvfC8UFkKTGBAorLeqTh46IX7nWxDrhgdLTdALt8b0meSbM2T+RUhMuBDW0P1tgcgnCJlCP5Uv0=
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
  <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com>
  <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
  <20180306080855.phtgl2bzqm5hnthu@gmail.com> <CA+DvKQ+uQD0qyMvwqaRd_sMLBHE5q9pcfOQ+VknBW2==q0NJJA@mail.gmail.com>
- <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 6 Mar 2018 19:07:39 +0000
-Message-ID: <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
+ <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com> <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Mar 2018 11:16:51 -0800
+X-Google-Sender-Auth: LY33epd1IVZAIEtM8vDiCeD7k4k
+Message-ID: <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Daniel Micay <danielmicay@gmail.com>, Ingo Molnar <mingo@kernel.org>,
 	Kees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@linux.intel.com>,
 	Alexander Popov <alex.popov@linux.com>,
@@ -66,36 +69,35 @@ Cc: Daniel Micay <danielmicay@gmail.com>, Ingo Molnar <mingo@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594216426928795489?=
+X-GMAIL-MSGID: =?utf-8?q?1594217004445381062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 6 March 2018 at 18:56, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Tue, Mar 6, 2018 at 7:16 AM, Daniel Micay <danielmicay@gmail.com> wrote:
->>
->> Zeroing locals isn't very expensive because the compiler has a chance
->> to optimize it out when it can figure out it isn't needed and they're
->> almost always used.
+On Tue, Mar 6, 2018 at 11:07 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
 >
-> I thought I saw Kees with some stats, and it wasn't even noticeable.
-> But maybe I mis-remember.
->
-> I definitely like the "zero local variables", and would actually
-> prefer something even stronger than GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-> (although I can't actually read gcc plugins, so I'm just going by
-> name).
->
-> It's not necessarily just struct, it can very much be arrays and
-> regular automatic variables too.
->
+> The compiler usually does a pretty good job of detecting which scalar
+> variables are never initialized by regular assignment.
 
-The compiler usually does a pretty good job of detecting which scalar
-variables are never initialized by regular assignment. The reason that
-this is different for struct type variables is that we often
-initialize them by passing a reference to a function, and if this
-function is in another compilation unit, the compiler doesn't know
-whether such a call amounts to an initialization or not.
+Sure, but "usually" is not really the same as always. Sometimes scalar
+types are initialized by passing a reference to them too.
 
-We could easily extend this to scalar and array types, but we'd first
-need to see what the performance impact is, because I don't think it
-will be negligible.
+> We could easily extend this to scalar and array types, but we'd first
+> need to see what the performance impact is, because I don't think it
+> will be negligible.
+
+For scalar types, I suspect it will be entirely unnoticeable, because
+they are not only small, but it's rare that this kind of "initialize
+by passing a reference" happens in the first place.
+
+For arrays, I agree. We very well may have arrays that we really want
+to do magic things about. But even then I'd rather have a "don't
+initialize this" flag for critical stuff that really *does* get
+initialized some other way. Then we can grep for those things and be
+more careful.
+
+If somebody has big arrays on the stack, that's often a problem
+anyway. It may be common in non-kernel code, but kernel code is very
+special.
+
+                    Linus
