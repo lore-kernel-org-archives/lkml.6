@@ -1,44 +1,48 @@
-Return-Path: <danielmicay@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520349386; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520362619; cv=none;
         d=google.com; s=arc-20160816;
-        b=SvytAFi7JlLp1SWJqKjOiaoPEw0MLL8ikN/V8YJ7DZ6qt36LoP9UB+32sP2NFqRNH3
-         Ic6Gd0Q0Hx++4NcZdprZCM6azjqi/3iCqRFklhLzOtQD2gRRKm+SbimeIGizShd9nLbt
-         VYI/gtnYJwYEKyO1zIWqQ+Xa21mzS/iMYjj2SVPNJmCYiCMK5FQwXbTVom/P46wBBzU0
-         nVoaET/bbdL57xID42iIyf7KJF7O1hxJSJIEthFm3VUndtL+CaGNFrwpWt2me/emBhtP
-         OPfYDwwsJA90VS+FNDpoDb6b6r0VA4POIWPIQvs1CDD5nkoS3bRxg1yeC6k51wYiQXS6
-         TQaA==
+        b=c3ySDI4K5+aIH+cYR/7zTo9ZCY75GHSOiQ8h7yKBmMS5FD5So2T3ZwjUNlLgS2SxQ9
+         4cYnq74DsBTelVYraM10usJP+EUEiRPYZwTtOqJiy2vZALcCMLGuX1L666OxwNwLToOi
+         4s88Xe0+ujpFTYu9yoVDpKZMbQgTouokMzuIjYegaYkpKCqQ3u3zY8bkuMEz/nT+2JLG
+         Iay5vsje4uEsqBNlrpY/8y99RYG3RLZRyy/StIT5e0FgPATW2GFnEe8l44wTnRRQ+Yh9
+         jquLSMdzr8eKwr4XOSUhPA5Bb4m0hwF2NKSijz8nQmOikivkrWd5is9JXyPJFZW5eSu1
+         7N7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=tedkacjw5Rqhoei4qa3NglIULQDRViYNWV859ewmd8I=;
-        b=A298a12C9JKOsiKVIdqwmAV7MVY4KTC43KKsYk6K+907FUJwAywXvpybZiqtgXP9rU
-         9ypDWEZ5sT6v5OO/pMzaUzLfezE2FH/oKqC3yyLvbL8NLPJANFoJ6sGiWr/3e3rBqV/B
-         lQha8eOPRDHVoGDRut4Ilv7hrFr+4LvYVd/rgofATEUVg723qvNDw/BcaRSgLITkv+Vr
-         x2+xvEgOqmijAb1aW/zANmio9ljzfR0yn1UAmC1hiarJhEItVVXWv3Avtux+9MZCiwDs
-         ngy1JJyTxEqW8Syq4eGRr0oltRx6iU6YY7UnN9CkS5TMVrfwCP9EdVw4NbguNxlVSTqP
-         jb/A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=7KiD5QGFy+Kgrpj28STV/gGjfGOhyND9lDbocr7r3KY=;
+        b=FgIjMBlwB9ZW3blDppaTpozcZW++vdAPVfIwSSpX4eXaTtt0FaooMDKTbtxpxtOFrP
+         1aqBNu8GxiQzaAtGkraR0YnDh96GN3jy6t20S5BwKOonLKzsRk14yebQsyiVimr6jCeV
+         75IezkV1ZVdkA7eJ0gn6zYEx+chmqOOn3mYwLEjiFStycsGNYZ5IKRugNW6l4WVC7XvI
+         lfYSMB0Hq4NIgeGV2FcvHuEcdrkuJnt5+VRPHeC359Lbsb2QIJgdOgAzbGapZarwqB0C
+         REjml8JWmkl0oDJKWUB2F4opcAd/IPtU3yPY0RE1JJlI61G5LsnZW1s1/cDIrHkcA0Dk
+         2ZLg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=T31YAOIR;
-       spf=pass (google.com: domain of danielmicay@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=danielmicay@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hgI6FkxX;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=Lti24G7X;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=T31YAOIR;
-       spf=pass (google.com: domain of danielmicay@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=danielmicay@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELu1HG6UWslXAAp454QApZKf1gSjuB4kdfKBrtLxIPcwO4s/84dpkX7zKylEKG0LjwWVoeJngl0se8i0wF81CAk=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hgI6FkxX;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=Lti24G7X;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELv5FQTit8AaMaLusHmWKWQhbd7jBEUuLUxDDV9nvu4hTjZdPUsqfuG75WFQQlzOPKHGtICm6kHhyRG3ZK0l2nA=
 MIME-Version: 1.0
-In-Reply-To: <20180306080855.phtgl2bzqm5hnthu@gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CA+DvKQ+uQD0qyMvwqaRd_sMLBHE5q9pcfOQ+VknBW2==q0NJJA@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
  <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com>
- <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com> <20180306080855.phtgl2bzqm5hnthu@gmail.com>
-From: Daniel Micay <danielmicay@gmail.com>
-Date: Tue, 6 Mar 2018 10:16:24 -0500
-Message-ID: <CA+DvKQ+uQD0qyMvwqaRd_sMLBHE5q9pcfOQ+VknBW2==q0NJJA@mail.gmail.com>
+ <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
+ <20180306080855.phtgl2bzqm5hnthu@gmail.com> <CA+DvKQ+uQD0qyMvwqaRd_sMLBHE5q9pcfOQ+VknBW2==q0NJJA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Mar 2018 10:56:58 -0800
+X-Google-Sender-Auth: h3cSxJcB6hsOwTPs3OqhiYYMPwE
+Message-ID: <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+To: Daniel Micay <danielmicay@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Andy Lutomirski <luto@kernel.org>,
@@ -63,41 +67,29 @@ Cc: Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594201878517653479?=
+X-GMAIL-MSGID: =?utf-8?q?1594215754247859554?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are cases that clearing the stack can cover but I don't think it
-has high importance if all locals were being default initialized to
-zero. The new stack will end up with gaps from alignment, variables
-that weren't fully used, etc. where data from an old stack is present.
-Unless there's something really important left over like a private
-key, it shouldn't make issues like a before read overflow on the stack
-much worse.
+On Tue, Mar 6, 2018 at 7:16 AM, Daniel Micay <danielmicay@gmail.com> wrote:
+>
+> Zeroing locals isn't very expensive because the compiler has a chance
+> to optimize it out when it can figure out it isn't needed and they're
+> almost always used.
 
-There's an important missing feature which does get covered by this
-plugin: variable-length arrays can skip past the VMAP_STACK guard
-pages (as could alloca / large frames if they were actually used). The
-ideal would probably be both GCC and Clang providing a working, safe
-implementation of stack probes to enable with VMAP_STACK but they
-don't do that. I'm not sure it makes sense for the kernel to be
-working around that downstream though. It's strange because Clang has
-had a working implementation on Windows for ages where the ABI
-requires it but for some reason they never provided the option
-elsewhere.
+I thought I saw Kees with some stats, and it wasn't even noticeable.
+But maybe I mis-remember.
 
+I definitely like the "zero local variables", and would actually
+prefer something even stronger than GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+(although I can't actually read gcc plugins, so I'm just going by
+name).
 
-Zeroing locals isn't very expensive because the compiler has a chance
-to optimize it out when it can figure out it isn't needed and they're
-almost always used. If there are cases it hurts, it might be possible
-to fix that by inlining an initialization function so it can see the
-initialization. From my tests doing it in the entirety of the kernel
-and Android userspace via a Clang patch (which we use in production),
-SSP has a much more significant cost. Filling them with a non-zero
-value is also a nice way to find bugs and I think that will still be
-true with KMSan available via Clang. There might be cases where
-there's a large array where the compiler can't remove the zeroing and
-the call is pretty hot... but we didn't run into any substantial
-performance costs, although for our niche we only really care about UI
-latency, battery life, etc. and losing 1-2% throughput for some things
-is irrelevant.
+It's not necessarily just struct, it can very much be arrays and
+regular automatic variables too.
+
+And yes, we might want to have some override switch for individual
+variables ("I really know what I'm doing and I promise I fill it
+myself, but the compiler doesn't understand me, look here:").
+
+                Linus
