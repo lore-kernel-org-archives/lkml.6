@@ -1,60 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750878AbeCFFFx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 00:05:53 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45794 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750713AbeCFFFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 00:05:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="205804718"
-Date: Tue, 6 Mar 2018 13:05:06 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Stefan Chulski <stefanc@marvell.com>
-Cc: kbuild-all@01.org, Antoine Tenart <antoine.tenart@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Miquel Raynal <miquel.raynal@free-electrons.com>,
-        Marcin Wojtas <mw@semihalf.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [linux-next:master 5332/5518]
- drivers/net/ethernet/marvell/mvpp2.c:4288:5: sparse: symbol
- 'mvpp2_check_hw_buf_num' was not declared. Should it be static?
-Message-ID: <201803061326.5AOkQ4Wu%fengguang.wu@intel.com>
+        id S1750817AbeCFFOD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 00:14:03 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:28018 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeCFFOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 00:14:01 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w265Dhsr027213
+X-Nifty-SrcIP: [209.85.217.181]
+X-Google-Smtp-Source: AG47ELs2/ykkFcVnbPeMV5onXzssNSK2T1g86TLBiQJFJHOesLvME7XQjYvNKQZ7vyAGDjTs+auXr8hhgs/NoQcHCNI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <CAFkk2KTUZYMc9poahUQMoQi=wSVnNHDt0SS8BTdRHs59m=qO4w@mail.gmail.com>
+References: <20180216202255.25307-1-ulfalizer@gmail.com> <1518815662.13169.27.camel@perches.com>
+ <CAFkk2KSRswP2FEV7mTMJwLe+WRDdVEUnZBOyh_XWrQu2tW07zg@mail.gmail.com>
+ <CAK7LNAQjnCnPvFZEPR2YM9EsOALnPy=FeugZC_8PFrngb9AQgQ@mail.gmail.com> <CAFkk2KTUZYMc9poahUQMoQi=wSVnNHDt0SS8BTdRHs59m=qO4w@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 6 Mar 2018 14:13:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
+Message-ID: <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text checks
+To: Ulf Magnusson <ulfalizer@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>, Robo Bot <apw@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-head:   9c142d8a6556f069be6278ccab701039da81ad6f
-commit: effbf5f58d64b1d1f93cb687d9797b42f291d5fd [5332/5518] net: mvpp2: update the BM buffer free/destroy logic
-reproduce:
-        # apt-get install sparse
-        git checkout effbf5f58d64b1d1f93cb687d9797b42f291d5fd
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+(+To: Andrew)
+
+2018-03-06 13:52 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> On Sat, Feb 24, 2018 at 2:53 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-02-23 10:30 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>>> On Fri, Feb 16, 2018 at 10:14 PM, Joe Perches <joe@perches.com> wrote:
+>>>> On Fri, 2018-02-16 at 21:22 +0100, Ulf Magnusson wrote:
+>>>>> Hello,
+>>>>>
+>>>>> This patchset contains some improvements for the Kconfig help text check in
+>>>>> scripts/checkconfig.pl:
+>>>>
+>>>> Seems sensible enough to me.
+>>>> Signed-off-by: Joe Perches <joe@perches.com>
+>>>
+>>> Will you be taking this in yourself?
+>>>
+>>> (Adding Masahiro on CC -- forgot when I sent the patchset.)
+>>>
+>>> Cheers,
+>>> Ulf
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>> I am not a perl expert, but I have no objection for this series.
+>>
+>>
+>> Thanks!
+>>
+>>
+>>
+>>
+>> --
+>> Best Regards
+>> Masahiro Yamada
+>
+> *Bump*
 
 
-sparse warnings: (new ones prefixed by >>)
+Who is addressed by "*Bump*" ?
 
->> drivers/net/ethernet/marvell/mvpp2.c:4288:5: sparse: symbol 'mvpp2_check_hw_buf_num' was not declared. Should it be static?
-   drivers/net/ethernet/marvell/mvpp2.c:6620:36: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] l3_proto @@    got restricted __be1int [signed] l3_proto @@
-   drivers/net/ethernet/marvell/mvpp2.c:6620:36:    expected int [signed] l3_proto
-   drivers/net/ethernet/marvell/mvpp2.c:6620:36:    got restricted __be16 [usertype] protocol
 
-Please review and possibly fold the followup patch.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I think patches for checkpatch.pl
+are supposed to be taken care of by Andrew.
+
+He forwards patches to Linus.
+
+
+$ git log --no-merges --pretty=fuller scripts/checkpatch.pl  | grep
+'Commit:' | sort | uniq -c | sort -nr
+    555 Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+     16 Commit:     Linus Torvalds <torvalds@woody.linux-foundation.org>
+      4 Commit:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+      4 Commit:     Michael S. Tsirkin <mst@redhat.com>
+      2 Commit:     Thomas Gleixner <tglx@linutronix.de>
+      2 Commit:     Ingo Molnar <mingo@kernel.org>
+      2 Commit:     Greg Kroah-Hartman <gregkh@suse.de>
+      1 Commit:     Tobin C. Harding <me@tobin.cc>
+      1 Commit:     Rob Herring <robh@kernel.org>
+      1 Commit:     Petr Mladek <pmladek@suse.com>
+      1 Commit:     Michal Marek <mmarek@suse.cz>
+      1 Commit:     Mauro Carvalho Chehab <mchehab@s-opensource.com>
+      1 Commit:     Masahiro Yamada <yamada.masahiro@socionext.com>
+      1 Commit:     Lucas De Marchi <lucas.demarchi@profusion.mobi>
+      1 Commit:     Jiri Kosina <jkosina@suse.cz>
+      1 Commit:     Dan Williams <dan.j.williams@intel.com>
+      1 Commit:     Bjorn Helgaas <bhelgaas@google.com>
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
