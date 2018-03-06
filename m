@@ -1,60 +1,31 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3003213-1520295974-2-13097766260337856283
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520295973; b=bl9I3UQxIN40A/09vgUAOUTpXDMzyVkip8baLRPbm/MvjwV
-    NUXCsBqMgt2VS1/8pr5mSMm3aMk9AvKcAIEsnSRQ7aPO6hsL+BkRHefHl58idnTW
-    VLTtczGAY62bZKZPK0vToegBrmT3ZhaZrfN7168XLR20kuXwfDtQ9TUfpYqi/dHt
-    XiGooz3fvq0nK6Ioy8Yc7jrtj+JKLWwarjp9yxTWT7Z8R3N0YbNuQOquZ4ZjHmsI
-    RvttjN+agyIGeZKALjksyiyRY4jJ+FWgyyX/y83eUBbuxoQ7+B8yUcY0SCkVdqE4
-    NWhFmd/68MD1fssEls6z9ivxE21odeb02UcnOYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1520295973;
-    bh=yiexmfzFJCZaFPVZUdV7YyqgR8uYFnW/1Ktuxgpja4c=; b=MaP+AAAKkmzF
-    wj2Ht+oYFuYTTpad5qKBc57TEMpq9vM+AA38trIUhPaffB0KLh86qGwR3CkdhPzW
-    Ax+91+FqzaXtyyRpetldsgoOq8Sjli1gwi6STu4YlpITwIvagyOx4LfDYoMkZa7J
-    zM0LljiJ6J7h2VvDI7IG/DH9PV6AkZ15zH6gdKXcMcvqrSZMWBAVQJqbH5/hLywD
-    nnyubhEhqVJaJSrlcSwhzNnrpeMdiS6Wz8m3NLUABFFFqKqzEy/pIpKv8egkJAEA
-    c8po8TL5xMV5/jwPOgX+QEO+4W+CZZzMkc7zH/nUM2PoRoASEWrChlAdT5kliXgY
-    ewBo2TxmUw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=SckJ2e1o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=SckJ2e1o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932930AbeCFA0L (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 19:26:11 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34758 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932926AbeCFA0K (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 5 Mar 2018 19:26:10 -0500
+Return-Path: <pasha.tatashin@oracle.com>
+X-Google-Smtp-Source: AG47ELvmu9AdEgl1DIaZJZMmf9fB3AzSnXYtKlfkVrRT1ENcxb2pnxWyE7UQSS5vnJJ+U7nxI0/P
+ARC-Seal: i=1; a=rsa-sha256; t=1520295973; cv=none;
+        d=google.com; s=arc-20160816;
+        b=vplHrD9DpBR6UzhIJzY2x4j2aucCHtBA0Kfl3zBI4itOXiq3T5g6FUR4i/OyXNIgVG
+         csONcULKQxmivg9opP3Zt09SkHHBIHzRwIZiiRcU/ZH5aMRVIDzGBWn53oXyTwmx+Qyk
+         QolnKk7pcwm2ytNP8rjjb43EZwE88RqGzJ8shc6KPqfHrn/r6i4Lkz4JhnRaK1d1A9aJ
+         8JHpLNotk6O4BB1FqZ0plZLn9gha6p3ts7+AkGdfUo1J8zq797O8irnjqdLWHjzH51EP
+         /ia003JE3axt1Jkm/nShLu793nTSen2S8hb6ak3ikP4/pgkvi1ETW0rY1wNrkpCTLLJ4
+         TMaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Q+ufNThHBu+wgxR6EICVZyufyKyfGhPqMc9d1GhjYxo=;
+        b=TxBAHaDPhkWlb66q3w6shss7Fa4oxjE1QLNFfaIk7D4iOKh7xF+tz1xzds9umTN1gW
+         7Y3t1qDPQbcWdx26YixWg5j93XeftJnHq0OMPN/vQCA0m3t3UCVhRbSI57OzTDDM4QHP
+         dMX5YtqQAPLS2KhsdYdo6oQN/o58uDh2B3v79DXfSQAyYVR+hzfyzNMd9RZX50zGGyrp
+         RNbqapyLIoFNX3QmKvHWFNCx00I3MYjnMhcAU8pwZb6bVu5BKiv/3rUfo8es21fO/ADG
+         bFSP1/FC9aPS5AaH+CVsjASp589cp1xUbpICITHXzRXdJVcuSLvPLWl6PHuUzoos6pv6
+         ahEQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=jt38k7fg;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=jt38k7fg;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux-kernel@vger.kernel.org, Alexander.Levin@microsoft.com,
@@ -62,92 +33,101 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 09/65] x86/mm, sched/core: Turn off IRQs in switch_mm()
-Date: Mon,  5 Mar 2018 19:24:42 -0500
-Message-Id: <20180306002538.1761-10-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 15/65] x86/mm: Make flush_tlb_mm_range() more predictable
+Date: Mon,  5 Mar 2018 19:24:48 -0500
+Message-Id: <20180306002538.1761-16-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=930
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594145870827682603?=
+X-GMAIL-MSGID: =?utf-8?q?1594145870827682603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit 078194f8e9fe3cf54c8fd8bded48a1db5bd8eb8a upstream.
+commit ce27374fabf553153c3f53efcaa9bfab9216bd8c upstream.
 
-Potential races between switch_mm() and TLB-flush or LDT-flush IPIs
-could be very messy.  AFAICT the code is currently okay, whether by
-accident or by careful design, but enabling PCID will make it
-considerably more complicated and will no longer be obviously safe.
+I'm about to rewrite the function almost completely, but first I
+want to get a functional change out of the way.  Currently, if
+flush_tlb_mm_range() does not flush the local TLB at all, it will
+never do individual page flushes on remote CPUs.  This seems to be
+an accident, and preserving it will be awkward.  Let's change it
+first so that any regressions in the rewrite will be easier to
+bisect and so that the rewrite can attempt to change no visible
+behavior at all.
 
-Fix it with a big hammer: run switch_mm() with IRQs off.
+The fix is simple: we can simply avoid short-circuiting the
+calculation of base_pages_to_flush.
 
-To avoid a performance hit in the scheduler, we take advantage of
-our knowledge that the scheduler already has IRQs disabled when it
-calls switch_mm().
+As a side effect, this also eliminates a potential corner case: if
+tlb_single_page_flush_ceiling == TLB_FLUSH_ALL, flush_tlb_mm_range()
+could have ended up flushing the entire address space one page at a
+time.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Nadav Amit <namit@vmware.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/f19baf759693c9dcae64bbff76189db77cb13398.1461688545.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/4b29b771d9975aad7154c314534fec235618175a.1492844372.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 4ead44fd2525ed97e5362a806d312a0e3b0ea445)
+(cherry picked from commit 9f4d1ba1d407e56dac833aa0b11c60f952939e1c)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-
-Conflicts:
-	arch/x86/include/asm/mmu_context.h
 ---
- arch/x86/include/asm/mmu_context.h |  4 ++++
- arch/x86/mm/tlb.c                  | 10 ++++++++++
- 2 files changed, 14 insertions(+)
+ arch/x86/mm/tlb.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 375fafccb32c..2bf4bae1c65e 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -95,6 +95,10 @@ static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
- extern void switch_mm(struct mm_struct *prev, struct mm_struct *next,
- 		      struct task_struct *tsk);
- 
-+extern void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
-+			       struct task_struct *tsk);
-+#define switch_mm_irqs_off switch_mm_irqs_off
-+
- #define activate_mm(prev, next)			\
- do {						\
- 	paravirt_activate_mm((prev), (next));	\
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 40c640980720..4ce6569ad963 100644
+index 262abde154eb..95d5b4fff799 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -63,6 +63,16 @@ EXPORT_SYMBOL_GPL(leave_mm);
+@@ -285,6 +285,12 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 	unsigned long base_pages_to_flush = TLB_FLUSH_ALL;
  
- void switch_mm(struct mm_struct *prev, struct mm_struct *next,
- 	       struct task_struct *tsk)
-+{
-+	unsigned long flags;
+ 	preempt_disable();
 +
-+	local_irq_save(flags);
-+	switch_mm_irqs_off(prev, next, tsk);
-+	local_irq_restore(flags);
-+}
++	if ((end != TLB_FLUSH_ALL) && !(vmflag & VM_HUGETLB))
++		base_pages_to_flush = (end - start) >> PAGE_SHIFT;
++	if (base_pages_to_flush > tlb_single_page_flush_ceiling)
++		base_pages_to_flush = TLB_FLUSH_ALL;
 +
-+void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
-+			struct task_struct *tsk)
- {
- 	unsigned cpu = smp_processor_id();
+ 	if (current->active_mm != mm) {
+ 		/* Synchronize with switch_mm. */
+ 		smp_mb();
+@@ -301,15 +307,11 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 		goto out;
+ 	}
  
+-	if ((end != TLB_FLUSH_ALL) && !(vmflag & VM_HUGETLB))
+-		base_pages_to_flush = (end - start) >> PAGE_SHIFT;
+-
+ 	/*
+ 	 * Both branches below are implicit full barriers (MOV to CR or
+ 	 * INVLPG) that synchronize with switch_mm.
+ 	 */
+-	if (base_pages_to_flush > tlb_single_page_flush_ceiling) {
+-		base_pages_to_flush = TLB_FLUSH_ALL;
++	if (base_pages_to_flush == TLB_FLUSH_ALL) {
+ 		count_vm_tlb_event(NR_TLB_LOCAL_FLUSH_ALL);
+ 		local_flush_tlb();
+ 	} else {
 -- 
 2.16.2
