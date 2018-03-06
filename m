@@ -1,158 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932370AbeCFB4S (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 20:56:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58090 "EHLO mx2.suse.de"
+        id S932505AbeCFB42 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 20:56:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58107 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752017AbeCFB4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 20:56:17 -0500
+        id S932406AbeCFB4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 20:56:25 -0500
 From: Benjamin Poirier <bpoirier@suse.com>
 To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Cc: Alexander Duyck <alexander.duyck@gmail.com>,
         Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
         intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] Revert "e1000e: Separate signaling for link check/link up"
-Date: Tue,  6 Mar 2018 10:55:52 +0900
-Message-Id: <20180306015553.10441-1-bpoirier@suse.com>
+Subject: [PATCH 2/2] e1000e: Fix link check race condition
+Date: Tue,  6 Mar 2018 10:55:53 +0900
+Message-Id: <20180306015553.10441-2-bpoirier@suse.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180306015553.10441-1-bpoirier@suse.com>
+References: <20180306015553.10441-1-bpoirier@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 19110cfbb34d4af0cdfe14cd243f3b09dc95b013.
-This reverts commit 4110e02eb45ea447ec6f5459c9934de0a273fb91.
-This reverts commit d3604515c9eda464a92e8e67aae82dfe07fe3c98.
+Alex reported the following race condition:
 
-Commit 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-changed what happens to the link status when there is an error which
-happens after "get_link_status = false" in the copper check_for_link
-callbacks. Previously, such an error would be ignored and the link
-considered up. After that commit, any error implies that the link is down.
+/* link goes up... interrupt... schedule watchdog */
+\ e1000_watchdog_task
+	\ e1000e_has_link
+		\ hw->mac.ops.check_for_link() === e1000e_check_for_copper_link
+			\ e1000e_phy_has_link_generic(..., &link)
+				link = true
 
-Revert commit 19110cfbb34d ("e1000e: Separate signaling for link check/link
-up") and its followups. After reverting, the race condition described in
-the log of commit 19110cfbb34d is reintroduced. It may still be triggered
-by LSC events but this should keep the link down in case the link is
-electrically unstable, as discussed. The race may no longer be
-triggered by RXO events because commit 4aea7a5c5e94 ("e1000e: Avoid
-receiver overrun interrupt bursts") restored reading icr in the Other
-handler.
+					 /* link goes down... interrupt */
+					 \ e1000_msix_other
+						 hw->mac.get_link_status = true
 
-Link: https://lkml.org/lkml/2018/3/1/789
+			/* link is up */
+			mac->get_link_status = false
+
+		link_active = true
+		/* link_active is true, wrongly, and stays so because
+		 * get_link_status is false */
+
+Avoid this problem by making sure that we don't set get_link_status = false
+after having checked the link.
+
+It seems this problem has been present since the introduction of e1000e.
+
+Link: https://lkml.org/lkml/2018/1/29/338
+Reported-by: Alexander Duyck <alexander.duyck@gmail.com>
 Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c | 13 ++++---------
- drivers/net/ethernet/intel/e1000e/mac.c     | 13 ++++---------
- drivers/net/ethernet/intel/e1000e/netdev.c  |  2 +-
- 3 files changed, 9 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/intel/e1000e/ich8lan.c | 31 ++++++++++++++++-------------
+ drivers/net/ethernet/intel/e1000e/mac.c     | 14 ++++++-------
+ 2 files changed, 24 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-index ff308b05d68c..d6d4ed7acf03 100644
+index d6d4ed7acf03..1dddfb7b2de6 100644
 --- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
 +++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1367,9 +1367,6 @@ static s32 e1000_disable_ulp_lpt_lp(struct e1000_hw *hw, bool force)
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-- *
-- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-- *  up).
-  **/
- static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- {
-@@ -1385,7 +1382,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 * Change or Rx Sequence Error interrupt.
+@@ -1383,6 +1383,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
  	 */
  	if (!mac->get_link_status)
--		return 1;
-+		return 0;
+ 		return 0;
++	mac->get_link_status = false;
  
  	/* First we want to see if the MII Status Register reports
  	 * link.  If so, then we want to get the current speed/duplex
-@@ -1602,7 +1599,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 * we have already determined whether we have link or not.
+@@ -1390,12 +1391,12 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
  	 */
- 	if (!mac->autoneg)
--		return 1;
-+		return -E1000_ERR_CONFIG;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
-@@ -1616,12 +1613,10 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
- 	 * different link partner.
- 	 */
- 	ret_val = e1000e_config_fc_after_link_up(hw);
--	if (ret_val) {
-+	if (ret_val)
- 		e_dbg("Error configuring flow control\n");
+ 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
+ 	if (ret_val)
 -		return ret_val;
--	}
++		goto out;
  
--	return 1;
+ 	if (hw->mac.type == e1000_pchlan) {
+ 		ret_val = e1000_k1_gig_workaround_hv(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 
+ 	/* When connected at 10Mbps half-duplex, some parts are excessively
+@@ -1428,7 +1429,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 
+ 		ret_val = hw->phy.ops.acquire(hw);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 
+ 		if (hw->mac.type == e1000_pch2lan)
+ 			emi_addr = I82579_RX_CONFIG;
+@@ -1450,7 +1451,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		hw->phy.ops.release(hw);
+ 
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 
+ 		if (hw->mac.type >= e1000_pch_spt) {
+ 			u16 data;
+@@ -1459,14 +1460,14 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 			if (speed == SPEED_1000) {
+ 				ret_val = hw->phy.ops.acquire(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 				ret_val = e1e_rphy_locked(hw,
+ 							  PHY_REG(776, 20),
+ 							  &data);
+ 				if (ret_val) {
+ 					hw->phy.ops.release(hw);
+-					return ret_val;
++					goto out;
+ 				}
+ 
+ 				ptr_gap = (data & (0x3FF << 2)) >> 2;
+@@ -1480,18 +1481,18 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 				}
+ 				hw->phy.ops.release(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 			} else {
+ 				ret_val = hw->phy.ops.acquire(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 				ret_val = e1e_wphy_locked(hw,
+ 							  PHY_REG(776, 20),
+ 							  0xC023);
+ 				hw->phy.ops.release(hw);
+ 				if (ret_val)
+-					return ret_val;
++					goto out;
+ 
+ 			}
+ 		}
+@@ -1518,7 +1519,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	    (hw->adapter->pdev->device == E1000_DEV_ID_PCH_I218_V3)) {
+ 		ret_val = e1000_k1_workaround_lpt_lp(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 	if (hw->mac.type >= e1000_pch_lpt) {
+ 		/* Set platform power management values for
+@@ -1526,7 +1527,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		 */
+ 		ret_val = e1000_platform_pm_pch_lpt(hw, link);
+ 		if (ret_val)
+-			return ret_val;
++			goto out;
+ 	}
+ 
+ 	/* Clear link partner's EEE ability */
+@@ -1549,9 +1550,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	}
+ 
+ 	if (!link)
+-		return 0;	/* No link detected */
+-
+-	mac->get_link_status = false;
++		goto out;
+ 
+ 	switch (hw->mac.type) {
+ 	case e1000_pch2lan:
+@@ -1617,6 +1616,10 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 		e_dbg("Error configuring flow control\n");
+ 
+ 	return ret_val;
++
++out:
++	mac->get_link_status = true;
 +	return ret_val;
  }
  
  static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
 diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
-index db735644b312..b322011ec282 100644
+index b322011ec282..5bdc3a2d4fd7 100644
 --- a/drivers/net/ethernet/intel/e1000e/mac.c
 +++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -410,9 +410,6 @@ void e1000e_clear_hw_cntrs_base(struct e1000_hw *hw)
-  *  Checks to see of the link status of the hardware has changed.  If a
-  *  change in link status has been detected, then we read the PHY registers
-  *  to get the current speed/duplex if link exists.
-- *
-- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
-- *  up).
-  **/
- s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- {
-@@ -426,7 +423,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 * Change or Rx Sequence Error interrupt.
+@@ -424,19 +424,15 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
  	 */
  	if (!mac->get_link_status)
--		return 1;
-+		return 0;
+ 		return 0;
++	mac->get_link_status = false;
  
  	/* First we want to see if the MII Status Register reports
  	 * link.  If so, then we want to get the current speed/duplex
-@@ -450,7 +447,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 * we have already determined whether we have link or not.
+ 	 * of the PHY.
  	 */
- 	if (!mac->autoneg)
--		return 1;
-+		return -E1000_ERR_CONFIG;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
-@@ -464,12 +461,10 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
- 	 * different link partner.
- 	 */
- 	ret_val = e1000e_config_fc_after_link_up(hw);
--	if (ret_val) {
-+	if (ret_val)
- 		e_dbg("Error configuring flow control\n");
+ 	ret_val = e1000e_phy_has_link_generic(hw, 1, 0, &link);
+-	if (ret_val)
 -		return ret_val;
--	}
+-
+-	if (!link)
+-		return 0;	/* No link detected */
+-
+-	mac->get_link_status = false;
++	if (ret_val || !link)
++		goto out;
  
--	return 1;
+ 	/* Check if there was DownShift, must be checked
+ 	 * immediately after link-up
+@@ -465,6 +461,10 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 		e_dbg("Error configuring flow control\n");
+ 
+ 	return ret_val;
++
++out:
++	mac->get_link_status = true;
 +	return ret_val;
  }
  
  /**
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 9fd4050a91ca..8a3aa85b159c 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -5090,7 +5090,7 @@ static bool e1000e_has_link(struct e1000_adapter *adapter)
- 	case e1000_media_type_copper:
- 		if (hw->mac.get_link_status) {
- 			ret_val = hw->mac.ops.check_for_link(hw);
--			link_active = ret_val > 0;
-+			link_active = !hw->mac.get_link_status;
- 		} else {
- 			link_active = true;
- 		}
 -- 
 2.16.2
