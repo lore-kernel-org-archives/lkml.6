@@ -1,167 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753350AbeCFJsw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:48:52 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7302 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750907AbeCFJsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:48:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="205863177"
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] scsi: ufs: ufshcd_dump_regs to use memcpy_fromio
-Date: Tue,  6 Mar 2018 11:45:12 +0200
-Message-Id: <20180306094512.13366-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.3
+        id S1753402AbeCFJtL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:49:11 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:29854 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeCFJtJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:49:09 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w269n5J9021712
+X-Nifty-SrcIP: [209.85.213.53]
+X-Google-Smtp-Source: AG47ELtdXlB52roeab6jQ7lMSm1SAIdUEqQQOMo7qiA6gbT0pyMou8bGFiizO9LEQ34HnmyUX/ace0jI7Rh+XOjBj3U=
+MIME-Version: 1.0
+In-Reply-To: <CAFkk2KS=Z2qHgh5X_W9uTPPG1qHop_m7ZoHYQy5Ss9PpBTJd6Q@mail.gmail.com>
+References: <1519776926-30459-1-git-send-email-yamada.masahiro@socionext.com>
+ <1519776926-30459-6-git-send-email-yamada.masahiro@socionext.com>
+ <20180228051525.a2vouqs6djnd2cnf@huvuddator> <CAK7LNATWRmYf7nfGcFiGe2DF2PSkE9mrS51GytzWEz5DYToN0w@mail.gmail.com>
+ <20180301111801.gdhoam4kqrbqnasv@huvuddator> <CAK7LNATrMVvjurGBLvCHH_5Vio_Xm83h8yaiLQPU0VUUvQLCuQ@mail.gmail.com>
+ <CAFkk2KS=Z2qHgh5X_W9uTPPG1qHop_m7ZoHYQy5Ss9PpBTJd6Q@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 6 Mar 2018 18:48:24 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATCDtPJMcZ0uz4UR1kNaqVBfGSejDLXyBLP=30-SWAfwQ@mail.gmail.com>
+Message-ID: <CAK7LNATCDtPJMcZ0uz4UR1kNaqVBfGSejDLXyBLP=30-SWAfwQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: remove redundant streamline_config.pl prerequisite
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Marc Herbert <marc.herbert@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ufshcd_dump_regs should use memcpy_fromio to read host registers
-instead of directly accessing using memcpy.
-The same function is utilized in ufs-qcom.
+2018-03-02 0:23 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> On Thu, Mar 1, 2018 at 3:39 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-03-01 20:18 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>>> The local{yes,mod}config targets currently have streamline_config.pl as
+>>> a prerequisite. This is redundant, because streamline_config.pl is a
+>>> checked-in file with no prerequisites.
+>>>
+>>> Remove the prerequisite and reference streamline_config.pl directly in
+>>> the recipe of the rule instead.
+>>>
+>>> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+>>> ---
+>>>  scripts/kconfig/Makefile | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+>>> index 1f74336d4e23..58be52cb464d 100644
+>>
+>>
+>> Thanks! Almost good.
+>>
+>> Just small nits.
+>>
+>>
+>>> --- a/scripts/kconfig/Makefile
+>>> +++ b/scripts/kconfig/Makefile
+>>> @@ -77,9 +77,9 @@ silentoldconfig: $(obj)/conf
+>>>             touch   include/generated/autoksyms.h
+>>>         $< $(silent) --$@ $(Kconfig)
+>>>
+>>> -localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
+>>> +localyesconfig localmodconfig: $(obj)/conf
+>>>         $(Q)mkdir -p include/config include/generated
+>>> -       $(Q)perl $< --$@ $(srctree) $(Kconfig) > .tmp.config
+>>> +       $(Q)perl $(obj)/streamline_config.pl --$@ $(srctree) $(Kconfig) > .tmp.config
+>>
+>>
+>>
+>> '$(src)/streamline_config.pl' is better than '$(obj)/streamline_config.pl'
+>> since it is a checked-in file.
+>>
+>> '$(src)' and '$(obj)' are always the same.
+>> (https://github.com/torvalds/linux/blob/master/scripts/Makefile.build#L6)
+>>
+>>
+>> So, there is no effective difference.
+>> It is just a coding convention to use $(obj)/ for generated files,
+>> and $(src)/ for source files.
+>>
+>> The original code already used $(obj)/, so this is not your fault
+>> but I want to fix it while we are here.
+>>
+>>
+>>
+>> One more nit.
+>>
+>> $(obj)/conf $(silent) --silentoldconfig $(Kconfig);
+>>
+>> can be
+>>
+>> $< $(silent) --silentoldconfig $(Kconfig);
+>>
+>>
+>> I guess you did not touch this line to avoid
+>> conflict with my patch.
+>
+> Yep, plus I wanted to keep the patch focused.
 
-Elminite compilation warning
-drivers/scsi/ufs/ufshcd.c:356:9: warning: incorrect type in argument 6 (different address spaces)
-drivers/scsi/ufs/ufshcd.c:356:9:    expected void const *buf
-drivers/scsi/ufs/ufshcd.c:356:9:    got void [noderef] <asn:2>*mmio_base
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/scsi/ufs/ufs-qcom.c | 21 ++++++---------------
- drivers/scsi/ufs/ufshcd.c   | 35 ++++++++++++++++++++++++-----------
- drivers/scsi/ufs/ufshcd.h   |  3 +++
- 3 files changed, 33 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 2b38db2eeafa..77ac98ea80d4 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -50,19 +50,10 @@ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
- static int ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div(struct ufs_hba *hba,
- 						       u32 clk_cycles);
- 
--static void ufs_qcom_dump_regs(struct ufs_hba *hba, int offset, int len,
--		char *prefix)
--{
--	print_hex_dump(KERN_ERR, prefix,
--			len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,
--			16, 4, (void __force *)hba->mmio_base + offset,
--			len * 4, false);
--}
--
- static void ufs_qcom_dump_regs_wrapper(struct ufs_hba *hba, int offset, int len,
--		char *prefix, void *priv)
-+				       const char *prefix, void *priv)
- {
--	ufs_qcom_dump_regs(hba, offset, len, prefix);
-+	ufshcd_dump_regs(hba, offset, len * 4, prefix);
- }
- 
- static int ufs_qcom_get_connected_tx_lanes(struct ufs_hba *hba, u32 *tx_lanes)
-@@ -1431,7 +1422,7 @@ static int ufs_qcom_clk_scale_notify(struct ufs_hba *hba,
- 
- static void ufs_qcom_print_hw_debug_reg_all(struct ufs_hba *hba,
- 		void *priv, void (*print_fn)(struct ufs_hba *hba,
--		int offset, int num_regs, char *str, void *priv))
-+		int offset, int num_regs, const char *str, void *priv))
- {
- 	u32 reg;
- 	struct ufs_qcom_host *host;
-@@ -1613,7 +1604,7 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
- 
- static void ufs_qcom_testbus_read(struct ufs_hba *hba)
- {
--	ufs_qcom_dump_regs(hba, UFS_TEST_BUS, 1, "UFS_TEST_BUS ");
-+	ufshcd_dump_regs(hba, UFS_TEST_BUS, 4, "UFS_TEST_BUS ");
- }
- 
- static void ufs_qcom_print_unipro_testbus(struct ufs_hba *hba)
-@@ -1639,8 +1630,8 @@ static void ufs_qcom_print_unipro_testbus(struct ufs_hba *hba)
- 
- static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
- {
--	ufs_qcom_dump_regs(hba, REG_UFS_SYS1CLK_1US, 16,
--			"HCI Vendor Specific Registers ");
-+	ufshcd_dump_regs(hba, REG_UFS_SYS1CLK_1US, 16 * 4,
-+			 "HCI Vendor Specific Registers ");
- 
- 	/* sleep a bit intermittently as we are dumping too much data */
- 	ufs_qcom_print_hw_debug_reg_all(hba, NULL, ufs_qcom_dump_regs_wrapper);
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 3abcd31646eb..f2e1da77045c 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -98,8 +98,29 @@
- 		_ret;                                                   \
- 	})
- 
--#define ufshcd_hex_dump(prefix_str, buf, len) \
--print_hex_dump(KERN_ERR, prefix_str, DUMP_PREFIX_OFFSET, 16, 4, buf, len, false)
-+#define ufshcd_hex_dump(prefix_str, buf, len) do {                       \
-+	size_t __len = (len);                                            \
-+	print_hex_dump(KERN_ERR, prefix_str,                             \
-+		       __len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,\
-+		       16, 4, buf, __len, false);                        \
-+} while (0)
-+
-+int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
-+		     const char *prefix)
-+{
-+	u8 *regs;
-+
-+	regs = kzalloc(len, GFP_KERNEL);
-+	if (!regs)
-+		return -ENOMEM;
-+
-+	memcpy_fromio(regs, hba->mmio_base + offset, len);
-+	ufshcd_hex_dump(prefix, regs, len);
-+	kfree(regs);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(ufshcd_dump_regs);
- 
- enum {
- 	UFSHCD_MAX_CHANNEL	= 0,
-@@ -343,15 +364,7 @@ static void ufshcd_print_uic_err_hist(struct ufs_hba *hba,
- 
- static void ufshcd_print_host_regs(struct ufs_hba *hba)
- {
--	/*
--	 * hex_dump reads its data without the readl macro. This might
--	 * cause inconsistency issues on some platform, as the printed
--	 * values may be from cache and not the most recent value.
--	 * To know whether you are looking at an un-cached version verify
--	 * that IORESOURCE_MEM flag is on when xxx_get_resource() is invoked
--	 * during platform/pci probe function.
--	 */
--	ufshcd_hex_dump("host regs: ", hba->mmio_base, UFSHCI_REG_SPACE_SIZE);
-+	ufshcd_dump_regs(hba, 0, UFSHCI_REG_SPACE_SIZE, "host_regs: ");
- 	dev_err(hba->dev, "hba->ufs_version = 0x%x, hba->capabilities = 0x%x\n",
- 		hba->ufs_version, hba->capabilities);
- 	dev_err(hba->dev,
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index deb3c5d382e9..a3a449b724c7 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -1019,4 +1019,7 @@ static inline u8 ufshcd_scsi_to_upiu_lun(unsigned int scsi_lun)
- 		return scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID;
- }
- 
-+int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
-+		     const char *prefix);
-+
- #endif /* End of Header */
+
+Applied to linux-kbuild/kconfig.  Thanks!
+
+
+I changed
+
+[1]  $(obj)/streamline_config.pl
+    -> $(srctree)/$(src)/streamline_config.pl
+
+    Mandatory change to avoid out-of-tree build error
+
+[2]  $(obj)/conf   ->  $<
+
+    Clean-up
+
+
+
+
 -- 
-2.14.3
+Best Regards
+Masahiro Yamada
