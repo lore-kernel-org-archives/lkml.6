@@ -1,462 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753863AbeCFQVo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:21:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750797AbeCFQVm (ORCPT
+        id S1753555AbeCFQan (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:30:43 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34178 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeCFQal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:21:42 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53D4A600E6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Tue, 6 Mar 2018 09:21:40 -0700
-From: Lina Iyer <ilina@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: Re: [PATCH v4 1/2] drivers: qcom: add command DB driver
-Message-ID: <20180306162140.GC4930@codeaurora.org>
-References: <20180226175802.20052-1-ilina@codeaurora.org>
- <20180226175802.20052-2-ilina@codeaurora.org>
- <152027534725.108663.13213325833387672227@swboyd.mtv.corp.google.com>
+        Tue, 6 Mar 2018 11:30:41 -0500
+Date: Tue, 6 Mar 2018 16:30:35 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
+        linux-omap@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regulator regression in next-20180305
+Message-ID: <20180306163035.GE13586@sirena.org.uk>
+References: <20180305231246.GB5799@atomide.com>
+ <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Yb+qhiCg54lqZFXW"
 Content-Disposition: inline
-In-Reply-To: <152027534725.108663.13213325833387672227@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
+X-Cookie: DYSLEXICS OF THE WORLD, UNTIE!
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05 2018 at 11:42 -0700, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-02-26 09:58:01)
->> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
->> new file mode 100644
->> index 000000000000..0792a2a98fc9
->> --- /dev/null
->> +++ b/drivers/soc/qcom/cmd-db.c
->> @@ -0,0 +1,319 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/of_reserved_mem.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/types.h>
->> +
->> +#include <soc/qcom/cmd-db.h>
->> +
->> +#define NUM_PRIORITY           2
->> +#define MAX_SLV_ID             8
->> +#define CMD_DB_MAGIC           0x0C0330DBUL
->
->Make this an array so it's endian safe.
->
->> +#define SLAVE_ID_MASK          0x7
->> +#define SLAVE_ID_SHIFT         16
->> +
->> +#define ENTRY_HEADER(hdr)      ((void *)cmd_db_header +        \
->> +                               sizeof(*cmd_db_header) +        \
->> +                               hdr->header_offset)
->> +
->> +#define RSC_OFFSET(hdr, ent)   ((void *)cmd_db_header +        \
->> +                               sizeof(*cmd_db_header) +        \
->> +                               hdr.data_offset + ent.offset)
->> +
->> +/**
->> + * entry_header: header for each entry in cmddb
->
->struct entry_header - header for each...
->
-Ok
 
->> + *
->> + * @id: resource's identifier
->> + * @priority: unused
->> + * @addr: the address of the resource
->> + * @len: length of the data
->> + * @offset: offset at which data starts
->
->offset from this entry header at which data starts? Or offset from
->where?
->
-Offset from @data_offset of the rsc_header.
+--Yb+qhiCg54lqZFXW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> + */
->> +struct entry_header {
->> +       u64 id;
->> +       u32 priority[NUM_PRIORITY];
->> +       u32 addr;
->> +       u16 len;
->> +       u16 offset;
->> +};
->> +
->> +/**
->> + * rsc_hdr: resource header information
->
->ditto.
->
-Will do.
+On Mon, Mar 05, 2018 at 08:22:26PM -0300, Fabio Estevam wrote:
+> On Mon, Mar 5, 2018 at 8:12 PM, Tony Lindgren <tony@atomide.com> wrote:
 
->> + *
->> + * @slv_id: id for the resource
->> + * @header_offset: Entry header offset from data
->> + * @data_offset: Entry offset for data location
->
->Same question: offset from where?
->
-Ok
+> > Looks like with next-20180305 there's a regulator regression
+> > where mmc0 won't show any cards or produces errors:
 
->> + * @cnt: number of entries for HW type
->> + * @version: MSB is major, LSB is minor
->
->@reserved: reserved for future use
->
-Ok.
->> + */
->> +struct rsc_hdr {
->> +       u16 slv_id;
->> +       u16 header_offset;
->> +       u16 data_offset;
->> +       u16 cnt;
->> +       u16 version;
->> +       u16 reserved[3];
->> +};
->> +
->> +/**
->> + * cmd_db_header: The DB header information
->> + *
->> + * @version: The cmd db version
->> + * @magic_number: constant expected in the database
->> + * @header: array of resources
->> + * @check_sum: check sum for the header. Unused.
->> + * @reserved: reserved memory
->> + * @data: driver specific data
->> + */
->> +struct cmd_db_header {
->> +       u32 version;
->> +       u32 magic_num;
->> +       struct rsc_hdr header[MAX_SLV_ID];
->> +       u32 check_sum;
->
->Drop underscore? 'checksum' is usually one word.
->
-Sure.
+> > mmcblk0: error -110 requesting status
+> > mmc1: new high speed SDIO card at address 0001
+> > mmcblk0: error -110 requesting status
+> > mmcblk0: recovery failed!
+> > print_req_error: I/O error, dev mmcblk0, sector 0
+> > Buffer I/O error on dev mmcblk0, logical block 0, async page read
+> > mmcblk0: error -110 requesting status
+> > mmcblk0: recovery failed!
 
->> +       u32 reserved;
->> +       u8 data[];
->> +};
->> +
->> +/**
->> + * DOC: Description of the Command DB database.
->> + *
->> + * At the start of the command DB memory is the cmd_db_header structure.
->> + * The cmd_db_header holds the version, checksum, magic key as well as an
->> + * array for header for each slave (depicted by the rsc_header). Each h/w
->> + * based accelerator is a 'slave' (shared resource) and has slave id indicating
->> + * the type of accelerator. The rsc_header is the header for such individual
->> + * slaves of a given type. The entries for each of these slaves begin at the
->> + * rsc_hdr.header_offset. In addition each slave could have auxiliary data
->> + * that may be needed by the driver. The data for the slave starts at the
->> + * entry_header.offset to the location pointed to by the rsc_hdr.data_offset.
->> + *
->> + * Drivers have a stringified key to a slave/resource. They can query the slave
->> + * information and get the slave id and the auxiliary data and the length of the
->> + * data. Using this information, they can format the request to be sent to the
->> + * h/w accelerator and request a resource state.
->> + */
->> +
->> +static struct cmd_db_header *cmd_db_header;
->> +
->> +/**
->> + * cmd_db_ready - Indicates if command DB is available
->> + *
->> + * Return: 0 on success, errno otherwise
->> + */
->> +int cmd_db_ready(void)
->> +{
->> +       if (cmd_db_header == NULL)
->> +               return -EPROBE_DEFER;
->> +       else if (cmd_db_header->magic_num != CMD_DB_MAGIC)
->> +               return -EINVAL;
->> +       else
->> +               return 0;
->
->Drop else and just return 0.
->
-Ok.
+No other error messages?  That seems like there's something going on
+that's very different to what Fabio was reporting...  I'm guessing some
+voltage application didn't go through but it's hard to tell with so
+little data.  dra7 does seem to have what Fabio had though so there's
+definitely some effect on the OMAP platforms.
 
->> +}
->> +EXPORT_SYMBOL(cmd_db_ready);
->> +
->> +static u64 cmd_db_get_u64_id(const char *id)
->> +{
->> +       u64 rsc_id = 0;
->> +       u8 *ch = (u8 *)&rsc_id;
->> +       int i;
->> +
->> +       for (i = 0; i < sizeof(rsc_id) && id[i]; i++)
->> +               ch[i] = id[i];
->
->This could be a strncpy now? Didn't I already ask this? I'll have to
->look back at the other emails it seems. Actually, it looks like a cast
->of a string to an integer,
-Yes, you did ask. The cast helps do an integer comparison as opposed to
-string comparision on the database.
+> I have also seen regulator issues due to this series:
+> https://lkml.org/lkml/2018/3/5/731
 
->which is then reversed to look up the same
->string. Not sure what the use is for this.
->
-Where do you see that?
+Looking at your stuff I'm having trouble figuring out what's going on -
+we're getting double locking of a parent regulator during enable
+according to your backtraces but it's not clear to me what took that
+lock already.  regulator_enable() walks the supplies before it takes
+the lock on the regulator it's immediately being called on, not holding
+any locks on supplies while enabling.  regulator_balance_voltage() then
+tries to lock the supplies again but lockdep says the lock is already
+held by regulator_enable().  It's also weird that this doesn't seem to
+be showing up on other boards in kernelci, the regulator setup on those
+i.MX boards looks to be quite simple so I'd expect a much wider impact.
 
->> +
->> +       return rsc_id;
->> +}
->> +
->> +static int cmd_db_get_header(u64 query, struct entry_header *eh,
->> +                           struct rsc_hdr *rh)
->> +{
->> +       struct rsc_hdr *rsc_hdr;
->> +       struct entry_header *ent;
->> +       int ret, i, j;
->> +
->> +       ret = cmd_db_ready();
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (!eh || !rh)
->> +               return -EINVAL;
->> +
->> +       for (i = 0; i < MAX_SLV_ID; i++) {
->> +               rsc_hdr = &cmd_db_header->header[i];
->> +               if (!rsc_hdr->slv_id)
->> +                       break;
->> +
->> +               ent = ENTRY_HEADER(rsc_hdr);
->> +               for (j = 0; j < rsc_hdr->cnt; j++, ent++) {
->> +                       if (ent->id == query)
->> +                               break;
->> +               }
->> +
->> +               if (j < rsc_hdr->cnt) {
->> +                       memcpy(eh, ent, sizeof(*ent));
->> +                       memcpy(rh, rsc_hdr, sizeof(*rh));
->
->I suppose it's OK to punt on the endian issues for now if it's too hard.
->Eventually we'll want to handle it though and it shouldn't make the code
->any worse when endianness is the same. Can it be done now?
->
-Why is the change in endian needed? We can always add that in later if
-we decide to change the default endian. I would prefer that we punt it
-for now.
+I'm wondering if your case is more pain from mutex_lock_nested(), both
+regulator_lock_coupled() and regulator_lock_supply() will end up using=20
+indexes starting at 0 for the locking classes.  That doesn't smell right
+though, but in case my straw clutching works:
 
->> +                       return 0;
->> +               }
->> +       }
->> +
->> +       return -ENODEV;
->> +}
->> +
->> +static int cmd_db_get_header_by_rsc_id(const char *id,
->> +                                     struct entry_header *ent_hdr,
->> +                                     struct rsc_hdr *rsc_hdr)
->> +{
->> +       u64 rsc_id = cmd_db_get_u64_id(id);
->> +
->> +       return cmd_db_get_header(rsc_id, ent_hdr, rsc_hdr);
->> +}
->> +
->> +/**
->> + * cmd_db_read_addr() - Query command db for resource id address.
->> + *
->> + *  @id: resource id to query for address
->> + *
->> + * This is used to retrieve resource address based on resource
->> + * id.
->> + *  Return: resource address on success, 0 on error
->
->Weird spaces here. Mix of tabs and spaces perhaps?
->
-Hmm. Not sure, didn't see checkpatch complain. Will check.
+If we can't figure it out I'll just drop the series but I'd prefer to at
+least understand what's going on.
 
->> + */
->> +u32 cmd_db_read_addr(const char *id)
->> +{
->> +       int ret;
->> +       struct entry_header ent;
->> +       struct rsc_hdr rsc_hdr;
->> +
->> +       ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
->> +
->> +       return ret < 0 ? 0 : ent.addr;
->> +}
->> +EXPORT_SYMBOL(cmd_db_read_addr);
->> +
->> +/**
->> + * cmd_db_read_aux_data() - Query command db for aux data.
->> + *
->> + *  @id : Resource to retrieve AUX Data on.
->> + *  @data : Data buffer to copy returned aux data to. Returns size on NULL
->> + *  @len : Caller provides size of data buffer passed in.
->
->Attach the ':' to the variable please.
->
-Ok
->> + *
->> + *  Return: size of data on success, errno on error
->
->success, -EINVAL on error
->
-Ok
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index e685f8b94acf..2c5b20a97f51 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -159,7 +159,7 @@ static void regulator_lock_supply(struct regulator_dev =
+*rdev)
+ {
+ 	int i;
+=20
+-	for (i =3D 0; rdev; rdev =3D rdev_get_supply(rdev), i++)
++	for (i =3D 1000; rdev; rdev =3D rdev_get_supply(rdev), i++)
+ 		mutex_lock_nested(&rdev->mutex, i);
+ }
+=20
 
->> + */
->> +int cmd_db_read_aux_data(const char *id, u8 *data, int len)
->> +{
->> +       int ret;
->> +       struct entry_header ent;
->> +       struct rsc_hdr rsc_hdr;
->> +
->> +       if (!data)
->> +               return -EINVAL;
->> +
->> +       ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (len < ent.len)
->> +               return -EINVAL;
->> +
->> +       len = min_t(u16, ent.len, len);
->> +       memcpy(data, RSC_OFFSET(rsc_hdr, ent), len);
->> +
->> +       return len;
->> +}
->> +EXPORT_SYMBOL(cmd_db_read_aux_data);
->> +
->> +/**
->> + * cmd_db_read_aux_data_len - Get the length of the auxllary data stored in DB.
->> + *
->> + * @id: Resource to retrieve AUX Data.
->> + *
->> + * Return: size on success, 0 on error
->> + */
->> +size_t cmd_db_read_aux_data_len(const char *id)
->> +{
->> +       int ret;
->> +       struct entry_header ent;
->> +       struct rsc_hdr rsc_hdr;
->> +
->> +       ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
->
->A bunch of code is calling this function. Why not change the user
->interface to use an opaque 'resource' cookie that we can 'get' or 'find'
->and then use that cookie in the rest of the API to pull out the data
->that's desired?
->
-Fair point. Let me find out. I suspect this was done to keep the API
-similar to other non-Linux interfaces. I am not sure why they all didn't
-use a handle instead of char *.
+--Yb+qhiCg54lqZFXW
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +
->> +       return ret < 0 ? 0 : ent.len;
->> +}
->> +EXPORT_SYMBOL(cmd_db_read_aux_data_len);
->> +
->> +/**
->> + * cmd_db_read_slave_id - Get the slave ID for a given resource address
->> + *
->> + * @id: Resource id to query the DB for version
->> + *
->> + * Return: cmd_db_hw_type enum on success, CMD_DB_HW_INVALID on error
->> + */
->> +enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
->> +{
->> +       int ret;
->> +       struct entry_header ent;
->> +       struct rsc_hdr rsc_hdr;
->> +
->> +       ret = cmd_db_get_header_by_rsc_id(id, &ent, &rsc_hdr);
->> +
->> +       return ret < 0 ? CMD_DB_HW_INVALID :
->> +                      (ent.addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
->> +}
->> +EXPORT_SYMBOL(cmd_db_read_slave_id);
->> +
->> +static int cmd_db_dev_probe(struct platform_device *pdev)
->> +{
->> +       struct reserved_mem *rmem;
->> +       void *dict, *start_addr;
->> +       int ret = 0;
->> +
->> +       rmem = of_reserved_mem_lookup(pdev->dev.of_node);
->> +       if (!rmem) {
->> +               dev_err(&pdev->dev, "failed to acquire memory region\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       dict = devm_memremap(&pdev->dev, rmem->base, rmem->size, MEMREMAP_WB);
->> +       if (IS_ERR(dict))
->> +               return -ENOMEM;
->> +
->> +       start_addr = memremap(readl_relaxed(dict), readl_relaxed(dict + 0x4),
->> +                            MEMREMAP_WB);
->> +       if (IS_ERR_OR_NULL(start_addr)) {
->
->Should just be !start_addr? I don't see where memremap() returns an
->error pointer.
->
-Sure.
+-----BEGIN PGP SIGNATURE-----
 
->> +               ret = PTR_ERR(start_addr);
->> +               goto done;
->> +       }
->> +
->> +       cmd_db_header = start_addr;
->> +       if (cmd_db_header->magic_num != CMD_DB_MAGIC) {
->
->memcmp?
->
-Why? It could be a simple comparison.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqewioACgkQJNaLcl1U
+h9Bx+wf/S3swz2uKSJ5y19NvOIHzMsSOtAoS4mvk/oMR9d1GyKZV1PFbkndwr3vP
+4p96oKTEzKDQi0+rDCM1Rohf6rWrFzVL4uSUEqhIUNmJuBrUp5qlgPpaXYRDN1bP
+UXNQoji+imP+OTD+A98SJQfgfALSh4qaPsK/8S+fis5hK7NMlYZfiDDQAyrns4RV
+BiSgPoHiLNWIFxMCIF4Ecx+CtcaEBOUJYmUlbc22c7qDkrvGgycFQ2RhprUnWCJH
+fjCG4/8YDYAdiVxsNeOeyVK/6BmUTvETjCW3c1UZS5oNTsDt871Lng5QHhtVfr2A
+d1CPG/WcdEFgPH3ztRV2kMisAApWLA==
+=fsPY
+-----END PGP SIGNATURE-----
 
->> +               ret = -EINVAL;
->> +               dev_err(&pdev->dev, "Invalid Command DB Magic\n");
->> +               goto done;
->> +       }
->> +
->> +done:
->> +       devm_memunmap(&pdev->dev, dict);
->
->I'm lost why we use devm_*() for this mapping.
->
-Must have picked it up from an example. Curious, why not though?
-
->> +       return ret;
->> +}
->> +
->> +static const struct of_device_id cmd_db_match_table[] = {
->> +       { .compatible = "qcom,cmd-db" },
->> +       { },
->> +};
->> +
->> +static struct platform_driver cmd_db_dev_driver = {
->> +       .probe  = cmd_db_dev_probe,
->> +       .driver = {
->> +                 .name = "cmd-db",
->> +                 .of_match_table = cmd_db_match_table,
->
->Add suppress_bind_attrs here to make sure we can't remove this device
->later? That also allows us to ignore unmapping the start_addr pointer
->in any sort of 'remove' function.
->
-Ok..
-
-Thanks Stephen.
-
--- Lina
+--Yb+qhiCg54lqZFXW--
