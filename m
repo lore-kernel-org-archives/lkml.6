@@ -1,70 +1,97 @@
 Return-Path: <akpm@linux-foundation.org>
-X-Google-Smtp-Source: AG47ELtAJcNtBomfOeVCHz7Cb3eXpMGDBXWQzvuag1ht3lpzhnffX5koa4BEispTCuHubreS5lf9
-ARC-Seal: i=1; a=rsa-sha256; t=1520376523; cv=none;
+X-Google-Smtp-Source: AG47ELs4+L56OjxveuK7/5/OpA2D32Zfy1q3lJdgqdkpfcGeyeuH1HfhJxh7BmAtpK3MYagFIdHG
+ARC-Seal: i=1; a=rsa-sha256; t=1520376506; cv=none;
         d=google.com; s=arc-20160816;
-        b=oYjbLacFflPpNAxXdEG6hJpAgTfoAkCx1jbC8CEooPi8RuuZ9PoDGhEy3V1hpSfiVG
-         O22DfFeqvWyo8y19wywOAD6XMJTTUWld0OJuZ1YXfpReqJWdIzxfBni6hAAN1VFmNWmR
-         1BqbEi2eVlEGoE0xU7FlVqsc1dPwNHKO+RTymh3MKsFUkT7KTJGx8UFcWggb73/CMJkW
-         pqnDuGe10UCiOwthRYc5Jd9QlxJRHv3812yjxxbVwDlsyb1iffVMAHkhMr7eNea0JiGg
-         Qw1j/7MkJPKDJ6t1JxVImW67JwzBFMQzniDeEdxuBLG3aFtkhuFacTbujKjb+ecForT2
-         G2iw==
+        b=jZPABUCpO93vruNcSmh0mfL90wuqwekITfFxXYirgfLN97rA7Llj2yejXJDSdS50ar
+         H8lqr5+RF1Bg5m06j847PVzSoZqi0SoVQgNN2XLVf9eZlUJICRTPIpK533nzB9ZUryu1
+         ewT8zqEGz4kS5s5WbMyaI2waWZ0x2Mi4Z7JDCcqVz7g2Acaifj3y6q9gv74GYMz/uQ/D
+         PV20iYpU0VPq5LlQ8q0S/67ArLc3MDtrr7GgCVImMMazBRyRKfjswDSDj9DN9/B+pzIV
+         ykxwydrwJIMxyefzwy6ihoofUt3OpFZGZUv7LXErF6Q3Z05FoC96VcDo2z467nnAxaHk
+         jrPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=Yvste6i3GR9/5p9d07wnFoQlWNOO1pt5djFDHNgm6s8=;
-        b=XW2GI6wwaE+dez44z8nayrH2pKqPC+84IXeRLMtuYk4Etvn2eyPMG4FPBF9sHYkugR
-         i+L1MgkFfasUGJzu9toFrdgZqJ+l/Y/H+bTWD91Zyk0cS2yIROeYjMRH2a+37tXiDBbp
-         7s7HcpWgM+YyQq34mlaVc+0oK+wUil/XZ7Xx2e4irfJqx4BQC28glhD783P+wUAM0+Lv
-         Ql25ECQB8NmqohfI1wFvYInIBiixfqlSXJ0iX5nXbLs18wQkxS1DzXuEWvq8lXZymik7
-         Didsrz53EVvvjAMI49Ns8UkM4iLTrce8/pvwBVlSYKZvLk8KSoQQRxW/y+H1O6BMCO4M
-         sQYA==
+        bh=rZ+MWbcusjcb4byTvpxy+8cp+dix0uRbm1S8PhOTVL8=;
+        b=Kw1aMq1g9l39Kb6hw+69UaKcZzu/kDxO8qqewG75/pTxVR24MMgygkoV7mXqbqVoiS
+         tk6TWyqeXUwCSzKJrXJ0I3Udkh9M5nw9vygsm6Lz6ADRwYrqoaxKZ8vAcIxPdA83ScPy
+         VzHAqFiVsUL/IHQQ96qU2wazA/QeQ+03UOAqs1GJf52Cggdhqz6O6c3DFzJPVBtZX4mh
+         4uHUV6iaer/hoZY/GzHdaWujVzBz19+IXSU0yWm9uGFFU+b7H2hYTdharU6mq5j2bQcP
+         P2Ny4fBlOl3Vo5JhWDF9I5C8rQG3E+YoCJ9jZ7WetBY2XzrNtHO9PB+0Dvkf0BeZaExT
+         hH/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
-Date: Tue, 6 Mar 2018 14:48:07 -0800
+Date: Tue, 6 Mar 2018 14:48:19 -0800
 From: Andrew Morton <akpm@linux-foundation.org>
 To: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
- davem@davemloft.net, dave.hansen@linux.intel.com, bsingharora@gmail.com,
- nborisov@suse.com, aarcange@redhat.com, anthony.yznaga@oracle.com,
- mgorman@suse.de, linuxram@us.ibm.com, kirill.shutemov@linux.intel.com,
- dan.j.williams@intel.com, jack@suse.cz, ross.zwisler@linux.intel.com,
- gregkh@linuxfoundation.org, tglx@linutronix.de, mhocko@suse.com,
- n-horiguchi@ah.jp.nec.com, jglisse@redhat.com, henry.willard@oracle.com,
- aneesh.kumar@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, sparclinux@vger.kernel.org, Khalid Aziz
- <khalid@gonehiking.org>
-Subject: Re: [PATCH v12 07/11] mm: Add address parameter to
- arch_validate_prot()
-Message-Id: <20180306144807.30915bcffe6e640c3ad6279c@linux-foundation.org>
-In-Reply-To: <349751cbd54fda6f4a223f941aa71bbfe7be77ce.1519227112.git.khalid.aziz@oracle.com>
+Cc: davem@davemloft.net, dave.hansen@linux.intel.com,
+ kstewart@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
+ anthony.yznaga@oracle.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ sparclinux@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>
+Subject: Re: [PATCH v12 09/11] mm: Allow arch code to override
+ copy_highpage()
+Message-Id: <20180306144819.53e794acc83309fd8b401e92@linux-foundation.org>
+In-Reply-To: <ecbafa2bfcc05f22183be2e7784ed11943b1d5b2.1519227112.git.khalid.aziz@oracle.com>
 References: <cover.1519227112.git.khalid.aziz@oracle.com>
-	<349751cbd54fda6f4a223f941aa71bbfe7be77ce.1519227112.git.khalid.aziz@oracle.com>
+	<ecbafa2bfcc05f22183be2e7784ed11943b1d5b2.1519227112.git.khalid.aziz@oracle.com>
 X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593031745545119756?=
-X-GMAIL-MSGID: =?utf-8?q?1594230333453251501?=
+X-GMAIL-THRID: =?utf-8?q?1593031715838543761?=
+X-GMAIL-MSGID: =?utf-8?q?1594230315402308593?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 21 Feb 2018 10:15:49 -0700 Khalid Aziz <khalid.aziz@oracle.com> wrote:
+On Wed, 21 Feb 2018 10:15:51 -0700 Khalid Aziz <khalid.aziz@oracle.com> wrote:
 
-> A protection flag may not be valid across entire address space and
-> hence arch_validate_prot() might need the address a protection bit is
-> being set on to ensure it is a valid protection flag. For example, sparc
-> processors support memory corruption detection (as part of ADI feature)
-> flag on memory addresses mapped on to physical RAM but not on PFN mapped
-> pages or addresses mapped on to devices. This patch adds address to the
-> parameters being passed to arch_validate_prot() so protection bits can
-> be validated in the relevant context.
+> Some architectures can support metadata for memory pages and when a
+> page is copied, its metadata must also be copied. Sparc processors
+> from M7 onwards support metadata for memory pages. This metadata
+> provides tag based protection for access to memory pages. To maintain
+> this protection, the tag data must be copied to the new page when a
+> page is migrated across NUMA nodes. This patch allows arch specific
+> code to override default copy_highpage() and copy metadata along
+> with page data upon migration.
 > 
-> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
-> Cc: Khalid Aziz <khalid@gonehiking.org>
-> Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> ...
+>
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -237,6 +237,8 @@ static inline void copy_user_highpage(struct page *to, struct page *from,
+>  
+>  #endif
+>  
+> +#ifndef __HAVE_ARCH_COPY_HIGHPAGE
+> +
+>  static inline void copy_highpage(struct page *to, struct page *from)
+>  {
+>  	char *vfrom, *vto;
+> @@ -248,4 +250,6 @@ static inline void copy_highpage(struct page *to, struct page *from)
+>  	kunmap_atomic(vfrom);
+>  }
+>  
+> +#endif
+> +
+>  #endif /* _LINUX_HIGHMEM_H */
+
+It would be more consistent and conventional here to do
+
+#ifndef copy_highpage
+static inline void copy_highpage(struct page *to, struct page *from)
+{
+	...
+}
+#define copy_highpage copy_highpage
+
+As is happening in [patch 07/11].
+
+And a similar change could be made to [patch 02/11], actually.
+
+
+Either way,
 
 Acked-by: Andrew Morton <akpm@linux-foundation.org>
