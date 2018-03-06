@@ -1,67 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753918AbeCFQuQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:50:16 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:11623 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753785AbeCFQuO (ORCPT
+        id S1753892AbeCFQwZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:52:25 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46323 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753065AbeCFQwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:50:14 -0500
-Subject: Re: [PATCH] HID: hid-ntrig: use true and false for boolean values
-To: Jiri Kosina <jikos@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180306000624.GA2680@embeddedgus>
- <nycvar.YFH.7.76.1803061519430.15778@cbobk.fhfr.pm>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <28d2c1a8-2ef3-c8cb-6fed-b29bc4b68f0e@embeddedor.com>
-Date: Tue, 6 Mar 2018 10:50:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 6 Mar 2018 11:52:22 -0500
+X-Google-Smtp-Source: AG47ELuBRlm5Cq6PC184yTXPsWBXpHvVafMUN710LJDBrH6DmYDsZi7Gv4x6PVt0w2GiV6vQCQxtL5RiyIkvJuD0Rhs=
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1803061519430.15778@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1etFn3-002SSu-KS
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:56390
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180306040630.GA9905@linux.intel.com>
+References: <20180302122049.13900-1-jthumshirn@suse.de> <20180306040630.GA9905@linux.intel.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 6 Mar 2018 08:52:21 -0800
+Message-ID: <CAPcyv4giwg1mStkA+7hXnABb8fV6VH2qQPstRfYU26-P56X4ug@mail.gmail.com>
+Subject: Re: [PATCH] acpi, nfit: remove redundant __func__ in dev_dbg
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
-
-On 03/06/2018 08:20 AM, Jiri Kosina wrote:
-> On Mon, 5 Mar 2018, Gustavo A. R. Silva wrote:
-> 
->> Assign true or false to boolean variables instead of an integer value.
+On Mon, Mar 5, 2018 at 8:06 PM, Ross Zwisler
+<ross.zwisler@linux.intel.com> wrote:
+> On Fri, Mar 02, 2018 at 01:20:49PM +0100, Johannes Thumshirn wrote:
+>> Dynamic debug can be instructed to add the function name to the debug
+>> output using the +f switch, so there is no need for the nfit module to
+>> do it again. If a user decides to add the +f switch for nfit's dynamic
+>> debug this results in double prints of the function name like the
+>> following:
 >>
->> This issue was detected with the help of Coccinelle.
+>> [ 2391.935383] acpi_nfit_ctl: nfit ACPI0012:00: acpi_nfit_ctl:nmem8 cmd: 10: func: 1 input length: 0
 >>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> I've commited this (and the hid-multitouch variant of it as well) to
-> for-4.17/upstream.
-> 
+>> Thus remove the stray __func__ printing.
+>>
+>> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+>
+> Oh, Johannes I noticed that here is one stray one still in
+> drivers/acpi/nfit/mce.c.  Do you mind pulling it into your patch to keep the
+> drivers/acpi/nfit/* changes together?
 
-Good to know.
-
-Thanks
---
-Gustavo
+I'll fix this locally.
