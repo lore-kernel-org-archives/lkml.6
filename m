@@ -1,153 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932505AbeCFHHE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:07:04 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33637 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932313AbeCFHHA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:07:00 -0500
-X-Google-Smtp-Source: AG47ELtWRh0yWeXewQ7AJIkvbefMpJZI85SH5fBOYBeI4L7mTcBXCbgwZ52WSjTMeVZWesDbiaWsfg==
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCHv2 2/2] zram: drop max_zpage_size and use zs_huge_class_size()
-Date: Tue,  6 Mar 2018 16:06:39 +0900
-Message-Id: <20180306070639.7389-3-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180306070639.7389-1-sergey.senozhatsky@gmail.com>
-References: <20180306070639.7389-1-sergey.senozhatsky@gmail.com>
+        id S1752483AbeCFHIW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:08:22 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5738 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750792AbeCFHIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 02:08:20 -0500
+Subject: [RFC PATCH] irqchip/gic-v3-its: handle wrapped case in
+ its_wait_for_range_completion()
+To: Marc Zyngier <marc.zyngier@arm.com>
+References: <1518320521-12536-1-git-send-email-yangyingliang@huawei.com>
+ <866073z7pr.wl-marc.zyngier@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yangyingliang <yangyingliang@huawei.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5A9E3E13.6060207@huawei.com>
+Date: Tue, 6 Mar 2018 15:06:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <866073z7pr.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes ZRAM's enforced "huge object" value and uses
-zsmalloc huge-class watermark instead, which makes more sense.
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-TEST
-- I used a 1G zram device, LZO compression back-end, original
-  data set size was 444MB. Looking at zsmalloc classes stats the
-  test ended up to be pretty fair.
+While cpus posting a bunch of ITS commands, the cmd_queue and rd_idx will
+be wrapped easily. And current way of handling wrapped case is not quite
+right.
+Such as, in direct case, rd_idx will wrap if other cpus post commands
+that make rd_idx increase. When rd_idx wrapped, the driver prints
+timeout messages but in fact the command is finished.
 
-BASE ZRAM/ZSMALLOC
-=====================
-zram mm_stat
+This patch adds two variables to count wrapped times of ITS commands and
+read index. With these two variables, the driver can handle wrapped case
+correctly.
 
-498978816 191482495 199831552        0 199831552    15634        0
-
-zsmalloc classes
-
- class  size almost_full almost_empty obj_allocated   obj_used pages_used pages_per_zspage freeable
-...
-   151  2448           0            0          1240       1240        744                3        0
-   168  2720           0            0          4200       4200       2800                2        0
-   190  3072           0            0         10100      10100       7575                3        0
-   202  3264           0            0           380        380        304                4        0
-   254  4096           0            0         10620      10620      10620                1        0
-
- Total                 7           46        106982     106187      48787                         0
-
-PATCHED ZRAM/ZSMALLOC
-=====================
-
-zram mm_stat
-
-498978816 182579184 194248704        0 194248704    15628        0
-
-zsmalloc classes
-
- class  size almost_full almost_empty obj_allocated   obj_used pages_used pages_per_zspage freeable
-...
-   151  2448           0            0          1240       1240        744                3        0
-   168  2720           0            0          4200       4200       2800                2        0
-   190  3072           0            0         10100      10100       7575                3        0
-   202  3264           0            0          7180       7180       5744                4        0
-   254  4096           0            0          3820       3820       3820                1        0
-
- Total                 8           45        106959     106193      47424                         0
-
-As we can see, we reduced the number of objects stored in class-4096,
-because a huge number of objects which we previously forcibly stored
-in class-4096 now stored in non-huge class-3264. This results in lower
-memory consumption:
- - zsmalloc now uses 47424 physical pages, which is less than 48787
-   pages zsmalloc used before.
-
- - objects that we store in class-3264 share zspages. That's why overall
-   the number of pages that both class-4096 and class-3264 consumed went
-   down from 10924 to 9564.
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- drivers/block/zram/zram_drv.c |  9 ++++++++-
- drivers/block/zram/zram_drv.h | 16 ----------------
- 2 files changed, 8 insertions(+), 17 deletions(-)
+  drivers/irqchip/irq-gic-v3-its.c | 72 
++++++++++++++++++++++++++++++++++-------
+  1 file changed, 60 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 85110e7931e5..1b8082e6d2f5 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -44,6 +44,11 @@ static const char *default_compressor = "lzo";
- 
- /* Module params (documentation at end) */
- static unsigned int num_devices = 1;
-+/*
-+ * Pages that compress to sizes equals or greater than this are stored
-+ * uncompressed in memory.
-+ */
-+static size_t huge_class_size;
- 
- static void zram_free_page(struct zram *zram, size_t index);
- 
-@@ -786,6 +791,8 @@ static bool zram_meta_alloc(struct zram *zram, u64 disksize)
- 		return false;
- 	}
- 
-+	if (!huge_class_size)
-+		huge_class_size = zs_huge_class_size();
- 	return true;
- }
- 
-@@ -965,7 +972,7 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 		return ret;
- 	}
- 
--	if (unlikely(comp_len > max_zpage_size)) {
-+	if (unlikely(comp_len >= huge_class_size)) {
- 		if (zram_wb_enabled(zram) && allow_wb) {
- 			zcomp_stream_put(zram->comp);
- 			ret = write_to_bdev(zram, bvec, index, bio, &element);
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 31762db861e3..d71c8000a964 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -21,22 +21,6 @@
- 
- #include "zcomp.h"
- 
--/*-- Configurable parameters */
+diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+b/drivers/irqchip/irq-gic-v3-its.c
+index 1d3056f..a03e18e 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -111,6 +111,9 @@ struct its_node {
+  	u32			pre_its_base; /* for Socionext Synquacer */
+  	bool			is_v4;
+  	int			vlpi_redist_offset;
++	int 			last_rd;
++	u64			cmd_wrapped_cnt;
++	u64			rd_wrapped_cnt;
+  };
+
+  #define ITS_ITT_ALIGN		SZ_256
+@@ -662,6 +665,7 @@ static int its_queue_full(struct its_node *its)
+
+  static struct its_cmd_block *its_allocate_entry(struct its_node *its)
+  {
++	u32 rd;
+  	struct its_cmd_block *cmd;
+  	u32 count = 1000000;	/* 1s! */
+
+@@ -675,11 +679,24 @@ static struct its_cmd_block 
+*its_allocate_entry(struct its_node *its)
+  		udelay(1);
+  	}
+
++	/*
++	 * Here is protected by its->lock and driver cannot allocate
++	 * ITS commands, if ITS command queue is full, so the read
++	 * won't wrap twice between this rd_idx and last rd_idx.
++	 * Count rd wrapped times here is safe.
++	 */
++	rd = readl_relaxed(its->base + GITS_CREADR);
++	if (rd < its->last_rd)
++		its->rd_wrapped_cnt++;
++	its->last_rd = rd;
++
+  	cmd = its->cmd_write++;
+
+  	/* Handle queue wrapping */
+-	if (its->cmd_write == (its->cmd_base + ITS_CMD_QUEUE_NR_ENTRIES))
++	if (its->cmd_write == (its->cmd_base + ITS_CMD_QUEUE_NR_ENTRIES)) {
+  		its->cmd_write = its->cmd_base;
++		its->cmd_wrapped_cnt++;
++	}
+
+  	/* Clear command  */
+  	cmd->raw_cmd[0] = 0;
+@@ -713,29 +730,57 @@ static void its_flush_cmd(struct its_node *its, 
+struct its_cmd_block *cmd)
+
+  static int its_wait_for_range_completion(struct its_node *its,
+  					 struct its_cmd_block *from,
+-					 struct its_cmd_block *to)
++					 struct its_cmd_block *to,
++					 u64 last_cmd_wrapped_cnt)
+  {
+-	u64 rd_idx, from_idx, to_idx;
++	unsigned long flags;
++	u64 rd_idx, from_idx, to_idx, rd_wrapped_cnt;
+  	u32 count = 1000000;	/* 1s! */
+
+  	from_idx = its_cmd_ptr_to_offset(its, from);
+  	to_idx = its_cmd_ptr_to_offset(its, to);
+
+  	while (1) {
++		raw_spin_lock_irqsave(&its->lock, flags);
+  		rd_idx = readl_relaxed(its->base + GITS_CREADR);
++		if (rd_idx < its->last_rd)
++			its->rd_wrapped_cnt++;
++		its->last_rd = rd_idx;
++		rd_wrapped_cnt = its->rd_wrapped_cnt;
++		raw_spin_unlock_irqrestore(&its->lock, flags);
+
+-		/* Direct case */
+-		if (from_idx < to_idx && rd_idx >= to_idx)
+-			break;
 -
--/*
-- * Pages that compress to size greater than this are stored
-- * uncompressed in memory.
-- */
--static const size_t max_zpage_size = PAGE_SIZE / 4 * 3;
--
--/*
-- * NOTE: max_zpage_size must be less than or equal to:
-- *   ZS_MAX_ALLOC_SIZE. Otherwise, zs_malloc() would
-- * always return failure.
-- */
--
--/*-- End of configurable params */
--
- #define SECTOR_SHIFT		9
- #define SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
- #define SECTORS_PER_PAGE	(1 << SECTORS_PER_PAGE_SHIFT)
+-		/* Wrapped case */
+-		if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
++		/*
++		 * If rd_wrapped_cnt > last_cmd_wrapped_cnt:
++		 * there are a lot of ITS commands posted by
++		 * other cpus and ITS is fast.
++		 *
++		 * If rd_wrapped_cnt < last_cmd_wrapped_cnt:
++		 * ITS is slow, there are some ITS commands
++		 * not finished.
++		 *
++		 * If rd_wrapped_cnt == last_cmd_wrapped_cnt:
++		 * it's common case.
++		 */
++		if (rd_wrapped_cnt > last_cmd_wrapped_cnt) {
++			/*
++			 * There is a lot of ITS commands posted by other cpus,
++			 * it make rd_idx move foward fast and wrap.
++			 */
+  			break;
++		} else if (rd_wrapped_cnt == last_cmd_wrapped_cnt) {
++			/* Direct case */
++			if (from_idx < to_idx && rd_idx >= to_idx)
++				break;
++
++			/* Wrapped case */
++			if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
++				break;
++		}
+
+  		count--;
+  		if (!count) {
+-			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu)\n",
+-					   from_idx, to_idx, rd_idx);
++			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu) %llu %llu\n",
++					   from_idx, to_idx, rd_idx, rd_wrapped_cnt, last_cmd_wrapped_cnt);
+  			return -1;
+  		}
+  		cpu_relax();
+@@ -754,6 +799,7 @@ void name(struct its_node *its,						\
+  	struct its_cmd_block *cmd, *sync_cmd, *next_cmd;		\
+  	synctype *sync_obj;						\
+  	unsigned long flags;						\
++	u64 cmd_wrapped_cnt;						\
+  									\
+  	raw_spin_lock_irqsave(&its->lock, flags);			\
+  									\
+@@ -776,9 +822,11 @@ void name(struct its_node *its,						\
+  									\
+  post:									\
+  	next_cmd = its_post_commands(its);				\
++	cmd_wrapped_cnt = its->cmd_wrapped_cnt;				\
+  	raw_spin_unlock_irqrestore(&its->lock, flags);			\
+  									\
+-	if (its_wait_for_range_completion(its, cmd, next_cmd))		\
++	if (its_wait_for_range_completion(its, cmd, next_cmd, 		\
++					  cmd_wrapped_cnt))		\
+  		pr_err_ratelimited("ITS cmd %ps failed\n", builder);	\
+  }
+
 -- 
-2.16.2
+1.8.3
