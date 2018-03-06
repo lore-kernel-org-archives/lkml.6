@@ -1,45 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeCFHtl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:49:41 -0500
-Received: from mga17.intel.com ([192.55.52.151]:24769 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbeCFHtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:49:39 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="31691526"
-Date: Tue, 6 Mar 2018 09:49:32 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Message-ID: <20180306074932.GB3624@linux.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180305125642.GA3425@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1753210AbeCFHvk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:51:40 -0500
+Received: from regular1.263xmail.com ([211.150.99.131]:56467 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbeCFHvi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 02:51:38 -0500
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <ab67b1767c75f4142a541f771cbe5781>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com, heiko@sntech.de, dtor@google.com,
+        dianders@google.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v4 2/3] Input: gpio-keys - allow setting wakeup event action in DT
+Date: Tue,  6 Mar 2018 15:51:22 +0800
+Message-Id: <20180306075123.20989-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180306074418.8879-2-jeffy.chen@rock-chips.com>
+References: <20180306074418.8879-2-jeffy.chen@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> Why you need cover letter?  What are u missing in the patch description
+Allow specifying event actions to trigger wakeup when using the
+gpio-keys input device as a wakeup source.
 
-If you submit a *patch set* I *require* a cover letter, yes.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-/Jarkko
+Changes in v4: None
+Changes in v3: None
+Changes in v2:
+Specify wakeup event action instead of irq trigger type as Brian
+suggested.
+
+ Documentation/devicetree/bindings/input/gpio-keys.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
+index a94940481e55..996ce84352cb 100644
+--- a/Documentation/devicetree/bindings/input/gpio-keys.txt
++++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
+@@ -26,6 +26,14 @@ Optional subnode-properties:
+ 	  If not specified defaults to 5.
+ 	- wakeup-source: Boolean, button can wake-up the system.
+ 			 (Legacy property supported: "gpio-key,wakeup")
++	- wakeup-event-action: Specifies whether the key should wake the
++	  system when asserted, when deasserted, or both. This property is
++	  only valid for keys that wake up the system (e.g., when the
++	  "wakeup-source" property is also provided).
++	  Supported values are defined in linux-event-codes.h:
++		EV_ACT_ASSERTED		- asserted
++		EV_ACT_DEASSERTED	- deasserted
++		EV_ACT_ANY		- both asserted and deasserted
+ 	- linux,can-disable: Boolean, indicates that button is connected
+ 	  to dedicated (not shared) interrupt which can be disabled to
+ 	  suppress events from the button.
+-- 
+2.11.0
