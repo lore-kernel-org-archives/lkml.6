@@ -1,192 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752483AbeCFHIW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:08:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5738 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750792AbeCFHIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:08:20 -0500
-Subject: [RFC PATCH] irqchip/gic-v3-its: handle wrapped case in
- its_wait_for_range_completion()
-To: Marc Zyngier <marc.zyngier@arm.com>
-References: <1518320521-12536-1-git-send-email-yangyingliang@huawei.com>
- <866073z7pr.wl-marc.zyngier@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yangyingliang <yangyingliang@huawei.com>
-From: Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5A9E3E13.6060207@huawei.com>
-Date: Tue, 6 Mar 2018 15:06:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1750848AbeCFHME (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:12:04 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:55676 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750727AbeCFHMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 02:12:03 -0500
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, kernel test robot <shun.hao@intel.com>
+Date: Tue, 06 Mar 2018 01:11:03 -0600
+Message-ID: <87woypy8zc.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <866073z7pr.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-XM-SPF: eid=1et6lC-0000DE-7J;;;mid=<87woypy8zc.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=174.19.85.160;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18ahY7TXcJrmDGu8J2M0JzG8TmdfEbm/xE=
+X-SA-Exim-Connect-IP: 174.19.85.160
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4974]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15017 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.4 (0.0%), b_tie_ro: 1.66 (0.0%), parse: 0.63 (0.0%),
+        extract_message_metadata: 2.4 (0.0%), get_uri_detail_list: 0.88 (0.0%),
+        tests_pri_-1000: 2.8 (0.0%), tests_pri_-950: 1.22 (0.0%), tests_pri_-900:
+        0.95 (0.0%), tests_pri_-400: 15 (0.1%), check_bayes: 15 (0.1%), b_tokenize:
+        4.2 (0.0%), b_tok_get_all: 4.8 (0.0%), b_comp_prob: 1.59 (0.0%),
+        b_tok_touch_all: 2.3 (0.0%), b_finish: 0.58 (0.0%), tests_pri_0: 99 (0.7%),
+        check_dkim_signature: 0.39 (0.0%), check_dkim_adsp: 3.9 (0.0%),
+        tests_pri_500: 14885 (99.1%), poll_dns_idle: 14879 (99.1%), rewrite_mail:
+        0.00 (0.0%)
+Subject: [GIT PULL] siginfo fix for v4.16-rc5
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+Linus,
 
-While cpus posting a bunch of ITS commands, the cmd_queue and rd_idx will
-be wrapped easily. And current way of handling wrapped case is not quite
-right.
-Such as, in direct case, rd_idx will wrap if other cpus post commands
-that make rd_idx increase. When rd_idx wrapped, the driver prints
-timeout messages but in fact the command is finished.
+Please pull the siginfo-linus branch from the git tree:
 
-This patch adds two variables to count wrapped times of ITS commands and
-read index. With these two variables, the driver can handle wrapped case
-correctly.
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-linus
 
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
-  drivers/irqchip/irq-gic-v3-its.c | 72 
-+++++++++++++++++++++++++++++++++-------
-  1 file changed, 60 insertions(+), 12 deletions(-)
+   HEAD: f6a015498dcaee72f80283cb7873d88deb07129c signal/x86: Include the field offsets in the build time checks
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c 
-b/drivers/irqchip/irq-gic-v3-its.c
-index 1d3056f..a03e18e 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -111,6 +111,9 @@ struct its_node {
-  	u32			pre_its_base; /* for Socionext Synquacer */
-  	bool			is_v4;
-  	int			vlpi_redist_offset;
-+	int 			last_rd;
-+	u64			cmd_wrapped_cnt;
-+	u64			rd_wrapped_cnt;
-  };
+The kbuild test robot found that I accidentally moved si_pkey when I was
+cleaning up siginfo_t.  A short followed by an int with the int having 8
+byte alignment.  Sheesh siginfo_t is a weird structure.
 
-  #define ITS_ITT_ALIGN		SZ_256
-@@ -662,6 +665,7 @@ static int its_queue_full(struct its_node *its)
+I have now corrected it and added build time checks that with a little
+luck will catch any similar future mistakes.  The build time checks were
+sufficient for me to verify the bug and to verify my fix.  So they are
+at least useful this once.
 
-  static struct its_cmd_block *its_allocate_entry(struct its_node *its)
-  {
-+	u32 rd;
-  	struct its_cmd_block *cmd;
-  	u32 count = 1000000;	/* 1s! */
+Eric W. Biederman (2):
+      signal: Correct the offset of si_pkey in struct siginfo
+      signal/x86: Include the field offsets in the build time checks
 
-@@ -675,11 +679,24 @@ static struct its_cmd_block 
-*its_allocate_entry(struct its_node *its)
-  		udelay(1);
-  	}
-
-+	/*
-+	 * Here is protected by its->lock and driver cannot allocate
-+	 * ITS commands, if ITS command queue is full, so the read
-+	 * won't wrap twice between this rd_idx and last rd_idx.
-+	 * Count rd wrapped times here is safe.
-+	 */
-+	rd = readl_relaxed(its->base + GITS_CREADR);
-+	if (rd < its->last_rd)
-+		its->rd_wrapped_cnt++;
-+	its->last_rd = rd;
-+
-  	cmd = its->cmd_write++;
-
-  	/* Handle queue wrapping */
--	if (its->cmd_write == (its->cmd_base + ITS_CMD_QUEUE_NR_ENTRIES))
-+	if (its->cmd_write == (its->cmd_base + ITS_CMD_QUEUE_NR_ENTRIES)) {
-  		its->cmd_write = its->cmd_base;
-+		its->cmd_wrapped_cnt++;
-+	}
-
-  	/* Clear command  */
-  	cmd->raw_cmd[0] = 0;
-@@ -713,29 +730,57 @@ static void its_flush_cmd(struct its_node *its, 
-struct its_cmd_block *cmd)
-
-  static int its_wait_for_range_completion(struct its_node *its,
-  					 struct its_cmd_block *from,
--					 struct its_cmd_block *to)
-+					 struct its_cmd_block *to,
-+					 u64 last_cmd_wrapped_cnt)
-  {
--	u64 rd_idx, from_idx, to_idx;
-+	unsigned long flags;
-+	u64 rd_idx, from_idx, to_idx, rd_wrapped_cnt;
-  	u32 count = 1000000;	/* 1s! */
-
-  	from_idx = its_cmd_ptr_to_offset(its, from);
-  	to_idx = its_cmd_ptr_to_offset(its, to);
-
-  	while (1) {
-+		raw_spin_lock_irqsave(&its->lock, flags);
-  		rd_idx = readl_relaxed(its->base + GITS_CREADR);
-+		if (rd_idx < its->last_rd)
-+			its->rd_wrapped_cnt++;
-+		its->last_rd = rd_idx;
-+		rd_wrapped_cnt = its->rd_wrapped_cnt;
-+		raw_spin_unlock_irqrestore(&its->lock, flags);
-
--		/* Direct case */
--		if (from_idx < to_idx && rd_idx >= to_idx)
--			break;
--
--		/* Wrapped case */
--		if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
-+		/*
-+		 * If rd_wrapped_cnt > last_cmd_wrapped_cnt:
-+		 * there are a lot of ITS commands posted by
-+		 * other cpus and ITS is fast.
-+		 *
-+		 * If rd_wrapped_cnt < last_cmd_wrapped_cnt:
-+		 * ITS is slow, there are some ITS commands
-+		 * not finished.
-+		 *
-+		 * If rd_wrapped_cnt == last_cmd_wrapped_cnt:
-+		 * it's common case.
-+		 */
-+		if (rd_wrapped_cnt > last_cmd_wrapped_cnt) {
-+			/*
-+			 * There is a lot of ITS commands posted by other cpus,
-+			 * it make rd_idx move foward fast and wrap.
-+			 */
-  			break;
-+		} else if (rd_wrapped_cnt == last_cmd_wrapped_cnt) {
-+			/* Direct case */
-+			if (from_idx < to_idx && rd_idx >= to_idx)
-+				break;
-+
-+			/* Wrapped case */
-+			if (from_idx >= to_idx && rd_idx >= to_idx && rd_idx < from_idx)
-+				break;
-+		}
-
-  		count--;
-  		if (!count) {
--			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu)\n",
--					   from_idx, to_idx, rd_idx);
-+			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu) %llu %llu\n",
-+					   from_idx, to_idx, rd_idx, rd_wrapped_cnt, last_cmd_wrapped_cnt);
-  			return -1;
-  		}
-  		cpu_relax();
-@@ -754,6 +799,7 @@ void name(struct its_node *its,						\
-  	struct its_cmd_block *cmd, *sync_cmd, *next_cmd;		\
-  	synctype *sync_obj;						\
-  	unsigned long flags;						\
-+	u64 cmd_wrapped_cnt;						\
-  									\
-  	raw_spin_lock_irqsave(&its->lock, flags);			\
-  									\
-@@ -776,9 +822,11 @@ void name(struct its_node *its,						\
-  									\
-  post:									\
-  	next_cmd = its_post_commands(its);				\
-+	cmd_wrapped_cnt = its->cmd_wrapped_cnt;				\
-  	raw_spin_unlock_irqrestore(&its->lock, flags);			\
-  									\
--	if (its_wait_for_range_completion(its, cmd, next_cmd))		\
-+	if (its_wait_for_range_completion(its, cmd, next_cmd, 		\
-+					  cmd_wrapped_cnt))		\
-  		pr_err_ratelimited("ITS cmd %ps failed\n", builder);	\
-  }
-
--- 
-1.8.3
+ arch/x86/kernel/signal_compat.c    | 65 ++++++++++++++++++++++++++++++++++++++
+ include/linux/compat.h             |  4 +--
+ include/uapi/asm-generic/siginfo.h |  4 +--
+ 3 files changed, 69 insertions(+), 4 deletions(-)
