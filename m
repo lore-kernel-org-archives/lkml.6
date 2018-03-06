@@ -1,170 +1,287 @@
-Return-Path: <SRS0=5xW2=GE=gmail.com=htejun@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2426127-1521056737-2-5024028488878839905
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=5xW2=GE=gmail.com=htejun@kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521056737; b=SCtUirv+njz6QdLP5KkJNmP6cJZ0gVW7H0Nt/GH+6VWXAG4
-    tr8j+iQinq6qNnzhLYZkUHkrKAyDx9yPej3NtRg2r9VANGyo+d6vWPiSY3KNtBk7
-    DtT52f48NV/s8ucMZzLSCdG5yt84naZKDL6bYT5MDhqpqs8FZCNZv37tPQ6e0+H+
-    6kzbT22fFOqzojkuVJciDYpjdeRCe/prHY5a9KMVXnRWw3fcQEpPzar7SnorWTJv
-    dcpiZP2QsSG05qE5rvJADHjfxWG+I4Gi91NQjd4xdkIbU7M16fOYat14T82LUPu/
-    WLXswFtHLeNcCz3styfVDKJCTRaPwnPlkLpdaRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=sender:from:to:cc:subject:date:message-id
-    :in-reply-to:references; s=arctest; t=1521056737; bh=GLWObaPTIUZ
-    6EtonGulkOVQ0MK3T4Q3B2oWXZVMUsTo=; b=AFzyMwbAQZgmvZl5RvIpr8F0dpP
-    dgmxcXFn9lVkn92JkpN9bEhRYoCyf8+RuanV1VUBI3ghibijWOGxRHgRubiyt429
-    xZydOJPdQ2HDqE9hPZlDPAEDUf1wmUHvjnXZy0Mp9cxsmyX81IdBheAFxUzKGWvS
-    obpiGDbFO6panZBeFk9krwHn9YvBBOkx1atW8vSvnowLinTeIaqn1OOHtnk7BWwE
-    1J+W+jMpxjXm7JlAeX2FIpCCljWGYf8s2y6MOS/hJfnBlet4w7gF9oOLNhSGnSoi
-    06UpeM3oMm1nr6iWQ6xyCGLCbcrVS6VzEt6W8MEWj6yJEUjNat39m10d67A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ieGMt89T x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom=SRS0=5xW2=GE=gmail.com=htejun@kernel.org smtp.helo=mail.kernel.org;
-    x-aligned-from=domain_pass;
-    x-category=clean score=0 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eDJpVtYM;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ieGMt89T x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom=SRS0=5xW2=GE=gmail.com=htejun@kernel.org smtp.helo=mail.kernel.org;
-    x-aligned-from=domain_pass;
-    x-category=clean score=0 state=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eDJpVtYM;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: security@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5492077A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=htejun@gmail.com
-X-Google-Smtp-Source: AG47ELuZH4IlW9VDyXB6mecFbd/CRJ+XQAlWBvWFKeEVdWSNNKa9JDehA7yJGQYVbEd42pcey/hJ2Q==
-Sender: Tejun Heo <htejun@gmail.com>
-From: Tejun Heo <tj@kernel.org>
-To: torvalds@linux-foundation.org,
-	jannh@google.com,
-	paulmck@linux.vnet.ibm.com,
-	bcrl@kvack.org,
-	viro@zeniv.linux.org.uk,
-	kent.overstreet@gmail.com
-Cc: security@kernel.org,
+Return-Path: <yong.deng@magewell.com>
+X-Google-Smtp-Source: AG47ELtxY9qYxe6S/BCdMa3ggndIFBNrpKledB6VXH9hQDOhqjhbgvObaWEevZOyrOmsj9Jm1z0l
+ARC-Seal: i=1; a=rsa-sha256; t=1520301136; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0N2ZERljxPFDnoFMAI8qjb8Q/vKMFRSiRQF+J/gdDIu3Kqa8xtuzo27Na/HpM9s3mY
+         NQmU/o4rAxP30+ANS/n3Xzmwtp5pPx1aj5FA9o3qQlIdkIuCJYjHO9Movx7uHBPyZeaM
+         cKhJynuQmDgkNoWof/cCfq6ZoBrowcZGRb3Zk1FzkjeI20bS+Sz08nC3SO68CvmTZ4v2
+         fxn/Ayd2A1i6ad7Xx5R/Z9ab/ROm9YWXQoWhA88JPJXq5BHkaIi2s90GPRrcJbHRCEpY
+         Br6QPuSfoBhxKt42qSK5cf3zHE88sxDOMDb3dyp8z8eMhef5NJNJutXuHzCiiQ2cy39l
+         Ow8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=x7uOHLWaZyDz9RxJW8RJ2KAHeVxDaXOmGUf0zfRKb0A=;
+        b=lL/HEcvUShf1oObTNbWb/fLEOp1SJ4q27igVPRfMx90sbNcLoIJwfaGrx7IVOvPmq1
+         203+mHJjdsLMqFfZTBxyUgdR+fd5kKZmUcxxTEg3E2rwTxmxjWp/1jeCCg8Bxyuz3aS2
+         3yjidnFfpSCXRWyXI0KUXvlUpTdnq40NfeuzvUwqnRmwZ3my0tgOeluoOYXcBQdLmC+d
+         5TMogU4F6izxlnavsqaHJT6EqmU8WA1DUrVLyrZtnSRHYqZ3yAaq7MPsXUQc05V2ErpO
+         xM1xjqJ72RkT+b2ZyRTBN9igXPRHlneOLFwqt0DGqJWmJx2jGw3RsSuBC1QIHtIM30DY
+         G5rg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.37 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.37 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07444192|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03299;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.BBpnETm_1520301121;
+From: Yong Deng <yong.deng@magewell.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Todor Tomov <todor.tomov@linaro.org>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@fb.com,
-	Tejun Heo <tj@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/8] fs/aio: Use RCU accessors for kioctx_table->table[]
-Date: Wed, 14 Mar 2018 12:45:09 -0700
-Message-Id: <20180314194515.1661824-2-tj@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180314194515.1661824-1-tj@kernel.org>
-References: <20180314194205.1651587-1-tj@kernel.org>
- <20180314194515.1661824-1-tj@kernel.org>
+	linux-sunxi@googlegroups.com,
+	Yong Deng <yong.deng@magewell.com>
+Subject: [PATCH v9 0/2] Initial Allwinner V3s CSI Support
+Date: Tue,  6 Mar 2018 09:51:10 +0800
+Message-Id: <1520301070-48769-1-git-send-email-yong.deng@magewell.com>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594151284000328035?=
+X-GMAIL-MSGID: =?utf-8?q?1594151284000328035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-While converting ioctx index from a list to a table, db446a08c23d
-("aio: convert the ioctx list to table lookup v3") missed tagging
-kioctx_table->table[] as an array of RCU pointers and using the
-appropriate RCU accessors.  This introduces a small window in the
-lookup path where init and access may race.
+This patchset add initial support for Allwinner V3s CSI.
 
-Mark kioctx_table->table[] with __rcu and use the approriate RCU
-accessors when using the field.
+Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+interface and CSI1 is used for parallel interface. This is not
+documented in datasheet but by test and guess.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: db446a08c23d ("aio: convert the ioctx list to table lookup v3")
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org
----
- fs/aio.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+This patchset implement a v4l2 framework driver and add a binding 
+documentation for it. 
 
-diff --git a/fs/aio.c b/fs/aio.c
-index eb2e0cf..6bcd3fb 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -68,9 +68,9 @@ struct aio_ring {
- #define AIO_RING_PAGES	8
- 
- struct kioctx_table {
--	struct rcu_head	rcu;
--	unsigned	nr;
--	struct kioctx	*table[];
-+	struct rcu_head		rcu;
-+	unsigned		nr;
-+	struct kioctx __rcu	*table[];
- };
- 
- struct kioctx_cpu {
-@@ -330,7 +330,7 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
- 	for (i = 0; i < table->nr; i++) {
- 		struct kioctx *ctx;
- 
--		ctx = table->table[i];
-+		ctx = rcu_dereference(table->table[i]);
- 		if (ctx && ctx->aio_ring_file == file) {
- 			if (!atomic_read(&ctx->dead)) {
- 				ctx->user_id = ctx->mmap_base = vma->vm_start;
-@@ -666,9 +666,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
- 	while (1) {
- 		if (table)
- 			for (i = 0; i < table->nr; i++)
--				if (!table->table[i]) {
-+				if (!rcu_access_pointer(table->table[i])) {
- 					ctx->id = i;
--					table->table[i] = ctx;
-+					rcu_assign_pointer(table->table[i], ctx);
- 					spin_unlock(&mm->ioctx_lock);
- 
- 					/* While kioctx setup is in progress,
-@@ -849,8 +849,8 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
- 	}
- 
- 	table = rcu_dereference_raw(mm->ioctx_table);
--	WARN_ON(ctx != table->table[ctx->id]);
--	table->table[ctx->id] = NULL;
-+	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
-+	RCU_INIT_POINTER(table->table[ctx->id], NULL);
- 	spin_unlock(&mm->ioctx_lock);
- 
- 	/* free_ioctx_reqs() will do the necessary RCU synchronization */
-@@ -895,7 +895,8 @@ void exit_aio(struct mm_struct *mm)
- 
- 	skipped = 0;
- 	for (i = 0; i < table->nr; ++i) {
--		struct kioctx *ctx = table->table[i];
-+		struct kioctx *ctx =
-+			rcu_dereference_protected(table->table[i], true);
- 
- 		if (!ctx) {
- 			skipped++;
-@@ -1084,7 +1085,7 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- 	if (!table || id >= table->nr)
- 		goto out;
- 
--	ctx = table->table[id];
-+	ctx = rcu_dereference(table->table[id]);
- 	if (ctx && ctx->user_id == ctx_id) {
- 		percpu_ref_get(&ctx->users);
- 		ret = ctx;
+Currently, the driver only support the parallel interface. And has been
+tested with a BT1120 signal which generating from FPGA. The following
+fetures are not support with this patchset:
+  - ISP 
+  - MIPI-CSI2
+  - Master clock for camera sensor
+  - Power regulator for the front end IC
+
+Changes in v9:
+  * Merge the patchs from Maxime:
+    a. Fill dma_pfn_offset to accomodate for the RAM offset
+    b. Reduce the error level
+    c. Pass the sun6i_csi_dev pointer to our helpers
+    d. Don't emit a warning when the configured format isn't found
+    e. Support the YUYV format properly
+    f. Invert the polaritie of all signals
+    g. Expose controls on the v4l2_device
+
+Changes in v8:
+  * Revert to v6 and add 'hack' for PHYS_OFFSET.
+
+Changes in v7:
+  * Add 'depends on ARM' in Kconfig to avoid built with non-ARM arch.
+
+Changes in v6:
+  * Add Rob Herring's review tag.
+  * Fix a NULL pointer dereference by picking Maxime Ripard's patch.
+  * Add Maxime Ripard's test tag.
+
+Changes in v5:
+  * Using the new SPDX tags.
+  * Fix MODULE_LICENSE.
+  * Add many default cases and warning messages.
+  * Detail the parallel bus properties
+  * Fix some spelling and syntax mistakes.
+
+Changes in v4:
+  * Deal with the CSI 'INNER QUEUE'.
+    CSI will lookup the next dma buffer for next frame before the
+    the current frame done IRQ triggered. This is not documented
+    but reported by Ondřej Jirman.
+    The BSP code has workaround for this too. It skip to mark the
+    first buffer as frame done for VB2 and pass the second buffer
+    to CSI in the first frame done ISR call. Then in second frame
+    done ISR call, it mark the first buffer as frame done for VB2
+    and pass the third buffer to CSI. And so on. The bad thing is
+    that the first buffer will be written twice and the first frame
+    is dropped even the queued buffer is sufficient.
+    So, I make some improvement here. Pass the next buffer to CSI
+    just follow starting the CSI. In this case, the first frame
+    will be stored in first buffer, second frame in second buffer.
+    This mothed is used to avoid dropping the first frame, it
+    would also drop frame when lacking of queued buffer.
+  * Fix: using a wrong mbus_code when getting the supported formats
+  * Change all fourcc to pixformat
+  * Change some function names
+
+Changes in v3:
+  * Get rid of struct sun6i_csi_ops
+  * Move sun6i-csi to new directory drivers/media/platform/sunxi
+  * Merge sun6i_csi.c and sun6i_csi_v3s.c into sun6i_csi.c
+  * Use generic fwnode endpoints parser
+  * Only support a single subdev to make things simple
+  * Many complaintion fix
+
+Changes in v2: 
+  * Change sunxi-csi to sun6i-csi
+  * Rebase to media_tree master branch 
+
+Following is the 'v4l2-compliance -s -f' output, I have test this
+with both interlaced and progressive signal:
+
+# ./v4l2-compliance -s -f
+v4l2-compliance SHA   : 6049ea8bd64f9d78ef87ef0c2b3dc9b5de1ca4a1
+
+Driver Info:
+        Driver name   : sun6i-video
+        Card type     : sun6i-csi
+        Bus info      : platform:csi
+        Driver version: 4.15.0
+        Capabilities  : 0x84200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps   : 0x04200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+
+Compliance test for device /dev/video0 (not using libv4l2):
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second video open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Test input 0:
+
+        Control ioctls:
+                test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+                test VIDIOC_QUERYCTRL: OK (Not Supported)
+                test VIDIOC_G/S_CTRL: OK (Not Supported)
+                test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+                test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+                test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+                Standard Controls: 0 Private Controls: 0
+
+        Format ioctls:
+                test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+                test VIDIOC_G/S_PARM: OK (Not Supported)
+                test VIDIOC_G_FBUF: OK (Not Supported)
+                test VIDIOC_G_FMT: OK
+                test VIDIOC_TRY_FMT: OK
+                test VIDIOC_S_FMT: OK
+                test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+                test Cropping: OK (Not Supported)
+                test Composing: OK (Not Supported)
+                test Scaling: OK (Not Supported)
+
+        Codec ioctls:
+                test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+                test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+                test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+        Buffer ioctls:
+                test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+                test VIDIOC_EXPBUF: OK
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test MMAP: OK                                     
+        test USERPTR: OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Stream using all formats:
+        test MMAP for Format HM12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV21, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format YU12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format YV12, Frame Size 1280x720:
+                Stride 1920, Field None: OK                                 
+        test MMAP for Format NV16, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+        test MMAP for Format NV61, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+        test MMAP for Format 422P, Frame Size 1280x720:
+                Stride 2560, Field None: OK                                 
+
+Total: 54, Succeeded: 54, Failed: 0, Warnings: 0
+
+Yong Deng (2):
+  dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
+  media: V3s: Add support for Allwinner CSI.
+
+ .../devicetree/bindings/media/sun6i-csi.txt        |  59 ++
+ MAINTAINERS                                        |   8 +
+ drivers/media/platform/Kconfig                     |   1 +
+ drivers/media/platform/Makefile                    |   2 +
+ drivers/media/platform/sunxi/sun6i-csi/Kconfig     |   9 +
+ drivers/media/platform/sunxi/sun6i-csi/Makefile    |   3 +
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 936 +++++++++++++++++++++
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h | 145 ++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h | 196 +++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.c   | 759 +++++++++++++++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.h   |  53 ++
+ 11 files changed, 2171 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Kconfig
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Makefile
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
+
 -- 
-2.9.5
+1.8.3.1
