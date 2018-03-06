@@ -1,89 +1,92 @@
-Return-Path: <jinb.park7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520335370; cv=none;
+Return-Path: <linux+gregkh=linuxfoundation.org@armlinux.org.uk>
+X-Google-Smtp-Source: AG47ELsav+fgAU1GATu9B570YpPzAj/X9jpp7B7eE1H5HSJU1arm3Jhdj/dkzRwxU2yy2DIfKSdP
+ARC-Seal: i=1; a=rsa-sha256; t=1520335707; cv=none;
         d=google.com; s=arc-20160816;
-        b=tcw9SRqRJ+9hLNQqm8QmSt+ywTa9WdE+5sVD7wD9OLUrnULAzf/a29PS6/hEU1V+AW
-         Pu8uaOeXDJpqeJo2H0mrNk9kXJIWeDVT8KhZvNBNX/V7GswQzW96idMEB+SKoHMfXrNq
-         Cs6BSEviMf1RgTHehWHvgoqD5TLpAcbC2o8ndyVhrQXCxxGGQIbIbC8pQ7x1wUfvhzD1
-         /awPJFPetiypE7aeHne1tA5ZHAoG5KPxEh0d/BD+4bSf0zJ1S7Lcbxec0UwVhsMr69X0
-         myYMZCScl5xAIlHjkxQ/AXiDGxNsDNtpNml7JSNoTsKJ8O+DK2m33GUJB3bAZeI5ObUE
-         sP0Q==
+        b=hn0Z2RqGucH1Gf6LnK9sJqv56MpS2h/OVgeDjkD0Req9J0v/rVhZd0K5v1s1QdjjwG
+         Z1zf4nXC8u3QiIGmxkrtudyzb9tas2hw+dGyZOsRe2pRGLHDrdjqv3ypMoTagz811pw+
+         10Zfl1LTGvPVQa15l51t8Q88WH/aGzm4NvAl8WvazEvdJoefr6qIbpckuj2sUVBHcqd/
+         GjLnylJ/7wyh6bumP7exY14BpxgOSWWPZO6wCStOnQUPL2QQznZZGNEFktNWcN7s5yt3
+         IICe/03lcEnZtCNtTmHLySkvex8dVABTEWMkQDLbaVhp4Cx0F4T2R6keGaZ95F9pA5/F
+         ixyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=PB5p/v89tu0o4I175OEjSoX/f0w7bSlM0/LZNjgFgEU=;
-        b=Xq8Ahxb6Ecn2z+t65PP4jselSaEXJhuwUMnybNBNWeUVJ6fT6Xq1y1BL+0PNsIIolB
-         Jwrhl4mWEwOgz6o6SfRlFnTNSEanTgkYlip+yDwgxnjrR3BcAkc4ZXUaXP5mE6XPQoPz
-         bxRYtTRwVtzn1FVeJEljyaSdgM+Ik4M/l3HvUOmUkgBU1pF01ItToeJWmZE25FuowdY7
-         VEB+VgII5/pkRyGAaMYkAefPjAZxspjhCBrGEHO5NyfzNAe6HhknVedv5ByDyYQnuGj3
-         /57RWYukOV2iLM+azmboJVZjRvI9FN+Lrmuf6pEsshIvog00IlOEZt78ul52k4G30NWZ
-         Xnzg==
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=tua8qlT4hMgybx7Pj1F3NF3E7gCWTzLTR7r09w9VFBk=;
+        b=ZIXyDYgL768VyeYJye3fxKoWxJR1DIbyOA5FPapKpulmtVNUGojKIjnXxZqj/fD7VV
+         1HL6YxGwcX2gyb8Gdh5A59MEe9BJYRxRTgGGXGrzIvg34PBe5ryKH+XIm1nZMI/wTfMf
+         pRR7E81bXPzCZjBDT9edPXHiWdniYii56e9gYuvPx0VfxR6SnCMMMEE5KDfTVcuTlEsV
+         xPFt6DfGjAh+N5Q6rKgw69NR6ijc0JmWBPxqI2Gmgf4bIMqbwwqVBfALebAwG8od4TO/
+         um0BFcTLGg1CCTKVaIcKr9smp9NcXS8XwFGNPBgJSBvHwJcAkTME64CzH1KntI4DQs1P
+         1UXA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MWxx6H13;
-       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=k7gnrKAz;
+       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MWxx6H13;
-       spf=pass (google.com: domain of jinb.park7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jinb.park7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELvCghsxxEKKacuPhn1d+vLVHpv2GlcXe8hJqI3CHqevu/GG6Q3XOfqqLGHwccldimPUMfzrSQ==
-Date: Tue, 6 Mar 2018 20:22:41 +0900
-From: Jinbum Park <jinb.park7@gmail.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org, vladimir.murzin@arm.com,
-	keescook@chromium.org, will.deacon@arm.com, mark.rutland@arm.com,
+       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=k7gnrKAz;
+       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
+Date: Tue, 6 Mar 2018 11:28:02 +0000
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Jinbum Park <jinb.park7@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com, mark.rutland@arm.com,
+	vladimir.murzin@arm.com, keescook@chromium.org,
+	gregkh@linuxfoundation.org, will.deacon@arm.com,
 	catalin.marinas@arm.com
-Subject: [PATCH] arm: mm: Kconfig: Disable KUSER_HELPERS in ARMv6 or later as
- default
-Message-ID: <20180306112241.GA5938@pjb1027-Latitude-E5410>
+Subject: Re: [PATCH] arm: mm: Kconfig: Disable KUSER_HELPERS in ARMv6 or
+ later as default
+Message-ID: <20180306112802.GI9418@n2100.armlinux.org.uk>
+References: <20180306112241.GA5938@pjb1027-Latitude-E5410>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180306112241.GA5938@pjb1027-Latitude-E5410>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594187181647482868?=
-X-GMAIL-MSGID: =?utf-8?q?1594187181647482868?=
+X-GMAIL-MSGID: =?utf-8?q?1594187534887170222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Codes for KUSER_HELPERS can be abused as ROP gadaget,
-So that It's better to disable that as if possible.
+On Tue, Mar 06, 2018 at 08:22:41PM +0900, Jinbum Park wrote:
+> Codes for KUSER_HELPERS can be abused as ROP gadaget,
+> So that It's better to disable that as if possible.
+> 
+> Since over ARMv6 has ldrex/strex at user-space,
+> NEED_KUSER_HELPERS is not selected for over ARMv6.
+> 
+> But, Even though NEED_KUSER_HELPERS is not selected,
+> current configuration enable KUSER_HELPERS as default.
+> 
+> * as-is
+> 
+> - Enable KUSER_HELPERS as default even though over ARMv6.
+> - User can disable KUSER_HELPERS.
+> 
+> * to-be
+> 
+> - Disable KUSER_HELPERS in ARMv6 or later as default.
+> - User can enable KUSER_HELPERS for compatibility.
+> 
+> This change removes the unnecessary configuration that has security-risk.
 
-Since over ARMv6 has ldrex/strex at user-space,
-NEED_KUSER_HELPERS is not selected for over ARMv6.
+NAK.
 
-But, Even though NEED_KUSER_HELPERS is not selected,
-current configuration enable KUSER_HELPERS as default.
+It is not this trivial or easy to make this change - you are assuming
+that userspace does not use these, which is in incorrect assumption -
+there are armhf distros out there that make use of the kuser helpers,
+which means we can't disable it by default without causing userspace
+regressions.
 
-* as-is
+Therefore, it defaults to being enabled, unless someone decides to
+disable it and knows for certain that their userspace does not depend
+on this - it's a choice that distros have to make when building their
+kernels with the knowledge of how their distro userspace is configured.
 
-- Enable KUSER_HELPERS as default even though over ARMv6.
-- User can disable KUSER_HELPERS.
-
-* to-be
-
-- Disable KUSER_HELPERS in ARMv6 or later as default.
-- User can enable KUSER_HELPERS for compatibility.
-
-This change removes the unnecessary configuration that has security-risk.
-
-Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
----
- arch/arm/mm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index 7f14acf..40e5fe5 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -840,7 +840,7 @@ config NEED_KUSER_HELPERS
- config KUSER_HELPERS
- 	bool "Enable kuser helpers in vector page" if !NEED_KUSER_HELPERS
- 	depends on MMU
--	default y
-+	default y if NEED_KUSER_HELPERS
- 	help
- 	  Warning: disabling this option may break user programs.
- 
 -- 
-1.9.1
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
