@@ -1,80 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933259AbeCFTcw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:32:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49252 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933291AbeCFTYj (ORCPT
+        id S1754121AbeCFTdH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 14:33:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40896 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753857AbeCFTdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:24:39 -0500
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: [PATCH v8 47/63] shmem: Convert find_swap_entry to XArray
-Date: Tue,  6 Mar 2018 11:23:57 -0800
-Message-Id: <20180306192413.5499-48-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180306192413.5499-1-willy@infradead.org>
-References: <20180306192413.5499-1-willy@infradead.org>
+        Tue, 6 Mar 2018 14:33:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A13FE60314
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Philip Elcan <pelcan@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
+ <20180306134405.GB18080@arm.com>
+ <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
+ <20180306152318.GE17454@arm.com>
+ <cbdce6fd-a1db-4f12-ccea-adfe9fe7c057@codeaurora.org>
+Message-ID: <dbc6e162-d245-a685-8bfe-f506d18e19e3@codeaurora.org>
+Date: Tue, 6 Mar 2018 13:33:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <cbdce6fd-a1db-4f12-ccea-adfe9fe7c057@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi Will,
 
-This is a 1:1 conversion.
+On 03/06/2018 12:48 PM, Shanker Donthineni wrote:
+> Hi Will,
+> 
+> On 03/06/2018 09:23 AM, Will Deacon wrote:
+>> Hi Shanker,
+>>
+>> On Tue, Mar 06, 2018 at 08:47:27AM -0600, Shanker Donthineni wrote:
+>>> On 03/06/2018 07:44 AM, Will Deacon wrote:
+>>>> I think this is a slight asymmetry with the code for the I-side. On the
+>>>> I-side, you hook into invalidate_icache_by_line, whereas on the D-side you
+>>>> hook into the callers of dcache_by_line_op. Why is that?
+>>>>
+>>>
+>>> There is no particular reason other than complexity of the macro with another 
+>>> alternative. I tried to avoid this change by updating __clean_dcache_area_pou().
+>>> I can change if you're interested to see both I-Side and D-Side changes are
+>>> symmetric some thing like this...
+>>>
+>>>  .macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+>>>   
+>>>   .if	(\op == cvau)
+>>>   alternative_if ARM64_HAS_CACHE_IDC
+>>>         dsb	ishst
+>>>         b       9997f
+>>>   alternative_else_nop_endif
+>>>   .endif
+>>>
+>>> 	dcache_line_size \tmp1, \tmp2
+>>> 	add	\size, \kaddr, \size
+>>> 	sub	\tmp2, \tmp1, #1
+>>> 	bic	\kaddr, \kaddr, \tmp2
+>>>  9998:
+>>> 	.if	(\op == cvau || \op == cvac)
+>>>  alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+>>> 	dc	\op, \kaddr
+>>>  alternative_else
+>>> 	dc	civac, \kaddr
+>>>  alternative_endif
+>>> 	.elseif	(\op == cvap)
+>>>  alternative_if ARM64_HAS_DCPOP
+>>> 	sys 3, c7, c12, 1, \kaddr	// dc cvap
+>>>  alternative_else
+>>> 	dc	cvac, \kaddr
+>>>  alternative_endif
+>>> 	.else
+>>> 	dc	\op, \kaddr
+>>> 	.endif
+>>> 	add	\kaddr, \kaddr, \tmp1
+>>> 	cmp	\kaddr, \size
+>>> 	b.lo	9998b
+>>> 	dsb	\domain
+>>> 9997:
+>>> 	.endm
+>>
+>> I think it would be cleaner the other way round, actually -- move the check
+>> out of invalidate_icache_by_line and into its two callers.
+>>
+> 
+> Sure, I'll send out the next patch with your suggestions.
+> 
+>>>> I notice that the only user other than
+>>>> flush_icache_range/__flush_cache_user_range or invalidate_icache_by_line
+>>>> is in KVM, via invalidate_icache_range. If you want to hook in there, why
+>>>> aren't you also patching __flush_icache_all? If so, I'd rather have the
+>>>> I-side code consistent with the D-side code and do this in the handful of
+>>>> callers. We might even be able to elide a branch or two that way.
+>>>>
+>>>
+>>> Agree with you, it saves function calls overhead. I'll do this change...
+>>>
+>>> static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
+>>> {
+>>> 	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)
+>>> 	    __invalidate_icache_guest_page(pfn, size);
+>>> }
+>>>
+>>>
+>>>> I'm going to assume that I-cache aliases are all coherent if DIC=1, so it's
+>>>> safe to elide our alias sync code.
+>>>>
+>>>
+>>> I'm not sure about I-cache whether aliases are all coherent if DIC=1 ot not.
+>>> Unfortunately I don't have any hardware to test DIC=1. I've verified IDC=1.
+>>
+>> I checked with our architects and aliases don't pose a problem here, so you
+>> can ignore me :)
+>>
+> 
+> I also confirmed with Thomas Speier, we can skip __flush_icache_all() if DIC=1.
+> 
+>  
+Planning to patch __flush_icache_all() itself instead of changing the callers. This
+way we can avoid "ic ialluis" completely. Is this okay for you? 
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+static inline void __flush_icache_all(void)
+{
+       /* Instruction cache invalidation is not required for I/D coherence? */
+      if (!cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
+               asm("ic ialluis");
+               dsb(ish);
+       }
+}
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0af8a439dfad..49f42dc9e1dc 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1076,28 +1076,27 @@ static void shmem_evict_inode(struct inode *inode)
- 	clear_inode(inode);
- }
- 
--static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
-+static unsigned long find_swap_entry(struct xarray *xa, void *item)
- {
--	struct radix_tree_iter iter;
--	void **slot;
--	unsigned long found = -1;
-+	XA_STATE(xas, xa, 0);
- 	unsigned int checked = 0;
-+	void *entry;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		if (*slot == item) {
--			found = iter.index;
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		if (xas_retry(&xas, entry))
-+			continue;
-+		if (entry == item)
- 			break;
--		}
- 		checked++;
--		if ((checked % 4096) != 0)
-+		if ((checked % XA_CHECK_SCHED) != 0)
- 			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
-+		xas_pause(&xas);
- 		cond_resched_rcu();
- 	}
--
- 	rcu_read_unlock();
--	return found;
-+
-+	return xas_invalid(&xas) ? -1 : xas.xa_index;
- }
- 
- /*
+>> Will
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+> 
+
 -- 
-2.16.1
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
