@@ -1,88 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753981AbeCFTMO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:12:14 -0500
-Received: from gateway30.websitewelcome.com ([192.185.147.85]:25108 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753823AbeCFTMK (ORCPT
+        id S1754070AbeCFTMa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 14:12:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51826 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753994AbeCFTM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:12:10 -0500
-Date: Tue, 6 Mar 2018 12:47:55 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [RFC] netfilter: cttimeout: remove VLA in ctnl_timeout_parse_policy
-Message-ID: <20180306184755.GA7628@embeddedgus>
+        Tue, 6 Mar 2018 14:12:28 -0500
+Date: Tue, 6 Mar 2018 19:12:18 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
+        linux-omap@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regulator regression in next-20180305
+Message-ID: <20180306191218.GF13586@sirena.org.uk>
+References: <20180305231246.GB5799@atomide.com>
+ <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
+ <20180306163035.GE13586@sirena.org.uk>
+ <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8TaQrIeukR7mmbKf"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1etHd3-004NRO-8T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:37144
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
+X-Cookie: DYSLEXICS OF THE WORLD, UNTIE!
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA and replace it
-with dynamic memory allocation.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/netfilter/nfnetlink_cttimeout.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+--8TaQrIeukR7mmbKf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
-index 95b0470..a2f7d92 100644
---- a/net/netfilter/nfnetlink_cttimeout.c
-+++ b/net/netfilter/nfnetlink_cttimeout.c
-@@ -52,18 +52,26 @@ ctnl_timeout_parse_policy(void *timeouts,
- 			  struct net *net, const struct nlattr *attr)
- {
- 	int ret = 0;
-+	struct nlattr **tb = NULL;
- 
- 	if (likely(l4proto->ctnl_timeout.nlattr_to_obj)) {
--		struct nlattr *tb[l4proto->ctnl_timeout.nlattr_max+1];
-+		tb = kcalloc(l4proto->ctnl_timeout.nlattr_max + 1, sizeof(*tb),
-+			     GFP_KERNEL);
-+
-+		if (!tb)
-+			return -ENOMEM;
- 
- 		ret = nla_parse_nested(tb, l4proto->ctnl_timeout.nlattr_max,
- 				       attr, l4proto->ctnl_timeout.nla_policy,
- 				       NULL);
- 		if (ret < 0)
--			return ret;
-+			goto err;
- 
- 		ret = l4proto->ctnl_timeout.nlattr_to_obj(tb, net, timeouts);
- 	}
-+
-+err:
-+	kfree(tb);
- 	return ret;
- }
- 
--- 
-2.7.4
+On Tue, Mar 06, 2018 at 01:56:42PM -0300, Fabio Estevam wrote:
+> On Tue, Mar 6, 2018 at 1:30 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > -       for (i = 0; rdev; rdev = rdev_get_supply(rdev), i++)
+> > +       for (i = 1000; rdev; rdev = rdev_get_supply(rdev), i++)
+> >                 mutex_lock_nested(&rdev->mutex, i);
+
+> With this change the log is a bit different, but still get a kernel hang:
+> https://pastebin.com/eF08TnuT
+
+Yeah, that's what I expected.  What we really need to figure out I think
+is what exactly is taking the lock that we end up colliding with, I
+don't seem to be able to reproduce so I'm having to just go on staring
+at the code here.
+
+--8TaQrIeukR7mmbKf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqe6BIACgkQJNaLcl1U
+h9C6Mwf/TpWxJKwUprayYcpopNp7taEsA/MC6XT0/R7jcrCT1CsP/XbsgMT96yW5
+NJ0zhtO2mt+z1aayp82JKS5fsx53kUwbkzaWAjBJZyhZOvvQpmcTttrB8WNThT6d
+muYi9X/Vhhjo2sWBlJW1GdwNo2S6z+FKFeTjt2n9RKJFxXPGJCRFM/EDnrMz4YMD
+V7piEh8RpFmgAlMU6USHZ/RUhIFwAUOOALOb2AKuZPRdYiP78ZNjnvDKpfT3wIBp
+1WgAsDqj/LN1NQmbJIHS//g9e5HhIcxx43o0KLLFz0tXtZaltHEk9d+yjZ4/rWGU
+9+33XhXTvtG+5NJ3cpCis3+E3H2f4w==
+=NZwF
+-----END PGP SIGNATURE-----
+
+--8TaQrIeukR7mmbKf--
