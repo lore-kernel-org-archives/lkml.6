@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750944AbeCFGnS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 01:43:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53607 "EHLO
+        id S1752760AbeCFGnw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 01:43:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59373 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeCFGnR (ORCPT
+        with ESMTP id S1750727AbeCFGnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 01:43:17 -0500
-Date: Mon, 5 Mar 2018 22:43:02 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-5tzvb875ep2sel03aeefgmud@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, kan.liang@intel.com, wangnan0@huawei.com,
-        acme@redhat.com, yao.jin@intel.com, adrian.hunter@intel.com,
-        tglx@linutronix.de, dsahern@gmail.com, hpa@zytor.com, jolsa@kernel.org,
-        torvalds@linux-foundation.org, namhyung@kernel.org, mingo@kernel.org
-Reply-To: mingo@kernel.org, namhyung@kernel.org, jolsa@kernel.org,
-        torvalds@linux-foundation.org, dsahern@gmail.com, hpa@zytor.com,
-        yao.jin@intel.com, tglx@linutronix.de, adrian.hunter@intel.com,
-        wangnan0@huawei.com, acme@redhat.com, linux-kernel@vger.kernel.org,
-        kan.liang@intel.com
+        Tue, 6 Mar 2018 01:43:50 -0500
+Date: Mon, 5 Mar 2018 22:43:29 -0800
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-a18ee796f8af5569628c324700b9a34b88884488@git.kernel.org>
+Cc: tglx@linutronix.de, mingo@kernel.org, jolsa@kernel.org,
+        dsahern@gmail.com, peterz@infradead.org, acme@redhat.com,
+        hpa@zytor.com, namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, jolsa@kernel.org,
+        dsahern@gmail.com, peterz@infradead.org, acme@redhat.com,
+        hpa@zytor.com, namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180301165215.6780-1-jolsa@kernel.org>
+References: <20180301165215.6780-1-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate browser: Be more robust when drawing
- jump arrows
-Git-Commit-ID: 9c04409d7f5c325233961673356ea8aced6a4ef3
+Subject: [tip:perf/core] perf tests: Switch trace+probe_libc_inet_pton to
+ use record
+Git-Commit-ID: a18ee796f8af5569628c324700b9a34b88884488
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,85 +36,119 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9c04409d7f5c325233961673356ea8aced6a4ef3
-Gitweb:     https://git.kernel.org/tip/9c04409d7f5c325233961673356ea8aced6a4ef3
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 1 Mar 2018 11:33:59 -0300
+Commit-ID:  a18ee796f8af5569628c324700b9a34b88884488
+Gitweb:     https://git.kernel.org/tip/a18ee796f8af5569628c324700b9a34b88884488
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 1 Mar 2018 17:52:14 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Mar 2018 09:57:57 -0300
+CommitDate: Mon, 5 Mar 2018 09:58:42 -0300
 
-perf annotate browser: Be more robust when drawing jump arrows
+perf tests: Switch trace+probe_libc_inet_pton to use record
 
-This first happened with a gcc function, _cpp_lex_token, that has the
-usual jumps:
+There's a problem with relying on backtrace data from 'perf trace' the
+way the trace+probe_libc_inet_pton does. This test inserts uprobe within
+ping binary and checks that it gets its sample using 'perf trace'.
 
- │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
+It also checks it gets proper backtrace from sample and that's where the
+issue is.
 
-I.e. jumps to a label inside that function (_cpp_lex_token), and those
-works, but also this kind:
+The 'perf trace' does not sort events (by definition) so it can happen
+that it processes the event sample before the ping binary memory map
+event. This can (very rarely) happen as proved by this events dump
+output (from custom added debug output):
 
- │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
+  ...
+  7680/7680: [0x7f4e29718000(0x204000) @ 0 fd:00 33611321 4230892504]: r-xp /usr/lib64/libdl-2.17.so
+  7680/7680: [0x7f4e29502000(0x216000) @ 0 fd:00 33617257 2606846872]: r-xp /usr/lib64/libz.so.1.2.7
+  (IP, 0x2): 7680/7680: 0x7f4e29c2ed60 period: 1 addr: 0
+  7680/7680: [0x564842ef0000(0x233000) @ 0 fd:00 83 1989280200]: r-xp /usr/bin/ping
+  7680/7680: [0x7f4e2aca2000(0x224000) @ 0 fd:00 33611308 1219144940]: r-xp /usr/lib64/ld-2.17.so
+  ...
 
-I.e. jumps to another function, outside _cpp_lex_token, which are not
-being correctly handled generating as a side effect references to
-ab->offset[] entries that are set to NULL, so to make this code more
-robust, check that here.
+In this case 'perf trace' fails to resolve the last callchain IP (within
+the ping binary) because it does not know about the ping binary memory
+map yet and the test fails like this:
 
-A proper fix for will be put in place, looking at the function name
-right after the '<' token and probably treating this like a 'call'
-instruction.
+  PING ::1(::1) 56 data bytes
+  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.037 ms
+  --- ::1 ping statistics ---
+  1 packets transmitted, 1 received, 0% packet loss, time 0ms
+  rtt min/avg/max/mdev = 0.037/0.037/0.037/0.000 ms
+  0.000 probe_libc:inet_pton:(7f4e29c2ed60))
+  __GI___inet_pton (/usr/lib64/libc-2.17.so)
+  getaddrinfo (/usr/lib64/libc-2.17.so)
+  [0] ([unknown])
+  FAIL: expected backtrace entry 8 ".*\(.*/bin/ping.*\)$" got "[0] ([unknown])"
 
-For now just don't draw the arrow.
+Switching the test to use 'perf record' and 'perf script' instead of
+'perf trace'.
 
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Link: https://lkml.kernel.org/n/tip-5tzvb875ep2sel03aeefgmud@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180301165215.6780-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ .../perf/tests/shell/trace+probe_libc_inet_pton.sh | 30 +++++++++++-----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index e2f666391ac4..6ff6839558b0 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -328,7 +328,32 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 	if (!disasm_line__is_valid_jump(cursor, sym))
- 		return;
+diff --git a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+index 8c4ab0b390c0..52c3ee701a89 100755
+--- a/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/trace+probe_libc_inet_pton.sh
+@@ -15,30 +15,28 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
  
-+	/*
-+	 * This first was seen with a gcc function, _cpp_lex_token, that
-+	 * has the usual jumps:
-+	 *
-+	 *  │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
-+	 *
-+	 * I.e. jumps to a label inside that function (_cpp_lex_token), and
-+	 * those works, but also this kind:
-+	 *
-+	 *  │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
-+	 *
-+	 *  I.e. jumps to another function, outside _cpp_lex_token, which
-+	 *  are not being correctly handled generating as a side effect references
-+	 *  to ab->offset[] entries that are set to NULL, so to make this code
-+	 *  more robust, check that here.
-+	 *
-+	 *  A proper fix for will be put in place, looking at the function
-+	 *  name right after the '<' token and probably treating this like a
-+	 *  'call' instruction.
-+	 */
- 	target = ab->offsets[cursor->ops.target.offset];
-+	if (target == NULL) {
-+		ui_helpline__printf("WARN: jump target inconsistency, press 'o', ab->offsets[%#x] = NULL\n",
-+				    cursor->ops.target.offset);
-+		return;
-+	}
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+-	expected[0]="PING.*bytes"
+-	expected[1]="64 bytes from ::1.*"
+-	expected[2]=".*ping statistics.*"
+-	expected[3]=".*packets transmitted.*"
+-	expected[4]="rtt min.*"
+-	expected[5]="[0-9]+\.[0-9]+[[:space:]]+probe_libc:inet_pton:\([[:xdigit:]]+\)"
+-	expected[6]=".*inet_pton[[:space:]]\($libc|inlined\)$"
++	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
++	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf'
+-		expected[7]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+-		expected[8]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
+-		expected[9]="main[[:space:]]\(.*/bin/ping.*\)$"
+-		expected[10]="__libc_start_main[[:space:]]\($libc\)$"
+-		expected[11]="_start[[:space:]]\(.*/bin/ping.*\)$"
++		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
++		expected[3]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
++		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
++		expected[5]="__libc_start_main[[:space:]]\($libc\)$"
++		expected[6]="_start[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+-		expected[7]="getaddrinfo[[:space:]]\($libc\)$"
+-		expected[8]=".*\(.*/bin/ping.*\)$"
++		expected[2]="getaddrinfo[[:space:]]\($libc\)$"
++		expected[3]=".*\(.*/bin/ping.*\)$"
+ 		;;
+ 	esac
  
- 	bcursor = browser_line(&cursor->al);
- 	btarget = browser_line(target);
+-	perf trace --no-syscalls -e probe_libc:inet_pton/$eventattr/ ping -6 -c 1 ::1 2>&1 | grep -v ^$ | while read line ; do
++	file=`mktemp -u /tmp/perf.data.XXX`
++
++	perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
++	perf script -i $file | while read line ; do
+ 		echo $line
+ 		echo "$line" | egrep -q "${expected[$idx]}"
+ 		if [ $? -ne 0 ] ; then
+@@ -48,6 +46,8 @@ trace_libc_inet_pton_backtrace() {
+ 		let idx+=1
+ 		[ -z "${expected[$idx]}" ] && break
+ 	done
++
++	rm -f $file
+ }
+ 
+ # Check for IPv6 interface existence
