@@ -1,80 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750838AbeCFPUB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:20:01 -0500
-Received: from mga02.intel.com ([134.134.136.20]:51915 "EHLO mga02.intel.com"
+        id S1753733AbeCFPUe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:20:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932078AbeCFPT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:19:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="22392319"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
-Thread-Topic: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
-Thread-Index: AQHTtUX4G0C9trJxR0mDOOPWnODFj6PDTs7g
-Date: Tue, 6 Mar 2018 15:19:23 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F4C1@hasmsx108.ger.corp.intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
-         <20180306092503.11568-4-tomas.winkler@intel.com>
- <1520339005.3779.3.camel@linux.intel.com>
-In-Reply-To: <1520339005.3779.3.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGZkZTQxNjItZTk4YS00NDExLTgxYzQtZWMzMTQ3ODY0NjIyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJIQWZKMkNZeFp1amI0eVBWSjFUdjdubHZzY29URmRoZ0IyXC9EMGRmbVwvRWxESGszazhpSXRQZk1pc1k4d0hUbGoifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.252.24.108]
-Content-Type: text/plain; charset="utf-8"
+        id S1753553AbeCFPUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:20:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F63121777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 6 Mar 2018 12:20:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH Resent] perf annotate: Fix s390 target function
+ disassembly
+Message-ID: <20180306152030.GB3382@kernel.org>
+References: <20180306123955.98802-1-tmricht@linux.vnet.ibm.com>
+ <20180306140449.GD10176@kernel.org>
+ <f37513cc-1819-6a66-03b5-73b30bbbb966@linux.vnet.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f37513cc-1819-6a66-03b5-73b30bbbb966@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w26FK4Y8019999
 
-> On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
-> > TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve
-> > generation of crypto keys which can be a computationally intensive task.
-> > The timeout is set to 3min.
-> > Rather than increasing default timeout a new constant is added, to not
-> > stall for too long on regular commands failures.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Em Tue, Mar 06, 2018 at 03:52:35PM +0100, Thomas-Mich Richter escreveu:
+> On 03/06/2018 03:04 PM, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Mar 06, 2018 at 01:39:55PM +0100, Thomas Richter escreveu:
+> >> Perf annotate displays function call assembler instructions
+> >> with a right arrow. Hitting enter on this line/instruction
+> >> causes the browser to disassemble this target function and
+> >> show it on the screen.  On s390 this results in an error
+> >> message 'The called function was not found.'
+> >>
+> >> The function call assembly line parsing does not handle
+> >> the s390 bras and brasl instructions. Function call__parse
+> >> expects the target as first operand:
+> >> 	callq	e9140 <__fxstat>
+> >> S390 has a register number as first operand:
+> >> 	brasl	%r14,41d60 <abort>
+> >> Therefore the target addresses on s390 are always zero
+> >> which is an invalid address.
+> >>
+> >> Fix this by skipping the first operand on s390.
+> >>
+> >> Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+> >> Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> >> Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+> >> ---
+> >>  tools/perf/util/annotate.c | 8 ++++++++
+> >>  1 file changed, 8 insertions(+)
+> >>
+> >> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> >> index 49ff825f745c..feb6006b676d 100644
+> >> --- a/tools/perf/util/annotate.c
+> >> +++ b/tools/perf/util/annotate.c
+> >> @@ -192,6 +192,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map *
+> >>  	};
+> >>  
+> >>  	ops->target.addr = strtoull(ops->raw, &endptr, 16);
+> >> +	if (!strcmp(arch->name, "s390")) {
+> >> +		/* s390 function call 1st operand is register */
+> >> +		tok = strchr(ops->raw, ',');
+> >> +		if (tok)
+> >> +			ops->target.addr = strtoull(tok + 1, &endptr, 16);
+> >> +		else
+> >> +			ops->target.addr = 0;
+> >> +	} else
+> >> +		ops->target.addr = strtoull(ops->raw, &endptr, 16);
+> > 
+> > Do we have to do this here? Can't we have a s390_call__parse() and set
+> > that in the s/390 instructions?
 > 
-> Why are you radically chaging the default timeout? The commit message
-> does not tell anything about that change.
->
-Let me, recheck but it should be same value just converted to msecs.
+> 
+> Originally I wanted to add an architecture specific weak function to handle s390
+> This did not work because file util/annotate.c includes the architecture specific versions
+> around line 100:
+> 
+> #include "arch/arm/annotate/instructions.c"
+> #include "arch/arm64/annotate/instructions.c"
+> #include "arch/x86/annotate/instructions.c"
+> #include "arch/powerpc/annotate/instructions.c"
+> #include "arch/s390/annotate/instructions.c"
+> 
+> This includes the C file for s390 so we end up having function call__parse defined twice,
+> one with a weak definition and one without which results in a compiler error.
+> 
+> I will use  a s390 specific call__parse function and sent another patch.
+
+So, in tools/perf/arch/s390/annotate/instructions.c you have that
+function s390__associate_ins_ops() where it sets the handler for the
+"brasl" asm instruction to be 'call__ops', what I am proposing is that
+instead you provide a brasl__ops and use it, this ops knows that it is a
+'call', but the target is not where call__ops expects it to be, thus we
+have a separate ops for that, got it?
+
+- Arnaldo
  
-> Why couldn't we just have two timeouts: one default and one long that
-> would be at least as long as the longest timeout defined in the spec?
-
-I've tried to explain it in the commit message but apparently has failed. 
-
-We have a default or undefined which should be the same as it was unless I did some silly mistake in conversion to msecs (will check), ass all others are in msecs.
-It was 2 min = 2 * 60 * HZ (in jiffies) which would be msecs_to_jiffies(2 * 60 * 1000 = 120000) 
-TPM2_DURATION_DEFAULT   = 120000
-
-Then we have a new one which is 3 min just for key generation (Prime number generation is heavy liffting) 
-
-> Then we would not have to ever update LAST_CC constant, we could actually
-> remove it completely.
-
-I believe I've removed it next patch, I didnâ€™t want do too much in this one.
-
-Thanks
-Tomas
+> >> -- 
+> >> 2.14.3
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> 
+> 
+> -- 
+> Thomas Richter, Dept 3303, IBM LTC Boeblingen Germany
+> --
+> Vorsitzende des Aufsichtsrats: Martina Koederitz 
+> Geschäftsführung: Dirk Wittkopp
+> Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
