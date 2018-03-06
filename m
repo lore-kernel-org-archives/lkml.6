@@ -1,83 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750865AbeCFI0c convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:26:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54402 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbeCFI0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:26:31 -0500
-Date: Tue, 6 Mar 2018 09:26:18 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: =?UTF-8?B?5qyn6Ziz5b+X5b+g?= <oyzhizhong@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        boris.brezillon@free-electrons.com,
-        Marek =?UTF-8?B?VmHFoXV0?= <marek.vasut@gmail.com>, richard@nod.at,
-        vdavydov.dev@gmail.com, cyrille.pitchen@wedev4u.fr,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtdchar: fix usage of mtd_ooblayout_ecc()
-Message-ID: <20180306092618.1ac355d2@bbrezillon>
-In-Reply-To: <CAPrnC+CMH-o_LCWqnEFH4v7K1VVVU3hstKorHb+-XZvp3xy6AA@mail.gmail.com>
-References: <CAPrnC+CMH-o_LCWqnEFH4v7K1VVVU3hstKorHb+-XZvp3xy6AA@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752799AbeCFI2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:28:01 -0500
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40523 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeCFI17 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 03:27:59 -0500
+X-Google-Smtp-Source: AG47ELvvb7Jngklu5fIYvwWILlS5th7ZXufmFC+IhuA7/uvUwWDFVGa7uXNEIZdalZbYu4vl8nMVoA==
+Date: Tue, 6 Mar 2018 11:27:43 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC, PATCH 13/22] mm, rmap: Free encrypted pages once mapcount
+ drops to zero
+Message-ID: <20180306082743.2epdfxv4ds7hz7py@node.shutemov.name>
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+ <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
+ <e04536bc-77e9-84d0-3c23-1dfea8542da5@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e04536bc-77e9-84d0-3c23-1dfea8542da5@intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 11:13:25 +0800
-欧阳志忠 <oyzhizhong@gmail.com> wrote:
-
-> Section was not properly computed. The value of OOB region definition is
-> always ECC section 0 information in the OOB area, but we want to get all
-> the ECC bytes information, so we should call
-> mtd_ooblayout_ecc(mtd, section++, &oobregion) until it returns -ERANGE.
+On Mon, Mar 05, 2018 at 11:13:36AM -0800, Dave Hansen wrote:
+> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
+> > @@ -1292,6 +1308,12 @@ static void page_remove_anon_compound_rmap(struct page *page)
+> >  		__mod_node_page_state(page_pgdat(page), NR_ANON_MAPPED, -nr);
+> >  		deferred_split_huge_page(page);
+> >  	}
+> > +
+> > +	anon_vma = page_anon_vma(page);
+> > +	if (anon_vma_encrypted(anon_vma)) {
+> > +		int keyid = anon_vma_keyid(anon_vma);
+> > +		free_encrypt_page(page, keyid, compound_order(page));
+> > +	}
+> >  }
 > 
+> It's not covered in the description and I'm to lazy to dig into it, so:
+> Without this code, where do they get freed?  Why does it not cause any
+> problems to free them here?
 
-You still miss the Fixes and Cc-stable tags:
+It's the only place where we get it freed. "Freeing" is not the best
+terminology here, but I failed to come up with something batter.
+We prepare the encryption page to being freed: flush the cache in MKTME
+case.
 
-Fixes: c2b78452a9db ("mtd: use mtd_ooblayout_xxx() helpers where appropriate")
-Cc: <stable@vger.kernel.org>
+The page itself gets freed later in a usual manner: once refcount drops to
+zero. The problem is that we may not have valid anon_vma around once
+mapcount drops to zero, so we have to do "freeing" here.
 
-Looks good otherwise.
+For anonymous memory once mapcount dropped to zero there's no way it will
+get mapped back to userspace. page_remove_anon
 
-I'm just curious, how did you find the problem? Do you have a userspace
-tool that queries the OOB/ECC layout?
+Kernel still will be able to access the page with kmap() and I will need
+to be very careful to get it right wrt cache management.
 
-> Signed-off-by: OuYang ZhiZhong <oyzhizhong@gmail.com>
-> ---
->  drivers/mtd/mtdchar.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-> index de8c902..7d80a8b 100644
-> --- a/drivers/mtd/mtdchar.c
-> +++ b/drivers/mtd/mtdchar.c
-> @@ -479,7 +479,7 @@ static int shrink_ecclayout(struct mtd_info *mtd,
->   for (i = 0; i < MTD_MAX_ECCPOS_ENTRIES;) {
->   u32 eccpos;
-> 
-> - ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-> + ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
->   if (ret < 0) {
->   if (ret != -ERANGE)
->   return ret;
-> @@ -526,7 +526,7 @@ static int get_oobinfo(struct mtd_info *mtd, struct
-> nand_oobinfo *to)
->   for (i = 0; i < ARRAY_SIZE(to->eccpos);) {
->   u32 eccpos;
-> 
-> - ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-> + ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
->   if (ret < 0) {
->   if (ret != -ERANGE)
->   return ret;
-
-
+I'll update the description.
 
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ Kirill A. Shutemov
