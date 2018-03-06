@@ -1,94 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeCFKkz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:40:55 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46229 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750933AbeCFKkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:40:53 -0500
-X-Google-Smtp-Source: AG47ELuSaoDtMqGi8ir/iBve6prUPg2H0Vpter5nijtoYf2N6OT2L2KxL/wFJAXwO93dj1DHZDMFmSwKoCBeESVNETY=
+        id S1753472AbeCFKlG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:41:06 -0500
+Received: from mail.us.es ([193.147.175.20]:41048 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753419AbeCFKk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 05:40:58 -0500
+Date: Tue, 6 Mar 2018 11:40:54 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Wensong Zhang <wensong@linux-vs.org>, Julian Anastasov <ja@ssi.bg>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipvs: use true and false for boolean values
+Message-ID: <20180306104054.glcbnnqbyb5ztctk@salvia>
+References: <20180305213557.GA12365@embeddedor.com>
+ <20180306080208.xxz27gffcd7z5fqi@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <416d8d27-200f-befb-1c30-14544fffcba0@deltatee.com>
-References: <20180228234006.21093-1-logang@deltatee.com> <20180228234006.21093-8-logang@deltatee.com>
- <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
- <20180305160004.GA30975@localhost.localdomain> <3f56c76d-6a5c-7c2f-5442-c9209749b598@deltatee.com>
- <CAOSf1CHvaz0QTCkptQwsdyPp6uvvHqtM51N0MfrO9RqYf9W0tg@mail.gmail.com> <416d8d27-200f-befb-1c30-14544fffcba0@deltatee.com>
-From: Oliver <oohall@gmail.com>
-Date: Tue, 6 Mar 2018 21:40:51 +1100
-Message-ID: <CAOSf1CG3jdx9RdhCgq+d0fdYLLByhknsXfkUYwigzQzZM0xfGw@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the CMB
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306080208.xxz27gffcd7z5fqi@verge.net.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 12:14 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->
-> On 05/03/18 05:49 PM, Oliver wrote:
->>
->> It's in arch/powerpc/kernel/io.c as _memcpy_toio() and it has two full
->> barriers!
->>
->> Awesome!
->>
->> Our io.h indicates that our iomem accessors are designed to provide x86ish
->> strong ordering of accesses to MMIO space. The git log indicates
->> arch/powerpc/kernel/io.c has barely been touched in the last decade so
->> odds are most of that code was written in the elder days when people
->> were less aware of ordering issues. It might just be overly conservative
->> by today's standards, but maybe not (see below).
->
->
-> Yes, that seems overly conservative.
->
->> (I'm not going to suggest ditching the lwsync trick. mpe is not going
->> to take that patch
->> without a really good reason)
->
->
-> Well, that's pretty gross. Is this not exactly the situation mmiowb() is
-> meant to solve? See [1].
+On Tue, Mar 06, 2018 at 09:02:08AM +0100, Simon Horman wrote:
+> On Mon, Mar 05, 2018 at 03:35:57PM -0600, Gustavo A. R. Silva wrote:
+> > Assign true or false to boolean variables instead of an integer value.
+> > 
+> > This issue was detected with the help of Coccinelle.
+> > 
+> > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> 
+> Signed-off-by: Simon Horman <horms@verge.net.au>
+> 
+> Pablo, could you take this one?
 
-Yep, mmiowb() is supposed to be used in this situation. According to BenH,
-author of that io_sync hack, we implement the stronger semantics
-so that we don't break existing drivers that assume spin_unlock() does
-order i/o even though it's not supposed to. At a guess the x86 version of
-spin_unlock() happens to do that so the rest of us need to either live
-with it or fix all the bugs :)
-
-> Though, you're right in principle. Even if power was similar to other
-> systems in this way, it's still a risk that if these pages get passed
-> somewhere in the kernel that uses a spin lock like that without an mmiowb()
-> call, then it's going to have a bug. For now, the risk is pretty low as we
-> know exactly where all the p2pmem pages will be used but if it gets into
-> other places, all bets are off.
-
-Yeah this was my main concern with the whole approach. For ioremap()ed
-memory we have the __iomem annotation to help with tracking when we
-need to be careful, but we'd lose that entirely here.
-
-> I did do some work trying to make a safe
-> version of io-pages and also trying to change from pages to pfn_t in large
-> areas but neither approach seemed likely to get any traction in the
-> community, at least not in the near term.
-
-It's a tricky problem. HMM with DEVICE_PRIVATE might be more
-palatable than the pfn_t conversion since there would still be struct pages
-backing the device memory. That said, there are probably other issues with
-device private memory not being part of the linear mapping, but HMM
-provides some assistance there.
-
-Oliver
+Applied, thanks Simon!
