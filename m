@@ -1,82 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeCFJuP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:50:15 -0500
-Received: from foss.arm.com ([217.140.101.70]:35584 "EHLO foss.arm.com"
+        id S1753473AbeCFJtk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:49:40 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33272 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753316AbeCFJuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:50:11 -0500
-Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
-To: Auger Eric <eric.auger@redhat.com>,
-        Peter Maydell <peter.maydell@linaro.org>
-Cc: lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu
-References: <20180215175803.6870-1-marc.zyngier@arm.com>
- <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
- <86o9k63f7a.wl-marc.zyngier@arm.com>
- <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
- <CAFEAcA9=YpNngKqeOXiO7QDvL=1ZaQEW8fh3XHjwD+i8qQm9wg@mail.gmail.com>
- <a1579f14-a5fe-11bc-a831-f729cead25ba@redhat.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <81f8b489-883b-58c8-851b-c624ca72c28d@arm.com>
-Date: Tue, 6 Mar 2018 09:50:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <a1579f14-a5fe-11bc-a831-f729cead25ba@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1750859AbeCFJtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:49:36 -0500
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/9] panic: Add closing panic marker parenthesis
+Date: Tue,  6 Mar 2018 10:49:12 +0100
+Message-Id: <20180306094920.16917-2-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180306094920.16917-1-bp@alien8.de>
+References: <20180306094920.16917-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/18 20:37, Auger Eric wrote:
-> Hi Peter,
-> 
-> On 05/03/18 17:31, Peter Maydell wrote:
->> On 2 March 2018 at 12:26, Auger Eric <eric.auger@redhat.com> wrote:
->>> Hi Marc,
->>> On 02/03/18 12:11, Marc Zyngier wrote:
->>>> On Fri, 02 Mar 2018 10:44:48 +0000,
->>>> Auger Eric wrote:
->>>>> I understand the get/set is called as part of the migration process.
->>>>> So my understanding is the benefit of this series is migration fails in
->>>>> those cases:
->>>>>
->>>>>> =0.2 source -> 0.1 destination
->>>>> 0.1 source -> >=0.2 destination
->>>>
->>>> It also fails in the case where you migrate a 1.0 guest to something
->>>> that cannot support it.
->>>
->>> That's because on the destination, the number of regs is less than on
->>> source, right?
->>
->> I think it fails because the KVM_REG_ARM_PSCI_VERSION register will be
->> in the migration state but not in the destination's list of registers:
->> the code in QEMU's target/arm/machine.c:cpu_post_load() function that
->> checks "register in their list but not ours: fail migration" will
->> catch this.
-> 
-> Thank you for the pointer. Yes at the time I reviewed the patch and just
-> focusing on the kernel code, this was not immediate to me.
-> 
->>
->> That also means that we will fail migration from a new kernel where
->> we've specifically asked for PSCI 0.2 to an old PSCI-0.2-only kernel
->> (because the KVM_REG_ARM_PSCI_VERSION reg will appear in the migration
->> stream even if its value is the one value that matches the old kernel
->> behaviour). I don't know if we care about that.
-> 
-> Do you know when are we likely to force PSCI 0.2 on a new kernel? At
-> which layer is the decision supposed to be made and on which criteria?
+From: Borislav Petkov <bp@suse.de>
 
-No decent SW should need this. But if you've written a guest that cannot
-work if it doesn't get "2" as response to PSCI_VERSION, you can override it.
+Otherwise it looks unbalanced.
 
-	M.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ kernel/panic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 2cfef408fec9..9fb023d0cae1 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -289,7 +289,7 @@ void panic(const char *fmt, ...)
+ 		disabled_wait(caller);
+ 	}
+ #endif
+-	pr_emerg("---[ end Kernel panic - not syncing: %s\n", buf);
++	pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
+ 	local_irq_enable();
+ 	for (i = 0; ; i += PANIC_TIMER_STEP) {
+ 		touch_softlockup_watchdog();
 -- 
-Jazz is not dead. It just smells funny...
+2.13.0
