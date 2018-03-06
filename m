@@ -1,84 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeCFHvx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:51:53 -0500
-Received: from regular1.263xmail.com ([211.150.99.141]:58372 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750933AbeCFHvw (ORCPT
+        id S1753281AbeCFHwb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:52:31 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35082 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbeCFHw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:51:52 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <c183501b05c1c3f3bbf8cb04987ee150>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: briannorris@google.com, heiko@sntech.de, dtor@google.com,
-        dianders@google.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>, devicetree@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Emil Renner Berthing <kernel@esmil.dk>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v4 3/3] arm64: dts: rockchip: kevin: Avoid wakeup when inserting the pen
-Date: Tue,  6 Mar 2018 15:51:23 +0800
-Message-Id: <20180306075123.20989-2-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180306075123.20989-1-jeffy.chen@rock-chips.com>
-References: <20180306074418.8879-2-jeffy.chen@rock-chips.com>
- <20180306075123.20989-1-jeffy.chen@rock-chips.com>
+        Tue, 6 Mar 2018 02:52:29 -0500
+X-Google-Smtp-Source: AG47ELtwoqUV29Fp63CmP7xETm/OAaxMHfCXt9anwnhNYvOvqCz0whpApYOJc7RMOggovQ1u15oFPw==
+Date: Tue, 6 Mar 2018 15:36:58 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: acme@kernel.org
+Cc: jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf report: Provide libtraceevent with a kernel symbol
+ resolver
+Message-ID: <20180306073658.GA7964@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>, acme@kernel.org,
+        jolsa@redhat.com, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20180115044732.GB20373@udknight>
+ <20180208122031.GA30130@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180208122031.GA30130@krava>
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
-inserting the pen.
+On Thu, Feb 08, 2018 at 01:20:31PM +0100, Jiri Olsa wrote:
+> On Mon, Jan 15, 2018 at 12:47:32PM +0800, Wang YanQing wrote:
+> > So that beautifiers wanting to resolve kernel function addresses to
+> > names can do its work, and when we use "perf report" for output of
+> > "perf kmem record", we will get kernel symbol output.
+> > 
+> > Signed-off-by: Wang YanQing <udknight@gmail.com>
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Hi! Arnaldo Carvalho de Melo
 
-Changes in v4:
-Include dt-binding gpio-keys.h
+What is the status of this patch now?
+Does the patch sanked to the bottom of your mailbox?
 
-Changes in v3: None
-Changes in v2:
-Specify wakeup event action instead of irq trigger type as Brian
-suggested.
-
- arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-index 191a6bcb1704..89126dbe5d91 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-@@ -44,6 +44,7 @@
- 
- /dts-v1/;
- #include "rk3399-gru.dtsi"
-+#include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/linux-event-codes.h>
- 
- /*
-@@ -134,6 +135,8 @@
- 		gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
- 		linux,code = <SW_PEN_INSERTED>;
- 		linux,input-type = <EV_SW>;
-+		/* Wakeup only when ejecting */
-+		wakeup-event-action = <EV_ACT_DEASSERTED>;
- 		wakeup-source;
- 	};
- };
--- 
-2.11.0
+Thanks!
