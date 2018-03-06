@@ -1,158 +1,164 @@
-Return-Path: <borntraeger@de.ibm.com>
-X-Google-Smtp-Source: AG47ELv7NL5Nq6ZflwL3GGeRJMg5jduCSbI+KLJAC+JhK87AIhvSwu1SKPpv9Q9rJtlQuuYV6rVE
-ARC-Seal: i=1; a=rsa-sha256; t=1520242241; cv=none;
-        d=google.com; s=arc-20160816;
-        b=L0DibhXuJB3NrLiud6o6GXhKCix8Dis3RiSee0iUfSKBh1/Z181EXM4PFEkV82vVaX
-         IZ7wh+eFoWfxPBU8RipobHzPjdewccCfabstvq4gty2Q2jwqlqqRjoVUE01bcfPAOAk2
-         1Oy0F/CAqqylxwiaEOEbH9Im4nNmr76s/25vAQScxt9kMy0of/ppd6a+iZdHtuFKKQEC
-         QIXSCcGUXPuBBT58nv5uZhvculJ4V6RBJYq6/5IykjTe5oFeUVn2z58ejrL2OoKqBtXn
-         G3eH3YZit5wHtU/ZKNX92cse6lJJmuooRA3tWnkAAdh8CUWSJYuJS6hZjV7Jl6I9GoGW
-         zgNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=6gu135xJV7xAVumoi5TVUnsCNMymNSoJc6Lq6N7Fv3g=;
-        b=oP1MXjiDzo+kctJNZa/pWDEAvNopPg9A22Gu1DqwKl4CqENGvubCm8O+vTT42HCoQ/
-         dZvgpjlpGRoMo4zq+ORA69UkfZFgnWGMWd1OgsOkGB5Tco4irHcjgdhQsbVQb9RtX9HT
-         7V1ujcWEs+StSl4if6MPUY7un9UaylaKwc4c/wLJQdcZHp5/xgkzhoVRhmy7jfcYSaIr
-         qxKzUCG2+o5VIc/ITuhHEz8VhQegP86RVzPYy86qhylcCnpEeYdTyhsyQ3KOyeeXBlaw
-         D/pg7UDpi0OEXxnTBylsEnzaBexsrTIqvGx59acSQl50e4vBTJByHeubn0gcvu5Msm6q
-         BHzA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v3 02/10] include: Move compat_timespec/ timeval to
- compat_time.h
-To: Deepa Dinamani <deepa.kernel@gmail.com>, tglx@linutronix.de,
-        john.stultz@linaro.org
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, y2038@lists.linaro.org,
-        acme@kernel.org, benh@kernel.crashing.org, catalin.marinas@arm.com,
-        cmetcalf@mellanox.com, cohuck@redhat.com, davem@davemloft.net,
-        deller@gmx.de, devel@driverdev.osuosl.org, gerald.schaefer@de.ibm.com,
-        gregkh@linuxfoundation.org, heiko.carstens@de.ibm.com,
-        hoeppner@linux.vnet.ibm.com, hpa@zytor.com, jejb@parisc-linux.org,
-        jwi@linux.vnet.ibm.com, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com,
-        mpe@ellerman.id.au, oberpar@linux.vnet.ibm.com,
-        oprofile-list@lists.sf.net, paulus@samba.org, peterz@infradead.org,
-        ralf@linux-mips.org, rostedt@goodmis.org, rric@kernel.org,
-        schwidefsky@de.ibm.com, sebott@linux.vnet.ibm.com,
-        sparclinux@vger.kernel.org, sth@linux.vnet.ibm.com,
-        ubraun@linux.vnet.ibm.com, will.deacon@arm.com, x86@kernel.org
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-347975-1520340400-2-1803333237824690528
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520340399; b=q8HxLXbK7m5xNzojSoG6NzKdlcRiQPavtYeDV+scmu/w2gR
+    lfxqKjbdKBXLgC0TBvXkG3Pqvw2bdsjRbFODJFEOeiqrnS22k+6+D12MJlONo4Pi
+    0EqYdBKiM9r0HriDhZCO+7UG8JbjoJCdX7dLIyq+6DQulQGlcAoULQR4v5VQt0sk
+    JekAGnSxt9bwIAo7FEHsOKBclu6zO+OwbvHq2oTNjEwGBsjsgZTuZpCHdkkmdLOF
+    m58nGN6eNIFFN8Wo9/JfKloy0o608vrOFyXIzF/a+QPA7rp6R3SBJuRls2SBPmxO
+    8KQ+3w5Ab7Nv2lyjxqVFY3iZQR7OMAujts+YuwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520340399; bh=Y
+    8xJq4lcH1XGoDe/vZDBRJHhHeVC11fuCdYHQ+2/dTw=; b=JR1riL9TtsR/wReri
+    uKSguW8WRha4UBOHfJCp/+Hjv9E4ADc/65kHP07fYYJ1Us/dC1VulDqpQuzjaFmx
+    bhcDPGrSNJrzlD2p942AS9AESOeKDwvm7qXMdrUlbqKIqhiHKz3yCubqbXZzWbv7
+    CrkVv5Fb/78hwfr/EowIhKv92UWRbkHa2zk5E+Qz5fUvRKBY1kxC6jkH0dtMa4uM
+    Av/AdnQUcAWqxJ2cO3r3gXIrZmoOjHv5Tj99O04TL0+mG0GsbCCbT60KjhYDDjsO
+    dkCoUm0CdbblEx5U4NBX97BoIshaFiUCn8rEKGITLnKFnZUNPFdl2rS43A6avM/z
+    7pyEQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=eFOHlHtt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OR/Ae2yI;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=eFOHlHtt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OR/Ae2yI;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELubcUMV/+p/AxAmTMPOWF9PblRAuLVhHE+k8ZdW1lB3Qhh5h6OFTi2hSjDKV9ynu+IUnH/10AD6Di9PnFGMwqU=
+MIME-Version: 1.0
+In-Reply-To: <c6fb6676-a8d3-8893-660c-2b9899c5d5ab@de.ibm.com>
 References: <20180116021818.24791-1-deepa.kernel@gmail.com>
  <20180116021818.24791-3-deepa.kernel@gmail.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Mon, 5 Mar 2018 10:30:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180116021818.24791-3-deepa.kernel@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030509-0040-0000-0000-0000041AD39A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030509-0041-0000-0000-0000261DE199
-Message-Id: <c6fb6676-a8d3-8893-660c-2b9899c5d5ab@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-05_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803050113
+ <c6fb6676-a8d3-8893-660c-2b9899c5d5ab@de.ibm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 13:46:30 +0100
+X-Google-Sender-Auth: Di7AbiJq9u7xkF2XLlEyCPy3GA0
+Message-ID: <CAK8P3a0Gm1L70EaFzJBk0drRNKtX0FE22BHOSrXBgH1wNfKZ5A@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] include: Move compat_timespec/ timeval to
+ compat_time.h
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Heiko Carstens <heiko.carstens@de.ibm.com>, Paul Mackerras <paulus@samba.org>,
+ Deepa Dinamani <deepa.kernel@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ sparclinux <sparclinux@vger.kernel.org>, devel@driverdev.osuosl.org,
+ linux-s390 <linux-s390@vger.kernel.org>,
+ y2038 Mailman List <y2038@lists.linaro.org>, Helge Deller <deller@gmx.de>,
+ the arch/x86 maintainers <x86@kernel.org>, sebott@linux.vnet.ibm.com,
+ "James E.J. Bottomley" <jejb@parisc-linux.org>, Ingo Molnar <mingo@redhat.com>,
+ oprofile-list@lists.sf.net, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>,
+ Robert Richter <rric@kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>,
+ Will Deacon <will.deacon@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Julian Wiedmann <jwi@linux.vnet.ibm.com>, John Stultz <john.stultz@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ gerald.schaefer@de.ibm.com, Parisc List <linux-parisc@vger.kernel.org>,
+ gregkh <gregkh@linuxfoundation.org>, cohuck@redhat.com,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Ralf Baechle <ralf@linux-mips.org>, David Miller <davem@davemloft.net>,
+ Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+ Stefan Haberland <sth@linux.vnet.ibm.com>,
+ Martin Schwidefsky <schwidefsky@de.ibm.com>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ Ursula Braun <ubraun@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1589713718016333322?=
-X-GMAIL-MSGID: =?utf-8?q?1594089528230682454?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 01/16/2018 03:18 AM, Deepa Dinamani wrote:
-> All the current architecture specific defines for these
-> are the same. Refactor these common defines to a common
-> header file.
-> 
-> The new common linux/compat_time.h is also useful as it
-> will eventually be used to hold all the defines that
-> are needed for compat time types that support non y2038
-> safe types. New architectures need not have to define these
-> new types as they will only use new y2038 safe syscalls.
-> This file can be deleted after y2038 when we stop supporting
-> non y2038 safe syscalls.
+On Mon, Mar 5, 2018 at 10:30 AM, Christian Borntraeger
+<borntraeger@de.ibm.com> wrote:
+> On 01/16/2018 03:18 AM, Deepa Dinamani wrote:
+>> All the current architecture specific defines for these
+>> are the same. Refactor these common defines to a common
+>> header file.
+>>
+>> The new common linux/compat_time.h is also useful as it
+>> will eventually be used to hold all the defines that
+>> are needed for compat time types that support non y2038
+>> safe types. New architectures need not have to define these
+>> new types as they will only use new y2038 safe syscalls.
+>> This file can be deleted after y2038 when we stop supporting
+>> non y2038 safe syscalls.
+>
+> You are now include a <linux/*.h> from several asm files
+> (
+>  arch/arm64/include/asm/stat.h
+>  arch/s390/include/asm/elf.h
+>  arch/x86/include/asm/ftrace.h
+>  arch/x86/include/asm/sys_ia32.h
+> )
+> It works, and it is done in many places, but it looks somewhat weird.
+> Would it make sense to have an asm-generic/compate-time.h instead? Asking for
+> opinions here.
 
-You are now include a <linux/*.h> from several asm files
-(
- arch/arm64/include/asm/stat.h   
- arch/s390/include/asm/elf.h     
- arch/x86/include/asm/ftrace.h   
- arch/x86/include/asm/sys_ia32.h 
-)
-It works, and it is done in many places, but it looks somewhat weird.
-Would it make sense to have an asm-generic/compate-time.h instead? Asking for
-opinions here.
+I don't think we have such a rule. If a header file is common to all
+architectures (i.e. no architecture uses a different implementation),
+it should be in include/linux rather than include/asm-generic, regardless
+of whether it can be used by assembler files or not.
 
-> 
-> The patch also requires an operation similar to:
-> 
-> git grep "asm/compat\.h" | cut -d ":" -f 1 |  xargs -n 1 sed -i -e "s%asm/compat.h%linux/compat.h%g"
+>> --- a/drivers/s390/net/qeth_core_main.c
+>> +++ b/drivers/s390/net/qeth_core_main.c
+>> @@ -32,7 +32,7 @@
+>>  #include <asm/chpid.h>
+>>  #include <asm/io.h>
+>>  #include <asm/sysinfo.h>
+>> -#include <asm/compat.h>
+>> +#include <linux/compat.h>
+>>  #include <asm/diag.h>
+>>  #include <asm/cio.h>
+>>  #include <asm/ccwdev.h>
+>
+> Can you move that into the other includes (where all the other <linux/*> includes are.
 
-some comments from the s390 perspective:
+Good catch, this is definitely a rule we have ;-)
 
-> --- a/arch/s390/hypfs/hypfs_sprp.c
-> +++ b/arch/s390/hypfs/hypfs_sprp.c
-ok.
-[...]
-> --- a/arch/s390/include/asm/elf.h
-> +++ b/arch/s390/include/asm/elf.h
-> @@ -126,7 +126,7 @@
->   */
-> 
->  #include <asm/ptrace.h>
-> -#include <asm/compat.h>
-> +#include <linux/compat.h>
->  #include <asm/syscall.h>
->  #include <asm/user.h>
-
-see above.
-[...]
-> --- a/arch/s390/kvm/priv.c
-> +++ b/arch/s390/kvm/priv.c
-ok
-> --- a/arch/s390/pci/pci_clp.c
-> +++ b/arch/s390/pci/pci_clp.c
-ok
-> --- a/drivers/s390/block/dasd_ioctl.c
-> +++ b/drivers/s390/block/dasd_ioctl.c
-ok 
-> --- a/drivers/s390/char/fs3270.c
-> +++ b/drivers/s390/char/fs3270.c
-ok
-> --- a/drivers/s390/char/sclp_ctl.c
-> +++ b/drivers/s390/char/sclp_ctl.c
-ok
-> --- a/drivers/s390/char/vmcp.c
-> +++ b/drivers/s390/char/vmcp.c
-ok
-> --- a/drivers/s390/cio/chsc_sch.c
-> +++ b/drivers/s390/cio/chsc_sch.c
-ok
-
-> --- a/drivers/s390/net/qeth_core_main.c
-> +++ b/drivers/s390/net/qeth_core_main.c
-> @@ -32,7 +32,7 @@
->  #include <asm/chpid.h>
->  #include <asm/io.h>
->  #include <asm/sysinfo.h>
-> -#include <asm/compat.h>
-> +#include <linux/compat.h>
->  #include <asm/diag.h>
->  #include <asm/cio.h>
->  #include <asm/ccwdev.h>
-
-Can you move that into the other includes (where all the other <linux/*> includes are.
+       Arnd
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
