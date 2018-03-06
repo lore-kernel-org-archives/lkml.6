@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELs13Q+pyFeKauEFIvhcjudwKBQRZC3CdcQXHl+ceLgZOQprLU9104EfmWNnu5JvSVknGLBr
-ARC-Seal: i=1; a=rsa-sha256; t=1520295968; cv=none;
+X-Google-Smtp-Source: AG47ELv60gsyUJrnDTzKyiEpHbEt3YUHaoNQ7O1lDQwnwisPaNn8Nb8KmAraF+pkNOcyw3KYDfz9
+ARC-Seal: i=1; a=rsa-sha256; t=1520295966; cv=none;
         d=google.com; s=arc-20160816;
-        b=yUWXsvuftbcDtXBgKY2Unaqnt8jAbvsME5ptfp8XRsNvn6p6eU6BsVLbcWISgZbmBo
-         EkNvgeZE/QES308VxKHcHhe8/h3EqlPZWAyrIpRMF1ghBPMy/R1CyZIk5RqtQu1UcmIc
-         LA1F0q9HX8oo27CbyI9z2Kq/kWd3bgU7NxgzALvnum2beLnagfFw1104vckQPBP96liv
-         65Qc0JldWbP80Wr3JYgmpevj3LTqG44+uGHuCvAZMI2SU8KgQiXAEnMPNqWrvkCUTy7J
-         NDrLm+qUNSG7fg8bqi0r1CCZApYT+6ZQieauus3vpLEw5LqsiOXACOxsik+a+Nb1zoaL
-         AGqg==
+        b=TI8EamALTx1fyeo4kSXLiRq/S4T1eJYS6gqdNvt9O8IP9lEQnhrQpU1QBr+AQFxYEV
+         qo5vmIVsSlOxwBDFO3drII3TyxzJrNpy7iLnM8Bbu82tQ8bRKJxYibSPetQ2QHr1dHBC
+         AE85uX+naRdmvd3u6uweCFlOq5U1MNRhZqTaSwHiOurF2fmZ4hE3F9GtiYlvGxG+0QsD
+         s/A4KpGnvjh9YWU+6PtArh/DH9xg8GtsAJxv0jJ+KKX6/hSSkFj9ac++430/eIBbbWGA
+         S2dt7CcdIAnTK8h64PCYKkfTvedBWx/SXvLVGQXVwGRDEnjklNHcaAHGFCoisLxcCPWb
+         OtqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=HZrVxKT7IeiAd6dhR07u8+LeXK7g1Fntd5W+o6y2r4o=;
-        b=i2r6HNcz7W+rP3tUdyrRhy2vActSR1FL2CZxC2i6sVDH5qpjoh9H3iFY0+b44g4gd4
-         Q5ZY1V8AAbT1AFXseikXBZkifyf2siPZI5e32+8WVmXEU2t5cMWc1/IpjQTAl7CylhP6
-         bFBHRNa6j8ONO97EmS7bwp06VI/OfZoXy5MZ6YgNkHuEs6T93J3eUOwTtQE/Q16bN+qn
-         3v5Df3LcfTEsanTxf1fDghdsV47SZqA9sCq4pPvGE8RAk4EybBGMTEz9arfMhDVpANTe
-         MtSTQsN2Aa/MDLBisdj339E/jNjBpbXxw4bSP1TgZJAXSe3JIbpDfuVVEWGa2JVvpP43
-         BqrQ==
+        bh=8uaeY7VVV2WAyKE3bAx1MtEhAk8ueaA2hzkbsEkt94g=;
+        b=os32Tz3hLZpY0lbbrlFlCNK6ljA7OwUMIrpKii1OXEfMbH2zZtStpzX1DIsz9lKug1
+         nN7bZcMdUQf1uqkuWw1AgefZBEB2gRJK/wIMFjON/7nY8w9m9rl0ey4SQPSG5Rlwp8d6
+         lNcnANJYYO2yI+5l6VVG891zAvUZHYZUCEjjcMs+nT4zKAbiUecql2opRuPv5lMtd3+s
+         ehmzzO5Q2FWQGA6tMv5nK3tYp5Sz4HP0OUAcvasImHRXJJsA2qU1Qw2btbtLMTjSqBBJ
+         j67yDaDex+/ZZUzd91zQHuDf41QjOdc0no/ZIMNbeRBh/ZYCeZ4SWMfyyxOcJfuZo/Hf
+         WjYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=P4q5r+Zq;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Br4GL93I;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=P4q5r+Zq;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Br4GL93I;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -33,9 +33,9 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 10/65] ARM: Hide finish_arch_post_lock_switch() from modules
-Date: Mon,  5 Mar 2018 19:24:43 -0500
-Message-Id: <20180306002538.1761-11-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 07/65] x86/mm: Build arch/x86/mm/tlb.c even on !SMP
+Date: Mon,  5 Mar 2018 19:24:40 -0500
+Message-Id: <20180306002538.1761-8-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
@@ -45,103 +45,76 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145864686554015?=
-X-GMAIL-MSGID: =?utf-8?q?1594145864686554015?=
+X-GMAIL-THRID: =?utf-8?q?1594145862964741657?=
+X-GMAIL-MSGID: =?utf-8?q?1594145862964741657?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit ef0491ea17f8019821c7e9c8e801184ecf17f85a upstream.
+commit e1074888c326038340a1ada9129d679e661f2ea6 upstream.
 
-The introduction of switch_mm_irqs_off() brought back an old bug
-regarding the use of preempt_enable_no_resched:
+Currently all of the functions that live in tlb.c are inlined on
+!SMP builds.  One can debate whether this is a good idea (in many
+respects the code in tlb.c is better than the inlined UP code).
 
-As part of:
+Regardless, I want to add code that needs to be built on UP and SMP
+kernels and relates to tlb flushing, so arrange for tlb.c to be
+compiled unconditionally.
 
-  62b94a08da1b ("sched/preempt: Take away preempt_enable_no_resched() from modules")
-
-the definition of preempt_enable_no_resched() is only available in
-built-in code, not in loadable modules, so we can't generally use
-it from header files.
-
-However, the ARM version of finish_arch_post_lock_switch()
-calls preempt_enable_no_resched() and is defined as a static
-inline function in asm/mmu_context.h. This in turn means we cannot
-include asm/mmu_context.h from modules.
-
-With today's tip tree, asm/mmu_context.h gets included from
-linux/mmu_context.h, which is normally the exact pattern one would
-expect, but unfortunately, linux/mmu_context.h can be included from
-the vhost driver that is a loadable module, now causing this compile
-time error with modular configs:
-
-  In file included from ../include/linux/mmu_context.h:4:0,
-                   from ../drivers/vhost/vhost.c:18:
-  ../arch/arm/include/asm/mmu_context.h: In function 'finish_arch_post_lock_switch':
-  ../arch/arm/include/asm/mmu_context.h:88:3: error: implicit declaration of function 'preempt_enable_no_resched' [-Werror=implicit-function-declaration]
-     preempt_enable_no_resched();
-
-Andy already tried to fix the bug by including linux/preempt.h
-from asm/mmu_context.h, but that didn't help. Arnd suggested reordering
-the header files, which wasn't popular, so let's use this
-workaround instead:
-
-The finish_arch_post_lock_switch() definition is now also hidden
-inside of #ifdef MODULE, so we don't see anything referencing
-preempt_enable_no_resched() from a header file. I've built a
-few hundred randconfig kernels with this, and did not see any
-new problems.
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-arm-kernel@lists.infradead.org
-Fixes: f98db6013c55 ("sched/core: Add switch_mm_irqs_off() and use it in the scheduler")
-Link: http://lkml.kernel.org/r/1463146234-161304-1-git-send-email-arnd@arndb.de
+Link: http://lkml.kernel.org/r/f0d778f0d828fc46e5d1946bca80f0aaf9abf032.1461688545.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit c22d4b4d1c7fcc0d9eb4d8618d86c554c48ed9c0)
+(cherry picked from commit 83cc4b50e3a977915666ade0b951ba446e7181bd)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/arm/include/asm/mmu_context.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/Makefile | 3 +--
+ arch/x86/mm/tlb.c    | 4 ++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/mmu_context.h b/arch/arm/include/asm/mmu_context.h
-index 9b32f76bb0dd..10f662498eb7 100644
---- a/arch/arm/include/asm/mmu_context.h
-+++ b/arch/arm/include/asm/mmu_context.h
-@@ -61,6 +61,7 @@ static inline void check_and_switch_context(struct mm_struct *mm,
- 		cpu_switch_mm(mm->pgd, mm);
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index a482d105172b..d893640d5c68 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -1,5 +1,5 @@
+ obj-y	:=  init.o init_$(BITS).o fault.o ioremap.o extable.o pageattr.o mmap.o \
+-	    pat.o pgtable.o physaddr.o gup.o setup_nx.o
++	    pat.o pgtable.o physaddr.o gup.o setup_nx.o tlb.o
+ 
+ # Make sure __phys_addr has no stackprotector
+ nostackp := $(call cc-option, -fno-stack-protector)
+@@ -9,7 +9,6 @@ CFLAGS_setup_nx.o		:= $(nostackp)
+ CFLAGS_fault.o := -I$(src)/../include/asm/trace
+ 
+ obj-$(CONFIG_X86_PAT)		+= pat_rbtree.o
+-obj-$(CONFIG_SMP)		+= tlb.o
+ 
+ obj-$(CONFIG_X86_32)		+= pgtable_32.o iomap_32.o
+ 
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 061e0114005e..a1aa5f59e3ad 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -28,6 +28,8 @@
+  *	Implement flush IPI by CALL_FUNCTION_VECTOR, Alex Shi
+  */
+ 
++#ifdef CONFIG_SMP
++
+ struct flush_tlb_info {
+ 	struct mm_struct *flush_mm;
+ 	unsigned long flush_start;
+@@ -346,3 +348,5 @@ static int __init create_tlb_single_page_flush_ceiling(void)
+ 	return 0;
  }
- 
-+#ifndef MODULE
- #define finish_arch_post_lock_switch \
- 	finish_arch_post_lock_switch
- static inline void finish_arch_post_lock_switch(void)
-@@ -82,6 +83,7 @@ static inline void finish_arch_post_lock_switch(void)
- 		preempt_enable_no_resched();
- 	}
- }
-+#endif /* !MODULE */
- 
- #endif	/* CONFIG_MMU */
- 
+ late_initcall(create_tlb_single_page_flush_ceiling);
++
++#endif /* CONFIG_SMP */
 -- 
 2.16.2
