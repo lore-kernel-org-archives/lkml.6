@@ -1,62 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753601AbeCFMxI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:53:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34034 "EHLO
+        id S1753713AbeCFNBP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:01:15 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39692 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753223AbeCFMxG (ORCPT
+        with ESMTP id S1753487AbeCFNBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:53:06 -0500
-Date: Tue, 6 Mar 2018 04:53:04 -0800
-From: Matthew Wilcox <willy@infradead.org>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
- holding lock
-Message-ID: <20180306125303.GA13722@bombadil.infradead.org>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-4-aaron.lu@intel.com>
- <20180301140044.GK15057@dhcp22.suse.cz>
- <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
- <20180305114159.GA32573@intel.com>
- <bdec481f-b402-64b6-75b0-350b370f3eac@suse.cz>
- <20180306122733.GA9664@intel.com>
+        Tue, 6 Mar 2018 08:01:14 -0500
+Date: Tue, 6 Mar 2018 14:00:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>, Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH] riscv/locking: Strengthen spin_lock() and
+ spin_unlock()
+Message-ID: <20180306130059.GE25201@hirez.programming.kicks-ass.net>
+References: <20180222134004.GN25181@hirez.programming.kicks-ass.net>
+ <20180222141249.GA14033@andrea>
+ <82beae6a-2589-6136-b563-3946d7c4fc60@nvidia.com>
+ <20180222181317.GI2855@linux.vnet.ibm.com>
+ <20180222182717.GS25181@hirez.programming.kicks-ass.net>
+ <563431d0-4fb5-9efd-c393-83cc5197e934@nvidia.com>
+ <20180226142107.uid5vtv5r7zbso33@yquem.inria.fr>
+ <CA+55aFwu5jat5vV-d6RVaUFo=Bjeyv-7eXWUJySg6xFUTnfbWQ@mail.gmail.com>
+ <20180226162426.GB17158@arm.com>
+ <CA+55aFyT=+8m0mmpeegP8LOVtkCYv3O2vyO-ZcQdLAR=s309jg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180306122733.GA9664@intel.com>
+In-Reply-To: <CA+55aFyT=+8m0mmpeegP8LOVtkCYv3O2vyO-ZcQdLAR=s309jg@mail.gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 08:27:33PM +0800, Aaron Lu wrote:
-> On Tue, Mar 06, 2018 at 08:55:57AM +0100, Vlastimil Babka wrote:
-> > So the adjacent line prefetch might be disabled? Could you check bios or
-> > the MSR mentioned in
-> > https://software.intel.com/en-us/articles/disclosure-of-hw-prefetcher-control-on-some-intel-processors
+On Mon, Feb 26, 2018 at 09:00:43AM -0800, Linus Torvalds wrote:
+> On Mon, Feb 26, 2018 at 8:24 AM, Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > Strictly speaking, that's not what we've got implemented on arm64: only
+> > the read part of the RmW has Acquire semantics, but there is a total
+> > order on the lock/unlock operations for the lock.
 > 
-> root@lkp-bdw-ep2 ~# rdmsr 0x1a4
-> 0
-
-Technically 0x1a4 is per-core, so you should run rdmsr -a 0x1a4 in order to
-check all the cores.  But I can't imagine they're being set differently on
-each core.
-
-> > instructions (calculated from itlb misses and insns-per-itlb-miss) shows
-> > less than 1% increase, so dunno. And the improvement comes from reduced
-> > dTLB-load-misses? That makes no sense for order-0 buddy struct pages
-> > which always share a page. And the memmap mapping should use huge pages.
+> Hmm.
 > 
-> THP is disabled to stress order 0 pages(should have mentioned this in
-> patch's description, sorry about this).
+> I thought we had exactly that bug on some architecture with the queued
+> spinlocks, and people decided it was wrong.
 
-THP isn't related to memmap; the kernel uses huge pages (usually the 1G
-pages) in order to map its own memory.
+So ARM64 and Power have the acquire-on-load only thing, but qspinlock
+has it per construction on anything that allowes reordering stores.
+
+Given that unlock/lock are ordered, which covers about 99% of the users
+out there, and fixing the issue would make things significantly slower
+on the weak architectures we let it be.
+
+But yes, its a pesky detail.
