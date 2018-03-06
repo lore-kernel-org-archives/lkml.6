@@ -1,228 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeCFKEm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:04:42 -0500
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:34480 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752936AbeCFKEk (ORCPT
+        id S1753345AbeCFKF3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:05:29 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56080 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbeCFKF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:04:40 -0500
-X-Google-Smtp-Source: AG47ELutq1goEMJgAvCLgSOrEjfuHdt0f+qeE11zFb9DxjFioSgFP61H1S4Sc+yR1iFoCJJBANTDjA==
-Message-ID: <1520330675.13868.17.camel@redhat.com>
-Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
-From: Benjamin Berg <bberg@redhat.com>
-To: Peter FP1 Zhang <zhangfp1@lenovo.com>, Takashi Iwai <tiwai@suse.de>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Tue, 06 Mar 2018 11:04:35 +0100
-In-Reply-To: <FA1DB435B97D5A4192BAE54A4EA542A99ABF1F5E@CNMAILEX04.lenovo.com>
-References: <20180214122939.10069-1-bberg@redhat.com>
-         <s5hr2pn6803.wl-tiwai@suse.de> <1518622889.23539.65.camel@redhat.com>
-         <FA1DB435B97D5A4192BAE54A4EA542A99ABF1473@CNMAILEX04.lenovo.com>
-         <s5heflfhdbr.wl-tiwai@suse.de>
-          <FA1DB435B97D5A4192BAE54A4EA542A99ABF1F5E@CNMAILEX04.lenovo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Mar 2018 05:05:27 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [Update][RFC/RFT][PATCH v2 4/6] cpuidle: Return nohz hint from cpuidle_select()
+Date: Tue, 06 Mar 2018 11:06:10 +0100
+Message-ID: <6393309.frkCvRUP95@aspire.rjw.lan>
+In-Reply-To: <1756432.KnKEJ20PhI@aspire.rjw.lan>
+References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <1756432.KnKEJ20PhI@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Hi Peter,
+Add a new pointer argument to cpuidle_select() and to the ->select
+cpuidle governor callback to allow a boolean value indicating
+whether or not the tick should be stopped before entering the
+selected state to be returned from there.
 
-On Mon, 2018-02-26 at 08:46 +0000, Peter FP1 Zhang wrote:
-> The following comments from our Accessory BU hardware team FYI.
-> //
-> Most of dock audio is converted from USB if it is connected by cable,
-> but CS13 Mechnical dock is not. We need to know the specific dock
-> model first.
-> //
+Make the ladder governor ignore that pointer (to preserve its
+current behavior) and make the menu governor return 'false" through
+it if:
+ (1) the idle exit latency is constrained at 0,
+ (2) the selected state is a polling one, or
+ (3) the target residency of the selected state is less than the
+     length of the tick period and there is at least one deeper
+     idle state available within the tick period range.
 
-I think that basically answers the question and we can conclude that
-the 80s series has USB audio on the docking stations.
+Since the value returned through the new argument pointer is not
+used yet, this change is not expected to alter the functionality of
+the code.
 
-CS13 is the previous generation docking (at the bottom of the laptops)
-while the new models have a new docking connector at the side (which is
-USB-C + 14 pins primarily for Ethernet incl. LEDs and likely some other
-purpose).
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Thanks,
-Benjamin
+Update: Fix a reversed value of *nohz_ret in menu_select().
 
-> -----Original Message-----
-> From: Peter FP1 Zhang 
-> Sent: Wednesday, February 21, 2018 12:07 AM
-> To: 'Takashi Iwai'
-> Cc: Benjamin Berg; alsa-devel@alsa-project.org; Jaroslav Kysela; linu
-> x-kernel@vger.kernel.org; kailang@realtek.com
-> Subject: RE: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
-> 
-> Thank you Takashi. 
-> I will also double confirm it with our Accessory BU guys about Ben's
-> question when I back to my office. And will let you know if there was
-> any different answer from them.
-> 
-> 
-> Peter Zhang \ 张福平,  PMP
-> ThinkPad & ThinkStation Linux Solutions
-> Tel: (+86) 181-1611-8005 | Lenovo Shanghai
-> 
-> Linux for Those Who Do - http://www.lenovo.com/linux
-> 
-> -----Original Message-----
-> From: Takashi Iwai [mailto:tiwai@suse.de]
-> Sent: Tuesday, February 20, 2018 11:48 PM
-> To: Peter FP1 Zhang
-> Cc: Benjamin Berg; alsa-devel@alsa-project.org; Jaroslav Kysela; linu
-> x-kernel@vger.kernel.org; kailang@realtek.com
-> Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
-> 
-> On Sat, 17 Feb 2018 14:54:02 +0100,
-> Peter FP1 Zhang wrote:
-> > 
-> > Hi Ben,
-> > 
-> > My understanding is same as yours. Recently Realtek Audio expert
-> > Kailang (on copy) submitted a patch for Dock as the attached, are
-> > you asking the same thing?
-> > Looks like the issue is related to Dock model, there are many
-> > different Dock models, could you please let us know which specific
-> > dock model you mean? Thanks.
-> > 
-> > @Kailang, Do you have any suggestions or comments?
-> 
-> FYI, because of this unclearness, the patch from Benjamin is still
-> pending.  I'm OK to apply it at first, then adjust later if the
-> docking station quirk is required, too.  Just let me know.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> > 
-> > Thanks,
-> > 
-> > Peter Zhang \ 张福平,  PMP
-> > ThinkPad & ThinkStation Linux Solutions
-> > Tel: (+86) 181-1611-8005 | Lenovo Shanghai
-> > 
-> > Linux for Those Who Do - http://www.lenovo.com/linux
-> > 
-> > 
-> > -----Original Message-----
-> > From: Benjamin Berg [mailto:bberg@redhat.com]
-> > Sent: Wednesday, February 14, 2018 11:41 PM
-> > To: Takashi Iwai
-> > Cc: alsa-devel@alsa-project.org; Jaroslav Kysela; 
-> > linux-kernel@vger.kernel.org; Peter FP1 Zhang
-> > Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
-> > 
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA512
-> > 
-> > On Wed, 2018-02-14 at 14:00 +0100, Takashi Iwai wrote:
-> > > On Wed, 14 Feb 2018 13:29:39 +0100,
-> > > Benjamin Berg wrote:
-> > > > 
-> > > > The internal mic boost on the T480 is too high. Fix this by 
-> > > > applying the ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the
-> > > > machine 
-> > > > to limit the gain.
-> > > > 
-> > > > Signed-off-by: Benjamin Berg <bberg@redhat.com>
-> > > > Tested-by: Benjamin Berg <bberg@redhat.com>
-> > > 
-> > > Applying this quirk itself is OK, but just wonder whether this
-> > > model 
-> > > has a docking station port.  Recently we fixed the dock issue,
-> > > and 
-> > > it required to apply ALC298_FIXUP_TPT470_DOCK.
-> > 
-> > I assumed that on the T480 and similar models the audio on the dock
-> > is connected through USB (the dock is USB-C + further pins), but I
-> > cannot confirm this myself right now as I only have a T480
-> > currently.
-> > 
-> > I have now contacted Peter Zhang of Lenovo about this and also to
-> > check if other 80 series models may need the same fixup.
-> > 
-> > Benjamin
-> > 
-> > > 
-> > > thanks,
-> > > 
-> > > Takashi
-> > > 
-> > > > ---
-> > > >  sound/pci/hda/patch_realtek.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/sound/pci/hda/patch_realtek.c 
-> > > > b/sound/pci/hda/patch_realtek.c index
-> > > > ce28f7ce64e6..8467ce3db767
-> > > > 100644
-> > > > --- a/sound/pci/hda/patch_realtek.c
-> > > > +++ b/sound/pci/hda/patch_realtek.c
-> > > > @@ -6510,6 +6510,7 @@ static const struct snd_pci_quirk 
-> > > > alc269_fixup_tbl[] = {
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", 
-> > > > ALC298_FIXUP_TPT470_DOCK),
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", 
-> > > > ALC298_FIXUP_TPT470_DOCK),
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", 
-> > > > ALC298_FIXUP_TPT470_DOCK),
-> > > > +	SND_PCI_QUIRK(0x17aa, 0x225d, "Thinkpad T480",
-> > > > ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", 
-> > > > ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", 
-> > > > ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
-> > > >  	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", 
-> > > > ALC294_FIXUP_LENOVO_MIC_LOCATION),
-> > > > --
-> > > > 2.14.3
-> > > > 
-> > > > 
-> > 
-> > -----BEGIN PGP SIGNATURE-----
-> > 
-> > iQIzBAEBCgAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlqEWKkACgkQq6ZWhpmF
-> > Y3AEyQ/7B6l4Na1GLDf11P8OdzzcXOy6grjvrLYwq6WFA3M1DirlQsPwjSbnJ7V8
-> > znIX30EK6My9Ip6jyvJQIpiBlaX1FKJuJ3So9mjgUeOcCQMFkwnC1fMMyyWEAWLq
-> > TI1s7F5w4OQwhQpwtlId4AIB7A2ZzQmP/9YqfIPDtIiNJqjd9aRruBJi8A8j3sB5
-> > slY1CYgCQhBUiAkUPisFrt+b4aFU5FlgINQR+6uOSKO0/IaSKq9rFwX76lOTOsBj
-> > kHhywIF9Qef6CvUDaAOFWjQcTA/ooDPifUsfNzo6ZHnNZIks0Cov12JeO5UrxjiD
-> > a3BuG6SZAVm4awfkTj5pIL0DuBAXYhTJd/hU3VMWdV0/kb0OeVONSahMzhSOCM30
-> > WdFKpWC0+n3TEkTWSG9QGwL6wbXiaLNZ0JRgQkcoJ9JqPVngFf9LIRBzqdMyzyCE
-> > UzLu/oQ9XlXQrFx1IG5KS/RJJPUwpJKhXOygSpRZx/HhmaWpPVLCu9GNg+ytoVIL
-> > QEg381jOTTPi+DX0k07WYK+hUEvB83cbtsm+EiEGMa4bxuhYQp2p1moGqOrzv2XK
-> > iEN8LfF97KJ4GtqVWybnstxMxMdS0CwXBPxUZ3OY6C03S3sdVqk/QrEpE4i0+N8P
-> > CcX3g+rEJVUkpsdm17Sf5u4DjeGH7HBPsDmHirrwvFdeOkTiO4E=
-> > =NIZ6
-> > -----END PGP SIGNATURE-----
-> > 
-> > [2 0000-alc298-thinkpad-dock.patch <application/octet-stream 
-> > (base64)>]
-> > 
------BEGIN PGP SIGNATURE-----
+---
+ drivers/cpuidle/cpuidle.c          |   10 ++++++++--
+ drivers/cpuidle/governors/ladder.c |    3 ++-
+ drivers/cpuidle/governors/menu.c   |   26 ++++++++++++++++++++++----
+ include/linux/cpuidle.h            |    6 ++++--
+ kernel/sched/idle.c                |    4 +++-
+ 5 files changed, 39 insertions(+), 10 deletions(-)
 
-iQIzBAEBCgAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlqeZ7MACgkQq6ZWhpmF
-Y3CUIRAAnZ40ojWpK/oQmBvZCo5tEuiLKuJtQYhsw3yOxs96Ud2u1W/pSx3ED1Re
-qm0TNk9sj7oNPmVnUuSMN5JIj4erW/K3fQ/yM69Sen7LFgDYuSvVEEdhHQbPjpC0
-4C9AHA/InFmecWFjHZ8OLC1DvkXPoHmlw3MpJ4delf1qYZgq6jSrpQFJd2ClnNln
-wvinsIPo71lHLHB33aQd+Gii6C2GplW8V/j77qDVU3KAQQSSz9LDHitZ8oFxEk5U
-kX+nsCN8LXrnBBNGNcVsKaKdJUEfBcelnxz/3I15NPLEroOA5kZnzArj6OBBnYvB
-axpYlXKv1+eSdkq/qGq3H2Me7Ln38kNVYcu7wJKwsBxcMMwhXAoQRLwwr7tEKW+z
-lA8leioxjeCR9ncqxbuUuqOAa6W/PRd6dH9Xp3UVaTg/EPC/kZfg9R2iY7I/ZQOT
-2rcLcsVxlLWg0BGAnV/2o3gRwXymHxKYT8R0MS3TFqVq+fZj9K+SXeueBid1qW78
-wHs9hHjFOO5pZprkOmLWbybV39qi9gEeBV+Q+bIyAlJiYXT2tBCe/t19+6ktCxNa
-8/BWeOvk+rRamtanwX+cXaYOVoh/Ney1nODJs70i58yrTpKM4RwQlhx515S7a+UQ
-Hnx+xw8/wd9IPH67yc7D97iKSFHk5ObmeNB6IHUQhm7CyP6Yedw=
-=+cS7
------END PGP SIGNATURE-----
+Index: linux-pm/include/linux/cpuidle.h
+===================================================================
+--- linux-pm.orig/include/linux/cpuidle.h
++++ linux-pm/include/linux/cpuidle.h
+@@ -131,7 +131,8 @@ extern bool cpuidle_not_available(struct
+ 				  struct cpuidle_device *dev);
+ 
+ extern int cpuidle_select(struct cpuidle_driver *drv,
+-			  struct cpuidle_device *dev);
++			  struct cpuidle_device *dev,
++			  bool *nohz_ret);
+ extern int cpuidle_enter(struct cpuidle_driver *drv,
+ 			 struct cpuidle_device *dev, int index);
+ extern void cpuidle_reflect(struct cpuidle_device *dev, int index);
+@@ -246,7 +247,8 @@ struct cpuidle_governor {
+ 					struct cpuidle_device *dev);
+ 
+ 	int  (*select)		(struct cpuidle_driver *drv,
+-					struct cpuidle_device *dev);
++					struct cpuidle_device *dev,
++					bool *nohz_ret);
+ 	void (*reflect)		(struct cpuidle_device *dev, int index);
+ };
+ 
+Index: linux-pm/kernel/sched/idle.c
+===================================================================
+--- linux-pm.orig/kernel/sched/idle.c
++++ linux-pm/kernel/sched/idle.c
+@@ -186,13 +186,15 @@ static void cpuidle_idle_call(void)
+ 		next_state = cpuidle_find_deepest_state(drv, dev);
+ 		call_cpuidle(drv, dev, next_state);
+ 	} else {
++		bool nohz = true;
++
+ 		tick_nohz_idle_go_idle(true);
+ 		rcu_idle_enter();
+ 
+ 		/*
+ 		 * Ask the cpuidle framework to choose a convenient idle state.
+ 		 */
+-		next_state = cpuidle_select(drv, dev);
++		next_state = cpuidle_select(drv, dev, &nohz);
+ 		entered_state = call_cpuidle(drv, dev, next_state);
+ 		/*
+ 		 * Give the governor an opportunity to reflect on the outcome
+Index: linux-pm/drivers/cpuidle/cpuidle.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/cpuidle.c
++++ linux-pm/drivers/cpuidle/cpuidle.c
+@@ -263,12 +263,18 @@ int cpuidle_enter_state(struct cpuidle_d
+  *
+  * @drv: the cpuidle driver
+  * @dev: the cpuidle device
++ * @nohz_ret: indication on whether or not to stop the tick
+  *
+  * Returns the index of the idle state.  The return value must not be negative.
++ *
++ * The memory location pointed to by @nohz_ret is expected to be written the
++ * 'false' boolean value if the scheduler tick should not be stopped before
++ * entering the returned state.
+  */
+-int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		   bool *nohz_ret)
+ {
+-	return cpuidle_curr_governor->select(drv, dev);
++	return cpuidle_curr_governor->select(drv, dev, nohz_ret);
+ }
+ 
+ /**
+Index: linux-pm/drivers/cpuidle/governors/ladder.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/ladder.c
++++ linux-pm/drivers/cpuidle/governors/ladder.c
+@@ -63,9 +63,10 @@ static inline void ladder_do_selection(s
+  * ladder_select_state - selects the next state to enter
+  * @drv: cpuidle driver
+  * @dev: the CPU
++ * @dummy: not used
+  */
+ static int ladder_select_state(struct cpuidle_driver *drv,
+-				struct cpuidle_device *dev)
++			       struct cpuidle_device *dev, bool *dummy)
+ {
+ 	struct ladder_device *ldev = this_cpu_ptr(&ladder_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+Index: linux-pm/drivers/cpuidle/governors/menu.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/menu.c
++++ linux-pm/drivers/cpuidle/governors/menu.c
+@@ -279,8 +279,10 @@ again:
+  * menu_select - selects the next idle state to enter
+  * @drv: cpuidle driver containing state data
+  * @dev: the CPU
++ * @nohz_ret: indication on whether or not to stop the tick
+  */
+-static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		       bool *nohz_ret)
+ {
+ 	struct menu_device *data = this_cpu_ptr(&menu_devices);
+ 	struct device *device = get_cpu_device(dev->cpu);
+@@ -303,8 +305,10 @@ static int menu_select(struct cpuidle_dr
+ 		latency_req = resume_latency;
+ 
+ 	/* Special case when user has set very strict latency requirement */
+-	if (unlikely(latency_req == 0))
++	if (unlikely(latency_req == 0)) {
++		*nohz_ret = false;
+ 		return 0;
++	}
+ 
+ 	/* determine the expected residency time, round up */
+ 	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length());
+@@ -367,10 +371,12 @@ static int menu_select(struct cpuidle_dr
+ 			continue;
+ 		if (idx == -1)
+ 			idx = i; /* first enabled state */
+-		if (s->target_residency > data->predicted_us)
+-			break;
+ 		if (s->exit_latency > latency_req)
+ 			break;
++		if (s->target_residency > data->predicted_us) {
++			first_idx = i;
++			break;
++		}
+ 
+ 		idx = i;
+ 	}
+@@ -378,6 +384,18 @@ static int menu_select(struct cpuidle_dr
+ 	if (idx == -1)
+ 		idx = 0; /* No states enabled. Must use 0. */
+ 
++	if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING) {
++		*nohz_ret = false;
++	} else if (drv->states[idx].target_residency < TICK_USEC) {
++		/*
++		 * Do not stop the tick if there is at least one more state
++		 * within the tick period range that could be used if longer
++		 * idle duration was predicted.
++		 */
++		*nohz_ret = !(first_idx > idx &&
++			      drv->states[first_idx].target_residency < TICK_USEC);
++	}
++
+ 	data->last_state_idx = idx;
+ 
+ 	return data->last_state_idx;
