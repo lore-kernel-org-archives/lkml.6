@@ -1,120 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754102AbeCFRYt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:24:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35774 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753983AbeCFRYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:24:47 -0500
-Date: Tue, 6 Mar 2018 09:25:15 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [RFC] rcu: Prevent expedite reporting within RCU read-side
- section
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
- <20180306134205.lwmn3cgisnwkngcf@tardis>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306134205.lwmn3cgisnwkngcf@tardis>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030617-0056-0000-0000-0000042905C5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008628; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00999276; UDB=6.00508256; IPR=6.00778594;
- MB=3.00019879; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-06 17:24:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030617-0057-0000-0000-0000086B0A83
-Message-Id: <20180306172515.GW3918@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803060191
+        id S1754076AbeCFRYc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:24:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753852AbeCFRYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 12:24:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661D32178B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 8/9] perf auxtrace: Prevent decoding when --no-itrace
+Date: Tue,  6 Mar 2018 14:23:42 -0300
+Message-Id: <20180306172343.16546-9-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180306172343.16546-1-acme@kernel.org>
+References: <20180306172343.16546-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 09:42:05PM +0800, Boqun Feng wrote:
-> On Tue, Mar 06, 2018 at 02:31:58PM +0900, Byungchul Park wrote:
-> > Hello Paul and RCU folks,
-> > 
-> > I am afraid I correctly understand and fix it. But I really wonder why
-> > sync_rcu_exp_handler() reports the quiescent state even in the case that
-> > current task is within a RCU read-side section. Do I miss something?
-> > 
-> > If I correctly understand it and you agree with it, I can add more logic
-> > which make it more expedited by boosting current or making it urgent
-> > when we fail to report the quiescent state on the IPI.
-> > 
-> > ----->8-----
-> > From 0b0191f506c19ce331a1fdb7c2c5a00fb23fbcf2 Mon Sep 17 00:00:00 2001
-> > From: Byungchul Park <byungchul.park@lge.com>
-> > Date: Tue, 6 Mar 2018 13:54:41 +0900
-> > Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side section
-> > 
-> > We report the quiescent state for this cpu if it's out of RCU read-side
-> > section at the moment IPI was just fired during the expedite process.
-> > 
-> > However, current code reports the quiescent state even in the case:
-> > 
-> >    1) the current task is still within a RCU read-side section
-> >    2) the current task has been blocked within the RCU read-side section
-> 
-> If this happens, the task will queue itself in
-> rcu_preempt_note_context_switch() using rcu_preempt_ctxt_queue(). The gp
-> kthread will wait for this task to dequeue itself. IOW, we have other
-> mechanism to wait for this task other than bottom-up qs reporting tree.
-> So I think we are fine here.
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-That is indeed the trick!  ;-)
+Prevent auxtrace_queues__process_index() from queuing AUX area data for
+decoding when the --no-itrace option has been used.
 
-							Thanx, Paul
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/1520327598-1317-3-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/auxtrace.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-> Regards,
-> Boqun
-> 
-> > Since we don't get to the quiescent state yet in the case, we shouldn't
-> > report it but check it another time.
-> > 
-> > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> > ---
-> >  kernel/rcu/tree_exp.h | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > index 73e1d3d..cc69d14 100644
-> > --- a/kernel/rcu/tree_exp.h
-> > +++ b/kernel/rcu/tree_exp.h
-> > @@ -731,13 +731,13 @@ static void sync_rcu_exp_handler(void *info)
-> >  	/*
-> >  	 * We are either exiting an RCU read-side critical section (negative
-> >  	 * values of t->rcu_read_lock_nesting) or are not in one at all
-> > -	 * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
-> > -	 * read-side critical section that blocked before this expedited
-> > -	 * grace period started.  Either way, we can immediately report
-> > -	 * the quiescent state.
-> > +	 * (zero value of t->rcu_read_lock_nesting). We can immediately
-> > +	 * report the quiescent state.
-> >  	 */
-> > -	rdp = this_cpu_ptr(rsp->rda);
-> > -	rcu_report_exp_rdp(rsp, rdp, true);
-> > +	if (t->rcu_read_lock_nesting <= 0) {
-> > +		rdp = this_cpu_ptr(rsp->rda);
-> > +		rcu_report_exp_rdp(rsp, rdp, true);
-> > +	}
-> >  }
-> >  
-> >  /**
-> > -- 
-> > 1.9.1
-> > 
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 9faf3b5367db..6470ea2aa25e 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -60,6 +60,12 @@
+ #include "sane_ctype.h"
+ #include "symbol/kallsyms.h"
+ 
++static bool auxtrace__dont_decode(struct perf_session *session)
++{
++	return !session->itrace_synth_opts ||
++	       session->itrace_synth_opts->dont_decode;
++}
++
+ int auxtrace_mmap__mmap(struct auxtrace_mmap *mm,
+ 			struct auxtrace_mmap_params *mp,
+ 			void *userpg, int fd)
+@@ -762,6 +768,9 @@ int auxtrace_queues__process_index(struct auxtrace_queues *queues,
+ 	size_t i;
+ 	int err;
+ 
++	if (auxtrace__dont_decode(session))
++		return 0;
++
+ 	list_for_each_entry(auxtrace_index, &session->auxtrace_index, list) {
+ 		for (i = 0; i < auxtrace_index->nr; i++) {
+ 			ent = &auxtrace_index->entries[i];
+@@ -892,12 +901,6 @@ int perf_event__synthesize_auxtrace_info(struct auxtrace_record *itr,
+ 	return err;
+ }
+ 
+-static bool auxtrace__dont_decode(struct perf_session *session)
+-{
+-	return !session->itrace_synth_opts ||
+-	       session->itrace_synth_opts->dont_decode;
+-}
+-
+ int perf_event__process_auxtrace_info(struct perf_tool *tool __maybe_unused,
+ 				      union perf_event *event,
+ 				      struct perf_session *session)
+-- 
+2.14.3
