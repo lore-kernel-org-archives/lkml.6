@@ -1,35 +1,32 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520371778; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520374187; cv=none;
         d=google.com; s=arc-20160816;
-        b=P7Er4uY6G1C+JxYkl4Z8ITe3WEmPq/akHBQ5sCGRqc11d3yh/4HKh0N300rKtN+5LS
-         oYfo6WgcLok/3+eQfHM4i4KRlwBf9KdPj3bfDS+DI0Wu+kZOux09VqZlHbTnslUVn8rY
-         0KuDnitbHZZgoQg8Gkl5nyKpM97+72/EYrEAq7i/Xil+sGuLdzhcKqsXLaUSS7QI8q+B
-         224YopgLIqT9SjXj4OupE58BgWmUjHbdQlx/qr/jjyo5Rv0xd5GDkBZjwpAnCf4M9/WO
-         fTC2HvU5SU+svNkwDa+ic4hRunvH3QRhJPo7YqxHurmjaaZM2JVp2Ay8DzoHmBq9g39L
-         fLLA==
+        b=zF+fIlzWXS4UQRO6M4Aysh1xXkvHD1U7mxQIso/kABubzNVDDYtdGmVN8DJwo7oO36
+         i5FzbGOUPLkol+s1kJ27Ih1uNQsMJIVy5Sx+duzVPjrENWDQHD7+JV2GlSaa+i9mdnCf
+         v9ZsutHW+nGRs2UU1BL1+HA+jNmbUYF9Apy0Yyrd8MwYFiMgMqqU8L6sN2nLNWzor/vP
+         oquqhBm5iFz5HBcthg4NgZrC4WlksxJWbYASL3cx5YgUCyXJYuSqx+4dA0cLN+FDhIox
+         qtV9b0g0g09mHhAfajN2Viea7mng9p3OnsLCYhuH6Devlw2o9G5PUu0pXDgbsZy+Yfot
+         lgQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=Vx8pzO0qSkj4e4WqZaFluHtaorTxe28EcSP77FcHQTM=;
-        b=0c+wxm1+rrCHKHqgvyK4RJhHSanGwA1BedgDlpXLAEfDaxqqWHYx8QVqbAGckmNr/P
-         E+W9FcamL+NRtC/y9Qalpmwk89OfuZHKubL61D9NcradkP3AX2Wr8xVTs4XxiNRwkFAe
-         N+SnPH/lP/e3jnKg6fDqY9YtsT8YGl8URZ6nvvXleC+ZSByHRw0syG/+qiN1AQiUCk9D
-         ZhRNb3S9jZwkxSutiXfkA7sfqedmQ3PsMEshjwJ+/EG0Zg/YToQU4SC3qqbkiXhP1pXm
-         ssDLyLrE5isxlk553JaheUzYc4lB4EBlqoIUSxxwl/1dlNrQphJ9VlvfUxsFRfkWiAoT
-         j/Rw==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=O/7jQ2Ohf9xY+zncn16KtQ032vi16BS7gixoFyTtmYU=;
+        b=ZfzV+Pn5dj0dedYj1wIJe1my7gOLDNhngBSxyLj9z+jX1mj0M8eTPlGnaQZ9DvC50m
+         QNhMyfC1JGqnXMkn4GjmTVcdSeuau716UL4FanrpgtVMRg84icFAcUESo34WAVbcI8gC
+         KWjPibVa44YiTDYa9qDz6TsShIVV0ug+N++Fj3F232LKbTZYCZGK/An4MAmJ4lbsOfYC
+         36CcB6cXgZJ6Z56rRqcuEO6SX8xAUwTy1UQm2ebT5KqOw1cqHq5FeJaoj/939o771MOI
+         4NECJU62pYbWSDiejbwvRuwPQ0LxaEABuCV92yUkGUe77pNWOFEkx+PjBOqin2DI5TXk
+         PVWg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KQU+fJPx;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=eIz9LjU2;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IZclFGyG;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=KQU+fJPx;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=eIz9LjU2;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELtZB9wthGC/UVfbNComBUMAR+BOtLICXGjGo881wC0ZYe5UGzHttTnRskiq0KGJcw8eKq6Szh98owpB9DAkJJ8=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IZclFGyG;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELslWZhubeBsi/ClUtRXgtkvQofF7OFv12NE2uwnB1WrIpkEHd440P7yTOlDIUejgKXQzc6Qj1a0KqxVh1heL8M=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAK8P3a3BA2BueHOuOiszEzkBtA80QDdo3wgX+62=KXCdi9wScQ@mail.gmail.com>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CA+55aFxeJ-6JB-DeZavyzeAYrcdjM=5tMM5dMxvNgT5WJLfQMQ@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
@@ -40,13 +37,14 @@ References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
  <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
  <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
- <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com> <CAK8P3a3BA2BueHOuOiszEzkBtA80QDdo3wgX+62=KXCdi9wScQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 Mar 2018 13:29:37 -0800
-X-Google-Sender-Auth: YE_M6plm6V96HjKnwoI4wYCvqHw
-Message-ID: <CA+55aFxeJ-6JB-DeZavyzeAYrcdjM=5tMM5dMxvNgT5WJLfQMQ@mail.gmail.com>
+ <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
+ <CAK8P3a3BA2BueHOuOiszEzkBtA80QDdo3wgX+62=KXCdi9wScQ@mail.gmail.com> <CA+55aFxeJ-6JB-DeZavyzeAYrcdjM=5tMM5dMxvNgT5WJLfQMQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 23:09:45 +0100
+X-Google-Sender-Auth: Au7Kci0Om_bkz-HqCP8S0Cg84Ks
+Message-ID: <CAK8P3a12YVBK6rtXwubW-0W3XwEbF+BU21MN1Fx8OrA4-2S7vw@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Arnd Bergmann <arnd@arndb.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.com>,
 	Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
@@ -73,29 +71,69 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594225358104241055?=
+X-GMAIL-MSGID: =?utf-8?q?1594227883564731282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 1:21 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Mar 6, 2018 at 10:29 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Mar 6, 2018 at 1:21 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> Right, there are two separate problems: the missing warnings
+>> and the actual uninitialized use. Allocating the stack slots would
+>> address both but only at an enormous cost. Assigning a value
+>> would still have a cost, as it would prevent certain other optimizations,
+>> and it wouldn't help find the missing initializations,
+>> but the cost would obviously be much lower.
 >
-> Right, there are two separate problems: the missing warnings
-> and the actual uninitialized use. Allocating the stack slots would
-> address both but only at an enormous cost. Assigning a value
-> would still have a cost, as it would prevent certain other optimizations,
-> and it wouldn't help find the missing initializations,
-> but the cost would obviously be much lower.
+> What possible optimization would it prevent?
+>
+> I cannot think of a single interesting optimization that would be
+> invalidated by a trivial initialization of 0 to a scalar.
+>
+> Yes, it can obviously generate some extra code for the "pass pointer
+> to uninitialized scalar around to be initialized", where it can now
+> make that stack slot be initialized to zero - so it can generate extra
+> code. But disabling an optimization?
+>
+> What did you have in mind?
 
-What possible optimization would it prevent?
+The type of optimization that causes my earlier example
 
-I cannot think of a single interesting optimization that would be
-invalidated by a trivial initialization of 0 to a scalar.
+int g(int c)
+{
+        int i;
+        if (c)  /* gcc optimizes out the condition as nothing else sets i */
+                i = 1;
+        return i;
+}
 
-Yes, it can obviously generate some extra code for the "pass pointer
-to uninitialized scalar around to be initialized", where it can now
-make that stack slot be initialized to zero - so it can generate extra
-code. But disabling an optimization?
+to be simplified to
 
-What did you have in mind?
+int g(int c)
+{
+        return 1;
+}
 
-                   Linus
+Obviously the specific example is a bug and we'd be better off
+with the zero-initialization, but it was clearly an intentional
+optimization. The bug report in [1]
+suggests that the optimization step that causes the loss of
+information here is "sparse conditional constant propagation"
+as described in [2].
+
+I have to admit that I understand nearly nothing of that
+paper, but my memory from earlier discussions with
+gcc folks is that it will merge code paths for uninitialized
+variables with the normal case if there is exactly one
+initialization, or more generally try to eliminate any code
+path that leads to undefined behavior.
+By forcing an initialization, I would imagine that this early
+dead code elimination fails even for the case that a
+later optimization step can prove that an uninitialized
+variable use never occurs.
+
+      Arnd
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=18501
+[2] http://www.cs.wustl.edu/~cytron/531Pages/f11/Resources/Papers/cprop.pdf
