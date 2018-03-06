@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932314AbeCFE6N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 23:58:13 -0500
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38673 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932069AbeCFE6M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 23:58:12 -0500
-X-Google-Smtp-Source: AG47ELtsG8JEt4ZPS/DJu9VZPjNQ+dcaDLtJCp1ALxRSuc3DPzO9phu/wB0zOSi1dYDilD1CafydsA==
-From: "Oliver O'Halloran" <oohall@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-nvdimm@lists.01.org, "Oliver O'Halloran" <oohall@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH] kernel/memremap: Remove stale devres_free() call
-Date: Tue,  6 Mar 2018 15:56:47 +1100
-Message-Id: <20180306045647.7784-1-oohall@gmail.com>
-X-Mailer: git-send-email 2.9.5
+        id S1750808AbeCFFFt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 00:05:49 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6201 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750713AbeCFFFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 00:05:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
+   d="scan'208";a="209124780"
+Date: Tue, 6 Mar 2018 13:05:06 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Stefan Chulski <stefanc@marvell.com>
+Cc: kbuild-all@01.org, Antoine Tenart <antoine.tenart@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Miquel Raynal <miquel.raynal@free-electrons.com>,
+        Marcin Wojtas <mw@semihalf.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH linux-next] net: mvpp2: mvpp2_check_hw_buf_num() can be
+ static
+Message-ID: <20180306050506.GA35183@xian>
+References: <201803061326.5AOkQ4Wu%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803061326.5AOkQ4Wu%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_memremap_pages() was re-worked in e8d513483300 to take a caller
-allocated struct dev_pagemap as a function parameter. A call to
-devres_free() was left in the error cleanup path which results in
-a kernel panic if the remap fails for some reason. Remove it
-to fix the panic and let devm_memremap_pages() fail gracefully.
 
-Fixes: e8d513483300 ("memremap: change devm_memremap_pages interface to use struct dev_pagemap")
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Fixes: effbf5f58d64 ("net: mvpp2: update the BM buffer free/destroy logic")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-Both in-tree users of devm_memremap_pages() embed dev_pagemap into other
-structures so this shouldn't cause any leaks. Logan's p2p series does
-add one usage that assumes pgmap will be freed on error so that'll
-need fixing.
----
- kernel/memremap.c | 1 -
- 1 file changed, 1 deletion(-)
+ mvpp2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 4dd4274cabe2..895e6b76b25e 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -427,7 +427,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
-  err_pfn_remap:
-  err_radix:
- 	pgmap_radix_release(res, pgoff);
--	devres_free(pgmap);
- 	return ERR_PTR(error);
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index c7b8093..c360430 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -4285,7 +4285,7 @@ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
  }
- EXPORT_SYMBOL(devm_memremap_pages);
--- 
-2.9.5
+ 
+ /* Check number of buffers in BM pool */
+-int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
++static int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
+ {
+ 	int buf_num = 0;
+ 
