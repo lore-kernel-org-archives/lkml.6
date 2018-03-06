@@ -1,74 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754004AbeCFPk4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:40:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:40350 "EHLO foss.arm.com"
+        id S1753852AbeCFPlU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:41:20 -0500
+Received: from sauhun.de ([88.99.104.3]:44450 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753859AbeCFPko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:40:44 -0500
-Subject: Re: [PATCH] net: smsc911x: Fix unload crash when link is up
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "steve.glendinning@shawell.net" <steve.glendinning@shawell.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180306150006.31512-1-jeremy.linton@arm.com>
- <20180306152345.GD30557@lunn.ch>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <166f6d54-4079-50a1-144d-b68afba5a7a6@arm.com>
-Date: Tue, 6 Mar 2018 09:40:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751989AbeCFPlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:41:15 -0500
+Date: Tue, 6 Mar 2018 16:40:59 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Jan Glauber <jglauber@cavium.com>
+Cc: George Cherian <george.cherian@cavium.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/3] i2c: xlp9xx: Check for Bus state before every
+ transfer
+Message-ID: <20180306154056.p3vapgvctxpijitm@ninjato>
+References: <1519737980-27997-1-git-send-email-george.cherian@cavium.com>
+ <20180306084829.GB11729@wintermute>
 MIME-Version: 1.0
-In-Reply-To: <20180306152345.GD30557@lunn.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mvkl5gyybjujn7rj"
+Content-Disposition: inline
+In-Reply-To: <20180306084829.GB11729@wintermute>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 03/06/2018 09:23 AM, Andrew Lunn wrote:
->> This is caused by the mdiobus being unregistered/free'd
->> and the code in phy_detach() attempting to manipulate mdio
->> related structures from unregister_netdev() calling close()
->>
->> To fix this, we delay the mdiobus teardown until after
->> the netdev is deregistered.
->>
->> Reported-by: Matt Sealey <matt.sealey@arm.com>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   drivers/net/ethernet/smsc/smsc911x.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
->> index 012fb66eed8d..f0afb88d7bc2 100644
->> --- a/drivers/net/ethernet/smsc/smsc911x.c
->> +++ b/drivers/net/ethernet/smsc/smsc911x.c
->> @@ -2335,14 +2335,14 @@ static int smsc911x_drv_remove(struct platform_device *pdev)
->>   	pdata = netdev_priv(dev);
->>   	BUG_ON(!pdata);
->>   	BUG_ON(!pdata->ioaddr);
->> -	WARN_ON(dev->phydev);
-> 
-> Hi Jeremy
-> 
-> I assume this WARN_ON() also fired? It would be good to comment about
-> why you removed it, that the code now handles that case.
+--mvkl5gyybjujn7rj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, the phydev is started and assigned in the netdev _open and 
-stopped/set to null in the _stop. Since the module remove is not blocked 
-by having the netdev active, and unregister_netdev closes out active 
-connections, the WARN_ON would needlessly trigger if the netdev was 
-still open.
 
-> 
-> Apart from that
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> I don't know how valuable same-company reviewed-by's are in the end,=20
 
-Thanks for looking at this.
+Case by case. And in your case, I trust you.
+
+> but the patches look good to me with the small change in SMBalert, so you
+> could add:
+>=20
+> Reviewed-by: Jan Glauber <jglauber@cavium.com>
+
+Thanks.
+
+
+--mvkl5gyybjujn7rj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqetoMACgkQFA3kzBSg
+Kba1Iw/+Mxxuy/sbxjLZb4Jl02YQHBneo6jdbOunV16Ucg9v3JQa8OAqUFgLyVnJ
+hiTCFki8XsM9tCbBlenxb/h3pSKkNXivOXnM/P5tyNetg9cL/vu/zAIpdFHuQYi2
+NmkKxraGgTDjRZTyVSwzrURgUOu517H6q9tl4djXEMCN3rLgWFKjO4NaZEtwkf0y
+z09ra51C6ARCbCeRyn1B7+BARVcCr4rJjWR+H2yZIsRJC82ChC6nvAVuBJErcqcC
+sVVG/3wkxp3JUpuQnQDPfxy43zROx595pc+hYkGL9usi+ioZQWTnYO58XqG/6QaP
+Wo1wLZz+R+T6CyOOiQs0sNZZ5QibtMWgIrAYstzZgVL2/k/9b3yXEsTP7o2Y3q6c
+R+1OhPhOPRMHXvMXeJWdw4BIYM/3DlG73HyVYq8zkmTh/7EnmgyUd3qebUjI5wVu
+rMfaPhecNnWm1iHsrweKHtOxdvNZhVXR7TuGR9IT2Q03apSYOrnvPYMHJyRaXJ+X
+nzriEWOWGlWIBxjAnH9HZsE9UT97ZcihBSzCUK5KrArqvMZwtptsIvIQg8HgZm3v
+fewdL78VWVkgiKt/pbatuvgBcUbS49pZJTUpQ7D4gL2MRa+ugc9xNS9pCcan7Bvn
+atAp1U+/gsc+1rItOnTke3QynuWegjTYADURFq1pt4VQxgHz5mI=
+=RVGg
+-----END PGP SIGNATURE-----
+
+--mvkl5gyybjujn7rj--
