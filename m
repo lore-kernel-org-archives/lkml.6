@@ -1,32 +1,35 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520372875; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520374763; cv=none;
         d=google.com; s=arc-20160816;
-        b=AoqxmTTp2c6nnazSLz+zfPV/P30MFEtROaJe0q5VLIUxU7s7PlmpncgMS5gI0Gtyhh
-         rkvr8YIRlPFaIdV9mxeVj9KrwZRz32T/V6E68cPYKnsb1UvKk1RkkPcxrIo4J8RulY9p
-         CbNlBuuQeCou3umql1VZ2dZ2+mjippX9LskqbuxU8Y4o1K4pR7nkfBGAyLDqQSw4hDBg
-         uJx1uHCr/ZIoPPiO9JkW5zZQaB3Mm9+6xIV6wD+PygXeZcCdCqJvRJRNuXUqsLy2VKIR
-         kyyFxDCJV5sIIhp4kBsQAIm14ev0PrQH26zRIP3pSan+Jc9dbsNgeJdKT+feSXUts2+8
-         8Y4g==
+        b=OPMxr6dLwYzWutD4AxIpoJZ45h7H7O+rgIc7JEbAsg44l9fFXDkfg1JVd4lDvGkt2A
+         r7USvS/hLSkY6G/9MPEck7qsB9Rb6qinoOL4k3lylviq9m3SOevcGF44soOUZIw//k1P
+         6I5NGt5Sb7I3QE78hnupJQTNT6mNrfE6A8DOWXWqmcmTtIsr1/iBCj9E7KTrYNcfltUw
+         eGkb/GRwLTetg/Oh7blL8UL5+ALWqDcDqPkflVcDM3/zj7TUZ7UIwLSUP+ttmB2Jz6Rv
+         K9DzHCSg5PuIXArIBPNXr0SXd1JXPtn47/eW6Er6kqiqOxTrl3MsTQ0Kf5rEnlGfwdmO
+         INqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=XiuKBqhzR11z8Z38f5IO64TTl9WKPpK2Quwz6HGyON4=;
-        b=rOOemubgil/e6uzvznxBcqo+TbXXzWnew7EwNw2JvPDf/Sf74qKKRhd+SG/FwbUhx7
-         1DnruzBd9YbamKHNrjmgazjF3Kzoie4J7B4ztNC17UmAs0fzSSRr07S30g9e5NEt8fyd
-         R9W8Vu5SCpmjrP8362Aqg70iqAcPhKQKInLbQvzYvUue27vQXoZFnSInbD9bBw01rblV
-         6aFagXsUCN0S+8nSeM+QxJpty0AgL0vhXZKJbyEzdH6ZL+LkkueoJiNG4u18/jrKKsAl
-         La9FDh6QgzIRhy89Idhmjb7arnMiz2h+JX13IhMX6r10jrQZCef9NMraWpZ9Jhi6m6ln
-         QoIA==
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=dauoV97BNc8VXSVDax2bdKq66VF+IdNquRCBPQDOh60=;
+        b=SWnP0CCpsODf/uJEISNUplFxhql0rnT20SSxzm0QMN+CiA0CUkM18pXCi7ahQoZ+CJ
+         vDtVGOl67O0S3+JsAejLjXqiL757X7PiT/yPQt1s4beX1D8sPB8KiQrKlAv1pPHfNk6e
+         TAAlwpC+NzCjAC8VZVJCHcLbcyf+iBoWZb7aTFlsgyThAIPqTNg38G6lxBSts0NlMO+p
+         plE0w9svHqygTghxMRYrIH+elHcF8Y57QvBaURdMbLDeEFMyV2PQglJBf6bqaI6mImGL
+         3njLEVl1f2OuVCRKR3Fo9moEnTCCZDUAISF2J6n2dRMoy/9ZDiEnmJSeBbKx0cp1Kq2a
+         AOSA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iM+Ew1TW;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cG3nEJva;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=JDfwJ0YD;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iM+Ew1TW;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AG47ELumigQ91SsD89DxBEeRsm5SlFDmiQTcAwGAG6+ZoEZ4TeUTNEdVGfQ2KvpAUVsXGrjWqvo8b9sVSzKdZtYs9xM=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cG3nEJva;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=JDfwJ0YD;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELu7dqNqPgZsGN1sEdCrm8q1aIBK/gOlWw4osb3uNZqxAESdZOci6ofBT+8O36gHjfwbe6q0MjjbVGyS164Blcc=
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20180306163616.7e3b6e0e@vmware.local.home>
+Sender: linus971@gmail.com
+In-Reply-To: <CAK8P3a0ko9E91jok0fSnwQ__vO8nzBpmki768t_-Z9MhZ_f-JQ@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
@@ -37,17 +40,18 @@ References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
  <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
  <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
- <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com> <20180306163616.7e3b6e0e@vmware.local.home>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 6 Mar 2018 22:47:54 +0100
-X-Google-Sender-Auth: BjR23Fm9Dqr_5PHdCdtP4P7Hkks
-Message-ID: <CAK8P3a0ko9E91jok0fSnwQ__vO8nzBpmki768t_-Z9MhZ_f-JQ@mail.gmail.com>
+ <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
+ <20180306163616.7e3b6e0e@vmware.local.home> <CAK8P3a0ko9E91jok0fSnwQ__vO8nzBpmki768t_-Z9MhZ_f-JQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Mar 2018 14:19:21 -0800
+X-Google-Sender-Auth: 7azwRGgfQKgw2xlw1K1im5t92t8
+Message-ID: <CA+55aFybrMeMDEW6bO6XkLVzvgaz9bzTM7CMFxxwHnwD4bcebg@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Daniel Micay <danielmicay@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Andy Lutomirski <luto@kernel.org>,
 	Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
@@ -70,43 +74,58 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594226508228080073?=
+X-GMAIL-MSGID: =?utf-8?q?1594228487865972028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 10:36 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Tue, 6 Mar 2018 13:01:20 -0800
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Tue, Mar 6, 2018 at 1:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 >
->> Then the optimization passes will just remove the initialization in
->> 99.9% of all cases. Only very occasionally - when gcc cannot see it
->> being overwritten - would it remain. And those are exactly the cases
->> where you *want* it to remain.
->
-> You mean have gcc fill in the variables that it thinks is used
-> uninitialized with zeros? As long as it still warns about it, because
-> that usually catches some real bugs where zeroing the variable doesn't
-> actually fix the bug.
->
-> I also tried the example Arnd posted with:
->
->
-> int g(int c)
-> {
->         int i;
->         if (c)  /* gcc optimizes out the condition as nothing else sets i */
->                 i = 1;
->         return i;
-> }
->
-> And he's right. -O2 doesn't warn :-(  I think that it should.
+> I don't really understand it myself, but I do understand that
+> the gcc developers think this is a hard problem to solve.
 
-See this bug that has been open since 2004 and the 31 bugs
-that have been marked as duplicates since then:
+Depending on the internal representation, things that look absolutely
+trivially obvious to humans may not actually be all that trivial at
+all.
 
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=18501
+In particular, the only sane modern IR for a compiler is based on SSA
+(single static assignment), and in that form, the example code is
+actually very obvious: the variable 'i' is assigned to exactly once,
+and has the value 1, so *OBVIOUSLY* the value of 'i' is 1 at each use.
 
-I don't really understand it myself, but I do understand that
-the gcc developers think this is a hard problem to solve.
+It's really so obvious that sparse does exactly the same. If you use
+the sparse "test-linearize" program, you will see that test program
+result in
 
-      Arnd
+  g:
+  .L0:
+      <entry-point>
+      ret.32      $1
+
+because it is very obvious to the optimizer that 'i' is 1.
+
+In fact, to get anything else, you almost _have_ to initialize 'i' to
+"UNDEFINED" in the compiler. At that point the SSA representation says
+'i' has two sources, one undefined and one '1', and all the SSA
+optimizations and simplifications just DTRT automatically.
+
+But it literally involves adding that initialization.
+
+This is actually one reason I think the C "automatic variables are
+undefined" behavior is wrong. It made sense historically, but in an
+SSA world, it actually ends up not even helping.
+
+You might as well just initialize the damn things to zero, avoiding an
+undefined case and just be done with it, and make that part of the
+language definition. It would just be consistent with static variables
+anyway, so it would actually clean up the language conceptually too.
+
+Of course, within the confines of C _history_, that didn't make sense.
+SSA became a thing two decades after C had been invented, and it took
+even longer for it to become the de-facto standard IR for any sane
+optimization.
+
+Honestly, that whole "local variable might be used uninitialized" is
+just a historical accident, and is not some fundamentally good
+warning. It's _only_ a valid warning due to a language mis-feature.
+
+                     Linus
