@@ -1,52 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeCFJ2d (ORCPT <rfc822;w@1wt.eu>);
+        id S1750801AbeCFJ2i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:28:38 -0500
+Received: from mga12.intel.com ([192.55.52.136]:27809 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750907AbeCFJ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Mar 2018 04:28:33 -0500
-Received: from mail-ot0-f174.google.com ([74.125.82.174]:35669 "EHLO
-        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeCFJ2a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:28:30 -0500
-X-Google-Smtp-Source: AG47ELv8Ttu/gMMbE2ROJ/D7JHSyBoHJis+WghRdTKgPN1fmpn0+iZfNoeipOSgOMF0U0k11LCrthVbNRiZrRY++CrM=
-MIME-Version: 1.0
-In-Reply-To: <1756432.KnKEJ20PhI@aspire.rjw.lan>
-References: <2067762.1uWBf5RSRc@aspire.rjw.lan> <1756432.KnKEJ20PhI@aspire.rjw.lan>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 6 Mar 2018 10:28:29 +0100
-X-Google-Sender-Auth: efo0AlnNvHZ1gJoi9V-rT7gizhA
-Message-ID: <CAJZ5v0g=Enc1ji-HMt9R+WSh9KPvGsB8saN34xtuVi5UOfcBMQ@mail.gmail.com>
-Subject: Re: [RFC/RFT][PATCH v2 4/6] cpuidle: Return nohz hint from cpuidle_select()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
+   d="scan'208";a="209184748"
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 0/5 V2] tpm: timeouts revamp
+Date: Tue,  6 Mar 2018 11:24:58 +0200
+Message-Id: <20180306092503.11568-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bummer. :-(
+This series cleans up tpm timeouts setting and handling.
 
-On Tue, Mar 6, 2018 at 10:05 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+First motivation was to fix failures coming from too short timeouts
+for commands that creates keys.
+Key generation may take significant time depending on the underlying
+hardware. Rather than increasing default timeout a new constant is
+added, to not stall too long on regular commands failures.
 
-> +       if (drv->states[idx].flags & CPUIDLE_FLAG_POLLING) {
-> +               *nohz_ret = false;
-> +       } else if (drv->states[idx].target_residency < TICK_USEC) {
-> +               /*
-> +                * Do not stop the tick if there is at least one more state
-> +                * within the tick period range that could be used if longer
-> +                * idle duration was predicted.
-> +                */
-> +               *nohz_ret = first_idx > idx &&
-> +                           drv->states[first_idx].target_residency < TICK_USEC;
+Second is to define timeouts for new tpm2 commands
+defined in TCG 1.36 spec.
 
-This is reversed, sent a wrong version of the patch.
+Tomas Winkler (5):
+  tpm: sort objects in the Makefile
+  tpm: factor out tpm 1.2 duration calculation to tpm1-cmd.c
+  tpm2: add longer timeouts for creation commands.
+  tpm2: add new tpm2 commands according to TCG 1.36
+  tmp: factor out tpm_get_timeouts
 
-I'll resend with this fixed shortly.
+V2: 1. Makefile go back tpm-y construct.
+    2. Add more info to longer timouts patch
+    3. Rebase other patches
+    4. Remove patch not connected to timouts from the series.
+
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 408 +---------------------------------
+ drivers/char/tpm/tpm.h               |  74 ++++---
+ drivers/char/tpm/tpm1-cmd.c          | 416 +++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 220 ++++++++----------
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
+ drivers/char/tpm/tpm_tis_core.c      |   2 +-
+ drivers/char/tpm/xen-tpmfront.c      |   2 +-
+ 9 files changed, 582 insertions(+), 568 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
+
+-- 
+2.14.3
