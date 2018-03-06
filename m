@@ -1,92 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753606AbeCFMnc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:43:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42320 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750933AbeCFMna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:43:30 -0500
-Date: Tue, 6 Mar 2018 13:43:26 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-Message-ID: <20180306124326.ucom526x6giwp2br@pathway.suse.cz>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <20180305144846.3jommv372c73dltt@pathway.suse.cz>
- <20180306042957.GE6713@jagdpanzerIV>
+        id S1753635AbeCFMrq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:47:46 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:57869 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbeCFMro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:47:44 -0500
+Subject: Re: [PATCH] mmc: card: Don't show eMMC RPMB and BOOT areas in
+ /proc/partitions
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1519731229-19141-1-git-send-email-harish_kandiga@mentor.com>
+ <CACRpkdYuxoZaF9xyoA9tsyBuXOkrcdZVGWYfcyEMe0psk6UydQ@mail.gmail.com>
+From: Harish Jenny K N <harish_kandiga@mentor.com>
+Message-ID: <034dc340-149f-dfdf-a2eb-5f15ce9fb412@mentor.com>
+Date: Tue, 6 Mar 2018 18:17:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306042957.GE6713@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CACRpkdYuxoZaF9xyoA9tsyBuXOkrcdZVGWYfcyEMe0psk6UydQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-03-06 13:29:57, Sergey Senozhatsky wrote:
-> On (03/05/18 15:48), Petr Mladek wrote:
-> [..]
-> > 
-> > I hope that I did not miss anything. I could not try this at
-> > runtime.
-> 
-> I think you can. The rules are universal, you can do on x86
-> something like this
-> 
-> ---
-> 
->  arch/x86/kernel/dumpstack.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-> index a2d8a3908670..5d45f406717e 100644
-> --- a/arch/x86/kernel/dumpstack.c
-> +++ b/arch/x86/kernel/dumpstack.c
-> @@ -375,3 +375,16 @@ static int __init code_bytes_setup(char *s)
->  	return 1;
->  }
->  __setup("code_bytes=", code_bytes_setup);
-> +
-> +void dump_stack(void)
-> +{
-> +	dump_stack_print_info(KERN_DEFAULT);
-> +
-> +	pr_crit("\t\tLinux\n\n");
-> +
-> +	pr_crit("An error has occurred. To continue:\n"
-> +		"Press Enter to return to Linux, or\n"
-> +		"Press CTRL+ALT+DEL to restart your computer.\n");
-> +
-> +	pr_crit("\n\n\tPress any key to continue _");
-> +}
-> 
-> ---
-> 
-> Should be enough for testing.
-
-Yup, this worked.
-
-I have pushed the patch into printk.git for-4.17 branch,
-see https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/commit/?h=for-4.17&id=33251b634b4aa1317e2f911e3b723179949a0605
 
 
-Greentime Hu,
+On Friday 02 March 2018 06:23 PM, Linus Walleij wrote:
+> On Tue, Feb 27, 2018 at 12:33 PM, Harish Jenny K N
+> <harish_kandiga@mentor.com> wrote:
+>
+>> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+>>
+>> Since RPMB area is accessible via special ioctl only and boot areas
+>> are unlikely to contain any partitions, exclude them all from listing
+>> in /proc/partitions. This will hide them from various user-level
+>> software (e.g. fdisk), thus avoiding unnecessary access attempts.
+>>
+>> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+>> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+> Makes sense to me, at least it makes the problem smaller not bigger.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-the for-4.17 branch in printk.git is based on Linus' tree. Therefore
-I had to remove the hunk against arch/nds32/kernel/traps.c because
-this file is only in linux-next.
 
-I think that it might be easier if you remove the EXPORT_SYMBOL()
-in your branch. Is it OK for you, please?
+Any other comments/inputs on this ?
 
-Best Regards,
-Petr
+
+Thanks,
+Harish Jenny K N
