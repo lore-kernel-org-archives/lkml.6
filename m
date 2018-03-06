@@ -1,96 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753134AbeCFBwd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 20:52:33 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37301 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753053AbeCFBw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 20:52:28 -0500
-X-Google-Smtp-Source: AG47ELskMG5xe5xAE+K/jbM690vvR45xIghbfM29+4Io8fDcjU55IEz3SBuolAJqAKykjK/d6B/umA==
-Date: Tue, 6 Mar 2018 10:52:22 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
-        linux-kernel-owner <linux-kernel-owner@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Jan Kara <jack@suse.cz>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
-        caijingxian <caijingxian@linux.alibaba.com>,
-        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: Would you help to tell why async printk solution was not taken
- to upstream kernel ?
-Message-ID: <20180306015222.GA6713@jagdpanzerIV>
-References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>
- <20180304130151.GA483@tigerII.localdomain>
- <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
- <20180304104324.6bbbaa53@gandalf.local.home>
- <20180305021416.GA6202@jagdpanzerIV>
- <20180305155802.5c0f73fc@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180305155802.5c0f73fc@gandalf.local.home>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S932370AbeCFB4S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 20:56:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58090 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752017AbeCFB4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 20:56:17 -0500
+From: Benjamin Poirier <bpoirier@suse.com>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>,
+        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Revert "e1000e: Separate signaling for link check/link up"
+Date: Tue,  6 Mar 2018 10:55:52 +0900
+Message-Id: <20180306015553.10441-1-bpoirier@suse.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steven,
+This reverts commit 19110cfbb34d4af0cdfe14cd243f3b09dc95b013.
+This reverts commit 4110e02eb45ea447ec6f5459c9934de0a273fb91.
+This reverts commit d3604515c9eda464a92e8e67aae82dfe07fe3c98.
 
-Let me Cc Tejun
+Commit 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+changed what happens to the link status when there is an error which
+happens after "get_link_status = false" in the copper check_for_link
+callbacks. Previously, such an error would be ignored and the link
+considered up. After that commit, any error implies that the link is down.
 
-On (03/05/18 15:58), Steven Rostedt wrote:
-> On Mon, 5 Mar 2018 11:14:16 +0900
-> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-> 
-> > But I still think that it makes sense to change that "print it all" approach.
-> > With more clear/explicit watchdog-dependent limits - we do direct printk for
-> > 1/2 (or 2/3) of a current watchdog threshold value and offload if there is
-> > more stuff in the logbuf. Implicit "logbuf size * console throughput" is
-> > harder to understand. Disabling watchdog because of printk is a bit too much
-> > of a compromise, probably.
-> 
-> If you know the baud rate, logbuf size * console throughput is actually
-> trivial to calculate.
-> 
-> Let's see. CONFIG_LOG_BUF_SHIFT defaults to 18 (2^18 = 262144).
-> Lets say we have a slow 9600 baud serial, which would give us:
->
->  262144 * 8 / 9600 = 219 (rounded up).
-> 
-> Thus, the worse case scenario would be 219 seconds to output the entire
-> buffer. Add 10 seconds more for extra overhead, and then you have 229
-> second watchdog that should never trigger because of a very slow
-> console.
->
-> (A more common 151200 baud modem would empty the buffer in 14 seconds).
+Revert commit 19110cfbb34d ("e1000e: Separate signaling for link check/link
+up") and its followups. After reverting, the race condition described in
+the log of commit 19110cfbb34d is reintroduced. It may still be triggered
+by LSC events but this should keep the link down in case the link is
+electrically unstable, as discussed. The race may no longer be
+triggered by RXO events because commit 4aea7a5c5e94 ("e1000e: Avoid
+receiver overrun interrupt bursts") restored reading icr in the Other
+handler.
 
-Right. And when you register one more console (e.g. net console), you need
-to re-calculate and re-adjust watchdog. When you set kernel log_buf_len
-param (e.g. you might do log_buf_len=32G to store ftrace dumps from NMI)
-you need to re-calculate and re-adjust watchdog, etc.
+Link: https://lkml.org/lkml/2018/3/1/789
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+---
+ drivers/net/ethernet/intel/e1000e/ich8lan.c | 13 ++++---------
+ drivers/net/ethernet/intel/e1000e/mac.c     | 13 ++++---------
+ drivers/net/ethernet/intel/e1000e/netdev.c  |  2 +-
+ 3 files changed, 9 insertions(+), 19 deletions(-)
 
-> > IOW, is logbuf worth of messages so critically important after all that we
-> > are ready to jeopardize the system stability?
-> 
-> The stability is only in jeopardy if the watchdogs trigger, right?
-
-Not limited to, watchdog threshold is at least deterministic.
-Unlike, for instance, this guy
-
-	rcu_read_lock()
-	 printk()
-	rcu_read_unlock()
-
-It will block RCU grace periods. In the worst case this can become a
-full-blown RCU stall and even OOM. In a less dramatic case this can
-increase memory pressure, cause reclaimer activities, etc, which is not
-a very good development, whether you have a small embedded device or a
-server under high load, especially given that all you did was a bunch
-of printks.
-
-	-ss
+diff --git a/drivers/net/ethernet/intel/e1000e/ich8lan.c b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+index ff308b05d68c..d6d4ed7acf03 100644
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -1367,9 +1367,6 @@ static s32 e1000_disable_ulp_lpt_lp(struct e1000_hw *hw, bool force)
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
+- *
+- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
+- *  up).
+  **/
+ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ {
+@@ -1385,7 +1382,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status)
+-		return 1;
++		return 0;
+ 
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -1602,7 +1599,7 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return 1;
++		return -E1000_ERR_CONFIG;
+ 
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+@@ -1616,12 +1613,10 @@ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val) {
++	if (ret_val)
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
+-	}
+ 
+-	return 1;
++	return ret_val;
+ }
+ 
+ static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
+diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
+index db735644b312..b322011ec282 100644
+--- a/drivers/net/ethernet/intel/e1000e/mac.c
++++ b/drivers/net/ethernet/intel/e1000e/mac.c
+@@ -410,9 +410,6 @@ void e1000e_clear_hw_cntrs_base(struct e1000_hw *hw)
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
+- *
+- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
+- *  up).
+  **/
+ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ {
+@@ -426,7 +423,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status)
+-		return 1;
++		return 0;
+ 
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -450,7 +447,7 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return 1;
++		return -E1000_ERR_CONFIG;
+ 
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+@@ -464,12 +461,10 @@ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val) {
++	if (ret_val)
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
+-	}
+ 
+-	return 1;
++	return ret_val;
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 9fd4050a91ca..8a3aa85b159c 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -5090,7 +5090,7 @@ static bool e1000e_has_link(struct e1000_adapter *adapter)
+ 	case e1000_media_type_copper:
+ 		if (hw->mac.get_link_status) {
+ 			ret_val = hw->mac.ops.check_for_link(hw);
+-			link_active = ret_val > 0;
++			link_active = !hw->mac.get_link_status;
+ 		} else {
+ 			link_active = true;
+ 		}
+-- 
+2.16.2
