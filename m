@@ -1,94 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753512AbeCFN5B (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:57:01 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34938 "EHLO mail.bootlin.com"
+        id S1753577AbeCFOBV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:01:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFN5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:57:00 -0500
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v3 0/7] drm/sun4i: Allwinner MIPI-DSI support
-Date: Tue,  6 Mar 2018 14:55:57 +0100
-Message-Id: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.14.3
+        id S1750932AbeCFOBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:01:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F6CC20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 6 Mar 2018 11:01:17 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Wang YanQing <udknight@gmail.com>, jolsa@redhat.com,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf report: Provide libtraceevent with a kernel symbol
+ resolver
+Message-ID: <20180306140117.GB10176@kernel.org>
+References: <20180115044732.GB20373@udknight>
+ <20180208122031.GA30130@krava>
+ <20180306073658.GA7964@udknight>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306073658.GA7964@udknight>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Em Tue, Mar 06, 2018 at 03:36:58PM +0800, Wang YanQing escreveu:
+> On Thu, Feb 08, 2018 at 01:20:31PM +0100, Jiri Olsa wrote:
+> > On Mon, Jan 15, 2018 at 12:47:32PM +0800, Wang YanQing wrote:
+> > > So that beautifiers wanting to resolve kernel function addresses to
+> > > names can do its work, and when we use "perf report" for output of
+> > > "perf kmem record", we will get kernel symbol output.
+> > > 
+> > > Signed-off-by: Wang YanQing <udknight@gmail.com>
+> > 
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Hi! Arnaldo Carvalho de Melo
+> 
+> What is the status of this patch now?
+> Does the patch sanked to the bottom of your mailbox?
 
-Here is an preliminary version of the MIPI-DSI support for the Allwinner
-SoCs.
+It looks ok, but you forgot to add a before and after output of tools
+affected by the patch.
 
-This controller can be found on a number of recent SoCs, such as the
-A31, A33 or the A64.
+Reading the patch one can try and figure out how to test your patch, but
+if you show how the output is changed, providing the exact command line
+used to produce the output, then you will make it easier for reviewers
+to reproduce your results, testing your patch.
 
-Given the sparse documentation, there's a number of obscure areas, but
-the current implementation has been tested with a 4-lanes DSI panel on
-an A33.
+I try to do this for every patch, so it all adds up, please help me with
+reviewing your patch :-)
 
-The support is a bit rough around the edges at the time, and some artifacts
-are still shown on the screen for some reasons. Wider testing with
-different display will hopefully nail those down.
-
-Let me know what you think,
-Maxime
-
-Changes from v2:
-  - Added a ports node under the DSI node
-  - Changed the huarui panel driver to an ili9881c driver
-  - Changed the panel vendor to bananapi
-  - Made the init table static in the panel driver
-  - Dropped the huarui vendor patch for the DT doc.
-
-Changes from v1:
-  - Rebased on 4.16-rc1
-  - Constified a few function arguments and structures
-  - Reworked the DT binding example a bit
-  - Reworked the panel driver to check for DSI return codes, and use DCS
-    helpers when possible
-
-Maxime Ripard (7):
-  drm/sun4i: tcon: Add TRI finish interrupt for vblank
-  dt-bindings: display: Add Allwinner MIPI-DSI bindings
-  drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
-  dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
-  drm/panel: Add Ilitek ILI9881c panel driver
-  arm: dts: sun8i: a33: Add the DSI-related nodes
-  [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
-
- Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt |   20 +-
- Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt       |   93 ++++++-
- arch/arm/boot/dts/sun8i-a33.dtsi                                    |   44 +++-
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts                        |   39 +++-
- drivers/gpu/drm/panel/Kconfig                                       |    9 +-
- drivers/gpu/drm/panel/Makefile                                      |    1 +-
- drivers/gpu/drm/panel/panel-ilitek-ili9881c.c                       |  506 +++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/Kconfig                                       |   10 +-
- drivers/gpu/drm/sun4i/Makefile                                      |    4 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                                  |  111 ++++++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                                  |   46 +++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                             |  297 +++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                              | 1111 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                              |   67 ++++-
- 14 files changed, 2355 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt
- create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
- create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
- create mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-
-base-commit: 37746b935fb2b75cd3aa014e08f959e0321bde59
--- 
-git-series 0.9.1
+- Arnaldo
