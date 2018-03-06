@@ -1,86 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754055AbeCFVVc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 16:21:32 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42092 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbeCFVVb (ORCPT
+        id S1754100AbeCFVd6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 16:33:58 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34974 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753504AbeCFVdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 16:21:31 -0500
-Date: Tue, 6 Mar 2018 13:21:29 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: might_sleep warning
-Message-Id: <20180306132129.45b395d9732b6360fa0b600d@linux-foundation.org>
-In-Reply-To: <CAGM2rebb9FdceEBO2GfJ7BKf=fEf8p86Yc1vCq4eZyyB0Me+DA@mail.gmail.com>
-References: <20180306192022.28289-1-pasha.tatashin@oracle.com>
-        <20180306123655.957e5b6b20b200505544ea7a@linux-foundation.org>
-        <CAGM2rea1raxsXDkqZgmmdBiuywp1M3y1p++=J893VJDgGDWLnQ@mail.gmail.com>
-        <20180306125604.c394a25a50cae0e36c546855@linux-foundation.org>
-        <CAGM2rebb9FdceEBO2GfJ7BKf=fEf8p86Yc1vCq4eZyyB0Me+DA@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Mar 2018 16:33:55 -0500
+Date: Tue, 6 Mar 2018 21:33:50 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
+        linux-omap@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regulator regression in next-20180305
+Message-ID: <20180306213350.GH13586@sirena.org.uk>
+References: <20180305231246.GB5799@atomide.com>
+ <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
+ <20180306163035.GE13586@sirena.org.uk>
+ <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
+ <20180306191218.GF13586@sirena.org.uk>
+ <CAOMZO5BfEfXN6OgxXswm8qFDbxDJKdUJmhDZGr_DBOh8fbtodA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+Z7/5fzWRHDJ0o7Q"
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5BfEfXN6OgxXswm8qFDbxDJKdUJmhDZGr_DBOh8fbtodA@mail.gmail.com>
+X-Cookie: DYSLEXICS OF THE WORLD, UNTIE!
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 16:04:06 -0500 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-> > > > >       spin_lock(&deferred_zone_grow_lock);
-> > > > > -     static_branch_disable(&deferred_pages);
-> > > > > +     deferred_zone_grow = false;
-> > > > >       spin_unlock(&deferred_zone_grow_lock);
-> > > > > +     static_branch_disable(&deferred_pages);
-> > > > >
-> > > > >       /* There will be num_node_state(N_MEMORY) threads */
-> > > > >       atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
-> > > >
-> > > > Kinda ugly, but I can see the logic behind the decisions.
-> > > >
-> > > > Can we instead turn deferred_zone_grow_lock into a mutex?
-> >
-> > (top-posting repaired.  Please don't top-post).
-> >
-> > > [CCed everyone]
-> > >
-> > > Hi Andrew,
-> > >
-> > > I afraid we cannot change this spinlock to mutex
-> > > because deferred_grow_zone() might be called from an interrupt context if
-> > > interrupt thread needs to allocate memory.
-> > >
-> >
-> > OK.  But if deferred_grow_zone() can be called from interrupt then
-> > page_alloc_init_late() should be using spin_lock_irq(), shouldn't it?
-> > I'm surprised that lockdep didn't detect that.
-> 
-> No, page_alloc_init_late()  cannot be called from interrupt, it is
-> called straight from:
-> kernel_init_freeable(). But, I believe deferred_grow_zone(): can be called:
-> 
-> get_page_from_freelist()
->  _deferred_grow_zone()
->    deferred_grow_zone()
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-That's why page_alloc_init_late() needs spin_lock_irq().  If a CPU is
-holding deferred_zone_grow_lock with enabled interrupts and an
-interrupt comes in on that CPU and the CPU runs deferred_grow_zone() in
-its interrupt handler, we deadlock.
+On Tue, Mar 06, 2018 at 05:06:48PM -0300, Fabio Estevam wrote:
+> On Tue, Mar 6, 2018 at 4:12 PM, Mark Brown <broonie@kernel.org> wrote:
 
-lockdep knows about this bug and should have reported it.
+> > Yeah, that's what I expected.  What we really need to figure out I think
+> > is what exactly is taking the lock that we end up colliding with, I
+> > don't seem to be able to reproduce so I'm having to just go on staring
+> > at the code here.
+
+> Any debug options I should turn on in order to help us to understand
+> more on the lock issue?
+
+No, unfortunately, apart from the generic kernel ones (like lockdep).
+I'll try to have a poke at adding some tomorrow, though I'm also
+considering just dropping the series for now.
+
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqfCT0ACgkQJNaLcl1U
+h9C9LAf/fr4dr//g7R8brVqukeJ7zYuWo3k4o0h8+VidxRv+hHlkvDMsIk1R9Pjp
+QCJFrRcF+pXiitZzMLeFP8w3/IC7pR2yiuq7plKfVOTJs7O5H6bcULyFfiXg3FNK
+zKu7o6VWdZuAtJNZ4TzJQwC2+bx9l58zAgZHCN8Z0iYOnTRyMB9nkM5eDi6QjdOu
+0E2BYhxNuq+TcFWxL0Pv6+2CL9mkkxKmScSGWIA9nglzTzE+bh9drrU8tgrT96GL
+xGVN++2OvnAzAOAGn86f6nKWVGfY4UMu439fUKmv3fue942+b83WbHFTmbf0+iuw
+XZv2Hu5DOKsSyJtWHW0PQF5y5cYBhA==
+=5ukD
+-----END PGP SIGNATURE-----
+
+--+Z7/5fzWRHDJ0o7Q--
