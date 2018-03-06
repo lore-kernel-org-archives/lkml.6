@@ -1,73 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753816AbeCFPXw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:23:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43704 "EHLO mail.kernel.org"
+        id S1753860AbeCFPYG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:24:06 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:48783 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFPXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:23:50 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0DA2178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AG47ELtGETWIKpqcwUSsUTVxOT8uf/LqsuG5QsBHwEQvVYHHEro42XSKSUZ243jVdfcww0FYysroEgVX5ipVZkVsgFg=
+        id S1753243AbeCFPXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:23:51 -0500
+Date: Tue, 6 Mar 2018 16:23:45 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: netdev@vger.kernel.org, steve.glendinning@shawell.net,
+        matt.sealey@arm.com, davem@davemloft.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: smsc911x: Fix unload crash when link is up
+Message-ID: <20180306152345.GD30557@lunn.ch>
+References: <20180306150006.31512-1-jeremy.linton@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1520347435-22970-11-git-send-email-b.zolnierkie@samsung.com>
-References: <CGME20180306144511epcas2p1c1c00d0bdea1e329d2d3d5583f135437@epcas2p1.samsung.com>
- <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com> <1520347435-22970-11-git-send-email-b.zolnierkie@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 6 Mar 2018 16:23:47 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfdQo=wCixbREyOriEUZPRGOT35sT3ojcoeXRt0UsBwqQ@mail.gmail.com>
-Message-ID: <CAJKOXPfdQo=wCixbREyOriEUZPRGOT35sT3ojcoeXRt0UsBwqQ@mail.gmail.com>
-Subject: Re: [PATCH 10/12] ARM: dts: remove no longer needed samsung thermal properties
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306150006.31512-1-jeremy.linton@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 3:43 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Remove no longer needed samsung thermal properties.
->
-> There should be no functional changes caused by this patch.
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> This is caused by the mdiobus being unregistered/free'd
+> and the code in phy_detach() attempting to manipulate mdio
+> related structures from unregister_netdev() calling close()
+> 
+> To fix this, we delay the mdiobus teardown until after
+> the netdev is deregistered.
+> 
+> Reported-by: Matt Sealey <matt.sealey@arm.com>
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 > ---
->  arch/arm/boot/dts/exynos3250.dtsi                   |  2 +-
->  arch/arm/boot/dts/exynos4.dtsi                      |  2 +-
->  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi   | 20 --------------------
->  arch/arm/boot/dts/exynos5250.dtsi                   |  2 +-
->  arch/arm/boot/dts/exynos5410.dtsi                   |  8 ++++----
->  arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi   | 21 ---------------------
->  arch/arm/boot/dts/exynos5420.dtsi                   | 10 +++++-----
->  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi   | 20 --------------------
->  arch/arm/boot/dts/exynos5440.dtsi                   |  6 +++---
->  .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi  | 20 --------------------
->  .../boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi | 19 -------------------
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi          | 10 +++++-----
->  .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi    | 21 ---------------------
->  arch/arm64/boot/dts/exynos/exynos7.dtsi             |  2 +-
->  14 files changed, 21 insertions(+), 142 deletions(-)
->  delete mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
->  delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
->  delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
->  delete mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+>  drivers/net/ethernet/smsc/smsc911x.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+> index 012fb66eed8d..f0afb88d7bc2 100644
+> --- a/drivers/net/ethernet/smsc/smsc911x.c
+> +++ b/drivers/net/ethernet/smsc/smsc911x.c
+> @@ -2335,14 +2335,14 @@ static int smsc911x_drv_remove(struct platform_device *pdev)
+>  	pdata = netdev_priv(dev);
+>  	BUG_ON(!pdata);
+>  	BUG_ON(!pdata->ioaddr);
+> -	WARN_ON(dev->phydev);
 
-Hi,
+Hi Jeremy
 
-Please split the arm64 to separate patchset.
+I assume this WARN_ON() also fired? It would be good to comment about
+why you removed it, that the code now handles that case.
 
-It is a cleanup patch and it depends on your driver changes so it will
-have to wait till your driver patches hit mainline.
+Apart from that
 
-Best regards,
-Krzysztof
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
