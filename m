@@ -1,69 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753957AbeCFRPF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:15:05 -0500
-Received: from smtprelay0092.hostedemail.com ([216.40.44.92]:50419 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753713AbeCFRPE (ORCPT
+        id S1753954AbeCFRQw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:16:52 -0500
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:39043 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753864AbeCFRQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:15:04 -0500
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1345:1437:1534:1541:1711:1730:1747:1777:1792:2393:2559:2562:2689:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3868:3871:4321:5007:6261:10004:10848:11026:11658:11914:12043:12296:12555:12679:12895:12986:13069:13161:13221:13229:13311:13357:14181:14384:14394:14721:21080:21627:30054:30064:30070,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: unit03_4913a697bef10
-X-Filterd-Recvd-Size: 2032
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] checkpatch: Improve get_quoted_string for TRACE_EVENT macros
-Date: Tue,  6 Mar 2018 09:14:58 -0800
-Message-Id: <9e9725342ca3dfc0f5e3e0b8ca3c482b0e5712cc.1520356392.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Tue, 6 Mar 2018 12:16:48 -0500
+X-Google-Smtp-Source: AG47ELvV4/JVfaSGosA3qhKDfL1h8Um9wUHkBu0WxH2l1oWaCZG946szhUIFSnJyQjdR1ygFvlxQe6cfzH0fAKgvJI8=
+MIME-Version: 1.0
+In-Reply-To: <1519965121-12017-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com> <1519965121-12017-2-git-send-email-yamada.masahiro@socionext.com>
+From: Tony Luck <tony.luck@intel.com>
+Date: Tue, 6 Mar 2018 09:16:46 -0800
+X-Google-Sender-Auth: Yo7vvrwpV0eAFqhoyR6wzV1AIuI
+Message-ID: <CA+8MBbLjdViZgUYuLT1qDAnxtBP62pCXnvNMbUCjZ=RP8Ok=Dw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] kbuild: define PYTHON2 and PYTHON3 variables
+ instead of PYTHON
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The get_quoted_string function does not expect invalid arguments.
+On Thu, Mar 1, 2018 at 8:31 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> arch/ia64/scripts/unwcheck.py is apparently written in Python 2, so
+> it should be invoked by 'python2'.
 
-The $stat test can return non-statements for complicated macros
-like TRACE_EVENT.
+I pushed the patch from Corentin Labbe to update this script to run with either
+python2 or python3. Linus took it yesterday:
 
-Allow the $stat block and test for vsprintf misuses to exceed
-the actual block lenght and possibly test invalid lines by
-validating the arguments of get_quoted_string.
+bd5edbe67794 ("ia64: convert unwcheck.py to python3")
 
-return "" if either get_quoted_string argument is undefined.
-
-Miscellanea:
-
-o Properly align the comment for the vsprintf extension test
-
-Signed-off-by: Joe Perches <joe@perches.com>
-Reported-by: Chuck Lever <chuck.lever@oracle.com>
----
- scripts/checkpatch.pl | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 16e542f4e027..5a6cef8f2376 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -1298,6 +1298,7 @@ sub sanitise_line {
- sub get_quoted_string {
- 	my ($line, $rawline) = @_;
- 
-+	return "" if (!defined($line) || !defined($rawline));
- 	return "" if ($line !~ m/($String)/g);
- 	return substr($rawline, $-[0], $+[0] - $-[0]);
- }
-@@ -5817,7 +5818,7 @@ sub process {
- 			}
- 		}
- 
--		# check for vsprintf extension %p<foo> misuses
-+# check for vsprintf extension %p<foo> misuses
- 		if ($^V && $^V ge 5.10.0 &&
- 		    defined $stat &&
- 		    $stat =~ /^\+(?![^\{]*\{\s*).*\b(\w+)\s*\(.*$String\s*,/s &&
--- 
-2.15.0
+-Tony
