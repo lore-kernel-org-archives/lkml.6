@@ -1,109 +1,104 @@
-Return-Path: <outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1520094324; cv=pass;
+Return-Path: <outreachy-kernel+bncBCUO3AHUWUIRB7WK73KAKGQEUM3QC6I@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1520412031; cv=pass;
         d=google.com; s=arc-20160816;
-        b=OofJ5HIDhH66NpfXLh2gXUevPSVp/SXs93/l4O0ScPftaI5qjtYqied+HD/fpCtCtm
-         ghV3ZS5oGsqD6MPCxJ0nSxvP9yPFoUokec4qjc7/8aWKbIbjStlAOW9kQZMBwuZMvgyP
-         BhUnoTAjPZEqdg0xC+TEMDMxiUu1cVsQTDbjX16WhpeFk0yiICbA9UV0sSb5+kUdylVK
-         KBWMA5g0EdVfH+r96xrIvINFsKF1BJwvOykQG3MAbwDjejYUW0qCgz4hWXron9oiSJxl
-         6gFetANtMZJGsC5mENAHWP2gBqRUfUt2laO/3Hgt1bG2utO9DFNEfOXH9jAJgCKbImC2
-         Exjg==
+        b=V9O3HyRCp3qYKOD5IrcnEeY477rfW5F+s1oj4U2hxAblFSXiSyK2gyZYLfoQZG0STZ
+         NDHTRoRf/pvglH+yPp3w001ZnagWkBhIjQCR5rci0viIqi0GE+BHnC0p7LpcyVl643Ho
+         ZIYPQ6wYFw+0Crpadsg7BKkjeteRQXF+gleFlNQ9YUCkSbM2BErb4YXbO2d0ECZLOrl5
+         NfwBkPJW20GVa1q4qmMTOM4q0fFZ/KSV9bj7RXrZNajqGNw9QlmaWWPmldKmN5YK7cIU
+         gwDPWYUUMntnA4Z+q/202SEVIqboUSFFu3CmBUN6rDDpuOOkqLL9BBBm/hD8IQGbxawD
+         Tp1g==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results:arc-message-signature
+         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results:arc-message-signature
          :arc-authentication-results;
-        bh=JmPGQOP2g3UVm8k5QrtCUpmUdjpJHzsD/PdqID5p0sg=;
-        b=tqu36K5UEekaBCnDV0PFSDNNEPYXWD3djERK88S6zmcKx5Yt9kRtcCJr+kUAi77dW5
-         1d+KHaj1DfLmQ7fJI4a1Gb05fkeOhUuPWosOeMi/efniq6l+iY0CdFvj8o/KnhwuXWJ5
-         kCrWfc2iQ7dw9fREB/tMH3ugqXi5DHS/jRTcONYIFTUe/xYP2wCc947+0jw3S+bvVbp+
-         dmgZcEWC7UVFbAkAxaa2eU1PXr7TWnJODeqFfpx14GHxGfV2WVohElvwEsiehUh4ih83
-         fnQ4rpTagDdXvdzrJI43u2g5T58VnsiD8qMk6YhwI0H5wcAh7B6ewrCSVYCNepZWnrzR
-         bYBQ==
+        bh=XIBPJr7NkAiPEZTgGeWkpE13lJItRKTOeAjdsFw2vlQ=;
+        b=eYt9aQq2wFrUQ7tz4IfWDrgoWap9H56QTW4HU56Z0CXnpNXZev2ZtyTFCkU5IYfY9Q
+         CxQ/ylKQnZ4If39B/P8OurLhS56f+Y+HwKqGt4W47HPCkcHM4Lqydm8wUzDMFYJy65IO
+         weSt9+NK+BbwjoW0Fzdf4dvpEV5xTgv6ooP6T9g45Uv4b4dc73HEgynqrxVv9cPywNIs
+         M1sdMF1xvDuD8HroaWJVvVx2QW6ocJl1QaQMDBkcj1lly/RI9uPYJxP5Qk9M5c2KgZLv
+         ZpeR4zuean0AWre9g4Kv6jQT/YHCCs6CFH1Ct1vNX+kww3bgIo24Uxow9bBy3RwLJrVs
+         4B5A==
 ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=kIubnAV8;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QKcNgJK9;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrb5ey5pkakgqej35on6a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=VgHEBVOM;
+       arc=pass (i=2 spf=pass spfdomain=ziepe.ca dkim=pass dkdomain=ziepe.ca);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcuo3ahuwuirb7wk73kakgqeum3qc6i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCUO3AHUWUIRB7WK73KAKGQEUM3QC6I@googlegroups.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=kIubnAV8;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QKcNgJK9;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrb5ey5pkakgqej35on6a@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRB5EY5PKAKGQEJ35ON6A@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-ARC-Seal: i=2; a=rsa-sha256; t=1520094324; cv=pass;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=VgHEBVOM;
+       arc=pass (i=2 spf=pass spfdomain=ziepe.ca dkim=pass dkdomain=ziepe.ca);
+       spf=pass (google.com: domain of outreachy-kernel+bncbcuo3ahuwuirb7wk73kakgqeum3qc6i@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCUO3AHUWUIRB7WK73KAKGQEUM3QC6I@googlegroups.com
+ARC-Seal: i=2; a=rsa-sha256; t=1520412031; cv=pass;
         d=google.com; s=arc-20160816;
-        b=BQi3dAAsQmALuAVpJf6fHFD6Dy3qzMHlEm3mbJOfyBF8YvA/HO19kvp/079Y40t+FY
-         AkezycheCpP12JG8slUmusKkLn58GOircWe3MiMIbEpvXjslNYXiXmABUwgUQifHZ8Cv
-         ZyZyU5Tttx50UxnAgnmffMkilf5J6OZKaqUZD9mRPQ7Zh3hbu+Mo/y3SVv2Kp/qxF4xz
-         rh3pkxkieblCMnbg3+Hc/oXpgGMZofdNHbfNoyx/hsW0XntEyEHxYQNmjuEwjVgjbdIq
-         GoCNg4nUxng4UNlyKh9U/25hLrMg6q54GXvD+U+wYFKBEzRcmGi+lDWwmWspDRLWZ864
-         S2eA==
+        b=YHl1XwQ1mABdYlQax22mnfXSfsOlEnhlDnRrhb4AlIJykuDav6u/1D33VocwdfQZL1
+         SKn56xsFKjViB0qH9iR7IDHWURM3x/Kus+W6RhSHSFxwm/ZmD1gNu8hfiHfE5XVrcg+t
+         rBS1xaJB2IoP7HcHbRAXsd7xrYlT5LYK7jCHJ7eimXs2A3LgX88I63REvit2G1Pj0Qgt
+         ao0U/aVaHj0lPrEzbqurdvUrCODHYb8HO49XCUyCYwk+BjhTTFHUEmQeoGdCOSJaeSsG
+         JCnb2WPHY1SWQqzo4+Jqi4Y8Hx3SE4CeD3d8tK1/Z6bQx2VW9XVtTcuf1YosuIZYHrXh
+         Iquw==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=JmPGQOP2g3UVm8k5QrtCUpmUdjpJHzsD/PdqID5p0sg=;
-        b=Of0wUGb58vqK0W4/DfDwjLCajEwVTfVA/iWeclucjvBq3+xn34fl92lc7HwAKA9oO1
-         clYif/ieTuc0q0oy6xr+gDv5qCTZPGW9F0wIIbBAG+DIxbrGgqy9zQpixH7n5LA/1sKb
-         gglPoRJgIenbbK91SoLhZ1f23UQgC69Kfnkg22ZqSQGYRGb3jup2w5MMWqqYyFCRqQA6
-         oosWsPBJYM/cAlFzzNfU5C78J4Wv7BFRUEyP3HxuPBT0dMDwwpRoV0B4+YhIbNDvF3s4
-         5mdZ+d+QQdCjCPFY2xPrpDJmtYW64R20cY4uOM0Fbwr5mt/nZ37sCKKaaDG27iLopkFO
-         TPRg==
+         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results;
+        bh=XIBPJr7NkAiPEZTgGeWkpE13lJItRKTOeAjdsFw2vlQ=;
+        b=uoHBGi8ZIGrslmjB5rnfjb+VvjTAKEYrpJGg4thCP2EOC6K4Fo+WyAFUj8O08eRuTM
+         Ef3P9lpTw1/QBQaQ3FkfllwDD4BTEwxWkz+/ibxH1CC1aIhVbrKYgml1IddVXK1+xRu8
+         kKKYSMgx76P+/GQ3qRJoOD/WpRYKmZD6GhdTNkrt9kiePLtIj187djm/4pSHer5fu3em
+         7dalt6KTFpv0TiAx/UUH2ao+2Tj1ThFrleKMx/xYNvi93XX/N1pfsysI12ykJqD1iUfa
+         KLfwRgQuuBXW/SuBZjclHEvmeRqo4bR9ZY1By/KeoCNY8lraPoW5XgUEAtdpI30tdQrw
+         6DRw==
 ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;
-       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@ziepe.ca header.s=google header.b=QG9ETXz9;
+       spf=pass (google.com: domain of jgg@ziepe.ca designates 2a00:1450:400c:c09::241 as permitted sender) smtp.mailfrom=jgg@ziepe.ca
 Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AG47ELsr2ubFZSO4KYFvyamwMNPbAekuhgedsFveIKawdC7iSp4z/3Fa37nq00/FIJA04UI7PjjQdQ==
+X-Google-Smtp-Source: AG47ELsyz3xej6rchPpQYMLKoL2aj1udjpcs8lhdK6/y5BPDoFBXWnTJr39Xhm/KBdc5+AFpP6OLgA==
 X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1520094324; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520379309; cv=none;
         d=google.com; s=arc-20160816;
-        b=YL7cWd7Py4HlYdKORM6VCmJ8faxZupVZk1p+9E9CYIjU02XMxNjETbuV46yrZoGn2y
-         ox6E0oWo5mlpCY2bu5d4/8PKYcLkAoIojEzFt09gJ4Mr2Ept0mh2+mlwhVHiIYVC1rN+
-         lKm3lrwWGdeq0dncdKHry0CFYHLiJimAZ/ogKcPTRzN1F4QsCwmTbXL5a0AtLHpbiNJ6
-         t04N04fFHvkBlbOZu5i9/ZuS8GFlIyhltjY4gMYVXifZM0r8S82rCQHKbGYZEahz3HR3
-         ck4VuLcMCAvh6ULUq0aidjw9q2VVuXiIJAnOAlSeSp/XAeZS1TcHS+1Sj96tF2db9i1j
-         3FAw==
+        b=Ye9q59ZcS1vOA01xvOhucr3Bq2yRUZToVQj4k+adpCjo/Idg0Ybu5mCejlnOGTI+J9
+         N/Xz0JvuE+v46iYNj8TJV4UuGp6BehZJJjEhkDP/eGcTYN7fW6pcBLQG/9i8fBJjrvdW
+         aAXObWEF6fGLXmVObw7Wstl6G7Arn/eCRTuDmaPSiOCdYxL+96a9MGohud022smrIUxA
+         vejZL5SRgxiXTaVjVncQx6qX6xx1dY9YizM3qy7TeXykJnM5mVVWh02DevTYEU+2OShF
+         1RTzyI9awsBaoWawWAfB1tNgT4RhJIJWyN1GF/sIUkDALGHvCXP0RA2u5lY33V3k4Aqr
+         x6Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=jAoRDVk9MoJjPtavbOkBMRGgEROpWxXEBz5fKKpM5+I=;
-        b=oiBtJ+QF2OrcMI8Aib0k2Q17AuxPc6UJWMWKB2HPu+OJMimDYcXzCGWUrT4MMc6t09
-         vWWg7C63z3/Y/oPwhnYBeBCI1+QSL1GTfOM+Q3X+Jmw17PKx51TXeVnmKMA3ybdlY0r7
-         wsI0H6kL6WLpR7Sy7lGd5TS2EXxBDcE/knVGVrwEv+VG6JVbcu1DTDUUjES+2QUZ7FRV
-         JECRTn5siwSWMnT7LWUAVA8x4u025euBEo9Nt3d5iVNb+UF3pwy2xcMBl5Bw8ll7eiKx
-         oCIGFL1AiJk7o9VOaek4ag03VowJqI686Ts0DS5jbOFLbNJGmjagDOHYROk7U6UcBgtY
-         mZwA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=7kbE0xUoEbyzRI2viRsSR22r9eevLw94V+peLncbY1I=;
+        b=bsXL05Rq0PHzUjsMmzwZauIUTn/IFUADUM0shpmkwGaSspFbPtfKTigrEoOItlSz1J
+         lnyrdkyGjqsTk0GYaWYrGtV7WXCkgsuTH2lb+QSGEwVCpRMUtqJfldX/oObb7KoSBPW/
+         2Kd1hH3/+6E39JSVGjTLMFaZyYv8MRe1eHSWaf4O8ZR+ktftSCEfvs1yV9ZF1G9wB2Ys
+         +VuVN695+WXQYhydInI1el7s29WEM9/qRKfBA82gkRK6h00bzHBIdptmm3i4gcFCHXdH
+         sHnzwrLqV8KFjSaAGaAC6etrphUI9Q4zFhVxpIYenATHStZFjyhO4tXdfCemFYxFtORH
+         iXWg==
 ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;
-       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Date: Sat, 3 Mar 2018 21:54:57 +0530
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: dennis.dalessandro@intel.com
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	outreachy-kernel@googlegroups.com
-Subject: [Outreachy kernel] [PATCH v2] infiniband: hw: Drop unnecessary continue
-Message-ID: <20180303162457.GA21730@seema-Inspiron-15-3567>
+       dkim=pass header.i=@ziepe.ca header.s=google header.b=QG9ETXz9;
+       spf=pass (google.com: domain of jgg@ziepe.ca designates 2a00:1450:400c:c09::241 as permitted sender) smtp.mailfrom=jgg@ziepe.ca
+Date: Tue, 6 Mar 2018 16:35:05 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Arushi <arushisinghal19971997@gmail.com>
+Cc: dennis.dalessandro@intel.com,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, outreachy-kernel@googlegroups.com
+Subject: [Outreachy kernel] Re: [PATCH v2] infiniband: hw: Drop unnecessary continue
+Message-ID: <20180306233505.GD8328@ziepe.ca>
+References: <20180303162457.GA21730@seema-Inspiron-15-3567>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
+In-Reply-To: <20180303162457.GA21730@seema-Inspiron-15-3567>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Original-Sender: arushisinghal19971997@gmail.com
+X-Original-Sender: jgg@ziepe.ca
 X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
- header.i=@gmail.com header.s=20161025 header.b=HY1H7Ob/;       spf=pass
- (google.com: domain of arushisinghal19971997@gmail.com designates
- 2607:f8b0:400e:c05::241 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+ header.i=@ziepe.ca header.s=google header.b=QG9ETXz9;       spf=pass
+ (google.com: domain of jgg@ziepe.ca designates 2a00:1450:400c:c09::241 as
+ permitted sender) smtp.mailfrom=jgg@ziepe.ca
 Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
 X-Google-Group-Id: 672804067692
 List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
 List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
@@ -112,44 +107,29 @@ List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegro
  <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593934427022927872?=
-X-GMAIL-MSGID: =?utf-8?q?1593934427022927872?=
+X-GMAIL-MSGID: =?utf-8?q?1594267566292365259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Continue at the bottom of a loop are removed.
-Issue found using drop_continue.cocci Coccinelle script.
+On Sat, Mar 03, 2018 at 09:54:57PM +0530, Arushi wrote:
+> Continue at the bottom of a loop are removed.
+> Issue found using drop_continue.cocci Coccinelle script.
+> 
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> Changes in v2:
+> - Braces is dropped from if with single statement.
+> 
+>  drivers/infiniband/hw/qib/qib_init.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
----
-Changes in v2:
-- Braces is dropped from if with single statement.
+applied to for-next
 
- drivers/infiniband/hw/qib/qib_init.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/hw/qib/qib_init.c b/drivers/infiniband/hw/qib/qib_init.c
-index 3990f38..6c68f8a 100644
---- a/drivers/infiniband/hw/qib/qib_init.c
-+++ b/drivers/infiniband/hw/qib/qib_init.c
-@@ -678,11 +678,9 @@ int qib_init(struct qib_devdata *dd, int reinit)
- 		lastfail = qib_create_rcvhdrq(dd, rcd);
- 		if (!lastfail)
- 			lastfail = qib_setup_eagerbufs(rcd);
--		if (lastfail) {
-+		if (lastfail)
- 			qib_dev_err(dd,
- 				"failed to allocate kernel ctxt's rcvhdrq and/or egr bufs\n");
--			continue;
--		}
- 	}
- 
- 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
--- 
-2.7.4
+Thanks
+Jason
 
 -- 
 You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
 To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
 To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180303162457.GA21730%40seema-Inspiron-15-3567.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180306233505.GD8328%40ziepe.ca.
 For more options, visit https://groups.google.com/d/optout.
