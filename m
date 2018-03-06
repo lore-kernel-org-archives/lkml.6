@@ -1,178 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752955AbeCFBOA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 20:14:00 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:49936 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbeCFBN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 20:13:58 -0500
-From: Qi Hou <qi.hou@windriver.com>
-To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>, <fmh6jj@gmail.com>,
-        <fmhess@users.sourceforge.net>
-CC: <jassisinghbrar@gmail.com>, <rmk+kernel@arm.linux.org.uk>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dmaengine: pl330: fix a race condition in case of threaded irqs
-Date: Tue, 6 Mar 2018 09:13:37 +0800
-Message-ID: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753124AbeCFBOS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 20:14:18 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:37326 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753039AbeCFBOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 20:14:15 -0500
+To: Oliver <oohall@gmail.com>
+Cc: Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180228234006.21093-1-logang@deltatee.com>
+ <20180228234006.21093-8-logang@deltatee.com>
+ <CAOSf1CEj1vmLLd27-642=XSnL9ODkpEC0qLHA2_W5_7rV5+4Pg@mail.gmail.com>
+ <20180305160004.GA30975@localhost.localdomain>
+ <3f56c76d-6a5c-7c2f-5442-c9209749b598@deltatee.com>
+ <CAOSf1CHvaz0QTCkptQwsdyPp6uvvHqtM51N0MfrO9RqYf9W0tg@mail.gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <416d8d27-200f-befb-1c30-14544fffcba0@deltatee.com>
+Date: Mon, 5 Mar 2018 18:14:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [128.224.162.131]
+In-Reply-To: <CAOSf1CHvaz0QTCkptQwsdyPp6uvvHqtM51N0MfrO9RqYf9W0tg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, jgg@mellanox.com, jglisse@redhat.com, alex.williamson@redhat.com, benh@kernel.crashing.org, axboe@kernel.dk, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, keith.busch@intel.com, oohall@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 07/10] nvme-pci: Use PCI p2pmem subsystem to manage the
+ CMB
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When booting up with "threadirqs" in command line, all irq handlers of the DMA
-controller pl330 will be threaded forcedly. These threads will race for the same
-list, pl330->req_done.
 
-Before the callback, the spinlock was released. And after it, the spinlock was
-taken. This opened an race window where another threaded irq handler could steal
-the spinlock and be permitted to delete entries of the list, pl330->req_done.
 
-If the later deleted an entry that was still referred to by the former, there would
-be a kernel panic when the former was scheduled and tried to get the next sibling
-of the deleted entry.
+On 05/03/18 05:49 PM, Oliver wrote:
+> It's in arch/powerpc/kernel/io.c as _memcpy_toio() and it has two full barriers!
+> 
+> Awesome!
+> 
+> Our io.h indicates that our iomem accessors are designed to provide x86ish
+> strong ordering of accesses to MMIO space. The git log indicates
+> arch/powerpc/kernel/io.c has barely been touched in the last decade so
+> odds are most of that code was written in the elder days when people
+> were less aware of ordering issues. It might just be overly conservative
+> by today's standards, but maybe not (see below).
 
-The scenario could be depicted as below:
+Yes, that seems overly conservative.
 
-  Thread: T1  pl330->req_done  Thread: T2
-      |             |              |
-      |          -A-B-C-D-         |
-    Locked          |              |
-      |             |           Waiting
-    Del A           |              |
-      |          -B-C-D-           |
-    Unlocked        |              |
-      |             |           Locked
-    Waiting         |              |
-      |             |            Del B
-      |             |              |
-      |           -C-D-         Unlocked
-    Waiting         |              |
-      |
-    Locked
-      |
-   get C via B
-      \
-       - Kernel panic
+> (I'm not going to suggest ditching the lwsync trick. mpe is not going
+> to take that patch
+> without a really good reason)
 
-The kernel panic looked like as below:
+Well, that's pretty gross. Is this not exactly the situation mmiowb() is 
+meant to solve? See [1].
 
-Unable to handle kernel paging request at virtual address dead000000000108
-pgd = ffffff8008c9e000
-[dead000000000108] *pgd=000000027fffe003, *pud=000000027fffe003, *pmd=0000000000000000
-Internal error: Oops: 96000044 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 85 Comm: irq/59-66330000 Not tainted 4.8.24-WR9.0.0.12_standard #2
-Hardware name: Broadcom NS2 SVK (DT)
-task: ffffffc1f5cc3c00 task.stack: ffffffc1f5ce0000
-PC is at pl330_irq_handler+0x27c/0x390
-LR is at pl330_irq_handler+0x2a8/0x390
-pc : [<ffffff80084cb694>] lr : [<ffffff80084cb6c0>] pstate: 800001c5
-sp : ffffffc1f5ce3d00
-x29: ffffffc1f5ce3d00 x28: 0000000000000140
-x27: ffffffc1f5c530b0 x26: dead000000000100
-x25: dead000000000200 x24: 0000000000418958
-x23: 0000000000000001 x22: ffffffc1f5ccd668
-x21: ffffffc1f5ccd590 x20: ffffffc1f5ccd418
-x19: dead000000000060 x18: 0000000000000001
-x17: 0000000000000007 x16: 0000000000000001
-x15: ffffffffffffffff x14: ffffffffffffffff
-x13: ffffffffffffffff x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000000840
-x9 : ffffffc1f5ce0000 x8 : ffffffc1f5cc3338
-x7 : ffffff8008ce2020 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : dead000000000200 x2 : dead000000000100
-x1 : 0000000000000140 x0 : ffffffc1f5ccd590
+Though, you're right in principle. Even if power was similar to other 
+systems in this way, it's still a risk that if these pages get passed 
+somewhere in the kernel that uses a spin lock like that without an 
+mmiowb() call, then it's going to have a bug. For now, the risk is 
+pretty low as we know exactly where all the p2pmem pages will be used 
+but if it gets into other places, all bets are off. I did do some work 
+trying to make a safe version of io-pages and also trying to change from 
+pages to pfn_t in large areas but neither approach seemed likely to get 
+any traction in the community, at least not in the near term.
 
-Process irq/59-66330000 (pid: 85, stack limit = 0xffffffc1f5ce0020)
-Stack: (0xffffffc1f5ce3d00 to 0xffffffc1f5ce4000)
-3d00: ffffffc1f5ce3d80 ffffff80080f09d0 ffffffc1f5ca0c00 ffffffc1f6f7c600
-3d20: ffffffc1f5ce0000 ffffffc1f6f7c600 ffffffc1f5ca0c00 ffffff80080f0998
-3d40: ffffffc1f5ce0000 ffffff80080f0000 0000000000000000 0000000000000000
-3d60: ffffff8008ce202c ffffff8008ce2020 ffffffc1f5ccd668 ffffffc1f5c530b0
-3d80: ffffffc1f5ce3db0 ffffff80080f0d70 ffffffc1f5ca0c40 0000000000000001
-3da0: ffffffc1f5ce0000 ffffff80080f0cfc ffffffc1f5ce3e20 ffffff80080bf4f8
-3dc0: ffffffc1f5ca0c80 ffffff8008bf3798 ffffff8008955528 ffffffc1f5ca0c00
-3de0: ffffff80080f0c30 0000000000000000 0000000000000000 0000000000000000
-3e00: 0000000000000000 0000000000000000 0000000000000000 ffffff80080f0b68
-3e20: 0000000000000000 ffffff8008083690 ffffff80080bf420 ffffffc1f5ca0c80
-3e40: 0000000000000000 0000000000000000 0000000000000000 ffffff80080cb648
-3e60: ffffff8008b1c780 0000000000000000 0000000000000000 ffffffc1f5ca0c00
-3e80: ffffffc100000000 ffffff8000000000 ffffffc1f5ce3e90 ffffffc1f5ce3e90
-3ea0: 0000000000000000 ffffff8000000000 ffffffc1f5ce3eb0 ffffffc1f5ce3eb0
-3ec0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3ee0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f00: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f40: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3f80: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fa0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-3fc0: 0000000000000000 0000000000000005 0000000000000000 0000000000000000
-3fe0: 0000000000000000 0000000000000000 0000000275ce3ff0 0000000275ce3ff8
-Call trace:
-Exception stack(0xffffffc1f5ce3b30 to 0xffffffc1f5ce3c60)
-3b20:                                   dead000000000060 0000008000000000
-3b40: ffffffc1f5ce3d00 ffffff80084cb694 0000000000000008 0000000000000e88
-3b60: ffffffc1f5ce3bb0 ffffff80080dac68 ffffffc1f5ce3b90 ffffff8008826fe4
-3b80: 00000000000001c0 00000000000001c0 ffffffc1f5ce3bb0 ffffff800848dfcc
-3ba0: 0000000000020000 ffffff8008b15ae4 ffffffc1f5ce3c00 ffffff800808f000
-3bc0: 0000000000000010 ffffff80088377f0 ffffffc1f5ccd590 0000000000000140
-3be0: dead000000000100 dead000000000200 0000000000000001 0000000000000000
-3c00: 0000000000000000 ffffff8008ce2020 ffffffc1f5cc3338 ffffffc1f5ce0000
-3c20: 0000000000000840 0000000000000001 0000000000000000 ffffffffffffffff
-3c40: ffffffffffffffff ffffffffffffffff 0000000000000001 0000000000000007
-[<ffffff80084cb694>] pl330_irq_handler+0x27c/0x390
-[<ffffff80080f09d0>] irq_forced_thread_fn+0x38/0x88
-[<ffffff80080f0d70>] irq_thread+0x140/0x200
-[<ffffff80080bf4f8>] kthread+0xd8/0xf0
-[<ffffff8008083690>] ret_from_fork+0x10/0x40
-Code: f2a00838 f9405763 aa1c03e1 aa1503e0 (f9000443)
----[ end trace f50005726d31199c ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-SMP: stopping secondary CPUs
-SMP: failed to stop secondary CPUs 0-1
-Kernel Offset: disabled
-Memory Limit: none
----[ end Kernel panic - not syncing: Fatal exception in interrupt
+Logan
 
-To fix this, re-start with the list-head after dropping the lock then
-re-takeing it.
-
-Reviewed-by: Frank Mori Hess <fmh6jj@gmail.com>
-Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
-Signed-off-by: Qi Hou <qi.hou@windriver.com>
----
- drivers/dma/pl330.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index d7327fd..de1fd59 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -1510,7 +1510,7 @@ static void pl330_dotask(unsigned long data)
- /* Returns 1 if state was updated, 0 otherwise */
- static int pl330_update(struct pl330_dmac *pl330)
- {
--	struct dma_pl330_desc *descdone, *tmp;
-+	struct dma_pl330_desc *descdone;
- 	unsigned long flags;
- 	void __iomem *regs;
- 	u32 val;
-@@ -1588,7 +1588,9 @@ static int pl330_update(struct pl330_dmac *pl330)
- 	}
- 
- 	/* Now that we are in no hurry, do the callbacks */
--	list_for_each_entry_safe(descdone, tmp, &pl330->req_done, rqd) {
-+	while (!list_empty(&pl330->req_done)) {
-+		descdone = list_first_entry(&pl330->req_done,
-+					    struct dma_pl330_desc, rqd);
- 		list_del(&descdone->rqd);
- 		spin_unlock_irqrestore(&pl330->lock, flags);
- 		dma_pl330_rqcb(descdone, PL330_ERR_NONE);
--- 
-2.7.4
+[1] ACQUIRES VS I/O ACCESSES in 
+https://www.kernel.org/doc/Documentation/memory-barriers.txt
