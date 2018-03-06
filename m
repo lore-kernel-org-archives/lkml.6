@@ -1,141 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753689AbeCFM0k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:26:40 -0500
-Received: from mga18.intel.com ([134.134.136.126]:13330 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753672AbeCFM0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:26:38 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="34998970"
-Date: Tue, 6 Mar 2018 20:27:33 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v4 3/3] mm/free_pcppages_bulk: prefetch buddy while not
- holding lock
-Message-ID: <20180306122733.GA9664@intel.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-4-aaron.lu@intel.com>
- <20180301140044.GK15057@dhcp22.suse.cz>
- <cb158b3d-c992-6679-24df-b37d2bb170e0@suse.cz>
- <20180305114159.GA32573@intel.com>
- <bdec481f-b402-64b6-75b0-350b370f3eac@suse.cz>
+        id S1753734AbeCFM1O (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:27:14 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57745 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753385AbeCFM1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:27:10 -0500
+Subject: Re: [PATCH v3 8/8] scsi: hisi_sas: Code cleanup and minor bug fixes
+To: Hannes Reinecke <hare@suse.de>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+References: <1520261330-204596-1-git-send-email-john.garry@huawei.com>
+ <1520261330-204596-9-git-send-email-john.garry@huawei.com>
+ <301d4ff0-e1ac-fc40-9af2-2b6bf54b41b9@suse.de>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <127bf8a8-f10d-86b7-3d9a-6e969dd9d309@huawei.com>
+Date: Tue, 6 Mar 2018 12:26:51 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <301d4ff0-e1ac-fc40-9af2-2b6bf54b41b9@suse.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bdec481f-b402-64b6-75b0-350b370f3eac@suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 08:55:57AM +0100, Vlastimil Babka wrote:
-> On 03/05/2018 12:41 PM, Aaron Lu wrote:
-> > On Fri, Mar 02, 2018 at 06:55:25PM +0100, Vlastimil Babka wrote:
-> >> On 03/01/2018 03:00 PM, Michal Hocko wrote:
-> >>>
-> >>> I am really surprised that this has such a big impact.
-> >>
-> >> It's even stranger to me. Struct page is 64 bytes these days, exactly a
-> >> a cache line. Unless that changed, Intel CPUs prefetched a "buddy" cache
-> >> line (that forms an aligned 128 bytes block with the one we touch).
-> >> Which is exactly a order-0 buddy struct page! Maybe that implicit
-> >> prefetching stopped at L2 and explicit goes all the way to L1, can't
-> > 
-> > The Intel Architecture Optimization Manual section 7.3.2 says:
-> > 
-> > prefetchT0 - fetch data into all cache levels
-> > Intel Xeon Processors based on Nehalem, Westmere, Sandy Bridge and newer
-> > microarchitectures: 1st, 2nd and 3rd level cache.
-> > 
-> > prefetchT2 - fetch data into 2nd and 3rd level caches (identical to
-> > prefetchT1)
-> > Intel Xeon Processors based on Nehalem, Westmere, Sandy Bridge and newer
-> > microarchitectures: 2nd and 3rd level cache.
-> > 
-> > prefetchNTA - fetch data into non-temporal cache close to the processor,
-> > minimizing cache pollution
-> > Intel Xeon Processors based on Nehalem, Westmere, Sandy Bridge and newer
-> > microarchitectures: must fetch into 3rd level cache with fast replacement.
-> > 
-> > I tried 'prefetcht0' and 'prefetcht2' instead of the default
-> > 'prefetchNTA' on a 2 sockets Intel Skylake, the two ended up with about
-> > the same performance number as prefetchNTA. I had expected prefetchT0 to
-> > deliver a better score if it was indeed due to L1D since prefetchT2 will
-> > not place data into L1 while prefetchT0 will, but looks like it is not
-> > the case here.
-> > 
-> > It feels more like the buddy cacheline isn't in any level of the caches
-> > without prefetch for some reason.
-> 
-> So the adjacent line prefetch might be disabled? Could you check bios or
-> the MSR mentioned in
-> https://software.intel.com/en-us/articles/disclosure-of-hw-prefetcher-control-on-some-intel-processors
+Hi Hannes,
 
-root@lkp-bdw-ep2 ~# rdmsr 0x1a4
-0
+Thanks for checking this.
 
-Looks like this feature isn't disabled(the doc you linked says value 1
-means disable).
+>> > +	}
+>> >
+> return -EINVAL?
+>
+>> >  	return 0;
+>> >  }
 
-> >> remember. Would that make such a difference? It would be nice to do some
-> >> perf tests with cache counters to see what is really going on...
-> > 
-> > Compare prefetchT2 to no-prefetch, I saw these metrics change:
-> > 
-> > no-prefetch          change  prefetchT2       metrics
-> >             \                          \
-> > 	   stddev                     stddev
-> > ------------------------------------------------------------------------
-> >       0.18            +0.0        0.18        perf-stat.branch-miss-rate%                                       
-> >  8.268e+09            +3.8%  8.585e+09        perf-stat.branch-misses                               
-> >  2.333e+10            +4.7%  2.443e+10        perf-stat.cache-misses                                            
-> >  2.402e+11            +5.0%  2.522e+11        perf-stat.cache-references                                    
-> >       3.52            -1.1%       3.48        perf-stat.cpi                                                     
-> >       0.02            -0.0        0.01 ±3%    perf-stat.dTLB-load-miss-rate%                           
-> >  8.677e+08            -7.3%  8.048e+08 ±3%    perf-stat.dTLB-load-misses                                        
-> >       1.18            +0.0        1.19        perf-stat.dTLB-store-miss-rate%             
-> >  2.359e+10            +6.0%  2.502e+10        perf-stat.dTLB-store-misses                                       
-> >  1.979e+12            +5.0%  2.078e+12        perf-stat.dTLB-stores                     
-> >  6.126e+09           +10.1%  6.745e+09 ±3%    perf-stat.iTLB-load-misses                                        
-> >       3464            -8.4%       3172 ±3%    perf-stat.instructions-per-iTLB-miss            
-> >       0.28            +1.1%       0.29        perf-stat.ipc                                                     
-> >  2.929e+09            +5.1%  3.077e+09        perf-stat.minor-faults                         
-> >  9.244e+09            +4.7%  9.681e+09        perf-stat.node-loads                                              
-> >  2.491e+08            +5.8%  2.634e+08        perf-stat.node-store-misses               
-> >  6.472e+09            +6.1%  6.869e+09        perf-stat.node-stores                                             
-> >  2.929e+09            +5.1%  3.077e+09        perf-stat.page-faults                          
-> >    2182469            -4.2%    2090977        perf-stat.path-length
-> > 
-> > Not sure if this is useful though...
-> 
-> Looks like most stats increased in absolute values as the work done
-> increased and this is a time-limited benchmark? Although number of
+[ ... ]
 
-Yes it is.
+>> > +	}
+>> >
+>> >  	return 0;
+>> >  }
+> return -EINVAL?
+>
+>> > @@ -2408,7 +2410,7 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+>> >  		spin_lock_irqsave(&hisi_hba->lock, flags);
+>> >  		hisi_sas_slot_task_free(hisi_hba, task, slot);
+>> >  		spin_unlock_irqrestore(&hisi_hba->lock, flags);
 
-> instructions (calculated from itlb misses and insns-per-itlb-miss) shows
-> less than 1% increase, so dunno. And the improvement comes from reduced
-> dTLB-load-misses? That makes no sense for order-0 buddy struct pages
-> which always share a page. And the memmap mapping should use huge pages.
+[ ... ]
 
-THP is disabled to stress order 0 pages(should have mentioned this in
-patch's description, sorry about this).
+>> >  		}
+>> > -	} else
+>> > +	} else {
+>> >  		dev_err(dev, "no reset method!\n");
+>> > +		return -EIO;
+>> > +	}
+>> >
+>> >  	return 0;
+>> >  }
+> return -EINVAL?
+>
 
-> BTW what is path-length?
+These 3 changes you suggest are accepted.
 
-It's the instruction path length: the number of machine code instructions
-required to execute a section of a computer program.
+>> > @@ -731,7 +733,7 @@ static void phy_hard_reset_v3_hw(struct hisi_hba *hisi_hba, int phy_no)
+>> >  	start_phy_v3_hw(hisi_hba, phy_no);
+>> >  }
+>> >
+>> > -enum sas_linkrate phy_get_max_linkrate_v3_hw(void)
+>> > +static enum sas_linkrate phy_get_max_linkrate_v3_hw(void)
+>> >  {
+>> >  	return SAS_LINK_RATE_12_0_GBPS;
+>> >  }
+>> > @@ -1096,7 +1098,7 @@ static int prep_abort_v3_hw(struct hisi_hba *hisi_hba,
+>> >  	/* dw0 */
+>> >  	hdr->dw0 = cpu_to_le32((5 << CMD_HDR_CMD_OFF) | /*abort*/
+>> >  			       (port->id << CMD_HDR_PORT_OFF) |
+>> > -				   ((dev_is_sata(dev) ? 1:0)
+>> > +				   (dev_is_sata(dev)
+>> >  					<< CMD_HDR_ABORT_DEVICE_TYPE_OFF) |
+>> >  					(abort_flag
+>> >  					 << CMD_HDR_ABORT_FLAG_OFF));
+>> > @@ -1114,7 +1116,7 @@ static int prep_abort_v3_hw(struct hisi_hba *hisi_hba,
+>> >
+>> >  static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+>> >  {
+>> > -	int i, res = 0;
+>> > +	int i, res;
+>> >  	u32 context, port_id, link_rate;
+>> >  	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
+>> >  	struct asd_sas_phy *sas_phy = &phy->sas_phy;
+>> > @@ -1186,7 +1188,7 @@ static int phy_up_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+>> >  	phy->port_id = port_id;
+>> >  	phy->phy_attached = 1;
+>> >  	hisi_sas_notify_phy_event(phy, HISI_PHYE_PHY_UP);
+>> > -
+>> > +	res = IRQ_HANDLED;
+>> >  end:
+>> >  	hisi_sas_phy_write32(hisi_hba, phy_no, CHL_INT0,
+>> >  			     CHL_INT0_SL_PHY_ENABLE_MSK);
+>> > @@ -1217,7 +1219,7 @@ static int phy_down_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+>> >  	hisi_sas_phy_write32(hisi_hba, phy_no, CHL_INT0, CHL_INT0_NOT_RDY_MSK);
+>> >  	hisi_sas_phy_write32(hisi_hba, phy_no, PHYCTRL_NOT_RDY_MSK, 0);
+>> >
+>> > -	return 0;
+>> > +	return IRQ_HANDLED;
+>> >  }
+>> >
+>> >  static void phy_bcast_v3_hw(int phy_no, struct hisi_hba *hisi_hba)
+> If we're returning IRQ_HANDLED, shouldn't the function have the return
+> type irqreturn_t ?
+> But as this isn't an interrupt handler, shouldn't we rather fixup the
+> caller to check for the correct return values?
+
+Since function phy_bcast_v3_hw() does no checking and would always 
+return IRQ_HANDLED, we saw not point in having a return code and 
+checking it. However, I did notice that we don't set res = IRQ_HANDLED 
+after calling this function:
+                 if (irq_value & CHL_INT0_SL_RX_BCST_ACK_MSK)
+                     /* phy bcast */
+                     phy_bcast_v3_hw(phy_no, hisi_hba);
+             } else {
+                 if (irq_value & CHL_INT0_NOT_RDY_MSK)
+                     /* phy down */
+                     if (phy_down_v3_hw(phy_no, hisi_hba)
+                             == IRQ_HANDLED)
+                         res = IRQ_HANDLED;
+             }
+         }
+         irq_msk >>= 4;
+         phy_no++;
+     }
+
+     return res;
+}
+
+So this needs to be remedied.
+
+>
+>> > @@ -1573,7 +1575,7 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
+>> >  		spin_lock_irqsave(&hisi_hba->lock, flags);
+>> >  		hisi_sas_slot_task_free(hisi_hba, task, slot);
+>> >  		spin_unlock_irqrestore(&hisi_hba->lock, flags);
+>> > -		return -1;
+>> > +		return ts->stat;
+>> >  	}
+>> >
+>> >  	if (unlikely(!sas_dev)) {
+>> >
+
+Thanks,
+John
+
+> Cheers,
+>
+> Hannes
+> -- Dr. Hannes Reinecke Teamlead Storage & Networking hare@suse.de	+49
+> 911 74053 688 SUSE LINUX GmbH, Maxfeldstr. 5, 90409 NÃ¼rnberg GF: F.
+> ImendÃ¶rffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton HRB 21284 (AG
+> NÃ¼rnberg) .
