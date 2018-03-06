@@ -1,60 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753100AbeCFDLt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 22:11:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:49995 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752480AbeCFDLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 22:11:47 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 6 Mar 2018 14:11:29 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Message-ID: <20180306141129.17edd0a9@canb.auug.org.au>
-In-Reply-To: <CAL_JsqL_BSY5Xr8xS+mz_k1eVVaScPZVDE4UpdnV-vQwKhKc+A@mail.gmail.com>
-References: <20180306120511.1b480c32@canb.auug.org.au>
-        <CAL_JsqL_BSY5Xr8xS+mz_k1eVVaScPZVDE4UpdnV-vQwKhKc+A@mail.gmail.com>
+        id S1753224AbeCFDMI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 22:12:08 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34963 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753164AbeCFDMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 22:12:07 -0500
+X-Google-Smtp-Source: AG47ELsb+EZi+Qfh7bHQMpKteAby7R+ohtrhrdFzJRoi3FV/tQ93Rfl10YuHYSvvMgpgANjmPRxp2Q==
+Subject: Re: [PATCH v5 3/3] of: add early boot allocation of
+ of_find_node_by_phandle() cache
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Chintan Pandya <cpandya@codeaurora.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
+ <1520208889-3908-4-git-send-email-frowand.list@gmail.com>
+ <CAL_Jsq+sD=Hj+3cYy0injRSZ5Dj2M6c+KbiFrrwsO_9pqq8wKg@mail.gmail.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <c5393057-b0e0-7e9d-041a-96996cf047b2@gmail.com>
+Date: Mon, 5 Mar 2018 19:12:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/98wXG95qUazi3ODtmvuuIFL"; protocol="application/pgp-signature"
+In-Reply-To: <CAL_Jsq+sD=Hj+3cYy0injRSZ5Dj2M6c+KbiFrrwsO_9pqq8wKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/98wXG95qUazi3ODtmvuuIFL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 03/05/18 12:26, Rob Herring wrote:
+> On Sun, Mar 4, 2018 at 6:14 PM,  <frowand.list@gmail.com> wrote:
+>> From: Frank Rowand <frank.rowand@sony.com>
+>>
+>> The initial implementation of the of_find_node_by_phandle() cache
+>> allocates the cache using kcalloc().  Add an early boot allocation
+>> of the cache so it will be usable during early boot.  Switch over
+>> to the kcalloc() based cache once normal memory allocation
+>> becomes available.
+> 
+> Do we get a lot of lookups early? It makes sense to me to do early,
+> but freeing and repopulating seems to add needless complexity.
 
-Hi Rob,
+Hey, that was my argument.  :-)
 
-On Mon, 5 Mar 2018 20:34:46 -0600 Rob Herring <robherring2@gmail.com> wrote:
->
-> Yes. I've sent out patches for all these. Waiting for various
-> maintainers to pick them up.
+I would be quite happy leaving off patch 3/3.  And without 3/3,
+2/3 becomes not necessary here, but still could go in separately
+for completeness.  Though it could go in via Andrew.
 
-Excellent, thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/98wXG95qUazi3ODtmvuuIFL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqeBuEACgkQAVBC80lX
-0GzIrwf9G5wDis2mXdtNZkizHRU/UuE9/qbrnrnwh78tl+G9MvRb85GnAM1vhBv4
-xpyFQc2TKzJzdCYn/DJTh5L9ZIiD0N03009snzJguzPnuA03WycAUFnntOCBG3wG
-MPzABsuy/FmVXr1Jz8BSX/KmYW1Mz70I2tH6a06aQEFLcHqCD/L/Iew/Yviiumth
-LwfPQV80dRLfzF6lGDuAYkUD7gVztc2j8btxkSZ2fTO4Pj2bqrIPnTBeb06ao+3w
-QSGYFtIzqhgrwRs7Px4QRFWpOcQNzJt6lHtLLnLo5msnvIJpqPsZYumh4iMwiBC/
-k4wscGLAo0nF3enXH712KPzx/ty8Sg==
-=044S
------END PGP SIGNATURE-----
-
---Sig_/98wXG95qUazi3ODtmvuuIFL--
+-Frank
