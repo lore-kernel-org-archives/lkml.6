@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753210AbeCFHvk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:51:40 -0500
-Received: from regular1.263xmail.com ([211.150.99.131]:56467 "EHLO
+        id S1753263AbeCFHvx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:51:53 -0500
+Received: from regular1.263xmail.com ([211.150.99.141]:58372 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750801AbeCFHvi (ORCPT
+        with ESMTP id S1750933AbeCFHvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:51:38 -0500
+        Tue, 6 Mar 2018 02:51:52 -0500
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,60 +16,69 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <ab67b1767c75f4142a541f771cbe5781>
+X-UNIQUE-TAG: <c183501b05c1c3f3bbf8cb04987ee150>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
 To: linux-kernel@vger.kernel.org
 Cc: briannorris@google.com, heiko@sntech.de, dtor@google.com,
         dianders@google.com, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 2/3] Input: gpio-keys - allow setting wakeup event action in DT
-Date: Tue,  6 Mar 2018 15:51:22 +0800
-Message-Id: <20180306075123.20989-1-jeffy.chen@rock-chips.com>
+        Matthias Kaehlcke <mka@chromium.org>, devicetree@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Emil Renner Berthing <kernel@esmil.dk>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-rockchip@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH v4 3/3] arm64: dts: rockchip: kevin: Avoid wakeup when inserting the pen
+Date: Tue,  6 Mar 2018 15:51:23 +0800
+Message-Id: <20180306075123.20989-2-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180306074418.8879-2-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180306075123.20989-1-jeffy.chen@rock-chips.com>
 References: <20180306074418.8879-2-jeffy.chen@rock-chips.com>
+ <20180306075123.20989-1-jeffy.chen@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow specifying event actions to trigger wakeup when using the
-gpio-keys input device as a wakeup source.
+Add wakeup event action for Pen Insert gpio key, to avoid wakeup when
+inserting the pen.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
-Changes in v4: None
+Changes in v4:
+Include dt-binding gpio-keys.h
+
 Changes in v3: None
 Changes in v2:
 Specify wakeup event action instead of irq trigger type as Brian
 suggested.
 
- Documentation/devicetree/bindings/input/gpio-keys.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/input/gpio-keys.txt b/Documentation/devicetree/bindings/input/gpio-keys.txt
-index a94940481e55..996ce84352cb 100644
---- a/Documentation/devicetree/bindings/input/gpio-keys.txt
-+++ b/Documentation/devicetree/bindings/input/gpio-keys.txt
-@@ -26,6 +26,14 @@ Optional subnode-properties:
- 	  If not specified defaults to 5.
- 	- wakeup-source: Boolean, button can wake-up the system.
- 			 (Legacy property supported: "gpio-key,wakeup")
-+	- wakeup-event-action: Specifies whether the key should wake the
-+	  system when asserted, when deasserted, or both. This property is
-+	  only valid for keys that wake up the system (e.g., when the
-+	  "wakeup-source" property is also provided).
-+	  Supported values are defined in linux-event-codes.h:
-+		EV_ACT_ASSERTED		- asserted
-+		EV_ACT_DEASSERTED	- deasserted
-+		EV_ACT_ANY		- both asserted and deasserted
- 	- linux,can-disable: Boolean, indicates that button is connected
- 	  to dedicated (not shared) interrupt which can be disabled to
- 	  suppress events from the button.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+index 191a6bcb1704..89126dbe5d91 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
+@@ -44,6 +44,7 @@
+ 
+ /dts-v1/;
+ #include "rk3399-gru.dtsi"
++#include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/linux-event-codes.h>
+ 
+ /*
+@@ -134,6 +135,8 @@
+ 		gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+ 		linux,code = <SW_PEN_INSERTED>;
+ 		linux,input-type = <EV_SW>;
++		/* Wakeup only when ejecting */
++		wakeup-event-action = <EV_ACT_DEASSERTED>;
+ 		wakeup-source;
+ 	};
+ };
 -- 
 2.11.0
