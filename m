@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753807AbeCFNF1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:05:27 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:40754 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753756AbeCFNFY (ORCPT
+        id S1753825AbeCFNFd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:05:33 -0500
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36554 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753756AbeCFNFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:05:24 -0500
-X-Google-Smtp-Source: AG47ELt0AI31zIeXY7BLegdqRlW3zIB6/CbmFa93rtTFGzgi3xGqg1uw55GDiRooeMJNw4qOerrTGw==
+        Tue, 6 Mar 2018 08:05:30 -0500
+X-Google-Smtp-Source: AG47ELs+adOwLerbD2LYEsDkJMNw7ujDGaRkMbf217f1DpN6w209s4s1LYDZ1lquiQejyOJHtlWAsQ==
 From: Amit Kucheria <amit.kucheria@linaro.org>
 To: linux-arm-msm@vger.kernel.org
 Cc: Catalin Marinas <catalin.marinas@arm.com>,
@@ -18,9 +18,9 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
         Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] arm64: defconfig: enable thermal sensor on QCOM platforms
-Date: Tue,  6 Mar 2018 18:35:02 +0530
-Message-Id: <3c0f37be33dba8500fe39a0951f67a6882245afa.1520340931.git.amit.kucheria@linaro.org>
+Subject: [PATCH 3/3] arm64: defconfig: enable more cpufreq governors
+Date: Tue,  6 Mar 2018 18:35:03 +0530
+Message-Id: <7a5ecbaf8e5defbf47dc1f0b312a372a4654a18e.1520340931.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1520340931.git.amit.kucheria@linaro.org>
 References: <cover.1520340931.git.amit.kucheria@linaro.org>
@@ -30,33 +30,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the driver for the TSENS IP that is present across several QCOM
-SoCs.
+Enable the various CPUFREQ governors and statistics to ease development.
+Don't change the default governor - performance governor.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/configs/defconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 634b373..80530cb 100644
+index 80530cb..1f542fd 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -327,6 +327,7 @@ CONFIG_THERMAL_EMULATION=y
- CONFIG_BRCMSTB_THERMAL=m
- CONFIG_EXYNOS_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
-+CONFIG_QCOM_TSENS=y
- CONFIG_ROCKCHIP_THERMAL=m
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
-@@ -562,6 +563,7 @@ CONFIG_PHY_XGENE=y
- CONFIG_PHY_TEGRA_XUSB=y
- CONFIG_QCOM_L2_PMU=y
- CONFIG_QCOM_L3_PMU=y
-+CONFIG_QCOM_QFPROM=y
- CONFIG_UNIPHIER_EFUSE=y
- CONFIG_TEE=y
- CONFIG_OPTEE=y
+@@ -99,6 +99,14 @@ CONFIG_HIBERNATION=y
+ CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
+ CONFIG_ARM_CPUIDLE=y
+ CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_GOV_ATTR_SET=y
++CONFIG_CPU_FREQ_GOV_COMMON=y
++CONFIG_CPU_FREQ_STAT=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=m
++CONFIG_CPU_FREQ_GOV_USERSPACE=y
++CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
++CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+ CONFIG_CPUFREQ_DT=y
+ CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
+ CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
 -- 
 2.7.4
