@@ -1,47 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753077AbeCFEGd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 23:06:33 -0500
-Received: from mga03.intel.com ([134.134.136.65]:44675 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752654AbeCFEGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 23:06:31 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="32691960"
-Date: Mon, 5 Mar 2018 21:06:30 -0700
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NV-DIMM Mailing List <linux-nvdimm@lists.01.org>
-Subject: Re: [PATCH] acpi, nfit: remove redundant __func__ in dev_dbg
-Message-ID: <20180306040630.GA9905@linux.intel.com>
-References: <20180302122049.13900-1-jthumshirn@suse.de>
+        id S1753050AbeCFEaD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 23:30:03 -0500
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33527 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752162AbeCFEaB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 23:30:01 -0500
+X-Google-Smtp-Source: AG47ELsrR+hYWgYgq1U96AsEaByU/Hptl2a+oSnTISSuxIBeMgFkBLXo78WR6E6TPdlCtPYOUm2gag==
+Date: Tue, 6 Mar 2018 13:29:57 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
+Message-ID: <20180306042957.GE6713@jagdpanzerIV>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+ <20180305144846.3jommv372c73dltt@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302122049.13900-1-jthumshirn@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180305144846.3jommv372c73dltt@pathway.suse.cz>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 01:20:49PM +0100, Johannes Thumshirn wrote:
-> Dynamic debug can be instructed to add the function name to the debug
-> output using the +f switch, so there is no need for the nfit module to
-> do it again. If a user decides to add the +f switch for nfit's dynamic
-> debug this results in double prints of the function name like the
-> following:
+On (03/05/18 15:48), Petr Mladek wrote:
+[..]
 > 
-> [ 2391.935383] acpi_nfit_ctl: nfit ACPI0012:00: acpi_nfit_ctl:nmem8 cmd: 10: func: 1 input length: 0
-> 
-> Thus remove the stray __func__ printing.
-> 
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> I hope that I did not miss anything. I could not try this at
+> runtime.
 
-Oh, Johannes I noticed that here is one stray one still in
-drivers/acpi/nfit/mce.c.  Do you mind pulling it into your patch to keep the
-drivers/acpi/nfit/* changes together?
+I think you can. The rules are universal, you can do on x86
+something like this
+
+---
+
+ arch/x86/kernel/dumpstack.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index a2d8a3908670..5d45f406717e 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -375,3 +375,16 @@ static int __init code_bytes_setup(char *s)
+ 	return 1;
+ }
+ __setup("code_bytes=", code_bytes_setup);
++
++void dump_stack(void)
++{
++	dump_stack_print_info(KERN_DEFAULT);
++
++	pr_crit("\t\tLinux\n\n");
++
++	pr_crit("An error has occurred. To continue:\n"
++		"Press Enter to return to Linux, or\n"
++		"Press CTRL+ALT+DEL to restart your computer.\n");
++
++	pr_crit("\n\n\tPress any key to continue _");
++}
+
+---
+
+Should be enough for testing.
+
+> Anyway, from my side:
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Thanks.
+
+	-ss
