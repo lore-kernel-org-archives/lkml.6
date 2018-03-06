@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeCFMQz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:16:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60302 "EHLO mail.bootlin.com"
+        id S1753577AbeCFMRC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:17:02 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60317 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753155AbeCFMQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:16:53 -0500
+        id S1753555AbeCFMQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:16:58 -0500
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
 Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
         linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v5 1/5] dt-bindings: mips: Add bindings for Microsemi SoCs
-Date: Tue,  6 Mar 2018 13:16:03 +0100
-Message-Id: <20180306121607.1567-2-alexandre.belloni@bootlin.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
+Date: Tue,  6 Mar 2018 13:16:04 +0100
+Message-Id: <20180306121607.1567-3-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
 References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
@@ -21,63 +22,160 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for Microsemi SoCs. Currently only Ocelot is supported.
+Add a device tree include file for the Microsemi Ocelot SoC.
 
-Reviewed-by: Rob Herring <robh+dt@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- Documentation/devicetree/bindings/mips/mscc.txt | 43 +++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/mscc.txt
+ arch/mips/boot/dts/Makefile         |   1 +
+ arch/mips/boot/dts/mscc/Makefile    |   1 +
+ arch/mips/boot/dts/mscc/ocelot.dtsi | 117 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 119 insertions(+)
+ create mode 100644 arch/mips/boot/dts/mscc/Makefile
+ create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
 
-diff --git a/Documentation/devicetree/bindings/mips/mscc.txt b/Documentation/devicetree/bindings/mips/mscc.txt
+diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+index e2c6f131c8eb..1e79cab8e269 100644
+--- a/arch/mips/boot/dts/Makefile
++++ b/arch/mips/boot/dts/Makefile
+@@ -4,6 +4,7 @@ subdir-y	+= cavium-octeon
+ subdir-y	+= img
+ subdir-y	+= ingenic
+ subdir-y	+= lantiq
++subdir-y	+= mscc
+ subdir-y	+= mti
+ subdir-y	+= netlogic
+ subdir-y	+= ni
+diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
 new file mode 100644
-index 000000000000..ae15ec333542
+index 000000000000..dd08e63a10ba
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/mscc.txt
-@@ -0,0 +1,43 @@
-+* Microsemi MIPS CPUs
++++ b/arch/mips/boot/dts/mscc/Makefile
+@@ -0,0 +1 @@
++obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+new file mode 100644
+index 000000000000..8c3210577410
+--- /dev/null
++++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+@@ -0,0 +1,117 @@
++//SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/* Copyright (c) 2017 Microsemi Corporation */
 +
-+Boards with a SoC of the Microsemi MIPS family shall have the following
-+properties:
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "mscc,ocelot";
 +
-+Required properties:
-+- compatible: "mscc,ocelot"
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+
-+* Other peripherals:
-+
-+o CPU chip regs:
-+
-+The SoC has a few registers (DEVCPU_GCB:CHIP_REGS) handling miscellaneous
-+functionalities: chip ID, general purpose register for software use, reset
-+controller, hardware status and configuration, efuses.
-+
-+Required properties:
-+- compatible: Should be "mscc,ocelot-chip-regs", "simple-mfd", "syscon"
-+- reg : Should contain registers location and length
-+
-+Example:
-+	syscon@71070000 {
-+		compatible = "mscc,ocelot-chip-regs", "simple-mfd", "syscon";
-+		reg = <0x71070000 0x1c>;
++		cpu@0 {
++			compatible = "mips,mips24KEc";
++			device_type = "cpu";
++			clocks = <&cpu_clk>;
++			reg = <0>;
++		};
 +	};
 +
-+
-+o CPU system control:
-+
-+The SoC has a few registers (ICPU_CFG:CPU_SYSTEM_CTRL) handling configuration of
-+the CPU: 8 general purpose registers, reset control, CPU en/disabling, CPU
-+endianness, CPU bus control, CPU status.
-+
-+Required properties:
-+- compatible: Should be "mscc,ocelot-cpu-syscon", "syscon"
-+- reg : Should contain registers location and length
-+
-+Example:
-+	syscon@70000000 {
-+		compatible = "mscc,ocelot-cpu-syscon", "syscon";
-+		reg = <0x70000000 0x2c>;
++	aliases {
++		serial0 = &uart0;
 +	};
++
++	cpuintc: interrupt-controller@0 {
++		#address-cells = <0>;
++		#interrupt-cells = <1>;
++		interrupt-controller;
++		compatible = "mti,cpu-interrupt-controller";
++	};
++
++	cpu_clk: cpu-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <500000000>;
++	};
++
++	ahb_clk: ahb-clk {
++		compatible = "fixed-factor-clock";
++		#clock-cells = <0>;
++		clocks = <&cpu_clk>;
++		clock-div = <2>;
++		clock-mult = <1>;
++	};
++
++	ahb {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x70000000 0x2000000>;
++
++		interrupt-parent = <&intc>;
++
++		cpu_ctrl: syscon@0 {
++			compatible = "mscc,ocelot-cpu-syscon", "syscon";
++			reg = <0x0 0x2c>;
++		};
++
++		intc: interrupt-controller@70 {
++			compatible = "mscc,ocelot-icpu-intr";
++			reg = <0x70 0x70>;
++			#interrupt-cells = <1>;
++			interrupt-controller;
++			interrupt-parent = <&cpuintc>;
++			interrupts = <2>;
++		};
++
++		uart0: serial@100000 {
++			pinctrl-0 = <&uart_pins>;
++			pinctrl-names = "default";
++			compatible = "ns16550a";
++			reg = <0x100000 0x20>;
++			interrupts = <6>;
++			clocks = <&ahb_clk>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++
++			status = "disabled";
++		};
++
++		uart2: serial@100800 {
++			pinctrl-0 = <&uart2_pins>;
++			pinctrl-names = "default";
++			compatible = "ns16550a";
++			reg = <0x100800 0x20>;
++			interrupts = <7>;
++			clocks = <&ahb_clk>;
++			reg-io-width = <4>;
++			reg-shift = <2>;
++
++			status = "disabled";
++		};
++
++		reset@1070008 {
++			compatible = "mscc,ocelot-chip-reset";
++			reg = <0x1070008 0x4>;
++		};
++
++		gpio: pinctrl@1070034 {
++			compatible = "mscc,ocelot-pinctrl";
++			reg = <0x1070034 0x68>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&gpio 0 0 22>;
++
++			uart_pins: uart-pins {
++				pins = "GPIO_6", "GPIO_7";
++				function = "uart";
++			};
++
++			uart2_pins: uart2-pins {
++				pins = "GPIO_12", "GPIO_13";
++				function = "uart2";
++			};
++		};
++	};
++};
 -- 
 2.16.2
