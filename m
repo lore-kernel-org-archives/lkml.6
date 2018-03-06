@@ -1,44 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933163AbeCFWKE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:10:04 -0500
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:42783 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932753AbeCFWKC (ORCPT
+        id S1754131AbeCFWMn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 17:12:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56464 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753805AbeCFWMk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:10:02 -0500
-X-Google-Smtp-Source: AG47ELuEgN7WoifpfmInkjwP5TsN+/sHPXtLqdPe7Va8xIrfZweXTiPMFl4nnNcjoxmBoNSXDpvruN3jmBZ3xlMN4dg=
+        Tue, 6 Mar 2018 17:12:40 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D047C6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 6 Mar 2018 15:12:38 -0700
+From: Lina Iyer <ilina@codeaurora.org>
+To: Evan Green <evgreen@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/10] drivers: qcom: rpmh: cache sleep/wake state
+ requests
+Message-ID: <20180306221238.GG4930@codeaurora.org>
+References: <20180302164317.10554-1-ilina@codeaurora.org>
+ <20180302164317.10554-8-ilina@codeaurora.org>
+ <CAE=gft59Jkb+X0fOcdEZN_8moUPvptZ-xuQaX1mg-VxBzHrSXw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180306213350.GH13586@sirena.org.uk>
-References: <20180305231246.GB5799@atomide.com> <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
- <20180306163035.GE13586@sirena.org.uk> <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
- <20180306191218.GF13586@sirena.org.uk> <CAOMZO5BfEfXN6OgxXswm8qFDbxDJKdUJmhDZGr_DBOh8fbtodA@mail.gmail.com>
- <20180306213350.GH13586@sirena.org.uk>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 6 Mar 2018 19:10:01 -0300
-Message-ID: <CAOMZO5BPyY3WUYUhV76HGdb_NbCv9riFdtEFaku2k4dd9-A_FQ@mail.gmail.com>
-Subject: Re: Regulator regression in next-20180305
-To: Mark Brown <broonie@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
-        linux-omap@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAE=gft59Jkb+X0fOcdEZN_8moUPvptZ-xuQaX1mg-VxBzHrSXw@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 6:33 PM, Mark Brown <broonie@kernel.org> wrote:
+On Mon, Mar 05 2018 at 13:45 -0700, Evan Green wrote:
+>Hi Lina,
+>
+>On Fri, Mar 2, 2018 at 8:43 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>> Active state requests are sent immediately to the mailbox controller,
+>> while sleep and wake state requests are cached in this driver to avoid
+>> taxing the mailbox controller repeatedly. The cached values will be sent
+>> to the controller when the rpmh_flush() is called.
+>>
+>> Generally, flushing is a system PM activity and may be called from the
+>> system PM drivers when the system is entering suspend or deeper sleep
+>> modes during cpuidle.
+>>
+>> Also allow invalidating the cached requests, so they may be re-populated
+>> again.
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>>
+>> Changes in v3:
+>>         - Remove locking for flush function
+>>         - Improve comments
+>> ---
+>>  drivers/soc/qcom/rpmh.c | 208 +++++++++++++++++++++++++++++++++++++++++++++++-
+>>  include/soc/qcom/rpmh.h |  10 +++
+>>  2 files changed, 217 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> index d95ea3fa8b67..8a04009075b8 100644
+>> --- a/drivers/soc/qcom/rpmh.c
+>> +++ b/drivers/soc/qcom/rpmh.c
+>[...]
+>> +
+>> +/**
+>> + * rpmh_invalidate: Invalidate all sleep and active sets
+>> + * sets.
+>> + *
+>> + * @rc: The RPMh handle got from rpmh_get_dev_channel
+>> + *
+>> + * Invalidate the sleep and active values in the TCS blocks.
+>> + */
+>> +int rpmh_invalidate(struct rpmh_client *rc)
+>> +{
+>> +       struct rpmh_ctrlr *rpm = rc->ctrlr;
+>> +       int ret;
+>> +       unsigned long flags;
+>> +
+>> +       if (IS_ERR_OR_NULL(rc))
+>> +               return -EINVAL;
+>> +
+>> +       spin_lock_irqsave(&rpm->lock, flags);
+>> +       rpm->dirty = true;
+>> +       spin_unlock_irqrestore(&rpm->lock, flags);
+>
+>Thanks for removing the locking from the flush path. I was hoping to
+>see the locking removed around this statement as well. The way I
+>understand it, all of the racy bits are attempting to set dirty to
+>true, so you don't need a lock to protect multiple threads from
+>setting the same value. The only time dirty is read or cleared is in
+>the single-threaded PM path, so there are no potentially dangerous
+>interactions.
+>
+Fair point. Will take care of it.
 
-> No, unfortunately, apart from the generic kernel ones (like lockdep).
-> I'll try to have a poke at adding some tomorrow, though I'm also
-> considering just dropping the series for now.
-
-Ok, lockdep is already enabled by default in the defconfig I am using
-(imx_v6_v7_defconfig).
-
-Yesterday I spent a few hours trying to understand this locking issue,
-but didn't get any success on this task.
-
-Thanks
+>If no one has any other comments on the series, then I don't need to
+>hold everything up based on this one tweak alone. But if you end up
+>spinning it again for other reasons, consider making this change as
+>well.
+>
+Thanks,
+Lina
