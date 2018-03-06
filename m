@@ -1,59 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933035AbeCFO4O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:56:14 -0500
-Received: from mga18.intel.com ([134.134.136.126]:20369 "EHLO mga18.intel.com"
+        id S932974AbeCFO4N (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:56:13 -0500
+Received: from mga09.intel.com ([134.134.136.24]:21347 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932418AbeCFO4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932448AbeCFO4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Mar 2018 09:56:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="23368215"
-Subject: Re: [RFC, PATCH 21/22] x86/mm: Introduce page_keyid() and
- page_encrypted()
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-22-kirill.shutemov@linux.intel.com>
- <61041640-435e-1a67-177f-a75791130514@intel.com>
- <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <91d27559-3f28-d53c-9fd9-d16e015a3f59@intel.com>
-Date: Tue, 6 Mar 2018 06:56:08 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+   d="scan'208";a="35033616"
+Message-ID: <1520348165.10722.438.camel@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction
+ callback
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Arteaga <javier@emutex.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 06 Mar 2018 16:56:05 +0200
+In-Reply-To: <3585081b-70af-5c31-08c0-84e96b6055bc@emutex.com>
+References: <20180306134213.16898-1-javier@emutex.com>
+         <3585081b-70af-5c31-08c0-84e96b6055bc@emutex.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/06/2018 12:57 AM, Kirill A. Shutemov wrote:
-> On Mon, Mar 05, 2018 at 09:08:53AM -0800, Dave Hansen wrote:
->> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
->>> +static inline bool page_encrypted(struct page *page)
->>> +{
->>> +	/* All pages with non-zero KeyID are encrypted */
->>> +	return page_keyid(page) != 0;
->>> +}
->>
->> Is this true?  I thought there was a KEYID_NO_ENCRYPT "Do not encrypt
->> memory when this KeyID is in use."  Is that really only limited to key 0.
+On Tue, 2018-03-06 at 14:31 +0000, Javier Arteaga wrote:
+> (Fix Andy's Cc: - apologies)
 > 
-> Well, it depends on what we mean by "encrypted". For memory management
-> pruposes we care if the page is encrypted with KeyID different from
-> default one. All pages with non-default KeyID threated the same by memory
-> management.
+> On 06/03/2018 13:42, Javier Arteaga wrote:
+> > Allows querying GPIO direction from the pad config register.
+> > If the pad is not in GPIO mode, return an error.
+> > 
+> > Signed-off-by: Javier Arteaga <javier@emutex.com>
+> > ---
+> > This is needed by the drivers for the UP Squared board, an APL-based
+> > platform. (For now, these drivers are out-of-tree.)
+> > 
+> > An earlier version of this patch was reviewed some time ago by Andy
+> > Shevchenko outside of the mailing lists:
+> > <https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
+> > 
 
-Doesn't it really mean "am I able to use the direct map to get this
-page's contents?"
+Yes, this one look good!
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> >  drivers/pinctrl/intel/pinctrl-intel.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/drivers/pinctrl/intel/pinctrl-intel.c
+> > b/drivers/pinctrl/intel/pinctrl-intel.c
+> > index 96e73e30204e..1e24a6b8a64e 100644
+> > --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> > +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> > @@ -788,6 +788,24 @@ static void intel_gpio_set(struct gpio_chip
+> > *chip, unsigned offset, int value)
+> >  	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> >  }
+> >  
+> > +static int intel_gpio_get_direction(struct gpio_chip *chip,
+> > unsigned int offset)
+> > +{
+> > +	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+> > +	void __iomem *reg;
+> > +	u32 padcfg0;
+> > +
+> > +	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
+> > +	if (!reg)
+> > +		return -EINVAL;
+> > +
+> > +	padcfg0 = readl(reg);
+> > +
+
+> > +	if (padcfg0 & PADCFG0_PMODE_MASK)
+> > +		return -EINVAL;
+
+Actually we might return direction of GPIO function while pin is in some
+other mode, though it would probably make not much sense in practice.
+
+> > +
+> > +	return !!(padcfg0 & PADCFG0_GPIOTXDIS);
+> > +}
+> > +
+> >  static int intel_gpio_direction_input(struct gpio_chip *chip,
+> > unsigned offset)
+> >  {
+> >  	return pinctrl_gpio_direction_input(chip->base + offset);
+> > @@ -804,6 +822,7 @@ static const struct gpio_chip intel_gpio_chip =
+> > {
+> >  	.owner = THIS_MODULE,
+> >  	.request = gpiochip_generic_request,
+> >  	.free = gpiochip_generic_free,
+> > +	.get_direction = intel_gpio_get_direction,
+> >  	.direction_input = intel_gpio_direction_input,
+> >  	.direction_output = intel_gpio_direction_output,
+> >  	.get = intel_gpio_get,
+> > 
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
