@@ -1,83 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751030AbeCFIqD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:46:03 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:60084 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeCFIqC (ORCPT
+        id S1753050AbeCFIro (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:47:44 -0500
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:55683 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeCFIrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:46:02 -0500
-Date: Tue, 6 Mar 2018 09:45:36 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Li, Aubrey" <aubrey.li@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Tue, 6 Mar 2018 03:47:43 -0500
+X-Google-Smtp-Source: AG47ELsyde+uat9+jdrWAMsMIjiXPuRzdR+dpur4Zxf4kL03a/g61P8IK5VDmc1V3Z2BxShCZupD8g==
+Date: Tue, 6 Mar 2018 09:47:38 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
+        Benjamin LaHaise <bcrl@kvack.org>, Al Viro <viro@zeniv.linux.org.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RFC/RFT][PATCH 4/7] cpuidle: menu: Split idle duration
- prediction from state selection
-Message-ID: <20180306084536.GZ25201@hirez.programming.kicks-ass.net>
-References: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
- <2332986.m9oRvTSu8E@aspire.rjw.lan>
- <20180305113803.GO25201@hirez.programming.kicks-ass.net>
- <CAJZ5v0gdsSXOLL=nJW801L0LzE0CeyPCCrgq4_0tyi40wNLa+w@mail.gmail.com>
- <20180305125012.GA25181@hirez.programming.kicks-ass.net>
- <CAJZ5v0g5x9EWh0MH7wUh4sem9aYB-JuWb_Pn96qNwj=XefOcHg@mail.gmail.com>
- <20180305135322.GV25201@hirez.programming.kicks-ass.net>
- <43825f88-762e-11e5-d70a-45152b95599d@linux.intel.com>
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org
+Subject: Re: Simplifying our RCU models
+Message-ID: <20180306084738.tcs4ggbby77phlbh@gmail.com>
+References: <CAG48ez17vOL0oEWqoqdHCjqfGVX+aPhHBrtgCfn35z6jZ=8-Xg@mail.gmail.com>
+ <CA+55aFzQPQw2UqQ2EEGN1Xe7=qDs-2VTvHVi7SSqGNwqNRg0cQ@mail.gmail.com>
+ <CAOS58YPzLeiZnwEeN31wWMZhki0t9+3ozdRNv9DgxWKY7OKmGA@mail.gmail.com>
+ <CA+55aFx48U4W5tUgqW9ioZOHibPhQoDCUDWF_d-7yNCbqFQ7zg@mail.gmail.com>
+ <20180305001600.GO3918@linux.vnet.ibm.com>
+ <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
+ <20180305030949.GP3918@linux.vnet.ibm.com>
+ <20180305082441.4hao2z4dqn2n5on6@gmail.com>
+ <87po4izj67.fsf_-_@xmission.com>
+ <20180305161446.GQ3918@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <43825f88-762e-11e5-d70a-45152b95599d@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180305161446.GQ3918@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 10:15:10AM +0800, Li, Aubrey wrote:
-> On 2018/3/5 21:53, Peter Zijlstra wrote:
-> > On Mon, Mar 05, 2018 at 02:05:10PM +0100, Rafael J. Wysocki wrote:
-> >> On Mon, Mar 5, 2018 at 1:50 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> >>> On Mon, Mar 05, 2018 at 12:47:23PM +0100, Rafael J. Wysocki wrote:
-> > 
-> >>>> IOW, the target residency of the selected state doesn't tell you how
-> >>>> much time you should expect to be idle in general.
-> >>>
-> >>> Right, but I think that measure isn't of primary relevance. What we want
-> >>> to know is: 'should I stop the tick' and 'what C state do I go to'.
+
+* Paul E. McKenney <paulmck@linux.vnet.ibm.com> wrote:
+
+> > > But if we look at the bigger API picture:
+> > >
+> > >                           !PREEMPT_RCU  PREEMPT_RCU=y
+> > >   rcu_read_lock():        atomic        preemptible
+> > >   rcu_read_lock_sched():  atomic        atomic
+> > >   srcu_read_lock():       preemptible   preemptible
+> > >
+> > > Then we could maintain full read side API flexibility by making PREEMPT_RCU=y the 
+> > > only model, merging it with SRCU and using these main read side APIs:
+> > >
+> > >   rcu_read_lock_preempt_disable():	atomic
+> > >   rcu_read_lock():			preemptible
 > 
-> I understood the benefit of mapping duration to state number, is duration <->
-> state number mapping a generic solution to all arches?
+> One issue with merging SRCU into rcu_read_lock() is the general blocking within 
+> SRCU readers.  Once merged in, these guys block everyone.  We should focus 
+> initially on the non-SRCU variants.
+> 
+> On the other hand, Linus's suggestion of merging rcu_read_lock_sched()
+> into rcu_read_lock() just might be feasible.  If that really does pan
+> out, we end up with the following:
+> 
+>				!PREEMPT	PREEMPT=y
+>	rcu_read_lock():	atomic		preemptible
+>	srcu_read_lock():	preemptible	preemptible
+> 
+> In this model, rcu_read_lock_sched() maps to preempt_disable() and (as
+> you say above) rcu_read_lock_bh() maps to local_bh_disable().  The way
+> this works is that in PREEMPT=y kernels, synchronize_rcu() waits not
+> only for RCU read-side critical sections, but also for regions of code
+> with preemption disabled.  The main caveat seems to be that there be an
+> assumed point of preemptibility between each interrupt and each softirq
+> handler, which should be OK.
+> 
+> There will be some adjustments required for lockdep-RCU, but that should
+> be reasonably straightforward.
+> 
+> Seem reasonable?
 
-Yes, all platforms have a limited set of possible idle states.
+Yes, that approach sounds very reasonable to me: it is similar to what we do on 
+the locking side as well, where we have 'atomic' variants (spinlocks/rwlocks) and 
+'sleeping' variants (mutexes, rwsems, etc.).
 
-> Back to the user's concern is, "I'm running a latency sensitive application, and
-> I want idle switching ASAP". So I think the user may not care about what C state
-> to go into, that is, even if a deeper state has chance to go, the user striving
-> for a higher workload score may still not want it?
+( This means there will be more automatic coupling between BH and preempt critical
+  sections and RCU models not captured via explicit RCU-namespace APIs, but that
+  should be OK I think. )
 
-The user caring about performance very much cares about the actual idle
-state too, exit latency for deeper states is horrific and will screw
-them up just as much as the whole nohz timer reprogramming does.
+A couple of small side notes:
 
-We can basically view the whole nohz thing as an additional entry/exit
-latency for the idle state, which is why I don't think its weird to
-couple them.
+ - Could we please also clean up the namespace of the synchronization APIs and 
+   change them all to an rcu_ prefix, like all the other RCU APIs are? Right now 
+   have a mixture like rcu_read_lock() but synchronize_rcu(), while I'd reall love 
+   to be able to do:
 
-> >> Maybe just return a "nohz" indicator from cpuidle_select() in addition
-> >> to the state index and make the decision in the governor?
-> > 
-> > Much better option than returning a duration :-)
-> >
-> So what does "nohz = disable and state index = deepest" mean? This combination
-> does not make sense for performance only purpose?
+	git grep '\<rcu_' ...
 
-I tend to agree with you that the state space allowed by a separate
-variable is larger than required, but it's significantly smaller than
-preserving 'time' so I can live with it.
+   ... to see RCU API usage within a particular kernel area. This would also clean
+   up some of the internal inconsistencies like having 'struct rcu_synchronize'.
+
+ - If we are cleaning up the write side APIs, could we move over to a _wait 
+   nomenclature, i.e. rcu_wait*()?
+
+   I.e. the new RCU namespace would be something like:
+
+     rcu_read_lock                => rcu_read_lock        # unchanged
+     rcu_read_unlock              => rcu_read_unlock      # unchanged
+
+     call_rcu                     => rcu_call_rcu
+     call_rcu_bh                  => rcu_call_bh
+     call_rcu_sched               => rcu_call_sched
+
+     synchronize_rcu              => rcu_wait_
+     synchronize_rcu_bh           => rcu_wait_bh
+     synchronize_rcu_bh_expedited => rcu_wait_expedited_bh
+     synchronize_rcu_expedited    => rcu_wait_expedited
+     synchronize_rcu_mult         => rcu_wait_mult
+     synchronize_rcu_sched        => rcu_wait_sched
+     synchronize_rcu_tasks        => rcu_wait_tasks
+
+     srcu_read_lock               => srcu_read_lock       # unchanged
+     srcu_read_unlock             => srcu_read_unlock     # unchanged
+
+     synchronize_srcu             => srcu_wait
+     synchronize_srcu_expedited   => srcu_wait_expedited
+
+   Note that due to the prefix approach we gain various new patterns:
+
+       git grep rcu_wait          # matches both rcu and srcu
+       git grep rcu_wait          # matches all RCU waiting variants
+       git grep wait_expedited    # matches all expedited variants
+
+   ... which all increase the organization of the namespace.
+
+ - While we are at it, the two RCU-state API variants, while rarely used, are
+   named in a pretty obscure, disconnected fashion as well. A much better naming 
+   would be:
+
+     get_state_synchronize_rcu    => rcu_get_state
+     cond_synchronize_rcu         => rcu_wait_state
+
+   ... or so. This would also move them into the new, unified rcu_ prefix 
+   namespace.
+
+Note how consistent and hierarchical the new RCU API namespace is:
+
+	<subsystem-prefix>_<verb>[_<qualifier[s]>]
+
+If you agree with the overall concept of this I'd be glad to help out with 
+scripting & testing the RCU namespace transition safely in an unintrusive fashion 
+once you've done the model unification work, with compatibility defines to not 
+create conflicts, churn and pain, etc.
+
+Thanks,
+
+	Ingo
