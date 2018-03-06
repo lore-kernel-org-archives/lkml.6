@@ -1,71 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932941AbeCFUbG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 15:31:06 -0500
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:33954 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932287AbeCFUbF (ORCPT
+        id S1753898AbeCFUg7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 15:36:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55100 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753070AbeCFUg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 15:31:05 -0500
-X-Google-Smtp-Source: AG47ELvPz57LS43xYynO/p0GJaPA0m5lbY6I/glo2ckX5B02R7AmJ3JQ3kkf0yTPGwpfeW1kYurJ7rImH3fHsq3vzks=
-MIME-Version: 1.0
-In-Reply-To: <CAM_iQpVQs0YTckbo9F0zjPsSL+=ksVZvdcLO-QHTONcZc84eKg@mail.gmail.com>
-References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
- <20180306170011.GD25017@tassilo.jf.intel.com> <CAM_iQpUfRMW4aGfaTdFqCRwuuLXFX69Aewg+k-aa6BMUKSrhTA@mail.gmail.com>
- <20180306175320.GE25017@tassilo.jf.intel.com> <CAM_iQpVQs0YTckbo9F0zjPsSL+=ksVZvdcLO-QHTONcZc84eKg@mail.gmail.com>
-From: Ilya Pronin <ipronin@twitter.com>
-Date: Tue, 6 Mar 2018 12:31:03 -0800
-Message-ID: <CA+Xn3kw2FZ4m1TossMT35KKJ7EsSV=ykdWKCHtjRs1oefdXWNw@mail.gmail.com>
-Subject: Re: [PATCH] perf stat: fix cvs output format
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Andi Kleen <ak@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Mar 2018 15:36:58 -0500
+Date: Tue, 6 Mar 2018 12:36:55 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        m.mizuma@jp.fujitsu.com, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: might_sleep warning
+Message-Id: <20180306123655.957e5b6b20b200505544ea7a@linux-foundation.org>
+In-Reply-To: <20180306192022.28289-1-pasha.tatashin@oracle.com>
+References: <20180306192022.28289-1-pasha.tatashin@oracle.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Speaking from the user's seat. An optional (not just empty) cgroup
-field is fine as long it consistently appears when requested with -G
-option. The problem with print_metric_csv() was that in the case of
-unsupported counters 2 additional empty fields in the output are
-completely unexpected and not documented anywhere.
+On Tue,  6 Mar 2018 14:20:22 -0500 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-Andi, in the output example in your commit
-92a61f6412d3a09d6462252a522fa79c9290f405 stalled-cycles-backend event
-has counter run time field, counter run time percentage field, empty
-metric value, empty metric unit, and then 2 other empty fields. Are
-they expected? If yes, what are they and why other events, e.g.
-stalled-cycles-frontend, don't have them? Am I missing something here?
+> Robot reported this issue:
+> https://lkml.org/lkml/2018/2/27/851
+> 
+> That is introduced by:
+> mm: initialize pages on demand during boot
+> 
+> The problem is caused by changing static branch value within spin lock.
+> Spin lock disables preemption, and changing static branch value takes
+> mutex lock in its path, and thus may sleep.
+> 
+> The fix is to add another boolean variable to avoid the need to change
+> static branch within spinlock.
+> 
+> ...
+>
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1579,6 +1579,7 @@ static int __init deferred_init_memmap(void *data)
+>   * page_alloc_init_late() soon after smp_init() is complete.
+>   */
+>  static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
+> +static bool deferred_zone_grow __initdata = true;
+>  static DEFINE_STATIC_KEY_TRUE(deferred_pages);
+>  
+>  /*
+> @@ -1616,7 +1617,7 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
+>  	 * Bail if we raced with another thread that disabled on demand
+>  	 * initialization.
+>  	 */
+> -	if (!static_branch_unlikely(&deferred_pages)) {
+> +	if (!static_branch_unlikely(&deferred_pages) || !deferred_zone_grow) {
+>  		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
+>  		return false;
+>  	}
+> @@ -1683,10 +1684,15 @@ void __init page_alloc_init_late(void)
+>  	/*
+>  	 * We are about to initialize the rest of deferred pages, permanently
+>  	 * disable on-demand struct page initialization.
+> +	 *
+> +	 * Note: it is prohibited to modify static branches in non-preemptible
+> +	 * context. Since, spin_lock() disables preemption, we must use an
+> +	 * extra boolean deferred_zone_grow.
+>  	 */
+>  	spin_lock(&deferred_zone_grow_lock);
+> -	static_branch_disable(&deferred_pages);
+> +	deferred_zone_grow = false;
+>  	spin_unlock(&deferred_zone_grow_lock);
+> +	static_branch_disable(&deferred_pages);
+>  
+>  	/* There will be num_node_state(N_MEMORY) threads */
+>  	atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
 
-On Tue, Mar 6, 2018 at 11:03 AM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
-> On Tue, Mar 6, 2018 at 9:53 AM, Andi Kleen <ak@linux.intel.com> wrote:
->>> Here is the output from your own commit:
->>>
->>>       423470,,stalled-cycles-frontend,509102,100.00,65.69,frontend cycles idle
->>>       <not supported>,,stalled-cycles-backend,0,100.00,,,,
->>>
->>> so line 1 has 7 fields, line 2 has 9 fields, and this is expected?
->>
->> If you had metrics on line 1 it would be correct.
->>
->> So you just shifted it to break that case.
->>
->> If you always want to have the same number of fields
->> you need to add two empty fields to the normal output
->> when there are no metrics.
->
-> The number of separators is the only way to learn the number
-> of fields, therefore it must be a fixed number.
->
-> Yeah, it could be the other way that supported ones have less
-> separators than it should. If we look at print_metric_csv() alone,
-> it should produce a same number of separators for all cases,
-> otherwise hard to count.
->
-> So I believe we need an additional patch, like the one attached,
-> to make it complete? Note, I only spot the cgroup field here.
+Kinda ugly, but I can see the logic behind the decisions.
 
--- 
-Ilya Pronin
+Can we instead turn deferred_zone_grow_lock into a mutex?
