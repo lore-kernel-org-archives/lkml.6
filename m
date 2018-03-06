@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3347819-1519921297-2-17734479508006815724
+X-Cyrus-Session-Id: sloti22d1t05-4155484-1520328210-2-16982046042088112827
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,56 +12,75 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1519921296; b=cBNRjQbVycW5r89oZqzeT3iwF5w+WtzAIUJR+OJZYsaI+JI
-    bmeiyDeUM56tgHZY9cJsYu0DYr2FoLC7t9wtjs4xvNmWN8MVXNunkrCX1UGwAmqa
-    WrD2fGN+DdxlTIJYz0XTNUWARhAQJ7mz1sI3WCkz03mL3QFjVogqEM2MLTWkuUbJ
-    oVFOckisVmJgF+sHQcpKFu2j3OLhHtRNg6RXjn2UtDQ26ef4QryUYul6Cjj8tipY
-    +U3ayhKkWFcQ/0pZCMUro2KolWSCrcVhojQhQApaxqAagfWm6a2zcItRUza+bAEO
-    uE/et+cujXPHANMSwj8L0CbV39Vl/tr0llvHoIQ==
+    t=1520328210; b=h9gTxZTHesI9Y1chQPXRuUJfFBw8757nrHHXOph6SEP463u
+    aTbKPmuW5A5IxdKO40aaIZIBYpoKOY2RPnhmIwtPjGyMs5rgKZ39TNyQPhFEryms
+    MJuORor9jEl9K7nvIn5E4xgMt+UnQc7XsfbcmSGKXzXiou5FUY+kXIvcMgu7b3nA
+    OTDfL2hWN+Td2JcBXB59dg9BrJFzNHQu9qaaq6qSDg2tT9mFdCHyNH8GpYlmGGQY
+    FcNBSO1QOoM3FfGAsHeIafQtLuvYNf85wlcJ6c7dUKvVYKqhL3hNpsXqQlztOrBU
+    wG0xHnZf353xjAWABze1UxgtDLMova3nVkwsXBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1519921296; bh=W
-    TA/XVYL40qVrFonhab/gR2FeFP96vKPXk6d/xaMNjE=; b=o+2650Ms9Kc04Zvek
-    GCPlMFrM05b9Bz/MqG8pIw0kMylmQEZQVl23exugPqglVy+00WWKhd9AuAuF39VP
-    E4xyGN5n9VRwpGJsloaN97dBWhvcNZNK2f+dm9dCyah1D6BdAsXdYll18sg4c5R6
-    XEEw9yBJ1FgQJa0OMDYISzsM9XqGR4AcIl5nbOsidrVYQXUAN+8TuOS5C4RpGDf+
-    5ofg8cXFXwTSY9Jcm0SMVVw/4mvLTdTRHXp/T4esaw5bDeLVKnRG1CfEkF5reGc7
-    jtYujnXwOStoyK9Lz9Jci+c/WQK9RQ1aESaTnEiSZ/2hD8LodzI+xML9nxE6//ME
-    iL2GQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1520328210; bh=D
+    0ZJQlwo32UwA44N8MMJqOWq/j8wIsRrbdCteK0eOmQ=; b=fFEVSA+1zSINU3Jcx
+    1Dhy+IEjqUJjR0jKdH1dV0qMV+EaCIVRjyk7V6+9yKqDruuPBPCWNvKYVaGDJLFP
+    t3Kl8cINwcQvZbqT2sNqDon2IJCqjGGkFWkbx6/C3G7F+fyHnES30lOGe44mveA6
+    7HNsm8FsbJ5ZjR3VW7mN1rjLIlJAFLw/HXZoSdsSnFExnHLdqMa4Sd7ZsIdTyrNT
+    40gmuMIa9P72Nq/5FFgpW+IkryLRSuUcgm9OROcDMSkaTNO0pHLtJlY0IKwVbz/g
+    B4eJwq7b/4xZueo/fZN3mJlXHBY4JcjD18tXKPgo3k2byB+DK4XKVUpxuVmbNru0
+    lmf9g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 1 Mar 2018 17:21:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Subject: Re: [PATCH 2/4] staging: most: Replace calls to BUG_ON() with
- WARN_ONCE() and return.
-Message-ID: <20180301162130.GB15087@kroah.com>
+X-Google-Smtp-Source: AG47ELt1YldNjHrLGsfWLoHjUvKvyp0pNStVffzgbPBBnTTd/c0/hpZDzpGPLJA6TZppcNrJ2Z27cIlPcuw0KVw54c0=
+MIME-Version: 1.0
+In-Reply-To: <20180301162130.GB15087@kroah.com>
 References: <20180224075835.11618-1-quytelda@tamalin.org>
  <20180224075835.11618-2-quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180224075835.11618-2-quytelda@tamalin.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+ <20180301162130.GB15087@kroah.com>
+From: Quytelda Kahja <quytelda@tamalin.org>
+Date: Tue, 6 Mar 2018 01:23:18 -0800
+X-Gmail-Original-Message-ID: <CAFLvi20e+D4984vypj7nVECFxh_AKVwGWTqCqfyFYJ9AV=Rvdg@mail.gmail.com>
+Message-ID: <CAFLvi20e+D4984vypj7nVECFxh_AKVwGWTqCqfyFYJ9AV=Rvdg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] staging: most: Replace calls to BUG_ON() with
+ WARN_ONCE() and return.
+To: Greg KH <gregkh@linuxfoundation.org>
+X-Provags-ID: V03:K0:Xom5ilAa0SykA3UnXJ2Hff4yl9nQYxpksj1sEIMW/H0nlxaBOjq
+ 5vwvzfl26E3cr7o9fjccnVRVfffAaYIFTFtdp3lZPR1kZHbvxrkJsto9zVch1gMCjRNg4Ex
+ 1eKaTM9q/KOAMMqu1F4s+w95bcrdl6as849AqyvKQdl9Ro6m898Krlua7S58qvb+iPq6na0
+ g00gsDoFxIXx9mvVrlVSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WNxFO1k8zzg=:CXT2sire6l2WTmPcmmrF2d
+ gNiOdWlXKMf1CFI9T3NMovLUQmB4cU1HzYUCPEplYOUVA8u2nOZTgKvgGpBExko85jZubzndP
+ xqjmuzOCY8XU/B8QMuhJZ+tN0fNep8tEGZnngx99XHzyaYX6mgfABYvpUYPr2u/+CrbGROzXY
+ XlqTMqSzFh2gWsQA5QqQyIl9bo+3MSiuGD3QgJi4FrKU+mRfpbrWuUbJLkH2gRWJVjYZUKgud
+ omMHGcW0+iCJ09DPnH6bNcIBC3KjA5hb94HkIjsFKLUjKI7tuwlOatAg6W7mKHrtzhtBpA0L3
+ 5bxbRUcz494yw1qexP5lU+NRXvEI8azF6eWDGNQHxCMyZGJVVWk+D7u4ITkN45F2wrxL26Rhx
+ FSBZiDCX5V9XCb+BOpe8Silovk/wHvdOQY6Hbz8wsHyCcyYs2A+4OvjhnNTN1y1MQKY2XhoXI
+ FX6Zm3eLYs1rZDcd613xQGsky2LNuYcaVN8jvQF/MWic8kjRmWdbi90wfXjoRiBbZwWcXKzMz
+ aPd9Oji+66Wj6r9q+ZD+QlCDf4aovcBCqMeJS6+dKcCK7qVxzg6HpjMU2/3LUvVnQNgUSYHxp
+ slueTC5VO6uVms/hAmFNogWxI8G5vyr5BTZ6vnmPMfcPIiHXyD41L/BTu10P3SctxgOsymh1O
+ NCECRswV0EoLySMg+oJZqd1l+YgCa3cVTfRnrPruR8hcybjAHmPP0xJcZzkdE2yNrgY59tv2O
+ UJ7IwQ7/VSt7K57g77IPC0/1XtyFleHm1FZqOsaVCmnFad+yCgaRpfojT7w=
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -83,51 +102,64 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 11:58:33PM -0800, Quytelda Kahja wrote:
-> Replace calls to BUG_ON() used to check for NULL pointers with WARN_ONCE()
-> followed by a return.
+> Are you sure this will work?
+Well, my goal was just to replace the code that could crash the kernel
+and let somebody with a better understanding of this particular driver
+write the recovery code, if necessary.  It seemed from context that
+the BUG_ON() calls were being used like assert() though, so I assumed
+there wasn't really much recovery to be made from that problem.  If
+you feel this doesn't improve the behavior of the driver, just drop
+the patch.
 
-Are you sure this will work?
+Thank you,
+Quytelda Kahja
 
-> 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> ---
->  drivers/staging/most/core.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-> index 18157dd80324..3f65390a6e17 100644
-> --- a/drivers/staging/most/core.c
-> +++ b/drivers/staging/most/core.c
-> @@ -916,7 +916,11 @@ static void arm_mbo(struct mbo *mbo)
->  	unsigned long flags;
->  	struct most_channel *c;
->  
-> -	BUG_ON((!mbo) || (!mbo->context));
-> +	if (WARN_ONCE(!mbo || !mbo->context,
-> +		      "Bad mbo or missing channel reference.\n")) {
-> +		return;
-
-How is the code supposed to recover from this major problem?
-
-> +	}
-> +
->  	c = mbo->context;
->  
->  	if (c->is_poisoned) {
-> @@ -1001,7 +1005,7 @@ static int arm_mbo_chain(struct most_channel *c, int dir,
->  void most_submit_mbo(struct mbo *mbo)
->  {
->  	if (WARN_ONCE(!mbo || !mbo->context,
-> -		      "bad mbo or missing channel reference\n"))
-> +		      "Bad mbo or missing channel reference.\n"))
-
-You did something different here that you did not describe in your
-changelog :(
-
-thanks,
-
-greg k-h
+On Thu, Mar 1, 2018 at 8:21 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Fri, Feb 23, 2018 at 11:58:33PM -0800, Quytelda Kahja wrote:
+>> Replace calls to BUG_ON() used to check for NULL pointers with WARN_ONCE()
+>> followed by a return.
+>
+> Are you sure this will work?
+>
+>>
+>> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+>> ---
+>>  drivers/staging/most/core.c | 13 ++++++++++---
+>>  1 file changed, 10 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+>> index 18157dd80324..3f65390a6e17 100644
+>> --- a/drivers/staging/most/core.c
+>> +++ b/drivers/staging/most/core.c
+>> @@ -916,7 +916,11 @@ static void arm_mbo(struct mbo *mbo)
+>>       unsigned long flags;
+>>       struct most_channel *c;
+>>
+>> -     BUG_ON((!mbo) || (!mbo->context));
+>> +     if (WARN_ONCE(!mbo || !mbo->context,
+>> +                   "Bad mbo or missing channel reference.\n")) {
+>> +             return;
+>
+> How is the code supposed to recover from this major problem?
+>
+>> +     }
+>> +
+>>       c = mbo->context;
+>>
+>>       if (c->is_poisoned) {
+>> @@ -1001,7 +1005,7 @@ static int arm_mbo_chain(struct most_channel *c, int dir,
+>>  void most_submit_mbo(struct mbo *mbo)
+>>  {
+>>       if (WARN_ONCE(!mbo || !mbo->context,
+>> -                   "bad mbo or missing channel reference\n"))
+>> +                   "Bad mbo or missing channel reference.\n"))
+>
+> You did something different here that you did not describe in your
+> changelog :(
+>
+> thanks,
+>
+> greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
