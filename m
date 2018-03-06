@@ -1,108 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932613AbeCFRqJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:46:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:34584 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753785AbeCFRqH (ORCPT
+        id S933020AbeCFRrZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:47:25 -0500
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35362 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932660AbeCFRrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:46:07 -0500
-Date: Tue, 6 Mar 2018 18:46:04 +0100
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Corey Minyard <cminyard@mvista.com>
-Cc: linux-rt-users <linux-rt-users@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Warning from swake_up_all in 4.14.15-rt13 non-RT
-Message-ID: <20180306174604.nta5rcvfvrfdfftz@linutronix.de>
-References: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
+        Tue, 6 Mar 2018 12:47:24 -0500
+X-Google-Smtp-Source: AG47ELtJKCFGA7RY1sGFa4a3IJh/eapazX+72u4TgYsGMCsH0M75xNYHuBxXYmr0fetV6bSANLfV/CeJc7i1UTBgR/Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <dd6ad0b5-569b-067d-257f-dbf15ffa7077@mvista.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CAAeHK+y4hze8CUDMJ_G6W+diBO88+WYu892SK9QAt36y8nbZYQ@mail.gmail.com>
+References: <083f58501e54731203801d899632d76175868e97.1519400992.git.andreyknvl@google.com>
+ <26dd94c5-19ca-dca6-07b8-7103f53c0130@virtuozzo.com> <CAAeHK+y4hze8CUDMJ_G6W+diBO88+WYu892SK9QAt36y8nbZYQ@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Tue, 6 Mar 2018 18:47:22 +0100
+Message-ID: <CAAeHK+z+Q0qKdSt4R=Cd7XPS0njNM3c+66Q-JA97aZ5nEa6Kug@mail.gmail.com>
+Subject: Re: [PATCH] kasan, slub: fix handling of kasan_slab_free hook
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Kostya Serebryany <kcc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-05 09:08:11 [-0600], Corey Minyard wrote:
-> Starting with the change
-> 
-> 8a64547a07980f9d25e962a78c2e10ee82bdb742 fs/dcache: use swait_queue instead
-> of
-> waitqueue
-…
-> The following change is the obvious reason:
-> 
-> --- a/kernel/sched/swait.c
-> +++ b/kernel/sched/swait.c
-> @@ -69,6 +69,7 @@ void swake_up_all(struct swait_queue_head *q)
->         struct swait_queue *curr;
->         LIST_HEAD(tmp);
-> 
-> +       WARN_ON(irqs_disabled());
->         raw_spin_lock_irq(&q->lock);
->         list_splice_init(&q->task_list, &tmp);
->         while (!list_empty(&tmp)) {
-> 
-> I've done a little bit of analysis here, percpu_ref_kill_and_confirm()
-> does spin_lock_irqsave() and then does a percpu_ref_put().  If the
-> refcount reaches zero, the release function of the refcount is
-> called.  In this case, the block code has set this to
-> blk_queue_usage_counter_release(), which calls swake_up_all().
-> 
-> It seems like a bad idea to call percpu_ref_put() with interrupts
-> disabled.  This problem actually doesn't appear to be RT-related,
-> there's just no warning call if the RT tree isn't used.
+On Tue, Mar 6, 2018 at 6:42 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> On Fri, Mar 2, 2018 at 1:10 PM, Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>> On 02/23/2018 06:53 PM, Andrey Konovalov wrote:
+>>> The kasan_slab_free hook's return value denotes whether the reuse of a
+>>> slab object must be delayed (e.g. when the object is put into memory
+>>> qurantine).
+>>>
+>>> The current way SLUB handles this hook is by ignoring its return value
+>>> and hardcoding checks similar (but not exactly the same) to the ones
+>>> performed in kasan_slab_free, which is prone to making mistakes.
+>>>
+>>
+>> What are those differences exactly? And what problems do they cause?
+>> Answers to these questions should be in the changelog.
+>
+>
+> The difference is that with the old code we end up proceeding with
+> invalidly freeing an object when an invalid-free (or double-free) is
+> detected. Will add this in v2.
+>
+>>
+>>
+>>> This patch changes the way SLUB handles this by:
+>>> 1. taking into account the return value of kasan_slab_free for each of
+>>>    the objects, that are being freed;
+>>> 2. reconstructing the freelist of objects to exclude the ones, whose
+>>>    reuse must be delayed.
+>>>
+>>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>>> ---
+>>
+>>
+>>
+>>
+>>>
+>>> @@ -2965,14 +2974,13 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
+>>>                                     void *head, void *tail, int cnt,
+>>>                                     unsigned long addr)
+>>>  {
+>>> -     slab_free_freelist_hook(s, head, tail);
+>>>       /*
+>>> -      * slab_free_freelist_hook() could have put the items into quarantine.
+>>> -      * If so, no need to free them.
+>>> +      * With KASAN enabled slab_free_freelist_hook modifies the freelist
+>>> +      * to remove objects, whose reuse must be delayed.
+>>>        */
+>>> -     if (s->flags & SLAB_KASAN && !(s->flags & SLAB_TYPESAFE_BY_RCU))
+>>> -             return;
+>>> -     do_slab_free(s, page, head, tail, cnt, addr);
+>>> +     slab_free_freelist_hook(s, &head, &tail);
+>>> +     if (head != NULL)
+>>
+>> That's an additional branch in non-debug fast-path. Find a way to avoid this.
+>
+> Hm, there supposed to be a branch here. We either have objects that we
+> need to free, or we don't, and we need to do different things in those
+> cases. Previously this was done with a hardcoded "if (s->flags &
+> SLAB_KASAN && ..." statement, not it's a different "if (head !=
+> NULL)".
+>
+> I could put this check under #ifdef CONFIG_KASAN if the performance is
+> critical here, but I'm not sure if that's the best solution. I could
+> also add an "unlikely()" there.
 
-yeah but vanilla uses wake_up() which does spin_lock_irqsafe() so it is
-not an issue there.
+OK, I have a solution better for this, stay tuned for v2.
 
-The odd part here is that percpu_ref_kill_and_confirm() does _irqsave()
-which suggests that it might be called from any context and then it does
-wait_event_lock_irq() which enables interrupts again while it waits. So
-it can't be used from any context.
-
-> I'm not sure if it's best to just do the put outside the lock, or
-> have modified put function that returns a bool to know if a release
-> is required, then the release function can be called outside the
-> lock.  I can do patches and test, but I'm hoping for a little
-> guidance here.
-
-swake_up_all() does raw_spin_lock_irq() because it should be called from
-non-IRQ context. And it drops the lock (+IRQ enable) between wake-ups in
-case we "need_resched()" because we woke a high-priority waiter. There
-is the list_splice because we wanted to drop the locks (and have IRQs
-open) during the entire wake up process but finish_swait() may happen
-during the wake up and so we must hold the lock while the list-item is
-removed for the queue head.
-I have no idea what is the wisest thing to do here. The obvious fix
-would be to use the irqsafe() variant here and not drop the lock between
-wake ups. That is essentially what swake_up_all_locked() does which I
-need for the completions (and based on some testing most users have one
-waiter except during PM and some crypto code).
-It is probably no comparison to wake_up_q() (which does multiple wake
-ups without a context switch) but then we did this before like that.
-
-Preferably we would have a proper list_splice() and some magic in the
-"early" dequeue part that works.
-
-> I'm also wondering why we don't have a warning like this in the
-> *_spin_lock_irq() macros, perhaps turned on with a debug
-> option.  That would catch things like this sooner.
-
-Ideally you would add lockdep_assert_irqs_enabled() to
-local_irq_disable() so you would have it hidden behind lockdep with an
-recursion check and everything. But this needs a lot of headers like
-task_struct so…
-I had once WARN_ON_ONCE(irqs_disabled()) added to testdrive it and had a
-few false-positive in the early boot or constructs like in
-__run_hrtimer(). I didn't look at it further…
-
-> Thanks,
-> 
-> -corey
-
-Sebastian
+>
+>>
+>>
+>>> +             do_slab_free(s, page, head, tail, cnt, addr);
+>>>  }
+>>>
+>>>  #ifdef CONFIG_KASAN
+>>>
