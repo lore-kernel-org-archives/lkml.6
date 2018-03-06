@@ -1,122 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753263AbeCFIse (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:48:34 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39674 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750825AbeCFIsc (ORCPT
+        id S1753257AbeCFItv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:49:51 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40446 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeCFItu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:48:32 -0500
-X-Google-Smtp-Source: AG47ELs9exMWoUKT4KBHxONB4lPqMwRdhfQgn4mbu/XW0Oaq/+NDVHOijWz73SlwtLia7tP/5mHD6g==
-From: Jan Glauber <jglauber@cavium.com>
-X-Google-Original-From: Jan Glauber <jglauber@caviumnetworks.com>
-Date: Tue, 6 Mar 2018 09:48:29 +0100
-To: George Cherian <george.cherian@cavium.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wsa@the-dreams.de
-Subject: Re: [PATCHv2 1/3] i2c: xlp9xx: Check for Bus state before every
- transfer
-Message-ID: <20180306084829.GB11729@wintermute>
-References: <1519737980-27997-1-git-send-email-george.cherian@cavium.com>
+        Tue, 6 Mar 2018 03:49:50 -0500
+Subject: Re: [PATCH v4 15/38] drm/bridge: analogix_dp: Ensure edp is disabled
+ when shutting down the panel
+To: Marek Szyprowski <m.szyprowski@samsung.com>, architt@codeaurora.org,
+        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
+        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
+        heiko@sntech.de
+Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, linux-rockchip@lists.infradead.org,
+        orjan.eide@arm.com,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
+References: <20180305222324.5872-1-enric.balletbo@collabora.com>
+ <CGME20180305222414epcas5p4bdc22ede027606945c97d3429c3bd10c@epcas5p4.samsung.com>
+ <20180305222324.5872-16-enric.balletbo@collabora.com>
+ <3b9537bb-0471-775e-d43b-1f1ccd46b94c@samsung.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <4d0e97f2-985c-fe04-9390-45ea60f3d731@collabora.com>
+Date: Tue, 6 Mar 2018 09:49:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519737980-27997-1-git-send-email-george.cherian@cavium.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <3b9537bb-0471-775e-d43b-1f1ccd46b94c@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't know how valuable same-company reviewed-by's are in the end, 
-but the patches look good to me with the small change in SMBalert, so you
-could add:
+Hi Marek,
 
-Reviewed-by: Jan Glauber <jglauber@cavium.com>
-
---Jan
-
-On Tue, Feb 27, 2018 at 01:26:18PM +0000, George Cherian wrote:
-> I2C bus enters the STOP condition after the DATA_DONE interrupt is raised.
-> Essentially the driver should be checking the bus state before sending
-> any transaction. In case a transaction is initiated while the
-> bus is busy, the prior transaction's stop condition is not achieved.
-> Add the check to make sure the bus is not busy before every transaction.
+On 06/03/18 08:35, Marek Szyprowski wrote:
+> Hi All,
 > 
-> Signed-off-by: George Cherian <george.cherian@cavium.com>
-> ---
->  drivers/i2c/busses/i2c-xlp9xx.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+> This is the patch, which introduces the issue I've pointed here:
 > 
-> diff --git a/drivers/i2c/busses/i2c-xlp9xx.c b/drivers/i2c/busses/i2c-xlp9xx.c
-> index 1f6d780..42dd1fa 100644
-> --- a/drivers/i2c/busses/i2c-xlp9xx.c
-> +++ b/drivers/i2c/busses/i2c-xlp9xx.c
-> @@ -16,6 +16,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/delay.h>
->  
->  #define XLP9XX_I2C_DIV			0x0
->  #define XLP9XX_I2C_CTRL			0x1
-> @@ -36,6 +37,8 @@
->  #define XLP9XX_I2C_TIMEOUT		0X10
->  #define XLP9XX_I2C_GENCALLADDR		0x11
->  
-> +#define XLP9XX_I2C_STATUS_BUSY		BIT(0)
-> +
->  #define XLP9XX_I2C_CMD_START		BIT(7)
->  #define XLP9XX_I2C_CMD_STOP		BIT(6)
->  #define XLP9XX_I2C_CMD_READ		BIT(5)
-> @@ -71,6 +74,7 @@
->  #define XLP9XX_I2C_HIGH_FREQ		400000
->  #define XLP9XX_I2C_FIFO_SIZE		0x80U
->  #define XLP9XX_I2C_TIMEOUT_MS		1000
-> +#define XLP9XX_I2C_BUSY_TIMEOUT		50
->  
->  #define XLP9XX_I2C_FIFO_WCNT_MASK	0xff
->  #define XLP9XX_I2C_STATUS_ERRMASK	(XLP9XX_I2C_INTEN_ARLOST | \
-> @@ -241,6 +245,26 @@ static irqreturn_t xlp9xx_i2c_isr(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static int xlp9xx_i2c_check_bus_status(struct xlp9xx_i2c_dev *priv)
-> +{
-> +	u32 status;
-> +	u32 busy_timeout = XLP9XX_I2C_BUSY_TIMEOUT;
-> +
-> +	while (busy_timeout) {
-> +		status = xlp9xx_read_i2c_reg(priv, XLP9XX_I2C_STATUS);
-> +		if ((status & XLP9XX_I2C_STATUS_BUSY) == 0)
-> +			break;
-> +
-> +		busy_timeout--;
-> +		usleep_range(1000, 1100);
-> +	}
-> +
-> +	if (!busy_timeout)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
->  static int xlp9xx_i2c_init(struct xlp9xx_i2c_dev *priv)
->  {
->  	u32 prescale;
-> @@ -363,6 +387,14 @@ static int xlp9xx_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->  	int i, ret;
->  	struct xlp9xx_i2c_dev *priv = i2c_get_adapdata(adap);
->  
-> +	ret = xlp9xx_i2c_check_bus_status(priv);
-> +	if (ret) {
-> +		xlp9xx_i2c_init(priv);
-> +		ret = xlp9xx_i2c_check_bus_status(priv);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	for (i = 0; i < num; i++) {
->  		ret = xlp9xx_i2c_xfer_msg(priv, &msgs[i], i == num - 1);
->  		if (ret != 0)
-> -- 
-> 2.1.4
+> https://lists.freedesktop.org/archives/dri-devel/2018-March/167794.html
+> 
+> On 2018-03-05 23:23, Enric Balletbo i Serra wrote:
+>> From: Lin Huang <hl@rock-chips.com>
+>>
+>> When panel is shut down, we should make sure edp can be disabled to avoid
+>> undefined behavior.
+>>
+>> Cc: Stéphane Marchesin <marcheu@chromium.org>
+>> Signed-off-by: Lin Huang <hl@rock-chips.com>
+>> Signed-off-by: zain wang <wzz@rock-chips.com>
+>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 92fb9a072cb6..9b7d530ad24c 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct
+>> analogix_dp_device *dp)
+>>         pm_runtime_get_sync(dp->dev);
+>>   +    ret = clk_prepare_enable(dp->clock);
+>> +    if (ret < 0) {
+>> +        DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
+>> +        goto out_dp_clk_pre;
+>> +    }
+>> +
+>>       if (dp->plat_data->power_on)
+>>           dp->plat_data->power_on(dp->plat_data);
+>>   @@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct
+>> analogix_dp_device *dp)
+>>       phy_power_off(dp->phy);
+>>       if (dp->plat_data->power_off)
+>>           dp->plat_data->power_off(dp->plat_data);
+>> +    clk_disable_unprepare(dp->clock);
+>> +out_dp_clk_pre:
+>>       pm_runtime_put_sync(dp->dev);
+>>         return ret;
+>> @@ -1234,10 +1242,13 @@ static void analogix_dp_bridge_disable(struct
+>> drm_bridge *bridge)
+>>         disable_irq(dp->irq);
+>>       phy_power_off(dp->phy);
+>> +    analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+> 
+> In case of Exynos DP, external PHY is used to power the DP block, so no
+> register access should be performed after phy_power_off(). Please move
+> analogix_dp_set_analog_power_down() before phy_power_off().
+> 
+
+Oh, sorry, I missed that change, I'll include in next version, but I will wait a
+little bit more before send for if I receive feedback on the others patches.
+
+
+>>         if (dp->plat_data->power_off)
+>>           dp->plat_data->power_off(dp->plat_data);
+>>   +    clk_disable_unprepare(dp->clock);
+>> +
+>>       pm_runtime_put_sync(dp->dev);
+>>         ret = analogix_dp_prepare_panel(dp, false, true);
+> 
+> Best regards
+Enric
