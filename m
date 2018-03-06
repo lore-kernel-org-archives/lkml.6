@@ -1,55 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754221AbeCFTsW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:48:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48700 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753821AbeCFTYS (ORCPT
+        id S1753878AbeCFUGv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 15:06:51 -0500
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:40953 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750797AbeCFUGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:24:18 -0500
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: [PATCH v8 03/63] arm64: Turn flush_dcache_mmap_lock into a no-op
-Date: Tue,  6 Mar 2018 11:23:13 -0800
-Message-Id: <20180306192413.5499-4-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180306192413.5499-1-willy@infradead.org>
-References: <20180306192413.5499-1-willy@infradead.org>
+        Tue, 6 Mar 2018 15:06:49 -0500
+X-Google-Smtp-Source: AG47ELvsIT6XpKt1n77NsFvPRFVNNE4yG746lxwLzhOWSXattY1j1U5dMkfJuP2qpGQjyhMWomdM6I663jW54BaVQAI=
+MIME-Version: 1.0
+In-Reply-To: <20180306191218.GF13586@sirena.org.uk>
+References: <20180305231246.GB5799@atomide.com> <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
+ <20180306163035.GE13586@sirena.org.uk> <CAOMZO5DL_a8DOKgyZ4j2-bcPZLeUtQ9ekc74yVwtKYofbpOafg@mail.gmail.com>
+ <20180306191218.GF13586@sirena.org.uk>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 6 Mar 2018 17:06:48 -0300
+Message-ID: <CAOMZO5BfEfXN6OgxXswm8qFDbxDJKdUJmhDZGr_DBOh8fbtodA@mail.gmail.com>
+Subject: Re: Regulator regression in next-20180305
+To: Mark Brown <broonie@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
+        linux-omap@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi Mark,
 
-ARM64 doesn't walk the VMA tree in its flush_dcache_page()
-implementation, so has no need to take the tree_lock.
+On Tue, Mar 6, 2018 at 4:12 PM, Mark Brown <broonie@kernel.org> wrote:
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reviewed-by: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/include/asm/cacheflush.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> Yeah, that's what I expected.  What we really need to figure out I think
+> is what exactly is taking the lock that we end up colliding with, I
+> don't seem to be able to reproduce so I'm having to just go on staring
+> at the code here.
 
-diff --git a/arch/arm64/include/asm/cacheflush.h b/arch/arm64/include/asm/cacheflush.h
-index bef9f418f089..550b0abea953 100644
---- a/arch/arm64/include/asm/cacheflush.h
-+++ b/arch/arm64/include/asm/cacheflush.h
-@@ -137,10 +137,8 @@ static inline void __flush_icache_all(void)
- 	dsb(ish);
- }
- 
--#define flush_dcache_mmap_lock(mapping) \
--	spin_lock_irq(&(mapping)->tree_lock)
--#define flush_dcache_mmap_unlock(mapping) \
--	spin_unlock_irq(&(mapping)->tree_lock)
-+#define flush_dcache_mmap_lock(mapping)		do { } while (0)
-+#define flush_dcache_mmap_unlock(mapping)	do { } while (0)
- 
- /*
-  * We don't appear to need to do anything here.  In fact, if we did, we'd
--- 
-2.16.1
+Any debug options I should turn on in order to help us to understand
+more on the lock issue?
