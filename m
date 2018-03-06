@@ -1,111 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752892AbeCFBFc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 20:05:32 -0500
-Received: from ozlabs.org ([103.22.144.67]:34673 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752460AbeCFBFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 20:05:30 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 6 Mar 2018 12:05:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warning after merge of the devicetree tree
-Message-ID: <20180306120511.1b480c32@canb.auug.org.au>
+        id S1752955AbeCFBOA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 20:14:00 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:49936 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbeCFBN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 20:13:58 -0500
+From: Qi Hou <qi.hou@windriver.com>
+To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>, <fmh6jj@gmail.com>,
+        <fmhess@users.sourceforge.net>
+CC: <jassisinghbrar@gmail.com>, <rmk+kernel@arm.linux.org.uk>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] dmaengine: pl330: fix a race condition in case of threaded irqs
+Date: Tue, 6 Mar 2018 09:13:37 +0800
+Message-ID: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TI3sDtET/RW45ETjEtZ+zuP"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [128.224.162.131]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TI3sDtET/RW45ETjEtZ+zuP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When booting up with "threadirqs" in command line, all irq handlers of the DMA
+controller pl330 will be threaded forcedly. These threads will race for the same
+list, pl330->req_done.
 
-Hi Rob,
+Before the callback, the spinlock was released. And after it, the spinlock was
+taken. This opened an race window where another threaded irq handler could steal
+the spinlock and be permitted to delete entries of the list, pl330->req_done.
 
-After merging the devicetree tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+If the later deleted an entry that was still referred to by the former, there would
+be a kernel panic when the former was scheduled and tried to get the next sibling
+of the deleted entry.
 
-arch/arm/boot/dts/imx51-digi-connectcore-jsk.dtb: Warning (chosen_node_stdo=
-ut_path): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6dl-phytec-pbab01.dtb: Warning (chosen_node_stdout_pat=
-h): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6dl-phytec-mira-rdk-nand.dtb: Warning (chosen_node_std=
-out_path): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6q-phytec-mira-rdk-emmc.dtb: Warning (chosen_node_stdo=
-ut_path): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6q-phytec-mira-rdk-nand.dtb: Warning (chosen_node_stdo=
-ut_path): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6qp-phytec-mira-rdk-nand.dtb: Warning (chosen_node_std=
-out_path): /chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/imx6ul-isiot-nand.dtb: Warning (sound_dai_property): /sou=
-nd/simple-audio-card,codec: Missing property '#sound-dai-cells' in node /so=
-c/aips-bus@2100000/i2c@21a0000/codec@a or bad phandle (referred from sound-=
-dai[0])
-arch/arm/boot/dts/imx6ul-geam.dtb: Warning (sound_dai_property): /sound/sim=
-ple-audio-card,codec: Missing property '#sound-dai-cells' in node /soc/aips=
--bus@2100000/i2c@21a0000/codec@a or bad phandle (referred from sound-dai[0])
-arch/arm/boot/dts/imx6ul-isiot-emmc.dtb: Warning (sound_dai_property): /sou=
-nd/simple-audio-card,codec: Missing property '#sound-dai-cells' in node /so=
-c/aips-bus@2100000/i2c@21a0000/codec@a or bad phandle (referred from sound-=
-dai[0])
-arch/arm/boot/dts/vf610m4-colibri.dtb: Warning (chosen_node_stdout_path): /=
-chosen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/rk3288-tinker.dtb: Warning (sound_dai_property): /sound/s=
-imple-audio-card,codec: Missing property '#sound-dai-cells' in node /hdmi@f=
-f980000 or bad phandle (referred from sound-dai[0])
-arch/arm/boot/dts/stih410-b2120.dtb: Warning (chosen_node_stdout_path): /ch=
-osen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/stih410-b2120.dtb: Warning (sound_dai_property): /soc/sou=
-nd/simple-audio-card,dai-link@0/codec: Missing property '#sound-dai-cells' =
-in node /soc/sti-display-subsystem/sti-hdmi@8d04000 or bad phandle (referre=
-d from sound-dai[0])
-arch/arm/boot/dts/stih407-b2120.dtb: Warning (chosen_node_stdout_path): /ch=
-osen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/stih407-b2120.dtb: Warning (sound_dai_property): /soc/sou=
-nd/simple-audio-card,dai-link@0/codec: Missing property '#sound-dai-cells' =
-in node /soc/sti-display-subsystem/sti-hdmi@8d04000 or bad phandle (referre=
-d from sound-dai[0])
-arch/arm/boot/dts/stih410-b2260.dtb: Warning (chosen_node_stdout_path): /ch=
-osen:linux,stdout-path: Use 'stdout-path' instead
-arch/arm/boot/dts/stih410-b2260.dtb: Warning (sound_dai_property): /soc/sou=
-nd/simple-audio-card,dai-link@0/codec: Missing property '#sound-dai-cells' =
-in node /soc/sti-display-subsystem/sti-hdmi@8d04000 or bad phandle (referre=
-d from sound-dai[0])
-arch/arm/boot/dts/stih418-b2199.dtb: Warning (chosen_node_stdout_path): /ch=
-osen:linux,stdout-path: Use 'stdout-path' instead
+The scenario could be depicted as below:
 
-Presumably introduced by commit
+  Thread: T1  pl330->req_done  Thread: T2
+      |             |              |
+      |          -A-B-C-D-         |
+    Locked          |              |
+      |             |           Waiting
+    Del A           |              |
+      |          -B-C-D-           |
+    Unlocked        |              |
+      |             |           Locked
+    Waiting         |              |
+      |             |            Del B
+      |             |              |
+      |           -C-D-         Unlocked
+    Waiting         |              |
+      |
+    Locked
+      |
+   get C via B
+      \
+       - Kernel panic
 
-  c0e8e5234671 ("scripts/dtc: Update to upstream version v1.4.6-9-gaadd0b65=
-c987")
+The kernel panic looked like as below:
 
-or
+Unable to handle kernel paging request at virtual address dead000000000108
+pgd = ffffff8008c9e000
+[dead000000000108] *pgd=000000027fffe003, *pud=000000027fffe003, *pmd=0000000000000000
+Internal error: Oops: 96000044 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 85 Comm: irq/59-66330000 Not tainted 4.8.24-WR9.0.0.12_standard #2
+Hardware name: Broadcom NS2 SVK (DT)
+task: ffffffc1f5cc3c00 task.stack: ffffffc1f5ce0000
+PC is at pl330_irq_handler+0x27c/0x390
+LR is at pl330_irq_handler+0x2a8/0x390
+pc : [<ffffff80084cb694>] lr : [<ffffff80084cb6c0>] pstate: 800001c5
+sp : ffffffc1f5ce3d00
+x29: ffffffc1f5ce3d00 x28: 0000000000000140
+x27: ffffffc1f5c530b0 x26: dead000000000100
+x25: dead000000000200 x24: 0000000000418958
+x23: 0000000000000001 x22: ffffffc1f5ccd668
+x21: ffffffc1f5ccd590 x20: ffffffc1f5ccd418
+x19: dead000000000060 x18: 0000000000000001
+x17: 0000000000000007 x16: 0000000000000001
+x15: ffffffffffffffff x14: ffffffffffffffff
+x13: ffffffffffffffff x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000000840
+x9 : ffffffc1f5ce0000 x8 : ffffffc1f5cc3338
+x7 : ffffff8008ce2020 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001
+x3 : dead000000000200 x2 : dead000000000100
+x1 : 0000000000000140 x0 : ffffffc1f5ccd590
 
-  f26e93812a4f ("scripts: re-enable some now fixed dtc warnings")
+Process irq/59-66330000 (pid: 85, stack limit = 0xffffffc1f5ce0020)
+Stack: (0xffffffc1f5ce3d00 to 0xffffffc1f5ce4000)
+3d00: ffffffc1f5ce3d80 ffffff80080f09d0 ffffffc1f5ca0c00 ffffffc1f6f7c600
+3d20: ffffffc1f5ce0000 ffffffc1f6f7c600 ffffffc1f5ca0c00 ffffff80080f0998
+3d40: ffffffc1f5ce0000 ffffff80080f0000 0000000000000000 0000000000000000
+3d60: ffffff8008ce202c ffffff8008ce2020 ffffffc1f5ccd668 ffffffc1f5c530b0
+3d80: ffffffc1f5ce3db0 ffffff80080f0d70 ffffffc1f5ca0c40 0000000000000001
+3da0: ffffffc1f5ce0000 ffffff80080f0cfc ffffffc1f5ce3e20 ffffff80080bf4f8
+3dc0: ffffffc1f5ca0c80 ffffff8008bf3798 ffffff8008955528 ffffffc1f5ca0c00
+3de0: ffffff80080f0c30 0000000000000000 0000000000000000 0000000000000000
+3e00: 0000000000000000 0000000000000000 0000000000000000 ffffff80080f0b68
+3e20: 0000000000000000 ffffff8008083690 ffffff80080bf420 ffffffc1f5ca0c80
+3e40: 0000000000000000 0000000000000000 0000000000000000 ffffff80080cb648
+3e60: ffffff8008b1c780 0000000000000000 0000000000000000 ffffffc1f5ca0c00
+3e80: ffffffc100000000 ffffff8000000000 ffffffc1f5ce3e90 ffffffc1f5ce3e90
+3ea0: 0000000000000000 ffffff8000000000 ffffffc1f5ce3eb0 ffffffc1f5ce3eb0
+3ec0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3ee0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f00: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f40: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f60: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3f80: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3fa0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+3fc0: 0000000000000000 0000000000000005 0000000000000000 0000000000000000
+3fe0: 0000000000000000 0000000000000000 0000000275ce3ff0 0000000275ce3ff8
+Call trace:
+Exception stack(0xffffffc1f5ce3b30 to 0xffffffc1f5ce3c60)
+3b20:                                   dead000000000060 0000008000000000
+3b40: ffffffc1f5ce3d00 ffffff80084cb694 0000000000000008 0000000000000e88
+3b60: ffffffc1f5ce3bb0 ffffff80080dac68 ffffffc1f5ce3b90 ffffff8008826fe4
+3b80: 00000000000001c0 00000000000001c0 ffffffc1f5ce3bb0 ffffff800848dfcc
+3ba0: 0000000000020000 ffffff8008b15ae4 ffffffc1f5ce3c00 ffffff800808f000
+3bc0: 0000000000000010 ffffff80088377f0 ffffffc1f5ccd590 0000000000000140
+3be0: dead000000000100 dead000000000200 0000000000000001 0000000000000000
+3c00: 0000000000000000 ffffff8008ce2020 ffffffc1f5cc3338 ffffffc1f5ce0000
+3c20: 0000000000000840 0000000000000001 0000000000000000 ffffffffffffffff
+3c40: ffffffffffffffff ffffffffffffffff 0000000000000001 0000000000000007
+[<ffffff80084cb694>] pl330_irq_handler+0x27c/0x390
+[<ffffff80080f09d0>] irq_forced_thread_fn+0x38/0x88
+[<ffffff80080f0d70>] irq_thread+0x140/0x200
+[<ffffff80080bf4f8>] kthread+0xd8/0xf0
+[<ffffff8008083690>] ret_from_fork+0x10/0x40
+Code: f2a00838 f9405763 aa1c03e1 aa1503e0 (f9000443)
+---[ end trace f50005726d31199c ]---
+Kernel panic - not syncing: Fatal exception in interrupt
+SMP: stopping secondary CPUs
+SMP: failed to stop secondary CPUs 0-1
+Kernel Offset: disabled
+Memory Limit: none
+---[ end Kernel panic - not syncing: Fatal exception in interrupt
 
---=20
-Cheers,
-Stephen Rothwell
+To fix this, re-start with the list-head after dropping the lock then
+re-takeing it.
 
---Sig_/TI3sDtET/RW45ETjEtZ+zuP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Reviewed-by: Frank Mori Hess <fmh6jj@gmail.com>
+Tested-by: Frank Mori Hess <fmh6jj@gmail.com>
+Signed-off-by: Qi Hou <qi.hou@windriver.com>
+---
+ drivers/dma/pl330.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqd6UcACgkQAVBC80lX
-0GxgOQf/dUt0YEIxDVuwPgnhyFTNEMCoX/vuRlClWhL60LeDppwNwOgwExuE1VxJ
-5wnoiwerAuzlUeahZ/lhbhAA4Ccp8hxseTam9hg8SR6nho/CIw5KsLiDJQOrnl86
-BQU0Ev2kLRrvV63j70zg2plnhD5X6oS5Fl5huGeolkqfJFExJ1u12V4Y2pkWwnom
-6cn7Yi6smfg75FrpiWdFPwJw2dVkxorme3msj80twGsag9NhMM9MeTZqKCL4vKYD
-ZqR2jKl6I3PYMP/68SV49FE2M/ZH6GRq2a8SGTh8DMIbt5HFjJnDPLpZ3KjCgt75
-XBXCwpgeemNU9swX42qtiOlPOtmKdw==
-=dIj3
------END PGP SIGNATURE-----
-
---Sig_/TI3sDtET/RW45ETjEtZ+zuP--
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index d7327fd..de1fd59 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -1510,7 +1510,7 @@ static void pl330_dotask(unsigned long data)
+ /* Returns 1 if state was updated, 0 otherwise */
+ static int pl330_update(struct pl330_dmac *pl330)
+ {
+-	struct dma_pl330_desc *descdone, *tmp;
++	struct dma_pl330_desc *descdone;
+ 	unsigned long flags;
+ 	void __iomem *regs;
+ 	u32 val;
+@@ -1588,7 +1588,9 @@ static int pl330_update(struct pl330_dmac *pl330)
+ 	}
+ 
+ 	/* Now that we are in no hurry, do the callbacks */
+-	list_for_each_entry_safe(descdone, tmp, &pl330->req_done, rqd) {
++	while (!list_empty(&pl330->req_done)) {
++		descdone = list_first_entry(&pl330->req_done,
++					    struct dma_pl330_desc, rqd);
+ 		list_del(&descdone->rqd);
+ 		spin_unlock_irqrestore(&pl330->lock, flags);
+ 		dma_pl330_rqcb(descdone, PL330_ERR_NONE);
+-- 
+2.7.4
