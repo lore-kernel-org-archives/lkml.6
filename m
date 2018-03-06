@@ -1,59 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932692AbeCFN4P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:56:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:40148 "EHLO mga17.intel.com"
+        id S932804AbeCFN5E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:57:04 -0500
+Received: from mga09.intel.com ([134.134.136.24]:18266 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932543AbeCFN4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:56:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1753507AbeCFN5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 08:57:01 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="22193905"
-Date: Tue, 6 Mar 2018 15:56:07 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] tmp: factor out tpm1_get_random into tpm1-cmd.c
-Message-ID: <20180306135607.GB5700@linux.intel.com>
-References: <20180306093041.11996-1-tomas.winkler@intel.com>
- <20180306093041.11996-4-tomas.winkler@intel.com>
- <1520335881.7549.9.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9422F24F@hasmsx108.ger.corp.intel.com>
+   d="scan'208";a="35017755"
+Date: Tue, 6 Mar 2018 15:56:58 +0200
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Todor Tomov <todor.tomov@linaro.org>, hverkuil@xs4all.nl,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: ov5645: Fix write_reg return code
+Message-ID: <20180306135658.dh5vlmsevodrcr7m@paasikivi.fi.intel.com>
+References: <1518082920-11309-1-git-send-email-todor.tomov@linaro.org>
+ <20180306104010.234737a6@vento.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F24F@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180306104010.234737a6@vento.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 11:34:50AM +0000, Winkler, Tomas wrote:
-> 
-> > 
-> > On Tue, 2018-03-06 at 11:30 +0200, Tomas Winkler wrote:
-> > > Factor out get random implementation from tpm-interface.c into
-> > > tpm1_get_random function in tpm1-cmd.c.
-> > > No functional changes.
-> > >
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > 
-> > While you are doing this, please make it use tpm_buf so tha we get stuff out
-> > of that nasty union. Using "helper" structs is still fine, just move it right
-> > before the function implementation out of tpm.h (there are examples of this
-> > tpm2-cmd.c).
-> 
-> Sure, but not while moving code, this is dangerous. Should be done after code is moved.
+HI Mauro,
 
-Makes sense have use two steps here.
+On Tue, Mar 06, 2018 at 10:40:10AM -0300, Mauro Carvalho Chehab wrote:
+> Em Thu,  8 Feb 2018 11:41:59 +0200
+> Todor Tomov <todor.tomov@linaro.org> escreveu:
+> 
+> > I2C transfer functions return number of successful operations (on success).
+> > 
+> > Do not return the received positive return code but instead return 0 on
+> > success. The users of write_reg function already use this logic.
+> > 
+> > Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+> > ---
+> >  drivers/media/i2c/ov5645.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > index d28845f..9755562 100644
+> > --- a/drivers/media/i2c/ov5645.c
+> > +++ b/drivers/media/i2c/ov5645.c
+> > @@ -600,11 +600,13 @@ static int ov5645_write_reg(struct ov5645 *ov5645, u16 reg, u8 val)
+> >  	regbuf[2] = val;
+> >  
+> >  	ret = i2c_master_send(ov5645->i2c_client, regbuf, 3);
+> > -	if (ret < 0)
+> > +	if (ret < 0) {
+> >  		dev_err(ov5645->dev, "%s: write reg error %d: reg=%x, val=%x\n",
+> >  			__func__, ret, reg, val);
+> > +		return ret;
+> > +	}
+> 
+> Actually, if ret < 3, it should return an error too (like -EREMOTEIO 
+> or -EIO).
 
-/Jarkko
+i2c_master_send() always returns a negative error code or the number of
+octets written.
+
+But thank you for reminding me about the patch. :-)
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
