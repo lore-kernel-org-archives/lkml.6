@@ -1,52 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeCFDMI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 22:12:08 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34963 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753164AbeCFDMH (ORCPT
+        id S932370AbeCFDPI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 22:15:08 -0500
+Received: from mail.windriver.com ([147.11.1.11]:38623 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbeCFDPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 22:12:07 -0500
-X-Google-Smtp-Source: AG47ELsb+EZi+Qfh7bHQMpKteAby7R+ohtrhrdFzJRoi3FV/tQ93Rfl10YuHYSvvMgpgANjmPRxp2Q==
-Subject: Re: [PATCH v5 3/3] of: add early boot allocation of
- of_find_node_by_phandle() cache
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Chintan Pandya <cpandya@codeaurora.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
- <1520208889-3908-4-git-send-email-frowand.list@gmail.com>
- <CAL_Jsq+sD=Hj+3cYy0injRSZ5Dj2M6c+KbiFrrwsO_9pqq8wKg@mail.gmail.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <c5393057-b0e0-7e9d-041a-96996cf047b2@gmail.com>
-Date: Mon, 5 Mar 2018 19:12:05 -0800
+        Mon, 5 Mar 2018 22:15:07 -0500
+Subject: Re: [PATCH] tipc: bcast: use true and false for boolean values
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <netdev@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180305215614.GA15175@embeddedor.com>
+From: Ying Xue <ying.xue@windriver.com>
+Message-ID: <7dd608de-c048-306a-643c-8a98778eaef3@windriver.com>
+Date: Tue, 6 Mar 2018 11:11:21 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+sD=Hj+3cYy0injRSZ5Dj2M6c+KbiFrrwsO_9pqq8wKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180305215614.GA15175@embeddedor.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.98]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/18 12:26, Rob Herring wrote:
-> On Sun, Mar 4, 2018 at 6:14 PM,  <frowand.list@gmail.com> wrote:
->> From: Frank Rowand <frank.rowand@sony.com>
->>
->> The initial implementation of the of_find_node_by_phandle() cache
->> allocates the cache using kcalloc().  Add an early boot allocation
->> of the cache so it will be usable during early boot.  Switch over
->> to the kcalloc() based cache once normal memory allocation
->> becomes available.
+On 03/06/2018 05:56 AM, Gustavo A. R. Silva wrote:
+> Assign true or false to boolean variables instead of an integer value.
 > 
-> Do we get a lot of lookups early? It makes sense to me to do early,
-> but freeing and repopulating seems to add needless complexity.
+> This issue was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-Hey, that was my argument.  :-)
+Acked-by: Ying Xue <ying.xue@windriver.com>
 
-I would be quite happy leaving off patch 3/3.  And without 3/3,
-2/3 becomes not necessary here, but still could go in separately
-for completeness.  Though it could go in via Andrew.
-
--Frank
+> ---
+>  net/tipc/bcast.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+> index 37892b3..f371117 100644
+> --- a/net/tipc/bcast.c
+> +++ b/net/tipc/bcast.c
+> @@ -574,5 +574,5 @@ void tipc_nlist_purge(struct tipc_nlist *nl)
+>  {
+>  	tipc_dest_list_purge(&nl->list);
+>  	nl->remote = 0;
+> -	nl->local = 0;
+> +	nl->local = false;
+>  }
+> 
