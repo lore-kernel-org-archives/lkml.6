@@ -1,24 +1,24 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELuzR6wRpgIdq4YSQncEi0lTQ+goO62bysFPedmUqg6nuPyEzbMzh/PWDLkTraFMcESx44Kc
-ARC-Seal: i=1; a=rsa-sha256; t=1520358622; cv=none;
+X-Google-Smtp-Source: AG47ELvxlanpfwDUxOD2w7YXbrAed5+VIpyonnAp6CQliaIczkt1zb+59n7P559/O22dRPmydpMu
+ARC-Seal: i=1; a=rsa-sha256; t=1520357014; cv=none;
         d=google.com; s=arc-20160816;
-        b=zF1eSCiSM4+6/KDPfLoGOxPOuRSn39b3e9Ua/TG3rK+yHqb1eRwG+L5phgpM7ampP5
-         ew+vvZo3KZMO5oWTww36qJuCV52HGbsrggCNxCQr4oo2lifEHUrAkd2/s6QicpCqriPV
-         MWsTL+nS538MXLfFpK8/L0i6MWiPWVEn7Ll8wfEH3bhMMb8VGpvvK51+/PYrLI0QUryL
-         LgeNr2yyJUoGo8E/M4jkp8qPqfhlFAYQKoZUhbUMcUBgQ3wC0uG0KX6cNv+k2S/4vmvd
-         xJhMfZVUuk10yegG2coYZY3I2QKkQ6bLKbk7Ta8ktWWW5SgXibtfRMBIBuIansKsRanp
-         efAg==
+        b=g29GW+NPJhGoERlhka4WcKEHkHQgpDg8z4MvGI/RRfo3l1/lvUtTH5xRwfRdT/daGa
+         dcwjzlsWLORrGtZZnCu8o1Z42rOwmoQyRLVPxIpBxOjw1o/r/95OtIqDJYPL7l2Y1pFU
+         L6Tmrn9q2UMLdWDofpuWaS9dnKc+JXS8leAXa6wSDb9nok2CD/sjargDDGpy9NA5aRKh
+         9xF/ZlOSI2WUMR1ljZ2lUWuZD/74nL6Sx/+sHrf218Q0Uu7uNRvuwxXqg1DvxRKpWIMP
+         ji+4la8urMjOPUcrfFZZfLG+IaJYOKgZtHNqCcQnEYwds6b3G5Z6glmYKIFcYu8iT5py
+         Z33Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:organization:from:references:to:subject
          :cc:arc-authentication-results;
-        bh=ICw1ef35f34kbhiiCXup1FXo7DgkaEH1YbIcxQHa++4=;
-        b=Uo6sGr/BduvxwhGUP7B0SggIv9SE+LlkhU2QGW088+46kfeObkkhW80IhREUogcgUf
-         0+6+euCWyirige5S3ZK0hG3GRh3s1x1NKSP0YRm9+SAi18EwPvflKnw971At1ajKUn9Q
-         R9QKrFtgQydUBmJy6v3rJCicb4ejYeXJscCewmuDtexDPijPfILrocj2kJ29DrLeuJzP
-         v+93t3heHRHIJ36Ja2tAiV9ABIKv1mXtvcR2DdzerEaa5VlTLTGnfMz/oa0PS9X/id8k
-         W6IrlNeyq/frbC6Z2oIOgjdNrqhfLESAGgVFa/Gkk6EbUFsGpFIgZEYC3K6iNElY54do
-         QtkQ==
+        bh=hpTo764A4+WmJJXdknSx0EiIFDORwJGvKE7Wmc7imMM=;
+        b=d31N1+vzGp/PH9r1xRFhc9Zc3YUVCKnCl8c7oh6h144rfIZlWPPVsmLUQymPGx69jd
+         ORtXTbpGgW7iWDxVbFSAO7kL2mqTn99nkOtvqMnniwK8a0PqRuzRGca+lghgvY9XJDIU
+         rgJm4WTJ/R41Xxe8QO16suzZk10T/zoEo6DaD6TmBzqQdXBSVLg1bpHZIS2AcX0c4dyW
+         P+AdIR9IJAd3VQ8eaTcXFvkJTDBrWvHpYAVQjdGEvn+WSIPQBSoy/nCnEvwmcsMGmen+
+         tabi7RZdVAnOt89QSdiM97OOCKF5pQm9cZ7QlPFdOjtsLgsVve7cOU1lPq7yD64i2f8d
+         kOWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
@@ -32,131 +32,45 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
  dietmar.eggemann@arm.com, morten.rasmussen@arm.com, palmer@sifive.com,
  lenb@kernel.org, john.garry@huawei.com, austinwc@codeaurora.org,
  tnowicki@caviumnetworks.com
-Subject: Re: [PATCH v7 07/13] drivers: base cacheinfo: Add support for ACPI
- based firmware tables
+Subject: Re: [PATCH v7 08/13] arm64: Add support for ACPI based firmware
+ tables
 To: Jeremy Linton <jeremy.linton@arm.com>, linux-acpi@vger.kernel.org
 References: <20180228220619.6992-1-jeremy.linton@arm.com>
- <20180228220619.6992-8-jeremy.linton@arm.com>
+ <20180228220619.6992-9-jeremy.linton@arm.com>
 From: Sudeep Holla <sudeep.holla@arm.com>
 Organization: ARM
-Message-ID: <eb07e64d-ec91-6952-717e-d8a62ec0e8b0@arm.com>
-Date: Tue, 6 Mar 2018 17:50:15 +0000
+Message-ID: <362fcf8a-44f8-7eb5-0f17-a7763f6236e4@arm.com>
+Date: Tue, 6 Mar 2018 17:23:28 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228220619.6992-8-jeremy.linton@arm.com>
+In-Reply-To: <20180228220619.6992-9-jeremy.linton@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593684152561134116?=
-X-GMAIL-MSGID: =?utf-8?q?1594211563569778065?=
+X-GMAIL-THRID: =?utf-8?q?1593684154790972814?=
+X-GMAIL-MSGID: =?utf-8?q?1594209877131683512?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 
 On 28/02/18 22:06, Jeremy Linton wrote:
-> Call ACPI cache parsing routines from base cacheinfo code if ACPI
-> is enable. Also stub out cache_setup_acpi() so that individual
-> architectures can enable ACPI topology parsing.
+> The /sys cache entries should support ACPI/PPTT generated cache
+> topology information. Lets detect ACPI systems and call
+> an arch specific cache_setup_acpi() routine to update the hardware
+> probed cache topology.
 > 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->  drivers/acpi/pptt.c       |  1 +
->  drivers/base/cacheinfo.c  | 14 ++++++++++----
->  include/linux/cacheinfo.h |  9 +++++++++
->  3 files changed, 20 insertions(+), 4 deletions(-)
+> For arm64, if ACPI is enabled, determine the max number of cache
+> levels and populate them using the PPTT table if one is available.
 > 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 883e4318c6cd..c98f94ebd272 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -343,6 +343,7 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
->  {
->  	int valid_flags = 0;
->  
-> +	this_leaf->fw_token = cpu_node;
 
+I fail to understand the kbuild failure report association with this
+patch(most likely the previous patch could be culprit, I am looking at
+it in detail now), but for this patch
 
-Any reason why this can't part of 05/13 ?
-
->  	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
->  		this_leaf->size = found_cache->size;
->  		valid_flags++;
-> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> index 597aacb233fc..2880e2ab01f5 100644
-> --- a/drivers/base/cacheinfo.c
-> +++ b/drivers/base/cacheinfo.c
-> @@ -206,7 +206,7 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
->  					   struct cacheinfo *sib_leaf)
->  {
->  	/*
-> -	 * For non-DT systems, assume unique level 1 cache, system-wide
-> +	 * For non-DT/ACPI systems, assume unique level 1 caches, system-wide
->  	 * shared caches for all other levels. This will be used only if
->  	 * arch specific code has not populated shared_cpu_map
->  	 */
-> @@ -214,6 +214,11 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
->  }
->  #endif
->  
-> +int __weak cache_setup_acpi(unsigned int cpu)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
->  static int cache_shared_cpu_map_setup(unsigned int cpu)
->  {
->  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-> @@ -227,8 +232,8 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
->  	if (of_have_populated_dt())
->  		ret = cache_setup_of_node(cpu);
->  	else if (!acpi_disabled)
-> -		/* No cache property/hierarchy support yet in ACPI */
-> -		ret = -ENOTSUPP;
-> +		ret = cache_setup_acpi(cpu);
-> +
->  	if (ret)
->  		return ret;
->  
-> @@ -279,7 +284,8 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
->  			cpumask_clear_cpu(cpu, &sib_leaf->shared_cpu_map);
->  			cpumask_clear_cpu(sibling, &this_leaf->shared_cpu_map);
->  		}
-> -		of_node_put(this_leaf->fw_token);
-> +		if (of_have_populated_dt())
-> +			of_node_put(this_leaf->fw_token);
->  	}
->  }
->  
-> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-> index 0c6f658054d2..1446d3f053a2 100644
-> --- a/include/linux/cacheinfo.h
-> +++ b/include/linux/cacheinfo.h
-> @@ -97,6 +97,15 @@ int func(unsigned int cpu)					\
->  struct cpu_cacheinfo *get_cpu_cacheinfo(unsigned int cpu);
->  int init_cache_level(unsigned int cpu);
->  int populate_cache_leaves(unsigned int cpu);
-> +int cache_setup_acpi(unsigned int cpu);
-> +int acpi_find_last_cache_level(unsigned int cpu);
-> +#ifndef CONFIG_ACPI
-> +int acpi_find_last_cache_level(unsigned int cpu)
-
-The above 3 lines looks weird, can't it be:
-
-#ifdef CONFIG_ACPI
-int acpi_find_last_cache_level(unsigned int cpu);
-#else
-int acpi_find_last_cache_level(unsigned int cpu)
-{
-	/* ACPI kernels should be built with PPTT support */
-	return 0;
-}
-
-Also I think it should be CONFIG_ACPI_PPTT, otherwise it might cause
-issue on platforms which define CONFIG_ACPI but CONFIG_ACPI_PPTT is not.
-I can only relate this to the s390 error reported by kbuild robot.
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
 -- 
 Regards,
