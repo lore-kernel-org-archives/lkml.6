@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932458AbeCFGm1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 01:42:27 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50635 "EHLO
+        id S932589AbeCFGnA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 01:43:00 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46671 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932259AbeCFGmZ (ORCPT
+        with ESMTP id S932259AbeCFGm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 01:42:25 -0500
-Date: Mon, 5 Mar 2018 22:41:41 -0800
-From: tip-bot for weiping zhang <tipbot@zytor.com>
-Message-ID: <tip-25f72f9ed88d5be86c92432fc779e2725e3506cd@git.kernel.org>
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        zhangweiping@didichuxing.com, hpa@zytor.com, namhyung@kernel.org,
-        jolsa@kernel.org, acme@redhat.com
-Reply-To: jolsa@kernel.org, acme@redhat.com, namhyung@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, zhangweiping@didichuxing.com,
-        peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com
-In-Reply-To: <20180129154805.GA6284@localhost.didichuxing.com>
-References: <20180129154805.GA6284@localhost.didichuxing.com>
+        Tue, 6 Mar 2018 01:42:59 -0500
+Date: Mon, 5 Mar 2018 22:42:35 -0800
+From: tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-ab6c79b819f5a50cf41a11ebec17bef63b530333@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
+        yao.jin@linux.intel.com, ak@linux.intel.com, kan.liang@intel.com,
+        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        ak@linux.intel.com, yao.jin@linux.intel.com, kan.liang@intel.com,
+        mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com, alexander.shishkin@linux.intel.com
+In-Reply-To: <1516117388-10120-1-git-send-email-yao.jin@linux.intel.com>
+References: <1516117388-10120-1-git-send-email-yao.jin@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cgroup: Simplify arguments when tracking
- multiple events
-Git-Commit-ID: 25f72f9ed88d5be86c92432fc779e2725e3506cd
+Subject: [tip:perf/core] perf stat: Ignore error thread when enabling
+ system-wide --per-thread
+Git-Commit-ID: ab6c79b819f5a50cf41a11ebec17bef63b530333
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,123 +36,141 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  25f72f9ed88d5be86c92432fc779e2725e3506cd
-Gitweb:     https://git.kernel.org/tip/25f72f9ed88d5be86c92432fc779e2725e3506cd
-Author:     weiping zhang <zhangweiping@didichuxing.com>
-AuthorDate: Mon, 29 Jan 2018 23:48:09 +0800
+Commit-ID:  ab6c79b819f5a50cf41a11ebec17bef63b530333
+Gitweb:     https://git.kernel.org/tip/ab6c79b819f5a50cf41a11ebec17bef63b530333
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Tue, 16 Jan 2018 23:43:08 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 22 Feb 2018 10:02:27 -0300
+CommitDate: Tue, 27 Feb 2018 11:29:21 -0300
 
-perf cgroup: Simplify arguments when tracking multiple events
+perf stat: Ignore error thread when enabling system-wide --per-thread
 
-When using -G with one cgroup and -e with multiple events, only the
-first event gets the correct cgroup setting, all events from the second
-onwards will track system-wide events.
+If we execute 'perf stat --per-thread' with non-root account (even set
+kernel.perf_event_paranoid = -1 yet), it reports the error:
 
-If the user wants to track multiple events for a specific cgroup, the
-user must give parameters like the following:
+  jinyao@skl:~$ perf stat --per-thread
+  Error:
+  You may not have permission to collect system-wide stats.
 
-  $ perf stat -e e1 -e e2 -e e3 -G test,test,test
+  Consider tweaking /proc/sys/kernel/perf_event_paranoid,
+  which controls use of the performance events system by
+  unprivileged users (without CAP_SYS_ADMIN).
 
-This patch simplify this case, just type one cgroup:
+  The current value is 2:
 
-  $ perf stat -e e1 -e e2 -e e3 -G test
+    -1: Allow use of (almost) all events by all users
+        Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
+  >= 0: Disallow ftrace function tracepoint by users without CAP_SYS_ADMIN
+        Disallow raw tracepoint access by users without CAP_SYS_ADMIN
+  >= 1: Disallow CPU event access by users without CAP_SYS_ADMIN
+  >= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN
 
-  $ mkdir -p /sys/fs/cgroup/perf_event/empty_cgroup
-  $ perf stat -e cycles -e cache-misses -a -I 1000 -G empty_cgroup
+  To make this setting permanent, edit /etc/sysctl.conf too, e.g.:
 
-Before:
+          kernel.perf_event_paranoid = -1
 
-     1.001007226   <not counted>      cycles	   empty_cgroup
-     1.001007226           7,506      cache-misses
+Perhaps the ptrace rule doesn't allow to trace some processes. But anyway
+the global --per-thread mode had better ignore such errors and continue
+working on other threads.
 
-After:
+This patch will record the index of error thread in perf_evsel__open()
+and remove this thread before retrying.
 
-     1.000834097   <not counted>      cycles	   empty_cgroup
-     1.000834097   <not counted>      cache-misses empty_cgroup
+For example (run with non-root, kernel.perf_event_paranoid isn't set):
 
-Signed-off-by: weiping zhang <zhangweiping@didichuxing.com>
+  jinyao@skl:~$ perf stat --per-thread
+  ^C
+   Performance counter stats for 'system wide':
+
+         vmstat-3458    6.171984   cpu-clock:u (msec) #  0.000 CPUs utilized
+           perf-3670    0.515599   cpu-clock:u (msec) #  0.000 CPUs utilized
+         vmstat-3458   1,163,643   cycles:u           #  0.189 GHz
+           perf-3670      40,881   cycles:u           #  0.079 GHz
+         vmstat-3458   1,410,238   instructions:u     #  1.21  insn per cycle
+           perf-3670       3,536   instructions:u     #  0.09  insn per cycle
+         vmstat-3458     288,937   branches:u         # 46.814 M/sec
+           perf-3670         936   branches:u         #  1.815 M/sec
+         vmstat-3458      15,195   branch-misses:u    #  5.26% of all branches
+           perf-3670          76   branch-misses:u    #  8.12% of all branches
+
+        12.651675247 seconds time elapsed
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180129154805.GA6284@localhost.didichuxing.com
-[ Improved the doc text a bit, providing an example for cgroup + system wide counting ]
+Link: http://lkml.kernel.org/r/1516117388-10120-1-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-record.txt |  6 +++++-
- tools/perf/Documentation/perf-stat.txt   |  6 +++++-
- tools/perf/util/cgroup.c                 | 17 ++++++++++++++++-
- 3 files changed, 26 insertions(+), 3 deletions(-)
+ tools/perf/builtin-stat.c    | 14 +++++++++++++-
+ tools/perf/util/evsel.c      |  3 +++
+ tools/perf/util/thread_map.c |  1 +
+ tools/perf/util/thread_map.h |  1 +
+ 4 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 3eea6de35a38..76bc2181d214 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -308,7 +308,11 @@ can be provided. Each cgroup is applied to the corresponding event, i.e., first
- to first event, second cgroup to second event and so on. It is possible to provide
- an empty cgroup (monitor all the time) using, e.g., -G foo,,bar. Cgroups must have
- corresponding events, i.e., they always refer to events defined earlier on the command
--line.
-+line. If the user wants to track multiple events for a specific cgroup, the user can
-+use '-e e1 -e e2 -G foo,foo' or just use '-e e1 -e e2 -G foo'.
-+
-+If wanting to monitor, say, 'cycles' for a cgroup and also for system wide, this
-+command line can be used: 'perf stat -e cycles -G cgroup_name -a -e cycles'.
- 
- -b::
- --branch-any::
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 2bbe79a50d3c..2b38e222016a 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -118,7 +118,11 @@ can be provided. Each cgroup is applied to the corresponding event, i.e., first
- to first event, second cgroup to second event and so on. It is possible to provide
- an empty cgroup (monitor all the time) using, e.g., -G foo,,bar. Cgroups must have
- corresponding events, i.e., they always refer to events defined earlier on the command
--line.
-+line. If the user wants to track multiple events for a specific cgroup, the user can
-+use '-e e1 -e e2 -G foo,foo' or just use '-e e1 -e e2 -G foo'.
-+
-+If wanting to monitor, say, 'cycles' for a cgroup and also for system wide, this
-+command line can be used: 'perf stat -e cycles -G cgroup_name -a -e cycles'.
- 
- -o file::
- --output file::
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index 984f69144f87..5dd9b5ea314d 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -157,9 +157,11 @@ int parse_cgroups(const struct option *opt __maybe_unused, const char *str,
- 		  int unset __maybe_unused)
- {
- 	struct perf_evlist *evlist = *(struct perf_evlist **)opt->value;
-+	struct perf_evsel *counter;
-+	struct cgroup_sel *cgrp = NULL;
- 	const char *p, *e, *eos = str + strlen(str);
- 	char *s;
--	int ret;
-+	int ret, i;
- 
- 	if (list_empty(&evlist->entries)) {
- 		fprintf(stderr, "must define events before cgroups\n");
-@@ -188,5 +190,18 @@ int parse_cgroups(const struct option *opt __maybe_unused, const char *str,
- 			break;
- 		str = p+1;
- 	}
-+	/* for the case one cgroup combine to multiple events */
-+	i = 0;
-+	if (nr_cgroups == 1) {
-+		evlist__for_each_entry(evlist, counter) {
-+			if (i == 0)
-+				cgrp = counter->cgrp;
-+			else {
-+				counter->cgrp = cgrp;
-+				refcount_inc(&cgrp->refcnt);
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index fadcff52cd09..6214d2b220b2 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -637,7 +637,19 @@ try_again:
+                                 if (verbose > 0)
+                                         ui__warning("%s\n", msg);
+                                 goto try_again;
+-                        }
++			} else if (target__has_per_thread(&target) &&
++				   evsel_list->threads &&
++				   evsel_list->threads->err_thread != -1) {
++				/*
++				 * For global --per-thread case, skip current
++				 * error thread.
++				 */
++				if (!thread_map__remove(evsel_list->threads,
++							evsel_list->threads->err_thread)) {
++					evsel_list->threads->err_thread = -1;
++					goto try_again;
++				}
 +			}
-+			i++;
-+		}
-+	}
- 	return 0;
+ 
+ 			perf_evsel__open_strerror(counter, &target,
+ 						  errno, msg, sizeof(msg));
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ef351688b797..b56e1c2ddaee 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1915,6 +1915,9 @@ try_fallback:
+ 		goto fallback_missing_features;
+ 	}
+ out_close:
++	if (err)
++		threads->err_thread = thread;
++
+ 	do {
+ 		while (--thread >= 0) {
+ 			close(FD(evsel, cpu, thread));
+diff --git a/tools/perf/util/thread_map.c b/tools/perf/util/thread_map.c
+index 729dad8f412d..5d467d8ae9ab 100644
+--- a/tools/perf/util/thread_map.c
++++ b/tools/perf/util/thread_map.c
+@@ -32,6 +32,7 @@ static void thread_map__reset(struct thread_map *map, int start, int nr)
+ 	size_t size = (nr - start) * sizeof(map->map[0]);
+ 
+ 	memset(&map->map[start], 0, size);
++	map->err_thread = -1;
  }
+ 
+ static struct thread_map *thread_map__realloc(struct thread_map *map, int nr)
+diff --git a/tools/perf/util/thread_map.h b/tools/perf/util/thread_map.h
+index 5ec91cfd1869..2f689c90a8c6 100644
+--- a/tools/perf/util/thread_map.h
++++ b/tools/perf/util/thread_map.h
+@@ -14,6 +14,7 @@ struct thread_map_data {
+ struct thread_map {
+ 	refcount_t refcnt;
+ 	int nr;
++	int err_thread;
+ 	struct thread_map_data map[];
+ };
+ 
