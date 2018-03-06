@@ -1,114 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeCFItv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:49:51 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40446 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbeCFItu (ORCPT
+        id S1753155AbeCFIya (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:54:30 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38806 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeCFIy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:49:50 -0500
-Subject: Re: [PATCH v4 15/38] drm/bridge: analogix_dp: Ensure edp is disabled
- when shutting down the panel
-To: Marek Szyprowski <m.szyprowski@samsung.com>, architt@codeaurora.org,
-        inki.dae@samsung.com, thierry.reding@gmail.com, hjc@rock-chips.com,
-        seanpaul@chromium.org, airlied@linux.ie, tfiga@chromium.org,
-        heiko@sntech.de
-Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        dianders@chromium.org, linux-rockchip@lists.infradead.org,
-        orjan.eide@arm.com,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@chromium.org>
-References: <20180305222324.5872-1-enric.balletbo@collabora.com>
- <CGME20180305222414epcas5p4bdc22ede027606945c97d3429c3bd10c@epcas5p4.samsung.com>
- <20180305222324.5872-16-enric.balletbo@collabora.com>
- <3b9537bb-0471-775e-d43b-1f1ccd46b94c@samsung.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <4d0e97f2-985c-fe04-9390-45ea60f3d731@collabora.com>
-Date: Tue, 6 Mar 2018 09:49:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 6 Mar 2018 03:54:29 -0500
+X-Google-Smtp-Source: AG47ELtCw2/a8vVr41rzt0TqYj2PYYeXyk6XxjEJN9HNqK+06e3jC6reBtGZXL+N6a/54KDrfFNy+w==
+Date: Tue, 6 Mar 2018 11:54:12 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC, PATCH 19/22] x86/mm: Implement free_encrypt_page()
+Message-ID: <20180306085412.vkgheeya24dze53t@node.shutemov.name>
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+ <20180305162610.37510-20-kirill.shutemov@linux.intel.com>
+ <a692b2ff-b590-b731-ad14-18238f471a1c@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3b9537bb-0471-775e-d43b-1f1ccd46b94c@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a692b2ff-b590-b731-ad14-18238f471a1c@intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
+On Mon, Mar 05, 2018 at 11:07:16AM -0800, Dave Hansen wrote:
+> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
+> > +void free_encrypt_page(struct page *page, int keyid, unsigned int order)
+> > +{
+> > +	int i;
+> > +	void *v;
+> > +
+> > +	for (i = 0; i < (1 << order); i++) {
+> > +		v = kmap_atomic_keyid(page, keyid + i);
+> > +		/* See comment in prep_encrypt_page() */
+> > +		clflush_cache_range(v, PAGE_SIZE);
+> > +		kunmap_atomic(v);
+> > +	}
+> > +}
+> 
+> Have you measured how slow this is?
 
-On 06/03/18 08:35, Marek Szyprowski wrote:
-> Hi All,
-> 
-> This is the patch, which introduces the issue I've pointed here:
-> 
-> https://lists.freedesktop.org/archives/dri-devel/2018-March/167794.html
-> 
-> On 2018-03-05 23:23, Enric Balletbo i Serra wrote:
->> From: Lin Huang <hl@rock-chips.com>
->>
->> When panel is shut down, we should make sure edp can be disabled to avoid
->> undefined behavior.
->>
->> Cc: Stéphane Marchesin <marcheu@chromium.org>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->> Signed-off-by: zain wang <wzz@rock-chips.com>
->> Signed-off-by: Sean Paul <seanpaul@chromium.org>
->> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
->> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 92fb9a072cb6..9b7d530ad24c 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1160,6 +1160,12 @@ static int analogix_dp_set_bridge(struct
->> analogix_dp_device *dp)
->>         pm_runtime_get_sync(dp->dev);
->>   +    ret = clk_prepare_enable(dp->clock);
->> +    if (ret < 0) {
->> +        DRM_ERROR("Failed to prepare_enable the clock clk [%d]\n", ret);
->> +        goto out_dp_clk_pre;
->> +    }
->> +
->>       if (dp->plat_data->power_on)
->>           dp->plat_data->power_on(dp->plat_data);
->>   @@ -1191,6 +1197,8 @@ static int analogix_dp_set_bridge(struct
->> analogix_dp_device *dp)
->>       phy_power_off(dp->phy);
->>       if (dp->plat_data->power_off)
->>           dp->plat_data->power_off(dp->plat_data);
->> +    clk_disable_unprepare(dp->clock);
->> +out_dp_clk_pre:
->>       pm_runtime_put_sync(dp->dev);
->>         return ret;
->> @@ -1234,10 +1242,13 @@ static void analogix_dp_bridge_disable(struct
->> drm_bridge *bridge)
->>         disable_irq(dp->irq);
->>       phy_power_off(dp->phy);
->> +    analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
-> 
-> In case of Exynos DP, external PHY is used to power the DP block, so no
-> register access should be performed after phy_power_off(). Please move
-> analogix_dp_set_analog_power_down() before phy_power_off().
-> 
+No, I have not.
 
-Oh, sorry, I missed that change, I'll include in next version, but I will wait a
-little bit more before send for if I receive feedback on the others patches.
-
-
->>         if (dp->plat_data->power_off)
->>           dp->plat_data->power_off(dp->plat_data);
->>   +    clk_disable_unprepare(dp->clock);
->> +
->>       pm_runtime_put_sync(dp->dev);
->>         ret = analogix_dp_prepare_panel(dp, false, true);
+> It's an optimization, but can we find a way to only do this dance when
+> we *actually* change the keyid?  Right now, we're doing mapping at alloc
+> and free, clflushing at free and zeroing at alloc.  Let's say somebody does:
 > 
-> Best regards
-Enric
+> 	ptr = malloc(PAGE_SIZE);
+> 	*ptr = foo;
+> 	free(ptr);
+> 
+> 	ptr = malloc(PAGE_SIZE);
+> 	*ptr = bar;
+> 	free(ptr);
+> 
+> And let's say ptr is in encrypted memory and that we actually munmap()
+> at free().  We can theoretically skip the clflush, right?
+
+Yes we can. Theoretically. We would need to find a way to keep KeyID
+around after the page is removed from rmap. That's not so trivial as far
+as I can see.
+
+I will look into optimization after I'll got functionality in place.
+
+-- 
+ Kirill A. Shutemov
