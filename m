@@ -1,101 +1,120 @@
-Date: Tue, 6 Mar 2018 19:24:14 -0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexei Starovoitov <ast@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, davem@davemloft.net,
-	daniel@iogearbox.net, torvalds@linux-foundation.org,
-	mcgrof@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@fb.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf
- binaries
-Message-ID: <20180307032414.GA24203@kroah.com>
-References: <20180306013457.1955486-1-ast@kernel.org>
- <20180306110549.GB31087@kroah.com>
- <d4fa4529-8341-8069-b80e-78773b0bb366@fb.com>
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1120109-1520363588-2-15329680238134899198
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520363587; b=d7eXJyDcSO5wXykIxkgnRGCmDA0n1lCYe4h0KQdhs+N+Uql
+    GqyOOfBWPYVN9WrZieIAJDIpg9vXXK/3+DffstZgb3yKIBifbqLT7hScA3oSVOzZ
+    ZWDCIsRym3a3rnWy89trUMo3NQXXlVip5Pn9yaj6CuEaLQ5PVUJ/An9NzrijqIEC
+    XmnSw8wkbMM32aJe7s8ggNwMIrtyLTzPJtFUUBRsPkp1vUNceQfjCL3vs5EQAg5O
+    Y5j9LOwW8nlWrWHVAYqqzZ0d9hK2Fkk6TAnZPiOcIEY82bKKQg2VMvowv+lvOUZm
+    xru1QP+RneIVH/PZ+X14DU/9V5vUWgwMXzl6mBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1520363587; bh=auHaP2vCw7YoXqCJgTcQQQBSFODcF+/0yfJNA/
+    BGUcs=; b=ao7XGKhheuS5Y15CNVW1+7MK16P3cwVqpPWN+XPBb73q8m5JAxieBa
+    xTtD3XiP3lh24dEGLtdCPKNtAwfuSZwDZgxDKgF0fv7btEzekpwTpRX6Sj7gouHZ
+    5A9WpCGTbi1+PYXrthjNWHCVHBvNLYUdUjCth/d87NA1ufvAhc386HQfoj99ctBP
+    LDAWzIeC3xorDn/QMiI/BsG0TWd4BkCX92XS15h6aahZf7jeDBwZ59qCLLkjbjem
+    0hJhd4EiHsYRRaToHsFq8m0w4o7HAU2qx/kKZWkKrXgcLYjzkZgWSDcHvuLLubOL
+    kV5egewP29tjm17yS2jUBTEx9CmkPNPw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NTkjdWxr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=EW+cZrS+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jI4tKCEx;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NTkjdWxr x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=EW+cZrS+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jI4tKCEx;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754002AbeCFTM2 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 14:12:28 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40952 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753168AbeCFTMZ (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 6 Mar 2018 14:12:25 -0500
+X-Google-Smtp-Source: AG47ELuG6w424sUiVCP4WIwCgcage+k80g5InLrNO6gyJFgGm4k8uHU1vWFmWfiECN+YrPNyQ/2EXhcd1EEAOadssgc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4fa4529-8341-8069-b80e-78773b0bb366@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180306013457.1955486-1-ast@kernel.org>
+References: <20180306013457.1955486-1-ast@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Mar 2018 11:12:24 -0800
+X-Google-Sender-Auth: D2_eZzdGHg-RtDffp08f36Xo0Qk
+Message-ID: <CA+55aFx5Q8D3cmuoXJFV9Ok_vc3fd3rNP-5onqFTPTtfZgi=HQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] modules: allow modprobe load regular elf binaries
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: David Miller <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 05:07:45PM -0800, Alexei Starovoitov wrote:
-> combining multiple answers...
-> 
-> On 3/6/18 3:05 AM, Greg KH wrote:
-> > 
-> > Any chance you can add a field to your "umh module" type such that a
-> > normal 'modinfo' program will be able to notice it is different easily?
-> 
-> ok. handling of modinfo turned out to be straightforward.
-> kmod tooling worked fine with simple addition of .modinfo section.
-> 
-> $ modinfo bpfilter
-> filename:
-> /lib/modules/4.16.0-rc4-00799-g1716f0aa3039-dirty/net/bpfilter/bpfilter.ko
-> umh:            Y
+On Mon, Mar 5, 2018 at 5:34 PM, Alexei Starovoitov <ast@kernel.org> wrote:
+> As the first step in development of bpfilter project [1] the request_module()
+> code is extended to allow user mode helpers to be invoked. Idea is that
+> user mode helpers are built as part of the kernel build and installed as
+> traditional kernel modules with .ko file extension into distro specified
+> location, such that from a distribution point of view, they are no different
+> than regular kernel modules. Thus, allow request_module() logic to load such
+> user mode helper (umh) modules via:
+[,,]
 
-Nice.  But perhaps spell it out, "user_mode_helper"?  Anyway,
-bikesheding now, sorry, whatever you want to call it is fine with me.
+I like this, but I have one request: can we make sure that this action
+is visible in the system messages?
 
-> license:        GPL
-> 
-> I will require umh=Y and license to be present.
-> umh has to be set to Y for this 'umh modules'
-> and taint of kernel will happen if license is not gpl.
+When we load a regular module, at least it shows in lsmod afterwards,
+although I have a few times wanted to really see module load as an
+event in the logs too.
 
-Interesting, I like it :)
+When we load a module that just executes a user program, and there is
+no sign of it in the module list, I think we *really* need to make
+that event show to the admin some way.
 
+.. and yes, maybe we'll need to rate-limit the messages, and maybe it
+turns out that I'm entirely wrong and people will hate the messages
+after they get used to the concept of these pseudo-modules, but
+particularly for the early implementation when this is a new thing, I
+really want a message like
 
-> Other modinfo like vermagic are not applicable here, since
-> umh modules interact with kernel via normal kernel/user abi.
+     executed user process xyz-abc as a pseudo-module
 
-Very true.
+or something in dmesg.
 
-> > > Since umh can crash, can be oom-ed by the kernel, killed by admin,
-> > > the subsystem that uses them (like bpfilter) need to manage life
-> > > time of umh on its own, so module infra doesn't do any accounting
-> > > of them. They don't appear in "lsmod" and cannot be "rmmod".
-> > > Multiple request_module("umh") will load multiple umh.ko processes.
-> > > 
-> > > Similar to kernel modules the kernel will be tainted if "umh module"
-> > > has invalid signature.
-> > 
-> > Shouldn't we fail to load the "module" if the signature is not valid if
-> > CONFIG_MODULE_SIG_FORCE=y is enabled, like we do for modules?  I run my
-> > systems like that, and just "warning" isn't probably a good idea for
-> > systems that want to enforce that everything is signed properly?
-> 
-> CONFIG_MODULE_SIG_FORCE=y is already handled by this patch.
-> It's checked first for either .ko or umh.ko (before any elf parsing)
-> and returns -ENOKEY to user space without any dmesg message.
-> I think it's best to keep it as-is.
-> The taint and warning is for 'undef SIG_FORCE' and when module
-> is signed, but incorrectly.
+I do *not* want this to be a magical way to hide things.
 
-Ah, sorry, I missed that, thanks for clearing it up.
-
-> > Other than that, one minor question:
-> > 
-> > > @@ -1745,7 +1745,9 @@ static int do_execveat_common(int fd, struct filename *filename,
-> > >  	sched_exec();
-> > > 
-> > >  	bprm->file = file;
-> > > -	if (fd == AT_FDCWD || filename->name[0] == '/') {
-> > > +	if (!filename) {
-> > > +		bprm->filename = "/dev/null";
-> > 
-> > Why the use of "/dev/null" for the filename here, and elsewhere in the
-> > code?  While I'm "sure" that everyone really does have /dev/null/
-> > mounted in the root namespace, what is the use of it here?
-> 
-> filename is assumed to be non-null in several places further
-> down and instead of hacking it everywhere it's cleaner to assign
-> some string to it.
-> I'll change it to filename = "none"
-> Same in umh part.
-
-Thanks, that makes sense.
-
-greg k-h
+                  Linus
