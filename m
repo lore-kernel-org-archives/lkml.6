@@ -1,113 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753518AbeCFJuH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:50:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33318 "EHLO mail.skyhub.de"
+        id S1753535AbeCFJuP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:50:15 -0500
+Received: from foss.arm.com ([217.140.101.70]:35584 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753463AbeCFJtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:49:41 -0500
-From: Borislav Petkov <bp@alien8.de>
-To: X86 ML <x86@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 9/9] x86/dumpstack: Save first regs set for the executive summary
-Date: Tue,  6 Mar 2018 10:49:20 +0100
-Message-Id: <20180306094920.16917-10-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
-In-Reply-To: <20180306094920.16917-1-bp@alien8.de>
-References: <20180306094920.16917-1-bp@alien8.de>
+        id S1753316AbeCFJuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:50:11 -0500
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+To: Auger Eric <eric.auger@redhat.com>,
+        Peter Maydell <peter.maydell@linaro.org>
+Cc: lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu
+References: <20180215175803.6870-1-marc.zyngier@arm.com>
+ <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com>
+ <40c74835-da24-485f-14bb-a0c357c7e79b@redhat.com>
+ <CAFEAcA9=YpNngKqeOXiO7QDvL=1ZaQEW8fh3XHjwD+i8qQm9wg@mail.gmail.com>
+ <a1579f14-a5fe-11bc-a831-f729cead25ba@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <81f8b489-883b-58c8-851b-c624ca72c28d@arm.com>
+Date: Tue, 6 Mar 2018 09:50:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <a1579f14-a5fe-11bc-a831-f729cead25ba@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On 05/03/18 20:37, Auger Eric wrote:
+> Hi Peter,
+> 
+> On 05/03/18 17:31, Peter Maydell wrote:
+>> On 2 March 2018 at 12:26, Auger Eric <eric.auger@redhat.com> wrote:
+>>> Hi Marc,
+>>> On 02/03/18 12:11, Marc Zyngier wrote:
+>>>> On Fri, 02 Mar 2018 10:44:48 +0000,
+>>>> Auger Eric wrote:
+>>>>> I understand the get/set is called as part of the migration process.
+>>>>> So my understanding is the benefit of this series is migration fails in
+>>>>> those cases:
+>>>>>
+>>>>>> =0.2 source -> 0.1 destination
+>>>>> 0.1 source -> >=0.2 destination
+>>>>
+>>>> It also fails in the case where you migrate a 1.0 guest to something
+>>>> that cannot support it.
+>>>
+>>> That's because on the destination, the number of regs is less than on
+>>> source, right?
+>>
+>> I think it fails because the KVM_REG_ARM_PSCI_VERSION register will be
+>> in the migration state but not in the destination's list of registers:
+>> the code in QEMU's target/arm/machine.c:cpu_post_load() function that
+>> checks "register in their list but not ours: fail migration" will
+>> catch this.
+> 
+> Thank you for the pointer. Yes at the time I reviewed the patch and just
+> focusing on the kernel code, this was not immediate to me.
+> 
+>>
+>> That also means that we will fail migration from a new kernel where
+>> we've specifically asked for PSCI 0.2 to an old PSCI-0.2-only kernel
+>> (because the KVM_REG_ARM_PSCI_VERSION reg will appear in the migration
+>> stream even if its value is the one value that matches the old kernel
+>> behaviour). I don't know if we care about that.
+> 
+> Do you know when are we likely to force PSCI 0.2 on a new kernel? At
+> which layer is the decision supposed to be made and on which criteria?
 
-Save the regs set when we call __die() for the first time and print it
-in oops_end().
+No decent SW should need this. But if you've written a guest that cannot
+work if it doesn't get "2" as response to PSCI_VERSION, you can override it.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/kernel/dumpstack.c | 33 ++++++++++++---------------------
- 1 file changed, 12 insertions(+), 21 deletions(-)
-
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index e855815b00d4..409a5bd02a18 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -31,6 +31,8 @@ static u8 __opc[OPCODE_BUFSIZE];
- static u8 *opcodes = __opc;
- static int die_counter;
- 
-+static struct pt_regs exec_summary_regs;
-+
- bool in_task_stack(unsigned long *stack, struct task_struct *task,
- 		   struct stack_info *info)
- {
-@@ -325,6 +327,9 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
- 	raw_local_irq_restore(flags);
- 	oops_exit();
- 
-+	/* Executive summary in case the oops scrolled away */
-+	__show_regs(&exec_summary_regs, false);
-+
- 	if (!signr)
- 		return;
- 	if (in_interrupt())
-@@ -343,10 +348,10 @@ NOKPROBE_SYMBOL(oops_end);
- 
- int __die(const char *str, struct pt_regs *regs, long err)
- {
--#ifdef CONFIG_X86_32
--	unsigned short ss;
--	unsigned long sp;
--#endif
-+	/* Save the regs of the first oops for the executive summary later. */
-+	if (!die_counter)
-+		exec_summary_regs = *regs;
-+
- 	printk(KERN_DEFAULT
- 	       "%s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff, ++die_counter,
- 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT"         : "",
-@@ -356,26 +361,14 @@ int __die(const char *str, struct pt_regs *regs, long err)
- 	       IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION) ?
- 	       (boot_cpu_has(X86_FEATURE_PTI) ? " PTI" : " NOPTI") : "");
- 
-+	show_regs(regs);
-+
- 	if (notify_die(DIE_OOPS, str, regs, err,
- 			current->thread.trap_nr, SIGSEGV) == NOTIFY_STOP)
- 		return 1;
- 
- 	print_modules();
--	show_regs(regs);
--#ifdef CONFIG_X86_32
--	if (user_mode(regs)) {
--		sp = regs->sp;
--		ss = regs->ss;
--	} else {
--		sp = kernel_stack_pointer(regs);
--		savesegment(ss, ss);
--	}
--	printk(KERN_EMERG "EIP: %pS SS:ESP: %04x:%08lx\n",
--	       (void *)regs->ip, ss, sp);
--#else
--	/* Executive summary in case the oops scrolled away */
--	printk(KERN_ALERT "RIP: %pS RSP: %016lx\n", (void *)regs->ip, regs->sp);
--#endif
-+
- 	return 0;
- }
- NOKPROBE_SYMBOL(__die);
-@@ -442,7 +435,5 @@ void show_regs(struct pt_regs *regs)
- 
- 		if (regs->ip < PAGE_OFFSET)
- 			pr_cont(" Bad RIP value.\n");
--		else
--			show_opcodes((u8 *)regs->ip, KERN_DEFAULT);
- 	}
- }
+	M.
 -- 
-2.13.0
+Jazz is not dead. It just smells funny...
