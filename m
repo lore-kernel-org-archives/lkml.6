@@ -1,111 +1,125 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-5053-1520330363-2-13050165594764122708
+X-Cyrus-Session-Id: sloti22d1t05-3033004-1520297541-2-9082472132619442837
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520330362; b=hI8ZdM+2Pb45oor3OwKmfTZ2+6/VoczWEIrZpcoZzV3LRiw
-    Bpmbj6SEW+ITJU+hnXiptSpkeJ0urpOjrmStXN3540SFB+yP+UuFGukrP5w1KmTu
-    voYe73jqeZBXcjaHWWx91G0UdYTjLzGhPbsV26yXls/u0cg2f2Min4O3CXfLAjic
-    Yoj72roQCEsM8Iwki+jTXJ3ec31Bo6ss9UoDlpztSWAYHctrnQvmh8gTRVlHVWFu
-    vhUqYqqfHhLNqjFwT/8uM3MJtlTv6/HauwMEns7JUy6wd94OvO+MrSTEc/dUs8cS
-    eqsmY2xkPInnOU6PIxrlSMH+rbnRaE1+ERaAvEA==
+    t=1520297541; b=tmvE1H1at6XXxz3dQkyqcw+XfakAAooPn0Iy4AZ9N4YliRm
+    p4wlDpqLs1pQbIhEVEMGwllv38cVqn+MNa8n99yzBnDxMCqDxxDurV6eWX8v4qh/
+    yFqOOd1Hq3M5jOmzKnd8MfRDREKbLBRDIr+an6p1IhGJZuNFG5F4gtsfUIMTdscr
+    YucO4VzZz/qAjQtD/up4k3f7wgFD440u+81ERbA9ZyCQkLY1FwMP7+Jh/FE8zqxJ
+    V1W8dkUXNFZqXyIC0tZJfTQ8meu/B6ymGX83IHyLEItRzek/GYT6PYe83l7/el2q
+    CUHUubQQ39cPXkE2pdywpi/5a/TxlpOW4onVRWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1520330362; bh=m/1KGQgMEzCmHlcDmVLTEjuZh5drILc5pgSNPN
-    k5wm4=; b=R9SrqTtprTsytBZ/NJZ6vmHDw24SsV7nCLXuzYm1uyGYgz8P71TgBz
-    kUfaTqEQZ84SARFb6iLPmAhnHDAIBoOVdu1n6t9wFg9rpZq5xaego/XcUsn82Tqn
-    cgb8IxL7xU4Ha2+oP0ZtzUNZ030O47lbrO5jqIAztF33Giz1Byl17JzWoQE8galt
-    pkcJ9URwQueOH7/uhBvL+CJaVXC82MSKomMS+GaBPvGTP1TY518IE0EUfjjJ1Ny6
-    sgBKNBUi+H8IW7UK0CFsDON7ut89Ef5589vYl0XsdzTSvU4FndyIKBBvDqgX6zqR
-    LL02Rk37O6VgZtRNUQx/gUwpkhuhiI+Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1520297541; bh=YsUptTda22BUDjhNapyRxlS2TF
+    6LZibS6DLGgfj2aQg=; b=iABF8gvtJAd7RUnpssZf7erNCjXeWO3BPMG4ICPmbt
+    0offJABspQ9x5uQBN1cKE0MbnutqZZxwa8Tj1pW7LMmW+2Q1cqiWjBIwbQgk3AuL
+    JbYEeTn0k42mOGZh12dbYWlfyxQe19wFjAJR2vQUVdbDhOo3pGP0Wvntfi/PoUfR
+    LqYajiMRbk2mxw6qc4Nn3YyBAKiKqXAOawE1VGMR2zczAgtMrcSgtP4/40OFnxoG
+    R2TiOUy7exPh6fBOVzt5o/6uWManYjdMPyQr50NwAMrjnPVTa1uk1foVWFH8NjQ3
+    kGjiKIJTgRhacf0vXyqhTwv7qqCZQ3pNO4Ch+8p0PqjQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Tu9IIJNL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass;
     x-category=clean score=-100 state=0;
+    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Tu9IIJNL;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeCFJ7J (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 6 Mar 2018 04:59:09 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42658 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750836AbeCFJ7H (ORCPT
+        id S932395AbeCFAwU (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 19:52:20 -0500
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:35192 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932287AbeCFAwT (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:59:07 -0500
-From: Bich HEMON <bich.hemon@st.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 5 Mar 2018 19:52:19 -0500
+X-Google-Smtp-Source: AG47ELsNUFR6K6w2Ils4GTD1TAcFoTulmD6/UbI3HpKMJ+ncmQneRWBC2YvMm+qIFIkvCIr1D+QZmw==
+Date: Mon, 5 Mar 2018 18:52:12 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bich HEMON <bich.hemon@st.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre TORGUE <alexandre.torgue@st.com>,
-        "Jiri Slaby" <jslaby@suse.com>,
+        Jiri Slaby <jslaby@suse.com>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Update interrupt names
-Thread-Topic: [PATCH 0/2] Update interrupt names
-Thread-Index: AQHTsIIPpjIbAcUZf0OKeLK3O9cgzKPC8Z0A
-Date: Tue, 6 Mar 2018 09:58:38 +0000
-Message-ID: <d855b529-be9b-13d9-8834-c2d0b7a16884@st.com>
+Subject: Re: [PATCH 1/2] dt-bindings: serial: stm32: add wakeup option using
+ note
+Message-ID: <20180306005212.acwhs2ajr64exf2s@rob-hp-laptop>
 References: <1519815044-22669-1-git-send-email-bich.hemon@st.com>
-In-Reply-To: <1519815044-22669-1-git-send-email-bich.hemon@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0AA9BE539F3A4A4AAAC39B354D85FF2F@st.com>
-Content-Transfer-Encoding: base64
+ <1519815044-22669-2-git-send-email-bich.hemon@st.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519815044-22669-2-git-send-email-bich.hemon@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkgYWxsLA0KDQpPbiAwMi8yOC8yMDE4IDExOjUxIEFNLCBCaWNoIEhFTU9OIHdyb3RlOg0KPiBU
-aGlzIHBhdGNoc2V0IHVwZGF0ZXMgZXhpc3Rpbmcgc3RtMzIgdXNhcnQgZHJpdmVyIGJ5IHVwZGF0
-aW5nIGludGVycnVwdA0KPiBpbml0aWFsaXphdGlvbiBieSBuYW1lLg0KPiANCj4gQmljaCBIZW1v
-biAoMik6DQo+ICAgIGR0LWJpbmRpbmdzOiBzZXJpYWw6IHN0bTMyOiBhZGQgd2FrZXVwIG9wdGlv
-biB1c2luZyBub3RlDQo+ICAgIHNlcmlhbDogc3RtMzI6IHVwZGF0ZSBpbnRlcnJ1cHQgaW5pdGlh
-bGl6YXRpb24NCj4gDQo+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Nlcmlh
-bC9zdCxzdG0zMi11c2FydC50eHQgfCA0ICsrKysNCj4gICBkcml2ZXJzL3R0eS9zZXJpYWwvc3Rt
-MzItdXNhcnQuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDQgKystLQ0KPiAgIDIgZmls
-ZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCg0KUGxlYXNl
-IG5vdGUgdGhhdCB0aGlzIHBhdGNoIHNldCBpcyBhYmFuZG9uZWQuIEFzIFJvYiBwb2ludGVkIHRo
-YXQgb3V0LCANCnRoZSBpbnRlcnJ1cHQgaW5kaWNlcyBhcmUgZml4ZWQsIHNvIHRoZXJlIGlzIG5v
-IG5lZWQgdG8ga2VlcCB0aGVzZSBwYXRjaGVzLg0KDQpCZXN0IHJlZ2FyZHMsDQoNCkJpY2g=
+On Wed, Feb 28, 2018 at 10:51:17AM +0000, Bich HEMON wrote:
+> Update bindings with interrupt-names and wakeup-source information
+> 
+> Signed-off-by: Bich Hemon <bich.hemon@st.com>
+> ---
+>  Documentation/devicetree/bindings/serial/st,stm32-usart.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/st,stm32-usart.txt b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+> index d150b04..aaeb564 100644
+> --- a/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+> +++ b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+> @@ -10,6 +10,7 @@ Required properties:
+>  - interrupts:
+>    - The interrupt line for the USART instance,
+>    - An optional wake-up interrupt.
+> +- interrupt-names: Contains "event" for the USART interrupt line.
+
+This should be moved down into optional properties.
+
+>  - clocks: The input clock of the USART instance
+>  
+>  Optional properties:
+> @@ -17,6 +18,9 @@ Optional properties:
+>  - st,hw-flow-ctrl: bool flag to enable hardware flow control.
+>  - dmas: phandle(s) to DMA controller node(s). Refer to stm32-dma.txt
+>  - dma-names: "rx" and/or "tx"
+> +- wakeup-source: bool flag to indicate this device has wakeup capabilities
+> +- interrupt-names : Should contain "wakeup" if optional wake-up interrupt is
+> +  used.
+>  
+>  Examples:
+>  usart4: serial@40004c00 {
+> -- 
+> 1.9.1
