@@ -1,84 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753752AbeCFQq0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:46:26 -0500
-Received: from mga03.intel.com ([134.134.136.65]:15121 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:46:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,432,1515484800";
-   d="scan'208";a="23396341"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Topic: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Index: AQHTs7KEInSI42HCTUSCFlGLoOJ8nqPBeeQAgAAiLaCAARpWAIAAJchggABsQYCAACIiQA==
-Date: Tue, 6 Mar 2018 16:45:59 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F595@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
- <1520353933.5393.21.camel@HansenPartnership.com>
-In-Reply-To: <1520353933.5393.21.camel@HansenPartnership.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWQ4MWY2ZjgtMTQwZC00YTY4LWEzYTItNDE5ZjU1OTc4NjAyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJqdHpGRUcxMFg2MG54bmNscWl5UTEyYVZTVWZId2N3SW85UThGSk45Rk1RNXFZOXJOVytHQ2hNTVwvSXdySVJOTSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.252.24.108]
-Content-Type: text/plain; charset="utf-8"
+        id S1753654AbeCFQtW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:49:22 -0500
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38619 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750782AbeCFQtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 11:49:20 -0500
+X-Google-Smtp-Source: AG47ELtIpZRFThbEARospIczxnpgK1tzf6GFN5v/kLu72R8+1gB+q8hNXtDLslvJQjU5d7AhpKdpEQ==
+Date: Tue, 6 Mar 2018 17:49:10 +0100
+From: Petr Vorel <petr.vorel@gmail.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kconfig: make unmet dependency warnings readable
+Message-ID: <20180306164910.tpdhl4e5xzvmwcua@dell5510>
+Reply-To: Petr Vorel <petr.vorel@gmail.com>
+References: <1520333499-31854-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520333499-31854-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w26GkUo2032177
 
-> 
-> On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > >
-> > >
-> > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > >
-> > > > Why you need cover letter?  What are u missing in the patch
-> > > > description
-> > >
-> > > If you submit a *patch set* I *require* a cover letter, yes.
-> >
-> > It's good but it is not must, you are inventing your own rules.
-> 
-> As long as the Maintainer is the gatekeeper, you're not going to get very far
-> with this argument.  The fact is that a lot of subsystems have varying rules;
-> often undocumented, some of which are even in conflict, like alphabetic vs
-> reverse christmas tree format for includes.
+Hi Masahiro,
 
-Usually I'm trying to stay in convention of the surouding code even if it's agains my personal taste.
- I think this particular case was a bit different. 
- 
-> A cover letter is actually one of the more uniform rules.  It's referred to in
-> submitting patches, but not actually documented there.
+...
+>   $ make allyesconfig
+>   scripts/kconfig/conf  --allyesconfig Kconfig
+>   warning: (A && B && D) selects E which has unmet direct
+>   dependencies (DEP1 && DEP2)
 
-I'm all for cover letters,  but for few code line fixes it's more comments then code.
+> Here, I see some points to be improved.
 
-What is most important I think I and Jarkko had found finally a common ground.
+> First, '(A || B || D)' would make more sense than '(A && B && D)'.
+Good point, make sense, current is really confusing.
 
-Thanks
-Tomas
+> I am not sure if this is intentional, but expr_simplify_unmet_dep()
+> turns OR expressions into AND, like follows:
+
+>         case E_OR:
+>                 return expr_alloc_and(
+
+> Second, we see false positives.  'A' is a real unmet dependency.
+> 'B' is false positive because 'DEP1' is fixed to 'y', and 'B' depends
+> on 'DEP2'.  'C' was correctly dropped by expr_simplify_unmet_dep().
+> 'D' is also false positive because it has no chance to be enabled.
+> Current expr_simplify_unmet_dep() cannot avoid those false positives.
+
+> After all, I decided to use the same helpers as used for printing
+> reverse dependencies in the help.
+
+> With this commit, unreadable warnings in the real world:
+
+> $ make ARCH=score allyesconfig
+> scripts/kconfig/conf  --allyesconfig Kconfig
+> warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && DWMAC_IPQ806X
+> && DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMA
+> C_STI && TI_CPSW && PINCTRL_GEMINI && PINCTRL_OXNAS && PINCTRL_ROCKCHIP &&
+>  PINCTRL_DOVE && PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG
+> && VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 && LP
+> C18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI && COMMON_CLK_ASPEED && C
+> OMMON_CLK_NXP && COMMON_CLK_OXNAS && COMMON_CLK_BOSTON && ATMEL_ST && QCOM
+> _ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI && ATMEL_EBI && ST_IRQCHIP && RESE
+> T_IMX7 && PHY_HI6220_USB && PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8
+> XX_USB) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+> warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS && PINCTRL_PIS
+> TACHIO && PINCTRL_PIC32 && PINCTRL_MESON && PINCTRL_NOMADIK && PINCTRL_MTK
+>  && PINCTRL_MT7622 && GPIO_TB10X) selects OF_GPIO which has unmet direct d
+> ependencies (GPIOLIB && OF && HAS_IOMEM)
+> warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP) sele
+> cts FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CR
+> IS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARC
+> H_WANT_FRAME_POINTERS)
+
+> will be turned into:
+
+> $ make ARCH=score allyesconfig
+> scripts/kconfig/conf  --allyesconfig Kconfig
+
+> WARNING:
+>  Unmet direct dependencies detected for MFD_SYSCON
+>  Depends on:
+>     HAS_IOMEM [=n]
+>  Selected by [y]:
+>   - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 || COMPILE_TEST [=y])
+> && OF [=y]
+>   - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 || COMPILE_TEST
+> [=y])
+>   - ATMEL_ST [=y] && GENERIC_CLOCKEVENTS [=y]
+>   - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
+>   - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 || COMPILE_TEST [=y])
+>   - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
+>   - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] || COMPILE_TEST
+> [=y])
+
+> WARNING:
+>  Unmet direct dependencies detected for OF_GPIO
+>  Depends on:
+>     GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
+>  Selected by [y]:
+>   - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
+> [=y]) && OF [=y]
+>   - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
+> [=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
+
+> WARNING:
+>  Unmet direct dependencies detected for FRAME_POINTER
+>  Depends on:
+>     DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN
+>  || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
+>  Selected by [y]:
+>   - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
+> PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
+> !ARC && !X86
+
+Although I liked the brevity of current form (one liner is nice), fixing false positives
+justify it enough. The same look and feel with help and reusing code makes are also pros.
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+
+...
+> +static void sym_warn_unmet_dependency(struct symbol *sym)
+> +{
+> +	struct gstr gs = str_new();
+> +
+> +	str_printf(&gs, "\nWARNING:\n");
+> +	str_printf(&gs, " Unmet direct dependencies detected for %s\n",
+
+Just one change: keep error on the same line as 'WARNING:':
+	str_printf(&gs, "\nWARNING: Unmet direct dependencies detected for %s\n",
+It's make easier to grep error and save space vertically.
+
+
+Kind regards,
+Petr
