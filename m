@@ -1,145 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933027AbeCFOqy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:46:54 -0500
-Received: from mail-dm3nam03on0065.outbound.protection.outlook.com ([104.47.41.65]:61984
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932589AbeCFOqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:46:51 -0500
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=George.Cherian@cavium.com;
-From: George Cherian <george.cherian@cavium.com>
-To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: wsa@the-dreams.de, George Cherian <george.cherian@cavium.com>,
-        Kamlakant Patel <kamlakant.patel@cavium.com>
-Subject: [PATCH v2] i2c: xlp9xx: Add support for SMBAlert
-Date: Tue,  6 Mar 2018 06:46:34 -0800
-Message-Id: <1520347594-184146-1-git-send-email-george.cherian@cavium.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [50.233.148.156]
-X-ClientProxiedBy: CO1PR15CA0045.namprd15.prod.outlook.com
- (2603:10b6:101:1f::13) To BL2PR07MB2323.namprd07.prod.outlook.com
- (2a01:111:e400:c753::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b3416432-83ed-491a-968e-08d58371174d
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:BL2PR07MB2323;
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;3:kC9lMwJ+pheNaivwx4t/AyHBno08sfBTXml4gvkxX6IZTmAQ2y5bVdx9ZovxfTR7FcPI3X9OVjZA/64BLMgv8pzGqK+cqhyT/d0Pv9EiG7mZotFLyT3n+mVpKGcSUIoM0NLIUNCkgjCsAlueEosKWOCHTcPO3hXzjDCrtDgxlg/XmlVkFz+jwVMlKDMSfOJXaHecZwI/taWkRyNQXQuwRdbPIXkVPrl4iH0N+V1x8U8C+sNHFsVWJnM8+2VCcNh5;25:us5M0I0czTefuEBmOrGNVhSOCkY/iz4AVw2m8gjYeGzYREd1GVvzPpCLzFGUb28SztQul9DPFdjB925Hz7cKHcJYU+7oXFJ3E5t035vr5NPEKhlapMx67IVLgAHHoSvGsMf5tblYfWstFAoH6UIyth4ZCBOX8osRJsmQ3ycYXnI7b6TbsMkeAGI3fz6sc4bKPe4rb4qcO5589XaiQqk2g5OdIKKBEMOxahRUj7R00Se4XBpVMSGf3V9Jh+lLdYqdhDhJ/53jAm8pOJn5m9UxPrr78w43Ya9pcvbQN6jNusXJY/585Hw2s1EIxfEsb/qTHMb4EFvGAWxx42CmbkCKDw==;31:et8rWaaCy0/6bD1qm7hd4Ifxkm9T3XMPASLnWPAglDZt20iOn/538qKMqgl7VsXgbEUs+LiYASafuTK698wLHH2MsJz7FpB1cIKfCkPB0/4oYjVd2MQcor8RNrSfyoNe46FhJGcm6YAc2E937BpBqF6tsHGUOlIXOx4mMQPrH0PnU2tfyAaSREhkLy5qslZj59Anqh7aBbUsq9mYmNec/qi0i3CjAYNvAzS4gV/N2u0=
-X-MS-TrafficTypeDiagnostic: BL2PR07MB2323:
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;20:DiK1j/YZFYc1gWrLok84y2JBp7qUPifKcrFf+Mv0X++sPnqMomDDZdyNEpgjvVSKWdq5Y2Blg3NLD6CKj4uKtaXNGKb72o2A3vMIlIOWtV73yWdFxLyZZGCl69KWsxjcpV57JUpyOxmU1NCj80dlJnSnysHRT27ZGrehkQCQ847XROFzqJdbBA8WDhFqJQzzz6KBcGwLlmijn+VbnfZIlbsdoCYFpbx86znfVsBA5L2gILb0b6W3h5OxtU6n6/B0X3d8VtZ1mHl8jWfU6lzqAW7fjPOdmBtuhUs4TsVXawfcnXyTKqTdT1Twhf9X12Li6XiMPnp84iYKaYl34w7n6yFlJWOWXO4dPTBrZXFoRzCAj6vS4XM4gjpHmv9EAsV8ot16YKMYy7ODfTdF2/kqMuUJ9MiL3723SMGLV/l0cUQR44fzaDHbwQ4mhHDCif5vaU4LDZnXoWrlvEaJaP8D7VuD8BuKDgvx7qfty9VE4FZ3nYnK/HN6P+3fP2Ic99O2;4:CHjxgflfIJLCDvjXfFQImjg4p1v+kHrTDTWyGgNUuGVWcPye12mDIbUcJZgOmxEaF8x2bJEptAXqeYlGLTHPbzkkl3vLb279luPuMoI2wlF5/vCLT58d/GkAhGloA4DHWtFRDS31sqCWmouGzN4prqjlXG1FOrtn+/Z0lQEVzfKjq7fAulwLsVIfpIjCtf+kstg2p1j3q/1dXEpb/N6BIUW+SpkCQnwqkmesjlKbfWE1+Z6LYXsf3JKi11U4EMi1NW2SvcHhpbDDwKLSu5vS/A==
-X-Microsoft-Antispam-PRVS: <BL2PR07MB23235DFC10B5E4B6442E8D53F9D90@BL2PR07MB2323.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6041288)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:BL2PR07MB2323;BCL:0;PCL:0;RULEID:;SRVR:BL2PR07MB2323;
-X-Forefront-PRVS: 06036BD506
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(366004)(396003)(376002)(39860400002)(346002)(189003)(199004)(4326008)(25786009)(81156014)(8676002)(81166006)(316002)(54906003)(16586007)(69596002)(66066001)(6512007)(52116002)(386003)(6506007)(51416003)(36756003)(47776003)(107886003)(53936002)(5660300001)(105586002)(50466002)(7736002)(6486002)(26005)(72206003)(97736004)(16526019)(186003)(106356001)(6116002)(3846002)(86362001)(53416004)(8936002)(48376002)(50226002)(478600001)(68736007)(2906002)(6666003)(305945005)(4720700003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR07MB2323;H:sbr2s-28.caveonetworks.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR07MB2323;23:W3W/VPa1yLV0felFdKuX58nAswfoMpbsmP/81bzn8?=
- =?us-ascii?Q?DQAhVi+h10/B0RBTEtKCeEf73+Y9n6IawjhLdD9JjRvdi2zu5bv6V1uu83Yw?=
- =?us-ascii?Q?dleKuN7VtCUHuiVkDcyqcc9Dm0haUe8Yv+CRh0JJ3voPldGrKCzzkGv7gpbG?=
- =?us-ascii?Q?E02Zuc6xKqGjaHD4sKDzNEP1hurxZCs1jl88YfImSykONdNtVg7Z6dDeF6eH?=
- =?us-ascii?Q?SHoSdMVqvgnWLU3syQysdPrIpxRWHJAItJjQozC4mcFNBBJAjj1GaC/+tUFD?=
- =?us-ascii?Q?0al8G0NU36VE8oJz7B7PyCXaD48WHx0VrT3BzbQQNwzRG8KHN97XgQIpGHB3?=
- =?us-ascii?Q?1A5fgQx4lGbuTRmPEBRk6maZZABOnDtbiqdD/CLTGnlABnS9Ppe5+mlvRUZL?=
- =?us-ascii?Q?oy+nSxBaQnyN6m19YCAJHTiH1w8hxtQLe/HQ2hyXFcwXJzGeVBY/4tYzMteq?=
- =?us-ascii?Q?ayewwl2mx6qAXRJcim5/6JIYWELOuqq80M/6TUWlOaT8UZJcfkd8SNGWiTav?=
- =?us-ascii?Q?9KWDfk7UHa3MHkODo1T7g9gUsKPgH+6+V20LvSWQXobnXyjG+WrdRzZBc+GE?=
- =?us-ascii?Q?ipGohRRfVPc4zpKqj5UCfK81c8gTf2d1uUs++s6Qwtw1iz2GF3Q2dJnqaOiN?=
- =?us-ascii?Q?a7R6bc+ls1+fLIo10qGWSzA6vyVAsRTCoWjprJAcwFBUxMLvG1xTO9Qgq8Bl?=
- =?us-ascii?Q?R+wkn68y1wrEUEwE/SD6srywpP2jz08C3ZleEaDqSFDcW5pnFEO8FWzHEx7x?=
- =?us-ascii?Q?kz8m0lTF6DGSmsYquJInreduJrduwBez+LK0S0K38TX2nSfe7XLJ0xt2gbEZ?=
- =?us-ascii?Q?xSFSmmbZmTIXPPPkBnTAphDKwhyBsGXyg+OH8s3/uo+dDxqK03p0NEyWbluD?=
- =?us-ascii?Q?ieBvunEcJW5/S4GwWSAEJckjmdcgFFGDozXm5LDcHhUlbY3VWra23jjMa+lK?=
- =?us-ascii?Q?r6hh3M7qoQ/ulmbXwuLgxX2VpgxxvFyBJC7FvvqbFjz7zUmiry+mij/KX+54?=
- =?us-ascii?Q?qwkOUVw1jD7FYjzUAQjEy/JJBhO7w9UfZ/BIsvwUH4SxVspD53ufeDfNCOWo?=
- =?us-ascii?Q?f1KWh7SLyJw628hNu4+g6xj1dkf00Ial3j6rkBbe/uMuc58/lV9CvIflyEiF?=
- =?us-ascii?Q?3tkiI0BPs8iWqZRDbtq5drsEheCITqLJ+6XEn7QX1u1eubLLrpJXQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: iOl6qtkH0n7cUvIw5zy6dlWtLJVO7x/HxVymwh+go7fsC8TIk8f+E/soCD583WVHRwO676bTa0GcNQ27CQ65bWWNqKymruXGk1WcdX80xayClCFzdgqhFDLHfllm+DQ3hPRW6RrwCjFq2YpZ46UwM5vgz6fKSiP/JwBa0kPHhgaKkMEVcMgvltw8TlS2AOVe
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;6:ZG+eGLooljSVpOqKxg6imY1B6gvIrNYM/s4EvAHT55WiYeqwcntPrpaAE2omF2z6qChEd57ATylL5qq4MAfzcShxgKX6ABxo25NqLd5TJsmCEuN+X3EdGvTUEY3ZWTfurQMSPlEKG3D2Bf9exDKSxu1VhYbCbO+DmxGttqUFr12z5A7QycVYmM9wPTT6LCM4bUO3db7ktETF+2p25ScFOhIxd+/XFiWyLvajytvEHADwXOEU97jUjWaRxGozT6sPKvlRpkggPNKdQCFBGhr0li1PQDQ4ecQ7cSegZ9BiiAwHDi22R4yq140NodbKkRoZCJzWZ7WhS8FR6dDv/gpFdxm95ht/C038IMmenjWymSc=;5:xDRaMFKeo3g8wsYoeQFAZMnYxA8F+yvFSuan0TI8ua32p7U1LGdcFdBN825k8o2Qpl9/Dt8Ckmss84ydS0eTSHzWmM5aWqQ1vWg7CVsG4pHG9j3HV1QQm6PEdKt1NpaRsVWupaT+O8DNyLDd5ehXqRBq8gDwewZO3gts08Yq+BM=;24:azc4NlqDsEMkmpu877Rs7eVmdDPc3U9rUT2lvjwBfzEKdGAGeP1gcFcnoXzEkmPOQvMPkKnYsgSgbC0C6R5x5EQaxz/kLB5w3FyTy1HmqqM=;7:SijPgmwnT+cDjx/zwa7Y38GKNMmc8CCmxTd1rdVq/dmUXoLHLBZjWn1udQaUOkc4N36ewC5eL+UEisgdrWTRSPfX7NsqyXGMXwpChb1iHtuDxKdnDP2LhRbI9RvDqF71woUkeeGEdYU2rorj7jnw3DrSFJJ+2qDy1D0b9QkxTOXE8oHtYWb2pEwgs/VniKPywH0dPdLyDeIBaL3I7uVrbwX6x1NHzS+Su7KQlgBhfNZnFk/BZkb1pyCB/9CUAT9r
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2018 14:46:48.1578 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3416432-83ed-491a-968e-08d58371174d
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR07MB2323
+        id S1753792AbeCFOrS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:47:18 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:38671 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933079AbeCFOpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:45:07 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180306144505epoutp036b5cca3f98edc712d28badcba6e2ae90~ZXABbEY_G1736017360epoutp03i
+X-AuditID: b6c32a45-3ebff70000001023-f8-5a9ea970d243
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH 08/12] thermal: exynos: remove parsing of
+ samsung,tmu_cal_type property
+Date: Tue, 06 Mar 2018 15:43:51 +0100
+Message-id: <1520347435-22970-9-git-send-email-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 1.9.1
+In-reply-to: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7bCmhW7BynlRBg8mKFtsnLGe1WL+kXNA
+        4so1Vov+x6+ZLc6f38BusekxkHt51xw2i8+9RxgtZpzfx2RxaOpeRoul1y8yWbTuPcJu8eRh
+        H5sDr8eaeWsYPS5fu8jssXPWXXaPxXteMnlsWtXJ5rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
+        pRbp2yVwZVw4cZe14KVOxbkp55kaGBtUuxg5OSQETCQ6rq9k7WLk4hAS2MEosXPrT2YI5zuj
+        xJWTc4EyHGBVRyb7QMR3M0pc+DyPCcL5xShx/exGVpBRbAJWEhPbVzGC2CICJRLTVvUyghQx
+        C5xlktix/R0LSEJYIFJi09FrTCA2i4CqRNutu2DNvAIeEic23GOHuElO4uSxyWBxTgFPiRMd
+        59hABkkInGCTaJ+znhmiyEXi7dJPjBC2sMSr41ugmqUlnq3ayAjR0Mwo8W3HHqiGCYwSe9YL
+        QdjWEoePXwTbwCzAJ9Fx+C87xJ+8Eh1tUCUeEle+PWGDsB0lpj9bCg2XOYwSC5cuZ53AKLWA
+        kWEVo1hqQXFuemqxUYGhXnFibnFpXrpecn7uJkZwxGu57mCccc7nEKMAB6MSD+8Gj7lRQqyJ
+        ZcWVuYcYJTiYlUR4I/TnRQnxpiRWVqUW5ccXleakFh9ilOZgURLnbQtwiRISSE8sSc1OTS1I
+        LYLJMnFwSjUwHi73uPgrnGHJKz0f7q9S/N/D9lgwJKs9Wea0eDu7zJQJd/yaeIV+y69ZXj51
+        Qp/Hyj4zw6ki59xqFjDKnk/fM9H40hfGdU5fMwvmFjh7C0+xduAV+TjT/5//5/SNSbPEpdXW
+        O2dPlw99dVfursK8xW8D9lbGvl7Qkzb9bawbh8kFbY49qx4vVWIpzkg01GIuKk4EAFxvPIP0
+        AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t9jAd28lfOiDDZeMrXYOGM9q8X8I+eA
+        xJVrrBb9j18zW5w/v4HdYtNjIPfyrjlsFp97jzBazDi/j8ni0NS9jBZLr19ksmjde4Td4snD
+        PjYHXo8189Ywely+dpHZY+esu+wei/e8ZPLYtKqTzWPzknqPvi2rGD0+b5IL4IjisklJzcks
+        Sy3St0vgyrhw4i5rwUudinNTzjM1MDaodjFycEgImEgcmezTxcjFISSwk1Hi5/SDrBDOL0aJ
+        47NXMnYxcnKwCVhJTGxfBWaLCJRIdE57zQxiMwucZZI4+J8DZJCwQKTEg828IGEWAVWJtlt3
+        WUFsXgEPiRMb7rGD2BICchInj00Gi3MKeEqc6DjHBmILAdUs7v7NNoGRZwEjwypGydSC4tz0
+        3GKjAqO81HK94sTc4tK8dL3k/NxNjMDQ3HZYq38H4+Ml8YcYBTgYlXh4N3jMjRJiTSwrrsw9
+        xCjBwawkwhuhPy9KiDclsbIqtSg/vqg0J7X4EKM0B4uSOC9//rFIIYH0xJLU7NTUgtQimCwT
+        B6dUA+OO/53tHGr2nPlX3H8oZOuHK+WKr1r/keHOh1Xb57GJXOjLXfM46VZfqf+MR7GZHfYf
+        9HM5zoa8V2K6vqiaxW/PRiuVTLf2WYsi5KIUeHuuJmxc8Pv8ed2mVSdu+6xX5P3WK39Rr7ij
+        7ON7g0cf6wKDJF6rVYlr194PVpj6caFdQHNQ0gv5AiWW4oxEQy3mouJEAHuXUDJJAgAA
+X-CMS-MailID: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
+X-RootMTR: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
+References: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
+        <CGME20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SMBus alert mechanism to i2c-xlp9xx driver.
-The second interrupt is parsed to use for SMBus alert.
-The first interrupt is the i2c controller main interrupt.
+Since calibration type for temperature is SoC (not platform) specific
+just move it from platform data to struct exynos_tmu_data instance.
+Then remove parsing of samsung,tmu_cal_type property. Also remove no
+longer needed platform data structure.
 
-Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
-Signed-off-by: George Cherian <george.cherian@cavium.com>
+There should be no functional changes caused by this patch.
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/i2c/busses/i2c-xlp9xx.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/thermal/samsung/exynos_tmu.c | 41 ++++++++----------------------------
+ drivers/thermal/samsung/exynos_tmu.h | 10 ---------
+ 2 files changed, 9 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-xlp9xx.c b/drivers/i2c/busses/i2c-xlp9xx.c
-index eb8913e..d5cadb6 100644
---- a/drivers/i2c/busses/i2c-xlp9xx.c
-+++ b/drivers/i2c/busses/i2c-xlp9xx.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/completion.h>
- #include <linux/i2c.h>
-+#include <linux/i2c-smbus.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -84,6 +85,8 @@ struct xlp9xx_i2c_dev {
- 	struct device *dev;
- 	struct i2c_adapter adapter;
- 	struct completion msg_complete;
-+	struct i2c_smbus_alert_setup alert_data;
-+	struct i2c_client *ara;
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 262ab41..ab5062b 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -177,7 +177,6 @@
+  * struct exynos_tmu_data : A structure to hold the private data of the TMU
+ 	driver
+  * @id: identifier of the one instance of the TMU controller.
+- * @pdata: pointer to the tmu platform/configuration data
+  * @base: base address of the single instance of the TMU controller.
+  * @base_second: base address of the common registers of the TMU controller.
+  * @irq: irq number of the TMU controller.
+@@ -187,6 +186,7 @@
+  * @clk: pointer to the clock structure.
+  * @clk_sec: pointer to the clock structure for accessing the base_second.
+  * @sclk: pointer to the clock structure for accessing the tmu special clk.
++ * @cal_type: calibration type for temperature
+  * @efuse_value: SoC defined fuse value
+  * @min_efuse_value: minimum valid trimming data
+  * @max_efuse_value: maximum valid trimming data
+@@ -208,7 +208,6 @@
+  */
+ struct exynos_tmu_data {
+ 	int id;
+-	struct exynos_tmu_platform_data *pdata;
+ 	void __iomem *base;
+ 	void __iomem *base_second;
  	int irq;
- 	bool msg_read;
- 	bool len_recv;
-@@ -447,6 +450,19 @@ static int xlp9xx_i2c_get_frequency(struct platform_device *pdev,
- 	return 0;
+@@ -216,6 +215,7 @@ struct exynos_tmu_data {
+ 	struct work_struct irq_work;
+ 	struct mutex lock;
+ 	struct clk *clk, *clk_sec, *sclk;
++	u32 cal_type;
+ 	u32 efuse_value;
+ 	u32 min_efuse_value;
+ 	u32 max_efuse_value;
+@@ -266,10 +266,9 @@ static void exynos_report_trigger(struct exynos_tmu_data *p)
+  */
+ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+ {
+-	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	int temp_code;
+ 
+-	switch (pdata->cal_type) {
++	switch (data->cal_type) {
+ 	case TYPE_TWO_POINT_TRIMMING:
+ 		temp_code = (temp - EXYNOS_FIRST_POINT_TRIM) *
+ 			(data->temp_error2 - data->temp_error1) /
+@@ -293,10 +292,9 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+  */
+ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+ {
+-	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	int temp;
+ 
+-	switch (pdata->cal_type) {
++	switch (data->cal_type) {
+ 	case TYPE_TWO_POINT_TRIMMING:
+ 		temp = (temp_code - data->temp_error1) *
+ 			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+@@ -536,7 +534,6 @@ static int exynos4412_tmu_initialize(struct platform_device *pdev)
+ static int exynos5433_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	struct thermal_zone_device *tz = data->tzd;
+ 	unsigned int status, trim_info;
+ 	unsigned int rising_threshold = 0, falling_threshold = 0;
+@@ -563,14 +560,12 @@ static int exynos5433_tmu_initialize(struct platform_device *pdev)
+ 				>> EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
+ 
+ 	switch (cal_type) {
+-	case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
+-		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
+-		break;
+ 	case EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING:
+-		pdata->cal_type = TYPE_TWO_POINT_TRIMMING;
++		data->cal_type = TYPE_TWO_POINT_TRIMMING;
+ 		break;
++	case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
+ 	default:
+-		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
++		data->cal_type = TYPE_ONE_POINT_TRIMMING;
+ 		break;
+ 	}
+ 
+@@ -1151,21 +1146,9 @@ static int exynos_of_get_soc_type(struct device_node *np)
+ 	return -EINVAL;
  }
  
-+static int xlp9xx_i2c_smbus_setup(struct xlp9xx_i2c_dev *priv,
-+				  struct platform_device *pdev)
-+{
-+	if (!priv->alert_data.irq)
-+		return -EINVAL;
-+
-+	priv->ara = i2c_setup_smbus_alert(&priv->adapter, &priv->alert_data);
-+	if (!priv->ara)
-+		return -ENODEV;
-+
-+	return 0;
-+}
-+
- static int xlp9xx_i2c_probe(struct platform_device *pdev)
+-static int exynos_of_sensor_conf(struct device_node *np,
+-				 struct exynos_tmu_platform_data *pdata)
+-{
+-	of_node_get(np);
+-
+-	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
+-
+-	of_node_put(np);
+-	return 0;
+-}
+-
+ static int exynos_map_dt_data(struct platform_device *pdev)
  {
- 	struct xlp9xx_i2c_dev *priv;
-@@ -467,6 +483,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "invalid irq!\n");
- 		return priv->irq;
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	struct exynos_tmu_platform_data *pdata;
+ 	struct resource res;
+ 
+ 	if (!data || !pdev->dev.of_node)
+@@ -1192,14 +1175,6 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		return -EADDRNOTAVAIL;
  	}
-+	/* SMBAlert irq */
-+	priv->alert_data.irq = platform_get_irq(pdev, 1);
-+	if (priv->alert_data.irq <= 0)
-+		priv->alert_data.irq = 0;
  
- 	xlp9xx_i2c_get_frequency(pdev, priv);
- 	xlp9xx_i2c_init(priv);
-@@ -493,6 +513,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
+-	pdata = devm_kzalloc(&pdev->dev,
+-			     sizeof(struct exynos_tmu_platform_data),
+-			     GFP_KERNEL);
+-	if (!pdata)
+-		return -ENOMEM;
+-
+-	exynos_of_sensor_conf(pdev->dev.of_node, pdata);
+-	data->pdata = pdata;
+ 	data->soc = exynos_of_get_soc_type(pdev->dev.of_node);
  
-+	err = xlp9xx_i2c_smbus_setup(priv, pdev);
-+	if (err)
-+		dev_info(&pdev->dev, "No active SMBus alert %d\n", err);
+ 	switch (data->soc) {
+@@ -1284,6 +1259,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	data->cal_type = TYPE_ONE_POINT_TRIMMING;
 +
- 	platform_set_drvdata(pdev, priv);
- 	dev_dbg(&pdev->dev, "I2C bus:%d added\n", priv->adapter.nr);
+ 	/*
+ 	 * Check if the TMU shares some registers and then try to map the
+ 	 * memory of common registers.
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index 689453d..8f56f86 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -38,14 +38,4 @@ enum soc_type {
+ 	SOC_ARCH_EXYNOS7,
+ };
  
+-/**
+- * struct exynos_tmu_platform_data
+- * @cal_type: calibration type for temperature
+- *
+- * This structure is required for configuration of exynos_tmu driver.
+- */
+-struct exynos_tmu_platform_data {
+-	u32 cal_type;
+-};
+-
+ #endif /* _EXYNOS_TMU_H */
 -- 
-1.8.3.1
+1.9.1
