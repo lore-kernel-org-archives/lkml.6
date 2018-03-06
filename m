@@ -1,42 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754162AbeCFWC7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:02:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35526 "EHLO mail.kernel.org"
+        id S1754141AbeCFWC4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 17:02:56 -0500
+Received: from botnar.kaiser.cx ([176.28.20.183]:40896 "EHLO botnar.kaiser.cx"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753805AbeCFWC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:02:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C9B206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 6 Mar 2018 17:02:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ftrace: nuke clear_ftrace_function
-Message-ID: <20180306170254.684be2fc@vmware.local.home>
-In-Reply-To: <8096dab2-2efc-076d-4f5c-b6c9da6a0554@huawei.com>
-References: <1517537689-34947-1-git-send-email-xieyisheng1@huawei.com>
-        <8096dab2-2efc-076d-4f5c-b6c9da6a0554@huawei.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753805AbeCFWCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 17:02:55 -0500
+From: Martin Kaiser <martin@kaiser.cx>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Date: Tue,  6 Mar 2018 23:02:15 +0100
+Message-Id: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 19:30:28 +0800
-Yisheng Xie <xieyisheng1@huawei.com> wrote:
+The ssi1_ipg clock depends on ssi1_ipg_per. Set ssi1_ipg_per as parent
+clock of ssi1_ipg. Without this link, the fsl_ssi driver does not
+activate the ssi1_ipg clock correctly and ssi1 is unable to transfer
+audio data.
 
-> hi Steven and all,
-> Ping, for month passed, do you have any comment about this patch?
+Fix the parent clock of ssi2 as well, it shows the same behaviour.
 
-Sorry you got me in the midst of traveling and other issues.
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+Dear all,
 
-This patch looks fine, I'll queue it up. I'm currently working on some
-code so I wont be pushing anything till it's all finished.
+could you have a look at this patch? This makes SSI1 and 2 work for me.
+With the default "ipg" parent clocks, I get no ipg clocks on the SSIs.
+However, I was wondering why we don't need anything similar e.g. for the
+UARTs...
 
-Thanks!
+Best regards,
+Martin
 
--- Steve
+ drivers/clk/imx/clk-imx25.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index 23686f7..ee2852f 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -217,8 +217,8 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
+ 	clk[sim2_ipg] = imx_clk_gate("sim2_ipg", "ipg", ccm(CCM_CGCR2),  8);
+ 	clk[slcdc_ipg] = imx_clk_gate("slcdc_ipg", "ipg", ccm(CCM_CGCR2),  9);
+ 	clk[spba_ipg] = imx_clk_gate("spba_ipg", "ipg", ccm(CCM_CGCR2),  10);
+-	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ipg", ccm(CCM_CGCR2), 11);
+-	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ipg", ccm(CCM_CGCR2), 12);
++	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ssi1_ipg_per", ccm(CCM_CGCR2), 11);
++	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ssi2_ipg_per", ccm(CCM_CGCR2), 12);
+ 	clk[tsc_ipg] = imx_clk_gate("tsc_ipg", "ipg", ccm(CCM_CGCR2), 13);
+ 	clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
+ 	clk[uart2_ipg] = imx_clk_gate("uart2_ipg", "ipg", ccm(CCM_CGCR2), 15);
+-- 
+2.1.4
