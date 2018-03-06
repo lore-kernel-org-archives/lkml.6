@@ -1,136 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753601AbeCFMAS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:00:18 -0500
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:45982 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeCFMAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:00:16 -0500
-X-Google-Smtp-Source: AG47ELvgA+K9nsxeJn6xyXpH8CfZoCrEGeoMqwlG0HlUKSOD1Oa3wwFVXIuSRYPKcmWWNr0ZoK/26g==
-Date: Tue, 6 Mar 2018 09:00:11 -0300
-From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio:magnetometer: Remove duplications in iio_chan_spec
-Message-ID: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
+        id S1753636AbeCFMAg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:00:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59863 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753520AbeCFMAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:00:35 -0500
+Date: Tue, 6 Mar 2018 13:00:23 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, Paul Burton <paul.burton@mips.com>
+Subject: Re: [PATCH v4 5/6] MIPS: generic: Add support for Microsemi Ocelot
+Message-ID: <20180306120023.GS3035@piout.net>
+References: <20180302224811.26840-1-alexandre.belloni@bootlin.com>
+ <20180302224811.26840-6-alexandre.belloni@bootlin.com>
+ <20180303002528.GE4197@saruman>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180303002528.GE4197@saruman>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The magn_3d_channels array has multiple declarations of iio_chan_spec.
-Most of the iio_chan_spec are very similar, changing only by the .type
-and .channel2 field. This patch reduces the code duplication by adding a
-macro that can replace the iio_chan_spec  repetitions in the
-magn_3d_channels array.
+On 03/03/2018 at 00:25:29 +0000, James Hogan wrote:
+> Similarly if the platform is little endian only, you could also add:
+> # require CONFIG_CPU_LITTLE_ENDIAN=y
+> 
 
-Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
----
- drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
- 1 file changed, 19 insertions(+), 64 deletions(-)
+It supports big endian.
 
-diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-index a1fd9d591818..fff64711a6c8 100644
---- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-+++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
-@@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
- 	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
- };
- 
-+#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
-+	{								\
-+		.type = channel_type,					\
-+		.modified = 1,						\
-+		.channel2 = characteristic,				\
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
-+					BIT(IIO_CHAN_INFO_SCALE) |	\
-+					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-+					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
-+	}								\
-+
- /* Channel definitions */
- static const struct iio_chan_spec magn_3d_channels[] = {
--	{
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_X,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Y,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_MAGN,
--		.modified = 1,
--		.channel2 = IIO_MOD_Z,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_MAGN,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}, {
--		.type = IIO_ROT,
--		.modified = 1,
--		.channel2 = IIO_MOD_NORTH_TRUE,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--	}
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
-+	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
- };
- 
- /* Adjust channel real bits based on report descriptor */
+> > +
+> > +CONFIG_LEGACY_BOARD_OCELOT=y
+> > +
+> > +CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER=y
+> 
+> Hmm, can this break any other generic platforms that already make the
+> DTB command line override the arcs_cmdline? Paul?
+> 
+> I.e. In arch_mem_init() the condition of copying arcs_cmdline to
+> boot_command_line would switch from !boot_command_line[0] to
+> arcs_cmdline[0]. I suppose arcs_cmdline[] may not have been written in
+> those cases. If its safe then it should probably be a standard thing
+> selected by MIPS_GENERIC instead of a board specific thing.
+> 
+
+Actually, this is not needed so I'm removing it.
+
+> > +CONFIG_MAGIC_SYSRQ=y
+> 
+> Perhaps its worth adding this to the base generic_defconfig if its
+> useful to have.
+> 
+
+Our test automation tool is using it to reboot the platform but I don't
+know if this is useful for anybody else.
+
+> > +static __init bool ocelot_detect(void)
+> > +{
+> > +	u32 rev;
+> > +
+> > +	rev = __raw_readl((void *)DEVCPU_GCB_CHIP_REGS_CHIP_ID);
+> 
+> Isn't that an address in the user segment, i.e. TLB mapped virtual
+> memory? Does the bootloader set up a wired mapping for it or something?
+> 
+> The address looks similar to UART_UART which is given to ioremap so must
+> be a physical address. Perhaps the mapping you're using is 1:1
+> virtual:physical address?
+> 
+> If its using a TLB mapping, then:
+> 1) That isn't safe this early to run on other platforms, as it'll give a
+>    TLB refill exception. It should be quite possible to detect such a
+>    mapping to make it safer though.
+> 2) If yamon initialises the TLB to a known state, then that may well be
+>    a hacky but workable way to distinguish yamon (sead3) from redboot
+>    (mscc) in future.
+> 
+
+Yes, this is an identity mapping that is installed by redboot because
+all the peripherals are in the user segment.
+
 -- 
-2.16.2
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
