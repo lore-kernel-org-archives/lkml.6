@@ -1,184 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeCFSPZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 13:15:25 -0500
-Received: from foss.arm.com ([217.140.101.70]:42616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750797AbeCFSPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 13:15:24 -0500
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs,
- wifi reset)
-To: Doug Anderson <dianders@chromium.org>
-Cc: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-References: <20180227204711.29357-1-dianders@chromium.org>
- <3831527.HjPPvuL6zK@diego> <d0aac677-ed2e-c059-0cba-79f88de194b4@arm.com>
- <CAD=FV=Wr6_U9c1qFRgx3=JhMg8US20_oMEmEfCdpVyGKek_8gQ@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <16f41a01-2ac2-c4c0-6989-990612b467d1@arm.com>
-Date: Tue, 6 Mar 2018 18:15:18 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Wr6_U9c1qFRgx3=JhMg8US20_oMEmEfCdpVyGKek_8gQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        id S1753881AbeCFSS2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 13:18:28 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35043 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750782AbeCFSS0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 13:18:26 -0500
+X-Google-Smtp-Source: AG47ELvSQEYmAcQUYg2Af2iVxsA3YHRaWO1evLRW4WZfTGFGQ+HF8Q1c5o+C/bwNDNmjPsy9P+VFKQ==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v2] kasan, slub: fix handling of kasan_slab_free hook
+Date: Tue,  6 Mar 2018 19:18:17 +0100
+Message-Id: <a62759a2545fddf69b0c034547212ca1eb1b3ce2.1520359686.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+The kasan_slab_free hook's return value denotes whether the reuse of a
+slab object must be delayed (e.g. when the object is put into memory
+qurantine).
 
-On 06/03/18 18:00, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Mar 6, 2018 at 3:58 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> Hi all,
->>
->> On 01/03/18 08:43, Heiko Stübner wrote:
->>> Am Dienstag, 27. Februar 2018, 21:47:11 CET schrieb Douglas Anderson:
->>>> Back in the early days when gru devices were still under development
->>>> we found an issue where the WiFi reset line needed to be configured as
->>>> early as possible during the boot process to avoid the WiFi module
->>>> being in a bad state.
->>>>
->>>> We found that the way to get the kernel to do this in the earliest
->>>> possible place was to configure this line in the pinctrl hogs, so
->>>> that's what we did.  For some history here you can see
->>>> <http://crosreview.com/368770>.  After the time that change landed in
->>>> the kernel, we landed a firmware change to configure this line even
->>>> earlier.  See <http://crosreview.com/399919>.  However, even after the
->>>> firmware change landed we kept the kernel change to deal with the fact
->>>> that some people working on devices might take a little while to
->>>> update their firmware.
->>>>
->>>> At this there are definitely zero devices out in the wild that have
->>>> firmware without the fix in it.  Specifically looking in the firmware
->>>> branch several critically important fixes for memory stability landed
->>>> after the patch in coreboot and I know we didn't ship without those.
->>>> Thus, by now, everyone should have the new firmware and it's safe to
->>>> not have the kernel set this up in a pinctrl hog.
->>>>
->>>> Historically, even though it wasn't needed to have this in a pinctrl
->>>> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
->>>> default hog at bootup and then would never touch things again.  That
->>>> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
->>>> during suspend/resume").  After that commit then we'll re-apply the
->>>> default hog at resume time and that can screw up the reset state of
->>>> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
->>>> then the whole system can go haywire.  That's what was happening.
->>>> Specifically you'd resume a rk3399-gru-* device and it would mostly
->>>> resume, then would crash with some crazy weird crash.
->>>>
->>>> One could say, perhaps, that the recent pinctrl change was at fault
->>>> (and should be fixed) since it changed behavior.  ...but that's not
->>>> really true.  The device tree for rk3399-gru is really to blame.
->>>> Specifically since the pinctrl is defined in the hog and not in the
->>>> "wlan-pd-n" node then the actual user of this pin doesn't have a
->>>> pinctrl entry for it.  That's bad.
->>>>
->>>> Let's fix our problems by just moving the control of
->>>> "wlan_module_reset_l pinctrl" out of the hog and put them in the
->>>> proper place.
->>>>
->>>> NOTE: in theory, I think it should actually be possible to have a pin
->>>> controlled _both_ by the hog and by an actual device.  Once the device
->>>> claims the pin I think the hog is supposed to let go.  I'm not 100%
->>>> sure that this works and in any case this solution would be more
->>>> complex than is necessary.
->>>>
->>>> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
->>>> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
->>>> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during suspend/resume")
->>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>
->>> applied as fix for 4.16 with the 2 Tested-tags
->> Sorry to rain on everyone's parade, but further testing shows that this
->> patch may not be enough to restore a reliable s2r. My initial testing
->> did show that we were resuming without the VOP errors, but there seem to
->> be further issues (I'm loosing the keyboard and the trackpad after
->> resume on Kevin).
->>
->> Applying my initial hack makes it work again. I suspect that there are
->> more hog pins that need tweaking, but I'm a bit out of my depth here.
-> 
-> Are you positive you weren't just wearing your lucky hat when you
-> tested your patch and then took it off when you tested mine?  As far
+The current way SLUB handles this hook is by ignoring its return value
+and hardcoding checks similar (but not exactly the same) to the ones
+performed in kasan_slab_free, which is prone to making mistakes.
 
-So far, I seem to have a 100% success rate in resuming with my silly
-hack, whist your DT patch alone only gives me a 50% rate at best.
+The main difference between the hardcoded checks and the ones in
+kasan_slab_free is whether we want to perform a free in case when an
+invalid-free or a double-free was detected (we don't).
 
-> as I can see the only hogs left on kevin are:
-> 
->   &ap_pwroff      /* AP will auto-assert this when in S3 */
->   &clk_32k        /* This pin is always 32k on gru boards */
-> 
-> Those map to:
-> 
->   ap_pwroff: ap-pwroff {
->      rockchip,pins = <1 5 RK_FUNC_1 &pcfg_pull_none>;
->   };
-> 
->   clk_32k: clk-32k {
->     rockchip,pins = <0 0 RK_FUNC_2 &pcfg_pull_none>;
->   };
-> 
-> So I added some printouts at suspend/resume time.  Specifically I set
-> a boolean to "true" for the duration rockchip_pinctrl_suspend() and
-> rockchip_pinctrl_resume() and this turned on a printout in
-> rockchip_set_mux().  My printout looked like this (yeah, I know it's a
-> whitespace-damaged patch just to show what I'm doing):
-> 
-> +       regmap_read(regmap, reg, &before);
->         data = (mask << (bit + 16));
->         rmask = data | (data >> 16);
->         data |= (mux & mask) << bit;
->         ret = regmap_update_bits(regmap, reg, rmask, data);
-> 
-> +       regmap_read(regmap, reg, &after);
-> +
-> +       if (DOUG) {
-> +               dev_info(info->dev,
-> +                        "setting mux of GPIO%d-%d to %d; %#010x=>%#010x\n",
-> +                        bank->bank_num, pin, mux, reg, before, after);
-> +       }
-> 
-> ...and a similar one in rockchip_set_pull().  That showed this at resume time:
-> 
-> [   62.284427] rockchip-pinctrl pinctrl: setting mux of GPIO1-5 to 1;
-> 0x00009400=>0x00009400
-> [   62.294423] rockchip-pinctrl pinctrl: setting pull of GPIO1-5;
-> 0x000041aa=>0x000041aa
-> [   62.303343] rockchip-pinctrl pinctrl: setting mux of GPIO0-0 to 2;
-> 0x00005002=>0x00005002
-> [   62.313240] rockchip-pinctrl pinctrl: setting pull of GPIO0-0;
-> 0x00000ddc=>0x00000ddc
-> [
-> 
-> Said another way: pinmux and pull isn't actually changing due to the
-> hogs.  We can see if something else could be changing, but I'd really
-> want to be sure you're certain that the hogs are causing you
-> problems...
+This patch changes the way SLUB handles this by:
+1. taking into account the return value of kasan_slab_free for each of
+   the objects, that are being freed;
+2. reconstructing the freelist of objects to exclude the ones, whose
+   reuse must be delayed.
 
-I cannot say for sure that the hogs are the issue. But I thought that
-they were the only pins affected by 981ed1bfbc6c... If this patch can
-affect other pins, then I'm probably barking up the wrong tree.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
 
-Thanks,
+Changes in v2:
+- Made slab_free_freelist_hook return bool and return true when KASAN is
+  disabled. That should eliminate unnecessary branch in slab_free.
 
-	M.
+ mm/slub.c | 57 +++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 34 insertions(+), 23 deletions(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index e381728a3751..8442b3c54870 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1362,10 +1362,8 @@ static __always_inline void kfree_hook(void *x)
+ 	kasan_kfree_large(x, _RET_IP_);
+ }
+ 
+-static __always_inline void *slab_free_hook(struct kmem_cache *s, void *x)
++static __always_inline bool slab_free_hook(struct kmem_cache *s, void *x)
+ {
+-	void *freeptr;
+-
+ 	kmemleak_free_recursive(x, s->flags);
+ 
+ 	/*
+@@ -1385,17 +1383,12 @@ static __always_inline void *slab_free_hook(struct kmem_cache *s, void *x)
+ 	if (!(s->flags & SLAB_DEBUG_OBJECTS))
+ 		debug_check_no_obj_freed(x, s->object_size);
+ 
+-	freeptr = get_freepointer(s, x);
+-	/*
+-	 * kasan_slab_free() may put x into memory quarantine, delaying its
+-	 * reuse. In this case the object's freelist pointer is changed.
+-	 */
+-	kasan_slab_free(s, x, _RET_IP_);
+-	return freeptr;
++	/* KASAN might put x into memory quarantine, delaying its reuse */
++	return kasan_slab_free(s, x, _RET_IP_);
+ }
+ 
+-static inline void slab_free_freelist_hook(struct kmem_cache *s,
+-					   void *head, void *tail)
++static inline bool slab_free_freelist_hook(struct kmem_cache *s,
++					   void **head, void **tail)
+ {
+ /*
+  * Compiler cannot detect this function can be removed if slab_free_hook()
+@@ -1406,13 +1399,33 @@ static inline void slab_free_freelist_hook(struct kmem_cache *s,
+ 	defined(CONFIG_DEBUG_OBJECTS_FREE) ||	\
+ 	defined(CONFIG_KASAN)
+ 
+-	void *object = head;
+-	void *tail_obj = tail ? : head;
+-	void *freeptr;
++	void *object;
++	void *next = *head;
++	void *old_tail = *tail ? *tail : *head;
++
++	/* Head and tail of the reconstructed freelist */
++	*head = NULL;
++	*tail = NULL;
+ 
+ 	do {
+-		freeptr = slab_free_hook(s, object);
+-	} while ((object != tail_obj) && (object = freeptr));
++		object = next;
++		next = get_freepointer(s, object);
++		/* If object's reuse doesn't have to be delayed */
++		if (!slab_free_hook(s, object)) {
++			/* Move object to the new freelist */
++			set_freepointer(s, object, *head);
++			*head = object;
++			if (!*tail)
++				*tail = object;
++		}
++	} while (object != old_tail);
++
++	if (*head == *tail)
++		*tail = NULL;
++
++	return *head != NULL;
++#else
++	return true;
+ #endif
+ }
+ 
+@@ -2965,14 +2978,12 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
+ 				      void *head, void *tail, int cnt,
+ 				      unsigned long addr)
+ {
+-	slab_free_freelist_hook(s, head, tail);
+ 	/*
+-	 * slab_free_freelist_hook() could have put the items into quarantine.
+-	 * If so, no need to free them.
++	 * With KASAN enabled slab_free_freelist_hook modifies the freelist
++	 * to remove objects, whose reuse must be delayed.
+ 	 */
+-	if (s->flags & SLAB_KASAN && !(s->flags & SLAB_TYPESAFE_BY_RCU))
+-		return;
+-	do_slab_free(s, page, head, tail, cnt, addr);
++	if (slab_free_freelist_hook(s, &head, &tail))
++		do_slab_free(s, page, head, tail, cnt, addr);
+ }
+ 
+ #ifdef CONFIG_KASAN
 -- 
-Jazz is not dead. It just smells funny...
+2.16.2.395.g2e18187dfd-goog
