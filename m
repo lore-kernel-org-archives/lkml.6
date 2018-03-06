@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753477AbeCFJNA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:13:00 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60016 "EHLO
+        id S1753460AbeCFJM6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:12:58 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61257 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753069AbeCFJMe (ORCPT
+        with ESMTP id S1750885AbeCFJMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 6 Mar 2018 04:12:34 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -18,9 +18,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC/RFT][PATCH v2 2/6] sched: idle: Do not stop the tick upfront in the idle loop
-Date: Tue, 06 Mar 2018 10:02:15 +0100
-Message-ID: <3346281.BDGJiv2ZOp@aspire.rjw.lan>
+Subject: [RFC/RFT][PATCH v2 3/6] sched: idle: Do not stop the tick before cpuidle_idle_call()
+Date: Tue, 06 Mar 2018 10:03:16 +0100
+Message-ID: <2037426.jsGIfSuYk6@aspire.rjw.lan>
 In-Reply-To: <2067762.1uWBf5RSRc@aspire.rjw.lan>
 References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -32,86 +32,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Push the decision whether or not to stop the tick somewhat deeper
-into the idle loop.
+Make cpuidle_idle_call() decide whether or not to stop the tick.
 
-Stopping the tick upfront leads to unpleasant outcomes in case the
-idle governor doesn't agree with the timekeeping code on the duration
-of the upcoming idle period.  Specifically, if the tick has been
-stopped and the idle governor predicts short idle, the situation is
-bad regardless of whether or not the prediction is accurate.  If it
-is accurate, the tick has been stopped unnecessarily which means
-excessive overhead.  If it is not accurate, the CPU is likely to
-spend too much time in the (shallow, because short idle has been
-predicted) idle state selected by the governor [1].
+First, there are code paths in cpuidle_idle_call() that don't need
+the tick to be stopped.  In particular, the cpuidle_enter_s2idle()
+path deals with the tick (and with the entire timekeeping for that
+matter) by itself and it doesn't need the tick to be stopped
+beforehand.
 
-As the first step towards addressing this problem, change the code
-to make the tick stopping decision inside of the loop in do_idle().
-In particular, do not stop the tick in the cpu_idle_poll() code path.
-Also don't do that in tick_nohz_irq_exit() which doesn't really have
-information to whether or not to stop the tick.
+Second, to address the issue with short idle duration predictions
+by the idle governor after the tick has been stopped, it will be
+necessary to change the ordering of some governor code with respect
+to some code in tick_nohz_idle_go_idle().  For this purpose, call
+tick_nohz_idle_go_idle() in the same branch as cpuidle_select().
 
-Link: https://marc.info/?l=linux-pm&m=150116085925208&w=2 # [1]
-Link: https://tu-dresden.de/zih/forschung/ressourcen/dateien/projekte/haec/powernightmares.pdf
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
 
 -> v2: No changes.
 
 ---
- kernel/sched/idle.c      |   13 ++++++++++---
- kernel/time/tick-sched.c |    2 +-
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ kernel/sched/idle.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 Index: linux-pm/kernel/sched/idle.c
 ===================================================================
 --- linux-pm.orig/kernel/sched/idle.c
 +++ linux-pm/kernel/sched/idle.c
-@@ -220,13 +220,17 @@ static void do_idle(void)
- 	 */
- 
- 	__current_set_polling();
--	tick_nohz_idle_enter();
-+	tick_nohz_idle_prepare();
- 
- 	while (!need_resched()) {
- 		check_pgt_cache();
- 		rmb();
- 
- 		if (cpu_is_offline(cpu)) {
-+			local_irq_disable();
-+			tick_nohz_idle_go_idle(true);
-+			local_irq_enable();
-+
- 			cpuhp_report_idle_dead();
- 			arch_cpu_idle_dead();
- 		}
-@@ -240,10 +244,13 @@ static void do_idle(void)
- 		 * broadcast device expired for us, we don't want to go deep
- 		 * idle as we know that the IPI is going to arrive right away.
- 		 */
--		if (cpu_idle_force_poll || tick_check_broadcast_expired())
-+		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
-+			tick_nohz_idle_go_idle(false);
- 			cpu_idle_poll();
--		else
-+		} else {
-+			tick_nohz_idle_go_idle(true);
- 			cpuidle_idle_call();
-+		}
- 		arch_cpu_idle_exit();
+@@ -146,13 +146,14 @@ static void cpuidle_idle_call(void)
  	}
  
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -1007,7 +1007,7 @@ void tick_nohz_irq_exit(void)
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+ 	/*
+-	 * Tell the RCU framework we are entering an idle section,
+-	 * so no more rcu read side critical sections and one more
++	 * The RCU framework needs to be told that we are entering an idle
++	 * section, so no more rcu read side critical sections and one more
+ 	 * step to the grace period
+ 	 */
+-	rcu_idle_enter();
  
- 	if (ts->inidle)
--		__tick_nohz_idle_enter(ts, true);
-+		__tick_nohz_idle_enter(ts, false);
- 	else
- 		tick_nohz_full_update_tick(ts);
- }
+ 	if (cpuidle_not_available(drv, dev)) {
++		tick_nohz_idle_go_idle(false);
++		rcu_idle_enter();
+ 		default_idle_call();
+ 		goto exit_idle;
+ 	}
+@@ -169,6 +170,9 @@ static void cpuidle_idle_call(void)
+ 
+ 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
+ 		if (idle_should_enter_s2idle()) {
++			tick_nohz_idle_go_idle(false);
++			rcu_idle_enter();
++
+ 			entered_state = cpuidle_enter_s2idle(drv, dev);
+ 			if (entered_state > 0) {
+ 				local_irq_enable();
+@@ -176,9 +180,15 @@ static void cpuidle_idle_call(void)
+ 			}
+ 		}
+ 
++		tick_nohz_idle_go_idle(true);
++		rcu_idle_enter();
++
+ 		next_state = cpuidle_find_deepest_state(drv, dev);
+ 		call_cpuidle(drv, dev, next_state);
+ 	} else {
++		tick_nohz_idle_go_idle(true);
++		rcu_idle_enter();
++
+ 		/*
+ 		 * Ask the cpuidle framework to choose a convenient idle state.
+ 		 */
+@@ -248,7 +258,6 @@ static void do_idle(void)
+ 			tick_nohz_idle_go_idle(false);
+ 			cpu_idle_poll();
+ 		} else {
+-			tick_nohz_idle_go_idle(true);
+ 			cpuidle_idle_call();
+ 		}
+ 		arch_cpu_idle_exit();
