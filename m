@@ -1,131 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750947AbeCFHhP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:37:15 -0500
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:55459 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750730AbeCFHhN (ORCPT
+        id S1750913AbeCFHlC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:41:02 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50356 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750730AbeCFHk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:37:13 -0500
-X-Google-Smtp-Source: AG47ELtJ8SpAFpUVLu+2YTPhnRGHgB8zbkN/S2ykSnm+y+cNsM0ze5Dt+IaAgQ5IQDQ3xbBgjgny2A==
-Date: Tue, 6 Mar 2018 08:37:09 +0100
+        Tue, 6 Mar 2018 02:40:59 -0500
+X-Google-Smtp-Source: AG47ELv//fUf+/oI2wKQqyQIicddh0Ds9InLTXTfa/W//uTJlepRyt+Mw5HPH+NK6kj0nZnte99sYQ==
+Date: Tue, 6 Mar 2018 08:40:55 +0100
 From: Daniel Vetter <daniel@ffwll.ch>
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
+        Archit Taneja <architt@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH 1/4] drm/atomic: integrate modeset lock with private
  objects
-Message-ID: <20180306073709.GT22212@phenom.ffwll.local>
-Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20180221143730.30285-2-robdclark@gmail.com>
- <20180221144919.GN5453@intel.com>
- <CAF6AEGuYmLRphz1FusqaOqyz=mGtbvn7oOsxNYKg3MEMOvYO1A@mail.gmail.com>
- <20180221150727.GO5453@intel.com>
- <CAF6AEGucNXQZjKaL4KYXSnax=kFiurmsgxKHP9t5ycy_tbmj7g@mail.gmail.com>
- <20180221152720.GP5453@intel.com>
- <CAF6AEGs+_gjEzueON9Rz8ce9xzHKhkdR2yQGfSpC=6DQV19V2A@mail.gmail.com>
- <20180221155410.GQ5453@intel.com>
- <CAF6AEGvbQ6KF3utSmrx+_Bcmw=BC2D1yvbU8GeFfAd4rMWfvkQ@mail.gmail.com>
- <20180221163654.GS5453@intel.com>
+Message-ID: <20180306074055.GU22212@phenom.ffwll.local>
+Mail-Followup-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20180221143730.30285-1-robdclark@gmail.com>
+ <20180221143730.30285-2-robdclark@gmail.com>
+ <d159d04e-8e92-eb03-c65a-f625021b8f9f@linux.intel.com>
+ <20180306072920.GR22212@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180221163654.GS5453@intel.com>
+In-Reply-To: <20180306072920.GR22212@phenom.ffwll.local>
 X-Operating-System: Linux phenom 4.14.0-3-amd64 
 User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 06:36:54PM +0200, Ville Syrjälä wrote:
-> On Wed, Feb 21, 2018 at 11:17:21AM -0500, Rob Clark wrote:
-> > On Wed, Feb 21, 2018 at 10:54 AM, Ville Syrjälä
-> > <ville.syrjala@linux.intel.com> wrote:
-> > > On Wed, Feb 21, 2018 at 10:36:06AM -0500, Rob Clark wrote:
-> > >> On Wed, Feb 21, 2018 at 10:27 AM, Ville Syrjälä
-> > >> <ville.syrjala@linux.intel.com> wrote:
-> > >> > On Wed, Feb 21, 2018 at 10:20:03AM -0500, Rob Clark wrote:
-> > >> >> On Wed, Feb 21, 2018 at 10:07 AM, Ville Syrjälä
-> > >> >> <ville.syrjala@linux.intel.com> wrote:
-> > >> >> > On Wed, Feb 21, 2018 at 09:54:49AM -0500, Rob Clark wrote:
-> > >> >> >> On Wed, Feb 21, 2018 at 9:49 AM, Ville Syrjälä
-> > >> >> >> <ville.syrjala@linux.intel.com> wrote:
-> > >> >> >> > On Wed, Feb 21, 2018 at 09:37:21AM -0500, Rob Clark wrote:
-> > >> >> >> >> Follow the same pattern of locking as with other state objects.  This
-> > >> >> >> >> avoids boilerplate in the driver.
-> > >> >> >> >
-> > >> >> >> > I'm not sure we really want to do this. What if the driver wants a
-> > >> >> >> > custom locking scheme for this state?
-> > >> >> >>
-> > >> >> >> That seems like something we want to discourage, ie. all the more
-> > >> >> >> reason for this patch.
-> > >> >> >>
-> > >> >> >> There is no reason drivers could not split their global state into
-> > >> >> >> multiple private objs's, each with their own lock, for more fine
-> > >> >> >> grained locking.  That is basically the only valid reason I can think
-> > >> >> >> of for "custom locking".
-> > >> >> >
-> > >> >> > In i915 we have at least one case that would want something close to an
-> > >> >> > rwlock. Any crtc lock is enough for read, need all of them for write.
-> > >> >> > Though if we wanted to use private objs for that we might need to
-> > >> >> > actually make the states refcounted as well, otherwise I can imagine
-> > >> >> > we might land in some use-after-free issues once again.
-> > >> >> >
-> > >> >> > Maybe we could duplicate the state into per-crtc and global copies, but
-> > >> >> > then we have to keep all of those in sync somehow which doesn't sound
-> > >> >> > particularly pleasant.
-> > >> >>
-> > >> >> Or just keep your own driver lock for read, and use that plus the core
-> > >> >> modeset lock for write?
-> > >> >
-> > >> > If we can't add the private obj to the state we can't really use it.
-> > >> >
-> > >>
-> > >> I'm not sure why that is strictly true (that you need to add it to the
-> > >> state if for read-only), since you'd be guarding it with your own
-> > >> driver read-lock you can just priv->foo_state->bar.
-> > >>
-> > >> Since it is read-only access, there is no roll-back to worry about for
-> > >> test-only or failed atomic_check()s..
-> > >
-> > > That would be super ugly. We want to access the information the same
-> > > way whether it has been modified or not.
+On Tue, Mar 06, 2018 at 08:29:20AM +0100, Daniel Vetter wrote:
+> On Wed, Feb 21, 2018 at 04:19:40PM +0100, Maarten Lankhorst wrote:
+> > Hey,
 > > 
-> > Well, I mean the whole idea of what you want to do seems a bit super-ugly ;-)
+> > Op 21-02-18 om 15:37 schreef Rob Clark:
+> > > Follow the same pattern of locking as with other state objects.  This
+> > > avoids boilerplate in the driver.
+> > I'm afraid this will prohibit any uses of this on i915, since it still uses legacy lock_all().
 > > 
-> > I mean, in mdp5 the assigned global resources go in plane/crtc state,
-> > and tracking of what is assigned to which plane/crtc is in global
-> > state, so it fits nicely in the current locking model.  For i915, I'm
-> > not quite sure what is the global state you are concerned about, so it
-> > is a bit hard to talk about the best solution in the abstract.  Maybe
-> > the better option is to teach modeset-lock how to be a rwlock instead?
+> > Oh well, afaict nothing in i915 uses private objects, so I don't think it's harmful. :)
 > 
-> The thing I'm thinking is the core display clock (cdclk) frequency which
-> we need to consult whenever computing plane states and whatnot. We don't
-> want a modeset on one crtc to block a plane update on another crtc
-> unless we actually have to bump the cdclk (which would generally require
-> all crtcs to undergo a full modeset). Seems like a generally useful
-> pattern to me.
+> We do use private objects, as part of dp mst helpers. But I also thought
+> that the only users left of lock_all are in the debugfs code, where this
+> really doesn't matter all that much.
 
-The usual way to fix that is to have read-only copies of the state in the
-plane or crtc states. And for writing (or if the requirement changes) you
-have to lock all the objects. Essentially what Rob's doing for his
-plane/crtc assignment stuff.
+Correction, we use it in other places than debugfs. But thanks to Ville's
+private state obj refactoring we now have drm_atomic_private_obj_init(),
+so it's easy to add all the private state objects to a new list in
+drm_dev->mode_config.private_states or so, and use that list in
+drm_modeset_lock_all_ctx to also take driver private locks.
 
-What we do in i915 is kinda not what I've been recommending to everyone
-else, because it is a rather tricky and complicated way to get things
-done. Sure there's a tradeoff between duplicating data and complicated
-locking schemes, but I think for the kms case having to explicitly type
-code that reflects the depencies in computation (instead of having that
-embedded implicitly in the locking scheme) is a feature, not a bug.
+I think that would actually be useful in other places, just in case.
 -Daniel
+
+> 
+> > Could you cc intel-gfx just in case?
+> 
+> Yeah, best to double-check with CI.
+> 
+> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_atomic.c | 9 ++++++++-
+> > >  include/drm/drm_atomic.h     | 5 +++++
+> > >  2 files changed, 13 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > > index fc8c4da409ff..004e621ab307 100644
+> > > --- a/drivers/gpu/drm/drm_atomic.c
+> > > +++ b/drivers/gpu/drm/drm_atomic.c
+> > > @@ -1078,6 +1078,8 @@ drm_atomic_private_obj_init(struct drm_private_obj *obj,
+> > >  {
+> > >  	memset(obj, 0, sizeof(*obj));
+> > >  
+> > > +	drm_modeset_lock_init(&obj->lock);
+> > > +
+> > >  	obj->state = state;
+> > >  	obj->funcs = funcs;
+> > >  }
+> > > @@ -1093,6 +1095,7 @@ void
+> > >  drm_atomic_private_obj_fini(struct drm_private_obj *obj)
+> > >  {
+> > >  	obj->funcs->atomic_destroy_state(obj, obj->state);
+> > > +	drm_modeset_lock_fini(&obj->lock);
+> > >  }
+> > >  EXPORT_SYMBOL(drm_atomic_private_obj_fini);
+> > >  
+> > > @@ -1113,7 +1116,7 @@ struct drm_private_state *
+> > >  drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+> > >  				 struct drm_private_obj *obj)
+> > >  {
+> > > -	int index, num_objs, i;
+> > > +	int index, num_objs, i, ret;
+> > >  	size_t size;
+> > >  	struct __drm_private_objs_state *arr;
+> > >  	struct drm_private_state *obj_state;
+> > > @@ -1122,6 +1125,10 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+> > >  		if (obj == state->private_objs[i].ptr)
+> > >  			return state->private_objs[i].state;
+> > >  
+> > > +	ret = drm_modeset_lock(&obj->lock, state->acquire_ctx);
+> > > +	if (ret)
+> > > +		return ERR_PTR(ret);
+> > > +
+> > >  	num_objs = state->num_private_objs + 1;
+> > >  	size = sizeof(*state->private_objs) * num_objs;
+> > >  	arr = krealloc(state->private_objs, size, GFP_KERNEL);
+> > > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> > > index 09076a625637..9ae53b73c9d2 100644
+> > > --- a/include/drm/drm_atomic.h
+> > > +++ b/include/drm/drm_atomic.h
+> > > @@ -218,6 +218,11 @@ struct drm_private_state_funcs {
+> > >   * &drm_modeset_lock is required to duplicate and update this object's state.
+> > >   */
+> > >  struct drm_private_obj {
+> > > +	/**
+> > > +	 * @lock: Modeset lock to protect the state object.
+> > > +	 */
+> > > +	struct drm_modeset_lock lock;
+> > > +
+> > >  	/**
+> > >  	 * @state: Current atomic state for this driver private object.
+> > >  	 */
+> > 
+> > 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
 -- 
 Daniel Vetter
 Software Engineer, Intel Corporation
