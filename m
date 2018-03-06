@@ -1,52 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932830AbeCFO7H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:59:07 -0500
-Received: from mga01.intel.com ([192.55.52.88]:57351 "EHLO mga01.intel.com"
+        id S932983AbeCFO7d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:59:33 -0500
+Received: from mga09.intel.com ([134.134.136.24]:21499 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932659AbeCFO7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:59:06 -0500
+        id S932589AbeCFO7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:59:31 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="23368702"
-Subject: Re: [RFC, PATCH 13/22] mm, rmap: Free encrypted pages once mapcount
- drops to zero
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
- <e04536bc-77e9-84d0-3c23-1dfea8542da5@intel.com>
- <20180306082743.2epdfxv4ds7hz7py@node.shutemov.name>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <d1faf309-837b-d385-4d0a-c840fdab8b36@intel.com>
-Date: Tue, 6 Mar 2018 06:59:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180306082743.2epdfxv4ds7hz7py@node.shutemov.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+   d="scan'208";a="209287884"
+Message-ID: <1520348368.10722.440.camel@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction
+ callback
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Arteaga <javier@emutex.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 06 Mar 2018 16:59:28 +0200
+In-Reply-To: <1520348165.10722.438.camel@linux.intel.com>
+References: <20180306134213.16898-1-javier@emutex.com>
+         <3585081b-70af-5c31-08c0-84e96b6055bc@emutex.com>
+         <1520348165.10722.438.camel@linux.intel.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/06/2018 12:27 AM, Kirill A. Shutemov wrote:
-> +	anon_vma = page_anon_vma(page);
-> +	if (anon_vma_encrypted(anon_vma)) {
-> +		int keyid = anon_vma_keyid(anon_vma);
-> +		free_encrypt_page(page, keyid, compound_order(page));
-> +	}
->  }
+On Tue, 2018-03-06 at 16:56 +0200, Andy Shevchenko wrote:
+> On Tue, 2018-03-06 at 14:31 +0000, Javier Arteaga wrote:
 
-So, just double-checking: free_encrypt_page() neither "frees and
-encrypts the page"" nor "free an encrypted page"?
+> > > +static int intel_gpio_get_direction(struct gpio_chip *chip,
+> > > unsigned int offset)
+> > > +{
 
-That seems a bit suboptimal. :)
+> > > +	if (padcfg0 & PADCFG0_PMODE_MASK)
+> > > +		return -EINVAL;
+> 
+> Actually we might return direction of GPIO function while pin is in
+> some
+> other mode, though it would probably make not much sense in practice.
+
+One more though, this is a call back for GPIO function anyway, so, above
+condition should never happen. I think it's safe to remove it
+completely.
+
+> > > +
+> > > +	return !!(padcfg0 & PADCFG0_GPIOTXDIS);
+> > > +}
+
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
