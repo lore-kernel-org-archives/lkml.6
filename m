@@ -1,87 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeCFJiD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:38:03 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:61523 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753305AbeCFJhp (ORCPT
+        id S1753290AbeCFJjP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:39:15 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39447 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750836AbeCFJjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:37:45 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w269bV2N016298
-X-Nifty-SrcIP: [209.85.213.44]
-X-Google-Smtp-Source: AG47ELvxTQOGKSu4dJARqOc9EpI9+a2fsJ3RixbU6PXzgch/llVpWhQnvYi957RjtEQtX6X6lcnm+mFvwu3IKG5CcEo=
-MIME-Version: 1.0
-In-Reply-To: <CAFkk2KT70V-bKpUKi_pczO30bh7mAfSPPxghvESG16_CuXJpWg@mail.gmail.com>
-References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
- <1519965121-12017-10-git-send-email-yamada.masahiro@socionext.com>
- <CAFkk2KQTjnTLkBx_8jXLejxVJLHV6gijN0_MCYDwbsL+KNkp=w@mail.gmail.com>
- <CAB=NE6V+5MK-ytS+-QBppSBLz7T4hRQV8eMA2Vv9-crcbj7NYg@mail.gmail.com> <CAFkk2KT70V-bKpUKi_pczO30bh7mAfSPPxghvESG16_CuXJpWg@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 6 Mar 2018 18:36:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT728fMNs2nAc0oAN=TocdL6eGXjy3=16Rjy+qo2E9VcA@mail.gmail.com>
-Message-ID: <CAK7LNAT728fMNs2nAc0oAN=TocdL6eGXjy3=16Rjy+qo2E9VcA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/11] kconfig: unittest: test randconfig for choice in choice
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Mar 2018 04:39:12 -0500
+X-Google-Smtp-Source: AG47ELvnMW/ni3k+fTGUibSUuZPZaUewKniFOiNgQxKWGwwaaH41b5Qz3yTb30uki9jSEbAmNVhonQ==
+From: linxiulei@gmail.com
+To: peterz@infradead.org, jolsa@redhat.com, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, eranian@gmail.com,
+        torvalds@linux-foundation.org, linux-perf-users@vger.kernel.org,
+        brendan.d.gregg@gmail.com
+Cc: yang_oliver@hotmail.com, "leilei.lin" <leilei.lin@alibaba-inc.com>
+Subject: [PATCH RESEND v5] perf/core: Fix installing arbitrary cgroup event into cpu
+Date: Tue,  6 Mar 2018 17:36:37 +0800
+Message-Id: <20180306093637.28247-1-linxiulei@gmail.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-03 18:34 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> On Fri, Mar 2, 2018 at 10:29 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->>
->>
->> On Fri, Mar 2, 2018, 3:14 AM Ulf Magnusson <ulfalizer@gmail.com> wrote:
->>>
->>> On Fri, Mar 2, 2018 at 5:31 AM, Masahiro Yamada
->>> > This is complicated usage, but it is still used in the real world;
->>> > drivers/usb/gadget/legacy/Kconfig is source'd in a choice context,
->>> > then creates a sub-choice in it.
->>>
->>> That file is the only one that does all that weird choice stuff btw.
->>>
->>> It's as if it was written to make use of as much obscure Kconfig stuff
->>> as possible. :P
->>
->>
->> Can't we just use another way to describe this requirement on this file,
->> with the trade-off of simplifying kconfig semantics?
->>
->>   Luis
->
-> I don't think changing how drivers/usb/gadget/legacy/Kconfig does
-> things would allow for any simplifications, unfortunately (except to
-> get rid of the fix tested by this patch, maybe).
+From: "leilei.lin" <leilei.lin@alibaba-inc.com>
 
-We could also revert 3b9a19e08960e5cd.  :)
+Do not install cgroup event into the CPU context and schedule it
+if the cgroup is not running on this CPU
 
+While there is no task of cgroup running specified CPU, current
+kernel still install cgroup event into CPU context that causes
+another cgroup event can't be installed into this CPU.
 
-> Being able to have non-choice-value symbols and choices in choices is
-> a side effect of automatic submenu creation. Symbols and choices that
-> depend on the symbol before them end up in a submenu, and only the
-> top-level symbols in the choice are marked as choice value symbols.
->
-> I always wondered whether that was an intended feature or just
-> something people discovered works (it seems to work anyway...). It
-> feels pretty iffy to have cosmetic submenus affect behavior like that,
-> but playing devil's advocate, it kinda makes sense to put symbols
-> close to the symbols they depend on if you can get away with it.
->
+This patch prevent scheduling events at __perf_install_in_context()
+and installing events at list_update_cgroup_event() if cgroup isn't
+running on specified CPU.
 
-I am happy to drop this test
-if removing the seem-to-work feature will clean up the code.
+Signed-off-by: leilei.lin <leilei.lin@alibaba-inc.com>
+---
+ v2: Set cpuctx->cgrp only if the same cgroup is running on this
+   CPU otherwise following events couldn't be activated immediately
+ v3: Enhance the comments and commit message
+ v4: Adjust to config
+ v5: Clear cpuctx->cgrp only when no cgroup event exists
 
+ kernel/events/core.c | 54 +++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 13 deletions(-)
 
-Now I am accumulating test cases.
-
-
-
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4df5b69..f3ffa70 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -933,31 +933,45 @@ list_update_cgroup_event(struct perf_event *event,
+ {
+ 	struct perf_cpu_context *cpuctx;
+ 	struct list_head *cpuctx_entry;
++	struct perf_cgroup *cgrp;
+ 
+ 	if (!is_cgroup_event(event))
+ 		return;
+ 
+-	if (add && ctx->nr_cgroups++)
+-		return;
+-	else if (!add && --ctx->nr_cgroups)
+-		return;
+ 	/*
+ 	 * Because cgroup events are always per-cpu events,
+ 	 * this will always be called from the right CPU.
+ 	 */
+ 	cpuctx = __get_cpu_context(ctx);
+-	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
+-	/* cpuctx->cgrp is NULL unless a cgroup event is active in this CPU .*/
+-	if (add) {
+-		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++	cgrp = perf_cgroup_from_task(current, ctx);
++
++	/*
++	 * if only the cgroup is running on this cpu
++	 * and cpuctx->cgrp == NULL (otherwise it would've
++	 * been set with running cgroup), we put this cgroup
++	 * into cpu context. Or it would case mismatch in
++	 * following cgroup events at event_filter_match()
++	 */
++	if (add && !cpuctx->cgrp &&
++			cgroup_is_descendant(cgrp->css.cgroup,
++			event->cgrp->css.cgroup)) {
++		cpuctx->cgrp = cgrp;
++	}
++
++	if (add && ctx->nr_cgroups++)
++		return;
++	else if (!add && --ctx->nr_cgroups)
++		return;
+ 
++	/* no cgroup running */
++	if (!add)
++		cpuctx->cgrp = NULL;
++
++	cpuctx_entry = &cpuctx->cgrp_cpuctx_entry;
++	if (add)
+ 		list_add(cpuctx_entry, this_cpu_ptr(&cgrp_cpuctx_list));
+-		if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
+-			cpuctx->cgrp = cgrp;
+-	} else {
++	else
+ 		list_del(cpuctx_entry);
+-		cpuctx->cgrp = NULL;
+-	}
+ }
+ 
+ #else /* !CONFIG_CGROUP_PERF */
+@@ -2311,6 +2325,20 @@ static int  __perf_install_in_context(void *info)
+ 		raw_spin_lock(&task_ctx->lock);
+ 	}
+ 
++#ifdef CONFIG_CGROUP_PERF
++	if (is_cgroup_event(event)) {
++		/*
++		 * Only care about cgroup events.
++		 *
++		 * If only the task belongs to cgroup of this event,
++		 * we will continue the installment
++		 */
++		struct perf_cgroup *cgrp = perf_cgroup_from_task(current, ctx);
++		reprogram = cgroup_is_descendant(cgrp->css.cgroup,
++					event->cgrp->css.cgroup);
++	}
++#endif
++
+ 	if (reprogram) {
+ 		ctx_sched_out(ctx, cpuctx, EVENT_TIME);
+ 		add_event_to_ctx(event, ctx);
 -- 
-Best Regards
-Masahiro Yamada
+2.8.4.31.g9ed660f
