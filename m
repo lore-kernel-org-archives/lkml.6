@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELscu7zLRGwYqNUafRDbvivHTGAijivR9Umg8MaXP977CDGzZDbHORvWitzlUzV19YRqTHbJ
-ARC-Seal: i=1; a=rsa-sha256; t=1520295966; cv=none;
+X-Google-Smtp-Source: AG47ELttrPYrMT36K9j7tOovc2asiazX+cvzGZ6DK9o6bDGd21CcVyBL3lhra13K1kZEPbvJ/5V5
+ARC-Seal: i=1; a=rsa-sha256; t=1520295964; cv=none;
         d=google.com; s=arc-20160816;
-        b=DaxI6YAmDU2txV9c3nn4WYeYiGTuItNL0SjVLQvEhzpdV6qev0mTDRUM9SXgBvEKOD
-         TJvME1qEh+5mkKRWHQm1KW03bL/yQeIOey1rq9VoAAqtDNY7dOMSqX1Jso1UebVDc5WM
-         mdV536/uGx3tp3C3iKYiNkW2U3EWs+v1z9MRPAjWqMpl/GzoT3v5c2lOtuvefORlb93e
-         lCejTXoMPb9yHQ9iXY0uj5roCZszaD4Ix7O6avhieYqEU3kHlkwXKdaFWg0xpzPvIm/C
-         CnRVoY6/H1gZSCmmZu0FEIAJwfCVakPNcJhZFDId8nVra3q6LAXob0YAeSzsxeXBSwul
-         jnFA==
+        b=bAcMUCsYZqwVnyC7Y1EOCbc6N8qq8S/2sPaqDIOqKFE8pLifj//RT0/Sg/0CX3HSj+
+         M3xFDTvNDGilxrzTBiib15MbZcMmr3rkSvy7uqVAf9IXD2Bho8x9XMK2PNfwnWn+gJEq
+         45w4DLDhyxX5igwasubjXgXiaydjtI6Lpq58jvvvj2whzFzbldqnmBr/lbXd1sZP8247
+         PjXtqbnt1Ou21+cLuoeIEikht8hE29kzVu8/nNRU7cCKw7Kfbx7Ra9gHSkY7qo0+DqTS
+         CAu3pFLLpMxJ8TTUYvqOhZVEFPpm0GAJADsFklAgaUNDQjImoI7dtQ1ogIH9XD6ie5Wd
+         u75g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=U6LekhF5L6zObDuRnj+gIYlRM+qljTVVkXWjggyHW6c=;
-        b=RQBZYj0cXsK00s71FMV81rYGcf2zmP/2rSqusKbzuVBzFC4fprcD7wMWzXKobjFDo8
-         esi3aErNbC+bdVvUNanBiSW8oY+pZ2KmHpV+HUdUZCwiG09y5fUTGJFK2UZ8vC+QRU+R
-         XYe+GNrAO2O5zy96oPBVV81c6A57+DNe2Y7vAnr+2TnA3WcajUrYjxnUWYN0mT9CQ2vQ
-         nO+AT7PZH19zR5NzRjLmDD6EltV9wLThSUg9s8m0r7hXz6Kj1hy0btiCN1Fr9vK+8WWa
-         mdWmoXpSH/fwedOSafW6p4QBJK1G5g+2PjA191MBhDcp+utaewK0TdHT5Oyj9ZRrrOQX
-         qPpg==
+        bh=NbVnWObOf2m0mPKrE143jFhhKQEJywxSUK6kzu8bxxI=;
+        b=IntdrTbLuiZqaw8rx9hhl4lVtslGhzaMUn0d+FrhscbEEiWvlBO5GqW6Fb46GMjN8b
+         WrHddVgFoR7vG5SoA+P4XtmzGdKMb42sVoQpjz76U+L826m723vrmjUm4bV0eIKiSKuw
+         qGJ9u6QK3/c+qBXTxZ0N3cJn6U/OQeZvtSf7wWG6i5YtQgEMsmTCULdwE1YReG0Aqvrb
+         3ZVcfB8QvjS081toqE5gWa2sgC62jLd0aRP6MOp6wuLQ/FiKmZ0t78Y3g/kP0ojE+Buk
+         IVtiS7BS6F+Tx4rUbfmWvpu2vAKmH9PY6nuwRWmxD6lwojs5nAf0ydGnK+T2s1XeMLM2
+         d4KQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=tI8h0M/3;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=kMFNsTHt;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=tI8h0M/3;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=kMFNsTHt;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -33,27 +33,30 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 08/65] x86/mm, sched/core: Uninline switch_mm()
-Date: Mon,  5 Mar 2018 19:24:41 -0500
-Message-Id: <20180306002538.1761-9-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 06/65] sched/core: Add switch_mm_irqs_off() and use it in the scheduler
+Date: Mon,  5 Mar 2018 19:24:39 -0500
+Message-Id: <20180306002538.1761-7-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=845
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=917
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145863637211403?=
-X-GMAIL-MSGID: =?utf-8?q?1594145863637211403?=
+X-GMAIL-THRID: =?utf-8?q?1594145861379212068?=
+X-GMAIL-MSGID: =?utf-8?q?1594145861379212068?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 69c0319aabba45bcf33178916a2f06967b4adede upstream.
+From: Andy Lutomirski <luto@kernel.org>
 
-It's fairly large and it has quite a few callers.  This may also
-help untangle some headers down the road.
+commit f98db6013c557c216da5038d9c52045be55cd039 upstream.
+
+By default, this is the same thing as switch_mm().
+
+x86 will override it as an optimization.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Borislav Petkov <bp@suse.de>
@@ -61,237 +64,67 @@ Cc: Borislav Petkov <bp@alien8.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/54f3367803e7f80b2be62c8a21879aa74b1a5f57.1461688545.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/df401df47bdd6be3e389c6f1e3f5310d70e81b2c.1461688545.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 70a39c7fd167399fde76aeac314dce026a255b49)
+(cherry picked from commit 425f13a36652523d604fd96413d6c438d415dd70)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-
-Conflicts:
-	arch/x86/include/asm/mmu_context.h
 ---
- arch/x86/include/asm/mmu_context.h |  97 +----------------------------------
- arch/x86/mm/tlb.c                  | 100 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+), 95 deletions(-)
+ include/linux/mmu_context.h | 7 +++++++
+ kernel/sched/core.c         | 6 +++---
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 73e38f14ddeb..375fafccb32c 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -92,101 +92,8 @@ static inline void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
+diff --git a/include/linux/mmu_context.h b/include/linux/mmu_context.h
+index 70fffeba7495..a4441784503b 100644
+--- a/include/linux/mmu_context.h
++++ b/include/linux/mmu_context.h
+@@ -1,9 +1,16 @@
+ #ifndef _LINUX_MMU_CONTEXT_H
+ #define _LINUX_MMU_CONTEXT_H
+ 
++#include <asm/mmu_context.h>
++
+ struct mm_struct;
+ 
+ void use_mm(struct mm_struct *mm);
+ void unuse_mm(struct mm_struct *mm);
+ 
++/* Architectures that care about IRQ state in switch_mm can override this. */
++#ifndef switch_mm_irqs_off
++# define switch_mm_irqs_off switch_mm
++#endif
++
  #endif
- }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8fbedeb5553f..d253618d09c6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -32,7 +32,7 @@
+ #include <linux/init.h>
+ #include <linux/uaccess.h>
+ #include <linux/highmem.h>
+-#include <asm/mmu_context.h>
++#include <linux/mmu_context.h>
+ #include <linux/interrupt.h>
+ #include <linux/capability.h>
+ #include <linux/completion.h>
+@@ -2339,7 +2339,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 		atomic_inc(&oldmm->mm_count);
+ 		enter_lazy_tlb(oldmm, next);
+ 	} else
+-		switch_mm(oldmm, mm, next);
++		switch_mm_irqs_off(oldmm, mm, next);
  
--static inline void switch_mm(struct mm_struct *prev, struct mm_struct *next,
--			     struct task_struct *tsk)
--{
--	unsigned cpu = smp_processor_id();
--
--	if (likely(prev != next)) {
--#ifdef CONFIG_SMP
--		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
--		this_cpu_write(cpu_tlbstate.active_mm, next);
--#endif
--		cpumask_set_cpu(cpu, mm_cpumask(next));
--
--		/*
--		 * Re-load page tables.
--		 *
--		 * This logic has an ordering constraint:
--		 *
--		 *  CPU 0: Write to a PTE for 'next'
--		 *  CPU 0: load bit 1 in mm_cpumask.  if nonzero, send IPI.
--		 *  CPU 1: set bit 1 in next's mm_cpumask
--		 *  CPU 1: load from the PTE that CPU 0 writes (implicit)
--		 *
--		 * We need to prevent an outcome in which CPU 1 observes
--		 * the new PTE value and CPU 0 observes bit 1 clear in
--		 * mm_cpumask.  (If that occurs, then the IPI will never
--		 * be sent, and CPU 0's TLB will contain a stale entry.)
--		 *
--		 * The bad outcome can occur if either CPU's load is
--		 * reordered before that CPU's store, so both CPUs must
--		 * execute full barriers to prevent this from happening.
--		 *
--		 * Thus, switch_mm needs a full barrier between the
--		 * store to mm_cpumask and any operation that could load
--		 * from next->pgd.  TLB fills are special and can happen
--		 * due to instruction fetches or for no reason at all,
--		 * and neither LOCK nor MFENCE orders them.
--		 * Fortunately, load_cr3() is serializing and gives the
--		 * ordering guarantee we need.
--		 *
--		 */
--		load_cr3(next->pgd);
--
--		trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
--
--		/* Stop flush ipis for the previous mm */
--		cpumask_clear_cpu(cpu, mm_cpumask(prev));
--
--		/* Load per-mm CR4 state */
--		load_mm_cr4(next);
--
--		/*
--		 * Load the LDT, if the LDT is different.
--		 *
--		 * It's possible that prev->context.ldt doesn't match
--		 * the LDT register.  This can happen if leave_mm(prev)
--		 * was called and then modify_ldt changed
--		 * prev->context.ldt but suppressed an IPI to this CPU.
--		 * In this case, prev->context.ldt != NULL, because we
--		 * never set context.ldt to NULL while the mm still
--		 * exists.  That means that next->context.ldt !=
--		 * prev->context.ldt, because mms never share an LDT.
--		 */
--		if (unlikely(prev->context.ldt != next->context.ldt))
--			load_mm_ldt(next);
--	}
--#ifdef CONFIG_SMP
--	  else {
--		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
--		BUG_ON(this_cpu_read(cpu_tlbstate.active_mm) != next);
--
--		if (!cpumask_test_cpu(cpu, mm_cpumask(next))) {
--			/*
--			 * On established mms, the mm_cpumask is only changed
--			 * from irq context, from ptep_clear_flush() while in
--			 * lazy tlb mode, and here. Irqs are blocked during
--			 * schedule, protecting us from simultaneous changes.
--			 */
--			cpumask_set_cpu(cpu, mm_cpumask(next));
--
--			/*
--			 * We were in lazy tlb mode and leave_mm disabled
--			 * tlb flush IPI delivery. We must reload CR3
--			 * to make sure to use no freed page tables.
--			 *
--			 * As above, load_cr3() is serializing and orders TLB
--			 * fills with respect to the mm_cpumask write.
--			 */
--			load_cr3(next->pgd);
--			trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
--			load_mm_cr4(next);
--			load_mm_ldt(next);
--		}
--	}
--#endif
--}
-+extern void switch_mm(struct mm_struct *prev, struct mm_struct *next,
-+		      struct task_struct *tsk);
+ 	if (!prev->mm) {
+ 		prev->active_mm = NULL;
+@@ -4979,7 +4979,7 @@ void idle_task_exit(void)
+ 	BUG_ON(cpu_online(smp_processor_id()));
  
- #define activate_mm(prev, next)			\
- do {						\
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index a1aa5f59e3ad..40c640980720 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -59,6 +59,106 @@ void leave_mm(int cpu)
- }
- EXPORT_SYMBOL_GPL(leave_mm);
- 
-+#endif /* CONFIG_SMP */
-+
-+void switch_mm(struct mm_struct *prev, struct mm_struct *next,
-+	       struct task_struct *tsk)
-+{
-+	unsigned cpu = smp_processor_id();
-+
-+	if (likely(prev != next)) {
-+#ifdef CONFIG_SMP
-+		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
-+		this_cpu_write(cpu_tlbstate.active_mm, next);
-+#endif
-+		cpumask_set_cpu(cpu, mm_cpumask(next));
-+
-+		/*
-+		 * Re-load page tables.
-+		 *
-+		 * This logic has an ordering constraint:
-+		 *
-+		 *  CPU 0: Write to a PTE for 'next'
-+		 *  CPU 0: load bit 1 in mm_cpumask.  if nonzero, send IPI.
-+		 *  CPU 1: set bit 1 in next's mm_cpumask
-+		 *  CPU 1: load from the PTE that CPU 0 writes (implicit)
-+		 *
-+		 * We need to prevent an outcome in which CPU 1 observes
-+		 * the new PTE value and CPU 0 observes bit 1 clear in
-+		 * mm_cpumask.  (If that occurs, then the IPI will never
-+		 * be sent, and CPU 0's TLB will contain a stale entry.)
-+		 *
-+		 * The bad outcome can occur if either CPU's load is
-+		 * reordered before that CPU's store, so both CPUs must
-+		 * execute full barriers to prevent this from happening.
-+		 *
-+		 * Thus, switch_mm needs a full barrier between the
-+		 * store to mm_cpumask and any operation that could load
-+		 * from next->pgd.  TLB fills are special and can happen
-+		 * due to instruction fetches or for no reason at all,
-+		 * and neither LOCK nor MFENCE orders them.
-+		 * Fortunately, load_cr3() is serializing and gives the
-+		 * ordering guarantee we need.
-+		 *
-+		 */
-+		load_cr3(next->pgd);
-+
-+		trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
-+
-+		/* Stop flush ipis for the previous mm */
-+		cpumask_clear_cpu(cpu, mm_cpumask(prev));
-+
-+		/* Load per-mm CR4 state */
-+		load_mm_cr4(next);
-+
-+		/*
-+		 * Load the LDT, if the LDT is different.
-+		 *
-+		 * It's possible that prev->context.ldt doesn't match
-+		 * the LDT register.  This can happen if leave_mm(prev)
-+		 * was called and then modify_ldt changed
-+		 * prev->context.ldt but suppressed an IPI to this CPU.
-+		 * In this case, prev->context.ldt != NULL, because we
-+		 * never set context.ldt to NULL while the mm still
-+		 * exists.  That means that next->context.ldt !=
-+		 * prev->context.ldt, because mms never share an LDT.
-+		 */
-+		if (unlikely(prev->context.ldt != next->context.ldt))
-+			load_mm_ldt(next);
-+	}
-+#ifdef CONFIG_SMP
-+	  else {
-+		this_cpu_write(cpu_tlbstate.state, TLBSTATE_OK);
-+		BUG_ON(this_cpu_read(cpu_tlbstate.active_mm) != next);
-+
-+		if (!cpumask_test_cpu(cpu, mm_cpumask(next))) {
-+			/*
-+			 * On established mms, the mm_cpumask is only changed
-+			 * from irq context, from ptep_clear_flush() while in
-+			 * lazy tlb mode, and here. Irqs are blocked during
-+			 * schedule, protecting us from simultaneous changes.
-+			 */
-+			cpumask_set_cpu(cpu, mm_cpumask(next));
-+
-+			/*
-+			 * We were in lazy tlb mode and leave_mm disabled
-+			 * tlb flush IPI delivery. We must reload CR3
-+			 * to make sure to use no freed page tables.
-+			 *
-+			 * As above, load_cr3() is serializing and orders TLB
-+			 * fills with respect to the mm_cpumask write.
-+			 */
-+			load_cr3(next->pgd);
-+			trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
-+			load_mm_cr4(next);
-+			load_mm_ldt(next);
-+		}
-+	}
-+#endif
-+}
-+
-+#ifdef CONFIG_SMP
-+
- /*
-  * The flush IPI assumes that a thread switch happens in this order:
-  * [cpu0: the cpu that switches]
+ 	if (mm != &init_mm) {
+-		switch_mm(mm, &init_mm, current);
++		switch_mm_irqs_off(mm, &init_mm, current);
+ 		finish_arch_post_lock_switch();
+ 	}
+ 	mmdrop(mm);
 -- 
 2.16.2
