@@ -1,90 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753570AbeCFLqa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 06:46:30 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41037 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753539AbeCFLq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:46:26 -0500
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: dmaengine@vger.kernel.org
-Cc: linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wan Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v3 2/2] dt-bindings: Document the Synopsys DW AXI DMA bindings
-Date: Tue,  6 Mar 2018 14:46:15 +0300
-Message-Id: <20180306114615.8895-3-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180306114615.8895-1-Eugeniy.Paltsev@synopsys.com>
-References: <20180306114615.8895-1-Eugeniy.Paltsev@synopsys.com>
+        id S1753539AbeCFLsD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 06:48:03 -0500
+Received: from mga09.intel.com ([134.134.136.24]:12543 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750864AbeCFLsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 06:48:01 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="22923714"
+Date: Tue, 6 Mar 2018 17:21:54 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Qi Hou <qi.hou@windriver.com>
+Cc: dan.j.williams@intel.com, fmh6jj@gmail.com,
+        fmhess@users.sourceforge.net, jassisinghbrar@gmail.com,
+        rmk+kernel@arm.linux.org.uk, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: pl330: fix a race condition in case of
+ threaded irqs
+Message-ID: <20180306115153.GS15443@localhost>
+References: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520298817-19870-1-git-send-email-qi.hou@windriver.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the Synopsys
-DesignWare AXI DMA controller.
+On Tue, Mar 06, 2018 at 09:13:37AM +0800, Qi Hou wrote:
+> When booting up with "threadirqs" in command line, all irq handlers of the DMA
+> controller pl330 will be threaded forcedly. These threads will race for the same
+> list, pl330->req_done.
+> 
+> Before the callback, the spinlock was released. And after it, the spinlock was
+> taken. This opened an race window where another threaded irq handler could steal
+> the spinlock and be permitted to delete entries of the list, pl330->req_done.
+> 
+> If the later deleted an entry that was still referred to by the former, there would
+> be a kernel panic when the former was scheduled and tried to get the next sibling
+> of the deleted entry.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
-Changes v2->v3:
- * None.
+Applied, thanks
 
- .../devicetree/bindings/dma/snps,dw-axi-dmac.txt   | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-
-diff --git a/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-new file mode 100644
-index 000000000000..f237b7928283
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
-@@ -0,0 +1,41 @@
-+Synopsys DesignWare AXI DMA Controller
-+
-+Required properties:
-+- compatible: "snps,axi-dma-1.01a"
-+- reg: Address range of the DMAC registers. This should include
-+  all of the per-channel registers.
-+- interrupt: Should contain the DMAC interrupt number.
-+- interrupt-parent: Should be the phandle for the interrupt controller
-+  that services interrupts for this device.
-+- dma-channels: Number of channels supported by hardware.
-+- snps,dma-masters: Number of AXI masters supported by the hardware.
-+- snps,data-width: Maximum AXI data width supported by hardware.
-+  (0 - 8bits, 1 - 16bits, 2 - 32bits, ..., 6 - 512bits)
-+- snps,priority: Priority of channel. Array size is equal to the number of
-+  dma-channels. Priority value must be programmed within [0:dma-channels-1]
-+  range. (0 - minimum priority)
-+- snps,block-size: Maximum block size supported by the controller channel.
-+  Array size is equal to the number of dma-channels.
-+
-+Optional properties:
-+- snps,axi-max-burst-len: Restrict master AXI burst length by value specified
-+  in this property. If this property is missing the maximum AXI burst length
-+  supported by DMAC is used. [1:256]
-+
-+Example:
-+
-+dmac: dma-controller@80000 {
-+	compatible = "snps,axi-dma-1.01a";
-+	reg = <0x80000 0x400>;
-+	clocks = <&core_clk>, <&cfgr_clk>;
-+	clock-names = "core-clk", "cfgr-clk";
-+	interrupt-parent = <&intc>;
-+	interrupts = <27>;
-+
-+	dma-channels = <4>;
-+	snps,dma-masters = <2>;
-+	snps,data-width = <3>;
-+	snps,block-size = <4096 4096 4096 4096>;
-+	snps,priority = <0 1 2 3>;
-+	snps,axi-max-burst-len = <16>;
-+};
 -- 
-2.14.3
+~Vinod
