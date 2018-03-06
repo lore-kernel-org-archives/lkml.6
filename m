@@ -1,105 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753308AbeCFJOJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:14:09 -0500
-Received: from mga17.intel.com ([192.55.52.151]:28963 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753024AbeCFJOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:14:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="25575372"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] perf record: Combine some auxtrace initialization into a single function
-Date: Tue,  6 Mar 2018 11:13:12 +0200
-Message-Id: <1520327598-1317-2-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520327598-1317-1-git-send-email-adrian.hunter@intel.com>
-References: <1520327598-1317-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1753388AbeCFJMz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:12:55 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61241 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753263AbeCFJMf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:12:35 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFC/RFT][PATCH v2 0/6] sched/cpuidle: Idle loop rework
+Date: Tue, 06 Mar 2018 09:57:16 +0100
+Message-ID: <2067762.1uWBf5RSRc@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for adding AUX area sampling support, combine some auxtrace
-initialization into a single function.
+Hi All,
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/builtin-record.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+Thanks a lot for the discussion so far!
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 907267206973..9b6338ce9c2b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -273,6 +273,24 @@ static void record__read_auxtrace_snapshot(struct record *rec)
- 	}
- }
- 
-+static int record__auxtrace_init(struct record *rec)
-+{
-+	int err;
-+
-+	if (!rec->itr) {
-+		rec->itr = auxtrace_record__init(rec->evlist, &err);
-+		if (err)
-+			return err;
-+	}
-+
-+	err = auxtrace_parse_snapshot_options(rec->itr, &rec->opts,
-+					      rec->opts.auxtrace_snapshot_opts);
-+	if (err)
-+		return err;
-+
-+	return auxtrace_parse_filters(rec->evlist);
-+}
-+
- #else
- 
- static inline
-@@ -293,6 +311,11 @@ int auxtrace_record__snapshot_start(struct auxtrace_record *itr __maybe_unused)
- 	return 0;
- }
- 
-+static int record__auxtrace_init(struct record *rec __maybe_unused)
-+{
-+	return 0;
-+}
-+
- #endif
- 
- static int record__mmap_evlist(struct record *rec,
-@@ -1711,17 +1734,6 @@ int cmd_record(int argc, const char **argv)
- 		alarm(rec->switch_output.time);
- 	}
- 
--	if (!rec->itr) {
--		rec->itr = auxtrace_record__init(rec->evlist, &err);
--		if (err)
--			goto out;
--	}
--
--	err = auxtrace_parse_snapshot_options(rec->itr, &rec->opts,
--					      rec->opts.auxtrace_snapshot_opts);
--	if (err)
--		goto out;
--
- 	/*
- 	 * Allow aliases to facilitate the lookup of symbols for address
- 	 * filters. Refer to auxtrace_parse_filters().
-@@ -1730,7 +1742,7 @@ int cmd_record(int argc, const char **argv)
- 
- 	symbol__init(NULL);
- 
--	err = auxtrace_parse_filters(rec->evlist);
-+	err = record__auxtrace_init(rec);
- 	if (err)
- 		goto out;
- 
--- 
-1.9.1
+Here's a new version of the series addressing some comments from the
+discussion and (most importantly) replacing patches 4 and 5 with another
+(simpler) patch.
+
+The summary below still applies:
+
+On Sunday, March 4, 2018 11:21:30 PM CET Rafael J. Wysocki wrote:
+> 
+> The problem is that if we stop the sched tick in
+> tick_nohz_idle_enter() and then the idle governor predicts short idle
+> duration, we lose regardless of whether or not it is right.
+> 
+> If it is right, we've lost already, because we stopped the tick
+> unnecessarily.  If it is not right, we'll lose going forward, because
+> the idle state selected by the governor is going to be too shallow and
+> we'll draw too much power (that has been reported recently to actually
+> happen often enough for people to care).
+> 
+> This patch series is an attempt to improve the situation and the idea
+> here is to make the decision whether or not to stop the tick deeper in
+> the idle loop and in particular after running the idle state selection
+> in the path where the idle governor is invoked.  This way the problem
+> can be avoided, because the idle duration predicted by the idle governor
+> can be used to decide whether or not to stop the tick so that the tick
+> is only stopped if that value is large enough (and, consequently, the
+> idle state selected by the governor is deep enough).
+> 
+> The series tires to avoid adding too much new code, rather reorder the
+> existing code and make it more fine-grained.
+> 
+> Patch 1 prepares the tick-sched code for the subsequent modifications and it
+> doesn't change the code's functionality (at least not intentionally).
+> 
+> Patch 2 starts pushing the tick stopping decision deeper into the idle
+> loop, but it is limited to do_idle() and tick_nohz_irq_exit().
+> 
+> Patch 3 makes cpuidle_idle_call() decide whether or not to stop the tick
+> and sets the stage for the changes in patch 6.
+
+Patch 4 adds a bool pointer argument to cpuidle_select() and the ->select
+governor callback allowing them to return a "nohz" hint on whether or not to
+stop the tick to the caller.
+
+Patch 5 reorders the idle state selection with respect to the stopping of the
+tick and causes the additional "nohz" hint from cpuidle_select() to be used
+for deciding whether or not to stop the tick.
+
+Patch 6 cleans up the code to avoid running one piece of it twice in a row
+in some cases.
+
+And the two paragraphs below still apply:
+
+> I have tested these patches on a couple of machines, including the very laptop
+> I'm sending them from, without any obvious issues, but please give them a go
+> if you can, especially if you have an easy way to reproduce the problem they
+> are targeting.  The patches are on top of 4.16-rc3 (if you need a git branch
+> with them for easier testing, please let me know).
+> 
+> The above said, this is just RFC, so no pets close to the machines running it,
+> please, and I'm kind of expecting Peter and Thomas to tear it into pieces. :-)
+
+Thanks,
+Rafael
