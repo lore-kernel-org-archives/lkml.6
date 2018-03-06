@@ -1,73 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeCFPcv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:32:51 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39352 "EHLO mail.bootlin.com"
+        id S1753792AbeCFPhc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:37:32 -0500
+Received: from mga02.intel.com ([134.134.136.20]:53171 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbeCFPct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:32:49 -0500
-Date: Tue, 6 Mar 2018 16:32:47 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][net-next] net: mvpp2: make function
- mvpp2_check_hw_buf_num static
-Message-ID: <20180306153247.GL4321@kwain>
-References: <20180306152517.2770-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180306152517.2770-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753590AbeCFPhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:37:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,432,1515484800";
+   d="scan'208";a="209264447"
+From: kan.liang@linux.intel.com
+To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
+        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 1/8] perf evlist: Store 'overwrite' in struct perf_mmap
+Date: Tue,  6 Mar 2018 10:36:00 -0500
+Message-Id: <1520350567-80082-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On Tue, Mar 06, 2018 at 04:25:17PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function mvpp2_check_hw_buf_num is local to the source and does
-> not need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> drivers/net/ethernet/marvell/mvpp2.c:4298:5: warning: symbol
-> 'mvpp2_check_hw_buf_num' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+It has been determined that the map is for overwrite mode
+(evlist->overwrite_mmap) or non-overwrite mode (evlist->mmap) when
+calling perf_evlist__alloc_mmap().
+Store the information in struct perf_mmap, which will be used later to
+simpler the perf_mmap__read*() interfaces.
 
-Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
 
-Thanks!
-Antoine
+Changes since V1:
+ - New patch to store 'overwrite' in struct perf_mmap at allocation
 
-> ---
->  drivers/net/ethernet/marvell/mvpp2.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-> index ac0a0dc8f157..61c6896d0d62 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2.c
-> @@ -4295,7 +4295,8 @@ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
->  }
->  
->  /* Check number of buffers in BM pool */
-> -int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
-> +static int mvpp2_check_hw_buf_num(struct mvpp2 *priv,
-> +				  struct mvpp2_bm_pool *bm_pool)
->  {
->  	int buf_num = 0;
->  
-> -- 
-> 2.15.1
-> 
+ tools/perf/util/evlist.c | 8 +++++---
+ tools/perf/util/mmap.h   | 1 +
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 41a4666..a59281d 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -722,7 +722,8 @@ void perf_evlist__munmap(struct perf_evlist *evlist)
+ 	zfree(&evlist->overwrite_mmap);
+ }
+ 
+-static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
++static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
++						 bool overwrite)
+ {
+ 	int i;
+ 	struct perf_mmap *map;
+@@ -736,6 +737,7 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
+ 
+ 	for (i = 0; i < evlist->nr_mmaps; i++) {
+ 		map[i].fd = -1;
++		map[i].overwrite = overwrite;
+ 		/*
+ 		 * When the perf_mmap() call is made we grab one refcount, plus
+ 		 * one extra to let perf_mmap__consume() get the last
+@@ -779,7 +781,7 @@ static int perf_evlist__mmap_per_evsel(struct perf_evlist *evlist, int idx,
+ 			maps = evlist->overwrite_mmap;
+ 
+ 			if (!maps) {
+-				maps = perf_evlist__alloc_mmap(evlist);
++				maps = perf_evlist__alloc_mmap(evlist, true);
+ 				if (!maps)
+ 					return -1;
+ 				evlist->overwrite_mmap = maps;
+@@ -1029,7 +1031,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	struct mmap_params mp;
+ 
+ 	if (!evlist->mmap)
+-		evlist->mmap = perf_evlist__alloc_mmap(evlist);
++		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+ 	if (!evlist->mmap)
+ 		return -ENOMEM;
+ 
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index ec7d3a24..7113797 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -20,6 +20,7 @@ struct perf_mmap {
+ 	int		 fd;
+ 	refcount_t	 refcnt;
+ 	u64		 prev;
++	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
+ };
 -- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.4.11
