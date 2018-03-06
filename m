@@ -1,131 +1,391 @@
-Return-Path: <SRS0=mXP0=GE=wdc.com=prvs=6043d9405=Bart.VanAssche@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2529736-1521058460-2-17918677880452898816
+Return-Path: <SRS0=gsCl=F4=gmail.com=htejun@kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-891914-1520357761-2-16802037786012209585
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='com',
-  MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01,
+  LANGUAGES enfr, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
+  MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=mXP0=GE=wdc.com=prvs=6043d9405=Bart.VanAssche@kernel.org
+X-Mail-from: SRS0=gsCl=F4=gmail.com=htejun@kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521058459; b=jmbm2X6qKU+MFCPmcFke2UA6P4vUyCzeH0f3IcCb64Lzzbj
-    HYGuQoowulLkVGZsPp7G+X6D5oQkeWjGWHsnlF8n/zWmMgJCKs0LjWR7nVACEIYL
-    RP9gBhx6w3Jrktuf+sunBE6/2PdlIfbq01TE7OvR9zbjPsaySCha8haLDxjES4HR
-    +8ntX8s6ZrHnB3MYvPfrOEbUo761uKK9VGUpZ5E0TZKhQdTxxjOZe0GLGUqWYddH
-    6XcZLfpfNkZANjrwpU0Y+L99ZQ5v8PjeJO79oCbXaJg/zw4XsV8b0o2h5DA8dl+g
-    OrKSQybyxnQ2jTpYoJsDphVH5Aq5LD0a20aisrg==
+    t=1520357760; b=EOqEavttqvW2cDXZraPCsSRw20zM8kJ3MXSe26aj5omRG1I
+    LbmnjdJKi6/WmPlZRogQnUseYwz6ISCA5Pxg9ACHVlTU6tqLebNxpvhOxOkK4hZH
+    21DbRKw+vaZaXf2XwcGvaWiGRu2c/SqNqwQgorJEuSkVYorDPkL0uOIbU9SD8+wo
+    Jhi3HBbnvQlH2eX4jpT7iqrYubCN2PvFb17Hx7rxoYnDU0ERn4707w8FBR7bytlX
+    YozOLJXEwkY2V4t+AnrW1BGD9k9kQnD43acRSPUHpQbx3HGQQ+abN/v7KP0UNQPd
+    kRE+gHIVB4LhjZaHA+hEeopDli4Dbzg6QQ+J7kA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version; s=arctest; t=
-    1521058459; bh=lltDlpbWSwZ631so6Wp282mgoNFZOsMYoCnpD8gE1QY=; b=m
-    mVVBlCzxAFlo/eEtvhspJuYqoIVqEEabcuHhS9d3khc+l0B/v21pcsUUFXKkf3Y3
-    09k1+rlAuFDZL5o8ug4yODi/9ZGgrDVTftE7qaNNlDQl+Qwp5asyjHVH2VasUCg1
-    TmW/3XceWkdwTpL+krBz5ChscvsM6ay3gwKplH/c8iLvKr7csF8ZrXZGmCgm3wLL
-    HXM6ScsFs7Lw4OrNA1jv9bfgxE1OwP6x9EAbL4g5Ngt6GGecJ9Fq6ekHhI282YLJ
-    4SRZadMBeDHqm500yK9/ibr3/x8R+gK6mHSoh/3PsY+JsS7rQNzBdptqNC22mdVj
-    SZWFAF7VREruplDofyCFg==
+    messagingengine.com; h=sender:from:to:cc:subject:date:message-id
+    :in-reply-to:references; s=arctest; t=1520357760; bh=YyBmo4kInCj
+    52a9l6TvxOFqF/cRoHG/Cke3iQ6kgzvI=; b=NNqVogjD+R1KEZs6TlcPdQ1xQW5
+    yzHsrS1e3wJszx10M17iT7IjJSWuwMNnEkM1tgAbte0ov/ROjTwFS0Smgv9itKEW
+    vdSEiCvVXQ687vyWKaSFzhBJz6ux4NyYyxzee4N61MF3i0yBidHJ6aS7ELEb+Vk0
+    wgxrkWT6LlaGhK3siyBkwlBM15FrhagtjAsEEJwNf2qsg33dBdf2dNFdHywnRSWR
+    64lAnc7kiqcCTwSTYMOZz6x0a7p4DYPtjSsy2AWwnnOE4w4EmC/RsvjqS8NBiONV
+    jrL3GaxOndVm/KSkiUDCechfz4U8Cn8E3rGac2zHNugjWH9XO8s9+N2ggjQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=KvbWWDF5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1-wdc-com;
-    dkim=pass (2048-bit rsa key sha256) header.d=wdc.com header.i=@wdc.com header.b=FYzSamJH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dkim.wdc.com;
-    dmarc=none (p=none,d=none) header.from=wdc.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O+EjZV1T x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom=SRS0=mXP0=GE=wdc.com=prvs=6043d9405=Bart.VanAssche@kernel.org smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=SRS0=gsCl=F4=gmail.com=htejun@kernel.org smtp.helo=mail.kernel.org;
+    x-aligned-from=domain_pass;
     x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=N64hqeEd;
     x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=wdc.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=KvbWWDF5 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1-wdc-com;
-    dkim=pass (2048-bit rsa key sha256) header.d=wdc.com header.i=@wdc.com header.b=FYzSamJH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dkim.wdc.com;
-    dmarc=none (p=none,d=none) header.from=wdc.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=O+EjZV1T x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom=SRS0=mXP0=GE=wdc.com=prvs=6043d9405=Bart.VanAssche@kernel.org smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=SRS0=gsCl=F4=gmail.com=htejun@kernel.org smtp.helo=mail.kernel.org;
+    x-aligned-from=domain_pass;
     x-category=clean score=0 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=N64hqeEd;
     x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=wdc.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 X-Remote-Delivered-To: security@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9765120779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=prvs=6043d9405=Bart.VanAssche@wdc.com
-X-IronPort-AV: E=Sophos;i="5.48,306,1517846400";
-   d="scan'208";a="73663265"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "peterz@infradead.org" <peterz@infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jannh@google.com" <jannh@google.com>, "bcrl@kvack.org" <bcrl@kvack.org>,
-	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-	"kernel-team@fb.com" <kernel-team@fb.com>, "kent.overstreet@gmail.com"
-	<kent.overstreet@gmail.com>, "security@kernel.org" <security@kernel.org>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "axboe@kernel.dk"
-	<axboe@kernel.dk>, "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>,
-	"tj@kernel.org" <tj@kernel.org>
-Subject: Re: [PATCH 5/7] block: Remove superflous rcu_read_[un]lock_sched() in
- blk_queue_enter()
-Thread-Topic: [PATCH 5/7] block: Remove superflous rcu_read_[un]lock_sched()
- in blk_queue_enter()
-Thread-Index: AQHTtXF+r00ELC+QgkOKRsA7lcNfRKPDfP6AgAyhrgCAABYKgIAAAOsAgAABgAA=
-Date: Wed, 14 Mar 2018 20:14:09 +0000
-Message-ID: <1521058448.3006.32.camel@wdc.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC93C20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=htejun@gmail.com
+X-Google-Smtp-Source: AG47ELsSUJQcurjEmGgSkNKPOVGNtN5b2QuNr2nibg9LgAsUWQWkCJ6xkl32kMrHbf565eOCOy8scQ==
+Sender: Tejun Heo <htejun@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+To: torvalds@linux-foundation.org,
+	jannh@google.com,
+	paulmck@linux.vnet.ibm.com,
+	bcrl@kvack.org,
+	viro@zeniv.linux.org.uk,
+	kent.overstreet@gmail.com
+Cc: security@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@fb.com,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 7/7] RCU, workqueue: Implement rcu_work
+Date: Tue,  6 Mar 2018 09:33:16 -0800
+Message-Id: <20180306173316.3088458-7-tj@kernel.org>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180306173316.3088458-1-tj@kernel.org>
 References: <20180306172657.3060270-1-tj@kernel.org>
-	 <20180306173316.3088458-1-tj@kernel.org>
-	 <20180306173316.3088458-5-tj@kernel.org> <1520358769.3578.21.camel@wdc.com>
-	 <20180314184636.GC2943022@devbig577.frc2.facebook.com>
-	 <1521057929.3006.31.camel@wdc.com>
-	 <20180314200846.GR4064@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180314200846.GR4064@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0463;7:CZzQHt9c+IXIRHN9SteVNSIjE2TB/AnhWH7AGyOr9kH4Ub2IpdwLQ5Clgmov7soNFtnbAI5Y2WyJ9xCQxTj2NdYEp+Dt94ZyF2CI45t1IRevGSqCtHqlZ9gVWJ/ro0AoCnWa1OuZY+R89jvEm18WXsQPTDCiLFoswD7eXkPLp1iOi5huSJI4wbxKMVdYlDHbFT0G/bp5Q8RnitEdE3zrvEjasEOuKbQHfrrCQvAcxNsvWrBHAMS+kIohRrrnPwZU;20:roMpvL6WMHzG4bfE1eufc9fS6/cq9T5KmaxpGJN4b4ncFLnMo8KkzJtYM4FEW8+TeFQAg3qRYafpG8dRUxCfdd45Tt4JipUJVaS4sQCqUAdOPR+Taj3nZuEIUyP2I2XlSUHCwGZPcPqzeqx0BZ+WTPHH9mWCWBNWOFQiK/bungw=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a6a1f85d-745e-4c1f-dc20-08d589e825a5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0463;
-x-ms-traffictypediagnostic: MWHPR04MB0463:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB046359077CC784EB66A64B9E98D10@MWHPR04MB0463.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501244)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR04MB0463;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0463;
-x-forefront-prvs: 0611A21987
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(366004)(39380400002)(376002)(346002)(51914003)(377424004)(199004)(189003)(186003)(8676002)(2501003)(53936002)(76176011)(93886005)(2950100002)(3660700001)(229853002)(316002)(105586002)(6916009)(5250100002)(68736007)(478600001)(2900100001)(5660300001)(72206003)(3280700002)(7416002)(14454004)(99286004)(26005)(86362001)(7736002)(6436002)(5640700003)(2351001)(305945005)(97736004)(36756003)(4326008)(6246003)(39060400002)(6486002)(54906003)(66066001)(6116002)(3846002)(81156014)(1730700003)(8936002)(81166006)(6506007)(103116003)(106356001)(102836004)(2906002)(6512007)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0463;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: 7GrJwF75DZIOkklFBn9U7j0h8T9bAYv2r0kcTcIWNI5mahWg8myY0ZW856SKuQeFuxJMdHfyo/CqqyP8UTIvgYWEtC58/EwIR1nqF/f/1qwcS1nFOMom95Utt/KQPe/6N048LZlxeVCwjbjpMuUYZFAHF5L25086rWlCdlzvzIaPe7esylcAVqijLn0l+7hKSouPHQocg5kqtynwUunIyCMynAqX1yfF/1vGReg6BZ3KBDZby9c0cW8yXmQFP2UGtQemy9O9tbVcMYLFMTtBE8S/mBkaXSdzGQZIom4KeEiY5I5MYwm4ciNHfx5A2TGB/7hLtMH+sWw1QnwnvqpZnw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2BF306CA1E382F43A59B4E23C4C2FC81@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6a1f85d-745e-4c1f-dc20-08d589e825a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2018 20:14:09.8744
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0463
+ <20180306173316.3088458-1-tj@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gV2VkLCAyMDE4LTAzLTE0IGF0IDIxOjA4ICswMTAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
-Cj4gT24gV2VkLCBNYXIgMTQsIDIwMTggYXQgMDg6MDU6MzBQTSArMDAwMCwgQmFydCBWYW4gQXNz
-Y2hlIHdyb3RlOg0KPiA+IENhbiB5b3UgY2xhcmlmeSB0aGlzIGZ1cnRoZXI/IEZyb20gPGxpbnV4
-L3JjdXBkYXRlLmg+Og0KPiA+IA0KPiA+IHN0YXRpYyBpbmxpbmUgdm9pZCBzeW5jaHJvbml6ZV9y
-Y3Uodm9pZCkNCj4gPiB7DQo+ID4gCXN5bmNocm9uaXplX3NjaGVkKCk7DQo+ID4gfQ0KPiANCj4g
-WW91J2xsIGZpbmQgdGhhdCBpcyBmb3IgIUNPTkZJR19QUkVFTVBUX1JDVS4NCg0KVGhhbmtzIGZv
-ciB0aGUgY2xhcmlmaWNhdGlvbi4gSSB3aWxsIHN1Ym1pdCBhIGZpeCBmb3IgdGhlIFNDU0kgY29k
-ZS4NCg0KQmFydC4NCg0KDQo=
+There are cases where RCU callback needs to be bounced to a sleepable
+context.  This is currently done by the RCU callback queueing a work
+item, which can be cumbersome to write and confusing to read.
+
+This patch introduces rcu_work, a workqueue work variant which gets
+executed after a RCU grace period, and converts the open coded
+bouncing in fs/aio and kernel/cgroup.
+
+v2: Use rcu_barrier() instead of synchronize_rcu() to wait for
+    completion of previously queued rcu callback as per Paul.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ fs/aio.c                    | 21 +++++-------------
+ include/linux/cgroup-defs.h |  2 +-
+ include/linux/workqueue.h   | 38 +++++++++++++++++++++++++++++++
+ kernel/cgroup/cgroup.c      | 21 ++++++------------
+ kernel/workqueue.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 106 insertions(+), 30 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 6bcd3fb..88d7927 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -115,8 +115,7 @@ struct kioctx {
+ 	struct page		**ring_pages;
+ 	long			nr_pages;
+ 
+-	struct rcu_head		free_rcu;
+-	struct work_struct	free_work;	/* see free_ioctx() */
++	struct rcu_work		free_rwork;	/* see free_ioctx() */
+ 
+ 	/*
+ 	 * signals when all in-flight requests are done
+@@ -592,13 +591,12 @@ static int kiocb_cancel(struct aio_kiocb *kiocb)
+ /*
+  * free_ioctx() should be RCU delayed to synchronize against the RCU
+  * protected lookup_ioctx() and also needs process context to call
+- * aio_free_ring(), so the double bouncing through kioctx->free_rcu and
+- * ->free_work.
++ * aio_free_ring().  Use rcu_work.
+  */
+ static void free_ioctx(struct work_struct *work)
+ {
+-	struct kioctx *ctx = container_of(work, struct kioctx, free_work);
+-
++	struct kioctx *ctx = container_of(to_rcu_work(work), struct kioctx,
++					  free_rwork);
+ 	pr_debug("freeing %p\n", ctx);
+ 
+ 	aio_free_ring(ctx);
+@@ -608,14 +606,6 @@ static void free_ioctx(struct work_struct *work)
+ 	kmem_cache_free(kioctx_cachep, ctx);
+ }
+ 
+-static void free_ioctx_rcufn(struct rcu_head *head)
+-{
+-	struct kioctx *ctx = container_of(head, struct kioctx, free_rcu);
+-
+-	INIT_WORK(&ctx->free_work, free_ioctx);
+-	schedule_work(&ctx->free_work);
+-}
+-
+ static void free_ioctx_reqs(struct percpu_ref *ref)
+ {
+ 	struct kioctx *ctx = container_of(ref, struct kioctx, reqs);
+@@ -625,7 +615,8 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
+ 		complete(&ctx->rq_wait->comp);
+ 
+ 	/* Synchronize against RCU protected table->table[] dereferences */
+-	call_rcu(&ctx->free_rcu, free_ioctx_rcufn);
++	INIT_RCU_WORK(&ctx->free_rwork, free_ioctx);
++	queue_rcu_work(system_wq, &ctx->free_rwork);
+ }
+ 
+ /*
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 9f242b8..92d7640 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -151,8 +151,8 @@ struct cgroup_subsys_state {
+ 	atomic_t online_cnt;
+ 
+ 	/* percpu_ref killing and RCU release */
+-	struct rcu_head rcu_head;
+ 	struct work_struct destroy_work;
++	struct rcu_work destroy_rwork;
+ 
+ 	/*
+ 	 * PI: the parent css.	Placed here for cache proximity to following
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index bc0cda1..b39f3a4 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -13,6 +13,7 @@
+ #include <linux/threads.h>
+ #include <linux/atomic.h>
+ #include <linux/cpumask.h>
++#include <linux/rcupdate.h>
+ 
+ struct workqueue_struct;
+ 
+@@ -120,6 +121,15 @@ struct delayed_work {
+ 	int cpu;
+ };
+ 
++struct rcu_work {
++	struct work_struct work;
++	struct rcu_head rcu;
++
++	/* target workqueue and CPU ->rcu uses to queue ->work */
++	struct workqueue_struct *wq;
++	int cpu;
++};
++
+ /**
+  * struct workqueue_attrs - A struct for workqueue attributes.
+  *
+@@ -151,6 +161,11 @@ static inline struct delayed_work *to_delayed_work(struct work_struct *work)
+ 	return container_of(work, struct delayed_work, work);
+ }
+ 
++static inline struct rcu_work *to_rcu_work(struct work_struct *work)
++{
++	return container_of(work, struct rcu_work, work);
++}
++
+ struct execute_work {
+ 	struct work_struct work;
+ };
+@@ -266,6 +281,12 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
+ #define INIT_DEFERRABLE_WORK_ONSTACK(_work, _func)			\
+ 	__INIT_DELAYED_WORK_ONSTACK(_work, _func, TIMER_DEFERRABLE)
+ 
++#define INIT_RCU_WORK(_work, _func)					\
++	INIT_WORK(&(_work)->work, (_func))
++
++#define INIT_RCU_WORK_ONSTACK(_work, _func)				\
++	INIT_WORK_ONSTACK(&(_work)->work, (_func))
++
+ /**
+  * work_pending - Find out whether a work item is currently pending
+  * @work: The work item in question
+@@ -447,6 +468,8 @@ extern bool queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct delayed_work *work, unsigned long delay);
+ extern bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct delayed_work *dwork, unsigned long delay);
++extern bool queue_rcu_work_on(int cpu, struct workqueue_struct *wq,
++			struct rcu_work *rwork);
+ 
+ extern void flush_workqueue(struct workqueue_struct *wq);
+ extern void drain_workqueue(struct workqueue_struct *wq);
+@@ -463,6 +486,8 @@ extern bool flush_delayed_work(struct delayed_work *dwork);
+ extern bool cancel_delayed_work(struct delayed_work *dwork);
+ extern bool cancel_delayed_work_sync(struct delayed_work *dwork);
+ 
++extern bool flush_rcu_work(struct rcu_work *rwork);
++
+ extern void workqueue_set_max_active(struct workqueue_struct *wq,
+ 				     int max_active);
+ extern struct work_struct *current_work(void);
+@@ -520,6 +545,19 @@ static inline bool mod_delayed_work(struct workqueue_struct *wq,
+ }
+ 
+ /**
++ * queue_rcu_work - queue work on a workqueue after a RCU grace period
++ * @wq: workqueue to use
++ * @rwork: RCU work to queue
++ *
++ * Equivalent to queue_rcu_work_on() but tries to use the local CPU.
++ */
++static inline bool queue_rcu_work(struct workqueue_struct *wq,
++				  struct rcu_work *rwork)
++{
++	return queue_rcu_work_on(WORK_CPU_UNBOUND, wq, rwork);
++}
++
++/**
+  * schedule_work_on - put work task on a specific cpu
+  * @cpu: cpu to put the work task on
+  * @work: job to be done
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 8cda3bc..4c5d4ca0 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4514,10 +4514,10 @@ static struct cftype cgroup_base_files[] = {
+  * and thus involve punting to css->destroy_work adding two additional
+  * steps to the already complex sequence.
+  */
+-static void css_free_work_fn(struct work_struct *work)
++static void css_free_rwork_fn(struct work_struct *work)
+ {
+-	struct cgroup_subsys_state *css =
+-		container_of(work, struct cgroup_subsys_state, destroy_work);
++	struct cgroup_subsys_state *css = container_of(to_rcu_work(work),
++				struct cgroup_subsys_state, destroy_rwork);
+ 	struct cgroup_subsys *ss = css->ss;
+ 	struct cgroup *cgrp = css->cgroup;
+ 
+@@ -4563,15 +4563,6 @@ static void css_free_work_fn(struct work_struct *work)
+ 	}
+ }
+ 
+-static void css_free_rcu_fn(struct rcu_head *rcu_head)
+-{
+-	struct cgroup_subsys_state *css =
+-		container_of(rcu_head, struct cgroup_subsys_state, rcu_head);
+-
+-	INIT_WORK(&css->destroy_work, css_free_work_fn);
+-	queue_work(cgroup_destroy_wq, &css->destroy_work);
+-}
+-
+ static void css_release_work_fn(struct work_struct *work)
+ {
+ 	struct cgroup_subsys_state *css =
+@@ -4621,7 +4612,8 @@ static void css_release_work_fn(struct work_struct *work)
+ 
+ 	mutex_unlock(&cgroup_mutex);
+ 
+-	call_rcu(&css->rcu_head, css_free_rcu_fn);
++	INIT_RCU_WORK(&css->destroy_rwork, css_free_rwork_fn);
++	queue_rcu_work(cgroup_destroy_wq, &css->destroy_rwork);
+ }
+ 
+ static void css_release(struct percpu_ref *ref)
+@@ -4755,7 +4747,8 @@ static struct cgroup_subsys_state *css_create(struct cgroup *cgrp,
+ err_list_del:
+ 	list_del_rcu(&css->sibling);
+ err_free_css:
+-	call_rcu(&css->rcu_head, css_free_rcu_fn);
++	INIT_RCU_WORK(&css->destroy_rwork, css_free_rwork_fn);
++	queue_rcu_work(cgroup_destroy_wq, &css->destroy_rwork);
+ 	return ERR_PTR(err);
+ }
+ 
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bb9a519..e26c2f4 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1604,6 +1604,40 @@ bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
+ }
+ EXPORT_SYMBOL_GPL(mod_delayed_work_on);
+ 
++static void rcu_work_rcufn(struct rcu_head *rcu)
++{
++	struct rcu_work *rwork = container_of(rcu, struct rcu_work, rcu);
++
++	/* read the comment in __queue_work() */
++	local_irq_disable();
++	__queue_work(rwork->cpu, rwork->wq, &rwork->work);
++	local_irq_enable();
++}
++
++/**
++ * queue_rcu_work_on - queue work on specific CPU after a RCU grace period
++ * @cpu: CPU number to execute work on
++ * @wq: workqueue to use
++ * @rwork: work to queue
++ *
++ * Return: %false if @work was already on a queue, %true otherwise.
++ */
++bool queue_rcu_work_on(int cpu, struct workqueue_struct *wq,
++		       struct rcu_work *rwork)
++{
++	struct work_struct *work = &rwork->work;
++
++	if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))) {
++		rwork->wq = wq;
++		rwork->cpu = cpu;
++		call_rcu(&rwork->rcu, rcu_work_rcufn);
++		return true;
++	}
++
++	return false;
++}
++EXPORT_SYMBOL(queue_rcu_work_on);
++
+ /**
+  * worker_enter_idle - enter idle state
+  * @worker: worker which is entering idle state
+@@ -3001,6 +3035,26 @@ bool flush_delayed_work(struct delayed_work *dwork)
+ }
+ EXPORT_SYMBOL(flush_delayed_work);
+ 
++/**
++ * flush_rcu_work - wait for a rwork to finish executing the last queueing
++ * @rwork: the rcu work to flush
++ *
++ * Return:
++ * %true if flush_rcu_work() waited for the work to finish execution,
++ * %false if it was already idle.
++ */
++bool flush_rcu_work(struct rcu_work *rwork)
++{
++	if (test_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(&rwork->work))) {
++		rcu_barrier();
++		flush_work(&rwork->work);
++		return true;
++	} else {
++		return flush_work(&rwork->work);
++	}
++}
++EXPORT_SYMBOL(flush_rcu_work);
++
+ static bool __cancel_work(struct work_struct *work, bool is_dwork)
+ {
+ 	unsigned long flags;
+-- 
+2.9.5
