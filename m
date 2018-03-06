@@ -1,145 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753949AbeCFSs4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 13:48:56 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:32810 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753902AbeCFSsy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 13:48:54 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFABD601CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-Reply-To: shankerd@codeaurora.org
-Subject: Re: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC
- and CTR_EL0.IDC
-To: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        Vikram Sethi <vikrams@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        id S1754015AbeCFSts convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 13:49:48 -0500
+Received: from gloria.sntech.de ([95.129.55.99]:40650 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753168AbeCFStq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 13:49:46 -0500
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
- <20180306134405.GB18080@arm.com>
- <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
- <20180306152318.GE17454@arm.com>
-From: Shanker Donthineni <shankerd@codeaurora.org>
-Message-ID: <cbdce6fd-a1db-4f12-ccea-adfe9fe7c057@codeaurora.org>
-Date: Tue, 6 Mar 2018 12:48:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs, wifi reset)
+Date: Tue, 06 Mar 2018 19:49:41 +0100
+Message-ID: <13699528.5LUGj0SynH@diego>
+In-Reply-To: <16f41a01-2ac2-c4c0-6989-990612b467d1@arm.com>
+References: <20180227204711.29357-1-dianders@chromium.org> <CAD=FV=Wr6_U9c1qFRgx3=JhMg8US20_oMEmEfCdpVyGKek_8gQ@mail.gmail.com> <16f41a01-2ac2-c4c0-6989-990612b467d1@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180306152318.GE17454@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+Am Dienstag, 6. März 2018, 19:15:18 CET schrieb Marc Zyngier:
+> Hi Doug,
+> 
+> On 06/03/18 18:00, Doug Anderson wrote:
+> > Hi,
+> > 
+> > On Tue, Mar 6, 2018 at 3:58 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >> Hi all,
+> >> 
+> >> On 01/03/18 08:43, Heiko Stübner wrote:
+> >>> Am Dienstag, 27. Februar 2018, 21:47:11 CET schrieb Douglas Anderson:
+> >>>> Back in the early days when gru devices were still under development
+> >>>> we found an issue where the WiFi reset line needed to be configured as
+> >>>> early as possible during the boot process to avoid the WiFi module
+> >>>> being in a bad state.
+> >>>> 
+> >>>> We found that the way to get the kernel to do this in the earliest
+> >>>> possible place was to configure this line in the pinctrl hogs, so
+> >>>> that's what we did.  For some history here you can see
+> >>>> <http://crosreview.com/368770>.  After the time that change landed in
+> >>>> the kernel, we landed a firmware change to configure this line even
+> >>>> earlier.  See <http://crosreview.com/399919>.  However, even after the
+> >>>> firmware change landed we kept the kernel change to deal with the fact
+> >>>> that some people working on devices might take a little while to
+> >>>> update their firmware.
+> >>>> 
+> >>>> At this there are definitely zero devices out in the wild that have
+> >>>> firmware without the fix in it.  Specifically looking in the firmware
+> >>>> branch several critically important fixes for memory stability landed
+> >>>> after the patch in coreboot and I know we didn't ship without those.
+> >>>> Thus, by now, everyone should have the new firmware and it's safe to
+> >>>> not have the kernel set this up in a pinctrl hog.
+> >>>> 
+> >>>> Historically, even though it wasn't needed to have this in a pinctrl
+> >>>> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
+> >>>> default hog at bootup and then would never touch things again.  That
+> >>>> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
+> >>>> during suspend/resume").  After that commit then we'll re-apply the
+> >>>> default hog at resume time and that can screw up the reset state of
+> >>>> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
+> >>>> then the whole system can go haywire.  That's what was happening.
+> >>>> Specifically you'd resume a rk3399-gru-* device and it would mostly
+> >>>> resume, then would crash with some crazy weird crash.
+> >>>> 
+> >>>> One could say, perhaps, that the recent pinctrl change was at fault
+> >>>> (and should be fixed) since it changed behavior.  ...but that's not
+> >>>> really true.  The device tree for rk3399-gru is really to blame.
+> >>>> Specifically since the pinctrl is defined in the hog and not in the
+> >>>> "wlan-pd-n" node then the actual user of this pin doesn't have a
+> >>>> pinctrl entry for it.  That's bad.
+> >>>> 
+> >>>> Let's fix our problems by just moving the control of
+> >>>> "wlan_module_reset_l pinctrl" out of the hog and put them in the
+> >>>> proper place.
+> >>>> 
+> >>>> NOTE: in theory, I think it should actually be possible to have a pin
+> >>>> controlled _both_ by the hog and by an actual device.  Once the device
+> >>>> claims the pin I think the hog is supposed to let go.  I'm not 100%
+> >>>> sure that this works and in any case this solution would be more
+> >>>> complex than is necessary.
+> >>>> 
+> >>>> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
+> >>>> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
+> >>>> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during
+> >>>> suspend/resume")
+> >>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> >>> 
+> >>> applied as fix for 4.16 with the 2 Tested-tags
+> >> 
+> >> Sorry to rain on everyone's parade, but further testing shows that this
+> >> patch may not be enough to restore a reliable s2r. My initial testing
+> >> did show that we were resuming without the VOP errors, but there seem to
+> >> be further issues (I'm loosing the keyboard and the trackpad after
+> >> resume on Kevin).
+> >> 
+> >> Applying my initial hack makes it work again. I suspect that there are
+> >> more hog pins that need tweaking, but I'm a bit out of my depth here.
+> > 
+> > Are you positive you weren't just wearing your lucky hat when you
+> > tested your patch and then took it off when you tested mine?  As far
+> 
+> So far, I seem to have a 100% success rate in resuming with my silly
+> hack, whist your DT patch alone only gives me a 50% rate at best.
+> 
+> > as I can see the only hogs left on kevin are:
+> >   &ap_pwroff      /* AP will auto-assert this when in S3 */
+> >   &clk_32k        /* This pin is always 32k on gru boards */
+> > 
+> > Those map to:
+> >   ap_pwroff: ap-pwroff {
+> >   
+> >      rockchip,pins = <1 5 RK_FUNC_1 &pcfg_pull_none>;
+> >   
+> >   };
+> >   
+> >   clk_32k: clk-32k {
+> >   
+> >     rockchip,pins = <0 0 RK_FUNC_2 &pcfg_pull_none>;
+> >   
+> >   };
+> > 
+> > So I added some printouts at suspend/resume time.  Specifically I set
+> > a boolean to "true" for the duration rockchip_pinctrl_suspend() and
+> > rockchip_pinctrl_resume() and this turned on a printout in
+> > rockchip_set_mux().  My printout looked like this (yeah, I know it's a
+> > whitespace-damaged patch just to show what I'm doing):
+> > 
+> > +       regmap_read(regmap, reg, &before);
+> > 
+> >         data = (mask << (bit + 16));
+> >         rmask = data | (data >> 16);
+> >         data |= (mux & mask) << bit;
+> >         ret = regmap_update_bits(regmap, reg, rmask, data);
+> > 
+> > +       regmap_read(regmap, reg, &after);
+> > +
+> > +       if (DOUG) {
+> > +               dev_info(info->dev,
+> > +                        "setting mux of GPIO%d-%d to %d;
+> > %#010x=>%#010x\n", +                        bank->bank_num, pin, mux,
+> > reg, before, after); +       }
+> > 
+> > ...and a similar one in rockchip_set_pull().  That showed this at resume
+> > time:
+> > 
+> > [   62.284427] rockchip-pinctrl pinctrl: setting mux of GPIO1-5 to 1;
+> > 0x00009400=>0x00009400
+> > [   62.294423] rockchip-pinctrl pinctrl: setting pull of GPIO1-5;
+> > 0x000041aa=>0x000041aa
+> > [   62.303343] rockchip-pinctrl pinctrl: setting mux of GPIO0-0 to 2;
+> > 0x00005002=>0x00005002
+> > [   62.313240] rockchip-pinctrl pinctrl: setting pull of GPIO0-0;
+> > 0x00000ddc=>0x00000ddc
+> > [
+> > 
+> > Said another way: pinmux and pull isn't actually changing due to the
+> > hogs.  We can see if something else could be changing, but I'd really
+> > want to be sure you're certain that the hogs are causing you
+> > problems...
+> 
+> I cannot say for sure that the hogs are the issue. But I thought that
+> they were the only pins affected by 981ed1bfbc6c... If this patch can
+> affect other pins, then I'm probably barking up the wrong tree.
 
-On 03/06/2018 09:23 AM, Will Deacon wrote:
-> Hi Shanker,
-> 
-> On Tue, Mar 06, 2018 at 08:47:27AM -0600, Shanker Donthineni wrote:
->> On 03/06/2018 07:44 AM, Will Deacon wrote:
->>> I think this is a slight asymmetry with the code for the I-side. On the
->>> I-side, you hook into invalidate_icache_by_line, whereas on the D-side you
->>> hook into the callers of dcache_by_line_op. Why is that?
->>>
->>
->> There is no particular reason other than complexity of the macro with another 
->> alternative. I tried to avoid this change by updating __clean_dcache_area_pou().
->> I can change if you're interested to see both I-Side and D-Side changes are
->> symmetric some thing like this...
->>
->>  .macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
->>   
->>   .if	(\op == cvau)
->>   alternative_if ARM64_HAS_CACHE_IDC
->>         dsb	ishst
->>         b       9997f
->>   alternative_else_nop_endif
->>   .endif
->>
->> 	dcache_line_size \tmp1, \tmp2
->> 	add	\size, \kaddr, \size
->> 	sub	\tmp2, \tmp1, #1
->> 	bic	\kaddr, \kaddr, \tmp2
->>  9998:
->> 	.if	(\op == cvau || \op == cvac)
->>  alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
->> 	dc	\op, \kaddr
->>  alternative_else
->> 	dc	civac, \kaddr
->>  alternative_endif
->> 	.elseif	(\op == cvap)
->>  alternative_if ARM64_HAS_DCPOP
->> 	sys 3, c7, c12, 1, \kaddr	// dc cvap
->>  alternative_else
->> 	dc	cvac, \kaddr
->>  alternative_endif
->> 	.else
->> 	dc	\op, \kaddr
->> 	.endif
->> 	add	\kaddr, \kaddr, \tmp1
->> 	cmp	\kaddr, \size
->> 	b.lo	9998b
->> 	dsb	\domain
->> 9997:
->> 	.endm
-> 
-> I think it would be cleaner the other way round, actually -- move the check
-> out of invalidate_icache_by_line and into its two callers.
-> 
+On Kevin I see something like
 
-Sure, I'll send out the next patch with your suggestions.
+[   60.764129] cros-ec-spi spi2.0: spi transfer failed: -108
+[   60.764132] cros-ec-spi spi2.0: cs-deassert spi transfer failed: -108
+[   60.764136] cros-ec-spi spi2.0: Command xfer error (err:-108)
+[   60.764365] cros-ec-spi spi2.0: spi transfer failed: -108
+[   60.764368] cros-ec-spi spi2.0: cs-deassert spi transfer failed: -108
+[   60.764371] cros-ec-spi spi2.0: Command xfer error (err:-108)
 
->>> I notice that the only user other than
->>> flush_icache_range/__flush_cache_user_range or invalidate_icache_by_line
->>> is in KVM, via invalidate_icache_range. If you want to hook in there, why
->>> aren't you also patching __flush_icache_all? If so, I'd rather have the
->>> I-side code consistent with the D-side code and do this in the handful of
->>> callers. We might even be able to elide a branch or two that way.
->>>
->>
->> Agree with you, it saves function calls overhead. I'll do this change...
->>
->> static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
->> {
->> 	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)
->> 	    __invalidate_icache_guest_page(pfn, size);
->> }
->>
->>
->>> I'm going to assume that I-cache aliases are all coherent if DIC=1, so it's
->>> safe to elide our alias sync code.
->>>
->>
->> I'm not sure about I-cache whether aliases are all coherent if DIC=1 ot not.
->> Unfortunately I don't have any hardware to test DIC=1. I've verified IDC=1.
-> 
-> I checked with our architects and aliases don't pose a problem here, so you
-> can ignore me :)
-> 
+on resume with my current for-next. So maybe your hack just
+happened to change some timing during resume?
 
-I also confirmed with Thomas Speier, we can skip __flush_icache_all() if DIC=1.
-
- 
-> Will
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
--- 
-Shanker Donthineni
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Suspend/Resume also disconnects my usb-ethernet, making me lose my
+nfsroot, so I can test this once every boot only.
