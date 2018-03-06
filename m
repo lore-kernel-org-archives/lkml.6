@@ -1,82 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933516AbeCFTaZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:30:25 -0500
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54699 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753466AbeCFTaU (ORCPT
+        id S933709AbeCFTbU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 14:31:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49292 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933295AbeCFTYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:30:20 -0500
-X-Google-Smtp-Source: AG47ELsO7zHOYB5OcA9UsX8MGwO2Qkj2x3nRO7i04UpJKkDeVr+E6R0tyAzPbEhCsWgjRA2EIpo91w==
-Subject: [pci PATCH v3 3/3] virtio_pci: Add support for unmanaged SR-IOV on
- virtio_pci devices
-From: Alexander Duyck <alexander.duyck@gmail.com>
-To: bhelgaas@google.com, alexander.h.duyck@intel.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, mheyne@amazon.de,
-        liang-min.wang@intel.com, mark.d.rustad@intel.com, dwmw2@infradead.org,
-        dwmw@amazon.co.uk
-Date: Tue, 06 Mar 2018 11:30:17 -0800
-Message-ID: <20180306192957.3153.60365.stgit@localhost.localdomain>
-In-Reply-To: <20180306192423.3153.42741.stgit@localhost.localdomain>
-References: <20180306192423.3153.42741.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Mar 2018 14:24:40 -0500
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: [PATCH v8 51/63] shmem: Convert shmem_partial_swap_usage to XArray
+Date: Tue,  6 Mar 2018 11:24:01 -0800
+Message-Id: <20180306192413.5499-52-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180306192413.5499-1-willy@infradead.org>
+References: <20180306192413.5499-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Hardware-realized virtio_pci devices can implement SR-IOV, so this
-patch enables its use. The device in question is an upcoming Intel
-NIC that implements both a virtio_net PF and virtio_net VFs. These
-are hardware realizations of what has been up to now been a software
-interface.
+Simpler code because the xarray takes care of things like the limit and
+dereferencing the slot.
 
-The device in question has the following 4-part PCI IDs:
-
-PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
-VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
-
-The patch currently needs no check for device ID, because the callback
-will never be made for devices that do not assert the capability or
-when run on a platform incapable of SR-IOV.
-
-One reason for this patch is because the hardware requires the
-vendor ID of a VF to be the same as the vendor ID of the PF that
-created it. So it seemed logical to simply have a fully-functioning
-virtio_net PF create the VFs. This patch makes that possible.
-
-Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/virtio/virtio_pci_common.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ mm/shmem.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 48d4d1cf1cb6..ca1549393255 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -584,6 +584,7 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- 	else
- 		virtio_pci_modern_remove(vp_dev);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index cfbffb4b47a2..707430003ec7 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -658,29 +658,17 @@ static int shmem_free_swap(struct address_space *mapping,
+ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 						pgoff_t start, pgoff_t end)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
+ 	struct page *page;
+ 	unsigned long swapped = 0;
  
-+	pci_disable_sriov(pci_dev);
- 	pci_disable_device(pci_dev);
- 	put_device(dev);
- }
-@@ -596,6 +597,9 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
- #ifdef CONFIG_PM_SLEEP
- 	.driver.pm	= &virtio_pci_pm_ops,
- #endif
-+#ifdef CONFIG_PCI_IOV
-+	.sriov_configure = pci_sriov_configure_unmanaged,
-+#endif
- };
+ 	rcu_read_lock();
+-
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
+-		if (iter.index >= end)
+-			break;
+-
+-		page = radix_tree_deref_slot(slot);
+-
+-		if (radix_tree_deref_retry(page)) {
+-			slot = radix_tree_iter_retry(&iter);
+-			continue;
+-		}
+-
++	xas_for_each(&xas, page, end - 1) {
+ 		if (xa_is_value(page))
+ 			swapped++;
  
- module_pci_driver(virtio_pci_driver);
+ 		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
++			xas_pause(&xas);
+ 			cond_resched_rcu();
+ 		}
+ 	}
+-- 
+2.16.1
