@@ -1,77 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754097AbeCFVre (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 16:47:34 -0500
-Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61]:48334 "EHLO
-        a8-61.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753876AbeCFVrd (ORCPT
+        id S1754187AbeCFVtL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 16:49:11 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34354 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753823AbeCFVtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 16:47:33 -0500
-From: Jeremy Cline <jeremy@jcline.org>
-To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lining916740672@icloud.com, Jeremy Cline <jeremy@jcline.org>
-Subject: [PATCH v2] scsi: sd: Keep disk read-only when re-reading partition
-Date: Tue, 6 Mar 2018 21:47:32 +0000
-Message-ID: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
-X-Mailer: git-send-email 2.16.2
-X-SES-Outgoing: 2018.03.06-54.240.8.61
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+        Tue, 6 Mar 2018 16:49:09 -0500
+Subject: Re: [PATCH] mm: might_sleep warning
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Miles Chen <miles.chen@mediatek.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+References: <20180306192022.28289-1-pasha.tatashin@oracle.com>
+ <20180306123655.957e5b6b20b200505544ea7a@linux-foundation.org>
+ <CAGM2rea1raxsXDkqZgmmdBiuywp1M3y1p++=J893VJDgGDWLnQ@mail.gmail.com>
+ <20180306125604.c394a25a50cae0e36c546855@linux-foundation.org>
+ <CAGM2rebb9FdceEBO2GfJ7BKf=fEf8p86Yc1vCq4eZyyB0Me+DA@mail.gmail.com>
+ <20180306132129.45b395d9732b6360fa0b600d@linux-foundation.org>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Message-ID: <a90aa8fc-0612-3107-93c6-9e4b706785db@oracle.com>
+Date: Tue, 6 Mar 2018 16:48:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180306132129.45b395d9732b6360fa0b600d@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803060234
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the read-only flag is true on a SCSI disk, re-reading the partition
-table sets the flag back to false.
+> That's why page_alloc_init_late() needs spin_lock_irq().  If a CPU is
+> holding deferred_zone_grow_lock with enabled interrupts and an
+> interrupt comes in on that CPU and the CPU runs deferred_grow_zone() in
+> its interrupt handler, we deadlock.
+> 
+> lockdep knows about this bug and should have reported it.
+> 
 
-To observe this bug, you can run:
+I see what you are saying. Yes you are correct, we need spin_lock_irq() 
+in page_alloc_init_late(). I will update the patch. I am not sure why 
+lockdep has not reported it. May be it is initialized after this code is 
+executed?
 
-1. blockdev --setro /dev/sda
-2. blockdev --rereadpt /dev/sda
-3. blockdev --getro /dev/sda
-
-This commit reads the disk's old state and combines it with the device
-disk-reported state rather than unconditionally marking it as RW.
-
-Reported-by: Li Ning <lining916740672@icloud.com>
-Signed-off-by: Jeremy Cline <jeremy@jcline.org>
----
-Sorry about this, but there's a bug in the first version of this patch.
-I'm not sure what the protocol is for sending revised patches when the
-earlier version got accepted, but I don't see the first version in
-4.16/scsi-fixes yet. If I should make a patch on top of the v1 patch,
-just let me know.
-
-Changes in v2:
-  - Don't save the value of "get_disk_ro" to "sdkp->write_prot" since,
-    as Li Ning noticed, that causes a second bug: when you make the disk
-    writable again with "blockdev --setrw /dev/sda" it isn't possible to
-    write to the disk until the partition is re-read.
-
- drivers/scsi/sd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index bff21e636ddd..3541caf3fceb 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2595,6 +2595,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
- 	int res;
- 	struct scsi_device *sdp = sdkp->device;
- 	struct scsi_mode_data data;
-+	int disk_ro = get_disk_ro(sdkp->disk);
- 	int old_wp = sdkp->write_prot;
- 
- 	set_disk_ro(sdkp->disk, 0);
-@@ -2635,7 +2636,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
- 			  "Test WP failed, assume Write Enabled\n");
- 	} else {
- 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
--		set_disk_ro(sdkp->disk, sdkp->write_prot);
-+		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
- 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
- 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
- 				  sdkp->write_prot ? "on" : "off");
--- 
-2.16.2
+Thank you,
+Pavel
