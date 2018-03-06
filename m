@@ -1,136 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeCFJSv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:18:51 -0500
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:53743 "EHLO
-        anchovy3.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753322AbeCFJSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:18:49 -0500
-Subject: Re: [PATCH 3/3] i2c: xlp9xx: Add support for SMBAlert
-To: Jan Glauber <jglauber@cavium.com>,
-        George Cherian <george.cherian@cavium.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wsa@the-dreams.de, Kamlakant Patel <kamlakant.patel@cavium.com>
-References: <1519737980-27997-1-git-send-email-george.cherian@cavium.com>
- <1519737980-27997-3-git-send-email-george.cherian@cavium.com>
- <20180306083647.GA11729@wintermute>
-From: Phil Reid <preid@electromag.com.au>
-Message-ID: <b78f0a77-403d-a5e5-e274-8c4f08a2cd20@electromag.com.au>
-Date: Tue, 6 Mar 2018 17:18:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753024AbeCFJVl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:21:41 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750836AbeCFJVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:21:38 -0500
+Date: Tue, 6 Mar 2018 10:21:34 +0100
+From: Andrew Jones <drjones@redhat.com>
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu
+Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
+Message-ID: <20180306092134.4bfbz34yhqfrfdlf@kamzik.brq.redhat.com>
+References: <20180215175803.6870-1-marc.zyngier@arm.com>
+ <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
+ <86o9k63f7a.wl-marc.zyngier@arm.com>
+ <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180306083647.GA11729@wintermute>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/03/2018 16:36, Jan Glauber wrote:
-> On Tue, Feb 27, 2018 at 01:26:20PM +0000, George Cherian wrote:
->> Add support for SMBus alert mechanism to i2c-xlp9xx driver.
->> The second interrupt is parsed to use for SMBus alert.
->> The first interrupt is the i2c controller main interrupt.
->>
->> Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
->> Signed-off-by: George Cherian <george.cherian@cavium.com>
->> ---
->>   drivers/i2c/busses/i2c-xlp9xx.c | 26 ++++++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
->>
->> diff --git a/drivers/i2c/busses/i2c-xlp9xx.c b/drivers/i2c/busses/i2c-xlp9xx.c
->> index eb8913e..9462eab 100644
->> --- a/drivers/i2c/busses/i2c-xlp9xx.c
->> +++ b/drivers/i2c/busses/i2c-xlp9xx.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/clk.h>
->>   #include <linux/completion.h>
->>   #include <linux/i2c.h>
->> +#include <linux/i2c-smbus.h>
->>   #include <linux/init.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/io.h>
->> @@ -84,6 +85,8 @@ struct xlp9xx_i2c_dev {
->>   	struct device *dev;
->>   	struct i2c_adapter adapter;
->>   	struct completion msg_complete;
->> +	struct i2c_smbus_alert_setup alert_data;
->> +	struct i2c_client *ara;
->>   	int irq;
->>   	bool msg_read;
->>   	bool len_recv;
->> @@ -447,6 +450,21 @@ static int xlp9xx_i2c_get_frequency(struct platform_device *pdev,
->>   	return 0;
->>   }
->>   
->> +static int xlp9xx_i2c_smbus_setup(struct xlp9xx_i2c_dev *priv,
->> +				  struct platform_device *pdev)
->> +{
->> +	if (!priv->alert_data.irq)
->> +		return -EINVAL;
->> +
->> +	priv->alert_data.alert_edge_triggered = 0;
+On Mon, Mar 05, 2018 at 04:47:55PM +0000, Peter Maydell wrote:
+> On 2 March 2018 at 11:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > On Fri, 02 Mar 2018 10:44:48 +0000,
+> > Auger Eric wrote:
+> >> I understand the get/set is called as part of the migration process.
+> >> So my understanding is the benefit of this series is migration fails in
+> >> those cases:
+> >>
+> >> >=0.2 source -> 0.1 destination
+> >> 0.1 source -> >=0.2 destination
+> >
+> > It also fails in the case where you migrate a 1.0 guest to something
+> > that cannot support it.
 > 
-> Hi George,
+> I think it would be useful if we could write out the various
+> combinations of source, destination and what we expect/want to
+> have happen. My gut feeling here is that we're sacrificing
+> exact migration compatibility in favour of having the guest
+> automatically get the variant-2 mitigations, but it's not clear
+> to me exactly which migration combinations that's intended to
+> happen for. Marc?
 > 
-> I think this is not needed anymore, see:
-> 9b9f2b8bc2ac i2c: i2c-smbus: Use threaded irq for smbalert
-> 
-> --Jan
+> If this wasn't a mitigation issue the desired behaviour would be
+> straightforward:
+>  * kernel should default to 0.2 on the basis that
+>    that's what it did before
+>  * new QEMU version should enable 1.0 by default for virt-2.12
+>    and 0.2 for virt-2.11 and earlier
+>  * PSCI version info shouldn't appear in migration stream unless
+>    it's something other than 0.2
+> But that would leave some setups (which?) unnecessarily without the
+> mitigation, so we're not doing that. The question is, exactly
+> what *are* we aiming for?
 
-Yes.
+The reason Marc dropped this patch from the series it was first introduced
+in was because we didn't have the aim 100% understood. We want the
+mitigation by default, but also to have the least chance of migration
+failure, and when we must fail (because we're not doing the
+straightforward approach listed above, which would prevent failures), then
+we want to fail with the least amount of damage to the user.
 
-And also all of this is not needed if named interrupts.
-- interrupt-names
-	"irq", "wakeup" and "smbus_alert" names are recognized by I2C core,
-	other names are	left to individual drivers.
+I experimented with a couple different approaches and provided tables[1]
+with my results. I even recommended an approach, but I may have changed
+my mind after reading Marc's follow-up[2]. The thread continues from
+there as well with follow-ups from Christoffer, Marc, and myself. Anyway,
+Marc did this repost for us to debate it and work out the best approach
+here.
 
-presence of named irq smbus_alert should result in alert handler being
-created for that bus by the core
+Thanks,
+drew
 
-> 
->> +
->> +	priv->ara = i2c_setup_smbus_alert(&priv->adapter, &priv->alert_data);
->> +	if (!priv->ara)
->> +		return -ENODEV;
->> +
->> +	return 0;
->> +}
->> +
->>   static int xlp9xx_i2c_probe(struct platform_device *pdev)
->>   {
->>   	struct xlp9xx_i2c_dev *priv;
->> @@ -467,6 +485,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
->>   		dev_err(&pdev->dev, "invalid irq!\n");
->>   		return priv->irq;
->>   	}
->> +	/* SMBAlert irq */
->> +	priv->alert_data.irq = platform_get_irq(pdev, 1);
->> +	if (priv->alert_data.irq <= 0)
->> +		priv->alert_data.irq = 0;
->>   
->>   	xlp9xx_i2c_get_frequency(pdev, priv);
->>   	xlp9xx_i2c_init(priv);
->> @@ -493,6 +515,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
->>   	if (err)
->>   		return err;
->>   
->> +	err = xlp9xx_i2c_smbus_setup(priv, pdev);
->> +	if (err)
->> +		dev_info(&pdev->dev, "No active SMBus alert %d\n", err);
->> +
->>   	platform_set_drvdata(pdev, priv);
->>   	dev_dbg(&pdev->dev, "I2C bus:%d added\n", priv->adapter.nr);
->>   
->> -- 
->> 2.1.4
-> 
-> 
-
-
--- 
-Regards
-Phil Reid
+[1] https://www.spinics.net/lists/arm-kernel/msg632355.html
+[2] https://www.spinics.net/lists/arm-kernel/msg632385.html
