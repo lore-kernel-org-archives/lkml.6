@@ -1,162 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932410AbeCFGxH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 01:53:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36337 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeCFGxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 01:53:05 -0500
-Date: Mon, 5 Mar 2018 22:52:56 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-6afad54d2f0ddebacfcf3b829147d7fed8dab298@git.kernel.org>
-Cc: mingo@kernel.org, acme@redhat.com, wangnan0@huawei.com,
-        kan.liang@linux.intel.com, namhyung@kernel.org, tglx@linutronix.de,
-        ak@linux.intel.com, linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        hpa@zytor.com
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        namhyung@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
-        acme@redhat.com, kan.liang@linux.intel.com, ak@linux.intel.com,
-        tglx@linutronix.de
-In-Reply-To: <1519945751-37786-14-git-send-email-kan.liang@linux.intel.com>
-References: <1519945751-37786-14-git-send-email-kan.liang@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf mmap: Discard legacy interfaces for mmap read
- forward
-Git-Commit-ID: 6afad54d2f0ddebacfcf3b829147d7fed8dab298
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1750948AbeCFGzO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 01:55:14 -0500
+Received: from mga18.intel.com ([134.134.136.126]:62763 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750763AbeCFGzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 01:55:12 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
+   d="scan'208";a="35806186"
+Date: Tue, 6 Mar 2018 14:54:11 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kbuild-all@01.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, alex.williamson@redhat.com, peterx@redhat.com,
+        eric.auger@redhat.com, aik@ozlabs.ru
+Subject: Re: [PATCH 3/3] vfio/pci: Add ioeventfd support
+Message-ID: <201803061415.NOLGNvAS%fengguang.wu@intel.com>
+References: <20180228201520.25283.97532.stgit@gimli.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180228201520.25283.97532.stgit@gimli.home>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6afad54d2f0ddebacfcf3b829147d7fed8dab298
-Gitweb:     https://git.kernel.org/tip/6afad54d2f0ddebacfcf3b829147d7fed8dab298
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Thu, 1 Mar 2018 18:09:11 -0500
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Mar 2018 10:51:10 -0300
+Hi Alex,
 
-perf mmap: Discard legacy interfaces for mmap read forward
+I love your patch! Perhaps something to improve:
 
-Discards legacy interfaces perf_evlist__mmap_read_forward(),
-perf_evlist__mmap_read() and perf_evlist__mmap_consume().
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.16-rc4 next-20180306]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-No tools use them.
+url:    https://github.com/0day-ci/linux/commits/Alex-Williamson/vfio-pci-Pull-BAR-mapping-setup-from-read-write-path/20180303-015851
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1519945751-37786-14-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/vfio/pci/vfio_pci_rdwr.c:290:1: sparse: incorrect type in argument 2 (different address spaces) @@    expected void [noderef] <asn:2>*<noident> @@    got sn:2>*<noident> @@
+   drivers/vfio/pci/vfio_pci_rdwr.c:290:1:    expected void [noderef] <asn:2>*<noident>
+   drivers/vfio/pci/vfio_pci_rdwr.c:290:1:    got void *opaque
+   drivers/vfio/pci/vfio_pci_rdwr.c:291:1: sparse: incorrect type in argument 2 (different address spaces) @@    expected void [noderef] <asn:2>*<noident> @@    got sn:2>*<noident> @@
+   drivers/vfio/pci/vfio_pci_rdwr.c:291:1:    expected void [noderef] <asn:2>*<noident>
+   drivers/vfio/pci/vfio_pci_rdwr.c:291:1:    got void *opaque
+   drivers/vfio/pci/vfio_pci_rdwr.c:292:1: sparse: incorrect type in argument 2 (different address spaces) @@    expected void [noderef] <asn:2>*<noident> @@    got sn:2>*<noident> @@
+   drivers/vfio/pci/vfio_pci_rdwr.c:292:1:    expected void [noderef] <asn:2>*<noident>
+   drivers/vfio/pci/vfio_pci_rdwr.c:292:1:    got void *opaque
+>> drivers/vfio/pci/vfio_pci_rdwr.c:378:52: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *opaque @@    got void [noderef] <avoid *opaque @@
+   drivers/vfio/pci/vfio_pci_rdwr.c:378:52:    expected void *opaque
+   drivers/vfio/pci/vfio_pci_rdwr.c:378:52:    got void [noderef] <asn:2>*
+
+vim +290 drivers/vfio/pci/vfio_pci_rdwr.c
+
+   286	
+   287	#ifdef iowrite64
+   288	VFIO_PCI_IOEVENTFD_HANDLER(64)
+   289	#endif
+ > 290	VFIO_PCI_IOEVENTFD_HANDLER(32)
+   291	VFIO_PCI_IOEVENTFD_HANDLER(16)
+   292	VFIO_PCI_IOEVENTFD_HANDLER(8)
+   293	
+   294	long vfio_pci_ioeventfd(struct vfio_pci_device *vdev, loff_t offset,
+   295				uint64_t data, int count, int fd)
+   296	{
+   297		struct pci_dev *pdev = vdev->pdev;
+   298		loff_t pos = offset & VFIO_PCI_OFFSET_MASK;
+   299		int ret, bar = VFIO_PCI_OFFSET_TO_INDEX(offset);
+   300		struct vfio_pci_ioeventfd *ioeventfd;
+   301		int (*handler)(void *addr, void *value);
+   302	
+   303		/* Only support ioeventfds into BARs */
+   304		if (bar > VFIO_PCI_BAR5_REGION_INDEX)
+   305			return -EINVAL;
+   306	
+   307		if (pos + count > pci_resource_len(pdev, bar))
+   308			return -EINVAL;
+   309	
+   310		/* Disallow ioeventfds working around MSI-X table writes */
+   311		if (bar == vdev->msix_bar &&
+   312		    !(pos + count <= vdev->msix_offset ||
+   313		      pos >= vdev->msix_offset + vdev->msix_size))
+   314			return -EINVAL;
+   315	
+   316		switch (count) {
+   317		case 1:
+   318			handler = &vfio_pci_ioeventfd_handler8;
+   319			break;
+   320		case 2:
+   321			handler = &vfio_pci_ioeventfd_handler16;
+   322			break;
+   323		case 4:
+   324			handler = &vfio_pci_ioeventfd_handler32;
+   325			break;
+   326	#ifdef iowrite64
+   327		case 8:
+   328			handler = &vfio_pci_ioeventfd_handler64;
+   329			break;
+   330	#endif
+   331		default:
+   332			return -EINVAL;
+   333		}
+   334	
+   335		ret = vfio_pci_setup_barmap(vdev, bar);
+   336		if (ret)
+   337			return ret;
+   338	
+   339		mutex_lock(&vdev->ioeventfds_lock);
+   340	
+   341		list_for_each_entry(ioeventfd, &vdev->ioeventfds_list, next) {
+   342			if (ioeventfd->pos == pos && ioeventfd->bar == bar &&
+   343			    ioeventfd->data == data && ioeventfd->count == count) {
+   344				if (fd == -1) {
+   345					vfio_virqfd_disable(&ioeventfd->virqfd);
+   346					list_del(&ioeventfd->next);
+   347					vdev->ioeventfds_nr--;
+   348					kfree(ioeventfd);
+   349					ret = 0;
+   350				} else
+   351					ret = -EEXIST;
+   352	
+   353				goto out_unlock;
+   354			}
+   355		}
+   356	
+   357		if (fd < 0) {
+   358			ret = -ENODEV;
+   359			goto out_unlock;
+   360		}
+   361	
+   362		if (vdev->ioeventfds_nr >= VFIO_PCI_IOEVENTFD_MAX) {
+   363			ret = -ENOSPC;
+   364			goto out_unlock;
+   365		}
+   366	
+   367		ioeventfd = kzalloc(sizeof(*ioeventfd), GFP_KERNEL);
+   368		if (!ioeventfd) {
+   369			ret = -ENOMEM;
+   370			goto out_unlock;
+   371		}
+   372	
+   373		ioeventfd->pos = pos;
+   374		ioeventfd->bar = bar;
+   375		ioeventfd->data = data;
+   376		ioeventfd->count = count;
+   377	
+ > 378		ret = vfio_virqfd_enable(vdev->barmap[bar] + pos, handler, NULL,
+
 ---
- tools/perf/util/evlist.c | 25 +------------------------
- tools/perf/util/evlist.h |  4 ----
- tools/perf/util/mmap.c   | 21 +--------------------
- 3 files changed, 2 insertions(+), 48 deletions(-)
-
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 7b7d535396f7..41a4666f1519 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -702,29 +702,6 @@ static int perf_evlist__resume(struct perf_evlist *evlist)
- 	return perf_evlist__set_paused(evlist, false);
- }
- 
--union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist, int idx)
--{
--	struct perf_mmap *md = &evlist->mmap[idx];
--
--	/*
--	 * Check messup is required for forward overwritable ring buffer:
--	 * memory pointed by md->prev can be overwritten in this case.
--	 * No need for read-write ring buffer: kernel stop outputting when
--	 * it hit md->prev (perf_mmap__consume()).
--	 */
--	return perf_mmap__read_forward(md);
--}
--
--union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx)
--{
--	return perf_evlist__mmap_read_forward(evlist, idx);
--}
--
--void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx)
--{
--	perf_mmap__consume(&evlist->mmap[idx], false);
--}
--
- static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
- {
- 	int i;
-@@ -761,7 +738,7 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist)
- 		map[i].fd = -1;
- 		/*
- 		 * When the perf_mmap() call is made we grab one refcount, plus
--		 * one extra to let perf_evlist__mmap_consume() get the last
-+		 * one extra to let perf_mmap__consume() get the last
- 		 * events after all real references (perf_mmap__get()) are
- 		 * dropped.
- 		 *
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 336b838e6957..6c41b2f78713 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -129,10 +129,6 @@ struct perf_sample_id *perf_evlist__id2sid(struct perf_evlist *evlist, u64 id);
- 
- void perf_evlist__toggle_bkw_mmap(struct perf_evlist *evlist, enum bkw_mmap_state state);
- 
--union perf_event *perf_evlist__mmap_read(struct perf_evlist *evlist, int idx);
--
--union perf_event *perf_evlist__mmap_read_forward(struct perf_evlist *evlist,
--						 int idx);
- void perf_evlist__mmap_consume(struct perf_evlist *evlist, int idx);
- 
- int perf_evlist__open(struct perf_evlist *evlist);
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 91531a7c8fbf..4f27c464ce0b 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -63,25 +63,6 @@ static union perf_event *perf_mmap__read(struct perf_mmap *map,
- 	return event;
- }
- 
--/*
-- * legacy interface for mmap read.
-- * Don't use it. Use perf_mmap__read_event().
-- */
--union perf_event *perf_mmap__read_forward(struct perf_mmap *map)
--{
--	u64 head;
--
--	/*
--	 * Check if event was unmapped due to a POLLHUP/POLLERR.
--	 */
--	if (!refcount_read(&map->refcnt))
--		return NULL;
--
--	head = perf_mmap__read_head(map);
--
--	return perf_mmap__read(map, &map->prev, head);
--}
--
- /*
-  * Read event from ring buffer one by one.
-  * Return one event for each call.
-@@ -191,7 +172,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
- int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
- {
- 	/*
--	 * The last one will be done at perf_evlist__mmap_consume(), so that we
-+	 * The last one will be done at perf_mmap__consume(), so that we
- 	 * make sure we don't prevent tools from consuming every last event in
- 	 * the ring buffer.
- 	 *
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
