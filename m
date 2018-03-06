@@ -1,119 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754114AbeCFXkP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 18:40:15 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:44716 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753923AbeCFXkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 18:40:10 -0500
-From: Haris Okanovic <haris.okanovic@ni.com>
-To: <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <haris.okanovic@ni.com>, <harisokn@gmail.com>, <bigeasy@linutronix.de>,
-        <tglx@linutronix.de>, <julia.cartwright@ni.com>,
-        <gratian.crisan@ni.com>, <anna-maria@linutronix.de>,
-        <daniel@bristot.me>
-Subject: [PATCH v4 2/2] timers: Don't search for expired timers while TIMER_SOFTIRQ is scheduled
-Date: Tue, 6 Mar 2018 17:39:44 -0600
-Message-ID: <20180306233944.11271-2-haris.okanovic@ni.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180306233944.11271-1-haris.okanovic@ni.com>
-References: <alpine.DEB.2.20.1707182206110.2425@nanos>
- <20180306233944.11271-1-haris.okanovic@ni.com>
+        id S1754151AbeCFXpS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:45:18 -0500
+Received: from mga11.intel.com ([192.55.52.93]:35623 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753878AbeCFXpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 18:45:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,433,1515484800";
+   d="p7s'?scan'208";a="32939669"
+From: "Derrick, Jonathan" <jonathan.derrick@intel.com>
+To: "Bauer, Scott" <scott.bauer@intel.com>,
+        "jonas.rabenstein@studium.uni-erlangen.de"
+        <jonas.rabenstein@studium.uni-erlangen.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH][RESEND] block: sed-opal: fix u64 short atom length
+Thread-Topic: [PATCH][RESEND] block: sed-opal: fix u64 short atom length
+Thread-Index: AQHTsWEJmaXloMfF5ESmT6QyyCoGnaPEbbAA
+Date: Tue, 6 Mar 2018 23:45:14 +0000
+Message-ID: <1520379912.4178.83.camel@intel.com>
+References: <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
+In-Reply-To: <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.112.61]
+Content-Type: multipart/signed; micalg=sha-1;
+        protocol="application/x-pkcs7-signature"; boundary="=-d8NuL9zfMejDWQd2LDRh"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change avoid needlessly searching for more timers in
-run_local_timers() (hard interrupt context) when they can't fire.
-For example, when ktimersoftd/run_timer_softirq() is scheduled but
-preempted due to cpu contention. When it runs, run_timer_softirq() will
-discover newly expired timers up to current jiffies in addition to
-firing previously expired timers.
+--=-d8NuL9zfMejDWQd2LDRh
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-However, this change also adds an edge case where non-hrtimer firing
-is sometimes delayed by an additional tick. This is acceptable since we
-don't make latency guarantees for non-hrtimers and would prefer to
-minimize hard interrupt time instead.
+Hi Jonas,
 
-Signed-off-by: Haris Okanovic <haris.okanovic@ni.com>
----
-[PATCH v3]
- - Split block_softirq into separate commit
-[PATCH v4]
- - Rebase onto v4.14.20-rt17
+On Thu, 2018-03-01 at 14:27 +0100, Jonas Rabenstein wrote:
+> The length must be given as bytes and not as 4 bit tuples.
+>=20
+> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlange
+> n.de>
+> ---
+>  block/sed-opal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/block/sed-opal.c b/block/sed-opal.c
+> index 36842bfa572e..d5f565e1557a 100644
+> --- a/block/sed-opal.c
+> +++ b/block/sed-opal.c
+> @@ -562,7 +562,7 @@ static void add_token_u64(int *err, struct
+> opal_dev *cmd, u64 number)
+>  	}
+> =20
+>  	msb =3D fls(number);
+> -	len =3D DIV_ROUND_UP(msb, 4);
+> +	len =3D DIV_ROUND_UP(msb, 8);
 
-https://github.com/harisokanovic/linux/tree/dev/hokanovi/timer-peek-v6
----
- kernel/time/timer.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+This change looks partially correct, but I believe we should be doing
+fls64() on 'number' as well.
 
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 98e952a6428d..5687e9bcf378 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -207,6 +207,7 @@ struct timer_base {
- 	unsigned int		cpu;
- 	bool			is_idle;
- 	bool			must_forward_clk;
-+	bool			block_softirq;
- 	DECLARE_BITMAP(pending_map, WHEEL_SIZE);
- 	struct hlist_head	vectors[WHEEL_SIZE];
- 	struct hlist_head	expired_lists[LVL_DEPTH];
-@@ -1404,9 +1405,11 @@ static int __collect_expired_timers(struct timer_base *base)
- 
- 	/*
- 	 * expire_timers() must be called at least once before we can
--	 * collect more timers.
-+	 * collect more timers. We should never hit this case unless
-+	 * TIMER_SOFTIRQ got raised without expired timers.
- 	 */
--	if (base->expired_levels)
-+	if (WARN_ONCE(base->expired_levels,
-+			"Must expire collected timers before collecting more"))
- 		return base->expired_levels;
- 
- 	clk = base->clk;
-@@ -1748,6 +1751,9 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
- 	__run_timers(base);
- 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
- 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
-+
-+	/* Allow new TIMER_SOFTIRQs to get scheduled by run_local_timers() */
-+	base->block_softirq = false;
- }
- 
- /*
-@@ -1758,6 +1764,14 @@ void run_local_timers(void)
- 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
- 
- 	hrtimer_run_queues();
-+
-+	/*
-+	 * Skip if TIMER_SOFTIRQ is already running on this CPU, since it
-+	 * will find and expire all timers up to current jiffies.
-+	 */
-+	if (base->block_softirq)
-+		return;
-+
- 	/* Raise the softirq only if required. */
- 	if (time_before(jiffies, base->clk) || !tick_find_expired(base)) {
- 		if (!IS_ENABLED(CONFIG_NO_HZ_COMMON))
-@@ -1766,7 +1780,10 @@ void run_local_timers(void)
- 		base++;
- 		if (time_before(jiffies, base->clk) || !tick_find_expired(base))
- 			return;
-+		base--;
- 	}
-+
-+	base->block_softirq = true;
- 	raise_softirq(TIMER_SOFTIRQ);
- }
- 
--- 
-2.15.1
+It looks like it currently coincidentally works with u64 numbers
+falling in 32-bit ranges.
+
+
+> =20
+>  	if (cmd->pos >=3D IO_BUFFER_LENGTH - len - 1) {
+>  		pr_debug("Error adding u64: end of buffer.\n");
+--=-d8NuL9zfMejDWQd2LDRh
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+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
+AG6qjTBc2iB2iz6IVnzrBtQT5DR3KM6EqbMTwur8keTC11xls7lwWexzsSgt37V9UNKAqfsZPgcX
+AgMBAAGjggI3MIICMzAdBgNVHQ4EFgQUJRdznv8EeAa3g+3F5NKtNNctuBcwHwYDVR0jBBgwFoAU
+HmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5pbnRlbC5j
+b20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWluZyUyMENB
+JTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3dy5pbnRl
+bC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIw
+SXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRlbC5jb20v
+MAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9gSiFjp9T
+gpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMMMCkGCSsG
+AQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBRBgNVHREESjBIoCoGCisGAQQB
+gjcUAgOgHAwaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb22BGmpvbmF0aGFuLmRlcnJpY2tAaW50
+ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQA5LNb+VnWY0V21FlNjnQ2BIb5gmlED29zwQiC5yezn
+2SexgvN31129iJSkXuiBHdcVJiUAUPHYuxPRwumwbrkY6m+sYi9kIzKt+ZKNNAN4WbnavsbyRBlb
+cIn2E5swqD+sks8AmKivHmg+gFeboLaOf+EqVihIz1Wec1PpbX98R1t2ep7Y/81DD1fIjAWHl6Mq
+TJwjKQuYB01kkJdXZAGPXUQSARR1y2D1YpCkDqfGH2STaB4nenD4INSyhTGo5RV9wwTAibyrIq50
+rnmvBnHTmICQVdHuIhG1gGmDLUAGqfrU3W2QJr9gkICdrTMgIEdd8s73wknaZxZKqfRxnMVQMYIC
+FzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBD
+bGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFs
+IEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAKye+0C3syvSXOcAAAAArJ4wCQYFKw4DAhoFAKBdMBgG
+CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDMwNjIzNDUxMlowIwYJ
+KoZIhvcNAQkEMRYEFC6UnZxFJwQK9vn9TlAhodBQ1j3pMA0GCSqGSIb3DQEBAQUABIIBAKijeo2x
+ZBA6lxKukdGNDA8EobA+UwDMb/JXSpHrepK51mykwgM8z6aFR+HlzisMHAMV4ix/tPn4t6XqTyk/
+UPqbt0qFVHNSs+NnPeNmCeX2VE0+d00bBcP9b32uGXmIpibDUzeck092s+Q8/0PBScMzgP4gRfnt
+AuUTdDTw0KC1SaNk6rpZRLExujt5fYRZ51g3tdA8mDyXJEFBfkQaTH2DlvL82fqZG4xk9OSUHTiC
+Skx9wI9Gl2zZnZ9xeHCMJWBiJzEJA7SIa/iD3HNlkMfIbt13sNbFKik0ljD2C+WG+EVHq+xVdiKx
+uoWOgUVmp0aI6U9xe+Gxn+vHs6/m/78AAAAAAAA=
+
+
+--=-d8NuL9zfMejDWQd2LDRh--
