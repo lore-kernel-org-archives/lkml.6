@@ -1,77 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeCFIeM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:34:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:53538 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752894AbeCFIeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:34:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
-   d="scan'208";a="39561108"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/3] tpm_crb: use __le64 annotated variable for response
- buffer address
-Thread-Topic: [PATCH 3/3] tpm_crb: use __le64 annotated variable for
- response buffer address
-Thread-Index: AQHTs7KLZZhpVtGdmECDIyA6qJ9KhKPBe78AgAFFgICAACHOcA==
-Date: Tue, 6 Mar 2018 08:34:03 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F07F@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180304121205.16934-3-tomas.winkler@intel.com>
- <20180305130320.GC3425@linux.intel.com>
- <20180306082821.GB5705@linux.intel.com>
-In-Reply-To: <20180306082821.GB5705@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjBiNGY4ZDUtMTEwOS00MDFlLTg5OTQtYmZkOGQzNGE3OTlkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI3SngyQlRjVWNUeGJuRlwvS0tWTjMrS0FLRGtcL2NGenVDU3l3cWk0NVoxMDRcL0hIUHNPUG9BdHlWdHd4M2ZxY09PIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.226]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753340AbeCFIhB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:37:01 -0500
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:38477 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753164AbeCFIg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 03:36:58 -0500
+X-Google-Smtp-Source: AG47ELvzDe2GDp+t/bWKUibSTohO+ZKXyMz1PAtWGTFRHcWXpjOYWzZ41zjhCsNCH2294M1Yrh3cjA==
+Date: Tue, 6 Mar 2018 11:36:42 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC, PATCH 18/22] x86/mm: Handle allocation of encrypted pages
+Message-ID: <20180306083642.yrhbcuz7fgwhmlix@node.shutemov.name>
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+ <20180305162610.37510-19-kirill.shutemov@linux.intel.com>
+ <6551765a-5926-8445-d867-8f7c6bf343b4@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6551765a-5926-8445-d867-8f7c6bf343b4@intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> On Mon, Mar 05, 2018 at 03:03:20PM +0200, Jarkko Sakkinen wrote:
-> > On Sun, Mar 04, 2018 at 02:12:05PM +0200, Tomas Winkler wrote:
-> > > This suppresses sparse warning
-> > > drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted
-> > > __le64
-> > >
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > ---
-> > >  drivers/char/tpm/tpm_crb.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > The guideline is that you should describe what is wrong rather than
-> > copy-paste the sparse message.
+On Mon, Mar 05, 2018 at 11:07:55AM -0800, Dave Hansen wrote:
+> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
+> > kmap_atomic_keyid() would map the page with the specified KeyID.
+> > For now it's dummy implementation that would be replaced later.
 > 
-> Jason, didn't yo give the feedback to some patch 1-2 years ago that instead
-> of copy-pasting parse error one should write a clear commit msg or is this
-> OK?
+> I think you need to explain the tradeoffs here.  We could just change
+> the linear map around, but you don't.  Why?
 
-I think you are reading wrongly the rule,  the title explains the issue and in addition 
-I'm adding exact sparse warning. this is usually required. 
-What is wrong is putting something like 'Fix sparse error' or "Fix warning' into patch subject. 
-So the imperative here is 'adding annotation' and not a 'fixing a sparse message'.
+I don't think we settled on implementation by this point: kmap() is only
+interface and doesn't imply what it acctually does. I *can* change linear
+mapping if we would chose so.
 
-Thanks
-Tomas
+I will explain the kmap() implementation in patches that would implement
+it.
+
+-- 
+ Kirill A. Shutemov
