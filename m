@@ -1,59 +1,35 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520319882; cv=none;
+Return-Path: <dave.hansen@intel.com>
+X-Google-Smtp-Source: AG47ELsc1Vb6OIdIZY7Zjs9oV3mvDrIVwyXljPOTSjFcvZogzjp4wtBRMEiTV3SVP7n76pUotV4g
+ARC-Seal: i=1; a=rsa-sha256; t=1520343958; cv=none;
         d=google.com; s=arc-20160816;
-        b=N3o2kJfSTMA1xLfJ6FTUB8NnvevulL2WT2QE/NKPlhY7wuyl8OY2mVmxYZ6a9L5gNR
-         17YJIf1NsOW8+TSaM5yQuHnmsRRMbf4/MO4ogfLe6kwSv1Mva/1DOscy1y5P5KYl9p1B
-         HN5W3mEjtc7e/Gm3YbHPv0gsIMO9mrNT5EZufZ60lsJlEsddBss6QZq26UZrghF3G1FQ
-         7pAo35KS4U4fJd6woOC1n+bzx2xYE/bHFoV5Hd7KPGTxZAxBiXgmtIV8jRnjdbHyk1qW
-         dRR5hwwGG8MG9L0T8nv8sx8Xy8MweyDvnPXNapYQCpdmrk9frhGW/TfrPinQN1OzzFcH
-         my5A==
+        b=FryUkCNs5Eae62FZ4/y2eINA6jFaYmzOthCFrpONEGNNCbG1ovh/gFiQQhs2bRexxX
+         Nz/e+VFo+dwHK/XwSR0CPaJkXPJeTEG2RTU6eQO+yqGl7amrW4I1HBWBBZu2RKu4BfAP
+         G/l8Jh5GUyZDdRD6aXgCb8YMLjdn1C2oYlCdwpygqQ+rFXHnrWjb61gOVKqVHFsFdb/X
+         PwOfX8Ov4sPsq5Rp9BTsbLibt/mKrYV7fNo9ClpVzvZeCqb7ukYWY1MC6V6gHQSAnK9u
+         tbNG0+S+ZfXSYrdYIQWGERknH27Hv/UZLvpookTTW3vZxWWVx9bIB2yR38/rsSh4b07l
+         ldfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:cc:references:to:subject
          :arc-authentication-results;
-        bh=nh2CFa/dplVlNrvpsaJBS56wf0GM7Jwe6EzydpCW7LU=;
-        b=QBJwK9gyP1QST1mDVZqqrzqGt46EzWygmYxiePckDEAOkNrnRxWmFs7VAxazG2CBu5
-         +wDdMn8huToewCM01zsrfNaM3E01N8rnrxkR/IcDEM81nY4BG0IuWwfwA9kk9rX+t38c
-         oRt4QDRXmCVL4dSUO1E2lcAka48Jwt21EJ+uxLZh39vpVFx3r72C5JqQv253Q+qeP7EY
-         d2b6vaRPVTw4UNfORbMGTWa+rVnQzIU2O3H3CHqKRcalV6QtSCqK1LDjbl/vgNfb7YLh
-         iJXrPNSAO6SzPLufHP+lBH3e6d72grVWIEA9zhYiXRdq6WkzSX7Yb8+9HpgVJb+vqdy4
-         d+DA==
+        bh=jOTQlXXZaVothf5DfucmTg1u9l4IpmCcVal7rvLUeMc=;
+        b=p6QewBi43uvIxqF8TlHJLk+su7roKhtRk190unmonebKOOizl0G4/iX1M4X0IJ3PTH
+         zKymj76LVUBvU5P5PqW4yM3+ndsXpb4Vm7jEruWeBGWnhHfRfYaCEUWSuEEM8uWHoowr
+         f8nFF6LjVNnvkAgmvKiOrnuC7gEqTdPX3yAgo2ZjzsWy6k6RttHDuJg+simMLHFF51hK
+         OSRiqXsWsb5dkrAiFl9LUmnX/lGReoQ+RTZr+Irp79Hfa+sObnVemIIy/qKPjMBI3edK
+         Rg0nbBwEoQsFOJFChwRkCqCmbWu9MgDLy2SRdGQsNFCmTLX3NPUvAR4CXpWlFaXkjp6l
+         Nl/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZwXQpKus;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZwXQpKus;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AG47ELuDungSINWrZ8dL9i4llgx13058Yj+/3Ub95UTsTQK2D5MHFdYzoCYAkd5oEZSJNMyvOptQeg==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Tue, 6 Mar 2018 08:04:37 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Joerg Roedel <joro@8bytes.org>, Brian Gerst <brgerst@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, Andrew Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	=?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-	Joerg Roedel <jroedel@suse.de>
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="35015544"
 Subject: Re: [PATCH 07/34] x86/entry/32: Restore segments before int registers
-Message-ID: <20180306070437.kf3fkevqj6cuxptz@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
 References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
  <1520245563-8444-8-git-send-email-joro@8bytes.org>
  <CA+55aFym-18UbD5K3n1Ki=mvpuLqa7E6E=qG0aE-dctzTap_WQ@mail.gmail.com>
@@ -64,31 +40,53 @@ References: <1520245563-8444-1-git-send-email-joro@8bytes.org>
  <20180305213550.GV16484@8bytes.org>
  <CA+55aFx2dxZmL487CnhV6rWRiqmJwZNAspyPqCD4Hwqxwncs6Q@mail.gmail.com>
  <12c11262-5e0f-2987-0a74-3bde4b66c352@zytor.com>
+ <20180306070437.kf3fkevqj6cuxptz@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Joerg Roedel <joro@8bytes.org>, Brian Gerst <brgerst@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-mm <linux-mm@kvack.org>, Andrew Lutomirski <luto@kernel.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+ Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ David Laight <David.Laight@aculab.com>, Denys Vlasenko
+ <dvlasenk@redhat.com>, Eduardo Valentin <eduval@amazon.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will.deacon@arm.com>, "Liguori, Anthony" <aliguori@amazon.com>,
+ Daniel Gruss <daniel.gruss@iaik.tugraz.at>, Hugh Dickins <hughd@google.com>,
+ Kees Cook <keescook@google.com>, Andrea Arcangeli <aarcange@redhat.com>,
+ Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+ Joerg Roedel <jroedel@suse.de>
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <6224cf9e-4c13-58e5-4541-c06074a20191@intel.com>
+Date: Tue, 6 Mar 2018 05:45:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12c11262-5e0f-2987-0a74-3bde4b66c352@zytor.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180306070437.kf3fkevqj6cuxptz@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594093021030252223?=
-X-GMAIL-MSGID: =?utf-8?q?1594170941542824057?=
+X-GMAIL-MSGID: =?utf-8?q?1594196187048541367?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 03/05/2018 11:04 PM, Ingo Molnar wrote:
+> * H. Peter Anvin <hpa@zytor.com> wrote:
+>> On NX-enabled hardware NX works with PDE, but the PDPDT in general doesn't
+>> have permission bits (it's really more of a set of four CR3s than a page
+>> table level.)
+> The 4 PDPDT entries are also shadowed in the CPU and are only refreshed
+> on CR3 loads, not spontaneously reloaded from memory during TLB walk
+> like regular page table entries, right?
 
-* H. Peter Anvin <hpa@zytor.com> wrote:
+Yes.  The SDM even calls them non-architectural "PDPTE Registers" and
+talks about them only being loaded at CR3 write time.
 
-> On NX-enabled hardware NX works with PDE, but the PDPDT in general doesn't
-> have permission bits (it's really more of a set of four CR3s than a page
-> table level.)
+~5 years ago we even had a bug directly related to this feature:
 
-The 4 PDPDT entries are also shadowed in the CPU and are only refreshed
-on CR3 loads, not spontaneously reloaded from memory during TLB walk
-like regular page table entries, right?
-
-This too strengthens the notion that the third page table level of PAE is more 
-like a special in-memory CR3[4] array.
-
-Thanks,
-
-	Ingo
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=324cdc3f7e6a752fe0e95fa7b5c9664171a34ded
