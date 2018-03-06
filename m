@@ -1,191 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933312AbeCFOpK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:45:10 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:49767 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932313AbeCFOpC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:45:02 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180306144500epoutp028a03bfaf4a7e539ccc06563c42fd6435~ZW-8kitTd1274612746epoutp02b
-X-AuditID: b6c32a47-19fff7000000100c-72-5a9ea96b2736
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 07/12] thermal: exynos: remove parsing of samsung,tmu_gain
- property
-Date: Tue, 06 Mar 2018 15:43:50 +0100
-Message-id: <1520347435-22970-8-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7bCmqW72ynlRBp/XS1hsnLGe1WL+kXNA
-        4so1Vov+x6+ZLc6f38BusekxkHt51xw2i8+9RxgtZpzfx2RxaOpeRoul1y8yWbTuPcJu8eRh
-        H5sDr8eaeWsYPS5fu8jssXPWXXaPxXteMnlsWtXJ5rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
-        pRbp2yVwZVz99ZO14I9qxdKGdpYGxiPyXYycHBICJhK7Pj5i72Lk4hAS2MEo8eH8VWYI5zuj
-        xPxpE4EcDrCqM4tVIeK7GSUWPJ/IBOH8YpTY2XuRDWQUm4CVxMT2VYwgtohAicS0Vb2MIEXM
-        AmeZJHZsf8cCkhAWCJVoWb2dGcRmEVCVeDhxISvIBl4BD4n/+8ohTpKTOHlsMiuIzSngKXGi
-        4xwbyBwJgRNsEhfeb2GCKHKR+HF0LSOELSzx6vgWdghbWuLZqo2MEA3NjBLfduxhhkhMYJTY
-        s14IwraWOHz8ItgGZgE+iY7Df9kh3uSV6GiDKvGQWHrkDguE7Sixe10fNIzmMEosb53GOIFR
-        agEjwypGsdSC4tz01GKjAmO94sTc4tK8dL3k/NxNjOB413LfwbjtnM8hRgEORiUe3g0ec6OE
-        WBPLiitzDzFKcDArifBG6M+LEuJNSaysSi3Kjy8qzUktPsQozcGiJM7bGuASJSSQnliSmp2a
-        WpBaBJNl4uCUamAMcuDJ+j6ftff68vJ4U3Pf02c1TlkVet3d9UBSvFVqx4HfNSWVdmYtbh7L
-        34l/cPtso78t6UrN/J5fT5mn6B9MijTo+X9bUYpzsVaiG9vhZz3V1hlWMZefsJ/5HpihlbRf
-        fGdIkeGeAus2u1UBrtuDlTy+6D97/WnJjzzPu5JN7/SdlreLCSuxFGckGmoxFxUnAgAHzEhb
-        8wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t9jAd2slfOiDA4/kbLYOGM9q8X8I+eA
-        xJVrrBb9j18zW5w/v4HdYtNjIPfyrjlsFp97jzBazDi/j8ni0NS9jBZLr19ksmjde4Td4snD
-        PjYHXo8189Ywely+dpHZY+esu+wei/e8ZPLYtKqTzWPzknqPvi2rGD0+b5IL4IjisklJzcks
-        Sy3St0vgyrj66ydrwR/ViqUN7SwNjEfkuxg5OCQETCTOLFbtYuTiEBLYySix6tVLVgjnF5Bz
-        5DlbFyMnB5uAlcTE9lWMILaIQIlE57TXzCA2s8BZJomD/zlAbGGBUImW1dvB4iwCqhIPJy5k
-        BVnAK+Ah8X9fOUhYQkBO4uSxyawgNqeAp8SJjnNg44WAShZ3/2abwMizgJFhFaNkakFxbnpu
-        sVGBUV5quV5xYm5xaV66XnJ+7iZGYGhuO6zVv4Px8ZL4Q4wCHIxKPLwbPOZGCbEmlhVX5h5i
-        lOBgVhLhjdCfFyXEm5JYWZValB9fVJqTWnyIUZqDRUmclz//WKSQQHpiSWp2ampBahFMlomD
-        U6qBcYq5xaFbTCuaOlIWNQfv6JquZ26pG6VWtj6qPODp68kHrhwWdrDNONwxkZdPs/BKtJbR
-        XTMl0bh4vwV2z7yMjSY9W9TQMqdqPd/mXfZuqlzsP6uMYs/5sdxYNN3x3iXPHeH28ybJyjU+
-        4M6+GpsQ7bfu5J2zh1Mjpin+NRdkuySypbAk99JPJZbijERDLeai4kQANDFNHEkCAAA=
-X-CMS-MailID: 20180306144458epcas2p1102a06fa3e58b88cad914be624e0c1db
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180306144458epcas2p1102a06fa3e58b88cad914be624e0c1db
-X-RootMTR: 20180306144458epcas2p1102a06fa3e58b88cad914be624e0c1db
-References: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180306144458epcas2p1102a06fa3e58b88cad914be624e0c1db@epcas2p1.samsung.com>
+        id S933027AbeCFOqy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:46:54 -0500
+Received: from mail-dm3nam03on0065.outbound.protection.outlook.com ([104.47.41.65]:61984
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932589AbeCFOqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:46:51 -0500
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com;
+From: George Cherian <george.cherian@cavium.com>
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: wsa@the-dreams.de, George Cherian <george.cherian@cavium.com>,
+        Kamlakant Patel <kamlakant.patel@cavium.com>
+Subject: [PATCH v2] i2c: xlp9xx: Add support for SMBAlert
+Date: Tue,  6 Mar 2018 06:46:34 -0800
+Message-Id: <1520347594-184146-1-git-send-email-george.cherian@cavium.com>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [50.233.148.156]
+X-ClientProxiedBy: CO1PR15CA0045.namprd15.prod.outlook.com
+ (2603:10b6:101:1f::13) To BL2PR07MB2323.namprd07.prod.outlook.com
+ (2a01:111:e400:c753::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b3416432-83ed-491a-968e-08d58371174d
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:BL2PR07MB2323;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;3:kC9lMwJ+pheNaivwx4t/AyHBno08sfBTXml4gvkxX6IZTmAQ2y5bVdx9ZovxfTR7FcPI3X9OVjZA/64BLMgv8pzGqK+cqhyT/d0Pv9EiG7mZotFLyT3n+mVpKGcSUIoM0NLIUNCkgjCsAlueEosKWOCHTcPO3hXzjDCrtDgxlg/XmlVkFz+jwVMlKDMSfOJXaHecZwI/taWkRyNQXQuwRdbPIXkVPrl4iH0N+V1x8U8C+sNHFsVWJnM8+2VCcNh5;25:us5M0I0czTefuEBmOrGNVhSOCkY/iz4AVw2m8gjYeGzYREd1GVvzPpCLzFGUb28SztQul9DPFdjB925Hz7cKHcJYU+7oXFJ3E5t035vr5NPEKhlapMx67IVLgAHHoSvGsMf5tblYfWstFAoH6UIyth4ZCBOX8osRJsmQ3ycYXnI7b6TbsMkeAGI3fz6sc4bKPe4rb4qcO5589XaiQqk2g5OdIKKBEMOxahRUj7R00Se4XBpVMSGf3V9Jh+lLdYqdhDhJ/53jAm8pOJn5m9UxPrr78w43Ya9pcvbQN6jNusXJY/585Hw2s1EIxfEsb/qTHMb4EFvGAWxx42CmbkCKDw==;31:et8rWaaCy0/6bD1qm7hd4Ifxkm9T3XMPASLnWPAglDZt20iOn/538qKMqgl7VsXgbEUs+LiYASafuTK698wLHH2MsJz7FpB1cIKfCkPB0/4oYjVd2MQcor8RNrSfyoNe46FhJGcm6YAc2E937BpBqF6tsHGUOlIXOx4mMQPrH0PnU2tfyAaSREhkLy5qslZj59Anqh7aBbUsq9mYmNec/qi0i3CjAYNvAzS4gV/N2u0=
+X-MS-TrafficTypeDiagnostic: BL2PR07MB2323:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;20:DiK1j/YZFYc1gWrLok84y2JBp7qUPifKcrFf+Mv0X++sPnqMomDDZdyNEpgjvVSKWdq5Y2Blg3NLD6CKj4uKtaXNGKb72o2A3vMIlIOWtV73yWdFxLyZZGCl69KWsxjcpV57JUpyOxmU1NCj80dlJnSnysHRT27ZGrehkQCQ847XROFzqJdbBA8WDhFqJQzzz6KBcGwLlmijn+VbnfZIlbsdoCYFpbx86znfVsBA5L2gILb0b6W3h5OxtU6n6/B0X3d8VtZ1mHl8jWfU6lzqAW7fjPOdmBtuhUs4TsVXawfcnXyTKqTdT1Twhf9X12Li6XiMPnp84iYKaYl34w7n6yFlJWOWXO4dPTBrZXFoRzCAj6vS4XM4gjpHmv9EAsV8ot16YKMYy7ODfTdF2/kqMuUJ9MiL3723SMGLV/l0cUQR44fzaDHbwQ4mhHDCif5vaU4LDZnXoWrlvEaJaP8D7VuD8BuKDgvx7qfty9VE4FZ3nYnK/HN6P+3fP2Ic99O2;4:CHjxgflfIJLCDvjXfFQImjg4p1v+kHrTDTWyGgNUuGVWcPye12mDIbUcJZgOmxEaF8x2bJEptAXqeYlGLTHPbzkkl3vLb279luPuMoI2wlF5/vCLT58d/GkAhGloA4DHWtFRDS31sqCWmouGzN4prqjlXG1FOrtn+/Z0lQEVzfKjq7fAulwLsVIfpIjCtf+kstg2p1j3q/1dXEpb/N6BIUW+SpkCQnwqkmesjlKbfWE1+Z6LYXsf3JKi11U4EMi1NW2SvcHhpbDDwKLSu5vS/A==
+X-Microsoft-Antispam-PRVS: <BL2PR07MB23235DFC10B5E4B6442E8D53F9D90@BL2PR07MB2323.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040501)(2401047)(5005006)(8121501046)(3002001)(3231220)(944501244)(52105095)(10201501046)(93006095)(93001095)(6041288)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:BL2PR07MB2323;BCL:0;PCL:0;RULEID:;SRVR:BL2PR07MB2323;
+X-Forefront-PRVS: 06036BD506
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(366004)(396003)(376002)(39860400002)(346002)(189003)(199004)(4326008)(25786009)(81156014)(8676002)(81166006)(316002)(54906003)(16586007)(69596002)(66066001)(6512007)(52116002)(386003)(6506007)(51416003)(36756003)(47776003)(107886003)(53936002)(5660300001)(105586002)(50466002)(7736002)(6486002)(26005)(72206003)(97736004)(16526019)(186003)(106356001)(6116002)(3846002)(86362001)(53416004)(8936002)(48376002)(50226002)(478600001)(68736007)(2906002)(6666003)(305945005)(4720700003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR07MB2323;H:sbr2s-28.caveonetworks.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR07MB2323;23:W3W/VPa1yLV0felFdKuX58nAswfoMpbsmP/81bzn8?=
+ =?us-ascii?Q?DQAhVi+h10/B0RBTEtKCeEf73+Y9n6IawjhLdD9JjRvdi2zu5bv6V1uu83Yw?=
+ =?us-ascii?Q?dleKuN7VtCUHuiVkDcyqcc9Dm0haUe8Yv+CRh0JJ3voPldGrKCzzkGv7gpbG?=
+ =?us-ascii?Q?E02Zuc6xKqGjaHD4sKDzNEP1hurxZCs1jl88YfImSykONdNtVg7Z6dDeF6eH?=
+ =?us-ascii?Q?SHoSdMVqvgnWLU3syQysdPrIpxRWHJAItJjQozC4mcFNBBJAjj1GaC/+tUFD?=
+ =?us-ascii?Q?0al8G0NU36VE8oJz7B7PyCXaD48WHx0VrT3BzbQQNwzRG8KHN97XgQIpGHB3?=
+ =?us-ascii?Q?1A5fgQx4lGbuTRmPEBRk6maZZABOnDtbiqdD/CLTGnlABnS9Ppe5+mlvRUZL?=
+ =?us-ascii?Q?oy+nSxBaQnyN6m19YCAJHTiH1w8hxtQLe/HQ2hyXFcwXJzGeVBY/4tYzMteq?=
+ =?us-ascii?Q?ayewwl2mx6qAXRJcim5/6JIYWELOuqq80M/6TUWlOaT8UZJcfkd8SNGWiTav?=
+ =?us-ascii?Q?9KWDfk7UHa3MHkODo1T7g9gUsKPgH+6+V20LvSWQXobnXyjG+WrdRzZBc+GE?=
+ =?us-ascii?Q?ipGohRRfVPc4zpKqj5UCfK81c8gTf2d1uUs++s6Qwtw1iz2GF3Q2dJnqaOiN?=
+ =?us-ascii?Q?a7R6bc+ls1+fLIo10qGWSzA6vyVAsRTCoWjprJAcwFBUxMLvG1xTO9Qgq8Bl?=
+ =?us-ascii?Q?R+wkn68y1wrEUEwE/SD6srywpP2jz08C3ZleEaDqSFDcW5pnFEO8FWzHEx7x?=
+ =?us-ascii?Q?kz8m0lTF6DGSmsYquJInreduJrduwBez+LK0S0K38TX2nSfe7XLJ0xt2gbEZ?=
+ =?us-ascii?Q?xSFSmmbZmTIXPPPkBnTAphDKwhyBsGXyg+OH8s3/uo+dDxqK03p0NEyWbluD?=
+ =?us-ascii?Q?ieBvunEcJW5/S4GwWSAEJckjmdcgFFGDozXm5LDcHhUlbY3VWra23jjMa+lK?=
+ =?us-ascii?Q?r6hh3M7qoQ/ulmbXwuLgxX2VpgxxvFyBJC7FvvqbFjz7zUmiry+mij/KX+54?=
+ =?us-ascii?Q?qwkOUVw1jD7FYjzUAQjEy/JJBhO7w9UfZ/BIsvwUH4SxVspD53ufeDfNCOWo?=
+ =?us-ascii?Q?f1KWh7SLyJw628hNu4+g6xj1dkf00Ial3j6rkBbe/uMuc58/lV9CvIflyEiF?=
+ =?us-ascii?Q?3tkiI0BPs8iWqZRDbtq5drsEheCITqLJ+6XEn7QX1u1eubLLrpJXQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: iOl6qtkH0n7cUvIw5zy6dlWtLJVO7x/HxVymwh+go7fsC8TIk8f+E/soCD583WVHRwO676bTa0GcNQ27CQ65bWWNqKymruXGk1WcdX80xayClCFzdgqhFDLHfllm+DQ3hPRW6RrwCjFq2YpZ46UwM5vgz6fKSiP/JwBa0kPHhgaKkMEVcMgvltw8TlS2AOVe
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2323;6:ZG+eGLooljSVpOqKxg6imY1B6gvIrNYM/s4EvAHT55WiYeqwcntPrpaAE2omF2z6qChEd57ATylL5qq4MAfzcShxgKX6ABxo25NqLd5TJsmCEuN+X3EdGvTUEY3ZWTfurQMSPlEKG3D2Bf9exDKSxu1VhYbCbO+DmxGttqUFr12z5A7QycVYmM9wPTT6LCM4bUO3db7ktETF+2p25ScFOhIxd+/XFiWyLvajytvEHADwXOEU97jUjWaRxGozT6sPKvlRpkggPNKdQCFBGhr0li1PQDQ4ecQ7cSegZ9BiiAwHDi22R4yq140NodbKkRoZCJzWZ7WhS8FR6dDv/gpFdxm95ht/C038IMmenjWymSc=;5:xDRaMFKeo3g8wsYoeQFAZMnYxA8F+yvFSuan0TI8ua32p7U1LGdcFdBN825k8o2Qpl9/Dt8Ckmss84ydS0eTSHzWmM5aWqQ1vWg7CVsG4pHG9j3HV1QQm6PEdKt1NpaRsVWupaT+O8DNyLDd5ehXqRBq8gDwewZO3gts08Yq+BM=;24:azc4NlqDsEMkmpu877Rs7eVmdDPc3U9rUT2lvjwBfzEKdGAGeP1gcFcnoXzEkmPOQvMPkKnYsgSgbC0C6R5x5EQaxz/kLB5w3FyTy1HmqqM=;7:SijPgmwnT+cDjx/zwa7Y38GKNMmc8CCmxTd1rdVq/dmUXoLHLBZjWn1udQaUOkc4N36ewC5eL+UEisgdrWTRSPfX7NsqyXGMXwpChb1iHtuDxKdnDP2LhRbI9RvDqF71woUkeeGEdYU2rorj7jnw3DrSFJJ+2qDy1D0b9QkxTOXE8oHtYWb2pEwgs/VniKPywH0dPdLyDeIBaL3I7uVrbwX6x1NHzS+Su7KQlgBhfNZnFk/BZkb1pyCB/9CUAT9r
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2018 14:46:48.1578 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3416432-83ed-491a-968e-08d58371174d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR07MB2323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since pdata gain values are SoC (not platform) specific just move
-it from platform data to struct exynos_tmu_data instance. Then
-remove parsing of samsung,tmu_gain property.
+Add support for SMBus alert mechanism to i2c-xlp9xx driver.
+The second interrupt is parsed to use for SMBus alert.
+The first interrupt is the i2c controller main interrupt.
 
-There should be no functional changes caused by this patch.
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kamlakant Patel <kamlakant.patel@cavium.com>
+Signed-off-by: George Cherian <george.cherian@cavium.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 18 +++++++++---------
- drivers/thermal/samsung/exynos_tmu.h |  4 ----
- 2 files changed, 9 insertions(+), 13 deletions(-)
+ drivers/i2c/busses/i2c-xlp9xx.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 12bbf79..262ab41 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -192,6 +192,8 @@
-  * @max_efuse_value: maximum valid trimming data
-  * @temp_error1: fused value of the first point trim.
-  * @temp_error2: fused value of the second point trim.
-+ * @gain: gain of amplifier in the positive-TC generator block
-+ *	0 < gain <= 15
-  * @reference_voltage: reference voltage of amplifier
-  *	in the positive-TC generator block
-  *	0 < reference_voltage <= 31
-@@ -218,6 +220,7 @@ struct exynos_tmu_data {
- 	u32 min_efuse_value;
- 	u32 max_efuse_value;
- 	u16 temp_error1, temp_error2;
-+	u8 gain;
- 	u8 reference_voltage;
- 	struct regulator *regulator;
- 	struct thermal_zone_device *tzd;
-@@ -386,8 +389,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+diff --git a/drivers/i2c/busses/i2c-xlp9xx.c b/drivers/i2c/busses/i2c-xlp9xx.c
+index eb8913e..d5cadb6 100644
+--- a/drivers/i2c/busses/i2c-xlp9xx.c
++++ b/drivers/i2c/busses/i2c-xlp9xx.c
+@@ -10,6 +10,7 @@
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/i2c.h>
++#include <linux/i2c-smbus.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -84,6 +85,8 @@ struct xlp9xx_i2c_dev {
+ 	struct device *dev;
+ 	struct i2c_adapter adapter;
+ 	struct completion msg_complete;
++	struct i2c_smbus_alert_setup alert_data;
++	struct i2c_client *ara;
+ 	int irq;
+ 	bool msg_read;
+ 	bool len_recv;
+@@ -447,6 +450,19 @@ static int xlp9xx_i2c_get_frequency(struct platform_device *pdev,
+ 	return 0;
+ }
  
- static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
++static int xlp9xx_i2c_smbus_setup(struct xlp9xx_i2c_dev *priv,
++				  struct platform_device *pdev)
++{
++	if (!priv->alert_data.irq)
++		return -EINVAL;
++
++	priv->ara = i2c_setup_smbus_alert(&priv->adapter, &priv->alert_data);
++	if (!priv->ara)
++		return -ENODEV;
++
++	return 0;
++}
++
+ static int xlp9xx_i2c_probe(struct platform_device *pdev)
  {
--	struct exynos_tmu_platform_data *pdata = data->pdata;
--
- 	if (data->soc == SOC_ARCH_EXYNOS4412 ||
- 	    data->soc == SOC_ARCH_EXYNOS3250)
- 		con |= (EXYNOS4412_MUX_ADDR_VALUE << EXYNOS4412_MUX_ADDR_SHIFT);
-@@ -396,7 +397,7 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
- 	con |= data->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
+ 	struct xlp9xx_i2c_dev *priv;
+@@ -467,6 +483,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "invalid irq!\n");
+ 		return priv->irq;
+ 	}
++	/* SMBAlert irq */
++	priv->alert_data.irq = platform_get_irq(pdev, 1);
++	if (priv->alert_data.irq <= 0)
++		priv->alert_data.irq = 0;
  
- 	con &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
--	con |= (pdata->gain << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
-+	con |= (data->gain << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+ 	xlp9xx_i2c_get_frequency(pdev, priv);
+ 	xlp9xx_i2c_init(priv);
+@@ -493,6 +513,10 @@ static int xlp9xx_i2c_probe(struct platform_device *pdev)
+ 	if (err)
+ 		return err;
  
- 	con &= ~(EXYNOS_TMU_TRIP_MODE_MASK << EXYNOS_TMU_TRIP_MODE_SHIFT);
- 	con |= (EXYNOS_NOISE_CANCEL_MODE << EXYNOS_TMU_TRIP_MODE_SHIFT);
-@@ -1153,14 +1154,8 @@ static int exynos_of_get_soc_type(struct device_node *np)
- static int exynos_of_sensor_conf(struct device_node *np,
- 				 struct exynos_tmu_platform_data *pdata)
- {
--	u32 value;
--	int ret;
--
- 	of_node_get(np);
- 
--	ret = of_property_read_u32(np, "samsung,tmu_gain", &value);
--	pdata->gain = (u8)value;
--
- 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
- 
- 	of_node_put(np);
-@@ -1214,6 +1209,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_read = exynos4210_tmu_read;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->gain = 15;
- 		data->reference_voltage = 7;
- 		data->efuse_value = 55;
- 		data->min_efuse_value = 40;
-@@ -1231,6 +1227,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->gain = 8;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 55;
- 		if (data->soc != SOC_ARCH_EXYNOS5420 &&
-@@ -1247,6 +1244,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 8;
-+		data->gain = 8;
- 		if (res.start == EXYNOS5433_G3D_BASE)
- 			data->reference_voltage = 23;
- 		else
-@@ -1262,6 +1260,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos5440_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos5440_tmu_clear_irqs;
- 		data->ntrip = 4;
-+		data->gain = 5;
- 		data->reference_voltage = 16;
- 		data->efuse_value = 0x5d2d;
- 		data->min_efuse_value = 16;
-@@ -1274,6 +1273,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
- 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
- 		data->ntrip = 8;
-+		data->gain = 9;
- 		data->reference_voltage = 17;
- 		data->efuse_value = 75;
- 		data->min_efuse_value = 15;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 9f4318c..689453d 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -40,15 +40,11 @@ enum soc_type {
- 
- /**
-  * struct exynos_tmu_platform_data
-- * @gain: gain of amplifier in the positive-TC generator block
-- *	0 < gain <= 15
-  * @cal_type: calibration type for temperature
-  *
-  * This structure is required for configuration of exynos_tmu driver.
-  */
- struct exynos_tmu_platform_data {
--	u8 gain;
--
- 	u32 cal_type;
- };
++	err = xlp9xx_i2c_smbus_setup(priv, pdev);
++	if (err)
++		dev_info(&pdev->dev, "No active SMBus alert %d\n", err);
++
+ 	platform_set_drvdata(pdev, priv);
+ 	dev_dbg(&pdev->dev, "I2C bus:%d added\n", priv->adapter.nr);
  
 -- 
-1.9.1
+1.8.3.1
