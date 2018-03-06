@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeCFOkA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:40:00 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48608 "EHLO
+        id S932804AbeCFOkP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:40:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49184 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753800AbeCFOj5 (ORCPT
+        with ESMTP id S932182AbeCFOkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:39:57 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D56460817
+        Tue, 6 Mar 2018 09:40:11 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 812F160763
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,9 +19,9 @@ To: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, linux@arm.linux.org.uk
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 04/15] clk: qcom: Add HFPLL driver
-Date: Tue,  6 Mar 2018 20:08:57 +0530
-Message-Id: <1520347148-27852-5-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v9 07/15] clk: qcom: Add IPQ806X's HFPLLs
+Date: Tue,  6 Mar 2018 20:09:00 +0530
+Message-Id: <1520347148-27852-8-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
@@ -31,146 +31,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
+Describe the HFPLLs present on IPQ806X devices.
 
-Cc: <devicetree@vger.kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
+ drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index fbf4532..d9ae51e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -226,3 +226,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
-+
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index a2b7888..c57b808 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -39,3 +39,4 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-new file mode 100644
-index 0000000..a6de7101
---- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 28eb200..d571cf8 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
 +#include "clk-hfpll.h"
-+
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
+ #include "reset.h"
+ 
+ static struct clk_pll pll0 = {
+@@ -113,6 +114,84 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
 +};
 +
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
 +		.num_parents = 1,
++		.name = "hfpll0",
 +		.ops = &clk_ops_hfpll,
-+	};
-+
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-+}
-+
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
++		.flags = CLK_IGNORE_UNUSED,
 +	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
 +};
-+module_platform_driver(qcom_hfpll_driver);
 +
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -2800,6 +2879,9 @@ enum {
+ 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
+ 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
+ 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
