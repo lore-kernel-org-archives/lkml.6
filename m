@@ -1,24 +1,24 @@
 Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AG47ELvUiyFRM9yeB2rir7OXXW89VwrBihI7lwJZYkgGq/BXoCIfV6FYsQRlVwAsnUJ0JHVU6Y9e
-ARC-Seal: i=1; a=rsa-sha256; t=1520355317; cv=none;
+X-Google-Smtp-Source: AG47ELtvEuKlcL81UezE6FAUygwTp1NF78T6P5yFO+3TxNNWpwDoVp1f7Wn8DxIoOp14ZCwEUPc6
+ARC-Seal: i=1; a=rsa-sha256; t=1520354709; cv=none;
         d=google.com; s=arc-20160816;
-        b=V8XeY0FBSaEJUenD0HhxCCpEbsXpC3zsADxTG7SokZbuTyeN/oURb6r4Vw8lvSz9Kg
-         qhXyclgNjKSHcx89pW6doYucWFIQ9sNpzyzeXLUtDsZv1m08Flbq7NyTPNOaaK4XppkR
-         53wpqzLy9aY6kZ059VUsU3tr57K5xBE7NrKLbkhxKsGVO1xA6iCvnnvPNL/4xLus9QBY
-         D9VmfY6UM8gqKTNOq3t7fhbEX36s060x3CnM+D0/R+UZNIIpNYvQ1ppSDf6Tm3I9Qdsn
-         pEJ4Ob+0YHedJ1r/An59GcISsvgkooj+7XPF1x+w/3GmWv+La+0NnCGUjkx0tJX9Va8w
-         9NkA==
+        b=S2YkipcD55PUNGee+j3AzLKFXnWqN4grr+xuRxkvmmo+bZYCTVX+6IcMWwCsNh4QzQ
+         qB063aCB41uU8zuhrk++Trlp5HEzlIQ1SY8PgTd7Y58F8yaFP4MPN3vWMPYZGX4wS7xR
+         HKK4Iyvy0+esfXczByHUlNMQ/7qGzDehoA3ATfEXT9kNXQ5L1D8Tv4gQ6L0Y5jNXV0Kk
+         vdI8AN8CGme27Mjzjyh3voiawX77F1iVnp7P14Cic2aKUQ/9i70vpPfhBDMZl8pLzzo2
+         YGSm6ZbL/tTqgKFE9x1URHm3FIUgh6AEvT9fWEbA+q41PpQeNLhsP/XJcU4f6D6RCMas
+         1i0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:organization:from:references:to:subject
          :cc:arc-authentication-results;
-        bh=EnHWx5+Xb3cK3/5KADBtd7koXEyE3RpbCpPKo9ZkK3s=;
-        b=nrP349E1TyUOBr28XGxlx1HTidhwReRjkxzd6IOkwsXM729Nn+Bk4YMNETtIRcT7yA
-         95Rsx3N0/Xv2I5tuLs4zYauiygoQZb6ZsM7pzCk2igOb59Cy+6t7RNsgEnZUS09AASv6
-         Xf4Q4K+zMrUp2+kegiUIHCMp5N0HVVBdtysILX+bmMjNq6086Xqrvg7aCRdT0c/3K4N9
-         vQdjjl9c8gI1bkNZkpeBt1mplvSAzVnsb10HKpEJ+31QfKds6ix9VQ3faQCK0bR49PCM
-         rOC5B5rnCmPhXudP8rxu1uDPqZj3XXKQHDh8MKDG5ys6d1LwP/CVBCctcZWvu2l3O24I
-         tO0Q==
+        bh=jxokB72zfR5yjYOEyfDuhDjFOW104bcEbwDhZNhonj0=;
+        b=wdPaN4uA5RbYIrHHTdmj9xvK7v+f1LTYI0aDj2Fmd7FwdrW6Ja5QraO2xmzx2kWslm
+         zA5KLPcg+O5n7neWB2BhusiUVScnNU6Kb3XE1Ya1I55sysCIusr+C6nH9BgdaWJWqjGH
+         9xE2uie00Pqw9Pa3J1AnkuGiVm8fo5tmeju70WYU8uTqkxwva1FyHxXmgotZ7QY+Gzyc
+         XExe64J2Behmga9RbWSjiRfJZqs1Y0FnTt76MCmMPdur3JJQVSR64RK/IVXSVVhap4wx
+         lgn4rWbjh/7afA53aCdgvP/8aajMeTl6xKTQ0/9QusEghn7omGLXI7UrJt8Exgyi4K3M
+         KNxw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
 Authentication-Results: mx.google.com;
@@ -32,35 +32,39 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
  dietmar.eggemann@arm.com, morten.rasmussen@arm.com, palmer@sifive.com,
  lenb@kernel.org, john.garry@huawei.com, austinwc@codeaurora.org,
  tnowicki@caviumnetworks.com
-Subject: Re: [PATCH v7 06/13] ACPI: Enable PPTT support on ARM64
+Subject: Re: [PATCH v7 03/13] cacheinfo: rename of_node to fw_token
 To: Jeremy Linton <jeremy.linton@arm.com>, linux-acpi@vger.kernel.org
 References: <20180228220619.6992-1-jeremy.linton@arm.com>
- <20180228220619.6992-7-jeremy.linton@arm.com>
+ <20180228220619.6992-4-jeremy.linton@arm.com>
 From: Sudeep Holla <sudeep.holla@arm.com>
 Organization: ARM
-Message-ID: <776784b6-01ce-1385-0d02-ca5fd1ece61f@arm.com>
-Date: Tue, 6 Mar 2018 16:55:11 +0000
+Message-ID: <4864c763-0d11-9e09-ff02-87e94b410da6@arm.com>
+Date: Tue, 6 Mar 2018 16:45:03 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180228220619.6992-7-jeremy.linton@arm.com>
+In-Reply-To: <20180228220619.6992-4-jeremy.linton@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593684151159305303?=
-X-GMAIL-MSGID: =?utf-8?q?1594208098186525130?=
+X-GMAIL-THRID: =?utf-8?q?1593684145443447566?=
+X-GMAIL-MSGID: =?utf-8?q?1594207460209501534?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 
 On 28/02/18 22:06, Jeremy Linton wrote:
-> Now that we have a PPTT parser, in preparation for its use
-> on arm64, lets build it.
+> Rename and change the type of of_node to indicate
+> it is a generic pointer which is generally only used
+> for comparison purposes. In a later patch we will put
+> an ACPI/PPTT token pointer in fw_token so that
+> the code which builds the shared cpu masks can be reused.
 > 
+Thanks for renaming :)
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
 -- 
 Regards,
