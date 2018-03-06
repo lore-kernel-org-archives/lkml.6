@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELsS2T9y6W7RKVyGk2KAYx+KhBJx62JWYJbxCsPypRkHn29DovPN8FMyLudKtMVlZWP0NB0B
-ARC-Seal: i=1; a=rsa-sha256; t=1520295970; cv=none;
+X-Google-Smtp-Source: AG47ELs13Q+pyFeKauEFIvhcjudwKBQRZC3CdcQXHl+ceLgZOQprLU9104EfmWNnu5JvSVknGLBr
+ARC-Seal: i=1; a=rsa-sha256; t=1520295968; cv=none;
         d=google.com; s=arc-20160816;
-        b=uqjQdhj/z6Vn4ltDrOiYixZjU4JT4FgnY7lwAtBO6kgITh6Ls27ysx2JKy8w3iuaR2
-         88jbDDI/FfUPkB/6hkDXwDL4q43U1XhKdK5YbJU3oD0Leb3TBdypgq9ILzQrl+n934iv
-         v2NFDlgGlr1MUXiMPd9ewxDnvfpE19261l69hvjQyV06v8nxH7OlDhMG17y2GMRCUYwY
-         HvdypudTTcg8w6Dx8bYR9U01LfJQPYRlTont/eB+WL3RYC+l0S9wPIc924KeYBV3KTcT
-         ZQm+ac2i032j5sAF0QmTWWHdFNfssSaZbUez0q6wA33i6dYSv5dS02c6J3L2ESjY8CXg
-         BQ2g==
+        b=yUWXsvuftbcDtXBgKY2Unaqnt8jAbvsME5ptfp8XRsNvn6p6eU6BsVLbcWISgZbmBo
+         EkNvgeZE/QES308VxKHcHhe8/h3EqlPZWAyrIpRMF1ghBPMy/R1CyZIk5RqtQu1UcmIc
+         LA1F0q9HX8oo27CbyI9z2Kq/kWd3bgU7NxgzALvnum2beLnagfFw1104vckQPBP96liv
+         65Qc0JldWbP80Wr3JYgmpevj3LTqG44+uGHuCvAZMI2SU8KgQiXAEnMPNqWrvkCUTy7J
+         NDrLm+qUNSG7fg8bqi0r1CCZApYT+6ZQieauus3vpLEw5LqsiOXACOxsik+a+Nb1zoaL
+         AGqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=ISymb/JSMqLef2glkK3eGHMRnV3nWhFiZBV5jTu+ocg=;
-        b=q0tK6SAql2jcGJZ9sMA+GGqHtxKvFLssmYFsbBbVaEM51p7SGvY+sgQThQBfLnzVki
-         psqpeZNbBmaJKoyTKOP2NCp5ZfGTparVu4TYxY+f5mY4EJ7QFdj68YqabO/5gTiRjXtD
-         OptGIwfdbL4PSYJlsrQjM9Rc5XG1jSDXdVD6Cz94ZpD94+pKckf8JFPiDSoWs2cr/elQ
-         q4Fj9wdHfCrey5YcHAIHvjbKt9poKh8tcIlZui4wHJScfW4/eDCK5bdJHxe760lY4ZVA
-         pPGRUNnPX68/2Oh5B1j9BaTrNbSRJLBtBr8HWQY+S5WTzL8WFwd9sm+1zqFSYoijF+jV
-         T/Sw==
+        bh=HZrVxKT7IeiAd6dhR07u8+LeXK7g1Fntd5W+o6y2r4o=;
+        b=i2r6HNcz7W+rP3tUdyrRhy2vActSR1FL2CZxC2i6sVDH5qpjoh9H3iFY0+b44g4gd4
+         Q5ZY1V8AAbT1AFXseikXBZkifyf2siPZI5e32+8WVmXEU2t5cMWc1/IpjQTAl7CylhP6
+         bFBHRNa6j8ONO97EmS7bwp06VI/OfZoXy5MZ6YgNkHuEs6T93J3eUOwTtQE/Q16bN+qn
+         3v5Df3LcfTEsanTxf1fDghdsV47SZqA9sCq4pPvGE8RAk4EybBGMTEz9arfMhDVpANTe
+         MtSTQsN2Aa/MDLBisdj339E/jNjBpbXxw4bSP1TgZJAXSe3JIbpDfuVVEWGa2JVvpP43
+         BqrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=TM5eUHgp;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=P4q5r+Zq;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=TM5eUHgp;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=P4q5r+Zq;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.78 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -33,9 +33,9 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 11/65] sched/core: Idle_task_exit() shouldn't use switch_mm_irqs_off()
-Date: Mon,  5 Mar 2018 19:24:44 -0500
-Message-Id: <20180306002538.1761-12-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 10/65] ARM: Hide finish_arch_post_lock_switch() from modules
+Date: Mon,  5 Mar 2018 19:24:43 -0500
+Message-Id: <20180306002538.1761-11-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
@@ -45,52 +45,103 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145867541737484?=
-X-GMAIL-MSGID: =?utf-8?q?1594145867541737484?=
+X-GMAIL-THRID: =?utf-8?q?1594145864686554015?=
+X-GMAIL-MSGID: =?utf-8?q?1594145864686554015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-commit 252d2a4117bc181b287eeddf848863788da733ae upstream.
+commit ef0491ea17f8019821c7e9c8e801184ecf17f85a upstream.
 
-idle_task_exit() can be called with IRQs on x86 on and therefore
-should use switch_mm(), not switch_mm_irqs_off().
+The introduction of switch_mm_irqs_off() brought back an old bug
+regarding the use of preempt_enable_no_resched:
 
-This doesn't seem to cause any problems right now, but it will
-confuse my upcoming TLB flush changes.  Nonetheless, I think it
-should be backported because it's trivial.  There won't be any
-meaningful performance impact because idle_task_exit() is only
-used when offlining a CPU.
+As part of:
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+  62b94a08da1b ("sched/preempt: Take away preempt_enable_no_resched() from modules")
+
+the definition of preempt_enable_no_resched() is only available in
+built-in code, not in loadable modules, so we can't generally use
+it from header files.
+
+However, the ARM version of finish_arch_post_lock_switch()
+calls preempt_enable_no_resched() and is defined as a static
+inline function in asm/mmu_context.h. This in turn means we cannot
+include asm/mmu_context.h from modules.
+
+With today's tip tree, asm/mmu_context.h gets included from
+linux/mmu_context.h, which is normally the exact pattern one would
+expect, but unfortunately, linux/mmu_context.h can be included from
+the vhost driver that is a loadable module, now causing this compile
+time error with modular configs:
+
+  In file included from ../include/linux/mmu_context.h:4:0,
+                   from ../drivers/vhost/vhost.c:18:
+  ../arch/arm/include/asm/mmu_context.h: In function 'finish_arch_post_lock_switch':
+  ../arch/arm/include/asm/mmu_context.h:88:3: error: implicit declaration of function 'preempt_enable_no_resched' [-Werror=implicit-function-declaration]
+     preempt_enable_no_resched();
+
+Andy already tried to fix the bug by including linux/preempt.h
+from asm/mmu_context.h, but that didn't help. Arnd suggested reordering
+the header files, which wasn't popular, so let's use this
+workaround instead:
+
+The finish_arch_post_lock_switch() definition is now also hidden
+inside of #ifdef MODULE, so we don't see anything referencing
+preempt_enable_no_resched() from a header file. I've built a
+few hundred randconfig kernels with this, and did not see any
+new problems.
+
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Borislav Petkov <bp@suse.de>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-arm-kernel@lists.infradead.org
 Fixes: f98db6013c55 ("sched/core: Add switch_mm_irqs_off() and use it in the scheduler")
-Link: http://lkml.kernel.org/r/ca3d1a9fa93a0b49f5a8ff729eda3640fb6abdf9.1497034141.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/1463146234-161304-1-git-send-email-arnd@arndb.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 18a5348d49afcfc2b95da939143c9420edd78b9e)
+(cherry picked from commit c22d4b4d1c7fcc0d9eb4d8618d86c554c48ed9c0)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/asm/mmu_context.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d253618d09c6..9c905bd94ff0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4979,7 +4979,7 @@ void idle_task_exit(void)
- 	BUG_ON(cpu_online(smp_processor_id()));
+diff --git a/arch/arm/include/asm/mmu_context.h b/arch/arm/include/asm/mmu_context.h
+index 9b32f76bb0dd..10f662498eb7 100644
+--- a/arch/arm/include/asm/mmu_context.h
++++ b/arch/arm/include/asm/mmu_context.h
+@@ -61,6 +61,7 @@ static inline void check_and_switch_context(struct mm_struct *mm,
+ 		cpu_switch_mm(mm->pgd, mm);
+ }
  
- 	if (mm != &init_mm) {
--		switch_mm_irqs_off(mm, &init_mm, current);
-+		switch_mm(mm, &init_mm, current);
- 		finish_arch_post_lock_switch();
++#ifndef MODULE
+ #define finish_arch_post_lock_switch \
+ 	finish_arch_post_lock_switch
+ static inline void finish_arch_post_lock_switch(void)
+@@ -82,6 +83,7 @@ static inline void finish_arch_post_lock_switch(void)
+ 		preempt_enable_no_resched();
  	}
- 	mmdrop(mm);
+ }
++#endif /* !MODULE */
+ 
+ #endif	/* CONFIG_MMU */
+ 
 -- 
 2.16.2
