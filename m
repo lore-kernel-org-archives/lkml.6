@@ -1,50 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932906AbeCFQpd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:45:33 -0500
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55759 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeCFQpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:45:31 -0500
-X-Google-Smtp-Source: AG47ELs5Iz0pQ4VgnfNHeTwliwnv62FzT11MwXkLIDFZa1vwZeZATCk0w+pIMVLtzt4AtOtyK2DW/oPsy0jhnepJB/4=
+        id S1753752AbeCFQq0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:46:26 -0500
+Received: from mga03.intel.com ([134.134.136.65]:15121 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750817AbeCFQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 11:46:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,432,1515484800";
+   d="scan'208";a="23396341"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Thread-Topic: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Thread-Index: AQHTs7KEInSI42HCTUSCFlGLoOJ8nqPBeeQAgAAiLaCAARpWAIAAJchggABsQYCAACIiQA==
+Date: Tue, 6 Mar 2018 16:45:59 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F595@hasmsx108.ger.corp.intel.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+         <20180305125642.GA3425@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+         <20180306074932.GB3624@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+ <1520353933.5393.21.camel@HansenPartnership.com>
+In-Reply-To: <1520353933.5393.21.camel@HansenPartnership.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWQ4MWY2ZjgtMTQwZC00YTY4LWEzYTItNDE5ZjU1OTc4NjAyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJqdHpGRUcxMFg2MG54bmNscWl5UTEyYVZTVWZId2N3SW85UThGSk45Rk1RNXFZOXJOVytHQ2hNTVwvSXdySVJOTSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.252.24.108]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180221090000.18091-1-niklas.cassel@axis.com>
-References: <20180221090000.18091-1-niklas.cassel@axis.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 6 Mar 2018 17:45:30 +0100
-X-Google-Sender-Auth: IW5thdlSCanCHW2VECgNTSBGoBA
-Message-ID: <CAK8P3a0ykwsO40w49TL9xgVKv3wrvx7KXz1o6XD5+qXQ6n8YUA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] ARTPEC-6 ARM SoC device tree updates
-To: Niklas Cassel <niklas.cassel@axis.com>
-Cc: arm-soc <arm@kernel.org>, linux-arm-kernel@axis.com,
-        DTML <devicetree@vger.kernel.org>, Niklas Cassel <niklass@axis.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w26GkUo2032177
 
-On Wed, Feb 21, 2018 at 9:59 AM, Niklas Cassel <niklas.cassel@axis.com> wrote:
-> Hello,
->
-> Here comes some ARTPEC-6 ARM SoC device tree updates.
->
-> Niklas Cassel (8):
->   ARM: dts: artpec: disable Accelerator Coherency Port
->   ARM: dts: artpec: use 1 GiB RAM
->   ARM: dts: artpec: remove 0x prefix from clkctrl unit address
->   ARM: dts: artpec: migrate ethernet to stmmac binding
->   ARM: dts: artpec: add and utilize artpec6 pin controller
->   ARM: dts: artpec: add and utilize nbpfaxi DMA controllers
->   ARM: dts: artpec: add disabled node for PCIe endpoint mode
->   ARM: dts: artpec: add node for hardware crypto accelerator
+> 
+> On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > >
+> > >
+> > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > >
+> > > > Why you need cover letter?  What are u missing in the patch
+> > > > description
+> > >
+> > > If you submit a *patch set* I *require* a cover letter, yes.
+> >
+> > It's good but it is not must, you are inventing your own rules.
+> 
+> As long as the Maintainer is the gatekeeper, you're not going to get very far
+> with this argument.  The fact is that a lot of subsystems have varying rules;
+> often undocumented, some of which are even in conflict, like alphabetic vs
+> reverse christmas tree format for includes.
 
-For a series eight patches, a pull request would save me some work, but
-I applied it anyway.
+Usually I'm trying to stay in convention of the surouding code even if it's agains my personal taste.
+ I think this particular case was a bit different. 
+ 
+> A cover letter is actually one of the more uniform rules.  It's referred to in
+> submitting patches, but not actually documented there.
 
-Are you sure that the first three patches shouldn't be applied to stable
-backports?
+I'm all for cover letters,  but for few code line fixes it's more comments then code.
 
-     Arnd
+What is most important I think I and Jarkko had found finally a common ground.
+
+Thanks
+Tomas
