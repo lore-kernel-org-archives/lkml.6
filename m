@@ -1,81 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754006AbeCFTVN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:21:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42125 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753453AbeCFTVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:21:10 -0500
-Date: Tue, 6 Mar 2018 20:21:06 +0100
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stefan Schake <stschake@gmail.com>
-Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
-Message-ID: <20180306202106.0abd51ca@kitsune.suse.cz>
-In-Reply-To: <166274019.307112.1520085525833@email.1und1.de>
-References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
-        <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
-        <20180214163649.3a0c9476@kitsune.suse.cz>
-        <20180214165827.386b9bb1@kitsune.suse.cz>
-        <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
-        <20180214202454.6e7ebeaf@naga.suse.cz>
-        <166274019.307112.1520085525833@email.1und1.de>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933101AbeCFTYY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 14:24:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48692 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753779AbeCFTYS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 14:24:18 -0500
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: [PATCH v8 02/63] radix tree: Use GFP_ZONEMASK bits of gfp_t for flags
+Date: Tue,  6 Mar 2018 11:23:12 -0800
+Message-Id: <20180306192413.5499-3-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180306192413.5499-1-willy@infradead.org>
+References: <20180306192413.5499-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-On Sat, 3 Mar 2018 14:58:45 +0100 (CET)
-Stefan Wahren <stefan.wahren@i2se.com> wrote:
+None of these bits may be used for slab allocations, so we can use them
+as radix tree flags as long as we mask them off before passing them
+to the slab allocator.  Move the IDR flag from the high bits to the
+GFP_ZONEMASK bits.
 
-> Hi Michal,
-> 
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+---
+ include/linux/idr.h                  | 3 ++-
+ include/linux/radix-tree.h           | 7 ++++---
+ lib/radix-tree.c                     | 3 ++-
+ tools/testing/radix-tree/linux/gfp.h | 1 +
+ 4 files changed, 9 insertions(+), 5 deletions(-)
 
-> yesterday i finished my stress tests with Raspberry Pi 3.
-> 
-> Scenario:
-> - copy Tumbleweed on SD card
-> (openSUSE-Tumbleweed-ARM-JeOS-raspberrypi3.aarch64-2018.02.02-Build1.2.raw,
-> Linux 4.14.15)
-> - setup locales with yast
-> - run zypper update
-> - reboot
-> - install and remove java 1.8 in a loop for at least 1 hour
-> 
-> Results of the different SD cards:
-> Toshiba uSDHC Class 10 UHS-1 32 GB: PASS
-> BASETech uSDHC Class 10 16 GB: PASS
-> Samsung uSDHC EVO+ UHS-1 16 GB: PASS
-> Samsung uSDHC Class 6 32 GB: PASS
-> SanDisk Edge Class 4 16 GB: PASS
-> Kingston uSDHC Class 10 UHS-1 32 GB: PASS
-> QUMOX uSDHC Class 10 UHS-1 16 GB: FAIL (zypper segfaulted
-> permantently) Transcend uSDHC Class 10 UHS-1 32 GB: PASS
-> 
-> I was never able to reproduce this timeout. 
-
-For the record I was not able to reproduce the issue installing and
-removing openjdk-1.7.0 in a loop for an hour on Leap 42.3 system which
-is affected by the issue. This was a loop of repeatedly installing and
-removing four packages and was executed 68 times. I enabled zypper
-package caching to avoid spending time in download.
-
-Thanks
-
-Michal
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index 7d6a6313f0ab..913c335054f0 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -29,7 +29,8 @@ struct idr {
+ #define IDR_FREE	0
+ 
+ /* Set the IDR flag and the IDR_FREE tag */
+-#define IDR_RT_MARKER		((__force gfp_t)(3 << __GFP_BITS_SHIFT))
++#define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
++					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
+ 
+ #define IDR_INIT_BASE(base) {						\
+ 	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER),			\
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index fc55ff31eca7..6c4e2e716dac 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -104,9 +104,10 @@ struct radix_tree_node {
+ 	unsigned long	tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS];
+ };
+ 
+-/* The top bits of gfp_mask are used to store the root tags and the IDR flag */
+-#define ROOT_IS_IDR	((__force gfp_t)(1 << __GFP_BITS_SHIFT))
+-#define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT + 1)
++/* The IDR tag is stored in the low bits of the GFP flags */
++#define ROOT_IS_IDR	((__force gfp_t)4)
++/* The top bits of gfp_mask are used to store the root tags */
++#define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
+ 
+ struct radix_tree_root {
+ 	gfp_t			gfp_mask;
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index 8e00138d593f..da9e10c827df 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -146,7 +146,7 @@ static unsigned int radix_tree_descend(const struct radix_tree_node *parent,
+ 
+ static inline gfp_t root_gfp_mask(const struct radix_tree_root *root)
+ {
+-	return root->gfp_mask & __GFP_BITS_MASK;
++	return root->gfp_mask & (__GFP_BITS_MASK & ~GFP_ZONEMASK);
+ }
+ 
+ static inline void tag_set(struct radix_tree_node *node, unsigned int tag,
+@@ -2285,6 +2285,7 @@ void __init radix_tree_init(void)
+ 	int ret;
+ 
+ 	BUILD_BUG_ON(RADIX_TREE_MAX_TAGS + __GFP_BITS_SHIFT > 32);
++	BUILD_BUG_ON(ROOT_IS_IDR & ~GFP_ZONEMASK);
+ 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
+ 			sizeof(struct radix_tree_node), 0,
+ 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
+diff --git a/tools/testing/radix-tree/linux/gfp.h b/tools/testing/radix-tree/linux/gfp.h
+index e3201ccf54c3..32159c08a52e 100644
+--- a/tools/testing/radix-tree/linux/gfp.h
++++ b/tools/testing/radix-tree/linux/gfp.h
+@@ -19,6 +19,7 @@
+ 
+ #define __GFP_RECLAIM	(__GFP_DIRECT_RECLAIM|__GFP_KSWAPD_RECLAIM)
+ 
++#define GFP_ZONEMASK	0x0fu
+ #define GFP_ATOMIC	(__GFP_HIGH|__GFP_ATOMIC|__GFP_KSWAPD_RECLAIM)
+ #define GFP_KERNEL	(__GFP_RECLAIM | __GFP_IO | __GFP_FS)
+ #define GFP_NOWAIT	(__GFP_KSWAPD_RECLAIM)
+-- 
+2.16.1
