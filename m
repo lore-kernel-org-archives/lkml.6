@@ -1,52 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754052AbeCFVrI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 16:47:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753876AbeCFVrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 16:47:07 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 118312178E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 6 Mar 2018 16:47:04 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: Lina Iyer <ilina@codeaurora.org>, kbuild-all@01.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
- FTRACE
-Message-ID: <20180306164704.3c33c046@vmware.local.home>
-In-Reply-To: <201803061347.bjigZje9%fengguang.wu@intel.com>
-References: <20180302164317.10554-4-ilina@codeaurora.org>
-        <201803061347.bjigZje9%fengguang.wu@intel.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1754097AbeCFVre (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 16:47:34 -0500
+Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61]:48334 "EHLO
+        a8-61.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753876AbeCFVrd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 16:47:33 -0500
+From: Jeremy Cline <jeremy@jcline.org>
+To: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lining916740672@icloud.com, Jeremy Cline <jeremy@jcline.org>
+Subject: [PATCH v2] scsi: sd: Keep disk read-only when re-reading partition
+Date: Tue, 6 Mar 2018 21:47:32 +0000
+Message-ID: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
+X-Mailer: git-send-email 2.16.2
+X-SES-Outgoing: 2018.03.06-54.240.8.61
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 13:38:06 +0800
-kbuild test robot <lkp@intel.com> wrote:
+If the read-only flag is true on a SCSI disk, re-reading the partition
+table sets the flag back to false.
 
-> >> drivers/soc/qcom/./trace-rpmh.h:29:3: error: implicit declaration of function '__assign_string'; did you mean '__assign_str'? [-Werror=implicit-function-declaration]  
+To observe this bug, you can run:
 
-Yes, you meant __assign_str(). I may have said __assign_string() in my
-comments, but I was doing it from memory, not actually compiling code.
+1. blockdev --setro /dev/sda
+2. blockdev --rereadpt /dev/sda
+3. blockdev --getro /dev/sda
 
-Please make sure you test the code and make sure it builds before
-posting. And displays the tracepoint as you expect it to.
+This commit reads the disk's old state and combines it with the device
+disk-reported state rather than unconditionally marking it as RW.
 
-Thanks,
+Reported-by: Li Ning <lining916740672@icloud.com>
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+---
+Sorry about this, but there's a bug in the first version of this patch.
+I'm not sure what the protocol is for sending revised patches when the
+earlier version got accepted, but I don't see the first version in
+4.16/scsi-fixes yet. If I should make a patch on top of the v1 patch,
+just let me know.
 
--- Steve
+Changes in v2:
+  - Don't save the value of "get_disk_ro" to "sdkp->write_prot" since,
+    as Li Ning noticed, that causes a second bug: when you make the disk
+    writable again with "blockdev --setrw /dev/sda" it isn't possible to
+    write to the disk until the partition is re-read.
 
+ drivers/scsi/sd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->       __assign_string(name, d->name);
->       ^
->    include/trace/trace_events.h:719:4: note: in definition of macro 'DECLARE_EVENT_CLASS'
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index bff21e636ddd..3541caf3fceb 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2595,6 +2595,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
+ 	int res;
+ 	struct scsi_device *sdp = sdkp->device;
+ 	struct scsi_mode_data data;
++	int disk_ro = get_disk_ro(sdkp->disk);
+ 	int old_wp = sdkp->write_prot;
+ 
+ 	set_disk_ro(sdkp->disk, 0);
+@@ -2635,7 +2636,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
+ 			  "Test WP failed, assume Write Enabled\n");
+ 	} else {
+ 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
+-		set_disk_ro(sdkp->disk, sdkp->write_prot);
++		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
+ 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
+ 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
+ 				  sdkp->write_prot ? "on" : "off");
+-- 
+2.16.2
