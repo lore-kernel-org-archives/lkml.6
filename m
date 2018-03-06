@@ -1,314 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754146AbeCFXvc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 18:51:32 -0500
-Received: from mga05.intel.com ([192.55.52.43]:62700 "EHLO mga05.intel.com"
+        id S1754210AbeCFXwY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:52:24 -0500
+Received: from mga01.intel.com ([192.55.52.88]:26344 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753923AbeCFXva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 18:51:30 -0500
+        id S1754144AbeCFXwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 18:52:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.47,433,1515484800";
-   d="scan'208";a="36509678"
-Message-ID: <1520383562.29569.49.camel@intel.com>
-Subject: Re: [PATCH] x86/tsc: Always Running Timer (ART) nanoseconds
- clocksource
-From: Rajvi Jingar <rajvi.Jingar@intel.com>
-To: <tglx@linutronix.de>
-CC: <mingo@kernel.org>, <hpa@zytor.com>, <x86@kernel.org>,
-        <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christopher.s.hall@intel.com>
-Date: Tue, 6 Mar 2018 16:46:02 -0800
-In-Reply-To: <alpine.DEB.2.21.1803011022330.1396@nanos.tec.linutronix.de>
-References: <1519818885-5480-1-git-send-email-rajvi.jingar@intel.com>
-         <alpine.DEB.2.21.1803011022330.1396@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
+   d="scan'208";a="22497538"
+From: Rajvi Jingar <rajvi.jingar@intel.com>
+To: rajvi.jingar@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, christopher.s.hall@intel.com
+Subject: [PATCH v2] x86/tsc: Convert ART in nanoseconds to TSC.
+Date: Tue,  6 Mar 2018 08:47:29 -0800
+Message-Id: <1520354849-32593-1-git-send-email-rajvi.jingar@intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.22.254.140]
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Device drivers use get_device_system_crosststamp() to produce precise
+system/device cross-timestamps. The PHC clock and ALSA interfaces,
+for example, make the cross-timestamps available to user applications.
+On Intel platforms, get_device_system_crosststamp() requires a TSC
+value derived from ART (Always Running Timer) to compute the monotonic
+ raw and realtime system timestamps.
 
-Thank you for your review comments. Please find my answers inline.
+Starting with Intel Goldmont platforms, the PCIe root complex supports
+the PTM time sync protocol. PTM requires all timestamps to be in units
+of nanoseconds. The Intel root complex hardware propagates system time –
+derived from ART - in units of nanoseconds performing the conversion
+as follows:
 
-On Thu, 2018-03-01 at 12:40 +0100, Thomas Gleixner wrote:
-> On Wed, 28 Feb 2018, Rajvi Jingar wrote:
-> 
-> Subject: x86/tsc: Always Running Timer (ART) nanoseconds clocksource
-> 
-> Please don't use clocksource here. That's misleading because
-> clocksources
-> are related to the time keeping infrastructure. What the patch
-> provides is a
-> conversion/correlation function for ART.
-> 
+ART_NS = ART * 1e9 / <crystal frequency>
 
-Sure. v2 has it corrected.
+When user software requests a cross-timestamp, the system timestamps
+(generally read from device registers) must be converted to TSC by
+the driver software as follows:
 
-> > Some clock distribution mechanisms (e.g. PCIe-PTM) require time to
-> > be
-> > distributed in units of nanoseconds. In order to cross-timestamp
-> > local
-> > device time across domains the local device timestamp needs to be
-> > correlated with TSC.
-> > 
-> > On systems that support ART, a CPUID leaf (0x15) returns parameter
-> > Nominal Core Crystal Clock Frequency such that:
-> > 
-> > ART_value (in ticks) = (cryst_freq * ART.ns) / 1e9
-> > 
-> > Add a special case for Goldmont-based platform (which returns
-> > cryst_freq 0)
-> > to manually set the frequency to 19.2MHz.
-> > 
-> > Signed-off-by: Rajvi Jingar <rajvi.jingar@intel.com>
-> > Signed-off-by: Christopher S. Hall <christopher.s.hall@intel.com>
-> 
-> This SOB chain is wrong. Christopher is not transporting your patch.
-> If he
-> was involved in development then please use the:
-> 
-> Co-developed-by: Christopher S. Hall <christopher.s.hall@intel.com>
-> Signed-off-by: Christopher S. Hall <christopher.s.hall@intel.com>
-> Signed-off-by: Rajvi Jingar <rajvi.jingar@intel.com>
-> 
-> format.
-> 
+TSC = ART_NS * TSC_KHZ / 1e6
 
-Adding Cristopher to "Suggested-by" tag since it was suggested by him.
+This is valid when CPU feature flag X86_FEATURE_TSC_KNOWN_FREQ is set
+indicating the tsc_khz is derived from CPUID[15H]. Drivers should
+check that this flag is set before conversion to TSC is attempted.
 
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -108,6 +108,7 @@
-> >  #define X86_FEATURE_EXTD_APICID		( 3*32+26) /*
-> > Extended APICID (8 bits) */
-> >  #define X86_FEATURE_AMD_DCM		( 3*32+27) /* AMD
-> > multi-node processor */
-> >  #define X86_FEATURE_APERFMPERF		( 3*32+28) /* P-
-> > State hardware coordination feedback capability (APERF/MPERF MSRs)
-> > */
-> > +#define X86_FEATURE_ART_NS		( 3*32+29) /* Always
-> > running timer (ART) in nanoseconds */
-> 
-> What's the point of this feature flag? You are not using it in the
-> conversion function for sanity checking the invocation.
-> 
-> Also the naming is bogus as it suggests that the ART value is
-> actually in
-> nano seconds which is not true at all.
-> 
-> What it allows is to do a translation from nanosecond based ART
-> values
-> - where ever they come from - to TSC.
+Changes from v1:
 
-Flag was introduced because of the unreliability of the
-CPUID[0x15].ECX, to check in driver whether it is set or not before
-calling this conversion. It has been removed from v2 since new
-conversion uses tsc_khz instead. We can utilize
-X86_FEATURE_TSC_KNOWN_FREQ flag to add check in driver before calling
-this conversion.
+* use existing frequency hardcode for platforms where CPUID[15H].ECX == 0
+(v1 added redundant hardcode just for the ART.ns conversion)
 
-> >  static u32 art_to_tsc_numerator;
-> >  static u32 art_to_tsc_denominator;
-> > +static u32 art_to_tsc_hz;
-> 
-> I really do not understand your attempt to connect this to TSC. It's
-> just
-> wrong. From your changelog:
-> 
->        ART_value (in ticks) = (cryst_freq * ART.ns) / 1e9
-> 
-> Where is TSC in that formula? Also what is ART.ns? This does not make
-> any
-> sense at all.
-> 
-> From the SDM:
-> 
->      The invariant TSC is based on the invariant timekeeping hardware
->      (called Always Running Timer or ART), that runs at the core
-> crystal
->      clock frequency.
-> 
-> So ART_TICKS is simply the value read from the ART register in a
-> device and
-> the unit of this value is the core crystal clock frequency.
-> 
-> Now what you want to achieve is the conversion of ART_TICKS to
-> nanoseconds. That is:
-> 
-> 	ART_NS = ART_TICKS * CORE_CRYSTAL_FREQ / 1e9
-> 
+* use tsc_khz for TSC conversion, also requires driver to check
+X86_FEATURE_TSC_KNOWN_FREQ (v1 used CPUID[15H].ECX value directly)
 
-To correct the above formula, 
-ART_NS  = ART_TICKS * 1e9 / CORE_CRYSTAL_FREQ
+Signed-off-by: Rajvi Jingar <rajvi.jingar@intel.com>
+Suggested-by: Christopher S. Hall <christopher.s.hall@intel.com>
+---
+ arch/x86/include/asm/tsc.h |  1 +
+ arch/x86/kernel/tsc.c      | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-Added the ART_NS->TSC formula in changelog with more details.
-
-> >  	cpuid(ART_CPUID_LEAF, &art_to_tsc_denominator,
-> > -	      &art_to_tsc_numerator, unused, unused+1);
-> > +	      &art_to_tsc_numerator, &art_to_tsc_hz, &unused);
-> 
-> That means that the variable you want here is:
-> 
->      core_crystal_freq
-> 
-> and not some misleading randomly chosen one. Again from the SDM:
-> 
-> ECX Bits 31 - 00: An unsigned integer which is the nominal frequency
-> of the
->     	      	  core crystal clock in Hz.
-> 
-
-Variable core_crystal_freq has been removed in v2.
-
-> >  	if (art_to_tsc_denominator < ART_MIN_DENOMINATOR)
-> >  		return;
-> > @@ -1001,6 +1002,15 @@ static void __init detect_art(void)
-> >  
-> >  	/* Make this sticky over multiple CPU init calls */
-> >  	setup_force_cpu_cap(X86_FEATURE_ART);
-> > +
-> > +	if (art_to_tsc_hz == 0) {
-> > +		if (boot_cpu_data.x86_model ==
-> > INTEL_FAM6_ATOM_GOLDMONT)
-> > +			art_to_tsc_hz = 19200000;
-> > +		else
-> > +			return;
-> 
-> Please make this a switch case right away. Given the track record of
-> Intels
-> bogus frequency information in CPUID this will grow before this patch
-> is
-> merged.
-> 
-> 	  switch (boot_cpu_data.x86_model) {
-> 	  case INTEL_FAM6_ATOM_GOLDMONT:
-> 	  	/* Add a comment explaining why goldmont is special
-> */
-> 	  	art_to_tsc_hz = 19200000;
-> 		break;
-> 	  default: return;
-> 	  }
-> 
-
-This hardcoding was redundant for this conversion so it has been
-removed and v2 uses existing frequency hardcode for platforms where
-CPUID[15H].ECX == 0.
-
-> > +	}
-> > +
-> > +	setup_force_cpu_cap(X86_FEATURE_ART_NS);
-> 
-> This still makes no sense. Can you please elaborate what this feature
-> is for?
-> 
-> > @@ -1179,6 +1189,27 @@ struct system_counterval_t
-> > convert_art_to_tsc(u64 art)
-> >  }
-> >  EXPORT_SYMBOL(convert_art_to_tsc);
-> >  
-> > +#define ART_NS_QUANTITY	1000000000
-> 
-> What on earth does this constant mean? It's simply NSEC_PER_SEC, i.e.
-> 1e9,
-> if I did not miscount the trailing zeros. There is absolutely no
-> point to
-> invent obscure new constants if there are meaningful and correct ones
-> available already.
-> 
-
-Sure. I missed out the already existing constant. Thanks for pointing
-it out.
-
-> > +/*
-> > + * Convert ART ns to TSC given numerator/denominator found in
-> > detect_art()
-> 
-> Please use proper kernel doc to document the function.
-> 
-> > + */
-> > +struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
-> 
-> How do you get a ART value in nanoseconds in the first place? You are
-> mumbling something unspecific in your changelog:
-> 
->     Some clock distribution mechanisms (e.g. PCIe-PTM) require time
-> to be
->     distributed in units of nanoseconds.
-> 
-> Of course you completely fail to explain how that is supposed to
-> work. The
-> original explanation for ART was that ART is distributed to PCIe as
-> is and
-> the time stamps taken in devices are in ART frequency. That's how PTP
-> uses
-> it, right?
-> 
-> Now you say, that PCIe-PTM provides ART values in nanosecond units. I
-> assume that's done in hardware and uses the same conversion formula:
-> 
-> 	ART_NS = ART_TICKS * CORE_CRYSTAL_FREQ / 1e9
-> 
-> That brings up the obvious question how PCIe-PTM knows about
-> CORE_CRYSTAL_FREQ on Goldmont if the CPUID does not. What a mess.
-> 
-> All this information wants to be in the changelog and not left to the
-> reader/reviewer to be figured out with crystalballs.
-> 
-> So for full correlation to TSC you need to go back to the original
-> core
-> crystal ticks and then do the conversion to TSC. The way you are
-> doing this
-> is:
-> 
->     	ART_TICKS = ART_NS * 1e9 / CORE_CRYSTAL_FREQ;
-> 
-> and then:
-> 
->         TSC = art_tsc_offset + ART_TICKS * art_tsc_nominator /
-> art_tsc_denominator
-> 
-> Sorry, but that is just mindless hackery. The complete conversion
-> function
-> is:
-> 
->        TSC = art_tsc_offset + (ART_TICKS * 1e9 * art_tsc_nominator) /
->        	     		      (CORE_CRYSTAL_FREQ *
-> art_tsc_denominator)
-> 
-> The relevant values are already known at init time. So you can simply
-> compute the compound values.
-> 
-> 	art_ns_tsc_nominator = 1e9 * art_tsc_nominator;
-> 	art_ns_tsc_denominator = CORE_CRYSTAL_FREQ *
-> art_tsc_denominator;
-> 
-> and the computation boils down to:
-> 
-> 	res = div64_u64_rem(art_ns, art_ns_tsc_denominator, &rem);
-> 	res *= art_ns_to_tsc_numerator;
-> 
-> 	rem *= art_ns_to_tsc_numerator;
-> 	res += div64_u64(rem, art_ns_tsc_denominator);
-> 	res += art_tsc_offset;
-> 
-> instead of a completely uncomprehensible mess which is also prone to
-> lose
-> precision.
-> 
-> Hmm?
-> 
-> Thanks,
-> 
-> 	tglx
-
-Formula has been changed in v2 to calculate TSC from given ART in
-nanoseconds that is much straightforward.
-
-Thanks,
-Rajvi
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index cf5d53c..2701d22 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -31,6 +31,7 @@ static inline cycles_t get_cycles(void)
+ }
+ 
+ extern struct system_counterval_t convert_art_to_tsc(u64 art);
++extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
+ 
+ extern void tsc_early_delay_calibrate(void);
+ extern void tsc_init(void);
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index fb43027..f07f3bd 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1179,6 +1179,24 @@ struct system_counterval_t convert_art_to_tsc(u64 art)
+ }
+ EXPORT_SYMBOL(convert_art_to_tsc);
+ 
++struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns)
++{
++	u64 tmp, res, rem;
++
++	rem = do_div(art_ns, USEC_PER_SEC);
++
++	res = art_ns * tsc_khz;
++	tmp = rem * tsc_khz;
++
++	do_div(tmp, USEC_PER_SEC);
++	res += tmp;
++
++	return (struct system_counterval_t) {.cs = art_related_clocksource,
++			.cycles = res};
++}
++EXPORT_SYMBOL(convert_art_ns_to_tsc);
++
++
+ static void tsc_refine_calibration_work(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(tsc_irqwork, tsc_refine_calibration_work);
+ /**
+-- 
+2.7.4
