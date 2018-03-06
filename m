@@ -1,68 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754295AbeCFXZ6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 18:25:58 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:37454 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754144AbeCFXZ4 (ORCPT
+        id S932941AbeCFXe0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:34:26 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45122 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754122AbeCFXeY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 18:25:56 -0500
-X-Google-Smtp-Source: AG47ELuo6XK0zEriMEouGviyz2k2KaH3EvfBLbG9/8dcC8LUM0rjcW7O540n35FcE3n5MDB2CbLNbMILbS5PjXlZbWo=
+        Tue, 6 Mar 2018 18:34:24 -0500
+X-Google-Smtp-Source: AG47ELvpEdsSpkiOjgeQiPnwSsX/m0Jr2Q4TTMOKGLuxwedPrfWF9NqNOBjyp8g4aJ7gfc2rVkNzPQ==
+Date: Tue, 6 Mar 2018 16:34:19 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] infiniband: remove redundant assignment to pointer 'rdi'
+Message-ID: <20180306233419.GA8328@ziepe.ca>
+References: <20180301162354.17420-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <7b724d51-52b8-6cbf-2a9d-f44f3de28dc8@ti.com>
-References: <5a8c6a34.8880a70a.2a9a1.afc7@mx.google.com> <CAK8P3a0OaN6QjPdTXXXzMeYQt+WnMfvVuhza5Rb2wqdq_iEFVA@mail.gmail.com>
- <7b724d51-52b8-6cbf-2a9d-f44f3de28dc8@ti.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 00:25:55 +0100
-X-Google-Sender-Auth: A4Xu33jqVOuuCsIk7vht5pADuyY
-Message-ID: <CAK8P3a2-zq95wnNYDSeTubkhr4Oc_YTSHX-NjvbD35iVNk+fWg@mail.gmail.com>
-Subject: Re: mainline build: 15 warnings 0 failures (mainline/v4.16-rc2-64-gaf3e79d)
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: "Olof's autobuilder" <build@lixom.net>,
-        Olof Johansson <olof@lixom.net>,
-        Kernel Build Reports Mailman List
-        <kernel-build-reports@lists.linaro.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180301162354.17420-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 3:42 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
->
-> On Wednesday 21 February 2018 06:12 PM, Arnd Bergmann wrote:
->> On Tue, Feb 20, 2018 at 7:34 PM, Olof's autobuilder <build@lixom.net> wrote:
->>> Here are the build results from automated periodic testing.
->>>
->>> The tree being built was mainline, found at:
->>>
->>> URL: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>
->>>
->>> Warnings:
->>>
->>>         arm64.allmodconfig:
->>> include/uapi/linux/byteorder/big_endian.h:31:52: warning: passing argument 1 of '__fswab64' makes integer from pointer without a cast [-Wint-conversion]
->>
->> I sent two patches to the bnxt_re maintainers yesterday. I expect them
->> to get applied
->> soon, but haven't heard back yet.
->>
->>> WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
->>
->> Still waiting for Kishon to apply an older patch I sent for this.
->
-> I had merged it locally. Now pushed everything.
+On Thu, Mar 01, 2018 at 04:23:54PM +0000, Colin Ian King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer rdi is being initialized with a value that is never read
+> and re-assigned immediately after, hence the initialization is redundant
+> and can be removed.
+> 
+> Cleans up clang warning:
+> drivers/infiniband/sw/rdmavt/vt.c:94:23: warning: Value stored to 'rdi'
+> during its initialization is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>  drivers/infiniband/sw/rdmavt/vt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Kishon,
+applied to for-next, thanks
 
-kernelci still reports it as one of the remaining warnings for v4.16-rc,
-any chance you can send this as a bugfix for the current release?
-
-       Arnd
+Jason
