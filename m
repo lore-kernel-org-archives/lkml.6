@@ -1,45 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753300AbeCFKBw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:01:52 -0500
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39866 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeCFKBv (ORCPT
+        id S1753251AbeCFKEm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:04:42 -0500
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:34480 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752936AbeCFKEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:01:51 -0500
-X-Google-Smtp-Source: AG47ELuV0Di0juXdWnrki+MaN3iduVd432ec2Ex5VDT1xY/vprG4Fo7IosLbE/PkYR62s+7usGouLQ==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: tj@kernel.org, jiangshanlai@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] workqueue: use put_device() instead of kfee()
-Date: Tue,  6 Mar 2018 15:31:03 +0530
-Message-Id: <6ea392ae58fb06df5c1548ae804bb4d842dbd049.1520330391.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 6 Mar 2018 05:04:40 -0500
+X-Google-Smtp-Source: AG47ELutq1goEMJgAvCLgSOrEjfuHdt0f+qeE11zFb9DxjFioSgFP61H1S4Sc+yR1iFoCJJBANTDjA==
+Message-ID: <1520330675.13868.17.camel@redhat.com>
+Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
+From: Benjamin Berg <bberg@redhat.com>
+To: Peter FP1 Zhang <zhangfp1@lenovo.com>, Takashi Iwai <tiwai@suse.de>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Tue, 06 Mar 2018 11:04:35 +0100
+In-Reply-To: <FA1DB435B97D5A4192BAE54A4EA542A99ABF1F5E@CNMAILEX04.lenovo.com>
+References: <20180214122939.10069-1-bberg@redhat.com>
+         <s5hr2pn6803.wl-tiwai@suse.de> <1518622889.23539.65.camel@redhat.com>
+         <FA1DB435B97D5A4192BAE54A4EA542A99ABF1473@CNMAILEX04.lenovo.com>
+         <s5heflfhdbr.wl-tiwai@suse.de>
+          <FA1DB435B97D5A4192BAE54A4EA542A99ABF1F5E@CNMAILEX04.lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Never directly free @dev after calling device_register(), even
-if it returned an error! Always use put_device() to give up the
-reference initialized in this function instead.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- kernel/workqueue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Peter,
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index bb9a519..ccd1080 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5337,7 +5337,7 @@ int workqueue_sysfs_register(struct workqueue_struct *wq)
- 
- 	ret = device_register(&wq_dev->dev);
- 	if (ret) {
--		kfree(wq_dev);
-+		put_device(&wq_dev->dev);
- 		wq->wq_dev = NULL;
- 		return ret;
- 	}
--- 
-1.9.1
+On Mon, 2018-02-26 at 08:46 +0000, Peter FP1 Zhang wrote:
+> The following comments from our Accessory BU hardware team FYI.
+> //
+> Most of dock audio is converted from USB if it is connected by cable,
+> but CS13 Mechnical dock is not. We need to know the specific dock
+> model first.
+> //
+
+I think that basically answers the question and we can conclude that
+the 80s series has USB audio on the docking stations.
+
+CS13 is the previous generation docking (at the bottom of the laptops)
+while the new models have a new docking connector at the side (which is
+USB-C + 14 pins primarily for Ethernet incl. LEDs and likely some other
+purpose).
+
+Thanks,
+Benjamin
+
+> -----Original Message-----
+> From: Peter FP1 Zhang 
+> Sent: Wednesday, February 21, 2018 12:07 AM
+> To: 'Takashi Iwai'
+> Cc: Benjamin Berg; alsa-devel@alsa-project.org; Jaroslav Kysela; linu
+> x-kernel@vger.kernel.org; kailang@realtek.com
+> Subject: RE: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
+> 
+> Thank you Takashi. 
+> I will also double confirm it with our Accessory BU guys about Ben's
+> question when I back to my office. And will let you know if there was
+> any different answer from them.
+> 
+> 
+> Peter Zhang \ 张福平,  PMP
+> ThinkPad & ThinkStation Linux Solutions
+> Tel: (+86) 181-1611-8005 | Lenovo Shanghai
+> 
+> Linux for Those Who Do - http://www.lenovo.com/linux
+> 
+> -----Original Message-----
+> From: Takashi Iwai [mailto:tiwai@suse.de]
+> Sent: Tuesday, February 20, 2018 11:48 PM
+> To: Peter FP1 Zhang
+> Cc: Benjamin Berg; alsa-devel@alsa-project.org; Jaroslav Kysela; linu
+> x-kernel@vger.kernel.org; kailang@realtek.com
+> Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
+> 
+> On Sat, 17 Feb 2018 14:54:02 +0100,
+> Peter FP1 Zhang wrote:
+> > 
+> > Hi Ben,
+> > 
+> > My understanding is same as yours. Recently Realtek Audio expert
+> > Kailang (on copy) submitted a patch for Dock as the attached, are
+> > you asking the same thing?
+> > Looks like the issue is related to Dock model, there are many
+> > different Dock models, could you please let us know which specific
+> > dock model you mean? Thanks.
+> > 
+> > @Kailang, Do you have any suggestions or comments?
+> 
+> FYI, because of this unclearness, the patch from Benjamin is still
+> pending.  I'm OK to apply it at first, then adjust later if the
+> docking station quirk is required, too.  Just let me know.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> > 
+> > Thanks,
+> > 
+> > Peter Zhang \ 张福平,  PMP
+> > ThinkPad & ThinkStation Linux Solutions
+> > Tel: (+86) 181-1611-8005 | Lenovo Shanghai
+> > 
+> > Linux for Those Who Do - http://www.lenovo.com/linux
+> > 
+> > 
+> > -----Original Message-----
+> > From: Benjamin Berg [mailto:bberg@redhat.com]
+> > Sent: Wednesday, February 14, 2018 11:41 PM
+> > To: Takashi Iwai
+> > Cc: alsa-devel@alsa-project.org; Jaroslav Kysela; 
+> > linux-kernel@vger.kernel.org; Peter FP1 Zhang
+> > Subject: Re: [PATCH] ALSA: hda/realtek: Limit mic boost on T480
+> > 
+> > -----BEGIN PGP SIGNED MESSAGE-----
+> > Hash: SHA512
+> > 
+> > On Wed, 2018-02-14 at 14:00 +0100, Takashi Iwai wrote:
+> > > On Wed, 14 Feb 2018 13:29:39 +0100,
+> > > Benjamin Berg wrote:
+> > > > 
+> > > > The internal mic boost on the T480 is too high. Fix this by 
+> > > > applying the ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the
+> > > > machine 
+> > > > to limit the gain.
+> > > > 
+> > > > Signed-off-by: Benjamin Berg <bberg@redhat.com>
+> > > > Tested-by: Benjamin Berg <bberg@redhat.com>
+> > > 
+> > > Applying this quirk itself is OK, but just wonder whether this
+> > > model 
+> > > has a docking station port.  Recently we fixed the dock issue,
+> > > and 
+> > > it required to apply ALC298_FIXUP_TPT470_DOCK.
+> > 
+> > I assumed that on the T480 and similar models the audio on the dock
+> > is connected through USB (the dock is USB-C + further pins), but I
+> > cannot confirm this myself right now as I only have a T480
+> > currently.
+> > 
+> > I have now contacted Peter Zhang of Lenovo about this and also to
+> > check if other 80 series models may need the same fixup.
+> > 
+> > Benjamin
+> > 
+> > > 
+> > > thanks,
+> > > 
+> > > Takashi
+> > > 
+> > > > ---
+> > > >  sound/pci/hda/patch_realtek.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/sound/pci/hda/patch_realtek.c 
+> > > > b/sound/pci/hda/patch_realtek.c index
+> > > > ce28f7ce64e6..8467ce3db767
+> > > > 100644
+> > > > --- a/sound/pci/hda/patch_realtek.c
+> > > > +++ b/sound/pci/hda/patch_realtek.c
+> > > > @@ -6510,6 +6510,7 @@ static const struct snd_pci_quirk 
+> > > > alc269_fixup_tbl[] = {
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x224b, "Thinkpad", 
+> > > > ALC298_FIXUP_TPT470_DOCK),
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x224c, "Thinkpad", 
+> > > > ALC298_FIXUP_TPT470_DOCK),
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x224d, "Thinkpad", 
+> > > > ALC298_FIXUP_TPT470_DOCK),
+> > > > +	SND_PCI_QUIRK(0x17aa, 0x225d, "Thinkpad T480",
+> > > > ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", 
+> > > > ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", 
+> > > > ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+> > > >  	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", 
+> > > > ALC294_FIXUP_LENOVO_MIC_LOCATION),
+> > > > --
+> > > > 2.14.3
+> > > > 
+> > > > 
+> > 
+> > -----BEGIN PGP SIGNATURE-----
+> > 
+> > iQIzBAEBCgAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlqEWKkACgkQq6ZWhpmF
+> > Y3AEyQ/7B6l4Na1GLDf11P8OdzzcXOy6grjvrLYwq6WFA3M1DirlQsPwjSbnJ7V8
+> > znIX30EK6My9Ip6jyvJQIpiBlaX1FKJuJ3So9mjgUeOcCQMFkwnC1fMMyyWEAWLq
+> > TI1s7F5w4OQwhQpwtlId4AIB7A2ZzQmP/9YqfIPDtIiNJqjd9aRruBJi8A8j3sB5
+> > slY1CYgCQhBUiAkUPisFrt+b4aFU5FlgINQR+6uOSKO0/IaSKq9rFwX76lOTOsBj
+> > kHhywIF9Qef6CvUDaAOFWjQcTA/ooDPifUsfNzo6ZHnNZIks0Cov12JeO5UrxjiD
+> > a3BuG6SZAVm4awfkTj5pIL0DuBAXYhTJd/hU3VMWdV0/kb0OeVONSahMzhSOCM30
+> > WdFKpWC0+n3TEkTWSG9QGwL6wbXiaLNZ0JRgQkcoJ9JqPVngFf9LIRBzqdMyzyCE
+> > UzLu/oQ9XlXQrFx1IG5KS/RJJPUwpJKhXOygSpRZx/HhmaWpPVLCu9GNg+ytoVIL
+> > QEg381jOTTPi+DX0k07WYK+hUEvB83cbtsm+EiEGMa4bxuhYQp2p1moGqOrzv2XK
+> > iEN8LfF97KJ4GtqVWybnstxMxMdS0CwXBPxUZ3OY6C03S3sdVqk/QrEpE4i0+N8P
+> > CcX3g+rEJVUkpsdm17Sf5u4DjeGH7HBPsDmHirrwvFdeOkTiO4E=
+> > =NIZ6
+> > -----END PGP SIGNATURE-----
+> > 
+> > [2 0000-alc298-thinkpad-dock.patch <application/octet-stream 
+> > (base64)>]
+> > 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlqeZ7MACgkQq6ZWhpmF
+Y3CUIRAAnZ40ojWpK/oQmBvZCo5tEuiLKuJtQYhsw3yOxs96Ud2u1W/pSx3ED1Re
+qm0TNk9sj7oNPmVnUuSMN5JIj4erW/K3fQ/yM69Sen7LFgDYuSvVEEdhHQbPjpC0
+4C9AHA/InFmecWFjHZ8OLC1DvkXPoHmlw3MpJ4delf1qYZgq6jSrpQFJd2ClnNln
+wvinsIPo71lHLHB33aQd+Gii6C2GplW8V/j77qDVU3KAQQSSz9LDHitZ8oFxEk5U
+kX+nsCN8LXrnBBNGNcVsKaKdJUEfBcelnxz/3I15NPLEroOA5kZnzArj6OBBnYvB
+axpYlXKv1+eSdkq/qGq3H2Me7Ln38kNVYcu7wJKwsBxcMMwhXAoQRLwwr7tEKW+z
+lA8leioxjeCR9ncqxbuUuqOAa6W/PRd6dH9Xp3UVaTg/EPC/kZfg9R2iY7I/ZQOT
+2rcLcsVxlLWg0BGAnV/2o3gRwXymHxKYT8R0MS3TFqVq+fZj9K+SXeueBid1qW78
+wHs9hHjFOO5pZprkOmLWbybV39qi9gEeBV+Q+bIyAlJiYXT2tBCe/t19+6ktCxNa
+8/BWeOvk+rRamtanwX+cXaYOVoh/Ney1nODJs70i58yrTpKM4RwQlhx515S7a+UQ
+Hnx+xw8/wd9IPH67yc7D97iKSFHk5ObmeNB6IHUQhm7CyP6Yedw=
+=+cS7
+-----END PGP SIGNATURE-----
