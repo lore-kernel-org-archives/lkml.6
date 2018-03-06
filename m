@@ -1,50 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeCFRxh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:53:37 -0500
-Received: from mga11.intel.com ([192.55.52.93]:16110 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbeCFRxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:53:36 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,432,1515484800";
-   d="scan'208";a="32864010"
-Date: Tue, 6 Mar 2018 09:53:20 -0800
-From: Andi Kleen <ak@linux.intel.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, Ilya Pronin <ipronin@twitter.com>
-Subject: Re: [PATCH] perf stat: fix cvs output format
-Message-ID: <20180306175320.GE25017@tassilo.jf.intel.com>
-References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
- <20180306170011.GD25017@tassilo.jf.intel.com>
- <CAM_iQpUfRMW4aGfaTdFqCRwuuLXFX69Aewg+k-aa6BMUKSrhTA@mail.gmail.com>
+        id S1753944AbeCFSAi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 13:00:38 -0500
+Received: from mail-vk0-f54.google.com ([209.85.213.54]:38361 "EHLO
+        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753831AbeCFSAf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 13:00:35 -0500
+X-Google-Smtp-Source: AG47ELtHzJmpB96nd8DeY4D9F+6mARlKdT266t9MPTRFo+UztJY9HmWRXgA+O56Tl3bCyMjqPJc6DZLPFnqw7h3ROXE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpUfRMW4aGfaTdFqCRwuuLXFX69Aewg+k-aa6BMUKSrhTA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <d0aac677-ed2e-c059-0cba-79f88de194b4@arm.com>
+References: <20180227204711.29357-1-dianders@chromium.org> <3831527.HjPPvuL6zK@diego>
+ <d0aac677-ed2e-c059-0cba-79f88de194b4@arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 6 Mar 2018 10:00:32 -0800
+X-Google-Sender-Auth: z8JPM3uCo55OxUD-WrYf7EIbNhQ
+Message-ID: <CAD=FV=Wr6_U9c1qFRgx3=JhMg8US20_oMEmEfCdpVyGKek_8gQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs,
+ wifi reset)
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w26I0iaD014273
 
-> Here is the output from your own commit:
-> 
->       423470,,stalled-cycles-frontend,509102,100.00,65.69,frontend cycles idle
->       <not supported>,,stalled-cycles-backend,0,100.00,,,,
-> 
-> so line 1 has 7 fields, line 2 has 9 fields, and this is expected?
+Hi,
 
-If you had metrics on line 1 it would be correct.
+On Tue, Mar 6, 2018 at 3:58 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> Hi all,
+>
+> On 01/03/18 08:43, Heiko Stübner wrote:
+>> Am Dienstag, 27. Februar 2018, 21:47:11 CET schrieb Douglas Anderson:
+>>> Back in the early days when gru devices were still under development
+>>> we found an issue where the WiFi reset line needed to be configured as
+>>> early as possible during the boot process to avoid the WiFi module
+>>> being in a bad state.
+>>>
+>>> We found that the way to get the kernel to do this in the earliest
+>>> possible place was to configure this line in the pinctrl hogs, so
+>>> that's what we did.  For some history here you can see
+>>> <http://crosreview.com/368770>.  After the time that change landed in
+>>> the kernel, we landed a firmware change to configure this line even
+>>> earlier.  See <http://crosreview.com/399919>.  However, even after the
+>>> firmware change landed we kept the kernel change to deal with the fact
+>>> that some people working on devices might take a little while to
+>>> update their firmware.
+>>>
+>>> At this there are definitely zero devices out in the wild that have
+>>> firmware without the fix in it.  Specifically looking in the firmware
+>>> branch several critically important fixes for memory stability landed
+>>> after the patch in coreboot and I know we didn't ship without those.
+>>> Thus, by now, everyone should have the new firmware and it's safe to
+>>> not have the kernel set this up in a pinctrl hog.
+>>>
+>>> Historically, even though it wasn't needed to have this in a pinctrl
+>>> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
+>>> default hog at bootup and then would never touch things again.  That
+>>> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
+>>> during suspend/resume").  After that commit then we'll re-apply the
+>>> default hog at resume time and that can screw up the reset state of
+>>> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
+>>> then the whole system can go haywire.  That's what was happening.
+>>> Specifically you'd resume a rk3399-gru-* device and it would mostly
+>>> resume, then would crash with some crazy weird crash.
+>>>
+>>> One could say, perhaps, that the recent pinctrl change was at fault
+>>> (and should be fixed) since it changed behavior.  ...but that's not
+>>> really true.  The device tree for rk3399-gru is really to blame.
+>>> Specifically since the pinctrl is defined in the hog and not in the
+>>> "wlan-pd-n" node then the actual user of this pin doesn't have a
+>>> pinctrl entry for it.  That's bad.
+>>>
+>>> Let's fix our problems by just moving the control of
+>>> "wlan_module_reset_l pinctrl" out of the hog and put them in the
+>>> proper place.
+>>>
+>>> NOTE: in theory, I think it should actually be possible to have a pin
+>>> controlled _both_ by the hog and by an actual device.  Once the device
+>>> claims the pin I think the hog is supposed to let go.  I'm not 100%
+>>> sure that this works and in any case this solution would be more
+>>> complex than is necessary.
+>>>
+>>> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
+>>> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
+>>> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during suspend/resume")
+>>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>
+>> applied as fix for 4.16 with the 2 Tested-tags
+> Sorry to rain on everyone's parade, but further testing shows that this
+> patch may not be enough to restore a reliable s2r. My initial testing
+> did show that we were resuming without the VOP errors, but there seem to
+> be further issues (I'm loosing the keyboard and the trackpad after
+> resume on Kevin).
+>
+> Applying my initial hack makes it work again. I suspect that there are
+> more hog pins that need tweaking, but I'm a bit out of my depth here.
 
-So you just shifted it to break that case.
+Are you positive you weren't just wearing your lucky hat when you
+tested your patch and then took it off when you tested mine?  As far
+as I can see the only hogs left on kevin are:
 
-If you always want to have the same number of fields
-you need to add two empty fields to the normal output
-when there are no metrics.
+  &ap_pwroff      /* AP will auto-assert this when in S3 */
+  &clk_32k        /* This pin is always 32k on gru boards */
 
--Andi
+Those map to:
+
+  ap_pwroff: ap-pwroff {
+     rockchip,pins = <1 5 RK_FUNC_1 &pcfg_pull_none>;
+  };
+
+  clk_32k: clk-32k {
+    rockchip,pins = <0 0 RK_FUNC_2 &pcfg_pull_none>;
+  };
+
+So I added some printouts at suspend/resume time.  Specifically I set
+a boolean to "true" for the duration rockchip_pinctrl_suspend() and
+rockchip_pinctrl_resume() and this turned on a printout in
+rockchip_set_mux().  My printout looked like this (yeah, I know it's a
+whitespace-damaged patch just to show what I'm doing):
+
++       regmap_read(regmap, reg, &before);
+        data = (mask << (bit + 16));
+        rmask = data | (data >> 16);
+        data |= (mux & mask) << bit;
+        ret = regmap_update_bits(regmap, reg, rmask, data);
+
++       regmap_read(regmap, reg, &after);
++
++       if (DOUG) {
++               dev_info(info->dev,
++                        "setting mux of GPIO%d-%d to %d; %#010x=>%#010x\n",
++                        bank->bank_num, pin, mux, reg, before, after);
++       }
+
+...and a similar one in rockchip_set_pull().  That showed this at resume time:
+
+[   62.284427] rockchip-pinctrl pinctrl: setting mux of GPIO1-5 to 1;
+0x00009400=>0x00009400
+[   62.294423] rockchip-pinctrl pinctrl: setting pull of GPIO1-5;
+0x000041aa=>0x000041aa
+[   62.303343] rockchip-pinctrl pinctrl: setting mux of GPIO0-0 to 2;
+0x00005002=>0x00005002
+[   62.313240] rockchip-pinctrl pinctrl: setting pull of GPIO0-0;
+0x00000ddc=>0x00000ddc
+[
+
+Said another way: pinmux and pull isn't actually changing due to the
+hogs.  We can see if something else could be changing, but I'd really
+want to be sure you're certain that the hogs are causing you
+problems...
+
+
+-Doug
