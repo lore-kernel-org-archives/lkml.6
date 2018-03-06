@@ -1,48 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753363AbeCFLK6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 06:10:58 -0500
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34285 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeCFLK5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:10:57 -0500
-X-Google-Smtp-Source: AG47ELuNvffyXFRvkfk/zUTiqq50gt4+CsD4lqaAffis3aEXy3yz3/85Lm6+A/xkKQ82M9lYU4qE0g==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH net-next] net: phy: mdio-mux: slience probe defer error
-Date: Tue,  6 Mar 2018 12:10:45 +0100
-Message-Id: <20180306111045.19315-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+        id S1753332AbeCFLNy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 06:13:54 -0500
+Received: from foss.arm.com ([217.140.101.70]:36662 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750865AbeCFLNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 06:13:53 -0500
+Date: Tue, 6 Mar 2018 11:13:41 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lee@lakrids.cambridge.arm.com, Chun-Yi <jlee@suse.com>,
+        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>, Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Message-ID: <20180306111339.xjrugce553f2egzh@lakrids.cambridge.arm.com>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we fail to register the mdio bus due to probe defer, we should not
-print an error message. Just be silent in this case.
+On Mon, Mar 05, 2018 at 03:23:09PM -0800, Sai Praneeth Prakhya wrote:
+> @@ -329,6 +331,19 @@ static int __init efisubsys_init(void)
+>  		return 0;
+>  
+>  	/*
+> +	 * Since we process only one efi_runtime_service() at a time, an
+> +	 * ordered workqueue (which creates only one execution context)
+> +	 * should suffice all our needs.
+> +	 */
+> +	efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue", 0);
+> +	if (!efi_rts_wq) {
+> +		pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
+> +		       "disabled.\n");
+> +		clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
+> +		return 0;
+> +	}
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/net/phy/mdio-mux-mmioreg.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I'm a little worried that something might sample this flag between it
+being set in an early_initcall (arm_enable_runtime_services), and
+cleared in a subsys_initcall here.
 
-diff --git a/drivers/net/phy/mdio-mux-mmioreg.c b/drivers/net/phy/mdio-mux-mmioreg.c
-index 2573ab012f16..70f6115530af 100644
---- a/drivers/net/phy/mdio-mux-mmioreg.c
-+++ b/drivers/net/phy/mdio-mux-mmioreg.c
-@@ -163,8 +163,9 @@ static int mdio_mux_mmioreg_probe(struct platform_device *pdev)
- 			    mdio_mux_mmioreg_switch_fn,
- 			    &s->mux_handle, s, NULL);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to register mdio-mux bus %pOF\n",
--			np);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to register mdio-mux bus %pOF\n", np);
- 		return ret;
- 	}
- 
--- 
-2.14.3
+However, nothing seems to do that so far, so maybe that's ok...
+
+[...]
+
+> +/* efi_runtime_service() function identifiers */
+> +enum {
+> +	GET_TIME,
+> +	SET_TIME,
+> +	GET_WAKEUP_TIME,
+> +	SET_WAKEUP_TIME,
+> +	GET_VARIABLE,
+> +	GET_NEXT_VARIABLE,
+> +	SET_VARIABLE,
+> +	SET_VARIABLE_NONBLOCKING,
+> +	QUERY_VARIABLE_INFO,
+> +	QUERY_VARIABLE_INFO_NONBLOCKING,
+> +	GET_NEXT_HIGH_MONO_COUNT,
+> +	RESET_SYSTEM,
+> +	UPDATE_CAPSULE,
+> +	QUERY_CAPSULE_CAPS,
+> +};
+
+Can we please give this enum a name....
+
+[...]
+
+> +/*
+> + * efi_runtime_work:	Details of EFI Runtime Service work
+> + * @func:		EFI Runtime Service function identifier
+> + * @arg<1-5>:		EFI Runtime Service function arguments
+> + * @status:		Status of executing EFI Runtime Service
+> + */
+> +struct efi_runtime_work {
+> +	u8 func;
+
+... and use it here rather than an opaque u8? I realise that means
+placing the enum in <linux/efi.h>.
+
+> +	void *arg1;
+> +	void *arg2;
+> +	void *arg3;
+> +	void *arg4;
+> +	void *arg5;
+> +	efi_status_t status;
+> +	struct work_struct work;
+> +};
+
+Thanks,
+Mark.
