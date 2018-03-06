@@ -1,122 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753733AbeCFPUe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753553AbeCFPUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:20:33 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F63121777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 6 Mar 2018 12:20:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH Resent] perf annotate: Fix s390 target function
- disassembly
-Message-ID: <20180306152030.GB3382@kernel.org>
-References: <20180306123955.98802-1-tmricht@linux.vnet.ibm.com>
- <20180306140449.GD10176@kernel.org>
- <f37513cc-1819-6a66-03b5-73b30bbbb966@linux.vnet.ibm.com>
+        id S1753713AbeCFPXQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:23:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40022 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750817AbeCFPXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:23:15 -0500
+Date: Tue, 6 Mar 2018 15:23:19 +0000
+From: Will Deacon <will.deacon@arm.com>
+To: Shanker Donthineni <shankerd@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+Message-ID: <20180306152318.GE17454@arm.com>
+References: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
+ <20180306134405.GB18080@arm.com>
+ <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f37513cc-1819-6a66-03b5-73b30bbbb966@linux.vnet.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 06, 2018 at 03:52:35PM +0100, Thomas-Mich Richter escreveu:
-> On 03/06/2018 03:04 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Mar 06, 2018 at 01:39:55PM +0100, Thomas Richter escreveu:
-> >> Perf annotate displays function call assembler instructions
-> >> with a right arrow. Hitting enter on this line/instruction
-> >> causes the browser to disassemble this target function and
-> >> show it on the screen.  On s390 this results in an error
-> >> message 'The called function was not found.'
-> >>
-> >> The function call assembly line parsing does not handle
-> >> the s390 bras and brasl instructions. Function call__parse
-> >> expects the target as first operand:
-> >> 	callq	e9140 <__fxstat>
-> >> S390 has a register number as first operand:
-> >> 	brasl	%r14,41d60 <abort>
-> >> Therefore the target addresses on s390 are always zero
-> >> which is an invalid address.
-> >>
-> >> Fix this by skipping the first operand on s390.
-> >>
-> >> Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-> >> Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> >> Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-> >> ---
-> >>  tools/perf/util/annotate.c | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
-> >>
-> >> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> >> index 49ff825f745c..feb6006b676d 100644
-> >> --- a/tools/perf/util/annotate.c
-> >> +++ b/tools/perf/util/annotate.c
-> >> @@ -192,6 +192,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map *
-> >>  	};
-> >>  
-> >>  	ops->target.addr = strtoull(ops->raw, &endptr, 16);
-> >> +	if (!strcmp(arch->name, "s390")) {
-> >> +		/* s390 function call 1st operand is register */
-> >> +		tok = strchr(ops->raw, ',');
-> >> +		if (tok)
-> >> +			ops->target.addr = strtoull(tok + 1, &endptr, 16);
-> >> +		else
-> >> +			ops->target.addr = 0;
-> >> +	} else
-> >> +		ops->target.addr = strtoull(ops->raw, &endptr, 16);
-> > 
-> > Do we have to do this here? Can't we have a s390_call__parse() and set
-> > that in the s/390 instructions?
-> 
-> 
-> Originally I wanted to add an architecture specific weak function to handle s390
-> This did not work because file util/annotate.c includes the architecture specific versions
-> around line 100:
-> 
-> #include "arch/arm/annotate/instructions.c"
-> #include "arch/arm64/annotate/instructions.c"
-> #include "arch/x86/annotate/instructions.c"
-> #include "arch/powerpc/annotate/instructions.c"
-> #include "arch/s390/annotate/instructions.c"
-> 
-> This includes the C file for s390 so we end up having function call__parse defined twice,
-> one with a weak definition and one without which results in a compiler error.
-> 
-> I will use  a s390 specific call__parse function and sent another patch.
+Hi Shanker,
 
-So, in tools/perf/arch/s390/annotate/instructions.c you have that
-function s390__associate_ins_ops() where it sets the handler for the
-"brasl" asm instruction to be 'call__ops', what I am proposing is that
-instead you provide a brasl__ops and use it, this ops knows that it is a
-'call', but the target is not where call__ops expects it to be, thus we
-have a separate ops for that, got it?
-
-- Arnaldo
- 
-> >> -- 
-> >> 2.14.3
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-perf-users" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, Mar 06, 2018 at 08:47:27AM -0600, Shanker Donthineni wrote:
+> On 03/06/2018 07:44 AM, Will Deacon wrote:
+> > I think this is a slight asymmetry with the code for the I-side. On the
+> > I-side, you hook into invalidate_icache_by_line, whereas on the D-side you
+> > hook into the callers of dcache_by_line_op. Why is that?
 > > 
 > 
+> There is no particular reason other than complexity of the macro with another 
+> alternative. I tried to avoid this change by updating __clean_dcache_area_pou().
+> I can change if you're interested to see both I-Side and D-Side changes are
+> symmetric some this like this...
 > 
-> -- 
-> Thomas Richter, Dept 3303, IBM LTC Boeblingen Germany
-> --
-> Vorsitzende des Aufsichtsrats: Martina Koederitz 
-> Geschäftsführung: Dirk Wittkopp
-> Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+>  .macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+>   
+>   .if	(\op == cvau)
+>   alternative_if ARM64_HAS_CACHE_IDC
+>         dsb	ishst
+>         b       9997f
+>   alternative_else_nop_endif
+>   .endif
+> 
+> 	dcache_line_size \tmp1, \tmp2
+> 	add	\size, \kaddr, \size
+> 	sub	\tmp2, \tmp1, #1
+> 	bic	\kaddr, \kaddr, \tmp2
+>  9998:
+> 	.if	(\op == cvau || \op == cvac)
+>  alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+> 	dc	\op, \kaddr
+>  alternative_else
+> 	dc	civac, \kaddr
+>  alternative_endif
+> 	.elseif	(\op == cvap)
+>  alternative_if ARM64_HAS_DCPOP
+> 	sys 3, c7, c12, 1, \kaddr	// dc cvap
+>  alternative_else
+> 	dc	cvac, \kaddr
+>  alternative_endif
+> 	.else
+> 	dc	\op, \kaddr
+> 	.endif
+> 	add	\kaddr, \kaddr, \tmp1
+> 	cmp	\kaddr, \size
+> 	b.lo	9998b
+> 	dsb	\domain
+> 9997:
+> 	.endm
+
+I think it would be cleaner the other way round, actually -- move the check
+out of invalidate_icache_by_line and into its two callers.
+
+> > I notice that the only user other than
+> > flush_icache_range/__flush_cache_user_range or invalidate_icache_by_line
+> > is in KVM, via invalidate_icache_range. If you want to hook in there, why
+> > aren't you also patching __flush_icache_all? If so, I'd rather have the
+> > I-side code consistent with the D-side code and do this in the handful of
+> > callers. We might even be able to elide a branch or two that way.
+> > 
+> 
+> Agree with you, it saves function calls overhead. I'll do this change...
+> 
+> static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
+> {
+> 	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)
+> 	    __invalidate_icache_guest_page(pfn, size);
+> }
+> 
+> 
+> > I'm going to assume that I-cache aliases are all coherent if DIC=1, so it's
+> > safe to elide our alias sync code.
+> > 
+> 
+> I'm not sure about I-cache whether aliases are all coherent if DIC=1 ot nor.
+> Unfortunately I don't have any hardware to test DIC=1. I've verified IDC=1.
+
+I checked with our architects and aliases don't pose a problem here, so you
+can ignore me :)
+
+Will
