@@ -1,115 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752919AbeCFA5d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 19:57:33 -0500
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46540 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeCFA5b (ORCPT
+        id S1753055AbeCFA6L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 19:58:11 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:53160 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753024AbeCFA6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 19:57:31 -0500
-X-Google-Smtp-Source: AG47ELuhuIezfn1VCkWC+E35qSmTcfd5YAtPhTI2dezdmSDpUj/FKgqoF5c6KjakSlHuJeLvjmXy5A==
-Date: Mon, 5 Mar 2018 18:57:29 -0600
-From: Rob Herring <robh@kernel.org>
-To: Fabien Dessenne <fabien.dessenne@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Ludovic Barre <ludovic.barre@st.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mailbox: add STMicroelectronics STM32
- IPCC binding
-Message-ID: <20180306005729.odhf4g5br7tfrq35@rob-hp-laptop>
-References: <1519824270-7134-1-git-send-email-fabien.dessenne@st.com>
- <1519824270-7134-2-git-send-email-fabien.dessenne@st.com>
+        Mon, 5 Mar 2018 19:58:09 -0500
+Subject: Re: [PATCH 1/1] mm: make start_isolate_page_range() fail if already
+ isolated
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>
+References: <20180226191054.14025-1-mike.kravetz@oracle.com>
+ <20180226191054.14025-2-mike.kravetz@oracle.com>
+ <20180302160607.570e13f2157f56503fe1bdaa@linux-foundation.org>
+ <3887b37d-2bc0-1eff-9aec-6a99cc0715fb@oracle.com>
+ <20180302165614.edb17a020964e9ea2f1797ca@linux-foundation.org>
+ <40e790c9-cd78-3d41-a69b-bff4f024c9f1@oracle.com>
+Message-ID: <0c473e9c-d28b-b965-2f14-5d195e404d0c@oracle.com>
+Date: Mon, 5 Mar 2018 16:57:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519824270-7134-2-git-send-email-fabien.dessenne@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <40e790c9-cd78-3d41-a69b-bff4f024c9f1@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=982
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803060011
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 02:24:29PM +0100, Fabien Dessenne wrote:
-> Add a binding for the STMicroelectronics STM32 IPCC block exposing a
-> mailbox mechanism between two processors.
+On 03/02/2018 05:39 PM, Mike Kravetz wrote:
+> On 03/02/2018 04:56 PM, Andrew Morton wrote:
+>> On Fri, 2 Mar 2018 16:38:33 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>>
+>>> On 03/02/2018 04:06 PM, Andrew Morton wrote:
+>>>> On Mon, 26 Feb 2018 11:10:54 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>>>>
+>>>>> start_isolate_page_range() is used to set the migrate type of a
+>>>>> set of page blocks to MIGRATE_ISOLATE while attempting to start
+>>>>> a migration operation.  It assumes that only one thread is
+>>>>> calling it for the specified range.  This routine is used by
+>>>>> CMA, memory hotplug and gigantic huge pages.  Each of these users
+>>>>> synchronize access to the range within their subsystem.  However,
+>>>>> two subsystems (CMA and gigantic huge pages for example) could
+>>>>> attempt operations on the same range.  If this happens, page
+>>>>> blocks may be incorrectly left marked as MIGRATE_ISOLATE and
+>>>>> therefore not available for page allocation.
+>>>>>
+>>>>> Without 'locking code' there is no easy way to synchronize access
+>>>>> to the range of page blocks passed to start_isolate_page_range.
+>>>>> However, if two threads are working on the same set of page blocks
+>>>>> one will stumble upon blocks set to MIGRATE_ISOLATE by the other.
+>>>>> In such conditions, make the thread noticing MIGRATE_ISOLATE
+>>>>> clean up as normal and return -EBUSY to the caller.
+>>>>>
+>>>>> This will allow start_isolate_page_range to serve as a
+>>>>> synchronization mechanism and will allow for more general use
+>>>>> of callers making use of these interfaces.  So, update comments
+>>>>> in alloc_contig_range to reflect this new functionality.
+>>>>>
+>>>>> ...
+>>>>>
+>>>>> --- a/mm/page_isolation.c
+>>>>> +++ b/mm/page_isolation.c
+>>>>> @@ -28,6 +28,13 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
+>>>>>  
+>>>>>  	spin_lock_irqsave(&zone->lock, flags);
+>>>>>  
+>>>>> +	/*
+>>>>> +	 * We assume we are the only ones trying to isolate this block.
+>>>>> +	 * If MIGRATE_ISOLATE already set, return -EBUSY
+>>>>> +	 */
+>>>>> +	if (is_migrate_isolate_page(page))
+>>>>> +		goto out;
+>>>>> +
+>>>>>  	pfn = page_to_pfn(page);
+>>>>>  	arg.start_pfn = pfn;
+>>>>>  	arg.nr_pages = pageblock_nr_pages;
+>>>>
+>>>> Seems a bit ugly and I'm not sure that it's correct.  If the loop in
+>>>> start_isolate_page_range() gets partway through a number of pages then
+>>>> we hit the race, start_isolate_page_range() will then go and "undo" the
+>>>> work being done by the thread which it is racing against?
+>>>
+>>> I agree that it is a bit ugly.  However, when a thread hits the above
+>>> condition it will only undo what it has done.  Only one thread is able
+>>> to set migrate state to isolate (under the zone lock).  So, a thread
+>>> will only undo what it has done.
+>>
+>> I don't get it.  That would make sense if start_isolate_page_range()
+>> held zone->lock across the entire loop, but it doesn't do that.
+>>
 > 
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  .../devicetree/bindings/mailbox/stm32-ipcc.txt     | 48 ++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
+> It works because all threads set migrate isolate on page blocks going
+> from pfn low to pfn high.  When they encounter a conflict, they know
+> exactly which blocks they set and only undo those blocks.  Perhaps, I
+> am missing something, but it does not matter because ...
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
-> new file mode 100644
-> index 0000000..2321689
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
-> @@ -0,0 +1,48 @@
-> +* STMicroelectronics STM32 IPCC (Inter-Processor Communication Controller)
-> +
-> +The IPCC block provides a non blocking signaling mechanism to post and
-> +retrieve messages in an atomic way between two processors.
-> +It provides the signaling for N bidirectionnal channels. The number of channels
-> +(N) can be read from a dedicated register.
-> +
-> +Required properties:
-> +- compatible:   Must be "st,stm32-ipcc"
-
-Kind of generic. There's only 1 version of h/w across all stm32 parts?
-
-> +- reg:          Register address range (base address and length)
-> +- st,proc_id:   Processor id using the mailbox (0 or 1)
-
-s/_/-/
-
-
-> +- clocks:       Input clock
-> +- interrupt-names: List of names for the interrupts described by the interrupt
-> +                   property. Must contain the following entries:
-> +                   - "rx"
-> +                   - "tx"
-> +- interrupts:   Interrupt specifiers for "rx channel occupied" and "tx channel
-> +                free"
-> +- #mbox-cells:  Number of cells required for the mailbox specifier. Must be 1.
-> +                The data contained in the mbox specifier of the "mboxes"
-> +                property in the client node is the mailbox channel index.
-> +
-> +Optional properties:
-> +- wakeup-source: Flag to indicate whether this device can wake up the system
-
-> +- interrupts:    Wakeup interrupt used to wake up the system.
-> +- interrupt-names: "wakeup" for the wakeup interrupt.
-
-Make these required. "wakeup-source" alone determines if you use it.
-
-> +
-> +
-> +
-> +Example:
-> +	ipcc: mailbox@4c001000 {
-> +		compatible = "st,stm32-ipcc";
-> +		#mbox-cells = <1>;
-> +		reg = <0x4c001000 0x400>;
-> +		st,proc_id = <0>;
-> +		interrupts-extended = <&intc GIC_SPI 100 IRQ_TYPE_NONE>,
-> +				      <&intc GIC_SPI 101 IRQ_TYPE_NONE>,
-> +				      <&aiec 62 1>;
-> +		interrupt-names = "rx", "tx", "wakeup";
-> +		clocks = <&rcc_clk IPCC>;
-> +		wakeup-source;
-> +	}
-> +
-> +Client:
-> +	mbox_test {
-> +		...
-> +		mboxes = <&ipcc 0>, <&ipcc 1>;
-> +	};
-> -- 
-> 2.7.4
+>>> The exact problem of one thread undoing what another thread has done
+>>> is possible with the code today and is what this patch is attempting
+>>> to address.
+>>>
+>>>> Even if that can't happen, blundering through a whole bunch of pages
+>>>> then saying whoops then undoing everything is unpleasing.
+>>>>
+>>>> Should we be looking at preventing these races at a higher level?
+>>>
+>>> I could not immediately come up with a good idea here.  The zone lock
+>>> would be the obvious choice, but I don't think we want to hold it while
+>>> examining each of the page blocks.  Perhaps a new lock or semaphore
+>>> associated with the zone?  I'm open to suggestions.
+>>
+>> Yes, I think it would need a new lock.  Hopefully a mutex.
 > 
+> I'll look into adding an 'isolate' mutex to the zone structure and reworking
+> this patch.
+
+I went back and examined the 'isolation functionality' with an eye on perhaps
+adding a mutex for some higher level synchronization.  However, there does
+not appear to be a straight forward solution.
+
+What we really need is some way of preventing two threads from operating on
+the same set of page blocks concurrently.  We do not want a big mutex, as
+we do want two threads to run in parallel if operating on separate
+non-overlapping ranges (CMA does this today).  If we did this, I think we
+would need a new data structure to represent page blocks within a zone.
+start_isolate_page_range() would then then check the new data structure for
+conflicts, and if none found mark the range it is operating on as 'in use'.
+undo_isolate_page_range() would clear the entries for the range in the new
+data structure.  Such information would hang off the zone and be protected
+by the zone lock.  The new data structure could be static (like a bit map),
+or dynamic.  It certainly is doable, but ...
+
+The more I think about it, the more I like my original proposal.  The
+comment "blundering through a whole bunch of pages then saying whoops
+then undoing everything is unpleasing" is certainly true.  But do note
+that after isolating the page blocks, we will then attempt to migrate
+pages within those blocks.  There is a more than a minimal chance that
+we will not be able to migrate something within the set of page blocks.
+In that case we again say whoops and undo even more work.
+
+I am relatively new to this area of code.  Therefore, it would be good to
+get comments from some of the original authors.
+-- 
+Mike Kravetz
