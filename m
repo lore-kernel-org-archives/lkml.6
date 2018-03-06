@@ -1,68 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753852AbeCFPlU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:41:20 -0500
-Received: from sauhun.de ([88.99.104.3]:44450 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751989AbeCFPlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:41:15 -0500
-Date: Tue, 6 Mar 2018 16:40:59 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Jan Glauber <jglauber@cavium.com>
-Cc: George Cherian <george.cherian@cavium.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/3] i2c: xlp9xx: Check for Bus state before every
- transfer
-Message-ID: <20180306154056.p3vapgvctxpijitm@ninjato>
-References: <1519737980-27997-1-git-send-email-george.cherian@cavium.com>
- <20180306084829.GB11729@wintermute>
+        id S1753779AbeCFPnK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:43:10 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54001 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753487AbeCFPnH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:43:07 -0500
+X-Google-Smtp-Source: AG47ELu3nCT6ITwf8QmpKXm83BwVA4AELucrDLynDO4nLn9CFw37QpIGOZdpELuOd2IzcEb2KVSh2Q==
+Subject: Re: [PATCH] thermal: of: Allow selection of thermal governor in DT
+To: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: DTML <devicetree@vger.kernel.org>,
+        Ram Chandrasekar <rkumbako@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1520274879.git.amit.kucheria@linaro.org>
+ <3b80853abb45a9e067cf7a16754b07bb67712457.1520274879.git.amit.kucheria@linaro.org>
+ <e6c78c81-f18d-c811-925d-5b1dd427fb65@linaro.org>
+ <CAP245DWvBjcS73YhPxwh2OKW_PYvBLTe-ay6XD8VrSWpukQ3CQ@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <4e3cc8a6-4b4b-4b09-5c04-b7b331158339@linaro.org>
+Date: Tue, 6 Mar 2018 16:43:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mvkl5gyybjujn7rj"
-Content-Disposition: inline
-In-Reply-To: <20180306084829.GB11729@wintermute>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAP245DWvBjcS73YhPxwh2OKW_PYvBLTe-ay6XD8VrSWpukQ3CQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/03/2018 06:48, Amit Kucheria wrote:
+> On Tue, Mar 6, 2018 at 2:41 AM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> On 05/03/2018 19:36, Amit Kucheria wrote:
+>>> From: Ram Chandrasekar <rkumbako@codeaurora.org>
+>>>
+>>> There is currently no way for the governor to be selected for each thermal
+>>> zone in devicetree. This results in the default governor being used for all
+>>> thermal zones even though no such restriction exists in the core code.
+>>>
+>>> Add support for specifying the thermal governor to be used for a thermal
+>>> zone in the devicetree. The devicetree config should specify the governor
+>>> name as a string that matches any available governors. If not specified, we
+>>> maintain the current behaviour of using the default governor.
+>>>
+>>> Signed-off-by: Ram Chandrasekar <rkumbako@codeaurora.org>
+>>> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+>>
+>> Why not create a kernel parameter (eg. thermal.governor=) ? So everyone
+>> can gain benefit of this feature. And in order to specify that from the
+>> DT, add the 'chosen' node and bootargs with the desired kernel parameter?
+>>
+> 
+> This is supposed to be a per-thermal zone property. So specifying it
+> on the command-line, while possible, might be a little cumbersome. I'm
+> not even sure if kernel parameters can have a variable number of
+> arguments. IOW, thermal.tz0.governor=userspace,
+> thermal.tz1.governor=step_wise, thermal.tz2.governor=userspace, .....
+> 
+> I'm already seeing SoCs defining 8 or more thermal zones.
 
---mvkl5gyybjujn7rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah yes indeed.
 
 
-> I don't know how valuable same-company reviewed-by's are in the end,=20
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Case by case. And in your case, I trust you.
-
-> but the patches look good to me with the small change in SMBalert, so you
-> could add:
->=20
-> Reviewed-by: Jan Glauber <jglauber@cavium.com>
-
-Thanks.
-
-
---mvkl5gyybjujn7rj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlqetoMACgkQFA3kzBSg
-Kba1Iw/+Mxxuy/sbxjLZb4Jl02YQHBneo6jdbOunV16Ucg9v3JQa8OAqUFgLyVnJ
-hiTCFki8XsM9tCbBlenxb/h3pSKkNXivOXnM/P5tyNetg9cL/vu/zAIpdFHuQYi2
-NmkKxraGgTDjRZTyVSwzrURgUOu517H6q9tl4djXEMCN3rLgWFKjO4NaZEtwkf0y
-z09ra51C6ARCbCeRyn1B7+BARVcCr4rJjWR+H2yZIsRJC82ChC6nvAVuBJErcqcC
-sVVG/3wkxp3JUpuQnQDPfxy43zROx595pc+hYkGL9usi+ioZQWTnYO58XqG/6QaP
-Wo1wLZz+R+T6CyOOiQs0sNZZ5QibtMWgIrAYstzZgVL2/k/9b3yXEsTP7o2Y3q6c
-R+1OhPhOPRMHXvMXeJWdw4BIYM/3DlG73HyVYq8zkmTh/7EnmgyUd3qebUjI5wVu
-rMfaPhecNnWm1iHsrweKHtOxdvNZhVXR7TuGR9IT2Q03apSYOrnvPYMHJyRaXJ+X
-nzriEWOWGlWIBxjAnH9HZsE9UT97ZcihBSzCUK5KrArqvMZwtptsIvIQg8HgZm3v
-fewdL78VWVkgiKt/pbatuvgBcUbS49pZJTUpQ7D4gL2MRa+ugc9xNS9pCcan7Bvn
-atAp1U+/gsc+1rItOnTke3QynuWegjTYADURFq1pt4VQxgHz5mI=
-=RVGg
------END PGP SIGNATURE-----
-
---mvkl5gyybjujn7rj--
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
