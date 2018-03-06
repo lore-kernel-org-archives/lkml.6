@@ -1,68 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750869AbeCFFPO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 00:15:14 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43236 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbeCFFPM (ORCPT
+        id S1750797AbeCFFcx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 00:32:53 -0500
+Received: from LGEAMRELO12.lge.com ([156.147.23.52]:47582 "EHLO
+        lgeamrelo12.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeCFFcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 00:15:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60C45601A1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v8 15/15] dt-bindings: cpufreq: Document
- operating-points-v2-krait-cpu
-To: Rob Herring <robh@kernel.org>
-Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
- <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
- <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a8d40af2-8a9e-8868-93fa-dbdec20a437e@codeaurora.org>
-Date: Tue, 6 Mar 2018 10:45:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Mar 2018 00:32:52 -0500
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+From: Byungchul Park <byungchul.park@lge.com>
+To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side section
+Date: Tue,  6 Mar 2018 14:31:58 +0900
+Message-Id: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Paul and RCU folks,
 
+I am afraid I correctly understand and fix it. But I really wonder why
+sync_rcu_exp_handler() reports the quiescent state even in the case that
+current task is within a RCU read-side section. Do I miss something?
 
-On 3/6/2018 3:49 AM, Rob Herring wrote:
-> On Tue, Feb 27, 2018 at 07:37:02PM +0530, Sricharan R wrote:
->> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
->> that has KRAIT processors the voltage/current value of each OPP
->> varies based on the silicon variant in use.
->> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
->> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
->> reads the efuse value from the SoC to provide the required information
->> that is used to determine the voltage and current value for each OPP of
->> operating-points-v2 table when it is parsed by the OPP framework.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
->>  1 file changed, 363 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+If I correctly understand it and you agree with it, I can add more logic
+which make it more expedited by boosting current or making it urgent
+when we fail to report the quiescent state on the IPI.
 
-Thanks Rob !!
-Will post with all tags and the Makefile corrected.
+----->8-----
+>From 0b0191f506c19ce331a1fdb7c2c5a00fb23fbcf2 Mon Sep 17 00:00:00 2001
+From: Byungchul Park <byungchul.park@lge.com>
+Date: Tue, 6 Mar 2018 13:54:41 +0900
+Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side section
 
-Regards,
- Sricharan
+We report the quiescent state for this cpu if it's out of RCU read-side
+section at the moment IPI was just fired during the expedite process.
 
+However, current code reports the quiescent state even in the case:
+
+   1) the current task is still within a RCU read-side section
+   2) the current task has been blocked within the RCU read-side section
+
+Since we don't get to the quiescent state yet in the case, we shouldn't
+report it but check it another time.
+
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+---
+ kernel/rcu/tree_exp.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 73e1d3d..cc69d14 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -731,13 +731,13 @@ static void sync_rcu_exp_handler(void *info)
+ 	/*
+ 	 * We are either exiting an RCU read-side critical section (negative
+ 	 * values of t->rcu_read_lock_nesting) or are not in one at all
+-	 * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
+-	 * read-side critical section that blocked before this expedited
+-	 * grace period started.  Either way, we can immediately report
+-	 * the quiescent state.
++	 * (zero value of t->rcu_read_lock_nesting). We can immediately
++	 * report the quiescent state.
+ 	 */
+-	rdp = this_cpu_ptr(rsp->rda);
+-	rcu_report_exp_rdp(rsp, rdp, true);
++	if (t->rcu_read_lock_nesting <= 0) {
++		rdp = this_cpu_ptr(rsp->rda);
++		rcu_report_exp_rdp(rsp, rdp, true);
++	}
+ }
+ 
+ /**
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
