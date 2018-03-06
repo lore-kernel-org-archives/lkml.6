@@ -1,42 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751030AbeCFICQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:02:16 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:50252 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750730AbeCFICO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:02:14 -0500
-Date: Tue, 6 Mar 2018 09:02:08 +0100
-From: Simon Horman <horms@verge.net.au>
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Wensong Zhang <wensong@linux-vs.org>, Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipvs: use true and false for boolean values
-Message-ID: <20180306080208.xxz27gffcd7z5fqi@verge.net.au>
-References: <20180305213557.GA12365@embeddedor.com>
+        id S932543AbeCFICZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:02:25 -0500
+Received: from mga06.intel.com ([134.134.136.31]:57178 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932088AbeCFICV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 03:02:21 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,430,1515484800";
+   d="scan'208";a="32737555"
+Date: Tue, 6 Mar 2018 10:02:15 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Message-ID: <20180306080159.GC3624@linux.intel.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+ <20180305125642.GA3425@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+ <20180305175912.GD5791@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422E568@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180305213557.GA12365@embeddedor.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422E568@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 03:35:57PM -0600, Gustavo A. R. Silva wrote:
-> Assign true or false to boolean variables instead of an integer value.
+On Mon, Mar 05, 2018 at 06:04:56PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > > enum tpm_duration {
+> > > > 	TPM_DURATION_DEFAULT = 2000,
+> > > > 	TPM_DURATION_LONG = 300000,
+> > > > };
+> > > >
+> > > How is this aligned with the spec PTP spec?
+> > 
+> > For TPM 2.0 that spec only partially defines durations for CCs and thus our
+> > look up table is already kind "flakky". In a sense that the default duration is
+> > upper limit for spec defined durations.
 > 
-> This issue was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> The timeouts for LONG and MEDIUM is defined by the  PTP spec,  we need to maintain those as those effect the system.
+> The UNDEFINED and LONG LONG is the implementation choice we driver from empirical data we have so far.
 
-Signed-off-by: Simon Horman <horms@verge.net.au>
+Where can be get this empirical data?
 
-Pablo, could you take this one?
+You are not only adding 30s delay but also turning the 2s delay to 12s
+delay.
+
+IMHO we could very well use PTP LONG for all commands as the timeout.
+Why that would not work?
+
+/Jarkko
