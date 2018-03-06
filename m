@@ -1,146 +1,78 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELvVZiFbPBMvFv+/AioUe1A+IuVhrhCA21zxTSCzi/P6PyIRHq8DT2ZH3gyTssdnQZ5t1kSO
-ARC-Seal: i=1; a=rsa-sha256; t=1520295961; cv=none;
+Return-Path: <leo.wen@rock-chips.com>
+X-Google-Smtp-Source: AG47ELs9JYipRBkYBXYUgU2OWgpGXjrHRPqYIZ23MhcyNm5vuXB1kHIY3ih7rIAEPgQGhaTWzGyp
+ARC-Seal: i=1; a=rsa-sha256; t=1520301576; cv=none;
         d=google.com; s=arc-20160816;
-        b=0lhHnT2OjZvL+sYZAwKHS5y7fh1yUSLacuagcbIb9zB8MRT1BF/nKWf1+4+8VYIzE4
-         S7oPX3UT7RSpoKWuiS+HgPC72MKcF2CGM+fEjubOdj8QN3uXVjYhDfjrTASTfYj77iAP
-         iEzbwhigzUEPiYdGIG6sZVrgJQa/l2Z/DSLF/fRGFEHa055nyp/oJo6wAqdYZ/zpZIAv
-         7Nk6nyEvZR94maBhPTkqMmEyqSvS4hO3Lg8hjC2dtNKstkzJZCnqb+nOoavbNHlmlDfy
-         PPgTN6wMTmfM8YfIDvPlA+D2tX83o34a8aiOAGzlwaKgnmktaKdEEkX75f7AfVLriw03
-         j9oA==
+        b=Z83zb+ODSEzvK81w7jQAoZ8oCccGUeoH3M7nd65hv/+9cgMoDs6gZLX8V5yjj2MWQc
+         sgqJgNqkS9DFFp2kTx7f8RwAhYTRz5OxzNmKCM8nI8pTu7aHUZIlU4l1YcO8eb9hYOT2
+         6m9kleZTldb2AdIZyVnsuPgTAT3BWKxy1Hx7xmZsihqJQkvGWj1MX+ojQPKJiEDootHS
+         5LvIQJ5Hi3ecEnuFYSdVD5SDaKxPAvLtvG+klKDxkgJ84jIJV1go9J3d0C7yefiGD9MB
+         7mzbNs2tsJ0h5D/WKjRiFACT/8Zv+35DsyUY7eWerw4wb1d/CmkX0UIxhr2ZzYu9hlWt
+         BMig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=j/xUg9Pel3D+OY1q+CzCfCXs2LDA5NFVvcjGpCg+b4s=;
-        b=cmI+b7SWPsNafC4NeN4j9fwIdOxxyLQ1AG822ucILoU0osfwXzU6n+FMqZRyQY0jZe
-         HYkuSW0gWEssUrDdkFttx96a4y4FcPRFViAtcSfDr4ywuxt6nsuc8mX3MJZmeo5zhIrE
-         fzGtqP6pYEK8bNMkDWPwu00qaWXyPpy/Hfb0UMfxn+EavYrXJIxQ0YRiQcgBZhP3nTPb
-         tOEqaA18zrttO2F+UGzSIU1XPF1DFP9f1uM1veyDIdmm31HM4gTvt6Fg4oC5UKuHxmRw
-         9MUAY46qVM0P7QTpbmAeSNOHSl3kCWQ3AsMLI70Icwgl/Qm5jniashSAVHLiUcwXWSLn
-         Q/RA==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=j9xuZWrOLgjKs9yngaadKt+Zc8WxUcS0QswfblFy7qY=;
+        b=po+YcVMiTtegr131fsRRBit81E/tk5M2bOMCtd1F3/rec7FRPKaEZKL8Qa2bqSQvOH
+         mv0KU7B3Y93DMM88DDQba5u4ELfb1F0nvjmg1FaJ9Q8rN7ohzl/Pzn0RprKUQurNvIjL
+         5TM9217fZ/Qeq8yCCHcP4nBkmVqkkRz1gWnvAn2SwTuP87iiPPdZ6bmFnL+u4o/IJ7Ww
+         HTbC5d7iXQE/x/5FR/tRtFeL2mV3C96vVEhUMzb9082QUvjkAYQy3LE9vg0gFW7MbvGQ
+         FA0wHFtCa/DiyFyx6H1ujTT7u5hi567NDRwdKgIvX3DeLKItYiGE8qggWNQCIxaU7TG+
+         MiIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=N+z8Ngk0;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.133 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=N+z8Ngk0;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, Alexander.Levin@microsoft.com,
-        dan.j.williams@intel.com, sathyanarayanan.kuppuswamy@intel.com,
-        pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
-        cminyard@mvista.com, pasha.tatashin@oracle.com,
-        gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 01/65] x86/mm: Add INVPCID helpers
-Date: Mon,  5 Mar 2018 19:24:34 -0500
-Message-Id: <20180306002538.1761-2-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
-References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803060003
+       spf=pass (google.com: domain of leo.wen@rock-chips.com designates 211.150.99.133 as permitted sender) smtp.mailfrom=leo.wen@rock-chips.com
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: leo.wen@rock-chips.com
+X-FST-TO: mchehab@kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: leo.wen@rock-chips.com
+X-UNIQUE-TAG: <78a5abbf51312c27fd4966e9da00ea47>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Wen Nuan <leo.wen@rock-chips.com>
+To: mchehab@kernel.org,
+	davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	linus.walleij@linaro.org,
+	rdunlap@infradead.org,
+	jacob2.chen@rock-chips.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	eddie.cai@rock-chips.com,
+	Leo Wen <leo.wen@rock-chips.com>
+Subject: [PATCH V3 0/2] Rockchip: Add RK1608 driver and DT-bindings
+Date: Tue,  6 Mar 2018 09:59:18 +0800
+Message-Id: <1520301560-114573-1-git-send-email-leo.wen@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145858030279147?=
-X-GMAIL-MSGID: =?utf-8?q?1594145858030279147?=
+X-GMAIL-THRID: =?utf-8?q?1594151745570396225?=
+X-GMAIL-MSGID: =?utf-8?q?1594151745570396225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Leo Wen <leo.wen@rock-chips.com>
 
-commit 060a402a1ddb551455ee410de2eadd3349f2801b upstream.
+You can use the v4l2-ctl command to capture frames for RK1608.
+Add DT-bindings documentation for Rockchip RK1608.
+Add the information of the MAINTAINERS.
 
-This adds helpers for each of the four currently-specified INVPCID
-modes.
+Leo Wen (2):
+  [media] Add Rockchip RK1608 driver
+  dt-bindings: Document the Rockchip RK1608 bindings
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Toshi Kani <toshi.kani@hp.com>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/8a62b23ad686888cee01da134c91409e22064db9.1454096309.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit becf292446e9f2dc8842c448836bbe8005e24db0)
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- arch/x86/include/asm/tlbflush.h | 48 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ Documentation/devicetree/bindings/media/rk1608.txt |   87 ++
+ MAINTAINERS                                        |    7 +
+ drivers/media/spi/Makefile                         |    1 +
+ drivers/media/spi/rk1608.c                         | 1409 ++++++++++++++++++++
+ drivers/media/spi/rk1608.h                         |  442 ++++++
+ 5 files changed, 1946 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/rk1608.txt
+ create mode 100644 drivers/media/spi/rk1608.c
+ create mode 100644 drivers/media/spi/rk1608.h
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 7e459b7ee708..995937999e1f 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -7,6 +7,54 @@
- #include <asm/processor.h>
- #include <asm/special_insns.h>
- 
-+static inline void __invpcid(unsigned long pcid, unsigned long addr,
-+			     unsigned long type)
-+{
-+	u64 desc[2] = { pcid, addr };
-+
-+	/*
-+	 * The memory clobber is because the whole point is to invalidate
-+	 * stale TLB entries and, especially if we're flushing global
-+	 * mappings, we don't want the compiler to reorder any subsequent
-+	 * memory accesses before the TLB flush.
-+	 *
-+	 * The hex opcode is invpcid (%ecx), %eax in 32-bit mode and
-+	 * invpcid (%rcx), %rax in long mode.
-+	 */
-+	asm volatile (".byte 0x66, 0x0f, 0x38, 0x82, 0x01"
-+		      : : "m" (desc), "a" (type), "c" (desc) : "memory");
-+}
-+
-+#define INVPCID_TYPE_INDIV_ADDR		0
-+#define INVPCID_TYPE_SINGLE_CTXT	1
-+#define INVPCID_TYPE_ALL_INCL_GLOBAL	2
-+#define INVPCID_TYPE_ALL_NON_GLOBAL	3
-+
-+/* Flush all mappings for a given pcid and addr, not including globals. */
-+static inline void invpcid_flush_one(unsigned long pcid,
-+				     unsigned long addr)
-+{
-+	__invpcid(pcid, addr, INVPCID_TYPE_INDIV_ADDR);
-+}
-+
-+/* Flush all mappings for a given PCID, not including globals. */
-+static inline void invpcid_flush_single_context(unsigned long pcid)
-+{
-+	__invpcid(pcid, 0, INVPCID_TYPE_SINGLE_CTXT);
-+}
-+
-+/* Flush all mappings, including globals, for all PCIDs. */
-+static inline void invpcid_flush_all(void)
-+{
-+	__invpcid(0, 0, INVPCID_TYPE_ALL_INCL_GLOBAL);
-+}
-+
-+/* Flush all mappings for all PCIDs except globals. */
-+static inline void invpcid_flush_all_nonglobals(void)
-+{
-+	__invpcid(0, 0, INVPCID_TYPE_ALL_NON_GLOBAL);
-+}
-+
- #ifdef CONFIG_PARAVIRT
- #include <asm/paravirt.h>
- #else
 -- 
-2.16.2
+2.7.4
