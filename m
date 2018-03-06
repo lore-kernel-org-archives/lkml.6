@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753937AbeCFPjl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:39:41 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34644 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753923AbeCFPjj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:39:39 -0500
-X-Google-Smtp-Source: AG47ELsJ1KDfl8DzuvKFH35s5RNJj/AECFeRX1sJ+w171kIODWJiTuG6z2ZeZ0Rh115YjuT0P+D96A==
-Date: Tue, 6 Mar 2018 08:39:36 -0700
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Tomas Winkler <tomas.winkler@intel.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] tpm_crb: use __le64 annotated variable for response
- buffer address
-Message-ID: <20180306153936.GA13395@ziepe.ca>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
- <20180304121205.16934-3-tomas.winkler@intel.com>
- <20180305130320.GC3425@linux.intel.com>
- <20180306082821.GB5705@linux.intel.com>
+        id S1754004AbeCFPk4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:40:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:40350 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753859AbeCFPko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:40:44 -0500
+Subject: Re: [PATCH] net: smsc911x: Fix unload crash when link is up
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "steve.glendinning@shawell.net" <steve.glendinning@shawell.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180306150006.31512-1-jeremy.linton@arm.com>
+ <20180306152345.GD30557@lunn.ch>
+From: Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <166f6d54-4079-50a1-144d-b68afba5a7a6@arm.com>
+Date: Tue, 6 Mar 2018 09:40:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306082821.GB5705@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180306152345.GD30557@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 10:28:21AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Mar 05, 2018 at 03:03:20PM +0200, Jarkko Sakkinen wrote:
-> > On Sun, Mar 04, 2018 at 02:12:05PM +0200, Tomas Winkler wrote:
-> > > This suppresses sparse warning
-> > > drivers/char/tpm/tpm_crb.c:558:18: warning: cast to restricted __le64
-> > > 
-> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > >  drivers/char/tpm/tpm_crb.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > The guideline is that you should describe what is wrong rather than
-> > copy-paste the sparse message.
+Hi,
+
+On 03/06/2018 09:23 AM, Andrew Lunn wrote:
+>> This is caused by the mdiobus being unregistered/free'd
+>> and the code in phy_detach() attempting to manipulate mdio
+>> related structures from unregister_netdev() calling close()
+>>
+>> To fix this, we delay the mdiobus teardown until after
+>> the netdev is deregistered.
+>>
+>> Reported-by: Matt Sealey <matt.sealey@arm.com>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   drivers/net/ethernet/smsc/smsc911x.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+>> index 012fb66eed8d..f0afb88d7bc2 100644
+>> --- a/drivers/net/ethernet/smsc/smsc911x.c
+>> +++ b/drivers/net/ethernet/smsc/smsc911x.c
+>> @@ -2335,14 +2335,14 @@ static int smsc911x_drv_remove(struct platform_device *pdev)
+>>   	pdata = netdev_priv(dev);
+>>   	BUG_ON(!pdata);
+>>   	BUG_ON(!pdata->ioaddr);
+>> -	WARN_ON(dev->phydev);
 > 
-> Jason, didn't yo give the feedback to some patch 1-2 years ago that
-> instead of copy-pasting parse error one should write a clear commit
-> msg or is this OK?
+> Hi Jeremy
+> 
+> I assume this WARN_ON() also fired? It would be good to comment about
+> why you removed it, that the code now handles that case.
 
-The standard is to give some explaination why the tool complaint is
-valid and then if suitable include the tool complaint itself.
+Yes, the phydev is started and assigned in the netdev _open and 
+stopped/set to null in the _stop. Since the module remove is not blocked 
+by having the netdev active, and unregister_netdev closes out active 
+connections, the WARN_ON would needlessly trigger if the netdev was 
+still open.
 
-Eg bad:
+> 
+> Apart from that
+> 
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Fix sparse warning on resp
-
-Good:
-
-use __le64 annotated variable for response buffer address
-
-IMHO, the subject line sufficiently describes the patch, and it is
-generally OK to clip the tool warning into the body..
-
-Jason
+Thanks for looking at this.
