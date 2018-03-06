@@ -1,35 +1,32 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520374763; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520371280; cv=none;
         d=google.com; s=arc-20160816;
-        b=OPMxr6dLwYzWutD4AxIpoJZ45h7H7O+rgIc7JEbAsg44l9fFXDkfg1JVd4lDvGkt2A
-         r7USvS/hLSkY6G/9MPEck7qsB9Rb6qinoOL4k3lylviq9m3SOevcGF44soOUZIw//k1P
-         6I5NGt5Sb7I3QE78hnupJQTNT6mNrfE6A8DOWXWqmcmTtIsr1/iBCj9E7KTrYNcfltUw
-         eGkb/GRwLTetg/Oh7blL8UL5+ALWqDcDqPkflVcDM3/zj7TUZ7UIwLSUP+ttmB2Jz6Rv
-         K9DzHCSg5PuIXArIBPNXr0SXd1JXPtn47/eW6Er6kqiqOxTrl3MsTQ0Kf5rEnlGfwdmO
-         INqw==
+        b=ANCQjMKwDMyRSJRQ2npe5jS/meVenE2c5Y75DI2tTgGVTNyKxJZheEZaJfsPhbSVwI
+         8Ehi6zCOn8qFTFKR+VyD5s71ol8g7EMU5+ul6wa8LTKgVqvOKuLqXBoUyt0fEreK2T0V
+         RhvlreWTZbyZQIPvRdfRM2sEYIutyJs8goPSWmQyyow4zy1VD8Cjx+M36o6SvZGuzvei
+         AAKy+1YVy2i/+VevZFfZLMxmERjqePCkIui1ynrE1Tqk3gIeJk2rO9FqlNUHr2IEW/jh
+         2fT1k7ZXCRj5CUv710B6fX59i6cx6GdDC4nzCG6NXHBHaQkdkzHJqoF2iH0pzATdGmFl
+         CL0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=dauoV97BNc8VXSVDax2bdKq66VF+IdNquRCBPQDOh60=;
-        b=SWnP0CCpsODf/uJEISNUplFxhql0rnT20SSxzm0QMN+CiA0CUkM18pXCi7ahQoZ+CJ
-         vDtVGOl67O0S3+JsAejLjXqiL757X7PiT/yPQt1s4beX1D8sPB8KiQrKlAv1pPHfNk6e
-         TAAlwpC+NzCjAC8VZVJCHcLbcyf+iBoWZb7aTFlsgyThAIPqTNg38G6lxBSts0NlMO+p
-         plE0w9svHqygTghxMRYrIH+elHcF8Y57QvBaURdMbLDeEFMyV2PQglJBf6bqaI6mImGL
-         3njLEVl1f2OuVCRKR3Fo9moEnTCCZDUAISF2J6n2dRMoy/9ZDiEnmJSeBbKx0cp1Kq2a
-         AOSA==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=VswKHH4zdSJliin+/xcix7ENfrlzv9IRJG99az2V0Ek=;
+        b=QFag78F31/3B6w82jUBI+O592uGT51dUCT4+tBjjycvM1Kq3JnBP07b2f3CCDXRhB1
+         5Odmd6cBe4YY5y8tzzo2RQjVpN0cvYSZXBHS0+WMWniNGmQH3o+9kEmRZ6WIo7YWPbXU
+         iIVOhGpz3GRLh4wvPcgBex32YVHfWdy8YdOVjvFuNPrYyVNJlQu14Q6w+3DSJV3kLQOu
+         XGgUFdUtPWSoKyCtVwAw8VXtyBjdjdMveduercFMcBx+KMZ31yf3nfMJS+9532HW9ALf
+         FABIRadaJtYiK27pyKRrJ7y1adi5XY5PYDUnAUZI9Z5pfcbDcis+NaDyY+9e2dVjh+Qv
+         XYEw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cG3nEJva;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=JDfwJ0YD;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HaSv0SUa;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cG3nEJva;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=JDfwJ0YD;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELu7dqNqPgZsGN1sEdCrm8q1aIBK/gOlWw4osb3uNZqxAESdZOci6ofBT+8O36gHjfwbe6q0MjjbVGyS164Blcc=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HaSv0SUa;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELvCXTqgY6AXd2KAw0k3Z1oi6YvCLGcE9ao5hLaMn15aN/B3uW1Oy9D0EwMcM3IXOtMZlitqKaFYD5CzW+sJOfk=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAK8P3a0ko9E91jok0fSnwQ__vO8nzBpmki768t_-Z9MhZ_f-JQ@mail.gmail.com>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
@@ -39,19 +36,16 @@ References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com>
  <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
  <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
- <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
- <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
- <20180306163616.7e3b6e0e@vmware.local.home> <CAK8P3a0ko9E91jok0fSnwQ__vO8nzBpmki768t_-Z9MhZ_f-JQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 Mar 2018 14:19:21 -0800
-X-Google-Sender-Auth: 7azwRGgfQKgw2xlw1K1im5t92t8
-Message-ID: <CA+55aFybrMeMDEW6bO6XkLVzvgaz9bzTM7CMFxxwHnwD4bcebg@mail.gmail.com>
+ <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com> <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 22:21:19 +0100
+X-Google-Sender-Auth: KpBfgeJq3_mxwuehUVp06GCvtZw
+Message-ID: <CAK8P3a3BA2BueHOuOiszEzkBtA80QDdo3wgX+62=KXCdi9wScQ@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Daniel Micay <danielmicay@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Alexander Popov <alex.popov@linux.com>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Andy Lutomirski <luto@kernel.org>,
 	Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
@@ -65,67 +59,46 @@ Cc: Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ard.biesheuvel@linaro.
 	Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
 	Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
 	Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Dominik Brodowski <linux@dominikbrodowski.net>,
-	Juergen Gross <jgross@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, Mathias Krause <minipli@googlemail.com>,
-	Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey <me@kylehuey.com>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>, Will Deacon <will.deacon@arm.com>, X86 ML <x86@kernel.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Dominik Brodowski <linux@dominikbrodowski.net>, Juergen Gross <jgross@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Mathias Krause <minipli@googlemail.com>, Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+	Kyle Huey <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
+	Will Deacon <will.deacon@arm.com>, X86 ML <x86@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594228487865972028?=
+X-GMAIL-MSGID: =?utf-8?q?1594224835898809409?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 1:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Mar 6, 2018 at 10:01 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, Mar 6, 2018 at 12:42 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> Forcing gcc to allocate a stack slot and zero-initialize it should
+>> find many bugs by adding valid warnings, but also add lots of
+>> false positives as well as prevent important optimizations in other
+>> places that are actually well-defined.
 >
-> I don't really understand it myself, but I do understand that
-> the gcc developers think this is a hard problem to solve.
+> Oh, no, the "force gcc to allocate a stack slot" would be absolutely insane.
+>
+> You should never do that. Anybody who does that should be shot.
+>
+> But you don't have to force any stack allocation. You should just
+> initialize it to zero (*without* the stack allocation).
+>
+> Then the optimization passes will just remove the initialization in
+> 99.9% of all cases. Only very occasionally - when gcc cannot see it
+> being overwritten - would it remain. And those are exactly the cases
+> where you *want* it to remain.
 
-Depending on the internal representation, things that look absolutely
-trivially obvious to humans may not actually be all that trivial at
-all.
+Right, there are two separate problems: the missing warnings
+and the actual uninitialized use. Allocating the stack slots would
+address both but only at an enormous cost. Assigning a value
+would still have a cost, as it would prevent certain other optimizations,
+and it wouldn't help find the missing initializations,
+but the cost would obviously be much lower.
 
-In particular, the only sane modern IR for a compiler is based on SSA
-(single static assignment), and in that form, the example code is
-actually very obvious: the variable 'i' is assigned to exactly once,
-and has the value 1, so *OBVIOUSLY* the value of 'i' is 1 at each use.
-
-It's really so obvious that sparse does exactly the same. If you use
-the sparse "test-linearize" program, you will see that test program
-result in
-
-  g:
-  .L0:
-      <entry-point>
-      ret.32      $1
-
-because it is very obvious to the optimizer that 'i' is 1.
-
-In fact, to get anything else, you almost _have_ to initialize 'i' to
-"UNDEFINED" in the compiler. At that point the SSA representation says
-'i' has two sources, one undefined and one '1', and all the SSA
-optimizations and simplifications just DTRT automatically.
-
-But it literally involves adding that initialization.
-
-This is actually one reason I think the C "automatic variables are
-undefined" behavior is wrong. It made sense historically, but in an
-SSA world, it actually ends up not even helping.
-
-You might as well just initialize the damn things to zero, avoiding an
-undefined case and just be done with it, and make that part of the
-language definition. It would just be consistent with static variables
-anyway, so it would actually clean up the language conceptually too.
-
-Of course, within the confines of C _history_, that didn't make sense.
-SSA became a thing two decades after C had been invented, and it took
-even longer for it to become the de-facto standard IR for any sane
-optimization.
-
-Honestly, that whole "local variable might be used uninitialized" is
-just a historical accident, and is not some fundamentally good
-warning. It's _only_ a valid warning due to a language mis-feature.
-
-                     Linus
+      Arnd
