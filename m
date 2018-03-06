@@ -1,67 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932228AbeCFH6t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 02:58:49 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750769AbeCFH6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 02:58:48 -0500
-Date: Tue, 6 Mar 2018 08:58:46 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ilya Pronin <ipronin@twitter.com>
-Subject: Re: [PATCH] perf stat: fix cvs output format
-Message-ID: <20180306075846.GB19895@krava>
-References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
+        id S932454AbeCFH7x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 02:59:53 -0500
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:35306 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeCFH7w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 02:59:52 -0500
+X-Google-Smtp-Source: AG47ELsdRrMGgEgl7zlRd77pDP15TxV/7rvsSZnPkqMyp62YkE9g5sJc3JhjWpc5nYTzIK+h2NfFEp4iOPu2gN2dKoA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180305223905.65nnunv63fyg7bye@rob-hp-laptop>
+References: <1519775750-21297-1-git-send-email-jollys@xilinx.com>
+ <1519775750-21297-2-git-send-email-jollys@xilinx.com> <20180305223905.65nnunv63fyg7bye@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Mar 2018 08:59:50 +0100
+X-Google-Sender-Auth: S5PpMusqGaoZm_zzSMlGeOOMw8k
+Message-ID: <CAMuHMdVpWciek2xow1Y1W7jga6BEbAZ7OhnyviRsXK39vYGyXw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: power: Add ZynqMP power domain bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Jolly Shah <jolly.shah@xilinx.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        sean.wang@mediatek.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mark Rutland <mark.rutland@arm.com>, rajanv@xilinx.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jolly Shah <jollys@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 10:43:53PM -0800, Cong Wang wrote:
-> From: Ilya Pronin <ipronin@twitter.com>
-> 
-> When printing stats in CSV mode, perf stat appends extra CSV
-> separators when counter is not supported:
-> 
-> <not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
-> 
-> which causes a failure of parsing fields. The numbers of separators
-> is fixed for each line, no matter supported or not supported.
-> 
-> Fixes: 92a61f6412d3 ("perf stat: Implement CSV metrics output")
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Signed-off-by: Ilya Pronin <ipronin@twitter.com>
-> Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-> ---
->  tools/perf/builtin-stat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 98bf9d32f222..54a4c152edb3 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -917,7 +917,7 @@ static void print_metric_csv(void *ctx,
->  	char buf[64], *vals, *ends;
->  
->  	if (unit == NULL || fmt == NULL) {
-> -		fprintf(out, "%s%s%s%s", csv_sep, csv_sep, csv_sep, csv_sep);
-> +		fprintf(out, "%s%s", csv_sep, csv_sep);
->  		return;
->  	}
+Hi Rob, Jolly,
 
-right, the non else legs prints just 2 values:
-  fprintf(out, "%s%s%s%s", csv_sep, vals, csv_sep, unit);
+On Mon, Mar 5, 2018 at 11:39 PM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Feb 27, 2018 at 03:55:49PM -0800, Jolly Shah wrote:
+>> Add documentation to describe ZynqMP power domain bindings.
+>>
+>> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+>> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+>> ---
+>>  .../devicetree/bindings/power/zynqmp-genpd.txt     | 46 ++++++++++++++++++++++
+>>  1 file changed, 46 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/power/zynqmp-genpd.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/power/zynqmp-genpd.txt b/Documentation/devicetree/bindings/power/zynqmp-genpd.txt
+>> new file mode 100644
+>> index 0000000..25f9711
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/power/zynqmp-genpd.txt
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+>> +This node contains a number of subnodes, each representing a single PM domain
+>> +that PM domain consumer devices reference.
+>> +
+>> +== PM Domain Nodes ==
+>> +
+>> +Required properties:
+>> + - #power-domain-cells: Number of cells in a PM domain specifier. Must be 0.
+>> + - pd-id: List of domain identifiers of as defined by platform firmware. These
+>> +       identifiers are passed to the PM firmware.
+>> +
+>> +Example:
+>> +     zynqmp-genpd {
+>> +             compatible = "xlnx,zynqmp-genpd";
+>
+> What's the control interface for controlling the domains?
+>> +
+>> +             pd_usb0: pd-usb0 {
+>> +                     pd-id = <22>;
+>> +                     #power-domain-cells = <0>;
+>
+> There's no need for all these sub nodes. Make #power-domain-cells 1 and
+> put the id in the cell value.
 
-thanks,
-jirka
+That was my first reaction, too...
+>
+>> +             };
+>> +
+>> +             pd_sata: pd-sata {
+>> +                     pd-id = <28>;
+>> +                     #power-domain-cells = <0>;
+>> +             };
+>> +
+>> +             pd_gpu: pd-gpu {
+>> +                     pd-id = <58 20 21>;
+
+... until I saw the above.
+Controlling the GPU power area requires controlling 3 physical areas?
+
+However, doing it this way may bite you in the future, if a need arises to
+control a subset. And what about power up/down order?
+
+>> +                     #power-domain-cells = <0x0>;
+>> +             };
+>> +     };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
