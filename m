@@ -1,48 +1,47 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520310629; cv=none;
+Return-Path: <luto@kernel.org>
+X-Google-Smtp-Source: AG47ELve9Zculqwc/DJdOf42KdmidClcs4EzfYk4YY7vRxrX2etvwPPsOAUHae2Rb/U00g1VWa2d
+ARC-Seal: i=1; a=rsa-sha256; t=1520359129; cv=none;
         d=google.com; s=arc-20160816;
-        b=rg7revYv27BDZHQ3M9v3eUXHSOR47pCH9xMfhrVaD7qFBR6YUxcf2NXuhPmTUEzQtZ
-         btEFWzTnCzNAt8o3G5xSnlLb3sH/qmKF49wEPEkp/F3RpTKCgEOcFUi5ItkenqYRNddu
-         1rSdDIMT1Sg5sQXqWCozj5VtFjIhe7617S3v7kzMIVMWgpPLOeVayGZThElG3iiTMLvR
-         JTH2NvUHLoBgUVmzxzt2S0k3dAbkeY2rUDUPHBM2UsB1+fE5GH9Q+4gMM46MdpcLOgtd
-         5HFcHbyojq0kPWMC7VrW6FWLvctsMdaCrjerOrCGcGZeeV4CMWG9u2Vep8CjcnUF/mO6
-         sIOA==
+        b=C7mDUyCY5uFyPccwW0M2SpaNMwfWyRkVH7dyc9efSkGSPgaQ92OCvMf/ZchvzEALDB
+         YIvkwC0vGII8Cxg6s/fzL+P4U2sT+0ZOFAZGMs+A/MUxLMkNv+gyLyyhtTcoMRllvmtO
+         oGQGEJyBaeq2WkAzWMah7672VYW4hBJDX2kaTsfPiF59JJ4WECWkVL2FRkIB1jXEvUaa
+         mkXZpLwfxYmOgQur+y2dqkh4Q4yDHolp4NlrVogcYGs+XJeFTM7MtLrxlMSvapeIXM0v
+         j7Bx63k/AEyN0hZPUbf77+28mQGgJihA2KGp0q+Afj1JvQLemp6t9h76gP9NWKGRJdha
+         xOpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=Vp7GScJjZzYKuQvVc9F8mx/OyV8QNOxzf4xNM9Kd0gY=;
-        b=qrPhlYqIblGaf3A9CKYuK3IJogCT4HUHrDLeUCH8QBmOCIj7dBidXCqYYbNBGMkk41
-         H/FwHw7oLab93XwhMOCEHBU5/Le+Fv+Dc7QQfJ14z4EOBNuX6yc80YoJCaH6SNHXYPAY
-         KFE4xbsXPetmI86zI4amVJ3IyXgEW4VZm8eqeE7DmOLdejwbznVh5CMhUQWQL6/JMgjn
-         jxea4M2CUWBUWrNXNQVRH1aW/iw/582rrpMW0+IjzqMr3csQUDMtTURcCish6F1N55GX
-         3aAlDv2VtnLPs9E0aOk3BghbdxIbO/1y/NSg81W4U/ie+LBQFRV1TMP2ZMUoXSVb6QXb
-         t66g==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:arc-authentication-results;
+        bh=s53JoKN6GGW3unXeuV887LSWts+tYDZETL5vw65DvCI=;
+        b=B+DHoqtK4jG+NHFN9uZRzkeGfRr5pi63dsORB0BzGABHuV989okoYpEPThtlVzx8+K
+         o1gwVEL2UJN/5OfwOAwPzuf0LYD5rjwSAIPJ+n7bF1tOMI+5cmN4mmjh0P9mFNwtoiAT
+         Y2r01yZxlAEbemdPHSQRrEjTKqgRadE0uGnYuHv3jG9xKjktG+HXUhe8ZfJV52d5+HDL
+         KSkcKlLyvAzXevUcWVy/JTuNpuHsem7DEPoYA04jRmOZvyiFufXP4+4QjTAdM13lptnU
+         pJUvWH5BoI7ul1HkMFsTSK3z/H7XWPqwdu1ppRS5oMI9iJ/qd2Nyt/463fkYixgYw8MQ
+         8tmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=anSaK0yG;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=UWVuSFb8;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=anSaK0yG;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=UWVuSFb8;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELsk3ea5C4Gk/fSSMFkkj5iWIMet7BfYL2TGncC+ttgKP2MZBSZULeozH4YKAcV1qwVxhT5SOKGTJHBtMuJ8jV0=
+       spf=pass (google.com: best guess record for domain of luto@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=luto@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0872217BE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5jJaTR25zZp5sGqc6m3nv3AunYhEZhxtB_JuP2WFbv_pfg@mail.gmail.com>
+In-Reply-To: <CA+55aFyknMsiT3efAeOyf32O2NJjD9vt0XxtAegFVmmn+pvxgA@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
  <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com>
  <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
- <CA+55aFxpzgQiJg8XyQTH-hDHd7A0jRAtOJ8b6krrvNDQX96Vrw@mail.gmail.com> <CAGXu5jJaTR25zZp5sGqc6m3nv3AunYhEZhxtB_JuP2WFbv_pfg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Mar 2018 20:30:28 -0800
-X-Google-Sender-Auth: WrzN1dYeWSKbnrQsp2zbQpbVDM8
-Message-ID: <CA+55aFyknMsiT3efAeOyf32O2NJjD9vt0XxtAegFVmmn+pvxgA@mail.gmail.com>
+ <CA+55aFxpzgQiJg8XyQTH-hDHd7A0jRAtOJ8b6krrvNDQX96Vrw@mail.gmail.com>
+ <CAGXu5jJaTR25zZp5sGqc6m3nv3AunYhEZhxtB_JuP2WFbv_pfg@mail.gmail.com> <CA+55aFyknMsiT3efAeOyf32O2NJjD9vt0XxtAegFVmmn+pvxgA@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Tue, 6 Mar 2018 17:58:26 +0000
+X-Gmail-Original-Message-ID: <CALCETrWpt3ckn0jpDS_J7Da053-gi27ddbK8zEBicpeFWuhP_w@mail.gmail.com>
+Message-ID: <CALCETrWpt3ckn0jpDS_J7Da053-gi27ddbK8zEBicpeFWuhP_w@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
 	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
@@ -67,62 +66,21 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594161238713883938?=
+X-GMAIL-MSGID: =?utf-8?q?1594212094633524422?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 4:56 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Mon, Mar 5, 2018 at 1:40 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>  and we already obviously limit that kind of broken behavior
->> with -fwrapv and -fno-strict-alias.
+On Tue, Mar 6, 2018 at 4:30 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Mar 5, 2018 at 4:56 PM, Kees Cook <keescook@chromium.org> wrote:
+>> On Mon, Mar 5, 2018 at 1:40 PM, Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
 >
-> And -fno-delete-null-pointer-checks, and and and.... :P
-
-Indeed.
-
-> The recent discussions on minimum compiler version underscore the fact
-> that people move forward on compilers _very_ slowly.
-
-Yes.
-
-At the same time, things like that are kind of like a config option
-for hardening - it's not like everybody absolutely needs to have the
-compiler support, but people who want it can.
-
-Sure, it limits us in some ways (ie we can't just say "we _depend_ on
-automatic variables being zero"), but as long as it's not a huge
-maintenance burden, it probably doesn't much matter.
-
-
->> And it doesn't necessarily generate any worse code.
+> I was actually hoping that the clang people would get rid of those,
+> but they only seemed to care about VLA's in structures, not about them
+> in general ;(
 >
-> I agree, though some performance-sensitive subsystem (e.g. networking)
-> get very defensive about an always-on stack initialization[2]. No
-> matter what happens with this kind of automatic initialization, I
-> suspect it's going to have to stay a build-time option to let some
-> people opt-out of it.
+> I detest VLA's, we really shouldn't use them. I'm sorry we have any.
 
-I do think that having some way of marking "this variable really
-doesn't need zeroing" would be fine.
-
-Then peope'd *think* about the fact that you're passing an actual
-uninitialized piece of memory around, and people could be careful with
-them.
-
-And the places that would actually want that should show up like a
-sore thumb in a profile. And if they don't, then clearly the zeroing
-can't be much of an issue, can it?
-
-> Another case is that this series provides actual stack probing to
-> detect VLA abuse. This is less of an issue now with VMAP_STACK, and
-> I've had VLA removal on the long-term goal list for the kernel for a
-> while now, but the probing does work...
-
-I was actually hoping that the clang people would get rid of those,
-but they only seemed to care about VLA's in structures, not about them
-in general ;(
-
-I detest VLA's, we really shouldn't use them. I'm sorry we have any.
-
-              Linus
+Then we need to fix our abysmal synchronous crypto API, which, AFAICT,
+is the primary user of on-stack VLAs in the kernel.
