@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932182AbeCFGmR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 01:42:17 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56983 "EHLO
+        id S932458AbeCFGm1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 01:42:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50635 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeCFGmQ (ORCPT
+        with ESMTP id S932259AbeCFGmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 01:42:16 -0500
-Date: Mon, 5 Mar 2018 22:42:08 -0800
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-853745f5e6d95faaae6381c9a01dbd43de992fb3@git.kernel.org>
-Cc: acme@redhat.com, Kan.liang@intel.com, mingo@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, kan.liang@intel.com,
-        hpa@zytor.com
-Reply-To: acme@redhat.com, Kan.liang@intel.com, mingo@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, kan.liang@intel.com,
-        hpa@zytor.com
-In-Reply-To: <1519669030-176549-1-git-send-email-kan.liang@intel.com>
-References: <1519669030-176549-1-git-send-email-kan.liang@intel.com>
+        Tue, 6 Mar 2018 01:42:25 -0500
+Date: Mon, 5 Mar 2018 22:41:41 -0800
+From: tip-bot for weiping zhang <tipbot@zytor.com>
+Message-ID: <tip-25f72f9ed88d5be86c92432fc779e2725e3506cd@git.kernel.org>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        zhangweiping@didichuxing.com, hpa@zytor.com, namhyung@kernel.org,
+        jolsa@kernel.org, acme@redhat.com
+Reply-To: jolsa@kernel.org, acme@redhat.com, namhyung@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, zhangweiping@didichuxing.com,
+        peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com
+In-Reply-To: <20180129154805.GA6284@localhost.didichuxing.com>
+References: <20180129154805.GA6284@localhost.didichuxing.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Fix annoying fallback message on older
- kernels
-Git-Commit-ID: 853745f5e6d95faaae6381c9a01dbd43de992fb3
+Subject: [tip:perf/core] perf cgroup: Simplify arguments when tracking
+ multiple events
+Git-Commit-ID: 25f72f9ed88d5be86c92432fc779e2725e3506cd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,55 +36,123 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  853745f5e6d95faaae6381c9a01dbd43de992fb3
-Gitweb:     https://git.kernel.org/tip/853745f5e6d95faaae6381c9a01dbd43de992fb3
-Author:     Kan Liang <Kan.liang@intel.com>
-AuthorDate: Mon, 26 Feb 2018 10:17:10 -0800
+Commit-ID:  25f72f9ed88d5be86c92432fc779e2725e3506cd
+Gitweb:     https://git.kernel.org/tip/25f72f9ed88d5be86c92432fc779e2725e3506cd
+Author:     weiping zhang <zhangweiping@didichuxing.com>
+AuthorDate: Mon, 29 Jan 2018 23:48:09 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 26 Feb 2018 16:04:08 -0300
+CommitDate: Thu, 22 Feb 2018 10:02:27 -0300
 
-perf top: Fix annoying fallback message on older kernels
+perf cgroup: Simplify arguments when tracking multiple events
 
-On older (e.g. v4.4) kernels, an annoying fallback message can be
-observed in 'perf top':
+When using -G with one cgroup and -e with multiple events, only the
+first event gets the correct cgroup setting, all events from the second
+onwards will track system-wide events.
 
-	┌─Warning:──────────────────────┐
-	│fall back to non-overwrite mode│
-	│                               │
-	│                               │
-	│Press any key...               │
-	└───────────────────────────────┘
+If the user wants to track multiple events for a specific cgroup, the
+user must give parameters like the following:
 
-The 'perf top' utility has been changed to overwrite mode since commit
-ebebbf082357 ("perf top: Switch default mode to overwrite mode").
+  $ perf stat -e e1 -e e2 -e e3 -G test,test,test
 
-For older kernels which don't have overwrite mode support, 'perf top'
-will fall back to non-overwrite mode and print out the fallback message
-using ui__warning(), which needs user's input to close.
+This patch simplify this case, just type one cgroup:
 
-The fallback message is not critical for end users. Turning it to debug
-message which is printed when running with -vv.
+  $ perf stat -e e1 -e e2 -e e3 -G test
 
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Kan Liang <kan.liang@intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Fixes: ebebbf082357 ("perf top: Switch default mode to overwrite mode")
-Link: http://lkml.kernel.org/r/1519669030-176549-1-git-send-email-kan.liang@intel.com
+  $ mkdir -p /sys/fs/cgroup/perf_event/empty_cgroup
+  $ perf stat -e cycles -e cache-misses -a -I 1000 -G empty_cgroup
+
+Before:
+
+     1.001007226   <not counted>      cycles	   empty_cgroup
+     1.001007226           7,506      cache-misses
+
+After:
+
+     1.000834097   <not counted>      cycles	   empty_cgroup
+     1.000834097   <not counted>      cache-misses empty_cgroup
+
+Signed-off-by: weiping zhang <zhangweiping@didichuxing.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180129154805.GA6284@localhost.didichuxing.com
+[ Improved the doc text a bit, providing an example for cgroup + system wide counting ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/Documentation/perf-record.txt |  6 +++++-
+ tools/perf/Documentation/perf-stat.txt   |  6 +++++-
+ tools/perf/util/cgroup.c                 | 17 ++++++++++++++++-
+ 3 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index b7c823ba8374..35ac016fcb98 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -991,7 +991,7 @@ static int perf_top_overwrite_fallback(struct perf_top *top,
- 	evlist__for_each_entry(evlist, counter)
- 		counter->attr.write_backward = false;
- 	opts->overwrite = false;
--	ui__warning("fall back to non-overwrite mode\n");
-+	pr_debug2("fall back to non-overwrite mode\n");
- 	return 1;
- }
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index 3eea6de35a38..76bc2181d214 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -308,7 +308,11 @@ can be provided. Each cgroup is applied to the corresponding event, i.e., first
+ to first event, second cgroup to second event and so on. It is possible to provide
+ an empty cgroup (monitor all the time) using, e.g., -G foo,,bar. Cgroups must have
+ corresponding events, i.e., they always refer to events defined earlier on the command
+-line.
++line. If the user wants to track multiple events for a specific cgroup, the user can
++use '-e e1 -e e2 -G foo,foo' or just use '-e e1 -e e2 -G foo'.
++
++If wanting to monitor, say, 'cycles' for a cgroup and also for system wide, this
++command line can be used: 'perf stat -e cycles -G cgroup_name -a -e cycles'.
  
+ -b::
+ --branch-any::
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 2bbe79a50d3c..2b38e222016a 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -118,7 +118,11 @@ can be provided. Each cgroup is applied to the corresponding event, i.e., first
+ to first event, second cgroup to second event and so on. It is possible to provide
+ an empty cgroup (monitor all the time) using, e.g., -G foo,,bar. Cgroups must have
+ corresponding events, i.e., they always refer to events defined earlier on the command
+-line.
++line. If the user wants to track multiple events for a specific cgroup, the user can
++use '-e e1 -e e2 -G foo,foo' or just use '-e e1 -e e2 -G foo'.
++
++If wanting to monitor, say, 'cycles' for a cgroup and also for system wide, this
++command line can be used: 'perf stat -e cycles -G cgroup_name -a -e cycles'.
+ 
+ -o file::
+ --output file::
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 984f69144f87..5dd9b5ea314d 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -157,9 +157,11 @@ int parse_cgroups(const struct option *opt __maybe_unused, const char *str,
+ 		  int unset __maybe_unused)
+ {
+ 	struct perf_evlist *evlist = *(struct perf_evlist **)opt->value;
++	struct perf_evsel *counter;
++	struct cgroup_sel *cgrp = NULL;
+ 	const char *p, *e, *eos = str + strlen(str);
+ 	char *s;
+-	int ret;
++	int ret, i;
+ 
+ 	if (list_empty(&evlist->entries)) {
+ 		fprintf(stderr, "must define events before cgroups\n");
+@@ -188,5 +190,18 @@ int parse_cgroups(const struct option *opt __maybe_unused, const char *str,
+ 			break;
+ 		str = p+1;
+ 	}
++	/* for the case one cgroup combine to multiple events */
++	i = 0;
++	if (nr_cgroups == 1) {
++		evlist__for_each_entry(evlist, counter) {
++			if (i == 0)
++				cgrp = counter->cgrp;
++			else {
++				counter->cgrp = cgrp;
++				refcount_inc(&cgrp->refcnt);
++			}
++			i++;
++		}
++	}
+ 	return 0;
+ }
