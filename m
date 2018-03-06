@@ -1,89 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753900AbeCFTVD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 14:21:03 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:32828 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeCFTVC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 14:21:02 -0500
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
-        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
-        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
-        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, paul.burton@mips.com,
-        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH] mm: might_sleep warning
-Date: Tue,  6 Mar 2018 14:20:22 -0500
-Message-Id: <20180306192022.28289-1-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.2
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803060210
+        id S1754006AbeCFTVN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 14:21:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42125 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753453AbeCFTVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 14:21:10 -0500
+Date: Tue, 6 Mar 2018 20:21:06 +0100
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Eric Anholt <eric@anholt.net>, bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.org>, Gerd Hoffmann <kraxel@redhat.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stefan Schake <stschake@gmail.com>
+Subject: Re: [PATCH 1/2] mmc: bcm2835: reset host on timeout
+Message-ID: <20180306202106.0abd51ca@kitsune.suse.cz>
+In-Reply-To: <166274019.307112.1520085525833@email.1und1.de>
+References: <97593d6e1a41af1baff61f7d9e6e68a450fc9da6.1518619058.git.msuchanek@suse.de>
+        <1fbf0d77-cb53-f0fa-b810-e9954138d907@i2se.com>
+        <20180214163649.3a0c9476@kitsune.suse.cz>
+        <20180214165827.386b9bb1@kitsune.suse.cz>
+        <ecf8dd61-ab16-b298-d197-ea93ecf5982b@i2se.com>
+        <20180214202454.6e7ebeaf@naga.suse.cz>
+        <166274019.307112.1520085525833@email.1und1.de>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Robot reported this issue:
-https://lkml.org/lkml/2018/2/27/851
+Hello,
 
-That is introduced by:
-mm: initialize pages on demand during boot
+On Sat, 3 Mar 2018 14:58:45 +0100 (CET)
+Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-The problem is caused by changing static branch value within spin lock.
-Spin lock disables preemption, and changing static branch value takes
-mutex lock in its path, and thus may sleep.
+> Hi Michal,
+> 
 
-The fix is to add another boolean variable to avoid the need to change
-static branch within spinlock.
+> yesterday i finished my stress tests with Raspberry Pi 3.
+> 
+> Scenario:
+> - copy Tumbleweed on SD card
+> (openSUSE-Tumbleweed-ARM-JeOS-raspberrypi3.aarch64-2018.02.02-Build1.2.raw,
+> Linux 4.14.15)
+> - setup locales with yast
+> - run zypper update
+> - reboot
+> - install and remove java 1.8 in a loop for at least 1 hour
+> 
+> Results of the different SD cards:
+> Toshiba uSDHC Class 10 UHS-1 32 GB: PASS
+> BASETech uSDHC Class 10 16 GB: PASS
+> Samsung uSDHC EVO+ UHS-1 16 GB: PASS
+> Samsung uSDHC Class 6 32 GB: PASS
+> SanDisk Edge Class 4 16 GB: PASS
+> Kingston uSDHC Class 10 UHS-1 32 GB: PASS
+> QUMOX uSDHC Class 10 UHS-1 16 GB: FAIL (zypper segfaulted
+> permantently) Transcend uSDHC Class 10 UHS-1 32 GB: PASS
+> 
+> I was never able to reproduce this timeout. 
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- mm/page_alloc.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+For the record I was not able to reproduce the issue installing and
+removing openjdk-1.7.0 in a loop for an hour on Leap 42.3 system which
+is affected by the issue. This was a loop of repeatedly installing and
+removing four packages and was executed 68 times. I enabled zypper
+package caching to avoid spending time in download.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b337a026007c..52edc6695b2b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1579,6 +1579,7 @@ static int __init deferred_init_memmap(void *data)
-  * page_alloc_init_late() soon after smp_init() is complete.
-  */
- static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
-+static bool deferred_zone_grow __initdata = true;
- static DEFINE_STATIC_KEY_TRUE(deferred_pages);
- 
- /*
-@@ -1616,7 +1617,7 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
- 	 * Bail if we raced with another thread that disabled on demand
- 	 * initialization.
- 	 */
--	if (!static_branch_unlikely(&deferred_pages)) {
-+	if (!static_branch_unlikely(&deferred_pages) || !deferred_zone_grow) {
- 		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
- 		return false;
- 	}
-@@ -1683,10 +1684,15 @@ void __init page_alloc_init_late(void)
- 	/*
- 	 * We are about to initialize the rest of deferred pages, permanently
- 	 * disable on-demand struct page initialization.
-+	 *
-+	 * Note: it is prohibited to modify static branches in non-preemptible
-+	 * context. Since, spin_lock() disables preemption, we must use an
-+	 * extra boolean deferred_zone_grow.
- 	 */
- 	spin_lock(&deferred_zone_grow_lock);
--	static_branch_disable(&deferred_pages);
-+	deferred_zone_grow = false;
- 	spin_unlock(&deferred_zone_grow_lock);
-+	static_branch_disable(&deferred_pages);
- 
- 	/* There will be num_node_state(N_MEMORY) threads */
- 	atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
--- 
-2.16.2
+Thanks
+
+Michal
