@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753460AbeCFJM6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:12:58 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61257 "EHLO
+        id S1753439AbeCFJM4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:12:56 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65027 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750885AbeCFJMe (ORCPT
+        with ESMTP id S1750947AbeCFJMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:12:34 -0500
+        Tue, 6 Mar 2018 04:12:35 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Peter Zijlstra <peterz@infradead.org>,
         Linux PM <linux-pm@vger.kernel.org>
@@ -18,9 +18,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Aubrey Li <aubrey.li@linux.intel.com>,
         Mike Galbraith <mgalbraith@suse.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC/RFT][PATCH v2 3/6] sched: idle: Do not stop the tick before cpuidle_idle_call()
-Date: Tue, 06 Mar 2018 10:03:16 +0100
-Message-ID: <2037426.jsGIfSuYk6@aspire.rjw.lan>
+Subject: [RFC/RFT][PATCH v2 1/6] time: tick-sched: Reorganize idle tick management code
+Date: Tue, 06 Mar 2018 10:02:01 +0100
+Message-ID: <4136227.b9g9WnMbNJ@aspire.rjw.lan>
 In-Reply-To: <2067762.1uWBf5RSRc@aspire.rjw.lan>
 References: <2067762.1uWBf5RSRc@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -32,82 +32,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Make cpuidle_idle_call() decide whether or not to stop the tick.
+Prepare two pieces of code in tick_nohz_idle_enter() for being
+called separately from each other.
 
-First, there are code paths in cpuidle_idle_call() that don't need
-the tick to be stopped.  In particular, the cpuidle_enter_s2idle()
-path deals with the tick (and with the entire timekeeping for that
-matter) by itself and it doesn't need the tick to be stopped
-beforehand.
+First, make it possible to call the initial preparatory part of
+tick_nohz_idle_enter() without the tick-stopping part following
+it and introduce the tick_nohz_idle_prepare() wrapper for that
+(that will be used in the next set of changes).
 
-Second, to address the issue with short idle duration predictions
-by the idle governor after the tick has been stopped, it will be
-necessary to change the ordering of some governor code with respect
-to some code in tick_nohz_idle_go_idle().  For this purpose, call
-tick_nohz_idle_go_idle() in the same branch as cpuidle_select().
+Second, add a new stop_tick argument to __tick_nohz_idle_enter()
+tell it whether or not to stop the tick (that is always set for
+now) and add a wrapper allowing this function to be called from
+the outside of tick-sched.c.
+
+Just the code reorganization and two new wrapper functions, no
+intended functional changes.
 
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
 
--> v2: No changes.
+-> v2: Eliminate assumetry in enabling/disabling interrupts.
 
 ---
- kernel/sched/idle.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ include/linux/tick.h     |    2 +
+ kernel/time/tick-sched.c |   62 ++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 45 insertions(+), 19 deletions(-)
 
-Index: linux-pm/kernel/sched/idle.c
+Index: linux-pm/include/linux/tick.h
 ===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -146,13 +146,14 @@ static void cpuidle_idle_call(void)
- 	}
+--- linux-pm.orig/include/linux/tick.h
++++ linux-pm/include/linux/tick.h
+@@ -114,6 +114,8 @@ enum tick_dep_bits {
+ #ifdef CONFIG_NO_HZ_COMMON
+ extern bool tick_nohz_enabled;
+ extern int tick_nohz_tick_stopped(void);
++extern void tick_nohz_idle_prepare(void);
++extern void tick_nohz_idle_go_idle(bool stop_tick);
+ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+Index: linux-pm/kernel/time/tick-sched.c
+===================================================================
+--- linux-pm.orig/kernel/time/tick-sched.c
++++ linux-pm/kernel/time/tick-sched.c
+@@ -911,14 +911,14 @@ static bool can_stop_idle_tick(int cpu,
+ 	return true;
+ }
  
+-static void __tick_nohz_idle_enter(struct tick_sched *ts)
++static void __tick_nohz_idle_enter(struct tick_sched *ts, bool stop_tick)
+ {
+ 	ktime_t now, expires;
+ 	int cpu = smp_processor_id();
+ 
+ 	now = tick_nohz_start_idle(ts);
+ 
+-	if (can_stop_idle_tick(cpu, ts)) {
++	if (can_stop_idle_tick(cpu, ts) && stop_tick) {
+ 		int was_stopped = ts->tick_stopped;
+ 
+ 		ts->idle_calls++;
+@@ -936,22 +936,8 @@ static void __tick_nohz_idle_enter(struc
+ 	}
+ }
+ 
+-/**
+- * tick_nohz_idle_enter - stop the idle tick from the idle task
+- *
+- * When the next event is more than a tick into the future, stop the idle tick
+- * Called when we start the idle loop.
+- *
+- * The arch is responsible of calling:
+- *
+- * - rcu_idle_enter() after its last use of RCU before the CPU is put
+- *  to sleep.
+- * - rcu_idle_exit() before the first use of RCU after the CPU is woken up.
+- */
+-void tick_nohz_idle_enter(void)
++void __tick_nohz_idle_prepare(void)
+ {
+-	struct tick_sched *ts;
+-
+ 	lockdep_assert_irqs_enabled();
  	/*
--	 * Tell the RCU framework we are entering an idle section,
--	 * so no more rcu read side critical sections and one more
-+	 * The RCU framework needs to be told that we are entering an idle
-+	 * section, so no more rcu read side critical sections and one more
- 	 * step to the grace period
+ 	 * Update the idle state in the scheduler domain hierarchy
+@@ -960,12 +946,50 @@ void tick_nohz_idle_enter(void)
+ 	 * exiting idle.
  	 */
--	rcu_idle_enter();
- 
- 	if (cpuidle_not_available(drv, dev)) {
-+		tick_nohz_idle_go_idle(false);
-+		rcu_idle_enter();
- 		default_idle_call();
- 		goto exit_idle;
- 	}
-@@ -169,6 +170,9 @@ static void cpuidle_idle_call(void)
- 
- 	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
- 		if (idle_should_enter_s2idle()) {
-+			tick_nohz_idle_go_idle(false);
-+			rcu_idle_enter();
+ 	set_cpu_sd_state_idle();
++}
 +
- 			entered_state = cpuidle_enter_s2idle(drv, dev);
- 			if (entered_state > 0) {
- 				local_irq_enable();
-@@ -176,9 +180,15 @@ static void cpuidle_idle_call(void)
- 			}
- 		}
++/**
++ * tick_nohz_idle_prepare - prepare for entering idle on the current CPU.
++ *
++ * Called when we start the idle loop.
++ */
++void tick_nohz_idle_prepare(void)
++{
++	struct tick_sched *ts;
++
++	__tick_nohz_idle_prepare();
++
++	local_irq_disable();
++
++	ts = this_cpu_ptr(&tick_cpu_sched);
++	ts->inidle = 1;
++
++	local_irq_enable();
++}
++
++/**
++ * tick_nohz_idle_go_idle - start idle period on the current CPU.
++ * @stop_tick: Whether or not to stop the idle tick.
++ *
++ * When @stop_tick is set and the next event is more than a tick into the
++ * future, stop the idle tick.
++ */
++void tick_nohz_idle_go_idle(bool stop_tick)
++{
++	__tick_nohz_idle_enter(this_cpu_ptr(&tick_cpu_sched), stop_tick);
++}
++
++void tick_nohz_idle_enter(void)
++{
++	struct tick_sched *ts;
++
++	__tick_nohz_idle_prepare();
  
-+		tick_nohz_idle_go_idle(true);
-+		rcu_idle_enter();
-+
- 		next_state = cpuidle_find_deepest_state(drv, dev);
- 		call_cpuidle(drv, dev, next_state);
- 	} else {
-+		tick_nohz_idle_go_idle(true);
-+		rcu_idle_enter();
-+
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
-@@ -248,7 +258,6 @@ static void do_idle(void)
- 			tick_nohz_idle_go_idle(false);
- 			cpu_idle_poll();
- 		} else {
--			tick_nohz_idle_go_idle(true);
- 			cpuidle_idle_call();
- 		}
- 		arch_cpu_idle_exit();
+ 	local_irq_disable();
+ 
+ 	ts = this_cpu_ptr(&tick_cpu_sched);
+ 	ts->inidle = 1;
+-	__tick_nohz_idle_enter(ts);
++	__tick_nohz_idle_enter(ts, true);
+ 
+ 	local_irq_enable();
+ }
+@@ -983,7 +1007,7 @@ void tick_nohz_irq_exit(void)
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+ 
+ 	if (ts->inidle)
+-		__tick_nohz_idle_enter(ts);
++		__tick_nohz_idle_enter(ts, true);
+ 	else
+ 		tick_nohz_full_update_tick(ts);
+ }
