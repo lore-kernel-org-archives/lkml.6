@@ -1,105 +1,84 @@
-Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AG47ELu/y6B8TTNGkg2c/qiNVYIoYfJmwi1/AVuDc6JtkF/f9WEf6IxSQCA7F5QTLszacK2gFzeP
-ARC-Seal: i=1; a=rsa-sha256; t=1520863270; cv=none;
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AG47ELtjsknRoErFSTNKCtrxT5gyUYjPGO/q9j5ZS0KkIrK4FDwUDUvkNQk5pF8X5Qi/SH70YCIm
+ARC-Seal: i=1; a=rsa-sha256; t=1520344951; cv=none;
         d=google.com; s=arc-20160816;
-        b=cGjde2nKxrbhtddDCcF338G2eeZ1/nhdCXoCE262gO4kQIoOFEaG2C+Rvh7pM4BbVD
-         v5NRZNZaqzPyVO3jkXY8h4S+xyhrSVQ9/ozPa+3EwPDBRgefJVRFmhJojBR73KJYwOV/
-         10Cx4gov+zKJLFIeqGOcHyS0VbJaU2No/p82hFWHn3aye5wrr3WJ1+9y2fBsGUAZHB36
-         mMCFTWzCuGUbiNwXqoglTdWOCxi22V5YbaN2gTquvbMBxlPmqOZ3poNX1gZUGfTBJKdm
-         Wt/LkQXOMMr06b6BfwICAbVRJ137OdW3J/OLPeHjyDWRLDdY3kYAs6nTOoKOFen49bIl
-         5pww==
+        b=RdM6HckvCoiWVDjt5KgkrPTDi0N3tp7AaAddWE1xnp43ja/H7MOkgavHaHeIWojpK6
+         k5CC6B78ulUttd5giHlIL9HX3kuraY/i8Qwi/RnWA994rAIfKLNlzCfZc/qXqiqD2tG6
+         De5YtwSRKqyHUrrQD7dakQmWv4quG0PyfWhVTYIq4Z7uoIcnVuhDBFcaUh2N6GckIZHW
+         tcJQy8GqIATKlp5ph2vrwJfc0ONkSHAMNurDgRwq1sJG5l7olt9n3ucudSiF6IWoMa07
+         ImHeensUXTyMKUtmnSjdtWY4MYbmkN8/CLsn3dwviqnqPbTYUzZ9fbplUduWy+VayTfK
+         z7gg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=2S3X0ujorlr3pUBXj69i0h2H2dJUptZo1oetdDhqfQA=;
-        b=vQyuLhKiy1+peT7b8B+6BoHAHbJrOOTMmvFrQJp6W4APnhnr4bCorFX6JhhDcXmn9g
-         lmbFqHKzOHPh1F0Sqlv9yG5RP4725kHP4AC8RPUQAgHzL5fD0dtz8ym5eGOlfr110mkn
-         heHrKa3GBqZWhn5iW1aFHRum7XVAUn+dHrucBthw5VHRf0Z2Xdp9M3WActTSXgFghXPK
-         eqhpHcnU2cX+DGEdThKeZEA+dhcQa7sni7b2sW1bgFQygP7egVPOGRqBSb4kA2nKHqjv
-         +Bj6t7uh/Me0gUgf2vPvqwAw/N2BnEbfmhq1+JSMaz6QmJrVt+QD4MaMqMuS59ljXI22
-         7KXA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject:dmarc-filter
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=w7Y5XZoZCTzE8zYKWqKFkcPQQOoBlpitkmrLvnWTLLA=;
+        b=Wx814ERMqvqsIx+RnvbhrsYjGlGUkCVUf4qteagfiHKxAnEtchaVUIxUcGr0EbsYQ5
+         GGC+EgESUrC2d5G2ZF/4c8IXt72inrVecFOz0GRH/t0JCPewERhUK4b9YX9a0wxcHdft
+         vDWt6KOUKedGXd9pl/4g3b3mg6ajDypP9D05JvwAJ32PXwS3zZn6fwMQkVxN7OlC+anO
+         mXecoywfWGj9/a8qMP1tip/grc3cza/xpzkESmp5T7wrr2wFOreUq2k0bq2nlKjXAIj6
+         lLFOoJQFabPRnFuEGJ73kEhHvNvR5n9ZRmVyqs0aMSq1mH3hTnu8lSBem0tVCw2oD9fI
+         B4Dw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=AfQdgO+P;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=KLCnutf+;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=BYEBMEI0;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Zso+Agjh;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=AfQdgO+P;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=KLCnutf+;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 12 Mar 2018 19:31:08 +0530
-From: poza@codeaurora.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v12 0/6] Address error and recovery for AER and DPC
-In-Reply-To: <20180311220337.GA194000@bhelgaas-glaptop.roam.corp.google.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=BYEBMEI0;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Zso+Agjh;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84494600E6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v12 3/6] PCI/PORTDRV: Implement generic find service
+To: Oza Pawandeep <poza@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kate Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
+ Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+ Timur Tabi <timur@codeaurora.org>
 References: <1519837457-3596-1-git-send-email-poza@codeaurora.org>
- <20180311220337.GA194000@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <7130ab5d568b721ee59f029cf0d5072c@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+ <1519837457-3596-4-git-send-email-poza@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <ac53deae-8fad-b896-805f-36343253a34b@codeaurora.org>
+Date: Tue, 6 Mar 2018 09:02:26 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1519837457-3596-4-git-send-email-poza@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593665102741565714?=
-X-GMAIL-MSGID: =?utf-8?q?1594740723969455375?=
+X-GMAIL-THRID: =?utf-8?q?1593665114849236705?=
+X-GMAIL-MSGID: =?utf-8?q?1594197227887116946?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-03-12 03:33, Bjorn Helgaas wrote:
-> On Wed, Feb 28, 2018 at 10:34:11PM +0530, Oza Pawandeep wrote:
->> This patch set brings in error handling support for DPC
->> 
->> The current implementation of AER and error message broadcasting to 
->> the
->> EP driver is tightly coupled and limited to AER service driver.
->> It is important to factor out broadcasting and other link handling
->> callbacks. So that not only when AER gets triggered, but also when DPC 
->> get
->> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
->> 
->> DPC should enumerate the devices after recovering the link, which is
->> achieved by implementing error_resume callback.
-> 
-> The main point of this series is to call the driver error handling
-> callbacks (error_detected(), mmio_enabled(), slot_reset(), etc.) when
-> DPC events occur.  We've always called them for AER events, but prior
-> to this series, we didn't call them for DPC events.
-> 
-> That's a good thing -- we should treat DPC events as much like AER
-> events as possible.
-> 
-> This series does make it more obvious that there's still a big
-> difference between AER and DPC handling -- for DPC, we remove and
-> re-enumerate all the devices, but we don't for AER.
-> 
-> That difference has been there since the beginning of DPC, so it has
-> nothing to do with *this* series EXCEPT for the fact that it really
-> complicates the logic you're adding to reset_link() and
-> broadcast_error_message().
-> 
-> We ought to be able to simplify that somehow because the only real
-> difference between AER and DPC should be that DPC automatically
-> disables the link and AER does it in software.
-> 
-> Bjorn
+On 2/28/2018 12:04 PM, Oza Pawandeep wrote:
+> +struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+> +							u32 service)
+> +{
+> +	struct pcie_port_service_driver *drv = NULL;
 
-Ok, so here is slight modification which I will do and will post final 
-looking patches.
+Remove initialization
 
-1) do not enumerate the devices after link is up (since AER does not do 
-it)
-2) remove the call to pci_stop_and_remove_bus_device(dev); because now 
-DPC also makes use of driver's callback. (like AER does)
+> +	struct portdrv_service_data pdrvs;
+> +
+> +	pdrvs.service = service;
 
-above 2 changes should make behavior of DPC identical to AER.
+initialize pdrvs.drv = NULL here.
 
-Regards,
-Oza.
+> +	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
+> +
+> +	drv = pdrvs.drv;
+> +	return drv;
+> +}
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
