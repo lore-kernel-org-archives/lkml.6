@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754028AbeCFRYU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:24:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55212 "EHLO mail.kernel.org"
+        id S1754044AbeCFRYW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:24:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753925AbeCFRYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:24:12 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2DF21777
+        id S1754031AbeCFRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 12:24:20 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A295221777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -15,11 +15,12 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Jin Yao <yao.jin@intel.com>, Kan Liang <kan.liang@intel.com>
-Subject: [PATCH 3/9] perf annotate browser: Be more robust when drawing jump arrows
-Date: Tue,  6 Mar 2018 14:23:37 -0300
-Message-Id: <20180306172343.16546-4-acme@kernel.org>
+        Namhyung Kim <namhyung@kernel.org>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 5/9] tools headers: Sync copy of kvm UAPI headers
+Date: Tue,  6 Mar 2018 14:23:39 -0300
+Message-Id: <20180306172343.16546-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180306172343.16546-1-acme@kernel.org>
 References: <20180306172343.16546-1-acme@kernel.org>
@@ -32,79 +33,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-This first happened with a gcc function, _cpp_lex_token, that has the
-usual jumps:
+In 801e459a6f3a ("KVM: x86: Add a framework for supporting MSR-based
+features") a new ioctl was introduced, which with this sync of the kvm
+UAPI headers, makes 'perf trace' know about it:
 
- │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
+  $ cd /tmp/build/perf/trace/beauty/generated/ioctl/
+  $ diff -u kvm_ioctl_array.c.old kvm_ioctl_array.c
+  --- /tmp/kvm_ioctl_array.c	2018-03-05 11:55:38.409145056 -0300
+  +++ /tmp/build/perf/trace/beauty/generated/ioctl/kvm_ioctl_array.c	2018-03-05 11:56:17.456153501 -0300
+  @@ -6,6 +6,7 @@
+ 	[0x04] = "GET_VCPU_MMAP_SIZE",
+ 	[0x05] = "GET_SUPPORTED_CPUID",
+ 	[0x09] = "GET_EMULATED_CPUID",
+  +	[0x0a] = "GET_MSR_FEATURE_INDEX_LIST",
+ 	[0x40] = "SET_MEMORY_REGION",
+ 	[0x41] = "CREATE_VCPU",
+ 	[0x42] = "GET_DIRTY_LOG",
 
-I.e. jumps to a label inside that function (_cpp_lex_token), and those
-works, but also this kind:
+So when using 'perf trace -e ioctl' that will appear along with the
+others, like in this excerpt of a system wide session:
 
- │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
+  14.556 ( 0.006 ms): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) = 0
+  14.565 ( 0.006 ms): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) = 0
+  14.573 (         ): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) ...
+  34.075 ( 0.016 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73e850) = 0
+  40.549 ( 0.012 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73ece0) = 0
+  40.625 ( 0.005 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73e940) = 0
+  40.632 ( 0.003 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_MADVISE, arg: 0x7ffe4e73e9b0) = 0
 
-I.e. jumps to another function, outside _cpp_lex_token, which are not
-being correctly handled generating as a side effect references to
-ab->offset[] entries that are set to NULL, so to make this code more
-robust, check that here.
+This also silences the perf build header copy drift verifier:
 
-A proper fix for will be put in place, looking at the function name
-right after the '<' token and probably treating this like a 'call'
-instruction.
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+    BUILD:   Doing 'make -j4' parallel build
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
 
-For now just don't draw the arrow.
-
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Ingo Molnar <mingo@kernel.org>
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Link: https://lkml.kernel.org/n/tip-5tzvb875ep2sel03aeefgmud@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-h31oz5g0mt1dh2s2ajq6o6no@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ tools/include/uapi/linux/kvm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 286427975112..fbf927cf775d 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -327,7 +327,32 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 	if (!disasm_line__is_valid_jump(cursor, sym))
- 		return;
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index 0fb5ef939732..7b26d4b0b052 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -761,6 +761,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_TRACE_PAUSE           __KVM_DEPRECATED_MAIN_0x07
+ #define KVM_TRACE_DISABLE         __KVM_DEPRECATED_MAIN_0x08
+ #define KVM_GET_EMULATED_CPUID	  _IOWR(KVMIO, 0x09, struct kvm_cpuid2)
++#define KVM_GET_MSR_FEATURE_INDEX_LIST    _IOWR(KVMIO, 0x0a, struct kvm_msr_list)
  
-+	/*
-+	 * This first was seen with a gcc function, _cpp_lex_token, that
-+	 * has the usual jumps:
-+	 *
-+	 *  │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
-+	 *
-+	 * I.e. jumps to a label inside that function (_cpp_lex_token), and
-+	 * those works, but also this kind:
-+	 *
-+	 *  │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
-+	 *
-+	 *  I.e. jumps to another function, outside _cpp_lex_token, which
-+	 *  are not being correctly handled generating as a side effect references
-+	 *  to ab->offset[] entries that are set to NULL, so to make this code
-+	 *  more robust, check that here.
-+	 *
-+	 *  A proper fix for will be put in place, looking at the function
-+	 *  name right after the '<' token and probably treating this like a
-+	 *  'call' instruction.
-+	 */
- 	target = ab->offsets[cursor->ops.target.offset];
-+	if (target == NULL) {
-+		ui_helpline__printf("WARN: jump target inconsistency, press 'o', ab->offsets[%#x] = NULL\n",
-+				    cursor->ops.target.offset);
-+		return;
-+	}
+ /*
+  * Extension capability list.
+@@ -934,6 +935,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_AIS_MIGRATION 150
+ #define KVM_CAP_PPC_GET_CPU_CHAR 151
+ #define KVM_CAP_S390_BPB 152
++#define KVM_CAP_GET_MSR_FEATURES 153
  
- 	bcursor = browser_line(&cursor->al);
- 	btarget = browser_line(target);
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
 -- 
 2.14.3
