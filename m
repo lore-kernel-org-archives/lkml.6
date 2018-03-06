@@ -1,78 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753024AbeCFL0S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 06:26:18 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36868 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFL0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:26:17 -0500
-Date: Tue, 6 Mar 2018 11:26:11 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lee@lakrids.cambridge.arm.com, Chun-Yi <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>, Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH V2 3/3] efi: Use efi_rts_workqueue to invoke EFI Runtime
- Services
-Message-ID: <20180306112610.7izxtuy33bt7ivfs@lakrids.cambridge.arm.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <1520292190-5027-4-git-send-email-sai.praneeth.prakhya@intel.com>
+        id S932408AbeCFLbA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 06:31:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59004 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750907AbeCFLa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 06:30:58 -0500
+Subject: Re: [PATCH] ftrace: nuke clear_ftrace_function
+To: <rostedt@goodmis.org>, <mingo@redhat.com>
+References: <1517537689-34947-1-git-send-email-xieyisheng1@huawei.com>
+CC: <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <8096dab2-2efc-076d-4f5c-b6c9da6a0554@huawei.com>
+Date: Tue, 6 Mar 2018 19:30:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520292190-5027-4-git-send-email-sai.praneeth.prakhya@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1517537689-34947-1-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 03:23:10PM -0800, Sai Praneeth Prakhya wrote:
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+hi Steven and all,
+Ping, for month passed, do you have any comment about this patch?
+
+Thanks & Sorry to disturb
+Yisheng
+
+On 2018/2/2 10:14, Yisheng Xie wrote:
+> clear_ftrace_function is not used outside of ftrace.c and is not help to
+> use a function, so nuke it per Steve's suggestion.
 > 
-> Presently, efi_runtime_services() are executed by firmware in process
-> context. To execute efi_runtime_service(), kernel switches the page
-> directory from swapper_pgd to efi_pgd. However, efi_pgd doesn't have any
-> user space mappings. A potential issue could be, for instance, an NMI
-> interrupt (like perf) trying to profile some user data while in efi_pgd.
-
-It might be worth pointing out that this could result in disaster (e.g.
-if the frame pointer happens to point at MMIO in the EFI runtime
-services mappings).
-
-[...]
-
-> pstore writes could potentially be invoked in interrupt context and it
-> uses set_variable<>() and query_variable_info<>() to store logs. If we
-> invoke efi_runtime_services() through efi_rts_wq while in atomic()
-> kernel issues a warning ("scheduling wile in atomic") and prints stack
-> trace. One way to overcome this is to not make the caller process wait
-> for the worker thread to finish. This approach breaks pstore i.e. the
-> log messages aren't written to efi variables. Hence, pstore calls
-> efi_runtime_services() without using efi_rts_wq or in other words
-> efi_rts_wq will be used unconditionally for all the
-> efi_runtime_services() except set_variable<>() and
-> query_variable_info<>()
-
-Can't NMIs still come in during this?
-
-... or do we assume that since something has already gone wrong, this
-doesn't matter?
-
-Otherwise, this doesn't seem to break basic stuff on arm64 platforms. I
-can boot up, read the EFI RTC, and reboot. I ahd lockdep and KASAN
-enabled, I received no splats from either.
-
-FWIW:
-
-Tested-by: Mark Rutland <mark.rutland@arm.com [arm64]
-
-Thanks,
-Mark.
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  include/linux/ftrace.h |  2 --
+>  kernel/trace/ftrace.c  | 13 +------------
+>  2 files changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 9c3c9a3..15518b5 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -223,7 +223,6 @@ enum ftrace_tracing_type_t {
+>   */
+>  int register_ftrace_function(struct ftrace_ops *ops);
+>  int unregister_ftrace_function(struct ftrace_ops *ops);
+> -void clear_ftrace_function(void);
+>  
+>  extern void ftrace_stub(unsigned long a0, unsigned long a1,
+>  			struct ftrace_ops *op, struct pt_regs *regs);
+> @@ -239,7 +238,6 @@ static inline int ftrace_nr_registered_ops(void)
+>  {
+>  	return 0;
+>  }
+> -static inline void clear_ftrace_function(void) { }
+>  static inline void ftrace_kill(void) { }
+>  static inline void ftrace_free_init_mem(void) { }
+>  static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index dabd9d1..6263a98 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -192,17 +192,6 @@ static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
+>  	op->saved_func(ip, parent_ip, op, regs);
+>  }
+>  
+> -/**
+> - * clear_ftrace_function - reset the ftrace function
+> - *
+> - * This NULLs the ftrace function and in essence stops
+> - * tracing.  There may be lag
+> - */
+> -void clear_ftrace_function(void)
+> -{
+> -	ftrace_trace_function = ftrace_stub;
+> -}
+> -
+>  static void ftrace_sync(struct work_struct *work)
+>  {
+>  	/*
+> @@ -6691,7 +6680,7 @@ void ftrace_kill(void)
+>  {
+>  	ftrace_disabled = 1;
+>  	ftrace_enabled = 0;
+> -	clear_ftrace_function();
+> +	ftrace_trace_function = ftrace_stub;
+>  }
+>  
+>  /**
+> 
