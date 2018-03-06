@@ -1,32 +1,35 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520368976; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520370083; cv=none;
         d=google.com; s=arc-20160816;
-        b=v2yyBy5vPEF5DoFNz1MiLby9ZT5rYfTDGQtw4Yp0GktMkbVI5gtRY23ybpFq3DIqZM
-         BJW4NUNpfCrGYhjOynSpWh9n0mIfpFIXw1w4JMgJPYGZ09EhjQ6jMC1U+PkyAvbvMh/j
-         ahwHn0SAYh1gcTOEwXNO4LA4YmfWI9QdbKi12K6j0RAfXVrqfXFLFUROMhkmIbVGEoi1
-         KcSZZAW4yedkk17mFASxHIDKEy7GMkFdlAYXWhA8NuTJSGZ5nX85WrL7tmST+MTsbq5i
-         K6vi7yx2tiLRTNU23q/uih6b7D+AB0wVz0FpE4PyXy3jasnIrNb236K4onsfzkNrETjV
-         LArw==
+        b=boq2KZwIcuaxZ9+QuZ/sI2OAlgTy1agtJC3YYTk3f+Wkb4SaixUzb7qUGvJbKlt9NW
+         xdUqr4xrVoge6IhGsxOpyVvBSmkDdmpOQPZC+994kcMBp7Vb3Tn6xMyq2V+tBv4DtUg2
+         rbhScmZ2NZmOMrE9SCfy8IJPbGlUeUHugvP+vswV5dySfMKJsfqtls1qC2PUqR/eGZy7
+         uxQ+iGuiarSdot4jwBFwj0JKONd+AawkedIBPQX2vIRwB5PR9hESbKr+8cNq0cqqOjZg
+         IqbFjKGEA94CtwaKnFSHjZhdW+4if1GY98XMiULNf/X0K8Gq71dcZfxm+ibrCxSP8xd4
+         Kfhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=cEEECcQNtgkbor0G85i7LUnSIKdDrDioQv0alPQdzk4=;
-        b=wxf7jm7Z1wzjDq81LhJ1FJ87nTuit9i0Y+sHYhchdXJOWm5DxWoNgFeQWnAcaCcXOY
-         zdFVSCv4Szro6/AsHr9bYJ+84OcOiB9LGtykFcbOXe4UAqxEmfkXjl8WQc3MHfZKMI+4
-         KEqTDSlubtHFFWAKrBt9hHVhaa/jemwuOD9/E6bmhvYE8NNTlcNpYh/N/tF+yKLMTosj
-         Y080LZhG8EZdvOwJpRLLaYtlKrDq62ZIUlD/1fChck+1vQ3Hm6+X5IM0t0A7YhIeY+Y6
-         TgOVhcB2yuPs+KFP0kte7sfBEBXRbWzAfKje2sgRIofLQSYfAe0RnDTShdL/TsxAl3ht
-         taBw==
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=y1n7Ytid9eafeUkQW/E/1MPiY9rzl2jjaa+dlH6fXqc=;
+        b=sg48UdJu6Hu1PRpMT6kQ8bCl3EQOvFq1D/mfClBIT9I6iVdEBkjAvhjHzdmEDUOZXu
+         /uO1eCCkQd42rsL7hNJ1tX/4gTIB9B7WJ1+kYWFMXw0g3kZTwOEmkjScnhvANIBYq/+a
+         fA+/kW4egezwy3kavfn9WhIrPkaewLc8/nJEuGntNmVrXo0tx9XfAnfv4SalXzK8ZoL4
+         qa9whz4ZGVtWDYZIU1nUXDFV0nAP59lkSWaG99Fh2QNC4zyuFn+Pw/G/nQU+B481yjx7
+         lrjQkQB4pkeU32ZJ9fncn4c0mPZPoFkX5/Rw+mqjCKfOh+58POTSsFb0UoHltjQcoZvM
+         M6bg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g1jCPxM2;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JJkQXL4g;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=XDO5wyQd;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g1jCPxM2;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AG47ELvxXEf7nVW99EFTa7hx8ZOJwaUESD4J8Fk6P1I7SXiWwa1+Gg71hghhAeNHOaPUETJ/GT7Itnb5ACz/Xa595VA=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JJkQXL4g;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=XDO5wyQd;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELso97mzzMnHN6JgNBT1Vo7WFtXSWk7on5J7XgJRtn3NF0BRMWWvzRzY1QINBgl4zA2XxdLjCPmcXd49ervx1D8=
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
+Sender: linus971@gmail.com
+In-Reply-To: <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
@@ -34,13 +37,14 @@ References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
  <20180306080855.phtgl2bzqm5hnthu@gmail.com> <CA+DvKQ+uQD0qyMvwqaRd_sMLBHE5q9pcfOQ+VknBW2==q0NJJA@mail.gmail.com>
  <CA+55aFwgmTaaA8QqMGm+VzRNbpKxDXbq2MtKyayyq8f+=PqWqA@mail.gmail.com>
- <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com> <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 6 Mar 2018 21:42:54 +0100
-X-Google-Sender-Auth: NridBCSwwoTVet27j41JqkXxSaY
-Message-ID: <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
+ <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
+ <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com> <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Mar 2018 13:01:20 -0800
+X-Google-Sender-Auth: -lr1vGQYkO2FubYRwrSqGng5F_s
+Message-ID: <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.com>,
 	Ingo Molnar <mingo@kernel.org>, Kees Cook <keescook@chromium.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
@@ -67,104 +71,71 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Daniel Micay <danielmicay@gmail.
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594222419857944671?=
+X-GMAIL-MSGID: =?utf-8?q?1594223581053403035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 8:16 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Mar 6, 2018 at 11:07 AM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->>
->> The compiler usually does a pretty good job of detecting which scalar
->> variables are never initialized by regular assignment.
+On Tue, Mar 6, 2018 at 12:42 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Sure, but "usually" is not really the same as always. Sometimes scalar
-> types are initialized by passing a reference to them too.
+> Forcing gcc to allocate a stack slot and zero-initialize it should
+> find many bugs by adding valid warnings, but also add lots of
+> false positives as well as prevent important optimizations in other
+> places that are actually well-defined.
+
+Oh, no, the "force gcc to allocate a stack slot" would be absolutely insane.
+
+You should never do that. Anybody who does that should be shot.
+
+But you don't have to force any stack allocation. You should just
+initialize it to zero (*without* the stack allocation).
+
+Then the optimization passes will just remove the initialization in
+99.9% of all cases. Only very occasionally - when gcc cannot see it
+being overwritten - would it remain. And those are exactly the cases
+where you *want* it to remain.
+
+Of course, it is possible that you can't just do that from a plugin.
+But I can almost guarantee that it would be trivial to do as a gcc
+switch if any gcc people wanted to do it. Just look at each scalar
+auto variable, and if it doesn't have an initializer, just add one to
+zero completely mindlessly.
+
+As the crusaders said: "Kill them all and let the optimizer sort them out".
+
+(Note: the "trivial to do" is about scalar values only. Non-scalar
+values have more complexities, like struct padding issues etc).
+
+>> If somebody has big arrays on the stack, that's often a problem
+>> anyway. It may be common in non-kernel code, but kernel code is very
+>> special.
 >
->> We could easily extend this to scalar and array types, but we'd first
->> need to see what the performance impact is, because I don't think it
->> will be negligible.
+> I can think of a few cases that are important, this one is well-known:
 >
-> For scalar types, I suspect it will be entirely unnoticeable, because
-> they are not only small, but it's rare that this kind of "initialize
-> by passing a reference" happens in the first place.
+> int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+>                            fd_set __user *exp, struct timespec64 *end_time)
+> {
+>         ....
+>         /* Allocate small arguments on the stack to save memory and be faster */
+>         long stack_fds[SELECT_STACK_ALLOC/sizeof(long)];
 
-A lot of the scalar variables with actual bugs are missed by the gcc
-warnings, because it never allocates a stack slot for examples
-like
+Oh, I can well imagine things like this.
 
-int f(int c)
-{
-        int i;
-        if (c)
-                return i; /* uninitialized return */
-        asm volatile("" : "=r" (i)); /* gcc sees that 'i' escapes here */
-        return 0;
-}
+But they will be a handful, they will be seen in profiles, and they'd
+be easy to mark. And then you can validate the ones you mark, instead
+of worrying about all the ones you don't even know about.
 
-int g(int c)
-{
-        int i;
-        if (c)  /* gcc optimizes out the condition as nothing else sets i */
-                i = 1;
-        return i;
-}
-
-At -O2 optimization level, these fail to produce a warning, and
-they won't ever leak stack data, but they are still undefined behavior
-and don't do what the author intended.
-
-Forcing gcc to allocate a stack slot and zero-initialize it should
-find many bugs by adding valid warnings, but also add lots of
-false positives as well as prevent important optimizations in other
-places that are actually well-defined.
-
-> For arrays, I agree. We very well may have arrays that we really want
-> to do magic things about. But even then I'd rather have a "don't
-> initialize this" flag for critical stuff that really *does* get
-> initialized some other way. Then we can grep for those things and be
-> more careful.
+> There is also the really scary code like:
 >
-> If somebody has big arrays on the stack, that's often a problem
-> anyway. It may be common in non-kernel code, but kernel code is very
-> special.
+> #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+>         char __##name##_desc[sizeof(struct skcipher_request) + \
+>                 crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
+>         struct skcipher_request *name = (void *)__##name##_desc
 
-I can think of a few cases that are important, this one is well-known:
+The crypto stuff does disgusting things. It used to do VLA's in
+structures too, that has morphed into using these crazy XYZ_ON_STACK()
+defines.
 
-int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
-                           fd_set __user *exp, struct timespec64 *end_time)
-{
-        ....
-        /* Allocate small arguments on the stack to save memory and be faster */
-        long stack_fds[SELECT_STACK_ALLOC/sizeof(long)];
+They eventually need to fix their own crap at some point. It shouldn't
+be something we care about from a design standpoint.
 
-Another case I came across very recently with a similar optimization is:
-
- int ib_process_cq_direct(struct ib_cq *cq, int budget)
- {
-       struct ib_wc wcs[IB_POLL_BATCH];
-
-In both cases, the stack variables are chosen to be just under
-the CONFIG_FRAME_WARN limit to avoid a memory allocation
-in the fast path. If we add an explicit zero initialization,
-that optimization may turn out counterproductive, but a
-"don't initialize" flag would be sufficient to deal with them
-one at a time.
-
-There is also the really scary code like:
-
-#define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
-        char __##name##_desc[sizeof(struct skcipher_request) + \
-                crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
-        struct skcipher_request *name = (void *)__##name##_desc
-
-that implements an alloca() through a dynamic array for storing
-a variable-sized structure on the stack. These are usually small,
-but the size is driver specific and some can be surprisingly
-big, e.g. struct ccp_aes_req_ctx, struct hifn_request_context, or
-struct iproc_reqctx_s. If we can come up with a way to avoid those,
-we could actually enable -Wstack-usage=${CONFIG_FRAME_WARN}
-to warn for any functions with dynamic stack allocation.
-
-      Arnd
+                 Linus
