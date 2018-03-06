@@ -1,36 +1,36 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2553435-1520799417-2-5620112748233821172
+X-Cyrus-Session-Id: sloti22d1t05-1470797-1520375217-2-14922531265690227135
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='net', MailFrom='org'
-X-Spam-charsets: from='UTF-8', plain='iso-8859-15'
+X-Spam-charsets: from='UTF-8', plain='utf-8'
 X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520799416; b=wR5yJT9RUQC8qdzKSiR4ktKOEh9W2RTAFEZt9a3+Tr705lO
-    WlEXYgkDuUnaGnCBPN20YqIvmLjDJ/XjxAcGiOS3o2Bg5C+ybhVHmssvNe3kmPXf
-    Z6ZWV2lUyVjd4OotQ/50vWtRLtunXYu9K6tpQPXNcYA25lageOx91wTqUDQpZGYW
-    4oNBZzVMZv7F9iGOPS1RRwrwOeg/i8pW9xQm0wL8DgC/ynZHiYmtkYJPfXj4KBUA
-    1eGn1YT7V/f5JZMwBAU9t0jYRktOpGHogHoIJxTjNX1FR85i1wlwked7wvLcU1hk
-    tGVGlHM0jJsuoiakvmqawhxVTCz8XYFrSus+xrg==
+    t=1520375216; b=uK2Hqz6A68tcg1RRw6gQ/28jaM+J6JeuxwFAzxnJekWC0tO
+    ZX3HAhYXTgsVY9TYwD0NdlH+jJGSB1fc4utwSAklw2IxYCgvGMGiSdJpNJow1LQX
+    M0CM3F0khH5skrImsUbOwHev2Mktq6CmLTiuL3ZTOxFKK5MuIHu2eCz+LuZYyls+
+    p720hFOlt6cHwl4G/qKYzJxDL/WMKXQdL/xNRrnXGcz8XU1EaaFTUAetsNYZAqDP
+    IjWu/z7AlICCcs1GO5/OKfr0o0XklZgCQZdczaOCz7MJhduL2U52cdRacdc82Nzb
+    eVpBrtI4VAQSBYosWsn6ENNr38S/5QNJ0w5ObUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:to:cc:references:from:message-id
     :date:mime-version:in-reply-to:content-type:sender:list-id; s=
-    arctest; t=1520799416; bh=Yiu7rYOaWZitCy3W5wiSA870XakBSGq6mhZok3
-    sz+gE=; b=OmWtmZgOW3fqf3BeCCBRDW04ggSpt/PHQ+4eN+1J28Brl53KOwi4cg
-    0pezPv8OEatVLPuGHeQh3P13UQNPyKvQlDCmAE9PJ8CRK95zbRVNzqGCmXnF5aVB
-    aDW0rCTNTdZpv7sQ1ReHjvHrjiuEfj7oKsBCTYdt8X4O/RWBl8nPBLg4mJPmPUqO
-    U+xrezFV67+Jl6oyBpDRs0rHphfNYj3xvXUGnDvk4TbclAc3YdUVpyp9Bhja46fa
-    DjANCmlMEu2Eht+UGKke1DgHvnj3UlZQ/zAWTp7WJgsbbbz33AKnGyBCgg4wYgEG
-    LmXPM9IeZn89o5/6XiaczsfVA00iTZfw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    arctest; t=1520375216; bh=ZefJiZqk8YtYRfcVJv5iaJeQ0b6feIQjwn6gtu
+    nYvK4=; b=bT/Z9+jCMFVAQqs2YoPIMcE0Uh1/X3Bia5QmBP/9Eo/6wMHLPMC2qz
+    gH+p7zvz4MuYH3gnfNE+RuHP+Y/gK9Fwgn3KmvAAA0Tx8EczbekTwannhLcjv09K
+    RqXL5PV4ZGY02cwP5a3Qx6FNkqd1MMUcIBYHxUbTzKPRtgPSNzJzvXc4fG6vZIAs
+    TlMnKBeK6WmGRlzj6/+XDhqRkQjIOOo7QzLQR/8n/cKfmb+mNULB+hS1Y/1BjGYQ
+    s//Snh0leCjGwa/s4sdyGWG3q60efjmDo1jw2rbhGkGa6mXxRyv6nrDyBOwuz6f/
+    peFy51FhUCvsEFCTxT3s2Y4cMOC3AE+w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=digikod.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=digikod.net header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=digikod.net;
@@ -50,17 +50,17 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=digikod.net header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932258AbeCKUQz (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 11 Mar 2018 16:16:55 -0400
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:56970 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932144AbeCKUQx (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Sun, 11 Mar 2018 16:16:53 -0400
-Subject: Re: [PATCH bpf-next v8 01/11] fs,security: Add a security blob to
- nameidata
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
+        id S1753868AbeCFW0y (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 17:26:54 -0500
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:49847 "EHLO
+        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753805AbeCFW0x (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 6 Mar 2018 17:26:53 -0500
+Subject: Re: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
+ sandboxing
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -77,26 +77,23 @@ Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
         Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
         Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-fsdevel@vger.kernel.org
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>
 References: <20180227004121.3633-1-mic@digikod.net>
- <20180227004121.3633-2-mic@digikod.net>
- <20180227005721.GK30522@ZenIV.linux.org.uk>
- <20180227012329.GL30522@ZenIV.linux.org.uk>
+ <CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
+ <2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
+ <CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
 From: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <53e1f50d-6719-aa6c-a0a7-485cf1fd0d2d@digikod.net>
-Date: Sun, 11 Mar 2018 21:14:08 +0100
+Message-ID: <a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
+Date: Tue, 6 Mar 2018 23:25:31 +0100
 User-Agent: 
 MIME-Version: 1.0
-In-Reply-To: <20180227012329.GL30522@ZenIV.linux.org.uk>
+In-Reply-To: <CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="cdt5OfIhwr4oaLzUGCrbv9AUTGvyZ36E3"
+ boundary="PvZReyUi33n28IxqiwHX1q5FTHMFGG1i5"
 X-Antivirus-Code: 0x100000
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
@@ -105,13 +102,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---cdt5OfIhwr4oaLzUGCrbv9AUTGvyZ36E3
-Content-Type: multipart/mixed; boundary="fU5D1iIsVDFbnRIZV7fin7fKso3RelxuQ";
+--PvZReyUi33n28IxqiwHX1q5FTHMFGG1i5
+Content-Type: multipart/mixed; boundary="sEcIHHJqCS6B4cMrH9dqyVOUmWwcXc4Pq";
  protected-headers="v1"
 From: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>,
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
  Arnaldo Carvalho de Melo <acme@kernel.org>,
  Casey Schaufler <casey@schaufler-ca.com>,
  Daniel Borkmann <daniel@iogearbox.net>, David Drysdale
@@ -123,124 +119,142 @@ Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
  Sargun Dhillon <sargun@sargun.me>, "Serge E . Hallyn" <serge@hallyn.com>,
  Shuah Khan <shuah@kernel.org>, Tejun Heo <tj@kernel.org>,
  Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
- Will Drewry <wad@chromium.org>, kernel-hardening@lists.openwall.com,
- linux-api@vger.kernel.org, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, James Morris <jmorris@namei.org>,
- John Johansen <john.johansen@canonical.com>,
- Stephen Smalley <sds@tycho.nsa.gov>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- linux-fsdevel@vger.kernel.org
-Message-ID: <53e1f50d-6719-aa6c-a0a7-485cf1fd0d2d@digikod.net>
-Subject: Re: [PATCH bpf-next v8 01/11] fs,security: Add a security blob to
- nameidata
+ Will Drewry <wad@chromium.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Linux API <linux-api@vger.kernel.org>,
+ LSM List <linux-security-module@vger.kernel.org>,
+ Network Development <netdev@vger.kernel.org>
+Message-ID: <a70b41ee-78cb-52cc-152c-ac5e43b7e45c@digikod.net>
+Subject: Re: [PATCH bpf-next v8 00/11] Landlock LSM: Toward unprivileged
+ sandboxing
 References: <20180227004121.3633-1-mic@digikod.net>
- <20180227004121.3633-2-mic@digikod.net>
- <20180227005721.GK30522@ZenIV.linux.org.uk>
- <20180227012329.GL30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180227012329.GL30522@ZenIV.linux.org.uk>
+ <CALCETrV3OZb70o83uOG437PubwBwaUJ6SKQucq_7g1BuBOmxzg@mail.gmail.com>
+ <2e06621c-08e9-dc12-9b6e-9c09d5d8f458@digikod.net>
+ <CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
+In-Reply-To: <CALCETrWnJ7WkkfiymyahQd7YqO0KXP4mG1pRMq7fp8LG8Bwtcw@mail.gmail.com>
 
---fU5D1iIsVDFbnRIZV7fin7fKso3RelxuQ
-Content-Type: text/plain; charset=iso-8859-15
+--sEcIHHJqCS6B4cMrH9dqyVOUmWwcXc4Pq
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
 
-On 02/27/2018 02:23 AM, Al Viro wrote:
-> On Tue, Feb 27, 2018 at 12:57:21AM +0000, Al Viro wrote:
->> On Tue, Feb 27, 2018 at 01:41:11AM +0100, Micka=EBl Sala=FCn wrote:
->>> The function current_nameidata_security(struct inode *) can be used t=
-o
->>> retrieve a blob's pointer address tied to the inode being walk throug=
-h.
->>> This enable to follow a path lookup and know where an inode access co=
-me
->>> from. This is needed for the Landlock LSM to be able to restrict acce=
-ss
->>> to file path.
->>>
->>> The LSM hook nameidata_free_security(struct inode *) is called before=
 
->>> freeing the associated nameidata.
+On 28/02/2018 00:09, Andy Lutomirski wrote:
+> On Tue, Feb 27, 2018 at 10:03 PM, Micka=C3=ABl Sala=C3=BCn <mic@digikod=
+=2Enet> wrote:
 >>
->> NAK.  Not without well-defined semantics and "some Linux S&M uses that=
- for
->> something, don't ask what" does not count.
+>> On 27/02/2018 05:36, Andy Lutomirski wrote:
+>>> On Tue, Feb 27, 2018 at 12:41 AM, Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>>>> Hi,
+>>>>
 >=20
-> Incidentally, pathwalk mechanics is subject to change at zero notice, s=
+>>>>
+>>>> ## Why use the seccomp(2) syscall?
+>>>>
+>>>> Landlock use the same semantic as seccomp to apply access rule
+>>>> restrictions. It add a new layer of security for the current process=
+
+>>>> which is inherited by its children. It makes sense to use an unique
+>>>> access-restricting syscall (that should be allowed by seccomp filter=
+s)
+>>>> which can only drop privileges. Moreover, a Landlock rule could come=
+
+>>>> from outside a process (e.g.  passed through a UNIX socket). It is t=
+hen
+>>>> useful to differentiate the creation/load of Landlock eBPF programs =
+via
+>>>> bpf(2), from rule enforcement via seccomp(2).
+>>>
+>>> This seems like a weak argument to me.  Sure, this is a bit different=
+
+>>> from seccomp(), and maybe shoving it into the seccomp() multiplexer i=
+s
+>>> awkward, but surely the bpf() multiplexer is even less applicable.
+>>
+>> I think using the seccomp syscall is fine, and everyone agreed on it.
+>>
+>=20
+> Ah, sorry, I completely misread what you wrote.  My apologies.  You
+> can disregard most of my email.
+>=20
+>>
+>>>
+>>> Also, looking forward, I think you're going to want a bunch of the
+>>> stuff that's under consideration as new seccomp features.  Tycho is
+>>> working on a "user notifier" feature for seccomp where, in addition t=
 o
-> if you want something, you'd better
-> 	* have explicitly defined semantics
-> 	* explain what it is - on fsdevel
-> 	* not have it hidden behind the layers of opaque LSM dreck, pardon
-> the redundance.
+>>> accepting, rejecting, or kicking to ptrace, you can send a message to=
+
+>>> the creator of the filter and wait for a reply.  I think that Landloc=
+k
+>>> will want exactly the same feature.
+>>
+>> I don't think why this may be useful at all her. Landlock does not
+>> filter at the syscall level but handles kernel object and actions as
+>> does an LSM. That is the whole purpose of Landlock.
 >=20
-> Again, pathwalk internals have changed in the past and may bloody well
-> change again in the future.  There's a damn good reason why struct name=
-idata
-> is _not_ visible outside of fs/namei.c, and quietly relying upon any
-> implementation details is no-go.
+> Suppose I'm writing a container manager.  I want to run "mount" in the
+> container, but I don't want to allow moun() in general and I want to
+> emulate certain mount() actions.  I can write a filter that catches
+> mount using seccomp and calls out to the container manager for help.
+> This isn't theoretical -- Tycho wants *exactly* this use case to be
+> supported.
+
+Well, I think this use case should be handled with something like
+LD_PRELOAD and a helper library. FYI, I did something like this:
+https://github.com/stemjail/stemshim
+
+Otherwise, we should think about enabling a process to (dynamically)
+extend/patch the vDSO (similar to LD_PRELOAD but at the syscall level
+and works with static binaries) for a subset of processes (the same way
+seccomp filters are inherited). It may be more powerful and flexible
+than extending the kernel/seccomp to patch (buggy?) userland.
+
+>=20
+> But using seccomp for this is indeed annoying.  It would be nice to
+> use Landlock's ability to filter based on the filesystem type, for
+> example.  So Tycho could write a Landlock rule like:
+>=20
+> bool filter_mount(...)
+> {
+>   if (path needs emulation)
+>     call_user_notifier();
+> }
+>=20
+> And it should work.
+>=20
+> This means that, if both seccomp user notifiers and Landlock make it
+> upstream, then there should probably be a way to have a user notifier
+> bound to a seccomp filter and a set of landlock filters.
 >=20
 
-I thought this whole patch series would go to linux-fsdevel but only
-this patch did. I'll CCed fsdevel for the next round. Meanwhile, the
-cover letter is here: https://lkml.org/lkml/2018/2/26/1214
-The code using current_nameidata_lookup(inode) is in the patch 07/11:
-https://lkml.org/lkml/2018/2/26/1206
-
-To sum up, I don't know any way to identify if a directory (execute)
-access was directly requested by a process or inferred by the kernel
-because of a path walk. This was not needed until now because the other
-access control systems (either the DAC or access controls enforced by
-inode-based LSM, i.e. SELinux and Smack) do not care about the file
-hierarchy. Path-based access controls (i.e. AppArmor and Tomoyo)
-directly use the notion of path to define a security policy (in the
-kernel, not only in the user space configuration). Landlock can't rely
-on xattrs (because of composed and unprivileged access control). Because
-we can't know for sure from which path an inode come from (if any),
-path-based LSM hooks do not help for some file system checks (e.g.
-inode_permission). With Landlock, I try to find a way to identify a set
-of inodes, from the user space point of view, which is most of the time
-related to file hierarchies.
-
-I needed a way to "follow" a path walk, with the minimum amount of code,
-and if possible without touching the fs/namei.c . I saw that the
-pathwalk mechanism has evolved over time. With this patch, I tried to
-make a kernel object (nameidata) usable in some way by LSM, but only
-through an inode (current_nameidata_lookup(inode)). The "only" guarantee
-of this function should be to identify if an inode is tied to a path
-walk. This enable to follow a path walk and know why an inode access is
-requested.
-
-I get your concern about the "instability" of the path walk mechanism.
-However, I though that a path resolution should not change from the user
-space point of view, like other Linux ABI. Anyway, all the current
-inode-based access controls, including DAC, rely on this path walks
-mechanism. This patch does not expose anything to user space, but only
-through the API of Landlock, which is currently relying on path walk
-resolutions, already visible to user space. Did I miss something? Do you
-have another suggestion to tie an inode to a path walk?
-
-Thanks,
- Micka=EBl
+Using seccomp filters and Landlock programs may be powerful. However,
+for this use case, I think a *post-syscall* vDSO-like (which could get
+some data returned by a Landlock program) may be much more flexible
+(with less kernel code). What is needed here is a way to know the kernel
+semantic (Landlock) and a way to patch userland without patching its
+code (vDSO-like).
 
 
---fU5D1iIsVDFbnRIZV7fin7fKso3RelxuQ--
+--sEcIHHJqCS6B4cMrH9dqyVOUmWwcXc4Pq--
 
---cdt5OfIhwr4oaLzUGCrbv9AUTGvyZ36E3
+--PvZReyUi33n28IxqiwHX1q5FTHMFGG1i5
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEUysCyY8er9Axt7hqIt7+33O9apUFAlqljhgACgkQIt7+33O9
-apUEVwgAoNkjdPJXibIfn0WlEL+JT2QbHNoII6AAZyRUKgBTBgmHs0OGeBR0aa5U
-bA8cIvDL558Y2crA9gzum00XepwC4JNIhMq3dmSOYZtcNfkN2OIhJGUqSSFWPsRe
-q76GTF4esFx9ic9mE8K+V4MmvvVSUQzD/eZWeVtb5V/2t5opQ7zPlzPjPtOYG1Kh
-vF2mfOetMES0iFdNT7aM9FCME/PqFGatL2Fh/Zbx/i+AIrA1QoYrzUsAl9BbdBIT
-vKprrbgAn0l0cHSLAUWA85G8EpYoT5+fejiwL+bxAhUzgTZWZCTq9rlnDFBfea8J
-vFr06ZvGzyeD2wmRlKQRLrRIerFUmA==
-=/ydU
+iQEzBAEBCgAdFiEEUysCyY8er9Axt7hqIt7+33O9apUFAlqfFVsACgkQIt7+33O9
+apXBpgf+IexCxH4mYe+h7ZXCYbbX2SNVuELlcdHdOc0/nWAtQp1iE60Q5cerYFzd
+2GyIc2aNTXQo8bxcvUIubzGPmvIiDkuAB5FvaDsjgkC/02YisW6N9QegxMx7duD6
+QtHTiW8LqIektN1IkNstUXn6M796ToUjMMrJo+Mh/hyUV488wepbsPNvRQwTD9g8
+sbvC1CVnQQtjqPNkgqaI1uA4n3hRB75a+9JH8tRu/Z7CP9EiTpqVuJhx02R7jO8P
+k2aMZXLNbdO3p14nk67gL/TMhLIIPLEcVWICjmDexGMY+o3ehARIYV+KqEXVbzO4
+rgQ9zEHUngRX4523Yf46CtEZUgn+3A==
+=i3OW
 -----END PGP SIGNATURE-----
 
---cdt5OfIhwr4oaLzUGCrbv9AUTGvyZ36E3--
+--PvZReyUi33n28IxqiwHX1q5FTHMFGG1i5--
