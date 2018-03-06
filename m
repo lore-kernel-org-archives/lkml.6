@@ -1,111 +1,64 @@
-Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELsff3nzP4N3XH6gUFx0F7IZlufu6o3dJKZPFX7bV3jcPcFt69J1bJkH+E8OzheAkh0ON9g+
-ARC-Seal: i=1; a=rsa-sha256; t=1520276926; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520333310; cv=none;
         d=google.com; s=arc-20160816;
-        b=Uz2xoEsu7qv3BeerTWVdk8Fhm5HJmdDkjbEPP5Z7O54nzCLy+tjsuUAc9Ne6vO5/kC
-         meMeNri/WeE+k+y7lypahY1M1DNmxs8uPUAjufpikKCRfqoo5wSN92lqDXJo/1IvU+tr
-         5UG1EncubCBVvKafm71OLqcdRidK7I1XtNDW3lPxB7vnS3+3nT/ga8314dmGy3noiIcY
-         ePa9wKZMiY5H2TnY8VqURL4zgBiWnry1aKR5ZFmaV+gihgGcDtj7d5GubV6Op9vO5ytN
-         qaLMFVDar3dt0vJ+MGUXNAXL2pC/HR3Xtd+ofhPpQ5UFX9qVqjPmgJtCGqFFNSXYJ7iJ
-         MN3g==
+        b=E1o1KjGSQAFFfRVwbJod+F7n/zstYOUURoT7q1fC7hBR2AxBzOqlNCNweTQwknTQ6O
+         wwB/yUBICjxM1ZdXoyJFSvMmSGVw/kDFLFXcKTwfQ0WUhPthcSSDs8aOy8mShWI86+0c
+         gFfWvIsa5JPfZO80vX0bjnDmnScq7G6rII7k8kA/qN2u9Ykjd6Nkl5KyqAIncd9i6V3w
+         XqnkzoS1m0OnlaOsxc0lyMDRarlk5CxGOttg/38NpT16JG91Bu8tWIyHoqVr/0LfamNv
+         yRHjb2+JU+OFKHXE26PCKAOkbiw5+1LH3dURZz1cKUsVNtnBXXXmM2cQ5AHgg1TTsB99
+         9SbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:references:in-reply-to:message-id:date:cc:to:from
-         :arc-authentication-results;
-        bh=1DC3WJpFzbCmzBHdpBlUMbwm8ev3vh+p7NOOpdODLX0=;
-        b=uZNCEe7+TTmYSkeScXtkvsfNS2K0RhvtnMjDNLaHMdiMxyUqWbbhZJL+/dnPiENCvR
-         I9YlpLUlepZoQcPT8SbmQWLFVYE/eEiSXIY+5xGuFwIlSii5Perr7i7EZMVcYEw8fMII
-         YP9gQGdHjpPZQkkU2SJ4lUXpEOzJLTUDM14I6/yUzywYWxWI40/OoD+T9el098xL3so9
-         jpXRV7bNQj/Cm/OGHuEf9RSsAKSLGOwcn+MHopn62uJoux/fKPJ43BRST/l7htss9DQW
-         dJzHFOvaO1pt9S/0A5leowkYF8vV6NeuJIiX3gCfyQvSIR0emFSGiWYsw5wKvGR6YSR9
-         3JXA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=A+aierCuaWsV39/9qaiARy0HUQMPDSybaF8K0JVGmb4=;
+        b=pDO+IwMOKKgPuvRoQjDTCe1Q6rX9V7P4ry31j2v+pqUBvNjZQySCvWPgCnY8j75yeW
+         Bx5ge0sWMwkjujelLGuQOH8MrW99ENSWGZXfv7lV3CAsR7fyBzVDbzHywbIfL4lpCAoq
+         /VjoZQehUOavlzrLNv1jekN1FZ0u1UFIlf2U+gFhnooXHJjWvdKa9EhiVn5AKM8WF1xI
+         PuzasNC27m2PUjZdaNfNasB2ojSOd7o4zPNn4JqQ7j8DaGcYnlspuH3i98pmIn8vBrWy
+         2H5GFYyB14jhnwmvrb5RUynKMY+D+Lt3XVqScrcFkdLUWJwT2gqjRGuXjJLsV2olpvJ6
+         sokg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GKyTnfFF;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-ntb@googlegroups.com,
-	linux-crypto@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GKyTnfFF;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELt3QH/isKt4zROazZzNs15isM1KN3oW278pW3Cy6ELWK4yjuFiJjeERYNApfcNPcbuNuzKgmLwhIkCgZ9U42uY=
+MIME-Version: 1.0
+In-Reply-To: <20180305190824.847-8-logang@deltatee.com>
+References: <20180305190824.847-1-logang@deltatee.com> <20180305190824.847-8-logang@deltatee.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 6 Mar 2018 12:48:29 +0200
+Message-ID: <CAHp75Vc41MwtDr24-z3po2nx3Hr7_=tFUD0odcrbnVTP4SnJ1g@mail.gmail.com>
+Subject: Re: [PATCH v11 7/7] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines
+ to use the common header
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-ntb@googlegroups.com, linux-crypto <linux-crypto@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
 	Jon Mason <jdmason@kudzu.us>
-Date: Mon,  5 Mar 2018 12:08:24 -0700
-Message-Id: <20180305190824.847-8-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180305190824.847-1-logang@deltatee.com>
-References: <20180305190824.847-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jdmason@kudzu.us
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v11 7/7] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594125898084128153?=
-X-GMAIL-MSGID: =?utf-8?q?1594125898084128153?=
+X-GMAIL-MSGID: =?utf-8?q?1594185021709306508?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clean up the ifdefs which conditionally defined the io{read|write}64
-functions in favour of the new common io-64-nonatomic-lo-hi header.
+On Mon, Mar 5, 2018 at 9:08 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> Clean up the ifdefs which conditionally defined the io{read|write}64
+> functions in favour of the new common io-64-nonatomic-lo-hi header.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jon Mason <jdmason@kudzu.us>
----
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 30 +-----------------------------
- 1 file changed, 1 insertion(+), 29 deletions(-)
+>  #include <linux/kthread.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/ntb.h>
+> +#include <linux/io-64-nonatomic-lo-hi.h>
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index f624ae27eabe..d2a1e746b335 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -19,6 +19,7 @@
- #include <linux/kthread.h>
- #include <linux/interrupt.h>
- #include <linux/ntb.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- 
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
- MODULE_VERSION("0.1");
-@@ -35,35 +36,6 @@ module_param(use_lut_mws, bool, 0644);
- MODULE_PARM_DESC(use_lut_mws,
- 		 "Enable the use of the LUT based memory windows");
- 
--#ifndef ioread64
--#ifdef readq
--#define ioread64 readq
--#else
--#define ioread64 _ioread64
--static inline u64 _ioread64(void __iomem *mmio)
--{
--	u64 low, high;
--
--	low = ioread32(mmio);
--	high = ioread32(mmio + sizeof(u32));
--	return low | (high << 32);
--}
--#endif
--#endif
--
--#ifndef iowrite64
--#ifdef writeq
--#define iowrite64 writeq
--#else
--#define iowrite64 _iowrite64
--static inline void _iowrite64(u64 val, void __iomem *mmio)
--{
--	iowrite32(val, mmio);
--	iowrite32(val >> 32, mmio + sizeof(u32));
--}
--#endif
--#endif
--
- #define SWITCHTEC_NTB_MAGIC 0x45CC0001
- #define MAX_MWS     128
- 
+A nit, can we preserve alphabetical ordering?
+
+
 -- 
-2.11.0
+With Best Regards,
+Andy Shevchenko
