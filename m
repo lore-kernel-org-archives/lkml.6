@@ -1,57 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753812AbeCFQcS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:32:18 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40420 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750817AbeCFQcQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:32:16 -0500
-Message-ID: <1520353933.5393.21.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Tue, 06 Mar 2018 08:32:13 -0800
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1753785AbeCFQkX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:40:23 -0500
+Received: from mx.exactcode.de ([144.76.154.42]:47664 "EHLO mx.exactcode.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752784AbeCFQkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 11:40:22 -0500
+Content-Type: text/plain; charset=windows-1252
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+Subject: Re: [PATCH] k10temp support for AMD Ryzen w/ Vega gfx
+From: =?windows-1252?Q?Ren=E9_Rebe?= <rene@exactcode.de>
+In-Reply-To: <4938bed8-e612-959a-1b72-29dba0839ceb@roeck-us.net>
+Date: Tue, 6 Mar 2018 17:40:14 +0100
+Cc: linux-hwmon@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>,
+        linux-kernel@vger.kernel.org
+Message-Id: <E3F75B2B-434E-4BBB-952C-9A31A00A363A@exactcode.de>
+References: <1769691A-DD1D-4641-B7BA-62C1BA571EBF@exactcode.de> <20180305230350.GA13099@roeck-us.net> <E39517F8-AEF1-444D-BA90-DE84CF656D7F@exactcode.de> <4938bed8-e612-959a-1b72-29dba0839ceb@roeck-us.net>
+X-Mailer: Apple Mail (2.1878.6)
+X-Spam-Score: 0.3 (/)
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w26GeTeO031564
 
-On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > 
-> > 
-> > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > 
-> > > Why you need cover letter?Â Â What are u missing in the patch
-> > > description
-> > 
-> > If you submit a *patch set* I *require* a cover letter, yes.
+Hi,
+
+On 06 Mar 2018, at 11:06, Guenter Roeck <linux@roeck-us.net> wrote:
+
+> On 03/05/2018 10:48 PM, René Rebe wrote:
+>> Hi,
+>> On 06 Mar 2018, at 00:03, Guenter Roeck <linux@roeck-us.net <mailto:linux@roeck-us.net>> wrote:
+>>> On Mon, Mar 05, 2018 at 11:38:24PM +0100, René Rebe wrote:
+>>>> Hi,
+>>>> 
+>>>> This enables k10temp for the new AMD Ryzen APUs w/ Vega Mobile Gfx.
+>>>> Tested on Ryzen 5 2500U, the temperature looked plausible.
+>>>> 
+>>>>  Signed-off-by: René Rebe <rene@exactcode.de <mailto:rene@exactcode.de>>
+>>>> 
+>>>> PS: 1st RFC - might get white-space damaged, will resend when ACKed.
+>>>> Sorry my Xemacs/Mew broke.
+>>>> 
+>>>> --- linux-4.15/drivers/hwmon/k10temp.c.vanilla2018-03-05 22:22:30.974331180 +0000
+>>>> +++ linux-4.15/drivers/hwmon/k10temp.c2018-03-05 22:24:17.186327291 +0000
+>>>> @@ -40,6 +40,10 @@
+>>>> #define PCI_DEVICE_ID_AMD_17H_DF_F30x1463
+>>>> #endif
+>>>> 
+>>>> +#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
+>>>> +#define PCI_DEVICE_ID_AMD_17H_RR_NB0x15d0
+>>>> +#endif
+>>>> +
+>>>> /* CPUID function 0x80000001, ebx */
+>>>> #define CPUID_PKGTYPE_MASK0xf0000000
+>>>> #define CPUID_PKGTYPE_F0x00000000
+>>>> @@ -89,6 +93,8 @@
+>>>> { 0x17, "AMD Ryzen Threadripper 1950", 10000 },
+>>>> { 0x17, "AMD Ryzen Threadripper 1920", 10000 },
+>>>> { 0x17, "AMD Ryzen Threadripper 1910", 10000 },
+>>>> +{ 0x17, "AMD Ryzen 5 2500U with Radeon Vega Mobile Gfx", 20000 },
+>>>> +{ 0x17, "AMD Ryzen 7 2700U with Radeon Vega Mobile Gfx", 20000 },
+>>> 
+>>> Do you have a confirmation that the temperature offset is correct ?
+>> I tried all of the three currently used offsets and this was looked the most plausible.
+>> For me having some indication of temperature is better than having none at all.
+>> Maybe some contact at AMD can shed some light on it, too?
 > 
-> It's good but it is not must, you are inventing your own rules.
+> Per the information I got (not from AMD), those CPUs are not supposed to have an offset.
+> 
+> Does the system have a Super-IO chip ? If so, what temperature does it report ?
+> Also, what temperatures do you see with 0 offset ?
 
-As long as the Maintainer is the gatekeeper, you're not going to get
-very far with this argument. Â The fact is that a lot of subsystems have
-varying rules; often undocumented, some of which are even in conflict,
-like alphabetic vs reverse christmas tree format for includes.
+hm, interesting – as other Ryzens were marked with this offsets I did not imagine the mobile ones would have none, …
 
-A cover letter is actually one of the more uniform rules. Â It's
-referred to in submitting patches, but not actually documented there.
+Without offset it would mean the ideapad 720s would idle after fresh boot in a (really) cold room at a little over 40°C.
+The machine does not feel that warm, but maybe it is under the heatsink (my boot w/ full-disk encryption takes a bit)?
 
-James
+Should I resend the patch without the offsets as baseline for other users to test? Without the chipset PCI ID it obviously currently does not match on those new mobile machines, ...
+
+	René
+
+-- 
+ ExactCODE GmbH, Lietzenburger Str. 42, DE-10789 Berlin
+ http://exactcode.com | http://exactscan.com | http://ocrkit.com | http://t2-project.org | http://rene.rebe.de
