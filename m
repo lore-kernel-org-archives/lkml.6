@@ -1,85 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933042AbeCFOG1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:06:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34688 "EHLO mail.kernel.org"
+        id S933061AbeCFOHG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:07:06 -0500
+Received: from mga12.intel.com ([192.55.52.136]:39091 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750932AbeCFOG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:06:26 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA93220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 6 Mar 2018 11:06:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] perf auxtrace: Prevent decoding when --no-itrace
-Message-ID: <20180306140624.GE10176@kernel.org>
-References: <1520327598-1317-1-git-send-email-adrian.hunter@intel.com>
- <1520327598-1317-3-git-send-email-adrian.hunter@intel.com>
+        id S1750932AbeCFOHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:07:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="205914454"
+Subject: Re: [RFC/RFT][PATCH 4/7] cpuidle: menu: Split idle duration
+ prediction from state selection
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <1657351.s4RTvEoqBQ@aspire.rjw.lan>
+ <2332986.m9oRvTSu8E@aspire.rjw.lan>
+ <20180305113803.GO25201@hirez.programming.kicks-ass.net>
+ <CAJZ5v0gdsSXOLL=nJW801L0LzE0CeyPCCrgq4_0tyi40wNLa+w@mail.gmail.com>
+ <20180305125012.GA25181@hirez.programming.kicks-ass.net>
+ <CAJZ5v0g5x9EWh0MH7wUh4sem9aYB-JuWb_Pn96qNwj=XefOcHg@mail.gmail.com>
+ <20180305135322.GV25201@hirez.programming.kicks-ass.net>
+ <43825f88-762e-11e5-d70a-45152b95599d@linux.intel.com>
+ <20180306084536.GZ25201@hirez.programming.kicks-ass.net>
+From: "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <73d0ffca-7496-12f3-e1b7-a96494507817@linux.intel.com>
+Date: Tue, 6 Mar 2018 22:07:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520327598-1317-3-git-send-email-adrian.hunter@intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180306084536.GZ25201@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 06, 2018 at 11:13:13AM +0200, Adrian Hunter escreveu:
-> Prevent auxtrace_queues__process_index() from queuing AUX area data for
-> decoding when the --no-itrace option has been used.
-
-So I'm putting this one both on perf/urgent and on perf/core, the rest
-just on perf/core, ok?
-
-- Arnaldo
- 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  tools/perf/util/auxtrace.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
+On 2018/3/6 16:45, Peter Zijlstra wrote:
+> On Tue, Mar 06, 2018 at 10:15:10AM +0800, Li, Aubrey wrote:
+>> On 2018/3/5 21:53, Peter Zijlstra wrote:
+>>> On Mon, Mar 05, 2018 at 02:05:10PM +0100, Rafael J. Wysocki wrote:
+>>>> On Mon, Mar 5, 2018 at 1:50 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>>>>> On Mon, Mar 05, 2018 at 12:47:23PM +0100, Rafael J. Wysocki wrote:
+>>>
+>>>>>> IOW, the target residency of the selected state doesn't tell you how
+>>>>>> much time you should expect to be idle in general.
+>>>>>
+>>>>> Right, but I think that measure isn't of primary relevance. What we want
+>>>>> to know is: 'should I stop the tick' and 'what C state do I go to'.
+>>
+>> I understood the benefit of mapping duration to state number, is duration <->
+>> state number mapping a generic solution to all arches?
 > 
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index 9faf3b5367db..6470ea2aa25e 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -60,6 +60,12 @@
->  #include "sane_ctype.h"
->  #include "symbol/kallsyms.h"
->  
-> +static bool auxtrace__dont_decode(struct perf_session *session)
-> +{
-> +	return !session->itrace_synth_opts ||
-> +	       session->itrace_synth_opts->dont_decode;
-> +}
-> +
->  int auxtrace_mmap__mmap(struct auxtrace_mmap *mm,
->  			struct auxtrace_mmap_params *mp,
->  			void *userpg, int fd)
-> @@ -762,6 +768,9 @@ int auxtrace_queues__process_index(struct auxtrace_queues *queues,
->  	size_t i;
->  	int err;
->  
-> +	if (auxtrace__dont_decode(session))
-> +		return 0;
-> +
->  	list_for_each_entry(auxtrace_index, &session->auxtrace_index, list) {
->  		for (i = 0; i < auxtrace_index->nr; i++) {
->  			ent = &auxtrace_index->entries[i];
-> @@ -892,12 +901,6 @@ int perf_event__synthesize_auxtrace_info(struct auxtrace_record *itr,
->  	return err;
->  }
->  
-> -static bool auxtrace__dont_decode(struct perf_session *session)
-> -{
-> -	return !session->itrace_synth_opts ||
-> -	       session->itrace_synth_opts->dont_decode;
-> -}
-> -
->  int perf_event__process_auxtrace_info(struct perf_tool *tool __maybe_unused,
->  				      union perf_event *event,
->  				      struct perf_session *session)
-> -- 
-> 1.9.1
+> Yes, all platforms have a limited set of possible idle states.
+> 
+>> Back to the user's concern is, "I'm running a latency sensitive application, and
+>> I want idle switching ASAP". So I think the user may not care about what C state
+>> to go into, that is, even if a deeper state has chance to go, the user striving
+>> for a higher workload score may still not want it?
+> 
+> The user caring about performance very much cares about the actual idle
+> state too, exit latency for deeper states is horrific and will screw
+> them up just as much as the whole nohz timer reprogramming does.
+> 
+> We can basically view the whole nohz thing as an additional entry/exit
+> latency for the idle state, which is why I don't think its weird to
+> couple them.
+
+okay, I see your point now. Thanks!
+
+> 
+>>>> Maybe just return a "nohz" indicator from cpuidle_select() in addition
+>>>> to the state index and make the decision in the governor?
+>>>
+>>> Much better option than returning a duration :-)
+>>>
+>> So what does "nohz = disable and state index = deepest" mean? This combination
+>> does not make sense for performance only purpose?
+> 
+> I tend to agree with you that the state space allowed by a separate
+> variable is larger than required, but it's significantly smaller than
+> preserving 'time' so I can live with it.
+> 
