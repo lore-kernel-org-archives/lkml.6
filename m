@@ -1,103 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933141AbeCFWwt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:52:49 -0500
-Received: from ozlabs.org ([103.22.144.67]:40393 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933008AbeCFWws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:52:48 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 7 Mar 2018 09:52:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Petr Mladek <pmladek@suse.com>, Greentime Hu <green.hu@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Vincent Chen <deanbo422@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak
- symbol
-Message-ID: <20180307095201.3d8ee50b@canb.auug.org.au>
-In-Reply-To: <20180306124326.ucom526x6giwp2br@pathway.suse.cz>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
-        <20180305144846.3jommv372c73dltt@pathway.suse.cz>
-        <20180306042957.GE6713@jagdpanzerIV>
-        <20180306124326.ucom526x6giwp2br@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/drl7wfGDxBs.9T/Gxn/cNCV"; protocol="application/pgp-signature"
+        id S1754189AbeCFXPN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:15:13 -0500
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44272 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753996AbeCFXPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 18:15:12 -0500
+X-Google-Smtp-Source: AG47ELut4A8ZPK+RwSa7PeaK6doJCPM8f1pqEqNLHWbKVtklGTp+NfyEmeoVL1txRDMgEawEnN9gHw==
+From: Patrik Torstensson <totte@google.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-kernel@vger.kernel.org, ebiggers@google.com,
+        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com,
+        Patrik Torstensson <totte@google.com>
+Subject: [PATCH] Add an option to dm-verity to validate hashes at most once
+Date: Tue,  6 Mar 2018 15:14:56 -0800
+Message-Id: <20180306231456.210504-1-totte@google.com>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/drl7wfGDxBs.9T/Gxn/cNCV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add an option to dm-verity to validate hashes at most once
+to allow platforms that is CPU/memory contraint to be
+protected by dm-verity against offline attacks.
 
-Hi all,
+The option introduces a bitset that is used to check if
+a block has been validated before or not. A block can
+be validated more than once as there is no thread protection
+for the bitset.
 
-On Tue, 6 Mar 2018 13:43:26 +0100 Petr Mladek <pmladek@suse.com> wrote:
->
-> Greentime Hu,
->=20
-> the for-4.17 branch in printk.git is based on Linus' tree. Therefore
-> I had to remove the hunk against arch/nds32/kernel/traps.c because
-> this file is only in linux-next.
->=20
-> I think that it might be easier if you remove the EXPORT_SYMBOL()
-> in your branch. Is it OK for you, please?
+This patch has been developed and tested on entry-level
+Android Go devices.
 
-I have added the following as a merge resolution to the linux-next
-merge of the printk tree from today (someone will need to mention this
-to Linus when the printk and nds32 trees meet in Linus' tree):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 7 Mar 2018 09:47:26 +1100
-Subject: [PATCH] nds32: merge fix for dump_stack update
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Patrik Torstensson <totte@google.com>
 ---
- arch/nds32/kernel/traps.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/md/dm-verity-target.c | 58 +++++++++++++++++++++++++++++++++--
+ drivers/md/dm-verity.h        |  1 +
+ 2 files changed, 56 insertions(+), 3 deletions(-)
 
-diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
-index 8828b4aeb72b..455bb0787367 100644
---- a/arch/nds32/kernel/traps.c
-+++ b/arch/nds32/kernel/traps.c
-@@ -166,8 +166,6 @@ void dump_stack(void)
- 	__dump(NULL, base_reg);
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index aedb8222836b..479d0af212bf 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -32,6 +32,7 @@
+ #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
+ #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
+ #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
++#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
+ 
+ #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
+ 
+@@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
+ 	return 0;
  }
-=20
--EXPORT_SYMBOL(dump_stack);
--
- void show_stack(struct task_struct *tsk, unsigned long *sp)
+ 
++/*
++ * Moves the bio iter one data block forward.
++ */
++static inline void verity_bv_skip_block(struct dm_verity *v,
++					struct dm_verity_io *io,
++					struct bvec_iter *iter)
++{
++	struct bio *bio = dm_bio_from_per_bio_data(io,
++						   v->ti->per_io_data_size);
++
++	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
++}
++
+ /*
+  * Verify one "dm_verity_io" structure.
+  */
+@@ -445,8 +459,15 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 
+ 	for (b = 0; b < io->n_blocks; b++) {
+ 		int r;
++		sector_t cur_block = io->block + b;
+ 		struct ahash_request *req = verity_io_hash_req(v, io);
+ 
++		if (v->validated_blocks &&
++		    likely(test_bit(cur_block, v->validated_blocks))) {
++			verity_bv_skip_block(v, io, &io->iter);
++			continue;
++		}
++
+ 		r = verity_hash_for_block(v, io, io->block + b,
+ 					  verity_io_want_digest(v, io),
+ 					  &is_zero);
+@@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 			return r;
+ 
+ 		if (likely(memcmp(verity_io_real_digest(v, io),
+-				  verity_io_want_digest(v, io), v->digest_size) == 0))
++				  verity_io_want_digest(v, io),
++				  v->digest_size) == 0)) {
++			if (v->validated_blocks)
++				set_bit(cur_block, v->validated_blocks);
+ 			continue;
++		}
+ 		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
+-					   io->block + b, NULL, &start) == 0)
++					   cur_block, NULL, &start) == 0)
+ 			continue;
+ 		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
+-					   io->block + b))
++					   cur_block))
+ 			return -EIO;
+ 	}
+ 
+@@ -740,6 +765,7 @@ static void verity_dtr(struct dm_target *ti)
+ 	if (v->bufio)
+ 		dm_bufio_client_destroy(v->bufio);
+ 
++	kvfree(v->validated_blocks);
+ 	kfree(v->salt);
+ 	kfree(v->root_digest);
+ 	kfree(v->zero_digest);
+@@ -760,6 +786,26 @@ static void verity_dtr(struct dm_target *ti)
+ 	kfree(v);
+ }
+ 
++static int verity_alloc_most_once(struct dm_verity *v)
++{
++	struct dm_target *ti = v->ti;
++
++	/* the bitset can only handle INT_MAX blocks */
++	if (v->data_blocks > INT_MAX) {
++		ti->error = "device too large to use check_at_most_once";
++		return -E2BIG;
++	}
++
++	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
++				     * sizeof(unsigned long), GFP_KERNEL);
++	if (!v->validated_blocks) {
++		ti->error = "failed to allocate bitset for check_at_most_once";
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
+ static int verity_alloc_zero_digest(struct dm_verity *v)
  {
- 	unsigned long *base_reg;
---=20
-2.16.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/drl7wfGDxBs.9T/Gxn/cNCV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqfG5EACgkQAVBC80lX
-0GwnZwf/dilwqwwoLvICdHaJM2d3cW3Ow0E6wQcW7bpfUZqmrpyoTN01+COhCXkb
-RzjxwPOpd2+Kz/z42GChTZXjjgpCj9qFj29ZqcLsmHMPX4GkReigEU2nGSoihc3i
-ej/dSFrx+BFTr3EE+6BM14+Q7Zgg+7c1Mgr3aZHfd2dgJAbIvPKWsR5pfbHT1Rb9
-nIrr1tLAlnqSkaToAEiR4d1VkLYPxTG3yFMBwi8HfDGBhf0Qmd3dcxtf8LemNGnc
-N5r5H4ABdQmZvCelrDRI6TxNO8U751GQNze8W8vUWw4HEWeC1dV/rzojWXlCOEGP
-nvmaWFGp75AjwX0lGQicj9MNKgIYvA==
-=ElDY
------END PGP SIGNATURE-----
-
---Sig_/drl7wfGDxBs.9T/Gxn/cNCV--
+ 	int r = -ENOMEM;
+@@ -829,6 +875,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+ 			}
+ 			continue;
+ 
++		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
++			r = verity_alloc_most_once(v);
++			if (r)
++				return r;
++			continue;
++
+ 		} else if (verity_is_fec_opt_arg(arg_name)) {
+ 			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
+ 			if (r)
+diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+index b675bc015512..ace5ec781b5f 100644
+--- a/drivers/md/dm-verity.h
++++ b/drivers/md/dm-verity.h
+@@ -63,6 +63,7 @@ struct dm_verity {
+ 	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
+ 
+ 	struct dm_verity_fec *fec;	/* forward error correction */
++	unsigned long *validated_blocks; /* bitset blocks validated */
+ };
+ 
+ struct dm_verity_io {
+-- 
+2.16.2.395.g2e18187dfd-goog
