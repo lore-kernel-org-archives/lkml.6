@@ -1,106 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754131AbeCFWMn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:12:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56464 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753805AbeCFWMk (ORCPT
+        id S1754173AbeCFWNr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 17:13:47 -0500
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53739 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754003AbeCFWNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:12:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D047C6016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Tue, 6 Mar 2018 15:12:38 -0700
-From: Lina Iyer <ilina@codeaurora.org>
-To: Evan Green <evgreen@chromium.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] drivers: qcom: rpmh: cache sleep/wake state
- requests
-Message-ID: <20180306221238.GG4930@codeaurora.org>
-References: <20180302164317.10554-1-ilina@codeaurora.org>
- <20180302164317.10554-8-ilina@codeaurora.org>
- <CAE=gft59Jkb+X0fOcdEZN_8moUPvptZ-xuQaX1mg-VxBzHrSXw@mail.gmail.com>
+        Tue, 6 Mar 2018 17:13:45 -0500
+X-Google-Smtp-Source: AG47ELvVpTeVn1A9A/A8Ksx340y+HRd3xv7TGC5ITMtW77P1pBkj4Bg1HitctMH5dh7G+yGkl01Ckw==
+Date: Tue, 6 Mar 2018 14:13:42 -0800
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com
+Subject: Re: [RESEND PATCH v3] crypto: add zBeWalgo compression for zram
+Message-ID: <20180306221342.GA178079@gmail.com>
+References: <A4A8A981-9668-4F3F-B718-8F05B0506074@informatik.uni-hamburg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE=gft59Jkb+X0fOcdEZN_8moUPvptZ-xuQaX1mg-VxBzHrSXw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <A4A8A981-9668-4F3F-B718-8F05B0506074@informatik.uni-hamburg.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05 2018 at 13:45 -0700, Evan Green wrote:
->Hi Lina,
->
->On Fri, Mar 2, 2018 at 8:43 AM, Lina Iyer <ilina@codeaurora.org> wrote:
->> Active state requests are sent immediately to the mailbox controller,
->> while sleep and wake state requests are cached in this driver to avoid
->> taxing the mailbox controller repeatedly. The cached values will be sent
->> to the controller when the rpmh_flush() is called.
->>
->> Generally, flushing is a system PM activity and may be called from the
->> system PM drivers when the system is entering suspend or deeper sleep
->> modes during cpuidle.
->>
->> Also allow invalidating the cached requests, so they may be re-populated
->> again.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->>
->> Changes in v3:
->>         - Remove locking for flush function
->>         - Improve comments
->> ---
->>  drivers/soc/qcom/rpmh.c | 208 +++++++++++++++++++++++++++++++++++++++++++++++-
->>  include/soc/qcom/rpmh.h |  10 +++
->>  2 files changed, 217 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index d95ea3fa8b67..8a04009075b8 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->[...]
->> +
->> +/**
->> + * rpmh_invalidate: Invalidate all sleep and active sets
->> + * sets.
->> + *
->> + * @rc: The RPMh handle got from rpmh_get_dev_channel
->> + *
->> + * Invalidate the sleep and active values in the TCS blocks.
->> + */
->> +int rpmh_invalidate(struct rpmh_client *rc)
->> +{
->> +       struct rpmh_ctrlr *rpm = rc->ctrlr;
->> +       int ret;
->> +       unsigned long flags;
->> +
->> +       if (IS_ERR_OR_NULL(rc))
->> +               return -EINVAL;
->> +
->> +       spin_lock_irqsave(&rpm->lock, flags);
->> +       rpm->dirty = true;
->> +       spin_unlock_irqrestore(&rpm->lock, flags);
->
->Thanks for removing the locking from the flush path. I was hoping to
->see the locking removed around this statement as well. The way I
->understand it, all of the racy bits are attempting to set dirty to
->true, so you don't need a lock to protect multiple threads from
->setting the same value. The only time dirty is read or cleared is in
->the single-threaded PM path, so there are no potentially dangerous
->interactions.
->
-Fair point. Will take care of it.
+Hi Benjamin,
 
->If no one has any other comments on the series, then I don't need to
->hold everything up based on this one tweak alone. But if you end up
->spinning it again for other reasons, consider making this change as
->well.
+On Tue, Mar 06, 2018 at 09:23:08PM +0100, Benjamin Warnke wrote:
+> Currently ZRAM uses compression-algorithms from the crypto-api. ZRAM
+> compresses each page individually. As a result the compression algorithm is
+> forced to use a very small sliding window. None of the available compression
+> algorithms is designed to achieve high compression ratios with small inputs.
+> 
+> This patch adds a new compression algorithm 'zBeWalgo' to the crypto api. This
+> algorithm focusses on increasing the capacity of the compressed block-device
+> created by ZRAM. The choice of compression algorithms is always a tradeoff
+> between speed and compression ratio.
+> 
+[...]
+> 
+> Zstd is not in the list of compared algorithms, because it is not available
+> for Zram in the currently available kernel trees.
 >
-Thanks,
-Lina
+
+This still isn't a valid excuse for not comparing it to Zstandard.  Zstandard is
+already in the kernel in lib/.  It would only need glue code to wire it up as an
+scomp_alg to the crypto API.  In contrast you're proposing an entirely new
+algorithm.  Ultimately, by proposing a new algorithm you're on the hook to
+demonstrate that existing algorithms aren't good enough.  Note that many of the
+existing algorithms including Zstandard also have multiple compression levels
+available to choose from.
+
+It's also rare to add a compression or encryption algorithm to the Linux kernel
+that isn't already used somewhere else.  Have you at least written a formal
+specification of the 'zBeWalgo' data format?  Zstandard, for example, had a
+well-tested and optimized userspace library and a specification of the data
+format before it was added to the kernel.  And even before that it took a couple
+years of development to stabilize the Zstandard data format.
+
+Now, it's true that you don't strictly need a stable data format if the
+algorithm will only ever be used for RAM compression.  But, if you want to take
+that shortcut, then you're on the hook to justify it, and perhaps to enlighten
+the crypto API about algorithms that don't have a stable data format (e.g. using
+a new CRYPTO_ALG_* flag) so that users have to more explicitly opt-in to using
+them.
+
+You cannot just ignore fuzz-safety in the decompressor either.  The existing
+decompressors exposed through the crypto API are fuzz-safe, so it's not valid to
+compare an unsafe decompressor to them.  If you really do want to add an unsafe
+decompressor then you'd likely need to look into adding crypto API support for
+users to request unsafe decompression -- which could also be used to expose the
+unsafe version of the LZ4 decompressor (LZ4_decompress_fast() instead of
+LZ4_decompress_safe()).  Or if you do make the decompressor safe, then of course
+you'd actually need to fuzz it; I suggest porting the code to userspace and
+running american fuzzy lop (afl-fuzz) on it: http://lcamtuf.coredump.cx/afl/
+
+Separately, given that this is a brand new algorithm and it seems to have
+various corner cases, it would be a good idea to demonstrate a higher guarantee
+of the correctness of the compression-decompression round trip.  afl-fuzz can be
+good for that too: you could port the code to userspace and write a simple
+program which compresses and decompresses a file and aborts if it was corrupted.
+Then by passing the program to afl-fuzz it will eventually cover most of the
+compressor and decompressor.  I've done that when testing compression code in
+the past.
+
+Hope this is helpful!
+
+Eric
