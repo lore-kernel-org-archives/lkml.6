@@ -1,31 +1,60 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELtMKf+V24yGRhhXbrfOpRNkEqeNTw1JWeHbCv1ktihWfZrMBvDvAwGd2PBUWEzvtJHndRfV
-ARC-Seal: i=1; a=rsa-sha256; t=1520295989; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YlP58K2CBaujWhKjSGcNMBMCpi1BqfQKcDSPWuwFgiaJZLGxhXBzM02briwh2ki5m2
-         XYnuueVPNBPrydoKR9Roj1taDvbVor9rD/0g35ctSySG9AEWl5BerZ+NHDslzESb1Ezu
-         Qi42TkCKaqwkEgVt4fqjQKjswnmn5dYDS+SPl7FXtfhBiUEOwHqoHpwzTjiBa3KJs6jp
-         2VrwLb28GgNPjeHTIUrOW/iubPPJ5Q2qwHdJxLeUoMUAWyGNM/LcADsmZWf3wlNu2/LX
-         DHwpiRL68qqeyZuleCariUa66O8597FklFVB9RJrpdEHbUNxyit5p0KpeB8QbrPSCwoW
-         kcTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=4dMhrQFZiqYY0bOZ0Jn6bsC/rEVN47hHED+m/27ywZE=;
-        b=Kb6ORzBwDbTHIuuZYcatAcxuCdETgoVpFVIoR9ZoNKnET5C+zaNi9SFlFk6wG4/euL
-         XJev98dYu0VzbEkD1/RW3V08VDePckSn5+RRvqB/i71K/8p780RxMv+Wi2m2wOZtgkyR
-         YYBvz0d5a64QPyGygLWptRefmMzXRONV1eLlQXXLEqHgvTeS12ltqnL+biQ/no8DaQA4
-         Q1OkvsrwFvwcEVG1DGDQaIAqTDQWk2Nf2kK5p5eIwUeYqpQsSOSnOShWKp66EegeDUYV
-         vgUtrK2pBLtqXyndc6V4DMHz536V2kF1AwPXo/L3cvMIeldGexlgfBw6QTg2afW1N+vm
-         ea+w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=sEd9PZmW;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=sEd9PZmW;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3003213-1520295988-2-7320164239271248940
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520295987; b=C+e4arChMfb/PTXgkNgGEz9oAprB2h0ymJlDUral8O6GINV
+    lVxHRWrgySRxR6dWAznzVZJY4ACjjI1wruYehRpRwJ/N/Hs57dLpU85mYvre/o/3
+    srgpzEBitds0RYYhIHN1sD+Qv5+7wpMeB4AZY0/DrsF7dbeS/VM4rar3/wNNjBTm
+    kifLSnW/WP9Pplqkvfmghag6U9UdnHZty0uaOb2Efu3te7M6vq1iL9Bo4Wjtazep
+    Q6mgg5veAGA75BXm6RGqczFKfLjX+7DimOMuDu6CfAUeYAGtSqA7v9X8G4Ejuvwm
+    /2ERParbmxW8q8DWgAi0WB/zh1QJi9lJM74J+qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=arctest; t=1520295987;
+    bh=bflzpeXFpNqWHPyV3zPVoIV2aLKx8l09W8kggEjg3tU=; b=iCja8wWOxsun
+    6fXNzz7WwLPt/ga82i+mgCzzfpr14kwJN6HL1tfK+wT7DGUiPr88rdGzVrj15Xkr
+    L0Jixuj79gUl1eomlIAOtOUoGNEO5LcLJhwYUkM4e7myns6X54jyohosr7Qw4Wnc
+    gC3MkH3GILLFrNzROreHmdcmtDmLu1umnnOx/a2uPHnHx8Fmrox66pmIjmlgAWyt
+    GvDF8R2i9cC1PuOEhJ1ql7T4UzQkS5NYgdDoAQIhpMTfBP2zHUA1ythI3j4F2ev4
+    nwOBPq2dqU25in9sT09F5+Qu5v8c1N1eocnYvFTYDZr24NYoZiK1nEk5836GEKlh
+    DohJHXdqSg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=idxSpNcV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=idxSpNcV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933127AbeCFA0X (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 5 Mar 2018 19:26:23 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34868 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933101AbeCFA0V (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 5 Mar 2018 19:26:21 -0500
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux-kernel@vger.kernel.org, Alexander.Levin@microsoft.com,
@@ -33,75 +62,64 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 31/65] kaiser: KAISER depends on SMP
-Date: Mon,  5 Mar 2018 19:25:04 -0500
-Message-Id: <20180306002538.1761-32-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 21/65] x86/mm/64: Fix reboot interaction with CR4.PCIDE
+Date: Mon,  5 Mar 2018 19:24:54 -0500
+Message-Id: <20180306002538.1761-22-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=660
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145887267826772?=
-X-GMAIL-MSGID: =?utf-8?q?1594145887267826772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hugh Dickins <hughd@google.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-It is absurd that KAISER should depend on SMP, but apparently nobody
-has tried a UP build before: which breaks on implicit declaration of
-function 'per_cpu_offset' in arch/x86/mm/kaiser.c.
+commit 924c6b900cfdf376b07bccfd80e62b21914f8a5a upstream.
 
-Now, you would expect that to be trivially fixed up; but looking at
-the System.map when that block is #ifdef'ed out of kaiser_init(),
-I see that in a UP build __per_cpu_user_mapped_end is precisely at
-__per_cpu_user_mapped_start, and the items carefully gathered into
-that section for user-mapping on SMP, dispersed elsewhere on UP.
+Trying to reboot via real mode fails with PCID on: long mode cannot
+be exited while CR4.PCIDE is set.  (No, I have no idea why, but the
+SDM and actual CPUs are in agreement here.)  The result is a GPF and
+a hang instead of a reboot.
 
-So, some other kind of section assignment will be needed on UP,
-but implementing that is not a priority: just make KAISER depend
-on SMP for now.
+I didn't catch this in testing because neither my computer nor my VM
+reboots this way.  I can trigger it with reboot=bios, though.
 
-Also inserted a blank line before the option, tidied up the
-brief Kconfig help message, and added an "If unsure, Y".
-
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 660da7c9228f ("x86/mm: Enable CR4.PCIDE on supported systems")
+Reported-and-tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/f1e7d965998018450a7a70c2823873686a8b21c0.1507524746.git.luto@kernel.org
+Cc: Hugh Dickins <hughd@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit d94df20135ccfdfb77b1479c501564e9b4ab5bc9)
+
+(cherry picked from commit 6c4db09c291a19da66512f99c4bcb378a862f9e6)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- security/Kconfig | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/kernel/reboot.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index cdad6dd3693a..5f4b656bfa4c 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -30,14 +30,16 @@ config SECURITY
- 	  model will be used.
- 
- 	  If you are unsure how to answer this question, answer N.
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 0549ae3cb332..d9ea27ec9dbd 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -93,6 +93,10 @@ void __noreturn machine_real_restart(unsigned int type)
+ 	load_cr3(initial_page_table);
+ #else
+ 	write_cr3(real_mode_header->trampoline_pgd);
 +
- config KAISER
- 	bool "Remove the kernel mapping in user mode"
- 	default y
--	depends on X86_64
--	depends on !PARAVIRT
-+	depends on X86_64 && SMP && !PARAVIRT
- 	help
--	  This enforces a strict kernel and user space isolation in order to close
--	  hardware side channels on kernel address information.
-+	  This enforces a strict kernel and user space isolation, in order
-+	  to close hardware side channels on kernel address information.
-+
-+	  If you are unsure how to answer this question, answer Y.
++	/* Exiting long mode will fail if CR4.PCIDE is set. */
++	if (static_cpu_has(X86_FEATURE_PCID))
++		cr4_clear_bits(X86_CR4_PCIDE);
+ #endif
  
- config KAISER_REAL_SWITCH
- 	bool "KAISER: actually switch page tables"
+ 	/* Jump to the identity-mapped low memory code */
 -- 
 2.16.2
