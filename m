@@ -1,47 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932941AbeCFXe0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 18:34:26 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45122 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754122AbeCFXeY (ORCPT
+        id S933236AbeCFXgM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:36:12 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54966 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933055AbeCFXgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 18:34:24 -0500
-X-Google-Smtp-Source: AG47ELvpEdsSpkiOjgeQiPnwSsX/m0Jr2Q4TTMOKGLuxwedPrfWF9NqNOBjyp8g4aJ7gfc2rVkNzPQ==
-Date: Tue, 6 Mar 2018 16:34:19 -0700
+        Tue, 6 Mar 2018 18:36:09 -0500
+X-Google-Smtp-Source: AG47ELtFLhJvR1OtQWJ+ap6bppxSqVGTd9kbPO/nICLAauZhLBs2FBAopxtPjQknDBnZPRxL5HCmaw==
+Date: Tue, 6 Mar 2018 16:36:04 -0700
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
         Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] infiniband: remove redundant assignment to pointer 'rdi'
-Message-ID: <20180306233419.GA8328@ziepe.ca>
-References: <20180301162354.17420-1-colin.king@canonical.com>
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] RDMA/bnxt_re/qplib_sp: Use true and false for boolean
+ values
+Message-ID: <20180306233604.GG8328@ziepe.ca>
+References: <20180305233647.GA30787@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180301162354.17420-1-colin.king@canonical.com>
+In-Reply-To: <20180305233647.GA30787@embeddedgus>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 01, 2018 at 04:23:54PM +0000, Colin Ian King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 05, 2018 at 05:36:47PM -0600, Gustavo A. R. Silva wrote:
+> Assign true or false to boolean variables instead of an integer value.
 > 
-> The pointer rdi is being initialized with a value that is never read
-> and re-assigned immediately after, hence the initialization is redundant
-> and can be removed.
+> This issue was detected with the help of Coccinelle.
 > 
-> Cleans up clang warning:
-> drivers/infiniband/sw/rdmavt/vt.c:94:23: warning: Value stored to 'rdi'
-> during its initialization is never read
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->  drivers/infiniband/sw/rdmavt/vt.c | 2 +-
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+> ---
+>  drivers/infiniband/hw/bnxt_re/qplib_sp.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-applied to for-next, thanks
+Applied to for-next, thanks
 
 Jason
