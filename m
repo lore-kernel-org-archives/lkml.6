@@ -1,97 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753689AbeCFOnV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:43:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48758 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753860AbeCFOj6 (ORCPT
+        id S932934AbeCFOoC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:44:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54698 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753785AbeCFOjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:39:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52AA760A60
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 05/15] dt-bindings: clock: Document qcom,hfpll
-Date: Tue,  6 Mar 2018 20:08:58 +0530
-Message-Id: <1520347148-27852-6-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+        Tue, 6 Mar 2018 09:39:42 -0500
+Subject: Re: [PATCH V4] scsi: core: use blk_mq_requeue_request in
+ __scsi_queue_insert
+To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: Bart.VanAssche@wdc.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+References: <1520042049-8874-1-git-send-email-jianchao.w.wang@oracle.com>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <46a8136a-3dbb-0b73-4dfe-2a44a860dbe7@oracle.com>
+Date: Tue, 6 Mar 2018 22:39:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520042049-8874-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803060165
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Martin
 
-Adds bindings document for qcom,hfpll instantiated within
-the Krait processor subsystem as separate register region.
+Can you take your precious time to review this ?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+Thanks in advice.
+Jianchao
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-new file mode 100644
-index 0000000..771cb0a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -0,0 +1,46 @@
-+High-Frequency PLL (HFPLL)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>:
-+		shall contain only one of the following. The generic
-+		compatible "qcom,hfpll" should be also included.
-+
-+                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-+                        "qcom,hfpll-apq8064", "qcom,hfpll"
-+                        "qcom,hfpll-msm8974", "qcom,hfpll"
-+                        "qcom,hfpll-msm8960", "qcom,hfpll"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: address and size of HPLL registers. An optional second
-+		    element specifies the address and size of the alias
-+		    register region.
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-+		    starting at 0. Otherwise hfpll_Y where Y is more specific
-+		    such as "l2".
-+
-+Example:
-+
-+1) An HFPLL for the L2 cache.
-+
-+	clock-controller@f9016000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf9016000 0x30>;
-+		clock-output-names = "hfpll_l2";
-+	};
-+
-+2) An HFPLL for CPU0. This HFPLL has the alias register region.
-+
-+	clock-controller@f908a000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-+		clock-output-names = "hfpll0";
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+On 03/03/2018 09:54 AM, Jianchao Wang wrote:
+> In scsi core, __scsi_queue_insert should just put request back on
+> the queue and retry using the same command as before. However, for
+> blk-mq, scsi_mq_requeue_cmd is employed here which will unprepare
+> the request. To align with the semantics of __scsi_queue_insert,
+> use blk_mq_requeue_request with kick_requeue_list == true and put
+> the reference of scsi_device.
+> 
+> Cc: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+> ---
+> Changelog:
+> V3 -> V4:
+>  - modify the comment and make it more clearly
+> 
+> V2 -> V3:
+>  - add comment to explain why we need a put_device in
+>    __scsi_queue_insert
+>  - add reviewed-by
+> 
+> V1 -> V2:
+>  - add put_device on scsi_device->sdev_gendev
+>  drivers/scsi/scsi_lib.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index a86df9c..6ce33f6 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -191,7 +191,19 @@ static void __scsi_queue_insert(struct scsi_cmnd *cmd, int reason, bool unbusy)
+>  	 */
+>  	cmd->result = 0;
+>  	if (q->mq_ops) {
+> -		scsi_mq_requeue_cmd(cmd);
+> +		/*
+> +		 * Before a SCSI command is dispatched,
+> +		 * get_device(&sdev->sdev_gendev) is called and the host,
+> +		 * target and device busy counters are increased. Since
+> +		 * requeuing a request causes these actions to be repeated and
+> +		 * since scsi_device_unbusy() has already been called,
+> +		 * put_device(&device->sdev_gendev) must still be called. Call
+> +		 * put_device() after blk_mq_requeue_request() to avoid that
+> +		 * removal of the SCSI device can start before requeueing has
+> +		 * happened.
+> +		 */
+> +		blk_mq_requeue_request(cmd->request, true);
+> +		put_device(&device->sdev_gendev);
+>  		return;
+>  	}
+>  	spin_lock_irqsave(q->queue_lock, flags);
+> 
