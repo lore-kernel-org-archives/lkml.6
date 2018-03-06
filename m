@@ -1,59 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932905AbeCFO4F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:56:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38578 "EHLO mail.bootlin.com"
+        id S933035AbeCFO4O (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:56:14 -0500
+Received: from mga18.intel.com ([134.134.136.126]:20369 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932448AbeCFO4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:56:04 -0500
-Date: Tue, 6 Mar 2018 15:56:02 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, zyw@rock-chips.com,
-        briannorris@google.com, dianders@google.com, jwerner@chromium.org,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>
-Subject: Re: [RESEND PATCH v3] rtc: cros-ec: return -ETIME when refused to
- set alarms in the past
-Message-ID: <20180306145602.GA3035@piout.net>
-References: <20180227025003.8823-1-jeffy.chen@rock-chips.com>
+        id S932418AbeCFO4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:56:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="23368215"
+Subject: Re: [RFC, PATCH 21/22] x86/mm: Introduce page_keyid() and
+ page_encrypted()
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+ <20180305162610.37510-22-kirill.shutemov@linux.intel.com>
+ <61041640-435e-1a67-177f-a75791130514@intel.com>
+ <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <91d27559-3f28-d53c-9fd9-d16e015a3f59@intel.com>
+Date: Tue, 6 Mar 2018 06:56:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180227025003.8823-1-jeffy.chen@rock-chips.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2018 at 10:50:03 +0800, Jeffy Chen wrote:
-> Since accessing a Chrome OS EC based rtc is a slow operation, there is a
-> race window where if the alarm is set for the next second and the second
-> ticks over right before calculating the alarm offset.
+On 03/06/2018 12:57 AM, Kirill A. Shutemov wrote:
+> On Mon, Mar 05, 2018 at 09:08:53AM -0800, Dave Hansen wrote:
+>> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
+>>> +static inline bool page_encrypted(struct page *page)
+>>> +{
+>>> +	/* All pages with non-zero KeyID are encrypted */
+>>> +	return page_keyid(page) != 0;
+>>> +}
+>>
+>> Is this true?  I thought there was a KEYID_NO_ENCRYPT "Do not encrypt
+>> memory when this KeyID is in use."  Is that really only limited to key 0.
 > 
-> In this case the current driver is setting a 0-second alarm, which would
-> be considered as disabling alarms by the EC(EC_RTC_ALARM_CLEAR).
-> 
-> This breaks, e.g., hwclock which relies on RTC_UIE_ON ->
-> rtc_update_irq_enable(), which sets a 1-second alarm and expects it to
-> fire an interrupt.
-> 
-> So return -ETIME when the alarm is in the past, follow __rtc_set_alarm().
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> ---
-> 
-> Changes in v3:
-> Fix alarm time comparing.
-> 
-> Changes in v2:
-> Rewrite commit message as Brian suggested.
-> Check alarm time only when that alarm is enabled.
-> 
->  drivers/rtc/rtc-cros-ec.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-Applied, thanks.
+> Well, it depends on what we mean by "encrypted". For memory management
+> pruposes we care if the page is encrypted with KeyID different from
+> default one. All pages with non-default KeyID threated the same by memory
+> management.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Doesn't it really mean "am I able to use the direct map to get this
+page's contents?"
