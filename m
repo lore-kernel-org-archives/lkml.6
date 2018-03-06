@@ -1,66 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753667AbeCFO2I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:28:08 -0500
-Received: from lucky1.263xmail.com ([211.157.147.133]:34942 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeCFO2G (ORCPT
+        id S1753729AbeCFOab (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:30:31 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37861 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753223AbeCFOa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:28:06 -0500
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: vladimir_zapolskiy@mentor.com
-X-SENDER-IP: 220.200.58.142
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <19c388a2931be0557130b71bd559ac66>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        adrian.hunter@intel.com, avri.altman@wdc.com,
-        andriy.shevchenko@linux.intel.com, shawn.lin@rock-chips.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir_Zapolskiy@mentor.com
-Subject: Re: [PATCH v5] mmc: Export host capabilities to debugfs.
-To: Harish Jenny K N <harish_kandiga@mentor.com>
-References: <1520344425-13131-1-git-send-email-harish_kandiga@mentor.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <6d51c3b3-abd3-82a8-ec7b-da063a9e5aaa@rock-chips.com>
-Date: Tue, 6 Mar 2018 22:27:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1520344425-13131-1-git-send-email-harish_kandiga@mentor.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
+        Tue, 6 Mar 2018 09:30:29 -0500
+X-Google-Smtp-Source: AG47ELuHyI209CfblnW4T7Ssq5VtmPU6rlxEw8uUNDeDX8ddXqE+VguXnsIM5pLIuZ0bHFE4kQGSqg==
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: marc.zyngier@arm.com, jason@lakedaemon.net, tglx@linutronix.de,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH] irqchip: gic-v3-its: fail IRQ allocation if nr_ites is exceeded
+Date: Tue,  6 Mar 2018 14:30:15 +0000
+Message-Id: <20180306143015.27316-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/6 21:53, Harish Jenny K N wrote:
-> This patch exports the host capabilities to debugfs
-> 
-> This idea of sharing host capabilities over debugfs
-> came up from Abbas Raza <Abbas_Raza@mentor.com>
-> Earlier discussions:
-> https://lkml.org/lkml/2018/3/5/357
-> https://www.spinics.net/lists/linux-mmc/msg48219.html
-> 
-> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
-> ---
-> 
-> Changes in v5:
-> - Added parser logic in kernel by using debugfs_create_file
->   for caps and caps2 instead of debugfs_create_x32
+Normally, ITS device IDs are not shared between different PCIe
+devices, and ITS MSIs are allocated from the range that was
+reserved when the device's struct its_device was created.
 
-I'm fine with your method if Ulf likes it, but could you use
-DEFINE_SHOW_ATTRIBUTE instead? :)
+When a duplicate device ID is seen by its_msi_prepare(), it skips
+the call to its_create_device(), since it assumes it is dealing
+with an alias of what is essentially the same device.
 
+In exceptional cases, such as on the Socionext SynQuacer SoC that
+maps all PCIe RIDs to ITS device ID #0, we may end up in the
+situation where its_alloc_device_irq() calls succeed erroneously,
+due to the fact that the first its_create_device() call allocated
+a LPI map of sufficient size to cover the newly allocated MSI,
+while the size of the ITT mapping (which is based on nr_ites) has
+already been programmed to a value that does not cover this MSI.
 
+The result is that the additional devices that share device ID #0
+get MSIs assigned to them, but asserting them doesn't actually
+work, and the device doesn't function.
 
+Instead, let's fail the its_alloc_device_irq() in this case, and
+allow the device to fall back to legacy INTx interrupts instead.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 1d3056f53747..b5a1e4f83297 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2186,7 +2186,7 @@ static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
+ 
+ 	idx = find_first_zero_bit(dev->event_map.lpi_map,
+ 				  dev->event_map.nr_lpis);
+-	if (idx == dev->event_map.nr_lpis)
++	if (idx == dev->event_map.nr_lpis || idx == dev->nr_ites)
+ 		return -ENOSPC;
+ 
+ 	*hwirq = dev->event_map.lpi_base + idx;
 -- 
-Best Regards
-Shawn Lin
+2.11.0
