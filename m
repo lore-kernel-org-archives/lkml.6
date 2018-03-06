@@ -1,55 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932112AbeCFI6J (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:58:09 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55915 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750730AbeCFI6I (ORCPT
+        id S932491AbeCFI6b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:58:31 -0500
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:53727 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932228AbeCFI6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:58:08 -0500
-X-Google-Smtp-Source: AG47ELux6K1gHtFzo8pJHG/ac322dr55gaJy3kPdd+a8jy77kDRgkZHowqTfD3jZju4y5kNGWl1g4w==
-Date: Tue, 6 Mar 2018 11:57:51 +0300
+        Tue, 6 Mar 2018 03:58:30 -0500
+X-Google-Smtp-Source: AG47ELuRq4r1DRQGluV/S0hSXZ9lAXhkQJywPDDF4jnPTTFY1mIJ3zUauMIAyiL+fscrNHNrV7PbrQ==
+Date: Tue, 6 Mar 2018 11:58:13 +0300
 From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [RFC, PATCH 21/22] x86/mm: Introduce page_keyid() and
- page_encrypted()
-Message-ID: <20180306085751.tvozsfe6hogh37pd@node.shutemov.name>
+Subject: Re: [RFC, PATCH 00/22] Partial MKTME enabling
+Message-ID: <20180306085813.d22slphcsrtzrtaq@node.shutemov.name>
 References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-22-kirill.shutemov@linux.intel.com>
- <61041640-435e-1a67-177f-a75791130514@intel.com>
+ <20180305183050.GA22743@infradead.org>
+ <20180305190549.GA10418@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <61041640-435e-1a67-177f-a75791130514@intel.com>
+In-Reply-To: <20180305190549.GA10418@bombadil.infradead.org>
 User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 09:08:53AM -0800, Dave Hansen wrote:
-> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
-> > +static inline bool page_encrypted(struct page *page)
-> > +{
-> > +	/* All pages with non-zero KeyID are encrypted */
-> > +	return page_keyid(page) != 0;
-> > +}
+On Mon, Mar 05, 2018 at 11:05:50AM -0800, Matthew Wilcox wrote:
+> On Mon, Mar 05, 2018 at 10:30:50AM -0800, Christoph Hellwig wrote:
+> > On Mon, Mar 05, 2018 at 07:25:48PM +0300, Kirill A. Shutemov wrote:
+> > > Hi everybody,
+> > > 
+> > > Here's updated version of my patchset that brings support of MKTME.
+> > 
+> > It would really help if you'd explain what "MKTME" is..
 > 
-> Is this true?  I thought there was a KEYID_NO_ENCRYPT "Do not encrypt
-> memory when this KeyID is in use."  Is that really only limited to key 0.
+> You needed to keep reading, to below the -------------- line.
+> 
+> I agree though, that should have been up top.
 
-Well, it depends on what we mean by "encrypted". For memory management
-pruposes we care if the page is encrypted with KeyID different from
-default one. All pages with non-default KeyID threated the same by memory
-management.
-
-So far we don't have users for the interface. We may reconsider
-the meaning once we get users.
+My bad. Will update it for future postings.
 
 -- 
  Kirill A. Shutemov
