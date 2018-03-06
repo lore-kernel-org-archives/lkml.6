@@ -1,75 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeCFN5E (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:57:04 -0500
-Received: from mga09.intel.com ([134.134.136.24]:18266 "EHLO mga09.intel.com"
+        id S932889AbeCFN5M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:57:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34963 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753507AbeCFN5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:57:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="35017755"
-Date: Tue, 6 Mar 2018 15:56:58 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Todor Tomov <todor.tomov@linaro.org>, hverkuil@xs4all.nl,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: ov5645: Fix write_reg return code
-Message-ID: <20180306135658.dh5vlmsevodrcr7m@paasikivi.fi.intel.com>
-References: <1518082920-11309-1-git-send-email-todor.tomov@linaro.org>
- <20180306104010.234737a6@vento.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306104010.234737a6@vento.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932287AbeCFN5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 08:57:10 -0500
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v3 2/7] dt-bindings: display: Add Allwinner MIPI-DSI bindings
+Date: Tue,  6 Mar 2018 14:55:59 +0100
+Message-Id: <5f183ae295c0190369ec576ecfb10c1d78f41eb3.1520344489.git-series.maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
+References: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
+References: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Mauro,
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Tue, Mar 06, 2018 at 10:40:10AM -0300, Mauro Carvalho Chehab wrote:
-> Em Thu,  8 Feb 2018 11:41:59 +0200
-> Todor Tomov <todor.tomov@linaro.org> escreveu:
-> 
-> > I2C transfer functions return number of successful operations (on success).
-> > 
-> > Do not return the received positive return code but instead return 0 on
-> > success. The users of write_reg function already use this logic.
-> > 
-> > Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> > ---
-> >  drivers/media/i2c/ov5645.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> > index d28845f..9755562 100644
-> > --- a/drivers/media/i2c/ov5645.c
-> > +++ b/drivers/media/i2c/ov5645.c
-> > @@ -600,11 +600,13 @@ static int ov5645_write_reg(struct ov5645 *ov5645, u16 reg, u8 val)
-> >  	regbuf[2] = val;
-> >  
-> >  	ret = i2c_master_send(ov5645->i2c_client, regbuf, 3);
-> > -	if (ret < 0)
-> > +	if (ret < 0) {
-> >  		dev_err(ov5645->dev, "%s: write reg error %d: reg=%x, val=%x\n",
-> >  			__func__, ret, reg, val);
-> > +		return ret;
-> > +	}
-> 
-> Actually, if ret < 3, it should return an error too (like -EREMOTEIO 
-> or -EIO).
+The Allwinner SoCs usually come with a DSI encoder. Add a binding for it.
 
-i2c_master_send() always returns a negative error code or the number of
-octets written.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 93 +++++++-
+ 1 file changed, 93 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
 
-But thank you for reminding me about the patch. :-)
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+new file mode 100644
+index 000000000000..6a6cf5de08b0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -0,0 +1,93 @@
++Allwinner A31 DSI Encoder
++=========================
++
++The DSI pipeline consists of two separate blocks: the DSI controller
++itself, and its associated D-PHY.
++
++DSI Encoder
++-----------
++
++The DSI Encoder generates the DSI signal from the TCON's.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun6i-a31-mipi-dsi
++  - reg: base address and size of memory-mapped region
++  - interrupts: interrupt associated to this IP
++  - clocks: phandles to the clocks feeding the DSI encoder
++    * bus: the DSI interface clock
++    * mod: the DSI module clock
++  - clock-names: the clock names mentioned above
++  - phys: phandle to the D-PHY
++  - phy-names: must be "dphy"
++  - resets: phandle to the reset controller driving the encoder
++
++  - ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The
++    first port should be the input endpoint, usually coming from the
++    associated TCON.
++
++Any MIPI-DSI device attached to this should be described according to
++the bindings defined in ../mipi-dsi-bus.txt
++
++D-PHY
++-----
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun6i-a31-mipi-dphy
++  - reg: base address and size of memory-mapped region
++  - clocks: phandles to the clocks feeding the DSI encoder
++    * bus: the DSI interface clock
++    * mod: the DSI module clock
++  - clock-names: the clock names mentioned above
++  - resets: phandle to the reset controller driving the encoder
++
++Example:
++
++dsi0: dsi@1ca0000 {
++	compatible = "allwinner,sun6i-a31-mipi-dsi";
++	reg = <0x01ca0000 0x1000>;
++	interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&ccu CLK_BUS_MIPI_DSI>,
++		 <&ccu CLK_DSI_SCLK>;
++	clock-names = "bus", "mod";
++	resets = <&ccu RST_BUS_MIPI_DSI>;
++	phys = <&dphy0>;
++	phy-names = "dphy";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	panel@0 {
++		compatible = "bananapi,lhr050h41", "ilitek,ili9881c";
++		reg = <0>;
++		power-gpios = <&pio 1 7 GPIO_ACTIVE_HIGH>; /* PB07 */
++		reset-gpios = <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL05 */
++		backlight = <&pwm_bl>;
++	};
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			dsi0_in_tcon0: endpoint {
++				remote-endpoint = <&tcon0_out_dsi0>;
++			};
++		};
++	};
++};
++
++dphy0: d-phy@1ca1000 {
++	compatible = "allwinner,sun6i-a31-mipi-dphy";
++	reg = <0x01ca1000 0x1000>;
++	clocks = <&ccu CLK_BUS_MIPI_DSI>,
++		 <&ccu CLK_DSI_DPHY>;
++	clock-names = "bus", "mod";
++	resets = <&ccu RST_BUS_MIPI_DSI>;
++	#phy-cells = <0>;
++};
 -- 
-Regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+git-series 0.9.1
