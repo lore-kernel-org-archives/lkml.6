@@ -1,23 +1,23 @@
 Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AG47ELtBjDYiP0YBdSMJOz19lNt1FVO5DF0ZWE5LRQN8qT7r3a5zER9MR/Y0ngbxSZaHIuRx75zS
+X-Google-Smtp-Source: AG47ELtJRmZRUaPbF6hECqL+NaY29KNwcGvdtdlUH801o3dzvthpYohxHm+NolH2RmtSZpkc6FNp
 ARC-Seal: i=1; a=rsa-sha256; t=1520333308; cv=none;
         d=google.com; s=arc-20160816;
-        b=XMI2qt6d6Oh9OZgniQKbZgjKKLTyN61eyRbAaAn5Au1OglBdX5IXR3wH0Q6PK+8iCa
-         j6Xehm3Lz9Fq2QkgGfTjyNVnnOpQHuNC70YgUaZ59kbDqkTMHbszvF9fmGcN6BZS0CDE
-         AUCJrseydBsRgKl7tK5NqeAkB4i+gOnefJqzEDrzD8F4ZeDiZmjkNYSPej5sYb3DQk9j
-         otWNr1gtVOoht7LENzxDig0tgNkxHFJFFGdVy/FgGUqIb3L+aJYlO06ti7xgjAE8VnSl
-         jMorMlPnX/19jZuQ2FGFdb1lqvGnYLwSNvGpIgDQYt75qIO0W06h3PxrKEIfzOyzidqc
-         nSSg==
+        b=hd+vDfxIX6XCHVeGsvCWMmuVr39P1RciIOkdazg93872pnnZW7ukmk2ZQisFMrLwgz
+         CneKbIOY5yyaFH6QF+TEBCxr/zYtuFsvclmhLBLWYkAZyy7blfpQMhvMWu2qI4qvvxnK
+         zFx+B9Sz7Ifh6cDKycRI1IMnpYMWfKL817neyN6wp0B7f7K+mJV+3l1gMYba4hAP086x
+         WwxYSRqWqBq1czmTrIZQQPGFrUHHtMu3vfacFkdIIJPH1mIC7OiZP8ff2kmM4/9vvj+m
+         SpFAwihapY5PDnonGHomMikAMRoG2g+mrip2Imjg16MJisoymE3TrSSk0EfVEBmd0wgq
+         G6qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=OA7cjhpliCNDOhxGQb5JT1Tyzni2iDNL/x3EBcw9IO4=;
-        b=w+tzusUgM+vWxUgH/h/yA6irJYiqfLkqS4qFYlssjR9t+n4vxtG+2G0X2F8qPDwNJ/
-         mBtTqTvLVyMn9glS9RqUC/M22gac568ayckixiqcu0+DMP1BksODksYbC1K498myE5Ok
-         3h4xeCO8sTW4oM/hdi4VW0jwAu5Q7S6o4pvKNwUfeM1cfCnmJ8BVCNFAcKt/wQowwqJu
-         eB1kDQQJP7CKja44S4byF/nozTsmtnFgmCsQxyKDt6KUUbuqoPe34es7Vi2Ekbczl6OO
-         Zpo5rk2HF6m47mNR4UxDHqInDskVeeuKDLFMxq7UtjVW94SZdTTCEAdX/TVrg/I/IzoQ
-         yobA==
+        bh=YY5/xfa6Q6jO3B9AmF91X3fG8bvtn1Lz1KUNcgUPL3E=;
+        b=NsSziO9ecbE/p9GcoZYnd6mVUH1NrXwLyE3fXVzf4kG//4GJP2oDgKql6fO+a901FO
+         YoMfQa48kFk+vxgyhjCG6iRShvyO+61HW+Fi+mGy81OyvZz4u2q69YBudubW8j2bqZlf
+         Z5StXoVpbylnpNV8AxvgfwsHxoMf7BEzbvOQXbnO1d6rUrQRh6nptcQ1TAZzckOx6Ejf
+         LFYIsoTRsbUNfYG7h/j3jaIPsCmkx1KcO9hHz3D5kSSMXRJtn/2vuZr2b1ljT3+b/sHl
+         khQP0c/cXRfW2NKVt0bvXxrfMNfw1xufnptiitWgC/T6xuLU6dUtD0J7gAOjziIz9xA7
+         B4ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
@@ -35,9 +35,9 @@ CC: <joe@perches.com>, <benh@kernel.crashing.org>,
 	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
 	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
 	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
-Subject: [PATCH v16 3/9] PCI: Add fwnode handler as input param of pci_register_io_range()
-Date: Tue, 6 Mar 2018 18:47:42 +0800
-Message-ID: <1520333268-82754-4-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v16 4/9] PCI: Apply the new generic I/O management on PCI IO hosts
+Date: Tue, 6 Mar 2018 18:47:43 +0800
+Message-ID: <1520333268-82754-5-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
 References: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
@@ -46,113 +46,184 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594185019418376311?=
-X-GMAIL-MSGID: =?utf-8?q?1594185019418376311?=
+X-GMAIL-THRID: =?utf-8?q?1594185018743470182?=
+X-GMAIL-MSGID: =?utf-8?q?1594185018743470182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+From: Zhichang Yuan <yuanzhichang@hisilicon.com>
 
-In preparation for having the PCI MMIO helpers to use the new generic
-I/O space management(logical PIO) we need to add the fwnode handler as
-extra input parameter.
-This patch changes the signature of pci_register_io_range() and of
-its callers as needed.
+After introducing the new generic I/O space management(Logical PIO), the
+original PCI MMIO relevant helpers need to be updated based on the new
+interfaces defined in logical PIO.
+This patch adapts the corresponding code to match the changes introduced
+by logical PIO.
 
+Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
 Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
 Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Tested-by: dann frazier <dann.frazier@canonical.com>
 ---
- drivers/acpi/pci_root.c | 8 +++++---
- drivers/of/address.c    | 4 +++-
- drivers/pci/pci.c       | 3 ++-
- include/linux/pci.h     | 3 ++-
- 4 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/pci/pci.c        | 92 +++++++++---------------------------------------
+ include/asm-generic/io.h |  2 +-
+ 2 files changed, 18 insertions(+), 76 deletions(-)
 
-diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
-index 6fc204a..1213479 100644
---- a/drivers/acpi/pci_root.c
-+++ b/drivers/acpi/pci_root.c
-@@ -729,7 +729,8 @@ static void acpi_pci_root_validate_resources(struct device *dev,
- 	}
- }
- 
--static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
-+static void acpi_pci_root_remap_iospace(struct fwnode_handle *fwnode,
-+			struct resource_entry *entry)
- {
- #ifdef PCI_IOBASE
- 	struct resource *res = entry->res;
-@@ -738,7 +739,7 @@ static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
- 	resource_size_t length = resource_size(res);
- 	unsigned long port;
- 
--	if (pci_register_io_range(cpu_addr, length))
-+	if (pci_register_io_range(fwnode, cpu_addr, length))
- 		goto err;
- 
- 	port = pci_address_to_pio(cpu_addr);
-@@ -780,7 +781,8 @@ int acpi_pci_probe_root_resources(struct acpi_pci_root_info *info)
- 	else {
- 		resource_list_for_each_entry_safe(entry, tmp, list) {
- 			if (entry->res->flags & IORESOURCE_IO)
--				acpi_pci_root_remap_iospace(entry);
-+				acpi_pci_root_remap_iospace(&device->fwnode,
-+						entry);
- 
- 			if (entry->res->flags & IORESOURCE_DISABLED)
- 				resource_list_destroy_entry(entry);
-diff --git a/drivers/of/address.c b/drivers/of/address.c
-index ce4d3d8..cdf047b 100644
---- a/drivers/of/address.c
-+++ b/drivers/of/address.c
-@@ -2,6 +2,7 @@
- #define pr_fmt(fmt)	"OF: " fmt
- 
- #include <linux/device.h>
-+#include <linux/fwnode.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/module.h>
-@@ -333,7 +334,8 @@ int of_pci_range_to_resource(struct of_pci_range *range,
- 
- 	if (res->flags & IORESOURCE_IO) {
- 		unsigned long port;
--		err = pci_register_io_range(range->cpu_addr, range->size);
-+		err = pci_register_io_range(&np->fwnode, range->cpu_addr,
-+				range->size);
- 		if (err)
- 			goto invalid_range;
- 		port = pci_address_to_pio(range->cpu_addr);
 diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index ff41a64..3f30b7d 100644
+index 3f30b7d..09c2490 100644
 --- a/drivers/pci/pci.c
 +++ b/drivers/pci/pci.c
-@@ -3451,7 +3451,8 @@ struct io_range {
+@@ -22,6 +22,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/string.h>
+ #include <linux/log2.h>
++#include <linux/logic_pio.h>
+ #include <linux/pci-aspm.h>
+ #include <linux/pm_wakeup.h>
+ #include <linux/interrupt.h>
+@@ -3436,17 +3437,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
+ }
+ EXPORT_SYMBOL(pci_request_regions_exclusive);
+ 
+-#ifdef PCI_IOBASE
+-struct io_range {
+-	struct list_head list;
+-	phys_addr_t start;
+-	resource_size_t size;
+-};
+-
+-static LIST_HEAD(io_range_list);
+-static DEFINE_SPINLOCK(io_range_lock);
+-#endif
+-
+ /*
   * Record the PCI IO range (expressed as CPU physical address + size).
   * Return a negative value if an error has occured, zero otherwise
-  */
--int pci_register_io_range(phys_addr_t addr, resource_size_t size)
-+int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-+			resource_size_t	size)
+@@ -3454,51 +3444,28 @@ struct io_range {
+ int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+ 			resource_size_t	size)
  {
- 	int err = 0;
+-	int err = 0;
+-
++	int ret = 0;
+ #ifdef PCI_IOBASE
+-	struct io_range *range;
+-	resource_size_t allocated_size = 0;
+-
+-	/* check if the range hasn't been previously recorded */
+-	spin_lock(&io_range_lock);
+-	list_for_each_entry(range, &io_range_list, list) {
+-		if (addr >= range->start && addr + size <= range->start + size) {
+-			/* range already registered, bail out */
+-			goto end_register;
+-		}
+-		allocated_size += range->size;
+-	}
++	struct logic_pio_hwaddr *range;
  
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 25b7a35..17cc998 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1221,7 +1221,8 @@ int __must_check pci_bus_alloc_resource(struct pci_bus *bus,
- 			void *alignf_data);
+-	/* range not registed yet, check for available space */
+-	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
+-		/* if it's too big check if 64K space can be reserved */
+-		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
+-			err = -E2BIG;
+-			goto end_register;
+-		}
+-
+-		size = SZ_64K;
+-		pr_warn("Requested IO range too big, new size set to 64K\n");
+-	}
++	if (!size || addr + size < addr)
++		return -EINVAL;
  
+-	/* add the range to the list */
+ 	range = kzalloc(sizeof(*range), GFP_ATOMIC);
+-	if (!range) {
+-		err = -ENOMEM;
+-		goto end_register;
+-	}
++	if (!range)
++		return -ENOMEM;
  
--int pci_register_io_range(phys_addr_t addr, resource_size_t size);
-+int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-+			resource_size_t size);
- unsigned long pci_address_to_pio(phys_addr_t addr);
- phys_addr_t pci_pio_to_address(unsigned long pio);
- int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr);
+-	range->start = addr;
++	range->fwnode = fwnode;
+ 	range->size = size;
++	range->hw_start = addr;
++	range->flags = LOGIC_PIO_CPU_MMIO;
+ 
+-	list_add_tail(&range->list, &io_range_list);
+-
+-end_register:
+-	spin_unlock(&io_range_lock);
++	ret = logic_pio_register_range(range);
++	if (ret)
++		kfree(range);
+ #endif
+ 
+-	return err;
++	return ret;
+ }
+ 
+ phys_addr_t pci_pio_to_address(unsigned long pio)
+@@ -3506,21 +3473,10 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
+ 	phys_addr_t address = (phys_addr_t)OF_BAD_ADDR;
+ 
+ #ifdef PCI_IOBASE
+-	struct io_range *range;
+-	resource_size_t allocated_size = 0;
+-
+-	if (pio > IO_SPACE_LIMIT)
++	if (pio >= MMIO_UPPER_LIMIT)
+ 		return address;
+ 
+-	spin_lock(&io_range_lock);
+-	list_for_each_entry(range, &io_range_list, list) {
+-		if (pio >= allocated_size && pio < allocated_size + range->size) {
+-			address = range->start + pio - allocated_size;
+-			break;
+-		}
+-		allocated_size += range->size;
+-	}
+-	spin_unlock(&io_range_lock);
++	address = logic_pio_to_hwaddr(pio);
+ #endif
+ 
+ 	return address;
+@@ -3529,21 +3485,7 @@ phys_addr_t pci_pio_to_address(unsigned long pio)
+ unsigned long __weak pci_address_to_pio(phys_addr_t address)
+ {
+ #ifdef PCI_IOBASE
+-	struct io_range *res;
+-	resource_size_t offset = 0;
+-	unsigned long addr = -1;
+-
+-	spin_lock(&io_range_lock);
+-	list_for_each_entry(res, &io_range_list, list) {
+-		if (address >= res->start && address < res->start + res->size) {
+-			addr = address - res->start + offset;
+-			break;
+-		}
+-		offset += res->size;
+-	}
+-	spin_unlock(&io_range_lock);
+-
+-	return addr;
++	return logic_pio_trans_cpuaddr(address);
+ #else
+ 	if (address > IO_SPACE_LIMIT)
+ 		return (unsigned long)-1;
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index f76fbd6..0016413 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -901,7 +901,7 @@ static inline void __iomem *ioremap_wt(phys_addr_t offset, size_t size)
+ #define ioport_map ioport_map
+ static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
+ {
+-	return PCI_IOBASE + (port & IO_SPACE_LIMIT);
++	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
+ }
+ #endif
+ 
 -- 
 1.9.1
