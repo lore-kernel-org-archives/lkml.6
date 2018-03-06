@@ -1,23 +1,23 @@
 Return-Path: <john.garry@huawei.com>
-X-Google-Smtp-Source: AG47ELu8/UKCtDCu7Y4fZde0E0nicYSg83Zg7mEO+3lhf38waJCb4EYkVU2EpX31SOf7mb1rU/hw
-ARC-Seal: i=1; a=rsa-sha256; t=1520333308; cv=none;
+X-Google-Smtp-Source: AG47ELtNAKbI0kfqxY/To/IVHLDtK0X6YytSLW5ZA8qh8273L3xSpCn+ue/ZGuKuGtvcRQR9GBcv
+ARC-Seal: i=1; a=rsa-sha256; t=1520333307; cv=none;
         d=google.com; s=arc-20160816;
-        b=I4Sj2mhcXGKJ03rtLao1GUxuTitsRthPZfkwpMw9+w8ajNT6DRlooabfFmc46NKM2/
-         VbI+88GkMG6HDbqnIeMHXOm4KuKbErc4+MfDsmF8AytoP04zq84PuW/4crUNdwL5yViM
-         5RpWjeXDw27QXbVCEaQrqBLj3nM/uA5P0EACkVP0ZvfaRtSLAEQ61oorkX7c7VmNtuQY
-         hRs0eAZvEFMFYH1n7YQWVyj3uA5rFH5w2e7jEN1TMLJjo96Umi0X9jy2XUT6l6s8pn68
-         J8psR2kDWp9SP6euFPdojdTKKtwS3fS/Uv+I89bnkgyfpLtMmnfd44MjfE1rZ/InQCNA
-         XmzA==
+        b=dmffvVXWB020e5cBkqFwd59ABnCT8c2sH2Z4KCXp9tKSo+f6lfxUuksyZwE4fiX11J
+         48ilRWIOcPgu4STSHzNVYwyLLW6KUNY5tdhu98Wr+zA9y70XceT+NwJ+Hwj+MhBQ3x6N
+         FqmBHURBYvziiPcwZH4yyFIBPr996RDQcZPxXX7d8tMbLgfLC7EaGSd3jeXxmb5nif3K
+         eTW9W/6ga8i49LWm4UjLK1g86KY0u1vrUmityVHh2AAIOYw/sf69OYv/ouoiU7Gjhmob
+         J2YEgqToasn5LTYm36l+0TEi3kxygPu+pkFMm0NfhUCUoHNph+vX9UND5mGjcWl2UZHo
+         UY6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=nvhWHZCipRIdJIkl7+hQmKOw1hwhNHiP712hSO7D/40=;
-        b=NAt2CasqPpPkyD+HNK127Ok0PkM3Lv0f++tRwaf6hRvKs0nm6Ue5YDoohoyOO+oY0Y
-         tTCS3QMKOzGxNPKMEOoEAearLU3Qk2+hFA+BtHxE6ayYVbAHmguxXPa8Y7fJvd1wfk6K
-         Xl8VMeQhtMdnjw1CHFe2mlHx0XTL47tTdupRNLt7k58wxjC+3oN8LkN0JqfxG6bwy3jY
-         +Dw/r1CIlGwRmSOI0ht83QMbu3S4/qGNoy8dspoIu3TPonj/xCm1BEc0Ol9BHoOclmmC
-         YNLtmgLWlKf83cKrvsJvR5jheswOmxrjfhQA3HTfMt+x6fhaAwMLIkiddxC6LkzTJ8bu
-         TJEA==
+        bh=I1Ny4etVpnhj4w4E0Liop+7XjFBzJdOKJp6JVI/JQQs=;
+        b=ZK5NousBWyyFFinLFT6HWe+3vXTHAelN1npRbt0dQTLhLzvmUPhRrJvGCNY0QrDF+r
+         /6GdR0C/FvbuopPW2GWSPwNZToe8rq6zA8DCQ54bYCx3VJsRJK2NIEeQMVeheWRiREp2
+         qFJfl/+P/nRMbAGsQArhkYOthDJ914PS+i87aIiIGquy6/RPYjRjpyUpYjiOSQE5ZYWi
+         K+HqcZX0ldIP96z0rJI2WY+skNyB3TNakvXicMD6pqNg1GZeGopJmAxOCOFvWXa0y7jV
+         r+63oXR/uG7MKKUOsqFppfP938AOPeoaNgOtMi7SSsnAMLpKO232FqisaUAVGzb78zVn
+         eqVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.190 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
@@ -35,9 +35,9 @@ CC: <joe@perches.com>, <benh@kernel.crashing.org>,
 	<devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
 	<rdunlap@infradead.org>, <gregkh@linuxfoundation.org>,
 	<akpm@linux-foundation.org>, <frowand.list@gmail.com>, <agraf@suse.de>
-Subject: [PATCH v16 7/9] ACPI / scan: do not enumerate Indirect IO host children
-Date: Tue, 6 Mar 2018 18:47:46 +0800
-Message-ID: <1520333268-82754-8-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v16 9/9] MAINTAINERS: Add maintainer for HiSilicon LPC driver
+Date: Tue, 6 Mar 2018 18:47:48 +0800
+Message-ID: <1520333268-82754-10-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
 References: <1520333268-82754-1-git-send-email-john.garry@huawei.com>
@@ -46,75 +46,35 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594185019228445079?=
-X-GMAIL-MSGID: =?utf-8?q?1594185019228445079?=
+X-GMAIL-THRID: =?utf-8?q?1594185018373770883?=
+X-GMAIL-MSGID: =?utf-8?q?1594185018373770883?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Through the logical PIO framework systems which otherwise have
-no IO space access to legacy ISA/LPC devices may access these
-devices through so-called "indirect IO" method. In this, IO
-space accesses for non-PCI hosts are redirected to a host
-LLDD to manually generate the IO space (bus) accesses. Hosts
-are able to register a region in logical PIO space to map to
-its bus address range.
-
-Indirect IO child devices have an associated host-specific bus
-address. Special translation is required to map between
-a logical PIO address for a device and it's host bus address.
-
-Since in the ACPI tables the child device IO resources would
-be the host-specific values, it is required the ACPI scan code
-should not enumerate these devices, and that this should be
-the responsibility of the host driver so that it can "fixup"
-the resources so that they map to the appropriate logical PIO
-addresses.
-
-To avoid enumerating these child devices, we check whether
-the parent for a device is a member of a known list of
-"indirect IO" hosts. For now, the HiSilicon LPC host
-controller ID is added.
-
-To flag a device to not be enumerated, we reuse the existing
-serial bus slave flag.
+Added maintainer for drivers/bus/hisi_lpc.c
 
 Signed-off-by: John Garry <john.garry@huawei.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Tested-by: dann frazier <dann.frazier@canonical.com>
 ---
- drivers/acpi/scan.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 8e63d93..c1a60852 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1524,11 +1524,25 @@ static int acpi_check_serial_bus_slave(struct acpi_resource *ares, void *data)
- 	return -1;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c187bc8..cd4f9dc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6403,6 +6403,13 @@ W:	http://www.hisilicon.com
+ S:	Maintained
+ F:	drivers/net/ethernet/hisilicon/hns3/
  
-+static bool acpi_is_indirect_io_slave(struct acpi_device *device)
-+{
-+	struct acpi_device *parent = device->parent;
-+	const struct acpi_device_id indirect_io_hosts[] = {
-+		{"HISI0191", 0},
-+		{}
-+	};
++HISILICON LPC BUS DRIVER
++M:	john.garry@huawei.com
++W:	http://www.hisilicon.com
++S:	Maintained
++F:	drivers/bus/hisi_lpc.c
++F:	Documentation/devicetree/bindings/arm/hisilicon/hisilicon-low-pin-count.txt
 +
-+	return parent && !acpi_match_device_ids(parent, indirect_io_hosts);
-+}
-+
- static bool acpi_is_serial_bus_slave(struct acpi_device *device)
- {
- 	struct list_head resource_list;
- 	bool is_serial_bus_slave = false;
- 
-+	if (acpi_is_indirect_io_slave(device))
-+		return true;
-+
- 	/* Macs use device properties in lieu of _CRS resources */
- 	if (x86_apple_machine &&
- 	    (fwnode_property_present(&device->fwnode, "spiSclkPeriod") ||
+ HISILICON NETWORK SUBSYSTEM DRIVER
+ M:	Yisen Zhuang <yisen.zhuang@huawei.com>
+ M:	Salil Mehta <salil.mehta@huawei.com>
 -- 
 1.9.1
