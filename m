@@ -1,257 +1,433 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753316AbeCFKPC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:15:02 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:23729 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750801AbeCFKO7 (ORCPT
+        id S1753401AbeCFKPk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:15:40 -0500
+Received: from mail-io0-f193.google.com ([209.85.223.193]:42152 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750838AbeCFKPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:14:59 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w26ADWAO002547
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Petr Vorel <petr.vorel@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: make unmet dependency warnings readable
-Date: Tue,  6 Mar 2018 19:13:30 +0900
-Message-Id: <1520331210-27940-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 6 Mar 2018 05:15:37 -0500
+X-Google-Smtp-Source: AG47ELuoRRbhpJNBFph+V2kI/npCA7hQNqrdop7w5qo4y7ruw+sw52CEm/aIPo1LoBtO54sm7v2ZJDa4x7x9ylQZdRw=
+MIME-Version: 1.0
+References: <20170920081340.7413-1-tweek@google.com> <20170920081340.7413-5-tweek@google.com>
+ <CAJ+F1CKL7UBdhfDTu-RKOv5oy=qdeP8pEbn6_TudUs75ybeSQQ@mail.gmail.com>
+In-Reply-To: <CAJ+F1CKL7UBdhfDTu-RKOv5oy=qdeP8pEbn6_TudUs75ybeSQQ@mail.gmail.com>
+From: Thiebaud Weksteen <tweek@google.com>
+Date: Tue, 06 Mar 2018 10:15:25 +0000
+Message-ID: <CA+zpnLf6fJC1z_WTqrV1OAjRqzFv8B-w+x+x=tzDkwF0Omc6mA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
+To: marcandre.lureau@gmail.com
+Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        tpmdd-devel@lists.sourceforge.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>, linux-kernel@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>, peterhuewe@gmx.de,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd@selhorst.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w26AFj7t004567
 
-Currently, the unmet dependency warnings end up with endlessly long
-expressions, most of which are false positives.
+On Mon, Mar 5, 2018 at 4:40 PM Marc-André Lureau
+<marcandre.lureau@gmail.com>
+wrote:
 
-Here is test code to demonstrate how it currently works.
+> Hi Thiebaud
 
-[Test Case]
+> On Wed, Sep 20, 2017 at 10:13 AM, Thiebaud Weksteen <tweek@google.com>
+wrote:
+> > With TPM 2.0 specification, the event logs may only be accessible by
+> > calling an EFI Boot Service. Modify the EFI stub to copy the log area to
+> > a new Linux-specific EFI configuration table so it remains accessible
+> > once booted.
+> >
+> > When calling this service, it is possible to specify the expected format
+> > of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only
+the
+> > first format is retrieved.
+> >
 
-  config DEP1
-          def_bool y
+> Do you have plans to add support for the crypto-agile format? I am
+> working on uefi/ovmf support, and I am wondering if it is at all
+> necessary to add support for the 1.2 format. What do you think? I can
+> eventually try to work on 2.0 format support.
 
-  config DEP2
-          def_bool n
+Yes, this is definitely my intent. I am running low on free time for this
+piece of work to happen just now though.
 
-  config A
-          bool "A"
-          depends on DEP2
-          select C
+Thanks
 
-  config B
-          bool "B"
-          select C
 
-  config C
-          bool
-          depends on DEP1 && DEP2
+> Thanks
 
-[Result]
+> > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> > ---
+> >  arch/x86/boot/compressed/eboot.c      |  1 +
+> >  drivers/firmware/efi/Makefile         |  2 +-
+> >  drivers/firmware/efi/efi.c            |  4 ++
+> >  drivers/firmware/efi/libstub/Makefile |  3 +-
+> >  drivers/firmware/efi/libstub/tpm.c    | 81
++++++++++++++++++++++++++++++++++++
+> >  drivers/firmware/efi/tpm.c            | 40 +++++++++++++++++
+> >  include/linux/efi.h                   | 46 ++++++++++++++++++++
+> >  7 files changed, 174 insertions(+), 3 deletions(-)
+> >  create mode 100644 drivers/firmware/efi/tpm.c
+> >
+> > diff --git a/arch/x86/boot/compressed/eboot.c
+b/arch/x86/boot/compressed/eboot.c
+> > index a1686f3dc295..ef6abe8b3788 100644
+> > --- a/arch/x86/boot/compressed/eboot.c
+> > +++ b/arch/x86/boot/compressed/eboot.c
+> > @@ -999,6 +999,7 @@ struct boot_params *efi_main(struct efi_config *c,
+> >
+> >         /* Ask the firmware to clear memory on unclean shutdown */
+> >         efi_enable_reset_attack_mitigation(sys_table);
+> > +       efi_retrieve_tpm2_eventlog(sys_table);
+> >
+> >         setup_graphics(boot_params);
+> >
+> > diff --git a/drivers/firmware/efi/Makefile
+b/drivers/firmware/efi/Makefile
+> > index 0329d319d89a..2f074b5cde87 100644
+> > --- a/drivers/firmware/efi/Makefile
+> > +++ b/drivers/firmware/efi/Makefile
+> > @@ -10,7 +10,7 @@
+> >  KASAN_SANITIZE_runtime-wrappers.o      := n
+> >
+> >  obj-$(CONFIG_ACPI_BGRT)                += efi-bgrt.o
+> > -obj-$(CONFIG_EFI)                      += efi.o vars.o reboot.o
+memattr.o
+> > +obj-$(CONFIG_EFI)                      += efi.o vars.o reboot.o
+memattr.o tpm.o
+> >  obj-$(CONFIG_EFI)                      += capsule.o memmap.o
+> >  obj-$(CONFIG_EFI_VARS)                 += efivars.o
+> >  obj-$(CONFIG_EFI_ESRT)                 += esrt.o
+> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> > index f97f272e16ee..0308acfaaf76 100644
+> > --- a/drivers/firmware/efi/efi.c
+> > +++ b/drivers/firmware/efi/efi.c
+> > @@ -52,6 +52,7 @@ struct efi __read_mostly efi = {
+> >         .properties_table       = EFI_INVALID_TABLE_ADDR,
+> >         .mem_attr_table         = EFI_INVALID_TABLE_ADDR,
+> >         .rng_seed               = EFI_INVALID_TABLE_ADDR,
+> > +       .tpm_log                = EFI_INVALID_TABLE_ADDR
+> >  };
+> >  EXPORT_SYMBOL(efi);
+> >
+> > @@ -444,6 +445,7 @@ static __initdata efi_config_table_type_t
+common_tables[] = {
+> >         {EFI_PROPERTIES_TABLE_GUID, "PROP", &efi.properties_table},
+> >         {EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR",
+&efi.mem_attr_table},
+> >         {LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
+> > +       {LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
+> >         {NULL_GUID, NULL, NULL},
+> >  };
+> >
+> > @@ -532,6 +534,8 @@ int __init efi_config_parse_tables(void
+*config_tables, int count, int sz,
+> >         if (efi_enabled(EFI_MEMMAP))
+> >                 efi_memattr_init();
+> >
+> > +       efi_tpm_eventlog_init();
+> > +
+> >         /* Parse the EFI Properties table if it exists */
+> >         if (efi.properties_table != EFI_INVALID_TABLE_ADDR) {
+> >                 efi_properties_table_t *tbl;
+> > diff --git a/drivers/firmware/efi/libstub/Makefile
+b/drivers/firmware/efi/libstub/Makefile
+> > index dedf9bde44db..2abe6d22dc5f 100644
+> > --- a/drivers/firmware/efi/libstub/Makefile
+> > +++ b/drivers/firmware/efi/libstub/Makefile
+> > @@ -29,8 +29,7 @@ OBJECT_FILES_NON_STANDARD     := y
+> >  # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
+> >  KCOV_INSTRUMENT                        := n
+> >
+> > -lib-y                          := efi-stub-helper.o gop.o secureboot.o
+> > -lib-$(CONFIG_RESET_ATTACK_MITIGATION) += tpm.o
+> > +lib-y                          := efi-stub-helper.o gop.o secureboot.o
+tpm.o
+> >
+> >  # include the stub's generic dependencies from lib/ when building for
+ARM/arm64
+> >  arm-deps := fdt_rw.c fdt_ro.c fdt_wip.c fdt.c fdt_empty_tree.c
+fdt_sw.c sort.c
+> > diff --git a/drivers/firmware/efi/libstub/tpm.c
+b/drivers/firmware/efi/libstub/tpm.c
+> > index 6224cdbc9669..da661bf8cb96 100644
+> > --- a/drivers/firmware/efi/libstub/tpm.c
+> > +++ b/drivers/firmware/efi/libstub/tpm.c
+> > @@ -4,15 +4,18 @@
+> >   * Copyright (C) 2016 CoreOS, Inc
+> >   * Copyright (C) 2017 Google, Inc.
+> >   *     Matthew Garrett <mjg59@google.com>
+> > + *     Thiebaud Weksteen <tweek@google.com>
+> >   *
+> >   * This file is part of the Linux kernel, and is made available under
+the
+> >   * terms of the GNU General Public License version 2.
+> >   */
+> >  #include <linux/efi.h>
+> > +#include <linux/tpm_eventlog.h>
+> >  #include <asm/efi.h>
+> >
+> >  #include "efistub.h"
+> >
+> > +#ifdef CONFIG_RESET_ATTACK_MITIGATION
+> >  static const efi_char16_t efi_MemoryOverWriteRequest_name[] = {
+> >         'M', 'e', 'm', 'o', 'r', 'y', 'O', 'v', 'e', 'r', 'w', 'r',
+'i', 't',
+> >         'e', 'R', 'e', 'q', 'u', 'e', 's', 't', 'C', 'o', 'n', 't',
+'r', 'o',
+> > @@ -56,3 +59,81 @@ void
+efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+> >                     EFI_VARIABLE_BOOTSERVICE_ACCESS |
+> >                     EFI_VARIABLE_RUNTIME_ACCESS, sizeof(val), &val);
+> >  }
+> > +
+> > +#endif
+> > +
+> > +void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
+> > +{
+> > +       efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
+> > +       efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
+> > +       efi_status_t status;
+> > +       efi_physical_addr_t log_location, log_last_entry;
+> > +       struct linux_efi_tpm_eventlog *log_tbl;
+> > +       unsigned long first_entry_addr, last_entry_addr;
+> > +       size_t log_size, last_entry_size;
+> > +       efi_bool_t truncated;
+> > +       void *tcg2_protocol;
+> > +
+> > +       status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
+> > +                               &tcg2_protocol);
+> > +       if (status != EFI_SUCCESS)
+> > +               return;
+> > +
+> > +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
+tcg2_protocol,
+> > +                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
+> > +                               &log_location, &log_last_entry,
+&truncated);
+> > +       if (status != EFI_SUCCESS)
+> > +               return;
+> > +
+> > +       if (!log_location)
+> > +               return;
+> > +       first_entry_addr = (unsigned long) log_location;
+> > +
+> > +       /*
+> > +        * We populate the EFI table even if the logs are empty.
+> > +        */
+> > +       if (!log_last_entry) {
+> > +               log_size = 0;
+> > +       } else {
+> > +               last_entry_addr = (unsigned long) log_last_entry;
+> > +               /*
+> > +                * get_event_log only returns the address of the last
+entry.
+> > +                * We need to calculate its size to deduce the full
+size of
+> > +                * the logs.
+> > +                */
+> > +               last_entry_size = sizeof(struct tcpa_event) +
+> > +                       ((struct tcpa_event *)
+last_entry_addr)->event_size;
+> > +               log_size = log_last_entry - log_location +
+last_entry_size;
+> > +       }
+> > +
+> > +       /* Allocate space for the logs and copy them. */
+> > +       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+> > +                               sizeof(*log_tbl) + log_size,
+> > +                               (void **) &log_tbl);
+> > +
+> > +       if (status != EFI_SUCCESS) {
+> > +               efi_printk(sys_table_arg,
+> > +                          "Unable to allocate memory for event log\n");
+> > +               return;
+> > +       }
+> > +
+> > +       memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
+> > +       log_tbl->size = log_size;
+> > +       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+> > +       memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
+> > +
+> > +       status = efi_call_early(install_configuration_table,
+> > +                               &linux_eventlog_guid, log_tbl);
+> > +       if (status != EFI_SUCCESS)
+> > +               goto err_free;
+> > +       return;
+> > +
+> > +err_free:
+> > +       efi_call_early(free_pool, log_tbl);
+> > +}
+> > +
+> > +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
+> > +{
+> > +       /* Only try to retrieve the logs in 1.2 format. */
+> > +       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
+> > +}
+> > diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+> > new file mode 100644
+> > index 000000000000..0cbeb3d46b18
+> > --- /dev/null
+> > +++ b/drivers/firmware/efi/tpm.c
+> > @@ -0,0 +1,40 @@
+> > +/*
+> > + * Copyright (C) 2017 Google, Inc.
+> > + *     Thiebaud Weksteen <tweek@google.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include <linux/efi.h>
+> > +#include <linux/init.h>
+> > +#include <linux/memblock.h>
+> > +
+> > +#include <asm/early_ioremap.h>
+> > +
+> > +/*
+> > + * Reserve the memory associated with the TPM Event Log configuration
+table.
+> > + */
+> > +int __init efi_tpm_eventlog_init(void)
+> > +{
+> > +       struct linux_efi_tpm_eventlog *log_tbl;
+> > +       unsigned int tbl_size;
+> > +
+> > +       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
+> > +               return 0;
+> > +
+> > +       log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
+> > +       if (!log_tbl) {
+> > +               pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
+> > +                       efi.tpm_log);
+> > +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+> > +               return -ENOMEM;
+> > +       }
+> > +
+> > +       tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> > +       memblock_reserve(efi.tpm_log, tbl_size);
+> > +       early_memunmap(log_tbl, sizeof(*log_tbl));
+> > +       return 0;
+> > +}
+> > +
+> > diff --git a/include/linux/efi.h b/include/linux/efi.h
+> > index 8dc3d94a3e3c..c5805eb601b1 100644
+> > --- a/include/linux/efi.h
+> > +++ b/include/linux/efi.h
+> > @@ -472,6 +472,39 @@ typedef struct {
+> >         u64 get_all;
+> >  } apple_properties_protocol_64_t;
+> >
+> > +typedef struct {
+> > +       u32 get_capability;
+> > +       u32 get_event_log;
+> > +       u32 hash_log_extend_event;
+> > +       u32 submit_command;
+> > +       u32 get_active_pcr_banks;
+> > +       u32 set_active_pcr_banks;
+> > +       u32 get_result_of_set_active_pcr_banks;
+> > +} efi_tcg2_protocol_32_t;
+> > +
+> > +typedef struct {
+> > +       u64 get_capability;
+> > +       u64 get_event_log;
+> > +       u64 hash_log_extend_event;
+> > +       u64 submit_command;
+> > +       u64 get_active_pcr_banks;
+> > +       u64 set_active_pcr_banks;
+> > +       u64 get_result_of_set_active_pcr_banks;
+> > +} efi_tcg2_protocol_64_t;
+> > +
+> > +typedef u32 efi_tcg2_event_log_format;
+> > +
+> > +typedef struct {
+> > +       void *get_capability;
+> > +       efi_status_t (*get_event_log)(efi_handle_t,
+efi_tcg2_event_log_format,
+> > +               efi_physical_addr_t *, efi_physical_addr_t *,
+efi_bool_t *);
+> > +       void *hash_log_extend_event;
+> > +       void *submit_command;
+> > +       void *get_active_pcr_banks;
+> > +       void *set_active_pcr_banks;
+> > +       void *get_result_of_set_active_pcr_banks;
+> > +} efi_tcg2_protocol_t;
+> > +
+> >  /*
+> >   * Types and defines for EFI ResetSystem
+> >   */
+> > @@ -622,6 +655,7 @@ void efi_native_runtime_setup(void);
+> >  #define EFI_MEMORY_ATTRIBUTES_TABLE_GUID       EFI_GUID(0xdcfa911d,
+0x26eb, 0x469f,  0xa2, 0x20, 0x38, 0xb7, 0xdc, 0x46, 0x12, 0x20)
+> >  #define EFI_CONSOLE_OUT_DEVICE_GUID            EFI_GUID(0xd3b36f2c,
+0xd551, 0x11d4,  0x9a, 0x46, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d)
+> >  #define APPLE_PROPERTIES_PROTOCOL_GUID         EFI_GUID(0x91bd12fe,
+0xf6c3, 0x44fb,  0xa5, 0xb7, 0x51, 0x22, 0xab, 0x30, 0x3a, 0xe0)
+> > +#define EFI_TCG2_PROTOCOL_GUID                 EFI_GUID(0x607f766c,
+0x7455, 0x42be,  0x93, 0x0b, 0xe4, 0xd7, 0x6d, 0xb2, 0x72, 0x0f)
+> >
+> >  #define EFI_IMAGE_SECURITY_DATABASE_GUID       EFI_GUID(0xd719b2cb,
+0x3d3a, 0x4596,  0xa3, 0xbc, 0xda, 0xd0, 0x0e, 0x67, 0x65, 0x6f)
+> >  #define EFI_SHIM_LOCK_GUID                     EFI_GUID(0x605dab50,
+0xe046, 0x4300,  0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23)
+> > @@ -634,6 +668,7 @@ void efi_native_runtime_setup(void);
+> >  #define LINUX_EFI_ARM_SCREEN_INFO_TABLE_GUID   EFI_GUID(0xe03fc20a,
+0x85dc, 0x406e,  0xb9, 0x0e, 0x4a, 0xb5, 0x02, 0x37, 0x1d, 0x95)
+> >  #define LINUX_EFI_LOADER_ENTRY_GUID            EFI_GUID(0x4a67b082,
+0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
+> >  #define LINUX_EFI_RANDOM_SEED_TABLE_GUID       EFI_GUID(0x1ce1e5bc,
+0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
+> > +#define LINUX_EFI_TPM_EVENT_LOG_GUID           EFI_GUID(0xb7799cb0,
+0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
+> >
+> >  typedef struct {
+> >         efi_guid_t guid;
+> > @@ -908,6 +943,7 @@ extern struct efi {
+> >         unsigned long properties_table; /* properties table */
+> >         unsigned long mem_attr_table;   /* memory attributes table */
+> >         unsigned long rng_seed;         /* UEFI firmware random seed */
+> > +       unsigned long tpm_log;          /* TPM2 Event Log table */
+> >         efi_get_time_t *get_time;
+> >         efi_set_time_t *set_time;
+> >         efi_get_wakeup_time_t *get_wakeup_time;
+> > @@ -1504,6 +1540,8 @@ static inline void
+> >  efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
+{ }
+> >  #endif
+> >
+> > +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
+> > +
+> >  /*
+> >   * Arch code can implement the following three template macros,
+avoiding
+> >   * reptition for the void/non-void return cases of
+{__,}efi_call_virt():
+> > @@ -1571,4 +1609,12 @@ struct linux_efi_random_seed {
+> >         u8      bits[];
+> >  };
+> >
+> > +struct linux_efi_tpm_eventlog {
+> > +       u32     size;
+> > +       u8      version;
+> > +       u8      log[];
+> > +};
+> > +
+> > +extern int efi_tpm_eventlog_init(void);
+> > +
+> >  #endif /* _LINUX_EFI_H */
+> > --
+> > 2.14.1.821.g8fa685d3b7-goog
+> >
 
-  $ make allyesconfig
-  scripts/kconfig/conf  --allyesconfig Kconfig
-  warning: (A && B) selects C which has unmet direct dependencies
-  (DEP1 && DEP2)
 
-Here, I see some points to be improved.
 
-First, '(A || B)' would make more sense than '(A && B)'.  I am not
-sure if this is intentional, but expr_simplify_unmet_dep() turns OR
-expressions into AND, like follows:
-
-        case E_OR:
-                return expr_alloc_and(
-
-Second, 'A' never causes unmet dependency because 'DEP1' is fixed to
-'y', and 'A' correctly depends on 'DEP2'.  It will be better to not
-report 'A', but it is impossible to avoid this false positive in the
-current expr_simplify_unmet_dep().
-
-After all, I decided to use the same helpers as used for printing
-reverse dependencies in the help.
-
-With this commit, unreadable warnings in the real world:
-
-$ make ARCH=score allyesconfig
-scripts/kconfig/conf  --allyesconfig Kconfig
-warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && DWMAC_IPQ806X
-&& DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMA
-C_STI && TI_CPSW && PINCTRL_GEMINI && PINCTRL_OXNAS && PINCTRL_ROCKCHIP &&
- PINCTRL_DOVE && PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG
-&& VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 && LP
-C18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI && COMMON_CLK_ASPEED && C
-OMMON_CLK_NXP && COMMON_CLK_OXNAS && COMMON_CLK_BOSTON && ATMEL_ST && QCOM
-_ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI && ATMEL_EBI && ST_IRQCHIP && RESE
-T_IMX7 && PHY_HI6220_USB && PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8
-XX_USB) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
-warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS && PINCTRL_PIS
-TACHIO && PINCTRL_PIC32 && PINCTRL_MESON && PINCTRL_NOMADIK && PINCTRL_MTK
- && PINCTRL_MT7622 && GPIO_TB10X) selects OF_GPIO which has unmet direct d
-ependencies (GPIOLIB && OF && HAS_IOMEM)
-warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP) sele
-cts FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CR
-IS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARC
-H_WANT_FRAME_POINTERS)
-
-will be turned into:
-
-$ make ARCH=score allyesconfig
-scripts/kconfig/conf  --allyesconfig Kconfig
-
-WARNING:
- Unmet direct dependencies detected for MFD_SYSCON
- Depends on:
-    HAS_IOMEM [=n]
- Selected by [y]:
-  - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 || COMPILE_TEST [=y])
-&& OF [=y]
-  - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 || COMPILE_TEST
-[=y])
-  - ATMEL_ST [=y] && GENERIC_CLOCKEVENTS [=y]
-  - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
-  - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 || COMPILE_TEST [=y])
-  - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
-  - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] || COMPILE_TEST
-[=y])
-
-WARNING:
- Unmet direct dependencies detected for OF_GPIO
- Depends on:
-    GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
- Selected by [y]:
-  - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-[=y]) && OF [=y]
-  - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-[=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
-
-WARNING:
- Unmet direct dependencies detected for FRAME_POINTER
- Depends on:
-    DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN
- || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
- Selected by [y]:
-  - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
-PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
-!ARC && !X86
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/kconfig/expr.c   | 29 -----------------------------
- scripts/kconfig/expr.h   |  1 -
- scripts/kconfig/symbol.c | 33 +++++++++++++++++++++------------
- 3 files changed, 21 insertions(+), 42 deletions(-)
-
-diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
-index 49376e1..235e179 100644
---- a/scripts/kconfig/expr.c
-+++ b/scripts/kconfig/expr.c
-@@ -1150,35 +1150,6 @@ expr_get_leftmost_symbol(const struct expr *e)
- 	return expr_copy(e);
- }
- 
--/*
-- * Given expression `e1' and `e2', returns the leaf of the longest
-- * sub-expression of `e1' not containing 'e2.
-- */
--struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
--{
--	struct expr *ret;
--
--	switch (e1->type) {
--	case E_OR:
--		return expr_alloc_and(
--		    expr_simplify_unmet_dep(e1->left.expr, e2),
--		    expr_simplify_unmet_dep(e1->right.expr, e2));
--	case E_AND: {
--		struct expr *e;
--		e = expr_alloc_and(expr_copy(e1), expr_copy(e2));
--		e = expr_eliminate_dups(e);
--		ret = (!expr_eq(e, e1)) ? e1 : NULL;
--		expr_free(e);
--		break;
--		}
--	default:
--		ret = e1;
--		break;
--	}
--
--	return expr_get_leftmost_symbol(ret);
--}
--
- void expr_print(struct expr *e,
- 		void (*fn)(void *, struct symbol *, const char *),
- 		void *data, int prevtoken)
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 8dbf2a4..94a383b 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -305,7 +305,6 @@ struct expr *expr_transform(struct expr *e);
- int expr_contains_symbol(struct expr *dep, struct symbol *sym);
- bool expr_depends_symbol(struct expr *dep, struct symbol *sym);
- struct expr *expr_trans_compare(struct expr *e, enum expr_type type, struct symbol *sym);
--struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
- 
- void expr_fprint(struct expr *e, FILE *out);
- struct gstr; /* forward */
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 0f7eba7..9138b80 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -333,6 +333,25 @@ static struct symbol *sym_calc_choice(struct symbol *sym)
- 	return def_sym;
- }
- 
-+static void sym_warn_unmet_dependency(struct symbol *sym)
-+{
-+	struct gstr gs = str_new();
-+
-+	str_printf(&gs, "\nWARNING:\n");
-+	str_printf(&gs, " Unmet direct dependencies detected for %s\n",
-+		   sym->name);
-+	str_printf(&gs, " Depends on:\n    ");
-+	expr_gstr_print(sym->dir_dep.expr, &gs);
-+	str_printf(&gs, "\n");
-+
-+	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, yes,
-+			       " Selected by [y]:\n");
-+	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, mod,
-+			       " Selected by [m]:\n");
-+
-+	fputs(str_get(&gs), stderr);
-+}
-+
- void sym_calc_value(struct symbol *sym)
- {
- 	struct symbol_value newval, oldval;
-@@ -414,18 +433,8 @@ void sym_calc_value(struct symbol *sym)
- 				}
- 			}
- 		calc_newval:
--			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
--				struct expr *e;
--				e = expr_simplify_unmet_dep(sym->rev_dep.expr,
--				    sym->dir_dep.expr);
--				fprintf(stderr, "warning: (");
--				expr_fprint(e, stderr);
--				fprintf(stderr, ") selects %s which has unmet direct dependencies (",
--					sym->name);
--				expr_fprint(sym->dir_dep.expr, stderr);
--				fprintf(stderr, ")\n");
--				expr_free(e);
--			}
-+			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no)
-+				sym_warn_unmet_dependency(sym);
- 			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
- 		}
- 		if (newval.tri == mod &&
--- 
-2.7.4
+> --
+> Marc-André Lureau
