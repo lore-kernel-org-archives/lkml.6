@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELvBJpPlWhyqjAP08MY367QT081JrPJmfiQ9tPotE7XEApsRHZDYvxKT4uBusxwMBWtFRLiL
-ARC-Seal: i=1; a=rsa-sha256; t=1520295978; cv=none;
+X-Google-Smtp-Source: AG47ELsrak/sgam+EwH8+R8uJtUGKV9l0gDZ7HlevZU7WBViMgCAZixRcQVuz+Yhyo7xmdgFQviZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520295976; cv=none;
         d=google.com; s=arc-20160816;
-        b=XjK8YrLcyQywJI8kbzwyMxrdZsmNxBAaigTkFHZBqsBaNpulJmvVBVom6k35a7CIX+
-         LBd9Fav0PgMtc2mhuO5O3M3lZeBgTv1vQXex2y90ALJ932GOOnlnB0Uh5ofR5idhT1hX
-         fCJXXjqci2fOI2hfdu73zp4iefN4sYUwKF9O+AjvWMs6v6urdxeBtT1LEg6epLH3FvRq
-         Q4WE4LKNcPpA7ZYKeKS3i8xae+Sfso7tMaTqSMM+NuKEin8fmJEIi6U/tMFCKEa1DP6D
-         qZf7Lrvp0Zzjp1FjRcLdob6UmLvd9cKNgDNGN6dWH/QW+Z5FkZaPxRfBfzh7E1v+S9DF
-         Cdgw==
+        b=F973qSSJT2l/UCHkItvNxxu8HzfhigfC4Qe867k+igp378QQFNHcfWeY8ywlAdEov7
+         qq10YpYxS2GksC1I38xzUbaDwFLPql4lBCwkNh/Y2Qi2Bp3ZPUXc7bZRu6TEp3F0S2/i
+         a52/ppV55DmCqhbL3qAjjd/EHARIY0MylgF1Fk5KeZ20Euzzzt9oe/sQmp+qIvFwXkEe
+         v/Eyu/gRF03XpxexHHlMJA1U4ukQXjxcqZJ0mPupX0CF8BdkxQI3/NUowYqGFpZTHnqI
+         H/VdjQBbX/FrgByo2YUy1yZqoAJr7TtUGVRcf2tbs+uRINAlsC4WVPJmjLVA4Vf3O8I1
+         Y+HQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=vN+Qt0UQwlOJ+BaEhV4YeL2tvSderFbvl2fIT+FXHpY=;
-        b=lx0L3MNIktemJ4N9YTP/gB+tBA1nj/1KQcGTXDafJ0xmpXRcE839ZndUC9CjmNWLvc
-         EZ4Ym5LXoEdr0GeXIFwxXmGWdYZBL2Q7Mjvg6FJXIUNxFcIZa7TT04bZtX+rfNVdF43q
-         8uRmPO+P34Jqlycfe5YExy2gt4CuFQOApzvO67S3aTJc1ZkpxwNIUHCW7zfffcFfJpV2
-         shVp9gWz1hPLscczkjyMuXthmuzAYGgMKnsb0dsteR48ykgvvu7Cz/Hu2xUjxKP09FEZ
-         ctHE/nZk4wxR4vSQTSSoQHXuxbtGLyVk25AWTUENdjHIYIiJqOZ3LBwI5iVibe7xWTig
-         vsmw==
+        bh=mU51MuW1ll1fZko7UYoFvY0CElTeAURomXpb4XjeBtw=;
+        b=TG/rEhGyhUqUbpeQ3O+mVTzXNGrauPXnSDbm7t7J6LB49QJpWF9uUW0eIozq6b0loh
+         MT50168HQVS43d4HI9cWFuwjl7hLq9vAUEv/c9JUB5TjCXZs3Y6NI1S8333CzSTu8aq0
+         Cep8B4MiUAWkJtBrfJs3WuXYKwEdMFuJDSTbyoN1taBMv+0/7ECsdSWYQuyotFJxrKIe
+         VUetyNEJA8IBCeNDAAPuFBKDmt/1pSTbB+H+5GwTTVqJbCDWH+2cIaRX20p4CiWPe1VZ
+         AkdlKrcXI1sST66kSIDn/RRIbt/daQgKWdntWcQvzkHSy1YeM+YlUqgGmWd8qosw/CoF
+         bdxA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=s17X40b0;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=oTFTJD1a;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=s17X40b0;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=oTFTJD1a;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -33,9 +33,9 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 20/65] x86/mm: Enable CR4.PCIDE on supported systems
-Date: Mon,  5 Mar 2018 19:24:53 -0500
-Message-Id: <20180306002538.1761-21-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 18/65] x86/mm: Disable PCID on 32-bit kernels
+Date: Mon,  5 Mar 2018 19:24:51 -0500
+Message-Id: <20180306002538.1761-19-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
@@ -45,121 +45,89 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145875542172157?=
-X-GMAIL-MSGID: =?utf-8?q?1594145875542172157?=
+X-GMAIL-THRID: =?utf-8?q?1594145874652650360?=
+X-GMAIL-MSGID: =?utf-8?q?1594145874652650360?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit 660da7c9228f685b2ebe664f9fd69aaddcc420b5 upstream.
+commit cba4671af7550e008f7a7835f06df0763825bf3e upstream.
 
-We can use PCID if the CPU has PCID and PGE and we're not on Xen.
-
-By itself, this has no effect. A followup patch will start using PCID.
+32-bit kernels on new hardware will see PCID in CPUID, but PCID can
+only be used in 64-bit mode.  Rather than making all PCID code
+conditional, just disable the feature on 32-bit builds.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Mel Gorman <mgorman@suse.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@redhat.com>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/6327ecd907b32f79d5aa0d466f04503bbec5df88.1498751203.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/2e391769192a4d31b808410c383c6bf0734bc6ea.1498751203.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Hugh Dickins <hughd@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-(cherry picked from commit fd0504525efd2ce2063cd4229baabd3e3a56ecbc)
+(cherry picked from commit 78043e5b6fb2921d836b31f23e89e52925191153)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/include/asm/tlbflush.h |  8 ++++++++
- arch/x86/kernel/cpu/common.c    | 22 ++++++++++++++++++++++
- arch/x86/xen/enlighten.c        |  6 ++++++
- 3 files changed, 36 insertions(+)
+ arch/x86/include/asm/disabled-features.h | 4 +++-
+ arch/x86/kernel/cpu/bugs.c               | 8 ++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 4f7017c9cae8..09a70d8d293e 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -183,6 +183,14 @@ static inline void __flush_tlb_all(void)
- 		__flush_tlb_global();
- 	else
- 		__flush_tlb();
-+
-+	/*
-+	 * Note: if we somehow had PCID but not PGE, then this wouldn't work --
-+	 * we'd end up flushing kernel translations for the current ASID but
-+	 * we might fail to flush kernel translations for other cached ASIDs.
-+	 *
-+	 * To avoid this issue, we force PCID off if PGE is off.
-+	 */
- }
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index f226df064660..8b17c2ad1048 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -21,11 +21,13 @@
+ # define DISABLE_K6_MTRR	(1<<(X86_FEATURE_K6_MTRR & 31))
+ # define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
+ # define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
++# define DISABLE_PCID		0
+ #else
+ # define DISABLE_VME		0
+ # define DISABLE_K6_MTRR	0
+ # define DISABLE_CYRIX_ARR	0
+ # define DISABLE_CENTAUR_MCR	0
++# define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
+ #endif /* CONFIG_X86_64 */
  
- static inline void __flush_tlb_one(unsigned long addr)
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 843be1de5ddb..f5647d238337 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -339,6 +339,25 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+static void setup_pcid(struct cpuinfo_x86 *c)
-+{
-+	if (cpu_has(c, X86_FEATURE_PCID)) {
-+		if (cpu_has(c, X86_FEATURE_PGE)) {
-+			cr4_set_bits(X86_CR4_PCIDE);
-+		} else {
-+			/*
-+			 * flush_tlb_all(), as currently implemented, won't
-+			 * work if PCID is on but PGE is not.  Since that
-+			 * combination doesn't exist on real hardware, there's
-+			 * no reason to try to fully support it, but it's
-+			 * polite to avoid corrupting data if we're on
-+			 * an improperly configured VM.
-+			 */
-+			clear_cpu_cap(c, X86_FEATURE_PCID);
-+		}
-+	}
-+}
-+
  /*
-  * Some CPU features depend on higher CPUID levels, which may not always
-  * be available due to CPUID level capping or broken virtualization
-@@ -968,6 +987,9 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	setup_smep(c);
- 	setup_smap(c);
+@@ -35,7 +37,7 @@
+ #define DISABLED_MASK1	0
+ #define DISABLED_MASK2	0
+ #define DISABLED_MASK3	(DISABLE_CYRIX_ARR|DISABLE_CENTAUR_MCR|DISABLE_K6_MTRR)
+-#define DISABLED_MASK4	0
++#define DISABLED_MASK4	(DISABLE_PCID)
+ #define DISABLED_MASK5	0
+ #define DISABLED_MASK6	0
+ #define DISABLED_MASK7	0
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 03445346ee0a..4c7dd836304a 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -65,6 +65,14 @@ static void __init check_fpu(void)
  
-+	/* Set up PCID */
-+	setup_pcid(c);
-+
- 	/*
- 	 * The vendor-specific functions might have changed features.
- 	 * Now we do "generic changes."
-diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
-index 1ecae556d4ed..809730c09e2b 100644
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -432,6 +432,12 @@ static void __init xen_init_cpuid_mask(void)
- 		~((1 << X86_FEATURE_MTRR) |  /* disable MTRR */
- 		  (1 << X86_FEATURE_ACC));   /* thermal monitoring */
- 
+ void __init check_bugs(void)
+ {
++#ifdef CONFIG_X86_32
 +	/*
-+	 * Xen PV would need some work to support PCID: CR3 handling as well
-+	 * as xen_flush_tlb_others() would need updating.
++	 * Regardless of whether PCID is enumerated, the SDM says
++	 * that it can't be enabled in 32-bit mode.
 +	 */
-+	cpuid_leaf1_ecx_mask &= ~(1 << (X86_FEATURE_PCID % 32));  /* disable PCID */
++	setup_clear_cpu_cap(X86_FEATURE_PCID);
++#endif
 +
- 	if (!xen_initial_domain())
- 		cpuid_leaf1_edx_mask &=
- 			~((1 << X86_FEATURE_ACPI));  /* disable ACPI */
+ 	identify_boot_cpu();
+ #ifndef CONFIG_SMP
+ 	pr_info("CPU: ");
 -- 
 2.16.2
