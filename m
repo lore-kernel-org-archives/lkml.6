@@ -1,71 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753720AbeCFNy5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:54:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34658 "EHLO mx1.redhat.com"
+        id S932448AbeCFNzf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:55:35 -0500
+Received: from mga17.intel.com ([192.55.52.151]:40135 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750838AbeCFNy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:54:56 -0500
-Date: Tue, 6 Mar 2018 10:54:54 -0300
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>, Ilya Pronin <ipronin@twitter.com>
-Subject: Re: [PATCH] perf stat: fix cvs output format
-Message-ID: <20180306135454.GD2257@redhat.com>
-References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
- <20180306075846.GB19895@krava>
+        id S1750838AbeCFNzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 08:55:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="209238422"
+Date: Tue, 6 Mar 2018 15:55:28 +0200
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] tpm: factor out tpm 1.2 duration calculation to
+ tpm1-cmd.c
+Message-ID: <20180306135528.GA5700@linux.intel.com>
+References: <20180305202017.24008-1-tomas.winkler@intel.com>
+ <20180305202017.24008-3-tomas.winkler@intel.com>
+ <1520335194.7549.7.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9422F21B@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180306075846.GB19895@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422F21B@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Mar 06, 2018 at 08:58:46AM +0100, Jiri Olsa escreveu:
-> On Mon, Mar 05, 2018 at 10:43:53PM -0800, Cong Wang wrote:
-> > From: Ilya Pronin <ipronin@twitter.com>
-> > 
-> > When printing stats in CSV mode, perf stat appends extra CSV
-> > separators when counter is not supported:
-> > 
-> > <not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
-> > 
-> > which causes a failure of parsing fields. The numbers of separators
-> > is fixed for each line, no matter supported or not supported.
-> > 
-> > Fixes: 92a61f6412d3 ("perf stat: Implement CSV metrics output")
-> > Cc: Andi Kleen <ak@linux.intel.com>
-> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>
-> > Signed-off-by: Ilya Pronin <ipronin@twitter.com>
-> > Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-> > ---
-> >  tools/perf/builtin-stat.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > index 98bf9d32f222..54a4c152edb3 100644
-> > --- a/tools/perf/builtin-stat.c
-> > +++ b/tools/perf/builtin-stat.c
-> > @@ -917,7 +917,7 @@ static void print_metric_csv(void *ctx,
-> >  	char buf[64], *vals, *ends;
-> >  
-> >  	if (unit == NULL || fmt == NULL) {
-> > -		fprintf(out, "%s%s%s%s", csv_sep, csv_sep, csv_sep, csv_sep);
-> > +		fprintf(out, "%s%s", csv_sep, csv_sep);
-> >  		return;
-> >  	}
+On Tue, Mar 06, 2018 at 11:21:04AM +0000, Winkler, Tomas wrote:
 > 
-> right, the non else legs prints just 2 values:
->   fprintf(out, "%s%s%s%s", csv_sep, vals, csv_sep, unit);
+> > 
+> > On Mon, 2018-03-05 at 22:20 +0200, Tomas Winkler wrote:
+> > > Factor out tpm1.2 commands calculation into tpm1-cmd.c file.
+> > > and change the prefix from tpm_ to tpm1_.
+> > > No functional change is done here.
+> > >
+> > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > 
+> > This a good idea but can you go on and move all TPM 1.x stuff to this new
+> > file while you are doing it?
 > 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> 
+> Yes, see the next patch series.
 
-Thanks, applied to perf/urgent.
+I read this before that series, sorry :-)
 
-- Arnaldo
+/Jarkko
