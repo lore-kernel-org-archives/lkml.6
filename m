@@ -1,126 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932963AbeCFOKm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:10:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49050 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932147AbeCFOKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:10:40 -0500
-Date: Tue, 6 Mar 2018 15:10:38 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Jason Baron <jbaron@akamai.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 7/8] livepatch: Correctly handle atomic replace for
- not yet loaded modules
-Message-ID: <20180306141038.v3ufd7llwhwfhosq@pathway.suse.cz>
-References: <20180221132914.4809-1-pmladek@suse.com>
- <20180221132914.4809-8-pmladek@suse.com>
- <alpine.LSU.2.21.1802222145160.21576@pobox.suse.cz>
- <20180301102859.zwrt6w36ub474nb2@pathway.suse.cz>
- <7f920ec3-dfe0-6a4d-dd25-5d5c4fa75714@redhat.com>
- <alpine.LSU.2.21.1803051050330.26605@pobox.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1803051050330.26605@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S932859AbeCFOMN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:12:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58873 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932659AbeCFOMM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:12:12 -0500
+Message-ID: <1520345528.4095.18.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] input: Add RAVE SP Powerbutton driver
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Chris Healy <cphealy@gmail.com>
+Date: Tue, 06 Mar 2018 15:12:08 +0100
+In-Reply-To: <20180301165527.22274-1-andrew.smirnov@gmail.com>
+References: <20180301165527.22274-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-03-05 10:54:16, Miroslav Benes wrote:
-> On Fri, 2 Mar 2018, Joe Lawrence wrote:
+Am Donnerstag, den 01.03.2018, 08:55 -0800 schrieb Andrey Smirnov:
+> Add driver that properly handles input event emitted by RAVE SP
+> devices.
 > 
-> > On 03/01/2018 05:28 AM, Petr Mladek wrote:
-> > > On Thu 2018-02-22 22:00:28, Miroslav Benes wrote:
-> > >> On Wed, 21 Feb 2018, Petr Mladek wrote:
-> > >>> This patch allows the late initialization.
-> > >>>
-> > >>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > >>> index ad508a86b2f9..da1438d47d83 100644
-> > >>> --- a/kernel/livepatch/core.c
-> > >>> +++ b/kernel/livepatch/core.c
-> > >>> @@ -984,7 +988,12 @@ static void klp_free_patch(struct klp_patch *patch)
-> > >>>  
-> > >>>  static int klp_init_func(struct klp_object *obj, struct klp_func *func)
-> > >>>  {
-> > >>> -	if (!func->old_name || !func->new_func)
-> > >>> +	if (!func->old_name)
-> > >>> +		return -EINVAL;
-> > >>> +
-> > >>> +	/* NOPs do not know the address until the patched module is loaded. */
-> > >>> +	if (!func->new_func &&
-> > >>> +	    (!klp_is_func_type(func, KLP_FUNC_NOP) || klp_is_object_loaded(obj)))
-> > >>>  		return -EINVAL;
-> > >>
-> > >> If we changed the order of klp_init_func() and klp_init_object_loaded() 
-> > >> calls in klp_init_object(), the hunk would not be needed. Is that correct? 
-> > > 
-> > > Not really. klp_init_object_loaded() would set func->new_func only
-> > > when the object was loaded. But we want to proceed here and create
-> > > the kobject for NOPs even when it was not loaded.
+> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Cc: Chris Healy <cphealy@gmail.com>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Anyway, the above check have to be updated after we removed the
-redundant func->new_func assignment in klp_alloc_func_nop().
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-func->new_func is always NULL for NOPs in klp_init_func().
-It is set later in klp_init_object_loaded().
-
-I am going to use the following check in v10:
-
-	/*
-	 * NOPs get the address later. The the patched module must be loaded,
-	 * see klp_init_object_loaded().
-	 */
-	if (!func->new_func && !klp_is_func_type(func, KLP_FUNC_NOP))
-		return -EINVAL;
-
-> > > 
-> > >>>  	INIT_LIST_HEAD(&func->stack_node);
-> > >>> @@ -1039,6 +1048,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
-> > >>>  			return -ENOENT;
-> > >>>  		}
-> > >>>  
-> > >>> +		if (klp_is_func_type(func, KLP_FUNC_NOP))
-> > >>> +			func->new_func = (void *)func->old_addr;
-> > >>
-> > >> Is there a reason why you left the same assignment in 
-> > >> klp_alloc_func_nop()? This one is enough, no?
-> > > 
-> > > Good point! I am going to replace the obsolete assignment
-> > > with a comment in v8.
-> > 
-> > Hi Petr, Miroslav,
-> > 
-> > I don't think the assignment in klp_alloc_func_nop() was necessarily
-> > redundant.  It was removed in v9 and that breaks my atomic replace
-> > sample module when I try to load it.  (Perhaps the sample patch has
-> > issues, but here are my debug notes):
-
-Sigh, I hate "trivial" last minute clean ups ;-)
-
-
-> Ok, so it was not redundant. Or... I think it should be redundant, but we 
-> need to define the if condition in klp_init_func() properly.
-
-Exactly, see above.
-
-
-> > I think this problem is contained to only replacement patches that need
-> > the nop-revert feature... if the replacement patch provides a new
-> > function definition, then it shouldn't be affected.
-> > 
-> > Man, we need a regression test suite for all these cases :)
-
-It would be great...
-
-> Any volunteer?
-
-?
-
-Best Regards,
-Petr
+> ---
+> 
+> Changes since [v1]:
+> 
+> 	- Removed redundant dev.parent assignment
+> 
+> 	- Various cosmetic changes
+> 
+> [v1] lkml.kernel.org/r/20180226154130.25774-1-andrew.smirnov@gmail.com
+> 
+>  drivers/input/misc/Kconfig             |  9 ++++
+>  drivers/input/misc/Makefile            |  1 +
+>  drivers/input/misc/rave-sp-pwrbutton.c | 94 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 104 insertions(+)
+>  create mode 100644 drivers/input/misc/rave-sp-pwrbutton.c
+> 
+> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+> index 62a1312a7387..6a3c753b093b 100644
+> --- a/drivers/input/misc/Kconfig
+> +++ b/drivers/input/misc/Kconfig
+> @@ -841,4 +841,13 @@ config INPUT_HISI_POWERKEY
+> >  	  To compile this driver as a module, choose M here: the
+> >  	  module will be called hisi_powerkey.
+>  
+> +config INPUT_RAVE_SP_PWRBUTTON
+> > +	tristate "RAVE SP Power button Driver"
+> > +	depends on RAVE_SP_CORE
+> > +	help
+> > +	  Say Y here if you want to enable power key reporting from RAVE SP
+> +
+> > +	  To compile this driver as a module, choose M here: the
+> > +	  module will be called rave-sp-pwrbutton.
+> +
+>  endif
+> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+> index a8f61af865aa..8cc58f362bb8 100644
+> --- a/drivers/input/misc/Makefile
+> +++ b/drivers/input/misc/Makefile
+> > @@ -60,6 +60,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
+> >  obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
+> >  obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
+> >  obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
+> > +obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
+> >  obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
+> >  obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
+> >  obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
+> diff --git a/drivers/input/misc/rave-sp-pwrbutton.c b/drivers/input/misc/rave-sp-pwrbutton.c
+> new file mode 100644
+> index 000000000000..bcab3cdb7ebd
+> --- /dev/null
+> +++ b/drivers/input/misc/rave-sp-pwrbutton.c
+> @@ -0,0 +1,94 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Power Button driver for RAVE SP
+> +//
+> +// Copyright (C) 2017 Zodiac Inflight Innovations
+> +//
+> +//
+> +
+> +#include <linux/input.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mfd/rave-sp.h>
+> +#include <linux/platform_device.h>
+> +
+> > +#define RAVE_SP_EVNT_BUTTON_PRESS	(RAVE_SP_EVNT_BASE + 0x00)
+> +
+> +struct rave_sp_power_button {
+> > +	struct input_dev *idev;
+> > +	struct notifier_block nb;
+> +};
+> +
+> +static int rave_sp_power_button_event(struct notifier_block *nb,
+> > +				      unsigned long action, void *data)
+> +{
+> > +	struct rave_sp_power_button *pb =
+> > +		container_of(nb, struct rave_sp_power_button, nb);
+> > +	const u8 event = rave_sp_action_unpack_event(action);
+> > +	const u8 value = rave_sp_action_unpack_value(action);
+> > +	struct input_dev *idev = pb->idev;
+> +
+> > +	if (event == RAVE_SP_EVNT_BUTTON_PRESS) {
+> > +		input_report_key(idev, KEY_POWER, value);
+> > +		input_sync(idev);
+> +
+> > +		return NOTIFY_STOP;
+> > +	}
+> +
+> > +	return NOTIFY_DONE;
+> +}
+> +
+> +static int rave_sp_pwrbutton_probe(struct platform_device *pdev)
+> +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct rave_sp_power_button *pb;
+> > +	struct input_dev *idev;
+> > +	int error;
+> +
+> > +	pb = devm_kzalloc(dev, sizeof(*pb), GFP_KERNEL);
+> > +	if (!pb)
+> > +		return -ENOMEM;
+> +
+> > +	idev = devm_input_allocate_device(dev);
+> > +	if (!idev)
+> > +		return -ENOMEM;
+> +
+> > +	idev->name = pdev->name;
+> +
+> > +	input_set_capability(idev, EV_KEY, KEY_POWER);
+> +
+> > +	error = input_register_device(idev);
+> > +	if (error)
+> > +		return error;
+> +
+> > +	pb->idev = idev;
+> > +	pb->nb.notifier_call = rave_sp_power_button_event;
+> > +	pb->nb.priority = 128;
+> +
+> > +	error = devm_rave_sp_register_event_notifier(dev, &pb->nb);
+> > +	if (error)
+> > +		return error;
+> +
+> > +	return 0;
+> +}
+> +
+> +static const struct of_device_id rave_sp_pwrbutton_of_match[] = {
+> > +	{ .compatible = "zii,rave-sp-pwrbutton" },
+> > +	{}
+> +};
+> +
+> +static struct platform_driver rave_sp_pwrbutton_driver = {
+> > +	.probe = rave_sp_pwrbutton_probe,
+> > > +	.driver	= {
+> > +		.name = KBUILD_MODNAME,
+> > +		.of_match_table = rave_sp_pwrbutton_of_match,
+> > +	},
+> +};
+> +module_platform_driver(rave_sp_pwrbutton_driver);
+> +
+> +MODULE_DEVICE_TABLE(of, rave_sp_pwrbutton_of_match);
+> +MODULE_LICENSE("GPL");
+> > +MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
+> > +MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
+> > +MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
+> +MODULE_DESCRIPTION("RAVE SP Power Button driver");
