@@ -1,186 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753601AbeCFNXX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 08:23:23 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34159 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFNXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 08:23:21 -0500
-Date: Tue, 6 Mar 2018 14:23:07 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 04/10] dt-bindings: display: Add Allwinner MIPI-DSI
- bindings
-Message-ID: <20180306132307.onmqodndydwu3v5s@flea.lan>
-References: <cover.68c39205c8726547449e3df67b549d89380e51a2.1519204731.git-series.maxime.ripard@bootlin.com>
- <eb9c3f0c0270334154b48605e2ded542236ced79.1519204731.git-series.maxime.ripard@bootlin.com>
- <20180301221543.szhh75wplyq4rvhd@rob-hp-laptop>
+        id S1753674AbeCFN1d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 08:27:33 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45853 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753497AbeCFN1b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 08:27:31 -0500
+X-Google-Smtp-Source: AG47ELvjYBS7xtFh24FfD76bLFoPC8QIqmsIw7gRhdTxSH2zSexETrB58cHYwNvgXkcFS9E7Jjkx2QIJSmk/EfqxGTk=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xrbqrypybnr7yb3y"
-Content-Disposition: inline
-In-Reply-To: <20180301221543.szhh75wplyq4rvhd@rob-hp-laptop>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 14:27:30 +0100
+X-Google-Sender-Auth: gqLkA6Rt0h-fw9euvxQfB0_qV6Y
+Message-ID: <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
+Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        adi-buildroot-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 5, 2018 at 6:37 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> We want to move dump_stack related functions out of printk C
+> code and consolidate them in lib/dump_stack file. The reason why
+> dump_stack_print_info()/etc ended up in printk.c was a "generic"
+> (dummy) lib dump_stack() function, which archs can override.
+> For example, blackfin and nds32, define their own EXPORT_SYMBOL
+> dump_stack() functions.
+>
+> In case of blackfin that arch-specific dump_stack() symbol invokes
+> a global dump_stack_print_info() function. So we can't easily move
+> dump_stack_print_info() to lib/dump_stack, because this way we will
+> link with lib/dump_stack.o file, which will bring in a generic
+> dump_stack() symbol with it, causing a multiple definitions error:
+>   - one dump_stack() from arch/blackfin/dumpstack
+>   - the other one from lib/dump_stack
+>
+> Convert generic dump_stack() into a weak symbol. So we will be
+> able link with lib/dump_stack and at the same time archs will
+> be able to override dump_stack(). It also opens up a way for us
+> to move dump_stack_set_arch_desc(), dump_stack_print_info() and
+> show_regs_print_info() to lib/dump_stack.
+>
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> ---
+>  arch/blackfin/kernel/dumpstack.c | 1 -
+>  arch/nds32/kernel/traps.c        | 2 --
+>  lib/dump_stack.c                 | 4 ++--
+>  3 files changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/blackfin/kernel/dumpstack.c b/arch/blackfin/kernel/dumpstack.c
+> index 3c992c1f8ef2..61af017130cd 100644
+> --- a/arch/blackfin/kernel/dumpstack.c
+> +++ b/arch/blackfin/kernel/dumpstack.c
+> @@ -174,4 +174,3 @@ void dump_stack(void)
+>         show_stack(current, &stack);
+>         trace_buffer_restore(tflags);
+>  }
+> -EXPORT_SYMBOL(dump_stack);
 
---xrbqrypybnr7yb3y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As we are now removing blackfin, based on the latest discussion, this
+part should no longer be necessary.
 
-Hi Rob,
+> diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
+> index 8828b4aeb72b..455bb0787367 100644
+> --- a/arch/nds32/kernel/traps.c
+> +++ b/arch/nds32/kernel/traps.c
+> @@ -166,8 +166,6 @@ void dump_stack(void)
+>         __dump(NULL, base_reg);
+>  }
+>
+> -EXPORT_SYMBOL(dump_stack);
+> -
+>  void show_stack(struct task_struct *tsk, unsigned long *sp)
+>  {
+>         unsigned long *base_reg;
 
-On Thu, Mar 01, 2018 at 04:15:43PM -0600, Rob Herring wrote:
-> On Wed, Feb 21, 2018 at 10:20:28AM +0100, Maxime Ripard wrote:
-> > From: Maxime Ripard <maxime.ripard@free-electrons.com>
-> >=20
-> > The Allwinner SoCs usually come with a DSI encoder. Add a binding for i=
-t.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 84 +++=
-++++-
-> >  1 file changed, 84 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/sunxi/sun=
-6i-dsi.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.=
-txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> > new file mode 100644
-> > index 000000000000..cbcc673b9bcc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> > @@ -0,0 +1,84 @@
-> > +Allwinner A31 DSI Encoder
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > +
-> > +The DSI pipeline consists of two separate blocks: the DSI controller
-> > +itself, and its associated D-PHY.
-> > +
-> > +DSI Encoder
-> > +-----------
-> > +
-> > +The DSI Encoder generates the DSI signal from the TCON's.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be one of:
-> > +    * allwinner,sun6i-a31-mipi-dsi
-> > +  - reg: base address and size of memory-mapped region
-> > +  - interrupts: interrupt associated to this IP
-> > +  - clocks: phandles to the clocks feeding the DSI encoder
-> > +    * bus: the DSI interface clock
-> > +    * mod: the DSI module clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - phys: phandle to the D-PHY
-> > +  - phy-names: must be "dphy"
-> > +  - resets: phandle to the reset controller driving the encoder
-> > +
-> > +  - ports: A ports node with endpoint definitions as defined in
-> > +    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> > +    port should be the input endpoint, usually coming from the
-> > +    associated TCON.
-> > +
-> > +Any MIPI-DSI device attached to this should be described according to
-> > +the bindings defined in ../mipi-dsi-bus.txt
-> > +
-> > +D-PHY
-> > +-----
-> > +
-> > +Required properties:
-> > +  - compatible: value must be one of:
-> > +    * allwinner,sun6i-a31-mipi-dphy
-> > +  - reg: base address and size of memory-mapped region
-> > +  - clocks: phandles to the clocks feeding the DSI encoder
-> > +    * bus: the DSI interface clock
-> > +    * mod: the DSI module clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandle to the reset controller driving the encoder
-> > +
-> > +Example:
-> > +
-> > +dsi0: dsi@1ca0000 {
-> > +	compatible =3D "allwinner,sun6i-a31-mipi-dsi";
-> > +	reg =3D <0x01ca0000 0x1000>;
-> > +	interrupts =3D <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-> > +	clocks =3D <&ccu CLK_BUS_MIPI_DSI>,
-> > +		 <&ccu CLK_DSI_SCLK>;
-> > +	clock-names =3D "bus", "mod";
-> > +	resets =3D <&ccu RST_BUS_MIPI_DSI>;
-> > +	phys =3D <&dphy0>;
-> > +	phy-names =3D "dphy";
-> > +	#address-cells =3D <1>;
-> > +	#size-cells =3D <0>;
-> > +
-> > +	panel@0 {
-> > +		compatible =3D "huarui,lhr050h41";
-> > +		reg =3D <0>;
-> > +		power-gpios =3D <&pio 1 7 GPIO_ACTIVE_HIGH>; /* PB07 */
-> > +		reset-gpios =3D <&r_pio 0 5 GPIO_ACTIVE_LOW>; /* PL05 */
-> > +		backlight =3D <&pwm_bl>;
-> > +	};
-> > +
-> > +	port {
-> > +		dsi0_in_tcon0: endpoint {
-> > +			remote-endpoint =3D <&tcon0_out_dsi0>;
-> > +		};
-> > +	};
->=20
-> Kind of odd to have a mixture of panel and port. I guess that's valid=20
-> though.
+nds32 currently only exists in linux-next, not in the mainline kernel.
+If it's the only architecture that does something different from everyone
+else, I think we should change nds32.
 
-I guess the most elegant way would have been to have the panel also
-part of the OF graph, but we have to conform to the generic DSI panels
-as well :)
+I looked at the nds32 show_stack() implementation now and it
+seems to me that it is completely unnecessary, as the implementation
+from lib/dump_stack.c does basically the same thing (by calling
+show_stack(NULL, NULL)).
 
-> I'd recommend you put port under ports node so if you ever have=20
-> another port you are not mixing unit-address spaces.
+> diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+> index c5edbedd364d..02a8ad163760 100644
+> --- a/lib/dump_stack.c
+> +++ b/lib/dump_stack.c
+> @@ -25,7 +25,7 @@ static void __dump_stack(void)
+>  #ifdef CONFIG_SMP
+>  static atomic_t dump_lock = ATOMIC_INIT(-1);
+>
+> -asmlinkage __visible void dump_stack(void)
+> +asmlinkage __weak __visible void dump_stack(void)
+>  {
+>         unsigned long flags;
+>         int was_locked;
+> @@ -58,7 +58,7 @@ asmlinkage __visible void dump_stack(void)
+>         local_irq_restore(flags);
+>  }
+>  #else
+> -asmlinkage __visible void dump_stack(void)
+> +asmlinkage __weak __visible void dump_stack(void)
+>  {
+>         __dump_stack();
+>  }
 
-Ok, I'll do that.
+Weak symbols are generally discouraged in the kernel. We have
+them in a couple of places, but I find them rather confusing as they
+make it harder to figure out what is actually going on.
 
-> With that,
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---xrbqrypybnr7yb3y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqeljoACgkQ0rTAlCFN
-r3SsBA/+Mc752L8vTvUgInFjgUhUnrblwMEQcm7aNO+iqgNm1AYbp4FY3zenX9Ba
-EoXsqdfxeBaaP1B1tSkQzSjOFKIiCpkv+fTFed0cXSQcd/Fohc27CVljiKaYB+em
-90g2HMdxqpaPWOKlDrH62q6JKnlYin+/9E4C80gtLD2YcimocpgrveH4myqqVcao
-rujWljkmX7kRY9hySxDorNx2ciQCm7l9OTvLIYv0zuacGnx31LKHpw9ZtGiukA4A
-3GTq4uQrlV1eez/Vg8zosEmgfshHL5tpci1L0h3HVswSaZAKYd2SfoUVC3C1QF/k
-GsEokCASAN2tvaeNiZKFfxQ6uY34tzTewO1X4KDGEXhkwJ0qq3DyL5OQ14o7FcMr
-vMFNDD+8knnh89qVatYYc1xnvF6Rkp6M6ggUQ8TggclQxb17qPm7eufEnWRj38eL
-rrAax/NVqZetlLRh7QX5Ulc2heIRk7THGl5/S0/hOF9QwBcil+A0tqg3JvC/Zs+i
-SS1FeRlyD7mvKq1Hkb+hdSOLnYC4m+z5P80vdb90b9y0+y+3r4QgH/EEhW1hm8TV
-CO/ggT7Eyu98Yfr7i/mxC/BCbkCCJOw61LSB9GMuuwbZTr1aFUofTUTUxqUTM7Nv
-sAwQqm9ONeiD6JefhI8VN98Z0mFOgZdZBcI4CWZrVuzESe6cJnI=
-=eTXM
------END PGP SIGNATURE-----
-
---xrbqrypybnr7yb3y--
+       Arnd
