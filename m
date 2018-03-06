@@ -1,126 +1,664 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4059601-1520327929-2-7330399440379317384
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1039939-1520362389-2-10965248245574842925
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520327928; b=gGzhNdFT65WgTmoLsr8obETkyZI6jOdhVi/6rXM52iMAqcW
-    Nt3cLs4oJC4pY3aXbqc4lnN5Isa0BgOspxi/VAsP9gCkuJ7NcY3axupSL6Gu/8zT
-    iOVj+l6nShjUbjbFH4fKarmUR0Ik6UCcVW9hkFapQHYNL2LTSOT9wmNJxmldbVlC
-    PRLUquN/8sBQ330Llcboga6vRd/VMJTLdAd9URXzc+xOEso4Lvuv5TEqzSGT2UdS
-    imhiknA41ESyGKsqNQdlkwFtdxomDC01EYrfABbf76rlHfq5PPtqycFYl+WcFqCP
-    S3JFY2SEKhfJfKR2FAGnAhBukG4hM3wre9TQEVA==
+    t=1520362388; b=lpUPYhTJPhtkQtVLjzncyk8VaONaktxwbSt0VZg52y52Qsf
+    OxL9MAC+QLHrslt3c94Azf7WWnfVsl6hiqgZXKRuCi567rDMyHe/GxUczHiaq4GJ
+    m7bKiqd2gxEKqWNKf+9gUftU7VeG2DaIxtWc3f4bmQthUfIEZN2RR0VBdO36VD04
+    5VN8E0HvP7a4Mo5ig/D+7wEtWwc91nYFv13tBswOK/HT6zppHMkzVo/Pjeyd9Y/c
+    pT8W5Pe6aV4vFXGa1EVEpYCQLJci3i27B/yrqt4pEgARqG9wnefrF9olT55LVFsC
+    lkScou8MJBi0FLLeOeJubxNleAszhqct6Ps+C+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520327928; bh=T
-    wuvVorD6ne82tXrYMreBoUpnrhDOwuBv7FgJmEhADo=; b=NErKZicvmf9XrtV/7
-    ae4+2Xb/4w0IEIBDiOj+xOi1IZM0Bh9+/VtgnxbEOE4C8rbl4xxJTwYcJpUuxZb3
-    iUKtEiQr9iW4vdvXRILQjT3hpGRuIBJj9JIkWy8aPOQM3S6+kdkNo9+VBaXn1LKt
-    hyPvRE39ev7Fh0DkfzjOsh5vFbk9ghNgelYPK56pMBPU8d1p2fqENzIORvGehRt4
-    nmTrngrhyeyTXK7NqjMkMvRyxPM04Hf6SwDC8jurbZjUGpTEFZ8pPNb9rP1P9ZNI
-    qR6DFZDbAnGNT9Sx6owC4cePIOIaJA8VMXK9zC/VoZasmIKBGvpK0t2LftT6iVyZ
-    +4R8w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=arctest; t=
+    1520362388; bh=orzdw5ZdxlhgFQSD0pNo/f+ss7PC3K6MESTLYekuk48=; b=w
+    hWK9IFpep85ro1HDM/d+5x2hE7Zx+iF106UJ4qxbPaF2RZ8+FW+/AEvsvL5WCxcC
+    A817Ogo2rVvlelP1ngaQcKLjEVicRMwyKjbRCE47pT+UkTeKUUu8ldOOJd/VtMCx
+    lECmOg5wmL4THT0zCqWBh/MvHWwGs+dKJqNA8xnNtklPeA46i1MJf+8F4JTphbA9
+    g+B6wyfkCq0hIVtovzGik8IoF4tqEZ1ZlUynuG0GGK0Bx7ElEnNidEjfkNxWzA5z
+    zL2jMHlT4M2ibzTdcPUODXBJ+0cWjLLN9DKlnwGNJyrXLL/ihN7kY3s8GP11Fvqm
+    BXygCDcbXkT0BU3dhU8dw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dominikbrodowski.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dominikbrodowski.net header.result=pass header_is_org_domain=yes
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=dominikbrodowski.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH v2 1/2] staging: most: Add a blank line.
-Date: Tue,  6 Mar 2018 01:18:02 -0800
-Message-Id: <20180306091803.16689-1-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180302101221.f26ehzc6kvbowq5r@mwanda>
-References: <20180302101221.f26ehzc6kvbowq5r@mwanda>
-X-Provags-ID: V03:K0:6e0PPCW0e0L2zS9curBbp9iQtFERY6+VcMQ/yRHLO1V54cV8Nh/
- yH38MVOwCDa4PIwN6lZE1JxqJZSCJYNk+LEzSi1v152oaXrLR94GLuXtTzpxc7iOVjQ4i+c
- aRIgeHH4AHDZ9qdTl0kWWqIGXr4b4UhsD72UAX6Ys7DWtNjOwyTfeD5eLm8zq03sDLXXJA2
- l6kjzSLtiRVW7yO609I2w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:/EMwGYZlOIc=:ZgMVreGwH+zEqjxbD/iJKZ
- yI6VwYXaDI2yqdBGKrdsLOUeYMEfQfwHYVU18H7xjGvAiYkg/SzhL/WCl0nzTsItUCF4saFc3
- BXjWW4FkeIBK/0ZjkB9ILvKtXKvIdhYLvYbb7HS2c7qovYT+DMF8I2U2jsZD0/tQ/YxH0t8ZH
- W6vAkNRGrC73Jgxl+x9LL6wtJY41fqQ6g3wNfLr+DA/Iq2xVzKe1I66Q3ldAIhORMDzDydqlk
- oElncKIe1KqwajsjcZQ4dTAzf9w9ijhQDQNVYFU3KTAYDMsEFP6Oj/unIdPPafTzOfoZtjU2m
- nK5sgCIX8eEBShqNDGJE7vDrjbZ57wWktsJw13eB7k1/6REgCq+nssjDqTLt9XkS8PXV94UAA
- sjrUdsf2Qzeej7SEW++QGAgzwFUtFyik43w75YbgI/XQBfojOJ36AAFMqzAyC3HfKpkiugUgN
- rff3Y5udokGa4WSyeXycMlO6+kiLSFSgPGirBY/RekiugMXIpxoXeHLyXgBerW0TdgTCLDoqi
- Rc9SUH1Cdie6gZwJwXkjbeWA5QM2cl0elHfaumuBwSfCs/NgLX3nUKfLxuDgRrM2gRYyfTfL4
- bUJlrrz8pHtkticcLchyRiAi0EDqTgn1UNMCpwGUcXwZkF6aLeZf2PkZ0td06tkLY2IIY47J2
- Vp84aZQolTbfwn29sYUwk5MAdA9G8igUFkHTi77BuPggJVhdgBu5xfL2G9wUeZB0cA+U+AHM9
- k3PVCIDN/arIFiDiYCoczyN+pCbn5gXNTAWzyg==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, chris@engineersdelight.de,
- linux-kernel@vger.kernel.org, Michael.Fabry@microchip.com,
- christian.gromm@microchip.com, Quytelda Kahja <quytelda@tamalin.org>
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=dominikbrodowski.net header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750838AbeCFSxH (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 13:53:07 -0500
+Received: from isilmar-4.linta.de ([136.243.71.142]:36716 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750836AbeCFSxG (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Tue, 6 Mar 2018 13:53:06 -0500
+Date: Tue, 6 Mar 2018 19:53:01 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Cc: torvalds@linux-foundation.org, luto@amacapital.net,
+        mingo@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
+        ak@linux.intel.com, x86@kernel.org
+Subject: [PATCH] kernel/sys_ni: sort cond_syscall() entries
+Message-ID: <20180306185301.GA31061@light.dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use a blank line after components_show() function declaration.
+Shuffle the cond_syscall() entries in kernel/sys_ni.c around so that they
+are kept in the same order as in include/uapi/asm-generic/unistd.h. For
+better structuring, add the same comments as in that file, but keep a few
+additional comments and extend the commentary where it seems useful.
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
- drivers/staging/most/core.c | 1 +
- 1 file changed, 1 insertion(+)
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 
-diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index 0ab2de5ecf18..67e2d7f29967 100644
---- a/drivers/staging/most/core.c
-+++ b/drivers/staging/most/core.c
-@@ -583,6 +583,7 @@ static ssize_t components_show(struct device_driver *drv, char *buf)
- 	}
- 	return offs;
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index b5189762d275..44c65e4d2528 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -17,245 +17,403 @@ asmlinkage long sys_ni_syscall(void)
+ 	return -ENOSYS;
  }
+ 
+-cond_syscall(sys_quotactl);
+-cond_syscall(sys32_quotactl);
+-cond_syscall(sys_acct);
++/*
++ * This list is kept in the same order as include/uapi/asm-generic/unistd.h.
++ * Architecture specific entries go below, then follow deprecated or obsolote
++ * system calls.
++ */
 +
- /**
-  * split_string - parses buf and extracts ':' separated substrings.
-  *
--- 
-2.16.2
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
++cond_syscall(sys_io_setup);
++cond_syscall(compat_sys_io_setup);
++cond_syscall(sys_io_destroy);
++cond_syscall(sys_io_submit);
++cond_syscall(compat_sys_io_submit);
++cond_syscall(sys_io_cancel);
++cond_syscall(sys_io_getevents);
++cond_syscall(compat_sys_io_getevents);
++
++/* fs/xattr.c */
++
++/* fs/dcache.c */
++
++/* fs/cookies.c */
+ cond_syscall(sys_lookup_dcookie);
+ cond_syscall(compat_sys_lookup_dcookie);
+-cond_syscall(sys_swapon);
+-cond_syscall(sys_swapoff);
++
++/* fs/eventfd.c */
++cond_syscall(sys_eventfd2);
++
++/* fs/eventfd.c */
++cond_syscall(sys_epoll_create1);
++cond_syscall(sys_epoll_ctl);
++cond_syscall(sys_epoll_pwait);
++cond_syscall(compat_sys_epoll_pwait);
++
++/* fs/fcntl.c */
++
++/* fs/inotify_user.c */
++cond_syscall(sys_inotify_init1);
++cond_syscall(sys_inotify_add_watch);
++cond_syscall(sys_inotify_rm_watch);
++
++/* fs/ioctl.c */
++
++/* fs/ioprio.c */
++cond_syscall(sys_ioprio_set);
++cond_syscall(sys_ioprio_get);
++
++/* fs/locks.c */
++cond_syscall(sys_flock);
++
++/* fs/namei.c */
++
++/* fs/namespace.c */
++
++/* fs/nfsctl.c */
++
++/* fs/open.c */
++
++/* fs/pipe.c */
++
++/* fs/quota.c */
++cond_syscall(sys_quotactl);
++
++/* fs/readdir.c */
++
++/* fs/read_write.c */
++
++/* fs/sendfile.c */
++
++/* fs/select.c */
++
++/* fs/signalfd.c */
++cond_syscall(sys_signalfd4);
++cond_syscall(compat_sys_signalfd4);
++
++/* fs/splice.c */
++
++/* fs/stat.c */
++
++/* fs/sync.c */
++
++/* fs/timerfd.c */
++cond_syscall(sys_timerfd_create);
++cond_syscall(sys_timerfd_settime);
++cond_syscall(compat_sys_timerfd_settime);
++cond_syscall(sys_timerfd_gettime);
++cond_syscall(compat_sys_timerfd_gettime);
++
++/* fs/utimes.c */
++
++/* kernel/acct.c */
++cond_syscall(sys_acct);
++
++/* kernel/capability.c */
++cond_syscall(sys_capget);
++cond_syscall(sys_capset);
++
++/* kernel/exec_domain.c */
++
++/* kernel/exit.c */
++
++/* kernel/fork.c */
++
++/* kernel/futex.c */
++cond_syscall(sys_futex);
++cond_syscall(compat_sys_futex);
++cond_syscall(sys_set_robust_list);
++cond_syscall(compat_sys_set_robust_list);
++cond_syscall(sys_get_robust_list);
++cond_syscall(compat_sys_get_robust_list);
++
++/* kernel/hrtimer.c */
++
++/* kernel/itimer.c */
++
++/* kernel/kexec.c */
+ cond_syscall(sys_kexec_load);
+ cond_syscall(compat_sys_kexec_load);
+-cond_syscall(sys_kexec_file_load);
++
++/* kernel/module.c */
+ cond_syscall(sys_init_module);
+-cond_syscall(sys_finit_module);
+ cond_syscall(sys_delete_module);
++
++/* kernel/posix-timers.c */
++
++/* kernel/printk.c */
++cond_syscall(sys_syslog);
++
++/* kernel/ptrace.c */
++
++/* kernel/sched/core.c */
++
++/* kernel/signal.c */
++
++/* kernel/sys.c */
++cond_syscall(sys_setregid);
++cond_syscall(sys_setgid);
++cond_syscall(sys_setreuid);
++cond_syscall(sys_setuid);
++cond_syscall(sys_setresuid);
++cond_syscall(sys_getresuid);
++cond_syscall(sys_setresgid);
++cond_syscall(sys_getresgid);
++cond_syscall(sys_setfsuid);
++cond_syscall(sys_setfsgid);
++cond_syscall(sys_setgroups);
++cond_syscall(sys_getgroups);
++
++/* kernel/time.c */
++
++/* kernel/timer.c */
++
++/* ipc/mqueue.c */
++cond_syscall(sys_mq_open);
++cond_syscall(compat_sys_mq_open);
++cond_syscall(sys_mq_unlink);
++cond_syscall(sys_mq_timedsend);
++cond_syscall(compat_sys_mq_timedsend);
++cond_syscall(sys_mq_timedreceive);
++cond_syscall(compat_sys_mq_timedreceive);
++cond_syscall(sys_mq_notify);
++cond_syscall(compat_sys_mq_notify);
++cond_syscall(sys_mq_getsetattr);
++cond_syscall(compat_sys_mq_getsetattr);
++
++/* ipc/msg.c */
++cond_syscall(sys_msgget);
++cond_syscall(sys_msgctl);
++cond_syscall(compat_sys_msgctl);
++cond_syscall(sys_msgrcv);
++cond_syscall(compat_sys_msgrcv);
++cond_syscall(sys_msgsnd);
++cond_syscall(compat_sys_msgsnd);
++
++/* ipc/sem.c */
++cond_syscall(sys_semget);
++cond_syscall(sys_semctl);
++cond_syscall(compat_sys_semctl);
++cond_syscall(sys_semtimedop);
++cond_syscall(compat_sys_semtimedop);
++cond_syscall(sys_semop);
++
++/* ipc/shm.c */
++cond_syscall(sys_shmget);
++cond_syscall(sys_shmctl);
++cond_syscall(compat_sys_shmctl);
++cond_syscall(sys_shmat);
++cond_syscall(compat_sys_shmat);
++cond_syscall(sys_shmdt);
++
++/* net/socket.c */
++cond_syscall(sys_socket);
+ cond_syscall(sys_socketpair);
+ cond_syscall(sys_bind);
+ cond_syscall(sys_listen);
+ cond_syscall(sys_accept);
+-cond_syscall(sys_accept4);
+ cond_syscall(sys_connect);
+ cond_syscall(sys_getsockname);
+ cond_syscall(sys_getpeername);
+-cond_syscall(sys_sendto);
+-cond_syscall(sys_send);
+-cond_syscall(sys_recvfrom);
+-cond_syscall(sys_recv);
+-cond_syscall(sys_socket);
+ cond_syscall(sys_setsockopt);
+ cond_syscall(compat_sys_setsockopt);
+ cond_syscall(sys_getsockopt);
+ cond_syscall(compat_sys_getsockopt);
++cond_syscall(sys_sendto);
+ cond_syscall(sys_shutdown);
++cond_syscall(sys_recvfrom);
++cond_syscall(compat_sys_recvfrom);
+ cond_syscall(sys_sendmsg);
+-cond_syscall(sys_sendmmsg);
+ cond_syscall(compat_sys_sendmsg);
+-cond_syscall(compat_sys_sendmmsg);
+ cond_syscall(sys_recvmsg);
+-cond_syscall(sys_recvmmsg);
+ cond_syscall(compat_sys_recvmsg);
+-cond_syscall(compat_sys_recv);
+-cond_syscall(compat_sys_recvfrom);
+-cond_syscall(compat_sys_recvmmsg);
+-cond_syscall(sys_socketcall);
+-cond_syscall(sys_futex);
+-cond_syscall(compat_sys_futex);
+-cond_syscall(sys_set_robust_list);
+-cond_syscall(compat_sys_set_robust_list);
+-cond_syscall(sys_get_robust_list);
+-cond_syscall(compat_sys_get_robust_list);
+-cond_syscall(sys_epoll_create);
+-cond_syscall(sys_epoll_create1);
+-cond_syscall(sys_epoll_ctl);
+-cond_syscall(sys_epoll_wait);
+-cond_syscall(sys_epoll_pwait);
+-cond_syscall(compat_sys_epoll_pwait);
+-cond_syscall(sys_semget);
+-cond_syscall(sys_semop);
+-cond_syscall(sys_semtimedop);
+-cond_syscall(compat_sys_semtimedop);
+-cond_syscall(sys_semctl);
+-cond_syscall(compat_sys_semctl);
+-cond_syscall(sys_msgget);
+-cond_syscall(sys_msgsnd);
+-cond_syscall(compat_sys_msgsnd);
+-cond_syscall(sys_msgrcv);
+-cond_syscall(compat_sys_msgrcv);
+-cond_syscall(sys_msgctl);
+-cond_syscall(compat_sys_msgctl);
+-cond_syscall(sys_shmget);
+-cond_syscall(sys_shmat);
+-cond_syscall(compat_sys_shmat);
+-cond_syscall(sys_shmdt);
+-cond_syscall(sys_shmctl);
+-cond_syscall(compat_sys_shmctl);
+-cond_syscall(sys_mq_open);
+-cond_syscall(sys_mq_unlink);
+-cond_syscall(sys_mq_timedsend);
+-cond_syscall(sys_mq_timedreceive);
+-cond_syscall(sys_mq_notify);
+-cond_syscall(sys_mq_getsetattr);
+-cond_syscall(compat_sys_mq_open);
+-cond_syscall(compat_sys_mq_timedsend);
+-cond_syscall(compat_sys_mq_timedreceive);
+-cond_syscall(compat_sys_mq_notify);
+-cond_syscall(compat_sys_mq_getsetattr);
+-cond_syscall(sys_mbind);
+-cond_syscall(sys_get_mempolicy);
+-cond_syscall(sys_set_mempolicy);
+-cond_syscall(compat_sys_mbind);
+-cond_syscall(compat_sys_get_mempolicy);
+-cond_syscall(compat_sys_set_mempolicy);
++
++/* mm/filemap.c */
++
++/* mm/nommu.c, also with MMU */
++cond_syscall(sys_mremap);
++
++/* security/keys/keyctl.c */
+ cond_syscall(sys_add_key);
+ cond_syscall(sys_request_key);
+ cond_syscall(sys_keyctl);
+ cond_syscall(compat_sys_keyctl);
+-cond_syscall(compat_sys_socketcall);
+-cond_syscall(sys_inotify_init);
+-cond_syscall(sys_inotify_init1);
+-cond_syscall(sys_inotify_add_watch);
+-cond_syscall(sys_inotify_rm_watch);
+-cond_syscall(sys_migrate_pages);
+-cond_syscall(sys_move_pages);
+-cond_syscall(sys_chown16);
+-cond_syscall(sys_fchown16);
+-cond_syscall(sys_getegid16);
+-cond_syscall(sys_geteuid16);
+-cond_syscall(sys_getgid16);
+-cond_syscall(sys_getgroups16);
+-cond_syscall(sys_getresgid16);
+-cond_syscall(sys_getresuid16);
+-cond_syscall(sys_getuid16);
+-cond_syscall(sys_lchown16);
+-cond_syscall(sys_setfsgid16);
+-cond_syscall(sys_setfsuid16);
+-cond_syscall(sys_setgid16);
+-cond_syscall(sys_setgroups16);
+-cond_syscall(sys_setregid16);
+-cond_syscall(sys_setresgid16);
+-cond_syscall(sys_setresuid16);
+-cond_syscall(sys_setreuid16);
+-cond_syscall(sys_setuid16);
+-cond_syscall(sys_sgetmask);
+-cond_syscall(sys_ssetmask);
+-cond_syscall(sys_vm86old);
+-cond_syscall(sys_vm86);
+-cond_syscall(sys_modify_ldt);
+-cond_syscall(sys_ipc);
+-cond_syscall(compat_sys_ipc);
+-cond_syscall(compat_sys_sysctl);
+-cond_syscall(sys_flock);
+-cond_syscall(sys_io_setup);
+-cond_syscall(sys_io_destroy);
+-cond_syscall(sys_io_submit);
+-cond_syscall(sys_io_cancel);
+-cond_syscall(sys_io_getevents);
+-cond_syscall(compat_sys_io_setup);
+-cond_syscall(compat_sys_io_submit);
+-cond_syscall(compat_sys_io_getevents);
+-cond_syscall(sys_sysfs);
+-cond_syscall(sys_syslog);
+-cond_syscall(sys_process_vm_readv);
+-cond_syscall(sys_process_vm_writev);
+-cond_syscall(compat_sys_process_vm_readv);
+-cond_syscall(compat_sys_process_vm_writev);
+-cond_syscall(sys_uselib);
+-cond_syscall(sys_fadvise64);
+-cond_syscall(sys_fadvise64_64);
+-cond_syscall(sys_madvise);
+-cond_syscall(sys_setuid);
+-cond_syscall(sys_setregid);
+-cond_syscall(sys_setgid);
+-cond_syscall(sys_setreuid);
+-cond_syscall(sys_setresuid);
+-cond_syscall(sys_getresuid);
+-cond_syscall(sys_setresgid);
+-cond_syscall(sys_getresgid);
+-cond_syscall(sys_setgroups);
+-cond_syscall(sys_getgroups);
+-cond_syscall(sys_setfsuid);
+-cond_syscall(sys_setfsgid);
+-cond_syscall(sys_capget);
+-cond_syscall(sys_capset);
+-cond_syscall(sys_copy_file_range);
+ 
+-/* arch-specific weak syscall entries */
+-cond_syscall(sys_pciconfig_read);
+-cond_syscall(sys_pciconfig_write);
+-cond_syscall(sys_pciconfig_iobase);
+-cond_syscall(compat_sys_s390_ipc);
+-cond_syscall(ppc_rtas);
+-cond_syscall(sys_spu_run);
+-cond_syscall(sys_spu_create);
+-cond_syscall(sys_subpage_prot);
+-cond_syscall(sys_s390_pci_mmio_read);
+-cond_syscall(sys_s390_pci_mmio_write);
++/* arch/example/kernel/sys_example.c */
+ 
+-/* mmu depending weak syscall entries */
++/* mm/fadvise.c */
++cond_syscall(sys_fadvise64_64);
++
++/* mm/, CONFIG_MMU only */
++cond_syscall(sys_swapon);
++cond_syscall(sys_swapoff);
+ cond_syscall(sys_mprotect);
+ cond_syscall(sys_msync);
+ cond_syscall(sys_mlock);
+ cond_syscall(sys_munlock);
+ cond_syscall(sys_mlockall);
+ cond_syscall(sys_munlockall);
+-cond_syscall(sys_mlock2);
+ cond_syscall(sys_mincore);
+ cond_syscall(sys_madvise);
+-cond_syscall(sys_mremap);
+ cond_syscall(sys_remap_file_pages);
+-cond_syscall(compat_sys_move_pages);
++cond_syscall(sys_mbind);
++cond_syscall(compat_sys_mbind);
++cond_syscall(sys_get_mempolicy);
++cond_syscall(compat_sys_get_mempolicy);
++cond_syscall(sys_set_mempolicy);
++cond_syscall(compat_sys_set_mempolicy);
++cond_syscall(sys_migrate_pages);
+ cond_syscall(compat_sys_migrate_pages);
++cond_syscall(sys_move_pages);
++cond_syscall(compat_sys_move_pages);
+ 
+-/* block-layer dependent */
+-cond_syscall(sys_bdflush);
+-cond_syscall(sys_ioprio_set);
+-cond_syscall(sys_ioprio_get);
+-
+-/* New file descriptors */
+-cond_syscall(sys_signalfd);
+-cond_syscall(sys_signalfd4);
+-cond_syscall(compat_sys_signalfd);
+-cond_syscall(compat_sys_signalfd4);
+-cond_syscall(sys_timerfd_create);
+-cond_syscall(sys_timerfd_settime);
+-cond_syscall(sys_timerfd_gettime);
+-cond_syscall(compat_sys_timerfd_settime);
+-cond_syscall(compat_sys_timerfd_gettime);
+-cond_syscall(sys_eventfd);
+-cond_syscall(sys_eventfd2);
+-cond_syscall(sys_memfd_create);
+-cond_syscall(sys_userfaultfd);
+-
+-/* performance counters: */
+ cond_syscall(sys_perf_event_open);
++cond_syscall(sys_accept4);
++cond_syscall(sys_recvmmsg);
++cond_syscall(compat_sys_recvmmsg);
++
++/*
++ * Architecture specific syscalls: see further below
++ */
+ 
+-/* fanotify! */
++/* fanotify */
+ cond_syscall(sys_fanotify_init);
+ cond_syscall(sys_fanotify_mark);
+-cond_syscall(compat_sys_fanotify_mark);
+ 
+ /* open by handle */
+ cond_syscall(sys_name_to_handle_at);
+ cond_syscall(sys_open_by_handle_at);
+ cond_syscall(compat_sys_open_by_handle_at);
+ 
++cond_syscall(sys_sendmmsg);
++cond_syscall(compat_sys_sendmmsg);
++cond_syscall(sys_process_vm_readv);
++cond_syscall(compat_sys_process_vm_readv);
++cond_syscall(sys_process_vm_writev);
++cond_syscall(compat_sys_process_vm_writev);
++
+ /* compare kernel pointers */
+ cond_syscall(sys_kcmp);
+ 
++cond_syscall(sys_finit_module);
++
+ /* operate on Secure Computing state */
+ cond_syscall(sys_seccomp);
+ 
++cond_syscall(sys_memfd_create);
++
+ /* access BPF programs and maps */
+ cond_syscall(sys_bpf);
+ 
+ /* execveat */
+ cond_syscall(sys_execveat);
+ 
++cond_syscall(sys_userfaultfd);
++
+ /* membarrier */
+ cond_syscall(sys_membarrier);
+ 
++cond_syscall(sys_mlock2);
++
++cond_syscall(sys_copy_file_range);
++
+ /* memory protection keys */
+ cond_syscall(sys_pkey_mprotect);
+ cond_syscall(sys_pkey_alloc);
+ cond_syscall(sys_pkey_free);
++
++
++/*
++ * Architecture specific weak syscall entries.
++ */
++
++/* pciconfig: alpha, arm, arm64, ia64, sparc */
++cond_syscall(sys_pciconfig_read);
++cond_syscall(sys_pciconfig_write);
++cond_syscall(sys_pciconfig_iobase);
++
++/* sys_socketcall: arm, mips, x86, ... */
++cond_syscall(sys_socketcall);
++cond_syscall(compat_sys_socketcall);
++
++/* compat syscalls for arm64, x86, ... */
++cond_syscall(compat_sys_sysctl);
++cond_syscall(compat_sys_fanotify_mark);
++
++/* x86 */
++cond_syscall(sys_vm86old);
++cond_syscall(sys_modify_ldt);
++cond_syscall(sys32_quotactl);
++cond_syscall(sys_vm86);
++cond_syscall(sys_kexec_file_load);
++
++/* s390 */
++cond_syscall(sys_s390_pci_mmio_read);
++cond_syscall(sys_s390_pci_mmio_write);
++cond_syscall(compat_sys_s390_ipc);
++
++/* powerpc */
++cond_syscall(ppc_rtas);
++cond_syscall(sys_spu_run);
++cond_syscall(sys_spu_create);
++cond_syscall(sys_subpage_prot);
++
++
++/*
++ * Deprecated system calls whcih are still defined in
++ * include/uapi/asm-generic/unistd.h and wanted by >= 1 arch
++ */
++
++/* __ARCH_WANT_SYSCALL_NO_FLAGS */
++cond_syscall(sys_epoll_create);
++cond_syscall(sys_inotify_init);
++cond_syscall(sys_eventfd);
++cond_syscall(sys_signalfd);
++cond_syscall(compat_sys_signalfd);
++
++/* __ARCH_WANT_SYSCALL_OFF_T */
++cond_syscall(sys_fadvise64);
++
++/* __ARCH_WANT_SYSCALL_DEPRECATED */
++cond_syscall(sys_epoll_wait);
++cond_syscall(sys_recv);
++cond_syscall(compat_sys_recv);
++cond_syscall(sys_send);
++cond_syscall(sys_recv);
++cond_syscall(sys_uselib);
++
++
++/*
++ * The syscalls below are not found in include/uapi/asm-generic/unistd.h
++ */
++
++/* obsolete: SGETMASK_SYSCALL */
++cond_syscall(sys_sgetmask);
++cond_syscall(sys_ssetmask);
++
++/* obsolete: SYSFS_SYSCALL */
++cond_syscall(sys_sysfs);
++
++/* obsolete: __ARCH_WANT_SYS_IPC */
++cond_syscall(sys_ipc);
++cond_syscall(compat_sys_ipc);
++
++/* obsolete: UID16 */
++cond_syscall(sys_chown16);
++cond_syscall(sys_fchown16);
++cond_syscall(sys_getegid16);
++cond_syscall(sys_geteuid16);
++cond_syscall(sys_getgid16);
++cond_syscall(sys_getgroups16);
++cond_syscall(sys_getresgid16);
++cond_syscall(sys_getresuid16);
++cond_syscall(sys_getuid16);
++cond_syscall(sys_lchown16);
++cond_syscall(sys_setfsgid16);
++cond_syscall(sys_setfsuid16);
++cond_syscall(sys_setgid16);
++cond_syscall(sys_setgroups16);
++cond_syscall(sys_setregid16);
++cond_syscall(sys_setresgid16);
++cond_syscall(sys_setresuid16);
++cond_syscall(sys_setreuid16);
++cond_syscall(sys_setuid16);
