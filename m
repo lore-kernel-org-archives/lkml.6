@@ -1,45 +1,48 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520286023; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520297817; cv=none;
         d=google.com; s=arc-20160816;
-        b=AmQF2T58s/P60tn5+AncGQR//ZKmsr1XnzEw/g0SzgrUIKzTyZgYYUCe+E98ev+7q1
-         uH1yZ8QT3idsl0MqxcbChuF1OPeAovsoNtgj6dJ91gjxlAn6mv2GmbGoO7umIddgah9B
-         NX20diaNXp1JomERMXNdpeDQUCF66ZVcbxAEhHuhTDKHVlvO6ZiG3z8g6PBQSuWJdx20
-         c1FH5N7qopVQdrXBhoyFey6Rm0JH9ZiFoCRRimW8Qx/7xniUKLCJYGLB7WdRnwnyGVrQ
-         INTTvzCSgxCOPiRH99LARwkkwtfvnpOJ+J9HeZTZxJXnaonx5R8ZNbtUHomoD+THfplt
-         75vg==
+        b=Y2MYz9MqEfFe+3dIddWmXzuP5JTt9YKTGe+a2LL59tAq48/z4yUUzeSVGhUmI6wvk6
+         t59XpBTDBPOExjbfGLkJXrD3/1+lfKxxBbxbYoJl8+YMCE00/N0SUo6TZ9mYTjKnmwtO
+         zakKTSHt+Y9Wz6CJzB9AH1csZX2+9xRpcyfrlevZCpUQ+3/TGID6wH01BLWzGnodyy0N
+         iXzv8UKFgiPz6l3X5q1QvA/Qu2v1oOd3kEjVAnOQKdy7FyYM5tvip3cqfofLevHBnx14
+         jcG9Da9z7WD+PFwwfF+pJMOwV+k7UoV4Zvm6QR9mIUQs8ewt6HgL+seg2b1ppcxpvs+r
+         u4SQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=BZZ7skrKzQkU1wLaqnUYR997KZuDAzym6EIv74R5qp8=;
-        b=RjHKagPweHq8d0RgEzYEh6KWD+w6JwUdBbpk2ZN7t1wSrhC7ecuZM6/wH8Rbp6lNBR
-         W4h5YYjlQZjcNBCgr0XXIS2vLvpw4qpbgQ2aSPISCQp0oNcc84tcEcHaWBI2KGc0LG6K
-         uite2uUC2bRhTjolKPhe9CrRdQ5v2MCQPgtt5mxo8w4Y89SMPc64FBJp13maOJKdA+Vm
-         0tffyVrMpfnLeMdP/GeziUHk+8iUUcS4vZNQXlXbQ/yJzmA6SnpWpRSUyBxctKmQbxj5
-         gCYqOFVD1IYRVy5dhzm9ssHOUcVEXFzVf4VUFoHg47jPtZyB/A4Ni9RkMt3IznJ4pQuU
-         Zhvg==
+        bh=eaR+o/COMyH7T3Iu+NMVBBIPYWFthQ1buI3Pmt73MXc=;
+        b=FjHkIEmJPi9YawwG45aFgyFa2NMPb5MxBjDmaqI7FA6r23Rlci3zxWB3OsN2YUB3x2
+         qnu3avWUks9D61wm7RY05UNWdSPgsM/t4geMmOQxPMkj9j6o477iiS4MGss2aOtSlWUZ
+         0mtVlD1x4lJkeOEfpMIOmzP2CfBb/b6JgaZI0Lkdx7OS0aRK0xCiK0krAbFhIvpKLYuV
+         3XpHbFI0iQHBKKlAZW2Dx5Esgzvf3PdM1Pea1f3ylKWUEQ9axKaYEOitrzfgzGzXSMEO
+         WSCTti6lObzg35RR4EcgD2SpiwZpUqhxizXTY6ZIWCX6BhglQHJCWZs44PI3W6lrua4s
+         M6iQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kM/lmOQh;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=GZjCgYyu;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ryi2wT2B;
+       dkim=pass header.i=@chromium.org header.s=google header.b=YFSaWMrb;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kM/lmOQh;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=GZjCgYyu;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELtWt5qokjfOXe9tLukIvDDyt4M5JSdbVw5k7bG51UfeIi76cxO7Cx0b5++d1iXkrGQtUWqgkrejBbOmxQ+1cOg=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ryi2wT2B;
+       dkim=pass header.i=@chromium.org header.s=google header.b=YFSaWMrb;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AG47ELufxCB28Q41SLQyMPgTMeqZfYawYAumeu1hHZ3mIEAfT+BlePQnIr5UsqOD9trzPBorGmn2Ky0QeHnRi626YUI=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
-In-Reply-To: <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
+Sender: keescook@google.com
+In-Reply-To: <CA+55aFxpzgQiJg8XyQTH-hDHd7A0jRAtOJ8b6krrvNDQX96Vrw@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
- <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com> <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Mar 2018 13:40:21 -0800
-X-Google-Sender-Auth: -49My8DnY2wgSzeVO64u2GqWIw0
-Message-ID: <CA+55aFxpzgQiJg8XyQTH-hDHd7A0jRAtOJ8b6krrvNDQX96Vrw@mail.gmail.com>
+ <CA+55aFxEAYyrUkApo-dtZvxcYbvWBZJpUytjbm7e2wruTvbYjQ@mail.gmail.com>
+ <CAGXu5j+-AjMKxOYDOpbmJ4X357JRGWViAOmqyqd6bu_w47mffw@mail.gmail.com> <CA+55aFxpzgQiJg8XyQTH-hDHd7A0jRAtOJ8b6krrvNDQX96Vrw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 5 Mar 2018 16:56:55 -0800
+X-Google-Sender-Auth: tFn3SpTs0Bb5RiYdEvaMIqWISJ4
+Message-ID: <CAGXu5jJaTR25zZp5sGqc6m3nv3AunYhEZhxtB_JuP2WFbv_pfg@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
-To: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux.com>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
 	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
@@ -65,63 +68,90 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>, Alexander Popov <alex.popov@linux
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594135436760859407?=
+X-GMAIL-MSGID: =?utf-8?q?1594147804079206914?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 5, 2018 at 1:02 PM, Kees Cook <keescook@chromium.org> wrote:
-> This specific class of flaw ("uninitialized" stack contents being used
-> or leaked) is already being looked for by tons of tools like KASan.
-> There are teams of people working on it, and they still haven't found
-> all the cases where these flaws appear.
+On Mon, Mar 5, 2018 at 1:40 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> This "mindlessly clear stack after use" is stupid.
 
-Right.
+In defense of the series, it's hardly "mindless". :) The primary
+feature is that it has run-time tracking of stack depth to clear only
+the minimum needed portion of the stack.
 
-So let's do the *smart* thing, not the *stupid* thing.
+> There are smart things we can do, and it's not just about "find the
+> problems" like KASAN, but also "avoid undefined behavior".
+>
+> I absolutely detest undefined compiler behavior. We should fix it. One
+> of the biggest mistakes C ever did was to have "undefined" in the
+> standard, and we already obviously limit that kind of broken behavior
+> with -fwrapv and -fno-strict-alias.
 
-This "mindlessly clear stack after use" is stupid.
+And -fno-delete-null-pointer-checks, and and and.... :P
 
-There are smart things we can do, and it's not just about "find the
-problems" like KASAN, but also "avoid undefined behavior".
+What we've done, traditionally, has always been two pronged: fix the
+kernel source and fix the compiler. Our kernel fixes have been short
+term (fixing specific instances where we notice a problem), with the
+compiler fix becoming the global solution down the road once everyone
+has that version of the compiler. This leaves a defense gap for bugs
+we haven't found yet (which are actually present, whether _we_ know
+about them or not :P).
 
-I absolutely detest undefined compiler behavior. We should fix it. One
-of the biggest mistakes C ever did was to have "undefined" in the
-standard, and we already obviously limit that kind of broken behavior
-with -fwrapv and -fno-strict-alias.
+The recent discussions on minimum compiler version underscore the fact
+that people move forward on compilers _very_ slowly. I've been trying
+to add a third prong (with many of these kinds of defenses), where we
+can address the gap. The first two prongs remain: fix the specific
+cases as they're uncovered (e.g. by KASan), and fix the global problem
+with the compiler (I recently detailed[1] four specific features I
+wanted to see from compilers on this front last week). Then the added
+third prong is: provide wide coverage _now_ for those that don't have
+a fixed compiler (especially when no such fix even exists right now)
+to catch all the cases we haven't found yet.
 
-Both of those disable what I consider to be just bugs in the C
-standard that should not be allowed for system software - it's a class
-of "stupid compiler tricks to generate bad code", which by definition
-a compiler shouldn't do. A compiler should generate *good* code, not
-random bad code.
+> This is more of the *smart* kind of behavior - I'm also perfectly
+> willing to say that automatic variables should just always initialize
+> to zero, exactly the same way static variables do.
+>
+> And it doesn't necessarily generate any worse code.
 
-And yes:
+I agree, though some performance-sensitive subsystem (e.g. networking)
+get very defensive about an always-on stack initialization[2]. No
+matter what happens with this kind of automatic initialization, I
+suspect it's going to have to stay a build-time option to let some
+people opt-out of it.
 
-> We've already seen multiple cases of this just with the by-ref
-> initialization plugin, where a stack content leak goes away because we
-> asked the compiler to please initialize the memory for us when we
-> forgot to do it ourselves. Getting the compiler to help us seems like
-> the obviously correct thing to do, since we're using such a
-> memory-safety-unfriendly language. :)
+> Honestly, with clearing of automatic variables, what stack leaks
+> really exists in practice that this all would help against?
 
-This is more of the *smart* kind of behavior - I'm also perfectly
-willing to say that automatic variables should just always initialize
-to zero, exactly the same way static variables do.
+As we both know, we have very different ideas about what "in practice"
+means for security flaws. :) So, yes, while auto-init gets us coverage
+for a large portion of stack content leak bugs, it's still temporally
+different from clearing the stack on exit. For example, a stack read
+flaw with a negative index can read out the prior syscall's deeper
+stack contents. Stack-clearing also reduces the lifetime of stack
+contents (e.g. in the case of cross-thread reads from another process,
+the time for the race to read the stack is longer). While these are
+certainly more rare cases, they do exist, and I've seen much weirder
+attacks.
 
-And it doesn't necessarily generate any worse code.
+Another case is that this series provides actual stack probing to
+detect VLA abuse. This is less of an issue now with VMAP_STACK, and
+I've had VLA removal on the long-term goal list for the kernel for a
+while now, but the probing does work...
 
-Why? Because it's the _intelligent_ thing to do - unlike some
-completely mindless idiotic "clear the stack" patch.
+I would love to see (and am already pursuing) auto-init (see [1]
+again), but this series does provide additional coverage, and it does
+it today.
 
-Now, I haven't actually seen the patches, I've only seen signs of
-them, but the signs I have seen very much seem to say "this is the
-mindless and *stupid* kind of crap that we should not do".
+-Kees
 
-Things like adding hundreds of lines of new asm code, just because.
+[1] http://www.openwall.com/lists/kernel-hardening/2018/02/27/41
+[2] Both these cases, and so many more, are solved with the byref
+initialization plugin, but have been NAKed by -net:
+     https://lkml.org/lkml/2013/4/9/641
+     https://lkml.org/lkml/2017/10/31/699
 
-So by all means, push the zero initializations of automatic variables.
-That's just good sense.
-
-But don't push this crap.
-
-              Linus
+-- 
+Kees Cook
+Pixel Security
