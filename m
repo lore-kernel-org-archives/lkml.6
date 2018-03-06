@@ -1,150 +1,158 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2203218-1521048016-2-14150032534124267472
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1039940-1520361376-2-2912814239664613691
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521048016; b=h9FA3N/OC+rTykYeC6hamkDmYePm+wBg8XWKXRuVLQeRqSB
-    Jhuea6dwsDotTTeRXf9dWrAeUZi1V6H4WNpcV/dFUc/kTM+45yp+4hocoYwPE+oZ
-    QKEFt3oiXTI+nbcO4tw15I5YI4LedlRz942SFtG1ORMitjFzxs/E5hcUAqF7CRv9
-    1klj2A8yW05nIjelu753f3ISoj0dJ7d/NaASvgcJ8jd08XExKfAtltqmIYnWjmL6
-    0QU2UdgBIucZJ31u8lNdVtdBDsKqr+m6TsbS9wY+N/mukOmBktdoVxToOqqMcW0/
-    aIrYJS9OQtw0C8KFj1vGQhDZsUuioxoGrQU+a7Q==
+    t=1520361375; b=LEkfHNXFhfrlq88kYZeLh7/WRdGOJaWJwgqCbhYcIvwPMHz
+    hApudDGAQW0VJ5gMfxGVA4tUg3xs2P407sR+hon9Cbwrq7SqoVCMIcff7WOJ34Jf
+    dFVjxPgIW/UL90pR5DogJL8c8C4Pr/FNvf0HgQs7nim0+aPw+y0PRkbIQIKLkGP4
+    WILfR3RklsxbBX5ztuTXFJTXbB178mtmflMZPUjhipF7Ebgvhdma2IggELmf6e/v
+    Lk4oOJGBRDyPz/WwMC+cudGcTNoJ73T48Dhos7zU/5XiU8lenmD2RRxqDR78VzGm
+    63t+c5kxBv6+WjAexrmWRAv0Xc84SmF2l8voREg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=
-    arctest; t=1521048016; bh=no6ECmIAXcvsTCN8FmYoGyWYzZJTICAt6nTIpz
-    FxPCI=; b=JysF+NA2TKvtjI9YZprIkcnKXmweX6MV/4dc4xJ7+ZS+yvINcYiID4
-    q4qxgAh6cXG2hYRgqNedE7bGPPMHyVcMOR81ntCk+wW+c5FH9obcYJ+oYGbO01BL
-    jwrmQfMS8lXUEmJNm+fXh7ttFNu6kYjK3m3Stbl5tuck6qQTnBObQjLWk29+iPuS
-    LKTdRg1u8IpHZPJPRt4L0iEbQrwh1N1BTvdhOfdWevhLJrGDX+Xb0gmjJFjECnJW
-    CidWcvKS9m5NRjo2oIrHwv/y7Qimfug6gVFkh+9sfdO5Wx12WLlt18EjQYEyNQx1
-    1X3y1IVXh+ibrFNou7zpr8DFAUrdCYFw==
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520361375; bh=H
+    BsLvfRKyKPQKfgn6iPX8PGaAj2LSTmGxzDuquqcH0g=; b=tPS3mik7xCic7SHd2
+    DYDpErd19Sd+cqCUxmvFKu0RjogR8ULIeonOgf+R8fluVTDsbIdCRO+DyMbmLtxL
+    4mV2OF5u2WU1aJ5PKSvyn7k0ej6tmZLzlD075AzgvWkoy9ipNFYvC115ah57RwKH
+    FUmmLbI77JWVj/61nZHVUALrmouM/oootKPYiNpJCcUInq1C0rpG1WN7wsKkIMK6
+    oCPWogOpYpFq9FagSGm3wlyO4W0TFkX9oAIA1vhADfyf3qz6viwF7Ax57HpQSN9K
+    pRnE/OaCfb2QeIQG32Cna1mzo2EqShzEdmFK8AhNe/As2R3kzG9obfORv2zPho4R
+    QWGUQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Hjj6ZxCu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Hjj6ZxCu x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751790AbeCNRUA (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 14 Mar 2018 13:20:00 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49003 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751362AbeCNRT6 (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Wed, 14 Mar 2018 13:19:58 -0400
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: Re: [RESEND PATCH v4 3/3] ARM: dts: STi: Remove console=ttyASN from
- bootargs for STi boards] ARM: dts: STi: Remove "console=ttyASN" from bootargs
- for STi boards
-Thread-Topic: [RESEND PATCH v4 3/3] ARM: dts: STi: Remove console=ttyASN from
- bootargs for STi boards] ARM: dts: STi: Remove "console=ttyASN" from bootargs
- for STi boards
-Thread-Index: AQHTu7iWVCnNXxu9p0enlgZ7Wg96LQ==
-Date: Wed, 14 Mar 2018 17:19:19 +0000
-Message-ID: <315aff9e-506c-cbdc-874a-082c147fe81c@st.com>
-References: <1521039159-16655-1-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1521039159-16655-1-git-send-email-patrice.chotard@st.com>
-Accept-Language: fr-FR, en-US
+    x-category=clean score=-100 state=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Dexuan Cui <decui@microsoft.com>
+To: "bhelgaas@google.com" <bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+ <linux-pci@vger.kernel.org>, KY Srinivasan <kys@microsoft.com>, Stephen
+ Hemminger <sthemmin@microsoft.com>, "olaf@aepfle.de" <olaf@aepfle.de>,
+ "apw@canonical.com" <apw@canonical.com>, "jasowang@redhat.com"
+ <jasowang@redhat.com>
+Subject: [PATCH v3 0/6] some fixes to the pci-hyperv driver.
+Thread-Topic: [PATCH v3 0/6] some fixes to the pci-hyperv driver.
+Thread-Index: AQHTtXf7PitDCSv6zUCzJu5CMiqdGg==
+Date: Tue, 6 Mar 2018 18:21:45 +0000
+Message-ID: <20180306182128.23281-1-decui@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F55E529FEAD6FB48B630264F516092AE@st.com>
-Content-Transfer-Encoding: base64
+x-mailer: git-send-email 2.15.1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com;
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1; KL1P15301MB0021;
+ 7:D/u6uOCLadU7peJVrx+M5z9Jt2a23IlI6vVuIY7NLDFYzkfp7pODGaEZv9svWAOQR0srVsUPQyysDZHM/5MpfO12OKEraRcGmTA3J3BuGa75VfYKOjf1WWTEggrLO/CqISgRdZ1NNVajAwTAzF2NLGOWhVEjM+SGCDriYVKlKgdL5DjkKuK5v6H/duEyq1/VRQ72d6D7i3Ii4UNGv/ocqqSseI4FR/oLr32XNucFc+WWC8cZVpZxaTch3vgaWgR5;
+ 20:REcuF8+nP50cvrAHy47ooWgJcNGESjs6Z3sQF6BIz9rxNJOBN0MEyznfq72ttMdNnEy1ZuPlCVoQPKd6Bo+J8IJdL7JeZ6o54b3tC4/dAhthPt8CwFIFirPQuFVTdRKlHesrueRSwXzFhoytUyl7MmaRd2Z8saOX/bKbfUk8UW0=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;SSOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 80a49b3a-4721-4bc5-c68b-08d5838f1ebc
+x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);
+ SRVR:KL1P15301MB0021;
+x-ms-traffictypediagnostic: KL1P15301MB0021:
+x-microsoft-antispam-prvs: <KL1P15301MB0021DFA60B447413A23B2927BFD90@KL1P15301MB0021.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
+ RULEID:(8211001083)(61425038)(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041288)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);
+ SRVR:KL1P15301MB0021; BCL:0; PCL:0; RULEID:; SRVR:KL1P15301MB0021;
+x-forefront-prvs: 06036BD506
+x-forefront-antispam-report: SFV:NSPM;
+ SFS:(10019020)(396003)(39860400002)(39380400002)(346002)(376002)(366004)(199004)(189003)(5660300001)(36756003)(22452003)(1511001)(10090500001)(2501003)(66066001)(316002)(7736002)(14454004)(10290500003)(2201001)(99286004)(305945005)(478600001)(25786009)(4326008)(86362001)(102836004)(106356001)(6506007)(105586002)(186003)(77096007)(26005)(3660700001)(110136005)(2900100001)(54906003)(68736007)(50226002)(97736004)(8676002)(81156014)(81166006)(8936002)(53936002)(3280700002)(6116002)(86612001)(6436002)(6512007)(2906002)(1076002)(6486002)(107886003)(3846002)(22906009);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:KL1P15301MB0021;
+ H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM; FPR:; SPF:None; PTR:InfoNoRecords;
+ A:1; MX:1; LANG:en;
+x-microsoft-antispam-message-info: Cum1XPBHU9AuToGNIht6gKNyrjsjit7SGUFMIk0O7NU7EXKw4FLxaXKBNSF+zhxTgWSV4QXqo7XNOTKKaXyHr5TPMj7ls1v9hkGoA61AYJ5QSdiB9/o9oTUKaAViR7PlWVeWYEsoucvALfAcZABmZmIkQ4c4G3+QV03nggPXXVLEcnjUEPBBHrPqSqDlsMzUi9vdwWcxryFd9XcKUObI8b5ZxEEj+hzRFcrSDrEtcD95Xq+inAMLoJRkMuN2sdX/2LyK7cxJxr+dTxDZqE35oOZWWtUfF4mWZpUhEGDM4sdlYvAbs/oBtnWTwm13LJLw9N+YQ5/y7rK+EnagiucftA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-14_09:,,
- signatures=0
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80a49b3a-4721-4bc5-c68b-08d5838f1ebc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2018 18:21:45.7339 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0021
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>,
+ "driverdev-devel@linuxdriverproject.org"
+ <driverdev-devel@linuxdriverproject.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Michael Kelley
+ \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+ "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-U29ycnkNCg0KSSBqdXN0IG5vdGljZWQgIHRoYXQgdGhlIGNvbW1pdCBoZWFkZXIgaXMgY29ycnVw
-dGVkDQpJIHdpbGwgcmVzZW5kIHRoaXMgcGF0Y2gNCg0KUGF0cmljZQ0KDQpPbiAwMy8xNC8yMDE4
-IDAzOjUyIFBNLCBwYXRyaWNlLmNob3RhcmRAc3QuY29tIHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNl
-IENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiBBcyBzZXJpYWwgaW50ZXJm
-YWNlIGlzIGFscmVhZHkgc3BlY2lmaWVkIGludG8gc3Rkb3V0LXBhdGggcHJvcGVydHksDQo+ICJj
-b25zb2xlPXR0eUFTTiwxMTUyMDAiIGZyb20gYm9vdGFyZ3MgY2FuIGJlIHJlbW92ZWQuDQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+
-DQo+IC0tLQ0KPiANCj4gdjQ6IF8gbm9uZQ0KPiB2MzogXyByZW1vdmUgImNvbnNvbGU9c2VyaWFs
-TiwxMTUyMDAiIGZyb20gYm9vdGFyZ3MgYW5kIHVzZSBwcmVmZXJlZA0KPiAgICAgICAgc3Rkb3V0
-LXBhdGggcHJvcGVydHkNCj4gdjI6IF8gbm9uZQ0KPiANCj4gICBhcmNoL2FybS9ib290L2R0cy9z
-dGloNDA3LWIyMTIwLmR0cyB8IDIgKy0NCj4gICBhcmNoL2FybS9ib290L2R0cy9zdGloNDEwLWIy
-MTIwLmR0cyB8IDIgKy0NCj4gICBhcmNoL2FybS9ib290L2R0cy9zdGloNDEwLWIyMjYwLmR0cyB8
-IDIgKy0NCj4gICBhcmNoL2FybS9ib290L2R0cy9zdGloNDE4LWIyMTk5LmR0cyB8IDIgKy0NCj4g
-ICA0IGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gDQo+
-IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWIyMTIwLmR0cyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL3N0aWg0MDctYjIxMjAuZHRzDQo+IGluZGV4IDM3ZjJkZGJmYTA5OS4uYTdh
-MGY3NmU5Y2JjIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWIyMTIw
-LmR0cw0KPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDA3LWIyMTIwLmR0cw0KPiBAQCAt
-MTQsNyArMTQsNyBAQA0KPiAgIAljb21wYXRpYmxlID0gInN0LHN0aWg0MDctYjIxMjAiLCAic3Qs
-c3RpaDQwNyI7DQo+ICAgDQo+ICAgCWNob3NlbiB7DQo+IC0JCWJvb3RhcmdzID0gImNvbnNvbGU9
-dHR5QVMwLDExNTIwMCBjbGtfaWdub3JlX3VudXNlZCI7DQo+ICsJCWJvb3RhcmdzID0gImNsa19p
-Z25vcmVfdW51c2VkIjsNCj4gICAJCWxpbnV4LHN0ZG91dC1wYXRoID0gJnNiY19zZXJpYWwwOw0K
-PiAgIAl9Ow0KPiAgIA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC1i
-MjEyMC5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9zdGloNDEwLWIyMTIwLmR0cw0KPiBpbmRleCBh
-NmYwMGE2Njg3YTkuLjZjNmI0Y2MzN2U5NyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9k
-dHMvc3RpaDQxMC1iMjEyMC5kdHMNCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC1i
-MjEyMC5kdHMNCj4gQEAgLTE0LDcgKzE0LDcgQEANCj4gICAJY29tcGF0aWJsZSA9ICJzdCxzdGlo
-NDEwLWIyMTIwIiwgInN0LHN0aWg0MTAiOw0KPiAgIA0KPiAgIAljaG9zZW4gew0KPiAtCQlib290
-YXJncyA9ICJjb25zb2xlPXR0eUFTMCwxMTUyMDAgY2xrX2lnbm9yZV91bnVzZWQiOw0KPiArCQli
-b290YXJncyA9ICJjbGtfaWdub3JlX3VudXNlZCI7DQo+ICAgCQlsaW51eCxzdGRvdXQtcGF0aCA9
-ICZzYmNfc2VyaWFsMDsNCj4gICAJfTsNCj4gICANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jv
-b3QvZHRzL3N0aWg0MTAtYjIyNjAuZHRzIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RpaDQxMC1iMjI2
-MC5kdHMNCj4gaW5kZXggNjI3NzA0OTZlMzI4Li41MGQzNjc1ODM5MWMgMTAwNjQ0DQo+IC0tLSBh
-L2FyY2gvYXJtL2Jvb3QvZHRzL3N0aWg0MTAtYjIyNjAuZHRzDQo+ICsrKyBiL2FyY2gvYXJtL2Jv
-b3QvZHRzL3N0aWg0MTAtYjIyNjAuZHRzDQo+IEBAIC0xNSw3ICsxNSw3IEBADQo+ICAgCWNvbXBh
-dGlibGUgPSAic3Qsc3RpaDQxMC1iMjI2MCIsICJzdCxzdGloNDEwIjsNCj4gICANCj4gICAJY2hv
-c2VuIHsNCj4gLQkJYm9vdGFyZ3MgPSAiY29uc29sZT10dHlBUzEsMTE1MjAwIGNsa19pZ25vcmVf
-dW51c2VkIjsNCj4gKwkJYm9vdGFyZ3MgPSAiY2xrX2lnbm9yZV91bnVzZWQiOw0KPiAgIAkJbGlu
-dXgsc3Rkb3V0LXBhdGggPSAmdWFydDE7DQo+ICAgCX07DQo+ICAgDQo+IGRpZmYgLS1naXQgYS9h
-cmNoL2FybS9ib290L2R0cy9zdGloNDE4LWIyMTk5LmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3N0
-aWg0MTgtYjIxOTkuZHRzDQo+IGluZGV4IDM2ZjQwZjU4MTU1ZC4uN2Y1ZjMyNTJiZmM3IDEwMDY0
-NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9zdGloNDE4LWIyMTk5LmR0cw0KPiArKysgYi9h
-cmNoL2FybS9ib290L2R0cy9zdGloNDE4LWIyMTk5LmR0cw0KPiBAQCAtMTQsNyArMTQsNyBAQA0K
-PiAgIAljb21wYXRpYmxlID0gInN0LHN0aWg0MTgtYjIxOTkiLCAic3Qsc3RpaDQxOCI7DQo+ICAg
-DQo+ICAgCWNob3NlbiB7DQo+IC0JCWJvb3RhcmdzID0gImNvbnNvbGU9dHR5QVMwLDExNTIwMCBj
-bGtfaWdub3JlX3VudXNlZCI7DQo+ICsJCWJvb3RhcmdzID0gImNsa19pZ25vcmVfdW51c2VkIjsN
-Cj4gICAJCWxpbnV4LHN0ZG91dC1wYXRoID0gJnNiY19zZXJpYWwwOw0KPiAgIAl9Ow0KPiAgIA0K
-PiA=
+Changes in v2 are:
+
+Patch 1, 6: no change since v1.
+Patch 2,4,5: I added these new patches, as suggested by Michael Kelley.
+Patch 3: Removed the unnecessary drain_workqueue(), as suggested by Michael Kelley.
+
+Changes in v3 are:
+
+Patch 5: minimized the scope of the spinlock, as suggested by Michael Kelley.
+
+Dexuan Cui (6):
+  PCI: hv: fix a comment typo in _hv_pcifront_read_config()
+  PCI: hv: hv_eject_device_work(): remove the bogus test
+  PCI: hv: serialize the present/eject work items
+  PCI: hv: remove hbus->enum_sem
+  PCI: hv: hv_pci_devices_present(): only queue a new work when
+    necessary
+  PCI: hv: fix 2 hang issues in hv_compose_msi_msg()
+
+ drivers/pci/host/pci-hyperv.c | 116 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 90 insertions(+), 26 deletions(-)
+
+-- 
+2.7.4
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
