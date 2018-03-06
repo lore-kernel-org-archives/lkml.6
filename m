@@ -1,47 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753184AbeCFISZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:18:25 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38681 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750769AbeCFISX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:18:23 -0500
-X-Google-Smtp-Source: AG47ELtWolFhDx0AuPhWlA/u+3BvyAabqpfSX8NGHJzLMSm2juXzoizH8jdPXT0aFM5SkaMM8O+Fxg==
-Date: Tue, 6 Mar 2018 11:18:07 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC, PATCH 13/22] mm, rmap: Free encrypted pages once mapcount
- drops to zero
-Message-ID: <20180306081807.f3ohd7fg6jpohg4h@node.shutemov.name>
-References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
- <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
- <eb2cc1cf-1be1-4535-f71b-fa33272a6f71@intel.com>
+        id S1750865AbeCFI0c convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:26:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54402 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750730AbeCFI0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 03:26:31 -0500
+Date: Tue, 6 Mar 2018 09:26:18 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: =?UTF-8?B?5qyn6Ziz5b+X5b+g?= <oyzhizhong@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        boris.brezillon@free-electrons.com,
+        Marek =?UTF-8?B?VmHFoXV0?= <marek.vasut@gmail.com>, richard@nod.at,
+        vdavydov.dev@gmail.com, cyrille.pitchen@wedev4u.fr,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mtdchar: fix usage of mtd_ooblayout_ecc()
+Message-ID: <20180306092618.1ac355d2@bbrezillon>
+In-Reply-To: <CAPrnC+CMH-o_LCWqnEFH4v7K1VVVU3hstKorHb+-XZvp3xy6AA@mail.gmail.com>
+References: <CAPrnC+CMH-o_LCWqnEFH4v7K1VVVU3hstKorHb+-XZvp3xy6AA@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb2cc1cf-1be1-4535-f71b-fa33272a6f71@intel.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 11:12:15AM -0800, Dave Hansen wrote:
-> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
-> >  extern void prep_encrypt_page(struct page *page, gfp_t gfp, unsigned int order);
-> > +extern void free_encrypt_page(struct page *page, int keyid, unsigned int order);
-> 
-> The grammar here is weird, I think.
-> 
-> Why not free_encrypted_page()?
+On Tue, 6 Mar 2018 11:13:25 +0800
+欧阳志忠 <oyzhizhong@gmail.com> wrote:
 
-Okay, I'll fix this.
+> Section was not properly computed. The value of OOB region definition is
+> always ECC section 0 information in the OOB area, but we want to get all
+> the ECC bytes information, so we should call
+> mtd_ooblayout_ecc(mtd, section++, &oobregion) until it returns -ERANGE.
+> 
+
+You still miss the Fixes and Cc-stable tags:
+
+Fixes: c2b78452a9db ("mtd: use mtd_ooblayout_xxx() helpers where appropriate")
+Cc: <stable@vger.kernel.org>
+
+Looks good otherwise.
+
+I'm just curious, how did you find the problem? Do you have a userspace
+tool that queries the OOB/ECC layout?
+
+> Signed-off-by: OuYang ZhiZhong <oyzhizhong@gmail.com>
+> ---
+>  drivers/mtd/mtdchar.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+> index de8c902..7d80a8b 100644
+> --- a/drivers/mtd/mtdchar.c
+> +++ b/drivers/mtd/mtdchar.c
+> @@ -479,7 +479,7 @@ static int shrink_ecclayout(struct mtd_info *mtd,
+>   for (i = 0; i < MTD_MAX_ECCPOS_ENTRIES;) {
+>   u32 eccpos;
+> 
+> - ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
+> + ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
+>   if (ret < 0) {
+>   if (ret != -ERANGE)
+>   return ret;
+> @@ -526,7 +526,7 @@ static int get_oobinfo(struct mtd_info *mtd, struct
+> nand_oobinfo *to)
+>   for (i = 0; i < ARRAY_SIZE(to->eccpos);) {
+>   u32 eccpos;
+> 
+> - ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
+> + ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
+>   if (ret < 0) {
+>   if (ret != -ERANGE)
+>   return ret;
+
+
 
 -- 
- Kirill A. Shutemov
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
