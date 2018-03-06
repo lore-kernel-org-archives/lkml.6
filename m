@@ -1,125 +1,111 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4155484-1520330435-2-14625554242818166938
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-5053-1520330363-2-13050165594764122708
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES daen, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520330435; b=FdVTs5vFNyFyAaBhXtmC2zCv9UwXuJ80jYAVBACoClrgvJ8
-    4XnFo65P5j8m7oE7wkcjcDWL6L1idavGvBEULpKUzdFFOz55qVmaInDiqX1bTmwO
-    7U5XtW4E4ZkLSxjCPjxso10+tDuQItdl5/47trpM2hnf9bfiaJunznPPSnDqfV0k
-    e0vX6p2/Ny6A3OfWdiX/hQuBK43vhev9CxYwJKzIblyts8aVYkWrOtCgNG18modH
-    XK1SxpArVPqQkRe61Oy4tuRhwoiewec7yrEehizzbGui5SvEeq8UuEdwZV3wrTX0
-    YrqLp3U0Hz6IEoXW+Qz+l4PvIdBxsZJaXybSxUA==
+    t=1520330362; b=hI8ZdM+2Pb45oor3OwKmfTZ2+6/VoczWEIrZpcoZzV3LRiw
+    Bpmbj6SEW+ITJU+hnXiptSpkeJ0urpOjrmStXN3540SFB+yP+UuFGukrP5w1KmTu
+    voYe73jqeZBXcjaHWWx91G0UdYTjLzGhPbsV26yXls/u0cg2f2Min4O3CXfLAjic
+    Yoj72roQCEsM8Iwki+jTXJ3ec31Bo6ss9UoDlpztSWAYHctrnQvmh8gTRVlHVWFu
+    vhUqYqqfHhLNqjFwT/8uM3MJtlTv6/HauwMEns7JUy6wd94OvO+MrSTEc/dUs8cS
+    eqsmY2xkPInnOU6PIxrlSMH+rbnRaE1+ERaAvEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520330435; bh=0
-    6mZOnVCRUWkeXCi1RZ+GFO1sBTxstxx8wgSSosm/y8=; b=MQu8bbGPRqLF4mdxp
-    1RL/loZHHcsf6JE6epOKW0b8Qgt4Dt5BzQPRJwbmvxB2CppXVMzZMY7kAESoGJF9
-    JoVfOucsDFPTwcG9/jjJDrIecOUvWF6SX1189Dj8xuf16TVzjbNqOL/QbwKGmAso
-    a/NGnwiT24GO6INmSkieD6bduwl2FnD1pNWE9aL9KxGHXTXdQ57LpB30gFW3OrqX
-    vQF2WwhTSaeiOJK+XZgGepgjjdClyWFDSHlyWUTOIcQ1Na8GuDPxp0hmbHJLZahg
-    kloekAB5fyTnbgDPK6TkI1UxcjiwKU/kRHtlp8/e2jWDazoWsos2oPeRpoMN6cFf
-    g01ZA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=
+    arctest; t=1520330362; bh=m/1KGQgMEzCmHlcDmVLTEjuZh5drILc5pgSNPN
+    k5wm4=; b=R9SrqTtprTsytBZ/NJZ6vmHDw24SsV7nCLXuzYm1uyGYgz8P71TgBz
+    kUfaTqEQZ84SARFb6iLPmAhnHDAIBoOVdu1n6t9wFg9rpZq5xaego/XcUsn82Tqn
+    cgb8IxL7xU4Ha2+oP0ZtzUNZ030O47lbrO5jqIAztF33Giz1Byl17JzWoQE8galt
+    pkcJ9URwQueOH7/uhBvL+CJaVXC82MSKomMS+GaBPvGTP1TY518IE0EUfjjJ1Ny6
+    sgBKNBUi+H8IW7UK0CFsDON7ut89Ef5589vYl0XsdzTSvU4FndyIKBBvDqgX6zqR
+    LL02Rk37O6VgZtRNUQx/gUwpkhuhiI+Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=st.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=0 state=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	wsa@the-dreams.de
-Subject: [PATCH] staging: ks7010: Replace literal with constant.
-Date: Tue,  6 Mar 2018 02:00:04 -0800
-Message-Id: <20180306100004.19416-1-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-X-Provags-ID: V03:K0:mgFeca0/v008agY+b35pZOSTZ/L5SePXXPu1h/ar13ppRMNMgA6
- r0nyqawOL6RrGH5SjVn8OhA1+GNmhsndPbbscBOJ/1nT1hZRu5TL9sEGHwEaXKVrSv866c4
- qOUEoxO3G0bLPKzgSFINYzqPkEixO10S/1npqR+M9NjPk0nGfumuBby+0pX086Q1TSwGT3l
- 7JU7oVaQTyD0/88pqdP1Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:EIS++cdamm4=:SqfyY/MJDLE3RIB2o9KDNO
- lliRcTnH3FAaRcy0RLc8AdfWMQCHL2jM13XCd6zmVKdx2FbACEyUWnQQPSBpc1L6LPRZjjEJR
- zzMPz1v33ss1Ve34tSnz1CbSrQZvqqjw0GRni1Hmz92B2NCfUGgwpdqrhh6b3iQyF6iYTbPgm
- KZKMBuKArIzElPC33Q6ZHgFcQPc0DIM7xlUm5In1iO4NDq3Du5R4DHWFk3suH8Urk4bM8IGWV
- 9kzDxw9oMhBZJ4fZNkk8EUzAO/xbstc86++Ake3y5pYV1rfnfVQvNoFjDtIXRP2p/fkD1RSYw
- dl3mLe/uBxZBB4hAwu5u+vwoocIMy2BF8eO72wOMGKg08Fcp3g7MH9O5UTmOghm3jfXK9w8qZ
- f5lT15Dg55p/luxK1dRBEa5Z2SIp0DX47KfsOS7qnAY/U+F+WZFCmXS2py/d3vUzRPHbcVV9C
- +6HluPWckJR1soYidbHtYAYUEDwEUui5P2c4hu/DQBRaVI2JMNzMmfpkPHzwPugWoOzAnGN7N
- RTeurNPcq9JPWNmVjZB0aP57D9O1QkZcKf0EXclF1mCtaSyCwJ/xiYQgszhTyW/JRztZVXO/n
- 8dPdcoijsvNA9mV1sLRHp93QYUQw96Vl65/3xJc3m2C2FKqyNMvnJyLTOkBZ2HOnixBtbkEDn
- TIxEOXtFlmuHdRZwFygQmkYYn6jUuZSXRwFUORS6YChIM4n+TPDoSgkQQRjO6+LGmRke/bW2K
- qfp4QeJJsRDf/iVydGTTGAr4srf+tEfKfgKH1A==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=st.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753335AbeCFJ7J (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 04:59:09 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42658 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750836AbeCFJ7H (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:59:07 -0500
+From: Bich HEMON <bich.hemon@st.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] Update interrupt names
+Thread-Topic: [PATCH 0/2] Update interrupt names
+Thread-Index: AQHTsIIPpjIbAcUZf0OKeLK3O9cgzKPC8Z0A
+Date: Tue, 6 Mar 2018 09:58:38 +0000
+Message-ID: <d855b529-be9b-13d9-8834-c2d0b7a16884@st.com>
+References: <1519815044-22669-1-git-send-email-bich.hemon@st.com>
+In-Reply-To: <1519815044-22669-1-git-send-email-bich.hemon@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0AA9BE539F3A4A4AAAC39B354D85FF2F@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_05:,,
+ signatures=0
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace literal bytestring with CIPHER_ID_WPA_WEP40 constant.
-
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
- drivers/staging/ks7010/ks_hostif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 7935ba56bb1d..05f7be4638fe 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -293,7 +293,7 @@ int get_ap_information(struct ks_wlan_private *priv, struct ap_info_t *ap_info,
- 			memcpy(ap->rsn_ie.body, bp + 2, ap->rsn_ie.size);
- 			break;
- 		case WLAN_EID_VENDOR_SPECIFIC: /* WPA */
--			if (memcmp(bp + 2, "\x00\x50\xf2\x01", 4) == 0) { /* WPA OUI check */
-+			if (memcmp(bp + 2, CIPHER_ID_WPA_WEP40, 4) == 0) { /* WPA OUI check */
- 				ap->wpa_ie.id = *bp;
- 				if (*(bp + 1) <= RSN_IE_BODY_MAX) {
- 					ap->wpa_ie.size = *(bp + 1);
--- 
-2.16.2
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+SGkgYWxsLA0KDQpPbiAwMi8yOC8yMDE4IDExOjUxIEFNLCBCaWNoIEhFTU9OIHdyb3RlOg0KPiBU
+aGlzIHBhdGNoc2V0IHVwZGF0ZXMgZXhpc3Rpbmcgc3RtMzIgdXNhcnQgZHJpdmVyIGJ5IHVwZGF0
+aW5nIGludGVycnVwdA0KPiBpbml0aWFsaXphdGlvbiBieSBuYW1lLg0KPiANCj4gQmljaCBIZW1v
+biAoMik6DQo+ICAgIGR0LWJpbmRpbmdzOiBzZXJpYWw6IHN0bTMyOiBhZGQgd2FrZXVwIG9wdGlv
+biB1c2luZyBub3RlDQo+ICAgIHNlcmlhbDogc3RtMzI6IHVwZGF0ZSBpbnRlcnJ1cHQgaW5pdGlh
+bGl6YXRpb24NCj4gDQo+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Nlcmlh
+bC9zdCxzdG0zMi11c2FydC50eHQgfCA0ICsrKysNCj4gICBkcml2ZXJzL3R0eS9zZXJpYWwvc3Rt
+MzItdXNhcnQuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDQgKystLQ0KPiAgIDIgZmls
+ZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCg0KUGxlYXNl
+IG5vdGUgdGhhdCB0aGlzIHBhdGNoIHNldCBpcyBhYmFuZG9uZWQuIEFzIFJvYiBwb2ludGVkIHRo
+YXQgb3V0LCANCnRoZSBpbnRlcnJ1cHQgaW5kaWNlcyBhcmUgZml4ZWQsIHNvIHRoZXJlIGlzIG5v
+IG5lZWQgdG8ga2VlcCB0aGVzZSBwYXRjaGVzLg0KDQpCZXN0IHJlZ2FyZHMsDQoNCkJpY2g=
