@@ -1,91 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753525AbeCFOPp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:15:45 -0500
-Received: from bert.emutex.com ([91.103.1.109]:48165 "EHLO bert.emutex.com"
+        id S1753598AbeCFORL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:17:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750817AbeCFOPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:15:43 -0500
-From: Javier Arteaga <javier@emutex.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Javier Arteaga <javier@emutex.com>
-Subject: [PATCH] pinctrl: intel: Implement intel_gpio_get_direction callback
-Date: Tue,  6 Mar 2018 13:42:13 +0000
-Message-Id: <20180306134213.16898-1-javier@emutex.com>
-X-Mailer: git-send-email 2.16.2
-X-Spam-Score: -1.0 (-)
-X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  Allows querying GPIO direction from the pad config register.
-    If the pad is not in GPIO mode, return an error. Signed-off-by: Javier Arteaga
-    <javier@emutex.com> --- This is needed by the drivers for the UP Squared
-   board, an APL-based platform. (For now, these drivers are out-of-tree.) [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+        id S1750838AbeCFORJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:17:09 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E54320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 6 Mar 2018 11:17:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: changbin.du@intel.com, peterz@infradead.org, mingo@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] perf sched map: re-annotate shortname if thread
+ comm changed
+Message-ID: <20180306141707.GG10176@kernel.org>
+References: <1520307457-23668-1-git-send-email-changbin.du@intel.com>
+ <20180306075302.GA19895@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306075302.GA19895@krava>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allows querying GPIO direction from the pad config register.
-If the pad is not in GPIO mode, return an error.
+Em Tue, Mar 06, 2018 at 08:53:02AM +0100, Jiri Olsa escreveu:
+> On Tue, Mar 06, 2018 at 11:37:35AM +0800, changbin.du@intel.com wrote:
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > v2:
+> >   o add a patch to move thread::shortname to thread_runtime
+> >   o add function perf_sched__process_comm() to process PERF_RECORD_COMM event.
+> > 
+> > Changbin Du (2):
+> >   perf sched: move thread::shortname to thread_runtime
+> >   perf sched map: re-annotate shortname if thread comm changed
+> 
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Signed-off-by: Javier Arteaga <javier@emutex.com>
----
-This is needed by the drivers for the UP Squared board, an APL-based
-platform. (For now, these drivers are out-of-tree.)
+Thanks, applied both, the final layout for 'struct thread_runtime':
 
-An earlier version of this patch was reviewed some time ago by Andy
-Shevchenko outside of the mailing lists:
-<https://github.com/emutex/ubilinux-kernel/commit/708a776f2ffd1b1c>
+[root@jouet perf]# pahole -C thread_runtime ~/bin/perf
+struct thread_runtime {
+	u64                        last_time;            /*     0     8 */
+	u64                        dt_run;               /*     8     8 */
+	u64                        dt_sleep;             /*    16     8 */
+	u64                        dt_iowait;            /*    24     8 */
+	u64                        dt_preempt;           /*    32     8 */
+	u64                        dt_delay;             /*    40     8 */
+	u64                        ready_to_run;         /*    48     8 */
+	struct stats               run_stats;            /*    56    40 */
+	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
+	u64                        total_run_time;       /*    96     8 */
+	u64                        total_sleep_time;     /*   104     8 */
+	u64                        total_iowait_time;    /*   112     8 */
+	u64                        total_preempt_time;   /*   120     8 */
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	u64                        total_delay_time;     /*   128     8 */
+	int                        last_state;           /*   136     4 */
+	char                       shortname[3];         /*   140     3 */
+	_Bool                      comm_changed;         /*   143     1 */
+	u64                        migrations;           /*   144     8 */
 
- drivers/pinctrl/intel/pinctrl-intel.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 96e73e30204e..1e24a6b8a64e 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -788,6 +788,24 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
- 
-+static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
-+	void __iomem *reg;
-+	u32 padcfg0;
-+
-+	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	if (!reg)
-+		return -EINVAL;
-+
-+	padcfg0 = readl(reg);
-+
-+	if (padcfg0 & PADCFG0_PMODE_MASK)
-+		return -EINVAL;
-+
-+	return !!(padcfg0 & PADCFG0_GPIOTXDIS);
-+}
-+
- static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
- 	return pinctrl_gpio_direction_input(chip->base + offset);
-@@ -804,6 +822,7 @@ static const struct gpio_chip intel_gpio_chip = {
- 	.owner = THIS_MODULE,
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-+	.get_direction = intel_gpio_get_direction,
- 	.direction_input = intel_gpio_direction_input,
- 	.direction_output = intel_gpio_direction_output,
- 	.get = intel_gpio_get,
--- 
-2.16.2
+	/* size: 152, cachelines: 3, members: 17 */
+	/* last cacheline: 24 bytes */
+};
+[root@jouet perf]#
