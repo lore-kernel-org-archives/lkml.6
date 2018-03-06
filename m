@@ -1,78 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932659AbeCFMRI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:17:08 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60332 "EHLO mail.bootlin.com"
+        id S1753648AbeCFMRL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:17:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:49160 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752936AbeCFMRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:17:03 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v5 3/5] MIPS: mscc: add ocelot PCB123 device tree
-Date: Tue,  6 Mar 2018 13:16:05 +0100
-Message-Id: <20180306121607.1567-4-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
-References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
+        id S932646AbeCFMRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:17:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="209252114"
+Message-ID: <1520338622.3779.1.camel@linux.intel.com>
+Subject: Re: [PATCH 0/5 V2] tpm: timeouts revamp
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 06 Mar 2018 14:17:02 +0200
+In-Reply-To: <20180306092503.11568-1-tomas.winkler@intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a device tree for the Microsemi Ocelot PCB123 evaluation board.
+On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
+> This series cleans up tpm timeouts setting and handling.
+> 
+> First motivation was to fix failures coming from too short timeouts
+> for commands that creates keys.
+> Key generation may take significant time depending on the underlying
+> hardware. Rather than increasing default timeout a new constant is
+> added, to not stall too long on regular commands failures.
+> 
+> Second is to define timeouts for new tpm2 commands
+> defined in TCG 1.36 spec.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/mips/boot/dts/mscc/Makefile          |  2 ++
- arch/mips/boot/dts/mscc/ocelot_pcb123.dts | 27 +++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb123.dts
+Where can we get that specification? I don't have that new
+version and couldn't find it from the public internet.
 
-diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
-index dd08e63a10ba..c51164537c02 100644
---- a/arch/mips/boot/dts/mscc/Makefile
-+++ b/arch/mips/boot/dts/mscc/Makefile
-@@ -1 +1,3 @@
-+dtb-$(CONFIG_LEGACY_BOARD_OCELOT)	+= ocelot_pcb123.dtb
-+
- obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/mscc/ocelot_pcb123.dts b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
-new file mode 100644
-index 000000000000..b4e3860c6cf4
---- /dev/null
-+++ b/arch/mips/boot/dts/mscc/ocelot_pcb123.dts
-@@ -0,0 +1,27 @@
-+//SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/* Copyright (c) 2017 Microsemi Corporation */
-+
-+/dts-v1/;
-+
-+#include "ocelot.dtsi"
-+
-+/ {
-+	compatible = "mscc,ocelot-pcb123", "mscc,ocelot";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0e000000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
--- 
-2.16.2
+/Jarkko
