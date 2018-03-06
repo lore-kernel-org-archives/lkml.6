@@ -1,107 +1,135 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AG47ELuF2lECh0SvIg+0XVHCLNRLLuLYtDCzUo26g7SMhKwg8oaDsko8aD8DskCw8cDUCVYNmmSX
-ARC-Seal: i=1; a=rsa-sha256; t=1520520028; cv=none;
+Return-Path: <bp@alien8.de>
+X-Google-Smtp-Source: AG47ELsxGqivqQTjR6k06xESxiAVuTlS9XHrSvDKWVS397YA9ofPYrUs7m/dTKc8xNweT7e1WiMx
+ARC-Seal: i=1; a=rsa-sha256; t=1520333011; cv=none;
         d=google.com; s=arc-20160816;
-        b=sCM0as2NnTzAwitJeJRHoOzMsGbhRJa1eBWW3FPjQ122oDS7uetO+3kSpm6RbNCTfS
-         XAZbkfNpx3ZPx5U1UaOiTxVH3ogC6VnGYHzLFndfxlfQjB73Qa7YyS9LG/pLC1Gr+D5O
-         V9ZQ8Bx8uqgKP/oGtD3A+TXXc73SMu0roj7glyDzPvmrnhhLIuTnbhMcgpnZeFgz/R0Y
-         ClelaG6PzSsyJv1t4g0wnTGwooP7rmtK+443mAgAtHOQWkGfBStw950/3dms9Xu70c8z
-         V5lnUkSv4db4yS22dXd/NrjYgvvDtugwTohMCcDLCU9Q//wzs+frVE+LOQDi1Imv3r4O
-         VEXQ==
+        b=S8q4cuZNgeWnMs5U/3icxMNxrWxr5FXmCoeJTusUU3Qyk0eDS+NG4BaVbQopoCY3v2
+         2BMwwiamHzlGJOJtnrBbkcZNW954yj7CYlYtlp/26xS9J1C1fTWUoruVnn2HhxU1juHL
+         96XxLOlM1g/TNDIBfYuviJWUJUDzE+FaI5AtpzOIpsPNJEPuoBjTAcQ83LACAIw7KEuw
+         dpB1VwpJFddw+d5pN8BYvCya91QreYtoTkxrPi1q8Mwov+cvl7UvldLo+BbHPpNDqjiV
+         jetdBrdf2AU5KofnpP8Dg6iQHKQy2IP3pKQSqZvhcsRICuPWGacYMTwg+PtYIM6GOraE
+         fxpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=H0nifbRMpGDAXWboFTB/0e238gyjpcDv6PKHLFMaIlc=;
-        b=xMyCDdBTFWB2sETYLuWZzDGQesFGFDrgFee165LK5x9+oStSt6ZNw/7NY8a/i+VgEP
-         z1hFH8G/OcOKjGctO+iLkvqM4yHoiWzTfXV5AiAFpLW2PBCahS4ALsITTYOCQVBvB/H2
-         F9AyIPymESSwwzzGjAsyZigW01+GQFgOCNSlKmf2pGsH72a8WnCKtzrO69VqbyoMeTVr
-         UXWmg3q34J/akiybBGZso2ldErQ/spfWgbqoDZJafcBbix5OxN7PTlB4HKBBZPVM4ZTZ
-         nfY/BLUTm3EJnbv0feXh4klypWyD/Bhc7x3EiSNWzRbypliPMuFgazrx/hJkxjhCwSc0
-         tN5A==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=YYDGOg3nBvelunCycOz22PZcpJBC8156Se7LB1nwJ2g=;
+        b=MnD5GLcV8JgcEMC5BU1cZZg4kXDBJhUX4watLHeHm59BwP2j/ZJKR1XN+sudwd0IOz
+         BYLm6MvF0vEsH8i/7TnuPg1I0sZqdrBQXvCHiBBHblklbe3gLvr8xWDTmk2ipYndEZfn
+         Q/WJW+fi07KXQFlU+rN+wTsblroPtr0kCTxXMYw67QcU4Plv2WXCYwA9PGKhyNc6p+ss
+         D7+nSGnSQ33FZct6QzDJz/5JuHS9sLFa1RSPGNb+uCdHO7eVMb555E2e1AbQDgs6+Ril
+         ebJfNVi5fmKecEOwGKzOh3DjAHKs/Y3nny3odddq94DgqCBz4ejjK1E0h04kWAaDqDzu
+         L4eA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 8 Mar 2018 06:40:20 -0800
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Seunghun Han <tipbot@zytor.com>
-Message-ID: <tip-b3b7c4795ccab5be71f080774c45bbbcc75c2aaf@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, kkamagui@gmail.com, tony.luck@intel.com,
-        tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
-        linux-edac@vger.kernel.org, mingo@kernel.org,
-        gregkh@linuxfoundation.org
-Reply-To: hpa@zytor.com, gregkh@linuxfoundation.org, mingo@kernel.org,
-        linux-edac@vger.kernel.org, tony.luck@intel.com, kkamagui@gmail.com,
-        linux-kernel@vger.kernel.org, bp@suse.de, tglx@linutronix.de
-In-Reply-To: <20180302202706.9434-1-kkamagui@gmail.com>
+       spf=pass (google.com: domain of bp@alien8.de designates 5.9.137.197 as permitted sender) smtp.mailfrom=bp@alien8.de
+Date: Tue, 6 Mar 2018 11:43:20 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Seunghun Han <kkamagui@gmail.com>
+Cc: Tony Luck <tony.luck@intel.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH V3] x86: mce: fix kernel panic when check_interval is
+ changed
+Message-ID: <20180306104320.GB11535@pd.tnic>
 References: <20180302202706.9434-1-kkamagui@gmail.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/urgent] x86/MCE: Serialize sysfs changes
-Git-Commit-ID: b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20180302202706.9434-1-kkamagui@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594380809723141993?=
-X-GMAIL-MSGID: =?utf-8?q?1594380809723141993?=
+X-GMAIL-THRID: =?utf-8?q?1593186374882748310?=
+X-GMAIL-MSGID: =?utf-8?q?1594184707796161178?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
-Gitweb:     https://git.kernel.org/tip/b3b7c4795ccab5be71f080774c45bbbcc75c2aaf
-Author:     Seunghun Han <kkamagui@gmail.com>
-AuthorDate: Tue, 6 Mar 2018 15:21:43 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 8 Mar 2018 15:36:27 +0100
+On Sat, Mar 03, 2018 at 05:27:06AM +0900, Seunghun Han wrote:
+> I am Seunghun Han and a senior security researcher at National Security
+> Research Institute of South Korea.
+> 
+> I found a security issue which can make kernel panic in userspace. After
+> analyzing the issue carefully, I found that MCE driver in the kernel has a
+> problem which can be occurred in SMP environment.
+> 
+> The check_interval file in
+> /sys/devices/system/machinecheck/machinecheck<cpu number> directory is a
+> global timer value for MCE polling. If it is changed by one CPU, MCE driver
+> in kernel calls mce_restart() function in store_int_with_restart() function
+> and broadcasts the event to other CPUs to delete and restart MCE polling
+> timer.
+> 
+> The __mcheck_cpu_init_timer() function which is called by mce_restart()
+> function initializes the mce_timer variable, and the "lock" in mce_timer is
+> also reinitialized. If more than one CPU write a specific value to
+> check_interval file concurrently, one can initialize the "lock" in mce_timer
+> while the others are handling "lock" in mce_timer. This problem causes some
+> synchronization errors such as kernel panic and kernel hang. Other functions
+> such as set_ignore_ce(), set_cmci_disabled(), and mce_enable_ce() also
+> have synchronization problems.
+> 
+> It could be a security problem because the attacker could make kernel panic
+> by writing a value to the check_interval file in userspace, and it could be
+> used for Denial-of-Service (DoS) attack.
+> 
+> To fix this problem, I added a mce_sysfs_mutex to serialize requests for
+> timer and sysfs functions.
+> 
+> Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+> ---
+> Changes since v2: add a mutex to sysfs functions according to review
+> result.
+> Changes since v1: add mce_sysfs_mutex according to review result.
 
-x86/MCE: Serialize sysfs changes
+Thanks, I've committed the patch below. Scream if there's still
+something not in order:
+
+---
+From: Seunghun Han <kkamagui@gmail.com>
+Date: Sat, 3 Mar 2018 05:27:06 +0900
+Subject: [PATCH] x86/MCE: Synchronize sysfs changes
 
 The check_interval file in
 
   /sys/devices/system/machinecheck/machinecheck<cpu number>
 
-directory is a global timer value for MCE polling. If it is changed by one
-CPU, mce_restart() broadcasts the event to other CPUs to delete and restart
-the MCE polling timer and __mcheck_cpu_init_timer() reinitializes the
-mce_timer variable.
+directory is a global timer value for MCE polling. If it is changed by
+one CPU, mce_restart() broadcasts the event to other CPUs to delete
+and restart the MCE polling timer and __mcheck_cpu_init_timer()
+reinitializes the mce_timer variable.
 
 If more than one CPU writes a specific value to the check_interval file
-concurrently, mce_timer is not protected from such concurrent accesses and
-all kinds of explosions happen. Since only root can write to those sysfs
-variables, the issue is not a big deal security-wise.
+concurrently, mce_timer is not protected from such concurrent accesses
+and all kinds of explosions happen.
 
-However, concurrent writes to these configuration variables is void of
-reason so the proper thing to do is to serialize the access with a mutex.
+Since only root can write to those sysfs variables, the issue is not a
+big deal security-wise.
+
+However, concurrent writes to these configuration variables is
+void of reason so the proper thing to do is to "slow" accesses
+down by synchronizing them with a mutex and thus take care of the
+synchronization issue too.
 
 Boris:
 
- - Make store_int_with_restart() use device_store_ulong() to filter out
+ - make store_int_with_restart() use device_store_ulong() to filter out
    negative intervals
- - Limit min interval to 1 second
- - Correct locking
- - Massage commit message
+ - limit min interval to 1 second
+ - correct locking
+ - massage commit message
 
 Signed-off-by: Seunghun Han <kkamagui@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: stable@vger.kernel.org
+Cc: x86-ml <x86@kernel.org>
 Link: http://lkml.kernel.org/r/20180302202706.9434-1-kkamagui@gmail.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
  arch/x86/kernel/cpu/mcheck/mce.c | 22 +++++++++++++++++++++-
  1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index b3323cab9139..466f47301334 100644
+index 181f6cf25895..21962c48dad7 100644
 --- a/arch/x86/kernel/cpu/mcheck/mce.c
 +++ b/arch/x86/kernel/cpu/mcheck/mce.c
 @@ -56,6 +56,9 @@
@@ -114,7 +142,7 @@ index b3323cab9139..466f47301334 100644
  #define CREATE_TRACE_POINTS
  #include <trace/events/mce.h>
  
-@@ -2088,6 +2091,7 @@ static ssize_t set_ignore_ce(struct device *s,
+@@ -2104,6 +2107,7 @@ static ssize_t set_ignore_ce(struct device *s,
  	if (kstrtou64(buf, 0, &new) < 0)
  		return -EINVAL;
  
@@ -122,7 +150,7 @@ index b3323cab9139..466f47301334 100644
  	if (mca_cfg.ignore_ce ^ !!new) {
  		if (new) {
  			/* disable ce features */
-@@ -2100,6 +2104,8 @@ static ssize_t set_ignore_ce(struct device *s,
+@@ -2116,6 +2120,8 @@ static ssize_t set_ignore_ce(struct device *s,
  			on_each_cpu(mce_enable_ce, (void *)1, 1);
  		}
  	}
@@ -131,7 +159,7 @@ index b3323cab9139..466f47301334 100644
  	return size;
  }
  
-@@ -2112,6 +2118,7 @@ static ssize_t set_cmci_disabled(struct device *s,
+@@ -2128,6 +2134,7 @@ static ssize_t set_cmci_disabled(struct device *s,
  	if (kstrtou64(buf, 0, &new) < 0)
  		return -EINVAL;
  
@@ -139,7 +167,7 @@ index b3323cab9139..466f47301334 100644
  	if (mca_cfg.cmci_disabled ^ !!new) {
  		if (new) {
  			/* disable cmci */
-@@ -2123,6 +2130,8 @@ static ssize_t set_cmci_disabled(struct device *s,
+@@ -2139,6 +2146,8 @@ static ssize_t set_cmci_disabled(struct device *s,
  			on_each_cpu(mce_enable_ce, NULL, 1);
  		}
  	}
@@ -148,7 +176,7 @@ index b3323cab9139..466f47301334 100644
  	return size;
  }
  
-@@ -2130,8 +2139,19 @@ static ssize_t store_int_with_restart(struct device *s,
+@@ -2146,8 +2155,19 @@ static ssize_t store_int_with_restart(struct device *s,
  				      struct device_attribute *attr,
  				      const char *buf, size_t size)
  {
@@ -169,3 +197,11 @@ index b3323cab9139..466f47301334 100644
  	return ret;
  }
  
+-- 
+2.13.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
