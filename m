@@ -1,91 +1,91 @@
-Return-Path: <kernel-hardening-return-12155-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuWsCfOGaEohy963g/lUM3Omh0kblD/ykXvy85UlkwgXs0s8VDUmTBFVjPFbUEuAHQW3hb9
-ARC-Seal: i=1; a=rsa-sha256; t=1520357648; cv=none;
+Return-Path: <kernel-hardening-return-12141-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELuUowQLyCR1zNkinnefrHfx0ySWsM20qR7B9QIAKLjukAN9rvgVkQ0zP3CIzWvXMCeI5DMT
+ARC-Seal: i=1; a=rsa-sha256; t=1520343087; cv=none;
         d=google.com; s=arc-20160816;
-        b=xSHa2zQt1kb8aGpv7Inv+uq+d1pB9VppkhpaW5Z08Ej1bv4RVK/+l4dBUotUHnFzm0
-         C4GCrnci8ZTn8Eh0iXzpZu44X3RYBgzv4nd0hDbw7fpDwyCt/UCNBKs24RV0d/UydWxY
-         PwR71F4sw7uImGlBOuQYbbCydXAkBO4LIDt81/I6MV6qEkGswm0Pk0NpU8NWyKeeEWng
-         X31ixI+n/hPzacIHDloXuK3eP+eoKeD/0gPlVvBhJrOBpTLy+a4oJ5j+GkEUNZcaBJpt
-         GwXPHSbPzOPTAjJm7TLsbO4pv/Qxz9Wt/aCeLDMEa3om1CHqaHt0OYTum2kbfBySB/BS
-         KGrQ==
+        b=Bwgdpc6C8ysh/+AQD3MJuW0zYS0jr1cIAuzCVJb/BSEzCmHouuVBlehUNbVvIRIkbP
+         cAzVdEGAFlzEVehMiu/UrBYK8cAQUoTc4WNL2vmyQg162kvds7WpNe4wCnlorEOhHTwa
+         KNmcN7hTB5cTMbtdh4Ni91ZTRXwQGFRW7hGuMbZ7wl30I6WY1YpV+WljVVygFSd6OHl+
+         p0AKK7eHIQFOimPE9XXxHCjGnkR00Fia3Y33+XZTcKufSjIGVCUQmknANylVLPtw7+Fp
+         jJlp4Ni2/Ifs3U/lNRHYOFmM2C8WbVbqbjmKv7E/6RmSK419yWP/HveXAHEfgkVb1V8+
+         O9fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=2sK0x8Jc+jGtj94hk6mffXo/isYJpY3lLDBdXPKdRqw=;
-        b=hnWtaX56QFWYT7uEG9M+25an0QlEzKDe1MvsvU2SUsxf+CkEWfSLQyeblMTUDZGo0B
-         MDVTY3KcW4F8Xtiys2o3n/z3xQ/HAakPNQAltpYVYHT1QEB0eC3Dj0XnqUv1ug/Y+eFL
-         tE9gSDt5cAN1Dtv6udToPfVGUOONbQCGuzoeWq0HzY/kYAsOMQcMECD39kagBAAiXSVR
-         rWyJfmTO9wtUu/pKHEsoys0TFwz3apoGH9eRo0rlj3qDIV7kACQ6D7CXXqJHFLGai6h3
-         chSWExiGJdsWcYFHeU26F9WFB8D9BnkMEPfpiVE+RfAHLh3BLHuD1m5GkIbN6M8pv4+n
-         65lw==
+        h=message-id:user-agent:in-reply-to:content-disposition:mime-version
+         :references:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=kVGMyYpMLbafkRB2EfAxf6S8YDBVZQKlj2Qx/44Qx8I=;
+        b=t5kJB7/HsT0toMri0UG+iqvMaoCnxCOH5uEQPlxuVBAq7Qj6yyKdFVbD0K7NA6qWbL
+         wtBAlSNYcNM395pdaka0NqPNiGHmsCStiRSlrwQcAJZt56A5IMv/7MaqYI5FLrPBhXXi
+         oWyFH7yWfC9pX+bupSMaBfGHBhiVsXGd4xUjpiPZB6p0HlTWjsI1eoDU08Z4UDYImp3r
+         m4QRLTE6t2DpZEAidjJMBk+Kv/qD0eDhTEZiNCqSC1z96kmiJPDFNkA/6bKO4MTVzm5w
+         2AYrbXMqi81UkH3w/L7X8UVXwOScpsA6K0P8FknFOnguKEQPcYNf2IP8HetBZV+aojDg
+         cl6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RP0BLKvp;
-       spf=pass (google.com: domain of kernel-hardening-return-12155-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12155-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12141-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12141-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RP0BLKvp;
-       spf=pass (google.com: domain of kernel-hardening-return-12155-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12155-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12141-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12141-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Tue, 6 Mar 2018 14:30:52 +0100
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Igor Stoppa <igor.stoppa@huawei.com>
+Cc: david@fromorbit.com, willy@infradead.org, keescook@chromium.org,
+        mhocko@kernel.org, labbott@redhat.com,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 Subject: Re: [PATCH 7/7] Documentation for Pmalloc
-To: Igor Stoppa <igor.stoppa@huawei.com>, david@fromorbit.com,
- willy@infradead.org, keescook@chromium.org, mhocko@kernel.org
-Cc: labbott@redhat.com, linux-security-module@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com
 References: <20180228200620.30026-1-igor.stoppa@huawei.com>
  <20180228200620.30026-8-igor.stoppa@huawei.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <226151f3-bec6-e6f7-d7b7-7ad0c391865b@gmail.com>
-Date: Tue, 6 Mar 2018 09:33:44 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20180228200620.30026-8-igor.stoppa@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18030613-0008-0000-0000-000004D87037
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030613-0009-0000-0000-00001E6B8703
+Message-Id: <20180306133051.GE19349@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803060153
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593676894350547582?=
-X-GMAIL-MSGID: =?utf-8?q?1594210542449932161?=
+X-GMAIL-MSGID: =?utf-8?q?1594195273065375207?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-Minus the comment-fixes Mike Rapoport mentioned, looks good:
-
-Reviewed-by: Jay Freyensee <why2jjj.linux@gmail.com>
-
-
-On 2/28/18 12:06 PM, Igor Stoppa wrote:
+On Wed, Feb 28, 2018 at 10:06:20PM +0200, Igor Stoppa wrote:
 > Detailed documentation about the protectable memory allocator.
->
+> 
 > Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 > ---
->   Documentation/core-api/index.rst   |   1 +
->   Documentation/core-api/pmalloc.rst | 111 +++++++++++++++++++++++++++++++++++++
->   2 files changed, 112 insertions(+)
->   create mode 100644 Documentation/core-api/pmalloc.rst
->
+>  Documentation/core-api/index.rst   |   1 +
+>  Documentation/core-api/pmalloc.rst | 111 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 112 insertions(+)
+>  create mode 100644 Documentation/core-api/pmalloc.rst
+> 
 > diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
 > index c670a8031786..8f5de42d6571 100644
 > --- a/Documentation/core-api/index.rst
 > +++ b/Documentation/core-api/index.rst
 > @@ -25,6 +25,7 @@ Core utilities
->      genalloc
->      errseq
->      printk-formats
+>     genalloc
+>     errseq
+>     printk-formats
 > +   pmalloc
->   
->   Interfaces for kernel debugging
->   ===============================
+> 
+>  Interfaces for kernel debugging
+>  ===============================
 > diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
 > new file mode 100644
 > index 000000000000..8fb9c9d3171b
@@ -93,6 +93,9 @@ On 2/28/18 12:06 PM, Igor Stoppa wrote:
 > +++ b/Documentation/core-api/pmalloc.rst
 > @@ -0,0 +1,111 @@
 > +.. SPDX-License-Identifier: GPL-2.0
+
+Please add a label to allow cross-referencing
+
 > +
 > +Protectable memory allocator
 > +============================
@@ -112,10 +115,26 @@ On 2/28/18 12:06 PM, Igor Stoppa wrote:
 > +-------
 > +
 > +pmalloc builds on top of genalloc, using the same concept of memory pools.
+
+It would be nice to add a label to genalloc.rst and reference it here:
+
+diff --git a/Documentation/core-api/genalloc.rst b/Documentation/core-api/genalloc.rst
+index 6b38a39fab24..983fa94f999c 100644
+--- a/Documentation/core-api/genalloc.rst
++++ b/Documentation/core-api/genalloc.rst
+@@ -1,3 +1,5 @@
++.. _genalloc:
++
+ The genalloc/genpool subsystem
+ ==============================
+ 
 > +
 > +The value added by pmalloc is that now the memory contained in a pool can
 > +become R/O, for the rest of the life of the pool.
 > +
+
+IMHO, "read only" looks better than R/O
+
 > +Different kernel drivers and threads can use different pools, for finer
 > +control of what becomes R/O and when. And for improved lockless concurrency.
 > +
@@ -161,7 +180,9 @@ On 2/28/18 12:06 PM, Igor Stoppa wrote:
 > +The typical sequence, when using pmalloc, is:
 > +
 > +1. create a pool
-> +
+
+Can we use #. instead of numbers for the numbered list items?
+
 > +.. kernel-doc:: include/linux/pmalloc.h
 > +   :functions: pmalloc_create_pool
 > +
@@ -169,7 +190,20 @@ On 2/28/18 12:06 PM, Igor Stoppa wrote:
 > +
 > +.. kernel-doc:: include/linux/pmalloc.h
 > +   :functions: pmalloc_prealloc
-> +
+
+Maybe it's better to have a short reference to the function and keep all
+the elaborate descriptions in the API section?
+For instance, something like
+
+diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
+@@ -68,8 +70,7 @@ The typical sequence, when using pmalloc, is:
+ 
+ 1. create a pool
+ 
+-.. kernel-doc:: include/linux/pmalloc.h
+-   :functions: pmalloc_create_pool
++     :c:func:`pmalloc_create_pool`
+ 
 > +3. issue one or more allocation requests to the pool with locking as needed
 > +
 > +.. kernel-doc:: include/linux/pmalloc.h
@@ -203,3 +237,10 @@ On 2/28/18 12:06 PM, Igor Stoppa wrote:
 > +---
 > +
 > +.. kernel-doc:: include/linux/pmalloc.h
+> -- 
+> 2.14.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
