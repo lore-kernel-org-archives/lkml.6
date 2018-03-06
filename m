@@ -1,146 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753654AbeCFQtW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:49:22 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38619 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750782AbeCFQtU (ORCPT
+        id S1753918AbeCFQuQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:50:16 -0500
+Received: from gateway24.websitewelcome.com ([192.185.50.91]:11623 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753785AbeCFQuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:49:20 -0500
-X-Google-Smtp-Source: AG47ELtIpZRFThbEARospIczxnpgK1tzf6GFN5v/kLu72R8+1gB+q8hNXtDLslvJQjU5d7AhpKdpEQ==
-Date: Tue, 6 Mar 2018 17:49:10 +0100
-From: Petr Vorel <petr.vorel@gmail.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kconfig: make unmet dependency warnings readable
-Message-ID: <20180306164910.tpdhl4e5xzvmwcua@dell5510>
-Reply-To: Petr Vorel <petr.vorel@gmail.com>
-References: <1520333499-31854-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 6 Mar 2018 11:50:14 -0500
+Subject: Re: [PATCH] HID: hid-ntrig: use true and false for boolean values
+To: Jiri Kosina <jikos@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180306000624.GA2680@embeddedgus>
+ <nycvar.YFH.7.76.1803061519430.15778@cbobk.fhfr.pm>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <28d2c1a8-2ef3-c8cb-6fed-b29bc4b68f0e@embeddedor.com>
+Date: Tue, 6 Mar 2018 10:50:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520333499-31854-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <nycvar.YFH.7.76.1803061519430.15778@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.117.58
+X-Source-L: No
+X-Exim-ID: 1etFn3-002SSu-KS
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.66]) [189.175.117.58]:56390
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+Hi Jiri,
 
-...
->   $ make allyesconfig
->   scripts/kconfig/conf  --allyesconfig Kconfig
->   warning: (A && B && D) selects E which has unmet direct
->   dependencies (DEP1 && DEP2)
+On 03/06/2018 08:20 AM, Jiri Kosina wrote:
+> On Mon, 5 Mar 2018, Gustavo A. R. Silva wrote:
+> 
+>> Assign true or false to boolean variables instead of an integer value.
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> I've commited this (and the hid-multitouch variant of it as well) to
+> for-4.17/upstream.
+> 
 
-> Here, I see some points to be improved.
+Good to know.
 
-> First, '(A || B || D)' would make more sense than '(A && B && D)'.
-Good point, make sense, current is really confusing.
-
-> I am not sure if this is intentional, but expr_simplify_unmet_dep()
-> turns OR expressions into AND, like follows:
-
->         case E_OR:
->                 return expr_alloc_and(
-
-> Second, we see false positives.  'A' is a real unmet dependency.
-> 'B' is false positive because 'DEP1' is fixed to 'y', and 'B' depends
-> on 'DEP2'.  'C' was correctly dropped by expr_simplify_unmet_dep().
-> 'D' is also false positive because it has no chance to be enabled.
-> Current expr_simplify_unmet_dep() cannot avoid those false positives.
-
-> After all, I decided to use the same helpers as used for printing
-> reverse dependencies in the help.
-
-> With this commit, unreadable warnings in the real world:
-
-> $ make ARCH=score allyesconfig
-> scripts/kconfig/conf  --allyesconfig Kconfig
-> warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && DWMAC_IPQ806X
-> && DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMA
-> C_STI && TI_CPSW && PINCTRL_GEMINI && PINCTRL_OXNAS && PINCTRL_ROCKCHIP &&
->  PINCTRL_DOVE && PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG
-> && VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 && LP
-> C18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI && COMMON_CLK_ASPEED && C
-> OMMON_CLK_NXP && COMMON_CLK_OXNAS && COMMON_CLK_BOSTON && ATMEL_ST && QCOM
-> _ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI && ATMEL_EBI && ST_IRQCHIP && RESE
-> T_IMX7 && PHY_HI6220_USB && PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8
-> XX_USB) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
-> warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS && PINCTRL_PIS
-> TACHIO && PINCTRL_PIC32 && PINCTRL_MESON && PINCTRL_NOMADIK && PINCTRL_MTK
->  && PINCTRL_MT7622 && GPIO_TB10X) selects OF_GPIO which has unmet direct d
-> ependencies (GPIOLIB && OF && HAS_IOMEM)
-> warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP) sele
-> cts FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CR
-> IS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARC
-> H_WANT_FRAME_POINTERS)
-
-> will be turned into:
-
-> $ make ARCH=score allyesconfig
-> scripts/kconfig/conf  --allyesconfig Kconfig
-
-> WARNING:
->  Unmet direct dependencies detected for MFD_SYSCON
->  Depends on:
->     HAS_IOMEM [=n]
->  Selected by [y]:
->   - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 || COMPILE_TEST [=y])
-> && OF [=y]
->   - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 || COMPILE_TEST
-> [=y])
->   - ATMEL_ST [=y] && GENERIC_CLOCKEVENTS [=y]
->   - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
->   - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 || COMPILE_TEST [=y])
->   - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
->   - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] || COMPILE_TEST
-> [=y])
-
-> WARNING:
->  Unmet direct dependencies detected for OF_GPIO
->  Depends on:
->     GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
->  Selected by [y]:
->   - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-> [=y]) && OF [=y]
->   - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
-> [=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
-
-> WARNING:
->  Unmet direct dependencies detected for FRAME_POINTER
->  Depends on:
->     DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN
->  || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
->  Selected by [y]:
->   - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
-> PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
-> !ARC && !X86
-
-Although I liked the brevity of current form (one liner is nice), fixing false positives
-justify it enough. The same look and feel with help and reusing code makes are also pros.
-
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
-
-...
-> +static void sym_warn_unmet_dependency(struct symbol *sym)
-> +{
-> +	struct gstr gs = str_new();
-> +
-> +	str_printf(&gs, "\nWARNING:\n");
-> +	str_printf(&gs, " Unmet direct dependencies detected for %s\n",
-
-Just one change: keep error on the same line as 'WARNING:':
-	str_printf(&gs, "\nWARNING: Unmet direct dependencies detected for %s\n",
-It's make easier to grep error and save space vertically.
-
-
-Kind regards,
-Petr
+Thanks
+--
+Gustavo
