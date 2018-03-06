@@ -1,87 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753556AbeCFKZG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:25:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46208 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751030AbeCFKZD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:25:03 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EE93601CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH] drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic
- Meson GX SoCs
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: airlied@linux.ie, a.hajda@samsung.com, Jose.Abreu@synopsys.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <1519386277-25902-1-git-send-email-narmstrong@baylibre.com>
- <d0ecb49f-f2bd-0a0d-fa18-c7cb178ca17a@baylibre.com>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <be7cad05-ab4a-572b-1535-fbd85ea7c386@codeaurora.org>
-Date: Tue, 6 Mar 2018 15:54:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <d0ecb49f-f2bd-0a0d-fa18-c7cb178ca17a@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753419AbeCFK0m (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:26:42 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750838AbeCFK0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 05:26:40 -0500
+From: Vratislav Bendel <vbendel@redhat.com>
+To: linux-xfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc: Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] xfs: Correctly invert xfs_buftarg LRU isolation logic
+Date: Tue,  6 Mar 2018 11:26:38 +0100
+Message-Id: <20180306102638.25322-1-vbendel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Due to an inverted logic mistake in xfs_buftarg_isolate()
+the xfs_buffers with zero b_lru_ref will take another trip
+around LRU, while isolating buffers with non-zero b_lru_ref.
 
-On Tuesday 06 March 2018 03:23 PM, Neil Armstrong wrote:
-> Hi Architt,
-> 
-> On 23/02/2018 12:44, Neil Armstrong wrote:
->> The Amlogic Meson GX SoCs, embedded the v2.01a controller, has been also
->> identified needing this workaround.
->> This patch adds the corresponding version to enable a single iteration for
->> this specific version.
->>
->> Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> index a38db40..f5018f9 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -1637,6 +1637,8 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
->>   	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
->>   	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
->>   	 * 4 and 1 iterations respectively.
->> +	 * The Amlogic Meson GX SoCs (v2.01a) have been identifies as needing
->> +	 * the workaround with a single iteration.
+Additionally those isolated buffers end up right back on the LRU
+once they are released, because b_lru_ref remains elevated.
 
-s/identifies/identified
+Fix that circuitous route by leaving them on the LRU
+as originally intended.
 
->>   	 */
->>   
->>   	switch (hdmi->version) {
->> @@ -1644,6 +1646,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
->>   		count = 4;
->>   		break;
->>   	case 0x131a:
->> +	case 0x201a:
->>   		count = 1;
->>   		break;
->>   	default:
->>
-> 
-> This fixes a long time issue on Amlogic SoCs, is it ok for you ?
+Signed-off-by: Vratislav Bendel <vbendel@redhat.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/xfs/xfs_buf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me. Feel free to queue it to drm-misc-next.
-
-Thanks,
-Archit
-
-> 
-> Thanks,
-> Neil
-> 
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index d1da2ee9e6db..ac669a10c62f 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1708,7 +1708,7 @@ xfs_buftarg_isolate(
+ 	 * zero. If the value is already zero, we need to reclaim the
+ 	 * buffer, otherwise it gets another trip through the LRU.
+ 	 */
+-	if (!atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
++	if (atomic_add_unless(&bp->b_lru_ref, -1, 0)) {
+ 		spin_unlock(&bp->b_lock);
+ 		return LRU_ROTATE;
+ 	}
+-- 
+2.14.3
