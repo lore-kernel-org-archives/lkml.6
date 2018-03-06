@@ -1,112 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753555AbeCFQan (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 11:30:43 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34178 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeCFQal (ORCPT
+        id S1753812AbeCFQcS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 11:32:18 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40420 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750817AbeCFQcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 11:30:41 -0500
-Date: Tue, 6 Mar 2018 16:30:35 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Maciej Purski <m.purski@samsung.com>,
-        linux-omap@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Regulator regression in next-20180305
-Message-ID: <20180306163035.GE13586@sirena.org.uk>
-References: <20180305231246.GB5799@atomide.com>
- <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Yb+qhiCg54lqZFXW"
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
-X-Cookie: DYSLEXICS OF THE WORLD, UNTIE!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 6 Mar 2018 11:32:16 -0500
+Message-ID: <1520353933.5393.21.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Tue, 06 Mar 2018 08:32:13 -0800
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+         <20180305125642.GA3425@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+         <20180306074932.GB3624@linux.intel.com>
+         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
+> > 
+> > 
+> > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
+> > > 
+> > > Why you need cover letter?  What are u missing in the patch
+> > > description
+> > 
+> > If you submit a *patch set* I *require* a cover letter, yes.
+> 
+> It's good but it is not must, you are inventing your own rules.
 
---Yb+qhiCg54lqZFXW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As long as the Maintainer is the gatekeeper, you're not going to get
+very far with this argument.  The fact is that a lot of subsystems have
+varying rules; often undocumented, some of which are even in conflict,
+like alphabetic vs reverse christmas tree format for includes.
 
-On Mon, Mar 05, 2018 at 08:22:26PM -0300, Fabio Estevam wrote:
-> On Mon, Mar 5, 2018 at 8:12 PM, Tony Lindgren <tony@atomide.com> wrote:
+A cover letter is actually one of the more uniform rules.  It's
+referred to in submitting patches, but not actually documented there.
 
-> > Looks like with next-20180305 there's a regulator regression
-> > where mmc0 won't show any cards or produces errors:
-
-> > mmcblk0: error -110 requesting status
-> > mmc1: new high speed SDIO card at address 0001
-> > mmcblk0: error -110 requesting status
-> > mmcblk0: recovery failed!
-> > print_req_error: I/O error, dev mmcblk0, sector 0
-> > Buffer I/O error on dev mmcblk0, logical block 0, async page read
-> > mmcblk0: error -110 requesting status
-> > mmcblk0: recovery failed!
-
-No other error messages?  That seems like there's something going on
-that's very different to what Fabio was reporting...  I'm guessing some
-voltage application didn't go through but it's hard to tell with so
-little data.  dra7 does seem to have what Fabio had though so there's
-definitely some effect on the OMAP platforms.
-
-> I have also seen regulator issues due to this series:
-> https://lkml.org/lkml/2018/3/5/731
-
-Looking at your stuff I'm having trouble figuring out what's going on -
-we're getting double locking of a parent regulator during enable
-according to your backtraces but it's not clear to me what took that
-lock already.  regulator_enable() walks the supplies before it takes
-the lock on the regulator it's immediately being called on, not holding
-any locks on supplies while enabling.  regulator_balance_voltage() then
-tries to lock the supplies again but lockdep says the lock is already
-held by regulator_enable().  It's also weird that this doesn't seem to
-be showing up on other boards in kernelci, the regulator setup on those
-i.MX boards looks to be quite simple so I'd expect a much wider impact.
-
-I'm wondering if your case is more pain from mutex_lock_nested(), both
-regulator_lock_coupled() and regulator_lock_supply() will end up using=20
-indexes starting at 0 for the locking classes.  That doesn't smell right
-though, but in case my straw clutching works:
-
-If we can't figure it out I'll just drop the series but I'd prefer to at
-least understand what's going on.
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index e685f8b94acf..2c5b20a97f51 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -159,7 +159,7 @@ static void regulator_lock_supply(struct regulator_dev =
-*rdev)
- {
- 	int i;
-=20
--	for (i =3D 0; rdev; rdev =3D rdev_get_supply(rdev), i++)
-+	for (i =3D 1000; rdev; rdev =3D rdev_get_supply(rdev), i++)
- 		mutex_lock_nested(&rdev->mutex, i);
- }
-=20
-
---Yb+qhiCg54lqZFXW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqewioACgkQJNaLcl1U
-h9Bx+wf/S3swz2uKSJ5y19NvOIHzMsSOtAoS4mvk/oMR9d1GyKZV1PFbkndwr3vP
-4p96oKTEzKDQi0+rDCM1Rohf6rWrFzVL4uSUEqhIUNmJuBrUp5qlgPpaXYRDN1bP
-UXNQoji+imP+OTD+A98SJQfgfALSh4qaPsK/8S+fis5hK7NMlYZfiDDQAyrns4RV
-BiSgPoHiLNWIFxMCIF4Ecx+CtcaEBOUJYmUlbc22c7qDkrvGgycFQ2RhprUnWCJH
-fjCG4/8YDYAdiVxsNeOeyVK/6BmUTvETjCW3c1UZS5oNTsDt871Lng5QHhtVfr2A
-d1CPG/WcdEFgPH3ztRV2kMisAApWLA==
-=fsPY
------END PGP SIGNATURE-----
-
---Yb+qhiCg54lqZFXW--
+James
