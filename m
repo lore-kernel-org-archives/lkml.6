@@ -1,81 +1,119 @@
-Return-Path: <jmorris@namei.org>
-X-Google-Smtp-Source: AG47ELuGLBSoexV0bFqg4Rcw/KpfrDUdhpfBmPsGu+htTw7Nv7mhpk0JR736avIlrK5Jk+E/SWgX
-ARC-Seal: i=1; a=rsa-sha256; t=1520374221; cv=none;
-        d=google.com; s=arc-20160816;
-        b=DtP/Hw+1e9kgTw0urwsNCuHGXHsB2HC7F1F7GgDH9lL3klfoF1STfJIvJpa0XrKYbK
-         s8mIhT+5AHGF5ZLbg2dvCUCbRbhvUIXfH0oacZvV/cwYiUmf7GyMPkkOmPb10fj+BCcY
-         6AWNCUsE0DoIeL/s6Fa8/aCFq7vwGFhO+Udadzu8Kz18Lk0jBsqMlvWS6mKVKqJiGxLa
-         eagya0HQYdoJ0ApcptZ4h4/IJG9oF/GiHMuqr5LN1vyg7eM1zkalQbdpJ1KRGa23j7Po
-         HvCrq4VRDOVo7trS8MdpdHtqOIGYOMpzZA/rqS65/DEOHVHAr+Aej7TuHpaAIy3LzJ1J
-         A/8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=QtRJlwZzoi0Zygpq34oma4RJcJhOChir3n7+t9vSv70=;
-        b=UdJ3Mozf+NJOXbI5VOzAlfRO3BSVW6Fp5bhVK6DtwxqMBr3bRWNLXfsGBRvD23lRAv
-         jhadSEVZ14UDB5hMWFWF6/F349YaJaMtkihasNuR06CzQIlED5UvJQ5k67Lxv9CpbGvi
-         11S9FDuo5wS5ZH4Lv+dKfc6xmXxURwURLklKzy4PaJSgRVgUmxH7EcZ7vmCOBohcIT6L
-         TpjzgcJYVYmZPAbTAoUVrH+xOEgpk3nTLSBxkvZo+P2UkQG3x7DKzI5YwsrO+rrdqTrp
-         eV200ZyBRHMtIn0xZq6K0Cx3njI/wjjDQaTXeuPJFF8F9Q+dr0IUp1JzCl44Pn1JLOne
-         z/vQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jmorris@namei.org designates 65.99.196.166 as permitted sender) smtp.mailfrom=jmorris@namei.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jmorris@namei.org designates 65.99.196.166 as permitted sender) smtp.mailfrom=jmorris@namei.org
-Date: Wed, 7 Mar 2018 09:10:10 +1100 (AEDT)
-From: James Morris <jmorris@namei.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        gregkh@linuxfoundation.org, "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        selinux@tycho.nsa.gov
-Subject: Re: [PATCH] usb,signal,security: only pass the cred, not the secid,
- to kill_pid_info_as_cred and security_task_kill
-In-Reply-To: <8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1803070909310.14366@namei.org>
-References: <20170908164001.21138-1-sds@tycho.nsa.gov> <CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com> <alpine.LRH.2.21.1709090808200.15026@namei.org> <CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
- <8b1ea069-2389-5298-c187-647202762d72@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-257181-1520339139-2-16700835051379714847
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520339139; b=gnkgWFGkqdTZR5mQxXCvCpHOqaTqGJRhvhKJeK8cMm+XjWk
+    aCDUAEMiZwLAZyzK9Fgy566XyYoPFUPez7SLeRz0X7Yg9DhpLZ4K/X8efnrn9FaD
+    8LhnhbLIqtcdAX97sHlITohrEPvylONA+jhwkMecnaC3y/R9Bh1FZGiXo6SV3aUO
+    HiqqxwKIrmhirYhxO5lVn9joVpII7LE4mWkreVcXFKbIbuN7ZqLlAT/kmZErRyrr
+    +CrMaEpNdu3VSw4Jut9cx7SuvwdKNIl7bUtTbhSLrX1Zxf40zUJQADnR5Wkz4sIG
+    YHjfZLQTQS31HArZfcf9i2rJndbBwuQGYTYnKGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520339139; bh=+
+    BFN/Cnxmed7TUwXNWLYkmCuD0i+X21LEHet4J0lRP8=; b=FVk7wssdVuLWxkwqp
+    txahWt1GIW9JEKduF5jUi6Vy52sp+ZX6svxiI86ALrVCx3hWkrgFTe40WzVPGinI
+    vAX9wDDUmTCJqO2n54tYLW5e7w5FTqZKMKTIT6eoUrkNKFq9r5DsPY5i7EXGdzT4
+    q9gDb6UoT80CSEXy94Gco845VwAroDFRhn2hvp1GLCr8PhmfDGpyDNrkvz6FsrlL
+    1N9SUIlNcjL1U5LDU7e973heg1hvV8rAK4NfVwV+X9uJfanqP5hPS4Rq2wlPrNmG
+    NH3V5Yvs7D9AdNwTHNreGS62AkE8ZCFGC49XApFwnWtM+dzMFURXiVcZR4pNMw1Y
+    r5GRw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=AbZ/3bcH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=C+cd/Deg;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=AbZ/3bcH x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=C+cd/Deg;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELso0CdFtJz5+7z1+tfhe6iJOSfwbawzSajZ7DZic5TBd0PVM3lL+FJBac8pErQSk+WXL4er4A==
+Date: Tue, 6 Mar 2018 09:25:26 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 0/3] staging:iio:meter: Checkpatch cleanup for meter
+Message-ID: <cover.1520338980.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1577990101774039350?=
-X-GMAIL-MSGID: =?utf-8?q?1594227919470172219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 6 Mar 2018, Casey Schaufler wrote:
+This patchset fixes errors and checks found by checkpatch.pl in the
+staging/iio/meter. These series fixes:
 
-> On 3/6/2018 11:01 AM, Paul Moore wrote:
-> > On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
-> >> On Fri, 8 Sep 2017, Paul Moore wrote:
-> >>> Looks fine to me from a SELinux perspective.  If Casey and John are
-> >>> happy with this I can volunteer to pull it into the selinux/next tree
-> >>> (once the merge window closes), otherwise if someone else wants to
-> >>> merge this my ack is below.
-> >> As this impacts multiple LSMs, I'd prefer to take it via my tree.
-> > What happened to this James?  As best I can tell there were never any
-> > objections, and plenty of ACKs, but I don't see it in Linus' tree.
-> > I'll extend my offer to merge it, but I know you expressed a desire to
-> > pull this via your tree.
-> 
-> I was also surprised that it had not been included.
-> 
-> >
-> > * http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
-> >
+* Removes the use of 4 digit octal by replaces IIO_DEV_ATTR_CH_OFF by
+	IIO_DEVICE_ATTR;
+* Removes unnecessary macro;
+* Aligns open parenthesis;
 
-Oops,
+After apply this patch series, meter going to be checkpatch 
 
-Now applied to:
+Rodrigo Siqueira (3):
+  staging:iio:meter: Replaces IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR
+  staging:iio:meter: Remove unused macro IIO_DEV_ATTR_CH_OFF
+  staging:iio:meter: Aligns open parenthesis
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-testing
-
-
-
+ drivers/staging/iio/meter/ade7753.c         | 18 +++++++------
+ drivers/staging/iio/meter/ade7758_trigger.c |  4 +--
+ drivers/staging/iio/meter/ade7759.c         | 18 +++++++------
+ drivers/staging/iio/meter/ade7854-spi.c     | 40 ++++++++++++++---------------
+ drivers/staging/iio/meter/meter.h           |  3 ---
+ 5 files changed, 42 insertions(+), 41 deletions(-)
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.16.2
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
