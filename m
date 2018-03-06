@@ -1,93 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932956AbeCFPFx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:05:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:57858 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753291AbeCFPFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:05:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
-   d="scan'208";a="35910834"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Javier Martinez Canillas" <javierm@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
+        id S1753761AbeCFPM0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:12:26 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39880 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753487AbeCFPMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:12:24 -0500
+Date: Tue, 6 Mar 2018 15:12:47 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Vignesh R <vigneshr@ti.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 0/5 V2] tpm: timeouts revamp
-Thread-Topic: [PATCH 0/5 V2] tpm: timeouts revamp
-Thread-Index: AQHTtUUWa2w7XNJLoU6dUA5o8zEWQKPDBFyAgAAXOQCAADJ/MA==
-Date: Tue, 6 Mar 2018 15:05:44 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9422F491@hasmsx108.ger.corp.intel.com>
-References: <20180306092503.11568-1-tomas.winkler@intel.com>
- <1520338622.3779.1.camel@linux.intel.com>
- <031568ca-8999-478d-8c53-8b206f312e90@redhat.com>
- <20180306140256.GC5700@linux.intel.com>
-In-Reply-To: <20180306140256.GC5700@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTgzZDY4MDEtMDM3MC00NjhmLTgxNDktMjQwYjc5MDU0MTc3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJyT2RJdTZlODdIYkNuT1FOWTd1bDRKWHpmK1E0a1FwRm9NMmNCMlh6eEZKb0psdHZJUHpTR28zOXptRUozOW9EIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.252.24.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 2/3] PCI: dwc: pci-dra7xx: Improve MSI IRQ handling
+Message-ID: <20180306151247.GA7378@red-moon>
+References: <20180209120415.17590-1-vigneshr@ti.com>
+ <20180209120415.17590-3-vigneshr@ti.com>
+ <20180212175801.GA29070@e107981-ln.cambridge.arm.com>
+ <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7cfa73af-09fa-d298-aaab-3e74ee7e1dd5@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- 
-> On Tue, Mar 06, 2018 at 01:39:49PM +0100, Javier Martinez Canillas wrote:
-> > On 03/06/2018 01:17 PM, Jarkko Sakkinen wrote:
-> > > On Tue, 2018-03-06 at 11:24 +0200, Tomas Winkler wrote:
-> > >> This series cleans up tpm timeouts setting and handling.
-> > >>
-> > >> First motivation was to fix failures coming from too short timeouts
-> > >> for commands that creates keys.
-> > >> Key generation may take significant time depending on the
-> > >> underlying hardware. Rather than increasing default timeout a new
-> > >> constant is added, to not stall too long on regular commands failures.
-> > >>
-> > >> Second is to define timeouts for new tpm2 commands defined in TCG
-> > >> 1.36 spec.
-> > >
-> >
-> > Probably a typo, since the latest TCG spec version is the 1.38 [0].
-> >
-> > > Where can we get that specification? I don't have that new version
-> > > and couldn't find it from the public internet.
-> > >
-> > > /Jarkko
-> > >
-> >
-> > [0]: https://trustedcomputinggroup.org/tpm-library-specification/
+On Thu, Feb 15, 2018 at 09:59:21AM +0530, Vignesh R wrote:
+> Hi,
 > 
-> I already have that version of the specifications but I thought that we were
-> speaking about PC Client Platform spefication, which is at version 1.30. TCG
-> spec is an ambiguous term so that is where the confusion started from.
+> On Monday 12 February 2018 11:28 PM, Lorenzo Pieralisi wrote:
+> > On Fri, Feb 09, 2018 at 05:34:14PM +0530, Vignesh R wrote:
+> >> We need to ensure that there are no pending MSI IRQ vector set (i.e
+> >> PCIE_MSI_INTR0_STATUS reads 0 at least once) before exiting
+> >> dra7xx_pcie_msi_irq_handler(). Else, the dra7xx PCIe wrapper will not
+> >> register new MSI IRQs even though PCIE_MSI_INTR0_STATUS shows IRQs are
+> >> pending. Therefore, keep calling dra7xx_pcie_msi_irq_handler() until it
+> >> returns IRQ_NONE, which suggests that PCIE_MSI_INTR0_STATUS is 0.
+> >> 
+> >> This fixes a bug, where PCIe wifi cards with 4 DMA queues like Intel
+> >> 8260 used to throw following error and stall during ping/iperf3 tests.
+> >> 
+> >> [   97.776310] iwlwifi 0000:01:00.0: Queue 9 stuck for 2500 ms.
+> >> 
+> >> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> >> ---
+> >>  drivers/pci/dwc/pci-dra7xx.c | 21 ++++++++++++++++++---
+> >>  1 file changed, 18 insertions(+), 3 deletions(-)
+> >> 
+> >> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+> >> index ed8558d638e5..3420cbf7b60a 100644
+> >> --- a/drivers/pci/dwc/pci-dra7xx.c
+> >> +++ b/drivers/pci/dwc/pci-dra7xx.c
+> >> @@ -254,14 +254,31 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+> >>        struct dra7xx_pcie *dra7xx = arg;
+> >>        struct dw_pcie *pci = dra7xx->pci;
+> >>        struct pcie_port *pp = &pci->pp;
+> >> +     int count = 0;
+> >>        unsigned long reg;
+> >>        u32 virq, bit;
+> >>  
+> >>        reg = dra7xx_pcie_readl(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI);
+> >> +     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+> >>  
+> >>        switch (reg) {
+> >>        case MSI:
+> >> -             dw_handle_msi_irq(pp);
+> >> +             /*
+> >> +              * Need to make sure no MSI IRQs are pending before
+> >> +              * exiting handler, else the wrapper will not catch new
+> >> +              * IRQs. So loop around till dw_handle_msi_irq() returns
+> >> +              * IRQ_NONE
+> >> +              */
+> >> +             while (dw_handle_msi_irq(pp) != IRQ_NONE && count < 1000)
+> >> +                     count++;
+> >> +
+> >> +             if (count == 1000) {
+> >> +                     dev_err(pci->dev, "too much work in msi irq\n");
+> >> +                     dra7xx_pcie_writel(dra7xx,
+> >> +                                        PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI,
+> >> +                                        reg);
+> >> +                     return IRQ_HANDLED;
+> > 
+> > I am not merging any code patching this IRQ handling routine anymore
+> > unless you thoroughly explain to me how this CONF_IRQSTATUS_MSI register
+> > works (and how it is related to DW registers) and why this specific host
+> > controller needs handling that is not required by any other host
+> > controller relying on dw_handle_msi_irq().
 > 
-TCG spec doesn't define timeouts just new commands 
+> Unlike other DW PCIe controllers, TI implementation has a wrapper on top
+> of DW core. This wrapper latches the DW core level MSI and legacy
+> interrupts and then propagates it to GIC.
+> PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI register is present in this TI
+> wrapper which aggregates all the MSI IRQs(PCIE_MSI_INTR0_STATUS) of DW
+> level. They are mapped on the MSI interrupt line of PCIe controller,
+> using a single status bit in the PCIECTRL_TI_CONF_IRQSTATUS_MSI register.
+> 
+> So, the irq handler, dra7xx_pcie_msi_irq_handler(), first needs to look
+> at PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI[4] to know that its MSI IRQ and
+> then call dw_handle_msi_irq() to handle individual MSI vectors.
+> Driver has to make sure there are no pending vectors in DW core MSI
 
-> The only spec I've seen some timeouts is the PC Client Specification but I
-> guess I've then missed the list in TPM 2.0 spefication. Where are they listed?
-> I worked with Will Arthur durations based on PC Client Specification when
-> TPM 2.0 support was first implemented.
+How can it make *sure* ? And what makes the wrapper latch MSI IRQs
+again ?
 
+> status register before exiting handler. Otherwise next MSI IRQ will not
+> be latched by the wrapper.
 
-That's correct, this  PTP spec. It defines the timeouts for the commands, this is stated in the patch comments.
+I am sorry but I do not understand how this works - what is the
+condition that makes wrapper latch IRQs again ? This is at least
+racy, if not outright broken.
 
-Need to cross reference these two specs. 
+That count == 1000 is a symptom there is something broken on how this
+driver handles IRQs and I have the impression that we are applying
+plasters on top of plasters to make it less broken than it actually is.
 
-Thanks
-Tomas
+> > I suspect there is a code design flaw with the way this host handles
+> > IRQs and we are going to find it and fix it the way it should, not with
+> > any plaster like this patch.
+> > 
+> 
+> I agree there has been some churn wrt this wrapper level IRQ handler.
+> But, that was because hardware documentation/TRM did not match
+> actual behavior and so it took some time to understand how the
+> hardware is working.
+
+How does HW work :) ? Please explain in detail how this works in HW
+then we will get to the code.
+
+Thanks,
+Lorenzo
+
+> I have extensively tested this series on multiple problematic PCIe USB
+> cards and PCIe WiFi cards over week long stress tests. And also had
+> some agreement with internal hardware designers.  Hardware
+> documentations will also be updated.
+> 
+> 
+> > Lorenzo
+> > 
+> >> +             }
+> >>                break;
+> >>        case INTA:
+> >>        case INTB:
+> >> @@ -275,8 +292,6 @@ static irqreturn_t dra7xx_pcie_msi_irq_handler(int irq, void *arg)
+> >>                break;
+> >>        }
+> >>  
+> >> -     dra7xx_pcie_writel(dra7xx, PCIECTRL_DRA7XX_CONF_IRQSTATUS_MSI, reg);
+> >> -
+> >>        return IRQ_HANDLED;
+> >>  }
+> >>  
+> >> -- 
+> >> 2.16.1
+> >> 
+> 
+> -- 
+> Regards
+> Vignesh
