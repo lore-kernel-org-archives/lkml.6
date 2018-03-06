@@ -1,19 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754275AbeCFWkI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:40:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58770 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754094AbeCFWkH (ORCPT
+        id S1754319AbeCFWkr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 17:40:47 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54672 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754306AbeCFWkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:40:07 -0500
-From: Jagannathan Raman <jag.raman@oracle.com>
-To: joro@8bytes.org, tglx@linutronix.de
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/vt-d: fix usage of force parameter in intel_ir_reconfigure_irte()
-Date: Tue,  6 Mar 2018 17:39:41 -0500
-Message-Id: <1520375981-4958-1-git-send-email-jag.raman@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 6 Mar 2018 17:40:46 -0500
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        pasha.tatashin@oracle.com, m.mizuma@jp.fujitsu.com,
+        akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com,
+        takahiro.akashi@linaro.org, gi-oh.kim@profitbricks.com,
+        heiko.carstens@de.ibm.com, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, paul.burton@mips.com,
+        miles.chen@mediatek.com, vbabka@suse.cz, mgorman@suse.de,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2] mm: might_sleep warning
+Date: Tue,  6 Mar 2018 17:40:04 -0500
+Message-Id: <20180306224004.25150-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.16.2
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -23,59 +29,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was noticed that the IRTE configured for guest OS kernel
-was over-written while the guest was running. As a result,
-vt-d Posted Interrupts configured for the guest are not being
-delivered directly, and instead bounces off the host. Every
-interrupt delivery takes a VM Exit.
+Robot reported this issue:
+https://lkml.org/lkml/2018/2/27/851
 
-It was noticed that the following stack is doing the over-write:
-[  147.463177]  modify_irte+0x171/0x1f0
-[  147.463405]  intel_ir_set_affinity+0x5c/0x80
-[  147.463641]  msi_domain_set_affinity+0x32/0x90
-[  147.463881]  irq_do_set_affinity+0x37/0xd0
-[  147.464125]  irq_set_affinity_locked+0x9d/0xb0
-[  147.464374]  __irq_set_affinity+0x42/0x70
-[  147.464627]  write_irq_affinity.isra.5+0xe1/0x110
-[  147.464895]  proc_reg_write+0x38/0x70
-[  147.465150]  __vfs_write+0x36/0x180
-[  147.465408]  ? handle_mm_fault+0xdf/0x200
-[  147.465671]  ? _cond_resched+0x15/0x30
-[  147.465936]  vfs_write+0xad/0x1a0
-[  147.466204]  SyS_write+0x52/0xc0
-[  147.466472]  do_syscall_64+0x74/0x1a0
-[  147.466744]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+That is introduced by:
+mm: initialize pages on demand during boot
 
-reversing the sense of force check in intel_ir_reconfigure_irte()
-restores proper posted interrupt functionality
+The problem is caused by changing static branch value within spin lock.
+Spin lock disables preemption, and changing static branch value takes
+mutex lock in its path, and thus may sleep.
 
-Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+The fix is to add another boolean variable to avoid the need to change
+static branch within spinlock.
+
+Also, as noticed by Andrew, change spin_lock to spin_lock_irq, in order
+to disable interrupts and avoid possible deadlock with
+deferred_grow_zone().
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- Hi Thomas,
+ mm/page_alloc.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
- I noticed that you added intel_ir_reconfigure_irte() with the
- following commit:
- d491bdff888e ("iommu/vt-d: Reevaluate vector configuration on
- activate()")
-
- Could you please confirm the usage of "force" parameter in
- intel_ir_reconfigure_irte()?
-
- drivers/iommu/intel_irq_remapping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 66f69af..3062a15 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -1136,7 +1136,7 @@ static void intel_ir_reconfigure_irte(struct irq_data *irqd, bool force)
- 	irte->dest_id = IRTE_DEST(cfg->dest_apicid);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index b337a026007c..5df1ca40a2ff 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1579,6 +1579,7 @@ static int __init deferred_init_memmap(void *data)
+  * page_alloc_init_late() soon after smp_init() is complete.
+  */
+ static __initdata DEFINE_SPINLOCK(deferred_zone_grow_lock);
++static bool deferred_zone_grow __initdata = true;
+ static DEFINE_STATIC_KEY_TRUE(deferred_pages);
  
- 	/* Update the hardware only if the interrupt is in remapped mode. */
--	if (!force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
-+	if (force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
- 		modify_irte(&ir_data->irq_2_iommu, irte);
- }
+ /*
+@@ -1616,7 +1617,7 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
+ 	 * Bail if we raced with another thread that disabled on demand
+ 	 * initialization.
+ 	 */
+-	if (!static_branch_unlikely(&deferred_pages)) {
++	if (!static_branch_unlikely(&deferred_pages) || !deferred_zone_grow) {
+ 		spin_unlock_irqrestore(&deferred_zone_grow_lock, flags);
+ 		return false;
+ 	}
+@@ -1683,10 +1684,15 @@ void __init page_alloc_init_late(void)
+ 	/*
+ 	 * We are about to initialize the rest of deferred pages, permanently
+ 	 * disable on-demand struct page initialization.
++	 *
++	 * Note: it is prohibited to modify static branches in non-preemptible
++	 * context. Since, spin_lock() disables preemption, we must use an
++	 * extra boolean deferred_zone_grow.
+ 	 */
+-	spin_lock(&deferred_zone_grow_lock);
++	spin_lock_irq(&deferred_zone_grow_lock);
++	deferred_zone_grow = false;
++	spin_unlock_irq(&deferred_zone_grow_lock);
+ 	static_branch_disable(&deferred_pages);
+-	spin_unlock(&deferred_zone_grow_lock);
  
+ 	/* There will be num_node_state(N_MEMORY) threads */
+ 	atomic_set(&pgdat_init_n_undone, num_node_state(N_MEMORY));
 -- 
-1.8.3.1
+2.16.2
