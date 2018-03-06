@@ -1,64 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753026AbeCFIRW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 03:17:22 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51174 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750782AbeCFIRV (ORCPT
+        id S1753184AbeCFISZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 03:18:25 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38681 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeCFISX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 03:17:21 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Rik van Riel <riel@surriel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RFC/RFT][PATCH 6/7] sched: idle: Predict idle duration before stopping the tick
-Date: Tue, 06 Mar 2018 09:18:04 +0100
-Message-ID: <2173697.qZXBTo6fPi@aspire.rjw.lan>
-In-Reply-To: <1520292421.6857.22.camel@surriel.com>
-References: <1657351.s4RTvEoqBQ@aspire.rjw.lan> <2048240.1dZKXsSxFh@aspire.rjw.lan> <1520292421.6857.22.camel@surriel.com>
+        Tue, 6 Mar 2018 03:18:23 -0500
+X-Google-Smtp-Source: AG47ELtWolFhDx0AuPhWlA/u+3BvyAabqpfSX8NGHJzLMSm2juXzoizH8jdPXT0aFM5SkaMM8O+Fxg==
+Date: Tue, 6 Mar 2018 11:18:07 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC, PATCH 13/22] mm, rmap: Free encrypted pages once mapcount
+ drops to zero
+Message-ID: <20180306081807.f3ohd7fg6jpohg4h@node.shutemov.name>
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+ <20180305162610.37510-14-kirill.shutemov@linux.intel.com>
+ <eb2cc1cf-1be1-4535-f71b-fa33272a6f71@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb2cc1cf-1be1-4535-f71b-fa33272a6f71@intel.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, March 6, 2018 12:27:01 AM CET Rik van Riel wrote:
-> On Sun, 2018-03-04 at 23:28 +0100, Rafael J. Wysocki wrote:
-> > 
-> > +++ linux-pm/kernel/sched/idle.c
-> > @@ -188,13 +188,14 @@ static void cpuidle_idle_call(void)
-> >  	} else {
-> >  		unsigned int duration_us;
-> >  
-> > -		tick_nohz_idle_go_idle(true);
-> > -		rcu_idle_enter();
-> > -
-> >  		/*
-> >  		 * Ask the cpuidle framework to choose a convenient
-> > idle state.
-> >  		 */
-> >  		next_state = cpuidle_select(drv, dev, &duration_us);
-> > +
-> > +		tick_nohz_idle_go_idle(duration_us > USEC_PER_SEC /
-> > HZ);
-> > +		rcu_idle_enter();
-> > +
-> >  		entered_state = call_cpuidle(drv, dev, next_state);
+On Mon, Mar 05, 2018 at 11:12:15AM -0800, Dave Hansen wrote:
+> On 03/05/2018 08:26 AM, Kirill A. Shutemov wrote:
+> >  extern void prep_encrypt_page(struct page *page, gfp_t gfp, unsigned int order);
+> > +extern void free_encrypt_page(struct page *page, int keyid, unsigned int order);
 > 
-> When the expected idle period is short enough
-> that the timer is not stopped, does it make
-> sense to still call rcu_idle_enter?
+> The grammar here is weird, I think.
 > 
-> Should rcu_idle_enter also be conditional on
-> the expected idle period?
+> Why not free_encrypted_page()?
 
-Well, that would be the next step. :-)
+Okay, I'll fix this.
+
+-- 
+ Kirill A. Shutemov
