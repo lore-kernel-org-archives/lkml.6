@@ -1,56 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754066AbeCFVlq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 16:41:46 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49024 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753876AbeCFVll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 16:41:41 -0500
-Date: Tue, 6 Mar 2018 13:41:39 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: mingo@kernel.org, adobriyan@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 0/4 v2] Define killable version for
- access_remote_vm() and use it in fs/proc
-Message-Id: <20180306134139.375e15abab173329962f7d5a@linux-foundation.org>
-In-Reply-To: <b576e32b-9c47-ee67-a576-b5a0c05c2864@linux.alibaba.com>
-References: <1519691151-101999-1-git-send-email-yang.shi@linux.alibaba.com>
-        <20180306124540.d8b5f6da97ab69a49566f950@linux-foundation.org>
-        <b576e32b-9c47-ee67-a576-b5a0c05c2864@linux.alibaba.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        id S1754052AbeCFVrI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 16:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753876AbeCFVrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 16:47:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 118312178E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 6 Mar 2018 16:47:04 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: Lina Iyer <ilina@codeaurora.org>, kbuild-all@01.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
+ FTRACE
+Message-ID: <20180306164704.3c33c046@vmware.local.home>
+In-Reply-To: <201803061347.bjigZje9%fengguang.wu@intel.com>
+References: <20180302164317.10554-4-ilina@codeaurora.org>
+        <201803061347.bjigZje9%fengguang.wu@intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 13:17:37 -0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
+On Tue, 6 Mar 2018 13:38:06 +0800
+kbuild test robot <lkp@intel.com> wrote:
 
-> 
-> 
-> It just mitigates the hung task warning, can't resolve the mmap_sem 
-> scalability issue. Furthermore, waiting on pure uninterruptible state 
-> for reading /proc sounds unnecessary. It doesn't wait for I/O completion.
+> >> drivers/soc/qcom/./trace-rpmh.h:29:3: error: implicit declaration of function '__assign_string'; did you mean '__assign_str'? [-Werror=implicit-function-declaration]  
 
-OK.
+Yes, you meant __assign_str(). I may have said __assign_string() in my
+comments, but I was doing it from memory, not actually compiling code.
 
-> >
-> > Where the heck are we holding mmap_sem for so long?  Can that be fixed?
-> 
-> The mmap_sem is held for unmapping a large map which has every single 
-> page mapped. This is not a issue in real production code. Just found it 
-> by running vm-scalability on a machine with ~600GB memory.
-> 
-> AFAIK, I don't see any easy fix for the mmap_sem scalability issue. I 
-> saw range locking patches (https://lwn.net/Articles/723648/) were 
-> floating around. But, it may not help too much on the case that a large 
-> map with every single page mapped.
+Please make sure you test the code and make sure it builds before
+posting. And displays the tracepoint as you expect it to.
 
-Well it sounds fairly simple to mitigate?  Simplistically: don't unmap
-600G in a single hit; do it 1G at a time, dropping mmap_sem each time. 
-A smarter version might only come up for air if there are mmap_sem
-waiters and if it has already done some work.  I don't think we have
-any particular atomicity requirements when unmapping?
+Thanks,
+
+-- Steve
+
+
+>       __assign_string(name, d->name);
+>       ^
+>    include/trace/trace_events.h:719:4: note: in definition of macro 'DECLARE_EVENT_CLASS'
