@@ -1,229 +1,369 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753792AbeCFOrS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:47:18 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:38671 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933079AbeCFOpH (ORCPT
+        id S933079AbeCFOrd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:47:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38238 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753812AbeCFOrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:45:07 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180306144505epoutp036b5cca3f98edc712d28badcba6e2ae90~ZXABbEY_G1736017360epoutp03i
-X-AuditID: b6c32a45-3ebff70000001023-f8-5a9ea970d243
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 08/12] thermal: exynos: remove parsing of
- samsung,tmu_cal_type property
-Date: Tue, 06 Mar 2018 15:43:51 +0100
-Message-id: <1520347435-22970-9-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7bCmhW7BynlRBg8mKFtsnLGe1WL+kXNA
-        4so1Vov+x6+ZLc6f38BusekxkHt51xw2i8+9RxgtZpzfx2RxaOpeRoul1y8yWbTuPcJu8eRh
-        H5sDr8eaeWsYPS5fu8jssXPWXXaPxXteMnlsWtXJ5rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
-        pRbp2yVwZVw4cZe14KVOxbkp55kaGBtUuxg5OSQETCQ6rq9k7WLk4hAS2MEosXPrT2YI5zuj
-        xJWTc4EyHGBVRyb7QMR3M0pc+DyPCcL5xShx/exGVpBRbAJWEhPbVzGC2CICJRLTVvUyghQx
-        C5xlktix/R0LSEJYIFJi09FrTCA2i4CqRNutu2DNvAIeEic23GOHuElO4uSxyWBxTgFPiRMd
-        59hABkkInGCTaJ+znhmiyEXi7dJPjBC2sMSr41ugmqUlnq3ayAjR0Mwo8W3HHqiGCYwSe9YL
-        QdjWEoePXwTbwCzAJ9Fx+C87xJ+8Eh1tUCUeEle+PWGDsB0lpj9bCg2XOYwSC5cuZ53AKLWA
-        kWEVo1hqQXFuemqxUYGhXnFibnFpXrpecn7uJkZwxGu57mCccc7nEKMAB6MSD+8Gj7lRQqyJ
-        ZcWVuYcYJTiYlUR4I/TnRQnxpiRWVqUW5ccXleakFh9ilOZgURLnbQtwiRISSE8sSc1OTS1I
-        LYLJMnFwSjUwHi73uPgrnGHJKz0f7q9S/N/D9lgwJKs9Wea0eDu7zJQJd/yaeIV+y69ZXj51
-        Qp/Hyj4zw6ki59xqFjDKnk/fM9H40hfGdU5fMwvmFjh7C0+xduAV+TjT/5//5/SNSbPEpdXW
-        O2dPlw99dVfursK8xW8D9lbGvl7Qkzb9bawbh8kFbY49qx4vVWIpzkg01GIuKk4EAFxvPIP0
-        AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t9jAd28lfOiDDZeMrXYOGM9q8X8I+eA
-        xJVrrBb9j18zW5w/v4HdYtNjIPfyrjlsFp97jzBazDi/j8ni0NS9jBZLr19ksmjde4Td4snD
-        PjYHXo8189Ywely+dpHZY+esu+wei/e8ZPLYtKqTzWPzknqPvi2rGD0+b5IL4IjisklJzcks
-        Sy3St0vgyrhw4i5rwUudinNTzjM1MDaodjFycEgImEgcmezTxcjFISSwk1Hi5/SDrBDOL0aJ
-        47NXMnYxcnKwCVhJTGxfBWaLCJRIdE57zQxiMwucZZI4+J8DZJCwQKTEg828IGEWAVWJtlt3
-        WUFsXgEPiRMb7rGD2BICchInj00Gi3MKeEqc6DjHBmILAdUs7v7NNoGRZwEjwypGydSC4tz0
-        3GKjAqO81HK94sTc4tK8dL3k/NxNjMDQ3HZYq38H4+Ml8YcYBTgYlXh4N3jMjRJiTSwrrsw9
-        xCjBwawkwhuhPy9KiDclsbIqtSg/vqg0J7X4EKM0B4uSOC9//rFIIYH0xJLU7NTUgtQimCwT
-        B6dUA+OO/53tHGr2nPlX3H8oZOuHK+WKr1r/keHOh1Xb57GJXOjLXfM46VZfqf+MR7GZHfYf
-        9HM5zoa8V2K6vqiaxW/PRiuVTLf2WYsi5KIUeHuuJmxc8Pv8ed2mVSdu+6xX5P3WK39Rr7ij
-        7ON7g0cf6wKDJF6rVYlr194PVpj6caFdQHNQ0gv5AiWW4oxEQy3mouJEAHuXUDJJAgAA
-X-CMS-MailID: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
-X-RootMTR: 20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931
-References: <1520347435-22970-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180306144502epcas2p2818ee9c6d378d91fbff666549fb01931@epcas2p2.samsung.com>
+        Tue, 6 Mar 2018 09:47:31 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45605601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH v6] arm64: Add support for new control bits CTR_EL0.DIC
+ and CTR_EL0.IDC
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1519877640-11944-1-git-send-email-shankerd@codeaurora.org>
+ <20180306134405.GB18080@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <d6182273-c23a-c4fa-ce40-c87055bfb338@codeaurora.org>
+Date: Tue, 6 Mar 2018 08:47:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20180306134405.GB18080@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since calibration type for temperature is SoC (not platform) specific
-just move it from platform data to struct exynos_tmu_data instance.
-Then remove parsing of samsung,tmu_cal_type property. Also remove no
-longer needed platform data structure.
+Hi Will
 
-There should be no functional changes caused by this patch.
+On 03/06/2018 07:44 AM, Will Deacon wrote:
+> Hi Shanker,
+> 
+> On Wed, Feb 28, 2018 at 10:14:00PM -0600, Shanker Donthineni wrote:
+>> The DCache clean & ICache invalidation requirements for instructions
+>> to be data coherence are discoverable through new fields in CTR_EL0.
+>> The following two control bits DIC and IDC were defined for this
+>> purpose. No need to perform point of unification cache maintenance
+>> operations from software on systems where CPU caches are transparent.
+>>
+>> This patch optimize the three functions __flush_cache_user_range(),
+>> clean_dcache_area_pou() and invalidate_icache_range() if the hardware
+>> reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
+>> instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
+>> in order to avoid the unnecessary overhead.
+>>
+>> CTR_EL0.DIC: Instruction cache invalidation requirements for
+>>  instruction to data coherence. The meaning of this bit[29].
+>>   0: Instruction cache invalidation to the point of unification
+>>      is required for instruction to data coherence.
+>>   1: Instruction cache cleaning to the point of unification is
+>>       not required for instruction to data coherence.
+>>
+>> CTR_EL0.IDC: Data cache clean requirements for instruction to data
+>>  coherence. The meaning of this bit[28].
+>>   0: Data cache clean to the point of unification is required for
+>>      instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+>>      or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+>>   1: Data cache clean to the point of unification is not required
+>>      for instruction to data coherence.
+>>
+>> Co-authored-by: Philip Elcan <pelcan@codeaurora.org>
+>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+>> ---
+>> Changes since v5:
+>>   -Addressed Mark's review comments.
+> 
+> This mostly looks good now. Just a few comments inline.
+> 
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 7381eeb..41af850 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -1091,6 +1091,18 @@ config ARM64_RAS_EXTN
+>>  	  and access the new registers if the system supports the extension.
+>>  	  Platform RAS features may additionally depend on firmware support.
+>>  
+>> +config ARM64_SKIP_CACHE_POU
+>> +	bool "Enable support to skip cache PoU operations"
+>> +	default y
+>> +	help
+>> +	  Explicit point of unification cache operations can be eliminated
+>> +	  in software if the hardware handles transparently. The new bits in
+>> +	  CTR_EL0, CTR_EL0.DIC and CTR_EL0.IDC indicates the hardware
+>> +	  capabilities of ICache and DCache PoU requirements.
+>> +
+>> +	  Selecting this feature will allow the kernel to optimize cache
+>> +	  maintenance to the PoU.
+>> +
+>>  endmenu
+> 
+> Let's not bother with a Kconfig option. I think the extra couple of NOPs
+> this introduces for CPUs that don't implement the new features isn't going
+> to hurt anybody.
+> 
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 41 ++++++++----------------------------
- drivers/thermal/samsung/exynos_tmu.h | 10 ---------
- 2 files changed, 9 insertions(+), 42 deletions(-)
+Okay, I'll get rid of Kconfig option.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 262ab41..ab5062b 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -177,7 +177,6 @@
-  * struct exynos_tmu_data : A structure to hold the private data of the TMU
- 	driver
-  * @id: identifier of the one instance of the TMU controller.
-- * @pdata: pointer to the tmu platform/configuration data
-  * @base: base address of the single instance of the TMU controller.
-  * @base_second: base address of the common registers of the TMU controller.
-  * @irq: irq number of the TMU controller.
-@@ -187,6 +186,7 @@
-  * @clk: pointer to the clock structure.
-  * @clk_sec: pointer to the clock structure for accessing the base_second.
-  * @sclk: pointer to the clock structure for accessing the tmu special clk.
-+ * @cal_type: calibration type for temperature
-  * @efuse_value: SoC defined fuse value
-  * @min_efuse_value: minimum valid trimming data
-  * @max_efuse_value: maximum valid trimming data
-@@ -208,7 +208,6 @@
-  */
- struct exynos_tmu_data {
- 	int id;
--	struct exynos_tmu_platform_data *pdata;
- 	void __iomem *base;
- 	void __iomem *base_second;
- 	int irq;
-@@ -216,6 +215,7 @@ struct exynos_tmu_data {
- 	struct work_struct irq_work;
- 	struct mutex lock;
- 	struct clk *clk, *clk_sec, *sclk;
-+	u32 cal_type;
- 	u32 efuse_value;
- 	u32 min_efuse_value;
- 	u32 max_efuse_value;
-@@ -266,10 +266,9 @@ static void exynos_report_trigger(struct exynos_tmu_data *p)
-  */
- static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
- {
--	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	int temp_code;
- 
--	switch (pdata->cal_type) {
-+	switch (data->cal_type) {
- 	case TYPE_TWO_POINT_TRIMMING:
- 		temp_code = (temp - EXYNOS_FIRST_POINT_TRIM) *
- 			(data->temp_error2 - data->temp_error1) /
-@@ -293,10 +292,9 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
-  */
- static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
- {
--	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	int temp;
- 
--	switch (pdata->cal_type) {
-+	switch (data->cal_type) {
- 	case TYPE_TWO_POINT_TRIMMING:
- 		temp = (temp_code - data->temp_error1) *
- 			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
-@@ -536,7 +534,6 @@ static int exynos4412_tmu_initialize(struct platform_device *pdev)
- static int exynos5433_tmu_initialize(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	struct thermal_zone_device *tz = data->tzd;
- 	unsigned int status, trim_info;
- 	unsigned int rising_threshold = 0, falling_threshold = 0;
-@@ -563,14 +560,12 @@ static int exynos5433_tmu_initialize(struct platform_device *pdev)
- 				>> EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
- 
- 	switch (cal_type) {
--	case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
--		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
--		break;
- 	case EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING:
--		pdata->cal_type = TYPE_TWO_POINT_TRIMMING;
-+		data->cal_type = TYPE_TWO_POINT_TRIMMING;
- 		break;
-+	case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
- 	default:
--		pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
-+		data->cal_type = TYPE_ONE_POINT_TRIMMING;
- 		break;
- 	}
- 
-@@ -1151,21 +1146,9 @@ static int exynos_of_get_soc_type(struct device_node *np)
- 	return -EINVAL;
- }
- 
--static int exynos_of_sensor_conf(struct device_node *np,
--				 struct exynos_tmu_platform_data *pdata)
--{
--	of_node_get(np);
--
--	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
--
--	of_node_put(np);
--	return 0;
--}
--
- static int exynos_map_dt_data(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--	struct exynos_tmu_platform_data *pdata;
- 	struct resource res;
- 
- 	if (!data || !pdev->dev.of_node)
-@@ -1192,14 +1175,6 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		return -EADDRNOTAVAIL;
- 	}
- 
--	pdata = devm_kzalloc(&pdev->dev,
--			     sizeof(struct exynos_tmu_platform_data),
--			     GFP_KERNEL);
--	if (!pdata)
--		return -ENOMEM;
--
--	exynos_of_sensor_conf(pdev->dev.of_node, pdata);
--	data->pdata = pdata;
- 	data->soc = exynos_of_get_soc_type(pdev->dev.of_node);
- 
- 	switch (data->soc) {
-@@ -1284,6 +1259,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
-+	data->cal_type = TYPE_ONE_POINT_TRIMMING;
-+
- 	/*
- 	 * Check if the TMU shares some registers and then try to map the
- 	 * memory of common registers.
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 689453d..8f56f86 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -38,14 +38,4 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS7,
- };
- 
--/**
-- * struct exynos_tmu_platform_data
-- * @cal_type: calibration type for temperature
-- *
-- * This structure is required for configuration of exynos_tmu driver.
-- */
--struct exynos_tmu_platform_data {
--	u32 cal_type;
--};
--
- #endif /* _EXYNOS_TMU_H */
+>> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+>> index 3c78835..39f2274 100644
+>> --- a/arch/arm64/include/asm/assembler.h
+>> +++ b/arch/arm64/include/asm/assembler.h
+>> @@ -444,6 +444,11 @@
+>>   * 	Corrupts:	tmp1, tmp2
+>>   */
+>>  	.macro invalidate_icache_by_line start, end, tmp1, tmp2, label
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +alternative_if ARM64_HAS_CACHE_DIC
+>> +	b	9996f
+>> +alternative_else_nop_endif
+>> +#endif
+>>  	icache_line_size \tmp1, \tmp2
+>>  	sub	\tmp2, \tmp1, #1
+>>  	bic	\tmp2, \start, \tmp2
+>> @@ -453,6 +458,7 @@
+>>  	cmp	\tmp2, \end
+>>  	b.lo	9997b
+>>  	dsb	ish
+>> +9996:
+>>  	isb
+>>  	.endm
+>>  
+>> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+>> index ea9bb4e..d460e9f 100644
+>> --- a/arch/arm64/include/asm/cache.h
+>> +++ b/arch/arm64/include/asm/cache.h
+>> @@ -20,8 +20,12 @@
+>>  
+>>  #define CTR_L1IP_SHIFT		14
+>>  #define CTR_L1IP_MASK		3
+>> +#define CTR_DMLINE_SHIFT	16
+> 
+> This should be "CTR_DMINLINE_SHIFT"
+> 
+
+I'll change it.
+
+>> +#define CTR_ERG_SHIFT		20
+>>  #define CTR_CWG_SHIFT		24
+>>  #define CTR_CWG_MASK		15
+>> +#define CTR_IDC_SHIFT		28
+>> +#define CTR_DIC_SHIFT		29
+>>  
+>>  #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+>>  
+>> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+>> index bb26382..8dd42ae 100644
+>> --- a/arch/arm64/include/asm/cpucaps.h
+>> +++ b/arch/arm64/include/asm/cpucaps.h
+>> @@ -45,7 +45,9 @@
+>>  #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+>>  #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+>>  #define ARM64_HAS_RAS_EXTN			26
+>> +#define ARM64_HAS_CACHE_IDC			27
+>> +#define ARM64_HAS_CACHE_DIC			28
+>>  
+>> -#define ARM64_NCAPS				27
+>> +#define ARM64_NCAPS				29
+>>  
+>>  #endif /* __ASM_CPUCAPS_H */
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index 2985a06..0b64b55 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
+>>  };
+>>  
+>>  static const struct arm64_ftr_bits ftr_ctr[] = {
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
+>> -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),                    /* RES1 */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),    /* DIC */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),    /* IDC */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),   /* CWG */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),   /* ERG */
+>> +	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMLINE_SHIFT, 4, 1), /* DminLine */
+>>  	/*
+>>  	 * Linux can handle differing I-cache policies. Userspace JITs will
+>>  	 * make use of *minLine.
+>> @@ -852,6 +852,20 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
+>>  					ID_AA64PFR0_FP_SHIFT) < 0;
+>>  }
+>>  
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
+>> +			  int __unused)
+>> +{
+>> +	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
+>> +}
+>> +
+>> +static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
+>> +			  int __unused)
+>> +{
+>> +	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
+>> +}
+>> +#endif
+>> +
+>>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>>  static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>>  
+>> @@ -1088,6 +1102,20 @@ static int cpu_copy_el2regs(void *__unused)
+>>  		.enable = cpu_clear_disr,
+>>  	},
+>>  #endif /* CONFIG_ARM64_RAS_EXTN */
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +	{
+>> +		.desc = "Skip D-Cache maintenance 'DC CVAU' (CTR_EL0.IDC=1)",
+> 
+> Can we stick a bit closer to the architectural text here, please? How about:
+> 
+> "Data cache clean to the PoU not required for I/D coherence"
+> 
+
+I'll take your suggestion.
+
+>> +		.capability = ARM64_HAS_CACHE_IDC,
+>> +		.def_scope = SCOPE_SYSTEM,
+>> +		.matches = has_cache_idc,
+>> +	},
+>> +	{
+>> +		.desc = "Skip I-Cache maintenance 'IC IVAU' (CTR_EL0.DIC=1)",
+> 
+> "Instruction cache invalidation not required for I/D coherence"
+> 
+
+Same here.
+
+>> +		.capability = ARM64_HAS_CACHE_DIC,
+>> +		.def_scope = SCOPE_SYSTEM,
+>> +		.matches = has_cache_dic,
+>> +	},
+>> +#endif /* CONFIG_ARM64_SKIP_CACHE_POU */
+>>  	{},
+>>  };
+>>  
+>> diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+>> index 758bde7..d8d7a32 100644
+>> --- a/arch/arm64/mm/cache.S
+>> +++ b/arch/arm64/mm/cache.S
+>> @@ -50,6 +50,12 @@ ENTRY(flush_icache_range)
+>>   */
+>>  ENTRY(__flush_cache_user_range)
+>>  	uaccess_ttbr0_enable x2, x3, x4
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +alternative_if ARM64_HAS_CACHE_IDC
+>> +	dsb	ishst
+>> +	b	8f
+>> +alternative_else_nop_endif
+>> +#endif
+>>  	dcache_line_size x2, x3
+>>  	sub	x3, x2, #1
+>>  	bic	x4, x0, x3
+>> @@ -60,6 +66,7 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+>>  	b.lo	1b
+>>  	dsb	ish
+>>  
+>> +8:
+>>  	invalidate_icache_by_line x0, x1, x2, x3, 9f
+>>  	mov	x0, #0
+>>  1:
+>> @@ -116,6 +123,12 @@ ENDPIPROC(__flush_dcache_area)
+>>   *	- size    - size in question
+>>   */
+>>  ENTRY(__clean_dcache_area_pou)
+>> +#ifdef CONFIG_ARM64_SKIP_CACHE_POU
+>> +alternative_if ARM64_HAS_CACHE_IDC
+>> +	dsb	ishst
+>> +	ret
+>> +alternative_else_nop_endif
+> 
+> I think this is a slight asymmetry with the code for the I-side. On the
+> I-side, you hook into invalidate_icache_by_line, whereas on the D-side you
+> hook into the callers of dcache_by_line_op. Why is that?
+> 
+
+There is no particular reason other than complexity of the macro with another 
+alternative. I tried to avoid this change by updating __clean_dcache_area_pou().
+I can change if you're interested to see both I-Side and D-Side changes are
+symmetric some this like this...
+
+ .macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+  
+  .if	(\op == cvau)
+  alternative_if ARM64_HAS_CACHE_IDC
+        dsb	ishst
+        b       9997f
+  alternative_else_nop_endif
+  .endif
+
+	dcache_line_size \tmp1, \tmp2
+	add	\size, \kaddr, \size
+	sub	\tmp2, \tmp1, #1
+	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+	.if	(\op == cvau || \op == cvac)
+ alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+	dc	\op, \kaddr
+ alternative_else
+	dc	civac, \kaddr
+ alternative_endif
+	.elseif	(\op == cvap)
+ alternative_if ARM64_HAS_DCPOP
+	sys 3, c7, c12, 1, \kaddr	// dc cvap
+ alternative_else
+	dc	cvac, \kaddr
+ alternative_endif
+	.else
+	dc	\op, \kaddr
+	.endif
+	add	\kaddr, \kaddr, \tmp1
+	cmp	\kaddr, \size
+	b.lo	9998b
+	dsb	\domain
+9997:
+	.endm
+
+> I notice that the only user other than
+> flush_icache_range/__flush_cache_user_range or invalidate_icache_by_line
+> is in KVM, via invalidate_icache_range. If you want to hook in there, why
+> aren't you also patching __flush_icache_all? If so, I'd rather have the
+> I-side code consistent with the D-side code and do this in the handful of
+> callers. We might even be able to elide a branch or two that way.
+> 
+
+Agree with you, it saves function calls overhead. I'll do this change...
+
+static void invalidate_icache_guest_page(kvm_pfn_t pfn, unsigned long size)
+{
+	if (cpus_have_const_cap(ARM64_HAS_CACHE_DIC)
+	    __invalidate_icache_guest_page(pfn, size);
+}
+
+
+> I'm going to assume that I-cache aliases are all coherent if DIC=1, so it's
+> safe to elide our alias sync code.
+> 
+
+I'm not sure about I-cache whether aliases are all coherent if DIC=1 ot nor.
+Unfortunately I don't have any hardware to test DIC=1. I've verified IDC=1.
+
+> Will
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
 -- 
-1.9.1
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
