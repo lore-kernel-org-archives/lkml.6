@@ -1,29 +1,29 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELui6mOpha3GePkJGE3EjadswWJP1b/d1SPq8rYY+/8Naq/Th3kqFU47OwXBtM7JJ1oU8u83
-ARC-Seal: i=1; a=rsa-sha256; t=1520295962; cv=none;
+X-Google-Smtp-Source: AG47ELvVZiFbPBMvFv+/AioUe1A+IuVhrhCA21zxTSCzi/P6PyIRHq8DT2ZH3gyTssdnQZ5t1kSO
+ARC-Seal: i=1; a=rsa-sha256; t=1520295961; cv=none;
         d=google.com; s=arc-20160816;
-        b=yxa0lh4xkz6EzL+aCeyl+cPEENzuptJ/gkW/s9Nj+kgN7Enyum1+EyZLb6QM3mj6lV
-         TjpIefR49M4yMq08/jgFl9TUj8ydbhU/9TnQvjNQrmKvnf+oYVEqZEA4mIEbqXuJ2wkP
-         QTTnWybCq/Et3HWERFQyN7WYw2k3yfOUyyboFy6CzLlsFJHlcbZdFoe+mqSPA6Ekx3Pv
-         ju4P3xRtfVzWYXZXuMBkFONGTK1MUQ5I7CK1bBmwZIw+i8v73JYE8UD/hg5HLMEAUp4a
-         I6DeJ80AXKe1sMjfMxRX7aETyqiiKpH42YyHWxsY6tMQRJSk7QHyjm8ybcT7fXUPm5MS
-         JVpA==
+        b=0lhHnT2OjZvL+sYZAwKHS5y7fh1yUSLacuagcbIb9zB8MRT1BF/nKWf1+4+8VYIzE4
+         S7oPX3UT7RSpoKWuiS+HgPC72MKcF2CGM+fEjubOdj8QN3uXVjYhDfjrTASTfYj77iAP
+         iEzbwhigzUEPiYdGIG6sZVrgJQa/l2Z/DSLF/fRGFEHa055nyp/oJo6wAqdYZ/zpZIAv
+         7Nk6nyEvZR94maBhPTkqMmEyqSvS4hO3Lg8hjC2dtNKstkzJZCnqb+nOoavbNHlmlDfy
+         PPgTN6wMTmfM8YfIDvPlA+D2tX83o34a8aiOAGzlwaKgnmktaKdEEkX75f7AfVLriw03
+         j9oA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=bbbZNlQR1zRCJ8uxrvwncBKDWqm4wopjwMGTfoLTDHY=;
-        b=GvMEjxtOGI3+EhiWwVdAuMvoqUv6nNWxN1n/Hwf/i0dfH2GTyqFEXJ+5QcU+ea0Snn
-         CdqJf/Oi2mTsB3UtepEWqbLBXseQnIO7YhMjiCVRNb3EDnuzsRi9RtcTaZqDBzxpqkfB
-         +f/mRiPi5SVhpqT4xSCrlD1W5dVC2jf++0xmN8HEnlqe1UTGu1wCdzzrVDkfPaoF/Ljg
-         Ou25f3zds3bD04USmHS0lMmqNf3izaABFL66ZM7oTvGNwvpbqswofRuQP1TnVv541jPb
-         mu6gx7HGNEOhmPlB/8dSQO7JqWaR4UYeb+LbeKDm8YBRTapHocwOiMan3OIHksm+qIC6
-         8g1Q==
+        bh=j/xUg9Pel3D+OY1q+CzCfCXs2LDA5NFVvcjGpCg+b4s=;
+        b=cmI+b7SWPsNafC4NeN4j9fwIdOxxyLQ1AG822ucILoU0osfwXzU6n+FMqZRyQY0jZe
+         HYkuSW0gWEssUrDdkFttx96a4y4FcPRFViAtcSfDr4ywuxt6nsuc8mX3MJZmeo5zhIrE
+         fzGtqP6pYEK8bNMkDWPwu00qaWXyPpy/Hfb0UMfxn+EavYrXJIxQ0YRiQcgBZhP3nTPb
+         tOEqaA18zrttO2F+UGzSIU1XPF1DFP9f1uM1veyDIdmm31HM4gTvt6Fg4oC5UKuHxmRw
+         9MUAY46qVM0P7QTpbmAeSNOHSl3kCWQ3AsMLI70Icwgl/Qm5jniashSAVHLiUcwXWSLn
+         Q/RA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=FFtw3RGo;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=N+z8Ngk0;
        spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=FFtw3RGo;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=N+z8Ngk0;
        spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
@@ -33,31 +33,29 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 04/65] x86/mm: If INVPCID is available, use it to flush global mappings
-Date: Mon,  5 Mar 2018 19:24:37 -0500
-Message-Id: <20180306002538.1761-5-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 01/65] x86/mm: Add INVPCID helpers
+Date: Mon,  5 Mar 2018 19:24:34 -0500
+Message-Id: <20180306002538.1761-2-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=934
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145858840407281?=
-X-GMAIL-MSGID: =?utf-8?q?1594145858840407281?=
+X-GMAIL-THRID: =?utf-8?q?1594145858030279147?=
+X-GMAIL-MSGID: =?utf-8?q?1594145858030279147?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit d8bced79af1db6734f66b42064cc773cada2ce99 upstream.
+commit 060a402a1ddb551455ee410de2eadd3349f2801b upstream.
 
-On my Skylake laptop, INVPCID function 2 (flush absolutely
-everything) takes about 376ns, whereas saving flags, twiddling
-CR4.PGE to flush global mappings, and restoring flags takes about
-539ns.
+This adds helpers for each of the four currently-specified INVPCID
+modes.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Reviewed-by: Borislav Petkov <bp@suse.de>
@@ -76,34 +74,73 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Toshi Kani <toshi.kani@hp.com>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/ed0ef62581c0ea9c99b9bf6df726015e96d44743.1454096309.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/8a62b23ad686888cee01da134c91409e22064db9.1454096309.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 85d3700c744a11ee2989252acf50ccbbd814167a)
+(cherry picked from commit becf292446e9f2dc8842c448836bbe8005e24db0)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/include/asm/tlbflush.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/include/asm/tlbflush.h | 48 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index ed2317f19ec7..433eeaafe498 100644
+index 7e459b7ee708..995937999e1f 100644
 --- a/arch/x86/include/asm/tlbflush.h
 +++ b/arch/x86/include/asm/tlbflush.h
-@@ -152,6 +152,15 @@ static inline void __native_flush_tlb_global(void)
- {
- 	unsigned long flags;
+@@ -7,6 +7,54 @@
+ #include <asm/processor.h>
+ #include <asm/special_insns.h>
  
-+	if (static_cpu_has(X86_FEATURE_INVPCID)) {
-+		/*
-+		 * Using INVPCID is considerably faster than a pair of writes
-+		 * to CR4 sandwiched inside an IRQ flag save/restore.
-+		 */
-+		invpcid_flush_all();
-+		return;
-+	}
++static inline void __invpcid(unsigned long pcid, unsigned long addr,
++			     unsigned long type)
++{
++	u64 desc[2] = { pcid, addr };
 +
- 	/*
- 	 * Read-modify-write to CR4 - protect it from preemption and
- 	 * from interrupts. (Use the raw variant because this code can
++	/*
++	 * The memory clobber is because the whole point is to invalidate
++	 * stale TLB entries and, especially if we're flushing global
++	 * mappings, we don't want the compiler to reorder any subsequent
++	 * memory accesses before the TLB flush.
++	 *
++	 * The hex opcode is invpcid (%ecx), %eax in 32-bit mode and
++	 * invpcid (%rcx), %rax in long mode.
++	 */
++	asm volatile (".byte 0x66, 0x0f, 0x38, 0x82, 0x01"
++		      : : "m" (desc), "a" (type), "c" (desc) : "memory");
++}
++
++#define INVPCID_TYPE_INDIV_ADDR		0
++#define INVPCID_TYPE_SINGLE_CTXT	1
++#define INVPCID_TYPE_ALL_INCL_GLOBAL	2
++#define INVPCID_TYPE_ALL_NON_GLOBAL	3
++
++/* Flush all mappings for a given pcid and addr, not including globals. */
++static inline void invpcid_flush_one(unsigned long pcid,
++				     unsigned long addr)
++{
++	__invpcid(pcid, addr, INVPCID_TYPE_INDIV_ADDR);
++}
++
++/* Flush all mappings for a given PCID, not including globals. */
++static inline void invpcid_flush_single_context(unsigned long pcid)
++{
++	__invpcid(pcid, 0, INVPCID_TYPE_SINGLE_CTXT);
++}
++
++/* Flush all mappings, including globals, for all PCIDs. */
++static inline void invpcid_flush_all(void)
++{
++	__invpcid(0, 0, INVPCID_TYPE_ALL_INCL_GLOBAL);
++}
++
++/* Flush all mappings for all PCIDs except globals. */
++static inline void invpcid_flush_all_nonglobals(void)
++{
++	__invpcid(0, 0, INVPCID_TYPE_ALL_NON_GLOBAL);
++}
++
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/paravirt.h>
+ #else
 -- 
 2.16.2
