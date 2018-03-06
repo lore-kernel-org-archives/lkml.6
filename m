@@ -1,65 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753512AbeCFMQy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 07:16:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60307 "EHLO mail.bootlin.com"
+        id S932773AbeCFMXd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:23:33 -0500
+Received: from mga02.intel.com ([134.134.136.20]:39344 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753024AbeCFMQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 07:16:53 -0500
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v5 0/5] MIPS: add support for Microsemi MIPS SoCs
-Date: Tue,  6 Mar 2018 13:16:02 +0100
-Message-Id: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S932629AbeCFMXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 07:23:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="209253224"
+Message-ID: <1520339005.3779.3.camel@linux.intel.com>
+Subject: Re: [PATCH 3/5 V2] tpm2: add longer timeouts for creation commands.
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 06 Mar 2018 14:23:25 +0200
+In-Reply-To: <20180306092503.11568-4-tomas.winkler@intel.com>
+References: <20180306092503.11568-1-tomas.winkler@intel.com>
+         <20180306092503.11568-4-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 2018-03-06 at 11:25 +0200, Tomas Winkler wrote:
+> TPM2_CC_Create(0x153) and TPM2_CC_CreatePrimary (0x131) involve generation
+> of crypto keys which can be a computationally intensive task.
+> The timeout is set to 3min.
+> Rather than increasing default timeout a new constant is
+> added, to not stall for too long on regular commands failures.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-This patch series adds initial support for the Microsemi MIPS SoCs. It
-is currently focusing on the Microsemi Ocelot (VSC7513, VSC7514).
+Why are you radically chaging the default timeout? The commit
+message does not tell anything about that change.
 
-Changes in v5:
- - reworked the DT to remove ocelot_measure_hpt_freq()
- - fixed the memory node (memory@0)
- - fixed indentation
- - board-ocelot.config:
-    o require CONFIG_CPU_MIPS32_R2
-    o removed CONFIG_MIPS_CMDLINE_FROM_BOOTLOADER
-    o removed CONFIG_SQUASHFS because generic_defconfig has
-      # CONFIG_MISC_FILESYSTEMS is not set
- - removed DMA_NONCOHERENT from MSCC_OCELOT
+Why couldn't we just have two timeouts: one default and one long that
+would be at least as long as the longest timeout defined in the spec?
+Then we would not have to ever update LAST_CC constant, we could
+actually remove it completely.
 
-Alexandre Belloni (5):
-  dt-bindings: mips: Add bindings for Microsemi SoCs
-  MIPS: mscc: add ocelot dtsi
-  MIPS: mscc: add ocelot PCB123 device tree
-  MIPS: generic: Add support for Microsemi Ocelot
-  MAINTAINERS: Add entry for Microsemi MIPS SoCs
-
- Documentation/devicetree/bindings/mips/mscc.txt |  43 +++++++++
- MAINTAINERS                                     |   9 ++
- arch/mips/Makefile                              |   4 +
- arch/mips/boot/dts/Makefile                     |   1 +
- arch/mips/boot/dts/mscc/Makefile                |   3 +
- arch/mips/boot/dts/mscc/ocelot.dtsi             | 117 ++++++++++++++++++++++++
- arch/mips/boot/dts/mscc/ocelot_pcb123.dts       |  27 ++++++
- arch/mips/configs/generic/board-ocelot.config   |  36 ++++++++
- arch/mips/generic/Kconfig                       |  16 ++++
- arch/mips/generic/Makefile                      |   1 +
- arch/mips/generic/board-ocelot.c                |  67 ++++++++++++++
- 11 files changed, 324 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/mscc.txt
- create mode 100644 arch/mips/boot/dts/mscc/Makefile
- create mode 100644 arch/mips/boot/dts/mscc/ocelot.dtsi
- create mode 100644 arch/mips/boot/dts/mscc/ocelot_pcb123.dts
- create mode 100644 arch/mips/configs/generic/board-ocelot.config
- create mode 100644 arch/mips/generic/board-ocelot.c
-
--- 
-2.16.2
+/Jarkko
