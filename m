@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932804AbeCFOkP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:40:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49184 "EHLO
+        id S932918AbeCFOka (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:40:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50364 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932182AbeCFOkL (ORCPT
+        with ESMTP id S932820AbeCFOk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:40:11 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 812F160763
+        Tue, 6 Mar 2018 09:40:27 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C9D460398
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
 From: Sricharan R <sricharan@codeaurora.org>
@@ -19,9 +19,9 @@ To: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, linux@arm.linux.org.uk
 Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 07/15] clk: qcom: Add IPQ806X's HFPLLs
-Date: Tue,  6 Mar 2018 20:09:00 +0530
-Message-Id: <1520347148-27852-8-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v9 08/15] clk: qcom: Add support for Krait clocks
+Date: Tue,  6 Mar 2018 20:09:01 +0530
+Message-Id: <1520347148-27852-9-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
@@ -31,119 +31,219 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-Describe the HFPLLs present on IPQ806X devices.
+The Krait clocks are made up of a series of muxes and a divider
+that choose between a fixed rate clock and dedicated HFPLLs for
+each CPU. Instead of using mmio accesses to remux parents, the
+Krait implementation exposes the remux control via cp15
+registers. Support these clocks.
 
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ drivers/clk/qcom/Kconfig     |   4 ++
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-krait.h |  38 +++++++++++++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 28eb200..d571cf8 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
- 
- static struct clk_pll pll0 = {
-@@ -113,6 +114,84 @@
- 	},
- };
- 
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d9ae51e..bf14f56 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -234,3 +234,7 @@ config QCOM_HFPLL
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
++
++config KRAIT_CLOCKS
++	bool
++	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index c57b808..e1e96f6 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+new file mode 100644
+index 0000000..2e41767
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -0,0 +1,124 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include <asm/krait-l2-accessors.h>
++
++#include "clk-krait.h"
++
++/* Secondary and primary muxes share the same cp15 register */
++static DEFINE_SPINLOCK(krait_clock_reg_lock);
++
++#define LPL_SHIFT	8
++static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
++{
++	unsigned long flags;
++	u32 regval;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	regval = krait_get_l2_indirect_reg(mux->offset);
++	regval &= ~(mux->mask << mux->shift);
++	regval |= (sel & mux->mask) << mux->shift;
++	if (mux->lpl) {
++		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
++		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
++	}
++	krait_set_l2_indirect_reg(mux->offset, regval);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	/* Wait for switch to complete. */
++	mb();
++	udelay(1);
++}
++
++static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	mux->en_mask = sel;
++	/* Don't touch mux if CPU is off as it won't work */
++	if (__clk_is_enabled(hw->clk))
++		__krait_mux_set_sel(mux, sel);
++
++	return 0;
++}
++
++static u8 krait_mux_get_parent(struct clk_hw *hw)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = krait_get_l2_indirect_reg(mux->offset);
++	sel >>= mux->shift;
++	sel &= mux->mask;
++	mux->en_mask = sel;
++
++	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
++}
++
++const struct clk_ops krait_mux_clk_ops = {
++	.set_parent = krait_mux_set_parent,
++	.get_parent = krait_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate_closest,
++};
++EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
++
++/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
++static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
++	return DIV_ROUND_UP(*parent_rate, 2);
++}
++
++static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	unsigned long flags;
++	u32 val;
++	u32 mask = BIT(d->width) - 1;
++
++	if (d->lpl)
++		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	val = krait_get_l2_indirect_reg(d->offset);
++	val &= ~mask;
++	krait_set_l2_indirect_reg(d->offset, val);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	u32 mask = BIT(d->width) - 1;
++	u32 div;
++
++	div = krait_get_l2_indirect_reg(d->offset);
++	div >>= d->shift;
++	div &= mask;
++	div = (div + 1) * 2;
++
++	return DIV_ROUND_UP(parent_rate, div);
++}
++
++const struct clk_ops krait_div2_clk_ops = {
++	.round_rate = krait_div2_round_rate,
++	.set_rate = krait_div2_set_rate,
++	.recalc_rate = krait_div2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+new file mode 100644
+index 0000000..71890bc
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __QCOM_CLK_KRAIT_H
++#define __QCOM_CLK_KRAIT_H
++
++#include <linux/clk-provider.h>
++
++struct krait_mux_clk {
++	unsigned int	*parent_map;
++	u32		offset;
++	u32		mask;
++	u32		shift;
++	u32		en_mask;
++	bool		lpl;
++
++	struct clk_hw	hw;
++	struct notifier_block   clk_nb;
 +};
 +
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
++
++extern const struct clk_ops krait_mux_clk_ops;
++
++struct krait_div2_clk {
++	u32		offset;
++	u8		width;
++	u32		shift;
++	bool		lpl;
++
++	struct clk_hw	hw;
 +};
 +
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
++#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
 +
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
++extern const struct clk_ops krait_div2_clk_ops;
 +
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -2800,6 +2879,9 @@ enum {
- 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
- 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
- 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
++#endif
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
