@@ -1,116 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeCFCoG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 21:44:06 -0500
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39530 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752321AbeCFCoE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 21:44:04 -0500
-X-Google-Smtp-Source: AG47ELvI+yRVH6x4QUnYgmatH8hXUVYHotK29QAn9mnWgZrtzYEOvfvp/yH40daZ+BFDU77ZKwFntA==
-Date: Tue, 6 Mar 2018 11:43:58 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
+        id S1753141AbeCFCrk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 21:47:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752586AbeCFCrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 21:47:39 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114F820856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 5 Mar 2018 21:47:01 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: "Qixuan.Wu" <qixuan.wu@linux.alibaba.com>,
         linux-kernel-owner <linux-kernel-owner@vger.kernel.org>,
         Petr Mladek <pmladek@suse.com>, Jan Kara <jack@suse.cz>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         "chenggang.qin" <chenggang.qin@linux.alibaba.com>,
         caijingxian <caijingxian@linux.alibaba.com>,
-        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>,
-        Tejun Heo <tj@kernel.org>
+        "yuanliang.wyl" <yuanliang.wyl@alibaba-inc.com>
 Subject: Re: Would you help to tell why async printk solution was not taken
  to upstream kernel ?
-Message-ID: <20180306024358.GC6713@jagdpanzerIV>
+Message-ID: <20180305214701.7434d030@gandalf.local.home>
+In-Reply-To: <20180306020026.GB6713@jagdpanzerIV>
 References: <1eb584e2-a479-46dd-8a25-820da7a34e85.qixuan.wu@linux.alibaba.com>
- <20180304130151.GA483@tigerII.localdomain>
- <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
- <20180304104324.6bbbaa53@gandalf.local.home>
- <20180305021416.GA6202@jagdpanzerIV>
- <20180305155802.5c0f73fc@gandalf.local.home>
- <20180306015222.GA6713@jagdpanzerIV>
+        <20180304130151.GA483@tigerII.localdomain>
+        <af2c3824-c122-4496-a876-9b03af60c429.qixuan.wu@linux.alibaba.com>
+        <20180304104324.6bbbaa53@gandalf.local.home>
+        <20180305021416.GA6202@jagdpanzerIV>
+        <20180305154524.2056b773@gandalf.local.home>
+        <20180306020026.GB6713@jagdpanzerIV>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306015222.GA6713@jagdpanzerIV>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One more thing
+On Tue, 6 Mar 2018 11:00:26 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-On (03/06/18 10:52), Sergey Senozhatsky wrote:
-[..]
-> > If you know the baud rate, logbuf size * console throughput is actually
-> > trivial to calculate.
+> On (03/05/18 15:45), Steven Rostedt wrote:
+> > On Mon, 5 Mar 2018 11:14:16 +0900
+> > Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+> >   
+> > > It can print more than "one full buffer worth". In theory and on practice.  
+> > 
+> > How so? As soon as another process adds to the buffer, it will take
+> > over the printing.  
+> 
+> The very same CPU which holds the console_sem can add messages to the
+> logbuf.
+> 
+> There are at least 3 cases I can easily think of.
+> 
+> 
+> #1 preemption under console_sem
+> 
+> console_lock()
+>  for (;;) {
+>   local_irq_save()
+>   call_console_drivers()
+>   local_irq_restore()
+>   << preemption >>
 
-It's trivial when your setup is trivial. In a less trivial case if you
-set watchdog threshold based on "logbuf size * console throughput" then
-things are still too bad.
+At this moment all watchdogs are working fine. And the continuing will
+be done as if it was the first printk. No lockup eminent.
 
-So this is what a typical printk over serial console looks like
+>        printk // from another task, same CPU
+>  }
+> 
+> 
+> #2 IRQ->printk under console_sem
+> 
+> console_lock()
+>  for (;;) {
+>   local_irq_save()
+>   call_console_drivers()
+>   local_irq_restore()
+>   << IRQ >>
+>        printk
 
-printk()
- console_unlock()
-  for (;;) {
-   local_irq_save()
-    call_console_drivers()
-     foo_console_write()
-      spin_lock_irqsave(&port->lock, flags);
-      uart_console_write(port, s, count, foo_console_putchar);
-      spin_unlock_irqrestore(&port->lock, flags);
-   local_irq_restore()
-  }
+So basically, the CPU is just printing what that CPU is printing. It
+only becomes an issue if the system has an issue (one CPU spamming
+printk). Which is another bug.
 
-Notice that call_console_drivers->foo_console_write spins on
-port->lock every time it wants to print out a logbuf line.
-Why does it do this?
+>  }
+> 
+> 
+> #3 This, eventually, becomes #2. But the root cause and, thus,
+> probability are completely different. printks from console drivers
+> (some console drivers are really complex, with dependencies on timers,
+> networking, etc. etc.). We currently handle those via
+> printk_safe -> IRQ work. But I think we kinda should stop doing so.
+> 
+> console_lock()
+>  for (;;) {
+>   local_irq_save()
+>   call_console_drivers()
+>    printk()
 
-In short, because of printf(). Yes, printk() may depend on printf().
+Which is another issue as well. But this is due to issues with printk
+having issues, and is a different category of bug.
 
-printf()
- n_tty_write()
-  uart_write()
-   uart_port_lock(state, flags)                  // spin_lock_irqsave(&uport->lock, flags)
-    memcpy(circ->buf + circ->head, buf, c);
-   uart_port_unlock(port, flags)                 // spin_unlock_irqrestore(&port->lock, flags);
+#2 and #3 are more recursive bugs and not a "printk locks up due to
+other CPUs" kind of bug.
 
-Now, printf() messages stored in uart circ buffer must be printed
-to the console. And this is where console's IRQ handler jumps in.
+-- Steve
 
-A typical IRQ handler does something like this
 
-static irqreturn_t foo_console_irq_handler(...)
-{
-	spin_lock(&port->lock);
-	rx_chars(port, status);
-	tx_chars(port, status);
-	spin_unlock(&port->lock);
-}
-
-Where tx_chars() usually does something like this
-
-	while (...) {
-		write_char(port, xmit->buf[xmit->tail]);
-		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
-		if (uart_circ_empty(xmit))
-			break;
-	}
-
-Some drivers flush all pending chars, some drivers limit the number
-of TX chars to some number, e.g. 512.
-
-But in any case, printk() -> call_console_drivers() -> foo_console_write()
-must spin on port->lock as long as foo_console_irq_handler() has chars to
-TX / RX.
-
-Thus, if you have O(logbuf) of kernel messages, and O(circ->buf) of user
-space messages, then printk() will spend O(logbuf) + O(circ->buf) + O(RX).
-
-So the watchdog threshold value based purely on O(logbuf) (printing to
-_all_ of the consoles) will not always work.
-
-	-ss
+>   local_irq_restore()
+>  }
+> 
+> 	-ss
