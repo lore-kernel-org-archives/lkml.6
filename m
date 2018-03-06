@@ -1,79 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933048AbeCFOoQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 09:44:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932706AbeCFOoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 09:44:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213FE2178B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AG47ELsh6FRJAhkTV3qbsKKEsd3ytyO1ONtbZyJgDItSCN9oNGz1+QY9ZaT2qR35aosPLmVVMBMrR3G89qKBYEZxL8I=
+        id S1753881AbeCFOoA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 09:44:00 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:37734 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753790AbeCFOjm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 09:39:42 -0500
+X-IronPort-AV: E=Sophos;i="5.47,431,1515456000";
+   d="scan'208";a="598137756"
+Date: Tue, 6 Mar 2018 06:39:39 -0800
+From: Eduardo Valentin <eduval@amazon.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: Re: [PATCH v4 0/3] KVM: Introduce dedicated vCPUs hint
+ KVM_HINTS_DEDICATED
+Message-ID: <20180306143939.GA23766@u40b0340c692b58f6553c.ant.amazon.com>
+References: <1518483942-14741-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
-References: <cover.1520340931.git.amit.kucheria@linaro.org> <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 6 Mar 2018 08:43:51 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
-Message-ID: <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: msm8916: Add cpu cooling maps
-To: Amit Kucheria <amit.kucheria@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1518483942-14741-1-git-send-email-wanpengli@tencent.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Viresh
+Folks,
 
-On Tue, Mar 6, 2018 at 7:05 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> From: Rajendra Nayak <rnayak@codeaurora.org>
->
-> Add cpu cooling maps for cpu passive trip points. The cpu cooling
-> device states are mapped to cpufreq based scaling frequencies.
->
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index e468277..acac9e3 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> @@ -15,6 +15,7 @@
->  #include <dt-bindings/clock/qcom,gcc-msm8916.h>
->  #include <dt-bindings/reset/qcom,gcc-msm8916.h>
->  #include <dt-bindings/clock/qcom,rpmcc.h>
-> +#include <dt-bindings/thermal/thermal.h>
->
->  / {
->         model = "Qualcomm Technologies, Inc. MSM8916";
-> @@ -115,6 +116,10 @@
->                         cpu-idle-states = <&CPU_SPC>;
->                         clocks = <&apcs 0>;
->                         operating-points-v2 = <&cpu_opp_table>;
-> +                       /* cooling options */
-> +                       cooling-min-level = <0>;
-> +                       cooling-max-level = <7>;
+On Tue, Feb 13, 2018 at 09:05:39AM +0800, Wanpeng Li wrote:
+> This patchset introduces dedicated vCPUs(vCPU pinning, and there is no 
+> vCPU over-commitment) hint KVM_HINTS_DEDICATED, it has two users now:
+> 
+> 1) Waiman Long mentioned that:
+> 
+>     Generally speaking, unfair lock performs well for VMs with a small
+>     number of vCPUs. Native qspinlock may perform better than pvqspinlock
+>     if there is vCPU pinning and there is no vCPU over-commitment.
+> 
+> 2) vCPUs are very unlikely to get preempted when they are the only task 
+>    running on a CPU. PV TLB flush is slower that the native flush in that 
+>    case.
+> 
+> v3 -> v4:
+>  * update feature bit document
+> v2 -> v3:
+>  * a separate table for CPUID[0x40000001].EDX bits
+>  * a new kvm_hint_has_feature macro
+> v1 -> v2:
+>  * update to KVM_HINTS_DEDICATED
 
-Viresh is working on removing these from the binding...
+Great to see this has finally moved forward! Thanks for picking it up Wanpeng.
 
-> +                       #cooling-cells = <2>;
->                 };
->
->                 CPU1: cpu@1 {
+I would just request to next time at least reference the original thread and
+copy the original authors of the patch/idea.
+
+Thanks a lot.
+
+-- 
+All the best,
+Eduardo Valentin
