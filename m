@@ -1,433 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeCFKPk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:15:40 -0500
-Received: from mail-io0-f193.google.com ([209.85.223.193]:42152 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeCFKPh (ORCPT
+        id S1753425AbeCFKQC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:16:02 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57601 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753075AbeCFKP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:15:37 -0500
-X-Google-Smtp-Source: AG47ELuoRRbhpJNBFph+V2kI/npCA7hQNqrdop7w5qo4y7ruw+sw52CEm/aIPo1LoBtO54sm7v2ZJDa4x7x9ylQZdRw=
-MIME-Version: 1.0
-References: <20170920081340.7413-1-tweek@google.com> <20170920081340.7413-5-tweek@google.com>
- <CAJ+F1CKL7UBdhfDTu-RKOv5oy=qdeP8pEbn6_TudUs75ybeSQQ@mail.gmail.com>
-In-Reply-To: <CAJ+F1CKL7UBdhfDTu-RKOv5oy=qdeP8pEbn6_TudUs75ybeSQQ@mail.gmail.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Tue, 06 Mar 2018 10:15:25 +0000
-Message-ID: <CA+zpnLf6fJC1z_WTqrV1OAjRqzFv8B-w+x+x=tzDkwF0Omc6mA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] efi: call get_event_log before ExitBootServices
-To: marcandre.lureau@gmail.com
-Cc: linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        tpmdd-devel@lists.sourceforge.net,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>, linux-kernel@vger.kernel.org,
-        Matthew Garrett <mjg59@google.com>, peterhuewe@gmx.de,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, tpmdd@selhorst.net
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Mar 2018 05:15:57 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180306101555euoutp01f133f9769ad8813669ca4703e7018a51~ZTVAP1tQ60836308363euoutp01K
+X-AuditID: cbfec7f2-1c1ff70000011644-a9-5a9e6a5a59d6
+Subject: Re: [PATCH v4 00/38] DRM Rockchip rk3399 (Kevin)
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: hshi@chromium.org, wzz@rock-chips.com, hl@rock-chips.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dianders@chromium.org, linux-rockchip@lists.infradead.org,
+        orjan.eide@arm.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <568969f3-0b93-05ef-953d-af1eebdac87e@samsung.com>
+Date: Tue, 06 Mar 2018 11:15:52 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+In-reply-to: <20180305222324.5872-1-enric.balletbo@collabora.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+Content-transfer-encoding: 7bit
+Content-language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH973nucfDuvZ0yCea6latmciq7SuyUtqz+iN/9Mut1OGJyq/u
+        HFHpljshmchqh6vkjkxm7oZssjvKUtGlWEn6KYXVMr/6Qe6HzX+vz/f93vfzfn/3pQnhEN+d
+        PhGfxEnjJbEiyomsfzTdtV58UiPeoP2wCl/pfMzDF7NG+fiZzkjhl+M/KFzdZ0J49uMwH5cW
+        nMdTtR0EvmT4yMMFA/kk7m4qofCv97MEfqBvJXF/7TOEx1QzFJ5u0pA4s3fptiVstaYascUK
+        M8l2513hsY395Yi9r+53YBsm3vPZgcvtPFZffoH9p24h2TxDFWIbejQEO1bnGbpI7BQYxcWe
+        SOakvkHHnGJUFV+oRJX3mZt3jZQCdYtykCMNzCboKdcROciJFjKVCBq00/ZhDEHLzy5y3tVm
+        UNoFHQJjxw0H2/AVQe2bYr7F5cz4w+zEVZ5FcGG+zQkPh60DwTxHcLnvKWVxUYwf5IzmWFnA
+        BMHF31M8C5PMGujUKueYpl2ZwzD8d5fNsgSmCt9ZYzgy26FRN2hdRjBbYHBGZecVoK8eJWzs
+        Bhmq1/bYJgcw67faeCdk1UzYz53he7vBwcbLITvLyLPxBcibbLNmBiYXQbOyyC4EQGu72b5s
+        MRTUXycsOYERQFam0GZh4far+fu3g+5TPd/2QtcQmCd/onzkqV7QR72gg3pBB/WCDrcQWYXc
+        OLksLpqT+cVzKT4ySZxMHh/tE5kQV4fm/t+TmfZfjWj8RYQJMTQSLRLQe0rFQr4kWZYaZ0JA
+        EyIXwSFfjVgoiJKkpnHShKNSeSwnMyEPmhS5CcLXpYuFTLQkiTvFcYmcdF7l0Y7uCgT+g7Ry
+        KiW4eajIu9hriN6sDK8kg82k9usa9zCDxz5uoqWqL/GPJKOkrPCAoTIi5GyI/ODaM4FE4Mjq
+        3NyX/Xt7DRkjKlVQiaIi9O+5AX0G+t680lB2b1BxZ0fkslTaS3rE1bixxi8tYH92yPGUFw+0
+        NzW7Q2b2h+Wmn/78+/ZbESmLkfh5EVKZ5D9ejuQzewMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xy7pRWfOiDH49Y7ToPXeSyaKp4y2r
+        xdllB9ksrnx9z2ax5vYhRov/j16zWsydVGvxY8MpZov2LY+YLCbdn8BicXnXHDaLTw/+M1vs
+        23yYxeLuhrOMFp9b/7FZ/Nw1j8Wi7bqYg6DHmnlrGD1mN1xk8bjc18vksePuEkaPnbPusnts
+        //aA1eN+93Emj81L6j3+ztrP4tG3ZRWjx/Zr85g9Pm+SC+CJ4rJJSc3JLEst0rdL4MpoXf6U
+        raBVp2L+yoNsDYyXlboYOTkkBEwkjmxpYe5i5OIQEljCKDH3/z12COc5o8T8v7PZQKqEBSwl
+        /n+byASSEBF4yShxsvcVWBWzwDlGidst69kgWqYxSvTcnMoC0sImYCjR9bYLrJ1XwE6i6dcP
+        JhCbRUBV4tzSFjBbVCBGYurHjawQNYISPybfA+vlFHCU2LHsGVicWcBM4svLw1C2vMTmNW+Z
+        IWxxiebWmywTGAVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiM
+        023Hfm7ewXhpY/AhRgEORiUe3g0ec6OEWBPLiitzDzFKcDArifBG6M+LEuJNSaysSi3Kjy8q
+        zUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cCYzuXRVLa9L/dO9OsfKzm17/3M
+        n9E/Pf2jo9cKpQAvvWdPrUos/DXDLd/+73QNTZiQXPmw7Mj58E/TD/tPmZM7UevOneB6r9t8
+        oqXm/zwa9kgyHlsyxae1dLdTd+/NiXarLLq3u9dsm2r3zaV79XW3DvWdJa2Pc+wDb6dHbBOL
+        fSYTw1jil6HEUpyRaKjFXFScCAD+1pnVzwIAAA==
+X-CMS-MailID: 20180306101554eucas1p17691d725e9860795c122f57c70c5cbdb
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180305222337epcas3p22a4f5c32c5622d89f6e649b26c0a6043
+X-RootMTR: 20180305222337epcas3p22a4f5c32c5622d89f6e649b26c0a6043
+References: <CGME20180305222337epcas3p22a4f5c32c5622d89f6e649b26c0a6043@epcas3p2.samsung.com>
+        <20180305222324.5872-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w26AFj7t004567
 
-On Mon, Mar 5, 2018 at 4:40 PM Marc-André Lureau
-<marcandre.lureau@gmail.com>
-wrote:
+Hi Enric,
 
-> Hi Thiebaud
+On 2018-03-05 23:22, Enric Balletbo i Serra wrote:
+> Hi,
+>
+> This patchset includes cleanups, improvements, and bug fixes for
+> Rockchip DRM driver and PSR support.
+>
+> This new version is the same as before but rebased on top of
+> drm-misc-next plus the Marek patches that fixes Chromebook2 Peach-Pit [1]
+> and the latest series of Rockchip rk3399 eDP support [2].
+>
+> [1] https://www.spinics.net/lists/dri-devel/msg167804.html
+> [2] https://www.spinics.net/lists/dri-devel/msg167770.html
 
-> On Wed, Sep 20, 2017 at 10:13 AM, Thiebaud Weksteen <tweek@google.com>
-wrote:
-> > With TPM 2.0 specification, the event logs may only be accessible by
-> > calling an EFI Boot Service. Modify the EFI stub to copy the log area to
-> > a new Linux-specific EFI configuration table so it remains accessible
-> > once booted.
-> >
-> > When calling this service, it is possible to specify the expected format
-> > of the logs: TPM 1.2 (SHA1) or TPM 2.0 ("Crypto Agile"). For now, only
-the
-> > first format is retrieved.
-> >
+Thanks for v4 of this patchset.
 
-> Do you have plans to add support for the crypto-agile format? I am
-> working on uefi/ovmf support, and I am wondering if it is at all
-> necessary to add support for the 1.2 format. What do you think? I can
-> eventually try to work on 2.0 format support.
+After fixing the issue pointed in the patch 15/38, everything works fine on
+Exynos5250-based Chromebook Snow and Exynos5420-based Chromebook2 Peach-Pit
+boards. You can add my:
 
-Yes, this is definitely my intent. I am running low on free time for this
-piece of work to happen just now though.
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Thanks
+> Regards,
+>   Enric
+>
+> Changes in v4:
+> - Rebased all on top of drm-misc-next
+> - Removed the following patches as are already applied.
+>    [PATCH v3 01/43] drm/rockchip: Get rid of unnecessary struct fields
+>    [PATCH v3 02/43] drm/rockchip: support prime import sg table
+>    [PATCH v3 03/43] drm/rockchip: Respect page offset for PRIME mmap
+>    calls
+> - Removed the following patches as now are part of another patchset
+>    [PATCH v3 05/43] drm/bridge: analogix_dp: Don't power bridge in
+>    analogix_dp_bind
+>    [PATCH v3 33/43] drm/panel: simple: Change mode for Sharp lq123p1jx31
+>
+> Changes in v3:
+> - Addressed some of the comments from Sean on the v2
+>
+> Changes in v2:
+> - A few patches have been replaced by newer and cleaner versions from
+>    the ChromeOS kernel gerrit, especially about disallowing PSR for the
+>    whole atomic commit.
+>
+>
+> Douglas Anderson (4):
+>    drm/bridge: analogix_dp: Reorder plat_data->power_off to happen sooner
+>    drm/bridge: analogix_dp: Properly log AUX CH errors
+>    drm/bridge: analogix_dp: Properly disable aux chan retries on rockchip
+>    drm/bridge: analogix_dp: Split the platform-specific poweron in two
+>      parts
+>
+> Kristian H. Kristensen (1):
+>    drm/rockchip: Disable PSR on input events
+>
+> Lin Huang (6):
+>    drm/bridge: analogix_dp: Move enable video into config_video()
+>    drm/bridge: analogix_dp: Check AUX_EN status when doing AUX transfer
+>    drm/bridge: analogix_dp: Ensure edp is disabled when shutting down the
+>      panel
+>    drm/bridge: analogix_dp: Extend hpd check time to 100ms
+>    drm/bridge: analogix_dp: Check dpcd write/read status
+>    drm/bridge: analogix_dp: Reset aux channel if an error occurred
+>
+> Mark Yao (1):
+>    drm/rockchip: pre dither down when output bpc is 8bit
+>
+> Sean Paul (2):
+>    drm/rockchip: Don't use atomic constructs for psr
+>    drm/rockchip: Remove analogix psr worker
+>
+> Tomasz Figa (7):
+>    drm/rockchip: analogix_dp: Do not call Analogix code before bind
+>    drm/rockchip: Cancel PSR enable work before changing the state
+>    drm/rockchip: psr: Avoid redundant calls to .set() callback
+>    drm/rockchip: psr: Sanitize semantics of allow/disallow API
+>    drm/rockchip: Disable PSR from reboot notifier
+>    drm/rockchip: Disallow PSR for the whole atomic commit
+>    drm/rockchip: psr: Remove flush by CRTC
+>
+> Yakir Yang (1):
+>    drm/bridge: analogix_dp: detect Sink PSR state after configuring the
+>      PSR
+>
+> zain wang (16):
+>    drm/bridge: analogix_dp: set psr activate/deactivate when
+>      enable/disable bridge
+>    drm/bridge: analogix_dp: Don't change psr while bridge is disabled
+>    drm/rockchip: add mutex vop lock
+>    drm/bridge: analogix_dp: add fast link train for eDP
+>    drm/rockchip: Only wait for panel ACK on PSR entry
+>    drm/bridge: analogix_dp: Don't use fast link training when panel just
+>      powered up
+>    drm/bridge: analogix_dp: Retry bridge enable when it failed
+>    drm/bridge: analogix_dp: Wait for HPD signal before configuring link
+>    drm/bridge: analogix_dp: Set PD_INC_BG first when powering up edp phy
+>    drm/bridge: analogix_dp: Fix incorrect usage of enhanced mode
+>    drm/bridge: analogix_dp: Fix AUX_PD bit for Rockchip
+>    drm/rockchip: Restore psr->state when enable/disable psr failed
+>    drm/bridge: analogix_dp: Don't use ANALOGIX_DP_PLL_CTL to control pll
+>    drm/bridge: analogix_dp: Fix timeout of video streamclk config
+>    drm/bridge: analogix_dp: Fix incorrect operations with register
+>      ANALOGIX_DP_FUNC_EN_1
+>    drm/bridge: analogix_dp: Move fast link training detect to set_bridge
+>
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 452 ++++++++++++++++-----
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.h |  14 +-
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 274 ++++++++-----
+>   drivers/gpu/drm/bridge/analogix/analogix_dp_reg.h  |   7 +
+>   drivers/gpu/drm/exynos/exynos_dp.c                 |   2 +-
+>   drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  73 ++--
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +-
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   3 +-
+>   drivers/gpu/drm/rockchip/rockchip_drm_fb.c         |  61 ++-
+>   drivers/gpu/drm/rockchip/rockchip_drm_psr.c        | 361 ++++++++++------
+>   drivers/gpu/drm/rockchip/rockchip_drm_psr.h        |   7 +-
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  47 ++-
+>   drivers/gpu/drm/rockchip/rockchip_drm_vop.h        |   1 +
+>   drivers/gpu/drm/rockchip/rockchip_vop_reg.c        |   1 +
+>   include/drm/bridge/analogix_dp.h                   |   5 +-
+>   15 files changed, 915 insertions(+), 395 deletions(-)
+>
 
-
-> Thanks
-
-> > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > ---
-> >  arch/x86/boot/compressed/eboot.c      |  1 +
-> >  drivers/firmware/efi/Makefile         |  2 +-
-> >  drivers/firmware/efi/efi.c            |  4 ++
-> >  drivers/firmware/efi/libstub/Makefile |  3 +-
-> >  drivers/firmware/efi/libstub/tpm.c    | 81
-+++++++++++++++++++++++++++++++++++
-> >  drivers/firmware/efi/tpm.c            | 40 +++++++++++++++++
-> >  include/linux/efi.h                   | 46 ++++++++++++++++++++
-> >  7 files changed, 174 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/firmware/efi/tpm.c
-> >
-> > diff --git a/arch/x86/boot/compressed/eboot.c
-b/arch/x86/boot/compressed/eboot.c
-> > index a1686f3dc295..ef6abe8b3788 100644
-> > --- a/arch/x86/boot/compressed/eboot.c
-> > +++ b/arch/x86/boot/compressed/eboot.c
-> > @@ -999,6 +999,7 @@ struct boot_params *efi_main(struct efi_config *c,
-> >
-> >         /* Ask the firmware to clear memory on unclean shutdown */
-> >         efi_enable_reset_attack_mitigation(sys_table);
-> > +       efi_retrieve_tpm2_eventlog(sys_table);
-> >
-> >         setup_graphics(boot_params);
-> >
-> > diff --git a/drivers/firmware/efi/Makefile
-b/drivers/firmware/efi/Makefile
-> > index 0329d319d89a..2f074b5cde87 100644
-> > --- a/drivers/firmware/efi/Makefile
-> > +++ b/drivers/firmware/efi/Makefile
-> > @@ -10,7 +10,7 @@
-> >  KASAN_SANITIZE_runtime-wrappers.o      := n
-> >
-> >  obj-$(CONFIG_ACPI_BGRT)                += efi-bgrt.o
-> > -obj-$(CONFIG_EFI)                      += efi.o vars.o reboot.o
-memattr.o
-> > +obj-$(CONFIG_EFI)                      += efi.o vars.o reboot.o
-memattr.o tpm.o
-> >  obj-$(CONFIG_EFI)                      += capsule.o memmap.o
-> >  obj-$(CONFIG_EFI_VARS)                 += efivars.o
-> >  obj-$(CONFIG_EFI_ESRT)                 += esrt.o
-> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> > index f97f272e16ee..0308acfaaf76 100644
-> > --- a/drivers/firmware/efi/efi.c
-> > +++ b/drivers/firmware/efi/efi.c
-> > @@ -52,6 +52,7 @@ struct efi __read_mostly efi = {
-> >         .properties_table       = EFI_INVALID_TABLE_ADDR,
-> >         .mem_attr_table         = EFI_INVALID_TABLE_ADDR,
-> >         .rng_seed               = EFI_INVALID_TABLE_ADDR,
-> > +       .tpm_log                = EFI_INVALID_TABLE_ADDR
-> >  };
-> >  EXPORT_SYMBOL(efi);
-> >
-> > @@ -444,6 +445,7 @@ static __initdata efi_config_table_type_t
-common_tables[] = {
-> >         {EFI_PROPERTIES_TABLE_GUID, "PROP", &efi.properties_table},
-> >         {EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR",
-&efi.mem_attr_table},
-> >         {LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
-> > +       {LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
-> >         {NULL_GUID, NULL, NULL},
-> >  };
-> >
-> > @@ -532,6 +534,8 @@ int __init efi_config_parse_tables(void
-*config_tables, int count, int sz,
-> >         if (efi_enabled(EFI_MEMMAP))
-> >                 efi_memattr_init();
-> >
-> > +       efi_tpm_eventlog_init();
-> > +
-> >         /* Parse the EFI Properties table if it exists */
-> >         if (efi.properties_table != EFI_INVALID_TABLE_ADDR) {
-> >                 efi_properties_table_t *tbl;
-> > diff --git a/drivers/firmware/efi/libstub/Makefile
-b/drivers/firmware/efi/libstub/Makefile
-> > index dedf9bde44db..2abe6d22dc5f 100644
-> > --- a/drivers/firmware/efi/libstub/Makefile
-> > +++ b/drivers/firmware/efi/libstub/Makefile
-> > @@ -29,8 +29,7 @@ OBJECT_FILES_NON_STANDARD     := y
-> >  # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
-> >  KCOV_INSTRUMENT                        := n
-> >
-> > -lib-y                          := efi-stub-helper.o gop.o secureboot.o
-> > -lib-$(CONFIG_RESET_ATTACK_MITIGATION) += tpm.o
-> > +lib-y                          := efi-stub-helper.o gop.o secureboot.o
-tpm.o
-> >
-> >  # include the stub's generic dependencies from lib/ when building for
-ARM/arm64
-> >  arm-deps := fdt_rw.c fdt_ro.c fdt_wip.c fdt.c fdt_empty_tree.c
-fdt_sw.c sort.c
-> > diff --git a/drivers/firmware/efi/libstub/tpm.c
-b/drivers/firmware/efi/libstub/tpm.c
-> > index 6224cdbc9669..da661bf8cb96 100644
-> > --- a/drivers/firmware/efi/libstub/tpm.c
-> > +++ b/drivers/firmware/efi/libstub/tpm.c
-> > @@ -4,15 +4,18 @@
-> >   * Copyright (C) 2016 CoreOS, Inc
-> >   * Copyright (C) 2017 Google, Inc.
-> >   *     Matthew Garrett <mjg59@google.com>
-> > + *     Thiebaud Weksteen <tweek@google.com>
-> >   *
-> >   * This file is part of the Linux kernel, and is made available under
-the
-> >   * terms of the GNU General Public License version 2.
-> >   */
-> >  #include <linux/efi.h>
-> > +#include <linux/tpm_eventlog.h>
-> >  #include <asm/efi.h>
-> >
-> >  #include "efistub.h"
-> >
-> > +#ifdef CONFIG_RESET_ATTACK_MITIGATION
-> >  static const efi_char16_t efi_MemoryOverWriteRequest_name[] = {
-> >         'M', 'e', 'm', 'o', 'r', 'y', 'O', 'v', 'e', 'r', 'w', 'r',
-'i', 't',
-> >         'e', 'R', 'e', 'q', 'u', 'e', 's', 't', 'C', 'o', 'n', 't',
-'r', 'o',
-> > @@ -56,3 +59,81 @@ void
-efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
-> >                     EFI_VARIABLE_BOOTSERVICE_ACCESS |
-> >                     EFI_VARIABLE_RUNTIME_ACCESS, sizeof(val), &val);
-> >  }
-> > +
-> > +#endif
-> > +
-> > +void efi_retrieve_tpm2_eventlog_1_2(efi_system_table_t *sys_table_arg)
-> > +{
-> > +       efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
-> > +       efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
-> > +       efi_status_t status;
-> > +       efi_physical_addr_t log_location, log_last_entry;
-> > +       struct linux_efi_tpm_eventlog *log_tbl;
-> > +       unsigned long first_entry_addr, last_entry_addr;
-> > +       size_t log_size, last_entry_size;
-> > +       efi_bool_t truncated;
-> > +       void *tcg2_protocol;
-> > +
-> > +       status = efi_call_early(locate_protocol, &tcg2_guid, NULL,
-> > +                               &tcg2_protocol);
-> > +       if (status != EFI_SUCCESS)
-> > +               return;
-> > +
-> > +       status = efi_call_proto(efi_tcg2_protocol, get_event_log,
-tcg2_protocol,
-> > +                               EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2,
-> > +                               &log_location, &log_last_entry,
-&truncated);
-> > +       if (status != EFI_SUCCESS)
-> > +               return;
-> > +
-> > +       if (!log_location)
-> > +               return;
-> > +       first_entry_addr = (unsigned long) log_location;
-> > +
-> > +       /*
-> > +        * We populate the EFI table even if the logs are empty.
-> > +        */
-> > +       if (!log_last_entry) {
-> > +               log_size = 0;
-> > +       } else {
-> > +               last_entry_addr = (unsigned long) log_last_entry;
-> > +               /*
-> > +                * get_event_log only returns the address of the last
-entry.
-> > +                * We need to calculate its size to deduce the full
-size of
-> > +                * the logs.
-> > +                */
-> > +               last_entry_size = sizeof(struct tcpa_event) +
-> > +                       ((struct tcpa_event *)
-last_entry_addr)->event_size;
-> > +               log_size = log_last_entry - log_location +
-last_entry_size;
-> > +       }
-> > +
-> > +       /* Allocate space for the logs and copy them. */
-> > +       status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
-> > +                               sizeof(*log_tbl) + log_size,
-> > +                               (void **) &log_tbl);
-> > +
-> > +       if (status != EFI_SUCCESS) {
-> > +               efi_printk(sys_table_arg,
-> > +                          "Unable to allocate memory for event log\n");
-> > +               return;
-> > +       }
-> > +
-> > +       memset(log_tbl, 0, sizeof(*log_tbl) + log_size);
-> > +       log_tbl->size = log_size;
-> > +       log_tbl->version = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
-> > +       memcpy(log_tbl->log, (void *) first_entry_addr, log_size);
-> > +
-> > +       status = efi_call_early(install_configuration_table,
-> > +                               &linux_eventlog_guid, log_tbl);
-> > +       if (status != EFI_SUCCESS)
-> > +               goto err_free;
-> > +       return;
-> > +
-> > +err_free:
-> > +       efi_call_early(free_pool, log_tbl);
-> > +}
-> > +
-> > +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
-> > +{
-> > +       /* Only try to retrieve the logs in 1.2 format. */
-> > +       efi_retrieve_tpm2_eventlog_1_2(sys_table_arg);
-> > +}
-> > diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> > new file mode 100644
-> > index 000000000000..0cbeb3d46b18
-> > --- /dev/null
-> > +++ b/drivers/firmware/efi/tpm.c
-> > @@ -0,0 +1,40 @@
-> > +/*
-> > + * Copyright (C) 2017 Google, Inc.
-> > + *     Thiebaud Weksteen <tweek@google.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> > +
-> > +#include <linux/efi.h>
-> > +#include <linux/init.h>
-> > +#include <linux/memblock.h>
-> > +
-> > +#include <asm/early_ioremap.h>
-> > +
-> > +/*
-> > + * Reserve the memory associated with the TPM Event Log configuration
-table.
-> > + */
-> > +int __init efi_tpm_eventlog_init(void)
-> > +{
-> > +       struct linux_efi_tpm_eventlog *log_tbl;
-> > +       unsigned int tbl_size;
-> > +
-> > +       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
-> > +               return 0;
-> > +
-> > +       log_tbl = early_memremap(efi.tpm_log, sizeof(*log_tbl));
-> > +       if (!log_tbl) {
-> > +               pr_err("Failed to map TPM Event Log table @ 0x%lx\n",
-> > +                       efi.tpm_log);
-> > +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> > +               return -ENOMEM;
-> > +       }
-> > +
-> > +       tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> > +       memblock_reserve(efi.tpm_log, tbl_size);
-> > +       early_memunmap(log_tbl, sizeof(*log_tbl));
-> > +       return 0;
-> > +}
-> > +
-> > diff --git a/include/linux/efi.h b/include/linux/efi.h
-> > index 8dc3d94a3e3c..c5805eb601b1 100644
-> > --- a/include/linux/efi.h
-> > +++ b/include/linux/efi.h
-> > @@ -472,6 +472,39 @@ typedef struct {
-> >         u64 get_all;
-> >  } apple_properties_protocol_64_t;
-> >
-> > +typedef struct {
-> > +       u32 get_capability;
-> > +       u32 get_event_log;
-> > +       u32 hash_log_extend_event;
-> > +       u32 submit_command;
-> > +       u32 get_active_pcr_banks;
-> > +       u32 set_active_pcr_banks;
-> > +       u32 get_result_of_set_active_pcr_banks;
-> > +} efi_tcg2_protocol_32_t;
-> > +
-> > +typedef struct {
-> > +       u64 get_capability;
-> > +       u64 get_event_log;
-> > +       u64 hash_log_extend_event;
-> > +       u64 submit_command;
-> > +       u64 get_active_pcr_banks;
-> > +       u64 set_active_pcr_banks;
-> > +       u64 get_result_of_set_active_pcr_banks;
-> > +} efi_tcg2_protocol_64_t;
-> > +
-> > +typedef u32 efi_tcg2_event_log_format;
-> > +
-> > +typedef struct {
-> > +       void *get_capability;
-> > +       efi_status_t (*get_event_log)(efi_handle_t,
-efi_tcg2_event_log_format,
-> > +               efi_physical_addr_t *, efi_physical_addr_t *,
-efi_bool_t *);
-> > +       void *hash_log_extend_event;
-> > +       void *submit_command;
-> > +       void *get_active_pcr_banks;
-> > +       void *set_active_pcr_banks;
-> > +       void *get_result_of_set_active_pcr_banks;
-> > +} efi_tcg2_protocol_t;
-> > +
-> >  /*
-> >   * Types and defines for EFI ResetSystem
-> >   */
-> > @@ -622,6 +655,7 @@ void efi_native_runtime_setup(void);
-> >  #define EFI_MEMORY_ATTRIBUTES_TABLE_GUID       EFI_GUID(0xdcfa911d,
-0x26eb, 0x469f,  0xa2, 0x20, 0x38, 0xb7, 0xdc, 0x46, 0x12, 0x20)
-> >  #define EFI_CONSOLE_OUT_DEVICE_GUID            EFI_GUID(0xd3b36f2c,
-0xd551, 0x11d4,  0x9a, 0x46, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d)
-> >  #define APPLE_PROPERTIES_PROTOCOL_GUID         EFI_GUID(0x91bd12fe,
-0xf6c3, 0x44fb,  0xa5, 0xb7, 0x51, 0x22, 0xab, 0x30, 0x3a, 0xe0)
-> > +#define EFI_TCG2_PROTOCOL_GUID                 EFI_GUID(0x607f766c,
-0x7455, 0x42be,  0x93, 0x0b, 0xe4, 0xd7, 0x6d, 0xb2, 0x72, 0x0f)
-> >
-> >  #define EFI_IMAGE_SECURITY_DATABASE_GUID       EFI_GUID(0xd719b2cb,
-0x3d3a, 0x4596,  0xa3, 0xbc, 0xda, 0xd0, 0x0e, 0x67, 0x65, 0x6f)
-> >  #define EFI_SHIM_LOCK_GUID                     EFI_GUID(0x605dab50,
-0xe046, 0x4300,  0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23)
-> > @@ -634,6 +668,7 @@ void efi_native_runtime_setup(void);
-> >  #define LINUX_EFI_ARM_SCREEN_INFO_TABLE_GUID   EFI_GUID(0xe03fc20a,
-0x85dc, 0x406e,  0xb9, 0x0e, 0x4a, 0xb5, 0x02, 0x37, 0x1d, 0x95)
-> >  #define LINUX_EFI_LOADER_ENTRY_GUID            EFI_GUID(0x4a67b082,
-0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
-> >  #define LINUX_EFI_RANDOM_SEED_TABLE_GUID       EFI_GUID(0x1ce1e5bc,
-0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
-> > +#define LINUX_EFI_TPM_EVENT_LOG_GUID           EFI_GUID(0xb7799cb0,
-0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
-> >
-> >  typedef struct {
-> >         efi_guid_t guid;
-> > @@ -908,6 +943,7 @@ extern struct efi {
-> >         unsigned long properties_table; /* properties table */
-> >         unsigned long mem_attr_table;   /* memory attributes table */
-> >         unsigned long rng_seed;         /* UEFI firmware random seed */
-> > +       unsigned long tpm_log;          /* TPM2 Event Log table */
-> >         efi_get_time_t *get_time;
-> >         efi_set_time_t *set_time;
-> >         efi_get_wakeup_time_t *get_wakeup_time;
-> > @@ -1504,6 +1540,8 @@ static inline void
-> >  efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg)
-{ }
-> >  #endif
-> >
-> > +void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
-> > +
-> >  /*
-> >   * Arch code can implement the following three template macros,
-avoiding
-> >   * reptition for the void/non-void return cases of
-{__,}efi_call_virt():
-> > @@ -1571,4 +1609,12 @@ struct linux_efi_random_seed {
-> >         u8      bits[];
-> >  };
-> >
-> > +struct linux_efi_tpm_eventlog {
-> > +       u32     size;
-> > +       u8      version;
-> > +       u8      log[];
-> > +};
-> > +
-> > +extern int efi_tpm_eventlog_init(void);
-> > +
-> >  #endif /* _LINUX_EFI_H */
-> > --
-> > 2.14.1.821.g8fa685d3b7-goog
-> >
-
-
-
-> --
-> Marc-André Lureau
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
