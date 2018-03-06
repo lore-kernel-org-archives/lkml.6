@@ -1,57 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754125AbeCFWBY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 17:01:24 -0500
-Received: from botnar.kaiser.cx ([176.28.20.183]:40582 "EHLO botnar.kaiser.cx"
+        id S1754162AbeCFWC7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 17:02:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753805AbeCFWBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:01:22 -0500
-From: Martin Kaiser <martin@kaiser.cx>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH] ARM: dts: i.MX25: define SSI FIFO depth
-Date: Tue,  6 Mar 2018 22:58:19 +0100
-Message-Id: <1520373499-13623-1-git-send-email-martin@kaiser.cx>
-X-Mailer: git-send-email 2.1.4
+        id S1753805AbeCFWC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 17:02:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C9B206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 6 Mar 2018 17:02:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ftrace: nuke clear_ftrace_function
+Message-ID: <20180306170254.684be2fc@vmware.local.home>
+In-Reply-To: <8096dab2-2efc-076d-4f5c-b6c9da6a0554@huawei.com>
+References: <1517537689-34947-1-git-send-email-xieyisheng1@huawei.com>
+        <8096dab2-2efc-076d-4f5c-b6c9da6a0554@huawei.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the i.MX25 reference manuals, each SSI has four FIFOs. All
-of those FIFOs can store up to 15 entries.
+On Tue, 6 Mar 2018 19:30:28 +0800
+Yisheng Xie <xieyisheng1@huawei.com> wrote:
 
-The fsl_ssi driver's internal default for the FIFO depth in 8. Set our
-non-default FIFO depth explicitly in the Device Tree.
+> hi Steven and all,
+> Ping, for month passed, do you have any comment about this patch?
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
- arch/arm/boot/dts/imx25.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Sorry you got me in the midst of traveling and other issues.
 
-diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
-index 9725705..cf70df2 100644
---- a/arch/arm/boot/dts/imx25.dtsi
-+++ b/arch/arm/boot/dts/imx25.dtsi
-@@ -269,6 +269,7 @@
- 				dmas = <&sdma 24 1 0>,
- 				       <&sdma 25 1 0>;
- 				dma-names = "rx", "tx";
-+				fsl,fifo-depth = <15>;
- 				status = "disabled";
- 			};
- 
-@@ -329,6 +330,7 @@
- 				dmas = <&sdma 28 1 0>,
- 				       <&sdma 29 1 0>;
- 				dma-names = "rx", "tx";
-+				fsl,fifo-depth = <15>;
- 				status = "disabled";
- 			};
- 
--- 
-2.1.4
+This patch looks fine, I'll queue it up. I'm currently working on some
+code so I wont be pushing anything till it's all finished.
+
+Thanks!
+
+-- Steve
