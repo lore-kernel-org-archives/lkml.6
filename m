@@ -1,59 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeCFL7u (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 06:59:50 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33304 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753332AbeCFL7d (ORCPT
+        id S1753601AbeCFMAS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 07:00:18 -0500
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45982 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeCFMAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 06:59:33 -0500
-Date: Tue, 6 Mar 2018 12:59:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, ananth@linux.vnet.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com, srikar@linux.vnet.ibm.com,
-        oleg@redhat.com
-Subject: Re: [RFC 3/4] trace_uprobe: Support SDT markers having semaphore
-Message-ID: <20180306115921.GD25201@hirez.programming.kicks-ass.net>
-References: <20180228075345.674-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180228075345.674-4-ravi.bangoria@linux.vnet.ibm.com>
+        Tue, 6 Mar 2018 07:00:16 -0500
+X-Google-Smtp-Source: AG47ELvgA+K9nsxeJn6xyXpH8CfZoCrEGeoMqwlG0HlUKSOD1Oa3wwFVXIuSRYPKcmWWNr0ZoK/26g==
+Date: Tue, 6 Mar 2018 09:00:11 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc: daniel.baluta@nxp.com, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio:magnetometer: Remove duplications in iio_chan_spec
+Message-ID: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180228075345.674-4-ravi.bangoria@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 01:23:44PM +0530, Ravi Bangoria wrote:
-> Userspace Statically Defined Tracepoints[1] are dtrace style markers
-> inside userspace applications. These markers are added by developer at
-> important places in the code. Each marker source expands to a single
-> nop instruction in the compiled code but there may be additional
-> overhead for computing the marker arguments which expands to couple of
-> instructions. If this computaion is quite more, execution of it can be
-> ommited by runtime if() condition when no one is tracing on the marker:
-> 
->     if (semaphore > 0) {
->         Execute marker instructions;
->     }   
-> 
-> Default value of semaphore is 0. Tracer has to increment the semaphore
-> before recording on a marker and decrement it at the end of tracing.
-> 
-> Implement the semaphore flip logic in trace_uprobe, leaving core uprobe
-> infrastructure as is, except one new callback from uprobe_mmap() to
-> trace_uprobe.
+The magn_3d_channels array has multiple declarations of iio_chan_spec.
+Most of the iio_chan_spec are very similar, changing only by the .type
+and .channel2 field. This patch reduces the code duplication by adding a
+macro that can replace the iio_chan_spec  repetitions in the
+magn_3d_channels array.
 
-W.T.H. is that called a semaphore? afaict its just a usage-counter.
-There is no blocking, no releasing, nothing that would make it an actual
-semaphore.
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
+ 1 file changed, 19 insertions(+), 64 deletions(-)
 
-So please, remove all mention of semaphore from this code, because it,
-most emphatically, is not one.
-
-Also, would it not be much better to do userspace jump-labels for this?
-That completely avoids the dynamic branch at the SDT site.
+diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+index a1fd9d591818..fff64711a6c8 100644
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
+ 	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
+ };
+ 
++#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
++	{								\
++		.type = channel_type,					\
++		.modified = 1,						\
++		.channel2 = characteristic,				\
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
++		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
++					BIT(IIO_CHAN_INFO_SCALE) |	\
++					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
++					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
++	}								\
++
+ /* Channel definitions */
+ static const struct iio_chan_spec magn_3d_channels[] = {
+-	{
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_X,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_Y,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_MAGN,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_Z,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_MAGN,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}, {
+-		.type = IIO_ROT,
+-		.modified = 1,
+-		.channel2 = IIO_MOD_NORTH_TRUE,
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+-		BIT(IIO_CHAN_INFO_SCALE) |
+-		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+-		BIT(IIO_CHAN_INFO_HYSTERESIS),
+-	}
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
++	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
+ };
+ 
+ /* Adjust channel real bits based on report descriptor */
+-- 
+2.16.2
