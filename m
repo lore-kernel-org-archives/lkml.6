@@ -1,71 +1,108 @@
-Return-Path: <gi-oh.kim@profitbricks.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520415270; cv=none;
-        d=google.com; s=arc-20160816;
-        b=cpzVS/s7xKoWyWMkDnScNv97Se1CKFkWuwWV5fy1/hU1VJNbFoJ/wJR/Pp++RBhaJa
-         QfHZRHJLQqV+VeimWo52c9z6vESJaxkaI7pmdmjne8SICi5cbOIm5DJlj2eIMl6Jae5h
-         BcMnGVaPVHMG8frdlZQr0xzu3yDhMs2mkfSHFMHAaWgEUtuzZzF1S9y9Xo2alGTB/kq3
-         j//Bwt/Cq7wvBXixkmCpAnyN++GYswl3n62CPjz6Wi3piUcL68O2jvPHl62f6TRAnQ2Y
-         mstj+RE68sMSM3RX1PZ/Qj5unhi4H934Gvb6RHPyYWnmt73dhH13iu4h/nMsUeTY7c88
-         LZ5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=xKJ/F4L8DFWz7HmrCqv0ZxIIYTLAPi3QNd+kfMWkCQ0=;
-        b=KKN1inWo/01Gw3oAyuOxP0OI54tGYyeG3EQGjIt3W2VAbUNVFBeVYE1xuEmMOH54Aj
-         TXQ9mc38fEJKpccEyBxUWwXpyghZE4ucqISCpa40US7pGS+rgbeMqSD1f9p69pO36N6X
-         247OjE/kY9XDtn2uV7WiGDX1EDrHhaRiEr6gwdY1DfTxMM48DaSjU4iTgu4vlarm0fvM
-         vAmrC2NY2Z0VPdu2/mt4RZW3qIhIRkQXdjPMFvtPT/pVnUaeGOJYBfLfsChIofE1SeTd
-         WqEuVmZDjBHQlvQMul3Cwnp4yiTvK9We5FxhGXNFvx+PM6M6dCOpuMyoIsYeLoBhyNlI
-         +OFQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@profitbricks-com.20150623.gappssmtp.com header.s=20150623 header.b=qf100x4b;
-       spf=pass (google.com: domain of gi-oh.kim@profitbricks.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gi-oh.kim@profitbricks.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@profitbricks-com.20150623.gappssmtp.com header.s=20150623 header.b=qf100x4b;
-       spf=pass (google.com: domain of gi-oh.kim@profitbricks.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gi-oh.kim@profitbricks.com
-X-Google-Smtp-Source: AG47ELs2+QdYlZqmdtQ/GAYquIIQAB1s/vZ6C00cIWRwTOhQVkUreV55J47O2IqBFbhCf1Tsbp+2Ow==
-From: Gioh Kim <gi-oh.kim@profitbricks.com>
-To: linux-kernel@vger.kernel.org,
-	kstewart@linuxfoundation.org,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	gregkh@linuxfoundation.org
-Cc: Gioh Kim <gi-oh.kim@profitbricks.com>
-Subject: [PATCH] setlocalversion: use any tag
-Date: Wed,  7 Mar 2018 10:34:03 +0100
-Message-Id: <20180307093403.19610-1-gi-oh.kim@profitbricks.com>
-X-Mailer: git-send-email 2.14.1
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1353193-1520372032-2-16515507669596340624
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520372031; b=p3HRbrStheYyei3KNr7YjFt25RGMpSssh9SmtX4z90YBd9b
+    sN6rSbQRsSbhQPrt/KEHNoMLLlE78PTKo1bO70FS0JtWD393tc/TsH+lX4VMaAAR
+    xHKkBGb2qPfkLmHkXz7bHmT+lAAo+G770qm8nI+TTkrdnCGcEalWiF9q2pHU5ysF
+    ECu1zRnrod2G8/5MfPlFU2B1UsWPB1bJUUiMtJ2iTFF7tlTBKCgkMN0U3ine+HqC
+    v5d+TTassrBzYstBXDor522KDNwuBzmJuXveR6mq8fe6UzcQ35uVPxjbghaLjknV
+    Oz8P+/2Pde7emBPemoHCv4NukkqxDp4L2E8jCgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1520372031; bh=n6N/HdpOtzkGkM9iWF42mJY/27ecOzRwBIde8Z
+    D0sHY=; b=HM4UM/LX4W00SS/3FmMbQawJEsEUxE8oQ6sbnTrAMbqWyMDZepB+j6
+    aOZjDcuCtKSxIjUxMNB/jK/jyh28MNVG4NwbqqCwrhCOUOMY1/n6d4RvjJKvtVCa
+    RsLPSX7bo5+BqSeLNt7KoCuXaRLyy+FB8UZbyeRzhcZC1Z4XP0TBDpAx76ljhlzq
+    MhwTjMNhoyIDSa+rb2Y6SB8ZaBpx0vZbZ5067HdTB5cOEWoIjVz2NHm5pRx60HlG
+    EvMSJOo/JZOGj7wx4wKCMEy/xRWI6B4/SYho/gv/F+3Tb60qnqnBDkxylfqwqpuh
+    alwylglHzmN72Da1y/DCCzah+t7HqJgQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ettC2Gww x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jMyajYzQ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=ettC2Gww x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=jMyajYzQ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753898AbeCFVdt (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 6 Mar 2018 16:33:49 -0500
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39806 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753504AbeCFVds (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 6 Mar 2018 16:33:48 -0500
+X-Google-Smtp-Source: AG47ELsuvacIiDIRd3BH9jBve3pHMP+N7u7KZmAa/fGf3FzIE3qtnfVzusiV1IF5t2VM8ZRByYuug2sI2V0gMyEnsNY=
+MIME-Version: 1.0
+In-Reply-To: <20180222160432.GA16971@redhat.com>
+References: <20180222155627.1800948-1-arnd@arndb.de> <20180222160432.GA16971@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 22:33:46 +0100
+X-Google-Sender-Auth: 6i29Pf7p3MYgoodUNjz73azYA8Q
+Message-ID: <CAK8P3a1jpj0ZCs81YJu0Dx3QFSypQ+VBr348UfEaagcuvM_1gA@mail.gmail.com>
+Subject: Re: dm-bufio: avoid false-positive Wmaybe-uninitialized warning
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Aliaksei Karaliou <akaraliou.dev@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594270962675824355?=
-X-GMAIL-MSGID: =?utf-8?q?1594270962675824355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I googled about '+' mark in kernel version number. Many people also
-do not understand why their kernel version includes '+'. And many
-people creates an empty .scmversion file to remove it. I also
-create the empty .scmversion file whenever I clean the kernel tree.
-If setlocalversion script uses both of annotated tag and
-lightweight tag, it would be more convenient because it is common to set
-lightweight tag during developmene process.
+On Thu, Feb 22, 2018 at 5:04 PM, Mike Snitzer <snitzer@redhat.com> wrote:
+> On Thu, Feb 22 2018 at 10:56am -0500,
+> Arnd Bergmann <arnd@arndb.de> wrote:
 
-Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
----
- scripts/setlocalversion | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Mikulas already sent a fix for this:
+> https://patchwork.kernel.org/patch/10211631/
+>
+> But I like yours a bit better, though I'll likely move the declaration
+> of 'noio_flag' temporary inside the conditional.
+>
+> Anyway, I'll get this fixed up shortly, thanks.
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 71f39410691b..9f4309697ea6 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -49,7 +49,7 @@ scm_version()
- 
- 		# If we are at a tagged commit (like "v2.6.30-rc6"), we ignore
- 		# it, because this version is defined in the top level Makefile.
--		if [ -z "`git describe --exact-match 2>/dev/null`" ]; then
-+		if [ -z "`git describe --exact-match --tags 2>/dev/null`" ]; then
- 
- 			# If only the short version is requested, don't bother
- 			# running further git commands
--- 
-2.14.1
+I see the fix made it into linux-next on the same day, but the build bots still
+report the warning for mainline kernels and now also for stable kernels
+that got a backport of the patch that introduced it on arm64.
+
+I assume you had not planned to send it for mainline, any chance you
+could change that and send it as a bugfix with a 'Cc:
+stable@vger.kernel.org' tag to restore a clean build?
+
+       Arnd
