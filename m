@@ -1,169 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeCFSAi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 13:00:38 -0500
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:38361 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753831AbeCFSAf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 13:00:35 -0500
-X-Google-Smtp-Source: AG47ELtHzJmpB96nd8DeY4D9F+6mARlKdT266t9MPTRFo+UztJY9HmWRXgA+O56Tl3bCyMjqPJc6DZLPFnqw7h3ROXE=
-MIME-Version: 1.0
-In-Reply-To: <d0aac677-ed2e-c059-0cba-79f88de194b4@arm.com>
-References: <20180227204711.29357-1-dianders@chromium.org> <3831527.HjPPvuL6zK@diego>
- <d0aac677-ed2e-c059-0cba-79f88de194b4@arm.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 6 Mar 2018 10:00:32 -0800
-X-Google-Sender-Auth: z8JPM3uCo55OxUD-WrYf7EIbNhQ
-Message-ID: <CAD=FV=Wr6_U9c1qFRgx3=JhMg8US20_oMEmEfCdpVyGKek_8gQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs,
- wifi reset)
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754048AbeCFSCE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 13:02:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753986AbeCFSCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 13:02:02 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2423F2179F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL 2/4] ARM: exynos: mach for v4.17
+Date: Tue,  6 Mar 2018 19:01:24 +0100
+Message-Id: <20180306180124.8987-5-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180306180124.8987-1-krzk@kernel.org>
+References: <20180306180124.8987-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w26I0iaD014273
-
-Hi,
-
-On Tue, Mar 6, 2018 at 3:58 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Hi all,
->
-> On 01/03/18 08:43, Heiko Stübner wrote:
->> Am Dienstag, 27. Februar 2018, 21:47:11 CET schrieb Douglas Anderson:
->>> Back in the early days when gru devices were still under development
->>> we found an issue where the WiFi reset line needed to be configured as
->>> early as possible during the boot process to avoid the WiFi module
->>> being in a bad state.
->>>
->>> We found that the way to get the kernel to do this in the earliest
->>> possible place was to configure this line in the pinctrl hogs, so
->>> that's what we did.  For some history here you can see
->>> <http://crosreview.com/368770>.  After the time that change landed in
->>> the kernel, we landed a firmware change to configure this line even
->>> earlier.  See <http://crosreview.com/399919>.  However, even after the
->>> firmware change landed we kept the kernel change to deal with the fact
->>> that some people working on devices might take a little while to
->>> update their firmware.
->>>
->>> At this there are definitely zero devices out in the wild that have
->>> firmware without the fix in it.  Specifically looking in the firmware
->>> branch several critically important fixes for memory stability landed
->>> after the patch in coreboot and I know we didn't ship without those.
->>> Thus, by now, everyone should have the new firmware and it's safe to
->>> not have the kernel set this up in a pinctrl hog.
->>>
->>> Historically, even though it wasn't needed to have this in a pinctrl
->>> hog, we still kept it since it didn't hurt.  Pinctrl would apply the
->>> default hog at bootup and then would never touch things again.  That
->>> all changed with commit 981ed1bfbc6c ("pinctrl: Really force states
->>> during suspend/resume").  After that commit then we'll re-apply the
->>> default hog at resume time and that can screw up the reset state of
->>> WiFi.  ...and on rk3399 if you touch a device on PCIe in the wrong way
->>> then the whole system can go haywire.  That's what was happening.
->>> Specifically you'd resume a rk3399-gru-* device and it would mostly
->>> resume, then would crash with some crazy weird crash.
->>>
->>> One could say, perhaps, that the recent pinctrl change was at fault
->>> (and should be fixed) since it changed behavior.  ...but that's not
->>> really true.  The device tree for rk3399-gru is really to blame.
->>> Specifically since the pinctrl is defined in the hog and not in the
->>> "wlan-pd-n" node then the actual user of this pin doesn't have a
->>> pinctrl entry for it.  That's bad.
->>>
->>> Let's fix our problems by just moving the control of
->>> "wlan_module_reset_l pinctrl" out of the hog and put them in the
->>> proper place.
->>>
->>> NOTE: in theory, I think it should actually be possible to have a pin
->>> controlled _both_ by the hog and by an actual device.  Once the device
->>> claims the pin I think the hog is supposed to let go.  I'm not 100%
->>> sure that this works and in any case this solution would be more
->>> complex than is necessary.
->>>
->>> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
->>> Fixes: 48f4d9796d99 ("arm64: dts: rockchip: add Gru/Kevin DTS")
->>> Fixes: 981ed1bfbc6c ("pinctrl: Really force states during suspend/resume")
->>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>
->> applied as fix for 4.16 with the 2 Tested-tags
-> Sorry to rain on everyone's parade, but further testing shows that this
-> patch may not be enough to restore a reliable s2r. My initial testing
-> did show that we were resuming without the VOP errors, but there seem to
-> be further issues (I'm loosing the keyboard and the trackpad after
-> resume on Kevin).
->
-> Applying my initial hack makes it work again. I suspect that there are
-> more hog pins that need tweaking, but I'm a bit out of my depth here.
-
-Are you positive you weren't just wearing your lucky hat when you
-tested your patch and then took it off when you tested mine?  As far
-as I can see the only hogs left on kevin are:
-
-  &ap_pwroff      /* AP will auto-assert this when in S3 */
-  &clk_32k        /* This pin is always 32k on gru boards */
-
-Those map to:
-
-  ap_pwroff: ap-pwroff {
-     rockchip,pins = <1 5 RK_FUNC_1 &pcfg_pull_none>;
-  };
-
-  clk_32k: clk-32k {
-    rockchip,pins = <0 0 RK_FUNC_2 &pcfg_pull_none>;
-  };
-
-So I added some printouts at suspend/resume time.  Specifically I set
-a boolean to "true" for the duration rockchip_pinctrl_suspend() and
-rockchip_pinctrl_resume() and this turned on a printout in
-rockchip_set_mux().  My printout looked like this (yeah, I know it's a
-whitespace-damaged patch just to show what I'm doing):
-
-+       regmap_read(regmap, reg, &before);
-        data = (mask << (bit + 16));
-        rmask = data | (data >> 16);
-        data |= (mux & mask) << bit;
-        ret = regmap_update_bits(regmap, reg, rmask, data);
-
-+       regmap_read(regmap, reg, &after);
-+
-+       if (DOUG) {
-+               dev_info(info->dev,
-+                        "setting mux of GPIO%d-%d to %d; %#010x=>%#010x\n",
-+                        bank->bank_num, pin, mux, reg, before, after);
-+       }
-
-...and a similar one in rockchip_set_pull().  That showed this at resume time:
-
-[   62.284427] rockchip-pinctrl pinctrl: setting mux of GPIO1-5 to 1;
-0x00009400=>0x00009400
-[   62.294423] rockchip-pinctrl pinctrl: setting pull of GPIO1-5;
-0x000041aa=>0x000041aa
-[   62.303343] rockchip-pinctrl pinctrl: setting mux of GPIO0-0 to 2;
-0x00005002=>0x00005002
-[   62.313240] rockchip-pinctrl pinctrl: setting pull of GPIO0-0;
-0x00000ddc=>0x00000ddc
-[
-
-Said another way: pinmux and pull isn't actually changing due to the
-hogs.  We can see if something else could be changing, but I'd really
-want to be sure you're certain that the hogs are causing you
-problems...
 
 
--Doug
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.17
+
+for you to fetch changes up to cc14b2b1f0b98926b6640bdd66861188ded850eb:
+
+  ARM: EXYNOS: Extend cpuidle support to Midas boards (2018-02-19 17:55:49 +0100)
+
+----------------------------------------------------------------
+Samsung mach/soc changes for v4.17
+
+1. Add few remaining SPDX license identifiers.
+2. Add cpuidle support to all Midas-based boards (including new
+   GT-I9300/GT-I9305/GT-N7100/GT-N7105).
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: EXYNOS: Add SPDX license identifiers
+
+Simon Shields (1):
+      ARM: EXYNOS: Extend cpuidle support to Midas boards
+
+ arch/arm/include/debug/exynos.S  |  7 ++-----
+ arch/arm/include/debug/samsung.S | 10 +++-------
+ arch/arm/mach-exynos/exynos.c    |  3 ++-
+ include/linux/serial_s3c.h       | 17 ++---------------
+ 4 files changed, 9 insertions(+), 28 deletions(-)
