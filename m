@@ -1,173 +1,306 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754189AbeCFXPN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 18:15:13 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:44272 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753996AbeCFXPM (ORCPT
+        id S1754214AbeCFXSR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 18:18:17 -0500
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41322 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753971AbeCFXSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 18:15:12 -0500
-X-Google-Smtp-Source: AG47ELut4A8ZPK+RwSa7PeaK6doJCPM8f1pqEqNLHWbKVtklGTp+NfyEmeoVL1txRDMgEawEnN9gHw==
-From: Patrik Torstensson <totte@google.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-kernel@vger.kernel.org, ebiggers@google.com,
-        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com,
-        Patrik Torstensson <totte@google.com>
-Subject: [PATCH] Add an option to dm-verity to validate hashes at most once
-Date: Tue,  6 Mar 2018 15:14:56 -0800
-Message-Id: <20180306231456.210504-1-totte@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+        Tue, 6 Mar 2018 18:18:14 -0500
+X-Google-Smtp-Source: AG47ELu+1ArCoIMd3aE14FZg4zn7sVT3uWRFeuuZc6j0IiLyf+hfB36nSw8K7Xr8l+z2bX1FTHEzUXPNAdKAnFlkNgI=
+MIME-Version: 1.0
+In-Reply-To: <fbf029c2c9c5071c9e91b8b6f036d7659f3f8b78.1518503420.git.geliangtang@gmail.com>
+References: <6f60cb1c9a62abde779cdf45b772118192086491.1518356301.git.geliangtang@gmail.com>
+ <fbf029c2c9c5071c9e91b8b6f036d7659f3f8b78.1518503420.git.geliangtang@gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 6 Mar 2018 15:18:12 -0800
+X-Google-Sender-Auth: k-n0uzErD5kHov4QBNPh6mirQqg
+Message-ID: <CAGXu5jLdCJPhMXaOfP=zdtQAqdXvRYa4f6PxjdtqLqifJYUYFA@mail.gmail.com>
+Subject: Re: [PATCH v4] pstore: add lz4hc and 842 compression support
+To: Geliang Tang <geliangtang@gmail.com>
+Cc: Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an option to dm-verity to validate hashes at most once
-to allow platforms that is CPU/memory contraint to be
-protected by dm-verity against offline attacks.
+On Mon, Feb 12, 2018 at 10:40 PM, Geliang Tang <geliangtang@gmail.com> wrote:
+> Currently, pstore has supported three compression algorithms: zlib,
+> lzo and lz4. This patch added two more compression algorithms: lz4hc
+> and 842.
+>
+> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
 
-The option introduces a bitset that is used to check if
-a block has been validated before or not. A block can
-be validated more than once as there is no thread protection
-for the bitset.
+Thanks for the updates, I've applied this. I'll send a follow-up patch
+that I'm adding to avoid size_t cast to unsigned int.
 
-This patch has been developed and tested on entry-level
-Android Go devices.
+-Kees
 
-Signed-off-by: Patrik Torstensson <totte@google.com>
----
- drivers/md/dm-verity-target.c | 58 +++++++++++++++++++++++++++++++++--
- drivers/md/dm-verity.h        |  1 +
- 2 files changed, 56 insertions(+), 3 deletions(-)
+> ---
+> Changes in v4:
+>  -842 compress is not work in patch v3 since big_oops_buf_sz is too big.
+>   change big_oops_buf_sz from psinfo->bufsize * 2 to psinfo->bufsize.
+> Changes in v3:
+>  -fix outlen in 842
+> Changes in v2:
+>  -fix checkpatch.pl WARNING:
+>   please write a paragraph that describes the config symbol fully
+> ---
+>  fs/pstore/Kconfig    |  25 +++++++++
+>  fs/pstore/platform.c | 147 ++++++++++++++++++++++++++++++++++++++++++++-------
+>  2 files changed, 154 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
+> index b42e5bd6d8ff..cf97a3ecdce0 100644
+> --- a/fs/pstore/Kconfig
+> +++ b/fs/pstore/Kconfig
+> @@ -39,6 +39,31 @@ config PSTORE_LZ4_COMPRESS
+>          select LZ4_DECOMPRESS
+>          help
+>            This option enables LZ4 compression algorithm support.
+> +
+> +config PSTORE_LZ4HC_COMPRESS
+> +       bool "LZ4HC"
+> +       select LZ4HC_COMPRESS
+> +       select LZ4_DECOMPRESS
+> +       help
+> +         This option enables LZ4 high compression mode algorithm.
+> +
+> +         Currently, pstore has supported five compression algorithms:
+> +         zlib, lzo, lz4, lz4hc and 842.
+> +
+> +         The default compression algorithm is zlib.
+> +
+> +config PSTORE_842_COMPRESS
+> +       bool "842"
+> +       select 842_COMPRESS
+> +       select 842_DECOMPRESS
+> +       help
+> +         This option enables 842 compression algorithm support.
+> +
+> +         Currently, pstore has supported five compression algorithms:
+> +         zlib, lzo, lz4, lz4hc and 842.
+> +
+> +         The default compression algorithm is zlib.
+> +
+>  endchoice
+>
+>  config PSTORE_CONSOLE
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index c3129b131e4d..19aaefeb052f 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -34,9 +34,12 @@
+>  #ifdef CONFIG_PSTORE_LZO_COMPRESS
+>  #include <linux/lzo.h>
+>  #endif
+> -#ifdef CONFIG_PSTORE_LZ4_COMPRESS
+> +#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
+>  #include <linux/lz4.h>
+>  #endif
+> +#ifdef CONFIG_PSTORE_842_COMPRESS
+> +#include <linux/sw842.h>
+> +#endif
+>  #include <linux/string.h>
+>  #include <linux/timer.h>
+>  #include <linux/slab.h>
+> @@ -336,6 +339,33 @@ static const struct pstore_zbackend backend_lzo = {
+>  };
+>  #endif
+>
+> +#if defined(CONFIG_PSTORE_LZ4_COMPRESS) || defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
+> +static int decompress_lz4(void *in, void *out, size_t inlen, size_t outlen)
+> +{
+> +       int ret;
+> +
+> +       ret = LZ4_decompress_safe(in, out, inlen, outlen);
+> +       if (ret < 0) {
+> +               /*
+> +                * LZ4_decompress_safe will return an error code
+> +                * (< 0) if decompression failed
+> +                */
+> +               pr_err("LZ4_decompress_safe error, ret = %d!\n", ret);
+> +               return -EIO;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void free_lz4(void)
+> +{
+> +       kfree(workspace);
+> +       kfree(big_oops_buf);
+> +       big_oops_buf = NULL;
+> +       big_oops_buf_sz = 0;
+> +}
+> +#endif
+> +
+>  #ifdef CONFIG_PSTORE_LZ4_COMPRESS
+>  static int compress_lz4(const void *in, void *out, size_t inlen, size_t outlen)
+>  {
+> @@ -350,29 +380,54 @@ static int compress_lz4(const void *in, void *out, size_t inlen, size_t outlen)
+>         return ret;
+>  }
+>
+> -static int decompress_lz4(void *in, void *out, size_t inlen, size_t outlen)
+> +static void allocate_lz4(void)
+> +{
+> +       big_oops_buf_sz = LZ4_compressBound(psinfo->bufsize);
+> +       big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
+> +       if (big_oops_buf) {
+> +               workspace = kmalloc(LZ4_MEM_COMPRESS, GFP_KERNEL);
+> +               if (!workspace) {
+> +                       pr_err("No memory for compression workspace; skipping compression\n");
+> +                       kfree(big_oops_buf);
+> +                       big_oops_buf = NULL;
+> +               }
+> +       } else {
+> +               pr_err("No memory for uncompressed data; skipping compression\n");
+> +               workspace = NULL;
+> +       }
+> +}
+> +
+> +static const struct pstore_zbackend backend_lz4 = {
+> +       .compress       = compress_lz4,
+> +       .decompress     = decompress_lz4,
+> +       .allocate       = allocate_lz4,
+> +       .free           = free_lz4,
+> +       .name           = "lz4",
+> +};
+> +#endif
+> +
+> +#ifdef CONFIG_PSTORE_LZ4HC_COMPRESS
+> +static int compress_lz4hc(const void *in, void *out,
+> +                         size_t inlen, size_t outlen)
+>  {
+>         int ret;
+>
+> -       ret = LZ4_decompress_safe(in, out, inlen, outlen);
+> -       if (ret < 0) {
+> -               /*
+> -                * LZ4_decompress_safe will return an error code
+> -                * (< 0) if decompression failed
+> -                */
+> -               pr_err("LZ4_decompress_safe error, ret = %d!\n", ret);
+> +       ret = LZ4_compress_HC(in, out, inlen, outlen,
+> +                             LZ4HC_DEFAULT_CLEVEL, workspace);
+> +       if (!ret) {
+> +               pr_err("LZ4_compress_HC error; compression failed!\n");
+>                 return -EIO;
+>         }
+>
+>         return ret;
+>  }
+>
+> -static void allocate_lz4(void)
+> +static void allocate_lz4hc(void)
+>  {
+>         big_oops_buf_sz = LZ4_compressBound(psinfo->bufsize);
+>         big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
+>         if (big_oops_buf) {
+> -               workspace = kmalloc(LZ4_MEM_COMPRESS, GFP_KERNEL);
+> +               workspace = kmalloc(LZ4HC_MEM_COMPRESS, GFP_KERNEL);
+>                 if (!workspace) {
+>                         pr_err("No memory for compression workspace; skipping compression\n");
+>                         kfree(big_oops_buf);
+> @@ -384,7 +439,59 @@ static void allocate_lz4(void)
+>         }
+>  }
+>
+> -static void free_lz4(void)
+> +static const struct pstore_zbackend backend_lz4hc = {
+> +       .compress       = compress_lz4hc,
+> +       .decompress     = decompress_lz4,
+> +       .allocate       = allocate_lz4hc,
+> +       .free           = free_lz4,
+> +       .name           = "lz4hc",
+> +};
+> +#endif
+> +
+> +#ifdef CONFIG_PSTORE_842_COMPRESS
+> +static int compress_842(const void *in, void *out, size_t inlen, size_t outlen)
+> +{
+> +       int ret;
+> +
+> +       ret = sw842_compress(in, inlen, out, (unsigned int *)&outlen, workspace);
+> +       if (ret) {
+> +               pr_err("sw842_compress error; compression failed!\n");
+> +               return ret;
+> +       }
+> +
+> +       return outlen;
+> +}
+> +
+> +static int decompress_842(void *in, void *out, size_t inlen, size_t outlen)
+> +{
+> +       int ret;
+> +
+> +       ret = sw842_decompress(in, inlen, out, (unsigned int *)&outlen);
+> +       if (ret) {
+> +               pr_err("sw842_decompress error, ret = %d!\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       return outlen;
+> +}
+> +
+> +static void allocate_842(void)
+> +{
+> +       big_oops_buf_sz = psinfo->bufsize;
+> +       big_oops_buf = kmalloc(big_oops_buf_sz, GFP_KERNEL);
+> +       if (big_oops_buf) {
+> +               workspace = kmalloc(SW842_MEM_COMPRESS, GFP_KERNEL);
+> +               if (!workspace) {
+> +                       kfree(big_oops_buf);
+> +                       big_oops_buf = NULL;
+> +               }
+> +       } else {
+> +               pr_err("No memory for uncompressed data; skipping compression\n");
+> +               workspace = NULL;
+> +       }
+> +}
+> +
+> +static void free_842(void)
+>  {
+>         kfree(workspace);
+>         kfree(big_oops_buf);
+> @@ -392,12 +499,12 @@ static void free_lz4(void)
+>         big_oops_buf_sz = 0;
+>  }
+>
+> -static const struct pstore_zbackend backend_lz4 = {
+> -       .compress       = compress_lz4,
+> -       .decompress     = decompress_lz4,
+> -       .allocate       = allocate_lz4,
+> -       .free           = free_lz4,
+> -       .name           = "lz4",
+> +static const struct pstore_zbackend backend_842 = {
+> +       .compress       = compress_842,
+> +       .decompress     = decompress_842,
+> +       .allocate       = allocate_842,
+> +       .free           = free_842,
+> +       .name           = "842",
+>  };
+>  #endif
+>
+> @@ -408,6 +515,10 @@ static const struct pstore_zbackend *zbackend =
+>         &backend_lzo;
+>  #elif defined(CONFIG_PSTORE_LZ4_COMPRESS)
+>         &backend_lz4;
+> +#elif defined(CONFIG_PSTORE_LZ4HC_COMPRESS)
+> +       &backend_lz4hc;
+> +#elif defined(CONFIG_PSTORE_842_COMPRESS)
+> +       &backend_842;
+>  #else
+>         NULL;
+>  #endif
+> --
+> 2.14.1
+>
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index aedb8222836b..479d0af212bf 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -32,6 +32,7 @@
- #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
- #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
- #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
-+#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
- 
- #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
- 
-@@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
- 	return 0;
- }
- 
-+/*
-+ * Moves the bio iter one data block forward.
-+ */
-+static inline void verity_bv_skip_block(struct dm_verity *v,
-+					struct dm_verity_io *io,
-+					struct bvec_iter *iter)
-+{
-+	struct bio *bio = dm_bio_from_per_bio_data(io,
-+						   v->ti->per_io_data_size);
-+
-+	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
-+}
-+
- /*
-  * Verify one "dm_verity_io" structure.
-  */
-@@ -445,8 +459,15 @@ static int verity_verify_io(struct dm_verity_io *io)
- 
- 	for (b = 0; b < io->n_blocks; b++) {
- 		int r;
-+		sector_t cur_block = io->block + b;
- 		struct ahash_request *req = verity_io_hash_req(v, io);
- 
-+		if (v->validated_blocks &&
-+		    likely(test_bit(cur_block, v->validated_blocks))) {
-+			verity_bv_skip_block(v, io, &io->iter);
-+			continue;
-+		}
-+
- 		r = verity_hash_for_block(v, io, io->block + b,
- 					  verity_io_want_digest(v, io),
- 					  &is_zero);
-@@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
- 			return r;
- 
- 		if (likely(memcmp(verity_io_real_digest(v, io),
--				  verity_io_want_digest(v, io), v->digest_size) == 0))
-+				  verity_io_want_digest(v, io),
-+				  v->digest_size) == 0)) {
-+			if (v->validated_blocks)
-+				set_bit(cur_block, v->validated_blocks);
- 			continue;
-+		}
- 		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
--					   io->block + b, NULL, &start) == 0)
-+					   cur_block, NULL, &start) == 0)
- 			continue;
- 		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
--					   io->block + b))
-+					   cur_block))
- 			return -EIO;
- 	}
- 
-@@ -740,6 +765,7 @@ static void verity_dtr(struct dm_target *ti)
- 	if (v->bufio)
- 		dm_bufio_client_destroy(v->bufio);
- 
-+	kvfree(v->validated_blocks);
- 	kfree(v->salt);
- 	kfree(v->root_digest);
- 	kfree(v->zero_digest);
-@@ -760,6 +786,26 @@ static void verity_dtr(struct dm_target *ti)
- 	kfree(v);
- }
- 
-+static int verity_alloc_most_once(struct dm_verity *v)
-+{
-+	struct dm_target *ti = v->ti;
-+
-+	/* the bitset can only handle INT_MAX blocks */
-+	if (v->data_blocks > INT_MAX) {
-+		ti->error = "device too large to use check_at_most_once";
-+		return -E2BIG;
-+	}
-+
-+	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
-+				     * sizeof(unsigned long), GFP_KERNEL);
-+	if (!v->validated_blocks) {
-+		ti->error = "failed to allocate bitset for check_at_most_once";
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
- static int verity_alloc_zero_digest(struct dm_verity *v)
- {
- 	int r = -ENOMEM;
-@@ -829,6 +875,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- 			}
- 			continue;
- 
-+		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
-+			r = verity_alloc_most_once(v);
-+			if (r)
-+				return r;
-+			continue;
-+
- 		} else if (verity_is_fec_opt_arg(arg_name)) {
- 			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
- 			if (r)
-diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-index b675bc015512..ace5ec781b5f 100644
---- a/drivers/md/dm-verity.h
-+++ b/drivers/md/dm-verity.h
-@@ -63,6 +63,7 @@ struct dm_verity {
- 	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
- 
- 	struct dm_verity_fec *fec;	/* forward error correction */
-+	unsigned long *validated_blocks; /* bitset blocks validated */
- };
- 
- struct dm_verity_io {
+
+
 -- 
-2.16.2.395.g2e18187dfd-goog
+Kees Cook
+Pixel Security
