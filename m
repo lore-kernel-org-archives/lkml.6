@@ -1,111 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750817AbeCFFOD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 00:14:03 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:28018 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbeCFFOB (ORCPT
+        id S1750869AbeCFFPO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 00:15:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43236 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeCFFPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 00:14:01 -0500
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w265Dhsr027213
-X-Nifty-SrcIP: [209.85.217.181]
-X-Google-Smtp-Source: AG47ELs2/ykkFcVnbPeMV5onXzssNSK2T1g86TLBiQJFJHOesLvME7XQjYvNKQZ7vyAGDjTs+auXr8hhgs/NoQcHCNI=
+        Tue, 6 Mar 2018 00:15:12 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60C45601A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v8 15/15] dt-bindings: cpufreq: Document
+ operating-points-v2-krait-cpu
+To: Rob Herring <robh@kernel.org>
+Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+ <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
+ <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <a8d40af2-8a9e-8868-93fa-dbdec20a437e@codeaurora.org>
+Date: Tue, 6 Mar 2018 10:45:04 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KTUZYMc9poahUQMoQi=wSVnNHDt0SS8BTdRHs59m=qO4w@mail.gmail.com>
-References: <20180216202255.25307-1-ulfalizer@gmail.com> <1518815662.13169.27.camel@perches.com>
- <CAFkk2KSRswP2FEV7mTMJwLe+WRDdVEUnZBOyh_XWrQu2tW07zg@mail.gmail.com>
- <CAK7LNAQjnCnPvFZEPR2YM9EsOALnPy=FeugZC_8PFrngb9AQgQ@mail.gmail.com> <CAFkk2KTUZYMc9poahUQMoQi=wSVnNHDt0SS8BTdRHs59m=qO4w@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 6 Mar 2018 14:13:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
-Message-ID: <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text checks
-To: Ulf Magnusson <ulfalizer@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>, Robo Bot <apw@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+To: Andrew)
 
-2018-03-06 13:52 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> On Sat, Feb 24, 2018 at 2:53 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-02-23 10:30 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->>> On Fri, Feb 16, 2018 at 10:14 PM, Joe Perches <joe@perches.com> wrote:
->>>> On Fri, 2018-02-16 at 21:22 +0100, Ulf Magnusson wrote:
->>>>> Hello,
->>>>>
->>>>> This patchset contains some improvements for the Kconfig help text check in
->>>>> scripts/checkconfig.pl:
->>>>
->>>> Seems sensible enough to me.
->>>> Signed-off-by: Joe Perches <joe@perches.com>
->>>
->>> Will you be taking this in yourself?
->>>
->>> (Adding Masahiro on CC -- forgot when I sent the patchset.)
->>>
->>> Cheers,
->>> Ulf
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+On 3/6/2018 3:49 AM, Rob Herring wrote:
+> On Tue, Feb 27, 2018 at 07:37:02PM +0530, Sricharan R wrote:
+>> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+>> that has KRAIT processors the voltage/current value of each OPP
+>> varies based on the silicon variant in use.
+>> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
+>> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
+>> reads the efuse value from the SoC to provide the required information
+>> that is used to determine the voltage and current value for each OPP of
+>> operating-points-v2 table when it is parsed by the OPP framework.
 >>
->>
->> I am not a perl expert, but I have no objection for this series.
->>
->>
->> Thanks!
->>
->>
->>
->>
->> --
->> Best Regards
->> Masahiro Yamada
->
-> *Bump*
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
+>>  1 file changed, 363 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
+Thanks Rob !!
+Will post with all tags and the Makefile corrected.
 
-Who is addressed by "*Bump*" ?
-
-
-
-I think patches for checkpatch.pl
-are supposed to be taken care of by Andrew.
-
-He forwards patches to Linus.
-
-
-$ git log --no-merges --pretty=fuller scripts/checkpatch.pl  | grep
-'Commit:' | sort | uniq -c | sort -nr
-    555 Commit:     Linus Torvalds <torvalds@linux-foundation.org>
-     16 Commit:     Linus Torvalds <torvalds@woody.linux-foundation.org>
-      4 Commit:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-      4 Commit:     Michael S. Tsirkin <mst@redhat.com>
-      2 Commit:     Thomas Gleixner <tglx@linutronix.de>
-      2 Commit:     Ingo Molnar <mingo@kernel.org>
-      2 Commit:     Greg Kroah-Hartman <gregkh@suse.de>
-      1 Commit:     Tobin C. Harding <me@tobin.cc>
-      1 Commit:     Rob Herring <robh@kernel.org>
-      1 Commit:     Petr Mladek <pmladek@suse.com>
-      1 Commit:     Michal Marek <mmarek@suse.cz>
-      1 Commit:     Mauro Carvalho Chehab <mchehab@s-opensource.com>
-      1 Commit:     Masahiro Yamada <yamada.masahiro@socionext.com>
-      1 Commit:     Lucas De Marchi <lucas.demarchi@profusion.mobi>
-      1 Commit:     Jiri Kosina <jkosina@suse.cz>
-      1 Commit:     Dan Williams <dan.j.williams@intel.com>
-      1 Commit:     Bjorn Helgaas <bhelgaas@google.com>
-
-
-
+Regards,
+ Sricharan
 
 -- 
-Best Regards
-Masahiro Yamada
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
