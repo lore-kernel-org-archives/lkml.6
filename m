@@ -1,154 +1,257 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeCFKNh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 05:13:37 -0500
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53162 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeCFKNf (ORCPT
+        id S1753316AbeCFKPC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 05:15:02 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:23729 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbeCFKO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 05:13:35 -0500
-X-Google-Smtp-Source: AG47ELstWQ2iUCqLeBp2MsCa9ITTqKrJ/aAIr+Y6gKc/6VcA0vNVP3hK1bpIrGHHDb8YRXUDQ9/YxA==
-Date: Tue, 6 Mar 2018 11:13:31 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: Ville =?iso-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>,
-        DRI-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/drm_ioctl.c: Test client capability value early when
- setting.
-Message-ID: <20180306101331.GD22212@phenom.ffwll.local>
-Mail-Followup-To: Liviu Dudau <Liviu.Dudau@arm.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        DRI-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180228152741.22507-1-Liviu.Dudau@arm.com>
- <20180228154041.GK5453@intel.com>
- <20180228154444.GA20827@e110455-lin.cambridge.arm.com>
- <20180228155715.GL5453@intel.com>
- <20180228163430.GB20827@e110455-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180228163430.GB20827@e110455-lin.cambridge.arm.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 6 Mar 2018 05:14:59 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w26ADWAO002547
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Petr Vorel <petr.vorel@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: make unmet dependency warnings readable
+Date: Tue,  6 Mar 2018 19:13:30 +0900
+Message-Id: <1520331210-27940-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 04:34:30PM +0000, Liviu Dudau wrote:
-> On Wed, Feb 28, 2018 at 05:57:15PM +0200, Ville Syrjälä wrote:
-> > On Wed, Feb 28, 2018 at 03:44:44PM +0000, Liviu Dudau wrote:
-> > > On Wed, Feb 28, 2018 at 05:40:41PM +0200, Ville Syrjälä wrote:
-> > > > On Wed, Feb 28, 2018 at 03:27:41PM +0000, Liviu Dudau wrote:
-> > > > > The drm_setclientcap() function implementing the DRM_IOCTL_SET_CLIENT_CAP
-> > > > > ioctl expects that any capability set by the client will have a value of 1.
-> > > > > Make the check early so that we don't have to test the value for each
-> > > > > capability.
-> > > > 
-> > > > What if we want a a non-boolean capability at some point?
-> > > 
-> > > Well, I'm adding another boolean capability soon, so you will be going
-> > > against the trend :)
-> > 
-> > Plenty of non-bools in driver specific counterparts I believe.
-> 
-> So, is that a NACK? 
+Currently, the unmet dependency warnings end up with endlessly long
+expressions, most of which are false positives.
 
-Yeah I think this is overoptimizing for not repeating code.
--Daniel
+Here is test code to demonstrate how it currently works.
 
-> 
-> 
-> > 
-> > > I guess you will have 2 options: revert the patch or add a condition to
-> > > the test.
-> > > 
-> > > I don't have strong feelings, just felt like too much copying when
-> > > adding another capability so I thought to do some "cleanup".
-> > > 
-> > > Best regards,
-> > > Liviu
-> > > 
-> > > > 
-> > > > > 
-> > > > > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/drm_ioctl.c | 9 +++------
-> > > > >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> > > > > index af782911c505..02ffa0e8d77b 100644
-> > > > > --- a/drivers/gpu/drm/drm_ioctl.c
-> > > > > +++ b/drivers/gpu/drm/drm_ioctl.c
-> > > > > @@ -306,22 +306,19 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
-> > > > >  {
-> > > > >  	struct drm_set_client_cap *req = data;
-> > > > >  
-> > > > > +	if (req->value > 1)
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > >  	switch (req->capability) {
-> > > > >  	case DRM_CLIENT_CAP_STEREO_3D:
-> > > > > -		if (req->value > 1)
-> > > > > -			return -EINVAL;
-> > > > >  		file_priv->stereo_allowed = req->value;
-> > > > >  		break;
-> > > > >  	case DRM_CLIENT_CAP_UNIVERSAL_PLANES:
-> > > > > -		if (req->value > 1)
-> > > > > -			return -EINVAL;
-> > > > >  		file_priv->universal_planes = req->value;
-> > > > >  		break;
-> > > > >  	case DRM_CLIENT_CAP_ATOMIC:
-> > > > >  		if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
-> > > > >  			return -EINVAL;
-> > > > > -		if (req->value > 1)
-> > > > > -			return -EINVAL;
-> > > > >  		file_priv->atomic = req->value;
-> > > > >  		file_priv->universal_planes = req->value;
-> > > > >  		break;
-> > > > > -- 
-> > > > > 2.16.2
-> > > > > 
-> > > > > _______________________________________________
-> > > > > dri-devel mailing list
-> > > > > dri-devel@lists.freedesktop.org
-> > > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > 
-> > > > -- 
-> > > > Ville Syrjälä
-> > > > Intel OTC
-> > > 
-> > > -- 
-> > > ====================
-> > > | I would like to |
-> > > | fix the world,  |
-> > > | but they're not |
-> > > | giving me the   |
-> > >  \ source code!  /
-> > >   ---------------
-> > >     ¯\_(ツ)_/¯
-> > 
-> > -- 
-> > Ville Syrjälä
-> > Intel OTC
-> 
-> -- 
-> ====================
-> | I would like to |
-> | fix the world,  |
-> | but they're not |
-> | giving me the   |
->  \ source code!  /
->   ---------------
->     ¯\_(ツ)_/¯
+[Test Case]
 
+  config DEP1
+          def_bool y
+
+  config DEP2
+          def_bool n
+
+  config A
+          bool "A"
+          depends on DEP2
+          select C
+
+  config B
+          bool "B"
+          select C
+
+  config C
+          bool
+          depends on DEP1 && DEP2
+
+[Result]
+
+  $ make allyesconfig
+  scripts/kconfig/conf  --allyesconfig Kconfig
+  warning: (A && B) selects C which has unmet direct dependencies
+  (DEP1 && DEP2)
+
+Here, I see some points to be improved.
+
+First, '(A || B)' would make more sense than '(A && B)'.  I am not
+sure if this is intentional, but expr_simplify_unmet_dep() turns OR
+expressions into AND, like follows:
+
+        case E_OR:
+                return expr_alloc_and(
+
+Second, 'A' never causes unmet dependency because 'DEP1' is fixed to
+'y', and 'A' correctly depends on 'DEP2'.  It will be better to not
+report 'A', but it is impossible to avoid this false positive in the
+current expr_simplify_unmet_dep().
+
+After all, I decided to use the same helpers as used for printing
+reverse dependencies in the help.
+
+With this commit, unreadable warnings in the real world:
+
+$ make ARCH=score allyesconfig
+scripts/kconfig/conf  --allyesconfig Kconfig
+warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && DWMAC_IPQ806X
+&& DWMAC_LPC18XX && DWMAC_OXNAS && DWMAC_ROCKCHIP && DWMAC_SOCFPGA && DWMA
+C_STI && TI_CPSW && PINCTRL_GEMINI && PINCTRL_OXNAS && PINCTRL_ROCKCHIP &&
+ PINCTRL_DOVE && PINCTRL_ARMADA_37XX && PINCTRL_STM32 && S3C2410_WATCHDOG
+&& VIDEO_OMAP3 && VIDEO_S5P_FIMC && USB_XHCI_MTK && RTC_DRV_AT91SAM9 && LP
+C18XX_DMAMUX && VIDEO_OMAP4 && COMMON_CLK_GEMINI && COMMON_CLK_ASPEED && C
+OMMON_CLK_NXP && COMMON_CLK_OXNAS && COMMON_CLK_BOSTON && ATMEL_ST && QCOM
+_ADSP_PIL && QCOM_Q6V5_PIL && QCOM_GSBI && ATMEL_EBI && ST_IRQCHIP && RESE
+T_IMX7 && PHY_HI6220_USB && PHY_RALINK_USB && PHY_ROCKCHIP_PCIE && PHY_DA8
+XX_USB) selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_OXNAS && PINCTRL_PIS
+TACHIO && PINCTRL_PIC32 && PINCTRL_MESON && PINCTRL_NOMADIK && PINCTRL_MTK
+ && PINCTRL_MT7622 && GPIO_TB10X) selects OF_GPIO which has unmet direct d
+ependencies (GPIOLIB && OF && HAS_IOMEM)
+warning: (FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && LOCKDEP) sele
+cts FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CR
+IS || M68K || FRV || UML || SUPERH || BLACKFIN || MN10300 || METAG) || ARC
+H_WANT_FRAME_POINTERS)
+
+will be turned into:
+
+$ make ARCH=score allyesconfig
+scripts/kconfig/conf  --allyesconfig Kconfig
+
+WARNING:
+ Unmet direct dependencies detected for MFD_SYSCON
+ Depends on:
+    HAS_IOMEM [=n]
+ Selected by [y]:
+  - PINCTRL_STM32 [=y] && PINCTRL [=y] && (ARCH_STM32 || COMPILE_TEST [=y])
+&& OF [=y]
+  - RTC_DRV_AT91SAM9 [=y] && RTC_CLASS [=y] && (ARCH_AT91 || COMPILE_TEST
+[=y])
+  - ATMEL_ST [=y] && GENERIC_CLOCKEVENTS [=y]
+  - RESET_IMX7 [=y] && RESET_CONTROLLER [=y]
+  - PHY_HI6220_USB [=y] && (ARCH_HISI && ARM64 || COMPILE_TEST [=y])
+  - PHY_RALINK_USB [=y] && (RALINK || COMPILE_TEST [=y])
+  - PHY_ROCKCHIP_PCIE [=y] && (ARCH_ROCKCHIP && OF [=y] || COMPILE_TEST
+[=y])
+
+WARNING:
+ Unmet direct dependencies detected for OF_GPIO
+ Depends on:
+    GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
+ Selected by [y]:
+  - PINCTRL_MTK [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
+[=y]) && OF [=y]
+  - PINCTRL_MT7622 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST
+[=y]) && OF [=y] && (ARM64 || COMPILE_TEST [=y])
+
+WARNING:
+ Unmet direct dependencies detected for FRAME_POINTER
+ Depends on:
+    DEBUG_KERNEL [=y] && (CRIS || M68K || FRV || UML || SUPERH || BLACKFIN
+ || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS [=n]
+ Selected by [y]:
+  - LATENCYTOP [=y] && DEBUG_KERNEL [=y] && STACKTRACE_SUPPORT [=y] &&
+PROC_FS [=y] && !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND &&
+!ARC && !X86
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/expr.c   | 29 -----------------------------
+ scripts/kconfig/expr.h   |  1 -
+ scripts/kconfig/symbol.c | 33 +++++++++++++++++++++------------
+ 3 files changed, 21 insertions(+), 42 deletions(-)
+
+diff --git a/scripts/kconfig/expr.c b/scripts/kconfig/expr.c
+index 49376e1..235e179 100644
+--- a/scripts/kconfig/expr.c
++++ b/scripts/kconfig/expr.c
+@@ -1150,35 +1150,6 @@ expr_get_leftmost_symbol(const struct expr *e)
+ 	return expr_copy(e);
+ }
+ 
+-/*
+- * Given expression `e1' and `e2', returns the leaf of the longest
+- * sub-expression of `e1' not containing 'e2.
+- */
+-struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2)
+-{
+-	struct expr *ret;
+-
+-	switch (e1->type) {
+-	case E_OR:
+-		return expr_alloc_and(
+-		    expr_simplify_unmet_dep(e1->left.expr, e2),
+-		    expr_simplify_unmet_dep(e1->right.expr, e2));
+-	case E_AND: {
+-		struct expr *e;
+-		e = expr_alloc_and(expr_copy(e1), expr_copy(e2));
+-		e = expr_eliminate_dups(e);
+-		ret = (!expr_eq(e, e1)) ? e1 : NULL;
+-		expr_free(e);
+-		break;
+-		}
+-	default:
+-		ret = e1;
+-		break;
+-	}
+-
+-	return expr_get_leftmost_symbol(ret);
+-}
+-
+ void expr_print(struct expr *e,
+ 		void (*fn)(void *, struct symbol *, const char *),
+ 		void *data, int prevtoken)
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index 8dbf2a4..94a383b 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -305,7 +305,6 @@ struct expr *expr_transform(struct expr *e);
+ int expr_contains_symbol(struct expr *dep, struct symbol *sym);
+ bool expr_depends_symbol(struct expr *dep, struct symbol *sym);
+ struct expr *expr_trans_compare(struct expr *e, enum expr_type type, struct symbol *sym);
+-struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
+ 
+ void expr_fprint(struct expr *e, FILE *out);
+ struct gstr; /* forward */
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 0f7eba7..9138b80 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -333,6 +333,25 @@ static struct symbol *sym_calc_choice(struct symbol *sym)
+ 	return def_sym;
+ }
+ 
++static void sym_warn_unmet_dependency(struct symbol *sym)
++{
++	struct gstr gs = str_new();
++
++	str_printf(&gs, "\nWARNING:\n");
++	str_printf(&gs, " Unmet direct dependencies detected for %s\n",
++		   sym->name);
++	str_printf(&gs, " Depends on:\n    ");
++	expr_gstr_print(sym->dir_dep.expr, &gs);
++	str_printf(&gs, "\n");
++
++	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, yes,
++			       " Selected by [y]:\n");
++	expr_gstr_print_revdep(sym->rev_dep.expr, &gs, mod,
++			       " Selected by [m]:\n");
++
++	fputs(str_get(&gs), stderr);
++}
++
+ void sym_calc_value(struct symbol *sym)
+ {
+ 	struct symbol_value newval, oldval;
+@@ -414,18 +433,8 @@ void sym_calc_value(struct symbol *sym)
+ 				}
+ 			}
+ 		calc_newval:
+-			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
+-				struct expr *e;
+-				e = expr_simplify_unmet_dep(sym->rev_dep.expr,
+-				    sym->dir_dep.expr);
+-				fprintf(stderr, "warning: (");
+-				expr_fprint(e, stderr);
+-				fprintf(stderr, ") selects %s which has unmet direct dependencies (",
+-					sym->name);
+-				expr_fprint(sym->dir_dep.expr, stderr);
+-				fprintf(stderr, ")\n");
+-				expr_free(e);
+-			}
++			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no)
++				sym_warn_unmet_dependency(sym);
+ 			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
+ 		}
+ 		if (newval.tri == mod &&
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
