@@ -1,62 +1,68 @@
-Return-Path: <keescook@chromium.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520377096; cv=none;
+Return-Path: <paul@paul-moore.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520362863; cv=none;
         d=google.com; s=arc-20160816;
-        b=OtTWqCvt4sBvM6qhIEsr/uyYlflz8OAts4+11dwH7Rwy9wl1L+0Ghgs+PzDxas6F/q
-         QM3AUwMvuhwqdCdYc7ebz2k0PRJD02UCU5Rx1VHtQkP52BuqWdQbtcYcO7Nn2LDLM9ot
-         lH+cwyZypY2cq68/AHweFJ+wmGQPctGa/631Zx6wehCg909OL891X14Ad9A3B2YcWpA5
-         b/Vs4L5z+mtb4D/rNW+UmNfMiUEfOfaFs28H/Wgz2QNhkRzkT3aOZ4V9OHEzjG9CY5qI
-         dvnz1wKQmmVAq8sTX7nxjgfLJEA84os3qhXodkPNzIc7bpmcFzXo1++m9xRPnL7YdW3A
-         aHFQ==
+        b=qvmgSpEjFOkEF2cOb9LZiC2hiHwMOHh2hsGG1kA1BKe8Rb15IwHto4EGM05H59TbhV
+         UYH74V+5BWqetqJbQ1ob/swDQ1VsB1UjHeKD6vWTdD8C4XkVyu2xbVZ6pMv3Eung6WCj
+         zl4diKd+arPv0YCKxT7G5039lbKWR1p6Ah7xlzM77SgKouP4VD/4oPQ1UjtlVbgQLlwr
+         1wmni3s/Uc8E7bvSz0GrADR5+nE7ev2bCMwpAzwczIWyCPkX8h76mROFozvIodzrcck0
+         FtsKG4ArSm4BehkhUggjL/vz+LjORbR2viTJEPQWbyfmgmiMAFNCwFWIWazhxxWt4aWX
+         ixTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=w/7NltTPSaMBQVzS5M6F8X4o+QVdIrGuWtmnPKkQW1g=;
-        b=gpbkjL5YBhNW7My2hcSQkk9sMIXkuGMgGelJngtmU1RqdyAu8L+2TfqFQsSp3DWeeA
-         GJPis7Ka+Jb9S/wx4oye1WGn2mP0MZ2Kwb1gXEatHS9JlrAypsbrLuaYiSFY7H6rqLak
-         CCZZAhBXKsQk86qp9V3S82IDWpUkcE34UB+lzcR4an4hZlESgBIlkfo8TxhAUhnUgdfZ
-         4up6xfcOrIcPYVo1VVQwMyeVchP713c0CWBgfmX8TTMsEHbFtuXcFv5r4r8ZF0gIoWUp
-         EHBBP1p1g65Cr48nvoYz4MvvadpN6jkqC04p4HxGmqyBD+zgGrJ9QccNETumZYprgxbI
-         LobA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=mwPTgvt4aKm90UJRjt3yGYVQFp/Cv0hLmHdwlpryTBo=;
+        b=H1dqFzbxauYnOZisvIxDjK9GRs0A4i1dePQ4Ns/Ay9nXglw18Zcr8fqRX7c6qiQq52
+         PXVNq9rpTAjwfhYFop/OWhaHuqwvx0zXsQ8hgHIplZzCcFY9bGdlaY7ZqRVoW/Bti+26
+         mMdWAEz6zRL/uEgCtCxmmFGQNdp7C8/xYwMverb5hQTD3MlKwvLSfuMK8j57Jk9w/K6e
+         EXLx7qfoFoC6ebhNB7MJ4Z9UH3ALEwX8sE11YvbLYSxDYO1Ny/xdn17iboKeR4t8wMBK
+         1ybjsZMBBnI2ihoO7w+zOpwrPT6GnR043WBL2Tv8y3BFaudmoL5SuLn86WdA7u78cy2j
+         VZPg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=oAAHn+Uk;
-       spf=pass (google.com: domain of keescook@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@paul-moore-com.20150623.gappssmtp.com header.s=20150623 header.b=y3RihPtR;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of paul@paul-moore.com) smtp.mailfrom=paul@paul-moore.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=oAAHn+Uk;
-       spf=pass (google.com: domain of keescook@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@chromium.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AG47ELtlFHXMGrrFQu9kcSdK+xMHFNGbe+KQq/oSVRQzfCUIsQwzKmc9Sk0Amt5nI2aldW8q2JMIeg==
-From: Kees Cook <keescook@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] lkdtm: Add missing SPDX-License-Identifier line
-Date: Tue,  6 Mar 2018 14:58:10 -0800
-Message-Id: <1520377090-6724-3-git-send-email-keescook@chromium.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1520377090-6724-1-git-send-email-keescook@chromium.org>
-References: <1520377090-6724-1-git-send-email-keescook@chromium.org>
+       dkim=pass header.i=@paul-moore-com.20150623.gappssmtp.com header.s=20150623 header.b=y3RihPtR;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of paul@paul-moore.com) smtp.mailfrom=paul@paul-moore.com
+X-Google-Smtp-Source: AG47ELtmn75FqByf610glgFkE+vUme11EJB1gG2wus2tKoMW1Krpm2ECDcb6Ro09oX67dbEdrZaWuNG7madXBnoO2xo=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <alpine.LRH.2.21.1709090808200.15026@namei.org>
+References: <20170908164001.21138-1-sds@tycho.nsa.gov> <CAHC9VhSga+mg8VTtVoafdbpQ2K62PEBGrWidB8SUwWtRO+hahA@mail.gmail.com>
+ <alpine.LRH.2.21.1709090808200.15026@namei.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 6 Mar 2018 14:01:01 -0500
+Message-ID: <CAHC9VhQ3YRmk7k5DQO9zoGKRXi3CSTHvmRuLa891NVWsVNCZZA@mail.gmail.com>
+Subject: Re: [PATCH] usb,signal,security: only pass the cred, not the secid,
+ to kill_pid_info_as_cred and security_task_kill
+To: James Morris <jmorris@namei.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>, casey@schaufler-ca.com,
+	John Johansen <john.johansen@canonical.com>, James Morris <james.l.morris@oracle.com>,
+	gregkh@linuxfoundation.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	selinux@tycho.nsa.gov
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594230933949319335?=
-X-GMAIL-MSGID: =?utf-8?q?1594230933949319335?=
+X-GMAIL-THRID: =?utf-8?q?1577990101774039350?=
+X-GMAIL-MSGID: =?utf-8?q?1594216009833366613?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The refcount.c file missed the mass-addition of the SPDX lines.
+On Fri, Sep 8, 2017 at 6:09 PM, James Morris <jmorris@namei.org> wrote:
+> On Fri, 8 Sep 2017, Paul Moore wrote:
+>> Looks fine to me from a SELinux perspective.  If Casey and John are
+>> happy with this I can volunteer to pull it into the selinux/next tree
+>> (once the merge window closes), otherwise if someone else wants to
+>> merge this my ack is below.
+>
+> As this impacts multiple LSMs, I'd prefer to take it via my tree.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/misc/lkdtm/refcount.c | 1 +
- 1 file changed, 1 insertion(+)
+What happened to this James?  As best I can tell there were never any
+objections, and plenty of ACKs, but I don't see it in Linus' tree.
+I'll extend my offer to merge it, but I know you expressed a desire to
+pull this via your tree.
 
-diff --git a/drivers/misc/lkdtm/refcount.c b/drivers/misc/lkdtm/refcount.c
-index 2b99d448e7fd..0a146b32da13 100644
---- a/drivers/misc/lkdtm/refcount.c
-+++ b/drivers/misc/lkdtm/refcount.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This is for all the tests related to refcount bugs (e.g. overflow,
-  * underflow, reaching zero untested, etc).
+* http://kernsec.org/pipermail/linux-security-module-archive/2017-September/003156.html
+
 -- 
-2.7.4
+paul moore
+www.paul-moore.com
