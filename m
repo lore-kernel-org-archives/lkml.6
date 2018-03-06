@@ -1,58 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754059AbeCFR01 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:26:27 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39490 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753962AbeCFRYS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:24:18 -0500
-Subject: Re: Re[v2]: Use of GCC plugin instead ISO C
-To: Progyan Bhattacharya <bprogyan@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1518941218.12663.1.camel@gmail.com>
- <7bd655df-39a1-2098-0d1c-256c0900b7ed@infradead.org>
- <1519310261.20003.1.camel@acm.org> <1519890640.7987.0.camel@acm.org>
- <5b4d0708-c375-02b0-9014-9400992addf8@infradead.org>
- <1520342938.6596.1.camel@acm.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d3ce60f9-7838-a98b-c807-fa0603544f9d@infradead.org>
-Date: Tue, 6 Mar 2018 09:24:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753891AbeCFRaK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:30:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34940 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752784AbeCFRaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 12:30:09 -0500
+Date: Tue, 6 Mar 2018 14:30:06 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, linux-kernel@vger.kernel.org,
+        Jiri Olsa <jolsa@redhat.com>, Ilya Pronin <ipronin@twitter.com>
+Subject: Re: [PATCH] perf stat: fix cvs output format
+Message-ID: <20180306173006.GB2213@redhat.com>
+References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
+ <20180306170011.GD25017@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1520342938.6596.1.camel@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306170011.GD25017@tassilo.jf.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/06/2018 05:28 AM, Progyan Bhattacharya wrote:
-> On Thu, 2018-03-01 at 13:42 -0800, Randy Dunlap wrote:
->> If you would build with V=1 and capture all of the output (lots of
->> it!) to a file,
->> you could search it for "pedantic" to see where/why it is used.
->>
->> I have no idea about the permission problem that you quoted above.
+Em Tue, Mar 06, 2018 at 09:00:11AM -0800, Andi Kleen escreveu:
+> On Mon, Mar 05, 2018 at 10:43:53PM -0800, Cong Wang wrote:
+> > From: Ilya Pronin <ipronin@twitter.com>
+> > 
+> > When printing stats in CSV mode, perf stat appends extra CSV
+> > separators when counter is not supported:
+> > 
+> > <not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
+> > 
+> > which causes a failure of parsing fields. The numbers of separators
 > 
-> Sorry for the misunderstanding!
-> Here is the full build log for
+> Causes failure in what?
 > 
->     make V=1
+> > is fixed for each line, no matter supported or not supported.
 > 
+> I don't think they're extra fields, there are cases where they can be filled out
 
-Thanks. I don't see a problem there except for the final line.
+My understanding was that at some place there is a if/else
 
-First, please make sure that this file does not already exist before starting
-a build:  /home/progyan/Programs/Linux/tools/objtool/.objtool-in.o.cmd
+	if (supported counters)
+		fprintf_something with N fields, all filled in
+        else
+		fprintf_empty_fields with != N fields
 
+So I think this is not about using things like 'a,b,,,,,,' but about
+using different number of commas (fields) for supported/unsupported
+counters, no?
 
-Then I will look at this more if you will send me your kernel .config file and
-the exact command(s) that you use to run the build.
+- Arnaldo
 
-thanks,
--- 
-~Randy
+> for variance, metricvalue, unit. And other code in perf too uses empty
+> fields when something is not available.
+> 
+>         - optional usec time stamp in fractions of second (with -I xxx)
+>         - optional CPU, core, or socket identifier
+>         - optional number of logical CPUs aggregated
+>         - counter value
+>         - unit of the counter value or empty
+>         - event name
+>         - run time of counter
+>         - percentage of measurement time the counter was running
+>         - optional variance if multiple values are collected with -r  
+>         - optional metric value
+>         - optional unit of metric
+> 
+> 
+> -Andi
