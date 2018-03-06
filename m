@@ -1,58 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753860AbeCFPYG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 10:24:06 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:48783 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753243AbeCFPXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 10:23:51 -0500
-Date: Tue, 6 Mar 2018 16:23:45 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: netdev@vger.kernel.org, steve.glendinning@shawell.net,
-        matt.sealey@arm.com, davem@davemloft.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: smsc911x: Fix unload crash when link is up
-Message-ID: <20180306152345.GD30557@lunn.ch>
-References: <20180306150006.31512-1-jeremy.linton@arm.com>
+        id S1753821AbeCFPZX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 10:25:23 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35756 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753512AbeCFPZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 10:25:21 -0500
+From: Colin King <colin.king@canonical.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][net-next] net: mvpp2: make function mvpp2_check_hw_buf_num static
+Date: Tue,  6 Mar 2018 16:25:17 +0100
+Message-Id: <20180306152517.2770-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306150006.31512-1-jeremy.linton@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> This is caused by the mdiobus being unregistered/free'd
-> and the code in phy_detach() attempting to manipulate mdio
-> related structures from unregister_netdev() calling close()
-> 
-> To fix this, we delay the mdiobus teardown until after
-> the netdev is deregistered.
-> 
-> Reported-by: Matt Sealey <matt.sealey@arm.com>
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->  drivers/net/ethernet/smsc/smsc911x.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-> index 012fb66eed8d..f0afb88d7bc2 100644
-> --- a/drivers/net/ethernet/smsc/smsc911x.c
-> +++ b/drivers/net/ethernet/smsc/smsc911x.c
-> @@ -2335,14 +2335,14 @@ static int smsc911x_drv_remove(struct platform_device *pdev)
->  	pdata = netdev_priv(dev);
->  	BUG_ON(!pdata);
->  	BUG_ON(!pdata->ioaddr);
-> -	WARN_ON(dev->phydev);
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Jeremy
+The function mvpp2_check_hw_buf_num is local to the source and does
+not need to be in global scope, so make it static.
 
-I assume this WARN_ON() also fired? It would be good to comment about
-why you removed it, that the code now handles that case.
+Cleans up sparse warning:
+drivers/net/ethernet/marvell/mvpp2.c:4298:5: warning: symbol
+'mvpp2_check_hw_buf_num' was not declared. Should it be static?
 
-Apart from that
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/mvpp2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+index ac0a0dc8f157..61c6896d0d62 100644
+--- a/drivers/net/ethernet/marvell/mvpp2.c
++++ b/drivers/net/ethernet/marvell/mvpp2.c
+@@ -4295,7 +4295,8 @@ static void mvpp2_bm_bufs_free(struct device *dev, struct mvpp2 *priv,
+ }
+ 
+ /* Check number of buffers in BM pool */
+-int mvpp2_check_hw_buf_num(struct mvpp2 *priv, struct mvpp2_bm_pool *bm_pool)
++static int mvpp2_check_hw_buf_num(struct mvpp2 *priv,
++				  struct mvpp2_bm_pool *bm_pool)
+ {
+ 	int buf_num = 0;
+ 
+-- 
+2.15.1
