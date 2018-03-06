@@ -1,126 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753994AbeCFRYK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 12:24:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55312 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753979AbeCFRYI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 12:24:08 -0500
-Date: Tue, 6 Mar 2018 09:24:35 -0800
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Byungchul Park <max.byungchul.park@gmail.com>
-Cc: Byungchul Park <byungchul.park@lge.com>, rostedt@goodmis.org,
-        josh@joshtriplett.org, jiangshanlai@gmail.com, kernel-team@lge.com,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] rcu: Prevent expedite reporting within RCU read-side
- section
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
- <CANrsvRO-QUS0p_2KMgNJN5h64mN49J37uh7KSYm7Fo5csi_t1w@mail.gmail.com>
- <CANrsvROu6fOu8vOubS2Z4m9nHYQtxw4+WTwz1UqeaLJ66_bQ1g@mail.gmail.com>
+        id S1754028AbeCFRYU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 12:24:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753925AbeCFRYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 12:24:12 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2DF21777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Jin Yao <yao.jin@intel.com>, Kan Liang <kan.liang@intel.com>
+Subject: [PATCH 3/9] perf annotate browser: Be more robust when drawing jump arrows
+Date: Tue,  6 Mar 2018 14:23:37 -0300
+Message-Id: <20180306172343.16546-4-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180306172343.16546-1-acme@kernel.org>
+References: <20180306172343.16546-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANrsvROu6fOu8vOubS2Z4m9nHYQtxw4+WTwz1UqeaLJ66_bQ1g@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18030617-0024-0000-0000-00000332048A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008628; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00999276; UDB=6.00508256; IPR=6.00778594;
- MB=3.00019879; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-06 17:24:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030617-0025-0000-0000-0000473D8BC5
-Message-Id: <20180306172435.GV3918@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-06_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803060191
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 09:43:19PM +0900, Byungchul Park wrote:
-> On Mar 6, 2018 2:34 PM, "Byungchul Park" <byungchul.park@lge.com> wrote:
-> >
-> > Hello Paul and RCU folks,
-> >
-> > I am afraid I correctly understand and fix it. But I really wonder why
-> > sync_rcu_exp_handler() reports the quiescent state even in the case that
-> > current task is within a RCU read-side section. Do I miss something?
-> 
-> Hello,
-> 
-> I missed the fact that the original code is anyway safe because
-> the case is gonna be handled properly in rcu_read_unlock().
-> 
-> This patch just makes unnecessary spin lock/unlock within *report*()
-> avoided. Please ignore this if you don't think it's that worthy. I am
-> also not sure if it is.
-> 
-> Sorry bothering you. And thanks.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Not a problem, especially given that you figured it out before I got
-to your email.  And thank you for your review of RCU!
+This first happened with a gcc function, _cpp_lex_token, that has the
+usual jumps:
 
-							Thanx, Paul
+ │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
 
-> > If I correctly understand it and you agree with it, I can add more logic
-> > which make it more expedited by boosting current or making it urgent
-> > when we fail to report the quiescent state on the IPI.
-> >
-> > ----->8-----
-> > From 0b0191f506c19ce331a1fdb7c2c5a00fb23fbcf2 Mon Sep 17 00:00:00 2001
-> > From: Byungchul Park <byungchul.park@lge.com>
-> > Date: Tue, 6 Mar 2018 13:54:41 +0900
-> > Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side section
-> >
-> > We report the quiescent state for this cpu if it's out of RCU read-side
-> > section at the moment IPI was just fired during the expedite process.
-> >
-> > However, current code reports the quiescent state even in the case:
-> >
-> >    1) the current task is still within a RCU read-side section
-> >    2) the current task has been blocked within the RCU read-side section
-> >
-> > Since we don't get to the quiescent state yet in the case, we shouldn't
-> > report it but check it another time.
-> >
-> > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> > ---
-> >  kernel/rcu/tree_exp.h | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > index 73e1d3d..cc69d14 100644
-> > --- a/kernel/rcu/tree_exp.h
-> > +++ b/kernel/rcu/tree_exp.h
-> > @@ -731,13 +731,13 @@ static void sync_rcu_exp_handler(void *info)
-> >         /*
-> >          * We are either exiting an RCU read-side critical section (negative
-> >          * values of t->rcu_read_lock_nesting) or are not in one at all
-> > -        * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
-> > -        * read-side critical section that blocked before this expedited
-> > -        * grace period started.  Either way, we can immediately report
-> > -        * the quiescent state.
-> > +        * (zero value of t->rcu_read_lock_nesting). We can immediately
-> > +        * report the quiescent state.
-> >          */
-> > -       rdp = this_cpu_ptr(rsp->rda);
-> > -       rcu_report_exp_rdp(rsp, rdp, true);
-> > +       if (t->rcu_read_lock_nesting <= 0) {
-> > +               rdp = this_cpu_ptr(rsp->rda);
-> > +               rcu_report_exp_rdp(rsp, rdp, true);
-> > +       }
-> >  }
-> >
-> >  /**
-> > --
-> > 1.9.1
-> >
-> 
+I.e. jumps to a label inside that function (_cpp_lex_token), and those
+works, but also this kind:
+
+ │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
+
+I.e. jumps to another function, outside _cpp_lex_token, which are not
+being correctly handled generating as a side effect references to
+ab->offset[] entries that are set to NULL, so to make this code more
+robust, check that here.
+
+A proper fix for will be put in place, looking at the function name
+right after the '<' token and probably treating this like a 'call'
+instruction.
+
+For now just don't draw the arrow.
+
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Jin Yao <yao.jin@intel.com>
+Cc: Kan Liang <kan.liang@intel.com>
+Link: https://lkml.kernel.org/n/tip-5tzvb875ep2sel03aeefgmud@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/ui/browsers/annotate.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 286427975112..fbf927cf775d 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -327,7 +327,32 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 	if (!disasm_line__is_valid_jump(cursor, sym))
+ 		return;
+ 
++	/*
++	 * This first was seen with a gcc function, _cpp_lex_token, that
++	 * has the usual jumps:
++	 *
++	 *  │1159e6c: ↓ jne    115aa32 <_cpp_lex_token@@Base+0xf92>
++	 *
++	 * I.e. jumps to a label inside that function (_cpp_lex_token), and
++	 * those works, but also this kind:
++	 *
++	 *  │1159e8b: ↓ jne    c469be <cpp_named_operator2name@@Base+0xa72>
++	 *
++	 *  I.e. jumps to another function, outside _cpp_lex_token, which
++	 *  are not being correctly handled generating as a side effect references
++	 *  to ab->offset[] entries that are set to NULL, so to make this code
++	 *  more robust, check that here.
++	 *
++	 *  A proper fix for will be put in place, looking at the function
++	 *  name right after the '<' token and probably treating this like a
++	 *  'call' instruction.
++	 */
+ 	target = ab->offsets[cursor->ops.target.offset];
++	if (target == NULL) {
++		ui_helpline__printf("WARN: jump target inconsistency, press 'o', ab->offsets[%#x] = NULL\n",
++				    cursor->ops.target.offset);
++		return;
++	}
+ 
+ 	bcursor = browser_line(&cursor->al);
+ 	btarget = browser_line(target);
+-- 
+2.14.3
