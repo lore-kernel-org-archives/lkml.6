@@ -1,121 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753363AbeCFJyp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 04:54:45 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:44153 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeCFJym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 04:54:42 -0500
-X-Google-Smtp-Source: AG47ELthXBCGXjZZ6LzjDAYa9KF9beGtEg5Y1hN06wWBVj0T4rPkI5klSGx2gUcoq4gphC+HCjKLv6Q78ggVVE9Yuw0=
-MIME-Version: 1.0
-In-Reply-To: <20180306005729.odhf4g5br7tfrq35@rob-hp-laptop>
-References: <1519824270-7134-1-git-send-email-fabien.dessenne@st.com>
- <1519824270-7134-2-git-send-email-fabien.dessenne@st.com> <20180306005729.odhf4g5br7tfrq35@rob-hp-laptop>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Tue, 6 Mar 2018 10:54:39 +0100
-Message-ID: <CA+M3ks51PxJ_MBFcwKoLhVvBR0j8d_sY6uVkxjNEvP3Atvj4qQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mailbox: add STMicroelectronics STM32
- IPCC binding
-To: Rob Herring <robh@kernel.org>
-Cc: Fabien Dessenne <fabien.dessenne@st.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Ludovic Barre <ludovic.barre@st.com>, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+        id S1753184AbeCFJ4a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 04:56:30 -0500
+Received: from mga17.intel.com ([192.55.52.151]:30654 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750838AbeCFJ42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 04:56:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,431,1515484800";
+   d="scan'208";a="25583983"
+Message-ID: <1520330185.10722.401.camel@linux.intel.com>
+Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Date: Tue, 06 Mar 2018 11:56:25 +0200
+In-Reply-To: <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+         <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+         <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+         <1519752950.10722.231.camel@linux.intel.com>
+         <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+         <1519814544.10722.266.camel@linux.intel.com>
+         <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
+         <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+         <CAKwiHFgTbFof34oc59OU3M1=-PTzstv0uxSmoiRc8TJPJPMHVw@mail.gmail.com>
+         <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-06 1:57 GMT+01:00 Rob Herring <robh@kernel.org>:
-> On Wed, Feb 28, 2018 at 02:24:29PM +0100, Fabien Dessenne wrote:
->> Add a binding for the STMicroelectronics STM32 IPCC block exposing a
->> mailbox mechanism between two processors.
->>
->> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
->> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
->> ---
->>  .../devicetree/bindings/mailbox/stm32-ipcc.txt     | 48 ++++++++++++++++++++++
->>  1 file changed, 48 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
->> new file mode 100644
->> index 0000000..2321689
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
->> @@ -0,0 +1,48 @@
->> +* STMicroelectronics STM32 IPCC (Inter-Processor Communication Controller)
->> +
->> +The IPCC block provides a non blocking signaling mechanism to post and
->> +retrieve messages in an atomic way between two processors.
->> +It provides the signaling for N bidirectionnal channels. The number of channels
->> +(N) can be read from a dedicated register.
->> +
->> +Required properties:
->> +- compatible:   Must be "st,stm32-ipcc"
->
-> Kind of generic. There's only 1 version of h/w across all stm32 parts?
->
+On Tue, 2018-03-06 at 10:25 +0100, Petr Mladek wrote:
+> On Mon 2018-03-05 16:16:37, Rasmus Villemoes wrote:
+> > On 2 March 2018 at 13:53, Petr Mladek <pmladek@suse.com> wrote:
 
-We can check the version in one of the hardware block register.
-I guess in this case we can have this kind of generic compatible, right ?
+> > > -       if (!ptr && *fmt != 'K' && *fmt != 'x') {
+> > > +       if ((unsigned long)ptr < PAGE_SIZE && *fmt != 'K' && *fmt
+> > > != 'x') {
+> > 
+> > ISTM that accidentally passing an ERR_PTR would be just as likely as
+> > passing a NULL pointer (or some small offset from one), so if we do
+> > this, shouldn't the test also cover IS_ERR values?
+> 
+> It would make perfect sense to catch IS_ERR_PTR(). Derefenrecing
+> such pointer cause crash. But it might be pretty confusing to print
+> "(null)" in this case.
+> 
+> I would handle this in separate patch and print "(err)" or so.
+> Any volunteer to prepare the patch?
 
-Benjamin
+As I pointed out, we have already such check for %s in binary printf().
+And it goes for "(null)". I'm not sure if changing that might break
+something.
 
->> +- reg:          Register address range (base address and length)
->> +- st,proc_id:   Processor id using the mailbox (0 or 1)
->
-> s/_/-/
->
->
->> +- clocks:       Input clock
->> +- interrupt-names: List of names for the interrupts described by the interrupt
->> +                   property. Must contain the following entries:
->> +                   - "rx"
->> +                   - "tx"
->> +- interrupts:   Interrupt specifiers for "rx channel occupied" and "tx channel
->> +                free"
->> +- #mbox-cells:  Number of cells required for the mailbox specifier. Must be 1.
->> +                The data contained in the mbox specifier of the "mboxes"
->> +                property in the client node is the mailbox channel index.
->> +
->> +Optional properties:
->> +- wakeup-source: Flag to indicate whether this device can wake up the system
->
->> +- interrupts:    Wakeup interrupt used to wake up the system.
->> +- interrupt-names: "wakeup" for the wakeup interrupt.
->
-> Make these required. "wakeup-source" alone determines if you use it.
->
->> +
->> +
->> +
->> +Example:
->> +     ipcc: mailbox@4c001000 {
->> +             compatible = "st,stm32-ipcc";
->> +             #mbox-cells = <1>;
->> +             reg = <0x4c001000 0x400>;
->> +             st,proc_id = <0>;
->> +             interrupts-extended = <&intc GIC_SPI 100 IRQ_TYPE_NONE>,
->> +                                   <&intc GIC_SPI 101 IRQ_TYPE_NONE>,
->> +                                   <&aiec 62 1>;
->> +             interrupt-names = "rx", "tx", "wakeup";
->> +             clocks = <&rcc_clk IPCC>;
->> +             wakeup-source;
->> +     }
->> +
->> +Client:
->> +     mbox_test {
->> +             ...
->> +             mboxes = <&ipcc 0>, <&ipcc 1>;
->> +     };
->> --
->> 2.7.4
->>
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
