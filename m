@@ -1,113 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932865AbeCFAIl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 5 Mar 2018 19:08:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40570 "EHLO mail.kernel.org"
+        id S932906AbeCFAKI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 5 Mar 2018 19:10:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932544AbeCFAIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 5 Mar 2018 19:08:39 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C32621770
+        id S932243AbeCFAKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 5 Mar 2018 19:10:07 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8C520685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Tue, 6 Mar 2018 00:08:32 +0000
-From: James Hogan <jhogan@kernel.org>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@crapouillou.net, malat@debian.org, dom.peklo@gmail.com
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-Message-ID: <20180306000832.GL4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 5 Mar 2018 18:10:04 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] PCI: Move declaration of of_irq_parse_and_map_pci
+ under OF_IRQ
+Message-ID: <20180306001004.GB33706@bhelgaas-glaptop.roam.corp.google.com>
+References: <1520292150-15699-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nrXiCraHbXeog9mY"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170927151527.25570-4-prasannatsmkumar@gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <1520292150-15699-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 05, 2018 at 03:22:30PM -0800, Guenter Roeck wrote:
+> Since commit 4670d610d5923 ("PCI: Move OF-related PCI functions into
+> PCI core"), sparc:allmodconfig fails to build with the following error.
+> 
+> pcie-cadence-host.c:(.text+0x4c4):
+> 	undefined reference to `of_irq_parse_and_map_pci'
+> pcie-cadence-host.c:(.text+0x4c8):
+> 	undefined reference to `of_irq_parse_and_map_pci'
+> 
+> of_irq_parse_and_map_pci is now only available if OF_IRQ is enabled.
+> Make its declaration and its dummy function dependent on OF_IRQ
+> to solve the problem.
+> 
+> Fixes: 4670d610d5923 ("PCI: Move OF-related PCI functions into PCI core")
+> Cc: Rob Herring <robh@kernel.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
---nrXiCraHbXeog9mY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to for-linus for v4.16, thanks!
 
-On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
-> Add initial Ingenic X1000 SoC support. Provide minimum necessary
-> information to boot kernel to an initramfs userspace.
->=20
-> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 > ---
->  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++=
-++++++
->  arch/mips/jz4740/Kconfig              |  6 +++
->  arch/mips/jz4740/time.c               |  2 +-
->  3 files changed, 100 insertions(+), 1 deletion(-)
->  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
-
-arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
-get_system_type() will need updating too.
-
-Does X1000 use a different PRID, or is it basically just a JZ4780 core
-with different SoC peripherals?
-
-> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/i=
-ngenic/x1000.dtsi
-> new file mode 100644
-> index 0000000..abbb9ec
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
-> @@ -0,0 +1,93 @@
-> +/*
-> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail=
-=2Ecom>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2. This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-
-(these will need updating to use SPDX identifiers if you respin)
-
-> +	cgu: jz4780-cgu@10000000 {
-
-not sure jz4780 is appropriate here.
-
-> +		compatible =3D "ingenic,x1000-cgu";
-> +		reg =3D <0x10000000 0x100>;
+> v2: Added Rob's Ack
+>     Sent to linux-pci mailing list per Rob's request
+> 
+>  include/linux/of_pci.h | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+> index 88865e0ebf4d..091033a6b836 100644
+> --- a/include/linux/of_pci.h
+> +++ b/include/linux/of_pci.h
+> @@ -13,7 +13,6 @@ struct device_node;
+>  struct device_node *of_pci_find_child_device(struct device_node *parent,
+>  					     unsigned int devfn);
+>  int of_pci_get_devfn(struct device_node *np);
+> -int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
+>  int of_pci_parse_bus_range(struct device_node *node, struct resource *res);
+>  int of_get_pci_domain_nr(struct device_node *node);
+>  int of_pci_get_max_link_speed(struct device_node *node);
+> @@ -34,12 +33,6 @@ static inline int of_pci_get_devfn(struct device_node *np)
+>  }
+>  
+>  static inline int
+> -of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+> -{
+> -	return 0;
+> -}
+> -
+> -static inline int
+>  of_pci_parse_bus_range(struct device_node *node, struct resource *res)
+>  {
+>  	return -EINVAL;
+> @@ -67,6 +60,16 @@ of_pci_get_max_link_speed(struct device_node *node)
+>  static inline void of_pci_check_probe_only(void) { }
+>  #endif
+>  
+> +#if IS_ENABLED(CONFIG_OF_IRQ)
+> +int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
+> +#else
+> +static inline int
+> +of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+> +{
+> +	return 0;
+> +}
+> +#endif
 > +
-> +		clocks =3D <&ext>, <&rtc>;
-> +		clock-names =3D "ext", "rtc";
-> +
-> +		#clock-cells =3D <1>;
-> +	};
-
-Cheers
-James
-
---nrXiCraHbXeog9mY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqd2/8ACgkQbAtpk944
-dnpAlw/+MjVXePpEgRTo/x44QOaJLfHn945fI+988C3mMlcVg2kUqCRp0b0U+7ZD
-ozPBJYreFQvJXWJM0dAyf34A/9PxdZGDHtcv7bn/BG+EY05F7XWqyQwfAO4zmBhG
-IMmhra1XLX4b0XwnFMUXz2OBndGJPJkOQ/iJY5viIdVZR+98dQMZP3a6q21H/Nhs
-mZkrjVJ0Eq8CuYCuDxxeX1d8nkuutFgq77MvbEXHkTB2OI1eRQ8IkuwOIUJ9+7g3
-uqi3LhzWR+DtpPHTDqY+AwBM+wrRx9YcDj3XPg03waefBm8c7wRKdmZb20zDLLxV
-G14KvwVaiMIcEKDhyYi4Z21X6gZwEUPJUJJ5qmSN/DGj3a0EzFpZrYRnuGEjRUUU
-u/R0o9c3mg8MeYzmPrz+ckVMe2z4IgezOd3QrYzPvDa8HUrrKfK++/Wvr6TN3Gu3
-sy9zp0hyg9+zArF90hYznChoam9ePPoUZjM7Ao3eXLLggohMWeEvRiFOPkyICQt9
-flD7d/Tom/i00YO3LTMpicIfNnWCGGaBcXuDZzwMXIwXBiHpEjPZ7CKSzbHTlzjx
-/vsnemhVAHxvKRayAzdUm6gML/jvpYi/EpJzDW7zeWI+18oDXvdN80tsVYSNGtbK
-V6PGb7j4MWsBNNquEbU8H0DM96OkqhNFFBtMf3tniVxRv2iAz/k=
-=eDtH
------END PGP SIGNATURE-----
-
---nrXiCraHbXeog9mY--
+>  #if defined(CONFIG_OF_ADDRESS)
+>  int of_pci_get_host_bridge_resources(struct device_node *dev,
+>  			unsigned char busno, unsigned char bus_max,
+> -- 
+> 2.7.4
+> 
