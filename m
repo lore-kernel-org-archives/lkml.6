@@ -1,35 +1,35 @@
 Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520372483; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1520372832; cv=none;
         d=google.com; s=arc-20160816;
-        b=z7oHAm/HY9oC/jV4PwSeCTlcf9mY76PSMyuSDPULw4yg1Aite3LKAZAqQbR3WP6ByO
-         /+7KLJXIHVaL5oUxYekAOTtm+03yCBtFkO2iQud4iyPuUet6i1h1NYZePKDBQ/YZKvGe
-         2VShp8sNl2oFiie/DEYqlE+GZVYJMtg8s9a6UVa7z5Mw0nHrc9/P/G51+BzmXokkWN1w
-         5WRYYymt5oRsw0+T2t44rWzoXsBV85U3ZuHD8ej8bW5T60mP2eeCR/5HIAAnih7FCYc2
-         gT4dcrRRCGGam4e+8o4SS7LW1jcd0KeSPJcZHvQmWLimV4lOnXccpMFuRP2WAvu0JwT1
-         NLQA==
+        b=XCapY5JVNL1x7lpw6pcrKatlxzm+rU05W1N5LVeQaAzmai99ovF1zEcWQh4wf3UTvx
+         x8WMI6boORe/QjcxtFz3tqeU3lNaAmURNvEAFtKs/suIyguagL1EaeUd1mDV35bPUt7z
+         HFdmapXmOoi4iwjtxkltpHoAYFTyldrJyZSaJn/+oQdaAtHPDnHslkrSvBD1hPywi2Mt
+         CDwHajy8Bx+cjBAdEkzot1HwOWZZworJ48yMSAYMIepdasXrl+vcrnQuVewfhZWevpzF
+         KNVrGZd/ibtHY21m6soSQmCkU8CR4Xb9Vwcg0l5kBWKxhSC6REstVV5bPJB/2tnJToyx
+         VYYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=ElAshBtn0M52Gj6SxJE41lv5TibK3iSu3LnW+M3hufs=;
-        b=brvIM4vt2XKwHYzVCgwxpqaM8W6Wyu5MHS5vMHlzZGXTRnHIhe6g9bh3pr1ek0T27o
-         RzzjEw1IWAiHG0byYFFoyRcy3+0G/rgLOp4xn/KTmOBbMCpv8uYShes/6lDECQQeGzd/
-         wEZmNXWNfsUy607QoXtiI0XuZWep+ORXCYxJfjrZ/nRNKfJvabnRKIqEzjJf7pql3BQF
-         DEk3Kp4/r9K5OhhZQSJJIhlqVpoyAN7UOmkNq05eCTaO28Erh1wHhC75Yf4tiFSo8eJa
-         tjY95Y19A9R4X5OGF31tWlgtQlFHGe4A4tefK0uaG7QOYQYDkTa6c/dyANmeVST9QBnY
-         u0Jg==
+        bh=SQK5txUxhheUu3cbmvRNTWhJ55z55jhQz/qqqE+rSgU=;
+        b=gR6i0ogyI4mtkbjNC9gsSi0Tl6M/wuAC+qnB1ItUijqArGlvtQ1/JjXJ9uKHo173xo
+         jukkJN1/yUHiCszvDyPyKVa+0A4wSvUw6V1cuWbK1dFcjdcxNOhZp+S6E73TcecRTIZC
+         ZJQohrud+0Fd/igeNvqG5zpOn8GJ5nmF+2FiYqXZfo6VMYC6Wg1cTqKMlUvgIatJeSlp
+         DloKZuldUrrzbNJ9cXtsmcjalatWqJZ4F5uBfo4AnXqnnp+n7ylSItpw7Ar1A7zlAswt
+         MVKVfNWf6fTrYshQ9567M6zBJCn0bOjRx7htKZHqRCd+N4RKr/uxmcPSriZGghruUXiP
+         T7jw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WxNSO5zs;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=LqOGbrhE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BTPmPoEN;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=UwMh6+ko;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WxNSO5zs;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=LqOGbrhE;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=BTPmPoEN;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=UwMh6+ko;
        spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELtNoGtw6RmBl7WZvP+PkfEB3IPIRCU+VL5Px7MIQVglMsQx25cwaGhQPDIjs9B6v2rwV4MojMEziUVbZ52crbE=
+X-Google-Smtp-Source: AG47ELvW33hK3O2XEHDPji3A7odnwStaYJhAQBShvtO8HJtTH7nnCDQtJw/ufOXMdOiRmryrbvUUdtVj466mQCJ+DKY=
 MIME-Version: 1.0
 Sender: linus971@gmail.com
-In-Reply-To: <20180306163616.7e3b6e0e@vmware.local.home>
+In-Reply-To: <CA+55aFze-do7sAvg1=z=Yb4p8J2EJ5Eyr6MLdMbgQKwMrO5hxQ@mail.gmail.com>
 References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <1520107232-14111-5-git-send-email-alex.popov@linux.com> <b52a2cca-cb5c-d47f-131e-7db297f78958@linux.intel.com>
  <CAGXu5jLRpJ7ktij4TpaSG-RZLOou=RWyY_=jTMNE87+E4Xp2Ag@mail.gmail.com>
@@ -40,11 +40,12 @@ References: <1520107232-14111-1-git-send-email-alex.popov@linux.com>
  <CAKv+Gu_VaO39h8trgsNhU4JEVkdgoFWGoovBdmAL_YsHe7Nq1Q@mail.gmail.com>
  <CA+55aFxkzxhGaK=sp2CqM1YFEE=fL33wC1TR4KKqsRqPGto6yA@mail.gmail.com>
  <CAK8P3a0bWWZbFW5AFag=vRKC=PbCbwaLNPNiyk1ziJk=fTe0nQ@mail.gmail.com>
- <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com> <20180306163616.7e3b6e0e@vmware.local.home>
+ <CA+55aFxTdT11pxKL7oscN=2bu8wkiZbZgDfQd_Emqk1Z1Qqb7A@mail.gmail.com>
+ <20180306163616.7e3b6e0e@vmware.local.home> <CA+55aFze-do7sAvg1=z=Yb4p8J2EJ5Eyr6MLdMbgQKwMrO5hxQ@mail.gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 6 Mar 2018 13:41:22 -0800
-X-Google-Sender-Auth: wD7_CwcI6xpaMloMNUzKaDv2AjI
-Message-ID: <CA+55aFze-do7sAvg1=z=Yb4p8J2EJ5Eyr6MLdMbgQKwMrO5hxQ@mail.gmail.com>
+Date: Tue, 6 Mar 2018 13:47:11 -0800
+X-Google-Sender-Auth: Dh0EKEe9g53BdiBbdpVV1UIx0og
+Message-ID: <CA+55aFyv4wDxLQDbzB14HgW8ddu-w2VFteh5JQ57Jkw46mCVAw@mail.gmail.com>
 Subject: Re: [PATCH RFC v9 4/7] x86/entry: Erase kernel stack in syscall_trace_enter()
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
@@ -73,25 +74,25 @@ Cc: Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593947986518331727?=
-X-GMAIL-MSGID: =?utf-8?q?1594226097727694116?=
+X-GMAIL-MSGID: =?utf-8?q?1594226463420597590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 1:36 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> You mean have gcc fill in the variables that it thinks is used
-> uninitialized with zeros?
+On Tue, Mar 6, 2018 at 1:41 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> The warning would remain for the case where you don't enable this
+> hardening feature, so it wouldn't go away.
 
-No.
+Side note: if in ten years we'd have a minimum gcc version that we
+could  just unconditionally say "auto (scalars) initialize to zero",
+then we'd just make that be the *semantics*, and the warning would
+obviously simply not ever be an issue.
 
-It should do it unconditionally.
+But that's no different from "static variables initialize to zero" and
+nobody sane expects a warning from that. It's just what it is.
 
-Because "gcc thinks is used uninitialized" is simply not good enough.
+But that's at least ten years away. We tend to support disgustingly
+old compiler versions.
 
-The warning would remain for the case where you don't enable this
-hardening feature, so it wouldn't go away.
-
-The warning also wouldn't be *improved*. The warning is simply a
-completely a separate thing, and as your example shows is *entirely*
-independent of the "make all locals be initialized to zero".
-
-                  Linus
+               Linus
