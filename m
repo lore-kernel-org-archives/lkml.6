@@ -1,30 +1,30 @@
 Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AG47ELtHywcGEg//iMEX1gtDavJbtY2NKZkIOManc1zbD2+VsmgKvcGNxD4a0PBjaD1n++1zLN4E
-ARC-Seal: i=1; a=rsa-sha256; t=1520296000; cv=none;
+X-Google-Smtp-Source: AG47ELun+ayc8zhkx8PA9NAUD/cv/Hhwh4C8/Ev69w0CYLpvI0vPoiG4OYydnS3VmKvH0UENOBzI
+ARC-Seal: i=1; a=rsa-sha256; t=1520295999; cv=none;
         d=google.com; s=arc-20160816;
-        b=zrTXG45NgmhHrKbxpaIfF+OuCOHNLUeSxuSnSsaulk8yopW0zjtnSw43Oixp5E5R9L
-         lo/LBZ67znQCNxx0DWxrehC0G3as8vVdNpGpRl6fUBcUET6ggg50368vv7HgE0xj9RWB
-         Css26KhxJovrFB+bwaJ8dBLuWric6KyagQNCYUT6Ylq5Fg/IaeBk3XSpWpHgmOO8sC2c
-         S+1PAqw0e3QT7ovn10jA98/K8QqBesyCcQCQUqyTjugzTzMoLxDhxmKr31M2/j5mB2FU
-         3HrJCtsiASAGUHXWsKjTQpoDNqZt1Kkgh4/6N+YDJgGQjJ9VMByPYpgsNaf0kGgH1sGN
-         Ac8A==
+        b=QDT737yGUgdO0h7VUDXJiiGGUN8J7yVL1hVKeQmCnlgFh9kPIrlJzZYyBbVD7dJHQw
+         B/zkOPgEcKKUj8cj9ukzUZr4hZNSnywBJIMwdV5sL+3s6Ha662hhkNtYe8S+xzskXTfT
+         5VhvBXzjYCR7JbvWJEwVkh45aaejFGwLHN8NDSLY8lzTwhNKpG4vDBYN14Pd5ZU5E6Dj
+         ZVeTbIhytw/hiq7bsA0srFeIf6sIySf5MX/z5Zmcy4vSg2g6IFi32e6iH6H4xHtr/rqH
+         CDXG1EJnIhFbVxFE7yvuGQQ/k2lWjY8gy2oFBagXI8lxDoTVz/HvcmbllvjcDLN1hzQy
+         dw8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:to:from
          :dkim-signature:arc-authentication-results;
-        bh=wGSaqbzeMR7IRsCOyNZK+MM0TBdH3S5swLeEFm1ieV4=;
-        b=lqnlnil0kQBhk7u6bL+IYptBZ3sqQcygzC17TqKXSnP8rTTzCT+PpkCTYmcLiaMqmG
-         2v0+xMgOGYrlWvi6WevD3kK8y+wmq0T95UUxv7HhY/0yH/X9jJj8bNzYa/1fZhGJc8OA
-         6he3atkW85oupSU+XEt7DqHWfLSMg/LmG1Vch82vIz4p0REJdzQBSqnorgwCpIgSWMS8
-         BGVhpR6eWr/bpKXVKqazCJHMV/743YrQ3zqngntc+o3KvzvF92tYEaN87i3+KxaF9rdU
-         C0t/mxq3oklLpNcveYgi0TF8YFZWkaBrCVe/nAZazSEK0p/oyCTy1MxS0pf2X3R9HzYe
-         NQQw==
+        bh=miKudcJsOFUcuBNsFt0BiUZgcrfFIjlJ98w9mhT8j6s=;
+        b=wztNPRQvTaImXUEZnm1L/gNNHF2Ya7AlrrveJW+2tqJc1E79ixf19AumDmmQT+T9BK
+         +KG84NP5aylNzdAavHq/kkZHXLtwthJli2Ae4+bfDMLN/AFDQ0ZFMNMAencCU1QdSjFI
+         dseZW971t4CnUjAjsfpN5WY/05gR6tsg7JlX9hufdptg4z4M0dERs0fi2J9j8+P+m/wq
+         m18GDBZiRtuDk0jP8/6PU1GhwcjxdsvfkppB4LRNkTjdqWiq8zz6HG+S0VhTr8XJCvZl
+         z3fUp9rbmXqqznrW5VIPmRIoP114CA1OohfOfwb4597yWtCyp58tI/d/tcL5aRz2YsRV
+         qd7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=H1QOH1de;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Qb3GppGP;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=H1QOH1de;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=Qb3GppGP;
+       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 From: Pavel Tatashin <pasha.tatashin@oracle.com>
 To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
@@ -33,9 +33,9 @@ To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         pankaj.laxminarayan.bharadiya@intel.com, akuster@mvista.com,
         cminyard@mvista.com, pasha.tatashin@oracle.com,
         gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: [PATCH 4.1 43/65] kaiser: load_new_mm_cr3() let SWITCH_USER_CR3 flush user
-Date: Mon,  5 Mar 2018 19:25:16 -0500
-Message-Id: <20180306002538.1761-44-pasha.tatashin@oracle.com>
+Subject: [PATCH 4.1 42/65] kaiser: enhanced by kernel and user PCIDs
+Date: Mon,  5 Mar 2018 19:25:15 -0500
+Message-Id: <20180306002538.1761-43-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180306002538.1761-1-pasha.tatashin@oracle.com>
 References: <20180306002538.1761-1-pasha.tatashin@oracle.com>
@@ -45,405 +45,417 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ma
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1803060003
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594145898725652167?=
-X-GMAIL-MSGID: =?utf-8?q?1594145898725652167?=
+X-GMAIL-THRID: =?utf-8?q?1594145898310750873?=
+X-GMAIL-MSGID: =?utf-8?q?1594145898310750873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hugh Dickins <hughd@google.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-We have many machines (Westmere, Sandybridge, Ivybridge) supporting
-PCID but not INVPCID: on these load_new_mm_cr3() simply crashed.
-
-Flushing user context inside load_new_mm_cr3() without the use of
-invpcid is difficult: momentarily switch from kernel to user context
-and back to do so?  I'm not sure whether that can be safely done at
-all, and would risk polluting user context with kernel internals,
-and kernel context with stale user externals.
-
-Instead, follow the hint in the comment that was there: change
-X86_CR3_PCID_USER_VAR to be a per-cpu variable, then load_new_mm_cr3()
-can leave a note in it, for SWITCH_USER_CR3 on return to userspace to
-flush user context TLB, instead of default X86_CR3_PCID_USER_NOFLUSH.
-
-Which works well enough that there's no need to do it this way only
-when invpcid is unsupported: it's a good alternative to invpcid here.
-But there's a couple of inlines in asm/tlbflush.h that need to do the
-same trick, so it's best to localize all this per-cpu business in
-mm/kaiser.c: moving that part of the initialization from setup_pcid()
-to kaiser_setup_pcid(); with kaiser_flush_tlb_on_return_to_user() the
-function for noting an X86_CR3_PCID_USER_FLUSH.  And let's keep a
-KAISER_SHADOW_PGD_OFFSET in there, to avoid the extra OR on exit.
-
-I did try to make the feature tests in asm/tlbflush.h more consistent
-with each other: there seem to be far too many ways of performing such
-tests, and I don't have a good grasp of their differences.  At first
-I converted them all to be static_cpu_has(): but that proved to be a
-mistake, as the comment in __native_flush_tlb_single() hints; so then
-I reversed and made them all this_cpu_has().  Probably all gratuitous
-change, but that's the way it's working at present.
-
-I am slightly bothered by the way non-per-cpu X86_CR3_PCID_KERN_VAR
-gets re-initialized by each cpu (before and after these changes):
-no problem when (as usual) all cpus on a machine have the same
-features, but in principle incorrect.  However, my experiment
-to per-cpu-ify that one did not end well...
+Merged performance improvements to Kaiser, using distinct kernel
+and user Process Context Identifiers to minimize the TLB flushing.
 
 Signed-off-by: Hugh Dickins <hughd@google.com>
 Acked-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-(cherry picked from commit 0731188fc74cc2237975a2b5bedd36e2463ef10b)
+(cherry picked from commit eb82151d0b1df53d1ad8d060ecd554ca12eb552a)
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 
 Conflicts:
+	arch/x86/entry/entry_64.S (not in this tree)
+	arch/x86/kernel/entry_64.S (patched instead of that)
+	arch/x86/entry/entry_64_compat.S (not in this tree)
+	arch/x86/ia32/ia32entry.S (patched instead of that)
 	arch/x86/include/asm/tlbflush.h
 ---
- arch/x86/include/asm/kaiser.h   | 18 ++++++++------
- arch/x86/include/asm/tlbflush.h | 54 ++++++++++++++++++++++++++++++++---------
- arch/x86/kernel/cpu/common.c    | 22 +----------------
- arch/x86/mm/kaiser.c            | 50 +++++++++++++++++++++++++++++++++-----
- arch/x86/mm/tlb.c               | 46 ++++++++++++++---------------------
- 5 files changed, 117 insertions(+), 73 deletions(-)
+ arch/x86/ia32/ia32entry.S                   |  1 +
+ arch/x86/include/asm/cpufeature.h           |  1 +
+ arch/x86/include/asm/kaiser.h               | 15 ++++++++--
+ arch/x86/include/asm/pgtable_types.h        | 26 ++++++++++++++++
+ arch/x86/include/asm/tlbflush.h             | 37 +++++++++++++++++++++--
+ arch/x86/include/uapi/asm/processor-flags.h |  3 +-
+ arch/x86/kernel/cpu/common.c                | 34 +++++++++++++++++++++
+ arch/x86/kernel/entry_64.S                  | 10 +++++--
+ arch/x86/kvm/x86.c                          |  3 +-
+ arch/x86/mm/kaiser.c                        |  7 +++++
+ arch/x86/mm/tlb.c                           | 46 +++++++++++++++++++++++++++--
+ 11 files changed, 172 insertions(+), 11 deletions(-)
 
+diff --git a/arch/x86/ia32/ia32entry.S b/arch/x86/ia32/ia32entry.S
+index 665e2c7887fe..070470d161f6 100644
+--- a/arch/x86/ia32/ia32entry.S
++++ b/arch/x86/ia32/ia32entry.S
+@@ -15,6 +15,7 @@
+ #include <asm/irqflags.h>
+ #include <asm/asm.h>
+ #include <asm/smap.h>
++#include <asm/pgtable_types.h>
+ #include <asm/kaiser.h>
+ #include <linux/linkage.h>
+ #include <linux/err.h>
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 3d6606fb97d0..80a2b9487b29 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -185,6 +185,7 @@
+ #define X86_FEATURE_ARAT	( 7*32+ 1) /* Always Running APIC Timer */
+ #define X86_FEATURE_CPB		( 7*32+ 2) /* AMD Core Performance Boost */
+ #define X86_FEATURE_EPB		( 7*32+ 3) /* IA32_ENERGY_PERF_BIAS support */
++#define X86_FEATURE_INVPCID_SINGLE ( 7*32+ 4) /* Effectively INVPCID && CR4.PCIDE=1 */
+ #define X86_FEATURE_PLN		( 7*32+ 5) /* Intel Power Limit Notification */
+ #define X86_FEATURE_PTS		( 7*32+ 6) /* Intel Package Thermal Status */
+ #define X86_FEATURE_DTHERM	( 7*32+ 7) /* Digital Thermal Sensor */
 diff --git a/arch/x86/include/asm/kaiser.h b/arch/x86/include/asm/kaiser.h
-index 360ff3bc44a9..009bca514c20 100644
+index e0fc45e77aee..360ff3bc44a9 100644
 --- a/arch/x86/include/asm/kaiser.h
 +++ b/arch/x86/include/asm/kaiser.h
-@@ -32,13 +32,12 @@ movq \reg, %cr3
- .macro _SWITCH_TO_USER_CR3 reg
+@@ -1,5 +1,8 @@
+ #ifndef _ASM_X86_KAISER_H
+ #define _ASM_X86_KAISER_H
++
++#include <uapi/asm/processor-flags.h> /* For PCID constants */
++
+ /*
+  * This file includes the definitions for the KAISER feature.
+  * KAISER is a counter measure against x86_64 side channel attacks on
+@@ -21,13 +24,21 @@
+ 
+ .macro _SWITCH_TO_KERNEL_CR3 reg
  movq %cr3, \reg
- andq $(~(X86_CR3_PCID_ASID_MASK | KAISER_SHADOW_PGD_OFFSET)), \reg
--/*
-- * This can obviously be one instruction by putting the
-- * KAISER_SHADOW_PGD_OFFSET bit in the X86_CR3_PCID_USER_VAR.
-- * But, just leave it now for simplicity.
-- */
--orq  X86_CR3_PCID_USER_VAR, \reg
--orq  $(KAISER_SHADOW_PGD_OFFSET), \reg
-+orq  PER_CPU_VAR(X86_CR3_PCID_USER_VAR), \reg
-+js   9f
-+// FLUSH this time, reset to NOFLUSH for next time
-+// But if nopcid?  Consider using 0x80 for user pcid?
-+movb $(0x80), PER_CPU_VAR(X86_CR3_PCID_USER_VAR+7)
-+9:
+-andq $(~KAISER_SHADOW_PGD_OFFSET), \reg
++andq $(~(X86_CR3_PCID_ASID_MASK | KAISER_SHADOW_PGD_OFFSET)), \reg
++orq  X86_CR3_PCID_KERN_VAR, \reg
  movq \reg, %cr3
  .endm
  
-@@ -90,6 +89,11 @@ movq PER_CPU_VAR(unsafe_stack_register_backup), %rax
- */
- DECLARE_PER_CPU_USER_MAPPED(unsigned long, unsafe_stack_register_backup);
+ .macro _SWITCH_TO_USER_CR3 reg
+ movq %cr3, \reg
+-orq $(KAISER_SHADOW_PGD_OFFSET), \reg
++andq $(~(X86_CR3_PCID_ASID_MASK | KAISER_SHADOW_PGD_OFFSET)), \reg
++/*
++ * This can obviously be one instruction by putting the
++ * KAISER_SHADOW_PGD_OFFSET bit in the X86_CR3_PCID_USER_VAR.
++ * But, just leave it now for simplicity.
++ */
++orq  X86_CR3_PCID_USER_VAR, \reg
++orq  $(KAISER_SHADOW_PGD_OFFSET), \reg
+ movq \reg, %cr3
+ .endm
  
-+extern unsigned long X86_CR3_PCID_KERN_VAR;
-+DECLARE_PER_CPU(unsigned long, X86_CR3_PCID_USER_VAR);
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 7a5fc4410c00..b3c77e6529c2 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -106,6 +106,32 @@
+ 			 _PAGE_SOFT_DIRTY)
+ #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+ 
++/* The ASID is the lower 12 bits of CR3 */
++#define X86_CR3_PCID_ASID_MASK  (_AC((1<<12)-1,UL))
 +
-+extern char __per_cpu_user_mapped_start[], __per_cpu_user_mapped_end[];
++/* Mask for all the PCID-related bits in CR3: */
++#define X86_CR3_PCID_MASK       (X86_CR3_PCID_NOFLUSH | X86_CR3_PCID_ASID_MASK)
++#if defined(CONFIG_KAISER) && defined(CONFIG_X86_64)
++#define X86_CR3_PCID_ASID_KERN  (_AC(0x4,UL))
++#define X86_CR3_PCID_ASID_USER  (_AC(0x6,UL))
 +
- /**
-  *  kaiser_add_mapping - map a virtual memory part to the shadow (user) mapping
-  *  @addr: the start address of the range
++#define X86_CR3_PCID_KERN_FLUSH		(X86_CR3_PCID_ASID_KERN)
++#define X86_CR3_PCID_USER_FLUSH		(X86_CR3_PCID_ASID_USER)
++#define X86_CR3_PCID_KERN_NOFLUSH	(X86_CR3_PCID_NOFLUSH | X86_CR3_PCID_ASID_KERN)
++#define X86_CR3_PCID_USER_NOFLUSH	(X86_CR3_PCID_NOFLUSH | X86_CR3_PCID_ASID_USER)
++#else
++#define X86_CR3_PCID_ASID_KERN  (_AC(0x0,UL))
++#define X86_CR3_PCID_ASID_USER  (_AC(0x0,UL))
++/*
++ * PCIDs are unsupported on 32-bit and none of these bits can be
++ * set in CR3:
++ */
++#define X86_CR3_PCID_KERN_FLUSH		(0)
++#define X86_CR3_PCID_USER_FLUSH		(0)
++#define X86_CR3_PCID_KERN_NOFLUSH	(0)
++#define X86_CR3_PCID_USER_NOFLUSH	(0)
++#endif
++
+ /*
+  * The cache modes defined here are used to translate between pure SW usage
+  * and the HW defined cache mode bits and/or PAT entries.
 diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index b558d1996621..ff8c5eb95caf 100644
+index 09a70d8d293e..b558d1996621 100644
 --- a/arch/x86/include/asm/tlbflush.h
 +++ b/arch/x86/include/asm/tlbflush.h
-@@ -12,6 +12,7 @@ static inline void __invpcid(unsigned long pcid, unsigned long addr,
+@@ -12,7 +12,6 @@ static inline void __invpcid(unsigned long pcid, unsigned long addr,
  			     unsigned long type)
  {
  	struct { u64 d[2]; } desc = { { pcid, addr } };
-+
+-
  	/*
  	 * The memory clobber is because the whole point is to invalidate
  	 * stale TLB entries and, especially if we're flushing global
-@@ -130,17 +131,42 @@ static inline void cr4_set_bits_and_update_boot(unsigned long mask)
- 	cr4_set_bits(mask);
- }
- 
-+/*
-+ * Declare a couple of kaiser interfaces here for convenience,
-+ * to avoid the need for asm/kaiser.h in unexpected places.
-+ */
-+#ifdef CONFIG_KAISER
-+extern void kaiser_setup_pcid(void);
-+extern void kaiser_flush_tlb_on_return_to_user(void);
-+#else
-+static inline void kaiser_setup_pcid(void)
-+{
-+}
-+static inline void kaiser_flush_tlb_on_return_to_user(void)
-+{
-+}
-+#endif
-+
+@@ -134,6 +133,14 @@ static inline void cr4_set_bits_and_update_boot(unsigned long mask)
  static inline void __native_flush_tlb(void)
  {
--	native_write_cr3(native_read_cr3());
-+	if (this_cpu_has(X86_FEATURE_INVPCID)) {
-+		/*
-+		 * Note, this works with CR4.PCIDE=0 or 1.
-+		 */
-+		invpcid_flush_all_nonglobals();
-+		return;
-+	}
-+
- 	/*
--	 * We are no longer using globals with KAISER, so a
--	 * "nonglobals" flush would work too. But, this is more
--	 * conservative.
--	 *
--	 * Note, this works with CR4.PCIDE=0 or 1.
-+	 * If current->mm == NULL then we borrow a mm which may change during a
-+	 * task switch and therefore we must not be preempted while we write CR3
-+	 * back:
- 	 */
--	invpcid_flush_all();
-+	preempt_disable();
-+	if (this_cpu_has(X86_FEATURE_PCID))
-+		kaiser_flush_tlb_on_return_to_user();
-+	native_write_cr3(native_read_cr3());
-+	preempt_enable();
+ 	native_write_cr3(native_read_cr3());
++	/*
++	 * We are no longer using globals with KAISER, so a
++	 * "nonglobals" flush would work too. But, this is more
++	 * conservative.
++	 *
++	 * Note, this works with CR4.PCIDE=0 or 1.
++	 */
++	invpcid_flush_all();
  }
  
  static inline void __native_flush_tlb_global_irq_disabled(void)
-@@ -156,9 +182,13 @@ static inline void __native_flush_tlb_global_irq_disabled(void)
- 
- static inline void __native_flush_tlb_global(void)
- {
-+#ifdef CONFIG_KAISER
-+	/* Globals are not used at all */
-+	__native_flush_tlb();
-+#else
- 	unsigned long flags;
- 
--	if (static_cpu_has(X86_FEATURE_INVPCID)) {
-+	if (this_cpu_has(X86_FEATURE_INVPCID)) {
+@@ -155,6 +162,8 @@ static inline void __native_flush_tlb_global(void)
  		/*
  		 * Using INVPCID is considerably faster than a pair of writes
  		 * to CR4 sandwiched inside an IRQ flag save/restore.
-@@ -175,10 +205,9 @@ static inline void __native_flush_tlb_global(void)
- 	 * be called from deep inside debugging code.)
- 	 */
- 	raw_local_irq_save(flags);
--
- 	__native_flush_tlb_global_irq_disabled();
--
- 	raw_local_irq_restore(flags);
-+#endif
- }
++		 *
++	 	 * Note, this works with CR4.PCIDE=0 or 1.
+ 		 */
+ 		invpcid_flush_all();
+ 		return;
+@@ -174,7 +183,31 @@ static inline void __native_flush_tlb_global(void)
  
  static inline void __native_flush_tlb_single(unsigned long addr)
-@@ -189,9 +218,12 @@ static inline void __native_flush_tlb_single(unsigned long addr)
- 	 *
- 	 * The ASIDs used below are hard-coded.  But, we must not
- 	 * call invpcid(type=1/2) before CR4.PCIDE=1.  Just call
--	 * invpcid in the case we are called early.
-+	 * invlpg in the case we are called early.
- 	 */
-+
- 	if (!this_cpu_has(X86_FEATURE_INVPCID_SINGLE)) {
-+		if (this_cpu_has(X86_FEATURE_PCID))
-+			kaiser_flush_tlb_on_return_to_user();
- 		asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
- 		return;
- 	}
+ {
+-	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
++	/*
++	 * SIMICS #GP's if you run INVPCID with type 2/3
++	 * and X86_CR4_PCIDE clear.  Shame!
++	 *
++	 * The ASIDs used below are hard-coded.  But, we must not
++	 * call invpcid(type=1/2) before CR4.PCIDE=1.  Just call
++	 * invpcid in the case we are called early.
++	 */
++	if (!this_cpu_has(X86_FEATURE_INVPCID_SINGLE)) {
++		asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
++		return;
++	}
++	/* Flush the address out of both PCIDs. */
++	/*
++	 * An optimization here might be to determine addresses
++	 * that are only kernel-mapped and only flush the kernel
++	 * ASID.  But, userspace flushes are probably much more
++	 * important performance-wise.
++	 *
++	 * Make sure to do only a single invpcid when KAISER is
++	 * disabled and we have only a single ASID.
++	 */
++	if (X86_CR3_PCID_ASID_KERN != X86_CR3_PCID_ASID_USER)
++		invpcid_flush_one(X86_CR3_PCID_ASID_KERN, addr);
++	invpcid_flush_one(X86_CR3_PCID_ASID_USER, addr);
+ }
+ 
+ static inline void __flush_tlb_all(void)
+diff --git a/arch/x86/include/uapi/asm/processor-flags.h b/arch/x86/include/uapi/asm/processor-flags.h
+index 180a0c3c224d..bd4513b7b877 100644
+--- a/arch/x86/include/uapi/asm/processor-flags.h
++++ b/arch/x86/include/uapi/asm/processor-flags.h
+@@ -79,7 +79,8 @@
+ #define X86_CR3_PWT		_BITUL(X86_CR3_PWT_BIT)
+ #define X86_CR3_PCD_BIT		4 /* Page Cache Disable */
+ #define X86_CR3_PCD		_BITUL(X86_CR3_PCD_BIT)
+-#define X86_CR3_PCID_MASK	_AC(0x00000fff,UL) /* PCID Mask */
++#define X86_CR3_PCID_NOFLUSH_BIT 63 /* Preserve old PCID */
++#define X86_CR3_PCID_NOFLUSH    _BITULL(X86_CR3_PCID_NOFLUSH_BIT)
+ 
+ /*
+  * Intel CPU features in CR4
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 6fb0d332f440..9e09e190ba92 100644
+index 47194fac7eb7..6fb0d332f440 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -339,32 +339,11 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
+@@ -339,11 +339,45 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
  	}
  }
  
--/*
-- * These can have bit 63 set, so we can not just use a plain "or"
-- * instruction to get their value or'd into CR3.  It would take
-- * another register.  So, we use a memory reference to these
-- * instead.
-- *
-- * This is also handy because systems that do not support
-- * PCIDs just end up or'ing a 0 into their CR3, which does
-- * no harm.
-- */
--__aligned(PAGE_SIZE) unsigned long X86_CR3_PCID_KERN_VAR = 0;
--__aligned(PAGE_SIZE) unsigned long X86_CR3_PCID_USER_VAR = 0;
--
++/*
++ * These can have bit 63 set, so we can not just use a plain "or"
++ * instruction to get their value or'd into CR3.  It would take
++ * another register.  So, we use a memory reference to these
++ * instead.
++ *
++ * This is also handy because systems that do not support
++ * PCIDs just end up or'ing a 0 into their CR3, which does
++ * no harm.
++ */
++__aligned(PAGE_SIZE) unsigned long X86_CR3_PCID_KERN_VAR = 0;
++__aligned(PAGE_SIZE) unsigned long X86_CR3_PCID_USER_VAR = 0;
++
  static void setup_pcid(struct cpuinfo_x86 *c)
  {
  	if (cpu_has(c, X86_FEATURE_PCID)) {
  		if (cpu_has(c, X86_FEATURE_PGE)) {
  			cr4_set_bits(X86_CR4_PCIDE);
--			/*
--			 * These variables are used by the entry/exit
--			 * code to change PCIDs.
--			 */
--#ifdef CONFIG_KAISER
--			X86_CR3_PCID_KERN_VAR = X86_CR3_PCID_KERN_NOFLUSH;
--			X86_CR3_PCID_USER_VAR = X86_CR3_PCID_USER_NOFLUSH;
--#endif
++			/*
++			 * These variables are used by the entry/exit
++			 * code to change PCIDs.
++			 */
++#ifdef CONFIG_KAISER
++			X86_CR3_PCID_KERN_VAR = X86_CR3_PCID_KERN_NOFLUSH;
++			X86_CR3_PCID_USER_VAR = X86_CR3_PCID_USER_NOFLUSH;
++#endif
++			/*
++			 * INVPCID has two "groups" of types:
++			 * 1/2: Invalidate an individual address
++			 * 3/4: Invalidate all contexts
++			 *
++			 * 1/2 take a PCID, but 3/4 do not.  So, 3/4
++			 * ignore the PCID argument in the descriptor.
++			 * But, we have to be careful not to call 1/2
++			 * with an actual non-zero PCID in them before
++			 * we do the above cr4_set_bits().
++			 */
++			if (cpu_has(c, X86_FEATURE_INVPCID))
++				set_cpu_cap(c, X86_FEATURE_INVPCID_SINGLE);
+ 		} else {
  			/*
- 			 * INVPCID has two "groups" of types:
- 			 * 1/2: Invalidate an individual address
-@@ -390,6 +369,7 @@ static void setup_pcid(struct cpuinfo_x86 *c)
- 			clear_cpu_cap(c, X86_FEATURE_PCID);
- 		}
- 	}
-+	kaiser_setup_pcid();
- }
+ 			 * flush_tlb_all(), as currently implemented, won't
+diff --git a/arch/x86/kernel/entry_64.S b/arch/x86/kernel/entry_64.S
+index d2b2372e01c6..0f7bba928264 100644
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -1541,7 +1541,10 @@ ENTRY(nmi)
+ 	/* %rax is saved above, so OK to clobber here */
+ 	movq	%cr3, %rax
+ 	pushq	%rax
+-	andq	$(~KAISER_SHADOW_PGD_OFFSET), %rax
++	/* mask off "user" bit of pgd address and 12 PCID bits: */
++	andq	$(~(X86_CR3_PCID_ASID_MASK | KAISER_SHADOW_PGD_OFFSET)), %rax
++	/* Add back kernel PCID and "no flush" bit */
++	orq	X86_CR3_PCID_KERN_VAR, %rax
+ 	movq	%rax, %cr3
+ #endif
+ 	call	do_nmi
+@@ -1777,7 +1780,10 @@ end_repeat_nmi:
+ 	/* %rax is saved above, so OK to clobber here */
+ 	movq	%cr3, %rax
+ 	pushq	%rax
+-	andq	$(~KAISER_SHADOW_PGD_OFFSET), %rax
++	/* mask off "user" bit of pgd address and 12 PCID bits: */
++	andq	$(~(X86_CR3_PCID_ASID_MASK | KAISER_SHADOW_PGD_OFFSET)), %rax
++	/* Add back kernel PCID and "no flush" bit */
++	orq	X86_CR3_PCID_KERN_VAR, %rax
+ 	movq	%rax, %cr3
+ #endif
+ 	DEFAULT_FRAME 0				/* XXX: Do we need this? */
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e4e7d45fd551..153afbb6c080 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -733,7 +733,8 @@ int kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+ 			return 1;
  
- /*
+ 		/* PCID can not be enabled when cr3[11:0]!=000H or EFER.LMA=0 */
+-		if ((kvm_read_cr3(vcpu) & X86_CR3_PCID_MASK) || !is_long_mode(vcpu))
++		if ((kvm_read_cr3(vcpu) & X86_CR3_PCID_ASID_MASK) ||
++		    !is_long_mode(vcpu))
+ 			return 1;
+ 	}
+ 
 diff --git a/arch/x86/mm/kaiser.c b/arch/x86/mm/kaiser.c
-index 91968328ccdf..7923190cd123 100644
+index 50d650799f39..91968328ccdf 100644
 --- a/arch/x86/mm/kaiser.c
 +++ b/arch/x86/mm/kaiser.c
-@@ -12,12 +12,26 @@
- #include <linux/ftrace.h>
- 
- #include <asm/kaiser.h>
-+#include <asm/tlbflush.h>	/* to verify its kaiser declarations */
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
- #include <asm/desc.h>
-+
- #ifdef CONFIG_KAISER
-+__visible
-+DEFINE_PER_CPU_USER_MAPPED(unsigned long, unsafe_stack_register_backup);
-+
-+/*
-+ * These can have bit 63 set, so we can not just use a plain "or"
-+ * instruction to get their value or'd into CR3.  It would take
-+ * another register.  So, we use a memory reference to these instead.
-+ *
-+ * This is also handy because systems that do not support PCIDs
-+ * just end up or'ing a 0 into their CR3, which does no harm.
-+ */
-+__aligned(PAGE_SIZE) unsigned long X86_CR3_PCID_KERN_VAR;
-+DEFINE_PER_CPU(unsigned long, X86_CR3_PCID_USER_VAR);
- 
--__visible DEFINE_PER_CPU_USER_MAPPED(unsigned long, unsafe_stack_register_backup);
- /*
-  * At runtime, the only things we map are some things for CPU
-  * hotplug, and stacks for new processes.  No two CPUs will ever
-@@ -239,9 +253,6 @@ static void __init kaiser_init_all_pgds(void)
- 	WARN_ON(__ret);							\
+@@ -240,6 +240,8 @@ static void __init kaiser_init_all_pgds(void)
  } while (0)
  
--extern char __per_cpu_user_mapped_start[], __per_cpu_user_mapped_end[];
--extern unsigned long X86_CR3_PCID_KERN_VAR;
--extern unsigned long X86_CR3_PCID_USER_VAR;
+ extern char __per_cpu_user_mapped_start[], __per_cpu_user_mapped_end[];
++extern unsigned long X86_CR3_PCID_KERN_VAR;
++extern unsigned long X86_CR3_PCID_USER_VAR;
  /*
   * If anything in here fails, we will likely die on one of the
   * first kernel->user transitions and init will die.  But, we
-@@ -295,8 +306,6 @@ void __init kaiser_init(void)
- 
- 	kaiser_add_user_map_early(&X86_CR3_PCID_KERN_VAR, PAGE_SIZE,
+@@ -290,6 +292,11 @@ void __init kaiser_init(void)
+ 	kaiser_add_user_map_early(&debug_idt_table,
+ 				  sizeof(gate_desc) * NR_VECTORS,
  				  __PAGE_KERNEL);
--	kaiser_add_user_map_early(&X86_CR3_PCID_USER_VAR, PAGE_SIZE,
--				  __PAGE_KERNEL);
++
++	kaiser_add_user_map_early(&X86_CR3_PCID_KERN_VAR, PAGE_SIZE,
++				  __PAGE_KERNEL);
++	kaiser_add_user_map_early(&X86_CR3_PCID_USER_VAR, PAGE_SIZE,
++				  __PAGE_KERNEL);
  }
  
  /* Add a mapping to the shadow mapping, and synchronize the mappings */
-@@ -361,4 +370,33 @@ pgd_t kaiser_set_shadow_pgd(pgd_t *pgdp, pgd_t pgd)
- 	}
- 	return pgd;
- }
-+
-+void kaiser_setup_pcid(void)
-+{
-+	unsigned long kern_cr3 = 0;
-+	unsigned long user_cr3 = KAISER_SHADOW_PGD_OFFSET;
-+
-+	if (this_cpu_has(X86_FEATURE_PCID)) {
-+		kern_cr3 |= X86_CR3_PCID_KERN_NOFLUSH;
-+		user_cr3 |= X86_CR3_PCID_USER_NOFLUSH;
-+	}
-+	/*
-+	 * These variables are used by the entry/exit
-+	 * code to change PCID and pgd and TLB flushing.
-+	 */
-+	X86_CR3_PCID_KERN_VAR = kern_cr3;
-+	this_cpu_write(X86_CR3_PCID_USER_VAR, user_cr3);
-+}
-+
-+/*
-+ * Make a note that this cpu will need to flush USER tlb on return to user.
-+ * Caller checks whether this_cpu_has(X86_FEATURE_PCID) before calling:
-+ * if cpu does not, then the NOFLUSH bit will never have been set.
-+ */
-+void kaiser_flush_tlb_on_return_to_user(void)
-+{
-+	this_cpu_write(X86_CR3_PCID_USER_VAR,
-+			X86_CR3_PCID_USER_FLUSH | KAISER_SHADOW_PGD_OFFSET);
-+}
-+EXPORT_SYMBOL(kaiser_flush_tlb_on_return_to_user);
- #endif /* CONFIG_KAISER */
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 7176496112ff..9c9657f139cd 100644
+index 95624d903c0e..7176496112ff 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -6,13 +6,14 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/cpu.h>
-+#include <linux/debugfs.h>
+@@ -34,6 +34,46 @@ struct flush_tlb_info {
+ 	unsigned long flush_end;
+ };
  
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
- #include <asm/cache.h>
- #include <asm/apic.h>
- #include <asm/uv/uv.h>
--#include <linux/debugfs.h>
-+#include <asm/kaiser.h>
- 
++static void load_new_mm_cr3(pgd_t *pgdir)
++{
++	unsigned long new_mm_cr3 = __pa(pgdir);
++
++	/*
++	 * KAISER, plus PCIDs needs some extra work here.  But,
++	 * if either of features is not present, we need no
++	 * PCIDs here and just do a normal, full TLB flush with
++	 * the write_cr3()
++	 */
++	if (!IS_ENABLED(CONFIG_KAISER) ||
++	    !cpu_feature_enabled(X86_FEATURE_PCID))
++		goto out_set_cr3;
++	/*
++	 * We reuse the same PCID for different tasks, so we must
++	 * flush all the entires for the PCID out when we change
++	 * tasks.
++	 */
++	new_mm_cr3 = X86_CR3_PCID_KERN_FLUSH | __pa(pgdir);
++
++	/*
++	 * The flush from load_cr3() may leave old TLB entries
++	 * for userspace in place.  We must flush that context
++	 * separately.  We can theoretically delay doing this
++	 * until we actually load up the userspace CR3, but
++	 * that's a bit tricky.  We have to have the "need to
++	 * flush userspace PCID" bit per-cpu and check it in the
++	 * exit-to-userspace paths.
++	 */
++	invpcid_flush_single_context(X86_CR3_PCID_ASID_USER);
++
++out_set_cr3:
++	/*
++	 * Caution: many callers of this function expect
++	 * that load_cr3() is serializing and orders TLB
++	 * fills with respect to the mm_cpumask writes.
++	 */
++	write_cr3(new_mm_cr3);
++}
++
  /*
-  *	TLB flushing, formerly SMP-only
-@@ -38,34 +39,23 @@ static void load_new_mm_cr3(pgd_t *pgdir)
- {
- 	unsigned long new_mm_cr3 = __pa(pgdir);
+  * We cannot call mmdrop() because we are in interrupt context,
+  * instead update mm->cpu_vm_mask.
+@@ -45,7 +85,7 @@ void leave_mm(int cpu)
+ 		BUG();
+ 	if (cpumask_test_cpu(cpu, mm_cpumask(active_mm))) {
+ 		cpumask_clear_cpu(cpu, mm_cpumask(active_mm));
+-		load_cr3(swapper_pg_dir);
++		load_new_mm_cr3(swapper_pg_dir);
+ 		/*
+ 		 * This gets called in the idle path where RCU
+ 		 * functions differently.  Tracing normally
+@@ -105,7 +145,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * ordering guarantee we need.
+ 		 *
+ 		 */
+-		load_cr3(next->pgd);
++		load_new_mm_cr3(next->pgd);
  
--	/*
--	 * KAISER, plus PCIDs needs some extra work here.  But,
--	 * if either of features is not present, we need no
--	 * PCIDs here and just do a normal, full TLB flush with
--	 * the write_cr3()
--	 */
--	if (!IS_ENABLED(CONFIG_KAISER) ||
--	    !cpu_feature_enabled(X86_FEATURE_PCID))
--		goto out_set_cr3;
--	/*
--	 * We reuse the same PCID for different tasks, so we must
--	 * flush all the entires for the PCID out when we change
--	 * tasks.
--	 */
--	new_mm_cr3 = X86_CR3_PCID_KERN_FLUSH | __pa(pgdir);
--
--	/*
--	 * The flush from load_cr3() may leave old TLB entries
--	 * for userspace in place.  We must flush that context
--	 * separately.  We can theoretically delay doing this
--	 * until we actually load up the userspace CR3, but
--	 * that's a bit tricky.  We have to have the "need to
--	 * flush userspace PCID" bit per-cpu and check it in the
--	 * exit-to-userspace paths.
--	 */
--	invpcid_flush_single_context(X86_CR3_PCID_ASID_USER);
-+#ifdef CONFIG_KAISER
-+	if (this_cpu_has(X86_FEATURE_PCID)) {
-+		/*
-+		 * We reuse the same PCID for different tasks, so we must
-+		 * flush all the entries for the PCID out when we change tasks.
-+		 * Flush KERN below, flush USER when returning to userspace in
-+		 * kaiser's SWITCH_USER_CR3 (_SWITCH_TO_USER_CR3) macro.
-+		 *
-+		 * invpcid_flush_single_context(X86_CR3_PCID_ASID_USER) could
-+		 * do it here, but can only be used if X86_FEATURE_INVPCID is
-+		 * available - and many machines support pcid without invpcid.
-+		 */
-+		new_mm_cr3 |= X86_CR3_PCID_KERN_FLUSH;
-+		kaiser_flush_tlb_on_return_to_user();
-+	}
-+#endif /* CONFIG_KAISER */
+ 		trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
  
--out_set_cr3:
- 	/*
- 	 * Caution: many callers of this function expect
- 	 * that load_cr3() is serializing and orders TLB
+@@ -150,7 +190,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			 * As above, load_cr3() is serializing and orders TLB
+ 			 * fills with respect to the mm_cpumask write.
+ 			 */
+-			load_cr3(next->pgd);
++			load_new_mm_cr3(next->pgd);
+ 			trace_tlb_flush(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
+ 			load_mm_cr4(next);
+ 			load_mm_ldt(next);
 -- 
 2.16.2
