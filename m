@@ -1,83 +1,71 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1520419553; cv=none;
+Return-Path: <gi-oh.kim@profitbricks.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520415270; cv=none;
         d=google.com; s=arc-20160816;
-        b=kDZR9Iv7k8lOrhjZTj9AgJYRzyzpTlP2hqdKPtE5nQJVvtHn+MzHoewiwiLPJWVzRt
-         dHR6Wf0janvkAMMOpXmeLBuDboE9hJfKTx/AKJ19jVaLfJFyS4pjcuDIqSqDXMHmfHZ/
-         ZQvBnuZirWSK7zK+Ht64/ZzljJhROEMsu4bfUeEiiX5pPnmqaRb4ppNPZryObAHPf96b
-         FmTs+X0GvMPQex2DaiednrUd6VbFwbnnZBc0cHj6mx6Ng4C2FeKLlBZJUNDZK9LSwYLc
-         lUK238kKYhcZqd1b3VxI1YoT7E/D8jYxpaNj5aAoXq0ShlGLpqeN1qpZU3n2wRpWTOTo
-         7d1w==
+        b=cpzVS/s7xKoWyWMkDnScNv97Se1CKFkWuwWV5fy1/hU1VJNbFoJ/wJR/Pp++RBhaJa
+         QfHZRHJLQqV+VeimWo52c9z6vESJaxkaI7pmdmjne8SICi5cbOIm5DJlj2eIMl6Jae5h
+         BcMnGVaPVHMG8frdlZQr0xzu3yDhMs2mkfSHFMHAaWgEUtuzZzF1S9y9Xo2alGTB/kq3
+         j//Bwt/Cq7wvBXixkmCpAnyN++GYswl3n62CPjz6Wi3piUcL68O2jvPHl62f6TRAnQ2Y
+         mstj+RE68sMSM3RX1PZ/Qj5unhi4H934Gvb6RHPyYWnmt73dhH13iu4h/nMsUeTY7c88
+         LZ5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=2vXjIBHQ/xG3pLZtEBuLJIL2gZonK/zaKnBshAA1k64=;
-        b=BCKZhcUKE9P4fXXiJBIaDwLoq1YYZGRU5ANtoh6EezmHgpSET13d8Av5iJ3fZQUKzG
-         AcKdugBrOdbVSLHubv/mKYB0zW3ekE4URvx8K1Wi9hwauAvchQ6hjDTsD8Eit/2lQO6z
-         C5Bw4/26CG88dkm900UcF9uVKOt5ylylkCwZNorNeY7AdKyO/HsZg1M0swod8UQ6YEkj
-         kCJ4mOUNf8siduXL+UTlb2lWbl3ieo9U9uo0sYfMQFLiTWgWSr9xBROrxUmBuKcKEHch
-         byjNW9m4dplml61Ia3lCuTAwUK4DL1PMt3/MaiJ/c/6mreu8JIuC+3kNgPx33rbmey9k
-         qXjA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=xKJ/F4L8DFWz7HmrCqv0ZxIIYTLAPi3QNd+kfMWkCQ0=;
+        b=KKN1inWo/01Gw3oAyuOxP0OI54tGYyeG3EQGjIt3W2VAbUNVFBeVYE1xuEmMOH54Aj
+         TXQ9mc38fEJKpccEyBxUWwXpyghZE4ucqISCpa40US7pGS+rgbeMqSD1f9p69pO36N6X
+         247OjE/kY9XDtn2uV7WiGDX1EDrHhaRiEr6gwdY1DfTxMM48DaSjU4iTgu4vlarm0fvM
+         vAmrC2NY2Z0VPdu2/mt4RZW3qIhIRkQXdjPMFvtPT/pVnUaeGOJYBfLfsChIofE1SeTd
+         WqEuVmZDjBHQlvQMul3Cwnp4yiTvK9We5FxhGXNFvx+PM6M6dCOpuMyoIsYeLoBhyNlI
+         +OFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HcW/y1wC;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@profitbricks-com.20150623.gappssmtp.com header.s=20150623 header.b=qf100x4b;
+       spf=pass (google.com: domain of gi-oh.kim@profitbricks.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gi-oh.kim@profitbricks.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=HcW/y1wC;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AG47ELtP9ppccwp853ik1nWeno5bFVAbJjqfGvDV/CwejEPTZNmrR7mRFvpIYfcMgrE5xzBTDuaQNg==
-Subject: Re: [PATCH] slimbus: core: use put_device() instead of kfree()
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, broonie@kernel.org,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-References: <9d7f5ca30baa3a336b145a96a631a8c093f54d8b.1520418001.git.arvind.yadav.cs@gmail.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <55c2399e-3136-4a90-26ac-0ebcb2918a15@linaro.org>
-Date: Wed, 7 Mar 2018 10:45:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <9d7f5ca30baa3a336b145a96a631a8c093f54d8b.1520418001.git.arvind.yadav.cs@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@profitbricks-com.20150623.gappssmtp.com header.s=20150623 header.b=qf100x4b;
+       spf=pass (google.com: domain of gi-oh.kim@profitbricks.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gi-oh.kim@profitbricks.com
+X-Google-Smtp-Source: AG47ELs2+QdYlZqmdtQ/GAYquIIQAB1s/vZ6C00cIWRwTOhQVkUreV55J47O2IqBFbhCf1Tsbp+2Ow==
+From: Gioh Kim <gi-oh.kim@profitbricks.com>
+To: linux-kernel@vger.kernel.org,
+	kstewart@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org
+Cc: Gioh Kim <gi-oh.kim@profitbricks.com>
+Subject: [PATCH] setlocalversion: use any tag
+Date: Wed,  7 Mar 2018 10:34:03 +0100
+Message-Id: <20180307093403.19610-1-gi-oh.kim@profitbricks.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594274042806495005?=
-X-GMAIL-MSGID: =?utf-8?q?1594275453373741986?=
+X-GMAIL-THRID: =?utf-8?q?1594270962675824355?=
+X-GMAIL-MSGID: =?utf-8?q?1594270962675824355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+I googled about '+' mark in kernel version number. Many people also
+do not understand why their kernel version includes '+'. And many
+people creates an empty .scmversion file to remove it. I also
+create the empty .scmversion file whenever I clean the kernel tree.
+If setlocalversion script uses both of annotated tag and
+lightweight tag, it would be more convenient because it is common to set
+lightweight tag during developmene process.
 
+Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+---
+ scripts/setlocalversion | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 07/03/18 10:22, Arvind Yadav wrote:
-> Never directly free @dev after calling device_register(), even
-> if it returned an error! Always use put_device() to give up the
-> reference initialized.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->   drivers/slimbus/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Looks good for me,
-
-Will queue it up.
-
-> diff --git a/drivers/slimbus/core.c b/drivers/slimbus/core.c
-> index 4988a8f..7ddfc67 100644
-> --- a/drivers/slimbus/core.c
-> +++ b/drivers/slimbus/core.c
-> @@ -141,7 +141,7 @@ static struct slim_device *slim_alloc_device(struct slim_controller *ctrl,
->   	sbdev->e_addr = *eaddr;
->   	ret = slim_add_device(ctrl, sbdev, node);
->   	if (ret) {
-> -		kfree(sbdev);
-> +		put_device(&sbdev->dev);
->   		return NULL;
->   	}
->   
-> 
-
-thanks,
-srini
+diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+index 71f39410691b..9f4309697ea6 100755
+--- a/scripts/setlocalversion
++++ b/scripts/setlocalversion
+@@ -49,7 +49,7 @@ scm_version()
+ 
+ 		# If we are at a tagged commit (like "v2.6.30-rc6"), we ignore
+ 		# it, because this version is defined in the top level Makefile.
+-		if [ -z "`git describe --exact-match 2>/dev/null`" ]; then
++		if [ -z "`git describe --exact-match --tags 2>/dev/null`" ]; then
+ 
+ 			# If only the short version is requested, don't bother
+ 			# running further git commands
+-- 
+2.14.1
