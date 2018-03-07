@@ -1,113 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934409AbeCGWnq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 17:43:46 -0500
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34877 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934175AbeCGWng (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:43:36 -0500
-X-Google-Smtp-Source: AG47ELt/T4ZaJQDNqtJkZscry8bSaA80qiOZ1MfUj9NIUFPzCIoR3ar6OxTGOcVV6kfkbrEFhEA/Og==
-From: Greg Hackmann <ghackmann@google.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH v2 net] net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
-Date: Wed,  7 Mar 2018 14:42:53 -0800
-Message-Id: <20180307224253.152470-1-ghackmann@google.com>
-X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+        id S934512AbeCGWoV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 17:44:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56430 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933743AbeCGWoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 17:44:18 -0500
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 1/2] rtc: Add RTC range
+Date: Wed,  7 Mar 2018 23:44:02 +0100
+Message-Id: <20180307224403.18315-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f7c83bcbfaf5 ("net: xfrm: use __this_cpu_read per-cpu helper") added a
-__this_cpu_read() call inside ipcomp_alloc_tfms().
+Add a way for drivers to inform the core of the supported date/time range.
+The core can then check whether the date/time or alarm is in the range
+before calling ->set_time, ->set_mmss or ->set_alarm. It returns -ERANGE
+when the time is out of range.
 
-At the time, __this_cpu_read() required the caller to either not care
-about races or to handle preemption/interrupt issues.  3.15 tightened
-the rules around some per-cpu operations, and now __this_cpu_read()
-should never be used in a preemptible context.  On 3.15 and later, we
-need to use this_cpu_read() instead.
-
-syzkaller reported this leading to the following kernel BUG while
-fuzzing sendmsg:
-
-BUG: using __this_cpu_read() in preemptible [00000000] code: repro/3101
-caller is ipcomp_init_state+0x185/0x990
-CPU: 3 PID: 3101 Comm: repro Not tainted 4.16.0-rc4-00123-g86f84779d8e9 #154
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0xb9/0x115
- check_preemption_disabled+0x1cb/0x1f0
- ipcomp_init_state+0x185/0x990
- ? __xfrm_init_state+0x876/0xc20
- ? lock_downgrade+0x5e0/0x5e0
- ipcomp4_init_state+0xaa/0x7c0
- __xfrm_init_state+0x3eb/0xc20
- xfrm_init_state+0x19/0x60
- pfkey_add+0x20df/0x36f0
- ? pfkey_broadcast+0x3dd/0x600
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_seq_stop+0x80/0x80
- ? __skb_clone+0x236/0x750
- ? kmem_cache_alloc+0x1f6/0x260
- ? pfkey_sock_destruct+0x340/0x340
- ? pfkey_process+0x62a/0x6f0
- pfkey_process+0x62a/0x6f0
- ? pfkey_send_new_mapping+0x11c0/0x11c0
- ? mutex_lock_io_nested+0x1390/0x1390
- pfkey_sendmsg+0x383/0x750
- ? dump_sp+0x430/0x430
- sock_sendmsg+0xc0/0x100
- ___sys_sendmsg+0x6c8/0x8b0
- ? copy_msghdr_from_user+0x3b0/0x3b0
- ? pagevec_lru_move_fn+0x144/0x1f0
- ? find_held_lock+0x32/0x1c0
- ? do_huge_pmd_anonymous_page+0xc43/0x11e0
- ? lock_downgrade+0x5e0/0x5e0
- ? get_kernel_page+0xb0/0xb0
- ? _raw_spin_unlock+0x29/0x40
- ? do_huge_pmd_anonymous_page+0x400/0x11e0
- ? __handle_mm_fault+0x553/0x2460
- ? __fget_light+0x163/0x1f0
- ? __sys_sendmsg+0xc7/0x170
- __sys_sendmsg+0xc7/0x170
- ? SyS_shutdown+0x1a0/0x1a0
- ? __do_page_fault+0x5a0/0xca0
- ? lock_downgrade+0x5e0/0x5e0
- SyS_sendmsg+0x27/0x40
- ? __sys_sendmsg+0x170/0x170
- do_syscall_64+0x19f/0x640
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7f0ee73dfb79
-RSP: 002b:00007ffe14fc15a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0ee73dfb79
-RDX: 0000000000000000 RSI: 00000000208befc8 RDI: 0000000000000004
-RBP: 00007ffe14fc15b0 R08: 00007ffe14fc15c0 R09: 00007ffe14fc15c0
-R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000400440
-R13: 00007ffe14fc16b0 R14: 0000000000000000 R15: 0000000000000000
-
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-v2: expand commit log to clarify that kernel 3.15 and later are impacted
+ Documentation/ABI/testing/sysfs-class-rtc |  8 ++++++++
+ drivers/rtc/interface.c                   | 14 ++++++++++++++
+ drivers/rtc/rtc-sysfs.c                   | 12 ++++++++++++
+ include/linux/rtc.h                       |  3 +++
+ 4 files changed, 37 insertions(+)
 
- net/xfrm/xfrm_ipcomp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/xfrm/xfrm_ipcomp.c b/net/xfrm/xfrm_ipcomp.c
-index ccfdc7115a83..a00ec715aa46 100644
---- a/net/xfrm/xfrm_ipcomp.c
-+++ b/net/xfrm/xfrm_ipcomp.c
-@@ -283,7 +283,7 @@ static struct crypto_comp * __percpu *ipcomp_alloc_tfms(const char *alg_name)
- 		struct crypto_comp *tfm;
+diff --git a/Documentation/ABI/testing/sysfs-class-rtc b/Documentation/ABI/testing/sysfs-class-rtc
+index 792a38300336..95984289a4ee 100644
+--- a/Documentation/ABI/testing/sysfs-class-rtc
++++ b/Documentation/ABI/testing/sysfs-class-rtc
+@@ -43,6 +43,14 @@ Contact:	linux-rtc@vger.kernel.org
+ Description:
+ 		(RO) The name of the RTC corresponding to this sysfs directory
  
- 		/* This can be any valid CPU ID so we don't need locking. */
--		tfm = __this_cpu_read(*pos->tfms);
-+		tfm = this_cpu_read(*pos->tfms);
++What:		/sys/class/rtc/rtcX/range
++Date:		January 2018
++KernelVersion:	4.16
++Contact:	linux-rtc@vger.kernel.org
++Description:
++		Valid time range for the RTC, as seconds from epoch, formatted
++		as [min, max]
++
+ What:		/sys/class/rtc/rtcX/since_epoch
+ Date:		March 2006
+ KernelVersion:	2.6.17
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 7e253be19ba7..c068daebeec2 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -70,6 +70,13 @@ int rtc_set_time(struct rtc_device *rtc, struct rtc_time *tm)
+ 	if (err != 0)
+ 		return err;
  
- 		if (!strcmp(crypto_comp_name(tfm), alg_name)) {
- 			pos->users++;
++	if (rtc->range_min != rtc->range_max) {
++		time64_t time = rtc_tm_to_time64(tm);
++
++		if (time < rtc->range_min || time > rtc->range_max)
++			return -ERANGE;
++	}
++
+ 	err = mutex_lock_interruptible(&rtc->ops_lock);
+ 	if (err)
+ 		return err;
+@@ -374,6 +381,13 @@ int rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ 	if (err != 0)
+ 		return err;
+ 
++	if (rtc->range_min != rtc->range_max) {
++		time64_t time = rtc_tm_to_time64(&alarm->time);
++
++		if (time < rtc->range_min || time > rtc->range_max)
++			return -ERANGE;
++	}
++
+ 	err = mutex_lock_interruptible(&rtc->ops_lock);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/rtc/rtc-sysfs.c b/drivers/rtc/rtc-sysfs.c
+index 92ff2edb86a6..454da38c6012 100644
+--- a/drivers/rtc/rtc-sysfs.c
++++ b/drivers/rtc/rtc-sysfs.c
+@@ -248,6 +248,14 @@ offset_store(struct device *dev, struct device_attribute *attr,
+ }
+ static DEVICE_ATTR_RW(offset);
+ 
++static ssize_t
++range_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "[%lld,%llu]\n", to_rtc_device(dev)->range_min,
++		       to_rtc_device(dev)->range_max);
++}
++static DEVICE_ATTR_RO(range);
++
+ static struct attribute *rtc_attrs[] = {
+ 	&dev_attr_name.attr,
+ 	&dev_attr_date.attr,
+@@ -257,6 +265,7 @@ static struct attribute *rtc_attrs[] = {
+ 	&dev_attr_hctosys.attr,
+ 	&dev_attr_wakealarm.attr,
+ 	&dev_attr_offset.attr,
++	&dev_attr_range.attr,
+ 	NULL,
+ };
+ 
+@@ -286,6 +295,9 @@ static umode_t rtc_attr_is_visible(struct kobject *kobj,
+ 	} else if (attr == &dev_attr_offset.attr) {
+ 		if (!rtc->ops->set_offset)
+ 			mode = 0;
++	} else if (attr == &dev_attr_range.attr) {
++		if (!(rtc->range_max - rtc->range_min))
++			mode = 0;
+ 	}
+ 
+ 	return mode;
+diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+index 3b65b201169c..c78528c394e5 100644
+--- a/include/linux/rtc.h
++++ b/include/linux/rtc.h
+@@ -150,6 +150,9 @@ struct rtc_device {
+ 	bool nvram_old_abi;
+ 	struct bin_attribute *nvram;
+ 
++	time64_t range_min;
++	timeu64_t range_max;
++
+ #ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
+ 	struct work_struct uie_task;
+ 	struct timer_list uie_timer;
 -- 
-2.16.2.395.g2e18187dfd-goog
+2.16.2
