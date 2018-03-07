@@ -1,26 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754507AbeCGOP2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:15:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50102 "EHLO
+        id S1754545AbeCGOPw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:15:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50374 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754456AbeCGOP0 (ORCPT
+        with ESMTP id S1754481AbeCGOPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:15:26 -0500
+        Wed, 7 Mar 2018 09:15:34 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "ASoC: wm8524: Remove unit address" to the regulator tree
-In-Reply-To: 
-Message-Id: <E1etZqm-0001c4-3g@debutante>
-Date: Wed, 07 Mar 2018 14:15:24 +0000
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Maciej Purski <m.purski@samsung.com>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Tirupathi Reddy <tirupath@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: don't try to use DT information without CONFIG_OF" to the regulator tree
+In-Reply-To: <20180306123333.84344-1-arnd@arndb.de>
+Message-Id: <E1etZqr-0001dt-39@debutante>
+Date: Wed, 07 Mar 2018 14:15:29 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wm8524: Remove unit address
+   regulator: don't try to use DT information without CONFIG_OF
 
 has been applied to the regulator tree at
 
@@ -45,35 +49,57 @@ to this mail.
 Thanks,
 Mark
 
->From 770981f5a8dc61a10c7e8248d07aa558079527a1 Mon Sep 17 00:00:00 2001
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 7 Mar 2018 00:24:13 -0300
-Subject: [PATCH] ASoC: wm8524: Remove unit address
+>From 30f00f4897a093bb2b0308caab7855d6b75e9e1b Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 6 Mar 2018 13:33:09 +0100
+Subject: [PATCH] regulator: don't try to use DT information without CONFIG_OF
 
-WM8524 does not use I2C nor SPI, hence no 'reg' property is used,
-so remove the unit address from the bindings example to conform.
+The coupled regulator support requires CONFIG_OF today, otherwise
+we get a link error:
 
-This avoids users getting dtc warnings when they copy the
-binding example to a real dts file.
+drivers/regulator/core.o: In function `regulator_fill_coupling_array':
+core.c:(.text+0x3e44): undefined reference to `of_parse_coupled_regulator'
+drivers/regulator/core.o: In function `regulator_register':
+core.c:(.text+0x5eb4): undefined reference to `of_get_n_coupled'
+core.c:(.text+0x5f08): undefined reference to `of_check_coupling_data'
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
+This changes the affected functions to return success when CONFIG_OF
+is disabled, which should result in the same behavior as before.
+
+Fixes: cf6fc8064766 ("regulator: core: Resolve coupled regulators")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/wm8524.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/core.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/wm8524.txt b/Documentation/devicetree/bindings/sound/wm8524.txt
-index 20c62002cbcd..0f0553563fc1 100644
---- a/Documentation/devicetree/bindings/sound/wm8524.txt
-+++ b/Documentation/devicetree/bindings/sound/wm8524.txt
-@@ -10,7 +10,7 @@ Required properties:
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index d68244ad9423..e685f8b94acf 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4345,6 +4345,9 @@ static int regulator_register_fill_coupling_array(struct device *dev,
+ {
+ 	struct regulator_dev *rdev = dev_to_rdev(dev);
  
- Example:
++	if (!IS_ENABLED(CONFIG_OF))
++		return 0;
++
+ 	if (regulator_fill_coupling_array(rdev))
+ 		rdev_dbg(rdev, "unable to resolve coupling\n");
  
--codec: wm8524@0 {
-+codec: wm8524 {
- 	compatible = "wlf,wm8524";
- 	wlf,mute-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
- };
+@@ -4353,7 +4356,12 @@ static int regulator_register_fill_coupling_array(struct device *dev,
+ 
+ static int regulator_resolve_coupling(struct regulator_dev *rdev)
+ {
+-	int n_phandles = of_get_n_coupled(rdev);
++	int n_phandles;
++
++	if (!IS_ENABLED(CONFIG_OF))
++		return 0;
++
++	n_phandles = of_get_n_coupled(rdev);
+ 
+ 	if (n_phandles + 1 > MAX_COUPLED) {
+ 		rdev_err(rdev, "too many regulators coupled\n");
 -- 
 2.16.2
