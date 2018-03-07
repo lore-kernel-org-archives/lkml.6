@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuTdFulgVp9BMRlO6ph0oOsYdRwFPMqzOxBf2wmcCCecdNrq5wos7U5Iu9NvS4RIJ2odQQv
-ARC-Seal: i=1; a=rsa-sha256; t=1520451806; cv=none;
+X-Google-Smtp-Source: AG47ELsoEqhVcGpMglFPc9wp5L5ACSe72ZGtfDvca4oVGUvD+dE9OETpUgXjS7CevDCXrQExjc0c
+ARC-Seal: i=1; a=rsa-sha256; t=1520451804; cv=none;
         d=google.com; s=arc-20160816;
-        b=WTwIB1trfonGU4I9F59PW+sO15zj0sCMOJ6baJr17Xa49Ar47RIdDmgj5WHQ3FNu2o
-         Wlz3dSJ53CF5hct6wSPgNSA2fttk4p5uSjFE/zFeOHkFT8sezPHqUJlX6PkCIuGUcvHY
-         KzwXHktB0yqqnRde34vsp8fRTlcyrQBWZixxFRQ7TuyEkjSx38HE31+c3X9d86getHVL
-         he1WnBfGyhjM1/zbz1RV04Qv3s5h9OgCjdN7QVmRHGtkCwiQPnl+sxheH3FK4cGUJOuO
-         JYdPWgSmbS5/IEMGSIHMnTTiv/GrsH3ds1Q8GP3CgpHuN9ViHwpHifkYbilWfS1q+ufg
-         E+6A==
+        b=U73CHsSCunU7ZC5eb9ys4RJ/CkgioUC4FKz0+GVUCDbetxuFBhiNLzagOd/t5RB8w9
+         xvP4JvF3oXgPRz0IdQ/9LmJAU5eMUmwFf3bpcl+Czb/m+zStHfkECYSVpOHKvyY0++ZA
+         x2lCUBf5/V8JZVvLnRMTY9paa+Yj4b0MGoQR16axRv8JqXznhoIMccPf/l8FlVhwdX70
+         GQgv2x8aqvmvci4M2eM3psn/zNKqlWNndu5ppV61hIs1sLpWy5Si/Ag4/Kddz25Q4ZfK
+         ynAICm9rrQkSHWxqZRYXtu8Ou1N+Ba3JeZeJDKRlOTVUSnZc1Y8FSkOeaSqL0ozCb06q
+         qloA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BrQrR9t8WHAF375xx9A3mt1l37pEwySyokWTgRaFZJY=;
-        b=wHwMJlobCRbCN2hfLz8E7pCfdLBHnl6Lc0kWOfWvy6SnsCjISMRHBoPIpsWe6ItTHK
-         rlgWGW2/WwJH50F2NA/fvAvP3YxVHU3m+2LHXt9FXy1zZuhiojFkSUdbdG4rBIWFQl/h
-         vX341/bth4vAB9UOyVT4DhFkAlB3E++atN0SZ9qsbVAI8UbemXkkFmXN7eBO3RPZGK2r
-         J3mTFJuwwiAlVES85pSYgYBhpUYwq4PI3n6dkDHwcEaVbEUKjonb3nyOS+1jDj/SXuXN
-         gIgmYvWWeOO2Sff3GXSO0F8NgEPr562x2iHLIGHf9SG63Rs6K72+cjw60jyoq4P0JKfy
-         oCwg==
+        bh=TR3vbmIfRFS0WQodX+PQGNrmnvzRGLgvVbWejijQ79o=;
+        b=iU50y3vye70Eix6NSYYwDm0hK2K50R2ApuEotH8U29ywZT5ZB6+NrRxTJ6TeddoaY9
+         3Nx1r356vZ4GzrEuXsrntQIHfqNJ2v0Y56iKtyAXSKoCaA6NYZPcrgCJk4GQ8dg3512r
+         UgaozEtGY16YMGttvajK+0Xi5VR28VEHBxwYCDto4BQ8uZM3D121FZe29oSm0cPQivXB
+         P3wiuBlhvk67ruF9yXq6UtkzDbUqV+nB2lnECE/dSW+YrO5sFFf2noSGEU86RfA2k/fQ
+         G5QxOXmapKazqSn86FCh02K4RknlOQKYmPdxaQwfw7pW0wGBvNOEoB27pFao49UZWeNh
+         z3aQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.15 101/122] KVM: s390: take care of clock-comparator sign control
-Date: Wed,  7 Mar 2018 11:38:33 -0800
-Message-Id: <20180307191744.006977301@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Anna Karbownik <anna.karbownik@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	jim.m.snow@intel.com,
+	krzysztof.paliswiat@intel.com,
+	lukasz.odzioba@intel.com,
+	qiuxu.zhuo@intel.com,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.15 100/122] EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL
+Date: Wed,  7 Mar 2018 11:38:32 -0800
+Message-Id: <20180307191743.848319164@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309273560523667?=
-X-GMAIL-MSGID: =?utf-8?q?1594309273560523667?=
+X-GMAIL-THRID: =?utf-8?q?1594309271673449358?=
+X-GMAIL-MSGID: =?utf-8?q?1594309271673449358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,70 +57,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Anna Karbownik <anna.karbownik@intel.com>
 
-commit 5fe01793dd953ab947fababe8abaf5ed5258c8df upstream.
+commit bf8486709ac7fad99e4040dea73fe466c57a4ae1 upstream.
 
-Missed when enabling the Multiple-epoch facility. If the facility is
-installed and the control is set, a sign based comaprison has to be
-performed.
+Commit
 
-Right now we would inject wrong interrupts and ignore interrupt
-conditions. Also the sleep time is calculated in a wrong way.
+  3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20180207114647.6220-2-david@redhat.com>
-Fixes: 8fa1696ea781 ("KVM: s390: Multiple Epoch Facility support")
-Cc: stable@vger.kernel.org
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+decreased NUM_CHANNELS from 8 to 4, but this is not enough for Knights
+Landing which supports up to 6 channels.
+
+This caused out-of-bounds writes to pvt->mirror_mode and pvt->tolm
+variables which don't pay critical role on KNL code path, so the memory
+corruption wasn't causing any visible driver failures.
+
+The easiest way of fixing it is to change NUM_CHANNELS to 6. Do that.
+
+An alternative solution would be to restructure the KNL part of the
+driver to 2MC/3channel representation.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Anna Karbownik <anna.karbownik@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: jim.m.snow@intel.com
+Cc: krzysztof.paliswiat@intel.com
+Cc: lukasz.odzioba@intel.com
+Cc: qiuxu.zhuo@intel.com
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 3286d3eb906c ("EDAC, sb_edac: Drop NUM_CHANNELS from 8 back to 4")
+Link: http://lkml.kernel.org/r/1519312693-4789-1-git-send-email-anna.karbownik@intel.com
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kvm/interrupt.c |   25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/edac/sb_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -170,8 +170,15 @@ static int ckc_interrupts_enabled(struct
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -279,7 +279,7 @@ static const u32 correrrthrsld[] = {
+  * sbridge structs
+  */
  
- static int ckc_irq_pending(struct kvm_vcpu *vcpu)
- {
--	if (vcpu->arch.sie_block->ckc >= kvm_s390_get_tod_clock_fast(vcpu->kvm))
-+	const u64 now = kvm_s390_get_tod_clock_fast(vcpu->kvm);
-+	const u64 ckc = vcpu->arch.sie_block->ckc;
-+
-+	if (vcpu->arch.sie_block->gcr[0] & 0x0020000000000000ul) {
-+		if ((s64)ckc >= (s64)now)
-+			return 0;
-+	} else if (ckc >= now) {
- 		return 0;
-+	}
- 	return ckc_interrupts_enabled(vcpu);
- }
- 
-@@ -1011,13 +1018,19 @@ int kvm_cpu_has_pending_timer(struct kvm
- 
- static u64 __calculate_sltime(struct kvm_vcpu *vcpu)
- {
--	u64 now, cputm, sltime = 0;
-+	const u64 now = kvm_s390_get_tod_clock_fast(vcpu->kvm);
-+	const u64 ckc = vcpu->arch.sie_block->ckc;
-+	u64 cputm, sltime = 0;
- 
- 	if (ckc_interrupts_enabled(vcpu)) {
--		now = kvm_s390_get_tod_clock_fast(vcpu->kvm);
--		sltime = tod_to_ns(vcpu->arch.sie_block->ckc - now);
--		/* already expired or overflow? */
--		if (!sltime || vcpu->arch.sie_block->ckc <= now)
-+		if (vcpu->arch.sie_block->gcr[0] & 0x0020000000000000ul) {
-+			if ((s64)now < (s64)ckc)
-+				sltime = tod_to_ns((s64)ckc - (s64)now);
-+		} else if (now < ckc) {
-+			sltime = tod_to_ns(ckc - now);
-+		}
-+		/* already expired */
-+		if (!sltime)
- 			return 0;
- 		if (cpu_timer_interrupts_enabled(vcpu)) {
- 			cputm = kvm_s390_get_cpu_timer(vcpu);
+-#define NUM_CHANNELS		4	/* Max channels per MC */
++#define NUM_CHANNELS		6	/* Max channels per MC */
+ #define MAX_DIMMS		3	/* Max DIMMS per channel */
+ #define KNL_MAX_CHAS		38	/* KNL max num. of Cache Home Agents */
+ #define KNL_MAX_CHANNELS	6	/* KNL max num. of PCI channels */
