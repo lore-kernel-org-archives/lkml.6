@@ -1,73 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934901AbeCGUgz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:36:55 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934803AbeCGUfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:35:08 -0500
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
-Subject: [PATCH 1/5] sysctl: Clarify how the ctl_table.flags should be set
-Date: Wed,  7 Mar 2018 15:34:25 -0500
-Message-Id: <1520454869-13871-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1520454869-13871-1-git-send-email-longman@redhat.com>
-References: <1520454869-13871-1-git-send-email-longman@redhat.com>
+        id S964807AbeCGUh3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:37:29 -0500
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34979 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934760AbeCGUh0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:37:26 -0500
+X-Google-Smtp-Source: AG47ELveVc3FQadqpYeyu0y1zSRCdK9v8zV1V1sOyVq4y03OWsgz9SeC61lshqZOX5ARpf4kEVveWlW+J3UknG4zMYs=
+MIME-Version: 1.0
+In-Reply-To: <87muzoglga.fsf@concordia.ellerman.id.au>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-18-malat@debian.org>
+ <87muzoglga.fsf@concordia.ellerman.id.au>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 7 Mar 2018 21:37:05 +0100
+X-Google-Sender-Auth: ytFHvUhn5-6SiqxfF2KOnz6mddE
+Message-ID: <CA+7wUsyMQcvEOOAuthFg4Sc783x4KBqtjkgB81KzJqPxQnwdYA@mail.gmail.com>
+Subject: Re: [PATCH 17/21] powerpc: Add missing prototype for sys_debug_setcontext
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w27Kba9G018965
 
-Additional comments are added to clarify how the ctl_table.flags
-field should be set as well as precaution on what needs to be done
-when additional flags are defined in the future.
+On Sun, Mar 4, 2018 at 11:54 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Mathieu Malaterre <malat@debian.org> writes:
+>
+>> In commit 81e7009ea46c ("powerpc: merge ppc signal.c and ppc64 signal32.c")
+>> the function sys_debug_setcontext was added without a prototype.
+>>
+>> Fix compilation warning (treated as error in W=1):
+>>
+>>   CC      arch/powerpc/kernel/signal_32.o
+>> arch/powerpc/kernel/signal_32.c:1227:5: error: no previous prototype for ‘sys_debug_setcontext’ [-Werror=missing-prototypes]
+>>  int sys_debug_setcontext(struct ucontext __user *ctx,
+>>      ^~~~~~~~~~~~~~~~~~~~
+>> cc1: all warnings being treated as errors
+>
+> This one should actually be using the SYSCALL_DEFINE syntax, so that it
+> can be used with CONFIG_FTRACE_SYSCALLS.
+>
+> See eg. our mmap:
+>
+>   SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
+>                 unsigned long, prot, unsigned long, flags,
+>                 unsigned long, fd, off_t, offset)
+>   {
+>         return do_mmap2(addr, len, prot, flags, fd, offset, PAGE_SHIFT);
+>   }
+>
+>
+> We probably still need this patch, but I'm not entirely sure because the
+> SYSCALL_DEFINE macro does all sorts of shenanigans.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/sysctl.h | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+I see. Could you please drop this patch then. The patch does not look
+that trivial anymore. I'll need to dig a bit more on how to do the
+syscall stuff with a 7 params function.
 
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 3db57af..bc09361 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -125,7 +125,7 @@ struct ctl_table
- } __randomize_layout;
- 
- /**
-- * enum ctl_table_flags - flags for the ctl table
-+ * enum ctl_table_flags - flags for the ctl table (struct ctl_table.flags)
-  *
-  * @CTL_FLAGS_CLAMP_RANGE: Set to indicate that the entry should be
-  *	flexibly clamped to min/max range in case the user provided
-@@ -134,10 +134,23 @@ struct ctl_table
-  * 	had been issued for that entry.
-  *
-  * At most 16 different flags will be allowed.
-+ *
-+ * The flags can be set in two different ways. They can either be
-+ * statically set at definition time or dynamically set at run time.
-+ *
-+ * Currently, only the CTL_FLAGS_OOR_WARNED flag is set at run time.
-+ * No locking or atomic access to set @CTL_FLAGS_OOR_WARNED is needed
-+ * in the current use case. If similar dynamic flags are defined in the
-+ * future, we may need to revisit again to see if atomic access or
-+ * locking is needed to prevent lost changes due to concurrent updates
-+ * to the flags field.
-  */
- enum ctl_table_flags {
-+	/* Statically set flags */
- 	CTL_FLAGS_CLAMP_RANGE		= BIT(0),
--	CTL_FLAGS_OOR_WARNED		= BIT(1),
-+
-+	/* Flags set at run time */
-+	CTL_FLAGS_OOR_WARNED		= BIT(8),
- };
- 
- struct ctl_node {
--- 
-1.8.3.1
+Thanks
