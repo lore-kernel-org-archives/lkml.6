@@ -1,106 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754184AbeCGMz7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:55:59 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50220 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751156AbeCGMz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:55:58 -0500
-Subject: Re: [PATCH v7 01/14] iommu/rockchip: Prohibit unbind and remove
-To: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, xxm@rock-chips.com, tfiga@chromium.org,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180306030252.3197-1-jeffy.chen@rock-chips.com>
- <20180306030252.3197-2-jeffy.chen@rock-chips.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <713e01c9-4850-dd03-841f-060c1eec1cbd@arm.com>
-Date: Wed, 7 Mar 2018 12:55:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180306030252.3197-2-jeffy.chen@rock-chips.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        id S1754377AbeCGM4S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:56:18 -0500
+Received: from mga06.intel.com ([134.134.136.31]:16354 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754260AbeCGM4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:56:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
+   d="scan'208";a="23227797"
+Message-ID: <1520427371.10722.453.camel@linux.intel.com>
+Subject: Re: [PATCH v5 1/3] ACPI / x86: boot: Split out
+ acpi_generic_reduce_hw_init() and export
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 07 Mar 2018 14:56:11 +0200
+In-Reply-To: <1519383078.10722.107.camel@linux.intel.com>
+References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
+         <CAJZ5v0g7XO2N0vCi-A95MDjgJpTS0M=ZXrSGu2fqkwSHZ79GEg@mail.gmail.com>
+         <1519383078.10722.107.camel@linux.intel.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/03/18 03:02, Jeffy Chen wrote:
-> Removal of IOMMUs cannot be done reliably.
+On Fri, 2018-02-23 at 12:51 +0200, Andy Shevchenko wrote:
+> On Tue, 2018-02-20 at 19:42 +0100, Rafael J. Wysocki wrote:
+> > On Tue, Feb 20, 2018 at 7:05 PM, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > This is a preparation patch to allow override the hardware reduced
+> > > initialization on ACPI enabled platforms.
+> > > 
+> > > No functional change intended.
+> > > 
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> This is similar to exynos iommu driver.
+> Thanks, Rafael!
+> 
+> Ingo, can it be applied?
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+Hmm... It seems Ingo is busy with something else.
 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> ---
-> 
-> Changes in v7: None
-> Changes in v6: None
-> Changes in v5: None
-> Changes in v4:
-> Rewrite commit message.
-> 
-> Changes in v3:
-> Also remove remove() and module_exit() as Tomasz suggested.
-> 
-> Changes in v2: None
-> 
->   drivers/iommu/rockchip-iommu.c | 21 +--------------------
->   1 file changed, 1 insertion(+), 20 deletions(-)
-> 
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 9d991c2d8767..16cd8780c289 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -1197,18 +1197,6 @@ static int rk_iommu_probe(struct platform_device *pdev)
->   	return err;
->   }
->   
-> -static int rk_iommu_remove(struct platform_device *pdev)
-> -{
-> -	struct rk_iommu *iommu = platform_get_drvdata(pdev);
-> -
-> -	if (iommu) {
-> -		iommu_device_sysfs_remove(&iommu->iommu);
-> -		iommu_device_unregister(&iommu->iommu);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->   static const struct of_device_id rk_iommu_dt_ids[] = {
->   	{ .compatible = "rockchip,iommu" },
->   	{ /* sentinel */ }
-> @@ -1217,10 +1205,10 @@ MODULE_DEVICE_TABLE(of, rk_iommu_dt_ids);
->   
->   static struct platform_driver rk_iommu_driver = {
->   	.probe = rk_iommu_probe,
-> -	.remove = rk_iommu_remove,
->   	.driver = {
->   		   .name = "rk_iommu",
->   		   .of_match_table = rk_iommu_dt_ids,
-> +		   .suppress_bind_attrs = true,
->   	},
->   };
->   
-> @@ -1248,14 +1236,7 @@ static int __init rk_iommu_init(void)
->   		platform_driver_unregister(&rk_iommu_domain_driver);
->   	return ret;
->   }
-> -static void __exit rk_iommu_exit(void)
-> -{
-> -	platform_driver_unregister(&rk_iommu_driver);
-> -	platform_driver_unregister(&rk_iommu_domain_driver);
-> -}
-> -
->   subsys_initcall(rk_iommu_init);
-> -module_exit(rk_iommu_exit);
->   
->   MODULE_DESCRIPTION("IOMMU API for Rockchip");
->   MODULE_AUTHOR("Simon Xue <xxm@rock-chips.com> and Daniel Kurtz <djkurtz@chromium.org>");
-> 
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
