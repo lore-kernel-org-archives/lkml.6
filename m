@@ -1,109 +1,94 @@
-Return-Path: <kernel-hardening-return-12213-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtrzDHqWxdLAKB5mH/0ncm61sY3ujFjO5sxl8AS1FAK05lwjNRETAbrzHiq/JY9aeQsWO5r
-ARC-Seal: i=1; a=rsa-sha256; t=1520457976; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520457864; cv=none;
         d=google.com; s=arc-20160816;
-        b=h0qqEPnBjwanGMqzgV3Kan8vFi8VAGbE+B7ODvOOYFdk3BrZ3DmFhSP3532Mw5mVXc
-         ouAGkvOF00jwrcmGb63m/QcngsvLXZkhcHMevyzHi4iBWxqBg/oPuWy/noWSCM5YCTAm
-         xR/LbLRhdI20EkCIzuNs+oz5mA9rE3ly8EcxpeDs8naN3FqIN2IPkOvpWdRtrzcONc/s
-         wmMwtP7S/uUZhv4ECwCYIAP3rI1NfjQwDfqd/IWv6W+WDucq6mxSPOAiNWTXCPLTdo0U
-         uasX+xGhIjGLDDkeygpJywv1LlmXx06PmREsUaWnon22Ts/YDfeH2aefXg3BGA/HOwBe
-         gXDg==
+        b=SBNLTamRSQ6JRe0TH7fFr66gf2yPD1kYB5z2AY9GEQJMDP1NfboNwzwJltPTECdMof
+         QA6FegQtHManlWeXIpMsCYIWrMkuAh1oDy7Jk3Dfc5Y1OmHBX9XTGFLbY6PAGICO1q3u
+         eGVzMdehLjLWSObWQdI13E0NTdEsi2i73QInaanZ8URQJLiciY6t6bIVeh7ZRG4fP+E+
+         MV50TWQ2GNuDODoziC9ShGa2jJdYeotNjf6fo2uoAxrfAG9zAKpF40xdZjAPRjVA5XOL
+         tqOT6f+E7dr+dZIp5LRVkqp5wL9OBx3pR/KWruD0Dybpr5yCQ77ksqqRjxXiAwHT5qpJ
+         ZW9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=JWKxbolXDV+D3bGvNGvc+WWEC6sQGh7+nzTc4X5nQrM=;
-        b=S0LKdP/naITpp+ec3wWnFal39xS06q1SXX5UGzRTxmsNtzTu1B+RnKryQ90iYP9BvX
-         ZpGcA03OJ+Nph7g8kMRBCIthgDjTfDkTw9gvOHQWYiNtRH3mgbcNpFcJqGAaMIH3hb/Y
-         GS5YOQQjqZMGEu3HBOKamg5Is37wIwWZQ0IYfzBGntfrGgDin4qXu2ms6pCZlgNEmodo
-         QQo3AFPvXgnQI5gtQMNor6AANZl/UBEnPn3C2h/3LeXULv4B9JfmCxZAVZQpHjFa6pG6
-         eR51ljPmPnuTVk2HqCLNxB7xp2y543DOpqRa0HPFvbyev8SetK58zROM0gfXm0MtVb+x
-         032w==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=18Fkw59ceXzKTxluf0ZdW+yT8LW3uL6DTXlXPys/7W4=;
+        b=HZG+Om5VH7HSWMi4nrp2WAZRSivA0r5beIT43jsPnWFFP1dV6acCmI/GHiUs5SvHHY
+         oVqdyCXbkE7HWu8aZ271uob3DcFkK21S2zZUpAwuwmoEsgUJpESxYF2C79/hURNQXn5j
+         /uYS90690xaiayao8OJBraTwNnY6U5DDkGisYoQHmcg0Tawj+ZgyXTZXZp2Nj/uW1hDq
+         gicnHXnQu4XrhnUlpqa5PiHS+kNITEriuW9+NOmaJ2OixmX2inV5YQMwZFZfwxeXFE3g
+         JJIlbVwAfL+6yxttyOoD1oyCioC9eyxvR1zjW9coYj/N0FwxbFkZfeAYigPyX1Sfz33W
+         3yyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=dHylESBw;
-       spf=pass (google.com: domain of kernel-hardening-return-12213-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12213-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U+kE/w/O;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=dHylESBw;
-       spf=pass (google.com: domain of kernel-hardening-return-12213-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12213-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Wed, 7 Mar 2018 13:25:55 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yury Norov <ynorov@caviumnetworks.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH] test_bitmap: Do not accidentally use stack VLA
-Message-ID: <20180307212555.GA17927@beast>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=U+kE/w/O;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AG47ELvm/Bvaz4B/3NRO5Hca+KBLuoVG7/o91XwX7OBhi0RPHamEQ222wpiKYuGEB/zMnLHxhw8mgAT1RcWSjsCNSKw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20180221233825.10024-1-jhogan@kernel.org>
+References: <20180221233825.10024-1-jhogan@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 22:24:23 +0100
+X-Google-Sender-Auth: DDyO_JiM0Rwoz7PUh-PnsDrAyl4
+Message-ID: <CAK8P3a2qV5n57f7=FC0nYZWfeXCVaOaK4R_7Wr74p3ZMyuwJNQ@mail.gmail.com>
+Subject: Re: [PATCH 00/13] Remove metag architecture
+To: James Hogan <jhogan@kernel.org>
+Cc: "open list:METAG ARCHITECTURE" <linux-metag@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Linux Media Mailing List <linux-media@vger.kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594315743525049563?=
-X-GMAIL-MSGID: =?utf-8?q?1594315743525049563?=
+X-GMAIL-THRID: =?utf-8?q?1593055859238851284?=
+X-GMAIL-MSGID: =?utf-8?q?1594315624987980143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This avoids an accidental stack VLA (since the compiler thinks the value
-of "len" can change, even when marked "const"). This just replaces it
-with a #define so it will DTRT.
+On Thu, Feb 22, 2018 at 12:38 AM, James Hogan <jhogan@kernel.org> wrote:
+> These patches remove the metag architecture and tightly dependent
+> drivers from the kernel. With the 4.16 kernel the ancient gcc 4.2.4
+> based metag toolchain we have been using is hitting compiler bugs, so
+> now seems a good time to drop it altogether.
+>
+> Quoting from patch 1:
+>
+> The earliest Meta architecture port of Linux I have a record of was an
+> import of a Meta port of Linux v2.4.1 in February 2004, which was worked
+> on significantly over the next few years by Graham Whaley, Will Newton,
+> Matt Fleming, myself and others.
+>
+> Eventually the port was merged into mainline in v3.9 in March 2013, not
+> long after Imagination Technologies bought MIPS Technologies and shifted
+> its CPU focus over to the MIPS architecture.
+>
+> As a result, though the port was maintained for a while, kept on life
+> support for a while longer, and useful for testing a few specific
+> drivers for which I don't have ready access to the equivalent MIPS
+> hardware, it is now essentially dead with no users.
+>
+> It is also stuck using an out-of-tree toolchain based on GCC 4.2.4 which
+> is no longer maintained, now struggles to build modern kernels due to
+> toolchain bugs, and doesn't itself build with a modern GCC. The latest
+> buildroot port is still using an old uClibc snapshot which is no longer
+> served, and the latest uClibc doesn't build with GCC 4.2.4.
+>
+> So lets call it a day and drop the Meta architecture port from the
+> kernel. RIP Meta.
 
-Seen with -Wvla. Fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+I've pulled it into my asm-generic tree now, which is also part of linux-next,
+and followed up with patches removing frv, m32r, score, unicore32
+and blackfin. I have not removed the device drivers yet, but I'm working
+on that.
 
-Cc: Yury Norov <ynorov@caviumnetworks.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- lib/test_bitmap.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-index b3f235baa05d..756f20ad03db 100644
---- a/lib/test_bitmap.c
-+++ b/lib/test_bitmap.c
-@@ -292,15 +292,17 @@ static void __init test_bitmap_parselist(void)
- 	}
- }
- 
-+#define EXP_BYTES	(sizeof(exp) * 8)
-+
- static void __init test_bitmap_arr32(void)
- {
--	unsigned int nbits, next_bit, len = sizeof(exp) * 8;
-+	unsigned int nbits, next_bit;
- 	u32 arr[sizeof(exp) / 4];
--	DECLARE_BITMAP(bmap2, len);
-+	DECLARE_BITMAP(bmap2, EXP_BYTES);
- 
- 	memset(arr, 0xa5, sizeof(arr));
- 
--	for (nbits = 0; nbits < len; ++nbits) {
-+	for (nbits = 0; nbits < EXP_BYTES; ++nbits) {
- 		bitmap_to_arr32(arr, exp, nbits);
- 		bitmap_from_arr32(bmap2, arr, nbits);
- 		expect_eq_bitmap(bmap2, exp, nbits);
-@@ -312,7 +314,7 @@ static void __init test_bitmap_arr32(void)
- 				" tail is not safely cleared: %d\n",
- 				nbits, next_bit);
- 
--		if (nbits < len - 32)
-+		if (nbits < EXP_BYTES - 32)
- 			expect_eq_uint(arr[DIV_ROUND_UP(nbits, 32)],
- 								0xa5a5a5a5);
- 	}
--- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+       Arnd
