@@ -1,64 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754416AbeCGOey convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:34:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38622 "EHLO mail.bootlin.com"
+        id S1754517AbeCGOfu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:35:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751176AbeCGOev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:34:51 -0500
-Date: Wed, 7 Mar 2018 15:34:49 +0100
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, lgirdwood@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, michael@amarulasolutions.com
-Subject: Re: [PATCH v2 1/2] ASoC: codecs: Add support for PCM1789
-Message-ID: <20180307153449.18769094@dell-desktop.home>
-In-Reply-To: <20180305155938.GL8588@sirena.org.uk>
-References: <20180305124817.7421-1-mylene.josserand@bootlin.com>
-        <20180305124817.7421-2-mylene.josserand@bootlin.com>
-        <20180305154910.GJ8588@sirena.org.uk>
-        <20180305155715.GJ3035@piout.net>
-        <20180305155938.GL8588@sirena.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753168AbeCGOfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:35:48 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615652172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Wed, 7 Mar 2018 14:35:41 +0000
+From: James Hogan <jhogan@kernel.org>
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dominik Peklo <dom.peklo@gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+Message-ID: <20180307143541.GN4197@saruman>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+ <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="GIP5y49pbaVPin6k"
+Content-Disposition: inline
+In-Reply-To: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
 
-Thanks for the review.
+--GIP5y49pbaVPin6k
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 5 Mar 2018 15:59:38 +0000
-Mark Brown <broonie@kernel.org> wrote:
+On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wrote:
+> > Does X1000 use a different PRID, or is it basically just a JZ4780 core
+> > with different SoC peripherals?
+>=20
+> Yes X1000 does have a different PRID (PRID =3D 0x2ed1024f). X1000 has
 
-> On Mon, Mar 05, 2018 at 04:57:15PM +0100, Alexandre Belloni wrote:
-> > On 05/03/2018 at 15:49:10 +0000, Mark Brown wrote:  
-> 
-> > > Please don't mix C and C++ style comments in a single comment like this
-> > > - it looks unintentional.  Just use the same style for the whole thing.
-> > > You also don't need to include all the boilerplate with the SPDX header.  
-> 
-> > I think Linus made it clear that he wants the SPDX header to be a
-> > C++ comment, the documentation has:  
-> 
-> Sure, so make the entire thing a C++ comment then.
+Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
+0x4f, which cpu-probe.c already handles (apparently the D1 company code
+is used for JZ4770 & JZ4775 too).
 
-Ok, I saw other drivers with this mix C++/C comment code so I wrote it
-like this but no problem using only C++ comment.
+> I used to get my code tested from Domink but I could not reach him for
+> quite some time. Before buying the development board myself I would
+> like to see if anyone can help me in testing. Do you have any contact
+> with Ingenic who can help in testing this?
 
-I will send a v3 with this modification only (except if I have other
-reviews).
+Not personally, but I'll ask around. Of course if nobody much cares
+about it in practice and nobody has the hardware, there may be little
+value in supporting it upstream.
 
-Best regards,
+Cheers
+James
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+--GIP5y49pbaVPin6k
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqf+L0ACgkQbAtpk944
+dnpxJg//YwmBGpZiKtWrr50Yl9djqsbIg8DK8NbUWmpkL00AEb33Km0FXtjJZJA2
+ui3yc67jcMiE6BdJ8+jJoEnYlkOq8/6Uk1U6dyOUfKitnQVVKq92TMdzQe5vmNSr
+kJY/F2YsknT/3Z6YGn+RlRM6NBhRiT/VnIrj1CIzK7hc/NB1/eKgP7jBwQDs77Gx
+0PmX+bXifRmYYPPaSf3Ki2vx07jKqBPdcnpluvZB57XwpGSwUScTqQcBTOcFZAAL
+92b2AGRvEAjoWBc3IXo5OgMPGEtkodwHgDjZVYQH0XLM4UaLuj2bI/fEQQ9z/fbV
+ONAi/Cqit7RcHBspNnpJuoYbcEqn0/Xy3k2xbTJja/4VybZgK/wFb3IPEIHEqOVQ
+PJTfj2UoADNnccEXSMJRyFVXjK9Na5sN5zjnnelRfObNZ4ssSO6bMry6RX/OcT8z
+LnbsM1DLcpk16ZGUDSx/d2S7mQK1oc2YBfw7KY2uuAJ6ARyaw4uftk2l9RDSqI9g
+/yqwKMCtmR6iYF4Wd7CVbF+QeGOykvg4KHV50E3r19AEDvHFbOS7poVW1yfWiV56
+QHyx3rMoM3YcX6OoZBkm+qFA+Yyfkzn2Ut7bHUG5JutuJ+ZuUIAkyj3pq4cEeoaw
+9LkVmgGulWlXSJDFaxHXSIyj61d626Hs7lfiwVzZLaz+T6+J5+o=
+=zbax
+-----END PGP SIGNATURE-----
+
+--GIP5y49pbaVPin6k--
