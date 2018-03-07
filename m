@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu6C/S1Bd0PnTAGZTn45szYxlaAcdGw7QXeYxNJk+FipK8P7dFXK9Ms3t0yV8O1zyiNVyxY
-ARC-Seal: i=1; a=rsa-sha256; t=1520451949; cv=none;
+X-Google-Smtp-Source: AG47ELsHrsxrIo41OoC8nmmyqJ1PNAwcQh08ov9v3oaHr7QkmfLZ4vwgpKhUpZ/7sSl/vAzUc/LW
+ARC-Seal: i=1; a=rsa-sha256; t=1520451945; cv=none;
         d=google.com; s=arc-20160816;
-        b=fu88o1wqy5iRznDbHOvYYP8ztcjrOxGhG8jnT7flR2e5Rcd9BXEz9W2XizoVhLENrS
-         wfNMQryuGZYi2swkUZ6oqHQYQmefGS2FYm1UW8nkn4j4yLR93uutTebhKSb8GSDqcCks
-         T5MxzaTEHY1kKh82L2GunWLFRsQ8hscJTF2REos78f3SvuPLbMJKIMy8gEJoWNHsnCix
-         Rl9MT5Ueq4q/Uxfy9YXhlblS38inUeKAW8fUXAbrfpoLB1tg560iVojU/IoTrTZ20w+x
-         vQphzMZ+Z5QQL+FfCfkZAyzQ7Au6C//e/hDsmmiWmJDXH/4PvcfGkx7b46kmheVdCNUH
-         24Jg==
+        b=g+Tyk652p3stE3b6AGjH5Ofgd4G0cwtMDuEVTSaoPPMNojPZUS7OvIwn6vuOKhx78U
+         1WNnVs59Xm+N7PyKt8cwMrvVkahcl5cdsWBYEqpnDDua13LZDSuKiI1DJZzXm8AssQTM
+         8gu7nJUA5h5a0EiJFUk/OtVl24iFhR0ak8ttUr2J/FdekZhn9lnQ7wBAc6wOeiautZR1
+         bV4z4N+vbO6/dOxyFn6bx/Bhdk3BohxmtGTMuvGp1RnNZyLVe0m8zOkkEH1QowTkxC+E
+         1Fsz3KGDqO+/K8uztVkqDFkn5CQTYnIdTbSNrxwSfFc14ddql+XlDOwwQYXLKfckHDyq
+         2YLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BbLQ2DiitoyeXeVDNOXaG735WU4A+RXDmzev96o+RKg=;
-        b=ZHqayAhHEmsd6Rggpv729LTwgOloSfIKZeQENFtd8Jo2bOXdOuiR/T25sKn4f05k08
-         rgrAfjW4syN+Z68F667STG53FIGb+mRiV0IYOgCaKcwMj804ifFJ5vmo+BCE7Z0vCiZn
-         JZPPmg+Kd6vJirGIpw72Az1vsX16AhxLcNbQQzuVm9I/8Sk765lEgvQ6UiIbxLcnXoIr
-         6sYAyPSM2tGvQ3sxDZLVvcu1nZ5BSdjzS7FEWJrvgz13MumZkNJV5q60rzk5cquIwhPY
-         rPmoG27b4bt6JCDtG4WVF+81Bc+AuzI0p2bVhTBjwXjvAIGtpdH/X7GSCtFukJP3vyCi
-         +jBw==
+        bh=Rqpuh0TjV90m1uEwqRP7W8ofQ3VwKyHi0VEZ5X+qYwk=;
+        b=aeKWFvOIJRKgSrI2dPIUsqXOrANOnpkC7roEBBbZnrt1Hs8f32OzJSpg2VJ9xiCV+M
+         mdTWQL+95IQa4+mmjjaXyeym1/oTRfrefzDEgN+tzN3bgmMDxpZQUhsyHw8aglxFXW0I
+         sUqHDu8yIi8Fezkgsv1ESNMWiVCSPBTNKNYMtIxRORg3bY1TosaPB5Ne5i4/Db3U239r
+         CcfFTZPbSZGikPTuZoBoWWnuZgE+poJkCvy7MYfHBI0WbuGHi8SIv0/SkJOR3saKSc/m
+         8jNI91aYorx7TJ2lkajxS6GL09U7/2nvxSIEOGz/FHbzce5Mtjb4j7Wfy6IGvacm2Loq
+         eeNA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>,
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 042/110] netlink: ensure to loop over all netns in genlmsg_multicast_allns()
-Date: Wed,  7 Mar 2018 11:38:25 -0800
-Message-Id: <20180307191045.128205302@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 014/110] ALSA: hda - Fix pincfg at resume on Lenovo T470 dock
+Date: Wed,  7 Mar 2018 11:37:57 -0800
+Message-Id: <20180307191041.565429464@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -41,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309132128532441?=
-X-GMAIL-MSGID: =?utf-8?q?1594309423553194127?=
+X-GMAIL-THRID: =?utf-8?q?1594309059227409390?=
+X-GMAIL-MSGID: =?utf-8?q?1594309419146888795?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +48,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Takashi Iwai <tiwai@suse.de>
 
+commit 71db96ddfa72671bd43cacdcc99ca178d90ba267 upstream.
 
-[ Upstream commit cb9f7a9a5c96a773bbc9c70660dc600cfff82f82 ]
+We've added a quirk to enable the recent Lenovo dock support, where it
+overwrites the pin configs of NID 0x17 and 19, not only updating the
+pin config cache.  It works right after the boot, but the problem is
+that the pin configs are occasionally cleared when the machine goes to
+PM.  Meanwhile the quirk writes the pin configs only at the pre-probe,
+so this won't be applied any longer.
 
-Nowadays, nlmsg_multicast() returns only 0 or -ESRCH but this was not the
-case when commit 134e63756d5f was pushed.
-However, there was no reason to stop the loop if a netns does not have
-listeners.
-Returns -ESRCH only if there was no listeners in all netns.
+For addressing that issue, this patch moves the code to overwrite the
+pin configs into HDA_FIXUP_ACT_INIT section so that it's always
+applied at both probe and resume time.
 
-To avoid having the same problem in the future, I didn't take the
-assumption that nlmsg_multicast() returns only 0 or -ESRCH.
-
-Fixes: 134e63756d5f ("genetlink: make netns aware")
-CC: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195161
+Fixes: 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad Dock device for ALC298 platform")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netlink/genetlink.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -1081,6 +1081,7 @@ static int genlmsg_mcast(struct sk_buff
- {
- 	struct sk_buff *tmp;
- 	struct net *net, *prev = NULL;
-+	bool delivered = false;
- 	int err;
+---
+ sound/pci/hda/patch_realtek.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4852,13 +4852,14 @@ static void alc_fixup_tpt470_dock(struct
  
- 	for_each_net_rcu(net) {
-@@ -1092,14 +1093,21 @@ static int genlmsg_mcast(struct sk_buff
- 			}
- 			err = nlmsg_multicast(prev->genl_sock, tmp,
- 					      portid, group, flags);
--			if (err)
-+			if (!err)
-+				delivered = true;
-+			else if (err != -ESRCH)
- 				goto error;
- 		}
- 
- 		prev = net;
+ 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
++		snd_hda_apply_pincfgs(codec, pincfgs);
++	} else if (action == HDA_FIXUP_ACT_INIT) {
+ 		/* Enable DOCK device */
+ 		snd_hda_codec_write(codec, 0x17, 0,
+ 			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
+ 		/* Enable DOCK device */
+ 		snd_hda_codec_write(codec, 0x19, 0,
+ 			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
+-		snd_hda_apply_pincfgs(codec, pincfgs);
  	}
+ }
  
--	return nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	err = nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
-+	if (!err)
-+		delivered = true;
-+	else if (err != -ESRCH)
-+		goto error;
-+	return delivered ? 0 : -ESRCH;
-  error:
- 	kfree_skb(skb);
- 	return err;
