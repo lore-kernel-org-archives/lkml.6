@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754362AbeCGM3H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:29:07 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6166 "EHLO huawei.com"
+        id S1754352AbeCGM0D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:26:03 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6167 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751067AbeCGMZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:25:58 -0500
+        id S1753807AbeCGMZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:25:57 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <hare@suse.de>
 CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 06/10] scsi: hisi_sas: remove unused variable hisi_sas_devices.running_req
-Date: Wed, 7 Mar 2018 20:25:10 +0800
-Message-ID: <1520425514-205565-7-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v4 07/10] scsi: hisi_sas: fix return value of hisi_sas_task_prep()
+Date: Wed, 7 Mar 2018 20:25:11 +0800
+Message-ID: <1520425514-205565-8-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
 References: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
@@ -27,86 +27,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-The structure element hisi_sas_devices.running_req to count how
-many commands are active is in effect only ever written in the
-code, so remove it.
+It is an implicit regulation that error code that function returned
+should be negative. But hisi_sas_task_prep() doesn't follow this.
+This may cause problems in the upper layer code.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+For example, in sas_expander.c of libsas, smp_execute_task_sg() may
+return the number of bytes of underrun. It will be conflicted with
+the scenaio lldd_execute_task() return an positive error code.
+
+This patch change the return value from SAS_PHY_DOWN to -ECOMM in
+hisi_sas_task_prep().
+
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       | 1 -
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 9 ---------
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 3 ---
- 3 files changed, 13 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index e7fd287..d1153e8 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -175,7 +175,6 @@ struct hisi_sas_device {
- 	struct hisi_sas_dq	*dq;
- 	struct list_head	list;
- 	u64 attached_phy;
--	atomic64_t running_req;
- 	enum sas_device_type	dev_type;
- 	int device_id;
- 	int sata_idx;
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 9ff8790..88ad8d4 100644
+index 88ad8d4..dff9723 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -200,8 +200,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
- 
- 	if (task) {
- 		struct device *dev = hisi_hba->dev;
--		struct domain_device *device = task->dev;
--		struct hisi_sas_device *sas_dev = device->lldd_dev;
- 
- 		if (!task->lldd_task)
- 			return;
-@@ -213,9 +211,6 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
- 				dma_unmap_sg(dev, task->scatter,
- 					     task->num_scatter,
- 					     task->data_dir);
--
--		if (sas_dev)
--			atomic64_dec(&sas_dev->running_req);
+@@ -316,7 +316,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 		 */
+ 		if (device->dev_type != SAS_SATA_DEV)
+ 			task->task_done(task);
+-		return SAS_PHY_DOWN;
++		return -ECOMM;
  	}
  
- 	if (slot->buf)
-@@ -431,8 +426,6 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 	if (DEV_IS_GONE(sas_dev)) {
+@@ -327,7 +327,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 			dev_info(dev, "task prep: device %016llx not ready\n",
+ 				 SAS_ADDR(device->sas_addr));
  
- 	dq->slot_prep = slot;
--
--	atomic64_inc(&sas_dev->running_req);
- 	++(*pass);
- 
- 	return 0;
-@@ -1517,8 +1510,6 @@ static int hisi_sas_query_task(struct sas_task *task)
- 
- 	dq->slot_prep = slot;
- 
--	atomic64_inc(&sas_dev->running_req);
--
- 	/* send abort command to the chip */
- 	hisi_hba->hw->start_delivery(dq);
- 	spin_unlock_irqrestore(&dq->lock, flags_dq);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index 2eb8980..8dd0e6a6 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -1407,9 +1407,6 @@ static int slot_complete_v1_hw(struct hisi_hba *hisi_hba,
+-		return SAS_PHY_DOWN;
++		return -ECOMM;
  	}
  
- out:
--	if (sas_dev)
--		atomic64_dec(&sas_dev->running_req);
--
- 	hisi_sas_slot_task_free(hisi_hba, task, slot);
- 	sts = ts->stat;
+ 	port = to_hisi_sas_port(sas_port);
+@@ -337,7 +337,7 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 			 "SATA/STP" : "SAS",
+ 			 device->port->id);
  
+-		return SAS_PHY_DOWN;
++		return -ECOMM;
+ 	}
+ 
+ 	if (!sas_protocol_ata(task->task_proto)) {
 -- 
 1.9.1
