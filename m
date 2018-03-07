@@ -1,56 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934190AbeCGPya (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:54:30 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40808 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934124AbeCGPvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:51:54 -0500
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 17/19] perf build: Add llvm/clang/cxx make tests into FEATURE_TESTS_EXTRA
-Date: Wed,  7 Mar 2018 16:50:18 +0100
-Message-Id: <20180307155020.32613-18-jolsa@kernel.org>
-In-Reply-To: <20180307155020.32613-1-jolsa@kernel.org>
-References: <20180307155020.32613-1-jolsa@kernel.org>
+        id S934216AbeCGPzA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:55:00 -0500
+Received: from ms.lwn.net ([45.79.88.28]:58150 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933728AbeCGPy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:54:56 -0500
+Date: Wed, 7 Mar 2018 08:54:54 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Winkler, Tomas" <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org\" <linux-security-module@vger.kernel.org>, "@lwn.net,
+        linux-kernel@vger.kernel.org,
+        " <linux-kernel@vger.kernel.org>"@lwn.net
+Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
+ commands.
+Message-ID: <20180307085454.2c820a13@lwn.net>
+In-Reply-To: <1520361396.10396.396.camel@linux.vnet.ibm.com>
+References: <20180304121205.16934-1-tomas.winkler@intel.com>
+        <20180305125642.GA3425@linux.intel.com>
+        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
+        <20180306074932.GB3624@linux.intel.com>
+        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
+        <1520353933.5393.21.camel@HansenPartnership.com>
+        <1520361396.10396.396.camel@linux.vnet.ibm.com>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So we can see the status when we build perf, like:
+On Tue, 06 Mar 2018 13:36:36 -0500
+Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
 
-  $ make LIBCLANGLLVM=1 VF=1
-  ...                           cxx: [ on  ]
-  ...                          llvm: [ on  ]
-  ...                  llvm-version: [ on  ]
-  ...                         clang: [ on  ]
+> I've heard that some maintainers are moving away from cover letters,
+> since they are not include in the git repo and are lost.
 
-Link: http://lkml.kernel.org/n/tip-geuvqz2pe5hh75bgbvar9sio@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/build/Makefile.feature | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+If I get a patch series with a cover letter that should be preserved, I
+apply the series in a branch then do a no-ff merge; the cover letter can
+then go into the merge commit.  There's no reason why cover letters need to
+be lost.
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index c378f003b007..5b6dda3b1ca8 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -82,7 +82,11 @@ FEATURE_TESTS_EXTRA :=                  \
-          liberty-z                      \
-          libunwind-debug-frame          \
-          libunwind-debug-frame-arm      \
--         libunwind-debug-frame-aarch64
-+         libunwind-debug-frame-aarch64  \
-+         cxx                            \
-+         llvm                           \
-+         llvm-version                   \
-+         clang
- 
- FEATURE_TESTS ?= $(FEATURE_TESTS_BASIC)
- 
--- 
-2.13.6
+jon
