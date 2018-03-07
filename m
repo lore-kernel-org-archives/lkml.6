@@ -1,53 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934033AbeCGQQr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:16:47 -0500
-Received: from mtaout.hs-regensburg.de ([194.95.104.10]:1894 "EHLO
-        mtaout.hs-regensburg.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933985AbeCGQQe (ORCPT
+        id S933981AbeCGQRu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:17:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59643 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933502AbeCGQRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:16:34 -0500
-From: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>
-Cc: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/cpuid: Switch to 'static const' specifier
-Date: Wed,  7 Mar 2018 17:07:34 +0100
-Message-Id: <20180307160734.6691-1-ralf.ramsauer@oth-regensburg.de>
-X-Mailer: git-send-email 2.16.2
-X-PMX-Version: 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2018.3.7.160016, AntiVirus-Engine: 5.33.0, AntiVirus-Data: 2017.1.26.5330002
-X-PMX-Spam: Gauge=IIIIIIII, Probability=8%, Report='
- MULTIPLE_RCPTS 0.1, HTML_00_01 0.05, HTML_00_10 0.05, BODYTEXTP_SIZE_3000_LESS 0, BODY_SIZE_1000_1099 0, BODY_SIZE_2000_LESS 0, BODY_SIZE_5000_LESS 0, BODY_SIZE_7000_LESS 0, LEGITIMATE_SIGNS 0, MULTIPLE_REAL_RCPTS 0, NO_URI_HTTPS 0, RDNS_NXDOMAIN 0, RDNS_SUSP 0, RDNS_SUSP_GENERIC 0, __ANY_URI 0, __CC_NAME 0, __CC_NAME_DIFF_FROM_ACC 0, __CC_REAL_NAMES 0, __HAS_CC_HDR 0, __HAS_FROM 0, __HAS_MSGID 0, __HAS_X_MAILER 0, __MIME_TEXT_ONLY 0, __MIME_TEXT_P 0, __MIME_TEXT_P1 0, __MULTIPLE_RCPTS_CC_X2 0, __NO_HTML_TAG_RAW 0, __SANE_MSGID 0, __SUBJ_ALPHA_END 0, __TO_MALFORMED_2 0, __TO_NAME 0, __TO_NAME_DIFF_FROM_ACC 0, __TO_REAL_NAMES 0, __URI_NO_WWW 0, __URI_NS '
+        Wed, 7 Mar 2018 11:17:49 -0500
+X-Google-Smtp-Source: AG47ELuRfcMVVquo/SZKPvoO2fl0A7ig4NohrnhzSWFcRrlW9Gk2kOvfKrAlvRj/yDZ9LEL/twx3jg==
+From: Christian Brauner <christian.brauner@canonical.com>
+X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
+Date: Wed, 7 Mar 2018 17:17:45 +0100
+To: linux-kernel@vger.kernel.org, ebiederm@xmission.com,
+        torvalds@linux-foundation.org
+Subject: Invalid /proc/<pid>/fd/{0,1,2} symlinks with TIOCGPTPEER
+Message-ID: <20180307161744.GA17562@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the only spot where the 'const static' specifier is used;
-everywhere else 'static const' is preferred, as static should be the
-first specifier.
+Hey,
 
-This is just a cosmetic fix that aligns this, no functional change.
+We discovered a potential bug in the devpts implementation via
+TIOCGPTPEER ioctl()s today. We've tackled a similar problem already in:
 
-Signed-off-by: Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>
----
- arch/x86/kernel/cpu/cpuid-deps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+commit 311fc65c9fb9c966bca8e6f3ff8132ce57344ab9
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu Aug 24 15:13:29 2017 -0500
 
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 904b0a3c4e53..2c0bd38a44ab 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -19,7 +19,7 @@ struct cpuid_dep {
-  * called from cpu hotplug. It shouldn't do anything in this case,
-  * but it's difficult to tell that to the init reference checker.
-  */
--const static struct cpuid_dep cpuid_deps[] = {
-+static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_XSAVEOPT,		X86_FEATURE_XSAVE     },
- 	{ X86_FEATURE_XSAVEC,		X86_FEATURE_XSAVE     },
- 	{ X86_FEATURE_XSAVES,		X86_FEATURE_XSAVE     },
--- 
-2.16.2
+    pty: Repair TIOCGPTPEER
+
+Most libcs will *still* look at /dev/ptmx when opening the master fd of
+pty device. Usually, /dev/ptmx will nowadays be either a symlink to
+/dev/pts/ptmx or it will be a second device node with permissions 666
+whereas /dev/pts/ptmx will usually have permissions 000. Afaik, we've
+also always supported making /dev/ptmx a bind-mount to /dev/pts/ptmx or
+at least I haven't observed any issues with this so far and it's
+something fairly common in containers. So in short, it should be legal
+to do:
+
+mount --bind /dev/pts/ptmx /dev/ptmx
+chmod 666 /dev/ptmx
+
+However, for any libc implementation or program that uses TIOCGPTPEER
+the /proc/<pid>/fd/{0,1,2} symlinks are broken (currently affects at
+least glibc 2.27) with bind-mounts of /dev/pts/ptmx to /dev/ptmx. A
+quick reproducer is:
+
+unshare --mount
+mount --bind /dev/pts/ptmx /dev/ptmx
+chmod 666 /dev/ptmx
+script
+ls -al /proc/self/fd/0
+
+Let's assume the slave device index I received was 5 then I would expect to
+see:
+
+ls -al /proc/self/fd/0
+lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /dev/pts/5
+
+But what I actually see is:
+
+ls -al /proc/self/fd/0
+lrwx------ 1 chb chb 64 Mar  7 16:41 /proc/self/fd/0 -> /
+
+I think the explanation for this is fairly straightforward. When
+userspace does:
+
+master = open("/dev/ptmx", O_RDWR | O_NOCTTY);
+slave = ioctl(master, TIOCGPTPEER, O_RDWR | O_NOCTTY);
+
+and /dev/ptmx is a bind-mount of /dev/pts/ptmx looking up the root mount
+of the dentry for the slave it appears to the kernel as if the dentry is
+escaping it's bind-mount:
+
+├─/dev        udev          devtmpfs   rw,nosuid,relatime,size=4001260k,nr_inodes=1000315,mode=755
+│ ├─/dev/pts  devpts        devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+│ └─/dev/ptmx devpts[/ptmx] devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+
+since the root mount of the dentry is /dev/pts but the root mount of
+/dev/ptmx is /dev if I'm correct so similar to what Linus pointed out in
+a previous discussion (see [1]) before. So we still record the "wrong"
+vfsmount when /dev/ptmx is a bind-mount and then hit the problem when we
+call devpts_mntget() in drivers/tty/pty.c.
+
+So I thought about this and - in case my analysis is correct - the
+solution didn't seem obvious to me as a bind-mount has no concept of
+what it's "parent" is (Which in this case should be the devpts mount at
+/dev/pts.).
+
+Christian
+
+[1]: https://lkml.org/lkml/2017/8/23/826
