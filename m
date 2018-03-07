@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtISzs3odLvkPfLXK8EQeN3oIq6SoVySurgw5r6DmPYCziOTT5W/9YpyiUliZfvbOQsGSx0
-ARC-Seal: i=1; a=rsa-sha256; t=1520451726; cv=none;
+X-Google-Smtp-Source: AG47ELsPKMiuFSySAiKytsL0XKBs/iVXDIToYBGVPV0T+mwsm2mLxCOZ8JoYDkUQIES4c8nwbep1
+ARC-Seal: i=1; a=rsa-sha256; t=1520451724; cv=none;
         d=google.com; s=arc-20160816;
-        b=nJPFDUG8cIdTrhlizoJ2reaunIitLyHVUHBG+K7QKQXUckVrNnzUS1NoSkJnjgDgE7
-         l9VuLGoHRyj5ZkxBMGuaH0wq4B+P8nD3fXUEdAHVAC99xZsZMScOOHDz3qL5mnqGTi/A
-         wNwvlTR6/ZroOCjGhtxLDtUAnfxcbNPhuSA9Xrdc8tr5pIcD7sux/r+nBrDLM8KACdCT
-         BJsWH7kQEF452iifrIt+H/7WlalQ1+StxuYOHS/Ay8cSSF8gQRJ/e2of1JFpjq6PIeB1
-         B0wY+0b9xJmB9wr6eg24k2ezd8I16XrCZfS/IFKoJxW/XHFdHJHy1u8Mvw0nv6rMPXyw
-         mPbg==
+        b=QWFNk6qtY9UzJellMrQxprvhTGukpFHVpGkBgDvyHtdU0Sxl0I5NCcfTwkqxUa5NdO
+         ux3SVPqJavlMYvmhnIqip7WFm09MJEF9cUfHqJfoRZgivGZFLYREffcyWjq2myh42fOK
+         tBVVfiGbkrp/i4LlglcH2ojprmhWEpq4qEB1wcqEvrONrIFsByw4g0JbykVij/CoQPwS
+         StKk4YYxArASYVDnFHLjjvTUJ7RvEoyCTfcIVPrrPbJmyzUjILjhO5bthwtuV6/ajhVz
+         SNp1yqfueqy86TTyHYXsy+lMs2ms9qWPGMI/txW7WzXdjE/h6KJKEJ7UfdSGi86sRVU+
+         wv4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UjmWtRLLpxFxrerOKYPIz7CnINahb1XCvWzNMLrU2GQ=;
-        b=hlMcuJ+/h8illUvlEBhYkP3LVuxSX5UluzAuo5FIIVbfuOroLqrUMWq3N+P/XP9nK8
-         +OTLsLwunlTrKSUw0doocnVP6pUQxZ7ZbwqnwtV/li/532WHfzT9rB+6Gn7FUNHFYm38
-         9z7cqe3h5IYumzzzypu9QvPWVLJjEhv5MuwbgaEapqs4DvN2WfQWM3HP6ZbkoQWxW0l9
-         4SJzCGRc53Nr4UjCifC39zhvJFczdRdOob/dGlCOHBHXluDHF+B9YkFyJMPgORbdD5eC
-         Y5BIBiqUOHWpUk19TVYSxr0Z/4sdKQtJrabC3wkDv6AfqwZOX3J7UVdaoXy+BDMbLJmE
-         tOTA==
+        bh=gNf0kaB3u+6Y1xfjH5UMT6V4J7gqwC1n1sGaCcg7FPE=;
+        b=PE6OejU0VPxxhsSgzFpaVaSTjLcUXMnXqeUNNM+sghTSBvP0yF2/jHqDVmGgzqRINR
+         82QJKscbHwIJMTCzhjyd+ZXAU7WWTge2qBUsh2xxOfQXPBd4Z2U8X6cjcbn0F9024Enr
+         G/tP8u4CnYYFe2NK8GBXt9eZPJzJ6PA/V5k3VjpNI0CGVDaN9fn+OFj5frv2p4I4qy4f
+         d8vnOZMrGKA9VX+vWP7B00SrKzh+x2u0q5k9lKv3o4un7PB7nLg95c52enoDrLPNR3gT
+         Gj3N0Ao6jMk92NUp3t7jQ3yn6og3IWhPqEmxeK8xcpvSUd2mMzzIYls6cJRtoBEDxgXM
+         vJuQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Goldwyn Rodrigues <rgoldwyn@suse.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 035/122] direct-io: Fix sleep in atomic due to sync AIO
-Date: Wed,  7 Mar 2018 11:37:27 -0800
-Message-Id: <20180307191734.231518222@linuxfoundation.org>
+	Eran Ben Elisha <eranbe@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.15 069/122] net/mlx5e: Verify inline header size do not exceed SKB linear size
+Date: Wed,  7 Mar 2018 11:38:01 -0800
+Message-Id: <20180307191739.358205777@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309189650061540?=
-X-GMAIL-MSGID: =?utf-8?q?1594309189650061540?=
+X-GMAIL-THRID: =?utf-8?q?1594309187550945375?=
+X-GMAIL-MSGID: =?utf-8?q?1594309187550945375?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,46 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-commit d9c10e5b8863cfb6886d1640386455075c6e979d upstream.
 
-Commit e864f39569f4 "fs: add RWF_DSYNC aand RWF_SYNC" added additional
-way for direct IO to become synchronous and thus trigger fsync from the
-IO completion handler. Then commit 9830f4be159b "fs: Use RWF_* flags for
-AIO operations" allowed these flags to be set for AIO as well. However
-that commit forgot to update the condition checking whether the IO
-completion handling should be defered to a workqueue and thus AIO DIO
-with RWF_[D]SYNC set will call fsync() from IRQ context resulting in
-sleep in atomic.
+[ Upstream commit f600c6088018d1dbc5777d18daa83660f7ea4a64 ]
 
-Fix the problem by checking directly iocb flags (the same way as it is
-done in dio_complete()) instead of checking all conditions that could
-lead to IO being synchronous.
+Driver tries to copy at least MLX5E_MIN_INLINE bytes into the control
+segment of the WQE. It assumes that the linear part contains at least
+MLX5E_MIN_INLINE bytes, which can be wrong.
 
-CC: Christoph Hellwig <hch@lst.de>
-CC: Goldwyn Rodrigues <rgoldwyn@suse.com>
-CC: stable@vger.kernel.org
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 9830f4be159b29399d107bffb99e0132bc5aedd4
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cited commit verified that driver will not copy more bytes into the
+inline header part that the actual size of the packet. Re-factor this
+check to make sure we do not exceed the linear part as well.
+
+This fix is aligned with the current driver's assumption that the entire
+L2 will be present in the linear part of the SKB.
+
+Fixes: 6aace17e64f4 ("net/mlx5e: Fix inline header size for small packets")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/direct-io.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1252,8 +1252,7 @@ do_blockdev_direct_IO(struct kiocb *iocb
- 	 */
- 	if (dio->is_async && iov_iter_rw(iter) == WRITE) {
- 		retval = 0;
--		if ((iocb->ki_filp->f_flags & O_DSYNC) ||
--		    IS_SYNC(iocb->ki_filp->f_mapping->host))
-+		if (iocb->ki_flags & IOCB_DSYNC)
- 			retval = dio_set_defer_completion(dio);
- 		else if (!dio->inode->i_sb->s_dio_done_wq) {
- 			/*
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+@@ -176,7 +176,7 @@ static inline u16 mlx5e_calc_min_inline(
+ 	default:
+ 		hlen = mlx5e_skb_l2_header_offset(skb);
+ 	}
+-	return min_t(u16, hlen, skb->len);
++	return min_t(u16, hlen, skb_headlen(skb));
+ }
+ 
+ static inline void mlx5e_tx_skb_pull_inline(unsigned char **skb_data,
