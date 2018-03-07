@@ -1,95 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754643AbeCGO7k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:59:40 -0500
-Received: from foss.arm.com ([217.140.101.70]:52246 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754389AbeCGO7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:59:38 -0500
-Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
-To: Saravana Kannan <skannan@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: robh@kernel.org, mathieu.poirier@linaro.org, peterz@infradead.org,
-        sudeep.holla@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        jonathan.cameron@huawei.com, frowand.list@gmail.com,
-        leo.yan@linaro.org, linux-arm-kernel@lists.infradead.org
-References: <20180102112533.13640-1-suzuki.poulose@arm.com>
- <20180102112533.13640-9-suzuki.poulose@arm.com>
- <5A90B77E.8040105@codeaurora.org> <20180225143653.peb4quk3ha5h3t5x@salmiak>
- <5A972A7D.9020301@codeaurora.org>
- <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com>
- <5A986425.9080007@codeaurora.org>
- <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com>
- <5A99A3DC.9020400@codeaurora.org>
- <20180305105925.4cjiqejfid7rswe6@lakrids.cambridge.arm.com>
- <5A9DC03B.8020201@codeaurora.org>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <f340190f-8286-bd3c-c743-79a3d48cc33d@arm.com>
-Date: Wed, 7 Mar 2018 14:59:34 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <5A9DC03B.8020201@codeaurora.org>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1754652AbeCGPAO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:00:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39126 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754389AbeCGPAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:00:13 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2352260452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+From: Shanker Donthineni <shankerd@codeaurora.org>
+To: Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kvmarm <kvmarm@lists.cs.columbia.edu>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Vikram Sethi <vikrams@codeaurora.org>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH v7] arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC
+Date: Wed,  7 Mar 2018 09:00:08 -0600
+Message-Id: <1520434808-29703-1-git-send-email-shankerd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The DCache clean & ICache invalidation requirements for instructions
+to be data coherence are discoverable through new fields in CTR_EL0.
+The following two control bits DIC and IDC were defined for this
+purpose. No need to perform point of unification cache maintenance
+operations from software on systems where CPU caches are transparent.
 
+This patch optimize the three functions __flush_cache_user_range(),
+clean_dcache_area_pou() and invalidate_icache_range() if the hardware
+reports CTR_EL0.IDC and/or CTR_EL0.IDC. Basically it skips the two
+instructions 'DC CVAU' and 'IC IVAU', and the associated loop logic
+in order to avoid the unnecessary overhead.
 
-Hi Saravana,
+CTR_EL0.DIC: Instruction cache invalidation requirements for
+ instruction to data coherence. The meaning of this bit[29].
+  0: Instruction cache invalidation to the point of unification
+     is required for instruction to data coherence.
+  1: Instruction cache cleaning to the point of unification is
+      not required for instruction to data coherence.
 
-Sorry for the late response, I was out on vacation.
+CTR_EL0.IDC: Data cache clean requirements for instruction to data
+ coherence. The meaning of this bit[28].
+  0: Data cache clean to the point of unification is required for
+     instruction to data coherence, unless CLIDR_EL1.LoC == 0b000
+     or (CLIDR_EL1.LoUIS == 0b000 && CLIDR_EL1.LoUU == 0b000).
+  1: Data cache clean to the point of unification is not required
+     for instruction to data coherence.
 
-On 05/03/18 22:10, Saravana Kannan wrote:
-> On 03/05/2018 02:59 AM, Mark Rutland wrote:
->> On Fri, Mar 02, 2018 at 11:19:56AM -0800, Saravana Kannan wrote:
->>> On 03/02/2018 02:42 AM, Mark Rutland wrote:
->>>> It's important to note that the DSU PMU's event_init() ensures events
->>>> are affine to a single CPU, and the perf core code serializes operations
->>>> on those events via the context lock.
->>>
->>> Ah, I see that now. Thanks!
->>>
->>>> Therefore, two CPUs *won't* try to access the registers simultaneously.
->>>
->>> Right, and this driver seems to be going through a lot of work to make sure
->>> all events are read in one CPU.
->>>
->>> Do you even have an upstream target where there are multiple DSU's in a
->>> system?
->>
->> I have no idea, though I do beleive that it's possible for a system to
->> have multiple DSUs.
->>
->>> If not, we can simplify a ton of this code (no hotplug notifiers, no
->>> migrating PMUs, no SMP calls, etc) by just adding a spinlock and letting any
->>> CPU read these DSU counters.
->>
->> Regardless of whether we allow arbitrary CPUs to read the counters,
->> other logic still needs to be CPU affine, and we'll still need hotplug
->> notifiers and event migration.
-> 
-> If you have to support multiple DSUs in a system, then the need is obvious. But if you don't have to support multiple DSU, it's not obvious to me on why you still need CPU affining or hotplug notifiers. Could you please provide me pointers for general understanding?
-> 
+Co-authored-by: Philip Elcan <pelcan@codeaurora.org>
+Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+---
+Changes since v6:
+  -Both I-Cache and D-Cache changes are symmetric as Will suggested.
+  -Remove Kconfig option.
+  -Patch __flush_icache_all().
 
-We need to support multiple DSUs as such configurations are possible.
+Changes since v5:
+  -Addressed Mark's review comments.
 
-> 
->> I am not necessarily opposed to allowing read() calls from associated
->> CPUs, but as before, I'll leave that to Suzuki.
+Changes since v4:
+  -Moved patching ARM64_HAS_CACHE_DIC inside invalidate_icache_by_line
+  -Removed 'dsb ishst' for ARM64_HAS_CACHE_DIC as Mark suggested.
 
-I am fine with reading the registers from any of the associated CPUs.
+Changes since v3:
+  -Added preprocessor guard CONFIG_xxx to code snippets in cache.S
+  -Changed barrier attributes from ISH to ISHST.
 
-> 
-> Can you make sure this thread is on Suzuki's radar?
-> 
-> Suzuki,
-> 
-> Could please respond? IPI for DSUs are definitely a pain for us.
+Changes since v2:
+  -Included barriers, DSB/ISB with DIC set, and DSB with IDC set.
+  -Single Kconfig option.
 
-Thanks
-Suzuki
+Changes since v1:
+  -Reworded commit text.
+  -Used the alternatives framework as Catalin suggested.
+  -Rebased on top of https://patchwork.kernel.org/patch/10227927/
+
+ arch/arm64/include/asm/cache.h      |  4 ++++
+ arch/arm64/include/asm/cacheflush.h |  7 +++++--
+ arch/arm64/include/asm/cpucaps.h    |  4 +++-
+ arch/arm64/kernel/cpufeature.c      | 36 ++++++++++++++++++++++++++++++------
+ arch/arm64/mm/cache.S               | 21 ++++++++++++++++++++-
+ 5 files changed, 62 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+index ea9bb4e..9bbffc7 100644
+--- a/arch/arm64/include/asm/cache.h
++++ b/arch/arm64/include/asm/cache.h
+@@ -20,8 +20,12 @@
+ 
+ #define CTR_L1IP_SHIFT		14
+ #define CTR_L1IP_MASK		3
++#define CTR_DMINLINE_SHIFT	16
++#define CTR_ERG_SHIFT		20
+ #define CTR_CWG_SHIFT		24
+ #define CTR_CWG_MASK		15
++#define CTR_IDC_SHIFT		28
++#define CTR_DIC_SHIFT		29
+ 
+ #define CTR_L1IP(ctr)		(((ctr) >> CTR_L1IP_SHIFT) & CTR_L1IP_MASK)
+ 
+diff --git a/arch/arm64/include/asm/cacheflush.h b/arch/arm64/include/asm/cacheflush.h
+index bef9f41..d51bde1 100644
+--- a/arch/arm64/include/asm/cacheflush.h
++++ b/arch/arm64/include/asm/cacheflush.h
+@@ -133,8 +133,11 @@ extern void copy_to_user_page(struct vm_area_struct *, struct page *,
+ 
+ static inline void __flush_icache_all(void)
+ {
+-	asm("ic	ialluis");
+-	dsb(ish);
++	/* Instruction cache invalidation is not required for I/D coherence? */
++	if (!cpus_have_const_cap(ARM64_HAS_CACHE_DIC)) {
++		asm("ic	ialluis");
++		dsb(ish);
++	}
+ }
+ 
+ #define flush_dcache_mmap_lock(mapping) \
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index bb26382..8dd42ae 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -45,7 +45,9 @@
+ #define ARM64_HARDEN_BRANCH_PREDICTOR		24
+ #define ARM64_HARDEN_BP_POST_GUEST_EXIT		25
+ #define ARM64_HAS_RAS_EXTN			26
++#define ARM64_HAS_CACHE_IDC			27
++#define ARM64_HAS_CACHE_DIC			28
+ 
+-#define ARM64_NCAPS				27
++#define ARM64_NCAPS				29
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 2985a06..9f39e9c 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -199,12 +199,12 @@ static int __init register_cpu_hwcaps_dumper(void)
+ };
+ 
+ static const struct arm64_ftr_bits ftr_ctr[] = {
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1),		/* RES1 */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 29, 1, 1),	/* DIC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 28, 1, 1),	/* IDC */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 24, 4, 0),	/* CWG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, 20, 4, 0),	/* ERG */
+-	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, 16, 4, 1),	/* DminLine */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_EXACT, 31, 1, 1), /* RES1 */
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DIC_SHIFT, 1, 1),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_IDC_SHIFT, 1, 1),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_CWG_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_HIGHER_SAFE, CTR_ERG_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, CTR_DMINLINE_SHIFT, 4, 1),
+ 	/*
+ 	 * Linux can handle differing I-cache policies. Userspace JITs will
+ 	 * make use of *minLine.
+@@ -852,6 +852,18 @@ static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int __unus
+ 					ID_AA64PFR0_FP_SHIFT) < 0;
+ }
+ 
++static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
++}
++
++static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
++			  int __unused)
++{
++	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
++}
++
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+ 
+@@ -1088,6 +1100,18 @@ static int cpu_copy_el2regs(void *__unused)
+ 		.enable = cpu_clear_disr,
+ 	},
+ #endif /* CONFIG_ARM64_RAS_EXTN */
++	{
++		.desc = "Data cache clean to the PoU not required for I/D coherence",
++		.capability = ARM64_HAS_CACHE_IDC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_idc,
++	},
++	{
++		.desc = "Instruction cache invalidation not required for I/D coherence",
++		.capability = ARM64_HAS_CACHE_DIC,
++		.def_scope = SCOPE_SYSTEM,
++		.matches = has_cache_dic,
++	},
+ 	{},
+ };
+ 
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 758bde7..303dfcc 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -50,6 +50,10 @@ ENTRY(flush_icache_range)
+  */
+ ENTRY(__flush_cache_user_range)
+ 	uaccess_ttbr0_enable x2, x3, x4
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	b	7f
++alternative_else_nop_endif
+ 	dcache_line_size x2, x3
+ 	sub	x3, x2, #1
+ 	bic	x4, x0, x3
+@@ -60,8 +64,13 @@ user_alt 9f, "dc cvau, x4",  "dc civac, x4",  ARM64_WORKAROUND_CLEAN_CACHE
+ 	b.lo	1b
+ 	dsb	ish
+ 
++7:
++alternative_if ARM64_HAS_CACHE_DIC
++	isb
++	b	8f
++alternative_else_nop_endif
+ 	invalidate_icache_by_line x0, x1, x2, x3, 9f
+-	mov	x0, #0
++8:	mov	x0, #0
+ 1:
+ 	uaccess_ttbr0_disable x1, x2
+ 	ret
+@@ -80,6 +89,12 @@ ENDPROC(__flush_cache_user_range)
+  *	- end     - virtual end address of region
+  */
+ ENTRY(invalidate_icache_range)
++alternative_if ARM64_HAS_CACHE_DIC
++	mov	x0, xzr
++	isb
++	ret
++alternative_else_nop_endif
++
+ 	uaccess_ttbr0_enable x2, x3, x4
+ 
+ 	invalidate_icache_by_line x0, x1, x2, x3, 2f
+@@ -116,6 +131,10 @@ ENDPIPROC(__flush_dcache_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pou)
++alternative_if ARM64_HAS_CACHE_IDC
++	dsb	ishst
++	ret
++alternative_else_nop_endif
+ 	dcache_by_line_op cvau, ish, x0, x1, x2, x3
+ 	ret
+ ENDPROC(__clean_dcache_area_pou)
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
