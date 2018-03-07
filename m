@@ -1,63 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934348AbeCGWuq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 17:50:46 -0500
-Received: from imap.thunk.org ([74.207.234.97]:40624 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933743AbeCGWup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:50:45 -0500
-Date: Wed, 7 Mar 2018 17:50:43 -0500
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: ext4 ignoring rootfs default mount options
-Message-ID: <20180307225043.GA15217@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
- <20180307040608.GA2462@thunk.org>
- <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
- <20180307160856.GD7507@thunk.org>
- <20180307191324.qtloesy4zdlkfnwv@csclub.uwaterloo.ca>
+        id S934407AbeCGWu4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 17:50:56 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:42680 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933743AbeCGWuy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 17:50:54 -0500
+From: Brad Mouring <brad.mouring@ni.com>
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Brad Mouring <brad.mouring@ni.com>
+Subject: [PATCH] net: phy: Move interrupt check from phy_check to phy_interrupt
+Date: Wed, 7 Mar 2018 16:50:42 -0600
+Message-ID: <20180307225042.2205-1-brad.mouring@ni.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307191324.qtloesy4zdlkfnwv@csclub.uwaterloo.ca>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 02:13:24PM -0500, Lennart Sorensen wrote:
-> 
-> Trying to use tune2fs -E mount_opts to set some default options, and
-> can't figure out how to enter two options at once.
->
-> ...
->
-> Sure in this case I can set one with -o and the other with -E, but in
-> general there seems to be a small problem here, probably only in user
-> space though.  Seems tune2fs needs some change in how it deals with
-> extended options that contain commas.
+If multiple phys share the same interrupt (e.g. a multi-phy chip),
+the first device registered is the only one checked as phy_interrupt
+will always return IRQ_HANDLED if the first phydev is not halted.
+Move the interrupt check into phy_interrupt and, if it was not this
+phydev, return IRQ_NONE to allow other devices on this irq a chance
+to check if it was their interrupt.
 
-Yes, this is a shortcoming in tune2fs.  You can set extended mount
-options using debugfs:
+Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+---
+ drivers/net/phy/phy.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-    debugfs -w -R "set_super_value mount_opts foo,bar" /dev/sda1
-
-... but there ought to be some way to support some kind of quoting
-mechanism so that tune2fs can understand when a comma is part of an
-extended option value, as opposed to separating extended options.
-
-Extended options haven't been used much, so it's not been something
-that has gotten a lot of polish.  Backing up for a bit, is there a
-reason why you need so many mount options when mounting the root file
-sytsem?  Specifically, why do you want to turn off dellayed allocation?
-
-	 	       	      	       	  - Ted
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index e3e29c2b028b..ff1aa815568f 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -632,6 +632,12 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
+ 	if (PHY_HALTED == phydev->state)
+ 		return IRQ_NONE;		/* It can't be ours.  */
+ 
++	if (phy_interrupt_is_valid(phydev)) {
++		if (phydev->drv->did_interrupt &&
++			!phydev->drv->did_interrupt(phydev))
++			return IRQ_NONE;
++	}
++
+ 	phy_change(phydev);
+ 
+ 	return IRQ_HANDLED;
+@@ -725,16 +731,6 @@ EXPORT_SYMBOL(phy_stop_interrupts);
+  */
+ void phy_change(struct phy_device *phydev)
+ {
+-	if (phy_interrupt_is_valid(phydev)) {
+-		if (phydev->drv->did_interrupt &&
+-		    !phydev->drv->did_interrupt(phydev))
+-			return;
+-
+-		if (phydev->state == PHY_HALTED)
+-			if (phy_disable_interrupts(phydev))
+-				goto phy_err;
+-	}
+-
+ 	mutex_lock(&phydev->lock);
+ 	if ((PHY_RUNNING == phydev->state) || (PHY_NOLINK == phydev->state))
+ 		phydev->state = PHY_CHANGELINK;
+-- 
+2.16.2
