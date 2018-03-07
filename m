@@ -1,74 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753949AbeCGMc3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:32:29 -0500
-Received: from foss.arm.com ([217.140.101.70]:49758 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751067AbeCGMc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:32:27 -0500
-Date: Wed, 7 Mar 2018 12:32:21 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
-Message-ID: <20180307123221.GC2211@e110439-lin>
-References: <20180222170153.673-1-patrick.bellasi@arm.com>
- <20180222170153.673-2-patrick.bellasi@arm.com>
- <20180306185614.GF25201@hirez.programming.kicks-ass.net>
+        id S933293AbeCGMe7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:34:59 -0500
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:39268 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754191AbeCGMe4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:34:56 -0500
+X-Google-Smtp-Source: AG47ELt6ykQpjtw3olIFPjNU6Cdi5tpirmOSPM3umTvRM9G/0xI9SSFtxi8bv5qRKB80UAxu6kKMmW8g6WAMMhoUAjU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306185614.GF25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <2196d230-6124-b5c6-e0a2-463fe8a6c510@ti.com>
+References: <5a8c6a34.8880a70a.2a9a1.afc7@mx.google.com> <CAK8P3a0OaN6QjPdTXXXzMeYQt+WnMfvVuhza5Rb2wqdq_iEFVA@mail.gmail.com>
+ <7b724d51-52b8-6cbf-2a9d-f44f3de28dc8@ti.com> <CAK8P3a2-zq95wnNYDSeTubkhr4Oc_YTSHX-NjvbD35iVNk+fWg@mail.gmail.com>
+ <2196d230-6124-b5c6-e0a2-463fe8a6c510@ti.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 13:34:54 +0100
+X-Google-Sender-Auth: ki8W0vdQSg2iHI0AQwK164ZsIv0
+Message-ID: <CAK8P3a0ZRGgYV=0MYSmp7u1AxvBPEEJkrEFh+Vk+NpKjuSYdUA@mail.gmail.com>
+Subject: Re: mainline build: 15 warnings 0 failures (mainline/v4.16-rc2-64-gaf3e79d)
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "Olof's autobuilder" <build@lixom.net>,
+        Olof Johansson <olof@lixom.net>,
+        Kernel Build Reports Mailman List
+        <kernel-build-reports@lists.linaro.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Mar 19:56, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 05:01:50PM +0000, Patrick Bellasi wrote:
-> > +/**
-> > + * Estimation Utilization for FAIR tasks.
-> > + *
-> > + * Support data structure to track an Exponential Weighted Moving Average
-> > + * (EWMA) of a FAIR task's utilization. New samples are added to the moving
-> > + * average each time a task completes an activation. Sample's weight is
-> > + * chosen so that the EWMA will be relatively insensitive to transient changes
-> > + * to the task's workload.
-> > + *
-> > + * @enqueued: instantaneous estimated utilization of a task/cpu
-> > + *      task: the task's util_avg at last task dequeue time
-> > + *    cfs_rq: the sum of util_est.enqueued for each RUNNABLE task on that CPU
-> > + *
-> > + *  Thus, the util_est.enqueued of a task represents the contribution on the
-> > + *  estimated utilization of the CPU where that task is currently enqueued.
-> > + *
-> > + * @ewma: the Exponential Weighted Moving Average (EWMA) utilization of a task
-> > + *  Only for tasks we track a moving average of the past instantaneous
-> > + *  estimated utilization. This allows to absorb sporadic drops in
-> > + *  utilization of an otherwise almost periodic task.
-> > + *
-> > + */
-> 
-> The above comment appears to have whitespace issues, the paragraph
-> starting with "Thus" looks indented by one character for exmaple.
+On Wed, Mar 7, 2018 at 12:02 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> On Wednesday 07 March 2018 04:55 AM, Arnd Bergmann wrote:
+>> On Wed, Feb 21, 2018 at 3:42 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>> On Wednesday 21 February 2018 06:12 PM, Arnd Bergmann wrote:
+>>>> On Tue, Feb 20, 2018 at 7:34 PM, Olof's autobuilder <build@lixom.net> wrote:
+>>>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
+>>>>
+>>>> Still waiting for Kishon to apply an older patch I sent for this.
+>>>
+>>> I had merged it locally. Now pushed everything.
+>>
+>> Hi Kishon,
+>>
+>> kernelci still reports it as one of the remaining warnings for v4.16-rc,
+>> any chance you can send this as a bugfix for the current release?
+>
+> I had queued this for next. Sure, I'll try to send this for current -rc.
 
-That was actually intentional... I wanted to keep it aligned after the
-"@" to better mark paragraphs describing the struct members.
+Thanks a lot! I got a confirmation on one of the other remaining issues,
+so we're down to one or two patches for a clean 4.16 build now,
+plus probably another three that we need to get a clean 'randconfig'
+build on x86 and arm64.
 
-However, I've just notice the overall format is not sphinx valid.
-Thus, I'll update it to ensure also that the documentation is properly
-generated.
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+       Arnd
