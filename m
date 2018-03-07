@@ -1,116 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934619AbeCGTlK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:41:10 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51564 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934564AbeCGTlE (ORCPT
+        id S966018AbeCGTtx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:49:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36568 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965818AbeCGTtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:41:04 -0500
-Message-ID: <1520451662.24314.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jiandi An <anjiandi@codeaurora.org>
-Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, linux-ima-devel@lists.sourceforge.net,
-        linux-ima-user@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 07 Mar 2018 11:41:02 -0800
-In-Reply-To: <1520450495.10396.587.camel@linux.vnet.ibm.com>
-References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
-         <20180307185132.GA30102@ziepe.ca>
-         <1520448953.10396.565.camel@linux.vnet.ibm.com>
-         <1520449719.5558.28.camel@HansenPartnership.com>
-         <1520450495.10396.587.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
+        Wed, 7 Mar 2018 14:49:51 -0500
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Date: Wed, 07 Mar 2018 14:49:50 -0500
+From: Agustin Vega-Frias <agustinv@codeaurora.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        timur@codeaurora.org
+Subject: Re: [RFC V3 1/3] perf, tools: Support wildcards on pmu name in
+ dynamic pmu events
+In-Reply-To: <20180307193930.GW3701@kernel.org>
+References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
+ <1520345084-42646-2-git-send-email-agustinv@codeaurora.org>
+ <20180307160224.GN3701@kernel.org>
+ <d3bd59db56fbc13b931ae45573bf94d8@codeaurora.org>
+ <20180307185415.GK25017@tassilo.jf.intel.com>
+ <20180307190509.GQ3701@kernel.org> <20180307190543.GR3701@kernel.org>
+ <20180307193930.GW3701@kernel.org>
+Message-ID: <ca5a79445859ff4fb75b021f84f656f9@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 14:21 -0500, Mimi Zohar wrote:
-> On Wed, 2018-03-07 at 11:08 -0800, James Bottomley wrote:
-> > 
-> > On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
-> > > 
-> > > On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
-> > > > 
-> > > > 
-> > > > On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
-> > > > > 
-> > > > > 
-> > > > > TPM_CRB driver is the TPM support for ARM64.  If it
-> > > > > is built as module, TPM chip is registered after IMA
-> > > > > init.  tpm_pcr_read() in IMA driver would fail and
-> > > > > display the following message even though eventually
-> > > > > there is TPM chip on the system:
-> > > > > 
-> > > > > ima: No TPM chip found, activating TPM-bypass! (rc=-19)
-> > > > > 
-> > > > > Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
-> > > > > built in kernel and initializes before IMA driver.
-> > > > > 
-> > > > > Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
-> > > > >  security/integrity/ima/Kconfig | 1 +
-> > > > >  1 file changed, 1 insertion(+)
-> > > > > 
-> > > > > diff --git a/security/integrity/ima/Kconfig
-> > > > > b/security/integrity/ima/Kconfig
-> > > > > index 35ef693..6a8f677 100644
-> > > > > +++ b/security/integrity/ima/Kconfig
-> > > > > @@ -10,6 +10,7 @@ config IMA
-> > > > >  	select CRYPTO_HASH_INFO
-> > > > >  	select TCG_TPM if HAS_IOMEM && !UML
-> > > > >  	select TCG_TIS if TCG_TPM && X86
-> > 
-> > Well, this explains why IMA doesn't work on one of my X86 systems:
-> > it's got a non i2c infineon TPM.
-> > 
-> > > 
-> > > > 
-> > > > > 
-> > > > > +	select TCG_CRB if TCG_TPM && ACPI
-> > > > >  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
-> > > > >  	help
-> > > > >  	  The Trusted Computing Group(TCG) runtime Integrity
-> > > > 
-> > > > This seems really weird, why are any specific TPM drivers
-> > > > linked to IMA config, we have lots of drivers..
-> > > > 
-> > > > I don't think I've ever seen this pattern in Kconfig before?
-> > > 
-> > > As you've seen by the current discussions, the TPM driver needs
-> > > to be initialized prior to IMA.  Otherwise IMA goes into TPM-
-> > > bypass mode.  That implies that the TPM must be builtin to the
-> > > kernel, and not as a kernel module.
-> > 
-> > Actually, that's not necessarily true:  If we don't begin appraisal
-> > until after the initrd phase, then the initrd can load TPM modules
-> > before IMA starts.
-> > 
-> > This would involve a bit of code rejigging to not require a TPM
-> > until IMA wants to write its first measurement, but it looks doable
-> > and would get us out of having to second guess TPM selections.
+On 2018-03-07 14:39, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Mar 07, 2018 at 04:05:43PM -0300, Arnaldo Carvalho de Melo 
+> escreveu:
+>> Em Wed, Mar 07, 2018 at 04:05:09PM -0300, Arnaldo Carvalho de Melo 
+>> escreveu:
+>> > Em Wed, Mar 07, 2018 at 10:54:15AM -0800, Andi Kleen escreveu:
+>> > > > Sorry about that. That's probably because FNM_EXTMATCH is a GNU extension,
+>> > > > not POSIX, and the Alpine and Android runtimes likely don't implement
+>> > > > that...
+>> > > > I'll send a fix reverting back to the strncmp to ignore the uncore_ prefix,
+>> > > > and dropping that extension.
+>> > >
+>> > > Just don't set it? Even the basic glob patterns are useful.
+>> >
+>> > Or use:
+>> >
+>> > #ifndef FNM_EXTMATCH
+>> > #define FNM_EXTMATCH 0
+>> > #endif
+>> >
+>> > So on systems without it, its not used, while on GNU systems, we have
+>> > that functionality (pretty fancy, someone may need that... ;-))
+>> 
+>> I'll try this route, btw, no need to send more patches for now.
 > 
-> The question is about measurement, not appraisal.  Although the
-> initramfs might be measured, the initramfs can access files on the
-> real root filesystem.  Those files need to be measured, before they
-> are used/accessed.
+> So, with the patch at the end of this message, it works now in those
+> systems:
+> 
+> [root@jouet ~]# dm
+>    1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+>    2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 
+> 20160822
+>    3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+>    4 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+>    5 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623
+> (Red Hat 4.8.5-11)
+>    6 amazonlinux:2                 : Ok   gcc (GCC) 7.2.1 20170915
+> (Red Hat 7.2.1-2)
+>    7 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc
+> (GCC) 4.9.x 20150123 (prerelease)
+>    8 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc
+> (GCC) 4.9.x 20150123 (prerelease)
+>    9 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704
+> (Red Hat 4.1.2-55)
+>   10 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313
+> (Red Hat 4.4.7-18)
+> 
+> I stopped the test at this point to process some more patches, will
+> restart the tests with those extra patches and if all goes well with 
+> the
+> other 46 build environments, push upstream, thanks.
+> 
+> - Arnaldo
+> 
+> diff --git a/tools/perf/util/parse-events.y 
+> b/tools/perf/util/parse-events.y
+> index 316ac073aa78..18473be7d787 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -9,6 +9,13 @@
+>  #define YYDEBUG 1
+> 
+>  #include <fnmatch.h>
+> +/*
+> + * GNU extension, so better define it to 0 for systems such
+> + * as Android and Alpine Linux.
+> + */
+> +#ifndef FNM_EXTMATCH
+> +#define FNM_EXTMATCH 0
+> +#endif
+>  #include <linux/compiler.h>
+>  #include <linux/list.h>
+>  #include <linux/types.h>
 
-Isn't it a question of threat model?  Because the initrd is measured,
-you know it's the one you specified and you should know its security
-properties, so measurement doesn't really need to begin until the root
-pivots.  At that point you pick up the boot aggregate so the log now is
-tied to the initrd measurement.  Conversely, I can't really see a
-threat model where you could trick a correctly measured initrd into
-subverting IMA, especially because listening network daemons aren't
-usually active at this stage.
+Hey Jiri,
 
-I'm not saying there isn't a use case for wanting your TPM built in,
-I'm just saying I don't think it needs to be required for everyone who
-uses IMA.
+The downside is that, while the compilation now works on those
+systems, the pattern will not work as intended in them :o(
+Let me cook something and send it ASAP.
 
-James
+Thanks,
+Agustín
+
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
