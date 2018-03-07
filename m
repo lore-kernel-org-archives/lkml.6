@@ -1,83 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754632AbeCGSOC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:14:02 -0500
-Received: from mail-ot0-f176.google.com ([74.125.82.176]:44737 "EHLO
-        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeCGSN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:13:57 -0500
-X-Google-Smtp-Source: AG47ELubwxd+qLG4A+mo16ws8EUzUEG2NRGwMB0Blg7WAv/2oWSfvnzwMqvvtv1dAi/fwey8voo0aNOCnRr9WmHHNXA=
+        id S1754706AbeCGSOv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:14:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55262 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754551AbeCGSOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:14:47 -0500
+Subject: Re: [PATCH] arm64: kdump: fix interrupt handling done during
+ machine_crash_shutdown
+To: Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Hoeun Ryu <hoeun.ryu@gmail.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>
+References: <1519837260-30662-1-git-send-email-jaz@semihalf.com>
+ <20180228171647.6t4dabntujcb5kon@lakrids.cambridge.arm.com>
+ <ba0c6804-51a3-f36e-a67e-20ce84961451@arm.com>
+ <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <9a709b76-1b45-8250-9d8e-adbad59a43cc@arm.com>
+Date: Wed, 7 Mar 2018 18:14:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
- <1520437971.3731.22.camel@flygoat.com> <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Wed, 7 Mar 2018 19:13:35 +0100
-X-Google-Sender-Auth: CumWZxfvomEZHBONW6_X4UqIv1I
-Message-ID: <CA+7wUsyTrHZ=yk7EObc4ZaeXFcdgxVZL=9v2Mtz9=1_5dBz6Hg@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, James Hogan <jhogan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAH76GKO8oYVN+H4pvd6NTGc0u8AD7JMSJCYEJzNtdsAJm5L_9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w27IEMsg028620
 
-On Wed, Mar 7, 2018 at 5:25 PM, PrasannaKumar Muralidharan
-<prasannatsmkumar@gmail.com> wrote:
-> On 7 March 2018 at 21:22, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
->> 在 2018-03-07三的 20:35 +0530，PrasannaKumar Muralidharan写道：
->>> Hi James,
->>>
->>> Seems Jiaxun is interested in the board and is willing to help.
->>>
->>> I have been told that Ingenic is focusing on IoT market and X1000 is
->>> intended for IoT segment. I think that they would be selling several
->>> 100Ks of chip over the coming years. But I feel Ingenic spends time
->>> only on maintaining their Linux port which is usually based on very
->>> old kernel version.
->>
->> Ingenic is going to release their XBrust2 core with it's products such
->> as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
->> superset of MIPS's MSA SIMD instruction set). The newest kernel port of
->> X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
->> with Ingenic, they said they are forcusing on China domestic market.
->> But they're looking for partners to enter foriegn market.
->>
->> [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
->> Chinese website, ingenic have a gerrit but I don't have access to it.
->> As my experience, it's hard to develop on Chinese-made chips wihout
->> reading Chinese documents.)
->
-> Can you take a diff and upload it somewhere else? Download speed is a
-> couple of bytes per second. Can you put the diff in github or similar
-> other service?
-> I would like to see if the port uses DT.
+On 02/03/18 11:56, Grzegorz Jaszczyk wrote:
+> Thank you for your feedback. I probably over-interpreted some of the
+> documentation paragraph to justify (probably) buggy behavior that I am
+> seeing. Regardless of correctness of this patch I will appreciate if
+> you could help understanding this issue.
+> 
+> First the whole story: I was debugging why the crashdump kernel hangs
+> in v. early stage, when the kdump was triggered from the
+> ARM_SBSA_WATCHDOG interrupt handler, while everything worked fine when
+> it was triggered from the process context. Finally It occurred that it
+> is because the crashdump kernel doesn't get any timer interrupt. I
+> also notice that this problem doesn't occur when the gic is configured
+> to work in EOImode == 1. In such circumstances, the write to
+> GIC_CPU_EOI in gic_handle_irq is causing priority drop to idle, and
+> therefore when the crashdump kernel starts, the timer interrupt is
+> able to preempt still active watchdog interrupt (I know that this
+> interrupt shouldn't be active after irq_set_irqchip_state but for some
+> reason it seems to not do the job correctly).
+> 
+> In my commit log I wrongly describe the bahaviour of
+> irq_set_irqchip_state and irq_get_irqchip_state. In
+> machine_kexec_mask_interrupts (when watchdog interrupt is active)
+> after adding some debugs I see that (focusing only on watchdog
+> interrupt):
+> 1) before calling irq_set_irqchip_state when I check the status with
+> irq_get_irqchip_state I see that watchdog interrupt is active
+> 2) decative interrupt via irq_set_irqchip_state
+> 3) check the status via irq_get_irqchip_state which indicates that the
+> status has changed to inactive, so everything seems to be fine, but
+> still in crashdump kernel I don't get any interrupts (when the EOImode
+> == 0).
+> 
+> When I modify the machine_kexec_mask_interrupts, to call the eoi for
+> watchdog (only temporary to observe the effect):
+> if (i == watchdog_irq)
+>      chip->irq_eoi(&desc->irq_data);
+> 
+> everything is working. So it seems that deactivating the interrupt via
+> write to GIC_CPU_EOI (EOImode == 0) or GIC_CPU_EOI +
+> GIC_CPU_DEACTIVATE (EOImode == 1) does the job, while deactivating it
+> with use of GIC_DIST_ACTIVE_CLEAR doesn't.
+> 
+> I am using the unmodified GICv2m ("arm,gic-400") and the watchdog
+> interrupt is connected as one of the SPI. Do you have any idea what
+> can be wrong? Maybe I am missing something? gic configuration? I also
+> don't exclude that nobody who work with kdump doesn't use (EOImode ==
+> 0) and therefore didn't see this behavior.
 
-Technically this was documented here:
+Not using EOImode==1 is definitely an oddity (at least on the host), but
+that doesn't mean it shouldn't work.
 
-ftp://ftp.ingenic.cn/DevSupport/Linux/Linux-3.0.8/JZ4780/JZ4780_linux_development_guide_EN.pdf
+The reason the thing is hanging is that although we correctly deactivate
+the interrupt, nothing performs the priority drop. Your write to EOI
+helps in the sense that it guarantees that both priority drop and
+deactivate are done with the same operation, but that's not something
+we'd want to expose.
 
-Go to §2.1 Download Source Code:
+My preferred approach would be to nuke the active priority registers at
+boot time, as the CPUs come up. I'll try to write something this week.
 
-1) Download repo a) $ mkdir b) $ cd c) $ wget
-http://git.ingenic.cn:8082/bj/repo d) $ chmod +x repo
-
-However everything seems to be gone (including the gerrit page).
-
-2ctc
+	M.
+-- 
+Jazz is not dead. It just smells funny...
