@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754681AbeCGTFs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:05:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754333AbeCGTFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:05:46 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4B72172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 7 Mar 2018 16:05:43 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Agustin Vega-Frias <agustinv@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        timur@codeaurora.org
-Subject: Re: [RFC V3 1/3] perf, tools: Support wildcards on pmu name in
- dynamic pmu events
-Message-ID: <20180307190543.GR3701@kernel.org>
-References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
- <1520345084-42646-2-git-send-email-agustinv@codeaurora.org>
- <20180307160224.GN3701@kernel.org>
- <d3bd59db56fbc13b931ae45573bf94d8@codeaurora.org>
- <20180307185415.GK25017@tassilo.jf.intel.com>
- <20180307190509.GQ3701@kernel.org>
+        id S1754736AbeCGTGC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:06:02 -0500
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43328 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754500AbeCGTGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 14:06:00 -0500
+X-Google-Smtp-Source: AG47ELthI8llHBt5tVDpF7wtb3JsLknKgmkCNyrFFqOUzlVMaFOVpJGa1V1KqJTgafwahriNl+uzKLmTTY/5aXjmrFw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307190509.GQ3701@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180307064612.GA10926@infradead.org>
+References: <20180306192423.3153.42741.stgit@localhost.localdomain> <20180307064612.GA10926@infradead.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 7 Mar 2018 11:05:58 -0800
+Message-ID: <CAKgT0UdRFxGUPu4jY0xrUuv8Um62ndPnknhHXuF4Abu6D7GEqg@mail.gmail.com>
+Subject: Re: [pci PATCH v3 0/3] Add support for unmanaged SR-IOV
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
+        Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 07, 2018 at 04:05:09PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Wed, Mar 07, 2018 at 10:54:15AM -0800, Andi Kleen escreveu:
-> > > Sorry about that. That's probably because FNM_EXTMATCH is a GNU extension,
-> > > not POSIX, and the Alpine and Android runtimes likely don't implement
-> > > that...
-> > > I'll send a fix reverting back to the strncmp to ignore the uncore_ prefix,
-> > > and dropping that extension.
-> > 
-> > Just don't set it? Even the basic glob patterns are useful.
-> 
-> Or use:
-> 
-> #ifndef FNM_EXTMATCH
-> #define FNM_EXTMATCH 0
-> #endif
-> 
-> So on systems without it, its not used, while on GNU systems, we have
-> that functionality (pretty fancy, someone may need that... ;-))
+On Tue, Mar 6, 2018 at 10:46 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Tue, Mar 06, 2018 at 11:29:08AM -0800, Alexander Duyck wrote:
+>> This series is meant to add support for SR-IOV on devices when the VFs are
+>> not managed by the kernel. Examples of recent patches attempting to do this
+>> include:
+>> virto - https://patchwork.kernel.org/patch/10241225/
+>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>> vfio - https://patchwork.kernel.org/patch/10103353/
+>> uio - https://patchwork.kernel.org/patch/9974031/
+>
+> nvme and ema seems to be existing examples.  Care to throw in
+> conversions while you're at it?
 
-I'll try this route, btw, no need to send more patches for now.
+Yeah, I can do that. I assume you meant "ena" not "ema".
 
-- Arnaldo
+I'm probably looking at doing a v4 that will drop the vfio userspace
+driver bits for now as it sounds like there are additional issues that
+still need to be addressed.
+
+Thanks.
+
+- Alex
