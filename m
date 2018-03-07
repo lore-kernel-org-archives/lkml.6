@@ -1,91 +1,114 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520457711; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520382656; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z6UYGWLdQ5ZWcUphFF91OpNHFEd6x+HX+FSxGoMLjBSTofGPlBEiTzVUPmYethgNBr
-         G3sifBZaqsMnJVLDt2PcEANEYWrBmQWXIpqEyh6dM4Obg1Smr2b+VtIocV445JorZPrA
-         LFXpimyhOywC8lrUrJ4iTKfWIwkLgK2moYZlQVJOapg4WEjbAt+KNRrcu/Es5N1Z6XZ9
-         X6MkNgDICQEaETjOWWYtsxbyOQKTtwTxIiD55+sFBrth8YLUENtM5l+SyiQ4cibfV60C
-         PIi7BgExyi3LIPgPyWBR7F5ld3/05O1+z8+FryR2LrjAtJJ0L/s/Rkf7bSJcex6AO3c/
-         elcg==
+        b=MTJeNIik4gzgJPit9KrC7dq4D4Vd5c2wsK+YydVkPvlsw3NwSrXApsD/kyM4CVeEH8
+         z9B4pV/yIrBdAyN9Fgfu6MkRqnPvrTzsG7MmrCKmW3EutgsKEfqGL6E65wAcyEN7e7PV
+         qO/qPBNRDGHbaji7ijZU8a+J7esf/So6Fa3IoL5SyxWoQsOnLl20cLdyvSl8SuE+z49P
+         hhQNLHyc509Qcr0iX8vJnMFUFZfsuPJNLc0N4UVqpM1PNtt8NqwE9XQshg8EUC8vTp5K
+         SFzM9XojzOvD+vfoJ0/d02A3IG7cTJeffwklQ6OhdVJdXEjcrm7+w5Y4FwpliZX+wHaI
+         /w5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=utmY/k038HyPTCNrCTex6Od25OwxnXy4wd8Gc++7/+w=;
-        b=T0OXqxza934COlnkUjZPZG8TgYfLB3VxPOnpn093QsRTVSySjBahiCLAF+OwqC5L1T
-         oK3owedRW6e6QRpQMyGC/PThT4Bu03Bbs6louGZAfQZrVAU9ddzcB0GFeLF90iF6GO2v
-         8usio6e2ODLKJzIqx3o5bfUpJfcZWPQ1+peU09cnzpyKYKS03Tr1WhRGZM3+5dCX+7jz
-         6tpPqPPqiqHL1pN/Bi/SjeeDogAxTyo6Fmi8VVJRBS4Lh3Z5xm2h3ooopP3F3mi0RhlS
-         aA7byElm3uVj7YX+D0mDiU93HPsaVwuPvkTPXLNGv2BCHUZkmDY364s09PAg+8kTb9Ls
-         W9HQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Y5CiQDT3VzA2kNY1pEiHnrmMfBEpjdyOA40aL+1xUcc=;
+        b=L+uNAt1uqvMyJuVMjH5s9Ax10lRDsCNAmZIeFlWRA5xmmt8I7dbJfEQQYY+9zr+x44
+         yPEx20pkCHHE/1YrA+8grON9A9DsZLIMjrEmZi6FDnxYLH6W5g8BMzxVB1ojRn4O2tSG
+         stDdJJOp8NMw/P9n8ZQnkgqEZ1oLeffjGAAPOFW0J45JefDh7GzQWLvflZH1Os5R7ZsF
+         Fvn00lDxAJqPH/WA5GaTUMhI3yLIW4tI+J+9Fw8moO6O2HYfjNgi1HnjcH+kyAIH2gfx
+         5y9pLUOUaRBlizeZtZejt05Ez/BD+ge1iBkl134MP89X/jXwma0Aylyvhtf1y7gUHOtu
+         R5Iw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=NFg+Zd2q;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=AZyy2dkD;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=q5CO/jiT;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=NFg+Zd2q;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=AZyy2dkD;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AG47ELuYy+yx+pLr4bHPXxeSkLEY9dTEylRNfpNajEESbPicav53ZJtJKxy5rnvGOnxc83AqAdkvBmHhToJ0C0ROeOw=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=q5CO/jiT;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AG47ELvN+9WtxFl1nT70vSLdhVqcFrY7IoR8mOEvpWUJ+zQmCB4/TD4OdCNtKxbh3hTT9Gw/I0KzQZQc+BZ8OFQpgHo=
 MIME-Version: 1.0
-Sender: linus971@gmail.com
 In-Reply-To: <20180306233140.268BD8E1@viggo.jf.intel.com>
 References: <20180306233140.268BD8E1@viggo.jf.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 7 Mar 2018 13:21:50 -0800
-X-Google-Sender-Auth: A5bZ84qW7lafWqAwLnUulmPvf6M
-Message-ID: <CA+55aFzGgtnkKpJEDCvzDmEn7JE6DnOKuHwtkTkeN3AeHjt6dw@mail.gmail.com>
+From: Kees Cook <keescook@google.com>
+Date: Tue, 6 Mar 2018 16:30:54 -0800
+Message-ID: <CAGXu5j+LYqK7knp369PmWb00O2rRidyyS7q10NCgiobhCCbP4w@mail.gmail.com>
 Subject: Re: [PATCH] docs: clarify security-bugs disclosure policy
 To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Andrea Arcangeli <aarcange@redhat.com>,
-	Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Greg KH <gregkh@linuxfoundation.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Alan Cox <gnomes@lxorguk.ukuu.org.uk>, Andrea Arcangeli <aarcange@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>, Tim Chen <tim.c.chen@linux.intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594233094195809494?=
-X-GMAIL-MSGID: =?utf-8?q?1594315465524060881?=
+X-GMAIL-MSGID: =?utf-8?q?1594236764034969292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 On Tue, Mar 6, 2018 at 3:31 PM, Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 >
 > I think we need to soften the language a bit.  It might scare folks
 > off, especially the:
 >
 >          We prefer to fully disclose the bug as soon as possible.
 >
-> which is not really the case.
+> which is not really the case.  As Greg mentioned in private mail, we
+> really do not prefer to disclose things until *after* a fix.  The
+> whole "we have the final say" is also a bit harsh.
+> [...]
+>  ----------
+>
+> -The goal of the Linux kernel security team is to work with the
+> -bug submitter to bug resolution as well as disclosure.  We prefer
+> -to fully disclose the bug as soon as possible.  It is reasonable to
+> -delay disclosure when the bug or the fix is not yet fully understood,
+> -the solution is not well-tested or for vendor coordination.  However, we
+> -expect these delays to be short, measurable in days, not weeks or months.
+> +The goal of the Linux kernel security team is to work with the bug
+> +submitter to bug resolution as well as disclosure.  We prefer to fully
+> +disclose the bug as soon as possible after a fix is available.  It is
+> +customary to delay disclosure when the bug or the fix is not yet fully
+> +understood, the solution is not well-tested or for vendor coordination.
+> +However, we expect these delays to typically be short, measurable in
+> +days, not weeks or months.
+> +
+>  A disclosure date is negotiated by the security team working with the
+> -bug submitter as well as vendors.  However, the kernel security team
+> -holds the final say when setting a disclosure date.  The timeframe for
+> -disclosure is from immediate (esp. if it's already publicly known)
+> -to a few weeks.  As a basic default policy, we expect report date to
+> -disclosure date to be on the order of 7 days.
+> +bug submitter as well as affected vendors.  The security team prefers
+> +coordinated disclosure and will consider pre-existing, reasonable
+> +disclosure dates.
+> +
+> +The timeframe for disclosure ranges from immediate (esp. if it's
+> +already publicly known) to a few weeks.  As a basic default policy, we
+> +expect report date to disclosure date to be on the order of 7 days.
 
-Ack. What we do is definitely not full disclosure. In fact, we often
-actively try to avoid disclosing details and leave that entirely to
-others.
+This seems reasonable. Though I have two thoughts related to "we have
+final say" and why it was there:
 
-We disclose the *patches*, and the explanation of the patch, but not
-necessarily anything else (ie no exploit code or even any exploit
-discussion). We also don't explicitly disclose the discussion of the
-patches or the report, although part of it mayt obviously become more
-or less public for other reasons.
+Sometimes we get insane embargo requests, and Linus has wanted to go
+public ASAP. The wording was chosen to let reporters know that it is
+possible for issues that don't need to wait 7 days to not wait 7 days.
+For example, letting security@kernel.org know about a flaw and then
+tell us to sit on it for 2 months until some public presentation,
+that's not going to happen.
 
-So we should probably avoid using a term that means something else to
-a lot of people.
+Additionally, we frequently make all network bugs immediately public,
+since the net subsystem tends to reject embargoes.
 
-And for similar reasons, I don't think the fixed verbiage should use
-"coordinated disclosure" either, like in your patch. That usually
-means the kind of embargoes that the security list does not honor.
+So, maybe we could be more explicit about these cases? Or explicitly
+describe what "reasonable" means (it's only hinted at).
 
-So I think it merits clarification, but maybe just specify the two
-things relevant to our disclosure: the fact that the patch and
-explanation for the patch gets made public (but not necessarily other
-effects), and that the timeframe is very limited.
+-Kees
 
-It's not full disclosure, it's not coordinated disclosure, and it's
-not "no disclosure".
-
-It's more like just "timely open fixes".
-
-                 Linus
+-- 
+Kees Cook
+Pixel Security
