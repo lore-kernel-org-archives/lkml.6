@@ -1,103 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754562AbeCGOhM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:37:12 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44659 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753953AbeCGOhJ (ORCPT
+        id S1754485AbeCGOhg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:37:36 -0500
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:35966 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeCGOhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:37:09 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180307143707euoutp029b1e6f39035cb825dfa0a9e4f7a5df54~ZqiWAJkhk2970829708euoutp02H
-X-AuditID: cbfec7f4-713ff700000043e4-30-5a9ff9111f67
-Subject: Re: Regulator regression in next-20180305
-To: Mark Brown <broonie@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        linux-omap@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Maciej Purski <m.purski@samsung.com>
-Message-id: <339dfd3e-5c5d-1e91-8890-5bfb69049d12@samsung.com>
-Date: Wed, 07 Mar 2018 15:37:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-version: 1.0
-In-reply-to: <20180307141027.GD7290@sirena.org.uk>
-Content-type: text/plain; charset="windows-1252"; format="flowed"
-Content-language: en-US
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFKsWRmVeSWpSXmKPExsWy7djP87qCP+dHGRz/a2axccZ6VoupD5+w
-        WTy86m+x6fE1VovLu+awWcxe0s9isfbIXXaL/Ve8HDg8vn2dxOKxc9Zddo9NqzrZPDYvqffo
-        27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujF1TPzMXvOSq6Pon1sB4laOLkZNDQsBE4vDi1exd
-        jFwcQgIrGCXOfG9jg3A+M0qc+zGRBaaq+cU0FojEMkaJY/PamCCcZ4wSO1p/sYNUCQsYSWzf
-        1MoKYosIKEtc/b4XrINZ4AGTxKnL6xm7GDk42AS0JNa0x4PU8ArYSVw984INxGYRUJXoObYU
-        bJuoQITEwqlPGSFqBCV+TL4HFucEmn9mcSdYPbOAo8SDRTtZIWxxiebWmywQtrzE5jVvmUH2
-        SghcZpO4fnsxI8QLLhJ3V25ig7CFJV4d38IOYctIXJ7cDfVmtcTFr7ugamokGm9vgKqxlvg8
-        aQszxAI+iUnbpjOD/CIhwCvR0SYEUeIhsWzJXqgxjhIb1k4Bu01I4AKTxPo/IhMY5WYheWcW
-        khdmIXlhFpIXFjCyrGIUTy0tzk1PLTbKSy3XK07MLS7NS9dLzs/dxAhMMaf/Hf+yg3HXn6RD
-        jAIcjEo8vBv2z4sSYk0sK67MPcQowcGsJMJ77+P8KCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8
-        cRp1UUIC6YklqdmpqQWpRTBZJg5OqQbGHQpL5r2VvDC1qOsi09LKg9xfFQQjXsyXOrfj0/vk
-        r/HTgg/4LtGe0Dfr/zfT4MDbLOd2MfB8mO8WsiDW9d+cs+atazNVAss2ixw/LHLQmeuAtFGt
-        1vm7bL/ubDr5Xd/u6cndF5N8bQ9V7zrxrCEspPTs3Hij7CbVY/9uqJgqCb268Ofu7QwGEyWW
-        4oxEQy3mouJEAK/BxNstAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xq7qCP+dHGWxYIGmxccZ6VoupD5+w
-        WTy86m+x6fE1VovLu+awWcxe0s9isfbIXXaL/Ve8HDg8vn2dxOKxc9Zddo9NqzrZPDYvqffo
-        27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujF1TPzMXvOSq6Pon1sB4laOLkZNDQsBEovnFNJYu
-        Ri4OIYEljBJbWn6wQjjPGCVOvJ7LCFIlLGAksX1TKyuILSKgLHH1+16wDmaBB0wS6369Zofo
-        uMAksX/aLaAMBwebgJbEmvZ4kAZeATuJq2desIHYLAKqEj3HlrKA2KICERKdK+ezQNQISvyY
-        fA/M5gRadmZxJ1g9s4CtxIL361ggbHGJ5tabULa8xOY1b5knMArMQtI+C0nLLCQts5C0LGBk
-        WcUoklpanJueW2ykV5yYW1yal66XnJ+7iREYC9uO/dyyg7HrXfAhRgEORiUe3g3750UJsSaW
-        FVfmHmKU4GBWEuG993F+lBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe8waVUUIC6YklqdmpqQWp
-        RTBZJg5OqQbGQ58kdkY2ivQ8Etm0XuH+w/yoGvNf3xqWV8nU+ledXP1nhUnby6z5hz7oiksf
-        e8v8xaKvji/ggvj1Jf2qN/883P3DSuKFPfvGbJ+nbk5z5Pgf1ySwfPr7M2RywpwML4E5+Sfl
-        vpy7z3uXnev4gx+iSw85Nd5aJuJ6Y7HKs7QWjRXtv45dWXlCTomlOCPRUIu5qDgRAIHWej6B
-        AgAA
-X-CMS-MailID: 20180307143705eucas1p1bbc5ee9462e3e495dba732504c1482f2
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180306163044epcas2p1b5bc62e4cba6c6e8c8ea7e75329c11ef
-X-RootMTR: 20180306163044epcas2p1b5bc62e4cba6c6e8c8ea7e75329c11ef
-References: <20180305231246.GB5799@atomide.com>
-        <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
-        <CGME20180306163044epcas2p1b5bc62e4cba6c6e8c8ea7e75329c11ef@epcas2p1.samsung.com>
-        <20180306163035.GE13586@sirena.org.uk>
-        <bb1adc11-40ff-d37d-60f1-d6e706b058a6@samsung.com>
-        <20180307141027.GD7290@sirena.org.uk>
+        Wed, 7 Mar 2018 09:37:35 -0500
+X-Google-Smtp-Source: AG47ELtGMPMRz2mSsv32mAQ1G1v5eZ2h0Xnq02s/WUrT51q4gRUvBLjTflqSOLv1Tq44WPUDJqwkdA==
+Date: Wed, 7 Mar 2018 14:37:30 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: [PATCH] Documentation/locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180307143730.y7hoo3vjbogx6gmr@holly.lan>
+References: <1519814372-19941-1-git-send-email-parri.andrea@gmail.com>
+ <20180228105631.GA7681@arm.com>
+ <20180228112403.GA32228@andrea>
+ <20180228113456.GC7681@arm.com>
+ <20180228121523.GA354@andrea>
+ <20180307131341.GA28486@andrea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307131341.GA28486@andrea>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 03/07/2018 03:10 PM, Mark Brown wrote:
-> On Wed, Mar 07, 2018 at 01:57:12PM +0100, Maciej Purski wrote:
+On Wed, Mar 07, 2018 at 02:13:41PM +0100, Andrea Parri wrote:
+> On Wed, Feb 28, 2018 at 01:15:23PM +0100, Andrea Parri wrote:
+> > On Wed, Feb 28, 2018 at 11:34:56AM +0000, Will Deacon wrote:
 > 
->> I'm trying to figure out what is so special about these boards. The only
->> strange thing, that I haven't noticed at first, is that all regulators share
->> a common supply - dummy regulator. It is defined in anatop_regulator.c.
+> [...]
 > 
-> No, that's a regulator framework thing - the regulator framework will
-> use the dummy regulator as a supply when there's nothing described in
-> the DT so long as the client doesn't explicitly tell it that the supply
-> might be optional.
+> >> only if there's some evidence that you've looked at the callsites
+> >> and determined that they won't break.
 > 
+> I looked at the callsites for {,raw_}spin_is_locked() (reported below):
+>
+> In most cases (40+), these primitives are used within BUG_ON/WARN_ON or
+> the like; a handful of other cases using these with no concurrency, for
+> checking "self-lock", or for heuristics.
+> 
+> I confirm that the "ipc/sem.c" case, mentioned in the arm64 and powerpc
+> commits adding smp_mb() to their arch_spin_is_locked(), disappeared.
+> 
+> And that the "debug_core" case seems to be the only case requiring some
+> thoughts: my understanding (but I Cc the KGDB maintainers, so that they
+> can correct me, or provide other details) is that KGDB does not rely on
+> implicit barriers in raw_spin_is_locked().
+> 
+> (This seems instead to rely on barriers in the IPIs sending/handling, in
+>  part., kgdb_roundup_cpus, kgdb_nmicallback; yes, these barriers are not
+>  documented, but I've discussed with Daniel, Jason about the eventuality
+>  of adding such documentations/inline comments.)
 
-Ok, thanks for explanation. I think I have found a possibly dangerous scenario, 
-but I can't see this situation possible in Fabio's case.
+Indeed.
 
-Assume, that we have a chain of supplies, consisting of at least 3. Say: A->B->C.
+Whilst responding to queries from Andrea I certainly saw opportunities 
+to clean things up... and the result of those clean ups would actually 
+be the removal of both calls to raw_spin_is_locked(). Nevertheless, for
+now lets deal with the code as it is:
 
-When we're setting voltage on A, we lock it, call balance_voltage(), lock 
-suppliers and call set_voltage_rdev(). So we have regulators A, B, C locked. 
-Then set_voltage_rdev() is trying to set voltage of its supply by calling 
-set_voltage_unlocked().
+The calls to raw_spin_is_locked() within debug-core will pretty much always 
+be from cores that did not take the lock because the code is triggered
+once we have selected a master and are rounding up the other cpus. Thus
+we do have to analyse the sequencing here.
 
-Now we're on the regulator B. Set_voltage_unlocked() calls balance_voltage(), 
-which again locks its supplies, if they exist. B's supply is C, so we end up 
-with having a deadlock on regulator C.
+Pretty much every architecture I looked at implements the round up 
+using the IPI machinery (hardly surprising; this is obvious way to 
+implement it). I think this provides the required barriers implicitly
+so the is-this-round-up code will correctly observe the locks to be 
+locked when triggered via an IPI.
 
-Tony and Fabio, do you find this scenario possible on your boards?
+It is more difficult to describe the analysis if the is-this-a-round-up
+code is spuriously triggered before the IPI but so far I've not come up 
+with anything worse than a benign race (which exists even with barriers).
+The round up code will eventually figure out it has spuriously tried to
+park and will exit without altering important state. The return value of 
+kgdb_nmicallback() does change in this case but no architecture cares 
+about that[1].
 
-Best regards
-Maciej Purski
+
+Daniel
+
+
+[1] So one of the clean ups I alluded to above is therefore to remove 
+    the return code ;-) .
+
+
+> (N.B. I have _not_ tested any of these observations, say by removing the
+>  smp_mb() from your implementation; so, you know...)
+> 
+>   Andrea
+> 
+> 
+> ./mm/khugepaged.c:1222:						VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&khugepaged_mm_lock));
+> ./mm/khugepaged.c:1663:						VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&khugepaged_mm_lock));
+> ./mm/swap.c:828:						VM_BUG_ON(NR_CPUS != 1 && !spin_is_locked(&lruvec_pgdat(lruvec)->lru_lock));
+> ./security/apparmor/file.c:497:					old = rcu_dereference_protected(fctx->label, spin_is_locked(&fctx->lock));
+> ./net/netfilter/ipset/ip_set_hash_gen.h:18:			__ipset_dereference_protected(p, spin_is_locked(&(set)->lock))
+> ./fs/ocfs2/dlmglue.c:760:					mlog_bug_on_msg(spin_is_locked(&res->l_lock),
+> ./fs/ocfs2/inode.c:1194:					mlog_bug_on_msg(spin_is_locked(&oi->ip_lock),
+> ./fs/userfaultfd.c:156:						VM_BUG_ON(spin_is_locked(&ctx->fault_pending_wqh.lock));
+> ./fs/userfaultfd.c:158:						VM_BUG_ON(spin_is_locked(&ctx->fault_wqh.lock));
+> ./fs/userfaultfd.c:160:						VM_BUG_ON(spin_is_locked(&ctx->event_wqh.lock));
+> ./fs/userfaultfd.c:162:						VM_BUG_ON(spin_is_locked(&ctx->fd_wqh.lock));
+> ./fs/userfaultfd.c:919:						VM_BUG_ON(!spin_is_locked(&wqh->lock));
+> ./virt/kvm/arm/vgic/vgic.c:192:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
+> ./virt/kvm/arm/vgic/vgic.c:269:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
+> ./virt/kvm/arm/vgic/vgic.c:307:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
+> ./virt/kvm/arm/vgic/vgic.c:663:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
+> ./virt/kvm/arm/vgic/vgic.c:694:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
+> ./virt/kvm/arm/vgic/vgic.c:715:					DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
+> ./virt/kvm/kvm_main.c:3934:					WARN_ON(raw_spin_is_locked(&kvm_count_lock));
+> ./kernel/debug/debug_core.c:527:				if (!raw_spin_is_locked(&dbg_slave_lock))
+> ./kernel/debug/debug_core.c:755:				raw_spin_is_locked(&dbg_master_lock)) {
+> ./kernel/locking/spinlock_debug.c:98:				SPIN_BUG_ON(!raw_spin_is_locked(lock), lock, "already unlocked");
+> ./kernel/locking/mutex-debug.c:39:				SMP_DEBUG_LOCKS_WARN_ON(!spin_is_locked(&lock->wait_lock));
+> ./kernel/locking/mutex-debug.c:54:				SMP_DEBUG_LOCKS_WARN_ON(!spin_is_locked(&lock->wait_lock));
+> ./kernel/futex.c:1368:						if (WARN_ON_SMP(!q->lock_ptr || !spin_is_locked(q->lock_ptr))
+> ./kernel/printk/printk_safe.c:281:				if (in_nmi() && raw_spin_is_locked(&logbuf_lock)) { // same cpu (printk in nmi)
+> ./kernel/printk/printk_safe.c:314:	    			raw_spin_is_locked(&logbuf_lock)) { // same cpu (printk in nmi)
+> ./include/net/sock.h:1529:					return !sk->sk_lock.owned && !spin_is_locked(&sk->sk_lock.slock); // returns in BUG_ON/WARN_ON_ONCE
+> ./arch/x86/pci/i386.c:62:					WARN_ON_SMP(!spin_is_locked(&pcibios_fwaddrmap_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3446:			printk("cryptocop_completed_jobs_lock %d\n", spin_is_locked(&cryptocop_completed_jobs_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3447:			printk("cryptocop_job_queue_lock %d\n", spin_is_locked(&cryptocop_job_queue_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3448:			printk("descr_pool_lock %d\n", spin_is_locked(&descr_pool_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3449:			printk("cryptocop_sessions_lock %d\n", spin_is_locked(cryptocop_sessions_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3450:			printk("running_job_lock %d\n", spin_is_locked(running_job_lock));
+> ./arch/cris/arch-v32/drivers/cryptocop.c:3451:			printk("cryptocop_process_lock %d\n", spin_is_locked(cryptocop_process_lock));
+> ./arch/parisc/kernel/firmware.c:208:        			if (spin_is_locked(&pdc_lock)) // self-lock: if (is_locked) unlock(pdc_lock)
+> ./drivers/staging/irda/drivers/sir_dev.c:637:			if(spin_is_locked(&dev->tx_lock)) { 	// for debug
+> ./drivers/staging/lustre/lustre/osc/osc_cl_internal.h:189:	return spin_is_locked(&obj->oo_lock); // for assert
+> ./drivers/tty/serial/sn_console.c:891:				if (spin_is_locked(&port->sc_port.lock)) { // single lock
+> ./drivers/tty/serial/sn_console.c:908:				if (!spin_is_locked(&port->sc_port.lock) // single lock
+> ./drivers/misc/sgi-xp/xpc_channel.c:31:				DBUG_ON(!spin_is_locked(&ch->lock));
+> ./drivers/misc/sgi-xp/xpc_channel.c:85:				DBUG_ON(!spin_is_locked(&ch->lock));
+> ./drivers/misc/sgi-xp/xpc_channel.c:761:			DBUG_ON(!spin_is_locked(&ch->lock));
+> ./drivers/misc/sgi-xp/xpc_sn2.c:1674:				DBUG_ON(!spin_is_locked(&ch->lock));
+> ./drivers/misc/sgi-xp/xpc_uv.c:1186:				DBUG_ON(!spin_is_locked(&ch->lock));
+> ./drivers/net/ethernet/smsc/smsc911x.h:70:			WARN_ON_SMP(!spin_is_locked(&pdata->mac_lock))
+> ./drivers/net/ethernet/intel/igbvf/mbx.c:267:			WARN_ON_ONCE(!spin_is_locked(&hw->mbx_lock));
+> ./drivers/net/ethernet/intel/igbvf/mbx.c:305:			WARN_ON_ONCE(!spin_is_locked(&hw->mbx_lock));
+> ./drivers/net/ethernet/intel/i40e/i40e_main.c:1527:		WARN(!spin_is_locked(&vsi->mac_filter_hash_lock),
+> ./drivers/net/wireless/zydas/zd1211rw/zd_mac.c:238:		ZD_ASSERT(!spin_is_locked(&mac->lock));
+> ./drivers/scsi/fnic/fnic_scsi.c:184:				int sh_locked = spin_is_locked(host->host_lock); // self-lock: if (!is_locked) lock(host_lock)
+> ./drivers/scsi/snic/snic_scsi.c:2004:				SNIC_BUG_ON(!spin_is_locked(io_lock));
+> ./drivers/scsi/snic/snic_scsi.c:2607:				SNIC_BUG_ON(!spin_is_locked(io_lock));
+> ./drivers/atm/nicstar.c:2692:					if (spin_is_locked(&card->int_lock)) {	// optimization ("Probably it isn't worth spinning")
+> ./drivers/hv/hv_balloon.c:644:					WARN_ON_ONCE(!spin_is_locked(&dm_device.ha_lock));
