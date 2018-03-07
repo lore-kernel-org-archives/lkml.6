@@ -1,68 +1,44 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520451863-2-7405605654930720051
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451863; b=NvzaJMLcfyk9dylki5PIEaXuzJkRCJyPKYb6x6zwJIqm+Ex
-    n84oIaZQLFYrnrMM/uirSwWbpDbmolhaSVWyeDQh7m7DwQT60yZ66FnJ8KadCoip
-    YZVNrOnuKhHNFtLapvDqog5ujny41Xg7W+eqFrfQJw0sR5aLVVuSFe26DEkBtGPL
-    6VFn8DihmPBxOe9mV6v2Vis0Ovg4tttBBxz9xnKTNr3wdPuvQWpRbHhP1+2QxOkR
-    rVhmzk9pFCl/gphYAxLK9eYefyq9Cfjko5liu8itRT4QZyRpJL7rE2Y+0D7gshMv
-    H1BkIRb2zi9melBFgkTx4uB6JLd5Gzh6TGNp/BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451863; bh=Z+P60IHGjeYeD7F2YwI0xy/w9S
-    1F80ryiq0ys+FtzRw=; b=pk4v6IQC6jFXz7JHkF523RtSTUawN329ppqaKU1B6d
-    MNz9lkRwJcfarnjrA9KxfjvMP7zD5G4ghzc0JTMd0eMFCFXBQbvP3uFQBCQDKqO+
-    lT6SvNIwQ2iriow785X+DEY4mu/8p1y43g/ENryoAT3hHRAReEcQKqafU+apEDyg
-    oaE/5tRgr8NwacVvAc9mG8JsAQ97l4ClrlLzeZxUOjTBR7u5HKJLU3Z5LsjPQVuB
-    Sf+BwEd98CHGK6QYzu0xpzwOaSgKlfiK/pFTA0jqMtqmpHQmLUS27xZwwIMj+aTv
-    Dr+pg1UxP01D2ARvgmVRc7tY0EKhqiMk3DYd/0u6xulg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965062AbeCGToU (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:44:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43706 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934593AbeCGToT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:44:19 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvr9HK5RaWo1G0lgCawpAU6FPmFg7Ai8VK2V+TTGabI9PLO81zI+NfbgJxnVQwIwsQAfZmq
+ARC-Seal: i=1; a=rsa-sha256; t=1520451862; cv=none;
+        d=google.com; s=arc-20160816;
+        b=J3+qpzWlQzvKgralEIEIwRBJu/nieB45m2CyOBnDwp2/gammxRjCoZ/deEg0LFRwls
+         HiKRVR6oiTRHoreI0kDRFmazEDhyD/+eJtIcC4CwL/Qq4fGADHNwUibOYlOQBNcFJnbI
+         /7tXawrculvvYdbDlM9h8xx3b4Pk0LDuXBSor97Qg5OHtZFCL1pFxgVVzoyJ7OvNfB/X
+         37SVXeMJKIVmHwRZMU0xZByUHwL1xWWS7YK7K3Q+eyFKNg5y7sHNI/dvrbp0v5Cv/mfq
+         hVqSHaW/TlwHxk68wYYxNm4aDmvDbmLyA7BIFVuZMxhBQOZJkpt/UKw/O6cwLxy2k5mr
+         YzmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=NgBC+O/WBeS+7421uEz2plmcawh3FdsleheX76LG1Yc=;
+        b=tWQ9ewYirDKxCz/PZtf98hATktl8nHC9GroAhBTQ+3dnjH9Lhg9u1RGlb7+jHSiqZ/
+         GRqM4tn0+EY5A3IPfPTnC3tcPmv8A3Id+L3QNm79zVlvuDN5zL9Cg/Mu8w5tHcgA+LkT
+         z3zQL69eAaqiwBaoZl8FKaUuUHJgwDSJS0nTmY0MMT+D0l0YiDancP7iHq3Aun7PxrcO
+         4WlFRIxy70djsHZRbkd567iXlrreD+02lBzrya1YuQURtctJw4pEHkCXJCNxrCnwXaiT
+         uZ0K2Px5LlJD03MVTqbPB7L3u0NtTpQAzHG0WjubkvVxChYceFOmST6rNVhGR4TfWuCp
+         Y6xg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.15 114/122] KVM: x86: move LAPIC initialization after VMCS creation
-Date: Wed,  7 Mar 2018 11:38:46 -0800
-Message-Id: <20180307191746.184967649@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jim Mattson <jmattson@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	KarimAllah Ahmed <karahmed@amazon.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	kvm@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.15 115/122] KVM/VMX: Optimize vmx_vcpu_run() and svm_vcpu_run() by marking the RDMSR path as unlikely()
+Date: Wed,  7 Mar 2018 11:38:47 -0800
+Message-Id: <20180307191746.319141902@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -70,9 +46,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309331730557447?=
+X-GMAIL-MSGID: =?utf-8?q?1594309331730557447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,54 +59,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 0b2e9904c15963e715d33e5f3f1387f17d19333a upstream.
+commit 946fbbc13dce68902f64515b610eeb2a6c3d7a64 upstream.
 
-The initial reset of the local APIC is performed before the VMCS has been
-created, but it tries to do a vmwrite:
+vmx_vcpu_run() and svm_vcpu_run() are large functions, and giving
+branch hints to the compiler can actually make a substantial cycle
+difference by keeping the fast path contiguous in memory.
 
- vmwrite error: reg 810 value 4a00 (err 18944)
- CPU: 54 PID: 38652 Comm: qemu-kvm Tainted: G        W I      4.16.0-0.rc2.git0.1.fc28.x86_64 #1
- Hardware name: Intel Corporation S2600CW/S2600CW, BIOS SE5C610.86B.01.01.0003.090520141303 09/05/2014
- Call Trace:
-  vmx_set_rvi [kvm_intel]
-  vmx_hwapic_irr_update [kvm_intel]
-  kvm_lapic_reset [kvm]
-  kvm_create_lapic [kvm]
-  kvm_arch_vcpu_init [kvm]
-  kvm_vcpu_init [kvm]
-  vmx_create_vcpu [kvm_intel]
-  kvm_vm_ioctl [kvm]
+With this optimization, the retpoline-guest/retpoline-host case is
+about 50 cycles faster.
 
-Move it later, after the VMCS has been created.
-
-Fixes: 4191db26b714 ("KVM: x86: Update APICv on APIC reset")
-Cc: stable@vger.kernel.org
-Cc: Liran Alon <liran.alon@oracle.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180222154318.20361-3-pbonzini@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/lapic.c |    1 -
- arch/x86/kvm/x86.c   |    1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/svm.c |    2 +-
+ arch/x86/kvm/vmx.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2156,7 +2156,6 @@ int kvm_create_lapic(struct kvm_vcpu *vc
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5139,7 +5139,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
+ 	 * save it.
  	 */
- 	vcpu->arch.apic_base = MSR_IA32_APICBASE_ENABLE;
- 	static_key_slow_inc(&apic_sw_disabled.key); /* sw disabled at reset */
--	kvm_lapic_reset(vcpu, false);
- 	kvm_iodevice_init(&apic->dev, &apic_mmio_ops);
+-	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
  
- 	return 0;
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7793,6 +7793,7 @@ int kvm_arch_vcpu_setup(struct kvm_vcpu
- 	if (r)
- 		return r;
- 	kvm_vcpu_reset(vcpu, false);
-+	kvm_lapic_reset(vcpu, false);
- 	kvm_mmu_setup(vcpu);
- 	vcpu_put(vcpu);
- 	return r;
+ 	if (svm->spec_ctrl)
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9579,7 +9579,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
+ 	 * save it.
+ 	 */
+-	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++	if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+ 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+ 	if (vmx->spec_ctrl)
