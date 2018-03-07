@@ -1,119 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751280AbeCGHXl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 02:23:41 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35066 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750984AbeCGHXg (ORCPT
+        id S1751253AbeCGHjn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 02:39:43 -0500
+Received: from goliath.siemens.de ([192.35.17.28]:50321 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeCGHjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 02:23:36 -0500
-X-Google-Smtp-Source: AG47ELssuBYUXl+8BQPVg7TPPcJf8XB6hpoFsSOjJVpZs0kJbJe1pXcEVpwcIgv5yK7goJVCMLxHOg==
-From: Sargun Dhillon <sargun@sargun.me>
-X-Google-Original-From: Sargun Dhillon <sargun@netflix.com>
-Date: Wed, 7 Mar 2018 07:23:33 +0000
-To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
-        igor.stoppa@huawei.com, casey@schaufler-ca.com
-Subject: [PATCH v4 3/3] security: Add an example sample dynamic LSM
-Message-ID: <d62571895f667d70839ef5d5b2b0571e245110dc.1520407240.git.sargun@sargun.me>
-References: <cover.1520407240.git.sargun@sargun.me>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1520407240.git.sargun@sargun.me>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 7 Mar 2018 02:39:41 -0500
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH v5 1/7] jailhouse: Provide detection for non-x86 systems
+Date: Wed,  7 Mar 2018 08:39:12 +0100
+Message-Id: <dae9fe0c6e63141c28ca90492fa5712b4c33ffb5.1520408357.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
+References: <cover.1520408357.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
+References: <cover.1520408357.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an example LSM that utilizes the features added by the
-dynamically loadable LSMs patch. Once the module is unloaded, the
-command is once again allowed. It prevents the user from running:
-date --set="October 21 2015 16:29:00 PDT"
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Implement jailhouse_paravirt() via device tree probing on architectures
+!= x86. Will be used by the PCI core.
+
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Juergen Gross <jgross@suse.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- samples/Kconfig           |  6 ++++++
- samples/Makefile          |  2 +-
- samples/lsm/Makefile      |  4 ++++
- samples/lsm/lsm_example.c | 33 +++++++++++++++++++++++++++++++++
- 4 files changed, 44 insertions(+), 1 deletion(-)
- create mode 100644 samples/lsm/Makefile
- create mode 100644 samples/lsm/lsm_example.c
+ Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
+ arch/x86/include/asm/jailhouse_para.h           |  2 +-
+ include/linux/hypervisor.h                      | 17 +++++++++++++++--
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index c332a3b9de05..022242c0b50b 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -117,4 +117,10 @@ config SAMPLE_STATX
- 	help
- 	  Build example userspace program to use the new extended-stat syscall.
+diff --git a/Documentation/devicetree/bindings/jailhouse.txt b/Documentation/devicetree/bindings/jailhouse.txt
+new file mode 100644
+index 000000000000..2901c25ff340
+--- /dev/null
++++ b/Documentation/devicetree/bindings/jailhouse.txt
+@@ -0,0 +1,8 @@
++Jailhouse non-root cell device tree bindings
++--------------------------------------------
++
++When running in a non-root Jailhouse cell (partition), the device tree of this
++platform shall have a top-level "hypervisor" node with the following
++properties:
++
++- compatible = "jailhouse,cell"
+diff --git a/arch/x86/include/asm/jailhouse_para.h b/arch/x86/include/asm/jailhouse_para.h
+index 875b54376689..b885a961a150 100644
+--- a/arch/x86/include/asm/jailhouse_para.h
++++ b/arch/x86/include/asm/jailhouse_para.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL2.0 */
  
-+config SAMPLE_DYNAMIC_LSM
-+	tristate "Build LSM examples -- loadable modules only"
-+	depends on SECURITY_DYNAMIC_HOOKS && m
-+	help
-+	  This builds an example dynamic LSM
+ /*
+- * Jailhouse paravirt_ops implementation
++ * Jailhouse paravirt detection
+  *
+  * Copyright (c) Siemens AG, 2015-2017
+  *
+diff --git a/include/linux/hypervisor.h b/include/linux/hypervisor.h
+index b19563f9a8eb..fc08b433c856 100644
+--- a/include/linux/hypervisor.h
++++ b/include/linux/hypervisor.h
+@@ -8,15 +8,28 @@
+  */
+ 
+ #ifdef CONFIG_X86
 +
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index db54e766ddb1..9d23835d6e6d 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
--			   vfio-mdev/ statx/
-+			   vfio-mdev/ statx/ lsm/
-diff --git a/samples/lsm/Makefile b/samples/lsm/Makefile
-new file mode 100644
-index 000000000000..d4ccb940f18b
---- /dev/null
-+++ b/samples/lsm/Makefile
-@@ -0,0 +1,4 @@
-+# builds the loadable LSM example kernel modules;
-+# then to use one (as root):  insmod <module_name.ko>
-+# and to unload: rmmod module_name
-+obj-$(CONFIG_SAMPLE_DYNAMIC_LSM) += lsm_example.o
-diff --git a/samples/lsm/lsm_example.c b/samples/lsm/lsm_example.c
-new file mode 100644
-index 000000000000..95c56ebd4d16
---- /dev/null
-+++ b/samples/lsm/lsm_example.c
-@@ -0,0 +1,33 @@
-+/*
-+ * This sample hooks into the "settime"
-+ *
-+ * Once you run it, the following will not be allowed:
-+ * date --set="October 21 2015 16:29:00 PDT"
-+ */
++#include <asm/jailhouse_para.h>
+ #include <asm/x86_init.h>
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/lsm_hooks.h>
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ 	x86_platform.hyper.pin_vcpu(cpu);
+ }
+-#else
 +
-+static int settime_cb(const struct timespec *ts, const struct timezone *tz)
++#else /* !CONFIG_X86 */
++
++#include <linux/of.h>
++
+ static inline void hypervisor_pin_vcpu(int cpu)
+ {
+ }
+-#endif
++
++static inline bool jailhouse_paravirt(void)
 +{
-+	/* We aren't allowed to travel to October 21 2015 16:29 PDT */
-+	if (ts->tv_sec >= 1445470140 && ts->tv_sec < 1445470200)
-+		return -EPERM;
-+
-+	return 0;
++	return of_find_compatible_node(NULL, NULL, "jailhouse,cell");
 +}
 +
-+static struct security_hook_list sample_hooks[] = {
-+	LSM_HOOK_INIT(settime, settime_cb),
-+};
-+
-+static int __init lsm_init(void)
-+{
-+	return security_add_dynamic_hooks(sample_hooks,
-+					  ARRAY_SIZE(sample_hooks),
-+					  "sample");
-+}
-+
-+module_init(lsm_init)
-+MODULE_LICENSE("GPL");
++#endif /* !CONFIG_X86 */
+ 
+ #endif /* __LINUX_HYPEVISOR_H */
 -- 
-2.14.1
+2.13.6
