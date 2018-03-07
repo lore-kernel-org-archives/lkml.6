@@ -1,85 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754639AbeCGNWY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 08:22:24 -0500
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:62607 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754545AbeCGNVw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 08:21:52 -0500
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Tony Lindgren <tony@atomide.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, <kishon@ti.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v3 11/11] mmc: sdhci-omap: Add sdhci_omap specific ops for enable_sdio_irq
-Date: Wed, 7 Mar 2018 18:50:20 +0530
-Message-ID: <20180307132020.30951-12-kishon@ti.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180307132020.30951-1-kishon@ti.com>
-References: <20180307132020.30951-1-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S933366AbeCGNWa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 08:22:30 -0500
+Received: from mga07.intel.com ([134.134.136.100]:43105 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754545AbeCGNWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 08:22:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
+   d="scan'208";a="39930073"
+Message-ID: <1520428941.10722.466.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] vsprintf: don't dereference pointers to the first
+ or last page
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Adam Borowski <kilobyte@angband.pl>, Petr Mladek <pmladek@suse.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>
+Date: Wed, 07 Mar 2018 15:22:21 +0200
+In-Reply-To: <20180306181122.11449-2-kilobyte@angband.pl>
+References: <20180306092513.ibodfsnv4xrxdlub@pathway.suse.cz>
+         <20180306181122.11449-1-kilobyte@angband.pl>
+         <20180306181122.11449-2-kilobyte@angband.pl>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sdhci_omap_enable_sdio_irq to set CTPL and CLKEXTFREE bits in
-MMCHS_CON register required to detect asynchronous card interrupt
-on DAT[1].
+On Tue, 2018-03-06 at 19:11 +0100, Adam Borowski wrote:
+> As old code to avoid so is inconsistent, let's unify it within a
+> single
+> macro.
+> 
+>  
+> +#define IS_BAD_PTR(x) ((unsigned long)(x) >= (unsigned long)-
+> PAGE_SIZE \
+> +				|| (unsigned long)(x) < PAGE_SIZE)
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/mmc/host/sdhci-omap.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Oh, no.
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 14dd51b51b41..8ceb3956b211 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -36,6 +36,7 @@
- #define CON_DDR			BIT(19)
- #define CON_CLKEXTFREE		BIT(16)
- #define CON_PADEN		BIT(15)
-+#define CON_CTPL		BIT(11)
- #define CON_INIT		BIT(1)
- #define CON_OD			BIT(0)
- 
-@@ -226,6 +227,23 @@ static void sdhci_omap_conf_bus_power(struct sdhci_omap_host *omap_host,
- 	}
- }
- 
-+static void sdhci_omap_enable_sdio_irq(struct mmc_host *mmc, int enable)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-+	u32 reg;
-+
-+	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
-+	if (enable)
-+		reg |= (CON_CTPL | CON_CLKEXTFREE);
-+	else
-+		reg &= ~(CON_CTPL | CON_CLKEXTFREE);
-+	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, reg);
-+
-+	sdhci_enable_sdio_irq(mmc, enable);
-+}
-+
- static inline void sdhci_omap_set_dll(struct sdhci_omap_host *omap_host,
- 				      int count)
- {
-@@ -962,6 +980,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.set_ios = sdhci_omap_set_ios;
- 	host->mmc_host_ops.card_busy = sdhci_omap_card_busy;
- 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
-+	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
- 
- 	ret = sdhci_setup_host(host);
- 	if (ret)
+First of all, why it's a macro?
+
+Next, what prevents us to do it in place using IS_ERR() instead? (Btw, I
+have a patch for that, not published yet)
+
+>  #define BAD_PTR_STRING(x) (!(x) ? "(null)" : IS_ERR(x) ? "(err)" :
+> "(invalid)")
+>  
+>  /**
+> @@ -589,7 +591,7 @@ char *string(char *buf, char *end, const char *s,
+> struct printf_spec spec)
+>  	int len = 0;
+>  	size_t lim = spec.precision;
+>  
+> -	if ((unsigned long)s < PAGE_SIZE)
+> +	if (IS_BAD_PTR(s))
+>  		s = BAD_PTR_STRING(s);
+
+I don't think it's a good idea to change current behaviour.
+
+> @@ -1583,7 +1585,7 @@ char *device_node_string(char *buf, char *end,
+> struct device_node *dn,
+>  	if (!IS_ENABLED(CONFIG_OF))
+>  		return string(buf, end, "(!OF)", spec);
+>  
+> -	if ((unsigned long)dn < PAGE_SIZE)
+> +	if (IS_BAD_PTR(dn))
+>  		return string(buf, end, BAD_PTR_STRING(dn), spec);
+
+This makes no sense. Explained in comment against patch 1.
+
+>  
+>  	/* simple case without anything any more format specifiers */
+> @@ -1851,7 +1853,7 @@ char *pointer(const char *fmt, char *buf, char
+> *end, void *ptr,
+>  {
+>  	const int default_width = 2 * sizeof(void *);
+>  
+> -	if (!ptr && *fmt != 'K' && *fmt != 'x') {
+> +	if (IS_BAD_PTR(ptr) && *fmt != 'K' && *fmt != 'x') {
+>  		/*
+>  		 * Print (null)/etc with the same width as a pointer
+> so it
+>  		 * makes tabular output look nice.
+> 
+
 -- 
-2.11.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
