@@ -1,75 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeCGCVe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:21:34 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39381 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753878AbeCGCVd (ORCPT
+        id S1754117AbeCGCXr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:23:47 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:49615 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753878AbeCGCXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:21:33 -0500
-X-Google-Smtp-Source: AG47ELs5XiwVDnvBb5HaOuikqvAETY+k+L1cZxguf2FKhR5IrRvhTk2xs81CUJmd3lNlkQLhjHrerQ==
-Date: Wed, 7 Mar 2018 11:21:27 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-Message-ID: <20180307022127.GB802@jagdpanzerIV>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
+        Tue, 6 Mar 2018 21:23:45 -0500
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w272NRtY014002
+X-Nifty-SrcIP: [209.85.217.178]
+X-Google-Smtp-Source: AG47ELsQtzNTfqH+q3dyl9JZ5RcDUmC3ALAuow7NXLoJzmQR/GLJuuiD8y0GmRgMp57v5aGdDPMpixozTe2EDvV264M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CA+8MBbLjdViZgUYuLT1qDAnxtBP62pCXnvNMbUCjZ=RP8Ok=Dw@mail.gmail.com>
+References: <1519965121-12017-1-git-send-email-yamada.masahiro@socionext.com>
+ <1519965121-12017-2-git-send-email-yamada.masahiro@socionext.com> <CA+8MBbLjdViZgUYuLT1qDAnxtBP62pCXnvNMbUCjZ=RP8Ok=Dw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 7 Mar 2018 11:22:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARc+4n6B1c0LXigAfffnpUqY3GSVw+rw5PQP9VrOxbOuw@mail.gmail.com>
+Message-ID: <CAK7LNARc+4n6B1c0LXigAfffnpUqY3GSVw+rw5PQP9VrOxbOuw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] kbuild: define PYTHON2 and PYTHON3 variables
+ instead of PYTHON
+To: Tony Luck <tony.luck@intel.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Arnd,
+2018-03-07 2:16 GMT+09:00 Tony Luck <tony.luck@intel.com>:
+> On Thu, Mar 1, 2018 at 8:31 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> arch/ia64/scripts/unwcheck.py is apparently written in Python 2, so
+>> it should be invoked by 'python2'.
+>
+> I pushed the patch from Corentin Labbe to update this script to run with either
+> python2 or python3. Linus took it yesterday:
+>
+> bd5edbe67794 ("ia64: convert unwcheck.py to python3")
+>
+> -Tony
 
-On (03/06/18 14:27), Arnd Bergmann wrote:
-[..]
-> As we are now removing blackfin, based on the latest discussion, this
-> part should no longer be necessary.
+Thanks for the reminder!
 
-When is this going to happen? 4.17?
+Yeah, I noticed this commit yesterday.
+Now, unwcheck.py seems to be compatible
+with both Python 2.x and 3.x
+(I have not tested it, but I understood so from the
+commit log.)
 
-[..]
-> nds32 currently only exists in linux-next, not in the mainline kernel.
-> If it's the only architecture that does something different from everyone
-> else, I think we should change nds32.
-> 
-> I looked at the nds32 show_stack() implementation now and it
-> seems to me that it is completely unnecessary, as the implementation
-> from lib/dump_stack.c does basically the same thing (by calling
-> show_stack(NULL, NULL)).
+I will keep 'PYTHON' and arch/ia64/Makefile as they are.
 
-Interesting point. I'll leave it to nds32 maintainers.
-OTOH blackfin is still in linux-next, so I assume we need
-that __weak dump_stack() for the time being.
+I will just add 'PYTHON2' and 'PYTHON3'.
 
-[..]
-> > +asmlinkage __weak __visible void dump_stack(void)
-> >  {
-> >         __dump_stack();
-> >  }
-> 
-> Weak symbols are generally discouraged in the kernel. We have
-> them in a couple of places, but I find them rather confusing as they
-> make it harder to figure out what is actually going on.
 
-Honestly, I kind of find __weak less confusing than EXPORT_SYMBOL(dump_stack)
-in 3 different places. __weak hints that the symbol likely will be overridden
-somewhere, while EXPORT_SYMBOL() does not (at least not to me). Dunno.
 
-	-ss
+
+-- 
+Best Regards
+Masahiro Yamada
