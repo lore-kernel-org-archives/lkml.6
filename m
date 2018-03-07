@@ -1,208 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754087AbeCGKc5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:32:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41676 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751132AbeCGKcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:32:54 -0500
-Date: Wed, 7 Mar 2018 11:32:52 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Paul Moore <paul@paul-moore.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Andy Lutomirski <luto@kernel.org>
-cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] audit: set TIF_AUDIT_SYSCALL only if audit filter has been
- populated
-Message-ID: <nycvar.YFH.7.76.1803071120410.15778@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1754235AbeCGKdI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:33:08 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57606 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754153AbeCGKdH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 05:33:07 -0500
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v1 5/9] PCI/portdrv: Remove pcie_port_bus_type link order dependency
+Date: Wed, 07 Mar 2018 11:33:48 +0100
+Message-ID: <7571217.yaDH5TzqWC@aspire.rjw.lan>
+In-Reply-To: <152040323121.240786.5383276983544773869.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040323121.240786.5383276983544773869.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+On Wednesday, March 7, 2018 7:13:51 AM CET Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> The pcie_port_bus_type must be registered before drivers that depend on it
+> can be registered.  Those drivers include:
+> 
+>   pcied_init()                # PCIe native hotplug driver
+>   aer_service_init()          # AER driver
+>   dpc_service_init()          # DPC driver
+>   pcie_pme_service_init()     # PME driver
+> 
+> Previously we registered pcie_port_bus_type from pcie_portdrv_init(), a
+> device_initcall.  The callers of pcie_port_service_register() (above) are
+> also device_initcalls.  This is fragile because the device_initcall
+> ordering depends on link order, which is not explicit.
+> 
+> Register pcie_port_bus_type from pci_driver_init() along with pci_bus_type.
+> This removes the link order dependency between portdrv and the pciehp, AER,
+> DPC, and PCIe PME drivers.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pci-driver.c       |   45 +++++++++++++++++++++++++++++++-
+>  drivers/pci/pcie/Makefile      |    2 +
+>  drivers/pci/pcie/portdrv_bus.c |   56 ----------------------------------------
+>  drivers/pci/pcie/portdrv_pci.c |   13 +--------
+>  4 files changed, 46 insertions(+), 70 deletions(-)
+>  delete mode 100644 drivers/pci/pcie/portdrv_bus.c
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 38ee7c8b4d1a..4db85a0faf34 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -7,6 +7,7 @@
+>   */
+>  
+>  #include <linux/pci.h>
+> +#include <linux/pcieport_if.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/device.h>
+> @@ -19,6 +20,7 @@
+>  #include <linux/suspend.h>
+>  #include <linux/kexec.h>
+>  #include "pci.h"
+> +#include "pcie/portdrv.h"
+>  
+>  struct pci_dynid {
+>  	struct list_head node;
+> @@ -1553,8 +1555,49 @@ struct bus_type pci_bus_type = {
+>  };
+>  EXPORT_SYMBOL(pci_bus_type);
+>  
+> +#ifdef CONFIG_PCIEPORTBUS
+> +static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
+> +{
+> +	struct pcie_device *pciedev;
+> +	struct pcie_port_service_driver *driver;
+> +
+> +	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
+> +		return 0;
+> +
+> +	pciedev = to_pcie_device(dev);
+> +	driver = to_service_driver(drv);
+> +
+> +	if (driver->service != pciedev->service)
+> +		return 0;
+> +
+> +	if ((driver->port_type != PCIE_ANY_PORT) &&
+> +	    (driver->port_type != pci_pcie_type(pciedev->port)))
+> +		return 0;
+> +
+> +	return 1;
+> +}
+> +
+> +struct bus_type pcie_port_bus_type = {
+> +	.name		= "pci_express",
+> +	.match		= pcie_port_bus_match,
+> +};
+> +EXPORT_SYMBOL_GPL(pcie_port_bus_type);
+> +#endif
+> +
+>  static int __init pci_driver_init(void)
+>  {
+> -	return bus_register(&pci_bus_type);
+> +	int ret;
+> +
+> +	ret = bus_register(&pci_bus_type);
+> +	if (ret)
+> +		return ret;
+> +
+> +#ifdef CONFIG_PCIEPORTBUS
+> +	ret = bus_register(&pcie_port_bus_type);
+> +	if (ret)
+> +		return ret;
+> +#endif
+> +
+> +	return 0;
+>  }
+>  postcore_initcall(pci_driver_init);
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index 223e4c34c29a..e01c10c97b95 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -6,7 +6,7 @@
+>  # Build PCI Express ASPM if needed
+>  obj-$(CONFIG_PCIEASPM)		+= aspm.o
+>  
+> -pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o
+> +pcieportdrv-y			:= portdrv_core.o portdrv_pci.o
+>  pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
+>  
+>  obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
+> diff --git a/drivers/pci/pcie/portdrv_bus.c b/drivers/pci/pcie/portdrv_bus.c
+> deleted file mode 100644
+> index f0fba552a0e2..000000000000
+> --- a/drivers/pci/pcie/portdrv_bus.c
+> +++ /dev/null
+> @@ -1,56 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/*
+> - * File:	portdrv_bus.c
+> - * Purpose:	PCI Express Port Bus Driver's Bus Overloading Functions
+> - *
+> - * Copyright (C) 2004 Intel
+> - * Copyright (C) Tom Long Nguyen (tom.l.nguyen@intel.com)
+> - */
+> -
+> -#include <linux/module.h>
+> -#include <linux/pci.h>
+> -#include <linux/kernel.h>
+> -#include <linux/errno.h>
+> -#include <linux/pm.h>
+> -
+> -#include <linux/pcieport_if.h>
+> -#include "portdrv.h"
+> -
+> -static int pcie_port_bus_match(struct device *dev, struct device_driver *drv);
+> -
+> -struct bus_type pcie_port_bus_type = {
+> -	.name		= "pci_express",
+> -	.match		= pcie_port_bus_match,
+> -};
+> -EXPORT_SYMBOL_GPL(pcie_port_bus_type);
+> -
+> -static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
+> -{
+> -	struct pcie_device *pciedev;
+> -	struct pcie_port_service_driver *driver;
+> -
+> -	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
+> -		return 0;
+> -
+> -	pciedev = to_pcie_device(dev);
+> -	driver = to_service_driver(drv);
+> -
+> -	if (driver->service != pciedev->service)
+> -		return 0;
+> -
+> -	if ((driver->port_type != PCIE_ANY_PORT) &&
+> -	    (driver->port_type != pci_pcie_type(pciedev->port)))
+> -		return 0;
+> -
+> -	return 1;
+> -}
+> -
+> -int pcie_port_bus_register(void)
+> -{
+> -	return bus_register(&pcie_port_bus_type);
+> -}
+> -
+> -void pcie_port_bus_unregister(void)
+> -{
+> -	bus_unregister(&pcie_port_bus_type);
+> -}
+> diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+> index c08ebd237242..9475886eeb62 100644
+> --- a/drivers/pci/pcie/portdrv_pci.c
+> +++ b/drivers/pci/pcie/portdrv_pci.c
+> @@ -259,22 +259,11 @@ static const struct dmi_system_id pcie_portdrv_dmi_table[] __initconst = {
+>  
+>  static int __init pcie_portdrv_init(void)
+>  {
+> -	int retval;
+> -
+>  	if (pcie_ports_disabled)
+>  		return -EACCES;
+>  
+>  	dmi_check_system(pcie_portdrv_dmi_table);
+>  
+> -	retval = pcie_port_bus_register();
+> -	if (retval) {
+> -		printk(KERN_WARNING "PCIE: bus_register error: %d\n", retval);
+> -		goto out;
+> -	}
+> -	retval = pci_register_driver(&pcie_portdriver);
+> -	if (retval)
+> -		pcie_port_bus_unregister();
+> - out:
+> -	return retval;
+> +	return pci_register_driver(&pcie_portdriver);
+>  }
+>  device_initcall(pcie_portdrv_init);
+> 
+> 
 
-There is no point going through all the audit slow path syscall entry/exit 
-in case the audit daemon is running, but hasn't populated the audit filter 
-with any rules whatsoever.
-
-Only set TIF_AUDIT_SYSCALL in case the number of populated audit rules is 
-non-zero.
-
-Originally-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
-
-This is basically resurrection / rebase of patch Andi Lutomirski sent some
-time back in 2014 or so.
- 
-Andi, is there any reason this hasn't been pursued further? I think we 
-still want to get some of the slow path performance back.
-
-Thanks.
-
- include/linux/audit.h | 15 +++++++++++++--
- kernel/auditfilter.c  |  4 ++--
- kernel/auditsc.c      | 45 ++++++++++++++++++++++++++++++++++++++++-----
- kernel/fork.c         |  2 +-
- 4 files changed, 56 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index af410d9fbf2d..3d5e96f96be5 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -451,8 +451,10 @@ static inline void audit_fanotify(unsigned int response)
- 		__audit_fanotify(response);
- }
- 
--extern int audit_n_rules;
- extern int audit_signals;
-+extern void audit_populate(struct task_struct *tsk);
-+extern void audit_inc_n_rules(void);
-+extern void audit_dec_n_rules(void);
- #else /* CONFIG_AUDITSYSCALL */
- static inline int audit_alloc(struct task_struct *task)
- {
-@@ -572,7 +574,16 @@ static inline void audit_fanotify(unsigned int response)
- 
- static inline void audit_ptrace(struct task_struct *t)
- { }
--#define audit_n_rules 0
-+
-+static inline void audit_populate(struct task_struct *tsk)
-+{ }
-+
-+static inline void audit_inc_n_rules(void)
-+{ }
-+
-+static inline void audit_dec_n_rules(void)
-+{ }
-+
- #define audit_signals 0
- #endif /* CONFIG_AUDITSYSCALL */
- 
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 4a1758adb222..46ad138d8ba2 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -991,7 +991,7 @@ static inline int audit_add_rule(struct audit_entry *entry)
- 	}
- #ifdef CONFIG_AUDITSYSCALL
- 	if (!dont_count)
--		audit_n_rules++;
-+		audit_inc_n_rules();
- 
- 	if (!audit_match_signal(entry))
- 		audit_signals++;
-@@ -1038,7 +1038,7 @@ int audit_del_rule(struct audit_entry *entry)
- 
- #ifdef CONFIG_AUDITSYSCALL
- 	if (!dont_count)
--		audit_n_rules--;
-+		audit_dec_n_rules();
- 
- 	if (!audit_match_signal(entry))
- 		audit_signals--;
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index e80459f7e132..642dd856e716 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -91,7 +91,7 @@
- #define MAX_PROCTITLE_AUDIT_LEN 128
- 
- /* number of audit rules */
--int audit_n_rules;
-+static int audit_n_rules;
- 
- /* determines whether we collect data for signals sent */
- int audit_signals;
-@@ -919,6 +919,36 @@ static inline struct audit_context *audit_alloc_context(enum audit_state state)
- 	return context;
- }
- 
-+void audit_inc_n_rules()
-+{
-+	struct task_struct *p, *g;
-+	unsigned long flags;
-+
-+	read_lock_irqsave(&tasklist_lock, flags);
-+	if (!audit_n_rules++) {
-+		do_each_thread(g, p) {
-+			if (p->audit_context)
-+				set_tsk_thread_flag(p, TIF_SYSCALL_AUDIT);
-+		} while_each_thread(g, p);
-+	}
-+	read_unlock_irqrestore(&tasklist_lock, flags);
-+}
-+
-+void audit_dec_n_rules()
-+{
-+	struct task_struct *p, *g;
-+	unsigned long flags;
-+
-+	read_lock_irqsave(&tasklist_lock, flags);
-+	audit_n_rules--;
-+	if (!audit_n_rules) {
-+		do_each_thread(g, p) {
-+			clear_tsk_thread_flag(p, TIF_SYSCALL_AUDIT);
-+		} while_each_thread(g, p);
-+	}
-+	read_unlock_irqrestore(&tasklist_lock, flags);
-+}
-+
- /**
-  * audit_alloc - allocate an audit context block for a task
-  * @tsk: task
-@@ -938,10 +968,8 @@ int audit_alloc(struct task_struct *tsk)
- 		return 0; /* Return if not auditing. */
- 
- 	state = audit_filter_task(tsk, &key);
--	if (state == AUDIT_DISABLED) {
--		clear_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
-+	if (state == AUDIT_DISABLED)
- 		return 0;
--	}
- 
- 	if (!(context = audit_alloc_context(state))) {
- 		kfree(key);
-@@ -951,7 +979,6 @@ int audit_alloc(struct task_struct *tsk)
- 	context->filterkey = key;
- 
- 	tsk->audit_context  = context;
--	set_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
- 	return 0;
- }
- 
-@@ -967,6 +994,14 @@ static inline void audit_free_context(struct audit_context *context)
- 	kfree(context);
- }
- 
-+void audit_populate(struct task_struct *tsk)
-+{
-+	if (tsk->audit_context && audit_n_rules)
-+		set_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
-+	else
-+		clear_tsk_thread_flag(tsk, TIF_SYSCALL_AUDIT);
-+}
-+
- static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 				 kuid_t auid, kuid_t uid, unsigned int sessionid,
- 				 u32 sid, char *comm)
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e5d9d405ae4e..79c828746d24 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1955,7 +1955,7 @@ static __latent_entropy struct task_struct *copy_process(
- 		attach_pid(p, PIDTYPE_PID);
- 		nr_threads++;
- 	}
--
-+	audit_populate(p);
- 	total_forks++;
- 	spin_unlock(&current->sighand->siglock);
- 	syscall_tracepoint_update(p);
--- 
-Jiri Kosina
-SUSE Labs
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
