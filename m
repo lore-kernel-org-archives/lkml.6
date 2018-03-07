@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvjMeLFERFt+1cqbebt5WFD0bPMLHN9cD+VfmzCxuMUlrnRuIvEj1SAf69+RXIvdQNSaLla
-ARC-Seal: i=1; a=rsa-sha256; t=1520451703; cv=none;
+X-Google-Smtp-Source: AG47ELu3uP5DGKyAYhZA+6ADUjQypslAoH39DlGU6w2+BJk8DkPLGsTrJm8iNcoRLN4BPC5Bv9qh
+ARC-Seal: i=1; a=rsa-sha256; t=1520451701; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hq8CUPZxXBZLYPGmuYg70n6cfxLD9w3VkNQvBOLSMhE62GLIkpm/+ucjT7mVVolFBq
-         5LnAGqoCUsVOj+lDTYKVrnA1beVo8PbXUkMsC5PT6MNZ7kEBilHUGKebfzuuyI1lDvrb
-         +e/9qWUqe1bZJqjixuEYSoOiOqrxw4VoEfVuDlzkc/Ijzxiwg+i6iq0Pxr7s3x4ykc4Z
-         NxThnjUA2cQTB1EqKYqbRDYs/rZf/p9usaaiqYSAwz6VP9Ix4oWZDziFNnp3dM8Noy4S
-         Zn9nHaSHWUXZ0KLQqVwdRedASX+jbD9QUm9wpYlP4ipCsc7dPaYkc4cMBOHFBl9i3jqZ
-         doRg==
+        b=0orelO3OO0nj8E5UHPJVt0rx3w2mDyLw+QkHNy2dbXT1s+ZsXrLdMp5Qak5hV9EmB5
+         lu0ux69SaE0AxABWZ5MWd6G5OWN1uZtuf7PJ6tmxXJYCU7554t9MivZ3dShlxFAXi6V6
+         qvPAR0UzN2HbSrUTZ52JZdgu869R65nplLfXfREFad5nFykR/VQq2EOjP8xFyyK698GL
+         I0k0jPS3uMStd/rydU7AIJX1y9WM3a7xdwIK14mw2ZrqB4POS9yQPMqr/SMpl2KejrAx
+         xyX7pD3ycvA60ecXa0OimvOgf9Zit19lAnpuABCGutWtF79j5tQPFkVF6/d8A6eMD5cK
+         nxNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JBbT8dCMDFoTiOL0OWX4aGy+Pm7FlL67ebqzYRo/qPA=;
-        b=UC5ROrJF3gXMjrbXoIJiNH/+UX82Ib9vsChaCCpjhKZb9Qs1pZKvJdT0PQxeJBS6FX
-         eU+QJFTJLY9dWkIcEubzKAelXqn3XLUVmv4r8hFKoOXOEVYA/uE5IfTShfyDephAUsOn
-         czGQVhu6J3b0SpbUUGNbtP5zjOt3+dg8ueUDGwhSvpEhy+69Ckj7BnKo6HSa9TGPQjaX
-         ohncvcGeOj/wm2PXfF3un+6jAPX4c4yVHsrBxixdGyzlZ5kviTB2oJdv6EMV8tVTz/NM
-         yBY7ld6Be/gLOVOIf+RPJas+iIeF3O5tNVO3bIVCj05oPqycV576cNTnBC/5IYK36yJ8
-         pm/Q==
+        bh=3FL3MxMzoA9A4gMhi1GHAQ6WzzoBFAA1HY4WQq7XF1w=;
+        b=b9lRLlve2ucjfJnUIbNP0u+jqNRpi2Igx0J5upChvDC3if3878yFNHGdz/kmFXoM0T
+         T/ig6GGqMVIw/+3aIwSnPkZtOWU4KDiWvkLbzl2mdkzr/ZyJXWcZYbk4cMDhrV/uWjZH
+         HnV0tOVugNTLfpWD74jdqc9xyFZzDd3q7FWjZjaO68WHmmpmxLX9h9Cf6hzYgneawFYF
+         u6wI4BXe20xfYwbQYsrZOzInhLpke13GUk7WhqsA8fd9+svvsK9p0FUS+789qN4XhQiD
+         YeJxzthsIygdTn/tVG8uYb5S/cfOVGbx5YTPv3vKvqJiMCl+RtycenBSDNP9r2317w8E
+         AgpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gerd Rausch <gerd.rausch@oracle.com>,
-	Jane Chu <jane.chu@oracle.com>,
-	Haozhong Zhang <haozhong.zhang@intel.com>,
-	Jan Kara <jack@suse.cz>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.15 034/122] dax: fix vma_is_fsdax() helper
-Date: Wed,  7 Mar 2018 11:37:26 -0800
-Message-Id: <20180307191734.092421774@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 060/122] doc: Change the min default value of tcp_wmem/tcp_rmem.
+Date: Wed,  7 Mar 2018 11:37:52 -0800
+Message-Id: <20180307191737.951690072@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309166179960390?=
-X-GMAIL-MSGID: =?utf-8?q?1594309166179960390?=
+X-GMAIL-THRID: =?utf-8?q?1594309163240228221?=
+X-GMAIL-MSGID: =?utf-8?q?1594309163240228221?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,35 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
 
-commit 230f5a8969d8345fc9bbe3683f068246cf1be4b8 upstream.
 
-Gerd reports that ->i_mode may contain other bits besides S_IFCHR. Use
-S_ISCHR() instead. Otherwise, get_user_pages_longterm() may fail on
-device-dax instances when those are meant to be explicitly allowed.
+[ Upstream commit a61a86f8db92923a2a4c857c49a795bcae754497 ]
 
-Fixes: 2bb6d2837083 ("mm: introduce get_user_pages_longterm")
-Cc: <stable@vger.kernel.org>
-Reported-by: Gerd Rausch <gerd.rausch@oracle.com>
-Acked-by: Jane Chu <jane.chu@oracle.com>
-Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+The SK_MEM_QUANTUM was changed from PAGE_SIZE to 4096. And the
+tcp_wmem/tcp_rmem min default values are 4096.
+
+Fixes: bd68a2a854ad ("net: set SK_MEM_QUANTUM to 4096")
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/fs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/networking/ip-sysctl.txt |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3204,7 +3204,7 @@ static inline bool vma_is_fsdax(struct v
- 	if (!vma_is_dax(vma))
- 		return false;
- 	inode = file_inode(vma->vm_file);
--	if (inode->i_mode == S_IFCHR)
-+	if (S_ISCHR(inode->i_mode))
- 		return false; /* device-dax */
- 	return true;
- }
+--- a/Documentation/networking/ip-sysctl.txt
++++ b/Documentation/networking/ip-sysctl.txt
+@@ -508,7 +508,7 @@ tcp_rmem - vector of 3 INTEGERs: min, de
+ 	min: Minimal size of receive buffer used by TCP sockets.
+ 	It is guaranteed to each TCP socket, even under moderate memory
+ 	pressure.
+-	Default: 1 page
++	Default: 4K
+ 
+ 	default: initial size of receive buffer used by TCP sockets.
+ 	This value overrides net.core.rmem_default used by other protocols.
+@@ -666,7 +666,7 @@ tcp_window_scaling - BOOLEAN
+ tcp_wmem - vector of 3 INTEGERs: min, default, max
+ 	min: Amount of memory reserved for send buffers for TCP sockets.
+ 	Each TCP socket has rights to use it due to fact of its birth.
+-	Default: 1 page
++	Default: 4K
+ 
+ 	default: initial size of send buffer used by TCP sockets.  This
+ 	value overrides net.core.wmem_default used by other protocols.
