@@ -1,124 +1,233 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AG47ELsw9/7AvU7kzOWXcrO0ycK7RGsOkQrceCLHpS44ko4lX2nIV5cEeWkvnMb4qZdvrdldhRUD
-ARC-Seal: i=1; a=rsa-sha256; t=1522072762; cv=none;
+Return-Path: <hns@goldelico.com>
+X-Google-Smtp-Source: AG47ELubqqXO110bZyBWeriqMlI4+LNqt82EF+RGiYmp2S5wAMPmMziZ/mGnQwzYC1uwKophAPky
+ARC-Seal: i=1; a=rsa-sha256; t=1520438060; cv=none;
         d=google.com; s=arc-20160816;
-        b=prr1jrQ+ROrVij16NdWkELNEfbOYsNSlZ/cB6db671iLt6ZpGOcIWKgLhEXgqi07Ng
-         dFAEGWEz8Spk8OsvHuzxC8EbzK798+aC1Xkt5+cPwnxzOocG/An2OjWFSc6Z4Gn36B9D
-         tIR31LpK2fp+jt/7c36Zu78e8dDVkUjKtJTSDGoTnbddG0YjBLNJNui8FyqfHPjBItbi
-         o3CamsP/BTlwEkn+5NiwMjC6L4NgcMZv+FFGve7HEZhJSXoLLJLurRM/9eTJMarBxlDv
-         JiYgOO7C2Zz06k2V/DN0kiPt6AaRsUhQU3LY1EHEe2RlcTQIn4aavzgsjgOVRL2kPhjz
-         0JSA==
+        b=pJiJkvljRYcFGf2ygJE8TSDQWgGyrPB89vQ0fHaC1JWV3ssm2HYyt8ATlEIFZiOvZ1
+         1UU+ge1gs/fmPz/9593Ddl2a/lFJ2WUmipUhztDt8lyfDVhc/YAhpDO0huxyaxR7czKj
+         6HsOuD2NdKIZ2RhCgYdzw7Apf1UH+af0Rg//sQeaQWb6W1Mrhu82uq7ZlVX5yIR12F5S
+         P7qSs31LbVzNBYdQXSk5egzmIRYMiQl7aKMX7qDlGHr9pQfk3DpyaWt3plpXI5S5ebxg
+         Sy1bUVApZ9ff51MD6xj5dAQxAbbdXn2Y1Zysvy953CgZmr/sTxGxVgRkwKZcUvlHijIs
+         inVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=JHNWeIwWG0bZ/c2Ukc1CrQkzV6I/h1NyPK1miJTCTvU=;
-        b=nrDHl74uDp0c9qEiFUaZMM8W7zg8Aa9gmBAtHYTLNXsu+ajN8wU1zns+6YuCxT4S71
-         RHc3ner1HFkUaWQY8Vq5wAiNs7G+vTlhsy9lUSQjpXUkalKc+bz4qqCnekfaT52DfupY
-         MXWsCfgH4oNSQ5wiWEQu4Yu6CLwDSQm8eQYZqiSFFB3GOILF/8UlsTOcETyHg3l0znYh
-         y+8+KS5UyMcQdpIu5Ccd1sS+zryeHy3hYUgl1nKAr+5fo8WLfb8HZx+wqydT9UV8eo7e
-         lYQI+e4ndR3+sre8lmP6LCKW2V92GuUFvnTbSG0cCKD1R/LPxaadKG1D5+cujpBb45+X
-         aggw==
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=eVBwri79ce9OxQQfDxzw7ZZVrYY7+KDeW7NLhepfSWo=;
+        b=AjodYhIjDGk1egeCv+MqKluQrbrGB7DfGD4FVOocZ1881fbgPKMtr2R4JiZmB4JIB+
+         c/zOHLXfe9tJNrQJ9xPepNlCNs/k3RIXp3e6m6JUvlG7E5g9dnwV9C8OE2s+fwPzE0zq
+         Jyja5nOyfRuL5UugckR0hb1Uws8AXBOn5nT6klhJ7Zz1sqyeJv9Gtb376+CnFcUqSt+h
+         3IWB2cCNd/806EepHLP7G7KwXyPNsCTLnPWl9q3pTbzrAL1HvL9p1TgzZlbFmJ8gbb6M
+         NDLGJ1E9y1jRvhiaGHBq7hPk5/0yOhxpxzZCovrLnt07ZrGKD0eToZL4WigqnO7muqGx
+         yMrA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=pdj9hKhK;
+       spf=neutral (google.com: 2a01:238:20a:202:5300::11 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Mon, 26 Mar 2018 15:59:20 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Johan Hovold <johan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	DTML <devicetree@vger.kernel.org>,
-	Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
-	=?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	kernel@pyra-handheld.com, Russell King <linux@armlinux.org.uk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-omap <linux-omap@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [Letux-kernel] [PATCH v5 3/5] misc serdev: Add w2sg0004 (gps
- receiver) power control driver
-Message-ID: <20180326135920.GA1450@amd>
-References: <5494ad34b39a6c62601e3747440268dfb3be7d5a.1512114576.git.hns@goldelico.com>
- <20171222124427.GI3374@localhost>
- <91850CC3-B280-4701-9D07-96AFF3A79A6F@goldelico.com>
- <90F9A8E4-035A-4A9E-8AAB-757491D63E69@goldelico.com>
- <20180112153903.GB5992@localhost>
- <20180212152618.GC13962@amd>
- <20180227070415.GB18666@localhost>
- <22A8F5FE-C8B9-46EB-B98D-A94EA4170131@goldelico.com>
- <20180319135418.GL18359@localhost>
- <FCD404C1-3DD4-45BD-9242-3F7A7C44F6C9@goldelico.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <FCD404C1-3DD4-45BD-9242-3F7A7C44F6C9@goldelico.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=pdj9hKhK;
+       spf=neutral (google.com: 2a01:238:20a:202:5300::11 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qEj3wLA==
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v5 3/5] misc serdev: Add w2sg0004 (gps receiver) power control driver
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <8B2641B8-E86B-425C-9E79-E9C41E4E623C@goldelico.com>
+Date: Wed, 7 Mar 2018 16:53:12 +0100
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ DTML <devicetree@vger.kernel.org>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Tony Lindgren <tony@atomide.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ kernel@pyra-handheld.com,
+ Russell King <linux@armlinux.org.uk>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-omap <linux-omap@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Thierry Reding <treding@nvidia.com>,
+ =?utf-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Jonathan Cameron <jic23@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <461DBB7C-5FF7-4723-9518-C9A5E7E5610D@goldelico.com>
+References: <cover.1512114576.git.hns@goldelico.com> <5494ad34b39a6c62601e3747440268dfb3be7d5a.1512114576.git.hns@goldelico.com> <20171222124427.GI3374@localhost> <91850CC3-B280-4701-9D07-96AFF3A79A6F@goldelico.com> <90F9A8E4-035A-4A9E-8AAB-757491D63E69@goldelico.com> <20180112153903.GB5992@localhost> <E7ECBBB8-2E88-4F04-AFC3-659332E84CF6@goldelico.com> <20180118061314.GG3286@localhost> <8B2641B8-E86B-425C-9E79-E9C41E4E623C@goldelico.com>
+To: Johan Hovold <johan@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1584169666984958099?=
-X-GMAIL-MSGID: =?utf-8?q?1596008968945391433?=
+X-GMAIL-MSGID: =?utf-8?q?1594294859847296875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Johan,
+I know you have a lot of other things to do, but we are still waiting =
+for a
+statement that this driver will be accepted after fixing the final =
+coding issues.
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please advise on how you want to proceed with this.
 
-Hi!
+One more technical comment/question/aspect below:
 
-> > No, we need some kind of at least rudimentary gps framework even if we
-> > allow for a raw (NMEA) interface for the time being (possibly
-> > indefinitely).
+> Am 18.01.2018 um 14:43 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
 >=20
-> Ok, that would be fine if we can get that!
+> Hi Johan,
 >=20
-> For a minimal set of API I think something like this (following hci_dev) =
-would suffice:
+>> Am 18.01.2018 um 07:13 schrieb Johan Hovold <johan@kernel.org>:
+>>=20
+>> Hacks are never good, but sometimes needed. But we should try to keep
+>> them contained in drivers rather than allow them to spread to core =
+code,
+>> was what I was trying to say above.
 >=20
-> struct gps_dev {
-> 	...
-> 	int (*open)(struct gps_dev *gdev);
-> 	int (*close)(struct gps_dev *gdev);
-> 	int (*send)(struct gps_dev *gdev, char *data, int length);
-> };
+> Well, aren't we talking here about a well isolated driver? And not =
+about
+> core code?
 >=20
-> int gps_register_dev(struct gps_dev *gdev);
-> void gps_unregister_dev(struct gps_dev *gdev);
-> int gps_recv_nmea_chars(struct gps_dev *gdev, char *data, int length);
+> Core code already provides everything to build a driver for this chip
+> to make us happy with.
 >=20
-> If that would wrap all creation of some /dev/ttyGPS0 (or however it is ca=
-lled),
-> it would fit our needs for a driver and user-space for our system.
+> It is just not yet providing a generic gps interface API to make =
+everybody
+> happy with.
 >=20
-> And I would be happy to get rid of creating and registering a /dev/ttyGPS0
-> in the w2sg0004 driver.
+>>> That is what Andreas did remark as motivation: provide a solution
+>>> for *existing* user spaces.
+>>=20
+>> I understand that this is what you want, but that in itself is not a
+>> sufficient reason to put something in the kernel.
+>=20
+> Agreed, but it is a secondary (but still strong) motivation, not the =
+primary one.
+>=20
+>>=20
+>>>>> - can not guarantee (!) to power off the chip if the last =
+user-space
+>>>>> process using it is killed (which is essential for =
+power-management of
+>>>>> a handheld, battery operated device)
+>>>>=20
+>>>> That depends on how you implement things (extending gpsd, wrapper
+>>>> script, pty daemon, ...).
+>>>=20
+>>> No. You can of course cover all standard cases but there is one =
+fundamental
+>>> issue which is IMHO a problem of any user-space implementation:
+>>>=20
+>>> 	How can you guarantee that the chip is powered off if no
+>>> 	user-space process is using it or if the last process doing
+>>> 	this is killed by *whatever* reason?
+>>>=20
+>>> E.g. after a kill -9. Or if someone deinstalls gpsd or whatever and =
+assumes
+>>> (and wants a guarantee) that GPS is now turned off and never turned =
+on drawing
+>>> precious milliamps from the battery for no use.
+>>=20
+>> Have something run at init to put the device in a low power state.
 
-Sounds like a good start.
+If I look for example at the camera module drivers provided by
+drivers/media/i2c, most of them could be easily power-controlled from
+user-space by i2c-tools and 1-2 gpios through /sys/class/gpio and
+a big set of scripts.
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Still they have a place in the kernel and cameras are powered on
+if the device is opened and powered down if it is closed.
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So I am still trying to understand the rationale and logic (if one =
+exists)
+behind having them in kernel but rejecting our driver which does the
+same for a different class of devices.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> This does *not* solve the issue how to *guarantee* that it becomes
+> powered off if the number of user-space processes goes down to zero
+> *after* init.
+>=20
+> Please consider that a portable device is rarely booted but might be
+> operated over several days with many suspend cycles. And people may
+> still expect that the power consumer "GPS" is turned off if their
+> personal user-space setup simply kills gpsd.
 
-iEYEARECAAYFAlq4/LgACgkQMOfwapXb+vL8hgCfS0UWaS1wC9bm/jIlnajYRwgo
-ReUAoIYO2jKAA99I3pDDwchvNGTzCbEZ
-=IReX
------END PGP SIGNATURE-----
+>=20
+>>=20
+>>> As it is well known, a user-space process can't protect itself =
+against kill -9.
+>>> Or has this recently been changed and I am not aware of?
+>>>=20
+>>> This is the fundamental reason why we need a kernel driver to =
+provide
+>>> reliable, repeatable and trustable power management of this chip.
+>>>=20
+>>> It is equally fundamental as a hard disk should spin down after the =
+last
+>>> file is closed. Even if this process ends by a kill -9.
+>=20
+> Please advise how we should solve this fundamental problem in =
+user-space.
+>=20
+>>>=20
+>>> This seems to contradict your argument that user-space can very =
+easily
+>>> adapt to everything. If the latter were true there would be no need =
+to
+>>> keep old interfaces supported for a long time.
+>>=20
+>> You probably know that we try hard never to change an interface that
+>> would break user space, and that's why we need to get it right.
+>=20
+> Yes, I know and agree that it is very important (and difficult to =
+achieve).
+>=20
+> But it seems that there are different opinions of what "right" is...
+>=20
+> You seem to focus on the "right" API only (where we agree that the =
+"right"
+> API does not exist and likely will never come or at least in the near =
+future).
+>=20
+> But for us the whole combination of kernel + user-space must behave =
+"right"
+> (and use a function split that allows to optimally achieve this goal).
+>=20
+>>=20
+>>> So can you agree to that a battery powered portable device must have
+>>> reliable and trustable power management? And if it provable can't be
+>>> implemented in user-space (a single counter example suffices) it =
+must
+>>> be a kernel driver?
+>>=20
+>> Having a kernel driver would make things easier for user space, sure,
+>> but again, that's not a sufficient reason to merge just any kernel
+>> implementation.
+>=20
+> It is not about "easier" for anyone. Neither for you nor for me. For =
+us
+> it would be much easier not to have to run this never-ending =
+discussion
+> over and over...
+>=20
+> It is about making it technically fully "reliable". And not 99% as per
+> quick and dirty user-space hacks.
+>=20
+> It is so easy to invent scenarios in user-space to make the device =
+practically
+> unusable by unnoticed draining a full battery within less than a day =
+when
+> not perfectly turning off the chip power.
+>=20
+> So if a kernel driver can better protect users against this situation =
+for
+> a portable device with this chip, why shouldn't it do with a handful =
+LOC?
+> What requirement is more important than this?
+>=20
+> BR and thanks,
+> Nikolaus
+>=20
 
---SUOF0GtieIMvvwua--
+BR and thanks,
+Nikolaus Schaller
