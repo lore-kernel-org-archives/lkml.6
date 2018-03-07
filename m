@@ -1,68 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934045AbeCGQZm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:25:42 -0500
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33851 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbeCGQZj (ORCPT
+        id S934078AbeCGQZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:25:55 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37839 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933775AbeCGQZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:25:39 -0500
-X-Google-Smtp-Source: AG47ELu62nEAK1uzWq42mk2VRL8+a4yhyPLYcJSIXH1/fLDcQ1ZStU9X71DD4+vrP+upeirrkRDi0Eds5U0hWiPUBZM=
+        Wed, 7 Mar 2018 11:25:41 -0500
+X-Google-Smtp-Source: AG47ELsBay4+fUOdYR3dYc4ixHx6OdM6EFneFpTO9p5G/mSOCjfDjaUldSAv8CiiuOl455Y3P7lT7w==
+Date: Wed, 7 Mar 2018 16:25:37 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v3 1/2] mfd: arizona: Update reset pin to use GPIOD
+Message-ID: <20180307162537.pryp3qz3lgm7a4zs@dell>
+References: <20180220163540.6704-1-ckeepax@opensource.cirrus.com>
+ <20180307132812.r5epcs26clpnh72t@dell>
+ <20180307141509.e3dpxteodxeoy2k3@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1520437971.3731.22.camel@flygoat.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
- <1520437971.3731.22.camel@flygoat.com>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Wed, 7 Mar 2018 21:55:38 +0530
-Message-ID: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180307141509.e3dpxteodxeoy2k3@localhost.localdomain>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w27GPkvW007737
 
-On 7 March 2018 at 21:22, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
-> 在 2018-03-07三的 20:35 +0530，PrasannaKumar Muralidharan写道：
->> Hi James,
->>
->> Seems Jiaxun is interested in the board and is willing to help.
->>
->> I have been told that Ingenic is focusing on IoT market and X1000 is
->> intended for IoT segment. I think that they would be selling several
->> 100Ks of chip over the coming years. But I feel Ingenic spends time
->> only on maintaining their Linux port which is usually based on very
->> old kernel version.
->
-> Ingenic is going to release their XBrust2 core with it's products such
-> as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
-> superset of MIPS's MSA SIMD instruction set). The newest kernel port of
-> X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
-> with Ingenic, they said they are forcusing on China domestic market.
-> But they're looking for partners to enter foriegn market.
->
-> [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
-> Chinese website, ingenic have a gerrit but I don't have access to it.
-> As my experience, it's hard to develop on Chinese-made chips wihout
-> reading Chinese documents.)
+On Wed, 07 Mar 2018, Charles Keepax wrote:
 
-Can you take a diff and upload it somewhere else? Download speed is a
-couple of bytes per second. Can you put the diff in github or similar
-other service?
-I would like to see if the port uses DT.
+> On Wed, Mar 07, 2018 at 01:28:12PM +0000, Lee Jones wrote:
+> > On Tue, 20 Feb 2018, Charles Keepax wrote:
+> > > +	if (IS_ERR(pdata->reset)) {
+> > > +		ret = PTR_ERR(pdata->reset);
+> > > +		switch (ret) {
+> > > +		case -ENOENT:
+> > > +		case -ENOSYS:
+> > > +			break;
+> > > +		case -EPROBE_DEFER:
+> > > +			return ret;
+> > > +		default:
+> > > +			dev_err(arizona->dev, "Reset GPIO malformed: %d\n",
+> > > +				ret);
+> > > +			break;
+> > > +		}
+> > 
+> > I haven't seen a switch statement used in the error handling path
+> > before.  There is probably good reason for that.
+> > 
+> 
+> There are a fair few of them "grep -rI "switch (ret)" | wc -l" ==
+> 205. Although to be fair that has rarely been an argument in
+> somethings favour.
+
+I didn't say "it has never been done", just that I hadn't seen it.
+
+Besides, 205 uses is a very small amount in kernel code:
+
+`git grep "if (ret" | wc -l` == 74710
+
+> > What is the 'default' case?  -EINVAL?
+> > 
+> 
+> I would guess most of the time yes, but I would rather not assume
+> that. I can redo this as if's if you prefer it that way? The if is
+> slightly less lines although I do think the switch is much
+> clearer as to intent.
+> 
+> if (ret == -EPROBE_DEFER) {
+> 	return ret;
+> } else if (ret != -ENOENT && ret != -ENOSYS {
+> 	dev_err(arizona->dev, ....);
+> }
+
+I don't know enough about the API to see why -ENOENT and -ENOSYS do
+not deserve error messages.
+
+What do the other users of the API do?
+
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
