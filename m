@@ -1,48 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934263AbeCGPxT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:53:19 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34935 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933958AbeCGPxM (ORCPT
+        id S934282AbeCGPx0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:53:26 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41172 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934262AbeCGPxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:53:12 -0500
-X-Google-Smtp-Source: AG47ELti7M68atOzRXYtUtl58/um6CBtqemDk5XmJc4gSHC/Xo23VOOD//KrJ59emm+LzQovh+caW1C4cSRZ5lrhNmE=
+        Wed, 7 Mar 2018 10:53:20 -0500
+X-Google-Smtp-Source: AG47ELvLrQ5n0Zpayeo0Ylpkna9eLSiPTUz/Y8/nA3yMBocRYyw+rWAuMRNM6q+fgYg4b7BldgVaAQ==
+Date: Wed, 7 Mar 2018 15:53:17 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
+        gwendal@chromium.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3 3/8] mfd: cros_ec: Don't try to grab log when suspended
+Message-ID: <20180307155317.nnqfbnrf2w6wlgk4@dell>
+References: <20180226102606.15093-1-enric.balletbo@collabora.com>
+ <20180226102606.15093-4-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20180307145559.y4tyyzd2pbqrk4yb@localhost.localdomain>
-References: <20180220163540.6704-1-ckeepax@opensource.cirrus.com>
- <CAOMZO5BNYkuz6pH2qZmj+4kBPQB=j-JniiqVbqzdH8nTOXVZQQ@mail.gmail.com> <20180307145559.y4tyyzd2pbqrk4yb@localhost.localdomain>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 7 Mar 2018 12:53:10 -0300
-Message-ID: <CAOMZO5BFRpOfZWfuK8ntfAdYG82uUW5HpaSwD4+P-SXY4W3Ujg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mfd: arizona: Update reset pin to use GPIOD
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180226102606.15093-4-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 11:55 AM, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
+On Mon, 26 Feb 2018, Enric Balletbo i Serra wrote:
 
-> Hmm... this raises a rather good point that I hadn't considered.
-> This driver is used in a lot of shipping devices and the old
-> style GPIO calls didn't take the activeness of the GPIO into
-> account just blindly setting the value you asked for. However the
-> new style calls do take this into account.
->
-> The trouble is I guess we don't know whether most users bothered
-> to set GPIO_ACTIVE_LOW or not. So it is very hard to say here if
-> we are about to breaking a lot of existing device trees here.
->
-> I guess probably the safest approach is to use
-> gpiod_set_raw_value_cansleep here?
+> From: Douglas Anderson <dianders@chromium.org>
+> 
+> We should stop our worker thread while we're suspended.  If we don't
+> then we'll get messages like:
+> 
+>   cros-ec-spi spi5.0: spi transfer failed: -108
+>   cros-ec-spi spi5.0: cs-deassert spi transfer failed: -108
+>   cros-ec-ctl cros-ec-ctl.0.auto: EC communication failed
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> ---
+> 
+> Changes in v3:
+> - [3/8] Add Reviewed-by Andy Shevchenko.
+> 
+> Changes in v2:
+> - [3/8] That patch is new in this series.
+> 
+>  drivers/mfd/cros_ec_dev.c                 |  4 ++++
+>  drivers/platform/chrome/cros_ec_debugfs.c | 20 ++++++++++++++++++++
+>  include/linux/mfd/cros_ec.h               |  2 ++
+>  3 files changed, 26 insertions(+)
 
-Yes, probably needed to avoid breakage of existing systems.
+I plan to make this patch 1/X and send it out as a pull-request.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
