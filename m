@@ -1,75 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934031AbeCGQU3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:20:29 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933335AbeCGQU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:20:27 -0500
-Date: Wed, 7 Mar 2018 17:19:44 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
- HV_X64_MSR_VP_ASSIST_PAGE
-Message-ID: <20180307161944.GE12290@flask>
-References: <20180226171121.18974-1-vkuznets@redhat.com>
- <20180226171121.18974-2-vkuznets@redhat.com>
+        id S934055AbeCGQUo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:20:44 -0500
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:52155 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933335AbeCGQUk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:20:40 -0500
+X-Google-Smtp-Source: AG47ELt0jUD2FymUvXLrFz0F4QjLsfpkC3hU/b3l2yt4Ll8FY5NmmpXlVEqFBGgIOqPcB3NZcwRXJA==
+Subject: Re: [RFC PATCH] ASoC: dapm: add support to pinctrl dapm
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20180305123213.2045-1-srinivas.kandagatla@linaro.org>
+ <20180305155208.GK8588@sirena.org.uk>
+ <21635274-1d7b-5ed9-6832-2e12fd844f7a@linaro.org>
+ <20180307151329.GJ7290@sirena.org.uk>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a9ebf59b-401b-27b2-f6d8-025438f0e16e@linaro.org>
+Date: Wed, 7 Mar 2018 16:20:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180226171121.18974-2-vkuznets@redhat.com>
+In-Reply-To: <20180307151329.GJ7290@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-26 18:11+0100, Vitaly Kuznetsov:
-> From: Ladi Prosek <lprosek@redhat.com>
-> 
-> The assist page has been used only for the paravirtual EOI so far, hence
-> the "APIC" in the MSR name. Renaming to match the Hyper-V TLFS where it's
-> called "Virtual VP Assist MSR".
-> 
-> Signed-off-by: Ladi Prosek <lprosek@redhat.com>
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/include/uapi/asm/hyperv.h | 10 +++++-----
->  arch/x86/kvm/hyperv.c              |  8 ++++----
->  arch/x86/kvm/lapic.h               |  2 +-
->  arch/x86/kvm/x86.c                 |  2 +-
->  4 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
-> index 1c12aaf33915..45cc62352040 100644
-> --- a/arch/x86/include/uapi/asm/hyperv.h
-> +++ b/arch/x86/include/uapi/asm/hyperv.h
-> @@ -189,7 +189,7 @@
->  #define HV_X64_MSR_EOI				0x40000070
->  #define HV_X64_MSR_ICR				0x40000071
->  #define HV_X64_MSR_TPR				0x40000072
-> -#define HV_X64_MSR_APIC_ASSIST_PAGE		0x40000073
-> +#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
->  
->  /* Define synthetic interrupt controller model specific registers. */
->  #define HV_X64_MSR_SCONTROL			0x40000080
-> @@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
->  #define HVCALL_POST_MESSAGE			0x005c
->  #define HVCALL_SIGNAL_EVENT			0x005d
->  
-> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
-> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
-> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
-> -		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
 
-Removing definitions from userspace api isn't a good idea.
 
-I have no idea why hyper.h is a userspace api, though -- Linux doesn't
-define any of those, so we could copy the definitions to a private
-header, rename, and never look at this file again.
+On 07/03/18 15:13, Mark Brown wrote:
+> On Mon, Mar 05, 2018 at 08:35:48PM +0000, Srinivas Kandagatla wrote:
+>> On 05/03/18 15:52, Mark Brown wrote:
+> 
+>>> This doesn't look right - we're trying to synchronize with the DAPM
+>>> async queue from something that should be run inside that very queue.
+>>> What is this supposed to be doing?
+> 
+>> I thought this is supposed to ensure that any pending asynchronous I/O is
+>> completed before touching pinctrl framework.
+> 
+> No, it completes all the pending DAPM operations.  async I/O is part of
+> that but it's not the only thing.
+
+Thanks for explaining, I will remove the synchronizing part and send a 
+next version,
+
+thanks,
+srini
+> 
