@@ -1,99 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754333AbeCGLcA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:32:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49098 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeCGLb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:31:59 -0500
-Date: Wed, 7 Mar 2018 11:31:49 +0000
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
-Message-ID: <20180307113149.GA2211@e110439-lin>
-References: <20180222170153.673-1-patrick.bellasi@arm.com>
- <20180222170153.673-2-patrick.bellasi@arm.com>
- <20180306185851.GG25201@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306185851.GG25201@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1754400AbeCGLf5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:35:57 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37733 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754382AbeCGLfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 06:35:55 -0500
+X-Google-Smtp-Source: AG47ELvxmf60IX7fw1HpGTy3+WVgZNB1672nFro3rs/eSWjvVtA5LA5H3vo+Ga9+Y6RFBZm+9X8jhw==
+From: musashino.open@gmail.com
+To: f.fainelli@gmail.com
+Cc: hauke@hauke-m.de, zajec5@gmail.com, jonmason@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        INAGAKI Hiroshi <musashino.open@gmail.com>
+Subject: [PATCH V2] ARM: dts: BCM5301X: add missing LEDs for Buffalo WZR-900DHP
+Date: Wed,  7 Mar 2018 20:33:56 +0900
+Message-Id: <1520422436-9405-1-git-send-email-musashino.open@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-Mar 19:58, Peter Zijlstra wrote:
-> On Thu, Feb 22, 2018 at 05:01:50PM +0000, Patrick Bellasi wrote:
-> > +static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-> > +				    struct task_struct *p)
-> > +{
-> > +	unsigned int enqueued;
-> > +
-> > +	if (!sched_feat(UTIL_EST))
-> > +		return;
-> > +
-> > +	/* Update root cfs_rq's estimated utilization */
-> > +	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> > +	enqueued += _task_util_est(p);
-> > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
-> > +}
-> 
-> > +static inline void util_est_dequeue(struct cfs_rq *cfs_rq,
-> > +				    struct task_struct *p,
-> > +				    bool task_sleep)
-> > +{
-> > +	long last_ewma_diff;
-> > +	struct util_est ue;
-> > +
-> > +	if (!sched_feat(UTIL_EST))
-> > +		return;
-> > +
-> > +	/*
-> > +	 * Update root cfs_rq's estimated utilization
-> > +	 *
-> > +	 * If *p is the last task then the root cfs_rq's estimated utilization
-> > +	 * of a CPU is 0 by definition.
-> > +	 */
-> > +	ue.enqueued = 0;
-> > +	if (cfs_rq->nr_running) {
-> > +		ue.enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
-> > +		ue.enqueued -= min_t(unsigned int, ue.enqueued,
-> > +				     _task_util_est(p));
-> > +	}
-> > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, ue.enqueued);
-> 
-> It appears to me this isn't a stable situation and completely relies on
-> the !nr_running case to recalibrate. If we ensure that doesn't happen
-> for a significant while the sum can run-away, right?
+From: INAGAKI Hiroshi <musashino.open@gmail.com>
 
-By away you mean go over 1024 or overflow the unsigned int storage?
+Buffalo WZR-900DHP has 8 LEDs, but there is not LED definitions in the
+dts and cannot configure these LEDs.
+I Added missing LED definitions for WZR-900DHP.
 
-In the first case, I think we don't care about exceeding 1024 since:
-- we cap to capacity_orig_of in cpu_util_est
-- by directly reading the cfs_rq->avg.util_est.enqueued we can
-  actually detect conditions in which a CPU is over-saturated.
+Signed-off-by: INAGAKI Hiroshi <musashino.open@gmail.com>
+---
+ arch/arm/boot/dts/bcm47081-buffalo-wzr-900dhp.dts | 68 +++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-In the second case, with an unsigned int we can enqueue up to few
-millions of 100% tasks on a single CPU without overflowing.
-
-> Should we put a max in enqueue to avoid this?
-
-IMO the capping from the cpu_util_est getter should be enough...
-
-Maybe I'm missing your point here?
-
+diff --git a/arch/arm/boot/dts/bcm47081-buffalo-wzr-900dhp.dts b/arch/arm/boot/dts/bcm47081-buffalo-wzr-900dhp.dts
+index 8bef642..87ea6ba 100644
+--- a/arch/arm/boot/dts/bcm47081-buffalo-wzr-900dhp.dts
++++ b/arch/arm/boot/dts/bcm47081-buffalo-wzr-900dhp.dts
+@@ -35,6 +35,74 @@
+ 		       0x88000000 0x08000000>;
+ 	};
+ 
++	spi {
++		compatible = "spi-gpio";
++		num-chipselects = <1>;
++		gpio-sck = <&chipcommon 7 0>;
++		gpio-mosi = <&chipcommon 4 0>;
++		cs-gpios = <&chipcommon 6 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hc595: gpio_spi@0 {
++			compatible = "fairchild,74hc595";
++			reg = <0>;
++			registers-number = <1>;
++			spi-max-frequency = <100000>;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		usb {
++			label = "bcm53xx:green:usb";
++			gpios = <&hc595 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		power0 {
++			label = "bcm53xx:green:power";
++			gpios = <&hc595 1 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++		};
++
++		power1 {
++			label = "bcm53xx:red:power";
++			gpios = <&hc595 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		router0 {
++			label = "bcm53xx:green:router";
++			gpios = <&hc595 3 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++		};
++
++		router1 {
++			label = "bcm53xx:amber:router";
++			gpios = <&hc595 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		wan {
++			label = "bcm53xx:green:wan";
++			gpios = <&hc595 5 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++		};
++
++		wireless0 {
++			label = "bcm53xx:green:wireless";
++			gpios = <&hc595 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		wireless1 {
++			label = "bcm53xx:amber:wireless";
++			gpios = <&hc595 7 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		#address-cells = <1>;
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+2.7.4
