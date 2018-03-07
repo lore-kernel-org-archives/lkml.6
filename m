@@ -1,267 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754469AbeCGLz2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:55:28 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39378 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754279AbeCGLzW (ORCPT
+        id S1754446AbeCGL6a convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:58:30 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:55907 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751241AbeCGL61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:55:22 -0500
-X-Google-Smtp-Source: AG47ELsw5f5XAyzwKUAIPu5sXM9sAONO6Enwwt1b2acAZPTpiPpibReifSvCVC/rSzMjKCP6qefweSWcSyov560QRIE=
+        Wed, 7 Mar 2018 06:58:27 -0500
+Date: Wed, 7 Mar 2018 12:58:07 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: linus.walleij@linaro.org, Matheus Castello <matheus@castello.eng.br>
+Cc: eric@anholt.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <821312841.275581.1520423887935@email.1und1.de>
+In-Reply-To: <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+References: <431699005.307231.1520086916739@email.1und1.de>
+ <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+Subject: Re: [PATCH v2 0/3] pinctrl: bcm2835: Add brcm,level property
 MIME-Version: 1.0
-In-Reply-To: <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
-References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com> <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 7 Mar 2018 12:55:00 +0100
-Message-ID: <CANiq72m6_WCXSrBPesgvO1rsF1_AT5Jod_rY-y1f4JjO-SMCDg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
- infrastructure to invoke all efi_runtime_services()
-To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>,
-        Lee@vger.kernel.org, Chun-Yi <jlee@suse.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>, Dave Hansen <dave.hansen@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peter.zijlstra@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:XWhppvzj83o3fRpzwIUGtnj4ruwEitjkFmnyVzPAnElFEyrQ43F
+ +ryLlqUEny1VLXijJA/wsmBPSAk+x7u1aVy1Uxi1r/sav7suoCxdd6MmvaoC+sDr/nwl5xG
+ OTJj0vGbRlGGqggH7dbfFFmD5EFz3LsdFalbu/Cg2YL8z4hc2AJIByvWfSEMVzANI/bAB2q
+ zJx85ZcPs8JQlmZ632hxg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hP+TZK582jc=:3fdLT3h8rvoFFcjn8cvvNC
+ eJNfkCErerY/69C7YV9d3CzQarnSInwr4+o2q5EtvapBuB4ac6jffwTtpArOEacObdFWTIm9l
+ Wg5sU151E9x4PliXLaJfedl2h9yzVmGSI/fFmf3lp7t0QUZ1nRmcZljtXE6o5TsDHawuv0LUD
+ FnGQefY9MPaD9SvEtuIg8pl6YIi/gIffuBP8j/cNSU7bvJlHxD1tgJ6qqTYJJNUI9TkjBeBNY
+ LW4ax9GpyNsaXGqg+7tWe7GvxALBcgPYzdGccWvCSBm+L5oIIC0O6wZadUO0PE9N84uPoJVC0
+ RUAnaKEjQAkbM580QADc/ohDBOk+lkeX31Q2Dwgg524GJQx5uwu07duaXw5wK3wjfeI+ZsuaB
+ pPQRFWhHKnIa/eTV5sjFDzQuVF6ZNdC1OYKb7jzXRqQoXnyit9I5Lu36TOmv0cw6Fdw68pczt
+ ALEJcis9Zk6iR2z4jXfSlUyGQn+Xpc41MIYNcwre2UsR+1j+YmDWP09pFNHHaLfJ+S+zmjNPb
+ OsY4s3LqcfKRL/Ee76lgQSA6EiT3kb2CtB0ctnFqO6kJ7ib6HGCDpLC2LYrsCySuZvK0NZ2gZ
+ CT5bNeINxGDxKu6YbNmdEY7QKhsmDAcoJqNufY4Xb7nuQx0LARG8h17IExihMfdGcbs7W+nBE
+ fehfeShT8aQCs28RoUPKuVxhD93dNhaBTSrbNgPCIVD1MUBFIF+k5qI5wgEM/plxfVJtH/d/O
+ pjjPrHccKMixLor+6m0d9jmDoPJRyyYhtgafbuwMj1rwdANLlHN6BP42InM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 12:23 AM, Sai Praneeth Prakhya
-<sai.praneeth.prakhya@intel.com> wrote:
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
->
-> When a process requests the kernel to execute any efi_runtime_service(),
-> the requested efi_runtime_service (represented as an identifier) and its
-> arguments are packed into a struct named efi_runtime_work and queued
-> onto work queue named efi_rts_wq. The caller then waits until the work
-> is completed.
->
-> Introduce some infrastructure:
-> 1. Creating workqueue named efi_rts_wq
-> 2. A macro (efi_queue_work()) that
->         a. populates efi_runtime_work
->         b. queues work onto efi_rts_wq and
->         c. waits until worker thread returns
->
-> The caller thread has to wait until the worker thread returns, because
-> it's dependent on the return status of efi_runtime_service() and, in
-> specific cases, the arguments populated by efi_runtime_service(). Some
-> efi_runtime_services() takes a pointer to buffer as an argument and
-> fills up the buffer with requested data. For instance,
-> efi_get_variable() and efi_get_next_variable(). Hence, caller process
-> cannot just post the work and get going.
->
-> Some facts about efi_runtime_services():
-> 1. A quick look at all the efi_runtime_services() shows that any
-> efi_runtime_service() has five or less arguments.
-> 2. An argument of efi_runtime_service() can be a value (of any type)
-> or a pointer (of any type).
-> Hence, efi_runtime_work has five void pointers to store these arguments.
->
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Cc: Lee, Chun-Yi <jlee@suse.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: Ricardo Neri <ricardo.neri@intel.com>
-> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-> Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> Cc: Peter Zijlstra <peter.zijlstra@intel.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/firmware/efi/efi.c              | 15 ++++++++
->  drivers/firmware/efi/runtime-wrappers.c | 61 +++++++++++++++++++++++++++++++++
->  include/linux/efi.h                     | 20 +++++++++++
->  3 files changed, 96 insertions(+)
->
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 838b8efe639c..04b46c62f3ce 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -75,6 +75,8 @@ static unsigned long *efi_tables[] = {
->         &efi.mem_attr_table,
->  };
->
-> +struct workqueue_struct *efi_rts_wq;
-> +
->  static bool disable_runtime;
->  static int __init setup_noefi(char *arg)
->  {
-> @@ -329,6 +331,19 @@ static int __init efisubsys_init(void)
->                 return 0;
->
->         /*
-> +        * Since we process only one efi_runtime_service() at a time, an
-> +        * ordered workqueue (which creates only one execution context)
-> +        * should suffice all our needs.
-> +        */
-> +       efi_rts_wq = alloc_ordered_workqueue("efi_rts_workqueue", 0);
+Hi Matheus,
 
-efi_rts_wq or efi_rts_workqueue?
+> Matheus Castello <matheus@castello.eng.br> hat am 5. März 2018 um 03:29 geschrieben:
+> 
+> 
+> Hi Linus and Stefan,
+> 
+> thanks for the tips.
+> 
+> This series adds support for generic binding for pinctrl bcm2835 driver,
+> and add the code for set output buffer of a pin using the output-low and
+> output-high generic properties.
+> 
+> Tested on Raspberry Pi Zero W, based on bcm2835 SoC.
+> 
+> Matheus Castello (3):
 
-> +       if (!efi_rts_wq) {
-> +               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
+looks like you missed the changes to the dt binding. Please also add Rob Herring and Mark Rutland to CC. We need a ACK from them.
 
-Same here.
-
-> +                      "disabled.\n");
-> +               clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> +               return 0;
-> +       }
-> +
-> +       /*
->          * Clean DUMMY object calls EFI Runtime Service, set_variable(), so
->          * it should be invoked only after efi_rts_workqueue is ready.
->          */
-> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-> index ae54870b2788..649763171439 100644
-> --- a/drivers/firmware/efi/runtime-wrappers.c
-> +++ b/drivers/firmware/efi/runtime-wrappers.c
-> @@ -1,6 +1,14 @@
->  /*
->   * runtime-wrappers.c - Runtime Services function call wrappers
->   *
-> + * Implementation summary:
-> + * -----------------------
-> + * 1. When user/kernel thread requests to execute efi_runtime_service(),
-> + * enqueue work to efi_rts_workqueue.
-> + * 2. Caller thread waits until the work is finished because it's
-> + * dependent on the return status and execution of efi_runtime_service().
-> + * For instance, get_variable() and get_next_variable().
-> + *
->   * Copyright (C) 2014 Linaro Ltd. <ard.biesheuvel@linaro.org>
->   *
->   * Split off from arch/x86/platform/efi/efi.c
-> @@ -22,6 +30,8 @@
->  #include <linux/mutex.h>
->  #include <linux/semaphore.h>
->  #include <linux/stringify.h>
-> +#include <linux/workqueue.h>
-> +
->  #include <asm/efi.h>
->
->  /*
-> @@ -33,6 +43,57 @@
->  #define __efi_call_virt(f, args...) \
->         __efi_call_virt_pointer(efi.systab->runtime, f, args)
->
-> +/* efi_runtime_service() function identifiers */
-> +enum {
-> +       GET_TIME,
-> +       SET_TIME,
-> +       GET_WAKEUP_TIME,
-> +       SET_WAKEUP_TIME,
-> +       GET_VARIABLE,
-> +       GET_NEXT_VARIABLE,
-> +       SET_VARIABLE,
-> +       SET_VARIABLE_NONBLOCKING,
-> +       QUERY_VARIABLE_INFO,
-> +       QUERY_VARIABLE_INFO_NONBLOCKING,
-> +       GET_NEXT_HIGH_MONO_COUNT,
-> +       RESET_SYSTEM,
-> +       UPDATE_CAPSULE,
-> +       QUERY_CAPSULE_CAPS,
-> +};
-
-Much cleaner now :-)
-
-> +
-> +/*
-> + * efi_queue_work:     Queue efi_runtime_service() and wait until it's done
-> + * @rts:               efi_runtime_service() function identifier
-> + * @rts_arg<1-5>:      efi_runtime_service() function arguments
-> + *
-> + * Accesses to efi_runtime_services() are serialized by a binary
-> + * semaphore (efi_runtime_lock) and caller waits until the work is
-> + * finished, hence _only_ one work is queued at a time and the queued
-> + * work gets flushed.
-> + */
-> +#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)                \
-> +({                                                                     \
-> +       struct efi_runtime_work efi_rts_work;                           \
-> +                                                                       \
-> +       INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);            \
-> +       efi_rts_work.func = _rts;                                       \
-> +       efi_rts_work.arg1 = _arg1;                                      \
-> +       efi_rts_work.arg2 = _arg2;                                      \
-> +       efi_rts_work.arg3 = _arg3;                                      \
-> +       efi_rts_work.arg4 = _arg4;                                      \
-> +       efi_rts_work.arg5 = _arg5;                                      \
-> +       /*                                                              \
-> +        * queue_work() returns 0 if work was already on queue,         \
-> +        * _ideally_ this should never happen.                          \
-> +        */                                                             \
-> +       if (queue_work(efi_rts_wq, &efi_rts_work.work))                 \
-> +               flush_work(&efi_rts_work.work);                         \
-> +       else                                                            \
-> +               BUG();                                                  \
-
-Thanks for the change! One remark, I would just do:
-
-> +       if (!queue_work(efi_rts_wq, &efi_rts_work.work))                \
-> +               BUG();                                                  \
-
-And then you can unindent:
-
-> +       flush_work(&efi_rts_work.work);                         \
-
-> +                                                                       \
-> +       efi_rts_work.status;                                            \
-> +})
-> +
->  void efi_call_virt_check_flags(unsigned long flags, const char *call)
->  {
->         unsigned long cur_flags, mismatch;
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index c4efb3ef0dfa..bb06b71af55c 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1652,4 +1652,24 @@ struct linux_efi_tpm_eventlog {
->
->  extern int efi_tpm_eventlog_init(void);
->
-> +/*
-> + * efi_runtime_work:   Details of EFI Runtime Service work
-> + * @func:              EFI Runtime Service function identifier
-> + * @arg<1-5>:          EFI Runtime Service function arguments
-> + * @status:            Status of executing EFI Runtime Service
-> + */
-> +struct efi_runtime_work {
-> +       u8 func;
-> +       void *arg1;
-> +       void *arg2;
-> +       void *arg3;
-> +       void *arg4;
-> +       void *arg5;
-> +       efi_status_t status;
-> +       struct work_struct work;
-> +};
-
-Why is efi_runtime_work in the .h at all?
-
-Please CC me for the next version! :-)
-
-Cheers,
-Miguel
-
-> +
-> +/* Workqueue to queue EFI Runtime Services */
-> +extern struct workqueue_struct *efi_rts_wq;
-> +
->  #endif /* _LINUX_EFI_H */
+>   pinctrl: bcm2835: switch to GENERIC_PINCONF
+>   pinctrl: bcm2835: Add support for generic pinctrl binding
+>   pinctrl: bcm2835: Add support for output-low output-high properties
+> 
+>  drivers/pinctrl/bcm/Kconfig           |  1 +
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 88 +++++++++++++++++++++++------------
+>  2 files changed, 60 insertions(+), 29 deletions(-)
+> 
 > --
 > 2.7.4
 >
