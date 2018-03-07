@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuWQKaHoiEbVN3kvB3hgiOpU2f63MgWsgpTL3/Lah8sv1nbvJoel34kjhNMmepoCcgpoZYc
-ARC-Seal: i=1; a=rsa-sha256; t=1520451669; cv=none;
+X-Google-Smtp-Source: AG47ELsghsxqJVtf328H9a51azhqPf7J3WTwhCslcYarHTiEd3S80ipUx//ETGsHPC5uS9pxIJRp
+ARC-Seal: i=1; a=rsa-sha256; t=1520451668; cv=none;
         d=google.com; s=arc-20160816;
-        b=aoXYOsR2OP9eZB5wicvzbZlYH16peKVxTj8hIwV27daVsYFyMGH7XOdz6Y6xpc2Ct9
-         utYVqPs3rO5dork99caf9rhmbq5DdRQWt+4kbKTL8+aT0d7uehOX3FHlFXUbfLLPTv7K
-         jmEWUFY7z4dc7C7uMkSskKx0hKN1SRlhBO2sh3VO6r+Ye2kJL8LmQNLbnelbQ0wQAuls
-         AlFKSIPAsiQ4ySmuxcmE3LH4wjYbsXnrji3AcZpnvkO3DFoJYXyOP8NbAUIXJrhUAcQ4
-         QjTgrRN0/o6zHcQkz73iZJMT3PTI/Wc5MxCmUTgL0n7n+WMKzjHqPrJGwjlFEq7+owm/
-         B0MA==
+        b=qTiHY2iun1V8wQ9sxZ1qf2JInHqaVlIi3SllLDlBMPSfF1NGk6PLAFGV/t+mca8FGP
+         TUOeeKXnAmJsbJ3/7gqJv3lh7l6VYYqmyzgYR+G8n3cFLWJ2qtNTlKEXnuz/02w9LtSh
+         KbNgudxDiD2890KzB5NLWg8Cn+pSfejtkuNWQiX01mbB522gDbZYlTqjNRZmklrkiJUK
+         UlnTITcBdIrBfIag3/hped1XbFz57FshrWw2md14cZTnvrJJwxz3vpBWQJ3RpgrEVfWD
+         ERTAFtK6VyMTxpqj9SRVx1RmLLqiUGFNgVpPeNMSzn7mQkCXl8lsYD76Z/y8RGVkfI/D
+         R5Ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=clUGXujiYt3uRFJpdOSt5O1k2DzpjpL67iEKIR4MG44=;
-        b=vmgFwq4n1Zrw0J5KenGnOokrcY57z4ujcliqR70f7y/3AYX1nDY9ADfwATYKpqURuu
-         bY8MADOmczjHduhT7Qt/gGL6PQHglTUNAK3XajwIkDXgncwDvffynh7xjG+17ZirT9sV
-         xJhCzvplVD9vEITRcVDDZ/y9TcoEBH8yOXu62armP+sd6rEUPMBDbWC3y80cWarKjrUn
-         pOO3/ImMgUFPUXmt5KR8h23ZqeJSmsfxS6dBJjS/bijPNA0/MmJ3oGk+aEwmQNeGDYyy
-         iH6rmj4pa/TsN9a6RJYHvr0jxZcfQb5htshzXqZEsmPAz1jHfCTCGgZXiEOImGDjuu0e
-         UtzQ==
+        bh=KQhasd6Z4uKLuhFEDan5Tfcb0qtkwC7hCuPjdOagqyU=;
+        b=JYh/85MHr/lBJqEXw9CPWv0+jtcCiGVI4P46bVPAih1bkFm4hiXQrAoT99wE/KNS6l
+         hFWq7IVmQ5/OAB/kyeaiKWe7NLV1IXyTRkr0BAlpH8UEC2+tx7PR47LDcnDZGAqYEwJn
+         t1p85/K5Rlz3Z5cp2zC+xWQiiHbQuL2bPtZcObmksKUR8twQcsZog1W8qA8J22l+aoSP
+         wf/jXZnSkOd0Tvx5toJlMtadAZyH3i3JAjI97n8BnJfwBuddzAogbP2widWT3Dbk0vcy
+         +YDRkq7iSnEwT9qDA6waHZttcPZNonkSduCYy72DfTgk+8uQXZGVZAl8Lypk0YvlDZrN
+         mk8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Stefano Brivio <sbrivio@redhat.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 046/122] net: ipv4: dont allow setting net.ipv4.route.min_pmtu below 68
-Date: Wed,  7 Mar 2018 11:37:38 -0800
-Message-Id: <20180307191735.623449626@linuxfoundation.org>
+Subject: [PATCH 4.15 044/122] net: ethernet: ti: cpsw: fix net watchdog timeout
+Date: Wed,  7 Mar 2018 11:37:36 -0800
+Message-Id: <20180307191735.374113232@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309129773633488?=
-X-GMAIL-MSGID: =?utf-8?q?1594309129773633488?=
+X-GMAIL-THRID: =?utf-8?q?1594309128551674718?=
+X-GMAIL-MSGID: =?utf-8?q?1594309128551674718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +50,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 
 
-[ Upstream commit c7272c2f1229125f74f22dcdd59de9bbd804f1c8 ]
+[ Upstream commit 62f94c2101f35cd45775df00ba09bde77580e26a ]
 
-According to RFC 1191 sections 3 and 4, ICMP frag-needed messages
-indicating an MTU below 68 should be rejected:
+It was discovered that simple program which indefinitely sends 200b UDP
+packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
+watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
+timeout is triggered due to race between cpsw_ndo_start_xmit() and
+cpsw_tx_handler() [NAPI]
 
-    A host MUST never reduce its estimate of the Path MTU below 68
-    octets.
+cpsw_ndo_start_xmit()
+	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
+		txq = netdev_get_tx_queue(ndev, q_idx);
+		netif_tx_stop_queue(txq);
 
-and (talking about ICMP frag-needed's Next-Hop MTU field):
+^^ as per [1] barier has to be used after set_bit() otherwise new value
+might not be visible to other cpus
+	}
 
-    This field will never contain a value less than 68, since every
-    router "must be able to forward a datagram of 68 octets without
-    fragmentation".
+cpsw_tx_handler()
+	if (unlikely(netif_tx_queue_stopped(txq)))
+		netif_tx_wake_queue(txq);
 
-Furthermore, by letting net.ipv4.route.min_pmtu be set to negative
-values, we can end up with a very large PMTU when (-1) is cast into u32.
+and when it happens ndev TX queue became disabled forever while driver's HW
+TX queue is empty.
 
-Let's also make ip_rt_min_pmtu a u32, since it's only ever compared to
-unsigned ints.
+Fix this, by adding smp_mb__after_atomic() after netif_tx_stop_queue()
+calls and double check for free TX descriptors after stopping ndev TX queue
+- if there are free TX descriptors wake up ndev TX queue.
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+[1] https://www.kernel.org/doc/html/latest/core-api/atomic_ops.html
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Reviewed-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/route.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ti/cpsw.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -128,10 +128,13 @@ static int ip_rt_redirect_silence __read
- static int ip_rt_error_cost __read_mostly	= HZ;
- static int ip_rt_error_burst __read_mostly	= 5 * HZ;
- static int ip_rt_mtu_expires __read_mostly	= 10 * 60 * HZ;
--static int ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
-+static u32 ip_rt_min_pmtu __read_mostly		= 512 + 20 + 20;
- static int ip_rt_min_advmss __read_mostly	= 256;
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -1618,6 +1618,7 @@ static netdev_tx_t cpsw_ndo_start_xmit(s
+ 		q_idx = q_idx % cpsw->tx_ch_num;
  
- static int ip_rt_gc_timeout __read_mostly	= RT_GC_TIMEOUT;
+ 	txch = cpsw->txv[q_idx].ch;
++	txq = netdev_get_tx_queue(ndev, q_idx);
+ 	ret = cpsw_tx_packet_submit(priv, skb, txch);
+ 	if (unlikely(ret != 0)) {
+ 		cpsw_err(priv, tx_err, "desc submit failed\n");
+@@ -1628,15 +1629,26 @@ static netdev_tx_t cpsw_ndo_start_xmit(s
+ 	 * tell the kernel to stop sending us tx frames.
+ 	 */
+ 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
+-		txq = netdev_get_tx_queue(ndev, q_idx);
+ 		netif_tx_stop_queue(txq);
 +
-+static int ip_min_valid_pmtu __read_mostly	= IPV4_MIN_MTU;
++		/* Barrier, so that stop_queue visible to other cpus */
++		smp_mb__after_atomic();
 +
- /*
-  *	Interface to generic destination cache.
-  */
-@@ -2934,7 +2937,8 @@ static struct ctl_table ipv4_route_table
- 		.data		= &ip_rt_min_pmtu,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &ip_min_valid_pmtu,
- 	},
- 	{
- 		.procname	= "min_adv_mss",
++		if (cpdma_check_free_tx_desc(txch))
++			netif_tx_wake_queue(txq);
+ 	}
+ 
+ 	return NETDEV_TX_OK;
+ fail:
+ 	ndev->stats.tx_dropped++;
+-	txq = netdev_get_tx_queue(ndev, skb_get_queue_mapping(skb));
+ 	netif_tx_stop_queue(txq);
++
++	/* Barrier, so that stop_queue visible to other cpus */
++	smp_mb__after_atomic();
++
++	if (cpdma_check_free_tx_desc(txch))
++		netif_tx_wake_queue(txq);
++
+ 	return NETDEV_TX_BUSY;
+ }
+ 
