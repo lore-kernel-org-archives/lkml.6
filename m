@@ -1,78 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934105AbeCGQ4U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:56:20 -0500
-Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:36768 "EHLO
-        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933502AbeCGQ4S (ORCPT
+        id S933953AbeCGQ5p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:57:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35522 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933468AbeCGQ5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:56:18 -0500
-Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
-        reason="no signature"; dkim-adsp=none (unprotected policy);
-        dkim-atps=neutral
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 217.238.11.28
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-To: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] block: sed-opal: fix u64 short atom length
-Date: Wed,  7 Mar 2018 17:55:56 +0100
-Message-Id: <20180307165556.2618-1-jonas.rabenstein@studium.uni-erlangen.de>
-X-Mailer: git-send-email 2.16.1
-References: <1520379912.4178.83.camel@intel.com> <20180301132700.1279-1-jonas.rabenstein@studium.uni-erlangen.de>
-In-Reply-To: <1520379912.4178.83.camel@intel.com>
+        Wed, 7 Mar 2018 11:57:42 -0500
+Date: Wed, 7 Mar 2018 16:57:38 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: JeffyChen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/3] mfd: syscon: Set name of regmap_config
+Message-ID: <20180307165738.GK7290@sirena.org.uk>
+References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+ <5A9EAC92.4050702@rock-chips.com>
+ <20180307102006.GA7290@sirena.org.uk>
+ <5A9FC3E0.5020600@rock-chips.com>
+ <20180307105731.GB7290@sirena.org.uk>
+ <20180307165405.ltuobrr53vko4do7@dell>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0FM4RQAc0jwHekq5"
+Content-Disposition: inline
+In-Reply-To: <20180307165405.ltuobrr53vko4do7@dell>
+X-Cookie: If you can read this, you're too close.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The length must be given as bytes and not as 4 bit tuples.
 
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
----
-v2:
-  - use fls64
-  - shorten loop body
----
- block/sed-opal.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+--0FM4RQAc0jwHekq5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 36842bfa572e..38411c5c477f 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -554,15 +554,14 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 
- 	size_t len;
- 	int msb;
--	u8 n;
- 
- 	if (!(number & ~TINY_ATOM_DATA_MASK)) {
- 		add_token_u8(err, cmd, number);
- 		return;
- 	}
- 
--	msb = fls(number);
--	len = DIV_ROUND_UP(msb, 4);
-+	msb = fls64(number);
-+	len = DIV_ROUND_UP(msb, 8);
- 
- 	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
- 		pr_debug("Error adding u64: end of buffer.\n");
-@@ -570,10 +569,8 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 		return;
- 	}
- 	add_short_atom_header(cmd, false, false, len);
--	while (len--) {
--		n = number >> (len * 8);
--		add_token_u8(err, cmd, n);
--	}
-+	while (len--)
-+		add_token_u8(err, cmd, number >> (len * 8));
- }
- 
- static void add_token_bytestring(int *err, struct opal_dev *cmd,
--- 
-2.16.1
+On Wed, Mar 07, 2018 at 04:54:05PM +0000, Lee Jones wrote:
+> On Wed, 07 Mar 2018, Mark Brown wrote:
+> > On Wed, Mar 07, 2018 at 06:50:08PM +0800, JeffyChen wrote:
+
+> > Yes, like I say I think that's a good idea anyway - that sort of usage
+> > is the reason we've got the facility to set an explicit name.
+
+> Is that an Ack?
+
+No, it looked like the change was only for MFD?
+
+--0FM4RQAc0jwHekq5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqgGgEACgkQJNaLcl1U
+h9CoKQf+Lrm8JVJBDZdK+SeS648s4w/sUGqFWjF00CF6lP/Vljah1B9QVPbXrWhZ
+EEyyFt+yJAQKG76XuIuomVEKMzILJ6qtvHvHhAZJUrQpdrn934mFnPE/ck6b2fEB
+jtugbzcKHfQu40/zI1JcUv7IwpknsWzoVUQpZjbkvruDEvMm+OLGnu8V29N5Fdik
+rv7HDSmWnqVg7iRJp8CmVFJ7gCmCv+loKF+cpcRBbAcQJmGDvXrm2F2vML9R+k3Y
+c+yWl3YgAfh+ddy71mpYN5lHLZ9mK3BRiiiqHISpv0lO0JnFIQRE1u9vWMqxq7N1
+mhQnu9wAeojxfDyjIybRlSErinpJwg==
+=eFp7
+-----END PGP SIGNATURE-----
+
+--0FM4RQAc0jwHekq5--
