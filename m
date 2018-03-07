@@ -1,70 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751142AbeCGJJV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 04:09:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55486 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751011AbeCGJJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 04:09:19 -0500
-Date: Wed, 7 Mar 2018 10:09:17 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-Message-ID: <20180307090917.2xqifk2wpk5ty36j@pathway.suse.cz>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
- <20180307022127.GB802@jagdpanzerIV>
- <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
+        id S1751226AbeCGJLc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 04:11:32 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33447 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751036AbeCGJL3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 04:11:29 -0500
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Lee Jones <lee.jones@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+CC: "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 0/6] Add mmc support for STM32F7 boards
+Thread-Topic: [PATCH v2 0/6] Add mmc support for STM32F7 boards
+Thread-Index: AQHTsUuS+UqUKF3X2UiZlq/99s8mF6PBSM6AgAMiYoCAAAnkgA==
+Date: Wed, 7 Mar 2018 09:11:03 +0000
+Message-ID: <f006750d-1fa9-4bbf-8f4d-32abee21cadd@st.com>
+References: <1519901623-23216-1-git-send-email-patrice.chotard@st.com>
+ <44ed2e2c-83f1-77f5-fa70-29c5525b9ee7@st.com>
+ <20180307083538.vicxhbu72jex7zi6@dell>
+In-Reply-To: <20180307083538.vicxhbu72jex7zi6@dell>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BECE1318239103438E1B695E8C20C3AE@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w279BZPr004605
 
-Ah, there was a mid-air collision. Arnd already answered most of my
-questions and even more.
+Hi Lee
 
-On Wed 2018-03-07 09:46:27, Arnd Bergmann wrote:
-> On Wed, Mar 7, 2018 at 3:21 AM, Sergey Senozhatsky
-> <sergey.senozhatsky.work@gmail.com> wrote:
-> > On (03/06/18 14:27), Arnd Bergmann wrote:
-> >> Weak symbols are generally discouraged in the kernel. We have
-> >> them in a couple of places, but I find them rather confusing as they
-> >> make it harder to figure out what is actually going on.
-> >
-> > Honestly, I kind of find __weak less confusing than EXPORT_SYMBOL(dump_stack)
-> > in 3 different places. __weak hints that the symbol likely will be overridden
-> > somewhere, while EXPORT_SYMBOL() does not (at least not to me). Dunno.
+On 03/07/2018 09:35 AM, Lee Jones wrote:
+> On Mon, 05 Mar 2018, Alexandre Torgue wrote:
 > 
-> It's not either/or, they are both wrong ;-)
+>> Hi Patrice,
+>>
+>> On 03/01/2018 11:53 AM, patrice.chotard@st.com wrote:
+>>> From: Patrice Chotard <patrice.chotard@st.com>
+>>>
+>>> This series adds :
+>>>    _ SDIO pins definition for STM32F7 SoCs family
+>>>    _ add sdio1 DT entry for STM32F746 Discovery board
+>>>    _ add sdio1 DT entry for STM32F746 Evaluation board
+>>>    _ add sdio1 DT entry for STM32F769 Discovery board
+>>>    _ add SDMMC2 entry in stm32f7-rcc.h
+>>>    _ replace sdio2 hard coded value in stm32f746.dtsi
+>>>
+>>> v2: _ rename sdio_pins / sdio_od_pins to sdio_pins_a / sdio_od_pins_a
+>>>         and update board dts files accordingly.
+>>>
+>>>
+>>> Patrice Chotard (6):
+>>>     ARM: dts: stm32: Add sdio pins definition for stm32f7
+>>>     ARM: dts: stm32: Enable sdio1 for stm32f746-disco
+>>>     ARM: dts: stm32: Enable sdio1 for stm32f746-eval
+>>>     ARM: dts: stm32: Enable sdio1 for stm32f769-disco
+>>>     dt-bindings: mfd: Add STM32F7 SDMMC2 rcc entry
+>>>     ARM: dts: stm32: Fix sdio2 rcc hard coded value
+>>>
+>>>    arch/arm/boot/dts/stm32746g-eval.dts   | 17 ++++++++++
+>>>    arch/arm/boot/dts/stm32f7-pinctrl.dtsi | 62 ++++++++++++++++++++++++++++++++++
+>>>    arch/arm/boot/dts/stm32f746-disco.dts  | 19 +++++++++++
+>>>    arch/arm/boot/dts/stm32f746.dtsi       |  2 +-
+>>>    arch/arm/boot/dts/stm32f769-disco.dts  | 19 +++++++++++
+>>>    include/dt-bindings/mfd/stm32f7-rcc.h  |  1 +
+>>>    6 files changed, 119 insertions(+), 1 deletion(-)
+>>>
+>> Series applied on stm32-next.
 > 
-> The EXPORT_SYMBOL() is not the thing that makes it work. The duplicate
-> declaration today only works because lib/dump_stack.o is listed as lib-y
-> in the Makefile instead of obj-y. On blackfin and nds32, this causes the entire
-> file to just not be included in the final vmlinux, because there are no
-> references to it.
+> Even the MFD patch?
 > 
-> With your patch, I would actually expect the lib/dump_stack.o file
-> to still not be picked up, so now you have a missing EXPORT_SYMBOL()
-> on the two unusual architectures until the point when you add another
-> (referenced) symbol to it.
 
-Great catch! We should change it from lib-y to obj-y. Of course,
-the best solution would be if nds32 uses the generic implementation
-and we could avoid adding __weak.
+Yes, the MFD part has been taken by Alex.
 
-Best Regards,
-Petr
+Patrice
