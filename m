@@ -1,21 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754415AbeCGM1x (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:27:53 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6172 "EHLO huawei.com"
+        id S933294AbeCGM0f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:26:35 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6170 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751305AbeCGM0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:26:01 -0500
+        id S1754173AbeCGM0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:26:06 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <hare@suse.de>
 CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 0/10] hisi_sas: support x6000 board and some misc changes
-Date: Wed, 7 Mar 2018 20:25:04 +0800
-Message-ID: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v4 01/10] dt-bindings: scsi: hisi_sas: add an property of signal attenuation
+Date: Wed, 7 Mar 2018 20:25:05 +0800
+Message-ID: <1520425514-205565-2-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
+References: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
@@ -24,54 +27,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset primarily adds support for the Huawei x6000 board,
-which includes hip07 chipset. Unfortunately, due to some board
-layout differences with our development board, we need to set
-a PHY-related register differently for optimal signal quality. As
-such, a signal attenuation property is added to describe the
-differences in the boards and allow the PHY register to be set
-appropriately.
+From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-In addition to this above features, some misc changes are added for:
-- PHY linkrate sysfs interface
-- linkrate set function
-- internal abort timer timeout increase
-- add module device id tabe for v3 hw
-- register init setting changes
+For some new boards with hip07 chipset we are required to
+set PHY config registers differently. The hw property which
+determines how to set these registers is in the PHY signal
+attenuation readings.
 
-Differences to v3:
-- address comments from Hannes on patch #8:
-  https://marc.info/?l=linux-scsi&m=152033924615703&w=2
-- add patch for module Id table and some register
-  setting for v3 HW.
+This patch add an devicetree property, "hisilicon,signal-attenuation",
+which is used to describe the signal attenuation of an board.
 
-Differences to v2:
-- rename dt binding property name to "hisilicon,signal-attenuation"
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ Documentation/devicetree/bindings/scsi/hisilicon-sas.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Differences to v1:
-- rename dt binding property name to include "hisi-" prefix
-
-Xiang Chen (3):
-  scsi: hisi_sas: remove unused variable hisi_sas_devices.running_req
-  scsi: hisi_sas: Code cleanup and minor bug fixes
-  scsi: hisi_sas: add v3 hw MODULE_DEVICE_TABLE()
-
-Xiaofei Tan (7):
-  dt-bindings: scsi: hisi_sas: add an property of signal attenuation
-  scsi: hisi_sas: support the property of signal attenuation for v2 hw
-  scsi: hisi_sas: fix the issue of link rate inconsistency
-  scsi: hisi_sas: fix the issue of setting linkrate register
-  scsi: hisi_sas: increase timer expire of internal abort task
-  scsi: hisi_sas: fix return value of hisi_sas_task_prep()
-  scsi: hisi_sas: modify some register config for hip08
-
- .../devicetree/bindings/scsi/hisilicon-sas.txt     |  7 +++
- drivers/scsi/hisi_sas/hisi_sas.h                   |  1 -
- drivers/scsi/hisi_sas/hisi_sas_main.c              | 34 +++++-----
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c             | 13 ++--
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c             | 62 ++++++++++++++-----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c             | 72 ++++++++++------------
- 6 files changed, 109 insertions(+), 80 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+index df3bef7..8c6659e 100644
+--- a/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
++++ b/Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
+@@ -53,6 +53,13 @@ Main node required properties:
+ Optional main node properties:
+  - hip06-sas-v2-quirk-amt : when set, indicates that the v2 controller has the
+ 			    "am-max-transmissions" limitation.
++ - hisilicon,signal-attenuation : array of 3 32-bit values, containing de-emphasis,
++		preshoot, and boost attenuation readings for the board. They
++		are used to describe the signal attenuation of the board. These
++		values' range is 7600 to 12400, and used to represent -24dB to
++		24dB.
++		The formula is "y = (x-10000)/10000". For example, 10478
++		means 4.78dB.
+ 
+ Example:
+ 	sas0: sas@c1000000 {
 -- 
 1.9.1
