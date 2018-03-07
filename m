@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751220AbeCGGOB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 01:14:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42652 "EHLO mail.kernel.org"
+        id S932687AbeCGGOH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 01:14:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751099AbeCGGN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 01:13:58 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2221021797
+        id S1751099AbeCGGOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 01:14:03 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF3D2179F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 6/9] PCI/portdrv: Remove unused PCIE_PORT_SERVICE_VC
+Subject: [PATCH v1 7/9] PCI/portdrv: Simplify PCIe feature permission
+ checking
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: linux-pci@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Date: Wed, 07 Mar 2018 00:13:56 -0600
-Message-ID: <152040323671.240786.17190514268346362843.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Wed, 07 Mar 2018 00:14:02 -0600
+Message-ID: <152040324229.240786.12446096160159507017.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -29,113 +30,212 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Helgaas <bhelgaas@google.com>
 
-No driver registers for PCIE_PORT_SERVICE_VC, so remove it.
+Some PCIe features (AER, DPC, hotplug, PME) can be managed by either the
+platform firmware or the OS, so the host bridge driver may have to request
+permission from the platform before using them.  On ACPI systems, this is
+done by negotiate_os_control() in acpi_pci_root_add().
 
-This removes the VC "service" files from /sys/bus/pci_express/devices,
-e.g., 0000:07:00.0:pcie108, 0000:08:04.0:pcie208 (all the files that
-contained "8" as the last digit of the "pcieXXX" part).  The port driver
-created these files for PCIe port devices that have a VC Capability.
+The PCIe port driver later uses pcie_port_platform_notify() and
+pcie_port_acpi_setup() to figure out whether it can use these features.
+But all we need is a single bit for each service, so these interfaces are
+needlessly complicated.
 
-Since this reduces PCIE_PORT_DEVICE_MAXSERVICES and moves DPC down into the
-spot where VC used to be, the DPC sysfs files will now be named "pcieXX8".
-I don't think there's anything useful userspace can do with those files, so
-I hope nobody cares about these filenames.
+Simplify this by adding bits in the struct pci_host_bridge to show when the
+OS has permission to use each feature:
 
-There is no VC driver that calls pcie_port_service_register(), so there
-never was a /sys/bus/pci_express/drivers/vc directory.
+  + unsigned int use_aer:1;       /* OS may use PCIe AER */
+  + unsigned int use_hotplug:1;	  /* OS may use PCIe hotplug */
+  + unsigned int use_pme:1;       /* OS may use PCIe PME */
+
+These are set when we create a host bridge, and the host bridge driver can
+clear the bits corresponding to any feature the platform doesn't want us to
+use.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/pcie/portdrv.h      |    2 +-
- drivers/pci/pcie/portdrv_acpi.c |    2 +-
- drivers/pci/pcie/portdrv_core.c |   14 ++++----------
- include/linux/pcieport_if.h     |    4 +---
- 4 files changed, 7 insertions(+), 15 deletions(-)
+ drivers/acpi/pci_root.c         |   13 ++++++++++--
+ drivers/pci/pcie/Makefile       |    1 -
+ drivers/pci/pcie/portdrv.h      |   11 ----------
+ drivers/pci/pcie/portdrv_core.c |   42 ++++++++++++++++++++++++---------------
+ drivers/pci/probe.c             |   10 +++++++++
+ include/linux/pci.h             |    3 +++
+ 6 files changed, 50 insertions(+), 30 deletions(-)
 
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 6fc204a52493..dce53527cdc1 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -871,6 +871,7 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
+ 	struct acpi_device *device = root->device;
+ 	int node = acpi_get_node(device->handle);
+ 	struct pci_bus *bus;
++	struct pci_host_bridge *host_bridge;
+ 
+ 	info->root = root;
+ 	info->bridge = device;
+@@ -895,9 +896,17 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
+ 	if (!bus)
+ 		goto out_release_info;
+ 
++	host_bridge = to_pci_host_bridge(bus->bridge);
++	if (!(root->osc_control_set & PCIE_PORT_SERVICE_HP))
++		host_bridge->use_hotplug = 0;
++	if (!(root->osc_control_set & OSC_PCI_EXPRESS_AER_CONTROL))
++		host_bridge->use_aer = 0;
++	if (!(root->osc_control_set & OSC_PCI_EXPRESS_PME_CONTROL))
++		host_bridge->use_pme = 0;
++
+ 	pci_scan_child_bus(bus);
+-	pci_set_host_bridge_release(to_pci_host_bridge(bus->bridge),
+-				    acpi_pci_root_release_info, info);
++	pci_set_host_bridge_release(host_bridge, acpi_pci_root_release_info,
++				    info);
+ 	if (node != NUMA_NO_NODE)
+ 		dev_printk(KERN_DEBUG, &bus->dev, "on NUMA node %d\n", node);
+ 	return bus;
+diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+index e01c10c97b95..11fb633b866c 100644
+--- a/drivers/pci/pcie/Makefile
++++ b/drivers/pci/pcie/Makefile
+@@ -7,7 +7,6 @@
+ obj-$(CONFIG_PCIEASPM)		+= aspm.o
+ 
+ pcieportdrv-y			:= portdrv_core.o portdrv_pci.o
+-pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
+ 
+ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
+ 
 diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index a4fc44d52206..749d200936d9 100644
+index 749d200936d9..2c19cf9ffea2 100644
 --- a/drivers/pci/pcie/portdrv.h
 +++ b/drivers/pci/pcie/portdrv.h
-@@ -12,7 +12,7 @@
+@@ -66,15 +66,4 @@ static inline bool pcie_pme_no_msi(void) { return false; }
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
  
- #include <linux/compiler.h>
- 
--#define PCIE_PORT_DEVICE_MAXSERVICES   5
-+#define PCIE_PORT_DEVICE_MAXSERVICES   4
- /*
-  * The PCIe Capability Interrupt Message Number (PCIe r3.1, sec 7.8.2) must
-  * be one of the first 32 MSI-X entries.  Per PCI r3.0, sec 6.8.3.1, MSI
-diff --git a/drivers/pci/pcie/portdrv_acpi.c b/drivers/pci/pcie/portdrv_acpi.c
-index 319c94976873..4a1b50867c98 100644
---- a/drivers/pci/pcie/portdrv_acpi.c
-+++ b/drivers/pci/pcie/portdrv_acpi.c
-@@ -48,7 +48,7 @@ void pcie_port_acpi_setup(struct pci_dev *port, int *srv_mask)
- 
- 	flags = root->osc_control_set;
- 
--	*srv_mask = PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_DPC;
-+	*srv_mask = PCIE_PORT_SERVICE_DPC;
- 	if (flags & OSC_PCI_EXPRESS_NATIVE_HP_CONTROL)
- 		*srv_mask |= PCIE_PORT_SERVICE_HP;
- 	if (flags & OSC_PCI_EXPRESS_PME_CONTROL)
+-#ifdef CONFIG_ACPI
+-void pcie_port_acpi_setup(struct pci_dev *port, int *mask);
+-
+-static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask)
+-{
+-	pcie_port_acpi_setup(port, mask);
+-}
+-#else /* !CONFIG_ACPI */
+-static inline void pcie_port_platform_notify(struct pci_dev *port, int *mask){}
+-#endif /* !CONFIG_ACPI */
+-
+ #endif /* _PORTDRV_H_ */
 diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index 9db77c683732..94ce4dc50d1a 100644
+index 94ce4dc50d1a..29210e9bfbd3 100644
 --- a/drivers/pci/pcie/portdrv_core.c
 +++ b/drivers/pci/pcie/portdrv_core.c
-@@ -189,10 +189,8 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
- 	if (ret < 0)
- 		return -ENODEV;
- 
--	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++) {
--		if (i != PCIE_PORT_SERVICE_VC_SHIFT)
--			irqs[i] = pci_irq_vector(dev, 0);
--	}
-+	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++)
-+		irqs[i] = pci_irq_vector(dev, 0);
- 
- 	return 0;
- }
-@@ -212,8 +210,7 @@ static int get_port_device_capability(struct pci_dev *dev)
+@@ -207,19 +207,20 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
+  */
+ static int get_port_device_capability(struct pci_dev *dev)
+ {
++	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
++	bool native;
  	int services = 0;
- 	int cap_mask = 0;
+-	int cap_mask = 0;
  
--	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP
--			| PCIE_PORT_SERVICE_VC;
-+	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP;
- 	if (pci_aer_available())
- 		cap_mask |= PCIE_PORT_SERVICE_AER | PCIE_PORT_SERVICE_DPC;
+-	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP;
+-	if (pci_aer_available())
+-		cap_mask |= PCIE_PORT_SERVICE_AER | PCIE_PORT_SERVICE_DPC;
+-
+-	if (pcie_ports_auto)
+-		pcie_port_platform_notify(dev, &cap_mask);
++	/*
++	 * If the user specified "pcie_ports=native", use the PCIe services
++	 * regardless of whether the platform has given us permission.  On
++	 * ACPI systems, this means we ignore _OSC.
++	 */
++	native = !pcie_ports_auto;
  
-@@ -240,9 +237,6 @@ static int get_port_device_capability(struct pci_dev *dev)
+-	/* Hot-Plug Capable */
+-	if ((cap_mask & PCIE_PORT_SERVICE_HP) && dev->is_hotplug_bridge) {
++	if (dev->is_hotplug_bridge && (native || host->use_hotplug)) {
+ 		services |= PCIE_PORT_SERVICE_HP;
++
+ 		/*
+ 		 * Disable hot-plug interrupts in case they have been enabled
+ 		 * by the BIOS and the hot-plug service driver is not loaded.
+@@ -227,20 +228,27 @@ static int get_port_device_capability(struct pci_dev *dev)
+ 		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+ 			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+ 	}
+-	/* AER capable */
+-	if ((cap_mask & PCIE_PORT_SERVICE_AER)
+-	    && pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR)) {
++
++	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR) &&
++	    pci_aer_available() && (native || host->use_aer)) {
+ 		services |= PCIE_PORT_SERVICE_AER;
++
+ 		/*
+ 		 * Disable AER on this port in case it's been enabled by the
+ 		 * BIOS (the AER service driver will enable it when necessary).
  		 */
  		pci_disable_pcie_error_reporting(dev);
  	}
--	/* VC support */
--	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VC))
--		services |= PCIE_PORT_SERVICE_VC;
- 	/* Root ports are capable of generating PME too */
- 	if ((cap_mask & PCIE_PORT_SERVICE_PME)
- 	    && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) {
-@@ -332,7 +326,7 @@ int pcie_port_device_register(struct pci_dev *dev)
- 	 */
- 	status = pcie_init_service_irqs(dev, irqs, capabilities);
- 	if (status) {
--		capabilities &= PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_HP;
-+		capabilities &= PCIE_PORT_SERVICE_HP;
- 		if (!capabilities)
- 			goto error_disable;
+-	/* Root ports are capable of generating PME too */
+-	if ((cap_mask & PCIE_PORT_SERVICE_PME)
+-	    && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) {
++
++	/*
++	 * Root ports are capable of generating PME too.  Root Complex
++	 * Event Collectors can also generate PMEs, but we don't handle
++	 * those yet.
++	 */
++	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT &&
++	    (native || host->use_pme)) {
+ 		services |= PCIE_PORT_SERVICE_PME;
++
+ 		/*
+ 		 * Disable PME interrupt on this port in case it's been enabled
+ 		 * by the BIOS (the PME service driver will enable it when
+@@ -248,7 +256,9 @@ static int get_port_device_capability(struct pci_dev *dev)
+ 		 */
+ 		pcie_pme_interrupt_enable(dev, false);
  	}
-diff --git a/include/linux/pcieport_if.h b/include/linux/pcieport_if.h
-index b69769dbf659..28eb21731db6 100644
---- a/include/linux/pcieport_if.h
-+++ b/include/linux/pcieport_if.h
-@@ -20,9 +20,7 @@
- #define PCIE_PORT_SERVICE_AER		(1 << PCIE_PORT_SERVICE_AER_SHIFT)
- #define PCIE_PORT_SERVICE_HP_SHIFT	2	/* Native Hotplug */
- #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
--#define PCIE_PORT_SERVICE_VC_SHIFT	3	/* Virtual Channel */
--#define PCIE_PORT_SERVICE_VC		(1 << PCIE_PORT_SERVICE_VC_SHIFT)
--#define PCIE_PORT_SERVICE_DPC_SHIFT	4	/* Downstream Port Containment */
-+#define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
- #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
+-	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC))
++
++	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
++	    pci_aer_available())
+ 		services |= PCIE_PORT_SERVICE_DPC;
  
- struct pcie_device {
+ 	return services;
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ef5377438a1e..839fb0059900 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -540,6 +540,16 @@ struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
+ 	INIT_LIST_HEAD(&bridge->windows);
+ 	bridge->dev.release = pci_release_host_bridge_dev;
+ 
++	/*
++	 * We assume we can manage these PCIe features.  Some systems may
++	 * reserve these for use by the platform itself, e.g., an ACPI BIOS
++	 * may implement its own AER handling and use _OSC to prevent the
++	 * OS from interfering.
++	 */
++	bridge->use_aer = 1;
++	bridge->use_hotplug = 1;
++	bridge->use_pme = 1;
++
+ 	return bridge;
+ }
+ EXPORT_SYMBOL(pci_alloc_host_bridge);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 024a1beda008..40aec7a6fdd9 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -469,6 +469,9 @@ struct pci_host_bridge {
+ 	struct msi_controller *msi;
+ 	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
+ 	unsigned int	no_ext_tags:1;		/* No Extended Tags */
++	unsigned int	use_aer:1;		/* OS may use PCIe AER */
++	unsigned int	use_hotplug:1;		/* OS may use PCIe hotplug */
++	unsigned int	use_pme:1;		/* OS may use PCIe PME */
+ 	/* Resource alignment requirements */
+ 	resource_size_t (*align_resource)(struct pci_dev *dev,
+ 			const struct resource *res,
