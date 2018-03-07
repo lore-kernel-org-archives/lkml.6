@@ -1,51 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754076AbeCGDNf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 22:13:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36206 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753857AbeCGDNd (ORCPT
+        id S933324AbeCGDYw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 22:24:52 -0500
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:35182 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933198AbeCGDYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 22:13:33 -0500
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lining916740672@icloud.com
-Subject: Re: [PATCH v2] scsi: sd: Keep disk read-only when re-reading partition
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
-Date: Tue, 06 Mar 2018 22:13:25 -0500
-In-Reply-To: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
-        (Jeremy Cline's message of "Tue, 6 Mar 2018 21:47:32 +0000")
-Message-ID: <yq1vae8o9wq.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Tue, 6 Mar 2018 22:24:50 -0500
+X-Google-Smtp-Source: AG47ELsL75R7qxRH3gKHl9aYLPYctA45qVG/XPSOdbwcx5vZtG5E1ppETDEJrKOrL+qTawjgDOyQpQ==
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=388
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803070034
+In-Reply-To: <CAAFQd5DPewKda7ThqMGKRvnArZ0X8ChD10E06nLZaNa-SBNdwA@mail.gmail.com>
+References: <20180306030252.3197-1-jeffy.chen@rock-chips.com>
+ <20180306032759.29069-1-jeffy.chen@rock-chips.com> <20180306032759.29069-4-jeffy.chen@rock-chips.com>
+ <CAAFQd5DPewKda7ThqMGKRvnArZ0X8ChD10E06nLZaNa-SBNdwA@mail.gmail.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 7 Mar 2018 12:24:25 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5D_wnj9DNYDa_rLkEy3u71ADLp9gc9fdwQPxHz2J-LLAA@mail.gmail.com>
+Message-ID: <CAAFQd5D_wnj9DNYDa_rLkEy3u71ADLp9gc9fdwQPxHz2J-LLAA@mail.gmail.com>
+Subject: Re: [PATCH v7 13/14] iommu/rockchip: Add runtime PM support
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ricky Liang <jcliang@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>, simon xue <xxm@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 6, 2018 at 7:07 PM, Tomasz Figa <tfiga@chromium.org> wrote:
+> Hi Jeffy,
+>
+> It looks like I missed some details of how runtime PM enable works
+> before, so we might be able to simplify things. Sorry for not getting
+> things right earlier.
+>
+> On Tue, Mar 6, 2018 at 12:27 PM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+>> When the power domain is powered off, the IOMMU cannot be accessed and
+>> register programming must be deferred until the power domain becomes
+>> enabled.
+>>
+>> Add runtime PM support, and use runtime PM device link from IOMMU to
+>> master to startup and shutdown IOMMU.
+>>
+>> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+>> ---
+>>
+>> Changes in v7:
+>> Add WARN_ON in irq isr, and modify iommu archdata comment.
+>>
+>> Changes in v6: None
+>> Changes in v5:
+>> Avoid race about pm_runtime_get_if_in_use() and pm_runtime_enabled().
+>>
+>> Changes in v4: None
+>> Changes in v3:
+>> Only call startup() and shutdown() when iommu attached.
+>> Remove pm_mutex.
+>> Check runtime PM disabled.
+>> Check pm_runtime in rk_iommu_irq().
+>>
+>> Changes in v2: None
+>>
+>>  drivers/iommu/rockchip-iommu.c | 189 ++++++++++++++++++++++++++++++++---------
+>>  1 file changed, 148 insertions(+), 41 deletions(-)
+>>
+>> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+>> index 2448a0528e39..db08978203f7 100644
+>> --- a/drivers/iommu/rockchip-iommu.c
+>> +++ b/drivers/iommu/rockchip-iommu.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/of_iommu.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/spinlock.h>
+>>
+>> @@ -105,7 +106,14 @@ struct rk_iommu {
+>>         struct iommu_domain *domain; /* domain to which iommu is attached */
+>>  };
+>>
+>> +/**
+>> + * struct rk_iommudata - iommu archdata of master device.
+>> + * @link:      device link with runtime PM integration from the master
+>> + *             (consumer) to the IOMMU (supplier).
+>> + * @iommu:     IOMMU of the master device.
+>> + */
+>>  struct rk_iommudata {
+>> +       struct device_link *link;
+>>         struct rk_iommu *iommu;
+>>  };
+>>
+>> @@ -518,7 +526,13 @@ static irqreturn_t rk_iommu_irq(int irq, void *dev_id)
+>>         u32 int_status;
+>>         dma_addr_t iova;
+>>         irqreturn_t ret = IRQ_NONE;
+>> -       int i;
+>> +       bool need_runtime_put;
+>> +       int i, err;
+>> +
+>> +       err = pm_runtime_get_if_in_use(iommu->dev);
+>> +       if (WARN_ON(err <= 0 && err != -EINVAL))
+>> +               return ret;
+>> +       need_runtime_put = err > 0;
+>
+> Actually, for our purposes, we can assume that runtime PM enable
+> status can be only changed by the driver itself. Looking at the LXR,
+> PM core also calls __pm_runtime_disable() before calling
+> .suspend_late() callback and pm_runtime_enable() after calling
+> .resume_early() callback, but we should be able to ignore this,
+> because we handle things in .suspend() callback in this driver.
+>
+> With this assumption in mind, all we need to do here is:
+>
+> if (WARN_ON(!pm_runtime_get_if_in_use(iommu->dev)))
+>     return 0;
+>
+>>
+>>         WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks));
+>>
+>> @@ -570,6 +584,9 @@ static irqreturn_t rk_iommu_irq(int irq, void *dev_id)
+>>
+>>         clk_bulk_disable(iommu->num_clocks, iommu->clocks);
+>>
+>> +       if (need_runtime_put)
+>> +               pm_runtime_put(iommu->dev);
+>
+> if (pm_runtime_enabled())
+>         pm_runtime_put(iommu->dev);
 
-Jeremy,
+Actually, we don't even need this pm_runtime_enabled() check and can
+always call pm_runtime_put(), because at this point we would be only
+in either of cases:
+1) runtime PM compiled in and enabled, so we got the enable count and
+need to put it,
+2) runtime PM not compiled in, so pm_runtime_put() is a no-op.
 
-> Sorry about this, but there's a bug in the first version of this patch.
-> I'm not sure what the protocol is for sending revised patches when the
-> earlier version got accepted, but I don't see the first version in
-> 4.16/scsi-fixes yet.
+>
+>> +
+>>         return ret;
+>>  }
+>>
+>> @@ -611,10 +628,20 @@ static void rk_iommu_zap_iova(struct rk_iommu_domain *rk_domain,
+>>         spin_lock_irqsave(&rk_domain->iommus_lock, flags);
+>>         list_for_each(pos, &rk_domain->iommus) {
+>>                 struct rk_iommu *iommu;
+>> +               int ret;
+>> +
+>>                 iommu = list_entry(pos, struct rk_iommu, node);
+>> -               WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu->clocks));
+>> -               rk_iommu_zap_lines(iommu, iova, size);
+>> -               clk_bulk_disable(iommu->num_clocks, iommu->clocks);
+>> +
+>> +               /* Only zap TLBs of IOMMUs that are powered on. */
+>> +               ret = pm_runtime_get_if_in_use(iommu->dev);
+>> +               if (ret > 0 || ret == -EINVAL) {
+>
+> if (pm_runtime_get_if_in_use(iommu->dev)) {
+>
+>> +                       WARN_ON(clk_bulk_enable(iommu->num_clocks,
+>> +                                               iommu->clocks));
+>> +                       rk_iommu_zap_lines(iommu, iova, size);
+>> +                       clk_bulk_disable(iommu->num_clocks, iommu->clocks);
+>
+>         if (pm_runtime_enabled(iommu->dev))
+>                 pm_runtime_put(iommu->dev);
 
-It's your lucky day! I botched fixing up something the other day and as
-a result the tree was never pushed.
+Same here.
 
-v2 added to 4.16/scsi-fixes.
-
-Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Best regards,
+Tomasz
