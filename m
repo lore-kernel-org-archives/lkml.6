@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933612AbeCGPSg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:18:36 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40243 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753949AbeCGPSf (ORCPT
+        id S933616AbeCGPVL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:21:11 -0500
+Received: from mail-io0-f194.google.com ([209.85.223.194]:40366 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933335AbeCGPVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:18:35 -0500
-X-Google-Smtp-Source: AG47ELsOkiQg9m4/jy9hohIeTF97GZaXPfPIA0toXKuNMrdB2FCzg1o132CUIGgCiHc+PcqyAS0UZg==
-Date: Wed, 7 Mar 2018 15:18:31 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, gwendal@chromium.org, bleung@chromium.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Vincent Palatin <vpalatin@chromium.org>
-Subject: Re: [PATCH 1/6] mfd: cros_ec: fail early if we cannot identify the EC
-Message-ID: <20180307151831.u65fryr4e7mbdwpe@dell>
-References: <20180219224602.22582-1-enric.balletbo@collabora.com>
- <20180307151253.pytqvo55svirgc6z@dell>
+        Wed, 7 Mar 2018 10:21:06 -0500
+X-Google-Smtp-Source: AG47ELttOJgRqwH2DzYUBTjudGfcXHWwZbgOSa9t78pVNYnyoBTp2eC53+OGUIRHWnjSHqrvJ9ArchJe4F4iMJuHnJ4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180307151253.pytqvo55svirgc6z@dell>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1520432391.3731.8.camel@flygoat.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com> <1520432391.3731.8.camel@flygoat.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 20:51:04 +0530
+Message-ID: <CANc+2y5t9PLHJTF0RvoVOTy0DpWtb++ARFT=5KuJOd-1Da+ASQ@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w27FLGo0029875
 
-On Wed, 07 Mar 2018, Lee Jones wrote:
+Hi Jiaxun,
 
-> On Mon, 19 Feb 2018, Enric Balletbo i Serra wrote:
-> 
-> > From: Vincent Palatin <vpalatin@chromium.org>
-> > 
-> > If we cannot communicate with the EC chip to detect the protocol version
-> > and its features, it's very likely useless to continue. Else we will
-> > commit all kind of uninformed mistakes (using the wrong protocol, the
-> > wrong buffer size, mixing the EC with other chips).
-> > 
-> > Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> > Acked-by: Benson Leung <bleung@chromium.org>
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > ---
-> >  drivers/mfd/cros_ec.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> Unless it is my mailer that is playing up, it looks as though you have
-> sent this set un-threaded, which means that when others or myself
-> start replying to them one-by-one, they will be sprawled throughout my
-> inbox.  It also seems as though there is no 0th (cover letter) patch,
-> which means I am lacking potentially important information regarding
-> the history of the set and what you are trying to achieve.
-> 
-> Anyway, the patch has been applied this time (hopefully there aren't
-> any inter-dependencies.
+On 7 March 2018 at 19:49, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> 在 2018-03-07三的 19:14 +0530，PrasannaKumar Muralidharan写道：
+>>
+>> I used to get my code tested from Domink but I could not reach him
+>> for
+>> quite some time. Before buying the development board myself I would
+>> like to see if anyone can help me in testing. Do you have any contact
+>> with Ingenic who can help in testing this?
+>>
+>
+> Hi PrasannaKumar
+>
+> I'm resently working on Ingenic chips too. Ingentic guys have sent me a
+> X1000 development broad and it will arrive in about two weeks. I have a
+> ejtag debugger also (but not very suit with X1000 because X1000 have
+> different ejtag interface with standard MIPS cores, maybe we need some
+> modification on openocd). So maybe I can help in testing this after I
+> get my broad. Just ask if you need any help.
+> Thanks
+> --
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-As discussed in 2/6, I'm going to un-apply this.
+Really nice to hear. I will ask for help once I make changes.
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+PrasannaKumar
