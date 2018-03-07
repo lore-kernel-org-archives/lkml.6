@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsBhsSdy4hyR8K8qNscS99lj0fvUsab46/vYKNz+YF+jH2CJZbjVvQAbWF1Po7k7CuGbW4f
-ARC-Seal: i=1; a=rsa-sha256; t=1520451758; cv=none;
+X-Google-Smtp-Source: AG47ELt5xcQMFNnjOtlq14LfCC23itSqC6ZfkxuXt2KFihhn2H68jK70xMymr+m2U3Z/JnV3HGwv
+ARC-Seal: i=1; a=rsa-sha256; t=1520451755; cv=none;
         d=google.com; s=arc-20160816;
-        b=E8Gre5agiE9S/DW9o1Iu1uiZ2FqGhxHZUG2rAWt3WsI8Sb/QT//WgzFyhv5Q4hqwoV
-         kOqPIlXK075AUU74fHzr8PvyQGdxuYk3L7nXO3fwscn3jr9l7sq+gAispG3fHUlrbDds
-         EYYCcWWrx299hhlKem02fqA9VzNtKEjz1AwsO/yAR2gF64jlsxHxoih3E/ves8yFD+gN
-         R8lBymBdLtL6SKItr6fkeIPllQoai6RsXu4nzplkWsowX3FwZeGRabl2SFRRIsCpoMkT
-         dLrBKymj3lezOtPGyhUpEzDmmtqY38Ska4KykmGhcTK6tsGkylieHGkeiudNqbhukc93
-         WiJg==
+        b=Dv/u2V6z1GNdaKMc2PR/eNNhT7MdbR9dibt+45m87z7GSOE38qyhVSWBAYZqiJoUZQ
+         HygWS3HZCJwaYsr/TBwWKUVEK1ZRjbqzIMynWdYYDKOFk+XDdxQjWDUqFXDNl1tbzWVT
+         eD67Vk9LTCRbj+2uJ2aNBlAxFT3ZVbrgf4/wo7plUcLnijs4mn5zb+vxZerVnFJYjVzA
+         JqU1Dk8iWUjpCpsYIAQ9Ehkw65/D91+/oBhn5Oa3f5wFLlOPdaR/Ynr2QRTB6U0He/7e
+         K03ZS+xyvI433GEvzUfFymH9VlG2sATJ5fK3+FgbK0HvtNk0XTVDTEOVEed70SV33MQH
+         ADFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iFqfuBfDuGaqB18cTalDU/pLZCJ/pHuIXo8qdHamesY=;
-        b=Rz5wWy8RO0j7aHNla7F6tfAx/85be70c1ck1UoQVETjXOL2WKDj1dRT6vXQwF8qiLH
-         TOM11f66Z4YlbKanCWJjwVyRykqU1j2vidyeEkWnieb1+TGyRzp0piySEaTRRIpCH5dU
-         ZkEUgE+Ix/d0mY9r3tQecsK4lif0fxPu9LqfenCz0VL377vlDsUwnixB7T7VmYSuSws+
-         tR0FPO4dRQU8vJZcaLxCsYydUP8CvuNLpHNtvT3mE0zK0MM5juD8xtPLmskND7xAzYN2
-         LlkFK2hyRiNSa2mg6bK5/a8+SB2Be/s9fmr9NgzwYLdcgN+WkvWMrrotoWgzVnxGEAqa
-         7K/A==
+        bh=jFcHiMDwl/HFrRtMbedipEYs28T5T2YKUrpZwgKFlQg=;
+        b=ovHWeWMVlNYvYoxkn7bieGjR75Mm9sSx8Fz7MmREQduS88XfEUrmh/eMVoMWMu2AwH
+         l99x6xKXZ3DzStdM51+DYUgqP68Nj0Fcf5xqHeT2deq0Yk3/73DPd+584urInv5MvvIL
+         08k77uxwr71Kk6mirPRj2O5psS9FK9nsrInHKApI9IPrT5sifouyj6pufutmBcT9O2JK
+         MPyCOklkkD4KDD/eGvvAelKa+x3lCBrKdLFZH7twkuDH1pDiVbxWqdHZVZJpB6cXG/4h
+         vnHp17WuUUwm4lrvWF3hKbK5ugzrRtIFmCkB4B9DZZvhQmgoxtY6rTvd++ahPrueVs7Z
+         Zl5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	James Chapman <jchapman@katalix.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 085/122] l2tp: fix races with tunnel socket close
-Date: Wed,  7 Mar 2018 11:38:17 -0800
-Message-Id: <20180307191741.628371232@linuxfoundation.org>
+Subject: [PATCH 4.15 084/122] l2tp: dont use inet_shutdown on ppp session destroy
+Date: Wed,  7 Mar 2018 11:38:16 -0800
+Message-Id: <20180307191741.438364863@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309223678390598?=
-X-GMAIL-MSGID: =?utf-8?q?1594309223678390598?=
+X-GMAIL-THRID: =?utf-8?q?1594309220051657758?=
+X-GMAIL-MSGID: =?utf-8?q?1594309220051657758?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,412 +52,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: James Chapman <jchapman@katalix.com>
 
 
-[ Upstream commit d00fa9adc528c1b0e64d532556764852df8bd7b9 ]
+[ Upstream commit 225eb26489d05c679a4c4197ffcb81c81e9dcaf4 ]
 
-The tunnel socket tunnel->sock (struct sock) is accessed when
-preparing a new ppp session on a tunnel at pppol2tp_session_init. If
-the socket is closed by a thread while another is creating a new
-session, the threads race. In pppol2tp_connect, the tunnel object may
-be created if the pppol2tp socket is associated with the special
-session_id 0 and the tunnel socket is looked up using the provided
-fd. When handling this, pppol2tp_connect cannot sock_hold the tunnel
-socket to prevent it being destroyed during pppol2tp_connect since
-this may itself may race with the socket being destroyed. Doing
-sockfd_lookup in pppol2tp_connect isn't sufficient to prevent
-tunnel->sock going away either because a given tunnel socket fd may be
-reused between calls to pppol2tp_connect. Instead, have
-l2tp_tunnel_create sock_hold the tunnel socket before it does
-sockfd_put. This ensures that the tunnel's socket is always extant
-while the tunnel object exists. Hold a ref on the socket until the
-tunnel is destroyed and ensure that all tunnel destroy paths go
-through a common function (l2tp_tunnel_delete) since this will do the
-final sock_put to release the tunnel socket.
+Previously, if a ppp session was closed, we called inet_shutdown to mark
+the socket as unconnected such that userspace would get errors and
+then close the socket. This could race with userspace closing the
+socket. Instead, leave userspace to close the socket in its own time
+(our session will be detached anyway).
 
-Since the tunnel's socket is now guaranteed to exist if the tunnel
-exists, we no longer need to use sockfd_lookup via l2tp_sock_to_tunnel
-to derive the tunnel from the socket since this is always
-sk_user_data.
+BUG: KASAN: use-after-free in inet_shutdown+0x5d/0x1c0
+Read of size 4 at addr ffff880010ea3ac0 by task syzbot_347bd5ac/8296
 
-Also, sessions no longer sock_hold the tunnel socket since sessions
-already hold a tunnel ref and the tunnel sock will not be freed until
-the tunnel is freed. Removing these sock_holds in
-l2tp_session_register avoids a possible sock leak in the
-pppol2tp_connect error path if l2tp_session_register succeeds but
-attaching a ppp channel fails. The pppol2tp_connect error path could
-have been fixed instead and have the sock ref dropped when the session
-is freed, but doing a sock_put of the tunnel socket when the session
-is freed would require a new session_free callback. It is simpler to
-just remove the sock_hold of the tunnel socket in
-l2tp_session_register, now that the tunnel socket lifetime is
-guaranteed.
-
-Finally, some init code in l2tp_tunnel_create is reordered to ensure
-that the new tunnel object's refcount is set and the tunnel socket ref
-is taken before the tunnel socket destructor callbacks are set.
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Modules linked in:
-CPU: 0 PID: 4360 Comm: syzbot_19c09769 Not tainted 4.16.0-rc2+ #34
+CPU: 3 PID: 8296 Comm: syzbot_347bd5ac Not tainted 4.16.0-rc1+ #91
 Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-RIP: 0010:pppol2tp_session_init+0x1d6/0x500
-RSP: 0018:ffff88001377fb40 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: ffff88001636a940 RCX: ffffffff84836c1d
-RDX: 0000000000000045 RSI: 0000000055976744 RDI: 0000000000000228
-RBP: ffff88001377fb60 R08: ffffffff84836bc8 R09: 0000000000000002
-R10: ffff88001377fab8 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88001636aac8 R14: ffff8800160f81c0 R15: 1ffff100026eff76
-FS:  00007ffb3ea66700(0000) GS:ffff88001a400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020e77000 CR3: 0000000016261000 CR4: 00000000000006f0
 Call Trace:
- pppol2tp_connect+0xd18/0x13c0
- ? pppol2tp_session_create+0x170/0x170
- ? __might_fault+0x115/0x1d0
- ? lock_downgrade+0x860/0x860
- ? __might_fault+0xe5/0x1d0
- ? security_socket_connect+0x8e/0xc0
- SYSC_connect+0x1b6/0x310
- ? SYSC_bind+0x280/0x280
- ? __do_page_fault+0x5d1/0xca0
- ? up_read+0x1f/0x40
- ? __do_page_fault+0x3c8/0xca0
- SyS_connect+0x29/0x30
- ? SyS_accept+0x40/0x40
- do_syscall_64+0x1e0/0x730
- ? trace_hardirqs_off_thunk+0x1a/0x1c
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x7ffb3e376259
-RSP: 002b:00007ffeda4f6508 EFLAGS: 00000202 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 0000000020e77012 RCX: 00007ffb3e376259
-RDX: 000000000000002e RSI: 0000000020e77000 RDI: 0000000000000004
-RBP: 00007ffeda4f6540 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000400b60
-R13: 00007ffeda4f6660 R14: 0000000000000000 R15: 0000000000000000
-Code: 80 3d b0 ff 06 02 00 0f 84 07 02 00 00 e8 13 d6 db fc 49 8d bc 24 28 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 f
-a 48 c1 ea 03 <80> 3c 02 00 0f 85 ed 02 00 00 4d 8b a4 24 28 02 00 00 e8 13 16
+ dump_stack+0x101/0x157
+ ? inet_shutdown+0x5d/0x1c0
+ print_address_description+0x78/0x260
+ ? inet_shutdown+0x5d/0x1c0
+ kasan_report+0x240/0x360
+ __asan_load4+0x78/0x80
+ inet_shutdown+0x5d/0x1c0
+ ? pppol2tp_show+0x80/0x80
+ pppol2tp_session_close+0x68/0xb0
+ l2tp_tunnel_closeall+0x199/0x210
+ ? udp_v6_flush_pending_frames+0x90/0x90
+ l2tp_udp_encap_destroy+0x6b/0xc0
+ ? l2tp_tunnel_del_work+0x2e0/0x2e0
+ udpv6_destroy_sock+0x8c/0x90
+ sk_common_release+0x47/0x190
+ udp_lib_close+0x15/0x20
+ inet_release+0x85/0xd0
+ inet6_release+0x43/0x60
+ sock_release+0x53/0x100
+ ? sock_alloc_file+0x260/0x260
+ sock_close+0x1b/0x20
+ __fput+0x19f/0x380
+ ____fput+0x1a/0x20
+ task_work_run+0xd2/0x110
+ exit_to_usermode_loop+0x18d/0x190
+ do_syscall_64+0x389/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+RIP: 0033:0x7fe240a45259
+RSP: 002b:00007fe241132df8 EFLAGS: 00000297 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fe240a45259
+RDX: 00007fe240a45259 RSI: 0000000000000000 RDI: 00000000000000a5
+RBP: 00007fe241132e20 R08: 00007fe241133700 R09: 0000000000000000
+R10: 00007fe241133700 R11: 0000000000000297 R12: 0000000000000000
+R13: 00007ffc49aff84f R14: 0000000000000000 R15: 00007fe241141040
 
-Fixes: 80d84ef3ff1dd ("l2tp: prevent l2tp_tunnel_delete racing with userspace close")
+Allocated by task 8331:
+ save_stack+0x43/0xd0
+ kasan_kmalloc+0xad/0xe0
+ kasan_slab_alloc+0x12/0x20
+ kmem_cache_alloc+0x144/0x3e0
+ sock_alloc_inode+0x22/0x130
+ alloc_inode+0x3d/0xf0
+ new_inode_pseudo+0x1c/0x90
+ sock_alloc+0x30/0x110
+ __sock_create+0xaa/0x4c0
+ SyS_socket+0xbe/0x130
+ do_syscall_64+0x128/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+
+Freed by task 8314:
+ save_stack+0x43/0xd0
+ __kasan_slab_free+0x11a/0x170
+ kasan_slab_free+0xe/0x10
+ kmem_cache_free+0x88/0x2b0
+ sock_destroy_inode+0x49/0x50
+ destroy_inode+0x77/0xb0
+ evict+0x285/0x340
+ iput+0x429/0x530
+ dentry_unlink_inode+0x28c/0x2c0
+ __dentry_kill+0x1e3/0x2f0
+ dput.part.21+0x500/0x560
+ dput+0x24/0x30
+ __fput+0x2aa/0x380
+ ____fput+0x1a/0x20
+ task_work_run+0xd2/0x110
+ exit_to_usermode_loop+0x18d/0x190
+ do_syscall_64+0x389/0x3b0
+ entry_SYSCALL_64_after_hwframe+0x26/0x9b
+
+Fixes: fd558d186df2c ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
 Signed-off-by: James Chapman <jchapman@katalix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/l2tp/l2tp_core.c |  117 ++++++++++++++-------------------------------------
- net/l2tp/l2tp_core.h |   23 ----------
- net/l2tp/l2tp_ip.c   |   10 +---
- net/l2tp/l2tp_ip6.c  |    8 +--
- 4 files changed, 42 insertions(+), 116 deletions(-)
+ net/l2tp/l2tp_ppp.c |   10 ----------
+ 1 file changed, 10 deletions(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -136,51 +136,6 @@ l2tp_session_id_hash_2(struct l2tp_net *
- 
- }
- 
--/* Lookup the tunnel socket, possibly involving the fs code if the socket is
-- * owned by userspace.  A struct sock returned from this function must be
-- * released using l2tp_tunnel_sock_put once you're done with it.
-- */
--static struct sock *l2tp_tunnel_sock_lookup(struct l2tp_tunnel *tunnel)
--{
--	int err = 0;
--	struct socket *sock = NULL;
--	struct sock *sk = NULL;
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -420,16 +420,6 @@ abort:
+  */
+ static void pppol2tp_session_close(struct l2tp_session *session)
+ {
+-	struct sock *sk;
 -
--	if (!tunnel)
--		goto out;
+-	BUG_ON(session->magic != L2TP_SESSION_MAGIC);
 -
--	if (tunnel->fd >= 0) {
--		/* Socket is owned by userspace, who might be in the process
--		 * of closing it.  Look the socket up using the fd to ensure
--		 * consistency.
--		 */
--		sock = sockfd_lookup(tunnel->fd, &err);
--		if (sock)
--			sk = sock->sk;
--	} else {
--		/* Socket is owned by kernelspace */
--		sk = tunnel->sock;
--		sock_hold(sk);
--	}
--
--out:
--	return sk;
--}
--
--/* Drop a reference to a tunnel socket obtained via. l2tp_tunnel_sock_put */
--static void l2tp_tunnel_sock_put(struct sock *sk)
--{
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
--	if (tunnel) {
--		if (tunnel->fd >= 0) {
--			/* Socket is owned by userspace */
--			sockfd_put(sk->sk_socket);
--		}
+-	sk = pppol2tp_session_get_sock(session);
+-	if (sk) {
+-		if (sk->sk_socket)
+-			inet_shutdown(sk->sk_socket, SEND_SHUTDOWN);
 -		sock_put(sk);
 -	}
--	sock_put(sk);
--}
--
- /* Session hash list.
-  * The session_id SHOULD be random according to RFC2661, but several
-  * L2TP implementations (Cisco and Microsoft) use incrementing
-@@ -193,6 +148,13 @@ l2tp_session_id_hash(struct l2tp_tunnel
- 	return &tunnel->session_hlist[hash_32(session_id, L2TP_HASH_BITS)];
  }
  
-+void l2tp_tunnel_free(struct l2tp_tunnel *tunnel)
-+{
-+	sock_put(tunnel->sock);
-+	/* the tunnel is freed in the socket destructor */
-+}
-+EXPORT_SYMBOL(l2tp_tunnel_free);
-+
- /* Lookup a tunnel. A new reference is held on the returned tunnel. */
- struct l2tp_tunnel *l2tp_tunnel_get(const struct net *net, u32 tunnel_id)
- {
-@@ -345,13 +307,11 @@ int l2tp_session_register(struct l2tp_se
- 			}
- 
- 		l2tp_tunnel_inc_refcount(tunnel);
--		sock_hold(tunnel->sock);
- 		hlist_add_head_rcu(&session->global_hlist, g_head);
- 
- 		spin_unlock_bh(&pn->l2tp_session_hlist_lock);
- 	} else {
- 		l2tp_tunnel_inc_refcount(tunnel);
--		sock_hold(tunnel->sock);
- 	}
- 
- 	hlist_add_head(&session->hlist, head);
-@@ -975,7 +935,7 @@ int l2tp_udp_encap_recv(struct sock *sk,
- {
- 	struct l2tp_tunnel *tunnel;
- 
--	tunnel = l2tp_sock_to_tunnel(sk);
-+	tunnel = l2tp_tunnel(sk);
- 	if (tunnel == NULL)
- 		goto pass_up;
- 
-@@ -983,13 +943,10 @@ int l2tp_udp_encap_recv(struct sock *sk,
- 		 tunnel->name, skb->len);
- 
- 	if (l2tp_udp_recv_core(tunnel, skb, tunnel->recv_payload_hook))
--		goto pass_up_put;
-+		goto pass_up;
- 
--	sock_put(sk);
- 	return 0;
- 
--pass_up_put:
--	sock_put(sk);
- pass_up:
- 	return 1;
- }
-@@ -1223,7 +1180,6 @@ static void l2tp_tunnel_destruct(struct
- 
- 	l2tp_info(tunnel, L2TP_MSG_CONTROL, "%s: closing...\n", tunnel->name);
- 
--
- 	/* Disable udp encapsulation */
- 	switch (tunnel->encap) {
- 	case L2TP_ENCAPTYPE_UDP:
-@@ -1246,12 +1202,11 @@ static void l2tp_tunnel_destruct(struct
- 	list_del_rcu(&tunnel->list);
- 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
- 
--	tunnel->sock = NULL;
--	l2tp_tunnel_dec_refcount(tunnel);
--
- 	/* Call the original destructor */
- 	if (sk->sk_destruct)
- 		(*sk->sk_destruct)(sk);
-+
-+	kfree_rcu(tunnel, rcu);
- end:
- 	return;
- }
-@@ -1312,30 +1267,22 @@ EXPORT_SYMBOL_GPL(l2tp_tunnel_closeall);
- /* Tunnel socket destroy hook for UDP encapsulation */
- static void l2tp_udp_encap_destroy(struct sock *sk)
- {
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
-+	struct l2tp_tunnel *tunnel = l2tp_tunnel(sk);
-+
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- }
- 
- /* Workqueue tunnel deletion function */
- static void l2tp_tunnel_del_work(struct work_struct *work)
- {
--	struct l2tp_tunnel *tunnel = NULL;
--	struct socket *sock = NULL;
--	struct sock *sk = NULL;
--
--	tunnel = container_of(work, struct l2tp_tunnel, del_work);
-+	struct l2tp_tunnel *tunnel = container_of(work, struct l2tp_tunnel,
-+						  del_work);
-+	struct sock *sk = tunnel->sock;
-+	struct socket *sock = sk->sk_socket;
- 
- 	l2tp_tunnel_closeall(tunnel);
- 
--	sk = l2tp_tunnel_sock_lookup(tunnel);
--	if (!sk)
--		goto out;
--
--	sock = sk->sk_socket;
--
- 	/* If the tunnel socket was created within the kernel, use
- 	 * the sk API to release it here.
- 	 */
-@@ -1346,8 +1293,10 @@ static void l2tp_tunnel_del_work(struct
- 		}
- 	}
- 
--	l2tp_tunnel_sock_put(sk);
--out:
-+	/* drop initial ref */
-+	l2tp_tunnel_dec_refcount(tunnel);
-+
-+	/* drop workqueue ref */
- 	l2tp_tunnel_dec_refcount(tunnel);
- }
- 
-@@ -1600,13 +1549,22 @@ int l2tp_tunnel_create(struct net *net,
- 		sk->sk_user_data = tunnel;
- 	}
- 
-+	/* Bump the reference count. The tunnel context is deleted
-+	 * only when this drops to zero. A reference is also held on
-+	 * the tunnel socket to ensure that it is not released while
-+	 * the tunnel is extant. Must be done before sk_destruct is
-+	 * set.
-+	 */
-+	refcount_set(&tunnel->ref_count, 1);
-+	sock_hold(sk);
-+	tunnel->sock = sk;
-+	tunnel->fd = fd;
-+
- 	/* Hook on the tunnel socket destructor so that we can cleanup
- 	 * if the tunnel socket goes away.
- 	 */
- 	tunnel->old_sk_destruct = sk->sk_destruct;
- 	sk->sk_destruct = &l2tp_tunnel_destruct;
--	tunnel->sock = sk;
--	tunnel->fd = fd;
- 	lockdep_set_class_and_name(&sk->sk_lock.slock, &l2tp_socket_class, "l2tp_sock");
- 
- 	sk->sk_allocation = GFP_ATOMIC;
-@@ -1616,11 +1574,6 @@ int l2tp_tunnel_create(struct net *net,
- 
- 	/* Add tunnel to our list */
- 	INIT_LIST_HEAD(&tunnel->list);
--
--	/* Bump the reference count. The tunnel context is deleted
--	 * only when this drops to zero. Must be done before list insertion
--	 */
--	refcount_set(&tunnel->ref_count, 1);
- 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
- 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
- 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
-@@ -1661,8 +1614,6 @@ void l2tp_session_free(struct l2tp_sessi
- 
- 	if (tunnel) {
- 		BUG_ON(tunnel->magic != L2TP_TUNNEL_MAGIC);
--		sock_put(tunnel->sock);
--		session->tunnel = NULL;
- 		l2tp_tunnel_dec_refcount(tunnel);
- 	}
- 
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -219,27 +219,8 @@ static inline void *l2tp_session_priv(st
- 	return &session->priv[0];
- }
- 
--static inline struct l2tp_tunnel *l2tp_sock_to_tunnel(struct sock *sk)
--{
--	struct l2tp_tunnel *tunnel;
--
--	if (sk == NULL)
--		return NULL;
--
--	sock_hold(sk);
--	tunnel = (struct l2tp_tunnel *)(sk->sk_user_data);
--	if (tunnel == NULL) {
--		sock_put(sk);
--		goto out;
--	}
--
--	BUG_ON(tunnel->magic != L2TP_TUNNEL_MAGIC);
--
--out:
--	return tunnel;
--}
--
- struct l2tp_tunnel *l2tp_tunnel_get(const struct net *net, u32 tunnel_id);
-+void l2tp_tunnel_free(struct l2tp_tunnel *tunnel);
- 
- struct l2tp_session *l2tp_session_get(const struct net *net,
- 				      struct l2tp_tunnel *tunnel,
-@@ -288,7 +269,7 @@ static inline void l2tp_tunnel_inc_refco
- static inline void l2tp_tunnel_dec_refcount(struct l2tp_tunnel *tunnel)
- {
- 	if (refcount_dec_and_test(&tunnel->ref_count))
--		kfree_rcu(tunnel, rcu);
-+		l2tp_tunnel_free(tunnel);
- }
- 
- /* Session reference counts. Incremented when code obtains a reference
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -234,17 +234,13 @@ static void l2tp_ip_close(struct sock *s
- static void l2tp_ip_destroy_sock(struct sock *sk)
- {
- 	struct sk_buff *skb;
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
-+	struct l2tp_tunnel *tunnel = sk->sk_user_data;
- 
- 	while ((skb = __skb_dequeue_tail(&sk->sk_write_queue)) != NULL)
- 		kfree_skb(skb);
- 
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
--
--	sk_refcnt_debug_dec(sk);
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- }
- 
- static int l2tp_ip_bind(struct sock *sk, struct sockaddr *uaddr, int addr_len)
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -248,16 +248,14 @@ static void l2tp_ip6_close(struct sock *
- 
- static void l2tp_ip6_destroy_sock(struct sock *sk)
- {
--	struct l2tp_tunnel *tunnel = l2tp_sock_to_tunnel(sk);
-+	struct l2tp_tunnel *tunnel = sk->sk_user_data;
- 
- 	lock_sock(sk);
- 	ip6_flush_pending_frames(sk);
- 	release_sock(sk);
- 
--	if (tunnel) {
--		l2tp_tunnel_closeall(tunnel);
--		sock_put(sk);
--	}
-+	if (tunnel)
-+		l2tp_tunnel_delete(tunnel);
- 
- 	inet6_destroy_sock(sk);
- }
+ /* Really kill the session socket. (Called from sock_put() if
