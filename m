@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtSocSfp2fVxTp0af+SkjvP5JCTxSoOhSfMIVPGkEEnfC2UvOmvhZ1oeYsEyeSkA8YW3oSp
-ARC-Seal: i=1; a=rsa-sha256; t=1520451835; cv=none;
+X-Google-Smtp-Source: AG47ELtTo/9H9RlcrnmWYQu0QNUzEj5/xRSuQUEtGYsxvEd6j8hUZ9OyklKmnOa5pv8dJaWuGmRT
+ARC-Seal: i=1; a=rsa-sha256; t=1520451830; cv=none;
         d=google.com; s=arc-20160816;
-        b=RSfKohQJO5bu2CWItje6hcZwvrKMSB6YS1Jfzhg6tUw55UfKBsP8xzcJ21QeDOzTIP
-         Nky1Qwqs/7OapFcHep3PLe13udoxgaC5zkvQfTmw1GlnKDv2Xaxji7PtumunhA4wEW+M
-         bezGKEycpv5hyJEFjxQiz8X9U2Q2t6ulopT97ktIYhYGDvcTN9ZilZayETk32ceqwAhv
-         XDbkiQvIYVtGxALfBhLj1YsYY50IKH9lKSGABLIYBQaUyRYkMIzcRpcoJS7dBGfnBY4s
-         KkQiIqRdi0Pgilwi9gD6oPwXmy0jn13fN+EcJEWRVTclZe3YUtfNtWcCuNA3PnFJbAgY
-         +o3A==
+        b=T6VZ7sYgjGOp0G3j2e9kaTkH1TSthPEZzh5bxYD2jRJ+KLila9lQKaZvh5+oOKjM2K
+         6dKu0HIBQ9fp/BoFNpVvJRdLc0PhHb2Ug63uHeNI5ubos6A6KVnSpYgjrSKCf8mfZJNh
+         t6QCcRTV3dA63OO5EWq4znM9TZA5F83CEcHQkQYX4NmpjXEYfyLAaGXKw+kJfx00SG5H
+         do5g+m4zqv+pfvZGM4HHJqVy2IxX1dbB9hS1fqCVZj3sWpAEC7nauvKpCP0KxTA0MLf3
+         1T5t0mnaAho9Pi1IgF2HoamU/j5AEPgzzA+W5nrIPqFblrd6HWpF3Q8CM0dNVLv4A8S0
+         1OTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yPMh4EmjQ3JR3poFTomY+NqCmUjforj2KeOjFeJyjJs=;
-        b=h1PY9RZ8VeAIpKqqVdOLGkNIZyOJPL5RsefNslk7lDLViz5Ivq4P/JZ1T/4/U/HYnR
-         LkFjNqdKefOz5z5krr7o3EyO2xrk3yyA3+P2EkXwFgNGQ1/sLRvdp37Cp7InVmdeUypU
-         JUkq9yu26pmYk7NmCsQlXlYlDdrf+0iAbhIBCjFFSZCOoj/vqDCP8UXYLFk/vAYg7Egl
-         sVef0vImjgJ6qjpLaQJcngu5x7TZNAA3zJiWql688PgnDhIWGQvZLXNjBz4+77P8PHAT
-         Nfx+LXivgjrIxQWG1wqwi5N9qIjR4VGi8d3UgAvx5ODGRIs6MAaTgLQIhqW7ipbNYly1
-         hRQQ==
+        bh=MyFMoy8qTq24HD4UufgZw0+qBpcwvipwO1VmxeHxHyw=;
+        b=FnD+uMxdw5V9tnAGcigiAB2YDl9QRRDtN3nGlQ7B1h5DNik6hSFcOaqu1TH+SuD3Xt
+         6+ZD7ix9kiF+480obiW3TTU6yxdU2ifY8skzlgaL4a6mHYjRxHgTVUgqS1wVe1oXH7wu
+         jJT+bkOsiT9HiRsNogqjh0qxhTMe1kCXHie9O6yUWhqF30iVyU/5oGdcmEaYqQUoX3Wo
+         H3aBHyggprZkXW9mciLxh46S/CMB9uBBBJcCyQb4BXSZ4ELHdfKwzwshMvwMKqY0SpVC
+         rOcMqXH5/VgQ/COUgG0wIHs8H1FtrlNyVaORgPxpOWdxe4CwB8VxaEiD/ziZokq8OUFT
+         tJOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Boris Pismenny <borisp@mellanox.com>,
-	Ilya Lesokhin <ilyal@mellanox.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 070/122] tls: Use correct sk->sk_prot for IPV6
-Date: Wed,  7 Mar 2018 11:38:02 -0800
-Message-Id: <20180307191739.488275683@linuxfoundation.org>
+Subject: [PATCH 4.15 078/122] virtio-net: disable NAPI only when enabled during XDP set
+Date: Wed,  7 Mar 2018 11:38:10 -0800
+Message-Id: <20180307191740.519486798@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309303852952237?=
-X-GMAIL-MSGID: =?utf-8?q?1594309303852952237?=
+X-GMAIL-THRID: =?utf-8?q?1594309298927002039?=
+X-GMAIL-MSGID: =?utf-8?q?1594309298927002039?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,120 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Pismenny <borisp@mellanox.com>
+From: Jason Wang <jasowang@redhat.com>
 
 
-[ Upstream commit c113187d38ff85dc302a1bb55864b203ebb2ba10 ]
+[ Upstream commit 4e09ff5362843dff3accfa84c805c7f3a99de9cd ]
 
-The tls ulp overrides sk->prot with a new tls specific proto structs.
-The tls specific structs were previously based on the ipv4 specific
-tcp_prot sturct.
-As a result, attaching the tls ulp to an ipv6 tcp socket replaced
-some ipv6 callback with the ipv4 equivalents.
+We try to disable NAPI to prevent a single XDP TX queue being used by
+multiple cpus. But we don't check if device is up (NAPI is enabled),
+this could result stall because of infinite wait in
+napi_disable(). Fixing this by checking device state through
+netif_running() before.
 
-This patch adds ipv6 tls proto structs and uses them when
-attached to ipv6 sockets.
-
-Fixes: 3c4d7559159b ('tls: kernel TLS support')
-Signed-off-by: Boris Pismenny <borisp@mellanox.com>
-Signed-off-by: Ilya Lesokhin <ilyal@mellanox.com>
+Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_main.c |   52 +++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 37 insertions(+), 15 deletions(-)
+ drivers/net/virtio_net.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -46,16 +46,26 @@ MODULE_DESCRIPTION("Transport Layer Secu
- MODULE_LICENSE("Dual BSD/GPL");
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2040,8 +2040,9 @@ static int virtnet_xdp_set(struct net_de
+ 	}
  
- enum {
-+	TLSV4,
-+	TLSV6,
-+	TLS_NUM_PROTS,
-+};
-+
-+enum {
- 	TLS_BASE_TX,
- 	TLS_SW_TX,
- 	TLS_NUM_CONFIG,
- };
+ 	/* Make sure NAPI is not using any XDP TX queues for RX. */
+-	for (i = 0; i < vi->max_queue_pairs; i++)
+-		napi_disable(&vi->rq[i].napi);
++	if (netif_running(dev))
++		for (i = 0; i < vi->max_queue_pairs; i++)
++			napi_disable(&vi->rq[i].napi);
  
--static struct proto tls_prots[TLS_NUM_CONFIG];
-+static struct proto *saved_tcpv6_prot;
-+static DEFINE_MUTEX(tcpv6_prot_mutex);
-+static struct proto tls_prots[TLS_NUM_PROTS][TLS_NUM_CONFIG];
+ 	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
+ 	err = _virtnet_set_queues(vi, curr_qp + xdp_qp);
+@@ -2060,7 +2061,8 @@ static int virtnet_xdp_set(struct net_de
+ 		}
+ 		if (old_prog)
+ 			bpf_prog_put(old_prog);
+-		virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++		if (netif_running(dev))
++			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
+ 	}
  
- static inline void update_sk_prot(struct sock *sk, struct tls_context *ctx)
- {
--	sk->sk_prot = &tls_prots[ctx->tx_conf];
-+	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
-+
-+	sk->sk_prot = &tls_prots[ip_ver][ctx->tx_conf];
- }
- 
- int wait_on_pending_writer(struct sock *sk, long *timeo)
-@@ -450,8 +460,21 @@ static int tls_setsockopt(struct sock *s
- 	return do_tls_setsockopt(sk, optname, optval, optlen);
- }
- 
-+static void build_protos(struct proto *prot, struct proto *base)
-+{
-+	prot[TLS_BASE_TX] = *base;
-+	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
-+	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
-+	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
-+
-+	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
-+	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
-+	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
-+}
-+
- static int tls_init(struct sock *sk)
- {
-+	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct tls_context *ctx;
- 	int rc = 0;
-@@ -476,6 +499,17 @@ static int tls_init(struct sock *sk)
- 	ctx->getsockopt = sk->sk_prot->getsockopt;
- 	ctx->sk_proto_close = sk->sk_prot->close;
- 
-+	/* Build IPv6 TLS whenever the address of tcpv6_prot changes */
-+	if (ip_ver == TLSV6 &&
-+	    unlikely(sk->sk_prot != smp_load_acquire(&saved_tcpv6_prot))) {
-+		mutex_lock(&tcpv6_prot_mutex);
-+		if (likely(sk->sk_prot != saved_tcpv6_prot)) {
-+			build_protos(tls_prots[TLSV6], sk->sk_prot);
-+			smp_store_release(&saved_tcpv6_prot, sk->sk_prot);
-+		}
-+		mutex_unlock(&tcpv6_prot_mutex);
-+	}
-+
- 	ctx->tx_conf = TLS_BASE_TX;
- 	update_sk_prot(sk, ctx);
- out:
-@@ -488,21 +522,9 @@ static struct tcp_ulp_ops tcp_tls_ulp_op
- 	.init			= tls_init,
- };
- 
--static void build_protos(struct proto *prot, struct proto *base)
--{
--	prot[TLS_BASE_TX] = *base;
--	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
--	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
--	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
--
--	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
--	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
--	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
--}
--
- static int __init tls_register(void)
- {
--	build_protos(tls_prots, &tcp_prot);
-+	build_protos(tls_prots[TLSV4], &tcp_prot);
- 
- 	tcp_register_ulp(&tcp_tls_ulp_ops);
- 
+ 	return 0;
