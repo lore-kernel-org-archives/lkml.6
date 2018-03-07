@@ -1,197 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751083AbeCGFhj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 00:37:39 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:50459 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750951AbeCGFhi (ORCPT
+        id S1751112AbeCGFzp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 00:55:45 -0500
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:53806 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbeCGFzo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 00:37:38 -0500
-From: Harish Jenny K N <harish_kandiga@mentor.com>
-To: <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <adrian.hunter@intel.com>, <shawn.lin@rock-chips.com>,
-        <avri.altman@wdc.com>, <andriy.shevchenko@linux.intel.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <harish_kandiga@mentor.com>, <Vladimir_Zapolskiy@mentor.com>
-Subject: [PATCH v6] mmc: Export host capabilities to debugfs.
-Date: Wed, 7 Mar 2018 11:07:31 +0530
-Message-ID: <1520401051-11135-1-git-send-email-harish_kandiga@mentor.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 7 Mar 2018 00:55:44 -0500
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.184
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [RFC] rcu: Prevent expedite reporting within RCU read-side
+ section
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+References: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
+ <20180306134205.lwmn3cgisnwkngcf@tardis>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <908c33f9-c8ed-5d4e-91cb-a123de5dbbc7@lge.com>
+Date: Wed, 7 Mar 2018 14:55:40 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180306134205.lwmn3cgisnwkngcf@tardis>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exports the host capabilities to debugfs
+On 3/6/2018 10:42 PM, Boqun Feng wrote:
+> On Tue, Mar 06, 2018 at 02:31:58PM +0900, Byungchul Park wrote:
+>> Hello Paul and RCU folks,
+>>
+>> I am afraid I correctly understand and fix it. But I really wonder why
+>> sync_rcu_exp_handler() reports the quiescent state even in the case that
+>> current task is within a RCU read-side section. Do I miss something?
+>>
+>> If I correctly understand it and you agree with it, I can add more logic
+>> which make it more expedited by boosting current or making it urgent
+>> when we fail to report the quiescent state on the IPI.
+>>
+>> ----->8-----
+>>  From 0b0191f506c19ce331a1fdb7c2c5a00fb23fbcf2 Mon Sep 17 00:00:00 2001
+>> From: Byungchul Park <byungchul.park@lge.com>
+>> Date: Tue, 6 Mar 2018 13:54:41 +0900
+>> Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side section
+>>
+>> We report the quiescent state for this cpu if it's out of RCU read-side
+>> section at the moment IPI was just fired during the expedite process.
+>>
+>> However, current code reports the quiescent state even in the case:
+>>
+>>     1) the current task is still within a RCU read-side section
+>>     2) the current task has been blocked within the RCU read-side section
+>>
+> 
+> If this happens, the task will queue itself in
+> rcu_preempt_note_context_switch() using rcu_preempt_ctxt_queue(). The gp
+> kthread will wait for this task to dequeue itself. IOW, we have other
+> mechanism to wait for this task other than bottom-up qs reporting tree.
+> So I think we are fine here.
 
-This idea of sharing host capabilities over debugfs
-came up from Abbas Raza <Abbas_Raza@mentor.com>
-Earlier discussions:
-https://lkml.org/lkml/2018/3/5/357
-https://www.spinics.net/lists/linux-mmc/msg48219.html
+Right. Basically we consider both the quiscent state within the current
+task and queued tasks on rcu nodes that you mentioned, to control grace
+periods when PREEMPT kernel is used.
 
-Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
----
+Actually my concern was if it's safe to clear the bit of 'expmask' on
+the IPI for all possible cases, even though anyway blocked tasks would
+try to prevent the grace period from ending.
 
-Changes in v6:
-- Used DEFINE_SHOW_ATTRIBUTE
+I worried if something subtle might cause problems, but the code looks
+fine on second thought as you said. Thank you for your explanation.
 
-Changes in v5:
-- Added parser logic in kernel by using debugfs_create_file  for caps and caps2 instead of debugfs_create_x32
-- Changed Author
+> Regards,
+> Boqun
+> 
+>> Since we don't get to the quiescent state yet in the case, we shouldn't
+>> report it but check it another time.
+>>
+>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>> ---
+>>   kernel/rcu/tree_exp.h | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+>> index 73e1d3d..cc69d14 100644
+>> --- a/kernel/rcu/tree_exp.h
+>> +++ b/kernel/rcu/tree_exp.h
+>> @@ -731,13 +731,13 @@ static void sync_rcu_exp_handler(void *info)
+>>   	/*
+>>   	 * We are either exiting an RCU read-side critical section (negative
+>>   	 * values of t->rcu_read_lock_nesting) or are not in one at all
+>> -	 * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
+>> -	 * read-side critical section that blocked before this expedited
+>> -	 * grace period started.  Either way, we can immediately report
+>> -	 * the quiescent state.
+>> +	 * (zero value of t->rcu_read_lock_nesting). We can immediately
+>> +	 * report the quiescent state.
+>>   	 */
+>> -	rdp = this_cpu_ptr(rsp->rda);
+>> -	rcu_report_exp_rdp(rsp, rdp, true);
+>> +	if (t->rcu_read_lock_nesting <= 0) {
+>> +		rdp = this_cpu_ptr(rsp->rda);
+>> +		rcu_report_exp_rdp(rsp, rdp, true);
+>> +	}
+>>   }
+>>   
+>>   /**
+>> -- 
+>> 1.9.1
+>>
 
-Changes in v4:
-- Moved the creation of nodes to mmc_add_host_debugfs
-- Exported caps2
-- Renamed host_caps to caps
-
-Changes in v3:
-- Removed typecasting of &host->caps to (u32 *)
-
-Changes in v2:
-- Changed Author
-
- drivers/mmc/core/debugfs.c | 120 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
-
-diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-index c51e0c0..136bdf7 100644
---- a/drivers/mmc/core/debugfs.c
-+++ b/drivers/mmc/core/debugfs.c
-@@ -225,6 +225,120 @@ static int mmc_clock_opt_set(void *data, u64 val)
- DEFINE_SIMPLE_ATTRIBUTE(mmc_clock_fops, mmc_clock_opt_get, mmc_clock_opt_set,
- 	"%llu\n");
-
-+static int mmc_caps_show(struct seq_file *s, void *unused)
-+{
-+	struct mmc_host *host = s->private;
-+	u32 caps = host->caps;
-+
-+	seq_puts(s, "\nMMC Host capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+	seq_printf(s, "Can the host do 4 bit transfers :\t%s\n",
-+		   ((caps & MMC_CAP_4_BIT_DATA) ? "Yes" : "No"));
-+	seq_printf(s, "Can do MMC high-speed timing :\t%s\n",
-+		   ((caps & MMC_CAP_MMC_HIGHSPEED) ? "Yes" : "No"));
-+	seq_printf(s, "Can do SD high-speed timing :\t%s\n",
-+		   ((caps & MMC_CAP_SD_HIGHSPEED) ? "Yes" : "No"));
-+	seq_printf(s, "Can signal pending SDIO IRQs :\t%s\n",
-+		   ((caps & MMC_CAP_SDIO_IRQ) ? "Yes" : "No"));
-+	seq_printf(s, "Talks only SPI protocols :\t%s\n",
-+		   ((caps & MMC_CAP_SPI) ? "Yes" : "No"));
-+	seq_printf(s, "Needs polling for card-detection :\t%s\n",
-+		   ((caps & MMC_CAP_NEEDS_POLL) ? "Yes" : "No"));
-+	seq_printf(s, "Can the host do 8 bit transfers :\t%s\n",
-+		   ((caps & MMC_CAP_8_BIT_DATA) ? "Yes" : "No"));
-+	seq_printf(s, "Suspend (e)MMC/SD at idle :\t%s\n",
-+		   ((caps & MMC_CAP_AGGRESSIVE_PM) ? "Yes" : "No"));
-+	seq_printf(s, "Nonremovable e.g. eMMC :\t%s\n",
-+		   ((caps & MMC_CAP_NONREMOVABLE) ? "Yes" : "No"));
-+	seq_printf(s, "Waits while card is busy :\t%s\n",
-+		   ((caps & MMC_CAP_WAIT_WHILE_BUSY) ? "Yes" : "No"));
-+	seq_printf(s, "Allow erase/trim commands :\t%s\n",
-+		   ((caps & MMC_CAP_ERASE) ? "Yes" : "No"));
-+	seq_printf(s, "Can support DDR mode at 3.3V :\t%s\n",
-+		   ((caps & MMC_CAP_3_3V_DDR) ? "Yes" : "No"));
-+	seq_printf(s, "Can support DDR mode at 1.8V :\t%s\n",
-+		   ((caps & MMC_CAP_1_8V_DDR) ? "Yes" : "No"));
-+	seq_printf(s, "Can support DDR mode at 1.2V :\t%s\n",
-+		   ((caps & MMC_CAP_1_2V_DDR) ? "Yes" : "No"));
-+	seq_printf(s, "Can power off after boot :\t%s\n",
-+		   ((caps & MMC_CAP_POWER_OFF_CARD) ? "Yes" : "No"));
-+	seq_printf(s, "CMD14/CMD19 bus width ok :\t%s\n",
-+		   ((caps & MMC_CAP_BUS_WIDTH_TEST) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports UHS SDR12 mode :\t%s\n",
-+		   ((caps & MMC_CAP_UHS_SDR12) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports UHS SDR25 mode :\t%s\n",
-+		   ((caps & MMC_CAP_UHS_SDR25) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports UHS SDR50 mode :\t%s\n",
-+		   ((caps & MMC_CAP_UHS_SDR50) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports UHS SDR104 mode :\t%s\n",
-+		   ((caps & MMC_CAP_UHS_SDR104) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports UHS DDR50 mode :\t%s\n",
-+		   ((caps & MMC_CAP_UHS_DDR50) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports Driver Type A :\t%s\n",
-+		   ((caps & MMC_CAP_DRIVER_TYPE_A) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports Driver Type C :\t%s\n",
-+		   ((caps & MMC_CAP_DRIVER_TYPE_C) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports Driver Type D :\t%s\n",
-+		   ((caps & MMC_CAP_DRIVER_TYPE_D) ? "Yes" : "No"));
-+	seq_printf(s, "RW reqs can be completed within mmc_request_done() :\t%s\n",
-+		   ((caps & MMC_CAP_DONE_COMPLETE) ? "Yes" : "No"));
-+	seq_printf(s, "Enable card detect wake :\t%s\n",
-+		   ((caps & MMC_CAP_CD_WAKE) ? "Yes" : "No"));
-+	seq_printf(s, "Commands during data transfer :\t%s\n",
-+		   ((caps & MMC_CAP_CMD_DURING_TFR) ? "Yes" : "No"));
-+	seq_printf(s, "CMD23 supported. :\t%s\n",
-+		   ((caps & MMC_CAP_CMD23) ? "Yes" : "No"));
-+	seq_printf(s, "Hardware reset :\t%s\n",
-+		   ((caps & MMC_CAP_HW_RESET) ? "Yes" : "No"));
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(mmc_caps);
-+
-+static int mmc_caps2_show(struct seq_file *s, void *unused)
-+{
-+	struct mmc_host *host = s->private;
-+	u32 caps2 = host->caps2;
-+
-+	seq_puts(s, "\nMMC Host additional capabilities are:\n");
-+	seq_puts(s, "=============================================\n");
-+	seq_printf(s, "Boot partition no access :\t%s\n",
-+		   ((caps2 & MMC_CAP2_BOOTPART_NOACC) ? "Yes" : "No"));
-+	seq_printf(s, "Can do full power cycle :\t%s\n",
-+		   ((caps2 & MMC_CAP2_FULL_PWR_CYCLE) ? "Yes" : "No"));
-+	seq_printf(s, "Can support HS200 1.8V SDR :\t%s\n",
-+		   ((caps2 & MMC_CAP2_HS200_1_8V_SDR) ? "Yes" : "No"));
-+	seq_printf(s, "Can support HS200 1.2V SDR :\t%s\n",
-+		   ((caps2 & MMC_CAP2_HS200_1_2V_SDR) ? "Yes" : "No"));
-+	seq_printf(s, "Card-detect signal active high :\t%s\n",
-+		   ((caps2 & MMC_CAP2_CD_ACTIVE_HIGH) ? "Yes" : "No"));
-+	seq_printf(s, "Write-protect signal active high :\t%s\n",
-+		   ((caps2 & MMC_CAP2_RO_ACTIVE_HIGH) ? "Yes" : "No"));
-+	seq_printf(s, "Don't power up before scan :\t%s\n",
-+		   ((caps2 & MMC_CAP2_NO_PRESCAN_POWERUP) ? "Yes" : "No"));
-+	seq_printf(s, "Can support HS400 1.8V :\t%s\n",
-+		   ((caps2 & MMC_CAP2_HS400_1_8V) ? "Yes" : "No"));
-+	seq_printf(s, "Can support HS400 1.2V :\t%s\n",
-+		   ((caps2 & MMC_CAP2_HS400_1_2V) ? "Yes" : "No"));
-+	seq_printf(s, "SDIO IRQ Nothread :\t%s\n",
-+		   ((caps2 & MMC_CAP2_SDIO_IRQ_NOTHREAD) ? "Yes" : "No"));
-+	seq_printf(s, "No physical write protect pin, assume always read-write :\t%s\n",
-+		   ((caps2 & MMC_CAP2_NO_WRITE_PROTECT) ? "Yes" : "No"));
-+	seq_printf(s, "Do not send SDIO commands during initialization :\t%s\n",
-+		   ((caps2 & MMC_CAP2_NO_SDIO) ? "Yes" : "No"));
-+	seq_printf(s, "Host supports enhanced strobe :\t%s\n",
-+		   ((caps2 & MMC_CAP2_HS400_ES) ? "Yes" : "No"));
-+	seq_printf(s, "Do not send SD commands during initialization :\t%s\n",
-+		   ((caps2 & MMC_CAP2_NO_SD) ? "Yes" : "No"));
-+	seq_printf(s, "Do not send (e)MMC commands during initialization :\t%s\n",
-+		   ((caps2 & MMC_CAP2_NO_MMC) ? "Yes" : "No"));
-+	seq_printf(s, "Has eMMC command queue engine :\t%s\n",
-+		   ((caps2 & MMC_CAP2_CQE) ? "Yes" : "No"));
-+	seq_printf(s, "CQE can issue a direct command :\t%s\n",
-+		   ((caps2 & MMC_CAP2_CQE_DCMD) ? "Yes" : "No"));
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(mmc_caps2);
-+
- void mmc_add_host_debugfs(struct mmc_host *host)
- {
- 	struct dentry *root;
-@@ -243,6 +357,12 @@ void mmc_add_host_debugfs(struct mmc_host *host)
- 	if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
- 		goto err_node;
-
-+	if (!debugfs_create_file("caps", S_IRUSR, root, host, &mmc_caps_fops))
-+		goto err_node;
-+
-+	if (!debugfs_create_file("caps2", S_IRUSR, root, host, &mmc_caps2_fops))
-+		goto err_node;
-+
- 	if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
- 			&mmc_clock_fops))
- 		goto err_node;
---
-1.9.1
+-- 
+Thanks,
+Byungchul
