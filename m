@@ -1,40 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv2E6R9Hb9J9iDBSBZyO9+lrgHFXSb8UI0PCk9bvt9ziyjiqK+hDlyfsOr0qhiYSnLbttLT
-ARC-Seal: i=1; a=rsa-sha256; t=1520451912; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fTwy6vE6jICJcCk2r4HOvFXeEhBQ+EZxGbYh8spIGt/XAhIdbkUVcmT7931jRwyyOv
-         haQbKOqr9nz2L6xHmglERORogbx7n3uwIOFNiiryjyFK3zkMJXgp+l6RRGJlnM47/UGk
-         l5WcLfhJ9ow7iQe+tb+o2x78IhWVZE91BG2sFKJtXoEDciAWpSWFxxQF1SHR7cuiqnlv
-         MOSwVtQvOa90pdVM0b1IZWVmCrmLQxEq/dSOZ/G5Aufmvv4t09mJPVPjUQ5tf0m/N19w
-         co0FDEto5RA1WsN0a6nLAac2yFmTcPShWEeLRhl3ZsjyctBiem8oLNW5FeQ87LAYYR41
-         9TRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=NklUq1Q2I2JMO9kkFDHL/UBHmzHXZsP4nwhxeHQXvhg=;
-        b=nZErwq7vdrGusY3e5Pzson8IU5prNafuam7VdLNLRDVzl3Q3QnN9HrrOcBe+Kvov+h
-         uSOMcj15kfZil+DHBgj9q5R8INOYE0b1li9KUMGC6KlsJyQMi2Y23YtnZ3PkFDFZeqQy
-         nWc4dIJCI/X64tSqfTq1AQyNBIcR59RGLEPGZGuga5gav3V/s4RX7UepL29LX9doJ1iz
-         7tNmYJul0wzri1It9IaNda1LgEFMGID1IUz7e/InLz0YOcV7IZbeRtyx1qJQBJjTYSNs
-         tZ6aGi82yA5OO40OOHE3ipZ0NHWLyjISnmqW81CUggyEC4ncczWxBZkluX5kMeNMKYRo
-         woUQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520451971-2-9828141656003119367
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520451970; b=SgMcMLrum5xu5Jbyg6nofm/6Sg32XXGlQVKBND2j86+ToXg
+    //SPd9WEt8VXo0TSepeqCj8vmieb6rVJevOZnDroLxdLXIdGjCoZyejr99QFKZkp
+    nWvSILAW3hMLGGT1rr1726aA/7PXSFQBaB8H73EPxfRboHt1bYv2EDkvhB3VBcro
+    /0+poF9f7BhIGR3KlsmV3Uz8gC5MIj1VYF2s3BLtU1U7qaFJ4DUqEEml4qoaqmiH
+    UZ0yd7WZ9KHSs2Q1BsVMkX4+pSegdMMBvz44iSSmlSxV5kKXP0Qj0OCkhCRnIqs3
+    kUwg0+G8mX37/SEC7j3/Rx3XBgRtonCF2mkAVCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520451970; bh=+B69skLm/KUumc8eg/yWkxDtJB
+    I1grQ8jAki8ny2bNI=; b=VxsCyWWtTJ3H48C4ULb8/gPLKqoNl34mb+0z69G/MV
+    v4e2mQQd97gJO4jK6gQhqF0BJC7k5CddprRIwi5RMuvNx+AfQ4Rz90jJJ8QTZTKR
+    8KNJR6hZTWDKPTB6cY3mR5JUr5esnS5offlDgSzK3ciYQX4U1ZUgjJapXWxUPgfE
+    RuVD+3tSjmF70tC/5KVD3Pjvw2yiEfhmeY+2Xtnp9tZoKQvAngDtMCYz1H11r5b1
+    +2v6MftdRVsRZ5d7GXbYoUIKVyiOXn608ylcs/RPpcurB9U+QPQ+63QhRPSjFzYC
+    wnvpoE6Mgx9MB8Xo6dPKpWXgZuo+Fi+7xO0zHTMdlRXA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965454AbeCGTqF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:46:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44442 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965391AbeCGTqD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:03 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Michal Hocko <mhocko@suse.com>,
-	kvm@vger.kernel.org,
-	Haozhong Zhang <haozhong.zhang@intel.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 027/110] vfio: disable filesystem-dax page pinning
-Date: Wed,  7 Mar 2018 11:38:10 -0800
-Message-Id: <20180307191043.187618642@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 015/110] mmc: sdhci-pci: Fix S0i3 for Intel BYT-based controllers
+Date: Wed,  7 Mar 2018 11:37:58 -0800
+Message-Id: <20180307191041.685553678@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -42,10 +70,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309114995317883?=
-X-GMAIL-MSGID: =?utf-8?q?1594309384324147220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,78 +80,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 94db151dc89262bfa82922c44e8320cea2334667 upstream.
+commit f8870ae6e2d6be75b1accc2db981169fdfbea7ab upstream.
 
-Filesystem-DAX is incompatible with 'longterm' page pinning. Without
-page cache indirection a DAX mapping maps filesystem blocks directly.
-This means that the filesystem must not modify a file's block map while
-any page in a mapping is pinned. In order to prevent the situation of
-userspace holding of filesystem operations indefinitely, disallow
-'longterm' Filesystem-DAX mappings.
+Tuning can leave the IP in an active state (Buffer Read Enable bit set)
+which prevents the entry to low power states (i.e. S0i3). Data reset will
+clear it.
 
-RDMA has the same conflict and the plan there is to add a 'with lease'
-mechanism to allow the kernel to notify userspace that the mapping is
-being torn down for block-map maintenance. Perhaps something similar can
-be put in place for vfio.
+Generally tuning is followed by a data transfer which will anyway sort out
+the state, so it is rare that S0i3 is actually prevented.
 
-Note that xfs and ext4 still report:
-
-   "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
-
-...at mount time, and resolving the dax-dma-vs-truncate problem is one
-of the last hurdles to remove that designation.
-
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: kvm@vger.kernel.org
-Cc: <stable@vger.kernel.org>
-Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
-Tested-by: Haozhong Zhang <haozhong.zhang@intel.com>
-Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-pci-core.c |   35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -338,11 +338,12 @@ static int vaddr_get_pfn(struct mm_struc
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -594,9 +594,36 @@ static void byt_read_dsm(struct sdhci_pc
+ 	slot->chip->rpm_retune = intel_host->d3_retune;
+ }
+ 
+-static int byt_emmc_probe_slot(struct sdhci_pci_slot *slot)
++static int intel_execute_tuning(struct mmc_host *mmc, u32 opcode)
++{
++	int err = sdhci_execute_tuning(mmc, opcode);
++	struct sdhci_host *host = mmc_priv(mmc);
++
++	if (err)
++		return err;
++
++	/*
++	 * Tuning can leave the IP in an active state (Buffer Read Enable bit
++	 * set) which prevents the entry to low power states (i.e. S0i3). Data
++	 * reset will clear it.
++	 */
++	sdhci_reset(host, SDHCI_RESET_DATA);
++
++	return 0;
++}
++
++static void byt_probe_slot(struct sdhci_pci_slot *slot)
  {
- 	struct page *page[1];
- 	struct vm_area_struct *vma;
-+	struct vm_area_struct *vmas[1];
- 	int ret;
++	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
++
+ 	byt_read_dsm(slot);
++
++	ops->execute_tuning = intel_execute_tuning;
++}
++
++static int byt_emmc_probe_slot(struct sdhci_pci_slot *slot)
++{
++	byt_probe_slot(slot);
+ 	slot->host->mmc->caps |= MMC_CAP_8_BIT_DATA | MMC_CAP_NONREMOVABLE |
+ 				 MMC_CAP_HW_RESET | MMC_CAP_1_8V_DDR |
+ 				 MMC_CAP_CMD_DURING_TFR |
+@@ -651,7 +678,7 @@ static int ni_byt_sdio_probe_slot(struct
+ {
+ 	int err;
  
- 	if (mm == current->mm) {
--		ret = get_user_pages_fast(vaddr, 1, !!(prot & IOMMU_WRITE),
--					  page);
-+		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
-+					      page, vmas);
- 	} else {
- 		unsigned int flags = 0;
+-	byt_read_dsm(slot);
++	byt_probe_slot(slot);
  
-@@ -351,7 +352,18 @@ static int vaddr_get_pfn(struct mm_struc
+ 	err = ni_set_max_freq(slot);
+ 	if (err)
+@@ -664,7 +691,7 @@ static int ni_byt_sdio_probe_slot(struct
  
- 		down_read(&mm->mmap_sem);
- 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
--					    NULL, NULL);
-+					    vmas, NULL);
-+		/*
-+		 * The lifetime of a vaddr_get_pfn() page pin is
-+		 * userspace-controlled. In the fs-dax case this could
-+		 * lead to indefinite stalls in filesystem operations.
-+		 * Disallow attempts to pin fs-dax pages via this
-+		 * interface.
-+		 */
-+		if (ret > 0 && vma_is_fsdax(vmas[0])) {
-+			ret = -EOPNOTSUPP;
-+			put_page(page[0]);
-+		}
- 		up_read(&mm->mmap_sem);
- 	}
+ static int byt_sdio_probe_slot(struct sdhci_pci_slot *slot)
+ {
+-	byt_read_dsm(slot);
++	byt_probe_slot(slot);
+ 	slot->host->mmc->caps |= MMC_CAP_POWER_OFF_CARD | MMC_CAP_NONREMOVABLE |
+ 				 MMC_CAP_WAIT_WHILE_BUSY;
+ 	return 0;
+@@ -672,7 +699,7 @@ static int byt_sdio_probe_slot(struct sd
  
+ static int byt_sd_probe_slot(struct sdhci_pci_slot *slot)
+ {
+-	byt_read_dsm(slot);
++	byt_probe_slot(slot);
+ 	slot->host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY |
+ 				 MMC_CAP_AGGRESSIVE_PM | MMC_CAP_CD_WAKE;
+ 	slot->cd_idx = 0;
