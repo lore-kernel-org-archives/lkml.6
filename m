@@ -1,194 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934108AbeCGQvi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:51:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44108 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933955AbeCGQv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:51:26 -0500
-Message-ID: <1520441424.1092.25.camel@bootlin.com>
-Subject: Re: [RFCv4,13/21] media: videobuf2-v4l2: support for requests
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Gustavo Padovan <gustavo.padovan@collabora.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Wed, 07 Mar 2018 17:50:24 +0100
-In-Reply-To: <20180220044425.169493-14-acourbot@chromium.org>
-References: <20180220044425.169493-14-acourbot@chromium.org>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-h1q3yGSgdWOpu6oM+3qZ"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
+        id S934141AbeCGQv7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:51:59 -0500
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39590 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933919AbeCGQv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:51:29 -0500
+X-Google-Smtp-Source: AG47ELs1UsLiOE5ANc+UdhU1/YmYz2Hb/Q8rJBaEcQsoai+230NXeDSYKMWbyRL6uvAkFlhNSR8xnw==
+Date: Wed, 7 Mar 2018 16:51:26 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 1/3] mfd: rave-sp: Add code to print firmware versions
+Message-ID: <20180307165126.do5ecbm7ne2llmhb@dell>
+References: <20180226150739.13457-1-andrew.smirnov@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180226150739.13457-1-andrew.smirnov@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 26 Feb 2018, Andrey Smirnov wrote:
 
---=-h1q3yGSgdWOpu6oM+3qZ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, 2018-02-20 at 13:44 +0900, Alexandre Courbot wrote:
-> Add a new vb2_qbuf_request() (a request-aware version of vb2_qbuf())
-> that request-aware drivers can call to queue a buffer into a request
-> instead of directly into the vb2 queue if relevent.
->=20
-> This function expects that drivers invoking it are using instances of
-> v4l2_request_entity and v4l2_request_entity_data to describe their
-> entity and entity data respectively.
->=20
-> Also add the vb2_request_submit() helper function which drivers can
-> invoke in order to queue all the buffers previously queued into a
-> request into the regular vb2 queue.
-
-See a comment/proposal below about an issue I encountered when using
-multi-planar formats.
-
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> Add code that would query and print out bootloader and application
+> firmware version info.
+> 
+> Cc: linux-kernel@vger.kernel.org
+> Cc: cphealy@gmail.com
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 > ---
->  .../media/common/videobuf2/videobuf2-v4l2.c   | 129
-> +++++++++++++++++-
->  include/media/videobuf2-v4l2.h                |  59 ++++++++
->  2 files changed, 187 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> index 6d4d184aa68e..0627c3339572 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> 
+> Lee:
+> 
+> The reason 'part_number_firmware' and 'part_number_firmware' are a
+> part of struct rave_sp is because there exists another patch on top of
+> this one that exposes those fields via sysfs. The latter patch is not
+> currently being upstreamed (might be in the future), so if keeping
+> this arrangement is too ugly, let me know, and I'll get rid of those
+> fields in 'rave_sp'.
 
-[...]
+That's okay.
 
-> +#if IS_ENABLED(CONFIG_MEDIA_REQUEST_API)
-> +int vb2_qbuf_request(struct vb2_queue *q, struct v4l2_buffer *b,
-> +		     struct media_request_entity *entity)
-> +{
-> +	struct v4l2_request_entity_data *data;
-> +	struct v4l2_vb2_request_buffer *qb;
-> +	struct media_request *req;
-> +	struct vb2_buffer *vb;
-> +	int ret =3D 0;
+>  drivers/mfd/rave-sp.c | 97 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+> 
+> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+> index c8173de5653a..9e4c83ff2aec 100644
+> --- a/drivers/mfd/rave-sp.c
+> +++ b/drivers/mfd/rave-sp.c
+> @@ -160,6 +160,8 @@ struct rave_sp_variant {
+>   * @variant:			Device variant specific information
+>   * @event_notifier_list:	Input event notification chain
+>   *
+> + * @part_number_firmware:	Firmware version
+> + * @part_number_bootloader:	Bootloader version
+>   */
+>  struct rave_sp {
+>  	struct serdev_device *serdev;
+> @@ -171,8 +173,42 @@ struct rave_sp {
+>  
+>  	const struct rave_sp_variant *variant;
+>  	struct blocking_notifier_head event_notifier_list;
 > +
-> +	if (b->request_fd <=3D 0)
-> +		return vb2_qbuf(q, b);
+> +	const char *part_number_firmware;
+> +	const char *part_number_bootloader;
+>  };
+>  
+> +struct rave_sp_version {
+> +	u8     hardware;
+> +	__le16 major;
+> +	u8     minor;
+> +	u8     letter[2];
+> +} __packed;
 > +
-> +	if (!q->allow_requests)
-> +		return -EINVAL;
-> +
-> +	req =3D media_request_get_from_fd(b->request_fd);
-> +	if (!req)
-> +		return -EINVAL;
-> +
-> +	data =3D to_v4l2_entity_data(media_request_get_entity_data(req,
-> entity));
-> +	if (IS_ERR(data)) {
-> +		ret =3D PTR_ERR(data);
-> +		goto out;
-> +	}
-> +
-> +	mutex_lock(&req->lock);
-> +
-> +	if (req->state !=3D MEDIA_REQUEST_STATE_IDLE) {
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	ret =3D vb2_queue_or_prepare_buf(q, b, "qbuf");
-> +	if (ret)
-> +		goto out;
-> +
-> +	vb =3D q->bufs[b->index];
-> +	switch (vb->state) {
-> +	case VB2_BUF_STATE_DEQUEUED:
-> +		break;
-> +	case VB2_BUF_STATE_PREPARED:
-> +		break;
-> +	case VB2_BUF_STATE_PREPARING:
-> +		dprintk(1, "buffer still being prepared\n");
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	default:
-> +		dprintk(1, "invalid buffer state %d\n", vb->state);
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/* do we already have a buffer for this request in the queue?
-> */
-> +	list_for_each_entry(qb, &data->queued_buffers, node) {
-> +		if (qb->queue =3D=3D q) {
-> +			ret =3D -EBUSY;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	qb =3D kzalloc(sizeof(*qb), GFP_KERNEL);
-> +	if (!qb) {
-> +		ret =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * TODO should be prepare the buffer here if needed, to
-> report errors
-> +	 * early?
-> +	 */
-> +	qb->pre_req_state =3D vb->state;
-> +	qb->queue =3D q;
-> +	memcpy(&qb->v4l2_buf, b, sizeof(*b));
+> +struct rave_sp_status {
+> +	struct rave_sp_version bootloader_version;
+> +	struct rave_sp_version firmware_version;
+> +	u16 rdu_eeprom_flag;
+> +	u16 dds_eeprom_flag;
+> +	u8  pic_flag;
+> +	u8  orientation;
+> +	u32 etc;
+> +	s16 temp[2];
+> +	u8  backlight_current[3];
+> +	u8  dip_switch;
+> +	u8  host_interrupt;
+> +	u16 voltage_28;
+> +	u8  i2c_device_status;
+> +	u8  power_status;
+> +	u8  general_status;
+> +#define RAVE_SP_STATUS_GS_FIRMWARE_MODE	BIT(1)
 
-I am getting data corruption on qb->v4l2_buf.m.planes from this when
-using planar buffers, only after exiting the ioctl handler (i.e. when
-accessing this buffer later from the queue).
+I'm more concerned with the seemingly unused #define shoved in the
+middle of a struct definition -- which I am not a fan of.
 
-I initially thought this was because the planes pointer was copied as-is=
-=20
-from userspace, but Maxime Ripard suggested that this would have
-automatically triggered a visible fault in the kernel.
+Better to introduce it when you start using it and outside of the
+struct definition please.
 
-Thus, my best guess is that the data is properly copied from userspace
-but freed when leaving the ioctl handler, which doesn't work our with
-the request API.
+The remainder of the patch looks okay.
 
-A dirty fix that I came up with consists in re-allocating the planes
-buffer here and copying its contents from "b", so that it can live
-beyond the ioctl call.
-
-I am not too sure whether this should be fixed here or in the part of
-the v4l2 common code that frees this data. What do you think?
-
-Cheers!
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-h1q3yGSgdWOpu6oM+3qZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqgGFAACgkQ3cLmz3+f
-v9H32gf+LN5xXtYIVPuQZAYOR6pf/9murfObKJFco8ChzvzGjXC9+YdvqotP54u3
-S4BNV/YFaSx9A6qCkiKarjIV9TQ8lAkqtDYd7RrsHEnKthPX8plZgN4sCUjVEpfA
-t93wB+kdTQOHZa8GeBLKTIR9J5eV9APNI8Gjz42AmzYOIuCm0MtN/DAGjDefGO+K
-5l65Rtolcj3JavRnLHGe5KpGXusuiXzYd2Tuh733LCKabRq2ANXwgecfdAsn7uqo
-5V+H54tgRD3uBZXc/+vnWvJHQ13wIetU6t+As+Q6VkioOSsFJhueL5NOanMzwn99
-W3Xm6atM7ezcHgkYWOGwPDULaYGxEA==
-=/MVj
------END PGP SIGNATURE-----
-
---=-h1q3yGSgdWOpu6oM+3qZ--
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
