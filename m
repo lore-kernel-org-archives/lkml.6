@@ -1,36 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsPKMiuFSySAiKytsL0XKBs/iVXDIToYBGVPV0T+mwsm2mLxCOZ8JoYDkUQIES4c8nwbep1
-ARC-Seal: i=1; a=rsa-sha256; t=1520451724; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QWFNk6qtY9UzJellMrQxprvhTGukpFHVpGkBgDvyHtdU0Sxl0I5NCcfTwkqxUa5NdO
-         ux3SVPqJavlMYvmhnIqip7WFm09MJEF9cUfHqJfoRZgivGZFLYREffcyWjq2myh42fOK
-         tBVVfiGbkrp/i4LlglcH2ojprmhWEpq4qEB1wcqEvrONrIFsByw4g0JbykVij/CoQPwS
-         StKk4YYxArASYVDnFHLjjvTUJ7RvEoyCTfcIVPrrPbJmyzUjILjhO5bthwtuV6/ajhVz
-         SNp1yqfueqy86TTyHYXsy+lMs2ms9qWPGMI/txW7WzXdjE/h6KJKEJ7UfdSGi86sRVU+
-         wv4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=gNf0kaB3u+6Y1xfjH5UMT6V4J7gqwC1n1sGaCcg7FPE=;
-        b=PE6OejU0VPxxhsSgzFpaVaSTjLcUXMnXqeUNNM+sghTSBvP0yF2/jHqDVmGgzqRINR
-         82QJKscbHwIJMTCzhjyd+ZXAU7WWTge2qBUsh2xxOfQXPBd4Z2U8X6cjcbn0F9024Enr
-         G/tP8u4CnYYFe2NK8GBXt9eZPJzJ6PA/V5k3VjpNI0CGVDaN9fn+OFj5frv2p4I4qy4f
-         d8vnOZMrGKA9VX+vWP7B00SrKzh+x2u0q5k9lKv3o4un7PB7nLg95c52enoDrLPNR3gT
-         Gj3N0Ao6jMk92NUp3t7jQ3yn6og3IWhPqEmxeK8xcpvSUd2mMzzIYls6cJRtoBEDxgXM
-         vJuQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4025272-1520451724-2-15237121070592490654
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520451723; b=vjHJeGGWg4rmPY7Qr13wWYBBeEl7KF7U73c596dkF7lf+eb
+    /kh2MqRommbzP8yQD5VOfXGwrFKwgaKQgKS3iDmDf0e8iC8on+JbIXxUBBjlEmSM
+    ECOEDEZ0KVD/Y7BAa3142h8XbXV3zE3tbsZjHAVyEb8my412Wif48fOQyd7UslzB
+    wfGJtVTIe9yC5oHf8gPAomd4hmgH9Zwk0lpHEkE+vOh/ytzunoL8UVfBvczfjE6I
+    TcRR2EpvMYBe9HB4FuZpbluOAsq2wtYr7aU8qCqUVTF8f86onzko/SiYrZ17ZUZG
+    LKXtOG+/ZVoMuTZRNbpT+w7ZEw4LOfhcAvQ+gjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520451723; bh=mN5EE/Yw2scPGqhtkeI/573SEt
+    Iz3hiv5dngl8qlFKI=; b=wgDd8lXHDrBKkKJBUdfqVoXB/bnz+Os0rl8GkZ9toX
+    tg9LqhfhlKbLJL+1WJDO0YZocvoJfhtFrpFBu2p4DF/0yPWmHYsbSp1I+QpokT2g
+    aTbgYGwWohIOgIQYhGwaLk+yTP26nl0zGiCDfFNrXFe2862IwKrpZ0VbKebBQBhV
+    MZgXvZBiNpckscv3lAMgTPi1Umku9sEBwRT6SMU78js6U+N8A63Uc5bT5ZUjLO0S
+    FalPVZXbXYjcpeNZSv+eDV5PVjvfA5yjRK0+VMX6IM+i1dzvIhBPMiW2nwBSmR46
+    mMLWbXzE1G4lqHRmOTo4Z7VV2Rt4SAS8QMBRUiTziZnA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754845AbeCGTl7 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:41:59 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41554 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754826AbeCGTl6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:41:58 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Eran Ben Elisha <eranbe@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.15 069/122] net/mlx5e: Verify inline header size do not exceed SKB linear size
-Date: Wed,  7 Mar 2018 11:38:01 -0800
-Message-Id: <20180307191739.358205777@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 067/122] sctp: fix dst refcnt leak in sctp_v6_get_dst()
+Date: Wed,  7 Mar 2018 11:37:59 -0800
+Message-Id: <20180307191739.063518256@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -38,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309187550945375?=
-X-GMAIL-MSGID: =?utf-8?q?1594309187550945375?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +82,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit f600c6088018d1dbc5777d18daa83660f7ea4a64 ]
+[ Upstream commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2 ]
 
-Driver tries to copy at least MLX5E_MIN_INLINE bytes into the control
-segment of the WQE. It assumes that the linear part contains at least
-MLX5E_MIN_INLINE bytes, which can be wrong.
+When going through the bind address list in sctp_v6_get_dst() and
+the previously found address is better ('matchlen > bmatchlen'),
+the code continues to the next iteration without releasing currently
+held destination.
 
-Cited commit verified that driver will not copy more bytes into the
-inline header part that the actual size of the packet. Re-factor this
-check to make sure we do not exceed the linear part as well.
+Fix it by releasing 'bdst' before continue to the next iteration, and
+instead of introducing one more '!IS_ERR(bdst)' check for dst_release(),
+move the already existed one right after ip6_dst_lookup_flow(), i.e. we
+shouldn't proceed further if we get an error for the route lookup.
 
-This fix is aligned with the current driver's assumption that the entire
-L2 will be present in the linear part of the SKB.
-
-Fixes: 6aace17e64f4 ("net/mlx5e: Fix inline header size for small packets")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using secondary addresses for ipv6")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sctp/ipv6.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -176,7 +176,7 @@ static inline u16 mlx5e_calc_min_inline(
- 	default:
- 		hlen = mlx5e_skb_l2_header_offset(skb);
- 	}
--	return min_t(u16, hlen, skb->len);
-+	return min_t(u16, hlen, skb_headlen(skb));
- }
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -326,8 +326,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		final_p = fl6_update_dst(fl6, rcu_dereference(np->opt), &final);
+ 		bdst = ip6_dst_lookup_flow(sk, fl6, final_p);
  
- static inline void mlx5e_tx_skb_pull_inline(unsigned char **skb_data,
+-		if (!IS_ERR(bdst) &&
+-		    ipv6_chk_addr(dev_net(bdst->dev),
++		if (IS_ERR(bdst))
++			continue;
++
++		if (ipv6_chk_addr(dev_net(bdst->dev),
+ 				  &laddr->a.v6.sin6_addr, bdst->dev, 1)) {
+ 			if (!IS_ERR_OR_NULL(dst))
+ 				dst_release(dst);
+@@ -336,8 +338,10 @@ static void sctp_v6_get_dst(struct sctp_
+ 		}
+ 
+ 		bmatchlen = sctp_v6_addr_match_len(daddr, &laddr->a);
+-		if (matchlen > bmatchlen)
++		if (matchlen > bmatchlen) {
++			dst_release(bdst);
+ 			continue;
++		}
+ 
+ 		if (!IS_ERR_OR_NULL(dst))
+ 			dst_release(dst);
