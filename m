@@ -1,169 +1,174 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-26780-1520586109-2-17631993674015078740
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-29808-1520456095-2-3079646631757335570
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, T_TVD_MIME_EPI 0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Attached: signature.asc
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520586108; b=qxOtS8EELEgBa9s928uMPjV/0pfEIYerroGWO0JsF+MXwoe
-    IZMXlV5HWl1v7DpDMdkg9npvm831ik6SxLLkmElXGsMlNEgYpApmY9+/++W6+uYg
-    WTfpkp2hXesdAldh6q0qP26+yuUs0xFZSuKSXYiF3q2nkV7LsnaL76oeT0eUt4w4
-    7UP34SLqT4DkxrultKPwAFB24HOdQVjm0HM5Hm+EyNmj4f0vas1J9QWyZgPI5co1
-    J0+bZFlWz0d7gZrn2ttHgBk8GucQjGICfRDXTV5PFRqR8Sy8cyuQSwrvUDd4dY12
-    +rcaYURCudLzKB6M3dbdCIIAR3eAQDFzOpkbftw==
+    t=1520456094; b=pFnxAKYopiSCdkTyr2yGPgYwMKUprPTYYaGrlF0UC76YUuW
+    janbApieP8xwazGcBCw7wl8mhmMUP+t6GHT802pb102mowbljkm67T8S10lxx0Ms
+    amYqJYrzxY8EuN4xAlOJXCuaUqQct0e2Dzkdhs5FOzuLy510a3NxCQezFPISyg2p
+    KU+Wd2Coreu2NFA3WLw8P/68r5mswkD4eL2OBbqKrz5rV0juqU966U0m3+MGmGzm
+    YGbzJDe2Lg4wtyySZDsEiB1+fgVmpsaW5nnBII23iRzvt9eyKvYyNJL5ls49I5Tr
+    Jy8jqSes+rOYS+Q6VE1ht4b68QROLh/FT+jn1xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
-    :date:message-id:mime-version:content-type:sender:list-id; s=
-    arctest; t=1520586108; bh=OeQ9pAhT3sCpKOLbfFTEaOeq/SDBup+nG8Bi4q
-    SbB8E=; b=LzvGXR4woOpAkgqefew7r2mMKXW5ufVHfryOOtohae2dXO84E9bXhU
-    3ATzVBM1gU5yNkiaIr6Irno/8gs8QQkbrbqX5YOCLtaUmqCPRHA3WlnQ1YqIn9xf
-    GkB+3i8DoXB4rkkyvgCPyPsFBT1frn0jGC/baPtybx6u/drms25UK7ORygScRuwv
-    vcyrnc593qXxxeZ8MzLt0Zomt9jKfm2OwYnfoix5inD7+LWj/icIxGM9KzhXmcX4
-    aEyfxNDn0W0QHxxeBTd+h5NikwPc2aJipUMmlSA0fGS/6UXtI3VejpNEFgphNZ6R
-    niZj6ah2VMYntHkpp2/DVTwNB9U8inwQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520456094; bh=D
+    FA3c7Ck2tWnBQFEsTO/3S6zSR1ltrKiC//4o/6buqk=; b=SOml5I3o8Pg/0S1zR
+    z5xOteWvjrwgPkzoR0gQ7Vl72btgvQla5LUHSTUNgjh5Bbkp6/M9gP9SdUYODZd6
+    2f7hvW5TxtJ/3qucZGJji8wjKTqK7OsHJcDgebb94mi4HaeWSLO4AcZqE8CWUdnQ
+    mh95l38rF2is+QxS/9LmqxN9X65Eeh+BdeuSWQqnRQAIIz3b71MuK9eycPAnUzLq
+    z7rG1R7FEOLl/kGE2XKZoVFF5/dExXifpcmySmaewNPiEAD9M/rTZs7Ainw5XdRt
+    prKE89CpZyYMgq5u+oqUDrs6XU+qb/GiNhWMPEPSAM5Vae7+iTKJW/yipbecaxpl
+    mou9w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=dmZHUtsW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fueLz8N/;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass;
+    dkim=fail (message has been altered; 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=dmZHUtsW x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751161AbeCIJBb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 9 Mar 2018 04:01:31 -0500
-Received: from mga02.intel.com ([134.134.136.20]:34852 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751114AbeCIJBa (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Fri, 9 Mar 2018 04:01:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,444,1515484800";
-   d="asc'?scan'208";a="36757032"
-From: Felipe Balbi <balbi@kernel.org>
-To: Roger Quadros <rogerq@ti.com>,
-        Brian Norris <briannorris@chromium.org>
-Cc: William Wu <william.wu@rock-chips.com>, gregkh@linuxfoundation.org,
-        heiko@sntech.de, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        frank.wang@rock-chips.com, huangtao@rock-chips.com,
-        dianders@google.com, briannorris@google.com, groeck@google.com,
-        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
-        lin.huang@rock-chips.com
-Subject: Re: [PATCH] usb: dwc3: core: power on PHYs before initializing core
-In-Reply-To: <abca45d6-2304-a607-5185-f26327a653f5@ti.com>
-References: <1515729616-8639-1-git-send-email-william.wu@rock-chips.com> <87ina6vodf.fsf@linux.intel.com> <20180308164916.GA65031@rodete-desktop-imager.corp.google.com> <abca45d6-2304-a607-5185-f26327a653f5@ti.com>
-Date: Fri, 09 Mar 2018 11:01:17 +0200
-Message-ID: <871sgtbp2a.fsf@linux.intel.com>
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fueLz8N/;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELsjd6X6KCxGRYdR0e/2agKIIKKtkNXk2wmPkI+jBk8Vd+egTF3gcN+q63JPn162U8Qoxo7tVQ==
+Date: Wed, 7 Mar 2018 12:54:44 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2] staging: lustre: Remove VLA usage
+Message-ID: <20180307205444.GA11349@beast>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Disposition: inline
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Dmitry Eremin <dmitry.eremin@intel.com>,
+ Tycho Andersen <tycho@tycho.ws>, Andreas Dilger <andreas.dilger@intel.com>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org,
+ Gargi Sharma <gs051095@gmail.com>, Oleg Drokin <oleg.drokin@intel.com>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The kernel would like to have all stack VLA usage removed[1]. This switches
+to a simple kasprintf() instead, and in the process fixes an off-by-one
+between the allocation and the sprintf (allocation did not include NULL
+byte in calculation).
+
+[1] https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/staging/lustre/lustre/llite/xattr.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
+index 532384c91447..ff6fe81a4ddb 100644
+--- a/drivers/staging/lustre/lustre/llite/xattr.c
++++ b/drivers/staging/lustre/lustre/llite/xattr.c
+@@ -87,10 +87,10 @@ ll_xattr_set_common(const struct xattr_handler *handler,
+ 		    const char *name, const void *value, size_t size,
+ 		    int flags)
+ {
+-	char fullname[strlen(handler->prefix) + strlen(name) + 1];
+ 	struct ll_sb_info *sbi = ll_i2sbi(inode);
+ 	struct ptlrpc_request *req = NULL;
+ 	const char *pv = value;
++	char *fullname;
+ 	__u64 valid;
+ 	int rc;
+ 
+@@ -141,10 +141,13 @@ ll_xattr_set_common(const struct xattr_handler *handler,
+ 			return -EPERM;
+ 	}
+ 
+-	sprintf(fullname, "%s%s\n", handler->prefix, name);
++	fullname = kasprintf(GFP_KERNEL, "%s%s\n", handler->prefix, name);
++	if (!fullname)
++		return -ENOMEM;
+ 	rc = md_setxattr(sbi->ll_md_exp, ll_inode2fid(inode),
+ 			 valid, fullname, pv, size, 0, flags,
+ 			 ll_i2suppgid(inode), &req);
++	kfree(fullname);
+ 	if (rc) {
+ 		if (rc == -EOPNOTSUPP && handler->flags == XATTR_USER_T) {
+ 			LCONSOLE_INFO("Disabling user_xattr feature because it is not supported on the server\n");
+@@ -364,11 +367,11 @@ static int ll_xattr_get_common(const struct xattr_handler *handler,
+ 			       struct dentry *dentry, struct inode *inode,
+ 			       const char *name, void *buffer, size_t size)
+ {
+-	char fullname[strlen(handler->prefix) + strlen(name) + 1];
+ 	struct ll_sb_info *sbi = ll_i2sbi(inode);
+ #ifdef CONFIG_FS_POSIX_ACL
+ 	struct ll_inode_info *lli = ll_i2info(inode);
+ #endif
++	char *fullname;
+ 	int rc;
+ 
+ 	CDEBUG(D_VFSTRACE, "VFS Op:inode=" DFID "(%p)\n",
+@@ -411,9 +414,13 @@ static int ll_xattr_get_common(const struct xattr_handler *handler,
+ 	if (handler->flags == XATTR_ACL_DEFAULT_T && !S_ISDIR(inode->i_mode))
+ 		return -ENODATA;
+ #endif
+-	sprintf(fullname, "%s%s\n", handler->prefix, name);
+-	return ll_xattr_list(inode, fullname, handler->flags, buffer, size,
+-			     OBD_MD_FLXATTR);
++	fullname = kasprintf(GFP_KERNEL, "%s%s\n", handler->prefix, name);
++	if (!fullname)
++		return -ENOMEM;
++	rc = ll_xattr_list(inode, fullname, handler->flags, buffer, size,
++			   OBD_MD_FLXATTR);
++	kfree(fullname);
++	return rc;
+ }
+ 
+ static ssize_t ll_getxattr_lov(struct inode *inode, void *buf, size_t buf_size)
+-- 
+2.7.4
 
 
-Hi,
-
-Roger Quadros <rogerq@ti.com> writes:
-> Hi,
->
-> On 08/03/18 18:49, Brian Norris wrote:
->> Hi,
->>=20
->> On Thu, Mar 08, 2018 at 12:43:40PM +0200, Felipe Balbi wrote:
->>> William Wu <william.wu@rock-chips.com> writes:
->>>> The dwc3_core_init() gets the PHYs and initializes the PHYs with
->>>> the usb_phy_init() and phy_init() functions before initializing
->>>> core, and power on the PHYs after core initialization is done.
->>>>
->>>> However, some platforms (e.g. Rockchip RK3399 DWC3 with Type-C
->>>> USB3 PHY), it needs to do some special operation while power on
->>>> the Type-C PHY before initializing DWC3 core. It's because that
->>>> the RK3399 Type-C PHY requires to hold the DWC3 controller in
->>>> reset state to keep the PIPE power state in P2 while configuring
->>>> the Type-C PHY, otherwise, it may cause waiting for the PIPE ready
->>>> timeout. In this case, if we power on the PHYs after the DWC3 core
->>>> initialization is done, the core will be reset to uninitialized
->>>> state after power on the PHYs.
->>>>
->>>> Fix this by powering on the PHYs before initializing core. And
->>>> because the GUID register may also be reset in this case, so we
->>>> need to configure the GUID register after powering on the PHYs.
->>>>
->>>> Signed-off-by: William Wu <william.wu@rock-chips.com>
->>>
->>> does this cause any regressions for your boards?
->>=20
->> I'm not Roger, but I believe it was determined we don't need this for
->> the Rockchip systems for which William was originally sending this. At
->> least not right now. I believe our PHY init problems were mostly
->> resolved in other ways.
->>=20
->> (Although I hear USB is currently pretty broken around suspend/resume
->> for us on -next. Likely unrelated.)
->>=20
->> I guess we never clearly replied stating the above. I hope this isn't
->> merged anywhere? Or I guess it's no problem to me at the moment, but it
->> might be needless churn.
->>=20
->
-> I did some quick tests on TI platforms and didn't see any issues with thi=
-s patch.
-> Since this patch isn't really fixing your problem and we didn't have any
-> problems to start with I'd suggest to avoid this churn for now.
-
-fair enough, I won't apply it :-)
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqiTV0ACgkQzL64meEa
-mQYAbBAAq6DNTsVhFehYtxLSararzyR1Bl7Jmm7fW7a5WRQL6oymcPBUIxqkNZeW
-HKzeSPXSKptZamTwbTsy6f0O5KgZ+InB+/BpffoBMz4+H2m+od4n/QJJy1NRLF7v
-9kvcX6vmfl+2qnEUTXZA3iuq5Ke7IXUsOiZbr54GnLdRLDP+Pc0G6figfpW/d8cA
-XkJAxajTnxYhhm/TBF+v/tihfMTyJtNYRp1Z/YZcyGNAAy12mB/XA5bP8YDdn9Rz
-Jse5StIviEGb/hKNd6S+myzv69tixXqFbyqSd2mG4ZgBOKxNg6IUHvU9sfc2xw/9
-/K+pmceXwDUNOBJsICp6Akwq4jRqYNEVCfdRaMMvFTEHDm70LwkVCnC8XwFZpQ1k
-KHL0/YnOBJH8L/hrinG6GoraURUstt8B/1EgVdnry7kYr952F1gDN+OgccI8PyiZ
-8Jqy6ec4IS+wHmpVVsninE634t9iuYKqUt/OpdsXHIhGfMRqPRy+F0M3qbAkY6/J
-M0TZGgIWMtxG4AsBdGK+MJUk31s4jwIO7mHRIMoXFBXTEoy57V5Ir5vAZVZKWwHW
-2izw8+thTpw6UWJ79aFMd8GmeRIuzbCpWujK1aFj3x/fBxPE/aiTGfOzbmgZvUBy
-r7lke7ehQz3y8b0dRMuRudfm6qCg+Ew1EX6uUDvF/y7Vw1bfo9w=
-=VnTN
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Kees Cook
+Pixel Security
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
