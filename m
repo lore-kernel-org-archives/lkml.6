@@ -1,88 +1,324 @@
-Return-Path: <arndbergmann@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520342363; cv=none;
+Return-Path: <juliac@eso.teric.us>
+X-Google-Smtp-Source: AG47ELu+/rw6XzioPWPFAJis0SZg3hzZ0yGl/22eqnpjAYKbEdBfvWExVuWCj6RlCbNfCMsR4HAG
+ARC-Seal: i=1; a=rsa-sha256; t=1520392748; cv=none;
         d=google.com; s=arc-20160816;
-        b=hbYFYwDl/c11TQc55AkxhUIJaHki3PCG2f5FOiN00DrEEHdVKz3UjJCO12NdEzJ3ae
-         PvybwBYa0ndGmxjSChs1W75JkitJpKwWwJ/eLh1UifCmbzXWhzGiFMMUTzForP3tmcep
-         4fXlpuqUOanCeGcJE3/mFprB8T8aGFqX7UIePygNtksRGBmBVoDycQ3Hlc6R/kS9cO7T
-         YHiG9a4GLD/ktyUul8vPSexPPWluFW8e+UEj99nhJeZ0tLNxte3UmYyqyzUFIM9cmxq/
-         F8PxJwoYaSqmpHmS5m9rm4rj5rZNPO8ayeScwIwrwet5CC4neXdmJ3uaeU+Dnp9ercf+
-         uPPw==
+        b=VuNRe0puUG8u03byZY64kQQvk+w7MsuZfaoTwO81VY4hYG+ZVgAMRaAKQryxXqb7rx
+         E/+7BiDKu+C37jjvddycO7NkDReE8B6e6VKqH39pfHSamEL8C9a/IFmH2EHMQ2qVuB8x
+         1cbKp4d/ZoZu4+a9lnlP+oXAzHEeYLE875mXp63quHYTGwTZajhWPCZVjY790p/+Hcwa
+         s+4Gua7qcpVBUW+y3oPfml8uZlrl3w6MZz/Ndwyp9bIsj7CQfW93dP0BhXtBob6RQYhI
+         FRW4vS2aMSrU34OO96DQE0/votyohNFTAoYe7YcEth+cjjuSxMUBEVtgeZk/r0n2r+HL
+         zZHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=X1GqLJSs70mU+Hi0nCNtIWkAnuFR5UYUEq2exZOJtPA=;
-        b=wcF7kE0YPkeEcKhF5GiJ7aMfgzxFdnWOHtN1M7pNCHOyvI6UR7jdiezwDYVNRXlTZ+
-         kkAD8LUIN3jlDayZufHTvdPWLpoTsRg9YyQkyguh0+tXYeabigkqRp4JAJ/cb2PSSUIx
-         chb63N1l0GtY8w1JnCZk/cOhC422IGhUCZvFJvgTAj0gY3tp2k02QL18NmAtBJySw8CT
-         MdHSriee3+xMLnb+M+9jEDmixOmAeUKRUYrAAS2nD+vZ/kLp0Tre3pfsLl89djfWISPu
-         v7rjmrZDNABdviuGBhy04gQbXLLxB7KwbCXP8voavXuZhDus/Nw1blybfiroJKqvfTFf
-         XQgA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=Z2iaNWMEV/QMHKOXx+FOlMxwzzW8YfyvqHBaPTTZ0kU=;
+        b=hT1T4SS8LJZeAHk2piKTN2CQ3a3fj5UdcgxFS31kzXk7gBi0/rLbw1aW2D2hdegv3n
+         LpuGRJi4yTidHmlm14qUiavGDf68BIYGuht0A2nZRxVHJ1F8V4ORAKC6E+R6zxBQLM6+
+         wrMi7nyFWcKBiU656NeMUhkIPwa+8ORuQtoxCuqSm2k531G0avyJ4uEHjr+8LfVCOLi0
+         B+0UBtmIl9fugsT8B/eWQh8BWqv91bDT/Qe7MtmGlBVFNkcpXK63ytuIrMIFqa2NZQM3
+         H0RWwioPz11ebDoFI3uvUlDzos+JAS3nY1uXYl8BfGxVda+fPQFDZzH7ccgNbRpmqJH+
+         BTQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rMZf7X2c;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+       dkim=pass header.i=@eso.teric.us header.s=mail header.b=e/AgaD+a;
+       spf=pass (google.com: domain of juliac@eso.teric.us designates 69.164.192.171 as permitted sender) smtp.mailfrom=juliac@eso.teric.us
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rMZf7X2c;
-       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
-X-Google-Smtp-Source: AG47ELsf27hNfo36p0U4aS7dNaWzr9ZebAUD/lJS5I3YZJeOPCb6zk2KVAlNLA8n8bBIFlaxtxI5oTazWmGqLeBElwc=
-MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <20180306130551.GA16061@amd>
+       dkim=pass header.i=@eso.teric.us header.s=mail header.b=e/AgaD+a;
+       spf=pass (google.com: domain of juliac@eso.teric.us designates 69.164.192.171 as permitted sender) smtp.mailfrom=juliac@eso.teric.us
+Date: Tue, 6 Mar 2018 21:19:07 -0600
+From: Julia Cartwright <juliac@eso.teric.us>
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: joel@jms.id.au, andrew@aj.id.au, arnd@arndb.de,
+	gregkh@linuxfoundation.org, jdelvare@suse.com, linux@roeck-us.net,
+	benh@kernel.crashing.org, andrew@lunn.ch,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/8] [PATCH 1/8] drivers/peci: Add support for PECI
+ bus driver core
+Message-ID: <20180307031907.GD1924@kryptos.localdomain>
 References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
- <20180221161606.32247-3-jae.hyun.yoo@linux.intel.com> <20180306124002.GA13950@amd>
- <20180306125416.GD26143@lunn.ch> <20180306130551.GA16061@amd>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 6 Mar 2018 14:19:22 +0100
-X-Google-Sender-Auth: EEox9t7UDbbxxPcc3i00QRynH-U
-Message-ID: <CAK8P3a2VvaFMO6jsx09ukN+=tj7sRZ9mkYGcSRiO1Fe6==sJ9A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] [PATCH 2/8] Documentations: dt-bindings: Add a
- document of PECI adapter driver for Aspeed AST24xx/25xx SoCs
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, gregkh <gregkh@linuxfoundation.org>,
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	linux-hwmon@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+ <20180221161606.32247-2-jae.hyun.yoo@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180221161606.32247-2-jae.hyun.yoo@linux.intel.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593027883264098537?=
-X-GMAIL-MSGID: =?utf-8?q?1594194514707088400?=
+X-GMAIL-THRID: =?utf-8?q?1593027882449244386?=
+X-GMAIL-MSGID: =?utf-8?q?1594247346595885580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 6, 2018 at 2:05 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Tue 2018-03-06 13:54:16, Andrew Lunn wrote:
->> On Tue, Mar 06, 2018 at 01:40:02PM +0100, Pavel Machek wrote:
->> > Hi!
->> >
->> > > Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> > > ---
->> > >  .../devicetree/bindings/peci/peci-aspeed.txt       | 73 ++++++++++++++++++++++
->> > >  1 file changed, 73 insertions(+)
->> > >  create mode 100644 Documentation/devicetree/bindings/peci/peci-aspeed.txt
->> > >
->> > > diff --git a/Documentation/devicetree/bindings/peci/peci-aspeed.txt b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
->> > > new file mode 100644
->> > > index 000000000000..8a86f346d550
->> > > --- /dev/null
->> > > +++ b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
->> > > @@ -0,0 +1,73 @@
->> > > +Device tree configuration for PECI buses on the AST24XX and AST25XX SoCs.
->> >
->> > Are these SoCs x86-based?
->>
->> ARM, as far as i can tell. If i get the architecture correct, these
->> are BMC, Board Management Controllers, looking after the main x86 CPU,
->> stopping it overheating, controlling the power supplies, remote
->> management, etc.
->
-> Ok, so with x86 machine, I get arm-based one for free. I get it. Is
-> user able to run his own kernel on the arm system, or is it locked
-> down, TiVo style?
+On Wed, Feb 21, 2018 at 08:15:59AM -0800, Jae Hyun Yoo wrote:
+> This commit adds driver implementation for PECI bus into linux
+> driver framework.
+> 
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> ---
+[..]
+> +static int peci_locked_xfer(struct peci_adapter *adapter,
+> +			    struct peci_xfer_msg *msg,
+> +			    bool do_retry,
+> +			    bool has_aw_fcs)
 
-In the past, they were all locked down, the team submitting those
-patches in working on changing that. Have a look for OpenBMC.
+_locked generally means that this function is invoked with some critical
+lock held, what lock does the caller need to acquire before invoking
+this function?
 
-       Arnd
+> +{
+> +	ktime_t start, end;
+> +	s64 elapsed_ms;
+> +	int rc = 0;
+> +
+> +	if (!adapter->xfer) {
+
+Is this really an optional feature of an adapter?  If this is not
+optional, then this check should be in place when the adapter is
+registered, not here.  (And it should WARN_ON(), because it's a driver
+developer error).
+
+> +		dev_dbg(&adapter->dev, "PECI level transfers not supported\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (in_atomic() || irqs_disabled()) {
+
+As Andrew mentioned, this is broken.
+
+You don't even need a might_sleep().  The locking functions you use here
+will already include a might_sleep() w/ CONFIG_DEBUG_ATOMIC_SLEEP.
+
+> +		rt_mutex_trylock(&adapter->bus_lock);
+> +		if (!rc)
+> +			return -EAGAIN; /* PECI activity is ongoing */
+> +	} else {
+> +		rt_mutex_lock(&adapter->bus_lock);
+> +	}
+> +
+> +	if (do_retry)
+> +		start = ktime_get();
+> +
+> +	do {
+> +		rc = adapter->xfer(adapter, msg);
+> +
+> +		if (!do_retry)
+> +			break;
+> +
+> +		/* Per the PECI spec, need to retry commands that return 0x8x */
+> +		if (!(!rc && ((msg->rx_buf[0] & DEV_PECI_CC_RETRY_ERR_MASK) ==
+> +			      DEV_PECI_CC_TIMEOUT)))
+> +			break;
+
+This is pretty difficult to parse.  Can you split it into two different
+conditions?
+
+> +
+> +		/* Set the retry bit to indicate a retry attempt */
+> +		msg->tx_buf[1] |= DEV_PECI_RETRY_BIT;
+
+Are you sure this bit is to be set in the _second_ byte of tx_buf?
+
+> +
+> +		/* Recalculate the AW FCS if it has one */
+> +		if (has_aw_fcs)
+> +			msg->tx_buf[msg->tx_len - 1] = 0x80 ^
+> +						peci_aw_fcs((u8 *)msg,
+> +							    2 + msg->tx_len);
+> +
+> +		/* Retry for at least 250ms before returning an error */
+> +		end = ktime_get();
+> +		elapsed_ms = ktime_to_ms(ktime_sub(end, start));
+> +		if (elapsed_ms >= DEV_PECI_RETRY_TIME_MS) {
+> +			dev_dbg(&adapter->dev, "Timeout retrying xfer!\n");
+> +			break;
+> +		}
+> +	} while (true);
+> +
+> +	rt_mutex_unlock(&adapter->bus_lock);
+> +
+> +	return rc;
+> +}
+> +
+> +static int peci_xfer(struct peci_adapter *adapter, struct peci_xfer_msg *msg)
+> +{
+> +	return peci_locked_xfer(adapter, msg, false, false);
+> +}
+> +
+> +static int peci_xfer_with_retries(struct peci_adapter *adapter,
+> +				  struct peci_xfer_msg *msg,
+> +				  bool has_aw_fcs)
+> +{
+> +	return peci_locked_xfer(adapter, msg, true, has_aw_fcs);
+> +}
+> +
+> +static int peci_scan_cmd_mask(struct peci_adapter *adapter)
+> +{
+> +	struct peci_xfer_msg msg;
+> +	u32 dib;
+> +	int rc = 0;
+> +
+> +	/* Update command mask just once */
+> +	if (adapter->cmd_mask & BIT(PECI_CMD_PING))
+> +		return 0;
+> +
+> +	msg.addr      = PECI_BASE_ADDR;
+> +	msg.tx_len    = GET_DIB_WR_LEN;
+> +	msg.rx_len    = GET_DIB_RD_LEN;
+> +	msg.tx_buf[0] = GET_DIB_PECI_CMD;
+> +
+> +	rc = peci_xfer(adapter, &msg);
+> +	if (rc < 0) {
+> +		dev_dbg(&adapter->dev, "PECI xfer error, rc : %d\n", rc);
+> +		return rc;
+> +	}
+> +
+> +	dib = msg.rx_buf[0] | (msg.rx_buf[1] << 8) |
+> +	      (msg.rx_buf[2] << 16) | (msg.rx_buf[3] << 24);
+> +
+> +	/* Check special case for Get DIB command */
+> +	if (dib == 0x00) {
+> +		dev_dbg(&adapter->dev, "DIB read as 0x00\n");
+> +		return -1;
+> +	}
+> +
+> +	if (!rc) {
+
+You should change this to:
+
+	if (rc) {
+		dev_dbg(&adapter->dev, "Error reading DIB, rc : %d\n", rc);
+		return rc;
+	}
+
+And then leave the happy path below unindented.
+
+> +		/**
+> +		 * setting up the supporting commands based on minor rev#
+> +		 * see PECI Spec Table 3-1
+> +		 */
+> +		dib = (dib >> 8) & 0xF;
+> +
+> +		if (dib >= 0x1) {
+> +			adapter->cmd_mask |= BIT(PECI_CMD_RD_PKG_CFG);
+> +			adapter->cmd_mask |= BIT(PECI_CMD_WR_PKG_CFG);
+> +		}
+> +
+> +		if (dib >= 0x2)
+> +			adapter->cmd_mask |= BIT(PECI_CMD_RD_IA_MSR);
+> +
+> +		if (dib >= 0x3) {
+> +			adapter->cmd_mask |= BIT(PECI_CMD_RD_PCI_CFG_LOCAL);
+> +			adapter->cmd_mask |= BIT(PECI_CMD_WR_PCI_CFG_LOCAL);
+> +		}
+> +
+> +		if (dib >= 0x4)
+> +			adapter->cmd_mask |= BIT(PECI_CMD_RD_PCI_CFG);
+> +
+> +		if (dib >= 0x5)
+> +			adapter->cmd_mask |= BIT(PECI_CMD_WR_PCI_CFG);
+> +
+> +		if (dib >= 0x6)
+> +			adapter->cmd_mask |= BIT(PECI_CMD_WR_IA_MSR);
+> +
+> +		adapter->cmd_mask |= BIT(PECI_CMD_GET_TEMP);
+> +		adapter->cmd_mask |= BIT(PECI_CMD_GET_DIB);
+> +		adapter->cmd_mask |= BIT(PECI_CMD_PING);
+
+These cmd_mask updates are not done with any locking in mind.  Is this
+intentional?  Or: is synchronization not necessary because this is
+always done during enumeration prior to exposing the adapter to users?
+
+> +	} else {
+> +		dev_dbg(&adapter->dev, "Error reading DIB, rc : %d\n", rc);
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+> +static int peci_cmd_support(struct peci_adapter *adapter, enum peci_cmd cmd)
+> +{
+> +	if (!(adapter->cmd_mask & BIT(PECI_CMD_PING)) &&
+> +	    peci_scan_cmd_mask(adapter) < 0) {
+> +		dev_dbg(&adapter->dev, "Failed to scan command mask\n");
+> +		return -EIO;
+> +	}
+> +
+> +	if (!(adapter->cmd_mask & BIT(cmd))) {
+> +		dev_dbg(&adapter->dev, "Command %d is not supported\n", cmd);
+> +		return -EINVAL;
+> +	}
+
+It would be nicer if you did this check prior to dispatching to the
+various subfunctions (peci_ioctl_ping, peci_ioctl_get_dib, etc.).  In
+that way, these functions could just assume the adapter supports them.
+
+[..]
+> +static int peci_register_adapter(struct peci_adapter *adapter)
+> +{
+> +	int res = -EINVAL;
+> +
+> +	/* Can't register until after driver model init */
+> +	if (WARN_ON(!is_registered)) {
+
+Is this solving a problem you actually ran into?
+
+[.. skipped review due to fatigue ..]
+
+> +++ b/include/linux/peci.h
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018 Intel Corporation
+> +
+> +#ifndef __LINUX_PECI_H
+> +#define __LINUX_PECI_H
+> +
+> +#include <linux/cdev.h>
+> +#include <linux/device.h>
+> +#include <linux/peci-ioctl.h>
+> +#include <linux/rtmutex.h>
+> +
+> +#define PECI_BUFFER_SIZE  32
+> +#define PECI_NAME_SIZE    32
+> +
+> +struct peci_xfer_msg {
+> +	u8	addr;
+> +	u8	tx_len;
+> +	u8	rx_len;
+> +	u8	tx_buf[PECI_BUFFER_SIZE];
+> +	u8	rx_buf[PECI_BUFFER_SIZE];
+> +} __attribute__((__packed__));
+
+The packed attribute has historically caused gcc to emit atrocious code,
+as it seems to assume packed implies members might not be naturally
+aligned.  Seeing as you're only working with u8s in this case, though,
+this shouldn't be a problem.
+
+> +struct peci_board_info {
+> +	char			type[PECI_NAME_SIZE];
+> +	u8			addr;	/* CPU client address */
+> +	struct device_node	*of_node;
+> +};
+> +
+> +struct peci_adapter {
+> +	struct module	*owner;
+> +	struct rt_mutex	bus_lock;
+
+Why an rt_mutex, instead of a regular mutex.  Do you explicitly need PI
+in mainline?
+
+> +	struct device	dev;
+> +	struct cdev	cdev;
+> +	int		nr;
+> +	char		name[PECI_NAME_SIZE];
+> +	int		(*xfer)(struct peci_adapter *adapter,
+> +				struct peci_xfer_msg *msg);
+> +	uint		cmd_mask;
+> +};
+> +
+> +#define to_peci_adapter(d) container_of(d, struct peci_adapter, dev)
+
+You can also do this with a static inline, which provides a marginally
+better error when screwed up.
+
+   Julia
