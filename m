@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsUX9GLAqOUdh2Aei2iUhh8C58XG6wtqBsn5ZJicfFdsgjXvV1hXret5QH+QOSUyryUxRYM
-ARC-Seal: i=1; a=rsa-sha256; t=1520452067; cv=none;
+X-Google-Smtp-Source: AG47ELtBQ53YuyPnOfMaoXd3AOId7SUdQ/LVWuNrq6A45z2InXtLHUHcLUU5JE9S2v7fFVRox5LB
+ARC-Seal: i=1; a=rsa-sha256; t=1520452065; cv=none;
         d=google.com; s=arc-20160816;
-        b=AHmOuICs3iHWzw9Y2daw8PSbwHuJK66KKxJ9rbBt0lE0Zlj+9yMNgt4gKmznbRRQoP
-         w9dOB1JH0CX8gYFNMFB3KpDAtZqjSWF0OoSFc/PauQVZgaofAbKDakWTgpfABnAj+33I
-         op0RhZFBaNi2R2/hQrnixPCR4z78rnrNUtSuwpO8cuyfDt23SkCFmuF8LdZL4/0wuwPq
-         V+TKSqr4cSlOOLeClPK1vG34IkRhmBlITQ1vQuZk55eCPldQ9tGnCmjOjEV4DPO2eP8p
-         Ob8lcgkEJQag1jVbNHfpneJMfRNigKpcYTSRrj1vK5Kshvaft6jVwaLyrYaQLFpmQfIr
-         p4XA==
+        b=QJ4A5T7Cld2LeXMJuNrAPgHd0divL+FLJVujrZEchqJTgb4xAAcQBrCzFyq9fPCZaD
+         VTYNsWi+uMtD7mfnCrPdsUzf4/C72v8THuPX2b2W3+7aTiA3YOrKxJBCNk88wLcj423k
+         cWS/rTORx1bYmR90eD2sfaKO1DJYKCg782sZTtDq0I3heP0f+yWgAJXD7dNwaBB8xH3f
+         z0hvdzfaMjA9P2RcEE30zGdNyW/tBdxyc6fijsT7nrR/d7qtnMEod3nt1sCgg3zyWdbz
+         6E8mb+axYuVDaoSHfaT/RMxOgg4s2DuM3Kq2WrK1yS/loP69AboxZ4L1jg8IBdTe4I18
+         aS6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7qYCIGxTGV3obfUCey1+Ub5URZD7jM5bL3LP9a7VGog=;
-        b=ue3JOldOWgYSa5wbYlBb+dCEF2QPOOl976ONiLKQEhPxN3bXi+AyPUNI9teLS496vo
-         be0VIJxAM87uczy1EwBOJ9DvpfEbB6VMZZIUo4rGd3Wc9rAEOlRsna1+y+jpRawnDcZt
-         EIMjE1uaqm7xMnImueII8fpGZUzr7UnYTG4t/jRIsUariIJ2Re0LtuGJkEscWaI97ayA
-         okciy0+KQmDTV7lV3kFbc877FllpWu9l09Fn7Zx7f+2ysfpKO52v1MO3kmos/nzR0P2p
-         nz2BPODoq57K04qw+t9GtRVhaM1TUV94s3wPNx3xtWuQeKZVVCJiMzmdhW+8xh/xk6mZ
-         G3Nw==
+        bh=YwwZasVEXn9iyo6h5+sWllpdFb/dHS0aq2MQH8xyuCc=;
+        b=CHVcCxTSjnZbihbYr9xeFPft+pBP/T0GA4xHS7cRBSGeb/Tf3ySQlqPwt0sjZHHi7E
+         6/D+P+tTQZOiOS30uzBvXBE5GkiaHBbY7JxBlkjMZdvOJAZdrVqZmKJNEgxRU3I7swmM
+         9P/OstXC5rRGbgvTZjpyFPJuB/1CVUcLSl/0kdFWPer9M4IeV0gYmUU8BtjNV4i24K+l
+         mm3T+V2qCFp7y3ImIa22mPcKCt3VtEYBhN2n7aesyya6muBLH7QuY2FbV1+tW/qsSSR2
+         WY0SZpFpcQ54DJ8/ndM/NeXlra17WycYcwP7OAEmEt8CBnV1/RJZf2KCCD4ZuWDeo523
+         vsmw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ivan Vecera <ivecera@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 058/110] net/sched: cls_u32: fix cls_u32 on filter replace
-Date: Wed,  7 Mar 2018 11:38:41 -0800
-Message-Id: <20180307191047.042343240@linuxfoundation.org>
+Subject: [PATCH 4.14 057/110] net_sched: gen_estimator: fix broken estimators based on percpu stats
+Date: Wed,  7 Mar 2018 11:38:40 -0800
+Message-Id: <20180307191046.925051357@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309172826180715?=
-X-GMAIL-MSGID: =?utf-8?q?1594309547208123032?=
+X-GMAIL-THRID: =?utf-8?q?1594309170264925770?=
+X-GMAIL-MSGID: =?utf-8?q?1594309545125486296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +49,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ivan Vecera <ivecera@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit eb53f7af6f15285e2f6ada97285395343ce9f433 ]
+[ Upstream commit a5f7add332b4ea6d4b9480971b3b0f5e66466ae9 ]
 
-The following sequence is currently broken:
+pfifo_fast got percpu stats lately, uncovering a bug I introduced last
+year in linux-4.10.
 
- # tc qdisc add dev foo ingress
- # tc filter replace dev foo protocol all ingress \
-   u32 match u8 0 0 action mirred egress mirror dev bar1
- # tc filter replace dev foo protocol all ingress \
-   handle 800::800 pref 49152 \
-   u32 match u8 0 0 action mirred egress mirror dev bar2
- Error: cls_u32: Key node flags do not match passed flags.
- We have an error talking to the kernel, -1
+I missed the fact that we have to clear our temporary storage
+before calling __gnet_stats_copy_basic() in the case of percpu stats.
 
-The error comes from u32_change() when comparing new and
-existing flags. The existing ones always contains one of
-TCA_CLS_FLAGS_{,NOT}_IN_HW flag depending on offloading state.
-These flags cannot be passed from userspace so the condition
-(n->flags != flags) in u32_change() always fails.
+Without this fix, rate estimators (tc qd replace dev xxx root est 1sec
+4sec pfifo_fast) are utterly broken.
 
-Fix the condition so the flags TCA_CLS_FLAGS_NOT_IN_HW and
-TCA_CLS_FLAGS_IN_HW are not taken into account.
-
-Fixes: 24d3dc6d27ea ("net/sched: cls_u32: Reflect HW offload status")
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Fixes: 1c0d32fde5bd ("net_sched: gen_estimator: complete rewrite of rate estimators")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_u32.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/core/gen_estimator.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/cls_u32.c
-+++ b/net/sched/cls_u32.c
-@@ -927,7 +927,8 @@ static int u32_change(struct net *net, s
- 		if (TC_U32_KEY(n->handle) == 0)
- 			return -EINVAL;
+--- a/net/core/gen_estimator.c
++++ b/net/core/gen_estimator.c
+@@ -66,6 +66,7 @@ struct net_rate_estimator {
+ static void est_fetch_counters(struct net_rate_estimator *e,
+ 			       struct gnet_stats_basic_packed *b)
+ {
++	memset(b, 0, sizeof(*b));
+ 	if (e->stats_lock)
+ 		spin_lock(e->stats_lock);
  
--		if (n->flags != flags)
-+		if ((n->flags ^ flags) &
-+		    ~(TCA_CLS_FLAGS_IN_HW | TCA_CLS_FLAGS_NOT_IN_HW))
- 			return -EINVAL;
- 
- 		new = u32_init_knode(tp, n);
