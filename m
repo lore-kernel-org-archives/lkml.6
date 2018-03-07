@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755182AbeCGX6U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 18:58:20 -0500
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38405 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755133AbeCGX5n (ORCPT
+        id S1755198AbeCGX6o (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 18:58:44 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42719 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755104AbeCGX5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 18:57:43 -0500
-X-Google-Smtp-Source: AG47ELvICUV9p6bkc2g6doM2CWEcX0wWOEEG6okwaWi9gU1HrDKLI5xENzzyinU4gfeIDiBZR0NVjA==
-Subject: [PATCH v3 3/5] arm: Convert to GENERIC_IRQ_MULTI_HANDLER
-Date: Wed,  7 Mar 2018 15:57:29 -0800
-Message-Id: <20180307235731.22627-4-palmer@sifive.com>
+        Wed, 7 Mar 2018 18:57:40 -0500
+X-Google-Smtp-Source: AG47ELvBV5Ea2irvL04doIvWBf3t0+6prKhmB39zsTXN0uXATGNoyI9mC4GLXNKgkl8mYXyA/giNsg==
+Subject: [PATCH v3 1/5] irq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER
+Date: Wed,  7 Mar 2018 15:57:27 -0800
+Message-Id: <20180307235731.22627-2-palmer@sifive.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180307235731.22627-1-palmer@sifive.com>
 References: <20180307235731.22627-1-palmer@sifive.com>
@@ -26,215 +26,92 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the ARM port to use the recently added
-GENERIC_IRQ_MULTI_HANDLER, which is essentially just a copy of ARM's
-existhing MULTI_IRQ_HANDLER.  The only changes are:
+It looks like the arm irqchip registration mechanism has been copied
+into a handful of ports, including arm64 and openrisc.  I want to use
+this in the RISC-V port, so I thought it would be good to make this
+generic instead.
 
-* handle_arch_irq is now defined in a generic C file instead of an
-  arm-specific assembly file.
-* handle_arch_irq is not marked as __ro_after_init.
+This patch copies the arm definition of CONFIG_MULTI_IRQ_HANDLER into
+kernel/irq under CONFIG_GENERIC_MULTI_IRQ_HANDLER.  This patch is
+currently all dead code, but it will be enabled in the various other
+architectures in subsequent patches.
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 ---
- arch/arm/Kconfig                 | 19 +++++++------------
- arch/arm/include/asm/irq.h       |  5 -----
- arch/arm/include/asm/mach/arch.h |  2 +-
- arch/arm/kernel/entry-armv.S     | 10 ++--------
- arch/arm/kernel/irq.c            | 10 ----------
- arch/arm/kernel/setup.c          |  2 +-
- 6 files changed, 11 insertions(+), 37 deletions(-)
+ include/linux/irq.h | 18 ++++++++++++++++++
+ kernel/irq/Kconfig  |  5 +++++
+ kernel/irq/handle.c | 15 +++++++++++++++
+ 3 files changed, 38 insertions(+)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d53575486..3f972e83909b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -339,8 +339,8 @@ config ARCH_MULTIPLATFORM
- 	select TIMER_OF
- 	select COMMON_CLK
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select MIGHT_HAVE_PCI
--	select MULTI_IRQ_HANDLER
- 	select PCI_DOMAINS if PCI
- 	select SPARSE_IRQ
- 	select USE_OF
-@@ -467,9 +467,9 @@ config ARCH_DOVE
- 	bool "Marvell Dove"
- 	select CPU_PJ4
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select MIGHT_HAVE_PCI
--	select MULTI_IRQ_HANDLER
- 	select MVEBU_MBUS
- 	select PINCTRL
- 	select PINCTRL_DOVE
-@@ -514,8 +514,8 @@ config ARCH_LPC32XX
- 	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
--	select MULTI_IRQ_HANDLER
- 	select SPARSE_IRQ
- 	select USE_OF
- 	help
-@@ -534,11 +534,11 @@ config ARCH_PXA
- 	select TIMER_OF
- 	select CPU_XSCALE if !CPU_XSC3
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIO_PXA
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
--	select MULTI_IRQ_HANDLER
- 	select PLAT_PXA
- 	select SPARSE_IRQ
- 	help
-@@ -574,11 +574,11 @@ config ARCH_SA1100
- 	select CPU_FREQ
- 	select CPU_SA1100
- 	select GENERIC_CLOCKEVENTS
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
- 	select ISA
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_MEMORY_H
- 	select SPARSE_IRQ
- 	help
-@@ -592,10 +592,10 @@ config ARCH_S3C24XX
- 	select GENERIC_CLOCKEVENTS
- 	select GPIO_SAMSUNG
- 	select GPIOLIB
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
- 	select HAVE_S3C_RTC if RTC_CLASS
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_IO_H
- 	select SAMSUNG_ATAGS
- 	select USE_OF
-@@ -629,10 +629,10 @@ config ARCH_OMAP1
- 	select CLKSRC_MMIO
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select IRQ_DOMAIN
--	select MULTI_IRQ_HANDLER
- 	select NEED_MACH_IO_H if PCCARD
- 	select NEED_MACH_MEMORY_H
- 	select SPARSE_IRQ
-@@ -921,11 +921,6 @@ config IWMMXT
- 	  Enable support for iWMMXt context switching at run time if
- 	  running on a CPU that supports it.
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index a0231e96a578..77e97872a13e 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -1170,4 +1170,22 @@ int __ipi_send_mask(struct irq_desc *desc, const struct cpumask *dest);
+ int ipi_send_single(unsigned int virq, unsigned int cpu);
+ int ipi_send_mask(unsigned int virq, const struct cpumask *dest);
  
--config MULTI_IRQ_HANDLER
--	bool
--	help
--	  Allow each machine to specify it's own IRQ handler at run time.
--
- if !MMU
- source "arch/arm/Kconfig-nommu"
- endif
-diff --git a/arch/arm/include/asm/irq.h b/arch/arm/include/asm/irq.h
-index b6f319606e30..c883fcbe93b6 100644
---- a/arch/arm/include/asm/irq.h
-+++ b/arch/arm/include/asm/irq.h
-@@ -31,11 +31,6 @@ extern void asm_do_IRQ(unsigned int, struct pt_regs *);
- void handle_IRQ(unsigned int, struct pt_regs *);
- void init_IRQ(void);
++#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
++/*
++ * Registers a generic IRQ handling function as the top-level IRQ handler in
++ * the system, which is generally the first C code called from an assembly
++ * architecture-specific interrupt handler.
++ *
++ * Returns 0 on success, or -EBUSY if an IRQ handler has already been
++ * registered.
++ */
++int __init set_handle_irq(void (*handle_irq)(struct pt_regs *));
++
++/*
++ * Allows interrupt handlers to find the irqchip that's been registered as the
++ * top-level IRQ handler.
++ */
++extern void (*handle_arch_irq)(struct pt_regs *) __ro_after_init;
++#endif
++
+ #endif /* _LINUX_IRQ_H */
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 6fc87ccda1d7..116a6972f124 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -132,3 +132,8 @@ config GENERIC_IRQ_DEBUGFS
+ 	  If you don't know what to do here, say N.
  
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--extern void (*handle_arch_irq)(struct pt_regs *);
--extern void set_handle_irq(void (*handle_irq)(struct pt_regs *));
--#endif
--
- #ifdef CONFIG_SMP
- extern void arch_trigger_cpumask_backtrace(const cpumask_t *mask,
- 					   bool exclude_self);
-diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
-index 5c1ad11aa392..bb8851208e17 100644
---- a/arch/arm/include/asm/mach/arch.h
-+++ b/arch/arm/include/asm/mach/arch.h
-@@ -59,7 +59,7 @@ struct machine_desc {
- 	void			(*init_time)(void);
- 	void			(*init_machine)(void);
- 	void			(*init_late)(void);
--#ifdef CONFIG_MULTI_IRQ_HANDLER
+ endmenu
++
++config GENERIC_IRQ_MULTI_HANDLER
++	bool
++	help
++	  Allow each machine to specify it's own IRQ handler at run time.
+diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
+index 79f987b942b8..3570c715c3e7 100644
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -20,6 +20,10 @@
+ 
+ #include "internals.h"
+ 
 +#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	void			(*handle_irq)(struct pt_regs *);
- #endif
- 	void			(*restart)(enum reboot_mode, const char *);
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index 1752033b0070..7eeb1f57fa20 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -22,7 +22,7 @@
- #include <asm/glue-df.h>
- #include <asm/glue-pf.h>
- #include <asm/vfpmacros.h>
--#ifndef CONFIG_MULTI_IRQ_HANDLER
-+#ifndef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- #include <mach/entry-macro.S>
- #endif
- #include <asm/thread_notify.h>
-@@ -39,7 +39,7 @@
-  * Interrupt handling.
-  */
- 	.macro	irq_handler
--#ifdef CONFIG_MULTI_IRQ_HANDLER
-+#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	ldr	r1, =handle_arch_irq
- 	mov	r0, sp
- 	badr	lr, 9997f
-@@ -1226,9 +1226,3 @@ vector_addrexcptn:
- 	.globl	cr_alignment
- cr_alignment:
- 	.space	4
--
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--	.globl	handle_arch_irq
--handle_arch_irq:
--	.space	4
--#endif
-diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
-index ece04a457486..9908dacf9229 100644
---- a/arch/arm/kernel/irq.c
-+++ b/arch/arm/kernel/irq.c
-@@ -102,16 +102,6 @@ void __init init_IRQ(void)
- 	uniphier_cache_init();
++void (*handle_arch_irq)(struct pt_regs *) __ro_after_init;
++#endif
++
+ /**
+  * handle_bad_irq - handle spurious and unhandled irqs
+  * @desc:      description of the interrupt
+@@ -207,3 +211,14 @@ irqreturn_t handle_irq_event(struct irq_desc *desc)
+ 	irqd_clear(&desc->irq_data, IRQD_IRQ_INPROGRESS);
+ 	return ret;
  }
- 
--#ifdef CONFIG_MULTI_IRQ_HANDLER
--void __init set_handle_irq(void (*handle_irq)(struct pt_regs *))
--{
--	if (handle_arch_irq)
--		return;
--
--	handle_arch_irq = handle_irq;
--}
--#endif
--
- #ifdef CONFIG_SPARSE_IRQ
- int __init arch_probe_nr_irqs(void)
- {
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index fc40a2b40595..f6c26c370427 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -1145,7 +1145,7 @@ void __init setup_arch(char **cmdline_p)
- 
- 	reserve_crashkernel();
- 
--#ifdef CONFIG_MULTI_IRQ_HANDLER
++
 +#ifdef CONFIG_GENERIC_IRQ_MULTI_HANDLER
- 	handle_arch_irq = mdesc->handle_irq;
- #endif
- 
++int __init set_handle_irq(void (*handle_irq)(struct pt_regs *))
++{
++	if (handle_arch_irq)
++		return -EBUSY;
++
++	handle_arch_irq = handle_irq;
++	return 0;
++}
++#endif
 -- 
 2.16.1
