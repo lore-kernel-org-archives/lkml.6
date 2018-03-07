@@ -1,255 +1,123 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-29808-1520456581-2-10063881335043316580
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-29808-1520455418-6-10890517983662715712
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520456580; b=Pxyth2XI9HsQFvfAYYxpCmHrZGemxIX00wfI5p8cSIdNIiC
-    3b7kmo9saXNsjfHCaKP3hSwoWDtvIgwrywxZc1oNdTW7Lo7oK5UEjeETxAlkRTcE
-    FXSPtroGebU3xEM1hbP1iC6+p8CZDumZmRz9xp16ZjK+RSm94+m6uWebNzZng65t
-    tTlYGFMh7QRT5kKFZuXgw4rOdDbeS6ZF11pu5GbYEk16oeWZa/l5wZp+gWClfBmq
-    KvcCJ2j02bjIF0/I0IXAyX/e9Dj45whwLgt0AJKYG8iHc9nSgjm8YbNlth3BevcC
-    VS4aIHe/Mn1vQsWsCfX/UZ/hybz6KxCVs0jQUXw==
+    t=1520455418; b=pHP7bBVBtvy1UllIqZ3DLmYkDfHAU42Na2Vz8QgiYq2J5ar
+    tNhJHv+gYdQm6h9QNGWVnYDDLjpPfSL7DE341lo7QEl6nQ9qQrw4h5KgYVuz4Xwn
+    a1Z/VpO0ZB0yZY8iMRW0xj7csGXOL65jJGKEFFHTY8wObWAK/zgRxUQXLjmqF7bI
+    3s/OYkgsa1rjbiYygJDyYKUzvDzFpMGjYVB7AWef61tjiMDULEgeJ/mFIPNk5koP
+    t8ykccDG/TmiJR/QoeVOSXrsRE+p4sY9RiHrxUXUXA41KLM199INX71huX8ut7MZ
+    t/8Al5QwooaBlNqMjSacHtqP5ruXSJKb/Bna9Lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520456580; bh=o
-    hns0q5/OJ5ar9q5GGphiH8YYJd5OQCROtLKYe9tyDU=; b=kfZZHiQkau7PH8hO7
-    /3nNkFrgJqmIZ2xTLkgbmP2aVPyGv25A+EY591skcuds5IEW4xK/2+Fiuo25HB/z
-    t1sfMV0e7VbUGl5kxrcXmUvFjsz0042OgJyhS6h1QJ4PZT0baN024HFSIhfl1D9j
-    GcXc3vfaJ6BGrpQ+DhBHJXyoTUKmvRDCyyRSKVa/YDBe9gfE2kUZxOFV/emlnhSW
-    t1R/vH8AW9iH378D2/6AONslh4/3WLURwmYI38/6/7m1/hrooiL0RI9cBVRlEn4J
-    ehmReNAUv41uLzUmiWnbBFitOMe2NjYxLZd5QefXCmUAwweK4XEVyucLD45qRP5n
-    wKCbw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520455418; bh=01i34uxo8gCDxznX9UPBLNY2yB
+    Q41OMHGFXintUiN7o=; b=o0rY4vrTiuW5PaTKMX0cVunNJrGrmAZm50hTo9jZaa
+    lsj1R0EUMyZkVbRDrZZmT2iMHmMLq43snJPQJvazsQdxhngRzzAejqKV7JCXYW2D
+    800A5zm5Zdp2WjJbku1DypOK3ZtKlQwQwLgshEPS9GafeEzGhBFCFMp9TGHE4gTk
+    m3Zj2CzZNqSl6i9m+JbSype0nE4pueZAKaAiaA8tOCUCU/NtHORH5fkaO7DG86ge
+    yAdlRgzCC4Oadrilui/w1iSWKmYB7k8UrOyn2cEd7R/tmr8CnHB0tKVNs9JlWWCc
+    kq/o2mMyfB4lHg+yfvPuBvYBrXjJI9sKRDbw1Dcw4+Kg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx1.messagingengine.com;
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11667206B2
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Wed, 7 Mar 2018 21:02:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Shreeya Patel <shreeya.patel23498@gmail.com>
-Subject: Re: [PATCH v3 1/4] Staging: iio: adis16209: Remove and add some
- comments and group the definitions
-Message-ID: <20180307210246.235456d9@archlinux>
-In-Reply-To: <1520168824.8495.2.camel@gmail.com>
-References: <cover.1520164945.git.shreeya.patel23498@gmail.com>
- <982742b1bb71d4d97c2f5edc6f95b85129d8667b.1520164945.git.shreeya.patel23498@gmail.com>
- <20180304125604.GA7613@himanshu-Vostro-3559>
- <1520168824.8495.2.camel@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
- Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- Himanshu Jha <himanshujha199640@gmail.com>, pmeerw@pmeerw.net, knaack.h@gmx.de
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-category=clean score=0 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935000AbeCGUmz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 15:42:55 -0500
+Received: from osg.samsung.com ([64.30.133.232]:48621 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933736AbeCGUmu (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:42:50 -0500
+From: Shuah Khan <shuahkh@osg.samsung.com>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, yuyang.du@intel.com,
+        k.opasiak@samsung.com, nobuo.iwata@fujixerox.co.jp,
+        julien.boibessot@armadeus.com, jdieter@lesbg.com,
+        peter.senna@gmail.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] More error codes for usbip request/reply messages
+Date: Wed,  7 Mar 2018 13:42:23 -0700
+Message-Id: <cover.1520455010.git.shuahkh@osg.samsung.com>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gU3VuLCAwNCBNYXIgMjAxOCAxODozNzowNCArMDUzMApTaHJlZXlhIFBhdGVsIDxzaHJlZXlh
-LnBhdGVsMjM0OThAZ21haWwuY29tPiB3cm90ZToKCj4gT24gU3VuLCAyMDE4LTAzLTA0IGF0IDE4
-OjI2ICswNTMwLCBIaW1hbnNodSBKaGEgd3JvdGU6Cj4gPiBIaSBTaHJlZXlhLAo+ID4gCj4gPiBP
-biBTdW4sIE1hciAwNCwgMjAxOCBhdCAwNjowNjoyMlBNICswNTMwLCBTaHJlZXlhIFBhdGVsIHdy
-b3RlOiAgCj4gPiA+IAo+ID4gPiBSZW1vdmUgc29tZSB1bm5lY2Vzc2F5IGNvbW1lbnRzIGFuZCBn
-cm91cCB0aGUgY29udHJvbAo+ID4gPiByZWdpc3RlciBhbmQgcmVnaXN0ZXIgZmllbGQgbWFjcm9z
-IHRvZ2V0aGVyLgo+ID4gPiBTb21lIG9mIHRoZSByZWdpc3RlciBuYW1lcyBkb2VzIG5vdCBtYWtl
-IGl0J3MgcHVwb3JzZQo+ID4gPiB2ZXJ5IGNsZWFyIGFuZCBoZW5jZSwgYWRkIHNvbWUgY29tbWVu
-dHMgZm9yIG1vcmUKPiA+ID4gaW5mb3JtYXRpb24uCj4gPiA+IEFsc28gdGhlcmUgYXJlIGNlcnRh
-aW4gdW5pdCBiYXNlZCBjb21tZW50cyB3aGljaCBhcmUgbm90Cj4gPiA+IHByb3ZpZGluZyBzdWZm
-aWNpZW50IGluZm9ybWF0aW9uLCBzbyBleHBhbmQgdGhvc2UgY29tbWVudHMuCj4gPiA+IAo+ID4g
-PiBTaWduZWQtb2ZmLWJ5OiBTaHJlZXlhIFBhdGVsIDxzaHJlZXlhLnBhdGVsMjM0OThAZ21haWwu
-Y29tPgo+ID4gPiAtLS0KPiA+ID4gCj4gPiA+IENoYW5nZXMgaW4gdjMKPiA+ID4gwqAgLVRoaXMg
-cGF0Y2ggaXMgdGhlIGNvbWJpbmF0aW9uIG9mIHR3byBwYXRjaGVzIGZyb20gdGhlCj4gPiA+IHBy
-ZXZpb3VzIHNlcmllcy4gQWxzbyBhZGQgc29tZSBtb3JlIGNvbW1lbnRzLgo+ID4gPiAKPiA+ID4g
-Cj4gPiA+IMKgZHJpdmVycy9zdGFnaW5nL2lpby9hY2NlbC9hZGlzMTYyMDkuYyB8IDEzMiArKysr
-KysrKysrLS0tLS0tLS0tLQo+ID4gPiAtLS0tLS0tLS0tLS0tLQo+ID4gPiDCoDEgZmlsZSBjaGFu
-Z2VkLCAzOSBpbnNlcnRpb25zKCspLCA5MyBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FjY2VsL2FkaXMxNjIwOS5jCj4gPiA+IGIvZHJp
-dmVycy9zdGFnaW5nL2lpby9hY2NlbC9hZGlzMTYyMDkuYwo+ID4gPiBpbmRleCAxNTExMjBmLi5k
-OGFlZjljIDEwMDY0NAo+ID4gPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FjY2VsL2FkaXMx
-NjIwOS5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9paW8vYWNjZWwvYWRpczE2MjA5LmMK
-PiA+ID4gQEAgLTIxLDEzNSArMjEsNzAgQEAKPiA+ID4gwqAjaW5jbHVkZSA8bGludXgvaWlvL2lt
-dS9hZGlzLmg+Cj4gPiA+IMKgCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU1RBUlRVUF9ERUxB
-WV9NUwkyMjAKPiA+ID4gLQo+ID4gPiAtLyogRmxhc2ggbWVtb3J5IHdyaXRlIGNvdW50ICovCj4g
-PiA+IMKgI2RlZmluZSBBRElTMTYyMDlfRkxBU0hfQ05UX1JFRwkJMHgwMAo+ID4gPiDCoAo+ID4g
-PiAtLyogT3V0cHV0LCBwb3dlciBzdXBwbHkgKi8KPiA+ID4gKy8qIERhdGEgT3V0cHV0IFJlZ2lz
-dGVyIERlZmluaXRpb25zICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU1VQUExZX09VVF9S
-RUcJMHgwMgo+ID4gPiAtCj4gPiA+IC0vKiBPdXRwdXQsIHgtYXhpcyBhY2NlbGVyb21ldGVyICov
-Cj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWEFDQ0xfT1VUX1JFRwkJMHgwNAo+ID4gPiAtCj4g
-PiA+IC0vKiBPdXRwdXQsIHktYXhpcyBhY2NlbGVyb21ldGVyICovCj4gPiA+IMKgI2RlZmluZSBB
-RElTMTYyMDlfWUFDQ0xfT1VUX1JFRwkJMHgwNgo+ID4gPiAtCj4gPiA+IMKgLyogT3V0cHV0LCBh
-dXhpbGlhcnkgQURDIGlucHV0ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfQVVYX0FEQ19S
-RUcJCTB4MDgKPiA+ID4gLQo+ID4gPiDCoC8qIE91dHB1dCwgdGVtcGVyYXR1cmUgKi8KPiA+ID4g
-wqAjZGVmaW5lIEFESVMxNjIwOV9URU1QX09VVF9SRUcJCTB4MEEKPiA+ID4gLQo+ID4gPiAtLyog
-T3V0cHV0LCB4LWF4aXMgaW5jbGluYXRpb24gKi8KPiA+ID4gKy8qIE91dHB1dCwgKy8tIDkwIGRl
-Z3JlZXMgWC1heGlzIGluY2xpbmF0aW9uICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWElO
-Q0xfT1VUX1JFRwkJMHgwQwo+ID4gPiAtCj4gPiA+IC0vKiBPdXRwdXQsIHktYXhpcyBpbmNsaW5h
-dGlvbiAqLwo+ID4gPiDCoCNkZWZpbmUgQURJUzE2MjA5X1lJTkNMX09VVF9SRUcJCTB4MEUKPiA+
-ID4gLQo+ID4gPiDCoC8qIE91dHB1dCwgKy8tMTgwIHZlcnRpY2FsIHJvdGF0aW9uYWwgcG9zaXRp
-b24gKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ST1RfT1VUX1JFRwkJMHgxMAo+ID4gPiDC
-oAo+ID4gPiAtLyogQ2FsaWJyYXRpb24sIHgtYXhpcyBhY2NlbGVyYXRpb24gb2Zmc2V0IG51bGwg
-Ki8KPiA+ID4gKy8qCj4gPiA+ICsgKiBDYWxpYnJhdGlvbiBSZWdpc3RlciBEZWZpbml0aW9ucy4K
-PiA+ID4gKyAqIEFjY2VsZXJhdGlvbiwgaW5jbGluYXRpb24gb3Igcm90YXRpb24gb2Zmc2V0IG51
-bGwuCj4gPiA+ICsgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9YQUNDTF9OVUxMX1JFRwkw
-eDEyCj4gPiA+IC0KPiA+ID4gLS8qIENhbGlicmF0aW9uLCB5LWF4aXMgYWNjZWxlcmF0aW9uIG9m
-ZnNldCBudWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWUFDQ0xfTlVMTF9SRUcJMHgx
-NAo+ID4gPiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgeC1heGlzIGluY2xpbmF0aW9uIG9mZnNl
-dCBudWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWElOQ0xfTlVMTF9SRUcJMHgxNgo+
-ID4gPiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgeS1heGlzIGluY2xpbmF0aW9uIG9mZnNldCBu
-dWxsICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfWUlOQ0xfTlVMTF9SRUcJMHgxOAo+ID4g
-PiAtCj4gPiA+IC0vKiBDYWxpYnJhdGlvbiwgdmVydGljYWwgcm90YXRpb24gb2Zmc2V0IG51bGwg
-Ki8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ST1RfTlVMTF9SRUcJCTB4MUEKPiA+ID4gwqAK
-PiA+ID4gLS8qIEFsYXJtIDEgYW1wbGl0dWRlIHRocmVzaG9sZCAqLwo+ID4gPiArLyogQWxhcm0g
-UmVnaXN0ZXIgRGVmaW5pdGlvbnMgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BTE1fTUFH
-MV9SRUcJCTB4MjAKPiA+ID4gLQo+ID4gPiAtLyogQWxhcm0gMiBhbXBsaXR1ZGUgdGhyZXNob2xk
-ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfQUxNX01BRzJfUkVHCQkweDIyCj4gPiA+IC0K
-PiA+ID4gLS8qIEFsYXJtIDEsIHNhbXBsZSBwZXJpb2QgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMx
-NjIwOV9BTE1fU01QTDFfUkVHCQkweDI0Cj4gPiA+IC0KPiA+ID4gLS8qIEFsYXJtIDIsIHNhbXBs
-ZSBwZXJpb2QgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BTE1fU01QTDJfUkVHCQkweDI2
-Cj4gPiA+IC0KPiA+ID4gLS8qIEFsYXJtIGNvbnRyb2wgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMx
-NjIwOV9BTE1fQ1RSTF9SRUcJCTB4MjgKPiA+ID4gwqAKPiA+ID4gLS8qIEF1eGlsaWFyeSBEQUMg
-ZGF0YSAqLwo+ID4gPiDCoCNkZWZpbmUgQURJUzE2MjA5X0FVWF9EQUNfUkVHCQkweDMwCj4gPiA+
-IC0KPiA+ID4gLS8qIEdlbmVyYWwtcHVycG9zZSBkaWdpdGFsIGlucHV0L291dHB1dCBjb250cm9s
-ICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfR1BJT19DVFJMX1JFRwkJMHgzMgo+ID4gPiAt
-Cj4gPiA+IC0vKiBNaXNjZWxsYW5lb3VzIGNvbnRyb2wgKi8KPiA+ID4gLSNkZWZpbmUgQURJUzE2
-MjA5X01TQ19DVFJMX1JFRwkJMHgzNAo+ID4gPiAtCj4gPiA+IC0vKiBJbnRlcm5hbCBzYW1wbGUg
-cGVyaW9kIChyYXRlKSBjb250cm9sICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYyMDlfU01QTF9Q
-UkRfUkVHCQkweDM2Cj4gPiA+IC0KPiA+ID4gLS8qIE9wZXJhdGlvbiwgZmlsdGVyIGNvbmZpZ3Vy
-YXRpb24gKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9BVkdfQ05UX1JFRwkJMHgzOAo+ID4g
-PiAtCj4gPiA+IC0vKiBPcGVyYXRpb24sIHNsZWVwIG1vZGUgY29udHJvbCAqLwo+ID4gPiDCoCNk
-ZWZpbmUgQURJUzE2MjA5X1NMUF9DTlRfUkVHCQkweDNBCj4gPiA+IMKgCj4gPiA+IC0vKiBEaWFn
-bm9zdGljcywgc3lzdGVtIHN0YXR1cyByZWdpc3RlciAqLwo+ID4gPiAtI2RlZmluZSBBRElTMTYy
-MDlfRElBR19TVEFUX1JFRwkJMHgzQwo+ID4gPiAtCj4gPiA+IC0vKiBPcGVyYXRpb24sIHN5c3Rl
-bSBjb21tYW5kIHJlZ2lzdGVyICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9S
-RUcJCTB4M0UKPiA+ID4gLQo+ID4gPiAtLyogTVNDX0NUUkwgKi8KPiA+ID4gLQo+ID4gPiAtLyog
-U2VsZi10ZXN0IGF0IHBvd2VyLW9uOiAxID0gZGlzYWJsZWQsIDAgPSBlbmFibGVkICovCj4gPiA+
-IC0jZGVmaW5lIEFESVMxNjIwOV9NU0NfQ1RSTF9QV1JVUF9TRUxGX1RFU1QJQklUKDEwKQo+ID4g
-PiAtCj4gPiA+IC0vKiBTZWxmLXRlc3QgZW5hYmxlICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIw
-OV9NU0NfQ1RSTF9TRUxGX1RFU1RfRU4JwqDCoMKgwqDCoMKgwqDCoEJJVCg4KQo+ID4gPiAtCj4g
-PiA+IC0vKiBEYXRhLXJlYWR5IGVuYWJsZTogMSA9IGVuYWJsZWQsIDAgPSBkaXNhYmxlZCAqLwo+
-ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfTVNDX0NUUkxfREFUQV9SRFlfRU4JwqDCoMKgwqDCoMKg
-wqDCoEJJVCgyKQo+ID4gPiAtCj4gPiA+ICsjZGVmaW5lIEFESVMxNjIwOV9NU0NfQ1RSTF9SRUcJ
-CQkweDM0Cj4gPiA+ICsjZGVmaW5lwqDCoEFESVMxNjIwOV9NU0NfQ1RSTF9QV1JVUF9TRUxGX1RF
-U1QJQklUKDEwKQo+ID4gPiArI2RlZmluZcKgwqBBRElTMTYyMDlfTVNDX0NUUkxfU0VMRl9URVNU
-X0VOCUJJVCg4KQo+ID4gPiArI2RlZmluZcKgwqBBRElTMTYyMDlfTVNDX0NUUkxfREFUQV9SRFlf
-RU4JCUJJVCgyKQo+ID4gPiDCoC8qIERhdGEtcmVhZHkgcG9sYXJpdHk6IDEgPSBhY3RpdmUgaGln
-aCwgMCA9IGFjdGl2ZSBsb3cgKi8KPiA+ID4gLSNkZWZpbmUgQURJUzE2MjA5X01TQ19DVFJMX0FD
-VElWRV9ISUdICcKgwqDCoMKgwqDCoMKgwqBCSVQoMSkKPiA+ID4gKyNkZWZpbmXCoMKgQURJUzE2
-MjA5X01TQ19DVFJMX0FDVElWRV9ISUdICQlCSVQoMSkKPiA+ID4gKyNkZWZpbmXCoMKgQURJUzE2
-MjA5X01TQ19DVFJMX0RBVEFfUkRZX0RJTzIJQklUKDApCj4gPiA+IMKgCj4gPiA+IC0vKiBEYXRh
-LXJlYWR5IGxpbmUgc2VsZWN0aW9uOiAxID0gRElPMiwgMCA9IERJTzEgKi8KPiA+ID4gLSNkZWZp
-bmUgQURJUzE2MjA5X01TQ19DVFJMX0RBVEFfUkRZX0RJTzIJQklUKDApCj4gPiA+IC0KPiA+ID4g
-LS8qIERJQUdfU1RBVCAqLwo+ID4gPiAtCj4gPiA+IC0vKiBBbGFybSAyIHN0YXR1czogMSA9IGFs
-YXJtIGFjdGl2ZSwgMCA9IGFsYXJtIGluYWN0aXZlICovCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIw
-OV9ESUFHX1NUQVRfQUxBUk0ywqDCoMKgwqDCoMKgwqDCoEJJVCg5KQo+ID4gPiAtCj4gPiA+IC0v
-KiBBbGFybSAxIHN0YXR1czogMSA9IGFsYXJtIGFjdGl2ZSwgMCA9IGFsYXJtIGluYWN0aXZlICov
-Cj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NUQVRfQUxBUk0xwqDCoMKgwqDCoMKgwqDC
-oEJJVCg4KQo+ID4gPiAtCj4gPiA+IC0vKiBTZWxmLXRlc3QgZGlhZ25vc3RpYyBlcnJvciBmbGFn
-OiAxID0gZXJyb3IgY29uZGl0aW9uLCAwID0KPiA+ID4gbm9ybWFsIG9wZXJhdGlvbiAqLwo+ID4g
-PiArI2RlZmluZSBBRElTMTYyMDlfRElBR19TVEFUX1JFRwkJCTB4M0MKPiA+ID4gKyNkZWZpbmXC
-oMKgQURJUzE2MjA5X0RJQUdfU1RBVF9BTEFSTTIJCUJJVCg5KQo+ID4gPiArI2RlZmluZcKgwqBB
-RElTMTYyMDlfRElBR19TVEFUX0FMQVJNMQkJQklUKDgpCj4gPiA+IMKgI2RlZmluZSBBRElTMTYy
-MDlfRElBR19TVEFUX1NFTEZURVNUX0ZBSUxfQklUCTUKPiA+ID4gLQo+ID4gPiAtLyogU1BJIGNv
-bW11bmljYXRpb25zIGZhaWx1cmUgKi8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NU
-QVRfU1BJX0ZBSUxfQklUCTMKPiA+ID4gLQo+ID4gPiAtLyogRmxhc2ggdXBkYXRlIGZhaWx1cmUg
-Ki8KPiA+ID4gwqAjZGVmaW5lIEFESVMxNjIwOV9ESUFHX1NUQVRfRkxBU0hfVVBUX0JJVAkyCj4g
-PiA+IC0KPiA+ID4gwqAvKiBQb3dlciBzdXBwbHkgYWJvdmUgMy42MjUgViAqLwo+ID4gPiDCoCNk
-ZWZpbmUgQURJUzE2MjA5X0RJQUdfU1RBVF9QT1dFUl9ISUdIX0JJVAkxCj4gPiA+IC0KPiA+ID4g
-wqAvKiBQb3dlciBzdXBwbHkgYmVsb3cgMy4xNSBWICovCj4gPiA+IMKgI2RlZmluZSBBRElTMTYy
-MDlfRElBR19TVEFUX1BPV0VSX0xPV19CSVQJMAo+ID4gPiDCoAo+ID4gPiAtLyogR0xPQl9DTUQg
-Ki8KPiA+ID4gLQo+ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfR0xPQl9DTURfU1dfUkVTRVQJQklU
-KDcpCj4gPiA+IC0jZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9DTEVBUl9TVEFUCUJJVCg0KQo+
-ID4gPiAtI2RlZmluZSBBRElTMTYyMDlfR0xPQl9DTURfRkFDVE9SWV9DQUwJQklUKDEpCj4gPiA+
-ICsjZGVmaW5lIEFESVMxNjIwOV9HTE9CX0NNRF9SRUcJCQkweDNFCj4gPiA+ICsjZGVmaW5lwqDC
-oEFESVMxNjIwOV9HTE9CX0NNRF9TV19SRVNFVAkJQklUKDcpCj4gPiA+ICsjZGVmaW5lwqDCoEFE
-SVMxNjIwOV9HTE9CX0NNRF9DTEVBUl9TVEFUCQlCSVQoNCkKPiA+ID4gKyNkZWZpbmXCoMKgQURJ
-UzE2MjA5X0dMT0JfQ01EX0ZBQ1RPUllfQ0FMCQlCSVQoMSkKPiA+ID4gwqAKPiA+ID4gLSNkZWZp
-bmUgQURJUzE2MjA5X0VSUk9SX0FDVElWRcKgwqDCoMKgwqDCoMKgwqDCoMKgQklUKDE0KQo+ID4g
-PiArI2RlZmluZSBBRElTMTYyMDlfRVJST1JfQUNUSVZFCQkJQklUKDE0KQo+ID4gPiDCoAo+ID4g
-PiDCoGVudW0gYWRpczE2MjA5X3NjYW4gewo+ID4gPiDCoAlBRElTMTYyMDlfU0NBTl9TVVBQTFks
-Cj4gPiA+IEBAIC0yMjYsMjQgKzE2MSwzOCBAQCBzdGF0aWMgaW50IGFkaXMxNjIwOV9yZWFkX3Jh
-dyhzdHJ1Y3QgaWlvX2Rldgo+ID4gPiAqaW5kaW9fZGV2LAo+ID4gPiDCoAkJCQkqdmFsMiA9IDYx
-MDUwMDsgLyogMC42MTA1IG1WICovCj4gPiA+IMKgCQkJcmV0dXJuIElJT19WQUxfSU5UX1BMVVNf
-TUlDUk87Cj4gPiA+IMKgCQljYXNlIElJT19URU1QOgo+ID4gPiAtCQkJKnZhbCA9IC00NzA7IC8q
-IC0wLjQ3IEMgKi8KPiA+ID4gKwkJCSp2YWwgPSAtNDcwOwo+ID4gPiDCoAkJCSp2YWwyID0gMDsK
-PiA+ID4gwqAJCQlyZXR1cm4gSUlPX1ZBTF9JTlRfUExVU19NSUNSTzsKPiA+ID4gwqAJCWNhc2Ug
-SUlPX0FDQ0VMOgo+ID4gPiArCQkJLyoKPiA+ID4gKwkJCcKgKiBJSU8gYmFzZSB1bml0IGZvciBz
-ZW5zaXRpdml0eSBvZgo+ID4gPiBhY2NlbGVyb21ldGVyCj4gPiA+ICsJCQnCoCogaXMgbWlsbGkg
-Zy4KPiA+ID4gKwkJCcKgKiAxIExTQiByZXByZXNlbnRzIDAuMjQ0IG1nLgo+ID4gPiArCQkJwqAq
-Lwo+ID4gPiDCoAkJCSp2YWwgPSAwOwo+ID4gPiAtCQkJKnZhbDIgPSBJSU9fR19UT19NX1NfMigy
-NDQxNDApOyAvKgo+ID4gPiAwLjI0NDE0MCBtZyAqLwo+ID4gPiArCQkJKnZhbDIgPSBJSU9fR19U
-T19NX1NfMigyNDQxNDApOwo+ID4gPiDCoAkJCXJldHVybiBJSU9fVkFMX0lOVF9QTFVTX05BTk87
-Cj4gPiA+IMKgCQljYXNlIElJT19JTkNMSToKPiA+ID4gwqAJCWNhc2UgSUlPX1JPVDoKPiA+ID4g
-KwkJCS8qCj4gPiA+ICsJCQnCoCogSUlPIGJhc2UgdW5pdHMgZm9yIHJvdGF0aW9uIGFyZQo+ID4g
-PiBkZWdyZWVzLgo+ID4gPiArCQkJwqAqIDEgTFNCIHJlcHJlc2VudHMgMC4wMjUgbWlsbGkgZGVn
-cmVlcy4KPiA+ID4gKwkJCcKgKi8KPiA+ID4gwqAJCQkqdmFsID0gMDsKPiA+ID4gLQkJCSp2YWwy
-ID0gMjUwMDA7IC8qIDAuMDI1IGRlZ3JlZSAqLwo+ID4gPiArCQkJKnZhbDIgPSAyNTAwMDsKPiA+
-ID4gwqAJCQlyZXR1cm4gSUlPX1ZBTF9JTlRfUExVU19NSUNSTzsKPiA+ID4gwqAJCWRlZmF1bHQ6
-Cj4gPiA+IMKgCQkJcmV0dXJuIC1FSU5WQUw7Cj4gPiA+IMKgCQl9Cj4gPiA+IMKgCQlicmVhazsK
-PiA+ID4gwqAJY2FzZSBJSU9fQ0hBTl9JTkZPX09GRlNFVDoKPiA+ID4gLQkJKnZhbCA9IDI1MDAw
-IC8gLTQ3MCAtIDB4NEZFOyAvKiAyNSBDID0gMHg0RkUgKi8KPiA+ID4gKwkJLyoKPiA+ID4gKwkJ
-wqAqIFRoZSByYXcgQURDIHZhbHVlIGlzIDB4NEZFIHdoZW4gdGhlIHRlbXBlcmF0dXJlCj4gPiA+
-ICsJCcKgKiBpcyA0NSBkZWdyZWVzIGFuZCB0aGUgc2NhbGUgZmFjdG9yIHBlciBtaWxsaQo+ID4g
-PiArCQnCoCogZGVncmVlIGNlbGNpdXMgaXMgLTQ3MC4gIAo+ID4gQXJlIHlvdSBzdXJlIGl0IGlz
-ICo0NSBkZWdyZWVzKiBhbmQgbm90ICoyNSBkZWdyZWVzKiBpbnN0ZWFkID8KPiA+IAo+ID4gQXMg
-SSBjYW4gY2xlYXJseSBzZWUgZnJvbSB0aGUgZGF0YXNoZWV0IDoKPiA+IAo+ID4gInNlbnNpdGl2
-aXR5ID0g4oiSMC40N8KwL0xTQiwgMjXCsEMgPSAxMjc4IExTQiA9IDB4MDRGRSIKPiA+IAo+ID4g
-UGxlYXNlIGNoZWNrIGl0IDopCj4gPiAKPiA+IEkgZm91bmQgdGhpcyBiZWNhdXNlIEknbSBhbHNv
-IGRvaW5nIGEgc2ltaWxhciBjbGVhbnVwIGZvciBhZGlzMTYyMDEuICAKPiAKPiBIaSBIaW1hbnNo
-dSwKPiAKPiBUaGFua3MgZm9yIHBvaW50aW5nIHRoaXMgb3V0IDopCj4gWWVzIGl0IGlzIDI1IGRl
-Z3JlZXMuCj4gCj4gSSdsbCBtYWtlIHRoZSBjaGFuZ2UgYWZ0ZXIgSm9uYXRoYW4ncyByZXZpZXdz
-IG9uIHRoZSBvdGhlciBjaGFuZ2VzCkdvb2QgY2F0Y2ggLSBJIHdvdWxkIHByb2JhYmx5IGhhdmUg
-bWlzc2VkIHRoYXQuCgpBbnlob3cgdGhlIHJlc3Qgb2YgdGhlIHBhdGNoIGxvb2tlZCBnb29kIHRv
-IG1lIHNvIEkndmUgYXBwbGllZCBpdCB0bwp0aGUgdG9ncmVnIGJyYW5jaCBvZiBpaW8uZ2l0IChm
-aXhlZCB1cCkgYW5kIHB1c2hlZCBvdXQgYXMgdGVzdGluZwpmb3IgdGhlIGF1dG9idWlsZGVycyB0
-byBwbGF5IHdpdGggaXQuCgpUaGFua3MsCgpKb25hdGhhbgoKPiAKPiBUaGFuayB5b3UKPiAKPiA+
-ICAgCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZl
-bCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVy
-ZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2
-ZWwK
+Currently ST_OK and ST_NA are the only values defined to communicate
+status of a request from a client. Client doesn't know what failed
+and prints a cryptic error message that something failed.
+
+This patch series adds more error codes to clearly indicate what failed.
+For example, when client sends request to import a device that isn't
+export-able, server can send a specific error code to the client.
+
+The first patch moves existing error codes to a common library header
+and adds more codes. It also adds an interface to map the code to a
+string to print messages from tools.
+
+The second patch changes the server/host to return the right codes
+in reply messages when client request fails.
+
+The third patch changes the clinet tools to recognize the new error
+codes and print messages.
+
+With this change the messages say why a request failed:
+    
+    - when a client requests a device that is already exported:
+    
+    usbip attach -r server_name -b 3-10.2
+    usbip: error: Attach Request for 3-10.2 failed - Device busy (exported)
+    
+    - when a client requests a device that isn't exportable,
+    
+    usbip attach -r server_name -b 3-10.4
+    usbip: error: Attach Request for 3-10.4 failed - Device not found
+
+Shuah Khan (3):
+  usbip: tools: add more error codes for usbip request/reply messages
+  usbip: usbip_host_common: Use new error codes to return request status
+  usbip: tools: change to use new error codes in server reply messages
+
+ tools/usb/usbip/libsrc/usbip_common.c      | 23 +++++++++++++++++++++++
+ tools/usb/usbip/libsrc/usbip_common.h      | 11 +++++++++++
+ tools/usb/usbip/libsrc/usbip_host_common.c |  5 ++++-
+ tools/usb/usbip/src/usbip_attach.c         | 11 +++++------
+ tools/usb/usbip/src/usbip_list.c           |  6 ++++--
+ tools/usb/usbip/src/usbip_network.c        |  6 +++++-
+ tools/usb/usbip/src/usbip_network.h        |  6 ++----
+ tools/usb/usbip/src/usbipd.c               | 18 +++++++++---------
+ 8 files changed, 63 insertions(+), 23 deletions(-)
+
+-- 
+2.14.1
+
