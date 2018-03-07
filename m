@@ -1,115 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754095AbeCGDgT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 22:36:19 -0500
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45212 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753898AbeCGDgR (ORCPT
+        id S1754070AbeCGDtC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 22:49:02 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.200]:18784 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753926AbeCGDs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 22:36:17 -0500
-X-Google-Smtp-Source: AG47ELvxNz7JenAPDgoojWrxelCwIlF7Ghn3fvdxlgRWsYpUCfBvniZT24ydKWSy3KyCLKLDTYURWQ==
-From: Gwendal Grignou <gwendal@chromium.org>
-To: jlbec@evilplan.org
-Cc: linux-kernel@vger.kernel.org, jorgelo@chromium.org
-Subject: [PATCH] configfs: initialize inode with owner
-Date: Tue,  6 Mar 2018 19:36:00 -0800
-Message-Id: <20180307033600.102115-1-gwendal@chromium.org>
-X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
+        Tue, 6 Mar 2018 22:48:59 -0500
+Subject: Re: [PATCH v2 2/3] pinctrl: bcm2835: Add support for generic pinctrl
+ binding
+To: Eric Anholt <eric@anholt.net>
+Cc: stefan.wahren@i2se.com, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <431699005.307231.1520086916739@email.1und1.de>
+ <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+ <1520216960-19880-3-git-send-email-matheus@castello.eng.br>
+ <87d10irtvt.fsf@anholt.net>
+From: Matheus Castello <matheus@castello.eng.br>
+Message-ID: <061d22c5-d955-fea0-6c35-79e7d2425bf6@castello.eng.br>
+Date: Tue, 6 Mar 2018 23:28:55 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <87d10irtvt.fsf@anholt.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.21.134
+X-Source-L: No
+X-Exim-ID: 1etPlC-0005uQ-Jn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.11]) [191.189.21.134]:20674
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 4
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Hi Eric,
 
-Use standard helper to set inode owner when created from user space.
-This is a noop when the owner is root.
+thanks for reviewing it. I will send the v3 of the patch with your notes. 
+I will just wait for the Linus considerations.
 
-Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
- fs/configfs/configfs_internal.h |  5 ++++-
- fs/configfs/inode.c             | 14 ++++++++------
- fs/configfs/mount.c             |  2 +-
- 3 files changed, 13 insertions(+), 8 deletions(-)
+Best Regards
+Matheus Castello
 
-diff --git a/fs/configfs/configfs_internal.h b/fs/configfs/configfs_internal.h
-index b65d1ef532d5..772fce1fd222 100644
---- a/fs/configfs/configfs_internal.h
-+++ b/fs/configfs/configfs_internal.h
-@@ -68,7 +68,10 @@ extern struct kmem_cache *configfs_dir_cachep;
- 
- extern int configfs_is_root(struct config_item *item);
- 
--extern struct inode * configfs_new_inode(umode_t mode, struct configfs_dirent *, struct super_block *);
-+extern struct inode *configfs_new_inode(umode_t mode,
-+					struct configfs_dirent *sd,
-+					struct inode *p_inode,
-+					struct super_block *s);
- extern int configfs_create(struct dentry *, umode_t mode, void (*init)(struct inode *));
- 
- extern int configfs_create_file(struct config_item *, const struct configfs_attribute *);
-diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-index eae87575e681..93db05a2db1f 100644
---- a/fs/configfs/inode.c
-+++ b/fs/configfs/inode.c
-@@ -108,9 +108,11 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
- 	return error;
- }
- 
--static inline void set_default_inode_attr(struct inode * inode, umode_t mode)
-+static inline void set_default_inode_attr(struct inode *inode,
-+					  struct inode *p_inode,
-+					  umode_t mode)
- {
--	inode->i_mode = mode;
-+	inode_init_owner(inode, p_inode, mode);
- 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
- }
- 
-@@ -125,7 +127,7 @@ static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
- }
- 
- struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
--				 struct super_block *s)
-+				 struct inode *p_inode, struct super_block *s)
- {
- 	struct inode * inode = new_inode(s);
- 	if (inode) {
-@@ -140,7 +142,7 @@ struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
- 			 */
- 			set_inode_attr(inode, sd->s_iattr);
- 		} else
--			set_default_inode_attr(inode, mode);
-+			set_default_inode_attr(inode, p_inode, mode);
- 	}
- 	return inode;
- }
-@@ -190,11 +192,11 @@ int configfs_create(struct dentry * dentry, umode_t mode, void (*init)(struct in
- 		return -EEXIST;
- 
- 	sd = dentry->d_fsdata;
--	inode = configfs_new_inode(mode, sd, dentry->d_sb);
-+	p_inode = d_inode(dentry->d_parent);
-+	inode = configfs_new_inode(mode, sd, p_inode, dentry->d_sb);
- 	if (!inode)
- 		return -ENOMEM;
- 
--	p_inode = d_inode(dentry->d_parent);
- 	p_inode->i_mtime = p_inode->i_ctime = CURRENT_TIME;
- 	configfs_set_inode_lock_class(sd, inode);
- 
-diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
-index a8f3b589a2df..23aede27c502 100644
---- a/fs/configfs/mount.c
-+++ b/fs/configfs/mount.c
-@@ -78,7 +78,7 @@ static int configfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_time_gran = 1;
- 
- 	inode = configfs_new_inode(S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
--				   &configfs_root, sb);
-+				   &configfs_root, NULL, sb);
- 	if (inode) {
- 		inode->i_op = &configfs_root_inode_operations;
- 		inode->i_fop = &configfs_dir_operations;
--- 
-2.16.2.660.g709887971b-goog
+On 03/05/2018 07:21 PM, Eric Anholt wrote:
+> Matheus Castello <matheus@castello.eng.br> writes:
+> 
+>> To keep driver up to date we add generic pinctrl binding support, which covers
+>> the features used in this driver and has additional node properties that this
+>> SoC has compatibility, so enabling future implementations of these properties
+>> without the need to create new node properties in the device trees.
+>>
+>> The logic of this change maintain the old brcm legacy binding support in order
+>> to keep the ABI stable.
+>>
+>> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+>> ---
+>>
+>> A brief explanation of what I did:
+>>
+>> Add pinconf-generic header for use the defines and pinctrl-generic API.
+>>
+>> Add dt-bindings pinctrl bcm2835 header to use functions selections and
+>> pulls definitions, which functions definitions where duplicated in the
+>> enum bcm2835_fsel, I removed the duplicate defines from enum.
+>>
+>> In the bcm2835_pctl_dt_node_to_map_pull I used the generic macro for
+>> pack the legacy param and arguments, since it will be unpacked along with
+>> generic properties that is packed with this same macro.
+>>
+>> In bcm2835_pctl_dt_node_to_map I thougt it was better, and simpler, to use
+>> pinctrl-generic parse code instead of parsing it inside the driver, so code
+>> first check for generic binding parse, if something is parsed then it is
+>> assumed that are using the new generic style, and when nothing is found then
+>> parse continues to search for legacy properties.
+>>
+>> In the bcm2835_pinconf_set was changed the unpack legacy by the generic, and
+>> was added a switch for the parameter tests, since pinctrl generic uses 3
+>> properties to define the states of the pull instead of one with arguments, that
+>> was the reason too that bcm2835_pull_config_set function was added, for reuse
+>> the code that set state of pull.
+>>
+>>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 83 +++++++++++++++++++++++------------
+>>  1 file changed, 54 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> index 785c366..755ea90 100644
+>> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> @@ -36,11 +36,13 @@
+>>  #include <linux/pinctrl/pinconf.h>
+>>  #include <linux/pinctrl/pinctrl.h>
+>>  #include <linux/pinctrl/pinmux.h>
+>> +#include <linux/pinctrl/pinconf-generic.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/seq_file.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/spinlock.h>
+>>  #include <linux/types.h>
+>> +#include <dt-bindings/pinctrl/bcm2835.h>
+>>
+>>  #define MODULE_NAME "pinctrl-bcm2835"
+>>  #define BCM2835_NUM_GPIOS 54
+>> @@ -213,14 +215,6 @@ static const char * const bcm2835_gpio_groups[] = {
+>>  };
+>>
+>>  enum bcm2835_fsel {
+>> -	BCM2835_FSEL_GPIO_IN = 0,
+>> -	BCM2835_FSEL_GPIO_OUT = 1,
+>> -	BCM2835_FSEL_ALT0 = 4,
+>> -	BCM2835_FSEL_ALT1 = 5,
+>> -	BCM2835_FSEL_ALT2 = 6,
+>> -	BCM2835_FSEL_ALT3 = 7,
+>> -	BCM2835_FSEL_ALT4 = 3,
+>> -	BCM2835_FSEL_ALT5 = 2,
+>>  	BCM2835_FSEL_COUNT = 8,
+>>  	BCM2835_FSEL_MASK = 0x7,
+>>  };
+>> @@ -714,7 +708,7 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
+>>  	configs = kzalloc(sizeof(*configs), GFP_KERNEL);
+>>  	if (!configs)
+>>  		return -ENOMEM;
+>> -	configs[0] = BCM2835_PINCONF_PACK(BCM2835_PINCONF_PARAM_PULL, pull);
+>> +	configs[0] = PIN_CONF_PACKED(BCM2835_PINCONF_PARAM_PULL, pull);
+>>
+>>  	map->type = PIN_MAP_TYPE_CONFIGS_PIN;
+>>  	map->data.configs.group_or_pin = bcm2835_gpio_pins[pin].name;
+>> @@ -736,6 +730,12 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>>  	int i, err;
+>>  	u32 pin, func, pull;
+>>
+>> +	/* Check for generic binding in this node */
+>> +	err = pinconf_generic_dt_node_to_map_all(pctldev, np, map, num_maps);
+>> +	if (err || *num_maps)
+>> +		return err;
+>> +
+>> +	/* Generic binding did not find anything continue with legacy parse */
+>>  	pins = of_find_property(np, "brcm,pins", NULL);
+>>  	if (!pins) {
+>>  		dev_err(pc->dev, "%pOF: missing brcm,pins property\n", np);
+>> @@ -917,37 +917,62 @@ static int bcm2835_pinconf_get(struct pinctrl_dev *pctldev,
+>>  	return -ENOTSUPP;
+>>  }
+>>
+>> +static void bcm2835_pull_config_set(struct bcm2835_pinctrl *pc,
+>> +		unsigned pin, unsigned arg)
+>> +{
+>> +	u32 off, bit;
+>> +
+>> +	off = GPIO_REG_OFFSET(pin);
+>> +	bit = GPIO_REG_SHIFT(pin);
+>> +
+>> +	bcm2835_gpio_wr(pc, GPPUD, arg & 3);
+>> +	/*
+>> +	* BCM2835 datasheet say to wait 150 cycles, but not of what.
+>> +	* But the VideoCore firmware delay for this operation
+>> +	* based nearly on the same amount of VPU cycles and this clock
+>> +	* runs at 250 MHz.
+>> +	*/
+>> +	udelay(1);
+>> +	bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
+>> +	udelay(1);
+>> +	bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
+>> +}
+>> +
+>>  static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+>>  			unsigned pin, unsigned long *configs,
+>>  			unsigned num_configs)
+>>  {
+>>  	struct bcm2835_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
+>> -	enum bcm2835_pinconf_param param;
+>> -	u16 arg;
+>> -	u32 off, bit;
+>> +	u16 param, arg;
+>>  	int i;
+>>
+>>  	for (i = 0; i < num_configs; i++) {
+>> -		param = BCM2835_PINCONF_UNPACK_PARAM(configs[i]);
+>> -		arg = BCM2835_PINCONF_UNPACK_ARG(configs[i]);
+>> +		param = configs[i] & 0xffUL;
+>> +		arg = configs[i] >> 8;
+> 
+> If you're removing the usage of BCM2835_PINCONF_PACK() and UNPACK, let's
+> delete those macros, too.  Also, it looks like there's
+> "pinconf_to_config_param()" for unpacking, instead of rolling your own.
+> 
+> Other than that, it looks good to me.  I'll let Linus comment on whether
+> this is handling the generic properties correctly.
+> 
+>>
+>> -		if (param != BCM2835_PINCONF_PARAM_PULL)
+>> -			return -EINVAL;
+>> +		switch (param) {
+>> +		/* Set legacy brcm,pull */
+>> +		case BCM2835_PINCONF_PARAM_PULL:
+>> +			bcm2835_pull_config_set(pc, pin, arg);
+>> +			break;
+>>
+>> -		off = GPIO_REG_OFFSET(pin);
+>> -		bit = GPIO_REG_SHIFT(pin);
+>> +		/* Set pull generic bindings */
+>> +		case PIN_CONFIG_BIAS_DISABLE:
+>> +			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_OFF);
+>> +			break;
+>>
+>> -		bcm2835_gpio_wr(pc, GPPUD, arg & 3);
+>> -		/*
+>> -		 * BCM2835 datasheet say to wait 150 cycles, but not of what.
+>> -		 * But the VideoCore firmware delay for this operation
+>> -		 * based nearly on the same amount of VPU cycles and this clock
+>> -		 * runs at 250 MHz.
+>> -		 */
+>> -		udelay(1);
+>> -		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), BIT(bit));
+>> -		udelay(1);
+>> -		bcm2835_gpio_wr(pc, GPPUDCLK0 + (off * 4), 0);
+>> +		case PIN_CONFIG_BIAS_PULL_DOWN:
+>> +			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_DOWN);
+>> +			break;
+>> +
+>> +		case PIN_CONFIG_BIAS_PULL_UP:
+>> +			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_UP);
+>> +			break;
+>> +
+>> +		default:
+>> +			return -EINVAL;
+>> +
+>> +		} /* switch param type */
+>>  	} /* for each config */
+>>
+>>  	return 0;
+>> --
+>> 2.7.4
