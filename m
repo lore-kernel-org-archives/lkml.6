@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754514AbeCGM1z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:27:55 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6168 "EHLO huawei.com"
+        id S1754488AbeCGM1Q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:27:16 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6173 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753964AbeCGM0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:26:01 -0500
+        id S1754189AbeCGM0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:26:02 -0500
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <hare@suse.de>
 CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
         Xiang Chen <chenxiang66@hisilicon.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 09/10] scsi: hisi_sas: modify some register config for hip08
-Date: Wed, 7 Mar 2018 20:25:13 +0800
-Message-ID: <1520425514-205565-10-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v4 10/10] scsi: hisi_sas: add v3 hw MODULE_DEVICE_TABLE()
+Date: Wed, 7 Mar 2018 20:25:14 +0800
+Message-ID: <1520425514-205565-11-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
 References: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
@@ -28,79 +27,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Do some modifications for register configuring for hip08.
+Export device table of v3 hw to userspace, or auto probe will fail
+for v3 hw.
 
-In future, to reduce kernel churn with patches to modify
-registers, any registers which may change between board
-models (mostly PHY/SERDES related) should be set in ACPI
-reset handler.
+Also change the module alias to include "pci", instead of "platform".
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 4023fcb..5ce5ef2c 100644
+index 5ce5ef2c..6f3e5ba 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -172,6 +172,7 @@
- #define CHL_INT1_MSK			(PORT_BASE + 0x1c4)
- #define CHL_INT2_MSK			(PORT_BASE + 0x1c8)
- #define CHL_INT_COAL_EN			(PORT_BASE + 0x1d0)
-+#define SAS_RX_TRAIN_TIMER		(PORT_BASE + 0x2a4)
- #define PHY_CTRL_RDY_MSK		(PORT_BASE + 0x2b0)
- #define PHYCTRL_NOT_RDY_MSK		(PORT_BASE + 0x2b4)
- #define PHYCTRL_DWS_RESET_MSK		(PORT_BASE + 0x2b8)
-@@ -184,6 +185,8 @@
- #define DMA_RX_STATUS			(PORT_BASE + 0x2e8)
- #define DMA_RX_STATUS_BUSY_OFF		0
- #define DMA_RX_STATUS_BUSY_MSK		(0x1 << DMA_RX_STATUS_BUSY_OFF)
-+
-+#define COARSETUNE_TIME			(PORT_BASE + 0x304)
- #define ERR_CNT_DWS_LOST		(PORT_BASE + 0x380)
- #define ERR_CNT_RESET_PROB		(PORT_BASE + 0x384)
- #define ERR_CNT_INVLD_DW		(PORT_BASE + 0x390)
-@@ -417,10 +420,10 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
- 		hisi_sas_write32(hisi_hba, OQ0_INT_SRC_MSK+0x4*i, 0);
+@@ -2394,6 +2394,7 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
+ 	{ PCI_VDEVICE(HUAWEI, 0xa230), hip08 },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(pci, sas_v3_pci_table);
  
- 	hisi_sas_write32(hisi_hba, HYPER_STREAM_ID_EN_CFG, 1);
--	hisi_sas_write32(hisi_hba, AXI_MASTER_CFG_BASE, 0x30000);
- 
- 	for (i = 0; i < hisi_hba->n_phy; i++) {
--		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE, 0x801);
-+		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE, 0x855);
-+		hisi_sas_phy_write32(hisi_hba, i, SAS_RX_TRAIN_TIMER, 0x13e80);
- 		hisi_sas_phy_write32(hisi_hba, i, CHL_INT0, 0xffffffff);
- 		hisi_sas_phy_write32(hisi_hba, i, CHL_INT1, 0xffffffff);
- 		hisi_sas_phy_write32(hisi_hba, i, CHL_INT2, 0xffffffff);
-@@ -432,17 +435,13 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
- 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_DWS_RESET_MSK, 0x0);
- 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_PHY_ENA_MSK, 0x0);
- 		hisi_sas_phy_write32(hisi_hba, i, SL_RX_BCAST_CHK_MSK, 0x0);
--		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x0);
--		hisi_sas_phy_write32(hisi_hba, i, PHY_CTRL, 0x199b4fa);
--		hisi_sas_phy_write32(hisi_hba, i, SAS_SSP_CON_TIMER_CFG,
--				     0xa03e8);
--		hisi_sas_phy_write32(hisi_hba, i, SAS_STP_CON_TIMER_CFG,
--				     0xa03e8);
--		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER,
--				     0x7f7a120);
--		hisi_sas_phy_write32(hisi_hba, i, CON_CFG_DRIVER,
--				     0x2a0a80);
-+		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x1);
-+		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER, 0x7f7a120);
-+
-+		/* used for 12G negotiate */
-+		hisi_sas_phy_write32(hisi_hba, i, COARSETUNE_TIME, 0x1e);
- 	}
-+
- 	for (i = 0; i < hisi_hba->queue_count; i++) {
- 		/* Delivery queue */
- 		hisi_sas_write32(hisi_hba,
+ static const struct pci_error_handlers hisi_sas_err_handler = {
+ 	.error_detected	= hisi_sas_error_detected_v3_hw,
+@@ -2416,4 +2417,4 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("John Garry <john.garry@huawei.com>");
+ MODULE_DESCRIPTION("HISILICON SAS controller v3 hw driver based on pci device");
+-MODULE_ALIAS("platform:" DRV_NAME);
++MODULE_ALIAS("pci:" DRV_NAME);
 -- 
 1.9.1
