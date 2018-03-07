@@ -1,110 +1,91 @@
-Return-Path: <dave.hansen@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtwFfCf8cyy2c2zdluU+fPKT9PtA80NifBfUjIJnvsxnh1y+Jq8Oo7JhfFAWNqD8NBGrqGB
-ARC-Seal: i=1; a=rsa-sha256; t=1520379156; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1520457711; cv=none;
         d=google.com; s=arc-20160816;
-        b=EkxAYDI94Bznutw36pLLdDy4Et6X1Br1WbPYpvKNKk/Fe+OfwBZctJaxqPcXQtB/04
-         lBEYYaVkI3KOoJNRKY3HxdYqiij1uOxhSCTcm3kc/7IQ7w03LvWSrgRdXioNdwGglC8f
-         3cYeeE4z4LtVTzEUUDmtuoPm/NiqcxKL8NdH6B1pR0UxnT3zUFHlnWFK4LFrmoacWvHa
-         pA3Ate0XVRhfRC+YJfHorLkYh+xlv5UYRuB0fFNAVvJfwF0eH2E6HDo9PqfbqLRUwfwU
-         Wo2is25T84JviwbkGa/Vrfg4vEl4RBT1PadMZ/GtQ9gbhFnp/93Nf154sFaoqEgw9wiu
-         ImeA==
+        b=Z6UYGWLdQ5ZWcUphFF91OpNHFEd6x+HX+FSxGoMLjBSTofGPlBEiTzVUPmYethgNBr
+         G3sifBZaqsMnJVLDt2PcEANEYWrBmQWXIpqEyh6dM4Obg1Smr2b+VtIocV445JorZPrA
+         LFXpimyhOywC8lrUrJ4iTKfWIwkLgK2moYZlQVJOapg4WEjbAt+KNRrcu/Es5N1Z6XZ9
+         X6MkNgDICQEaETjOWWYtsxbyOQKTtwTxIiD55+sFBrth8YLUENtM5l+SyiQ4cibfV60C
+         PIi7BgExyi3LIPgPyWBR7F5ld3/05O1+z8+FryR2LrjAtJJ0L/s/Rkf7bSJcex6AO3c/
+         elcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:from:cc:to:subject:arc-authentication-results;
-        bh=6M8+whjGFCRpwx4myVQk9wu05XcalodGrwNjb+RZ2z8=;
-        b=OKVhoUcZQN5iBFTGn3TGWLvsnmlMv5skMxdm+or9iilIGTZqQdHE9xHhV9iUMPpMNm
-         oUHI+VUdUthynNtis4EuDprzvm94Hgltr2mMNX/3L95Tx7llvRZC+7IIYEMR3zlegojg
-         4muOIRdVgONCnB49hL75iwlyIGDHpDvyUjEEVeNziOnKjiIgxSgLVloRysKln7cPbx0t
-         6t1L6XDoz7dmytcM45k5lSt1CskCNlf9MX0ZTI5lpzJPh6zGDUgArtFSdnRJMBWAXXL9
-         WEe20p+IEpcx38UT1eVyTz7Z4Jk23KqjJKecseUJT1G3OAlUBZh7mFVcDFADLSrkPWaX
-         jmkw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=utmY/k038HyPTCNrCTex6Od25OwxnXy4wd8Gc++7/+w=;
+        b=T0OXqxza934COlnkUjZPZG8TgYfLB3VxPOnpn093QsRTVSySjBahiCLAF+OwqC5L1T
+         oK3owedRW6e6QRpQMyGC/PThT4Bu03Bbs6louGZAfQZrVAU9ddzcB0GFeLF90iF6GO2v
+         8usio6e2ODLKJzIqx3o5bfUpJfcZWPQ1+peU09cnzpyKYKS03Tr1WhRGZM3+5dCX+7jz
+         6tpPqPPqiqHL1pN/Bi/SjeeDogAxTyo6Fmi8VVJRBS4Lh3Z5xm2h3ooopP3F3mi0RhlS
+         aA7byElm3uVj7YX+D0mDiU93HPsaVwuPvkTPXLNGv2BCHUZkmDY364s09PAg+8kTb9Ls
+         W9HQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=NFg+Zd2q;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=AZyy2dkD;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,433,1515484800";
-   d="scan'208";a="206044826"
-Subject: [PATCH] docs: clarify security-bugs disclosure policy
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,tglx@linutronix.de,gregkh@linuxfoundation.org,torvalds@linux-foundation.org,gnomes@lxorguk.ukuu.org.uk,aarcange@redhat.com,luto@kernel.org,keescook@google.com,tim.c.chen@linux.intel.com,dan.j.williams@intel.com,viro@zeniv.linux.org.uk,akpm@linux-foundation.org,linux-doc@vger.kernel.org,corbet@lwn.net,mark.rutland@arm.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Tue, 06 Mar 2018 15:31:40 -0800
-Message-Id: <20180306233140.268BD8E1@viggo.jf.intel.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=NFg+Zd2q;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=AZyy2dkD;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AG47ELuYy+yx+pLr4bHPXxeSkLEY9dTEylRNfpNajEESbPicav53ZJtJKxy5rnvGOnxc83AqAdkvBmHhToJ0C0ROeOw=
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <20180306233140.268BD8E1@viggo.jf.intel.com>
+References: <20180306233140.268BD8E1@viggo.jf.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 7 Mar 2018 13:21:50 -0800
+X-Google-Sender-Auth: A5bZ84qW7lafWqAwLnUulmPvf6M
+Message-ID: <CA+55aFzGgtnkKpJEDCvzDmEn7JE6DnOKuHwtkTkeN3AeHjt6dw@mail.gmail.com>
+Subject: Re: [PATCH] docs: clarify security-bugs disclosure policy
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Andrea Arcangeli <aarcange@redhat.com>,
+	Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594233094195809494?=
-X-GMAIL-MSGID: =?utf-8?q?1594233094195809494?=
+X-GMAIL-MSGID: =?utf-8?q?1594315465524060881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Tue, Mar 6, 2018 at 3:31 PM, Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>
+> I think we need to soften the language a bit.  It might scare folks
+> off, especially the:
+>
+>          We prefer to fully disclose the bug as soon as possible.
+>
+> which is not really the case.
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Ack. What we do is definitely not full disclosure. In fact, we often
+actively try to avoid disclosing details and leave that entirely to
+others.
 
-I think we need to soften the language a bit.  It might scare folks
-off, especially the:
+We disclose the *patches*, and the explanation of the patch, but not
+necessarily anything else (ie no exploit code or even any exploit
+discussion). We also don't explicitly disclose the discussion of the
+patches or the report, although part of it mayt obviously become more
+or less public for other reasons.
 
-	 We prefer to fully disclose the bug as soon as possible.
+So we should probably avoid using a term that means something else to
+a lot of people.
 
-which is not really the case.  As Greg mentioned in private mail, we
-really do not prefer to disclose things until *after* a fix.  The
-whole "we have the final say" is also a bit harsh.
+And for similar reasons, I don't think the fixed verbiage should use
+"coordinated disclosure" either, like in your patch. That usually
+means the kind of embargoes that the security list does not honor.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@google.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-doc@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Mark Rutland <mark.rutland@arm.com>
----
+So I think it merits clarification, but maybe just specify the two
+things relevant to our disclosure: the fact that the patch and
+explanation for the patch gets made public (but not necessarily other
+effects), and that the timeframe is very limited.
 
- b/Documentation/admin-guide/security-bugs.rst |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+It's not full disclosure, it's not coordinated disclosure, and it's
+not "no disclosure".
 
-diff -puN Documentation/admin-guide/security-bugs.rst~embargo Documentation/admin-guide/security-bugs.rst
---- a/Documentation/admin-guide/security-bugs.rst~embargo	2018-03-06 14:47:04.519431230 -0800
-+++ b/Documentation/admin-guide/security-bugs.rst	2018-03-06 14:57:46.410429629 -0800
-@@ -29,18 +29,22 @@ made public.
- Disclosure
- ----------
- 
--The goal of the Linux kernel security team is to work with the
--bug submitter to bug resolution as well as disclosure.  We prefer
--to fully disclose the bug as soon as possible.  It is reasonable to
--delay disclosure when the bug or the fix is not yet fully understood,
--the solution is not well-tested or for vendor coordination.  However, we
--expect these delays to be short, measurable in days, not weeks or months.
-+The goal of the Linux kernel security team is to work with the bug
-+submitter to bug resolution as well as disclosure.  We prefer to fully
-+disclose the bug as soon as possible after a fix is available.  It is
-+customary to delay disclosure when the bug or the fix is not yet fully
-+understood, the solution is not well-tested or for vendor coordination.
-+However, we expect these delays to typically be short, measurable in
-+days, not weeks or months.
-+
- A disclosure date is negotiated by the security team working with the
--bug submitter as well as vendors.  However, the kernel security team
--holds the final say when setting a disclosure date.  The timeframe for
--disclosure is from immediate (esp. if it's already publicly known)
--to a few weeks.  As a basic default policy, we expect report date to
--disclosure date to be on the order of 7 days.
-+bug submitter as well as affected vendors.  The security team prefers
-+coordinated disclosure and will consider pre-existing, reasonable
-+disclosure dates.
-+
-+The timeframe for disclosure ranges from immediate (esp. if it's
-+already publicly known) to a few weeks.  As a basic default policy, we
-+expect report date to disclosure date to be on the order of 7 days.
- 
- Coordination
- ------------
-_
+It's more like just "timely open fixes".
+
+                 Linus
