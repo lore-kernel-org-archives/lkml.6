@@ -1,120 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeCGGcm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 01:32:42 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48272 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751032AbeCGGck (ORCPT
+        id S1751076AbeCGGku (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 01:40:50 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:31944 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbeCGGkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 01:32:40 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 61D62602A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-To: iommu@lists.linux-foundation.org, joro@8bytes.org,
-        robin.murphy@arm.com
-Cc: tfiga@chromium.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS)
-Subject: [PATCH 1/1] iommu/arm-smmu: Add support for qcom,smmu-500 variant
-Date: Wed,  7 Mar 2018 12:02:19 +0530
-Message-Id: <20180307063219.14409-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        Wed, 7 Mar 2018 01:40:47 -0500
+X-IronPort-AV: E=Sophos;i="5.47,434,1515427200";
+   d="scan'208";a="73612130"
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Harish Jenny K N <harish_kandiga@mentor.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "andriy.shevchenko@linux.intel.com"
+        <andriy.shevchenko@linux.intel.com>
+CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
+Subject: RE: [PATCH v6] mmc: Export host capabilities to debugfs.
+Thread-Topic: [PATCH v6] mmc: Export host capabilities to debugfs.
+Thread-Index: AQHTtdZuKkHx5ynt6kqgcWhh3VT3raPET4/w
+Date: Wed, 7 Mar 2018 06:40:44 +0000
+Message-ID: <DM5PR04MB10857D9F0177C760047100D1FCD80@DM5PR04MB1085.namprd04.prod.outlook.com>
+References: <1520401051-11135-1-git-send-email-harish_kandiga@mentor.com>
+In-Reply-To: <1520401051-11135-1-git-send-email-harish_kandiga@mentor.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com;
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR04MB1147;7:KjpOcjpo7sncwlIkO2dGlQeEexK0qCHCxUtAMAEP58FEPp0m2MDeWNdS7lLb81agsHvP6Qo39pwlC8Zehx2b++R95gREdx7rYfl3yBnmaRZKp9COlJSLu3A30NoSy6QcAgIlJVxZA+ieSXTbFY196xwVZdx3AqULOSs1CdiB5RMfQc1TLzXkJQXX+BSMJtBRRy1nB4NVJ1wX/yo2rrtAp8/+MXxjdOjdpwwotA+NrJueNI8QY9WpKf+50H3/vI0C;20:s9VwUWwyKHRmLCu8GuJQMKVH373Eq96G0vzMKt2tjskwK5OKRSuIkQ7Dv4MeXrog/1PCrIV/mREODI8Iv9zDd+y7Snnt8WhaVt8h06086naIHT07x37e3P0pmSgj5HuNodzsQ72yOQ1mubuo0V76bVug/vJ1H3e1O5Hp7KcKM/M=
+x-ms-exchange-antispam-srfa-diagnostics: SSOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: c6073ed3-1066-425e-87d3-08d583f65a54
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR04MB1147;
+x-ms-traffictypediagnostic: DM5PR04MB1147:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <DM5PR04MB1147D2071035C8533945259EFCD80@DM5PR04MB1147.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231220)(944501244)(52105095)(3002001)(6055026)(6041288)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR04MB1147;BCL:0;PCL:0;RULEID:;SRVR:DM5PR04MB1147;
+x-forefront-prvs: 0604AFA86B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(39380400002)(396003)(376002)(13464003)(199004)(189003)(26005)(3280700002)(316002)(2201001)(2900100001)(110136005)(54906003)(229853002)(14454004)(25786009)(2950100002)(86362001)(99286004)(186003)(76176011)(7696005)(106356001)(5250100002)(2501003)(72206003)(3846002)(6116002)(478600001)(2906002)(68736007)(8936002)(5660300001)(33656002)(305945005)(7736002)(81166006)(81156014)(8676002)(74316002)(105586002)(53546011)(9686003)(966005)(6506007)(6306002)(66066001)(6246003)(53936002)(6436002)(97736004)(102836004)(55016002)(4326008)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR04MB1147;H:DM5PR04MB1085.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: 5mlTz2k4bwfYbTMPA1rfygog+Gs+N4vKBXcQs7dIivugh2W80ICevGFYqMRK0BGfuFxe7fcLtvcRlznKC6injQwVnSXh/Zdj4yazYuy7yRHvkCiQIbCzGa1hcXrNm0t/jgebEfbDXUK9Ya6OdvEz73AnDKH2CTN5eYEDhNtLLhAc19jOcTivZZkkshWxgAKEJCZAe5RN4Zn9oMHygQdDBtbmi/IvX4qTb3XZHM30s9MZkllvARQPOvMGToTgCzc1RJOpsLwghfHoZUCq+ZNtNW52wOlfV9udfKeB13AYGRTytVFaVSdWx77+USt9KuZxS5T8r0f+zFBf45jmCRq9iA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6073ed3-1066-425e-87d3-08d583f65a54
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2018 06:40:44.2069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR04MB1147
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w276etUF019391
 
-Qualcomm's arm-smmu 500 implementation supports runtime pm
-so enable the same.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
 
- Based on iommu/arm-smmu pm runtime support series [1]:
- [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
- 
- Tested on sdm845 with necessary support to enable the smmu
- and with necessary user.
+> -----Original Message-----
+> From: Harish Jenny K N [mailto:harish_kandiga@mentor.com]
+> Sent: Wednesday, March 07, 2018 7:38 AM
+> To: ulf.hansson@linaro.org; linus.walleij@linaro.org;
+> adrian.hunter@intel.com; shawn.lin@rock-chips.com; Avri Altman
+> <Avri.Altman@wdc.com>; andriy.shevchenko@linux.intel.com
+> Cc: linux-mmc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> harish_kandiga@mentor.com; Vladimir_Zapolskiy@mentor.com
+> Subject: [PATCH v6] mmc: Export host capabilities to debugfs.
+> 
+> This patch exports the host capabilities to debugfs
+> 
+> This idea of sharing host capabilities over debugfs came up from Abbas Raza
+> <Abbas_Raza@mentor.com> Earlier discussions:
+> https://lkml.org/lkml/2018/3/5/357
+> https://www.spinics.net/lists/linux-mmc/msg48219.html
+> 
+> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+> ---
+> 
+> 
+> +static int mmc_caps_show(struct seq_file *s, void *unused) {
+> +	struct mmc_host *host = s->private;
+> +	u32 caps = host->caps;
+> +
+> +	seq_puts(s, "\nMMC Host capabilities are:\n");
+> +	seq_puts(s,
+> "=============================================\n");
+> +	seq_printf(s, "Can the host do 4 bit transfers :\t%s\n",
+> +		   ((caps & MMC_CAP_4_BIT_DATA) ? "Yes" : "No"));
 
- [1] https://lkml.org/lkml/2018/3/2/325
+Maybe use a more compact form, and just call a macro with the applicable (stringified) bit?
 
- Documentation/devicetree/bindings/iommu/arm,smmu.txt | 14 ++++++++++++++
- drivers/iommu/arm-smmu.c                             |  8 ++++++++
- 2 files changed, 22 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 6ea27bd4f785..0b5c6d2a9865 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -18,6 +18,7 @@ conditions.
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-                         "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
-+                        "qcom,<soc>-smmu-500", "qcom,smmu-500"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
-@@ -30,6 +31,10 @@ conditions.
-                   An example string would be -
-                   "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
- 
-+                  "qcom,smmu-500" is arm,mmu-500 implementation that supports
-+                  efficient power management by supporting smmu's state
-+                  retention.
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
-@@ -179,3 +184,12 @@ conditions.
- 			 <&mmcc SMMU_MDP_AHB_CLK>;
- 		clock-names = "bus", "iface";
- 	};
-+
-+	smmu5: iommu {
-+		compatible = "qcom,sdm845-smmu-500", "qcom,smmu-500";
-+		reg = <0x15000000 0x80000>;
-+		#iommu-cells = <2>;
-+		#global-interrupts = <1>;
-+
-+		...
-+	};
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 7a96c924ae22..7f52456c6b25 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2008,6 +2008,12 @@ static const char * const qcom_smmuv2_clks[] = {
- 	"bus", "iface",
- };
- 
-+static const struct arm_smmu_match_data qcom_smmu500 = {
-+	.version = ARM_SMMU_V2,
-+	.model = ARM_MMU500,
-+	.rpm_supported = true,
-+};
-+
- static const struct arm_smmu_match_data qcom_smmuv2 = {
- 	.version = ARM_SMMU_V2,
- 	.model = QCOM_SMMUV2,
-@@ -2024,6 +2030,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
- 	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
-+	{ .compatible = "qcom,smmu-500", .data = &qcom_smmu500 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-@@ -2394,6 +2401,7 @@ IOMMU_OF_DECLARE(arm_mmu401, "arm,mmu-401");
- IOMMU_OF_DECLARE(arm_mmu500, "arm,mmu-500");
- IOMMU_OF_DECLARE(cavium_smmuv2, "cavium,smmu-v2");
- IOMMU_OF_DECLARE(qcom_smmuv2, "qcom,smmu-v2");
-+IOMMU_OF_DECLARE(qcom_smmu500, "qcom,smmu-500");
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Thanks,
+Avri
