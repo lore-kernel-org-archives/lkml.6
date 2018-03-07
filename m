@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt9z3ATGgsw+7ldD6ircIgpp3+FqT+D894ZxJXQDp5hIYW1BpWBHdocVfp01DbEhKm4EBTy
-ARC-Seal: i=1; a=rsa-sha256; t=1520451958; cv=none;
+X-Google-Smtp-Source: AG47ELsk1O65hWPBa2svqaR662BiXwniMIe5k05Jm/HEe3/8kXjl4UUJZWOxSQkVhsXhcx/KwFUc
+ARC-Seal: i=1; a=rsa-sha256; t=1520451956; cv=none;
         d=google.com; s=arc-20160816;
-        b=PfTcHg8vzCSXJfPblUXkxfrueQtz0Iqlcv5dpaPDIMgXgA4aAU0BqguiOUDERTtNo0
-         vfCGQJQtWnuQ43zn70XjvzP5KzCD89vGTL+HPuswXYT+Ie+sFxAd8z/K2Zk7T5Oj3X1y
-         CITpa9LOMVXr2FSBDVRrrx8STxs9F4RRjr6cO8mBGCfEnjzUfzndtyn2LuCDT4cAqGXi
-         mCzCkOa495C7/Ml3OHNIUJQSVQwYb3xDkqULxGc3y2Za6eA+1RQfsB53z0u726TJenl3
-         qldwO/ZGdgdm9p2tbWtGF5UKhcweBFFVd6q2pcq8fBIcBsCcgOp0SZp7Vsis/xa8BirX
-         UN5A==
+        b=LNqsMP8l6JpwInawdwlQVWjmmlf+u351iNLWmIe8qdmE98uhqdZVT7h/ZzralC7a7p
+         ZGA+Ejt1rOlqgoPAy+h86cTZ3UimukarRMWgKLo28KIjcS4GEMPDjqihiG0iqQUViuEd
+         eRYS8wD/mdnWk9L0pu5anJseAdadGAkVnlke5rhEvnH1p2aliEHOuBXIKs0R6D6upNNB
+         ZaP5BafuMcqKyHVUUi7nMAybWfjmIUIeSGVK92ixIq/CtnwzNiAj+Ra3Sc6pZAOyTN26
+         qZLJ8F6iNpYYJm+V9aiEc0lABlnfgjKvMYXc5fJYKsrzUGURdCM5kcux+Sjy4CsmFmtF
+         GPYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YdbJhbYDuh0cyoQpx4MiP74rC7UKei8WwO8cL9qHalA=;
-        b=AManAR0CiODlCE4uTZ+a7aPHXr/Rbe59YlnlCYmS82lNWbqr9H7hOplRIFi/vVqVL2
-         pnwCHZyhxZdsBs4gmQh+gbKYHnAFW4OPtVOvq865nLaTaIxYBu8hH6bxnHW2fm9AtRek
-         7Q+IVYEnD9sFDt5yGn5tFoCdsjrAkoavLOOBDpBjEhWAX4tdpzZs/kSMNMpwiupu1/sL
-         AQUoNv6aYJtjoN/jm6W5tx26k6fY5Jb0UKdrOXoJR/TcanNLY2goHSJ51Nm3ToW2Xkcv
-         ivqhMjDv69D2V8/oofFjvkirNBSnZi6xYSGIF1eLPNgoOXgzgimNtNs1+/2/BMv3sjmA
-         2EpA==
+        bh=GiFFDV7QNa41+gl7xa0IGZ+O7oeym7XJrF0aUPAM1MI=;
+        b=aWGM5yxju5r+oJKI7NK2+Lx4CY7OA3gLf0uPEE9L8WoE7iR6swkz+tJf0CazhfXjTb
+         i3I3sKuePj5ZAo7d8dDrRRAplLsG1vlx8GzyYJZYl3pT5qxgE6YQxTBGxpvHCTiVC8CA
+         CqXtyf+m/jdv5/+KQTN1j9/CxYx9klhGs1dTJ9yjM5uo21z8LbmOVsdvK3dfTZ4tzHi7
+         dEieCphwW6TA1PjZeFLTZp8qZVUeQ9R2YergmAmax0sBZsGkZchSiAa2DC/qr75tzwb6
+         6KgkWDomjiX/tK+PhVHSZopp4cdvEZVyUZUi5NBnbOGSQDbj+vDrL7+zHqj+EPl6M7eX
+         toUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 046/110] udplite: fix partial checksum initialization
-Date: Wed,  7 Mar 2018 11:38:29 -0800
-Message-Id: <20180307191045.610732732@linuxfoundation.org>
+Subject: [PATCH 4.14 045/110] sctp: verify size of a new chunk in _sctp_make_chunk()
+Date: Wed,  7 Mar 2018 11:38:28 -0800
+Message-Id: <20180307191045.465399638@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309143307548548?=
-X-GMAIL-MSGID: =?utf-8?q?1594309432734232067?=
+X-GMAIL-THRID: =?utf-8?q?1594309139344235247?=
+X-GMAIL-MSGID: =?utf-8?q?1594309430735636196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,71 +54,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 15f35d49c93f4fa9875235e7bf3e3783d2dd7a1b ]
+[ Upstream commit 07f2c7ab6f8d0a7e7c5764c4e6cc9c52951b9d9c ]
 
-Since UDP-Lite is always using checksum, the following path is
-triggered when calculating pseudo header for it:
+When SCTP makes INIT or INIT_ACK packet the total chunk length
+can exceed SCTP_MAX_CHUNK_LEN which leads to kernel panic when
+transmitting these packets, e.g. the crash on sending INIT_ACK:
 
-  udp4_csum_init() or udp6_csum_init()
-    skb_checksum_init_zero_check()
-      __skb_checksum_validate_complete()
+[  597.804948] skbuff: skb_over_panic: text:00000000ffae06e4 len:120168
+               put:120156 head:000000007aa47635 data:00000000d991c2de
+               tail:0x1d640 end:0xfec0 dev:<NULL>
+...
+[  597.976970] ------------[ cut here ]------------
+[  598.033408] kernel BUG at net/core/skbuff.c:104!
+[  600.314841] Call Trace:
+[  600.345829]  <IRQ>
+[  600.371639]  ? sctp_packet_transmit+0x2095/0x26d0 [sctp]
+[  600.436934]  skb_put+0x16c/0x200
+[  600.477295]  sctp_packet_transmit+0x2095/0x26d0 [sctp]
+[  600.540630]  ? sctp_packet_config+0x890/0x890 [sctp]
+[  600.601781]  ? __sctp_packet_append_chunk+0x3b4/0xd00 [sctp]
+[  600.671356]  ? sctp_cmp_addr_exact+0x3f/0x90 [sctp]
+[  600.731482]  sctp_outq_flush+0x663/0x30d0 [sctp]
+[  600.788565]  ? sctp_make_init+0xbf0/0xbf0 [sctp]
+[  600.845555]  ? sctp_check_transmitted+0x18f0/0x18f0 [sctp]
+[  600.912945]  ? sctp_outq_tail+0x631/0x9d0 [sctp]
+[  600.969936]  sctp_cmd_interpreter.isra.22+0x3be1/0x5cb0 [sctp]
+[  601.041593]  ? sctp_sf_do_5_1B_init+0x85f/0xc30 [sctp]
+[  601.104837]  ? sctp_generate_t1_cookie_event+0x20/0x20 [sctp]
+[  601.175436]  ? sctp_eat_data+0x1710/0x1710 [sctp]
+[  601.233575]  sctp_do_sm+0x182/0x560 [sctp]
+[  601.284328]  ? sctp_has_association+0x70/0x70 [sctp]
+[  601.345586]  ? sctp_rcv+0xef4/0x32f0 [sctp]
+[  601.397478]  ? sctp6_rcv+0xa/0x20 [sctp]
+...
 
-The problem can appear if skb->len is less than CHECKSUM_BREAK. In
-this particular case __skb_checksum_validate_complete() also invokes
-__skb_checksum_complete(skb). If UDP-Lite is using partial checksum
-that covers only part of a packet, the function will return bad
-checksum and the packet will be dropped.
+Here the chunk size for INIT_ACK packet becomes too big, mostly
+because of the state cookie (INIT packet has large size with
+many address parameters), plus additional server parameters.
 
-It can be fixed if we skip skb_checksum_init_zero_check() and only
-set the required pseudo header checksum for UDP-Lite with partial
-checksum before udp4_csum_init()/udp6_csum_init() functions return.
+Later this chunk causes the panic in skb_put_data():
 
-Fixes: ed70fcfcee95 ("net: Call skb_checksum_init in IPv4")
-Fixes: e4f45b7f40bd ("net: Call skb_checksum_init in IPv6")
+  skb_packet_transmit()
+      sctp_packet_pack()
+          skb_put_data(nskb, chunk->skb->data, chunk->skb->len);
+
+'nskb' (head skb) was previously allocated with packet->size
+from u16 'chunk->chunk_hdr->length'.
+
+As suggested by Marcelo we should check the chunk's length in
+_sctp_make_chunk() before trying to allocate skb for it and
+discard a chunk if its size bigger than SCTP_MAX_CHUNK_LEN.
+
 Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/udplite.h   |    1 +
- net/ipv4/udp.c          |    5 +++++
- net/ipv6/ip6_checksum.c |    5 +++++
- 3 files changed, 11 insertions(+)
+ net/sctp/sm_make_chunk.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/include/net/udplite.h
-+++ b/include/net/udplite.h
-@@ -64,6 +64,7 @@ static inline int udplite_checksum_init(
- 		UDP_SKB_CB(skb)->cscov = cscov;
- 		if (skb->ip_summed == CHECKSUM_COMPLETE)
- 			skb->ip_summed = CHECKSUM_NONE;
-+		skb->csum_valid = 0;
-         }
- 
- 	return 0;
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -2032,6 +2032,11 @@ static inline int udp4_csum_init(struct
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -1378,9 +1378,14 @@ static struct sctp_chunk *_sctp_make_chu
+ 	struct sctp_chunk *retval;
+ 	struct sk_buff *skb;
+ 	struct sock *sk;
++	int chunklen;
 +
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = inet_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
++	chunklen = SCTP_PAD4(sizeof(*chunk_hdr) + paylen);
++	if (chunklen > SCTP_MAX_CHUNK_LEN)
++		goto nodata;
  
- 	/* Note, we are only interested in != 0 or == 0, thus the
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb,
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
-+
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = ip6_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
+ 	/* No need to allocate LL here, as this is only a chunk. */
+-	skb = alloc_skb(SCTP_PAD4(sizeof(*chunk_hdr) + paylen), gfp);
++	skb = alloc_skb(chunklen, gfp);
+ 	if (!skb)
+ 		goto nodata;
  
- 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
