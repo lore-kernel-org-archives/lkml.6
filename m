@@ -1,103 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754153AbeCGLCA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:02:00 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60987 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751050AbeCGLB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:01:59 -0500
-Subject: Re: [PATCH] perf mmap: Discard head in overwrite_rb_find_range
-To: Jiri Olsa <jolsa@redhat.com>
-References: <1520336663-53466-1-git-send-email-xieyisheng1@huawei.com>
- <20180307102157.GC22848@krava>
-CC: <acme@redhat.com>, <mingo@redhat.com>, <peterz@infradead.org>,
-        <namhyung@kernel.org>, <alexander.shishkin@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, Kan Liang <kan.liang@linux.intel.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <2c7d1fe9-aeca-653e-569d-3078375bf588@huawei.com>
-Date: Wed, 7 Mar 2018 19:01:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1754318AbeCGLDL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:03:11 -0500
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:58307 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751050AbeCGLDI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 06:03:08 -0500
+Subject: Re: mainline build: 15 warnings 0 failures
+ (mainline/v4.16-rc2-64-gaf3e79d)
+To: Arnd Bergmann <arnd@arndb.de>
+References: <5a8c6a34.8880a70a.2a9a1.afc7@mx.google.com>
+ <CAK8P3a0OaN6QjPdTXXXzMeYQt+WnMfvVuhza5Rb2wqdq_iEFVA@mail.gmail.com>
+ <7b724d51-52b8-6cbf-2a9d-f44f3de28dc8@ti.com>
+ <CAK8P3a2-zq95wnNYDSeTubkhr4Oc_YTSHX-NjvbD35iVNk+fWg@mail.gmail.com>
+CC: "Olof's autobuilder" <build@lixom.net>,
+        Olof Johansson <olof@lixom.net>,
+        Kernel Build Reports Mailman List
+        <kernel-build-reports@lists.linaro.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2196d230-6124-b5c6-e0a2-463fe8a6c510@ti.com>
+Date: Wed, 7 Mar 2018 16:32:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180307102157.GC22848@krava>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <CAK8P3a2-zq95wnNYDSeTubkhr4Oc_YTSHX-NjvbD35iVNk+fWg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi jirka,
+Hi Arnd,
 
-On 2018/3/7 18:21, Jiri Olsa wrote:
-> On Tue, Mar 06, 2018 at 07:44:23PM +0800, Yisheng Xie wrote:
->> In overwrite mode, start will be set to head in perf_mmap__read_init.
->> Therefore, it is no need to set the start one more in
->> overwrite_rb_find_range and *start can be used as head instead of
->> passing head to overwrite_rb_find_range.
+On Wednesday 07 March 2018 04:55 AM, Arnd Bergmann wrote:
+> On Wed, Feb 21, 2018 at 3:42 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>
+>>
+>> On Wednesday 21 February 2018 06:12 PM, Arnd Bergmann wrote:
+>>> On Tue, Feb 20, 2018 at 7:34 PM, Olof's autobuilder <build@lixom.net> wrote:
+>>>> Here are the build results from automated periodic testing.
+>>>>
+>>>> The tree being built was mainline, found at:
+>>>>
+>>>> URL: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>>>
+>>>>
+>>>> Warnings:
+>>>>
+>>>>         arm64.allmodconfig:
+>>>> include/uapi/linux/byteorder/big_endian.h:31:52: warning: passing argument 1 of '__fswab64' makes integer from pointer without a cast [-Wint-conversion]
+>>>
+>>> I sent two patches to the bnxt_re maintainers yesterday. I expect them
+>>> to get applied
+>>> soon, but haven't heard back yet.
+>>>
+>>>> WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
+>>>
+>>> Still waiting for Kishon to apply an older patch I sent for this.
+>>
+>> I had merged it locally. Now pushed everything.
 > 
-> it conflicts a little with recent cleanup from Kan Liang,,
->   https://marc.info/?t=152035082800001&r=1&w=2
+> Hi Kishon,
 > 
-> otherwise it looks ok to me
-> 
+> kernelci still reports it as one of the remaining warnings for v4.16-rc,
+> any chance you can send this as a bugfix for the current release?
 
-I can send the next version based on Kan's patch after his patches are in the tree.
+I had queued this for next. Sure, I'll try to send this for current -rc.
 
 Thanks
-Yisheng
-
-> jirka
-> 
->>
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
->> ---
->>  tools/perf/util/mmap.c | 15 +++++++--------
->>  1 file changed, 7 insertions(+), 8 deletions(-)
->>
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index 91531a7..6751ac9 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -223,19 +223,18 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
->>  	return 0;
->>  }
->>  
->> -static int overwrite_rb_find_range(void *buf, int mask, u64 head, u64 *start, u64 *end)
->> +static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
->>  {
->>  	struct perf_event_header *pheader;
->> -	u64 evt_head = head;
->> +	u64 evt_head = *start;
->>  	int size = mask + 1;
->>  
->> -	pr_debug2("overwrite_rb_find_range: buf=%p, head=%"PRIx64"\n", buf, head);
->> -	pheader = (struct perf_event_header *)(buf + (head & mask));
->> -	*start = head;
->> +	pr_debug2("%s: buf=%p, start=%"PRIx64"\n", __func__, buf, *start);
->> +	pheader = (struct perf_event_header *)(buf + (*start & mask));
->>  	while (true) {
->> -		if (evt_head - head >= (unsigned int)size) {
->> +		if (evt_head - *start >= (unsigned int)size) {
->>  			pr_debug("Finished reading overwrite ring buffer: rewind\n");
->> -			if (evt_head - head > (unsigned int)size)
->> +			if (evt_head - *start > (unsigned int)size)
->>  				evt_head -= pheader->size;
->>  			*end = evt_head;
->>  			return 0;
->> @@ -287,7 +286,7 @@ int perf_mmap__read_init(struct perf_mmap *md, bool overwrite,
->>  		 * Backward ring buffer is full. We still have a chance to read
->>  		 * most of data from it.
->>  		 */
->> -		if (overwrite_rb_find_range(data, md->mask, head, startp, endp))
->> +		if (overwrite_rb_find_range(data, md->mask, startp, endp))
->>  			return -EINVAL;
->>  	}
->>  
->> -- 
->> 1.7.12.4
->>
-> 
-> .
-> 
+Kishon
