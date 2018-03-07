@@ -1,152 +1,159 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2684992-1520537264-2-10590337379403498962
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4009650-1520450673-2-2958768063313079203
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520537264; b=csG/oJZJpYUDqv0UBp6O3R3fDVFlFuFDblipKHuSz3EFjoC
-    dxzEyJRPvTpQV05+jz6F9SB9eC/T0KG4XACrw8SBcnKJqFYrb/ki01EabpH6rGHB
-    UJHK0UtbaKqHlwS0KU1dcdfJiSJavN7dKh3AFTZXroGLOnkmn0gn49pnmvRrJL5u
-    hOpSG/RJb8GlkuaoaJj1QYl8Bbz/Vx+vUBKfVS3xYGBP4/w2XGcENhpVtPdiIAN8
-    JFcymfUzdXv/oesZ2FGCQW+WkqJtFX1/Wn7Gp7Kst+951PXXXBDnyN/gpA+IJoXU
-    u9+YJqKP+7uptsQQvQ59cBCmM4HSGm/VvtnXmfA==
+    t=1520450672; b=eIjz0Rd7TQWTqa8iVctnxE/49C8dqFd2AEsaZlMkREsoe+k
+    ey0s3xAVrKn7HYiDcfXZ+zs1elxeiGJGqJVQIHssZDctB1A+UEZgTCK861LMDj47
+    ZbYX/QPd7wal5jnBnDfWIlFYxnKFI1sM3DmKl3XbLlXWzeDilHf3Yu3VUc3QAj6P
+    xPbVl0WJoYAJ8BXDtmAvAvPZeaoCu/wY5D/yCE/KphNPDOqHQYlOJJ4mEMOxVtbR
+    Osls9hDPb9SjaYNWom5zMu7RqlmwYFVbPl0bb4G5bHwkYIle8gW/bsmg76G8lMLG
+    K/IiE6BOjNLXjPQB3vdsjFRPnJM2RAW6BSCjFvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:in-reply-to:references:mime-version
-    :subject:to:from:message-id:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1520537264; bh=H
-    y1y4V0r4RWu0JEUj+J9lU2axUyMF7vXHg2n/QcbyRs=; b=pcjV7UaVirL74wViw
-    ClfAiGYWd5ZHnsT4B2G33DwCfIfWT7S8zK9wDLUx9WV0wTwZXUVYSgjdB7BWoimU
-    dTaPMTl202eh0WwpkVLnda4P6chbl1WLU8/S0wa4bNZB7hW4JO4x2ufkPIXP2lun
-    XA2WF9X3nNc/pKHQ91V8pTrjgTjHGhZp84hDzep+YBKjFFf1AKtxW2x8dDYc35aP
-    R7Gnjb39BPbfmWkmz/YBRLN18SjRXLVpEI71TQABxaNxBwHLzlJYt9WpORdLRvWD
-    3gx/amMcAXSfiJjfTk2yxJDkFxybltk4Ht4L/l5PQzz3pq6zU7Vi2s4mOApf+iSO
-    tDPuA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=DUjVpaW1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1520450672; bh=SIkQJEg4fzKybDAjTz38b5JfGa
+    SZqtgpDYlm1bPPWIw=; b=YIkTWFY1XBr6rGGF9SzD6i2LweXn7t80+bw0nOKWAa
+    FRdayBaxGVBqN+WXMyyMtuKw/AvVo6Yw1+S+N6Ub9g5HZnenWcHONqT0ukjYFiJ+
+    S2efMvH6UFUM6hZXof6zFt3VL5YP9HWt3XBUAvKNtd3PJ8Y+6gxpPSFd+VstXAbc
+    /rrkw0nmVeyA0xsV1y1ZAASTNAx6/eAUWTD0tb5tJcu95qes2MBSsPBW38Xd/w3U
+    GLonvFArqyUMCvD8LbMb0zS/hpLGnQ8rxEdBtJw5qyaXKnWd8/aTaIYET9dtzOlG
+    +r6FHYgifdgU5QEnczdxC9xQlzgnf32Np7L3P5LU4doA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=lH8bx8F6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iUeKyVf+;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-Authentication-Results: mx5.messagingengine.com;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=STUPAUY+;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=DUjVpaW1 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=lH8bx8F6 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iUeKyVf+;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELshLhTjUuKC0FYWgminAn1Hxe8eI8asLjnSfcG0qCxvh+dOn2b/n+1UFIAm17ZWVoVd4xA4HQ==
-Date: Fri, 09 Mar 2018 00:57:31 +0530
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180308191111.GA2041@himanshu-Vostro-3559>
-References: <1520532977-10653-1-git-send-email-shreeya.patel23498@gmail.com>
- <20180308191111.GA2041@himanshu-Vostro-3559>
-MIME-Version: 1.0
-Subject: Re: [PATCH v4] Staging: iio: adis16209: Change some macro names
-To: Himanshu Jha <himanshujha199640@gmail.com>
-From: Shreeya Patel <shreeya.patel23498@gmail.com>
-Message-ID: <6EF6C73A-ED18-4C5F-8368-929258026979@gmail.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, daniel.baluta@gmail.com, lars@metafoo.de,
- Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, pmeerw@pmeerw.net,
- knaack.h@gmx.de, jic23@kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=STUPAUY+;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933418AbeCGTY3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:24:29 -0500
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43502 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933351AbeCGTY2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:24:28 -0500
+X-Google-Smtp-Source: AG47ELu3e+tpzZBh4lyiM1ZHcwtkkGLnSHHVaWTX72nS7BtBCpTCxYeCZQ3mO9012mIYrcYiM1YG3g==
+From: Greg Hackmann <ghackmann@google.com>
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Hackmann <ghackmann@google.com>, stable@vger.kernel.org
+Subject: [PATCH] net: xfrm: use preempt-safe this_cpu_read() in ipcomp_alloc_tfms()
+Date: Wed,  7 Mar 2018 11:24:16 -0800
+Message-Id: <20180307192416.233202-1-ghackmann@google.com>
+X-Mailer: git-send-email 2.16.2.395.g2e18187dfd-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+f7c83bcbfaf5 ("net: xfrm: use __this_cpu_read per-cpu helper") added a
+__this_cpu_read() call inside ipcomp_alloc_tfms().  Since this call was
+introduced, the rules around per-cpu accessors have been tightened and
+__this_cpu_read() cannot be used in a preemptible context.
 
+syzkaller reported this leading to the following kernel BUG while
+fuzzing sendmsg:
 
-On 9 March 2018 00:41:12 GMT+05:30, Himanshu Jha <himanshujha199640@gmail.com> wrote:
->On Thu, Mar 08, 2018 at 11:46:17PM +0530, Shreeya Patel wrote:
->> Make some of the macro names according to the names
->> given in the datasheet of the adis16209 driver and
->> have slight indentation in field definitions to make
->> them clearly different from the register addresses.
->> 
->> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
->> ---
->> 
->> Changes in v4
->>   -Have slight indentation in field definitions.
->> 
->>  drivers/staging/iio/accel/adis16209.c | 48
->+++++++++++++++++------------------
->>  1 file changed, 24 insertions(+), 24 deletions(-)
->> 
->> diff --git a/drivers/staging/iio/accel/adis16209.c
->b/drivers/staging/iio/accel/adis16209.c
->> index eb5c878..19636e2 100644
->> --- a/drivers/staging/iio/accel/adis16209.c
->> +++ b/drivers/staging/iio/accel/adis16209.c
->> @@ -68,21 +68,21 @@
->>  #define  ADIS16209_MSC_CTRL_ACTIVE_HIGH		BIT(1)
->>  #define  ADIS16209_MSC_CTRL_DATA_RDY_DIO2	BIT(0)
->>  
->> -#define ADIS16209_STAT_REG			0x3C
->> -#define  ADIS16209_STAT_ALARM2			BIT(9)
->> -#define  ADIS16209_STAT_ALARM1			BIT(8)
->> -#define ADIS16209_STAT_SELFTEST_FAIL_BIT	5
->> -#define ADIS16209_STAT_SPI_FAIL_BIT		3
->> -#define ADIS16209_STAT_FLASH_UPT_FAIL_BIT	2
->> +#define ADIS16209_DIAG_STAT_REG			0x3C
->> +#define  ADIS16209_DIAG_STAT_ALARM2		BIT(9)
->> +#define  ADIS16209_DIAG_STAT_ALARM1		BIT(8)
->> +#define  ADIS16209_DIAG_STAT_SELFTEST_FAIL_BIT	5
->> +#define  ADIS16209_DIAG_STAT_SPI_FAIL_BIT	3
->> +#define  ADIS16209_DIAG_STAT_FLASH_UPT_BIT	2
->
->#define ADIS16209_STAT_FLASH_UPT_FAIL_BIT    2
->?
->It represents flash update fail bit! 
+BUG: using __this_cpu_read() in preemptible [00000000] code: repro/3101
+caller is ipcomp_init_state+0x185/0x990
+CPU: 3 PID: 3101 Comm: repro Not tainted 4.16.0-rc4-00123-g86f84779d8e9 #154
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ dump_stack+0xb9/0x115
+ check_preemption_disabled+0x1cb/0x1f0
+ ipcomp_init_state+0x185/0x990
+ ? __xfrm_init_state+0x876/0xc20
+ ? lock_downgrade+0x5e0/0x5e0
+ ipcomp4_init_state+0xaa/0x7c0
+ __xfrm_init_state+0x3eb/0xc20
+ xfrm_init_state+0x19/0x60
+ pfkey_add+0x20df/0x36f0
+ ? pfkey_broadcast+0x3dd/0x600
+ ? pfkey_sock_destruct+0x340/0x340
+ ? pfkey_seq_stop+0x80/0x80
+ ? __skb_clone+0x236/0x750
+ ? kmem_cache_alloc+0x1f6/0x260
+ ? pfkey_sock_destruct+0x340/0x340
+ ? pfkey_process+0x62a/0x6f0
+ pfkey_process+0x62a/0x6f0
+ ? pfkey_send_new_mapping+0x11c0/0x11c0
+ ? mutex_lock_io_nested+0x1390/0x1390
+ pfkey_sendmsg+0x383/0x750
+ ? dump_sp+0x430/0x430
+ sock_sendmsg+0xc0/0x100
+ ___sys_sendmsg+0x6c8/0x8b0
+ ? copy_msghdr_from_user+0x3b0/0x3b0
+ ? pagevec_lru_move_fn+0x144/0x1f0
+ ? find_held_lock+0x32/0x1c0
+ ? do_huge_pmd_anonymous_page+0xc43/0x11e0
+ ? lock_downgrade+0x5e0/0x5e0
+ ? get_kernel_page+0xb0/0xb0
+ ? _raw_spin_unlock+0x29/0x40
+ ? do_huge_pmd_anonymous_page+0x400/0x11e0
+ ? __handle_mm_fault+0x553/0x2460
+ ? __fget_light+0x163/0x1f0
+ ? __sys_sendmsg+0xc7/0x170
+ __sys_sendmsg+0xc7/0x170
+ ? SyS_shutdown+0x1a0/0x1a0
+ ? __do_page_fault+0x5a0/0xca0
+ ? lock_downgrade+0x5e0/0x5e0
+ SyS_sendmsg+0x27/0x40
+ ? __sys_sendmsg+0x170/0x170
+ do_syscall_64+0x19f/0x640
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7f0ee73dfb79
+RSP: 002b:00007ffe14fc15a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0ee73dfb79
+RDX: 0000000000000000 RSI: 00000000208befc8 RDI: 0000000000000004
+RBP: 00007ffe14fc15b0 R08: 00007ffe14fc15c0 R09: 00007ffe14fc15c0
+R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000400440
+R13: 00007ffe14fc16b0 R14: 0000000000000000 R15: 0000000000000000
 
-I think so that I have sent the wrong patch :(
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+---
+ net/xfrm/xfrm_ipcomp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is totally the reverse of the change that I wanted to have. 
-Maybe I messed up with this patch. 
-
-Jonathan, please avoid this patch. 
-I'll send the corrected one soon. 
-
-Thanks 
-
+diff --git a/net/xfrm/xfrm_ipcomp.c b/net/xfrm/xfrm_ipcomp.c
+index ccfdc7115a83..a00ec715aa46 100644
+--- a/net/xfrm/xfrm_ipcomp.c
++++ b/net/xfrm/xfrm_ipcomp.c
+@@ -283,7 +283,7 @@ static struct crypto_comp * __percpu *ipcomp_alloc_tfms(const char *alg_name)
+ 		struct crypto_comp *tfm;
+ 
+ 		/* This can be any valid CPU ID so we don't need locking. */
+-		tfm = __this_cpu_read(*pos->tfms);
++		tfm = this_cpu_read(*pos->tfms);
+ 
+ 		if (!strcmp(crypto_comp_name(tfm), alg_name)) {
+ 			pos->users++;
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.16.2.395.g2e18187dfd-goog
