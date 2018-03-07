@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs+s9JvpBqGtD7/HbeSYQUuyZhU1XleYPQQRAi7zHINrIYqnv1hN3aRkwwYWRcL8vev/0pg
-ARC-Seal: i=1; a=rsa-sha256; t=1520451776; cv=none;
+X-Google-Smtp-Source: AG47ELtcfO1URyZYuU4rNtg4/8bErx8gXzFAHKafIgdl2L7fTgYMcNL8IUwo+owr1NntrFKJhvxu
+ARC-Seal: i=1; a=rsa-sha256; t=1520451773; cv=none;
         d=google.com; s=arc-20160816;
-        b=sq3RJLDhlAeyBqV4VB6paIFvC2YPiENm4PRzebTM5xnifwhFa8TwDHCyUdqFpA1MF7
-         NxrEk5nHahM7J6lb/gkGgXQpcjyRuYztIj7r3pgFTix+w57pNbd+r8JVJwssVMXYNqya
-         vYG9rRQWtqsxcIBzazkrz4mYhz3Re2aRPUiJq56PhbifkebFLvCKLaCJ/SF/onaetY4v
-         N97zZsFyNzAr1gbUhfb+EcZ1cORzhdPomffT4w3NlCw9KurmI2DY/OZ+YZrmEEQl7Vu5
-         Eni0yClOfLzh6QZxQoSChuC7FK7LfpCYDkDRbKggLVuoPrK86fPwivY5YWkPM7LFGMJN
-         2KEw==
+        b=fNjgpdvMPWfLbNi9LC/MXBNB1pPL1d+UWnhSz5RoHXXRBu56aaEGCnARjZTOH9KslM
+         jsHRpVyVZe0yFvPHB2y1CLiVUV4Ju+A9N5lj1x3B0wkomoq+DETQp+Fp89l2w5Ysym7j
+         QjJjcJ2wH860/x4YidmrXD8M4eOEQE0EERfeD95oL/9xvbuykO8Fk6SYlKxa6XwS7krt
+         k/o7umBE+/5RRjR3OgsaTcYu1DnmgxnbRymp1FGrVmzq7NWFlJFCQntL14efPaqTNyBx
+         QNxnEPlVxAG+YRfOWw79ug4lsJMAL0CTpgfJlaU1R7dHaVnJdpvqu3bK5hx/21nsKAeW
+         r7lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cKaYOjXF9vvySWkOcX0mwX7RNYVzq10Ky6cpp9zOcAk=;
-        b=m9WDoD7oQT2E9UxVdtWhRPGrz19nJC0eVn6YAefeCR6OhKlbQUMegDVzoPc8SVoN7g
-         weO9o4MP4OH8wTCDjrdBrzgWEAeqV8+QTxNOl3tQERenn9K2hv4fsyisKN8gbWjhxUxG
-         X4+ZypC7+N/hXykpTAXtyp2lHZN6+qePQmQmlxMRj+4iPvmEUa7EKEZOpgOvo4RBZmQI
-         DHquSJ03wkRl9WTRROUqxCu13bUcWTJD5OoFOtpm/04RD+ZpfjEXOh7mY67PSFR3Wipi
-         h/l/v2OSkTj0az9hEHmQiXFaBWg00YsBXif9uTLk4Z/bun2WhSJlrtesXGRlUovYL1Ee
-         MH7Q==
+        bh=uRZJTYTQxH6s915g5xey7oDbLPTPw3j0hr94nPVCUJE=;
+        b=IRqgxHl7Gs08xVSKWdwweratXblfYw6GLufhq6D1hcui3Bs2TwE7G2UnsIgO3OHY2O
+         GLp+mwukqtcXFPBkOz5NQW0qjribu794MpBY7xsFUMV5dSOHU+rmn6Q/BenF5HzGnAVN
+         Bfx5p2T4kAb/kdFElJYiyq1Lh09pabNtWPkcOmI3gjbkRS4mekZoT4PWy9BH40eVxqxV
+         KPpGPGz9EGFSxJUuX0CQE6n5qPzHJ/lWavtsV8svUWcJe7hDPzZiViMHoAO14gBJSbfl
+         LfNBa/2vSBKItuYNdXsDHGch4hC7nDkJrtWGVmpRT4IjMYPylLU1H2Nim3BYlowdCCsi
+         6EcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Li Shuang <shuali@redhat.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 090/122] s390/qeth: fix overestimated count of buffer elements
-Date: Wed,  7 Mar 2018 11:38:22 -0800
-Message-Id: <20180307191742.404980376@linuxfoundation.org>
+Subject: [PATCH 4.15 072/122] cls_u32: fix use after free in u32_destroy_key()
+Date: Wed,  7 Mar 2018 11:38:04 -0800
+Message-Id: <20180307191739.748361550@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309241524248361?=
-X-GMAIL-MSGID: =?utf-8?q?1594309241524248361?=
+X-GMAIL-THRID: =?utf-8?q?1594309238741645152?=
+X-GMAIL-MSGID: =?utf-8?q?1594309238741645152?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,72 +51,191 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
 
-[ Upstream commit 12472af89632beb1ed8dea29d4efe208ca05b06a ]
+[ Upstream commit d7cdee5ea8d28ae1b6922deb0c1badaa3aa0ef8c ]
 
-qeth_get_elements_for_range() doesn't know how to handle a 0-length
-range (ie. start == end), and returns 1 when it should return 0.
-Such ranges occur on TSO skbs, where the L2/L3/L4 headers (and thus all
-of the skb's linear data) are skipped when mapping the skb into regular
-buffer elements.
+Li Shuang reported an Oops with cls_u32 due to an use-after-free
+in u32_destroy_key(). The use-after-free can be triggered with:
 
-This overestimation may cause several performance-related issues:
-1. sub-optimal IO buffer selection, where the next buffer gets selected
-   even though the skb would actually still fit into the current buffer.
-2. forced linearization, if the element count for a non-linear skb
-   exceeds QETH_MAX_BUFFER_ELEMENTS.
+dev=lo
+tc qdisc add dev $dev root handle 1: htb default 10
+tc filter add dev $dev parent 1: prio 5 handle 1: protocol ip u32 divisor 256
+tc filter add dev $dev protocol ip parent 1: prio 5 u32 ht 800:: match ip dst\
+ 10.0.0.0/8 hashkey mask 0x0000ff00 at 16 link 1:
+tc qdisc del dev $dev root
 
-Rather than modifying qeth_get_elements_for_range() and adding overhead
-to every caller, fix up those callers that are in risk of passing a
-0-length range.
+Which causes the following kasan splat:
 
-Fixes: 2863c61334aa ("qeth: refactor calculation of SBALE count")
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+ ==================================================================
+ BUG: KASAN: use-after-free in u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
+ Read of size 4 at addr ffff881b83dae618 by task kworker/u48:5/571
+
+ CPU: 17 PID: 571 Comm: kworker/u48:5 Not tainted 4.15.0+ #87
+ Hardware name: Dell Inc. PowerEdge R730/072T6D, BIOS 2.1.7 06/16/2016
+ Workqueue: tc_filter_workqueue u32_delete_key_freepf_work [cls_u32]
+ Call Trace:
+  dump_stack+0xd6/0x182
+  ? dma_virt_map_sg+0x22e/0x22e
+  print_address_description+0x73/0x290
+  kasan_report+0x277/0x360
+  ? u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
+  u32_destroy_key.constprop.21+0x117/0x140 [cls_u32]
+  u32_delete_key_freepf_work+0x1c/0x30 [cls_u32]
+  process_one_work+0xae0/0x1c80
+  ? sched_clock+0x5/0x10
+  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
+  ? _raw_spin_unlock_irq+0x29/0x40
+  ? trace_hardirqs_on_caller+0x381/0x570
+  ? _raw_spin_unlock_irq+0x29/0x40
+  ? finish_task_switch+0x1e5/0x760
+  ? finish_task_switch+0x208/0x760
+  ? preempt_notifier_dec+0x20/0x20
+  ? __schedule+0x839/0x1ee0
+  ? check_noncircular+0x20/0x20
+  ? firmware_map_remove+0x73/0x73
+  ? find_held_lock+0x39/0x1c0
+  ? worker_thread+0x434/0x1820
+  ? lock_contended+0xee0/0xee0
+  ? lock_release+0x1100/0x1100
+  ? init_rescuer.part.16+0x150/0x150
+  ? retint_kernel+0x10/0x10
+  worker_thread+0x216/0x1820
+  ? process_one_work+0x1c80/0x1c80
+  ? lock_acquire+0x1a5/0x540
+  ? lock_downgrade+0x6b0/0x6b0
+  ? sched_clock+0x5/0x10
+  ? lock_release+0x1100/0x1100
+  ? compat_start_thread+0x80/0x80
+  ? do_raw_spin_trylock+0x190/0x190
+  ? _raw_spin_unlock_irq+0x29/0x40
+  ? trace_hardirqs_on_caller+0x381/0x570
+  ? _raw_spin_unlock_irq+0x29/0x40
+  ? finish_task_switch+0x1e5/0x760
+  ? finish_task_switch+0x208/0x760
+  ? preempt_notifier_dec+0x20/0x20
+  ? __schedule+0x839/0x1ee0
+  ? kmem_cache_alloc_trace+0x143/0x320
+  ? firmware_map_remove+0x73/0x73
+  ? sched_clock+0x5/0x10
+  ? sched_clock_cpu+0x18/0x170
+  ? find_held_lock+0x39/0x1c0
+  ? schedule+0xf3/0x3b0
+  ? lock_downgrade+0x6b0/0x6b0
+  ? __schedule+0x1ee0/0x1ee0
+  ? do_wait_intr_irq+0x340/0x340
+  ? do_raw_spin_trylock+0x190/0x190
+  ? _raw_spin_unlock_irqrestore+0x32/0x60
+  ? process_one_work+0x1c80/0x1c80
+  ? process_one_work+0x1c80/0x1c80
+  kthread+0x312/0x3d0
+  ? kthread_create_worker_on_cpu+0xc0/0xc0
+  ret_from_fork+0x3a/0x50
+
+ Allocated by task 1688:
+  kasan_kmalloc+0xa0/0xd0
+  __kmalloc+0x162/0x380
+  u32_change+0x1220/0x3c9e [cls_u32]
+  tc_ctl_tfilter+0x1ba6/0x2f80
+  rtnetlink_rcv_msg+0x4f0/0x9d0
+  netlink_rcv_skb+0x124/0x320
+  netlink_unicast+0x430/0x600
+  netlink_sendmsg+0x8fa/0xd60
+  sock_sendmsg+0xb1/0xe0
+  ___sys_sendmsg+0x678/0x980
+  __sys_sendmsg+0xc4/0x210
+  do_syscall_64+0x232/0x7f0
+  return_from_SYSCALL_64+0x0/0x75
+
+ Freed by task 112:
+  kasan_slab_free+0x71/0xc0
+  kfree+0x114/0x320
+  rcu_process_callbacks+0xc3f/0x1600
+  __do_softirq+0x2bf/0xc06
+
+ The buggy address belongs to the object at ffff881b83dae600
+  which belongs to the cache kmalloc-4096 of size 4096
+ The buggy address is located 24 bytes inside of
+  4096-byte region [ffff881b83dae600, ffff881b83daf600)
+ The buggy address belongs to the page:
+ page:ffffea006e0f6a00 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
+ flags: 0x17ffffc0008100(slab|head)
+ raw: 0017ffffc0008100 0000000000000000 0000000000000000 0000000100070007
+ raw: dead000000000100 dead000000000200 ffff880187c0e600 0000000000000000
+ page dumped because: kasan: bad access detected
+
+ Memory state around the buggy address:
+  ffff881b83dae500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff881b83dae580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ >ffff881b83dae600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                             ^
+  ffff881b83dae680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff881b83dae700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ==================================================================
+
+The problem is that the htnode is freed before the linked knodes and the
+latter will try to access the first at u32_destroy_key() time.
+This change addresses the issue using the htnode refcnt to guarantee
+the correct free order. While at it also add a RCU annotation,
+to keep sparse happy.
+
+v1 -> v2: use rtnl_derefence() instead of RCU read locks
+v2 -> v3:
+  - don't check refcnt in u32_destroy_hnode()
+  - cleaned-up u32_destroy() implementation
+  - cleaned-up code comment
+v3 -> v4:
+  - dropped unneeded comment
+
+Reported-by: Li Shuang <shuali@redhat.com>
+Fixes: c0d378ef1266 ("net_sched: use tcf_queue_work() in u32 filter")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |   10 ++++++----
- drivers/s390/net/qeth_l3_main.c   |   11 ++++++-----
- 2 files changed, 12 insertions(+), 9 deletions(-)
+ net/sched/cls_u32.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -3835,10 +3835,12 @@ EXPORT_SYMBOL_GPL(qeth_get_elements_for_
- int qeth_get_elements_no(struct qeth_card *card,
- 		     struct sk_buff *skb, int extra_elems, int data_offset)
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -397,10 +397,12 @@ static int u32_init(struct tcf_proto *tp
+ static int u32_destroy_key(struct tcf_proto *tp, struct tc_u_knode *n,
+ 			   bool free_pf)
  {
--	int elements = qeth_get_elements_for_range(
--				(addr_t)skb->data + data_offset,
--				(addr_t)skb->data + skb_headlen(skb)) +
--			qeth_get_elements_for_frags(skb);
-+	addr_t end = (addr_t)skb->data + skb_headlen(skb);
-+	int elements = qeth_get_elements_for_frags(skb);
-+	addr_t start = (addr_t)skb->data + data_offset;
++	struct tc_u_hnode *ht = rtnl_dereference(n->ht_down);
 +
-+	if (start != end)
-+		elements += qeth_get_elements_for_range(start, end);
+ 	tcf_exts_destroy(&n->exts);
+ 	tcf_exts_put_net(&n->exts);
+-	if (n->ht_down)
+-		n->ht_down->refcnt--;
++	if (ht && --ht->refcnt == 0)
++		kfree(ht);
+ #ifdef CONFIG_CLS_U32_PERF
+ 	if (free_pf)
+ 		free_percpu(n->pf);
+@@ -653,16 +655,15 @@ static void u32_destroy(struct tcf_proto
  
- 	if ((elements + extra_elems) > QETH_MAX_BUFFER_ELEMENTS(card)) {
- 		QETH_DBF_MESSAGE(2, "Invalid size of IP packet "
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -2629,11 +2629,12 @@ static void qeth_tso_fill_header(struct
- static int qeth_l3_get_elements_no_tso(struct qeth_card *card,
- 			struct sk_buff *skb, int extra_elems)
- {
--	addr_t tcpdptr = (addr_t)tcp_hdr(skb) + tcp_hdrlen(skb);
--	int elements = qeth_get_elements_for_range(
--				tcpdptr,
--				(addr_t)skb->data + skb_headlen(skb)) +
--				qeth_get_elements_for_frags(skb);
-+	addr_t start = (addr_t)tcp_hdr(skb) + tcp_hdrlen(skb);
-+	addr_t end = (addr_t)skb->data + skb_headlen(skb);
-+	int elements = qeth_get_elements_for_frags(skb);
+ 		hlist_del(&tp_c->hnode);
+ 
+-		for (ht = rtnl_dereference(tp_c->hlist);
+-		     ht;
+-		     ht = rtnl_dereference(ht->next)) {
+-			ht->refcnt--;
+-			u32_clear_hnode(tp, ht);
+-		}
+-
+ 		while ((ht = rtnl_dereference(tp_c->hlist)) != NULL) {
++			u32_clear_hnode(tp, ht);
+ 			RCU_INIT_POINTER(tp_c->hlist, ht->next);
+-			kfree_rcu(ht, rcu);
 +
-+	if (start != end)
-+		elements += qeth_get_elements_for_range(start, end);
++			/* u32_destroy_key() will later free ht for us, if it's
++			 * still referenced by some knode
++			 */
++			if (--ht->refcnt == 0)
++				kfree_rcu(ht, rcu);
+ 		}
  
- 	if ((elements + extra_elems) > QETH_MAX_BUFFER_ELEMENTS(card)) {
- 		QETH_DBF_MESSAGE(2,
+ 		idr_destroy(&tp_c->handle_idr);
