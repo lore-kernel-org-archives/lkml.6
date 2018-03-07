@@ -1,83 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754189AbeCGMxw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:53:52 -0500
-Received: from ozlabs.org ([103.22.144.67]:48111 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751142AbeCGMxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:53:50 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 7 Mar 2018 23:53:29 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak
- symbol
-Message-ID: <20180307235329.53331366@canb.auug.org.au>
-In-Reply-To: <CAK8P3a2sA0BmR4cS4Af+d42MabzkZZEBvMaTpoWwOu-N7pP=dg@mail.gmail.com>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
-        <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
-        <20180307022127.GB802@jagdpanzerIV>
-        <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
-        <20180307104002.GA505@jagdpanzerIV>
-        <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
-        <20180307114845.GA894@jagdpanzerIV>
-        <20180307234142.1c7d2710@canb.auug.org.au>
-        <CAK8P3a2sA0BmR4cS4Af+d42MabzkZZEBvMaTpoWwOu-N7pP=dg@mail.gmail.com>
+        id S1754184AbeCGMz7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:55:59 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50220 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751156AbeCGMz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:55:58 -0500
+Subject: Re: [PATCH v7 01/14] iommu/rockchip: Prohibit unbind and remove
+To: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org
+Cc: jcliang@chromium.org, xxm@rock-chips.com, tfiga@chromium.org,
+        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180306030252.3197-1-jeffy.chen@rock-chips.com>
+ <20180306030252.3197-2-jeffy.chen@rock-chips.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <713e01c9-4850-dd03-841f-060c1eec1cbd@arm.com>
+Date: Wed, 7 Mar 2018 12:55:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QgMsei/S.KTruUSJ1_Y0=7B"; protocol="application/pgp-signature"
+In-Reply-To: <20180306030252.3197-2-jeffy.chen@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/QgMsei/S.KTruUSJ1_Y0=7B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 06/03/18 03:02, Jeffy Chen wrote:
+> Removal of IOMMUs cannot be done reliably.
+> 
+> This is similar to exynos iommu driver.
 
-Hi Arnd,
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-On Wed, 7 Mar 2018 13:48:09 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Right. At the moment, the plan is to remove metag, score, unicore32,
-> m32r, frv and blackfin. If you are building any more of those, you can
-> stop that as well.
-
-OK, thanks.  Will I get a tree with those removal commits in linux-next
-(sometime soon)? (I already have the metag removal via the metag tree.)
-
-> The fate of tile and mn10300 is still open, but I suspect they won't
-> last long either.
-
-Noted.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QgMsei/S.KTruUSJ1_Y0=7B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqf4MkACgkQAVBC80lX
-0GwXVgf/aAZtEA6SHcuFADY5/9kG531G7e4IPyzbAncnx4mofYbilxgYUXrxmlBs
-lFZUZBduqZb2qIhX0ldttkchNPgq8PtJFLFAfJgp6ryIY9AFhfbRyr6kGfaaUsS7
-6v+w8iJ+qN9vUgRhiLyx6WIjNTN7+A8F+k6E1+OMpcbGgp6RJCogf3Q9q8JRsTDV
-e5Wz9XeZDl1y/7UEE8ofoh9wP7CYZ77rvdh5ihkmFvcEGTcz38IErFcyKuc8uNTu
-OpV/Br/b52n9fDEisGJgEYYWmjsqr7L8s+qxt/x10Sl5Rmt7zSOoBQcmVFw1QUdR
-C4BmFIETfUSwYF19Uvb3wEfCi3yvlQ==
-=ANd4
------END PGP SIGNATURE-----
-
---Sig_/QgMsei/S.KTruUSJ1_Y0=7B--
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> ---
+> 
+> Changes in v7: None
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4:
+> Rewrite commit message.
+> 
+> Changes in v3:
+> Also remove remove() and module_exit() as Tomasz suggested.
+> 
+> Changes in v2: None
+> 
+>   drivers/iommu/rockchip-iommu.c | 21 +--------------------
+>   1 file changed, 1 insertion(+), 20 deletions(-)
+> 
+> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+> index 9d991c2d8767..16cd8780c289 100644
+> --- a/drivers/iommu/rockchip-iommu.c
+> +++ b/drivers/iommu/rockchip-iommu.c
+> @@ -1197,18 +1197,6 @@ static int rk_iommu_probe(struct platform_device *pdev)
+>   	return err;
+>   }
+>   
+> -static int rk_iommu_remove(struct platform_device *pdev)
+> -{
+> -	struct rk_iommu *iommu = platform_get_drvdata(pdev);
+> -
+> -	if (iommu) {
+> -		iommu_device_sysfs_remove(&iommu->iommu);
+> -		iommu_device_unregister(&iommu->iommu);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>   static const struct of_device_id rk_iommu_dt_ids[] = {
+>   	{ .compatible = "rockchip,iommu" },
+>   	{ /* sentinel */ }
+> @@ -1217,10 +1205,10 @@ MODULE_DEVICE_TABLE(of, rk_iommu_dt_ids);
+>   
+>   static struct platform_driver rk_iommu_driver = {
+>   	.probe = rk_iommu_probe,
+> -	.remove = rk_iommu_remove,
+>   	.driver = {
+>   		   .name = "rk_iommu",
+>   		   .of_match_table = rk_iommu_dt_ids,
+> +		   .suppress_bind_attrs = true,
+>   	},
+>   };
+>   
+> @@ -1248,14 +1236,7 @@ static int __init rk_iommu_init(void)
+>   		platform_driver_unregister(&rk_iommu_domain_driver);
+>   	return ret;
+>   }
+> -static void __exit rk_iommu_exit(void)
+> -{
+> -	platform_driver_unregister(&rk_iommu_driver);
+> -	platform_driver_unregister(&rk_iommu_domain_driver);
+> -}
+> -
+>   subsys_initcall(rk_iommu_init);
+> -module_exit(rk_iommu_exit);
+>   
+>   MODULE_DESCRIPTION("IOMMU API for Rockchip");
+>   MODULE_AUTHOR("Simon Xue <xxm@rock-chips.com> and Daniel Kurtz <djkurtz@chromium.org>");
+> 
