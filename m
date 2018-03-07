@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt6AoCLyeKvjsbBnjP2pB0aahJKONZ2/FXgEfV4Rc9uan0MlSkt7xiFURa4V+EQF5lzoLO0
-ARC-Seal: i=1; a=rsa-sha256; t=1520451787; cv=none;
+X-Google-Smtp-Source: AG47ELuy+r8d0xSGGqV7Ku+ut3J6XE4/43bnaai69zMM6MvQMH7X/uLOA3K8SwAqVQH0PosMGj3X
+ARC-Seal: i=1; a=rsa-sha256; t=1520451784; cv=none;
         d=google.com; s=arc-20160816;
-        b=hfLLnAHMxEmKqtyzBPIf9r2ZJp3xsc9SvF42Ky7aEGhCAjlHM1hapOaCsWnF0r1oVi
-         Xvs+B73DILhoa8n8uG8qxZvhInxUHSB9zEtQnse/59ktTL6xrT6226qEzcnxgvW4GvHJ
-         OgxwMo5esTvCYz3QFKaB63TiAchniAyRBcCk0/Z6HCNU8Yz0LGwxxit4gCy/VH8KeCUG
-         Z7tMdwABwZ3Cr2cozs0+HhewURScNcS7CCNS5UjA+lhSbL6SAB4Xt83X3uBiKcmYfPiI
-         2Q9WpLKf95c3L64pHEZUwLpriROE4Lqf/cqGlR0C2Yr5NH4MVj8FGJAlgXFnyixjgNHX
-         CQuQ==
+        b=Vj0C6A6ADLuWZCzpz7biwTyRBPpJvDvH/SzE4P+BUGJukD0Qiygn6426vFtfiB26Hx
+         Za9qz7PEbKID2CpJNpXFeJhMRqczrkAR8pT6E3b5VgjSQtJCLnHNB7e/gewjhSS+1q83
+         5RNazUZ09tt1XwXOXH7nuvKGPc9EASgb68WjA8INKH7CudNx/IAj6+2rtzb2gb/iUSol
+         lqLm7IvppG/oz8C4cJ8Gagcr4avGT+ieCgOtCg8F4XHbIRr3Uy43Sn5EQyJBIMq1wVOY
+         YNNs2B6byzhTzC+XKkXbalViRKKmETXrKQW9OvggJCkVmEi1Yepo6b8EOH/ZlLC2wWlE
+         RVeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pf26HoFt5GwBHLLhk8jraXSvkXlwkKU/mhrV3VyVYBk=;
-        b=MDhs2xmjLlgKUtPLX4GEitBMcYa2l55ASaklXW6AS/kbYbgkzgstX9wX17wT5OFBTP
-         DDEFNlJvEpzEGgtIW2T2exMSu8tZhwv0NBL3Gd+Fxv8wlGi8IweL3Ol1vqjXiUdz3ZcO
-         AvQBQ2DW+b7Lzf3+Rh6ECLZJfUiThCRl9/wFyQ/EijgI+1hQXXVe4RFeRWKlUcR6zyFD
-         alPJYSEo4uE2SkK2GSnpgaFTJXAgpGZGO0IfX1dcuefSQG15nuH78HgH10hEy7zgasaB
-         PHr+OpdvCFefnua3W/UnyHQ2zc/55g/8C8b6cLghiYxoxywsiuDFyNlZX+/GRBLkB28o
-         /00Q==
+        bh=xCpbHE7kAw8lioPoVAHkIrLJJtI4RIjhcXfMQP4YIMY=;
+        b=IBRv4sSzKW7UVe2Wjhda9scLRgSJGSvZlxOGEQw/cvYPYY47HQhrHm+NvIQWMxHiOa
+         3WYtQ2L2I5TtJQ/1ev4lppfDwqQ5x0n9e5lQs5Dtnh6Of++4xCicGjvgPTkr92FL9lyV
+         /K6fz/dI4EwynxFKvNPgaLJMHoq/kizbviPnRdxyQq6Z2SVzFVladZirNS+E3Wem0Ego
+         zLsJcVKMbBSm41aaY3OQL5DlIczPCnIEcV1jrkAVqb1Vq4eIyweKTRiGA767VcyfVMYR
+         GMzzO1xswkpYPdl7qaFUvlb+5tYCp/6ofW5thP5vZKHOv9YTnkqfpNnlAmp7KKNwdzJW
+         DvCA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 094/122] s390/qeth: fix IP address lookup for L3 devices
-Date: Wed,  7 Mar 2018 11:38:26 -0800
-Message-Id: <20180307191742.949603528@linuxfoundation.org>
+Subject: [PATCH 4.15 093/122] Revert "s390/qeth: fix using of ref counter for rxip addresses"
+Date: Wed,  7 Mar 2018 11:38:25 -0800
+Message-Id: <20180307191742.824868342@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309253420986963?=
-X-GMAIL-MSGID: =?utf-8?q?1594309253420986963?=
+X-GMAIL-THRID: =?utf-8?q?1594309251068453401?=
+X-GMAIL-MSGID: =?utf-8?q?1594309251068453401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,250 +52,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit c5c48c58b259bb8f0482398370ee539d7a12df3e ]
+[ Upstream commit 4964c66fd49b2e2342da35358f2ff74614bcbaee ]
 
-Current code ("qeth_l3_ip_from_hash()") matches a queried address object
-against objects in the IP table by IP address, Mask/Prefix Length and
-MAC address ("qeth_l3_ipaddrs_is_equal()"). But what callers actually
-require is either
-a) "is this IP address registered" (ie. match by IP address only),
-before adding a new address.
-b) or "is this address object registered" (ie. match all relevant
-   attributes), before deleting an address.
+This reverts commit cb816192d986f7596009dedcf2201fe2e5bc2aa7.
 
-Right now
-1. the ADD path is too strict in its lookup, and eg. doesn't detect
-conflicts between an existing NORMAL address and a new VIPA address
-(because the NORMAL address will have mask != 0, while VIPA has
-a mask == 0),
-2. the DELETE path is not strict enough, and eg. allows del_rxip() to
-delete a VIPA address as long as the IP address matches.
+The issue this attempted to fix never actually occurs.
+l3_add_rxip() checks (via l3_ip_from_hash()) if the requested address
+was previously added to the card. If so, it returns -EEXIST and doesn't
+call l3_add_ip().
+As a result, the "address exists" path in l3_add_ip() is never taken
+for rxip addresses, and this patch had no effect.
 
-Fix all this by adding helpers (_addr_match_ip() and _addr_match_all())
-that do the appropriate checking.
-
-Note that the ADD path for NORMAL addresses is special, as qeth keeps
-track of how many times such an address is in use (and there is no
-immediate way of returning errors to the caller). So when a requested
-NORMAL address _fully_ matches an existing one, it's not considered a
-conflict and we merely increment the refcount.
-
-Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+Fixes: cb816192d986 ("s390/qeth: fix using of ref counter for rxip addresses")
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_l3.h      |   34 ++++++++++++++
- drivers/s390/net/qeth_l3_main.c |   91 ++++++++++++++++++----------------------
- 2 files changed, 74 insertions(+), 51 deletions(-)
+ drivers/s390/net/qeth_l3_main.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/s390/net/qeth_l3.h
-+++ b/drivers/s390/net/qeth_l3.h
-@@ -40,8 +40,40 @@ struct qeth_ipaddr {
- 			unsigned int pfxlen;
- 		} a6;
- 	} u;
--
- };
-+
-+static inline bool qeth_l3_addr_match_ip(struct qeth_ipaddr *a1,
-+					 struct qeth_ipaddr *a2)
-+{
-+	if (a1->proto != a2->proto)
-+		return false;
-+	if (a1->proto == QETH_PROT_IPV6)
-+		return ipv6_addr_equal(&a1->u.a6.addr, &a2->u.a6.addr);
-+	return a1->u.a4.addr == a2->u.a4.addr;
-+}
-+
-+static inline bool qeth_l3_addr_match_all(struct qeth_ipaddr *a1,
-+					  struct qeth_ipaddr *a2)
-+{
-+	/* Assumes that the pair was obtained via qeth_l3_addr_find_by_ip(),
-+	 * so 'proto' and 'addr' match for sure.
-+	 *
-+	 * For ucast:
-+	 * -	'mac' is always 0.
-+	 * -	'mask'/'pfxlen' for RXIP/VIPA is always 0. For NORMAL, matching
-+	 *	values are required to avoid mixups in takeover eligibility.
-+	 *
-+	 * For mcast,
-+	 * -	'mac' is mapped from the IP, and thus always matches.
-+	 * -	'mask'/'pfxlen' is always 0.
-+	 */
-+	if (a1->type != a2->type)
-+		return false;
-+	if (a1->proto == QETH_PROT_IPV6)
-+		return a1->u.a6.pfxlen == a2->u.a6.pfxlen;
-+	return a1->u.a4.mask == a2->u.a4.mask;
-+}
-+
- static inline  u64 qeth_l3_ipaddr_hash(struct qeth_ipaddr *addr)
- {
- 	u64  ret = 0;
 --- a/drivers/s390/net/qeth_l3_main.c
 +++ b/drivers/s390/net/qeth_l3_main.c
-@@ -150,6 +150,24 @@ int qeth_l3_string_to_ipaddr(const char
- 		return -EINVAL;
- }
- 
-+static struct qeth_ipaddr *qeth_l3_find_addr_by_ip(struct qeth_card *card,
-+						   struct qeth_ipaddr *query)
-+{
-+	u64 key = qeth_l3_ipaddr_hash(query);
-+	struct qeth_ipaddr *addr;
-+
-+	if (query->is_multicast) {
-+		hash_for_each_possible(card->ip_mc_htable, addr, hnode, key)
-+			if (qeth_l3_addr_match_ip(addr, query))
-+				return addr;
-+	} else {
-+		hash_for_each_possible(card->ip_htable,  addr, hnode, key)
-+			if (qeth_l3_addr_match_ip(addr, query))
-+				return addr;
-+	}
-+	return NULL;
-+}
-+
- static void qeth_l3_convert_addr_to_bits(u8 *addr, u8 *bits, int len)
- {
- 	int i, j;
-@@ -203,34 +221,6 @@ static bool qeth_l3_is_addr_covered_by_i
- 	return rc;
- }
- 
--inline int
--qeth_l3_ipaddrs_is_equal(struct qeth_ipaddr *addr1, struct qeth_ipaddr *addr2)
--{
--	return addr1->proto == addr2->proto &&
--		!memcmp(&addr1->u, &addr2->u, sizeof(addr1->u))  &&
--		!memcmp(&addr1->mac, &addr2->mac, sizeof(addr1->mac));
--}
--
--static struct qeth_ipaddr *
--qeth_l3_ip_from_hash(struct qeth_card *card, struct qeth_ipaddr *tmp_addr)
--{
--	struct qeth_ipaddr *addr;
--
--	if (tmp_addr->is_multicast) {
--		hash_for_each_possible(card->ip_mc_htable,  addr,
--				hnode, qeth_l3_ipaddr_hash(tmp_addr))
--			if (qeth_l3_ipaddrs_is_equal(tmp_addr, addr))
--				return addr;
--	} else {
--		hash_for_each_possible(card->ip_htable,  addr,
--				hnode, qeth_l3_ipaddr_hash(tmp_addr))
--			if (qeth_l3_ipaddrs_is_equal(tmp_addr, addr))
--				return addr;
--	}
--
--	return NULL;
--}
--
- int qeth_l3_delete_ip(struct qeth_card *card, struct qeth_ipaddr *tmp_addr)
- {
- 	int rc = 0;
-@@ -245,8 +235,8 @@ int qeth_l3_delete_ip(struct qeth_card *
- 		QETH_CARD_HEX(card, 4, ((char *)&tmp_addr->u.a6.addr) + 8, 8);
- 	}
- 
--	addr = qeth_l3_ip_from_hash(card, tmp_addr);
--	if (!addr)
-+	addr = qeth_l3_find_addr_by_ip(card, tmp_addr);
-+	if (!addr || !qeth_l3_addr_match_all(addr, tmp_addr))
+@@ -250,8 +250,7 @@ int qeth_l3_delete_ip(struct qeth_card *
  		return -ENOENT;
  
  	addr->ref_counter--;
-@@ -268,6 +258,7 @@ int qeth_l3_add_ip(struct qeth_card *car
- {
- 	int rc = 0;
- 	struct qeth_ipaddr *addr;
-+	char buf[40];
- 
- 	QETH_CARD_TEXT(card, 4, "addip");
- 
-@@ -278,8 +269,20 @@ int qeth_l3_add_ip(struct qeth_card *car
- 		QETH_CARD_HEX(card, 4, ((char *)&tmp_addr->u.a6.addr) + 8, 8);
- 	}
- 
--	addr = qeth_l3_ip_from_hash(card, tmp_addr);
--	if (!addr) {
-+	addr = qeth_l3_find_addr_by_ip(card, tmp_addr);
-+	if (addr) {
-+		if (tmp_addr->type != QETH_IP_TYPE_NORMAL)
-+			return -EADDRINUSE;
-+		if (qeth_l3_addr_match_all(addr, tmp_addr)) {
-+			addr->ref_counter++;
-+			return 0;
-+		}
-+		qeth_l3_ipaddr_to_string(tmp_addr->proto, (u8 *)&tmp_addr->u,
-+					 buf);
-+		dev_warn(&card->gdev->dev,
-+			 "Registering IP address %s failed\n", buf);
-+		return -EADDRINUSE;
-+	} else {
- 		addr = qeth_l3_get_addr_buffer(tmp_addr->proto);
- 		if (!addr)
- 			return -ENOMEM;
-@@ -327,11 +330,7 @@ int qeth_l3_add_ip(struct qeth_card *car
- 			hash_del(&addr->hnode);
+-	if (addr->ref_counter > 0 && (addr->type == QETH_IP_TYPE_NORMAL ||
+-				      addr->type == QETH_IP_TYPE_RXIP))
++	if (addr->type == QETH_IP_TYPE_NORMAL && addr->ref_counter > 0)
+ 		return rc;
+ 	if (addr->in_progress)
+ 		return -EINPROGRESS;
+@@ -329,9 +328,8 @@ int qeth_l3_add_ip(struct qeth_card *car
  			kfree(addr);
  		}
--	} else {
--			if (addr->type == QETH_IP_TYPE_NORMAL)
--				addr->ref_counter++;
+ 	} else {
+-		if (addr->type == QETH_IP_TYPE_NORMAL ||
+-		    addr->type == QETH_IP_TYPE_RXIP)
+-			addr->ref_counter++;
++			if (addr->type == QETH_IP_TYPE_NORMAL)
++				addr->ref_counter++;
  	}
--
+ 
  	return rc;
- }
- 
-@@ -715,12 +714,7 @@ int qeth_l3_add_vipa(struct qeth_card *c
- 		return -ENOMEM;
- 
- 	spin_lock_bh(&card->ip_lock);
--
--	if (qeth_l3_ip_from_hash(card, ipaddr))
--		rc = -EEXIST;
--	else
--		qeth_l3_add_ip(card, ipaddr);
--
-+	rc = qeth_l3_add_ip(card, ipaddr);
- 	spin_unlock_bh(&card->ip_lock);
- 
- 	kfree(ipaddr);
-@@ -783,12 +777,7 @@ int qeth_l3_add_rxip(struct qeth_card *c
- 		return -ENOMEM;
- 
- 	spin_lock_bh(&card->ip_lock);
--
--	if (qeth_l3_ip_from_hash(card, ipaddr))
--		rc = -EEXIST;
--	else
--		qeth_l3_add_ip(card, ipaddr);
--
-+	rc = qeth_l3_add_ip(card, ipaddr);
- 	spin_unlock_bh(&card->ip_lock);
- 
- 	kfree(ipaddr);
-@@ -1396,8 +1385,9 @@ qeth_l3_add_mc_to_hash(struct qeth_card
- 		memcpy(tmp->mac, buf, sizeof(tmp->mac));
- 		tmp->is_multicast = 1;
- 
--		ipm = qeth_l3_ip_from_hash(card, tmp);
-+		ipm = qeth_l3_find_addr_by_ip(card, tmp);
- 		if (ipm) {
-+			/* for mcast, by-IP match means full match */
- 			ipm->disp_flag = QETH_DISP_ADDR_DO_NOTHING;
- 		} else {
- 			ipm = qeth_l3_get_addr_buffer(QETH_PROT_IPV4);
-@@ -1480,8 +1470,9 @@ qeth_l3_add_mc6_to_hash(struct qeth_card
- 		       sizeof(struct in6_addr));
- 		tmp->is_multicast = 1;
- 
--		ipm = qeth_l3_ip_from_hash(card, tmp);
-+		ipm = qeth_l3_find_addr_by_ip(card, tmp);
- 		if (ipm) {
-+			/* for mcast, by-IP match means full match */
- 			ipm->disp_flag = QETH_DISP_ADDR_DO_NOTHING;
- 			continue;
- 		}
