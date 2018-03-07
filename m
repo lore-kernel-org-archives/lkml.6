@@ -1,68 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520451971-2-9828141656003119367
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451970; b=SgMcMLrum5xu5Jbyg6nofm/6Sg32XXGlQVKBND2j86+ToXg
-    //SPd9WEt8VXo0TSepeqCj8vmieb6rVJevOZnDroLxdLXIdGjCoZyejr99QFKZkp
-    nWvSILAW3hMLGGT1rr1726aA/7PXSFQBaB8H73EPxfRboHt1bYv2EDkvhB3VBcro
-    /0+poF9f7BhIGR3KlsmV3Uz8gC5MIj1VYF2s3BLtU1U7qaFJ4DUqEEml4qoaqmiH
-    UZ0yd7WZ9KHSs2Q1BsVMkX4+pSegdMMBvz44iSSmlSxV5kKXP0Qj0OCkhCRnIqs3
-    kUwg0+G8mX37/SEC7j3/Rx3XBgRtonCF2mkAVCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451970; bh=+B69skLm/KUumc8eg/yWkxDtJB
-    I1grQ8jAki8ny2bNI=; b=VxsCyWWtTJ3H48C4ULb8/gPLKqoNl34mb+0z69G/MV
-    v4e2mQQd97gJO4jK6gQhqF0BJC7k5CddprRIwi5RMuvNx+AfQ4Rz90jJJ8QTZTKR
-    8KNJR6hZTWDKPTB6cY3mR5JUr5esnS5offlDgSzK3ciYQX4U1ZUgjJapXWxUPgfE
-    RuVD+3tSjmF70tC/5KVD3Pjvw2yiEfhmeY+2Xtnp9tZoKQvAngDtMCYz1H11r5b1
-    +2v6MftdRVsRZ5d7GXbYoUIKVyiOXn608ylcs/RPpcurB9U+QPQ+63QhRPSjFzYC
-    wnvpoE6Mgx9MB8Xo6dPKpWXgZuo+Fi+7xO0zHTMdlRXA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965454AbeCGTqF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:46:05 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44442 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965391AbeCGTqD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:03 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELu/2v+o22abeegJ9cJ8NLk62rFL1tAOIzVwi9YAiEUvxD33IClLpSsQHLRiczpXR73nnCX0
+ARC-Seal: i=1; a=rsa-sha256; t=1520451962; cv=none;
+        d=google.com; s=arc-20160816;
+        b=aQp4Vop5R/HukUsOGP4yUeiZ5x+8bDdQV1ZpREHMD56OuewPTOeKDmraP3woLqHFIp
+         4V+fVOKrYgclRBeNyAinygyGK1Vcgm+sf8tm69BrrFai802NdJjsNma8Q1Q0c7R6V9fB
+         /kNqM0MyeepD9ugsjQ0fJgUNNlH9p+vv8wK2QDmkMqb4AL86Au2P3LrzozjWwb0kiGAj
+         Wr4iRL6bxE/+I7KOHS+QNEAhOUGylwBb/CS1tp2otg+gRLcLxwSGsr39Jv7m3aqGASUY
+         7cSCvy/qttEXmaTkbsSCyZPAcTLttv17rtUbGv8qTx3hkvtBpAIbRpKBk6O+tOoHK72l
+         53vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=RvYIcvU61ivm+3eFfEu/8nQVXqQaqIaw1jdVLaA4tHY=;
+        b=clJozIOEhe8hCB3CbsFV4P6RF+sKZ1mtJZovvyidY5msF3j+ycdxozPJCipO+gXCvv
+         SnwQ4SWUwLJ9CPHSBYHBTzKFzts2Pswbe9DjKhtwA50B+KaXmNJVFIOfDZTA2RKbYxhl
+         zFFlLFO1yePnuA7WnCioJg+oqP26bgYoBOowEQBW4RfhqHqU8q/HPzSi1XGGkg3vOc5t
+         ejtPv7sBtfRQTmp5lDBNvX4lxN3JUVbzE9zHfCUX/57Etm7YeQrIfwWIuSio8jEKLpND
+         rx8+NWum8DNa294u7qXLqn9yqJeevA4HQPtz5G2YCSfunn7bcFrP6s5SvRx4TWiP3hS/
+         ynNw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 015/110] mmc: sdhci-pci: Fix S0i3 for Intel BYT-based controllers
-Date: Wed,  7 Mar 2018 11:37:58 -0800
-Message-Id: <20180307191041.685553678@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Tommi Rantala <tommi.t.rantala@nokia.com>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 048/110] sctp: fix dst refcnt leak in sctp_v4_get_dst
+Date: Wed,  7 Mar 2018 11:38:31 -0800
+Message-Id: <20180307191045.865516721@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -70,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309148513653241?=
+X-GMAIL-MSGID: =?utf-8?q?1594309437047192040?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,90 +51,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Tommi Rantala <tommi.t.rantala@nokia.com>
 
-commit f8870ae6e2d6be75b1accc2db981169fdfbea7ab upstream.
 
-Tuning can leave the IP in an active state (Buffer Read Enable bit set)
-which prevents the entry to low power states (i.e. S0i3). Data reset will
-clear it.
+[ Upstream commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8 ]
 
-Generally tuning is followed by a data transfer which will anyway sort out
-the state, so it is rare that S0i3 is actually prevented.
+Fix dst reference count leak in sctp_v4_get_dst() introduced in commit
+410f03831 ("sctp: add routing output fallback"):
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+When walking the address_list, successive ip_route_output_key() calls
+may return the same rt->dst with the reference incremented on each call.
+
+The code would not decrement the dst refcount when the dst pointer was
+identical from the previous iteration, causing the dst refcnt leak.
+
+Testcase:
+  ip netns add TEST
+  ip netns exec TEST ip link set lo up
+  ip link add dummy0 type dummy
+  ip link add dummy1 type dummy
+  ip link add dummy2 type dummy
+  ip link set dev dummy0 netns TEST
+  ip link set dev dummy1 netns TEST
+  ip link set dev dummy2 netns TEST
+  ip netns exec TEST ip addr add 192.168.1.1/24 dev dummy0
+  ip netns exec TEST ip link set dummy0 up
+  ip netns exec TEST ip addr add 192.168.1.2/24 dev dummy1
+  ip netns exec TEST ip link set dummy1 up
+  ip netns exec TEST ip addr add 192.168.1.3/24 dev dummy2
+  ip netns exec TEST ip link set dummy2 up
+  ip netns exec TEST sctp_test -H 192.168.1.2 -P 20002 -h 192.168.1.1 -p 20000 -s -B 192.168.1.3
+  ip netns del TEST
+
+In 4.4 and 4.9 kernels this results to:
+  [  354.179591] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  [  364.419674] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  [  374.663664] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  [  384.903717] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  [  395.143724] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  [  405.383645] unregister_netdevice: waiting for lo to become free. Usage count = 1
+  ...
+
+Fixes: 410f03831 ("sctp: add routing output fallback")
+Fixes: 0ca50d12f ("sctp: fix src address selection if using secondary addresses")
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mmc/host/sdhci-pci-core.c |   35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ net/sctp/protocol.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -594,9 +594,36 @@ static void byt_read_dsm(struct sdhci_pc
- 	slot->chip->rpm_retune = intel_host->d3_retune;
- }
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -514,22 +514,20 @@ static void sctp_v4_get_dst(struct sctp_
+ 		if (IS_ERR(rt))
+ 			continue;
  
--static int byt_emmc_probe_slot(struct sdhci_pci_slot *slot)
-+static int intel_execute_tuning(struct mmc_host *mmc, u32 opcode)
-+{
-+	int err = sdhci_execute_tuning(mmc, opcode);
-+	struct sdhci_host *host = mmc_priv(mmc);
-+
-+	if (err)
-+		return err;
-+
-+	/*
-+	 * Tuning can leave the IP in an active state (Buffer Read Enable bit
-+	 * set) which prevents the entry to low power states (i.e. S0i3). Data
-+	 * reset will clear it.
-+	 */
-+	sdhci_reset(host, SDHCI_RESET_DATA);
-+
-+	return 0;
-+}
-+
-+static void byt_probe_slot(struct sdhci_pci_slot *slot)
- {
-+	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
-+
- 	byt_read_dsm(slot);
-+
-+	ops->execute_tuning = intel_execute_tuning;
-+}
-+
-+static int byt_emmc_probe_slot(struct sdhci_pci_slot *slot)
-+{
-+	byt_probe_slot(slot);
- 	slot->host->mmc->caps |= MMC_CAP_8_BIT_DATA | MMC_CAP_NONREMOVABLE |
- 				 MMC_CAP_HW_RESET | MMC_CAP_1_8V_DDR |
- 				 MMC_CAP_CMD_DURING_TFR |
-@@ -651,7 +678,7 @@ static int ni_byt_sdio_probe_slot(struct
- {
- 	int err;
+-		if (!dst)
+-			dst = &rt->dst;
+-
+ 		/* Ensure the src address belongs to the output
+ 		 * interface.
+ 		 */
+ 		odev = __ip_dev_find(sock_net(sk), laddr->a.v4.sin_addr.s_addr,
+ 				     false);
+ 		if (!odev || odev->ifindex != fl4->flowi4_oif) {
+-			if (&rt->dst != dst)
++			if (!dst)
++				dst = &rt->dst;
++			else
+ 				dst_release(&rt->dst);
+ 			continue;
+ 		}
  
--	byt_read_dsm(slot);
-+	byt_probe_slot(slot);
- 
- 	err = ni_set_max_freq(slot);
- 	if (err)
-@@ -664,7 +691,7 @@ static int ni_byt_sdio_probe_slot(struct
- 
- static int byt_sdio_probe_slot(struct sdhci_pci_slot *slot)
- {
--	byt_read_dsm(slot);
-+	byt_probe_slot(slot);
- 	slot->host->mmc->caps |= MMC_CAP_POWER_OFF_CARD | MMC_CAP_NONREMOVABLE |
- 				 MMC_CAP_WAIT_WHILE_BUSY;
- 	return 0;
-@@ -672,7 +699,7 @@ static int byt_sdio_probe_slot(struct sd
- 
- static int byt_sd_probe_slot(struct sdhci_pci_slot *slot)
- {
--	byt_read_dsm(slot);
-+	byt_probe_slot(slot);
- 	slot->host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY |
- 				 MMC_CAP_AGGRESSIVE_PM | MMC_CAP_CD_WAKE;
- 	slot->cd_idx = 0;
+-		if (dst != &rt->dst)
+-			dst_release(dst);
++		dst_release(dst);
+ 		dst = &rt->dst;
+ 		break;
+ 	}
