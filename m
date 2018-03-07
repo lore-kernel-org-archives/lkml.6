@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933888AbeCGRmy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:42:54 -0500
-Received: from shards.monkeyblade.net ([184.105.139.130]:54704 "EHLO
+        id S934062AbeCGRpE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:45:04 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:54730 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932801AbeCGRmw (ORCPT
+        with ESMTP id S933412AbeCGRpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:42:52 -0500
-Date: Wed, 07 Mar 2018 12:42:49 -0500 (EST)
-Message-Id: <20180307.124249.619165601144161535.davem@davemloft.net>
-To: niklas.cassel@axis.com
-Cc: pavel@ucw.cz, peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        Jose.Abreu@synopsys.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] net: stmmac: use correct barrier between
- coherent memory and MMIO
+        Wed, 7 Mar 2018 12:45:02 -0500
+Date: Wed, 07 Mar 2018 12:45:00 -0500 (EST)
+Message-Id: <20180307.124500.1863183408172828694.davem@davemloft.net>
+To: paul@paul-moore.com
+Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        richard_c_haines@btinternet.com
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next
+ tree
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180307172157.GA22658@axis.com>
-References: <20180302232853.GA11108@axis.com>
-        <20180307.103226.1538176953286317879.davem@davemloft.net>
-        <20180307172157.GA22658@axis.com>
+In-Reply-To: <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
+References: <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
+        <20180307.114139.680250568317481879.davem@davemloft.net>
+        <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -28,32 +28,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@axis.com>
-Date: Wed, 7 Mar 2018 18:21:57 +0100
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Mar 2018 12:27:52 -0500
 
-> Considering this, you can drop/revert:
-> 95eb930a40a0 ("net: stmmac: use correct barrier between coherent memory and MMIO")
-> or perhaps you want me to send a revert?
+> I'm not sure we could have cleanly separated the core network stack
+> changes from the rest of the SELinux/SCTP enablement, regardless it's
+> a bit late at this point.  The only other thought would have been to
+> simply push Xin Long's cleanup patches until after the next merge
+> window, but that would only be worth considering if they truly were
+> just cleanup patches, and even then it doesn't seem very fair to Xin
+> Long to have to wait.
 
-You must submit explicit patches to do a revert or any other change.
+I think you wanted to have more integration, rather than less.
 
-> After reverting 95eb930a40a0, we will still have a dma_wmb() _after_ the
-> last descriptor word write. You just explained that nothing else is needed
-> after the last descriptor word write, so I actually think that this last
-> barrier is superfluous.
+What others have done in the past, is they simply pull my networking
+tree into their's.
 
-You don't need one after the last descriptor write.
+I never rebase, ever.
 
-Look, you're only concerned with ordering within the descriptor writes.
+My tree often goes in reasonable early in the merge window.
 
-So it's only about:
+So you would only have to wait until my tree went in before
+sending your pull request.
 
-	desc->a = x;
-
-	/* Write to 'a' must be visible to the hardware before 'b'. */
-	dma_wmb();
-	desc->b = y;
-
-	writel();
-
-That's all that you need.
+That's really the way to handle something like this.
