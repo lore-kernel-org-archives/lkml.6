@@ -1,52 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933860AbeCGP1z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:27:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:41169 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933335AbeCGP1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:27:53 -0500
-Date: Wed, 7 Mar 2018 16:27:51 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
-Message-ID: <20180307152751.GM3035@piout.net>
-References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
- <20180306121607.1567-3-alexandre.belloni@bootlin.com>
- <20180307151753.GQ4197@saruman>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307151753.GQ4197@saruman>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S933879AbeCGP2m (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:28:42 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49418 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933335AbeCGP2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:28:39 -0500
+Message-ID: <1520436517.5558.2.camel@HansenPartnership.com>
+Subject: Re: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jiri Slaby <jslaby@suse.cz>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org
+Cc: matthew.garrett@nebula.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Mar 2018 07:28:37 -0800
+In-Reply-To: <1520428682.10396.445.camel@linux.vnet.ibm.com>
+References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
+         <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
+         <1520428682.10396.445.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 at 15:17:56 +0000, James Hogan wrote:
-> On Tue, Mar 06, 2018 at 01:16:04PM +0100, Alexandre Belloni wrote:
-> > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> > new file mode 100644
-> > index 000000000000..8c3210577410
-> > --- /dev/null
-> > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> > @@ -0,0 +1,117 @@
-> > +//SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> 
-> Niggle: there should be a space after // for consistency with other
-> files. Same in patch 3.
-> 
+On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
+> On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
+> > what's the status of this please? Distributors (I checked SUSE,
+> > RedHat and Ubuntu) have to carry these patches and every of them
+> > have to forward-port the patches to new kernels. So are you going
+> > to resend the PR to have this merged?
+[...]
+> Just because I trust the platform keys prior to booting the kernel,
+> doesn't mean that I *want* to trust those keys once booted.  There
+> are, however, places where we need access to those keys to verify a
+> signature (eg. kexec kernel image).
 
-Ah, yes...
+Which is essentially the reason I always give when these patches come
+back
 
-If that is the only thing left, I can resend right away
+> Nayna Jain's "certs: define a trusted platform keyring" patch set
+> introduces a new, separate keyring for these platform keys.
 
+Perhaps, to break the deadlock, we should ask Jiří what the reason is
+the distros want these keys to be trusted.  Apart from the Microsoft
+key, it will also give you an OEM key in your trusted keyring.  Is it
+something to do with OEM supplied modules?
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+James
