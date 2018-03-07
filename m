@@ -1,62 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754377AbeCGM4S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:56:18 -0500
-Received: from mga06.intel.com ([134.134.136.31]:16354 "EHLO mga06.intel.com"
+        id S1754434AbeCGM5O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:57:14 -0500
+Received: from a.mx.secunet.com ([62.96.220.36]:50718 "EHLO a.mx.secunet.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754260AbeCGM4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:56:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
-   d="scan'208";a="23227797"
-Message-ID: <1520427371.10722.453.camel@linux.intel.com>
-Subject: Re: [PATCH v5 1/3] ACPI / x86: boot: Split out
- acpi_generic_reduce_hw_init() and export
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Wed, 07 Mar 2018 14:56:11 +0200
-In-Reply-To: <1519383078.10722.107.camel@linux.intel.com>
-References: <20180220180506.65523-1-andriy.shevchenko@linux.intel.com>
-         <CAJZ5v0g7XO2N0vCi-A95MDjgJpTS0M=ZXrSGu2fqkwSHZ79GEg@mail.gmail.com>
-         <1519383078.10722.107.camel@linux.intel.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751159AbeCGM5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:57:11 -0500
+Date: Wed, 7 Mar 2018 13:57:08 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: <yossiku@mellanox.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        "Hideaki YOSHIFUJI" <yoshfuji@linux-ipv6.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Artem Savkov <artem.savkov@gmail.com>
+Subject: Re: [PATCH net] xfrm: Verify MAC header exists before overwriting
+ eth_hdr(skb)->h_proto
+Message-ID: <20180307125708.rb55ny6rhxqgstpy@gauss3.secunet.de>
+References: <1520190232-7208-1-git-send-email-yossiku@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1520190232-7208-1-git-send-email-yossiku@mellanox.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 594905A7-8D47-4050-A687-B7CD44B7BABC
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-02-23 at 12:51 +0200, Andy Shevchenko wrote:
-> On Tue, 2018-02-20 at 19:42 +0100, Rafael J. Wysocki wrote:
-> > On Tue, Feb 20, 2018 at 7:05 PM, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > This is a preparation patch to allow override the hardware reduced
-> > > initialization on ACPI enabled platforms.
-> > > 
-> > > No functional change intended.
-> > > 
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sun, Mar 04, 2018 at 09:03:52PM +0200, yossiku@mellanox.com wrote:
+> From: Yossi Kuperman <yossiku@mellanox.com>
 > 
-> Thanks, Rafael!
+> Artem Savkov reported that commit 5efec5c655dd leads to a packet loss under
+> IPSec configuration. It appears that his setup consists of a TUN device,
+> which does not have a MAC header.
 > 
-> Ingo, can it be applied?
+> Make sure MAC header exists.
+> 
+> Note: TUN device sets a MAC header pointer, although it does not have one.
+> 
+> Fixes: 5efec5c655dd ("xfrm: Fix eth_hdr(skb)->h_proto to reflect inner IP version")
+> Reported-by: Artem Savkov <artem.savkov@gmail.com>
+> Tested-by: Artem Savkov <artem.savkov@gmail.com>
+> Signed-off-by: Yossi Kuperman <yossiku@mellanox.com>
 
-Hmm... It seems Ingo is busy with something else.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Applied, thanks Yossi!
