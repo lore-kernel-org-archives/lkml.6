@@ -1,77 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934022AbeCGQHw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:07:52 -0500
-Received: from mga03.intel.com ([134.134.136.65]:17920 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933479AbeCGQHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:07:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
-   d="scan'208";a="22762424"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "\"linux-security-module@vger.kernel.org\\\"
-        <linux-security-module@vger.kernel.org>, \"@lwn.net"
-        <"linux-security-module@vger.kernel.org\" <linux-security-module@vger.kernel.org>, "@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "\" <linux-kernel@vger.kernel.org>\"@lwn.net"
-        <" <linux-kernel@vger.kernel.org>"@lwn.net>
-Subject: RE: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Topic: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Thread-Index: AQHTs7KEInSI42HCTUSCFlGLoOJ8nqPBeeQAgAAiLaCAARpWAIAAJchggABsQYCAACLBAIABZScAgAAiLhA=
-Date: Wed, 7 Mar 2018 16:04:02 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9423018C@hasmsx108.ger.corp.intel.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-        <20180305125642.GA3425@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-        <20180306074932.GB3624@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-        <1520353933.5393.21.camel@HansenPartnership.com>
-        <1520361396.10396.396.camel@linux.vnet.ibm.com>
- <20180307085454.2c820a13@lwn.net>
-In-Reply-To: <20180307085454.2c820a13@lwn.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWQ2YTliODUtMGUwZS00YWUzLTg2NjktODNjZTFlMGU2MWNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJJd2N3MnpMbTZpR0gwZEZEWDJpY0pRZVZYMkV3bDg3RUJESzQ3U3F3QWFvZnhSMWFmaTNCUmllWkVYQkRZZ1wvYyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.107]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S934046AbeCGQIP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:08:15 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:56957 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933479AbeCGQIM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:08:12 -0500
+Subject: Re: RFC: remove the "tile" architecture from glibc
+To: Joseph Myers <joseph@codesourcery.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Helmut Grohne <helmutg@debian.org>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com>
+ <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de>
+ <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com>
+ <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
+ <alpine.DEB.2.20.1803071557070.28840@digraph.polyomino.org.uk>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <21665e92-27d1-81c5-5959-f0893541b515@physik.fu-berlin.de>
+Date: Wed, 7 Mar 2018 17:08:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1803071557070.28840@digraph.polyomino.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 87.77.146.231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/07/2018 05:00 PM, Joseph Myers wrote:
+> No-one has posted glibc test results for 2.27 or 2.26, despite the prior
+> claims of interest in keeping the glibc port.
 
-> 
-> On Tue, 06 Mar 2018 13:36:36 -0500
-> Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> 
-> > I've heard that some maintainers are moving away from cover letters,
-> > since they are not include in the git repo and are lost.
-> 
-> If I get a patch series with a cover letter that should be preserved, I apply the
-> series in a branch then do a no-ff merge; the cover letter can then go into
-> the merge commit.  There's no reason why cover letters need to be lost.
+To be honest, I find the rapid release model for glibc a bit annoying
+as a downstream. Upstream projects which adopt this model and then require
+constant attention from porters cause lots of stress for the less common
+architectures. There are other upstream projects that want attention as
+well and at some point it just will get extremely frustrating.
 
-That's clever, but still it feels like a hack. 
-I've try to keep cover letters as an empty commits for that but it has to be always forced when rebasing.
-Not sure git has a real user friendly support for that.
+Is such a rapid release model really needed for something like a C library?
 
-Tomas
+As for the testsuites: Adhemerval has gotten access from Debian to a
+number of porterboxes for the various uncommon architectures, including
+alpha, hppa, powerpcspe, sh4 and sparc64 and we're happy to give out
+accounts to anyone interested.
+
+And since Debian regularly updates glibc as well, you can get most testsuite
+runs also by just checking the build logs (click on the green or red texts):
+
+> https://buildd.debian.org/status/package.php?p=glibc&suite=sid
+
+Note: Testsuites for sh4 and m68k are currently disabled.
+
+Adrian
+
+-- 
+  .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
