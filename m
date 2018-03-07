@@ -1,111 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754108AbeCGKr3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:47:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60675 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751149AbeCGKr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:47:27 -0500
-Date: Wed, 7 Mar 2018 11:47:14 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Denis OSTERLAND <denis.osterland@diehl.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mgr@pengutronix.de" <mgr@pengutronix.de>,
-        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 3/4] rtc: isl1208: add support for isl1219 with tamper
- detection
-Message-ID: <20180307104714.GL3035@piout.net>
-References: <1520246373-19023-1-git-send-email-Denis.Osterland@diehl.com>
- <1520246373-19023-4-git-send-email-Denis.Osterland@diehl.com>
- <20180306204255.GI3035@piout.net>
- <1520410754.5976.27.camel@diehl.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520410754.5976.27.camel@diehl.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1754251AbeCGKtn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:49:43 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38293 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeCGKti (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 05:49:38 -0500
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180307104936euoutp021d7f218b19ac15f72fbe23d5a5a89210~ZnbsV1Gbh1739017390euoutp02R
+X-AuditID: cbfec7f2-1dbff70000011644-1e-5a9fc3bfa569
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v2] crypto: hash.h: Prevent use of req->result in ahash
+ update
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-id: <7850c31c-8703-51fb-0710-3b4920935bfc@partner.samsung.com>
+Date: Wed, 07 Mar 2018 11:49:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.6.0
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Content-language: en-US
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsWy7djP87r7D8+PMlj/kNli44z1rBZzzrew
+        WHS/krG4f+8nk8XlXXPYHFg9tqy8yeSx7YCqR9+WVYwenzfJBbBEcdmkpOZklqUW6dslcGXM
+        6ikueCVasfn9NfYGxjmCXYycHBICJhLfP2xm7GLk4hASWMEosflrAzuE85lRYsP3NWwwVf0P
+        LzNBJJYxSuzcfZUZwnnGKNGy+DAzSBWbgLnEo+1nmEBsYYEAid83poF1iwjoSKx8uZgVpIFZ
+        YCGjxI/+8+wgCV4BN4n/91eCNbMIqEpsm/6QBcQWFYiQWDj1KSNEjaDEj8n3wOLMApoSL75M
+        grLFJZpbb0LZ8hKb17xlhjh1DpvEjU0SELaLRNePDhYIW1ji1fEt7BC2jMTlyd1Q8XKJTVvW
+        gv0sIdDAKLHmfRMjRMJa4vDxi6wQC/gkJm2bDrSAAyjOK9HRJgRR4iHx+PEhRoiwo0THEROQ
+        sJBArMT8ZwtZJzDKzkLywSwkH8xC8sEsJB8sYGRZxSieWlqcm55abJiXWq5XnJhbXJqXrpec
+        n7uJEZgaTv87/mkH49dLSYcYBTgYlXh4I/bOixJiTSwrrsw9xCjBwawkwju5ZH6UEG9KYmVV
+        alF+fFFpTmrxIUZpDhYlcd44jbooIYH0xJLU7NTUgtQimCwTB6dUA2N67aR3ny7GX1pzW+r8
+        HMPQeqd3c+9VLtfzV2zzP3wu98TCBoFFc1qvP7oqJH5lI1t9+l6O5wESVSf9LoTNsJnwYO1D
+        vrzEQzOmtB0/wfPyxoaVCZM/Xp3148LTF9MyexYVSk8KqGCeU/zE2sGRYWIny66VInmf7xxO
+        DP85/9z5txcb7XuffQy6r8RSnJFoqMVcVJwIALV86S8JAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xa7r7Ds+PMjjzXNBi44z1rBZzzrew
+        WHS/krG4f+8nk8XlXXPYHFg9tqy8yeSx7YCqR9+WVYwenzfJBbBEcdmkpOZklqUW6dslcGXM
+        6ikueCVasfn9NfYGxjmCXYycHBICJhL9Dy8zdTFycQgJLGGUOHvzAyNIQkjgGaPEtTcpIDab
+        gLnEo+1nmEBsYQE/iXcvzrKB2CICOhIrXy5mBWlmFljIKDFp8TFWkASvgJvE//srmUFsFgFV
+        iW3TH7KA2KICERKdK+ezQNQISvyYfA/I5gBqVpeYMiUXJMwsIC7R3HqTBcKWl9i85i3zBEa+
+        WUg6ZiF0zELSMQtJxwJGllWMIqmlxbnpucVGesWJucWleel6yfm5mxiBQbrt2M8tOxi73gUf
+        YhTgYFTi4d2wf16UEGtiWXFl7iFGCQ5mJRHeySXzo4R4UxIrq1KL8uOLSnNSiw8xSnOwKInz
+        njeojBISSE8sSc1OTS1ILYLJMnFwSjUwHt8RbfLahWNpo5Xxp5KaTnPp1fGBC++LL9irs0GL
+        T4kr9S1DVlHPfdtP5nMqVMzPzvw3X7Ha73tQxmPTr61sEVWytqsF8m8ILF13/LZQbo6Gu2WZ
+        4bfITyf3pj8RXvxtY1vdiwUq/X4JSn9zJJ9MvROrfmxGdf7cx//VXpQHzH5mwSSgFnZaiaU4
+        I9FQi7moOBEAPO1X0E4CAAA=
+X-CMS-MailID: 20180307104934eucas1p18af0e65a519299997b5d2f7fb78cd39f
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180307104934eucas1p18af0e65a519299997b5d2f7fb78cd39f
+X-RootMTR: 20180307104934eucas1p18af0e65a519299997b5d2f7fb78cd39f
+References: <CGME20180307104934eucas1p18af0e65a519299997b5d2f7fb78cd39f@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 at 08:19:15 +0000, Denis OSTERLAND wrote:
-> > > +/* event section */
-> > > +#define ISL1208_REG_SCT 0x14
-> > > +#define ISL1208_REG_MNT 0x15
-> > > +#define ISL1208_REG_HRT 0x16
-> > > +#define ISL1208_REG_DTT 0x17
-> > > +#define ISL1208_REG_MOT 0x18
-> > > +#define ISL1208_REG_YRT 0x19
-> > > +#define ISL1208_EVT_SECTION_LEN 6
-> > > +
-> > Because they are not available on ISL1208, maybe it would be better to
-> > prefix them with ISL1219.
-> I see. Yes, this would clarify that they are only available on isl1219.
-> Shall we rename isl1208_rtc_event_show_timestamp/isl1208_rtc_event_clear
-> to isl1219_rtc_event_show_timestamp/isl1219_rtc_event_clear, too?
+Prevent improper use of req->result field in ahash update, init, export and
+import functions in drivers code. A driver should use ahash request context
+if it needs to save internal state.
 
-That could be done too, yes.
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+version 2:
+ Change req->digest to req->result, as pointed out by Tom Lendacky
 
-> > 
-> > > 
-> > > +
-> > > +	tv64.tv_sec = rtc_tm_to_time64(&tm);
-> > Why not using an unsigned long long directly here? time64_t is not the
-> > correct type.
-> Do you mean timespec64 is not the correct type here?
-> Then yes, sould be time64_t.
-> If you mean time64_t is not the correct type here,
-> then can you give me some detail why there is no rtc_tm_to_u64,
-> or something like that?
+ include/crypto/hash.h | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-The rtc subsystem forbids negative times, the proper type should be
-unsigned.
-
-> sprintf(buf, "%lld\n", rtc_tm_to_time64(&tm)) seems correct to me.
-> By the way, is it needed to check for seconds < 0 and return error?
-
-Indeed, you shoud check the tm with rtc_valid_tm before calling
-rtc_tm_to_time64.
-
-> > > -	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
-> > > +	if (id->driver_data == TYPE_ISL1219) {
-> > > +		rc = i2c_smbus_write_byte_data(client, ISL1208_REG_09, 0x10);
-> > > +		if (rc < 0) {
-> > > +			dev_err(&client->dev, "could not enable tamper detection\n");
-> > > +			return rc;
-> > > +		}
-> > > +		isl1208->sysfs_files = &isl1219_rtc_sysfs_files;
-> > > +	} else {
-> > > +		isl1208->sysfs_files = &isl1208_rtc_sysfs_files;
-> > > +	}
-> > > +
-> > I don't think the whole isl1208 is necessary. You should probably use
-> > the .is_visible callback of isl1219_rtc_sysfs_files. This will make the
-> > changelog quite smaller.
-> > 
-> Well, I don´t know how to access i2c_device_id from kobject.
-> rtc_attr_is_visible shows how to convert kobject to device and rtc_device,
-> but how to do (id->driver_data == TYPE_ISL1219) here?
-
-I'd use i2c_set_clientdata/i2c_get_clientdata but I agree that then it
-is basically the same as having isl1208->sysfs_files.
-
-but this makes me realize that the timestamp file doesn't end up at the
-correct location. What you do now is placing it under the i2c device
-while it should be placed under the rtc device (i.e. in
-/sys/class/rtc/rtcX/). This was a mistake made back in 2006.
-
-I guess you'll have to add a new group instead of adding to the current
-one.
-
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 2d1849dffb80..76e432cab75d 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -74,7 +74,8 @@ struct ahash_request {
+  * @init: **[mandatory]** Initialize the transformation context. Intended only to initialize the
+  *	  state of the HASH transformation at the beginning. This shall fill in
+  *	  the internal structures used during the entire duration of the whole
+- *	  transformation. No data processing happens at this point.
++ *	  transformation. No data processing happens at this point. Driver code
++ *	  implementation must not use req->result.
+  * @update: **[mandatory]** Push a chunk of data into the driver for transformation. This
+  *	   function actually pushes blocks of data from upper layers into the
+  *	   driver, which then passes those to the hardware as seen fit. This
+@@ -83,7 +84,8 @@ struct ahash_request {
+  *	   transformation. This function shall not modify the transformation
+  *	   context, as this function may be called in parallel with the same
+  *	   transformation object. Data processing can happen synchronously
+- *	   [SHASH] or asynchronously [AHASH] at this point.
++ *	   [SHASH] or asynchronously [AHASH] at this point. Driver must not use
++ *	   req->result.
+  * @final: **[mandatory]** Retrieve result from the driver. This function finalizes the
+  *	   transformation and retrieves the resulting hash from the driver and
+  *	   pushes it back to upper layers. No data processing happens at this
+@@ -120,11 +122,12 @@ struct ahash_request {
+  *	    you want to save partial result of the transformation after
+  *	    processing certain amount of data and reload this partial result
+  *	    multiple times later on for multiple re-use. No data processing
+- *	    happens at this point.
++ *	    happens at this point. Driver must not use req->result.
+  * @import: Import partial state of the transformation. This function loads the
+  *	    entire state of the ongoing transformation from a provided block of
+  *	    data so the transformation can continue from this point onward. No
+- *	    data processing happens at this point.
++ *	    data processing happens at this point. Driver must not use
++ *	    req->result.
+  * @halg: see struct hash_alg_common
+  */
+ struct ahash_alg {
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.16.2
