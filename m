@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754235AbeCGKdI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:33:08 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57606 "EHLO
+        id S1754302AbeCGKdr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:33:47 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56472 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754153AbeCGKdH (ORCPT
+        with ESMTP id S1751149AbeCGKdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:33:07 -0500
+        Wed, 7 Mar 2018 05:33:44 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1 5/9] PCI/portdrv: Remove pcie_port_bus_type link order dependency
-Date: Wed, 07 Mar 2018 11:33:48 +0100
-Message-ID: <7571217.yaDH5TzqWC@aspire.rjw.lan>
-In-Reply-To: <152040323121.240786.5383276983544773869.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040323121.240786.5383276983544773869.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Subject: Re: [PATCH v1 6/9] PCI/portdrv: Remove unused PCIE_PORT_SERVICE_VC
+Date: Wed, 07 Mar 2018 11:34:26 +0100
+Message-ID: <3478220.q9pgEXZY9y@aspire.rjw.lan>
+In-Reply-To: <152040323671.240786.17190514268346362843.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040323671.240786.17190514268346362843.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,209 +24,119 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 7, 2018 7:13:51 AM CET Bjorn Helgaas wrote:
+On Wednesday, March 7, 2018 7:13:56 AM CET Bjorn Helgaas wrote:
 > From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> The pcie_port_bus_type must be registered before drivers that depend on it
-> can be registered.  Those drivers include:
+> No driver registers for PCIE_PORT_SERVICE_VC, so remove it.
 > 
->   pcied_init()                # PCIe native hotplug driver
->   aer_service_init()          # AER driver
->   dpc_service_init()          # DPC driver
->   pcie_pme_service_init()     # PME driver
+> This removes the VC "service" files from /sys/bus/pci_express/devices,
+> e.g., 0000:07:00.0:pcie108, 0000:08:04.0:pcie208 (all the files that
+> contained "8" as the last digit of the "pcieXXX" part).  The port driver
+> created these files for PCIe port devices that have a VC Capability.
 > 
-> Previously we registered pcie_port_bus_type from pcie_portdrv_init(), a
-> device_initcall.  The callers of pcie_port_service_register() (above) are
-> also device_initcalls.  This is fragile because the device_initcall
-> ordering depends on link order, which is not explicit.
+> Since this reduces PCIE_PORT_DEVICE_MAXSERVICES and moves DPC down into the
+> spot where VC used to be, the DPC sysfs files will now be named "pcieXX8".
+> I don't think there's anything useful userspace can do with those files, so
+> I hope nobody cares about these filenames.
 > 
-> Register pcie_port_bus_type from pci_driver_init() along with pci_bus_type.
-> This removes the link order dependency between portdrv and the pciehp, AER,
-> DPC, and PCIe PME drivers.
+> There is no VC driver that calls pcie_port_service_register(), so there
+> never was a /sys/bus/pci_express/drivers/vc directory.
 > 
 > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 > ---
->  drivers/pci/pci-driver.c       |   45 +++++++++++++++++++++++++++++++-
->  drivers/pci/pcie/Makefile      |    2 +
->  drivers/pci/pcie/portdrv_bus.c |   56 ----------------------------------------
->  drivers/pci/pcie/portdrv_pci.c |   13 +--------
->  4 files changed, 46 insertions(+), 70 deletions(-)
->  delete mode 100644 drivers/pci/pcie/portdrv_bus.c
+>  drivers/pci/pcie/portdrv.h      |    2 +-
+>  drivers/pci/pcie/portdrv_acpi.c |    2 +-
+>  drivers/pci/pcie/portdrv_core.c |   14 ++++----------
+>  include/linux/pcieport_if.h     |    4 +---
+>  4 files changed, 7 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index 38ee7c8b4d1a..4db85a0faf34 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -7,6 +7,7 @@
->   */
+> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+> index a4fc44d52206..749d200936d9 100644
+> --- a/drivers/pci/pcie/portdrv.h
+> +++ b/drivers/pci/pcie/portdrv.h
+> @@ -12,7 +12,7 @@
 >  
->  #include <linux/pci.h>
-> +#include <linux/pcieport_if.h>
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/device.h>
-> @@ -19,6 +20,7 @@
->  #include <linux/suspend.h>
->  #include <linux/kexec.h>
->  #include "pci.h"
-> +#include "pcie/portdrv.h"
+>  #include <linux/compiler.h>
 >  
->  struct pci_dynid {
->  	struct list_head node;
-> @@ -1553,8 +1555,49 @@ struct bus_type pci_bus_type = {
->  };
->  EXPORT_SYMBOL(pci_bus_type);
+> -#define PCIE_PORT_DEVICE_MAXSERVICES   5
+> +#define PCIE_PORT_DEVICE_MAXSERVICES   4
+>  /*
+>   * The PCIe Capability Interrupt Message Number (PCIe r3.1, sec 7.8.2) must
+>   * be one of the first 32 MSI-X entries.  Per PCI r3.0, sec 6.8.3.1, MSI
+> diff --git a/drivers/pci/pcie/portdrv_acpi.c b/drivers/pci/pcie/portdrv_acpi.c
+> index 319c94976873..4a1b50867c98 100644
+> --- a/drivers/pci/pcie/portdrv_acpi.c
+> +++ b/drivers/pci/pcie/portdrv_acpi.c
+> @@ -48,7 +48,7 @@ void pcie_port_acpi_setup(struct pci_dev *port, int *srv_mask)
 >  
-> +#ifdef CONFIG_PCIEPORTBUS
-> +static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
-> +{
-> +	struct pcie_device *pciedev;
-> +	struct pcie_port_service_driver *driver;
-> +
-> +	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
-> +		return 0;
-> +
-> +	pciedev = to_pcie_device(dev);
-> +	driver = to_service_driver(drv);
-> +
-> +	if (driver->service != pciedev->service)
-> +		return 0;
-> +
-> +	if ((driver->port_type != PCIE_ANY_PORT) &&
-> +	    (driver->port_type != pci_pcie_type(pciedev->port)))
-> +		return 0;
-> +
-> +	return 1;
-> +}
-> +
-> +struct bus_type pcie_port_bus_type = {
-> +	.name		= "pci_express",
-> +	.match		= pcie_port_bus_match,
-> +};
-> +EXPORT_SYMBOL_GPL(pcie_port_bus_type);
-> +#endif
-> +
->  static int __init pci_driver_init(void)
->  {
-> -	return bus_register(&pci_bus_type);
-> +	int ret;
-> +
-> +	ret = bus_register(&pci_bus_type);
-> +	if (ret)
-> +		return ret;
-> +
-> +#ifdef CONFIG_PCIEPORTBUS
-> +	ret = bus_register(&pcie_port_bus_type);
-> +	if (ret)
-> +		return ret;
-> +#endif
-> +
-> +	return 0;
->  }
->  postcore_initcall(pci_driver_init);
-> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-> index 223e4c34c29a..e01c10c97b95 100644
-> --- a/drivers/pci/pcie/Makefile
-> +++ b/drivers/pci/pcie/Makefile
-> @@ -6,7 +6,7 @@
->  # Build PCI Express ASPM if needed
->  obj-$(CONFIG_PCIEASPM)		+= aspm.o
+>  	flags = root->osc_control_set;
 >  
-> -pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o
-> +pcieportdrv-y			:= portdrv_core.o portdrv_pci.o
->  pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
+> -	*srv_mask = PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_DPC;
+> +	*srv_mask = PCIE_PORT_SERVICE_DPC;
+>  	if (flags & OSC_PCI_EXPRESS_NATIVE_HP_CONTROL)
+>  		*srv_mask |= PCIE_PORT_SERVICE_HP;
+>  	if (flags & OSC_PCI_EXPRESS_PME_CONTROL)
+> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+> index 9db77c683732..94ce4dc50d1a 100644
+> --- a/drivers/pci/pcie/portdrv_core.c
+> +++ b/drivers/pci/pcie/portdrv_core.c
+> @@ -189,10 +189,8 @@ static int pcie_init_service_irqs(struct pci_dev *dev, int *irqs, int mask)
+>  	if (ret < 0)
+>  		return -ENODEV;
 >  
->  obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
-> diff --git a/drivers/pci/pcie/portdrv_bus.c b/drivers/pci/pcie/portdrv_bus.c
-> deleted file mode 100644
-> index f0fba552a0e2..000000000000
-> --- a/drivers/pci/pcie/portdrv_bus.c
-> +++ /dev/null
-> @@ -1,56 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * File:	portdrv_bus.c
-> - * Purpose:	PCI Express Port Bus Driver's Bus Overloading Functions
-> - *
-> - * Copyright (C) 2004 Intel
-> - * Copyright (C) Tom Long Nguyen (tom.l.nguyen@intel.com)
-> - */
-> -
-> -#include <linux/module.h>
-> -#include <linux/pci.h>
-> -#include <linux/kernel.h>
-> -#include <linux/errno.h>
-> -#include <linux/pm.h>
-> -
-> -#include <linux/pcieport_if.h>
-> -#include "portdrv.h"
-> -
-> -static int pcie_port_bus_match(struct device *dev, struct device_driver *drv);
-> -
-> -struct bus_type pcie_port_bus_type = {
-> -	.name		= "pci_express",
-> -	.match		= pcie_port_bus_match,
-> -};
-> -EXPORT_SYMBOL_GPL(pcie_port_bus_type);
-> -
-> -static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
-> -{
-> -	struct pcie_device *pciedev;
-> -	struct pcie_port_service_driver *driver;
-> -
-> -	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
-> -		return 0;
-> -
-> -	pciedev = to_pcie_device(dev);
-> -	driver = to_service_driver(drv);
-> -
-> -	if (driver->service != pciedev->service)
-> -		return 0;
-> -
-> -	if ((driver->port_type != PCIE_ANY_PORT) &&
-> -	    (driver->port_type != pci_pcie_type(pciedev->port)))
-> -		return 0;
-> -
-> -	return 1;
-> -}
-> -
-> -int pcie_port_bus_register(void)
-> -{
-> -	return bus_register(&pcie_port_bus_type);
-> -}
-> -
-> -void pcie_port_bus_unregister(void)
-> -{
-> -	bus_unregister(&pcie_port_bus_type);
-> -}
-> diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-> index c08ebd237242..9475886eeb62 100644
-> --- a/drivers/pci/pcie/portdrv_pci.c
-> +++ b/drivers/pci/pcie/portdrv_pci.c
-> @@ -259,22 +259,11 @@ static const struct dmi_system_id pcie_portdrv_dmi_table[] __initconst = {
->  
->  static int __init pcie_portdrv_init(void)
->  {
-> -	int retval;
-> -
->  	if (pcie_ports_disabled)
->  		return -EACCES;
->  
->  	dmi_check_system(pcie_portdrv_dmi_table);
->  
-> -	retval = pcie_port_bus_register();
-> -	if (retval) {
-> -		printk(KERN_WARNING "PCIE: bus_register error: %d\n", retval);
-> -		goto out;
+> -	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++) {
+> -		if (i != PCIE_PORT_SERVICE_VC_SHIFT)
+> -			irqs[i] = pci_irq_vector(dev, 0);
 > -	}
-> -	retval = pci_register_driver(&pcie_portdriver);
-> -	if (retval)
-> -		pcie_port_bus_unregister();
-> - out:
-> -	return retval;
-> +	return pci_register_driver(&pcie_portdriver);
+> +	for (i = 0; i < PCIE_PORT_DEVICE_MAXSERVICES; i++)
+> +		irqs[i] = pci_irq_vector(dev, 0);
+>  
+>  	return 0;
 >  }
->  device_initcall(pcie_portdrv_init);
+> @@ -212,8 +210,7 @@ static int get_port_device_capability(struct pci_dev *dev)
+>  	int services = 0;
+>  	int cap_mask = 0;
+>  
+> -	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP
+> -			| PCIE_PORT_SERVICE_VC;
+> +	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP;
+>  	if (pci_aer_available())
+>  		cap_mask |= PCIE_PORT_SERVICE_AER | PCIE_PORT_SERVICE_DPC;
+>  
+> @@ -240,9 +237,6 @@ static int get_port_device_capability(struct pci_dev *dev)
+>  		 */
+>  		pci_disable_pcie_error_reporting(dev);
+>  	}
+> -	/* VC support */
+> -	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VC))
+> -		services |= PCIE_PORT_SERVICE_VC;
+>  	/* Root ports are capable of generating PME too */
+>  	if ((cap_mask & PCIE_PORT_SERVICE_PME)
+>  	    && pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) {
+> @@ -332,7 +326,7 @@ int pcie_port_device_register(struct pci_dev *dev)
+>  	 */
+>  	status = pcie_init_service_irqs(dev, irqs, capabilities);
+>  	if (status) {
+> -		capabilities &= PCIE_PORT_SERVICE_VC | PCIE_PORT_SERVICE_HP;
+> +		capabilities &= PCIE_PORT_SERVICE_HP;
+>  		if (!capabilities)
+>  			goto error_disable;
+>  	}
+> diff --git a/include/linux/pcieport_if.h b/include/linux/pcieport_if.h
+> index b69769dbf659..28eb21731db6 100644
+> --- a/include/linux/pcieport_if.h
+> +++ b/include/linux/pcieport_if.h
+> @@ -20,9 +20,7 @@
+>  #define PCIE_PORT_SERVICE_AER		(1 << PCIE_PORT_SERVICE_AER_SHIFT)
+>  #define PCIE_PORT_SERVICE_HP_SHIFT	2	/* Native Hotplug */
+>  #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
+> -#define PCIE_PORT_SERVICE_VC_SHIFT	3	/* Virtual Channel */
+> -#define PCIE_PORT_SERVICE_VC		(1 << PCIE_PORT_SERVICE_VC_SHIFT)
+> -#define PCIE_PORT_SERVICE_DPC_SHIFT	4	/* Downstream Port Containment */
+> +#define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
+>  #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
+>  
+>  struct pcie_device {
 > 
 > 
 
