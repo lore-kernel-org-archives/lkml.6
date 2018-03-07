@@ -1,71 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754727AbeCGSbf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:31:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49176 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754039AbeCGSbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:31:34 -0500
-Subject: Re: [PATCH v1] xen: acpi: upload _PSD info for offline CPUs too
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Juergen Gross <jgross@suse.com>
-References: <20180306201209.21890-1-joao.m.martins@oracle.com>
- <a62621c6-ca44-fae4-7661-b7fe5380bbc0@oracle.com>
-From: Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <c57f56a9-4914-bef1-1379-cc0b8f038146@oracle.com>
-Date: Wed, 7 Mar 2018 18:26:24 +0000
+        id S933418AbeCGSbm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:31:42 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754730AbeCGSbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:31:37 -0500
+Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
+ ThunderX2 B0
+To: Ganapatrao Kulkarni <gklkml16@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: mark.rutland@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        John Garry <john.garry@huawei.com>, Will Deacon <Will.Deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
+References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
+ <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
+ <20180307143832.GJ3701@kernel.org>
+ <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
+From: William Cohen <wcohen@redhat.com>
+Message-ID: <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
+Date: Wed, 7 Mar 2018 13:31:35 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <a62621c6-ca44-fae4-7661-b7fe5380bbc0@oracle.com>
+In-Reply-To: <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803070210
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/2018 05:51 PM, Boris Ostrovsky wrote:
-> On 03/06/2018 03:12 PM, Joao Martins wrote:
->> All uploaded PM data from offline CPUs takes the info from vCPU 0 and
+On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
+> Hi Will Cohen,
 > 
-> "offline" may not be the right term here. Maybe "non-dom0"?
+> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
+>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
+>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
+>>>> to enable JSON events for B0.
+>>>>
+>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>>
+>> Ganapatrao, can you please take this in consideration and if agreeing
+>> send a v2 patch?
+>>
+>> With that I can add an Acked-by: wcohen, Right?
+>>
+>> - Arnaldo
+>>>> ---
+>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>> index e61c9ca..93c5d14 100644
+>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
+>>>> @@ -13,4 +13,5 @@
+>>>>  #
+>>>>  #Family-model,Version,Filename,EventType
+>>>>  0x00000000420f5160,v1,cavium,core
+>>>> +0x00000000430f0af0,v1,cavium,core
+>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
+>>>>
+>>>
+>>> Hi,
+>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
 > 
-Yeah, probably clearer to use that.
+> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
+> are ignored/dont-care.
 
->> changing only the acpi_id. For processors which P-state coordination type
->> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
->> (_PSD), because Xen will ignore cpufreq domains existence.
->>
->> Albeit for hardware exposing Px coordination types as SW_ANY or SW_ALL,
->> this will have some unintended side effects. Effectively, it will look at
->> the P-state domain existence and *if it already exists* it will skip the
->> acpi-cpufreq initialization and thus inherit the policy from the first CPU
->> in the cpufreq domain. This will finally lead to the original cpu not
->> changing target freq to P0 other than the first in the domain. Which will
->> make turbo boost not getting enabled (e.g. for 'performance' governor) for
->> all cpus.
->>
->> This patch fixes that, by also evaluating _PSD when enumerating all ACPI
->> procesors (online and offline) and always uploading the correct P-State
->> dependency up to Xen.
->>
->> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
->> ---
->> xen_processor_get_psd() is taken from acpi_processor_get_psd()
->> (drivers/acpi/processor_perflib.c) simply because only Xen Dom0 needs
->> to handle vcpus != pcpus. If preferred I could try exporting that API
->> instead and use it here.
-> 
-> I think this would be a preferable approach.
-> 
-OK, I'll respin with exporting this from drivers/acpi. FWIW I copied solely for
-backportability purposes provided that hardware with SW_ANY or SW_ALL and
-current stable kernels is a little broken.
+Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
 
-	Joao
+-Will
+
+> 
+>>>
+>>> 0x00000000430f0af[[:xdigit:]],v1,cavium,core
+>>>
+>>>
+>>> -Will Cohen
+>>
+> 
+> thanks
+> Ganapat
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
