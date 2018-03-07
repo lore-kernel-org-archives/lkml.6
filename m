@@ -1,62 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934924AbeCGUb2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:31:28 -0500
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35843 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934457AbeCGTmW (ORCPT
+        id S965016AbeCGUbg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:31:36 -0500
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40336 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934932AbeCGUbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:42:22 -0500
-X-Google-Smtp-Source: AG47ELsn889Cg3JKRfTRZSKAcUdVPobdWjZYEbVQhEr1i0zGOYa/xuo7kpBCZrLZz/ihRwriRo3JFtxJdLzKUUzV8/g=
+        Wed, 7 Mar 2018 15:31:33 -0500
+X-Google-Smtp-Source: AG47ELspLwLKn0dnWqW3jCGJnapg/NmZ2rNIg/9Nty0FflZuS6kAUx+M6h0G6Qpd2ppjtG0rUAfEqw==
+Date: Wed, 7 Mar 2018 14:31:31 -0600
+From: Rob Herring <robh@kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: devicetree@vger.kernel.org, monstr@monstr.eu,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 4/8] arm64: zynqmp: Add support for Xilinx zcu104-revA
+Message-ID: <20180307203131.vubpjgh6jootrkyc@rob-hp-laptop>
+References: <cover.1520017397.git.michal.simek@xilinx.com>
+ <409e614b762bd6da24bc26364fcf28c805986eaf.1520017397.git.michal.simek@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <20180307193438.fogti4jodn2jgsb5@rob-hp-laptop>
-References: <20180301152515.20940-1-enric.balletbo@collabora.com>
- <20180301152515.20940-3-enric.balletbo@collabora.com> <20180307193438.fogti4jodn2jgsb5@rob-hp-laptop>
-From: Alexandru Stan <amstan@google.com>
-Date: Wed, 7 Mar 2018 11:42:00 -0800
-Message-ID: <CAHNYxRx2kHvefaroNH_fhLcToXCH8q1TBfp-A8b0BNZ00jGL9w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] dt-bindings: phy-rockchip-typec: move extcon
- property to be optional.
-To: Rob Herring <robh@kernel.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org,
-        vicencb@gmail.com, kishon@ti.com,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        groeck@chromium.org, kernel@collabora.com,
-        linux-arm-kernel@lists.infradead.org,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <409e614b762bd6da24bc26364fcf28c805986eaf.1520017397.git.michal.simek@xilinx.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 11:34 AM, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Mar 01, 2018 at 04:25:11PM +0100, Enric Balletbo i Serra wrote:
->> The extcon property is used to detect the cable-state but some boards
->> just connect the type-c phy to a regular USB-A connector without any
->> power-delivery and thus no controller reporting the cable-state.
->> So the extcon property is not really a required property, move it to be
->> optional instead.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->>
->> Changes in v2:
->> - [2/6] Rewrite the justification as suggested by Heiko Stuebner.
->>
->>  Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt | 2 ++
->>  1 file changed, 2 insertions(+)
->
-> And extcon should be deprecated IMO.
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Fri, Mar 02, 2018 at 08:04:30PM +0100, Michal Simek wrote:
+> Xilinx zcu104 is another customer board. It is sort of zcu102 clone
+> with some differences.
+> 
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+> Changes in v3:
+> - Use i2c-mux instead of i2cswitch - was done with zcu106
+> - Remove gpio and usb aliases
+> 
+> Changes in v2:
+> - Remove i2c mw u-boot commands
+> - Record compatible string to xilinx.txt
+> 
+>  Documentation/devicetree/bindings/arm/xilinx.txt  |   3 +
+>  arch/arm64/boot/dts/xilinx/Makefile               |   1 +
+>  arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts | 195 ++++++++++++++++++++++
+>  3 files changed, 199 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-zcu104-revA.dts
 
-Hello Rob,
-
-I'm currently learning a bit about USB and extcon.
-
-Could you provide some background on why you think extcon should be
-deprecated? What do you propose we replace it with?
+Reviewed-by: Rob Herring <robh@kernel.org>
