@@ -1,64 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934095AbeCGRLw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:11:52 -0500
-Received: from mx1.uni-rostock.de ([139.30.22.71]:63850 "EHLO
-        mx1.uni-rostock.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933487AbeCGRLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:11:50 -0500
-From: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
-To: <johannes@sipsolutions.net>
-CC: <linux-wireless@vger.kernel.org>, <kvalo@codeaurora.org>,
-        <syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>,
-        Benjamin Beichler <benjamin.beichler@uni-rostock.de>
-Subject: [PATCH] mac80211_hwsim: fixed use-after-free bug in hwsim_exit_net
-Date: Wed, 7 Mar 2018 18:11:07 +0100
-Message-ID: <20180307171107.2803-1-benjamin.beichler@uni-rostock.de>
-X-Mailer: git-send-email 2.16.2
+        id S934153AbeCGRMr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:12:47 -0500
+Received: from ms.lwn.net ([45.79.88.28]:58426 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933774AbeCGRMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:12:39 -0500
+Date: Wed, 7 Mar 2018 10:12:38 -0700
+From: Jonathan Corbet <corbet@lwn.net>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Takashi Iwai <tiwai@suse.de>, Jani Nikula <jani.nikula@intel.com>,
+        Jiri Slaby <jslaby@suse.cz>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation/sphinx: Fix Directive import error
+Message-ID: <20180307101238.44c88415@lwn.net>
+In-Reply-To: <20180302184014.GG31400@bombadil.infradead.org>
+References: <20180302152831.11510-1-tiwai@suse.de>
+        <20180302184014.GG31400@bombadil.infradead.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [139.30.201.113]
-X-ClientProxiedBy: email1.uni-rostock.de (139.30.22.81) To
- email1.uni-rostock.de (139.30.22.81)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When destroying a net namespace, all hwsim interfaces, which are not
-created in default namespace are deleted. But the async deletion of the
-interfaces could last longer than the actual destruction of the
-namespace, which results to an use after free bug. Therefore use
-synchronous deletion in this case.
+On Fri, 2 Mar 2018 10:40:14 -0800
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Fixes: 100cb9ff40e0 ("mac80211_hwsim: Allow managing radios from
-non-initial namespaces")
-Reported-by: syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com
-Signed-off-by: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
----
- drivers/net/wireless/mac80211_hwsim.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> Sphinx 1.7 removed sphinx.util.compat.Directive so people
+> who have upgraded cannot build the documentation.  Switch to
+> docutils.parsers.rst.Directive which has been available since
+> docutils 0.5 released in 2009.
+> 
+> Bugzilla: https://bugzilla.opensuse.org/show_bug.cgi?id=1083694
+> Co-developed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index 7b6c3640a94f..93a7ae34653e 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3528,8 +3528,12 @@ static void __net_exit hwsim_exit_net(struct net *net)
- 		list_del(&data->list);
- 		rhashtable_remove_fast(&hwsim_radios_rht, &data->rht,
- 				       hwsim_rht_params);
--		INIT_WORK(&data->destroy_work, destroy_radio);
--		queue_work(hwsim_wq, &data->destroy_work);
-+		hwsim_radios_generation++;
-+		spin_unlock_bh(&hwsim_radio_lock);
-+		mac80211_hwsim_del_radio(data,
-+					 wiphy_name(data->hw->wiphy),
-+					 NULL);
-+		spin_lock_bh(&hwsim_radio_lock);
- 	}
- 	spin_unlock_bh(&hwsim_radio_lock);
- 
--- 
-2.16.2
+FWIW, I've *finally* gotten a chance to test this with a few sphinx
+versions; it works just fine, of course.  Will get it upstream shortly.
+
+Thanks,
+
+jon
