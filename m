@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs17JRK/OSz5BljcsQRPkah8nU+3NzkViq+8MYoCOgiY7oLOLIZgH4HE9k2Jat6vwvbVC7Y
-ARC-Seal: i=1; a=rsa-sha256; t=1520451797; cv=none;
+X-Google-Smtp-Source: AG47ELuMOMyLeJIQhZSa9/31c8CpH27RQkfTcINndFLi91tIR6qSYMU0pn/HrCZmqnEEMN38TVPR
+ARC-Seal: i=1; a=rsa-sha256; t=1520451793; cv=none;
         d=google.com; s=arc-20160816;
-        b=bAoL5ywy6/ykH71wWdXvVEQWBKYbZgc8RPePB8wtBMWrqoQzEu86RoClkupHEv7DH7
-         9Ym8CVt1U0x0gjHLt2FlqcjbdnNQu7OR3IESTZOCWSLzMwpcSNrZqWAhw/UiHKRlJw+I
-         Yw5ozRfCZIaFSrPNHXHJHoOyi96482snwrIYDtg1Ma5t8Z4/MLld2900xi3KYpcnnE+1
-         DzaOd3fCaOd8NTZOqzzJtjwtaxz0T/js6MitLmChJdqwe4RGoZc3JK2oOGxnTXIyR8AX
-         Z5pGKl+6KU893Ie0v7+P0G2pj/n1igDkebxFsrnlx444nF/tpTWXw1sEHynaNtZU6OnK
-         htPw==
+        b=GdWZE7kj/F9c+fbqifrW3nQ298yYOIZuYcc5cjGcMPB1G3Pj1skzw8Vim8rzWyvBHq
+         t2LR/z371/kDCDqZPl7kBpF/Dm1arVXQ/UukbDH2oBuTJuwhlXjq7ZhJYOFeX5FcxokO
+         wqMGbptajXww3aVisSHPxx5S1anbD4mUzjfZXSzlgy6Hy2I8fKd5YFhIcQGwV18nDqbP
+         V+8hNqM/3/ZoDupRAFN4qTAi1Rcdn6TJVTxhW7aKpaIpQ58DA+vz2scyS1GOctqcN6co
+         vvw8sPQp5NYpmCrCvbdMQ+Jz9HCrTpNIkcL1NvzkXtJpiZi3gQ5+SMONSddVDZL9kY4y
+         FoLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cCqrOvfJOAco7hHj7Kn48Vcfhvt/iryKBxxupCjRWD4=;
-        b=h0HVD1K2pzW1uKmuUeHmkrkb9At1Z77nWLfP2g5ynxMeRzhpuvaUUX5Kz5pPY5lvcN
-         qoNTrA0d5/MIVnd0RRPosc2blT+W1K6PAPtQJkYwuSmWxTUFAoV79Gb380L0U1QTx63W
-         M3cIaZLrr8dyKBVIZAVLm6WkdaeMy1jy0X00BJMuQsoCMYiTDrNCQQujK9eeACwurp2L
-         XtTOwv06K5VEtJz8E+8mrB8BygUT02s3QiSxy6zsY+wJDENoxptnGjxlNZlwDtXzRdJg
-         1n32f3rdUFQ57PjAdLHBWCSWaXzWNbYsHtMoRJZFGqGDvLuDINalEjPK7rwDDnoTN4D6
-         F3Vw==
+        bh=nw5vl3bevftyBim6zkajlXLsZ3DwDcrbtG9IiFsMifc=;
+        b=JXS3LGu49h7en1STwnR01IpQRFcnYAeB9OoAojLPRHi5KUoypG8BDIxaaFJuln06qW
+         rEZsptCDgL1kWfHn7to8RA3cFFCMVcndONLhpGgIaCnbObWOUUKBdou6X7kL+4DhzqG2
+         wo+FhjseN0AvR2ebfJyDQcnjmBaWd6AshWkawRcxR+tqBLXdAWvTu64TTBDWQ8Fzwuha
+         dxTRo5pgGgTvKAFsvGRChFh8cttTdFFP5mtfNq83BI/lovTRSXMvbhdMErJrUYPm6+8J
+         2+FG6OnRIt5jebHNk4DdvdxwLvmtPB6eOk2so23TnzXaUurQXd3Id2Wbb2Yet75MQlxY
+         /Eqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paolo Valente <paolo.valente@linaro.org>,
-	Omar Sandoval <osandov@fb.com>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 098/122] blk-mq: dont call io scheds .requeue_request when requeueing rq to ->dispatch
-Date: Wed,  7 Mar 2018 11:38:30 -0800
-Message-Id: <20180307191743.516746398@linuxfoundation.org>
+	Teodor Milkov <tm@del.bg>,
+	Yuchung Cheng <ycheng@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 096/122] tcp: revert F-RTO middle-box workaround
+Date: Wed,  7 Mar 2018 11:38:28 -0800
+Message-Id: <20180307191743.245437591@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309264299868557?=
-X-GMAIL-MSGID: =?utf-8?q?1594309264299868557?=
+X-GMAIL-THRID: =?utf-8?q?1594309259230127880?=
+X-GMAIL-MSGID: =?utf-8?q?1594309259230127880?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,52 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-commit 105976f517791aed3b11f8f53b308a2069d42055 upstream.
 
-__blk_mq_requeue_request() covers two cases:
+[ Upstream commit d4131f09770d9b7471c9da65e6ecd2477746ac5c ]
 
-- one is that the requeued request is added to hctx->dispatch, such as
-blk_mq_dispatch_rq_list()
+This reverts commit cc663f4d4c97b7297fb45135ab23cfd508b35a77. While fixing
+some broken middle-boxes that modifies receive window fields, it does not
+address middle-boxes that strip off SACK options. The best solution is
+to fully revert this patch and the root F-RTO enhancement.
 
-- another case is that the request is requeued to io scheduler, such as
-blk_mq_requeue_request().
-
-We should call io sched's .requeue_request callback only for the 2nd
-case.
-
-Cc: Paolo Valente <paolo.valente@linaro.org>
-Cc: Omar Sandoval <osandov@fb.com>
-Fixes: bd166ef183c2 ("blk-mq-sched: add framework for MQ capable IO schedulers")
-Cc: stable@vger.kernel.org
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Acked-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: cc663f4d4c97 ("tcp: restrict F-RTO to work-around broken middle-boxes")
+Reported-by: Teodor Milkov <tm@del.bg>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-mq.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_input.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -655,7 +655,6 @@ static void __blk_mq_requeue_request(str
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 45f750e85714..50963f92a67d 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1915,7 +1915,6 @@ void tcp_enter_loss(struct sock *sk)
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct net *net = sock_net(sk);
+ 	struct sk_buff *skb;
+-	bool new_recovery = icsk->icsk_ca_state < TCP_CA_Recovery;
+ 	bool is_reneg;			/* is receiver reneging on SACKs? */
+ 	bool mark_lost;
  
- 	trace_block_rq_requeue(q, rq);
- 	wbt_requeue(q->rq_wb, &rq->issue_stat);
--	blk_mq_sched_requeue_request(rq);
+@@ -1974,17 +1973,15 @@ void tcp_enter_loss(struct sock *sk)
+ 	tp->high_seq = tp->snd_nxt;
+ 	tcp_ecn_queue_cwr(tp);
  
- 	if (test_and_clear_bit(REQ_ATOM_STARTED, &rq->atomic_flags)) {
- 		if (q->dma_drain_size && blk_rq_bytes(rq))
-@@ -667,6 +666,9 @@ void blk_mq_requeue_request(struct reque
- {
- 	__blk_mq_requeue_request(rq);
- 
-+	/* this request will be re-inserted to io scheduler queue */
-+	blk_mq_sched_requeue_request(rq);
-+
- 	BUG_ON(blk_queued_rq(rq));
- 	blk_mq_add_to_requeue_list(rq, true, kick_requeue_list);
+-	/* F-RTO RFC5682 sec 3.1 step 1: retransmit SND.UNA if no previous
+-	 * loss recovery is underway except recurring timeout(s) on
+-	 * the same SND.UNA (sec 3.2). Disable F-RTO on path MTU probing
+-	 *
+-	 * In theory F-RTO can be used repeatedly during loss recovery.
+-	 * In practice this interacts badly with broken middle-boxes that
+-	 * falsely raise the receive window, which results in repeated
+-	 * timeouts and stop-and-go behavior.
++	/* F-RTO RFC5682 sec 3.1 step 1 mandates to disable F-RTO
++	 * if a previous recovery is underway, otherwise it may incorrectly
++	 * call a timeout spurious if some previously retransmitted packets
++	 * are s/acked (sec 3.2). We do not apply that retriction since
++	 * retransmitted skbs are permanently tagged with TCPCB_EVER_RETRANS
++	 * so FLAG_ORIG_SACK_ACKED is always correct. But we do disable F-RTO
++	 * on PTMU discovery to avoid sending new data.
+ 	 */
+ 	tp->frto = net->ipv4.sysctl_tcp_frto &&
+-		   (new_recovery || icsk->icsk_retransmits) &&
+ 		   !inet_csk(sk)->icsk_mtup.probe_size;
  }
+ 
+-- 
+2.14.3
