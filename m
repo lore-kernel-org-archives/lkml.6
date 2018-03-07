@@ -1,70 +1,89 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-X-Google-Smtp-Source: AG47ELuDrtj/poXhgkE05Ypa18dxGTBGzsyOmLc9xlgxbWDtqALlPy54+SwGJTbS9EnDAAjh73NK
-ARC-Seal: i=1; a=rsa-sha256; t=1520334264; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AG47ELuecIekMNZO6YSgkqPl09qVOMYSWTgDlZT4iGwOGibveWdUA5q/miUS+b0aAWHfJDqjm6hC
+ARC-Seal: i=1; a=rsa-sha256; t=1520432115; cv=none;
         d=google.com; s=arc-20160816;
-        b=vzaHhYuDkKZsHEZlJFKLq+bjSUZIfFNRSjLdJIlKaqgMPE1Rp5J3YtaNx/F7p9a7ad
-         UCeDccLY5fzU/i2Q0bJEhxKOA107CKPA6a6lwyv5lBKPBaAU/Zp5hWSPo5+QggWo8+8i
-         xuwQpe98Pm17M4Lcxo4oygKhiXqUdakpeIjIZrvsfZ+nEfJ2mGow4+z2HClxEfj0uCeG
-         V9kIPurT+HA4/JlBBESpfs8JIpTa5U6NlXxVXn4D2MFqDpDOaGNPBXlfVEP4RTDitvFl
-         qgK9IKB2+0l3T7g9rd8k26pz/gmMJFmY5GM0on4WRklpxmJiRJ88D8CFe0WEGGWxgcWk
-         L2FQ==
+        b=OW+aHphNYpH298hoYuoPyih88bjs71q82rSqqHJCpmlXEoMGC2lmnxfT1yXyp5fsTK
+         72YEWTzwjBcQVP7Y70yhMFg8CvC1G+c9QlkGcdDqZLDFa5SpYBMYXya0bDBMIMWpVwWx
+         esHMGiA6S4begqv/st0p17RyQqhrxwDuGtl+7q78yAUeOPA9AO0+v0yBmTTn+jLvJy11
+         YkgVhH6q0CSM9VapafSbKQqFYgmcVV41dPxOpPacaYz4yyVAh5g6uRN7gnZGfdyrH5uY
+         dkgHRhYoZjmqCWru++ry2pooXsv51DZqcR891EP/QG3mH9Eb2LFqjzYcdIJfK1J5M+OE
+         9U7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=hEhY7n8iduYHu3quSCGXXo87gyfMRQrJ4IQ65g67uFo=;
-        b=zBjd8DkvCkDSukxtblVTGOPFI4F1WU1fsJ1hiuieBMT0pao8apVGo/30cMXwgNNzNQ
-         rz0XJoxUtly2j1W2Xb7UYZMhJaCgh7znUJFbx14sn/zyvzQ6PzFUhAMIwIbWcrjFvNMt
-         H6ZY0jjEeU2fegcaKJjjT97+y2bnnV/h3d0xmUE4Lg31MUax+xCh7wUuNA4pwpp6GteM
-         8Utgffu0J0Epo6sQhwERADz3Vws3qsZZ/OjhrcPREgr4Z3gCKVfi9xF8iBIQWP7xcpf6
-         9QrUezfTx7qP7+Ab/6/JEJ4Ez6TlpbhsJe/t00S8qenOnHzQPXiZcioOQzCpVEFdEZMl
-         2yIA==
+        bh=65us4ob7yw2fpkW54kwiEVHuPVT0Ob7Noefm16V1UiQ=;
+        b=JB14xqJY499xPwAAV7azV5qlMua5yDV7a6zqXqeYGDOfwugPN6yQ3ak1Hqmvt9N6zy
+         dQOO7qggOYEdUBHMlf/0bEg406pwsvS0mhH0KBfw3k4NgKt6m0cYO5YDQEhwsAmFMhs8
+         QTwqYmd/ppQFMJGau2EFHP/aTF6m3g18hU22XB4uWU5PuDBYbNZnZ6hkWUCgTXMI4/Hn
+         iCMopCyhl07nnHPFlJrO6358ue5tfoOsqbm/2T3Byx0jrxYg0wYrOY8l4Tor99uplERW
+         he3aJIngCl7ymbYsRaRkUEp2Vuok8G9oc7MphrchotU0ID4sVu693lCkppU42ETmuQc5
+         mn+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.15 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=akyTGb+P;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jeffy.chen@rock-chips.com designates 211.150.80.15 as permitted sender) smtp.mailfrom=jeffy.chen@rock-chips.com
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <f8d72625a5a709bd29e05bdae7307691>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2 3/3] regmap: debugfs: Free map->debugfs_name when debugfs_create_dir() failed
-Date: Tue,  6 Mar 2018 19:04:03 +0800
-Message-Id: <20180306110403.14438-3-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
-References: <20180306110403.14438-1-jeffy.chen@rock-chips.com>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=akyTGb+P;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+From: Mark Brown <broonie@kernel.org>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: debugfs: Free map->debugfs_name when debugfs_create_dir() failed" to the regmap tree
+In-Reply-To: <20180306110403.14438-3-jeffy.chen@rock-chips.com>
+Message-Id: <E1etZqb-0001Z6-4n@debutante>
+Date: Wed, 07 Mar 2018 14:15:13 +0000
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594186021172605420?=
-X-GMAIL-MSGID: =?utf-8?q?1594186021172605420?=
+X-GMAIL-THRID: =?utf-8?q?1594288625334682792?=
+X-GMAIL-MSGID: =?utf-8?q?1594288625334682792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   regmap: debugfs: Free map->debugfs_name when debugfs_create_dir() failed
+
+has been applied to the regmap tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 17cf46cfe975f1dd04db6bd38398923846512d49 Mon Sep 17 00:00:00 2001
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Date: Tue, 6 Mar 2018 19:04:03 +0800
+Subject: [PATCH] regmap: debugfs: Free map->debugfs_name when
+ debugfs_create_dir() failed
 
 Free map->debugfs_name when debugfs_create_dir() failed to avoid memory
 leak.
 
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-
  drivers/base/regmap/regmap-debugfs.c | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index 5479a183248f..55e862a81e82 100644
+index dd3a16894e3c..c84f5ceb015a 100644
 --- a/drivers/base/regmap/regmap-debugfs.c
 +++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -582,6 +582,9 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+@@ -584,6 +584,9 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
  	map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
  	if (!map->debugfs) {
  		dev_warn(map->dev, "Failed to create debugfs directory\n");
@@ -75,4 +94,4 @@ index 5479a183248f..55e862a81e82 100644
  	}
  
 -- 
-2.11.0
+2.16.2
