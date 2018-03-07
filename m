@@ -1,618 +1,140 @@
-Return-Path: <yong.deng@magewell.com>
-X-Google-Smtp-Source: AG47ELtTiJF6GXDVt3OBFTOr2mV36fygjQq5BENr6YRHKS+f4NdyXW4I3Nb9DjqG8XJnE+JrFNhc
-ARC-Seal: i=1; a=rsa-sha256; t=1520562643; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JASkxOs9I3bfCyDwZEBapQSQy1heFyTyIs+mTEqPG24haUQnCLQ+b8K2wrfCN/TVa6
-         xN0Q3C/81j000dgInYGgDJw0cqsaUdQBpB2xqCwmB7dWDNpiK+P3V0yb60HTLXG/kohU
-         pEpoBLj0GuXVvIA51bnj96sndpsIiR7HzVUYIaa5PUCpJ8QWtplvaT1jGrfWxytAwQss
-         6GzjjPIdWwkPiOV+gbz+s2C/AxOf15lDFuuc9xb25UJdw5M7UUM86ZkHKCIao3y+bfpn
-         J7TzEPKtQ46OMQK8k7mwQrbZckJVRmeAUfdLdBVYwigYEyfr7Ei6ARfvSArE3aQM0mnq
-         NUIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=HPDLltV4KB23MftwCGpSt13CmxCiIsxDy5zdQX6fldY=;
-        b=SiLf0cb2Z1m550F27LWUItuoPqjse+Anjkn3xntK36h0Xv9iBmgR+X5AU+xIxxbuJh
-         2dxutwcISBTqBfoekh+0e8JtE5NtBlJd/cReLdiDpkO45hJ1n/yGQCBrRHQIvF/g8v1B
-         vaXQYhF1YzugCcuuV3FonyXVRe1rNPvDAa3ee9VONWnqWOSdKea4Gh5ATidM3INAYEYX
-         Pa1bwdCV0K10w/jcUBGQRr6+YNU58qThjTvK57SfTuPu0tfUPfy/ExN5tTVEP5D1JHSz
-         cUBaZ0Mj6QO9UPKxQZQmQFa8q2naw1p4kz35mHXg3vsIS4fJh8hiiiyBi/wcATKq035t
-         POQQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.74 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of yong.deng@magewell.com designates 115.124.20.74 as permitted sender) smtp.mailfrom=yong.deng@magewell.com
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07444169|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03275;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.BEF56O6_1520562629;
-Date: Fri, 9 Mar 2018 10:30:29 +0800
-From: Yong <yong.deng@magewell.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, "David S. Miller"
- <davem@davemloft.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap
- <rdunlap@infradead.org>, Hans Verkuil <hans.verkuil@cisco.com>, Stanimir
- Varbanov <stanimir.varbanov@linaro.org>, Benjamin Gaignard
- <benjamin.gaignard@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Philipp
- Zabel <p.zabel@pengutronix.de>, Ramesh Shanmugasundaram
- <ramesh.shanmugasundaram@bp.renesas.com>, Yannick Fertre
- <yannick.fertre@st.com>, Todor Tomov <todor.tomov@linaro.org>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v9 2/2] media: V3s: Add support for Allwinner CSI.
-Message-Id: <20180309103029.cc7047d4edaf1728b225054c@magewell.com>
-In-Reply-To: <20180306151418.5hts7jwgndi7qzsx@paasikivi.fi.intel.com>
-References: <1520302562-1577-1-git-send-email-yong.deng@magewell.com>
-	<20180306151418.5hts7jwgndi7qzsx@paasikivi.fi.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.30; i686-pc-mingw32)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-255570-1520464514-2-4392889339489113684
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520464513; b=NbgVsaLc6DGveC39sxLtLo0v6tXPMiW9R5MoDoKneFozdyl
+    +uCX5wF2F4gCJ0KuYyw7RrDmFDPlhN+8N+tdhJGWHar0LAboyB6JhlUYtOqOtUKg
+    q9N0RIc0LZgsh7lj1Ipy53Ceu6Ui6YVqgOW5eQZKEJQVQRe9b3eLkj3vEL8oZyHo
+    shYeCHfPThbaEoAuE65Z358+cwwbSC4CWKAAWCLBRs+FVFK+z1BV9pdJQCjars52
+    uh2606ykFLGJ/G2rBHabJu7cIKXoUyIR+D1F+vhQKDBcyaYC+4Nyx2oMNdWRUZxx
+    xujV5VY5YgE3m+OzLEEWwR6/MYmf2mFc/UH9ixA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc
+    :content-transfer-encoding:content-type:sender; s=arctest; t=
+    1520464513; bh=ykLPCzvtjYEDO76royWlEJ9NIvgIu5zQ4gMd96S825A=; b=O
+    TfTEELsNKpynxUZc0/ZS/vlCmKNX5Yaiu99TFHi5brKQwrEz5NgAz/fU6o0+wHje
+    OilNROLsWFGK6TJYBMxhSkN1UEPkt1MKSHAGiUuD6gHaabVYNBe9t8M3krixv6f9
+    Mad46s/6gu3oL/hOQv8R8RZ8pCjvM0jrn18qna1RoHDOzSatTVNS6Nd9V+XAA6Wy
+    9Z6tiIseeoRIOAlxIxacW5EBFJltKThPNjzcvSxcwKIv3bU2s0M5pOVHz6zCj3Fi
+    nrHPIGHJQ0w0Y/saShOhUXiziKMfhzmtgULj1WQ7yESesuu0zqamtteSivjgsDk6
+    p8ADQtqrJxbhxLnrfgSkg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bco8FBCb;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bco8FBCb;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELtD9KqcWKfX+qUnezg0cLCYO9zqwwK1rDXZwZE02pDGgZX0n8XLLFOT+IFO0gE7LJf7OUQxcQ==
+Subject: Re: [RFC] android: ion: How to properly clean caches for uncached
+ allocations
+To: Liam Mark <lmark@codeaurora.org>, Sumit Semwal <sumit.semwal@linaro.org>
+References: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <b1479541-13bd-85ea-f9c7-25264c91f9b9@redhat.com>
+Date: Wed, 7 Mar 2018 15:15:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com>
+Content-Language: en-US
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
+ linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+ Martijn Coenen <maco@android.com>, linux-arm-kernel@lists.infradead.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594152837685471403?=
-X-GMAIL-MSGID: =?utf-8?q?1594425494500452525?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
-
-On Tue, 6 Mar 2018 17:14:18 +0200
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-
-> Hi Yong,
+On 02/28/2018 09:18 PM, Liam Mark wrote:
+> The issue:
 > 
-> Thanks for the patchset; please see my comments below.
+> Currently in ION if you allocate uncached memory it is possible that there
+> are still dirty lines in the cache.  And often these dirty lines in the
+> cache are the zeros which were meant to clear out any sensitive kernel
+> data.
 > 
-> On Tue, Mar 06, 2018 at 10:16:02AM +0800, Yong Deng wrote:
-> > Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > interface and CSI1 is used for parallel interface. This is not
-> > documented in datasheet but by test and guess.
-
-...
-
-> > +
-> > +static const u32 supported_pixformats[] = {
-> > +	V4L2_PIX_FMT_SBGGR8,
-> > +	V4L2_PIX_FMT_SGBRG8,
-> > +	V4L2_PIX_FMT_SGRBG8,
-> > +	V4L2_PIX_FMT_SRGGB8,
-> > +	V4L2_PIX_FMT_SBGGR10,
-> > +	V4L2_PIX_FMT_SGBRG10,
-> > +	V4L2_PIX_FMT_SGRBG10,
-> > +	V4L2_PIX_FMT_SRGGB10,
-> > +	V4L2_PIX_FMT_SBGGR12,
-> > +	V4L2_PIX_FMT_SGBRG12,
-> > +	V4L2_PIX_FMT_SGRBG12,
-> > +	V4L2_PIX_FMT_SRGGB12,
-> > +	V4L2_PIX_FMT_YUYV,
-> > +	V4L2_PIX_FMT_YVYU,
-> > +	V4L2_PIX_FMT_UYVY,
-> > +	V4L2_PIX_FMT_VYUY,
-> > +	V4L2_PIX_FMT_HM12,
-> > +	V4L2_PIX_FMT_NV12,
-> > +	V4L2_PIX_FMT_NV21,
-> > +	V4L2_PIX_FMT_YUV420,
-> > +	V4L2_PIX_FMT_YVU420,
-> > +	V4L2_PIX_FMT_NV16,
-> > +	V4L2_PIX_FMT_NV61,
-> > +	V4L2_PIX_FMT_YUV422P,
-> > +};
+> What this means is that if you allocate uncached memory from ION, and then
+> subsequently write to that buffer (using the uncached mapping you are
+> provided by ION) then the data you have written could be corrupted at some
+> point in the future if a dirty line is evicted from the cache.
 > 
-> How about moving this where it's actually used? You'd also get rid of the
-> function to obtain this list.
+> Also this means there is a potential security issue.  If an un-privileged
+> userspace user allocated uncached memory (for example from the system heap)
+> and then if they were to read from that buffer (through the un-cached
+> mapping they are provided by ION), and if some of the zeros which were
+> written to that memory are still in the cache then this un-privileged
+> userspace user could read potentially sensitive kernel data.
 
-I think which formats are supported is determined by hardware (CSI).
-And different SoCs may support different formats. The distinction will
-be made in sun6i-csi.c.
+For the use case you are describing we don't actually need the
+memory to be non-cached until it comes time to do the dma mapping.
+Here's a proposal to shoot holes in:
 
-> 
-> > +
-> > +static inline struct sun6i_csi_dev *sun6i_csi_to_dev(struct sun6i_csi *csi)
-> > +{
-> > +	return container_of(csi, struct sun6i_csi_dev, csi);
-> > +}
-> > +
-> > +int sun6i_csi_get_supported_pixformats(struct sun6i_csi *csi,
-> > +				       const u32 **pixformats)
-> > +{
-> > +	if (pixformats != NULL)
-> > +		*pixformats = supported_pixformats;
-> > +
-> > +	return ARRAY_SIZE(supported_pixformats);
-> > +}
-> > +
-> > +/* TODO add 10&12 bit YUV, RGB support */
-> > +bool sun6i_csi_is_format_support(struct sun6i_csi *csi,
-> 
-> s/support/supported/
+- Before any dma_buf attach happens, all mmap mappings are cached
+- At the time attach happens, we shoot down any existing userspace
+mappings, do the dma_map with appropriate flags to clean the pages
+and then allow remapping to userspace as uncached. Really this
+looks like a variation on the old Ion faulting code which I removed
+except it's for uncached buffers instead of cached buffers.
 
-OK.
+Potential problems:
+- I'm not 100% about the behavior here if the attaching device
+is already dma_coherent. I also consider uncached mappings
+enough of a device specific optimization that you shouldn't
+do them unless you know it's needed.
+- The locking/sequencing with userspace could be tricky
+since userspace may not like us ripping mappings out from
+underneath if it's trying to access.
 
-> 
-> > +				 u32 pixformat, u32 mbus_code)
-> > +{
-> > +	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-> > +
-> > +	/*
-> > +	 * Some video receivers have the ability to be compatible with
-> > +	 * 8bit and 16bit bus width.
-> > +	 * Identify the media bus format from device tree.
-> > +	 */
-> > +	if ((sdev->csi.v4l2_ep.bus_type == V4L2_MBUS_PARALLEL
-> > +	      || sdev->csi.v4l2_ep.bus_type == V4L2_MBUS_BT656)
-> > +	     && sdev->csi.v4l2_ep.bus.parallel.bus_width == 16) {
-> > +		switch (pixformat) {
-> > +		case V4L2_PIX_FMT_HM12:
-> > +		case V4L2_PIX_FMT_NV12:
-> > +		case V4L2_PIX_FMT_NV21:
-> > +		case V4L2_PIX_FMT_NV16:
-> > +		case V4L2_PIX_FMT_NV61:
-> > +		case V4L2_PIX_FMT_YUV420:
-> > +		case V4L2_PIX_FMT_YVU420:
-> > +		case V4L2_PIX_FMT_YUV422P:
-> > +			switch (mbus_code) {
-> > +			case MEDIA_BUS_FMT_UYVY8_1X16:
-> > +			case MEDIA_BUS_FMT_VYUY8_1X16:
-> > +			case MEDIA_BUS_FMT_YUYV8_1X16:
-> > +			case MEDIA_BUS_FMT_YVYU8_1X16:
-> > +				return true;
-> > +			default:
-> > +				dev_dbg(sdev->dev, "Unsupported mbus code: 0x%x\n",
-> > +					mbus_code);
-> > +				break;
-> > +			}
-> > +			break;
-> > +		default:
-> > +			dev_dbg(sdev->dev, "Unsupported pixformat: 0x%x\n",
-> > +				pixformat);
-> > +			break;
-> > +		}
-> > +		return false;
-> > +	}
-> > +
-> > +	switch (pixformat) {
-> > +	case V4L2_PIX_FMT_SBGGR8:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SBGGR8_1X8);
-> > +	case V4L2_PIX_FMT_SGBRG8:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGBRG8_1X8);
-> > +	case V4L2_PIX_FMT_SGRBG8:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGRBG8_1X8);
-> > +	case V4L2_PIX_FMT_SRGGB8:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SRGGB8_1X8);
-> > +	case V4L2_PIX_FMT_SBGGR10:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SBGGR10_1X10);
-> > +	case V4L2_PIX_FMT_SGBRG10:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGBRG10_1X10);
-> > +	case V4L2_PIX_FMT_SGRBG10:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGRBG10_1X10);
-> > +	case V4L2_PIX_FMT_SRGGB10:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SRGGB10_1X10);
-> > +	case V4L2_PIX_FMT_SBGGR12:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SBGGR12_1X12);
-> > +	case V4L2_PIX_FMT_SGBRG12:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGBRG12_1X12);
-> > +	case V4L2_PIX_FMT_SGRBG12:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SGRBG12_1X12);
-> > +	case V4L2_PIX_FMT_SRGGB12:
-> > +		return (mbus_code == MEDIA_BUS_FMT_SRGGB12_1X12);
-> > +
-> > +	case V4L2_PIX_FMT_YUYV:
-> > +		return (mbus_code == MEDIA_BUS_FMT_YUYV8_2X8);
-> > +	case V4L2_PIX_FMT_YVYU:
-> > +		return (mbus_code == MEDIA_BUS_FMT_YVYU8_2X8);
-> > +	case V4L2_PIX_FMT_UYVY:
-> > +		return (mbus_code == MEDIA_BUS_FMT_UYVY8_2X8);
-> > +	case V4L2_PIX_FMT_VYUY:
-> > +		return (mbus_code == MEDIA_BUS_FMT_VYUY8_2X8);
-> > +
-> > +	case V4L2_PIX_FMT_HM12:
-> > +	case V4L2_PIX_FMT_NV12:
-> > +	case V4L2_PIX_FMT_NV21:
-> > +	case V4L2_PIX_FMT_NV16:
-> > +	case V4L2_PIX_FMT_NV61:
-> > +	case V4L2_PIX_FMT_YUV420:
-> > +	case V4L2_PIX_FMT_YVU420:
-> > +	case V4L2_PIX_FMT_YUV422P:
-> > +		switch (mbus_code) {
-> > +		case MEDIA_BUS_FMT_UYVY8_2X8:
-> > +		case MEDIA_BUS_FMT_VYUY8_2X8:
-> > +		case MEDIA_BUS_FMT_YUYV8_2X8:
-> > +		case MEDIA_BUS_FMT_YVYU8_2X8:
-> > +			return true;
-> > +		default:
-> > +			dev_dbg(sdev->dev, "Unsupported mbus code: 0x%x\n",
-> > +				mbus_code);
-> > +			break;
-> > +		}
-> > +		break;
-> > +	default:
-> > +		dev_dbg(sdev->dev, "Unsupported pixformat: 0x%x\n", pixformat);
-> > +		break;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
-> 
-> How about switching to runtime PM? I do admit there have been reasons why
-> subdevs used the s_power callback but CSI-2 receivers should have hardly
-> done that for a long, long time.
-
-I don't understand you very much. But this works well and have been tested.
-And I am not familiar with runtime PM.
-
-> 
-> > +{
-> > +	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-> > +	struct regmap *regmap = sdev->regmap;
-> > +	int ret;
-> > +
-> > +	if (!enable) {
-> > +		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, 0);
-> > +
-> > +		clk_disable_unprepare(sdev->clk_ram);
-> > +		clk_disable_unprepare(sdev->clk_mod);
-> > +		reset_control_assert(sdev->rstc_bus);
-> > +		return 0;
-> > +	}
-> > +
-> > +	ret = clk_prepare_enable(sdev->clk_mod);
-> > +	if (ret) {
-> > +		dev_err(sdev->dev, "Enable csi clk err %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = clk_prepare_enable(sdev->clk_ram);
-> > +	if (ret) {
-> > +		dev_err(sdev->dev, "Enable clk_dram_csi clk err %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = reset_control_deassert(sdev->rstc_bus);
-> > +	if (ret) {
-> > +		dev_err(sdev->dev, "reset err %d\n", ret);
-> > +		return ret;
-> > +	}
-> > +
-> > +	regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, CSI_EN_CSI_EN);
-> > +
-> > +	return 0;
-> > +}
-> > +
-
-...
-
-> > +
-> > +/* -----------------------------------------------------------------------------
-> > + * Media Controller and V4L2
-> > + */
-> > +static int sun6i_csi_link_entity(struct sun6i_csi *csi,
-> > +				 struct media_entity *entity)
-> > +{
-> > +	struct media_entity *sink;
-> > +	struct media_pad *sink_pad;
-> > +	int ret;
-> > +	int i;
-> > +
-> > +	if (!entity->num_pads) {
-> > +		dev_err(csi->dev, "%s: invalid entity\n", entity->name);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	for (i = 0; i < entity->num_pads; i++) {
-> > +		if (entity->pads[i].flags & MEDIA_PAD_FL_SOURCE)
-> > +			break;
-> 
-> I think you're looking for a pad corresponding to an fwnode. Could you use
-> media_entity_get_fwnode_pad()?
-
-OK.
-
-> 
-> > +	}
-> > +
-> > +	if (i == entity->num_pads) {
-> > +		dev_err(csi->dev, "%s: no source pad in external entity %s\n",
-> > +			__func__, entity->name);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	sink = &csi->video.vdev.entity;
-> > +	sink_pad = &csi->video.pad;
-> > +
-> > +	dev_dbg(csi->dev, "creating %s:%u -> %s:%u link\n",
-> > +		entity->name, i, sink->name, sink_pad->index);
-> > +	ret = media_create_pad_link(entity, i, sink, sink_pad->index,
-> > +				    MEDIA_LNK_FL_ENABLED);
-> > +	if (ret < 0) {
-> > +		dev_err(csi->dev, "failed to create %s:%u -> %s:%u link\n",
-> > +			entity->name, i, sink->name, sink_pad->index);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return media_entity_call(sink, link_setup, sink_pad, &entity->pads[i],
-> > +				 MEDIA_LNK_FL_ENABLED);
-> 
-> In general there's no need to call the link setup function this way outside
-> the MC framework. Is there a reason for doing so here?
-
-Do you mean use media_entity_setup_link instead? 
-
-> 
-> > +}
-> > +
-> > +static int sun6i_subdev_notify_complete(struct v4l2_async_notifier *notifier)
-> > +{
-> > +	struct sun6i_csi *csi = container_of(notifier, struct sun6i_csi,
-> > +					     notifier);
-> > +	struct v4l2_device *v4l2_dev = &csi->v4l2_dev;
-> > +	struct v4l2_subdev *sd;
-> > +	int ret;
-> > +
-> > +	dev_dbg(csi->dev, "notify complete, all subdevs registered\n");
-> > +
-> > +	if (notifier->num_subdevs != 1)
-> > +		return -EINVAL;
-> > +
-> > +	sd = list_first_entry(&v4l2_dev->subdevs, struct v4l2_subdev, list);
-> > +	if (sd == NULL)
-> > +		return -EINVAL;
-> > +
-> > +	ret = sun6i_csi_link_entity(csi, &sd->entity);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = v4l2_device_register_subdev_nodes(&csi->v4l2_dev);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return media_device_register(&csi->media_dev);
-> > +}
-> > +
-> > +static const struct v4l2_async_notifier_operations sun6i_csi_async_ops = {
-> > +	.complete = sun6i_subdev_notify_complete,
-> > +};
-> > +
-
-...
-
-> > +
-> > +static struct vb2_ops sun6i_csi_vb2_ops = {
-> 
-> const
-
-OK.
-
-> 
-> > +	.queue_setup		= sun6i_video_queue_setup,
-> > +	.wait_prepare		= vb2_ops_wait_prepare,
-> > +	.wait_finish		= vb2_ops_wait_finish,
-> > +	.buf_prepare		= sun6i_video_buffer_prepare,
-> > +	.start_streaming	= sun6i_video_start_streaming,
-> > +	.stop_streaming		= sun6i_video_stop_streaming,
-> > +	.buf_queue		= sun6i_video_buffer_queue,
-> > +};
-> > +
-> > +static int vidioc_querycap(struct file *file, void *priv,
-> > +				struct v4l2_capability *cap)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +
-> > +	strlcpy(cap->driver, "sun6i-video", sizeof(cap->driver));
-> > +	strlcpy(cap->card, video->vdev.name, sizeof(cap->card));
-> > +	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
-> > +		 video->csi->dev->of_node->name);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int vidioc_enum_fmt_vid_cap(struct file *file, void *priv,
-> > +				   struct v4l2_fmtdesc *f)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +	u32 index = f->index;
-> > +
-> > +	if (index >= video->num_formats)
-> > +		return -EINVAL;
-> > +
-> > +	f->pixelformat = video->formats[index].pixformat;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int vidioc_g_fmt_vid_cap(struct file *file, void *priv,
-> > +				struct v4l2_format *fmt)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +
-> > +	*fmt = video->fmt;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +
-> > +static int sun6i_video_try_fmt_source(struct sun6i_video *video,
-> > +				      u32 which,
-> > +				      struct v4l2_pix_format *pixfmt,
-> > +				      struct sun6i_csi_format *csi_fmt)
-> > +{
-> > +	struct v4l2_subdev *subdev;
-> > +	struct v4l2_subdev_pad_config *pad_cfg;
-> > +	struct v4l2_subdev_format format = {
-> > +		.which = which,
-> > +	};
-> > +	u32 pad;
-> > +	int ret;
-> > +
-> > +	subdev = sun6i_video_remote_subdev(video, &pad);
-> > +	if (subdev == NULL)
-> > +		return -ENXIO;
-> > +
-> > +	v4l2_fill_mbus_format(&format.format, pixfmt, csi_fmt->mbus_code);
-> > +
-> > +	pad_cfg = v4l2_subdev_alloc_pad_config(subdev);
-> > +	if (pad_cfg == NULL)
-> > +		return -ENOMEM;
-> > +
-> > +	format.pad = pad;
-> > +	ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &format);
-> > +	if (ret)
-> > +		goto done;
-> > +
-> > +	v4l2_fill_pix_format(pixfmt, &format.format);
-> > +
-> > +done:
-> > +	v4l2_subdev_free_pad_config(pad_cfg);
-> > +	return ret;
-> > +}
-> > +
-> > +static int sun6i_video_try_fmt(struct sun6i_video *video, u32 which,
-> > +			       struct v4l2_format *f,
-> > +			       struct sun6i_csi_format **current_fmt)
-> > +{
-> > +	struct sun6i_csi_format *csi_fmt;
-> > +	struct v4l2_pix_format *pixfmt = &f->fmt.pix;
-> > +	int ret;
-> > +
-> > +	csi_fmt = find_format_by_pixformat(video, pixfmt->pixelformat);
-> > +	if (csi_fmt == NULL) {
-> > +		if (video->num_formats > 0) {
-> > +			csi_fmt = &video->formats[0];
-> > +			pixfmt->pixelformat = csi_fmt->pixformat;
-> > +		} else
-> > +			return -EINVAL;
-> > +	}
-> > +
-> > +	ret = sun6i_video_try_fmt_source(video, which, pixfmt, csi_fmt);
-> > +	if (ret)
-> > +		return ret;
-> 
-> As the rest of the driver supports the media controller, I'd refrain from
-> checking the format on the external sub-device here. That format may change
-> later on without the knowledge of the sun6i-csi driver. It may, for
-> instance, be changed by the user.
-> 
-> Instead, you should have a link_validate op in the media_entity_operations
-> struct set for your sub-device and the video node. That guarantees that the
-> links are properly validated before streaming starts.
-> 
-> Typically MC-centric drivers only query format information and sometimes
-> controls from the external devices.
-
-If so, the user will can't get a hint when setting a unsupported format 
-but get error only when starting the stream. This will make it impossible
-for users to find out where the problem is.
-
-I think if the user want to change the format of sub-device through 
-sub-device node, he should do it before setting the format of v4l2 device.
-
-> 
-> > +
-> > +	pixfmt->bytesperline = (pixfmt->width * csi_fmt->bpp) >> 3;
-> 
-> Is there line alignment or something for the device?
-
-I am not sure. This is not documented.
-
-> 
-> > +	pixfmt->sizeimage = (pixfmt->width * csi_fmt->bpp * pixfmt->height) / 8;
-> 
-> pixfmt->bytesperline * pixfmt->height
-
-OK.
-
-> 
-> 
-> > +
-> > +	if (current_fmt)
-> > +		*current_fmt = csi_fmt;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int sun6i_video_set_fmt(struct sun6i_video *video, struct v4l2_format *f)
-> > +{
-> > +	struct sun6i_csi_format *current_fmt;
-> > +	int ret;
-> > +
-> > +	ret = sun6i_video_try_fmt(video, V4L2_SUBDEV_FORMAT_ACTIVE, f,
-> > +				  &current_fmt);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	video->fmt = *f;
-> > +	video->current_fmt = current_fmt;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int vidioc_s_fmt_vid_cap(struct file *file, void *priv,
-> > +				struct v4l2_format *f)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +
-> > +	if (vb2_is_busy(&video->vb2_vidq))
-> > +		return -EBUSY;
-> > +
-> > +	return sun6i_video_set_fmt(video, f);
-> > +}
-> > +
-> > +static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
-> > +				  struct v4l2_format *f)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +
-> > +	return sun6i_video_try_fmt(video, V4L2_SUBDEV_FORMAT_TRY, f, NULL);
-> > +}
-> > +
-> > +static int vidioc_enum_input(struct file *file, void *fh,
-> > +			 struct v4l2_input *inp)
-> > +{
-> > +	struct sun6i_video *video = video_drvdata(file);
-> > +	struct v4l2_subdev *subdev;
-> > +	u32 pad;
-> > +	int ret;
-> > +
-> > +	if (inp->index != 0)
-> > +		return -EINVAL;
-> > +
-> > +	subdev = sun6i_video_remote_subdev(video, &pad);
-> > +	if (subdev == NULL)
-> > +		return -ENXIO;
-> > +
-> > +	ret = v4l2_subdev_call(subdev, video, g_input_status, &inp->status);
-> > +	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
-> > +		return ret;
-> > +
-> > +	inp->type = V4L2_INPUT_TYPE_CAMERA;
-> 
-> What does the input status mean for a camera? How about removing it?
-
-Set it to zero?
-
-> 
-> > +
-> > +	inp->capabilities = 0;
-> > +	inp->std = 0;
-> > +	if (v4l2_subdev_has_op(subdev, pad, dv_timings_cap))
-> > +		inp->capabilities = V4L2_IN_CAP_DV_TIMINGS;
-> > +
-> > +	strlcpy(inp->name, subdev->name, sizeof(inp->name));
-> > +
-> > +	return 0;
-> > +}
-
-...
-
-> 
-> -- 
-> Kind regards,
-> 
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
+Thoughts?
 
 Thanks,
-Yong
+Laura
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
