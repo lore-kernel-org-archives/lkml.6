@@ -1,154 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754495AbeCGNpD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 08:45:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbeCGNot (ORCPT
+        id S1754528AbeCGNpe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 08:45:34 -0500
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35766 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754423AbeCGNov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 08:44:49 -0500
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] mm: Mark pages in use for page tables
-Date: Wed,  7 Mar 2018 05:44:43 -0800
-Message-Id: <20180307134443.32646-5-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180307134443.32646-1-willy@infradead.org>
-References: <20180307134443.32646-1-willy@infradead.org>
+        Wed, 7 Mar 2018 08:44:51 -0500
+X-Google-Smtp-Source: AG47ELvKeokPpWFhnHpbFTXl+YjJKuwbhFOTrPaq6rr2+rKf2g4TBk3nXFg0CAY2LMZ6hgNQeJX6gs9CTg8rznCSPwM=
+MIME-Version: 1.0
+In-Reply-To: <20180306000832.GL4197@saruman>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 19:14:49 +0530
+Message-ID: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: James Hogan <jhogan@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi James,
 
-Define a new PageTable bit in the page_type and use it to mark pages in
-use as page tables.  This can be helpful when debugging crashdumps or
-analysing memory fragmentation.  Add a KPF flag to report these pages
-to userspace and update page-types.c to interpret that flag.
+Thanks for reviewing this.
 
-Note that only pages currently accounted as NR_PAGETABLES are tracked
-as PageTable; this does not include pgd/p4d/pud/pmd pages.  Those will
-be the subject of a later patch.
+On 6 March 2018 at 05:38, James Hogan <jhogan@kernel.org> wrote:
+> On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
+>> Add initial Ingenic X1000 SoC support. Provide minimum necessary
+>> information to boot kernel to an initramfs userspace.
+>>
+>> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> ---
+>>  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++++++++
+>>  arch/mips/jz4740/Kconfig              |  6 +++
+>>  arch/mips/jz4740/time.c               |  2 +-
+>>  3 files changed, 100 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
+>
+> arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
+> get_system_type() will need updating too.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/tile/mm/pgtable.c                 | 3 +++
- fs/proc/page.c                         | 2 ++
- include/linux/mm.h                     | 2 ++
- include/linux/page-flags.h             | 6 ++++++
- include/uapi/linux/kernel-page-flags.h | 1 +
- tools/vm/page-types.c                  | 1 +
- 6 files changed, 15 insertions(+)
+Missed it. Will make necessary changes.
 
-diff --git a/arch/tile/mm/pgtable.c b/arch/tile/mm/pgtable.c
-index ec5576fd3a86..6dff12db335d 100644
---- a/arch/tile/mm/pgtable.c
-+++ b/arch/tile/mm/pgtable.c
-@@ -206,6 +206,7 @@ struct page *pgtable_alloc_one(struct mm_struct *mm, unsigned long address,
- 	 */
- 	for (i = 1; i < order; ++i) {
- 		init_page_count(p+i);
-+		__SetPageTable(p+i);
- 		inc_zone_page_state(p+i, NR_PAGETABLE);
- 	}
- 
-@@ -226,6 +227,7 @@ void pgtable_free(struct mm_struct *mm, struct page *p, int order)
- 
- 	for (i = 1; i < order; ++i) {
- 		__free_page(p+i);
-+		__ClearPageTable(p+i);
- 		dec_zone_page_state(p+i, NR_PAGETABLE);
- 	}
- }
-@@ -240,6 +242,7 @@ void __pgtable_free_tlb(struct mmu_gather *tlb, struct page *pte,
- 
- 	for (i = 1; i < order; ++i) {
- 		tlb_remove_page(tlb, pte + i);
-+		__ClearPageTable(pte + i);
- 		dec_zone_page_state(pte + i, NR_PAGETABLE);
- 	}
- }
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index c9757af919a3..80275e7a963b 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -156,6 +156,8 @@ u64 stable_page_flags(struct page *page)
- 		u |= 1 << KPF_BALLOON;
- 	if (PageVmalloc(page))
- 		u |= 1 << KPF_VMALLOC;
-+	if (PageTable(page))
-+		u |= 1 << KPF_PGTABLE;
- 
- 	if (page_is_idle(page))
- 		u |= 1 << KPF_IDLE;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42adb1a..7a15042d6828 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1829,6 +1829,7 @@ static inline bool pgtable_page_ctor(struct page *page)
- {
- 	if (!ptlock_init(page))
- 		return false;
-+	__SetPageTable(page);
- 	inc_zone_page_state(page, NR_PAGETABLE);
- 	return true;
- }
-@@ -1836,6 +1837,7 @@ static inline bool pgtable_page_ctor(struct page *page)
- static inline void pgtable_page_dtor(struct page *page)
- {
- 	pte_lock_deinit(page);
-+	__ClearPageTable(page);
- 	dec_zone_page_state(page, NR_PAGETABLE);
- }
- 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 1503d314bb3d..aa5c8c1c6d38 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -644,6 +644,7 @@ PAGEFLAG_FALSE(DoubleMap)
- #define PG_balloon	0x00000100
- #define PG_kmemcg	0x00000200
- #define PG_vmalloc	0x00000400
-+#define PG_table	0x00000800
- 
- #define PageType(page, flag)						\
- 	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-@@ -687,6 +688,11 @@ PAGE_TYPE_OPS(Kmemcg, kmemcg)
-  */
- PAGE_TYPE_OPS(Vmalloc, vmalloc)
- 
-+/*
-+ * Marks pages in use as page tables.
-+ */
-+PAGE_TYPE_OPS(Table, table)
-+
- extern bool is_free_buddy_page(struct page *page);
- 
- __PAGEFLAG(Isolated, isolated, PF_ANY);
-diff --git a/include/uapi/linux/kernel-page-flags.h b/include/uapi/linux/kernel-page-flags.h
-index 5f1735ff05b3..3c51d8bf8b7b 100644
---- a/include/uapi/linux/kernel-page-flags.h
-+++ b/include/uapi/linux/kernel-page-flags.h
-@@ -36,5 +36,6 @@
- #define KPF_ZERO_PAGE		24
- #define KPF_IDLE		25
- #define KPF_VMALLOC		26
-+#define KPF_PGTABLE		27
- 
- #endif /* _UAPILINUX_KERNEL_PAGE_FLAGS_H */
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-index 116f59eff5e2..bbb992694f05 100644
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -132,6 +132,7 @@ static const char * const page_flag_names[] = {
- 	[KPF_THP]		= "t:thp",
- 	[KPF_BALLOON]		= "o:balloon",
- 	[KPF_VMALLOC]		= "V:vmalloc",
-+	[KPF_PGTABLE]		= "g:pgtable",
- 	[KPF_ZERO_PAGE]		= "z:zero_page",
- 	[KPF_IDLE]              = "i:idle_page",
- 
--- 
-2.16.1
+> Does X1000 use a different PRID, or is it basically just a JZ4780 core
+> with different SoC peripherals?
+
+Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
+single CPU core so it is definitely not JZ4780.
+
+>> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
+>> new file mode 100644
+>> index 0000000..abbb9ec
+>> --- /dev/null
+>> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+>> @@ -0,0 +1,93 @@
+>> +/*
+>> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> + *
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2. This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>
+> (these will need updating to use SPDX identifiers if you respin)
+
+Sure. Will take care while submitting next version.
+
+>> +     cgu: jz4780-cgu@10000000 {
+>
+> not sure jz4780 is appropriate here.
+
+No, it is not. Copy pasted from jz4780.dtsi but missed updating this.
+
+>> +             compatible = "ingenic,x1000-cgu";
+>> +             reg = <0x10000000 0x100>;
+>> +
+>> +             clocks = <&ext>, <&rtc>;
+>> +             clock-names = "ext", "rtc";
+>> +
+>> +             #clock-cells = <1>;
+>> +     };
+>
+> Cheers
+> James
+
+I used to get my code tested from Domink but I could not reach him for
+quite some time. Before buying the development board myself I would
+like to see if anyone can help me in testing. Do you have any contact
+with Ingenic who can help in testing this?
+
+Thanks,
+PrasannaKumar
