@@ -1,38 +1,67 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvE29w9HeKJrwiyb//5Du3pUtEmuoPQewLIQ0xHpa8Sb6i8YS02GkBVakMNuMwtAA6kFWSs
-ARC-Seal: i=1; a=rsa-sha256; t=1520451908; cv=none;
-        d=google.com; s=arc-20160816;
-        b=XQ8wVMtVHQJFXYqXUYG68ooIxQOPl4sqiTuf0xSoUM9418KgVQ46k46l2Yv5eLLHpA
-         Xbs3sIzUz0FqPYXbKBqfnEaAwazkxHdPYtPg70vDM1/psDxmjn0Z2UKQUgbS2j1RXnDy
-         wgLFmldBhjugYTLaHAhjr2s1NCUo0SNIb2fQx9tQSYWGUy3upSh6M5eBWt1ybZjiifHT
-         ZjKy3NcNHcBhh1XEkMO7u/t1P+5wYlAOcKpiIOskspt2fO+fXIVVmrLW1lww2alibn6W
-         GomCJkusdDnfi1NreQxbnFak9YcwMYGE3C1dBIvosHI7iRQrn01RDLaurzceQYHuQJAe
-         30WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=v/DPd072h6iAIwkb4GxnEYm6+isM+El+B8pdPrg5vUk=;
-        b=zVQnJ02CwCtXNpnkhUvX8oC67oJxMA+dlCHG/mojpFbDZqtBuFz8Tk9jA8m9YB5e68
-         LAh6oztoEUJcSIneQBL02bCKSr6GjjZvX3OQ+STpgY4VAbg5FEeUVh88IMVWuNTRHURM
-         bbdwfyJ1GmZZ0LDPUj21FVe/EoYwKBCfO9M+RAoRyhYBiGLCn//DCBz5rlPPcmc7MuYY
-         zER7UHi+NbiDwVwMeWP9bG1VtKHYPhiW5qvQI16zbkZw0IThdsv/nbgGRwJHpCzxIUr5
-         VID4iaXsEJ8v35UF4+Tehxvp1793kyIMuJmhtmDISxNII6VX3bV9llhvJejaPE0bs3Se
-         2A/A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4025272-1520451906-2-6964636180029402835
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520451905; b=PQ8AOivNXMPrh25xZa0ojkCYeGxVDanMOqMR9zhBv+DMHAC
+    QPA3rgbhAqmwFgY07qVYsibV4cBe5yK22AZYsyIZ9liiMgljSl1VErQDjpDXRmML
+    b7sNp61DzRs+iIGL38RNyK5Y/zpDGzud92WDJ/pxg0fKd6RHDjh8XSoofnOF/Wr0
+    irmdKwjyhFqZKb0PdinEDmugAioOJTdhCgBpE1i0GXeC2nJE4nE6hG6CLcnPj0ns
+    0+RqlHZMrlAPdb4bVPuq8rN5AxSSy1Wd7YCP2ym4ENiesiQZWRGOvmgS5oGdzc91
+    Rwve6p6HU0bLB6MjkaaN/h39OUIaaG/DTGWxEhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1520451905; bh=7z1PgoAAvCHq5g1O4S2UE8ayOv
+    6pR8Zow9YXihbXb8w=; b=k+lehidL9FhLv7xFJ4vW1gX+KvltWZkICAaAaUKZwM
+    Ykwo20jeFOOpMhWoELBCdFu9I0j7sXZG9ZdV/DuNcQd7j9mCuxg2lRKL6mdBdgfi
+    kQpetJMFyoUyZf2/z3SFrbtZ3akTBKOihi/xHQuG3mgvIZ2E3HVzj6COhDcX7gqi
+    NaFqSs+L4ZB4lcKlKKm/n68MqXtEDhQoI1tKtVRbJL66Q4CLe9aUQiLWKyQuqNtw
+    FCpmLE/8rU1mHk7ArO5ioyjHNKQqv3P8PcLZ5NCy9FAognuskyH1GpdQxNcYpNbv
+    wJuJsN5UJVaKjNYoyhn1e4/pjQn0YoOD7n2EWwP0Y+pg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-category=clean score=-100 state=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965204AbeCGTpB (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:45:01 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43996 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965182AbeCGTo7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:44:59 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 025/110] block: fix the count of PGPGOUT for WRITE_SAME
-Date: Wed,  7 Mar 2018 11:38:08 -0800
-Message-Id: <20180307191042.938315225@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.14 022/110] parisc: Reduce irq overhead when run in qemu
+Date: Wed,  7 Mar 2018 11:38:05 -0800
+Message-Id: <20180307191042.523045231@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,10 +69,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309092397136741?=
-X-GMAIL-MSGID: =?utf-8?q?1594309380373882093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +79,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Helge Deller <deller@gmx.de>
 
-commit 7c5a0dcf557c6511a61e092ba887de28882fe857 upstream.
+commit 636a415bcc7f4fd020ece8fd5fc648c4cef19c34 upstream.
 
-The vm counters is counted in sectors, so we should do the conversation
-in submit_bio.
+When run under QEMU, calling mfctl(16) creates some overhead because the
+qemu timer has to be scaled and moved into the register. This patch
+reduces the number of calls to mfctl(16) by moving the calls out of the
+loops.
 
-Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-Cc: stable@vger.kernel.org
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Additionally, increase the minimal time interval to 8000 cycles instead
+of 500 to compensate possible QEMU delays when delivering interrupts.
+
+Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org # 4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/kernel/time.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2277,7 +2277,7 @@ blk_qc_t submit_bio(struct bio *bio)
- 		unsigned int count;
+--- a/arch/parisc/kernel/time.c
++++ b/arch/parisc/kernel/time.c
+@@ -76,10 +76,10 @@ irqreturn_t __irq_entry timer_interrupt(
+ 	next_tick = cpuinfo->it_value;
  
- 		if (unlikely(bio_op(bio) == REQ_OP_WRITE_SAME))
--			count = queue_logical_block_size(bio->bi_disk->queue);
-+			count = queue_logical_block_size(bio->bi_disk->queue) >> 9;
- 		else
- 			count = bio_sectors(bio);
+ 	/* Calculate how many ticks have elapsed. */
++	now = mfctl(16);
+ 	do {
+ 		++ticks_elapsed;
+ 		next_tick += cpt;
+-		now = mfctl(16);
+ 	} while (next_tick - now > cpt);
+ 
+ 	/* Store (in CR16 cycles) up to when we are accounting right now. */
+@@ -103,16 +103,17 @@ irqreturn_t __irq_entry timer_interrupt(
+ 	 * if one or the other wrapped. If "now" is "bigger" we'll end up
+ 	 * with a very large unsigned number.
+ 	 */
+-	while (next_tick - mfctl(16) > cpt)
++	now = mfctl(16);
++	while (next_tick - now > cpt)
+ 		next_tick += cpt;
+ 
+ 	/* Program the IT when to deliver the next interrupt.
+ 	 * Only bottom 32-bits of next_tick are writable in CR16!
+ 	 * Timer interrupt will be delivered at least a few hundred cycles
+-	 * after the IT fires, so if we are too close (<= 500 cycles) to the
++	 * after the IT fires, so if we are too close (<= 8000 cycles) to the
+ 	 * next cycle, simply skip it.
+ 	 */
+-	if (next_tick - mfctl(16) <= 500)
++	if (next_tick - now <= 8000)
+ 		next_tick += cpt;
+ 	mtctl(next_tick, 16);
  
