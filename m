@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv14CtAkKlmMEluujA0DqvkKJAHKPT4kzgeOGmg+EdYeB6yPzk3y7rs9tVFYn8ofP1JGNfw
-ARC-Seal: i=1; a=rsa-sha256; t=1520451684; cv=none;
+X-Google-Smtp-Source: AG47ELsnxUtGW3CTJC0YSUTRbogRXixewfbDG5ZMg+vxfckr+pjwgLiIQS58KChy/omfY8VB4R4N
+ARC-Seal: i=1; a=rsa-sha256; t=1520451682; cv=none;
         d=google.com; s=arc-20160816;
-        b=K/zGo+M3/bdv4pdCkZqa+MTFH7cpFrY0NNA5/MXpCp5jz8XB+oEJf0ORqNGIMc0b0Z
-         OXBDJu1MvrdJmIU5rI4jjZnrDVyx4UjXO37C+rubBQZ+WL7zPaiYPOJVkuI/+6SQjwDS
-         twSQ699yFlyX12pF+ihsOQCK+naH8r4BGhndY/P+k/hzVa2YAENDWm6P7tHplsF4FxgN
-         kKGugNR66hxH7lenbHw9fyageROdqh0I2dO4qOHG6p1KRywyulnIceyWZC60NhlgbeYE
-         BtHct9+B/lnt4HGIyksJsutLSlq1A8cBZ3nsMeb1rsKqxyORoGW5OkGatTV/Em8LufwM
-         Vizw==
+        b=wwOosQtypP2oihdqHAivj12dLMGFi5KB016ESos1uOqkslsikiqSPQQVh4jit5SWkg
+         NN0QrhoeAMNrMSbrLoi7eCNC8nLv3mtqRX5FF9h+guSB69Wf5YQXiLzilgrliXbWccry
+         8Qoh4fJbH1805lwpQHy16YHTuU22L7SZXtMeEn9OhqhVe7Y6U0NePT9jejUmf0ZWF6vM
+         AkVagI5nS6o657yj3747pNcFz4YGeZZHxoRSBp5+oH6c/haX4ke6rDop7HMiMDZ5eGdr
+         OEKAaW8MH1HaprTsDZCXPMxFS6RHuvoBa10KEAL7HuLSDq9KIeMGRbGF/hIeRQJOcqmF
+         COqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HMN+jitBx+VPixiWUTVoQiQIkHWOv8dV3/SgekbW0Hc=;
-        b=NY0ZkiZlE4hRv6tfgyJz4wJ9m2QCO9g5HGnhSHiTNXDkQHEODXxq3/qX71cgJ/Q07r
-         x0P9KMYwdf8z6H6jUldCIZaGmc2W0n8qpZlzfzcvMFqNgwaFOukXH/tQkNH+BEeyJb/A
-         PdDIlWA3s5o6vn/RSk0w3IQnvaeajqlNue+DR0Z53UVZXUzwMIXCeIRpSQWIqdj3NyB1
-         Y4+g1aMxzLRxDm+JzNr0use/4lv1EJzJa7Pnay5wYpluB0rvr147YddUgkla7aIJtMUx
-         sA8VA3io7QmXj+wHgw8VByIkGdiqbu6MOmtD75UAa7fH+Pue/1ktNvRkOI3uyAbNMG5d
-         o/9Q==
+        bh=zt3usaZtKk1wCalrDcbSFpjwa27FHn1bltb1yNaWi9M=;
+        b=Rh219xUF/fHH0oG2ldhwotRMVjSVucoA/yLr6e9hfU6ibMlzRI/DkdW07G1g2Y98KO
+         FZRBZoX0LVFjtCIRhBtad94kxEq8Dj2ZQ05IpN1QoowVMHn7ynECaiAnbo+wFkgYN0xF
+         C4nmq3gf5b5/UCMyJMQxUKgW0HkBJkCiAjzy7+6OKFKr+RdtuJtKqBcEz1OrZBbet9bv
+         T2cVuBdnRDjSVasEjxrNMtDLI8LrwXLsAq8gMMkGLG56v877Iri2vyo72kAt/XZfSiE9
+         bv+ZNIjrxlqQ3ysE/3ahrMUlNyxdVHg9xu7UsbXjOfycfIxYY8w5ANl2jfrtWmYtbVpU
+         o5Qg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Gal Pressman <galp@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.15 052/122] net/mlx5e: Fix TCP checksum in LRO buffers
-Date: Wed,  7 Mar 2018 11:37:44 -0800
-Message-Id: <20180307191736.638476454@linuxfoundation.org>
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 051/122] udplite: fix partial checksum initialization
+Date: Wed,  7 Mar 2018 11:37:43 -0800
+Message-Id: <20180307191736.460270737@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309146234864843?=
-X-GMAIL-MSGID: =?utf-8?q?1594309146234864843?=
+X-GMAIL-THRID: =?utf-8?q?1594309143307548548?=
+X-GMAIL-MSGID: =?utf-8?q?1594309143307548548?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,123 +49,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gal Pressman <galp@mellanox.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 8babd44d2079079f9d5a4aca7005aed80236efe0 ]
+[ Upstream commit 15f35d49c93f4fa9875235e7bf3e3783d2dd7a1b ]
 
-When receiving an LRO packet, the checksum field is set by the hardware
-to the checksum of the first coalesced packet. Obviously, this checksum
-is not valid for the merged LRO packet and should be fixed.  We can use
-the CQE checksum which covers the checksum of the entire merged packet
-TCP payload to help us calculate the checksum incrementally.
+Since UDP-Lite is always using checksum, the following path is
+triggered when calculating pseudo header for it:
 
-Tested by sending IPv4/6 traffic with LRO enabled, RX checksum disabled
-and watching nstat checksum error counters (in addition to the obvious
-bandwidth drop caused by checksum errors).
+  udp4_csum_init() or udp6_csum_init()
+    skb_checksum_init_zero_check()
+      __skb_checksum_validate_complete()
 
-This bug is usually "hidden" since LRO packets would go through the
-CHECKSUM_UNNECESSARY flow which does not validate the packet checksum.
+The problem can appear if skb->len is less than CHECKSUM_BREAK. In
+this particular case __skb_checksum_validate_complete() also invokes
+__skb_checksum_complete(skb). If UDP-Lite is using partial checksum
+that covers only part of a packet, the function will return bad
+checksum and the packet will be dropped.
 
-It's important to note that previous to this patch, LRO packets provided
-with CHECKSUM_UNNECESSARY are indeed packets with a correct validated
-checksum (even though the checksum inside the TCP header is incorrect),
-since the hardware LRO aggregation is terminated upon receiving a packet
-with bad checksum.
+It can be fixed if we skip skb_checksum_init_zero_check() and only
+set the required pseudo header checksum for UDP-Lite with partial
+checksum before udp4_csum_init()/udp6_csum_init() functions return.
 
-Fixes: e586b3b0baee ("net/mlx5: Ethernet Datapath files")
-Signed-off-by: Gal Pressman <galp@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: ed70fcfcee95 ("net: Call skb_checksum_init in IPv4")
+Fixes: e4f45b7f40bd ("net: Call skb_checksum_init in IPv6")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   47 +++++++++++++++++-------
- 1 file changed, 34 insertions(+), 13 deletions(-)
+ include/net/udplite.h   |    1 +
+ net/ipv4/udp.c          |    5 +++++
+ net/ipv6/ip6_checksum.c |    5 +++++
+ 3 files changed, 11 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -36,6 +36,7 @@
- #include <linux/tcp.h>
- #include <linux/bpf_trace.h>
- #include <net/busy_poll.h>
-+#include <net/ip6_checksum.h>
- #include "en.h"
- #include "en_tc.h"
- #include "eswitch.h"
-@@ -547,20 +548,33 @@ bool mlx5e_post_rx_mpwqes(struct mlx5e_r
- 	return true;
- }
+--- a/include/net/udplite.h
++++ b/include/net/udplite.h
+@@ -64,6 +64,7 @@ static inline int udplite_checksum_init(
+ 		UDP_SKB_CB(skb)->cscov = cscov;
+ 		if (skb->ip_summed == CHECKSUM_COMPLETE)
+ 			skb->ip_summed = CHECKSUM_NONE;
++		skb->csum_valid = 0;
+         }
  
-+static void mlx5e_lro_update_tcp_hdr(struct mlx5_cqe64 *cqe, struct tcphdr *tcp)
-+{
-+	u8 l4_hdr_type = get_cqe_l4_hdr_type(cqe);
-+	u8 tcp_ack     = (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_NO_DATA) ||
-+			 (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_AND_DATA);
+ 	return 0;
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2031,6 +2031,11 @@ static inline int udp4_csum_init(struct
+ 		err = udplite_checksum_init(skb, uh);
+ 		if (err)
+ 			return err;
 +
-+	tcp->check                      = 0;
-+	tcp->psh                        = get_cqe_lro_tcppsh(cqe);
-+
-+	if (tcp_ack) {
-+		tcp->ack                = 1;
-+		tcp->ack_seq            = cqe->lro_ack_seq_num;
-+		tcp->window             = cqe->lro_tcp_win;
-+	}
-+}
-+
- static void mlx5e_lro_update_hdr(struct sk_buff *skb, struct mlx5_cqe64 *cqe,
- 				 u32 cqe_bcnt)
- {
- 	struct ethhdr	*eth = (struct ethhdr *)(skb->data);
- 	struct tcphdr	*tcp;
- 	int network_depth = 0;
-+	__wsum check;
- 	__be16 proto;
- 	u16 tot_len;
- 	void *ip_p;
- 
--	u8 l4_hdr_type = get_cqe_l4_hdr_type(cqe);
--	u8 tcp_ack = (l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_NO_DATA) ||
--		(l4_hdr_type == CQE_L4_HDR_TYPE_TCP_ACK_AND_DATA);
--
- 	proto = __vlan_get_protocol(skb, eth->h_proto, &network_depth);
- 
- 	tot_len = cqe_bcnt - network_depth;
-@@ -577,23 +591,30 @@ static void mlx5e_lro_update_hdr(struct
- 		ipv4->check             = 0;
- 		ipv4->check             = ip_fast_csum((unsigned char *)ipv4,
- 						       ipv4->ihl);
-+
-+		mlx5e_lro_update_tcp_hdr(cqe, tcp);
-+		check = csum_partial(tcp, tcp->doff * 4,
-+				     csum_unfold((__force __sum16)cqe->check_sum));
-+		/* Almost done, don't forget the pseudo header */
-+		tcp->check = csum_tcpudp_magic(ipv4->saddr, ipv4->daddr,
-+					       tot_len - sizeof(struct iphdr),
-+					       IPPROTO_TCP, check);
- 	} else {
-+		u16 payload_len = tot_len - sizeof(struct ipv6hdr);
- 		struct ipv6hdr *ipv6 = ip_p;
- 
- 		tcp = ip_p + sizeof(struct ipv6hdr);
- 		skb_shinfo(skb)->gso_type = SKB_GSO_TCPV6;
- 
- 		ipv6->hop_limit         = cqe->lro_min_ttl;
--		ipv6->payload_len       = cpu_to_be16(tot_len -
--						      sizeof(struct ipv6hdr));
--	}
-+		ipv6->payload_len       = cpu_to_be16(payload_len);
- 
--	tcp->psh = get_cqe_lro_tcppsh(cqe);
--
--	if (tcp_ack) {
--		tcp->ack                = 1;
--		tcp->ack_seq            = cqe->lro_ack_seq_num;
--		tcp->window             = cqe->lro_tcp_win;
-+		mlx5e_lro_update_tcp_hdr(cqe, tcp);
-+		check = csum_partial(tcp, tcp->doff * 4,
-+				     csum_unfold((__force __sum16)cqe->check_sum));
-+		/* Almost done, don't forget the pseudo header */
-+		tcp->check = csum_ipv6_magic(&ipv6->saddr, &ipv6->daddr, payload_len,
-+					     IPPROTO_TCP, check);
++		if (UDP_SKB_CB(skb)->partial_cov) {
++			skb->csum = inet_compute_pseudo(skb, proto);
++			return 0;
++		}
  	}
- }
  
+ 	/* Note, we are only interested in != 0 or == 0, thus the
+--- a/net/ipv6/ip6_checksum.c
++++ b/net/ipv6/ip6_checksum.c
+@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb,
+ 		err = udplite_checksum_init(skb, uh);
+ 		if (err)
+ 			return err;
++
++		if (UDP_SKB_CB(skb)->partial_cov) {
++			skb->csum = ip6_compute_pseudo(skb, proto);
++			return 0;
++		}
+ 	}
+ 
+ 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
