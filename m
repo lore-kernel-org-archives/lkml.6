@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuh/0iUCAYi08adtfNJN53cRhNUl8PKBGK3i6R6vt5xS9/jDEGgtD9zRmbGe7rK7Us9zWnH
-ARC-Seal: i=1; a=rsa-sha256; t=1520451842; cv=none;
+X-Google-Smtp-Source: AG47ELtIGBFg9fQy1WLShD27iz996uRuHOklEgNRXiSpI6cr30i963JCuXuF8ZdaCBnaGkFqkRyh
+ARC-Seal: i=1; a=rsa-sha256; t=1520451840; cv=none;
         d=google.com; s=arc-20160816;
-        b=oXfOcX0nsQt8i3WeuULDBBI8ZM35/453LUPHowMXnvqvPHPjE6K0+9IgO4ERLx45qY
-         cBD52fEP3vUnFA2yrGKuzGEJWJ1BWvTETyPrWx4J3ApfRcDSRqUQ/FbfMz9Yh3AbO+TN
-         7tSs5GTTGkFBZRyHXHMpWDVI8Y5wdJszsAdNHxQ6ohKyV6UVpf6pgYC+em0ZSigQaf3X
-         ivs2b8nmekQyx6tw5+xI8apmi7dLOJ0saCDKgosF5m7KgAqBse2pa3NcUolfRY6RWZGe
-         PQr5vXNLaxeI4SQIZ/Qh2WkIx24bq3fFKdNuTI4JfMnHrHY1+SyShDpr9ZspGFXwyHK0
-         UvRg==
+        b=Zz+n5TXySuLXH+X8wh+RMWu8Ykm7a3Vu4RUD5iI1Z4sR8QkElLRdK22hs6SEjFD5LE
+         bxN1q452lInlNW0UeomRbHQfCZ8zJzHgl4X2tnKSbV7IMv2e548YamGkKp0RzNMp0S7E
+         vDVKlC0KqpL9Fpb0HGgSKO4gSB4QaeqDOYtcZdhE8GwnwEU2iH4A2AYzpe+8ScWMsB1U
+         LMoqR26DzapV38/HbxN83D8zFvryoIV4Y4DcSzMt6eRQlXGNDNVcOHUlJ4sNBGj/MkgI
+         zMl0KVOAGBwydouHsyRT953Q24c25imrTkFnJKpg8ezQb4FF9UWQZeDP52XV+NmBsmdv
+         3N3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Yi0+AImkkanUh5eBiI+6QXHDpTKYBEwmKDCuVAzYKtw=;
-        b=kc96sPskmgNK+P2uZBEDrGmjINIUFsuSqzm7xg5SJiDmzhLAW6yDiafSHyjlCelVyc
-         y5Pce5na8DddLyEK53PQr8gp0W5AlO23sZr1CYPahcyHrdvwrkHSNs+MfiVD6bXuSMzJ
-         FFoy9oNWyXBwMDvmltTqwSHK1kUmEtBu1yYFKCwx5yVTaOmhCtu0AesiEhcdSfmQmPOX
-         XqaGDCW8z1MyTXDLzcXM175aLc66sL8YTlqTSXNEXT1UAEGS/6UG6C/CjU+Fkr635I3f
-         WSZptAdWJmN6JYVzGKH7BVBB3N3WZURSnBWU/0HAliJskwTL7nB1SRUkJ7+9DE4ag5Tu
-         fV7g==
+        bh=RGmiv+QIlplgw+O0oozvYQrntPwTurgfQwHOUMUZ1dw=;
+        b=fGBQ4P3ZKiPOlqDrEdIEatOINvq0T+iKUDE8jmNWYe9bczU90aLSojgZCjkczXEZZh
+         SNGy2ueGIPXZwytFU9+NsRBdIk+rMN3UrlgzXRebYH/+898cai4msI201x8VjurWyMX5
+         m/qPxMrbR9X6yLMpOZRNX/fTKrxqiQ8Qt7FwMR3v6WKwEraMo91zlX5RSVuc4tlSV3KD
+         fToNfyGViEVWX8fXicmN5aUxd4TYQQO2Tw/qGPPNo+Ivzy5+TIwHiDlSAQiUTAIC8RKS
+         RlZQtRmHIEBESeUDek3KkPcwXm77Iwky9G323IlG3t8ouLKq4RMNfl5KdBYMWHHXxscx
+         SfMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adam Ford <aford173@gmail.com>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.15 119/122] ARM: dts: LogicPD SOM-LV: Fix I2C1 pinmux
-Date: Wed,  7 Mar 2018 11:38:51 -0800
-Message-Id: <20180307191746.864846388@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.15 118/122] ACPI / bus: Parse tables as term_list for Dell XPS 9570 and Precision M5530
+Date: Wed,  7 Mar 2018 11:38:50 -0800
+Message-Id: <20180307191746.723771136@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309311235762259?=
-X-GMAIL-MSGID: =?utf-8?q?1594309311235762259?=
+X-GMAIL-THRID: =?utf-8?q?1594309308611933489?=
+X-GMAIL-MSGID: =?utf-8?q?1594309308611933489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +49,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adam Ford <aford173@gmail.com>
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
 
-commit 84c7efd607e7fb6933920322086db64654f669b2 upstream.
+commit 36904703aeeeb6cd31993f1353c8325006229f9a upstream.
 
-The pinmuxing was missing for I2C1 which was causing intermittent issues
-with the PMIC which is connected to I2C1.  The bootloader did not quite
-configure the I2C1 either, so when running at 2.6MHz, it was generating
-errors at times.
+The i2c touchpad on Dell XPS 9570 and Precision M5530 doesn't work out
+of box.
 
-This correctly sets the I2C1 pinmuxing so it can operate at 2.6MHz
+The touchpad relies on its _INI method to update its _HID value from
+XXXX0000 to SYNA2393.
 
-Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD DM3730
-SOM-LV")
+Also, the _STA relies on value of I2CN to report correct status.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Set acpi_gbl_parse_table_as_term_list so the value of I2CN can be
+correctly set up, and _INI can get run. The ACPI table in this machine
+is designed to get parsed this way.
+
+Also, change the quirk table to a more generic name.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=198515
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/logicpd-som-lv.dtsi |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/acpi/bus.c |   38 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
 
---- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
-+++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
-@@ -98,6 +98,8 @@
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -66,10 +66,37 @@ static int set_copy_dsdt(const struct dm
+ 	return 0;
+ }
+ #endif
++static int set_gbl_term_list(const struct dmi_system_id *id)
++{
++	acpi_gbl_parse_table_as_term_list = 1;
++	return 0;
++}
+ 
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
++	/*
++	 * Touchpad on Dell XPS 9570/Precision M5530 doesn't work under I2C
++	 * mode.
++	 * https://bugzilla.kernel.org/show_bug.cgi?id=198515
++	 */
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell Precision M5530",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Precision M5530"),
++		},
++	},
++	{
++		.callback = set_gbl_term_list,
++		.ident = "Dell XPS 15 9570",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "XPS 15 9570"),
++		},
++	},
+ 	/*
+ 	 * Invoke DSDT corruption work-around on all Toshiba Satellite.
++	 * DSDT will be copied to memory.
+ 	 * https://bugzilla.kernel.org/show_bug.cgi?id=14679
+ 	 */
+ 	{
+@@ -83,7 +110,7 @@ static const struct dmi_system_id dsdt_d
+ 	{}
  };
- 
- &i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
- 	clock-frequency = <2600000>;
- 
- 	twl: twl@48 {
-@@ -216,7 +218,12 @@
- 		>;
- 	};
- 
--
-+	i2c1_pins: pinmux_i2c1_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
-+			OMAP3_CORE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)        /* i2c1_sda.i2c1_sda */
-+		>;
-+	};
+ #else
+-static const struct dmi_system_id dsdt_dmi_table[] __initconst = {
++static const struct dmi_system_id acpi_quirks_dmi_table[] __initconst = {
+ 	{}
  };
+ #endif
+@@ -1001,11 +1028,8 @@ void __init acpi_early_init(void)
  
- &omap3_pmx_wkup {
+ 	acpi_permanent_mmap = true;
+ 
+-	/*
+-	 * If the machine falls into the DMI check table,
+-	 * DSDT will be copied to memory
+-	 */
+-	dmi_check_system(dsdt_dmi_table);
++	/* Check machine-specific quirks */
++	dmi_check_system(acpi_quirks_dmi_table);
+ 
+ 	status = acpi_reallocate_root_table();
+ 	if (ACPI_FAILURE(status)) {
