@@ -1,149 +1,105 @@
-Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtiNXqIxVyDQt66lIpjTFiRYZUBEU7YO9qIZaPSkzEO2X8Ixl76M5x+R/CzBxfQ/cOKwVID
-ARC-Seal: i=1; a=rsa-sha256; t=1520363136; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AG47ELvskjfrT8i9ljQRScFKDJLqgrhBLzQTMVWJiSP25kDOd+vnSXglbaCeHUx33K6URlFvaHun
+ARC-Seal: i=1; a=rsa-sha256; t=1520460685; cv=none;
         d=google.com; s=arc-20160816;
-        b=hmrnKgSJbqFjB0B7vfFKBA4vwl27uVdaljv7udlwwcaMB3hlkiwbvMTxMRQv0rLqUL
-         vpPhvHDD+fJCvFzW7QDv4LQlVoZYdO+9ucltLlclvkPnyQqdlz5PkUg24iZS50J8XGR2
-         LPIsiXN9lpip75vWzv+5xpAIucPs7fILb9+yHrCed6lslbO3a+Kvd2JAIndrUwbptpX8
-         5gqiIO+qlJ7RsKA7qE82CYwD8im0oRUBm9ez9I0m4RY+eOd/OMtHIkwq1rvO55QP1S91
-         4Oiw6VN6U7fuwDLmjNMcjfedScJ/oZnDMB3Nuv8pHRaenh2jH4cfJO4Xj8uaosBk5Sl9
-         2SDw==
+        b=glKqyjaR/KC9HQZPZbnnLvTnt6lHtO7ZBmkUNlDiOacwa8+O50Xz96AxMK5Cz9GCQA
+         EqsbwALCSMqyeyDObO55DzCSVhzl55X4a6dtMzYIHfdaSgaqesXxBoYN8Lqoms0Duiwn
+         6uqjVDd0v1SAanUMygosOR7RL2zI6msoDWw0DHYXlHSoO3kqNmXhEnD0L0wZa8Cz9GTE
+         nUH7l0i234W3M5z8G2Zetl1oHowQEpN684cojoir5NPBjZ9SfElfneVC2Q7LrlbGe2hg
+         +l2qC0+BJHK6c8GuqpNJOENKx1p8oV4Jp5rf53njZsOT3ak3xgCfcF/5gBrDrxp6z1lX
+         EREQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=rfqdvN4UpsnhQHFy6igeYqPMrQElXon5a7zjxAtGD5k=;
-        b=mN3ydsbPBsA+sEQ8jdd4FEH3eAj8p7N6bchsFilDBtlaQM+d6ohugH8Zj08hEVshTv
-         Kxlk26THt9kcSyd6zWjSanMWf3xsTolYomQ0wGeaRE2dl9dFIFy2LQ0pAz1DNElEBoNP
-         usoKwWv2Qi+7vSyIZx2zPky4p/tERfiCj6hm3RgpLZleeeRaMckNrvbtsHSGxnAL5PUs
-         j6zHfUdPGmPFRJzul1aoTppT2tSa0YRfSboIpKnkF7Etob1AaVBvALciem4pgGYcrlvY
-         yxFqEGy4c2cQfCWIU2ZxK50m8T19kaeV6CaNPHLyKxDzH3pSqIrxEfRtencUuh0/AjD8
-         O6sA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=zKVabeR3rSYGVCkoc+ZM/VIgpNBPulLxSLY9zT+Q57o=;
+        b=OKfxAN8CCoPckZfoTx8xGOO7DJRn6lHbqlJa6mRZdbdW732/DUf1atypXqrHCIWJj0
+         Zi0iOWopXjHj/aLUw6oi3hWt4leWO8trEFQyi/QPuj8WyX2RxDEwbhxNBy7quwKZrkKA
+         6XRpzRrVIuyQ4gq2hjyxYh5aSOGIyGYFvfD6wfHvS6kFTBtnWTiEgTE+UDZoPn8KaFeK
+         A7aOipmPSPSgFl3UaoPEty6itPlDjR1rNmUijaxovvN1Q1ItXCuYH//tz5/fSbxNYyFK
+         U1WMwdaytkufkH1Mj9UIFZzvO+8RJlDv3P6DygyHDc+M+rwSXR75zhOhpRWXAoAYKIlk
+         h7aA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,432,1515484800";
-   d="scan'208";a="205989469"
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Wed, 7 Mar 2018 23:11:24 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: joel@jms.id.au, andrew@aj.id.au, arnd@arndb.de,
+	gregkh@linuxfoundation.org, jdelvare@suse.com, linux@roeck-us.net,
+	benh@kernel.crashing.org, andrew@lunn.ch,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org
 Subject: Re: [PATCH v2 2/8] [PATCH 2/8] Documentations: dt-bindings: Add a
  document of PECI adapter driver for Aspeed AST24xx/25xx SoCs
-To: Pavel Machek <pavel@ucw.cz>
-Cc: joel@jms.id.au, andrew@aj.id.au, arnd@arndb.de,
- gregkh@linuxfoundation.org, jdelvare@suse.com, linux@roeck-us.net,
- benh@kernel.crashing.org, andrew@lunn.ch, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- openbmc@lists.ozlabs.org
+Message-ID: <20180307221124.GD10438@amd>
 References: <20180221161606.32247-1-jae.hyun.yoo@linux.intel.com>
  <20180221161606.32247-3-jae.hyun.yoo@linux.intel.com>
  <20180306124002.GA13950@amd>
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <33bf6563-b220-7ff9-8b04-84e9bd781b3f@linux.intel.com>
-Date: Tue, 6 Mar 2018 11:05:36 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <33bf6563-b220-7ff9-8b04-84e9bd781b3f@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180306124002.GA13950@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="76DTJ5CE0DCVQemd"
+Content-Disposition: inline
+In-Reply-To: <33bf6563-b220-7ff9-8b04-84e9bd781b3f@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593027883264098537?=
-X-GMAIL-MSGID: =?utf-8?q?1594216296727595604?=
+X-GMAIL-MSGID: =?utf-8?q?1594318583775658529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Pavel,
 
-Thanks for sharing your time on reviewing it. Please see my answers inline.
+--76DTJ5CE0DCVQemd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Jae
+Hi!
 
-On 3/6/2018 4:40 AM, Pavel Machek wrote:
-> Hi!
-> 
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> ---
->>   .../devicetree/bindings/peci/peci-aspeed.txt       | 73 ++++++++++++++++++++++
->>   1 file changed, 73 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/peci/peci-aspeed.txt
->>
->> diff --git a/Documentation/devicetree/bindings/peci/peci-aspeed.txt b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
->> new file mode 100644
->> index 000000000000..8a86f346d550
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
->> @@ -0,0 +1,73 @@
->> +Device tree configuration for PECI buses on the AST24XX and AST25XX SoCs.
-> 
-> Are these SoCs x86-based?
-> 
+> >Are these SoCs x86-based?
+>=20
+> Yes, these are ARM SoCs. Please see Andrew's answer as well.
 
-Yes, these are ARM SoCs. Please see Andrew's answer as well.
+Understood, thanks.
 
->> +Required properties:
->> +- compatible
->> +	"aspeed,ast2400-peci" or "aspeed,ast2500-peci"
->> +	- aspeed,ast2400-peci: Aspeed AST2400 family PECI controller
->> +	- aspeed,ast2500-peci: Aspeed AST2500 family PECI controller
->> +
->> +- reg
->> +	Should contain PECI registers location and length.
-> 
-> Other dts documents put it on one line, reg: Should contain ...
-> 
->> +- clock_frequency
->> +	Should contain the operation frequency of PECI hardware module.
->> +	187500 ~ 24000000
-> 
-> specify this is Hz?
-> 
+> >>+	Read sampling point selection. The whole period of a bit time will be
+> >>+	divided into 16 time frames. This value will determine which time fra=
+me
+> >>+	this controller will sample PECI signal for data read back. Usually in
+> >>+	the middle of a bit time is the best.
+> >
+> >English? "This value will determine when this controller"?
+> >
+>=20
+> Could I change it like below?:
+>=20
+> "This value will determine in which time frame this controller samples PE=
+CI
+> signal for data read back"
 
-I'll add a description. Thanks!
+I guess... I'm not native speaker, I guess this could be improved some
+more.
 
->> +- rd-sampling-point
->> +	Read sampling point selection. The whole period of a bit time will be
->> +	divided into 16 time frames. This value will determine which time frame
->> +	this controller will sample PECI signal for data read back. Usually in
->> +	the middle of a bit time is the best.
-> 
-> English? "This value will determine when this controller"?
-> 
+Best regards,
+									Pavel
 
-Could I change it like below?:
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-"This value will determine in which time frame this controller samples 
-PECI signal for data read back"
+--76DTJ5CE0DCVQemd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->> +	0 ~ 15 (default: 8)
->> +
->> +- cmd_timeout_ms
->> +	Command timeout in units of ms.
->> +	1 ~ 60000 (default: 1000)
->> +
->> +Example:
->> +	peci: peci@1e78b000 {
->> +		compatible = "simple-bus";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x1e78b000 0x60>;
->> +
->> +		peci0: peci-bus@0 {
->> +			compatible = "aspeed,ast2500-peci";
->> +			reg = <0x0 0x60>;
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			interrupts = <15>;
->> +			clocks = <&clk_clkin>;
->> +			clock-frequency = <24000000>;
->> +			msg-timing-nego = <1>;
->> +			addr-timing-nego = <1>;
->> +			rd-sampling-point = <8>;
->> +			cmd-timeout-ms = <1000>;
->> +		};
->> +	};
->> \ No newline at end of file
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqgY4wACgkQMOfwapXb+vKkpwCgxIl38neoJCtEDSh34sHCjHMb
+QxUAnRhNCAIzVU8cgKZ4g2D+qFLjBZM8
+=gl0E
+-----END PGP SIGNATURE-----
+
+--76DTJ5CE0DCVQemd--
