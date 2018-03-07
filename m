@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvxbRZ8vIWmOw0CvgdtvTt1XHbXOnxxakMfoO7VPx4g2gP536lqV86VbCpDZQxGMfNtmCSH
-ARC-Seal: i=1; a=rsa-sha256; t=1520451858; cv=none;
+X-Google-Smtp-Source: AG47ELunmswSzbT8qcimKAwRPGSIylTNwTl9E40y1k5IaJqLzJ9/loq+nX41F/n53teekYjDb6Gz
+ARC-Seal: i=1; a=rsa-sha256; t=1520451856; cv=none;
         d=google.com; s=arc-20160816;
-        b=oJjKlaOMav1W6xjrDyle+9Hua1tx0cvvt1/ASm71hqtXmNcT9Z5ODH9bpN/KkXtpfR
-         grH441j2RkheiYAkfHpwdv01gtS2OxMOUfbLPc/o6rXQzTyeqUHvSpklv48G1x2FHzKb
-         gQNywIEo1X+e4Lrg61QltueAco7x7SsDhE4fFtsPlg0p9tfRWIDNmqGmR/GqZeDB8OUB
-         971w+7z+kwPt/lbzWdZBJG8R2AsebhWCoBJzIdjInAR12GgCqSLREkIyjVEc2m4lItGa
-         hzEvAMfysD6c15jc6Y+h/ILRR5vZO62rv9FeDjWNOsy/LGOdSwvyHZ4VS4tztew8ZKp1
-         J0GA==
+        b=ztdIbX2xPQ0CMoqTVkeTriRZpE99K+rMd/d79uet/VgLPXCxXgV0EOMdGEHnyRtC6c
+         5PXdYHBjFhFGInxpBE13JbjgoSz9YqFukJAkQEUCm2IOrsxj/bXwAFlHxn0R1imJfSNu
+         Z5/FCKLl4XHlRfqskh/Oy+pXIND9QsTlXbnetwdvwJjcoSz1YId6ZS//mTo07GOms2Iy
+         dDCSX1ldd+qoR9a5BVnVxctSN7Y8lWmpK6O5ZQ2v3SEKB4K4HKtanmt1U1khW7BIlEjA
+         0UkRHIZB4xgMKVrgO048g5N9WK5xXZSwU4lSlnSPWNVbQ54KxvJA8bcrQm0ldi+MlxUH
+         KbVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8hTWWEdo0YXFiuk4GW/3hqmquccaN2CYzArana47oRo=;
-        b=tXVkXKvvF2iW/w3AvtOborOrGebmp4KCAbtt96hXyWTWBtjsZSZ1PdPFYJaUW9bZL5
-         Q74jXCpO5xWK3OgTtmNk//kgErieZ7xWpOW1szvmqswrH4qQ9Yo0PHas1wX4G7HkY+Mf
-         JoLUTlIcqjLhHRtsSFYCqX8djAOjDx4lyULwQkj9XydNIadcN/W6Vxtc7r2ftE1Qi9si
-         Om1ngfYX5cVLiUNbTiC0sPT13fcvtqpqQqWWBfWrVPtkV+NNkmw173b4DBdIpjzQLGg8
-         TmqBloH/EZf8MOaMHqntcQtbZZ7dQZq4KCZ2b0VIt+7OTRCMXDCR+nTvODZQZeQQdSpS
-         /k4g==
+        bh=jJhRPn5UE2JxE/5XMXpnUypvkZyWaGURvPEioqj33mk=;
+        b=X1BM+/0Hod1+MEoL6z1CCszx5jy7+FAIdijJRope8GoQd3EG1YA9F/Cqegj9IDjkVj
+         yIlHu1GrpToT1MvoE5+Rsp9aDSTexWJOh1FGuiyhAjTWE3rXQHwpf9F+yg9b13O9iy5X
+         NVMC6MhtOtOK5/nlgik3RezsgnZfBlUQmtvfmZ0CLqwlCwNIFiV8WYcnoPLz5r7q+OoY
+         2KBW5QM2xaRmJBSptp+ze4R5IpIes4GVe/k1YArNE49Ed6CPfwg6ormrAb6hOa8oSfjB
+         iJMjsSKznSOJKDsJpffbxGHeLnyfNL0uZUv5IVvKgVFR9Frb4zTSMXK1A0ySwcStPD9J
+         JbkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	KarimAllah Ahmed <karahmed@amazon.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
 	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	kvm@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 113/122] KVM/x86: Remove indirect MSR op calls from SPEC_CTRL
-Date: Wed,  7 Mar 2018 11:38:45 -0800
-Message-Id: <20180307191746.018327420@linuxfoundation.org>
+	Eric Biggers <ebiggers3@gmail.com>,
+	Wanpeng Li <wanpeng.li@hotmail.com>
+Subject: [PATCH 4.15 112/122] KVM: mmu: Fix overlap between public and private memslots
+Date: Wed,  7 Mar 2018 11:38:44 -0800
+Message-Id: <20180307191745.863409523@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309327572733329?=
-X-GMAIL-MSGID: =?utf-8?q?1594309327572733329?=
+X-GMAIL-THRID: =?utf-8?q?1594309325310197361?=
+X-GMAIL-MSGID: =?utf-8?q?1594309325310197361?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,96 +52,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Wanpeng Li <wanpeng.li@hotmail.com>
 
-commit ecb586bd29c99fb4de599dec388658e74388daad upstream.
+commit b28676bb8ae4569cced423dc2a88f7cb319d5379 upstream.
 
-Having a paravirt indirect call in the IBRS restore path is not a
-good idea, since we are trying to protect from speculative execution
-of bogus indirect branch targets.  It is also slower, so use
-native_wrmsrl() on the vmentry path too.
+Reported by syzkaller:
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+    pte_list_remove: ffff9714eb1f8078 0->BUG
+    ------------[ cut here ]------------
+    kernel BUG at arch/x86/kvm/mmu.c:1157!
+    invalid opcode: 0000 [#1] SMP
+    RIP: 0010:pte_list_remove+0x11b/0x120 [kvm]
+    Call Trace:
+     drop_spte+0x83/0xb0 [kvm]
+     mmu_page_zap_pte+0xcc/0xe0 [kvm]
+     kvm_mmu_prepare_zap_page+0x81/0x4a0 [kvm]
+     kvm_mmu_invalidate_zap_all_pages+0x159/0x220 [kvm]
+     kvm_arch_flush_shadow_all+0xe/0x10 [kvm]
+     kvm_mmu_notifier_release+0x6c/0xa0 [kvm]
+     ? kvm_mmu_notifier_release+0x5/0xa0 [kvm]
+     __mmu_notifier_release+0x79/0x110
+     ? __mmu_notifier_release+0x5/0x110
+     exit_mmap+0x15a/0x170
+     ? do_exit+0x281/0xcb0
+     mmput+0x66/0x160
+     do_exit+0x2c9/0xcb0
+     ? __context_tracking_exit.part.5+0x4a/0x150
+     do_group_exit+0x50/0xd0
+     SyS_exit_group+0x14/0x20
+     do_syscall_64+0x73/0x1f0
+     entry_SYSCALL64_slow_path+0x25/0x25
+
+The reason is that when creates new memslot, there is no guarantee for new
+memslot not overlap with private memslots. This can be triggered by the
+following program:
+
+   #include <fcntl.h>
+   #include <pthread.h>
+   #include <setjmp.h>
+   #include <signal.h>
+   #include <stddef.h>
+   #include <stdint.h>
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <string.h>
+   #include <sys/ioctl.h>
+   #include <sys/stat.h>
+   #include <sys/syscall.h>
+   #include <sys/types.h>
+   #include <unistd.h>
+   #include <linux/kvm.h>
+
+   long r[16];
+
+   int main()
+   {
+	void *p = valloc(0x4000);
+
+	r[2] = open("/dev/kvm", 0);
+	r[3] = ioctl(r[2], KVM_CREATE_VM, 0x0ul);
+
+	uint64_t addr = 0xf000;
+	ioctl(r[3], KVM_SET_IDENTITY_MAP_ADDR, &addr);
+	r[6] = ioctl(r[3], KVM_CREATE_VCPU, 0x0ul);
+	ioctl(r[3], KVM_SET_TSS_ADDR, 0x0ul);
+	ioctl(r[6], KVM_RUN, 0);
+	ioctl(r[6], KVM_RUN, 0);
+
+	struct kvm_userspace_memory_region mr = {
+		.slot = 0,
+		.flags = KVM_MEM_LOG_DIRTY_PAGES,
+		.guest_phys_addr = 0xf000,
+		.memory_size = 0x4000,
+		.userspace_addr = (uintptr_t) p
+	};
+	ioctl(r[3], KVM_SET_USER_MEMORY_REGION, &mr);
+	return 0;
+   }
+
+This patch fixes the bug by not adding a new memslot even if it
+overlaps with private memslots.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm@vger.kernel.org
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
 Cc: stable@vger.kernel.org
-Fixes: d28b387fb74da95d69d2615732f50cceb38e9a4d
-Link: http://lkml.kernel.org/r/20180222154318.20361-2-pbonzini@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
+---
+ virt/kvm/kvm_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/x86/kvm/svm.c |    7 ++++---
- arch/x86/kvm/vmx.c |    7 ++++---
- 2 files changed, 8 insertions(+), 6 deletions(-)
-
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -45,6 +45,7 @@
- #include <asm/debugreg.h>
- #include <asm/kvm_para.h>
- #include <asm/irq_remapping.h>
-+#include <asm/microcode.h>
- #include <asm/nospec-branch.h>
- 
- #include <asm/virtext.h>
-@@ -5029,7 +5030,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * being speculatively taken.
- 	 */
- 	if (svm->spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
- 
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
-@@ -5139,10 +5140,10 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * save it.
- 	 */
- 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
--		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
-+		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
- 	if (svm->spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -51,6 +51,7 @@
- #include <asm/apic.h>
- #include <asm/irq_remapping.h>
- #include <asm/mmu_context.h>
-+#include <asm/microcode.h>
- #include <asm/nospec-branch.h>
- 
- #include "trace.h"
-@@ -9443,7 +9444,7 @@ static void __noclone vmx_vcpu_run(struc
- 	 * being speculatively taken.
- 	 */
- 	if (vmx->spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
- 
- 	vmx->__launched = vmx->loaded_vmcs->launched;
- 	asm(
-@@ -9579,10 +9580,10 @@ static void __noclone vmx_vcpu_run(struc
- 	 * save it.
- 	 */
- 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
--		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
-+		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
- 	if (vmx->spec_ctrl)
--		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-+		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
- 
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -974,8 +974,7 @@ int __kvm_set_memory_region(struct kvm *
+ 		/* Check for overlaps */
+ 		r = -EEXIST;
+ 		kvm_for_each_memslot(slot, __kvm_memslots(kvm, as_id)) {
+-			if ((slot->id >= KVM_USER_MEM_SLOTS) ||
+-			    (slot->id == id))
++			if (slot->id == id)
+ 				continue;
+ 			if (!((base_gfn + npages <= slot->base_gfn) ||
+ 			      (base_gfn >= slot->base_gfn + slot->npages)))
