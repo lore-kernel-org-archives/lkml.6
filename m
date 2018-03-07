@@ -1,76 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751263AbeCGJfp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 04:35:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44852 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeCGJfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 04:35:43 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE8676016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH v3 19/25] ASoC: qcom: q6afe: add support to
- MI2S ports
-To: srinivas.kandagatla@linaro.org, andy.gross@linaro.org,
-        broonie@kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
-        lgirdwood@gmail.com, david.brown@linaro.org, robh+dt@kernel.org,
-        spatakok@qti.qualcomm.com, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180213165837.1620-1-srinivas.kandagatla@linaro.org>
- <20180213165837.1620-20-srinivas.kandagatla@linaro.org>
-From: Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <7d3c344c-ccb5-78b8-e184-3ab65bdef6ac@codeaurora.org>
-Date: Wed, 7 Mar 2018 15:05:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180213165837.1620-20-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1751316AbeCGJgW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 04:36:22 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14502 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751090AbeCGJgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 04:36:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
+   d="scan'208";a="25903602"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 2/5] x86/boot/compressed/64: Find a place for 32-bit trampoline
+Date: Wed,  7 Mar 2018 12:36:10 +0300
+Message-Id: <20180307093610.49121-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
+References: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If a bootloader enables 64-bit mode with 4-level paging, we might need to
+switch over to 5-level paging. The switching requires the disabling of
+paging, which works fine if kernel itself is loaded below 4G.
 
+But if the bootloader puts the kernel above 4G (not sure if anybody does
+this), we would lose control as soon as paging is disabled, because the
+code becomes unreachable to the CPU.
 
-On 2/13/2018 10:28 PM, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   include/dt-bindings/sound/qcom,q6afe.h |  10 +++
->   sound/soc/qcom/qdsp6/q6afe.c           | 111 +++++++++++++++++++++++++++++++++
->   sound/soc/qcom/qdsp6/q6afe.h           |  10 +++
->   3 files changed, 131 insertions(+)
->
-> diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
-> index e9004ee39f72..3cd862262369 100644
-> --- a/include/dt-bindings/sound/qcom,q6afe.h
-> +++ b/include/dt-bindings/sound/qcom,q6afe.h
-> @@ -16,6 +16,16 @@
->   #define SLIMBUS_4_TX    24
->   #define SLIMBUS_5_RX    25
->   #define SLIMBUS_5_TX    26
-> +#define QUATERNARY_MI2S_RX	34
-> +#define QUATERNARY_MI2S_TX	35
-> +#define SECONDARY_MI2S_RX	36
-> +#define SECONDARY_MI2S_TX	37
-> +#define TERTIARY_MI2S_RX	38
-> +#define TERTIARY_MI2S_TX	39
-> +#define PRIMARY_MI2S_RX		40
-> +#define PRIMARY_MI2S_TX		41
-Can we assign ids to Primary, secondary, tertiary and quaternary MI2S 
-ports in sequence starting with Primary.
-> +#define SECONDARY_PCM_RX	42
-> +#define SECONDARY_PCM_TX	43
-Why only SECONDARY_PCM_RX ? This is not required for MI2S right?
->   #define SLIMBUS_6_RX    45
->   #define SLIMBUS_6_TX    46
->
-[..]
+To handle the situation, we need a trampoline in lower memory that would
+take care of switching on 5-level paging.
+
+This patch finds a spot in low memory for a trampoline.
+
+The heuristic is based on code in reserve_bios_regions().
+
+We find the end of low memory based on BIOS and EBDA start addresses.
+The trampoline is put just before end of low memory. It's mimic approach
+taken to allocate memory for realtime trampoline.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Tested-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/boot/compressed/misc.c       |  6 ++++++
+ arch/x86/boot/compressed/pgtable.h    | 13 +++++++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 34 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
+ create mode 100644 arch/x86/boot/compressed/pgtable.h
+
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index b50c42455e25..8e4b55dd5df9 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -14,6 +14,7 @@
+ 
+ #include "misc.h"
+ #include "error.h"
++#include "pgtable.h"
+ #include "../string.h"
+ #include "../voffset.h"
+ 
+@@ -372,6 +373,11 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ 	debug_putaddr(output_len);
+ 	debug_putaddr(kernel_total_size);
+ 
++#ifdef CONFIG_X86_64
++	/* Report address of 32-bit trampoline */
++	debug_putaddr(trampoline_32bit);
++#endif
++
+ 	/*
+ 	 * The memory hole needed for the kernel is the larger of either
+ 	 * the entire decompressed kernel plus relocation table, or the
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+new file mode 100644
+index 000000000000..58e654431e2a
+--- /dev/null
++++ b/arch/x86/boot/compressed/pgtable.h
+@@ -0,0 +1,13 @@
++#ifndef BOOT_COMPRESSED_PAGETABLE_H
++#define BOOT_COMPRESSED_PAGETABLE_H
++
++#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
++
++#ifndef __ASSEMBLY__
++
++#ifdef CONFIG_X86_64
++extern unsigned long *trampoline_32bit;
++#endif
++
++#endif /* __ASSEMBLY__ */
++#endif /* BOOT_COMPRESSED_PAGETABLE_H */
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 45c76eff2718..21d5cc1cd5fa 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -1,4 +1,5 @@
+ #include <asm/processor.h>
++#include "pgtable.h"
+ 
+ /*
+  * __force_order is used by special_insns.h asm code to force instruction
+@@ -9,14 +10,27 @@
+  */
+ unsigned long __force_order;
+ 
++#define BIOS_START_MIN		0x20000U	/* 128K, less than this is insane */
++#define BIOS_START_MAX		0x9f000U	/* 640K, absolute maximum */
++
+ struct paging_config {
+ 	unsigned long trampoline_start;
+ 	unsigned long l5_required;
+ };
+ 
++/*
++ * Trampoline address will be printed by extract_kernel() for debugging
++ * purposes.
++ *
++ * Avoid putting the pointer into .bss as it will be cleared between
++ * paging_prepare() and extract_kernel().
++ */
++unsigned long *trampoline_32bit __section(.data);
++
+ struct paging_config paging_prepare(void)
+ {
+ 	struct paging_config paging_config = {};
++	unsigned long bios_start, ebda_start;
+ 
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+@@ -35,5 +49,25 @@ struct paging_config paging_prepare(void)
+ 		paging_config.l5_required = 1;
+ 	}
+ 
++	/*
++	 * Find a suitable spot for the trampoline.
++	 * This code is based on reserve_bios_regions().
++	 */
++
++	ebda_start = *(unsigned short *)0x40e << 4;
++	bios_start = *(unsigned short *)0x413 << 10;
++
++	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
++		bios_start = BIOS_START_MAX;
++
++	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
++		bios_start = ebda_start;
++
++	/* Place the trampoline just below the end of low memory, aligned to 4k */
++	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
++	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
++
++	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
++
+ 	return paging_config;
+ }
+-- 
+2.16.1
