@@ -1,65 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934011AbeCGQkw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:40:52 -0500
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36414 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933487AbeCGQkr (ORCPT
+        id S934032AbeCGQlo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:41:44 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:53876 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933386AbeCGQll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:40:47 -0500
-X-Google-Smtp-Source: AG47ELuRtyzlFkIys0wYtix7pH2SGs/y1fqo1UOV9sP+u/L6cy1CZSgPNj2IXGii1iQnPFNd0DliSw==
-Date: Wed, 7 Mar 2018 16:40:44 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Daniel Schultz <d.schultz@phytec.de>
-Cc: linux-kernel@vger.kernel.org, w.egorov@phytec.de
-Subject: Re: [PATCH 1/2] mfd: rk808: Change DEV_OFF to DEV_OFF_RST for rk818
- shutdown
-Message-ID: <20180307164044.lsu3tjcrcf3mf7wt@dell>
-References: <1520255801-8557-1-git-send-email-d.schultz@phytec.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520255801-8557-1-git-send-email-d.schultz@phytec.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 7 Mar 2018 11:41:41 -0500
+Date: Wed, 07 Mar 2018 11:41:39 -0500 (EST)
+Message-Id: <20180307.114139.680250568317481879.davem@davemloft.net>
+To: paul@paul-moore.com
+Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        richard_c_haines@btinternet.com
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next
+ tree
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
+References: <20180305124054.09966cb0@canb.auug.org.au>
+        <CADvbK_cMVBWO7zgnyG=L8T5cTKfjyUXQAAv+a2ne5WVZ9TBJ4g@mail.gmail.com>
+        <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 05 Mar 2018, Daniel Schultz wrote:
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Mar 2018 11:34:31 -0500
 
-> After running "poweroff", the PMIC restarts the SoC instead of shutting
-> it down.
+> On Mon, Mar 5, 2018 at 2:03 AM, Xin Long <lucien.xin@gmail.com> wrote:
+>> On Mon, Mar 5, 2018 at 9:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi Paul,
+>>>
+>>> Today's linux-next merge of the selinux tree got a conflict in:
+>>>
+>>>   net/sctp/socket.c
+>>>
+>>> between several refactoring commits from the net-next tree and commit:
+>>>
+>>>   2277c7cd75e3 ("sctp: Add LSM hooks")
+>>>
+>>> from the selinux tree.
+>>>
+>>> I fixed it up (I think - see below) and can carry the fix as
+>> The fixup is great!  the same as I mentioned in:
+>> https://patchwork.ozlabs.org/patch/879898/
+>> for net-next.git
+>>
+>>> necessary. This is now fixed as far as linux-next is concerned, but any
+>>> non trivial conflicts should be mentioned to your upstream maintainer
+>>> when your tree is submitted for merging.  You may also want to consider
+>>> cooperating with the maintainer of the conflicting tree to minimise any
+>>> particularly complex conflicts.
+>>
+>> [net-next,0/9] sctp: clean up sctp_sendmsg, this patchset was just applied
+>> in net-next. So I just guess it might not yet be there when selinux tree was
+>> being submitted.
 > 
-> It seems like the description for those two register bits is swapped.
-> After changing from DEV_OFF to DEV_OFF_RST, the system can poweroff
-> correctly.
-> 
-> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-> ---
->  drivers/mfd/rk808.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The selinux/next branch is based on v4.16-rc1 and doesn't feed into
+> the netdev tree, it goes straight to Linus during the merge window so
+> unfortunately I think we may need to carry this for some time and
+> relay this fix-up patch up to Linus during the merge window.
 
-Please could you re-submit these 2 patches with the Rock Chips guys in
-Cc.  It would be easier to review if we had some expert eyes-on and a
-Tested-by or 2.
+What a mess.
 
-> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-> index 216fbf6..d138721 100644
-> --- a/drivers/mfd/rk808.c
-> +++ b/drivers/mfd/rk808.c
-> @@ -418,7 +418,7 @@ static void rk818_device_shutdown(void)
->  
->  	ret = regmap_update_bits(rk808->regmap,
->  				 RK818_DEVCTRL_REG,
-> -				 DEV_OFF, DEV_OFF);
-> +				 DEV_OFF_RST, DEV_OFF_RST);
->  	if (ret)
->  		dev_err(&rk808_i2c_client->dev, "power off error!\n");
->  }
-
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+The SCTP option changes should have gone through my tree in retrospect.
