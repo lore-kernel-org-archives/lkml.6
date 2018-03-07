@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933829AbeCGQ2w (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:28:52 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33621 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933335AbeCGQ2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:28:49 -0500
-X-Google-Smtp-Source: AG47ELtXX+rWwSE6UH25xIf5Vdn0QCbUxQMARkmQWr9KyE1tuWWpt4kTj9OZkrgWE7qEfov7JUaocA==
-Date: Wed, 7 Mar 2018 16:28:46 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Benson Leung <bleung@chromium.org>, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, groeck@chromium.org, gwendal@chromium.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 6/6] platform/chrome: mfd/cros_ec_dev: Add sysfs entry
- to set keyboard wake lid angle
-Message-ID: <20180307162846.6he3rtvtzkvuwpem@dell>
-References: <20180221170748.27505-1-enric.balletbo@collabora.com>
- <20180221170748.27505-7-enric.balletbo@collabora.com>
+        id S933848AbeCGQaf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:30:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933335AbeCGQad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:30:33 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9660F2177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AG47ELskAh568tD4eHtHbTJ7C84qomOWUMyLjvpTJbKhAwdPIbJpU606DwL06FRbymnxc+kNfsRcPvqUZqkJyERMtkM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180221170748.27505-7-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180307063219.14409-1-vivek.gautam@codeaurora.org>
+References: <20180307063219.14409-1-vivek.gautam@codeaurora.org>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 7 Mar 2018 10:30:09 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+WWR5r-RcuE2KGpswdRgwzOV_BZjEOzHj5bAULFD6_Xg@mail.gmail.com>
+Message-ID: <CAL_Jsq+WWR5r-RcuE2KGpswdRgwzOV_BZjEOzHj5bAULFD6_Xg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support for qcom,smmu-500 variant
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM SMMU DRIVERS"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Feb 2018, Enric Balletbo i Serra wrote:
+On Wed, Mar 7, 2018 at 12:32 AM, Vivek Gautam
+<vivek.gautam@codeaurora.org> wrote:
+> Qualcomm's arm-smmu 500 implementation supports runtime pm
+> so enable the same.
 
-> From: Gwendal Grignou <gwendal@chromium.org>
-> 
-> This adds a sysfs attribute (/sys/class/chromeos/cros_ec/kb_wake_angle)
-> used to set and get the keyboard wake lid angle. This attribute is
-> present only if 2 accelerometers are controlled by the EC.
-> 
-> This patch also moves the cros_ec features check before the device is
-> added so the features map obtained from the EC is ready on time.
-> 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+That's a driver detail unrelated to the binding.
+
+>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 > ---
-> Changes since v1:
-> - Suggested by Andy Shevchenko:
->   - Use the previous defined to_cros_ec_dev
->   - Use one line when fits in 80 characters.
->   - Use DEVICE_ATTR_RW variant.
-> 
->  drivers/platform/chrome/cros_ec_sysfs.c | 81 +++++++++++++++++++++++++++++++++
+>
+>  Based on iommu/arm-smmu pm runtime support series [1]:
+>  [PATCH v8 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+>
+>  Tested on sdm845 with necessary support to enable the smmu
+>  and with necessary user.
+>
+>  [1] https://lkml.org/lkml/2018/3/2/325
+>
+>  Documentation/devicetree/bindings/iommu/arm,smmu.txt | 14 ++++++++++++++
 
->  drivers/mfd/cros_ec_dev.c               | 19 ++++----
->  include/linux/mfd/cros_ec.h             |  1 +
+Please split bindings to separate patches.
 
-Please send me a PR with this patch contained.
+>  drivers/iommu/arm-smmu.c                             |  8 ++++++++
+>  2 files changed, 22 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index 6ea27bd4f785..0b5c6d2a9865 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -18,6 +18,7 @@ conditions.
+>                          "arm,mmu-500"
+>                          "cavium,smmu-v2"
+>                          "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+I don't even see this one in the tree yet...
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> +                        "qcom,<soc>-smmu-500", "qcom,smmu-500"
+
+IIRC, the mmu-500 is SMMU v2 implementation, right? Having
+qcom,smmu-500 seems kind of pointless.
+
+Given that we're there's only 1 SoC for "qcom,<soc>-smmu-v2" and
+you're already on to a new genericish compatible, just do SoC specific
+compatible strings.
+
+Rob
