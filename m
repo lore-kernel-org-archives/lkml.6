@@ -1,72 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754477AbeCGMsO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:48:14 -0500
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:37700 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754449AbeCGMsK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:48:10 -0500
-X-Google-Smtp-Source: AG47ELuVXW2qOsi4VMR6eAModBj9iaDjP4DpoAS/zlc/I7nOcmev32hPAzzhsNjfY9gtIL6uvZF8hhG8l9dUWNaVOAk=
-MIME-Version: 1.0
-In-Reply-To: <20180307234142.1c7d2710@canb.auug.org.au>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
- <20180307022127.GB802@jagdpanzerIV> <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
- <20180307104002.GA505@jagdpanzerIV> <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
- <20180307114845.GA894@jagdpanzerIV> <20180307234142.1c7d2710@canb.auug.org.au>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 13:48:09 +0100
-X-Google-Sender-Auth: OPwGv8BmwYmkaUka-SDkNbtFIrM
-Message-ID: <CAK8P3a2sA0BmR4cS4Af+d42MabzkZZEBvMaTpoWwOu-N7pP=dg@mail.gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+        id S1754359AbeCGMtm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:49:42 -0500
+Received: from mga02.intel.com ([134.134.136.20]:26123 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753953AbeCGMti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:49:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
+   d="scan'208";a="36192650"
+Message-ID: <1520426974.10722.449.camel@linux.intel.com>
+Subject: Re: [PATCH v6] mmc: Export host capabilities to debugfs.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Harish Jenny K N <harish_kandiga@mentor.com>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Vladimir_Zapolskiy@mentor.com" <Vladimir_Zapolskiy@mentor.com>
+Date: Wed, 07 Mar 2018 14:49:34 +0200
+In-Reply-To: <af726c5a-edd4-94f9-7789-4527e9aff93d@mentor.com>
+References: <1520401051-11135-1-git-send-email-harish_kandiga@mentor.com>
+         <DM5PR04MB10857D9F0177C760047100D1FCD80@DM5PR04MB1085.namprd04.prod.outlook.com>
+         <af726c5a-edd4-94f9-7789-4527e9aff93d@mentor.com>
+Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 1:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Sergey,
->
-> On Wed, 7 Mar 2018 20:48:56 +0900 Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
->>
->> On (03/07/18 11:57), Arnd Bergmann wrote:
->> [..]
->> > >> Originally I planned to wait a few more releases, but the last maintainer
->> > >> has commented that he will now send a patch for immediate removal,
->> > >> so 4.17 is almost certain at this point.
->> > >
->> > > Would be great to get it removed as soon as possible then. Otherwise we
->> > > will get broken blackfin build errors from Stephen (or would need to hold
->> > > off Dave's patch).
->> >
->> > You could also add a patch to your tree that removes the blackfin
->> > dump_stack() function, or we could ask Stephen and the other
->> > people operating build bots to stop building blackfin right now
->> > (they will have to do that anyway once the arch gets removed).
->>
->> OK. Petr, Stephen, what would be your preference?
->
-> I can easily stop building blackfin - and, if the intention is to
-> remove it, there is not much point in wasting resources building it any
-> anyway.
+On Wed, 2018-03-07 at 12:34 +0530, Harish Jenny K N wrote:
 
-Right. At the moment, the plan is to remove metag, score, unicore32,
-m32r, frv and blackfin. If you are building any more of those, you can
-stop that as well.
+> > > > > > 
+> > > +static int mmc_caps_show(struct seq_file *s, void *unused) {
+> > > +	struct mmc_host *host = s->private;
+> > > +	u32 caps = host->caps;
+> > > +
+> > > > > > +	seq_puts(s, "\nMMC Host capabilities are:\n");
 
-The fate of tile and mn10300 is still open, but I suspect they won't
-last long either.
+First of all, avoid leading '\n' in the messages.
 
-      Arnd
+> > > > > > +	seq_puts(s,
+> > > 
+"=============================================\n");
+> > > +	seq_printf(s, "Can the host do 4 bit transfers :\t%s\n",
+> > > +		   ((caps & MMC_CAP_4_BIT_DATA) ? "Yes" : "No"));
+> > 
+> > Maybe use a more compact form, and just call a macro with the
+> > applicable (stringified) bit?
+> 
+> Something like this ?
+> 
+> #define YN(bit) ((caps & bit) ? "Yes" : "No")
+> and then call
+> seq_printf(s, "Can the host do 4 bit transfers :\t%s\n",
+> YN(MMC_CAP_4_BIT_DATA));
+> 
+
+I would rather say something like this:
+
+static const char * const mmc_host_capabilities[] = {
+ "4-bit transfers allowed",
+ "...",
+ ...
+};
+
+...
+  for_each_set_bit(i, caps)
+   seq_printf("%s\n", mmc_host_capabilities[i]);
+...
+
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
