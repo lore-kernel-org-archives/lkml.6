@@ -1,71 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754482AbeCGOii (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:38:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751159AbeCGOig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:38:36 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9FB02172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 7 Mar 2018 11:38:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: William Cohen <wcohen@redhat.com>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        peterz@infradead.org, mingo@redhat.com, john.garry@huawei.com,
-        Will.Deacon@arm.com, mark.rutland@arm.com, jnair@caviumnetworks.com,
-        Robert.Richter@cavium.com
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-Message-ID: <20180307143832.GJ3701@kernel.org>
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
+        id S1754473AbeCGOkd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:40:33 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:32996 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbeCGOkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:40:31 -0500
+Date: Wed, 7 Mar 2018 15:40:28 +0100
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm-soc <arm@kernel.org>, linux-arm-kernel@axis.com,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/8] ARTPEC-6 ARM SoC device tree updates
+Message-ID: <20180307144027.GA17727@axis.com>
+References: <20180221090000.18091-1-niklas.cassel@axis.com>
+ <CAK8P3a0ykwsO40w49TL9xgVKv3wrvx7KXz1o6XD5+qXQ6n8YUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAK8P3a0ykwsO40w49TL9xgVKv3wrvx7KXz1o6XD5+qXQ6n8YUA@mail.gmail.com>
+User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
-> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
-> > There is MIDR change on ThunderX2 B0, adding an entry to mapfile
-> > to enable JSON events for B0.
-> > 
-> > Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+On Tue, Mar 06, 2018 at 05:45:30PM +0100, Arnd Bergmann wrote:
+> On Wed, Feb 21, 2018 at 9:59 AM, Niklas Cassel <niklas.cassel@axis.com> wrote:
+> > Hello,
+> >
+> > Here comes some ARTPEC-6 ARM SoC device tree updates.
+> >
+> > Niklas Cassel (8):
+> >   ARM: dts: artpec: disable Accelerator Coherency Port
+> >   ARM: dts: artpec: use 1 GiB RAM
+> >   ARM: dts: artpec: remove 0x prefix from clkctrl unit address
+> >   ARM: dts: artpec: migrate ethernet to stmmac binding
+> >   ARM: dts: artpec: add and utilize artpec6 pin controller
+> >   ARM: dts: artpec: add and utilize nbpfaxi DMA controllers
+> >   ARM: dts: artpec: add disabled node for PCIe endpoint mode
+> >   ARM: dts: artpec: add node for hardware crypto accelerator
+> 
+> For a series eight patches, a pull request would save me some work, but
+> I applied it anyway.
 
-Ganapatrao, can you please take this in consideration and if agreeing
-send a v2 patch?
+Thank you Arnd.
+You will receive pull requests in the future.
 
-With that I can add an Acked-by: wcohen, Right?
+> 
+> Are you sure that the first three patches shouldn't be applied to stable
+> backports?
 
-- Arnaldo
-> > ---
-> >  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-> > index e61c9ca..93c5d14 100644
-> > --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-> > +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-> > @@ -13,4 +13,5 @@
-> >  #
-> >  #Family-model,Version,Filename,EventType
-> >  0x00000000420f5160,v1,cavium,core
-> > +0x00000000430f0af0,v1,cavium,core
-> >  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
-> > 
-> 
-> Hi,
-> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
-> 
-> 0x00000000430f0af[[:xdigit:]],v1,cavium,core
-> 
-> 
-> -Will Cohen
+The only DTS available upstream is for the ARTPEC-6 devboard.
+Considering that ARTPEC-6 devboards are only used in-house,
+I don't see a reason to backport anything from this series.
+
+
+Best regards,
+Niklas
