@@ -1,107 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754715AbeCGPKg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:10:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754682AbeCGPKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:10:32 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 444BF21777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 7 Mar 2018 15:10:25 +0000
-From: James Hogan <jhogan@kernel.org>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-Message-ID: <20180307151025.GP4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com>
- <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman>
- <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+        id S1754760AbeCGPLh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:11:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52496 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754645AbeCGPLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:11:34 -0500
+Subject: Re: [PATCH v2 1/2] arm64: Relax constraints on ID feature bits
+To: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, james.morse@arm.com
+References: <20180207142106.10716-1-suzuki.poulose@arm.com>
+ <20180226180517.GG26147@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <1a293722-60ff-0e6f-0c57-b257a2880741@arm.com>
+Date: Wed, 7 Mar 2018 15:11:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ffBYM5qgR8HH9Mta"
-Content-Disposition: inline
-In-Reply-To: <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180226180517.GG26147@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Will,
 
---ffBYM5qgR8HH9Mta
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/02/18 18:05, Will Deacon wrote:
+> On Wed, Feb 07, 2018 at 02:21:05PM +0000, Suzuki K Poulose wrote:
+>> We treat most of the feature bits in the ID registers as STRICT,
+>> implying that all CPUs should match it the boot CPU state. However,
+>> for most of the features, we can handle if there are any mismatches
+>> by using the safe value. e.g, HWCAPs and other features used by the
+>> kernel. Relax the constraint on the feature bits whose mismatch can
+>> be handled by the kernel.
+>>
+>> For VHE, if there is a mismatch we don't care if the kernel is
+>> not using it. If the kernel is indeed running in EL2 mode, then
+>> the mismatches results in a panic. Similarly for ASID bits we
+>> take care of conflicts.
+>>
+>> For other features like, PAN, UAO we only enable it only if we
+>> have it on all the CPUs. For IESB, we set the SCTLR bit unconditionally
+>> anyways.
+>>
+>> For features that aren't currently used by kernel
+>>   (e.g ID_AA64MFMR1:{LOR,HPD}, ID_AA64MMFR2:LSM) make them NONSTRICT.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: James Morse <james.morse@arm.com>
+>> Cc: Dave Martin <dave.martin@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>> Changes since v1:
+>>   - Make ID_AA64MMFR1_EL1:LOR/HPD, ID_AA64MMFR1_EL1:LSM non-strict
+>>     as they aren't used by the kernel.
+>>   - Added comments around different fields.
+>>   - Make ID_AA64MMFR2:CNP non-strict, as we could decide to use it
+>>     only when it is available on all the CPUs.
+> 
+> This does mean we need to be careful when adding support for a new feature
+> because the cpufeature code is no longer guaranteeing homogeneity. I can't
+> see how we can detect this, so I suppose we'll just need to be careful to
+> pick this up during review.
+> 
+> It's also a bit nasty that older kernels won't shout about mismatched
+> features but a new kernel might. 
 
-On Wed, Mar 07, 2018 at 08:35:00PM +0530, PrasannaKumar Muralidharan wrote:
-> On 7 March 2018 at 20:05, James Hogan <jhogan@kernel.org> wrote:
-> > On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wr=
-ote:
-> >> > Does X1000 use a different PRID, or is it basically just a JZ4780 co=
-re
-> >> > with different SoC peripherals?
-> >>
-> >> Yes X1000 does have a different PRID (PRID =3D 0x2ed1024f). X1000 has
-> >
-> > Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
-> > 0x4f, which cpu-probe.c already handles (apparently the D1 company code
-> > is used for JZ4770 & JZ4775 too).
->=20
-> Okay. Does this mean I need not modify get_board_mach_type() and
-> get_system_type()?
+That is not correct. It is the opposite. The new kernel won't shout about
+mismatched features, where the old kernel complains.
 
-You still need to modify them, otherwise it won't understand
-"ingenic,x1000" compatible string, and will call it a JZ4740 in
-/proc/cpuinfo.
+I have a slight concern that this means
+> integration problems might slip through the cracks when a design is
+> validating against an older kernel.
+> 
+> Finally, there's still the problem that some features cannot be
+> enabled/disabled by the kernel and we can end up in a position where a
+> user application might SIGILL only on some CPUs if it's using an instruction
+> that isn't supported across the whole system. I think that sort of
+> configuration *does* warrant the current sanity check message/taint; afaict
+> we still go ahead and use the safe value, clobbering things like the hwcap,
+> but we should draw attention to the fact that userspace might crash if it's
+> trying to probe for these instructions using traps.
 
-> >> I used to get my code tested from Domink but I could not reach him for
-> >> quite some time. Before buying the development board myself I would
-> >> like to see if anyone can help me in testing. Do you have any contact
-> >> with Ingenic who can help in testing this?
-> >
-> > Not personally, but I'll ask around. Of course if nobody much cares
-> > about it in practice and nobody has the hardware, there may be little
-> > value in supporting it upstream.
->=20
-> Seems Jiaxun is interested in the board and is willing to help.
+The FTR_STRICT only affects whether we should issue a WARNING and TAINT the kernel
+if there is a mismatch. It doesn't affect the "safe" value calculation. So,
+I don't understand how the above situation can be triggered by this change.
 
-Okay, cool.
+> 
+> I'd like to hear what others think about this. As it stands, I don't think
+> this patch is quite right but I wouldn't be against relaxing specific
+> features to be NONSTRICT where we know that the kernel today can deal with
+> that transparently to userspace.
+> 
 
-Cheers
-James
-
---ffBYM5qgR8HH9Mta
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgAOEACgkQbAtpk944
-dnq2tA/9GgJebgZ1Sqh3YkkT5rAjetuUyvMwU+OMWBwMunIu+1ImhcSTWocj0RRT
-JjRAbBM4KhYJWb+IfmRytEQZ4zXzRN8vZhf7vxD9q6JNa7bhCDZq2AXU7AHpF4aS
-I72mOO7J6DlgdP6j6qS4T9t7o/TyzgH50w1tMIFKPYCVP74LwSjWtB1goNiAPD/H
-+m9QZt3vvWJM6dUM0PT4RYXxgBQbcx6UaDqjR7FTf+J5DWrAKmduC4v1Yoo0192q
-N2BbyiiLdSsRGJ3nMdtcSRuVnU2b5xhU1Kh1Fg29ufhaiHLkeQJrkVeRZlwHDVUj
-Sl8gmny2316B3JTJyRUQXDA043dCcs4aCVKnFUMLJdW3z/p8DtTFoR6QVJzvEwoy
-jNmCiOVz8S9cK4u0TVhmUQGwPmO0bibcwycSfHQWMk3sX/fU+bz6O4D4YqriELOs
-xqB8tM89hEZlbqsAHs6npFTMJl7bih1jyDyoo1GBlvvLNKbiw1qpmn4K5QP7oNtk
-IWwS7150My7k6PZsm8HmdtiblrIHV27uy3/b20YcBhBsDewdUUP51ukbkwzTPwi9
-Oq0pLUWo4uGkIacqISG37diUWrhqpyZjQOsi2jwimiPLjizih/3b7RIbfMez3Ur+
-L4gqLfw2U/3ajhm7VZgnvu+/SKpWmBkSU+INlKktfcpKqiWWqXo=
-=NHQN
------END PGP SIGNATURE-----
-
---ffBYM5qgR8HH9Mta--
+Suzuki
