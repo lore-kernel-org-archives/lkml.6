@@ -1,86 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964940AbeCGUfx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:35:53 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934327AbeCGUfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:35:08 -0500
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
-Subject: [PATCH 0/5] sysctl: Enable easy addition of range showing sysctl parameters
-Date: Wed,  7 Mar 2018 15:34:24 -0500
-Message-Id: <1520454869-13871-1-git-send-email-longman@redhat.com>
+        id S935049AbeCGUgB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:36:01 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43234 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934102AbeCGUf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:35:57 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78BAA6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
+From: Agustin Vega-Frias <agustinv@codeaurora.org>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: timur@codeaurora.org, agustinv@codeaurora.org
+Subject: [RFC V4] perf, tools: Support wildcards on pmu name in dynamic pmu events
+Date: Wed,  7 Mar 2018 15:35:47 -0500
+Message-Id: <1520454947-16977-1-git-send-email-agustinv@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is to be applied on top of the patch
-series "ipc: Clamp *mni to the real IPCMNI limit"
-(https://lkml.org/lkml/2018/3/1/716).
+Starting on v4.12 event parsing code for dynamic pmu events already
+supports prefix-based matching of multiple pmus when creating dynamic
+events. E.g., in a system with the following dynamic pmus:
 
-The purpose of this patch series is to enable easy addition of new
-auxillary sysctl parameters that can be read to display ranges of
-other sysctl parameters they are associated with.
+    mypmu_0
+    mypmu_1
+    mypmu_2
+    mypmu_4
 
-With this patch series applied, a developer can add a range-showing
-auxillary sysctl entries by just setting the CTL_FLAGS_SHOW_RANGE
-flag in the ctl_table entry that has a range to show and add one more
-to the number of reserved range entries in the CTL_RESERVE_RANGES()
-macro before the terminating null entry. The new auxillary sysctl
-parameters will have the "_range" suffix added.
+passing mypmu/<config>/ as an event spec will result in the creation
+of the event in all of the pmus. This change expands this matching
+through the use of fnmatch so glob-like expressions can be used to
+create events in multiple pmus. E.g., in the system described above
+if a user only wants to create the event in mypmu_0 and mypmu_1,
+mypmu_[01]/<config>/ can be passed.
 
-The number of ctl_table entries that have the CTL_FLAGS_SHOW_RANGE flag
-should match the number of reserved entries in the CTL_RESERVE_RANGES()
-macro. Otherwise, warning or error like below will be logged in the
-kernel ring buffer.
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+---
+ tools/perf/Documentation/perf-list.txt |  8 +++++++-
+ tools/perf/Documentation/perf-stat.txt | 13 +++++++++++++
+ tools/perf/util/parse-events.l         |  2 +-
+ tools/perf/util/parse-events.y         | 14 ++++++++++++--
+ 4 files changed, 33 insertions(+), 4 deletions(-)
 
-  Warning: Too many reserved ctl_table range entries ("shmmax")!
+diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
+index e2a897a..2549c34 100644
+--- a/tools/perf/Documentation/perf-list.txt
++++ b/tools/perf/Documentation/perf-list.txt
+@@ -141,7 +141,13 @@ on the first memory controller on socket 0 of a Intel Xeon system
 
-  Error: Insufficient reserved ctl_table range entries ("shmmax")!
+ Each memory controller has its own PMU.  Measuring the complete system
+ bandwidth would require specifying all imc PMUs (see perf list output),
+-and adding the values together.
++and adding the values together. To simplify creation of multiple events,
++prefix and glob matching is supported in the PMU name, and the prefix
++'uncore_' is also ignored when performing the match. So the command above
++can be expanded to all memory controllers by using the syntaxes:
++
++  perf stat -C 0 -a imc/cas_count_read/,imc/cas_count_write/ -I 1000 ...
++  perf stat -C 0 -a *imc*/cas_count_read/,*imc*/cas_count_write/ -I 1000 ...
 
-The IPC sysctl parameters msgmni and shmmni are extended to have
-those auxillary sysctl entries. As a result, one can now find out
-the range of allowable value by looking at the corresponding
-auxillary _range sysctl parameters. For example,
+ This example measures the combined core power every second
 
-  % cat msgmni_range
-  [0, 32768]
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 823fce7..5ee954f 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -49,6 +49,13 @@ report::
+ 	  parameters are defined by corresponding entries in
+ 	  /sys/bus/event_source/devices/<pmu>/format/*
 
-That means the msgmni sysctl parameter has to be within the 0 - 32768
-range inclusively.
++	Note that the last two syntaxes support prefix and glob matching in
++	the PMU name to simplify creation of events accross multiple instances
++	of the same type of PMU in large systems (e.g. memory controller PMUs).
++	Multiple PMU instances are typical for uncore PMUs, so the prefix
++	'uncore_' is also ignored when performing this match.
++
++
+ -i::
+ --no-inherit::
+         child tasks do not inherit counters
+@@ -246,6 +253,12 @@ taskset.
+ --no-merge::
+ Do not merge results from same PMUs.
 
-Patch 1 clarifies how the ctl_table.flags field should be used.
++When multiple events are created from a single event alias, stat will,
++by default, aggregate the event counts and show the result in a single
++row. This option disables that behavior and shows the individual events
++and counts. Aliases are listed immediately after the Kernel PMU events
++by perf list.
++
+ --smi-cost::
+ Measure SMI cost if msr/aperf/ and msr/smi/ events are supported.
 
-Patch 2 adds a new proc_show_minmax() handler to display a min/max
-range.
+diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
+index 655ecff..a1a01b1 100644
+--- a/tools/perf/util/parse-events.l
++++ b/tools/perf/util/parse-events.l
+@@ -175,7 +175,7 @@ bpf_source	[^,{}]+\.c[a-zA-Z0-9._]*
+ num_dec		[0-9]+
+ num_hex		0x[a-fA-F0-9]+
+ num_raw_hex	[a-fA-F0-9]+
+-name		[a-zA-Z_*?][a-zA-Z0-9_*?.]*
++name		[a-zA-Z_*?\[\]][a-zA-Z0-9_*?.\[\]]*
+ name_minus	[a-zA-Z_*?][a-zA-Z0-9\-_*?.:]*
+ drv_cfg_term	[a-zA-Z0-9_\.]+(=[a-zA-Z0-9_*?\.:]+)?
+ /* If you add a modifier you need to update check_modifier() */
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index e81a20e..dedf184 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -8,6 +8,7 @@
 
-Patch 3 defines the new CTL_FLAGS_SHOW_RANGE flag and the
-CTL_RESERVE_RANGES() macro.
+ #define YYDEBUG 1
 
-Patch 4 modifies the proc_sysctl.c file to handle the
-CTL_FLAGS_SHOW_RANGE in ctl_table registration and un-registration.
++#include <fnmatch.h>
+ #include <linux/compiler.h>
+ #include <linux/list.h>
+ #include <linux/types.h>
+@@ -234,6 +235,10 @@ PE_NAME opt_event_config
+ 	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
++		char *pattern;
++
++		if (asprintf(&pattern, "%s*", $1) < 0)
++			YYABORT;
 
-Patch 5 extends msgmni and shmmni to have their corresponding range
-showing sysctl parameters.
-
-Waiman Long (5):
-  sysctl: Clarify how the ctl_table.flags should be set
-  sysctl: Add a new handler proc_show_minmax()
-  sysctl: Add a new ctl_table flag to show min/max range
-  proc/sysctl: Handle CTL_FLAGS_SHOW_RANGE ctl_table flag
-  ipc: Show ranges of msgmni and shmmni with CTL_FLAGS_SHOW_RANGE
-
- fs/proc/proc_sysctl.c  | 99 +++++++++++++++++++++++++++++++++++++++++++++++---
- include/linux/sysctl.h | 52 +++++++++++++++++++++++++-
- ipc/ipc_sysctl.c       |  5 ++-
- kernel/sysctl.c        | 91 ++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 238 insertions(+), 9 deletions(-)
-
--- 
-1.8.3.1
+ 		while ((pmu = perf_pmu__scan(pmu)) != NULL) {
+ 			char *name = pmu->name;
+@@ -241,14 +246,19 @@ PE_NAME opt_event_config
+ 			if (!strncmp(name, "uncore_", 7) &&
+ 			    strncmp($1, "uncore_", 7))
+ 				name += 7;
+-			if (!strncmp($1, name, strlen($1))) {
+-				if (parse_events_copy_term_list(orig_terms, &terms))
++			if (!fnmatch(pattern, name, 0)) {
++				if (parse_events_copy_term_list(orig_terms, &terms)) {
++					free(pattern);
+ 					YYABORT;
++				}
+ 				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms))
+ 					ok++;
+ 				parse_events_terms__delete(terms);
+ 			}
+ 		}
++
++		free(pattern);
++
+ 		if (!ok)
+ 			YYABORT;
+ 	}
+--
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
