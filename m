@@ -1,42 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754461AbeCGOKa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:10:30 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37132 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753807AbeCGOK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:10:27 -0500
-Date: Wed, 7 Mar 2018 15:10:23 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [RFC 00/49] perf tools: Add threads to record command
-Message-ID: <20180307141023.GA15364@krava>
-References: <20180109153522.14116-1-jolsa@kernel.org>
+        id S1754525AbeCGOKk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:10:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41810 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeCGOKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:10:36 -0500
+Date: Wed, 7 Mar 2018 14:10:27 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Fabio Estevam <festevam@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        linux-omap@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: Regulator regression in next-20180305
+Message-ID: <20180307141027.GD7290@sirena.org.uk>
+References: <20180305231246.GB5799@atomide.com>
+ <CAOMZO5CXy=7ZKVapp_2Q4wq=mY-dJ0owZZN84vqUj1j1xasOKg@mail.gmail.com>
+ <CGME20180306163044epcas2p1b5bc62e4cba6c6e8c8ea7e75329c11ef@epcas2p1.samsung.com>
+ <20180306163035.GE13586@sirena.org.uk>
+ <bb1adc11-40ff-d37d-60f1-d6e706b058a6@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
 Content-Disposition: inline
-In-Reply-To: <20180109153522.14116-1-jolsa@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <bb1adc11-40ff-d37d-60f1-d6e706b058a6@samsung.com>
+X-Cookie: If you can read this, you're too close.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 09, 2018 at 04:34:33PM +0100, Jiri Olsa wrote:
-> hi,
-> sending *RFC* for threads support in perf record command.
-> 
-> In big picture this patchset adds perf record --threads
-> option that allows to create threads in following modes:
 
-rebased to current Arnaldo's perf/core with few bugs fixed
+--LTeJQqWS0MN7I/qa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-  perf/record_threads
+On Wed, Mar 07, 2018 at 01:57:12PM +0100, Maciej Purski wrote:
 
-jirka
+> I'm trying to figure out what is so special about these boards. The only
+> strange thing, that I haven't noticed at first, is that all regulators share
+> a common supply - dummy regulator. It is defined in anatop_regulator.c.
+
+No, that's a regulator framework thing - the regulator framework will
+use the dummy regulator as a supply when there's nothing described in
+the DT so long as the client doesn't explicitly tell it that the supply
+might be optional.
+
+--LTeJQqWS0MN7I/qa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqf8tIACgkQJNaLcl1U
+h9BGlgf+PRwjpmWYL9RWHYSFyl9NE+Av0pg57e5S2CUGYQpZw9iUEClJn7P5P9L3
+FizLSWWRBCCmg0ZhS+qspwQyUCHnINNH9VO6vxSGVTBbsHGzQ0178uZPtLLGF0wR
+eCmyTOATh6O4sH+a+CXDRUy8uTej/7dE1NenQZBsDEODb5wVgD4fITny5xuoog0R
+6TQK9lyiZSGiVD5SAC2x8fy8bElW2qDtDMYwiXbiNSI4iWzOCbwS+AFYEyUtMuxH
+2zQ1OySkM4Bx7Zc81JKZX7f/R+UI2VzmXY1H1ZO0vgHkRVWqPely+3R3EO9NGYPv
+xkZZQi0+YN1sLzrkux2bhxBja7ZTIQ==
+=q7o/
+-----END PGP SIGNATURE-----
+
+--LTeJQqWS0MN7I/qa--
