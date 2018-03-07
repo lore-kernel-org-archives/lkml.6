@@ -1,92 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754826AbeCGVMH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 16:12:07 -0500
-Received: from mailoutvs4.siol.net ([213.250.19.137]:59489 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754052AbeCGVMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 16:12:06 -0500
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: kuninori.morimoto.gx@renesas.com, maxime.ripard@free-electrons.com,
-        wens@csie.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [BUG] Kernel crash on Allwinner H3 due to sound core changes
-Date: Wed, 07 Mar 2018 22:11:56 +0100
-Message-ID: <1832733.mujlD9skaR@jernej-laptop>
-In-Reply-To: <26212674.B0xcQEiVyd@jernej-laptop>
-References: <2424862.oPtAVTfrB9@jernej-laptop> <20180302124050.GF6255@sirena.org.uk> <26212674.B0xcQEiVyd@jernej-laptop>
+        id S1754841AbeCGVMP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 16:12:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57004 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754052AbeCGVMK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 16:12:10 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4611D60398
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anjiandi@codeaurora.org
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+ <20180307185132.GA30102@ziepe.ca>
+ <1520448953.10396.565.camel@linux.vnet.ibm.com>
+ <1520449719.5558.28.camel@HansenPartnership.com>
+ <1520450495.10396.587.camel@linux.vnet.ibm.com>
+ <1520451662.24314.5.camel@HansenPartnership.com>
+From: Jiandi An <anjiandi@codeaurora.org>
+Message-ID: <d4670a63-0363-cf1c-a239-d83b01376d0c@codeaurora.org>
+Date: Wed, 7 Mar 2018 15:12:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1520451662.24314.5.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Dne ponedeljek, 05. marec 2018 ob 22:30:23 CET je Jernej Škrabec napisal(a):
-> Hi,
+
+On 03/07/2018 01:41 PM, James Bottomley wrote:
+> On Wed, 2018-03-07 at 14:21 -0500, Mimi Zohar wrote:
+>> On Wed, 2018-03-07 at 11:08 -0800, James Bottomley wrote:
+>>>
+>>> On Wed, 2018-03-07 at 13:55 -0500, Mimi Zohar wrote:
+>>>>
+>>>> On Wed, 2018-03-07 at 11:51 -0700, Jason Gunthorpe wrote:
+>>>>>
+>>>>>
+>>>>> On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+>>>>>>
+>>>>>>
+>>>>>> TPM_CRB driver is the TPM support for ARM64.  If it
+>>>>>> is built as module, TPM chip is registered after IMA
+>>>>>> init.  tpm_pcr_read() in IMA driver would fail and
+>>>>>> display the following message even though eventually
+>>>>>> there is TPM chip on the system:
+>>>>>>
+>>>>>> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+>>>>>>
+>>>>>> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+>>>>>> built in kernel and initializes before IMA driver.
+>>>>>>
+>>>>>> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+>>>>>>   security/integrity/ima/Kconfig | 1 +
+>>>>>>   1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/security/integrity/ima/Kconfig
+>>>>>> b/security/integrity/ima/Kconfig
+>>>>>> index 35ef693..6a8f677 100644
+>>>>>> +++ b/security/integrity/ima/Kconfig
+>>>>>> @@ -10,6 +10,7 @@ config IMA
+>>>>>>   	select CRYPTO_HASH_INFO
+>>>>>>   	select TCG_TPM if HAS_IOMEM && !UML
+>>>>>>   	select TCG_TIS if TCG_TPM && X86
+>>>
+>>> Well, this explains why IMA doesn't work on one of my X86 systems:
+>>> it's got a non i2c infineon TPM.
+>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>>> +	select TCG_CRB if TCG_TPM && ACPI
+>>>>>>   	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+>>>>>>   	help
+>>>>>>   	  The Trusted Computing Group(TCG) runtime Integrity
+>>>>>
+>>>>> This seems really weird, why are any specific TPM drivers
+>>>>> linked to IMA config, we have lots of drivers..
+>>>>>
+>>>>> I don't think I've ever seen this pattern in Kconfig before?
+>>>>
+>>>> As you've seen by the current discussions, the TPM driver needs
+>>>> to be initialized prior to IMA.  Otherwise IMA goes into TPM-
+>>>> bypass mode.  That implies that the TPM must be builtin to the
+>>>> kernel, and not as a kernel module.
+>>>
+>>> Actually, that's not necessarily true:  If we don't begin appraisal
+>>> until after the initrd phase, then the initrd can load TPM modules
+>>> before IMA starts.
+>>>
+>>> This would involve a bit of code rejigging to not require a TPM
+>>> until IMA wants to write its first measurement, but it looks doable
+>>> and would get us out of having to second guess TPM selections.
+>>
+>> The question is about measurement, not appraisal.  Although the
+>> initramfs might be measured, the initramfs can access files on the
+>> real root filesystem.  Those files need to be measured, before they
+>> are used/accessed.
 > 
-> Dne petek, 02. marec 2018 ob 13:40:50 CET je Mark Brown napisal(a):
-> > On Thu, Mar 01, 2018 at 11:23:57PM +0100, Jernej Škrabec wrote:
-> > > I removed parts of the code from the sun4i codec driver and
-> > > interestingly
-> > > it doesn't crash if I remove following lines:
-> > > 
-> > > ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
-> > > if (ret) {
-> > > 
-> > > 	dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
-> > > 	goto err_assert_reset;
-> > > 
-> > > }
-> > > 
-> > > Is it possible that NULL pointer causes troubles somewhere down the
-> > > line?
-> > 
-> > Shouldn't be, that's just the configuration which is optional and not
-> > what we're crashing trying to register, we can mostly configure things
-> > by querying the capabilities of the DMA controller via the dmaengine API
-> > these days.  You're removing all the DMA support there so cutting out a
-> > huge segment of the initialization of both this driver and the machine
-> > driver.  Other sunxi devices seem to be starting happily in -next so
-> > there's something system dependent here...
+> Isn't it a question of threat model?  Because the initrd is measured,
+> you know it's the one you specified and you should know its security
+> properties, so measurement doesn't really need to begin until the root
+> pivots.  At that point you pick up the boot aggregate so the log now is
+> tied to the initrd measurement.  Conversely, I can't really see a
+> threat model where you could trick a correctly measured initrd into
+> subverting IMA, especially because listening network daemons aren't
+> usually active at this stage.
 > 
-> I enabled memory debugging and it seems that there is an issue caused by
-> loading sun4i-codec driver and it is somehow connected to
-> snd_dmaengine_pcm_unregister().
+> I'm not saying there isn't a use case for wanting your TPM built in,
+> I'm just saying I don't think it needs to be required for everyone who
+> uses IMA.
 > 
-> Here is relevant dmesg: https://pastebin.com/raw/80K9GPnB
+> James
 > 
 
-I found the issue. Commit be7ee5f32a9a ("ASoC: soc-generic-dmaengine-pcm: 
-replace platform to component") changes struct dmaengine_pcm:
+ima_init() first calls tpm_pcr_read() which tries to use underlying
+registered TPM chip driver and send read PCR TPM command to the TPM
+chip. If IMA driver is enabled and ima_init() happens, we see this.
 
- struct dmaengine_pcm {
- 	struct dma_chan *chan[SNDRV_PCM_STREAM_LAST + 1];
- 	const struct snd_dmaengine_pcm_config *config;
--	struct snd_soc_platform platform;
-+	struct snd_soc_component component;
- 	unsigned int flags;
- };
+In security/integrity/ima/ima_main.c, init_ima() is in late_initcall.
+And it calls ima_init().
 
-In snd_dmaengine_pcm_register():
-ret = snd_soc_add_component(dev, &pcm->component,
-				    &dmaengine_pcm_component, NULL, 0);
+late_initcall(init_ima);  /* Start IMA after the TPM is available */
 
-And now, sun4i-codec first time returns -EPROBE_DEFER since driver for analog 
-part is not yet loaded. Because of that, all components get destroyed.
+So as long as init_ima() is called, need to at least enable the
+TPM driver for the platform right?
 
-snd_dmaengine_pcm_unregister() calls snd_soc_unregister_component() and that 
-one calls __snd_soc_unregister_component() multiple times (until it fails).
+I'm just following current IMA Kconfig where it's selecting different
+underlying TPM chip drivers for various platforms respectively when
+CONFIG_IMA is set to Y because IMA driver init calls tpm_pcr_read()
+which needs to use TPM.
 
-Issue is that __snd_soc_unregister_component() uses kfree() on component 
-pointer and that naturally can't succed since component was never kmalloc'ed 
-since it is a part of a bigger structure - struct dmaengine_pcm.
-
-What would be the best fix? Changing struct dmaengine_pcm to have pointer to a 
-component, so it can be freed?
-
-Best regards,
-Jernej
+-- 
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
