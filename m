@@ -1,59 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933746AbeCGSYv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:24:51 -0500
-Received: from ms.lwn.net ([45.79.88.28]:58668 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754577AbeCGSYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:24:48 -0500
-Date: Wed, 7 Mar 2018 11:24:47 -0700
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-Message-ID: <20180307112447.1eff794a@lwn.net>
-In-Reply-To: <1520440503.10396.534.camel@linux.vnet.ibm.com>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-        <20180305125642.GA3425@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-        <20180306074932.GB3624@linux.intel.com>
-        <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-        <1520353933.5393.21.camel@HansenPartnership.com>
-        <1520361396.10396.396.camel@linux.vnet.ibm.com>
-        <20180307085454.2c820a13@lwn.net>
-        <1520440503.10396.534.camel@linux.vnet.ibm.com>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S1754642AbeCGSZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:25:55 -0500
+Received: from shards.monkeyblade.net ([184.105.139.130]:55284 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbeCGSZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 13:25:52 -0500
+Date: Wed, 07 Mar 2018 13:25:51 -0500 (EST)
+Message-Id: <20180307.132551.1339524852801277076.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: antoine.tenart@bootlin.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][net-next] net: mvpp2: make function
+ mvpp2_check_hw_buf_num static
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180306152517.2770-1-colin.king@canonical.com>
+References: <20180306152517.2770-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 07 Mar 2018 11:35:03 -0500
-Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+From: Colin King <colin.king@canonical.com>
+Date: Tue,  6 Mar 2018 16:25:17 +0100
 
-> Some maintainers are saying to put the Changelog after the "---" so
-> that it isn't included in the patch description.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> One of the reasons for including the Changelog in the patch
-> description, is to credit people with bug fixes, important rework of
-> the patch, etc.
+> The function mvpp2_check_hw_buf_num is local to the source and does
+> not need to be in global scope, so make it static.
 > 
-> Do you have any thoughts on this?
+> Cleans up sparse warning:
+> drivers/net/ethernet/marvell/mvpp2.c:4298:5: warning: symbol
+> 'mvpp2_check_hw_buf_num' was not declared. Should it be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Not sure I have a strong opinion there.  We do have various tags meant to
-ensure proper credit; I would lean toward using those when possible rather
-than including long change histories that, in the long term, don't help
-readers to understand why the patch was applied.
-
-Thanks,
-
-jon
+Someone else submitted this already, but thanks for the submission.
