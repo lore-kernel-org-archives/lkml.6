@@ -1,28 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754208AbeCGI0f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:26:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42535 "EHLO
+        id S1754173AbeCGI06 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:26:58 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43523 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751055AbeCGI0c (ORCPT
+        with ESMTP id S1751055AbeCGI0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:26:32 -0500
-Date: Wed, 7 Mar 2018 00:26:11 -0800
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-cfacbabd1d9c35d2a179650b2911f17a8d8620b8@git.kernel.org>
-Cc: jolsa@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        namhyung@kernel.org, hpa@zytor.com, alexander.shishkin@linux.intel.com,
-        acme@redhat.com, tglx@linutronix.de, dsahern@gmail.com,
-        mingo@kernel.org
-Reply-To: mingo@kernel.org, dsahern@gmail.com,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        acme@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, namhyung@kernel.org, peterz@infradead.org
-In-Reply-To: <20180302161354.30192-1-jolsa@kernel.org>
-References: <20180302161354.30192-1-jolsa@kernel.org>
+        Wed, 7 Mar 2018 03:26:55 -0500
+Date: Wed, 7 Mar 2018 00:26:38 -0800
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-h31oz5g0mt1dh2s2ajq6o6no@git.kernel.org>
+Cc: namhyung@kernel.org, linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        adrian.hunter@intel.com, hpa@zytor.com, acme@redhat.com,
+        dsahern@gmail.com, jolsa@kernel.org, thomas.lendacky@amd.com,
+        mingo@kernel.org, rkrcmar@redhat.com, tglx@linutronix.de
+Reply-To: thomas.lendacky@amd.com, jolsa@kernel.org, dsahern@gmail.com,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org, hpa@zytor.com,
+        acme@redhat.com, adrian.hunter@intel.com, wangnan0@huawei.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf record: Fix crash in pipe mode
-Git-Commit-ID: cfacbabd1d9c35d2a179650b2911f17a8d8620b8
+Subject: [tip:perf/urgent] tools headers: Sync copy of kvm UAPI headers
+Git-Commit-ID: d976a6e9d9614a951dc21aaf2fbebdeca567dcfa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,125 +33,79 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cfacbabd1d9c35d2a179650b2911f17a8d8620b8
-Gitweb:     https://git.kernel.org/tip/cfacbabd1d9c35d2a179650b2911f17a8d8620b8
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 2 Mar 2018 17:13:54 +0100
+Commit-ID:  d976a6e9d9614a951dc21aaf2fbebdeca567dcfa
+Gitweb:     https://git.kernel.org/tip/d976a6e9d9614a951dc21aaf2fbebdeca567dcfa
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 5 Mar 2018 11:56:40 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Mar 2018 11:52:41 -0300
+CommitDate: Mon, 5 Mar 2018 11:56:40 -0300
 
-perf record: Fix crash in pipe mode
+tools headers: Sync copy of kvm UAPI headers
 
-Currently we can crash perf record when running in pipe mode, like:
+In 801e459a6f3a ("KVM: x86: Add a framework for supporting MSR-based
+features") a new ioctl was introduced, which with this sync of the kvm
+UAPI headers, makes 'perf trace' know about it:
 
-  $ perf record ls | perf report
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  perf: Segmentation fault
-  Error:
-  The - file has no samples!
+  $ cd /tmp/build/perf/trace/beauty/generated/ioctl/
+  $ diff -u kvm_ioctl_array.c.old kvm_ioctl_array.c
+  --- /tmp/kvm_ioctl_array.c	2018-03-05 11:55:38.409145056 -0300
+  +++ /tmp/build/perf/trace/beauty/generated/ioctl/kvm_ioctl_array.c	2018-03-05 11:56:17.456153501 -0300
+  @@ -6,6 +6,7 @@
+ 	[0x04] = "GET_VCPU_MMAP_SIZE",
+ 	[0x05] = "GET_SUPPORTED_CPUID",
+ 	[0x09] = "GET_EMULATED_CPUID",
+  +	[0x0a] = "GET_MSR_FEATURE_INDEX_LIST",
+ 	[0x40] = "SET_MEMORY_REGION",
+ 	[0x41] = "CREATE_VCPU",
+ 	[0x42] = "GET_DIRTY_LOG",
 
-The callstack of the crash is:
+So when using 'perf trace -e ioctl' that will appear along with the
+others, like in this excerpt of a system wide session:
 
-    0x0000000000515242 in perf_event__synthesize_event_update_name
-  3513            ev = event_update_event__new(len + 1, PERF_EVENT_UPDATE__NAME, evsel->id[0]);
-  (gdb) bt
-  #0  0x0000000000515242 in perf_event__synthesize_event_update_name
-  #1  0x00000000005158a4 in perf_event__synthesize_extra_attr
-  #2  0x0000000000443347 in record__synthesize
-  #3  0x00000000004438e3 in __cmd_record
-  #4  0x000000000044514e in cmd_record
-  #5  0x00000000004cbc95 in run_builtin
-  #6  0x00000000004cbf02 in handle_internal_command
-  #7  0x00000000004cc054 in run_argv
-  #8  0x00000000004cc422 in main
+  14.556 ( 0.006 ms): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) = 0
+  14.565 ( 0.006 ms): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) = 0
+  14.573 (         ): CPU 0/KVM/16077 ioctl(fd: 19<anon_inode:kvm-vcpu:0>, cmd: KVM_RUN) ...
+  34.075 ( 0.016 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73e850) = 0
+  40.549 ( 0.012 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73ece0) = 0
+  40.625 ( 0.005 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffe4e73e940) = 0
+  40.632 ( 0.003 ms): gnome-shell/2192 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_MADVISE, arg: 0x7ffe4e73e9b0) = 0
 
-The reason of the crash is that the evsel does not have ids array
-allocated and the pipe's synthesize code tries to access it.
+This also silences the perf build header copy drift verifier:
 
-We don't force evsel ids allocation when we have single event, because
-it's not needed. However we need it when we are in pipe mode even for
-single event as a key for evsel update event.
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+    BUILD:   Doing 'make -j4' parallel build
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
 
-Fixing this by forcing evsel ids allocation event for single event, when
-we are in pipe mode.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180302161354.30192-1-jolsa@kernel.org
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-h31oz5g0mt1dh2s2ajq6o6no@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 9 +++++++++
- tools/perf/perf.h           | 1 +
- tools/perf/util/record.c    | 8 ++++++--
- 3 files changed, 16 insertions(+), 2 deletions(-)
+ tools/include/uapi/linux/kvm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index bf4ca749d1ac..a217623fec2e 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -881,6 +881,15 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		}
- 	}
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index 0fb5ef939732..7b26d4b0b052 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -761,6 +761,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_TRACE_PAUSE           __KVM_DEPRECATED_MAIN_0x07
+ #define KVM_TRACE_DISABLE         __KVM_DEPRECATED_MAIN_0x08
+ #define KVM_GET_EMULATED_CPUID	  _IOWR(KVMIO, 0x09, struct kvm_cpuid2)
++#define KVM_GET_MSR_FEATURE_INDEX_LIST    _IOWR(KVMIO, 0x0a, struct kvm_msr_list)
  
-+	/*
-+	 * If we have just single event and are sending data
-+	 * through pipe, we need to force the ids allocation,
-+	 * because we synthesize event name through the pipe
-+	 * and need the id for that.
-+	 */
-+	if (data->is_pipe && rec->evlist->nr_entries == 1)
-+		rec->opts.sample_id = true;
-+
- 	if (record__open(rec) != 0) {
- 		err = -1;
- 		goto out_child;
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index cfe46236a5e5..57b9b342d533 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -61,6 +61,7 @@ struct record_opts {
- 	bool	     tail_synthesize;
- 	bool	     overwrite;
- 	bool	     ignore_missing_thread;
-+	bool	     sample_id;
- 	unsigned int freq;
- 	unsigned int mmap_pages;
- 	unsigned int auxtrace_mmap_pages;
-diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
-index 1e97937b03a9..6f09e4962dad 100644
---- a/tools/perf/util/record.c
-+++ b/tools/perf/util/record.c
-@@ -137,6 +137,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 	struct perf_evsel *evsel;
- 	bool use_sample_identifier = false;
- 	bool use_comm_exec;
-+	bool sample_id = opts->sample_id;
+ /*
+  * Extension capability list.
+@@ -934,6 +935,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_AIS_MIGRATION 150
+ #define KVM_CAP_PPC_GET_CPU_CHAR 151
+ #define KVM_CAP_S390_BPB 152
++#define KVM_CAP_GET_MSR_FEATURES 153
  
- 	/*
- 	 * Set the evsel leader links before we configure attributes,
-@@ -163,8 +164,7 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 		 * match the id.
- 		 */
- 		use_sample_identifier = perf_can_sample_identifier();
--		evlist__for_each_entry(evlist, evsel)
--			perf_evsel__set_sample_id(evsel, use_sample_identifier);
-+		sample_id = true;
- 	} else if (evlist->nr_entries > 1) {
- 		struct perf_evsel *first = perf_evlist__first(evlist);
+ #ifdef KVM_CAP_IRQ_ROUTING
  
-@@ -174,6 +174,10 @@ void perf_evlist__config(struct perf_evlist *evlist, struct record_opts *opts,
- 			use_sample_identifier = perf_can_sample_identifier();
- 			break;
- 		}
-+		sample_id = true;
-+	}
-+
-+	if (sample_id) {
- 		evlist__for_each_entry(evlist, evsel)
- 			perf_evsel__set_sample_id(evsel, use_sample_identifier);
- 	}
