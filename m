@@ -1,57 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964843AbeCGUjy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:39:54 -0500
-Received: from ozlabs.org ([103.22.144.67]:58671 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934800AbeCGUjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:39:51 -0500
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 8 Mar 2018 07:39:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Message-ID: <20180308073921.5c104e74@canb.auug.org.au>
+        id S934850AbeCGUlU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:41:20 -0500
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46350 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934411AbeCGUlR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:41:17 -0500
+X-Google-Smtp-Source: AG47ELuiHJM98GuNOIMiuOm5zKfXUiZ2mSQU1JVSL3BTJ7KwVsz9EgWJAjgE9U03MNEbvcjFklRsTQ==
+Date: Wed, 7 Mar 2018 14:41:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH 2/2] dt-bindings: Add support for SAW documentation
+Message-ID: <20180307204115.mugm7m3egrc73og2@rob-hp-laptop>
+References: <1520166709-554-1-git-send-email-ilialin@codeaurora.org>
+ <1520166709-554-3-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AY4ut3Ltsegz7HJcIBs+xRe"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520166709-554-3-git-send-email-ilialin@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AY4ut3Ltsegz7HJcIBs+xRe
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 04, 2018 at 02:31:49PM +0200, Ilia Lin wrote:
+> Add support for SAW controlled regulators in 8x96.
+> Document it.
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index 57d2c65..406f2e5 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+>  	Definition: Reference to regulator supplying the input pin, as
+>  		    described in the data sheet.
+>  
+> +- qcom,saw-reg:
+> +	Usage: optional
+> +	Value type: <phandle>
+> +	Description: Reference to syscon node defining the SAW registers.
+> +
+>  
+>  The regulator node houses sub-nodes for each regulator within the device. Each
+>  sub-node is identified using the node's name, with valid values listed for each
+> @@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+>  			2 = 0.55 uA
+>  			3 = 0.75 uA
+>  
+> +- qcom,saw-slave:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang slave. Will not be configured.
+> +
+> +- qcom,saw-leader:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang leader. Will be configured as
+> +		     SAW regulator.
+> +
+>  Example:
+>  
+>  	regulators {
+> @@ -221,3 +237,32 @@ Example:
+>  
+>  		....
+>  	};
+> +
+> +Example 2:
+> +
+> +	saw3: syscon@9A10000 {
+> +		compatible = "syscon";
 
-Hi Linus,
+syscon should not be used alone. It should have a specific compatible 
+too.
 
-Commit
+> +		reg = <0x9A10000 0x1000>;
+> +	};
+> +
+> +	...
+> +
+> +	spm-regulators {
+> +		compatible = "qcom,pm8994-regulators";
+> +		qcom,saw-reg = <&saw3>;
 
-  fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin i=
-n pinmux_pins[]")
+Why not just a child of the syscon?
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/AY4ut3Ltsegz7HJcIBs+xRe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqgTfkACgkQAVBC80lX
-0Gy0jQf/dOK5CE+vY9IR8xZ0gNZWtMpff6wH2R+si5pElt/kFi3oZS/uWA06YDoA
-kgOwRJOMG+5VEYomVbI0uRP8EcCxtVOGK1yhkzaHw/j5APVwRsdspNOqJzUB6KEk
-ot4ix3cPosZgSCdOddpk8yzXW3cc3cgx/DvFooPcuLwvIpg5Q3vBCLNKN/+DB7lC
-R6wMnPDn7IwUYfYDtQa0PRYT1YVenISQWYrn7gO+MtG1iMvVgIaNZZ8GZ0ECTNWp
-OARcakW+AuKSCTYxnU5Sgf7k67A+Y9MpWjIl7VGfk/r6Z9rekxGPOxBjCGN+f2jQ
-bTTRmwPt1iwovO2iBzWugv3MRjfeNg==
-=B4R3
------END PGP SIGNATURE-----
-
---Sig_/AY4ut3Ltsegz7HJcIBs+xRe--
+> +		s8 {
+> +			qcom,saw-slave;
+> +		};
+> +		s9 {
+> +			qcom,saw-slave;
+> +		};
+> +		s10 {
+> +			qcom,saw-slave;
+> +		};
+> +		pm8994_s11_saw: s11 {
+> +			qcom,saw-leader;
+> +			regulator-always-on;
+> +			regulator-min-microvolt = <900000>;
+> +			regulator-max-microvolt = <1140000>;
+> +		};
+> +	};
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
