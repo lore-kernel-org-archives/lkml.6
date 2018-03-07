@@ -1,232 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751281AbeCGGPD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 01:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751191AbeCGGNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 01:13:52 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88BC521795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 5/9] PCI/portdrv: Remove pcie_port_bus_type link order
- dependency
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Date: Wed, 07 Mar 2018 00:13:51 -0600
-Message-ID: <152040323121.240786.5383276983544773869.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1751042AbeCGGZj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 01:25:39 -0500
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:59478 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750959AbeCGGZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 01:25:38 -0500
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.184
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [RFC] rcu: Prevent expedite reporting within RCU read-side
+ section
+From: Byungchul Park <byungchul.park@lge.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com
+References: <1520314318-30916-1-git-send-email-byungchul.park@lge.com>
+ <20180306134205.lwmn3cgisnwkngcf@tardis>
+ <908c33f9-c8ed-5d4e-91cb-a123de5dbbc7@lge.com>
+Message-ID: <a2e0a9c5-4246-d3b9-2eb7-9bdd87aef636@lge.com>
+Date: Wed, 7 Mar 2018 15:25:36 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <908c33f9-c8ed-5d4e-91cb-a123de5dbbc7@lge.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 3/7/2018 2:55 PM, Byungchul Park wrote:
+> On 3/6/2018 10:42 PM, Boqun Feng wrote:
+>> On Tue, Mar 06, 2018 at 02:31:58PM +0900, Byungchul Park wrote:
+>>> Hello Paul and RCU folks,
+>>>
+>>> I am afraid I correctly understand and fix it. But I really wonder why
+>>> sync_rcu_exp_handler() reports the quiescent state even in the case that
+>>> current task is within a RCU read-side section. Do I miss something?
+>>>
+>>> If I correctly understand it and you agree with it, I can add more logic
+>>> which make it more expedited by boosting current or making it urgent
+>>> when we fail to report the quiescent state on the IPI.
+>>>
+>>> ----->8-----
+>>>  From 0b0191f506c19ce331a1fdb7c2c5a00fb23fbcf2 Mon Sep 17 00:00:00 2001
+>>> From: Byungchul Park <byungchul.park@lge.com>
+>>> Date: Tue, 6 Mar 2018 13:54:41 +0900
+>>> Subject: [RFC] rcu: Prevent expedite reporting within RCU read-side 
+>>> section
+>>>
+>>> We report the quiescent state for this cpu if it's out of RCU read-side
+>>> section at the moment IPI was just fired during the expedite process.
+>>>
+>>> However, current code reports the quiescent state even in the case:
+>>>
+>>>     1) the current task is still within a RCU read-side section
+>>>     2) the current task has been blocked within the RCU read-side 
+>>> section
+>>>
+>>
+>> If this happens, the task will queue itself in
+>> rcu_preempt_note_context_switch() using rcu_preempt_ctxt_queue(). The gp
+>> kthread will wait for this task to dequeue itself. IOW, we have other
+>> mechanism to wait for this task other than bottom-up qs reporting tree.
+>> So I think we are fine here.
+> 
+> Right. Basically we consider both the quiscent state within the current
+> task and queued tasks on rcu nodes that you mentioned, to control grace
+> periods when PREEMPT kernel is used.
+> 
+> Actually my concern was if it's safe to clear the bit of 'expmask' on
+> the IPI for all possible cases, even though anyway blocked tasks would
+> try to prevent the grace period from ending.
+> 
+> I worried if something subtle might cause problems, but the code looks
+> fine on second thought as you said. Thank you for your explanation.
 
-The pcie_port_bus_type must be registered before drivers that depend on it
-can be registered.  Those drivers include:
+In addition, by making quiescent states reported and bits of expmask
+cleared only when it's out of rcu read sections, of course keeping
+other mechanism unchanged like what you mentioned, I think we can avoid
+unnecessary locking ops and other statements, keeping the code still
+sane, even though the benefit might be small.
 
-  pcied_init()                # PCIe native hotplug driver
-  aer_service_init()          # AER driver
-  dpc_service_init()          # DPC driver
-  pcie_pme_service_init()     # PME driver
+For example, by removing some evitable calls to rcu_report_cpu_mult()
+either directly or indirectly. I'm not sure if RCU maintainers think
+it's worthy tho.
 
-Previously we registered pcie_port_bus_type from pcie_portdrv_init(), a
-device_initcall.  The callers of pcie_port_service_register() (above) are
-also device_initcalls.  This is fragile because the device_initcall
-ordering depends on link order, which is not explicit.
+>> Regards,
+>> Boqun
+>>
+>>> Since we don't get to the quiescent state yet in the case, we shouldn't
+>>> report it but check it another time.
+>>>
+>>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>>> ---
+>>>   kernel/rcu/tree_exp.h | 12 ++++++------
+>>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+>>> index 73e1d3d..cc69d14 100644
+>>> --- a/kernel/rcu/tree_exp.h
+>>> +++ b/kernel/rcu/tree_exp.h
+>>> @@ -731,13 +731,13 @@ static void sync_rcu_exp_handler(void *info)
+>>>       /*
+>>>        * We are either exiting an RCU read-side critical section 
+>>> (negative
+>>>        * values of t->rcu_read_lock_nesting) or are not in one at all
+>>> -     * (zero value of t->rcu_read_lock_nesting).  Or we are in an RCU
+>>> -     * read-side critical section that blocked before this expedited
+>>> -     * grace period started.  Either way, we can immediately report
+>>> -     * the quiescent state.
+>>> +     * (zero value of t->rcu_read_lock_nesting). We can immediately
+>>> +     * report the quiescent state.
+>>>        */
+>>> -    rdp = this_cpu_ptr(rsp->rda);
+>>> -    rcu_report_exp_rdp(rsp, rdp, true);
+>>> +    if (t->rcu_read_lock_nesting <= 0) {
+>>> +        rdp = this_cpu_ptr(rsp->rda);
+>>> +        rcu_report_exp_rdp(rsp, rdp, true);
+>>> +    }
+>>>   }
+>>>   /**
+>>> -- 
+>>> 1.9.1
+>>>
+> 
 
-Register pcie_port_bus_type from pci_driver_init() along with pci_bus_type.
-This removes the link order dependency between portdrv and the pciehp, AER,
-DPC, and PCIe PME drivers.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci-driver.c       |   45 +++++++++++++++++++++++++++++++-
- drivers/pci/pcie/Makefile      |    2 +
- drivers/pci/pcie/portdrv_bus.c |   56 ----------------------------------------
- drivers/pci/pcie/portdrv_pci.c |   13 +--------
- 4 files changed, 46 insertions(+), 70 deletions(-)
- delete mode 100644 drivers/pci/pcie/portdrv_bus.c
-
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 38ee7c8b4d1a..4db85a0faf34 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/pci.h>
-+#include <linux/pcieport_if.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/device.h>
-@@ -19,6 +20,7 @@
- #include <linux/suspend.h>
- #include <linux/kexec.h>
- #include "pci.h"
-+#include "pcie/portdrv.h"
- 
- struct pci_dynid {
- 	struct list_head node;
-@@ -1553,8 +1555,49 @@ struct bus_type pci_bus_type = {
- };
- EXPORT_SYMBOL(pci_bus_type);
- 
-+#ifdef CONFIG_PCIEPORTBUS
-+static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
-+{
-+	struct pcie_device *pciedev;
-+	struct pcie_port_service_driver *driver;
-+
-+	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
-+		return 0;
-+
-+	pciedev = to_pcie_device(dev);
-+	driver = to_service_driver(drv);
-+
-+	if (driver->service != pciedev->service)
-+		return 0;
-+
-+	if ((driver->port_type != PCIE_ANY_PORT) &&
-+	    (driver->port_type != pci_pcie_type(pciedev->port)))
-+		return 0;
-+
-+	return 1;
-+}
-+
-+struct bus_type pcie_port_bus_type = {
-+	.name		= "pci_express",
-+	.match		= pcie_port_bus_match,
-+};
-+EXPORT_SYMBOL_GPL(pcie_port_bus_type);
-+#endif
-+
- static int __init pci_driver_init(void)
- {
--	return bus_register(&pci_bus_type);
-+	int ret;
-+
-+	ret = bus_register(&pci_bus_type);
-+	if (ret)
-+		return ret;
-+
-+#ifdef CONFIG_PCIEPORTBUS
-+	ret = bus_register(&pcie_port_bus_type);
-+	if (ret)
-+		return ret;
-+#endif
-+
-+	return 0;
- }
- postcore_initcall(pci_driver_init);
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index 223e4c34c29a..e01c10c97b95 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -6,7 +6,7 @@
- # Build PCI Express ASPM if needed
- obj-$(CONFIG_PCIEASPM)		+= aspm.o
- 
--pcieportdrv-y			:= portdrv_core.o portdrv_pci.o portdrv_bus.o
-+pcieportdrv-y			:= portdrv_core.o portdrv_pci.o
- pcieportdrv-$(CONFIG_ACPI)	+= portdrv_acpi.o
- 
- obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
-diff --git a/drivers/pci/pcie/portdrv_bus.c b/drivers/pci/pcie/portdrv_bus.c
-deleted file mode 100644
-index f0fba552a0e2..000000000000
---- a/drivers/pci/pcie/portdrv_bus.c
-+++ /dev/null
-@@ -1,56 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * File:	portdrv_bus.c
-- * Purpose:	PCI Express Port Bus Driver's Bus Overloading Functions
-- *
-- * Copyright (C) 2004 Intel
-- * Copyright (C) Tom Long Nguyen (tom.l.nguyen@intel.com)
-- */
--
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/pm.h>
--
--#include <linux/pcieport_if.h>
--#include "portdrv.h"
--
--static int pcie_port_bus_match(struct device *dev, struct device_driver *drv);
--
--struct bus_type pcie_port_bus_type = {
--	.name		= "pci_express",
--	.match		= pcie_port_bus_match,
--};
--EXPORT_SYMBOL_GPL(pcie_port_bus_type);
--
--static int pcie_port_bus_match(struct device *dev, struct device_driver *drv)
--{
--	struct pcie_device *pciedev;
--	struct pcie_port_service_driver *driver;
--
--	if (drv->bus != &pcie_port_bus_type || dev->bus != &pcie_port_bus_type)
--		return 0;
--
--	pciedev = to_pcie_device(dev);
--	driver = to_service_driver(drv);
--
--	if (driver->service != pciedev->service)
--		return 0;
--
--	if ((driver->port_type != PCIE_ANY_PORT) &&
--	    (driver->port_type != pci_pcie_type(pciedev->port)))
--		return 0;
--
--	return 1;
--}
--
--int pcie_port_bus_register(void)
--{
--	return bus_register(&pcie_port_bus_type);
--}
--
--void pcie_port_bus_unregister(void)
--{
--	bus_unregister(&pcie_port_bus_type);
--}
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index c08ebd237242..9475886eeb62 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -259,22 +259,11 @@ static const struct dmi_system_id pcie_portdrv_dmi_table[] __initconst = {
- 
- static int __init pcie_portdrv_init(void)
- {
--	int retval;
--
- 	if (pcie_ports_disabled)
- 		return -EACCES;
- 
- 	dmi_check_system(pcie_portdrv_dmi_table);
- 
--	retval = pcie_port_bus_register();
--	if (retval) {
--		printk(KERN_WARNING "PCIE: bus_register error: %d\n", retval);
--		goto out;
--	}
--	retval = pci_register_driver(&pcie_portdriver);
--	if (retval)
--		pcie_port_bus_unregister();
-- out:
--	return retval;
-+	return pci_register_driver(&pcie_portdriver);
- }
- device_initcall(pcie_portdrv_init);
+-- 
+Thanks,
+Byungchul
