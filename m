@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933449AbeCGOTA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:19:00 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37540 "EHLO mail.bootlin.com"
+        id S933522AbeCGOTD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:19:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37547 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933407AbeCGOSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:18:53 -0500
+        id S932448AbeCGOSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:18:55 -0500
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: davem@davemloft.net
 Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -16,9 +16,9 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Gregory Clement <gregory.clement@bootlin.com>,
         Marcin Wojtas <mw@semihalf.com>, ymarkman@marvell.com,
         nadavh@marvell.com, stefanc@marvell.com
-Subject: [PATCH net-next 1/2] net: mvpp2: Simplify MAC filtering function parameters
-Date: Wed,  7 Mar 2018 15:18:03 +0100
-Message-Id: <20180307141804.348-2-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 2/2] net: mvpp2: Add support for unicast filtering
+Date: Wed,  7 Mar 2018 15:18:04 +0100
+Message-Id: <20180307141804.348-3-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180307141804.348-1-maxime.chevallier@bootlin.com>
 References: <20180307141804.348-1-maxime.chevallier@bootlin.com>
@@ -26,109 +26,459 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mvpp2_prs_mac_da_accept function takes into parameter both the
-struct representing the controller and the port id. This is meaningful
-when we want to create TCAM entries for non-initialized ports, but in
-this case we expect the port to be initialized before starting adding or
-removing MAC addresses to the per-port filter.
+Marvell PPv2 controller can be used to implement packet filtering based
+on the destination MAC address. This is already used to implement
+multicast filtering. This patch adds support for Unicast filtering.
 
-This commit changes the function so that it takes struct mvpp2_port as
-a parameter instead.
+Filtering is based on so-called "TCAM entries" to implement filtering.
+Due to their limited number and the fact that these are also used for
+other purposes, we reserve 80 entries for both unicast and multicast
+filters. On top of the broadcast address, and each interface's own MAC
+address, we reserve 25 entries per port, 4 for unicast filters, 21 for
+multicast.
+
+Whenever unicast or multicast range for one port is full, the filtering
+is disabled and port goes into promiscuous mode for the given type of
+addresses.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2.c | 296 +++++++++++++++++++----------------
+ 1 file changed, 161 insertions(+), 135 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index ac0a0dc8f157..7820906eca8a 100644
+index 7820906eca8a..84709b0a9903 100644
 --- a/drivers/net/ethernet/marvell/mvpp2.c
 +++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -3817,16 +3817,17 @@ mvpp2_prs_mac_da_range_find(struct mvpp2 *priv, int pmap, const u8 *da,
+@@ -601,6 +601,9 @@ enum mvpp2_tag_type {
+ #define MVPP2_PRS_TCAM_PROTO_MASK	0xff
+ #define MVPP2_PRS_TCAM_PROTO_MASK_L	0x3f
+ #define MVPP2_PRS_DBL_VLANS_MAX		100
++#define MVPP2_PRS_CAST_MASK		BIT(0)
++#define MVPP2_PRS_MCAST_VAL		BIT(0)
++#define MVPP2_PRS_UCAST_VAL		0x0
+ 
+ /* Tcam structure:
+  * - lookup ID - 4 bits
+@@ -624,6 +627,19 @@ enum mvpp2_tag_type {
+ 
+ #define MVPP2_PRS_VID_TCAM_BYTE         2
+ 
++/* TCAM range for unicast and multicast filtering. We have 25 entries per port,
++ * with 4 dedicated to UC filtering and the rest to multicast filtering.
++ * Additionnally we reserve one entry for the broadcast address, and one for
++ * each port's own address.
++ */
++#define MVPP2_PRS_MAC_UC_MC_FILT_MAX	25
++#define MVPP2_PRS_MAC_RANGE_SIZE	80
++
++/* Number of entries per port dedicated to UC and MC filtering */
++#define MVPP2_PRS_MAC_UC_FILT_MAX	4
++#define MVPP2_PRS_MAC_MC_FILT_MAX	(MVPP2_PRS_MAC_UC_MC_FILT_MAX - \
++					 MVPP2_PRS_MAC_UC_FILT_MAX)
++
+ /* There is a TCAM range reserved for VLAN filtering entries, range size is 33
+  * 10 VLAN ID filter entries per port
+  * 1 default VLAN filter entry per port
+@@ -639,36 +655,40 @@ enum mvpp2_tag_type {
+ #define MVPP2_PE_DROP_ALL		0
+ #define MVPP2_PE_FIRST_FREE_TID		1
+ 
++/* MAC filtering range */
++#define MVPP2_PE_MAC_RANGE_END		(MVPP2_PE_VID_FILT_RANGE_START - 1)
++#define MVPP2_PE_MAC_RANGE_START	(MVPP2_PE_MAC_RANGE_END - \
++						MVPP2_PRS_MAC_RANGE_SIZE + 1)
+ /* VLAN filtering range */
+ #define MVPP2_PE_VID_FILT_RANGE_END     (MVPP2_PRS_TCAM_SRAM_SIZE - 31)
+ #define MVPP2_PE_VID_FILT_RANGE_START   (MVPP2_PE_VID_FILT_RANGE_END - \
+ 					 MVPP2_PRS_VLAN_FILT_RANGE_SIZE + 1)
+ #define MVPP2_PE_LAST_FREE_TID          (MVPP2_PE_VID_FILT_RANGE_START - 1)
+ #define MVPP2_PE_IP6_EXT_PROTO_UN	(MVPP2_PRS_TCAM_SRAM_SIZE - 30)
+-#define MVPP2_PE_MAC_MC_IP6		(MVPP2_PRS_TCAM_SRAM_SIZE - 29)
+-#define MVPP2_PE_IP6_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 28)
+-#define MVPP2_PE_IP4_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 27)
+-#define MVPP2_PE_LAST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 26)
+-#define MVPP2_PE_FIRST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 21)
+-#define MVPP2_PE_EDSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 20)
+-#define MVPP2_PE_EDSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 19)
+-#define MVPP2_PE_DSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 18)
+-#define MVPP2_PE_DSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 17)
+-#define MVPP2_PE_ETYPE_EDSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 16)
+-#define MVPP2_PE_ETYPE_EDSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 15)
+-#define MVPP2_PE_ETYPE_DSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 14)
+-#define MVPP2_PE_ETYPE_DSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 13)
+-#define MVPP2_PE_MH_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 12)
+-#define MVPP2_PE_DSA_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 11)
+-#define MVPP2_PE_IP6_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 10)
+-#define MVPP2_PE_IP4_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 9)
+-#define MVPP2_PE_ETH_TYPE_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 8)
+-#define MVPP2_PE_VID_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 7)
+-#define MVPP2_PE_VID_EDSA_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 6)
+-#define MVPP2_PE_VLAN_DBL		(MVPP2_PRS_TCAM_SRAM_SIZE - 5)
+-#define MVPP2_PE_VLAN_NONE		(MVPP2_PRS_TCAM_SRAM_SIZE - 4)
+-#define MVPP2_PE_MAC_MC_ALL		(MVPP2_PRS_TCAM_SRAM_SIZE - 3)
+-#define MVPP2_PE_MAC_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 2)
++#define MVPP2_PE_IP6_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 29)
++#define MVPP2_PE_IP4_ADDR_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 28)
++#define MVPP2_PE_LAST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 27)
++#define MVPP2_PE_FIRST_DEFAULT_FLOW	(MVPP2_PRS_TCAM_SRAM_SIZE - 22)
++#define MVPP2_PE_EDSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 21)
++#define MVPP2_PE_EDSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 20)
++#define MVPP2_PE_DSA_TAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 19)
++#define MVPP2_PE_DSA_UNTAGGED		(MVPP2_PRS_TCAM_SRAM_SIZE - 18)
++#define MVPP2_PE_ETYPE_EDSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 17)
++#define MVPP2_PE_ETYPE_EDSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 16)
++#define MVPP2_PE_ETYPE_DSA_TAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 15)
++#define MVPP2_PE_ETYPE_DSA_UNTAGGED	(MVPP2_PRS_TCAM_SRAM_SIZE - 14)
++#define MVPP2_PE_MH_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 13)
++#define MVPP2_PE_DSA_DEFAULT		(MVPP2_PRS_TCAM_SRAM_SIZE - 12)
++#define MVPP2_PE_IP6_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 11)
++#define MVPP2_PE_IP4_PROTO_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 10)
++#define MVPP2_PE_ETH_TYPE_UN		(MVPP2_PRS_TCAM_SRAM_SIZE - 9)
++#define MVPP2_PE_VID_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 8)
++#define MVPP2_PE_VID_EDSA_FLTR_DEFAULT	(MVPP2_PRS_TCAM_SRAM_SIZE - 7)
++#define MVPP2_PE_VLAN_DBL		(MVPP2_PRS_TCAM_SRAM_SIZE - 6)
++#define MVPP2_PE_VLAN_NONE		(MVPP2_PRS_TCAM_SRAM_SIZE - 5)
++/* reserved */
++#define MVPP2_PE_MAC_MC_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 3)
++#define MVPP2_PE_MAC_UC_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 2)
+ #define MVPP2_PE_MAC_NON_PROMISCUOUS	(MVPP2_PRS_TCAM_SRAM_SIZE - 1)
+ 
+ #define MVPP2_PRS_VID_PORT_FIRST(port)	(MVPP2_PE_VID_FILT_RANGE_START + \
+@@ -798,6 +818,12 @@ enum mvpp2_prs_lookup {
+ 	MVPP2_PRS_LU_LAST,
+ };
+ 
++/* L2 cast enum */
++enum mvpp2_prs_l2_cast {
++	MVPP2_PRS_L2_UNI_CAST,
++	MVPP2_PRS_L2_MULTI_CAST,
++};
++
+ /* L3 cast enum */
+ enum mvpp2_prs_l3_cast {
+ 	MVPP2_PRS_L3_UNI_CAST,
+@@ -1973,78 +1999,43 @@ static void mvpp2_prs_mac_drop_all_set(struct mvpp2 *priv, int port, bool add)
+ 	mvpp2_prs_hw_write(priv, &pe);
  }
  
- /* Update parser's mac da entry */
--static int mvpp2_prs_mac_da_accept(struct mvpp2 *priv, int port,
--				   const u8 *da, bool add)
-+static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
-+				   bool add)
+-/* Set port to promiscuous mode */
+-static void mvpp2_prs_mac_promisc_set(struct mvpp2 *priv, int port, bool add)
++/* Set port to unicast or multicast promiscuous mode */
++static void mvpp2_prs_mac_promisc_set(struct mvpp2 *priv, int port,
++				      enum mvpp2_prs_l2_cast l2_cast, bool add)
  {
--	struct mvpp2_prs_entry *pe;
--	unsigned int pmap, len, ri;
- 	unsigned char mask[ETH_ALEN] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-+	struct mvpp2 *priv = port->priv;
-+	unsigned int pmap, len, ri;
-+	struct mvpp2_prs_entry *pe;
- 	int tid;
+ 	struct mvpp2_prs_entry pe;
++	unsigned char cast_match;
++	unsigned int ri;
++	int tid;
  
- 	/* Scan TCAM and see if entry with this <MAC DA, port> already exist */
--	pe = mvpp2_prs_mac_da_range_find(priv, (1 << port), da, mask,
-+	pe = mvpp2_prs_mac_da_range_find(priv, BIT(port->id), da, mask,
- 					 MVPP2_PRS_UDF_MAC_DEF);
- 
- 	/* No such entry */
-@@ -3861,7 +3862,7 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2 *priv, int port,
+-	/* Promiscuous mode - Accept unknown packets */
+-
+-	if (priv->prs_shadow[MVPP2_PE_MAC_PROMISCUOUS].valid) {
+-		/* Entry exist - update port only */
+-		pe.index = MVPP2_PE_MAC_PROMISCUOUS;
+-		mvpp2_prs_hw_read(priv, &pe);
++	if (l2_cast == MVPP2_PRS_L2_UNI_CAST) {
++		cast_match = MVPP2_PRS_UCAST_VAL;
++		tid = MVPP2_PE_MAC_UC_PROMISCUOUS;
++		ri = MVPP2_PRS_RI_L2_UCAST;
+ 	} else {
+-		/* Entry doesn't exist - create new */
+-		memset(&pe, 0, sizeof(pe));
+-		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_MAC);
+-		pe.index = MVPP2_PE_MAC_PROMISCUOUS;
+-
+-		/* Continue - set next lookup */
+-		mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_DSA);
+-
+-		/* Set result info bits */
+-		mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_L2_UCAST,
+-					 MVPP2_PRS_RI_L2_CAST_MASK);
+-
+-		/* Shift to ethertype */
+-		mvpp2_prs_sram_shift_set(&pe, 2 * ETH_ALEN,
+-					 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
+-
+-		/* Mask all ports */
+-		mvpp2_prs_tcam_port_map_set(&pe, 0);
+-
+-		/* Update shadow table */
+-		mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_MAC);
++		cast_match = MVPP2_PRS_MCAST_VAL;
++		tid = MVPP2_PE_MAC_MC_PROMISCUOUS;
++		ri = MVPP2_PRS_RI_L2_MCAST;
  	}
  
- 	/* Update port mask */
--	mvpp2_prs_tcam_port_set(pe, port, add);
-+	mvpp2_prs_tcam_port_set(pe, port->id, add);
+-	/* Update port mask */
+-	mvpp2_prs_tcam_port_set(&pe, port, add);
+-
+-	mvpp2_prs_hw_write(priv, &pe);
+-}
+-
+-/* Accept multicast */
+-static void mvpp2_prs_mac_multi_set(struct mvpp2 *priv, int port, int index,
+-				    bool add)
+-{
+-	struct mvpp2_prs_entry pe;
+-	unsigned char da_mc;
+-
+-	/* Ethernet multicast address first byte is
+-	 * 0x01 for IPv4 and 0x33 for IPv6
+-	 */
+-	da_mc = (index == MVPP2_PE_MAC_MC_ALL) ? 0x01 : 0x33;
+-
+-	if (priv->prs_shadow[index].valid) {
+-		/* Entry exist - update port only */
+-		pe.index = index;
++	/* promiscuous mode - Accept unknown unicast or multicast packets */
++	if (priv->prs_shadow[tid].valid) {
++		pe.index = tid;
+ 		mvpp2_prs_hw_read(priv, &pe);
+ 	} else {
+-		/* Entry doesn't exist - create new */
+ 		memset(&pe, 0, sizeof(pe));
+ 		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_MAC);
+-		pe.index = index;
++		pe.index = tid;
  
- 	/* Invalidate the entry if no ports are left enabled */
- 	pmap = mvpp2_prs_tcam_port_map_get(pe);
-@@ -3917,13 +3918,12 @@ static int mvpp2_prs_update_mac_da(struct net_device *dev, const u8 *da)
- 	int err;
+ 		/* Continue - set next lookup */
+ 		mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_DSA);
  
- 	/* Remove old parser entry */
--	err = mvpp2_prs_mac_da_accept(port->priv, port->id, dev->dev_addr,
--				      false);
-+	err = mvpp2_prs_mac_da_accept(port, dev->dev_addr, false);
- 	if (err)
- 		return err;
+ 		/* Set result info bits */
+-		mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_L2_MCAST,
+-					 MVPP2_PRS_RI_L2_CAST_MASK);
++		mvpp2_prs_sram_ri_update(&pe, ri, MVPP2_PRS_RI_L2_CAST_MASK);
  
- 	/* Add new parser entry */
--	err = mvpp2_prs_mac_da_accept(port->priv, port->id, da, true);
-+	err = mvpp2_prs_mac_da_accept(port, da, true);
- 	if (err)
- 		return err;
+-		/* Update tcam entry data first byte */
+-		mvpp2_prs_tcam_data_byte_set(&pe, 0, da_mc, 0xff);
++		/* Match UC or MC addresses */
++		mvpp2_prs_tcam_data_byte_set(&pe, 0, cast_match,
++					     MVPP2_PRS_CAST_MASK);
  
-@@ -3959,7 +3959,8 @@ static void mvpp2_prs_mcast_del_all(struct mvpp2 *priv, int port)
+ 		/* Shift to ethertype */
+ 		mvpp2_prs_sram_shift_set(&pe, 2 * ETH_ALEN,
+@@ -2758,11 +2749,10 @@ static void mvpp2_prs_mac_init(struct mvpp2 *priv)
+ 	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_MAC);
+ 	mvpp2_prs_hw_write(priv, &pe);
  
- 		if (is_multicast_ether_addr(da) && !is_broadcast_ether_addr(da))
- 			/* Delete this entry */
--			mvpp2_prs_mac_da_accept(priv, port, da, false);
-+			mvpp2_prs_mac_da_accept(priv->port_list[port], da,
-+						false);
+-	/* place holders only - no ports */
++	/* Create dummy entries for drop all and promiscuous modes */
+ 	mvpp2_prs_mac_drop_all_set(priv, 0, false);
+-	mvpp2_prs_mac_promisc_set(priv, 0, false);
+-	mvpp2_prs_mac_multi_set(priv, 0, MVPP2_PE_MAC_MC_ALL, false);
+-	mvpp2_prs_mac_multi_set(priv, 0, MVPP2_PE_MAC_MC_IP6, false);
++	mvpp2_prs_mac_promisc_set(priv, 0, MVPP2_PRS_L2_UNI_CAST, false);
++	mvpp2_prs_mac_promisc_set(priv, 0, MVPP2_PRS_L2_MULTI_CAST, false);
+ }
+ 
+ /* Set default entries for various types of dsa packets */
+@@ -3794,8 +3784,8 @@ mvpp2_prs_mac_da_range_find(struct mvpp2 *priv, int pmap, const u8 *da,
+ 	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_MAC);
+ 
+ 	/* Go through the all entires with MVPP2_PRS_LU_MAC */
+-	for (tid = MVPP2_PE_FIRST_FREE_TID;
+-	     tid <= MVPP2_PE_LAST_FREE_TID; tid++) {
++	for (tid = MVPP2_PE_MAC_RANGE_START;
++	     tid <= MVPP2_PE_MAC_RANGE_END; tid++) {
+ 		unsigned int entry_pmap;
+ 
+ 		if (!priv->prs_shadow[tid].valid ||
+@@ -3836,18 +3826,10 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
+ 			return 0;
+ 
+ 		/* Create new TCAM entry */
+-		/* Find first range mac entry*/
+-		for (tid = MVPP2_PE_FIRST_FREE_TID;
+-		     tid <= MVPP2_PE_LAST_FREE_TID; tid++)
+-			if (priv->prs_shadow[tid].valid &&
+-			    (priv->prs_shadow[tid].lu == MVPP2_PRS_LU_MAC) &&
+-			    (priv->prs_shadow[tid].udf ==
+-						       MVPP2_PRS_UDF_MAC_RANGE))
+-				break;
+-
+ 		/* Go through the all entries from first to last */
+-		tid = mvpp2_prs_tcam_first_free(priv, MVPP2_PE_FIRST_FREE_TID,
+-						tid - 1);
++		tid = mvpp2_prs_tcam_first_free(priv,
++						MVPP2_PE_MAC_RANGE_START,
++						MVPP2_PE_MAC_RANGE_END);
+ 		if (tid < 0)
+ 			return tid;
+ 
+@@ -3886,12 +3868,16 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
+ 		mvpp2_prs_tcam_data_byte_set(pe, len, da[len], 0xff);
+ 
+ 	/* Set result info bits */
+-	if (is_broadcast_ether_addr(da))
++	if (is_broadcast_ether_addr(da)) {
+ 		ri = MVPP2_PRS_RI_L2_BCAST;
+-	else if (is_multicast_ether_addr(da))
++	} else if (is_multicast_ether_addr(da)) {
+ 		ri = MVPP2_PRS_RI_L2_MCAST;
+-	else
+-		ri = MVPP2_PRS_RI_L2_UCAST | MVPP2_PRS_RI_MAC_ME_MASK;
++	} else {
++		ri = MVPP2_PRS_RI_L2_UCAST;
++
++		if (ether_addr_equal(da, port->dev->dev_addr))
++			ri |= MVPP2_PRS_RI_MAC_ME_MASK;
++	}
+ 
+ 	mvpp2_prs_sram_ri_update(pe, ri, MVPP2_PRS_RI_L2_CAST_MASK |
+ 				 MVPP2_PRS_RI_MAC_ME_MASK);
+@@ -3933,14 +3919,15 @@ static int mvpp2_prs_update_mac_da(struct net_device *dev, const u8 *da)
+ 	return 0;
+ }
+ 
+-/* Delete all port's multicast simple (not range) entries */
+-static void mvpp2_prs_mcast_del_all(struct mvpp2 *priv, int port)
++static void mvpp2_prs_mac_del_all(struct mvpp2_port *port)
+ {
++	struct mvpp2 *priv = port->priv;
+ 	struct mvpp2_prs_entry pe;
++	unsigned long pmap;
+ 	int index, tid;
+ 
+-	for (tid = MVPP2_PE_FIRST_FREE_TID;
+-	     tid <= MVPP2_PE_LAST_FREE_TID; tid++) {
++	for (tid = MVPP2_PE_MAC_RANGE_START;
++	     tid <= MVPP2_PE_MAC_RANGE_END; tid++) {
+ 		unsigned char da[ETH_ALEN], da_mask[ETH_ALEN];
+ 
+ 		if (!priv->prs_shadow[tid].valid ||
+@@ -3948,19 +3935,29 @@ static void mvpp2_prs_mcast_del_all(struct mvpp2 *priv, int port)
+ 		    (priv->prs_shadow[tid].udf != MVPP2_PRS_UDF_MAC_DEF))
+ 			continue;
+ 
+-		/* Only simple mac entries */
+ 		pe.index = tid;
+ 		mvpp2_prs_hw_read(priv, &pe);
+ 
++		pmap = mvpp2_prs_tcam_port_map_get(&pe);
++
++		/* We only want entries active on this port */
++		if (!test_bit(port->id, &pmap))
++			continue;
++
+ 		/* Read mac addr from entry */
+ 		for (index = 0; index < ETH_ALEN; index++)
+ 			mvpp2_prs_tcam_data_byte_get(&pe, index, &da[index],
+ 						     &da_mask[index]);
+ 
+-		if (is_multicast_ether_addr(da) && !is_broadcast_ether_addr(da))
+-			/* Delete this entry */
+-			mvpp2_prs_mac_da_accept(priv->port_list[port], da,
+-						false);
++		/* Special cases : Don't remove broadcast and port's own
++		 * address
++		 */
++		if (is_broadcast_ether_addr(da) ||
++		    ether_addr_equal(da, port->dev->dev_addr))
++			continue;
++
++		/* Remove entry from TCAM */
++		mvpp2_prs_mac_da_accept(port, da, false);
  	}
  }
  
-@@ -7380,15 +7381,14 @@ static int mvpp2_open(struct net_device *dev)
- 			0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
- 	int err;
+@@ -7502,36 +7499,64 @@ static int mvpp2_stop(struct net_device *dev)
+ 	return 0;
+ }
  
--	err = mvpp2_prs_mac_da_accept(port->priv, port->id, mac_bcast, true);
-+	err = mvpp2_prs_mac_da_accept(port, mac_bcast, true);
- 	if (err) {
- 		netdev_err(dev, "mvpp2_prs_mac_da_accept BC failed\n");
- 		return err;
+-static void mvpp2_set_rx_mode(struct net_device *dev)
++static int mvpp2_prs_mac_da_accept_list(struct mvpp2_port *port,
++					struct netdev_hw_addr_list *list)
+ {
+-	struct mvpp2_port *port = netdev_priv(dev);
+-	struct mvpp2 *priv = port->priv;
+ 	struct netdev_hw_addr *ha;
+-	int id = port->id;
+-	bool allmulti = dev->flags & IFF_ALLMULTI;
+-
+-retry:
+-	mvpp2_prs_mac_promisc_set(priv, id, dev->flags & IFF_PROMISC);
+-	mvpp2_prs_mac_multi_set(priv, id, MVPP2_PE_MAC_MC_ALL, allmulti);
+-	mvpp2_prs_mac_multi_set(priv, id, MVPP2_PE_MAC_MC_IP6, allmulti);
+-
+-	/* Remove all port->id's mcast enries */
+-	mvpp2_prs_mcast_del_all(priv, id);
+-
+-	if (!allmulti) {
+-		netdev_for_each_mc_addr(ha, dev) {
+-			if (mvpp2_prs_mac_da_accept(port, ha->addr, true)) {
+-				allmulti = true;
+-				goto retry;
+-			}
+-		}
++	int ret;
++
++	netdev_hw_addr_list_for_each(ha, list) {
++		ret = mvpp2_prs_mac_da_accept(port, ha->addr, true);
++		if (ret)
++			return ret;
  	}
--	err = mvpp2_prs_mac_da_accept(port->priv, port->id,
--				      dev->dev_addr, true);
-+	err = mvpp2_prs_mac_da_accept(port, dev->dev_addr, true);
- 	if (err) {
--		netdev_err(dev, "mvpp2_prs_mac_da_accept MC failed\n");
-+		netdev_err(dev, "mvpp2_prs_mac_da_accept own addr failed\n");
- 		return err;
- 	}
- 	err = mvpp2_prs_tag_mode_set(port->priv, port->id, MVPP2_TAG_TYPE_MH);
-@@ -7520,7 +7520,7 @@ static void mvpp2_set_rx_mode(struct net_device *dev)
  
- 	if (!allmulti) {
- 		netdev_for_each_mc_addr(ha, dev) {
--			if (mvpp2_prs_mac_da_accept(priv, id, ha->addr, true)) {
-+			if (mvpp2_prs_mac_da_accept(port, ha->addr, true)) {
- 				allmulti = true;
- 				goto retry;
- 			}
+-	/* Disable VLAN filtering in promiscuous mode */
+-	if (dev->flags & IFF_PROMISC)
+-		mvpp2_prs_vid_disable_filtering(port);
+-	else
++	return 0;
++}
++
++static void mvpp2_set_rx_promisc(struct mvpp2_port *port, bool enable)
++{
++	if (!enable && (port->dev->features & NETIF_F_HW_VLAN_CTAG_FILTER))
+ 		mvpp2_prs_vid_enable_filtering(port);
++	else
++		mvpp2_prs_vid_disable_filtering(port);
++
++	mvpp2_prs_mac_promisc_set(port->priv, port->id,
++				  MVPP2_PRS_L2_UNI_CAST, enable);
++
++	mvpp2_prs_mac_promisc_set(port->priv, port->id,
++				  MVPP2_PRS_L2_MULTI_CAST, enable);
++}
++
++static void mvpp2_set_rx_mode(struct net_device *dev)
++{
++	struct mvpp2_port *port = netdev_priv(dev);
++
++	/* Clear the whole UC and MC list */
++	mvpp2_prs_mac_del_all(port);
++
++	if (dev->flags & IFF_PROMISC) {
++		mvpp2_set_rx_promisc(port, true);
++		return;
++	}
++
++	mvpp2_set_rx_promisc(port, false);
++
++	if (netdev_uc_count(dev) > MVPP2_PRS_MAC_UC_FILT_MAX ||
++	    mvpp2_prs_mac_da_accept_list(port, &dev->uc))
++		mvpp2_prs_mac_promisc_set(port->priv, port->id,
++					  MVPP2_PRS_L2_UNI_CAST, true);
++
++	if (dev->flags & IFF_ALLMULTI) {
++		mvpp2_prs_mac_promisc_set(port->priv, port->id,
++					  MVPP2_PRS_L2_MULTI_CAST, true);
++		return;
++	}
++
++	if (netdev_mc_count(dev) > MVPP2_PRS_MAC_MC_FILT_MAX ||
++	    mvpp2_prs_mac_da_accept_list(port, &dev->mc))
++		mvpp2_prs_mac_promisc_set(port->priv, port->id,
++					  MVPP2_PRS_L2_MULTI_CAST, true);
+ }
+ 
+ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+@@ -8380,6 +8405,7 @@ static int mvpp2_port_probe(struct platform_device *pdev,
+ 
+ 	dev->vlan_features |= features;
+ 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
++	dev->priv_flags |= IFF_UNICAST_FLT;
+ 
+ 	/* MTU range: 68 - 9704 */
+ 	dev->min_mtu = ETH_MIN_MTU;
 -- 
 2.11.0
