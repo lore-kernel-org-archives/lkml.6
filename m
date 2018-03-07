@@ -1,78 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754654AbeCGTN0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:13:26 -0500
-Received: from caffeine.csclub.uwaterloo.ca ([129.97.134.17]:50821 "EHLO
-        caffeine.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754579AbeCGTNZ (ORCPT
+        id S1754580AbeCGTTB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:19:01 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:47051 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754173AbeCGTS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:13:25 -0500
-Date: Wed, 7 Mar 2018 14:13:24 -0500
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: ext4 ignoring rootfs default mount options
-Message-ID: <20180307191324.qtloesy4zdlkfnwv@csclub.uwaterloo.ca>
-References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
- <20180307040608.GA2462@thunk.org>
- <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
- <20180307160856.GD7507@thunk.org>
+        Wed, 7 Mar 2018 14:18:59 -0500
+X-Google-Smtp-Source: AG47ELsv8OjMq+aNfBXfVh1SD5hVHE6qo2SrktFnmf/NTZTgEQ6MiYJ9a6kAWZqUpJT5213qPud145+Cc/owHnDOpps=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307160856.GD7507@thunk.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
+In-Reply-To: <ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+References: <cover.1520407240.git.sargun@sargun.me> <3646ff78915fcbadbc660257d92921e5442553e0.1520407240.git.sargun@sargun.me>
+ <ad43c9ed-9314-1787-911a-f4b206bc5cff@schaufler-ca.com>
+From: Sargun Dhillon <sargun@sargun.me>
+Date: Wed, 7 Mar 2018 11:18:17 -0800
+Message-ID: <CAMp4zn8gtb7G28F8D_=npc6a7wwp3QMyvXrNKL0LA=EeFxRiKw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] security: Refactor LSM hooks into an array and enum
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: LSM <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 11:08:56AM -0500, Theodore Y. Ts'o wrote:
-> This is where it's critcal to understand that the "tune2fs -o" changes
-> the *default* mount options.  The key in the comment is the anything
-> different from the *filesystem* defaults (that is, the defaults of the
-> particular ext4 file system, as opposed to the global defaults).  The
-> idea is that /proc/mounts, and /etc/mtab shows the options string that
-> if used in /etc/fstab, or in the mount command line, will replicate
-> the current mount option state.  Furthermore, that /proc/mounts is the
-> minimal set of mount option strings.
+On Wed, Mar 7, 2018 at 9:45 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 3/6/2018 11:23 PM, Sargun Dhillon wrote:
+>> This commit should have no functional change. It changes the security hook
+>> list heads struct into an array. Additionally, it exposes all of the hooks
+>> via an enum. This loses memory layout randomization as the enum is not
+>> randomized.
+>
+> Please explain why you want to do this. I still dislike it.
+>
+Do you dislike it because of the loss of randomization, or some other reason?
+The reason for not just having a second list_heads is that it's
+somewhat ugly having to replicate that structure twice -- once for
+dynamic hooks, and once for 'static' hooks.
+Instead, we have one enum that LSMs can use and two arrays of heads
+rather than an entire unrolled set of list_heads.
 
-One more question about this.
-
-Trying to use tune2fs -E mount_opts to set some default options, and
-can't figure out how to enter two options at once.
-
-Doing:
-
-tune2fs -E mount_opts=nodelalloc,nouser_xattr /dev/sda3
-
-gives the error:
-
-tune2fs 1.43.4 (31-Jan-2017)
-
-Bad options specified.
-
-Extended options are separated by commas, and may take an argument which
-        is set off by an equals ('=') sign.
-
-Valid extended options are:
-        clear_mmp
-        hash_alg=<hash algorithm>
-        mount_opts=<extended default mount options>
-        stride=<RAID per-disk chunk size in blocks>
-        stripe_width=<RAID stride*data disks in blocks>
-        test_fs
-        ^test_fs
-
-Apparently it gets confused by the , in the argument to mount_opts.
-
-Unfortunately , happens to be the separator required by ext4 for that
-field.  So how does one use it?
-
-Sure in this case I can set one with -o and the other with -E, but in
-general there seems to be a small problem here, probably only in user
-space though.  Seems tune2fs needs some change in how it deals with
-extended options that contain commas.
-
--- 
-Len Sorensen
+If we had a way to randomize this, would it make you comfortable?
