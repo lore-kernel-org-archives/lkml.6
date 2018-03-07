@@ -1,274 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933426AbeCGCCq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:02:46 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39513 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933190AbeCGCCa (ORCPT
+        id S1754076AbeCGCM7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:12:59 -0500
+Received: from mail-pg0-f52.google.com ([74.125.83.52]:41704 "EHLO
+        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753857AbeCGCM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:02:30 -0500
-X-Google-Smtp-Source: AG47ELvNx+MicZW+5xvRG6AJaUACxeodvce1BVpZgRZ8VYh54d1ZSWhuE9xME4wLkD1Lfuhu0dF5AQ==
-Date: Tue, 06 Mar 2018 18:02:28 -0800 (PST)
-X-Google-Original-Date: Tue, 06 Mar 2018 17:58:10 PST (-0800)
-Subject: Re: [RFC PATCH 1/2] riscv/spinlock: Strengthen implementations with fences
-In-Reply-To: <1520274249-21815-1-git-send-email-parri.andrea@gmail.com>
-CC: albert@sifive.com, Daniel Lustig <dlustig@nvidia.com>,
-        stern@rowland.harvard.edu, Will Deacon <will.deacon@arm.com>,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        paulmck@linux.vnet.ibm.com, akiyks@gmail.com, mingo@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        parri.andrea@gmail.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: parri.andrea@gmail.com
-Message-ID: <mhng-e21e88a4-fa27-4d22-8862-6e0377300edd@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 6 Mar 2018 21:12:57 -0500
+X-Google-Smtp-Source: AG47ELsEfKfd3fkffaZiZ7+7yCVBaUMbCmdjpNgtHq7i71Z3EvRJjoM0icIerWgEMAuwwVcpnPtJ1g==
+Date: Wed, 7 Mar 2018 11:12:52 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com
+Subject: Re: [RESEND PATCH v3] crypto: add zBeWalgo compression for zram
+Message-ID: <20180307021252.GA802@jagdpanzerIV>
+References: <8CFBD60E-6A2B-4766-B6F9-09A98DEA26CB@informatik.uni-hamburg.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8CFBD60E-6A2B-4766-B6F9-09A98DEA26CB@informatik.uni-hamburg.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 05 Mar 2018 10:24:09 PST (-0800), parri.andrea@gmail.com wrote:
-> Current implementations map locking operations using .rl and .aq
-> annotations.  However, this mapping is unsound w.r.t. the kernel
-> memory consistency model (LKMM) [1]:
->
-> Referring to the "unlock-lock-read-ordering" test reported below,
-> Daniel wrote:
->
->   "I think an RCpc interpretation of .aq and .rl would in fact
->    allow the two normal loads in P1 to be reordered [...]
->
->    The intuition would be that the amoswap.w.aq can forward from
->    the amoswap.w.rl while that's still in the store buffer, and
->    then the lw x3,0(x4) can also perform while the amoswap.w.rl
->    is still in the store buffer, all before the l1 x1,0(x2)
->    executes.  That's not forbidden unless the amoswaps are RCsc,
->    unless I'm missing something.
->
->    Likewise even if the unlock()/lock() is between two stores.
->    A control dependency might originate from the load part of
->    the amoswap.w.aq, but there still would have to be something
->    to ensure that this load part in fact performs after the store
->    part of the amoswap.w.rl performs globally, and that's not
->    automatic under RCpc."
->
-> Simulation of the RISC-V memory consistency model confirmed this
-> expectation.
->
-> In order to "synchronize" LKMM and RISC-V's implementation, this
-> commit strengthens the implementations of the locking operations
-> by replacing .rl and .aq with the use of ("lightweigth") fences,
-> resp., "fence rw,  w" and "fence r , rw".
->
-> C unlock-lock-read-ordering
->
-> {}
-> /* s initially owned by P1 */
->
-> P0(int *x, int *y)
-> {
->         WRITE_ONCE(*x, 1);
->         smp_wmb();
->         WRITE_ONCE(*y, 1);
-> }
->
-> P1(int *x, int *y, spinlock_t *s)
-> {
->         int r0;
->         int r1;
->
->         r0 = READ_ONCE(*y);
->         spin_unlock(s);
->         spin_lock(s);
->         r1 = READ_ONCE(*x);
-> }
->
-> exists (1:r0=1 /\ 1:r1=0)
->
-> [1] https://marc.info/?l=linux-kernel&m=151930201102853&w=2
->     https://groups.google.com/a/groups.riscv.org/forum/#!topic/isa-dev/hKywNHBkAXM
->     https://marc.info/?l=linux-kernel&m=151633436614259&w=2
->
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <albert@sifive.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/riscv/include/asm/fence.h    | 12 ++++++++++++
->  arch/riscv/include/asm/spinlock.h | 29 +++++++++++++++--------------
->  2 files changed, 27 insertions(+), 14 deletions(-)
->  create mode 100644 arch/riscv/include/asm/fence.h
+Hello,
 
-Oh, sorry about this -- I thought I'd deleted all this code, but I guess I just 
-wrote a patch and then forgot about it.  Here's my original patch, which I have 
-marked as a WIP:
+On (03/06/18 20:59), Benjamin Warnke wrote:
+>    Currently ZRAM uses compression-algorithms from the crypto-api. ZRAM
+>    compresses each page individually. As a result the compression algorithm
+>    is
+>    forced to use a very small sliding window. None of the available
+>    compression
+>    algorithms is designed to achieve high compression ratios with small
+>    inputs.
 
-commit 39908f1f8b75ae88ce44dc77b8219a94078ad298
-Author: Palmer Dabbelt <palmer@sifive.com>
-Date:   Tue Dec 5 16:26:50 2017 -0800
+I think you first need to merge zBeWalgo (looks like a long way to go)
+And then add ZRAM support, as a separate patch.
 
-    RISC-V: Use generic spin and rw locks
+>    - 'ecoham' (100 MiB) This dataset is one of the input files for the
+>    scientific
+>    application ECOHAM which runs an ocean simulation. This dataset contains a
+>    lot of zeros. Where the data is not zero there are arrays of floating
+>    point
+>    values, adjacent float values are likely to be similar to each other,
+>    allowing for high compression ratios.
+> 
+>    algorithm | ratio   | compression    | decompression
+>    zbewalgo  |   12.94 |  294.10 MBit/s | 1242.59 MBit/s
+>    deflate   |   12.54 |   75.51 MBit/s |  736.39 MBit/s
+>    842       |   12.26 |  182.59 MBit/s |  683.61 MBit/s
+>    lz4hc     |   12.00 |   51.23 MBit/s | 1524.73 MBit/s
+>    lz4       |   10.68 | 1334.37 MBit/s | 1603.54 MBit/s
+>    lzo       |    9.79 | 1333.76 MBit/s | 1534.63 MBit/s
+> 
+>    - 'source-code' (800 MiB) This dataset is a tarball of the source-code
+>    from a
+>    linux-kernel.
+> 
+>    algorithm | ratio   | compression    | decompression
+>    deflate   |    3.27 |   42.48 MBit/s |  250.36 MBit/s
+>    lz4hc     |    2.40 |  104.14 MBit/s | 1150.53 MBit/s
+>    lzo       |    2.27 |  444.77 MBit/s |  886.97 MBit/s
+>    lz4       |    2.18 |  453.08 MBit/s | 1101.45 MBit/s
+>    842       |    1.65 |   64.10 MBit/s |  158.40 MBit/s
+>    zbewalgo  |    1.19 |   52.89 MBit/s |  197.58 MBit/s
+> 
+>    - 'hpcg' (8 GiB) This dataset is a (partial) memory-snapshot of the
+>    running hpcg-benchmark. At the time of the snapshot, that application
+>    performed a sparse matrix - vector multiplication.
+> 
+>    algorithm | ratio   | compression    | decompression
+>    zbewalgo  |   16.16 |  179.97 MBit/s |  468.36 MBit/s
+>    deflate   |    9.52 |   65.11 MBit/s |  632.69 MBit/s
+>    lz4hc     |    4.96 |  193.33 MBit/s | 1607.12 MBit/s
+>    842       |    4.20 |  150.99 MBit/s |  316.22 MBit/s
+>    lzo       |    4.14 |  922.74 MBit/s |  865.32 MBit/s
+>    lz4       |    3.79 |  908.39 MBit/s | 1375.33 MBit/s
+> 
+>    - 'partdiff' (8 GiB) Array of double values. Adjacent doubles are similar,
+>    but
+>    not equal. This array is produced by a partial differential equation
+>    solver
+>    using a Jakobi-implementation.
+> 
+>    algorithm | ratio   | compression    | decompression
+>    zbewalgo  |    1.30 |  203.30 MBit/s |  530.87 MBit/s
+>    deflate   |    1.02 |   37.06 MBit/s | 1131.88 MBit/s
+>    lzo       |    1.00 | 1741.46 MBit/s | 2012.78 MBit/s
+>    lz4       |    1.00 | 1458.08 MBit/s | 2013.88 MBit/s
+>    lz4hc     |    1.00 |  173.19 MBit/s | 2012.37 MBit/s
+>    842       |    1.00 |   64.10 MBit/s | 2013.64 MBit/s
 
-    This might not be exactly the right thing to do: we could use LR/SC to
-    produce slightly better locks by rolling the tests into the LR/SC.  I'm
-    going to defer that until I get a better handle on the new memory model
-    and just be safe here: after some discussion I'm pretty sure the AMOs
-    are good, and cmpxchg is safe (by being way too string).
+Hm, mixed feelings.
 
-    Since we'd want to rewrite the spinlocks anyway so they queue, I don't
-    see any reason to keep the old implementations around.
-
-    Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-
-diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
-index 2fd27e8ef1fd..9b166ea81fe5 100644
---- a/arch/riscv/include/asm/spinlock.h
-+++ b/arch/riscv/include/asm/spinlock.h
-@@ -15,128 +15,7 @@
- #ifndef _ASM_RISCV_SPINLOCK_H
- #define _ASM_RISCV_SPINLOCK_H
-
--#include <linux/kernel.h>
--#include <asm/current.h>
--
--/*
-- * Simple spin lock operations.  These provide no fairness guarantees.
-- */
--
--/* FIXME: Replace this with a ticket lock, like MIPS. */
--
--#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
--
--static inline void arch_spin_unlock(arch_spinlock_t *lock)
--{
--	__asm__ __volatile__ (
--		"amoswap.w.rl x0, x0, %0"
--		: "=A" (lock->lock)
--		:: "memory");
--}
--
--static inline int arch_spin_trylock(arch_spinlock_t *lock)
--{
--	int tmp = 1, busy;
--
--	__asm__ __volatile__ (
--		"amoswap.w.aq %0, %2, %1"
--		: "=r" (busy), "+A" (lock->lock)
--		: "r" (tmp)
--		: "memory");
--
--	return !busy;
--}
--
--static inline void arch_spin_lock(arch_spinlock_t *lock)
--{
--	while (1) {
--		if (arch_spin_is_locked(lock))
--			continue;
--
--		if (arch_spin_trylock(lock))
--			break;
--	}
--}
--
--/***********************************************************/
--
--static inline void arch_read_lock(arch_rwlock_t *lock)
--{
--	int tmp;
--
--	__asm__ __volatile__(
--		"1:	lr.w	%1, %0\n"
--		"	bltz	%1, 1b\n"
--		"	addi	%1, %1, 1\n"
--		"	sc.w.aq	%1, %1, %0\n"
--		"	bnez	%1, 1b\n"
--		: "+A" (lock->lock), "=&r" (tmp)
--		:: "memory");
--}
--
--static inline void arch_write_lock(arch_rwlock_t *lock)
--{
--	int tmp;
--
--	__asm__ __volatile__(
--		"1:	lr.w	%1, %0\n"
--		"	bnez	%1, 1b\n"
--		"	li	%1, -1\n"
--		"	sc.w.aq	%1, %1, %0\n"
--		"	bnez	%1, 1b\n"
--		: "+A" (lock->lock), "=&r" (tmp)
--		:: "memory");
--}
--
--static inline int arch_read_trylock(arch_rwlock_t *lock)
--{
--	int busy;
--
--	__asm__ __volatile__(
--		"1:	lr.w	%1, %0\n"
--		"	bltz	%1, 1f\n"
--		"	addi	%1, %1, 1\n"
--		"	sc.w.aq	%1, %1, %0\n"
--		"	bnez	%1, 1b\n"
--		"1:\n"
--		: "+A" (lock->lock), "=&r" (busy)
--		:: "memory");
--
--	return !busy;
--}
--
--static inline int arch_write_trylock(arch_rwlock_t *lock)
--{
--	int busy;
--
--	__asm__ __volatile__(
--		"1:	lr.w	%1, %0\n"
--		"	bnez	%1, 1f\n"
--		"	li	%1, -1\n"
--		"	sc.w.aq	%1, %1, %0\n"
--		"	bnez	%1, 1b\n"
--		"1:\n"
--		: "+A" (lock->lock), "=&r" (busy)
--		:: "memory");
--
--	return !busy;
--}
--
--static inline void arch_read_unlock(arch_rwlock_t *lock)
--{
--	__asm__ __volatile__(
--		"amoadd.w.rl x0, %1, %0"
--		: "+A" (lock->lock)
--		: "r" (-1)
--		: "memory");
--}
--
--static inline void arch_write_unlock(arch_rwlock_t *lock)
--{
--	__asm__ __volatile__ (
--		"amoswap.w.rl x0, x0, %0"
--		: "=A" (lock->lock)
--		:: "memory");
--}
-+#include <asm-generic/qspinlock.h>
-+#include <asm-generic/qrwlock.h>
-
- #endif /* _ASM_RISCV_SPINLOCK_H */
+	-ss
