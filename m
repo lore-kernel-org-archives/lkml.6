@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuh8rC0N6BsvreeJrS9TpTML+s1MCWNvlXLd0ru6wvWnTN2I7IV8ipKwUShGubIIsNYT0nR
-ARC-Seal: i=1; a=rsa-sha256; t=1520451751; cv=none;
+X-Google-Smtp-Source: AG47ELsJjh+G/jAJHBw56nsrJ1kJ/YaymgY9Nu2zNqAO6pvaGLzuslaEMvrPf+PvsciRt+qG81cz
+ARC-Seal: i=1; a=rsa-sha256; t=1520451749; cv=none;
         d=google.com; s=arc-20160816;
-        b=mYYoDL2ZVZAM5/EJPoYvKVlORwoG0Nj+4nJPRQ0Eo8kWEYbIbORrevBQo6PTo4aYYo
-         EwXFDIUO8m6WKOQMW9Brok+od/rywnt0AzswBUa5EdnInOc4PqCCMFY03kxFnTWsM1FL
-         GTxVImHgD0foifz/ncmoZvFgi953ZhNNjOlDrYA0kiQrpL66u1soiW7YCFuCxXdTb2/k
-         Ut7Vr7NIUulgh64uGr1NrB5GjVR7vFlbvvDXou8hBkGf0mcT5h/WWB/zrnqYTEXsDKh1
-         0DbrKclMp8QYRBcoxP8jCw3aT0HXzS26sPE36OnRW0hQXei+M9kBTO/3njlVITLyd7qe
-         FQkw==
+        b=ct/UbiGAOtqTBKXVX6JNSXWgtXWKTIcdu8l4zt4/e4zDhWZUGywrwX8ayWgQwhWU1e
+         3yBFEkFnRyHRIpoe9ee5gxxq3CZm4SnvAJDaZJFB4yAr+2I0PUZTlp+m1vEmDUt2sG34
+         kAVqT4acwM+mWBImAcFHaqvpVlRWV6j6dUmjPcJg7SGVwcJV2Cu521vd+Y7ezywHB5Lb
+         Eb4BqHHoXazs5tiN6qkP4jSmwltLHw2ZQANAXZN4ccPvjf4NMhIC1406TA4lZRYFK5fF
+         iRuX6PARItnEWvdPYvWrJhwJz60sWIDA5L1mhVkV1UC4+kmFqNndrQUkfABkiz1m97/w
+         5ULg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HHzmLQsFhQlCp2YYQwJrEosGpWQl39wfo257AD8jYJk=;
-        b=Lqe8r11FR9tHK4ntvKgZQeFgyCUfZlRv2+mt2kzIrWZfd3NSPDJ+xIqd+pUdacUXQj
-         fBMxB2DZq2KZ554HhIrNBPuDVh+XiYjrG6av4shGBlHI3XRlPjzWC+7sUKfyX0AMIhGC
-         /3seK/I63cis0p/tUurDM7N3kJMwLxL316lqroRALmWafw5rCeUDFtHxd5FFApSDwYek
-         MQv0rF7JgMil0phXRG3hDL3Hy2VPlfKIVIKvcXevEt8veDsTwYw5dHqaOCLZZnGLLZR/
-         mCuUoO/M841OS4FhWCoEImUb79LPiZR5pHIGaGZH32JAGXPOmAf5O6M+hFSnhd4nLefo
-         ImkA==
+        bh=ZlhBeRPP2mqVnzEys3ckyXhwjhYBjM+FNra0ecO3JPw=;
+        b=dCdBIBG/DL0kk7pzmNx0WKRInYT1HMABscpvkItgvkMDU1abR1x1qQy0ZPSgMkQmhP
+         /UMffC5Any6iBiHFGU1Wf0menGGROYn1uf9gUu5ctWCNKcynATCX9451InnBD4No3k6F
+         0pXn90A4D4yPynLdYyD7icuwbECyj6laxdbXudXuUmB8ocgHiXePrZRkyjd15gQBvADe
+         GOPNnss3UWFj5LvPXy5Fb5AV9DVISw02q726+SKspc4gtcvbLlDCcPqYlgdVijWWWu8Q
+         lZT4/Mw3PGbdK816ktT3zU94cOdruoPs84VA3HzQOMGcsmK1+EaZfTdMeH7y4hyJLuD0
+         ffwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 071/122] amd-xgbe: Restore PCI interrupt enablement setting on resume
-Date: Wed,  7 Mar 2018 11:38:03 -0800
-Message-Id: <20180307191739.608278488@linuxfoundation.org>
+	Vlad Buslov <vladbu@mellanox.com>,
+	Maor Gottlieb <maorg@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.15 080/122] net/mlx5: Fix error handling when adding flow rules
+Date: Wed,  7 Mar 2018 11:38:12 -0800
+Message-Id: <20180307191740.821519832@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309215205730962?=
-X-GMAIL-MSGID: =?utf-8?q?1594309215205730962?=
+X-GMAIL-THRID: =?utf-8?q?1594309213337133574?=
+X-GMAIL-MSGID: =?utf-8?q?1594309213337133574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,29 +50,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Vlad Buslov <vladbu@mellanox.com>
 
 
-[ Upstream commit cfd092f2db8b4b6727e1c03ef68a7842e1023573 ]
+[ Upstream commit 9238e380e823a39983ee8d6b6ee8d1a9c4ba8a65 ]
 
-After resuming from suspend, the PCI device support must re-enable the
-interrupt setting so that interrupts are actually delivered.
+If building match list or adding existing fg fails when
+node is locked, function returned without unlocking it.
+This happened if node version changed or adding existing fg
+returned with EAGAIN after jumping to search_again_locked label.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bd71b08ec2ee ("net/mlx5: Support multiple updates of steering rules in parallel")
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-pci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-@@ -426,6 +426,8 @@ static int xgbe_pci_resume(struct pci_de
- 	struct net_device *netdev = pdata->netdev;
- 	int ret = 0;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -1755,8 +1755,11 @@ search_again_locked:
  
-+	XP_IOWRITE(pdata, XP_INT_EN, 0x1fffff);
-+
- 	pdata->lpm_ctrl &= ~MDIO_CTRL1_LPOWER;
- 	XMDIO_WRITE(pdata, MDIO_MMD_PCS, MDIO_CTRL1, pdata->lpm_ctrl);
+ 	/* Collect all fgs which has a matching match_criteria */
+ 	err = build_match_list(&match_head, ft, spec);
+-	if (err)
++	if (err) {
++		if (take_write)
++			up_write_ref_node(&ft->node);
+ 		return ERR_PTR(err);
++	}
  
+ 	if (!take_write)
+ 		up_read_ref_node(&ft->node);
+@@ -1765,8 +1768,11 @@ search_again_locked:
+ 				      dest_num, version);
+ 	free_match_list(&match_head);
+ 	if (!IS_ERR(rule) ||
+-	    (PTR_ERR(rule) != -ENOENT && PTR_ERR(rule) != -EAGAIN))
++	    (PTR_ERR(rule) != -ENOENT && PTR_ERR(rule) != -EAGAIN)) {
++		if (take_write)
++			up_write_ref_node(&ft->node);
+ 		return rule;
++	}
+ 
+ 	if (!take_write) {
+ 		nested_down_write_ref_node(&ft->node, FS_LOCK_GRANDPARENT);
