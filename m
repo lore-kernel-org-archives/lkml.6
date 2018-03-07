@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsnYI3PZwpcxUXM21bWI75QRLlYAan8E8XUwxPCt62K46lEYgZv3KNGz2mEB08IJuoL9P+O
-ARC-Seal: i=1; a=rsa-sha256; t=1520452093; cv=none;
+X-Google-Smtp-Source: AG47ELsbe9y3ewz/5b9tizmXitzx5GwOmVSnQJ6h3vM+V4Erh/WU6AxPrWQSY7K/GIOrFWMN/Y9Q
+ARC-Seal: i=1; a=rsa-sha256; t=1520452091; cv=none;
         d=google.com; s=arc-20160816;
-        b=gvnXxfa7GIav1bGPTrTHSK2GA35MoxQS0tEF/H+2+yxOmc54nAnFxrR+MkEh8iM3Cm
-         6/kdturZ1stbVNUPWc6wsNit5mYIC/zyjR4HZJ0V9u7gn8T/fQ3qDbH8sgWPkZhuqI/J
-         0hMqLTkkv34jlJx9lotbCnoBSmBm6KuvFJ4Onq/hlKHr33RF20Uy2++f81Xs5MGEJblt
-         DY2WPWwbdQamYqrcX9PpD+W6jdVSgAnabfQxX6jtT6VCCMAXDRSCt8dIhMk6TmShewz+
-         SxmhhNlIDDy6k5LkJ+rHdBg0mC3SbMMoTonrANuZGbMeRSNSd4BE2N8CtIJ6hndyvVkU
-         oMTw==
+        b=UT5zMG3gPUaxu6nFch+h8BLwpVuGFsU/BLRdjuFu/vw2oGpQgblrBjHB8xrDUhEL5I
+         o9Ar4M/7+MsKguumAdBz3ek+S2ZEnEXxXy7bCdXtCQIw0YrTqZJZ97P1yYrnnWELKoqZ
+         4vMsqRwG6iuiUjETWaBn4S36rfj6+yJuB8TX72Dc6D1woQNNHn1mhqmSlLGDJk1qEpEp
+         uNS3Gk8Ui7LEtAjHX54wy2Ms7qXSyx5wHo2+mSIcvz7l/ql1X+O0VJC0S68nhlCDpcVJ
+         hQ3LqOuHWKJFPwf+MW/dk8fME9GQaovP0PlvA79qTVVXX6wdHXPk13a3MkamEST0D5zj
+         A1sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X+fe54FoTle9moNUm0J7gf9FbTfTGFDB9y8Uo1QGLks=;
-        b=fZQgK5qVMg4XAthGZ2gkbm72AqwhFZeJ6ln6wLv49WyacXey6n17hXgxzLBQ2zr/Wh
-         MDS4JcHvW6tbO6RbK2jCXJv1aJfVCjatRGttB+lBmyb4kt0NAbOmYd8OP0LyE467s9UR
-         O+WUz/1BiYwzEm5VanxayQ4ZHUBW3LHkP/wFp1BK+pK9qerRNDpdsyRXhj7nkYKd+JHW
-         29cXZyvqvK+msfmWRlAKr/YtI8nIAwS932EZLtxRtvIYqwgu56pNO9kSiAnN2ywnFvvF
-         7N2wi6eoduTtGkLOf57zSvVA8nUaXC6kM6KQ8Iq5xNOrTT0/L66DB1rZKdXq1vjn7j9K
-         mvXA==
+        bh=W2d66W00QSPTGWLVk72TlDQ3eI6sRd7hTs9QV2B7RDc=;
+        b=QlVDW8gGXNHQxy1+qoyEK6BaxSMVGvzCtnIYqXW3sLxmCvG6BkHWLw2Rq0LxKqW+60
+         DPRam3cSdkIH5eDIS4+564O85HqgnEOyP3EJGUI1juN/MzQAg7GjHi7xMSu0WiS9vcdi
+         xDJAvn4TkPYMNUoq6B/Ytkl14NkzD+1AZoK8kO5mGHJShPyIzjyajDgA43c72DjnMpL+
+         chGou1t/gciuLS05AWHFxvC4DAnzjr8cbaNirDRsSeM6h0ti5BCADrpBy/GIw3mOdgoG
+         GKmM11byqrt9cysi9D8pf0PAN2oGSD3/GJ9AQDDrRgDX5E11WxgVXNj3KLWECuL0icvg
+         M6+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Adam Ford <aford173@gmail.com>,
 	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 108/110] ARM: dts: LogicPD Torpedo: Fix I2C1 pinmux
-Date: Wed,  7 Mar 2018 11:39:31 -0800
-Message-Id: <20180307191053.823149228@linuxfoundation.org>
+Subject: [PATCH 4.14 107/110] ARM: dts: LogicPD SOM-LV: Fix I2C1 pinmux
+Date: Wed,  7 Mar 2018 11:39:30 -0800
+Message-Id: <20180307191053.665535272@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309313451719428?=
-X-GMAIL-MSGID: =?utf-8?q?1594309574176020722?=
+X-GMAIL-THRID: =?utf-8?q?1594309311235762259?=
+X-GMAIL-MSGID: =?utf-8?q?1594309571970475277?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +51,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Adam Ford <aford173@gmail.com>
 
-commit 74402055a2d3ec998a1ded599e86185a27d9bbf4 upstream.
+commit 84c7efd607e7fb6933920322086db64654f669b2 upstream.
 
 The pinmuxing was missing for I2C1 which was causing intermittent issues
 with the PMIC which is connected to I2C1.  The bootloader did not quite
 configure the I2C1 either, so when running at 2.6MHz, it was generating
-errors at time.
+errors at times.
 
 This correctly sets the I2C1 pinmuxing so it can operate at 2.6MHz
 
-Fixes: 687c27676151 ("ARM: dts: Add minimal support for LogicPD Torpedo
-DM3730 devkit")
+Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD DM3730
+SOM-LV")
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/logicpd-torpedo-som.dtsi |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/logicpd-som-lv.dtsi |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-+++ b/arch/arm/boot/dts/logicpd-torpedo-som.dtsi
-@@ -104,6 +104,8 @@
+--- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
++++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
+@@ -97,6 +97,8 @@
  };
  
  &i2c1 {
@@ -82,10 +82,11 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	clock-frequency = <2600000>;
  
  	twl: twl@48 {
-@@ -211,6 +213,12 @@
- 			OMAP3_CORE1_IOPAD(0x21b8, PIN_INPUT | MUX_MODE0)	/* hsusb0_data7.hsusb0_data7 */
+@@ -215,7 +217,12 @@
  		>;
  	};
+ 
+-
 +	i2c1_pins: pinmux_i2c1_pins {
 +		pinctrl-single,pins = <
 +			OMAP3_CORE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)        /* i2c1_scl.i2c1_scl */
@@ -94,4 +95,4 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +	};
  };
  
- &uart2 {
+ &omap3_pmx_wkup {
