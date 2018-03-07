@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751092AbeCGGN1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 01:13:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42336 "EHLO mail.kernel.org"
+        id S1751143AbeCGGNf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 01:13:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750951AbeCGGNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 01:13:24 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29238206B2
+        id S1750803AbeCGGNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 01:13:30 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A321421770
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 0/9] PCI: Simplify PCIe port driver
+Subject: [PATCH v1 1/9] PCI/PM: Move pcie_clear_root_pme_status() to core
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: linux-pci@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Date: Wed, 07 Mar 2018 00:13:23 -0600
-Message-ID: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Wed, 07 Mar 2018 00:13:29 -0600
+Message-ID: <152040320934.240786.9241781859071768363.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -25,60 +27,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an attempt to move a few things out of the port driver.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Patches 1-2 move a workaround for a BIOS PME issue from the port driver to
-the PCI core, so it doesn't depend on CONFIG_PCIEPORTBUS.
+Move pcie_clear_root_pme_status() from the port driver to the PCI core so
+it will be available even when the port driver isn't present.  No
+functional change intended.
 
-Patch 3 extends that workaround so it works for Root Complex Event
-Collectors.  I haven't seen reports of this being a problem, but I think we
-should handle Event Collector PMEs the same as Root Port PMEs.
-
-Patch 4 disables the port driver completely for "pcie_ports=compat".  We
-used to register the driver, claim port devices, enable them, etc., as part
-of supporting the above BIOS workaround.
-
-Patch 5 removes a port driver link order dependency.
-
-Patch 6 removes the unused VC service.
-
-Patch 7 simplifies the _OSC code path by keeping more of the details in the
-ACPI pci_root.c driver.
-
-Patch 8 removes an unnecessary #include.
-
-Patch 9 removes the "pcie_hp=nomsi" parameter.  This was added to work
-around an issue when shutting down devices, but a later patch fixed the
-root cause, and I don't think we need such a specific parameter any more
-(we still have "pci=nomsi").
-
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
+ drivers/pci/pci.c              |    9 +++++++++
+ drivers/pci/pci.h              |    1 +
+ drivers/pci/pcie/portdrv.h     |    2 --
+ drivers/pci/pcie/portdrv_pci.c |    9 ---------
+ 4 files changed, 10 insertions(+), 11 deletions(-)
 
-Bjorn Helgaas (9):
-      PCI/PM: Move pcie_clear_root_pme_status() to core
-      PCI/PM: Clear PCIe PME Status bit in core, not PCIe port driver
-      PCI/PM: Clear PCIe PME Status bit for Root Complex Event Collectors
-      PCI/portdrv: Disable port driver in compat mode
-      PCI/portdrv: Remove pcie_port_bus_type link order dependency
-      PCI/portdrv: Remove unused PCIE_PORT_SERVICE_VC
-      PCI/portdrv: Simplify PCIe feature permission checking
-      PCI/portdrv: Remove unnecessary include of <linux/pci-aspm.h>
-      PCI/portdrv: Remove "pcie_hp=nomsi" kernel parameter
-
-
- Documentation/admin-guide/kernel-parameters.txt |    4 -
- drivers/acpi/pci_root.c                         |   13 +++-
- drivers/pci/pci-driver.c                        |   60 ++++++++++++++++++
- drivers/pci/pci.c                               |    9 +++
- drivers/pci/pci.h                               |    1 
- drivers/pci/pcie/Makefile                       |    3 -
- drivers/pci/pcie/portdrv.h                      |   27 --------
- drivers/pci/pcie/portdrv_acpi.c                 |    2 -
- drivers/pci/pcie/portdrv_bus.c                  |   56 -----------------
- drivers/pci/pcie/portdrv_core.c                 |   77 ++++++++++-------------
- drivers/pci/pcie/portdrv_pci.c                  |   40 +-----------
- drivers/pci/probe.c                             |   10 +++
- include/linux/pci.h                             |    3 +
- include/linux/pcieport_if.h                     |    4 -
- 14 files changed, 131 insertions(+), 178 deletions(-)
- delete mode 100644 drivers/pci/pcie/portdrv_bus.c
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd10d9b0..120e3393fc35 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1683,6 +1683,15 @@ int pci_set_pcie_reset_state(struct pci_dev *dev, enum pcie_reset_state state)
+ }
+ EXPORT_SYMBOL_GPL(pci_set_pcie_reset_state);
+ 
++/**
++ * pcie_clear_root_pme_status - Clear root port PME interrupt status.
++ * @dev: PCIe root port or event collector.
++ */
++void pcie_clear_root_pme_status(struct pci_dev *dev)
++{
++	pcie_capability_set_dword(dev, PCI_EXP_RTSTA, PCI_EXP_RTSTA_PME);
++}
++
+ /**
+  * pci_check_pme_status - Check if given device has generated PME.
+  * @dev: Device to check.
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index fcd81911b127..813ca2c895d8 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -71,6 +71,7 @@ void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
+ void pci_power_up(struct pci_dev *dev);
+ void pci_disable_enabled_device(struct pci_dev *dev);
+ int pci_finish_runtime_suspend(struct pci_dev *dev);
++void pcie_clear_root_pme_status(struct pci_dev *dev);
+ int __pci_pme_wakeup(struct pci_dev *dev, void *ign);
+ void pci_pme_restore(struct pci_dev *dev);
+ bool pci_dev_keep_suspended(struct pci_dev *dev);
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index a854bc569117..a4fc44d52206 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -34,8 +34,6 @@ void pcie_port_bus_unregister(void);
+ 
+ struct pci_dev;
+ 
+-void pcie_clear_root_pme_status(struct pci_dev *dev);
+-
+ #ifdef CONFIG_HOTPLUG_PCI_PCIE
+ extern bool pciehp_msi_disabled;
+ 
+diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+index fb1c1bb87316..4413dd85e923 100644
+--- a/drivers/pci/pcie/portdrv_pci.c
++++ b/drivers/pci/pcie/portdrv_pci.c
+@@ -50,15 +50,6 @@ __setup("pcie_ports=", pcie_port_setup);
+ 
+ /* global data */
+ 
+-/**
+- * pcie_clear_root_pme_status - Clear root port PME interrupt status.
+- * @dev: PCIe root port or event collector.
+- */
+-void pcie_clear_root_pme_status(struct pci_dev *dev)
+-{
+-	pcie_capability_set_dword(dev, PCI_EXP_RTSTA, PCI_EXP_RTSTA_PME);
+-}
+-
+ static int pcie_portdrv_restore_config(struct pci_dev *dev)
+ {
+ 	int retval;
