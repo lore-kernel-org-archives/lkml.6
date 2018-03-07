@@ -1,56 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933325AbeCGCsh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:48:37 -0500
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35444 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932362AbeCGCse (ORCPT
+        id S1754076AbeCGDNf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 22:13:35 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36206 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753857AbeCGDNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:48:34 -0500
-X-Google-Smtp-Source: AG47ELv6bY3ytPtQ/hl+sbEO1y17bTZY4kz03PfR2V1OuHlNlHySYrZ6LX7+spbXWw/Bh/05tdhrO5MZZ4lTT125+AQ=
+        Tue, 6 Mar 2018 22:13:33 -0500
+To: Jeremy Cline <jeremy@jcline.org>
+Cc: "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lining916740672@icloud.com
+Subject: Re: [PATCH v2] scsi: sd: Keep disk read-only when re-reading partition
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
+Date: Tue, 06 Mar 2018 22:13:25 -0500
+In-Reply-To: <01000161fd48a4af-94cc485f-468a-404a-985e-7e8e50a358f0-000000@email.amazonses.com>
+        (Jeremy Cline's message of "Tue, 6 Mar 2018 21:47:32 +0000")
+Message-ID: <yq1vae8o9wq.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
-References: <cover.1520340931.git.amit.kucheria@linaro.org>
- <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
- <CAL_Jsq+QRTi6MnsnZeDVzUXsj5ya0OBROp8HeZ1cX+F=EGtoCA@mail.gmail.com>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 7 Mar 2018 08:18:33 +0530
-X-Google-Sender-Auth: 07qTKbnlknuqL3vDHf3C-GXTB6U
-Message-ID: <CAOh2x=n0zQMCtC2=NF9rRbSkNUrUJBxu1KWAoOpDh3CBDkCFgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] arm64: dts: msm8916: Add cpu cooling maps
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8824 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=388
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803070034
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 6, 2018 at 8:13 PM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Tue, Mar 6, 2018 at 7:05 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
 
->>         model = "Qualcomm Technologies, Inc. MSM8916";
->> @@ -115,6 +116,10 @@
->>                         cpu-idle-states = <&CPU_SPC>;
->>                         clocks = <&apcs 0>;
->>                         operating-points-v2 = <&cpu_opp_table>;
->> +                       /* cooling options */
->> +                       cooling-min-level = <0>;
->> +                       cooling-max-level = <7>;
->
-> Viresh is working on removing these from the binding...
+Jeremy,
 
-Yep, just drop all cooling-{min|max}-level lines from your code. That
-is not used
-anywhere by the kernel.
+> Sorry about this, but there's a bug in the first version of this patch.
+> I'm not sure what the protocol is for sending revised patches when the
+> earlier version got accepted, but I don't see the first version in
+> 4.16/scsi-fixes yet.
+
+It's your lucky day! I botched fixing up something the other day and as
+a result the tree was never pushed.
+
+v2 added to 4.16/scsi-fixes.
+
+Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
