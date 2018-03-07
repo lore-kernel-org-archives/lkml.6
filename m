@@ -1,59 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754333AbeCGKNE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:13:04 -0500
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38183 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754280AbeCGKMw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:12:52 -0500
-X-Google-Smtp-Source: AG47ELutNezj183oFuZy11y8CJ5xvJanWT2ceZJjY9agE+L6CbfK7NxXWgDRN2ggf8n9FPMC07uBbnTe5JNzyD35z08=
+        id S1754350AbeCGKNa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:13:30 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53306 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751183AbeCGKN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 05:13:27 -0500
+Date: Wed, 7 Mar 2018 11:13:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/9] x86/dumpstack: Improve opcodes dumping in the Code:
+ section
+Message-ID: <20180307101314.GC23662@pd.tnic>
+References: <20180306094920.16917-1-bp@alien8.de>
+ <20180306094920.16917-6-bp@alien8.de>
+ <CA+55aFxwdftN1KcA=Q26oN_GYWyeuyjmMPs-whxZcmz=-ARPFg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
-References: <20180220205638.1959033-1-arnd@arndb.de> <20180228211514.GC13394@ziepe.ca>
- <CAK8P3a2dsQ7QAb64DCp9Fc2xXjEyHNjBFdRc=y6FanQKsXhADg@mail.gmail.com>
- <20180306234539.GB1037@ziepe.ca> <CAK8P3a0mHEm8m8=CfV5Qmw0EcVCc31OetdFXHQ0KEvWk6K40Gw@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 11:12:50 +0100
-X-Google-Sender-Auth: CilZAijSIa47UfD2EpSXypyIvMw
-Message-ID: <CAK8P3a2cqjQzhaPwk9rE6=s4QQVFk8vAoYQfqSrh1nOi-KpZew@mail.gmail.com>
-Subject: Re: [PATCH 1/2] infiniband: qplib_fp: fix pointer cast
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Eddie Wai <eddie.wai@broadcom.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+55aFxwdftN1KcA=Q26oN_GYWyeuyjmMPs-whxZcmz=-ARPFg@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 10:05 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Mar 06, 2018 at 10:47:56AM -0800, Linus Torvalds wrote:
+> Are these always serialized? For oopses, I think we end up serializing
+> with die_lock, but is that always the case?
 
-> A small complication is that I wrote the changelog for the build warning
-> on 32-bit architectures, which is more elaborate. kernelci.org for
-> some reasons currently skips the allmodconfig build on all 32-bit
-> architectures (I should ask the kernelci maintainers to change that),
+Hmm, good question.
 
-I see that Olof's build bot does have build results for arm32
-allmodconfig, which is also big-endian, and reports the same
-errors that I described in the patch changelog.
+> Maybe at least a comment about why a static allocation is ok?
 
-See
+Well, I'm afraid it is not ok but let me show what I'm seeing - maybe
+I'm wrong somewhere:
 
-http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/
-http://arm-soc.lixom.net/buildlogs/arm-soc/v4.16-rc4-25-g41c42fe/buildall.arm.allmodconfig.log.passed
+Normally, when something calls die() we do this:
 
-for today's results.
+die
+|-> oops_begin
+|-> arch_spin_lock(&die_lock)		<-- grab die_lock
+|-> __die
+|-> show_regs
+|-> __show_regs
+|-> show_iret_regs
+|-> show_ip
+|-> show_opcodes
 
-This bot reports one other warning for arm32, but it's
-specific to the toolchain version used on that bot.
-I have a fix for that one as well, but there was some
-discussion on what the best approach would be.
+and we dump fine here.
 
-      Arnd
+But, if, for example, a #PF happens while we die(), we could do this:
+
+do_page_fault
+|-> __do_page_fault
+|-> bad_area_nosemaphore
+|-> __bad_area_nosemaphore
+|-> show_signal_msg
+|-> show_opcodes
+
+that's the catch-all case in:
+
+        if (unlikely(fault_in_kernel_space(address))) {
+
+and that doesn't sync with the die_lock, AFAICT, and we're walking all
+over the opcodes buffer.
+
+Unless I'm missing something, that is.
+
+If I'm not, then I guess I need to think about a better way to solve
+this. Because I like the improvement of not having to probe_kernel_read()
+byte-by-byte but read it all at once.
+
+And that is fine if I do a 64-byte default, on-stack buffer but that
+code_bytes= thing can be 2 pages max which is yuck. No way I'm doing
+on-stack buffers then.
+
+Hmm, I need to think about it.
+
+Thanks!
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
