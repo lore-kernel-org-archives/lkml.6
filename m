@@ -1,81 +1,140 @@
-Return-Path: <dan.carpenter@oracle.com>
-X-Google-Smtp-Source: AG47ELtqOPyRfUrL9xA9gJXygoO2FxjKx/TCEgmtqDXjqd8zlsUQedKweooiuauj2liqfWl783cG
-ARC-Seal: i=1; a=rsa-sha256; t=1520329664; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AzU+oaf7XlYt4vJIo7nr85n2sTdS4pvkLzy8w3jNzUiu55x957T8xuxEMFn12ymxQn
-         MJVh0dEMjll2g8oTfoT7JdlfF90Yzn1HpiWntFpv5NxNzEbwQSI4MT2mhuGa61+9JEw/
-         dmTW8ZAnHry6yJ+YDXsiuPXc8xhyw8xZvvoRsr/mKZs6PurE6y7lrWdkb6hsw+Gl51du
-         ZEm+FyYnpqpj67lrtkDNJL8F9SYSy+VzIksAQg19rLMrGvKJZxHynykXHyKKRV4FFIZX
-         NAFteAxzIkmK4c/eXQHaExF/w0Z1Avzm7UXlTJwlDn+Zoehuv7arzpCQ6RCAblpSjTgf
-         4LnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=Tzk8OZQbcVUmFcnfytazyLv7HugpMU9QBcwBwrCoSbo=;
-        b=RS4U6fU6heD/AsVYrRb42SLSDvKaxcMmWWEeaXfSzc0/zXaDm3B9DTZ7Fu3rOjxvBW
-         FNiQTkklgy8cm7jZCY7stWT6wknG2kdKorOX0rMVrXnXxhKEqRLfzEbKPv3mKTkpWKaE
-         +qrZiPj+tpp1UbqqOoxsGakgTwI28WD/L803bXZ4R0201A5aVlBizSOIU0TC80sBGz3F
-         KkJ/8nKDs0kw3Dtdc6T5ObfWEYmCWft06I2PSgmeFYNEb4PYYed5dqzalLRai7sL4CGQ
-         W18weer2SlRwk/NcQ257DfMtUHVE9xbrMf8+w+WGrDK0X6jD+xGNFTvKTxft+QVrUF9C
-         lxww==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=SYGXal/f;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=SYGXal/f;
-       spf=pass (google.com: domain of dan.carpenter@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=dan.carpenter@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Tue, 6 Mar 2018 12:47:28 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
-        christian.gromm@microchip.com, chris@engineersdelight.de,
-        linux-kernel@vger.kernel.org, Michael.Fabry@microchip.com
-Subject: Re: [PATCH 2/4] staging: most: Replace calls to BUG_ON() with
- WARN_ONCE() and return.
-Message-ID: <20180306094728.xbhamhpwdphv6kju@mwanda>
-References: <20180224075835.11618-1-quytelda@tamalin.org>
- <20180224075835.11618-2-quytelda@tamalin.org>
- <20180301162130.GB15087@kroah.com>
- <CAFLvi20e+D4984vypj7nVECFxh_AKVwGWTqCqfyFYJ9AV=Rvdg@mail.gmail.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1797899-1520386626-3-11959288890400160942
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1520386626; b=Q+jat3bc5WvCjqgQ3M8IkLMGVfEjzyzZOPjnu598jVj0qMp
+    i0TBSc9Da/LJIcg6OpLzcSCK+AKRcEFRsa8a9LNcyIfY/zquzlX0x3eDTXwLV87d
+    F7qx1ytln9CA/k872FeVvZz/Jbp8iuCyx5kQG/yqzpC25775uunf5YnjeexfHznB
+    zzO7l4+Czrr2TyhzboEsOywdH8mFFBan1CoftAb5pMtI03h5G3lEEpHef1eD/UZg
+    OntBYxz9goM0DwKJkPXgcnnFCpOC7mwoWfgctAJ69UWatFzdRXCPjorCN5oHwihX
+    3AC+RBAPdoHLn1081nZTyUyZ7A8nbkBvakpSxwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1520386626; bh=I
+    voN8gWXwXhhwDYIaw5alc3xBvV9x/BpZUE94HelNhU=; b=etarF0r2EgRRCdyb9
+    4boCstw6H/HDZST+HaMjwnxEhz8eDSSFXtEiqxEuhUvEd4Mt5x8ex7dvHqojlTTo
+    9rY9AjDo9euE1CNW9zpu8zHZy1nbA2oM6YajkpaPgg1irf5xy9gJyjzlW3Qt1l1G
+    rqoOtjFCLd+DmvDZ2g3ODgURzFPkIKZxsRqDVSz/me3s9k4/y1vbOohcmyyoSmE3
+    3VfM4JhVPWz84TfRZ2XNC+jXAFWCN0M4KVFWgO2hztC3VKVqABTkfCAcBpOOi/C5
+    N4Jnj0OSRbVCxao0048wSfBOOFlIDKQ9mnDs8UX5h9DgHqFy0TUWPwWqm2MU5mqh
+    DmVOg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-category=clean score=0 state=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	dan.carpenter@oracle.com
+Subject: [PATCH] staging: most: Remove unnecessary usage of BUG_ON().
+Date: Tue,  6 Mar 2018 17:31:41 -0800
+Message-Id: <20180307013141.23080-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180306094728.xbhamhpwdphv6kju@mwanda>
+References: <20180306094728.xbhamhpwdphv6kju@mwanda>
+X-Provags-ID: V03:K0:39Kz14lGS74Wmuq3BFwedmoVXbzoTHCapm0F5DxMi2erOnGybyx
+ k5Tq2IyxHpw7/zJ/TwhassuZG8QjM/wOxnYYxGuct039OoxZBoiJBwE6tkvUBT16SKYqnZs
+ t+vl0l/jp2bA0mHxosZ8iVSL4Lb46QFzGvkybdMu65zRNfky/Hs9K7uzxt0WISHRDk35m9R
+ 47Yyt2Ba82EzwelF3XIdg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:fpbJ13R4rmc=:RXCjOwRiTWaFANABFqkG3v
+ IvMvhEIV9gbXYgsmBMcFwDiLYqUvG7lyxsjeOpp76oa8S++Rw8F4m9Mb0bxDNrEu08Mljknqy
+ MGPOqC+I7Gyhfl9rbYCTgpsJK+UrSVnXR2NYeG5KdoVMJh84WPwwb8tgUhW5O/Kw0+sF0dK6L
+ AQQR/uW7Z9zicX6sNXrO1ieAnxk73sHrAdi0/tuIaF8S8x+c/0j9IIqebUkYQzFnE08fWAB7i
+ Cp7/pTW/zaWoh4onG7hmVYmp+6JQRRh+yE1LbCiGZpo57Woy0blO2JRz5KP0J4HJls/hF3Nvr
+ E72m3mn27F4ZdNXS7AT2SMJ2B2UlO39Gs/Ofdtx0ku9nN+1/kgMJqCUse8mkaafpQ/kCXxwee
+ cq6dv5Jk6xbNau0xyJgZ2XcFkFI5SFDgDPYlQ1B+/ApfxtR+gAXm6gamgk1uxF/5WIkaj3zIM
+ uZvdzeSRgHgQPLXTfsLYuaupbbGykYcZi8ljKNmKJDx7NN7c56FJr7asi54RyQoVy7kRBvjs4
+ DXde9/qiq526d3q+3DavQ8dY6pomFk9J8DeUH59Pyb8sFMojr4XgtA0LJBEfu/81bCiPGycTk
+ dZzHzB5mNIxhCzQRtYZ4Y9gXLbs+qt5CaD4Zvio3iVNhna6xnyANNBx7AQCKgDvX+9+ty/gCh
+ dyBGWmkmXyBEcwXAvHmrJ4SU47zcjKE/lOUPfFLhgOr5B8hW12ZLFqQd4NUkGKJ8TdVg8YlXX
+ ixpUIdKdFJCYtJU50IpojEJNFupYbF9KQPvHsQ==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, chris@engineersdelight.de,
+ linux-kernel@vger.kernel.org, Michael.Fabry@microchip.com,
+ christian.gromm@microchip.com, Quytelda Kahja <quytelda@tamalin.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFLvi20e+D4984vypj7nVECFxh_AKVwGWTqCqfyFYJ9AV=Rvdg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8823 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=433
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803060113
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593268397961397380?=
-X-GMAIL-MSGID: =?utf-8?q?1594181198496608752?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 01:23:18AM -0800, Quytelda Kahja wrote:
-> > Are you sure this will work?
-> Well, my goal was just to replace the code that could crash the kernel
-> and let somebody with a better understanding of this particular driver
-> write the recovery code, if necessary.  It seemed from context that
-> the BUG_ON() calls were being used like assert() though, so I assumed
-> there wasn't really much recovery to be made from that problem.  If
-> you feel this doesn't improve the behavior of the driver, just drop
-> the patch.
-> 
+There is no need for the calls to BUG_ON() in this driver, which are
+used to check if mbo or mbo->context are NULL; mbo is never NULL, and
+if mbo->context is NULL it would have already been dereferenced and
+oopsed before reaching the BUG_ON().
 
-mbo is always non-NULL just from a quick glance.  I didn't look hard
-enough to verify that mbo->context was OK.
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+Acked-by: Christian Gromm <christian.gromm@microchip.com>
+---
+ drivers/staging/most/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-It's generally best to just check the callers and delete these.
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index 0ab2de5ecf18..3afc25a61643 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -915,7 +915,6 @@ static void arm_mbo(struct mbo *mbo)
+ 	unsigned long flags;
+ 	struct most_channel *c;
+ 
+-	BUG_ON((!mbo) || (!mbo->context));
+ 	c = mbo->context;
+ 
+ 	if (c->is_poisoned) {
+@@ -1018,8 +1017,6 @@ static void most_write_completion(struct mbo *mbo)
+ {
+ 	struct most_channel *c;
+ 
+-	BUG_ON((!mbo) || (!mbo->context));
+-
+ 	c = mbo->context;
+ 	if (mbo->status == MBO_E_INVAL)
+ 		pr_info("WARN: Tx MBO status: invalid\n");
+-- 
+2.16.2
 
-Say you have a BUG_ON() then that prevents memory corruption (not an
-issue here) but it makes debugging hard.  But if you just have a NULL
-dereference it probably kills the driver but you get an Oops which you
-can debug.  So a NULL dereference is normally better than a BUG_ON().
-
-regards,
-dan carpenter
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
