@@ -1,72 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933936AbeCGRtE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:49:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49568 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933533AbeCGRtA (ORCPT
+        id S933791AbeCGRtx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:49:53 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:45416 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeCGRtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:49:00 -0500
-Subject: Re: [PATCH 1/3] certs: define a trusted platform keyring
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20180228175521.10287-1-nayna@linux.vnet.ibm.com>
- <31489.1520438598@warthog.procyon.org.uk>
-From: Nayna Jain <nayna@linux.vnet.ibm.com>
-Date: Wed, 7 Mar 2018 23:17:46 +0530
+        Wed, 7 Mar 2018 12:49:52 -0500
+Subject: Re: [PATCH v1] xen: acpi: upload _PSD info for offline CPUs too
+To: Joao Martins <joao.m.martins@oracle.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc: Juergen Gross <jgross@suse.com>
+References: <20180306201209.21890-1-joao.m.martins@oracle.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <a62621c6-ca44-fae4-7661-b7fe5380bbc0@oracle.com>
+Date: Wed, 7 Mar 2018 12:51:12 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <31489.1520438598@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180306201209.21890-1-joao.m.martins@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18030717-0048-0000-0000-00000246326B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008630; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.00999668; UDB=6.00508501; IPR=6.00779073;
- MB=3.00019896; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-07 17:48:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030717-0049-0000-0000-0000445D3122
-Message-Id: <8873df7f-490f-28e0-249e-34bb3b133015@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803070203
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8825 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803070204
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/06/2018 03:12 PM, Joao Martins wrote:
+> All uploaded PM data from offline CPUs takes the info from vCPU 0 and
 
+"offline" may not be the right term here. Maybe "non-dom0"?
 
-On 03/07/2018 09:33 PM, David Howells wrote:
-> Nayna Jain <nayna@linux.vnet.ibm.com> wrote:
+> changing only the acpi_id. For processors which P-state coordination type
+> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
+> (_PSD), because Xen will ignore cpufreq domains existence.
 >
->> +		key = key_create_or_update(make_key_ref(keyring, 1),
->> +				"asymmetric",
->> +				NULL,
->> +				p,
->> +				plen,
->> +				((KEY_POS_ALL & ~KEY_POS_SETATTR) |
->> +				 KEY_USR_VIEW | KEY_USR_READ),
->> +				KEY_ALLOC_NOT_IN_QUOTA |
->> +				KEY_ALLOC_BUILT_IN |
->> +				KEY_ALLOC_BYPASS_RESTRICTION);
-> There's no need to reindent here.  Please line up all the arguments: either
-> push the first argument over onto the next line if you need to or line them
-> all up with the char after the opening bracket.
-
-Thanks David for the feedback. I will post the v2 version with this fix. 
-Are there any other changes ?
-
-Thanks & Regards,
-    - Nayna
-
+> Albeit for hardware exposing Px coordination types as SW_ANY or SW_ALL,
+> this will have some unintended side effects. Effectively, it will look at
+> the P-state domain existence and *if it already exists* it will skip the
+> acpi-cpufreq initialization and thus inherit the policy from the first CPU
+> in the cpufreq domain. This will finally lead to the original cpu not
+> changing target freq to P0 other than the first in the domain. Which will
+> make turbo boost not getting enabled (e.g. for 'performance' governor) for
+> all cpus.
 >
-> David
+> This patch fixes that, by also evaluating _PSD when enumerating all ACPI
+> procesors (online and offline) and always uploading the correct P-State
+> dependency up to Xen.
 >
+> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+> ---
+> xen_processor_get_psd() is taken from acpi_processor_get_psd()
+> (drivers/acpi/processor_perflib.c) simply because only Xen Dom0 needs
+> to handle vcpus != pcpus. If preferred I could try exporting that API
+> instead and use it here.
+
+I think this would be a preferable approach.
+
+-boris
