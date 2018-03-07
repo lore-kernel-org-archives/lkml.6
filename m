@@ -1,95 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965155AbeCGUUj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:20:39 -0500
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:42818 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934991AbeCGUUg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:20:36 -0500
-X-Google-Smtp-Source: AG47ELueqdgY7KM8/7hLCYDS1mHC47ZBbQj0llWO+JNqjxFqKn65RiLBeL8Sh2O1gUVkuQpeAHlEiUptCGRYURJDNp8=
+        id S965160AbeCGUUv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:20:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933935AbeCGUUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:20:49 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11662172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Wed, 7 Mar 2018 20:20:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, daniel.baluta@nxp.com,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
+Subject: Re: [PATCH] iio:magnetometer: Remove duplications in iio_chan_spec
+Message-ID: <20180307202044.1d6e66f2@archlinux>
+In-Reply-To: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
+References: <20180306120011.pbnymd7izt2yxljl@smtp.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180307.124500.1863183408172828694.davem@davemloft.net>
-References: <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
- <20180307.114139.680250568317481879.davem@davemloft.net> <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
- <20180307.124500.1863183408172828694.davem@davemloft.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Mar 2018 15:20:33 -0500
-Message-ID: <CAHC9VhRQb50EYD6BVTxNv2x=S_tTLq57OZBsWbXFdfJEunNUiA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
-To: David Miller <davem@davemloft.net>
-Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        richard_c_haines@btinternet.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 12:45 PM, David Miller <davem@davemloft.net> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Wed, 7 Mar 2018 12:27:52 -0500
->
->> I'm not sure we could have cleanly separated the core network stack
->> changes from the rest of the SELinux/SCTP enablement, regardless it's
->> a bit late at this point.  The only other thought would have been to
->> simply push Xin Long's cleanup patches until after the next merge
->> window, but that would only be worth considering if they truly were
->> just cleanup patches, and even then it doesn't seem very fair to Xin
->> Long to have to wait.
->
-> I think you wanted to have more integration, rather than less.
+On Tue, 6 Mar 2018 09:00:11 -0300
+Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
 
-I'm not quite sure where you are going here, I think we *all* want
-integration - subtrees merge patches/trees, Linus merges subtrees,
-etc. - and I don't believe I've said anything to the contrary.
+> The magn_3d_channels array has multiple declarations of iio_chan_spec.
+> Most of the iio_chan_spec are very similar, changing only by the .type
+> and .channel2 field. This patch reduces the code duplication by adding a
+> macro that can replace the iio_chan_spec  repetitions in the
+> magn_3d_channels array.
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Whilst this looks fine to me, I'd like Srinivas to take a look before
+I apply it as this is his driver.  Please do make sure to cc the author.
+Whilst many such email addresses bounce as they have moved on they
+don't always.
 
-> What others have done in the past, is they simply pull my networking
-> tree into their's.
+Jonathan
 
-I only base the SELinux and audit trees on Linus' tree.  Perhaps I'm
-wrong, but a quick look at net-next makes me believe you do the same.
-
-I think it is also worth mentioning that the SELinux/SCTP patches have
-been in the selinux/next branch for several days now; from what I can
-tell they predate these net-next cleanup patches.  Not that it
-matters, I just don't believe that pulling net-next would have solved
-this problem; I suppose the right thing would have been for net-next
-to pull selinux/next, yes?
-
-> I never rebase, ever.
-
-I've learned that saying "never" (or "never X, ever" in this case) is
-a recipe for disaster, but if it works for you, go for it.
-
-FWIW, I try to avoid rebases as much as possible; it's the nuclear
-option as far as I'm concerned and the only time I regularly rebase
-the SELinux and audit trees is after the merge window (e.g. we need
-something in -rc1, or we are simply too far out of date).
-
-Looking quickly at net-next, it looks like net-next/master is
-refreshed/rebased on a regular basis too (it contains the
-selinux-pr-20180130 tag)... and perhaps rebase is a term you don't
-want to use, but I think we are on the same page here.
-
-> My tree often goes in reasonable early in the merge window.
-
-Generally speaking I send my pull request to Linus early in the merge
-window too.  It obviously tends to vary on when he does the pull, but
-we generally haven't had any major problems.
-
-> So you would only have to wait until my tree went in before
-> sending your pull request.
-
-So you would want me to rebase selinux/next on top of Linus' tree in
-the middle of the merge window?  I'm sure that isn't what you meant,
-but that's how I keep reading the above ... which can't be right,
-because in my experience that's one way to piss off Linus.  Help me
-understand what you are saying.
-
-> That's really the way to handle something like this.
-
--- 
-paul moore
-www.paul-moore.com
+> ---
+>  drivers/iio/magnetometer/hid-sensor-magn-3d.c | 83 ++++++---------------------
+>  1 file changed, 19 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+> index a1fd9d591818..fff64711a6c8 100644
+> --- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+> +++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+> @@ -74,72 +74,27 @@ static const u32 magn_3d_addresses[MAGN_3D_CHANNEL_MAX] = {
+>  	HID_USAGE_SENSOR_ORIENT_TRUE_NORTH,
+>  };
+>  
+> +#define HID_SENSOR_MAGN_3D_AXIS_CHANNEL(channel_type, characteristic)	\
+> +	{								\
+> +		.type = channel_type,					\
+> +		.modified = 1,						\
+> +		.channel2 = characteristic,				\
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) | \
+> +					BIT(IIO_CHAN_INFO_SCALE) |	\
+> +					BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
+> +					BIT(IIO_CHAN_INFO_HYSTERESIS),	\
+> +	}								\
+> +
+>  /* Channel definitions */
+>  static const struct iio_chan_spec magn_3d_channels[] = {
+> -	{
+> -		.type = IIO_MAGN,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_X,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_MAGN,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_Y,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_MAGN,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_Z,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_ROT,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_NORTH_MAGN_TILT_COMP,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_ROT,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_NORTH_TRUE_TILT_COMP,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_ROT,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_NORTH_MAGN,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}, {
+> -		.type = IIO_ROT,
+> -		.modified = 1,
+> -		.channel2 = IIO_MOD_NORTH_TRUE,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -	}
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_X),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Y),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_MAGN, IIO_MOD_Z),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN_TILT_COMP),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_TRUE_TILT_COMP),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
+> +	HID_SENSOR_MAGN_3D_AXIS_CHANNEL(IIO_ROT, IIO_MOD_NORTH_MAGN),
+>  };
+>  
+>  /* Adjust channel real bits based on report descriptor */
