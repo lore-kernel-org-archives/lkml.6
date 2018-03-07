@@ -1,89 +1,117 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AG47ELvTfodts0GZbe+hgbYGsi9rDG4gLvbo/TAg395cmt8U27tQQrj8ov3+A3rZjzSQopYPAIS7
-ARC-Seal: i=1; a=rsa-sha256; t=1519947162; cv=none;
+Return-Path: <andreas.dilger@intel.com>
+X-Google-Smtp-Source: AG47ELs+4DLFHr5Z3lj7P0EjxolBjIOVz23XqWYr9DM54YVMECg7UQZlLh+KXPtLljPq3AikgNgE
+ARC-Seal: i=1; a=rsa-sha256; t=1520457019; cv=none;
         d=google.com; s=arc-20160816;
-        b=TSa7/vpRANj4PCw5vX+14zGRf0g8ltoRD1Ed4pIevGVxAVcZnHO2Vg08cVB6pnil9l
-         Maxj594dyDGHJQEN0GA/XjT0Pw39g1V3x3eiyYfBEh02sxpMjRH1TlTLQDtY1P9g9e69
-         STfRvPtDjybf/yPqHE6cvkcGfE8acx6jH4c3mx4ZGR3LOkZGm5VYBlWMPBsyaSLlCllM
-         KA3USU9GcMhCpl7zf1BUV28xQSJg+S7MtQrdsJUzE9lTbzhsLsDr5mE9OO8Q/QP2Ks2S
-         zxil7bCYTkwB2xCUGnokXWZLVHzdRwjl5bKVeueJYAdBD0bVyBZsgQ7zejFSUrxgndhi
-         EEvQ==
+        b=sen+qa7+Mg+2lh4AnlqYc29hyq0jh6B1wPugv7/yKF+BZ+E3c7OQAD4aF199XvaNAL
+         bR9oc6LQjQw/8FqvzoMPagTGTF993FMLxx1p0EB7daZ4KVuoBaQ9q+m/8lIyhf0eJTV7
+         4rTclN4Z/bj/8AvidEVwRJ1jroB5ehfe9OQkc+pxDNaNmEbmriUIS4U/WUnzEDwBcR12
+         G36umQF2HUE6n0v9xdeLLUFQHuULiwAuO9mzc5DDcm822iXtyd4wiji8RwP+jfpfzMZK
+         Tg+4fOv//UaRfygoWtKIgHzOFVcNOUk9c6kecIJ0YuiftDfuW9Of1WaVq/t3XyOIYBht
+         fAnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:cc:subject:date:to:from
-         :arc-authentication-results;
-        bh=jHOSYWaeNyqXdGPinYF2SUJ3PQ3PezIxJ9oxpwU2sOQ=;
-        b=JmBvooae68XgzBjT7KBX+4Mysy6J0r++p9oJOA9R57hGQfD9YrSHWSTJSp7JbuYJY/
-         ZqNj4/BvC1dbcLD9v+zBArfaWtm6RVqy/lRB5c4I6FW8iXzUcXgXRytRIIumbuoT3s39
-         XAFAwMw+FsfnkDYrE7t73hn3UyQV1J0rYpMcWq065z8dXxOQsP+zYBzFmyJxngO2J4EX
-         BeDORgfYW+e/eL1xgTOjtfzp4dRAe+146eo2fpQ1UzKbTB1ug21rVeBIqKmTkfsLZipF
-         0AcM4JZhvhqRAAADzqvm2G9F1WURW42hKZopqOncvlpyScUjxag/VMDCr7bW0VDWH/9p
-         GpMg==
+        h=mime-version:content-transfer-encoding:content-id:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=yjYVMuyXdN0GcFaVGQhfn9cdeuH+BCOsmt89MzhNeDc=;
+        b=pRGTQyo0LLY4G96+DajW5Q5ZOwM39WjS77wYrlExhRqhY92XFRLkjinhh4NwVjdi/G
+         Nbsn6T5I/UGNmW+N2Oc/WKGFtZ0szBZJ1zSnL2QNybCZpY6UJ3on/FI0DiQOshGhkcRd
+         CzCOsBCzRIKNT5BnXVzAEhL6ghp/yb1xFAY3axGH9e0/jBFzO46tix25y4toRISSx5pU
+         1srikFbecqVRbKRO26R53jGKhZ0PTcD5QBbPqRU2Vdcn4NctdNdV5S8zX7RViO3g9cBM
+         mTUJ1+Y1ZcyAYH6Q3IMqhB6T1trzvricn0oL7NSHNs7OI+USWrTJL3o1SNjCwfEKeBEP
+         GaeQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+       spf=pass (google.com: domain of andreas.dilger@intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- James Simmons <jsimmons@infradead.org>,
- Andreas Dilger <andreas.dilger@intel.com>
-Date: Fri, 02 Mar 2018 10:31:25 +1100
-Subject: [PATCH 04/17] staging: lustre: obdclass: don't require lct_owner to
- be non-NULL.
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <151994708517.7628.10169180583984336095.stgit@noble>
-In-Reply-To: <151994679573.7628.1024109499321778846.stgit@noble>
+       spf=pass (google.com: domain of andreas.dilger@intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=andreas.dilger@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
+   d="scan'208";a="209668885"
+From: "Dilger, Andreas" <andreas.dilger@intel.com>
+To: NeilBrown <neilb@suse.com>
+CC: "Drokin, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
+ Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List
+	<lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH 04/17] staging: lustre: obdclass: don't require
+ lct_owner to be non-NULL.
+Thread-Topic: [PATCH 04/17] staging: lustre: obdclass: don't require
+ lct_owner to be non-NULL.
+Thread-Index: AQHTsbWZEU9W0VVzmkufKJTNHAVNgKPF1BGA
+Date: Wed, 7 Mar 2018 21:10:16 +0000
+Message-ID: <09E84FB8-BF65-4D08-BAB1-8C2AEC85B3B2@intel.com>
 References: <151994679573.7628.1024109499321778846.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+ <151994708517.7628.10169180583984336095.stgit@noble>
+In-Reply-To: <151994708517.7628.10169180583984336095.stgit@noble>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.6.233]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BBA7919C1530BB48B5EBC2B63AE257BC@intel.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593780115063763673?=
-X-GMAIL-MSGID: =?utf-8?q?1593780115063763673?=
+X-GMAIL-MSGID: =?utf-8?q?1594314739306120338?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some places in lu_object.c allow lct_owner to be NULL, implying
-that the code is built in to the kernel (not a module), but
-two places don't.  This prevents us from building lustre into
-the kernel.
+On Mar 1, 2018, at 16:31, NeilBrown <neilb@suse.com> wrote:
+>=20
+> Some places in lu_object.c allow lct_owner to be NULL, implying
+> that the code is built in to the kernel (not a module), but
+> two places don't.  This prevents us from building lustre into
+> the kernel.
+>=20
+> So remove the requirement and always allow lct_owner to be NULL.
+>=20
+> This requires removing an "assert" that the module count is positive,
+> but this is redundant as module_put() already does the necessary test.
+>=20
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-So remove the requirement and always allow lct_owner to be NULL.
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
 
-This requires removing an "assert" that the module count is positive,
-but this is redundant as module_put() already does the necessary test.
+> ---
+> drivers/staging/lustre/lustre/obdclass/lu_object.c |    7 +------
+> 1 file changed, 1 insertion(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers=
+/staging/lustre/lustre/obdclass/lu_object.c
+> index cca688175d2d..880800e78c52 100644
+> --- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
+> +++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+> @@ -1380,12 +1380,8 @@ static void key_fini(struct lu_context *ctx, int i=
+ndex)
+> 		lu_ref_del(&key->lct_reference, "ctx", ctx);
+> 		atomic_dec(&key->lct_used);
+>=20
+> -		if ((ctx->lc_tags & LCT_NOREF) =3D=3D 0) {
+> -#ifdef CONFIG_MODULE_UNLOAD
+> -			LINVRNT(module_refcount(key->lct_owner) > 0);
+> -#endif
+> +		if ((ctx->lc_tags & LCT_NOREF) =3D=3D 0)
+> 			module_put(key->lct_owner);
+> -		}
+> 		ctx->lc_value[index] =3D NULL;
+> 	}
+> }
+> @@ -1619,7 +1615,6 @@ static int keys_fill(struct lu_context *ctx)
+> 			LINVRNT(key->lct_init);
+> 			LINVRNT(key->lct_index =3D=3D i);
+>=20
+> -			LASSERT(key->lct_owner);
+> 			if (!(ctx->lc_tags & LCT_NOREF) &&
+> 			    !try_module_get(key->lct_owner)) {
+> 				/* module is unloading, skip this key */
+>=20
+>=20
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- drivers/staging/lustre/lustre/obdclass/lu_object.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-index cca688175d2d..880800e78c52 100644
---- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-@@ -1380,12 +1380,8 @@ static void key_fini(struct lu_context *ctx, int index)
- 		lu_ref_del(&key->lct_reference, "ctx", ctx);
- 		atomic_dec(&key->lct_used);
- 
--		if ((ctx->lc_tags & LCT_NOREF) == 0) {
--#ifdef CONFIG_MODULE_UNLOAD
--			LINVRNT(module_refcount(key->lct_owner) > 0);
--#endif
-+		if ((ctx->lc_tags & LCT_NOREF) == 0)
- 			module_put(key->lct_owner);
--		}
- 		ctx->lc_value[index] = NULL;
- 	}
- }
-@@ -1619,7 +1615,6 @@ static int keys_fill(struct lu_context *ctx)
- 			LINVRNT(key->lct_init);
- 			LINVRNT(key->lct_index == i);
- 
--			LASSERT(key->lct_owner);
- 			if (!(ctx->lc_tags & LCT_NOREF) &&
- 			    !try_module_get(key->lct_owner)) {
- 				/* module is unloading, skip this key */
+Cheers, Andreas
+--
+Andreas Dilger
+Lustre Principal Architect
+Intel Corporation
