@@ -1,53 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933879AbeCGP2m (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:28:42 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49418 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933335AbeCGP2j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:28:39 -0500
-Message-ID: <1520436517.5558.2.camel@HansenPartnership.com>
-Subject: Re: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jiri Slaby <jslaby@suse.cz>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org
-Cc: matthew.garrett@nebula.com, linux-security-module@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 07 Mar 2018 07:28:37 -0800
-In-Reply-To: <1520428682.10396.445.camel@linux.vnet.ibm.com>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
-         <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
-         <1520428682.10396.445.camel@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S933904AbeCGP2u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:28:50 -0500
+Received: from muru.com ([72.249.23.125]:59844 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933335AbeCGP2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:28:46 -0500
+Date: Wed, 7 Mar 2018 07:28:42 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm-soc <arm@kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL 2/6] omap timer changes for v4.17
+Message-ID: <20180307152842.GH5799@atomide.com>
+References: <pull-1520273005-304551@atomide.com>
+ <pull-1520273005-304551@atomide.com-2>
+ <CAK8P3a0YwGtE+UkA6+rQ_FQsGO5paL9ub_=oOq_SE3xPUiH1ww@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0YwGtE+UkA6+rQ_FQsGO5paL9ub_=oOq_SE3xPUiH1ww@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
-> On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
-> > what's the status of this please? Distributors (I checked SUSE,
-> > RedHat and Ubuntu) have to carry these patches and every of them
-> > have to forward-port the patches to new kernels. So are you going
-> > to resend the PR to have this merged?
-[...]
-> Just because I trust the platform keys prior to booting the kernel,
-> doesn't mean that I *want* to trust those keys once booted.  There
-> are, however, places where we need access to those keys to verify a
-> signature (eg. kexec kernel image).
+* Arnd Bergmann <arnd@arndb.de> [180307 15:22]:
+> On Mon, Mar 5, 2018 at 7:11 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > From: "Tony Lindgren" <tony@atomide.com>
+> >
+> > The following changes since commit 2fdc82776ac2ac49c5ee666d834718ac36420e49:
+> >
+> >   Merge branch 'omap-for-v.16/dmtimer-fix' into omap-for-v4.17/timer (2018-02-22 10:46:47 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap tags/omap-for-v4.17/timer-signed
+> >
+> > for you to fetch changes up to 58a54f03e73d67432216931854363e4ba15839b9:
+> >
+> >   clocksource: timer-ti-dm: Check prescaler value (2018-02-28 13:41:30 -0800)
+> >
+> > ----------------------------------------------------------------
+> > Move omap timer to drivers for 4.17
+> >
+> > This series from Keerthy and Ladislav Michl move omap dmtimer code
+> > to drivers. As we don't want to export custom timer functions to
+> > random drivers, we also need to update the related PWM driver to
+> > pass the timer specific functions in platform data.
+> >
+> > Note that this series is based on a merge of omap1 specific timer
+> > fix and omap2+ platform data clean-up to keep things working and
+> > make the move a bit simpler.
+> 
+> I was undecided whether this should be in next/drivers or next/soc,
+> ended up putting it into the latter.
+> 
+> I don't see the clocksource maintainers involved in the patch series,
+> so I added them to Cc now to make sure they are aware of the move
+> of the driver.
 
-Which is essentially the reason I always give when these patches come
-back
+OK thanks. We got some comments from Daniel for an earlier set of
+patches in December. No acks though, but hopefully it's good enough
+for further work to happen under drivers/clocksource :)
 
-> Nayna Jain's "certs: define a trusted platform keyring" patch set
-> introduces a new, separate keyring for these platform keys.
+Regards,
 
-Perhaps, to break the deadlock, we should ask Jiří what the reason is
-the distros want these keys to be trusted.  Apart from the Microsoft
-key, it will also give you an OEM key in your trusted keyring.  Is it
-something to do with OEM supplied modules?
-
-James
+Tony
