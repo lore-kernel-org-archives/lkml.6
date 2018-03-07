@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsnxUtGW3CTJC0YSUTRbogRXixewfbDG5ZMg+vxfckr+pjwgLiIQS58KChy/omfY8VB4R4N
-ARC-Seal: i=1; a=rsa-sha256; t=1520451682; cv=none;
+X-Google-Smtp-Source: AG47ELulWnC1RElljVH+yLa1UEiC8PecUezmJ5b2S3mA4aS9SIT2L2y18GepBOkphYfuof2Q/HNd
+ARC-Seal: i=1; a=rsa-sha256; t=1520451680; cv=none;
         d=google.com; s=arc-20160816;
-        b=wwOosQtypP2oihdqHAivj12dLMGFi5KB016ESos1uOqkslsikiqSPQQVh4jit5SWkg
-         NN0QrhoeAMNrMSbrLoi7eCNC8nLv3mtqRX5FF9h+guSB69Wf5YQXiLzilgrliXbWccry
-         8Qoh4fJbH1805lwpQHy16YHTuU22L7SZXtMeEn9OhqhVe7Y6U0NePT9jejUmf0ZWF6vM
-         AkVagI5nS6o657yj3747pNcFz4YGeZZHxoRSBp5+oH6c/haX4ke6rDop7HMiMDZ5eGdr
-         OEKAaW8MH1HaprTsDZCXPMxFS6RHuvoBa10KEAL7HuLSDq9KIeMGRbGF/hIeRQJOcqmF
-         COqw==
+        b=VBsYhIQcLRuek8YbXALxW+rz9ZzZR4d+K9uW39nYQ1kCMZLLwEP2GI2hRFzavK6wX+
+         qoEM6T3X4zXMI2pv3FCrFRrjYcUkK/n2ugyL7V7qHOzblxN+Q02i19XKgm8i+3palJgG
+         XgAlGoG/UWtdkvboufk0Iv2moRMrx/cTBwzMWSv9w2ICzgEF8f3Od6e4igq7v+dnBZis
+         cw2hiNAZXYasXrzYmGg14XUbe//RfpEut3RWQX3J66WPx86yQnUYdVEUY9Ahf3nralWF
+         y0IC3jN2w9H7dgV3DUaV2i6sg93/tu8xfFlGdgLoR5Ml5N8u6oz/Wc85QWTIUCxb2T/Q
+         gPOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zt3usaZtKk1wCalrDcbSFpjwa27FHn1bltb1yNaWi9M=;
-        b=Rh219xUF/fHH0oG2ldhwotRMVjSVucoA/yLr6e9hfU6ibMlzRI/DkdW07G1g2Y98KO
-         FZRBZoX0LVFjtCIRhBtad94kxEq8Dj2ZQ05IpN1QoowVMHn7ynECaiAnbo+wFkgYN0xF
-         C4nmq3gf5b5/UCMyJMQxUKgW0HkBJkCiAjzy7+6OKFKr+RdtuJtKqBcEz1OrZBbet9bv
-         T2cVuBdnRDjSVasEjxrNMtDLI8LrwXLsAq8gMMkGLG56v877Iri2vyo72kAt/XZfSiE9
-         bv+ZNIjrxlqQ3ysE/3ahrMUlNyxdVHg9xu7UsbXjOfycfIxYY8w5ANl2jfrtWmYtbVpU
-         o5Qg==
+        bh=CXaV149gnGzeMVLrLv6osJAtFA6skdVpgLgbg6489uA=;
+        b=NURSbHQlLjjSQ3F3Wl9euwBYDAMVegkBaLEHk/YKgM/OI7IUtSLIZzXDoVob5D6AtQ
+         tNjv70pnvru+tQWvi8JjGU7kAhbLHzqHQhwrMLI0UNvDbTJYv0UtLZQYH3P0XBVjCNxC
+         KNyaRp4LXjwdEhXFVCjjNtiCDHvjhUiaqsTb9yOIbb0Pe9iaMy6l6wGtwPpVbmpBraqj
+         R87xIi3+EAmM/vPGba2wazQDbOZpDvRtRHdUqIFxxlibp8gHxqqi9uYMHXjoEf5eks2k
+         xwqURfUQkpilNDIamwUo/PI6ilkiZCxnkR0Arb1N/P+/J6BQwVE3sFNFveHKnaAY6vL1
+         hYjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 051/122] udplite: fix partial checksum initialization
-Date: Wed,  7 Mar 2018 11:37:43 -0800
-Message-Id: <20180307191736.460270737@linuxfoundation.org>
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.15 033/122] cpufreq: s3c24xx: Fix broken s3c_cpufreq_init()
+Date: Wed,  7 Mar 2018 11:37:25 -0800
+Message-Id: <20180307191733.984904057@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309143307548548?=
-X-GMAIL-MSGID: =?utf-8?q?1594309143307548548?=
+X-GMAIL-THRID: =?utf-8?q?1594309141082260799?=
+X-GMAIL-MSGID: =?utf-8?q?1594309141082260799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +49,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
+commit 0373ca74831b0f93cd4cdbf7ad3aec3c33a479a5 upstream.
 
-[ Upstream commit 15f35d49c93f4fa9875235e7bf3e3783d2dd7a1b ]
+commit a307a1e6bc0d "cpufreq: s3c: use cpufreq_generic_init()"
+accidentally broke cpufreq on s3c2410 and s3c2412.
 
-Since UDP-Lite is always using checksum, the following path is
-triggered when calculating pseudo header for it:
+These two platforms don't have a CPU frequency table and used to skip
+calling cpufreq_table_validate_and_show() for them.  But with the
+above commit, we started calling it unconditionally and that will
+eventually fail as the frequency table pointer is NULL.
 
-  udp4_csum_init() or udp6_csum_init()
-    skb_checksum_init_zero_check()
-      __skb_checksum_validate_complete()
+Fix this by calling cpufreq_table_validate_and_show() conditionally
+again.
 
-The problem can appear if skb->len is less than CHECKSUM_BREAK. In
-this particular case __skb_checksum_validate_complete() also invokes
-__skb_checksum_complete(skb). If UDP-Lite is using partial checksum
-that covers only part of a packet, the function will return bad
-checksum and the packet will be dropped.
-
-It can be fixed if we skip skb_checksum_init_zero_check() and only
-set the required pseudo header checksum for UDP-Lite with partial
-checksum before udp4_csum_init()/udp6_csum_init() functions return.
-
-Fixes: ed70fcfcee95 ("net: Call skb_checksum_init in IPv4")
-Fixes: e4f45b7f40bd ("net: Call skb_checksum_init in IPv6")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: a307a1e6bc0d "cpufreq: s3c: use cpufreq_generic_init()"
+Cc: 3.13+ <stable@vger.kernel.org> # v3.13+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/udplite.h   |    1 +
- net/ipv4/udp.c          |    5 +++++
- net/ipv6/ip6_checksum.c |    5 +++++
- 3 files changed, 11 insertions(+)
 
---- a/include/net/udplite.h
-+++ b/include/net/udplite.h
-@@ -64,6 +64,7 @@ static inline int udplite_checksum_init(
- 		UDP_SKB_CB(skb)->cscov = cscov;
- 		if (skb->ip_summed == CHECKSUM_COMPLETE)
- 			skb->ip_summed = CHECKSUM_NONE;
-+		skb->csum_valid = 0;
-         }
- 
- 	return 0;
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -2031,6 +2031,11 @@ static inline int udp4_csum_init(struct
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
+---
+ drivers/cpufreq/s3c24xx-cpufreq.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/cpufreq/s3c24xx-cpufreq.c
++++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+@@ -351,7 +351,13 @@ struct clk *s3c_cpufreq_clk_get(struct d
+ static int s3c_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	policy->clk = clk_arm;
+-	return cpufreq_generic_init(policy, ftab, cpu_cur.info->latency);
 +
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = inet_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
- 
- 	/* Note, we are only interested in != 0 or == 0, thus the
---- a/net/ipv6/ip6_checksum.c
-+++ b/net/ipv6/ip6_checksum.c
-@@ -73,6 +73,11 @@ int udp6_csum_init(struct sk_buff *skb,
- 		err = udplite_checksum_init(skb, uh);
- 		if (err)
- 			return err;
++	policy->cpuinfo.transition_latency = cpu_cur.info->latency;
 +
-+		if (UDP_SKB_CB(skb)->partial_cov) {
-+			skb->csum = ip6_compute_pseudo(skb, proto);
-+			return 0;
-+		}
- 	}
++	if (ftab)
++		return cpufreq_table_validate_and_show(policy, ftab);
++
++	return 0;
+ }
  
- 	/* To support RFC 6936 (allow zero checksum in UDP/IPV6 for tunnels)
+ static int __init s3c_cpufreq_initclks(void)
