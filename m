@@ -1,112 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754346AbeCGLTb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:19:31 -0500
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:53802 "EHLO
-        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754293AbeCGLT2 (ORCPT
+        id S1754287AbeCGL04 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:26:56 -0500
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:46224 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeCGL0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:19:28 -0500
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [RESEND PATCH v3] crypto: add zBeWalgo compression for zram
-From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-In-Reply-To: <20180307021252.GA802@jagdpanzerIV>
-Date: Wed, 7 Mar 2018 12:19:24 +0100
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <43DE57BA-0029-4C1F-905C-7E57839054C4@informatik.uni-hamburg.de>
-References: <8CFBD60E-6A2B-4766-B6F9-09A98DEA26CB@informatik.uni-hamburg.de>
- <20180307021252.GA802@jagdpanzerIV>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 7 Mar 2018 06:26:51 -0500
+X-Google-Smtp-Source: AG47ELvefNbL/9Ajc8Y6UcqADzzDdI0GNDxSYDiezUu1eHNZloou82o9Xpcm9k+yIMwnOxE1HnWoEJaxmmQ4xo7EBHU=
+MIME-Version: 1.0
+In-Reply-To: <CAOh2x=k6aXd=pPaNKhd-fna58wk4mNcMWgy1Eb=VYwECRtqLaA@mail.gmail.com>
+References: <cover.1520398076.git.amit.kucheria@linaro.org>
+ <9f7199f0027ef2382e5ccc61a5118d0a00fa2e63.1520340931.git.amit.kucheria@linaro.org>
+ <4d134dee2154ae3fa56b375aaed9568e21b1a777.1520398076.git.amit.kucheria@linaro.org>
+ <CAOh2x=k6aXd=pPaNKhd-fna58wk4mNcMWgy1Eb=VYwECRtqLaA@mail.gmail.com>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Date: Wed, 7 Mar 2018 16:56:50 +0530
+Message-ID: <CAP245DU-VO9S7jh9d8gZNgM6Hr29P=Uzi4kxb_T8QLqbuQwFig@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: msm8916: Add cpu cooling maps
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Mar 7, 2018 at 10:44 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On Wed, Mar 7, 2018 at 10:30 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>> From: Rajendra Nayak <rnayak@codeaurora.org>
+>>
+>> Add cpu cooling maps for cpu passive trip points. The cpu cooling
+>> device states are mapped to cpufreq based scaling frequencies.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> index e468277..66b318e 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+>> @@ -15,6 +15,7 @@
+>>  #include <dt-bindings/clock/qcom,gcc-msm8916.h>
+>>  #include <dt-bindings/reset/qcom,gcc-msm8916.h>
+>>  #include <dt-bindings/clock/qcom,rpmcc.h>
+>> +#include <dt-bindings/thermal/thermal.h>
+>>
+>>  / {
+>>         model = "Qualcomm Technologies, Inc. MSM8916";
+>> @@ -115,6 +116,7 @@
+>>                         cpu-idle-states = <&CPU_SPC>;
+>>                         clocks = <&apcs 0>;
+>>                         operating-points-v2 = <&cpu_opp_table>;
+>> +                       #cooling-cells = <2>;
+>
+> LGTM.
 
-On(07/03/2018 03:12),Sergey Senozhatsky wrote:
-> 
-> Hello,
-> 
-> On (03/06/18 20:59), Benjamin Warnke wrote:
->>   Currently ZRAM uses compression-algorithms from the crypto-api. ZRAM
->>   compresses each page individually. As a result the compression algorithm
->>   is
->>   forced to use a very small sliding window. None of the available
->>   compression
->>   algorithms is designed to achieve high compression ratios with small
->>   inputs.
-> 
-> I think you first need to merge zBeWalgo (looks like a long way to go)
-> And then add ZRAM support, as a separate patch.
-
-I'll split my patch into 2 parts
-
-1st: add zBeWalgo compression algorithm
-2nd: enable zBeWalgo to be used by ZRAM
-
-> 
->>   - 'ecoham' (100 MiB) This dataset is one of the input files for the
->>   scientific
->>   application ECOHAM which runs an ocean simulation. This dataset contains a
->>   lot of zeros. Where the data is not zero there are arrays of floating
->>   point
->>   values, adjacent float values are likely to be similar to each other,
->>   allowing for high compression ratios.
->> 
->>   algorithm | ratio   | compression    | decompression
->>   zbewalgo  |   12.94 |  294.10 MBit/s | 1242.59 MBit/s
->>   deflate   |   12.54 |   75.51 MBit/s |  736.39 MBit/s
->>   842       |   12.26 |  182.59 MBit/s |  683.61 MBit/s
->>   lz4hc     |   12.00 |   51.23 MBit/s | 1524.73 MBit/s
->>   lz4       |   10.68 | 1334.37 MBit/s | 1603.54 MBit/s
->>   lzo       |    9.79 | 1333.76 MBit/s | 1534.63 MBit/s
->> 
->>   - 'source-code' (800 MiB) This dataset is a tarball of the source-code
->>   from a
->>   linux-kernel.
->> 
->>   algorithm | ratio   | compression    | decompression
->>   deflate   |    3.27 |   42.48 MBit/s |  250.36 MBit/s
->>   lz4hc     |    2.40 |  104.14 MBit/s | 1150.53 MBit/s
->>   lzo       |    2.27 |  444.77 MBit/s |  886.97 MBit/s
->>   lz4       |    2.18 |  453.08 MBit/s | 1101.45 MBit/s
->>   842       |    1.65 |   64.10 MBit/s |  158.40 MBit/s
->>   zbewalgo  |    1.19 |   52.89 MBit/s |  197.58 MBit/s
->> 
->>   - 'hpcg' (8 GiB) This dataset is a (partial) memory-snapshot of the
->>   running hpcg-benchmark. At the time of the snapshot, that application
->>   performed a sparse matrix - vector multiplication.
->> 
->>   algorithm | ratio   | compression    | decompression
->>   zbewalgo  |   16.16 |  179.97 MBit/s |  468.36 MBit/s
->>   deflate   |    9.52 |   65.11 MBit/s |  632.69 MBit/s
->>   lz4hc     |    4.96 |  193.33 MBit/s | 1607.12 MBit/s
->>   842       |    4.20 |  150.99 MBit/s |  316.22 MBit/s
->>   lzo       |    4.14 |  922.74 MBit/s |  865.32 MBit/s
->>   lz4       |    3.79 |  908.39 MBit/s | 1375.33 MBit/s
->> 
->>   - 'partdiff' (8 GiB) Array of double values. Adjacent doubles are similar,
->>   but
->>   not equal. This array is produced by a partial differential equation
->>   solver
->>   using a Jakobi-implementation.
->> 
->>   algorithm | ratio   | compression    | decompression
->>   zbewalgo  |    1.30 |  203.30 MBit/s |  530.87 MBit/s
->>   deflate   |    1.02 |   37.06 MBit/s | 1131.88 MBit/s
->>   lzo       |    1.00 | 1741.46 MBit/s | 2012.78 MBit/s
->>   lz4       |    1.00 | 1458.08 MBit/s | 2013.88 MBit/s
->>   lz4hc     |    1.00 |  173.19 MBit/s | 2012.37 MBit/s
->>   842       |    1.00 |   64.10 MBit/s | 2013.64 MBit/s
-> 
-> Hm, mixed feelings.
-
-as Eric Biggers suggested, I'll add Zstandard to the set of algorithms which compared. What else should I add to the benchmarks?
-
-Benjamin
+Can I take that as a Reviewed-by?
