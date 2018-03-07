@@ -1,140 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751268AbeCGIoq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:44:46 -0500
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34691 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeCGIoo (ORCPT
+        id S1754109AbeCGIqW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:46:22 -0500
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53857 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeCGIqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:44:44 -0500
-X-Google-Smtp-Source: AG47ELsu0Ep+0SBenIOIwbnnCT2IVnMcZeAkzYP6JYXzSQtafjATMvwj9uHzntrIULpkoppeaSH/EoDskdlWue4oGcw=
-MIME-Version: 1.0
-In-Reply-To: <20180307072311.GL15340@mtr-leonro.local>
-References: <001a1140e0de22a4900566cd1851@google.com> <20180307072311.GL15340@mtr-leonro.local>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 7 Mar 2018 09:44:23 +0100
-Message-ID: <CACT4Y+a1HGE4Cb_faXswH2yrFbVAJtPmS1CbWLS1+Z8qzTZbdA@mail.gmail.com>
-Subject: Re: WARNING: kmalloc bug in memdup_user
-To: Leon Romanovsky <leon@kernel.org>
-Cc: syzbot <syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com>,
-        dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        don.hiatt@intel.com, ira.weiny@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org, parav@mellanox.com,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 7 Mar 2018 03:46:12 -0500
+X-Google-Smtp-Source: AG47ELs1nkApE65N4vJEfNfRlioLeQe1TOdGZWwMNzN4CV27jZ3Ii628pnWUvpoo8gPa22JTwgCXzA==
+X-ME-Sender: <xms:z6afWhf3E-K3DTLI-UuzVSK1B-RfEh-J72Ia5nP-iRMlGcowfynogg>
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH] rcu: exp: Fix "must hold exp_mutex" comments for QS reporting functions
+Date: Wed,  7 Mar 2018 16:49:39 +0800
+Message-Id: <20180307084944.10229-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 8:23 AM, Leon Romanovsky <leon@kernel.org> wrote:
-> On Tue, Mar 06, 2018 at 10:59:02PM -0800, syzbot wrote:
->> Hello,
->>
->> syzbot hit the following crash on upstream commit
->> ce380619fab99036f5e745c7a865b21c59f005f6 (Tue Mar 6 04:31:14 2018 +0000)
->> Merge tag 'please-pull-ia64_misc' of
->> git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux
->>
->> So far this crash happened 52 times on upstream.
->> C reproducer is attached.
->> syzkaller reproducer is attached.
->> Raw console output is attached.
->> compiler: gcc (GCC) 7.1.1 20170620
->> .config is attached.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+a38b0e9f694c379ca7ce@syzkaller.appspotmail.com
->> It will help syzbot understand when the bug is fixed. See footer for
->> details.
->> If you forward the report, please keep this part and the footer.
->>
->> audit: type=1400 audit(1520367364.281:6): avc:  denied  { map } for
->> pid=4138 comm="bash" path="/bin/bash" dev="sda1" ino=1457
->> scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
->> tcontext=system_u:object_r:file_t:s0 tclass=file permissive=1
->> audit: type=1400 audit(1520367370.605:7): avc:  denied  { map } for
->> pid=4152 comm="syzkaller100190" path="/root/syzkaller100190328" dev="sda1"
->> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
->> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
->> WARNING: CPU: 0 PID: 4152 at mm/slab_common.c:1012 kmalloc_slab+0x5d/0x70
->> mm/slab_common.c:1012
->> Kernel panic - not syncing: panic_on_warn set ...
->>
->> CPU: 0 PID: 4152 Comm: syzkaller100190 Not tainted 4.16.0-rc4+ #343
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:17 [inline]
->>  dump_stack+0x194/0x24d lib/dump_stack.c:53
->>  panic+0x1e4/0x41c kernel/panic.c:183
->>  __warn+0x1dc/0x200 kernel/panic.c:547
->>  report_bug+0x211/0x2d0 lib/bug.c:184
->>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->>  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
->> RIP: 0010:kmalloc_slab+0x5d/0x70 mm/slab_common.c:1012
->> RSP: 0018:ffff8801bf76f970 EFLAGS: 00010246
->> RAX: 0000000000000000 RBX: fffffffffffffff4 RCX: ffffffff819733cb
->> RDX: ffffffff8423372f RSI: 0000000000000000 RDI: 000000003efef4b4
->> RBP: ffff8801bf76f970 R08: 0000000000000000 R09: 0000000000000000
->> R10: ffffffff88613380 R11: 0000000000000000 R12: 000000003efef4b4
->> R13: 0000000020000080 R14: 00000000014200c0 R15: ffff8801bf76fa68
->>  __do_kmalloc mm/slab.c:3700 [inline]
->>  __kmalloc_track_caller+0x21/0x760 mm/slab.c:3720
->>  memdup_user+0x2c/0x90 mm/util.c:160
->>  ucma_set_option+0x11f/0x4d0 drivers/infiniband/core/ucma.c:1297
->>  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1627
->>  __vfs_write+0xef/0x970 fs/read_write.c:480
->>  vfs_write+0x189/0x510 fs/read_write.c:544
->>  SYSC_write fs/read_write.c:589 [inline]
->>  SyS_write+0xef/0x220 fs/read_write.c:581
->>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->> RIP: 0033:0x43fe69
->> RSP: 002b:00007ffe099a6388 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
->> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fe69
->> RDX: 000000000000006b RSI: 00000000200000c0 RDI: 0000000000000003
->> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
->> R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401790
->> R13: 0000000000401820 R14: 0000000000000000 R15: 0000000000000000
->> Dumping ftrace buffer:
->>    (ftrace buffer empty)
->> Kernel Offset: disabled
->> Rebooting in 86400 seconds..
->
-> I'm surprised that it surfed only now.
-> It is clear bug, user's input wasn't checked.
+Since commit d9a3da0699b2 ("rcu: Add expedited grace-period support for
+preemptible RCU"), there are comments for some funtions in
+rcu_report_exp_rnp()'s call-chain saying that exp_mutex or its
+predecessors needs to be held.
 
+However, exp_mutex and its predecessors are merely used for synchronize
+between GPs, and it's clearly that all variables visited by those
+functions are under the protection of rcu_node's ->lock. Moreover, those
+functions are currently called without held exp_mutex, and seems that
+doesn't introduce any trouble.
 
-This is very simple. syzkaller did not test rdma_cm before. Just
-yesterday I added descriptions for /dev/infiniband/rdma_cm API:
-https://github.com/google/syzkaller/blob/master/sys/linux/rdma_cm.txt
-This gave me ~10 different crashes immediately, but syzkaller wasn't
-able to progress too far because for now all VMs crash on these
-previous bugs within seconds.
+So this patch fix this problem by correcting the comments
 
-I am pretty sure syzkaller still does not test lots of other
-rdma-related things, but there is no reason to believe that they
-contain fewer bugs (like these easily exploitable bugs on
-world-writable device).
-In order to teach syzkaller to test other rdma stuff one needs to add
-descriptions similar to the one above.
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Fixes: d9a3da0699b2 ("rcu: Add expedited grace-period support for preemptible RCU")
+---
+ kernel/rcu/tree_exp.h | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-
-> But it is not clear to me why optval wasn't declared as u64.
-
-After deciphering the API (headers and sources really) I came to
-conclusion that this is a pointer declared as u64 so that compat
-interface is not different from normal one.
-
-This API deciphering is hard for somebody who has absolutely no idea
-what's rdma whatsoever. So syzkaller descriptions not written by you
-(rdma developers) tend to be low quality, e.g. one needs to figure out
-that rdma_ucm_destroy_id.id needs to be an id of rdma_cm context of
-mcast group id depending on command that that's previously returned in
-this and that fields of responses to this and that commands. And if
-this is messed up, syzkaller won't be able to chain meaningful syscall
-sequences.
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index f8e4571efabf..2fd882b08b7c 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -154,7 +154,7 @@ static void __maybe_unused sync_exp_reset_tree(struct rcu_state *rsp)
+  * for the current expedited grace period.  Works only for preemptible
+  * RCU -- other RCU implementation use other means.
+  *
+- * Caller must hold the rcu_state's exp_mutex.
++ * Caller must hold the specificed rcu_node structure's ->lock
+  */
+ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+ {
+@@ -170,8 +170,7 @@ static bool sync_rcu_preempt_exp_done(struct rcu_node *rnp)
+  * recursively up the tree.  (Calm down, calm down, we do the recursion
+  * iteratively!)
+  *
+- * Caller must hold the rcu_state's exp_mutex and the specified rcu_node
+- * structure's ->lock.
++ * Caller must hold the specified rcu_node structure's ->lock.
+  */
+ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+ 				 bool wake, unsigned long flags)
+@@ -207,8 +206,6 @@ static void __rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
+ /*
+  * Report expedited quiescent state for specified node.  This is a
+  * lock-acquisition wrapper function for __rcu_report_exp_rnp().
+- *
+- * Caller must hold the rcu_state's exp_mutex.
+  */
+ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
+ 					      struct rcu_node *rnp, bool wake)
+@@ -221,8 +218,7 @@ static void __maybe_unused rcu_report_exp_rnp(struct rcu_state *rsp,
+ 
+ /*
+  * Report expedited quiescent state for multiple CPUs, all covered by the
+- * specified leaf rcu_node structure.  Caller must hold the rcu_state's
+- * exp_mutex.
++ * specified leaf rcu_node structure.
+  */
+ static void rcu_report_exp_cpu_mult(struct rcu_state *rsp, struct rcu_node *rnp,
+ 				    unsigned long mask, bool wake)
+-- 
+2.16.2
