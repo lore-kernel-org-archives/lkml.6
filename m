@@ -1,129 +1,189 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2389795-1520276968-2-5552373781614918902
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520276967; b=jcczrZmHTxqfR0iUdLKcuIkkQLmkOShanEGVBjzX8uKPBoc
-    FLJn19aW7lg6vXcHIXhXCF/U6fout+oJ29jXxtwineowvv3MMVLrblB5UQaOUAKE
-    lvEI5XmLLdmAwDU9xEsRTgBECGhrHz3PHa4lBo37hvv2KdSBGtZQWK3rY5yvzna8
-    1ZyLgQKkPWOpqmFdx8/Cjs/j+9L/16LYs/LmMtGFN4+6Hvkmu6GVYLd39lsHivch
-    0+521mQCXC7qQ4oSeXXcjYL2X7TXY9D+UwbE7I9EcfSs0+DmFDNBcrx3Dpiu73lc
-    QiRHhd/5LUDSFcRWKWFoiEQVaQGtfbSx1byWwqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520276967; bh=jrk+tOYUoqnI4UoaT64qqArVjBfKqQRuKb+hE+nyQE8=; b=E
-    BujGRJS0xhpnf8tOTYGjtgouu6mbXHk6oDJwlEVHJ3V5MgPk1asxKK+tgW9b66Fb
-    SuVZJldscvfFd2Zzjs+oxN3e9GQoKz3fbUhJAN9EyEwZ27QsEYthjFyJP72cC2RI
-    MV2H+EVcO36bm7F+swHVkd6gaNQnWDYZFQ1CRf2KZVph6sNG4DRBfMqV44rKhkkm
-    bfcut+jvVKg1cuGg0Mjxc6a9jS/wZdL7+eQgauFtXff9+ppJisLmP2gpnnxSYPZE
-    VneY56pROOyq2/PulMWDdBsSi4YOR53Xi5iqPoXHW54KO3dK33mgtZieOMoxtNrQ
-    1g3JmPmjo2RsVtEa8p+tA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Wz9t3kJe x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Y/Ybo3Ea;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Wz9t3kJe x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (body has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Y/Ybo3Ea;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AG47ELvRS3jTs3JJUVbvC572vTKEw149kihtPaXkUVcUJ5J8UhuyE2AWQOSoaqbnbkQIOdhqP3IF
+ARC-Seal: i=1; a=rsa-sha256; t=1520428057; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Zz4qjO+Z/7XbNMans/trmwIlrB7bQWHWK1kqufOHn4tuzZvUUsz+guBTDXJzcQw8YD
+         1MxXIUdqzUoW/EWLgoSRNhmUZupUDSNKK6RnxNDpwBzGCdJXbM1C/ZufdhkcRBtuEDHd
+         qPJ+cWyAKkK//u/qmOpR6t6hsAMuMWO8M1cKRg6yPHdHI+glMJTfx8sWNYL8K1iGu5PS
+         V+tCwl3150BkmvRzAs8T02aD0ybt+KflNWh1FWbKGUG+Ve0Kh9pOYwWq/pR6FHvO2kAn
+         JdB7OaYDNK2JVV4cHAqjULTh+spc16ATQlI9P78FIUAL1irnQOX5/Q3aeGCUJnci6TQh
+         9BtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Lm6jIZ4BD8AdJYXG+LXGjpVxji85xqsZAuuHgp4ZGFY=;
+        b=Kpcl8cIdx0vO+YPcEPxrxDF+oyB9V8JjWYobO/ozHz48QLhUlEqXFmGP53EOewWzOE
+         yJXulljzYq0QWB0abA1yS/l4YAZDs0/xRHxPbT50nv+od/1L8Cm0EPBLOf34XTpBvGR0
+         ZQ8OZzhOj6a8x7k6Y8Vk4JWq2p1o7Q/r/XI62SjptC4JFUM2ZoK1t9qR1XBRLWMkuV08
+         2PdPvDVPqPSpgRFKu+w7aUP1yUX4Bi/SAp21WBCjoBBPXKVWTdh+Hjy/L5pRt+Zgk4IA
+         JRaQAYI9tutEZssdu8VHtklaQ5+oXXuuR8S3BIha5PnpgmK07IjtIgIUYVvPkZJQigW0
+         adSw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=axv3AJce;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=axv3AJce;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753018AbeCETJG (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 5 Mar 2018 14:09:06 -0500
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:36040 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753001AbeCETJE (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 5 Mar 2018 14:09:04 -0500
-X-Google-Smtp-Source: AG47ELsXrtFl8DF46BjGBD2wD3WkGoHL1yvloO548wGsOtZbd9LNkC5irXfNfSkYdq8dPzOdIl95Cg==
-Message-ID: <1520276942.109662.9.camel@gmail.com>
-Subject: Re: inconsistent lock state with usbnet/asix usb ethernet and xhci
-From: Eric Dumazet <eric.dumazet@gmail.com>
-To: Oliver Neukum <oneukum@suse.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        netdev@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>
-Date: Mon, 05 Mar 2018 11:09:02 -0800
-In-Reply-To: <1520250367.3990.9.camel@suse.com>
-References: <CGME20180227072602eucas1p28dcdba711b3153820bd409d838cc63bd@eucas1p2.samsung.com>
-         <c15c90ef-ce1b-4dd7-1d9f-673deb01b6d2@samsung.com>
-         <1519740421.7296.6.camel@gmail.com>
-         <bac44c1b-d701-2f6b-5e1e-738befc25c9d@samsung.com>
-         <1519744167.7296.8.camel@gmail.com> <1519744400.7296.10.camel@gmail.com>
-         <1519747675.2649.3.camel@suse.com>
-         <02679502-cf6e-8714-e879-50a922c5d976@samsung.com>
-         <1520250367.3990.9.camel@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S1751234AbeCGNHh (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 7 Mar 2018 08:07:37 -0500
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36540 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeCGNHf (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 7 Mar 2018 08:07:35 -0500
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org
+Cc: tbird20d@gmail.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests/size: rework to use main instead of _start
+Date: Wed,  7 Mar 2018 14:07:25 +0100
+Message-Id: <20180307130725.8267-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594284370957041073?=
+X-GMAIL-MSGID: =?utf-8?q?1594284370957041073?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-03-05 at 12:46 +0100, Oliver Neukum wrote:
-> On Mon, 2018-03-05 at 08:45 +0100, Marek Szyprowski wrote:
-> > Hi Oliver,
-> > 
-> > On 2018-02-27 17:07, Oliver Neukum wrote:
-> > > Am Dienstag, den 27.02.2018, 07:13 -0800 schrieb Eric Dumazet:
-> > > > On Tue, 2018-02-27 at 07:09 -0800, Eric Dumazet wrote:
-> > > > > 
-> > > > > Note that for this one, it seems we also could perform stats
-> > > > > updates in
-> > > > > BH context, since skb is queued via defer_bh()
-> > > > > 
-> > > > > But simplicity wins I guess.
-> > > > 
-> > > > Thinking more about this, I am not sure we have any guarantee
-> > > > that TX
-> > > > and RX can not run on multiple cpus.
-> > > > 
-> > > > Using an unique syncp is not going to be safe, even if we make
-> > > > lockdep
-> > > > happy enough with the local_irq save/restore.
-> > > 
-> > > Unfortunately you are right. It is not guaranteed for some
-> > > hardware.
-> > 
-> > Does it mean that the fix proposed by Eric is not the proper
-> > solution?
-> 
-> For asix it should work, but asix is unlikely to be the only driver
-> with that issue. 32 bit recieves less testing nowadays.
+In a -ffreestanding environment without glibc, we shouldn't be able to
+call either getenv or printf. It seems that printf() happens to work
+fine, but it ends up using the glibc getenv(), which doesn't work unless
+we call the glibc _start() function first.
+Using _start() was originally meant as an optimization to reduce the
+memory consumption of the test program itself, in order to get a more
+accurate representation of the available RAM at system boot time.
+However, it causes more problems than it helps, especially when run from
+a shell script that also consumes some memory.
 
-Yes, although the lockdep part could be enforced in 64bit if we really
-care.
+get_size[2838]: segfault at ffffffffffffffd0 ip 000000000040538b
+   sp 00007ffc41980668 error 5 in get_size[400000+b0000]
+audit: type=1701 audit(1521532923.838:4): auid=0 uid=0 gid=0 ses=2
+   subj=kernel pid=2838 comm=\"get_size\"
+   exe=\"/opt/kselftests/next/size/get_size\" sig=11 res=1
+get_size[2840]: segfault at ffffffffffffffd0 ip 000000000040538b
+   sp 00007ffdace9b378 error 5 in get_size[400000+b0000]
+audit: type=1701 audit(1521532932.057:5): auid=0 uid=0 gid=0 ses=2
+   subj=kernel pid=2840 comm=\"get_size\"
+   exe=\"/opt/kselftests/next/size/get_size\" sig=11 res=1
 
-I will send a patch using two different sync (one for RX, one for TX)
+Rework to get_size test to use main (and printf) instead of _start. All
+other seftest tests uses main and not _start.
 
+Fixes: 0081901af95f ("selftests: size call ksft_print_header() to print TAP header")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/size/Makefile   |  2 +-
+ tools/testing/selftests/size/get_size.c | 47 ++++++++++-----------------------
+ 2 files changed, 15 insertions(+), 34 deletions(-)
+
+diff --git a/tools/testing/selftests/size/Makefile b/tools/testing/selftests/size/Makefile
+index 4685b3e421fc..73932e0e7cd0 100644
+--- a/tools/testing/selftests/size/Makefile
++++ b/tools/testing/selftests/size/Makefile
+@@ -1,4 +1,4 @@
+-CFLAGS := -static -ffreestanding -nostartfiles -s
++CFLAGS := -static -ffreestanding -s
+ 
+ TEST_GEN_PROGS := get_size
+ 
+diff --git a/tools/testing/selftests/size/get_size.c b/tools/testing/selftests/size/get_size.c
+index 1280b09266f0..490cf4e26eaf 100644
+--- a/tools/testing/selftests/size/get_size.c
++++ b/tools/testing/selftests/size/get_size.c
+@@ -26,13 +26,6 @@
+ #include <stdio.h>
+ #include "../kselftest.h"
+ 
+-#define STDOUT_FILENO 1
+-
+-static int print(const char *s)
+-{
+-	return write(STDOUT_FILENO, s, __builtin_strlen(s));
+-}
+-
+ static inline char *num_to_str(unsigned long num, char *buf, int len)
+ {
+ 	unsigned int digit;
+@@ -49,30 +42,18 @@ static inline char *num_to_str(unsigned long num, char *buf, int len)
+ 	return buf;
+ }
+ 
+-static int print_num(unsigned long num)
+-{
+-	char num_buf[30];
+-
+-	return print(num_to_str(num, num_buf, sizeof(num_buf)));
+-}
+-
+ static int print_k_value(const char *s, unsigned long num, unsigned long units)
+ {
+ 	unsigned long long temp;
+-	int ccode;
+-
+-	print(s);
+ 
+ 	temp = num;
+ 	temp = (temp * units)/1024;
+ 	num = temp;
+-	ccode = print_num(num);
+-	print("\n");
+-	return ccode;
++	return printf("%s%d\n", s, num);
+ }
+ 
+ /* this program has no main(), as startup libraries are not used */
+-void _start(void)
++int main(void)
+ {
+ 	int ccode;
+ 	struct sysinfo info;
+@@ -80,28 +61,28 @@ void _start(void)
+ 	static const char *test_name = " get runtime memory use\n";
+ 
+ 	ksft_print_header();
+-	print("# Testing system size.\n");
++	printf("# Testing system size.\n");
+ 
+ 	ccode = sysinfo(&info);
+ 	if (ccode < 0) {
+-		print("not ok 1");
+-		print(test_name);
+-		print(" ---\n reason: \"could not get sysinfo\"\n ...\n");
+-		_exit(ccode);
++		printf("not ok 1");
++		printf(test_name);
++		printf(" ---\n reason: \"could not get sysinfo\"\n ...\n");
++		return 1;
+ 	}
+-	print("ok 1");
+-	print(test_name);
++	printf("ok 1");
++	printf(test_name);
+ 
+ 	/* ignore cache complexities for now */
+ 	used = info.totalram - info.freeram - info.bufferram;
+-	print("# System runtime memory report (units in Kilobytes):\n");
+-	print(" ---\n");
++	printf("# System runtime memory report (units in Kilobytes):\n");
++	printf(" ---\n");
+ 	print_k_value(" Total:  ", info.totalram, info.mem_unit);
+ 	print_k_value(" Free:   ", info.freeram, info.mem_unit);
+ 	print_k_value(" Buffer: ", info.bufferram, info.mem_unit);
+ 	print_k_value(" In use: ", used, info.mem_unit);
+-	print(" ...\n");
+-	print("1..1\n");
++	printf(" ...\n");
++	printf("1..1\n");
+ 
+-	_exit(0);
++	return 0;
+ }
+-- 
+2.11.0
 
