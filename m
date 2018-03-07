@@ -1,74 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754341AbeCGK5o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:57:44 -0500
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:42866 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754293AbeCGK5h (ORCPT
+        id S1754070AbeCGK7m (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:59:42 -0500
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:35537 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751149AbeCGK7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:57:37 -0500
-X-Google-Smtp-Source: AG47ELtDSAorM0ydf+wgXEbHBzzFkLD14uM4f4nkesMghWo8eFkl+voUMSTuCowng8kpHsV9Ul8WS37UNMpElpDaLUc=
+        Wed, 7 Mar 2018 05:59:40 -0500
+X-Google-Smtp-Source: AG47ELtjXIyen66lBW6isgnM+oDeD4nPrJ5GOwy9EmAEXxNPu0AENfXHP9DpdmR76pc8/J5CIYARu0qZeHPVy14n3u4=
 MIME-Version: 1.0
-In-Reply-To: <20180307104002.GA505@jagdpanzerIV>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
- <20180307022127.GB802@jagdpanzerIV> <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
- <20180307104002.GA505@jagdpanzerIV>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 11:57:35 +0100
-X-Google-Sender-Auth: E15orKau_EbouSL7Rnahljlas_0
-Message-ID: <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Dave Young <dyoung@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+In-Reply-To: <6d5aeab8-aafe-fa3b-585e-953a34864e7d@arm.com>
+References: <cover.1520274879.git.amit.kucheria@linaro.org>
+ <3b80853abb45a9e067cf7a16754b07bb67712457.1520274879.git.amit.kucheria@linaro.org>
+ <6d5aeab8-aafe-fa3b-585e-953a34864e7d@arm.com>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Date: Wed, 7 Mar 2018 16:29:38 +0530
+Message-ID: <CAP245DVwaY84+fZrbne1RLK9gKsfSTE2TELDAC0RkZGMzFkpWg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: of: Allow selection of thermal governor in DT
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Ram Chandrasekar <rkumbako@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>, Lina Iyer <ilina@codeaurora.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 11:40 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> On (03/07/18 09:46), Arnd Bergmann wrote:
->> >
->> > When is this going to happen? 4.17?
+On Tue, Mar 6, 2018 at 6:02 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 05/03/18 18:36, Amit Kucheria wrote:
+>> From: Ram Chandrasekar <rkumbako@codeaurora.org>
 >>
->> Originally I planned to wait a few more releases, but the last maintainer
->> has commented that he will now send a patch for immediate removal,
->> so 4.17 is almost certain at this point.
+>> There is currently no way for the governor to be selected for each thermal
+>> zone in devicetree.
 >
-> Would be great to get it removed as soon as possible then. Otherwise we
-> will get broken blackfin build errors from Stephen (or would need to hold
-> off Dave's patch).
+> How is that any different from cpufreq, cpuidle or devfreq subsystems ?
 
-You could also add a patch to your tree that removes the blackfin
-dump_stack() function, or we could ask Stephen and the other
-people operating build bots to stop building blackfin right now
-(they will have to do that anyway once the arch gets removed).
+Cpufreq/cpuidle are designed to control a single parameter while
+thermal framework is trying to mitigate heat from several disparate
+sources that are throttled in different ways. Besides, cpufreq/cpuidle
+have somewhat mature governors. Cpuidle has only one governor (for
+tickless) - menu governor, cpufreq has ondemand in mainline, replaced
+by interactive in android and hopefully soon both will be replaced by
+schedutil.
 
->> With your patch, I would actually expect the lib/dump_stack.o file
->> to still not be picked up, so now you have a missing EXPORT_SYMBOL()
->> on the two unusual architectures until the point when you add another
->> (referenced) symbol to it.
+Badly configured cpufreq/cpuidle/devfreq only leads to wasted power,
+while badly configured thermal zone leads to the loss of operation
+e.g. reboots, too hot to touch, etc.
+
+>> This results in the default governor being used for all
+>> thermal zones even though no such restriction exists in the core code.
+>>
 >
-> Interesting point. Didn't check it. But I checked that we have at least
-> one reference to lib/dump_stack from every arch so __weak could work its
-> magic. The function is show_regs_print_info(). AFAICT, every arch calls
-> it (we have it in lib/dump_stack now, so we will link with lib/dump_stack).
-> Anyway, I'll be happy to drop my patch. Thanks for taking a look.
+> What restrictions ?
 
-Ah, right, that is after your second patch. So after the first one, it might
-be broken, but the follow-up patch fixes it.
+I said "no such restriction exists". IOW, the core code does allow the
+governor to be changed.
 
-Since lib/dump_stack.c is mandatory then, I would suggest making it
-obj-y and moving it out of lib/ into kernel/printk/.
+>> Add support for specifying the thermal governor to be used for a thermal
+>> zone in the devicetree.
+>
+> Then what prevents us from doing the same for other subsystems with so
+> called /inefficient default/ governors ?
 
-      Arnd
+Nothing? :-)
+
+It depends on how closely we want the board DT to represent a
+production-ready setup. If a platform maintainer wants to ship a
+well-tested configuration in DT, is that really a problem?
+
+If however, you are requiring them to ship magic runes for userspace
+daemons (e.g. per-board thermald config) to tweak the various
+governors in sysfs, it takes a bit more work to get to a
+production-ready setup.
+
+We should of course continue to improve our govenors to arrive at the
+one true governor, but that'll take some time and might never even
+happen in the case of thermal IMHO.
+
+>> The devicetree config should specify the governor
+>> name as a string that matches any available governors. If not specified, we
+>> maintain the current behaviour of using the default governor.
+>
+> If one is specified, can the user change it from sysfs ? If
+> yes, then why do we need this binding at all ? If no, we are basically
+> restricting, then what would happen if the DT was shipped with wrong
+> governor specified because the firmware author didn't know about any
+> other governor ?
+
+The governor can be changed from sysfs today. So it is all override-able.
+
+I guess your main worry is an unmodifiable DT with this option being
+shipped in firmware, right? That is a fair point, though that could be
+worked around from sysfs.
+
+> IMO, having this in DT is bad idea as it may cause more issues than
+> gain. We already have sysfs support like other PM subsystems and
+> userspace can deal with it.
+
+As mentioned above, I think thermal is a bit special because bad
+configuration may lead to loss of operation. But iff we're strictly
+enforcing the rule about no policy in board DTs, then I concede.
+
+Personally, I'd like mainline board DTs to have enough policy to
+provide a stable system so I don't have to futz around with userspace
+to set it all up correctly (in 3 different distros).
+
+Regards,
+Amit
