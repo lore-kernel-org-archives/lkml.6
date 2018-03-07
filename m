@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt1jKPqaePFSGN/nutGC2tXhriGQyENpjaDJ3xDEcuC1B/s85Mf4n9aeAH8tHhm0etMkBeD
-ARC-Seal: i=1; a=rsa-sha256; t=1520451649; cv=none;
+X-Google-Smtp-Source: AG47ELtWs+OazkvZGnSu7FleKUX5TU0eknmR3LqRbnn5j5bR0agrRzVkHRRzXGjNP9ZSZ/NC2C0a
+ARC-Seal: i=1; a=rsa-sha256; t=1520451646; cv=none;
         d=google.com; s=arc-20160816;
-        b=pTcsdIGqoIsAdoNpEgdOzF3kf/VOLBo52lSF0Shsjt/sBmicxreEsFr+119gj6kUOC
-         t+woLwLiRkHVlzjppKR3aeSY37D4jBGhoG+yLOPPwCdAvzYzGC1jChNm4IFqVdfL8Aq2
-         /KRSGI5fsADBraB1Mres661Uiopb701w6o8IwsPzzqBJ9O2UpTPOh7Nyh2kxO3CSC3gT
-         CByNXjTzTaRJu9s6JfemB8vrduiWT4TNfx361usCbNAKusZ7LpQyIKl43aelD3tLJUO1
-         7sS3IcdbsLIDslfTHWTz0zwnHIxWpnPRRQZR5ItwPg4tmXSAG8ZlEFxy9aD8Ik4Jcxvq
-         rrpQ==
+        b=PfoO7LZB8BUwAtInv/1R2cNzyKE3n+gaNJ4ZAXuEtKHlk2O0r8f8EXUJzfOdwFFMfF
+         cxLUrm+m4GMWVb573BvfXGIlpx9WBw38J67ydkPzc8LuNYhmc9UbvOsWH+rO0D5/ncYI
+         7rlPyiivZ4KbiLRPH1TYRCrwanhE+iZm7Y72T1JOgdJIlYGwQObDg/UF5H7bFtlHGAvl
+         9LYy4ONpn+YKa5N6VHmkY2PZ+GoRdcO+B9w07yX7Uk1W4FWko/6Jvb2/HjKAx1KIxzd1
+         pBkOqKFqfvnqNvExRUKf9NdFazpTXKgCUjEYMmTlKdRSXLSxCTFkwxpUgIQwG6k0y4Qt
+         oTAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IPtMTPEhCiGXD85ayXM857513sn9T9Qi16HATCPf5HU=;
-        b=dCppqjsBuzdZlenyBLxn+In6Wy9NqKOBkOvtLPHskGz9RsJ3uooYSXTiGn8+s6HXT6
-         coHC6eJbzYEAVjCcpa9X3vrzMI0TI8q0iNzcLQL90Re8fbli7TpRULNt5rsGO2dnuHZZ
-         YAkLAPv/jbtSbmjZ25P0BGlyTiLmDepEnd/X8A8Ry9wVzyuji0HuXFVGzo9F6I1Qd+yQ
-         SfCcSWlaX5AZrqrp42uuDmPWzzUHtX4NKYu9ljzFRbhTgQ+o0JQGzKl3j0D35E1tlo7o
-         AomVirHVe05Az4GnV68WcDxs02HF11swLtLllFCApP+FON7tLDUuUv/oJA0rQul9vK23
-         85EA==
+        bh=UEe9EzbdcU3MGnTGP9KrMTvFwHWHbU1FNdeb9vtvMr4=;
+        b=mS/c792T/qTFQAW0XBoQFaKccqgIwGQvzo9T9Cmv4VM/QpYO/PfLA3Y9/FgieHxEfV
+         e46mmDLYBnr/4vwJeUZftWrA/swMgNqnQ9IXvuCZQ8FnX6nGQzMSTOHnqR+rYATxi4FS
+         RkycedZDGbTCAbAPexE2eSAUwF5o/GtKT7K7Oe52N25wotL7GfRO8Rvrs+NIvn13NQgo
+         M4uVOiBvxx3bslzyEsHJmvp6rYGrfK7Vbp0AZ/+TEBzUTqUqq+yBbWdEQ1mGyDEPR+yn
+         Q4lHxOuWtAxCtnJXCnDtyO7CLXe5rGhAHWoZZgzi5wx6fvWI+aRQpkTgn0J2IA8H8PLM
+         QVkg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeremy Boone <jeremy.boone@nccgroup.trust>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.15 008/122] tpm: st33zp24: fix potential buffer overruns caused by bit glitches on the bus
-Date: Wed,  7 Mar 2018 11:37:00 -0800
-Message-Id: <20180307191730.479765771@linuxfoundation.org>
+	Ambarish Soman <asoman@redhat.com>,
+	Alexander Duyck <alexander.h.duyck@intel.com>,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Andrew Bowers <andrewx.bowers@intel.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 007/122] ixgbe: fix crash in build_skb Rx code path
+Date: Wed,  7 Mar 2018 11:36:59 -0800
+Message-Id: <20180307191730.367590552@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309108141640090?=
-X-GMAIL-MSGID: =?utf-8?q?1594309108141640090?=
+X-GMAIL-THRID: =?utf-8?q?1594309106047487634?=
+X-GMAIL-MSGID: =?utf-8?q?1594309106047487634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +53,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: Emil Tantilov <emil.s.tantilov@intel.com>
 
-commit 6d24cd186d9fead3722108dec1b1c993354645ff upstream.
+commit 0c5661ecc5dd7ce296870a3eb7b62b1b280a5e89 upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+Add check for build_skb enabled ring in ixgbe_dma_sync_frag().
+In that case &skb_shinfo(skb)->frags[0] may not always be set which
+can lead to a crash. Instead we derive the page offset from skb->data.
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Fixes: 42073d91a214 ("ixgbe: Have the CPU take ownership of the buffers sooner")
+CC: stable <stable@vger.kernel.org>
+Reported-by: Ambarish Soman <asoman@redhat.com>
+Suggested-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Signed-off-by: Emil Tantilov <emil.s.tantilov@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/st33zp24/st33zp24.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -457,7 +457,7 @@ static int st33zp24_recv(struct tpm_chip
- 			    size_t count)
- {
- 	int size = 0;
--	int expected;
-+	u32 expected;
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -1878,6 +1878,14 @@ static void ixgbe_dma_sync_frag(struct i
+ 				     ixgbe_rx_pg_size(rx_ring),
+ 				     DMA_FROM_DEVICE,
+ 				     IXGBE_RX_DMA_ATTR);
++	} else if (ring_uses_build_skb(rx_ring)) {
++		unsigned long offset = (unsigned long)(skb->data) & ~PAGE_MASK;
++
++		dma_sync_single_range_for_cpu(rx_ring->dev,
++					      IXGBE_CB(skb)->dma,
++					      offset,
++					      skb_headlen(skb),
++					      DMA_FROM_DEVICE);
+ 	} else {
+ 		struct skb_frag_struct *frag = &skb_shinfo(skb)->frags[0];
  
- 	if (!chip)
- 		return -EBUSY;
-@@ -474,7 +474,7 @@ static int st33zp24_recv(struct tpm_chip
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if (expected > count) {
-+	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
- 		goto out;
- 	}
