@@ -1,74 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933603AbeCGPSF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:18:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754628AbeCGPSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:18:02 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E662172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 7 Mar 2018 15:17:56 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
-Message-ID: <20180307151753.GQ4197@saruman>
-References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
- <20180306121607.1567-3-alexandre.belloni@bootlin.com>
+        id S1754715AbeCGPSL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:18:11 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55999 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933612AbeCGPSG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:18:06 -0500
+X-Google-Smtp-Source: AG47ELu589mtxZURzFSeO9gghfaIfqmpMIUX/1Fv0K8PV8PNapwPWQIgilqhzf98gX7a0H45y5hqOg==
+Date: Wed, 7 Mar 2018 15:18:02 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Vincent Palatin <vpalatin@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com
+Subject: Re: [PATCH 2/6] mfd: cros_ec: free IRQ automatically
+Message-ID: <20180307151802.lzibybov4qth6ksp@dell>
+References: <20180219224043.21383-1-enric.balletbo@collabora.com>
+ <CAP_ceTzdA6TgO4H2CCa4rJOjQvLL4tfFD8DnCZeJp67rWiSrdg@mail.gmail.com>
+ <CAFqH_53KekHzh_WGBN8WVFexb3DRCpu-pW4ffv3U0U7NUe99nw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nSQp8DZZn7gZbDHt"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180306121607.1567-3-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqH_53KekHzh_WGBN8WVFexb3DRCpu-pW4ffv3U0U7NUe99nw@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 20 Feb 2018, Enric Balletbo Serra wrote:
 
---nSQp8DZZn7gZbDHt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+> Hi Vincent,
+> 
+> 2018-02-20 9:00 GMT+01:00 Vincent Palatin <vpalatin@chromium.org>:
+> > On Mon, Feb 19, 2018 at 11:40 PM, Enric Balletbo i Serra
+> > <enric.balletbo@collabora.com> wrote:
+> >> From: Vincent Palatin <vpalatin@chromium.org>
+> >>
+> >> Free the IRQ we might have requested when removing the cros_ec device,
+> >> so we can unload and reload the driver properly.
+> >>
+> >> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> >> ---
+> >>  drivers/mfd/cros_ec.c | 17 ++++++-----------
+> >>  1 file changed, 6 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> >> index 74780f2964a1..d1a4fbee9380 100644
+> >> --- a/drivers/mfd/cros_ec.c
+> >> +++ b/drivers/mfd/cros_ec.c
+> >> @@ -119,9 +119,9 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> >>         }
+> >>
+> >>         if (ec_dev->irq) {
+> >> -               err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+> >> -                                          IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+> >> -                                          "chromeos-ec", ec_dev);
+> >> +               err = devm_request_threaded_irq(dev, ec_dev->irq, NULL,
+> >> +                               ec_irq_thread, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+> >> +                               "chromeos-ec", ec_dev);
+> >>                 if (err) {
+> >>                         dev_err(dev, "Failed to request IRQ %d: %d",
+> >>                                 ec_dev->irq, err);
+> >> @@ -135,7 +135,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> >>                 dev_err(dev,
+> >>                         "Failed to register Embedded Controller subdevice %d\n",
+> >>                         err);
+> >> -               goto fail_mfd;
+> >> +               return err;
+> >>         }
+> >>
+> >>         if (ec_dev->max_passthru) {
+> >> @@ -153,7 +153,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> >>                         dev_err(dev,
+> >>                                 "Failed to register Power Delivery subdevice %d\n",
+> >>                                 err);
+> >> -                       goto fail_mfd;
+> >> +                       return err;
+> >>                 }
+> >>         }
+> >>
+> >> @@ -162,7 +162,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> >>                 if (err) {
+> >>                         mfd_remove_devices(dev);
+> >>                         dev_err(dev, "Failed to register sub-devices\n");
+> >> -                       goto fail_mfd;
+> >> +                       return err;
+> >>                 }
+> >>         }
+> >>
+> >> @@ -180,11 +180,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> >>         cros_ec_acpi_install_gpe_handler(dev);
+> >>
+> >>         return 0;
+> >> -
+> >> -fail_mfd:
+> >> -       if (ec_dev->irq)
+> >> -               free_irq(ec_dev->irq, ec_dev);
+> >> -       return err;
+> >>  }
+> >>  EXPORT_SYMBOL(cros_ec_register);
+> >
+> >
+> > You need to remove the "free_irq(ec_dev->irq, ec_dev);" in cros_ec_remove() too.
+> > as done there:
+> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/866858/15/drivers/mfd/cros_ec.c
+> >
+> > it was missing originally but was added by: 'f58b14e6632a mfd:
+> > cros_ec: Free IRQ on exit'
+> >
+> 
+> Many thanks to catch this. I'll wait a bit more for if I receive more
+> feedback on the other patches and send a second version of this
+> patchset.
 
-On Tue, Mar 06, 2018 at 01:16:04PM +0100, Alexandre Belloni wrote:
-> diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> new file mode 100644
-> index 000000000000..8c3210577410
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> @@ -0,0 +1,117 @@
-> +//SPDX-License-Identifier: (GPL-2.0 OR MIT)
+Hmm... rather than mess around any further with this set, would you be
+kind enough to pull all of the patches back into a single set and send
+them out threaded with a cover-letter please?
 
-Niggle: there should be a space after // for consistency with other
-files. Same in patch 3.
+I'm also going to un-apply 1/6 for completeness.
 
-Cheers
-James
-
---nSQp8DZZn7gZbDHt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgAqEACgkQbAtpk944
-dnqvNQ//QZzrb3kPRgNFOVF7dhnq0vwq/wgTJG65c+zsdT1f7Q2+KHEWXYLarhYm
-oivnHbOYcv5NvDxhgnQZ62mWV0fdY7xKwJT+TIm1H0m3X3ciDmq73njZB2n4lj5z
-UuK0LEFvxRT24boK+cYN/cmbgFtB/kGz7qmxoCFYrCkq3RIMABVe0NtadLNE8sCF
-eT6GzGxpF9fJmOjDG9Ar+G1E3dY0WaIRyCMX1D2pYUAo7z5UMJvjSzAjEI/rc0qy
-k+daTCdCHcHEcBtA2vPRyXAydKWsfgIJUQGE23LmDK7vfXt/LeoDdwWjV1oijj57
-bmLIYrqbYMMV+OBTu62uZY3oLTrIlwbkfjo/GqVFjDMEh9CK8TH1QOXXgnShpVdG
-q6DFXV+7c3uYvLIV6Lg0OM8v0J4Kx9PT8vAHGRdlZRiE6akwhW9drUlC5y7Hpk2J
-fJaFP1aS2lvi7fKGF4kRLROGu/762djDe+c7vWioqoHIbv+bd/W+2Dm24cyAwlWh
-3Npc7bog3VIWu4rxF63QupOY3IKP/uQNKLrk0qOVPQFWrbwCrwQqroYDCvhfMnS+
-A8IOWuXEOPx5qHO6PJcYJFP2HVtec8hRe2+N3aGWHVMH1QKjgnFCjOKnwvdikZ+S
-RcXISMxNjBLfkJf97cqDoBYlnxg1/BTPaPS4MZtSRTW77a3eJXQ=
-=dKBS
------END PGP SIGNATURE-----
-
---nSQp8DZZn7gZbDHt--
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
