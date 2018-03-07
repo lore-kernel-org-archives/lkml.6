@@ -1,83 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754109AbeCGCh7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 21:37:59 -0500
-Received: from mga02.intel.com ([134.134.136.20]:48401 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753857AbeCGCh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 21:37:58 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,434,1515484800";
-   d="scan'208";a="25821092"
-Date: Wed, 7 Mar 2018 10:28:57 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, changbin.du@intel.com,
-        peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] perf sched map: re-annotate shortname if thread
- comm changed
-Message-ID: <20180307022857.kqxmo24we5r54nlh@intel.com>
-References: <1520307457-23668-1-git-send-email-changbin.du@intel.com>
- <20180306075302.GA19895@krava>
- <20180306141707.GG10176@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306141707.GG10176@kernel.org>
-User-Agent: NeoMutt/20171027-42-ad8712
+        id S933055AbeCGCkc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 21:40:32 -0500
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34247 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753857AbeCGCka (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 6 Mar 2018 21:40:30 -0500
+X-Google-Smtp-Source: AG47ELtyCICE0AEIqBpXXJ9x1ywJmUA6tHUgQwnqipMRBE8ZQCfX//Okef03zKAwz5J6a/c0pV+5Bw==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>
+Subject: [PATCH 1/2] backlight: Add RAVE SP backlight driver
+Date: Tue,  6 Mar 2018 18:40:10 -0800
+Message-Id: <20180307024011.25033-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 11:17:07AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Mar 06, 2018 at 08:53:02AM +0100, Jiri Olsa escreveu:
-> > On Tue, Mar 06, 2018 at 11:37:35AM +0800, changbin.du@intel.com wrote:
-> > > From: Changbin Du <changbin.du@intel.com>
-> > > 
-> > > v2:
-> > >   o add a patch to move thread::shortname to thread_runtime
-> > >   o add function perf_sched__process_comm() to process PERF_RECORD_COMM event.
-> > > 
-> > > Changbin Du (2):
-> > >   perf sched: move thread::shortname to thread_runtime
-> > >   perf sched map: re-annotate shortname if thread comm changed
-> > 
-> > Acked-by: Jiri Olsa <jolsa@kernel.org>
-> 
-> Thanks, applied both, the final layout for 'struct thread_runtime':
-> 
-> [root@jouet perf]# pahole -C thread_runtime ~/bin/perf
-> struct thread_runtime {
-> 	u64                        last_time;            /*     0     8 */
-> 	u64                        dt_run;               /*     8     8 */
-> 	u64                        dt_sleep;             /*    16     8 */
-> 	u64                        dt_iowait;            /*    24     8 */
-> 	u64                        dt_preempt;           /*    32     8 */
-> 	u64                        dt_delay;             /*    40     8 */
-> 	u64                        ready_to_run;         /*    48     8 */
-> 	struct stats               run_stats;            /*    56    40 */
-> 	/* --- cacheline 1 boundary (64 bytes) was 32 bytes ago --- */
-> 	u64                        total_run_time;       /*    96     8 */
-> 	u64                        total_sleep_time;     /*   104     8 */
-> 	u64                        total_iowait_time;    /*   112     8 */
-> 	u64                        total_preempt_time;   /*   120     8 */
-> 	/* --- cacheline 2 boundary (128 bytes) --- */
-> 	u64                        total_delay_time;     /*   128     8 */
-> 	int                        last_state;           /*   136     4 */
-> 	char                       shortname[3];         /*   140     3 */
-> 	_Bool                      comm_changed;         /*   143     1 */
-> 	u64                        migrations;           /*   144     8 */
-> 
-> 	/* size: 152, cachelines: 3, members: 17 */
-> 	/* last cacheline: 24 bytes */
-> };
-> [root@jouet perf]#
+This driver provides access to RAVE SP backlight control
+functionality.
 
-Hi Arnaldo, thanks for your patient optimization for this!
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Aleksander Morgado <aleksander@aleksander.es>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/video/backlight/Kconfig             |  6 +++
+ drivers/video/backlight/Makefile            |  1 +
+ drivers/video/backlight/rave-sp-backlight.c | 82 +++++++++++++++++++++++++++++
+ include/linux/mfd/rave-sp.h                 |  1 +
+ 4 files changed, 90 insertions(+)
+ create mode 100644 drivers/video/backlight/rave-sp-backlight.c
 
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index 4e1d2ad50ba1..5d2d0d7e8100 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -467,6 +467,12 @@ config BACKLIGHT_ARCXCNN
+ 	  If you have an ARCxCnnnn family backlight say Y to enable
+ 	  the backlight driver.
+ 
++config BACKLIGHT_RAVE_SP
++	tristate "RAVE SP Backlight driver"
++	depends on RAVE_SP_CORE
++	help
++	  Support for backlight control on RAVE SP device.
++
+ endif # BACKLIGHT_CLASS_DEVICE
+ 
+ endif # BACKLIGHT_LCD_SUPPORT
+diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+index 5e28f01c8391..19da71d518bf 100644
+--- a/drivers/video/backlight/Makefile
++++ b/drivers/video/backlight/Makefile
+@@ -57,3 +57,4 @@ obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
+ obj-$(CONFIG_BACKLIGHT_TPS65217)	+= tps65217_bl.o
+ obj-$(CONFIG_BACKLIGHT_WM831X)		+= wm831x_bl.o
+ obj-$(CONFIG_BACKLIGHT_ARCXCNN) 	+= arcxcnn_bl.o
++obj-$(CONFIG_BACKLIGHT_RAVE_SP)		+= rave-sp-backlight.o
+diff --git a/drivers/video/backlight/rave-sp-backlight.c b/drivers/video/backlight/rave-sp-backlight.c
+new file mode 100644
+index 000000000000..62836ba561db
+--- /dev/null
++++ b/drivers/video/backlight/rave-sp-backlight.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * LCD Backlight driver for RAVE SP
++ *
++ * Copyright (C) 2018 Zodiac Inflight Innovations
++ *
++ */
++
++#include <linux/backlight.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/rave-sp.h>
++#include <linux/platform_device.h>
++
++#define	RAVE_SP_BACKLIGHT_LCD_EN	BIT(7)
++
++static int rave_sp_backlight_update_status(struct backlight_device *bd)
++{
++	const struct backlight_properties *p = &bd->props;
++	const u8 intensity =
++		(p->power == FB_BLANK_UNBLANK) ? p->brightness : 0;
++	struct rave_sp *sp = dev_get_drvdata(&bd->dev);
++	u8 cmd[] = {
++		[0] = RAVE_SP_CMD_SET_BACKLIGHT,
++		[1] = 0,
++		[2] = intensity ? RAVE_SP_BACKLIGHT_LCD_EN | intensity : 0,
++		[3] = 0,
++		[4] = 0,
++	};
++
++	return rave_sp_exec(sp, cmd, sizeof(cmd), NULL, 0);
++}
++
++static const struct backlight_ops rave_sp_backlight_ops = {
++	.options	= BL_CORE_SUSPENDRESUME,
++	.update_status	= rave_sp_backlight_update_status,
++};
++
++static struct backlight_properties rave_sp_backlight_props = {
++	.type		= BACKLIGHT_FIRMWARE,
++	.max_brightness = 100,
++	.brightness	= 50,
++};
++
++static int rave_sp_backlight_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct backlight_device *bd;
++
++	bd = devm_backlight_device_register(dev, pdev->name, dev->parent,
++					    dev_get_drvdata(dev->parent),
++					    &rave_sp_backlight_ops,
++					    &rave_sp_backlight_props);
++	if (IS_ERR(bd))
++		return PTR_ERR(bd);
++
++	backlight_update_status(bd);
++
++	return 0;
++}
++
++static const struct of_device_id rave_sp_backlight_of_match[] = {
++	{ .compatible = "zii,rave-sp-backlight" },
++	{}
++};
++
++static struct platform_driver rave_sp_backlight_driver = {
++	.probe = rave_sp_backlight_probe,
++	.driver	= {
++		.name = KBUILD_MODNAME,
++		.of_match_table = rave_sp_backlight_of_match,
++	},
++};
++module_platform_driver(rave_sp_backlight_driver);
++
++MODULE_DEVICE_TABLE(of, rave_sp_backlight_of_match);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
++MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
++MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
++MODULE_DESCRIPTION("RAVE SP Backlight driver");
+diff --git a/include/linux/mfd/rave-sp.h b/include/linux/mfd/rave-sp.h
+index 796fb9794c9e..fe0ce7bc59cf 100644
+--- a/include/linux/mfd/rave-sp.h
++++ b/include/linux/mfd/rave-sp.h
+@@ -21,6 +21,7 @@ enum rave_sp_command {
+ 	RAVE_SP_CMD_STATUS			= 0xA0,
+ 	RAVE_SP_CMD_SW_WDT			= 0xA1,
+ 	RAVE_SP_CMD_PET_WDT			= 0xA2,
++	RAVE_SP_CMD_SET_BACKLIGHT		= 0xA6,
+ 	RAVE_SP_CMD_RESET			= 0xA7,
+ 	RAVE_SP_CMD_RESET_REASON		= 0xA8,
+ 
 -- 
-Thanks,
-Changbin Du
+2.14.3
