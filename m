@@ -1,61 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754466AbeCGO3k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:29:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45920 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbeCGO3h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:29:37 -0500
-Date: Wed, 7 Mar 2018 14:29:35 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Applied "ASoC: wm8524: Remove unit address" to the regulator tree
-Message-ID: <20180307142935.GF7290@sirena.org.uk>
-References: <E1etZqm-0001c4-3g@debutante>
+        id S1754534AbeCGOaK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:30:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753168AbeCGOaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:30:08 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE32204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 7 Mar 2018 11:30:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, timur@codeaurora.org
+Subject: Re: [RFC V3 0/3] perf stat: improvements for handling of multiple
+ PMUs
+Message-ID: <20180307143004.GH3701@kernel.org>
+References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
+ <20180307100408.GA22848@krava>
+ <20180307133630.GD3701@kernel.org>
+ <20180307135105.GA9080@krava>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <E1etZqm-0001c4-3g@debutante>
-X-Cookie: If you can read this, you're too close.
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180307135105.GA9080@krava>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Wed, Mar 07, 2018 at 02:51:05PM +0100, Jiri Olsa escreveu:
+> On Wed, Mar 07, 2018 at 10:36:30AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Mar 07, 2018 at 11:04:08AM +0100, Jiri Olsa escreveu:
+> > > On Tue, Mar 06, 2018 at 09:04:41AM -0500, Agustin Vega-Frias wrote:
+> > > > This series of patches adds some simple improvements to the way perf stat
+> > > > handles PMUs that have multiple instances by:
+> > > > 
+> > > > 1. Adding glob-like matching in addition to the prefix-based matching
+> > > >    introduced previously (patch 1).
+> > > > 2. Adding the ability to recover the PMU names when printing the events
+> > > >    separately with the --no-merge option (patch 2).
+> > > > 3. Restoring auto-merge for events created by prefix or glob-like match
+> > > >    (patch 3). Note that this still keeps the behavior that disables
+> > > >    auto-merging of legacy symbolic events (e.g. cycles).
+> > > > 
+> > > > V3:
+> > > > 
+> > > > - Consolidated prefix and glob matching into a single glob match with a
+> > > >   trailing * to maintain prefix matching and have more consistent behavior.
+> > > >   E.g., all of these match all the uncore_imc PMUs: imc, imc*, *imc, *imc*
+> > > 
+> > > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > 
+> > Thanks, applied.
+> > 
+> > I guess Andi had Acked or Reviewed this, no?
+> 
+> not the latest version.. please wait for his ack
 
---924gEkU1VlJlwnwX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, I have this applied to my local branch, and will add his acks or
+drop the patches if he still has any objection, Andi?
 
-On Wed, Mar 07, 2018 at 02:15:24PM +0000, Mark Brown wrote:
-> The patch
->=20
->    ASoC: wm8524: Remove unit address
->=20
-> has been applied to the regulator tree at
->=20
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git=
-=20
-
-Obviously this is an error, I'll drop it.
-
---924gEkU1VlJlwnwX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqf908ACgkQJNaLcl1U
-h9CwJAf9H0HcOBSqhxJTCT4SCLtoJ5/2/hK3vf5fPsfKAZt54gghSpRKN4EIMKmo
-VdVDUl+/Nwr6htakRHEP8N7RdyHEvxL2SOF0yOnKHBHlV0xAvF+dvBpSrVZJ9TtD
-O56jOC2VR5lZ2O9XEctrjHAjLrjPDXzc83KQDhgAHZzcl04HICj7BY1RvJxEhuth
-6bYEAIEE4hVqb47d3dSzhppYI1Tgok6uUcMTfEVfpBoTLaB0Y5WeWA3V2j+GC+YH
-Af7XJnbyJ/OMAcuSB8atsxhgsZCfjT4NIF9tOz7LLRiL8eI16+/7W7HC/9Ux9OWP
-rdk94DwfcwSknVT/sPY7FxmClmjl1g==
-=I9b3
------END PGP SIGNATURE-----
-
---924gEkU1VlJlwnwX--
+- Arnaldo
