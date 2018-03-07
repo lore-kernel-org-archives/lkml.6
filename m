@@ -1,169 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751316AbeCGJgW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 04:36:22 -0500
-Received: from mga09.intel.com ([134.134.136.24]:14502 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751090AbeCGJgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 04:36:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,435,1515484800";
-   d="scan'208";a="25903602"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <ak@linux.intel.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 2/5] x86/boot/compressed/64: Find a place for 32-bit trampoline
-Date: Wed,  7 Mar 2018 12:36:10 +0300
-Message-Id: <20180307093610.49121-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
-References: <20180227154217.69347-1-kirill.shutemov@linux.intel.com>
+        id S1754129AbeCGJjr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 04:39:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54004 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751011AbeCGJjp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 04:39:45 -0500
+Date: Wed, 7 Mar 2018 10:39:37 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
+Message-ID: <20180307093937.GZ25235@hirez.programming.kicks-ass.net>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-2-patrick.bellasi@arm.com>
+ <20180306185851.GG25201@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180306185851.GG25201@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a bootloader enables 64-bit mode with 4-level paging, we might need to
-switch over to 5-level paging. The switching requires the disabling of
-paging, which works fine if kernel itself is loaded below 4G.
+On Tue, Mar 06, 2018 at 07:58:51PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 22, 2018 at 05:01:50PM +0000, Patrick Bellasi wrote:
+> > +static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
+> > +				    struct task_struct *p)
+> > +{
+> > +	unsigned int enqueued;
+> > +
+> > +	if (!sched_feat(UTIL_EST))
+> > +		return;
+> > +
+> > +	/* Update root cfs_rq's estimated utilization */
+> > +	enqueued  = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+> > +	enqueued += _task_util_est(p);
+> > +	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
+> > +}
 
-But if the bootloader puts the kernel above 4G (not sure if anybody does
-this), we would lose control as soon as paging is disabled, because the
-code becomes unreachable to the CPU.
+> It appears to me this isn't a stable situation and completely relies on
+> the !nr_running case to recalibrate. If we ensure that doesn't happen
+> for a significant while the sum can run-away, right?
+> 
+> Should we put a max in enqueue to avoid this?
 
-To handle the situation, we need a trampoline in lower memory that would
-take care of switching on 5-level paging.
+Thinking about this a bit more; would it make sense to adjust the
+running sum/avg on migration? Something along the lines of:
 
-This patch finds a spot in low memory for a trampoline.
+  util_avg = se->load_avg / (cfs_rq->load_avg + se->load_avg);
 
-The heuristic is based on code in reserve_bios_regions().
+(which disregards cgroups), because that should more or less be the time
+it ends up running, given the WFQ rule.
 
-We find the end of low memory based on BIOS and EBDA start addresses.
-The trampoline is put just before end of low memory. It's mimic approach
-taken to allocate memory for realtime trampoline.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Tested-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/boot/compressed/misc.c       |  6 ++++++
- arch/x86/boot/compressed/pgtable.h    | 13 +++++++++++++
- arch/x86/boot/compressed/pgtable_64.c | 34 ++++++++++++++++++++++++++++++++++
- 3 files changed, 53 insertions(+)
- create mode 100644 arch/x86/boot/compressed/pgtable.h
-
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index b50c42455e25..8e4b55dd5df9 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -14,6 +14,7 @@
- 
- #include "misc.h"
- #include "error.h"
-+#include "pgtable.h"
- #include "../string.h"
- #include "../voffset.h"
- 
-@@ -372,6 +373,11 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
- 	debug_putaddr(output_len);
- 	debug_putaddr(kernel_total_size);
- 
-+#ifdef CONFIG_X86_64
-+	/* Report address of 32-bit trampoline */
-+	debug_putaddr(trampoline_32bit);
-+#endif
-+
- 	/*
- 	 * The memory hole needed for the kernel is the larger of either
- 	 * the entire decompressed kernel plus relocation table, or the
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-new file mode 100644
-index 000000000000..58e654431e2a
---- /dev/null
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -0,0 +1,13 @@
-+#ifndef BOOT_COMPRESSED_PAGETABLE_H
-+#define BOOT_COMPRESSED_PAGETABLE_H
-+
-+#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
-+
-+#ifndef __ASSEMBLY__
-+
-+#ifdef CONFIG_X86_64
-+extern unsigned long *trampoline_32bit;
-+#endif
-+
-+#endif /* __ASSEMBLY__ */
-+#endif /* BOOT_COMPRESSED_PAGETABLE_H */
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 45c76eff2718..21d5cc1cd5fa 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -1,4 +1,5 @@
- #include <asm/processor.h>
-+#include "pgtable.h"
- 
- /*
-  * __force_order is used by special_insns.h asm code to force instruction
-@@ -9,14 +10,27 @@
-  */
- unsigned long __force_order;
- 
-+#define BIOS_START_MIN		0x20000U	/* 128K, less than this is insane */
-+#define BIOS_START_MAX		0x9f000U	/* 640K, absolute maximum */
-+
- struct paging_config {
- 	unsigned long trampoline_start;
- 	unsigned long l5_required;
- };
- 
-+/*
-+ * Trampoline address will be printed by extract_kernel() for debugging
-+ * purposes.
-+ *
-+ * Avoid putting the pointer into .bss as it will be cleared between
-+ * paging_prepare() and extract_kernel().
-+ */
-+unsigned long *trampoline_32bit __section(.data);
-+
- struct paging_config paging_prepare(void)
- {
- 	struct paging_config paging_config = {};
-+	unsigned long bios_start, ebda_start;
- 
- 	/*
- 	 * Check if LA57 is desired and supported.
-@@ -35,5 +49,25 @@ struct paging_config paging_prepare(void)
- 		paging_config.l5_required = 1;
- 	}
- 
-+	/*
-+	 * Find a suitable spot for the trampoline.
-+	 * This code is based on reserve_bios_regions().
-+	 */
-+
-+	ebda_start = *(unsigned short *)0x40e << 4;
-+	bios_start = *(unsigned short *)0x413 << 10;
-+
-+	if (bios_start < BIOS_START_MIN || bios_start > BIOS_START_MAX)
-+		bios_start = BIOS_START_MAX;
-+
-+	if (ebda_start > BIOS_START_MIN && ebda_start < bios_start)
-+		bios_start = ebda_start;
-+
-+	/* Place the trampoline just below the end of low memory, aligned to 4k */
-+	paging_config.trampoline_start = bios_start - TRAMPOLINE_32BIT_SIZE;
-+	paging_config.trampoline_start = round_down(paging_config.trampoline_start, PAGE_SIZE);
-+
-+	trampoline_32bit = (unsigned long *)paging_config.trampoline_start;
-+
- 	return paging_config;
- }
--- 
-2.16.1
+That way the disparity between tasks migrating into the CPU at u=1 and
+them going to sleep at u<1 is much smaller and the above sum doesn't run
+away nearly as wild (it still needs some upper bound though).
