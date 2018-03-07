@@ -1,60 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932905AbeCGOBT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:01:19 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32998 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753935AbeCGOBR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:01:17 -0500
-X-Google-Smtp-Source: AG47ELsxBlqD91ZdvD45XlaAVu/0uL4F/x0lG+2ELeVVzuWV3+mWzMS1kVK0osN893MJX/dmB5Butw==
-Date: Wed, 7 Mar 2018 23:01:13 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Petr Mladek <pmladek@suse.com>,
-        Tejun Heo <tj@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Dave Young <dyoung@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        adi-buildroot-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] dump_stack: convert generic dump_stack into a weak symbol
-Message-ID: <20180307140113.GB521@tigerII.localdomain>
-References: <20180305053742.9149-1-sergey.senozhatsky@gmail.com>
- <CAK8P3a1aCQWwrJuCmx-nrMG58NQFCkCPRuAT5g43Lty13nE2dg@mail.gmail.com>
- <20180307022127.GB802@jagdpanzerIV>
- <CAK8P3a172j6r2HEwQ3cOOqXgXkFbxYifQ96VRFZ3+=wGawYNLQ@mail.gmail.com>
- <20180307104002.GA505@jagdpanzerIV>
- <CAK8P3a3eK4iS9rEWvoRfH75zjj7KHpsPnofoGdWH28Dqbz-UyQ@mail.gmail.com>
- <20180307114845.GA894@jagdpanzerIV>
- <20180307234142.1c7d2710@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307234142.1c7d2710@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S933603AbeCGODV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:03:21 -0500
+Received: from mga02.intel.com ([134.134.136.20]:30688 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753168AbeCGODS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:03:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,436,1515484800";
+   d="scan'208";a="36206779"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] perf intel-pt: Some fixes and preparation for AUX area sampling
+Date: Wed,  7 Mar 2018 16:02:20 +0200
+Message-Id: <1520431349-30689-1-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi
 
-On (03/07/18 23:41), Stephen Rothwell wrote:
-[..]
-> > OK. Petr, Stephen, what would be your preference?
-> 
-> I can easily stop building blackfin - and, if the intention is to
-> remove it, there is not much point in wasting resources building it any
-> anyway.
+Here are 4 fixes for Intel PT plus 5 more patches in preparation for
+supporting AUX area sampling.
 
-OK, sounds good to me.
 
-Then we can drop my dump_stack patch from printk.git and keep
-Dave's patch.
+Adrian Hunter (9):
+      perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
+      perf intel-pt: Fix sync_switch
+      perf intel-pt: Fix error recovery from missing TIP packet
+      perf intel-pt: Fix timestamp following overflow
+      perf intel-pt/bts: In auxtrace_record__init_intel() evlist is never NULL
+      perf intel-pt: Get rid of intel_pt_use_buffer_pid_tid()
+      perf intel-pt: Tidy old_buffer handling in intel_pt_get_trace()
+      perf intel-pt: Remove a check for sampling mode
+      perf intel-pt: Adjust overlap-checking to support sampling mode
 
-Thanks guys.
+ tools/perf/arch/x86/util/auxtrace.c                |  14 +--
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |  64 ++++++------
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |   2 +-
+ tools/perf/util/intel-pt.c                         | 110 +++++++++------------
+ 4 files changed, 84 insertions(+), 106 deletions(-)
 
-	-ss
+
+Regards
+Adrian
