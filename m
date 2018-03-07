@@ -1,158 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754507AbeCGMsW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:48:22 -0500
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55575 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754248AbeCGMrd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754492AbeCGMsP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:48:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50130 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754251AbeCGMrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 07:47:33 -0500
-X-Google-Smtp-Source: AG47ELsSlqE3YPPfaVrf3E7oQ30j+c0wrexoFZi3qTJdvEZxCyXu5WTipSm+kbKM3REgXuL/1dCbvg==
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-X-Google-Original-From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Subject: [PATCH 6/6] lib/scatterlist: Drop order argument from sgl_free_n_order
-Date: Wed,  7 Mar 2018 12:47:12 +0000
-Message-Id: <20180307124712.14963-7-tvrtko.ursulin@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180307124712.14963-1-tvrtko.ursulin@linux.intel.com>
-References: <20180307124712.14963-1-tvrtko.ursulin@linux.intel.com>
+Subject: Re: [PATCH v8 4/5] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To: Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net,
+        will.deacon@arm.com, robdclark@gmail.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: tfiga@chromium.org, jcrouse@codeaurora.org, sboyd@codeaurora.org,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
+References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
+ <20180302101050.6191-5-vivek.gautam@codeaurora.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f3011ef1-7ffe-8c2b-b9d6-3fb094789656@arm.com>
+Date: Wed, 7 Mar 2018 12:47:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180302101050.6191-5-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+On 02/03/18 10:10, Vivek Gautam wrote:
+> From: Sricharan R <sricharan@codeaurora.org>
+> 
+> Finally add the device link between the master device and
+> smmu, so that the smmu gets runtime enabled/disabled only when the
+> master needs it. This is done from add_device callback which gets
+> called once when the master is added to the smmu.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>   drivers/iommu/arm-smmu.c | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 3d6a1875431f..bb1ea82c1003 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -217,6 +217,9 @@ struct arm_smmu_device {
+>   
+>   	/* IOMMU core code handle */
+>   	struct iommu_device		iommu;
+> +
+> +	/* runtime PM link to master */
+> +	struct device_link *link;
 
-We can derive the order from sg->length and so do not need to pass it in
-explicitly. Rename the function to sgl_free_n.
+Just the one?
 
-Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-scsi@vger.kernel.org
-Cc: target-devel@vger.kernel.org
+>   };
+>   
+>   enum arm_smmu_context_fmt {
+> @@ -1470,10 +1473,26 @@ static int arm_smmu_add_device(struct device *dev)
+>   
+>   	iommu_device_link(&smmu->iommu, dev);
+>   
+> +	/*
+> +	 * Establish the link between smmu and master, so that the
+> +	 * smmu gets runtime enabled/disabled as per the master's
+> +	 * needs.
+> +	 */
+> +	smmu->link = device_link_add(dev, smmu->dev, DL_FLAG_PM_RUNTIME);
 
----
- drivers/target/target_core_transport.c |  2 +-
- include/linux/scatterlist.h            |  5 ++---
- lib/scatterlist.c                      | 16 ++++++----------
- 3 files changed, 9 insertions(+), 14 deletions(-)
+Maybe I've misunderstood how the API works, but AFAICS the second and 
+subsequent devices are all just going to overwrite (and leak) the link 
+of the previous one...
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index 4558f2e1fe1b..91e8f4047492 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -2303,7 +2303,7 @@ static void target_complete_ok_work(struct work_struct *work)
- 
- void target_free_sgl(struct scatterlist *sgl, int nents)
- {
--	sgl_free_n_order(sgl, nents, 0);
-+	sgl_free_n(sgl, nents);
- }
- EXPORT_SYMBOL(target_free_sgl);
- 
-diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-index 3ffc5f3bf181..3779d1fdd5c4 100644
---- a/include/linux/scatterlist.h
-+++ b/include/linux/scatterlist.h
-@@ -280,8 +280,7 @@ int sg_alloc_table_from_pages(struct sg_table *sgt, struct page **pages,
- struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
- 				    bool chainable, gfp_t gfp,
- 				    unsigned int *nent_p);
--void sgl_free_n_order(struct scatterlist *sgl, unsigned int nents,
--		      unsigned int order);
-+void sgl_free_n(struct scatterlist *sgl, unsigned int nents);
- 
- /**
-  * sgl_alloc - allocate a scatterlist and its pages
-@@ -303,7 +302,7 @@ sgl_alloc(unsigned long length, gfp_t gfp, unsigned int *nent_p)
-  */
- static inline void sgl_free(struct scatterlist *sgl)
- {
--	sgl_free_n_order(sgl, UINT_MAX, 0);
-+	sgl_free_n(sgl, UINT_MAX);
- }
- 
- #endif /* CONFIG_SGL_ALLOC */
-diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index c637849482d3..76111e91a038 100644
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -493,7 +493,7 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
- {
- 	unsigned int chunk_len = PAGE_SIZE << order;
- 	struct scatterlist *sgl, *sg;
--	unsigned int nent, i;
-+	unsigned int nent;
- 
- 	nent = round_up(length, chunk_len) >> (PAGE_SHIFT + order);
- 
-@@ -517,12 +517,11 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
- 
- 	sg_init_table(sgl, nent);
- 	sg = sgl;
--	i = 0;
- 	while (length) {
- 		struct page *page = alloc_pages(gfp, order);
- 
- 		if (!page) {
--			sgl_free_n_order(sgl, i, order);
-+			sgl_free(sgl);
- 			return NULL;
- 		}
- 
-@@ -530,7 +529,6 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
- 		sg_set_page(sg, page, chunk_len, 0);
- 		length -= chunk_len;
- 		sg = sg_next(sg);
--		i++;
- 	}
- 	WARN_ONCE(length, "length = %ld\n", length);
- 	return sgl;
-@@ -538,10 +536,9 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
- EXPORT_SYMBOL(sgl_alloc_order);
- 
- /**
-- * sgl_free_n_order - free a scatterlist and its pages
-+ * sgl_free_n - free a scatterlist and its pages
-  * @sgl: Scatterlist with one or more elements
-  * @nents: Maximum number of elements to free
-- * @order: Second argument for __free_pages()
-  *
-  * Notes:
-  * - If several scatterlists have been chained and each chain element is
-@@ -550,8 +547,7 @@ EXPORT_SYMBOL(sgl_alloc_order);
-  * - All pages in a chained scatterlist can be freed at once by setting @nents
-  *   to a high number.
-  */
--void sgl_free_n_order(struct scatterlist *sgl, unsigned int nents,
--		      unsigned int order)
-+void sgl_free_n(struct scatterlist *sgl, unsigned int nents)
- {
- 	struct scatterlist *sg;
- 	struct page *page;
-@@ -562,11 +558,11 @@ void sgl_free_n_order(struct scatterlist *sgl, unsigned int nents,
- 			break;
- 		page = sg_page(sg);
- 		if (page)
--			__free_pages(page, order);
-+			__free_pages(page, get_order(sg->length));
- 	}
- 	kfree(sgl);
- }
--EXPORT_SYMBOL(sgl_free_n_order);
-+EXPORT_SYMBOL(sgl_free_n);
- 
- #endif /* CONFIG_SGL_ALLOC */
- 
--- 
-2.14.1
+> +	if (!smmu->link) {
+> +		dev_warn(smmu->dev, "Unable to create device link between %s and %s\n",
+> +			 dev_name(smmu->dev), dev_name(dev));
+> +		ret = -ENODEV;
+> +		goto out_unlink;
+> +	}
+> +
+>   	arm_smmu_rpm_put(smmu);
+>   
+>   	return 0;
+>   
+> +out_unlink:
+> +	iommu_device_unlink(&smmu->iommu, dev);
+> +	arm_smmu_master_free_smes(fwspec);
+>   out_rpm_put:
+>   	arm_smmu_rpm_put(smmu);
+>   out_cfg_free:
+> @@ -1496,6 +1515,8 @@ static void arm_smmu_remove_device(struct device *dev)
+>   	cfg  = fwspec->iommu_priv;
+>   	smmu = cfg->smmu;
+>   
+> +	device_link_del(smmu->link);
+
+...and equivalently you end up with a double-free (or more) here of a 
+link which may not have belonged to dev anyway.
+
+Robin.
+
+> +
+>   	ret = arm_smmu_rpm_get(smmu);
+>   	if (ret < 0)
+>   		return;
+> 
