@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsPv2nPXZkoMBoiv8al+Jb96Ji2+tqioh091cJZjmzDm9naRnuuFPqMi7UHMrR0twLWA7AF
-ARC-Seal: i=1; a=rsa-sha256; t=1520451891; cv=none;
+X-Google-Smtp-Source: AG47ELur3/nlmuchM4OZKhb9uLtcVN0iPkuaLE6L/vubZAaMtiU8yKrbnUe1maF/rAPr86E9rwfO
+ARC-Seal: i=1; a=rsa-sha256; t=1520451889; cv=none;
         d=google.com; s=arc-20160816;
-        b=jnSCGR/08TMVxBlLIkYscNzFvBUYyFrrKn9OHDrBaKHlrh0AlKDbPKHUcXeLjIt4uQ
-         R8+38sRqpTDiYV2YHzouznbmldjW4ltAIHZXTV73mH7nXTX8tZFkrIuG3AFhHBMbMyWm
-         mSfo3GDG3RJyTN0wABkltUtVd3jj2JJkrSdH+qDOSBF0GpO9kZAoLaDk5lX8GZh2TUz3
-         8NaKOmbHHteCIQ5gQtQUfqt0xg0/MuzCAi+nPfLwGJ5ZZwgoIDHRkxJWo5uKHR77mZMf
-         nVVPsqezMJ1De9xkGoU+5QaNo5DObGcdEEEvlLUID0TY7xp5jOUtw2VSJppQOjS33ar7
-         qnAA==
+        b=kfbnGGpL1oCuCaOZYdqh7ZFJ8j1XfV5zEmGAcWArH36hJXipj3VMxFox+nTZ6ObMy5
+         YlqsA1XttzWNuj+btnF7m3p8aTV+PQ3Tad90dLgOrKNkPXp40hrAakwW2KHinweqB2I6
+         6nHfwFB+49rvcN5PiO+v6x8Z/p2M8SaUP6Agx/qVUR3nfSORWMMEZ0xHe3YS0q+SSE3z
+         OE6ZwIX8KG3XKs2kCIpchccmt6EcKmishf22acs+G2aWQsOzN1+UW25ClKTIdoCuIy9U
+         X5VHORGjln529MtqfDE7NDB5gN4NsGmI+bMdjN/mVsviHExWcqveiEcuJOkcJqrVwHHs
+         HxgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=y483zz9B1mDiK4VfVNECzMibvRAAzX5qL7jaW7F0sUs=;
-        b=JfuXhl28ufKbchgpXpQE5bPhrBtgFu6LHuPdwxw7lRW4PccMcAXSUNKNOvhjpDoIdN
-         p1GaBoSg1PiKBUcgxb2B9lXF2Gu72ovav8Fok1XXlff79z4gR0uwWhLoAyf+J0/JnaxQ
-         +KucCumpj9gnrOelCf69+rvWB+W2ExB0vCAXim0z48OmN4bb/vlIZ0US6IeUX2Yv5s+I
-         P1Q9YUMHcqpTLfkrGHYdGMpLhIBMPddF16mSnbuVc15t3Bfhc7zM1Yyb6A8eWM4cPtc5
-         7uQd/cxzZDVua1YiApzJUwJ49d4ZyzrbM6+uzNLiiN3A7E5OkB1wXjPKSefbnv6WXxJr
-         3hoQ==
+        bh=VfIz+Ok6XdIqvvnuFq2bWf1MMScaYO6Y1POzcvm7tUQ=;
+        b=z64Dbr53nC6LlKVIFDkRPszaFHkJKk9d/zRtFCZHHEv+/cdfNuSiAdUG8hvHiq8Y0c
+         unGpJKVXlMfDxzIAJ6+mUtyrwHHyRU2fZGdotyn96/2Rih/Iz5xta6ti91kidYfq0U/V
+         m+bzQ7jKAg4xf26VynsJZFBxE6ErLK6d1l5SxA3PrnO1x09yKopmT0LbR+bgyKiw1npH
+         d/jPaW6LplsLCc4ezLCXeV+I2SpfBSlN4x6/NGhepxbywarBIpEt4M3ROThswow9CBcW
+         z+KnpwE3eI2yn+Y2hLihRG8J8QcjAX9o8Znv0Ok1eUo/wNEXpbd1f2MbfD7zEgK54h4m
+         jK0g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: [PATCH 4.14 009/110] tpm_tis_spi: Use DMA-safe memory for SPI transfers
-Date: Wed,  7 Mar 2018 11:37:52 -0800
-Message-Id: <20180307191040.937945823@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.14 008/110] tpm: constify transmit data pointers
+Date: Wed,  7 Mar 2018 11:37:51 -0800
+Message-Id: <20180307191040.818351912@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309362557666553?=
-X-GMAIL-MSGID: =?utf-8?q?1594309362557666553?=
+X-GMAIL-THRID: =?utf-8?q?1594309360359900468?=
+X-GMAIL-MSGID: =?utf-8?q?1594309360359900468?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,127 +49,154 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Steffen <Alexander.Steffen@infineon.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 6b3a13173f23e798e1ba213dd4a2c065a3b8d751 upstream.
+commit c37fbc09bd4977736f6bc4050c6f099c587052a7 upstream.
 
-The buffers used as tx_buf/rx_buf in a SPI transfer need to be DMA-safe.
-This cannot be guaranteed for the buffers passed to tpm_tis_spi_read_bytes
-and tpm_tis_spi_write_bytes. Therefore, we need to use our own DMA-safe
-buffer and copy the data to/from it.
+Making cmd_getticks 'const' introduced a couple of harmless warnings:
 
-The buffer needs to be allocated separately, to ensure that it is
-cacheline-aligned and not shared with other data, so that DMA can work
-correctly.
+drivers/char/tpm/tpm_tis_core.c: In function 'probe_itpm':
+drivers/char/tpm/tpm_tis_core.c:469:31: error: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+  rc = tpm_tis_send_data(chip, cmd_getticks, len);
+drivers/char/tpm/tpm_tis_core.c:477:31: error: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+  rc = tpm_tis_send_data(chip, cmd_getticks, len);
+drivers/char/tpm/tpm_tis_core.c:255:12: note: expected 'u8 * {aka unsigned char *}' but argument is of type 'const u8 * {aka const unsigned char *}'
+ static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
 
-Fixes: 0edbfea537d1 ("tpm/tpm_tis_spi: Add support for spi phy")
+This changes the related functions to all take 'const' pointers
+so that gcc can see this as being correct. I had to slightly
+modify the logic around tpm_tis_spi_transfer() for this to work
+without introducing ugly casts.
+
 Cc: stable@vger.kernel.org
+Fixes: 5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis_spi.c |   45 ++++++++++++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 18 deletions(-)
+ drivers/char/tpm/tpm_tis.c      |    2 +-
+ drivers/char/tpm/tpm_tis_core.c |    4 ++--
+ drivers/char/tpm/tpm_tis_core.h |    4 ++--
+ drivers/char/tpm/tpm_tis_spi.c  |   25 +++++++++++--------------
+ 4 files changed, 16 insertions(+), 19 deletions(-)
 
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -223,7 +223,7 @@ static int tpm_tcg_read_bytes(struct tpm
+ }
+ 
+ static int tpm_tcg_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+-			       u8 *value)
++			       const u8 *value)
+ {
+ 	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
+ 
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -253,7 +253,7 @@ out:
+  * tpm.c can skip polling for the data to be available as the interrupt is
+  * waited for here
+  */
+-static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
++static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int rc, status, burstcnt;
+@@ -344,7 +344,7 @@ static void disable_interrupts(struct tp
+  * tpm.c can skip polling for the data to be available as the interrupt is
+  * waited for here
+  */
+-static int tpm_tis_send_main(struct tpm_chip *chip, u8 *buf, size_t len)
++static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int rc;
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -98,7 +98,7 @@ struct tpm_tis_phy_ops {
+ 	int (*read_bytes)(struct tpm_tis_data *data, u32 addr, u16 len,
+ 			  u8 *result);
+ 	int (*write_bytes)(struct tpm_tis_data *data, u32 addr, u16 len,
+-			   u8 *value);
++			   const u8 *value);
+ 	int (*read16)(struct tpm_tis_data *data, u32 addr, u16 *result);
+ 	int (*read32)(struct tpm_tis_data *data, u32 addr, u32 *result);
+ 	int (*write32)(struct tpm_tis_data *data, u32 addr, u32 src);
+@@ -128,7 +128,7 @@ static inline int tpm_tis_read32(struct
+ }
+ 
+ static inline int tpm_tis_write_bytes(struct tpm_tis_data *data, u32 addr,
+-				      u16 len, u8 *value)
++				      u16 len, const u8 *value)
+ {
+ 	return data->phy_ops->write_bytes(data, addr, len, value);
+ }
 --- a/drivers/char/tpm/tpm_tis_spi.c
 +++ b/drivers/char/tpm/tpm_tis_spi.c
-@@ -46,9 +46,7 @@
- struct tpm_tis_spi_phy {
- 	struct tpm_tis_data priv;
- 	struct spi_device *spi_device;
--
--	u8 tx_buf[4];
--	u8 rx_buf[4];
-+	u8 *iobuf;
- };
+@@ -57,7 +57,7 @@ static inline struct tpm_tis_spi_phy *to
+ }
  
- static inline struct tpm_tis_spi_phy *to_tpm_tis_spi_phy(struct tpm_tis_data *data)
-@@ -71,14 +69,14 @@ static int tpm_tis_spi_transfer(struct t
+ static int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+-				u8 *buffer, u8 direction)
++				u8 *in, const u8 *out)
+ {
+ 	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+ 	int ret = 0;
+@@ -71,7 +71,7 @@ static int tpm_tis_spi_transfer(struct t
  	while (len) {
  		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
  
--		phy->tx_buf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
--		phy->tx_buf[1] = 0xd4;
--		phy->tx_buf[2] = addr >> 8;
--		phy->tx_buf[3] = addr;
-+		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
-+		phy->iobuf[1] = 0xd4;
-+		phy->iobuf[2] = addr >> 8;
-+		phy->iobuf[3] = addr;
- 
- 		memset(&spi_xfer, 0, sizeof(spi_xfer));
--		spi_xfer.tx_buf = phy->tx_buf;
--		spi_xfer.rx_buf = phy->rx_buf;
-+		spi_xfer.tx_buf = phy->iobuf;
-+		spi_xfer.rx_buf = phy->iobuf;
- 		spi_xfer.len = 4;
- 		spi_xfer.cs_change = 1;
- 
-@@ -88,9 +86,9 @@ static int tpm_tis_spi_transfer(struct t
- 		if (ret < 0)
- 			goto exit;
- 
--		if ((phy->rx_buf[3] & 0x01) == 0) {
-+		if ((phy->iobuf[3] & 0x01) == 0) {
- 			// handle SPI wait states
--			phy->tx_buf[0] = 0;
-+			phy->iobuf[0] = 0;
- 
- 			for (i = 0; i < TPM_RETRY; i++) {
- 				spi_xfer.len = 1;
-@@ -99,7 +97,7 @@ static int tpm_tis_spi_transfer(struct t
- 				ret = spi_sync_locked(phy->spi_device, &m);
- 				if (ret < 0)
- 					goto exit;
--				if (phy->rx_buf[0] & 0x01)
-+				if (phy->iobuf[0] & 0x01)
- 					break;
- 			}
- 
-@@ -112,8 +110,14 @@ static int tpm_tis_spi_transfer(struct t
+-		phy->tx_buf[0] = direction | (transfer_len - 1);
++		phy->tx_buf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+ 		phy->tx_buf[1] = 0xd4;
+ 		phy->tx_buf[2] = addr >> 8;
+ 		phy->tx_buf[3] = addr;
+@@ -112,14 +112,8 @@ static int tpm_tis_spi_transfer(struct t
  		spi_xfer.cs_change = 0;
  		spi_xfer.len = transfer_len;
  		spi_xfer.delay_usecs = 5;
--		spi_xfer.tx_buf = out;
--		spi_xfer.rx_buf = in;
-+
-+		if (in) {
-+			spi_xfer.tx_buf = NULL;
-+		} else if (out) {
-+			spi_xfer.rx_buf = NULL;
-+			memcpy(phy->iobuf, out, transfer_len);
-+			out += transfer_len;
-+		}
+-
+-		if (direction) {
+-			spi_xfer.tx_buf = NULL;
+-			spi_xfer.rx_buf = buffer;
+-		} else {
+-			spi_xfer.tx_buf = buffer;
+-			spi_xfer.rx_buf = NULL;
+-		}
++		spi_xfer.tx_buf = out;
++		spi_xfer.rx_buf = in;
  
  		spi_message_init(&m);
  		spi_message_add_tail(&spi_xfer, &m);
-@@ -121,11 +125,12 @@ static int tpm_tis_spi_transfer(struct t
- 		if (ret < 0)
+@@ -128,7 +122,10 @@ static int tpm_tis_spi_transfer(struct t
  			goto exit;
  
--		len -= transfer_len;
--		if (in)
-+		if (in) {
-+			memcpy(in, phy->iobuf, transfer_len);
- 			in += transfer_len;
--		if (out)
--			out += transfer_len;
-+		}
-+
-+		len -= transfer_len;
+ 		len -= transfer_len;
+-		buffer += transfer_len;
++		if (in)
++			in += transfer_len;
++		if (out)
++			out += transfer_len;
  	}
  
  exit:
-@@ -191,6 +196,10 @@ static int tpm_tis_spi_probe(struct spi_
- 
- 	phy->spi_device = dev;
- 
-+	phy->iobuf = devm_kmalloc(&dev->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
-+	if (!phy->iobuf)
-+		return -ENOMEM;
-+
- 	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
- 				 NULL);
+@@ -139,13 +136,13 @@ exit:
+ static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
+ 				  u16 len, u8 *result)
+ {
+-	return tpm_tis_spi_transfer(data, addr, len, result, 0x80);
++	return tpm_tis_spi_transfer(data, addr, len, result, NULL);
  }
+ 
+ static int tpm_tis_spi_write_bytes(struct tpm_tis_data *data, u32 addr,
+-				   u16 len, u8 *value)
++				   u16 len, const u8 *value)
+ {
+-	return tpm_tis_spi_transfer(data, addr, len, value, 0);
++	return tpm_tis_spi_transfer(data, addr, len, NULL, value);
+ }
+ 
+ static int tpm_tis_spi_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
