@@ -1,120 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754400AbeCGLuO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:50:14 -0500
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:60650 "EHLO
-        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751151AbeCGLuN (ORCPT
+        id S1754374AbeCGLvv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:51:51 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:48543 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeCGLvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:50:13 -0500
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [RESEND PATCH v3] crypto: add zBeWalgo compression for zram
-From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-In-Reply-To: <20180306221342.GA178079@gmail.com>
-Date: Wed, 7 Mar 2018 12:50:08 +0100
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com
+        Wed, 7 Mar 2018 06:51:49 -0500
+Date: Wed, 7 Mar 2018 12:51:28 +0100 (CET)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: linus.walleij@linaro.org, Matheus Castello <matheus@castello.eng.br>
+Cc: eric@anholt.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <2117034393.275403.1520423489002@email.1und1.de>
+In-Reply-To: <1520216960-19880-2-git-send-email-matheus@castello.eng.br>
+References: <431699005.307231.1520086916739@email.1und1.de>
+ <1520216960-19880-1-git-send-email-matheus@castello.eng.br>
+ <1520216960-19880-2-git-send-email-matheus@castello.eng.br>
+Subject: Re: [PATCH v2 1/3] pinctrl: bcm2835: switch to GENERIC_PINCONF
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8BIT
-Message-Id: <16D8CBDD-CE09-49A5-86A1-1176847EDD71@informatik.uni-hamburg.de>
-References: <A4A8A981-9668-4F3F-B718-8F05B0506074@informatik.uni-hamburg.de>
- <20180306221342.GA178079@gmail.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K0:c3TuJzWbd3UqZd5tStdjUvkG3Mzn/+RLMyI9U2BijO1EUe1Ilfe
+ ihATl5CrMvb4yVjqQy+QtMdeG9TaUDvVIIZ8rMSZm27U039eTD0cteqMj5T6CoJJda4xjrv
+ 8MBwXjtjDrcd5LS0pXNCqNnT7WF26XOTO62892qpJbeROBDw9sa3570P7Lhh7ZNH08CNRjy
+ 7QWwO/LI2SyogEIPIXvDA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9l+rWgEFNLQ=:+gNOY7ZaRC3LM1Usrb+VhJ
+ JrcStLlSrc92PQEhser6Wi9bCORiphTtYWLaF1eCg71i6idsJ0hPikJZjTTeYw9vP0xi6Xzl1
+ 8rKm/FcQtMlrJdTZeHgrnoFyCbqE0KvA3oLvoloWwdK/Uf52k1jFqXyAVIH6hWJz2TioswYZr
+ 9qtU916sil0owwWcfbHQjUozpw9Nkq4L87ntR24WskoQuzBN1F4rkr+cDbGMtJSHdF/ACUceF
+ RmqTS+x0tEjSDG5fXlXJQ6L8NiSWwGV0RTeTcjUSfi8rXdd9zRBluapvVrnPYJGn4rPOZZ+yt
+ aiUofPzYGHxU5sjq7V4NrxMb43iSbxab+6c7OMgUWLYRCWWnJaBxBXk1oAkQ7pwXsoh6YuODV
+ ngesG9DHJskWucd/Ywu0bocKAu24gWAVUJEZwzFvemg6DncyOiwkV7LAX6JZ6eXRntA57Qlbs
+ abLNvPBaYoJvaPnnmRm6Hqez+vzcE9xoUDWrAudRW8SJ+3kT2iFi1hM0JgRgkgdPWyXyEKc53
+ gYN1vSnZLqgYZEyEvraverRsKAdK5o/e/KIRT8l9pIZ0K5Ff/0FYDlSnhmm335wz9DxB6qORd
+ WC/DZyNTVPTr9JOlzCrq66D3XWi+44epeQGYoM7POvoQQfV/BP+0/WwsVFo5GAcNY2AnxG6oB
+ HaoZxvNTnc/dXI6Y/f12G/FN3CAgGDmb34aSzkWvWwob3KFnX6hXTLGQSLKchmTCThJLsu2eA
+ YuLGTGJJOrS2uhFMUYYQQzLCeBuWak2S/Ko8cpazN4m3jeuyw4wxSuKdPWs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Matheus,
 
-
-On 06.03.2018 at 23:13, Eric Biggers wrote:
+> Matheus Castello <matheus@castello.eng.br> hat am 5. März 2018 um 03:29 geschrieben:
 > 
-> Hi Benjamin,
 > 
-> On Tue, Mar 06, 2018 at 09:23:08PM +0100, Benjamin Warnke wrote:
->> Currently ZRAM uses compression-algorithms from the crypto-api. ZRAM
->> compresses each page individually. As a result the compression algorithm is
->> forced to use a very small sliding window. None of the available compression
->> algorithms is designed to achieve high compression ratios with small inputs.
->> 
->> This patch adds a new compression algorithm 'zBeWalgo' to the crypto api. This
->> algorithm focusses on increasing the capacity of the compressed block-device
->> created by ZRAM. The choice of compression algorithms is always a tradeoff
->> between speed and compression ratio.
->> 
-> [...]
->> 
->> Zstd is not in the list of compared algorithms, because it is not available
->> for Zram in the currently available kernel trees.
->> 
+> To enable support for generic binding in the pinctrl-bcm2835 and use pinctrl
+> generic to parse properties the GENERIC_PINCONF have to be selected.
 > 
-> This still isn't a valid excuse for not comparing it to Zstandard.  Zstandard is
-> already in the kernel in lib/.  It would only need glue code to wire it up as an
-> scomp_alg to the crypto API.  
-
-I'll add benchmarks with Zstandard.
-
-> In contrast you're proposing an entirely new
-> algorithm.  Ultimately, by proposing a new algorithm you're on the hook to
-> demonstrate that existing algorithms aren't good enough.  Note that many of the
-> existing algorithms including Zstandard also have multiple compression levels
-> available to choose from.
-
-The crypto api exposes each algorithm only once with its default compression level.
-Currently there is no switch/option/mechanism/code or something to switch thoose levels.
-Of course I could benchmark the algorithms with multiple compression levels.
-How many / Which compression levels would you like to see to be compared with each other?
-
-> It's also rare to add a compression or encryption algorithm to the Linux kernel
-> that isn't already used somewhere else.
-
-The kernel is the only place where so many small pieces of data need to be compressed.
-In user space nobody cares that the data is splitted into pages, and therefore compression usually applied to large datasets.
-
->  Have you at least written a formal
-> specification of the 'zBeWalgo' data format?
-
-Not yet.
-
->  Zstandard, for example, had a
-> well-tested and optimized userspace library and a specification of the data
-> format before it was added to the kernel.  And even before that it took a couple
-> years of development to stabilize the Zstandard data format.
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> ---
+>  drivers/pinctrl/bcm/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Now, it's true that you don't strictly need a stable data format if the
-> algorithm will only ever be used for RAM compression.  But, if you want to take
-> that shortcut, then you're on the hook to justify it, and perhaps to enlighten
-> the crypto API about algorithms that don't have a stable data format (e.g. using
-> a new CRYPTO_ALG_* flag) so that users have to more explicitly opt-in to using
-> them.
+> diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+> index e8c4e4f..0f38d51 100644
+> --- a/drivers/pinctrl/bcm/Kconfig
+> +++ b/drivers/pinctrl/bcm/Kconfig
+> @@ -20,6 +20,7 @@ config PINCTRL_BCM2835
+>  	bool
+>  	select PINMUX
+>  	select PINCONF
+> +	select GENERIC_PINCONF
+>  	select GPIOLIB_IRQCHIP
+> 
+>  config PINCTRL_IPROC_GPIO
 
-I could add CRYPTO_ALG_TYPE_COMPRESS_UNSTABLE as an alias for CRYPTO_ALG_TYPE_COMPRESS
+i think it's okay to fold this change into patch #2.
 
-> You cannot just ignore fuzz-safety in the decompressor either. The existing
-> decompressors exposed through the crypto API are fuzz-safe, so it's not valid to
-> compare an unsafe decompressor to them.  If you really do want to add an unsafe
-> decompressor then you'd likely need to look into adding crypto API support for
-> users to request unsafe decompression -- which could also be used to expose the
-> unsafe version of the LZ4 decompressor (LZ4_decompress_fast() instead of
-> LZ4_decompress_safe()).  Or if you do make the decompressor safe, then of course
-> you'd actually need to fuzz it; I suggest porting the code to userspace and
-> running american fuzzy lop (afl-fuzz) on it: http://lcamtuf.coredump.cx/afl/
-
-The current version of the decompressor is fuzz-safe. I tested it with lots of data and made sure, that each possible branch in the code is executed multiple times in different combinations.
-
-> Separately, given that this is a brand new algorithm and it seems to have
-> various corner cases, it would be a good idea to demonstrate a higher guarantee
-> of the correctness of the compression-decompression round trip.  afl-fuzz can be
-> good for that too: you could port the code to userspace and write a simple
-> program which compresses and decompresses a file and aborts if it was corrupted.
-> Then by passing the program to afl-fuzz it will eventually cover most of the
-> compressor and decompressor.  I've done that when testing compression code in
-> the past.
-
-I will port my code to user space and use afl-fuzz to test it.
-
-Benjamin
+> --
+> 2.7.4
+>
