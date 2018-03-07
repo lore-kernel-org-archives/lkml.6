@@ -1,93 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeCGKyt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:54:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45445 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751130AbeCGKyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:54:45 -0500
-From: Takashi Iwai <tiwai@suse.de>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: doc: Correct title markers for asciidoctor
-Date: Wed,  7 Mar 2018 11:54:41 +0100
-Message-Id: <20180307105441.28512-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.2
+        id S1754192AbeCGK51 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:57:27 -0500
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37331 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbeCGK5Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 05:57:25 -0500
+X-Google-Smtp-Source: AG47ELttEKN/eX5eOpH9A9qNrAftH/QU11sp7Q42C6h7c3iwWfMJS4SN/1zslce+wPjqoGtDDKAayw==
+Date: Wed, 7 Mar 2018 10:57:21 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Alexandre TORGUE <alexandre.torgue@st.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 0/6] Add mmc support for STM32F7 boards
+Message-ID: <20180307105721.yxrun3xztrgun4me@dell>
+References: <1519901623-23216-1-git-send-email-patrice.chotard@st.com>
+ <44ed2e2c-83f1-77f5-fa70-29c5525b9ee7@st.com>
+ <20180307083538.vicxhbu72jex7zi6@dell>
+ <f006750d-1fa9-4bbf-8f4d-32abee21cadd@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f006750d-1fa9-4bbf-8f4d-32abee21cadd@st.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've tested to process the perf man pages with asciidoctor that is
-picker than asciidoc, and it revealed minor syntax errors in some
-documents.  Namely, the title markers aren't aligned with the previous
-line, hence asciidoctor didn't recognize as titles.
+On Wed, 07 Mar 2018, Patrice CHOTARD wrote:
 
-This patch corrects these markers to be processed properly.
+> Hi Lee
+> 
+> On 03/07/2018 09:35 AM, Lee Jones wrote:
+> > On Mon, 05 Mar 2018, Alexandre Torgue wrote:
+> > 
+> >> Hi Patrice,
+> >>
+> >> On 03/01/2018 11:53 AM, patrice.chotard@st.com wrote:
+> >>> From: Patrice Chotard <patrice.chotard@st.com>
+> >>>
+> >>> This series adds :
+> >>>    _ SDIO pins definition for STM32F7 SoCs family
+> >>>    _ add sdio1 DT entry for STM32F746 Discovery board
+> >>>    _ add sdio1 DT entry for STM32F746 Evaluation board
+> >>>    _ add sdio1 DT entry for STM32F769 Discovery board
+> >>>    _ add SDMMC2 entry in stm32f7-rcc.h
+> >>>    _ replace sdio2 hard coded value in stm32f746.dtsi
+> >>>
+> >>> v2: _ rename sdio_pins / sdio_od_pins to sdio_pins_a / sdio_od_pins_a
+> >>>         and update board dts files accordingly.
+> >>>
+> >>>
+> >>> Patrice Chotard (6):
+> >>>     ARM: dts: stm32: Add sdio pins definition for stm32f7
+> >>>     ARM: dts: stm32: Enable sdio1 for stm32f746-disco
+> >>>     ARM: dts: stm32: Enable sdio1 for stm32f746-eval
+> >>>     ARM: dts: stm32: Enable sdio1 for stm32f769-disco
+> >>>     dt-bindings: mfd: Add STM32F7 SDMMC2 rcc entry
+> >>>     ARM: dts: stm32: Fix sdio2 rcc hard coded value
+> >>>
+> >>>    arch/arm/boot/dts/stm32746g-eval.dts   | 17 ++++++++++
+> >>>    arch/arm/boot/dts/stm32f7-pinctrl.dtsi | 62 ++++++++++++++++++++++++++++++++++
+> >>>    arch/arm/boot/dts/stm32f746-disco.dts  | 19 +++++++++++
+> >>>    arch/arm/boot/dts/stm32f746.dtsi       |  2 +-
+> >>>    arch/arm/boot/dts/stm32f769-disco.dts  | 19 +++++++++++
+> >>>    include/dt-bindings/mfd/stm32f7-rcc.h  |  1 +
+> >>>    6 files changed, 119 insertions(+), 1 deletion(-)
+> >>>
+> >> Series applied on stm32-next.
+> > 
+> > Even the MFD patch?
+> > 
+> 
+> Yes, the MFD part has been taken by Alex.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- tools/perf/Documentation/perf-data.txt        | 2 +-
- tools/perf/Documentation/perf-ftrace.txt      | 2 +-
- tools/perf/Documentation/perf-kallsyms.txt    | 2 +-
- tools/perf/Documentation/perf-sched.txt       | 2 +-
- tools/perf/Documentation/perf-script-perl.txt | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+You should really wait for all of the appropriate Acks.  This helps to
+avoid possible merge conflicts when Linus starts pulling branches
+during the merge-window.
 
-diff --git a/tools/perf/Documentation/perf-data.txt b/tools/perf/Documentation/perf-data.txt
-index 90bb4aabe4f8..c87180764829 100644
---- a/tools/perf/Documentation/perf-data.txt
-+++ b/tools/perf/Documentation/perf-data.txt
-@@ -1,5 +1,5 @@
- perf-data(1)
--==============
-+============
- 
- NAME
- ----
-diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Documentation/perf-ftrace.txt
-index 721a447f046e..b80c84307dc9 100644
---- a/tools/perf/Documentation/perf-ftrace.txt
-+++ b/tools/perf/Documentation/perf-ftrace.txt
-@@ -1,5 +1,5 @@
- perf-ftrace(1)
--=============
-+==============
- 
- NAME
- ----
-diff --git a/tools/perf/Documentation/perf-kallsyms.txt b/tools/perf/Documentation/perf-kallsyms.txt
-index 954ea9e21236..cdd421cd1c57 100644
---- a/tools/perf/Documentation/perf-kallsyms.txt
-+++ b/tools/perf/Documentation/perf-kallsyms.txt
-@@ -1,5 +1,5 @@
- perf-kallsyms(1)
--==============
-+================
- 
- NAME
- ----
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index c7e50f263887..bb33601a823b 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -1,5 +1,5 @@
- perf-sched(1)
--==============
-+=============
- 
- NAME
- ----
-diff --git a/tools/perf/Documentation/perf-script-perl.txt b/tools/perf/Documentation/perf-script-perl.txt
-index 142606c0ec9c..5a1f68122f50 100644
---- a/tools/perf/Documentation/perf-script-perl.txt
-+++ b/tools/perf/Documentation/perf-script-perl.txt
-@@ -1,5 +1,5 @@
- perf-script-perl(1)
--==================
-+===================
- 
- NAME
- ----
+As it happens, I do not think Alex's tree and MFD will conflict this
+time, but it's something to bear in mind in the future.
+
+Please add my:
+
+  Acked-by: Lee Jones <lee.jones@linaro.org>
+
+... to the patch.
+
 -- 
-2.16.2
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
