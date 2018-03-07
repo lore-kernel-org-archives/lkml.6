@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934004AbeCGQTK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:19:10 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:14085 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933502AbeCGQTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:19:05 -0500
-X-IronPort-AV: E=Sophos;i="5.47,436,1515427200";
-   d="scan'208";a="72960732"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tursulin@ursulin.net" <tursulin@ursulin.net>
-CC: "tvrtko.ursulin@intel.com" <tvrtko.ursulin@intel.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH 4/6] lib/scatterlist: Unexport some trivial wrappers
-Thread-Topic: [PATCH 4/6] lib/scatterlist: Unexport some trivial wrappers
-Thread-Index: AQHTthJ7zkRjw7nDv0qSDdGT/47QzKPE89sA
-Date: Wed, 7 Mar 2018 16:19:01 +0000
-Message-ID: <1520439540.2890.19.camel@wdc.com>
-References: <20180307124712.14963-1-tvrtko.ursulin@linux.intel.com>
-         <20180307124712.14963-5-tvrtko.ursulin@linux.intel.com>
-In-Reply-To: <20180307124712.14963-5-tvrtko.ursulin@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0305;7:n3uxq9Zxg25U9U6/F2OVebCBsRaDpO8MK300CO0aGMlDd0ndAz6Ra0MJCqbmZ4agP6yd+q/PHvkWoI36t+cBRd4s8Xrz8Suy8scxshod48VL56s/OnavAZRCUoh1CN9C1N5SbDrU9+2HQjTSLr8vvsE6BPOdC5c+QH2ZL9VJzZXaiji2p8xywT6nBpo+SShCdJ+ooOSacQvt8QkJdVC/3DdSbkarD1Bv8ZwCMhdow+nyGBAErLggXA6iew/Q3Yzq;20:OE052saYUiA0p5jd0jJG3CABXZ4jN7//ipYc0ehIYZtjcOUCZe1+/pBkpin8Ky8ZnYV2OYe7TkTqzubZZ80/GrtZPxzl0482eDwlu+AKum7nVo7mISvq5VZJjt8m1TNUeUa+fIpDD3sIxAK5YRDbMV7CSLWEklIWFmVXRokbmqA=
-x-ms-exchange-antispam-srfa-diagnostics: SSOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f03d9f25-2402-4b7a-ce5e-08d5844723b7
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0305;
-x-ms-traffictypediagnostic: MWHPR04MB0305:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB030524C30C2365AAFA82D09098D80@MWHPR04MB0305.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040501)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231220)(944501244)(52105095)(3002001)(10201501046)(6055026)(6041288)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR04MB0305;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0305;
-x-forefront-prvs: 0604AFA86B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39380400002)(366004)(39860400002)(346002)(396003)(376002)(377424004)(199004)(189003)(14454004)(3660700001)(7736002)(3846002)(6116002)(6506007)(106356001)(2900100001)(76176011)(105586002)(229853002)(5660300001)(8936002)(8676002)(81156014)(72206003)(81166006)(305945005)(478600001)(2906002)(86362001)(2950100002)(3280700002)(186003)(25786009)(4326008)(6512007)(6486002)(68736007)(6246003)(316002)(6436002)(102836004)(36756003)(26005)(110136005)(5250100002)(66066001)(2501003)(99286004)(97736004)(54906003)(103116003)(53936002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0305;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: fXXqI0PcOWBcvZjPQnsgwAzOMngtHO93x/QRuUJxKSfTlVfaCDXgAaFtD8f1HJB5L8iy1ulhLvamlonsOekmWF2Z8/m+JFb/nTURToFdP4QD2zSu1WmGqFi5YQoiUMwExCydhnNmsnUl1YOHhPYwX5H3kBU9aKBDBmd28Ylszz5VJtmqmfKx6OdzA5gLuFWAM3TaMqoPPpYkdKKSAohEnNvUBVMSBTc0lI/86O4ekoVD2AvS7WHU/W0eRQt3h1X05U+SArEFxgvBZTpAWASps+G8omq0c9b/mtPuQLir9knawLsnqJGPDYzCxx1lIKeUsmwwHMkLY9V09iooNDZIdg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <08D6B93AC667B641BB23C40A520F7E76@namprd04.prod.outlook.com>
+        id S934031AbeCGQU3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:20:29 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933335AbeCGQU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:20:27 -0500
+Date: Wed, 7 Mar 2018 17:19:44 +0100
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] x86/kvm: rename HV_X64_MSR_APIC_ASSIST_PAGE to
+ HV_X64_MSR_VP_ASSIST_PAGE
+Message-ID: <20180307161944.GE12290@flask>
+References: <20180226171121.18974-1-vkuznets@redhat.com>
+ <20180226171121.18974-2-vkuznets@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f03d9f25-2402-4b7a-ce5e-08d5844723b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2018 16:19:01.7242
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0305
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180226171121.18974-2-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w27GJGNk007064
 
-On Wed, 2018-03-07 at 12:47 +0000, Tvrtko Ursulin wrote:
-> Save some kernel size by moving trivial wrappers to header as static
-> inline instead of exporting symbols for them.
+2018-02-26 18:11+0100, Vitaly Kuznetsov:
+> From: Ladi Prosek <lprosek@redhat.com>
+> 
+> The assist page has been used only for the paravirtual EOI so far, hence
+> the "APIC" in the MSR name. Renaming to match the Hyper-V TLFS where it's
+> called "Virtual VP Assist MSR".
+> 
+> Signed-off-by: Ladi Prosek <lprosek@redhat.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/include/uapi/asm/hyperv.h | 10 +++++-----
+>  arch/x86/kvm/hyperv.c              |  8 ++++----
+>  arch/x86/kvm/lapic.h               |  2 +-
+>  arch/x86/kvm/x86.c                 |  2 +-
+>  4 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/include/uapi/asm/hyperv.h b/arch/x86/include/uapi/asm/hyperv.h
+> index 1c12aaf33915..45cc62352040 100644
+> --- a/arch/x86/include/uapi/asm/hyperv.h
+> +++ b/arch/x86/include/uapi/asm/hyperv.h
+> @@ -189,7 +189,7 @@
+>  #define HV_X64_MSR_EOI				0x40000070
+>  #define HV_X64_MSR_ICR				0x40000071
+>  #define HV_X64_MSR_TPR				0x40000072
+> -#define HV_X64_MSR_APIC_ASSIST_PAGE		0x40000073
+> +#define HV_X64_MSR_VP_ASSIST_PAGE		0x40000073
+>  
+>  /* Define synthetic interrupt controller model specific registers. */
+>  #define HV_X64_MSR_SCONTROL			0x40000080
+> @@ -275,10 +275,10 @@ struct hv_tsc_emulation_status {
+>  #define HVCALL_POST_MESSAGE			0x005c
+>  #define HVCALL_SIGNAL_EVENT			0x005d
+>  
+> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ENABLE		0x00000001
+> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT	12
+> -#define HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_MASK	\
+> -		(~((1ull << HV_X64_MSR_APIC_ASSIST_PAGE_ADDRESS_SHIFT) - 1))
 
-Something that you may be unaware of is that the introduction of the sgl
-helper functions is only a first step. The next step will be to introduce
-a caching allocator for sg-lists. So for small sg-lists inlining won't
-help performance. But moving these definitions from a .c file into a .h
-file will (slightly) slow down kernel compilation. So I'd prefer that you
-drop this patch.
+Removing definitions from userspace api isn't a good idea.
 
-Thanks,
-
-Bart.
+I have no idea why hyper.h is a userspace api, though -- Linux doesn't
+define any of those, so we could copy the definitions to a private
+header, rename, and never look at this file again.
