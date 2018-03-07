@@ -1,43 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754518AbeCGO2A (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:28:00 -0500
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41388 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754279AbeCGO1y (ORCPT
+        id S1754466AbeCGO3k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:29:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45920 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeCGO3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:27:54 -0500
-X-Google-Smtp-Source: AG47ELsHsQju+daSZkvpgN/kSXJbb/8VSEjdGx7y/a4Ol5cketiS1moIpQMxfuo7FCuawsH0xu8/KbOmL42K/mKIZew=
+        Wed, 7 Mar 2018 09:29:37 -0500
+Date: Wed, 7 Mar 2018 14:29:35 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Applied "ASoC: wm8524: Remove unit address" to the regulator tree
+Message-ID: <20180307142935.GF7290@sirena.org.uk>
+References: <E1etZqm-0001c4-3g@debutante>
 MIME-Version: 1.0
-In-Reply-To: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
-References: <5ec790b43c6fea9f36e06b5b20233b2adebd7d50.1519814593.git.baolin.wang@linaro.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 7 Mar 2018 15:27:52 +0100
-X-Google-Sender-Auth: 2N5uawrqrvIsSAkFdFotlZMj4XA
-Message-ID: <CAK8P3a2Fu9OpdFwXKqwbxMzCR==smaW=M1mzn4rvFm05H-Dwig@mail.gmail.com>
-Subject: Re: [RESEND PATCH 1/7] arm64: dts: Add hwspinlock node for Spreadtrum SC9860
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, chunyan.zhang@linaro.org,
-        =?UTF-8?B?T3Jzb24gWmhhaSAo57+f5LqsKQ==?=
-        <orson.zhai@spreadtrum.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
+Content-Disposition: inline
+In-Reply-To: <E1etZqm-0001c4-3g@debutante>
+X-Cookie: If you can read this, you're too close.
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 28, 2018 at 11:47 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> The Spreadtrum SC9860 platform only has one hardware spinlock device,
-> which is located on AON system of Spreadtrum SC9860 platform.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Applied all seven patches to next/dt, thanks!
+--924gEkU1VlJlwnwX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-     Arnd
+On Wed, Mar 07, 2018 at 02:15:24PM +0000, Mark Brown wrote:
+> The patch
+>=20
+>    ASoC: wm8524: Remove unit address
+>=20
+> has been applied to the regulator tree at
+>=20
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git=
+=20
+
+Obviously this is an error, I'll drop it.
+
+--924gEkU1VlJlwnwX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqf908ACgkQJNaLcl1U
+h9CwJAf9H0HcOBSqhxJTCT4SCLtoJ5/2/hK3vf5fPsfKAZt54gghSpRKN4EIMKmo
+VdVDUl+/Nwr6htakRHEP8N7RdyHEvxL2SOF0yOnKHBHlV0xAvF+dvBpSrVZJ9TtD
+O56jOC2VR5lZ2O9XEctrjHAjLrjPDXzc83KQDhgAHZzcl04HICj7BY1RvJxEhuth
+6bYEAIEE4hVqb47d3dSzhppYI1Tgok6uUcMTfEVfpBoTLaB0Y5WeWA3V2j+GC+YH
+Af7XJnbyJ/OMAcuSB8atsxhgsZCfjT4NIF9tOz7LLRiL8eI16+/7W7HC/9Ux9OWP
+rdk94DwfcwSknVT/sPY7FxmClmjl1g==
+=I9b3
+-----END PGP SIGNATURE-----
+
+--924gEkU1VlJlwnwX--
