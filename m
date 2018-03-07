@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsHrsxrIo41OoC8nmmyqJ1PNAwcQh08ov9v3oaHr7QkmfLZ4vwgpKhUpZ/7sSl/vAzUc/LW
-ARC-Seal: i=1; a=rsa-sha256; t=1520451945; cv=none;
+X-Google-Smtp-Source: AG47ELsp6aL/EZcrqEbPiueYqNbHafN+Gb+dbmNBD4ZcUssgQt2z85SgszBGCLAnT8YGmp5uLm5L
+ARC-Seal: i=1; a=rsa-sha256; t=1520451943; cv=none;
         d=google.com; s=arc-20160816;
-        b=g+Tyk652p3stE3b6AGjH5Ofgd4G0cwtMDuEVTSaoPPMNojPZUS7OvIwn6vuOKhx78U
-         1WNnVs59Xm+N7PyKt8cwMrvVkahcl5cdsWBYEqpnDDua13LZDSuKiI1DJZzXm8AssQTM
-         8gu7nJUA5h5a0EiJFUk/OtVl24iFhR0ak8ttUr2J/FdekZhn9lnQ7wBAc6wOeiautZR1
-         bV4z4N+vbO6/dOxyFn6bx/Bhdk3BohxmtGTMuvGp1RnNZyLVe0m8zOkkEH1QowTkxC+E
-         1Fsz3KGDqO+/K8uztVkqDFkn5CQTYnIdTbSNrxwSfFc14ddql+XlDOwwQYXLKfckHDyq
-         2YLA==
+        b=uBpibjP6nV/4EWPu5/k82xFhIC3BNqXvyEYpVD+bUh9C5E8WkBfgPjfTM17X8UAo5G
+         VtY51bvYvSalCgpHE3YEmG3jfUORe/pJEqt2af/K+t9n7y4mX1asPH9M2/qfew9MyL24
+         gMSC50s+JT39rfgORz7ijLrWfd1Z6JD/KzYzfyueolZki5eURNc9aMNH+1UFAN24Aa/a
+         HfpXE+v9a5ZNoiGVa5cXHTwtzjUTDzsd3hyr6hYhcEcthk8panjWShhpbT9BWQ0bdRJA
+         xzbezhHtj5jK8sz7ATuu6iWFOZ7Dlxb2ThPHQKO5//bJcuc7X9GusjSoekKYByHQ8U+P
+         Q+5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Rqpuh0TjV90m1uEwqRP7W8ofQ3VwKyHi0VEZ5X+qYwk=;
-        b=aeKWFvOIJRKgSrI2dPIUsqXOrANOnpkC7roEBBbZnrt1Hs8f32OzJSpg2VJ9xiCV+M
-         mdTWQL+95IQa4+mmjjaXyeym1/oTRfrefzDEgN+tzN3bgmMDxpZQUhsyHw8aglxFXW0I
-         sUqHDu8yIi8Fezkgsv1ESNMWiVCSPBTNKNYMtIxRORg3bY1TosaPB5Ne5i4/Db3U239r
-         CcfFTZPbSZGikPTuZoBoWWnuZgE+poJkCvy7MYfHBI0WbuGHi8SIv0/SkJOR3saKSc/m
-         8jNI91aYorx7TJ2lkajxS6GL09U7/2nvxSIEOGz/FHbzce5Mtjb4j7Wfy6IGvacm2Loq
-         eeNA==
+        bh=Scts/hJbY42HoF0zRz6TrXjmzzwhpfANbK5NY/nDezw=;
+        b=WJwadjYJE4kCnR1YfYtQArIyCVaRMLJAiYbN58PdJ51bMOZ7RaOuV8NuhzHw9mDRcX
+         HxkHxCFdkM8sb5jHdM8TXs0b+H8KFQDstGTlgrwCHR1ujfJbMcf0hVjylQylfbsLezXT
+         mUFPAIHOz3D8bIDBiKX4C5glWQzs+GxshXwJVgXXExLXvKjYs3Er1A7W38WyWfhw08Ch
+         DV0Oj171fJyJ1MeCz2xstSERLTzLuXfrbbQGA+yjMGUqrHl8/lFDsc3QGpez7pqaQPkY
+         K7mAGO877Wj9ScqetNFpjDtsX/qWgrOCtohBnkN3LlfTta7lW46LntC5gV/CC5usudWx
+         tZHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 014/110] ALSA: hda - Fix pincfg at resume on Lenovo T470 dock
-Date: Wed,  7 Mar 2018 11:37:57 -0800
-Message-Id: <20180307191041.565429464@linuxfoundation.org>
+	Jakub Kicinski <jakub.kicinski@netronome.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 040/110] net: fix race on decreasing number of TX queues
+Date: Wed,  7 Mar 2018 11:38:23 -0800
+Message-Id: <20180307191044.878257226@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309059227409390?=
-X-GMAIL-MSGID: =?utf-8?q?1594309419146888795?=
+X-GMAIL-THRID: =?utf-8?q?1594309127138862131?=
+X-GMAIL-MSGID: =?utf-8?q?1594309416860689969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,46 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-commit 71db96ddfa72671bd43cacdcc99ca178d90ba267 upstream.
 
-We've added a quirk to enable the recent Lenovo dock support, where it
-overwrites the pin configs of NID 0x17 and 19, not only updating the
-pin config cache.  It works right after the boot, but the problem is
-that the pin configs are occasionally cleared when the machine goes to
-PM.  Meanwhile the quirk writes the pin configs only at the pre-probe,
-so this won't be applied any longer.
+[ Upstream commit ac5b70198adc25c73fba28de4f78adcee8f6be0b ]
 
-For addressing that issue, this patch moves the code to overwrite the
-pin configs into HDA_FIXUP_ACT_INIT section so that it's always
-applied at both probe and resume time.
+netif_set_real_num_tx_queues() can be called when netdev is up.
+That usually happens when user requests change of number of
+channels/rings with ethtool -L.  The procedure for changing
+the number of queues involves resetting the qdiscs and setting
+dev->num_tx_queues to the new value.  When the new value is
+lower than the old one, extra care has to be taken to ensure
+ordering of accesses to the number of queues vs qdisc reset.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195161
-Fixes: 61fcf8ece9b6 ("ALSA: hda/realtek - Enable Thinkpad Dock device for ALC298 platform")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Currently the queues are reset before new dev->num_tx_queues
+is assigned, leaving a window of time where packets can be
+enqueued onto the queues going down, leading to a likely
+crash in the drivers, since most drivers don't check if TX
+skbs are assigned to an active queue.
+
+Fixes: e6484930d7c7 ("net: allocate tx queues in register_netdevice")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_realtek.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/core/dev.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4852,13 +4852,14 @@ static void alc_fixup_tpt470_dock(struct
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2343,8 +2343,11 @@ EXPORT_SYMBOL(netdev_set_num_tc);
+  */
+ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
+ {
++	bool disabling;
+ 	int rc;
  
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
-+		snd_hda_apply_pincfgs(codec, pincfgs);
-+	} else if (action == HDA_FIXUP_ACT_INIT) {
- 		/* Enable DOCK device */
- 		snd_hda_codec_write(codec, 0x17, 0,
- 			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
- 		/* Enable DOCK device */
- 		snd_hda_codec_write(codec, 0x19, 0,
- 			    AC_VERB_SET_CONFIG_DEFAULT_BYTES_3, 0);
--		snd_hda_apply_pincfgs(codec, pincfgs);
++	disabling = txq < dev->real_num_tx_queues;
++
+ 	if (txq < 1 || txq > dev->num_tx_queues)
+ 		return -EINVAL;
+ 
+@@ -2360,15 +2363,19 @@ int netif_set_real_num_tx_queues(struct
+ 		if (dev->num_tc)
+ 			netif_setup_tc(dev, txq);
+ 
+-		if (txq < dev->real_num_tx_queues) {
++		dev->real_num_tx_queues = txq;
++
++		if (disabling) {
++			synchronize_net();
+ 			qdisc_reset_all_tx_gt(dev, txq);
+ #ifdef CONFIG_XPS
+ 			netif_reset_xps_queues_gt(dev, txq);
+ #endif
+ 		}
++	} else {
++		dev->real_num_tx_queues = txq;
  	}
- }
  
+-	dev->real_num_tx_queues = txq;
+ 	return 0;
+ }
+ EXPORT_SYMBOL(netif_set_real_num_tx_queues);
