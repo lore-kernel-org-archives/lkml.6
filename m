@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvapyetuTM1nsk8/tETBatgwSLZ02jq+xuYA/RoRVsq4kD4r4d3zkyvlKllmbS6kDvcRWb9
-ARC-Seal: i=1; a=rsa-sha256; t=1520451633; cv=none;
+X-Google-Smtp-Source: AG47ELs/FAs9u8rfhZ4LBYEXdiyXXmLzLGY/qtnli6QqYfq97P5hZuRF14MkKzqZPdFH31R52fZI
+ARC-Seal: i=1; a=rsa-sha256; t=1520451629; cv=none;
         d=google.com; s=arc-20160816;
-        b=r9y/TPRVbLgcR27ekU+jmgXQSWpC4u+jeWVo8xYsc3TouXkFe8aFo8TUvqjnTux4ln
-         xAT4sCfu03LBMyBmbjXK4oucgbhjLXxyv60Q6hXJxNPoZ9OjZMYaCLe/oJvQx++DTVlj
-         nhrA8LBe6EPdz4dzjXSQO1uFuaRPoibPF2WEADZLWX3igu6F6O4rC6Agtq6TGB/pCqwb
-         buKxQEHvyM8wCe+kiNnNWEKbslgA8Mj0EeOaTT8e//cm1XNHc3tQX3bIGZRstxd3ACMN
-         nyz1TvIWkGc0XNAOTxMRnkJhBYedhFeZENecEVSTUNUm0JIkhv5i8modl6hRkepP2uux
-         /IGQ==
+        b=wb/5sglIKR1qCaMvVqr9aSFyydoOsmSn0Q6PuQvoZ0lXF+6Lp9UFPhDt/0gUunz6wu
+         Eb7tLcAonr8x2hkJWAtqeP9EpHdDaXWcaPLtNGZAEJ87vIdi9IdNz2kQMITIooOEnyBz
+         UjHRnqQrgsJiXcBU++ZultNwQV3twVHarEO/YDhWEos0jvPladN8CWXnb4pa6u9uRMkP
+         OMxmYboEAWp14yrR2Ve/A9XDXRmrY3F+/4ZFNqfnARcrKRTLmZUaFfN5eH1nwzpQ8Ar+
+         1dHn94tokArk9Ba6aGd+zy8OvM3HT7nMW9VFeA17c7O/pTUpnnAbb4BUjtbuua1sQyk+
+         0uAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JAvQC81HXDYeNLm3p2RgVWH/N1HKJyMGLRpakMQ8Am0=;
-        b=hNfHv6Xz+mKSqYuXb8ZErA65bDnjzLrxpPQvjBVYOkhYNhQ3LHOkBp5gpJ/dA6aqiY
-         Ph0ois4eMpOmUVQW293kixHAkMpjmaHyzbE+tSu6JDirxgVY2qPBj4nzimRxQ0kYBa4G
-         Fz0IhaAGtwqqnG5plN86+SmTWV/AwxyrpcLZQbolzosKu6vuzBKiO7qCxPEvQS/e1ZKe
-         H63NK0yGYyk87ufYViEBoIV5Xi4CDpdt9UefXUf4mgtOfvXs+dKHPLAhaij679g5cMCi
-         GR2eLFxrV9wrsfdgNKt+A6G0upVTKnJUf0SPkSTm65dR795gFJee3qWY72uIiU2GsIsG
-         ZAyA==
+        bh=2GLa8etuWKn9jMDL5IUTG+nEDlqSYyUVeAxiJP06wSE=;
+        b=MI2MlKIVl3KT6F76XOBrvqMC3Bvcnh4FDTAsdbGTPCzZeK1Fvsu+NvBaiQ1ezlnaAC
+         rUZQPZUpICym+YakP1u1mrXyWRv2FXQuFDmTLU4LdZvQExlD+pAompTwXMy8ub74Cc4m
+         boRZIbhXNK4lulvJP2LwIO9cTpeQfk/1Mb8xjQOsjz3b5/uiyla5fUxvnCiQxge3Cjla
+         YSpdF2u82AR//RrSYLK68w/THq6HFHDmGIT4yjALDy36dij/9KztzxZcbanwzC19j4lc
+         yKNQzgjyt+4qbLBiV12qzMdtC5FzorJzuGS6y2uZSvu/Oh0Nfwi1lwGvY8iAQ5TzY8Yy
+         22UQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Omar Sandoval <osandov@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jiufei Xue <jiufei.xue@linux.alibaba.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 029/122] block: fix the count of PGPGOUT for WRITE_SAME
-Date: Wed,  7 Mar 2018 11:37:21 -0800
-Message-Id: <20180307191733.475730582@linuxfoundation.org>
+	Helge Deller <deller@gmx.de>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.15 027/122] parisc: Hide virtual kernel memory layout
+Date: Wed,  7 Mar 2018 11:37:19 -0800
+Message-Id: <20180307191733.184843390@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309092397136741?=
-X-GMAIL-MSGID: =?utf-8?q?1594309092397136741?=
+X-GMAIL-THRID: =?utf-8?q?1594309088232214795?=
+X-GMAIL-MSGID: =?utf-8?q?1594309088232214795?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Helge Deller <deller@gmx.de>
 
-commit 7c5a0dcf557c6511a61e092ba887de28882fe857 upstream.
+commit fd8d0ca2563151204f3fe555dc8ca4bcfe8677a3 upstream.
 
-The vm counters is counted in sectors, so we should do the conversation
-in submit_bio.
+For security reasons do not expose the virtual kernel memory layout to
+userspace.
 
-Fixes: 74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-Cc: stable@vger.kernel.org
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Suggested-by: Kees Cook <keescook@chromium.org>
+Cc: stable@vger.kernel.org # 4.15
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/mm/init.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2401,7 +2401,7 @@ blk_qc_t submit_bio(struct bio *bio)
- 		unsigned int count;
+--- a/arch/parisc/mm/init.c
++++ b/arch/parisc/mm/init.c
+@@ -629,7 +629,12 @@ void __init mem_init(void)
+ #endif
  
- 		if (unlikely(bio_op(bio) == REQ_OP_WRITE_SAME))
--			count = queue_logical_block_size(bio->bi_disk->queue);
-+			count = queue_logical_block_size(bio->bi_disk->queue) >> 9;
- 		else
- 			count = bio_sectors(bio);
- 
+ 	mem_init_print_info(NULL);
+-#ifdef CONFIG_DEBUG_KERNEL /* double-sanity-check paranoia */
++
++#if 0
++	/*
++	 * Do not expose the virtual kernel memory layout to userspace.
++	 * But keep code for debugging purposes.
++	 */
+ 	printk("virtual kernel memory layout:\n"
+ 	       "    vmalloc : 0x%px - 0x%px   (%4ld MB)\n"
+ 	       "    memory  : 0x%px - 0x%px   (%4ld MB)\n"
