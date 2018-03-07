@@ -1,62 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933206AbeCGD1W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 6 Mar 2018 22:27:22 -0500
-Received: from mail-vk0-f47.google.com ([209.85.213.47]:34590 "EHLO
-        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932362AbeCGD1U (ORCPT
+        id S1754095AbeCGDgT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 6 Mar 2018 22:36:19 -0500
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45212 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753898AbeCGDgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 6 Mar 2018 22:27:20 -0500
-X-Google-Smtp-Source: AG47ELs4ZcqF6wUCBGy2TRZYPXadMcKQlFfNv/mJBfuFgEflURi+4Eqzs5sJRrQ/MJEgxVpYSKVMEQ==
-MIME-Version: 1.0
-In-Reply-To: <5A9F598E.4020704@rock-chips.com>
-References: <20180306030252.3197-1-jeffy.chen@rock-chips.com>
- <20180306032759.29069-1-jeffy.chen@rock-chips.com> <20180306032759.29069-4-jeffy.chen@rock-chips.com>
- <CAAFQd5DPewKda7ThqMGKRvnArZ0X8ChD10E06nLZaNa-SBNdwA@mail.gmail.com> <5A9F598E.4020704@rock-chips.com>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 7 Mar 2018 12:26:57 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CM+7=RrJ_3OBmpHWAOA4VnxL24j=w-wMobjm_cVd5K3Q@mail.gmail.com>
-Message-ID: <CAAFQd5CM+7=RrJ_3OBmpHWAOA4VnxL24j=w-wMobjm_cVd5K3Q@mail.gmail.com>
-Subject: Re: [PATCH v7 13/14] iommu/rockchip: Add runtime PM support
-To: JeffyChen <jeffy.chen@rock-chips.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>, simon xue <xxm@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        open@263.net,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>, list@263.net:IOMMU DRIVERS
-        <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>,"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 6 Mar 2018 22:36:17 -0500
+X-Google-Smtp-Source: AG47ELvxNz7JenAPDgoojWrxelCwIlF7Ghn3fvdxlgRWsYpUCfBvniZT24ydKWSy3KyCLKLDTYURWQ==
+From: Gwendal Grignou <gwendal@chromium.org>
+To: jlbec@evilplan.org
+Cc: linux-kernel@vger.kernel.org, jorgelo@chromium.org
+Subject: [PATCH] configfs: initialize inode with owner
+Date: Tue,  6 Mar 2018 19:36:00 -0800
+Message-Id: <20180307033600.102115-1-gwendal@chromium.org>
+X-Mailer: git-send-email 2.16.2.660.g709887971b-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 12:16 PM, JeffyChen <jeffy.chen@rock-chips.com> wrote:
-> Hi Tomasz,
->
-> Thanks for your reply.
->
-> On 03/06/2018 06:07 PM, Tomasz Figa wrote:
->>
->> Hi Jeffy,
->>
->> It looks like I missed some details of how runtime PM enable works
->> before, so we might be able to simplify things. Sorry for not getting
->> things right earlier
->
->
-> hmm, right, the enable state should be the same during those functions. will
-> do it in the next version.
+From: Sarthak Kukreti <sarthakkukreti@chromium.org>
 
-Thanks. I actually realized that we don't even need the
-pm_runtime_enabled() checks either.
+Use standard helper to set inode owner when created from user space.
+This is a noop when the owner is root.
 
-Actually, we can clean this up in an incremental patch, so no need to
-resend if no other changes needed, since current code is still
-technically correct.
+Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+---
+ fs/configfs/configfs_internal.h |  5 ++++-
+ fs/configfs/inode.c             | 14 ++++++++------
+ fs/configfs/mount.c             |  2 +-
+ 3 files changed, 13 insertions(+), 8 deletions(-)
 
-Best regards,
-Tomasz
+diff --git a/fs/configfs/configfs_internal.h b/fs/configfs/configfs_internal.h
+index b65d1ef532d5..772fce1fd222 100644
+--- a/fs/configfs/configfs_internal.h
++++ b/fs/configfs/configfs_internal.h
+@@ -68,7 +68,10 @@ extern struct kmem_cache *configfs_dir_cachep;
+ 
+ extern int configfs_is_root(struct config_item *item);
+ 
+-extern struct inode * configfs_new_inode(umode_t mode, struct configfs_dirent *, struct super_block *);
++extern struct inode *configfs_new_inode(umode_t mode,
++					struct configfs_dirent *sd,
++					struct inode *p_inode,
++					struct super_block *s);
+ extern int configfs_create(struct dentry *, umode_t mode, void (*init)(struct inode *));
+ 
+ extern int configfs_create_file(struct config_item *, const struct configfs_attribute *);
+diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
+index eae87575e681..93db05a2db1f 100644
+--- a/fs/configfs/inode.c
++++ b/fs/configfs/inode.c
+@@ -108,9 +108,11 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
+ 	return error;
+ }
+ 
+-static inline void set_default_inode_attr(struct inode * inode, umode_t mode)
++static inline void set_default_inode_attr(struct inode *inode,
++					  struct inode *p_inode,
++					  umode_t mode)
+ {
+-	inode->i_mode = mode;
++	inode_init_owner(inode, p_inode, mode);
+ 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+ }
+ 
+@@ -125,7 +127,7 @@ static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
+ }
+ 
+ struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
+-				 struct super_block *s)
++				 struct inode *p_inode, struct super_block *s)
+ {
+ 	struct inode * inode = new_inode(s);
+ 	if (inode) {
+@@ -140,7 +142,7 @@ struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
+ 			 */
+ 			set_inode_attr(inode, sd->s_iattr);
+ 		} else
+-			set_default_inode_attr(inode, mode);
++			set_default_inode_attr(inode, p_inode, mode);
+ 	}
+ 	return inode;
+ }
+@@ -190,11 +192,11 @@ int configfs_create(struct dentry * dentry, umode_t mode, void (*init)(struct in
+ 		return -EEXIST;
+ 
+ 	sd = dentry->d_fsdata;
+-	inode = configfs_new_inode(mode, sd, dentry->d_sb);
++	p_inode = d_inode(dentry->d_parent);
++	inode = configfs_new_inode(mode, sd, p_inode, dentry->d_sb);
+ 	if (!inode)
+ 		return -ENOMEM;
+ 
+-	p_inode = d_inode(dentry->d_parent);
+ 	p_inode->i_mtime = p_inode->i_ctime = CURRENT_TIME;
+ 	configfs_set_inode_lock_class(sd, inode);
+ 
+diff --git a/fs/configfs/mount.c b/fs/configfs/mount.c
+index a8f3b589a2df..23aede27c502 100644
+--- a/fs/configfs/mount.c
++++ b/fs/configfs/mount.c
+@@ -78,7 +78,7 @@ static int configfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_time_gran = 1;
+ 
+ 	inode = configfs_new_inode(S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO,
+-				   &configfs_root, sb);
++				   &configfs_root, NULL, sb);
+ 	if (inode) {
+ 		inode->i_op = &configfs_root_inode_operations;
+ 		inode->i_fop = &configfs_dir_operations;
+-- 
+2.16.2.660.g709887971b-goog
