@@ -1,111 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933827AbeCGR1y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:27:54 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:32198 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933733AbeCGR1p (ORCPT
+        id S933871AbeCGR17 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:27:59 -0500
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36815 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933816AbeCGR1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:27:45 -0500
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180307172743epoutp016d90b771c7dbfb3c557b9c8b5cf0cd57~Zs3TguGct2424424244epoutp01I
-X-AuditID: b6c32a46-3a9ff70000001029-35-5aa0210f9777
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: krzk@kernel.org
-Cc: kgene@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: Enable HDMI audio on Snow Chromebook
-Date: Wed, 07 Mar 2018 18:27:11 +0100
-Message-id: <20180307172711.15697-4-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.14.2
-In-reply-to: <20180307172711.15697-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCmmS6/4oIogx0vRS02zljPajH/yDlW
-        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYu2Ru+wWh9+0szpwemxa1cnmsXlJvUffllWM
-        Hp83yQWwRHHZpKTmZJalFunbJXBl/PqxlLFgEU/FxRtzWBoYV3N1MXJySAiYSJw5Pou5i5GL
-        Q0hgB6PE5d072CCc74wSF5afZISperztMSNEYjejxJpZX9khnF+MEvt+bWQHqWITMJToPdoH
-        1iEiICxxb+lysCJmgX+MEutW7mUDSQgLOEs0HTjJAmKzCKhKzD72kBnE5hWwlvj3cDobxDp5
-        ifcL7oMN4hSwkVh4ZzoLyCAJgSlsEosu7WGFKHKR2P11NzuELSzx6vgWKFta4tmqjVB3V0t0
-        tnWxQzS3MEr8mXYJaoO1xOHjF8EGMQvwSXQc/gtUxAEU55XoaBOCKPGQ+LD3LNQuR4mLx/ZC
-        /d/PKPHr0hqWCYxSCxgZVjGKpRYU56anFhsVGOkVJ+YWl+al6yXn525iBMeoltsOxiXnfA4x
-        CnAwKvHwSvyZHyXEmlhWXJl7iFGCg1lJhNdIfkGUEG9KYmVValF+fFFpTmrxIUZpDhYlcd7W
-        AJcoIYH0xJLU7NTUgtQimCwTB6dUA+PReyvPnNJa1vnptPxjDrHM6tPh6z45i1x+tUPtjf1s
-        yRSDFZa3WyxU9u5XFYy8uSehb0b9ooe+jgq37R/2zfitInhdUZuf5egFJ9eSRd9v8lpJr/i7
-        /sVxoXl3nteua7K97h6cU6r19fTUdxMEpY0nPw5peftqs66K/4yKi3/Orn5bc/forrRCJZbi
-        jERDLeai4kQA92srfM0CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprILMWRmVeSWpSXmKPExsVy+t9jAV0+xQVRBmv6eCw2zljPajH/yDlW
-        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYu2Ru+wWh9+0szpwemxa1cnmsXlJvUffllWM
-        Hp83yQWwRHHZpKTmZJalFunbJXBl/PqxlLFgEU/FxRtzWBoYV3N1MXJySAiYSDze9pixi5GL
-        Q0hgJ6PEwn3tzBDOL0aJi4+PsoJUsQkYSvQe7WMEsUUEhCXuLV3ODlLELPCPUeLZ9MdsIAlh
-        AWeJpgMnWUBsFgFVidnHHjKD2LwC1hL/Hk5ng1gnL/F+wX2wQZwCNhIL70wHqxcCqnmzp4l9
-        AiPPAkaGVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsYgQG17bBW/w7Gx0viDzEKcDAq
-        8fBK/JkfJcSaWFZcmXuIUYKDWUmE10h+QZQQb0piZVVqUX58UWlOavEhRmkOFiVxXv78Y5FC
-        AumJJanZqakFqUUwWSYOTqkGRifPr5vMJmW+spx5K/XpJtG/FbaJCuHm1fnlbRb98d3M8ZrH
-        pyWfiU39Ih4ZFeH+2HhGmJKz6Twxxzze/R5MBnOU3z9kcVu880Tlcq7C2ObwuXOa9SZYz5vn
-        a5l+O+MO7+IzTt/MXlsmL/hY+zR9+87vUtkbdinPmGwjd7f7wtVs1uO9GY/eKLEUZyQaajEX
-        FScCACHTuhAkAgAA
-X-CMS-MailID: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
-X-RootMTR: 20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420
-References: <20180307172711.15697-1-s.nawrocki@samsung.com>
-        <CGME20180307172742epcas2p2c0ef2394412da71b6d0ee172c47c3420@epcas2p2.samsung.com>
+        Wed, 7 Mar 2018 12:27:54 -0500
+X-Google-Smtp-Source: AG47ELuHViQTll+nwshY1Bot1BqW1I0QyqzGnEDWSTfaxJFKrS2rWHroYel8A7NsZMDEnqClTSEa90ouSHg5lekkiOw=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180307.114139.680250568317481879.davem@davemloft.net>
+References: <20180305124054.09966cb0@canb.auug.org.au> <CADvbK_cMVBWO7zgnyG=L8T5cTKfjyUXQAAv+a2ne5WVZ9TBJ4g@mail.gmail.com>
+ <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com> <20180307.114139.680250568317481879.davem@davemloft.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Mar 2018 12:27:52 -0500
+Message-ID: <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
+To: David Miller <davem@davemloft.net>
+Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        richard_c_haines@btinternet.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds new cpu, codec subnodes according to the updated
-"google,snow-audio-max98095" bindings and the I2S clock tree
-configuration so sound on the HDMI interface can also be supported.
+On Wed, Mar 7, 2018 at 11:41 AM, David Miller <davem@davemloft.net> wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> Date: Wed, 7 Mar 2018 11:34:31 -0500
+>> On Mon, Mar 5, 2018 at 2:03 AM, Xin Long <lucien.xin@gmail.com> wrote:
+>>> On Mon, Mar 5, 2018 at 9:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> Hi Paul,
+>>>>
+>>>> Today's linux-next merge of the selinux tree got a conflict in:
+>>>>
+>>>>   net/sctp/socket.c
+>>>>
+>>>> between several refactoring commits from the net-next tree and commit:
+>>>>
+>>>>   2277c7cd75e3 ("sctp: Add LSM hooks")
+>>>>
+>>>> from the selinux tree.
+>>>>
+>>>> I fixed it up (I think - see below) and can carry the fix as
+>>> The fixup is great!  the same as I mentioned in:
+>>> https://patchwork.ozlabs.org/patch/879898/
+>>> for net-next.git
+>>>
+>>>> necessary. This is now fixed as far as linux-next is concerned, but any
+>>>> non trivial conflicts should be mentioned to your upstream maintainer
+>>>> when your tree is submitted for merging.  You may also want to consider
+>>>> cooperating with the maintainer of the conflicting tree to minimise any
+>>>> particularly complex conflicts.
+>>>
+>>> [net-next,0/9] sctp: clean up sctp_sendmsg, this patchset was just applied
+>>> in net-next. So I just guess it might not yet be there when selinux tree was
+>>> being submitted.
+>>
+>> The selinux/next branch is based on v4.16-rc1 and doesn't feed into
+>> the netdev tree, it goes straight to Linus during the merge window so
+>> unfortunately I think we may need to carry this for some time and
+>> relay this fix-up patch up to Linus during the merge window.
+>
+> What a mess.
+>
+> The SCTP option changes should have gone through my tree in retrospect.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos5250-snow-common.dtsi | 4 ++++
- arch/arm/boot/dts/exynos5250-snow.dts         | 8 ++++++++
- 2 files changed, 12 insertions(+)
+It's unfortunate.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-index bdf59dd3654b..932a00cfd716 100644
---- a/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-snow-common.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/clock/maxim,max77686.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/sound/samsung-i2s.h>
- #include "exynos5250.dtsi"
+I'm not sure we could have cleanly separated the core network stack
+changes from the rest of the SELinux/SCTP enablement, regardless it's
+a bit late at this point.  The only other thought would have been to
+simply push Xin Long's cleanup patches until after the next merge
+window, but that would only be worth considering if they truly were
+just cleanup patches, and even then it doesn't seem very fair to Xin
+Long to have to wait.
 
- / {
-@@ -523,6 +524,9 @@
- };
+Thankfully stuff like this is rare (at least from a netdev/SELinux POV).
 
- &i2s0 {
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
-+	#clock-cells = <1>;
- 	status = "okay";
- };
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 16e37c337a3f..8c3f1573a994 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -18,6 +18,14 @@
-
- 		samsung,model = "Snow-I2S-MAX98095";
- 		samsung,audio-codec = <&max98095>;
-+
-+		cpu {
-+			sound-dai = <&i2s0 0>;
-+		};
-+
-+		codec {
-+			sound-dai = <&hdmi>, <&max98095 0>;
-+		};
- 	};
- };
-
---
-2.14.2
+-- 
+paul moore
+www.paul-moore.com
