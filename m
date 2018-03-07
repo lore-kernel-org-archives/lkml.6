@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELslrQFP38uvpBrWkdWz0B2E5LhVnUBqtF3RHB5iBCYugszlf6JyOTSj3VJGB4I7bMdZx9G1
-ARC-Seal: i=1; a=rsa-sha256; t=1520451880; cv=none;
+X-Google-Smtp-Source: AG47ELuOG29yY4nz73OMs8pIUaabCLNddLrx9eJ7o4UotW2RFfhcmoEUHA7xwNsxPNyXmFV7rLpg
+ARC-Seal: i=1; a=rsa-sha256; t=1520451878; cv=none;
         d=google.com; s=arc-20160816;
-        b=FnT0VEoNU3eRH5z80sPrmsepT+vjhFGa9Lq94JIWTH2hPO6UC07Y9MhHcpmdLV7Fb1
-         6QZlPQZNAi5QYcJSOBhqHrFHBABlmeCIKRbi+GD1YHgSLEXZTIkt4+Iz6sRUH/MrtzwT
-         ZXMiQWQRM0pctn8Y/ia+ByIbHUDlhL/rs4rAhOTh+pMU/EV5mFmE17VBdnVrKCfzCxBK
-         MeVge1ryuOSu+Z52RjQ2jZqFD+17HUnSsGzPMH6bgjpgT/4tYtSniE6IITrMKQ56mJP1
-         tG+qvYDiDqmZfRMXpdaOGXYBMb25bn2gwVK4xArPw3O3mXkAXk6W/pesCTeLOetFpmu0
-         VTLg==
+        b=iRjf8SsU1+wf2Bxxylq2hDbRYyR3lEvLbhgyjjPHfRppQKkYMIGdlkxEI23doM25tz
+         nd3rBPcNNVqDuZpLJs6Nbk/zPtKLi5Pnrgh8Ci6vu/fC/fGfgzCx1GjwKCFPgilzpA7e
+         8hyhlBz/RUsGsqfseRI7b1ODPkpvRanW4G/ANSWKY1pNI/ZL70M2ioylDJVgT9jAjPId
+         sg9ucTbhBTiL8psoIErRYF3MHMasguuo/Tan76QA0uHojShweWcf0IRB05Y89IPShjrH
+         aj3Yatj4BLuZoAfdCPB0fLbB30km6FSFxWwZKW6OyJ4FQ0DyQ+FtOwD1PJWIJDYYrHig
+         oAzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p/QXb8NcE9HUzzbAKxS9aJds3gWcLERFV4Rbj7cXD4c=;
-        b=azUkRR6biIHViDvQsJk2+FpimagIaeDolEZUigzJiPv1GioWp+wmMgqybuG7CKUhNj
-         QGMAGymX5YIhPHEYIxCYValxjBb2DMf4bTt/g0shM69PsTuj3ADVeQL0Ryk3NoQ4xiEg
-         /fh0Zs4+KHOPFXhHucWvMjdbGv+64m03sLWwT8R8T5bszbqo27t8URcrUUknJuVia8aB
-         phB3OkMr1dHS72nZQ0ZYWYlRyE9lAD3XROigINj3C5/z/ObF8OcTrm9Q0He2P8CjN/0V
-         LJnb2WIwwRx34MmBRDSk2E+qk8IgKAjxyS8EzpH3ycLEU2Apa3Oh5NGt6TMqLsoB0hG1
-         rFtg==
+        bh=joWS3ALae9oUr9WVnjXV4kOSrOJVzPm8BmpwnH2xkL0=;
+        b=e+Rbha+T+ONo2NnkpxIs/vNocvWE/rA22EQ2Jxwtzd4lGr/u2fBO7H6jPkDf6mFmkK
+         DwenygIk3nqBbD4uvlbqXJtZFLsKW1fNyzZmfSypP/uzcNbia5ZuJlTP85SJO1NCS1V7
+         XwgggI5nZssa3V+lB2FbdmGnc7M23tevKznzAuoUjDGA8cYJQfMFXJMKxSjrft9oBYAy
+         ZMeKYTPc+I5Ip1qbvfD3yIXWWP7RGXN4sSJwnaPk/QyJDLrNQE623G4RzofHAzS8hQ3X
+         BxLPF9J3sD+YQmCDTD7vqamSKCPLxZBDZLI4Pj/F43JUXyaJDdlpnYEtXtz8XibXK+Lt
+         9/jQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	James Bottomley <James.Bottomley@HansenPartnership.com>,
 	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.14 004/110] tpm: fix potential buffer overruns caused by bit glitches on the bus
-Date: Wed,  7 Mar 2018 11:37:47 -0800
-Message-Id: <20180307191040.380529457@linuxfoundation.org>
+Subject: [PATCH 4.14 003/110] tpm: st33zp24: fix potential buffer overruns caused by bit glitches on the bus
+Date: Wed,  7 Mar 2018 11:37:46 -0800
+Message-Id: <20180307191040.262256297@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309110993937114?=
-X-GMAIL-MSGID: =?utf-8?q?1594309351450508853?=
+X-GMAIL-THRID: =?utf-8?q?1594309108141640090?=
+X-GMAIL-MSGID: =?utf-8?q?1594309348740480530?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,51 +53,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-commit 3be23274755ee85771270a23af7691dc9b3a95db upstream.
+commit 6d24cd186d9fead3722108dec1b1c993354645ff upstream.
 
 Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  If a bit does
-flip it could cause an overrun if it's in one of the size parameters,
-so sanity check that we're not overrunning the provided buffer when
-doing a memcpy().
+some platforms, can have glitches causing bit flips.  In all the
+driver _recv() functions, we need to use a u32 to unmarshal the
+response size, otherwise a bit flip of the 31st bit would cause the
+expected variable to go negative, which would then try to read a huge
+amount of data.  Also sanity check that the expected amount of data is
+large enough for the TPM header.
 
 Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
 Cc: stable@vger.kernel.org
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |    4 ++++
- drivers/char/tpm/tpm2-cmd.c      |    4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/char/tpm/st33zp24/st33zp24.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1228,6 +1228,10 @@ int tpm_get_random(u32 chip_num, u8 *out
- 			break;
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -457,7 +457,7 @@ static int st33zp24_recv(struct tpm_chip
+ 			    size_t count)
+ {
+ 	int size = 0;
+-	int expected;
++	u32 expected;
  
- 		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-+		if (recd > num_bytes) {
-+			total = -EFAULT;
-+			break;
-+		}
+ 	if (!chip)
+ 		return -EBUSY;
+@@ -474,7 +474,7 @@ static int st33zp24_recv(struct tpm_chip
+ 	}
  
- 		rlength = be32_to_cpu(tpm_cmd.header.out.length);
- 		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -683,6 +683,10 @@ static int tpm2_unseal_cmd(struct tpm_ch
- 	if (!rc) {
- 		data_len = be16_to_cpup(
- 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
-+		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
-+			rc = -EFAULT;
-+			goto out;
-+		}
- 
- 		rlength = be32_to_cpu(((struct tpm2_cmd *)&buf)
- 					->header.out.length);
+ 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
+-	if (expected > count) {
++	if (expected > count || expected < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
