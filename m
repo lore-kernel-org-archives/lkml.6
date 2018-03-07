@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754173AbeCGOPR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:15:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49748 "EHLO
+        id S1754473AbeCGOPZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:15:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49868 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751189AbeCGOPN (ORCPT
+        with ESMTP id S1754052AbeCGOPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:15:13 -0500
+        Wed, 7 Mar 2018 09:15:17 -0500
 From: Mark Brown <broonie@kernel.org>
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: debugfs: Improve warning message on debugfs_create_dir() failure" to the regmap tree
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Applied "regmap: debugfs: Don't leak dummy names" to the regmap tree
 In-Reply-To: 
-Message-Id: <E1etZqY-0001YG-GN@debutante>
-Date: Wed, 07 Mar 2018 14:15:10 +0000
+Message-Id: <E1etZqd-0001Zu-SP@debutante>
+Date: Wed, 07 Mar 2018 14:15:15 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: debugfs: Improve warning message on debugfs_create_dir() failure
+   regmap: debugfs: Don't leak dummy names
 
 has been applied to the regmap tree at
 
@@ -45,38 +45,33 @@ to this mail.
 Thanks,
 Mark
 
->From 59dd2a85040103e95b1c87b1b920d357ee91dada Mon Sep 17 00:00:00 2001
-From: Fabio Estevam <fabio.estevam@nxp.com>
-Date: Mon, 5 Mar 2018 23:13:04 -0300
-Subject: [PATCH] regmap: debugfs: Improve warning message on
- debugfs_create_dir() failure
+>From 46589e9c753b7c905e8671a89cbb9728f3b99855 Mon Sep 17 00:00:00 2001
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 5 Mar 2018 20:26:51 +0000
+Subject: [PATCH] regmap: debugfs: Don't leak dummy names
 
-Currently when debugfs_create_dir() fails we receive a warning message
-that provides no indication as to what was the directory entry that
-failed to be created.
+When allocating dummy names we need to store a pointer to the string we
+allocate so that we don't leak it on free.
 
-Improve the warning message by printing the directory name that failed
-in order to help debugging.
-
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap-debugfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/base/regmap/regmap-debugfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index c84f5ceb015a..87b562e49a43 100644
+index e3e7b91cc421..dd3a16894e3c 100644
 --- a/drivers/base/regmap/regmap-debugfs.c
 +++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -583,7 +583,8 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+@@ -575,7 +575,9 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
+ 	}
  
- 	map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
- 	if (!map->debugfs) {
--		dev_warn(map->dev, "Failed to create debugfs directory\n");
-+		dev_warn(map->dev,
-+			 "Failed to create %s debugfs directory\n", name);
+ 	if (!strcmp(name, "dummy")) {
+-		name = kasprintf(GFP_KERNEL, "dummy%d", dummy_index);
++		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
++						dummy_index);
++		name = map->debugfs_name;
+ 		dummy_index++;
+ 	}
  
- 		kfree(map->debugfs_name);
- 		map->debugfs_name = NULL;
 -- 
 2.16.2
