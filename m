@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtp3viXRyzctaLIKfKKeEnJO4ErmB8UajeKvpsMI8H9xsJe79pboSqUgKdDOU2KAbQXZJE0
-ARC-Seal: i=1; a=rsa-sha256; t=1520451837; cv=none;
+X-Google-Smtp-Source: AG47ELtSocSfp2fVxTp0af+SkjvP5JCTxSoOhSfMIVPGkEEnfC2UvOmvhZ1oeYsEyeSkA8YW3oSp
+ARC-Seal: i=1; a=rsa-sha256; t=1520451835; cv=none;
         d=google.com; s=arc-20160816;
-        b=s7WdSPwggCEB/HBzeVwaR44X8vbHB52Vy9H/9v2+HyBfWk9qTX4XvTrcb7f3TrBKCF
-         Nld7qZ2Vq9sMkB8doQMfxd4Uwa8MgZQmGNXQpFRfX/Sgj9hhq2l4OkUz/UYQZgxrSa2J
-         n5OYqAxhHUpCJ5Q1BSCUQCZOu3ahjAXebYYW3P+rKDZ650m6qYBUaBmVjy1M9RTLwGhv
-         9tf1g4XfohzqS3TtfZkheSAjJXMRwr+bGBzFOAHPYx7agNyiYzkAXC0gqNQ2admrGTDC
-         PCtOexquEHTSlkv+sJeqj/ZkNoo+yuVXVRPHmmsoLFpvnzwvA5YQv+tiSM41KOXOs3Au
-         CB+A==
+        b=RSfKohQJO5bu2CWItje6hcZwvrKMSB6YS1Jfzhg6tUw55UfKBsP8xzcJ21QeDOzTIP
+         Nky1Qwqs/7OapFcHep3PLe13udoxgaC5zkvQfTmw1GlnKDv2Xaxji7PtumunhA4wEW+M
+         bezGKEycpv5hyJEFjxQiz8X9U2Q2t6ulopT97ktIYhYGDvcTN9ZilZayETk32ceqwAhv
+         XDbkiQvIYVtGxALfBhLj1YsYY50IKH9lKSGABLIYBQaUyRYkMIzcRpcoJS7dBGfnBY4s
+         KkQiIqRdi0Pgilwi9gD6oPwXmy0jn13fN+EcJEWRVTclZe3YUtfNtWcCuNA3PnFJbAgY
+         +o3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=U5d6lEHUB+vPMUr4bYXAobCRnstI6goSLsS4Rv01xUg=;
-        b=maaL8W0i2JII8+ZIH2CBddTTQt54Mgij2FlP6fiUEJ5zqCnHNpMVzqdbjCVR4mFkPU
-         VKLOY1LryM8mPedCLdDUuMi2tnb7pefc0epZA7BOjbDgHFSsxIBuI6GfuUgmZBMWBnsP
-         m6Y+zPWJZLGFsTCVo+0VabGc2cortN/ERdQhUiORPdNCp61ZhQU27sfnGRXPVOJMezL9
-         elVmmhUn4+oYuyZffo6jfafwPKPRksNwdqFSAl6BOAfBoaxbYr3WEcOTsSEPAthVXjrM
-         YgVTZz+RyKltQgczpNy8QpTuqLoeNuXDWkwTl08yivDdFtFXKQQ4NpUo/fMPIlce+gV9
-         ERfw==
+        bh=yPMh4EmjQ3JR3poFTomY+NqCmUjforj2KeOjFeJyjJs=;
+        b=h1PY9RZ8VeAIpKqqVdOLGkNIZyOJPL5RsefNslk7lDLViz5Ivq4P/JZ1T/4/U/HYnR
+         LkFjNqdKefOz5z5krr7o3EyO2xrk3yyA3+P2EkXwFgNGQ1/sLRvdp37Cp7InVmdeUypU
+         JUkq9yu26pmYk7NmCsQlXlYlDdrf+0iAbhIBCjFFSZCOoj/vqDCP8UXYLFk/vAYg7Egl
+         sVef0vImjgJ6qjpLaQJcngu5x7TZNAA3zJiWql688PgnDhIWGQvZLXNjBz4+77P8PHAT
+         Nfx+LXivgjrIxQWG1wqwi5N9qIjR4VGi8d3UgAvx5ODGRIs6MAaTgLQIhqW7ipbNYly1
+         hRQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ulf Magnusson <ulfalizer@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 4.15 109/122] ARM: mvebu: Fix broken PL310_ERRATA_753970 selects
-Date: Wed,  7 Mar 2018 11:38:41 -0800
-Message-Id: <20180307191745.395018374@linuxfoundation.org>
+	Boris Pismenny <borisp@mellanox.com>,
+	Ilya Lesokhin <ilyal@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 070/122] tls: Use correct sk->sk_prot for IPV6
+Date: Wed,  7 Mar 2018 11:38:02 -0800
+Message-Id: <20180307191739.488275683@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309306231843406?=
-X-GMAIL-MSGID: =?utf-8?q?1594309306231843406?=
+X-GMAIL-THRID: =?utf-8?q?1594309303852952237?=
+X-GMAIL-MSGID: =?utf-8?q?1594309303852952237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +50,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ulf Magnusson <ulfalizer@gmail.com>
+From: Boris Pismenny <borisp@mellanox.com>
 
-commit 8aa36a8dcde3183d84db7b0d622ffddcebb61077 upstream.
 
-The MACH_ARMADA_375 and MACH_ARMADA_38X boards select ARM_ERRATA_753970,
-but it was renamed to PL310_ERRATA_753970 by commit fa0ce4035d48 ("ARM:
-7162/1: errata: tidy up Kconfig options for PL310 errata workarounds").
+[ Upstream commit c113187d38ff85dc302a1bb55864b203ebb2ba10 ]
 
-Fix the selects to use the new name.
+The tls ulp overrides sk->prot with a new tls specific proto structs.
+The tls specific structs were previously based on the ipv4 specific
+tcp_prot sturct.
+As a result, attaching the tls ulp to an ipv6 tcp socket replaced
+some ipv6 callback with the ipv4 equivalents.
 
-Discovered with the
-https://github.com/ulfalizer/Kconfiglib/blob/master/examples/list_undefined.py
-script.
-Fixes: fa0ce4035d48 ("ARM: 7162/1: errata: tidy up Kconfig options for
-PL310 errata workarounds"
-cc: stable@vger.kernel.org
-Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+This patch adds ipv6 tls proto structs and uses them when
+attached to ipv6 sockets.
+
+Fixes: 3c4d7559159b ('tls: kernel TLS support')
+Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: Ilya Lesokhin <ilyal@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/mach-mvebu/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/tls/tls_main.c |   52 +++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 37 insertions(+), 15 deletions(-)
 
---- a/arch/arm/mach-mvebu/Kconfig
-+++ b/arch/arm/mach-mvebu/Kconfig
-@@ -42,7 +42,7 @@ config MACH_ARMADA_375
- 	depends on ARCH_MULTI_V7
- 	select ARMADA_370_XP_IRQ
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARMADA_375_CLK
- 	select HAVE_ARM_SCU
-@@ -58,7 +58,7 @@ config MACH_ARMADA_38X
- 	bool "Marvell Armada 380/385 boards"
- 	depends on ARCH_MULTI_V7
- 	select ARM_ERRATA_720789
--	select ARM_ERRATA_753970
-+	select PL310_ERRATA_753970
- 	select ARM_GIC
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -46,16 +46,26 @@ MODULE_DESCRIPTION("Transport Layer Secu
+ MODULE_LICENSE("Dual BSD/GPL");
+ 
+ enum {
++	TLSV4,
++	TLSV6,
++	TLS_NUM_PROTS,
++};
++
++enum {
+ 	TLS_BASE_TX,
+ 	TLS_SW_TX,
+ 	TLS_NUM_CONFIG,
+ };
+ 
+-static struct proto tls_prots[TLS_NUM_CONFIG];
++static struct proto *saved_tcpv6_prot;
++static DEFINE_MUTEX(tcpv6_prot_mutex);
++static struct proto tls_prots[TLS_NUM_PROTS][TLS_NUM_CONFIG];
+ 
+ static inline void update_sk_prot(struct sock *sk, struct tls_context *ctx)
+ {
+-	sk->sk_prot = &tls_prots[ctx->tx_conf];
++	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
++
++	sk->sk_prot = &tls_prots[ip_ver][ctx->tx_conf];
+ }
+ 
+ int wait_on_pending_writer(struct sock *sk, long *timeo)
+@@ -450,8 +460,21 @@ static int tls_setsockopt(struct sock *s
+ 	return do_tls_setsockopt(sk, optname, optval, optlen);
+ }
+ 
++static void build_protos(struct proto *prot, struct proto *base)
++{
++	prot[TLS_BASE_TX] = *base;
++	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
++	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
++	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
++
++	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
++	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
++	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
++}
++
+ static int tls_init(struct sock *sk)
+ {
++	int ip_ver = sk->sk_family == AF_INET6 ? TLSV6 : TLSV4;
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct tls_context *ctx;
+ 	int rc = 0;
+@@ -476,6 +499,17 @@ static int tls_init(struct sock *sk)
+ 	ctx->getsockopt = sk->sk_prot->getsockopt;
+ 	ctx->sk_proto_close = sk->sk_prot->close;
+ 
++	/* Build IPv6 TLS whenever the address of tcpv6_prot changes */
++	if (ip_ver == TLSV6 &&
++	    unlikely(sk->sk_prot != smp_load_acquire(&saved_tcpv6_prot))) {
++		mutex_lock(&tcpv6_prot_mutex);
++		if (likely(sk->sk_prot != saved_tcpv6_prot)) {
++			build_protos(tls_prots[TLSV6], sk->sk_prot);
++			smp_store_release(&saved_tcpv6_prot, sk->sk_prot);
++		}
++		mutex_unlock(&tcpv6_prot_mutex);
++	}
++
+ 	ctx->tx_conf = TLS_BASE_TX;
+ 	update_sk_prot(sk, ctx);
+ out:
+@@ -488,21 +522,9 @@ static struct tcp_ulp_ops tcp_tls_ulp_op
+ 	.init			= tls_init,
+ };
+ 
+-static void build_protos(struct proto *prot, struct proto *base)
+-{
+-	prot[TLS_BASE_TX] = *base;
+-	prot[TLS_BASE_TX].setsockopt	= tls_setsockopt;
+-	prot[TLS_BASE_TX].getsockopt	= tls_getsockopt;
+-	prot[TLS_BASE_TX].close		= tls_sk_proto_close;
+-
+-	prot[TLS_SW_TX] = prot[TLS_BASE_TX];
+-	prot[TLS_SW_TX].sendmsg		= tls_sw_sendmsg;
+-	prot[TLS_SW_TX].sendpage	= tls_sw_sendpage;
+-}
+-
+ static int __init tls_register(void)
+ {
+-	build_protos(tls_prots, &tcp_prot);
++	build_protos(tls_prots[TLSV4], &tcp_prot);
+ 
+ 	tcp_register_ulp(&tcp_tls_ulp_ops);
+ 
