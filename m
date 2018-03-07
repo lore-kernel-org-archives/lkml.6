@@ -1,65 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754669AbeCGR1C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 12:27:02 -0500
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38272 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754248AbeCGR1A (ORCPT
+        id S933655AbeCGR11 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:27:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57738 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932801AbeCGR1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 12:27:00 -0500
-X-Google-Smtp-Source: AG47ELvwtrzn/SKlq8FpQ5RUGevXq5sUJzE/9obWW0aXUTBtP2xHil6c+RtTUoj7FgKWYYsanBRYiQ==
-Subject: Re: [PATCH 6/7] lkdtm: crash on overwriting protected pmalloc var
-To: Igor Stoppa <igor.stoppa@huawei.com>, david@fromorbit.com,
-        willy@infradead.org, keescook@chromium.org, mhocko@kernel.org
-Cc: labbott@redhat.com, linux-security-module@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-References: <20180228200620.30026-1-igor.stoppa@huawei.com>
- <20180228200620.30026-7-igor.stoppa@huawei.com>
- <1723ee8d-c89e-0704-c2c3-254eda39dc8b@gmail.com>
- <6378e63e-174f-642e-d319-1d121b74d3d7@huawei.com>
-From: J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <2664691b-4d48-1701-8dae-774ec7733f61@gmail.com>
-Date: Wed, 7 Mar 2018 09:26:55 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <6378e63e-174f-642e-d319-1d121b74d3d7@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 7 Mar 2018 12:27:14 -0500
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tools/memory-model 2/4] tools/memory-model: Remove mention of docker/gentoo image
+Date: Wed,  7 Mar 2018 09:27:38 -0800
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <1520443660-16858-1-git-send-email-paulmck@linux.vnet.ibm.com>
+References: <20180307172627.GA15805@linux.vnet.ibm.com>
+ <1520443660-16858-1-git-send-email-paulmck@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18030717-0008-0000-0000-000002E0DE8E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008629; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.00999660; UDB=6.00508497; IPR=6.00779066;
+ MB=3.00019896; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-07 17:27:10
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18030717-0009-0000-0000-0000387D2C15
+Message-Id: <1520443660-16858-2-git-send-email-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803070200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Because the docker and gentoo images haven't been updated in quite some
+time, they are likely to provide more confusion than help.  This commit
+therefore removes mention of them from the README file.
 
+Reported-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ tools/memory-model/README | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-On 3/7/18 5:18 AM, Igor Stoppa wrote:
->
-> On 06/03/18 19:20, J Freyensee wrote:
->
->> On 2/28/18 12:06 PM, Igor Stoppa wrote:
-> [...]
->
->>>    void __init lkdtm_perms_init(void);
->>>    void lkdtm_WRITE_RO(void);
->>>    void lkdtm_WRITE_RO_AFTER_INIT(void);
->>> +void lkdtm_WRITE_RO_PMALLOC(void);
->> Does this need some sort of #ifdef too?
-> Not strictly. It's just a function declaration.
-> As long as it is not used, the linker will not complain.
-> The #ifdef placed around the use and definition is sufficient, from a
-> correctness perspective.
->
-> But it's a different question if there is any standard in linux about
-> hiding also the declaration.
-
-
-I'd prefer hiding it if it's contents are being ifdef'ed out, but I 
-really think it's more of a maintainer preference question.
-
-
->
-> I am not very fond of #ifdefs, so when I can I try to avoid them.
->
->
+diff --git a/tools/memory-model/README b/tools/memory-model/README
+index ea950c566ffd..0b3a5f3c9ccd 100644
+--- a/tools/memory-model/README
++++ b/tools/memory-model/README
+@@ -27,21 +27,6 @@ separately:
+ 
+ See "herdtools7/INSTALL.md" for installation instructions.
+ 
+-Alternatively, Abhishek Bhardwaj has kindly provided a Docker image
+-of these tools at "abhishek40/memory-model".  Abhishek suggests the
+-following commands to install and use this image:
+-
+-  - Users should install Docker for their distribution.
+-  - docker run -itd abhishek40/memory-model
+-  - docker attach <id-emitted-from-the-previous-command>
+-
+-Gentoo users might wish to make use of Patrick McLean's package:
+-
+-  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/herdtools7
+-
+-These packages may not be up-to-date with respect to the GitHub
+-repository.
+-
+ 
+ ==================
+ BASIC USAGE: HERD7
+-- 
+2.5.2
