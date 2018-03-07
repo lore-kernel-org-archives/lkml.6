@@ -1,68 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934046AbeCGQIP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:08:15 -0500
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:56957 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933479AbeCGQIM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:08:12 -0500
-Subject: Re: RFC: remove the "tile" architecture from glibc
-To: Joseph Myers <joseph@codesourcery.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: GNU C Library <libc-alpha@sourceware.org>,
-        linux-arch <linux-arch@vger.kernel.org>, metcalf@alum.mit.edu,
-        Henrik Grindal Bakken <hgb@ifi.uio.no>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Helmut Grohne <helmutg@debian.org>
-References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com>
- <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de>
- <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com>
- <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
- <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
- <alpine.DEB.2.20.1803071557070.28840@digraph.polyomino.org.uk>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <21665e92-27d1-81c5-5959-f0893541b515@physik.fu-berlin.de>
-Date: Wed, 7 Mar 2018 17:08:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934005AbeCGQJC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:09:02 -0500
+Received: from imap.thunk.org ([74.207.234.97]:38696 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933409AbeCGQI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 11:08:59 -0500
+Date: Wed, 7 Mar 2018 11:08:56 -0500
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: ext4 ignoring rootfs default mount options
+Message-ID: <20180307160856.GD7507@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
+ <20180307040608.GA2462@thunk.org>
+ <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803071557070.28840@digraph.polyomino.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 87.77.146.231
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/2018 05:00 PM, Joseph Myers wrote:
-> No-one has posted glibc test results for 2.27 or 2.26, despite the prior
-> claims of interest in keeping the glibc port.
+On Wed, Mar 07, 2018 at 10:14:28AM -0500, Lennart Sorensen wrote:
+> 
+> But delalloc is the default for ext4, so a filesystem mounted with
+> nodelalloc ought to show that in /proc/mounts as far as I am concerned.
+> The comment in the code says anything that is different than the global
+> defaults and the filesystem defaults will be shown, but in this case it
+> is not.  Maybe the comment is just wrong or unclear and this is actually
+> the intended behaviour.  I don't think I like the behaviour if it is
+> intended to work this way.  The /proc/fs/ext4/ option at least looks
+> workable.  Strangely I found the function that implements it but couldn't
+> find anything using it for some reason.  I must have just missed it
+> since it obviously is there.
 
-To be honest, I find the rapid release model for glibc a bit annoying
-as a downstream. Upstream projects which adopt this model and then require
-constant attention from porters cause lots of stress for the less common
-architectures. There are other upstream projects that want attention as
-well and at some point it just will get extremely frustrating.
+This is where it's critcal to understand that the "tune2fs -o" changes
+the *default* mount options.  The key in the comment is the anything
+different from the *filesystem* defaults (that is, the defaults of the
+particular ext4 file system, as opposed to the global defaults).  The
+idea is that /proc/mounts, and /etc/mtab shows the options string that
+if used in /etc/fstab, or in the mount command line, will replicate
+the current mount option state.  Furthermore, that /proc/mounts is the
+minimal set of mount option strings.
 
-Is such a rapid release model really needed for something like a C library?
+You may not like the behavior, but it's been this way forever, and the
+reasoning behind it is that the low-level file system code doesn't
+really know what the actual mount option string that would be in
+/etc/fstab or in the /sbin/mount command line.  That's because
+/sbin/mount command actually parses the mount options, and things like
+"ro" is actually translated into bitflag passed to the mount option.
+So for example, it's impossible to know whether "rw" was in the
+user-specified mount string, since we never see it by the time the
+string gets sent to ext4_fill_super (in fact the kernel never sees
+it).  So when we try to make /proc/mounts a replacement for /etc/mtab
+(since some people make /etc/mtab as symlink /proc/mounts), it's
+actually impossible.  Trying to make it be the minimal set of options
+was at least a consitent thing.  That is, if you use "tune2fs -o
+nodelalloc", it's not necessary to put nodelalloc in /etc/fstab or in
+the mount command line.  And hence, it should not be in /proc/mounts.
 
-As for the testsuites: Adhemerval has gotten access from Debian to a
-number of porterboxes for the various uncommon architectures, including
-alpha, hppa, powerpcspe, sh4 and sparc64 and we're happy to give out
-accounts to anyone interested.
+As far as where ext4_seq_options_show() gets called, it's because we
+have a fair amount of macro shortcuts in fs/ext4/sysfs.c (which is
+where we put all of the pseudo file system support for ext4, which
+means it includes procfs).  Search for macros PROC_FILE_SHOW_DEFN and
+PROC_FILE_LIST.
 
-And since Debian regularly updates glibc as well, you can get most testsuite
-runs also by just checking the build logs (click on the green or red texts):
-
-> https://buildd.debian.org/status/package.php?p=glibc&suite=sid
-
-Note: Testsuites for sh4 and m68k are currently disabled.
-
-Adrian
-
--- 
-  .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+						- Ted
