@@ -1,67 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4009650-1520451629-2-9733740939316990751
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451628; b=vmpV/sBMm+IE/XwzMjTnFQ5dMn5aYbkRKbvhg/EZn+As82g
-    JJJu/TVTyt392s8BRQpN2JV9HM3bWmfaskiB2xTJcyfMiX/pahsZbiWYK4YuWq4b
-    GRq2BLF27H3dJgpCrRBqVe4ZGng71uilQGt/xyM3M8O9fLYw0sbPfzZEGWBgIaaT
-    mnIUYwmPcs7dA/nfUxkChV1AHEw86OaZfFWtwqwx0jDaTcPxfaT6Cywmf4qsbTZD
-    vgb+HYvnmsqnJaaxz8THhFhQRug/m/fTSV0JkK3LIYcCNOQuzjluOsAKN8Tmxxdu
-    MSo+uwIvWSQ/D/E2nNDdycoXHNUJZth2JVURKRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451628; bh=K2cYsOQBGwBW1tZ0NB5qgKqex4
-    zUqkyeh0yaEykKmm4=; b=BIci/gyoMPirpzu8Lp27D1Ez+9OkCJ5B4SR+D+MwAG
-    gBbl9DKBTRzIzC+0Q9692QlopKGpNOHuNPZfnCcswPPtSvLTbIbD1l6EeoGaKSR1
-    FCcqCLielUFeB5Nhm6SdrnaLYdvYokwqWD9ve78etrvxQNB6Rr+PtMeRbywkinJh
-    PgLC9i1BwtbI7cyDuEI6oKiCXz+5r00rh6lIjgSdlOJkmW3E7D9IEOgzJNxevZno
-    +g48HMbLk8PfdkcyzKxPZrR1ziJ4+7EuHe6aIi9QfyxsH4/lx0whoYXogZkn6FYt
-    ZD1X60zWBKmEKbqPxBYYOeac1ScW5UXfIgJjn5bouZkQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754817AbeCGTkZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:40:25 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40570 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754778AbeCGTkY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:40:24 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuYld56xod+AiQq4KzfxwD53K/xF9zJaXI24Sb+RAA3Eaf79WcfEakeI7WfBMbYRrw1HN36
+ARC-Seal: i=1; a=rsa-sha256; t=1520451627; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YznDFgQjCxaDA6m2HHEcz+fXaFgo89Gup96FKeO30qgz8bp0jww/NPht2iHMu3i9UJ
+         cyXtIyxM+zRa4aQbYuSFdG08SFji1SrSSwbYQLH7VPuMfww0Lz0Of/AV34m7hjnbP0KB
+         R/5/JOouX1QL5+H92GLrK1GYuCrILm1yCkBBpg1/i1Rnb/DbGqFxy+fogpGkNZxc+plu
+         zPEpTQYnBjXT7AWtfhNm/xyRiCXdrq8pXpcxu48Y8UWTBzkVJ7BcE9AWSFhQKqub439y
+         n6i9b4XLMMveQiy8K/YDfS3YACVsLJfg17rHfM+J9Vxp+1Ul+sLQYOZnRIBfddfliNK1
+         RFpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=VtzAreYMKH4VWJNKG313/Z+NKMlCKoHt6JiGEo46N8g=;
+        b=NZDYJi9LX6Bxk5GfmmcFfxGdb3pDENdtd0ZSyJKVWT6eQSvt3y0N/MloSosfwKRmRh
+         vLqQT95IJrVegbnsAHF9LVlf9YcGb51vnPlUuhCoL76LjrXfpmgdl8iBReIRXAfmpMl6
+         tFnPZ6Ap2aoTs5ystsGFPzh1ZCXcBrp8dhZdTsmm1am6TjMz0tVOmj0IaHxPR7rZ2ktd
+         Hbzp0r0/ykoRBmBfLGrG0kK1Tjq3rvMJusmbLuvhcf61ySXGt0JXkc+RS8nKfG5Wz6xy
+         MJ6VfwXUzDOqDb53Et8lJL33I0FCmh/LjPox9mIaTlD9gGFNRERt95uLVo5iXHQ9kWZg
+         4jbA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.15 025/122] parisc: Reduce irq overhead when run in qemu
-Date: Wed,  7 Mar 2018 11:37:17 -0800
-Message-Id: <20180307191732.908858756@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?John=20David=20Anglin=C2=A0?= <dave.anglin@bell.net>,
+	Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.15 026/122] parisc: Fix ordering of cache and TLB flushes
+Date: Wed,  7 Mar 2018 11:37:18 -0800
+Message-Id: <20180307191733.064892009@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -69,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309086102738504?=
+X-GMAIL-MSGID: =?utf-8?q?1594309086102738504?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -79,58 +49,209 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit 636a415bcc7f4fd020ece8fd5fc648c4cef19c34 upstream.
+commit 0adb24e03a124b79130c9499731936b11ce2677d upstream.
 
-When run under QEMU, calling mfctl(16) creates some overhead because the
-qemu timer has to be scaled and moved into the register. This patch
-reduces the number of calls to mfctl(16) by moving the calls out of the
-loops.
+The change to flush_kernel_vmap_range() wasn't sufficient to avoid the
+SMP stalls.  The problem is some drivers call these routines with
+interrupts disabled.  Interrupts need to be enabled for flush_tlb_all()
+and flush_cache_all() to work.  This version adds checks to ensure
+interrupts are not disabled before calling routines that need IPI
+interrupts.  When interrupts are disabled, we now drop into slower code.
 
-Additionally, increase the minimal time interval to 8000 cycles instead
-of 500 to compensate possible QEMU delays when delivering interrupts.
+The attached change fixes the ordering of cache and TLB flushes in
+several cases.  When we flush the cache using the existing PTE/TLB
+entries, we need to flush the TLB after doing the cache flush.  We don't
+need to do this when we flush the entire instruction and data caches as
+these flushes don't use the existing TLB entries.  The same is true for
+tmpalias region flushes.
 
+The flush_kernel_vmap_range() and invalidate_kernel_vmap_range()
+routines have been updated.
+
+Secondly, we added a new purge_kernel_dcache_range_asm() routine to
+pacache.S and use it in invalidate_kernel_vmap_range().  Nominally,
+purges are faster than flushes as the cache lines don't have to be
+written back to memory.
+
+Hopefully, this is sufficient to resolve the remaining problems due to
+cache speculation.  So far, testing indicates that this is the case.  I
+did work up a patch using tmpalias flushes, but there is a performance
+hit because we need the physical address for each page, and we also need
+to sequence access to the tmpalias flush code.  This increases the
+probability of stalls.
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Cc: stable@vger.kernel.org # 4.9+
 Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: stable@vger.kernel.org # 4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/time.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/parisc/include/asm/cacheflush.h |    1 
+ arch/parisc/kernel/cache.c           |   57 +++++++++++++++++++----------------
+ arch/parisc/kernel/pacache.S         |   22 +++++++++++++
+ 3 files changed, 54 insertions(+), 26 deletions(-)
 
---- a/arch/parisc/kernel/time.c
-+++ b/arch/parisc/kernel/time.c
-@@ -76,10 +76,10 @@ irqreturn_t __irq_entry timer_interrupt(
- 	next_tick = cpuinfo->it_value;
+--- a/arch/parisc/include/asm/cacheflush.h
++++ b/arch/parisc/include/asm/cacheflush.h
+@@ -26,6 +26,7 @@ void flush_user_icache_range_asm(unsigne
+ void flush_kernel_icache_range_asm(unsigned long, unsigned long);
+ void flush_user_dcache_range_asm(unsigned long, unsigned long);
+ void flush_kernel_dcache_range_asm(unsigned long, unsigned long);
++void purge_kernel_dcache_range_asm(unsigned long, unsigned long);
+ void flush_kernel_dcache_page_asm(void *);
+ void flush_kernel_icache_page(void *);
  
- 	/* Calculate how many ticks have elapsed. */
-+	now = mfctl(16);
- 	do {
- 		++ticks_elapsed;
- 		next_tick += cpt;
--		now = mfctl(16);
- 	} while (next_tick - now > cpt);
+--- a/arch/parisc/kernel/cache.c
++++ b/arch/parisc/kernel/cache.c
+@@ -465,10 +465,10 @@ EXPORT_SYMBOL(copy_user_page);
+ int __flush_tlb_range(unsigned long sid, unsigned long start,
+ 		      unsigned long end)
+ {
+-	unsigned long flags, size;
++	unsigned long flags;
  
- 	/* Store (in CR16 cycles) up to when we are accounting right now. */
-@@ -103,16 +103,17 @@ irqreturn_t __irq_entry timer_interrupt(
- 	 * if one or the other wrapped. If "now" is "bigger" we'll end up
- 	 * with a very large unsigned number.
- 	 */
--	while (next_tick - mfctl(16) > cpt)
-+	now = mfctl(16);
-+	while (next_tick - now > cpt)
- 		next_tick += cpt;
+-	size = (end - start);
+-	if (size >= parisc_tlb_flush_threshold) {
++	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
++	    end - start >= parisc_tlb_flush_threshold) {
+ 		flush_tlb_all();
+ 		return 1;
+ 	}
+@@ -539,13 +539,11 @@ void flush_cache_mm(struct mm_struct *mm
+ 	struct vm_area_struct *vma;
+ 	pgd_t *pgd;
  
- 	/* Program the IT when to deliver the next interrupt.
- 	 * Only bottom 32-bits of next_tick are writable in CR16!
- 	 * Timer interrupt will be delivered at least a few hundred cycles
--	 * after the IT fires, so if we are too close (<= 500 cycles) to the
-+	 * after the IT fires, so if we are too close (<= 8000 cycles) to the
- 	 * next cycle, simply skip it.
- 	 */
--	if (next_tick - mfctl(16) <= 500)
-+	if (next_tick - now <= 8000)
- 		next_tick += cpt;
- 	mtctl(next_tick, 16);
+-	/* Flush the TLB to avoid speculation if coherency is required. */
+-	if (parisc_requires_coherency())
+-		flush_tlb_all();
+-
+ 	/* Flushing the whole cache on each cpu takes forever on
+ 	   rp3440, etc.  So, avoid it if the mm isn't too big.  */
+-	if (mm_total_size(mm) >= parisc_cache_flush_threshold) {
++	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
++	    mm_total_size(mm) >= parisc_cache_flush_threshold) {
++		flush_tlb_all();
+ 		flush_cache_all();
+ 		return;
+ 	}
+@@ -553,9 +551,9 @@ void flush_cache_mm(struct mm_struct *mm
+ 	if (mm->context == mfsp(3)) {
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 			flush_user_dcache_range_asm(vma->vm_start, vma->vm_end);
+-			if ((vma->vm_flags & VM_EXEC) == 0)
+-				continue;
+-			flush_user_icache_range_asm(vma->vm_start, vma->vm_end);
++			if (vma->vm_flags & VM_EXEC)
++				flush_user_icache_range_asm(vma->vm_start, vma->vm_end);
++			flush_tlb_range(vma, vma->vm_start, vma->vm_end);
+ 		}
+ 		return;
+ 	}
+@@ -581,14 +579,9 @@ void flush_cache_mm(struct mm_struct *mm
+ void flush_cache_range(struct vm_area_struct *vma,
+ 		unsigned long start, unsigned long end)
+ {
+-	BUG_ON(!vma->vm_mm->context);
+-
+-	/* Flush the TLB to avoid speculation if coherency is required. */
+-	if (parisc_requires_coherency())
++	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
++	    end - start >= parisc_cache_flush_threshold) {
+ 		flush_tlb_range(vma, start, end);
+-
+-	if ((end - start) >= parisc_cache_flush_threshold
+-	    || vma->vm_mm->context != mfsp(3)) {
+ 		flush_cache_all();
+ 		return;
+ 	}
+@@ -596,6 +589,7 @@ void flush_cache_range(struct vm_area_st
+ 	flush_user_dcache_range_asm(start, end);
+ 	if (vma->vm_flags & VM_EXEC)
+ 		flush_user_icache_range_asm(start, end);
++	flush_tlb_range(vma, start, end);
+ }
  
+ void
+@@ -604,8 +598,7 @@ flush_cache_page(struct vm_area_struct *
+ 	BUG_ON(!vma->vm_mm->context);
+ 
+ 	if (pfn_valid(pfn)) {
+-		if (parisc_requires_coherency())
+-			flush_tlb_page(vma, vmaddr);
++		flush_tlb_page(vma, vmaddr);
+ 		__flush_cache_page(vma, vmaddr, PFN_PHYS(pfn));
+ 	}
+ }
+@@ -613,21 +606,33 @@ flush_cache_page(struct vm_area_struct *
+ void flush_kernel_vmap_range(void *vaddr, int size)
+ {
+ 	unsigned long start = (unsigned long)vaddr;
++	unsigned long end = start + size;
+ 
+-	if ((unsigned long)size > parisc_cache_flush_threshold)
++	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
++	    (unsigned long)size >= parisc_cache_flush_threshold) {
++		flush_tlb_kernel_range(start, end);
+ 		flush_data_cache();
+-	else
+-		flush_kernel_dcache_range_asm(start, start + size);
++		return;
++	}
++
++	flush_kernel_dcache_range_asm(start, end);
++	flush_tlb_kernel_range(start, end);
+ }
+ EXPORT_SYMBOL(flush_kernel_vmap_range);
+ 
+ void invalidate_kernel_vmap_range(void *vaddr, int size)
+ {
+ 	unsigned long start = (unsigned long)vaddr;
++	unsigned long end = start + size;
+ 
+-	if ((unsigned long)size > parisc_cache_flush_threshold)
++	if ((!IS_ENABLED(CONFIG_SMP) || !arch_irqs_disabled()) &&
++	    (unsigned long)size >= parisc_cache_flush_threshold) {
++		flush_tlb_kernel_range(start, end);
+ 		flush_data_cache();
+-	else
+-		flush_kernel_dcache_range_asm(start, start + size);
++		return;
++	}
++
++	purge_kernel_dcache_range_asm(start, end);
++	flush_tlb_kernel_range(start, end);
+ }
+ EXPORT_SYMBOL(invalidate_kernel_vmap_range);
+--- a/arch/parisc/kernel/pacache.S
++++ b/arch/parisc/kernel/pacache.S
+@@ -1110,6 +1110,28 @@ ENTRY_CFI(flush_kernel_dcache_range_asm)
+ 	.procend
+ ENDPROC_CFI(flush_kernel_dcache_range_asm)
+ 
++ENTRY_CFI(purge_kernel_dcache_range_asm)
++	.proc
++	.callinfo NO_CALLS
++	.entry
++
++	ldil		L%dcache_stride, %r1
++	ldw		R%dcache_stride(%r1), %r23
++	ldo		-1(%r23), %r21
++	ANDCM		%r26, %r21, %r26
++
++1:      cmpb,COND(<<),n	%r26, %r25,1b
++	pdc,m		%r23(%r26)
++
++	sync
++	syncdma
++	bv		%r0(%r2)
++	nop
++	.exit
++
++	.procend
++ENDPROC_CFI(purge_kernel_dcache_range_asm)
++
+ ENTRY_CFI(flush_user_icache_range_asm)
+ 	.proc
+ 	.callinfo NO_CALLS
