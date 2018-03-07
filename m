@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4119318-1520452653-2-2263661415007774609
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452644-2-13732117242376183386
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452653; b=JuJjQpkvMcrKW7rzqTGC2+64f9lvJVfmMmTh9Y0oIJsbqN8
-    KOfW9VWRIKbNx6lH8wvMn62B6cOg94KEK3EueZtBWjRaV0JAbHmWkbN0sAsFbhSO
-    +ApYviN4u63Wyvsjf73eryUiyON+yIJ2d6U4E/xPXUqqgcXfW7z6toIXH8Q4al53
-    grjWWJCSKsKE3itGjK8qjIzXAlY/uo+5jURk7lJut7jEEAYsOJPeRdVftrgudDun
-    GzjLPTdEqkV39nmKhAzTXx6nJUoK0xsHmSIZ/1hx4LI8kI3Qc10YYZCzNmuZsMfE
-    Ks4qIe8CFoVIYMus6aanl5lu4/ehYxaw2pWivaA==
+    t=1520452644; b=bjZpp7OgRMSuVZgigF5U8ElaU26cdNc00XDRwmLTPh4LPoQ
+    HoH8FWfP2ExJEJg4jZSr0rjp5qkQmSW30cxLO2p9Z2HxBtNEhrNYdmn6dzVzx9mX
+    hNDNZIJU1YRD4Xa2BwLcn6gaTnm2m2XXLTZMxRw1loRKg3qnISfGa3NsAuX6oAXD
+    gWxJllASEotBjHuMR4JgO9zFQDuOkUyCBQIwADGhFihsKRaKWqoJef26Swvk3CMF
+    WN2pEEnC1a0D5Co2Syg6p3lEP53UU7x9rHSCI/FweQTTDKTWB4bB1ysgsa7mGLnZ
+    SUBAmZMiicnmj1yNfe8P/awuVmRcYsKQ9Gthxtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452653; bh=YC0etEWx2NdhYV667cBc0vvaJW
-    LIOKK5Oo1F7azyYfE=; b=ODYA8nPrp8FZ2nLyM8averEYwIR7kAJsY+yR7MRmK+
-    QqXIrRS+ZZ35U3AodgjNlstFz2rSKWydw0XruHwWzEvAQ9xN1JIaI8c3CrXyDQZz
-    Zygnhmz1+gu+kwo2SuxEdt4HrBcugxCpJimem4NebDE6I/Af7jWjP55SB6s5flfu
-    mbcP2+fsISJKqm+7aqr8/dZg8onvW4v68gZhJS6Kr8P1jJEnc+C9HqLo5+8y+uCg
-    sQoQZk5WyHfQKuUoJyJ2JlKzk8UvE58eNDtgk5+vBYibZ+/vzIxt8bNSNunXs3cf
-    jj1sxu8NNsPP1A07tnPWfBJaNZ41Hz4MeEM1Q5P9CotA==
+    :list-id; s=arctest; t=1520452644; bh=x/iFTSEUYE/wiiH0vNiT8nAqg9
+    zomX/V4eMG/YRQKas=; b=HcH74XA3C0g6acsEt5qTrqLBYShbrNxh8u90ZuhVZq
+    bCSWx6Q/Zu1UrxtXZ/gbzN9LmXYbzfz57v/ef8AKlmy6VnD1Sk1BpCy8QjwrRoZ+
+    1MNtAOGi81wdO4TZpClGiH64rphJIax2eW1bE2c7kWVm2EKfxqPiGpgtc9dpbMCE
+    pL3v18B9Qqpl2UydZ0Z06wqmG+vnrnrN4Q66MFP1EdRleP7zBNX8OukWgfZLtkcE
+    3tiHGzuFn5HPWxe2ijJ6JzHZUS1GvCw/WFXJdm5PfRVFO0h1IFuAXpM3NejxgNXn
+    FuH8IDW/5ETgMgZ3O9uNtr6q3szEa0WKBFJbTyXW72Vg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,22 +49,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965186AbeCGT5U (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:57:20 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44962 "EHLO
+        id S965426AbeCGTrV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:47:21 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965716AbeCGTrV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:21 -0500
+        with ESMTP id S965684AbeCGTrS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:18 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 083/110] blk-mq: dont call io scheds .requeue_request when requeueing rq to ->dispatch
-Date: Wed,  7 Mar 2018 11:39:06 -0800
-Message-Id: <20180307191050.465606623@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 082/110] s390/qeth: fix IPA command submission race
+Date: Wed,  7 Mar 2018 11:39:05 -0800
+Message-Id: <20180307191050.321639195@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -82,52 +80,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-commit 105976f517791aed3b11f8f53b308a2069d42055 upstream.
 
-__blk_mq_requeue_request() covers two cases:
+[ Upstream commit d22ffb5a712f9211ffd104c38fc17cbfb1b5e2b0 ]
 
-- one is that the requeued request is added to hctx->dispatch, such as
-blk_mq_dispatch_rq_list()
+If multiple IPA commands are build & sent out concurrently,
+fill_ipacmd_header() may assign a seqno value to a command that's
+different from what send_control_data() later assigns to this command's
+reply.
+This is due to other commands passing through send_control_data(),
+and incrementing card->seqno.ipa along the way.
 
-- another case is that the request is requeued to io scheduler, such as
-blk_mq_requeue_request().
+So one IPA command has no reply that's waiting for its seqno, while some
+other IPA command has multiple reply objects waiting for it.
+Only one of those waiting replies wins, and the other(s) times out and
+triggers a recovery via send_ipa_cmd().
 
-We should call io sched's .requeue_request callback only for the 2nd
-case.
+Fix this by making sure that the same seqno value is assigned to
+a command and its reply object.
+Do so immediately before submitting the command & while holding the
+irq_pending "lock", to produce nicely ascending seqnos.
 
-Cc: Paolo Valente <paolo.valente@linaro.org>
-Cc: Omar Sandoval <osandov@fb.com>
-Fixes: bd166ef183c2 ("blk-mq-sched: add framework for MQ capable IO schedulers")
-Cc: stable@vger.kernel.org
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Acked-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+As a side effect, *all* IPA commands now use a reply object that's
+waiting for its actual seqno. Previously, early IPA commands that were
+submitted while the card was still DOWN used the "catch-all" IDX seqno.
+
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-mq.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -638,7 +638,6 @@ static void __blk_mq_requeue_request(str
- 
- 	trace_block_rq_requeue(q, rq);
- 	wbt_requeue(q->rq_wb, &rq->issue_stat);
--	blk_mq_sched_requeue_request(rq);
- 
- 	if (test_and_clear_bit(REQ_ATOM_STARTED, &rq->atomic_flags)) {
- 		if (q->dma_drain_size && blk_rq_bytes(rq))
-@@ -650,6 +649,9 @@ void blk_mq_requeue_request(struct reque
- {
- 	__blk_mq_requeue_request(rq);
- 
-+	/* this request will be re-inserted to io scheduler queue */
-+	blk_mq_sched_requeue_request(rq);
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -2087,25 +2087,26 @@ int qeth_send_control_data(struct qeth_c
+ 	}
+ 	reply->callback = reply_cb;
+ 	reply->param = reply_param;
+-	if (card->state == CARD_STATE_DOWN)
+-		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+-	else
+-		reply->seqno = card->seqno.ipa++;
 +
- 	BUG_ON(blk_queued_rq(rq));
- 	blk_mq_add_to_requeue_list(rq, true, kick_requeue_list);
- }
+ 	init_waitqueue_head(&reply->wait_q);
+-	spin_lock_irqsave(&card->lock, flags);
+-	list_add_tail(&reply->list, &card->cmd_waiter_list);
+-	spin_unlock_irqrestore(&card->lock, flags);
+ 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
+ 
+ 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
+-	qeth_prepare_control_data(card, len, iob);
+ 
+ 	if (IS_IPA(iob->data)) {
+ 		cmd = __ipa_cmd(iob);
++		cmd->hdr.seqno = card->seqno.ipa++;
++		reply->seqno = cmd->hdr.seqno;
+ 		event_timeout = QETH_IPA_TIMEOUT;
+ 	} else {
++		reply->seqno = QETH_IDX_COMMAND_SEQNO;
+ 		event_timeout = QETH_TIMEOUT;
+ 	}
++	qeth_prepare_control_data(card, len, iob);
++
++	spin_lock_irqsave(&card->lock, flags);
++	list_add_tail(&reply->list, &card->cmd_waiter_list);
++	spin_unlock_irqrestore(&card->lock, flags);
+ 
+ 	timeout = jiffies + event_timeout;
+ 
+@@ -2896,7 +2897,7 @@ static void qeth_fill_ipacmd_header(stru
+ 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
+ 	cmd->hdr.command = command;
+ 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
+-	cmd->hdr.seqno = card->seqno.ipa;
++	/* cmd->hdr.seqno is set by qeth_send_control_data() */
+ 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
+ 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
+ 	if (card->options.layer2)
