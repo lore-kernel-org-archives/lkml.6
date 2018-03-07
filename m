@@ -1,127 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754283AbeCGMJf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:09:35 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49438 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751142AbeCGMJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:09:31 -0500
-Subject: Re: [PATCH v4 10/10] ARM: sunxi: smp: Add initialization of CNTVOFF
-To: Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180223133742.26044-1-mylene.josserand@bootlin.com>
- <20180223133742.26044-11-mylene.josserand@bootlin.com>
- <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <dd55eee9-8ddc-f186-0bef-0a15764ff368@arm.com>
-Date: Wed, 7 Mar 2018 12:09:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754312AbeCGMLd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:11:33 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57566 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751150AbeCGMLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:11:31 -0500
+Date: Wed, 7 Mar 2018 13:11:20 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chun-Yi Lee <jlee@suse.com>, Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>, Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peter.zijlstra@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH V2 2/3] efi: Introduce efi_rts_workqueue and some
+ infrastructure to invoke all efi_runtime_services()
+Message-ID: <20180307121047.GG23662@pd.tnic>
+References: <1520292190-5027-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v67SuK9Xr7_dVb7RVGXUJwYRKnTiJwDrOJ-Su5CXmm7HXA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <1520292190-5027-3-git-send-email-sai.praneeth.prakhya@intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/02/18 16:17, Chen-Yu Tsai wrote:
-> On Fri, Feb 23, 2018 at 9:37 PM, Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
->> On Cortex-A7, the CNTVOFF register from arch timer is uninitialized.
->> It should be done by the bootloader but it is currently not the case,
->> even for boot CPU because this SoC is booting in secure mode.
->> It leads to an random offset value meaning that each CPU will have a
->> different time, which isn't working very well.
->>
->> Add assembly code used for boot CPU and secondary CPU cores to make
->> sure that the CNTVOFF register is initialized.
->>
->> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
->> ---
->>  arch/arm/mach-sunxi/headsmp.S | 21 +++++++++++++++++++++
->>  arch/arm/mach-sunxi/sunxi.c   |  4 ++++
->>  2 files changed, 25 insertions(+)
->>
->> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
->> index d5c97e945e69..605896251927 100644
->> --- a/arch/arm/mach-sunxi/headsmp.S
->> +++ b/arch/arm/mach-sunxi/headsmp.S
->> @@ -65,9 +65,30 @@ ENTRY(sunxi_mc_smp_cluster_cache_enable)
->>         first: .word sunxi_mc_smp_first_comer - .
->>  ENDPROC(sunxi_mc_smp_cluster_cache_enable)
->>
->> +ENTRY(sunxi_init_cntvoff)
->> +       /*
->> +        * CNTVOFF has to be initialized either from non-secure Hypervisor
->> +        * mode or secure Monitor mode with SCR.NS==1. If TrustZone is enabled
->> +        * then it should be handled by the secure code
->> +        */
->> +       cps     #MON_MODE
->> +       mrc     p15, 0, r1, c1, c1, 0           /* Get Secure Config */
->> +       orr     r0, r1, #1
->> +       mcr     p15, 0, r0, c1, c1, 0           /* Set Non Secure bit */
->> +       instr_sync
->> +       mov     r0, #0
->> +       mcrr    p15, 4, r0, r0, c14             /* CNTVOFF = 0 */
->> +       instr_sync
->> +       mcr     p15, 0, r1, c1, c1, 0           /* Set Secure bit */
->> +       instr_sync
->> +       cps     #SVC_MODE
->> +       ret     lr
->> +ENDPROC(sunxi_init_cntvoff)
-> 
-> There is no need to move all the assembly into a separate file, just
-> to add this function. Everything can be inlined as a naked function.
-> The "instr_sync" macro can be replaced with "isb", which is what it
-> expands to anyway.
-> 
-> I really want to keep everything self-contained without global symbols,
-> and in C files if possible.
-> 
->> +
->>  #ifdef CONFIG_SMP
->>  ENTRY(sunxi_boot)
->>         bl      sunxi_mc_smp_cluster_cache_enable
->> +       bl      sunxi_init_cntvoff
->>         b       secondary_startup
->>  ENDPROC(sunxi_boot)
->>
->> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
->> index 5e9602ce1573..4bb041492b54 100644
->> --- a/arch/arm/mach-sunxi/sunxi.c
->> +++ b/arch/arm/mach-sunxi/sunxi.c
->> @@ -37,8 +37,12 @@ static const char * const sun6i_board_dt_compat[] = {
->>  };
->>
->>  extern void __init sun6i_reset_init(void);
->> +extern void sunxi_init_cntvoff(void);
->> +
->>  static void __init sun6i_timer_init(void)
->>  {
->> +       sunxi_init_cntvoff();
-> 
-> You should check the enable-method to see if PSCI is set or not,
-> as an indicator whether the kernel is booted secure or non-secure.
-> AFAIK trying to set CNTVOFF under non-secure would be very bad.
+On Mon, Mar 05, 2018 at 03:23:09PM -0800, Sai Praneeth Prakhya wrote:
+> +#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
+> +({									\
+> +	struct efi_runtime_work efi_rts_work;				\
+> +									\
+> +	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
+> +	efi_rts_work.func = _rts;					\
+> +	efi_rts_work.arg1 = _arg1;					\
+> +	efi_rts_work.arg2 = _arg2;					\
+> +	efi_rts_work.arg3 = _arg3;					\
+> +	efi_rts_work.arg4 = _arg4;					\
+> +	efi_rts_work.arg5 = _arg5;					\
+> +	/*								\
+> +	 * queue_work() returns 0 if work was already on queue,		\
+> +	 * _ideally_ this should never happen.				\
+> +	 */								\
+> +	if (queue_work(efi_rts_wq, &efi_rts_work.work))			\
+> +		flush_work(&efi_rts_work.work);				\
+> +	else								\
+> +		BUG();							\
 
-Absolutely not. CNTVOFF *is* a non-secure register. The fact that it is
-not accessible from NS-PL1 is another problem. Please don't conflate the
-two things together.
+So failure to queue that work is such a critical problem that we need
+to BUG() and can't possibly continue and shoult not attempt recovery at
+all?
 
-Thanks,
+IOW, we should always strive to fail gracefully and not shit in pants at
+the first sign of trouble.
 
-	M.
+Even checkpatch warns here:
+
+WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rather than BUG() or BUG_ON()
+#184: FILE: drivers/firmware/efi/runtime-wrappers.c:92:
++               BUG();                                                  \
+
+
+and by looking at the other output, you should run your patches through
+checkpatch. Some of the things make sense like:
+
+WARNING: quoted string split across lines
+#97: FILE: drivers/firmware/efi/efi.c:341:
++               pr_err("Failed to create efi_rts_workqueue, EFI runtime services "
++                      "disabled.\n");
+
+for example.
+
 -- 
-Jazz is not dead. It just smells funny...
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
