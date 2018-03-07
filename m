@@ -1,66 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933407AbeCGNZi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 08:25:38 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35536 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754153AbeCGNZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 08:25:37 -0500
-Date: Wed, 7 Mar 2018 07:25:35 -0600
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/9] x86/dumpstack: Improve opcodes dumping in the Code:
- section
-Message-ID: <20180307132535.g7c2jro5n7okavbh@treble>
-References: <20180306094920.16917-1-bp@alien8.de>
- <20180306094920.16917-6-bp@alien8.de>
- <CA+55aFxwdftN1KcA=Q26oN_GYWyeuyjmMPs-whxZcmz=-ARPFg@mail.gmail.com>
- <20180307101314.GC23662@pd.tnic>
+        id S1754153AbeCGN0f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 08:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933402AbeCGN03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 08:26:29 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DC92172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 7 Mar 2018 10:26:24 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: doc: Correct title markers for asciidoctor
+Message-ID: <20180307132624.GB3701@kernel.org>
+References: <20180307105441.28512-1-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180307101314.GC23662@pd.tnic>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180307105441.28512-1-tiwai@suse.de>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 11:13:14AM +0100, Borislav Petkov wrote:
-> And that is fine if I do a 64-byte default, on-stack buffer but that
-> code_bytes= thing can be 2 pages max which is yuck. No way I'm doing
-> on-stack buffers then.
+Em Wed, Mar 07, 2018 at 11:54:41AM +0100, Takashi Iwai escreveu:
+> I've tested to process the perf man pages with asciidoctor that is
+> picker than asciidoc, and it revealed minor syntax errors in some
+> documents.  Namely, the title markers aren't aligned with the previous
+> line, hence asciidoctor didn't recognize as titles.
+> 
+> This patch corrects these markers to be processed properly.
 
-How about we just remove the 'code_bytes=' option?  (Or at the very
-least, reduce its possible range to a reasonable max?)
+Thanks, applying.
 
-I doubt anybody actually uses it.  I'd never heard of it before, nor
-have I ever seen an oops with a long code dump.  I can't fathom why
-somebody would even need it.  64 bytes is plenty, and an 8k code dump
-just sounds insane.
-
-It comes from the following commit:
-
-commit 86c418374223be3f328b5522545196db02c8ceda
-Author: Chuck Ebbert <cebbert@redhat.com>
-Date:   Tue Feb 13 13:26:25 2007 +0100
-
-    [PATCH] i386: add option to show more code in oops reports
-
-    Sometimes developers need to see more object code in an oops report,
-    e.g. when kernel may be corrupted at runtime.
-
-    Add the "code_bytes" option for this.
-
-    Signed-off-by: Chuck Ebbert <cebbert@redhat.com>
-    Signed-off-by: Andi Kleen <ak@suse.de>
-    Cc: Andi Kleen <ak@suse.de>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-But I've never seen a case where somebody needed to use it.
-
--- 
-Josh
+- Arnaldo
+ 
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  tools/perf/Documentation/perf-data.txt        | 2 +-
+>  tools/perf/Documentation/perf-ftrace.txt      | 2 +-
+>  tools/perf/Documentation/perf-kallsyms.txt    | 2 +-
+>  tools/perf/Documentation/perf-sched.txt       | 2 +-
+>  tools/perf/Documentation/perf-script-perl.txt | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-data.txt b/tools/perf/Documentation/perf-data.txt
+> index 90bb4aabe4f8..c87180764829 100644
+> --- a/tools/perf/Documentation/perf-data.txt
+> +++ b/tools/perf/Documentation/perf-data.txt
+> @@ -1,5 +1,5 @@
+>  perf-data(1)
+> -==============
+> +============
+>  
+>  NAME
+>  ----
+> diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Documentation/perf-ftrace.txt
+> index 721a447f046e..b80c84307dc9 100644
+> --- a/tools/perf/Documentation/perf-ftrace.txt
+> +++ b/tools/perf/Documentation/perf-ftrace.txt
+> @@ -1,5 +1,5 @@
+>  perf-ftrace(1)
+> -=============
+> +==============
+>  
+>  NAME
+>  ----
+> diff --git a/tools/perf/Documentation/perf-kallsyms.txt b/tools/perf/Documentation/perf-kallsyms.txt
+> index 954ea9e21236..cdd421cd1c57 100644
+> --- a/tools/perf/Documentation/perf-kallsyms.txt
+> +++ b/tools/perf/Documentation/perf-kallsyms.txt
+> @@ -1,5 +1,5 @@
+>  perf-kallsyms(1)
+> -==============
+> +================
+>  
+>  NAME
+>  ----
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index c7e50f263887..bb33601a823b 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -1,5 +1,5 @@
+>  perf-sched(1)
+> -==============
+> +=============
+>  
+>  NAME
+>  ----
+> diff --git a/tools/perf/Documentation/perf-script-perl.txt b/tools/perf/Documentation/perf-script-perl.txt
+> index 142606c0ec9c..5a1f68122f50 100644
+> --- a/tools/perf/Documentation/perf-script-perl.txt
+> +++ b/tools/perf/Documentation/perf-script-perl.txt
+> @@ -1,5 +1,5 @@
+>  perf-script-perl(1)
+> -==================
+> +===================
+>  
+>  NAME
+>  ----
+> -- 
+> 2.16.2
