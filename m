@@ -1,72 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933904AbeCGP2u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:28:50 -0500
-Received: from muru.com ([72.249.23.125]:59844 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933335AbeCGP2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:28:46 -0500
-Date: Wed, 7 Mar 2018 07:28:42 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: arm-soc <arm@kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL 2/6] omap timer changes for v4.17
-Message-ID: <20180307152842.GH5799@atomide.com>
-References: <pull-1520273005-304551@atomide.com>
- <pull-1520273005-304551@atomide.com-2>
- <CAK8P3a0YwGtE+UkA6+rQ_FQsGO5paL9ub_=oOq_SE3xPUiH1ww@mail.gmail.com>
+        id S933795AbeCGPad (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:30:33 -0500
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35967 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933335AbeCGPab (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:30:31 -0500
+X-Google-Smtp-Source: AG47ELszAQWG+7q7RJI8YpY5AmN67mwWY83TywDcQLHrP4URNaZAOLxQVzEnuuyFuKaVqJ2OXuHD9Q==
+Date: Wed, 7 Mar 2018 15:30:27 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/3] mfd: Update to SPDX license identifier
+Message-ID: <20180307153027.o6rp3777g3nk6q6b@dell>
+References: <1519170849-28802-1-git-send-email-rajmohan.mani@intel.com>
+ <1519170849-28802-2-git-send-email-rajmohan.mani@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0YwGtE+UkA6+rQ_FQsGO5paL9ub_=oOq_SE3xPUiH1ww@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1519170849-28802-2-git-send-email-rajmohan.mani@intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Arnd Bergmann <arnd@arndb.de> [180307 15:22]:
-> On Mon, Mar 5, 2018 at 7:11 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > From: "Tony Lindgren" <tony@atomide.com>
-> >
-> > The following changes since commit 2fdc82776ac2ac49c5ee666d834718ac36420e49:
-> >
-> >   Merge branch 'omap-for-v.16/dmtimer-fix' into omap-for-v4.17/timer (2018-02-22 10:46:47 -0800)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap tags/omap-for-v4.17/timer-signed
-> >
-> > for you to fetch changes up to 58a54f03e73d67432216931854363e4ba15839b9:
-> >
-> >   clocksource: timer-ti-dm: Check prescaler value (2018-02-28 13:41:30 -0800)
-> >
-> > ----------------------------------------------------------------
-> > Move omap timer to drivers for 4.17
-> >
-> > This series from Keerthy and Ladislav Michl move omap dmtimer code
-> > to drivers. As we don't want to export custom timer functions to
-> > random drivers, we also need to update the related PWM driver to
-> > pass the timer specific functions in platform data.
-> >
-> > Note that this series is based on a merge of omap1 specific timer
-> > fix and omap2+ platform data clean-up to keep things working and
-> > make the move a bit simpler.
+On Tue, 20 Feb 2018, Rajmohan Mani wrote:
+
+> Remove the GPL v2 license boilerplate and update with
+> the SPDX license identifier.
 > 
-> I was undecided whether this should be in next/drivers or next/soc,
-> ended up putting it into the latter.
-> 
-> I don't see the clocksource maintainers involved in the patch series,
-> so I added them to Cc now to make sure they are aware of the move
-> of the driver.
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> ---
+>  drivers/mfd/tps68470.c       | 10 +---------
+>  include/linux/mfd/tps68470.h | 17 +++--------------
+>  2 files changed, 4 insertions(+), 23 deletions(-)
 
-OK thanks. We got some comments from Daniel for an earlier set of
-patches in December. No acks though, but hopefully it's good enough
-for further work to happen under drivers/clocksource :)
+Applied, thanks.
 
-Regards,
-
-Tony
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
