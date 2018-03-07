@@ -1,68 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4025272-1520451938-2-5084880401842073536
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520451938; b=QqGgtHIybjREIhi85kEfcUlJXuU/gSfqyPIG0ggE2we1qB+
-    GPcjkIAxfBk+Ai/ljqBoYN1hYFdEP0Gj3vbw4xh5MNf4NLz9iqhCen0vkYp0nmlv
-    Iwk99azG315+ya6SzairiYajHS7WwC1RYmVwtuZ0oz9saNB8fowpIP5qrTZTI2xp
-    BfX3slexT+WUwJrh3BrXKzBJ8MJ9wXhyGKYht1dGcKm8fOHcPsJTG6NTLez3z+h5
-    PqVUw20FvLLa7MnTMEmO2+PRaKf2AvQ3L+IbZcswWXwKnjLDUN9znb+mgzEJl2pR
-    1QHLo8H/JrkcCzemYLJwADe5wkt2sf8kvLFj3GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520451938; bh=l8RswgGd3XY+XuvnXvx2ZjLzTM
-    WgjnHx75w1JAbQ4X0=; b=dp4VfYLM2IGGBVZSGMrfvWKH5zsi1QzSKWWMyAVtk7
-    Q0KbCTEDmab+Ch/JXVJz5tH/Ngwn6jtpes0fekMldRm401ULE2oPWPoBXcv3V/O7
-    HVJfE6IhV0yKeng9WhfaNuPk8HwYssSM4iemGtX/uZQFSLipgpyCyRDeFyUyRY8B
-    4glyyrU+HFGkJ5cVtcQ0SMxbXFvfrGGFeliehXGXUM3W9MCPDfKwgw3a4KA4Dc4L
-    oCamlnograJRYHgFw9fxPtMWnKHt8QCEj/jNqUk2Xzqqc/MflPjoLXV5hbQKSNLt
-    PUlH0ZY4FYiP5ryBrdOrc5/q5VUv0is7/9+o2JHwZOoQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965345AbeCGTpf (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:45:35 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965340AbeCGTpd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:45:33 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELuoJio7VD1KvGgQ7RcBVjxtFEnbkIs4aKkieHm+no1pY2MzoxRO1d388MVAsgL9B1dFM8Cz
+ARC-Seal: i=1; a=rsa-sha256; t=1520451936; cv=none;
+        d=google.com; s=arc-20160816;
+        b=iLjodjT1dbhdH9RsW+SLGrbVeyb3DG7KF9Z4V3fvSXvCG5IIH/veOrvBLRgs2G1c/S
+         jGdrIh92D/du3n8vvI3A1wBTDtCfmVW3leIxDf4TeQSt1XMWR4B0DBfboW7Md2iHH2vA
+         HipNOHRqsikBhWVFbP6orKdwFSlz6zmegeIUka2C2XLnEaH35MWtWuaQRbGdKAA7ujft
+         +E4QLGhINiwt4JIYQMuQHLTEeLLSg64+mQeQehRFHEJYGnu4Da4pL1wsOLfasi57U12H
+         tMSTxdJjhY2M1wfNwDoh8Z4SmawCcIi1zwyMZk1wGH6KcLjB+9P3n8u2O24LnAJOaLH6
+         M+Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=qJrtdyGMxPoTeq+4+fftV8xEx1hxmGudM9qKk1P+Qmg=;
+        b=ZHCobePGORvwfAqnRBBMGo2lRxpRWv3yz7+sVnMlk54UUeogvZVy9OwMKuSKvI7yqa
+         VKebQjRwbOE3lA3QxTazHXh/H2cJDlZtqf7Ek+BnVRVcYanlgORc/ovG5/6PUyXoESep
+         cJUfyDzXmNMAMba3aDgrl8PTQM3tLh4A5kowWVoNHQ7UY83YEhxd94JN33vNC49jcFs5
+         HzRJfeYxC/nkhh7mTfN4NeUkLfNFVo4MxquqBLyZOlBlO6HLagu5uOWLOw62dM8PrtBW
+         +B2cSRiCbYdOKDjRqpY5YAO6o0vx5sz0O2TY0iMwaAgoq7l41FF85PKX3RH8ot9gG2iG
+         wHMw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Du <dudenis2000@yahoo.ca>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 036/110] hdlc_ppp: carrier detect ok, dont turn off negotiation
-Date: Wed,  7 Mar 2018 11:38:19 -0800
-Message-Id: <20180307191044.386489036@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Martin Sebor <msebor@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 037/110] ipv6 sit: work around bogus gcc-8 -Wrestrict warning
+Date: Wed,  7 Mar 2018 11:38:20 -0800
+Message-Id: <20180307191044.508329918@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -70,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309119767792971?=
+X-GMAIL-MSGID: =?utf-8?q?1594309409872714241?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,35 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Denis Du <dudenis2000@yahoo.ca>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit b6c3bad1ba83af1062a7ff6986d9edc4f3d7fc8e ]
+[ Upstream commit ca79bec237f5809a7c3c59bd41cd0880aa889966 ]
 
-Sometimes when physical lines have a just good noise to make the protocol
-handshaking fail, but the carrier detect still good. Then after remove of
-the noise, nobody will trigger this protocol to be start again to cause
-the link to never come back. The fix is when the carrier is still on, not
-terminate the protocol handshaking.
+gcc-8 has a new warning that detects overlapping input and output arguments
+in memcpy(). It triggers for sit_init_net() calling ipip6_tunnel_clone_6rd(),
+which is actually correct:
 
-Signed-off-by: Denis Du <dudenis2000@yahoo.ca>
+net/ipv6/sit.c: In function 'sit_init_net':
+net/ipv6/sit.c:192:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+
+The problem here is that the logic detecting the memcpy() arguments finds them
+to be the same, but the conditional that tests for the input and output of
+ipip6_tunnel_clone_6rd() to be identical is not a compile-time constant.
+
+We know that netdev_priv(t->dev) is the same as t for a tunnel device,
+and comparing "dev" directly here lets the compiler figure out as well
+that 'dev == sitn->fb_tunnel_dev' when called from sit_init_net(), so
+it no longer warns.
+
+This code is old, so Cc stable to make sure that we don't get the warning
+for older kernels built with new gcc.
+
+Cc: Martin Sebor <msebor@gmail.com>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83456
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/hdlc_ppp.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/ipv6/sit.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -574,7 +574,10 @@ static void ppp_timer(unsigned long arg)
- 			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
- 				     0, NULL);
- 			proto->restart_counter--;
--		} else
-+		} else if (netif_carrier_ok(proto->dev))
-+			ppp_cp_event(proto->dev, proto->pid, TO_GOOD, 0, 0,
-+				     0, NULL);
-+		else
- 			ppp_cp_event(proto->dev, proto->pid, TO_BAD, 0, 0,
- 				     0, NULL);
- 		break;
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -176,7 +176,7 @@ static void ipip6_tunnel_clone_6rd(struc
+ #ifdef CONFIG_IPV6_SIT_6RD
+ 	struct ip_tunnel *t = netdev_priv(dev);
+ 
+-	if (t->dev == sitn->fb_tunnel_dev) {
++	if (dev == sitn->fb_tunnel_dev) {
+ 		ipv6_addr_set(&t->ip6rd.prefix, htonl(0x20020000), 0, 0, 0);
+ 		t->ip6rd.relay_prefix = 0;
+ 		t->ip6rd.prefixlen = 16;
