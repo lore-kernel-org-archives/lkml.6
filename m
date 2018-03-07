@@ -1,130 +1,297 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3428667-1520192792-2-14434788724619215995
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520192791; b=UoV5lS1L20trV0+idcs7dGz04dL8P1pSX4jRtpbLaRmbaPp
-    FTCx0a9pFo9lw8rWsFIDwyKeoSuoQxlUp4HIcqfXm9/ZFiwTepUtB5TIobQy9ieU
-    tBf9MmlUCcRpQ4dvKOSOYUezORdkJUlp/tr925gyEzM24EVGLNlycygGZvgmgVdF
-    19G7bfUnp7bWVMaPbdtwUnMjIy3c5BGLSmGSZuvQ/WxdrSiSgv7NdQ7sE0na6HqZ
-    0xLIq2Z/Ykzx2ITSQH4a+TtRTQdV7C19m5UAms1kZHYopgMUq12su6R8ERMJLH0j
-    0ts11XFShDBzvE4N0TvZtPLItMwkW5kYD2vG6Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520192791; bh=HOwCiTzRPl/eyq/xemkhP+ZAdLRjTVW51xroZ+59kIA=; b=U
-    dTpcxCDmk3ufKwZGgf5FWSzsQbyYUy5Q9R9xJn9kiom45n9mIbb0Wa04vWYP/wXn
-    H4GfJlDPVsblP2VlL1BwpINlOVB1blFUm9Ba5e3dpIoAtG0nw3iz5TdF2uh1LOgv
-    LVD05fy+f3UzEPaX0XogkWSiKiBUEBxrOEPhHZvgn0ozv/hdntTSGipngQmxOsjs
-    0jGsUQRTsjf0Zyu7Y+D8t34WjpGOHcrOmups1kVoZByKHUMoayW2pmh3/wY1SaNt
-    hjMx4Gz+Mu1Q2EG9ElIQScBgesQE1Wf10AjfoV/8FrzDMgyA+nRYpEGF6B080/43
-    lG1reyytu9NBbf47Krkng==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=bootlin.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=bootlin.com header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeCDTq3 (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 4 Mar 2018 14:46:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42101 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752134AbeCDTq1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 4 Mar 2018 14:46:27 -0500
-X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        mail.free-electrons.com
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT,
-        URIBL_BLOCKED shortcircuit=ham autolearn=disabled version=3.4.0
-Date: Sun, 4 Mar 2018 20:46:25 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cyrille.pitchen@wedev4u.fr, marek.vasut@gmail.com,
-        boris.brezillon@free-electrons.com, computersforpeace@gmail.com,
-        dwmw2@infradead.org, dedekind1@gmail.com, tharvey@gateworks.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] ubi: Reject MLC NAND
-Message-ID: <20180304204625.5f7da30f@bbrezillon>
-In-Reply-To: <20180303104554.5958-1-richard@nod.at>
-References: <20180303104554.5958-1-richard@nod.at>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Return-Path: <rrajk@nvidia.com>
+X-Google-Smtp-Source: AG47ELuBYR5jBMQxexYjL52zG6a9rxNRFRlhqbLYUfFm4TwNtg12VxXPyFefKCBLzloE21MlbHjH
+ARC-Seal: i=1; a=rsa-sha256; t=1520416071; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rAy3J+JrEZC1DfjP/FZIKegYcusQCoRNVbqb0ToEYf79S0ItBCAGmd9zjKI5n37zC+
+         2d40E4/0uznB0CWXwJffUCeKcCedqlAUph8lLsceGIFvrHFSYkKEUzY6IqgNGMLQpAr3
+         6h0eT3eYR7sFgT9upA7YAPGsE+WnnRvlpnNT8rkSni3jH8/Swm0Tx42CJTbf3xggwwrR
+         AexnldfbMHM1tYn+DmY+0EsVRurVsXqgP+Fm0LXO+8tIi2Egqzws7O/w7GvsUu1e4F9R
+         ybAR4TbWyQDcTKVZxB9LMWn1ozDCvgkPEwo91R04A3k8x2kCQ1g9JGYvwjIY+zIZr8SY
+         qgfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:arc-authentication-results;
+        bh=Vo8SpsQynngYtfIS8NGAZaImPSoShdpPpTI/RGE+zyM=;
+        b=riHTbCdVEoOTNaGRMxwDe4tYKaGr+Jfb7ACW4Izj+ZYpDMrsNE52rlqPuf4yvf8qkG
+         AcIR5w5n3wIck+C4/EemT528PryFpFTkN9OHvu3ncwVEhKZg9D4uon/Rv3chcRsf933c
+         yIvIMuYkzKZDBHsSt6GpjLNwj+mhYqQG0uHc/Ie49CXD6L0O1IDQOohspTafUsf9E5ZU
+         9mTiUQ5W2ppNT5qAeMN2Q4kAnZuziTDBc4seA2mh7cZvAqB8Y7vA9/N2AQDuBjoiuKga
+         UhmCFTNlWIncbdJQCOpnkAIo/5CL5sdophSgDbDBmJ6C5XVT81E+DmXKFpGwfLd2Gchs
+         ONRA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate102.nvidia.com on Wed, 07 Mar 2018 01:47:49 -0800
+Subject: Re: [PATCH 05/10] hwmon: generic-pwm-tachometer: Add generic PWM
+ based tachometer
+To: Guenter Roeck <linux@roeck-us.net>, Mikko Perttunen <cyndis@kapsi.fi>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <corbet@lwn.net>,
+	<catalin.marinas@arm.com>, <will.deacon@arm.com>,
+	<kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
+	<pombredanne@nexb.com>, <mmaddireddy@nvidia.com>, <mperttunen@nvidia.com>,
+	<arnd@arndb.de>, <timur@codeaurora.org>, <andy.gross@linaro.org>,
+	<xuwei5@hisilicon.com>, <elder@linaro.org>, <heiko@sntech.de>,
+	<krzk@kernel.org>, <ard.biesheuvel@linaro.org>
+References: <1519196339-9377-1-git-send-email-rrajk@nvidia.com>
+ <1519196339-9377-6-git-send-email-rrajk@nvidia.com>
+ <5172edff-fe29-7ed1-f0d2-b0359ea2c24d@roeck-us.net>
+ <2510b525-ec36-b49d-5a62-81f335c0d10d@nvidia.com>
+ <cfe0d0ce-3a89-bad0-85ba-6edf1135d2dc@roeck-us.net>
+ <2628eff2-dd33-34f4-a7e1-cfe46ef88a3f@nvidia.com>
+ <4556a8d2-947d-72c4-2962-3167afb53978@kapsi.fi>
+ <62ba7f67-5a99-51ab-1214-eb68ebb7e642@roeck-us.net>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>
+From: Rajkumar Rampelli <rrajk@nvidia.com>
+Message-ID: <952cb50e-d9a0-ae5e-d9f6-d1ce268f0384@nvidia.com>
+Date: Wed, 7 Mar 2018 15:17:51 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <62ba7f67-5a99-51ab-1214-eb68ebb7e642@roeck-us.net>
+X-Originating-IP: [10.19.65.123]
+X-ClientProxiedBy: BGMAIL102.nvidia.com (10.25.59.11) To bgmail103.nvidia.com
+ (10.25.59.12)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592992898629636853?=
+X-GMAIL-MSGID: =?utf-8?q?1594271801803950279?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat,  3 Mar 2018 11:45:54 +0100
-Richard Weinberger <richard@nod.at> wrote:
-
-> While UBI and UBIFS seem to work at first sight with MLC NAND, you will
-> most likely lose all your data upon a power-cut or due to read/write
-> disturb.
-> In order to protect users from bad surprises, refuse to attach to MLC
-> NAND.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
->  drivers/mtd/ubi/build.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-> index e941395de3ae..753494e042d5 100644
-> --- a/drivers/mtd/ubi/build.c
-> +++ b/drivers/mtd/ubi/build.c
-> @@ -854,6 +854,17 @@ int ubi_attach_mtd_dev(struct mtd_info *mtd, int ubi_num,
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * Both UBI and UBIFS have been designed for SLC NAND and NOR flashes.
-> +	 * MLC NAND is different and needs special care, otherwise UBI or UBIFS
-> +	 * will die soon and you will lose all your data.
-> +	 */
-> +	if (mtd->type == MTD_MLCNANDFLASH) {
-> +		pr_err("ubi: refuse attaching mtd%d - MLC NAND is not supported\n",
-> +			mtd->index);
-> +		return -EINVAL;
-> +	}
-> +
->  	if (ubi_num == UBI_DEV_NUM_AUTO) {
->  		/* Search for an empty slot in the @ubi_devices array */
->  		for (ubi_num = 0; ubi_num < UBI_MAX_DEVICES; ubi_num++)
 
 
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+On Wednesday 28 February 2018 07:59 PM, Guenter Roeck wrote:
+> On 02/27/2018 11:03 PM, Mikko Perttunen wrote:
+>> On 02/28/2018 08:12 AM, Rajkumar Rampelli wrote:
+>>>
+>>> On Wednesday 28 February 2018 11:28 AM, Guenter Roeck wrote:
+>>>> On 02/27/2018 09:38 PM, Rajkumar Rampelli wrote:
+>>>>>
+>>>>> On Wednesday 21 February 2018 08:20 PM, Guenter Roeck wrote:
+>>>>>> On 02/20/2018 10:58 PM, Rajkumar Rampelli wrote:
+>>>>>>> Add generic PWM based tachometer driver via HWMON interface
+>>>>>>> to report the RPM of motor. This drivers get the period/duty
+>>>>>>> cycle from PWM IP which captures the motor PWM output.
+>>>>>>>
+>>>>>>> This driver implements a simple interface for monitoring the 
+>>>>>>> speed of
+>>>>>>> a fan and exposes it in roatations per minute (RPM) to the user 
+>>>>>>> space
+>>>>>>> by using the hwmon's sysfs interface
+>>>>>>>
+>>>>>>> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
+>>>>>>> ---
+>>>>>>>   Documentation/hwmon/generic-pwm-tachometer |  17 +++++
+>>>>>>>   drivers/hwmon/Kconfig                      |  10 +++
+>>>>>>>   drivers/hwmon/Makefile                     |   1 +
+>>>>>>>   drivers/hwmon/generic-pwm-tachometer.c     | 112 
+>>>>>>> +++++++++++++++++++++++++++++
+>>>>>>>   4 files changed, 140 insertions(+)
+>>>>>>>   create mode 100644 Documentation/hwmon/generic-pwm-tachometer
+>>>>>>>   create mode 100644 drivers/hwmon/generic-pwm-tachometer.c
+>>>>>>>
+>>>>>>> diff --git a/Documentation/hwmon/generic-pwm-tachometer 
+>>>>>>> b/Documentation/hwmon/generic-pwm-tachometer
+>>>>>>> new file mode 100644
+>>>>>>> index 0000000..e0713ee
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/hwmon/generic-pwm-tachometer
+>>>>>>> @@ -0,0 +1,17 @@
+>>>>>>> +Kernel driver generic-pwm-tachometer
+>>>>>>> +====================================
+>>>>>>> +
+>>>>>>> +This driver enables the use of a PWM module to monitor a fan. 
+>>>>>>> It uses the
+>>>>>>> +generic PWM interface and can be used on SoCs as along as the 
+>>>>>>> SoC supports
+>>>>>>> +Tachometer controller that moniors the Fan speed in periods.
+>>>>>>> +
+>>>>>>> +Author: Rajkumar Rampelli <rrajk@nvidia.com>
+>>>>>>> +
+>>>>>>> +Description
+>>>>>>> +-----------
+>>>>>>> +
+>>>>>>> +The driver implements a simple interface for monitoring the Fan 
+>>>>>>> speed using
+>>>>>>> +PWM module and Tachometer controller. It requests period value 
+>>>>>>> through PWM
+>>>>>>> +capture interface to Tachometer and measures the Rotations per 
+>>>>>>> minute using
+>>>>>>> +received period value. It exposes the Fan speed in RPM to the 
+>>>>>>> user space by
+>>>>>>> +using the hwmon's sysfs interface.
+>>>>>>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+>>>>>>> index ef23553..8912dcb 100644
+>>>>>>> --- a/drivers/hwmon/Kconfig
+>>>>>>> +++ b/drivers/hwmon/Kconfig
+>>>>>>> @@ -1878,6 +1878,16 @@ config SENSORS_XGENE
+>>>>>>>         If you say yes here you get support for the temperature
+>>>>>>>         and power sensors for APM X-Gene SoC.
+>>>>>>>   +config GENERIC_PWM_TACHOMETER
+>>>>>>> +    tristate "Generic PWM based tachometer driver"
+>>>>>>> +    depends on PWM
+>>>>>>> +    help
+>>>>>>> +      Enables a driver to use PWM signal from motor to use
+>>>>>>> +      for measuring the motor speed. The RPM is captured by
+>>>>>>> +      PWM modules which has PWM capture capability and this
+>>>>>>> +      drivers reads the captured data from PWM IP to convert
+>>>>>>> +      it to speed in RPM.
+>>>>>>> +
+>>>>>>>   if ACPI
+>>>>>>>     comment "ACPI drivers"
+>>>>>>> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+>>>>>>> index f814b4a..9dcc374 100644
+>>>>>>> --- a/drivers/hwmon/Makefile
+>>>>>>> +++ b/drivers/hwmon/Makefile
+>>>>>>> @@ -175,6 +175,7 @@ obj-$(CONFIG_SENSORS_WM8350)    += 
+>>>>>>> wm8350-hwmon.o
+>>>>>>>   obj-$(CONFIG_SENSORS_XGENE)    += xgene-hwmon.o
+>>>>>>>     obj-$(CONFIG_PMBUS)        += pmbus/
+>>>>>>> +obj-$(CONFIG_GENERIC_PWM_TACHOMETER) += generic-pwm-tachometer.o
+>>>>>>>     ccflags-$(CONFIG_HWMON_DEBUG_CHIP) := -DDEBUG
+>>>>>>>   diff --git a/drivers/hwmon/generic-pwm-tachometer.c 
+>>>>>>> b/drivers/hwmon/generic-pwm-tachometer.c
+>>>>>>> new file mode 100644
+>>>>>>> index 0000000..9354d43
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/drivers/hwmon/generic-pwm-tachometer.c
+>>>>>>> @@ -0,0 +1,112 @@
+>>>>>>> +/*
+>>>>>>> + * Copyright (c) 2017-2018, NVIDIA CORPORATION.  All rights 
+>>>>>>> reserved.
+>>>>>>> + *
+>>>>>>> + * This program is free software; you can redistribute it 
+>>>>>>> and/or modify it
+>>>>>>> + * under the terms and conditions of the GNU General Public 
+>>>>>>> License,
+>>>>>>> + * version 2, as published by the Free Software Foundation.
+>>>>>>> + *
+>>>>>>> + * This program is distributed in the hope it will be useful, 
+>>>>>>> but WITHOUT
+>>>>>>> + * ANY WARRANTY; without even the implied warranty of 
+>>>>>>> MERCHANTABILITY or
+>>>>>>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General 
+>>>>>>> Public License for
+>>>>>>> + * more details.
+>>>>>>> + *
+>>>>>>> + */
+>>>>>>> +
+>>>>>>> +#include <linux/module.h>
+>>>>>>> +#include <linux/platform_device.h>
+>>>>>>> +#include <linux/err.h>
+>>>>>>> +#include <linux/pwm.h>
+>>>>>>> +#include <linux/hwmon.h>
+>>>>>>> +#include <linux/hwmon-sysfs.h>
+>>>>>>> +
+>>>>>>> +struct pwm_hwmon_tach {
+>>>>>>> +    struct device        *dev;
+>>>>>>> +    struct pwm_device    *pwm;
+>>>>>>> +    struct device        *hwmon;
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static ssize_t show_rpm(struct device *dev, struct 
+>>>>>>> device_attribute *attr,
+>>>>>>> +            char *buf)
+>>>>>>> +{
+>>>>>>> +    struct pwm_hwmon_tach *ptt = dev_get_drvdata(dev);
+>>>>>>> +    struct pwm_device *pwm = ptt->pwm;
+>>>>>>> +    struct pwm_capture result;
+>>>>>>> +    int err;
+>>>>>>> +    unsigned int rpm = 0;
+>>>>>>> +
+>>>>>>> +    err = pwm_capture(pwm, &result, 0);
+>>>>>>> +    if (err < 0) {
+>>>>>>> +        dev_err(ptt->dev, "Failed to capture PWM: %d\n", err);
+>>>>>>> +        return err;
+>>>>>>> +    }
+>>>>>>> +
+>>>>>>> +    if (result.period)
+>>>>>>> +        rpm = DIV_ROUND_CLOSEST_ULL(60ULL * NSEC_PER_SEC,
+>>>>>>> +                        result.period);
+>>>>>>> +
+>>>>>>> +    return sprintf(buf, "%u\n", rpm);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static SENSOR_DEVICE_ATTR(rpm, 0444, show_rpm, NULL, 0);
+>>>>>>> +
+>>>>>>> +static struct attribute *pwm_tach_attrs[] = {
+>>>>>>> +    &sensor_dev_attr_rpm.dev_attr.attr,
+>>>>>>> +    NULL,
+>>>>>>> +};
+>>>>>>
+>>>>>> "rpm" is not a standard hwmon sysfs attribute. If you don't provide
+>>>>>> a single standard hwmon sysfs attribute, having a hwmon driver is 
+>>>>>> pointless.
+>>>>> Guenter Roeck,
+>>>>> I will define a new hwmon sysfs attribute node called 
+>>>>> "hwmon_tachometer_attributes" in hwmon.h like below and update the 
+>>>>> same in tachometer hwmon driver. Is it fine ?
+>>>>> enum hwmon_tachometer_attributes {
+>>>>
+>>>> Are you kidding me ?
+>>>>
+>>>> Guenter
+>>> Sorry, I just wanted to confirm whether my understanding is correct 
+>>> or not before implementing it actually.
+>>> Or, shall I add this attribute as a part of fan attributes with 
+>>> "hwmon_fan_rpm" ? or any other way to do it ? I need your inputs in 
+>>> fixing this.
+>>
+>> I think he wants the attribute to be named according to the 
+>> properties in this document: 
+>> https://www.kernel.org/doc/Documentation/hwmon/sysfs-interface. I 
+>> guess the attribute would then map to fan1_input, though I'm not sure 
+>> if that's 100% correct either since this could technically be 
+>> attached to something other than a fan. But I would think in practice 
+>> that's not a big concern.
+>>
+>> Guenter,
+>> Please correct me as well if I'm wrong.
+>>
+> You are absolutely correct.
+>
+> While I am not opposed to ABI changes, the merits of those would need 
+> to be
+> discussed on the mailing list. But replacing "fan1_input" with "rpm" is
+> not an acceptable ABI change, even if it may measure something that turns
+> but isn't a fan.
+>
+> If this _is_ in fact supposed to be used for something else but fans, we
+> would have to discuss what that might be, and if hwmon is the appropriate
+> subsystem to measure and report it. This does to some degree lead back to
+> my concern of having the "fan" part of this patch series in the pwm core.
+> I am still not sure if that makes sense.
+>
+> Thanks,
+> Guenter
+I am planning to add tachometer support in pwm-fan.c driver 
+(drivers/hwmon/) instead of adding new generic-pwm-tachometer.c driver. 
+Measuring RPM value will be done in pwm-fan driver itself using pwm 
+capture feature and will add new sysfs attributes under this driver to 
+report rpm value of fan.
+>
+>> Thank you,
+>> Mikko
+>>
+>>>
+>>> -- 
+>>> To unsubscribe from this list: send the line "unsubscribe 
+>>> linux-tegra" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe 
+>> linux-hwmon" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>>
+>
