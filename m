@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsghsxqJVtf328H9a51azhqPf7J3WTwhCslcYarHTiEd3S80ipUx//ETGsHPC5uS9pxIJRp
-ARC-Seal: i=1; a=rsa-sha256; t=1520451668; cv=none;
+X-Google-Smtp-Source: AG47ELv12SNPWqOYbus8ToFMb1TqprFKOfOEylrZdk3uS56lCBMj8lxJLJG0hdJybO6d5azcokwV
+ARC-Seal: i=1; a=rsa-sha256; t=1520451667; cv=none;
         d=google.com; s=arc-20160816;
-        b=qTiHY2iun1V8wQ9sxZ1qf2JInHqaVlIi3SllLDlBMPSfF1NGk6PLAFGV/t+mca8FGP
-         TUOeeKXnAmJsbJ3/7gqJv3lh7l6VYYqmyzgYR+G8n3cFLWJ2qtNTlKEXnuz/02w9LtSh
-         KbNgudxDiD2890KzB5NLWg8Cn+pSfejtkuNWQiX01mbB522gDbZYlTqjNRZmklrkiJUK
-         UlnTITcBdIrBfIag3/hped1XbFz57FshrWw2md14cZTnvrJJwxz3vpBWQJ3RpgrEVfWD
-         ERTAFtK6VyMTxpqj9SRVx1RmLLqiUGFNgVpPeNMSzn7mQkCXl8lsYD76Z/y8RGVkfI/D
-         R5Ew==
+        b=hXQwOYbXKYOHsAHM25J0/xDwTYwlNxWfpes6yFr4tMLiGNWI0KJNooaZ867UsKZN5W
+         SAbZ0d83JPE9/Y/Y2zN6Hr1NLIGb/rWYQm/khsE1bK45S2C0MTO6asRFzANkGh9sAYYG
+         rwqflEFE1l/NpAhwHV9GUJ2K97/2Vs4Q98Dn4S+kE6gJZ97B9k5QIkWYeAY3ck1GZsSx
+         2lhlswE5h81vahAvLIwqWzb3zX+2cIUgTfrunFJYucu1ni2Fyht3BfDg+K0NA1ATksbv
+         F0ibMmkFDiLIXrV0EGNDRSZX7nsHc7XOL4eKVJtwwonJWvuCvWm0eV6VSjvLadzZHZqd
+         iqJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KQhasd6Z4uKLuhFEDan5Tfcb0qtkwC7hCuPjdOagqyU=;
-        b=JYh/85MHr/lBJqEXw9CPWv0+jtcCiGVI4P46bVPAih1bkFm4hiXQrAoT99wE/KNS6l
-         hFWq7IVmQ5/OAB/kyeaiKWe7NLV1IXyTRkr0BAlpH8UEC2+tx7PR47LDcnDZGAqYEwJn
-         t1p85/K5Rlz3Z5cp2zC+xWQiiHbQuL2bPtZcObmksKUR8twQcsZog1W8qA8J22l+aoSP
-         wf/jXZnSkOd0Tvx5toJlMtadAZyH3i3JAjI97n8BnJfwBuddzAogbP2widWT3Dbk0vcy
-         +YDRkq7iSnEwT9qDA6waHZttcPZNonkSduCYy72DfTgk+8uQXZGVZAl8Lypk0YvlDZrN
-         mk8A==
+        bh=pbQAfWkIFLfBZuLLJq6a4vyA9/trqya2ndd++0EFg5k=;
+        b=B9pQPjkRrCCAMwySwkIt+bDzUHoJiJ3JeWL6Yw++aV4oDGqhIfEdt2YSz8tat+mUQ1
+         92iTrp/0FXlHpCgejxj1PY1EodZkLQSQXVc2zhz+YbIlSB0idWqsKLr3Eg6/7rSHclxp
+         lWw63EKoLIsfjc3cqVwXoaQu0qMm6g5zKn9Gbg+GW8U5tUI/aYIT288OYrMXHLv/SQN2
+         jgoy7qU50Ej0v5WBPdORozzDYw1L8pIJI5heVODilyF4sTms6R1Jo8jZBmnUKoHZKSwP
+         A1ARKdjJo18AkOP0qEbYkCYhYWFonBfu2o6pimApUD9k0PQ5KnAX6AppU2VA+L9mAJCr
+         bZag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+	Jakub Kicinski <jakub.kicinski@netronome.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 044/122] net: ethernet: ti: cpsw: fix net watchdog timeout
-Date: Wed,  7 Mar 2018 11:37:36 -0800
-Message-Id: <20180307191735.374113232@linuxfoundation.org>
+Subject: [PATCH 4.15 045/122] net: fix race on decreasing number of TX queues
+Date: Wed,  7 Mar 2018 11:37:37 -0800
+Message-Id: <20180307191735.482049230@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309128551674718?=
-X-GMAIL-MSGID: =?utf-8?q?1594309128551674718?=
+X-GMAIL-THRID: =?utf-8?q?1594309127138862131?=
+X-GMAIL-MSGID: =?utf-8?q?1594309127138862131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +49,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
 
-[ Upstream commit 62f94c2101f35cd45775df00ba09bde77580e26a ]
+[ Upstream commit ac5b70198adc25c73fba28de4f78adcee8f6be0b ]
 
-It was discovered that simple program which indefinitely sends 200b UDP
-packets and runs on TI AM574x SoC (SMP) under RT Kernel triggers network
-watchdog timeout in TI CPSW driver (<6 hours run). The network watchdog
-timeout is triggered due to race between cpsw_ndo_start_xmit() and
-cpsw_tx_handler() [NAPI]
+netif_set_real_num_tx_queues() can be called when netdev is up.
+That usually happens when user requests change of number of
+channels/rings with ethtool -L.  The procedure for changing
+the number of queues involves resetting the qdiscs and setting
+dev->num_tx_queues to the new value.  When the new value is
+lower than the old one, extra care has to be taken to ensure
+ordering of accesses to the number of queues vs qdisc reset.
 
-cpsw_ndo_start_xmit()
-	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
-		txq = netdev_get_tx_queue(ndev, q_idx);
-		netif_tx_stop_queue(txq);
+Currently the queues are reset before new dev->num_tx_queues
+is assigned, leaving a window of time where packets can be
+enqueued onto the queues going down, leading to a likely
+crash in the drivers, since most drivers don't check if TX
+skbs are assigned to an active queue.
 
-^^ as per [1] barier has to be used after set_bit() otherwise new value
-might not be visible to other cpus
-	}
-
-cpsw_tx_handler()
-	if (unlikely(netif_tx_queue_stopped(txq)))
-		netif_tx_wake_queue(txq);
-
-and when it happens ndev TX queue became disabled forever while driver's HW
-TX queue is empty.
-
-Fix this, by adding smp_mb__after_atomic() after netif_tx_stop_queue()
-calls and double check for free TX descriptors after stopping ndev TX queue
-- if there are free TX descriptors wake up ndev TX queue.
-
-[1] https://www.kernel.org/doc/html/latest/core-api/atomic_ops.html
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Reviewed-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Fixes: e6484930d7c7 ("net: allocate tx queues in register_netdevice")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ net/core/dev.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1618,6 +1618,7 @@ static netdev_tx_t cpsw_ndo_start_xmit(s
- 		q_idx = q_idx % cpsw->tx_ch_num;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2366,8 +2366,11 @@ EXPORT_SYMBOL(netdev_set_num_tc);
+  */
+ int netif_set_real_num_tx_queues(struct net_device *dev, unsigned int txq)
+ {
++	bool disabling;
+ 	int rc;
  
- 	txch = cpsw->txv[q_idx].ch;
-+	txq = netdev_get_tx_queue(ndev, q_idx);
- 	ret = cpsw_tx_packet_submit(priv, skb, txch);
- 	if (unlikely(ret != 0)) {
- 		cpsw_err(priv, tx_err, "desc submit failed\n");
-@@ -1628,15 +1629,26 @@ static netdev_tx_t cpsw_ndo_start_xmit(s
- 	 * tell the kernel to stop sending us tx frames.
- 	 */
- 	if (unlikely(!cpdma_check_free_tx_desc(txch))) {
--		txq = netdev_get_tx_queue(ndev, q_idx);
- 		netif_tx_stop_queue(txq);
++	disabling = txq < dev->real_num_tx_queues;
 +
-+		/* Barrier, so that stop_queue visible to other cpus */
-+		smp_mb__after_atomic();
+ 	if (txq < 1 || txq > dev->num_tx_queues)
+ 		return -EINVAL;
+ 
+@@ -2383,15 +2386,19 @@ int netif_set_real_num_tx_queues(struct
+ 		if (dev->num_tc)
+ 			netif_setup_tc(dev, txq);
+ 
+-		if (txq < dev->real_num_tx_queues) {
++		dev->real_num_tx_queues = txq;
 +
-+		if (cpdma_check_free_tx_desc(txch))
-+			netif_tx_wake_queue(txq);
++		if (disabling) {
++			synchronize_net();
+ 			qdisc_reset_all_tx_gt(dev, txq);
+ #ifdef CONFIG_XPS
+ 			netif_reset_xps_queues_gt(dev, txq);
+ #endif
+ 		}
++	} else {
++		dev->real_num_tx_queues = txq;
  	}
  
- 	return NETDEV_TX_OK;
- fail:
- 	ndev->stats.tx_dropped++;
--	txq = netdev_get_tx_queue(ndev, skb_get_queue_mapping(skb));
- 	netif_tx_stop_queue(txq);
-+
-+	/* Barrier, so that stop_queue visible to other cpus */
-+	smp_mb__after_atomic();
-+
-+	if (cpdma_check_free_tx_desc(txch))
-+		netif_tx_wake_queue(txq);
-+
- 	return NETDEV_TX_BUSY;
+-	dev->real_num_tx_queues = txq;
+ 	return 0;
  }
- 
+ EXPORT_SYMBOL(netif_set_real_num_tx_queues);
