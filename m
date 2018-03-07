@@ -1,96 +1,484 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934085AbeCGP4S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:56:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934094AbeCGP4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S934100AbeCGP4N (ORCPT <rfc822;w@1wt.eu>);
         Wed, 7 Mar 2018 10:56:13 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBC2204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 7 Mar 2018 15:56:07 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] MIPS: mscc: add ocelot dtsi
-Message-ID: <20180307155605.GS4197@saruman>
-References: <20180306121607.1567-1-alexandre.belloni@bootlin.com>
- <20180306121607.1567-3-alexandre.belloni@bootlin.com>
- <20180307151753.GQ4197@saruman>
- <20180307152751.GM3035@piout.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PhxIMoEr374zxJm2"
-Content-Disposition: inline
-In-Reply-To: <20180307152751.GM3035@piout.net>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40756 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933502AbeCGPuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:50:39 -0500
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 07/19] perf tools: Add MEM_TOPOLOGY feature to perf data file
+Date: Wed,  7 Mar 2018 16:50:08 +0100
+Message-Id: <20180307155020.32613-8-jolsa@kernel.org>
+In-Reply-To: <20180307155020.32613-1-jolsa@kernel.org>
+References: <20180307155020.32613-1-jolsa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adding MEM_TOPOLOGY feature to perf data file,
+that will carry physical memory map and its
+node assignments.
 
---PhxIMoEr374zxJm2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The format of data in MEM_TOPOLOGY is as follows:
 
-On Wed, Mar 07, 2018 at 04:27:51PM +0100, Alexandre Belloni wrote:
-> On 07/03/2018 at 15:17:56 +0000, James Hogan wrote:
-> > On Tue, Mar 06, 2018 at 01:16:04PM +0100, Alexandre Belloni wrote:
-> > > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts=
-/mscc/ocelot.dtsi
-> > > new file mode 100644
-> > > index 000000000000..8c3210577410
-> > > --- /dev/null
-> > > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-> > > @@ -0,0 +1,117 @@
-> > > +//SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> >=20
-> > Niggle: there should be a space after // for consistency with other
-> > files. Same in patch 3.
-> >=20
->=20
-> Ah, yes...
->=20
-> If that is the only thing left, I can resend right away
+  0 - version          | for future changes
+  8 - block_size_bytes | /sys/devices/system/memory/block_size_bytes
+ 16 - count            | number of nodes
 
-There are a couple of irqchip patches from v2 which have gone from the
-latest versions:
-https://patchwork.linux-mips.org/project/linux-mips/list/?series=3D568
+ For each node we store map of physical indexes for
+ each node:
 
-and the vendor prefix too from v4:
-https://patchwork.linux-mips.org/project/linux-mips/list/?series=3D856
+ 32 - node id          | node index
+ 40 - size             | size of bitmap
+ 48 - bitmap           | bitmap of memory indexes that belongs to node
+                       | /sys/devices/system/node/node<NODE>/memory<INDEX>
 
-I presume they're all still relevant. Were you expecting the irqchip
-ones to go through MIPS too? We'd need an ack from the irqchip folk if
-so.
+The MEM_TOPOLOGY could be displayed with following
+report command:
 
-Cheers
-James
+  $ perf report --header-only -I
+  ...
+  # memory nodes (nr 1, block size 0x8000000):
+  #    0 [7G]: 0-23,32-69
 
---PhxIMoEr374zxJm2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Link: http://lkml.kernel.org/n/tip-qq7sohu774wxq154n3my037z@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/include/linux/bitmap.h |   2 +-
+ tools/perf/util/env.h        |   9 ++
+ tools/perf/util/header.c     | 305 +++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/header.h     |   1 +
+ 4 files changed, 316 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgC5UACgkQbAtpk944
-dnqpZxAAhdOHk4mQz5uDlvDsxv02A9Zn0D04DY5dAfGqYa6PoqNNrx7+Mj0rxo5s
-G0LweMNaHETxNlIae1bbOEF0FqT3jlRw4t6QQE4cdBYKq+v02rcmCCKlSPBLACSy
-gVpvSvl9QU3bJjMFErUTtboS3Ohn0SAC5TmSyVnUFxNGTCfZfT14/xLVE+nZLhBv
-R79kLdKwwWm/Cmk8yfSFAWEDygkSAPWoZ2VYgeE9DHbRMWTNUPNujF5HMug3j4rx
-suHmOpI1Hr/aP0eD5iY5YW5wXCeDqSCAQN8U6QVjttE9O1MZrWW3iKzSkuFc0f8h
-dgfDIj8sNazAO7rrvgwEMG8L4KiAD3fdwKazIxtkH941lJVJlOYPnXsG+i5agadw
-VpNJR/WvkQdXsUIOp5F9ETwSTwXbTti2DaoPqtOC7eC9fXFIx5Ie+5IaeZF3/uEv
-RKRkHcOrc2jxxQzF9SX9CM+n/ZDsr8zbfLSlsuDfZQEsDbLQr2ul69IqY7h5WOWH
-6coqoXWJESUG1mZwoLn62uschdbcALLFRoJ8Thm+u5moFkcXxaTRwPqerb9IqXLP
-X6eTgIyUvMIxCJNpMAv/W1dBZ3FRdL8IYzGbdHnRxfED+pF4T4IKpe4K6PRiJAK9
-gSfYeKJ3NCjAGMldOjtkzGkJ27o2wwpgXnpL2CcZKxXbSfoAXcg=
-=vF5I
------END PGP SIGNATURE-----
-
---PhxIMoEr374zxJm2--
+diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
+index ca160270fdfa..63440cc8d618 100644
+--- a/tools/include/linux/bitmap.h
++++ b/tools/include/linux/bitmap.h
+@@ -98,7 +98,7 @@ static inline int test_and_set_bit(int nr, unsigned long *addr)
+ 
+ /**
+  * bitmap_alloc - Allocate bitmap
+- * @nr: Bit to set
++ * @nbits: Number of bits
+  */
+ static inline unsigned long *bitmap_alloc(int nbits)
+ {
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index bf970f57dce0..c4ef2e523367 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -27,6 +27,12 @@ struct numa_node {
+ 	struct cpu_map	*map;
+ };
+ 
++struct memory_node {
++	u64		 node;
++	u64		 size;
++	unsigned long	*set;
++};
++
+ struct perf_env {
+ 	char			*hostname;
+ 	char			*os_release;
+@@ -43,6 +49,7 @@ struct perf_env {
+ 	int			nr_sibling_cores;
+ 	int			nr_sibling_threads;
+ 	int			nr_numa_nodes;
++	int			nr_memory_nodes;
+ 	int			nr_pmu_mappings;
+ 	int			nr_groups;
+ 	char			*cmdline;
+@@ -54,6 +61,8 @@ struct perf_env {
+ 	struct cpu_cache_level	*caches;
+ 	int			 caches_cnt;
+ 	struct numa_node	*numa_nodes;
++	struct memory_node	*memory_nodes;
++	unsigned long long	 memory_bsize;
+ };
+ 
+ extern struct perf_env perf_env;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index e0c3cad0fd8d..3a107e7ac135 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -17,6 +17,7 @@
+ #include <sys/stat.h>
+ #include <sys/utsname.h>
+ #include <linux/time64.h>
++#include <dirent.h>
+ 
+ #include "evlist.h"
+ #include "evsel.h"
+@@ -37,6 +38,7 @@
+ #include "asm/bug.h"
+ #include "tool.h"
+ #include "time-utils.h"
++#include "units.h"
+ 
+ #include "sane_ctype.h"
+ 
+@@ -132,6 +134,25 @@ int do_write(struct feat_fd *ff, const void *buf, size_t size)
+ }
+ 
+ /* Return: 0 if succeded, -ERR if failed. */
++static int do_write_bitmap(struct feat_fd *ff, unsigned long *set, u64 size)
++{
++	u64 *p = (u64 *) set;
++	int i, ret;
++
++	ret = do_write(ff, &size, sizeof(size));
++	if (ret < 0)
++		return ret;
++
++	for (i = 0; (u64) i < BITS_TO_U64(size); i++) {
++		ret = do_write(ff, p + i, sizeof(*p));
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++/* Return: 0 if succeded, -ERR if failed. */
+ int write_padded(struct feat_fd *ff, const void *bf,
+ 		 size_t count, size_t count_aligned)
+ {
+@@ -243,6 +264,38 @@ static char *do_read_string(struct feat_fd *ff)
+ 	return NULL;
+ }
+ 
++/* Return: 0 if succeded, -ERR if failed. */
++static int do_read_bitmap(struct feat_fd *ff, unsigned long **pset, u64 *psize)
++{
++	unsigned long *set;
++	u64 size, *p;
++	int i, ret;
++
++	ret = do_read_u64(ff, &size);
++	if (ret)
++		return ret;
++
++	set = bitmap_alloc(size);
++	if (!set)
++		return -ENOMEM;
++
++	bitmap_zero(set, size);
++
++	p = (u64 *) set;
++
++	for (i = 0; (u64) i < BITS_TO_U64(size); i++) {
++		ret = do_read_u64(ff, p + i);
++		if (ret < 0) {
++			free(set);
++			return ret;
++		}
++	}
++
++	*pset  = set;
++	*psize = size;
++	return 0;
++}
++
+ static int write_tracing_data(struct feat_fd *ff,
+ 			      struct perf_evlist *evlist)
+ {
+@@ -1196,6 +1249,176 @@ static int write_sample_time(struct feat_fd *ff,
+ 			sizeof(evlist->last_sample_time));
+ }
+ 
++
++static int memory_node__read(struct memory_node *n, unsigned long index)
++{
++	unsigned int phys, size = 0;
++	char path[PATH_MAX];
++	struct dirent *ent;
++	DIR *dir;
++
++#define for_each_memory(mem, dir)					\
++	while ((ent = readdir(dir)))					\
++		if (strcmp(ent->d_name, ".") &&				\
++		    strcmp(ent->d_name, "..") &&			\
++		    sscanf(ent->d_name, "memory%u", &mem) == 1)
++
++	scnprintf(path, PATH_MAX,
++		  "%s/devices/system/node/node%lu",
++		  sysfs__mountpoint(), index);
++
++	dir = opendir(path);
++	if (!dir) {
++		pr_warning("failed: cant' open memory sysfs data\n");
++		return -1;
++	}
++
++	for_each_memory(phys, dir) {
++		size = max(phys, size);
++	}
++
++	size++;
++
++	n->set = bitmap_alloc(size);
++	if (!n->set) {
++		closedir(dir);
++		return -ENOMEM;
++	}
++
++	bitmap_zero(n->set, size);
++	n->node = index;
++	n->size = size;
++
++	rewinddir(dir);
++
++	for_each_memory(phys, dir) {
++		set_bit(phys, n->set);
++	}
++
++	closedir(dir);
++	return 0;
++}
++
++static int memory_node__sort(const void *a, const void *b)
++{
++	const struct memory_node *na = a;
++	const struct memory_node *nb = b;
++
++	return na->node - nb->node;
++}
++
++static int build_mem_topology(struct memory_node *nodes, u64 size, u64 *cntp)
++{
++	char path[PATH_MAX];
++	struct dirent *ent;
++	DIR *dir;
++	u64 cnt = 0;
++	int ret = 0;
++
++	scnprintf(path, PATH_MAX, "%s/devices/system/node/",
++		  sysfs__mountpoint());
++
++	dir = opendir(path);
++	if (!dir) {
++		pr_warning("failed: can't open node sysfs data\n");
++		return -1;
++	}
++
++	while (!ret && (ent = readdir(dir))) {
++		unsigned int index;
++		int r;
++
++		if (!strcmp(ent->d_name, ".") ||
++		    !strcmp(ent->d_name, ".."))
++			continue;
++
++		r = sscanf(ent->d_name, "node%u", &index);
++		if (r != 1)
++			continue;
++
++		if (WARN_ONCE(cnt >= size,
++			      "failed to write MEM_TOPOLOGY, way too many nodes\n"))
++			return -1;
++
++		ret = memory_node__read(&nodes[cnt++], index);
++	}
++
++	*cntp = cnt;
++	closedir(dir);
++
++	if (!ret)
++		qsort(nodes, cnt, sizeof(nodes[0]), memory_node__sort);
++
++	return ret;
++}
++
++#define MAX_MEMORY_NODES 2000
++
++/*
++ * The MEM_TOPOLOGY holds physical memory map for every
++ * node in system. The format of data is as follows:
++ *
++ *  0 - version          | for future changes
++ *  8 - block_size_bytes | /sys/devices/system/memory/block_size_bytes
++ * 16 - count            | number of nodes
++ *
++ * For each node we store map of physical indexes for
++ * each node:
++ *
++ * 32 - node id          | node index
++ * 40 - size             | size of bitmap
++ * 48 - bitmap           | bitmap of memory indexes that belongs to node
++ */
++static int write_mem_topology(struct feat_fd *ff __maybe_unused,
++			      struct perf_evlist *evlist __maybe_unused)
++{
++	static struct memory_node nodes[MAX_MEMORY_NODES];
++	u64 bsize, version = 1, i, nr;
++	int ret;
++
++	ret = sysfs__read_xll("devices/system/memory/block_size_bytes",
++			      (unsigned long long *) &bsize);
++	if (ret)
++		return ret;
++
++	ret = build_mem_topology(&nodes[0], MAX_MEMORY_NODES, &nr);
++	if (ret)
++		return ret;
++
++	ret = do_write(ff, &version, sizeof(version));
++	if (ret < 0)
++		goto out;
++
++	ret = do_write(ff, &bsize, sizeof(bsize));
++	if (ret < 0)
++		goto out;
++
++	ret = do_write(ff, &nr, sizeof(nr));
++	if (ret < 0)
++		goto out;
++
++	for (i = 0; i < nr; i++) {
++		struct memory_node *n = &nodes[i];
++
++		#define _W(v)						\
++			ret = do_write(ff, &n->v, sizeof(n->v));	\
++			if (ret < 0)					\
++				goto out;
++
++		_W(node)
++		_W(size)
++
++		#undef _W
++
++		ret = do_write_bitmap(ff, n->set, n->size);
++		if (ret < 0)
++			goto out;
++	}
++
++out:
++	return ret;
++}
++
+ static void print_hostname(struct feat_fd *ff, FILE *fp)
+ {
+ 	fprintf(fp, "# hostname : %s\n", ff->ph->env.hostname);
+@@ -1543,6 +1766,35 @@ static void print_sample_time(struct feat_fd *ff, FILE *fp)
+ 	fprintf(fp, "# sample duration : %10.3f ms\n", d);
+ }
+ 
++static void memory_node__fprintf(struct memory_node *n,
++				 unsigned long long bsize, FILE *fp)
++{
++	char buf_map[100], buf_size[50];
++	unsigned long long size;
++
++	size = bsize * bitmap_weight(n->set, n->size);
++	unit_number__scnprintf(buf_size, 50, size);
++
++	bitmap_scnprintf(n->set, n->size, buf_map, 100);
++	fprintf(fp, "#  %3" PRIu64 " [%s]: %s\n", n->node, buf_size, buf_map);
++}
++
++static void print_mem_topology(struct feat_fd *ff, FILE *fp)
++{
++	struct memory_node *nodes;
++	int i, nr;
++
++	nodes = ff->ph->env.memory_nodes;
++	nr    = ff->ph->env.nr_memory_nodes;
++
++	fprintf(fp, "# memory nodes (nr %d, block size 0x%llx):\n",
++		nr, ff->ph->env.memory_bsize);
++
++	for (i = 0; i < nr; i++) {
++		memory_node__fprintf(&nodes[i], ff->ph->env.memory_bsize, fp);
++	}
++}
++
+ static int __event_process_build_id(struct build_id_event *bev,
+ 				    char *filename,
+ 				    struct perf_session *session)
+@@ -2205,6 +2457,58 @@ static int process_sample_time(struct feat_fd *ff, void *data __maybe_unused)
+ 	return 0;
+ }
+ 
++static int process_mem_topology(struct feat_fd *ff,
++				void *data __maybe_unused)
++{
++	struct memory_node *nodes;
++	u64 version, i, nr, bsize;
++	int ret = -1;
++
++	if (do_read_u64(ff, &version))
++		return -1;
++
++	if (version != 1)
++		return -1;
++
++	if (do_read_u64(ff, &bsize))
++		return -1;
++
++	if (do_read_u64(ff, &nr))
++		return -1;
++
++	nodes = zalloc(sizeof(*nodes) * nr);
++	if (!nodes)
++		return -1;
++
++	for (i = 0; i < nr; i++) {
++		struct memory_node n;
++
++		#define _R(v)				\
++			if (do_read_u64(ff, &n.v))	\
++				goto out;		\
++
++		_R(node)
++		_R(size)
++
++		#undef _R
++
++		if (do_read_bitmap(ff, &n.set, &n.size))
++			goto out;
++
++		nodes[i] = n;
++	}
++
++	ff->ph->env.memory_bsize    = bsize;
++	ff->ph->env.memory_nodes    = nodes;
++	ff->ph->env.nr_memory_nodes = nr;
++	ret = 0;
++
++out:
++	if (ret)
++		free(nodes);
++	return ret;
++}
++
+ struct feature_ops {
+ 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
+ 	void (*print)(struct feat_fd *ff, FILE *fp);
+@@ -2263,6 +2567,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+ 	FEAT_OPN(STAT,		stat,		false),
+ 	FEAT_OPN(CACHE,		cache,		true),
+ 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
++	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
+ };
+ 
+ struct header_print_data {
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index 942bdec6d70d..90d4577a92dc 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -36,6 +36,7 @@ enum {
+ 	HEADER_STAT,
+ 	HEADER_CACHE,
+ 	HEADER_SAMPLE_TIME,
++	HEADER_MEM_TOPOLOGY,
+ 	HEADER_LAST_FEATURE,
+ 	HEADER_FEAT_BITS	= 256,
+ };
+-- 
+2.13.6
