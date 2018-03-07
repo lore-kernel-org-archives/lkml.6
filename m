@@ -1,132 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934040AbeCGQ6n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:58:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54230 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933487AbeCGQ6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:58:38 -0500
-Subject: Re: [PATCH v8 3/5] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To: Tomasz Figa <tfiga@chromium.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Will Deacon <will.deacon@arm.com>, Rob Clark <robdclark@gmail.com>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jcrouse@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20180302101050.6191-1-vivek.gautam@codeaurora.org>
- <20180302101050.6191-4-vivek.gautam@codeaurora.org>
- <d0f2b3ed-136d-7704-2aef-1173a342a89c@arm.com>
- <CAAFQd5BTdF176x5ycatCmCHrMyVX2OZqdXd-JGq06RyDUb0N3g@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <30a2fa5e-3d8e-acb6-ab31-bec652f1be99@arm.com>
-Date: Wed, 7 Mar 2018 16:58:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BTdF176x5ycatCmCHrMyVX2OZqdXd-JGq06RyDUb0N3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S934104AbeCGRCG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 12:02:06 -0500
+Received: from mail.phytec.co.uk ([217.6.246.34]:39983 "EHLO root.phytec.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934017AbeCGRB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 12:01:59 -0500
+From: Daniel Schultz <d.schultz@phytec.de>
+To: lee.jones@linaro.org
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, chenjh@rock-chips.com,
+        linux-kernel@vger.kernel.org, w.egorov@phytec.de
+Subject: [PATCH v2 2/2] mfd: rk808: Add restart functionality
+Date: Wed, 7 Mar 2018 18:01:50 +0100
+Message-Id: <1520442110-28420-2-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
+References: <1520442110-28420-1-git-send-email-d.schultz@phytec.de>
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 07.03.2018 18:01:56,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 07.03.2018 18:01:56,
+        Serialize complete at 07.03.2018 18:01:56
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 13:52, Tomasz Figa wrote:
-> On Wed, Mar 7, 2018 at 9:38 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->> On 02/03/18 10:10, Vivek Gautam wrote:
->>>
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> The smmu device probe/remove and add/remove master device callbacks
->>> gets called when the smmu is not linked to its master, that is without
->>> the context of the master device. So calling runtime apis in those places
->>> separately.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> [vivek: Cleanup pm runtime calls]
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> ---
->>>    drivers/iommu/arm-smmu.c | 96
->>> ++++++++++++++++++++++++++++++++++++++++++++----
->>>    1 file changed, 88 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>> index c8b16f53f597..3d6a1875431f 100644
->>> --- a/drivers/iommu/arm-smmu.c
->>> +++ b/drivers/iommu/arm-smmu.c
->>> @@ -209,6 +209,8 @@ struct arm_smmu_device {
->>>          struct clk_bulk_data            *clks;
->>>          int                             num_clks;
->>>    +     bool                            rpm_supported;
->>> +
->>
->>
->> Can we not automatically infer this from whether clocks and/or power domains
->> are specified or not, then just use pm_runtime_enabled() as the fast-path
->> check as Tomasz originally proposed?
-> 
-> I wouldn't tie this to presence of clocks, since as a next step we
-> would want to actually control the clocks separately. (As far as I
-> understand, on QCom SoCs we might want to have runtime PM active for
-> the translation to work, but clocks gated whenever access to SMMU
-> registers is not needed.) Moreover, you might still have some super
-> high scale thousand-core systems that require clocks to be
-> prepare-enabled, but runtime PM would be undesirable for the reasons
-> we discussed before.
-> 
->>
->> I worry that relying on statically-defined matchdata is just going to blow
->> up the driver and DT binding into a maintenance nightmare; I really don't
->> want to start needing separate definitions for e.g. "arm,juno-etr-mmu-401"
->> and "arm,juno-hdlcd-mmu-401" just because one otherwise-identical instance
->> within the SoC is in a separate controllable power domain while the others
->> aren't.
-> 
-> I don't see a reason why both couldn't just have RPM supported
-> regardless of whether there is a real power domain. It would
-> effectively be just a no-op for those that don't have one.
+When using Rockchip SoCs with rk805/808/818 PMICs, restarts are realized by
+setting the reset registers in the "Clock and Reset Unit".
 
-Because you're then effectively defining "compatible" values for the 
-sake of attaching software policy to them, rather than actually 
-describing different hardware implementations.
+Since all three shutdown functions have almost the same code, all logic
+from the shutdown functions can be refactored to a new function
+"rk808_update_bits", which can update a register by a given address and
+bitmask.
 
-The fact that RPM can't do anything meaningful unless relevant 
-clock/power aspects *are* described, however, means that we shouldn't 
-need additional information redundant with that. Much like the fact that 
-we don't *already* have an "arm,juno-hdlcd-mmu-401" compatible to 
-account for those being integrated such that IDR0.CTTW has the wrong 
-value, since the presence or not of the "dma-coherent" property already 
-describes the truth in that regard.
+After that, notifier blocks and the restart functions were added to the
+driver. Like the shutdown function, the restart is bound to the
+"rockchip,system-power-controller" device tree property and can easily
+revoked to the software restart by removing the property.
 
-> IMHO the
-> only reason to avoid having the RPM enabled is the scalability issue
-> we discussed before.
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+Changes:
+	v2: Re-submit with recipients from Rockchip.
 
-Yes, but that's kind of my point; in reality high throughput/minimal 
-latency and aggressive power management are more or less mutually 
-exclusive. Mobile SoCs with fine-grained clock trees and power domains 
-won't have multiple 40GBe/NVMf/whatever links running flat out in 
-parallel; conversely networking/infrastructure/server SoCs aren't 
-designed around saving every last microamp of leakage current - even in 
-the (fairly unlikely) case of the interconnect clocks being 
-software-gateable at all I would be very surprised if that were ever 
-exposed directly to Linux (FWIW I believe ACPI essentially *requires* 
-clocks to be abstracted behind firmware).
+ drivers/mfd/rk808.c       | 97 ++++++++++++++++++++++++++++++-----------------
+ include/linux/mfd/rk808.h |  1 +
+ 2 files changed, 63 insertions(+), 35 deletions(-)
 
-Realistically then, explicit clocks are only expected on systems which 
-care about power management. We can always revisit that assumption if 
-anything crazy where it isn't the case ever becomes non-theoretical, but 
-for now it's one I'm entirely comfortable with. If on the other hand it 
-turns out that we can rely on just a power domain being present wherever 
-we want RPM, making clocks moot, then all the better.
-
-Robin.
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index d138721..2c68f8c 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -27,6 +27,7 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/regmap.h>
++#include <linux/reboot.h>
+ 
+ struct rk808_reg_data {
+ 	int addr;
+@@ -369,59 +370,73 @@ static const struct regmap_irq_chip rk818_irq_chip = {
+ 
+ static struct i2c_client *rk808_i2c_client;
+ 
+-static void rk805_device_shutdown(void)
++static void rk808_update_bits(unsigned int reg, unsigned int bit_mask)
+ {
+ 	int ret;
+ 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+ 
+ 	if (!rk808) {
+ 		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk805, so do nothing here\n");
++			 "have no %s, so do nothing here\n",
++			 rk808->regmap_irq_chip->name);
+ 		return;
+ 	}
+ 
+ 	ret = regmap_update_bits(rk808->regmap,
+-				 RK805_DEV_CTRL_REG,
+-				 DEV_OFF, DEV_OFF);
++				 reg,
++				 bit_mask, bit_mask);
+ 	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++		dev_err(&rk808_i2c_client->dev, "can't write to DEVCTRL: %x!\n",
++			ret);
+ }
+ 
+-static void rk808_device_shutdown(void)
++static void rk805_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+-
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk808, so do nothing here\n");
+-		return;
+-	}
++	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
++}
++static int rk805_restart_notify(struct notifier_block *this,
++				   unsigned long mode, void *cmd)
++{
++	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF_RST);
++	return NOTIFY_DONE;
++}
+ 
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK808_DEVCTRL_REG,
+-				 DEV_OFF_RST, DEV_OFF_RST);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++static void rk808_device_shutdown(void)
++{
++	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
++}
++static int rk808_restart_notify(struct notifier_block *this,
++				   unsigned long mode, void *cmd)
++{
++	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF);
++	return NOTIFY_DONE;
+ }
+ 
+ static void rk818_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
++	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF_RST);
++}
++static int rk818_restart_notify(struct notifier_block *this,
++				   unsigned long mode, void *cmd)
++{
++	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
++	return NOTIFY_DONE;
++}
+ 
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk818, so do nothing here\n");
+-		return;
+-	}
++static struct notifier_block rk805_restart_handler = {
++	.notifier_call = rk805_restart_notify,
++	.priority = 196,
++};
+ 
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK818_DEVCTRL_REG,
+-				 DEV_OFF_RST, DEV_OFF_RST);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+-}
++static struct notifier_block rk808_restart_handler = {
++	.notifier_call = rk808_restart_notify,
++	.priority = 196,
++};
++
++static struct notifier_block rk818_restart_handler = {
++	.notifier_call = rk818_restart_notify,
++	.priority = 196,
++};
+ 
+ static const struct of_device_id rk808_of_match[] = {
+ 	{ .compatible = "rockchip,rk805" },
+@@ -476,6 +491,7 @@ static int rk808_probe(struct i2c_client *client,
+ 		cells = rk805s;
+ 		nr_cells = ARRAY_SIZE(rk805s);
+ 		pm_pwroff_fn = rk805_device_shutdown;
++		rk808->nb = &rk805_restart_handler;
+ 		break;
+ 	case RK808_ID:
+ 		rk808->regmap_cfg = &rk808_regmap_config;
+@@ -485,6 +501,7 @@ static int rk808_probe(struct i2c_client *client,
+ 		cells = rk808s;
+ 		nr_cells = ARRAY_SIZE(rk808s);
+ 		pm_pwroff_fn = rk808_device_shutdown;
++		rk808->nb = &rk808_restart_handler;
+ 		break;
+ 	case RK818_ID:
+ 		rk808->regmap_cfg = &rk818_regmap_config;
+@@ -494,6 +511,7 @@ static int rk808_probe(struct i2c_client *client,
+ 		cells = rk818s;
+ 		nr_cells = ARRAY_SIZE(rk818s);
+ 		pm_pwroff_fn = rk818_device_shutdown;
++		rk808->nb = &rk818_restart_handler;
+ 		break;
+ 	default:
+ 		dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
+@@ -546,11 +564,18 @@ static int rk808_probe(struct i2c_client *client,
+ 
+ 	pm_off = of_property_read_bool(np,
+ 				"rockchip,system-power-controller");
+-	if (pm_off && !pm_power_off) {
++	if (pm_off) {
+ 		rk808_i2c_client = client;
+-		pm_power_off = pm_pwroff_fn;
++		if (!pm_power_off)
++			pm_power_off = pm_pwroff_fn;
++		if (rk808->nb) {
++			ret = register_restart_handler(rk808->nb);
++			if (ret)
++				dev_err(&client->dev,
++					"cannot register restart handler, %d\n",
++					ret);
++		}
+ 	}
+-
+ 	return 0;
+ 
+ err_irq:
+@@ -564,6 +589,8 @@ static int rk808_remove(struct i2c_client *client)
+ 
+ 	regmap_del_irq_chip(client->irq, rk808->irq_data);
+ 	pm_power_off = NULL;
++	if (rk808->nb)
++		unregister_restart_handler(rk808->nb);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index 338e0f6..9c26ca2 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -453,5 +453,6 @@ struct rk808 {
+ 	long				variant;
+ 	const struct regmap_config	*regmap_cfg;
+ 	const struct regmap_irq_chip	*regmap_irq_chip;
++	struct notifier_block		*nb;
+ };
+ #endif /* __LINUX_REGULATOR_RK808_H */
+-- 
+2.7.4
