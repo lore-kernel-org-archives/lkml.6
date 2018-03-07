@@ -1,59 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754535AbeCGO2J (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:28:09 -0500
-Received: from forward103p.mail.yandex.net ([77.88.28.106]:35777 "EHLO
-        forward103p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754279AbeCGO2C (ORCPT
+        id S933278AbeCGOWS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:22:18 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34763 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751176AbeCGOWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:28:02 -0500
-Authentication-Results: smtp3o.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Message-ID: <1520432391.3731.8.camel@flygoat.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        James Hogan <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Date: Wed, 07 Mar 2018 22:19:51 +0800
-In-Reply-To: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
-         <20170927151527.25570-4-prasannatsmkumar@gmail.com>
-         <20180306000832.GL4197@saruman>
-         <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+        Wed, 7 Mar 2018 09:22:17 -0500
+X-Google-Smtp-Source: AG47ELtVTaARZhj7BVWlKsoIfqwFJFT8fqGYffHx2Kuxqw7/3CMRiux24Kzd4ykE27gS6lJCG7TKuay+kXZdB5cipEA=
+MIME-Version: 1.0
+In-Reply-To: <e30ac9b4-253c-106d-4ea5-604ec3eeb953@st.com>
+References: <e30ac9b4-253c-106d-4ea5-604ec3eeb953@st.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 15:22:15 +0100
+X-Google-Sender-Auth: cRTlMuSsLvWDIHk3FyX691vk6OE
+Message-ID: <CAK8P3a0eyD-LaW4CVZuOKzuOSoksW4saNoCyJm=dJjr9i7_-MA@mail.gmail.com>
+Subject: Re: [GIT PULL] STi DT update for v4.17 round 1
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: "olof@lixom.net" <olof@lixom.net>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "arm@kernel.org" <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-03-07三的 19:14 +0530，PrasannaKumar Muralidharan写道：
-> 
-> I used to get my code tested from Domink but I could not reach him
-> for
-> quite some time. Before buying the development board myself I would
-> like to see if anyone can help me in testing. Do you have any contact
-> with Ingenic who can help in testing this?
-> 
+On Mon, Feb 26, 2018 at 9:32 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
+> warn: You locally have sti-dt-for-v4.17-round1 but it does not (yet)
+> warn: appear to be at
+> git://git.kernel.org/pub/scm/linux/kernel/git/pchotard/sti.git
+> warn: Do you want to push it there, perhaps?
+> warning: refname 'sti-dt-for-v4.17-round1' is ambiguous.
+> STi dts update:
+>
+> Fix all DT dtc warnings when building with W=1
+> For most of implicated node, the addition of a fake reg property
+> fixes these warnings.
+> For others nodes, their location in device tree
+> have been updated.
+>
 
-Hi PrasannaKumar
+Something went wrong with your git-request-pull command, but
+I have pulled the tag tags/sti-dt-for-v4.17-round1 into branch next/dt
+now, as this seems to be what you had intended to send.
 
-I'm resently working on Ingenic chips too. Ingentic guys have sent me a
-X1000 development broad and it will arrive in about two weeks. I have a
-ejtag debugger also (but not very suit with X1000 because X1000 have
-different ejtag interface with standard MIPS cores, maybe we need some
-modification on openocd). So maybe I can help in testing this after I
-get my broad. Just ask if you need any help.
-Thanks
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+      Arnd
