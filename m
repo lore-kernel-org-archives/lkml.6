@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtOk/p9HkLgwbAym1KSWojo/Az/4cKUDCFmBK0jwvovIn26dTwt49zEFcA6ugBTrSkIzs3l
-ARC-Seal: i=1; a=rsa-sha256; t=1520452082; cv=none;
+X-Google-Smtp-Source: AG47ELtEEGMT/9qx2vdbl3A+5Yq8vGbeONoTFXS5SYeItQWhueShvgYOSCzw+Cf9bYv9ux8TyrDO
+ARC-Seal: i=1; a=rsa-sha256; t=1520452080; cv=none;
         d=google.com; s=arc-20160816;
-        b=WfnI4m5kDfCeRDELd9PKwYmY4EA9L1/Kc583GJTVRzrcPJkFAsRHu6SOcKzhVHssND
-         cNmOM4htqst+YtW03Z0vc7J4C5Eaq/xb6OkDYQaC793LM+Mz5kemW/5BD7jNYi0RH91n
-         KNiZJdRn5Gq4qyBdWw/uF7KL6zic1/Mxu0f6Y7JcY9FPMhKxWFkIaQUkftymLqtbOoS3
-         KgW7viJsV0HtguxRHvXaJ0Ovl5EL7OW6r0SblbJyuRCAaeiw3QMdiOowDjvsHKchXiKz
-         wFF7Nca6UXMPjAdb0QweyYITHWc+i7zIdsgkq7NmlY2VY2n7KkdKmbLpx08YMtohGf5Z
-         IYcw==
+        b=g3SXj7db0lwSnIpqe7isb9kxW+Rm5ZS3FbKsBTr7XgG3G4b+ihb2qpR+0b4tGXLhtZ
+         dOiYk3drVFC03rZQPWrXs6w8Rzr5U2Ul2+yYwk/EfGsAaBS4ti+7yj74CPlNQ6RPmXWg
+         t5CBSDn3kACn25F4vm3EapNP2PK34SaDOpdtgv0bhRCxlEOmP/dSb+KMnuTIx6+gp4QV
+         AmwonPRM+/g6sc6TTi0bPJAuE/lx7xNtS8rerjwo01Qsl+vQNa746e3399nJtIpmV3V4
+         XZPD1m+cAk7du9bUPJRnb5PBll7Yb7KOAfaBMC3HgNQZ0xEyfi07XmU9E2At4JGUtBKj
+         XsgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/hTcqy2zkie+gZP3I1ZZIjvsiXT1i4AIg59CxD1tOSE=;
-        b=dNRJvhhILy4C/qqzGIVCFtQ8FILwLgMXZ6b0GNYeFBpLN/Fna8D9f7xexonIg9qgBn
-         fDJO8bZoeNiiNYkBw8mmYk1uzOQzGganxueKdYOIEZxf8WHVGSoM/SwhcRrXL6wi90FT
-         4dZbV7OV+vR3eJiq1qgqro7E0hvtTPqvYbPNhV6W4yyn1hc4VszC1yrSzBewfTsk1BNX
-         mYwdsGpCW0NJ0YkBRVcbdA/1QVkXSn9W9bMO72EJOSuFihkOxI2ScarK5AeuNU62Kjhb
-         D3RgBiARUaeeew5rtNJ6EPnolKAnRgzVyJcva3bWfWHcHkQ2Dtpdpg6LARftTfkpkT6w
-         XcBQ==
+        bh=zqdejJBZZwelrko8gEXgXJjZVlvkXDxQ1CWqVtIe+tM=;
+        b=Fk2jDNeYv84skNh/YN7botB8cNKkv85sSTbRf/86qvauUpGDNDrqM3v43AAqu+nyph
+         NwKeybpdo8X374NcH/us/2wXFMgJ9yV3z5ZzkPUT4Ac/+2X4+yEQK6UDRpI1c1AZ2WC4
+         Up6ZdBdD46adHWG+nc9Y9I2tTV/a2vI6tvJodUFV7gwuil0OgJ7bSpqhdwO6JhMzhkMh
+         v2pCVIA+WbNJvJdZ+GEsm8yVr7yOlZr+upaL16zTOOomG1nfyhAe4Mo5mFG5qdMP3zRN
+         wHStOM5N9OfaFZkWjQt72fhFZtaqd9j58/PdCTYMj5d3JoGESds8ihkT8E+FLQUXuylu
+         fQAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 103/110] PCI/ASPM: Deal with missing root ports in link state handling
-Date: Wed,  7 Mar 2018 11:39:26 -0800
-Message-Id: <20180307191053.128762401@linuxfoundation.org>
+	syzbot+fb7a33a4b6c35007a72b@syzkaller.appspotmail.com,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.14 102/110] KVM: x86: fix vcpu initialization with userspace lapic
+Date: Wed,  7 Mar 2018 11:39:25 -0800
+Message-Id: <20180307191052.960331800@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309562962341196?=
-X-GMAIL-MSGID: =?utf-8?q?1594309562962341196?=
+X-GMAIL-THRID: =?utf-8?q?1594309334216482775?=
+X-GMAIL-MSGID: =?utf-8?q?1594309560505163064?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +50,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Radim Krčmář <rkrcmar@redhat.com>
 
-commit ee8bdfb6568d86bb93f55f8d99c4c643e77304ee upstream.
+commit b7e31be385584afe7f073130e8e570d53c95f7fe upstream.
 
-Even though it is unconventional, some PCIe host implementations omit the
-root ports entirely, and simply consist of a host bridge (which is not
-modeled as a device in the PCI hierarchy) and a link.
+Moving the code around broke this rare configuration.
+Use this opportunity to finally call lapic reset from vcpu reset.
 
-When the downstream device is an endpoint, our current code does not seem
-to mind this unusual configuration. However, when PCIe switches are
-involved, the ASPM code assumes that any downstream switch port has a
-parent, and blindly dereferences the bus->parent->self field of the pci_dev
-struct to chain the downstream link state to the link state of the root
-port. Given that the root port is missing, the link is not modeled at all,
-and nor is the link state, and attempting to access it results in a NULL
-pointer dereference and a crash.
-
-Avoid this by allowing the link state chain to terminate at the downstream
-port if no root port exists.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reported-by: syzbot+fb7a33a4b6c35007a72b@syzkaller.appspotmail.com
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 0b2e9904c159 ("KVM: x86: move LAPIC initialization after VMCS creation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pcie/aspm.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kvm/lapic.c |   10 ++++------
+ arch/x86/kvm/x86.c   |    3 ++-
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -803,10 +803,14 @@ static struct pcie_link_state *alloc_pci
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1944,14 +1944,13 @@ void kvm_lapic_set_base(struct kvm_vcpu
  
- 	/*
- 	 * Root Ports and PCI/PCI-X to PCIe Bridges are roots of PCIe
--	 * hierarchies.
-+	 * hierarchies.  Note that some PCIe host implementations omit
-+	 * the root ports entirely, in which case a downstream port on
-+	 * a switch may become the root of the link state chain for all
-+	 * its subordinate endpoints.
- 	 */
- 	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT ||
--	    pci_pcie_type(pdev) == PCI_EXP_TYPE_PCIE_BRIDGE) {
-+	    pci_pcie_type(pdev) == PCI_EXP_TYPE_PCIE_BRIDGE ||
-+	    !pdev->bus->parent->self) {
- 		link->root = link;
- 	} else {
- 		struct pcie_link_state *parent;
+ void kvm_lapic_reset(struct kvm_vcpu *vcpu, bool init_event)
+ {
+-	struct kvm_lapic *apic;
++	struct kvm_lapic *apic = vcpu->arch.apic;
+ 	int i;
+ 
+-	apic_debug("%s\n", __func__);
++	if (!apic)
++		return;
+ 
+-	ASSERT(vcpu);
+-	apic = vcpu->arch.apic;
+-	ASSERT(apic != NULL);
++	apic_debug("%s\n", __func__);
+ 
+ 	/* Stop the timer in case it's a reset to an active apic */
+ 	hrtimer_cancel(&apic->lapic_timer.timer);
+@@ -2510,7 +2509,6 @@ void kvm_apic_accept_events(struct kvm_v
+ 
+ 	pe = xchg(&apic->pending_events, 0);
+ 	if (test_bit(KVM_APIC_INIT, &pe)) {
+-		kvm_lapic_reset(vcpu, true);
+ 		kvm_vcpu_reset(vcpu, true);
+ 		if (kvm_vcpu_is_bsp(apic->vcpu))
+ 			vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7779,7 +7779,6 @@ int kvm_arch_vcpu_setup(struct kvm_vcpu
+ 	if (r)
+ 		return r;
+ 	kvm_vcpu_reset(vcpu, false);
+-	kvm_lapic_reset(vcpu, false);
+ 	kvm_mmu_setup(vcpu);
+ 	vcpu_put(vcpu);
+ 	return r;
+@@ -7822,6 +7821,8 @@ void kvm_arch_vcpu_destroy(struct kvm_vc
+ 
+ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ {
++	kvm_lapic_reset(vcpu, init_event);
++
+ 	vcpu->arch.hflags = 0;
+ 
+ 	vcpu->arch.smi_pending = 0;
