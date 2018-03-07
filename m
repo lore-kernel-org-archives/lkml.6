@@ -1,73 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965887AbeCGTyU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 14:54:20 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.184]:26405 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965340AbeCGTyR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 14:54:17 -0500
-Date: Wed, 7 Mar 2018 13:54:15 -0600
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] video: fbdev: via_aux_vt1632: remove VLA usage
-Message-ID: <20180307195415.GA666@embeddedgus>
+        id S1754952AbeCGTy1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 14:54:27 -0500
+Received: from mga01.intel.com ([192.55.52.88]:27613 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753949AbeCGTyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 14:54:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.47,437,1515484800";
+   d="scan'208";a="180758507"
+Date: Wed, 7 Mar 2018 11:46:53 -0800
+From: Ivan Gorinov <ivan.gorinov@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v4 2/4] x86/devicetree: Fix device IRQ settings in DT
+Message-ID: <a234dee27ea60ce76141872da0d6bdb378b2a9ee.1520450752.git.ivan.gorinov@intel.com>
+References: <cover.1520450752.git.ivan.gorinov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1520450752.git.ivan.gorinov@intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.117.58
-X-Source-L: No
-X-Exim-ID: 1etf8h-002QFN-Ti
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.175.117.58]:47330
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA and replace it
-with a fixed-length array instead. Also, remove variable 'len'.
+IRQ parameters for the SoC devices connected directly to I/O APIC lines
+(without PCI IRQ routing) may be specified in the Device Tree.
+Called from DT IRQ parser, irq_create_fwspec_mapping() calls
+irq_domain_alloc_irqs() with a pointer to irq_fwspec structure as @arg.
+But x86-specific DT IRQ allocation code casts @arg to of_phandle_args
+structure pointer and crashes trying to read the IRQ parameters.
 
-Notice that no new IDs have been added in seven years.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
 ---
- drivers/video/fbdev/via/via_aux_vt1632.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/devicetree.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/video/fbdev/via/via_aux_vt1632.c b/drivers/video/fbdev/via/via_aux_vt1632.c
-index d24f4cd..0cd0d2a 100644
---- a/drivers/video/fbdev/via/via_aux_vt1632.c
-+++ b/drivers/video/fbdev/via/via_aux_vt1632.c
-@@ -35,10 +35,10 @@ static void probe(struct via_aux_bus *bus, u8 addr)
- 		.addr	=	addr,
- 		.name	=	name};
- 	/* check vendor id and device id */
--	const u8 id[] = {0x06, 0x11, 0x92, 0x31}, len = ARRAY_SIZE(id);
--	u8 tmp[len];
-+	const u8 id[4] = {0x06, 0x11, 0x92, 0x31};
-+	u8 tmp[4];
+diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+index 63d2ebc..5cd387f 100644
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -195,19 +195,22 @@ static struct of_ioapic_type of_ioapic_type[] =
+ static int dt_irqdomain_alloc(struct irq_domain *domain, unsigned int virq,
+ 			      unsigned int nr_irqs, void *arg)
+ {
+-	struct of_phandle_args *irq_data = (void *)arg;
++	struct irq_fwspec *fwspec = (struct irq_fwspec *)arg;
+ 	struct of_ioapic_type *it;
+ 	struct irq_alloc_info tmp;
++	int type_index;
  
--	if (!via_aux_read(&drv, 0x00, tmp, len) || memcmp(id, tmp, len))
-+	if (!via_aux_read(&drv, 0x00, tmp, 4) || memcmp(id, tmp, 4))
- 		return;
+-	if (WARN_ON(irq_data->args_count < 2))
++	if (WARN_ON(fwspec->param_count < 2))
+ 		return -EINVAL;
+-	if (irq_data->args[1] >= ARRAY_SIZE(of_ioapic_type))
++
++	type_index = fwspec->param[1];
++	if (type_index >= ARRAY_SIZE(of_ioapic_type))
+ 		return -EINVAL;
  
- 	printk(KERN_INFO "viafb: Found %s at address 0x%x\n", name, addr);
+-	it = &of_ioapic_type[irq_data->args[1]];
++	it = &of_ioapic_type[type_index];
+ 	ioapic_set_alloc_attr(&tmp, NUMA_NO_NODE, it->trigger, it->polarity);
+ 	tmp.ioapic_id = mpc_ioapic_id(mp_irqdomain_ioapic_idx(domain));
+-	tmp.ioapic_pin = irq_data->args[0];
++	tmp.ioapic_pin = fwspec->param[0];
+ 
+ 	return mp_irqdomain_alloc(domain, virq, nr_irqs, &tmp);
+ }
 -- 
 2.7.4
