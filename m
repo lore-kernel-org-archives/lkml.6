@@ -1,136 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754798AbeCGVLj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 16:11:39 -0500
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:38175 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeCGVLh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 16:11:37 -0500
-X-Google-Smtp-Source: AG47ELt9X3owHEPgNN33ruzBL0pKekmYuXkWqst6pbygK4/mUgo5ySup2aatRqCB+XZRVgusPJ0q/w==
-Date: Wed, 7 Mar 2018 15:11:18 -0600
-From: Rob Herring <robh@kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Jianguo Sun <sunjianguo1@huawei.com>,
-        Jiancheng Xue <xuejiancheng@hisilicon.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pengcheng Li <lpc.li@hisilicon.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: add bindings doc for HiSilicon INNO
- USB2 PHY
-Message-ID: <20180307211118.su2vyfa4zyfh4w2t@rob-hp-laptop>
-References: <1520217605-9312-1-git-send-email-shawn.guo@linaro.org>
- <1520217605-9312-2-git-send-email-shawn.guo@linaro.org>
+        id S1754826AbeCGVMH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 16:12:07 -0500
+Received: from mailoutvs4.siol.net ([213.250.19.137]:59489 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754052AbeCGVMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 16:12:06 -0500
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: kuninori.morimoto.gx@renesas.com, maxime.ripard@free-electrons.com,
+        wens@csie.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [BUG] Kernel crash on Allwinner H3 due to sound core changes
+Date: Wed, 07 Mar 2018 22:11:56 +0100
+Message-ID: <1832733.mujlD9skaR@jernej-laptop>
+In-Reply-To: <26212674.B0xcQEiVyd@jernej-laptop>
+References: <2424862.oPtAVTfrB9@jernej-laptop> <20180302124050.GF6255@sirena.org.uk> <26212674.B0xcQEiVyd@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520217605-9312-2-git-send-email-shawn.guo@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 10:40:04AM +0800, Shawn Guo wrote:
-> From: Pengcheng Li <lpc.li@hisilicon.com>
+Hi,
+
+Dne ponedeljek, 05. marec 2018 ob 22:30:23 CET je Jernej Škrabec napisal(a):
+> Hi,
 > 
-> It adds device tree bindings document for HiSilicon INNO USB2 PHY.
+> Dne petek, 02. marec 2018 ob 13:40:50 CET je Mark Brown napisal(a):
+> > On Thu, Mar 01, 2018 at 11:23:57PM +0100, Jernej Škrabec wrote:
+> > > I removed parts of the code from the sun4i codec driver and
+> > > interestingly
+> > > it doesn't crash if I remove following lines:
+> > > 
+> > > ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
+> > > if (ret) {
+> > > 
+> > > 	dev_err(&pdev->dev, "Failed to register against DMAEngine\n");
+> > > 	goto err_assert_reset;
+> > > 
+> > > }
+> > > 
+> > > Is it possible that NULL pointer causes troubles somewhere down the
+> > > line?
+> > 
+> > Shouldn't be, that's just the configuration which is optional and not
+> > what we're crashing trying to register, we can mostly configure things
+> > by querying the capabilities of the DMA controller via the dmaengine API
+> > these days.  You're removing all the DMA support there so cutting out a
+> > huge segment of the initialization of both this driver and the machine
+> > driver.  Other sunxi devices seem to be starting happily in -next so
+> > there's something system dependent here...
 > 
-> Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
-> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 72 ++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> I enabled memory debugging and it seems that there is an issue caused by
+> loading sun4i-codec driver and it is somehow connected to
+> snd_dmaengine_pcm_unregister().
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> new file mode 100644
-> index 000000000000..4dbf87c70b96
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
-> @@ -0,0 +1,72 @@
-> +Device tree bindings for HiSilicon INNO USB2 PHY
-> +
-> +Required properties:
-> +- compatible: Should be one of the following strings:
-> +	"hisilicon,inno-usb2-phy",
-> +	"hisilicon,hi3798cv200-usb2-phy".
-> +- reg: Should be the address space for PHY configuration register in peripheral
-> +  controller, e.g. PERI_USB0 for USB 2.0 PHY01 on Hi3798CV200 SoC.
-> +- clocks: The phandle and clock specifier pair for INNO USB2 PHY device
-> +  reference clock.
-> +- resets: The phandle and reset specifier pair for INNO USB2 PHY device reset
-> +  signal.
-> +- #address-cells: Must be 1.
-> +- #size-cells: Must be 0.
-> +
-> +The INNO USB2 PHY device should be a child node of peripheral controller that
-> +contains the PHY configuration register, and each device suppports up to 2 PHY
-> +ports which are represented as child nodes of INNO USB2 PHY device.
-> +
-> +Required properties for PHY port node:
-> +- reg: The PHY port instance number.
-> +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
-> +- resets: The phandle and reset specifier pair for PHY port reset signal.
-> +
-> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
-> +
-> +Example:
-> +
-> +perictrl: peripheral-controller@8a20000 {
-> +	compatible = "hisilicon,hi3798cv200-perictrl", "syscon",
-> +		     "simple-mfd";
-
-Is syscon needed here? Doesn't look like the phys need it.
-
-Is there no dependency on the peri ctrl probing first for the phys to 
-probe successfully? If there is some dependency, simple-mfd should not 
-be used.
-
-As for the phy binding,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +	reg = <0x8a20000 0x1000>;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges = <0x0 0x8a20000 0x1000>;
-> +
-> +	usb2_phy1: usb2-phy@120 {
-> +		compatible = "hisilicon,hi3798cv200-usb2-phy";
-> +		reg = <0x120 0x4>;
-> +		clocks = <&crg HISTB_USB2_PHY1_REF_CLK>;
-> +		resets = <&crg 0xbc 4>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		usb2_phy1_port0: phy@0 {
-> +			reg = <0>;
-> +			#phy-cells = <0>;
-> +			resets = <&crg 0xbc 8>;
-> +		};
-> +
-> +		usb2_phy1_port1: phy@1 {
-> +			reg = <1>;
-> +			#phy-cells = <0>;
-> +			resets = <&crg 0xbc 9>;
-> +		};
-> +	};
-> +
-> +	usb2_phy2: usb2-phy@124 {
-> +		compatible = "hisilicon,hi3798cv200-usb2-phy";
-> +		reg = <0x124 0x4>;
-> +		clocks = <&crg HISTB_USB2_PHY2_REF_CLK>;
-> +		resets = <&crg 0xbc 6>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		usb2_phy2_port0: phy@0 {
-> +			reg = <0>;
-> +			#phy-cells = <0>;
-> +			resets = <&crg 0xbc 10>;
-> +		};
-> +	};
-> +};
-> -- 
-> 1.9.1
+> Here is relevant dmesg: https://pastebin.com/raw/80K9GPnB
 > 
+
+I found the issue. Commit be7ee5f32a9a ("ASoC: soc-generic-dmaengine-pcm: 
+replace platform to component") changes struct dmaengine_pcm:
+
+ struct dmaengine_pcm {
+ 	struct dma_chan *chan[SNDRV_PCM_STREAM_LAST + 1];
+ 	const struct snd_dmaengine_pcm_config *config;
+-	struct snd_soc_platform platform;
++	struct snd_soc_component component;
+ 	unsigned int flags;
+ };
+
+In snd_dmaengine_pcm_register():
+ret = snd_soc_add_component(dev, &pcm->component,
+				    &dmaengine_pcm_component, NULL, 0);
+
+And now, sun4i-codec first time returns -EPROBE_DEFER since driver for analog 
+part is not yet loaded. Because of that, all components get destroyed.
+
+snd_dmaengine_pcm_unregister() calls snd_soc_unregister_component() and that 
+one calls __snd_soc_unregister_component() multiple times (until it fails).
+
+Issue is that __snd_soc_unregister_component() uses kfree() on component 
+pointer and that naturally can't succed since component was never kmalloc'ed 
+since it is a part of a bigger structure - struct dmaengine_pcm.
+
+What would be the best fix? Changing struct dmaengine_pcm to have pointer to a 
+component, so it can be freed?
+
+Best regards,
+Jernej
