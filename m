@@ -1,68 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4025272-1520452005-2-5308732351271466365
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452004; b=r/LPKSaGDkpejLIL4QCQyaei0iAvh4vOBCDTy5eoYUgwzfV
-    KOuSLu3BOfLQXFQIjKmKHW40RE7yGTTcs+b/vAdAPsWzflUVRPSMj1ximE/Ncv9L
-    n1lRongH2Za7Rb3P5UlDa0/AdeCgHWVqZ6o6HZNAYxwGFzwOt0BVodjwoywmHhRa
-    pIC6LSz5LZJpzFjEangICmISlFv7dzUBvH5TWFEwbJAe9oRC9Sg5ParrF2vPZQ/F
-    LkLB4jEntoEdbyCp1QPInofCQgRAksHCz/GXb9+bFNWD+QhVniUuHY6w5ZM5fKNN
-    K8wLAUfNDdS+CvUJOKPFWIVkk9c7uk0efpaqUAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452004; bh=JpH8RjP4XpcI9zwx8kO/CUwBgC
-    10Zr9CRQ0YcqQMwuo=; b=wnFhF/2EhK5Lc5dJ080AhJENKonMVIn3vf4InN++/U
-    cTI0ghdwllFPDdprOovKiLle6JtehkTiv9PLuvvxVEO3ys4VpoDdpM2eYabDqgJQ
-    q6y+2ni3oTJM7Pnmj8XwfVwHaznmKZInqZSyym9MSuK7IQwSJuCNWrCvQm/0DjIc
-    uAd51T/5SkLSS586BlEWeeQyoC404wIED+J2gkFqFq8m8/P6QZclXTW7lRUPWmLl
-    D95okcdoa8XRYCxHfEm0JT1x/UnKwoBywyZFzvVWSJ8Yva3wk6moEd78HmhrW/6G
-    JK5aF7hIQTrNCTcsWCX0P5PbP4HD8elZ4rdlSgGBfGYg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965574AbeCGTqk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:46:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44682 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965259AbeCGTqh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:46:37 -0500
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELv2E6R9Hb9J9iDBSBZyO9+lrgHFXSb8UI0PCk9bvt9ziyjiqK+hDlyfsOr0qhiYSnLbttLT
+ARC-Seal: i=1; a=rsa-sha256; t=1520451912; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fTwy6vE6jICJcCk2r4HOvFXeEhBQ+EZxGbYh8spIGt/XAhIdbkUVcmT7931jRwyyOv
+         haQbKOqr9nz2L6xHmglERORogbx7n3uwIOFNiiryjyFK3zkMJXgp+l6RRGJlnM47/UGk
+         l5WcLfhJ9ow7iQe+tb+o2x78IhWVZE91BG2sFKJtXoEDciAWpSWFxxQF1SHR7cuiqnlv
+         MOSwVtQvOa90pdVM0b1IZWVmCrmLQxEq/dSOZ/G5Aufmvv4t09mJPVPjUQ5tf0m/N19w
+         co0FDEto5RA1WsN0a6nLAac2yFmTcPShWEeLRhl3ZsjyctBiem8oLNW5FeQ87LAYYR41
+         9TRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=NklUq1Q2I2JMO9kkFDHL/UBHmzHXZsP4nwhxeHQXvhg=;
+        b=nZErwq7vdrGusY3e5Pzson8IU5prNafuam7VdLNLRDVzl3Q3QnN9HrrOcBe+Kvov+h
+         uSOMcj15kfZil+DHBgj9q5R8INOYE0b1li9KUMGC6KlsJyQMi2Y23YtnZ3PkFDFZeqQy
+         nWc4dIJCI/X64tSqfTq1AQyNBIcR59RGLEPGZGuga5gav3V/s4RX7UepL29LX9doJ1iz
+         7tNmYJul0wzri1It9IaNda1LgEFMGID1IUz7e/InLz0YOcV7IZbeRtyx1qJQBJjTYSNs
+         tZ6aGi82yA5OO40OOHE3ipZ0NHWLyjISnmqW81CUggyEC4ncczWxBZkluX5kMeNMKYRo
+         woUQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 066/110] net/mlx5e: Verify inline header size do not exceed SKB linear size
-Date: Wed,  7 Mar 2018 11:38:49 -0800
-Message-Id: <20180307191047.994943325@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Michal Hocko <mhocko@suse.com>,
+	kvm@vger.kernel.org,
+	Haozhong Zhang <haozhong.zhang@intel.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.14 027/110] vfio: disable filesystem-dax page pinning
+Date: Wed,  7 Mar 2018 11:38:10 -0800
+Message-Id: <20180307191043.187618642@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -70,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1594309114995317883?=
+X-GMAIL-MSGID: =?utf-8?q?1594309384324147220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -80,38 +53,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
+commit 94db151dc89262bfa82922c44e8320cea2334667 upstream.
 
-[ Upstream commit f600c6088018d1dbc5777d18daa83660f7ea4a64 ]
+Filesystem-DAX is incompatible with 'longterm' page pinning. Without
+page cache indirection a DAX mapping maps filesystem blocks directly.
+This means that the filesystem must not modify a file's block map while
+any page in a mapping is pinned. In order to prevent the situation of
+userspace holding of filesystem operations indefinitely, disallow
+'longterm' Filesystem-DAX mappings.
 
-Driver tries to copy at least MLX5E_MIN_INLINE bytes into the control
-segment of the WQE. It assumes that the linear part contains at least
-MLX5E_MIN_INLINE bytes, which can be wrong.
+RDMA has the same conflict and the plan there is to add a 'with lease'
+mechanism to allow the kernel to notify userspace that the mapping is
+being torn down for block-map maintenance. Perhaps something similar can
+be put in place for vfio.
 
-Cited commit verified that driver will not copy more bytes into the
-inline header part that the actual size of the packet. Re-factor this
-check to make sure we do not exceed the linear part as well.
+Note that xfs and ext4 still report:
 
-This fix is aligned with the current driver's assumption that the entire
-L2 will be present in the linear part of the SKB.
+   "DAX enabled. Warning: EXPERIMENTAL, use at your own risk"
 
-Fixes: 6aace17e64f4 ("net/mlx5e: Fix inline header size for small packets")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+...at mount time, and resolving the dax-dma-vs-truncate problem is one
+of the last hurdles to remove that designation.
+
+Acked-by: Alex Williamson <alex.williamson@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: kvm@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Reported-by: Haozhong Zhang <haozhong.zhang@intel.com>
+Tested-by: Haozhong Zhang <haozhong.zhang@intel.com>
+Fixes: d475c6346a38 ("dax,ext2: replace XIP read and write with DAX I/O")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -155,7 +155,7 @@ static inline u16 mlx5e_calc_min_inline(
- 	default:
- 		hlen = mlx5e_skb_l2_header_offset(skb);
- 	}
--	return min_t(u16, hlen, skb->len);
-+	return min_t(u16, hlen, skb_headlen(skb));
- }
+---
+ drivers/vfio/vfio_iommu_type1.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -338,11 +338,12 @@ static int vaddr_get_pfn(struct mm_struc
+ {
+ 	struct page *page[1];
+ 	struct vm_area_struct *vma;
++	struct vm_area_struct *vmas[1];
+ 	int ret;
  
- static inline void mlx5e_tx_skb_pull_inline(unsigned char **skb_data,
+ 	if (mm == current->mm) {
+-		ret = get_user_pages_fast(vaddr, 1, !!(prot & IOMMU_WRITE),
+-					  page);
++		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
++					      page, vmas);
+ 	} else {
+ 		unsigned int flags = 0;
+ 
+@@ -351,7 +352,18 @@ static int vaddr_get_pfn(struct mm_struc
+ 
+ 		down_read(&mm->mmap_sem);
+ 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+-					    NULL, NULL);
++					    vmas, NULL);
++		/*
++		 * The lifetime of a vaddr_get_pfn() page pin is
++		 * userspace-controlled. In the fs-dax case this could
++		 * lead to indefinite stalls in filesystem operations.
++		 * Disallow attempts to pin fs-dax pages via this
++		 * interface.
++		 */
++		if (ret > 0 && vma_is_fsdax(vmas[0])) {
++			ret = -EOPNOTSUPP;
++			put_page(page[0]);
++		}
+ 		up_read(&mm->mmap_sem);
+ 	}
+ 
