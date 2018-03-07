@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvRokAMslgZ5HtKI5HCnHuAAWnwfZ+DO6l+YrvvqfWMDLNQM2JyYwOG58MZe2lhpUByED3H
-ARC-Seal: i=1; a=rsa-sha256; t=1520451678; cv=none;
+X-Google-Smtp-Source: AG47ELs+5pyhTNLH2LVOJ4PHCarUL3QgeD7IRG0KQ8K+67d9TVT3z6KwRypl+zPF7Bw5OziqpB1o
+ARC-Seal: i=1; a=rsa-sha256; t=1520451675; cv=none;
         d=google.com; s=arc-20160816;
-        b=aRR6syaHKQERQ5TO/dAgCueU1Qzkd3aQ9NYKanbG8OYlpzNN20tkm5LNqvBOKkyNgI
-         0iOePqQIavB1PwTVsYiEVeUdgjyo0X8dzulVAech/IaBSJWZR3lkYaD3rmBg9fhuktKl
-         ErxADm0+ofKdyW93q9XXmEzIWHtRdY16017mvllftkcvNQRiFHYm4MMPPNxTk7Nc+Is5
-         DOR5ouVWNdRaHq0YKQEFZ5AxzvmJldXZfPNPS8KzsCAvey6oUwOgxiokQdzKQDHiLnOn
-         Z/BVxuxEtkStfVEZNYntq1hFIAS4WXrE9ADySAcGzYp9M/BP6770bg+mlG8yRuVw/T93
-         Kwcw==
+        b=yJ8woFdCvj4F3csmbiAyvSd3lI1Ae/gARNWBmfqE/E0D2/+D4t7Z+WLB/4uMUWSrKB
+         fj/SXOGL0QcEx3RvdwqH9xm6CAtYl16OSh4+imAn/g/DTewg7u5gLxEJgpMQY8O45nQe
+         HfI+Oc6sqb+Y2+KLCr1dV12gpKIbmOF+jJxzm1CdTq3m1pbUCDjXhYuFaV2HekaF8pBZ
+         ockBymYSARpKpGlqG3Bra4QdAxKvqw4kx31cV1VQZrZyfx8JMS+TC721kYlU2LljVC7q
+         9d/78azoERb7CkG5e7dh+4AM9Ip68tM/y9QukHaFvxLPKPWS0WE+2mw7vu1SkM5P6MbR
+         czjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=HL/ZSKOaEdFq5tegvmW7upXgwCZ7bjrm443GsTB2ADc=;
-        b=CsjAllIBQmVaX8n3V/e80utIo6kDkxo86/SlExs+PYfsAPsztRr754anRLYwSQOPag
-         5fbb4zis0TT41HZQGhPvmx16Fx1yqRtJSx5iHsvOjUqR72ayOQ2nSzOMt3PsGHlaJ1AJ
-         evL0caEZ9MtvffQVc5UjHWaBjnHH/tQ1VH2CC9hs8RLemhhmQp2LobCryk2RGc6ar+Ps
-         q6IOZy5SEO09fKV6z8WpIQyeQxvbPjKF6BesUshl3JLm5kuZS0SU7TqY13Whw6ptKkEg
-         bSRwKwKHQGIO4isM0gfKCyrpQEiBc2WVyEKfoPY4MrAX8eNqy/udXddSROLwniZZ0xl0
-         e29g==
+        bh=VQNq1zY/n++sqR68R0m21fokcmvqZc7M8DqtSATStX0=;
+        b=YMk2AA67Yp7gGVq7ozTIS1DQCwuKIZtDtxg+0eEdhJK4OgU0lqq1V3uN3b+Th40LNc
+         AZqv6ncput2qU52kmszU4n0vugqC7lqzZhYHj/36eSqxCIGCKff1B1tHvdXFGgM9FtS2
+         4Rpkyv2gozxjDgABVM65aggeOUAVTHtQaamYiVxefjYSBpgbCmp1AMxVuF5qxroB9j+D
+         gGRbVit8xSBqBKTxgMP++/InnXHBhSDIE+3luzNVQsVuLG3aFkzIOKPmvG3ueXeY+TY5
+         ZbANKRsC2v1wSC6BMrjlAsPTduiVA0cArxpHsZ2Jr/UCA1m9CWnd6AzuayBPthXnuPPo
+         71lw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
-	Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
+	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 050/122] sctp: verify size of a new chunk in _sctp_make_chunk()
-Date: Wed,  7 Mar 2018 11:37:42 -0800
-Message-Id: <20180307191736.274951227@linuxfoundation.org>
+Subject: [PATCH 4.15 049/122] ppp: prevent unregistered channels from connecting to PPP units
+Date: Wed,  7 Mar 2018 11:37:41 -0800
+Message-Id: <20180307191736.110010631@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309139344235247?=
-X-GMAIL-MSGID: =?utf-8?q?1594309139344235247?=
+X-GMAIL-THRID: =?utf-8?q?1594309136326653920?=
+X-GMAIL-MSGID: =?utf-8?q?1594309136326653920?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,84 +49,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 07f2c7ab6f8d0a7e7c5764c4e6cc9c52951b9d9c ]
+[ Upstream commit 77f840e3e5f09c6d7d727e85e6e08276dd813d11 ]
 
-When SCTP makes INIT or INIT_ACK packet the total chunk length
-can exceed SCTP_MAX_CHUNK_LEN which leads to kernel panic when
-transmitting these packets, e.g. the crash on sending INIT_ACK:
+PPP units don't hold any reference on the channels connected to it.
+It is the channel's responsibility to ensure that it disconnects from
+its unit before being destroyed.
+In practice, this is ensured by ppp_unregister_channel() disconnecting
+the channel from the unit before dropping a reference on the channel.
 
-[  597.804948] skbuff: skb_over_panic: text:00000000ffae06e4 len:120168
-               put:120156 head:000000007aa47635 data:00000000d991c2de
-               tail:0x1d640 end:0xfec0 dev:<NULL>
-...
-[  597.976970] ------------[ cut here ]------------
-[  598.033408] kernel BUG at net/core/skbuff.c:104!
-[  600.314841] Call Trace:
-[  600.345829]  <IRQ>
-[  600.371639]  ? sctp_packet_transmit+0x2095/0x26d0 [sctp]
-[  600.436934]  skb_put+0x16c/0x200
-[  600.477295]  sctp_packet_transmit+0x2095/0x26d0 [sctp]
-[  600.540630]  ? sctp_packet_config+0x890/0x890 [sctp]
-[  600.601781]  ? __sctp_packet_append_chunk+0x3b4/0xd00 [sctp]
-[  600.671356]  ? sctp_cmp_addr_exact+0x3f/0x90 [sctp]
-[  600.731482]  sctp_outq_flush+0x663/0x30d0 [sctp]
-[  600.788565]  ? sctp_make_init+0xbf0/0xbf0 [sctp]
-[  600.845555]  ? sctp_check_transmitted+0x18f0/0x18f0 [sctp]
-[  600.912945]  ? sctp_outq_tail+0x631/0x9d0 [sctp]
-[  600.969936]  sctp_cmd_interpreter.isra.22+0x3be1/0x5cb0 [sctp]
-[  601.041593]  ? sctp_sf_do_5_1B_init+0x85f/0xc30 [sctp]
-[  601.104837]  ? sctp_generate_t1_cookie_event+0x20/0x20 [sctp]
-[  601.175436]  ? sctp_eat_data+0x1710/0x1710 [sctp]
-[  601.233575]  sctp_do_sm+0x182/0x560 [sctp]
-[  601.284328]  ? sctp_has_association+0x70/0x70 [sctp]
-[  601.345586]  ? sctp_rcv+0xef4/0x32f0 [sctp]
-[  601.397478]  ? sctp6_rcv+0xa/0x20 [sctp]
-...
+However, it is possible for an unregistered channel to connect to a PPP
+unit: register a channel with ppp_register_net_channel(), attach a
+/dev/ppp file to it with ioctl(PPPIOCATTCHAN), unregister the channel
+with ppp_unregister_channel() and finally connect the /dev/ppp file to
+a PPP unit with ioctl(PPPIOCCONNECT).
 
-Here the chunk size for INIT_ACK packet becomes too big, mostly
-because of the state cookie (INIT packet has large size with
-many address parameters), plus additional server parameters.
+Once in this situation, the channel is only held by the /dev/ppp file,
+which can be released at anytime and free the channel without letting
+the parent PPP unit know. Then the ppp structure ends up with dangling
+pointers in its ->channels list.
 
-Later this chunk causes the panic in skb_put_data():
+Prevent this scenario by forbidding unregistered channels from
+connecting to PPP units. This maintains the code logic by keeping
+ppp_unregister_channel() responsible from disconnecting the channel if
+necessary and avoids modification on the reference counting mechanism.
 
-  skb_packet_transmit()
-      sctp_packet_pack()
-          skb_put_data(nskb, chunk->skb->data, chunk->skb->len);
+This issue seems to predate git history (successfully reproduced on
+Linux 2.6.26 and earlier PPP commits are unrelated).
 
-'nskb' (head skb) was previously allocated with packet->size
-from u16 'chunk->chunk_hdr->length'.
-
-As suggested by Marcelo we should check the chunk's length in
-_sctp_make_chunk() before trying to allocate skb for it and
-discard a chunk if its size bigger than SCTP_MAX_CHUNK_LEN.
-
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leinter@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/sm_make_chunk.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ppp/ppp_generic.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -1378,9 +1378,14 @@ static struct sctp_chunk *_sctp_make_chu
- 	struct sctp_chunk *retval;
- 	struct sk_buff *skb;
- 	struct sock *sk;
-+	int chunklen;
-+
-+	chunklen = SCTP_PAD4(sizeof(*chunk_hdr) + paylen);
-+	if (chunklen > SCTP_MAX_CHUNK_LEN)
-+		goto nodata;
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -3161,6 +3161,15 @@ ppp_connect_channel(struct channel *pch,
+ 		goto outl;
  
- 	/* No need to allocate LL here, as this is only a chunk. */
--	skb = alloc_skb(SCTP_PAD4(sizeof(*chunk_hdr) + paylen), gfp);
-+	skb = alloc_skb(chunklen, gfp);
- 	if (!skb)
- 		goto nodata;
- 
+ 	ppp_lock(ppp);
++	spin_lock_bh(&pch->downl);
++	if (!pch->chan) {
++		/* Don't connect unregistered channels */
++		spin_unlock_bh(&pch->downl);
++		ppp_unlock(ppp);
++		ret = -ENOTCONN;
++		goto outl;
++	}
++	spin_unlock_bh(&pch->downl);
+ 	if (pch->file.hdrlen > ppp->file.hdrlen)
+ 		ppp->file.hdrlen = pch->file.hdrlen;
+ 	hdrlen = pch->file.hdrlen + 2;	/* for protocol bytes */
