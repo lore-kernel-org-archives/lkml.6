@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuTp93CmpE/WqpE0Bs48D5j14nfoDzbPqbro+xPHukMSpIbEsMVDdAXCwCZLA/N0KHncBfH
-ARC-Seal: i=1; a=rsa-sha256; t=1520452061; cv=none;
+X-Google-Smtp-Source: AG47ELvyqHkaTUZiEnaBhsYZd0OOk4QXH4EGI++Fc2PiAkZLwNstf4RWQs8ad1uUblagqVUxD2JZ
+ARC-Seal: i=1; a=rsa-sha256; t=1520452058; cv=none;
         d=google.com; s=arc-20160816;
-        b=DeDSwqoEu2hZs3zYQHl/TUNBoSmK/O4/nxJGEvPDVCGmTEO4HGrwMdjG6QkK0AU5j/
-         xUsVIv1smEUrhq6RLWCEt+JMbD1hrR+IcvqaC1KHRY7zkt9+bOeLRR9IhDoTA/7mSVwk
-         M+LbrlN4w6H7kg5YYlznTiIBgCE4CEXgcoD3Egcx55Tumexs0SYN7wE/qOMZ5ordaHWp
-         cpq1RaxqdeaeuVfBnIPtdm4LMrl7guX1xTze26mL8q7pI1XNMaSjgQR7laZ8fZvI5xiu
-         uOaxYFE4obVPhXnlj+Ek5Y83HROAw0g49Qe/tjQMdlH9VhOGLTtmxSnMS7yn4BIbXu2u
-         OM0w==
+        b=lTrGdZSokeMz19/FE6ZStLT6QC+bfG6yXpHleHWStRqNgMVsMlSWhdrvrrdWZOWlIM
+         Ie56h61d2Url46AApB2TcU4hFpH/02GRX1IYoK+WdEAgbnuSqkrVCWB3bioQoOvstCNR
+         NqDEiz3OGbeksFtRRVsIE7NrJHrEPSQIRD2gH2wi7Sakf+A8bQcGYRuLzNDXy94P8mqs
+         PjLAxhFHdOiNHyEJDMyp3aSK5D+/AcEumSsfyGivxvLzkzUIogRevnKPckZW9/Y6qV2V
+         +/Gptnt6JbWkb4CkvE7J7shnfsS4qjpQC/JvNPs13f3FaDnWhN2NKBSlhUtfbn0YFdoy
+         OylA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j34lhTM6j0/LHGa/Uh7gO0y95QHMHXoj8VydIAKVW7w=;
-        b=mRUj0fpUgfqiYWHhq0abkxy0bkxN0R5dRnXRKMvWjfKukQI+Xltsp3ocFrqwhNXi7W
-         yUXn42EUhVFveJ6NAs/iJCOnkps8eVh2dU++meNK+QqB45+m1/Rd9VAQ4tAycFbN7//y
-         Rljy9/HX/QjUWu9zFLRLqOoA8dsbDSfyXaqE/qvOukytD/HSO87Oug6hgZ+o+B64bD3c
-         knv3hh5yMO7aZdJs4i4rjET/5+l2KWUc8LpF/je9mmcbQlZluIJv4+nhJNyy7ns33KHY
-         CZb9FHD/ayuz+Qu4YI3qJfchIlQfwijUjX/zluuvzwHIvzy89t+4Zaj+rTT9RvE9Lw2k
-         mmKA==
+        bh=uvEUg2epm2iZxtmzPeBFL9qXJSIXQiAYxLeKF5Ya3w4=;
+        b=VfguQEr7upRzSGmEHo2FeMMajWJ/b5j2qRTwSOPtLEbwIt1MV/IwtTciecUcvbZMge
+         b3DbLolgHEXK6GVSpqUQFxNyB65gUBJO3lAYHrQTrgvzyDwOtdPlzJ2YgRfZ6hcMQMGz
+         L97bjFEx+Cit+e0vTHG121U12IZ9bkB79zAwoGkpu+k1+NAVacLylEpWbx8wnU8Ax27J
+         1SeBI0ylDVRrwHyvDlQlpIcNTlLgAFkC/Zyn96J8KpdkZNUc0nGQI3RqHnK/mDWxTc6K
+         pofAI6TiuHYu46FxZ0si4FtORqpBLvVHPeQb3tF77Ynp1xmQq/QSPXhlXmdE+nC6nu7A
+         y3OA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,13 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
-	Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+	Oleksandr Natalenko <oleksandr@natalenko.name>,
+	Neal Cardwell <ncardwell@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 055/110] doc: Change the min default value of tcp_wmem/tcp_rmem.
-Date: Wed,  7 Mar 2018 11:38:38 -0800
-Message-Id: <20180307191046.687342513@linuxfoundation.org>
+Subject: [PATCH 4.14 054/110] tcp_bbr: better deal with suboptimal GSO
+Date: Wed,  7 Mar 2018 11:38:37 -0800
+Message-Id: <20180307191046.577013304@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309163240228221?=
-X-GMAIL-MSGID: =?utf-8?q?1594309540654607311?=
+X-GMAIL-THRID: =?utf-8?q?1594309161153019394?=
+X-GMAIL-MSGID: =?utf-8?q?1594309537838747366?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +52,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit a61a86f8db92923a2a4c857c49a795bcae754497 ]
+[ Upstream commit 350c9f484bde93ef229682eedd98cd5f74350f7f ]
 
-The SK_MEM_QUANTUM was changed from PAGE_SIZE to 4096. And the
-tcp_wmem/tcp_rmem min default values are 4096.
+BBR uses tcp_tso_autosize() in an attempt to probe what would be the
+burst sizes and to adjust cwnd in bbr_target_cwnd() with following
+gold formula :
 
-Fixes: bd68a2a854ad ("net: set SK_MEM_QUANTUM to 4096")
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+/* Allow enough full-sized skbs in flight to utilize end systems. */
+cwnd += 3 * bbr->tso_segs_goal;
+
+But GSO can be lacking or be constrained to very small
+units (ip link set dev ... gso_max_segs 2)
+
+What we really want is to have enough packets in flight so that both
+GSO and GRO are efficient.
+
+So in the case GSO is off or downgraded, we still want to have the same
+number of packets in flight as if GSO/TSO was fully operational, so
+that GRO can hopefully be working efficiently.
+
+To fix this issue, we make tcp_tso_autosize() unaware of
+sk->sk_gso_max_segs
+
+Only tcp_tso_segs() has to enforce the gso_max_segs limit.
+
+Tested:
+
+ethtool -K eth0 tso off gso off
+tc qd replace dev eth0 root pfifo_fast
+
+Before patch:
+for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
+    691  (ss -temoi shows cwnd is stuck around 6 )
+    667
+    651
+    631
+    517
+
+After patch :
+# for f in {1..5}; do ./super_netperf 1 -H lpaa24 -- -K bbr; done
+   1733 (ss -temoi shows cwnd is around 386 )
+   1778
+   1746
+   1781
+   1718
+
+Fixes: 0f8782ea1497 ("tcp_bbr: add BBR congestion control")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/networking/ip-sysctl.txt |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_output.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -508,7 +508,7 @@ tcp_rmem - vector of 3 INTEGERs: min, de
- 	min: Minimal size of receive buffer used by TCP sockets.
- 	It is guaranteed to each TCP socket, even under moderate memory
- 	pressure.
--	Default: 1 page
-+	Default: 4K
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1681,7 +1681,7 @@ u32 tcp_tso_autosize(const struct sock *
+ 	 */
+ 	segs = max_t(u32, bytes / mss_now, min_tso_segs);
  
- 	default: initial size of receive buffer used by TCP sockets.
- 	This value overrides net.core.rmem_default used by other protocols.
-@@ -666,7 +666,7 @@ tcp_window_scaling - BOOLEAN
- tcp_wmem - vector of 3 INTEGERs: min, default, max
- 	min: Amount of memory reserved for send buffers for TCP sockets.
- 	Each TCP socket has rights to use it due to fact of its birth.
--	Default: 1 page
-+	Default: 4K
+-	return min_t(u32, segs, sk->sk_gso_max_segs);
++	return segs;
+ }
+ EXPORT_SYMBOL(tcp_tso_autosize);
  
- 	default: initial size of send buffer used by TCP sockets.  This
- 	value overrides net.core.wmem_default used by other protocols.
+@@ -1693,8 +1693,10 @@ static u32 tcp_tso_segs(struct sock *sk,
+ 	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
+ 	u32 tso_segs = ca_ops->tso_segs_goal ? ca_ops->tso_segs_goal(sk) : 0;
+ 
+-	return tso_segs ? :
+-		tcp_tso_autosize(sk, mss_now, sysctl_tcp_min_tso_segs);
++	if (!tso_segs)
++		tso_segs = tcp_tso_autosize(sk, mss_now,
++					    sysctl_tcp_min_tso_segs);
++	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
+ }
+ 
+ /* Returns the portion of skb which can be sent right away */
