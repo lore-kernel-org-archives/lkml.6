@@ -1,97 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751075AbeCGFEV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 00:04:21 -0500
-Received: from mga04.intel.com ([192.55.52.120]:46483 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750957AbeCGFEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 00:04:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.47,434,1515484800";
-   d="scan'208";a="36571570"
-From: Haiyue Wang <haiyue.wang@linux.intel.com>
-To: joel@jms.id.au, andrew@aj.id.au, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: Haiyue Wang <haiyue.wang@linux.intel.com>
-Subject: [PATCH dts/arm/aspeed-g5 v1] ARM: dts: aspeed-g5: Add IPMI KCS node
-Date: Wed,  7 Mar 2018 13:04:50 +0800
-Message-Id: <1520399090-2455-1-git-send-email-haiyue.wang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751083AbeCGFKC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 00:10:02 -0500
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36870 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751010AbeCGFJ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 00:09:59 -0500
+X-Google-Smtp-Source: AG47ELs8pG3J6w7OcbIAcxJC5AFalPlEdaFHsPtHDJC4ShLbceyTc3AZho/ymioBaiRcQJGN49Me/w==
+Date: Wed, 7 Mar 2018 10:39:56 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v9 14/15] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+Message-ID: <20180307050956.GA6842@vireshk-i7>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-15-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520347148-27852-15-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IPMI KCS device part of the LPC interface and is used for
-communication with the host processor.
+On 06-03-18, 20:09, Sricharan R wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Register a cpufreq-generic device whenever we detect that a
+> "qcom,krait" compatible CPU is present in DT.
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> [Sricharan: updated to use dev_pm_opp_set_prop_name and
+> 	    nvmem apis]
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+>  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 199 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
 
-Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
----
- arch/arm/boot/dts/aspeed-g5.dtsi | 43 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index 8eac57c..f443169 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -267,8 +267,40 @@
- 				ranges = <0x0 0x1e789000 0x1000>;
- 
- 				lpc_bmc: lpc-bmc@0 {
--					compatible = "aspeed,ast2500-lpc-bmc";
-+					compatible = "aspeed,ast2500-lpc-bmc", "simple-mfd", "syscon";
- 					reg = <0x0 0x80>;
-+					reg-io-width = <4>;
-+
-+					#address-cells = <1>;
-+					#size-cells = <1>;
-+					ranges = <0x0 0x0 0x80>;
-+
-+					kcs1: kcs1@0 {
-+						compatible = "aspeed,ast2500-kcs-bmc";
-+						reg = <0x0 0x80>;
-+						interrupts = <8>;
-+						kcs_chan = <1>;
-+						kcs_addr = <0x0>;
-+						status = "disabled";
-+					};
-+
-+					kcs2: kcs2@0 {
-+						compatible = "aspeed,ast2500-kcs-bmc";
-+						reg = <0x0 0x80>;
-+						interrupts = <8>;
-+						kcs_chan = <2>;
-+						kcs_addr = <0x0>;
-+						status = "disabled";
-+					};
-+
-+					kcs3: kcs3@0 {
-+						compatible = "aspeed,ast2500-kcs-bmc";
-+						reg = <0x0 0x80>;
-+						interrupts = <8>;
-+						kcs_chan = <3>;
-+						kcs_addr = <0x0>;
-+						status = "disabled";
-+					};
- 				};
- 
- 				lpc_host: lpc-host@80 {
-@@ -294,6 +326,15 @@
- 						status = "disabled";
- 					};
- 
-+					kcs4: kcs4@0 {
-+						compatible = "aspeed,ast2500-kcs-bmc";
-+						reg = <0x0 0xa0>;
-+						interrupts = <8>;
-+						kcs_chan = <4>;
-+						kcs_addr = <0x0>;
-+						status = "disabled";
-+					};
-+
- 					lhc: lhc@20 {
- 						compatible = "aspeed,ast2500-lhc";
- 						reg = <0x20 0x24 0x48 0x8>;
 -- 
-2.7.4
+viresh
