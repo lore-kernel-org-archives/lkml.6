@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELttH8TdM5/BcoDJJuHnug9S46s+JsR/n9Xbu6HQKRxHJ29h/4dA43PPDYcYCnDOS4NGV2jY
-ARC-Seal: i=1; a=rsa-sha256; t=1520451614; cv=none;
+X-Google-Smtp-Source: AG47ELtG0ifv7lGSAVjs8ey5xDYMUbUD8J6cLRR1sVdxuil3UxhX/MzmceXI3UyJhF+1iJYp6ITK
+ARC-Seal: i=1; a=rsa-sha256; t=1520451608; cv=none;
         d=google.com; s=arc-20160816;
-        b=exwgR1G5uf4NjwCKZKH8ssL+L8oGrGUVj/Wewf8uej+PpWoqJ5Fo29ag2ov9ruPFRX
-         /DgP/Up9lLOb/B4Fdpdtx1yv47qma560shv454IJ6kHcgVHmOm0nPx/CiEWbj6AwHlca
-         i8uf74vGakLM+Z/hx+WxtCxKG5UucJTTnoveYA3LVqaqpCqmSz/jBJat3ndQr4CgGrNt
-         i5y7xhXVMkpTQbYgPRB44OCX5K1m7hWDNCCejJIa8HEhD7WcLWTYuSEjhUy31WdXru5c
-         KOBqvaWdiGEFxxi0MaSOZXeNIJYAvSdrswPw20UyGm/O09amWi6dFisz/XzlI/Nc8k8A
-         mmJQ==
+        b=zIgzxB/Ot6rs2pcSFlXogniejITkPo6bm3JP/4yg52Zra9WUGzOrlmeBdZK+zxlskV
+         k95SACOqjLI6/UE2peRYjYRuVGDWjWZIPL+peXGNNF2fcZzTp1lBh5+WWvOm7tifKcha
+         zhocEFGMrkEHKMX2NIro0xplgWvNomW5WtNmHTKAmG6MTorV++OhuEabwV3F3Yafy5/X
+         +mFrmw8105xhVvj35o22IPYXVscWQ7rLUrB4b6xvj0w7ZHzu6aYSvYxIUICUtH+6dH/w
+         GoZBZXBZhxmFyg3pfcSzALZGkOrB5pxZ0/OOpeCZyzXLJs3GnQCrgawdSetk5gHlMSFW
+         KAHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NvZJdFsI1F+EUmOHqQFeeB9WRUniWIzbiju3NVFY+Nc=;
-        b=HgjU40CJ2q9yb9OpQMrsXknHykmRhGQDfKjMQHS2AOkzY1NN78xrG4+ucbDdl8KfS7
-         bgKb5imlpSQONlFgtM9r1xUZZlkqAGeWRunIGo0M/fY8SfYiMlKZHGq3NSBKE9OQS4gK
-         7KvHYXRVn5EaX/mQCbrj2QXPTjkuzdP2TMUTnpHehFulE+VJ75+wSval2kwsXKpa/Ybu
-         eQwoWUcOXVp2PChh3ieOaiOsVerTiavhoL3SJAYJYr9e1NyHPRHKeMOQD7ck9yrd9ae/
-         IlbVSWT7qwnRZjPq3SH3XaPWxBpDjzagtOU7kbmrj8e/FmM0XUhjwkJiZF9kENDdAOIv
-         xeGA==
+        bh=iyW5DNC35DKcra97H8djESxRuQLpmoIp2C577bnp/ME=;
+        b=i/ZQP5RelBBAr/vLcqGDDzB0E3/1YbJFnn2abcnjcI+K/zFXQY+rYfTH4OwQVa6Eye
+         zPrabyNp9o5fMTIpkLL314dp8SfdFeDnDPAy9u6OMtt+OjSJGR2jXle93FrPA2mt/B0i
+         WE8wZIwSTcHy0nGngv20qkP+JRmG3rOHIvOVrGnf6wqwfU1vQsHVZWPE1Fc/n33cl4Sb
+         BafFCDd+mFrEosC8tVWvLSzSP0wiK3eikvHB+m+O+bvht8MEASE8VOLwfI02z0jHyEwa
+         +avknlO4WQDFuKhVNu1a9YdXHwdmiQgef7+4PgzKa88kuY2YzvqkTrYTzE4EXZ7RXTtC
+         36QA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Shawn Lin <shawn.lin@rock-chips.com>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.15 020/122] mmc: dw_mmc: Avoid accessing registers in runtime suspended state
-Date: Wed,  7 Mar 2018 11:37:12 -0800
-Message-Id: <20180307191732.271719877@linuxfoundation.org>
+Subject: [PATCH 4.15 019/122] mmc: dw_mmc-k3: Fix out-of-bounds access through DT alias
+Date: Wed,  7 Mar 2018 11:37:11 -0800
+Message-Id: <20180307191732.117591902@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309071701629543?=
-X-GMAIL-MSGID: =?utf-8?q?1594309071701629543?=
+X-GMAIL-THRID: =?utf-8?q?1594309066066917248?=
+X-GMAIL-MSGID: =?utf-8?q?1594309066066917248?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 5b43df8b4c1a7f0c3fbf793c9566068e6b1e570c upstream.
+commit 325501d9360eb42c7c51e6daa0d733844c1e790b upstream.
 
-cat /sys/kernel/debug/mmc0/regs will hang up the system since
-it's in runtime suspended state, so the genpd and biu_clk is
-off. This patch fixes this problem by calling pm_runtime_get_sync
-to wake it up before reading the registers.
+The hs_timing_cfg[] array is indexed using a value derived from the
+"mshcN" alias in DT, which may lead to an out-of-bounds access.
 
-Fixes: e9ed8835e990 ("mmc: dw_mmc: add runtime PM callback")
+Fix this by adding a range check.
+
+Fixes: 361c7fe9b02eee7e ("mmc: dw_mmc-k3: add sd support for hi3660")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/dw_mmc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/mmc/host/dw_mmc-k3.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -165,6 +165,8 @@ static int dw_mci_regs_show(struct seq_f
- {
- 	struct dw_mci *host = s->private;
+--- a/drivers/mmc/host/dw_mmc-k3.c
++++ b/drivers/mmc/host/dw_mmc-k3.c
+@@ -135,6 +135,9 @@ static int dw_mci_hi6220_parse_dt(struct
+ 	if (priv->ctrl_id < 0)
+ 		priv->ctrl_id = 0;
  
-+	pm_runtime_get_sync(host->dev);
++	if (priv->ctrl_id >= TIMING_MODE)
++		return -EINVAL;
 +
- 	seq_printf(s, "STATUS:\t0x%08x\n", mci_readl(host, STATUS));
- 	seq_printf(s, "RINTSTS:\t0x%08x\n", mci_readl(host, RINTSTS));
- 	seq_printf(s, "CMD:\t0x%08x\n", mci_readl(host, CMD));
-@@ -172,6 +174,8 @@ static int dw_mci_regs_show(struct seq_f
- 	seq_printf(s, "INTMASK:\t0x%08x\n", mci_readl(host, INTMASK));
- 	seq_printf(s, "CLKENA:\t0x%08x\n", mci_readl(host, CLKENA));
- 
-+	pm_runtime_put_autosuspend(host->dev);
-+
+ 	host->priv = priv;
  	return 0;
  }
- 
