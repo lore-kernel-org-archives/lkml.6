@@ -1,12 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeCGHjj (ORCPT <rfc822;w@1wt.eu>);
+        id S1754032AbeCGHkY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 02:40:24 -0500
+Received: from thoth.sbs.de ([192.35.17.2]:49540 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751141AbeCGHjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 7 Mar 2018 02:39:39 -0500
-Received: from goliath.siemens.de ([192.35.17.28]:50277 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeCGHjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 02:39:36 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
@@ -14,11 +13,10 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>
-Subject: [PATCH v5 2/7] PCI: Scan all functions when running over Jailhouse
-Date: Wed,  7 Mar 2018 08:39:13 +0100
-Message-Id: <06e279b2a3e06cf6689ab3975f8ab592bba02362.1520408357.git.jan.kiszka@siemens.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v5 6/7] x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
+Date: Wed,  7 Mar 2018 08:39:17 +0100
+Message-Id: <788bbd5325d1922235e9562c213057425fbc548c.1520408357.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
 References: <cover.1520408357.git.jan.kiszka@siemens.com>
@@ -30,106 +28,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Per PCIe r4.0, sec 7.5.1.1.9, multi-function devices are required to
-have a function 0.  Therefore, Linux scans for devices at function 0
-(devfn 0/8/16/...) and only scans for other functions if function 0
-has its Multi-Function Device bit set or ARI or SR-IOV indicate
-there are more functions.
+Jailhouse does not use ACPI, but it does support MMCONFIG. Make sure the
+latter can be built without having to enable ACPI as well. Primarily, we
+need to make the AMD mmconf-fam10h_64 depend upon MMCONFIG and ACPI,
+instead of just the former.
 
-The Jailhouse hypervisor may pass individual functions of a
-multi-function device to a guest without passing function 0, which
-means a Linux guest won't find them.
+Saves some bytes in the Jailhouse non-root kernel.
 
-Change Linux PCI probing so it scans all function numbers when
-running as a guest over Jailhouse.
-
-This is technically prohibited by the spec, so it is possible that
-PCI devices without the Multi-Function Device bit set may have
-unexpected behavior in response to this probe.
-
-Derived from original patch by Benedikt Spranger.
-
-CC: Benedikt Spranger <b.spranger@linutronix.de>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- arch/x86/pci/legacy.c |  4 +++-
- drivers/pci/probe.c   | 22 +++++++++++++++++++---
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ arch/x86/Kconfig          | 6 +++++-
+ arch/x86/kernel/Makefile  | 2 +-
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 1cb01abcb1be..dfbe6ac38830 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -4,6 +4,7 @@
- #include <linux/init.h>
- #include <linux/export.h>
- #include <linux/pci.h>
-+#include <asm/jailhouse_para.h>
- #include <asm/pci_x86.h>
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8986a6b6e3df..b53340e71f84 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2643,7 +2643,7 @@ config PCI_DIRECT
+ config PCI_MMCONFIG
+ 	bool "Support mmconfig PCI config space access" if X86_64
+ 	default y
+-	depends on PCI && (ACPI || SFI)
++	depends on PCI && (ACPI || SFI || JAILHOUSE_GUEST)
+ 	depends on X86_64 || (PCI_GOANY || PCI_GOMMCONFIG)
  
- /*
-@@ -34,13 +35,14 @@ int __init pci_legacy_init(void)
+ config PCI_OLPC
+@@ -2659,6 +2659,10 @@ config PCI_DOMAINS
+ 	def_bool y
+ 	depends on PCI
  
- void pcibios_scan_specific_bus(int busn)
- {
-+	int stride = jailhouse_paravirt() ? 1 : 8;
- 	int devfn;
- 	u32 l;
- 
- 	if (pci_find_bus(0, busn))
- 		return;
- 
--	for (devfn = 0; devfn < 256; devfn += 8) {
-+	for (devfn = 0; devfn < 256; devfn += stride) {
- 		if (!raw_pci_read(0, busn, devfn, PCI_VENDOR_ID, 2, &l) &&
- 		    l != 0x0000 && l != 0xffff) {
- 			DBG("Found device at %02x:%02x [%04x]\n", busn, devfn, l);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ef5377438a1e..3c365dc996e7 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -16,6 +16,7 @@
- #include <linux/pci-aspm.h>
- #include <linux/aer.h>
- #include <linux/acpi.h>
-+#include <linux/hypervisor.h>
- #include <linux/irqdomain.h>
- #include <linux/pm_runtime.h>
- #include "pci.h"
-@@ -2518,14 +2519,29 @@ static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
- {
- 	unsigned int used_buses, normal_bridges = 0, hotplug_bridges = 0;
- 	unsigned int start = bus->busn_res.start;
--	unsigned int devfn, cmax, max = start;
-+	unsigned int devfn, fn, cmax, max = start;
- 	struct pci_dev *dev;
-+	int nr_devs;
- 
- 	dev_dbg(&bus->dev, "scanning bus\n");
- 
- 	/* Go find them, Rover! */
--	for (devfn = 0; devfn < 0x100; devfn += 8)
--		pci_scan_slot(bus, devfn);
-+	for (devfn = 0; devfn < 256; devfn += 8) {
-+		nr_devs = pci_scan_slot(bus, devfn);
++config MMCONF_FAM10H
++	def_bool y
++	depends on X86_64 && PCI_MMCONFIG && ACPI
 +
-+		/*
-+		 * The Jailhouse hypervisor may pass individual functions of a
-+		 * multi-function device to a guest without passing function 0.
-+		 * Look for them as well.
-+		 */
-+		if (jailhouse_paravirt() && nr_devs == 0) {
-+			for (fn = 1; fn < 8; fn++) {
-+				dev = pci_scan_single_device(bus, devfn + fn);
-+				if (dev)
-+					dev->multifunction = 1;
-+			}
-+		}
-+	}
+ config PCI_CNB20LE_QUIRK
+ 	bool "Read CNB20LE Host Bridge Windows" if EXPERT
+ 	depends on PCI
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 29786c87e864..73ccf80c09a2 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -146,6 +146,6 @@ ifeq ($(CONFIG_X86_64),y)
+ 	obj-$(CONFIG_GART_IOMMU)	+= amd_gart_64.o aperture_64.o
+ 	obj-$(CONFIG_CALGARY_IOMMU)	+= pci-calgary_64.o tce_64.o
  
- 	/* Reserve buses for SR-IOV capability */
- 	used_buses = pci_iov_bus_range(bus);
+-	obj-$(CONFIG_PCI_MMCONFIG)	+= mmconf-fam10h_64.o
++	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
+ 	obj-y				+= vsmp_64.o
+ endif
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index f0e6456ca7d3..12bc0a1139da 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -716,7 +716,7 @@ static void init_amd_k8(struct cpuinfo_x86 *c)
+ 
+ static void init_amd_gh(struct cpuinfo_x86 *c)
+ {
+-#ifdef CONFIG_X86_64
++#ifdef CONFIG_MMCONF_FAM10H
+ 	/* do this for boot cpu */
+ 	if (c == &boot_cpu_data)
+ 		check_enable_amd_mmconf_dmi();
 -- 
 2.13.6
