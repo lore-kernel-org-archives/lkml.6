@@ -1,143 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965216AbeCGUQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:16:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965012AbeCGUQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:16:49 -0500
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C78820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Wed, 7 Mar 2018 20:16:44 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, daniel.baluta@nxp.com
-Subject: Re: [PATCH] iio: Replace occurrences of magic number 0 by
- IIO_CHAN_INFO_RAW
-Message-ID: <20180307201644.4d5e449a@archlinux>
-In-Reply-To: <20180306120257.eo6kh3b65qmpotoe@smtp.gmail.com>
-References: <20180306120257.eo6kh3b65qmpotoe@smtp.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S965155AbeCGUUj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:20:39 -0500
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:42818 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934991AbeCGUUg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:20:36 -0500
+X-Google-Smtp-Source: AG47ELueqdgY7KM8/7hLCYDS1mHC47ZBbQj0llWO+JNqjxFqKn65RiLBeL8Sh2O1gUVkuQpeAHlEiUptCGRYURJDNp8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180307.124500.1863183408172828694.davem@davemloft.net>
+References: <CAHC9VhST6LhUj6H28Ws96EaRzkp4FN91h46iGKpd2Yk44H7Jpw@mail.gmail.com>
+ <20180307.114139.680250568317481879.davem@davemloft.net> <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
+ <20180307.124500.1863183408172828694.davem@davemloft.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Mar 2018 15:20:33 -0500
+Message-ID: <CAHC9VhRQb50EYD6BVTxNv2x=S_tTLq57OZBsWbXFdfJEunNUiA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
+To: David Miller <davem@davemloft.net>
+Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        richard_c_haines@btinternet.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 6 Mar 2018 09:02:57 -0300
-Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
+On Wed, Mar 7, 2018 at 12:45 PM, David Miller <davem@davemloft.net> wrote:
+> From: Paul Moore <paul@paul-moore.com>
+> Date: Wed, 7 Mar 2018 12:27:52 -0500
+>
+>> I'm not sure we could have cleanly separated the core network stack
+>> changes from the rest of the SELinux/SCTP enablement, regardless it's
+>> a bit late at this point.  The only other thought would have been to
+>> simply push Xin Long's cleanup patches until after the next merge
+>> window, but that would only be worth considering if they truly were
+>> just cleanup patches, and even then it doesn't seem very fair to Xin
+>> Long to have to wait.
+>
+> I think you wanted to have more integration, rather than less.
 
-> Usually, functions responsible for reading raw data typically relies on
-> values from iio_chan_info_enum to correctly identify the type of data to
-> be read. There is a set of a device driver that uses the magic number 0
-> instead of IIO_CHAN_INFO_RAW. This patch improves the readability by
-> replaces the magic number 0 for the appropriate IIO_CHAN_INFO_RAW in six
-> devices driver in the IIO subsystem.
-> 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Just for reference this is a result of a weird piece of history
-where 0 used to be deliberately not in the enum (also the reason
-the variable is called mask in a lot of drivers which doesn't
-make all that much sense.)  We used to pass through bit mask
-with just one bit ever set.  Hence 0 was spcial.
+I'm not quite sure where you are going here, I think we *all* want
+integration - subtrees merge patches/trees, Linus merges subtrees,
+etc. - and I don't believe I've said anything to the contrary.
 
-Anyhow, good to clear these up.
+> What others have done in the past, is they simply pull my networking
+> tree into their's.
 
-Applied to the togreg branch of iio.git and pushed out as
-testing for the autobuilders to play with it.
+I only base the SELinux and audit trees on Linus' tree.  Perhaps I'm
+wrong, but a quick look at net-next makes me believe you do the same.
 
-Thanks,
+I think it is also worth mentioning that the SELinux/SCTP patches have
+been in the selinux/next branch for several days now; from what I can
+tell they predate these net-next cleanup patches.  Not that it
+matters, I just don't believe that pulling net-next would have solved
+this problem; I suppose the right thing would have been for net-next
+to pull selinux/next, yes?
 
-Jonathan
+> I never rebase, ever.
 
-> ---
->  drivers/iio/accel/hid-sensor-accel-3d.c | 2 +-
->  drivers/iio/dac/ad5380.c                | 2 +-
->  drivers/iio/dac/ad5764.c                | 2 +-
->  drivers/iio/gyro/hid-sensor-gyro-3d.c   | 2 +-
->  drivers/iio/light/hid-sensor-als.c      | 2 +-
->  drivers/iio/light/lm3533-als.c          | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
-> index c066a3bdbff7..41d97faf5013 100644
-> --- a/drivers/iio/accel/hid-sensor-accel-3d.c
-> +++ b/drivers/iio/accel/hid-sensor-accel-3d.c
-> @@ -155,7 +155,7 @@ static int accel_3d_read_raw(struct iio_dev *indio_dev,
->  	*val = 0;
->  	*val2 = 0;
->  	switch (mask) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		hid_sensor_power_state(&accel_state->common_attributes, true);
->  		report_id = accel_state->accel[chan->scan_index].report_id;
->  		address = accel_3d_addresses[chan->scan_index];
-> diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
-> index 845fd1c0fd9d..873c2bf637c0 100644
-> --- a/drivers/iio/dac/ad5380.c
-> +++ b/drivers/iio/dac/ad5380.c
-> @@ -158,7 +158,7 @@ static unsigned int ad5380_info_to_reg(struct iio_chan_spec const *chan,
->  	long info)
->  {
->  	switch (info) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		return AD5380_REG_DATA(chan->address);
->  	case IIO_CHAN_INFO_CALIBBIAS:
->  		return AD5380_REG_OFFSET(chan->address);
-> diff --git a/drivers/iio/dac/ad5764.c b/drivers/iio/dac/ad5764.c
-> index 033f20eca616..9333177062c0 100644
-> --- a/drivers/iio/dac/ad5764.c
-> +++ b/drivers/iio/dac/ad5764.c
-> @@ -168,7 +168,7 @@ static int ad5764_read(struct iio_dev *indio_dev, unsigned int reg,
->  static int ad5764_chan_info_to_reg(struct iio_chan_spec const *chan, long info)
->  {
->  	switch (info) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		return AD5764_REG_DATA(chan->address);
->  	case IIO_CHAN_INFO_CALIBBIAS:
->  		return AD5764_REG_OFFSET(chan->address);
-> diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
-> index f59995a90387..36941e69f959 100644
-> --- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
-> +++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
-> @@ -115,7 +115,7 @@ static int gyro_3d_read_raw(struct iio_dev *indio_dev,
->  	*val = 0;
->  	*val2 = 0;
->  	switch (mask) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		hid_sensor_power_state(&gyro_state->common_attributes, true);
->  		report_id = gyro_state->gyro[chan->scan_index].report_id;
->  		address = gyro_3d_addresses[chan->scan_index];
-> diff --git a/drivers/iio/light/hid-sensor-als.c b/drivers/iio/light/hid-sensor-als.c
-> index befd693a4a31..406caaee9a3c 100644
-> --- a/drivers/iio/light/hid-sensor-als.c
-> +++ b/drivers/iio/light/hid-sensor-als.c
-> @@ -97,7 +97,7 @@ static int als_read_raw(struct iio_dev *indio_dev,
->  	*val = 0;
->  	*val2 = 0;
->  	switch (mask) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		switch (chan->scan_index) {
->  		case  CHANNEL_SCAN_INDEX_INTENSITY:
->  		case  CHANNEL_SCAN_INDEX_ILLUM:
-> diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm3533-als.c
-> index 36208a3652e9..ff5a3324b489 100644
-> --- a/drivers/iio/light/lm3533-als.c
-> +++ b/drivers/iio/light/lm3533-als.c
-> @@ -199,7 +199,7 @@ static int lm3533_als_read_raw(struct iio_dev *indio_dev,
->  	int ret;
->  
->  	switch (mask) {
-> -	case 0:
-> +	case IIO_CHAN_INFO_RAW:
->  		switch (chan->type) {
->  		case IIO_LIGHT:
->  			ret = lm3533_als_get_adc(indio_dev, false, val);
+I've learned that saying "never" (or "never X, ever" in this case) is
+a recipe for disaster, but if it works for you, go for it.
+
+FWIW, I try to avoid rebases as much as possible; it's the nuclear
+option as far as I'm concerned and the only time I regularly rebase
+the SELinux and audit trees is after the merge window (e.g. we need
+something in -rc1, or we are simply too far out of date).
+
+Looking quickly at net-next, it looks like net-next/master is
+refreshed/rebased on a regular basis too (it contains the
+selinux-pr-20180130 tag)... and perhaps rebase is a term you don't
+want to use, but I think we are on the same page here.
+
+> My tree often goes in reasonable early in the merge window.
+
+Generally speaking I send my pull request to Linus early in the merge
+window too.  It obviously tends to vary on when he does the pull, but
+we generally haven't had any major problems.
+
+> So you would only have to wait until my tree went in before
+> sending your pull request.
+
+So you would want me to rebase selinux/next on top of Linus' tree in
+the middle of the merge window?  I'm sure that isn't what you meant,
+but that's how I keep reading the above ... which can't be right,
+because in my experience that's one way to piss off Linus.  Help me
+understand what you are saying.
+
+> That's really the way to handle something like this.
+
+-- 
+paul moore
+www.paul-moore.com
