@@ -1,82 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754286AbeCGK2f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:28:35 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49636 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751142AbeCGK2d (ORCPT
+        id S1754140AbeCGKap (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:30:45 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:56100 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751132AbeCGKai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:28:33 -0500
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1 4/9] PCI/portdrv: Disable port driver in compat mode
-Date: Wed, 07 Mar 2018 11:29:15 +0100
-Message-ID: <38992036.3QHJjk5T7c@aspire.rjw.lan>
-In-Reply-To: <152040322576.240786.3375466676254382935.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040322576.240786.3375466676254382935.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Wed, 7 Mar 2018 05:30:38 -0500
+X-Google-Smtp-Source: AG47ELtevs7CFk89noceRDW1sYZWAuzfeiDJUO6AxYkTs9QGRp+Qrd6O6zimgHQHX3DzWRnHvErQnO4mwG11g6ddJyE=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CACPK8Xeb3ryfi+FXr+mdpk2fPtSTwJXkuBjRhW76vx1SxGQfYQ@mail.gmail.com>
+References: <1519655769-25836-1-git-send-email-tmaimon77@gmail.com>
+ <1519655769-25836-2-git-send-email-tmaimon77@gmail.com> <CACPK8Xeb3ryfi+FXr+mdpk2fPtSTwJXkuBjRhW76vx1SxGQfYQ@mail.gmail.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Wed, 7 Mar 2018 12:30:37 +0200
+Message-ID: <CAP6Zq1io9rLytqkyo5BBFw1Hf24c-r9PuH5ORsKu-j2brzbZHQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-binding: timer: document NPCM7xx timer DT bindings
+To: Joel Stanley <joel@jms.id.au>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 7, 2018 7:13:45 AM CET Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> The "pcie_ports=compat" kernel parameter sets pcie_ports_disabled, which is
-> intended to disable the PCIe port driver.  But even when it was disabled,
-> we registered pcie_portdriver so we could work around a BIOS PME issue (see
-> fe31e69740ed ("PCI/PCIe: Clear Root PME Status bits early during system
-> resume")).
-> 
-> Registering the driver meant that the pcie_portdrv_probe() path called
-> pci_enable_device(), pci_save_state(), pm_runtime_set_autosuspend_delay(),
-> pm_runtime_use_autosuspend(), etc., even when the driver was disabled.
-> 
-> We've since moved the BIOS PME workaround from the port driver to the core,
-> so stop registering the PCIe port driver in compat mode.
-> 
-> This means "pcie_ports=compat" will now be basically the same as turning
-> off CONFIG_PCIEPORTBUS completely.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/pcie/portdrv_core.c |    3 ---
->  drivers/pci/pcie/portdrv_pci.c  |    2 +-
->  2 files changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-> index ef3bad4ad010..9db77c683732 100644
-> --- a/drivers/pci/pcie/portdrv_core.c
-> +++ b/drivers/pci/pcie/portdrv_core.c
-> @@ -212,9 +212,6 @@ static int get_port_device_capability(struct pci_dev *dev)
->  	int services = 0;
->  	int cap_mask = 0;
->  
-> -	if (pcie_ports_disabled)
-> -		return 0;
-> -
->  	cap_mask = PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP
->  			| PCIE_PORT_SERVICE_VC;
->  	if (pci_aer_available())
-> diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-> index f91afd09e356..c08ebd237242 100644
-> --- a/drivers/pci/pcie/portdrv_pci.c
-> +++ b/drivers/pci/pcie/portdrv_pci.c
-> @@ -262,7 +262,7 @@ static int __init pcie_portdrv_init(void)
->  	int retval;
->  
->  	if (pcie_ports_disabled)
-> -		return pci_register_driver(&pcie_portdriver);
-> +		return -EACCES;
->  
->  	dmi_check_system(pcie_portdrv_dmi_table);
->  
-> 
-> 
+Sorry for the late response
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 2 March 2018 at 03:51, Joel Stanley <joel@jms.id.au> wrote:
+> Hi Tomer,
+>
+> On Tue, Feb 27, 2018 at 1:06 AM, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>> Added device tree binding documentation for Nuvoton NPCM7xx timer.
+>>
+>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+>> ---
+>>  .../bindings/timer/nuvoton,npcm7xx-timer.txt       | 25 ++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+>> new file mode 100644
+>> index 000000000000..c5150522e618
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+>> @@ -0,0 +1,25 @@
+>> +Nuvoton NPCM7xx timer
+>
+> Would it make more sense to all this Nuvoton NPCM Timer? This way the
+> name stays generic for when you add other systems.
+>
+we cant promise the timer will stay the same in the next generation, I
+will leave this for NPCM7xx
+>> +
+>> +Nuvoton NPCM7xx have three timer modules, each timer module provides five 24-bit
+>> +timer counters.
+>
+>
+> I notice the timer has a register in the middle of it that is used for
+> the watchdog. Should we describe this in the same binding? Even if we
+> just add some text that adds
+>
+>  ... and one watchdog register.
+>
+I'm not sure, because the binding is only for the timer I dont think I
+need to describe what is the
+register contains
+>> +
+>> +Required properties:
+>> +- compatible      : "nuvoton,npcm750-timer" for Poleg NPCM750.
+>> +- reg             : Offset and length of the register set for the device.
+>> +- interrupts      : Contain the timer interrupt with flags for
+>> +                    falling edge.
+>> +
+>> +Required clocking property, have to be one of:
+>> +- clocks          : phandle of timer reference clock.
+>> +- clock-frequency : The frequency in Hz of the clock that drives the NPCM7xx
+>> +                    timer (usually 25000000).
+>> +
+>> +Example:
+>> +
+>> +timer@f0008000 {
+>> +    compatible = "nuvoton,npcm750-timer";
+>> +    interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>> +    reg = <0xf0008000 0x1000>;
+>
+> This can probably be <0xf0008000 0x50>, as tthe timer hardware only
+> has registers up to base + 0x50.
+Thanks,
+I will modify it in the next version, waiting fro more comments.
+>
+>> +    clocks = <&clk NPCM7XX_CLK_TIMER>;
+>> +};
+>> +
+>> --
+>> 2.14.1
+>>
+
+Cheers,
+
+Tomer
