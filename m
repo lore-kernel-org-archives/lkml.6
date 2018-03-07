@@ -1,62 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754488AbeCGM1Q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 07:27:16 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6173 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754189AbeCGM0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 07:26:02 -0500
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <hare@suse.de>
-CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 10/10] scsi: hisi_sas: add v3 hw MODULE_DEVICE_TABLE()
-Date: Wed, 7 Mar 2018 20:25:14 +0800
-Message-ID: <1520425514-205565-11-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
-References: <1520425514-205565-1-git-send-email-john.garry@huawei.com>
+        id S932905AbeCGM0U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 07:26:20 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43620 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754392AbeCGM0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 07:26:14 -0500
+Date: Wed, 7 Mar 2018 13:26:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v5 1/4] sched/fair: add util_est on top of PELT
+Message-ID: <20180307122607.GN25181@hirez.programming.kicks-ass.net>
+References: <20180222170153.673-1-patrick.bellasi@arm.com>
+ <20180222170153.673-2-patrick.bellasi@arm.com>
+ <20180306190241.GH25201@hirez.programming.kicks-ass.net>
+ <20180307114711.GB2211@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180307114711.GB2211@e110439-lin>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+On Wed, Mar 07, 2018 at 11:47:11AM +0000, Patrick Bellasi wrote:
+> On 06-Mar 20:02, Peter Zijlstra wrote:
+> > On Thu, Feb 22, 2018 at 05:01:50PM +0000, Patrick Bellasi wrote:
+> > > +struct util_est {
+> > > +	unsigned int			enqueued;
+> > > +	unsigned int			ewma;
+> > > +#define UTIL_EST_WEIGHT_SHIFT		2
+> > > +};
+> > 
+> > > +	ue = READ_ONCE(p->se.avg.util_est);
+> > 
+> > > +	WRITE_ONCE(p->se.avg.util_est, ue);
+> > 
+> > That is actually quite dodgy... and relies on the fact that we have the
+> > 8 byte case in __write_once_size() and __read_once_size()
+> > unconditionally. It then further relies on the compiler DTRT for 32bit
+> > platforms, which is generating 2 32bit loads/stores.
+> >
+> > The advantage is of course that it will use single u64 loads/stores
+> > where available.
+> 
+> Yes, that's mainly an "optimization" for 64bit targets... but perhaps
+> the benefits are negligible.
+> 
+> Do you prefer to keep more "under control" the generated code by using
+> two {READ,WRITE}_ONCEs?
+> 
+> IMO here we can also go with just the WRITE_ONCEs. I don't see a case
+> for the compiler to mangle load/store. While the WRITE_ONCE are still
+> required to sync with non rq-lock serialized code.
+> But... maybe I'm missing something... ?
 
-Export device table of v3 hw to userspace, or auto probe will fail
-for v3 hw.
+I'm not sure we rely on READ/WRITE_ONCE() of 64bit variables on 32bit
+targets to be sane anywhere else (we could be, I just dont know).
 
-Also change the module alias to include "pci", instead of "platform".
-
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 5ce5ef2c..6f3e5ba 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2394,6 +2394,7 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
- 	{ PCI_VDEVICE(HUAWEI, 0xa230), hip08 },
- 	{}
- };
-+MODULE_DEVICE_TABLE(pci, sas_v3_pci_table);
- 
- static const struct pci_error_handlers hisi_sas_err_handler = {
- 	.error_detected	= hisi_sas_error_detected_v3_hw,
-@@ -2416,4 +2417,4 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("John Garry <john.garry@huawei.com>");
- MODULE_DESCRIPTION("HISILICON SAS controller v3 hw driver based on pci device");
--MODULE_ALIAS("platform:" DRV_NAME);
-+MODULE_ALIAS("pci:" DRV_NAME);
--- 
-1.9.1
+I suspect it all works as expected... but its a tad tricky.
