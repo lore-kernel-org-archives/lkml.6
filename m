@@ -1,125 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754794AbeCGVfk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 16:35:40 -0500
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44782 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754389AbeCGVfi (ORCPT
+        id S1754834AbeCGVg1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 16:36:27 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35986 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754553AbeCGVg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 16:35:38 -0500
-X-Google-Smtp-Source: AG47ELueuaZrk+IBzkCSDYEqVTzbkCQcmUgbY6ESDdYBsNadoJt3XIz9NfHt7cuOo1iENPplb1XsOA==
-Date: Wed, 7 Mar 2018 15:35:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: sibis <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        georgi.djakov@linaro.org, jassisinghbrar@gmail.com,
-        p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/6] reset: qcom: AOSS (Always on subsystem) reset
- controller
-Message-ID: <20180307213514.4sv7ucxo25jpomz3@rob-hp-laptop>
-References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
- <1520243613-30393-2-git-send-email-sibis@codeaurora.org>
+        Wed, 7 Mar 2018 16:36:26 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 82EEB6022C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Message-ID: <5AA05B57.9010005@codeaurora.org>
+Date: Wed, 07 Mar 2018 13:36:23 -0800
+From: Saravana Kannan <skannan@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20130329 Thunderbird/17.0.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520243613-30393-2-git-send-email-sibis@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+CC: Mark Rutland <mark.rutland@arm.com>, robh@kernel.org,
+        mathieu.poirier@linaro.org, peterz@infradead.org, sudeep.holla@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        marc.zyngier@arm.com, jonathan.cameron@huawei.com,
+        frowand.list@gmail.com, leo.yan@linaro.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 8/8] perf: ARM DynamIQ Shared Unit PMU support
+References: <20180102112533.13640-1-suzuki.poulose@arm.com> <20180102112533.13640-9-suzuki.poulose@arm.com> <5A90B77E.8040105@codeaurora.org> <20180225143653.peb4quk3ha5h3t5x@salmiak> <5A972A7D.9020301@codeaurora.org> <20180301114911.fundyuqxtj5klk4e@lakrids.cambridge.arm.com> <5A986425.9080007@codeaurora.org> <20180302104223.7tpsyhsum7nej237@lakrids.cambridge.arm.com> <5A99A3DC.9020400@codeaurora.org> <20180305105925.4cjiqejfid7rswe6@lakrids.cambridge.arm.com> <5A9DC03B.8020201@codeaurora.org> <f340190f-8286-bd3c-c743-79a3d48cc33d@arm.com>
+In-Reply-To: <f340190f-8286-bd3c-c743-79a3d48cc33d@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 03:23:28PM +0530, sibis wrote:
-> Add reset controller driver for Qualcomm SDM845 SoC to
-> control reset signals provided by AOSS for Modem, Venus
-> ADSP, GPU, Camera, Wireless, Display subsystem
-> 
-> Signed-off-by: sibis <sibis@codeaurora.org>
+On 03/07/2018 06:59 AM, Suzuki K Poulose wrote:
+>
+>
+> Hi Saravana,
+>
+> Sorry for the late response, I was out on vacation.
+>
+> On 05/03/18 22:10, Saravana Kannan wrote:
+>> On 03/05/2018 02:59 AM, Mark Rutland wrote:
+>>> On Fri, Mar 02, 2018 at 11:19:56AM -0800, Saravana Kannan wrote:
+>>>> On 03/02/2018 02:42 AM, Mark Rutland wrote:
+>>>>> It's important to note that the DSU PMU's event_init() ensures events
+>>>>> are affine to a single CPU, and the perf core code serializes
+>>>>> operations
+>>>>> on those events via the context lock.
+>>>>
+>>>> Ah, I see that now. Thanks!
+>>>>
+>>>>> Therefore, two CPUs *won't* try to access the registers
+>>>>> simultaneously.
+>>>>
+>>>> Right, and this driver seems to be going through a lot of work to
+>>>> make sure
+>>>> all events are read in one CPU.
+>>>>
+>>>> Do you even have an upstream target where there are multiple DSU's in a
+>>>> system?
+>>>
+>>> I have no idea, though I do beleive that it's possible for a system to
+>>> have multiple DSUs.
+>>>
+>>>> If not, we can simplify a ton of this code (no hotplug notifiers, no
+>>>> migrating PMUs, no SMP calls, etc) by just adding a spinlock and
+>>>> letting any
+>>>> CPU read these DSU counters.
+>>>
+>>> Regardless of whether we allow arbitrary CPUs to read the counters,
+>>> other logic still needs to be CPU affine, and we'll still need hotplug
+>>> notifiers and event migration.
+>>
+>> If you have to support multiple DSUs in a system, then the need is
+>> obvious. But if you don't have to support multiple DSU, it's not
+>> obvious to me on why you still need CPU affining or hotplug notifiers.
+>> Could you please provide me pointers for general understanding?
+>>
+>
+> We need to support multiple DSUs as such configurations are possible.
+>
+>>
+>>> I am not necessarily opposed to allowing read() calls from associated
+>>> CPUs, but as before, I'll leave that to Suzuki.
+>
+> I am fine with reading the registers from any of the associated CPUs.
+>
 
-Need a full name here.
+If that's the case, can you please use my patch? And if it looks good to 
+you, give an Ack and ask Peter to pull it in as you'd be the user?
 
-> ---
->  .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 ++++++++
+Thanks,
+Saravana
 
-Separate patch for bindings (with the header) please.
 
->  drivers/reset/Kconfig                              |  10 ++
->  drivers/reset/Makefile                             |   1 +
->  drivers/reset/reset-qcom-aoss.c                    | 151 +++++++++++++++++++++
->  include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
->  5 files changed, 233 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->  create mode 100644 drivers/reset/reset-qcom-aoss.c
->  create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> new file mode 100644
-> index 0000000..5318e14
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> @@ -0,0 +1,54 @@
-> +Qualcomm AOSS Reset Controller
-> +======================================
-> +
-> +This binding describes a reset-controller found on AOSS (Always on SubSysem)
-> +for Qualcomm SDM845 SoCs.
-> +
-> +Required properties:
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be:
-> +		    "qcom,aoss-reset-sdm845", "syscon"
-
-Someone in QCom needs to go fix the order of all your downstream 
-compatibles or review your bindings before sending upstream. The 
-standard ordering is <vendor>,<soc>-<block>.
-
-Why syscon? The description is this is just a reset controller.
-
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must specify the base address and size of the
-> +		    syscon device.
-> +
-> +
-> +- #reset-cells:
-> +	Usage: required
-> +	Value type: <uint>
-> +	Definition: must be 1; cell entry represents the reset index.
-> +
-> +example:
-> +
-> +aoss_reset: qcom,reset-controller@b2e0100 {
-> +	compatible = "qcom,aoss-reset-sdm845", "syscon";
-> +	reg = <0xc2b0000 0x20004>;
-> +	#reset-cells = <1>;
-> +};
-> +
-> +
-> +Specifying reset lines connected to IP modules
-> +==============================================
-> +
-> +Device nodes that need access to reset lines should
-> +specify them as a reset phandle in their corresponding node as
-> +specified in reset.txt.
-> +
-> +Example:
-> +
-> +	modem-pil@4080000 {
-> +		...
-> +
-> +		resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
-> +		reset-names = "mss_restart";
-> +
-> +		...
-> +        };
-> +
-> +For list of all valid reset indicies see
-> +<dt-bindings/reset/qcom,aoss-sdm845.h>
-
-Put this before the example.
+-- 
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
