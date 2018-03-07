@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751306AbeCGHjy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 02:39:54 -0500
-Received: from thoth.sbs.de ([192.35.17.2]:49659 "EHLO thoth.sbs.de"
+        id S1751214AbeCGHjl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 02:39:41 -0500
+Received: from david.siemens.de ([192.35.17.14]:35652 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751196AbeCGHjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 02:39:48 -0500
+        id S1751112AbeCGHjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 02:39:37 -0500
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>
@@ -13,84 +13,43 @@ Cc: x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         jailhouse-dev@googlegroups.com, linux-pci@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Benedikt Spranger <b.spranger@linutronix.de>,
-        Juergen Gross <jgross@suse.com>, Mark Rutland <mark.rutland@arm.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v5 0/7] jailhouse: Enhance secondary Jailhouse guest support /wrt PCI
-Date: Wed,  7 Mar 2018 08:39:11 +0100
-Message-Id: <cover.1520408357.git.jan.kiszka@siemens.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v5 7/7] MAINTAINERS: Add entry for Jailhouse
+Date: Wed,  7 Mar 2018 08:39:18 +0100
+Message-Id: <8be8af4084d862faa43d55c7bae94af7e0da1609.1520408357.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
+References: <cover.1520408357.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1520408357.git.jan.kiszka@siemens.com>
+References: <cover.1520408357.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Basic x86 support [1] for running Linux as secondary Jailhouse [2] guest
-is currently pending in the tip tree. This builds on top and enhances
-the PCI support for x86 and also ARM guests (ARM[64] does not require
-platform patches and works already).
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Key elements of this series are:
- - detection of Jailhouse via device tree hypervisor node
- - function-level PCI scan if Jailhouse is detected
- - MMCONFIG support for x86 guests
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-As most changes affect x86, I would suggest to route the series also via
-tip after the necessary acks are collected.
-
-Changes in v5:
- - fix build breakage of patch 6 on i386
-
-Changes in v4:
- - slit up Kconfig changes
- - respect pcibios_last_bus during mmconfig setup
- - cosmetic changes requested by Andy
-
-Changes in v3:
- - avoided duplicate scans of PCI functions under Jailhouse
- - reformated PCI_MMCONFIG condition and rephrase related commit log
-
-Changes in v2:
- - adjusted commit log and include ordering in patch 2
- - rebased over Linus master
-
-Jan
-
-[1] https://lkml.org/lkml/2017/11/27/125
-[2] http://jailhouse-project.org
-
-CC: Benedikt Spranger <b.spranger@linutronix.de>
-CC: Juergen Gross <jgross@suse.com>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: Otavio Pontes <otavio.pontes@intel.com>
-CC: Rob Herring <robh+dt@kernel.org>
-
-Jan Kiszka (6):
-  jailhouse: Provide detection for non-x86 systems
-  PCI: Scan all functions when running over Jailhouse
-  x86: Align x86_64 PCI_MMCONFIG with 32-bit variant
-  x86: Consolidate PCI_MMCONFIG configs
-  x86/jailhouse: Allow to use PCI_MMCONFIG without ACPI
-  MAINTAINERS: Add entry for Jailhouse
-
-Otavio Pontes (1):
-  x86/jailhouse: Enable PCI mmconfig access in inmates
-
- Documentation/devicetree/bindings/jailhouse.txt |  8 ++++++++
- MAINTAINERS                                     |  7 +++++++
- arch/x86/Kconfig                                | 12 +++++++-----
- arch/x86/include/asm/jailhouse_para.h           |  2 +-
- arch/x86/include/asm/pci_x86.h                  |  2 ++
- arch/x86/kernel/Makefile                        |  2 +-
- arch/x86/kernel/cpu/amd.c                       |  2 +-
- arch/x86/kernel/jailhouse.c                     |  8 ++++++++
- arch/x86/pci/legacy.c                           |  4 +++-
- arch/x86/pci/mmconfig-shared.c                  |  4 ++--
- drivers/pci/probe.c                             | 22 +++++++++++++++++++---
- include/linux/hypervisor.h                      | 17 +++++++++++++++--
- 12 files changed, 74 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/jailhouse.txt
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4623caf8d72d..6dc0b8f3ae0e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7523,6 +7523,13 @@ Q:	http://patchwork.linuxtv.org/project/linux-media/list/
+ S:	Maintained
+ F:	drivers/media/dvb-frontends/ix2505v*
+ 
++JAILHOUSE HYPERVISOR INTERFACE
++M:	Jan Kiszka <jan.kiszka@siemens.com>
++L:	jailhouse-dev@googlegroups.com
++S:	Maintained
++F:	arch/x86/kernel/jailhouse.c
++F:	arch/x86/include/asm/jailhouse_para.h
++
+ JC42.4 TEMPERATURE SENSOR DRIVER
+ M:	Guenter Roeck <linux@roeck-us.net>
+ L:	linux-hwmon@vger.kernel.org
 -- 
 2.13.6
