@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754224AbeCGI11 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 03:27:27 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42631 "EHLO
+        id S1754248AbeCGI1n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 03:27:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49585 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751055AbeCGI1W (ORCPT
+        with ESMTP id S1751151AbeCGI1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 03:27:22 -0500
-Date: Wed, 7 Mar 2018 00:27:04 -0800
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-mzmuxocrf96v922xkerey3ns@git.kernel.org>
-Cc: adrian.hunter@intel.com, dsahern@gmail.com, mingo@kernel.org,
-        dwmw@amazon.co.uk, acme@redhat.com, wangnan0@huawei.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        hpa@zytor.com, jolsa@kernel.org
-Reply-To: dsahern@gmail.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        jolsa@kernel.org, namhyung@kernel.org, mingo@kernel.org,
-        dwmw@amazon.co.uk, acme@redhat.com, wangnan0@huawei.com
+        Wed, 7 Mar 2018 03:27:40 -0500
+Date: Wed, 7 Mar 2018 00:27:33 -0800
+From: tip-bot for Ilya Pronin <tipbot@zytor.com>
+Message-ID: <tip-40c21898ba5372c14ef71717040529794a91ccc2@git.kernel.org>
+Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        ak@linux.intel.com, mingo@kernel.org, ipronin@twitter.com,
+        tglx@linutronix.de, xiyou.wangcong@gmail.com, jolsa@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, ipronin@twitter.com,
+        mingo@kernel.org, ak@linux.intel.com, acme@redhat.com,
+        xiyou.wangcong@gmail.com, tglx@linutronix.de, jolsa@redhat.com
+In-Reply-To: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
+References: <20180306064353.31930-1-xiyou.wangcong@gmail.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers: Sync x86's cpufeatures.h
-Git-Commit-ID: 4caea0574c5009901d1976980579ccd26dbf358a
+Subject: [tip:perf/urgent] perf stat: Fix CVS output format for
+ non-supported counters
+Git-Commit-ID: 40c21898ba5372c14ef71717040529794a91ccc2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,44 +34,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4caea0574c5009901d1976980579ccd26dbf358a
-Gitweb:     https://git.kernel.org/tip/4caea0574c5009901d1976980579ccd26dbf358a
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 5 Mar 2018 12:07:52 -0300
+Commit-ID:  40c21898ba5372c14ef71717040529794a91ccc2
+Gitweb:     https://git.kernel.org/tip/40c21898ba5372c14ef71717040529794a91ccc2
+Author:     Ilya Pronin <ipronin@twitter.com>
+AuthorDate: Mon, 5 Mar 2018 22:43:53 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 5 Mar 2018 12:07:52 -0300
+CommitDate: Tue, 6 Mar 2018 10:53:52 -0300
 
-tools headers: Sync x86's cpufeatures.h
+perf stat: Fix CVS output format for non-supported counters
 
-The changes in dd84441a7971 ("x86/speculation: Use IBRS if available
-before calling into firmware") don't need any kind of special treatment
-in the current tools/perf/ codebase, so just update the copy to get rid
-of the perf build warning:
+When printing stats in CSV mode, 'perf stat' appends extra separators
+when a counter is not supported:
 
-  BUILD:   Doing 'make -j4' parallel build
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
+<not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-mzmuxocrf96v922xkerey3ns@git.kernel.org
+Which causes a failure when parsing fields. The numbers of separators
+should be the same for each line, no matter if the counter is or not
+supported.
+
+Signed-off-by: Ilya Pronin <ipronin@twitter.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Link: http://lkml.kernel.org/r/20180306064353.31930-1-xiyou.wangcong@gmail.com
+Fixes: 92a61f6412d3 ("perf stat: Implement CSV metrics output")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/builtin-stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 0dfe4d3f74e2..f41079da38c5 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -213,6 +213,7 @@
- #define X86_FEATURE_SEV			( 7*32+20) /* AMD Secure Encrypted Virtualization */
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 98bf9d32f222..54a4c152edb3 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -917,7 +917,7 @@ static void print_metric_csv(void *ctx,
+ 	char buf[64], *vals, *ends;
  
- #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+ 	if (unit == NULL || fmt == NULL) {
+-		fprintf(out, "%s%s%s%s", csv_sep, csv_sep, csv_sep, csv_sep);
++		fprintf(out, "%s%s", csv_sep, csv_sep);
+ 		return;
+ 	}
+ 	snprintf(buf, sizeof(buf), fmt, val);
