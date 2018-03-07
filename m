@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754360AbeCGKXs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 05:23:48 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57263 "EHLO
+        id S1754269AbeCGK0W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 05:26:22 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44872 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754325AbeCGKXn (ORCPT
+        with ESMTP id S1751151AbeCGK0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 05:23:43 -0500
+        Wed, 7 Mar 2018 05:26:21 -0500
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
         Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1 1/9] PCI/PM: Move pcie_clear_root_pme_status() to core
-Date: Wed, 07 Mar 2018 11:24:24 +0100
-Message-ID: <10009696.o2NQuGtdHo@aspire.rjw.lan>
-In-Reply-To: <152040320934.240786.9241781859071768363.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040320934.240786.9241781859071768363.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Subject: Re: [PATCH v1 2/9] PCI/PM: Clear PCIe PME Status bit in core, not PCIe port driver
+Date: Wed, 07 Mar 2018 11:27:03 +0100
+Message-ID: <5379448.nrM4VZMk5Q@aspire.rjw.lan>
+In-Reply-To: <152040321483.240786.16597888035806933750.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152040297576.240786.1532465558381209070.stgit@bhelgaas-glaptop.roam.corp.google.com> <152040321483.240786.16597888035806933750.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,88 +24,102 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, March 7, 2018 7:13:29 AM CET Bjorn Helgaas wrote:
+On Wednesday, March 7, 2018 7:13:34 AM CET Bjorn Helgaas wrote:
 > From: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> Move pcie_clear_root_pme_status() from the port driver to the PCI core so
-> it will be available even when the port driver isn't present.  No
-> functional change intended.
+> fe31e69740ed ("PCI/PCIe: Clear Root PME Status bits early during system
+> resume") added a .resume_noirq() callback to the PCIe port driver to clear
+> the PME Status bit during resume to work around a BIOS issue.
+> 
+> The BIOS evidently enabled PME interrupts for ACPI-based runtime wakeups
+> but did not clear the PME Status bit during resume, which meant PMEs after
+> resume did not trigger interrupts because PME Status did not transition
+> from cleared to set.
+> 
+> The fix was in the PCIe port driver, so it worked when CONFIG_PCIEPORTBUS
+> was set.  But I think we *always* want the fix because the platform may use
+> PME interrupts even if Linux is built without the PCIe port driver.
+> 
+> Move the fix from the port driver to the PCI core so we can work around
+> this "PME doesn't work after waking from a sleep state" issue regardless of
+> CONFIG_PCIEPORTBUS.
 > 
 > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
 > ---
->  drivers/pci/pci.c              |    9 +++++++++
->  drivers/pci/pci.h              |    1 +
->  drivers/pci/pcie/portdrv.h     |    2 --
->  drivers/pci/pcie/portdrv_pci.c |    9 ---------
->  4 files changed, 10 insertions(+), 11 deletions(-)
+>  drivers/pci/pci-driver.c       |   14 ++++++++++++++
+>  drivers/pci/pcie/portdrv_pci.c |   15 ---------------
+>  2 files changed, 14 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index f6a4dd10d9b0..120e3393fc35 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1683,6 +1683,15 @@ int pci_set_pcie_reset_state(struct pci_dev *dev, enum pcie_reset_state state)
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 3bed6beda051..bf0704b75f79 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -525,6 +525,18 @@ static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
+>  	pci_fixup_device(pci_fixup_resume_early, pci_dev);
 >  }
->  EXPORT_SYMBOL_GPL(pci_set_pcie_reset_state);
 >  
-> +/**
-> + * pcie_clear_root_pme_status - Clear root port PME interrupt status.
-> + * @dev: PCIe root port or event collector.
-> + */
-> +void pcie_clear_root_pme_status(struct pci_dev *dev)
+> +static void pcie_resume_early(struct pci_dev *pci_dev)
+
+I'd call it pcie_pme_root_status_cleanup() or similar so it is more clear
+what this function is for.
+
+LGTM otherwise.
+
 > +{
-> +	pcie_capability_set_dword(dev, PCI_EXP_RTSTA, PCI_EXP_RTSTA_PME);
+> +	/*
+> +	 * Some BIOSes forget to clear Root PME Status bits after system wakeup
+> +	 * which breaks ACPI-based runtime wakeup on PCI Express, so clear those
+> +	 * bits now just in case (shouldn't hurt).
+> +	 */
+> +	if (pci_is_pcie(pci_dev) &&
+> +	    pci_pcie_type(pci_dev) == PCI_EXP_TYPE_ROOT_PORT)
+> +		pcie_clear_root_pme_status(pci_dev);
 > +}
 > +
->  /**
->   * pci_check_pme_status - Check if given device has generated PME.
->   * @dev: Device to check.
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index fcd81911b127..813ca2c895d8 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -71,6 +71,7 @@ void pci_update_current_state(struct pci_dev *dev, pci_power_t state);
->  void pci_power_up(struct pci_dev *dev);
->  void pci_disable_enabled_device(struct pci_dev *dev);
->  int pci_finish_runtime_suspend(struct pci_dev *dev);
-> +void pcie_clear_root_pme_status(struct pci_dev *dev);
->  int __pci_pme_wakeup(struct pci_dev *dev, void *ign);
->  void pci_pme_restore(struct pci_dev *dev);
->  bool pci_dev_keep_suspended(struct pci_dev *dev);
-> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-> index a854bc569117..a4fc44d52206 100644
-> --- a/drivers/pci/pcie/portdrv.h
-> +++ b/drivers/pci/pcie/portdrv.h
-> @@ -34,8 +34,6 @@ void pcie_port_bus_unregister(void);
+>  /*
+>   * Default "suspend" method for devices that have no driver provided suspend,
+>   * or not even a driver at all (second part).
+> @@ -873,6 +885,8 @@ static int pci_pm_resume_noirq(struct device *dev)
+>  	if (pci_has_legacy_pm_support(pci_dev))
+>  		return pci_legacy_resume_early(dev);
 >  
->  struct pci_dev;
->  
-> -void pcie_clear_root_pme_status(struct pci_dev *dev);
-> -
->  #ifdef CONFIG_HOTPLUG_PCI_PCIE
->  extern bool pciehp_msi_disabled;
+> +	pcie_resume_early(pci_dev);
+> +
+>  	if (drv && drv->pm && drv->pm->resume_noirq)
+>  		error = drv->pm->resume_noirq(dev);
 >  
 > diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-> index fb1c1bb87316..4413dd85e923 100644
+> index 4413dd85e923..f91afd09e356 100644
 > --- a/drivers/pci/pcie/portdrv_pci.c
 > +++ b/drivers/pci/pcie/portdrv_pci.c
-> @@ -50,15 +50,6 @@ __setup("pcie_ports=", pcie_port_setup);
+> @@ -62,20 +62,6 @@ static int pcie_portdrv_restore_config(struct pci_dev *dev)
+>  }
 >  
->  /* global data */
->  
-> -/**
-> - * pcie_clear_root_pme_status - Clear root port PME interrupt status.
-> - * @dev: PCIe root port or event collector.
-> - */
-> -void pcie_clear_root_pme_status(struct pci_dev *dev)
+>  #ifdef CONFIG_PM
+> -static int pcie_port_resume_noirq(struct device *dev)
 > -{
-> -	pcie_capability_set_dword(dev, PCI_EXP_RTSTA, PCI_EXP_RTSTA_PME);
+> -	struct pci_dev *pdev = to_pci_dev(dev);
+> -
+> -	/*
+> -	 * Some BIOSes forget to clear Root PME Status bits after system wakeup
+> -	 * which breaks ACPI-based runtime wakeup on PCI Express, so clear those
+> -	 * bits now just in case (shouldn't hurt).
+> -	 */
+> -	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT)
+> -		pcie_clear_root_pme_status(pdev);
+> -	return 0;
 > -}
 > -
->  static int pcie_portdrv_restore_config(struct pci_dev *dev)
+>  static int pcie_port_runtime_suspend(struct device *dev)
 >  {
->  	int retval;
+>  	return to_pci_dev(dev)->bridge_d3 ? 0 : -EBUSY;
+> @@ -103,7 +89,6 @@ static const struct dev_pm_ops pcie_portdrv_pm_ops = {
+>  	.thaw		= pcie_port_device_resume,
+>  	.poweroff	= pcie_port_device_suspend,
+>  	.restore	= pcie_port_device_resume,
+> -	.resume_noirq	= pcie_port_resume_noirq,
+>  	.runtime_suspend = pcie_port_runtime_suspend,
+>  	.runtime_resume	= pcie_port_runtime_resume,
+>  	.runtime_idle	= pcie_port_runtime_idle,
 > 
 > 
