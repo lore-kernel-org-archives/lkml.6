@@ -1,99 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933958AbeCGPht (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:37:49 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36880 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933833AbeCGPhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:37:47 -0500
-Date: Wed, 7 Mar 2018 16:37:45 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf report: Show zero counters as well in 'perf report
- --stat'
-Message-ID: <20180307153745.GA21531@krava>
-References: <20180307152430.7e5h7e657b7bgd7q@gmail.com>
+        id S933986AbeCGPia (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:38:30 -0500
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33322 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933749AbeCGPi1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 10:38:27 -0500
+X-Google-Smtp-Source: AG47ELvwOSLBMpmaPFpuv2tgcbXElbElOwsiGrdMpSIWNju92MCBSCPjxh69HGnYRCSs9elzpHltwpxFW1s8DpzQ5aw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307152430.7e5h7e657b7bgd7q@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180306180124.8987-4-krzk@kernel.org>
+References: <20180306180124.8987-1-krzk@kernel.org> <20180306180124.8987-4-krzk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 7 Mar 2018 16:38:25 +0100
+X-Google-Sender-Auth: iaIG74CvTC9jD_oZbdDlywA_QNo
+Message-ID: <CAK8P3a32AsvfdLubV-_B=1DKYFjVfVRR6TuwRcE8cH3o1S_H1Q@mail.gmail.com>
+Subject: Re: [GIT PULL 4/4] arm64: dts: exynos: DTS for v4.17
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES"
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 04:24:30PM +0100, Ingo Molnar wrote:
-> 
-> When recently using 'perf report --stat' it was not clear to me from the output 
-> whether a particular statistics field (LOST_SAMPLES) was not present, or just 
-> zero:
-> 
->   fomalhaut:~> perf report --stat
-> 
->   Aggregated stats:
->            TOTAL events:     495984
->             MMAP events:         85
->             COMM events:       3389
->             EXIT events:       1605
->         THROTTLE events:          2
->       UNTHROTTLE events:          2
->             FORK events:       3377
->           SAMPLE events:     472629
->            MMAP2 events:      14753
->   FINISHED_ROUND events:        139
->       THREAD_MAP events:          1
->          CPU_MAP events:          1
->        TIME_CONV events:          1
-> 
-> I had to check the output several times to ascertain that I'm not misreading the 
-> output, that the field didn't change and that I didn't misremember the name. In 
-> fact I had to look into the perf source to make sure that zero fields are indeed 
-> not shown.
-> 
-> With the patch applied:
-> 
->   fomalhaut:~> perf report --stat
-> 
->   Aggregated stats:
->            TOTAL events:     495984
->             MMAP events:         85
->             LOST events:          0
->             COMM events:       3389
->             EXIT events:       1605
->         THROTTLE events:          2
->       UNTHROTTLE events:          2
->             FORK events:       3377
->             READ events:          0
->           SAMPLE events:     472629
->            MMAP2 events:      14753
->              AUX events:          0
->     ITRACE_START events:          0
->     LOST_SAMPLES events:          0
->           SWITCH events:          0
->  SWITCH_CPU_WIDE events:          0
->       NAMESPACES events:          0
->             ATTR events:          0
->       EVENT_TYPE events:          0
->     TRACING_DATA events:          0
->         BUILD_ID events:          0
->   FINISHED_ROUND events:        139
->         ID_INDEX events:          0
->    AUXTRACE_INFO events:          0
->         AUXTRACE events:          0
->   AUXTRACE_ERROR events:          0
->       THREAD_MAP events:          1
->          CPU_MAP events:          1
->      STAT_CONFIG events:          0
->             STAT events:          0
->       STAT_ROUND events:          0
->     EVENT_UPDATE events:          0
->        TIME_CONV events:          1
->          FEATURE events:          0
+On Tue, Mar 6, 2018 at 7:01 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+>
+>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.17
+>
+> for you to fetch changes up to 6ca620371ab2dab89a7645fc363453d2e26c992e:
+>
+>   arm64: dts: exynos: add OF graph between MHL and USB connector (2018-03-06 17:48:07 +0100)
+>
+> ----------------------------------------------------------------
+> Samsung DTS ARM64 changes for v4.17
+>
+> 1. Add support for HDMI audio on Exynos 5433 TM2/TM2E boards.
+> 2. Add support for USB-MHL connector on Exynos 5433 TM2/TM2E boards.
 
-ok, it also might be better to read since now the events
-appear in the same place, not scattered based on what was
-data was collected
+Pulled into next/dt, thanks!
 
-jirka
+       Arnd
