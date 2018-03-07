@@ -1,129 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754715AbeCGPSL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:18:11 -0500
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55999 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933612AbeCGPSG (ORCPT
+        id S933612AbeCGPSg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:18:36 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40243 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753949AbeCGPSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:18:06 -0500
-X-Google-Smtp-Source: AG47ELu589mtxZURzFSeO9gghfaIfqmpMIUX/1Fv0K8PV8PNapwPWQIgilqhzf98gX7a0H45y5hqOg==
-Date: Wed, 7 Mar 2018 15:18:02 +0000
+        Wed, 7 Mar 2018 10:18:35 -0500
+X-Google-Smtp-Source: AG47ELsOkiQg9m4/jy9hohIeTF97GZaXPfPIA0toXKuNMrdB2FCzg1o132CUIGgCiHc+PcqyAS0UZg==
+Date: Wed, 7 Mar 2018 15:18:31 +0000
 From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Vincent Palatin <vpalatin@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH 2/6] mfd: cros_ec: free IRQ automatically
-Message-ID: <20180307151802.lzibybov4qth6ksp@dell>
-References: <20180219224043.21383-1-enric.balletbo@collabora.com>
- <CAP_ceTzdA6TgO4H2CCa4rJOjQvLL4tfFD8DnCZeJp67rWiSrdg@mail.gmail.com>
- <CAFqH_53KekHzh_WGBN8WVFexb3DRCpu-pW4ffv3U0U7NUe99nw@mail.gmail.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: groeck@chromium.org, gwendal@chromium.org, bleung@chromium.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Vincent Palatin <vpalatin@chromium.org>
+Subject: Re: [PATCH 1/6] mfd: cros_ec: fail early if we cannot identify the EC
+Message-ID: <20180307151831.u65fryr4e7mbdwpe@dell>
+References: <20180219224602.22582-1-enric.balletbo@collabora.com>
+ <20180307151253.pytqvo55svirgc6z@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFqH_53KekHzh_WGBN8WVFexb3DRCpu-pW4ffv3U0U7NUe99nw@mail.gmail.com>
+In-Reply-To: <20180307151253.pytqvo55svirgc6z@dell>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Feb 2018, Enric Balletbo Serra wrote:
+On Wed, 07 Mar 2018, Lee Jones wrote:
 
-> Hi Vincent,
+> On Mon, 19 Feb 2018, Enric Balletbo i Serra wrote:
 > 
-> 2018-02-20 9:00 GMT+01:00 Vincent Palatin <vpalatin@chromium.org>:
-> > On Mon, Feb 19, 2018 at 11:40 PM, Enric Balletbo i Serra
-> > <enric.balletbo@collabora.com> wrote:
-> >> From: Vincent Palatin <vpalatin@chromium.org>
-> >>
-> >> Free the IRQ we might have requested when removing the cros_ec device,
-> >> so we can unload and reload the driver properly.
-> >>
-> >> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >> ---
-> >>  drivers/mfd/cros_ec.c | 17 ++++++-----------
-> >>  1 file changed, 6 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> >> index 74780f2964a1..d1a4fbee9380 100644
-> >> --- a/drivers/mfd/cros_ec.c
-> >> +++ b/drivers/mfd/cros_ec.c
-> >> @@ -119,9 +119,9 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >>         }
-> >>
-> >>         if (ec_dev->irq) {
-> >> -               err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
-> >> -                                          IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-> >> -                                          "chromeos-ec", ec_dev);
-> >> +               err = devm_request_threaded_irq(dev, ec_dev->irq, NULL,
-> >> +                               ec_irq_thread, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-> >> +                               "chromeos-ec", ec_dev);
-> >>                 if (err) {
-> >>                         dev_err(dev, "Failed to request IRQ %d: %d",
-> >>                                 ec_dev->irq, err);
-> >> @@ -135,7 +135,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >>                 dev_err(dev,
-> >>                         "Failed to register Embedded Controller subdevice %d\n",
-> >>                         err);
-> >> -               goto fail_mfd;
-> >> +               return err;
-> >>         }
-> >>
-> >>         if (ec_dev->max_passthru) {
-> >> @@ -153,7 +153,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >>                         dev_err(dev,
-> >>                                 "Failed to register Power Delivery subdevice %d\n",
-> >>                                 err);
-> >> -                       goto fail_mfd;
-> >> +                       return err;
-> >>                 }
-> >>         }
-> >>
-> >> @@ -162,7 +162,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >>                 if (err) {
-> >>                         mfd_remove_devices(dev);
-> >>                         dev_err(dev, "Failed to register sub-devices\n");
-> >> -                       goto fail_mfd;
-> >> +                       return err;
-> >>                 }
-> >>         }
-> >>
-> >> @@ -180,11 +180,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >>         cros_ec_acpi_install_gpe_handler(dev);
-> >>
-> >>         return 0;
-> >> -
-> >> -fail_mfd:
-> >> -       if (ec_dev->irq)
-> >> -               free_irq(ec_dev->irq, ec_dev);
-> >> -       return err;
-> >>  }
-> >>  EXPORT_SYMBOL(cros_ec_register);
-> >
-> >
-> > You need to remove the "free_irq(ec_dev->irq, ec_dev);" in cros_ec_remove() too.
-> > as done there:
-> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/866858/15/drivers/mfd/cros_ec.c
-> >
-> > it was missing originally but was added by: 'f58b14e6632a mfd:
-> > cros_ec: Free IRQ on exit'
-> >
+> > From: Vincent Palatin <vpalatin@chromium.org>
+> > 
+> > If we cannot communicate with the EC chip to detect the protocol version
+> > and its features, it's very likely useless to continue. Else we will
+> > commit all kind of uninformed mistakes (using the wrong protocol, the
+> > wrong buffer size, mixing the EC with other chips).
+> > 
+> > Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> > Acked-by: Benson Leung <bleung@chromium.org>
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > ---
+> >  drivers/mfd/cros_ec.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> Many thanks to catch this. I'll wait a bit more for if I receive more
-> feedback on the other patches and send a second version of this
-> patchset.
+> Unless it is my mailer that is playing up, it looks as though you have
+> sent this set un-threaded, which means that when others or myself
+> start replying to them one-by-one, they will be sprawled throughout my
+> inbox.  It also seems as though there is no 0th (cover letter) patch,
+> which means I am lacking potentially important information regarding
+> the history of the set and what you are trying to achieve.
+> 
+> Anyway, the patch has been applied this time (hopefully there aren't
+> any inter-dependencies.
 
-Hmm... rather than mess around any further with this set, would you be
-kind enough to pull all of the patches back into a single set and send
-them out threaded with a cover-letter please?
-
-I'm also going to un-apply 1/6 for completeness.
+As discussed in 2/6, I'm going to un-apply this.
 
 -- 
 Lee Jones
