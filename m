@@ -1,102 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933890AbeCGVJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 16:09:27 -0500
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50640 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933706AbeCGVJZ (ORCPT
+        id S1754798AbeCGVLj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 16:11:39 -0500
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:38175 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754052AbeCGVLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 16:09:25 -0500
-X-Google-Smtp-Source: AG47ELs3gEhmBD++0aWBbOyJkh097bVAkR6WuAqZWyprY1nx5Zhly5wpVO6AHNh+wgC4T7j4AlB9hgUobpw4ygIN7LA=
+        Wed, 7 Mar 2018 16:11:37 -0500
+X-Google-Smtp-Source: AG47ELt9X3owHEPgNN33ruzBL0pKekmYuXkWqst6pbygK4/mUgo5ySup2aatRqCB+XZRVgusPJ0q/w==
+Date: Wed, 7 Mar 2018 15:11:18 -0600
+From: Rob Herring <robh@kernel.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pengcheng Li <lpc.li@hisilicon.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: add bindings doc for HiSilicon INNO
+ USB2 PHY
+Message-ID: <20180307211118.su2vyfa4zyfh4w2t@rob-hp-laptop>
+References: <1520217605-9312-1-git-send-email-shawn.guo@linaro.org>
+ <1520217605-9312-2-git-send-email-shawn.guo@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1519715872-31050-1-git-send-email-leo.yan@linaro.org>
-References: <1519715872-31050-1-git-send-email-leo.yan@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 7 Mar 2018 14:09:24 -0700
-Message-ID: <CANLsYkxyBvhWBSR4A2meQVeefssrcfTVfBw6vG-ZKGNXwPDP9g@mail.gmail.com>
-Subject: Re: [PATCH] perf machine: Fix load kernel symbol with '-k' option
-To: Leo Yan <leo.yan@linaro.org>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520217605-9312-2-git-send-email-shawn.guo@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
-
-On 27 February 2018 at 00:17, Leo Yan <leo.yan@linaro.org> wrote:
-> On Hikey arm64 octa A53 platform, when use command './perf report -v
-> -k vmlinux --stdio' it outputs below error info, and it skips to load
-> kernel symbol and doesn't print symbol for event:
-> Failed to open [kernel.kallsyms]_text, continuing without symbols.
->
-> The regression is introduced by commit ("8c7f1bb37b29 perf machine: Move
-> kernel mmap name into struct machine"), which changes the logic for
-> machine mmap_name by removing function machine__mmap_name() and always
-> use 'machine->mmap_name'.  Comparing difference between
-> machine__mmap_name() and 'machine->mmap_name', the later one includes
-> the string for specified kernel vmlinux string with option '-k' in
-> command, but the old function machine__mmap_name() ignores vmlinux
-> path string.  As result, event's mmap file name doesn't match with
-> machine mmap file name anymore and it skips to load kernel symbol from
-> vmlinux file.
->
-> To resolve this issue, this patch adds extra checking for
-> 'machine->mmap_name', when its start char is not '[' then we can know
-> it includes vmlinux path string specified for option '-k'. For this
-> case it sets 'is_kernel_mmap = true' and run into flow to load kernel
-> symbol from vmlinux.
->
-> This patch has been verified with two commands: './perf report -v
-> -k vmlinux --stdio' and './perf script -v -F cpu,event,ip,sym,symoff
-> -k vmlinux'.
->
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+On Mon, Mar 05, 2018 at 10:40:04AM +0800, Shawn Guo wrote:
+> From: Pengcheng Li <lpc.li@hisilicon.com>
+> 
+> It adds device tree bindings document for HiSilicon INNO USB2 PHY.
+> 
+> Signed-off-by: Pengcheng Li <lpc.li@hisilicon.com>
+> Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 > ---
->  tools/perf/util/machine.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 12b7427..ffd709d 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -1299,9 +1299,18 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
->         else
->                 kernel_type = DSO_TYPE_GUEST_KERNEL;
->
-> -       is_kernel_mmap = memcmp(event->mmap.filename,
-> -                               machine->mmap_name,
-> -                               strlen(machine->mmap_name) - 1) == 0;
-> +       /*
-> +        * If machine mmap_name doesn't start with char '[', it includes
-> +        * the specified kernel vmlinux name with option '-k'.  So set
-> +        * is_kernel_mmap as true to create machine symbol map.
-> +        */
-> +       if (machine->mmap_name[0] != '[')
-
-I have tested your patch and it indeed solves the problem but I
-suggest to replace the above with:
-
-    if (symbol_conf.vmlinux_name)
-
-That is consistent with the test in function machine__set_mmap_name()
-and doesn't rely on a user specified input to operate properly.
-
-Thanks,
-Mathieu
-
-> +               is_kernel_mmap = true;
-> +       else
-> +               is_kernel_mmap = memcmp(event->mmap.filename,
-> +                                       machine->mmap_name,
-> +                                       strlen(machine->mmap_name) - 1) == 0;
+>  .../devicetree/bindings/phy/phy-hisi-inno-usb2.txt | 72 ++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> new file mode 100644
+> index 000000000000..4dbf87c70b96
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-hisi-inno-usb2.txt
+> @@ -0,0 +1,72 @@
+> +Device tree bindings for HiSilicon INNO USB2 PHY
 > +
->         if (event->mmap.filename[0] == '/' ||
->             (!is_kernel_mmap && event->mmap.filename[0] == '[')) {
->                 map = machine__findnew_module_map(machine, event->mmap.start,
-> --
-> 2.7.4
->
+> +Required properties:
+> +- compatible: Should be one of the following strings:
+> +	"hisilicon,inno-usb2-phy",
+> +	"hisilicon,hi3798cv200-usb2-phy".
+> +- reg: Should be the address space for PHY configuration register in peripheral
+> +  controller, e.g. PERI_USB0 for USB 2.0 PHY01 on Hi3798CV200 SoC.
+> +- clocks: The phandle and clock specifier pair for INNO USB2 PHY device
+> +  reference clock.
+> +- resets: The phandle and reset specifier pair for INNO USB2 PHY device reset
+> +  signal.
+> +- #address-cells: Must be 1.
+> +- #size-cells: Must be 0.
+> +
+> +The INNO USB2 PHY device should be a child node of peripheral controller that
+> +contains the PHY configuration register, and each device suppports up to 2 PHY
+> +ports which are represented as child nodes of INNO USB2 PHY device.
+> +
+> +Required properties for PHY port node:
+> +- reg: The PHY port instance number.
+> +- #phy-cells: Defined by generic PHY bindings.  Must be 0.
+> +- resets: The phandle and reset specifier pair for PHY port reset signal.
+> +
+> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> +
+> +Example:
+> +
+> +perictrl: peripheral-controller@8a20000 {
+> +	compatible = "hisilicon,hi3798cv200-perictrl", "syscon",
+> +		     "simple-mfd";
+
+Is syscon needed here? Doesn't look like the phys need it.
+
+Is there no dependency on the peri ctrl probing first for the phys to 
+probe successfully? If there is some dependency, simple-mfd should not 
+be used.
+
+As for the phy binding,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +	reg = <0x8a20000 0x1000>;
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges = <0x0 0x8a20000 0x1000>;
+> +
+> +	usb2_phy1: usb2-phy@120 {
+> +		compatible = "hisilicon,hi3798cv200-usb2-phy";
+> +		reg = <0x120 0x4>;
+> +		clocks = <&crg HISTB_USB2_PHY1_REF_CLK>;
+> +		resets = <&crg 0xbc 4>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usb2_phy1_port0: phy@0 {
+> +			reg = <0>;
+> +			#phy-cells = <0>;
+> +			resets = <&crg 0xbc 8>;
+> +		};
+> +
+> +		usb2_phy1_port1: phy@1 {
+> +			reg = <1>;
+> +			#phy-cells = <0>;
+> +			resets = <&crg 0xbc 9>;
+> +		};
+> +	};
+> +
+> +	usb2_phy2: usb2-phy@124 {
+> +		compatible = "hisilicon,hi3798cv200-usb2-phy";
+> +		reg = <0x124 0x4>;
+> +		clocks = <&crg HISTB_USB2_PHY2_REF_CLK>;
+> +		resets = <&crg 0xbc 6>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usb2_phy2_port0: phy@0 {
+> +			reg = <0>;
+> +			#phy-cells = <0>;
+> +			resets = <&crg 0xbc 10>;
+> +		};
+> +	};
+> +};
+> -- 
+> 1.9.1
+> 
