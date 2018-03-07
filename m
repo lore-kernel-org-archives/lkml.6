@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuijRqTz0gzzh85nLJqOtxxMDvxjbDntkNIer11+HwlwJjxLPDpI3XQeAkGAckLZRQoNM/r
-ARC-Seal: i=1; a=rsa-sha256; t=1520451746; cv=none;
+X-Google-Smtp-Source: AG47ELue/fG9ROMTdGprvFrwXIARhN2HwcIgKhwoTAuNZnZm+BCDZtNEYBm/cUyTU5SPtNUSJrMv
+ARC-Seal: i=1; a=rsa-sha256; t=1520451739; cv=none;
         d=google.com; s=arc-20160816;
-        b=q64BCTdYVaQFt4V26ICTeX4k9lOJ5CLVAuM4aFBfLJHQpSPaB+c4s4JeDLeRscheQN
-         a2dpMN1TMWXnIb7cx9ENkCXDVxx/J8Y3sKGfh44byICndygyuaZB9/CXUWlMH/fYbLug
-         KremJF30UIXSIvwytkzYFJVUreSP+4i2g94eR6jLTJENXRZ/mn2fs6jztucetNaA18hk
-         LwcKnvLp5KZEL6SRrLouV4v8nmjq0hoL95xffrc4Pj0UTy+AhDo0AGjM82u/jn3Qd81h
-         5CamOhxQI3Oyk904QbDju3BuzkEIcXpHLE4L+aXYU0nzf7UPpDNdtr6dcAlZLv3MnDg3
-         Nexg==
+        b=mNMQ71wHkNeAk7Q/5TZ0KVhq0xk1SrU97NZgQPwZmJoKyBEqlSGBA8BHsUN32vUBju
+         1Ht7Gu6AzwHQQGxHuH0HwP71rhO6+EEzKYS91eSPasTcQIFO1NAYsPZm/PhUKVT4GQSE
+         LT2V9Dxq25gqUaechPuWiPXZQXVF0eCEVuRPtgTzP0kahG/1LAlOe68q3zhW6bclDZbE
+         GnWU7W8OnE1SNhZnfVFShQ/QyL8jNQdph2Z0MSKDOfpVPtsyIeXcGWX6BvkphiMNj9d5
+         3L0H0Eh7Bc/TZBVVbXCbGKz+gN0gZaVAhqznwUvniKa1sqLJ1irlSt3kBHEbSkfE146w
+         /Gkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qSmODZiNXCQIDIzkivIqxV1AOxrH3CRUv1t9zpR3j4A=;
-        b=nMpRlEInPFqsHFm7b9w5WBZhemC1oJeKVuoNblkh7e6mgqRaMFMb/9NlHO4oPHa/41
-         sYyO2IsYThyweEcYEYuFJnoELxpeT5y4Zn9v0/J2RL6gORlx9TLDa3k2+qfLH/FI6YBD
-         YY7uisCfS93q98O0isUExKMrxxuCzEItE0cGOXU7EQNrp01ywRWi07e0zk8XDuuYC+NF
-         7QBmJctbt/zp6Qh1BKrzFy1XFo+De63dpUJSR3GvSJRdaQmtl3bh8JsQ0EGbD/pU0vH5
-         mEqRWTXHkzCzdrC3LhapsfqrecYFKgD//RLqTrdoMnLhGEYIuzidNjGh4jASMNtYOa2S
-         YkNQ==
+        bh=uU1Ajy3k9uLWnUK23EGbSk0FZbHSHjKE2EjdDvNFRaU=;
+        b=BNMOyZsAixxJdxGaWdEzRhQdADLZJHUZ3jAfZocLpAlmOAT6MP+Q8mxLC0Cb1XAE88
+         3JBlUh1EffTe0cJRxdYq7bF4SpvYBJDgfU218+aFQFnL7Pc07knw/3vAH7SRi+xrlBbk
+         tLXni81knZTqwQ7OOd6lrNFMnqeWfbecM3tK8MeLzd8EkyCU+81szkD7oe8fsvRKWh5E
+         gCUEgzFuoHGA5zho+268xbhO6zH7Z9mSMgWHVbCGqkjgGPqxxUDwFrr5dxfuynwWsGp8
+         30gPKvBeuKU7bsNP+r24Dd5dmiV2oOABalN/8jdim2i/Etcu66ksO9bBZs0++xi41+9B
+         IkTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Monakhov <dmonakhov@openvz.org>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 031/122] block: pass inclusive lend parameter to truncate_inode_pages_range
-Date: Wed,  7 Mar 2018 11:37:23 -0800
-Message-Id: <20180307191733.748254637@linuxfoundation.org>
+	Xiong Zhou <xzhou@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 039/122] bridge: check brport attr show in brport_show
+Date: Wed,  7 Mar 2018 11:37:31 -0800
+Message-Id: <20180307191734.729830899@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309211053475507?=
-X-GMAIL-MSGID: =?utf-8?q?1594309211053475507?=
+X-GMAIL-THRID: =?utf-8?q?1594309203094602682?=
+X-GMAIL-MSGID: =?utf-8?q?1594309203094602682?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 0bd1ed4860d0f5f836aa8371797689a3779d1bf5 upstream.
 
-The 'lend' parameter of truncate_inode_pages_range is required to be
-inclusive, so follow the rule.
+[ Upstream commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f ]
 
-This patch fixes one memory corruption triggered by discard.
+Now br_sysfs_if file flush doesn't have attr show. To read it will
+cause kernel panic after users chmod u+r this file.
 
-Cc: <stable@vger.kernel.org>
-Cc: Dmitry Monakhov <dmonakhov@openvz.org>
-Fixes: 351499a172c0 ("block: Invalidate cache on discard v2")
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Xiong found this issue when running the commands:
+
+  ip link add br0 type bridge
+  ip link add type veth
+  ip link set veth0 master br0
+  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
+  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
+
+kernel crashed with NULL a pointer dereference call trace.
+
+This patch is to fix it by return -EINVAL when brport_attr->show
+is null, just the same as the check for brport_attr->store in
+brport_store().
+
+Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
+Reported-by: Xiong Zhou <xzhou@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/ioctl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/bridge/br_sysfs_if.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -225,7 +225,7 @@ static int blk_ioctl_discard(struct bloc
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -255,6 +255,9 @@ static ssize_t brport_show(struct kobjec
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+ 	struct net_bridge_port *p = to_brport(kobj);
  
- 	if (start + len > i_size_read(bdev->bd_inode))
- 		return -EINVAL;
--	truncate_inode_pages_range(mapping, start, start + len);
-+	truncate_inode_pages_range(mapping, start, start + len - 1);
- 	return blkdev_issue_discard(bdev, start >> 9, len >> 9,
- 				    GFP_KERNEL, flags);
++	if (!brport_attr->show)
++		return -EINVAL;
++
+ 	return brport_attr->show(p, buf);
  }
+ 
