@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933890AbeCGQAx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:00:53 -0500
-Received: from forward101j.mail.yandex.net ([5.45.198.241]:38112 "EHLO
-        forward101j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933555AbeCGQAv (ORCPT
+        id S933955AbeCGQBC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:01:02 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:54063 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933555AbeCGQA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:00:51 -0500
-Authentication-Results: smtp4o.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Message-ID: <1520437971.3731.22.camel@flygoat.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        James Hogan <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Dominik Peklo <dom.peklo@gmail.com>
-Date: Wed, 07 Mar 2018 23:52:51 +0800
-In-Reply-To: <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
-         <20170927151527.25570-4-prasannatsmkumar@gmail.com>
-         <20180306000832.GL4197@saruman>
-         <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-         <20180307143541.GN4197@saruman>
-         <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Mar 2018 11:00:58 -0500
+Date: Wed, 7 Mar 2018 16:00:50 +0000
+From: Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To: Arnd Bergmann <arnd@arndb.de>
+CC: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        linux-arch <linux-arch@vger.kernel.org>, <metcalf@alum.mit.edu>,
+        Henrik Grindal Bakken <hgb@ifi.uio.no>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Helmut Grohne <helmutg@debian.org>
+Subject: Re: RFC: remove the "tile" architecture from glibc
+In-Reply-To: <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1803071557070.28840@digraph.polyomino.org.uk>
+References: <1a57be83-3349-5450-ee4f-d2a33569a728@mellanox.com> <d6c8e425-a6b6-6594-05e3-965536f06da3@physik.fu-berlin.de> <abce89d0-6798-069a-1a54-06e664665b78@mellanox.com> <dc3c52ce-f082-0da0-7828-0d4e6751e2a5@physik.fu-berlin.de>
+ <CAK8P3a3itR8i2ayG7e4ku7kz+CQU7qHhptdmtmgTz+CzFGmCiw@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-03-07三的 20:35 +0530，PrasannaKumar Muralidharan写道：
-> Hi James,
-> 
-> Seems Jiaxun is interested in the board and is willing to help.
-> 
-> I have been told that Ingenic is focusing on IoT market and X1000 is
-> intended for IoT segment. I think that they would be selling several
-> 100Ks of chip over the coming years. But I feel Ingenic spends time
-> only on maintaining their Linux port which is usually based on very
-> old kernel version.
+On Wed, 7 Mar 2018, Arnd Bergmann wrote:
 
-Ingenic is going to release their XBrust2 core with it's products such
-as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
-superset of MIPS's MSA SIMD instruction set). The newest kernel port of
-X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
-with Ingenic, they said they are forcusing on China domestic market.
-But they're looking for partners to enter foriegn market. 
+> Do you have any updates on this? A related question has come up
+> for the kernel, as are in the process of removing a number of architectures,
+> https://lwn.net/SubscriberLink/748074/119aaf0d62b3e6c1/ or
+> see https://lwn.net/Articles/748074/ for a nice summary.
 
-[1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
-Chinese website, ingenic have a gerrit but I don't have access to it.
-As my experience, it's hard to develop on Chinese-made chips wihout
-reading Chinese documents.)  
-> 
-> > 
+No-one has posted glibc test results for 2.27 or 2.26, despite the prior 
+claims of interest in keeping the glibc port.  If the kernel port is 
+removed, my assumption is that we should remove the glibc port at that 
+point (not keep it around for possible use with older kernels).
+
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
