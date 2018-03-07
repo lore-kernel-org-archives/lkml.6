@@ -1,86 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934046AbeCGQMl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 11:12:41 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53740 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933848AbeCGQMa (ORCPT
+        id S933922AbeCGQPS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 11:15:18 -0500
+Received: from caffeine.csclub.uwaterloo.ca ([129.97.134.17]:34353 "EHLO
+        caffeine.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933335AbeCGQPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 11:12:30 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Date: Wed, 7 Mar 2018 16:12:26 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Richard Fitzgerald <rf@opensource.cirrus.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling
- of hogs
-Message-ID: <20180307161226.vweofwcvy6nvux5p@localhost.localdomain>
-References: <20180228155306.1006-1-rf@opensource.cirrus.com>
- <CACRpkdYc1Ovvhwze37-uJJL+5YG5kHuW9rgDSbfhxLRP30aPWg@mail.gmail.com>
+        Wed, 7 Mar 2018 11:15:16 -0500
+Date: Wed, 7 Mar 2018 11:15:15 -0500
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: ext4 ignoring rootfs default mount options
+Message-ID: <20180307161515.n76esxdqfdz5ho7h@csclub.uwaterloo.ca>
+References: <20180306190315.puocf5bu3bfz6yct@csclub.uwaterloo.ca>
+ <20180307040608.GA2462@thunk.org>
+ <20180307151427.i6vbeq6kqo55cdgs@csclub.uwaterloo.ca>
+ <20180307160856.GD7507@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYc1Ovvhwze37-uJJL+5YG5kHuW9rgDSbfhxLRP30aPWg@mail.gmail.com>
+In-Reply-To: <20180307160856.GD7507@thunk.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1803070187
+From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 02, 2018 at 09:42:54AM +0100, Linus Walleij wrote:
-> On Wed, Feb 28, 2018 at 4:53 PM, Richard Fitzgerald
-> <rf@opensource.cirrus.com> wrote:
+On Wed, Mar 07, 2018 at 11:08:56AM -0500, Theodore Y. Ts'o wrote:
+> This is where it's critcal to understand that the "tune2fs -o" changes
+> the *default* mount options.  The key in the comment is the anything
+> different from the *filesystem* defaults (that is, the defaults of the
+> particular ext4 file system, as opposed to the global defaults).  The
+> idea is that /proc/mounts, and /etc/mtab shows the options string that
+> if used in /etc/fstab, or in the mount command line, will replicate
+> the current mount option state.  Furthermore, that /proc/mounts is the
+> minimal set of mount option strings.
 > 
-> > When dt_to_map_one_config() is called with a pinctrl_dev passed
-> > in, it should only be using this if the node being looked up
-> > is a hog. The code was always using the passed pinctrl_dev
-> > without checking whether the dt node referred to it.
-> >
-> > A pin controller can have pinctrl-n dependencies on other pin
-> > controllers in these cases:
-> >
-> > - the pin controller hardware is external, for example I2C, so
-> >   needs other pin controller(s) to be setup to communicate with
-> >   the hardware device.
-> >
-> > - it is a child of a composite MFD so its of_node is shared with
-> >   the parent MFD and other children of that MFD. Any part of that
-> >   MFD could have dependencies on other pin controllers.
-> >
-> > Because of this, dt_to_map_one_config() can't assume that if it
-> > has a pinctrl_dev passed in then the node it looks up must be
-> > a hog. It could be a reference to some other pin controller.
-> >
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> 
-> Seems correct. Also the code is a little more clear
-> after the patch.
-> 
-> Patch applied.
-> 
-> It'd be nice to see some testing of this, I hope linux-next is a good
-> testing ground.
-> 
+> You may not like the behavior, but it's been this way forever, and the
+> reasoning behind it is that the low-level file system code doesn't
+> really know what the actual mount option string that would be in
+> /etc/fstab or in the /sbin/mount command line.  That's because
+> /sbin/mount command actually parses the mount options, and things like
+> "ro" is actually translated into bitflag passed to the mount option.
+> So for example, it's impossible to know whether "rw" was in the
+> user-specified mount string, since we never see it by the time the
+> string gets sent to ext4_fill_super (in fact the kernel never sees
+> it).  So when we try to make /proc/mounts a replacement for /etc/mtab
+> (since some people make /etc/mtab as symlink /proc/mounts), it's
+> actually impossible.  Trying to make it be the minimal set of options
+> was at least a consitent thing.  That is, if you use "tune2fs -o
+> nodelalloc", it's not necessary to put nodelalloc in /etc/fstab or in
+> the mount command line.  And hence, it should not be in /proc/mounts.
 
-Once we are happy on the testing front, how would you feel about
-getting this forwarded to 4.14 stable as well?
+OK, that makes sense.  Thanks.  I will work on convincing myself this
+is how it should be.
 
-The trouble is for our customers on 4.14 this bug would cause
-us to have to change the layout of the device tree bindings. We
-end up having to make a subnode for the pinctrl and move the
-hogs into there, keeping the main pin settings on the MFD device
-itself. And we know from the Madera series that such a DT
-arrangement is not acceptable upstream. Meaning without this
-patch on 4.14 our customers are forced to have DT bindings that
-won't be compatible with a mainline kernel.
+> As far as where ext4_seq_options_show() gets called, it's because we
+> have a fair amount of macro shortcuts in fs/ext4/sysfs.c (which is
+> where we put all of the pseudo file system support for ext4, which
+> means it includes procfs).  Search for macros PROC_FILE_SHOW_DEFN and
+> PROC_FILE_LIST.
 
-Thanks,
-Charles
+Oh that's where it is.
+
+-- 
+Len Sorensen
