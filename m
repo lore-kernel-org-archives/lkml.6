@@ -1,122 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934303AbeCGWkN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 17:40:13 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.219]:39046 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934240AbeCGWkM (ORCPT
+        id S934366AbeCGWnh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 17:43:37 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:41582 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754498AbeCGWnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 17:40:12 -0500
-Subject: Re: [PATCH] rtc: remove VLA usage
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180307201133.GA5860@embeddedgus>
- <20180307212506.GO3035@piout.net>
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Message-ID: <4b85f83a-cbf7-ffe7-ec92-03aeb7fbd958@embeddedor.com>
-Date: Wed, 7 Mar 2018 16:40:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 7 Mar 2018 17:43:35 -0500
+From: Brad Mouring <brad.mouring@ni.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Michael Grzeschik" <m.grzeschik@pengutronix.de>
+CC: Mark Rutland <mark.rutland@arm.com>, <netdev@vger.kernel.org>,
+        "Julia Cartwright" <julia@ni.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Brad Mouring <brad.mouring@ni.com>
+Subject: [PATCH 1/2] net: macb: Add phy-handle DT support
+Date: Wed, 7 Mar 2018 16:42:56 -0600
+Message-ID: <20180307224257.1959-1-brad.mouring@ni.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <20180307212506.GO3035@piout.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.24.133
-X-Source-L: No
-X-Exim-ID: 1ethjF-000kL3-Tm
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-24-133.static.axtel.net ([192.168.3.98]) [187.162.24.133]:18934
-X-Source-Auth: garsilva@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+This optional binding (as described in the ethernet DT bindings doc)
+directs the netdev to the phydev to use. This is useful for a phy
+chip that has >1 phy in it, and two netdevs are using the same phy
+chip (i.e. the second mac's phy lives on the first mac's MDIO bus)
 
-On 03/07/2018 03:25 PM, Alexandre Belloni wrote:
-> On 07/03/2018 at 14:11:33 -0600, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wvla, remove VLA and replace it
->> with a fixed-length array instead.
->>
-> You should probably explain what VLA is and why this is important to do.
+The devicetree snippet would look something like this:
 
-Sure. I can elaborate a little bit more.
+ethernet@feedf00d {
+	...
+	phy-handle = <&phy0> // the first netdev is physically wired to phy0
+	...
+	phy0: phy@0 {
+		...
+		reg = <0x0> // MDIO address 0
+		...
+	}
+	phy1: phy@1 {
+		...
+		reg = <0x1> // MDIO address 1
+		...
+	}
+...
+}
 
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/rtc/rtc-bq32k.c  | 2 +-
->>   drivers/rtc/rtc-mcp795.c | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-bq32k.c b/drivers/rtc/rtc-bq32k.c
->> index e8698e9..e4b234a 100644
->> --- a/drivers/rtc/rtc-bq32k.c
->> +++ b/drivers/rtc/rtc-bq32k.c
->> @@ -74,7 +74,7 @@ static int bq32k_read(struct device *dev, void *data, uint8_t off, uint8_t len)
->>   static int bq32k_write(struct device *dev, void *data, uint8_t off, uint8_t len)
->>   {
->>   	struct i2c_client *client = to_i2c_client(dev);
->> -	uint8_t buffer[len + 1];
->> +	uint8_t buffer[256];
->>   
-> You chose to change len to 255, probably because this is a uint8_t but
+ethernet@deadbeef {
+	...
+	phy-handle = <&phy1> // tells the driver to use phy1 on the
+						 // first mac's mdio bus (it's wired thusly)
+	...
+}
 
-Correct.
+The work done to add the phy_node in the first place (dacdbb4dfc1a1:
+"net: macb: add fixed-link node support") will consume the
+device_node (if found).
 
-> this is way too much for this rtc, it only has 10 consecutive registers.
+Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-In that case probably the best solution is to add the following line to 
-the module:
-
-#define MAX_LEN 10
-
-and update the rest of the code as follows:
-
-uint8_t buffer[MAX_LEN + 1];
-
-
->>   	buffer[0] = off;
->>   	memcpy(&buffer[1], data, len);
->> diff --git a/drivers/rtc/rtc-mcp795.c b/drivers/rtc/rtc-mcp795.c
->> index 79e24ea..00e11c1 100644
->> --- a/drivers/rtc/rtc-mcp795.c
->> +++ b/drivers/rtc/rtc-mcp795.c
->> @@ -82,7 +82,7 @@ static int mcp795_rtcc_write(struct device *dev, u8 addr, u8 *data, u8 count)
->>   {
->>   	struct spi_device *spi = to_spi_device(dev);
->>   	int ret;
->> -	u8 tx[2 + count];
->> +	u8 tx[257];
-
-For this particular case it seems to me that the following works just fine:
-
-#define MAX_COUNT 7
-
-u8 tx[MAX_COUNT + 2];
-
-What do you think?
-
-Thanks for your feedback.
---
-Gustavo
-
->>   
->>   	tx[0] = MCP795_WRITE;
->>   	tx[1] = addr;
->> -- 
->> 2.7.4
->>
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index e84afcf1ecb5..cc5b9e6e3526 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -567,6 +567,9 @@ static int macb_mii_init(struct macb *bp)
+ 
+ 			err = mdiobus_register(bp->mii_bus);
+ 		} else {
++			/* attempt to find a phy-handle */
++			bp->phy_node = of_parse_phandle(np, "phy-handle", 0);
++
+ 			/* try dt phy registration */
+ 			err = of_mdiobus_register(bp->mii_bus, np);
+ 
+-- 
+2.16.2
