@@ -1,48 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754482AbeCGOTp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 09:19:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46556 "EHLO mx2.suse.de"
+        id S933355AbeCGOSv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 09:18:51 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37535 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754279AbeCGOTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 09:19:42 -0500
-Date: Wed, 7 Mar 2018 15:17:20 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v8 06/63] btrfs: Use filemap_range_has_page()
-Message-ID: <20180307141720.GA23693@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <20180306192413.5499-1-willy@infradead.org>
- <20180306192413.5499-7-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180306192413.5499-7-willy@infradead.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        id S1751241AbeCGOSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 09:18:49 -0500
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>, ymarkman@marvell.com,
+        nadavh@marvell.com, stefanc@marvell.com
+Subject: [PATCH net-next 0/2] net: mvpp2: Add Unicast filtering capabilities
+Date: Wed,  7 Mar 2018 15:18:02 +0100
+Message-Id: <20180307141804.348-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 11:23:16AM -0800, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> The current implementation of btrfs_page_exists_in_range() gives the
-> wrong answer if the workingset code has stored a shadow entry in the
-> page cache.  The filemap_range_has_page() function does not have this
-> problem, and it's shared code, so use it instead.
+Hi all,
 
-I'm going to merge this patch. btrfs_page_exists_in_range was full of
-bugs from the beginning so I'm more than happy to use the shared one.
-Thanks.
+This series adds unicast filtering support to the Marvell PPv2 controller.
+
+This is implemented using the header parser cababilities of the PPv2,
+which allows for generic packet filtering based on matching patterns in
+the packet headers.
+
+PPv2 controller only has 256 of these entries, and we need to share them
+with other features, such as VLAN filtering.
+
+For each interface, we have 5 entries dedicated to unicast filtering (the
+controller's own address, and 4 other), and 21 to multicast filtering.
+
+When this number is reached, the controller switches to unicast or
+multicast promiscuous mode.
+
+The first patch reworks the function that adds and removes addresses to the
+filter. This is preparatory work to ease UC filter implementation.
+
+The second patch adds the UC filtering feature.
+
+Maxime Chevallier (2):
+  net: mvpp2: Simplify MAC filtering function parameters
+  net: mvpp2: Add support for unicast filtering
+
+ drivers/net/ethernet/marvell/mvpp2.c | 320 +++++++++++++++++++----------------
+ 1 file changed, 173 insertions(+), 147 deletions(-)
+
+-- 
+2.11.0
