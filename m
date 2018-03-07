@@ -1,52 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754416AbeCGSsx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 13:48:53 -0500
-Received: from mail-it0-f45.google.com ([209.85.214.45]:39316 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753901AbeCGSsv (ORCPT
+        id S1754473AbeCGSvl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 13:51:41 -0500
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44164 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753934AbeCGSvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 13:48:51 -0500
-X-Google-Smtp-Source: AG47ELu9yqR7hj/tLsAWqYwXnr1uQn1AjHxTkK/WEDgagHozlUVulZ7NVnAzTRtdD94to2HOMCtIz2e+mr3q8NYAVSA=
+        Wed, 7 Mar 2018 13:51:39 -0500
+X-Google-Smtp-Source: AG47ELst7VfglUfaWNwSlwaj3ywS2rvY6r+pb/XbDVoHjsxc7ELUNPoOf9NeTuZ2ClLvqpppOJl2PQ==
+Date: Wed, 7 Mar 2018 11:51:32 -0700
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jiandi An <anjiandi@codeaurora.org>
+Cc: zohar@linux.vnet.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, linux-integrity@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-ima-user@lists.sourceforge.net,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security: Fix IMA Kconfig for dependencies on ARM64
+Message-ID: <20180307185132.GA30102@ziepe.ca>
+References: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180307155444.GA10367@linux.vnet.ibm.com>
-References: <CAOS58YPzLeiZnwEeN31wWMZhki0t9+3ozdRNv9DgxWKY7OKmGA@mail.gmail.com>
- <CA+55aFx48U4W5tUgqW9ioZOHibPhQoDCUDWF_d-7yNCbqFQ7zg@mail.gmail.com>
- <20180305001600.GO3918@linux.vnet.ibm.com> <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
- <20180305030949.GP3918@linux.vnet.ibm.com> <20180305082441.4hao2z4dqn2n5on6@gmail.com>
- <87po4izj67.fsf_-_@xmission.com> <20180305161446.GQ3918@linux.vnet.ibm.com>
- <20180306084738.tcs4ggbby77phlbh@gmail.com> <20180306203906.GA3918@linux.vnet.ibm.com>
- <20180307155444.GA10367@linux.vnet.ibm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 7 Mar 2018 10:48:50 -0800
-X-Google-Sender-Auth: kL6NgXUsx59tOx7U_MQMkOITHMM
-Message-ID: <CA+55aFzyycJWD2xuo7wSptJ=D045yiZnmO+7iY6CapDvge_uCw@mail.gmail.com>
-Subject: Re: Simplifying our RCU models
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, Tejun Heo <tj@kernel.org>,
-        Jann Horn <jannh@google.com>, Benjamin LaHaise <bcrl@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520400386-17674-1-git-send-email-anjiandi@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 7, 2018 at 7:54 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
+On Tue, Mar 06, 2018 at 11:26:26PM -0600, Jiandi An wrote:
+> TPM_CRB driver is the TPM support for ARM64.  If it
+> is built as module, TPM chip is registered after IMA
+> init.  tpm_pcr_read() in IMA driver would fail and
+> display the following message even though eventually
+> there is TPM chip on the system:
+> 
+> ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+> 
+> Fix IMA Kconfig to select TPM_CRB so TPM_CRB driver is
+> built in kernel and initializes before IMA driver.
+> 
+> Signed-off-by: Jiandi An <anjiandi@codeaurora.org>
+>  security/integrity/ima/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> Ah, and any thoughts on how best to get feedback from the various people
-> who would need to reprogram their fingers?  Or is everyone already on
-> board with changing these various names?
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 35ef693..6a8f677 100644
+> +++ b/security/integrity/ima/Kconfig
+> @@ -10,6 +10,7 @@ config IMA
+>  	select CRYPTO_HASH_INFO
+>  	select TCG_TPM if HAS_IOMEM && !UML
+>  	select TCG_TIS if TCG_TPM && X86
+> +	select TCG_CRB if TCG_TPM && ACPI
+>  	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+>  	help
+>  	  The Trusted Computing Group(TCG) runtime Integrity
 
-I really would prefer to not see massive re-naming unless there is a
-really good reason for it.
+This seems really weird, why are any specific TPM drivers linked to
+IMA config, we have lots of drivers..
 
-I'm all for simplifying RCU from a million different versions down to
-just a few thousand, but I'm definitely not convinced we want to do
-any search-and-replace.
+I don't think I've ever seen this pattern in Kconfig before?
 
-                 Linus
+Jason
