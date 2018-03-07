@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsFeYduDu/bBFplBzy4abxSNjCE+pPA6oMVc7G6UN2y9x+eM9txaD+7bpXGcOx+FAB2x0xS
-ARC-Seal: i=1; a=rsa-sha256; t=1520451621; cv=none;
+X-Google-Smtp-Source: AG47ELt9zS4g8C0cDAGl0g2zMkwjOysNn1SJtBaz+QOyLrNlCMD27Tmym1udKHCRmSTZ9YG7zi7g
+ARC-Seal: i=1; a=rsa-sha256; t=1520451619; cv=none;
         d=google.com; s=arc-20160816;
-        b=EEbSU+m0R4AEI/KcIwRKbyQV9Jgc8E+jj5fuJ1ZBI2aWJBNd8CvT+b8akWYBG/5v6X
-         qo9BJn5eu+FP6Zz0iDDesF1z7Qu4ROyXAPv/LAmB5hmyk7TS844RnLsbc6VQcIIP1ST0
-         yMYDv7yfC/2aQ480twfLFabGe3JnuJGNlZ5yDoLPlm7YC35C8MCjg0bv/lV6oYnT55Fz
-         +cHAcm6+2qY19Sc74aJgga3iGlh4bzbQlB2GGmP9cKmT1KvhCrdHuMrc/Cnrug0PZXj0
-         VKuuvrSPeLyE9de/CLOMXxxy+sdlu4JXsYrCq0EWmxMieAruw76dv6BO52704DkCsolj
-         6Pww==
+        b=eke9uE1/E0TepL1MlzeLvBj9L6ySG7EK5RjyVWMUPhk59mIjDA3Xi5C0qDEgcEWDXd
+         ISUYaSIYahCONU7hWS7b7uHTMPvKuaBIitcTBrZq+9/ZxuPSD7Tr+2/qoYNohQlu/2H4
+         MOV+1Zomkxz46/IPa3mlaI/8YWkyd6Fj+rqXZLUgnjzCLBzJee8SKK6TLuc7gvpruVLo
+         SrjNEYW2YvftCdTzg6LrM6PTJ6W+qvOgnYTYsn0lwKlEaGQ5GCkMgrLJAOgaWe+dHCuw
+         5OH8j1c+rvfehzycgkTpzqMyC0YgWeSwvJ1RUZQ9AHkIber6lVm4K++ZAkjURZvPuJGj
+         mL4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NmLXz9TWVlREB/XBud/nVBsZ/1ZbLKQlLecrVLzWbF4=;
-        b=t4qKQDD5QiSckO73FfRM7jMXj1XI1jtO6nRU6TCLArOKfDB5qXvu+Cpq98pqZF9cxa
-         gEzf322ljtitLwnEzgFT+utuk83qJfA8jEzOm+lLKqs/UoCLFFjQUsl/h70ycO4jWyre
-         RpfiUMYXIcF/+bf+5/Zxaj/rdA1zOsvlX83OHzU+sZxFtquj+wskNSo+YVlTlWCCOoVB
-         atACI9XFZLb8oDF35yqUSar7psReUtilylu6BrsZ/fxs5HNQKLGIufAo/gkV8Wq20Ypw
-         o77yKYZ8M/D+XmNtzwkLaKgyuvAWAVn9yXXa4bN1CtRadSZlkF+JwSbfSntazLAidz/j
-         GuVw==
+        bh=t0SqZolyxhUdvgbsu84HZuygaeYyLSh+cqIhpSeGrHc=;
+        b=sir2HUYhTg/zjM/4LyWqYlwErjF4TFGFWVaobaSyFC0kaPDdK8LPiBRlC2dIWz6mko
+         ezU1bAULgbK8yQpOd0MAEEzgs9hns4O2HtDSogW18QCQq60X8MCsJ0O+gRro5KeyrD6a
+         2xqfNpdr67FSqq83HRKnm2Uw7hB73NiC9vTVH3iiIwEw8Se0DlTJmW3mbjjPUHAeO3nY
+         NLOOvJRROZQpgi61Ka1VEOFDIFcvFXafu4kssB2dbw9LT4UhhtJIc/8w2Qgs9Fw18Oeb
+         uVam1s4FW0e+1jiXj5bXOXi8mTp0H8/t8R0BrLyn9hD8zH95BGUVPDwaRBwZRSNV/c6f
+         MpIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Neeraj Upadhyay <neeraju@codeaurora.org>,
-	Lingutla Chandrasekhar <clingutla@codeaurora.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH 4.15 023/122] timers: Forward timer base before migrating timers
-Date: Wed,  7 Mar 2018 11:37:15 -0800
-Message-Id: <20180307191732.694358714@linuxfoundation.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.15 022/122] mmc: dw_mmc: Fix out-of-bounds access for slots caps
+Date: Wed,  7 Mar 2018 11:37:14 -0800
+Message-Id: <20180307191732.561620659@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191729.190879024@linuxfoundation.org>
 References: <20180307191729.190879024@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309079274815920?=
-X-GMAIL-MSGID: =?utf-8?q?1594309079274815920?=
+X-GMAIL-THRID: =?utf-8?q?1594309077088716305?=
+X-GMAIL-MSGID: =?utf-8?q?1594309077088716305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,82 +50,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lingutla Chandrasekhar <clingutla@codeaurora.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
 
-commit c52232a49e203a65a6e1a670cd5262f59e9364a0 upstream.
+commit 0d84b9e5631d923744767dc6608672df906dd092 upstream.
 
-On CPU hotunplug the enqueued timers of the unplugged CPU are migrated to a
-live CPU. This happens from the control thread which initiated the unplug.
+Add num_caps field for dw_mci_drv_data to validate the controller
+id from DT alias and non-DT ways.
 
-If the CPU on which the control thread runs came out from a longer idle
-period then the base clock of that CPU might be stale because the control
-thread runs prior to any event which forwards the clock.
-
-In such a case the timers from the unplugged CPU are queued on the live CPU
-based on the stale clock which can cause large delays due to increased
-granularity of the outer timer wheels which are far away from base:;clock.
-
-But there is a worse problem than that. The following sequence of events
-illustrates it:
-
- - CPU0 timer1 is queued expires = 59969 and base->clk = 59131.
-
-   The timer is queued at wheel level 2, with resulting expiry time = 60032
-   (due to level granularity).
-
- - CPU1 enters idle @60007, with next timer expiry @60020.
-
- - CPU0 is hotplugged at @60009
-
- - CPU1 exits idle and runs the control thread which migrates the
-   timers from CPU0
-
-   timer1 is now queued in level 0 for immediate handling in the next
-   softirq because the requested expiry time 59969 is before CPU1 base->clk
-   60007
-
- - CPU1 runs code which forwards the base clock which succeeds because the
-   next expiring timer. which was collected at idle entry time is still set
-   to 60020.
-
-   So it forwards beyond 60007 and therefore misses to expire the migrated
-   timer1. That timer gets expired when the wheel wraps around again, which
-   takes between 63 and 630ms depending on the HZ setting.
-
-Address both problems by invoking forward_timer_base() for the control CPUs
-timer base. All other places, which might run into a similar problem
-(mod_timer()/add_timer_on()) already invoke forward_timer_base() to avoid
-that.
-
-[ tglx: Massaged comment and changelog ]
-
-Fixes: a683f390b93f ("timers: Forward the wheel clock whenever possible")
-Co-developed-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Signed-off-by: Lingutla Chandrasekhar <clingutla@codeaurora.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180118115022.6368-1-clingutla@codeaurora.org
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Fixes: 800d78bfccb3 ("mmc: dw_mmc: add support for implementation specific callbacks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/timer.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mmc/host/dw_mmc-exynos.c   |    1 +
+ drivers/mmc/host/dw_mmc-k3.c       |    1 +
+ drivers/mmc/host/dw_mmc-rockchip.c |    1 +
+ drivers/mmc/host/dw_mmc-zx.c       |    1 +
+ drivers/mmc/host/dw_mmc.c          |    9 ++++++++-
+ drivers/mmc/host/dw_mmc.h          |    2 ++
+ 6 files changed, 14 insertions(+), 1 deletion(-)
 
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1886,6 +1886,12 @@ int timers_dead_cpu(unsigned int cpu)
- 		raw_spin_lock_irq(&new_base->lock);
- 		raw_spin_lock_nested(&old_base->lock, SINGLE_DEPTH_NESTING);
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -487,6 +487,7 @@ static unsigned long exynos_dwmmc_caps[4
  
-+		/*
-+		 * The current CPUs base clock might be stale. Update it
-+		 * before moving the timers over.
-+		 */
-+		forward_timer_base(new_base);
+ static const struct dw_mci_drv_data exynos_drv_data = {
+ 	.caps			= exynos_dwmmc_caps,
++	.num_caps		= ARRAY_SIZE(exynos_dwmmc_caps),
+ 	.init			= dw_mci_exynos_priv_init,
+ 	.set_ios		= dw_mci_exynos_set_ios,
+ 	.parse_dt		= dw_mci_exynos_parse_dt,
+--- a/drivers/mmc/host/dw_mmc-k3.c
++++ b/drivers/mmc/host/dw_mmc-k3.c
+@@ -210,6 +210,7 @@ static int dw_mci_hi6220_execute_tuning(
+ 
+ static const struct dw_mci_drv_data hi6220_data = {
+ 	.caps			= dw_mci_hi6220_caps,
++	.num_caps		= ARRAY_SIZE(dw_mci_hi6220_caps),
+ 	.switch_voltage		= dw_mci_hi6220_switch_voltage,
+ 	.set_ios		= dw_mci_hi6220_set_ios,
+ 	.parse_dt		= dw_mci_hi6220_parse_dt,
+--- a/drivers/mmc/host/dw_mmc-rockchip.c
++++ b/drivers/mmc/host/dw_mmc-rockchip.c
+@@ -319,6 +319,7 @@ static const struct dw_mci_drv_data rk29
+ 
+ static const struct dw_mci_drv_data rk3288_drv_data = {
+ 	.caps			= dw_mci_rk3288_dwmmc_caps,
++	.num_caps		= ARRAY_SIZE(dw_mci_rk3288_dwmmc_caps),
+ 	.set_ios		= dw_mci_rk3288_set_ios,
+ 	.execute_tuning		= dw_mci_rk3288_execute_tuning,
+ 	.parse_dt		= dw_mci_rk3288_parse_dt,
+--- a/drivers/mmc/host/dw_mmc-zx.c
++++ b/drivers/mmc/host/dw_mmc-zx.c
+@@ -195,6 +195,7 @@ static unsigned long zx_dwmmc_caps[3] =
+ 
+ static const struct dw_mci_drv_data zx_drv_data = {
+ 	.caps			= zx_dwmmc_caps,
++	.num_caps		= ARRAY_SIZE(zx_dwmmc_caps),
+ 	.execute_tuning		= dw_mci_zx_execute_tuning,
+ 	.prepare_hs400_tuning	= dw_mci_zx_prepare_hs400_tuning,
+ 	.parse_dt               = dw_mci_zx_parse_dt,
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2808,8 +2808,15 @@ static int dw_mci_init_slot_caps(struct
+ 	} else {
+ 		ctrl_id = to_platform_device(host->dev)->id;
+ 	}
+-	if (drv_data && drv_data->caps)
 +
- 		BUG_ON(old_base->running_timer);
++	if (drv_data && drv_data->caps) {
++		if (ctrl_id >= drv_data->num_caps) {
++			dev_err(host->dev, "invalid controller id %d\n",
++				ctrl_id);
++			return -EINVAL;
++		}
+ 		mmc->caps |= drv_data->caps[ctrl_id];
++	}
  
- 		for (i = 0; i < WHEEL_SIZE; i++)
+ 	if (host->pdata->caps2)
+ 		mmc->caps2 = host->pdata->caps2;
+--- a/drivers/mmc/host/dw_mmc.h
++++ b/drivers/mmc/host/dw_mmc.h
+@@ -543,6 +543,7 @@ struct dw_mci_slot {
+ /**
+  * dw_mci driver data - dw-mshc implementation specific driver data.
+  * @caps: mmc subsystem specified capabilities of the controller(s).
++ * @num_caps: number of capabilities specified by @caps.
+  * @init: early implementation specific initialization.
+  * @set_ios: handle bus specific extensions.
+  * @parse_dt: parse implementation specific device tree properties.
+@@ -554,6 +555,7 @@ struct dw_mci_slot {
+  */
+ struct dw_mci_drv_data {
+ 	unsigned long	*caps;
++	u32		num_caps;
+ 	int		(*init)(struct dw_mci *host);
+ 	void		(*set_ios)(struct dw_mci *host, struct mmc_ios *ios);
+ 	int		(*parse_dt)(struct dw_mci *host);
