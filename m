@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELs7sARBBEMLjhvtLXxS4G67vje6uI3rQ/XTCpI+e/4wSX5nJzA9R3fsvqZJbwDXldOSrXAo
-ARC-Seal: i=1; a=rsa-sha256; t=1520452070; cv=none;
+X-Google-Smtp-Source: AG47ELsUX9GLAqOUdh2Aei2iUhh8C58XG6wtqBsn5ZJicfFdsgjXvV1hXret5QH+QOSUyryUxRYM
+ARC-Seal: i=1; a=rsa-sha256; t=1520452067; cv=none;
         d=google.com; s=arc-20160816;
-        b=P4HP6ZsBFlW4+fg7vdTsdezo6FmyIvMYyVx+CoMQoEA/0NbcIEUe/CNhs4zB1gNi4H
-         ftRWJCwthpmint1KUAUBQqWB97s34c/0LYtY8gu8Dq7wnGuMLYwV6bsQDWiMyHcnIiup
-         +va+AMLFW76LpOav0wjgy5KDj5m8z9MbXFQj+4QWvHdtix8+dMdCZty9iTQwUpx8r6cI
-         dehJVCGt5wTyL9RCDSfKvWKrMYRIj9/T1SGMvasLew8E7VIb/W8ekgwhtXdVeMcxJyIo
-         5H5xi55MwQaM00LDqObkGtB2mJi5dTOtDtJBcmxAcn6KKTuU00LOOOi1sdWB4YKBdtmA
-         7MCg==
+        b=AHmOuICs3iHWzw9Y2daw8PSbwHuJK66KKxJ9rbBt0lE0Zlj+9yMNgt4gKmznbRRQoP
+         w9dOB1JH0CX8gYFNMFB3KpDAtZqjSWF0OoSFc/PauQVZgaofAbKDakWTgpfABnAj+33I
+         op0RhZFBaNi2R2/hQrnixPCR4z78rnrNUtSuwpO8cuyfDt23SkCFmuF8LdZL4/0wuwPq
+         V+TKSqr4cSlOOLeClPK1vG34IkRhmBlITQ1vQuZk55eCPldQ9tGnCmjOjEV4DPO2eP8p
+         Ob8lcgkEJQag1jVbNHfpneJMfRNigKpcYTSRrj1vK5Kshvaft6jVwaLyrYaQLFpmQfIr
+         p4XA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+AgaDkjmyYYnyOLNYe5qRi/wpXOprUcijGKvORvjeG4=;
-        b=F7Ry6NUlfU8ZFt9Z823lrxBQ7SBGm3E4c8mmMY4crf0MtXlngsuYroTBRTUNc5ndPc
-         HGSwQ0LXBYTgQleKZ2o3Y60Kx7qXITtgUEBguJ6Z+Ps6wD+8f/f4V5hdpwS3/OFXWp9v
-         uQk+rnjwUVcxTDjgmH31RG8mAtlYKWYrjxz1p+cg2dNjRz6lK+ssx+89qOA/OAXNlADQ
-         TsCQtDGgVvfxefbkBJxpsHX/MGJY4cAgGxccIRRBiPPkjQuX2dpb8N+CTHs2fVQntPM1
-         HzCtT6TlVq/B6FrQwIW15TB98FIoVAUKM8GRGNh3V081O1PcJhIP1A4qaTTQ6LdfkgqI
-         4uJQ==
+        bh=7qYCIGxTGV3obfUCey1+Ub5URZD7jM5bL3LP9a7VGog=;
+        b=ue3JOldOWgYSa5wbYlBb+dCEF2QPOOl976ONiLKQEhPxN3bXi+AyPUNI9teLS496vo
+         be0VIJxAM87uczy1EwBOJ9DvpfEbB6VMZZIUo4rGd3Wc9rAEOlRsna1+y+jpRawnDcZt
+         EIMjE1uaqm7xMnImueII8fpGZUzr7UnYTG4t/jRIsUariIJ2Re0LtuGJkEscWaI97ayA
+         okciy0+KQmDTV7lV3kFbc877FllpWu9l09Fn7Zx7f+2ysfpKO52v1MO3kmos/nzR0P2p
+         nz2BPODoq57K04qw+t9GtRVhaM1TUV94s3wPNx3xtWuQeKZVVCJiMzmdhW+8xh/xk6mZ
+         G3Nw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 185.236.200.248 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ido Schimmel <idosch@mellanox.com>,
-	Shalom Toledo <shalomt@mellanox.com>,
-	Jiri Pirko <jiri@mellanox.com>,
+	Ivan Vecera <ivecera@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 049/110] mlxsw: spectrum_switchdev: Check success of FDB add operation
-Date: Wed,  7 Mar 2018 11:38:32 -0800
-Message-Id: <20180307191045.991894527@linuxfoundation.org>
+Subject: [PATCH 4.14 058/110] net/sched: cls_u32: fix cls_u32 on filter replace
+Date: Wed,  7 Mar 2018 11:38:41 -0800
+Message-Id: <20180307191047.042343240@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1594309150715591734?=
-X-GMAIL-MSGID: =?utf-8?q?1594309549958533272?=
+X-GMAIL-THRID: =?utf-8?q?1594309172826180715?=
+X-GMAIL-MSGID: =?utf-8?q?1594309547208123032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,102 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shalom Toledo <shalomt@mellanox.com>
+From: Ivan Vecera <ivecera@redhat.com>
 
 
-[ Upstream commit 0a8a1bf17e3af34f1f8d2368916a6327f8b3bfd5 ]
+[ Upstream commit eb53f7af6f15285e2f6ada97285395343ce9f433 ]
 
-Until now, we assumed that in case of error when adding FDB entries, the
-write operation will fail, but this is not the case. Instead, we need to
-check that the number of entries reported in the response is equal to
-the number of entries specified in the request.
+The following sequence is currently broken:
 
-Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
-Reported-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+ # tc qdisc add dev foo ingress
+ # tc filter replace dev foo protocol all ingress \
+   u32 match u8 0 0 action mirred egress mirror dev bar1
+ # tc filter replace dev foo protocol all ingress \
+   handle 800::800 pref 49152 \
+   u32 match u8 0 0 action mirred egress mirror dev bar2
+ Error: cls_u32: Key node flags do not match passed flags.
+ We have an error talking to the kernel, -1
+
+The error comes from u32_change() when comparing new and
+existing flags. The existing ones always contains one of
+TCA_CLS_FLAGS_{,NOT}_IN_HW flag depending on offloading state.
+These flags cannot be passed from userspace so the condition
+(n->flags != flags) in u32_change() always fails.
+
+Fix the condition so the flags TCA_CLS_FLAGS_NOT_IN_HW and
+TCA_CLS_FLAGS_IN_HW are not taken into account.
+
+Fixes: 24d3dc6d27ea ("net/sched: cls_u32: Reflect HW offload status")
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |   29 +++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ net/sched/cls_u32.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -1098,6 +1098,7 @@ static int __mlxsw_sp_port_fdb_uc_op(str
- 				     bool dynamic)
- {
- 	char *sfd_pl;
-+	u8 num_rec;
- 	int err;
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -927,7 +927,8 @@ static int u32_change(struct net *net, s
+ 		if (TC_U32_KEY(n->handle) == 0)
+ 			return -EINVAL;
  
- 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
-@@ -1107,9 +1108,16 @@ static int __mlxsw_sp_port_fdb_uc_op(str
- 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
- 	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
- 			      mac, fid, action, local_port);
-+	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
- 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
--	kfree(sfd_pl);
-+	if (err)
-+		goto out;
-+
-+	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
-+		err = -EBUSY;
+-		if (n->flags != flags)
++		if ((n->flags ^ flags) &
++		    ~(TCA_CLS_FLAGS_IN_HW | TCA_CLS_FLAGS_NOT_IN_HW))
+ 			return -EINVAL;
  
-+out:
-+	kfree(sfd_pl);
- 	return err;
- }
- 
-@@ -1134,6 +1142,7 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
- 				       bool adding, bool dynamic)
- {
- 	char *sfd_pl;
-+	u8 num_rec;
- 	int err;
- 
- 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
-@@ -1144,9 +1153,16 @@ static int mlxsw_sp_port_fdb_uc_lag_op(s
- 	mlxsw_reg_sfd_uc_lag_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
- 				  mac, fid, MLXSW_REG_SFD_REC_ACTION_NOP,
- 				  lag_vid, lag_id);
-+	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
- 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
--	kfree(sfd_pl);
-+	if (err)
-+		goto out;
- 
-+	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
-+		err = -EBUSY;
-+
-+out:
-+	kfree(sfd_pl);
- 	return err;
- }
- 
-@@ -1191,6 +1207,7 @@ static int mlxsw_sp_port_mdb_op(struct m
- 				u16 fid, u16 mid, bool adding)
- {
- 	char *sfd_pl;
-+	u8 num_rec;
- 	int err;
- 
- 	sfd_pl = kmalloc(MLXSW_REG_SFD_LEN, GFP_KERNEL);
-@@ -1200,7 +1217,15 @@ static int mlxsw_sp_port_mdb_op(struct m
- 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
- 	mlxsw_reg_sfd_mc_pack(sfd_pl, 0, addr, fid,
- 			      MLXSW_REG_SFD_REC_ACTION_NOP, mid);
-+	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
- 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
-+	if (err)
-+		goto out;
-+
-+	if (num_rec != mlxsw_reg_sfd_num_rec_get(sfd_pl))
-+		err = -EBUSY;
-+
-+out:
- 	kfree(sfd_pl);
- 	return err;
- }
+ 		new = u32_init_knode(tp, n);
