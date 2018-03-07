@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452644-2-13732117242376183386
+X-Cyrus-Session-Id: sloti22d1t05-4098462-1520452631-2-13473568599570809899
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520452644; b=bjZpp7OgRMSuVZgigF5U8ElaU26cdNc00XDRwmLTPh4LPoQ
-    HoH8FWfP2ExJEJg4jZSr0rjp5qkQmSW30cxLO2p9Z2HxBtNEhrNYdmn6dzVzx9mX
-    hNDNZIJU1YRD4Xa2BwLcn6gaTnm2m2XXLTZMxRw1loRKg3qnISfGa3NsAuX6oAXD
-    gWxJllASEotBjHuMR4JgO9zFQDuOkUyCBQIwADGhFihsKRaKWqoJef26Swvk3CMF
-    WN2pEEnC1a0D5Co2Syg6p3lEP53UU7x9rHSCI/FweQTTDKTWB4bB1ysgsa7mGLnZ
-    SUBAmZMiicnmj1yNfe8P/awuVmRcYsKQ9Gthxtw==
+    t=1520452630; b=YtS1/ItzG4lmGL3BsSuYYB2YPIspN4VWeyctMNyALVRZcn1
+    t4kr0eov/n2P9r4BpDc27A49r+e5i2zyPQISJBcFDEuA3VdWaVGyHt3yZGm6oZbY
+    EcQNG4+YzGs62qIvG6q9CQpqcuquEowFjIkvsLVcg7qC02m33v0rXd86GJ+Z/4ai
+    BWkKbNfW5WDgagsJkdwHdks4FQePaw+J3ckItiejIr+GpK2JEDxRdFC/nA2+gSy4
+    p6KDlRd8ulYlSDINyE4FAuiMr3zpXVTQm4s0kKaBwYB11t9ZNtn5lWkNVsc4Pz4g
+    G+um5gQMkYZKdTzBfTbuhENV+EM7WOqko2it+5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1520452644; bh=x/iFTSEUYE/wiiH0vNiT8nAqg9
-    zomX/V4eMG/YRQKas=; b=HcH74XA3C0g6acsEt5qTrqLBYShbrNxh8u90ZuhVZq
-    bCSWx6Q/Zu1UrxtXZ/gbzN9LmXYbzfz57v/ef8AKlmy6VnD1Sk1BpCy8QjwrRoZ+
-    1MNtAOGi81wdO4TZpClGiH64rphJIax2eW1bE2c7kWVm2EKfxqPiGpgtc9dpbMCE
-    pL3v18B9Qqpl2UydZ0Z06wqmG+vnrnrN4Q66MFP1EdRleP7zBNX8OukWgfZLtkcE
-    3tiHGzuFn5HPWxe2ijJ6JzHZUS1GvCw/WFXJdm5PfRVFO0h1IFuAXpM3NejxgNXn
-    FuH8IDW/5ETgMgZ3O9uNtr6q3szEa0WKBFJbTyXW72Vg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1520452630; bh=16ZpBjPyuFMh9obP3BljfxE7wI
+    DtgJ15kEokFCMPTBw=; b=Vpj4PY0/RRVmt+KWgv0b6EiE+uqRM9du/6Md3mLeBZ
+    x6oSZdRIC3hva7hbiO4xZnvy4cfus6kzEnj8hRlDtfksi64PJRMP4jLnMn4o7zQy
+    QrfMrDvccrlNVfBASf/mXh/bKa9TJcbv9/fw6bDCDt7B7CxxtDkcF5EfBJFT94Re
+    XD5jhP6jaNOm+4V5NwAcz56Qq9cEoAUG7eNDpzhn/u4sKFakAqa7h99K8AfE5Fsm
+    7hOerAYiurgzJoqHBIQ7DAFEz8te1iOonR1H6Kd0iKkARTCrbQukdk9cMEOCVvRL
+    bBPdM2qc3kFWNpDfuPdnAxngIHxpifrEajlHCFCsQIow==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-category=clean score=-100 state=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -49,20 +49,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965426AbeCGTrV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 7 Mar 2018 14:47:21 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44944 "EHLO
+        id S935040AbeCGTrZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 7 Mar 2018 14:47:25 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44980 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965684AbeCGTrS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:18 -0500
+        with ESMTP id S935038AbeCGTrY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 7 Mar 2018 14:47:24 -0500
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 082/110] s390/qeth: fix IPA command submission race
-Date: Wed,  7 Mar 2018 11:39:05 -0800
-Message-Id: <20180307191050.321639195@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 084/110] media: m88ds3103: dont call a non-initalized function
+Date: Wed,  7 Mar 2018 11:39:07 -0800
+Message-Id: <20180307191050.604302793@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180307191039.748351103@linuxfoundation.org>
 References: <20180307191039.748351103@linuxfoundation.org>
@@ -80,82 +80,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
+commit b9c97c67fd19262c002d94ced2bfb513083e161e upstream.
 
-[ Upstream commit d22ffb5a712f9211ffd104c38fc17cbfb1b5e2b0 ]
+If m88d3103 chip ID is not recognized, the device is not initialized.
 
-If multiple IPA commands are build & sent out concurrently,
-fill_ipacmd_header() may assign a seqno value to a command that's
-different from what send_control_data() later assigns to this command's
-reply.
-This is due to other commands passing through send_control_data(),
-and incrementing card->seqno.ipa along the way.
+However, it returns from probe without any error, causing this OOPS:
 
-So one IPA command has no reply that's waiting for its seqno, while some
-other IPA command has multiple reply objects waiting for it.
-Only one of those waiting replies wins, and the other(s) times out and
-triggers a recovery via send_ipa_cmd().
+[    7.689289] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[    7.689297] pgd = 7b0bd7a7
+[    7.689302] [00000000] *pgd=00000000
+[    7.689318] Internal error: Oops: 80000005 [#1] SMP ARM
+[    7.689322] Modules linked in: dvb_usb_dvbsky(+) m88ds3103 dvb_usb_v2 dvb_core videobuf2_vmalloc videobuf2_memops videobuf2_core crc32_arm_ce videodev media
+[    7.689358] CPU: 3 PID: 197 Comm: systemd-udevd Not tainted 4.15.0-mcc+ #23
+[    7.689361] Hardware name: BCM2835
+[    7.689367] PC is at 0x0
+[    7.689382] LR is at m88ds3103_attach+0x194/0x1d0 [m88ds3103]
+[    7.689386] pc : [<00000000>]    lr : [<bf0ae1ec>]    psr: 60000013
+[    7.689391] sp : ed8e5c20  ip : ed8c1e00  fp : ed8945c0
+[    7.689395] r10: ed894000  r9 : ed894378  r8 : eda736c0
+[    7.689400] r7 : ed894070  r6 : ed8e5c44  r5 : bf0bb040  r4 : eda77600
+[    7.689405] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : eda77600
+[    7.689412] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[    7.689417] Control: 10c5383d  Table: 2d8e806a  DAC: 00000051
+[    7.689423] Process systemd-udevd (pid: 197, stack limit = 0xe9dbfb63)
+[    7.689428] Stack: (0xed8e5c20 to 0xed8e6000)
+[    7.689439] 5c20: ed853a80 eda73640 ed894000 ed8942c0 ed853a80 bf0b9e98 ed894070 bf0b9f10
+[    7.689449] 5c40: 00000000 00000000 bf08c17c c08dfc50 00000000 00000000 00000000 00000000
+[    7.689459] 5c60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689468] 5c80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689479] 5ca0: 00000000 00000000 ed8945c0 ed8942c0 ed894000 ed894830 bf0b9e98 00000000
+[    7.689490] 5cc0: ed894378 bf0a3cb4 bf0bc3b0 0000533b ed920540 00000000 00000034 bf0a6434
+[    7.689500] 5ce0: ee952070 ed826600 bf0a7038 bf0a2dd8 00000001 bf0a6768 bf0a2f90 ed8943c0
+[    7.689511] 5d00: 00000000 c08eca68 ed826620 ed826620 00000000 ee952070 bf0bc034 ee952000
+[    7.689521] 5d20: ed826600 bf0bb080 ffffffed c0aa9e9c c0aa9dac ed826620 c16edf6c c168c2c8
+[    7.689531] 5d40: c16edf70 00000000 bf0bc034 0000000d 00000000 c08e268c bf0bb080 ed826600
+[    7.689541] 5d60: bf0bc034 ed826654 ed826620 bf0bc034 c164c8bc 00000000 00000001 00000000
+[    7.689553] 5d80: 00000028 c08e2948 00000000 bf0bc034 c08e2848 c08e0778 ee9f0a58 ed88bab4
+[    7.689563] 5da0: bf0bc034 ed90ba80 c168c1f0 c08e1934 bf0bb3bc c17045ac bf0bc034 c164c8bc
+[    7.689574] 5dc0: bf0bc034 bf0bb3bc ed91f564 c08e34ec bf0bc000 c164c8bc bf0bc034 c0aa8dc4
+[    7.689584] 5de0: ffffe000 00000000 bf0bf000 ed91f600 ed91f564 c03021e4 00000001 00000000
+[    7.689595] 5e00: c166e040 8040003f ed853a80 bf0bc448 00000000 c1678174 ed853a80 f0f22000
+[    7.689605] 5e20: f0f21fff 8040003f 014000c0 ed91e700 ed91e700 c16d8e68 00000001 ed91e6c0
+[    7.689615] 5e40: bf0bc400 00000001 bf0bc400 ed91f564 00000001 00000000 00000028 c03c9a24
+[    7.689625] 5e60: 00000001 c03c8c94 ed8e5f50 ed8e5f50 00000001 bf0bc400 ed91f540 c03c8cb0
+[    7.689637] 5e80: bf0bc40c 00007fff bf0bc400 c03c60b0 00000000 bf0bc448 00000028 c0e09684
+[    7.689647] 5ea0: 00000002 bf0bc530 c1234bf8 bf0bc5dc bf0bc514 c10ebbe8 ffffe000 bf000000
+[    7.689657] 5ec0: 00011538 00000000 ed8e5f48 00000000 00000000 00000000 00000000 00000000
+[    7.689666] 5ee0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.689676] 5f00: 00000000 00000000 7fffffff 00000000 00000013 b6e55a18 0000017b c0309104
+[    7.689686] 5f20: ed8e4000 00000000 00510af0 c03c9430 7fffffff 00000000 00000003 00000000
+[    7.689697] 5f40: 00000000 f0f0f000 00011538 00000000 f0f107b0 f0f0f000 00011538 f0f1fdb8
+[    7.689707] 5f60: f0f1fbe8 f0f1b974 00004000 000041e0 bf0bc3d0 00000001 00000000 000024c4
+[    7.689717] 5f80: 0000002d 0000002e 00000019 00000000 00000010 00000000 16894000 00000000
+[    7.689727] 5fa0: 00000000 c0308f20 16894000 00000000 00000013 b6e55a18 00000000 b6e5652c
+[    7.689737] 5fc0: 16894000 00000000 00000000 0000017b 00020000 00508110 00000000 00510af0
+[    7.689748] 5fe0: bef68948 bef68938 b6e4d3d0 b6d32590 60000010 00000013 00000000 00000000
+[    7.689790] [<bf0ae1ec>] (m88ds3103_attach [m88ds3103]) from [<bf0b9f10>] (dvbsky_s960c_attach+0x78/0x280 [dvb_usb_dvbsky])
+[    7.689821] [<bf0b9f10>] (dvbsky_s960c_attach [dvb_usb_dvbsky]) from [<bf0a3cb4>] (dvb_usbv2_probe+0xa3c/0x1024 [dvb_usb_v2])
+[    7.689849] [<bf0a3cb4>] (dvb_usbv2_probe [dvb_usb_v2]) from [<c0aa9e9c>] (usb_probe_interface+0xf0/0x2a8)
+[    7.689869] [<c0aa9e9c>] (usb_probe_interface) from [<c08e268c>] (driver_probe_device+0x2f8/0x4b4)
+[    7.689881] [<c08e268c>] (driver_probe_device) from [<c08e2948>] (__driver_attach+0x100/0x11c)
+[    7.689895] [<c08e2948>] (__driver_attach) from [<c08e0778>] (bus_for_each_dev+0x4c/0x9c)
+[    7.689909] [<c08e0778>] (bus_for_each_dev) from [<c08e1934>] (bus_add_driver+0x1c0/0x264)
+[    7.689919] [<c08e1934>] (bus_add_driver) from [<c08e34ec>] (driver_register+0x78/0xf4)
+[    7.689931] [<c08e34ec>] (driver_register) from [<c0aa8dc4>] (usb_register_driver+0x70/0x134)
+[    7.689946] [<c0aa8dc4>] (usb_register_driver) from [<c03021e4>] (do_one_initcall+0x44/0x168)
+[    7.689963] [<c03021e4>] (do_one_initcall) from [<c03c9a24>] (do_init_module+0x64/0x1f4)
+[    7.689979] [<c03c9a24>] (do_init_module) from [<c03c8cb0>] (load_module+0x20a0/0x25c8)
+[    7.689993] [<c03c8cb0>] (load_module) from [<c03c9430>] (SyS_finit_module+0xb4/0xec)
+[    7.690007] [<c03c9430>] (SyS_finit_module) from [<c0308f20>] (ret_fast_syscall+0x0/0x54)
+[    7.690018] Code: bad PC value
 
-Fix this by making sure that the same seqno value is assigned to
-a command and its reply object.
-Do so immediately before submitting the command & while holding the
-irq_pending "lock", to produce nicely ascending seqnos.
+This may happen on normal circumstances, if, for some reason, the demod
+hangs and start returning an invalid chip ID:
 
-As a side effect, *all* IPA commands now use a reply object that's
-waiting for its actual seqno. Previously, early IPA commands that were
-submitted while the card was still DOWN used the "catch-all" IDX seqno.
+[   10.394395] m88ds3103 3-0068: Unknown device. Chip_id=00
 
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+So, change the logic to cause probe to fail with -ENODEV, preventing
+the OOPS.
+
+Detected while testing DVB MMAP patches on Raspberry Pi 3 with
+DVBSky S960CI.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/s390/net/qeth_core_main.c |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -2087,25 +2087,26 @@ int qeth_send_control_data(struct qeth_c
+---
+ drivers/media/dvb-frontends/m88ds3103.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/media/dvb-frontends/m88ds3103.c
++++ b/drivers/media/dvb-frontends/m88ds3103.c
+@@ -1262,11 +1262,12 @@ static int m88ds3103_select(struct i2c_m
+  * New users must use I2C client binding directly!
+  */
+ struct dvb_frontend *m88ds3103_attach(const struct m88ds3103_config *cfg,
+-		struct i2c_adapter *i2c, struct i2c_adapter **tuner_i2c_adapter)
++				      struct i2c_adapter *i2c,
++				      struct i2c_adapter **tuner_i2c_adapter)
+ {
+ 	struct i2c_client *client;
+ 	struct i2c_board_info board_info;
+-	struct m88ds3103_platform_data pdata;
++	struct m88ds3103_platform_data pdata = {};
+ 
+ 	pdata.clk = cfg->clock;
+ 	pdata.i2c_wr_max = cfg->i2c_wr_max;
+@@ -1409,6 +1410,8 @@ static int m88ds3103_probe(struct i2c_cl
+ 	case M88DS3103_CHIP_ID:
+ 		break;
+ 	default:
++		ret = -ENODEV;
++		dev_err(&client->dev, "Unknown device. Chip_id=%02x\n", dev->chip_id);
+ 		goto err_kfree;
  	}
- 	reply->callback = reply_cb;
- 	reply->param = reply_param;
--	if (card->state == CARD_STATE_DOWN)
--		reply->seqno = QETH_IDX_COMMAND_SEQNO;
--	else
--		reply->seqno = card->seqno.ipa++;
-+
- 	init_waitqueue_head(&reply->wait_q);
--	spin_lock_irqsave(&card->lock, flags);
--	list_add_tail(&reply->list, &card->cmd_waiter_list);
--	spin_unlock_irqrestore(&card->lock, flags);
- 	QETH_DBF_HEX(CTRL, 2, iob->data, QETH_DBF_CTRL_LEN);
  
- 	while (atomic_cmpxchg(&card->write.irq_pending, 0, 1)) ;
--	qeth_prepare_control_data(card, len, iob);
- 
- 	if (IS_IPA(iob->data)) {
- 		cmd = __ipa_cmd(iob);
-+		cmd->hdr.seqno = card->seqno.ipa++;
-+		reply->seqno = cmd->hdr.seqno;
- 		event_timeout = QETH_IPA_TIMEOUT;
- 	} else {
-+		reply->seqno = QETH_IDX_COMMAND_SEQNO;
- 		event_timeout = QETH_TIMEOUT;
- 	}
-+	qeth_prepare_control_data(card, len, iob);
-+
-+	spin_lock_irqsave(&card->lock, flags);
-+	list_add_tail(&reply->list, &card->cmd_waiter_list);
-+	spin_unlock_irqrestore(&card->lock, flags);
- 
- 	timeout = jiffies + event_timeout;
- 
-@@ -2896,7 +2897,7 @@ static void qeth_fill_ipacmd_header(stru
- 	memset(cmd, 0, sizeof(struct qeth_ipa_cmd));
- 	cmd->hdr.command = command;
- 	cmd->hdr.initiator = IPA_CMD_INITIATOR_HOST;
--	cmd->hdr.seqno = card->seqno.ipa;
-+	/* cmd->hdr.seqno is set by qeth_send_control_data() */
- 	cmd->hdr.adapter_type = qeth_get_ipa_adp_type(card->info.link_type);
- 	cmd->hdr.rel_adapter_no = (__u8) card->info.portno;
- 	if (card->options.layer2)
