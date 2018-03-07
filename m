@@ -1,102 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933768AbeCGPXD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 10:23:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47884 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933487AbeCGPW6 (ORCPT
+        id S933806AbeCGPYk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 10:24:40 -0500
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36262 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933545AbeCGPYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 10:22:58 -0500
-Subject: Re: [PATCH 1/3 RESEND] tpm: add longer timeouts for creation
- commands.
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date: Wed, 07 Mar 2018 10:22:49 -0500
-In-Reply-To: <20180306215904.GA32097@ziepe.ca>
-References: <20180304121205.16934-1-tomas.winkler@intel.com>
-         <20180305125642.GA3425@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422E21E@hasmsx108.ger.corp.intel.com>
-         <20180306074932.GB3624@linux.intel.com>
-         <5B8DA87D05A7694D9FA63FD143655C1B9422EFFE@hasmsx108.ger.corp.intel.com>
-         <1520353933.5393.21.camel@HansenPartnership.com>
-         <1520361396.10396.396.camel@linux.vnet.ibm.com>
-         <20180306215904.GA32097@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18030715-0008-0000-0000-000004D8F670
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18030715-0009-0000-0000-00001E6C1264
-Message-Id: <1520436169.10396.516.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-07_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803070176
+        Wed, 7 Mar 2018 10:24:34 -0500
+X-Google-Smtp-Source: AG47ELtTUGMXm6hdGK1tciu3WzqrjlFI05AQzL32DT9+eGOoEi1bAhYjZWPQyoF/315Y1KqC98d4BA==
+Date: Wed, 7 Mar 2018 16:24:30 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@infradead.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf report: Show zero counters as well in 'perf report
+ --stat'
+Message-ID: <20180307152430.7e5h7e657b7bgd7q@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-03-06 at 14:59 -0700, Jason Gunthorpe wrote:
-> On Tue, Mar 06, 2018 at 01:36:36PM -0500, Mimi Zohar wrote:
-> > On Tue, 2018-03-06 at 08:32 -0800, James Bottomley wrote:
-> > > On Tue, 2018-03-06 at 08:06 +0000, Winkler, Tomas wrote:
-> > > > > 
-> > > > > 
-> > > > > On Mon, Mar 05, 2018 at 01:09:09PM +0000, Winkler, Tomas wrote:
-> > > > > > 
-> > > > > > Why you need cover letter?  What are u missing in the patch
-> > > > > > description
-> > > > > 
-> > > > > If you submit a *patch set* I *require* a cover letter, yes.
-> > > > 
-> > > > It's good but it is not must, you are inventing your own rules.
-> > > 
-> > > As long as the Maintainer is the gatekeeper, you're not going to get
-> > > very far with this argument.  The fact is that a lot of subsystems have
-> > > varying rules; often undocumented, some of which are even in conflict,
-> > > like alphabetic vs reverse christmas tree format for includes.
-> > > 
-> > > A cover letter is actually one of the more uniform rules.  It's
-> > > referred to in submitting patches, but not actually documented there.
-> > 
-> > I've heard that some maintainers are moving away from cover letters,
-> > since they are not include in the git repo and are lost.  I've seen
-> > Andrew Morton cut and paste the cover letter in the first patch
-> > description of the patch set.
-> 
-> Andrew has a workflow unlike any other I've seen..
 
-Andrew is the only one that actually cut and pasted the cover letter
-in the first patch description, but I've heard this from others.
+When recently using 'perf report --stat' it was not clear to me from the output 
+whether a particular statistics field (LOST_SAMPLES) was not present, or just 
+zero:
 
-> In my view the cover letter should explain why the maintainer should
-> apply the series, and give any guidance to the review process.
+  fomalhaut:~> perf report --stat
 
-> Not duplicate information that belongs in the patch comments. It
-> shouldn't explain how/why the patch(es) works, etc.
+  Aggregated stats:
+           TOTAL events:     495984
+            MMAP events:         85
+            COMM events:       3389
+            EXIT events:       1605
+        THROTTLE events:          2
+      UNTHROTTLE events:          2
+            FORK events:       3377
+          SAMPLE events:     472629
+           MMAP2 events:      14753
+  FINISHED_ROUND events:        139
+      THREAD_MAP events:          1
+         CPU_MAP events:          1
+       TIME_CONV events:          1
 
-Patch descriptions should never explain how/why a particular patch
-works.  If it is that difficult to understand, then something is wrong
-with the patch.  The individual patch descriptions should provide the
-current status, the motivation for the change, and short summary of
-the change (eg. new features, configs, etc).
+I had to check the output several times to ascertain that I'm not misreading the 
+output, that the field didn't change and that I didn't misremember the name. In 
+fact I had to look into the perf source to make sure that zero fields are indeed 
+not shown.
 
-The cover letter is needed for (larger) patch sets in order to explain
-the overall motivation, instead of having to guess where the patch set
-is going.  I wouldn't expect to see a cover letter for a single bug
-fix or two.
+With the patch applied:
 
-Mimi
+  fomalhaut:~> perf report --stat
+
+  Aggregated stats:
+           TOTAL events:     495984
+            MMAP events:         85
+            LOST events:          0
+            COMM events:       3389
+            EXIT events:       1605
+        THROTTLE events:          2
+      UNTHROTTLE events:          2
+            FORK events:       3377
+            READ events:          0
+          SAMPLE events:     472629
+           MMAP2 events:      14753
+             AUX events:          0
+    ITRACE_START events:          0
+    LOST_SAMPLES events:          0
+          SWITCH events:          0
+ SWITCH_CPU_WIDE events:          0
+      NAMESPACES events:          0
+            ATTR events:          0
+      EVENT_TYPE events:          0
+    TRACING_DATA events:          0
+        BUILD_ID events:          0
+  FINISHED_ROUND events:        139
+        ID_INDEX events:          0
+   AUXTRACE_INFO events:          0
+        AUXTRACE events:          0
+  AUXTRACE_ERROR events:          0
+      THREAD_MAP events:          1
+         CPU_MAP events:          1
+     STAT_CONFIG events:          0
+            STAT events:          0
+      STAT_ROUND events:          0
+    EVENT_UPDATE events:          0
+       TIME_CONV events:          1
+         FEATURE events:          0
+
+It's pretty clear at a glance that LOST_SAMPLES is present but zero.
+
+The original output can still be gotten via:
+
+  fomalhaut:~> perf report --stat | grep -vw 0
+
+  Aggregated stats:
+           TOTAL events:     495984
+            MMAP events:         85
+            COMM events:       3389
+            EXIT events:       1605
+        THROTTLE events:          2
+      UNTHROTTLE events:          2
+            FORK events:       3377
+          SAMPLE events:     472629
+           MMAP2 events:      14753
+  FINISHED_ROUND events:        139
+      THREAD_MAP events:          1
+         CPU_MAP events:          1
+       TIME_CONV events:          1
+
+So I don't think there's any real loss in functionality.
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/perf/ui/stdio/hist.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+Index: linux/tools/perf/ui/stdio/hist.c
+===================================================================
+--- linux.orig/tools/perf/ui/stdio/hist.c
++++ linux/tools/perf/ui/stdio/hist.c
+@@ -840,15 +840,11 @@ size_t events_stats__fprintf(struct even
+ 	for (i = 0; i < PERF_RECORD_HEADER_MAX; ++i) {
+ 		const char *name;
+ 
+-		if (stats->nr_events[i] == 0)
+-			continue;
+-
+ 		name = perf_event__name(i);
+ 		if (!strcmp(name, "UNKNOWN"))
+ 			continue;
+ 
+-		ret += fprintf(fp, "%16s events: %10d\n", name,
+-			       stats->nr_events[i]);
++		ret += fprintf(fp, "%16s events: %10d\n", name, stats->nr_events[i]);
+ 	}
+ 
+ 	return ret;
