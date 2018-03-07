@@ -1,72 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754383AbeCGLyC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 06:54:02 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38490 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751176AbeCGLx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 06:53:58 -0500
-Subject: Re: [PATCH] KVM: VMX: expose the host's ARCH_CAPABILITIES MSR to
- userspace
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-References: <1519433546-33879-1-git-send-email-pbonzini@redhat.com>
- <20180226221300.GK22024@char.us.oracle.com> <20180301213205.GB29001@flask>
- <ccead1df-ba70-f365-c816-7892834a290c@redhat.com>
- <20180302214212.GB13606@flask>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <9cad32c8-fdb6-95db-2cd3-a0e3297b1811@redhat.com>
-Date: Wed, 7 Mar 2018 12:53:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754436AbeCGLyr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 06:54:47 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49290 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754311AbeCGLyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 06:54:45 -0500
+Date: Wed, 7 Mar 2018 11:54:38 +0000
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Ilya Ledvich <ilya@compulab.co.il>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: imx6: Add PHY reference clock source support
+Message-ID: <20180307115438.GA15139@e107981-ln.cambridge.arm.com>
+References: <CAOMZO5AFC9dxhsQjmRrDA7Z3KMkEemryKOBmQhXm19NXKxHkKQ@mail.gmail.com>
+ <1515073977-10153-1-git-send-email-ilya@compulab.co.il>
+ <1515408232.12538.7.camel@pengutronix.de>
+ <498e20c0-7b86-0f86-7555-64a012b85b9e@compulab.co.il>
 MIME-Version: 1.0
-In-Reply-To: <20180302214212.GB13606@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <498e20c0-7b86-0f86-7555-64a012b85b9e@compulab.co.il>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/03/2018 22:42, Radim Krčmář wrote:
-> Ok, sounds good.  I've deferred it to rc5 as I think we'll want to use
-> this to replace the auto setting:  I would not bet that it is going to
-> be safe to expose future bits, so having the userspace always sanitize
-> the capabilities would be safer (and more in line with what we do with
-> other MSRs).  i.e. this patch would also
+On Wed, Jan 10, 2018 at 03:43:41PM +0200, Ilya Ledvich wrote:
+> Hi Lucas,
 > 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 051dab74e4e9..86ea4a83af1f 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -5740,9 +5740,6 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
->  		++vmx->nmsrs;
->  	}
->  
-> -	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
-> -		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
-> -
->  	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
->  
->  	/* 22.2.1, 20.8.1 */
+> On 01/08/2018 12:43 PM, Lucas Stach wrote:
+> >Am Donnerstag, den 04.01.2018, 15:52 +0200 schrieb Ilya Ledvich:
+> >>i.MX7D variant of the IP can use either Crystal Oscillator input
+> >>or internal clock input as a Reference Clock input for PCIe PHY.
+> >>Add support for an optional property 'fsl,pcie-phy-refclk-internal'.
+> >>If present then an internal clock input is used as PCIe PHY
+> >>reference clock source. By default an external oscillator input
+> >>is still used.
+> >>
+> >>Verified on Compulab SBC-iMX7 Single Board Computer.
+> >
+> >Sorry to get in late here, but I would rather have the external clock
+> >input modeled as a real clock and only use the internal clock if that
+> >isn't present.
+> >
+> 
+> I tried to follow the logic described in the iMX7 TRM, where external
+> oscillator is a default option. Additionally, the external clock input model
+> you've suggested, requires additional changes in the iMX7 SabreSD board (and
+> probably other boards which use an external input too) devicetree files.
+> 
+> >Are you even sure that the i.MX7 clock you mention isn't the already
+> >documented "pcie_bus" clock? This one is also allowed to be sourced
+> >externally on the i.MX6.
+> 
+> To the best of my understanding it's not the pcie_bus clock, but I'm
+> absolutely sure. Could anybody from the BSP team guys elaborate on this
+> issue? Thanks a lot!
 
-I don't know. There are good reasons for both behaviors, and especially
-the following two for _not_ removing the rdmsr:
+I have marked this with "Changes Requested" according to Lucas'
+feedback, please send a new version or let me know what I should
+do with it, thanks.
 
-1) so far you could just pass the result of KVM_GET_SUPPORTED_CPUID to
-KVM_SET_CPUID2, and expect the result to be "as close as possible to the
-host";
-
-2) having different behavior for VMX and ARCH_CAPABILITIES MSRs would be
-confusing.
-
-I think I'm leaning more towards the following direction: whitelist
-ARCH_CAPABILITIES, like we do for the AMD LFENCE MSR already, and
-default the AMD LFENCE MSR to the host value.
-
-Thanks,
-
-Paolo
+Lorenzo
