@@ -1,62 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965058AbeCGUdd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:33:33 -0500
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33071 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933935AbeCGUdb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:33:31 -0500
-X-Google-Smtp-Source: AG47ELvWWZrrwjPkvg3wTqhfKBu5gB9e7oYpu+hIAc+M10G0yqZoHp0/dcYs3x8zMn+q2s7BvveUvw==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND
-        64-BIT)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 15/21] powerpc: Make function MMU_setup static
-Date: Wed,  7 Mar 2018 21:32:55 +0100
-Message-Id: <20180307203257.23542-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180225172236.29650-16-malat@debian.org>
-References: <20180225172236.29650-16-malat@debian.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S935011AbeCGUfP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:35:15 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48442 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934899AbeCGUfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:35:10 -0500
+From: Waiman Long <longman@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Waiman Long <longman@redhat.com>
+Subject: [PATCH 5/5] ipc: Show ranges of msgmni and shmmni with CTL_FLAGS_SHOW_RANGE
+Date: Wed,  7 Mar 2018 15:34:29 -0500
+Message-Id: <1520454869-13871-6-git-send-email-longman@redhat.com>
+In-Reply-To: <1520454869-13871-1-git-send-email-longman@redhat.com>
+References: <1520454869-13871-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since function `MMU_setup` is not meant to be exported, change the
-signature to `static`. Fix warning (treated as error with W=1):
+The CTL_FLAGS_SHOW_RANGE flag is added to the msgmni and shmmni
+ctl_table entries to show their ranges. Two range table entries are
+reserved for the new *_range sysctl parameters.
 
-  CC      kernel/sys.o
-arch/powerpc/mm/init_32.c:102:13: error: no previous prototype for ‘MMU_setup’ [-Werror=missing-prototypes]
- void __init MMU_setup(void)
-             ^~~~~~~~~
-cc1: all warnings being treated as errors
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- arch/powerpc/mm/init_32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ ipc/ipc_sysctl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/mm/init_32.c b/arch/powerpc/mm/init_32.c
-index 6419b33ca309..a2bf6965d04f 100644
---- a/arch/powerpc/mm/init_32.c
-+++ b/arch/powerpc/mm/init_32.c
-@@ -99,7 +99,7 @@ unsigned long __max_low_memory = MAX_LOW_MEM;
- /*
-  * Check for command-line options that affect what MMU_init will do.
-  */
--void __init MMU_setup(void)
-+static void __init MMU_setup(void)
- {
- 	/* Check for nobats option (used in mapin_ram). */
- 	if (strstr(boot_command_line, "nobats")) {
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 2c03f57..3b4d7cd 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -143,7 +143,7 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ 		.proc_handler	= proc_ipc_dointvec_minmax,
+ 		.extra1		= &zero,
+ 		.extra2		= &ipc_mni,
+-		.flags		= CTL_FLAGS_CLAMP_RANGE,
++		.flags		= CTL_FLAGS_CLAMP_RANGE|CTL_FLAGS_SHOW_RANGE,
+ 	},
+ 	{
+ 		.procname	= "shm_rmid_forced",
+@@ -171,7 +171,7 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ 		.proc_handler	= proc_ipc_dointvec_minmax,
+ 		.extra1		= &zero,
+ 		.extra2		= &ipc_mni,
+-		.flags		= CTL_FLAGS_CLAMP_RANGE,
++		.flags		= CTL_FLAGS_CLAMP_RANGE|CTL_FLAGS_SHOW_RANGE,
+ 	},
+ 	{
+ 		.procname	= "auto_msgmni",
+@@ -228,6 +228,7 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ 		.extra2		= &int_max,
+ 	},
+ #endif
++	CTL_RESERVE_RANGES(2)
+ 	{}
+ };
+ 
 -- 
-2.11.0
+1.8.3.1
