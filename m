@@ -1,143 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965231AbeCGUJN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 7 Mar 2018 15:09:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53390 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934658AbeCGUJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 7 Mar 2018 15:09:10 -0500
+        id S965291AbeCGUOU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 7 Mar 2018 15:14:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935049AbeCGUOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 7 Mar 2018 15:14:16 -0500
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C40C20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jeyu@kernel.org
+Date: Wed, 7 Mar 2018 21:14:11 +0100
+From: Jessica Yu <jeyu@kernel.org>
+To: Jia Zhang <zhang.jia@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] module: Support to show the current enforcement
+ policy
+Message-ID: <20180307201408.ssuzsmbatntk67yz@redbean>
+References: <1519895346-7961-1-git-send-email-zhang.jia@linux.alibaba.com>
+ <1519895346-7961-3-git-send-email-zhang.jia@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Wed, 07 Mar 2018 15:09:08 -0500
-From: Agustin Vega-Frias <agustinv@codeaurora.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        timur@codeaurora.org
-Subject: Re: [RFC V3 1/3] perf, tools: Support wildcards on pmu name in
- dynamic pmu events
-In-Reply-To: <20180307195833.GX3701@kernel.org>
-References: <1520345084-42646-1-git-send-email-agustinv@codeaurora.org>
- <1520345084-42646-2-git-send-email-agustinv@codeaurora.org>
- <20180307160224.GN3701@kernel.org>
- <d3bd59db56fbc13b931ae45573bf94d8@codeaurora.org>
- <20180307185415.GK25017@tassilo.jf.intel.com>
- <20180307190509.GQ3701@kernel.org> <20180307190543.GR3701@kernel.org>
- <20180307193930.GW3701@kernel.org>
- <ca5a79445859ff4fb75b021f84f656f9@codeaurora.org>
- <20180307195833.GX3701@kernel.org>
-Message-ID: <0ba091eaa6676498b4554978606d8016@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1519895346-7961-3-git-send-email-zhang.jia@linux.alibaba.com>
+X-OS: Linux redbean 4.15.0-next-20180207 x86_64
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-07 14:58, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Mar 07, 2018 at 02:49:50PM -0500, Agustin Vega-Frias escreveu:
->> On 2018-03-07 14:39, Arnaldo Carvalho de Melo wrote:
->> > Em Wed, Mar 07, 2018 at 04:05:43PM -0300, Arnaldo Carvalho de Melo
->> > escreveu:
->> > > Em Wed, Mar 07, 2018 at 04:05:09PM -0300, Arnaldo Carvalho de Melo
->> > > escreveu:
->> > > > Em Wed, Mar 07, 2018 at 10:54:15AM -0800, Andi Kleen escreveu:
->> > > > > > Sorry about that. That's probably because FNM_EXTMATCH is a GNU extension,
->> > > > > > not POSIX, and the Alpine and Android runtimes likely don't implement
->> > > > > > that...
->> > > > > > I'll send a fix reverting back to the strncmp to ignore the uncore_ prefix,
->> > > > > > and dropping that extension.
->> > > > >
->> > > > > Just don't set it? Even the basic glob patterns are useful.
->> > > >
->> > > > Or use:
->> > > >
->> > > > #ifndef FNM_EXTMATCH
->> > > > #define FNM_EXTMATCH 0
->> > > > #endif
->> > > >
->> > > > So on systems without it, its not used, while on GNU systems, we have
->> > > > that functionality (pretty fancy, someone may need that... ;-))
->> > >
->> > > I'll try this route, btw, no need to send more patches for now.
->> >
->> > So, with the patch at the end of this message, it works now in those
->> > systems:
->> >
->> > [root@jouet ~]# dm
->> >    1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
->> >    2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1
->> > 20160822
->> >    3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
->> >    4 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
->> >    5 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623
->> > (Red Hat 4.8.5-11)
->> >    6 amazonlinux:2                 : Ok   gcc (GCC) 7.2.1 20170915
->> > (Red Hat 7.2.1-2)
->> >    7 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc
->> > (GCC) 4.9.x 20150123 (prerelease)
->> >    8 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc
->> > (GCC) 4.9.x 20150123 (prerelease)
->> >    9 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704
->> > (Red Hat 4.1.2-55)
->> >   10 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313
->> > (Red Hat 4.4.7-18)
->> >
->> > I stopped the test at this point to process some more patches, will
->> > restart the tests with those extra patches and if all goes well with the
->> > other 46 build environments, push upstream, thanks.
->> >
->> > - Arnaldo
->> >
->> > diff --git a/tools/perf/util/parse-events.y
->> > b/tools/perf/util/parse-events.y
->> > index 316ac073aa78..18473be7d787 100644
->> > --- a/tools/perf/util/parse-events.y
->> > +++ b/tools/perf/util/parse-events.y
->> > @@ -9,6 +9,13 @@
->> >  #define YYDEBUG 1
->> >
->> >  #include <fnmatch.h>
->> > +/*
->> > + * GNU extension, so better define it to 0 for systems such
->> > + * as Android and Alpine Linux.
->> > + */
->> > +#ifndef FNM_EXTMATCH
->> > +#define FNM_EXTMATCH 0
->> > +#endif
->> >  #include <linux/compiler.h>
->> >  #include <linux/list.h>
->> >  #include <linux/types.h>
->> 
->> Hey Jiri,
->> 
->> The downside is that, while the compilation now works on those
->> systems, the pattern will not work as intended in them :o(
->> Let me cook something and send it ASAP.
-> 
-> Well, do you think this is really a big problem? Even if we add nice
-> docs?
-> 
-> I haven't tested something that works with this syntax on a capable
-> system and then on one that doesn't, to see how it would behave,
-> probably it would say something about a syntax error?
-> 
++++ Jia Zhang [01/03/18 17:09 +0800]:
+>/sys/kernel/security/modsign/enforce gives the result of current
+>enforcement policy of loading module.
+>
+>Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 
-Most likely, yes, it would be flagged as a syntax error in the event 
-name.
-I'd prefer we fix this. I have the new patch ready, do you want me to 
-just
-send you that patch instead of the series?
+Why is this being added as part of securityfs? AFAIK that's primarily used by LSMs.
 
-Thanks,
-Agustín
+And we already export sig_enforce to sysfs (See /sys/module/module/parameters/sig_enforce).
+It already does exactly what your patchset tries to do, it only allows for enablement. 
 
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
-Linux Foundation Collaborative Project.
+Jessica
+
+>---
+> kernel/module.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 55 insertions(+)
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 79825ea..e3c6c8e 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -2794,11 +2794,60 @@ static int module_sig_check(struct load_info *info, int flags)
+>
+> 	return err;
+> }
+>+
+>+#ifdef CONFIG_SECURITYFS
+>+static ssize_t modsign_enforce_read(struct file *filp, char __user *ubuf,
+>+				    size_t count, loff_t *offp)
+>+{
+>+	char buf[2];
+>+
+>+	sprintf(buf, "%d", !!sig_enforce);
+>+
+>+	return simple_read_from_buffer(ubuf, count, offp, buf, 1);
+>+}
+>+
+>+static const struct file_operations modsign_enforce_ops = {
+>+	.read = modsign_enforce_read,
+>+	.llseek = generic_file_llseek,
+>+};
+>+
+>+static int __init securityfs_init(void)
+>+{
+>+	struct dentry *modsign_dir;
+>+	struct dentry *enforce;
+>+
+>+	modsign_dir = securityfs_create_dir("modsign", NULL);
+>+	if (IS_ERR(modsign_dir))
+>+		return -1;
+>+
+>+	enforce = securityfs_create_file("enforce",
+>+					 S_IRUSR | S_IRGRP, modsign_dir,
+>+					 NULL, &modsign_enforce_ops);
+>+	if (IS_ERR(enforce))
+>+		goto out;
+>+
+>+	return 0;
+>+out:
+>+	securityfs_remove(modsign_dir);
+>+
+>+	return -1;
+>+}
+>+#else /* !CONFIG_SECURITYFS */
+>+static int __init securityfs_init(void)
+>+{
+>+	return 0;
+>+}
+>+#endif
+> #else /* !CONFIG_MODULE_SIG */
+> static int module_sig_check(struct load_info *info, int flags)
+> {
+> 	return 0;
+> }
+>+
+>+static int __init securityfs_init(void)
+>+{
+>+	return 0;
+>+}
+> #endif /* !CONFIG_MODULE_SIG */
+>
+> /* Sanity checks against invalid binaries, wrong arch, weird elf version. */
+>@@ -4395,8 +4444,14 @@ void module_layout(struct module *mod,
+>
+> static int __init initialize_module(void)
+> {
+>+	int ret;
+>+
+> 	proc_modules_init();
+>
+>+	ret = securityfs_init();
+>+	if (unlikely(ret))
+>+		return ret;
+>+
+> 	return 0;
+> }
+> module_init(initialize_module);
+>-- 
+>1.8.3.1
+>
